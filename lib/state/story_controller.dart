@@ -1,0 +1,496 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../data/story_repository.dart';
+import '../models/era.dart';
+import '../models/person.dart';
+import '../models/story_event.dart';
+import 'story_state.dart';
+
+final supabaseClientProvider = Provider<SupabaseClient>((ref) {
+  return Supabase.instance.client;
+});
+
+final storyRepositoryProvider = Provider<StoryRepository>((ref) {
+  return StoryRepository(ref.watch(supabaseClientProvider));
+});
+
+final storyControllerProvider = NotifierProvider<StoryController, StoryState>(
+  StoryController.new,
+);
+
+class StoryController extends Notifier<StoryState> {
+  static const _apostolicEraCode = 'era_nt_apostolic';
+  Timer? _searchDebounce;
+
+  static const _palette = <Color>[
+    Color(0xFF3B6C94),
+    Color(0xFFB6673C),
+    Color(0xFF557C3E),
+    Color(0xFF8A4E5D),
+    Color(0xFF616161),
+    Color(0xFF9E7C24),
+    Color(0xFF7B5D43),
+    Color(0xFF5C6B9F),
+  ];
+
+  StoryRepository get _repo => ref.read(storyRepositoryProvider);
+
+  @override
+  StoryState build() => const StoryState(loading: true);
+
+  Future<void> initialize() async {
+    try {
+      state = state.copyWith(loading: true, clearError: true);
+      final eras = await _repo.fetchEras();
+      if (eras.isEmpty) {
+        state = state.copyWith(
+          loading: false,
+          eras: const [],
+          persons: const [],
+          events: const [],
+          error: '시대 데이터가 없습니다.',
+        );
+        return;
+      }
+
+      final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
+      state = state.copyWith(
+        loading: false,
+        eras: eras,
+        persons: const [],
+        events: const [],
+        completedEventIds: const {},
+        selectedEraId: null,
+        selectedPersonIds: const {},
+        selectedPersonColors: const {},
+        selectedTestament: hasOldTestament ? 'old' : _eraTestament(eras.first),
+        searchQuery: '',
+        searchResults: const [],
+        isSearching: false,
+        clearSelectedEvent: true,
+        clearSelectedPaulJourney: true,
+      );
+    } catch (e) {
+      state = state.copyWith(loading: false, error: '초기 데이터를 불러오지 못했습니다: $e');
+    }
+  }
+
+  Future<void> selectTestament(String testament) async {
+    final normalized = testament == 'new' ? 'new' : 'old';
+    final selectedEra = state.eras
+        .where((era) => era.id == state.selectedEraId)
+        .firstOrNull;
+    final selectedEraMatches =
+        selectedEra != null && _eraTestament(selectedEra) == normalized;
+
+    if (state.selectedTestament == normalized && selectedEraMatches) {
+      return;
+    }
+
+    state = state.copyWith(
+      selectedTestament: normalized,
+      clearSelectedEvent: true,
+      clearSelectedPaulJourney: true,
+      clearError: true,
+    );
+
+    if (selectedEraMatches) {
+      return;
+    }
+
+    final available =
+        state.eras.where((era) => _eraTestament(era) == normalized).toList()
+          ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+
+    if (available.isEmpty) {
+      state = state.copyWith(
+        clearSelectedEra: true,
+        persons: const [],
+        events: const [],
+        selectedPersonIds: const {},
+        selectedPersonColors: const {},
+        completedEventIds: const {},
+        clearSelectedEvent: true,
+        clearSelectedPaulJourney: true,
+      );
+      return;
+    }
+
+    await selectEra(available.first.id);
+  }
+
+  Future<void> toggleEra(String eraId) async {
+    if (state.selectedEraId == eraId) {
+      clearEraSelection();
+      return;
+    }
+    await selectEra(eraId);
+  }
+
+  void clearEraSelection() {
+    state = state.copyWith(
+      loading: false,
+      clearSelectedEra: true,
+      persons: const [],
+      events: const [],
+      selectedPersonIds: const {},
+      selectedPersonColors: const {},
+      completedEventIds: const {},
+      searchQuery: '',
+      searchResults: const [],
+      isSearching: false,
+      clearSelectedEvent: true,
+      clearSelectedPaulJourney: true,
+      clearError: true,
+    );
+  }
+
+  Future<void> selectEra(String eraId) async {
+    if (state.selectedEraId == eraId && state.persons.isNotEmpty) {
+      return;
+    }
+    final selectedEra = state.eras.where((era) => era.id == eraId).firstOrNull;
+    final eraTestament = selectedEra == null
+        ? state.selectedTestament
+        : _eraTestament(selectedEra);
+    try {
+      state = state.copyWith(
+        loading: true,
+        selectedEraId: eraId,
+        selectedTestament: eraTestament,
+        clearError: true,
+        clearSelectedPaulJourney: true,
+      );
+      final persons = await _repo.fetchPersonsByEra(eraId);
+      final events = await _repo.fetchEventsByEra(eraId);
+      final selectedPersonIds = _ensureSelectedPersons(persons, const {});
+      state = state.copyWith(
+        loading: false,
+        persons: persons,
+        events: events,
+        completedEventIds: const {},
+        selectedPersonIds: selectedPersonIds,
+        selectedPersonColors: _assignSelectedColors(selectedPersonIds),
+        searchQuery: '',
+        searchResults: const [],
+        isSearching: false,
+        clearSelectedEvent: true,
+        clearSelectedPaulJourney: true,
+      );
+    } catch (e) {
+      state = state.copyWith(loading: false, error: '시대 변경 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  void togglePerson(String personId) {
+    final next = {...state.selectedPersonIds};
+    if (next.contains(personId)) {
+      next.remove(personId);
+    } else {
+      next.add(personId);
+    }
+
+    final canKeepJourney = _canApplyPaulJourneyFilter(
+      selectedPersonIds: next,
+      eraId: state.selectedEraId,
+      persons: state.persons,
+    );
+    state = state.copyWith(
+      selectedPersonIds: next,
+      selectedPersonColors: _assignSelectedColors(next),
+      clearSelectedEvent: true,
+      clearSelectedPaulJourney: !canKeepJourney,
+    );
+  }
+
+  void selectPaulJourney(String? journeyKey) {
+    final normalized = _normalizeJourneyKey(journeyKey);
+    if (normalized == null) {
+      state = state.copyWith(
+        clearSelectedPaulJourney: true,
+        clearSelectedEvent: true,
+      );
+      return;
+    }
+
+    final canApply = _canApplyPaulJourneyFilter(
+      selectedPersonIds: state.selectedPersonIds,
+      eraId: state.selectedEraId,
+      persons: state.persons,
+    );
+    if (!canApply) {
+      state = state.copyWith(
+        clearSelectedPaulJourney: true,
+        clearSelectedEvent: true,
+      );
+      return;
+    }
+
+    if (state.selectedPaulJourney == normalized) {
+      state = state.copyWith(
+        clearSelectedPaulJourney: true,
+        clearSelectedEvent: true,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      selectedPaulJourney: normalized,
+      clearSelectedEvent: true,
+    );
+  }
+
+  void selectEvent(String? eventId) {
+    if (eventId == null) {
+      state = state.copyWith(clearSelectedEvent: true);
+      return;
+    }
+    state = state.copyWith(selectedEventId: eventId);
+  }
+
+  Future<void> markEventCompleted({
+    required String eventId,
+    required int score,
+    required bool isCompleted,
+  }) async {
+    // Progress persistence is intentionally disabled until user/auth tables are ready.
+    return;
+  }
+
+  void setSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query);
+    _searchDebounce?.cancel();
+
+    if (query.trim().isEmpty) {
+      state = state.copyWith(searchResults: const [], isSearching: false);
+      return;
+    }
+
+    state = state.copyWith(isSearching: true, searchResults: const []);
+    _searchDebounce = Timer(const Duration(milliseconds: 220), () {
+      unawaited(_runSearch(query));
+    });
+  }
+
+  Future<void> selectSearchResult(StoryEvent event) async {
+    state = state.copyWith(
+      loading: true,
+      clearSelectedEvent: true,
+      clearError: true,
+    );
+
+    try {
+      if (state.selectedEraId != event.eraId) {
+        await selectEra(event.eraId);
+      }
+
+      final searchSelectedIds = event.personIds.toSet();
+      var selectedIds = {
+        ...searchSelectedIds.where(
+          (personId) => state.persons.any((person) => person.id == personId),
+        ),
+      };
+
+      if (selectedIds.isEmpty &&
+          state.events.where((e) => e.id == event.id).isNotEmpty) {
+        selectedIds.addAll(
+          state.events
+              .firstWhere((e) => e.id == event.id)
+              .personIds
+              .where(
+                (personId) =>
+                    state.persons.any((person) => person.id == personId),
+              ),
+        );
+      }
+      if (selectedIds.isEmpty) {
+        selectedIds = {
+          if (searchSelectedIds.isNotEmpty) searchSelectedIds.first,
+        };
+      }
+
+      state = state.copyWith(
+        loading: false,
+        selectedPersonIds: selectedIds,
+        selectedPersonColors: _assignSelectedColors(selectedIds),
+        selectedEventId: event.id,
+        clearSelectedPaulJourney: true,
+        searchQuery: '',
+        searchResults: const [],
+        isSearching: false,
+      );
+      _focusOnSearchSelection(event.id);
+    } catch (error) {
+      state = state.copyWith(
+        loading: false,
+        error: '검색 결과 선택 중 오류가 발생했습니다: $error',
+      );
+    }
+  }
+
+  Future<void> _runSearch(String query) async {
+    final normalized = query.trim();
+    if (normalized.isEmpty) {
+      state = state.copyWith(searchResults: const [], isSearching: false);
+      return;
+    }
+
+    try {
+      final results = await _repo.searchEventsByText(normalized);
+      state = state.copyWith(
+        isSearching: false,
+        searchResults: results.take(12).toList(),
+      );
+    } catch (error) {
+      state = state.copyWith(
+        isSearching: false,
+        searchResults: const [],
+        error: '검색에 실패했습니다: $error',
+      );
+    }
+  }
+
+  List<StoryEvent> mergedTimeline() {
+    final activeJourney = state.selectedPaulJourney;
+    final requiresJourneySelection = _canApplyPaulJourneyFilter(
+      selectedPersonIds: state.selectedPersonIds,
+      eraId: state.selectedEraId,
+      persons: state.persons,
+    );
+    final filtered = state.events.where((event) {
+      final hasSelectedPerson = event.personIds.any(
+        state.selectedPersonIds.contains,
+      );
+      if (!hasSelectedPerson) {
+        return false;
+      }
+      if (requiresJourneySelection && activeJourney == null) {
+        return false;
+      }
+      if (activeJourney == null) {
+        return true;
+      }
+      return _journeyKeyForEventCode(event.code) == activeJourney;
+    }).toList();
+
+    filtered.sort((a, b) {
+      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+      if (cmp != 0) {
+        return cmp;
+      }
+      return a.id.compareTo(b.id);
+    });
+
+    return filtered;
+  }
+
+  List<StoryEvent> searchResults() {
+    return state.searchResults;
+  }
+
+  Color colorForPerson(String personId) {
+    final assigned = state.selectedPersonColors[personId];
+    if (assigned != null) {
+      return assigned;
+    }
+    return const Color(0xFF8E7B61);
+  }
+
+  Person? personById(String personId) {
+    for (final person in state.persons) {
+      if (person.id == personId) {
+        return person;
+      }
+    }
+    return null;
+  }
+
+  Set<String> _ensureSelectedPersons(
+    List<Person> persons,
+    Set<String> current,
+  ) {
+    if (persons.isEmpty) {
+      return const {};
+    }
+    return current.where((id) => persons.any((p) => p.id == id)).toSet();
+  }
+
+  void _focusOnSearchSelection(String eventId) {
+    final event = state.events.where((item) => item.id == eventId).firstOrNull;
+    if (event == null) {
+      return;
+    }
+    state = state.copyWith(selectedEventId: event.id);
+  }
+
+  Map<String, Color> _assignSelectedColors(Set<String> selectedIds) {
+    final next = <String, Color>{};
+    final ordered = selectedIds.toList();
+    for (var i = 0; i < ordered.length; i++) {
+      next[ordered[i]] = _palette[i % _palette.length];
+    }
+    return next;
+  }
+
+  String _eraTestament(Era era) {
+    final raw = era.testament.toString().trim().toLowerCase();
+    if (raw == 'new' || raw == 'nt' || raw == 'new_testament') {
+      return 'new';
+    }
+    if (era.code.toString().startsWith('era_nt_')) {
+      return 'new';
+    }
+    return 'old';
+  }
+
+  bool _canApplyPaulJourneyFilter({
+    required Set<String> selectedPersonIds,
+    required String? eraId,
+    required List<Person> persons,
+  }) {
+    if (eraId == null) {
+      return false;
+    }
+    final era = state.eras.where((item) => item.id == eraId).firstOrNull;
+    if (era == null || era.code != _apostolicEraCode) {
+      return false;
+    }
+    return persons.any(
+      (person) =>
+          selectedPersonIds.contains(person.id) && person.code == 'paul',
+    );
+  }
+
+  String? _normalizeJourneyKey(String? value) {
+    switch (value) {
+      case 'j1':
+      case 'j2':
+      case 'j3':
+      case 'rome':
+        return value;
+      default:
+        return null;
+    }
+  }
+
+  String? _journeyKeyForEventCode(String code) {
+    final normalized = code.toLowerCase();
+    if (normalized.contains('_j1_')) {
+      return 'j1';
+    }
+    if (normalized.contains('_j2_')) {
+      return 'j2';
+    }
+    if (normalized.contains('_j3_')) {
+      return 'j3';
+    }
+    if (normalized.contains('_rome_')) {
+      return 'rome';
+    }
+    return null;
+  }
+}

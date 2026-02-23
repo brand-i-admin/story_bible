@@ -1,0 +1,438 @@
+{
+  "meta": {
+    "title": "Bible geometric low-poly avatar prompts (51 set)",
+    "version": "1.0",
+    "count": 51,
+    "note": "51-character set: includes Jesus' twelve disciples and Paul."
+  },
+  "common_style": "2D cartoon character illustration, soft geometric low-poly look, gently faceted polygons, simplified clean shapes with rounded silhouette, medium facet count (not too many cuts), soft corners on facial planes, flat clean vector shading, solid color fills, non-photoreal, stylized illustrated adult face (age 25+), close-up portrait only, head-and-shoulders framing (chest-up), centered, single character, front-facing or front 3/4 view only, both eyes fully visible, facial features fully unobstructed, no profile-only view, no back view, no rear view, no body below chest, no hands, no props, transparent PNG background (alpha channel), no floor, no environment, no scene, high resolution, no text, no watermark, same character design system as a consistent set, same face proportions, same polygon density, same shading style, historically ancient biblical-era appearance, no modern accessories, no glasses, no eyewear",
+  "negative_prompt": "realistic, photoreal, real human, live-action, photograph, street photo, studio photo, camera shot, DSLR, cinematic lighting, depth of field, bokeh, skin pores, natural skin texture, detailed hair strands, anime, manga, 3D render, clay, pixel art, gritty, dark, horror, complex background, scenery, solid background, white background, gradient background, floor, shadow plane, text, logo, watermark, chibi, child, kid, infant, toddler, minor, babyface, oversized head, back view, rear view, from behind, profile-only, hidden face, occluded face, full body, standing full-length, feet visible, hands visible, hand-held props, object in hand, weapon in hand, waist-up with hands, cropped face, cut off chin, jagged geometry, excessive faceting, too many sharp edges, hard angular cuts, female facial hair, beard on woman, mustache on woman, stubble on woman, glasses, eyeglasses, spectacles, eyewear, sunglasses, goggles, monocle, pince-nez, modern eyewear",
+  "palettes": {
+    "primeval": "soft beige + olive + sky blue accents",
+    "patriarch": "warm sand + cream + muted teal accents",
+    "exodus_wilderness": "teal + desert tan + bronze accents",
+    "judges": "olive green + clay brown + muted gold accents",
+    "monarchy": "royal purple + navy + gold accents (still pastel)",
+    "prophets_exile": "muted indigo + gray + parchment cream accents",
+    "post_exile_return": "stone gray + sage green + parchment cream accents",
+    "gospels": "cream + sky blue + soft rose accents",
+    "early_church": "teal + sea blue + warm brown accents"
+  },
+  "generation_defaults": {
+    "sampleCount": 1,
+    "aspectRatio": "1:1",
+    "enhancePrompt": false,
+    "personGeneration": "allow_adult",
+    "outputMimeType": "image/png"
+  },
+  "characters": [
+    {
+      "index": 1,
+      "code": "adam",
+      "name_ko": "아담",
+      "name_en": "Adam",
+      "era": "primeval",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Adam from Genesis, adult man, serene first-human look, gentle eyes, short natural curls and neatly trimmed beard with a subtle leaf-shaped temple ornament, warm hopeful smile, identity conveyed through fresh natural facial texture, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 2,
+      "code": "eve",
+      "name_ko": "하와",
+      "name_en": "Eve",
+      "era": "primeval",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Eve from Genesis, adult woman, graceful facial contours, bright nurturing eyes, softly waved hair with vine-like braided detail near the temples, calm welcoming smile, identity conveyed through living-garden warmth in facial expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 3,
+      "code": "noah",
+      "name_ko": "노아",
+      "name_en": "Noah",
+      "era": "primeval",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Noah, elderly man, long white beard and weathered forehead lines, patient steady eyes, resilient seafarer calm, kind protective smile, identity conveyed through age lines and steadfast gaze, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 4,
+      "code": "cain",
+      "name_ko": "가인",
+      "name_en": "Cain",
+      "era": "primeval",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Cain, adult man, sun-touched farmer complexion, strong jawline, slightly guarded eyes with restrained tension, subtle uneasy half-smile, identity conveyed through hardened facial set and conflicted gaze, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 5,
+      "code": "abraham",
+      "name_ko": "아브라함",
+      "name_en": "Abraham",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Abraham, older man, silver beard and desert-weathered facial lines, trustworthy eyes, composed patriarchal dignity, gentle confident smile, identity conveyed through mature wisdom in brow and gaze, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 6,
+      "code": "sarah",
+      "name_ko": "사라",
+      "name_en": "Sarah",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Sarah, older woman, dignified mature face with soft laugh lines, attentive maternal eyes, elegant head veil framing the cheeks, warm motherly smile, identity conveyed through hopeful elder warmth, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 7,
+      "code": "isaac",
+      "name_ko": "이삭",
+      "name_en": "Isaac",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Isaac, adult man, calm thoughtful eyes, neatly kept beard, peaceful contemplative expression, gentle smile, identity conveyed through quiet trust and reflective facial composure, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 8,
+      "code": "rebekah",
+      "name_ko": "리브가",
+      "name_en": "Rebekah",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Rebekah, adult woman, alert compassionate eyes, defined graceful brows, poised expression with practical confidence, gentle smile, identity conveyed through service-minded clarity in facial focus, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 9,
+      "code": "jacob",
+      "name_ko": "야곱",
+      "name_en": "Jacob",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Jacob, adult man, travel-worn cheeks and contemplative brow, deep reflective eyes, slightly furrowed expression softening into hope, identity conveyed through wrestling and growth in facial tension, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 10,
+      "code": "leah",
+      "name_ko": "레아",
+      "name_en": "Leah",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Leah, adult woman, tender and reflective eyes, modest soft facial structure, gentle reserved smile, identity conveyed through inward strength and quiet devotion in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 11,
+      "code": "rachel",
+      "name_ko": "라헬",
+      "name_en": "Rachel",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Rachel, adult woman, luminous eyes and gentle symmetrical features, softly braided hairline framing the face, warm caring smile, identity conveyed through shepherd-like tenderness and grace, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 12,
+      "code": "joseph",
+      "name_ko": "요셉",
+      "name_en": "Joseph",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Joseph, adult man, confident compassionate gaze, neat beard line, subtle multicolor headband near the hairline, poised forgiving smile, identity conveyed through noble composure and visionary eyes, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 13,
+      "code": "moses",
+      "name_ko": "모세",
+      "name_en": "Moses",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Moses, elderly man, full white beard, deep leadership lines around eyes and brow, firm compassionate gaze, calm authoritative expression, identity conveyed through prophetic gravity in facial planes, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 14,
+      "code": "aaron",
+      "name_ko": "아론",
+      "name_en": "Aaron",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Aaron the priest, adult man, well-groomed beard, clear steady eyes, subtle geometric forehead band near hairline, reassuring smile, identity conveyed through priestly precision and warmth in facial structure, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 15,
+      "code": "miriam",
+      "name_ko": "미리암",
+      "name_en": "Miriam",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Miriam, adult woman, bright joyful eyes, expressive brows, lively smile with confident prophetic energy, subtle circular ornament near temple, identity conveyed through celebratory leadership in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 16,
+      "code": "joshua",
+      "name_ko": "여호수아",
+      "name_en": "Joshua",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Joshua, adult man, focused warrior-leader gaze, slightly scarred brow detail, firm jaw with kind eyes, determined steady expression, identity conveyed through courage and obedience in facial intensity, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 17,
+      "code": "caleb",
+      "name_ko": "갈렙",
+      "name_en": "Caleb",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Caleb, older man, sun-weathered face and vigorous eyes, broad confident smile, strong cheek structure, identity conveyed through fearless endurance in facial vitality, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 18,
+      "code": "deborah",
+      "name_ko": "드보라",
+      "name_en": "Deborah",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Deborah, adult woman, authoritative eyes and composed brow, confident upright expression, subtle palm-leaf motif hair clasp near temple, identity conveyed through judicial clarity and prophetic resolve in face, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 19,
+      "code": "gideon",
+      "name_ko": "기드온",
+      "name_en": "Gideon",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Gideon, adult man, humble but resolute eyes, modest facial tension easing into faith, faint dust-toned cheek shading, identity conveyed through reluctant courage in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 20,
+      "code": "samson",
+      "name_ko": "삼손",
+      "name_en": "Samson",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Samson, adult man, long uncut hair framing a strong face, thick brows, intense but not aggressive eyes, restrained heroic smile, identity conveyed through strength and vulnerability in facial contrasts, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 21,
+      "code": "ruth",
+      "name_ko": "룻",
+      "name_en": "Ruth",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Ruth, adult woman, warm resilient eyes, gentle cheek lines, sincere devoted smile, identity conveyed through loyalty and kindness in calm facial openness, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 22,
+      "code": "naomi",
+      "name_ko": "나오미",
+      "name_en": "Naomi",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Naomi, older woman, wise age lines around eyes and mouth, compassionate bittersweet expression, gentle maternal smile, identity conveyed through grief transformed into wisdom in facial depth, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 23,
+      "code": "samuel",
+      "name_ko": "사무엘",
+      "name_en": "Samuel",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Samuel, adult man, prophetic calm gaze, thoughtful brow, neatly kept beard, solemn yet gentle expression, identity conveyed through spiritual discernment in the eyes, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 24,
+      "code": "saul",
+      "name_ko": "사울",
+      "name_en": "Saul",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), King Saul, adult man, regal angular facial structure, pronounced brow ridge, serious conflicted eyes, restrained kingly expression, identity conveyed through authority mixed with inner unrest in face, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 25,
+      "code": "david",
+      "name_ko": "다윗",
+      "name_en": "David",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), David, adult man, lively shepherd-king eyes, expressive brows, youthful but mature beard line, confident joyful smile, identity conveyed through worshipful courage in facial energy, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 26,
+      "code": "solomon",
+      "name_ko": "솔로몬",
+      "name_en": "Solomon",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), King Solomon, adult man, refined beard and balanced facial symmetry, contemplative wise eyes, calm measured smile, identity conveyed through judgment and wisdom in composed expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 27,
+      "code": "boaz",
+      "name_ko": "보아스",
+      "name_en": "Boaz",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Boaz, adult man, broad kind face, reassuring eyes, steady honorable smile, identity conveyed through generous protector character in facial warmth, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 28,
+      "code": "esther",
+      "name_ko": "에스더",
+      "name_en": "Esther",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Esther, adult woman, poised queenly facial symmetry, courageous focused eyes, elegant serene smile, identity conveyed through bravery and grace in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 29,
+      "code": "elijah",
+      "name_ko": "엘리야",
+      "name_en": "Elijah",
+      "era": "prophets_exile",
+      "prompt": "COMMON_STYLE, palette: muted indigo + gray + parchment cream accents, Elijah, adult man, rugged beard and wind-worn facial texture, fiery intense eyes, firm prophetic expression softened by compassion, identity conveyed through zeal in gaze, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 30,
+      "code": "elisha",
+      "name_ko": "엘리사",
+      "name_en": "Elisha",
+      "era": "prophets_exile",
+      "prompt": "COMMON_STYLE, palette: muted indigo + gray + parchment cream accents, Elisha, adult man, calm concentrated eyes, composed beard, serene confident smile, identity conveyed through compassionate prophetic steadiness in facial calm, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 31,
+      "code": "isaiah",
+      "name_ko": "이사야",
+      "name_en": "Isaiah",
+      "era": "prophets_exile",
+      "prompt": "COMMON_STYLE, palette: muted indigo + gray + parchment cream accents, Isaiah, adult man, visionary upward-leaning gaze, thoughtful brow, gentle but intense prophetic eyes, identity conveyed through revelation-focused expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 32,
+      "code": "jeremiah",
+      "name_ko": "예레미야",
+      "name_en": "Jeremiah",
+      "era": "prophets_exile",
+      "prompt": "COMMON_STYLE, palette: muted indigo + gray + parchment cream accents, Jeremiah, adult man, compassionate sorrowful eyes, soft downward brow, tender grieving expression with hope, identity conveyed through lament and love in facial emotion, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 33,
+      "code": "daniel",
+      "name_ko": "다니엘",
+      "name_en": "Daniel",
+      "era": "prophets_exile",
+      "prompt": "COMMON_STYLE, palette: muted indigo + gray + parchment cream accents, Daniel, adult man, composed noble face, clear courageous eyes, disciplined calm smile, identity conveyed through faithful resolve in facial restraint, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 34,
+      "code": "ezra",
+      "name_ko": "에스라",
+      "name_en": "Ezra",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezra the scribe, adult man, scholarly focused eyes, neatly trimmed beard, concentrated brow, calm studious expression, identity conveyed through learning and teaching in facial precision, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 35,
+      "code": "nehemiah",
+      "name_ko": "느헤미야",
+      "name_en": "Nehemiah",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Nehemiah, adult man, determined practical eyes, strong focused brow, energetic confident smile, identity conveyed through builder-leader resolve in facial set, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 36,
+      "code": "zerubbabel",
+      "name_ko": "스룹바벨",
+      "name_en": "Zerubbabel",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Zerubbabel, adult man, humble resolute expression, steady rebuilding-focused eyes, firm but gentle mouth line, identity conveyed through restoration leadership in face, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 37,
+      "code": "jesus",
+      "name_ko": "예수님",
+      "name_en": "Jesus",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Jesus, adult man, warm compassionate eyes, balanced beard and hair framing the face, peaceful authoritative expression, very subtle soft glow around the face, identity conveyed through mercy and truth in gaze, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 38,
+      "code": "mary",
+      "name_ko": "마리아",
+      "name_en": "Mary",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Mary, adult woman, peaceful maternal face, soft attentive eyes, blue veil framing cheeks and forehead, gentle serene smile, identity conveyed through humble devotion in facial calm, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, and hairline details, not through clothing or body pose, explicitly feminine face, no facial hair, no beard, no mustache, no stubble, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 39,
+      "code": "peter",
+      "name_ko": "베드로",
+      "name_en": "Peter",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Peter, adult man, weathered fisherman facial texture, thick beard, bold expressive eyes, earnest determined smile, identity conveyed through impulsive courage transformed into steadfast faith, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 40,
+      "code": "paul",
+      "name_ko": "바울",
+      "name_en": "Paul",
+      "era": "early_church",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Paul the apostle, adult man, high forehead, short beard, intense teaching eyes, articulate expressive brow, confident mission-driven smile, identity conveyed through intellectual zeal in facial focus, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 41,
+      "code": "andrew",
+      "name_ko": "안드레",
+      "name_en": "Andrew",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Andrew, adult man, rugged yet approachable fisherman face, open kind eyes, simple beard, welcoming smile, identity conveyed through inviting discipleship in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 42,
+      "code": "james_zebedee",
+      "name_ko": "야고보(세베대의 아들)",
+      "name_en": "James son of Zebedee",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James son of Zebedee, adult man, sea-weathered beard and strong brow, devoted determined eyes, disciplined expression, identity conveyed through bold commitment in facial intensity, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 43,
+      "code": "john",
+      "name_ko": "요한",
+      "name_en": "John",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, John, adult man, relatively youthful facial softness with mature eyes, gentle contemplative gaze, compassionate slight smile, identity conveyed through love and reflection in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 44,
+      "code": "philip",
+      "name_ko": "빌립",
+      "name_en": "Philip",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Philip, adult man, practical thoughtful face, attentive analytical eyes, calm approachable smile, identity conveyed through questioning and guidance in facial intelligence, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 45,
+      "code": "bartholomew",
+      "name_ko": "바돌로매",
+      "name_en": "Bartholomew",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Bartholomew (Nathanael), adult man, honest straightforward gaze, clear open expression, composed gentle smile, identity conveyed through sincerity and integrity in face, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 46,
+      "code": "matthew",
+      "name_ko": "마태",
+      "name_en": "Matthew",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Matthew, adult man, neat groomed beard, sharp observant eyes, precise thoughtful expression, identity conveyed through record-keeping clarity and attention in facial focus, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 47,
+      "code": "thomas",
+      "name_ko": "도마",
+      "name_en": "Thomas",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Thomas, adult man, searching inquisitive eyes evolving into assured confidence, reflective brow, grounded calm smile, identity conveyed through doubt-to-faith journey in expression, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 48,
+      "code": "james_alphaeus",
+      "name_ko": "야고보(알패오의 아들)",
+      "name_en": "James son of Alphaeus",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James son of Alphaeus, adult man, humble quiet face, faithful steady eyes, modest gentle smile, identity conveyed through understated devotion in facial simplicity, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 49,
+      "code": "thaddaeus",
+      "name_ko": "다대오(유다)",
+      "name_en": "Thaddaeus",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Thaddaeus (Jude son of James), adult man, earnest compassionate gaze, balanced brows, warm sincere smile, identity conveyed through heartfelt loyalty in facial tone, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 50,
+      "code": "simon_zealot",
+      "name_ko": "시몬(셀롯)",
+      "name_en": "Simon the Zealot",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Simon the Zealot, adult man, weathered determined face softened by peace, focused eyes with calm restraint, subtle firm smile, identity conveyed through zeal transformed into gentleness, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    },
+    {
+      "index": 51,
+      "code": "judas_iscariot",
+      "name_ko": "가룟 유다",
+      "name_en": "Judas Iscariot",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Judas Iscariot, adult man, serious conflicted eyes, tense mouth line, respectful neutral expression without caricature, identity conveyed through inner conflict in facial nuance, role-specific identity must be expressed primarily through eyes, eyebrows, forehead lines, beard or hairline details, not through clothing or body pose, no hands, no props, no glasses, no eyewear, no modern accessories"
+    }
+  ]
+}
