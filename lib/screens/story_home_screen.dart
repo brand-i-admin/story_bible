@@ -4,9 +4,11 @@ import 'package:latlong2/latlong.dart';
 
 import '../models/era.dart';
 import '../models/bible_verse.dart';
+import '../models/person.dart';
 import '../models/story_event.dart';
 import '../models/quiz_question.dart';
 import '../state/story_controller.dart';
+import '../state/story_state.dart';
 import '../widgets/era_selector.dart';
 import '../widgets/game_ui_skin.dart';
 import '../widgets/person_panel.dart';
@@ -23,12 +25,197 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
   PersonSortMode _personSortMode = PersonSortMode.eraOrder;
+  _BottomTab _activeBottomTab = _BottomTab.home;
+  _WeeklyStudyData? _weeklyStudyData;
+  String? _weeklySelectedEventId;
+  final Set<String> _weeklyCheckedEventIds = <String>{};
+  bool _weeklyLoading = false;
+  String? _weeklyError;
+  bool _weeklyShowShortPopup = true;
+  String? _weeklyWeekKey;
 
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
       ref.read(storyControllerProvider.notifier).initialize();
+    });
+  }
+
+  StoryEvent? get _weeklySelectedEvent {
+    final data = _weeklyStudyData;
+    if (data == null || _weeklySelectedEventId == null) {
+      return null;
+    }
+    return data.events
+        .where((event) => event.id == _weeklySelectedEventId)
+        .firstOrNull;
+  }
+
+  DateTime _weekStartMonday(DateTime date) {
+    final day = DateTime(date.year, date.month, date.day);
+    return day.subtract(Duration(days: day.weekday - DateTime.monday));
+  }
+
+  String _weeklyKeyFor(DateTime monday) {
+    return '${monday.year}-${monday.month}-${monday.day}';
+  }
+
+  static const Map<String, String> _forcedWeeklyPersonCodeByWeekKey = {
+    // Monday, February 23, 2026 week
+    '2026-2-23': 'abraham',
+  };
+
+  int _seedFromKey(String key) {
+    return key.codeUnits.fold<int>(
+      0,
+      (acc, value) => ((acc * 31) + value) & 0x7fffffff,
+    );
+  }
+
+  Future<void> _openWeeklyTab() async {
+    if (_activeBottomTab != _BottomTab.weekly) {
+      setState(() {
+        _activeBottomTab = _BottomTab.weekly;
+      });
+    }
+
+    final monday = _weekStartMonday(DateTime.now());
+    final weekKey = _weeklyKeyFor(monday);
+    if (_weeklyStudyData != null && _weeklyWeekKey == weekKey) {
+      return;
+    }
+
+    setState(() {
+      _weeklyLoading = true;
+      _weeklyError = null;
+    });
+
+    try {
+      var state = ref.read(storyControllerProvider);
+      if (state.eras.isEmpty) {
+        await ref.read(storyControllerProvider.notifier).initialize();
+        state = ref.read(storyControllerProvider);
+      }
+
+      if (state.eras.isEmpty) {
+        throw StateError('시대 데이터를 불러오지 못했습니다.');
+      }
+
+      final repo = ref.read(storyRepositoryProvider);
+      final eraBundles = await Future.wait(
+        state.eras.map((era) async {
+          final responses = await Future.wait([
+            repo.fetchPersonsByEra(era.id),
+            repo.fetchEventsByEra(era.id),
+          ]);
+          return (
+            persons: responses[0] as List<Person>,
+            events: responses[1] as List<StoryEvent>,
+          );
+        }),
+      );
+
+      final personById = <String, Person>{};
+      final eventsByPersonId = <String, List<StoryEvent>>{};
+      for (final bundle in eraBundles) {
+        for (final person in bundle.persons) {
+          personById.putIfAbsent(person.id, () => person);
+        }
+        for (final event in bundle.events) {
+          for (final personId in event.personIds) {
+            eventsByPersonId
+                .putIfAbsent(personId, () => <StoryEvent>[])
+                .add(event);
+          }
+        }
+      }
+
+      final candidates =
+          personById.values
+              .where(
+                (person) =>
+                    (eventsByPersonId[person.id] ?? const <StoryEvent>[])
+                        .isNotEmpty,
+              )
+              .toList()
+            ..sort((a, b) {
+              final order = a.displayOrder.compareTo(b.displayOrder);
+              if (order != 0) {
+                return order;
+              }
+              return a.name.compareTo(b.name);
+            });
+      if (candidates.isEmpty) {
+        throw StateError('주간 추천 인물을 찾지 못했습니다.');
+      }
+
+      final forcedCode = _forcedWeeklyPersonCodeByWeekKey[weekKey];
+      final forcedPerson = forcedCode == null
+          ? null
+          : candidates.where((person) => person.code == forcedCode).firstOrNull;
+      final weeklyPerson =
+          forcedPerson ?? candidates[_seedFromKey(weekKey) % candidates.length];
+      final weeklyEvents =
+          [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
+            ..sort((a, b) {
+              final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+              if (cmp != 0) {
+                return cmp;
+              }
+              return a.id.compareTo(b.id);
+            });
+      final selectedEventId = weeklyEvents.isNotEmpty
+          ? weeklyEvents.first.id
+          : null;
+
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _weeklyStudyData = _WeeklyStudyData(
+          person: weeklyPerson,
+          events: weeklyEvents,
+          weekStartMonday: monday,
+        );
+        _weeklyWeekKey = weekKey;
+        _weeklySelectedEventId = selectedEventId;
+        _weeklyCheckedEventIds.clear();
+        _weeklyShowShortPopup = false;
+        _weeklyLoading = false;
+        _weeklyError = weeklyEvents.isEmpty ? '추천 인물의 이야기가 아직 없습니다.' : null;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _weeklyLoading = false;
+        _weeklyError = '주간 탭 데이터를 불러오지 못했습니다: $error';
+      });
+    }
+  }
+
+  void _closeWeeklyTab() {
+    setState(() {
+      _activeBottomTab = _BottomTab.home;
+    });
+  }
+
+  void _toggleWeeklyCheck(String eventId) {
+    setState(() {
+      if (_weeklyCheckedEventIds.contains(eventId)) {
+        _weeklyCheckedEventIds.remove(eventId);
+      } else {
+        _weeklyCheckedEventIds.add(eventId);
+      }
+    });
+  }
+
+  void _handleWeeklyEventSelect(String eventId) {
+    setState(() {
+      _weeklySelectedEventId = eventId;
+      _weeklyShowShortPopup = true;
     });
   }
 
@@ -769,6 +956,562 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  Widget _buildWeeklyBody({
+    required StoryState state,
+    required StoryController controller,
+  }) {
+    final weekly = _weeklyStudyData;
+    final selectedEvent = _weeklySelectedEvent;
+    if (_weeklyLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_weeklyError != null) {
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xAA000000),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            _weeklyError!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Color(0xFFFDF8EE)),
+          ),
+        ),
+      );
+    }
+    if (weekly == null) {
+      return const SizedBox.shrink();
+    }
+
+    final coordinatePoints = weekly.events
+        .where((event) => event.hasCoordinate)
+        .map((event) => event.latLng)
+        .toList(growable: false);
+    LatLng? initialMapCenter;
+    if (coordinatePoints.isNotEmpty) {
+      var minLat = coordinatePoints.first.latitude;
+      var maxLat = coordinatePoints.first.latitude;
+      var minLng = coordinatePoints.first.longitude;
+      var maxLng = coordinatePoints.first.longitude;
+      for (final point in coordinatePoints.skip(1)) {
+        if (point.latitude < minLat) {
+          minLat = point.latitude;
+        }
+        if (point.latitude > maxLat) {
+          maxLat = point.latitude;
+        }
+        if (point.longitude < minLng) {
+          minLng = point.longitude;
+        }
+        if (point.longitude > maxLng) {
+          maxLng = point.longitude;
+        }
+      }
+      initialMapCenter = LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          flex: 10,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final maxW = constraints.maxWidth;
+              final maxH = constraints.maxHeight;
+              final sideByHeight = maxH * 0.98;
+              final frameSide = (sideByHeight < maxW ? sideByHeight : maxW)
+                  .clamp(260.0, maxW)
+                  .toDouble();
+              final innerPadding = EdgeInsets.fromLTRB(
+                (frameSide * 0.18).clamp(26.0, 98.0).toDouble(),
+                (frameSide * 0.25).clamp(32.0, 128.0).toDouble(),
+                (frameSide * 0.18).clamp(26.0, 98.0).toDouble(),
+                (frameSide * 0.25).clamp(30.0, 118.0).toDouble(),
+              );
+
+              String avatarAssetForPerson(String personId) {
+                if (personId == weekly.person.id) {
+                  return weekly.person.avatarAssetPath;
+                }
+                final person = state.persons
+                    .where((p) => p.id == personId)
+                    .firstOrNull;
+                return person?.avatarAssetPath ?? weekly.person.avatarAssetPath;
+              }
+
+              return Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: frameSide,
+                  height: frameSide,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(kMapBackgroundAsset),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: innerPadding,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: StoryMapPanel(
+                          events: weekly.events,
+                          selectedEventId: _weeklySelectedEventId,
+                          onSelectEvent: _handleWeeklyEventSelect,
+                          colorForPerson: controller.colorForPerson,
+                          avatarAssetForPerson: avatarAssetForPerson,
+                          selectedPersonIds: {weekly.person.id},
+                          decorate: false,
+                          showSelectedCallout: false,
+                          animateReveal: false,
+                          centerSelectedOnReady: false,
+                          fitAllEventsOnReady: true,
+                          pinScale: 0.7,
+                          initialCenter: initialMapCenter,
+                          initialZoom: 6.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          flex: 7,
+          child: _buildWeeklyListPanel(
+            weekly: weekly,
+            selectedEvent: selectedEvent,
+            colorForPerson: controller.colorForPerson,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeeklyListPanel({
+    required _WeeklyStudyData weekly,
+    required StoryEvent? selectedEvent,
+    required Color Function(String personId) colorForPerson,
+  }) {
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: panelFrameDecoration(),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final basePadding = panelContentPaddingForSize(constraints.biggest);
+          final panelPadding = EdgeInsets.fromLTRB(
+            basePadding.left,
+            (basePadding.top * 0.46).clamp(20.0, 34.0).toDouble(),
+            basePadding.right,
+            (basePadding.bottom * 0.86).clamp(18.0, 40.0).toDouble(),
+          );
+          return Padding(
+            padding: panelPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 0, 2, 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Flexible(
+                        child: _weeklyPersonTitleBadge(
+                          text: '이번주 추천인물: ${weekly.person.name}',
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _weeklyPersonAvatar(person: weekly.person),
+                    ],
+                  ),
+                ),
+                Divider(height: 1, color: Colors.white.withValues(alpha: 0.45)),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, listConstraints) {
+                      final listWidget = weekly.events.isEmpty
+                          ? const Center(
+                              child: Text(
+                                '선택된 인물의 사건이 없습니다.',
+                                style: TextStyle(color: Color(0xFFF8EED9)),
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.only(top: 2, bottom: 4),
+                              itemCount: weekly.events.length,
+                              itemBuilder: (context, index) {
+                                final event = weekly.events[index];
+                                final selected =
+                                    event.id == _weeklySelectedEventId;
+                                final isChecked = _weeklyCheckedEventIds
+                                    .contains(event.id);
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 4.0,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () =>
+                                        _handleWeeklyEventSelect(event.id),
+                                    behavior: HitTestBehavior.opaque,
+                                    child: Container(
+                                      constraints: const BoxConstraints(
+                                        minHeight: 54,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 10,
+                                      ),
+                                      decoration: tabItemDecoration(
+                                        selected: selected,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: 9,
+                                                  height: 9,
+                                                  margin: const EdgeInsets.only(
+                                                    right: 8,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: colorForPerson(
+                                                      weekly.person.id,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${index + 1}. ${event.title}',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      color: Color(0xFFFDF8EE),
+                                                      height: 1.2,
+                                                      shadows: [
+                                                        Shadow(
+                                                          color: Color(
+                                                            0xAA000000,
+                                                          ),
+                                                          blurRadius: 3,
+                                                          offset: Offset(0, 1),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap: () =>
+                                                _toggleWeeklyCheck(event.id),
+                                            behavior: HitTestBehavior.opaque,
+                                            child: SizedBox(
+                                              width: 26,
+                                              height: 26,
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Image.asset(
+                                                    kCheckBoxAsset,
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                  if (isChecked)
+                                                    const Icon(
+                                                      Icons.check,
+                                                      size: 14,
+                                                      color: Color(0xFF89E492),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          _weeklyInlineQuizButton(
+                                            onTap: () => _startQuiz(event.id),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+
+                      final popupMaxHeight = (listConstraints.maxHeight * 0.82)
+                          .clamp(150.0, 232.0)
+                          .toDouble();
+
+                      return Stack(
+                        children: [
+                          Positioned.fill(child: listWidget),
+                          if (selectedEvent != null && _weeklyShowShortPopup)
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: _weeklyShortPopup(
+                                  event: selectedEvent,
+                                  maxHeight: popupMaxHeight,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _weeklyCloseButton({required VoidCallback onTap, double size = 28}) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.translucent,
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: Image.asset(kScrollCloseAsset, fit: BoxFit.contain),
+      ),
+    );
+  }
+
+  Widget _weeklyInlineQuizButton({required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 56,
+        height: 26,
+        decoration: actionButtonDecoration(selected: false),
+        alignment: Alignment.center,
+        child: const Text(
+          '퀴즈',
+          maxLines: 1,
+          style: TextStyle(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFFFDF8EE),
+            shadows: [
+              Shadow(
+                color: Color(0xAA000000),
+                blurRadius: 2,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _weeklyPersonTitleBadge({required String text}) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: IntrinsicWidth(
+        child: SizedBox(
+          height: 36,
+          child: DecoratedBox(
+            decoration: statesButtonDecoration(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFFFDF8EE),
+                  shadows: [
+                    Shadow(
+                      color: Color(0xAA000000),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _weeklyPersonAvatar({required Person person}) {
+    final avatarPath = person.avatarAssetPath.trim();
+    final fallbackText = person.name.trim().isEmpty
+        ? '?'
+        : person.name.trim().substring(0, 1);
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: const Color(0xFFF3E7CC), width: 1.4),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 2),
+        ],
+      ),
+      child: ClipOval(
+        child: avatarPath.isEmpty
+            ? _weeklyAvatarFallback(fallbackText)
+            : Image.asset(
+                avatarPath,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    _weeklyAvatarFallback(fallbackText),
+              ),
+      ),
+    );
+  }
+
+  Widget _weeklyAvatarFallback(String text) {
+    return Container(
+      color: const Color(0xFF8C6337),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: Color(0xFFF3EAD6),
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
+  Widget _weeklyShortPopup({
+    required StoryEvent event,
+    double maxHeight = 232,
+  }) {
+    final shortText =
+        (event.shortStory ??
+                event.shortText ??
+                event.story ??
+                event.summary ??
+                '')
+            .trim();
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      child: DecoratedBox(
+        decoration: shortDescriptionDecoration(),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 16, 50, 14),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      event.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF3D2D18),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    if (shortText.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        shortText,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Color(0xFF4C3A21),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () => _showEventDetailPopup(event),
+                        behavior: HitTestBehavior.translucent,
+                        child: Container(
+                          constraints: const BoxConstraints(
+                            minWidth: 96,
+                            minHeight: 30,
+                          ),
+                          decoration: actionButtonDecoration(selected: true),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
+                          child: const Text(
+                            '자세히 보기',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFFDF8EE),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              shadows: [
+                                Shadow(
+                                  color: Color(0xAA000000),
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              right: 10,
+              top: 8,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _weeklyShowShortPopup = false;
+                  });
+                },
+                behavior: HitTestBehavior.translucent,
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Image.asset(kScrollCloseAsset, fit: BoxFit.contain),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _storySection({
     required String title,
     required String content,
@@ -864,7 +1607,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _startQuiz(String eventId) async {
     final state = ref.read(storyControllerProvider);
     final repo = ref.read(storyRepositoryProvider);
-    final event = state.events.where((e) => e.id == eventId).firstOrNull;
+    final event =
+        state.events.where((e) => e.id == eventId).firstOrNull ??
+        _weeklyStudyData?.events.where((e) => e.id == eventId).firstOrNull;
     if (event == null) {
       return;
     }
@@ -1260,50 +2005,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     child: Align(
                       alignment: Alignment.center,
                       child: (!showLeftPanel && !showRightPanel)
-                          ? Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IntrinsicWidth(
-                                  child: SizedBox(
-                                    height: eraHeight,
-                                    child: EraSelector(
-                                      eras: testamentEras,
-                                      selectedEraId: state.selectedEraId,
-                                      onSelect: (eraId) {
-                                        controller.toggleEra(eraId);
-                                      },
-                                      selectedTestament:
-                                          state.selectedTestament,
-                                      onSelectTestament:
-                                          controller.selectTestament,
+                          ? SizedBox(
+                              width: double.infinity,
+                              height: eraHeight,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: eraHeight,
+                                      child: EraSelector(
+                                        eras: testamentEras,
+                                        selectedEraId: state.selectedEraId,
+                                        onSelect: (eraId) {
+                                          controller.toggleEra(eraId);
+                                        },
+                                        selectedTestament:
+                                            state.selectedTestament,
+                                        onSelectTestament:
+                                            controller.selectTestament,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 2,
+                                  const SizedBox(width: 6),
+                                  _utilityTabBar(
+                                    height: eraHeight,
+                                    onCalendarTap: _openWeeklyTab,
+                                    onBookTap: _openBibleReaderPopup,
                                   ),
-                                  child: _utilityImageButton(
-                                    assetPath: kBookButtonAsset,
-                                    size: eraHeight,
-                                    visualScale: 0.85,
-                                    onTap: _openBibleReaderPopup,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 2,
-                                  ),
-                                  child: _utilityImageButton(
-                                    assetPath: kProfileButtonAsset,
-                                    size: eraHeight,
-                                    visualScale: 0.85,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             )
                           : SizedBox(
                               width: double.infinity,
@@ -1351,6 +2081,93 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               child: ColoredBox(
                 color: Color(0x66000000),
                 child: Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          if (_activeBottomTab == _BottomTab.weekly)
+            Positioned.fill(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: _closeWeeklyTab,
+                      behavior: HitTestBehavior.opaque,
+                      child: const ColoredBox(color: Colors.black54),
+                    ),
+                  ),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 760,
+                        maxHeight: MediaQuery.of(context).size.height * 0.90,
+                        minWidth: 300,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        child: Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: scrollPopupDecoration().copyWith(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.4),
+                                blurRadius: 18,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final w = constraints.maxWidth;
+                              final h = constraints.maxHeight;
+                              const closeSize = 34.0;
+                              final closeRight = (w * 0.04)
+                                  .clamp(18.0, 32.0)
+                                  .toDouble();
+                              final closeTop = (h * 0.055)
+                                  .clamp(16.0, 30.0)
+                                  .toDouble();
+                              final baseRight = (w * 0.07)
+                                  .clamp(24.0, 56.0)
+                                  .toDouble();
+                              final reservedRight = closeRight + 10.0;
+                              final contentPadding = EdgeInsets.fromLTRB(
+                                (w * 0.05).clamp(12.0, 34.0).toDouble(),
+                                (h * 0.084).clamp(24.0, 48.0).toDouble(),
+                                baseRight < reservedRight
+                                    ? reservedRight
+                                    : baseRight,
+                                (h * 0.068).clamp(18.0, 40.0).toDouble(),
+                              );
+                              return Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Padding(
+                                      padding: contentPadding,
+                                      child: _buildWeeklyBody(
+                                        state: state,
+                                        controller: controller,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: closeTop,
+                                    right: closeRight,
+                                    child: _weeklyCloseButton(
+                                      onTap: _closeWeeklyTab,
+                                      size: closeSize,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
@@ -1455,6 +2272,20 @@ class _PaulJourneySelector extends StatelessWidget {
   }
 }
 
+enum _BottomTab { home, weekly }
+
+class _WeeklyStudyData {
+  const _WeeklyStudyData({
+    required this.person,
+    required this.events,
+    required this.weekStartMonday,
+  });
+
+  final Person person;
+  final List<StoryEvent> events;
+  final DateTime weekStartMonday;
+}
+
 extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
 }
@@ -1500,6 +2331,59 @@ Widget _utilityImageButton({
             behavior: HitTestBehavior.translucent,
             child: image,
           ),
+  );
+}
+
+Widget _utilityTabBar({
+  required double height,
+  VoidCallback? onCalendarTap,
+  VoidCallback? onBookTap,
+  VoidCallback? onProfileTap,
+}) {
+  const buttonSpacing = 1.0;
+  const horizontalPadding = 3.0;
+  const verticalPadding = 2.0;
+  const visualScale = 0.82;
+  final buttonSize = (height * 0.92).clamp(40.0, height).toDouble();
+  final barWidth =
+      (buttonSize * 3) + (buttonSpacing * 2) + (horizontalPadding * 2);
+
+  return SizedBox(
+    width: barWidth,
+    height: height,
+    child: DecoratedBox(
+      decoration: tabBarDecoration(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
+        ),
+        child: Row(
+          children: [
+            _utilityImageButton(
+              assetPath: kCalendarButtonAsset,
+              size: buttonSize,
+              visualScale: visualScale,
+              onTap: onCalendarTap,
+            ),
+            const SizedBox(width: buttonSpacing),
+            _utilityImageButton(
+              assetPath: kBookButtonAsset,
+              size: buttonSize,
+              visualScale: visualScale,
+              onTap: onBookTap,
+            ),
+            const SizedBox(width: buttonSpacing),
+            _utilityImageButton(
+              assetPath: kProfileButtonAsset,
+              size: buttonSize,
+              visualScale: visualScale,
+              onTap: onProfileTap,
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }
 

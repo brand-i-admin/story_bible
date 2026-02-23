@@ -23,6 +23,12 @@ class StoryMapPanel extends StatefulWidget {
     this.controller,
     this.bottomOverlay,
     this.decorate = true,
+    this.showSelectedCallout = true,
+    this.animateReveal = true,
+    this.centerSelectedOnReady = false,
+    this.fitAllEventsOnReady = false,
+    this.selectedFocusZoom,
+    this.pinScale = 1.0,
     this.initialCenter,
     this.initialZoom,
   });
@@ -37,6 +43,12 @@ class StoryMapPanel extends StatefulWidget {
   final StoryMapPanelController? controller;
   final Widget? bottomOverlay;
   final bool decorate;
+  final bool showSelectedCallout;
+  final bool animateReveal;
+  final bool centerSelectedOnReady;
+  final bool fitAllEventsOnReady;
+  final double? selectedFocusZoom;
+  final double pinScale;
   final LatLng? initialCenter;
   final double? initialZoom;
 
@@ -55,6 +67,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   bool _isAnimatingPath = false;
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
+  bool _mapReady = false;
 
   static const _PinStyle _normalPinStyle = _PinStyle(
     // Doubled from the previous size.
@@ -71,6 +84,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   static const double _selectedCalloutEstimatedHeight = 176;
   static const double _selectedCalloutTopMargin = 14;
+
+  _PinStyle _scaledPinStyle(_PinStyle base) {
+    final scale = widget.pinScale.clamp(0.6, 1.25);
+    return _PinStyle(
+      size: base.size * scale,
+      avatarDiameter: base.avatarDiameter * scale,
+      avatarAlignment: base.avatarAlignment,
+    );
+  }
 
   @override
   void initState() {
@@ -100,6 +122,19 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (_signature(oldWidget.events) != _signature(widget.events) ||
         oldWidget.selectedPersonIds != widget.selectedPersonIds) {
       _startRevealAnimation();
+      if (_mapReady &&
+          (widget.centerSelectedOnReady || widget.fitAllEventsOnReady)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) {
+            return;
+          }
+          if (widget.fitAllEventsOnReady) {
+            _focusAllEvents(duration: const Duration(milliseconds: 360));
+          } else {
+            _centerSelectedEvent();
+          }
+        });
+      }
     }
 
     if (oldWidget.selectedEventId != widget.selectedEventId) {
@@ -107,7 +142,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         if (!mounted) {
           return;
         }
-        _focusSelectedEventIfNeeded();
+        if (widget.fitAllEventsOnReady) {
+          return;
+        }
+        if (widget.centerSelectedOnReady) {
+          _centerSelectedEvent();
+        } else {
+          _focusSelectedEventIfNeeded();
+        }
       });
     }
   }
@@ -152,6 +194,38 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   initialZoom: zoom,
                   minZoom: 2.4,
                   maxZoom: 13,
+                  onMapReady: () {
+                    _mapReady = true;
+                    _startRevealAnimation();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) {
+                        return;
+                      }
+                      if (widget.fitAllEventsOnReady) {
+                        _focusAllEvents(
+                          duration: const Duration(milliseconds: 360),
+                        );
+                        Future.delayed(const Duration(milliseconds: 180), () {
+                          if (!mounted) {
+                            return;
+                          }
+                          _focusAllEvents(
+                            duration: const Duration(milliseconds: 240),
+                          );
+                        });
+                      } else if (widget.centerSelectedOnReady) {
+                        _centerSelectedEvent();
+                        Future.delayed(const Duration(milliseconds: 180), () {
+                          if (!mounted) {
+                            return;
+                          }
+                          _centerSelectedEvent();
+                        });
+                      } else {
+                        _focusSelectedEventIfNeeded();
+                      }
+                    });
+                  },
                   interactionOptions: const InteractionOptions(
                     flags: InteractiveFlag.all,
                   ),
@@ -276,7 +350,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       final selected = widget.selectedEventId == event.id;
       final colors = _colorsForEvent(event);
       final pinAsset = selected ? kPinSelectedAsset : kPinNormalAsset;
-      final pinStyle = selected ? _selectedPinStyle : _normalPinStyle;
+      final pinStyle = _scaledPinStyle(
+        selected ? _selectedPinStyle : _normalPinStyle,
+      );
       final primaryPersonId = _primaryPersonIdForEvent(event);
       final avatarAssetPath = primaryPersonId == null
           ? ''
@@ -307,7 +383,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             clipBehavior: Clip.none,
             alignment: Alignment.bottomCenter,
             children: [
-              if (selected)
+              if (selected && widget.showSelectedCallout)
                 Positioned(
                   bottom: pinStyle.size - 8,
                   child: _buildEventCallout(
@@ -807,6 +883,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return;
     }
 
+    if (!widget.animateReveal) {
+      setState(() {
+        _visibleCount = withCoordinate.length;
+        _segmentT = 1;
+        _isAnimatingPath = false;
+      });
+      return;
+    }
+
     setState(() {
       _visibleCount = 1;
       _segmentT = 0;
@@ -858,6 +943,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void _focusSelectedEventIfNeeded() {
+    if (!_mapReady) {
+      return;
+    }
+    if (!widget.showSelectedCallout) {
+      return;
+    }
     final selectedEventId = widget.selectedEventId;
     if (selectedEventId == null) {
       return;
@@ -875,7 +966,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     final adjusted = _buildAdjustedPoints(withCoordinate);
     final selectedPoint = adjusted[selectedEvent.id] ?? selectedEvent.latLng;
-    final camera = _controller.camera;
+    final camera = _safeCamera();
+    if (camera == null) {
+      return;
+    }
     final size = camera.nonRotatedSize;
     if (size.width <= 0 || size.height <= 0) {
       return;
@@ -913,12 +1007,66 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
+  void _centerSelectedEvent() {
+    if (!_mapReady) {
+      return;
+    }
+    final selectedEventId = widget.selectedEventId;
+    if (selectedEventId == null) {
+      return;
+    }
+    final withCoordinate = widget.events
+        .where((event) => event.hasCoordinate)
+        .toList();
+    final selectedEvent = withCoordinate
+        .where((event) => event.id == selectedEventId)
+        .firstOrNull;
+    if (selectedEvent == null) {
+      return;
+    }
+    final selectedPoint = selectedEvent.latLng;
+    final targetZoom = (widget.selectedFocusZoom ?? widget.initialZoom ?? 7.0)
+        .clamp(2.4, 13.0);
+    _focusToPoint(
+      selectedPoint,
+      targetZoom,
+      duration: const Duration(milliseconds: 280),
+    );
+  }
+
+  void _focusAllEvents({
+    Duration duration = const Duration(milliseconds: 360),
+  }) {
+    if (!_mapReady) {
+      return;
+    }
+    final points = widget.events
+        .where((event) => event.hasCoordinate)
+        .map((event) => event.latLng)
+        .toList(growable: false);
+    if (points.isEmpty) {
+      return;
+    }
+    if (points.length == 1) {
+      final singleZoom = ((widget.initialZoom ?? 5.3) + 0.35).clamp(2.4, 13.0);
+      _focusToPoint(points.first, singleZoom, duration: duration);
+      return;
+    }
+    final bounds = LatLngBounds.fromPoints(points);
+    // Keep a small safety margin so all pin heads remain visible.
+    final fittedZoom = (_computeRevealZoom(points) - 0.95).clamp(2.4, 13.0);
+    _focusToPoint(bounds.center, fittedZoom, duration: duration);
+  }
+
   LatLng _targetCenterForPointAtScreenOffset({
     required LatLng geoPoint,
     required Offset targetOffset,
     required double zoom,
   }) {
-    final camera = _controller.camera;
+    final camera = _safeCamera();
+    if (camera == null) {
+      return geoPoint;
+    }
     final projectedPoint = camera.projectAtZoom(geoPoint, zoom);
     final viewportCenter = camera.nonRotatedSize.center(Offset.zero);
     final offsetFromCenter = _rotateOffset(
@@ -943,7 +1091,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     double zoom, {
     Duration duration = const Duration(milliseconds: 600),
   }) {
-    final current = _controller.camera;
+    if (!_mapReady) {
+      return;
+    }
+    final current = _safeCamera();
+    if (current == null) {
+      return;
+    }
     final startCenter = current.center;
     final startZoom = current.zoom;
     if (startCenter == point && (startZoom - zoom).abs() < 0.001) {
@@ -965,6 +1119,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             (point.longitude - startCenter.longitude) * eased,
       );
       final nextZoom = startZoom + (zoom - startZoom) * eased;
+      if (!_mapReady) {
+        timer.cancel();
+        return;
+      }
       _controller.move(next, nextZoom);
 
       if (t >= 1.0) {
@@ -975,7 +1133,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomIn() {
-    final camera = _controller.camera;
+    if (!_mapReady) {
+      return;
+    }
+    final camera = _safeCamera();
+    if (camera == null) {
+      return;
+    }
     final targetZoom = (camera.zoom + 0.7).clamp(2.4, 13.0);
     _focusToPoint(
       camera.center,
@@ -985,7 +1149,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomOut() {
-    final camera = _controller.camera;
+    if (!_mapReady) {
+      return;
+    }
+    final camera = _safeCamera();
+    if (camera == null) {
+      return;
+    }
     final targetZoom = (camera.zoom - 0.7).clamp(2.4, 13.0);
     _focusToPoint(
       camera.center,
@@ -1088,6 +1258,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return delta;
     }
     return 360.0 - delta;
+  }
+
+  dynamic _safeCamera() {
+    try {
+      return _controller.camera;
+    } catch (_) {
+      return null;
+    }
   }
 }
 

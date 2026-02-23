@@ -4,6 +4,7 @@ const String kPanelFrameAsset = 'assets/elements/panel_left_and_right.png';
 const String kTabItemInactiveAsset = 'assets/elements/tab_item_inactive.png';
 const String kTabItemActiveAsset = 'assets/elements/tab_item_active.png';
 const String kTabBarAsset = 'assets/elements/tab_bar.png';
+const String kMapBackgroundAsset = 'assets/elements/map_background.png';
 const String kHeaderBadgeAsset = 'assets/elements/header_badge.png';
 const String kBtnDefaultAsset = 'assets/elements/btn_default.png';
 const String kBtnSelectedAsset = 'assets/elements/btn_selected.png';
@@ -13,8 +14,10 @@ const String kScrollCloseAsset = 'assets/elements/scroll_close.png';
 const String kPinNormalAsset = 'assets/elements/pin_normal.png';
 const String kPinSelectedAsset = 'assets/elements/pin_selected.png';
 const String kStatesBtnAsset = 'assets/elements/states_btn.png';
+const String kCalendarButtonAsset = 'assets/elements/calendar_button.png';
 const String kBookButtonAsset = 'assets/elements/book_button.png';
 const String kProfileButtonAsset = 'assets/elements/profile_button.png';
+const String kCheckBoxAsset = 'assets/elements/check_box.png';
 
 EdgeInsets panelContentPaddingForSize(Size size) {
   final width = size.width.isFinite ? size.width : 220.0;
