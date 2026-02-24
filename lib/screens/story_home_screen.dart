@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -26,6 +28,12 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
 
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
+  static final RegExp _sceneFilenamePattern = RegExp(r'/scene_(\d+)\.png$');
+  static final RegExp _sceneInvalidDirChars = RegExp(r'[\\/:*?"<>|]+');
+  static final RegExp _sceneWhitespacePattern = RegExp(r'\s+');
+  static final RegExp _sceneLooseNormalizePattern = RegExp(
+    r"[\s_\-:·,./\\(){}\[\]']+",
+  );
   PersonSortMode _personSortMode = PersonSortMode.eraOrder;
   _BottomTab _activeBottomTab = _BottomTab.home;
   _WeeklyStudyData? _weeklyStudyData;
@@ -38,6 +46,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   List<Person> _profileAllPeople = const [];
   bool _profileLoading = false;
   String? _profileError;
+  Map<String, dynamic>? _assetManifestCache;
+  final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
 
   @override
   void initState() {
@@ -409,6 +419,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final fallbackText = (event.story ?? event.shortText ?? event.summary ?? '')
         .trim();
     final storyText = shortStoryText.isNotEmpty ? shortStoryText : fallbackText;
+    final placeText = (event.placeName ?? '').trim();
+    final yearText = event.startYear?.toString() ?? '-';
+    final metaText = placeText.isEmpty ? yearText : '$placeText · $yearText';
+    final sceneAssetsFuture = _loadSceneAssetsForTitle(event.title);
     final refs = event.bibleRefs.join(' / ');
     final moveTarget = _parseBibleNavigationTarget(event.bibleRefs.firstOrNull);
 
@@ -529,24 +543,60 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                                     BorderRadius.circular(6),
                                               ),
                                             ),
-                                            Text(
-                                              event.title,
-                                              style: const TextStyle(
-                                                fontSize: 22,
-                                                height: 1.3,
-                                                fontWeight: FontWeight.w800,
-                                                color: Color(0xFF3A2B15),
-                                                letterSpacing: 0.1,
-                                              ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    event.title,
+                                                    style: const TextStyle(
+                                                      fontSize: 19,
+                                                      height: 1.25,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      color: Color(0xFF3A2B15),
+                                                      letterSpacing: 0.05,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Flexible(
+                                                  child: Text(
+                                                    metaText,
+                                                    textAlign: TextAlign.right,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      color: Color(0xFF6A522E),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              '${event.placeName ?? '-'} · ${event.startYear ?? '-'}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w700,
-                                                color: Color(0xFF6A522E),
-                                              ),
+                                            FutureBuilder<List<String>>(
+                                              future: sceneAssetsFuture,
+                                              builder: (context, snapshot) {
+                                                final sceneAssets =
+                                                    snapshot.data ??
+                                                    const <String>[];
+                                                if (sceneAssets.isEmpty) {
+                                                  return const SizedBox.shrink();
+                                                }
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 10,
+                                                      ),
+                                                  child: _storySceneRow(
+                                                    sceneAssets,
+                                                  ),
+                                                );
+                                              },
                                             ),
                                             const SizedBox(height: 14),
                                             if (storyText.isNotEmpty)
@@ -1033,6 +1083,103 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         );
       },
     );
+  }
+
+  Future<Map<String, dynamic>> _loadAssetManifest() async {
+    final cached = _assetManifestCache;
+    if (cached != null) {
+      return cached;
+    }
+
+    try {
+      final rawManifest = await rootBundle.loadString('AssetManifest.json');
+      final decoded = json.decode(rawManifest);
+      if (decoded is Map<String, dynamic>) {
+        _assetManifestCache = decoded;
+        return decoded;
+      }
+    } catch (_) {
+      // Return empty manifest when assets are unavailable in current build.
+    }
+    _assetManifestCache = <String, dynamic>{};
+    return _assetManifestCache!;
+  }
+
+  String _sceneDirectoryNameForTitle(String title) {
+    final replaced = title.replaceAll(_sceneInvalidDirChars, '_').trim();
+    final trimmedDots = replaced.replaceAll(RegExp(r'^\.+|\.+$'), '');
+    final collapsed = trimmedDots
+        .replaceAll(_sceneWhitespacePattern, ' ')
+        .trim();
+    return collapsed.isNotEmpty ? collapsed : 'untitled_event';
+  }
+
+  String _normalizeSceneLookupKey(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll(_sceneLooseNormalizePattern, '')
+        .trim();
+  }
+
+  Future<List<String>> _loadSceneAssetsForTitle(String title) async {
+    final dirName = _sceneDirectoryNameForTitle(title);
+    final cached = _sceneAssetsCache[dirName];
+    if (cached != null) {
+      return cached;
+    }
+
+    final manifest = await _loadAssetManifest();
+    const sceneRoot = 'assets/story_images/';
+    final allScenePaths = manifest.keys
+        .where(
+          (path) =>
+              path.startsWith(sceneRoot) &&
+              _sceneFilenamePattern.hasMatch(path),
+        )
+        .toList(growable: false);
+
+    final knownDirs = <String>{};
+    for (final path in allScenePaths) {
+      final relative = path.substring(sceneRoot.length);
+      final slashIndex = relative.indexOf('/');
+      if (slashIndex <= 0) {
+        continue;
+      }
+      knownDirs.add(relative.substring(0, slashIndex));
+    }
+
+    var chosenDir = dirName;
+    final directPrefix = '$sceneRoot$chosenDir/';
+    final hasDirect = allScenePaths.any(
+      (path) => path.startsWith(directPrefix),
+    );
+    if (!hasDirect) {
+      final titleKey = _normalizeSceneLookupKey(title);
+      final dirNameKey = _normalizeSceneLookupKey(dirName);
+      final fallbackDir = knownDirs.where((dir) {
+        final key = _normalizeSceneLookupKey(dir);
+        return key.isNotEmpty && (key == titleKey || key == dirNameKey);
+      }).firstOrNull;
+      if (fallbackDir != null) {
+        chosenDir = fallbackDir;
+      }
+    }
+
+    final chosenPrefix = '$sceneRoot$chosenDir/';
+    final sceneAssets =
+        allScenePaths
+            .where((path) => path.startsWith(chosenPrefix))
+            .toList(growable: false)
+          ..sort((a, b) {
+            final aMatch = _sceneFilenamePattern.firstMatch(a);
+            final bMatch = _sceneFilenamePattern.firstMatch(b);
+            final aIndex = int.tryParse(aMatch?.group(1) ?? '') ?? 0;
+            final bIndex = int.tryParse(bMatch?.group(1) ?? '') ?? 0;
+            return aIndex.compareTo(bIndex);
+          });
+
+    _sceneAssetsCache[dirName] = sceneAssets;
+    return sceneAssets;
   }
 
   Widget _buildWeeklyBody({
@@ -2099,6 +2246,70 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _storySceneRow(List<String> sceneAssets) {
+    final displayedAssets = sceneAssets.take(4).toList(growable: false);
+    if (displayedAssets.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    const tileGap = 8.0;
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
+          borderRadius: BorderRadius.circular(12),
+          color: const Color(0xF4EFE3CC),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final tileExtent = ((constraints.maxWidth - (tileGap * 3)) / 4)
+                .clamp(96.0, 180.0)
+                .toDouble();
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(displayedAssets.length, (index) {
+                final path = displayedAssets[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: index == displayedAssets.length - 1 ? 0 : tileGap,
+                  ),
+                  child: SizedBox(
+                    width: tileExtent,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0x9C7C5C39),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: SizedBox(
+                          height: tileExtent,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              path,
+                              fit: BoxFit.fitHeight,
+                              height: tileExtent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            );
+          },
         ),
       ),
     );

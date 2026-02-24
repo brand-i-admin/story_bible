@@ -1,0 +1,45 @@
+{
+  "event_id": "87f73da8-af1b-4765-9b6b-5fa036c3368f",
+  "event_code": "evt_nt_paul_j2_philippi",
+  "title": "2차: 빌립보 사역",
+  "short_story": "빌립보에서 루디아 가정이 먼저 복음을 받아들였다. 바울과 실라는 투옥되었지만 찬송과 기도 속에서 간수 가정까지 복음이 전해졌다. 고난의 자리에서 공동체가 세워지는 모습이 나타났다. 2차 여행의 대표적인 사건이다.",
+  "sentences_count": 4,
+  "entries": [
+    {
+      "sentence_index": 1,
+      "sentence": "빌립보에서 루디아 가정이 먼저 복음을 받아들였다.",
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "sentence_index": 2,
+      "sentence": "바울과 실라는 투옥되었지만 찬송과 기도 속에서 간수 가정까지 복음이 전해졌다.",
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "sentence_index": 3,
+      "sentence": "고난의 자리에서 공동체가 세워지는 모습이 나타났다.",
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "sentence_index": 4,
+      "sentence": "2차 여행의 대표적인 사건이다.",
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}
