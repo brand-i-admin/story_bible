@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
@@ -33,6 +35,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   String? _weeklyError;
   bool _weeklyShowShortPopup = true;
   String? _weeklyWeekKey;
+  List<Person> _profileAllPeople = const [];
+  bool _profileLoading = false;
+  String? _profileError;
 
   @override
   void initState() {
@@ -202,6 +207,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
+  Future<void> _openProfileTab() async {
+    if (_activeBottomTab != _BottomTab.profile) {
+      setState(() {
+        _activeBottomTab = _BottomTab.profile;
+      });
+    }
+    if (_profileAllPeople.isNotEmpty || _profileLoading) {
+      return;
+    }
+    await _loadProfilePeople();
+  }
+
+  void _closeProfileTab() {
+    setState(() {
+      _activeBottomTab = _BottomTab.home;
+    });
+  }
+
   void _toggleWeeklyCheck(String eventId) {
     setState(() {
       if (_weeklyCheckedEventIds.contains(eventId)) {
@@ -217,6 +240,62 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _weeklySelectedEventId = eventId;
       _weeklyShowShortPopup = true;
     });
+  }
+
+  Future<void> _loadProfilePeople() async {
+    setState(() {
+      _profileLoading = true;
+      _profileError = null;
+    });
+
+    try {
+      var state = ref.read(storyControllerProvider);
+      if (state.eras.isEmpty) {
+        await ref.read(storyControllerProvider.notifier).initialize();
+        state = ref.read(storyControllerProvider);
+      }
+      if (state.eras.isEmpty) {
+        throw StateError('시대 데이터를 불러오지 못했습니다.');
+      }
+
+      final repo = ref.read(storyRepositoryProvider);
+      final peopleByEra = await Future.wait(
+        state.eras.map((era) => repo.fetchPersonsByEra(era.id)),
+      );
+
+      final personById = <String, Person>{};
+      for (final eraPeople in peopleByEra) {
+        for (final person in eraPeople) {
+          personById.putIfAbsent(person.id, () => person);
+        }
+      }
+
+      final allPeople = personById.values.toList()
+        ..sort((a, b) {
+          final order = a.displayOrder.compareTo(b.displayOrder);
+          if (order != 0) {
+            return order;
+          }
+          return a.name.compareTo(b.name);
+        });
+
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileAllPeople = allPeople;
+        _profileLoading = false;
+        _profileError = allPeople.isEmpty ? '인물 데이터가 없습니다.' : null;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileLoading = false;
+        _profileError = '프로필 인물 데이터를 불러오지 못했습니다: $error';
+      });
+    }
   }
 
   Future<void> _openSearchSheet() async {
@@ -961,7 +1040,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required StoryController controller,
   }) {
     final weekly = _weeklyStudyData;
-    final selectedEvent = _weeklySelectedEvent;
     if (_weeklyLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -984,6 +1062,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (weekly == null) {
       return const SizedBox.shrink();
     }
+
+    final totalStories = weekly.events.length;
+    final completedStories = weekly.events
+        .where((event) => _weeklyCheckedEventIds.contains(event.id))
+        .length;
+    final weeklyProgress = totalStories == 0
+        ? 0.0
+        : completedStories / totalStories;
+    final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
+    final todayKst = DateTime(nowKst.year, nowKst.month, nowKst.day);
+    final weekStartKst = _weekStartMonday(todayKst);
+    final weekEndKst = weekStartKst.add(const Duration(days: 6));
+    final daysRemainingKst = math.max(
+      0,
+      weekEndKst.difference(todayKst).inDays,
+    );
 
     final coordinatePoints = weekly.events
         .where((event) => event.hasCoordinate)
@@ -1012,92 +1106,173 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       initialMapCenter = LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          flex: 10,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final maxW = constraints.maxWidth;
-              final maxH = constraints.maxHeight;
-              final sideByHeight = maxH * 0.98;
-              final frameSide = (sideByHeight < maxW ? sideByHeight : maxW)
-                  .clamp(260.0, maxW)
-                  .toDouble();
-              final innerPadding = EdgeInsets.fromLTRB(
-                (frameSide * 0.18).clamp(26.0, 98.0).toDouble(),
-                (frameSide * 0.25).clamp(32.0, 128.0).toDouble(),
-                (frameSide * 0.18).clamp(26.0, 98.0).toDouble(),
-                (frameSide * 0.25).clamp(30.0, 118.0).toDouble(),
-              );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final h = constraints.maxHeight;
+        final panelWidth = (w * 0.36).clamp(220.0, 312.0).toDouble();
+        final panelRight = (w * 0.02).clamp(8.0, 18.0).toDouble();
+        final panelGap = (w * 0.015).clamp(8.0, 14.0).toDouble();
+        final mapRightInset = (panelWidth + panelRight + panelGap)
+            .clamp(190.0, w * 0.66)
+            .toDouble();
+        final mapLeftInset = (w * 0.06).clamp(10.0, 40.0).toDouble();
+        final mapBottomInset = (h * 0.12).clamp(16.0, 52.0).toDouble();
+        final progressTop = (h * 0.08).clamp(10.0, 34.0).toDouble();
+        final progressHeight = (h * 0.072).clamp(34.0, 48.0).toDouble();
+        final progressGap = (h * 0.012).clamp(6.0, 12.0).toDouble();
+        final mapInsets = EdgeInsets.fromLTRB(
+          mapLeftInset,
+          progressTop + progressHeight + progressGap,
+          mapRightInset,
+          mapBottomInset,
+        );
+        final panelTop = (h * 0.13).clamp(12.0, 40.0).toDouble();
+        final panelBottom = (h * 0.09).clamp(12.0, 34.0).toDouble();
 
-              String avatarAssetForPerson(String personId) {
-                if (personId == weekly.person.id) {
-                  return weekly.person.avatarAssetPath;
-                }
-                final person = state.persons
-                    .where((p) => p.id == personId)
-                    .firstOrNull;
-                return person?.avatarAssetPath ?? weekly.person.avatarAssetPath;
-              }
+        String avatarAssetForPerson(String personId) {
+          if (personId == weekly.person.id) {
+            return weekly.person.avatarAssetPath;
+          }
+          final person = state.persons
+              .where((p) => p.id == personId)
+              .firstOrNull;
+          return person?.avatarAssetPath ?? weekly.person.avatarAssetPath;
+        }
 
-              return Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: frameSide,
-                  height: frameSide,
-                  child: DecoratedBox(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(kMapBackgroundAsset),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: innerPadding,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: StoryMapPanel(
-                          events: weekly.events,
-                          selectedEventId: _weeklySelectedEventId,
-                          onSelectEvent: _handleWeeklyEventSelect,
-                          colorForPerson: controller.colorForPerson,
-                          avatarAssetForPerson: avatarAssetForPerson,
-                          selectedPersonIds: {weekly.person.id},
-                          decorate: false,
-                          showSelectedCallout: false,
-                          animateReveal: false,
-                          centerSelectedOnReady: false,
-                          fitAllEventsOnReady: true,
-                          pinScale: 0.7,
-                          initialCenter: initialMapCenter,
-                          initialZoom: 6.2,
-                        ),
-                      ),
-                    ),
+        return Stack(
+          children: [
+            Positioned(
+              left: mapLeftInset,
+              right: mapRightInset,
+              top: progressTop,
+              height: progressHeight,
+              child: _weeklyProgressRow(
+                daysRemainingKst: daysRemainingKst,
+                completedCount: completedStories,
+                totalCount: totalStories,
+                progress: weeklyProgress,
+              ),
+            ),
+            Positioned.fill(
+              child: Padding(
+                padding: mapInsets,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: StoryMapPanel(
+                    events: weekly.events,
+                    selectedEventId: _weeklySelectedEventId,
+                    onSelectEvent: _handleWeeklyEventSelect,
+                    colorForPerson: controller.colorForPerson,
+                    avatarAssetForPerson: avatarAssetForPerson,
+                    selectedPersonIds: {weekly.person.id},
+                    decorate: false,
+                    showSelectedCallout: false,
+                    animateReveal: false,
+                    centerSelectedOnReady: false,
+                    fitAllEventsOnReady: true,
+                    fitAllZoomAdjust: -0.72,
+                    pinScale: 0.72,
+                    initialCenter: initialMapCenter,
+                    initialZoom: 6.2,
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+            Positioned(
+              right: panelRight,
+              top: panelTop,
+              bottom: panelBottom,
+              width: panelWidth,
+              child: _buildWeeklyListPanel(
+                weekly: weekly,
+                colorForPerson: controller.colorForPerson,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _weeklyProgressRow({
+    required int daysRemainingKst,
+    required int completedCount,
+    required int totalCount,
+    required double progress,
+  }) {
+    final clampedProgress = progress.clamp(0.0, 1.0);
+    final percentText = '${(clampedProgress * 100).round()}%';
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0xAA2A2118),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0x99DDB883), width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 8,
+              child: Text(
+                '이번주 남은 $daysRemainingKst일 · 이야기 $completedCount/$totalCount 달성',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFFFDF8EE),
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w800,
+                  shadows: [
+                    Shadow(
+                      color: Color(0xAA000000),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 5,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  minHeight: 8,
+                  value: clampedProgress,
+                  backgroundColor: const Color(0x664E3A26),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Color(0xFFC6922D),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              percentText,
+              maxLines: 1,
+              style: const TextStyle(
+                color: Color(0xFFFFE5A8),
+                fontSize: 10.5,
+                fontWeight: FontWeight.w900,
+                shadows: [
+                  Shadow(
+                    color: Color(0xAA000000),
+                    blurRadius: 2,
+                    offset: Offset(0, 1),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 6),
-        Expanded(
-          flex: 7,
-          child: _buildWeeklyListPanel(
-            weekly: weekly,
-            selectedEvent: selectedEvent,
-            colorForPerson: controller.colorForPerson,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
   Widget _buildWeeklyListPanel({
     required _WeeklyStudyData weekly,
-    required StoryEvent? selectedEvent,
     required Color Function(String personId) colorForPerson,
   }) {
     return Container(
@@ -1119,17 +1294,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(2, 0, 2, 2),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Flexible(
-                        child: _weeklyPersonTitleBadge(
-                          text: '이번주 추천인물: ${weekly.person.name}',
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      _weeklyPersonAvatar(person: weekly.person),
-                    ],
+                  child: _weeklyPersonTitleBadge(
+                    text: '이번주 추천인물: ${weekly.person.name}',
+                    person: weekly.person,
                   ),
                 ),
                 Divider(height: 1, color: Colors.white.withValues(alpha: 0.45)),
@@ -1253,25 +1420,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               },
                             );
 
-                      final popupMaxHeight = (listConstraints.maxHeight * 0.82)
-                          .clamp(150.0, 232.0)
-                          .toDouble();
-
-                      return Stack(
-                        children: [
-                          Positioned.fill(child: listWidget),
-                          if (selectedEvent != null && _weeklyShowShortPopup)
-                            Positioned.fill(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: _weeklyShortPopup(
-                                  event: selectedEvent,
-                                  maxHeight: popupMaxHeight,
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
+                      return listWidget;
                     },
                   ),
                 ),
@@ -1279,18 +1428,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _weeklyCloseButton({required VoidCallback onTap, double size = 28}) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.translucent,
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: Image.asset(kScrollCloseAsset, fit: BoxFit.contain),
       ),
     );
   }
@@ -1324,32 +1461,57 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Widget _weeklyPersonTitleBadge({required String text}) {
+  Widget _weeklyCloseButton({required VoidCallback onTap, double size = 34}) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.translucent,
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: Image.asset(kScrollCloseAsset, fit: BoxFit.contain),
+      ),
+    );
+  }
+
+  Widget _weeklyPersonTitleBadge({
+    required String text,
+    required Person person,
+  }) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: IntrinsicWidth(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 280),
         child: SizedBox(
           height: 36,
           child: DecoratedBox(
             decoration: statesButtonDecoration(),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-              child: Text(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFFFDF8EE),
-                  shadows: [
-                    Shadow(
-                      color: Color(0xAA000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
+              padding: const EdgeInsets.fromLTRB(10, 4, 6, 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFFFDF8EE),
+                        shadows: [
+                          Shadow(
+                            color: Color(0xAA000000),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 6),
+                  _weeklyPersonAvatar(person: person, size: 24),
+                ],
               ),
             ),
           ),
@@ -1358,35 +1520,39 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Widget _weeklyPersonAvatar({required Person person}) {
+  Widget _weeklyPersonAvatar({required Person person, double size = 32}) {
     final avatarPath = person.avatarAssetPath.trim();
     final fallbackText = person.name.trim().isEmpty
         ? '?'
         : person.name.trim().substring(0, 1);
+    final borderWidth = (size * 0.045).clamp(1.0, 1.6).toDouble();
+    final fallbackFontSize = (size * 0.34).clamp(9.0, 11.5).toDouble();
     return Container(
-      width: 32,
-      height: 32,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFFF3E7CC), width: 1.4),
+        border: Border.all(color: const Color(0xFFF3E7CC), width: borderWidth),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 2),
         ],
       ),
       child: ClipOval(
         child: avatarPath.isEmpty
-            ? _weeklyAvatarFallback(fallbackText)
+            ? _weeklyAvatarFallback(fallbackText, fontSize: fallbackFontSize)
             : Image.asset(
                 avatarPath,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    _weeklyAvatarFallback(fallbackText),
+                errorBuilder: (_, __, ___) => _weeklyAvatarFallback(
+                  fallbackText,
+                  fontSize: fallbackFontSize,
+                ),
               ),
       ),
     );
   }
 
-  Widget _weeklyAvatarFallback(String text) {
+  Widget _weeklyAvatarFallback(String text, {double fontSize = 11}) {
     return Container(
       color: const Color(0xFF8C6337),
       alignment: Alignment.center,
@@ -1394,9 +1560,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         text,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
+        style: TextStyle(
           color: Color(0xFFF3EAD6),
-          fontSize: 11,
+          fontSize: fontSize,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -1508,6 +1674,384 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  List<Person> _profilePeople(StoryState state) {
+    final people =
+        [...(_profileAllPeople.isNotEmpty ? _profileAllPeople : state.persons)]
+          ..sort((a, b) {
+            final order = a.displayOrder.compareTo(b.displayOrder);
+            if (order != 0) {
+              return order;
+            }
+            return a.name.compareTo(b.name);
+          });
+    return people;
+  }
+
+  Widget _buildProfileBody({required StoryState state}) {
+    final people = _profilePeople(state);
+    if (_profileLoading && people.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_profileError != null && people.isEmpty) {
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xAA000000),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            _profileError!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Color(0xFFFDF8EE)),
+          ),
+        ),
+      );
+    }
+    if (people.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final selectedId = state.selectedPersonIds.firstOrNull;
+    final selectedPerson = selectedId == null
+        ? null
+        : people.where((person) => person.id == selectedId).firstOrNull;
+    final profilePerson =
+        selectedPerson ?? _weeklyStudyData?.person ?? people.first;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gap = (constraints.maxWidth * 0.024).clamp(10.0, 18.0).toDouble();
+        final leftWidth = (constraints.maxWidth * 0.33)
+            .clamp(220.0, 270.0)
+            .toDouble();
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              SizedBox(
+                width: leftWidth,
+                child: _buildProfileLeftPanel(profilePerson: profilePerson),
+              ),
+              SizedBox(width: gap),
+              Expanded(child: _buildProfileRightPanel(people: people)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileLeftPanel({required Person profilePerson}) {
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: panelFrameDecoration(),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final basePadding = panelContentPaddingForSize(constraints.biggest);
+          final panelPadding = EdgeInsets.fromLTRB(
+            basePadding.left + 6,
+            (basePadding.top * 0.48).clamp(22.0, 40.0).toDouble(),
+            basePadding.right + 6,
+            (basePadding.bottom * 0.80).clamp(16.0, 30.0).toDouble(),
+          );
+
+          return Padding(
+            padding: panelPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    _weeklyPersonAvatar(person: profilePerson, size: 58),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        profilePerson.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Color(0xFFFDF8EE),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          shadows: [
+                            Shadow(
+                              color: Color(0xAA000000),
+                              blurRadius: 3,
+                              offset: Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _profileRoundedCard(
+                        title: '기도',
+                        subtitle: '오늘의 기도제목',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(child: _profileMiniActionButton(label: '노트')),
+                    const SizedBox(width: 8),
+                    Expanded(child: _profileMiniActionButton(label: '말씀')),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildProfileRightPanel({required List<Person> people}) {
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: panelFrameDecoration(),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final basePadding = panelContentPaddingForSize(constraints.biggest);
+          final panelPadding = EdgeInsets.fromLTRB(
+            basePadding.left + 6,
+            (basePadding.top * 0.43).clamp(18.0, 30.0).toDouble(),
+            basePadding.right + 6,
+            (basePadding.bottom * 0.70).clamp(12.0, 24.0).toDouble(),
+          );
+          final totalRows = (people.length / 4).ceil();
+
+          return Padding(
+            padding: panelPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _profileTopStatCard(title: '연속 출석일', value: '12일'),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _profileTopStatCard(
+                        title: '연속 인물 공부',
+                        value: '9일',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: totalRows,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, rowIndex) {
+                      final start = rowIndex * 4;
+                      final end = math.min(start + 4, people.length);
+                      final rowPeople = people.sublist(start, end);
+                      return _profilePersonProgressRow(
+                        rowPeople: rowPeople,
+                        rowIndex: rowIndex,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _profileRoundedCard({
+    required String title,
+    required String subtitle,
+  }) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 66),
+      decoration: BoxDecoration(
+        color: const Color(0xCCF1E2C8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xAA8E6F48), width: 1.2),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF452F1A),
+              fontWeight: FontWeight.w900,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF5A4326),
+              fontWeight: FontWeight.w700,
+              fontSize: 10.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _profileMiniActionButton({required String label}) {
+    return Container(
+      height: 40,
+      decoration: statesButtonDecoration(),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: Color(0xFFFDF8EE),
+          fontSize: 12,
+          fontWeight: FontWeight.w900,
+          shadows: [
+            Shadow(
+              color: Color(0xAA000000),
+              blurRadius: 2,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _profileTopStatCard({required String title, required String value}) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 48),
+      decoration: statesButtonDecoration(),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFFFDF8EE),
+              fontWeight: FontWeight.w800,
+              fontSize: 11,
+              shadows: [
+                Shadow(
+                  color: Color(0xAA000000),
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFFFFE5A8),
+              fontWeight: FontWeight.w900,
+              fontSize: 13,
+              shadows: [
+                Shadow(
+                  color: Color(0xAA000000),
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _profilePersonProgressRow({
+    required List<Person> rowPeople,
+    required int rowIndex,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0x88F5E8CF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
+      ),
+      child: Row(
+        children: List.generate(rowPeople.length, (index) {
+          final person = rowPeople[index];
+          final progressSeed = ((rowIndex * 4 + index) * 17) % 80;
+          final progress = (0.18 + (progressSeed / 100)).clamp(0.18, 0.98);
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: index == rowPeople.length - 1 ? 0 : 6,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      _weeklyPersonAvatar(person: person, size: 24),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          person.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Color(0xFF4A331D),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 10.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      minHeight: 7,
+                      value: progress,
+                      backgroundColor: const Color(0x664E3A26),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFFC6922D),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -2031,6 +2575,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     height: eraHeight,
                                     onCalendarTap: _openWeeklyTab,
                                     onBookTap: _openBibleReaderPopup,
+                                    onProfileTap: _openProfileTab,
                                   ),
                                 ],
                               ),
@@ -2121,24 +2666,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             builder: (context, constraints) {
                               final w = constraints.maxWidth;
                               final h = constraints.maxHeight;
+                              final selectedEvent = _weeklySelectedEvent;
                               const closeSize = 34.0;
-                              final closeRight = (w * 0.04)
-                                  .clamp(18.0, 32.0)
+                              final closeRight = (w * 0.022)
+                                  .clamp(8.0, 16.0)
                                   .toDouble();
-                              final closeTop = (h * 0.055)
-                                  .clamp(16.0, 30.0)
+                              final closeTop = (h * 0.02)
+                                  .clamp(6.0, 16.0)
                                   .toDouble();
-                              final baseRight = (w * 0.07)
-                                  .clamp(24.0, 56.0)
+                              final shortPopupWidth = (w * 0.34)
+                                  .clamp(248.0, 340.0)
                                   .toDouble();
-                              final reservedRight = closeRight + 10.0;
+                              final shortPopupMaxHeight = (h * 0.40)
+                                  .clamp(150.0, 232.0)
+                                  .toDouble();
                               final contentPadding = EdgeInsets.fromLTRB(
-                                (w * 0.05).clamp(12.0, 34.0).toDouble(),
-                                (h * 0.084).clamp(24.0, 48.0).toDouble(),
-                                baseRight < reservedRight
-                                    ? reservedRight
-                                    : baseRight,
-                                (h * 0.068).clamp(18.0, 40.0).toDouble(),
+                                (w * 0.012).clamp(4.0, 10.0).toDouble(),
+                                (h * 0.012).clamp(4.0, 10.0).toDouble(),
+                                (w * 0.012).clamp(4.0, 10.0).toDouble(),
+                                (h * 0.012).clamp(4.0, 10.0).toDouble(),
                               );
                               return Stack(
                                 children: [
@@ -2151,11 +2697,103 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                       ),
                                     ),
                                   ),
+                                  if (selectedEvent != null &&
+                                      _weeklyShowShortPopup)
+                                    Positioned.fill(
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: SizedBox(
+                                          width: shortPopupWidth,
+                                          child: _weeklyShortPopup(
+                                            event: selectedEvent,
+                                            maxHeight: shortPopupMaxHeight,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   Positioned(
                                     top: closeTop,
                                     right: closeRight,
                                     child: _weeklyCloseButton(
                                       onTap: _closeWeeklyTab,
+                                      size: closeSize,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (_activeBottomTab == _BottomTab.profile)
+            Positioned.fill(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: _closeProfileTab,
+                      behavior: HitTestBehavior.opaque,
+                      child: const ColoredBox(color: Colors.black54),
+                    ),
+                  ),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 760,
+                        maxHeight: MediaQuery.of(context).size.height * 0.90,
+                        minWidth: 300,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        child: Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: scrollPopupDecoration().copyWith(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.4),
+                                blurRadius: 18,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final w = constraints.maxWidth;
+                              final h = constraints.maxHeight;
+                              const closeSize = 34.0;
+                              final closeRight = (w * 0.022)
+                                  .clamp(8.0, 16.0)
+                                  .toDouble();
+                              final closeTop = (h * 0.02)
+                                  .clamp(6.0, 16.0)
+                                  .toDouble();
+                              final contentPadding = EdgeInsets.fromLTRB(
+                                (w * 0.035).clamp(10.0, 24.0).toDouble(),
+                                (h * 0.09).clamp(20.0, 50.0).toDouble(),
+                                (w * 0.035).clamp(10.0, 24.0).toDouble(),
+                                (h * 0.08).clamp(18.0, 42.0).toDouble(),
+                              );
+                              return Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Padding(
+                                      padding: contentPadding,
+                                      child: _buildProfileBody(state: state),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: closeTop,
+                                    right: closeRight,
+                                    child: _weeklyCloseButton(
+                                      onTap: _closeProfileTab,
                                       size: closeSize,
                                     ),
                                   ),
@@ -2272,7 +2910,7 @@ class _PaulJourneySelector extends StatelessWidget {
   }
 }
 
-enum _BottomTab { home, weekly }
+enum _BottomTab { home, weekly, profile }
 
 class _WeeklyStudyData {
   const _WeeklyStudyData({
@@ -2313,12 +2951,58 @@ Widget _utilityImageButton({
   required String assetPath,
   double size = 44,
   double visualScale = 1.14,
+  String? label,
   VoidCallback? onTap,
 }) {
-  final image = Transform.scale(
-    scale: visualScale,
+  final hasLabel = label != null && label.trim().isNotEmpty;
+  final normalizedLabel = hasLabel ? label.trim() : '';
+  final isTwoLine = normalizedLabel.contains('\n');
+
+  final image = Stack(
+    clipBehavior: Clip.none,
     alignment: Alignment.center,
-    child: Image.asset(assetPath, fit: BoxFit.contain),
+    children: [
+      Transform.scale(
+        scale: visualScale,
+        alignment: Alignment.center,
+        child: Image.asset(assetPath, fit: BoxFit.contain),
+      ),
+      if (hasLabel)
+        Positioned(
+          left: 2,
+          right: 2,
+          bottom: isTwoLine ? 4 : 6,
+          child: IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0x88000000),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                child: Text(
+                  normalizedLabel,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  style: TextStyle(
+                    color: const Color(0xFFFDF8EE),
+                    fontWeight: FontWeight.w900,
+                    fontSize: isTwoLine ? 7.8 : 8.8,
+                    height: 1.0,
+                    shadows: const [
+                      Shadow(
+                        color: Color(0xC0000000),
+                        blurRadius: 2,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+    ],
   );
 
   return SizedBox(

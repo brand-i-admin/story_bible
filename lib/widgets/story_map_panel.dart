@@ -27,6 +27,7 @@ class StoryMapPanel extends StatefulWidget {
     this.animateReveal = true,
     this.centerSelectedOnReady = false,
     this.fitAllEventsOnReady = false,
+    this.fitAllZoomAdjust = -0.95,
     this.selectedFocusZoom,
     this.pinScale = 1.0,
     this.initialCenter,
@@ -47,6 +48,7 @@ class StoryMapPanel extends StatefulWidget {
   final bool animateReveal;
   final bool centerSelectedOnReady;
   final bool fitAllEventsOnReady;
+  final double fitAllZoomAdjust;
   final double? selectedFocusZoom;
   final double pinScale;
   final LatLng? initialCenter;
@@ -251,15 +253,30 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   PolylineLayer(polylines: polylines),
                   MarkerLayer(markers: _buildRegionLabels()),
                   MarkerLayer(markers: _buildMarkers(widget.events)),
-                  const RichAttributionWidget(
-                    popupInitialDisplayDuration: Duration(seconds: 4),
-                    attributions: [
-                      TextSourceAttribution('OpenStreetMap contributors'),
-                      TextSourceAttribution('CARTO basemap'),
-                      TextSourceAttribution(
-                        'Country boundaries: Natural Earth',
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: IgnorePointer(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 6, bottom: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0x88FFFFFF),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          '© OpenStreetMap · CARTO · Natural Earth',
+                          style: TextStyle(
+                            fontSize: 8.5,
+                            color: Color(0xFF2D2D2D),
+                            fontWeight: FontWeight.w600,
+                            height: 1.1,
+                          ),
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                   if (widget.bottomOverlay != null)
                     Align(
@@ -1054,7 +1071,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
     final bounds = LatLngBounds.fromPoints(points);
     // Keep a small safety margin so all pin heads remain visible.
-    final fittedZoom = (_computeRevealZoom(points) - 0.95).clamp(2.4, 13.0);
+    final zoomAdjust = widget.fitAllZoomAdjust.clamp(-2.0, 2.0);
+    final fittedZoom = (_computeRevealZoom(points) + zoomAdjust).clamp(
+      2.4,
+      13.0,
+    );
     _focusToPoint(bounds.center, fittedZoom, duration: duration);
   }
 
