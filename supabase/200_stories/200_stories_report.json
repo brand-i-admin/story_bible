@@ -1,0 +1,25 @@
+{
+  "generated_at_utc": "2026-02-24T17:24:18.117682+00:00",
+  "event_count": 215,
+  "event_codes_sample": [
+    "evt_n001",
+    "evt_n002",
+    "evt_n003",
+    "evt_n004",
+    "evt_n005",
+    "evt_n006",
+    "evt_n007",
+    "evt_n008",
+    "evt_n009",
+    "evt_n010",
+    "evt_n011",
+    "evt_n012"
+  ],
+  "missing_verse_segments": 0,
+  "notes": [
+    "story is auto-composed from bible_verses (KRV) ranges",
+    "short_story uses scene lines when present, otherwise verse-based fallback",
+    "timeline uses JSON values plus conservative NT overrides",
+    "person codes are expanded for disciples/apostles/brothers then filtered by avatar prompt whitelist"
+  ]
+}

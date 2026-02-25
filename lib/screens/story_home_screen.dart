@@ -396,10 +396,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (event == null) {
       return;
     }
-    if (state.selectedEventId == event.id) {
-      controller.selectEvent(null);
-      return;
-    }
     controller.selectEvent(event.id);
   }
 
@@ -416,14 +412,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Future<void> _showEventDetailPopup(StoryEvent event) async {
     final shortStoryText = (event.shortStory ?? '').trim();
-    final fallbackText = (event.story ?? event.shortText ?? event.summary ?? '')
-        .trim();
+    final fallbackText = (event.story ?? event.summary ?? '').trim();
     final storyText = shortStoryText.isNotEmpty ? shortStoryText : fallbackText;
     final placeText = (event.placeName ?? '').trim();
     final yearText = event.startYear?.toString() ?? '-';
     final metaText = placeText.isEmpty ? yearText : '$placeText · $yearText';
     final sceneAssetsFuture = _loadSceneAssetsForTitle(event.title);
-    final refs = event.bibleRefs.join(' / ');
+    final refs = event.bibleRefs;
     final moveTarget = _parseBibleNavigationTarget(event.bibleRefs.firstOrNull);
 
     await showGeneralDialog<void>(
@@ -608,7 +603,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                               const SizedBox(height: 12),
                                               _storySection(
                                                 title: '관련 본문',
-                                                content: refs,
+                                                content: refs
+                                                    .map((ref) => '• $ref')
+                                                    .join('\n'),
                                                 action: moveTarget == null
                                                     ? null
                                                     : _bibleMoveButton(
@@ -1720,13 +1717,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required StoryEvent event,
     double maxHeight = 232,
   }) {
-    final shortText =
-        (event.shortStory ??
-                event.shortText ??
-                event.story ??
-                event.summary ??
-                '')
-            .trim();
+    final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
+        .trim();
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
@@ -2591,20 +2583,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selectedEra = state.eras
         .where((era) => era.id == state.selectedEraId)
         .firstOrNull;
-    final selectedPersonCodes = state.persons
-        .where((person) => state.selectedPersonIds.contains(person.id))
-        .map((person) => person.code)
-        .toSet();
     final avatarByPersonId = <String, String>{
       for (final person in state.persons) person.id: person.avatarAssetPath,
     };
-    final showPaulJourneySelector =
-        selectedEra?.code == 'era_nt_apostolic' &&
-        selectedPersonCodes.contains('paul');
-    final listEmptyMessage =
-        showPaulJourneySelector && state.selectedPaulJourney == null
-        ? '바울의 여정(1차/2차/3차/로마)을 먼저 선택해 주세요.'
-        : '선택된 인물의 사건이 없습니다.';
+    const listEmptyMessage = '선택된 인물의 사건이 없습니다.';
 
     final mapCenter =
         selectedEra?.mapCenterLat != null && selectedEra?.mapCenterLng != null
@@ -2686,22 +2668,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           setState(() {
                             _personSortMode = mode;
                           });
-                        },
-                      ),
-                    ),
-                  if (showLeftPanel && showPaulJourneySelector)
-                    Positioned(
-                      left: outerMargin + leftPanelWidth + 8,
-                      top: sideTop + 2,
-                      width: 128,
-                      child: _PaulJourneySelector(
-                        selectedJourneyKey: state.selectedPaulJourney,
-                        onSelect: (journeyKey) {
-                          if (state.selectedPaulJourney == journeyKey) {
-                            controller.selectPaulJourney(null);
-                            return;
-                          }
-                          controller.selectPaulJourney(journeyKey);
                         },
                       ),
                     ),
@@ -3019,102 +2985,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 ],
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PaulJourneySelector extends StatelessWidget {
-  const _PaulJourneySelector({
-    required this.selectedJourneyKey,
-    required this.onSelect,
-  });
-
-  final String? selectedJourneyKey;
-  final ValueChanged<String> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    const items = <(String, String)>[
-      ('j1', '1차 여행'),
-      ('j2', '2차 여행'),
-      ('j3', '3차 여행'),
-      ('rome', '로마 여정'),
-    ];
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9D6BA).withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF9F7A4C), width: 1.2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            '바울 여정',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFFFDF8EE),
-              shadows: [
-                Shadow(
-                  color: Color(0xAA000000),
-                  blurRadius: 3,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6),
-          ...items.map((entry) {
-            final key = entry.$1;
-            final label = entry.$2;
-            final selected = selectedJourneyKey == key;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: GestureDetector(
-                onTap: () => onSelect(key),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 7,
-                  ),
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? const Color(0xFFE08A1E)
-                        : const Color(0xFF5E4934),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: selected
-                          ? const Color(0xFFFFE6BF)
-                          : const Color(0xFFD2B084),
-                      width: selected ? 2 : 1.1,
-                    ),
-                  ),
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFFFDF8EE),
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12,
-                      shadows: [
-                        Shadow(
-                          color: Color(0xAA000000),
-                          blurRadius: 3,
-                          offset: Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
         ],
       ),
     );

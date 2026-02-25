@@ -1,0 +1,340 @@
+#!/usr/bin/env python3
+"""Build SQL seed for persons and person_eras from avatar prompts + stories.
+
+- persons: created from tools/avatar_prompts.json
+- person_eras: derived from assets/200_stories appearances (with group expansion)
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from collections import defaultdict
+from pathlib import Path
+from typing import Any
+
+EVENT_NO_RE = re.compile(r"^(\d{3})\s+.*$")
+
+DISCIPLES_WITH_JUDAS = [
+    "peter",
+    "andrew",
+    "james_zebedee",
+    "john",
+    "philip",
+    "bartholomew",
+    "matthew",
+    "thomas",
+    "james_alphaeus",
+    "thaddaeus",
+    "simon_zealot",
+    "judas",
+]
+DISCIPLES_NO_JUDAS = [code for code in DISCIPLES_WITH_JUDAS if code != "judas"]
+APOSTLES_AFTER_MATTHIAS = DISCIPLES_NO_JUDAS + ["matthias"]
+BROTHERS_ALL = [
+    "reuben",
+    "simeon",
+    "levi",
+    "judah",
+    "dan",
+    "naphtali",
+    "gad",
+    "asher",
+    "issachar",
+    "zebulun",
+    "benjamin",
+]
+BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
+
+STYLE_TO_ERA_CODE = {
+    "primeval": "era_primeval",
+    "patriarch": "era_patriarch",
+    "exodus_wilderness": "era_exodus",
+    "judges": "era_judges",
+    "monarchy": "era_monarchy",
+    "prophets_exile": "era_exile_return",
+    "post_exile_return": "era_exile_return",
+    "gospels": "era_nt_public_ministry",
+    "early_church": "era_nt_apostolic",
+}
+
+ERA_ORDER = [
+    "era_primeval",
+    "era_patriarch",
+    "era_exodus",
+    "era_judges",
+    "era_monarchy",
+    "era_exile_return",
+    "era_nt_public_ministry",
+    "era_nt_apostolic",
+    "era_nt_post_apostolic",
+    "era_nt_consummation",
+]
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Build SQL for persons and person_eras from avatar prompts."
+    )
+    parser.add_argument(
+        "--avatar-prompt-json",
+        default="tools/avatar_prompts.json",
+        help="Avatar prompt JSON path.",
+    )
+    parser.add_argument(
+        "--stories-dir",
+        default="assets/200_stories",
+        help="Directory containing story JSON files.",
+    )
+    parser.add_argument(
+        "--output",
+        default="supabase/200_stories/persons_seed.sql",
+        help="Output SQL path.",
+    )
+    return parser.parse_args()
+
+
+def parse_event_number(raw_title: str) -> int:
+    match = EVENT_NO_RE.match(raw_title.strip())
+    if match is None:
+        raise ValueError(f"Title does not start with 3-digit index: {raw_title!r}")
+    return int(match.group(1))
+
+
+def load_story_rows(stories_dir: Path) -> list[dict[str, Any]]:
+    if not stories_dir.exists():
+        raise FileNotFoundError(f"Stories dir not found: {stories_dir}")
+    rows: list[dict[str, Any]] = []
+    for path in sorted(stories_dir.glob("*.json"), key=lambda p: p.name):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(data, list):
+            raise ValueError(f"JSON root must be list: {path}")
+        for item in data:
+            if not isinstance(item, dict):
+                raise ValueError(f"Story row must be object in {path}: {item!r}")
+            rows.append(item)
+    rows.sort(key=lambda row: parse_event_number(str(row.get("title", ""))))
+    return rows
+
+
+def dedupe_preserve_order(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for item in items:
+        if item in seen:
+            continue
+        seen.add(item)
+        ordered.append(item)
+    return ordered
+
+
+def expand_person_codes(number: int, persons: list[str]) -> list[str]:
+    expanded: list[str] = []
+    persons_set = {code for code in persons}
+    for code in persons:
+        if code == "disciples":
+            if "judas" in persons_set or number >= 175:
+                expanded.extend(DISCIPLES_NO_JUDAS)
+            else:
+                expanded.extend(DISCIPLES_WITH_JUDAS)
+            continue
+        if code == "apostles":
+            expanded.extend(APOSTLES_AFTER_MATTHIAS)
+            continue
+        if code == "brothers":
+            if number in {38, 43, 44, 45}:
+                expanded.extend(BROTHERS_WITHOUT_BENJAMIN)
+            else:
+                expanded.extend(BROTHERS_ALL)
+            continue
+        expanded.append(code)
+    return dedupe_preserve_order(expanded)
+
+
+def sql_literal(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+def sql_value(value: Any) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, int):
+        return str(value)
+    return sql_literal(str(value))
+
+
+def split_chunks(items: list[Any], size: int) -> list[list[Any]]:
+    return [items[i : i + size] for i in range(0, len(items), size)]
+
+
+def build_sql(person_rows: list[dict[str, Any]], era_rows: list[tuple[str, str, int]]) -> str:
+    lines: list[str] = []
+    lines.append("-- Generated by tools/build_persons_seed_sql.py")
+    lines.append("-- Target tables: persons, person_eras")
+    lines.append("begin;")
+    lines.append("")
+
+    for chunk in split_chunks(person_rows, 120):
+        lines.append(
+            "with seed_persons (code, name, tagline, avatar_url, description, is_active) as ("
+        )
+        lines.append("  values")
+        values: list[str] = []
+        for row in chunk:
+            values.append(
+                "    ("
+                f"{sql_value(row['code'])}, "
+                f"{sql_value(row['name'])}, "
+                f"{sql_value(row['tagline'])}, "
+                f"{sql_value(row['avatar_url'])}, "
+                f"{sql_value(row['description'])}, "
+                f"{sql_value(row['is_active'])}"
+                ")"
+            )
+        lines.append(",\n".join(values))
+        lines.append(")")
+        lines.append("insert into persons (code, name, tagline, avatar_url, description, is_active)")
+        lines.append("select code, name, tagline, avatar_url, description, is_active from seed_persons")
+        lines.append("on conflict (code) do update set")
+        lines.append("  name = excluded.name,")
+        lines.append("  tagline = coalesce(excluded.tagline, persons.tagline),")
+        lines.append("  avatar_url = excluded.avatar_url,")
+        lines.append("  description = coalesce(excluded.description, persons.description),")
+        lines.append("  is_active = excluded.is_active")
+        lines.append(";")
+        lines.append("")
+
+    for chunk in split_chunks(era_rows, 240):
+        lines.append("with seed_person_eras (person_code, era_code, display_order) as (")
+        lines.append("  values")
+        values = [
+            "    ("
+            f"{sql_value(person_code)}, {sql_value(era_code)}, {sql_value(display_order)}"
+            ")"
+            for person_code, era_code, display_order in chunk
+        ]
+        lines.append(",\n".join(values))
+        lines.append(")")
+        lines.append("insert into person_eras (person_id, era_id, display_order)")
+        lines.append("select")
+        lines.append("  p.id,")
+        lines.append("  e.id,")
+        lines.append("  s.display_order")
+        lines.append("from seed_person_eras s")
+        lines.append("join persons p on p.code = s.person_code")
+        lines.append("join eras e on e.code = s.era_code")
+        lines.append("on conflict (person_id, era_id) do update set")
+        lines.append("  display_order = excluded.display_order")
+        lines.append(";")
+        lines.append("")
+
+    lines.append("commit;")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def main() -> int:
+    args = parse_args()
+    prompt_path = Path(args.avatar_prompt_json)
+    stories_dir = Path(args.stories_dir)
+    output_path = Path(args.output)
+
+    if not prompt_path.exists():
+        raise FileNotFoundError(f"Avatar prompt JSON not found: {prompt_path}")
+
+    prompt_data = json.loads(prompt_path.read_text(encoding="utf-8"))
+    characters = prompt_data.get("characters")
+    if not isinstance(characters, list):
+        raise ValueError(f"Invalid avatar prompt JSON format: {prompt_path}")
+
+    selected_codes: list[str] = []
+    char_by_code: dict[str, dict[str, Any]] = {}
+    for ch in characters:
+        if not isinstance(ch, dict):
+            continue
+        code = str(ch.get("code", "")).strip()
+        if not code:
+            continue
+        if code in char_by_code:
+            continue
+        selected_codes.append(code)
+        char_by_code[code] = ch
+
+    selected_set = set(selected_codes)
+
+    story_rows = load_story_rows(stories_dir)
+
+    pair_first_event: dict[tuple[str, str], int] = {}
+    for row in story_rows:
+        number = parse_event_number(str(row.get("title", "")))
+        era_code = str(row.get("era", "")).strip()
+        if not era_code:
+            continue
+
+        raw_persons = [str(code).strip() for code in row.get("persons", []) if str(code).strip()]
+        persons = [
+            code
+            for code in expand_person_codes(number, raw_persons)
+            if code in selected_set
+        ]
+
+        for code in persons:
+            key = (code, era_code)
+            if key not in pair_first_event:
+                pair_first_event[key] = number
+
+    # Fallback: if a selected person has no era from stories, map from prompt era.
+    for code in selected_codes:
+        if any(person == code for person, _ in pair_first_event):
+            continue
+        style = str(char_by_code[code].get("era", "")).strip()
+        era_code = STYLE_TO_ERA_CODE.get(style)
+        if era_code:
+            pair_first_event[(code, era_code)] = 9999
+
+    person_rows: list[dict[str, Any]] = []
+    for code in selected_codes:
+        ch = char_by_code[code]
+        name = str(ch.get("name_ko", "")).strip() or str(ch.get("name_en", "")).strip() or code
+        person_rows.append(
+            {
+                "code": code,
+                "name": name,
+                "tagline": None,
+                "avatar_url": f"assets/avatars/{code}.png",
+                "description": None,
+                "is_active": True,
+            }
+        )
+
+    era_order_index = {era: idx for idx, era in enumerate(ERA_ORDER)}
+    grouped: dict[str, list[tuple[int, str]]] = defaultdict(list)
+    for (person_code, era_code), first_no in pair_first_event.items():
+        grouped[era_code].append((first_no, person_code))
+
+    era_rows: list[tuple[str, str, int]] = []
+    for era_code in sorted(
+        grouped.keys(), key=lambda e: (era_order_index.get(e, 10_000), e)
+    ):
+        ordered_people = sorted(grouped[era_code], key=lambda item: (item[0], item[1]))
+        for idx, (_, person_code) in enumerate(ordered_people, start=1):
+            era_rows.append((person_code, era_code, idx))
+
+    sql_text = build_sql(person_rows=person_rows, era_rows=era_rows)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(sql_text, encoding="utf-8")
+
+    print(f"avatar prompt json : {prompt_path}")
+    print(f"stories dir        : {stories_dir}")
+    print(f"persons count      : {len(person_rows)}")
+    print(f"person_eras count  : {len(era_rows)}")
+    print(f"output             : {output_path}")
+    print("done")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

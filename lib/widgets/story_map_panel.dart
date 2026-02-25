@@ -72,16 +72,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   bool _mapReady = false;
 
   static const _PinStyle _normalPinStyle = _PinStyle(
-    // Doubled from the previous size.
     size: 70,
-    avatarDiameter: 30,
-    avatarAlignment: Alignment(-0.002, -0.34),
+    labelAlignment: Alignment(0.0, -0.34),
+    labelFontSize: 15.5,
   );
   static const _PinStyle _selectedPinStyle = _PinStyle(
-    // Keep selected marker at the same size as normal to avoid jump on select.
     size: 70,
-    avatarDiameter: 30,
-    avatarAlignment: Alignment(-0.002, -0.34),
+    labelAlignment: Alignment(0.0, -0.34),
+    labelFontSize: 15.5,
   );
 
   static const double _selectedCalloutEstimatedHeight = 176;
@@ -91,8 +89,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final scale = widget.pinScale.clamp(0.6, 1.25);
     return _PinStyle(
       size: base.size * scale,
-      avatarDiameter: base.avatarDiameter * scale,
-      avatarAlignment: base.avatarAlignment,
+      labelAlignment: base.labelAlignment,
+      labelFontSize: base.labelFontSize * scale,
     );
   }
 
@@ -349,49 +347,96 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final withCoordinate = events
         .where((event) => event.hasCoordinate)
         .toList();
-    final visible = withCoordinate.take(_visibleCount).toList();
-    final orderedEntries = visible.asMap().entries.toList()
-      ..sort((a, b) {
-        final aSelected = a.value.id == widget.selectedEventId;
-        final bSelected = b.value.id == widget.selectedEventId;
-        if (aSelected == bSelected) {
-          return 0;
-        }
-        return aSelected ? 1 : -1;
-      });
-    // Keep offsets stable by calculating from the full visible timeline.
-    final adjustedPoints = _buildAdjustedPoints(withCoordinate);
+    final visible = withCoordinate.take(_visibleCount).toList(growable: true);
+    final selectedEventId = widget.selectedEventId;
+    if (selectedEventId != null &&
+        !visible.any((event) => event.id == selectedEventId)) {
+      final selectedEvent = withCoordinate
+          .where((event) => event.id == selectedEventId)
+          .firstOrNull;
+      if (selectedEvent != null) {
+        visible.add(selectedEvent);
+      }
+    }
+    final eventOrder = <String, int>{};
+    for (var i = 0; i < events.length; i++) {
+      eventOrder.putIfAbsent(events[i].id, () => i + 1);
+    }
 
-    return orderedEntries.map((entry) {
-      final event = entry.value;
-      final selected = widget.selectedEventId == event.id;
+    final adjustedPoints = _buildAdjustedPoints(withCoordinate);
+    final nodes = <_MarkerNode>[];
+    for (final event in visible) {
+      final basePoint = adjustedPoints[event.id] ?? event.latLng;
+      final order = eventOrder[event.id] ?? 0;
+      final placeName = (event.placeName ?? '').trim();
       final colors = _colorsForEvent(event);
+      if (_hasMultiPlacePin(placeName) && order > 0) {
+        final parts = _splitPlaceParts(placeName);
+        final points = _buildSplitPinPoints(basePoint);
+        nodes.add(
+          _MarkerNode(
+            event: event,
+            point: points.$1,
+            pinLabel: '$order-1',
+            placeLabel: parts.$1,
+            showCallout: true,
+            personColors: colors,
+          ),
+        );
+        nodes.add(
+          _MarkerNode(
+            event: event,
+            point: points.$2,
+            pinLabel: '$order-2',
+            placeLabel: parts.$2,
+            showCallout: false,
+            personColors: colors,
+          ),
+        );
+      } else {
+        nodes.add(
+          _MarkerNode(
+            event: event,
+            point: basePoint,
+            pinLabel: order > 0 ? '$order' : '?',
+            placeLabel: placeName,
+            showCallout: true,
+            personColors: colors,
+          ),
+        );
+      }
+    }
+
+    final orderedNodes = nodes.toList()
+      ..sort((a, b) {
+        final aSelected = a.event.id == widget.selectedEventId;
+        final bSelected = b.event.id == widget.selectedEventId;
+        if (aSelected != bSelected) {
+          return aSelected ? 1 : -1;
+        }
+        if (a.event.id == b.event.id && a.showCallout != b.showCallout) {
+          return a.showCallout ? 1 : -1;
+        }
+        return 0;
+      });
+
+    return orderedNodes.map((node) {
+      final event = node.event;
+      final selected = widget.selectedEventId == event.id;
       final pinAsset = selected ? kPinSelectedAsset : kPinNormalAsset;
       final pinStyle = _scaledPinStyle(
         selected ? _selectedPinStyle : _normalPinStyle,
       );
-      final primaryPersonId = _primaryPersonIdForEvent(event);
-      final avatarAssetPath = primaryPersonId == null
-          ? ''
-          : widget.avatarAssetForPerson(primaryPersonId);
-      final shortText =
-          (event.shortStory ??
-                  event.shortText ??
-                  event.story ??
-                  event.summary ??
-                  '')
-              .trim();
-      final markerWidth = selected ? 338.0 : 150.0;
-      final markerHeight = selected ? 320.0 : pinStyle.size;
-      final placeName = (event.placeName ?? '').trim();
-      final hasPlaceName = placeName.isNotEmpty;
+      final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
+          .trim();
+      final markerWidth = selected && node.showCallout ? 338.0 : 150.0;
+      final markerHeight = selected && node.showCallout ? 320.0 : pinStyle.size;
+      final hasPlaceName = node.placeLabel.isNotEmpty;
 
       return Marker(
-        point: adjustedPoints[event.id] ?? event.latLng,
+        point: node.point,
         width: markerWidth,
         height: markerHeight,
-        // Anchor geographic point to the marker widget's bottom center
-        // (pin tip), so zoom/selection never drifts.
         alignment: Alignment.topCenter,
         child: SizedBox(
           width: markerWidth,
@@ -400,7 +445,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             clipBehavior: Clip.none,
             alignment: Alignment.bottomCenter,
             children: [
-              if (selected && widget.showSelectedCallout)
+              if (selected && widget.showSelectedCallout && node.showCallout)
                 Positioned(
                   bottom: pinStyle.size - 8,
                   child: _buildEventCallout(
@@ -420,12 +465,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                     children: [
                       Image.asset(pinAsset, fit: BoxFit.contain),
                       Align(
-                        alignment: pinStyle.avatarAlignment,
-                        child: _buildPinAvatar(
-                          event: event,
-                          avatarAssetPath: avatarAssetPath,
-                          diameter: pinStyle.avatarDiameter,
+                        alignment: pinStyle.labelAlignment,
+                        child: _buildPinNumberLabel(
+                          node.pinLabel,
                           selected: selected,
+                          fontSize: pinStyle.labelFontSize,
                         ),
                       ),
                     ],
@@ -436,13 +480,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                 Positioned(
                   bottom: -24,
                   child: IgnorePointer(
-                    child: _buildPlaceChip(placeName, selected: selected),
+                    child: _buildPlaceChip(node.placeLabel, selected: selected),
                   ),
                 ),
-              if (colors.length > 1)
+              if (node.personColors.length > 1)
                 Positioned(
                   bottom: hasPlaceName ? -40 : -16,
-                  child: IgnorePointer(child: _buildPersonColorDots(colors)),
+                  child: IgnorePointer(
+                    child: _buildPersonColorDots(node.personColors),
+                  ),
                 ),
             ],
           ),
@@ -503,72 +549,77 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
-  String? _primaryPersonIdForEvent(StoryEvent event) {
-    for (final personId in event.personIds) {
-      if (widget.selectedPersonIds.contains(personId)) {
-        return personId;
-      }
-    }
-    return event.personIds.firstOrNull;
-  }
-
-  Widget _buildPinAvatar({
-    required StoryEvent event,
-    required String avatarAssetPath,
-    required double diameter,
+  Widget _buildPinNumberLabel(
+    String label, {
     required bool selected,
+    required double fontSize,
   }) {
-    final path = avatarAssetPath.trim();
-    final fallbackText = _avatarFallbackText(event);
-    return Container(
-      width: diameter,
-      height: diameter,
+    final isMultiChar = label.length > 2;
+    final badgeHeight = (fontSize * 1.2).clamp(16.0, 22.0);
+    final badgeWidth = isMultiChar
+        ? (badgeHeight + 12).clamp(24.0, 36.0)
+        : badgeHeight;
+    return DecoratedBox(
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        color: Colors.white.withValues(alpha: 0.96),
+        shape: isMultiChar ? BoxShape.rectangle : BoxShape.circle,
+        borderRadius: isMultiChar
+            ? BorderRadius.circular(badgeHeight / 2)
+            : null,
         border: Border.all(
-          color: selected ? const Color(0xFFFFF3D3) : const Color(0xFFF3E7CC),
-          width: selected ? 1.8 : 1.4,
+          color: selected ? const Color(0xFF1A1A1A) : const Color(0xFF2A2A2A),
+          width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.28), blurRadius: 2),
-        ],
       ),
-      child: ClipOval(
-        child: path.isNotEmpty
-            ? Image.asset(
-                path,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    _buildAvatarFallback(fallbackText, selected: selected),
-              )
-            : _buildAvatarFallback(fallbackText, selected: selected),
-      ),
-    );
-  }
-
-  Widget _buildAvatarFallback(String fallbackText, {required bool selected}) {
-    return Container(
-      color: selected ? const Color(0xFFC88A31) : const Color(0xFF8C6337),
-      alignment: Alignment.center,
-      child: Text(
-        fallbackText,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: selected ? const Color(0xFFFFF8E9) : const Color(0xFFF3EAD6),
-          fontSize: 10,
-          fontWeight: FontWeight.w800,
+      child: SizedBox(
+        width: badgeWidth,
+        height: badgeHeight,
+        child: Center(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: (fontSize * 0.64).clamp(9.0, 12.0),
+              fontWeight: FontWeight.w900,
+              height: 1.0,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  String _avatarFallbackText(StoryEvent event) {
-    final title = event.title.trim();
-    if (title.isEmpty) {
-      return '?';
+  bool _hasMultiPlacePin(String placeName) {
+    return placeName.contains('→') || placeName.contains('->');
+  }
+
+  (String, String) _splitPlaceParts(String placeName) {
+    final arrow = placeName.contains('→') ? '→' : '->';
+    final parts = placeName
+        .split(arrow)
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+    if (parts.length >= 2) {
+      return (parts.first, parts.last);
     }
-    return title.substring(0, 1);
+    return (placeName, placeName);
+  }
+
+  (LatLng, LatLng) _buildSplitPinPoints(LatLng basePoint) {
+    const radiusDeg = 0.038;
+    final cosLat = math
+        .cos(basePoint.latitude * math.pi / 180)
+        .abs()
+        .clamp(0.3, 1.0);
+    final dLng = (radiusDeg / cosLat) * 0.75;
+    final dLat = radiusDeg * 0.30;
+    return (
+      LatLng(basePoint.latitude + dLat, basePoint.longitude - dLng),
+      LatLng(basePoint.latitude - dLat, basePoint.longitude + dLng),
+    );
   }
 
   Widget _buildEventCallout({
@@ -1001,9 +1052,18 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         _selectedPinStyle.size +
         _selectedCalloutEstimatedHeight +
         _selectedCalloutTopMargin;
+    final horizontalMargin = math.max(46.0, _selectedPinStyle.size * 0.7);
+    final verticalBottomMargin = math.max(42.0, _selectedPinStyle.size * 0.55);
+    final outOfHorizontalBounds =
+        selectedOffset.dx < horizontalMargin ||
+        selectedOffset.dx > size.width - horizontalMargin;
+    final outOfVerticalBounds =
+        selectedOffset.dy < minimumPointY ||
+        selectedOffset.dy > size.height - verticalBottomMargin;
     final needsFocus =
         calloutTop < _selectedCalloutTopMargin ||
-        selectedOffset.dy < minimumPointY;
+        outOfHorizontalBounds ||
+        outOfVerticalBounds;
     if (!needsFocus) {
       return;
     }
@@ -1293,13 +1353,31 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 class _PinStyle {
   const _PinStyle({
     required this.size,
-    required this.avatarDiameter,
-    required this.avatarAlignment,
+    required this.labelAlignment,
+    required this.labelFontSize,
   });
 
   final double size;
-  final double avatarDiameter;
-  final Alignment avatarAlignment;
+  final Alignment labelAlignment;
+  final double labelFontSize;
+}
+
+class _MarkerNode {
+  const _MarkerNode({
+    required this.event,
+    required this.point,
+    required this.pinLabel,
+    required this.placeLabel,
+    required this.showCallout,
+    required this.personColors,
+  });
+
+  final StoryEvent event;
+  final LatLng point;
+  final String pinLabel;
+  final String placeLabel;
+  final bool showCallout;
+  final List<Color> personColors;
 }
 
 extension _IterableX<E> on Iterable<E> {

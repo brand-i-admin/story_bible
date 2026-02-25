@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--prompt-json",
-        default="tools/avatar_prompts_51.json",
+        default="tools/avatar_prompts.json",
         help="Path to prompt JSON file.",
     )
     parser.add_argument(
@@ -112,12 +112,19 @@ def build_final_prompt(
     common_style: str,
     *,
     include_adult_guardrail: bool = True,
+    use_common_style: bool = True,
 ) -> str:
     prompt = raw_prompt.strip()
-    if "COMMON_STYLE" in prompt:
-        prompt = prompt.replace("COMMON_STYLE", common_style).strip()
-    elif not prompt.startswith(common_style):
-        prompt = f"{common_style}, {prompt}"
+    if use_common_style and common_style:
+        if "COMMON_STYLE" in prompt:
+            prompt = prompt.replace("COMMON_STYLE", common_style).strip()
+        elif not prompt.startswith(common_style):
+            prompt = f"{common_style}, {prompt}"
+    else:
+        prompt = prompt.replace("COMMON_STYLE", "").strip()
+
+    # Normalize comma spacing and remove empty segments after token replacement.
+    prompt = ", ".join(part.strip() for part in prompt.split(",") if part.strip())
 
     if not include_adult_guardrail:
         return prompt
@@ -317,10 +324,13 @@ def main() -> int:
 
     if args.dry_run:
         for item in characters:
+            use_common_style = bool(item.get("use_common_style", True))
+            disable_adult_guardrail = bool(item.get("disable_adult_guardrail", False))
             prompt = build_final_prompt(
                 item["prompt"],
                 common_style,
-                include_adult_guardrail=not args.no_adult_guardrail,
+                include_adult_guardrail=(not args.no_adult_guardrail) and (not disable_adult_guardrail),
+                use_common_style=use_common_style,
             )
             print(f"[DRY] {item['index']:02d} {item['code']}: {prompt}")
         print(f"DRY-RUN complete: {len(characters)} prompts")
@@ -341,10 +351,14 @@ def main() -> int:
     for item in characters:
         code = item["code"]
         index = int(item.get("index", 0))
+        use_common_style = bool(item.get("use_common_style", True))
+        disable_adult_guardrail = bool(item.get("disable_adult_guardrail", False))
+        per_item_person_generation = str(item.get("person_generation", "")).strip()
         prompt = build_final_prompt(
             item["prompt"],
             common_style,
-            include_adult_guardrail=not args.no_adult_guardrail,
+            include_adult_guardrail=(not args.no_adult_guardrail) and (not disable_adult_guardrail),
+            use_common_style=use_common_style,
         )
         out_file = out_dir / f"{code}.png"
 
@@ -356,7 +370,7 @@ def main() -> int:
             prompt,
             negative_prompt,
             defaults,
-            person_generation_override=args.person_generation,
+            person_generation_override=(args.person_generation or per_item_person_generation),
         )
         try:
             response = session.post(endpoint, json=body, timeout=180)

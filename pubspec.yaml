@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+4
+version: 1.0.0+5
 
 environment:
   sdk: ^3.8.1
@@ -65,16 +65,6 @@ flutter:
     - assets/avatars/
     - assets/elements/
     - assets/story_images/
-    - 'assets/story_images/2차_ 빌립보 사역/'
-    - 'assets/story_images/3차_ 밀레도 고별/'
-    - 'assets/story_images/그랄의 우물 다툼/'
-    - 'assets/story_images/느헤미야 파송/'
-    - 'assets/story_images/벧엘의 꿈/'
-    - 'assets/story_images/열 재앙과 유월절/'
-    - 'assets/story_images/예루살렘 정복/'
-    - 'assets/story_images/요셉이 팔려감/'
-    - 'assets/story_images/이사야의 소명/'
-    - 'assets/story_images/홍수 심판/'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -53,14 +53,13 @@ class StoryRepository {
           summary,
           story,
           short_story,
-          short_text,
+          story_scenes,
           start_year,
           end_year,
           time_sort_key,
           place_name,
           lat,
           lng,
-          search_text,
           event_persons(person_id),
           event_bible_refs(display_text)
         ''')
@@ -90,14 +89,13 @@ class StoryRepository {
           summary,
           story,
           short_story,
-          short_text,
+          story_scenes,
           start_year,
           end_year,
           time_sort_key,
           place_name,
           lat,
           lng,
-          search_text,
           event_persons(person_id, persons(name))
         ''')
         .order('time_sort_key', ascending: true);
@@ -238,14 +236,13 @@ class StoryRepository {
       summary: row['summary'] as String?,
       story: row['story'] as String?,
       shortStory: row['short_story'] as String?,
-      shortText: row['short_text'] as String?,
+      storyScenes: row['story_scenes'] as String?,
       startYear: row['start_year'] as int?,
       endYear: row['end_year'] as int?,
       timeSortKey: row['time_sort_key'] as int,
       placeName: row['place_name'] as String?,
       lat: (row['lat'] as num?)?.toDouble(),
       lng: (row['lng'] as num?)?.toDouble(),
-      searchText: row['search_text'] as String?,
       personIds: personRows
           .whereType<Map<String, dynamic>>()
           .map((entry) => entry['person_id'] as String?)
@@ -271,9 +268,7 @@ class StoryRepository {
     final summary = (event.summary ?? '').toLowerCase();
     final story = (event.story ?? '').toLowerCase();
     final shortStory = (event.shortStory ?? '').toLowerCase();
-    final shortText = (event.shortText ?? '').toLowerCase();
     final placeName = (event.placeName ?? '').toLowerCase();
-    final searchText = (event.searchText ?? '').toLowerCase();
     final personText = personNames.join(' ').toLowerCase();
 
     var score = 0;
@@ -289,12 +284,6 @@ class StoryRepository {
     }
     if (shortStory.contains(query)) {
       score += 130;
-    }
-    if (shortText.contains(query)) {
-      score += 100;
-    }
-    if (searchText.contains(query)) {
-      score += 70;
     }
     if (placeName.contains(query)) {
       score += 30;
@@ -315,12 +304,6 @@ class StoryRepository {
       }
       if (shortStory.contains(token)) {
         score += 20;
-      }
-      if (shortText.contains(token)) {
-        score += 10;
-      }
-      if (searchText.contains(token)) {
-        score += 8;
       }
       if (placeName.contains(token)) {
         score += 5;
