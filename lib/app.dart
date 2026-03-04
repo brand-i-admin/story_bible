@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'screens/story_home_screen.dart';
+import 'core/navigation/app_route_observer.dart';
+import 'core/theme/app_colors.dart';
+import 'features/bible_study/presentation/bible_study_screen.dart';
 
 class StoryBibleApp extends StatelessWidget {
   const StoryBibleApp({super.key});
@@ -12,10 +15,12 @@ class StoryBibleApp extends StatelessWidget {
       title: 'Story Bible',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8B5A2B)),
-        scaffoldBackgroundColor: const Color(0xFFEEE0C6),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.woodMid),
+        scaffoldBackgroundColor: AppColors.woodDark,
+        textTheme: GoogleFonts.notoSerifKrTextTheme(),
       ),
-      home: const StoryHomeScreen(),
+      navigatorObservers: [appRouteObserver],
+      home: const BibleStudyScreen(),
     );
   }
 }

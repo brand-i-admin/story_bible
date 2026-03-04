@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../core/navigation/app_route_observer.dart';
+import '../features/bible_study/presentation/bible_study_screen.dart';
 import '../models/era.dart';
 import '../models/bible_verse.dart';
 import '../models/person.dart';
@@ -26,7 +28,8 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
   ConsumerState<StoryHomeScreen> createState() => _StoryHomeScreenState();
 }
 
-class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
+class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen>
+    with RouteAware {
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
   static final RegExp _sceneFilenamePattern = RegExp(r'/scene_(\d+)\.png$');
   static final RegExp _sceneInvalidDirChars = RegExp(r'[\\/:*?"<>|]+');
@@ -48,13 +51,64 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   String? _profileError;
   Map<String, dynamic>? _assetManifestCache;
   final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
+  PageRoute<dynamic>? _route;
+  bool _isRouteObserverSubscribed = false;
 
   @override
   void initState() {
     super.initState();
+    _setLandscapeOrientation();
     Future.microtask(() {
       ref.read(storyControllerProvider.notifier).initialize();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && route != _route) {
+      if (_isRouteObserverSubscribed) {
+        appRouteObserver.unsubscribe(this);
+      }
+      _route = route;
+      appRouteObserver.subscribe(this, route);
+      _isRouteObserverSubscribed = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_isRouteObserverSubscribed) {
+      appRouteObserver.unsubscribe(this);
+    }
+    _setDefaultOrientations();
+    super.dispose();
+  }
+
+  @override
+  void didPush() {
+    _setLandscapeOrientation();
+  }
+
+  @override
+  void didPopNext() {
+    _setLandscapeOrientation();
+  }
+
+  Future<void> _setLandscapeOrientation() {
+    return SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  Future<void> _setDefaultOrientations() {
+    return SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   StoryEvent? get _weeklySelectedEvent {
@@ -233,6 +287,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     setState(() {
       _activeBottomTab = _BottomTab.home;
     });
+  }
+
+  void _openBibleStudyScreen() {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
+    }
+    navigator.push(
+      MaterialPageRoute<void>(builder: (_) => const BibleStudyScreen()),
+    );
   }
 
   void _toggleWeeklyCheck(String eventId) {
@@ -2693,6 +2758,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     top: sideTop,
                     child: Column(
                       children: [
+                        _mapControlButton(
+                          icon: Icons.menu_book_rounded,
+                          tooltip: '강해/성경',
+                          onTap: _openBibleStudyScreen,
+                        ),
+                        const SizedBox(height: 8),
                         _mapControlButton(
                           icon: Icons.search,
                           tooltip: '검색',

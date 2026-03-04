@@ -14,6 +14,7 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env');
 
   await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
@@ -36,7 +37,8 @@ SupabaseConfig _resolveSupabaseConfig() {
     'dev' => 'DEV',
     'prod' => 'DEV',
     _ => throw StateError(
-        'Unsupported ENV="$_runtimeEnv". Use ENV=dev or ENV=prod.'),
+      'Unsupported ENV="$_runtimeEnv". Use ENV=dev or ENV=prod.',
+    ),
   };
 
   final url = dotenv.env['SUPABASE_URL_$suffix'];
