@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_150",
+  "title": "150 언약 갱신: 다시 서명하다",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 49,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "느헤미야가 사람들이 금식하며 머리를 숙인다, 재를 뒤집어쓴 모습",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "느헤미야가 긴 고백 기도, 과거의 이야기들이 흘러간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "느헤미야가 지도자들이 문서에 서명한다, 붓 끝이 떨린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "느헤미야가 사람들의 얼굴이 조금씩 밝아진다, 다시 시작이 선언된다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

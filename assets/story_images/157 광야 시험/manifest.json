@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_157",
+  "title": "157 광야 시험",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 7,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "끝없는 광야, 예수가 지친 얼굴로 걷다가 멈춘다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "예수님이 조용히 고개를 끄덕인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "높은 곳의 시험, 예수는 흔들리지 않는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "유혹이 물러가고, 고요 속에 예수가 다시 길을 나선다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "event_id": "",
+  "event_code": "evt_111",
+  "title": "111 솔로몬 즉위: 지혜의 선택",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 11,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "다윗의 마지막 지시를 솔로몬이 긴장한 얼굴로 듣는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "solomon",
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "solomon",
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "solomon",
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "솔로몬의 즉위 앞쪽에 서 있고, 군중의 환호가 터진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "solomon"
+      ],
+      "scene_reference_person_codes": [
+        "solomon"
+      ],
+      "reference_avatar_codes": [
+        "solomon"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "밤의 꿈속에 하나님이 솔로몬에게 나타나시는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "solomon",
+        "god"
+      ],
+      "scene_reference_person_codes": [
+        "solomon",
+        "god"
+      ],
+      "reference_avatar_codes": [
+        "solomon",
+        "god"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "ok",
+      "retry_429_count": 0,
+      "used_model": "gemini-3-pro-image-preview",
+      "used_location": "global"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "솔로몬이 언약궤 앞에 서서 번제와 감사의 제물을 드리고 신하들은 기쁜 표정을 짓는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "solomon"
+      ],
+      "scene_reference_person_codes": [
+        "solomon"
+      ],
+      "reference_avatar_codes": [
+        "solomon"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

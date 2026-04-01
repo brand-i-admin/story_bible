@@ -1,0 +1,83 @@
+{
+  "event_id": "",
+  "event_code": "evt_015",
+  "title": "015 별 언약: 믿음이 의로",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 15,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "밤하늘 아래 하나님의 빛이 임한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "god"
+      ],
+      "scene_reference_person_codes": [
+        "god"
+      ],
+      "reference_avatar_codes": [
+        "god"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "아브라함이 셀 수 없는 별을 바라보다가 조용히 고개를 끄덕인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham"
+      ],
+      "scene_reference_person_codes": [
+        "abraham"
+      ],
+      "reference_avatar_codes": [
+        "abraham"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "아브라함이 암소와 암염소와 숫양의 고기를 쪼개어 언약 의식을 준비한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham"
+      ],
+      "scene_reference_person_codes": [
+        "abraham"
+      ],
+      "reference_avatar_codes": [
+        "abraham"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "어두운 밤, 아브라함이 지켜보는 가운데 하나님의 횃불 같은 빛이 쪼갠 고기 사이를 지나간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham",
+        "god"
+      ],
+      "scene_reference_person_codes": [
+        "abraham",
+        "god"
+      ],
+      "reference_avatar_codes": [
+        "abraham",
+        "god"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

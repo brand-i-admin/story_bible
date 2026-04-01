@@ -1,0 +1,89 @@
+{
+  "event_id": "",
+  "event_code": "evt_036",
+  "title": "036 벧엘 귀환: 라헬의 죽음",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 36,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "야곱이 결연한 표정으로 귀환 길을 재촉한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "길 위에서 라헬이 진통하고 그 곁에 선 야곱이 초조하게 지켜본다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "rachel",
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "rachel",
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "rachel",
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "라헬의 숨이 가늘어지고 갓난 베냐민 옆에서 야곱이 비통한 얼굴로 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "rachel",
+        "benjamin",
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "rachel",
+        "benjamin",
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "rachel",
+        "benjamin",
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "야곱이 무덤 기둥을 세우고 오래 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

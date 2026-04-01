@@ -1,0 +1,40 @@
+{
+  "event_id": "",
+  "event_code": "evt_189",
+  "title": "189 1차 선교(4): 루스드라–더베",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/185_215.json",
+  "source_index": 5,
+  "scenes_count": 2,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "군중의 열기가 오르며 상황이 급변한다, 긴장",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "바울이 상처를 안고도 다시 일어나 다음 도시로 걷는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "paul"
+      ],
+      "scene_reference_person_codes": [
+        "paul"
+      ],
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

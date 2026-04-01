@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_140",
+  "title": "140 에스더: 왕후가 되다",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 40,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "에스더가 왕후가 되기 전, 다른 후보들과 함께 궁정에 모인 모습",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esther"
+      ],
+      "scene_reference_person_codes": [
+        "esther"
+      ],
+      "reference_avatar_codes": [
+        "esther"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "왕관이 없는 후보의 모습인 에스더가 왕 앞에 선다, 방 안이 숨을 죽인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esther"
+      ],
+      "scene_reference_person_codes": [
+        "esther"
+      ],
+      "reference_avatar_codes": [
+        "esther"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "왕이 왕관을 씌운다, 에스더의 얼굴이 굳어지며 책임을 느낀다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esther"
+      ],
+      "scene_reference_person_codes": [
+        "esther"
+      ],
+      "reference_avatar_codes": [
+        "esther"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "모르드개가 멀리서 지켜본다, 때가 올 것 같은 눈빛",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "mordecai"
+      ],
+      "scene_reference_person_codes": [
+        "mordecai"
+      ],
+      "reference_avatar_codes": [
+        "mordecai"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

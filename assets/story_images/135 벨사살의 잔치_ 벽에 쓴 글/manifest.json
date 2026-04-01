@@ -1,0 +1,74 @@
+{
+  "event_id": "",
+  "event_code": "evt_135",
+  "title": "135 벨사살의 잔치: 벽에 쓴 글",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 35,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "다니엘이 화려한 잔치, 웃음과 술잔 소리로 가득하다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "daniel"
+      ],
+      "scene_reference_person_codes": [
+        "daniel"
+      ],
+      "reference_avatar_codes": [
+        "daniel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "벽에 나타난 손 글씨, 모두가 얼어붙는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "다니엘이 해석한다, 너는 저울에 달려 부족함이 보였다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "daniel"
+      ],
+      "scene_reference_person_codes": [
+        "daniel"
+      ],
+      "reference_avatar_codes": [
+        "daniel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "왕이 다니엘에게 자주색 옷을 입히게 하며 금 사슬을 그의 목에 걸어 주는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "daniel"
+      ],
+      "scene_reference_person_codes": [
+        "daniel"
+      ],
+      "reference_avatar_codes": [
+        "daniel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

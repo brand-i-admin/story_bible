@@ -1,0 +1,62 @@
+{
+  "event_id": "",
+  "event_code": "evt_187",
+  "title": "187 1차 선교(2): 비시디아 안디옥",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/185_215.json",
+  "source_index": 3,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "회당, 사람들이 바울의 말을 기다리며 숨죽인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "paul"
+      ],
+      "scene_reference_person_codes": [
+        "paul"
+      ],
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "설교 후 이방인들이 기뻐하며 몰려든다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "반대가 커지고 도시의 공기가 갈라진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "두 사람은 먼지를 털고 다음 도시로 떠난다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

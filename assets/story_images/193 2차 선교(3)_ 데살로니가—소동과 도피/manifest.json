@@ -1,0 +1,40 @@
+{
+  "event_id": "",
+  "event_code": "evt_193",
+  "title": "193 2차 선교(3): 데살로니가—소동과 도피",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/185_215.json",
+  "source_index": 9,
+  "scenes_count": 2,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "회당의 논쟁이 길어지고, 거리의 소문이 커진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "밤에 형제들이 바울 일행을 급히 피신시킨다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "paul"
+      ],
+      "scene_reference_person_codes": [
+        "paul"
+      ],
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

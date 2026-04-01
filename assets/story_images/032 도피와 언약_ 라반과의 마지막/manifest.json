@@ -1,0 +1,86 @@
+{
+  "event_id": "",
+  "event_code": "evt_032",
+  "title": "032 도피와 언약: 라반과의 마지막",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 32,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "야곱이 밤에 장막을 접고 몰래 길을 나선다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "라반이 분노한 얼굴로 추격해 따라잡는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "laban"
+      ],
+      "scene_reference_person_codes": [
+        "laban"
+      ],
+      "reference_avatar_codes": [
+        "laban"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "야곱과 라반이 격한 말다툼 끝에 돌무더기를 쌓아 경계 표를 만든다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob",
+        "laban"
+      ],
+      "scene_reference_person_codes": [
+        "jacob",
+        "laban"
+      ],
+      "reference_avatar_codes": [
+        "jacob",
+        "laban"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "야곱과 라반이 서로 맹세하고 각자의 길로 갈라진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob",
+        "laban"
+      ],
+      "scene_reference_person_codes": [
+        "jacob",
+        "laban"
+      ],
+      "reference_avatar_codes": [
+        "jacob",
+        "laban"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

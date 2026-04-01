@@ -1,0 +1,92 @@
+{
+  "event_id": "",
+  "event_code": "evt_048",
+  "title": "048 고센 정착: 만남과 눈물",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 46,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "애굽 총리의 옷을 입은 요셉이 전차를 타고 고센으로 급히 달려간다",
+      "scene_prompt_note": "Joseph is wearing Egyptian prime minister clothing.",
+      "scene_person_codes": [
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "애굽 총리의 옷을 입은 요셉과 야곱이 마주 보고 끌어안는다",
+      "scene_prompt_note": "Joseph is wearing Egyptian prime minister clothing.",
+      "scene_person_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "애굽 총리의 옷을 입은 요셉이 가족을 바로 앞에 세우며 예의를 지킨다",
+      "scene_prompt_note": "Joseph is wearing Egyptian prime minister clothing.",
+      "scene_person_codes": [
+        "joseph",
+        "pharaoh"
+      ],
+      "scene_reference_person_codes": [
+        "joseph",
+        "pharaoh"
+      ],
+      "reference_avatar_codes": [
+        "joseph",
+        "pharaoh"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "바로와 야곱이 서로 이야기하고 그 사이에 애굽 총리의 옷을 입은 요셉이 서 있다",
+      "scene_prompt_note": "Joseph is wearing Egyptian prime minister clothing and stands between Pharaoh and Jacob.",
+      "scene_person_codes": [
+        "pharaoh",
+        "jacob",
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "pharaoh",
+        "jacob",
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "pharaoh",
+        "jacob",
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

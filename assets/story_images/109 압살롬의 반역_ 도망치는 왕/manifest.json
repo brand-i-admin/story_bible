@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_109",
+  "title": "109 압살롬의 반역: 도망치는 왕",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 9,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "늙은 왕 다윗의 아들 압살롬이 젊은 청년의 모습으로 사람들의 편을 모으며 반역하는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "사독이라는 레위인이 언약궤를 메어 다윗 앞에 가져다 놓지만, 늙은 왕 다윗이 손을 가로젓는 모습",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "늙은 왕 다윗과 일행이 감람산을 울며 오르는 모습",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "늙은 왕 다윗이 60대 남자 후새에게 성으로 들어가라고 말하고, 후새가 성으로 들어가는 모습",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

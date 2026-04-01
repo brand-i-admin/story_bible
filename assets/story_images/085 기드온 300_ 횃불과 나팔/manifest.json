@@ -1,0 +1,68 @@
+{
+  "event_id": "",
+  "event_code": "evt_085",
+  "title": "085 기드온 300: 횃불과 나팔",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 32,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "병력이 줄어드는 앞쪽에 서 있고, 기드온이 놀라지만 고개를 끄덕인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "gideon"
+      ],
+      "scene_reference_person_codes": [
+        "gideon"
+      ],
+      "reference_avatar_codes": [
+        "gideon"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "밤, 300명이 항아리·횃불·나팔을 든다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "여호와와 기드온의 칼!, 항아리를 깨뜨리고 빛이 터진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "gideon"
+      ],
+      "scene_reference_person_codes": [
+        "gideon"
+      ],
+      "reference_avatar_codes": [
+        "gideon"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "이스라엘이 추격한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

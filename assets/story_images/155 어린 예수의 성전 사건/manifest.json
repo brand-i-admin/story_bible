@@ -1,0 +1,77 @@
+{
+  "event_id": "",
+  "event_code": "evt_155",
+  "title": "155 어린 예수의 성전 사건",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 5,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "유월절 후 귀가 행렬 속, 마리아가 예수를 찾다가 멈칫한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "mary",
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "mary",
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "mary",
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "부모가 예루살렘으로 되돌아가 급히 찾아다닌다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "성전 안, 예수가 교사들과 질문·대답을 나누고 모두가 놀란다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "예수 앞쪽에 서 있고, 부모가 말없이 바라본다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

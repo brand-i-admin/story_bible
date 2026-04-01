@@ -1,0 +1,62 @@
+{
+  "event_id": "",
+  "event_code": "evt_051",
+  "title": "051 이스라엘의 압제와 산파들",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 1,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "벽돌 굽는 현장, 감독의 고함과 지친 얼굴들",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "바로의 명령이 내려온다, 남자 아기는 죽여라",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "pharaoh"
+      ],
+      "scene_reference_person_codes": [
+        "pharaoh"
+      ],
+      "reference_avatar_codes": [
+        "pharaoh"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "산파들이 서로를 바라본다, 떨리지만 고개를 끄덕인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "아기가 숨 쉬는 소리, 산파들이 조용히 아이를 품고 숨긴다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

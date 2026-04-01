@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_146",
+  "title": "146 느헤미야의 파송: 무너진 성벽 소식",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 46,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "느헤미야가 소식을 듣고 무너진 얼굴로 앉아 운다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "느헤미야가 밤의 기도, 주의 이름을 경외하는 종들을 기억하소서",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "상대를 바라보며 기다린다, 느헤미야가 숨을 고른다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "왕의 허락과 편지가 주어진다, 느헤미야가 고개 숙여 감사한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

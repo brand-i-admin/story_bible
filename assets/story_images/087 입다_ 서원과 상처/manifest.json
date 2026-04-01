@@ -1,0 +1,74 @@
+{
+  "event_id": "",
+  "event_code": "evt_087",
+  "title": "087 입다: 서원과 상처",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 34,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "jephthah가 전쟁 전, 입다가 혼자 서원하며 중얼거린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jephthah"
+      ],
+      "scene_reference_person_codes": [
+        "jephthah"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "jephthah"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "전투의 승전 소식, 사람들이 환호한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "jephthah가 집 문이 열리고 가장 먼저 달려나온 딸을 보고 입다의 얼굴이 굳는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jephthah"
+      ],
+      "scene_reference_person_codes": [
+        "jephthah"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "jephthah"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "jephthah가 입다와 딸이 침묵 속에 마주 서 있고, 서원의 무게가 앞쪽에 서 있고, 을 누른다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jephthah"
+      ],
+      "scene_reference_person_codes": [
+        "jephthah"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "jephthah"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

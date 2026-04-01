@@ -1,0 +1,83 @@
+{
+  "event_id": "",
+  "event_code": "evt_049",
+  "title": "049 야곱의 축복: 열두 아들",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 47,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "늙은 야곱이 침상에서 상체를 일으킨다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "애굽 총리의 옷을 입은 요셉이 두 아들을 데려오고 야곱의 손이 교차한다",
+      "scene_prompt_note": "Joseph is wearing Egyptian prime minister clothing.",
+      "scene_person_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "늙은 야곱이 아들들을 바라보며 무거운 축복의 말을 남긴다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "턱수염과 머리가 하얗게 센 늙은 야곱이 마지막 숨을 고르며 눈을 감는다",
+      "scene_prompt_note": "Jacob should look very old with white hair and a white beard.",
+      "scene_person_codes": [
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

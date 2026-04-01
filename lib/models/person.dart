@@ -4,6 +4,7 @@ class Person {
     required this.code,
     required this.name,
     required this.tagline,
+    required this.description,
     required this.avatarUrl,
     required this.displayOrder,
   });
@@ -12,6 +13,7 @@ class Person {
   final String code;
   final String name;
   final String? tagline;
+  final String? description;
   final String? avatarUrl;
   final int displayOrder;
 

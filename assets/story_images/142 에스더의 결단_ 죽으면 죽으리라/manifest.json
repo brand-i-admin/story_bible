@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_142",
+  "title": "142 에스더의 결단: 죽으면 죽으리라",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 42,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "에스더가 망설인다, 부름 없이 나아가면",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esther"
+      ],
+      "scene_reference_person_codes": [
+        "esther"
+      ],
+      "reference_avatar_codes": [
+        "esther"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "모르드개가 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "mordecai"
+      ],
+      "scene_reference_person_codes": [
+        "mordecai"
+      ],
+      "reference_avatar_codes": [
+        "mordecai"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "에스더가 결연한 표정으로 선다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esther"
+      ],
+      "scene_reference_person_codes": [
+        "esther"
+      ],
+      "reference_avatar_codes": [
+        "esther"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "에스더가 문을 향해 걸어간다, 죽으면 죽으리라",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esther"
+      ],
+      "scene_reference_person_codes": [
+        "esther"
+      ],
+      "reference_avatar_codes": [
+        "esther"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

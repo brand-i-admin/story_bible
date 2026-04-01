@@ -1,0 +1,89 @@
+{
+  "event_id": "",
+  "event_code": "evt_082",
+  "title": "082 에훗: 왼손의 반전",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 30,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "israelites가 이스라엘 백성이 여호와 앞에서 악을 행하며 우상을 숭배한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "israelites"
+      ],
+      "scene_reference_person_codes": [
+        "israelites"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "israelites"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "israelites와 eglon이 이스라엘 백성이 모압 왕 에글론을 섬기며 무거운 조공을 바친다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "israelites",
+        "eglon"
+      ],
+      "scene_reference_person_codes": [
+        "israelites",
+        "eglon"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "israelites",
+        "eglon"
+      ],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "ehud와 eglon이 에훗이 조공을 들고 모압 왕 에글론에게 들어간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "ehud",
+        "eglon"
+      ],
+      "scene_reference_person_codes": [
+        "ehud",
+        "eglon"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "ehud",
+        "eglon"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "ehud와 eglon이 왕은 왕좌 앞 바닥에 움직이지 않게 누워 있고, 에훗은 재빨리 도망간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "ehud",
+        "eglon"
+      ],
+      "scene_reference_person_codes": [
+        "ehud",
+        "eglon"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "ehud",
+        "eglon"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

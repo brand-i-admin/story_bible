@@ -1,0 +1,40 @@
+{
+  "event_id": "",
+  "event_code": "evt_203",
+  "title": "203 로마행(3): 폭풍의 항해",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/185_215.json",
+  "source_index": 19,
+  "scenes_count": 2,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "파도가 배를 삼킬 듯 흔들고, 사람들은 절망한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "바울이 결연한 표정으로 선다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "paul"
+      ],
+      "scene_reference_person_codes": [
+        "paul"
+      ],
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

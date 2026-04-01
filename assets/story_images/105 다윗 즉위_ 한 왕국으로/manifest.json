@@ -1,0 +1,77 @@
+{
+  "event_id": "",
+  "event_code": "evt_105",
+  "title": "105 다윗 즉위: 한 왕국으로",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 5,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "사무엘이 다윗에게 기름을 붓는 앞쪽에 서 있고, 사람들의 시선이 모인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david",
+        "samuel"
+      ],
+      "scene_reference_person_codes": [
+        "david",
+        "samuel"
+      ],
+      "reference_avatar_codes": [
+        "david",
+        "samuel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "긴 갈등의 시간, 짧은, 서로 다른 진영이 흔들린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "장로들이 다윗 앞에 선다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "예루살렘에 들어서는 다윗, 도시의 문이 열리고 새 시작이 열린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "david"
+      ],
+      "scene_reference_person_codes": [
+        "david"
+      ],
+      "reference_avatar_codes": [
+        "david"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

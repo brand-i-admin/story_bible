@@ -196,6 +196,7 @@ BROTHERS_ALL = [
     "benjamin",
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
+ROSTER_EXCLUDED_CODES = {"dan"}
 
 # Commonly used NT anchor years (kept conservative; mostly still approx).
 # AD 70 temple destruction is treated as exact.
@@ -224,6 +225,25 @@ YEAR_OVERRIDES: dict[int, tuple[int | None, int | None, str]] = {
     206: (70, 70, "exact"),
     207: (95, 95, "approx"),
     208: (95, 95, "approx"),
+}
+
+# When a story has no precise map point, keep it visible on the map with a
+# conservative estimated anchor and an explicit "(추정)" label.
+APPROX_LOCATION_OVERRIDES: dict[int, tuple[str, float, float]] = {
+    1: ("메소포타미아(추정)", 31.018, 47.423),
+    2: ("에덴 지역(추정)", 31.018, 47.423),
+    3: ("에덴 지역(추정)", 31.018, 47.423),
+    4: ("에덴 동쪽(추정)", 31.09, 47.52),
+    5: ("에덴 밖 들판(추정)", 31.16, 47.61),
+    132: ("그발 강가(추정)", 32.55, 44.42),
+    166: ("베레아(요단 동편, 추정)", 31.93, 35.62),
+    209: ("밧모섬(추정)", 37.31, 26.55),
+    210: ("밧모섬(추정)", 37.31, 26.55),
+    211: ("밧모섬(추정)", 37.31, 26.55),
+    212: ("밧모섬(추정)", 37.31, 26.55),
+    213: ("밧모섬(추정)", 37.31, 26.55),
+    214: ("밧모섬(추정)", 37.31, 26.55),
+    215: ("밧모섬(추정)", 37.31, 26.55),
 }
 
 
@@ -411,7 +431,7 @@ def load_avatar_prompt_codes(prompt_json_path: Path) -> set[str]:
         if not isinstance(item, dict):
             continue
         code = str(item.get("code", "")).strip()
-        if code:
+        if code and code not in ROSTER_EXCLUDED_CODES:
             codes.add(code)
     if not codes:
         raise ValueError(f"No character codes found in avatar prompt JSON: {prompt_json_path}")
@@ -630,6 +650,18 @@ def make_time_sort_key(number: int, start_year: int | None, end_year: int | None
     return year * 1_000 + number
 
 
+def apply_approx_location_override(
+    number: int, place_name: str, lat: float | None, lng: float | None
+) -> tuple[str, float | None, float | None]:
+    if lat is not None and lng is not None:
+        return place_name, lat, lng
+    override = APPROX_LOCATION_OVERRIDES.get(number)
+    if override is None:
+        return place_name, lat, lng
+    override_place_name, override_lat, override_lng = override
+    return override_place_name, override_lat, override_lng
+
+
 def parse_story_rows(input_dir: Path) -> list[dict[str, Any]]:
     if not input_dir.exists():
         raise FileNotFoundError(f"Input dir not found: {input_dir}")
@@ -717,6 +749,9 @@ def normalize_events(
         lng = row.get("lng")
         lat_f = float(lat) if isinstance(lat, (int, float)) else None
         lng_f = float(lng) if isinstance(lng, (int, float)) else None
+        place_name, lat_f, lng_f = apply_approx_location_override(
+            number, place_name, lat_f, lng_f
+        )
 
         event = NormalizedEvent(
             number=number,

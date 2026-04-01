@@ -24,7 +24,7 @@ class StoryRepository {
     final rows = await _client
         .from('person_eras')
         .select(
-          'display_order, persons!inner(id, code, name, tagline, avatar_url)',
+          'display_order, persons!inner(id, code, name, tagline, description, avatar_url)',
         )
         .eq('era_id', eraId)
         .order('display_order', ascending: true);
@@ -36,6 +36,7 @@ class StoryRepository {
         code: person['code'] as String,
         name: person['name'] as String,
         tagline: person['tagline'] as String?,
+        description: person['description'] as String?,
         avatarUrl: person['avatar_url'] as String?,
         displayOrder: row['display_order'] as int,
       );
@@ -71,6 +72,58 @@ class StoryRepository {
           (row) => _storyEventFromRow(row, includeBibleRefs: true),
         )
         .toList();
+  }
+
+  Future<List<StoryEvent>> fetchEventsForPerson(String personId) async {
+    final rows = await _client
+        .from('events')
+        .select('''
+          id,
+          code,
+          era_id,
+          title,
+          summary,
+          story,
+          short_story,
+          story_scenes,
+          start_year,
+          end_year,
+          time_sort_key,
+          place_name,
+          lat,
+          lng,
+          event_persons!inner(person_id),
+          event_bible_refs(display_text)
+        ''')
+        .eq('event_persons.person_id', personId)
+        .order('time_sort_key', ascending: true);
+
+    return rows
+        .map<StoryEvent>(
+          (row) => _storyEventFromRow(row, includeBibleRefs: true),
+        )
+        .toList();
+  }
+
+  Future<Map<String, int>> fetchPersonTimelineOrder() async {
+    final rows = await _client
+        .from('events')
+        .select('time_sort_key, event_persons(person_id)')
+        .order('time_sort_key', ascending: true);
+
+    final firstAppearanceByPersonId = <String, int>{};
+    for (final row in rows) {
+      final timeSortKey = row['time_sort_key'] as int? ?? 0;
+      final personRows = row['event_persons'] as List<dynamic>? ?? const [];
+      for (final personRow in personRows.whereType<Map<String, dynamic>>()) {
+        final personId = personRow['person_id'] as String?;
+        if (personId == null) {
+          continue;
+        }
+        firstAppearanceByPersonId.putIfAbsent(personId, () => timeSortKey);
+      }
+    }
+    return firstAppearanceByPersonId;
   }
 
   Future<List<StoryEvent>> searchEventsByText(String query) async {

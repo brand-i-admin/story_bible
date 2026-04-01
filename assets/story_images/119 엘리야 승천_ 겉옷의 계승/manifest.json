@@ -1,0 +1,86 @@
+{
+  "event_id": "",
+  "event_code": "evt_119",
+  "title": "119 엘리야 승천: 겉옷의 계승",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 19,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "늙은 노인 엘리야가 엘리사에게 마지막 길을 함께 가자고 말하는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "elijah",
+        "elisha"
+      ],
+      "scene_reference_person_codes": [
+        "elijah",
+        "elisha"
+      ],
+      "reference_avatar_codes": [
+        "elijah",
+        "elisha"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "늙은 노인 엘리야가 겉옷으로 요단강 물을 치자 길이 열리는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "elijah"
+      ],
+      "scene_reference_person_codes": [
+        "elijah"
+      ],
+      "reference_avatar_codes": [
+        "elijah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "늙은 노인 엘리야가 불수레와 함께 하늘로 들려 올라가고, 엘리사가 울부짖는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "elijah",
+        "elisha"
+      ],
+      "scene_reference_person_codes": [
+        "elijah",
+        "elisha"
+      ],
+      "reference_avatar_codes": [
+        "elijah",
+        "elisha"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "엘리사가 겉옷을 들고 요단을 치자 물이 갈라지는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "elisha"
+      ],
+      "scene_reference_person_codes": [
+        "elisha"
+      ],
+      "reference_avatar_codes": [
+        "elisha"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

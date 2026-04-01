@@ -1,0 +1,76 @@
+{
+  "event_id": "",
+  "event_code": "evt_156",
+  "title": "156 예수의 세례",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 6,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "요단강가, 요한이 사람들을 세례 주는 가운데 예수가 앞으로 나온다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus",
+        "john_the_baptist"
+      ],
+      "scene_reference_person_codes": [
+        "jesus",
+        "john_the_baptist"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [
+        "john_the_baptist"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "요한이 망설이자 예수가 조용히 고개를 끄덕인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus",
+        "john_the_baptist"
+      ],
+      "scene_reference_person_codes": [
+        "jesus",
+        "john_the_baptist"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [
+        "john_the_baptist"
+      ],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "물에서 올라오는 순간 하늘이 열리는 듯한 빛이 비친다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "하늘에서 빛이 비치고, 사람들이 숨을 삼킨다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

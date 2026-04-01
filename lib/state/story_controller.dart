@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/story_repository.dart';
+import '../state/auth_providers.dart';
 import '../models/era.dart';
 import '../models/person.dart';
 import '../models/story_event.dart';
@@ -45,6 +47,7 @@ class StoryController extends Notifier<StoryState> {
     try {
       state = state.copyWith(loading: true, clearError: true);
       final eras = await _repo.fetchEras();
+      final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
       if (eras.isEmpty) {
         state = state.copyWith(
           loading: false,
@@ -62,7 +65,7 @@ class StoryController extends Notifier<StoryState> {
         eras: eras,
         persons: const [],
         events: const [],
-        completedEventIds: const {},
+        completedEventIds: completedEventIds,
         selectedEraId: null,
         selectedPersonIds: const {},
         selectedPersonColors: const {},
@@ -73,7 +76,10 @@ class StoryController extends Notifier<StoryState> {
         clearSelectedEvent: true,
       );
     } catch (e) {
-      state = state.copyWith(loading: false, error: '초기 데이터를 불러오지 못했습니다: $e');
+      state = state.copyWith(
+        loading: false,
+        error: _buildLoadErrorMessage(prefix: '초기 데이터를 불러오지 못했습니다.', error: e),
+      );
     }
   }
 
@@ -162,11 +168,12 @@ class StoryController extends Notifier<StoryState> {
       final persons = await _repo.fetchPersonsByEra(eraId);
       final events = await _repo.fetchEventsByEra(eraId);
       final selectedPersonIds = _ensureSelectedPersons(persons, const {});
+      final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
       state = state.copyWith(
         loading: false,
         persons: persons,
         events: events,
-        completedEventIds: const {},
+        completedEventIds: completedEventIds,
         selectedPersonIds: selectedPersonIds,
         selectedPersonColors: _assignSelectedColors(selectedPersonIds),
         searchQuery: '',
@@ -175,7 +182,10 @@ class StoryController extends Notifier<StoryState> {
         clearSelectedEvent: true,
       );
     } catch (e) {
-      state = state.copyWith(loading: false, error: '시대 변경 중 오류가 발생했습니다: $e');
+      state = state.copyWith(
+        loading: false,
+        error: _buildLoadErrorMessage(prefix: '시대 변경 중 오류가 발생했습니다.', error: e),
+      );
     }
   }
 
@@ -187,6 +197,17 @@ class StoryController extends Notifier<StoryState> {
       next.add(personId);
     }
 
+    state = state.copyWith(
+      selectedPersonIds: next,
+      selectedPersonColors: _assignSelectedColors(next),
+      clearSelectedEvent: true,
+    );
+  }
+
+  void setSelectedPersons(Set<String> personIds) {
+    final next = personIds
+        .where((id) => state.persons.any((person) => person.id == id))
+        .toSet();
     state = state.copyWith(
       selectedPersonIds: next,
       selectedPersonColors: _assignSelectedColors(next),
@@ -207,8 +228,36 @@ class StoryController extends Notifier<StoryState> {
     required int score,
     required bool isCompleted,
   }) async {
-    // Progress persistence is intentionally disabled until user/auth tables are ready.
-    return;
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    await _repo.upsertEventProgress(
+      userId: user.id,
+      eventId: eventId,
+      isCompleted: isCompleted,
+      score: score,
+      xpEarned: isCompleted ? score * 10 : 0,
+    );
+
+    if (isCompleted) {
+      await ref.read(userRepositoryProvider).recordStudyDay(user.id);
+    }
+
+    final nextCompleted = {...state.completedEventIds};
+    if (isCompleted) {
+      nextCompleted.add(eventId);
+    } else {
+      nextCompleted.remove(eventId);
+    }
+
+    state = state.copyWith(completedEventIds: nextCompleted);
+  }
+
+  Future<void> refreshCompletedEventIds() async {
+    final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
+    state = state.copyWith(completedEventIds: completedEventIds);
   }
 
   void setSearchQuery(String query) {
@@ -303,6 +352,14 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
+  Future<Set<String>> _fetchCompletedEventIdsForCurrentUser() async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return const <String>{};
+    }
+    return _repo.fetchCompletedEventIds(user.id);
+  }
+
   List<StoryEvent> mergedTimeline() {
     final filtered = state.events.where((event) {
       final hasSelectedPerson = event.personIds.any(
@@ -379,5 +436,21 @@ class StoryController extends Notifier<StoryState> {
       return 'new';
     }
     return 'old';
+  }
+
+  String _buildLoadErrorMessage({
+    required String prefix,
+    required Object error,
+  }) {
+    if (error is SocketException) {
+      return '$prefix 네트워크 연결 또는 Supabase 주소 설정을 확인하세요.';
+    }
+
+    final message = error.toString();
+    if (message.contains('Failed host lookup')) {
+      return '$prefix Supabase 주소를 찾지 못했습니다. .env의 SUPABASE_URL_DEV 설정을 확인하세요.';
+    }
+
+    return '$prefix $message';
   }
 }

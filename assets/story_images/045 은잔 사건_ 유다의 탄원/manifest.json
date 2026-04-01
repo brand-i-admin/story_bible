@@ -1,0 +1,107 @@
+{
+  "event_id": "",
+  "event_code": "evt_045",
+  "title": "045 은잔 사건: 유다의 탄원",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 44,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "형제들이 떠나자마자 추격자가 따라붙는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "brothers"
+      ],
+      "scene_reference_person_codes": [
+        "brothers"
+      ],
+      "reference_avatar_codes": [
+        "reuben",
+        "simeon",
+        "levi",
+        "judah",
+        "naphtali",
+        "gad",
+        "asher",
+        "issachar",
+        "zebulun",
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [
+        "dan"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "자루를 뒤지다 베냐민 자루에서 잔이 나온다, 얼굴이 하얘진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "benjamin"
+      ],
+      "scene_reference_person_codes": [
+        "benjamin"
+      ],
+      "reference_avatar_codes": [
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "파라오처럼 보이지 않는 애굽 총리 요셉 앞에 유다가 앞으로 나온다",
+      "scene_prompt_note": "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "scene_person_codes": [
+        "joseph",
+        "judah"
+      ],
+      "scene_reference_person_codes": [
+        "joseph",
+        "judah"
+      ],
+      "reference_avatar_codes": [
+        "joseph",
+        "judah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "유다가 앞쪽에 서 있고, 형제들의 눈에 눈물이 맺힌다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "judah",
+        "brothers"
+      ],
+      "scene_reference_person_codes": [
+        "judah",
+        "brothers"
+      ],
+      "reference_avatar_codes": [
+        "judah",
+        "reuben",
+        "simeon",
+        "levi",
+        "naphtali",
+        "gad",
+        "asher",
+        "issachar",
+        "zebulun",
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [
+        "dan"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

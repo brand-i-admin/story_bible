@@ -1,0 +1,74 @@
+{
+  "event_id": "",
+  "event_code": "evt_007",
+  "title": "007 홍수 전의 타락: 노아를 주목하다",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 7,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "혼란과 폭력이 번지는 앞쪽에 서 있고, 거리의 소란",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "하나님의 빛이 임한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "god"
+      ],
+      "scene_reference_person_codes": [
+        "god"
+      ],
+      "reference_avatar_codes": [
+        "god"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "노아가 조용히 방주 설계 도면을 펼친다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "noah"
+      ],
+      "scene_reference_person_codes": [
+        "noah"
+      ],
+      "reference_avatar_codes": [
+        "noah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "노아가 첫 나무를 자르며 준비를 시작한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "noah"
+      ],
+      "scene_reference_person_codes": [
+        "noah"
+      ],
+      "reference_avatar_codes": [
+        "noah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

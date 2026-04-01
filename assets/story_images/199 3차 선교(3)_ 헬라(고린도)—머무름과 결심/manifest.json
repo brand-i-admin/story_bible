@@ -1,0 +1,29 @@
+{
+  "event_id": "",
+  "event_code": "evt_199",
+  "title": "199 3차 선교(3): 헬라(고린도)—머무름과 결심",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/185_215.json",
+  "source_index": 15,
+  "scenes_count": 1,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "바울이 편지를 쓰고, 지도 위에 예루살렘을 표시한다, 결심",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "paul"
+      ],
+      "scene_reference_person_codes": [
+        "paul"
+      ],
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

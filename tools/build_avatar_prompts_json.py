@@ -5,8 +5,8 @@ Rules:
 - Expand group codes: disciples/apostles/brothers -> individual person codes.
 - Remove non-individual codes (groups/placeholders like mysterious_man, babel_people).
 - Keep only person codes with mention_count >= min_mentions.
-- Reuse existing prompt metadata when available.
-- If no template exists, use built-in default style/palette config.
+- Reuse existing prompt metadata only when prompt_source=manual.
+- If no manual style exists, use built-in default style/palette config.
 """
 
 from __future__ import annotations
@@ -50,28 +50,44 @@ BROTHERS_ALL = [
     "benjamin",
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
+# Explicit roster exclusions for codes that are technically person names
+# but should not appear as selectable characters in the app.
+ROSTER_EXCLUDED_CODES = {"dan"}
 
 DEFAULT_STYLE_SOURCE: dict[str, Any] = {
     "common_style": (
-        "cute chibi character, big head small body (2.5 heads tall), "
-        "low-poly faceted polygon style, origami papercraft look, "
-        "clean vector-like shading, pastel colors, soft gradients, "
-        "thick simple outline, minimal details, friendly expression, "
-        "front 3/4 view, full body, centered, plain white background, "
-        "high resolution, consistent proportions, no text, no watermark, "
-        "same character design system as a consistent set, same face proportions, "
-        "same polygon count, same shading style, same outline thickness"
+        "stylized geometric biblical character illustration, "
+        "blocky low-poly faceted planes, angular polygon face and hair, "
+        "flat matte vector shading with subtle cut-paper facets, "
+        "strict canonical body proportions, head:torso:legs = 1:1:1 exactly, "
+        "head section one-third of total height, torso section one-third, legs section one-third, "
+        "same body ratio template across all human characters, compact adult proportions, not chibi, "
+        "simple small eyes and nose, mature friendly expression, "
+        "minimal clean outline, exactly one character only, solo single subject, "
+        "full body visible from head to toe, both feet visible, whole figure fits inside frame, "
+        "centered, plain white background, "
+        "high resolution, consistent design system across the full cast, "
+        "distinct silhouette and face geometry for each character, "
+        "distinct hairstyle and story-inspired accessory for each character, "
+        "no text, no watermark"
     ),
     "negative_prompt": (
-        "realistic, photoreal, anime, manga, 3D render, clay, pixel art, "
-        "gritty, dark, horror, complex background, text, logo, watermark"
+        "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, "
+        "chibi, super-deformed, giant head, baby proportions, oversized eyes, "
+        "long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, "
+        "uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, "
+        "same-face clones, duplicate person, multiple people, crowd, group shot, "
+        "companions, side characters, extra faces, extra bodies, twin, mirrored figure, "
+        "close-up, portrait crop, bust shot, half body, cropped head, cropped feet, "
+        "marshmallow body, gritty, dark, horror, "
+        "complex background, text, logo, watermark"
     ),
     "palettes": {
         "primeval": "soft beige + olive + sky blue accents",
         "patriarch": "warm sand + cream + muted teal accents",
         "exodus_wilderness": "teal + desert tan + bronze accents",
         "judges": "olive green + clay brown + muted gold accents",
-        "monarchy": "royal purple + navy + gold accents (still pastel)",
+        "monarchy": "royal purple + navy + muted gold accents",
         "prophets_exile": "muted indigo + gray + parchment cream accents",
         "post_exile_return": "stone gray + sage green + parchment cream accents",
         "gospels": "cream + sky blue + soft rose accents",
@@ -236,6 +252,384 @@ KO_NAME_OVERRIDES = {
     "zebulun": "스불론",
 }
 
+AUTO_PROMPT_SOURCE = "auto_story_v2"
+GOD_NEGATIVE_PROMPT_EXTRA = (
+    "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, "
+    "religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, "
+    "compass rose, trident-like symbol, monogram, glyph, letters, runes, "
+    "secondary emblem, extra emblem, extra icon, detached symbol, lower symbol, "
+    "bottom mark, floating mark below, small logo below, framed icon, geometric badge"
+)
+GABRIEL_NEGATIVE_PROMPT_EXTRA = (
+    "ordinary human priest, ordinary human man, elderly man, beard, warrior, armor, "
+    "multiple people, crowd, group, duo, pair, two people, extra person, background person, "
+    "second angel, angel choir, heavenly host, attendants"
+)
+RUTH_NEGATIVE_PROMPT_EXTRA = (
+    "male, man, masculine face, broad male jaw, beard, mustache, warrior, armor"
+)
+HAMAN_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra person, background person, "
+    "king, queen, banquet crowd, attendants, throne scene"
+)
+DANIEL_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra person, background person"
+)
+DAN_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra person, background person"
+)
+
+FEMALE_CODES = {
+    "bathsheba",
+    "deborah",
+    "delilah",
+    "elizabeth",
+    "esther",
+    "eve",
+    "hagar",
+    "jezebel",
+    "leah",
+    "martha",
+    "mary",
+    "mary_magdalene",
+    "miriam",
+    "naomi",
+    "priscilla",
+    "rachel",
+    "rebekah",
+    "ruth",
+    "sarah",
+}
+
+ANGELIC_CODES = {
+    "gabriel",
+}
+
+FACE_SHAPE_VARIANTS = [
+    "square jaw with broad brow planes",
+    "long wedge-shaped face",
+    "hexagonal face with strong cheek angles",
+    "diamond-shaped face with a sharp chin",
+    "rectangular face with flat cheek planes",
+    "soft angular oval face",
+]
+
+BODY_VARIANTS = [
+    "lean traveler build",
+    "compact sturdy build",
+    "tall narrow build",
+    "square-shouldered build",
+    "broad stable build",
+    "light agile build",
+]
+
+MALE_HAIR_VARIANTS = [
+    "short blocky curls",
+    "medium wavy hair in angular chunks",
+    "straight shoulder-length hair with polygon strands",
+    "closely cropped faceted hair",
+    "wrapped geometric headcloth framing the face",
+    "layered hood-like head covering",
+]
+
+FEMALE_HAIR_VARIANTS = [
+    "wrapped angular headscarf",
+    "shoulder-length straight hair in polygon sheets",
+    "soft wavy bob with faceted planes",
+    "braided geometric hair",
+    "layered veil framing the face",
+    "tucked-back long hair with blocky edges",
+]
+
+CHARACTER_VISUAL_OVERRIDES = {
+    "esther": [
+        "slender graceful build",
+        "soft elegant oval face with refined feminine beauty",
+        "long dark hair under a royal veil with geometric jewel accents",
+    ],
+    "eve": [
+        "slender graceful build",
+        "soft delicate face with gentle feminine features",
+        "long flowing hair with soft faceted strands",
+    ],
+    "gabriel": [
+        "tall luminous figure with graceful proportions",
+        "smooth serene face with gentle heavenly features",
+        "soft radiant hair framed by simple glowing planes",
+    ],
+    "rachel": [
+        "slender graceful build",
+        "soft luminous oval face with striking beautiful feminine features",
+        "long dark hair under a graceful layered veil",
+    ],
+    "leah": [
+        "modest average build",
+        "soft plain oval face with simple gentle features",
+        "dark hair tucked under a practical layered veil",
+    ],
+    "ruth": [
+        "slender graceful build",
+        "soft feminine oval face with gentle features",
+        "soft layered veil framing the face",
+    ],
+}
+
+CHARACTER_MOOD_OVERRIDES = {
+    "esther": ["gentle confident smile and poised posture"],
+    "eve": ["gentle relaxed posture"],
+    "gabriel": ["gentle descending messenger posture"],
+    "rachel": ["warm radiant smile and elegant tender posture"],
+    "leah": ["quiet modest smile and gentle reserved posture"],
+    "ruth": ["warm humble smile and gentle posture"],
+}
+
+BEARD_VARIANTS = [
+    "",
+    "short angular beard",
+    "trimmed faceted beard",
+    "full blocky beard",
+    "mustache with a short beard",
+]
+
+ERA_ROLE_FALLBACKS = {
+    "primeval": "mythic early-world silhouette",
+    "patriarch": "nomadic patriarch silhouette",
+    "exodus_wilderness": "weathered desert-traveler silhouette",
+    "judges": "rugged tribal-era silhouette",
+    "monarchy": "structured royal-era silhouette",
+    "prophets_exile": "solemn exile-era silhouette",
+    "post_exile_return": "rebuilder-era silhouette",
+    "gospels": "traveling teacher silhouette",
+    "early_church": "mission-era silhouette",
+}
+
+CODE_SIGNATURE_HINTS = {
+    "abraham": ["nomadic patriarch silhouette", "travel-worn layered robe"],
+    "aaron": ["ceremonial leader silhouette", "priestly layered sash"],
+    "daniel": ["court-wise exile silhouette", "calm dignified bearing", "rolled scroll accent"],
+    "david": ["shepherd-king silhouette", "bold agile bearing", "sling and small stone pouch"],
+    "elijah": ["storm-like prophet silhouette", "rough mantle energy"],
+    "esther": [
+        "beautiful queenly silhouette",
+        "elegant regal beauty",
+        "refined royal poise",
+        "jeweled geometric crown band and rich royal robe accents",
+    ],
+    "gabriel": [
+        "radiant angelic messenger silhouette",
+        "single angel only",
+        "soft luminous wings made of simple faceted shapes",
+        "heavenly messenger presence with clean flowing robes",
+    ],
+    "eve": [
+        "graceful first-woman silhouette",
+        "warm gentle expression",
+        "soft feminine presence",
+    ],
+    "ezra": ["scribe-teacher silhouette", "measured studious bearing", "rolled scroll accent"],
+    "jesus": [
+        "calm teacher-and-healer silhouette",
+        "deep red outer robe over a light inner tunic",
+        "both arms gently opened outward in a welcoming gesture",
+    ],
+    "john": [
+        "young fisherman-apostle turned reflective writer silhouette",
+        "small net bundle and rolled scroll satchel",
+        "quiet witness-like presence",
+    ],
+    "joseph": ["dream-marked survivor silhouette", "protected-yet-resilient bearing", "patterned robe accent"],
+    "mary": ["humble courageous mother silhouette", "calm grounded presence", "layered travel veil"],
+    "haman": [
+        "scheming court-official silhouette",
+        "sealed decree scroll and signet ring",
+        "single arrogant court-villain presence",
+    ],
+    "moses": ["liberator silhouette shaped by wilderness", "steady leader's presence", "wooden staff"],
+    "nehemiah": ["wall-rebuilder silhouette", "focused civic resolve", "builder's belt with wooden tools"],
+    "noah": ["ark-builder silhouette", "weathered survivor presence", "builder's belt with wooden tools"],
+    "paul": ["road-worn missionary silhouette", "intense teacher's focus", "rolled scroll or letter satchel"],
+    "rachel": [
+        "radiant beautiful beloved matriarch silhouette",
+        "elegant luminous presence",
+    ],
+    "leah": [
+        "plain modest matriarch silhouette",
+        "simple gentle presence",
+    ],
+    "saul": [
+        "first king silhouette",
+        "simple geometric crown band or royal sash",
+        "tall commanding presence",
+    ],
+    "peter": [
+        "sturdy fisherman-apostle silhouette",
+        "broad dependable presence",
+        "shoulder-draped fishing net and rope details",
+    ],
+    "andrew": [
+        "rope-belt fisherman-apostle silhouette",
+        "hand net and rope-belt details",
+        "weathered fisherman's focus",
+    ],
+    "james_zebedee": [
+        "boat-working fisherman-apostle silhouette",
+        "coiled rope, short oar, and fish basket",
+        "bold energetic worker's presence",
+    ],
+    "philip": [
+        "road-guide messenger disciple silhouette",
+        "travel satchel and route scroll",
+        "practical alert presence",
+    ],
+    "bartholomew": [
+        "scripture scholar disciple silhouette",
+        "scroll bundle held like a student",
+        "measured thoughtful presence",
+    ],
+    "matthew": [
+        "tax-collector record-keeper disciple silhouette",
+        "coin pouch, wax tablet, and stylus",
+        "precise record-keeper presence",
+    ],
+    "thomas": [
+        "builder-craftsman disciple silhouette",
+        "measuring cord and carpenter tool pouch",
+        "solid thoughtful presence",
+    ],
+    "james_alphaeus": [
+        "village artisan disciple silhouette",
+        "simple work sash and cloth tool wrap",
+        "quiet steady presence",
+    ],
+    "thaddaeus": [
+        "courier-messenger disciple silhouette",
+        "letter satchel with a sealed scroll",
+        "warm approachable presence",
+    ],
+    "simon_zealot": [
+        "zealot organizer disciple silhouette",
+        "belted travel cloak with gathered folds",
+        "lean vigilant presence",
+    ],
+    "judas": [
+        "treasurer disciple silhouette",
+        "money pouch and small account bag",
+        "guarded calculating presence",
+    ],
+    "ruth": [
+        "beautiful loyal field-worker silhouette",
+        "gentle resilient presence",
+        "gathered grain bundle accent",
+    ],
+    "samuel": ["listening prophet silhouette", "quiet spiritual alertness"],
+    "solomon": [
+        "wise royal silhouette",
+        "measured judicial calm",
+        "simple geometric crown band or royal sash",
+    ],
+}
+
+STORY_ROLE_RULES = [
+    {
+        "phrase": "shepherd-inspired outdoor silhouette",
+        "patterns": ["목자", "양떼", "들판", "초장", "목동", "양을 치"],
+    },
+    {
+        "phrase": "fisherman-apostle silhouette with rope-belt layers",
+        "patterns": ["그물", "어부", "바다", "갈릴리", "고기잡", "배를 타"],
+    },
+    {
+        "phrase": "weathered desert-leader silhouette",
+        "patterns": ["광야", "출애굽", "홍해", "떨기나무", "시내산", "재앙"],
+    },
+    {
+        "phrase": "regal angular silhouette",
+        "patterns": ["왕위", "궁전", "왕비", "보좌", "즉위", "왕이 되"],
+    },
+    {
+        "phrase": "prophetic visionary silhouette",
+        "patterns": ["선지", "예언", "환상", "계시", "하늘이 열리", "말씀이 임"],
+    },
+    {
+        "phrase": "ceremonial temple-robe silhouette",
+        "patterns": ["제사장", "성전", "제단", "향", "언약궤"],
+    },
+    {
+        "phrase": "sturdy rebuilder silhouette",
+        "patterns": ["성벽", "재건", "귀환", "문을 세우", "돌을 쌓"],
+    },
+    {
+        "phrase": "road-worn traveler silhouette",
+        "patterns": ["선교", "여행", "항해", "파송", "도시", "로마", "길을 떠"],
+    },
+    {
+        "phrase": "protective caregiver silhouette",
+        "patterns": ["아기", "어머니", "품에 안", "태어나", "낳", "피신"],
+    },
+    {
+        "phrase": "bold warrior silhouette",
+        "patterns": ["전쟁", "군대", "용사", "싸우", "거인", "무장"],
+    },
+    {
+        "phrase": "dream-marked survivor silhouette",
+        "patterns": ["꿈", "구덩이", "감옥", "누명", "해석"],
+    },
+]
+
+STORY_PROP_RULES = [
+    {
+        "phrase": "wooden staff",
+        "patterns": ["지팡이", "막대기", "홍해", "떨기나무", "시내산"],
+    },
+    {
+        "phrase": "rolled scroll or letter satchel",
+        "patterns": ["두루마리", "편지", "율법", "설교", "가르치", "회당", "서신", "계시"],
+    },
+    {
+        "phrase": "sling and small stone pouch",
+        "patterns": ["물매", "거인", "시냇가", "골리앗"],
+    },
+    {
+        "phrase": "simple geometric crown band or royal sash",
+        "patterns": ["왕위", "왕비", "보좌", "즉위", "왕관"],
+    },
+    {
+        "phrase": "net weights and rope details",
+        "patterns": ["그물", "어부", "바다", "고기잡", "배를 타"],
+    },
+    {
+        "phrase": "oil-flask accent",
+        "patterns": ["기름", "향유", "단지", "항아리"],
+    },
+    {
+        "phrase": "builder's belt with wooden tools",
+        "patterns": ["성벽", "건축", "방주", "재건", "목수"],
+    },
+]
+
+STORY_MOOD_RULES = [
+    {
+        "phrase": "brave forward-leaning stance",
+        "patterns": ["믿음", "담대", "맞서", "용기", "담대히"],
+    },
+    {
+        "phrase": "open-handed compassionate posture",
+        "patterns": ["치유", "고치", "불쌍히", "위로", "눈물"],
+    },
+    {
+        "phrase": "thoughtful calm expression",
+        "patterns": ["기도", "묵상", "환상", "계시", "지혜", "생각"],
+    },
+    {
+        "phrase": "light celebratory posture",
+        "patterns": ["기쁨", "찬양", "춤", "감사", "축제"],
+    },
+    {
+        "phrase": "resolute steady posture",
+        "patterns": ["순종", "떠나라", "파송", "견디", "도망", "회개"],
+    },
+]
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -325,6 +719,8 @@ def expand_person_codes(number: int, persons: list[str]) -> list[str]:
 def is_individual_code(code: str) -> bool:
     if code in NON_INDIVIDUAL_CODES:
         return False
+    if code in ROSTER_EXCLUDED_CODES:
+        return False
     if not code:
         return False
     return True
@@ -355,20 +751,142 @@ def has_hangul(text: str) -> bool:
     return any("가" <= ch <= "힣" for ch in text)
 
 
-def build_generic_prompt(name_en: str, palette_text: str) -> str:
-    return (
-        f"COMMON_STYLE, palette: {palette_text}, {name_en}, "
-        "adult biblical character (age 25+), cute friendly expression, "
-        "simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style"
+def stable_pick(code: str, salt: str, options: list[str]) -> str:
+    if not options:
+        return ""
+    token = f"{salt}:{code}"
+    score = sum((idx + 1) * ord(ch) for idx, ch in enumerate(token))
+    return options[score % len(options)]
+
+
+def build_story_text(rows: list[dict[str, Any]]) -> str:
+    parts: list[str] = []
+    for row in rows:
+        for key in ("title", "summary"):
+            value = str(row.get(key, "")).strip()
+            if value:
+                parts.append(value)
+        for scene in row.get("story_scenes", []):
+            value = str(scene).strip()
+            if value:
+                parts.append(value)
+    return " ".join(parts).lower()
+
+
+def count_pattern_hits(text: str, patterns: list[str]) -> int:
+    return sum(text.count(pattern.lower()) for pattern in patterns if pattern)
+
+
+def select_story_fragments(
+    text: str, rules: list[dict[str, Any]], *, limit: int
+) -> list[str]:
+    scored: list[tuple[int, int, str]] = []
+    for idx, rule in enumerate(rules):
+        phrase = str(rule.get("phrase", "")).strip()
+        patterns = [str(pattern).strip() for pattern in rule.get("patterns", [])]
+        score = count_pattern_hits(text, patterns)
+        if phrase and score > 0:
+            scored.append((-score, idx, phrase))
+    scored.sort()
+    return [phrase for _, _, phrase in scored[:limit]]
+
+
+def build_story_prompt_fragments(
+    code: str,
+    era_style: str,
+    story_rows: list[dict[str, Any]],
+) -> list[str]:
+    text = build_story_text(story_rows)
+    code_hints = CODE_SIGNATURE_HINTS.get(code, [])
+    role_fragments = (
+        []
+        if code_hints
+        else select_story_fragments(
+            text,
+            STORY_ROLE_RULES,
+            limit=1,
+        )
     )
+    prop_fragments = [] if code_hints else select_story_fragments(text, STORY_PROP_RULES, limit=1)
+    if code in CHARACTER_MOOD_OVERRIDES:
+        mood_fragments = CHARACTER_MOOD_OVERRIDES[code]
+    else:
+        mood_fragments = select_story_fragments(text, STORY_MOOD_RULES, limit=1)
+
+    fragments: list[str] = []
+    fragments.extend(code_hints)
+    if role_fragments:
+        fragments.extend(role_fragments)
+    elif not code_hints:
+        fragments.append(ERA_ROLE_FALLBACKS.get(era_style, ERA_ROLE_FALLBACKS["patriarch"]))
+    fragments.extend(prop_fragments)
+    fragments.extend(mood_fragments)
+    return dedupe_preserve_order([fragment for fragment in fragments if fragment])
+
+
+def build_visual_variation_fragments(code: str) -> list[str]:
+    if code in CHARACTER_VISUAL_OVERRIDES:
+        return dedupe_preserve_order(
+            [fragment for fragment in CHARACTER_VISUAL_OVERRIDES[code] if fragment]
+        )
+
+    hair_variants = FEMALE_HAIR_VARIANTS if code in FEMALE_CODES else MALE_HAIR_VARIANTS
+    fragments = [
+        stable_pick(code, "body", BODY_VARIANTS),
+        stable_pick(code, "face", FACE_SHAPE_VARIANTS),
+        stable_pick(code, "hair", hair_variants),
+    ]
+    if code not in FEMALE_CODES:
+        beard = stable_pick(code, "beard", BEARD_VARIANTS)
+        if beard:
+            fragments.append(beard)
+    return dedupe_preserve_order([fragment for fragment in fragments if fragment])
+
+
+def build_character_prompt(
+    code: str,
+    name_en: str,
+    palette_text: str,
+    era_style: str,
+    story_rows: list[dict[str, Any]],
+) -> str:
+    if code in ANGELIC_CODES:
+        identity_text = "angelic heavenly messenger"
+    else:
+        identity_text = (
+            "adult biblical woman (age 25+)"
+            if code in FEMALE_CODES
+            else "adult biblical man (age 25+)"
+        )
+    prompt_parts = [
+        "COMMON_STYLE",
+        f"palette: {palette_text}",
+        name_en,
+        identity_text,
+        *build_story_prompt_fragments(code=code, era_style=era_style, story_rows=story_rows),
+        *build_visual_variation_fragments(code=code),
+        "ancient Near Eastern inspired clothing",
+        "clean iconic silhouette",
+        "distinctive story-driven accessory",
+        "single character only",
+        "no other people",
+        "full body visible head to toe",
+    ]
+    return ", ".join(part for part in prompt_parts if part)
 
 
 def build_god_prompt(palette_text: str) -> str:
     return (
-        f"palette: {palette_text}, unseen radiant divine presence, "
-        "abstract luminous holy form, flowing gentle light and soft glow, "
-        "no human figure, no face, no eyes, no mouth, no body, "
-        "no sun disk, no star icon, sacred non-anthropomorphic presence"
+        f"palette: {palette_text}, simple faceted form of light in the same blocky low-poly "
+        "biblical illustration style as the cast, "
+        "just a soft glowing light shape, not a symbol, not an emblem, not an icon, "
+        "one centered light form only, simple vertical tapered silhouette made of a few large "
+        "geometric planes, flat matte vector shading with subtle faceted edges, "
+        "gentle warm glow, a few short attached glow rays only, large clean empty white space around it, "
+        "plain white background, minimal clean composition, "
+        "no person, no human figure, no face, no eyes, no mouth, no hands, no body, "
+        "no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, "
+        "sacred non-anthropomorphic presence"
     )
 
 
@@ -380,6 +898,13 @@ def has_style_keys(data: dict[str, Any]) -> bool:
     return all(
         key in data for key in ["common_style", "negative_prompt", "palettes", "generation_defaults"]
     )
+
+
+def should_reuse_style_source(data: dict[str, Any]) -> bool:
+    meta = data.get("meta", {})
+    if not isinstance(meta, dict):
+        return False
+    return str(meta.get("style_source", "")).strip().lower() == "manual"
 
 
 def build_template_map(*json_paths: Path) -> dict[str, dict[str, Any]]:
@@ -408,6 +933,9 @@ def build_avatar_prompts(
 ) -> dict[str, Any]:
     mention_counts: Counter[str] = Counter()
     era_votes: dict[str, Counter[str]] = defaultdict(Counter)
+    story_profiles: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
 
     for row in rows:
         number = parse_event_number(str(row.get("title", "")))
@@ -419,6 +947,7 @@ def build_avatar_prompts(
                 continue
             mention_counts[code] += 1
             era_votes[code][era_style] += 1
+            story_profiles[code][era_style].append(row)
 
     selected_codes = sorted(
         [code for code, count in mention_counts.items() if count >= min_mentions],
@@ -454,19 +983,38 @@ def build_avatar_prompts(
             name_ko = name_en
 
         palette_text = str(palettes.get(era_style, palettes[default_style]))
-        prompt = str(template.get("prompt", "")).strip()
+        template_prompt_source = str(template.get("prompt_source", "")).strip().lower()
+        prompt = ""
+        if template_prompt_source == "manual":
+            prompt = str(template.get("prompt", "")).strip()
         use_common_style = bool(template.get("use_common_style", True))
         disable_adult_guardrail = bool(template.get("disable_adult_guardrail", False))
         person_generation = str(template.get("person_generation", "")).strip()
+        prompt_source = template_prompt_source if template_prompt_source == "manual" else AUTO_PROMPT_SOURCE
+
+        story_rows = list(story_profiles.get(code, {}).get(era_style, []))
+        if not story_rows:
+            story_rows = [
+                row
+                for rows_by_era in story_profiles.get(code, {}).values()
+                for row in rows_by_era
+            ]
 
         if code == "god":
             prompt = build_god_prompt(palette_text=palette_text)
             use_common_style = False
             disable_adult_guardrail = True
             person_generation = "dont_allow"
+            prompt_source = AUTO_PROMPT_SOURCE
 
         if not prompt:
-            prompt = build_generic_prompt(name_en=name_en, palette_text=palette_text)
+            prompt = build_character_prompt(
+                code=code,
+                name_en=name_en,
+                palette_text=palette_text,
+                era_style=era_style,
+                story_rows=story_rows,
+            )
 
         character = {
             "index": idx,
@@ -475,6 +1023,7 @@ def build_avatar_prompts(
             "name_en": name_en,
             "era": era_style,
             "prompt": prompt,
+            "prompt_source": prompt_source,
             "mention_count": mention_counts[code],
         }
         if not use_common_style:
@@ -483,17 +1032,30 @@ def build_avatar_prompts(
             character["disable_adult_guardrail"] = True
         if person_generation:
             character["person_generation"] = person_generation
+        if code == "god":
+            character["negative_prompt_extra"] = GOD_NEGATIVE_PROMPT_EXTRA
+        if code == "gabriel":
+            character["negative_prompt_extra"] = GABRIEL_NEGATIVE_PROMPT_EXTRA
+        if code == "haman":
+            character["negative_prompt_extra"] = HAMAN_NEGATIVE_PROMPT_EXTRA
+        if code == "daniel":
+            character["negative_prompt_extra"] = DANIEL_NEGATIVE_PROMPT_EXTRA
+        if code == "ruth":
+            character["negative_prompt_extra"] = RUTH_NEGATIVE_PROMPT_EXTRA
         characters.append(character)
 
     output = {
         "meta": {
             "title": "Bible avatar prompts (2+ mentions, individual-only from 200 stories)",
-            "version": "1.0",
+            "version": "2.0",
             "count": len(characters),
+            "style_source": AUTO_PROMPT_SOURCE,
             "note": (
                 "Generated from assets/200_stories with "
                 "disciples/apostles/brothers expanded to individuals, then filtered "
-                f"to mention_count >= {min_mentions}."
+                f"to mention_count >= {min_mentions}. "
+                "Prompts are story-aware geometric avatars; set prompt_source=manual "
+                "on a character to keep a custom prompt."
             ),
         },
         "common_style": style_source["common_style"],
@@ -518,7 +1080,7 @@ def main() -> int:
     style_source_path = "<built-in defaults>"
     for path in template_paths:
         data = load_prompt_json(path)
-        if has_style_keys(data):
+        if has_style_keys(data) and should_reuse_style_source(data):
             style_source = data
             style_source_path = str(path)
             break

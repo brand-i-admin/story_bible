@@ -1,0 +1,79 @@
+{
+  "event_id": "",
+  "event_code": "evt_180",
+  "title": "180 일곱 집사와 스데반 순교",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 30,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "구제 문제로 다툼이 생기고 사도들이 일곱 사람을 세운다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "apostles"
+      ],
+      "scene_reference_person_codes": [
+        "apostles"
+      ],
+      "reference_avatar_codes": [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "matthias"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "배경과 분위기만 보이는",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "분노가 폭발하고 스데반이 하늘을 바라본다, 직접 묘사 최소",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "사울이 그 광경을 지켜본다, 그의 눈빛이 단단해진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "saul"
+      ],
+      "scene_reference_person_codes": [
+        "saul"
+      ],
+      "reference_avatar_codes": [
+        "saul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "event_id": "",
+  "event_code": "evt_139",
+  "title": "139 성전 재건: 방해와 완공",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 39,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "주변 사람들이 접근한다, 긴장이 감돈다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "거절 후 방해와 협박이 시작된다, 작업이 멈춘다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 다시 망치 소리, 돌이 쌓이고 골조가 올라간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "returnees"
+      ],
+      "scene_reference_person_codes": [
+        "returnees"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "returnees"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 완공 예배, 사람들의 얼굴에 눈물과 웃음이 함께 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "returnees"
+      ],
+      "scene_reference_person_codes": [
+        "returnees"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "returnees"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

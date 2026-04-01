@@ -1,18 +1,19 @@
 {
   "meta": {
     "title": "Bible avatar prompts (2+ mentions, individual-only from 200 stories)",
-    "version": "1.0",
-    "count": 78,
-    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals, then filtered to mention_count >= 2."
+    "version": "2.0",
+    "count": 77,
+    "style_source": "auto_story_v2",
+    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals, then filtered to mention_count >= 2. Prompts are story-aware geometric avatars; set prompt_source=manual on a character to keep a custom prompt."
   },
-  "common_style": "cute chibi character, big head small body (2.5 heads tall), low-poly faceted polygon style, origami papercraft look, clean vector-like shading, pastel colors, soft gradients, thick simple outline, minimal details, friendly expression, front 3/4 view, full body, centered, plain white background, high resolution, consistent proportions, no text, no watermark, same character design system as a consistent set, same face proportions, same polygon count, same shading style, same outline thickness",
-  "negative_prompt": "realistic, photoreal, anime, manga, 3D render, clay, pixel art, gritty, dark, horror, complex background, text, logo, watermark",
+  "common_style": "stylized geometric biblical character illustration, blocky low-poly faceted planes, angular polygon face and hair, flat matte vector shading with subtle cut-paper facets, strict canonical body proportions, head:torso:legs = 1:1:1 exactly, head section one-third of total height, torso section one-third, legs section one-third, same body ratio template across all human characters, compact adult proportions, not chibi, simple small eyes and nose, mature friendly expression, minimal clean outline, exactly one character only, solo single subject, full body visible from head to toe, both feet visible, whole figure fits inside frame, centered, plain white background, high resolution, consistent design system across the full cast, distinct silhouette and face geometry for each character, distinct hairstyle and story-inspired accessory for each character, no text, no watermark",
+  "negative_prompt": "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, chibi, super-deformed, giant head, baby proportions, oversized eyes, long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, same-face clones, duplicate person, multiple people, crowd, group shot, companions, side characters, extra faces, extra bodies, twin, mirrored figure, close-up, portrait crop, bust shot, half body, cropped head, cropped feet, marshmallow body, gritty, dark, horror, complex background, text, logo, watermark",
   "palettes": {
     "primeval": "soft beige + olive + sky blue accents",
     "patriarch": "warm sand + cream + muted teal accents",
     "exodus_wilderness": "teal + desert tan + bronze accents",
     "judges": "olive green + clay brown + muted gold accents",
-    "monarchy": "royal purple + navy + gold accents (still pastel)",
+    "monarchy": "royal purple + navy + muted gold accents",
     "prophets_exile": "muted indigo + gray + parchment cream accents",
     "post_exile_return": "stone gray + sage green + parchment cream accents",
     "gospels": "cream + sky blue + soft rose accents",
@@ -32,7 +33,8 @@
       "name_ko": "예수님",
       "name_en": "Jesus",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Jesus, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Jesus, adult biblical man (age 25+), calm teacher-and-healer silhouette, deep red outer robe over a light inner tunic, both arms gently opened outward in a welcoming gesture, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 23
     },
     {
@@ -41,7 +43,8 @@
       "name_ko": "모세",
       "name_en": "Moses",
       "era": "exodus_wilderness",
-      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Moses, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Moses, adult biblical man (age 25+), liberator silhouette shaped by wilderness, steady leader's presence, wooden staff, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 23
     },
     {
@@ -50,7 +53,8 @@
       "name_ko": "바울",
       "name_en": "Paul",
       "era": "early_church",
-      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Paul, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Paul, adult biblical man (age 25+), road-worn missionary silhouette, intense teacher's focus, rolled scroll or letter satchel, brave forward-leaning stance, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 21
     },
     {
@@ -59,7 +63,8 @@
       "name_ko": "요한",
       "name_en": "John",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, John, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, John, adult biblical man (age 25+), young fisherman-apostle turned reflective writer silhouette, small net bundle and rolled scroll satchel, quiet witness-like presence, light celebratory posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 19
     },
     {
@@ -68,11 +73,13 @@
       "name_ko": "하나님",
       "name_en": "God",
       "era": "primeval",
-      "prompt": "palette: soft beige + olive + sky blue accents, stylized low-poly faceted polygon art in the same series style, one centered circular light orb (filled disc) with strong soft glow and radial beams, plain white background, minimal clean composition, no person, no human silhouette, no face, no body, no wings, no floating ring, no text",
+      "prompt": "palette: soft beige + olive + sky blue accents, simple faceted form of light in the same blocky low-poly biblical illustration style as the cast, just a soft glowing light shape, not a symbol, not an emblem, not an icon, one centered light form only, simple vertical tapered silhouette made of a few large geometric planes, flat matte vector shading with subtle faceted edges, gentle warm glow, a few short attached glow rays only, large clean empty white space around it, plain white background, minimal clean composition, no person, no human figure, no face, no eyes, no mouth, no hands, no body, no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, sacred non-anthropomorphic presence",
+      "prompt_source": "auto_story_v2",
       "mention_count": 17,
       "use_common_style": false,
       "disable_adult_guardrail": true,
-      "person_generation": "dont_allow"
+      "person_generation": "dont_allow",
+      "negative_prompt_extra": "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, compass rose, trident-like symbol, monogram, glyph, letters, runes, secondary emblem, extra emblem, extra icon, detached symbol, lower symbol, bottom mark, floating mark below, small logo below, framed icon, geometric badge"
     },
     {
       "index": 6,
@@ -80,7 +87,8 @@
       "name_ko": "베드로",
       "name_en": "Peter",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Peter, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Peter, adult biblical man (age 25+), sturdy fisherman-apostle silhouette, broad dependable presence, shoulder-draped fishing net and rope details, light celebratory posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 17
     },
     {
@@ -89,7 +97,8 @@
       "name_ko": "요셉",
       "name_en": "Joseph",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Joseph, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Joseph, adult biblical man (age 25+), dream-marked survivor silhouette, protected-yet-resilient bearing, patterned robe accent, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 16
     },
     {
@@ -98,7 +107,8 @@
       "name_ko": "야곱",
       "name_en": "Jacob",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Jacob, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Jacob, adult biblical man (age 25+), dream-marked survivor silhouette, oil-flask accent, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 15
     },
     {
@@ -107,7 +117,8 @@
       "name_ko": "아브라함",
       "name_en": "Abraham",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Abraham, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Abraham, adult biblical man (age 25+), nomadic patriarch silhouette, travel-worn layered robe, brave forward-leaning stance, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 13
     },
     {
@@ -116,7 +127,8 @@
       "name_ko": "빌립",
       "name_en": "Philip",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Philip, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Philip, adult biblical man (age 25+), road-guide messenger disciple silhouette, travel satchel and route scroll, practical alert presence, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 12
     },
     {
@@ -125,7 +137,8 @@
       "name_ko": "안드레",
       "name_en": "Andrew",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Andrew, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Andrew, adult biblical man (age 25+), rope-belt fisherman-apostle silhouette, hand net and rope-belt details, weathered fisherman's focus, light celebratory posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 11
     },
     {
@@ -134,7 +147,8 @@
       "name_ko": "다윗",
       "name_en": "David",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), David, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, David, adult biblical man (age 25+), shepherd-king silhouette, bold agile bearing, sling and small stone pouch, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 11
     },
     {
@@ -143,7 +157,8 @@
       "name_ko": "바돌로매",
       "name_en": "Bartholomew",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Bartholomew, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Bartholomew, adult biblical man (age 25+), scripture scholar disciple silhouette, scroll bundle held like a student, measured thoughtful presence, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -152,7 +167,8 @@
       "name_ko": "야고보(알패오의 아들)",
       "name_en": "James Alphaeus",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James Alphaeus, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James Alphaeus, adult biblical man (age 25+), village artisan disciple silhouette, simple work sash and cloth tool wrap, quiet steady presence, light celebratory posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -161,7 +177,8 @@
       "name_ko": "야고보(세베대의 아들)",
       "name_en": "James Zebedee",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James Zebedee, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James Zebedee, adult biblical man (age 25+), boat-working fisherman-apostle silhouette, coiled rope, short oar, and fish basket, bold energetic worker's presence, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -170,7 +187,8 @@
       "name_ko": "마태",
       "name_en": "Matthew",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Matthew, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Matthew, adult biblical man (age 25+), tax-collector record-keeper disciple silhouette, coin pouch, wax tablet, and stylus, precise record-keeper presence, light celebratory posture, broad stable build, soft angular oval face, layered hood-like head covering, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -179,7 +197,8 @@
       "name_ko": "시몬(셀롯)",
       "name_en": "Simon Zealot",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Simon Zealot, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Simon Zealot, adult biblical man (age 25+), zealot organizer disciple silhouette, belted travel cloak with gathered folds, lean vigilant presence, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -188,7 +207,8 @@
       "name_ko": "다대오(유다)",
       "name_en": "Thaddaeus",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Thaddaeus, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Thaddaeus, adult biblical man (age 25+), courier-messenger disciple silhouette, letter satchel with a sealed scroll, warm approachable presence, light celebratory posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -197,7 +217,8 @@
       "name_ko": "도마",
       "name_en": "Thomas",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Thomas, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Thomas, adult biblical man (age 25+), builder-craftsman disciple silhouette, measuring cord and carpenter tool pouch, solid thoughtful presence, light celebratory posture, broad stable build, soft angular oval face, layered hood-like head covering, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 10
     },
     {
@@ -206,7 +227,8 @@
       "name_ko": "유다",
       "name_en": "Judah",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Judah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Judah, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 9
     },
     {
@@ -215,7 +237,8 @@
       "name_ko": "사울",
       "name_en": "Saul",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Saul, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: deep navy blue + muted gold + ivory accents, Saul, adult biblical man (age 25+), first king silhouette, dark navy royal robe with gold trim, simple geometric crown band, tall commanding presence, resolute steady posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
       "mention_count": 9
     },
     {
@@ -224,7 +247,8 @@
       "name_ko": "레위",
       "name_en": "Levi",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Levi, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Levi, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 8
     },
     {
@@ -233,7 +257,8 @@
       "name_ko": "르우벤",
       "name_en": "Reuben",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Reuben, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Reuben, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 8
     },
     {
@@ -242,7 +267,8 @@
       "name_ko": "시므온",
       "name_en": "Simeon",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Simeon, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Simeon, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 8
     },
     {
@@ -251,7 +277,8 @@
       "name_ko": "아셀",
       "name_en": "Asher",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Asher, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Asher, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
@@ -260,478 +287,522 @@
       "name_ko": "베냐민",
       "name_en": "Benjamin",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Benjamin, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Benjamin, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
       "index": 27,
-      "code": "dan",
-      "name_ko": "단",
-      "name_en": "Dan",
-      "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Dan, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
-      "mention_count": 7
-    },
-    {
-      "index": 28,
       "code": "gad",
       "name_ko": "갓",
       "name_en": "Gad",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Gad, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Gad, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, light agile build, square jaw with broad brow planes, short blocky curls, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 29,
+      "index": 28,
       "code": "issachar",
       "name_ko": "잇사갈",
       "name_en": "Issachar",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Issachar, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Issachar, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 30,
+      "index": 29,
       "code": "joshua",
       "name_ko": "여호수아",
       "name_en": "Joshua",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Joshua, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Joshua, adult biblical man (age 25+), sturdy rebuilder silhouette, builder's belt with wooden tools, resolute steady posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 31,
+      "index": 30,
       "code": "judas",
       "name_ko": "유다",
       "name_en": "Judas",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Judas, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Judas, adult biblical man (age 25+), treasurer disciple silhouette, money pouch and small account bag, guarded calculating presence, light celebratory posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 32,
+      "index": 31,
       "code": "naphtali",
       "name_ko": "납달리",
       "name_en": "Naphtali",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Naphtali, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Naphtali, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 33,
+      "index": 32,
       "code": "sarah",
       "name_ko": "사라",
       "name_en": "Sarah",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Sarah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Sarah, adult biblical woman (age 25+), weathered desert-leader silhouette, open-handed compassionate posture, tall narrow build, diamond-shaped face with a sharp chin, braided geometric hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 34,
+      "index": 33,
       "code": "zebulun",
       "name_ko": "스불론",
       "name_en": "Zebulun",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Zebulun, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Zebulun, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, light agile build, square jaw with broad brow planes, short blocky curls, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 7
     },
     {
-      "index": 35,
+      "index": 34,
       "code": "aaron",
       "name_ko": "아론",
       "name_en": "Aaron",
       "era": "exodus_wilderness",
-      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Aaron, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Aaron, adult biblical man (age 25+), ceremonial leader silhouette, priestly layered sash, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 6
     },
     {
-      "index": 36,
+      "index": 35,
       "code": "barnabas",
       "name_ko": "바나바",
       "name_en": "Barnabas",
       "era": "early_church",
-      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Barnabas, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Barnabas, adult biblical man (age 25+), road-worn traveler silhouette, rolled scroll or letter satchel, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 6
     },
     {
-      "index": 37,
+      "index": 36,
       "code": "pharaoh",
       "name_ko": "바로",
       "name_en": "Pharaoh",
       "era": "exodus_wilderness",
-      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Pharaoh, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Pharaoh, adult biblical man (age 25+), weathered desert-leader silhouette, wooden staff, resolute steady posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 6
     },
     {
-      "index": 38,
+      "index": 37,
       "code": "samuel",
       "name_ko": "사무엘",
       "name_en": "Samuel",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Samuel, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Samuel, adult biblical man (age 25+), listening prophet silhouette, quiet spiritual alertness, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 6
     },
     {
-      "index": 39,
+      "index": 38,
       "code": "elijah",
       "name_ko": "엘리야",
       "name_en": "Elijah",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Elijah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: burnt orange + warm sand + muted brown accents, Elijah, adult biblical man (age 25+), storm-like prophet silhouette, rough orange mantle and weathered prophet robe, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
       "mention_count": 5
     },
     {
-      "index": 40,
+      "index": 39,
       "code": "esther",
       "name_ko": "에스더",
       "name_en": "Esther",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Esther, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Esther, adult biblical woman (age 25+), beautiful queenly silhouette, elegant regal beauty, refined royal poise, jeweled geometric crown band and rich royal robe accents, gentle confident smile and poised posture, slender graceful build, soft elegant oval face with refined feminine beauty, long dark hair under a royal veil with geometric jewel accents, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 5
     },
     {
-      "index": 41,
+      "index": 40,
       "code": "mary",
       "name_ko": "마리아",
       "name_en": "Mary",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Mary, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Mary, adult biblical woman (age 25+), humble courageous mother silhouette, calm grounded presence, layered travel veil, light celebratory posture, lean traveler build, long wedge-shaped face, shoulder-length straight hair in polygon sheets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 5
     },
     {
-      "index": 42,
+      "index": 41,
       "code": "nehemiah",
       "name_ko": "느헤미야",
       "name_en": "Nehemiah",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Nehemiah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Nehemiah, adult biblical man (age 25+), wall-rebuilder silhouette, focused civic resolve, builder's belt with wooden tools, thoughtful calm expression, light agile build, square jaw with broad brow planes, short blocky curls, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 5
     },
     {
-      "index": 43,
+      "index": 42,
       "code": "isaac",
       "name_ko": "이삭",
       "name_en": "Isaac",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Isaac, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Isaac, adult biblical man (age 25+), weathered desert-leader silhouette, thoughtful calm expression, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 4
     },
     {
-      "index": 44,
+      "index": 43,
       "code": "mordecai",
       "name_ko": "모르드개",
       "name_en": "Mordecai",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Mordecai, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Mordecai, adult biblical man (age 25+), ceremonial temple-robe silhouette, rolled scroll or letter satchel, open-handed compassionate posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 4
     },
     {
-      "index": 45,
+      "index": 44,
       "code": "silas",
       "name_ko": "실라",
       "name_en": "Silas",
       "era": "early_church",
-      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Silas, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Silas, adult biblical man (age 25+), road-worn traveler silhouette, rolled scroll or letter satchel, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 4
     },
     {
-      "index": 46,
+      "index": 45,
       "code": "solomon",
       "name_ko": "솔로몬",
       "name_en": "Solomon",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Solomon, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: sky blue + cream + rich gold accents, Solomon, adult biblical man (age 25+), wise royal silhouette, luxurious sky-blue king robe with rich gold trim, geometric crown band, measured judicial calm, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
       "mention_count": 4
     },
     {
-      "index": 47,
+      "index": 46,
       "code": "timothy",
       "name_ko": "디모데",
       "name_en": "Timothy",
       "era": "early_church",
-      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Timothy, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Timothy, adult biblical man (age 25+), road-worn traveler silhouette, rolled scroll or letter satchel, light celebratory posture, broad stable build, soft angular oval face, layered hood-like head covering, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 4
     },
     {
-      "index": 48,
+      "index": 47,
       "code": "adam",
       "name_ko": "아담",
       "name_en": "Adam",
       "era": "primeval",
-      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Adam, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Adam, adult biblical man (age 25+), mythic early-world silhouette, light agile build, square jaw with broad brow planes, short blocky curls, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 49,
+      "index": 48,
       "code": "daniel",
       "name_ko": "다니엘",
       "name_en": "Daniel",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Daniel, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
-      "mention_count": 3
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Daniel, adult biblical man (age 25+), court-wise exile silhouette, calm dignified bearing, rolled scroll accent, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 3,
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra person, background person"
     },
     {
-      "index": 50,
+      "index": 49,
       "code": "esau",
       "name_ko": "에서",
       "name_en": "Esau",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Esau, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Esau, adult biblical man (age 25+), nomadic patriarch silhouette, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 51,
+      "index": 50,
       "code": "eve",
       "name_ko": "하와",
       "name_en": "Eve",
       "era": "primeval",
-      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Eve, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Eve, adult biblical woman (age 25+), graceful first-woman silhouette, warm gentle expression, soft feminine presence, gentle relaxed posture, slender graceful build, soft delicate face with gentle feminine features, long flowing hair with soft faceted strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 52,
+      "index": 51,
       "code": "james",
       "name_ko": "야고보",
       "name_en": "James",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, James, adult biblical man (age 25+), fisherman-apostle silhouette with rope-belt layers, net weights and rope details, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 53,
+      "index": 52,
       "code": "laban",
       "name_ko": "라반",
       "name_en": "Laban",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Laban, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Laban, adult biblical man (age 25+), shepherd-inspired outdoor silhouette, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 54,
+      "index": 53,
       "code": "lot",
       "name_ko": "롯",
       "name_en": "Lot",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Lot, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Lot, adult biblical man (age 25+), ceremonial temple-robe silhouette, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 55,
+      "index": 54,
       "code": "noah",
       "name_ko": "노아",
       "name_en": "Noah",
       "era": "primeval",
-      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Noah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Noah, adult biblical man (age 25+), ark-builder silhouette, weathered survivor presence, builder's belt with wooden tools, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 56,
+      "index": 55,
       "code": "rachel",
       "name_ko": "라헬",
       "name_en": "Rachel",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Rachel, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Rachel, adult biblical woman (age 25+), radiant beautiful beloved matriarch silhouette, elegant luminous presence, warm radiant smile and elegant tender posture, slender graceful build, soft luminous oval face with striking beautiful feminine features, long dark hair under a graceful layered veil, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3
     },
     {
-      "index": 57,
+      "index": 56,
       "code": "ruth",
       "name_ko": "룻",
       "name_en": "Ruth",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Ruth, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
-      "mention_count": 3
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Ruth, adult biblical woman (age 25+), beautiful loyal field-worker silhouette, gentle resilient presence, gathered grain bundle accent, warm humble smile and gentle posture, slender graceful build, soft feminine oval face with gentle features, soft layered veil framing the face, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 3,
+      "negative_prompt_extra": "male, man, masculine face, broad male jaw, beard, mustache, warrior, armor"
     },
     {
-      "index": 58,
+      "index": 57,
       "code": "abimelech",
       "name_ko": "아비멜렉",
       "name_en": "Abimelech",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Abimelech, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Abimelech, adult biblical man (age 25+), road-worn traveler silhouette, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 59,
+      "index": 58,
       "code": "ahab",
       "name_ko": "아합",
       "name_en": "Ahab",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Ahab, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Ahab, adult biblical man (age 25+), prophetic visionary silhouette, rolled scroll or letter satchel, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 60,
+      "index": 59,
       "code": "ananias",
       "name_ko": "아나니아",
       "name_en": "Ananias",
       "era": "early_church",
-      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Ananias, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Ananias, adult biblical man (age 25+), ceremonial temple-robe silhouette, light agile build, square jaw with broad brow planes, short blocky curls, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 61,
+      "index": 60,
       "code": "boaz",
       "name_ko": "보아스",
       "name_en": "Boaz",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Boaz, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Boaz, adult biblical man (age 25+), protective caregiver silhouette, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 62,
+      "index": 61,
       "code": "elisha",
       "name_ko": "엘리사",
       "name_en": "Elisha",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Elisha, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Elisha, adult biblical man (age 25+), structured royal-era silhouette, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 63,
+      "index": 62,
       "code": "elizabeth",
       "name_ko": "엘리사벳",
       "name_en": "Elizabeth",
       "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Elizabeth, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Elizabeth, adult biblical woman (age 25+), ceremonial temple-robe silhouette, light celebratory posture, broad stable build, soft angular oval face, tucked-back long hair with blocky edges, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 64,
+      "index": 63,
       "code": "ezekiel",
       "name_ko": "에스겔",
       "name_en": "Ezekiel",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezekiel, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezekiel, adult biblical man (age 25+), prophetic visionary silhouette, simple geometric crown band or royal sash, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 65,
+      "index": 64,
       "code": "ezra",
       "name_ko": "에스라",
       "name_en": "Ezra",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezra, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezra, adult biblical man (age 25+), scribe-teacher silhouette, measured studious bearing, rolled scroll accent, light celebratory posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 66,
+      "index": 65,
       "code": "gabriel",
       "name_ko": "가브리엘",
       "name_en": "Gabriel",
       "era": "gospels",
-      "prompt": "palette: cream + sky blue + soft rose accents, stylized low-poly faceted polygon art in the same series style, abstract angel symbol for Gabriel: central vertical pillar of bright light with two symmetric geometric wing-shapes, strong soft glow and radial rays, no text!",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Gabriel, angelic heavenly messenger, radiant angelic messenger silhouette, single angel only, soft luminous wings made of simple faceted shapes, heavenly messenger presence with clean flowing robes, gentle descending messenger posture, tall luminous figure with graceful proportions, smooth serene face with gentle heavenly features, soft radiant hair framed by simple glowing planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2,
-      "use_common_style": false,
-      "disable_adult_guardrail": true,
-      "person_generation": "dont_allow"
+      "negative_prompt_extra": "ordinary human priest, ordinary human man, elderly man, beard, warrior, armor, multiple people, crowd, group, duo, pair, two people, extra person, background person, second angel, angel choir, heavenly host, attendants"
     },
     {
-      "index": 67,
+      "index": 66,
       "code": "gideon",
       "name_ko": "기드온",
       "name_en": "Gideon",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Gideon, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Gideon, adult biblical man (age 25+), bold warrior silhouette, oil-flask accent, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 68,
+      "index": 67,
       "code": "hagar",
       "name_ko": "하갈",
       "name_en": "Hagar",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Hagar, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Hagar, adult biblical woman (age 25+), weathered desert-leader silhouette, open-handed compassionate posture, tall narrow build, diamond-shaped face with a sharp chin, braided geometric hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 69,
+      "index": 68,
       "code": "haman",
       "name_ko": "하만",
       "name_en": "Haman",
       "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Haman, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
-      "mention_count": 2
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Haman, adult biblical man (age 25+), scheming court-official silhouette, sealed decree scroll and signet ring, single arrogant court-villain presence, broad stable build, soft angular oval face, layered hood-like head covering, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 2,
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra person, background person, king, queen, banquet crowd, attendants, throne scene"
     },
     {
-      "index": 70,
+      "index": 69,
       "code": "hezekiah",
       "name_ko": "히스기야",
       "name_en": "Hezekiah",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Hezekiah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal cream + deep indigo + muted gold accents, Hezekiah, adult biblical man (age 25+), crowned king of Judah silhouette, ceremonial royal robe with deep indigo accents, geometric crown band clearly visible, rolled scroll or letter satchel, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
       "mention_count": 2
     },
     {
-      "index": 71,
+      "index": 70,
       "code": "isaiah",
       "name_ko": "이사야",
       "name_en": "Isaiah",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Isaiah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Isaiah, adult biblical man (age 25+), ceremonial temple-robe silhouette, rolled scroll or letter satchel, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 72,
+      "index": 71,
       "code": "ishmael",
       "name_ko": "이스마엘",
       "name_en": "Ishmael",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Ishmael, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Ishmael, adult biblical man (age 25+), weathered desert-leader silhouette, open-handed compassionate posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 73,
+      "index": 72,
       "code": "jeremiah",
       "name_ko": "예레미야",
       "name_en": "Jeremiah",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Jeremiah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Jeremiah, adult biblical man (age 25+), road-worn traveler silhouette, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 74,
+      "index": 73,
       "code": "leah",
       "name_ko": "레아",
       "name_en": "Leah",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Leah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Leah, adult biblical woman (age 25+), plain modest matriarch silhouette, simple gentle presence, quiet modest smile and gentle reserved posture, modest average build, soft plain oval face with simple gentle features, dark hair tucked under a practical layered veil, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 75,
+      "index": 74,
       "code": "matthias",
       "name_ko": "맛디아",
       "name_en": "Matthias",
       "era": "early_church",
-      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Matthias, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: teal + sea blue + warm brown accents, Matthias, adult biblical man (age 25+), mission-era silhouette, thoughtful calm expression, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 76,
+      "index": 75,
       "code": "naomi",
       "name_ko": "나오미",
       "name_en": "Naomi",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Naomi, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Naomi, adult biblical woman (age 25+), ceremonial temple-robe silhouette, lean traveler build, long wedge-shaped face, shoulder-length straight hair in polygon sheets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 77,
+      "index": 76,
       "code": "nathan",
       "name_ko": "나단",
       "name_en": "Nathan",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + gold accents (still pastel), Nathan, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Nathan, adult biblical man (age 25+), regal angular silhouette, simple geometric crown band or royal sash, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     },
     {
-      "index": 78,
+      "index": 77,
       "code": "rebekah",
       "name_ko": "리브가",
       "name_en": "Rebekah",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Rebekah, adult biblical character (age 25+), cute friendly expression, simple iconic ancient outfit, clean silhouette, cohesive chibi low-poly style",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Rebekah, adult biblical woman (age 25+), nomadic patriarch silhouette, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, layered veil framing the face, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 2
     }
   ]

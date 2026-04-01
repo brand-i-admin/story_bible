@@ -1,23 +1,33 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/app_user_profile.dart';
 import '../models/era.dart';
 import '../models/bible_verse.dart';
+import '../models/intercessory_prayer_item.dart';
 import '../models/person.dart';
+import '../models/person_study_progress.dart';
+import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/quiz_question.dart';
+import '../screens/profile_notes_screen.dart';
+import '../screens/saved_verses_screen.dart';
+import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
-import '../widgets/era_selector.dart';
-import '../widgets/game_ui_skin.dart';
 import '../widgets/person_panel.dart';
-import '../widgets/story_list_panel.dart';
+import '../widgets/parchment_dialog.dart';
 import '../widgets/story_map_panel.dart';
+import '../widgets/story_selection_panel.dart';
 
 class StoryHomeScreen extends ConsumerStatefulWidget {
   const StoryHomeScreen({super.key});
@@ -27,15 +37,28 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
+  static const int _intercessoryPrayerPageSize = 12;
+  static const double _selectionSheetCollapsedSize = 0.16;
+  static const double _selectionSheetExpandedSize = 0.60;
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
+  final ScrollController _selectionPanelScrollController = ScrollController();
+  final ScrollController _intercessoryPrayerScrollController =
+      ScrollController();
+  ProviderSubscription<User?>? _authUserSubscription;
+  StateSetter? _profilePageSetState;
   static final RegExp _sceneFilenamePattern = RegExp(r'/scene_(\d+)\.png$');
+  static final RegExp _sceneCodeDigitsPattern = RegExp(r'(\d+)$');
   static final RegExp _sceneInvalidDirChars = RegExp(r'[\\/:*?"<>|]+');
   static final RegExp _sceneWhitespacePattern = RegExp(r'\s+');
   static final RegExp _sceneLooseNormalizePattern = RegExp(
     r"[\s_\-:·,./\\(){}\[\]']+",
   );
   PersonSortMode _personSortMode = PersonSortMode.eraOrder;
-  _BottomTab _activeBottomTab = _BottomTab.home;
+  int _selectionStep = 1;
+  StorySelectionPanelStage _selectionPanelStage =
+      StorySelectionPanelStage.expanded;
+  double _selectionSheetExtent = _selectionSheetExpandedSize;
+  Set<String> _draftSelectedPersonIds = <String>{};
   _WeeklyStudyData? _weeklyStudyData;
   String? _weeklySelectedEventId;
   final Set<String> _weeklyCheckedEventIds = <String>{};
@@ -44,16 +67,452 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   bool _weeklyShowShortPopup = true;
   String? _weeklyWeekKey;
   List<Person> _profileAllPeople = const [];
+  Map<String, String> _profilePersonTestamentById = const {};
+  AppUserProfile? _profileUser;
+  Map<String, PersonStudyProgress> _profileStudyProgressByPersonId = const {};
+  Map<String, int> _profilePersonTimelineOrderById = const {};
+  List<IntercessoryPrayerItem> _intercessoryPrayerItems = const [];
+  bool _intercessoryPrayerLoading = false;
+  bool _intercessoryPrayerLoadingMore = false;
+  bool _intercessoryPrayerHasNextPage = false;
+  String? _intercessoryPrayerError;
+  int _intercessoryPrayerPageIndex = 0;
+  int _profileAttendanceStreak = 0;
+  int _profileStudyStreak = 0;
+  String _profileSelectedTestament = 'old';
   bool _profileLoading = false;
   String? _profileError;
-  Map<String, dynamic>? _assetManifestCache;
+  bool _subPageLoading = false;
+  String _subPageLoadingLabel = '';
+  bool _signingOut = false;
+  List<String>? _assetManifestCache;
   final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    _authUserSubscription = ref.listenManual<User?>(signedInUserProvider, (
+      previous,
+      next,
+    ) {
+      final previousId = previous?.id;
+      final nextId = next?.id;
+      if (previousId == nextId) {
+        return;
+      }
+      _handleAuthUserChanged(next);
+    });
     Future.microtask(() {
       ref.read(storyControllerProvider.notifier).initialize();
+    });
+    _intercessoryPrayerScrollController.addListener(
+      _handleIntercessoryPrayerScroll,
+    );
+  }
+
+  @override
+  void dispose() {
+    _authUserSubscription?.close();
+    _selectionPanelScrollController.dispose();
+    _intercessoryPrayerScrollController
+      ..removeListener(_handleIntercessoryPrayerScroll)
+      ..dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.dispose();
+  }
+
+  Future<void> _handleAuthUserChanged(User? user) async {
+    if (!mounted) {
+      return;
+    }
+    if (user == null) {
+      setState(() {
+        _profileUser = null;
+        _profileStudyProgressByPersonId = const {};
+        _intercessoryPrayerItems = const [];
+        _intercessoryPrayerLoading = false;
+        _intercessoryPrayerLoadingMore = false;
+        _intercessoryPrayerHasNextPage = false;
+        _intercessoryPrayerError = null;
+        _intercessoryPrayerPageIndex = 0;
+        _profileAttendanceStreak = 0;
+        _profileStudyStreak = 0;
+        _profileError = null;
+      });
+      _profilePageSetState?.call(() {});
+      await ref
+          .read(storyControllerProvider.notifier)
+          .refreshCompletedEventIds();
+      return;
+    }
+
+    try {
+      await ref.read(userRepositoryProvider).ensureSignedInUser(user);
+      if (!mounted) {
+        return;
+      }
+      await _loadProfilePeople(forceRefresh: true);
+      if (!mounted) {
+        return;
+      }
+      await ref
+          .read(storyControllerProvider.notifier)
+          .refreshCompletedEventIds();
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      _profilePageSetState?.call(() {});
+    }
+  }
+
+  Future<void> _refreshProfileProgressAfterQuizCompletion() async {
+    if (!mounted) {
+      return;
+    }
+    if (_profileUser == null && _profileAllPeople.isEmpty) {
+      return;
+    }
+    await _loadProfilePeople(forceRefresh: true);
+    if (!mounted) {
+      return;
+    }
+    _profilePageSetState?.call(() {});
+  }
+
+  void _handleIntercessoryPrayerScroll() {
+    if (!_intercessoryPrayerScrollController.hasClients) {
+      return;
+    }
+    if (_intercessoryPrayerLoading ||
+        _intercessoryPrayerLoadingMore ||
+        !_intercessoryPrayerHasNextPage) {
+      return;
+    }
+    final position = _intercessoryPrayerScrollController.position;
+    if (position.extentAfter < 180) {
+      unawaited(_loadIntercessoryPrayerPage(loadMore: true));
+    }
+  }
+
+  Future<void> _loadIntercessoryPrayerPage({bool loadMore = false}) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _intercessoryPrayerItems = const [];
+        _intercessoryPrayerLoading = false;
+        _intercessoryPrayerLoadingMore = false;
+        _intercessoryPrayerHasNextPage = false;
+        _intercessoryPrayerError = null;
+        _intercessoryPrayerPageIndex = 0;
+      });
+      _profilePageSetState?.call(() {});
+      return;
+    }
+
+    if (loadMore) {
+      if (_intercessoryPrayerLoading ||
+          _intercessoryPrayerLoadingMore ||
+          !_intercessoryPrayerHasNextPage) {
+        return;
+      }
+    }
+
+    final nextPageIndex = loadMore ? _intercessoryPrayerPageIndex + 1 : 0;
+    if (mounted) {
+      setState(() {
+        if (loadMore) {
+          _intercessoryPrayerLoadingMore = true;
+        } else {
+          _intercessoryPrayerLoading = true;
+          _intercessoryPrayerError = null;
+        }
+      });
+    }
+
+    try {
+      final result = await ref
+          .read(userRepositoryProvider)
+          .fetchIntercessoryPrayerPage(
+            pageIndex: nextPageIndex,
+            pageSize: _intercessoryPrayerPageSize,
+          );
+      if (!mounted) {
+        return;
+      }
+      final nextItems = loadMore
+          ? <IntercessoryPrayerItem>[
+              ..._intercessoryPrayerItems,
+              ...result.items.where(
+                (item) => _intercessoryPrayerItems.every(
+                  (existing) => existing.id != item.id,
+                ),
+              ),
+            ]
+          : result.items;
+      setState(() {
+        _intercessoryPrayerItems = nextItems;
+        _intercessoryPrayerHasNextPage = result.hasNextPage;
+        _intercessoryPrayerPageIndex = result.pageIndex;
+        _intercessoryPrayerLoading = false;
+        _intercessoryPrayerLoadingMore = false;
+      });
+      _profilePageSetState?.call(() {});
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _intercessoryPrayerLoading = false;
+        _intercessoryPrayerLoadingMore = false;
+        _intercessoryPrayerError = '중보할 기도제목을 불러오지 못했습니다.\n$error';
+      });
+      _profilePageSetState?.call(() {});
+    }
+  }
+
+  static const List<Color> _draftSelectionPalette = <Color>[
+    Color(0xFF3B6C94),
+    Color(0xFFB6673C),
+    Color(0xFF557C3E),
+    Color(0xFF8A4E5D),
+    Color(0xFF616161),
+    Color(0xFF9E7C24),
+    Color(0xFF7B5D43),
+    Color(0xFF5C6B9F),
+  ];
+
+  Set<String> _sanitizeDraftSelectedPersonIds(StoryState state) {
+    return _draftSelectedPersonIds
+        .where((id) => state.persons.any((person) => person.id == id))
+        .toSet();
+  }
+
+  Map<String, Color> _draftPersonColors(StoryState state) {
+    final selectedIds = _sanitizeDraftSelectedPersonIds(state).toList();
+    final next = <String, Color>{};
+    for (var i = 0; i < selectedIds.length; i++) {
+      next[selectedIds[i]] =
+          _draftSelectionPalette[i % _draftSelectionPalette.length];
+    }
+    return next;
+  }
+
+  Color _colorForDraftPerson(String personId, StoryState state) {
+    return _draftPersonColors(state)[personId] ?? const Color(0xFF8E7B61);
+  }
+
+  bool _sameStringSet(Set<String> a, Set<String> b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final item in a) {
+      if (!b.contains(item)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _hasPendingPersonSelectionChanges(StoryState state) {
+    final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
+    return !_sameStringSet(sanitizedDraft, state.selectedPersonIds);
+  }
+
+  List<StoryEvent> _timelineForSelectedPersons(
+    StoryState state,
+    Set<String> selectedPersonIds,
+  ) {
+    final filtered = state.events.where((event) {
+      return event.personIds.any(selectedPersonIds.contains);
+    }).toList();
+
+    filtered.sort((a, b) {
+      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+      if (cmp != 0) {
+        return cmp;
+      }
+      return a.id.compareTo(b.id);
+    });
+    return filtered;
+  }
+
+  bool _canOpenSelectionStep(int step, StoryState state) {
+    if (step <= 1) {
+      return true;
+    }
+    if (step == 2) {
+      return state.selectedEraId != null;
+    }
+    return state.selectedPersonIds.isNotEmpty &&
+        !_hasPendingPersonSelectionChanges(state);
+  }
+
+  bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
+
+  double _sheetMaxSizeFor(Size size) => _selectionSheetExpandedSize;
+
+  double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
+
+  double _sheetSizeForStage(Size size, StorySelectionPanelStage stage) {
+    return switch (stage) {
+      StorySelectionPanelStage.collapsed => _sheetCollapsedPeekSizeFor(size),
+      StorySelectionPanelStage.half => _sheetMaxSizeFor(size),
+      StorySelectionPanelStage.expanded => _sheetMaxSizeFor(size),
+    };
+  }
+
+  double _sheetFocusSizeForSelectedEvent(Size size) {
+    return _sheetCollapsedPeekSizeFor(size);
+  }
+
+  Future<void> _handleStepEraSelect(String eraId) async {
+    final controller = ref.read(storyControllerProvider.notifier);
+    await controller.selectEra(eraId);
+    if (!mounted) {
+      return;
+    }
+    final nextState = ref.read(storyControllerProvider);
+    setState(() {
+      _selectionStep = 1;
+      _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+    });
+  }
+
+  Future<void> _handleStepTestamentSelect(String testament) async {
+    final controller = ref.read(storyControllerProvider.notifier);
+    await controller.selectTestament(testament);
+    if (!mounted) {
+      return;
+    }
+    final nextState = ref.read(storyControllerProvider);
+    setState(() {
+      _selectionStep = 1;
+      _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+    });
+  }
+
+  void _toggleDraftPerson(String personId) {
+    setState(() {
+      final next = {..._draftSelectedPersonIds};
+      if (next.contains(personId)) {
+        next.remove(personId);
+      } else {
+        next.add(personId);
+      }
+      _draftSelectedPersonIds = next;
+    });
+  }
+
+  void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
+    final targetExtent = stage == StorySelectionPanelStage.collapsed
+        ? _selectionSheetCollapsedSize
+        : _selectionSheetExpandedSize;
+    setState(() {
+      _selectionPanelStage = stage;
+      _selectionSheetExtent = targetExtent;
+    });
+  }
+
+  void _collapseSelectionPanel() {
+    _animateSelectionPanelToStage(StorySelectionPanelStage.collapsed);
+  }
+
+  void _expandSelectionPanelToHalf() {
+    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
+  }
+
+  void _expandSelectionPanelFully() {
+    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
+  }
+
+  void _stepSelectionPanelUp() {
+    switch (_selectionPanelStage) {
+      case StorySelectionPanelStage.collapsed:
+      case StorySelectionPanelStage.half:
+        _expandSelectionPanelFully();
+        return;
+      case StorySelectionPanelStage.expanded:
+        return;
+    }
+  }
+
+  void _stepSelectionPanelDown() {
+    switch (_selectionPanelStage) {
+      case StorySelectionPanelStage.expanded:
+      case StorySelectionPanelStage.half:
+        _collapseSelectionPanel();
+        return;
+      case StorySelectionPanelStage.collapsed:
+        return;
+    }
+  }
+
+  void _toggleSelectionPanelFromTopButton() {
+    if (_selectionPanelStage == StorySelectionPanelStage.collapsed) {
+      _expandSelectionPanelToHalf();
+      return;
+    }
+    _collapseSelectionPanel();
+  }
+
+  void _goToSelectionStep(int step) {
+    final state = ref.read(storyControllerProvider);
+    if (!_canOpenSelectionStep(step, state)) {
+      return;
+    }
+    setState(() {
+      if (step == 2) {
+        final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
+        _draftSelectedPersonIds = _selectionStep == 3
+            ? state.selectedPersonIds.toSet()
+            : sanitizedDraft;
+      }
+      _selectionStep = step;
+    });
+  }
+
+  void _proceedFromEraStep() {
+    final state = ref.read(storyControllerProvider);
+    if (state.selectedEraId == null) {
+      return;
+    }
+    setState(() {
+      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _selectionStep = 2;
+    });
+  }
+
+  void _proceedFromPersonStep() {
+    final state = ref.read(storyControllerProvider);
+    final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
+    if (sanitizedDraft.isEmpty) {
+      return;
+    }
+    ref
+        .read(storyControllerProvider.notifier)
+        .setSelectedPersons(sanitizedDraft);
+    final viewportSize = MediaQuery.sizeOf(context);
+    final collapsedExtent = _sheetSizeForStage(
+      viewportSize,
+      StorySelectionPanelStage.collapsed,
+    );
+    setState(() {
+      _draftSelectedPersonIds = sanitizedDraft;
+      _selectionStep = 3;
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = collapsedExtent;
     });
   }
 
@@ -88,171 +547,312 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Future<void> _openWeeklyTab() async {
-    if (_activeBottomTab != _BottomTab.weekly) {
-      setState(() {
-        _activeBottomTab = _BottomTab.weekly;
-      });
-    }
-
-    final monday = _weekStartMonday(DateTime.now());
-    final weekKey = _weeklyKeyFor(monday);
-    if (_weeklyStudyData != null && _weeklyWeekKey == weekKey) {
+  Future<void> _showSubPageLoading(String label) async {
+    if (!mounted) {
       return;
     }
-
     setState(() {
-      _weeklyLoading = true;
-      _weeklyError = null;
+      _subPageLoading = true;
+      _subPageLoadingLabel = label;
     });
-
-    try {
-      var state = ref.read(storyControllerProvider);
-      if (state.eras.isEmpty) {
-        await ref.read(storyControllerProvider.notifier).initialize();
-        state = ref.read(storyControllerProvider);
-      }
-
-      if (state.eras.isEmpty) {
-        throw StateError('시대 데이터를 불러오지 못했습니다.');
-      }
-
-      final repo = ref.read(storyRepositoryProvider);
-      final eraBundles = await Future.wait(
-        state.eras.map((era) async {
-          final responses = await Future.wait([
-            repo.fetchPersonsByEra(era.id),
-            repo.fetchEventsByEra(era.id),
-          ]);
-          return (
-            persons: responses[0] as List<Person>,
-            events: responses[1] as List<StoryEvent>,
-          );
-        }),
-      );
-
-      final personById = <String, Person>{};
-      final eventsByPersonId = <String, List<StoryEvent>>{};
-      for (final bundle in eraBundles) {
-        for (final person in bundle.persons) {
-          personById.putIfAbsent(person.id, () => person);
-        }
-        for (final event in bundle.events) {
-          for (final personId in event.personIds) {
-            eventsByPersonId
-                .putIfAbsent(personId, () => <StoryEvent>[])
-                .add(event);
-          }
-        }
-      }
-
-      final candidates =
-          personById.values
-              .where(
-                (person) =>
-                    (eventsByPersonId[person.id] ?? const <StoryEvent>[])
-                        .isNotEmpty,
-              )
-              .toList()
-            ..sort((a, b) {
-              final order = a.displayOrder.compareTo(b.displayOrder);
-              if (order != 0) {
-                return order;
-              }
-              return a.name.compareTo(b.name);
-            });
-      if (candidates.isEmpty) {
-        throw StateError('주간 추천 인물을 찾지 못했습니다.');
-      }
-
-      final forcedCode = _forcedWeeklyPersonCodeByWeekKey[weekKey];
-      final forcedPerson = forcedCode == null
-          ? null
-          : candidates.where((person) => person.code == forcedCode).firstOrNull;
-      final weeklyPerson =
-          forcedPerson ?? candidates[_seedFromKey(weekKey) % candidates.length];
-      final weeklyEvents =
-          [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
-            ..sort((a, b) {
-              final cmp = a.timeSortKey.compareTo(b.timeSortKey);
-              if (cmp != 0) {
-                return cmp;
-              }
-              return a.id.compareTo(b.id);
-            });
-      final selectedEventId = weeklyEvents.isNotEmpty
-          ? weeklyEvents.first.id
-          : null;
-
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _weeklyStudyData = _WeeklyStudyData(
-          person: weeklyPerson,
-          events: weeklyEvents,
-          weekStartMonday: monday,
-        );
-        _weeklyWeekKey = weekKey;
-        _weeklySelectedEventId = selectedEventId;
-        _weeklyCheckedEventIds.clear();
-        _weeklyShowShortPopup = false;
-        _weeklyLoading = false;
-        _weeklyError = weeklyEvents.isEmpty ? '추천 인물의 이야기가 아직 없습니다.' : null;
-      });
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _weeklyLoading = false;
-        _weeklyError = '주간 탭 데이터를 불러오지 못했습니다: $error';
-      });
-    }
+    await Future<void>.delayed(const Duration(milliseconds: 16));
   }
 
-  void _closeWeeklyTab() {
+  void _hideSubPageLoading() {
+    if (!mounted || !_subPageLoading) {
+      return;
+    }
     setState(() {
-      _activeBottomTab = _BottomTab.home;
+      _subPageLoading = false;
+      _subPageLoadingLabel = '';
     });
+  }
+
+  Future<void> _openWeeklyTab() async {
+    await _showSubPageLoading('금주 인물 여는 중...');
+    try {
+      final monday = _weekStartMonday(DateTime.now());
+      final weekKey = _weeklyKeyFor(monday);
+      if (_weeklyStudyData == null || _weeklyWeekKey != weekKey) {
+        setState(() {
+          _weeklyLoading = true;
+          _weeklyError = null;
+        });
+
+        try {
+          var state = ref.read(storyControllerProvider);
+          if (state.eras.isEmpty) {
+            await ref.read(storyControllerProvider.notifier).initialize();
+            state = ref.read(storyControllerProvider);
+          }
+
+          if (state.eras.isEmpty) {
+            throw StateError('시대 데이터를 불러오지 못했습니다.');
+          }
+
+          final repo = ref.read(storyRepositoryProvider);
+          final eraBundles = await Future.wait(
+            state.eras.map((era) async {
+              final responses = await Future.wait([
+                repo.fetchPersonsByEra(era.id),
+                repo.fetchEventsByEra(era.id),
+              ]);
+              return (
+                persons: responses[0] as List<Person>,
+                events: responses[1] as List<StoryEvent>,
+              );
+            }),
+          );
+
+          final personById = <String, Person>{};
+          final eventsByPersonId = <String, List<StoryEvent>>{};
+          for (final bundle in eraBundles) {
+            for (final person in bundle.persons) {
+              personById.putIfAbsent(person.id, () => person);
+            }
+            for (final event in bundle.events) {
+              for (final personId in event.personIds) {
+                eventsByPersonId
+                    .putIfAbsent(personId, () => <StoryEvent>[])
+                    .add(event);
+              }
+            }
+          }
+
+          final candidates =
+              personById.values
+                  .where(
+                    (person) =>
+                        (eventsByPersonId[person.id] ?? const <StoryEvent>[])
+                            .isNotEmpty,
+                  )
+                  .toList()
+                ..sort((a, b) {
+                  final order = a.displayOrder.compareTo(b.displayOrder);
+                  if (order != 0) {
+                    return order;
+                  }
+                  return a.name.compareTo(b.name);
+                });
+          if (candidates.isEmpty) {
+            throw StateError('주간 추천 인물을 찾지 못했습니다.');
+          }
+
+          final forcedCode = _forcedWeeklyPersonCodeByWeekKey[weekKey];
+          final forcedPerson = forcedCode == null
+              ? null
+              : candidates
+                    .where((person) => person.code == forcedCode)
+                    .firstOrNull;
+          final weeklyPerson =
+              forcedPerson ??
+              candidates[_seedFromKey(weekKey) % candidates.length];
+          final weeklyEvents =
+              [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
+                ..sort((a, b) {
+                  final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+                  if (cmp != 0) {
+                    return cmp;
+                  }
+                  return a.id.compareTo(b.id);
+                });
+          final selectedEventId = weeklyEvents.isNotEmpty
+              ? weeklyEvents.first.id
+              : null;
+
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _weeklyStudyData = _WeeklyStudyData(
+              person: weeklyPerson,
+              events: weeklyEvents,
+              weekStartMonday: monday,
+            );
+            _weeklyWeekKey = weekKey;
+            _weeklySelectedEventId = selectedEventId;
+            _weeklyCheckedEventIds.clear();
+            _weeklyShowShortPopup = false;
+            _weeklyLoading = false;
+            _weeklyError = weeklyEvents.isEmpty ? '추천 인물의 이야기가 아직 없습니다.' : null;
+          });
+        } catch (error) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _weeklyLoading = false;
+            _weeklyError = '주간 탭 데이터를 불러오지 못했습니다: $error';
+          });
+        }
+      }
+
+      final weekly = _weeklyStudyData;
+      if (!mounted || weekly == null) {
+        return;
+      }
+
+      final navigator = Navigator.of(context);
+      final pushFuture = navigator.push(
+        MaterialPageRoute<void>(
+          builder: (pageContext) {
+            return StatefulBuilder(
+              builder: (pageContext, setPageState) {
+                final state = ref.read(storyControllerProvider);
+                final controller = ref.read(storyControllerProvider.notifier);
+                final isAuthenticated = ref.read(signedInUserProvider) != null;
+                final selectedEvent = _weeklySelectedEvent;
+                final pageSelectedEvent = selectedEvent;
+                return _SubPageScaffold(
+                  title: '금주 인물',
+                  compactBackOnly: true,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                          child: _buildWeeklyBody(
+                            state: state,
+                            controller: controller,
+                            isAuthenticated: isAuthenticated,
+                            onSelectEvent: (eventId) {
+                              setPageState(() {
+                                _weeklySelectedEventId = eventId;
+                                _weeklyShowShortPopup = true;
+                              });
+                            },
+                            onToggleChecked: (eventId) {
+                              setPageState(() {
+                                if (_weeklyCheckedEventIds.contains(eventId)) {
+                                  _weeklyCheckedEventIds.remove(eventId);
+                                } else {
+                                  _weeklyCheckedEventIds.add(eventId);
+                                }
+                              });
+                            },
+                            onStartQuiz: _startQuiz,
+                          ),
+                        ),
+                      ),
+                      if (pageSelectedEvent != null && _weeklyShowShortPopup)
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              width: 320,
+                              child: _weeklyShortPopup(
+                                event: pageSelectedEvent,
+                                maxHeight: 232,
+                                onClose: () {
+                                  setPageState(() {
+                                    _weeklyShowShortPopup = false;
+                                  });
+                                },
+                                onOpenDetail: () {
+                                  setPageState(() {
+                                    _weeklyShowShortPopup = false;
+                                  });
+                                  _openEventDetailPage(pageSelectedEvent);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      );
+      _hideSubPageLoading();
+      await pushFuture;
+    } finally {
+      _hideSubPageLoading();
+    }
   }
 
   Future<void> _openProfileTab() async {
-    if (_activeBottomTab != _BottomTab.profile) {
-      setState(() {
-        _activeBottomTab = _BottomTab.profile;
-      });
+    await _showSubPageLoading('프로필 여는 중...');
+    try {
+      await _loadProfilePeople(forceRefresh: true);
+      if (!mounted) {
+        return;
+      }
+      final navigator = Navigator.of(context);
+      final pushFuture = navigator.push(
+        MaterialPageRoute<void>(
+          builder: (_) => Consumer(
+            builder: (context, ref, __) => StatefulBuilder(
+              builder: (context, setPageState) {
+                _profilePageSetState = setPageState;
+                final state = ref.watch(storyControllerProvider);
+                final isAuthenticated = ref.watch(signedInUserProvider) != null;
+                return _SubPageScaffold(
+                  title: '프로필',
+                  compactBackOnly: true,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: isAuthenticated
+                            ? _buildProfileBody(
+                                state: state,
+                                isAuthenticated: true,
+                              )
+                            : ImageFiltered(
+                                imageFilter: ui.ImageFilter.blur(
+                                  sigmaX: 4.5,
+                                  sigmaY: 4.5,
+                                ),
+                                child: IgnorePointer(
+                                  child: Opacity(
+                                    opacity: 0.9,
+                                    child: _buildProfileBody(
+                                      state: state,
+                                      isAuthenticated: false,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      if (!isAuthenticated)
+                        Positioned.fill(
+                          child: _lockedPreviewOverlay(
+                            child: _InlineLoginPromptCard(
+                              title: '프로필을 보려면 로그인이 필요해요',
+                              description:
+                                  '프로필, 노트, 저장한 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
+                              onSignedIn: () async {
+                                if (!mounted) {
+                                  return;
+                                }
+                                await _loadProfilePeople(forceRefresh: true);
+                                _profilePageSetState?.call(() {});
+                              },
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      _hideSubPageLoading();
+      await pushFuture;
+      _profilePageSetState = null;
+    } finally {
+      _hideSubPageLoading();
     }
-    if (_profileAllPeople.isNotEmpty || _profileLoading) {
+  }
+
+  Future<void> _loadProfilePeople({bool forceRefresh = false}) async {
+    if (!forceRefresh && (_profileAllPeople.isNotEmpty || _profileLoading)) {
       return;
     }
-    await _loadProfilePeople();
-  }
-
-  void _closeProfileTab() {
-    setState(() {
-      _activeBottomTab = _BottomTab.home;
-    });
-  }
-
-  void _toggleWeeklyCheck(String eventId) {
-    setState(() {
-      if (_weeklyCheckedEventIds.contains(eventId)) {
-        _weeklyCheckedEventIds.remove(eventId);
-      } else {
-        _weeklyCheckedEventIds.add(eventId);
-      }
-    });
-  }
-
-  void _handleWeeklyEventSelect(String eventId) {
-    setState(() {
-      _weeklySelectedEventId = eventId;
-      _weeklyShowShortPopup = true;
-    });
-  }
-
-  Future<void> _loadProfilePeople() async {
     setState(() {
       _profileLoading = true;
       _profileError = null;
@@ -268,35 +868,76 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         throw StateError('시대 데이터를 불러오지 못했습니다.');
       }
 
+      final user = ref.read(signedInUserProvider);
       final repo = ref.read(storyRepositoryProvider);
+      final userRepo = ref.read(userRepositoryProvider);
       final peopleByEra = await Future.wait(
         state.eras.map((era) => repo.fetchPersonsByEra(era.id)),
       );
+      final personTimelineOrderById = await repo.fetchPersonTimelineOrder();
 
       final personById = <String, Person>{};
-      for (final eraPeople in peopleByEra) {
+      final testamentByPersonId = <String, String>{};
+      for (var i = 0; i < state.eras.length; i++) {
+        final era = state.eras[i];
+        final eraPeople = peopleByEra[i];
+        final testament = _eraTestament(era);
         for (final person in eraPeople) {
           personById.putIfAbsent(person.id, () => person);
+          testamentByPersonId.putIfAbsent(person.id, () => testament);
         }
       }
 
       final allPeople = personById.values.toList()
-        ..sort((a, b) {
-          final order = a.displayOrder.compareTo(b.displayOrder);
-          if (order != 0) {
-            return order;
-          }
-          return a.name.compareTo(b.name);
-        });
+        ..sort(
+          (a, b) => _compareProfilePeople(
+            a,
+            b,
+            timelineOrderById: personTimelineOrderById,
+          ),
+        );
+
+      AppUserProfile? profile;
+      var attendanceStreak = 0;
+      var studyStreak = 0;
+      Map<String, PersonStudyProgress> progressByPersonId = const {};
+
+      if (user != null) {
+        profile = await userRepo.ensureSignedInUser(user);
+        attendanceStreak = await userRepo.fetchAttendanceStreak(user.id);
+        studyStreak = await userRepo.fetchStudyStreak(user.id);
+        final studyProgress = await userRepo.fetchPersonStudyProgress(
+          userId: user.id,
+          people: allPeople,
+        );
+        progressByPersonId = {
+          for (final progress in studyProgress) progress.person.id: progress,
+        };
+      }
 
       if (!mounted) {
         return;
       }
       setState(() {
         _profileAllPeople = allPeople;
+        _profilePersonTestamentById = testamentByPersonId;
+        _profileUser = profile;
+        _profileStudyProgressByPersonId = progressByPersonId;
+        _profilePersonTimelineOrderById = personTimelineOrderById;
+        if (user == null) {
+          _intercessoryPrayerItems = const [];
+          _intercessoryPrayerHasNextPage = false;
+          _intercessoryPrayerPageIndex = 0;
+          _intercessoryPrayerError = null;
+        }
+        _profileAttendanceStreak = attendanceStreak;
+        _profileStudyStreak = studyStreak;
         _profileLoading = false;
         _profileError = allPeople.isEmpty ? '인물 데이터가 없습니다.' : null;
       });
+      if (user != null) {
+        await _loadIntercessoryPrayerPage();
+      }
     } catch (error) {
       if (!mounted) {
         return;
@@ -312,11 +953,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: const Color(0xFFF5E9D6),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
       builder: (context) {
+        final mediaQuery = MediaQuery.of(context);
+        final safeHeight =
+            mediaQuery.size.height -
+            mediaQuery.padding.top -
+            mediaQuery.padding.bottom;
+        final maxSheetHeight = math.min(
+          mediaQuery.orientation == Orientation.landscape ? 520.0 : 560.0,
+          safeHeight - 20,
+        );
         return Consumer(
           builder: (context, ref, _) {
             final state = ref.watch(storyControllerProvider);
@@ -328,59 +979,71 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 12,
                 14,
                 12,
-                MediaQuery.of(context).viewInsets.bottom + 14,
+                mediaQuery.viewInsets.bottom + 14,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    key: ValueKey(state.searchQuery),
-                    initialValue: state.searchQuery,
-                    autofocus: true,
-                    onChanged: controller.setSearchQuery,
-                    decoration: InputDecoration(
-                      hintText: '단어/문장 검색...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+              child: SizedBox(
+                height: maxSheetHeight,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      key: ValueKey(state.searchQuery),
+                      initialValue: state.searchQuery,
+                      autofocus: true,
+                      onChanged: controller.setSearchQuery,
+                      decoration: InputDecoration(
+                        hintText: '단어/문장 검색...',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (state.isSearching)
-                    const SizedBox(
-                      height: 28,
-                      child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                    const SizedBox(height: 8),
+                    if (state.isSearching)
+                      const SizedBox(
+                        height: 28,
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       ),
+                    Expanded(
+                      child: results.isEmpty
+                          ? const Center(child: Text('검색 결과가 없습니다.'))
+                          : ListView.separated(
+                              itemCount: results.length,
+                              separatorBuilder: (_, __) =>
+                                  const Divider(height: 1),
+                              itemBuilder: (context, index) {
+                                final event = results[index];
+                                return ListTile(
+                                  dense: true,
+                                  title: Text(event.title),
+                                  subtitle: Text(event.placeName ?? '-'),
+                                  onTap: () async {
+                                    await controller.selectSearchResult(event);
+                                    if (mounted) {
+                                      final nextState = ref.read(
+                                        storyControllerProvider,
+                                      );
+                                      setState(() {
+                                        _selectionStep = 3;
+                                        _draftSelectedPersonIds = nextState
+                                            .selectedPersonIds
+                                            .toSet();
+                                      });
+                                    }
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    Navigator.of(context).pop();
+                                    _handleEventSelect(event.id);
+                                  },
+                                );
+                              },
+                            ),
                     ),
-                  SizedBox(
-                    height: 240,
-                    child: results.isEmpty
-                        ? const Center(child: Text('검색 결과가 없습니다.'))
-                        : ListView.separated(
-                            itemCount: results.length,
-                            separatorBuilder: (_, __) =>
-                                const Divider(height: 1),
-                            itemBuilder: (context, index) {
-                              final event = results[index];
-                              return ListTile(
-                                dense: true,
-                                title: Text(event.title),
-                                subtitle: Text(event.placeName ?? '-'),
-                                onTap: () async {
-                                  await controller.selectSearchResult(event);
-                                  if (!context.mounted) {
-                                    return;
-                                  }
-                                  Navigator.of(context).pop();
-                                  _handleEventSelect(event.id);
-                                },
-                              );
-                            },
-                          ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
@@ -396,7 +1059,48 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (event == null) {
       return;
     }
+    final viewportSize = MediaQuery.sizeOf(context);
+    final collapsedExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
     controller.selectEvent(event.id);
+    setState(() {
+      _selectionStep = 3;
+      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = collapsedExtent;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _mapPanelController.focusSelectedEvent(force: true);
+    });
+  }
+
+  void _handleSelectionPanelEventSelect(String eventId) {
+    final state = ref.read(storyControllerProvider);
+    final controller = ref.read(storyControllerProvider.notifier);
+    final event = state.events.where((e) => e.id == eventId).firstOrNull;
+    if (event == null) {
+      return;
+    }
+
+    final viewportSize = MediaQuery.sizeOf(context);
+    final targetSheetExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
+
+    setState(() {
+      _selectionStep = 3;
+      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = targetSheetExtent;
+    });
+    controller.selectEvent(event.id);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _mapPanelController.focusSelectedEvent(force: true);
+    });
   }
 
   void _openEventDetail(String eventId) {
@@ -407,270 +1111,165 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     controller.selectEvent(event.id);
-    _showEventDetailPopup(event);
+    setState(() {
+      _selectionStep = 3;
+      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+    });
+    _openEventDetailPage(event);
   }
 
-  Future<void> _showEventDetailPopup(StoryEvent event) async {
+  void _closeSelectedEventPopup() {
+    ref.read(storyControllerProvider.notifier).selectEvent(null);
+  }
+
+  Future<void> _openEventDetailPage(StoryEvent event) async {
     final shortStoryText = (event.shortStory ?? '').trim();
     final fallbackText = (event.story ?? event.summary ?? '').trim();
     final storyText = shortStoryText.isNotEmpty ? shortStoryText : fallbackText;
     final placeText = (event.placeName ?? '').trim();
     final yearText = event.startYear?.toString() ?? '-';
     final metaText = placeText.isEmpty ? yearText : '$placeText · $yearText';
-    final sceneAssetsFuture = _loadSceneAssetsForTitle(event.title);
+    final sceneAssetsFuture = _loadSceneAssetsForEvent(event);
     final refs = event.bibleRefs;
     final moveTarget = _parseBibleNavigationTarget(event.bibleRefs.firstOrNull);
 
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close',
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 420),
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutCubic,
-          reverseCurve: Curves.easeInCubic,
-        );
-        final tilt = (1 - curved.value) * 0.14;
-        final scale = 0.9 + (curved.value * 0.1);
-        return FadeTransition(
-          opacity: curved,
-          child: Transform(
-            alignment: Alignment.centerLeft,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(tilt)
-              ..scale(scale),
-            child: child,
-          ),
-        );
-      },
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 760,
-              maxHeight: MediaQuery.of(context).size.height * 0.94,
-              minWidth: 300,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: scrollPopupDecoration().copyWith(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.38),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final w = constraints.maxWidth;
-                            final h = constraints.maxHeight;
-                            // Keep text further inside the parchment edges, while
-                            // using almost all of the inner area after margins.
-                            final cTop = (h * 0.09)
-                                .clamp(34.0, 56.0)
-                                .toDouble();
-                            final cBottom = (h * 0.07)
-                                .clamp(26.0, 44.0)
-                                .toDouble();
-                            final cLeft = (w * 0.07)
-                                .clamp(28.0, 56.0)
-                                .toDouble();
+    if (!mounted) {
+      return;
+    }
 
-                            // Close button: half size and top-right.
-                            const closeSize = 36.0;
-                            final closeRight = (w * 0.04)
-                                .clamp(18.0, 32.0)
-                                .toDouble();
-                            final closeTop = (h * 0.05)
-                                .clamp(16.0, 30.0)
-                                .toDouble();
-                            final baseRight = (w * 0.07)
-                                .clamp(28.0, 56.0)
-                                .toDouble();
-                            final closeReservedRight =
-                                closeRight + closeSize + 10.0;
-                            final cRight = baseRight < closeReservedRight
-                                ? closeReservedRight
-                                : baseRight;
-
-                            return Stack(
-                              children: [
-                                // Content scrolls inside the inner parchment area
-                                Positioned(
-                                  top: cTop,
-                                  bottom: cBottom,
-                                  left: cLeft,
-                                  right: cRight,
-                                  child: ClipRect(
-                                    child: SingleChildScrollView(
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                      child: DefaultTextStyle(
-                                        style: const TextStyle(
-                                          color: Color(0xFF3B2A16),
-                                          fontFamily: 'Times New Roman',
-                                          height: 1.55,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: 8,
-                                              margin: const EdgeInsets.only(
-                                                bottom: 12,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xB39A7A4A),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    event.title,
-                                                    style: const TextStyle(
-                                                      fontSize: 19,
-                                                      height: 1.25,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      color: Color(0xFF3A2B15),
-                                                      letterSpacing: 0.05,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Flexible(
-                                                  child: Text(
-                                                    metaText,
-                                                    textAlign: TextAlign.right,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      color: Color(0xFF6A522E),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            FutureBuilder<List<String>>(
-                                              future: sceneAssetsFuture,
-                                              builder: (context, snapshot) {
-                                                final sceneAssets =
-                                                    snapshot.data ??
-                                                    const <String>[];
-                                                if (sceneAssets.isEmpty) {
-                                                  return const SizedBox.shrink();
-                                                }
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        top: 10,
-                                                      ),
-                                                  child: _storySceneRow(
-                                                    sceneAssets,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            const SizedBox(height: 14),
-                                            if (storyText.isNotEmpty)
-                                              _storySection(
-                                                title: '요약 이야기',
-                                                content: storyText,
-                                              ),
-                                            if (refs.isNotEmpty) ...[
-                                              const SizedBox(height: 12),
-                                              _storySection(
-                                                title: '관련 본문',
-                                                content: refs
-                                                    .map((ref) => '• $ref')
-                                                    .join('\n'),
-                                                action: moveTarget == null
-                                                    ? null
-                                                    : _bibleMoveButton(
-                                                        onTap: () {
-                                                          Navigator.of(
-                                                            context,
-                                                          ).pop();
-                                                          Future.microtask(() {
-                                                            if (!mounted) {
-                                                              return;
-                                                            }
-                                                            _openBibleReaderPopup(
-                                                              initialBookNo:
-                                                                  moveTarget
-                                                                      .bookNo,
-                                                              initialChapterNo:
-                                                                  moveTarget
-                                                                      .chapterNo,
-                                                              initialVerseNo:
-                                                                  moveTarget
-                                                                      .verseNo,
-                                                            );
-                                                          });
-                                                        },
-                                                      ),
-                                              ),
-                                            ],
-                                            if (storyText.isEmpty)
-                                              const Text('요약 정보가 없습니다.'),
-                                          ],
-                                        ),
+    final navigator = Navigator.of(context);
+    await navigator.push(
+      MaterialPageRoute<void>(
+        builder: (_) => Consumer(
+          builder: (context, ref, _) {
+            final currentState = ref.watch(storyControllerProvider);
+            final isCompleted = currentState.completedEventIds.contains(
+              event.id,
+            );
+            return _SubPageScaffold(
+              title: event.title,
+              compactBackOnly: true,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 16, 12),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 960),
+                    child: DecoratedBox(
+                      decoration: _modalSurfaceDecoration(),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+                        child: DefaultTextStyle(
+                          style: const TextStyle(
+                            color: Color(0xFF3B2A16),
+                            height: 1.55,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      event.title,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        height: 1.22,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF3A2B15),
                                       ),
                                     ),
                                   ),
-                                ),
-                                // Close button in upper-right corner of parchment
-                                Positioned(
-                                  right: closeRight,
-                                  top: closeTop,
-                                  child: GestureDetector(
-                                    onTap: () => Navigator.of(context).pop(),
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(
-                                      width: closeSize,
-                                      height: closeSize,
-                                      child: Image.asset(
-                                        kScrollCloseAsset,
-                                        fit: BoxFit.contain,
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Text(
+                                      metaText,
+                                      textAlign: TextAlign.right,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF6A522E),
                                       ),
                                     ),
                                   ),
+                                ],
+                              ),
+                              FutureBuilder<List<String>>(
+                                future: sceneAssetsFuture,
+                                builder: (context, snapshot) {
+                                  final sceneAssets =
+                                      snapshot.data ?? const <String>[];
+                                  if (sceneAssets.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 12),
+                                    child: _storySceneRow(sceneAssets),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 14),
+                              if (storyText.isNotEmpty)
+                                _storySection(
+                                  title: '요약 이야기',
+                                  content: storyText,
+                                )
+                              else
+                                _storySection(
+                                  title: '요약 이야기',
+                                  content: '요약 정보가 없습니다.',
                                 ),
+                              if (refs.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                _storySection(
+                                  title: '관련 본문',
+                                  content: refs
+                                      .map((ref) => '• $ref')
+                                      .join('\n'),
+                                  action: moveTarget == null
+                                      ? null
+                                      : _bibleMoveButton(
+                                          onTap: () {
+                                            Future.microtask(() {
+                                              if (!mounted) {
+                                                return;
+                                              }
+                                              _openBibleReaderPopup(
+                                                initialBookNo:
+                                                    moveTarget.bookNo,
+                                                initialChapterNo:
+                                                    moveTarget.chapterNo,
+                                                initialVerseNo:
+                                                    moveTarget.verseNo,
+                                              );
+                                            });
+                                          },
+                                        ),
+                                ),
+                                const SizedBox(height: 12),
                               ],
-                            );
-                          },
+                              SizedBox(
+                                width: double.infinity,
+                                child: _filledActionButton(
+                                  label: '퀴즈 시작',
+                                  onTap: () => _startQuiz(event.id),
+                                  completed: isCompleted,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -679,426 +1278,481 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     int? initialChapterNo,
     int? initialVerseNo,
   }) async {
-    final repo = ref.read(storyRepositoryProvider);
-    var selectedBookNo = (initialBookNo ?? 1).clamp(1, _kBibleBooks.length);
-    var selectedTestament = selectedBookNo >= 40 ? 'new' : 'old';
-    var selectedChapter = initialChapterNo ?? 1;
-    var pendingFocusVerse = (initialVerseNo ?? 0) > 0 ? initialVerseNo : null;
-    final chapterCache = <String, Future<List<BibleVerse>>>{};
+    await _showSubPageLoading('성경 여는 중...');
+    try {
+      final repo = ref.read(storyRepositoryProvider);
+      final user = ref.read(signedInUserProvider);
+      final userRepo = ref.read(userRepositoryProvider);
+      var savedVerseKeys = <String>{};
+      if (user != null) {
+        try {
+          savedVerseKeys = await userRepo.fetchSavedVerseKeys(user.id);
+        } catch (_) {
+          savedVerseKeys = <String>{};
+        }
+      }
+      var selectedBookNo = (initialBookNo ?? 1).clamp(1, _kBibleBooks.length);
+      var selectedTestament = selectedBookNo >= 40 ? 'new' : 'old';
+      var selectedChapter = initialChapterNo ?? 1;
+      var pendingFocusVerse = (initialVerseNo ?? 0) > 0 ? initialVerseNo : null;
+      final chapterCache = <String, Future<List<BibleVerse>>>{};
 
-    List<MapEntry<int, _BibleBookMeta>> booksForTestament(String testament) {
-      return _kBibleBooks
-          .asMap()
-          .entries
-          .where((entry) {
-            final bookNo = entry.key + 1;
-            return testament == 'new' ? bookNo >= 40 : bookNo <= 39;
-          })
-          .toList(growable: false);
-    }
+      List<MapEntry<int, _BibleBookMeta>> booksForTestament(String testament) {
+        return _kBibleBooks
+            .asMap()
+            .entries
+            .where((entry) {
+              final bookNo = entry.key + 1;
+              return testament == 'new' ? bookNo >= 40 : bookNo <= 39;
+            })
+            .toList(growable: false);
+      }
 
-    Future<List<BibleVerse>> loadVerses({
-      required int bookNo,
-      required int chapterNo,
-    }) {
-      final cacheKey = 'KRV:$bookNo:$chapterNo';
-      return chapterCache.putIfAbsent(
-        cacheKey,
-        () => repo.fetchBibleVersesByChapter(
-          translation: 'KRV',
-          bookNo: bookNo,
-          chapterNo: chapterNo,
-        ),
-      );
-    }
+      Future<List<BibleVerse>> loadVerses({
+        required int bookNo,
+        required int chapterNo,
+      }) {
+        final cacheKey = 'KRV:$bookNo:$chapterNo';
+        return chapterCache.putIfAbsent(
+          cacheKey,
+          () => repo.fetchBibleVersesByChapter(
+            translation: 'KRV',
+            bookNo: bookNo,
+            chapterNo: chapterNo,
+          ),
+        );
+      }
 
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close_bible_reader',
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 260),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final testamentBooks = booksForTestament(selectedTestament);
-            final selectedEntry =
-                testamentBooks
-                    .where((entry) => (entry.key + 1) == selectedBookNo)
-                    .firstOrNull ??
-                testamentBooks.first;
-            final selectedBook = selectedEntry.value;
-            final selectedBookNoSafe = selectedEntry.key + 1;
-            final chapterCount = selectedBook.chapters;
-            final chapterItems = List<int>.generate(chapterCount, (i) => i + 1);
-            final selectedChapterSafe = selectedChapter.clamp(1, chapterCount);
-            final versesFuture = loadVerses(
-              bookNo: selectedBookNoSafe,
-              chapterNo: selectedChapterSafe,
-            );
+      if (!context.mounted) {
+        return;
+      }
+      // ignore: use_build_context_synchronously
+      final navigator = Navigator.of(context);
+      final pushFuture = navigator.push(
+        MaterialPageRoute<void>(
+          builder: (pageContext) {
+            return StatefulBuilder(
+              builder: (pageContext, setDialogState) {
+                final testamentBooks = booksForTestament(selectedTestament);
+                final selectedEntry =
+                    testamentBooks
+                        .where((entry) => (entry.key + 1) == selectedBookNo)
+                        .firstOrNull ??
+                    testamentBooks.first;
+                final selectedBook = selectedEntry.value;
+                final selectedBookNoSafe = selectedEntry.key + 1;
+                final chapterCount = selectedBook.chapters;
+                final chapterItems = List<int>.generate(
+                  chapterCount,
+                  (i) => i + 1,
+                );
+                final selectedChapterSafe = selectedChapter.clamp(
+                  1,
+                  chapterCount,
+                );
+                final versesFuture = loadVerses(
+                  bookNo: selectedBookNoSafe,
+                  chapterNo: selectedChapterSafe,
+                );
 
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    clipBehavior: Clip.hardEdge,
-                    decoration: scrollPopupDecoration().copyWith(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.38),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final w = constraints.maxWidth;
-                        final h = constraints.maxHeight;
-                        final cTop = (h * 0.09).clamp(34.0, 56.0).toDouble();
-                        final cBottom = (h * 0.07).clamp(24.0, 42.0).toDouble();
-                        final cLeft = (w * 0.07).clamp(26.0, 56.0).toDouble();
-                        const closeSize = 36.0;
-                        final closeRight = (w * 0.04)
-                            .clamp(18.0, 32.0)
-                            .toDouble();
-                        final closeTop = (h * 0.05)
-                            .clamp(16.0, 30.0)
-                            .toDouble();
-                        final baseRight = (w * 0.07)
-                            .clamp(26.0, 56.0)
-                            .toDouble();
-                        final closeReservedRight =
-                            closeRight + closeSize + 10.0;
-                        final cRight = baseRight < closeReservedRight
-                            ? closeReservedRight
-                            : baseRight;
-
-                        return Stack(
-                          children: [
-                            Positioned(
-                              top: cTop,
-                              bottom: cBottom,
-                              left: cLeft,
-                              right: cRight,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 88,
-                                          child: _bibleDropdownFrame<String>(
-                                            value: selectedTestament,
-                                            items: const [
-                                              DropdownMenuItem(
-                                                value: 'old',
-                                                child: Text('구약'),
-                                              ),
-                                              DropdownMenuItem(
-                                                value: 'new',
-                                                child: Text('신약'),
-                                              ),
-                                            ],
-                                            onChanged: (testament) {
-                                              if (testament == null) {
-                                                return;
-                                              }
-                                              setDialogState(() {
-                                                selectedTestament = testament;
-                                                final nextBooks =
-                                                    booksForTestament(
-                                                      selectedTestament,
-                                                    );
-                                                if (nextBooks.isEmpty) {
-                                                  return;
-                                                }
-                                                final inSameTestament =
-                                                    selectedTestament == 'new'
-                                                    ? selectedBookNo >= 40
-                                                    : selectedBookNo <= 39;
-                                                if (!inSameTestament) {
-                                                  selectedBookNo =
-                                                      nextBooks.first.key + 1;
-                                                }
-                                                final maxChapter =
-                                                    _kBibleBooks[selectedBookNo -
-                                                            1]
-                                                        .chapters;
-                                                if (selectedChapter >
-                                                    maxChapter) {
-                                                  selectedChapter = maxChapter;
-                                                }
-                                                pendingFocusVerse = null;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        SizedBox(
-                                          width: 172,
-                                          child: _bibleDropdownFrame<int>(
-                                            value: selectedBookNoSafe,
-                                            items: testamentBooks
-                                                .map(
-                                                  (entry) =>
-                                                      DropdownMenuItem<int>(
-                                                        value: entry.key + 1,
-                                                        child: Text(
-                                                          entry.value.name,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                )
-                                                .toList(growable: false),
-                                            onChanged: (bookNo) {
-                                              if (bookNo == null) {
-                                                return;
-                                              }
-                                              setDialogState(() {
-                                                selectedBookNo = bookNo;
-                                                final maxChapter =
-                                                    _kBibleBooks[bookNo - 1]
-                                                        .chapters;
-                                                if (selectedChapter >
-                                                    maxChapter) {
-                                                  selectedChapter = maxChapter;
-                                                }
-                                                pendingFocusVerse = null;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        SizedBox(
-                                          width: 96,
-                                          child: _bibleDropdownFrame<int>(
-                                            value: selectedChapterSafe,
-                                            items: chapterItems
-                                                .map(
-                                                  (chapter) =>
-                                                      DropdownMenuItem<int>(
-                                                        value: chapter,
-                                                        child: Text(
-                                                          '$chapter장',
-                                                        ),
-                                                      ),
-                                                )
-                                                .toList(growable: false),
-                                            onChanged: (chapter) {
-                                              if (chapter == null) {
-                                                return;
-                                              }
-                                              setDialogState(() {
-                                                selectedChapter = chapter;
-                                                pendingFocusVerse = null;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: const Color(0xBF9A7A4A),
-                                          width: 1.2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: const Color(0xF4EFE3CC),
+                return _SubPageScaffold(
+                  title: '성경',
+                  compactBackOnly: true,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: _floatingPanelDecoration(
+                        color: const Color(0xF5F7E9D1),
+                        shadowOpacity: 0.10,
+                      ),
+                      padding: const EdgeInsets.all(18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 88,
+                                  child: _bibleDropdownFrame<String>(
+                                    value: selectedTestament,
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'old',
+                                        child: Text('구약'),
                                       ),
-                                      padding: const EdgeInsets.all(14),
-                                      child: FutureBuilder<List<BibleVerse>>(
-                                        future: versesFuture,
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Center(
-                                              child: SizedBox(
-                                                width: 22,
-                                                height: 22,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      strokeWidth: 2.2,
-                                                    ),
-                                              ),
-                                            );
-                                          }
-
-                                          if (snapshot.hasError) {
-                                            return SingleChildScrollView(
-                                              child: Text(
-                                                '본문을 불러오지 못했습니다.\n${snapshot.error}',
-                                                style: const TextStyle(
-                                                  color: Color(0xFFA63F2D),
-                                                  fontSize: 14,
-                                                  height: 1.5,
-                                                ),
-                                              ),
-                                            );
-                                          }
-
-                                          final verses =
-                                              snapshot.data ??
-                                              const <BibleVerse>[];
-                                          final focusVerseNo =
-                                              pendingFocusVerse;
-                                          final focusVerseKey = GlobalKey();
-                                          if (verses.isEmpty) {
-                                            return const Center(
-                                              child: Text(
-                                                '선택한 장의 본문 데이터가 없습니다.',
-                                                style: TextStyle(
-                                                  color: Color(0xFF6A5440),
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            );
-                                          }
-
-                                          if (focusVerseNo != null) {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) {
-                                                  final targetContext =
-                                                      focusVerseKey
-                                                          .currentContext;
-                                                  if (targetContext != null) {
-                                                    Scrollable.ensureVisible(
-                                                      targetContext,
-                                                      duration: const Duration(
-                                                        milliseconds: 280,
-                                                      ),
-                                                      curve:
-                                                          Curves.easeOutCubic,
-                                                      alignment: 0.12,
-                                                    );
-                                                  }
-                                                  pendingFocusVerse = null;
-                                                });
-                                          }
-
-                                          return SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${selectedBook.name} $selectedChapterSafe장',
-                                                  style: const TextStyle(
-                                                    color: Color(0xFF3B2A17),
-                                                    fontSize: 17,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 10),
-                                                ...verses.map((verse) {
-                                                  return Padding(
-                                                    key:
-                                                        focusVerseNo != null &&
-                                                            verse.verseNo ==
-                                                                focusVerseNo
-                                                        ? focusVerseKey
-                                                        : null,
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          bottom: 8,
-                                                        ),
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        style: const TextStyle(
-                                                          color: Color(
-                                                            0xFF3B2A17,
-                                                          ),
-                                                          fontSize: 15,
-                                                          height: 1.6,
-                                                        ),
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                '${verse.verseNo} ',
-                                                            style:
-                                                                const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800,
-                                                                ),
-                                                          ),
-                                                          TextSpan(
-                                                            text:
-                                                                verse.verseText,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                }),
-                                              ],
-                                            ),
-                                          );
-                                        },
+                                      DropdownMenuItem(
+                                        value: 'new',
+                                        child: Text('신약'),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              right: closeRight,
-                              top: closeTop,
-                              child: GestureDetector(
-                                onTap: () => Navigator.of(context).pop(),
-                                behavior: HitTestBehavior.translucent,
-                                child: SizedBox(
-                                  width: closeSize,
-                                  height: closeSize,
-                                  child: Image.asset(
-                                    kScrollCloseAsset,
-                                    fit: BoxFit.contain,
+                                    ],
+                                    onChanged: (testament) {
+                                      if (testament == null) {
+                                        return;
+                                      }
+                                      setDialogState(() {
+                                        selectedTestament = testament;
+                                        final nextBooks = booksForTestament(
+                                          selectedTestament,
+                                        );
+                                        if (nextBooks.isEmpty) {
+                                          return;
+                                        }
+                                        final inSameTestament =
+                                            selectedTestament == 'new'
+                                            ? selectedBookNo >= 40
+                                            : selectedBookNo <= 39;
+                                        if (!inSameTestament) {
+                                          selectedBookNo =
+                                              nextBooks.first.key + 1;
+                                        }
+                                        final maxChapter =
+                                            _kBibleBooks[selectedBookNo - 1]
+                                                .chapters;
+                                        if (selectedChapter > maxChapter) {
+                                          selectedChapter = maxChapter;
+                                        }
+                                        pendingFocusVerse = null;
+                                      });
+                                    },
                                   ),
                                 ),
+                                const SizedBox(width: 8),
+                                SizedBox(
+                                  width: 172,
+                                  child: _bibleDropdownFrame<int>(
+                                    value: selectedBookNoSafe,
+                                    items: testamentBooks
+                                        .map(
+                                          (entry) => DropdownMenuItem<int>(
+                                            value: entry.key + 1,
+                                            child: Text(
+                                              entry.value.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        )
+                                        .toList(growable: false),
+                                    onChanged: (bookNo) {
+                                      if (bookNo == null) {
+                                        return;
+                                      }
+                                      setDialogState(() {
+                                        selectedBookNo = bookNo;
+                                        final maxChapter =
+                                            _kBibleBooks[bookNo - 1].chapters;
+                                        if (selectedChapter > maxChapter) {
+                                          selectedChapter = maxChapter;
+                                        }
+                                        pendingFocusVerse = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                SizedBox(
+                                  width: 96,
+                                  child: _bibleDropdownFrame<int>(
+                                    value: selectedChapterSafe,
+                                    items: chapterItems
+                                        .map(
+                                          (chapter) => DropdownMenuItem<int>(
+                                            value: chapter,
+                                            child: Text('$chapter장'),
+                                          ),
+                                        )
+                                        .toList(growable: false),
+                                    onChanged: (chapter) {
+                                      if (chapter == null) {
+                                        return;
+                                      }
+                                      setDialogState(() {
+                                        selectedChapter = chapter;
+                                        pendingFocusVerse = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Expanded(
+                            child: Container(
+                              decoration: _floatingPanelDecoration(
+                                color: const Color(0xF4EFE3CC),
+                                shadowOpacity: 0.06,
+                              ),
+                              padding: const EdgeInsets.all(14),
+                              child: FutureBuilder<List<BibleVerse>>(
+                                future: versesFuture,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.2,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  if (snapshot.hasError) {
+                                    return SingleChildScrollView(
+                                      child: Text(
+                                        '본문을 불러오지 못했습니다.\n${snapshot.error}',
+                                        style: const TextStyle(
+                                          color: Color(0xFFA63F2D),
+                                          fontSize: 14,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  final verses =
+                                      snapshot.data ?? const <BibleVerse>[];
+                                  final focusVerseNo = pendingFocusVerse;
+                                  final focusVerseKey = GlobalKey();
+                                  if (verses.isEmpty) {
+                                    return const Center(
+                                      child: Text(
+                                        '선택한 장의 본문 데이터가 없습니다.',
+                                        style: TextStyle(
+                                          color: Color(0xFF6A5440),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  if (focusVerseNo != null) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          final targetContext =
+                                              focusVerseKey.currentContext;
+                                          if (targetContext != null) {
+                                            Scrollable.ensureVisible(
+                                              targetContext,
+                                              duration: const Duration(
+                                                milliseconds: 280,
+                                              ),
+                                              curve: Curves.easeOutCubic,
+                                              alignment: 0.12,
+                                            );
+                                          }
+                                          pendingFocusVerse = null;
+                                        });
+                                  }
+
+                                  return SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${selectedBook.name} $selectedChapterSafe장',
+                                          style: const TextStyle(
+                                            color: Color(0xFF3B2A17),
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ...verses.map((verse) {
+                                          final verseKey =
+                                              SavedBibleVerse.buildVerseKey(
+                                                translation: verse.translation,
+                                                bookNo: verse.bookNo,
+                                                chapterNo: verse.chapterNo,
+                                                verseNo: verse.verseNo,
+                                              );
+                                          final isSaved = savedVerseKeys
+                                              .contains(verseKey);
+                                          return Padding(
+                                            key:
+                                                focusVerseNo != null &&
+                                                    verse.verseNo ==
+                                                        focusVerseNo
+                                                ? focusVerseKey
+                                                : null,
+                                            padding: const EdgeInsets.only(
+                                              bottom: 4,
+                                            ),
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                onTap: user == null
+                                                    ? null
+                                                    : () async {
+                                                        try {
+                                                          final didSave =
+                                                              await userRepo
+                                                                  .toggleSavedVerse(
+                                                                    userId:
+                                                                        user.id,
+                                                                    verse:
+                                                                        verse,
+                                                                  );
+                                                          if (!pageContext
+                                                              .mounted) {
+                                                            return;
+                                                          }
+                                                          setDialogState(() {
+                                                            if (didSave) {
+                                                              savedVerseKeys
+                                                                  .add(
+                                                                    verseKey,
+                                                                  );
+                                                            } else {
+                                                              savedVerseKeys
+                                                                  .remove(
+                                                                    verseKey,
+                                                                  );
+                                                            }
+                                                          });
+                                                          final messenger =
+                                                              ScaffoldMessenger.of(
+                                                                pageContext,
+                                                              );
+                                                          messenger
+                                                              .hideCurrentSnackBar();
+                                                          messenger.showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                didSave
+                                                                    ? '저장되었어요'
+                                                                    : '저장이 삭제되었어요',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } catch (error) {
+                                                          if (!pageContext
+                                                              .mounted) {
+                                                            return;
+                                                          }
+                                                          ScaffoldMessenger.of(
+                                                            pageContext,
+                                                          ).showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                '저장 중 오류가 발생했습니다.\n$error',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                child: AnimatedContainer(
+                                                  duration: const Duration(
+                                                    milliseconds: 180,
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 3,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: isSaved
+                                                        ? const Color(
+                                                            0x3DE2BE57,
+                                                          )
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      style: TextStyle(
+                                                        color: const Color(
+                                                          0xFF3B2A17,
+                                                        ),
+                                                        fontSize: 15,
+                                                        height: 1.25,
+                                                      ),
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              '${verse.verseNo} ',
+                                                          style:
+                                                              const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800,
+                                                              ),
+                                                        ),
+                                                        TextSpan(
+                                                          text: verse.verseText,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
-                          ],
-                        );
-                      },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
-        );
-      },
-    );
+        ),
+      );
+      _hideSubPageLoading();
+      await pushFuture;
+    } finally {
+      _hideSubPageLoading();
+    }
   }
 
-  Future<Map<String, dynamic>> _loadAssetManifest() async {
+  Future<List<String>> _loadAssetManifest() async {
     final cached = _assetManifestCache;
     if (cached != null) {
       return cached;
     }
 
     try {
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final assetKeys = manifest.listAssets();
+      _assetManifestCache = assetKeys;
+      return assetKeys;
+    } catch (_) {
+      // Fall through to JSON manifest for older/alternate environments.
+    }
+
+    try {
       final rawManifest = await rootBundle.loadString('AssetManifest.json');
       final decoded = json.decode(rawManifest);
       if (decoded is Map<String, dynamic>) {
-        _assetManifestCache = decoded;
-        return decoded;
+        final assetKeys = decoded.keys.toList(growable: false);
+        _assetManifestCache = assetKeys;
+        return assetKeys;
       }
     } catch (_) {
       // Return empty manifest when assets are unavailable in current build.
     }
-    _assetManifestCache = <String, dynamic>{};
+    _assetManifestCache = const <String>[];
     return _assetManifestCache!;
   }
 
@@ -1118,7 +1772,31 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         .trim();
   }
 
-  Future<List<String>> _loadSceneAssetsForTitle(String title) async {
+  String _stripSceneDirectoryPrefix(String directoryName) {
+    return directoryName.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
+  }
+
+  String? _scenePrefixForCode(String code) {
+    final match = _sceneCodeDigitsPattern.firstMatch(code.trim());
+    final digits = match?.group(1);
+    if (digits == null || digits.isEmpty) {
+      return null;
+    }
+    final numeric = int.tryParse(digits);
+    if (numeric == null) {
+      return null;
+    }
+    return numeric.toString().padLeft(3, '0');
+  }
+
+  Future<List<String>> _loadSceneAssetsForEvent(StoryEvent event) async {
+    return _loadSceneAssetsForLookup(title: event.title, code: event.code);
+  }
+
+  Future<List<String>> _loadSceneAssetsForLookup({
+    required String title,
+    String? code,
+  }) async {
     final dirName = _sceneDirectoryNameForTitle(title);
     final cached = _sceneAssetsCache[dirName];
     if (cached != null) {
@@ -1127,7 +1805,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     final manifest = await _loadAssetManifest();
     const sceneRoot = 'assets/story_images/';
-    final allScenePaths = manifest.keys
+    final allScenePaths = manifest
         .where(
           (path) =>
               path.startsWith(sceneRoot) &&
@@ -1151,14 +1829,61 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       (path) => path.startsWith(directPrefix),
     );
     if (!hasDirect) {
+      final codePrefix = code == null ? null : _scenePrefixForCode(code);
+      if (codePrefix != null) {
+        final codeMatchedDir =
+            knownDirs
+                .where((dir) => dir.startsWith('$codePrefix '))
+                .toList(growable: false)
+              ..sort((a, b) => a.length.compareTo(b.length));
+        if (codeMatchedDir.isNotEmpty) {
+          chosenDir = codeMatchedDir.first;
+        }
+      }
+    }
+
+    final chosenPrefixAfterCode = '$sceneRoot$chosenDir/';
+    final hasCodeMatched = allScenePaths.any(
+      (path) => path.startsWith(chosenPrefixAfterCode),
+    );
+    if (!hasCodeMatched) {
       final titleKey = _normalizeSceneLookupKey(title);
       final dirNameKey = _normalizeSceneLookupKey(dirName);
-      final fallbackDir = knownDirs.where((dir) {
-        final key = _normalizeSceneLookupKey(dir);
-        return key.isNotEmpty && (key == titleKey || key == dirNameKey);
-      }).firstOrNull;
-      if (fallbackDir != null) {
-        chosenDir = fallbackDir;
+      final fallbackCandidates =
+          knownDirs
+              .map((dir) {
+                final rawKey = _normalizeSceneLookupKey(dir);
+                final strippedKey = _normalizeSceneLookupKey(
+                  _stripSceneDirectoryPrefix(dir),
+                );
+                var score = -1;
+                if (rawKey == titleKey || rawKey == dirNameKey) {
+                  score = 0;
+                } else if (strippedKey == titleKey ||
+                    strippedKey == dirNameKey) {
+                  score = 1;
+                } else if (strippedKey.endsWith(titleKey) ||
+                    strippedKey.endsWith(dirNameKey)) {
+                  score = 2;
+                } else if (strippedKey.contains(titleKey) ||
+                    strippedKey.contains(dirNameKey) ||
+                    titleKey.contains(strippedKey) ||
+                    dirNameKey.contains(strippedKey)) {
+                  score = 3;
+                }
+                return (dir: dir, score: score);
+              })
+              .where((candidate) => candidate.score >= 0)
+              .toList(growable: false)
+            ..sort((a, b) {
+              final byScore = a.score.compareTo(b.score);
+              if (byScore != 0) {
+                return byScore;
+              }
+              return a.dir.length.compareTo(b.dir.length);
+            });
+      if (fallbackCandidates.isNotEmpty) {
+        chosenDir = fallbackCandidates.first.dir;
       }
     }
 
@@ -1182,6 +1907,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget _buildWeeklyBody({
     required StoryState state,
     required StoryController controller,
+    required bool isAuthenticated,
+    required ValueChanged<String> onSelectEvent,
+    required ValueChanged<String> onToggleChecked,
+    required ValueChanged<String> onStartQuiz,
   }) {
     final weekly = _weeklyStudyData;
     if (_weeklyLoading) {
@@ -1207,9 +1936,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return const SizedBox.shrink();
     }
 
+    final completedEventIds = state.completedEventIds;
     final totalStories = weekly.events.length;
     final completedStories = weekly.events
-        .where((event) => _weeklyCheckedEventIds.contains(event.id))
+        .where((event) => completedEventIds.contains(event.id))
         .length;
     final weeklyProgress = totalStories == 0
         ? 0.0
@@ -1254,25 +1984,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       builder: (context, constraints) {
         final w = constraints.maxWidth;
         final h = constraints.maxHeight;
-        final panelWidth = (w * 0.36).clamp(220.0, 312.0).toDouble();
-        final panelRight = (w * 0.02).clamp(8.0, 18.0).toDouble();
-        final panelGap = (w * 0.015).clamp(8.0, 14.0).toDouble();
-        final mapRightInset = (panelWidth + panelRight + panelGap)
-            .clamp(190.0, w * 0.66)
-            .toDouble();
-        final mapLeftInset = (w * 0.06).clamp(10.0, 40.0).toDouble();
-        final mapBottomInset = (h * 0.12).clamp(16.0, 52.0).toDouble();
-        final progressTop = (h * 0.08).clamp(10.0, 34.0).toDouble();
-        final progressHeight = (h * 0.072).clamp(34.0, 48.0).toDouble();
-        final progressGap = (h * 0.012).clamp(6.0, 12.0).toDouble();
-        final mapInsets = EdgeInsets.fromLTRB(
-          mapLeftInset,
-          progressTop + progressHeight + progressGap,
-          mapRightInset,
-          mapBottomInset,
-        );
-        final panelTop = (h * 0.13).clamp(12.0, 40.0).toDouble();
-        final panelBottom = (h * 0.09).clamp(12.0, 34.0).toDouble();
+        final orientation = MediaQuery.orientationOf(context);
+        final useSplitLayout = orientation == Orientation.landscape || w >= 900;
+        final contentGap = (w * 0.012).clamp(8.0, 16.0).toDouble();
+        final progressHeight = (h * 0.072).clamp(36.0, 48.0).toDouble();
+        final mapHeightOnNarrow = (h * 0.44).clamp(220.0, 360.0).toDouble();
 
         String avatarAssetForPerson(String personId) {
           if (personId == weekly.person.id) {
@@ -1284,12 +2000,31 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           return person?.avatarAssetPath ?? weekly.person.avatarAssetPath;
         }
 
-        return Stack(
+        final mapPanel = ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: StoryMapPanel(
+            events: weekly.events,
+            selectedEventId: _weeklySelectedEventId,
+            onSelectEvent: onSelectEvent,
+            colorForPerson: controller.colorForPerson,
+            avatarAssetForPerson: avatarAssetForPerson,
+            selectedPersonIds: {weekly.person.id},
+            decorate: false,
+            showSelectedCallout: false,
+            animateReveal: false,
+            centerSelectedOnReady: false,
+            fitAllEventsOnReady: true,
+            fitAllZoomAdjust: -0.18,
+            pinScale: 1.0,
+            initialCenter: initialMapCenter,
+            initialZoom: 5.4,
+          ),
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Positioned(
-              left: mapLeftInset,
-              right: mapRightInset,
-              top: progressTop,
+            SizedBox(
               height: progressHeight,
               child: _weeklyProgressRow(
                 daysRemainingKst: daysRemainingKst,
@@ -1298,44 +2033,80 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 progress: weeklyProgress,
               ),
             ),
-            Positioned.fill(
-              child: Padding(
-                padding: mapInsets,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: StoryMapPanel(
-                    events: weekly.events,
-                    selectedEventId: _weeklySelectedEventId,
-                    onSelectEvent: _handleWeeklyEventSelect,
-                    colorForPerson: controller.colorForPerson,
-                    avatarAssetForPerson: avatarAssetForPerson,
-                    selectedPersonIds: {weekly.person.id},
-                    decorate: false,
-                    showSelectedCallout: false,
-                    animateReveal: false,
-                    centerSelectedOnReady: false,
-                    fitAllEventsOnReady: true,
-                    fitAllZoomAdjust: -0.72,
-                    pinScale: 0.72,
-                    initialCenter: initialMapCenter,
-                    initialZoom: 6.2,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              right: panelRight,
-              top: panelTop,
-              bottom: panelBottom,
-              width: panelWidth,
-              child: _buildWeeklyListPanel(
-                weekly: weekly,
-                colorForPerson: controller.colorForPerson,
-              ),
+            if (!isAuthenticated) ...[
+              SizedBox(height: contentGap * 0.72),
+              _weeklyGuestNoticeBanner(),
+            ],
+            SizedBox(height: contentGap),
+            Expanded(
+              child: useSplitLayout
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(flex: 6, child: mapPanel),
+                        SizedBox(width: contentGap),
+                        Expanded(
+                          flex: 4,
+                          child: _buildWeeklyListPanel(
+                            weekly: weekly,
+                            completedEventIds: completedEventIds,
+                            colorForPerson: controller.colorForPerson,
+                            onSelectEvent: onSelectEvent,
+                            onToggleChecked: onToggleChecked,
+                            onStartQuiz: onStartQuiz,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: mapHeightOnNarrow, child: mapPanel),
+                        SizedBox(height: contentGap),
+                        Expanded(
+                          child: _buildWeeklyListPanel(
+                            weekly: weekly,
+                            completedEventIds: completedEventIds,
+                            colorForPerson: controller.colorForPerson,
+                            onSelectEvent: onSelectEvent,
+                            onToggleChecked: onToggleChecked,
+                            onStartQuiz: onStartQuiz,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _weeklyGuestNoticeBanner() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4E5BE),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xD7D3A051), width: 1),
+      ),
+      child: Row(
+        children: const [
+          Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF8B632E)),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '비로그인 상태예요. 금주 인물과 퀴즈는 사용할 수 있지만 진행 상황은 저장되지 않아요.',
+              style: TextStyle(
+                color: Color(0xFF6A4A23),
+                fontSize: 10.8,
+                fontWeight: FontWeight.w700,
+                height: 1.28,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1417,203 +2188,178 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _buildWeeklyListPanel({
     required _WeeklyStudyData weekly,
+    required Set<String> completedEventIds,
     required Color Function(String personId) colorForPerson,
+    required ValueChanged<String> onSelectEvent,
+    required ValueChanged<String> onToggleChecked,
+    required ValueChanged<String> onStartQuiz,
   }) {
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: panelFrameDecoration(),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final basePadding = panelContentPaddingForSize(constraints.biggest);
-          final panelPadding = EdgeInsets.fromLTRB(
-            basePadding.left,
-            (basePadding.top * 0.46).clamp(20.0, 34.0).toDouble(),
-            basePadding.right,
-            (basePadding.bottom * 0.86).clamp(18.0, 40.0).toDouble(),
-          );
-          return Padding(
-            padding: panelPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(2, 0, 2, 2),
-                  child: _weeklyPersonTitleBadge(
-                    text: '이번주 추천인물: ${weekly.person.name}',
-                    person: weekly.person,
-                  ),
-                ),
-                Divider(height: 1, color: Colors.white.withValues(alpha: 0.45)),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, listConstraints) {
-                      final listWidget = weekly.events.isEmpty
-                          ? const Center(
-                              child: Text(
-                                '선택된 인물의 사건이 없습니다.',
-                                style: TextStyle(color: Color(0xFFF8EED9)),
+      decoration: _floatingPanelDecoration(),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _weeklyPersonTitleBadge(
+              text: '금주 인물: ${weekly.person.name}',
+              person: weekly.person,
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: weekly.events.isEmpty
+                  ? const Center(
+                      child: Text(
+                        '선택된 인물의 사건이 없습니다.',
+                        style: TextStyle(color: Color(0xFF5A4327)),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: weekly.events.length,
+                      itemBuilder: (context, index) {
+                        final event = weekly.events[index];
+                        final selected = event.id == _weeklySelectedEventId;
+                        final isCompleted = completedEventIds.contains(
+                          event.id,
+                        );
+                        final isChecked = _weeklyCheckedEventIds.contains(
+                          event.id,
+                        );
+                        final shortText =
+                            (event.shortStory ??
+                                    event.story ??
+                                    event.summary ??
+                                    '')
+                                .trim();
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: GestureDetector(
+                            onTap: () => onSelectEvent(event.id),
+                            behavior: HitTestBehavior.opaque,
+                            child: Container(
+                              constraints: const BoxConstraints(minHeight: 58),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
                               ),
-                            )
-                          : ListView.builder(
-                              padding: const EdgeInsets.only(top: 2, bottom: 4),
-                              itemCount: weekly.events.length,
-                              itemBuilder: (context, index) {
-                                final event = weekly.events[index];
-                                final selected =
-                                    event.id == _weeklySelectedEventId;
-                                final isChecked = _weeklyCheckedEventIds
-                                    .contains(event.id);
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 4.0,
+                              decoration: _interactiveCardDecoration(
+                                selected: selected,
+                                completed: isCompleted,
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    margin: const EdgeInsets.only(right: 8),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: colorForPerson(weekly.person.id),
+                                    ),
                                   ),
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        _handleWeeklyEventSelect(event.id),
-                                    behavior: HitTestBehavior.opaque,
-                                    child: Container(
-                                      constraints: const BoxConstraints(
-                                        minHeight: 54,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 10,
-                                      ),
-                                      decoration: tabItemDecoration(
-                                        selected: selected,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  width: 9,
-                                                  height: 9,
-                                                  margin: const EdgeInsets.only(
-                                                    right: 8,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: colorForPerson(
-                                                      weekly.person.id,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${index + 1}. ${event.title}',
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      color: Color(0xFFFDF8EE),
-                                                      height: 1.2,
-                                                      shadows: [
-                                                        Shadow(
-                                                          color: Color(
-                                                            0xAA000000,
-                                                          ),
-                                                          blurRadius: 3,
-                                                          offset: Offset(0, 1),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${index + 1}. ${event.title}',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 11.4,
+                                            fontWeight: FontWeight.w800,
+                                            color: selected
+                                                ? const Color(0xFFFDF8EE)
+                                                : isCompleted
+                                                ? const Color(0xFF2D5A39)
+                                                : const Color(0xFF4A331D),
+                                            height: 1.16,
                                           ),
-                                          const SizedBox(width: 8),
-                                          GestureDetector(
-                                            onTap: () =>
-                                                _toggleWeeklyCheck(event.id),
-                                            behavior: HitTestBehavior.opaque,
-                                            child: SizedBox(
-                                              width: 26,
-                                              height: 26,
-                                              child: Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                    kCheckBoxAsset,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                  if (isChecked)
-                                                    const Icon(
-                                                      Icons.check,
-                                                      size: 14,
-                                                      color: Color(0xFF89E492),
-                                                    ),
-                                                ],
-                                              ),
+                                        ),
+                                        if (shortText.isNotEmpty) ...[
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            shortText,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 9.4,
+                                              fontWeight: FontWeight.w600,
+                                              color: selected
+                                                  ? const Color(0xEAFDF8EE)
+                                                  : isCompleted
+                                                  ? const Color(0xCC44624B)
+                                                  : const Color(0xCC5A4327),
+                                              height: 1.18,
                                             ),
-                                          ),
-                                          const SizedBox(width: 6),
-                                          _weeklyInlineQuizButton(
-                                            onTap: () => _startQuiz(event.id),
                                           ),
                                         ],
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  GestureDetector(
+                                    onTap: () => onToggleChecked(event.id),
+                                    behavior: HitTestBehavior.opaque,
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        color: isChecked
+                                            ? const Color(0xFF2D7C55)
+                                            : const Color(0xFFF8F1E4),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: isChecked
+                                              ? const Color(0xFF2D7C55)
+                                              : const Color(0xFFB58E63),
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        isChecked
+                                            ? Icons.check_rounded
+                                            : Icons.circle_outlined,
+                                        size: 14,
+                                        color: isChecked
+                                            ? const Color(0xFFFDF8EE)
+                                            : const Color(0xFF8E6F48),
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                            );
-
-                      return listWidget;
-                    },
-                  ),
-                ),
-              ],
+                                  const SizedBox(width: 4),
+                                  _weeklyInlineQuizButton(
+                                    completed: isCompleted,
+                                    onTap: () => onStartQuiz(event.id),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _weeklyInlineQuizButton({required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: 56,
-        height: 26,
-        decoration: actionButtonDecoration(selected: false),
-        alignment: Alignment.center,
-        child: const Text(
-          '퀴즈',
-          maxLines: 1,
-          style: TextStyle(
-            fontSize: 10.5,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFFFDF8EE),
-            shadows: [
-              Shadow(
-                color: Color(0xAA000000),
-                blurRadius: 2,
-                offset: Offset(0, 1),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _weeklyCloseButton({required VoidCallback onTap, double size = 34}) {
-    return GestureDetector(
+  Widget _weeklyInlineQuizButton({
+    required bool completed,
+    required VoidCallback onTap,
+  }) {
+    return _filledActionButton(
+      label: '퀴즈',
       onTap: onTap,
-      behavior: HitTestBehavior.translucent,
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: Image.asset(kScrollCloseAsset, fit: BoxFit.contain),
-      ),
+      completed: completed,
+      compact: true,
+      minWidth: 50,
     );
   }
 
@@ -1621,45 +2367,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required String text,
     required Person person,
   }) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 280),
-        child: SizedBox(
-          height: 36,
-          child: DecoratedBox(
-            decoration: statesButtonDecoration(),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 4, 6, 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      text,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFFDF8EE),
-                        shadows: [
-                          Shadow(
-                            color: Color(0xAA000000),
-                            blurRadius: 2,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  _weeklyPersonAvatar(person: person, size: 24),
-                ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: _headerChipDecoration(),
+      child: Row(
+        children: [
+          _weeklyPersonAvatar(person: person, size: 28),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12.2,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF4A331D),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -1684,12 +2411,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       child: ClipOval(
         child: avatarPath.isEmpty
             ? _weeklyAvatarFallback(fallbackText, fontSize: fallbackFontSize)
-            : Image.asset(
-                avatarPath,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _weeklyAvatarFallback(
-                  fallbackText,
-                  fontSize: fallbackFontSize,
+            : ColoredBox(
+                color: Colors.white,
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                    width: size,
+                    height: size * 2,
+                    child: Image.asset(
+                      avatarPath,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (_, __, ___) => _weeklyAvatarFallback(
+                        fallbackText,
+                        fontSize: fallbackFontSize,
+                      ),
+                    ),
+                  ),
                 ),
               ),
       ),
@@ -1716,6 +2455,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget _weeklyShortPopup({
     required StoryEvent event,
     double maxHeight = 232,
+    required VoidCallback onClose,
+    required VoidCallback onOpenDetail,
   }) {
     final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
         .trim();
@@ -1723,11 +2464,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
       child: DecoratedBox(
-        decoration: shortDescriptionDecoration(),
+        decoration: _floatingPanelDecoration(
+          color: const Color(0xFFF9F1E4),
+          shadowOpacity: 0.28,
+        ),
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(18, 16, 50, 14),
+              padding: const EdgeInsets.fromLTRB(18, 16, 48, 14),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1759,34 +2503,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () => _showEventDetailPopup(event),
+                        onTap: onOpenDetail,
                         behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          constraints: const BoxConstraints(
-                            minWidth: 96,
-                            minHeight: 30,
-                          ),
-                          decoration: actionButtonDecoration(selected: true),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 5,
-                          ),
-                          child: const Text(
-                            '자세히 보기',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFFFDF8EE),
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              shadows: [
-                                Shadow(
-                                  color: Color(0xAA000000),
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                          ),
+                        child: _filledActionButton(
+                          label: '자세히 보기',
+                          onTap: onOpenDetail,
+                          compact: true,
+                          minWidth: 96,
                         ),
                       ),
                     ),
@@ -1797,19 +2520,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             Positioned(
               right: 10,
               top: 8,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _weeklyShowShortPopup = false;
-                  });
-                },
-                behavior: HitTestBehavior.translucent,
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: Image.asset(kScrollCloseAsset, fit: BoxFit.contain),
-                ),
-              ),
+              child: _modalCloseButton(size: 24, onTap: onClose),
             ),
           ],
         ),
@@ -1820,22 +2531,66 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   List<Person> _profilePeople(StoryState state) {
     final people =
         [...(_profileAllPeople.isNotEmpty ? _profileAllPeople : state.persons)]
-          ..sort((a, b) {
-            final order = a.displayOrder.compareTo(b.displayOrder);
-            if (order != 0) {
-              return order;
-            }
-            return a.name.compareTo(b.name);
-          });
+          ..retainWhere((person) {
+            final testament = _profilePersonTestamentById[person.id] ?? 'old';
+            return testament == _profileSelectedTestament;
+          })
+          ..sort(
+            (a, b) => _compareProfilePeople(
+              a,
+              b,
+              timelineOrderById: _profilePersonTimelineOrderById,
+            ),
+          );
     return people;
   }
 
-  Widget _buildProfileBody({required StoryState state}) {
+  int _compareProfilePeople(
+    Person a,
+    Person b, {
+    required Map<String, int> timelineOrderById,
+  }) {
+    final aTimeline = timelineOrderById[a.id];
+    final bTimeline = timelineOrderById[b.id];
+    if (aTimeline != null || bTimeline != null) {
+      final timelineOrder = (aTimeline ?? 1 << 30).compareTo(
+        bTimeline ?? 1 << 30,
+      );
+      if (timelineOrder != 0) {
+        return timelineOrder;
+      }
+    }
+
+    final displayOrder = a.displayOrder.compareTo(b.displayOrder);
+    if (displayOrder != 0) {
+      return displayOrder;
+    }
+    return a.name.compareTo(b.name);
+  }
+
+  AppUserProfile _guestPreviewProfile() {
+    final now = DateTime.now();
+    return AppUserProfile(
+      userId: 'guest',
+      shareId: 'ABC1234',
+      nickname: '내 프로필',
+      photoUrl: null,
+      prayerRequest: '로그인하면 기도제목을 저장할 수 있어요.',
+      createdAt: now,
+      updatedAt: now,
+    );
+  }
+
+  Widget _buildProfileBody({
+    required StoryState state,
+    required bool isAuthenticated,
+  }) {
     final people = _profilePeople(state);
+    final profile = _profileUser ?? _guestPreviewProfile();
     if (_profileLoading && people.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (_profileError != null && people.isEmpty) {
+    if (_profileError != null && isAuthenticated && _profileUser == null) {
       return Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -1851,17 +2606,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         ),
       );
     }
-    if (people.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final selectedId = state.selectedPersonIds.firstOrNull;
-    final selectedPerson = selectedId == null
-        ? null
-        : people.where((person) => person.id == selectedId).firstOrNull;
-    final profilePerson =
-        selectedPerson ?? _weeklyStudyData?.person ?? people.first;
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final gap = (constraints.maxWidth * 0.024).clamp(10.0, 18.0).toDouble();
@@ -1875,10 +2619,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             children: [
               SizedBox(
                 width: leftWidth,
-                child: _buildProfileLeftPanel(profilePerson: profilePerson),
+                child: _buildProfileLeftPanel(
+                  profile: profile,
+                  isAuthenticated: isAuthenticated,
+                ),
               ),
               SizedBox(width: gap),
-              Expanded(child: _buildProfileRightPanel(people: people)),
+              Expanded(
+                child: _buildProfileRightPanel(
+                  people: people,
+                  completedEventIds: state.completedEventIds,
+                  selectedTestament: _profileSelectedTestament,
+                  onSelectTestament: (testament) {
+                    setState(() {
+                      _profileSelectedTestament = testament;
+                    });
+                    _profilePageSetState?.call(() {});
+                  },
+                ),
+              ),
             ],
           ),
         );
@@ -1886,131 +2645,459 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Widget _buildProfileLeftPanel({required Person profilePerson}) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: panelFrameDecoration(),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final basePadding = panelContentPaddingForSize(constraints.biggest);
-          final panelPadding = EdgeInsets.fromLTRB(
-            basePadding.left + 6,
-            (basePadding.top * 0.48).clamp(22.0, 40.0).toDouble(),
-            basePadding.right + 6,
-            (basePadding.bottom * 0.80).clamp(16.0, 30.0).toDouble(),
-          );
+  Future<void> _openProfileEditor() async {
+    final profile = _profileUser;
+    final user = ref.read(signedInUserProvider);
+    if (profile == null || user == null) {
+      return;
+    }
+    final updatedProfile = await showDialog<AppUserProfile>(
+      context: context,
+      builder: (_) =>
+          _ProfileEditorDialog(initialProfile: profile, userId: user.id),
+    );
+    if (!mounted || updatedProfile == null) {
+      return;
+    }
+    setState(() {
+      _profileUser = updatedProfile;
+    });
+    _profilePageSetState?.call(() {});
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('프로필이 저장되었어요.')));
+  }
 
-          return Padding(
-            padding: panelPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    _weeklyPersonAvatar(person: profilePerson, size: 58),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        profilePerson.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xFFFDF8EE),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                          shadows: [
-                            Shadow(
-                              color: Color(0xAA000000),
-                              blurRadius: 3,
-                              offset: Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _profileRoundedCard(
-                        title: '기도',
-                        subtitle: '오늘의 기도제목',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(child: _profileMiniActionButton(label: '노트')),
-                    const SizedBox(width: 8),
-                    Expanded(child: _profileMiniActionButton(label: '말씀')),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
+  Future<void> _openProfileNotesPage() async {
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const ProfileNotesScreen()));
+  }
+
+  Future<void> _openSavedVersesPage() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SavedVersesScreen(
+          onOpenVerse: (verse) {
+            return _openBibleReaderPopup(
+              initialBookNo: verse.bookNo,
+              initialChapterNo: verse.chapterNo,
+              initialVerseNo: verse.verseNo,
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildProfileRightPanel({required List<Person> people}) {
+  Future<void> _copyProfileShareId(String shareId) async {
+    final normalized = shareId.trim();
+    if (normalized.isEmpty) {
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: normalized));
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('공유 ID가 복사되었어요. ($normalized)')));
+  }
+
+  Future<String?> _showShareIdInputDialog() async {
+    return showDialog<String>(
+      context: context,
+      builder: (_) => const _ShareIdInputDialog(),
+    );
+  }
+
+  Future<void> _promptAddIntercessoryPrayer() async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      return;
+    }
+    final enteredId = await _showShareIdInputDialog();
+
+    final shareId = enteredId?.trim().toUpperCase() ?? '';
+    if (shareId.isEmpty) {
+      return;
+    }
+
+    try {
+      await ref
+          .read(userRepositoryProvider)
+          .addIntercessoryPrayerByShareId(shareId);
+      if (!mounted) {
+        return;
+      }
+      await _loadIntercessoryPrayerPage();
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('중보할 기도제목에 추가했어요.')));
+    } on PostgrestException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      final message = error.message.trim().isEmpty
+          ? '기도제목을 추가하지 못했습니다.'
+          : error.message.trim();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('기도제목을 추가하지 못했습니다.\n$error')));
+    }
+  }
+
+  Future<void> _confirmDeleteIntercessoryPrayer(
+    IntercessoryPrayerItem item,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => ParchmentDialog(
+        title: '기도제목을 삭제할까요?',
+        subtitle: '${item.nickname}님의 기도제목을 목록에서 삭제할까요?',
+        actions: [
+          ParchmentDialogActionButton(
+            label: '취소',
+            style: ParchmentDialogActionStyle.secondary,
+            onTap: () => Navigator.of(dialogContext).pop(false),
+          ),
+          ParchmentDialogActionButton(
+            label: '삭제',
+            style: ParchmentDialogActionStyle.danger,
+            onTap: () => Navigator.of(dialogContext).pop(true),
+          ),
+        ],
+        child: const SizedBox.shrink(),
+      ),
+    );
+
+    if (confirmed != true) {
+      return;
+    }
+
+    try {
+      await ref.read(userRepositoryProvider).deleteIntercessoryPrayer(item.id);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _intercessoryPrayerItems = _intercessoryPrayerItems
+            .where((entry) => entry.id != item.id)
+            .toList(growable: false);
+      });
+      _profilePageSetState?.call(() {});
+      if (_intercessoryPrayerItems.length < 4 &&
+          _intercessoryPrayerHasNextPage) {
+        await _loadIntercessoryPrayerPage();
+      }
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('목록에서 삭제했어요.')));
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('삭제하지 못했습니다.\n$error')));
+    }
+  }
+
+  Future<void> _signOut() async {
+    if (_signingOut || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _signingOut = true;
+    });
+
+    final navigator = Navigator.of(context, rootNavigator: true);
+    navigator.popUntil((route) => route.isFirst);
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      if (!mounted) {
+        return;
+      }
+      await ref.read(authRepositoryProvider).signOut();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _signingOut = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildProfileLeftPanel({
+    required AppUserProfile profile,
+    required bool isAuthenticated,
+  }) {
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: panelFrameDecoration(),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final basePadding = panelContentPaddingForSize(constraints.biggest);
-          final panelPadding = EdgeInsets.fromLTRB(
-            basePadding.left + 6,
-            (basePadding.top * 0.43).clamp(18.0, 30.0).toDouble(),
-            basePadding.right + 6,
-            (basePadding.bottom * 0.70).clamp(12.0, 24.0).toDouble(),
-          );
-          final totalRows = (people.length / 4).ceil();
-
-          return Padding(
-            padding: panelPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+      decoration: _floatingPanelDecoration(),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _profileTopStatCard(title: '연속 출석일', value: '12일'),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _profileTopStatCard(
-                        title: '연속 인물 공부',
-                        value: '9일',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
+                _buildCurrentUserAvatar(profile: profile, size: 72),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: totalRows,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, rowIndex) {
-                      final start = rowIndex * 4;
-                      final end = math.min(start + 4, people.length);
-                      final rowPeople = people.sublist(start, end);
-                      return _profilePersonProgressRow(
-                        rowPeople: rowPeople,
-                        rowIndex: rowIndex,
-                      );
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _profileTinyIconButton(
+                                tooltip: '프로필 수정',
+                                onTap: _openProfileEditor,
+                                icon: Icons.edit_rounded,
+                              ),
+                              const SizedBox(width: 4),
+                              _profileTinyIconButton(
+                                tooltip: '로그아웃',
+                                onTap: _signOut,
+                                icon: Icons.logout_rounded,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          profile.nickname,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Color(0xFF4A331D),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          );
-        },
+            const SizedBox(height: 10),
+            _profileRoundedCard(
+              title: '기도제목',
+              subtitle: (profile.prayerRequest ?? '').trim().isNotEmpty
+                  ? profile.prayerRequest!.trim()
+                  : '오늘의 기도제목을 적어 보세요.',
+              maxLines: 4,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _profileMiniActionButton(
+                    label: '노트',
+                    onTap: _openProfileNotesPage,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _profileMiniActionButton(
+                    label: '말씀',
+                    onTap: _openSavedVersesPage,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: _buildIntercessoryPrayerSection(
+                isAuthenticated: isAuthenticated,
+                shareId: profile.shareId,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentUserAvatar({
+    required AppUserProfile profile,
+    required double size,
+    Uint8List? previewBytes,
+  }) {
+    final initials = profile.nickname.trim().isEmpty
+        ? '?'
+        : profile.nickname.trim().substring(0, 1);
+    final ImageProvider? imageProvider = previewBytes != null
+        ? MemoryImage(previewBytes)
+        : ((profile.photoUrl ?? '').trim().isNotEmpty
+              ? NetworkImage(profile.photoUrl!.trim())
+              : null);
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+        ),
+        border: Border.all(color: const Color(0xFF8C6743), width: 1.4),
+      ),
+      child: ClipOval(
+        child: imageProvider == null
+            ? Center(
+                child: Text(
+                  initials,
+                  style: TextStyle(
+                    color: const Color(0xFF4A331D),
+                    fontSize: size * 0.34,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              )
+            : Image(
+                image: imageProvider,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Center(
+                    child: Text(
+                      initials,
+                      style: TextStyle(
+                        color: const Color(0xFF4A331D),
+                        fontSize: size * 0.34,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  );
+                },
+              ),
+      ),
+    );
+  }
+
+  Widget _buildProfileRightPanel({
+    required List<Person> people,
+    required Set<String> completedEventIds,
+    required String selectedTestament,
+    required ValueChanged<String> onSelectTestament,
+  }) {
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: _floatingPanelDecoration(),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                _profileTestamentToggle(
+                  selectedTestament: selectedTestament,
+                  onSelectTestament: onSelectTestament,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _profileTopStatCard(
+                    title: '연속 출석일',
+                    value: '$_profileAttendanceStreak일',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _profileTopStatCard(
+                    title: '연속 인물 공부',
+                    value: '$_profileStudyStreak일',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: people.isEmpty
+                  ? Center(
+                      child: Text(
+                        selectedTestament == 'new'
+                            ? '신약 인물 데이터가 없습니다.'
+                            : '구약 인물 데이터가 없습니다.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF6D5231),
+                          fontWeight: FontWeight.w700,
+                          height: 1.5,
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      itemCount: (people.length / 5).ceil(),
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, rowIndex) {
+                        final start = rowIndex * 5;
+                        final end = math.min(start + 5, people.length);
+                        final rowPeople = people.sublist(start, end);
+                        return _profilePersonProgressRow(
+                          rowPeople: rowPeople,
+                          completedEventIds: completedEventIds,
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _profileTestamentToggle({
+    required String selectedTestament,
+    required ValueChanged<String> onSelectTestament,
+  }) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: _floatingPanelDecoration(
+        color: const Color(0xFFF7E9D2),
+        shadowOpacity: 0.08,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _profileTestamentToggleButton(
+            label: '구약',
+            selected: selectedTestament != 'new',
+            onTap: () => onSelectTestament('old'),
+          ),
+          const SizedBox(width: 4),
+          _profileTestamentToggleButton(
+            label: '신약',
+            selected: selectedTestament == 'new',
+            onTap: () => onSelectTestament('new'),
+          ),
+        ],
       ),
     );
   }
@@ -2018,6 +3105,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget _profileRoundedCard({
     required String title,
     required String subtitle,
+    int maxLines = 2,
   }) {
     return Container(
       constraints: const BoxConstraints(minHeight: 66),
@@ -2045,7 +3133,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           const SizedBox(height: 3),
           Text(
             subtitle,
-            maxLines: 1,
+            maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color(0xFF5A4326),
@@ -2058,26 +3146,504 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Widget _profileMiniActionButton({required String label}) {
+  Widget _profileMiniActionButton({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 40,
+          decoration: _softButtonDecoration(selected: false),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF4A331D),
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _profileShareIdChip({
+    required String shareId,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final visibleId = shareId.trim().isEmpty ? '-------' : shareId.trim();
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(8),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          decoration: BoxDecoration(
+            color: enabled ? const Color(0xDDF7E9D2) : const Color(0x9BEEDFC4),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                visibleId,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: enabled
+                      ? const Color(0xFF6C4C28)
+                      : const Color(0xAA6C4C28),
+                  fontSize: 7.4,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              if (enabled) ...[
+                const SizedBox(width: 2),
+                const Icon(
+                  Icons.copy_rounded,
+                  size: 9,
+                  color: Color(0xFF7A552C),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntercessoryPrayerSection({
+    required bool isAuthenticated,
+    required String shareId,
+  }) {
+    final hasItems = _intercessoryPrayerItems.isNotEmpty;
     return Container(
-      height: 40,
-      decoration: statesButtonDecoration(),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          color: Color(0xFFFDF8EE),
-          fontSize: 12,
-          fontWeight: FontWeight.w900,
-          shadows: [
-            Shadow(
-              color: Color(0xAA000000),
-              blurRadius: 2,
-              offset: Offset(0, 1),
+      clipBehavior: Clip.hardEdge,
+      decoration: _floatingPanelDecoration(
+        color: const Color(0xFFF7E9D2),
+        shadowOpacity: 0.08,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                const Text(
+                  '중보할 기도제목',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Color(0xFF452F1A),
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13,
+                  ),
+                ),
+                if (isAuthenticated)
+                  _profileShareIdChip(
+                    shareId: shareId,
+                    enabled: true,
+                    onTap: () => _copyProfileShareId(shareId),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: _intercessoryPrayerLoading && !hasItems
+                  ? const Center(child: CircularProgressIndicator())
+                  : _intercessoryPrayerError != null && !hasItems
+                  ? _buildIntercessoryPrayerErrorCard()
+                  : !hasItems
+                  ? _buildIntercessoryPrayerEmptyCard(enabled: isAuthenticated)
+                  : Stack(
+                      children: [
+                        ListView.separated(
+                          controller: _intercessoryPrayerScrollController,
+                          padding: const EdgeInsets.only(bottom: 52),
+                          itemCount:
+                              _intercessoryPrayerItems.length +
+                              (_intercessoryPrayerLoadingMore ? 1 : 0),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 8),
+                          itemBuilder: (context, index) {
+                            if (index >= _intercessoryPrayerItems.length) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.2,
+                                  ),
+                                ),
+                              );
+                            }
+                            final item = _intercessoryPrayerItems[index];
+                            return _buildIntercessoryPrayerItemCard(item);
+                          },
+                        ),
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: _intercessoryPrayerFab(
+                            enabled: isAuthenticated,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntercessoryPrayerErrorCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0x18A63F2D),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x66A63F2D), width: 1),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            _intercessoryPrayerError!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFF7E3426),
+              fontSize: 10.8,
+              fontWeight: FontWeight.w800,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 10),
+          _profileMiniActionButton(
+            label: '다시 불러오기',
+            onTap: _loadIntercessoryPrayerPage,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIntercessoryPrayerEmptyCard({required bool enabled}) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isVeryCompact = constraints.maxHeight < 150;
+        final isCompact = constraints.maxHeight < 180;
+        final buttonSize = isVeryCompact ? 28.0 : (isCompact ? 34.0 : 40.0);
+        final iconSize = isVeryCompact ? 18.0 : (isCompact ? 22.0 : 24.0);
+        final spacing = isVeryCompact ? 4.0 : (isCompact ? 6.0 : 8.0);
+        final fontSize = isVeryCompact ? 8.2 : (isCompact ? 8.8 : 9.6);
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: enabled ? _promptAddIntercessoryPrayer : null,
+            borderRadius: BorderRadius.circular(16),
+            child: Center(
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: buttonSize,
+                        height: buttonSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: enabled
+                              ? const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFD99F4A),
+                                    Color(0xFFB26B28),
+                                  ],
+                                )
+                              : const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFD7CCB9),
+                                    Color(0xFFB6A38A),
+                                  ],
+                                ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x22000000),
+                              blurRadius: 7,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: const Color(0xFFFDF8EE),
+                          size: iconSize,
+                        ),
+                      ),
+                      SizedBox(height: spacing),
+                      Text(
+                        enabled
+                            ? '다른 사람의 기도제목을 공유 받아\n함께 기도해요'
+                            : '로그인하면 다른 사람의 기도제목을\n함께 볼 수 있어요',
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: const Color(0xFF5A4326),
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildIntercessoryPrayerItemCard(IntercessoryPrayerItem item) {
+    final prayerText = (item.prayerRequest ?? '').trim().isEmpty
+        ? '아직 등록된 기도제목이 없어요.'
+        : item.prayerRequest!.trim();
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xC9F1E3CB),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
+      ),
+      padding: const EdgeInsets.fromLTRB(10, 10, 8, 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _profileNetworkAvatar(
+            nickname: item.nickname,
+            photoUrl: item.photoUrl,
+            size: 38,
+          ),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.nickname,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Color(0xFF452F1A),
+                          fontWeight: FontWeight.w900,
+                          fontSize: 11.6,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      item.shareId,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        color: Color(0xFF8A6A46),
+                        fontSize: 9.2,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  prayerText,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF5A4326),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10.1,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          _profileTinyIconButton(
+            tooltip: '삭제',
+            onTap: () => _confirmDeleteIntercessoryPrayer(item),
+            icon: Icons.delete_outline_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _intercessoryPrayerFab({required bool enabled}) {
+    return Material(
+      color: Colors.transparent,
+      elevation: 10,
+      shadowColor: const Color(0x33000000),
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: enabled ? _promptAddIntercessoryPrayer : null,
+        customBorder: const CircleBorder(),
+        child: Ink(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: enabled
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFD99F4A), Color(0xFFB26B28)],
+                  )
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFD7CCB9), Color(0xFFB6A38A)],
+                  ),
+            border: Border.all(color: const Color(0xFFF2D8A6), width: 1.1),
+          ),
+          child: const Icon(
+            Icons.add_rounded,
+            color: Color(0xFFFDF8EE),
+            size: 21,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _profileNetworkAvatar({
+    required String nickname,
+    required String? photoUrl,
+    double size = 42,
+  }) {
+    final initials = nickname.trim().isEmpty ? '?' : nickname.trim()[0];
+    final hasPhoto = (photoUrl ?? '').trim().isNotEmpty;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+        ),
+        border: Border.all(color: const Color(0xFF8C6743), width: 1.2),
+      ),
+      child: ClipOval(
+        child: hasPhoto
+            ? Image.network(
+                photoUrl!.trim(),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Center(
+                    child: Text(
+                      initials,
+                      style: TextStyle(
+                        color: const Color(0xFF4A331D),
+                        fontSize: size * 0.34,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  initials,
+                  style: TextStyle(
+                    color: const Color(0xFF4A331D),
+                    fontSize: size * 0.34,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _profileTinyIconButton({
+    required String tooltip,
+    required VoidCallback onTap,
+    required IconData icon,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(9),
+          child: Container(
+            width: 26,
+            height: 26,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xCCF7E9D2),
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+            ),
+            child: Icon(icon, size: 14, color: const Color(0xFF7A552C)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _profileTestamentToggleButton({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: 54,
+          height: double.infinity,
+          alignment: Alignment.center,
+          decoration: _softButtonDecoration(selected: selected),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: selected
+                  ? const Color(0xFFFDF8EE)
+                  : const Color(0xFF4A331D),
+              fontSize: 11.5,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
         ),
       ),
     );
@@ -2086,7 +3652,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget _profileTopStatCard({required String title, required String value}) {
     return Container(
       constraints: const BoxConstraints(minHeight: 48),
-      decoration: statesButtonDecoration(),
+      decoration: _floatingPanelDecoration(
+        color: const Color(0xFFF7E9D2),
+        shadowOpacity: 0.08,
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -2097,16 +3666,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Color(0xFFFDF8EE),
+              color: Color(0xFF6A4C2E),
               fontWeight: FontWeight.w800,
               fontSize: 11,
-              shadows: [
-                Shadow(
-                  color: Color(0xAA000000),
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
             ),
           ),
           const SizedBox(height: 2),
@@ -2115,16 +3677,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Color(0xFFFFE5A8),
+              color: Color(0xFFB06B25),
               fontWeight: FontWeight.w900,
               fontSize: 13,
-              shadows: [
-                Shadow(
-                  color: Color(0xAA000000),
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
             ),
           ),
         ],
@@ -2134,7 +3689,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _profilePersonProgressRow({
     required List<Person> rowPeople,
-    required int rowIndex,
+    required Set<String> completedEventIds,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -2146,47 +3701,113 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       child: Row(
         children: List.generate(rowPeople.length, (index) {
           final person = rowPeople[index];
-          final progressSeed = ((rowIndex * 4 + index) * 17) % 80;
-          final progress = (0.18 + (progressSeed / 100)).clamp(0.18, 0.98);
+          final progressData = _profileStudyProgressByPersonId[person.id];
+          final completedCount = progressData?.completedCount ?? 0;
+          final totalCount = progressData?.totalCount ?? 0;
+          final progress = progressData?.fraction ?? 0.0;
           return Expanded(
             child: Padding(
               padding: EdgeInsets.only(
                 right: index == rowPeople.length - 1 ? 0 : 6,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      _weeklyPersonAvatar(person: person, size: 24),
-                      const SizedBox(width: 5),
-                      Expanded(
-                        child: Text(
-                          person.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Color(0xFF4A331D),
-                            fontWeight: FontWeight.w800,
-                            fontSize: 10.5,
-                          ),
-                        ),
-                      ),
-                    ],
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => _openProfilePersonOverview(
+                    person: person,
+                    completedEventIds: completedEventIds,
                   ),
-                  const SizedBox(height: 5),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: LinearProgressIndicator(
-                      minHeight: 7,
-                      value: progress,
-                      backgroundColor: const Color(0x664E3A26),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFFC6922D),
-                      ),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 2,
+                      vertical: 1,
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+                        final compact = width < 56;
+                        final stacked = width < 96;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (compact)
+                              Center(
+                                child: _weeklyPersonAvatar(
+                                  person: person,
+                                  size: 20,
+                                ),
+                              )
+                            else if (stacked)
+                              Column(
+                                children: [
+                                  _weeklyPersonAvatar(person: person, size: 22),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    person.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Color(0xFF4A331D),
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 9.8,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              Row(
+                                children: [
+                                  _weeklyPersonAvatar(person: person, size: 24),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text(
+                                      person.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Color(0xFF4A331D),
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 10.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '$completedCount / $totalCount',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: compact || stacked
+                                  ? TextAlign.center
+                                  : TextAlign.start,
+                              style: TextStyle(
+                                color: const Color(0xFF8A6A46),
+                                fontWeight: FontWeight.w700,
+                                fontSize: compact ? 8.6 : 9.8,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(999),
+                              child: LinearProgressIndicator(
+                                minHeight: compact ? 6 : 7,
+                                value: progress,
+                                backgroundColor: const Color(0x664E3A26),
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFFC6922D),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           );
@@ -2195,10 +3816,405 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  Future<void> _openProfilePersonOverview({
+    required Person person,
+    required Set<String> completedEventIds,
+  }) async {
+    final repo = ref.read(storyRepositoryProvider);
+    final progressData = _profileStudyProgressByPersonId[person.id];
+    final completedCount = progressData?.completedCount ?? 0;
+    final totalCount = progressData?.totalCount ?? 0;
+    final progress = progressData?.fraction ?? 0.0;
+    final eventsFuture = repo.fetchEventsForPerson(person.id);
+
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'close',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (dialogContext, _, __) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 760,
+              maxHeight: MediaQuery.of(dialogContext).size.height * 0.84,
+              minWidth: 320,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: _modalSurfaceDecoration(),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                _weeklyPersonAvatar(person: person, size: 58),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            flex: 4,
+                                            child: Text(
+                                              person.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Color(0xFF3A2B15),
+                                                fontSize: 21,
+                                                fontWeight: FontWeight.w900,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 5,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 6,
+                                                      ),
+                                                  decoration:
+                                                      _headerChipDecoration(),
+                                                  child: Text(
+                                                    '$completedCount / $totalCount',
+                                                    style: const TextStyle(
+                                                      color: Color(0xFF6A4C2E),
+                                                      fontSize: 11.5,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          999,
+                                                        ),
+                                                    child: LinearProgressIndicator(
+                                                      minHeight: 8,
+                                                      value: progress,
+                                                      backgroundColor:
+                                                          const Color(
+                                                            0x664E3A26,
+                                                          ),
+                                                      valueColor:
+                                                          const AlwaysStoppedAnimation<
+                                                            Color
+                                                          >(Color(0xFFC6922D)),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        ((person.description ?? '')
+                                                    .trim()
+                                                    .isNotEmpty
+                                                ? person.description
+                                                : person.tagline) ??
+                                            '아직 등록된 인물 소개가 없습니다.',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: Color(0xFF4D381F),
+                                          fontSize: 13,
+                                          height: 1.48,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 28),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              '사건 목록',
+                              style: TextStyle(
+                                color: Color(0xFF4D381F),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: FutureBuilder<List<StoryEvent>>(
+                                future: eventsFuture,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.2,
+                                      ),
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text(
+                                        '사건 목록을 불러오지 못했습니다.\n${snapshot.error}',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Color(0xFFA63F2D),
+                                          fontWeight: FontWeight.w800,
+                                          height: 1.45,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  final events =
+                                      snapshot.data ?? const <StoryEvent>[];
+                                  if (events.isEmpty) {
+                                    return const Center(
+                                      child: Text(
+                                        '등록된 사건이 없습니다.',
+                                        style: TextStyle(
+                                          color: Color(0xFF6D5231),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return GridView.builder(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          mainAxisSpacing: 8,
+                                          crossAxisSpacing: 8,
+                                          childAspectRatio: 1.48,
+                                        ),
+                                    itemCount: events.length,
+                                    itemBuilder: (context, index) {
+                                      final event = events[index];
+                                      final isCompleted = completedEventIds
+                                          .contains(event.id);
+                                      final placeText = (event.placeName ?? '')
+                                          .trim();
+                                      final yearText =
+                                          event.startYear?.toString() ?? '-';
+                                      final metaText = placeText.isEmpty
+                                          ? yearText
+                                          : '$placeText · $yearText';
+                                      final summary =
+                                          (event.shortStory ??
+                                                  event.story ??
+                                                  event.summary ??
+                                                  '')
+                                              .trim();
+
+                                      return Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.of(dialogContext).pop();
+                                            _openEventDetailPage(event);
+                                          },
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                              12,
+                                              10,
+                                              12,
+                                              10,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: isCompleted
+                                                  ? const Color(0xFFF3E0BE)
+                                                  : const Color(0xEEF7EBD8),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: isCompleted
+                                                    ? const Color(0xD2C78956)
+                                                    : const Color(0xB58E6F48),
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                        color: isCompleted
+                                                            ? const Color(
+                                                                0xFFC8863B,
+                                                              )
+                                                            : const Color(
+                                                                0xFFF4ECDE,
+                                                              ),
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: isCompleted
+                                                              ? const Color(
+                                                                  0xFFF1D39C,
+                                                                )
+                                                              : const Color(
+                                                                  0xBC9A7A4C,
+                                                                ),
+                                                          width: 1.0,
+                                                        ),
+                                                      ),
+                                                      child: Icon(
+                                                        isCompleted
+                                                            ? Icons
+                                                                  .check_rounded
+                                                            : Icons
+                                                                  .circle_outlined,
+                                                        size: isCompleted
+                                                            ? 14
+                                                            : 11.5,
+                                                        color: isCompleted
+                                                            ? const Color(
+                                                                0xFFFDF8EE,
+                                                              )
+                                                            : const Color(
+                                                                0xFF8A6A46,
+                                                              ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        isCompleted
+                                                            ? '완료'
+                                                            : '미완료',
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        textAlign:
+                                                            TextAlign.right,
+                                                        style: TextStyle(
+                                                          color: isCompleted
+                                                              ? const Color(
+                                                                  0xFFB26D26,
+                                                                )
+                                                              : const Color(
+                                                                  0xFF8A6A46,
+                                                                ),
+                                                          fontSize: 10.5,
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  event.title,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    color: Color(0xFF3D2D18),
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w900,
+                                                    height: 1.2,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  metaText,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    color: Color(0xFF7A5E38),
+                                                    fontSize: 10.5,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                if (summary.isNotEmpty) ...[
+                                                  const SizedBox(height: 6),
+                                                  Expanded(
+                                                    child: Text(
+                                                      summary,
+                                                      maxLines: 3,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        color: Color(
+                                                          0xFF5A4326,
+                                                        ),
+                                                        fontSize: 10.6,
+                                                        height: 1.35,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ] else
+                                                  const Spacer(),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        right: 12,
+                        top: 12,
+                        child: _modalCloseButton(
+                          onTap: () => Navigator.of(dialogContext).pop(),
+                          size: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _storySection({
     required String title,
     required String content,
     Widget? action,
+    Widget? footer,
   }) {
     return SizedBox(
       width: double.infinity,
@@ -2237,6 +4253,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 color: Color(0xFF3B2A17),
               ),
             ),
+            if (footer != null) footer,
           ],
         ),
       ),
@@ -2258,41 +4275,43 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           borderRadius: BorderRadius.circular(12),
           color: const Color(0xF4EFE3CC),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final tileExtent = ((constraints.maxWidth - (tileGap * 3)) / 4)
-                .clamp(96.0, 180.0)
-                .toDouble();
+            final itemCount = displayedAssets.length;
+            final tileWidth =
+                (constraints.maxWidth - (tileGap * (itemCount - 1))) /
+                itemCount;
+            final viewportHeight = MediaQuery.sizeOf(context).height;
+            final maxTileHeight = math.max(180.0, viewportHeight * 0.48);
+            final tileHeight = math.min(tileWidth * 1.62, maxTileHeight);
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(displayedAssets.length, (index) {
                 final path = displayedAssets[index];
-                return Padding(
-                  padding: EdgeInsets.only(
-                    right: index == displayedAssets.length - 1 ? 0 : tileGap,
-                  ),
-                  child: SizedBox(
-                    width: tileExtent,
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: index == displayedAssets.length - 1 ? 0 : tileGap,
+                    ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color(0x9C7C5C39),
                             width: 1.0,
                           ),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: SizedBox(
-                          height: tileExtent,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              path,
-                              fit: BoxFit.fitHeight,
-                              height: tileExtent,
-                            ),
+                          height: tileHeight,
+                          child: Image.asset(
+                            path,
+                            fit: BoxFit.cover,
+                            width: tileWidth,
+                            height: tileHeight,
+                            alignment: Alignment.topCenter,
                           ),
                         ),
                       ),
@@ -2308,28 +4327,61 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Widget _bibleMoveButton({required VoidCallback onTap}) {
-    return GestureDetector(
+    return _filledActionButton(
+      label: '이동',
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 78,
-        height: 30,
-        child: DecoratedBox(
-          decoration: actionButtonDecoration(selected: true),
-          child: const Center(
-            child: Text(
-              '이동',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11,
-                color: Color(0xFFFDF8EE),
-                fontWeight: FontWeight.w900,
-                shadows: [
-                  Shadow(
-                    color: Color(0xAA000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
+      compact: true,
+      minWidth: 78,
+    );
+  }
+
+  Widget _lockedPreviewOverlay({required Widget child}) {
+    return Container(
+      color: const Color(0x2EF3E6D0),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _subPageLoadingOverlay() {
+    return AbsorbPointer(
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 3.2, sigmaY: 3.2),
+          child: Container(
+            color: const Color(0x46F5E7D2),
+            alignment: Alignment.center,
+            child: Container(
+              constraints: const BoxConstraints(minWidth: 176, maxWidth: 220),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              decoration: _floatingPanelDecoration(
+                color: const Color(0xF5F9EFDF),
+                shadowOpacity: 0.12,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2.2),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _subPageLoadingLabel,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF5A4020),
+                      fontSize: 12.6,
+                      fontWeight: FontWeight.w800,
+                      height: 1.25,
+                    ),
                   ),
                 ],
               ),
@@ -2354,6 +4406,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _startQuiz(String eventId) async {
     final state = ref.read(storyControllerProvider);
     final repo = ref.read(storyRepositoryProvider);
+    final isAuthenticated = ref.read(signedInUserProvider) != null;
     final event =
         state.events.where((e) => e.id == eventId).firstOrNull ??
         _weeklyStudyData?.events.where((e) => e.id == eventId).firstOrNull;
@@ -2370,19 +4423,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       await showDialog<void>(
         context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: const Color(0xFFF6EAD8),
-            title: Text(event.title),
-            content: Text('퀴즈를 불러오지 못했습니다. 다시 시도해 주세요.\n$error'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('닫기'),
-              ),
-            ],
-          );
-        },
+        builder: (dialogContext) => ParchmentDialog(
+          title: event.title,
+          subtitle: '퀴즈를 불러오지 못했습니다. 다시 시도해 주세요.',
+          actions: [
+            ParchmentDialogActionButton(
+              label: '닫기',
+              style: ParchmentDialogActionStyle.secondary,
+              onTap: () => Navigator.of(dialogContext).pop(),
+            ),
+          ],
+          child: Text(
+            '$error',
+            style: const TextStyle(
+              color: Color(0xFF5A4326),
+              fontSize: 12.2,
+              fontWeight: FontWeight.w700,
+              height: 1.45,
+            ),
+          ),
+        ),
       );
       return;
     }
@@ -2393,19 +4453,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (questions.isEmpty) {
       await showDialog<void>(
         context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: const Color(0xFFF6EAD8),
-            title: Text(event.title),
-            content: const Text('해당 사건의 퀴즈가 아직 준비되지 않았습니다.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('닫기'),
-              ),
-            ],
-          );
-        },
+        builder: (dialogContext) => ParchmentDialog(
+          title: event.title,
+          subtitle: '해당 사건의 퀴즈가 아직 준비되지 않았습니다.',
+          actions: [
+            ParchmentDialogActionButton(
+              label: '닫기',
+              style: ParchmentDialogActionStyle.secondary,
+              onTap: () => Navigator.of(dialogContext).pop(),
+            ),
+          ],
+          child: const SizedBox.shrink(),
+        ),
       );
       return;
     }
@@ -2523,26 +4582,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
                                     await showDialog<void>(
                                       context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          backgroundColor: const Color(
-                                            0xFFF6EAD8,
+                                      builder: (dialogContext) => ParchmentDialog(
+                                        title: '제출 결과',
+                                        subtitle: didPass
+                                            ? '총 ${questions.length}문제 중 $score문제를 맞췄습니다.\n모든 문제 정답입니다.'
+                                            : '총 ${questions.length}문제 중 $score문제를 맞췄습니다.',
+                                        actions: [
+                                          ParchmentDialogActionButton(
+                                            label: '확인',
+                                            style: ParchmentDialogActionStyle
+                                                .secondary,
+                                            onTap: () => Navigator.of(
+                                              dialogContext,
+                                            ).pop(),
                                           ),
-                                          title: const Text('제출 결과'),
-                                          content: Text(
-                                            didPass
-                                                ? '총 ${questions.length}문제 중 $score문제를 맞췄습니다.\n모든 문제 정답입니다.'
-                                                : '총 ${questions.length}문제 중 $score문제를 맞췄습니다.',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text('확인'),
-                                            ),
-                                          ],
-                                        );
-                                      },
+                                        ],
+                                        child: const SizedBox.shrink(),
+                                      ),
                                     );
 
                                     if (!context.mounted) {
@@ -2564,16 +4620,30 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       },
     );
 
-    if (!didPass) {
+    if (!isAuthenticated) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('비로그인 상태라 퀴즈 진행 상황은 저장되지 않아요.')),
+      );
       return;
     }
+
+    await ref
+        .read(storyControllerProvider.notifier)
+        .markEventCompleted(eventId: eventId, score: score, isCompleted: true);
+    await _refreshProfileProgressAfterQuizCompletion();
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
-    final timeline = controller.mergedTimeline();
+    final timeline = _timelineForSelectedPersons(
+      state,
+      state.selectedPersonIds,
+    );
     final testamentEras =
         state.eras
             .where((era) => _eraTestament(era) == state.selectedTestament)
@@ -2586,7 +4656,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final avatarByPersonId = <String, String>{
       for (final person in state.persons) person.id: person.avatarAssetPath,
     };
-    const listEmptyMessage = '선택된 인물의 사건이 없습니다.';
 
     final mapCenter =
         selectedEra?.mapCenterLat != null && selectedEra?.mapCenterLng != null
@@ -2596,6 +4665,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final mapZoom = selectedEra?.mapZoom;
     final topInset = MediaQuery.of(context).padding.top;
     const outerMargin = 20.0;
+    final mapCalloutTopObscuredPixels = topInset + 56;
 
     return Scaffold(
       body: Stack(
@@ -2605,6 +4675,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               events: timeline,
               selectedEventId: state.selectedEventId,
               onSelectEvent: _handleEventSelect,
+              onCloseSelectedCallout: _closeSelectedEventPopup,
               onOpenDetail: _openEventDetail,
               colorForPerson: controller.colorForPerson,
               avatarAssetForPerson: (personId) =>
@@ -2613,83 +4684,119 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               controller: _mapPanelController,
               initialCenter: mapCenter,
               initialZoom: mapZoom,
+              topObscuredPixels: mapCalloutTopObscuredPixels,
+              bottomObscuredFraction: _selectionSheetExtent > 0
+                  ? _selectionSheetExtent
+                  : _sheetSizeForStage(
+                      MediaQuery.sizeOf(context),
+                      _selectionPanelStage,
+                    ),
               decorate: false,
             ),
           ),
           LayoutBuilder(
             builder: (context, constraints) {
-              final usableWidth = constraints.maxWidth - outerMargin * 2;
-              final leftPanelWidth = (usableWidth * 0.235).clamp(176.0, 252.0);
-              final rightPanelWidth = (usableWidth * 0.225).clamp(176.0, 252.0);
-              const eraHeight = 60.0;
-              final sideTop = topInset + 12;
-              const sideBottom = 8.0;
-              final showLeftPanel = state.selectedEraId != null;
-              final showRightPanel = state.selectedPersonIds.isNotEmpty;
-              const selectorGap = 4.0;
-              final selectorLeftInset =
-                  outerMargin +
-                  (showLeftPanel ? leftPanelWidth + selectorGap : 0);
-              final selectorRightInset =
-                  outerMargin +
-                  (showRightPanel ? rightPanelWidth + selectorGap : 0);
-              final selectorAvailableWidth =
-                  constraints.maxWidth - selectorLeftInset - selectorRightInset;
-              final useInsetsForSelector = selectorAvailableWidth >= 220;
-              final selectorLeft = useInsetsForSelector
-                  ? selectorLeftInset
-                  : outerMargin;
-              final selectorRight = useInsetsForSelector
-                  ? selectorRightInset
-                  : outerMargin;
-              final rightPanelLeft = showRightPanel
-                  ? constraints.maxWidth - outerMargin - rightPanelWidth
-                  : constraints.maxWidth - outerMargin;
-              final controlsLeft = ((rightPanelLeft - 52).clamp(
-                outerMargin + 4,
-                rightPanelLeft,
-              )).toDouble();
+              final sideTop = topInset + 8;
+              final viewportSize = Size(
+                constraints.maxWidth,
+                constraints.maxHeight,
+              );
+              final isPhone = _isPhoneSheetLayoutForSize(viewportSize);
+              final sheetHorizontalMargin = isPhone ? 10.0 : 18.0;
+              final sheetHeight =
+                  constraints.maxHeight *
+                  _sheetSizeForStage(viewportSize, _selectionPanelStage);
+              final selectionButtonIsOpen =
+                  _selectionPanelStage == StorySelectionPanelStage.expanded;
+              final selectionButtonBackground = selectionButtonIsOpen
+                  ? const Color(0xFF74A856)
+                  : const Color(0xFFD2873E);
+              final selectionButtonBorder = selectionButtonIsOpen
+                  ? const Color(0xFFD4E8BC)
+                  : const Color(0xFFF1C98A);
+              final selectionButtonForeground = const Color(0xFFF8EED9);
+              final selectionButtonShadow = [
+                BoxShadow(
+                  color: selectionButtonIsOpen
+                      ? const Color(0x3977A85A)
+                      : const Color(0x33D2873E),
+                  blurRadius: selectionButtonIsOpen ? 9 : 8,
+                  offset: const Offset(0, 2),
+                ),
+              ];
 
               return Stack(
                 children: [
-                  if (showLeftPanel)
-                    Positioned(
-                      left: outerMargin,
-                      top: sideTop,
-                      bottom: sideBottom,
-                      width: leftPanelWidth,
-                      child: PersonPanel(
+                  const Positioned.fill(
+                    child: IgnorePointer(
+                      child: _ParchmentTextureLayer(
+                        opacity: 0.075,
+                        tint: Color(0xFFB88A57),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: sheetHorizontalMargin,
+                    right: sheetHorizontalMargin,
+                    bottom: 0,
+                    child: AnimatedContainer(
+                      key: const ValueKey<String>('selection-sheet'),
+                      duration: const Duration(milliseconds: 280),
+                      curve: Curves.easeOutCubic,
+                      height: sheetHeight,
+                      child: StorySelectionPanel(
+                        scrollController: _selectionPanelScrollController,
+                        step: _selectionStep,
+                        panelStage: _selectionPanelStage,
+                        onStepUp: _stepSelectionPanelUp,
+                        onStepDown: _stepSelectionPanelDown,
+                        canOpenStep: (step) =>
+                            _canOpenSelectionStep(step, state),
+                        onSelectStep: (step) => _goToSelectionStep(step),
+                        eras: testamentEras,
+                        selectedEraId: state.selectedEraId,
+                        selectedTestament: state.selectedTestament,
+                        onSelectEra: (eraId) {
+                          _handleStepEraSelect(eraId);
+                        },
+                        onSelectTestament: (testament) {
+                          _handleStepTestamentSelect(testament);
+                        },
                         persons: state.persons,
-                        selectedPersonIds: state.selectedPersonIds,
-                        onToggle: controller.togglePerson,
-                        colorForPerson: controller.colorForPerson,
-                        sortMode: _personSortMode,
-                        onSortModeChanged: (mode) {
+                        personSortMode: _personSortMode,
+                        onPersonSortModeChanged: (mode) {
                           setState(() {
                             _personSortMode = mode;
                           });
                         },
-                      ),
-                    ),
-                  if (showRightPanel)
-                    Positioned(
-                      right: outerMargin,
-                      top: sideTop,
-                      bottom: sideBottom,
-                      width: rightPanelWidth,
-                      child: StoryListPanel(
+                        draftSelectedPersonIds: _sanitizeDraftSelectedPersonIds(
+                          state,
+                        ),
+                        onToggleDraftPerson: _toggleDraftPerson,
+                        committedSelectedPersonIds: state.selectedPersonIds,
+                        hasPendingPersonChanges:
+                            _hasPendingPersonSelectionChanges(state),
+                        colorForDraftPerson: (personId) =>
+                            _colorForDraftPerson(personId, state),
+                        colorForCommittedPerson: controller.colorForPerson,
                         events: timeline,
                         selectedEventId: state.selectedEventId,
                         completedEventIds: state.completedEventIds,
-                        onSelectEvent: _handleEventSelect,
-                        onStartQuiz: _startQuiz,
-                        colorForPerson: controller.colorForPerson,
-                        selectedPersonIds: state.selectedPersonIds,
-                        emptyMessage: listEmptyMessage,
+                        onSelectEvent: _handleSelectionPanelEventSelect,
+                        onNextFromEra: _proceedFromEraStep,
+                        onNextFromPersons: _proceedFromPersonStep,
+                        onStartQuiz: () {
+                          final eventId = state.selectedEventId;
+                          if (eventId == null) {
+                            return;
+                          }
+                          _startQuiz(eventId);
+                        },
                       ),
                     ),
+                  ),
                   Positioned(
-                    left: controlsLeft,
+                    right: outerMargin,
                     top: sideTop,
                     child: Column(
                       children: [
@@ -2720,56 +4827,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     ),
                   ),
                   Positioned(
-                    left: selectorLeft,
-                    right: selectorRight,
-                    bottom: 20,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: (!showLeftPanel && !showRightPanel)
-                          ? SizedBox(
-                              width: double.infinity,
-                              height: eraHeight,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: eraHeight,
-                                      child: EraSelector(
-                                        eras: testamentEras,
-                                        selectedEraId: state.selectedEraId,
-                                        onSelect: (eraId) {
-                                          controller.toggleEra(eraId);
-                                        },
-                                        selectedTestament:
-                                            state.selectedTestament,
-                                        onSelectTestament:
-                                            controller.selectTestament,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  _utilityTabBar(
-                                    height: eraHeight,
-                                    onCalendarTap: _openWeeklyTab,
-                                    onBookTap: _openBibleReaderPopup,
-                                    onProfileTap: _openProfileTab,
-                                  ),
-                                ],
-                              ),
-                            )
-                          : SizedBox(
-                              width: double.infinity,
-                              height: eraHeight,
-                              child: EraSelector(
-                                eras: testamentEras,
-                                selectedEraId: state.selectedEraId,
-                                onSelect: (eraId) {
-                                  controller.toggleEra(eraId);
-                                },
-                                selectedTestament: state.selectedTestament,
-                                onSelectTestament: controller.selectTestament,
-                              ),
-                            ),
+                    left: outerMargin,
+                    top: sideTop,
+                    child: Row(
+                      children: [
+                        _topUtilityButton(
+                          label: '사건선택',
+                          selected: selectionButtonIsOpen,
+                          backgroundColor: selectionButtonBackground,
+                          borderColor: selectionButtonBorder,
+                          foregroundColor: selectionButtonForeground,
+                          boxShadow: selectionButtonShadow,
+                          onTap: _toggleSelectionPanelFromTopButton,
+                        ),
+                        const SizedBox(width: 8),
+                        _topUtilityButton(
+                          label: '금주 인물',
+                          onTap: _openWeeklyTab,
+                        ),
+                        const SizedBox(width: 8),
+                        _topUtilityButton(
+                          label: '성경',
+                          onTap: _openBibleReaderPopup,
+                        ),
+                        const SizedBox(width: 8),
+                        _topUtilityButton(label: '프로필', onTap: _openProfileTab),
+                      ],
                     ),
                   ),
                 ],
@@ -2805,193 +4888,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
-          if (_activeBottomTab == _BottomTab.weekly)
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: _closeWeeklyTab,
-                      behavior: HitTestBehavior.opaque,
-                      child: const ColoredBox(color: Colors.black54),
-                    ),
-                  ),
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 760,
-                        maxHeight: MediaQuery.of(context).size.height * 0.90,
-                        minWidth: 300,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: scrollPopupDecoration().copyWith(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.4),
-                                blurRadius: 18,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final w = constraints.maxWidth;
-                              final h = constraints.maxHeight;
-                              final selectedEvent = _weeklySelectedEvent;
-                              const closeSize = 34.0;
-                              final closeRight = (w * 0.022)
-                                  .clamp(8.0, 16.0)
-                                  .toDouble();
-                              final closeTop = (h * 0.02)
-                                  .clamp(6.0, 16.0)
-                                  .toDouble();
-                              final shortPopupWidth = (w * 0.34)
-                                  .clamp(248.0, 340.0)
-                                  .toDouble();
-                              final shortPopupMaxHeight = (h * 0.40)
-                                  .clamp(150.0, 232.0)
-                                  .toDouble();
-                              final contentPadding = EdgeInsets.fromLTRB(
-                                (w * 0.012).clamp(4.0, 10.0).toDouble(),
-                                (h * 0.012).clamp(4.0, 10.0).toDouble(),
-                                (w * 0.012).clamp(4.0, 10.0).toDouble(),
-                                (h * 0.012).clamp(4.0, 10.0).toDouble(),
-                              );
-                              return Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: Padding(
-                                      padding: contentPadding,
-                                      child: _buildWeeklyBody(
-                                        state: state,
-                                        controller: controller,
-                                      ),
-                                    ),
-                                  ),
-                                  if (selectedEvent != null &&
-                                      _weeklyShowShortPopup)
-                                    Positioned.fill(
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: SizedBox(
-                                          width: shortPopupWidth,
-                                          child: _weeklyShortPopup(
-                                            event: selectedEvent,
-                                            maxHeight: shortPopupMaxHeight,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  Positioned(
-                                    top: closeTop,
-                                    right: closeRight,
-                                    child: _weeklyCloseButton(
-                                      onTap: _closeWeeklyTab,
-                                      size: closeSize,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          if (_activeBottomTab == _BottomTab.profile)
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: _closeProfileTab,
-                      behavior: HitTestBehavior.opaque,
-                      child: const ColoredBox(color: Colors.black54),
-                    ),
-                  ),
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 760,
-                        maxHeight: MediaQuery.of(context).size.height * 0.90,
-                        minWidth: 300,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: scrollPopupDecoration().copyWith(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.4),
-                                blurRadius: 18,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final w = constraints.maxWidth;
-                              final h = constraints.maxHeight;
-                              const closeSize = 34.0;
-                              final closeRight = (w * 0.022)
-                                  .clamp(8.0, 16.0)
-                                  .toDouble();
-                              final closeTop = (h * 0.02)
-                                  .clamp(6.0, 16.0)
-                                  .toDouble();
-                              final contentPadding = EdgeInsets.fromLTRB(
-                                (w * 0.035).clamp(10.0, 24.0).toDouble(),
-                                (h * 0.09).clamp(20.0, 50.0).toDouble(),
-                                (w * 0.035).clamp(10.0, 24.0).toDouble(),
-                                (h * 0.08).clamp(18.0, 42.0).toDouble(),
-                              );
-                              return Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: Padding(
-                                      padding: contentPadding,
-                                      child: _buildProfileBody(state: state),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: closeTop,
-                                    right: closeRight,
-                                    child: _weeklyCloseButton(
-                                      onTap: _closeProfileTab,
-                                      size: closeSize,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          if (_subPageLoading) Positioned.fill(child: _subPageLoadingOverlay()),
         ],
       ),
     );
   }
 }
-
-enum _BottomTab { home, weekly, profile }
 
 class _WeeklyStudyData {
   const _WeeklyStudyData({
@@ -3005,8 +4907,1147 @@ class _WeeklyStudyData {
   final DateTime weekStartMonday;
 }
 
+class _ProfileEditorDialog extends ConsumerStatefulWidget {
+  const _ProfileEditorDialog({
+    required this.initialProfile,
+    required this.userId,
+  });
+
+  final AppUserProfile initialProfile;
+  final String userId;
+
+  @override
+  ConsumerState<_ProfileEditorDialog> createState() =>
+      _ProfileEditorDialogState();
+}
+
+class _ProfileEditorDialogState extends ConsumerState<_ProfileEditorDialog> {
+  late final TextEditingController _nicknameController;
+  late final TextEditingController _prayerController;
+  final ImagePicker _picker = ImagePicker();
+
+  Uint8List? _selectedBytes;
+  String? _selectedExtension;
+  bool _saving = false;
+  String? _localError;
+
+  @override
+  void initState() {
+    super.initState();
+    _nicknameController = TextEditingController(
+      text: widget.initialProfile.nickname,
+    );
+    _prayerController = TextEditingController(
+      text: widget.initialProfile.prayerRequest ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _nicknameController.dispose();
+    _prayerController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickProfileImage() async {
+    try {
+      final picked = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1600,
+        imageQuality: 86,
+      );
+      if (picked == null || !mounted) {
+        return;
+      }
+      final bytes = await picked.readAsBytes();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _selectedBytes = bytes;
+        _selectedExtension = picked.path.split('.').last;
+        _localError = null;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _localError = '사진을 불러오지 못했습니다.\n$error';
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    final nickname = _nicknameController.text.trim();
+    if (nickname.isEmpty) {
+      setState(() {
+        _localError = '닉네임을 입력해 주세요.';
+      });
+      return;
+    }
+
+    setState(() {
+      _saving = true;
+      _localError = null;
+    });
+
+    try {
+      String? nextPhotoUrl = widget.initialProfile.photoUrl;
+      if (_selectedBytes != null) {
+        nextPhotoUrl = await ref
+            .read(userRepositoryProvider)
+            .uploadProfileImage(
+              userId: widget.userId,
+              bytes: _selectedBytes!,
+              extension: _selectedExtension ?? 'png',
+            );
+      }
+
+      final updatedProfile = await ref
+          .read(userRepositoryProvider)
+          .updateUserProfile(
+            userId: widget.userId,
+            nickname: nickname,
+            prayerRequest: _prayerController.text,
+            photoUrl: nextPhotoUrl,
+          );
+      if (!mounted) {
+        return;
+      }
+      Navigator.of(context).pop(updatedProfile);
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _localError = '프로필을 저장하지 못했습니다.\n$error';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+        });
+      }
+    }
+  }
+
+  Widget _editorSectionLabel(String title, {String? subtitle}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFF4A331D),
+            fontSize: 13,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        if (subtitle != null && subtitle.trim().isNotEmpty) ...[
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              subtitle.trim(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFF8A6A46),
+                fontSize: 10.4,
+                fontWeight: FontWeight.w700,
+                height: 1.2,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  InputDecoration _editorInputDecoration({
+    required String hintText,
+    bool multiLine = false,
+  }) {
+    const borderColor = Color(0xB88E6F48);
+    const focusedBorderColor = Color(0xFFB87731);
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(
+        color: Color(0xFF9B805D),
+        fontSize: 12.4,
+        fontWeight: FontWeight.w600,
+      ),
+      filled: true,
+      fillColor: const Color(0xFFF9F2E7),
+      isDense: !multiLine,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: multiLine ? 14 : 12,
+      ),
+      counterText: '',
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: borderColor, width: 1.1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: borderColor, width: 1.1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: focusedBorderColor, width: 1.5),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0x558E6F48), width: 1.0),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final profile = widget.initialProfile;
+    final initials = profile.nickname.trim().isEmpty
+        ? '?'
+        : profile.nickname.trim().substring(0, 1);
+    final ImageProvider? imageProvider = _selectedBytes != null
+        ? MemoryImage(_selectedBytes!)
+        : ((profile.photoUrl ?? '').trim().isNotEmpty
+              ? NetworkImage(profile.photoUrl!.trim())
+              : null);
+
+    final photoCard = Container(
+      decoration: _floatingPanelDecoration(
+        color: const Color(0xFFF4E6CF),
+        shadowOpacity: 0.06,
+      ),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+              ),
+              border: Border.all(color: const Color(0xFF8C6743), width: 1.8),
+            ),
+            child: ClipOval(
+              child: imageProvider == null
+                  ? Center(
+                      child: Text(
+                        initials,
+                        style: const TextStyle(
+                          color: Color(0xFF4A331D),
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    )
+                  : Image(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) {
+                        return Center(
+                          child: Text(
+                            initials,
+                            style: const TextStyle(
+                              color: Color(0xFF4A331D),
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _saving ? null : _pickProfileImage,
+              icon: const Icon(Icons.photo_library_outlined, size: 16),
+              label: const Text('사진 바꾸기'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF8A5523),
+                side: const BorderSide(color: Color(0xB88E6F48), width: 1.1),
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final formCard = Container(
+      decoration: _floatingPanelDecoration(
+        color: const Color(0xFFF6EAD4),
+        shadowOpacity: 0.05,
+      ),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _editorSectionLabel('닉네임', subtitle: '다른 사람에게 보이는 이름이에요.'),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _nicknameController,
+            enabled: !_saving,
+            maxLength: 24,
+            textInputAction: TextInputAction.next,
+            style: const TextStyle(
+              color: Color(0xFF402B18),
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+            ),
+            onChanged: (_) {
+              if (_localError != null) {
+                setState(() {
+                  _localError = null;
+                });
+              }
+            },
+            decoration: _editorInputDecoration(hintText: '예: 기도왕, 다윗러버'),
+          ),
+          const SizedBox(height: 12),
+          _editorSectionLabel('기도제목', subtitle: '함께 기도받고 싶은 내용을 짧게 적어보세요.'),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _prayerController,
+            enabled: !_saving,
+            maxLength: 120,
+            minLines: 3,
+            maxLines: 4,
+            style: const TextStyle(
+              color: Color(0xFF4A331D),
+              fontSize: 12.8,
+              fontWeight: FontWeight.w700,
+              height: 1.45,
+            ),
+            onChanged: (_) {
+              if (_localError != null) {
+                setState(() {
+                  _localError = null;
+                });
+              }
+            },
+            decoration: _editorInputDecoration(
+              hintText: '예: 이번 주에 마음이 지치지 않도록 함께 기도해주세요.',
+              multiLine: true,
+            ),
+          ),
+          if (_localError != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0x14A63F2D),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0x55A63F2D), width: 1),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Text(
+                _localError!,
+                style: const TextStyle(
+                  color: Color(0xFF8E3626),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Container(
+          decoration: _modalSurfaceDecoration(),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+          child: SingleChildScrollView(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth >= 500;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            '프로필 수정',
+                            style: TextStyle(
+                              color: Color(0xFF3F2A17),
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _saving ? null : _saveProfile,
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF9B5C1E),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          child: Text(_saving ? '저장 중' : '저장'),
+                        ),
+                        const SizedBox(width: 8),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _saving
+                                ? null
+                                : () => Navigator.of(context).pop(),
+                            borderRadius: BorderRadius.circular(14),
+                            child: Ink(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: const Color(0x90FFFFFF),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: const Color(0xAA8E6F48),
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.close_rounded,
+                                color: Color(0xFF6E512C),
+                                size: 22,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    if (isWide)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 156, child: photoCard),
+                          const SizedBox(width: 14),
+                          Expanded(child: formCard),
+                        ],
+                      )
+                    else ...[
+                      photoCard,
+                      const SizedBox(height: 14),
+                      formCard,
+                    ],
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShareIdInputDialog extends StatefulWidget {
+  const _ShareIdInputDialog();
+
+  @override
+  State<_ShareIdInputDialog> createState() => _ShareIdInputDialogState();
+}
+
+class _ShareIdInputDialogState extends State<_ShareIdInputDialog> {
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _focusNode = FocusNode();
+    _controller.addListener(_normalizeText);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_normalizeText);
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _normalizeText() {
+    final normalized = _controller.text.toUpperCase().replaceAll(
+      RegExp(r'[^A-Z0-9]'),
+      '',
+    );
+    if (_controller.text == normalized) {
+      return;
+    }
+    _controller.value = _controller.value.copyWith(
+      text: normalized,
+      selection: TextSelection.collapsed(offset: normalized.length),
+      composing: TextRange.empty,
+    );
+  }
+
+  void _close([String? result]) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    _focusNode.unfocus();
+    Navigator.of(context).pop(result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: _controller,
+      builder: (context, value, _) {
+        final shareId = value.text.trim().toUpperCase();
+        final canSubmit = shareId.length == 7;
+
+        return ParchmentDialog(
+          title: '공유 ID 추가',
+          maxWidth: 410,
+          showCloseButton: true,
+          onClose: _close,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ParchmentDialogTextField(
+                controller: _controller,
+                focusNode: _focusNode,
+                hintText: '예: A1B2C3D',
+                maxLength: 7,
+                textCapitalization: TextCapitalization.characters,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
+                ],
+                onSubmitted: canSubmit ? (_) => _close(shareId) : null,
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ParchmentDialogActionButton(
+                  label: '추가',
+                  onTap: canSubmit ? () => _close(shareId) : null,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SubPageScaffold extends StatelessWidget {
+  const _SubPageScaffold({
+    required this.title,
+    required this.child,
+    this.compactBackOnly = false,
+  });
+
+  final String title;
+  final Widget child;
+  final bool compactBackOnly;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFF6EEDC),
+                    Color(0xFFF0DFC3),
+                    Color(0xFFE7D1AF),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: _ParchmentTextureLayer(
+                opacity: 0.11,
+                tint: const Color(0xFFB88955),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: compactBackOnly
+                ? Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 40, top: 10),
+                          child: child,
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: _SubPageCompactBackButton(
+                          onTap: () => Navigator.of(context).pop(),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 14, 20, 12),
+                        child: Row(
+                          children: [
+                            _topUtilityButton(
+                              label: '이전',
+                              onTap: () => Navigator.of(context).pop(),
+                              selected: true,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Container(
+                                height: 40,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                ),
+                                decoration: _floatingPanelDecoration(
+                                  color: const Color(0xEEF7E9D1),
+                                  shadowOpacity: 0.08,
+                                ),
+                                child: Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Color(0xFF4A331D),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(child: child),
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InlineLoginPromptCard extends ConsumerStatefulWidget {
+  const _InlineLoginPromptCard({
+    required this.title,
+    required this.description,
+    required this.onSignedIn,
+  });
+
+  final String title;
+  final String description;
+  final Future<void> Function() onSignedIn;
+
+  @override
+  ConsumerState<_InlineLoginPromptCard> createState() =>
+      _InlineLoginPromptCardState();
+}
+
+class _InlineLoginPromptCardState
+    extends ConsumerState<_InlineLoginPromptCard> {
+  bool _submitting = false;
+  String? _error;
+
+  Future<void> _handleAppleSignIn() async {
+    if (_submitting) {
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      final nicknameHint = await ref
+          .read(authRepositoryProvider)
+          .signInWithApple();
+      final user = ref.read(signedInUserProvider);
+      if (user != null) {
+        await ref
+            .read(userRepositoryProvider)
+            .ensureSignedInUser(user, nicknameHint: nicknameHint);
+        await widget.onSignedIn();
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = '애플 로그인에 실패했습니다.\n$error';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleKakaoSignIn() async {
+    if (_submitting) {
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await ref.read(authRepositoryProvider).signInWithKakao();
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = '카카오 로그인에 실패했습니다.\n$error';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: _modalSurfaceDecoration(),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+      child: Opacity(
+        opacity: _submitting ? 0.78 : 1,
+        child: IgnorePointer(
+          ignoring: _submitting,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                widget.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xFF4A331D),
+                  fontSize: 16.5,
+                  fontWeight: FontWeight.w900,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.description,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xFF6D5231),
+                  fontSize: 11.8,
+                  height: 1.42,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                height: 40,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFFEE500),
+                    foregroundColor: const Color(0xFF2A1B00),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 13.8,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  onPressed: _handleKakaoSignIn,
+                  child: const Text('카카오로 로그인'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 40,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF161616),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 13.8,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  onPressed: _handleAppleSignIn,
+                  child: const Text('Apple로 로그인'),
+                ),
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color(0xFFA63F2D),
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w800,
+                    height: 1.38,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SubPageCompactBackButton extends StatelessWidget {
+  const _SubPageCompactBackButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xD06A401E),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFF0C36B), width: 1.4),
+          ),
+          child: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 16,
+            color: Color(0xFFF8EED9),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
+}
+
+class _ParchmentTextureLayer extends StatelessWidget {
+  const _ParchmentTextureLayer({required this.opacity, required this.tint});
+
+  final double opacity;
+  final Color tint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: opacity,
+      child: ColorFiltered(
+        colorFilter: ColorFilter.mode(tint, BlendMode.multiply),
+        child: Image.asset(
+          'assets/elements/parchment_texture.png',
+          fit: BoxFit.cover,
+          alignment: Alignment.center,
+          excludeFromSemantics: true,
+        ),
+      ),
+    );
+  }
+}
+
+BoxDecoration _modalSurfaceDecoration() {
+  return BoxDecoration(
+    gradient: const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFF8F1E4), Color(0xFFF1E2C6)],
+    ),
+    borderRadius: BorderRadius.circular(28),
+    border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),
+    boxShadow: const [
+      BoxShadow(
+        color: Color(0x33000000),
+        blurRadius: 30,
+        offset: Offset(0, 18),
+      ),
+    ],
+  );
+}
+
+BoxDecoration _floatingPanelDecoration({
+  Color color = const Color(0xF5F7E9D1),
+  double shadowOpacity = 0.12,
+}) {
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color.alphaBlend(const Color(0x14FFFFFF), color), color],
+    ),
+    borderRadius: BorderRadius.circular(22),
+    border: Border.all(color: const Color(0xB88E6F48), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: shadowOpacity),
+        blurRadius: 18,
+        offset: const Offset(0, 8),
+      ),
+    ],
+  );
+}
+
+BoxDecoration _interactiveCardDecoration({
+  required bool selected,
+  bool completed = false,
+}) {
+  if (selected && completed) {
+    return BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF48A86B), Color(0xFF2D7B4D)],
+      ),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: const Color(0xFFD9F0D0), width: 1.2),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x24408F5E),
+          blurRadius: 14,
+          offset: Offset(0, 7),
+        ),
+      ],
+    );
+  }
+  if (selected) {
+    return BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFC8863B), Color(0xFFA85B25)],
+      ),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: const Color(0xFFF1D39C), width: 1.2),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x26A35B22),
+          blurRadius: 14,
+          offset: Offset(0, 7),
+        ),
+      ],
+    );
+  }
+  if (completed) {
+    return BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFE3F3DE), Color(0xFFD2EBCB)],
+      ),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: const Color(0xFF7FB07B), width: 1.0),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x183A7A4B),
+          blurRadius: 10,
+          offset: Offset(0, 4),
+        ),
+      ],
+    );
+  }
+  return BoxDecoration(
+    color: const Color(0xEEF7EBD8),
+    borderRadius: BorderRadius.circular(18),
+    border: Border.all(color: const Color(0xB58E6F48), width: 1.0),
+  );
+}
+
+BoxDecoration _headerChipDecoration() {
+  return BoxDecoration(
+    color: const Color(0xEEF2E1C6),
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: const Color(0xBC9A7A4C), width: 1),
+  );
+}
+
+BoxDecoration _softButtonDecoration({required bool selected}) {
+  return BoxDecoration(
+    gradient: selected
+        ? const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFC8863B), Color(0xFFA85B25)],
+          )
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFF8F0E2), Color(0xFFEEDDC1)],
+          ),
+    borderRadius: BorderRadius.circular(14),
+    border: Border.all(
+      color: selected ? const Color(0xFFF1D39C) : const Color(0xBC9A7A4C),
+      width: 1.0,
+    ),
+    boxShadow: selected
+        ? const [
+            BoxShadow(
+              color: Color(0x26A35B22),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ]
+        : null,
+  );
+}
+
+Widget _filledActionButton({
+  required String label,
+  required VoidCallback onTap,
+  bool completed = false,
+  bool compact = false,
+  double? minWidth,
+}) {
+  final height = compact ? 34.0 : 42.0;
+  final horizontal = compact ? 12.0 : 18.0;
+  final radius = compact ? 12.0 : 15.0;
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(radius),
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: minWidth ?? 92,
+          minHeight: height,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: completed
+                ? const [Color(0xFF58B573), Color(0xFF2D8754)]
+                : const [Color(0xFFD89A47), Color(0xFFB96B2D)],
+          ),
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(
+            color: completed
+                ? const Color(0xFFD7EFCE)
+                : const Color(0xFFF2D8A6),
+            width: 1.1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: completed
+                  ? const Color(0x223D8758)
+                  : const Color(0x26A35B22),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: const Color(0xFFFDF8EE),
+            fontSize: compact ? 11.5 : 12.5,
+            fontWeight: FontWeight.w900,
+            height: 1.0,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _modalCloseButton({required VoidCallback onTap, double size = 34}) {
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(size * 0.38),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: const Color(0xECF7EBD7),
+          borderRadius: BorderRadius.circular(size * 0.38),
+          border: Border.all(color: const Color(0xBC9A7A4C), width: 1.0),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x22000000),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Icon(
+          Icons.close_rounded,
+          size: size * 0.52,
+          color: const Color(0xFF5C4326),
+        ),
+      ),
+    ),
+  );
 }
 
 Widget _mapControlButton({
@@ -3028,124 +6069,67 @@ Widget _mapControlButton({
   );
 }
 
-Widget _utilityImageButton({
-  required String assetPath,
-  double size = 44,
-  double visualScale = 1.14,
-  String? label,
-  VoidCallback? onTap,
+Widget _topUtilityButton({
+  required String label,
+  required VoidCallback onTap,
+  bool selected = false,
+  bool enabled = true,
+  Color? backgroundColor,
+  Color? borderColor,
+  Color? foregroundColor,
+  List<BoxShadow>? boxShadow,
 }) {
-  final hasLabel = label != null && label.trim().isNotEmpty;
-  final normalizedLabel = hasLabel ? label.trim() : '';
-  final isTwoLine = normalizedLabel.contains('\n');
+  final resolvedBackgroundColor =
+      backgroundColor ??
+      (selected ? const Color(0xD06A401E) : const Color(0xB02A2118));
+  final resolvedBorderColor =
+      borderColor ??
+      (selected ? const Color(0xFFF0C36B) : const Color(0xBFD8BF99));
+  final resolvedForegroundColor = foregroundColor ?? const Color(0xFFF8EED9);
+  final resolvedBoxShadow =
+      boxShadow ??
+      (selected
+          ? [
+              BoxShadow(
+                color: const Color(0x45F0C36B),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ]
+          : null);
 
-  final image = Stack(
-    clipBehavior: Clip.none,
-    alignment: Alignment.center,
-    children: [
-      Transform.scale(
-        scale: visualScale,
-        alignment: Alignment.center,
-        child: Image.asset(assetPath, fit: BoxFit.contain),
-      ),
-      if (hasLabel)
-        Positioned(
-          left: 2,
-          right: 2,
-          bottom: isTwoLine ? 4 : 6,
-          child: IgnorePointer(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0x88000000),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-                child: Text(
-                  normalizedLabel,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  style: TextStyle(
-                    color: const Color(0xFFFDF8EE),
-                    fontWeight: FontWeight.w900,
-                    fontSize: isTwoLine ? 7.8 : 8.8,
-                    height: 1.0,
-                    shadows: const [
-                      Shadow(
-                        color: Color(0xC0000000),
-                        blurRadius: 2,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+  return Opacity(
+    opacity: enabled ? 1 : 0.42,
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 38,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: resolvedBackgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: resolvedBorderColor,
+              width: selected ? 1.4 : 1,
+            ),
+            boxShadow: resolvedBoxShadow,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: resolvedForegroundColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              height: 1.1,
             ),
           ),
-        ),
-    ],
-  );
-
-  return SizedBox(
-    width: size,
-    height: size,
-    child: onTap == null
-        ? image
-        : GestureDetector(
-            onTap: onTap,
-            behavior: HitTestBehavior.translucent,
-            child: image,
-          ),
-  );
-}
-
-Widget _utilityTabBar({
-  required double height,
-  VoidCallback? onCalendarTap,
-  VoidCallback? onBookTap,
-  VoidCallback? onProfileTap,
-}) {
-  const buttonSpacing = 1.0;
-  const horizontalPadding = 3.0;
-  const verticalPadding = 2.0;
-  const visualScale = 0.82;
-  final buttonSize = (height * 0.92).clamp(40.0, height).toDouble();
-  final barWidth =
-      (buttonSize * 3) + (buttonSpacing * 2) + (horizontalPadding * 2);
-
-  return SizedBox(
-    width: barWidth,
-    height: height,
-    child: DecoratedBox(
-      decoration: tabBarDecoration(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: horizontalPadding,
-          vertical: verticalPadding,
-        ),
-        child: Row(
-          children: [
-            _utilityImageButton(
-              assetPath: kCalendarButtonAsset,
-              size: buttonSize,
-              visualScale: visualScale,
-              onTap: onCalendarTap,
-            ),
-            const SizedBox(width: buttonSpacing),
-            _utilityImageButton(
-              assetPath: kBookButtonAsset,
-              size: buttonSize,
-              visualScale: visualScale,
-              onTap: onBookTap,
-            ),
-            const SizedBox(width: buttonSpacing),
-            _utilityImageButton(
-              assetPath: kProfileButtonAsset,
-              size: buttonSize,
-              visualScale: visualScale,
-              onTap: onProfileTap,
-            ),
-          ],
         ),
       ),
     ),
@@ -3160,7 +6144,7 @@ Widget _bibleDropdownFrame<T>({
   return SizedBox(
     height: 38,
     child: DecoratedBox(
-      decoration: statesButtonDecoration(),
+      decoration: _softButtonDecoration(selected: false),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: DropdownButtonHideUnderline(
@@ -3170,19 +6154,12 @@ Widget _bibleDropdownFrame<T>({
             isExpanded: true,
             iconSize: 12,
             borderRadius: BorderRadius.circular(10),
-            dropdownColor: const Color(0xFF4E3A26),
-            iconEnabledColor: const Color(0xFFFDF8EE),
+            dropdownColor: const Color(0xFFF3E4CC),
+            iconEnabledColor: const Color(0xFF5B4327),
             style: const TextStyle(
-              color: Color(0xFFFDF8EE),
+              color: Color(0xFF4A331D),
               fontWeight: FontWeight.w900,
               fontSize: 12,
-              shadows: [
-                Shadow(
-                  color: Color(0xAA000000),
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
             ),
             items: items,
             onChanged: onChanged,

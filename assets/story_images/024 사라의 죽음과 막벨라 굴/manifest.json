@@ -1,0 +1,83 @@
+{
+  "event_id": "",
+  "event_code": "evt_024",
+  "title": "024 사라의 죽음과 막벨라 굴",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 24,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "사라의 죽음 앞에서 아브라함이 조용히 울며 고개를 숙인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham",
+        "sarah"
+      ],
+      "scene_reference_person_codes": [
+        "abraham",
+        "sarah"
+      ],
+      "reference_avatar_codes": [
+        "abraham",
+        "sarah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "성문 앞에서 아브라함이 예의를 지키며 매장지를 요청한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham"
+      ],
+      "scene_reference_person_codes": [
+        "abraham"
+      ],
+      "reference_avatar_codes": [
+        "abraham"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "아브라함이 은을 세어 땅값을 직접 지불한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham"
+      ],
+      "scene_reference_person_codes": [
+        "abraham"
+      ],
+      "reference_avatar_codes": [
+        "abraham"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "막벨라 굴에 장사한 뒤 아브라함이 오래 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "abraham"
+      ],
+      "scene_reference_person_codes": [
+        "abraham"
+      ],
+      "reference_avatar_codes": [
+        "abraham"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

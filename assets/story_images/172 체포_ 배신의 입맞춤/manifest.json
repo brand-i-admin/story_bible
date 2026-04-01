@@ -1,0 +1,102 @@
+{
+  "event_id": "",
+  "event_code": "evt_172",
+  "title": "172 체포: 배신의 입맞춤",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 22,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "횃불과 무장한 무리가 숲길로 들어온다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "유다가 다가와 입맞춤한다, 예수의 눈빛이 흔들리지 않는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "judas",
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "judas",
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "judas",
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "제자들이 소란에 휩싸이고 누군가 칼을 휘두른다, 직접 묘사 최소",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "disciples"
+      ],
+      "scene_reference_person_codes": [
+        "disciples"
+      ],
+      "reference_avatar_codes": [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "예수가 묶여 끌려가고 제자들은 어둠 속으로 흩어진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "disciples",
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "disciples",
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas",
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

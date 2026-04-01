@@ -1,0 +1,80 @@
+{
+  "event_id": "",
+  "event_code": "evt_147",
+  "title": "147 성벽 재건: 밤의 조사와 한 손엔 무기",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 47,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "밤, 느헤미야가 소수와 함께 성벽을 따라 조사한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "느헤미야가 성벽을 재건하는 건축 현장",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "느헤미야가 건축 현장에서 한 손엔 돌, 한 손엔 무기를 들고 성벽을 세우는 모습",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "느헤미야가 나팔 소리에 사람들이 모이고, 하나님이 싸우신다는 외침에 모두가 고개를 드는 앞쪽에 서 있다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "nehemiah"
+      ],
+      "scene_reference_person_codes": [
+        "nehemiah"
+      ],
+      "reference_avatar_codes": [
+        "nehemiah"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

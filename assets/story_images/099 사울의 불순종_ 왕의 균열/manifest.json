@@ -1,0 +1,86 @@
+{
+  "event_id": "",
+  "event_code": "evt_099",
+  "title": "099 사울의 불순종: 왕의 균열",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 46,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "전투 전, 사울이 조급해하며 제사를 대신 드린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "saul"
+      ],
+      "scene_reference_person_codes": [
+        "saul"
+      ],
+      "reference_avatar_codes": [
+        "saul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "사무엘이 상대를 바라보며 기다린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "samuel"
+      ],
+      "scene_reference_person_codes": [
+        "samuel"
+      ],
+      "reference_avatar_codes": [
+        "samuel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "사무엘이 사울을 엄하게 꾸짖는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "saul",
+        "samuel"
+      ],
+      "scene_reference_person_codes": [
+        "saul",
+        "samuel"
+      ],
+      "reference_avatar_codes": [
+        "saul",
+        "samuel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "사무엘이 뒤돌아서 떠나자 사울이 옷자락을 붙잡고, 옷자락이 찢어진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "saul",
+        "samuel"
+      ],
+      "scene_reference_person_codes": [
+        "saul",
+        "samuel"
+      ],
+      "reference_avatar_codes": [
+        "saul",
+        "samuel"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

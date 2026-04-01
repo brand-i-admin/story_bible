@@ -1,0 +1,68 @@
+{
+  "event_id": "",
+  "event_code": "evt_159",
+  "title": "159 산상수훈: 복 있는 사람",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 9,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "산비탈에 사람들이 모여 앉고, 예수가 자리에 앉는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "복이 있나니, 선포가 이어지고 사람들의 표정이 바뀐다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "너희는 빛이라 말하며 예수가 손으로 도시를 가리킨다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "반석 위에 집을 짓는 자 비유로 마무리되고 군중이 놀란다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "event_id": "",
+  "event_code": "evt_037",
+  "title": "037 요셉의 꿈: 형제들의 시기",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 37,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "17세 안팎의 어린 요셉이 채색옷을 입고 형들 사이를 지나가자 미묘한 거리감이 흐른다",
+      "scene_prompt_note": "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
+      "scene_person_codes": [
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "요셉이 앞쪽에 서서 표정과 몸짓이 또렷하게 보인다",
+      "scene_prompt_note": "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
+      "scene_person_codes": [
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "야곱이 17세 안팎의 어린 요셉을 꾸짖지만 마음속에는 그 말을 담아둔다",
+      "scene_prompt_note": "Joseph should look about 17 years old beside Jacob: youthful face, slim build, and little or no beard.",
+      "scene_person_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "jacob",
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "형제들의 시기와 긴장이 장막 사이에 짙게 깔린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "brothers"
+      ],
+      "scene_reference_person_codes": [
+        "brothers"
+      ],
+      "reference_avatar_codes": [
+        "reuben",
+        "simeon",
+        "levi",
+        "judah",
+        "naphtali",
+        "gad",
+        "asher",
+        "issachar",
+        "zebulun",
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [
+        "dan"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

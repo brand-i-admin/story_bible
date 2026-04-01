@@ -1,0 +1,89 @@
+{
+  "event_id": "",
+  "event_code": "evt_089",
+  "title": "089 미가의 우상: 마음대로의 신앙",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 36,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "micah가 미가가 어머니의 저주를 듣고 훔친 돈을 고백한 뒤, 은신상을 만들고 집안에 신당을 차려 우상 숭배를 시작한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "micah"
+      ],
+      "scene_reference_person_codes": [
+        "micah"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "micah"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "micah와 jonathan이 미가가 레위인 요나단을 개인 제사장으로 세우고 집 신당 앞에 세운다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "micah",
+        "jonathan"
+      ],
+      "scene_reference_person_codes": [
+        "micah",
+        "jonathan"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "micah",
+        "jonathan"
+      ],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "micah, jonathan, danites가 단 지파 사람들이 미가의 집에서 은신상과 에봇과 드라빔과 제사장을 빼앗아 간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "micah",
+        "jonathan",
+        "danites"
+      ],
+      "scene_reference_person_codes": [
+        "micah",
+        "jonathan",
+        "danites"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "micah",
+        "jonathan",
+        "danites"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "danites가 단 지파가 평화롭게 살던 라이스 사람들을 멸하고 그 땅을 차지한 뒤, 강탈한 우상을 세워 숭배한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "danites"
+      ],
+      "scene_reference_person_codes": [
+        "danites"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "danites"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

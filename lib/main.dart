@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,11 +11,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: '.env');
-
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
 
   final supabaseConfig = _resolveSupabaseConfig();
 
@@ -36,7 +30,8 @@ SupabaseConfig _resolveSupabaseConfig() {
     'dev' => 'DEV',
     'prod' => 'DEV',
     _ => throw StateError(
-        'Unsupported ENV="$_runtimeEnv". Use ENV=dev or ENV=prod.'),
+      'Unsupported ENV="$_runtimeEnv". Use ENV=dev or ENV=prod.',
+    ),
   };
 
   final url = dotenv.env['SUPABASE_URL_$suffix'];

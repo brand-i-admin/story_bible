@@ -9,9 +9,9 @@
     "end_year": -4000,
     "time_precision": "approx",
     "time_sort_key": -3999999,
-    "place_name": "창조 세계(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "메소포타미아(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
     "persons": [
       "god"
     ],
@@ -36,9 +36,9 @@
     "end_year": -4000,
     "time_precision": "approx",
     "time_sort_key": -3999998,
-    "place_name": "에덴(전승/상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "에덴 지역(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
     "persons": [
       "god",
       "adam",
@@ -65,9 +65,9 @@
     "end_year": -3995,
     "time_precision": "approx",
     "time_sort_key": -3994997,
-    "place_name": "에덴(전승/상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "에덴 지역(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
     "persons": [
       "eve",
       "adam"
@@ -93,9 +93,9 @@
     "end_year": -3995,
     "time_precision": "approx",
     "time_sort_key": -3994996,
-    "place_name": "에덴 동쪽",
-    "lat": null,
-    "lng": null,
+    "place_name": "에덴 동쪽(추정)",
+    "lat": 31.09,
+    "lng": 47.52,
     "persons": [
       "god",
       "adam",
@@ -122,9 +122,9 @@
     "end_year": -3950,
     "time_precision": "approx",
     "time_sort_key": -3949995,
-    "place_name": "들판(에덴 밖)",
-    "lat": null,
-    "lng": null,
+    "place_name": "에덴 밖 들판(추정)",
+    "lat": 31.16,
+    "lng": 47.61,
     "persons": [
       "god"
     ],
@@ -488,7 +488,8 @@
     "lng": 35.1,
     "persons": [
       "abraham",
-      "sarah"
+      "sarah",
+      "god"
     ],
     "bible_refs": [
       {
@@ -1035,7 +1036,6 @@
       "simeon",
       "levi",
       "judah",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -1073,7 +1073,6 @@
       "reuben",
       "simeon",
       "levi",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -1088,33 +1087,6 @@
         "verse_start": 12,
         "chapter_end": 37,
         "verse_end": 36
-      }
-    ]
-  },
-  {
-    "number": 39,
-    "code": "evt_n039",
-    "era_code": "era_patriarch",
-    "title": "유다와 다말: 드러나는 진실",
-    "summary": "가정의 불의가 폭로되고 유다는 책임을 인정하게 된다.",
-    "start_year": -1910,
-    "end_year": -1910,
-    "time_precision": "approx",
-    "time_sort_key": -1909961,
-    "place_name": "유다 지역(전승)",
-    "lat": 31.6,
-    "lng": 35.0,
-    "persons": [
-      "judah"
-    ],
-    "bible_refs": [
-      {
-        "book_name": "창세기",
-        "display_text": "창 38:1-30",
-        "chapter_start": 38,
-        "verse_start": 1,
-        "chapter_end": 38,
-        "verse_end": 30
       }
     ]
   },
@@ -1219,7 +1191,6 @@
       "simeon",
       "levi",
       "judah",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -1256,7 +1227,6 @@
       "simeon",
       "levi",
       "judah",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -1294,7 +1264,6 @@
       "reuben",
       "simeon",
       "levi",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -1332,7 +1301,6 @@
       "simeon",
       "levi",
       "judah",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -1352,34 +1320,6 @@
     ]
   },
   {
-    "number": 47,
-    "code": "evt_n047",
-    "era_code": "era_patriarch",
-    "title": "야곱의 애굽 이주: 내려가라",
-    "summary": "야곱은 하나님의 격려를 받고 가족을 이끌고 애굽으로 내려간다.",
-    "start_year": -1880,
-    "end_year": -1880,
-    "time_precision": "approx",
-    "time_sort_key": -1879953,
-    "place_name": "브엘세바 → 애굽(전승)",
-    "lat": 31.25,
-    "lng": 34.8,
-    "persons": [
-      "jacob",
-      "joseph"
-    ],
-    "bible_refs": [
-      {
-        "book_name": "창세기",
-        "display_text": "창 46:1-7",
-        "chapter_start": 46,
-        "verse_start": 1,
-        "chapter_end": 46,
-        "verse_end": 7
-      }
-    ]
-  },
-  {
     "number": 48,
     "code": "evt_n048",
     "era_code": "era_patriarch",
@@ -1394,7 +1334,8 @@
     "lng": 31.85,
     "persons": [
       "jacob",
-      "joseph"
+      "joseph",
+      "pharaoh"
     ],
     "bible_refs": [
       {
@@ -1465,7 +1406,6 @@
       "simeon",
       "levi",
       "judah",
-      "dan",
       "naphtali",
       "gad",
       "asher",
@@ -3771,9 +3711,9 @@
     "end_year": -585,
     "time_precision": "approx",
     "time_sort_key": -584868,
-    "place_name": "골짜기 환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "그발 강가(추정)",
+    "lat": 32.55,
+    "lng": 44.42,
     "persons": [
       "ezekiel"
     ],
@@ -4930,9 +4870,9 @@
     "end_year": 30,
     "time_precision": "approx",
     "time_sort_key": 30166,
-    "place_name": "갈릴리/유대(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "베레아(요단 동편, 추정)",
+    "lat": 31.93,
+    "lng": 35.62,
     "persons": [
       "jesus"
     ],
@@ -6420,9 +6360,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900209,
-    "place_name": "하늘 보좌 환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [
       "john"
     ],
@@ -6447,9 +6387,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900210,
-    "place_name": "하늘 보좌 환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [
       "john"
     ],
@@ -6474,9 +6414,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900211,
-    "place_name": "환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [],
     "bible_refs": [
       {
@@ -6499,9 +6439,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900212,
-    "place_name": "환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [],
     "bible_refs": [
       {
@@ -6524,9 +6464,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900213,
-    "place_name": "환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [],
     "bible_refs": [
       {
@@ -6549,9 +6489,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900214,
-    "place_name": "환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [],
     "bible_refs": [
       {
@@ -6582,9 +6522,9 @@
     "end_year": null,
     "time_precision": "approx",
     "time_sort_key": 900215,
-    "place_name": "환상(상징)",
-    "lat": null,
-    "lng": null,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
     "persons": [
       "john"
     ],

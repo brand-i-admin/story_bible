@@ -1,0 +1,86 @@
+{
+  "event_id": "",
+  "event_code": "evt_088",
+  "title": "088 삼손: 힘의 비밀과 마지막 기도",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 35,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "samson과 delilah가 배경과 분위기만 보이는 앞쪽에 서 있고, 삼손은 웃으며 넘기다 점점 지친다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "samson",
+        "delilah"
+      ],
+      "scene_reference_person_codes": [
+        "samson",
+        "delilah"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "samson",
+        "delilah"
+      ],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "samson과 delilah가 비밀을 말하는 순간, 공기가 싸늘해진다, 삼손의 눈빛이 흔들린다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "samson",
+        "delilah"
+      ],
+      "scene_reference_person_codes": [
+        "samson",
+        "delilah"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "samson",
+        "delilah"
+      ],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "samson이 붙잡힌 삼손이 어둠 속에서 고개를 숙인다, 침묵",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "samson"
+      ],
+      "scene_reference_person_codes": [
+        "samson"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "samson"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "samson이 삼손이 마지막으로 기도한다, 나를 기억하소서",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "samson"
+      ],
+      "scene_reference_person_codes": [
+        "samson"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "samson"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

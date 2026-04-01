@@ -1,0 +1,29 @@
+{
+  "event_id": "",
+  "event_code": "evt_201",
+  "title": "201 로마행(1): 예루살렘 체포",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/185_215.json",
+  "source_index": 17,
+  "scenes_count": 1,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "군중의 함성, 바울이 붙잡혀 계단으로 끌려간다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "paul"
+      ],
+      "scene_reference_person_codes": [
+        "paul"
+      ],
+      "reference_avatar_codes": [
+        "paul"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

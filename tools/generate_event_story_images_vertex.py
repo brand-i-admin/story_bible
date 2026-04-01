@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+from datetime import datetime, timedelta, timezone
 import json
 import os
 from pathlib import Path
@@ -25,6 +26,16 @@ import google.auth
 from google.auth.transport.requests import Request
 import requests
 
+from story_scene_utils import (
+    dedupe_preserve_order,
+    detect_scene_person_codes,
+    expand_person_codes,
+    normalize_scene_persons_list,
+    parse_event_person_codes,
+    parse_person_name_map_from_seed_sql,
+    sanitize_scene_text_for_visual,
+)
+
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
 INVALID_FILENAME_CHARS = re.compile(r"[\\/:*?\"<>|]+")
@@ -33,6 +44,16 @@ SENTENCE_SPLIT_REGEX = re.compile(r"(?<=[.!?。！？])\s+")
 SENTENCE_FALLBACK_REGEX = re.compile(r"[^.!?。！？]+[.!?。！？]?")
 TITLE_PREFIX_NUMBER_REGEX = re.compile(r"^\s*(\d{1,4})\b")
 SCENE_PREFIX_REGEX = re.compile(r"^\s*장면\s*\d+\s*[:：]\s*")
+
+LATEST_IMAGE_MODEL = "gemini-3-pro-image-preview"
+LATEST_STABLE_IMAGE_MODEL = "gemini-2.5-flash-image"
+COMMON_SCENE_STYLE = (
+    "Create one non-photoreal 2D Bible story illustration in the same visual world as the avatar cast. "
+    "Use stylized geometric biblical illustration, blocky low-poly faceted planes, angular but friendly forms, "
+    "flat matte vector shading with subtle cut-paper facets, warm parchment-friendly colors, "
+    "clean composition, and consistent character design across every scene. "
+    "No speech bubbles, no captions, no written letters, no symbols, no watermark, no modern objects."
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -56,13 +77,16 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--location",
-        default=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
-        help="Vertex AI region. Defaults to GOOGLE_CLOUD_LOCATION or us-central1.",
+        default=os.getenv("GOOGLE_CLOUD_LOCATION", "global"),
+        help="Vertex AI region. Defaults to GOOGLE_CLOUD_LOCATION or global.",
     )
     parser.add_argument(
         "--model",
-        default="gemini-2.5-flash-image",
-        help="Vertex Gemini image model id.",
+        default=os.getenv("VERTEX_IMAGE_MODEL", "latest"),
+        help=(
+            "Vertex Gemini image model id. Aliases: latest -> "
+            f"{LATEST_IMAGE_MODEL}, stable -> {LATEST_STABLE_IMAGE_MODEL}."
+        ),
     )
     parser.add_argument(
         "--avatars-dir",
@@ -101,8 +125,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-reference-images",
         type=int,
-        default=2,
-        help="Maximum avatar reference images attached per scene.",
+        default=0,
+        help="Maximum avatar reference images attached per scene (0 = all matched refs).",
     )
     parser.add_argument(
         "--sample-count",
@@ -132,6 +156,11 @@ def parse_args() -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help="Create folders and manifest only, without API calls.",
+    )
+    parser.add_argument(
+        "--persons-seed-sql",
+        default="supabase/200_stories/persons_seed.sql",
+        help="Persons seed SQL used to recover canonical Korean person names.",
     )
     return parser.parse_args()
 
@@ -202,12 +231,55 @@ def normalize_scene_text(raw: str) -> str:
     return text
 
 
+def resolve_model_alias(model: str) -> str:
+    normalized = str(model).strip()
+    if not normalized or normalized == "latest":
+        return LATEST_IMAGE_MODEL
+    if normalized == "stable":
+        return LATEST_STABLE_IMAGE_MODEL
+    return normalized
+
+
+def resolve_location_for_model(location: str, model: str) -> str:
+    requested = str(location).strip() or "global"
+    if model.startswith("gemini-3-") and requested != "global":
+        return "global"
+    return requested
+
+
+def build_vertex_endpoint(*, project: str, location: str, model: str) -> str:
+    host = "aiplatform.googleapis.com" if location == "global" else f"{location}-aiplatform.googleapis.com"
+    return (
+        f"https://{host}/v1/projects/{project}/locations/{location}/publishers/google/models/"
+        f"{model}:generateContent"
+    )
+
+
+def request_model_candidates(primary_model: str) -> list[str]:
+    models = [primary_model]
+    if primary_model == LATEST_IMAGE_MODEL:
+        models.append(LATEST_STABLE_IMAGE_MODEL)
+    return dedupe_preserve_order(models)
+
+
 def extract_story_scenes(event: dict[str, Any], *, max_scenes: int) -> list[str]:
     normalized_max = min(4, max(1, int(max_scenes)))
     for key in ("story_scenes", "short_story", "sentences"):
         value = event.get(key)
         if isinstance(value, list):
-            scenes = [normalize_scene_text(str(item)) for item in value]
+            scenes: list[str] = []
+            for item in value:
+                if isinstance(item, dict):
+                    raw_text = str(
+                        item.get("text")
+                        or item.get("scene")
+                        or item.get("prompt")
+                        or item.get("description")
+                        or ""
+                    )
+                else:
+                    raw_text = str(item)
+                scenes.append(normalize_scene_text(raw_text))
             scenes = [scene for scene in scenes if scene]
             if scenes:
                 return scenes[:normalized_max]
@@ -239,65 +311,23 @@ def event_code_for(event: dict[str, Any], fallback_index: int) -> str:
     return f"event_{fallback_index:03d}"
 
 
-def normalize_persons(event: dict[str, Any]) -> list[dict[str, Any]]:
-    persons_data = event.get("persons")
-    persons: list[dict[str, Any]] = []
-
-    if isinstance(persons_data, list):
-        for idx, item in enumerate(persons_data, start=1):
-            if isinstance(item, str):
-                code = item.strip()
-                name = ""
-                role = ""
-                person_sequence = idx
-            elif isinstance(item, dict):
-                code = str(item.get("code") or "").strip()
-                name = str(item.get("name") or "").strip()
-                role = str(item.get("role") or "").strip()
-                person_sequence = int(item.get("person_sequence") or idx)
-            else:
-                continue
-            if not code:
-                continue
-            persons.append(
-                {
-                    "code": code,
-                    "name": name,
-                    "role": role,
-                    "person_sequence": person_sequence,
-                }
-            )
-    else:
-        event_persons = event.get("event_persons")
-        if isinstance(event_persons, list):
-            for item in event_persons:
-                if not isinstance(item, dict):
-                    continue
-                person = item.get("persons")
-                if not isinstance(person, dict):
-                    continue
-                code = str(person.get("code") or "").strip()
-                if not code:
-                    continue
-                persons.append(
-                    {
-                        "code": code,
-                        "name": str(person.get("name") or "").strip(),
-                        "role": str(item.get("role") or "").strip(),
-                        "person_sequence": int(item.get("person_sequence") or 0),
-                    }
-                )
-
-    persons.sort(key=lambda p: (p["person_sequence"], p["code"]))
-    deduped: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    for person in persons:
-        code = person["code"].lower()
-        if code in seen:
-            continue
-        seen.add(code)
-        deduped.append(person)
-    return deduped
+def normalize_persons(
+    event: dict[str, Any],
+    *,
+    code_to_name: dict[str, str],
+) -> list[dict[str, Any]]:
+    codes = parse_event_person_codes(event)
+    persons = [
+        {
+            "code": code,
+            "name": code_to_name.get(code, code),
+            "role": "",
+            "person_sequence": index,
+        }
+        for index, code in enumerate(codes, start=1)
+    ]
+    persons.sort(key=lambda person: (int(person["person_sequence"]), str(person["code"])))
+    return persons
 
 
 def sanitize_dirname(raw: str) -> str:
@@ -339,24 +369,70 @@ def match_person_codes(sentence: str, persons: list[dict[str, Any]]) -> list[str
     lowered = sentence.lower()
     matched: list[str] = []
     for person in persons:
-        code = person["code"]
-        name = person.get("name", "")
-        code_match = code.lower() in lowered
-        name_match = bool(name) and (name in sentence)
+        code = str(person["code"]).strip().lower()
+        name = str(person.get("name", "")).strip()
+        code_match = bool(code) and code in lowered
+        name_match = bool(name) and (name in sentence or name.replace(" ", "") in sentence.replace(" ", ""))
         if code_match or name_match:
             matched.append(code)
-    return matched
+    return dedupe_preserve_order(matched)
+
+
+def scene_person_codes_for(
+    event: dict[str, Any],
+    *,
+    scene_index: int,
+    scene_text: str,
+    persons: list[dict[str, Any]],
+    code_to_name: dict[str, str],
+) -> list[str]:
+    scene_persons = event.get("scene_persons")
+    event_person_codes = [str(person["code"]).strip().lower() for person in persons]
+    explicit_codes: list[str] = []
+    if isinstance(scene_persons, list) and scene_index < len(scene_persons):
+        explicit_codes = normalize_scene_persons_list(
+            scene_persons[scene_index],
+            event_person_codes,
+        )
+
+    detected_codes = detect_scene_person_codes(
+        scene_text,
+        event_person_codes,
+        code_to_name,
+    )
+    if explicit_codes or detected_codes:
+        return dedupe_preserve_order(explicit_codes + detected_codes)
+
+    return match_person_codes(scene_text, persons)
+
+
+def scene_reference_codes_for(
+    event: dict[str, Any],
+    *,
+    scene_index: int,
+    scene_person_codes: list[str],
+    persons: list[dict[str, Any]],
+) -> list[str]:
+    scene_reference_persons = event.get("scene_reference_persons")
+    event_person_codes = [str(person["code"]).strip().lower() for person in persons]
+    if isinstance(scene_reference_persons, list) and scene_index < len(scene_reference_persons):
+        explicit_codes = normalize_scene_persons_list(
+            scene_reference_persons[scene_index],
+            event_person_codes,
+        )
+        return explicit_codes
+    return dedupe_preserve_order(scene_person_codes)
 
 
 def choose_reference_avatars(
-    sentence: str,
-    persons: list[dict[str, Any]],
+    scene_person_codes: list[str],
     avatar_index: dict[str, Path],
     *,
     max_reference_images: int,
 ) -> list[tuple[str, Path]]:
-    matched_codes = match_person_codes(sentence, persons)
-    candidate_codes = matched_codes if matched_codes else [person["code"] for person in persons]
+    candidate_codes = expand_person_codes(scene_person_codes)
+    if max_reference_images > 0:
+        candidate_codes = candidate_codes[: max_reference_images]
 
     selected: list[tuple[str, Path]] = []
     seen: set[str] = set()
@@ -369,16 +445,42 @@ def choose_reference_avatars(
             continue
         selected.append((code, avatar_path))
         seen.add(norm)
-        if len(selected) >= max(1, max_reference_images):
+        if max_reference_images > 0 and len(selected) >= max_reference_images:
             break
     return selected
 
 
-def get_access_token() -> str:
+def missing_reference_avatar_codes(
+    scene_person_codes: list[str],
+    avatar_index: dict[str, Path],
+) -> list[str]:
+    missing: list[str] = []
+    for code in expand_person_codes(scene_person_codes):
+        if code.lower() not in avatar_index:
+            missing.append(code)
+    return dedupe_preserve_order(missing)
+
+
+def load_google_credentials():
     creds, _ = google.auth.default(scopes=[CLOUD_PLATFORM_SCOPE])
-    if not creds.valid:
-        creds.refresh(Request())
-    return creds.token
+    return creds
+
+
+def credentials_need_refresh(creds) -> bool:
+    if not getattr(creds, "valid", False):
+        return True
+    expiry = getattr(creds, "expiry", None)
+    if expiry is None:
+        return False
+    if expiry.tzinfo is None:
+        expiry = expiry.replace(tzinfo=timezone.utc)
+    return expiry <= datetime.now(timezone.utc) + timedelta(minutes=5)
+
+
+def ensure_session_auth(session: requests.Session, creds, request_adapter: Request, *, force: bool = False) -> None:
+    if force or credentials_need_refresh(creds):
+        creds.refresh(request_adapter)
+    session.headers.update({"Authorization": f"Bearer {creds.token}"})
 
 
 def _maybe_decode_base64(raw: str) -> bytes | None:
@@ -450,22 +552,42 @@ def build_parts(
     event_title: str,
     sentence: str,
     reference_avatars: list[tuple[str, Path]],
+    code_to_name: dict[str, str],
+    place_name: str = "",
+    scene_prompt_note: str = "",
 ) -> list[dict[str, Any]]:
-    char_text = ", ".join(code for code, _ in reference_avatars) if reference_avatars else "none"
+    reference_labels = [
+        f"{code_to_name.get(code, code)} ({code})" for code, _ in reference_avatars
+    ]
+    char_text = ", ".join(reference_labels) if reference_labels else "none"
+    place_clause = f" Place: {place_name}." if place_name else ""
+    note_clause = f" Additional art direction: {scene_prompt_note}." if scene_prompt_note else ""
     instruction = (
-        "Create one non-photoreal 2D illustration scene for a Bible story app. "
+        f"{COMMON_SCENE_STYLE} "
         f"Event title: {event_title}. "
-        f"Scene sentence: {sentence} "
+        f"Scene description: {sentence}.{place_clause}{note_clause} "
         "Keep the composition suitable for mobile storytelling. "
-        "No text, no watermark, no modern objects. "
-        "If reference avatar images are attached, preserve each character's face identity and style. "
-        f"Prioritize these character codes when applicable: {char_text}."
+        "Show only visible action, facial expression, body pose, props, weather, light, and environment. "
+        "Do not add spoken words, dialogue balloons, captions, written letters, scripture text, or logos. "
+        "If reference avatar images are attached, each attached character is canonical and must stay recognizable. "
+        "Preserve the attached character's face identity, hair, and recognizable core design. "
+        "If the scene description explicitly requests a different age, costume, role, or physical state, keep the same identity but follow that requested change. "
+        "Do not redesign, replace, or turn the attached character into a different person. "
+        f"Scene reference characters: {char_text}."
     )
 
     parts: list[dict[str, Any]] = [{"text": instruction}]
     for code, avatar_path in reference_avatars:
+        name = code_to_name.get(code, code)
         encoded = base64.b64encode(avatar_path.read_bytes()).decode("ascii")
-        parts.append({"text": f"Character reference image for code {code}."})
+        parts.append(
+            {
+                "text": (
+                    f"Attached canonical character reference: {name} ({code}). "
+                    "Keep this character visually consistent in the generated scene."
+                )
+            }
+        )
         parts.append({"inlineData": {"mimeType": "image/png", "data": encoded}})
     return parts
 
@@ -480,10 +602,21 @@ def build_request_body(parts: list[dict[str, Any]], sample_count: int) -> dict[s
     }
 
 
+def scene_prompt_note_for(event: dict[str, Any], *, scene_index: int) -> str:
+    notes = event.get("scene_prompt_notes")
+    if isinstance(notes, list) and scene_index < len(notes):
+        value = notes[scene_index]
+        if isinstance(value, str):
+            return value.strip()
+    return ""
+
+
 def main() -> int:
     args = parse_args()
+    resolved_model = resolve_model_alias(args.model)
+    resolved_location = resolve_location_for_model(args.location, resolved_model)
 
-    if not args.model.lower().startswith("gemini"):
+    if not resolved_model.lower().startswith("gemini"):
         print("ERROR: this script currently supports Gemini image models only.", file=sys.stderr)
         return 2
 
@@ -507,14 +640,12 @@ def main() -> int:
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
     avatar_index = build_avatar_index(avatars_dir)
-
-    endpoint = (
-        f"https://{args.location}-aiplatform.googleapis.com/v1/projects/"
-        f"{args.project}/locations/{args.location}/publishers/google/models/"
-        f"{args.model}:generateContent"
-    )
+    code_to_name = parse_person_name_map_from_seed_sql(Path(args.persons_seed_sql))
+    request_models = request_model_candidates(resolved_model)
 
     session: requests.Session | None = None
+    creds = None
+    auth_request: Request | None = None
     if not args.dry_run:
         if not args.project:
             print(
@@ -522,13 +653,15 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 2
-        token = get_access_token()
+        creds = load_google_credentials()
+        auth_request = Request()
         session = requests.Session()
-        session.headers.update(
-            {
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-            }
+        session.headers.update({"Content-Type": "application/json"})
+        ensure_session_auth(session, creds, auth_request)
+        print(
+            "[INFO] Vertex image generation "
+            f"project={args.project} location={resolved_location} "
+            f"models={request_models}"
         )
 
     used_dirnames: set[str] = set()
@@ -543,7 +676,7 @@ def main() -> int:
         event_dir = output_root / dirname
         event_dir.mkdir(parents=True, exist_ok=True)
 
-        persons = normalize_persons(event)
+        persons = normalize_persons(event, code_to_name=code_to_name)
         scenes = extract_story_scenes(event, max_scenes=args.max_scenes)
         if not scenes:
             print(f"[SKIP] {idx:03d} {title} -> no usable story_scenes")
@@ -552,18 +685,47 @@ def main() -> int:
         manifest_entries: list[dict[str, Any]] = []
         for scene_index, scene_text in enumerate(scenes, start=1):
             out_file = event_dir / f"scene_{scene_index:02d}.png"
-            reference_avatars = choose_reference_avatars(
+            scene_person_codes = scene_person_codes_for(
+                event,
+                scene_index=scene_index - 1,
+                scene_text=scene_text,
+                persons=persons,
+                code_to_name=code_to_name,
+            )
+            reference_person_codes = scene_reference_codes_for(
+                event,
+                scene_index=scene_index - 1,
+                scene_person_codes=scene_person_codes,
+                persons=persons,
+            )
+            visual_scene_text = sanitize_scene_text_for_visual(
                 scene_text,
-                persons,
+                scene_person_codes=scene_person_codes,
+                code_to_name=code_to_name,
+            )
+            scene_prompt_note = scene_prompt_note_for(
+                event,
+                scene_index=scene_index - 1,
+            )
+            reference_avatars = choose_reference_avatars(
+                reference_person_codes,
                 avatar_index,
                 max_reference_images=args.max_reference_images,
             )
             reference_codes = [code for code, _ in reference_avatars]
+            missing_reference_codes = missing_reference_avatar_codes(
+                reference_person_codes,
+                avatar_index,
+            )
 
             manifest_entry = {
                 "scene_index": scene_index,
-                "scene_prompt": scene_text,
+                "scene_prompt": visual_scene_text,
+                "scene_prompt_note": scene_prompt_note,
+                "scene_person_codes": scene_person_codes,
+                "scene_reference_person_codes": reference_person_codes,
                 "reference_avatar_codes": reference_codes,
+                "missing_reference_avatar_codes": missing_reference_codes,
                 "file": out_file.name,
                 "status": "pending",
             }
@@ -581,15 +743,21 @@ def main() -> int:
                 manifest_entries.append(manifest_entry)
                 print(
                     f"[DRY]  {idx:03d}.{scene_index:02d} {title} -> {out_file.name} "
-                    f"(refs={reference_codes})"
+                    f"(scene_persons={scene_person_codes}, ref_persons={reference_person_codes}, refs={reference_codes}, "
+                    f"missing_refs={missing_reference_codes})"
                 )
                 continue
 
             assert session is not None
+            assert creds is not None
+            assert auth_request is not None
             parts = build_parts(
                 event_title=title,
-                sentence=scene_text,
+                sentence=visual_scene_text,
                 reference_avatars=reference_avatars,
+                code_to_name=code_to_name,
+                place_name=str(event.get("place_name") or "").strip(),
+                scene_prompt_note=scene_prompt_note,
             )
             body = build_request_body(parts, sample_count=args.sample_count)
 
@@ -598,24 +766,64 @@ def main() -> int:
                 max_429_attempts = max(1, int(args.retry_429_attempts))
                 response: requests.Response | None = None
                 attempts_used = 0
+                used_model = request_models[0]
+                used_location = resolve_location_for_model(args.location, used_model)
 
-                for attempt in range(1, max_429_attempts + 1):
-                    attempts_used = attempt
-                    response = session.post(endpoint, json=body, timeout=180)
-                    if response.status_code != 429:
+                for model_index, candidate_model in enumerate(request_models):
+                    candidate_location = resolve_location_for_model(
+                        args.location,
+                        candidate_model,
+                    )
+                    endpoint = build_vertex_endpoint(
+                        project=args.project,
+                        location=candidate_location,
+                        model=candidate_model,
+                    )
+                    used_model = candidate_model
+                    used_location = candidate_location
+                    response = None
+
+                    for attempt in range(1, max_429_attempts + 1):
+                        attempts_used = attempt
+                        ensure_session_auth(session, creds, auth_request)
+                        response = session.post(endpoint, json=body, timeout=180)
+                        if response.status_code == 401:
+                            print(
+                                f"[AUTH] {label} model={candidate_model} "
+                                "received 401, refreshing access token and retrying once"
+                            )
+                            ensure_session_auth(
+                                session,
+                                creds,
+                                auth_request,
+                                force=True,
+                            )
+                            response = session.post(endpoint, json=body, timeout=180)
+                        if response.status_code != 429:
+                            break
+
+                        if attempt < max_429_attempts:
+                            print(
+                                f"[RETRY] {label} model={candidate_model} status=429 "
+                                f"attempt={attempt}/{max_429_attempts} "
+                                f"(sleep {args.sleep_on_429_sec:.1f}s)"
+                            )
+                            if args.sleep_on_429_sec > 0:
+                                time.sleep(args.sleep_on_429_sec)
+
+                    assert response is not None
+                    if response.status_code != 404:
                         break
-
-                    if attempt < max_429_attempts:
+                    if model_index + 1 < len(request_models):
                         print(
-                            f"[RETRY] {label} status=429 "
-                            f"attempt={attempt}/{max_429_attempts} "
-                            f"(sleep {args.sleep_on_429_sec:.1f}s)"
+                            f"[FALLBACK] {label} model={candidate_model} returned 404, "
+                            f"retrying with {request_models[model_index + 1]}"
                         )
-                        if args.sleep_on_429_sec > 0:
-                            time.sleep(args.sleep_on_429_sec)
 
                 assert response is not None
                 manifest_entry["retry_429_count"] = max(0, attempts_used - 1)
+                manifest_entry["used_model"] = used_model
+                manifest_entry["used_location"] = used_location
                 if response.status_code == 429:
                     failure += 1
                     manifest_entry["status"] = "failed_http_429"
@@ -634,7 +842,7 @@ def main() -> int:
                     manifest_entries.append(manifest_entry)
                     print(
                         f"[FAIL] {idx:03d}.{scene_index:02d} {title} "
-                        f"status={response.status_code}"
+                        f"status={response.status_code} model={used_model}"
                     )
                     continue
 
@@ -687,6 +895,8 @@ def main() -> int:
             "event_id": str(event.get("id") or "").strip(),
             "event_code": event_code,
             "title": title,
+            "model": resolved_model,
+            "location": resolved_location,
             "source_json": str(event.get("__source_file") or ""),
             "source_index": int(event.get("__source_index") or 0),
             "scenes_count": len(scenes),

@@ -1,0 +1,62 @@
+{
+  "event_id": "",
+  "event_code": "evt_090",
+  "title": "090 베냐민 전쟁: 공동체의 붕괴",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/51_100.json",
+  "source_index": 37,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "충격적 소식이 지파들에 퍼지고 분노가 폭발한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "지파들이 모여 결의를 다진다, 분위기가 살벌해진다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "israelites가 israelites가 israelites가 israelites가 israelites가 israelites가 israelites가 전투가 반복되고, 승리에도 얼굴에는 슬픔이 남는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "israelites"
+      ],
+      "scene_reference_person_codes": [
+        "israelites"
+      ],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [
+        "israelites"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "마지막에 왕이 없으므로 각기 소견대로라는 공허가 남는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

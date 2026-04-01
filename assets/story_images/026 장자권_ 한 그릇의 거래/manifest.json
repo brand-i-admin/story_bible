@@ -1,0 +1,89 @@
+{
+  "event_id": "",
+  "event_code": "evt_026",
+  "title": "026 장자권: 한 그릇의 거래",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 26,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "사냥에서 돌아온 에서가 지친 몸으로 장막으로 들어온다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esau"
+      ],
+      "scene_reference_person_codes": [
+        "esau"
+      ],
+      "reference_avatar_codes": [
+        "esau"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "붉은 죽 냄새 앞에서 에서가 허기를 참지 못하고 야곱을 바라본다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esau",
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "esau",
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "esau",
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "야곱이 장자권을 요구하고 에서가 망설인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esau",
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "esau",
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "esau",
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "허겁지겁 먹고, 뒤편에서는 야곱이 그 모습을 지켜본다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "esau",
+        "jacob"
+      ],
+      "scene_reference_person_codes": [
+        "esau",
+        "jacob"
+      ],
+      "reference_avatar_codes": [
+        "esau",
+        "jacob"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "event_id": "",
+  "event_code": "evt_046",
+  "title": "046 요셉의 정체 공개: 울음의 방",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/1_50.json",
+  "source_index": 45,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "요셉이 앞쪽에 서서 표정과 몸짓이 또렷하게 보인다",
+      "scene_prompt_note": "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "scene_person_codes": [
+        "joseph"
+      ],
+      "scene_reference_person_codes": [
+        "joseph"
+      ],
+      "reference_avatar_codes": [
+        "joseph"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "파라오처럼 보이지 않는 애굽 총리 요셉이 형들 앞에서 울음을 터뜨리자 형들은 당황해 얼어붙는다",
+      "scene_prompt_note": "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "scene_person_codes": [
+        "joseph",
+        "brothers"
+      ],
+      "scene_reference_person_codes": [
+        "joseph",
+        "brothers"
+      ],
+      "reference_avatar_codes": [
+        "joseph",
+        "reuben",
+        "simeon",
+        "levi",
+        "judah",
+        "naphtali",
+        "gad",
+        "asher",
+        "issachar",
+        "zebulun",
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [
+        "dan"
+      ],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "요셉과 형제들이 함께 서서 서로를 바라본다",
+      "scene_prompt_note": "Joseph is revealing his identity after laying aside some outer official symbols, but he still must not resemble Pharaoh.",
+      "scene_person_codes": [
+        "joseph",
+        "brothers"
+      ],
+      "scene_reference_person_codes": [
+        "joseph",
+        "brothers"
+      ],
+      "reference_avatar_codes": [
+        "joseph",
+        "reuben",
+        "simeon",
+        "levi",
+        "judah",
+        "naphtali",
+        "gad",
+        "asher",
+        "issachar",
+        "zebulun",
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [
+        "dan"
+      ],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "파라오처럼 보이지 않는 총리 차림의 요셉이 베냐민을 끌어안고, 형들은 뒤에서 놀란 얼굴로 그 모습을 바라본다",
+      "scene_prompt_note": "Joseph remains recognizable as Egypt's prime minister, not Pharaoh. The embrace with Benjamin is the focus.",
+      "scene_person_codes": [
+        "joseph",
+        "brothers"
+      ],
+      "scene_reference_person_codes": [
+        "joseph",
+        "brothers"
+      ],
+      "reference_avatar_codes": [
+        "joseph",
+        "reuben",
+        "simeon",
+        "levi",
+        "judah",
+        "naphtali",
+        "gad",
+        "asher",
+        "issachar",
+        "zebulun",
+        "benjamin"
+      ],
+      "missing_reference_avatar_codes": [
+        "dan"
+      ],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

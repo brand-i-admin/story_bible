@@ -1,0 +1,62 @@
+{
+  "event_id": "",
+  "event_code": "evt_169",
+  "title": "169 성전 정화",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/151_184.json",
+  "source_index": 19,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "성전 뜰, 거래 소리와 동전 소리가 가득하다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "예수가 분명한 손짓으로 흐름을 멈춘다, 사람들의 놀란 얼굴",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "jesus"
+      ],
+      "scene_reference_person_codes": [
+        "jesus"
+      ],
+      "reference_avatar_codes": [
+        "jesus"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "내 집은 기도하는 집 선언에 분위기가 얼어붙는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "지도자들이 멀리서 이를 갈며 서로 눈짓한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "event_id": "",
+  "event_code": "evt_113",
+  "title": "113 성전 봉헌: 기도와 영광",
+  "model": "gemini-3-pro-image-preview",
+  "location": "global",
+  "source_json": "assets/200_stories/101_150.json",
+  "source_index": 13,
+  "scenes_count": 4,
+  "entries": [
+    {
+      "scene_index": 1,
+      "scene_prompt": "언약궤가 성전으로 들어온다, 제사장들이 조심히 걷는다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_01.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 2,
+      "scene_prompt": "솔로몬이 두 손을 들고 기도한다, 엄숙",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "solomon"
+      ],
+      "scene_reference_person_codes": [
+        "solomon"
+      ],
+      "reference_avatar_codes": [
+        "solomon"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_02.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 3,
+      "scene_prompt": "구름이 성전을 덮는다, 제사장들이 멈칫한다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [],
+      "scene_reference_person_codes": [],
+      "reference_avatar_codes": [],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_03.png",
+      "status": "skipped_exists"
+    },
+    {
+      "scene_index": 4,
+      "scene_prompt": "솔로몬이 사람들은 숨죽인 채 임재를 느끼며 고개를 숙인다",
+      "scene_prompt_note": "",
+      "scene_person_codes": [
+        "solomon"
+      ],
+      "scene_reference_person_codes": [
+        "solomon"
+      ],
+      "reference_avatar_codes": [
+        "solomon"
+      ],
+      "missing_reference_avatar_codes": [],
+      "file": "scene_04.png",
+      "status": "skipped_exists"
+    }
+  ]
+}
