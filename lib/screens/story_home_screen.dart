@@ -46,7 +46,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       ScrollController();
   ProviderSubscription<User?>? _authUserSubscription;
   StateSetter? _profilePageSetState;
-  static final RegExp _sceneFilenamePattern = RegExp(r'/scene_(\d+)\.png$');
+  static final RegExp _sceneFilenamePattern = RegExp(
+    r'/scene_(\d+)\.(?:png|jpe?g|webp)$',
+    caseSensitive: false,
+  );
   static final RegExp _sceneCodeDigitsPattern = RegExp(r'(\d+)$');
   static final RegExp _sceneInvalidDirChars = RegExp(r'[\\/:*?"<>|]+');
   static final RegExp _sceneWhitespacePattern = RegExp(r'\s+');
@@ -1804,7 +1807,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
 
     final manifest = await _loadAssetManifest();
-    const sceneRoot = 'assets/story_images/';
+    const sceneRoot = 'assets/story_images_thumbs/';
     final allScenePaths = manifest
         .where(
           (path) =>
@@ -4278,47 +4281,49 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final itemCount = displayedAssets.length;
-            final tileWidth =
-                (constraints.maxWidth - (tileGap * (itemCount - 1))) /
-                itemCount;
+            final tileWidth = (constraints.maxWidth - (tileGap * 3)) / 4;
             final viewportHeight = MediaQuery.sizeOf(context).height;
             final maxTileHeight = math.max(180.0, viewportHeight * 0.48);
             final tileHeight = math.min(tileWidth * 1.62, maxTileHeight);
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(displayedAssets.length, (index) {
-                final path = displayedAssets[index];
-                return Expanded(
-                  child: Padding(
+            return Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(displayedAssets.length, (index) {
+                  final path = displayedAssets[index];
+                  return Padding(
                     padding: EdgeInsets.only(
                       right: index == displayedAssets.length - 1 ? 0 : tileGap,
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0x9C7C5C39),
-                            width: 1.0,
+                    child: SizedBox(
+                      width: tileWidth,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0x9C7C5C39),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SizedBox(
-                          height: tileHeight,
-                          child: Image.asset(
-                            path,
-                            fit: BoxFit.cover,
-                            width: tileWidth,
+                          child: SizedBox(
                             height: tileHeight,
-                            alignment: Alignment.topCenter,
+                            child: Image.asset(
+                              path,
+                              fit: BoxFit.fitHeight,
+                              width: tileWidth,
+                              height: tileHeight,
+                              alignment: Alignment.topCenter,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             );
           },
         ),

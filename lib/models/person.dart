@@ -19,8 +19,12 @@ class Person {
 
   String get avatarAssetPath {
     if (avatarUrl == null || avatarUrl!.isEmpty) {
-      return 'assets/avatars/_placeholder.png';
+      return 'assets/avatars_thumbs/_placeholder.png';
     }
-    return avatarUrl!;
+    final trimmed = avatarUrl!.trim();
+    if (trimmed.startsWith('assets/avatars/')) {
+      return trimmed.replaceFirst('assets/avatars/', 'assets/avatars_thumbs/');
+    }
+    return trimmed;
   }
 }

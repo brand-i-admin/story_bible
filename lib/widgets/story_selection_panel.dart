@@ -1572,7 +1572,7 @@ class _PortraitAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final avatarPath = (person.avatarUrl ?? '').trim();
+    final avatarPath = person.avatarAssetPath.trim();
     final fallbackText = person.name.trim().isEmpty
         ? '?'
         : person.name.trim().substring(0, 1);
