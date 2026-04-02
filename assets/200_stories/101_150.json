@@ -1,0 +1,2019 @@
+[
+  {
+    "title": "101 다윗과 골리앗: 돌 하나",
+    "era": "era_monarchy",
+    "persons": [
+      "david",
+      "goliath",
+      "saul"
+    ],
+    "place_name": "엘라 골짜기",
+    "lat": 31.69,
+    "lng": 34.93,
+    "summary": "소년 다윗은 믿음으로 거인을 맞서 전세를 뒤집는다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "17:32",
+        "to": "17:50"
+      }
+    ],
+    "start_year": -1025,
+    "end_year": -1025,
+    "time_precision": "approx",
+    "story_scenes": [
+      "골리앗의 조롱이 울리고 이스라엘 진영이 움츠러든다",
+      "18세쯤의 젊은 다윗이 사울 앞에 결연한 표정으로 서 있다",
+      "18세쯤의 젊은 다윗이 시냇가에서 돌을 집어 들고 물매를 고른다",
+      "돌이 날아가고 골리앗이 쓰러지며 진영의 공기가 바뀐다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "102 사울의 시기: 다윗의 도망 시작",
+    "era": "era_monarchy",
+    "persons": [
+      "david",
+      "saul",
+      "jonathan"
+    ],
+    "place_name": "기브아(사울의 성, 전승)",
+    "lat": 31.85,
+    "lng": 35.25,
+    "summary": "사울의 질투는 다윗을 적으로 만들고 도망의 길을 연다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "18:6",
+        "to": "20:42"
+      }
+    ],
+    "start_year": -1024,
+    "end_year": -1015,
+    "time_precision": "approx",
+    "story_scenes": [
+      "백성들이 환호하고, 사울의 표정은 굳어지고, 20대 초반의 젊은 다윗은 기쁜 얼굴로 서 있다",
+      "사울이 창을 던지고, 20대 초반의 젊은 다윗이 몸을 피한다",
+      "요나단이 20대 초반의 젊은 다윗과 언약을 맺고 눈물로 작별한다",
+      "20대 초반의 젊은 다윗이 밤길로 사라지고, 뒤에서 군사들의 발소리가 따라온다"
+    ],
+    "scene_persons": [
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "jonathan"
+      ],
+      [
+        "david"
+      ]
+    ]
+  },
+  {
+    "title": "103 다윗이 사울을 살려주다: 동굴의 순간",
+    "era": "era_monarchy",
+    "persons": [
+      "david",
+      "saul"
+    ],
+    "place_name": "엔게디(전승)",
+    "lat": 31.46,
+    "lng": 35.39,
+    "summary": "다윗은 복수의 기회를 놓아주며 ‘손대지 않음’으로 자신의 길을 지킨다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "24:1",
+        "to": "24:22"
+      }
+    ],
+    "start_year": -1012,
+    "end_year": -1012,
+    "time_precision": "approx",
+    "story_scenes": [
+      "다윗 일행이 동굴 안에 몸을 숨기고 긴장한 채 웅크리고 있다",
+      "사울이 다윗 일행이 숨어 있는 동굴 안으로 무심코 들어오는 모습",
+      "다윗이 동굴 안에서 사울의 옷자락만 조용히 자른다",
+      "동굴 안에서 사울이 울며 고개를 숙이고, 다윗은 괜찮다고 손짓하는 장면"
+    ],
+    "scene_persons": [
+      [
+        "david"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ]
+    ]
+  },
+  {
+    "title": "104 사울의 최후: 엔돌과 길보아",
+    "era": "era_monarchy",
+    "persons": [
+      "saul"
+    ],
+    "place_name": "길보아 산(전승)",
+    "lat": 32.49,
+    "lng": 35.38,
+    "summary": "사울의 두려움은 어두운 선택으로 이어지고 결국 전장에서 끝난다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "28:5",
+        "to": "28:20"
+      },
+      {
+        "book": "삼상",
+        "from": "31:1",
+        "to": "31:6"
+      }
+    ],
+    "start_year": -1010,
+    "end_year": -1010,
+    "time_precision": "approx",
+    "story_scenes": [
+      "블레셋 군대를 보고 사울이 떤다, 하늘은 침묵처럼 보인다",
+      "밤, 사울이 엔돌로 향한다, 불안한 발걸음",
+      "예언이 사울을 무너뜨린다, 사울이 바닥에 주저앉는다",
+      "길보아 전투, 사울이 쓰러지고 왕정의 첫 장이 닫힌다"
+    ],
+    "scene_persons": [
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ]
+    ]
+  },
+  {
+    "title": "105 다윗 즉위: 한 왕국으로",
+    "era": "era_monarchy",
+    "persons": [
+      "david",
+      "samuel"
+    ],
+    "place_name": "헤브론 → 예루살렘(전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "summary": "다윗은 점진적으로 왕이 되어 마침내 온 이스라엘을 다스린다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "2:1",
+        "to": "2:7"
+      },
+      {
+        "book": "삼하",
+        "from": "5:1",
+        "to": "5:10"
+      }
+    ],
+    "start_year": -1005,
+    "end_year": -1000,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사무엘이 다윗에게 기름을 붓는 장면, 사람들의 시선이 모인다",
+      "긴 갈등의 시간, 짧은, 서로 다른 진영이 흔들린다",
+      "장로들이 다윗 앞에 선다",
+      "예루살렘에 들어서는 다윗, 도시의 문이 열리고 새 시작이 열린다"
+    ],
+    "scene_persons": [
+      [
+        "david",
+        "samuel"
+      ],
+      [],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ]
+    ]
+  },
+  {
+    "title": "106 언약궤 입성: 춤과 기쁨",
+    "era": "era_monarchy",
+    "persons": [
+      "david"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "다윗은 언약궤가 들어올 때 온 마음으로 기뻐하며 예배한다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "6:12",
+        "to": "6:19"
+      }
+    ],
+    "start_year": -1000,
+    "end_year": -1000,
+    "time_precision": "approx",
+    "story_scenes": [
+      "나팔 소리와 함께 행렬이 예루살렘으로 들어온다",
+      "다윗이 체면보다 기쁨을 택해 춤춘다",
+      "언약궤 앞에서 다윗이 멈추어 고개 숙인다",
+      "다윗이 백성에게 음식을 나누며 축복하고, 도시는 환호로 찬다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ]
+    ]
+  },
+  {
+    "title": "107 다윗 언약: 집을 세우리라",
+    "era": "era_monarchy",
+    "persons": [
+      "david",
+      "nathan"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "하나님은 다윗에게 ‘네 집과 왕위를 견고케 하겠다’는 약속을 주신다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "7:1",
+        "to": "7:17"
+      }
+    ],
+    "start_year": -995,
+    "end_year": -995,
+    "time_precision": "approx",
+    "story_scenes": [
+      "다윗이 결연한 표정으로 선다, 나는 백향목에 거하나, 나단이 듣는다",
+      "밤, 나단이 말씀을 듣고 얼굴이 굳는다, 경외",
+      "다윗과 나단이 엄숙한 표정으로 손짓한다",
+      "다윗이 무릎 꿇고 기도한다, 약속의 무게가 방에 남는다"
+    ],
+    "scene_persons": [
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "nathan"
+      ],
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "david"
+      ]
+    ]
+  },
+  {
+    "title": "108 밧세바 사건: 나단의 책망",
+    "era": "era_monarchy",
+    "persons": [
+      "david",
+      "nathan"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "다윗의 죄가 드러나고, 나단 앞에서 다윗은 회개한다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "11:1",
+        "to": "12:13"
+      }
+    ],
+    "start_year": -990,
+    "end_year": -990,
+    "time_precision": "approx",
+    "story_scenes": [
+      "왕궁의 고요한 밤, 다윗의 시선이 멈춘다, 선택의 순간",
+      "다윗이 궁전 침상 곁에서 밧세바를 부르며 잘못된 욕망의 선택을 시작한다",
+      "나단이 결연한 표정으로 서 있고, 다윗이 분노하다가 멈춘다",
+      "궁전 안에서 다윗이 나단 앞에 엎드려 통곡하는 모습"
+    ],
+    "scene_persons": [
+      [
+        "david"
+      ],
+      [
+        "david",
+        "bathsheba"
+      ],
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "david",
+        "nathan"
+      ]
+    ]
+  },
+  {
+    "title": "109 압살롬의 반역: 도망치는 왕",
+    "era": "era_monarchy",
+    "persons": [
+      "david"
+    ],
+    "place_name": "예루살렘 → 요단 동편(전승)",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "압살롬의 반역으로 다윗은 예루살렘을 떠나며 눈물로 길을 간다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "15:1",
+        "to": "15:37"
+      }
+    ],
+    "start_year": -975,
+    "end_year": -975,
+    "time_precision": "approx",
+    "story_scenes": [
+      "늙은 왕 다윗의 아들 압살롬이 젊은 청년의 모습으로 사람들의 편을 모으며 반역하는 장면",
+      "사독이라는 레위인이 언약궤를 메어 다윗 앞에 가져다 놓지만, 늙은 왕 다윗이 손을 가로젓는 모습",
+      "늙은 왕 다윗과 일행이 감람산을 울며 오르는 모습",
+      "늙은 왕 다윗이 60대 남자 후새에게 성으로 들어가라고 말하고, 후새가 성으로 들어가는 모습"
+    ],
+    "scene_persons": [
+      [
+        "absalom"
+      ],
+      [
+        "david",
+        "zadok"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david",
+        "hushai"
+      ]
+    ]
+  },
+  {
+    "title": "110 인구조사와 제단: 다윗의 선택",
+    "era": "era_monarchy",
+    "persons": [
+      "david"
+    ],
+    "place_name": "예루살렘(아라우나 타작마당, 전승)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "잘못된 자랑이 재앙을 부르고, 다윗은 값을 치르고 제단을 세운다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "24:10",
+        "to": "24:25"
+      }
+    ],
+    "start_year": -970,
+    "end_year": -970,
+    "time_precision": "approx",
+    "story_scenes": [
+      "늙은 왕 다윗이 군사들에게 인구 조사를 명하는 장면",
+      "재앙이 땅을 덮치고, 늙은 왕 다윗이 후회하는 모습",
+      "늙은 왕 다윗이 결연한 표정으로 타작마당을 사들이는 장면",
+      "늙은 왕 다윗이 불이 타오르는 제단 앞에서 기도하며 재앙이 그치는 장면"
+    ],
+    "scene_persons": [
+      [
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ]
+    ]
+  },
+  {
+    "title": "111 솔로몬 즉위: 지혜의 선택",
+    "era": "era_monarchy",
+    "persons": [
+      "solomon",
+      "david",
+      "god"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "솔로몬은 왕으로 세워지고 ‘지혜’를 구해 길을 연다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "1:28",
+        "to": "3:15"
+      }
+    ],
+    "start_year": -970,
+    "end_year": -967,
+    "time_precision": "approx",
+    "story_scenes": [
+      "다윗의 마지막 지시를 솔로몬이 긴장한 얼굴로 듣는다",
+      "솔로몬의 즉위 장면, 군중의 환호가 터진다",
+      "밤의 꿈속에 하나님이 솔로몬에게 나타나시는 장면",
+      "솔로몬이 언약궤 앞에 서서 번제와 감사의 제물을 드리고 신하들은 기쁜 표정을 짓는다"
+    ],
+    "scene_persons": [
+      [
+        "solomon",
+        "david"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon",
+        "god"
+      ],
+      [
+        "solomon"
+      ]
+    ]
+  },
+  {
+    "title": "112 성전 건축: 손으로 짓는 집",
+    "era": "era_monarchy",
+    "persons": [
+      "solomon"
+    ],
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "솔로몬은 오랜 준비 끝에 성전을 건축한다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "5:1",
+        "to": "6:38"
+      }
+    ],
+    "start_year": -966,
+    "end_year": -959,
+    "time_precision": "approx",
+    "story_scenes": [
+      "목재와 돌이 모인다, 일꾼들의 발걸음이 분주하다",
+      "돌을 다듬는 소리, 조용히 올라가는 구조",
+      "빛이 반사되어 은은히 번진다",
+      "마지막 기둥이 세워지고, 성전이 완성된다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "113 성전 봉헌: 기도와 영광",
+    "era": "era_monarchy",
+    "persons": [
+      "solomon"
+    ],
+    "place_name": "예루살렘 성전",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "솔로몬의 봉헌 기도 후 하나님의 임재가 성전을 채운다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "8:1",
+        "to": "8:11"
+      }
+    ],
+    "start_year": -959,
+    "end_year": -959,
+    "time_precision": "approx",
+    "story_scenes": [
+      "언약궤가 성전으로 들어온다, 제사장들이 조심히 걷는다",
+      "솔로몬이 두 손을 들고 기도한다, 엄숙",
+      "구름이 성전을 덮는다, 제사장들이 멈칫한다",
+      "솔로몬이 사람들은 숨죽인 채 임재를 느끼며 고개를 숙인다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "solomon"
+      ],
+      [],
+      [
+        "solomon"
+      ]
+    ]
+  },
+  {
+    "title": "114 솔로몬: 이방의 경탄부터 타락까지",
+    "era": "era_monarchy",
+    "persons": [
+      "solomon"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "솔로몬의 지혜와 영화는 이방을 놀라게 했지만, 말년의 타락은 왕국의 균열을 예고했다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "10:1",
+        "to": "11:43"
+      }
+    ],
+    "start_year": -950,
+    "end_year": -950,
+    "time_precision": "approx",
+    "story_scenes": [
+      "낙타 행렬이 도착한다, 이국적 선물들이 펼쳐진다",
+      "스바 여왕이 수수께끼를 던지고, 솔로몬이 조용히 대답한다",
+      "솔로몬이 이방 여인들을 들여오며 마음이 흐려지는 장면",
+      "늙은 솔로몬이 생을 마치고 궁정이 조용해지는 장면"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ]
+    ]
+  },
+  {
+    "title": "115 왕국의 분열과 역사",
+    "era": "era_monarchy",
+    "persons": [],
+    "place_name": "세겜(전승)",
+    "lat": 32.22,
+    "lng": 35.28,
+    "summary": "왕국은 남과 북으로 갈라졌고, 결국 북이스라엘과 남유다는 각각 심판 속에 무너졌다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "12:1",
+        "to": "16:34"
+      }
+    ],
+    "start_year": -930,
+    "end_year": -930,
+    "time_precision": "approx",
+    "story_scenes": [
+      "내부에서 남과 북이 두 갈래로 갈라져 서로 맞서는 모습",
+      "완전히 분열된 북왕국과 남왕국의 모습",
+      "북왕국 이스라엘이 BC 722년에 앗수르에 의해 멸망하는 장면",
+      "남왕국 유다가 BC 586년에 바벨론에 의해 멸망하는 장면"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "116 엘리야와 갈멜: 불의 응답",
+    "era": "era_monarchy",
+    "persons": [
+      "elijah"
+    ],
+    "place_name": "갈멜 산",
+    "lat": 32.83,
+    "lng": 34.97,
+    "summary": "엘리야는 하나님이 참 하나님이심을 불의 응답으로 드러낸다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "18:20",
+        "to": "18:39"
+      }
+    ],
+    "start_year": -860,
+    "end_year": -860,
+    "time_precision": "approx",
+    "story_scenes": [
+      "바알 선지자들의 소란, 사람들의 얼굴이 흔들린다",
+      "엘리야가 결연한 표정으로 선다",
+      "엘리야가 제단에 물을 붓고 조용히 기도한다",
+      "불이 임하고 백성이 엎드린다, 여호와 그가 하나님이시로다!"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ]
+    ]
+  },
+  {
+    "title": "117 호렙의 엘리야: 조용한 음성",
+    "era": "era_monarchy",
+    "persons": [
+      "elijah"
+    ],
+    "place_name": "호렙 산(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "summary": "엘리야는 절망 속에서 ‘세미한 음성’으로 다시 부르심을 받는다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "19:1",
+        "to": "19:18"
+      }
+    ],
+    "start_year": -860,
+    "end_year": -860,
+    "time_precision": "approx",
+    "story_scenes": [
+      "엘리야가 광야에 쓰러진다, 차라리 죽여 주옵소서",
+      "천사의 돌봄, 빵과 물, 엘리야가 다시 일어난다",
+      "늙은 엘리야 앞에서 큰 바람과 지진과 불이 지나가고, 그 뒤에 고요가 온다",
+      "조용한 음성, 엘리야가 얼굴을 가리고 다시 길을 나선다"
+    ],
+    "scene_persons": [
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ]
+    ]
+  },
+  {
+    "title": "118 나봇의 포도원: 빼앗긴 정의",
+    "era": "era_monarchy",
+    "persons": [
+      "ahab",
+      "elijah"
+    ],
+    "place_name": "이스르엘(전승)",
+    "lat": 32.56,
+    "lng": 35.32,
+    "summary": "권력은 거짓 증언으로 무고한 자를 무너뜨리고, 예언은 죄를 드러낸다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "21:1",
+        "to": "21:19"
+      }
+    ],
+    "start_year": -855,
+    "end_year": -855,
+    "time_precision": "approx",
+    "story_scenes": [
+      "중년 남자 아합 왕이 40대 남자 나봇에게 포도원을 팔라고 권유하지만 거절당하는 장면",
+      "아합 왕이 뒤에 앉아 있고, 이세벨 여왕이 악한 표정으로 편지를 쓰는 장면",
+      "성문 밖에서 백성 무리가 나봇을 돌로 치고, 멀리 나봇이 쓰러지는 장면",
+      "엘리야가 아합과 이세벨에게 재앙이 임할 것을 호통치며 선포하는 장면"
+    ],
+    "scene_persons": [
+      [
+        "ahab",
+        "naboth"
+      ],
+      [
+        "ahab",
+        "jezebel"
+      ],
+      [
+        "naboth"
+      ],
+      [
+        "elijah",
+        "ahab",
+        "jezebel"
+      ]
+    ]
+  },
+  {
+    "title": "119 엘리야 승천: 겉옷의 계승",
+    "era": "era_monarchy",
+    "persons": [
+      "elijah",
+      "elisha"
+    ],
+    "place_name": "요단강 근처(전승)",
+    "lat": 31.85,
+    "lng": 35.55,
+    "summary": "엘리야는 떠나고, 엘리사는 겉옷과 사명을 이어받는다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "2:1",
+        "to": "2:14"
+      }
+    ],
+    "start_year": -850,
+    "end_year": -850,
+    "time_precision": "approx",
+    "story_scenes": [
+      "늙은 노인 엘리야가 엘리사에게 마지막 길을 함께 가자고 말하는 장면",
+      "늙은 노인 엘리야가 겉옷으로 요단강 물을 치자 길이 열리는 장면",
+      "늙은 노인 엘리야가 불수레와 함께 하늘로 들려 올라가고, 엘리사가 울부짖는 장면",
+      "엘리사가 겉옷을 들고 요단을 치자 물이 갈라지는 장면"
+    ],
+    "scene_persons": [
+      [
+        "elijah",
+        "elisha"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah",
+        "elisha"
+      ],
+      [
+        "elisha"
+      ]
+    ]
+  },
+  {
+    "title": "120 나아만: 요단의 일곱 번",
+    "era": "era_monarchy",
+    "persons": [
+      "naaman",
+      "elisha"
+    ],
+    "place_name": "사마리아/요단강(전승)",
+    "lat": 32.46,
+    "lng": 35.55,
+    "summary": "자존심을 내려놓을 때 치유가 찾아온다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "5:1",
+        "to": "5:14"
+      }
+    ],
+    "start_year": -845,
+    "end_year": -845,
+    "time_precision": "approx",
+    "story_scenes": [
+      "문둥병에 걸린 젊은 장수 나아만이 이스라엘로 향하는 장면",
+      "엘리사의 작은 종이 나아만에게 말하고, 나아만은 화를 내는 장면",
+      "젊은 장수 나아만이 분한 얼굴로 요단강 물에 몸을 담그는 장면",
+      "젊은 장수 나아만의 문둥병이 깨끗이 나은 장면"
+    ],
+    "scene_persons": [
+      [
+        "naaman"
+      ],
+      [
+        "naaman"
+      ],
+      [
+        "naaman"
+      ],
+      [
+        "naaman"
+      ]
+    ]
+  },
+  {
+    "title": "121 예후의 혁명: 칼날의 교체",
+    "era": "era_monarchy",
+    "persons": [
+      "jehu"
+    ],
+    "place_name": "이스르엘/사마리아(전승)",
+    "lat": 32.56,
+    "lng": 35.32,
+    "summary": "예후는 급진적 정변으로 왕조를 교체하지만 폭력의 그림자를 남긴다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "9:1",
+        "to": "10:31"
+      }
+    ],
+    "start_year": -841,
+    "end_year": -841,
+    "time_precision": "approx",
+    "story_scenes": [
+      "젊은 청년 예후가 선지자에게 기름부음을 받는 장면",
+      "젊은 청년 예후가 전차와 함께 어떤 왕을 무너뜨리는 장면",
+      "젊은 청년 예후가 어떤 왕후의 몰락을 지켜보는 장면",
+      "젊은 청년 예후가 금송아지를 섬기며 이스라엘이 죄에서 떠나지 않는 장면"
+    ],
+    "scene_persons": [
+      [
+        "jehu"
+      ],
+      [
+        "jehu"
+      ],
+      [
+        "jehu"
+      ],
+      [
+        "jehu"
+      ]
+    ]
+  },
+  {
+    "title": "122 북왕국 멸망: 사마리아 함락",
+    "era": "era_monarchy",
+    "persons": [
+      "israelites"
+    ],
+    "place_name": "사마리아",
+    "lat": 32.28,
+    "lng": 35.19,
+    "summary": "오랜 경고 끝에 북왕국은 무너지고 백성은 흩어진다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "17:5",
+        "to": "17:23"
+      }
+    ],
+    "start_year": -722,
+    "end_year": -722,
+    "time_precision": "approx",
+    "story_scenes": [
+      "성벽 위 병사들, 포위가 길어지고 식량이 줄어든다",
+      "성이 뚫리고 사람들이 달아난다, 혼란의 소리",
+      "사슬에 묶인 행렬이 먼 곳으로 끌려간다",
+      "텅 빈 도시, 바람만 불고, 끝이 남는다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "123 히스기야와 산헤립: 두려움의 편지",
+    "era": "era_monarchy",
+    "persons": [
+      "hezekiah",
+      "isaiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "포위 속에서 히스기야는 편지를 성전에 펼치고 하나님께 매달린다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "18:13",
+        "to": "19:19"
+      },
+      {
+        "book": "사",
+        "from": "36:1",
+        "to": "37:20"
+      }
+    ],
+    "start_year": -701,
+    "end_year": -701,
+    "time_precision": "approx",
+    "story_scenes": [
+      "성벽 아래 조롱",
+      "히스기야가 편지를 들고 성전으로 들어간다",
+      "히스기야가 성전에서 편지를 펼쳐 두고 간절히 기도하는 장면",
+      "이사야가 히스기야에게 와서 하나님의 말씀을 선포하는 장면"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah",
+        "isaiah"
+      ]
+    ]
+  },
+  {
+    "title": "124 히스기야의 병과 바벨론 사신",
+    "era": "era_monarchy",
+    "persons": [
+      "hezekiah",
+      "isaiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "회복 이후의 자랑은 또 다른 위기를 예고한다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "20:1",
+        "to": "20:19"
+      },
+      {
+        "book": "사",
+        "from": "38:1",
+        "to": "39:8"
+      }
+    ],
+    "start_year": -700,
+    "end_year": -700,
+    "time_precision": "approx",
+    "story_scenes": [
+      "히스기야가 병상에서 울며 기도하는 장면",
+      "이사야가 히스기야에게 와서 나을 것이라고 말하는 장면",
+      "히스기야가 다 나은 뒤 바벨론 사신들에게 보물을 자랑하는 장면",
+      "이사야가 히스기야에게 보물을 가리키며 호통치는 장면"
+    ],
+    "scene_persons": [
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah",
+        "isaiah"
+      ],
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah",
+        "isaiah"
+      ]
+    ]
+  },
+  {
+    "title": "125 요시야의 개혁: 율법책을 찾다",
+    "era": "era_monarchy",
+    "persons": [
+      "josiah"
+    ],
+    "place_name": "예루살렘 성전",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "잊힌 율법이 발견되자 요시야는 회개하고 나라를 새로 세우려 한다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "22:8",
+        "to": "23:25"
+      }
+    ],
+    "start_year": -622,
+    "end_year": -622,
+    "time_precision": "approx",
+    "story_scenes": [
+      "성전 수리 중 두루마리가 발견된다, 사람들이 숨을 삼킨다",
+      "josiah가 josiah가 josiah가 josiah가 josiah가 josiah가 왕 앞에서 율법을 읽자 요시야가 옷을 찢는다",
+      "배경과 분위기만 보이는",
+      "백성이 언약을 갱신한다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "josiah"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "126 예레미야의 소명: 불타는 말씀",
+    "era": "era_monarchy",
+    "persons": [
+      "jeremiah",
+      "god"
+    ],
+    "place_name": "아나돗(전승)",
+    "lat": 31.84,
+    "lng": 35.26,
+    "summary": "예레미야는 두려움 속에서도 ‘내가 네 입에 말을 두었다’는 부르심을 받는다.",
+    "bible_ref": [
+      {
+        "book": "렘",
+        "from": "1:4",
+        "to": "1:10"
+      }
+    ],
+    "start_year": -627,
+    "end_year": -627,
+    "time_precision": "approx",
+    "story_scenes": [
+      "젊은 예레미야가 멈칫한다, 나는 아이라 말할 줄 모릅니다",
+      "하나님의 빛이 젊은 예레미야에게 임하는 장면",
+      "예레미야에게 하나님의 말씀이 주어지는 장면",
+      "예레미야가 도시를 바라보는 장면"
+    ],
+    "scene_persons": [
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah",
+        "god"
+      ],
+      [
+        "jeremiah",
+        "god"
+      ],
+      [
+        "jeremiah"
+      ]
+    ]
+  },
+  {
+    "title": "127 바벨론의 압박: 첫 포로",
+    "era": "era_monarchy",
+    "persons": [
+      "jehoiachin"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "바벨론의 힘 앞에서 유다는 흔들리고, 일부가 포로로 끌려간다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "24:10",
+        "to": "24:17"
+      }
+    ],
+    "start_year": -597,
+    "end_year": -597,
+    "time_precision": "approx",
+    "story_scenes": [
+      "성벽 밖에 바벨론 군대의 깃발이 늘어선다",
+      "궁 안에서 협상과 두려움이 교차한다",
+      "여호야긴 왕이 백성들과 함께 바벨론에 잡혀가는 장면",
+      "새로운 20살 왕 시드기야가 바벨론을 배신하는 장면"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [
+        "jehoiachin"
+      ],
+      [
+        "zedekiah"
+      ]
+    ]
+  },
+  {
+    "title": "128 예루살렘 포위: 왕의 몰락",
+    "era": "era_monarchy",
+    "persons": [
+      "zedekiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "포위는 길어지고, 마지막 순간 왕과 도시는 무너진다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "25:1",
+        "to": "25:7"
+      }
+    ],
+    "start_year": -588,
+    "end_year": -586,
+    "time_precision": "approx",
+    "story_scenes": [
+      "시드기야가 기근 속에서 근심하는 모습",
+      "성벽이 뚫리고 도시가 혼란에 빠진다",
+      "시드기야가 도망가다 붙잡히는 모습",
+      "도시의 불빛이 꺼지고, 시대가 끝난다"
+    ],
+    "scene_persons": [
+      [
+        "zedekiah"
+      ],
+      [],
+      [
+        "zedekiah"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "129 예루살렘 함락: 성전이 불타다",
+    "era": "era_exile_return",
+    "persons": [
+      "israelites"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "성전이 파괴되고 백성은 포로로 끌려가며 포로 시대가 시작된다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "25:8",
+        "to": "25:21"
+      }
+    ],
+    "start_year": -586,
+    "end_year": -586,
+    "time_precision": "approx",
+    "story_scenes": [
+      "성전 쪽으로 번지는 불빛과 연기",
+      "israelites가 israelites가 israelites가 israelites가 israelites가 israelites가 사람들이 집을 떠나 끌려간다, 울음소리가 멀어진다",
+      "배경과 분위기만 보이는",
+      "텅 빈 도시에 바람만 남고, 화면이 천천히 어두워진다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "israelites"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "130 남은 자의 선택: 두 갈래 길",
+    "era": "era_exile_return",
+    "persons": [
+      "jeremiah"
+    ],
+    "place_name": "유다 땅(미스바/애굽 길, 전승)",
+    "lat": 31.83,
+    "lng": 35.17,
+    "summary": "남은 자들은 두려움 속에서 떠나고, 예레미야의 경고는 외면된다.",
+    "bible_ref": [
+      {
+        "book": "렘",
+        "from": "42:1",
+        "to": "43:7"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_scenes": [
+      "백성들이 예레미야에게 와서 기도를 간구하는 장면",
+      "하나님의 말씀이 예레미야에게 임하는 장면",
+      "예레미야가 사람들에게 하나님의 말씀을 강하게 전하지만 사람들은 듣지 않고 가버리는 장면",
+      "예레미야가 바로의 궁전 대문 벽돌 축대에 큰 돌 여러 개를 진흙으로 감추는 장면"
+    ],
+    "scene_persons": [
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah",
+        "god"
+      ],
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah"
+      ]
+    ]
+  },
+  {
+    "title": "131 에스겔의 소명: 보좌의 환상",
+    "era": "era_exile_return",
+    "persons": [
+      "ezekiel"
+    ],
+    "place_name": "그발 강가(바벨론, 전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "포로지에서 에스겔은 하나님의 영광을 보고 파수꾼의 사명을 받는다.",
+    "bible_ref": [
+      {
+        "book": "겔",
+        "from": "1:1",
+        "to": "3:11"
+      }
+    ],
+    "start_year": -593,
+    "end_year": -593,
+    "time_precision": "approx",
+    "story_scenes": [
+      "강가에 앉은 에스겔, 하늘이 갈라지는 듯한 빛",
+      "바퀴와 생물의 환상, 에스겔이 몸을 떤다",
+      "배경과 분위기만 보이는",
+      "에스겔이 일어나 포로 공동체를 바라본다, 파수꾼의 눈빛"
+    ],
+    "scene_persons": [
+      [
+        "ezekiel"
+      ],
+      [
+        "ezekiel"
+      ],
+      [],
+      [
+        "ezekiel"
+      ]
+    ]
+  },
+  {
+    "title": "132 마른 뼈: 숨이 들어오다",
+    "era": "era_exile_return",
+    "persons": [
+      "ezekiel"
+    ],
+    "place_name": "그발 강가(추정)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다.",
+    "bible_ref": [
+      {
+        "book": "겔",
+        "from": "37:1",
+        "to": "37:14"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_scenes": [
+      "뼈들로 가득한 골짜기, 바람도 없는 정적",
+      "에스겔이 대언하라는 명령",
+      "에스겔이 서 있는 가운데 마른 뼈 위에 힘줄과 살이 덮이기 시작한다",
+      "숨이 돌아온 사람들이 일어서고 그 한가운데 에스겔이 서 있다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "ezekiel"
+      ],
+      [
+        "ezekiel"
+      ],
+      [
+        "ezekiel"
+      ]
+    ]
+  },
+  {
+    "title": "133 다니엘: 뜻을 정하다",
+    "era": "era_exile_return",
+    "persons": [
+      "daniel"
+    ],
+    "place_name": "바벨론",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "다니엘은 낯선 제국 한복판에서 믿음의 기준을 세운다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "1:8",
+        "to": "1:20"
+      }
+    ],
+    "start_year": -605,
+    "end_year": -605,
+    "time_precision": "approx",
+    "story_scenes": [
+      "궁정의 화려한 식탁, 다니엘이 멈춘다",
+      "다니엘이 앞쪽에 서 있고, 관리가 난처해한다",
+      "다니엘이 왕에게 단정한 제안을 하는 장면",
+      "다니엘이 이전보다 더 건강한 모습으로 왕 앞에 서고 왕이 놀라는 장면"
+    ],
+    "scene_persons": [
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ]
+    ]
+  },
+  {
+    "title": "134 풀무불: 다니엘과 세 친구",
+    "era": "era_exile_return",
+    "persons": [
+      "daniel"
+    ],
+    "place_name": "바벨론(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "우상 숭배 강요 앞에서 믿음은 굴복 대신 신실함을 택한다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "3:1",
+        "to": "3:30"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_scenes": [
+      "다니엘과 세 친구가 거대한 금 신상 앞에서 서 있고, 다른 사람들은 모두 엎드린다",
+      "다니엘과 세 친구가 왕 앞에서 믿음을 굽히지 않는 장면",
+      "풀무불 속에서 다니엘과 세 친구가 함께 서 있는 장면",
+      "왕이 다니엘과 세 친구를 칭찬하는 모습"
+    ],
+    "scene_persons": [
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ]
+    ]
+  },
+  {
+    "title": "135 벨사살의 잔치: 벽에 쓴 글",
+    "era": "era_exile_return",
+    "persons": [
+      "daniel"
+    ],
+    "place_name": "바벨론",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "교만한 잔치에 ‘손 글씨’가 나타나고, 심판이 선포된다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "5:1",
+        "to": "5:31"
+      }
+    ],
+    "start_year": -539,
+    "end_year": -539,
+    "time_precision": "approx",
+    "story_scenes": [
+      "화려한 잔치, 웃음과 술잔 소리로 가득하다",
+      "벽에 나타난 손 글씨, 모두가 얼어붙는다",
+      "다니엘이 해석한다, 너는 저울에 달려 부족함이 보였다",
+      "왕이 다니엘에게 자주색 옷을 입히게 하며 금 사슬을 그의 목에 걸어 주는 장면"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ]
+    ]
+  },
+  {
+    "title": "136 사자굴: 멈추지 않는 기도",
+    "era": "era_exile_return",
+    "persons": [
+      "daniel"
+    ],
+    "place_name": "바벨론/메대-바사(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "6:1",
+        "to": "6:28"
+      }
+    ],
+    "start_year": -537,
+    "end_year": -537,
+    "time_precision": "approx",
+    "story_scenes": [
+      "관원들이 계략을 꾸민다, 그의 하나님을 걸어야 한다",
+      "다니엘이 창을 열고 기도한다, 소문이 퍼진다",
+      "신하들이 왕에게 말하고, 왕이 괴로워하는 장면",
+      "새벽, 다니엘의 목소리가 들린다, 하나님이 사자들의 입을 막으셨습니다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "daniel"
+      ],
+      [],
+      [
+        "daniel"
+      ]
+    ]
+  },
+  {
+    "title": "137 고레스 칙령: 돌아가라",
+    "era": "era_exile_return",
+    "persons": [
+      "cyrus",
+      "returnees"
+    ],
+    "place_name": "바벨론 → 예루살렘(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "고레스의 칙령으로 귀환의 문이 열리고 성전 재건이 시작된다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "1:1",
+        "to": "1:4"
+      }
+    ],
+    "start_year": -538,
+    "end_year": -538,
+    "time_precision": "approx",
+    "story_scenes": [
+      "칙령이 낭독된다, 사람들이 서로를 바라본다",
+      "누군가 울음을 터뜨린다, 돌아갈 수 있다",
+      "짐을 싸고 긴 행렬이 길을 나선다",
+      "멀리 예루살렘 방향으로 해가 뜬다, 희망의 톤"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "138 제단과 예배 회복",
+    "era": "era_exile_return",
+    "persons": [
+      "returnees"
+    ],
+    "place_name": "예루살렘(성전 터)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "폐허 위에서 먼저 예배가 회복되고 제단이 다시 세워진다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "3:1",
+        "to": "3:6"
+      }
+    ],
+    "start_year": -537,
+    "end_year": -537,
+    "time_precision": "approx",
+    "story_scenes": [
+      "returnees가 returnees가 returnees가 손에 돌을 들고 있다",
+      "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 제단을 쌓고 불을 밝힌다, 모두가 숨을 죽인다",
+      "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 제사가 드려지고, 오래 잊었던 노래가 다시 울린다",
+      "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 어떤 이는 울고 어떤 이는 기뻐한다, 처음이 다시 시작된다"
+    ],
+    "scene_persons": [
+      [
+        "returnees"
+      ],
+      [
+        "returnees"
+      ],
+      [
+        "returnees"
+      ],
+      [
+        "returnees"
+      ]
+    ]
+  },
+  {
+    "title": "139 성전 재건: 방해와 완공",
+    "era": "era_exile_return",
+    "persons": [
+      "returnees"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "방해가 이어지지만 성전은 결국 다시 세워진다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "4:1",
+        "to": "4:6"
+      },
+      {
+        "book": "스",
+        "from": "6:13",
+        "to": "6:22"
+      }
+    ],
+    "start_year": -536,
+    "end_year": -516,
+    "time_precision": "approx",
+    "story_scenes": [
+      "주변 사람들이 접근한다, 긴장이 감돈다",
+      "거절 후 방해와 협박이 시작된다, 작업이 멈춘다",
+      "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 다시 망치 소리, 돌이 쌓이고 골조가 올라간다",
+      "returnees가 returnees가 returnees가 returnees가 returnees가 returnees가 완공 예배, 사람들의 얼굴에 눈물과 웃음이 함께 있다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [
+        "returnees"
+      ],
+      [
+        "returnees"
+      ]
+    ]
+  },
+  {
+    "title": "140 에스더: 왕후가 되다",
+    "era": "era_exile_return",
+    "persons": [
+      "esther",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더는 예상치 못한 자리에서 왕후가 되어 때를 기다린다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "2:5",
+        "to": "2:18"
+      }
+    ],
+    "start_year": -480,
+    "end_year": -480,
+    "time_precision": "approx",
+    "story_scenes": [
+      "에스더가 왕후가 되기 전, 다른 후보들과 함께 궁정에 모인 모습",
+      "왕관이 없는 후보의 모습인 에스더가 왕 앞에 선다, 방 안이 숨을 죽인다",
+      "왕이 왕관을 씌운다, 에스더의 얼굴이 굳어지며 책임을 느낀다",
+      "모르드개가 멀리서 지켜본다, 때가 올 것 같은 눈빛"
+    ],
+    "scene_persons": [
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "mordecai"
+      ]
+    ]
+  },
+  {
+    "title": "141 하만의 음모: 유다인을 없애라",
+    "era": "era_exile_return",
+    "persons": [
+      "esther",
+      "haman",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "모르드개의 거절은 하만의 분노를 불러 대규모 학살 음모로 번진다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "3:1",
+        "to": "3:15"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_scenes": [
+      "하만이 지나가고 모두가 절하지만, 모르드개만 서 있다",
+      "하만의 얼굴이 붉어진다, 한 사람만이 아니라, 민족을",
+      "하만이 제비를 던져 날짜를 정하는 장면",
+      "조서가 퍼지고 수산 성이 어지러워진다, 에스더의 손이 떨린다"
+    ],
+    "scene_persons": [
+      [
+        "haman",
+        "mordecai"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "esther"
+      ]
+    ]
+  },
+  {
+    "title": "142 에스더의 결단: 죽으면 죽으리라",
+    "era": "era_exile_return",
+    "persons": [
+      "esther",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더는 금식 후 왕 앞에 나아가기로 결단한다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "4:10",
+        "to": "4:17"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_scenes": [
+      "에스더가 망설인다, 부름 없이 나아가면",
+      "모르드개가 앞쪽에 서 있다",
+      "에스더가 결연한 표정으로 선다",
+      "에스더가 문을 향해 걸어간다, 죽으면 죽으리라"
+    ],
+    "scene_persons": [
+      [
+        "esther"
+      ],
+      [
+        "mordecai"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ]
+    ]
+  },
+  {
+    "title": "143 잔치의 반전: 하만의 몰락",
+    "era": "era_exile_return",
+    "persons": [
+      "esther",
+      "haman",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "5:1",
+        "to": "7:10"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_scenes": [
+      "왕과 에스더가 이야기하는 장면",
+      "하만이 궁궐 안에 나무를 세우는 장면",
+      "잔치 자리에서 왕과 에스더와 대신들이 앉아 있고, 하만은 머리를 싸고 번뇌하며, 모르드개가 말을 타고 잔치로 들어오는 모습",
+      "하만이 자기가 세운 나무에 달리는 장면"
+    ],
+    "scene_persons": [
+      [
+        "esther"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "esther",
+        "haman",
+        "mordecai"
+      ],
+      [
+        "haman"
+      ]
+    ]
+  },
+  {
+    "title": "144 부림절: 살아남은 날",
+    "era": "era_exile_return",
+    "persons": [
+      "esther",
+      "mordecai"
+    ],
+    "place_name": "페르시아 전역(상징)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "구원의 반전은 기억의 축제가 되어 공동체를 살린다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "9:20",
+        "to": "9:28"
+      }
+    ],
+    "start_year": -473,
+    "end_year": -473,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사람들이 서로를 확인하며 안도의 숨을 쉰다",
+      "모르드개가 편지를 쓰고 소식이 퍼진다",
+      "선물을 나누고 음식을 나누는 앞쪽에 서 있고, 웃음과 눈물이 섞인다",
+      "달력에 표시되는 부림, 기억이 제도가 된다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "mordecai"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "145 에스라의 귀환: 말씀으로 정리하다",
+    "era": "era_exile_return",
+    "persons": [
+      "ezra"
+    ],
+    "place_name": "바벨론 → 예루살렘(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "summary": "에스라는 말씀의 사람으로 돌아와 공동체를 재정비한다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "7:1",
+        "to": "7:10"
+      }
+    ],
+    "start_year": -458,
+    "end_year": -458,
+    "time_precision": "approx",
+    "story_scenes": [
+      "에스라가 두루마리를 펼쳐 읽는다, 눈빛이 단단하다",
+      "귀환 행렬이 길을 나선다, 먼지 나는 길 위의 결단",
+      "예루살렘에 도착한 에스라가 현실을 보고 고개를 숙인다",
+      "에스라가 율법을 연구하고 행하며 가르치기로 뜻을 정했다가 울린다"
+    ],
+    "scene_persons": [
+      [
+        "ezra"
+      ],
+      [],
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ]
+    ]
+  },
+  {
+    "title": "146 느헤미야의 파송: 무너진 성벽 소식",
+    "era": "era_exile_return",
+    "persons": [
+      "nehemiah"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "느헤미야는 예루살렘 소식을 듣고 눈물로 기도한 뒤 파송을 받는다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "1:1",
+        "to": "1:11"
+      },
+      {
+        "book": "느",
+        "from": "2:1",
+        "to": "2:8"
+      }
+    ],
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "story_scenes": [
+      "느헤미야가 소식을 듣고 무너진 얼굴로 앉아 운다",
+      "느헤미야가 밤의 기도, 주의 이름을 경외하는 종들을 기억하소서",
+      "상대를 바라보며 기다린다, 느헤미야가 숨을 고른다",
+      "왕의 허락과 편지가 주어진다, 느헤미야가 고개 숙여 감사한다"
+    ],
+    "scene_persons": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ]
+  },
+  {
+    "title": "147 성벽 재건: 밤의 조사와 한 손엔 무기",
+    "era": "era_exile_return",
+    "persons": [
+      "nehemiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "느헤미야는 밤에 성벽을 살핀 뒤 재건을 이끌었고, 백성은 한 손에 돌 한 손에 무기를 들고 성을 세웠다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "2:11",
+        "to": "2:20"
+      },
+      {
+        "book": "느",
+        "from": "4:10",
+        "to": "4:20"
+      }
+    ],
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "story_scenes": [
+      "밤, 느헤미야가 소수와 함께 성벽을 따라 조사한다",
+      "성벽을 재건하는 건축 현장",
+      "건축 현장에서 한 손엔 돌, 한 손엔 무기를 들고 성벽을 세우는 모습",
+      "나팔 소리에 사람들이 모이고, 하나님이 싸우신다는 외침에 모두가 고개를 드는 장면"
+    ],
+    "scene_persons": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ]
+  },
+  {
+    "title": "149 율법 낭독: 울음에서 기쁨으로",
+    "era": "era_exile_return",
+    "persons": [
+      "ezra",
+      "nehemiah"
+    ],
+    "place_name": "예루살렘 수문 앞 광장(전승)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "summary": "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "8:1",
+        "to": "8:12"
+      }
+    ],
+    "start_year": -444,
+    "end_year": -444,
+    "time_precision": "approx",
+    "story_scenes": [
+      "에스라가 군중들에게 두루마리를 선포하는 장면",
+      "말씀을 듣고 사람들이 기뻐서 우는 장면",
+      "느헤미야가 울지 말라고 백성들을 다독이는 장면",
+      "에스라와 느헤미야와 백성들이 음식을 나누며 기뻐하는 장면"
+    ],
+    "scene_persons": [
+      [
+        "ezra"
+      ],
+      [],
+      [
+        "nehemiah"
+      ],
+      [
+        "ezra",
+        "nehemiah"
+      ]
+    ]
+  },
+  {
+    "title": "150 언약 갱신: 다시 서명하다",
+    "era": "era_exile_return",
+    "persons": [
+      "nehemiah",
+      "leaders",
+      "people"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "공동체는 죄를 고백하고 서약하며 새로운 질서를 세운다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "9:1",
+        "to": "10:39"
+      }
+    ],
+    "start_year": -444,
+    "end_year": -444,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사람들이 금식하며 머리를 숙인다, 재를 뒤집어쓴 모습",
+      "긴 고백 기도, 과거의 이야기들이 흘러간다",
+      "지도자들이 문서에 서명한다, 붓 끝이 떨린다",
+      "사람들의 얼굴이 조금씩 밝아진다, 다시 시작이 선언된다"
+    ],
+    "scene_persons": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ]
+  }
+]

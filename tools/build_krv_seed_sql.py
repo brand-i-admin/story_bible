@@ -27,6 +27,9 @@ Examples:
     --input /path/to/krv.csv \
     --output supabase/seeds/krv_bible_verses.sql \
     --truncate-translation
+
+  # Default 5-part split output (plus full output)
+  python tools/build_krv_seed_sql.py
 """
 
 from __future__ import annotations
@@ -247,6 +250,15 @@ def parse_args() -> argparse.Namespace:
         "--book-text-encodings",
         default="cp949,euc-kr,utf-8",
         help="Comma-separated encodings for --input-dir txt files.",
+    )
+    parser.add_argument(
+        "--split-parts",
+        type=int,
+        default=5,
+        help=(
+            "Also write split SQL files beside --output. "
+            "1 or less disables splitting. Default: 5."
+        ),
     )
     return parser.parse_args()
 
@@ -520,6 +532,15 @@ def chunked(items: list[T], size: int) -> list[list[T]]:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
+def split_rows_for_parts(items: list[T], part_count: int) -> list[list[T]]:
+    if part_count <= 1:
+        return [items]
+    if not items:
+        return [[]]
+    per_part = max(1, (len(items) + part_count - 1) // part_count)
+    return chunked(items, per_part)
+
+
 def sql_literal(value: str) -> str:
     escaped = value.replace("'", "''")
     return f"'{escaped}'"
@@ -645,12 +666,33 @@ def main() -> int:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(sql_text, encoding=args.encoding)
 
+    part_paths: list[Path] = []
+    split_parts = max(1, int(args.split_parts))
+    if split_parts > 1:
+        part_rows_list = split_rows_for_parts(rows, split_parts)
+        for idx, part_rows in enumerate(part_rows_list, start=1):
+            part_sql_text = build_sql(
+                part_rows,
+                translation=translation,
+                truncate_translation=(args.truncate_translation and idx == 1),
+                batch_size=args.batch_size,
+            )
+            part_path = output_path.with_name(
+                f"{output_path.stem}_part_{idx:02d}{output_path.suffix}"
+            )
+            part_path.write_text(part_sql_text, encoding=args.encoding)
+            part_paths.append(part_path)
+
     print(f"source           : {source_info}")
     print(f"input rows       : {raw_row_count}")
     print(f"deduped rows     : {len(rows)}")
     print(f"dropped duplicate: {raw_row_count - len(rows)}")
     print(f"translation      : {translation}")
     print(f"output           : {output_path}")
+    if part_paths:
+        print(f"split parts      : {len(part_paths)}")
+        for part_path in part_paths:
+            print(f"  - {part_path}")
     print("done")
     return 0
 

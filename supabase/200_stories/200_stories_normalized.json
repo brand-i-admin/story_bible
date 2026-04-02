@@ -1,0 +1,6550 @@
+[
+  {
+    "number": 1,
+    "code": "evt_n001",
+    "era_code": "era_primeval",
+    "title": "창조: 7일과 안식",
+    "summary": "하나님이 말씀으로 세상을 창조하시고 안식으로 완성하신다.",
+    "start_year": -4000,
+    "end_year": -4000,
+    "time_precision": "approx",
+    "time_sort_key": -3999999,
+    "place_name": "메소포타미아(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
+    "persons": [
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 1:1-2:3",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 3
+      }
+    ]
+  },
+  {
+    "number": 2,
+    "code": "evt_n002",
+    "era_code": "era_primeval",
+    "title": "에덴: 사람의 창조와 사명",
+    "summary": "사람은 에덴에서 돌보고 지키는 사명을 받는다.",
+    "start_year": -4000,
+    "end_year": -4000,
+    "time_precision": "approx",
+    "time_sort_key": -3999998,
+    "place_name": "에덴 지역(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
+    "persons": [
+      "god",
+      "adam",
+      "eve"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 2:4-25",
+        "chapter_start": 2,
+        "verse_start": 4,
+        "chapter_end": 2,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 3,
+    "code": "evt_n003",
+    "era_code": "era_primeval",
+    "title": "타락: 뱀의 유혹과 선택",
+    "summary": "유혹은 의심을 만들고, 선택은 관계의 균열로 이어진다.",
+    "start_year": -3995,
+    "end_year": -3995,
+    "time_precision": "approx",
+    "time_sort_key": -3994997,
+    "place_name": "에덴 지역(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
+    "persons": [
+      "eve",
+      "adam"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 3:1-13",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 4,
+    "code": "evt_n004",
+    "era_code": "era_primeval",
+    "title": "추방: 동산 밖으로",
+    "summary": "죄의 결과로 사람은 에덴을 떠나고, 길은 막힌다.",
+    "start_year": -3995,
+    "end_year": -3995,
+    "time_precision": "approx",
+    "time_sort_key": -3994996,
+    "place_name": "에덴 동쪽(추정)",
+    "lat": 31.09,
+    "lng": 47.52,
+    "persons": [
+      "god",
+      "adam",
+      "eve"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 3:14-24",
+        "chapter_start": 3,
+        "verse_start": 14,
+        "chapter_end": 3,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 5,
+    "code": "evt_n005",
+    "era_code": "era_primeval",
+    "title": "가인과 아벨: 들판의 비극",
+    "summary": "분노가 다스려지지 않자 형제가 형제를 해친다.",
+    "start_year": -3950,
+    "end_year": -3950,
+    "time_precision": "approx",
+    "time_sort_key": -3949995,
+    "place_name": "에덴 밖 들판(추정)",
+    "lat": 31.16,
+    "lng": 47.61,
+    "persons": [
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 4:1-16",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 16
+      }
+    ]
+  },
+  {
+    "number": 6,
+    "code": "evt_n006",
+    "era_code": "era_primeval",
+    "title": "셋의 계보: 다시 부르다",
+    "summary": "끊긴 듯한 역사 속에서도 하나님을 찾는 흐름이 이어진다.",
+    "start_year": -3900,
+    "end_year": -3100,
+    "time_precision": "approx",
+    "time_sort_key": -3899994,
+    "place_name": "근동(상징)",
+    "lat": 33.0,
+    "lng": 44.0,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 4:25-5:24",
+        "chapter_start": 4,
+        "verse_start": 25,
+        "chapter_end": 5,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 7,
+    "code": "evt_n007",
+    "era_code": "era_primeval",
+    "title": "홍수 전의 타락: 노아를 주목하다",
+    "summary": "폭력으로 가득 찬 세상 속에서 하나님은 노아에게 길을 여신다.",
+    "start_year": -2500,
+    "end_year": -2500,
+    "time_precision": "approx",
+    "time_sort_key": -2499993,
+    "place_name": "근동",
+    "lat": 33.0,
+    "lng": 44.0,
+    "persons": [
+      "god",
+      "noah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 6:1-22",
+        "chapter_start": 6,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 8,
+    "code": "evt_n008",
+    "era_code": "era_primeval",
+    "title": "방주와 홍수: 문이 닫히다",
+    "summary": "구원의 문이 닫히고 물이 땅을 덮는다.",
+    "start_year": -2500,
+    "end_year": -2499,
+    "time_precision": "approx",
+    "time_sort_key": -2499992,
+    "place_name": "방주(근동)",
+    "lat": 33.0,
+    "lng": 44.0,
+    "persons": [
+      "noah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 7:1-8:19",
+        "chapter_start": 7,
+        "verse_start": 1,
+        "chapter_end": 8,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 9,
+    "code": "evt_n009",
+    "era_code": "era_primeval",
+    "title": "무지개 언약: 다시는",
+    "summary": "하나님은 무지개로 언약을 표징하시며 새 출발을 약속하신다.",
+    "start_year": -2499,
+    "end_year": -2499,
+    "time_precision": "approx",
+    "time_sort_key": -2498991,
+    "place_name": "아라랏 산지(전승)",
+    "lat": 39.7,
+    "lng": 44.3,
+    "persons": [
+      "god",
+      "noah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 8:20-9:17",
+        "chapter_start": 8,
+        "verse_start": 20,
+        "chapter_end": 9,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 10,
+    "code": "evt_n010",
+    "era_code": "era_primeval",
+    "title": "바벨탑: 언어가 갈라지다",
+    "summary": "자기 이름을 세우려던 계획은 언어의 혼잡으로 멈춘다.",
+    "start_year": -2200,
+    "end_year": -2200,
+    "time_precision": "approx",
+    "time_sort_key": -2199990,
+    "place_name": "시날 평지(바벨론, 전승)",
+    "lat": 32.54,
+    "lng": 44.42,
+    "persons": [
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 11:1-9",
+        "chapter_start": 11,
+        "verse_start": 1,
+        "chapter_end": 11,
+        "verse_end": 9
+      }
+    ]
+  },
+  {
+    "number": 11,
+    "code": "evt_n011",
+    "era_code": "era_patriarch",
+    "title": "아브라함의 부르심: 떠나라",
+    "summary": "하나님이 아브라함을 부르시고 약속의 길을 여신다.",
+    "start_year": -2100,
+    "end_year": -2100,
+    "time_precision": "approx",
+    "time_sort_key": -2099989,
+    "place_name": "하란",
+    "lat": 36.87,
+    "lng": 39.03,
+    "persons": [
+      "abraham",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 12:1-9",
+        "chapter_start": 12,
+        "verse_start": 1,
+        "chapter_end": 12,
+        "verse_end": 9
+      }
+    ]
+  },
+  {
+    "number": 12,
+    "code": "evt_n012",
+    "era_code": "era_patriarch",
+    "title": "애굽 우회: 두려움의 선택",
+    "summary": "기근과 두려움 속에서 아브라함은 위험한 거짓말을 선택한다.",
+    "start_year": -2099,
+    "end_year": -2099,
+    "time_precision": "approx",
+    "time_sort_key": -2098988,
+    "place_name": "애굽(멤피스 일대, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "abraham",
+      "sarah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 12:10-20",
+        "chapter_start": 12,
+        "verse_start": 10,
+        "chapter_end": 12,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 13,
+    "code": "evt_n013",
+    "era_code": "era_patriarch",
+    "title": "롯과 분리: 시선의 선택",
+    "summary": "갈등을 피하려 한 분리가 훗날의 방향을 가른다.",
+    "start_year": -2098,
+    "end_year": -2098,
+    "time_precision": "approx",
+    "time_sort_key": -2097987,
+    "place_name": "요단 들(전승)",
+    "lat": 31.8,
+    "lng": 35.6,
+    "persons": [
+      "abraham",
+      "lot"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 13:1-18",
+        "chapter_start": 13,
+        "verse_start": 1,
+        "chapter_end": 13,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 14,
+    "code": "evt_n014",
+    "era_code": "era_patriarch",
+    "title": "전쟁과 멜기세덱: 축복의 만남",
+    "summary": "아브라함은 롯을 구출하고, 멜기세덱에게 축복을 받는다.",
+    "start_year": -2097,
+    "end_year": -2097,
+    "time_precision": "approx",
+    "time_sort_key": -2096986,
+    "place_name": "살렘(예루살렘, 전승)",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "abraham",
+      "lot"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 14:1-24",
+        "chapter_start": 14,
+        "verse_start": 1,
+        "chapter_end": 14,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 15,
+    "code": "evt_n015",
+    "era_code": "era_patriarch",
+    "title": "별 언약: 믿음이 의로",
+    "summary": "하나님은 별처럼 많은 자손을 약속하시고 언약을 확증하신다.",
+    "start_year": -2096,
+    "end_year": -2096,
+    "time_precision": "approx",
+    "time_sort_key": -2095985,
+    "place_name": "가나안(전승)",
+    "lat": 31.5,
+    "lng": 35.0,
+    "persons": [
+      "abraham",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 15:1-21",
+        "chapter_start": 15,
+        "verse_start": 1,
+        "chapter_end": 15,
+        "verse_end": 21
+      }
+    ]
+  },
+  {
+    "number": 16,
+    "code": "evt_n016",
+    "era_code": "era_patriarch",
+    "title": "하갈과 이스마엘: 사람의 방법",
+    "summary": "기다림이 길어지자 가정에 갈등이 들어오고 하갈은 광야로 나간다.",
+    "start_year": -2090,
+    "end_year": -2090,
+    "time_precision": "approx",
+    "time_sort_key": -2089984,
+    "place_name": "가나안(전승)",
+    "lat": 31.5,
+    "lng": 35.0,
+    "persons": [
+      "abraham",
+      "sarah",
+      "hagar",
+      "ishmael"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 16:1-16",
+        "chapter_start": 16,
+        "verse_start": 1,
+        "chapter_end": 16,
+        "verse_end": 16
+      }
+    ]
+  },
+  {
+    "number": 17,
+    "code": "evt_n017",
+    "era_code": "era_patriarch",
+    "title": "할례 언약: 이름이 바뀌다",
+    "summary": "언약의 표가 주어지고 아브라함과 사라의 이름이 바뀐다.",
+    "start_year": -2088,
+    "end_year": -2088,
+    "time_precision": "approx",
+    "time_sort_key": -2087983,
+    "place_name": "가나안(전승)",
+    "lat": 31.5,
+    "lng": 35.0,
+    "persons": [
+      "abraham",
+      "sarah",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 17:1-27",
+        "chapter_start": 17,
+        "verse_start": 1,
+        "chapter_end": 17,
+        "verse_end": 27
+      }
+    ]
+  },
+  {
+    "number": 18,
+    "code": "evt_n018",
+    "era_code": "era_patriarch",
+    "title": "세 손님: 웃음과 약속",
+    "summary": "손님을 맞이한 아브라함의 집에 불가능해 보이던 약속이 다시 선포된다.",
+    "start_year": -2087,
+    "end_year": -2087,
+    "time_precision": "approx",
+    "time_sort_key": -2086982,
+    "place_name": "마므레(헤브론, 전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "persons": [
+      "abraham",
+      "sarah",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 18:1-15",
+        "chapter_start": 18,
+        "verse_start": 1,
+        "chapter_end": 18,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 19,
+    "code": "evt_n019",
+    "era_code": "era_patriarch",
+    "title": "소돔을 위한 중보: 숫자가 줄어들다",
+    "summary": "아브라함은 의인을 위해 담대하게 간구하며 하나님의 공의를 붙든다.",
+    "start_year": -2087,
+    "end_year": -2087,
+    "time_precision": "approx",
+    "time_sort_key": -2086981,
+    "place_name": "마므레(전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "persons": [
+      "abraham",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 18:16-33",
+        "chapter_start": 18,
+        "verse_start": 16,
+        "chapter_end": 18,
+        "verse_end": 33
+      }
+    ]
+  },
+  {
+    "number": 20,
+    "code": "evt_n020",
+    "era_code": "era_patriarch",
+    "title": "소돔 멸망과 롯 구출",
+    "summary": "도시는 심판을 받고 롯의 가족은 급히 나오지만 뒤돌아봄이 비극을 만든다.",
+    "start_year": -2086,
+    "end_year": -2086,
+    "time_precision": "approx",
+    "time_sort_key": -2085980,
+    "place_name": "소돔 일대(사해 남부, 전승)",
+    "lat": 31.2,
+    "lng": 35.5,
+    "persons": [
+      "lot"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 19:1-29",
+        "chapter_start": 19,
+        "verse_start": 1,
+        "chapter_end": 19,
+        "verse_end": 29
+      }
+    ]
+  },
+  {
+    "number": 21,
+    "code": "evt_n021",
+    "era_code": "era_patriarch",
+    "title": "아브라함과 아비멜렉: 오해와 보호",
+    "summary": "아브라함의 두려움이 다시 거짓을 낳지만 하나님이 사라를 지키신다.",
+    "start_year": -2085,
+    "end_year": -2085,
+    "time_precision": "approx",
+    "time_sort_key": -2084979,
+    "place_name": "그랄(전승)",
+    "lat": 31.37,
+    "lng": 34.45,
+    "persons": [
+      "abraham",
+      "sarah",
+      "abimelech"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 20:1-18",
+        "chapter_start": 20,
+        "verse_start": 1,
+        "chapter_end": 20,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 22,
+    "code": "evt_n022",
+    "era_code": "era_patriarch",
+    "title": "이삭 탄생과 하갈 추방",
+    "summary": "약속의 아들이 태어나지만 가정의 갈등은 하갈을 광야로 내몬다.",
+    "start_year": -2066,
+    "end_year": -2066,
+    "time_precision": "approx",
+    "time_sort_key": -2065978,
+    "place_name": "브엘세바 주변(전승)",
+    "lat": 31.25,
+    "lng": 34.8,
+    "persons": [
+      "abraham",
+      "sarah",
+      "isaac",
+      "hagar",
+      "ishmael"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 21:1-21",
+        "chapter_start": 21,
+        "verse_start": 1,
+        "chapter_end": 21,
+        "verse_end": 21
+      }
+    ]
+  },
+  {
+    "number": 23,
+    "code": "evt_n023",
+    "era_code": "era_patriarch",
+    "title": "이삭 번제: 멈추게 하시는 하나님",
+    "summary": "극한의 시험 속에서 하나님은 아브라함을 멈추게 하시고 대안을 준비하신다.",
+    "start_year": -2055,
+    "end_year": -2055,
+    "time_precision": "approx",
+    "time_sort_key": -2054977,
+    "place_name": "모리아(예루살렘, 전승)",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "abraham",
+      "isaac",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 22:1-14",
+        "chapter_start": 22,
+        "verse_start": 1,
+        "chapter_end": 22,
+        "verse_end": 14
+      }
+    ]
+  },
+  {
+    "number": 24,
+    "code": "evt_n024",
+    "era_code": "era_patriarch",
+    "title": "사라의 죽음과 막벨라 굴",
+    "summary": "아브라함은 약속의 땅에서 첫 소유지로 묘지를 산다.",
+    "start_year": -2030,
+    "end_year": -2030,
+    "time_precision": "approx",
+    "time_sort_key": -2029976,
+    "place_name": "헤브론(막벨라, 전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "persons": [
+      "abraham",
+      "sarah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 23:1-20",
+        "chapter_start": 23,
+        "verse_start": 1,
+        "chapter_end": 23,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 25,
+    "code": "evt_n025",
+    "era_code": "era_patriarch",
+    "title": "리브가: 이삭의 결혼",
+    "summary": "기도와 만남을 통해 리브가가 이삭의 아내로 선택된다.",
+    "start_year": -2026,
+    "end_year": -2026,
+    "time_precision": "approx",
+    "time_sort_key": -2025975,
+    "place_name": "하란 주변(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "persons": [
+      "isaac",
+      "rebekah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 24:1-67",
+        "chapter_start": 24,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 67
+      }
+    ]
+  },
+  {
+    "number": 26,
+    "code": "evt_n026",
+    "era_code": "era_patriarch",
+    "title": "장자권: 한 그릇의 거래",
+    "summary": "에서는 배고픔에 장자의 권리를 가볍게 팔고 야곱은 그것을 붙잡는다.",
+    "start_year": -2006,
+    "end_year": -2006,
+    "time_precision": "approx",
+    "time_sort_key": -2005974,
+    "place_name": "브엘세바 일대(전승)",
+    "lat": 31.25,
+    "lng": 34.8,
+    "persons": [
+      "esau",
+      "jacob"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 25:19-34",
+        "chapter_start": 25,
+        "verse_start": 19,
+        "chapter_end": 25,
+        "verse_end": 34
+      }
+    ]
+  },
+  {
+    "number": 27,
+    "code": "evt_n027",
+    "era_code": "era_patriarch",
+    "title": "축복 가로채기: 속임수의 밤",
+    "summary": "야곱은 속임수로 이삭의 축복을 받고 도망길에 오른다.",
+    "start_year": -1985,
+    "end_year": -1985,
+    "time_precision": "approx",
+    "time_sort_key": -1984973,
+    "place_name": "브엘세바 일대(전승)",
+    "lat": 31.25,
+    "lng": 34.8,
+    "persons": [
+      "jacob",
+      "esau",
+      "isaac",
+      "rebekah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 27:1-45",
+        "chapter_start": 27,
+        "verse_start": 1,
+        "chapter_end": 27,
+        "verse_end": 45
+      }
+    ]
+  },
+  {
+    "number": 28,
+    "code": "evt_n028",
+    "era_code": "era_patriarch",
+    "title": "벧엘의 꿈: 사다리와 약속",
+    "summary": "도망자 야곱은 길 위에서 ‘함께하심’의 약속을 받는다.",
+    "start_year": -1985,
+    "end_year": -1985,
+    "time_precision": "approx",
+    "time_sort_key": -1984972,
+    "place_name": "벧엘(전승)",
+    "lat": 31.93,
+    "lng": 35.22,
+    "persons": [
+      "jacob",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 28:10-22",
+        "chapter_start": 28,
+        "verse_start": 10,
+        "chapter_end": 28,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 29,
+    "code": "evt_n029",
+    "era_code": "era_patriarch",
+    "title": "라반의 집: 레아와 라헬",
+    "summary": "야곱은 라헬을 사랑하지만 속임수로 레아와도 결혼하게 된다.",
+    "start_year": -1984,
+    "end_year": -1977,
+    "time_precision": "approx",
+    "time_sort_key": -1983971,
+    "place_name": "하란(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "persons": [
+      "jacob",
+      "laban",
+      "leah",
+      "rachel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 29:1-30",
+        "chapter_start": 29,
+        "verse_start": 1,
+        "chapter_end": 29,
+        "verse_end": 30
+      }
+    ]
+  },
+  {
+    "number": 30,
+    "code": "evt_n030",
+    "era_code": "era_patriarch",
+    "title": "열두 아들의 시작: 이름에 담긴 마음",
+    "summary": "경쟁과 상처 속에서도 열두 지파의 뿌리가 형성된다.",
+    "start_year": -1977,
+    "end_year": -1965,
+    "time_precision": "approx",
+    "time_sort_key": -1976970,
+    "place_name": "하란(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "persons": [
+      "jacob",
+      "leah",
+      "rachel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 29:31-30:24",
+        "chapter_start": 29,
+        "verse_start": 31,
+        "chapter_end": 30,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 31,
+    "code": "evt_n031",
+    "era_code": "era_patriarch",
+    "title": "야곱의 번성: 양떼의 기묘한 계약",
+    "summary": "야곱은 라반의 집에서 번성하고 라반과 갈등이 깊어진다.",
+    "start_year": -1965,
+    "end_year": -1961,
+    "time_precision": "approx",
+    "time_sort_key": -1964969,
+    "place_name": "하란(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "persons": [
+      "jacob",
+      "laban"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 30:25-31:16",
+        "chapter_start": 30,
+        "verse_start": 25,
+        "chapter_end": 31,
+        "verse_end": 16
+      }
+    ]
+  },
+  {
+    "number": 32,
+    "code": "evt_n032",
+    "era_code": "era_patriarch",
+    "title": "도피와 언약: 라반과의 마지막",
+    "summary": "야곱은 라반을 떠나고, 추격 끝에 언약으로 갈등을 마무리한다.",
+    "start_year": -1961,
+    "end_year": -1961,
+    "time_precision": "approx",
+    "time_sort_key": -1960968,
+    "place_name": "길르앗(전승)",
+    "lat": 32.0,
+    "lng": 35.7,
+    "persons": [
+      "jacob",
+      "laban"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 31:17-55",
+        "chapter_start": 31,
+        "verse_start": 17,
+        "chapter_end": 31,
+        "verse_end": 55
+      }
+    ]
+  },
+  {
+    "number": 33,
+    "code": "evt_n033",
+    "era_code": "era_patriarch",
+    "title": "얍복강 씨름: 이스라엘",
+    "summary": "야곱은 밤새 씨름하며 새 이름 ‘이스라엘’을 받는다.",
+    "start_year": -1960,
+    "end_year": -1960,
+    "time_precision": "approx",
+    "time_sort_key": -1959967,
+    "place_name": "얍복 강가(전승)",
+    "lat": 32.06,
+    "lng": 35.74,
+    "persons": [
+      "jacob"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 32:24-32",
+        "chapter_start": 32,
+        "verse_start": 24,
+        "chapter_end": 32,
+        "verse_end": 32
+      }
+    ]
+  },
+  {
+    "number": 34,
+    "code": "evt_n034",
+    "era_code": "era_patriarch",
+    "title": "에서와 화해: 달려오는 형",
+    "summary": "두려움으로 맞이한 재회는 포옹과 눈물로 풀린다.",
+    "start_year": -1960,
+    "end_year": -1960,
+    "time_precision": "approx",
+    "time_sort_key": -1959966,
+    "place_name": "야복/에돔 경계(전승)",
+    "lat": 32.1,
+    "lng": 35.6,
+    "persons": [
+      "jacob",
+      "esau"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 33:1-11",
+        "chapter_start": 33,
+        "verse_start": 1,
+        "chapter_end": 33,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 35,
+    "code": "evt_n035",
+    "era_code": "era_patriarch",
+    "title": "디나 사건: 복수의 폭발",
+    "summary": "상처는 복수로 번지고 야곱의 가족은 더 큰 위험에 놓인다.",
+    "start_year": -1958,
+    "end_year": -1958,
+    "time_precision": "approx",
+    "time_sort_key": -1957965,
+    "place_name": "세겜(전승)",
+    "lat": 32.22,
+    "lng": 35.28,
+    "persons": [
+      "simeon",
+      "levi",
+      "jacob"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 34:1-31",
+        "chapter_start": 34,
+        "verse_start": 1,
+        "chapter_end": 34,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 36,
+    "code": "evt_n036",
+    "era_code": "era_patriarch",
+    "title": "벧엘 귀환: 라헬의 죽음",
+    "summary": "야곱의 가정은 이동 중 큰 상실을 겪고도 약속의 길을 이어간다.",
+    "start_year": -1955,
+    "end_year": -1955,
+    "time_precision": "approx",
+    "time_sort_key": -1954964,
+    "place_name": "베들레헴 길(전승)",
+    "lat": 31.7,
+    "lng": 35.2,
+    "persons": [
+      "jacob",
+      "rachel",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 35:1-20",
+        "chapter_start": 35,
+        "verse_start": 1,
+        "chapter_end": 35,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 37,
+    "code": "evt_n037",
+    "era_code": "era_patriarch",
+    "title": "요셉의 꿈: 형제들의 시기",
+    "summary": "요셉의 꿈과 편애가 형제들의 마음을 뒤틀리게 한다.",
+    "start_year": -1915,
+    "end_year": -1915,
+    "time_precision": "approx",
+    "time_sort_key": -1914963,
+    "place_name": "헤브론 주변(전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "persons": [
+      "joseph",
+      "jacob",
+      "reuben",
+      "simeon",
+      "levi",
+      "judah",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 37:1-11",
+        "chapter_start": 37,
+        "verse_start": 1,
+        "chapter_end": 37,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 38,
+    "code": "evt_n038",
+    "era_code": "era_patriarch",
+    "title": "요셉이 팔리다: 구덩이와 은",
+    "summary": "시기는 요셉을 구덩이에 던지고 끝내 종으로 팔아넘긴다.",
+    "start_year": -1915,
+    "end_year": -1915,
+    "time_precision": "approx",
+    "time_sort_key": -1914962,
+    "place_name": "도단(전승)",
+    "lat": 32.42,
+    "lng": 35.18,
+    "persons": [
+      "joseph",
+      "judah",
+      "reuben",
+      "simeon",
+      "levi",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 37:12-36",
+        "chapter_start": 37,
+        "verse_start": 12,
+        "chapter_end": 37,
+        "verse_end": 36
+      }
+    ]
+  },
+  {
+    "number": 40,
+    "code": "evt_n040",
+    "era_code": "era_patriarch",
+    "title": "보디발의 집: 성실과 누명",
+    "summary": "요셉은 유혹을 거절하지만 누명을 쓰고 감옥으로 내려간다.",
+    "start_year": -1910,
+    "end_year": -1909,
+    "time_precision": "approx",
+    "time_sort_key": -1909960,
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 39:1-23",
+        "chapter_start": 39,
+        "verse_start": 1,
+        "chapter_end": 39,
+        "verse_end": 23
+      }
+    ]
+  },
+  {
+    "number": 41,
+    "code": "evt_n041",
+    "era_code": "era_patriarch",
+    "title": "감옥의 꿈: 술 맡은 관원장",
+    "summary": "요셉은 감옥에서 두 관원의 꿈을 해석하고도 잊혀진다.",
+    "start_year": -1909,
+    "end_year": -1909,
+    "time_precision": "approx",
+    "time_sort_key": -1908959,
+    "place_name": "애굽 감옥(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 40:1-23",
+        "chapter_start": 40,
+        "verse_start": 1,
+        "chapter_end": 40,
+        "verse_end": 23
+      }
+    ]
+  },
+  {
+    "number": 42,
+    "code": "evt_n042",
+    "era_code": "era_patriarch",
+    "title": "바로의 꿈: 총리 요셉",
+    "summary": "바로의 꿈을 해석한 요셉은 애굽의 총리로 세워진다.",
+    "start_year": -1900,
+    "end_year": -1900,
+    "time_precision": "approx",
+    "time_sort_key": -1899958,
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph",
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 41:1-57",
+        "chapter_start": 41,
+        "verse_start": 1,
+        "chapter_end": 41,
+        "verse_end": 57
+      }
+    ]
+  },
+  {
+    "number": 43,
+    "code": "evt_n043",
+    "era_code": "era_patriarch",
+    "title": "기근: 형제들의 1차 방문",
+    "summary": "기근 속에 형제들은 애굽으로 오고, 요셉은 그들을 시험하기 시작한다.",
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "time_sort_key": -1884957,
+    "place_name": "애굽(곡물 창고, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph",
+      "reuben",
+      "simeon",
+      "levi",
+      "judah",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 42:1-38",
+        "chapter_start": 42,
+        "verse_start": 1,
+        "chapter_end": 42,
+        "verse_end": 38
+      }
+    ]
+  },
+  {
+    "number": 44,
+    "code": "evt_n044",
+    "era_code": "era_patriarch",
+    "title": "2차 방문: 잔치와 긴장",
+    "summary": "베냐민과 함께 돌아온 형제들에게 요셉은 예상 밖의 잔치를 베푼다.",
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "time_sort_key": -1884956,
+    "place_name": "애굽(요셉의 집, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph",
+      "reuben",
+      "simeon",
+      "levi",
+      "judah",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 43:1-34",
+        "chapter_start": 43,
+        "verse_start": 1,
+        "chapter_end": 43,
+        "verse_end": 34
+      }
+    ]
+  },
+  {
+    "number": 45,
+    "code": "evt_n045",
+    "era_code": "era_patriarch",
+    "title": "은잔 사건: 유다의 탄원",
+    "summary": "은잔이 베냐민 자루에서 발견되고 유다는 자신을 대신 내놓는다.",
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "time_sort_key": -1884955,
+    "place_name": "애굽-가나안 길(전승)",
+    "lat": 30.3,
+    "lng": 32.0,
+    "persons": [
+      "joseph",
+      "judah",
+      "reuben",
+      "simeon",
+      "levi",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 44:1-34",
+        "chapter_start": 44,
+        "verse_start": 1,
+        "chapter_end": 44,
+        "verse_end": 34
+      }
+    ]
+  },
+  {
+    "number": 46,
+    "code": "evt_n046",
+    "era_code": "era_patriarch",
+    "title": "요셉의 정체 공개: 울음의 방",
+    "summary": "요셉은 더 이상 참지 못하고 형제들에게 자신을 드러낸다.",
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "time_sort_key": -1884954,
+    "place_name": "애굽(요셉의 집, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph",
+      "reuben",
+      "simeon",
+      "levi",
+      "judah",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 45:1-15",
+        "chapter_start": 45,
+        "verse_start": 1,
+        "chapter_end": 45,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 48,
+    "code": "evt_n048",
+    "era_code": "era_patriarch",
+    "title": "고센 정착: 만남과 눈물",
+    "summary": "요셉은 야곱을 맞이하고, 이스라엘은 고센에 자리 잡는다.",
+    "start_year": -1880,
+    "end_year": -1879,
+    "time_precision": "approx",
+    "time_sort_key": -1879952,
+    "place_name": "고센 땅(나일 델타, 전승)",
+    "lat": 30.8,
+    "lng": 31.85,
+    "persons": [
+      "jacob",
+      "joseph",
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 46:28-47:12",
+        "chapter_start": 46,
+        "verse_start": 28,
+        "chapter_end": 47,
+        "verse_end": 12
+      }
+    ]
+  },
+  {
+    "number": 49,
+    "code": "evt_n049",
+    "era_code": "era_patriarch",
+    "title": "야곱의 축복: 열두 아들",
+    "summary": "야곱은 마지막 순간 아들들을 불러 각 지파의 길을 예언적으로 선언한다.",
+    "start_year": -1860,
+    "end_year": -1860,
+    "time_precision": "approx",
+    "time_sort_key": -1859951,
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "jacob",
+      "joseph",
+      "reuben",
+      "judah",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 48:1-22",
+        "chapter_start": 48,
+        "verse_start": 1,
+        "chapter_end": 48,
+        "verse_end": 22
+      },
+      {
+        "book_name": "창세기",
+        "display_text": "창 49:1-28",
+        "chapter_start": 49,
+        "verse_start": 1,
+        "chapter_end": 49,
+        "verse_end": 28
+      }
+    ]
+  },
+  {
+    "number": 50,
+    "code": "evt_n050",
+    "era_code": "era_patriarch",
+    "title": "요셉의 마지막: 뼈를 기억하라",
+    "summary": "요셉은 용서를 확증하고, 언젠가 돌아갈 땅을 바라보며 마지막을 남긴다.",
+    "start_year": -1805,
+    "end_year": -1805,
+    "time_precision": "approx",
+    "time_sort_key": -1804950,
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "persons": [
+      "joseph",
+      "reuben",
+      "simeon",
+      "levi",
+      "judah",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun",
+      "benjamin"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "창세기",
+        "display_text": "창 50:1-26",
+        "chapter_start": 50,
+        "verse_start": 1,
+        "chapter_end": 50,
+        "verse_end": 26
+      }
+    ]
+  },
+  {
+    "number": 51,
+    "code": "evt_n051",
+    "era_code": "era_exodus",
+    "title": "이스라엘의 압제와 산파들",
+    "summary": "바로는 이스라엘을 두려워해 학대하고, 산파들은 하나님을 두려워해 생명을 지킨다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445949,
+    "place_name": "애굽(고센 일대, 전승)",
+    "lat": 30.8,
+    "lng": 31.85,
+    "persons": [
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 1:1-22",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 1,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 52,
+    "code": "evt_n052",
+    "era_code": "era_exodus",
+    "title": "모세의 탄생과 갈대상자",
+    "summary": "죽음의 명령 속에서 한 아기가 갈대상자에 실려 기적처럼 보호받는다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445948,
+    "place_name": "나일강(전승)",
+    "lat": 29.9,
+    "lng": 31.25,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 2:1-10",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 53,
+    "code": "evt_n053",
+    "era_code": "era_exodus",
+    "title": "모세의 분노와 미디안 도피",
+    "summary": "모세는 억압을 보고 분노하지만, 결국 광야로 도망쳐 새 삶을 시작한다.",
+    "start_year": -1406,
+    "end_year": -1406,
+    "time_precision": "approx",
+    "time_sort_key": -1405947,
+    "place_name": "애굽 → 미디안(전승)",
+    "lat": 29.9,
+    "lng": 31.25,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 2:11-25",
+        "chapter_start": 2,
+        "verse_start": 11,
+        "chapter_end": 2,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 54,
+    "code": "evt_n054",
+    "era_code": "era_exodus",
+    "title": "불타는 떨기나무: 모세의 소명",
+    "summary": "광야에서 하나님은 모세를 부르시고 ‘내가 너와 함께’라는 약속을 주신다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445946,
+    "place_name": "호렙 산(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "moses",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 3:1-22",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 22
+      },
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 4:1-17",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 55,
+    "code": "evt_n055",
+    "era_code": "era_exodus",
+    "title": "바로 앞 첫 대면: 짐이 더 무거워지다",
+    "summary": "해방을 요구하자 바로는 오히려 노역을 가중시키고 백성은 낙심한다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445945,
+    "place_name": "애굽 궁정(전승)",
+    "lat": 29.9,
+    "lng": 31.25,
+    "persons": [
+      "moses",
+      "aaron",
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 5:1-6:9",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 9
+      }
+    ]
+  },
+  {
+    "number": 56,
+    "code": "evt_n056",
+    "era_code": "era_exodus",
+    "title": "재앙의 시작: 물이 변하다",
+    "summary": "하나님은 재앙으로 바로의 완강함을 흔드시지만, 바로는 마음을 굳힌다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445944,
+    "place_name": "나일강(전승)",
+    "lat": 29.9,
+    "lng": 31.25,
+    "persons": [
+      "moses",
+      "aaron",
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 7:14-9:12",
+        "chapter_start": 7,
+        "verse_start": 14,
+        "chapter_end": 9,
+        "verse_end": 12
+      }
+    ]
+  },
+  {
+    "number": 57,
+    "code": "evt_n057",
+    "era_code": "era_exodus",
+    "title": "유월절: 피로 표시된 문",
+    "summary": "이스라엘은 유월절을 준비하며 ‘보호의 표’를 문에 남긴다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445943,
+    "place_name": "고센(전승)",
+    "lat": 30.8,
+    "lng": 31.85,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 12:1-14",
+        "chapter_start": 12,
+        "verse_start": 1,
+        "chapter_end": 12,
+        "verse_end": 14
+      }
+    ]
+  },
+  {
+    "number": 58,
+    "code": "evt_n058",
+    "era_code": "era_exodus",
+    "title": "출애굽의 밤: 떠나라는 명령",
+    "summary": "마침내 바로가 떠나라 말하고, 이스라엘은 급히 길을 나선다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445942,
+    "place_name": "애굽 → 광야(전승)",
+    "lat": 30.8,
+    "lng": 31.85,
+    "persons": [
+      "moses",
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 12:29-13:22",
+        "chapter_start": 12,
+        "verse_start": 29,
+        "chapter_end": 13,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 59,
+    "code": "evt_n059",
+    "era_code": "era_exodus",
+    "title": "홍해: 길이 열리다",
+    "summary": "막다른 길에서 하나님이 길을 여시고 백성은 두려움에서 믿음으로 옮겨간다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445941,
+    "place_name": "홍해/갈대바다(전승)",
+    "lat": 29.5,
+    "lng": 34.9,
+    "persons": [
+      "moses",
+      "pharaoh"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 14:10-31",
+        "chapter_start": 14,
+        "verse_start": 10,
+        "chapter_end": 14,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 60,
+    "code": "evt_n060",
+    "era_code": "era_exodus",
+    "title": "마라: 쓴 물이 달아지다",
+    "summary": "광야의 첫 위기에서 하나님은 쓴 물을 바꾸며 백성을 가르치신다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445940,
+    "place_name": "마라(전승)",
+    "lat": 28.7,
+    "lng": 33.4,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 15:22-27",
+        "chapter_start": 15,
+        "verse_start": 22,
+        "chapter_end": 15,
+        "verse_end": 27
+      }
+    ]
+  },
+  {
+    "number": 61,
+    "code": "evt_n061",
+    "era_code": "era_exodus",
+    "title": "만나와 메추라기: 하늘의 양식",
+    "summary": "먹을 것이 없던 광야에서 하나님은 매일의 양식을 주시며 ‘신뢰’를 훈련하신다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445939,
+    "place_name": "신 광야(전승)",
+    "lat": 28.9,
+    "lng": 33.3,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 16:1-36",
+        "chapter_start": 16,
+        "verse_start": 1,
+        "chapter_end": 16,
+        "verse_end": 36
+      }
+    ]
+  },
+  {
+    "number": 62,
+    "code": "evt_n062",
+    "era_code": "era_exodus",
+    "title": "아말렉 전투: 팔이 내려갈 때",
+    "summary": "전투의 승패는 숫자가 아니라 ‘붙드는 손’에서 드러난다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445938,
+    "place_name": "르비딤(전승)",
+    "lat": 28.75,
+    "lng": 33.35,
+    "persons": [
+      "moses",
+      "joshua",
+      "aaron"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 17:8-16",
+        "chapter_start": 17,
+        "verse_start": 8,
+        "chapter_end": 17,
+        "verse_end": 16
+      }
+    ]
+  },
+  {
+    "number": 63,
+    "code": "evt_n063",
+    "era_code": "era_exodus",
+    "title": "시내산 도착: 산이 떨리다",
+    "summary": "이스라엘은 시내산에서 언약 백성으로 부름받을 준비를 한다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445937,
+    "place_name": "시내산(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 19:1-25",
+        "chapter_start": 19,
+        "verse_start": 1,
+        "chapter_end": 19,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 64,
+    "code": "evt_n064",
+    "era_code": "era_exodus",
+    "title": "십계명: 하나님 나라의 기준",
+    "summary": "하나님은 구원받은 백성에게 살아갈 길을 선포하신다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445936,
+    "place_name": "시내산(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "moses",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 20:1-21",
+        "chapter_start": 20,
+        "verse_start": 1,
+        "chapter_end": 20,
+        "verse_end": 21
+      }
+    ]
+  },
+  {
+    "number": 65,
+    "code": "evt_n065",
+    "era_code": "era_exodus",
+    "title": "피의 언약: 백성의 대답",
+    "summary": "백성은 언약에 동의하고, 언약은 ‘피’로 엄숙히 확증된다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445935,
+    "place_name": "시내산 기슭(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 24:1-8",
+        "chapter_start": 24,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 8
+      }
+    ]
+  },
+  {
+    "number": 66,
+    "code": "evt_n066",
+    "era_code": "era_exodus",
+    "title": "금송아지: 아래에서 벌어진 일",
+    "summary": "기다림을 견디지 못한 백성은 우상을 만들고 언약을 깨뜨린다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445934,
+    "place_name": "시내산 진(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "moses",
+      "aaron"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 32:1-35",
+        "chapter_start": 32,
+        "verse_start": 1,
+        "chapter_end": 32,
+        "verse_end": 35
+      }
+    ]
+  },
+  {
+    "number": 67,
+    "code": "evt_n067",
+    "era_code": "era_exodus",
+    "title": "모세의 중보: 다시 시작",
+    "summary": "모세는 백성을 위해 중보하고 하나님은 관계 회복의 길을 여신다.",
+    "start_year": -1446,
+    "end_year": -1446,
+    "time_precision": "approx",
+    "time_sort_key": -1445933,
+    "place_name": "시내산(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "moses",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 33:7-23",
+        "chapter_start": 33,
+        "verse_start": 7,
+        "chapter_end": 33,
+        "verse_end": 23
+      },
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 34:1-10",
+        "chapter_start": 34,
+        "verse_start": 1,
+        "chapter_end": 34,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 68,
+    "code": "evt_n068",
+    "era_code": "era_exodus",
+    "title": "성막: 영광이 임하다",
+    "summary": "성막이 세워지고 하나님의 임재가 진 가운데 머문다.",
+    "start_year": -1445,
+    "end_year": -1445,
+    "time_precision": "approx",
+    "time_sort_key": -1444932,
+    "place_name": "광야 진(전승)",
+    "lat": 29.0,
+    "lng": 34.0,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "출애굽기",
+        "display_text": "출 35:1-40:38",
+        "chapter_start": 35,
+        "verse_start": 1,
+        "chapter_end": 40,
+        "verse_end": 38
+      }
+    ]
+  },
+  {
+    "number": 69,
+    "code": "evt_n069",
+    "era_code": "era_exodus",
+    "title": "나답·아비후: 가까이함의 무게",
+    "summary": "거룩을 가볍게 여기자 충격적 사건이 발생하고 공동체는 떨며 배운다.",
+    "start_year": -1445,
+    "end_year": -1445,
+    "time_precision": "approx",
+    "time_sort_key": -1444931,
+    "place_name": "성막(광야)",
+    "lat": 29.0,
+    "lng": 34.0,
+    "persons": [
+      "aaron",
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "레위기",
+        "display_text": "레 10:1-11",
+        "chapter_start": 10,
+        "verse_start": 1,
+        "chapter_end": 10,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 70,
+    "code": "evt_n070",
+    "era_code": "era_exodus",
+    "title": "가데스 정탐: 불신의 보고",
+    "summary": "정탐 보고는 두려움을 키우고, 불신은 광야 방황로 이어진다.",
+    "start_year": -1445,
+    "end_year": -1445,
+    "time_precision": "approx",
+    "time_sort_key": -1444930,
+    "place_name": "가데스바네아(전승)",
+    "lat": 30.63,
+    "lng": 34.8,
+    "persons": [
+      "moses",
+      "joshua"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "민수기",
+        "display_text": "민 13:1-33",
+        "chapter_start": 13,
+        "verse_start": 1,
+        "chapter_end": 13,
+        "verse_end": 33
+      },
+      {
+        "book_name": "민수기",
+        "display_text": "민 14:1-35",
+        "chapter_start": 14,
+        "verse_start": 1,
+        "chapter_end": 14,
+        "verse_end": 35
+      }
+    ]
+  },
+  {
+    "number": 71,
+    "code": "evt_n071",
+    "era_code": "era_exodus",
+    "title": "고라의 반역: 땅이 갈라지다",
+    "summary": "권위를 뒤흔든 반역은 공동체를 갈라놓고, 심판은 두려운 경고가 된다.",
+    "start_year": -1444,
+    "end_year": -1444,
+    "time_precision": "approx",
+    "time_sort_key": -1443929,
+    "place_name": "광야 진(전승)",
+    "lat": 30.0,
+    "lng": 34.0,
+    "persons": [
+      "moses",
+      "aaron"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "민수기",
+        "display_text": "민 16:1-35",
+        "chapter_start": 16,
+        "verse_start": 1,
+        "chapter_end": 16,
+        "verse_end": 35
+      }
+    ]
+  },
+  {
+    "number": 72,
+    "code": "evt_n072",
+    "era_code": "era_exodus",
+    "title": "놋뱀: 바라보라",
+    "summary": "원망 속에서 고통이 번지지만, 하나님은 ‘바라봄’으로 살 길을 주신다.",
+    "start_year": -1408,
+    "end_year": -1408,
+    "time_precision": "approx",
+    "time_sort_key": -1407928,
+    "place_name": "광야(에돔 길, 전승)",
+    "lat": 30.0,
+    "lng": 35.5,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "민수기",
+        "display_text": "민 21:4-9",
+        "chapter_start": 21,
+        "verse_start": 4,
+        "chapter_end": 21,
+        "verse_end": 9
+      }
+    ]
+  },
+  {
+    "number": 73,
+    "code": "evt_n073",
+    "era_code": "era_exodus",
+    "title": "발람: 축복으로 바뀐 저주",
+    "summary": "저주를 의뢰받은 발람의 입에서는 오히려 축복이 선포된다.",
+    "start_year": -1407,
+    "end_year": -1407,
+    "time_precision": "approx",
+    "time_sort_key": -1406927,
+    "place_name": "모압 산지(전승)",
+    "lat": 31.7,
+    "lng": 35.8,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "민수기",
+        "display_text": "민 22:1-24:25",
+        "chapter_start": 22,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 74,
+    "code": "evt_n074",
+    "era_code": "era_exodus",
+    "title": "모압의 유혹과 비느하스",
+    "summary": "유혹이 공동체를 무너뜨리려 할 때, 비느하스의 결단이 위기를 멈춘다.",
+    "start_year": -1407,
+    "end_year": -1407,
+    "time_precision": "approx",
+    "time_sort_key": -1406926,
+    "place_name": "싯딤(전승)",
+    "lat": 31.85,
+    "lng": 35.55,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "민수기",
+        "display_text": "민 25:1-13",
+        "chapter_start": 25,
+        "verse_start": 1,
+        "chapter_end": 25,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 75,
+    "code": "evt_n075",
+    "era_code": "era_exodus",
+    "title": "모세의 마지막: 느보 산",
+    "summary": "모세는 약속의 땅을 바라보고, 다음 세대에 길을 맡긴다.",
+    "start_year": -1406,
+    "end_year": -1406,
+    "time_precision": "approx",
+    "time_sort_key": -1405925,
+    "place_name": "느보 산(전승)",
+    "lat": 31.77,
+    "lng": 35.73,
+    "persons": [
+      "moses"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "신명기",
+        "display_text": "신 34:1-12",
+        "chapter_start": 34,
+        "verse_start": 1,
+        "chapter_end": 34,
+        "verse_end": 12
+      }
+    ]
+  },
+  {
+    "number": 76,
+    "code": "evt_n076",
+    "era_code": "era_judges",
+    "title": "요단강 도하: 물이 멈추다",
+    "summary": "이스라엘은 요단강을 건너며 약속의 땅에 들어선다.",
+    "start_year": -1406,
+    "end_year": -1406,
+    "time_precision": "approx",
+    "time_sort_key": -1405924,
+    "place_name": "요단강(여리고 맞은편, 전승)",
+    "lat": 31.85,
+    "lng": 35.55,
+    "persons": [
+      "joshua"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "여호수아",
+        "display_text": "수 3:1-4:24",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 77,
+    "code": "evt_n077",
+    "era_code": "era_judges",
+    "title": "여리고: 침묵의 행진",
+    "summary": "상식을 깨는 순종의 행진 끝에 성벽이 무너진다.",
+    "start_year": -1406,
+    "end_year": -1406,
+    "time_precision": "approx",
+    "time_sort_key": -1405923,
+    "place_name": "여리고",
+    "lat": 31.87,
+    "lng": 35.44,
+    "persons": [
+      "joshua"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "여호수아",
+        "display_text": "수 6:1-20",
+        "chapter_start": 6,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 78,
+    "code": "evt_n078",
+    "era_code": "era_judges",
+    "title": "아간: 감춘 것이 드러나다",
+    "summary": "숨긴 탐욕이 공동체의 패배로 드러나고, 정리가 시작된다.",
+    "start_year": -1406,
+    "end_year": -1406,
+    "time_precision": "approx",
+    "time_sort_key": -1405922,
+    "place_name": "아이 성 근처(전승)",
+    "lat": 31.93,
+    "lng": 35.25,
+    "persons": [
+      "joshua"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "여호수아",
+        "display_text": "수 7:1-26",
+        "chapter_start": 7,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 26
+      }
+    ]
+  },
+  {
+    "number": 79,
+    "code": "evt_n079",
+    "era_code": "era_judges",
+    "title": "기브온 조약: 속임수의 동맹",
+    "summary": "기브온은 속임수로 조약을 맺고, 이스라엘은 그 약속을 지킨다.",
+    "start_year": -1405,
+    "end_year": -1405,
+    "time_precision": "approx",
+    "time_sort_key": -1404921,
+    "place_name": "기브온(전승)",
+    "lat": 31.85,
+    "lng": 35.18,
+    "persons": [
+      "joshua"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "여호수아",
+        "display_text": "수 9:3-27",
+        "chapter_start": 9,
+        "verse_start": 3,
+        "chapter_end": 9,
+        "verse_end": 27
+      }
+    ]
+  },
+  {
+    "number": 80,
+    "code": "evt_n080",
+    "era_code": "era_judges",
+    "title": "세겜 언약 갱신: 선택하라",
+    "summary": "여호수아는 백성에게 ‘오늘 누구를 섬길지’ 선택을 요구한다.",
+    "start_year": -1380,
+    "end_year": -1380,
+    "time_precision": "approx",
+    "time_sort_key": -1379920,
+    "place_name": "세겜",
+    "lat": 32.22,
+    "lng": 35.28,
+    "persons": [
+      "joshua"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "여호수아",
+        "display_text": "수 24:1-28",
+        "chapter_start": 24,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 28
+      }
+    ]
+  },
+  {
+    "number": 81,
+    "code": "evt_n081",
+    "era_code": "era_judges",
+    "title": "사사 시대의 반복: 잊고, 부르짖고, 구원받고",
+    "summary": "이스라엘은 반복되는 타락과 회복의 사이클 속에 살아간다.",
+    "start_year": -1375,
+    "end_year": -1375,
+    "time_precision": "approx",
+    "time_sort_key": -1374919,
+    "place_name": "가나안(전승)",
+    "lat": 31.8,
+    "lng": 35.1,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 2:10-19",
+        "chapter_start": 2,
+        "verse_start": 10,
+        "chapter_end": 2,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 82,
+    "code": "evt_n082",
+    "era_code": "era_judges",
+    "title": "에훗: 왼손의 반전",
+    "summary": "에훗은 예상 밖의 방식으로 억압을 끊고 탈출한다.",
+    "start_year": -1320,
+    "end_year": -1320,
+    "time_precision": "approx",
+    "time_sort_key": -1319918,
+    "place_name": "여리고/모압 경계(전승)",
+    "lat": 31.85,
+    "lng": 35.5,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 3:12-30",
+        "chapter_start": 3,
+        "verse_start": 12,
+        "chapter_end": 3,
+        "verse_end": 30
+      }
+    ]
+  },
+  {
+    "number": 83,
+    "code": "evt_n083",
+    "era_code": "era_judges",
+    "title": "드보라와 바락: 노래로 끝난 전쟁",
+    "summary": "드보라는 바락을 이끌고, 예상 밖의 손에서 승리가 마무리된다.",
+    "start_year": -1200,
+    "end_year": -1200,
+    "time_precision": "approx",
+    "time_sort_key": -1199917,
+    "place_name": "기손 강/하솔 일대(전승)",
+    "lat": 32.7,
+    "lng": 35.2,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 4:1-24",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 24
+      },
+      {
+        "book_name": "사사기",
+        "display_text": "삿 5:1-31",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 84,
+    "code": "evt_n084",
+    "era_code": "era_judges",
+    "title": "기드온의 소명: 두려움 속의 표징",
+    "summary": "기드온은 두려움 속에서 부르심을 받고, 표징으로 확신을 얻는다.",
+    "start_year": -1160,
+    "end_year": -1160,
+    "time_precision": "approx",
+    "time_sort_key": -1159916,
+    "place_name": "오브라(전승)",
+    "lat": 32.5,
+    "lng": 35.3,
+    "persons": [
+      "gideon"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 6:11-24",
+        "chapter_start": 6,
+        "verse_start": 11,
+        "chapter_end": 6,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 85,
+    "code": "evt_n085",
+    "era_code": "era_judges",
+    "title": "기드온 300: 횃불과 나팔",
+    "summary": "적은 수의 300명이 공포를 뒤집는 소리로 승리를 만든다.",
+    "start_year": -1160,
+    "end_year": -1160,
+    "time_precision": "approx",
+    "time_sort_key": -1159915,
+    "place_name": "미디안 진(전승)",
+    "lat": 32.35,
+    "lng": 35.55,
+    "persons": [
+      "gideon"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 7:1-22",
+        "chapter_start": 7,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 86,
+    "code": "evt_n086",
+    "era_code": "era_judges",
+    "title": "아비멜렉: 왕 노릇의 비극",
+    "summary": "권력을 움켜쥔 아비멜렉의 길은 폭력과 파멸로 끝난다.",
+    "start_year": -1135,
+    "end_year": -1135,
+    "time_precision": "approx",
+    "time_sort_key": -1134914,
+    "place_name": "세겜(전승)",
+    "lat": 32.22,
+    "lng": 35.28,
+    "persons": [
+      "abimelech"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 9:1-57",
+        "chapter_start": 9,
+        "verse_start": 1,
+        "chapter_end": 9,
+        "verse_end": 57
+      }
+    ]
+  },
+  {
+    "number": 87,
+    "code": "evt_n087",
+    "era_code": "era_judges",
+    "title": "입다: 서원과 상처",
+    "summary": "입다는 승리를 원하며 서원을 하지만, 그 말은 깊은 상처를 남긴다.",
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "time_sort_key": -1099913,
+    "place_name": "길르앗(전승)",
+    "lat": 32.0,
+    "lng": 35.7,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 11:29-40",
+        "chapter_start": 11,
+        "verse_start": 29,
+        "chapter_end": 11,
+        "verse_end": 40
+      }
+    ]
+  },
+  {
+    "number": 88,
+    "code": "evt_n088",
+    "era_code": "era_judges",
+    "title": "삼손: 힘의 비밀과 마지막 기도",
+    "summary": "삼손은 은사를 남용하다 무너지고, 마지막에 하나님께 부르짖는다.",
+    "start_year": -1080,
+    "end_year": -1080,
+    "time_precision": "approx",
+    "time_sort_key": -1079912,
+    "place_name": "블레셋 지역(가사/소렉, 전승)",
+    "lat": 31.5,
+    "lng": 34.45,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 16:4-31",
+        "chapter_start": 16,
+        "verse_start": 4,
+        "chapter_end": 16,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 89,
+    "code": "evt_n089",
+    "era_code": "era_judges",
+    "title": "미가의 우상: 마음대로의 신앙",
+    "summary": "각자 소견대로 행하던 시대, 우상은 ‘이동’하며 타락을 드러낸다.",
+    "start_year": -1070,
+    "end_year": -1070,
+    "time_precision": "approx",
+    "time_sort_key": -1069911,
+    "place_name": "에브라임 산지(전승)",
+    "lat": 32.1,
+    "lng": 35.2,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 17:1-18:31",
+        "chapter_start": 17,
+        "verse_start": 1,
+        "chapter_end": 18,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 90,
+    "code": "evt_n090",
+    "era_code": "era_judges",
+    "title": "베냐민 전쟁: 공동체의 붕괴",
+    "summary": "한 사건이 연쇄 폭력으로 번지며 이스라엘 내부 전쟁으로 이어진다.",
+    "start_year": -1060,
+    "end_year": -1060,
+    "time_precision": "approx",
+    "time_sort_key": -1059910,
+    "place_name": "기브아(전승)",
+    "lat": 31.85,
+    "lng": 35.25,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "사사기",
+        "display_text": "삿 19:1-21:25",
+        "chapter_start": 19,
+        "verse_start": 1,
+        "chapter_end": 21,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 91,
+    "code": "evt_n091",
+    "era_code": "era_judges",
+    "title": "룻의 귀향: 따라가겠습니다",
+    "summary": "룻은 모든 것을 내려놓고 나오미를 따라 약속의 땅으로 돌아온다.",
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "time_sort_key": -1099909,
+    "place_name": "모압 → 베들레헴",
+    "lat": 31.7,
+    "lng": 35.2,
+    "persons": [
+      "ruth",
+      "naomi"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "룻기",
+        "display_text": "룻 1:6-18",
+        "chapter_start": 1,
+        "verse_start": 6,
+        "chapter_end": 1,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 92,
+    "code": "evt_n092",
+    "era_code": "era_judges",
+    "title": "보아스의 은혜: 이삭 줍는 자리",
+    "summary": "룻은 이삭을 줍다 보아스를 만나고, 보호와 은혜를 경험한다.",
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "time_sort_key": -1099908,
+    "place_name": "베들레헴 들판",
+    "lat": 31.7,
+    "lng": 35.2,
+    "persons": [
+      "ruth",
+      "boaz"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "룻기",
+        "display_text": "룻 2:1-17",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 93,
+    "code": "evt_n093",
+    "era_code": "era_judges",
+    "title": "기업 무를 자: 문 앞의 결정",
+    "summary": "보아스는 공적인 자리에서 룻을 맞아들이며 가문을 세운다.",
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "time_sort_key": -1099907,
+    "place_name": "베들레헴 성문",
+    "lat": 31.7,
+    "lng": 35.2,
+    "persons": [
+      "boaz",
+      "ruth",
+      "naomi"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "룻기",
+        "display_text": "룻 4:1-17",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 94,
+    "code": "evt_n094",
+    "era_code": "era_judges",
+    "title": "사무엘의 탄생: 한나의 눈물",
+    "summary": "한나는 눈물의 기도로 사무엘을 얻고, 약속대로 하나님께 드린다.",
+    "start_year": -1105,
+    "end_year": -1105,
+    "time_precision": "approx",
+    "time_sort_key": -1104906,
+    "place_name": "실로",
+    "lat": 31.9,
+    "lng": 35.3,
+    "persons": [
+      "samuel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 1:1-28",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 1,
+        "verse_end": 28
+      }
+    ]
+  },
+  {
+    "number": 95,
+    "code": "evt_n095",
+    "era_code": "era_judges",
+    "title": "언약궤 사건: 회개와 승리",
+    "summary": "언약궤의 아픔 이후, 백성은 회개하고 하나님은 구원을 보여주신다.",
+    "start_year": -1075,
+    "end_year": -1075,
+    "time_precision": "approx",
+    "time_sort_key": -1074905,
+    "place_name": "미스바",
+    "lat": 31.83,
+    "lng": 35.17,
+    "persons": [
+      "samuel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 4:1-11",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 11
+      },
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 5:1-6:21",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 21
+      },
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 7:3-13",
+        "chapter_start": 7,
+        "verse_start": 3,
+        "chapter_end": 7,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 96,
+    "code": "evt_n096",
+    "era_code": "era_monarchy",
+    "title": "왕을 요구하다: 우리도 왕을",
+    "summary": "백성은 ‘우리도 왕을’ 요구하고, 사무엘은 하나님 앞에서 그 무게를 경고한다.",
+    "start_year": -1050,
+    "end_year": -1050,
+    "time_precision": "approx",
+    "time_sort_key": -1049904,
+    "place_name": "라마/이스라엘(전승)",
+    "lat": 31.92,
+    "lng": 35.21,
+    "persons": [
+      "samuel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 8:1-22",
+        "chapter_start": 8,
+        "verse_start": 1,
+        "chapter_end": 8,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 97,
+    "code": "evt_n097",
+    "era_code": "era_monarchy",
+    "title": "사울의 기름부음: 숨은 청년",
+    "summary": "사울은 예상치 못한 자리에서 기름부음을 받고 첫 왕의 길에 들어선다.",
+    "start_year": -1050,
+    "end_year": -1050,
+    "time_precision": "approx",
+    "time_sort_key": -1049903,
+    "place_name": "라마(전승)",
+    "lat": 31.92,
+    "lng": 35.21,
+    "persons": [
+      "saul",
+      "samuel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 9:1-10:16",
+        "chapter_start": 9,
+        "verse_start": 1,
+        "chapter_end": 10,
+        "verse_end": 16
+      }
+    ]
+  },
+  {
+    "number": 98,
+    "code": "evt_n098",
+    "era_code": "era_monarchy",
+    "title": "사울의 첫 승리: 얍베스 길르앗",
+    "summary": "사울은 첫 위기에서 백성을 모아 구원하고 왕권을 굳힌다.",
+    "start_year": -1049,
+    "end_year": -1049,
+    "time_precision": "approx",
+    "time_sort_key": -1048902,
+    "place_name": "얍베스 길르앗(전승)",
+    "lat": 32.38,
+    "lng": 35.56,
+    "persons": [
+      "saul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 11:1-15",
+        "chapter_start": 11,
+        "verse_start": 1,
+        "chapter_end": 11,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 99,
+    "code": "evt_n099",
+    "era_code": "era_monarchy",
+    "title": "사울의 불순종: 왕의 균열",
+    "summary": "사울의 조급함과 자기합리화는 왕으로서의 길에 균열을 만든다.",
+    "start_year": -1045,
+    "end_year": -1045,
+    "time_precision": "approx",
+    "time_sort_key": -1044901,
+    "place_name": "길갈(전승)",
+    "lat": 31.85,
+    "lng": 35.45,
+    "persons": [
+      "saul",
+      "samuel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 13:7-14",
+        "chapter_start": 13,
+        "verse_start": 7,
+        "chapter_end": 13,
+        "verse_end": 14
+      },
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 15:1-23",
+        "chapter_start": 15,
+        "verse_start": 1,
+        "chapter_end": 15,
+        "verse_end": 23
+      }
+    ]
+  },
+  {
+    "number": 100,
+    "code": "evt_n100",
+    "era_code": "era_monarchy",
+    "title": "다윗의 기름부음: 새로운 선택",
+    "summary": "하나님은 사람의 기준이 아닌 마음을 보시고 다윗을 택하신다.",
+    "start_year": -1030,
+    "end_year": -1030,
+    "time_precision": "approx",
+    "time_sort_key": -1029900,
+    "place_name": "베들레헴",
+    "lat": 31.7,
+    "lng": 35.2,
+    "persons": [
+      "david",
+      "samuel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 16:1-13",
+        "chapter_start": 16,
+        "verse_start": 1,
+        "chapter_end": 16,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 101,
+    "code": "evt_n101",
+    "era_code": "era_monarchy",
+    "title": "다윗과 골리앗: 돌 하나",
+    "summary": "소년 다윗은 믿음으로 거인을 맞서 전세를 뒤집는다.",
+    "start_year": -1025,
+    "end_year": -1025,
+    "time_precision": "approx",
+    "time_sort_key": -1024899,
+    "place_name": "엘라 골짜기",
+    "lat": 31.69,
+    "lng": 34.93,
+    "persons": [
+      "david",
+      "saul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 17:32-50",
+        "chapter_start": 17,
+        "verse_start": 32,
+        "chapter_end": 17,
+        "verse_end": 50
+      }
+    ]
+  },
+  {
+    "number": 102,
+    "code": "evt_n102",
+    "era_code": "era_monarchy",
+    "title": "사울의 시기: 다윗의 도망 시작",
+    "summary": "사울의 질투는 다윗을 적으로 만들고 도망의 길을 연다.",
+    "start_year": -1024,
+    "end_year": -1015,
+    "time_precision": "approx",
+    "time_sort_key": -1023898,
+    "place_name": "기브아(사울의 성, 전승)",
+    "lat": 31.85,
+    "lng": 35.25,
+    "persons": [
+      "david",
+      "saul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 18:6-20:42",
+        "chapter_start": 18,
+        "verse_start": 6,
+        "chapter_end": 20,
+        "verse_end": 42
+      }
+    ]
+  },
+  {
+    "number": 103,
+    "code": "evt_n103",
+    "era_code": "era_monarchy",
+    "title": "다윗이 사울을 살려주다: 동굴의 순간",
+    "summary": "다윗은 복수의 기회를 놓아주며 ‘손대지 않음’으로 자신의 길을 지킨다.",
+    "start_year": -1012,
+    "end_year": -1012,
+    "time_precision": "approx",
+    "time_sort_key": -1011897,
+    "place_name": "엔게디(전승)",
+    "lat": 31.46,
+    "lng": 35.39,
+    "persons": [
+      "david",
+      "saul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 24:1-22",
+        "chapter_start": 24,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 104,
+    "code": "evt_n104",
+    "era_code": "era_monarchy",
+    "title": "사울의 최후: 엔돌과 길보아",
+    "summary": "사울의 두려움은 어두운 선택으로 이어지고 결국 전장에서 끝난다.",
+    "start_year": -1010,
+    "end_year": -1010,
+    "time_precision": "approx",
+    "time_sort_key": -1009896,
+    "place_name": "길보아 산(전승)",
+    "lat": 32.49,
+    "lng": 35.38,
+    "persons": [
+      "saul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 28:5-20",
+        "chapter_start": 28,
+        "verse_start": 5,
+        "chapter_end": 28,
+        "verse_end": 20
+      },
+      {
+        "book_name": "사무엘상",
+        "display_text": "삼상 31:1-6",
+        "chapter_start": 31,
+        "verse_start": 1,
+        "chapter_end": 31,
+        "verse_end": 6
+      }
+    ]
+  },
+  {
+    "number": 105,
+    "code": "evt_n105",
+    "era_code": "era_monarchy",
+    "title": "다윗 즉위: 한 왕국으로",
+    "summary": "다윗은 점진적으로 왕이 되어 마침내 온 이스라엘을 다스린다.",
+    "start_year": -1005,
+    "end_year": -1000,
+    "time_precision": "approx",
+    "time_sort_key": -1004895,
+    "place_name": "헤브론 → 예루살렘(전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "persons": [
+      "david"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 2:1-7",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 7
+      },
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 5:1-10",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 106,
+    "code": "evt_n106",
+    "era_code": "era_monarchy",
+    "title": "언약궤 입성: 춤과 기쁨",
+    "summary": "다윗은 언약궤가 들어올 때 온 마음으로 기뻐하며 예배한다.",
+    "start_year": -1000,
+    "end_year": -1000,
+    "time_precision": "approx",
+    "time_sort_key": -999894,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "david"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 6:12-19",
+        "chapter_start": 6,
+        "verse_start": 12,
+        "chapter_end": 6,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 107,
+    "code": "evt_n107",
+    "era_code": "era_monarchy",
+    "title": "다윗 언약: 집을 세우리라",
+    "summary": "하나님은 다윗에게 ‘네 집과 왕위를 견고케 하겠다’는 약속을 주신다.",
+    "start_year": -995,
+    "end_year": -995,
+    "time_precision": "approx",
+    "time_sort_key": -994893,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "david",
+      "nathan"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 7:1-17",
+        "chapter_start": 7,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 108,
+    "code": "evt_n108",
+    "era_code": "era_monarchy",
+    "title": "밧세바 사건: 나단의 책망",
+    "summary": "다윗의 죄가 드러나고, 나단 앞에서 다윗은 회개한다.",
+    "start_year": -990,
+    "end_year": -990,
+    "time_precision": "approx",
+    "time_sort_key": -989892,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "david",
+      "nathan"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 11:1-12:13",
+        "chapter_start": 11,
+        "verse_start": 1,
+        "chapter_end": 12,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 109,
+    "code": "evt_n109",
+    "era_code": "era_monarchy",
+    "title": "압살롬의 반역: 도망치는 왕",
+    "summary": "압살롬의 반역으로 다윗은 예루살렘을 떠나며 눈물로 길을 간다.",
+    "start_year": -975,
+    "end_year": -975,
+    "time_precision": "approx",
+    "time_sort_key": -974891,
+    "place_name": "예루살렘 → 요단 동편(전승)",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "david"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 15:1-37",
+        "chapter_start": 15,
+        "verse_start": 1,
+        "chapter_end": 15,
+        "verse_end": 37
+      }
+    ]
+  },
+  {
+    "number": 110,
+    "code": "evt_n110",
+    "era_code": "era_monarchy",
+    "title": "인구조사와 제단: 다윗의 선택",
+    "summary": "잘못된 자랑이 재앙을 부르고, 다윗은 값을 치르고 제단을 세운다.",
+    "start_year": -970,
+    "end_year": -970,
+    "time_precision": "approx",
+    "time_sort_key": -969890,
+    "place_name": "예루살렘(아라우나 타작마당, 전승)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [
+      "david"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사무엘하",
+        "display_text": "삼하 24:10-25",
+        "chapter_start": 24,
+        "verse_start": 10,
+        "chapter_end": 24,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 111,
+    "code": "evt_n111",
+    "era_code": "era_monarchy",
+    "title": "솔로몬 즉위: 지혜의 선택",
+    "summary": "솔로몬은 왕으로 세워지고 ‘지혜’를 구해 길을 연다.",
+    "start_year": -970,
+    "end_year": -967,
+    "time_precision": "approx",
+    "time_sort_key": -969889,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "solomon",
+      "david"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 1:28-3:15",
+        "chapter_start": 1,
+        "verse_start": 28,
+        "chapter_end": 3,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 112,
+    "code": "evt_n112",
+    "era_code": "era_monarchy",
+    "title": "성전 건축: 손으로 짓는 집",
+    "summary": "솔로몬은 오랜 준비 끝에 성전을 건축한다.",
+    "start_year": -966,
+    "end_year": -959,
+    "time_precision": "approx",
+    "time_sort_key": -965888,
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [
+      "solomon"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 5:1-6:38",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 38
+      }
+    ]
+  },
+  {
+    "number": 113,
+    "code": "evt_n113",
+    "era_code": "era_monarchy",
+    "title": "성전 봉헌: 기도와 영광",
+    "summary": "솔로몬의 봉헌 기도 후 하나님의 임재가 성전을 채운다.",
+    "start_year": -959,
+    "end_year": -959,
+    "time_precision": "approx",
+    "time_sort_key": -958887,
+    "place_name": "예루살렘 성전",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [
+      "solomon"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 8:1-11",
+        "chapter_start": 8,
+        "verse_start": 1,
+        "chapter_end": 8,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 114,
+    "code": "evt_n114",
+    "era_code": "era_monarchy",
+    "title": "스바 여왕: 지혜를 시험하다",
+    "summary": "스바 여왕은 솔로몬의 지혜를 보고 감탄하며 찬양한다.",
+    "start_year": -950,
+    "end_year": -950,
+    "time_precision": "approx",
+    "time_sort_key": -949886,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "solomon"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 10:1-13",
+        "chapter_start": 10,
+        "verse_start": 1,
+        "chapter_end": 10,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 115,
+    "code": "evt_n115",
+    "era_code": "era_monarchy",
+    "title": "왕국 분열: 북과 남",
+    "summary": "강압적 선택이 반발을 불러 왕국은 둘로 갈라진다.",
+    "start_year": -930,
+    "end_year": -930,
+    "time_precision": "approx",
+    "time_sort_key": -929885,
+    "place_name": "세겜(전승)",
+    "lat": 32.22,
+    "lng": 35.28,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 12:1-20",
+        "chapter_start": 12,
+        "verse_start": 1,
+        "chapter_end": 12,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 116,
+    "code": "evt_n116",
+    "era_code": "era_monarchy",
+    "title": "엘리야와 갈멜: 불의 응답",
+    "summary": "엘리야는 하나님이 참 하나님이심을 불의 응답으로 드러낸다.",
+    "start_year": -860,
+    "end_year": -860,
+    "time_precision": "approx",
+    "time_sort_key": -859884,
+    "place_name": "갈멜 산",
+    "lat": 32.83,
+    "lng": 34.97,
+    "persons": [
+      "elijah",
+      "ahab"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 18:20-39",
+        "chapter_start": 18,
+        "verse_start": 20,
+        "chapter_end": 18,
+        "verse_end": 39
+      }
+    ]
+  },
+  {
+    "number": 117,
+    "code": "evt_n117",
+    "era_code": "era_monarchy",
+    "title": "호렙의 엘리야: 조용한 음성",
+    "summary": "엘리야는 절망 속에서 ‘세미한 음성’으로 다시 부르심을 받는다.",
+    "start_year": -860,
+    "end_year": -860,
+    "time_precision": "approx",
+    "time_sort_key": -859883,
+    "place_name": "호렙 산(전승)",
+    "lat": 28.54,
+    "lng": 33.98,
+    "persons": [
+      "elijah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 19:1-18",
+        "chapter_start": 19,
+        "verse_start": 1,
+        "chapter_end": 19,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 118,
+    "code": "evt_n118",
+    "era_code": "era_monarchy",
+    "title": "나봇의 포도원: 빼앗긴 정의",
+    "summary": "권력은 거짓 증언으로 무고한 자를 무너뜨리고, 예언은 죄를 드러낸다.",
+    "start_year": -855,
+    "end_year": -855,
+    "time_precision": "approx",
+    "time_sort_key": -854882,
+    "place_name": "이스르엘(전승)",
+    "lat": 32.56,
+    "lng": 35.32,
+    "persons": [
+      "ahab",
+      "elijah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기상",
+        "display_text": "왕상 21:1-19",
+        "chapter_start": 21,
+        "verse_start": 1,
+        "chapter_end": 21,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 119,
+    "code": "evt_n119",
+    "era_code": "era_monarchy",
+    "title": "엘리야 승천: 겉옷의 계승",
+    "summary": "엘리야는 떠나고, 엘리사는 겉옷과 사명을 이어받는다.",
+    "start_year": -850,
+    "end_year": -850,
+    "time_precision": "approx",
+    "time_sort_key": -849881,
+    "place_name": "요단강 근처(전승)",
+    "lat": 31.85,
+    "lng": 35.55,
+    "persons": [
+      "elijah",
+      "elisha"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 2:1-14",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 14
+      }
+    ]
+  },
+  {
+    "number": 120,
+    "code": "evt_n120",
+    "era_code": "era_monarchy",
+    "title": "나아만: 요단의 일곱 번",
+    "summary": "자존심을 내려놓을 때 치유가 찾아온다.",
+    "start_year": -845,
+    "end_year": -845,
+    "time_precision": "approx",
+    "time_sort_key": -844880,
+    "place_name": "사마리아/요단강(전승)",
+    "lat": 32.46,
+    "lng": 35.55,
+    "persons": [
+      "elisha"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 5:1-14",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 14
+      }
+    ]
+  },
+  {
+    "number": 121,
+    "code": "evt_n121",
+    "era_code": "era_monarchy",
+    "title": "예후의 혁명: 칼날의 교체",
+    "summary": "예후는 급진적 정변으로 왕조를 교체하지만 폭력의 그림자를 남긴다.",
+    "start_year": -841,
+    "end_year": -841,
+    "time_precision": "approx",
+    "time_sort_key": -840879,
+    "place_name": "이스르엘/사마리아(전승)",
+    "lat": 32.56,
+    "lng": 35.32,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 9:1-10:31",
+        "chapter_start": 9,
+        "verse_start": 1,
+        "chapter_end": 10,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 122,
+    "code": "evt_n122",
+    "era_code": "era_monarchy",
+    "title": "북왕국 멸망: 사마리아 함락",
+    "summary": "오랜 경고 끝에 북왕국은 무너지고 백성은 흩어진다.",
+    "start_year": -722,
+    "end_year": -722,
+    "time_precision": "approx",
+    "time_sort_key": -721878,
+    "place_name": "사마리아",
+    "lat": 32.28,
+    "lng": 35.19,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 17:5-23",
+        "chapter_start": 17,
+        "verse_start": 5,
+        "chapter_end": 17,
+        "verse_end": 23
+      }
+    ]
+  },
+  {
+    "number": 123,
+    "code": "evt_n123",
+    "era_code": "era_monarchy",
+    "title": "히스기야와 산헤립: 두려움의 편지",
+    "summary": "포위 속에서 히스기야는 편지를 성전에 펼치고 하나님께 매달린다.",
+    "start_year": -701,
+    "end_year": -701,
+    "time_precision": "approx",
+    "time_sort_key": -700877,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "hezekiah",
+      "isaiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 18:13-19:19",
+        "chapter_start": 18,
+        "verse_start": 13,
+        "chapter_end": 19,
+        "verse_end": 19
+      },
+      {
+        "book_name": "이사야",
+        "display_text": "사 36:1-37:20",
+        "chapter_start": 36,
+        "verse_start": 1,
+        "chapter_end": 37,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 124,
+    "code": "evt_n124",
+    "era_code": "era_monarchy",
+    "title": "히스기야의 병과 바벨론 사신",
+    "summary": "회복 이후의 자랑은 또 다른 위기를 예고한다.",
+    "start_year": -700,
+    "end_year": -700,
+    "time_precision": "approx",
+    "time_sort_key": -699876,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "hezekiah",
+      "isaiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 20:1-19",
+        "chapter_start": 20,
+        "verse_start": 1,
+        "chapter_end": 20,
+        "verse_end": 19
+      },
+      {
+        "book_name": "이사야",
+        "display_text": "사 38:1-39:8",
+        "chapter_start": 38,
+        "verse_start": 1,
+        "chapter_end": 39,
+        "verse_end": 8
+      }
+    ]
+  },
+  {
+    "number": 125,
+    "code": "evt_n125",
+    "era_code": "era_monarchy",
+    "title": "요시야의 개혁: 율법책을 찾다",
+    "summary": "잊힌 율법이 발견되자 요시야는 회개하고 나라를 새로 세우려 한다.",
+    "start_year": -622,
+    "end_year": -622,
+    "time_precision": "approx",
+    "time_sort_key": -621875,
+    "place_name": "예루살렘 성전",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 22:8-23:25",
+        "chapter_start": 22,
+        "verse_start": 8,
+        "chapter_end": 23,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 126,
+    "code": "evt_n126",
+    "era_code": "era_monarchy",
+    "title": "예레미야의 소명: 불타는 말씀",
+    "summary": "예레미야는 두려움 속에서도 ‘내가 네 입에 말을 두었다’는 부르심을 받는다.",
+    "start_year": -627,
+    "end_year": -627,
+    "time_precision": "approx",
+    "time_sort_key": -626874,
+    "place_name": "아나돗(전승)",
+    "lat": 31.84,
+    "lng": 35.26,
+    "persons": [
+      "jeremiah",
+      "god"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "예레미야",
+        "display_text": "렘 1:4-10",
+        "chapter_start": 1,
+        "verse_start": 4,
+        "chapter_end": 1,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 127,
+    "code": "evt_n127",
+    "era_code": "era_monarchy",
+    "title": "바벨론의 압박: 첫 포로",
+    "summary": "바벨론의 힘 앞에서 유다는 흔들리고, 일부가 포로로 끌려간다.",
+    "start_year": -597,
+    "end_year": -597,
+    "time_precision": "approx",
+    "time_sort_key": -596873,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 24:10-17",
+        "chapter_start": 24,
+        "verse_start": 10,
+        "chapter_end": 24,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 128,
+    "code": "evt_n128",
+    "era_code": "era_monarchy",
+    "title": "예루살렘 포위: 왕의 몰락",
+    "summary": "포위는 길어지고, 마지막 순간 왕과 도시는 무너진다.",
+    "start_year": -588,
+    "end_year": -586,
+    "time_precision": "approx",
+    "time_sort_key": -587872,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 25:1-7",
+        "chapter_start": 25,
+        "verse_start": 1,
+        "chapter_end": 25,
+        "verse_end": 7
+      }
+    ]
+  },
+  {
+    "number": 129,
+    "code": "evt_n129",
+    "era_code": "era_exile_return",
+    "title": "예루살렘 함락: 성전이 불타다",
+    "summary": "성전이 파괴되고 백성은 포로로 끌려가며 포로 시대가 시작된다.",
+    "start_year": -586,
+    "end_year": -586,
+    "time_precision": "approx",
+    "time_sort_key": -585871,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "열왕기하",
+        "display_text": "왕하 25:8-21",
+        "chapter_start": 25,
+        "verse_start": 8,
+        "chapter_end": 25,
+        "verse_end": 21
+      }
+    ]
+  },
+  {
+    "number": 130,
+    "code": "evt_n130",
+    "era_code": "era_exile_return",
+    "title": "남은 자의 선택: 두 갈래 길",
+    "summary": "남은 자들은 두려움 속에서 떠나고, 예레미야의 경고는 외면된다.",
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "time_sort_key": -584870,
+    "place_name": "유다 땅(미스바/애굽 길, 전승)",
+    "lat": 31.83,
+    "lng": 35.17,
+    "persons": [
+      "jeremiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "예레미야",
+        "display_text": "렘 40:7-43:7",
+        "chapter_start": 40,
+        "verse_start": 7,
+        "chapter_end": 43,
+        "verse_end": 7
+      }
+    ]
+  },
+  {
+    "number": 131,
+    "code": "evt_n131",
+    "era_code": "era_exile_return",
+    "title": "에스겔의 소명: 보좌의 환상",
+    "summary": "포로지에서 에스겔은 하나님의 영광을 보고 파수꾼의 사명을 받는다.",
+    "start_year": -593,
+    "end_year": -593,
+    "time_precision": "approx",
+    "time_sort_key": -592869,
+    "place_name": "그발 강가(바벨론, 전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [
+      "ezekiel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스겔",
+        "display_text": "겔 1:1-3:11",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 132,
+    "code": "evt_n132",
+    "era_code": "era_exile_return",
+    "title": "마른 뼈: 숨이 들어오다",
+    "summary": "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다.",
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "time_sort_key": -584868,
+    "place_name": "그발 강가(추정)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [
+      "ezekiel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스겔",
+        "display_text": "겔 37:1-14",
+        "chapter_start": 37,
+        "verse_start": 1,
+        "chapter_end": 37,
+        "verse_end": 14
+      }
+    ]
+  },
+  {
+    "number": 133,
+    "code": "evt_n133",
+    "era_code": "era_exile_return",
+    "title": "다니엘: 뜻을 정하다",
+    "summary": "다니엘은 낯선 제국 한복판에서 믿음의 기준을 세운다.",
+    "start_year": -605,
+    "end_year": -605,
+    "time_precision": "approx",
+    "time_sort_key": -604867,
+    "place_name": "바벨론",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [
+      "daniel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "다니엘",
+        "display_text": "단 1:8-20",
+        "chapter_start": 1,
+        "verse_start": 8,
+        "chapter_end": 1,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 134,
+    "code": "evt_n134",
+    "era_code": "era_exile_return",
+    "title": "풀무불: 함께하시는 분",
+    "summary": "우상 숭배 강요 앞에서 믿음은 굴복 대신 신실함을 택한다.",
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "time_sort_key": -584866,
+    "place_name": "바벨론(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "다니엘",
+        "display_text": "단 3:1-30",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 30
+      }
+    ]
+  },
+  {
+    "number": 135,
+    "code": "evt_n135",
+    "era_code": "era_exile_return",
+    "title": "벨사살의 잔치: 벽에 쓴 글",
+    "summary": "교만한 잔치에 ‘손 글씨’가 나타나고, 심판이 선포된다.",
+    "start_year": -539,
+    "end_year": -539,
+    "time_precision": "approx",
+    "time_sort_key": -538865,
+    "place_name": "바벨론",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [
+      "daniel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "다니엘",
+        "display_text": "단 5:1-31",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 136,
+    "code": "evt_n136",
+    "era_code": "era_exile_return",
+    "title": "사자굴: 멈추지 않는 기도",
+    "summary": "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
+    "start_year": -537,
+    "end_year": -537,
+    "time_precision": "approx",
+    "time_sort_key": -536864,
+    "place_name": "바벨론/메대-바사(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [
+      "daniel"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "다니엘",
+        "display_text": "단 6:1-28",
+        "chapter_start": 6,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 28
+      }
+    ]
+  },
+  {
+    "number": 137,
+    "code": "evt_n137",
+    "era_code": "era_exile_return",
+    "title": "고레스 칙령: 돌아가라",
+    "summary": "고레스의 칙령으로 귀환의 문이 열리고 성전 재건이 시작된다.",
+    "start_year": -538,
+    "end_year": -538,
+    "time_precision": "approx",
+    "time_sort_key": -537863,
+    "place_name": "바벨론 → 예루살렘(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "에스라",
+        "display_text": "스 1:1-4",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 1,
+        "verse_end": 4
+      }
+    ]
+  },
+  {
+    "number": 138,
+    "code": "evt_n138",
+    "era_code": "era_exile_return",
+    "title": "제단과 예배 회복",
+    "summary": "폐허 위에서 먼저 예배가 회복되고 제단이 다시 세워진다.",
+    "start_year": -537,
+    "end_year": -537,
+    "time_precision": "approx",
+    "time_sort_key": -536862,
+    "place_name": "예루살렘(성전 터)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "에스라",
+        "display_text": "스 3:1-6",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 6
+      }
+    ]
+  },
+  {
+    "number": 139,
+    "code": "evt_n139",
+    "era_code": "era_exile_return",
+    "title": "성전 재건: 방해와 완공",
+    "summary": "방해가 이어지지만 성전은 결국 다시 세워진다.",
+    "start_year": -536,
+    "end_year": -516,
+    "time_precision": "approx",
+    "time_sort_key": -535861,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "에스라",
+        "display_text": "스 4:1-6",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 6
+      },
+      {
+        "book_name": "에스라",
+        "display_text": "스 6:13-22",
+        "chapter_start": 6,
+        "verse_start": 13,
+        "chapter_end": 6,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 140,
+    "code": "evt_n140",
+    "era_code": "era_exile_return",
+    "title": "에스더: 왕후가 되다",
+    "summary": "에스더는 예상치 못한 자리에서 왕후가 되어 때를 기다린다.",
+    "start_year": -480,
+    "end_year": -480,
+    "time_precision": "approx",
+    "time_sort_key": -479860,
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "persons": [
+      "esther",
+      "mordecai"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스더",
+        "display_text": "에 2:5-18",
+        "chapter_start": 2,
+        "verse_start": 5,
+        "chapter_end": 2,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 141,
+    "code": "evt_n141",
+    "era_code": "era_exile_return",
+    "title": "하만의 음모: 유다인을 없애라",
+    "summary": "모르드개의 거절은 하만의 분노를 불러 대규모 학살 음모로 번진다.",
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "time_sort_key": -473859,
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "persons": [
+      "haman",
+      "mordecai",
+      "esther"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스더",
+        "display_text": "에 3:1-15",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 142,
+    "code": "evt_n142",
+    "era_code": "era_exile_return",
+    "title": "에스더의 결단: 죽으면 죽으리라",
+    "summary": "에스더는 금식 후 왕 앞에 나아가기로 결단한다.",
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "time_sort_key": -473858,
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "persons": [
+      "esther",
+      "mordecai"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스더",
+        "display_text": "에 4:10-17",
+        "chapter_start": 4,
+        "verse_start": 10,
+        "chapter_end": 4,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 143,
+    "code": "evt_n143",
+    "era_code": "era_exile_return",
+    "title": "잔치의 반전: 하만의 몰락",
+    "summary": "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다.",
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "time_sort_key": -473857,
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "persons": [
+      "esther",
+      "haman"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스더",
+        "display_text": "에 5:1-8",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 8
+      },
+      {
+        "book_name": "에스더",
+        "display_text": "에 7:1-10",
+        "chapter_start": 7,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 144,
+    "code": "evt_n144",
+    "era_code": "era_exile_return",
+    "title": "부림절: 살아남은 날",
+    "summary": "구원의 반전은 기억의 축제가 되어 공동체를 살린다.",
+    "start_year": -473,
+    "end_year": -473,
+    "time_precision": "approx",
+    "time_sort_key": -472856,
+    "place_name": "페르시아 전역(상징)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "persons": [
+      "esther",
+      "mordecai"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스더",
+        "display_text": "에 9:20-28",
+        "chapter_start": 9,
+        "verse_start": 20,
+        "chapter_end": 9,
+        "verse_end": 28
+      }
+    ]
+  },
+  {
+    "number": 145,
+    "code": "evt_n145",
+    "era_code": "era_exile_return",
+    "title": "에스라의 귀환: 말씀으로 정리하다",
+    "summary": "에스라는 말씀의 사람으로 돌아와 공동체를 재정비한다.",
+    "start_year": -458,
+    "end_year": -458,
+    "time_precision": "approx",
+    "time_sort_key": -457855,
+    "place_name": "바벨론 → 예루살렘(전승)",
+    "lat": 32.55,
+    "lng": 44.42,
+    "persons": [
+      "ezra"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "에스라",
+        "display_text": "스 7:1-10",
+        "chapter_start": 7,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 146,
+    "code": "evt_n146",
+    "era_code": "era_exile_return",
+    "title": "느헤미야의 파송: 무너진 성벽 소식",
+    "summary": "느헤미야는 예루살렘 소식을 듣고 눈물로 기도한 뒤 파송을 받는다.",
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "time_sort_key": -444854,
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "persons": [
+      "nehemiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "느헤미야",
+        "display_text": "느 1:1-11",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 1,
+        "verse_end": 11
+      },
+      {
+        "book_name": "느헤미야",
+        "display_text": "느 2:1-8",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 8
+      }
+    ]
+  },
+  {
+    "number": 147,
+    "code": "evt_n147",
+    "era_code": "era_exile_return",
+    "title": "성벽 재건: 밤의 조사",
+    "summary": "느헤미야는 조용히 폐허를 확인하고 ‘일어나 건축하자’고 선언한다.",
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "time_sort_key": -444853,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "nehemiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "느헤미야",
+        "display_text": "느 2:11-20",
+        "chapter_start": 2,
+        "verse_start": 11,
+        "chapter_end": 2,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 148,
+    "code": "evt_n148",
+    "era_code": "era_exile_return",
+    "title": "방어하며 세우다: 한 손엔 무기",
+    "summary": "조롱과 위협 속에서도 백성은 한 손으로는 쌓고 한 손으로는 지킨다.",
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "time_sort_key": -444852,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "nehemiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "느헤미야",
+        "display_text": "느 4:10-20",
+        "chapter_start": 4,
+        "verse_start": 10,
+        "chapter_end": 4,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 149,
+    "code": "evt_n149",
+    "era_code": "era_exile_return",
+    "title": "율법 낭독: 울음에서 기쁨으로",
+    "summary": "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다.",
+    "start_year": -444,
+    "end_year": -444,
+    "time_precision": "approx",
+    "time_sort_key": -443851,
+    "place_name": "예루살렘 수문 앞 광장(전승)",
+    "lat": 31.78,
+    "lng": 35.23,
+    "persons": [
+      "ezra",
+      "nehemiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "느헤미야",
+        "display_text": "느 8:1-12",
+        "chapter_start": 8,
+        "verse_start": 1,
+        "chapter_end": 8,
+        "verse_end": 12
+      }
+    ]
+  },
+  {
+    "number": 150,
+    "code": "evt_n150",
+    "era_code": "era_exile_return",
+    "title": "언약 갱신: 다시 서명하다",
+    "summary": "공동체는 죄를 고백하고 서약하며 새로운 질서를 세운다.",
+    "start_year": -444,
+    "end_year": -444,
+    "time_precision": "approx",
+    "time_sort_key": -443850,
+    "place_name": "예루살렘",
+    "lat": 31.78,
+    "lng": 35.22,
+    "persons": [
+      "nehemiah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "느헤미야",
+        "display_text": "느 9:1-10:39",
+        "chapter_start": 9,
+        "verse_start": 1,
+        "chapter_end": 10,
+        "verse_end": 39
+      }
+    ]
+  },
+  {
+    "number": 151,
+    "code": "evt_n151",
+    "era_code": "era_nt_public_ministry",
+    "title": "세례 요한의 탄생 예고",
+    "summary": "제사장 사가랴에게 천사가 나타나 세례 요한의 탄생을 알린다.",
+    "start_year": 5,
+    "end_year": 5,
+    "time_precision": "approx",
+    "time_sort_key": 5151,
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.235,
+    "persons": [
+      "gabriel",
+      "elizabeth"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 1:5-25",
+        "chapter_start": 1,
+        "verse_start": 5,
+        "chapter_end": 1,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 152,
+    "code": "evt_n152",
+    "era_code": "era_nt_public_ministry",
+    "title": "마리아 수태고지와 찬양",
+    "summary": "마리아는 천사의 소식을 받고 엘리사벳을 찾아가 찬양한다.",
+    "start_year": 5,
+    "end_year": 5,
+    "time_precision": "approx",
+    "time_sort_key": 5152,
+    "place_name": "나사렛 → 유대 산지(전승)",
+    "lat": 32.7,
+    "lng": 35.303,
+    "persons": [
+      "mary",
+      "gabriel",
+      "elizabeth"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 1:26-56",
+        "chapter_start": 1,
+        "verse_start": 26,
+        "chapter_end": 1,
+        "verse_end": 56
+      }
+    ]
+  },
+  {
+    "number": 153,
+    "code": "evt_n153",
+    "era_code": "era_nt_public_ministry",
+    "title": "예수 탄생과 목자들",
+    "summary": "베들레헴에서 예수님이 태어나고 목자들이 기쁜 소식을 듣는다.",
+    "start_year": 4,
+    "end_year": 4,
+    "time_precision": "approx",
+    "time_sort_key": 4153,
+    "place_name": "베들레헴",
+    "lat": 31.705,
+    "lng": 35.202,
+    "persons": [
+      "jesus",
+      "mary",
+      "joseph"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 2:1-20",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 154,
+    "code": "evt_n154",
+    "era_code": "era_nt_public_ministry",
+    "title": "동방박사와 피신",
+    "summary": "동방박사가 경배하고, 헤롯의 위협으로 가족은 애굽으로 피신한다.",
+    "start_year": 4,
+    "end_year": 4,
+    "time_precision": "approx",
+    "time_sort_key": 4154,
+    "place_name": "예루살렘 → 베들레헴 → 애굽(전승)",
+    "lat": 31.778,
+    "lng": 35.222,
+    "persons": [
+      "jesus",
+      "mary",
+      "joseph"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마태복음",
+        "display_text": "마 2:1-15",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 155,
+    "code": "evt_n155",
+    "era_code": "era_nt_public_ministry",
+    "title": "어린 예수의 성전 사건",
+    "summary": "소년 예수는 성전에서 율법교사들과 대화하며 자신의 정체를 드러낸다.",
+    "start_year": 8,
+    "end_year": 8,
+    "time_precision": "approx",
+    "time_sort_key": 8155,
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.235,
+    "persons": [
+      "jesus",
+      "mary",
+      "joseph"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 2:41-52",
+        "chapter_start": 2,
+        "verse_start": 41,
+        "chapter_end": 2,
+        "verse_end": 52
+      }
+    ]
+  },
+  {
+    "number": 156,
+    "code": "evt_n156",
+    "era_code": "era_nt_public_ministry",
+    "title": "예수의 세례",
+    "summary": "예수님이 세례를 받으실 때 하늘의 음성과 표징이 나타난다.",
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "time_sort_key": 27156,
+    "place_name": "요단강(여리고 근처, 전승)",
+    "lat": 31.85,
+    "lng": 35.55,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마태복음",
+        "display_text": "마 3:13-17",
+        "chapter_start": 3,
+        "verse_start": 13,
+        "chapter_end": 3,
+        "verse_end": 17
+      },
+      {
+        "book_name": "마가복음",
+        "display_text": "막 1:9-11",
+        "chapter_start": 1,
+        "verse_start": 9,
+        "chapter_end": 1,
+        "verse_end": 11
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 3:21-22",
+        "chapter_start": 3,
+        "verse_start": 21,
+        "chapter_end": 3,
+        "verse_end": 22
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 1:29-34",
+        "chapter_start": 1,
+        "verse_start": 29,
+        "chapter_end": 1,
+        "verse_end": 34
+      }
+    ]
+  },
+  {
+    "number": 157,
+    "code": "evt_n157",
+    "era_code": "era_nt_public_ministry",
+    "title": "광야 시험",
+    "summary": "예수님은 광야에서 유혹을 말씀으로 이기며 사명의 방향을 확정하신다.",
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "time_sort_key": 27157,
+    "place_name": "유대 광야(전승)",
+    "lat": 31.75,
+    "lng": 35.3,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마태복음",
+        "display_text": "마 4:1-11",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 11
+      },
+      {
+        "book_name": "마가복음",
+        "display_text": "막 1:12-13",
+        "chapter_start": 1,
+        "verse_start": 12,
+        "chapter_end": 1,
+        "verse_end": 13
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 4:1-13",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 158,
+    "code": "evt_n158",
+    "era_code": "era_nt_public_ministry",
+    "title": "제자 부르심: 그물을 버리다",
+    "summary": "예수님은 어부들을 부르시고 그들은 삶의 방향을 바꾼다.",
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "time_sort_key": 27158,
+    "place_name": "갈릴리 호수(가버나움 근처)",
+    "lat": 32.88,
+    "lng": 35.57,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james",
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 1:16-20",
+        "chapter_start": 1,
+        "verse_start": 16,
+        "chapter_end": 1,
+        "verse_end": 20
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 4:18-22",
+        "chapter_start": 4,
+        "verse_start": 18,
+        "chapter_end": 4,
+        "verse_end": 22
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 5:1-11",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 11
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 1:35-51",
+        "chapter_start": 1,
+        "verse_start": 35,
+        "chapter_end": 1,
+        "verse_end": 51
+      }
+    ]
+  },
+  {
+    "number": 159,
+    "code": "evt_n159",
+    "era_code": "era_nt_public_ministry",
+    "title": "산상수훈: 복 있는 사람",
+    "summary": "예수님은 하나님 나라의 새로운 가치와 삶의 기준을 선포하신다.",
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "time_sort_key": 28159,
+    "place_name": "갈릴리 산지(전승)",
+    "lat": 32.85,
+    "lng": 35.55,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마태복음",
+        "display_text": "마 5:1-7:29",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 29
+      }
+    ]
+  },
+  {
+    "number": 160,
+    "code": "evt_n160",
+    "era_code": "era_nt_public_ministry",
+    "title": "폭풍을 잠잠케 하심",
+    "summary": "두려움 속 제자들 앞에서 예수님은 바람과 물결을 잠잠케 하신다.",
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "time_sort_key": 28160,
+    "place_name": "갈릴리 호수",
+    "lat": 32.83,
+    "lng": 35.59,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 4:35-41",
+        "chapter_start": 4,
+        "verse_start": 35,
+        "chapter_end": 4,
+        "verse_end": 41
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 8:23-27",
+        "chapter_start": 8,
+        "verse_start": 23,
+        "chapter_end": 8,
+        "verse_end": 27
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 8:22-25",
+        "chapter_start": 8,
+        "verse_start": 22,
+        "chapter_end": 8,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 161,
+    "code": "evt_n161",
+    "era_code": "era_nt_public_ministry",
+    "title": "야이로의 딸과 혈루증 여인",
+    "summary": "절박한 믿음이 이어지는 길 위에서 예수님은 치유와 생명의 능력을 보이신다.",
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "time_sort_key": 28161,
+    "place_name": "가버나움(전승)",
+    "lat": 32.88,
+    "lng": 35.57,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 5:21-43",
+        "chapter_start": 5,
+        "verse_start": 21,
+        "chapter_end": 5,
+        "verse_end": 43
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 9:18-26",
+        "chapter_start": 9,
+        "verse_start": 18,
+        "chapter_end": 9,
+        "verse_end": 26
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 8:40-56",
+        "chapter_start": 8,
+        "verse_start": 40,
+        "chapter_end": 8,
+        "verse_end": 56
+      }
+    ]
+  },
+  {
+    "number": 162,
+    "code": "evt_n162",
+    "era_code": "era_nt_public_ministry",
+    "title": "오병이어",
+    "summary": "작은 나눔이 시작점이 되어 많은 사람이 먹고 남는다.",
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "time_sort_key": 29162,
+    "place_name": "갈릴리 호숫가 들판(전승)",
+    "lat": 32.84,
+    "lng": 35.54,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 6:34-44",
+        "chapter_start": 6,
+        "verse_start": 34,
+        "chapter_end": 6,
+        "verse_end": 44
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 14:13-21",
+        "chapter_start": 14,
+        "verse_start": 13,
+        "chapter_end": 14,
+        "verse_end": 21
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 9:10-17",
+        "chapter_start": 9,
+        "verse_start": 10,
+        "chapter_end": 9,
+        "verse_end": 17
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 6:1-13",
+        "chapter_start": 6,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 163,
+    "code": "evt_n163",
+    "era_code": "era_nt_public_ministry",
+    "title": "변화산",
+    "summary": "예수님의 영광이 드러나고 제자들은 ‘그의 말을 들으라’는 음성을 듣는다.",
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "time_sort_key": 29163,
+    "place_name": "변화산(전승, 다볼/헤르몬 견해)",
+    "lat": 33.417,
+    "lng": 35.857,
+    "persons": [
+      "jesus",
+      "peter",
+      "james",
+      "john",
+      "moses",
+      "elijah"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 9:2-13",
+        "chapter_start": 9,
+        "verse_start": 2,
+        "chapter_end": 9,
+        "verse_end": 13
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 17:1-13",
+        "chapter_start": 17,
+        "verse_start": 1,
+        "chapter_end": 17,
+        "verse_end": 13
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 9:28-36",
+        "chapter_start": 9,
+        "verse_start": 28,
+        "chapter_end": 9,
+        "verse_end": 36
+      }
+    ]
+  },
+  {
+    "number": 164,
+    "code": "evt_n164",
+    "era_code": "era_nt_public_ministry",
+    "title": "베드로의 고백과 수난 예고",
+    "summary": "베드로의 고백 이후 예수님은 십자가의 길을 처음으로 분명히 예고하신다.",
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "time_sort_key": 29164,
+    "place_name": "가이사랴 빌립보",
+    "lat": 33.248,
+    "lng": 35.694,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 8:27-33",
+        "chapter_start": 8,
+        "verse_start": 27,
+        "chapter_end": 8,
+        "verse_end": 33
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 16:13-23",
+        "chapter_start": 16,
+        "verse_start": 13,
+        "chapter_end": 16,
+        "verse_end": 23
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 9:18-22",
+        "chapter_start": 9,
+        "verse_start": 18,
+        "chapter_end": 9,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 165,
+    "code": "evt_n165",
+    "era_code": "era_nt_public_ministry",
+    "title": "비유: 선한 사마리아인",
+    "summary": "예수님은 이웃의 의미를 ‘경계 밖의 자비’로 재정의하신다.",
+    "start_year": 30,
+    "end_year": 30,
+    "time_precision": "approx",
+    "time_sort_key": 30165,
+    "place_name": "예루살렘-여리고 길(전승)",
+    "lat": 31.8,
+    "lng": 35.4,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 10:25-37",
+        "chapter_start": 10,
+        "verse_start": 25,
+        "chapter_end": 10,
+        "verse_end": 37
+      }
+    ]
+  },
+  {
+    "number": 166,
+    "code": "evt_n166",
+    "era_code": "era_nt_public_ministry",
+    "title": "비유: 탕자의 귀환",
+    "summary": "잃은 아들을 맞이하는 아버지의 품이 하나님 나라의 심장을 드러낸다.",
+    "start_year": 30,
+    "end_year": 30,
+    "time_precision": "approx",
+    "time_sort_key": 30166,
+    "place_name": "베레아(요단 동편, 추정)",
+    "lat": 31.93,
+    "lng": 35.62,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 15:11-32",
+        "chapter_start": 15,
+        "verse_start": 11,
+        "chapter_end": 15,
+        "verse_end": 32
+      }
+    ]
+  },
+  {
+    "number": 167,
+    "code": "evt_n167",
+    "era_code": "era_nt_public_ministry",
+    "title": "나사로의 부활",
+    "summary": "예수님은 ‘나는 부활이요 생명’이라 하시며 나사로를 일으키신다.",
+    "start_year": 32,
+    "end_year": 32,
+    "time_precision": "approx",
+    "time_sort_key": 32167,
+    "place_name": "베다니",
+    "lat": 31.774,
+    "lng": 35.263,
+    "persons": [
+      "jesus",
+      "mary"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "요한복음",
+        "display_text": "요 11:1-44",
+        "chapter_start": 11,
+        "verse_start": 1,
+        "chapter_end": 11,
+        "verse_end": 44
+      }
+    ]
+  },
+  {
+    "number": 168,
+    "code": "evt_n168",
+    "era_code": "era_nt_public_ministry",
+    "title": "예루살렘 입성",
+    "summary": "예수님은 겸손한 왕으로 입성하시고 군중은 환호한다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33168,
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.222,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 11:1-11",
+        "chapter_start": 11,
+        "verse_start": 1,
+        "chapter_end": 11,
+        "verse_end": 11
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 21:1-11",
+        "chapter_start": 21,
+        "verse_start": 1,
+        "chapter_end": 21,
+        "verse_end": 11
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 19:28-40",
+        "chapter_start": 19,
+        "verse_start": 28,
+        "chapter_end": 19,
+        "verse_end": 40
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 12:12-19",
+        "chapter_start": 12,
+        "verse_start": 12,
+        "chapter_end": 12,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 169,
+    "code": "evt_n169",
+    "era_code": "era_nt_public_ministry",
+    "title": "성전 정화",
+    "summary": "예수님은 성전을 ‘기도의 집’으로 회복시키려 하신다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33169,
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.235,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 11:15-19",
+        "chapter_start": 11,
+        "verse_start": 15,
+        "chapter_end": 11,
+        "verse_end": 19
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 21:12-17",
+        "chapter_start": 21,
+        "verse_start": 12,
+        "chapter_end": 21,
+        "verse_end": 17
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 19:45-48",
+        "chapter_start": 19,
+        "verse_start": 45,
+        "chapter_end": 19,
+        "verse_end": 48
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 2:13-17",
+        "chapter_start": 2,
+        "verse_start": 13,
+        "chapter_end": 2,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 170,
+    "code": "evt_n170",
+    "era_code": "era_nt_public_ministry",
+    "title": "최후의 만찬",
+    "summary": "예수님은 떡과 잔으로 새 언약을 세우시고 배신을 예고하신다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33170,
+    "place_name": "예루살렘 다락방(전승)",
+    "lat": 31.776,
+    "lng": 35.233,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 14:12-26",
+        "chapter_start": 14,
+        "verse_start": 12,
+        "chapter_end": 14,
+        "verse_end": 26
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 26:17-30",
+        "chapter_start": 26,
+        "verse_start": 17,
+        "chapter_end": 26,
+        "verse_end": 30
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 22:7-23",
+        "chapter_start": 22,
+        "verse_start": 7,
+        "chapter_end": 22,
+        "verse_end": 23
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 13:1-30",
+        "chapter_start": 13,
+        "verse_start": 1,
+        "chapter_end": 13,
+        "verse_end": 30
+      }
+    ]
+  },
+  {
+    "number": 171,
+    "code": "evt_n171",
+    "era_code": "era_nt_public_ministry",
+    "title": "겟세마네: 뜻이 이루어지다",
+    "summary": "예수님은 고뇌 속에서 아버지의 뜻에 자신을 맡기신다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33171,
+    "place_name": "겟세마네(감람산)",
+    "lat": 31.78,
+    "lng": 35.24,
+    "persons": [
+      "jesus",
+      "peter",
+      "james",
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 14:32-42",
+        "chapter_start": 14,
+        "verse_start": 32,
+        "chapter_end": 14,
+        "verse_end": 42
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 26:36-46",
+        "chapter_start": 26,
+        "verse_start": 36,
+        "chapter_end": 26,
+        "verse_end": 46
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 22:39-46",
+        "chapter_start": 22,
+        "verse_start": 39,
+        "chapter_end": 22,
+        "verse_end": 46
+      }
+    ]
+  },
+  {
+    "number": 172,
+    "code": "evt_n172",
+    "era_code": "era_nt_public_ministry",
+    "title": "체포: 배신의 입맞춤",
+    "summary": "유다의 배신으로 예수님이 체포되고 제자들은 흩어진다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33172,
+    "place_name": "겟세마네(감람산)",
+    "lat": 31.78,
+    "lng": 35.24,
+    "persons": [
+      "jesus",
+      "judas",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 14:43-52",
+        "chapter_start": 14,
+        "verse_start": 43,
+        "chapter_end": 14,
+        "verse_end": 52
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 26:47-56",
+        "chapter_start": 26,
+        "verse_start": 47,
+        "chapter_end": 26,
+        "verse_end": 56
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 22:47-53",
+        "chapter_start": 22,
+        "verse_start": 47,
+        "chapter_end": 22,
+        "verse_end": 53
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 18:1-11",
+        "chapter_start": 18,
+        "verse_start": 1,
+        "chapter_end": 18,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 173,
+    "code": "evt_n173",
+    "era_code": "era_nt_public_ministry",
+    "title": "재판: 빌라도 앞",
+    "summary": "예수님은 불의한 재판을 받으시고 침묵 속에서 길을 걸으신다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33173,
+    "place_name": "예루살렘(총독 관저, 전승)",
+    "lat": 31.778,
+    "lng": 35.225,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 15:1-15",
+        "chapter_start": 15,
+        "verse_start": 1,
+        "chapter_end": 15,
+        "verse_end": 15
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 27:11-26",
+        "chapter_start": 27,
+        "verse_start": 11,
+        "chapter_end": 27,
+        "verse_end": 26
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 23:1-25",
+        "chapter_start": 23,
+        "verse_start": 1,
+        "chapter_end": 23,
+        "verse_end": 25
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 18:28-19:16",
+        "chapter_start": 18,
+        "verse_start": 28,
+        "chapter_end": 19,
+        "verse_end": 16
+      }
+    ]
+  },
+  {
+    "number": 174,
+    "code": "evt_n174",
+    "era_code": "era_nt_public_ministry",
+    "title": "십자가: 끝까지 사랑",
+    "summary": "예수님은 십자가에서 마지막까지 사랑을 드러내신다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33174,
+    "place_name": "골고다(예루살렘)",
+    "lat": 31.778,
+    "lng": 35.229,
+    "persons": [
+      "jesus"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마가복음",
+        "display_text": "막 15:21-39",
+        "chapter_start": 15,
+        "verse_start": 21,
+        "chapter_end": 15,
+        "verse_end": 39
+      },
+      {
+        "book_name": "마태복음",
+        "display_text": "마 27:32-54",
+        "chapter_start": 27,
+        "verse_start": 32,
+        "chapter_end": 27,
+        "verse_end": 54
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 23:26-49",
+        "chapter_start": 23,
+        "verse_start": 26,
+        "chapter_end": 23,
+        "verse_end": 49
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 19:17-37",
+        "chapter_start": 19,
+        "verse_start": 17,
+        "chapter_end": 19,
+        "verse_end": 37
+      }
+    ]
+  },
+  {
+    "number": 175,
+    "code": "evt_n175",
+    "era_code": "era_nt_public_ministry",
+    "title": "부활과 승천: 새 시작",
+    "summary": "부활하신 예수님은 제자들에게 사명을 주시고 승천하신다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33175,
+    "place_name": "예루살렘(무덤) → 감람산(전승)",
+    "lat": 31.78,
+    "lng": 35.24,
+    "persons": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "마태복음",
+        "display_text": "마 28:1-20",
+        "chapter_start": 28,
+        "verse_start": 1,
+        "chapter_end": 28,
+        "verse_end": 20
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 24:1-53",
+        "chapter_start": 24,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 53
+      },
+      {
+        "book_name": "요한복음",
+        "display_text": "요 20:1-29",
+        "chapter_start": 20,
+        "verse_start": 1,
+        "chapter_end": 20,
+        "verse_end": 29
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 1:1-11",
+        "chapter_start": 1,
+        "verse_start": 1,
+        "chapter_end": 1,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 176,
+    "code": "evt_n176",
+    "era_code": "era_nt_apostolic",
+    "title": "오순절: 성령강림",
+    "summary": "성령이 임하며 교회의 시대가 힘 있게 시작된다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33176,
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.222,
+    "persons": [
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "matthias"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 2:1-13",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 2,
+        "verse_end": 13
+      }
+    ]
+  },
+  {
+    "number": 177,
+    "code": "evt_n177",
+    "era_code": "era_nt_apostolic",
+    "title": "베드로 설교: 하루에 삼천",
+    "summary": "베드로의 설교로 많은 사람이 회개하고 공동체가 태어난다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33177,
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.222,
+    "persons": [
+      "peter"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 2:14-47",
+        "chapter_start": 2,
+        "verse_start": 14,
+        "chapter_end": 2,
+        "verse_end": 47
+      }
+    ]
+  },
+  {
+    "number": 178,
+    "code": "evt_n178",
+    "era_code": "era_nt_apostolic",
+    "title": "성전 미문 치유와 첫 박해",
+    "summary": "치유로 군중이 모이고, 지도자들은 사도들을 막기 시작한다.",
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "time_sort_key": 33178,
+    "place_name": "예루살렘 성전 미문",
+    "lat": 31.778,
+    "lng": 35.235,
+    "persons": [
+      "peter",
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 3:1-26",
+        "chapter_start": 3,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 26
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 4:1-22",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 179,
+    "code": "evt_n179",
+    "era_code": "era_nt_apostolic",
+    "title": "아나니아와 삽비라",
+    "summary": "거짓은 공동체를 흔들고, 사건은 거룩함의 경고가 된다.",
+    "start_year": 34,
+    "end_year": 34,
+    "time_precision": "approx",
+    "time_sort_key": 34179,
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.222,
+    "persons": [
+      "ananias",
+      "peter"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 5:1-11",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 180,
+    "code": "evt_n180",
+    "era_code": "era_nt_apostolic",
+    "title": "일곱 집사와 스데반 순교",
+    "summary": "섬김의 구조가 세워지고, 스데반의 죽음은 흩어짐의 불씨가 된다.",
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "time_sort_key": 35180,
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.222,
+    "persons": [
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "matthias",
+      "saul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 6:1-7",
+        "chapter_start": 6,
+        "verse_start": 1,
+        "chapter_end": 6,
+        "verse_end": 7
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 7:54-8:1",
+        "chapter_start": 7,
+        "verse_start": 54,
+        "chapter_end": 8,
+        "verse_end": 1
+      }
+    ]
+  },
+  {
+    "number": 181,
+    "code": "evt_n181",
+    "era_code": "era_nt_apostolic",
+    "title": "사마리아 복음: 빌립의 전도",
+    "summary": "박해로 흩어진 자리에서 복음은 사마리아까지 확장된다.",
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "time_sort_key": 35181,
+    "place_name": "사마리아",
+    "lat": 32.28,
+    "lng": 35.19,
+    "persons": [
+      "philip"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 8:4-25",
+        "chapter_start": 8,
+        "verse_start": 4,
+        "chapter_end": 8,
+        "verse_end": 25
+      }
+    ]
+  },
+  {
+    "number": 182,
+    "code": "evt_n182",
+    "era_code": "era_nt_apostolic",
+    "title": "에티오피아 내시: 길 위의 만남",
+    "summary": "한 사람의 질문이 길 위에서 답을 만나고, 복음은 더 먼 곳으로 간다.",
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "time_sort_key": 35182,
+    "place_name": "예루살렘-가사 길(전승)",
+    "lat": 31.5,
+    "lng": 34.47,
+    "persons": [
+      "philip"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 8:26-40",
+        "chapter_start": 8,
+        "verse_start": 26,
+        "chapter_end": 8,
+        "verse_end": 40
+      }
+    ]
+  },
+  {
+    "number": 183,
+    "code": "evt_n183",
+    "era_code": "era_nt_apostolic",
+    "title": "사울 회심: 다메섹의 빛",
+    "summary": "박해자 사울은 부르심을 만나고 방향이 완전히 바뀐다.",
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "time_sort_key": 35183,
+    "place_name": "다메섹",
+    "lat": 33.51,
+    "lng": 36.29,
+    "persons": [
+      "saul",
+      "ananias"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 9:1-19",
+        "chapter_start": 9,
+        "verse_start": 1,
+        "chapter_end": 9,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 184,
+    "code": "evt_n184",
+    "era_code": "era_nt_apostolic",
+    "title": "고넬료: 이방인에게도",
+    "summary": "베드로는 편견을 넘어 이방인에게도 성령이 임함을 목격한다.",
+    "start_year": 38,
+    "end_year": 38,
+    "time_precision": "approx",
+    "time_sort_key": 38184,
+    "place_name": "가이사랴",
+    "lat": 32.5,
+    "lng": 34.89,
+    "persons": [
+      "peter"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 10:1-48",
+        "chapter_start": 10,
+        "verse_start": 1,
+        "chapter_end": 10,
+        "verse_end": 48
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 11:1-18",
+        "chapter_start": 11,
+        "verse_start": 1,
+        "chapter_end": 11,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 185,
+    "code": "evt_nt_paul_j1_n185",
+    "era_code": "era_nt_apostolic",
+    "title": "안디옥 교회: 선교의 출발",
+    "summary": "안디옥 교회는 금식과 기도 가운데 바울과 바나바를 파송한다.",
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "time_sort_key": 46185,
+    "place_name": "안디옥(시리아)",
+    "lat": 36.202,
+    "lng": 36.16,
+    "persons": [
+      "barnabas",
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 13:1-3",
+        "chapter_start": 13,
+        "verse_start": 1,
+        "chapter_end": 13,
+        "verse_end": 3
+      }
+    ]
+  },
+  {
+    "number": 186,
+    "code": "evt_nt_paul_j1_n186",
+    "era_code": "era_nt_apostolic",
+    "title": "1차 선교(1): 구브로 살라미–바보",
+    "summary": "바울과 바나바는 구브로에서 복음을 전하며 첫 여정을 시작한다.",
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "time_sort_key": 46186,
+    "place_name": "구브로(살라미 → 바보)",
+    "lat": 34.775,
+    "lng": 32.424,
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 13:4-12",
+        "chapter_start": 13,
+        "verse_start": 4,
+        "chapter_end": 13,
+        "verse_end": 12
+      }
+    ]
+  },
+  {
+    "number": 187,
+    "code": "evt_nt_paul_j1_n187",
+    "era_code": "era_nt_apostolic",
+    "title": "1차 선교(2): 비시디아 안디옥",
+    "summary": "바울은 회당에서 설교하고, 복음은 이방인에게 크게 확장된다.",
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "time_sort_key": 46187,
+    "place_name": "비시디아 안디옥(소아시아)",
+    "lat": 38.35,
+    "lng": 31.18,
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 13:13-52",
+        "chapter_start": 13,
+        "verse_start": 13,
+        "chapter_end": 13,
+        "verse_end": 52
+      }
+    ]
+  },
+  {
+    "number": 188,
+    "code": "evt_nt_paul_j1_n188",
+    "era_code": "era_nt_apostolic",
+    "title": "1차 선교(3): 이고니온",
+    "summary": "표적과 논쟁이 함께 일어나고, 박해의 조짐이 짙어진다.",
+    "start_year": 47,
+    "end_year": 47,
+    "time_precision": "approx",
+    "time_sort_key": 47188,
+    "place_name": "이고니온(코니아)",
+    "lat": 37.874,
+    "lng": 32.493,
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 14:1-7",
+        "chapter_start": 14,
+        "verse_start": 1,
+        "chapter_end": 14,
+        "verse_end": 7
+      }
+    ]
+  },
+  {
+    "number": 189,
+    "code": "evt_nt_paul_j1_n189",
+    "era_code": "era_nt_apostolic",
+    "title": "1차 선교(4): 루스드라–더베",
+    "summary": "루스드라와 더베에서 전도가 이어지지만, 폭력적 박해도 뒤따른다.",
+    "start_year": 47,
+    "end_year": 47,
+    "time_precision": "approx",
+    "time_sort_key": 47189,
+    "place_name": "루스드라 → 더베(갈라디아)",
+    "lat": 37.58,
+    "lng": 32.28,
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 14:8-20",
+        "chapter_start": 14,
+        "verse_start": 8,
+        "chapter_end": 14,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 190,
+    "code": "evt_nt_paul_j1_n190",
+    "era_code": "era_nt_apostolic",
+    "title": "1차 선교(5): 안디옥(시리아)로 귀환 보고",
+    "summary": "1차 여행을 마치고 돌아와 하나님이 하신 일을 교회에 보고한다.",
+    "start_year": 48,
+    "end_year": 48,
+    "time_precision": "approx",
+    "time_sort_key": 48190,
+    "place_name": "안디옥(시리아)",
+    "lat": 36.202,
+    "lng": 36.16,
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 14:21-28",
+        "chapter_start": 14,
+        "verse_start": 21,
+        "chapter_end": 14,
+        "verse_end": 28
+      }
+    ]
+  },
+  {
+    "number": 191,
+    "code": "evt_nt_paul_j2_n191",
+    "era_code": "era_nt_apostolic",
+    "title": "2차 선교(1): 드로아에서 마게도냐로",
+    "summary": "드로아에서 ‘마게도냐로 건너오라’는 인도를 받고 방향이 바뀐다.",
+    "start_year": 49,
+    "end_year": 49,
+    "time_precision": "approx",
+    "time_sort_key": 49191,
+    "place_name": "드로아",
+    "lat": 39.812,
+    "lng": 26.173,
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 16:6-10",
+        "chapter_start": 16,
+        "verse_start": 6,
+        "chapter_end": 16,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 192,
+    "code": "evt_nt_paul_j2_n192",
+    "era_code": "era_nt_apostolic",
+    "title": "2차 선교(2): 빌립보—루디아와 감옥의 찬양",
+    "summary": "빌립보에서 복음은 가정과 감옥 한복판까지 스며든다.",
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "time_sort_key": 50192,
+    "place_name": "빌립보",
+    "lat": 41.012,
+    "lng": 24.286,
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 16:11-34",
+        "chapter_start": 16,
+        "verse_start": 11,
+        "chapter_end": 16,
+        "verse_end": 34
+      }
+    ]
+  },
+  {
+    "number": 193,
+    "code": "evt_nt_paul_j2_n193",
+    "era_code": "era_nt_apostolic",
+    "title": "2차 선교(3): 데살로니가—소동과 도피",
+    "summary": "데살로니가에서 복음이 퍼지자 반대가 폭동으로 번진다.",
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "time_sort_key": 50193,
+    "place_name": "데살로니가",
+    "lat": 40.64,
+    "lng": 22.944,
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 17:1-9",
+        "chapter_start": 17,
+        "verse_start": 1,
+        "chapter_end": 17,
+        "verse_end": 9
+      }
+    ]
+  },
+  {
+    "number": 194,
+    "code": "evt_nt_paul_j2_n194",
+    "era_code": "era_nt_apostolic",
+    "title": "2차 선교(4): 베뢰아—말씀을 상고하다",
+    "summary": "베뢰아 사람들은 말씀을 상고하며 복음을 받아들인다.",
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "time_sort_key": 50194,
+    "place_name": "베뢰아",
+    "lat": 40.523,
+    "lng": 22.203,
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 17:10-15",
+        "chapter_start": 17,
+        "verse_start": 10,
+        "chapter_end": 17,
+        "verse_end": 15
+      }
+    ]
+  },
+  {
+    "number": 195,
+    "code": "evt_nt_paul_j2_n195",
+    "era_code": "era_nt_apostolic",
+    "title": "2차 선교(5): 아덴—아레오바고 설교",
+    "summary": "바울은 ‘알지 못하는 신’ 제단을 출발점으로 창조주와 부활을 선포한다.",
+    "start_year": 51,
+    "end_year": 51,
+    "time_precision": "approx",
+    "time_sort_key": 51195,
+    "place_name": "아덴(아레오바고)",
+    "lat": 37.972,
+    "lng": 23.725,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 17:16-34",
+        "chapter_start": 17,
+        "verse_start": 16,
+        "chapter_end": 17,
+        "verse_end": 34
+      }
+    ]
+  },
+  {
+    "number": 196,
+    "code": "evt_nt_paul_j2_n196",
+    "era_code": "era_nt_apostolic",
+    "title": "2차 선교(6): 고린도—정착과 견딤",
+    "summary": "고린도에서 바울은 오래 머물며 공동체를 세우고 박해를 견딘다.",
+    "start_year": 51,
+    "end_year": 52,
+    "time_precision": "approx",
+    "time_sort_key": 51196,
+    "place_name": "고린도",
+    "lat": 37.939,
+    "lng": 22.932,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 18:1-18",
+        "chapter_start": 18,
+        "verse_start": 1,
+        "chapter_end": 18,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 197,
+    "code": "evt_nt_paul_j3_n197",
+    "era_code": "era_nt_apostolic",
+    "title": "3차 선교(1): 에베소—확장과 충돌",
+    "summary": "에베소에서 복음이 크게 확장되며 도시의 질서와도 충돌한다.",
+    "start_year": 53,
+    "end_year": 55,
+    "time_precision": "approx",
+    "time_sort_key": 53197,
+    "place_name": "에베소",
+    "lat": 37.949,
+    "lng": 27.364,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 19:1-41",
+        "chapter_start": 19,
+        "verse_start": 1,
+        "chapter_end": 19,
+        "verse_end": 41
+      }
+    ]
+  },
+  {
+    "number": 198,
+    "code": "evt_nt_paul_j3_n198",
+    "era_code": "era_nt_apostolic",
+    "title": "3차 선교(2): 마게도냐—교회를 굳게 하다",
+    "summary": "바울은 마게도냐를 돌며 성도들을 격려하고 공동체를 세운다.",
+    "start_year": 56,
+    "end_year": 56,
+    "time_precision": "approx",
+    "time_sort_key": 56198,
+    "place_name": "마게도냐(빌립보/데살로니가 권역)",
+    "lat": 40.64,
+    "lng": 22.944,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 20:1-2",
+        "chapter_start": 20,
+        "verse_start": 1,
+        "chapter_end": 20,
+        "verse_end": 2
+      }
+    ]
+  },
+  {
+    "number": 199,
+    "code": "evt_nt_paul_j3_n199",
+    "era_code": "era_nt_apostolic",
+    "title": "3차 선교(3): 헬라(고린도)—머무름과 결심",
+    "summary": "바울은 헬라에서 머물며 다음 행선과 위험을 준비한다.",
+    "start_year": 56,
+    "end_year": 57,
+    "time_precision": "approx",
+    "time_sort_key": 56199,
+    "place_name": "고린도(헬라)",
+    "lat": 37.939,
+    "lng": 22.932,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 20:2-3",
+        "chapter_start": 20,
+        "verse_start": 2,
+        "chapter_end": 20,
+        "verse_end": 3
+      }
+    ]
+  },
+  {
+    "number": 200,
+    "code": "evt_nt_paul_j3_n200",
+    "era_code": "era_nt_apostolic",
+    "title": "3차 선교(4): 밀레도—에베소 장로들과 작별",
+    "summary": "바울은 장로들을 불러 눈물로 권면하고 다시는 못 볼지도 모른다고 말한다.",
+    "start_year": 57,
+    "end_year": 57,
+    "time_precision": "approx",
+    "time_sort_key": 57200,
+    "place_name": "밀레도",
+    "lat": 37.53,
+    "lng": 27.276,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 20:17-38",
+        "chapter_start": 20,
+        "verse_start": 17,
+        "chapter_end": 20,
+        "verse_end": 38
+      }
+    ]
+  },
+  {
+    "number": 201,
+    "code": "evt_nt_paul_rome_n201",
+    "era_code": "era_nt_apostolic",
+    "title": "로마행(1): 예루살렘 체포",
+    "summary": "성전 소동으로 바울이 붙잡히며 ‘로마까지’의 여정이 시작된다.",
+    "start_year": 57,
+    "end_year": 57,
+    "time_precision": "approx",
+    "time_sort_key": 57201,
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.235,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 21:27-36",
+        "chapter_start": 21,
+        "verse_start": 27,
+        "chapter_end": 21,
+        "verse_end": 36
+      }
+    ]
+  },
+  {
+    "number": 202,
+    "code": "evt_nt_paul_rome_n202",
+    "era_code": "era_nt_apostolic",
+    "title": "로마행(2): 가이사랴 재판과 상소",
+    "summary": "바울은 재판 자리에서 증언하고 ‘가이사에게 상소’한다.",
+    "start_year": 59,
+    "end_year": 59,
+    "time_precision": "approx",
+    "time_sort_key": 59202,
+    "place_name": "가이사랴",
+    "lat": 32.5,
+    "lng": 34.89,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 24:10-27",
+        "chapter_start": 24,
+        "verse_start": 10,
+        "chapter_end": 24,
+        "verse_end": 27
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 25:7-12",
+        "chapter_start": 25,
+        "verse_start": 7,
+        "chapter_end": 25,
+        "verse_end": 12
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 26:1-32",
+        "chapter_start": 26,
+        "verse_start": 1,
+        "chapter_end": 26,
+        "verse_end": 32
+      }
+    ]
+  },
+  {
+    "number": 203,
+    "code": "evt_nt_paul_rome_n203",
+    "era_code": "era_nt_apostolic",
+    "title": "로마행(3): 폭풍의 항해",
+    "summary": "폭풍 속에서 바울은 ‘두려워 말라’는 약속으로 사람들을 붙든다.",
+    "start_year": 59,
+    "end_year": 59,
+    "time_precision": "approx",
+    "time_sort_key": 59203,
+    "place_name": "지중해 항로(그레데 근처, 전승)",
+    "lat": 35.2,
+    "lng": 25.1,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 27:13-26",
+        "chapter_start": 27,
+        "verse_start": 13,
+        "chapter_end": 27,
+        "verse_end": 26
+      }
+    ]
+  },
+  {
+    "number": 204,
+    "code": "evt_nt_paul_rome_n204",
+    "era_code": "era_nt_apostolic",
+    "title": "로마행(4): 멜리데(몰타) 표류",
+    "summary": "난파 후 섬에 도착하고, 바울을 통한 표징으로 사람들이 마음을 연다.",
+    "start_year": 60,
+    "end_year": 60,
+    "time_precision": "approx",
+    "time_sort_key": 60204,
+    "place_name": "몰타(멜리데)",
+    "lat": 35.9,
+    "lng": 14.51,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 27:39-44",
+        "chapter_start": 27,
+        "verse_start": 39,
+        "chapter_end": 27,
+        "verse_end": 44
+      },
+      {
+        "book_name": "사도행전",
+        "display_text": "행 28:1-10",
+        "chapter_start": 28,
+        "verse_start": 1,
+        "chapter_end": 28,
+        "verse_end": 10
+      }
+    ]
+  },
+  {
+    "number": 205,
+    "code": "evt_nt_paul_rome_n205",
+    "era_code": "era_nt_apostolic",
+    "title": "로마행(5): 로마 도착",
+    "summary": "바울은 로마에 도착해 묶인 상태로도 복음을 전한다.",
+    "start_year": 60,
+    "end_year": 62,
+    "time_precision": "approx",
+    "time_sort_key": 60205,
+    "place_name": "로마",
+    "lat": 41.902,
+    "lng": 12.496,
+    "persons": [
+      "paul"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "사도행전",
+        "display_text": "행 28:14-31",
+        "chapter_start": 28,
+        "verse_start": 14,
+        "chapter_end": 28,
+        "verse_end": 31
+      }
+    ]
+  },
+  {
+    "number": 206,
+    "code": "evt_n206",
+    "era_code": "era_nt_post_apostolic",
+    "title": "성전 파괴: 예루살렘의 큰 전환",
+    "summary": "AD 70 예루살렘 성전이 파괴되며 시대의 큰 전환이 일어난다.",
+    "start_year": 70,
+    "end_year": 70,
+    "time_precision": "exact",
+    "time_sort_key": 70206,
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.235,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "마태복음",
+        "display_text": "마 24:1-2",
+        "chapter_start": 24,
+        "verse_start": 1,
+        "chapter_end": 24,
+        "verse_end": 2
+      },
+      {
+        "book_name": "누가복음",
+        "display_text": "눅 21:5-6",
+        "chapter_start": 21,
+        "verse_start": 5,
+        "chapter_end": 21,
+        "verse_end": 6
+      }
+    ]
+  },
+  {
+    "number": 207,
+    "code": "evt_n207",
+    "era_code": "era_nt_post_apostolic",
+    "title": "밧모섬의 요한: 계시의 시작",
+    "summary": "요한은 밧모섬에서 환상 가운데 계시를 받는다.",
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "time_sort_key": 95207,
+    "place_name": "밧모섬",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 1:9-20",
+        "chapter_start": 1,
+        "verse_start": 9,
+        "chapter_end": 1,
+        "verse_end": 20
+      }
+    ]
+  },
+  {
+    "number": 208,
+    "code": "evt_n208",
+    "era_code": "era_nt_post_apostolic",
+    "title": "일곱 교회 편지: 촛대 사이의 말씀",
+    "summary": "일곱 교회에 칭찬과 책망, 약속이 전달된다.",
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "time_sort_key": 95208,
+    "place_name": "소아시아(일곱 교회 중심: 에베소)",
+    "lat": 37.95,
+    "lng": 27.37,
+    "persons": [
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 2:1-3:22",
+        "chapter_start": 2,
+        "verse_start": 1,
+        "chapter_end": 3,
+        "verse_end": 22
+      }
+    ]
+  },
+  {
+    "number": 209,
+    "code": "evt_n209",
+    "era_code": "era_nt_consummation",
+    "title": "하늘 보좌: 문이 열리다",
+    "summary": "요한은 하늘 보좌의 환상을 보고 경배의 중심을 목격한다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900209,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 4:1-11",
+        "chapter_start": 4,
+        "verse_start": 1,
+        "chapter_end": 4,
+        "verse_end": 11
+      }
+    ]
+  },
+  {
+    "number": 210,
+    "code": "evt_n210",
+    "era_code": "era_nt_consummation",
+    "title": "어린양: 두루마리를 받다",
+    "summary": "어린양이 두루마리를 받아 역사의 열쇠를 여는 존재로 드러난다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900210,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 5:1-14",
+        "chapter_start": 5,
+        "verse_start": 1,
+        "chapter_end": 5,
+        "verse_end": 14
+      }
+    ]
+  },
+  {
+    "number": 211,
+    "code": "evt_n211",
+    "era_code": "era_nt_consummation",
+    "title": "일곱 인: 역사의 문이 열리다",
+    "summary": "봉인이 하나씩 열리며 심판과 경고의 흐름이 전개된다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900211,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 6:1-7:17",
+        "chapter_start": 6,
+        "verse_start": 1,
+        "chapter_end": 7,
+        "verse_end": 17
+      }
+    ]
+  },
+  {
+    "number": 212,
+    "code": "evt_n212",
+    "era_code": "era_nt_consummation",
+    "title": "일곱 나팔: 경고의 울림",
+    "summary": "나팔이 울리며 경고가 반복되고 회개의 촉구가 이어진다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900212,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 8:1-11:19",
+        "chapter_start": 8,
+        "verse_start": 1,
+        "chapter_end": 11,
+        "verse_end": 19
+      }
+    ]
+  },
+  {
+    "number": 213,
+    "code": "evt_n213",
+    "era_code": "era_nt_consummation",
+    "title": "용과 두 짐승: 대립의 정점",
+    "summary": "거대한 대립이 드러나고, 믿는 자들의 인내가 강조된다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900213,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 12:1-13:18",
+        "chapter_start": 12,
+        "verse_start": 1,
+        "chapter_end": 13,
+        "verse_end": 18
+      }
+    ]
+  },
+  {
+    "number": 214,
+    "code": "evt_n214",
+    "era_code": "era_nt_consummation",
+    "title": "바벨론의 멸망: 무너지는 화려함",
+    "summary": "교만한 체계가 무너지고, 애통과 해방의 대비가 나타난다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900214,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 17:1-18",
+        "chapter_start": 17,
+        "verse_start": 1,
+        "chapter_end": 17,
+        "verse_end": 18
+      },
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 18:1-24",
+        "chapter_start": 18,
+        "verse_start": 1,
+        "chapter_end": 18,
+        "verse_end": 24
+      }
+    ]
+  },
+  {
+    "number": 215,
+    "code": "evt_n215",
+    "era_code": "era_nt_consummation",
+    "title": "최후 심판과 새 하늘 새 땅",
+    "summary": "심판이 지나고 새 예루살렘과 영원한 회복이 선포된다.",
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "time_sort_key": 900215,
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "persons": [
+      "john"
+    ],
+    "bible_refs": [
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 20:11-15",
+        "chapter_start": 20,
+        "verse_start": 11,
+        "chapter_end": 20,
+        "verse_end": 15
+      },
+      {
+        "book_name": "요한계시록",
+        "display_text": "계 21:1-22:5",
+        "chapter_start": 21,
+        "verse_start": 1,
+        "chapter_end": 22,
+        "verse_end": 5
+      }
+    ]
+  }
+]

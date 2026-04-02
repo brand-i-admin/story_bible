@@ -14,6 +14,7 @@ import base64
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 from typing import Any
@@ -37,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--prompt-json",
-        default="tools/avatar_prompts_51.json",
+        default="tools/avatar_prompts.json",
         help="Path to prompt JSON file.",
     )
     parser.add_argument(
@@ -96,6 +97,23 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do not append adult-only guardrail text to prompts.",
     )
+    parser.add_argument(
+        "--no-normalize-framing",
+        action="store_true",
+        help="Do not normalize avatar framing after generation.",
+    )
+    parser.add_argument(
+        "--content-ratio",
+        type=float,
+        default=0.90,
+        help="Target visible content ratio inside the avatar canvas. Default is 0.90.",
+    )
+    parser.add_argument(
+        "--white-threshold",
+        type=int,
+        default=248,
+        help="Near-white threshold used by the framing normalizer. Default is 248.",
+    )
     return parser.parse_args()
 
 
@@ -107,17 +125,33 @@ def load_prompt_config(path: Path) -> dict[str, Any]:
     return data
 
 
+def combine_negative_prompt(base_negative_prompt: str, extra_negative_prompt: str) -> str:
+    parts = [
+        part.strip()
+        for part in (base_negative_prompt, extra_negative_prompt)
+        if part and part.strip()
+    ]
+    return ", ".join(parts)
+
+
 def build_final_prompt(
     raw_prompt: str,
     common_style: str,
     *,
     include_adult_guardrail: bool = True,
+    use_common_style: bool = True,
 ) -> str:
     prompt = raw_prompt.strip()
-    if "COMMON_STYLE" in prompt:
-        prompt = prompt.replace("COMMON_STYLE", common_style).strip()
-    elif not prompt.startswith(common_style):
-        prompt = f"{common_style}, {prompt}"
+    if use_common_style and common_style:
+        if "COMMON_STYLE" in prompt:
+            prompt = prompt.replace("COMMON_STYLE", common_style).strip()
+        elif not prompt.startswith(common_style):
+            prompt = f"{common_style}, {prompt}"
+    else:
+        prompt = prompt.replace("COMMON_STYLE", "").strip()
+
+    # Normalize comma spacing and remove empty segments after token replacement.
+    prompt = ", ".join(part.strip() for part in prompt.split(",") if part.strip())
 
     if not include_adult_guardrail:
         return prompt
@@ -126,6 +160,35 @@ def build_final_prompt(
     if "no children" in lower or "no minors" in lower or "age 25+" in lower:
         return prompt
     return f"{prompt}, {ADULT_GUARDRAIL}"
+
+
+def normalize_avatar_files(
+    paths: list[Path],
+    *,
+    content_ratio: float,
+    white_threshold: int,
+) -> None:
+    if not paths:
+        return
+
+    script_path = Path(__file__).with_name("normalize_avatar_pngs.swift")
+    if not script_path.exists():
+        raise FileNotFoundError(f"Normalizer script not found: {script_path}")
+
+    cmd = [
+        "swift",
+        str(script_path),
+        "--content-ratio",
+        f"{content_ratio:.4f}",
+        "--white-threshold",
+        str(white_threshold),
+    ]
+    cmd.extend(str(path) for path in paths)
+    module_cache_dir = Path("/tmp/swift-module-cache")
+    module_cache_dir.mkdir(parents=True, exist_ok=True)
+    env = os.environ.copy()
+    env.setdefault("CLANG_MODULE_CACHE_PATH", str(module_cache_dir))
+    subprocess.run(cmd, check=True, env=env)
 
 
 def get_access_token() -> str:
@@ -317,10 +380,13 @@ def main() -> int:
 
     if args.dry_run:
         for item in characters:
+            use_common_style = bool(item.get("use_common_style", True))
+            disable_adult_guardrail = bool(item.get("disable_adult_guardrail", False))
             prompt = build_final_prompt(
                 item["prompt"],
                 common_style,
-                include_adult_guardrail=not args.no_adult_guardrail,
+                include_adult_guardrail=(not args.no_adult_guardrail) and (not disable_adult_guardrail),
+                use_common_style=use_common_style,
             )
             print(f"[DRY] {item['index']:02d} {item['code']}: {prompt}")
         print(f"DRY-RUN complete: {len(characters)} prompts")
@@ -337,14 +403,24 @@ def main() -> int:
 
     success = 0
     failure = 0
+    generated_files: list[Path] = []
 
     for item in characters:
         code = item["code"]
         index = int(item.get("index", 0))
+        use_common_style = bool(item.get("use_common_style", True))
+        disable_adult_guardrail = bool(item.get("disable_adult_guardrail", False))
+        per_item_person_generation = str(item.get("person_generation", "")).strip()
+        per_item_negative_prompt = str(item.get("negative_prompt_extra", "")).strip()
         prompt = build_final_prompt(
             item["prompt"],
             common_style,
-            include_adult_guardrail=not args.no_adult_guardrail,
+            include_adult_guardrail=(not args.no_adult_guardrail) and (not disable_adult_guardrail),
+            use_common_style=use_common_style,
+        )
+        final_negative_prompt = combine_negative_prompt(
+            negative_prompt,
+            per_item_negative_prompt,
         )
         out_file = out_dir / f"{code}.png"
 
@@ -354,9 +430,9 @@ def main() -> int:
 
         body = build_request_body(
             prompt,
-            negative_prompt,
+            final_negative_prompt,
             defaults,
-            person_generation_override=args.person_generation,
+            person_generation_override=(args.person_generation or per_item_person_generation),
         )
         try:
             response = session.post(endpoint, json=body, timeout=180)
@@ -400,6 +476,7 @@ def main() -> int:
                 continue
 
             out_file.write_bytes(img_bytes)
+            generated_files.append(out_file)
             success += 1
             print(f"[OK]   {index:02d} {code} -> {out_file}")
         except Exception as exc:  # noqa: BLE001
@@ -408,6 +485,21 @@ def main() -> int:
 
         if args.sleep_sec > 0:
             time.sleep(args.sleep_sec)
+
+    if generated_files and not args.no_normalize_framing:
+        try:
+            normalize_avatar_files(
+                generated_files,
+                content_ratio=args.content_ratio,
+                white_threshold=args.white_threshold,
+            )
+            print(
+                "[OK]   normalized framing "
+                f"({len(generated_files)} files, target ratio={args.content_ratio:.2f})"
+            )
+        except Exception as exc:  # noqa: BLE001
+            failure += 1
+            print(f"[FAIL] framing normalization error={exc}")
 
     print(f"Done. success={success} failure={failure}")
     return 0 if failure == 0 else 1

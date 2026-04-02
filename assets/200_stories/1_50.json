@@ -1,0 +1,2269 @@
+[
+  {
+    "title": "001 창조: 7일과 안식",
+    "era": "era_primeval",
+    "persons": [
+      "god"
+    ],
+    "place_name": "메소포타미아(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
+    "summary": "하나님이 말씀으로 세상을 창조하시고 안식으로 완성하신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "1:1",
+        "to": "2:3"
+      }
+    ],
+    "start_year": -4000,
+    "end_year": -4000,
+    "time_precision": "approx",
+    "story_scenes": [
+      "완전한 어둠과 혼돈이 가득한 태초의 세계",
+      "하나님의 빛이 임하며 어둠이 갈라지고 질서가 생겨난다",
+      "하늘과 바다와 땅, 식물과 별과 동물이 차례로 채워지고 사람은 전혀 보이지 않는다",
+      "넓은 세상이 고요한 안식에 잠기고 사람은 전혀 보이지 않는다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "god"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "002 에덴: 사람의 창조와 사명",
+    "era": "era_primeval",
+    "persons": [
+      "god",
+      "adam",
+      "eve"
+    ],
+    "place_name": "에덴 지역(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
+    "summary": "사람은 에덴에서 돌보고 지키는 사명을 받는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "2:4",
+        "to": "2:25"
+      }
+    ],
+    "start_year": -4000,
+    "end_year": -4000,
+    "time_precision": "approx",
+    "story_scenes": [
+      "옷을 입지 않은 아담이 큰 잎과 풀숲에 몸을 가린 채 흙에서 일어나 숨을 들이마시며 눈을 뜬다, 얼굴과 어깨 위주만 보인다",
+      "옷을 입지 않은 아담이 에덴의 큰 잎과 풀숲에 몸을 가린 채 서 있고 하나님의 빛이 가까이 임한다, 얼굴과 상반신 위주만 보인다",
+      "옷을 입지 않은 아담이 큰 잎과 풀숲에 몸을 가린 채 동물들을 바라보며 이름을 붙인다, 얼굴과 상반신 위주만 보인다",
+      "옷을 입지 않은 아담과 하와가 큰 잎과 풀숲 뒤에 몸을 가린 채 서로를 바라본다, 얼굴과 어깨 위주만 보인다"
+    ],
+    "scene_persons": [
+      [
+        "adam"
+      ],
+      [
+        "god",
+        "adam"
+      ],
+      [
+        "adam"
+      ],
+      [
+        "adam",
+        "eve"
+      ]
+    ],
+    "scene_reference_persons": [
+      [],
+      [
+        "god"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "003 타락: 뱀의 유혹과 선택",
+    "era": "era_primeval",
+    "persons": [
+      "eve",
+      "adam",
+      "serpent"
+    ],
+    "place_name": "에덴 지역(추정)",
+    "lat": 31.018,
+    "lng": 47.423,
+    "summary": "유혹은 의심을 만들고, 선택은 관계의 균열로 이어진다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "3:1",
+        "to": "3:13"
+      }
+    ],
+    "start_year": -3995,
+    "end_year": -3995,
+    "time_precision": "approx",
+    "story_scenes": [
+      "옷을 입지 않은 하와가 큰 나무 곁에서 뱀의 유혹을 듣는다, 몸은 잎과 가지에 가려지고 얼굴과 어깨 위주만 보인다",
+      "옷을 입지 않은 하와가 열매를 바라보며 망설이다 손을 뻗는다, 몸은 큰 잎과 풀숲에 가려지고 얼굴과 상반신 위주만 보인다",
+      "옷을 입지 않은 하와가 아담에게 열매를 건네고 아담이 받는다, 두 사람의 몸은 잎과 풀에 가려지고 얼굴과 어깨 위주만 보인다",
+      "아담과 하와가 잎으로 몸을 가린 채 나무 사이에 숨는다, 부끄러움이 덮친다"
+    ],
+    "scene_persons": [
+      [
+        "eve",
+        "serpent"
+      ],
+      [
+        "eve"
+      ],
+      [
+        "eve",
+        "adam"
+      ],
+      [
+        "adam",
+        "eve"
+      ]
+    ],
+    "scene_reference_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "004 추방: 동산 밖으로",
+    "era": "era_primeval",
+    "persons": [
+      "god",
+      "adam",
+      "eve"
+    ],
+    "place_name": "에덴 동쪽(추정)",
+    "lat": 31.09,
+    "lng": 47.52,
+    "summary": "죄의 결과로 사람은 에덴을 떠나고, 길은 막힌다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "3:14",
+        "to": "3:24"
+      }
+    ],
+    "start_year": -3995,
+    "end_year": -3995,
+    "time_precision": "approx",
+    "story_scenes": [
+      "하나님의 빛 앞에서 아담과 하와가 거친 가죽옷을 입은 채 고개를 숙이고 결과를 듣는다",
+      "하나님이 아담과 하와에게 거친 가죽옷을 입혀 준다",
+      "아담과 하와가 거친 가죽옷을 입은 채 동산 문을 나선다, 침묵의 발걸음",
+      "생명나무로 가는 길이 막히고 불칼이 번쩍인다"
+    ],
+    "scene_persons": [
+      [
+        "god",
+        "adam",
+        "eve"
+      ],
+      [
+        "god",
+        "adam",
+        "eve"
+      ],
+      [
+        "adam",
+        "eve"
+      ],
+      []
+    ],
+    "scene_reference_persons": [
+      [
+        "god"
+      ],
+      [
+        "god"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "005 가인과 아벨: 들판의 비극",
+    "era": "era_primeval",
+    "persons": [
+      "cain",
+      "abel",
+      "god"
+    ],
+    "place_name": "에덴 밖 들판(추정)",
+    "lat": 31.16,
+    "lng": 47.61,
+    "summary": "분노가 다스려지지 않자 형제가 형제를 해친다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "4:1",
+        "to": "4:16"
+      }
+    ],
+    "start_year": -3950,
+    "end_year": -3950,
+    "time_precision": "approx",
+    "story_scenes": [
+      "두 형제가 제사를 드린다, 표정 대비",
+      "하나님의 빛이 임하고, 가인이 이를 악문다",
+      "들판에서 가인이 아벨을 덮친다, 직접 묘사 없이 충격",
+      "하나님의 빛이 임하고, 가인은 책임을 피한다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "god"
+      ],
+      [],
+      [
+        "god"
+      ]
+    ]
+  },
+  {
+    "title": "006 셋의 계보: 다시 부르다",
+    "era": "era_primeval",
+    "persons": [
+      "seth"
+    ],
+    "place_name": "근동(상징)",
+    "lat": 33.0,
+    "lng": 44.0,
+    "summary": "끊긴 듯한 역사 속에서도 하나님을 찾는 흐름이 이어진다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "4:25",
+        "to": "5:24"
+      }
+    ],
+    "start_year": -3900,
+    "end_year": -3100,
+    "time_precision": "approx",
+    "story_scenes": [
+      "seth가 seth가 seth가 seth가 결연한 표정으로 선다",
+      "세대가 지나가며 이름들이 이어진다, 계보",
+      "seth가 seth가 사람들이 여호와의 이름을 부르기 시작한다, 예배 앞쪽에 서 있다",
+      "에녹이 하나님과 동행하는 모습으로 마무리된다"
+    ],
+    "scene_persons": [
+      [
+        "seth"
+      ],
+      [],
+      [
+        "seth"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "007 홍수 전의 타락: 노아를 주목하다",
+    "era": "era_primeval",
+    "persons": [
+      "god",
+      "noah"
+    ],
+    "place_name": "근동",
+    "lat": 33.0,
+    "lng": 44.0,
+    "summary": "폭력으로 가득 찬 세상 속에서 하나님은 노아에게 길을 여신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "6:1",
+        "to": "6:22"
+      }
+    ],
+    "start_year": -2500,
+    "end_year": -2500,
+    "time_precision": "approx",
+    "story_scenes": [
+      "혼란과 폭력이 번지는 앞쪽에 서 있고, 거리의 소란",
+      "하나님의 빛이 임한다",
+      "노아가 조용히 방주 설계 도면을 펼친다",
+      "노아가 첫 나무를 자르며 준비를 시작한다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "god"
+      ],
+      [
+        "noah"
+      ],
+      [
+        "noah"
+      ]
+    ]
+  },
+  {
+    "title": "008 방주와 홍수: 문이 닫히다",
+    "era": "era_primeval",
+    "persons": [
+      "noah"
+    ],
+    "place_name": "방주(근동)",
+    "lat": 33.0,
+    "lng": 44.0,
+    "summary": "구원의 문이 닫히고 물이 땅을 덮는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "7:1",
+        "to": "8:19"
+      }
+    ],
+    "start_year": -2500,
+    "end_year": -2499,
+    "time_precision": "approx",
+    "story_scenes": [
+      "노아 가족이 방주로 들어가고 짐승들이 따라 들어온다",
+      "문이 닫히는 둔탁한 소리, 바깥 소리가 끊긴다",
+      "폭우와 물기둥, 방주가 크게 흔들리며 떠오른다",
+      "물이 잦아들고 방주 문이 열리며 새 땅이 보인다"
+    ],
+    "scene_persons": [
+      [
+        "noah"
+      ],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "009 무지개 언약: 다시는",
+    "era": "era_primeval",
+    "persons": [
+      "god",
+      "noah"
+    ],
+    "place_name": "아라랏 산지(전승)",
+    "lat": 39.7,
+    "lng": 44.3,
+    "summary": "하나님은 무지개로 언약을 표징하시며 새 출발을 약속하신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "8:20",
+        "to": "9:17"
+      }
+    ],
+    "start_year": -2499,
+    "end_year": -2499,
+    "time_precision": "approx",
+    "story_scenes": [
+      "노아가 제단을 쌓고 고개 숙인다, 연기가 위로 오른다",
+      "하나님의 빛이 임한다",
+      "비구름이 걷히고 햇빛만 비치며 사람은 보이지 않는다",
+      "무지개가 선명하게 걸리고 노아가 올려다본다"
+    ],
+    "scene_persons": [
+      [
+        "noah"
+      ],
+      [
+        "god"
+      ],
+      [],
+      [
+        "noah"
+      ]
+    ]
+  },
+  {
+    "title": "010 바벨탑: 언어가 갈라지다",
+    "era": "era_primeval",
+    "persons": [
+      "babel_people",
+      "god"
+    ],
+    "place_name": "시날 평지(바벨론, 전승)",
+    "lat": 32.54,
+    "lng": 44.42,
+    "summary": "자기 이름을 세우려던 계획은 언어의 혼잡으로 멈춘다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "11:1",
+        "to": "11:9"
+      }
+    ],
+    "start_year": -2200,
+    "end_year": -2200,
+    "time_precision": "approx",
+    "story_scenes": [
+      "배경과 분위기만 보이는",
+      "탑이 올라가며 사람들의 얼굴이 도취된다",
+      "갑자기 말이 안 통한다, 손짓만 커지고 싸움이 난다",
+      "공사가 멈추고 사람들이 각기 다른 방향으로 흩어진다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "011 아브라함의 부르심: 떠나라",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "god"
+    ],
+    "place_name": "하란",
+    "lat": 36.87,
+    "lng": 39.03,
+    "summary": "하나님이 아브라함을 부르시고 약속의 길을 여신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "12:1",
+        "to": "12:9"
+      }
+    ],
+    "start_year": -2100,
+    "end_year": -2100,
+    "time_precision": "approx",
+    "story_scenes": [
+      "하란의 일상 속에서 아브라함이 멈춰 서서 먼 곳을 바라본다",
+      "하나님의 빛이 임하고 아브라함이 숨을 고른다",
+      "아브라함이 장막을 접고 가족이 짐을 낙타에 싣는다",
+      "가나안으로 향하는 길 위에서 아브라함이 제단을 세운다"
+    ],
+    "scene_persons": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ]
+    ]
+  },
+  {
+    "title": "012 애굽 우회: 두려움의 선택",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah"
+    ],
+    "place_name": "애굽(멤피스 일대, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "기근과 두려움 속에서 아브라함은 위험한 거짓말을 선택한다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "12:10",
+        "to": "12:20"
+      }
+    ],
+    "start_year": -2099,
+    "end_year": -2099,
+    "time_precision": "approx",
+    "story_scenes": [
+      "메마른 땅, 기근 속 행렬이 애굽으로 향한다",
+      "아브라함이 사라에게 속삭인다",
+      "궁정 쪽으로 끌려가는 사라, 긴장, 아브라함은 굳은 얼굴",
+      "재앙 후 사라가 돌아오고, 아브라함은 급히 떠난다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ]
+    ]
+  },
+  {
+    "title": "013 롯과 분리: 시선의 선택",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "lot"
+    ],
+    "place_name": "요단 들(전승)",
+    "lat": 31.8,
+    "lng": 35.6,
+    "summary": "갈등을 피하려 한 분리가 훗날의 방향을 가른다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "13:1",
+        "to": "13:18"
+      }
+    ],
+    "start_year": -2098,
+    "end_year": -2098,
+    "time_precision": "approx",
+    "story_scenes": [
+      "목자들이 다투고, 아브라함이 손을 들어 멈추게 한다",
+      "아브라함이 앞쪽에 서 있고, 양보를 제안한다",
+      "롯이 푸른 요단 들을 가리키며 선택한다",
+      "아브라함이 남은 땅에 서서 제단을 세운다"
+    ],
+    "scene_persons": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "lot"
+      ],
+      [
+        "abraham"
+      ]
+    ]
+  },
+  {
+    "title": "014 전쟁과 멜기세덱: 축복의 만남",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "lot",
+      "melchizedek"
+    ],
+    "place_name": "살렘(예루살렘, 전승)",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "아브라함은 롯을 구출하고, 멜기세덱에게 축복을 받는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "14:1",
+        "to": "14:24"
+      }
+    ],
+    "start_year": -2097,
+    "end_year": -2097,
+    "time_precision": "approx",
+    "story_scenes": [
+      "전령이 사로잡힘 소식을 전하자 아브라함이 굳은 얼굴로 멈춰 선다",
+      "아브라함이 사람들을 이끌고 야간 추격을 준비한다",
+      "전투 후 롯을 되찾고 돌아오는 아브라함의 행렬",
+      "멜기세덱이 떡과 포도주를 내며 아브라함을 축복한다"
+    ],
+    "scene_persons": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "lot"
+      ],
+      [
+        "abraham",
+        "melchizedek"
+      ]
+    ]
+  },
+  {
+    "title": "015 별 언약: 믿음이 의로",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "god"
+    ],
+    "place_name": "가나안(전승)",
+    "lat": 31.5,
+    "lng": 35.0,
+    "summary": "하나님은 별처럼 많은 자손을 약속하시고 언약을 확증하신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "15:1",
+        "to": "15:21"
+      }
+    ],
+    "start_year": -2096,
+    "end_year": -2096,
+    "time_precision": "approx",
+    "story_scenes": [
+      "밤하늘 아래 하나님의 빛이 임한다",
+      "아브라함이 셀 수 없는 별을 바라보다가 조용히 고개를 끄덕인다",
+      "아브라함이 암소와 암염소와 숫양의 고기를 쪼개어 언약 의식을 준비한다",
+      "어두운 밤, 아브라함이 지켜보는 가운데 하나님의 횃불 같은 빛이 쪼갠 고기 사이를 지나간다"
+    ],
+    "scene_persons": [
+      [
+        "god"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "god"
+      ]
+    ]
+  },
+  {
+    "title": "016 하갈과 이스마엘: 사람의 방법",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah",
+      "hagar",
+      "ishmael"
+    ],
+    "place_name": "가나안(전승)",
+    "lat": 31.5,
+    "lng": 35.0,
+    "summary": "기다림이 길어지자 가정에 갈등이 들어오고 하갈은 광야로 나간다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "16:1",
+        "to": "16:16"
+      }
+    ],
+    "start_year": -2090,
+    "end_year": -2090,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사라가 결연한 표정으로 선다",
+      "하갈의 시선이 바뀌고, 사라와 갈등이 폭발한다",
+      "광야 길, 하갈이 눈물로 주저앉는다",
+      "하나님의 위로, 하갈이 다시 일어나 길을 따른다"
+    ],
+    "scene_persons": [
+      [
+        "sarah"
+      ],
+      [
+        "sarah",
+        "hagar"
+      ],
+      [
+        "hagar"
+      ],
+      [
+        "hagar"
+      ]
+    ]
+  },
+  {
+    "title": "017 할례 언약: 이름이 바뀌다",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah",
+      "god"
+    ],
+    "place_name": "가나안(전승)",
+    "lat": 31.5,
+    "lng": 35.0,
+    "summary": "언약의 표가 주어지고 아브라함과 사라의 이름이 바뀐다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "17:1",
+        "to": "17:27"
+      }
+    ],
+    "start_year": -2088,
+    "end_year": -2088,
+    "time_precision": "approx",
+    "story_scenes": [
+      "하나님의 빛이 임한다",
+      "아브람이 엎드리고, 아브라함으로 불린다",
+      "사래가 사라로 불리며 약속이 구체화된다",
+      "언약의 표가 선포되고 아브라함이 결단한다"
+    ],
+    "scene_persons": [
+      [
+        "god"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "sarah"
+      ],
+      [
+        "abraham"
+      ]
+    ]
+  },
+  {
+    "title": "018 세 손님: 웃음과 약속",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah",
+      "god"
+    ],
+    "place_name": "마므레(헤브론, 전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "summary": "손님을 맞이한 아브라함의 집에 불가능해 보이던 약속이 다시 선포된다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "18:1",
+        "to": "18:15"
+      }
+    ],
+    "start_year": -2087,
+    "end_year": -2087,
+    "time_precision": "approx",
+    "story_scenes": [
+      "더운 낮, 아브라함이 세 손님을 보고 장막 밖으로 뛰어나가 맞이한다",
+      "사라가 장막 안에서 급히 음식을 준비하며 긴장한 표정을 짓는다",
+      "사라가 장막 뒤에서 숨은 채 웃음을 참지 못한다",
+      "하나님의 빛이 아브라함 앞에서 머물고, 장막 뒤에서 그 말을 듣던 사라의 얼굴이 굳는다"
+    ],
+    "scene_persons": [
+      [
+        "abraham"
+      ],
+      [
+        "sarah"
+      ],
+      [
+        "sarah"
+      ],
+      [
+        "abraham",
+        "god",
+        "sarah"
+      ]
+    ]
+  },
+  {
+    "title": "019 소돔을 위한 중보: 숫자가 줄어들다",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "god"
+    ],
+    "place_name": "마므레(전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "summary": "아브라함은 의인을 위해 담대하게 간구하며 하나님의 공의를 붙든다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "18:16",
+        "to": "18:33"
+      }
+    ],
+    "start_year": -2087,
+    "end_year": -2087,
+    "time_precision": "approx",
+    "story_scenes": [
+      "멀리 소돔 방향을 바라보는 아브라함의 실루엣",
+      "아브라함이 하나님의 빛 앞에서 간절히 중보를 시작한다",
+      "아브라함이 땅에 엎드려 하나님께 간절히 기도한다",
+      "기도를 마친 아브라함이 무거운 발걸음으로 자기 장막 쪽으로 돌아간다"
+    ],
+    "scene_persons": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham"
+      ]
+    ]
+  },
+  {
+    "title": "020 소돔 멸망과 롯 구출",
+    "era": "era_patriarch",
+    "persons": [
+      "lot",
+      "lot_wife"
+    ],
+    "place_name": "소돔 일대(사해 남부, 전승)",
+    "lat": 31.2,
+    "lng": 35.5,
+    "summary": "도시는 심판을 받고 롯의 가족은 급히 나오지만 뒤돌아봄이 비극을 만든다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "19:1",
+        "to": "19:29"
+      }
+    ],
+    "start_year": -2086,
+    "end_year": -2086,
+    "time_precision": "approx",
+    "story_scenes": [
+      "밤의 소돔에서 롯이 두 천사를 자기 집 안으로 급히 들여 숨겨 준다",
+      "아직 불타지 않은 도시를 뒤로 두고 롯이 아내와 두 딸을 재촉하며 허둥지둥 달린다",
+      "롯과 아내와 두 딸이 도망가고 뒤편 도시에는 불길과 연기가 치솟기 시작한다",
+      "롯의 아내는 소금기둥이 되고, 롯과 두 딸은 불타는 성을 뒤로한 채 달아난다"
+    ],
+    "scene_persons": [
+      [
+        "lot"
+      ],
+      [
+        "lot",
+        "lot_wife"
+      ],
+      [
+        "lot",
+        "lot_wife"
+      ],
+      [
+        "lot",
+        "lot_wife"
+      ]
+    ]
+  },
+  {
+    "title": "021 아브라함과 아비멜렉: 오해와 보호",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah",
+      "abimelech"
+    ],
+    "place_name": "그랄(전승)",
+    "lat": 31.37,
+    "lng": 34.45,
+    "summary": "아브라함의 두려움이 다시 거짓을 낳지만 하나님이 사라를 지키신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "20:1",
+        "to": "20:18"
+      }
+    ],
+    "start_year": -2085,
+    "end_year": -2085,
+    "time_precision": "approx",
+    "story_scenes": [
+      "그랄 입성, 아브라함과 사라가 결연한 표정으로 선다",
+      "아비멜렉의 궁정, 사라가 끌려가는 긴장",
+      "밤의 꿈, 경고를 받은 아비멜렉이 놀라 깬다",
+      "사라가 돌아오고, 아브라함은 변명 대신 침묵한다"
+    ],
+    "scene_persons": [
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "sarah",
+        "abimelech"
+      ],
+      [
+        "abimelech"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ]
+    ]
+  },
+  {
+    "title": "022 이삭 탄생과 하갈 추방",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah",
+      "isaac",
+      "hagar",
+      "ishmael"
+    ],
+    "place_name": "브엘세바 주변(전승)",
+    "lat": 31.25,
+    "lng": 34.8,
+    "summary": "약속의 아들이 태어나지만 가정의 갈등은 하갈을 광야로 내몬다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "21:1",
+        "to": "21:21"
+      }
+    ],
+    "start_year": -2066,
+    "end_year": -2066,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사라가 아기 이삭을 안고 환하게 웃는다",
+      "사라의 차가운 눈빛이 앞쪽에 크게 보이고, 뒤편에서는 열 살쯤 된 이스마엘이 어린 이삭을 놀린다",
+      "하갈이 물가죽을 들고 열 살쯤 된 이스마엘과 함께 집을 떠난다",
+      "하갈이 우물 앞에서 열 살쯤 된 이스마엘을 안아 일으켜 세운다"
+    ],
+    "scene_persons": [
+      [
+        "sarah",
+        "isaac"
+      ],
+      [
+        "sarah",
+        "isaac",
+        "ishmael"
+      ],
+      [
+        "hagar",
+        "ishmael"
+      ],
+      [
+        "hagar",
+        "ishmael"
+      ]
+    ],
+    "scene_reference_persons": [
+      [
+        "sarah"
+      ],
+      [
+        "sarah"
+      ],
+      [
+        "hagar"
+      ],
+      [
+        "hagar"
+      ]
+    ]
+  },
+  {
+    "title": "023 이삭 번제: 멈추게 하시는 하나님",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "isaac",
+      "god"
+    ],
+    "place_name": "모리아(예루살렘, 전승)",
+    "lat": 31.78,
+    "lng": 35.22,
+    "summary": "극한의 시험 속에서 하나님은 아브라함을 멈추게 하시고 대안을 준비하신다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "22:1",
+        "to": "22:14"
+      }
+    ],
+    "start_year": -2055,
+    "end_year": -2055,
+    "time_precision": "approx",
+    "story_scenes": [
+      "새벽, 아브라함이 나무를 챙기고 서른 살 남짓한 젊은 이삭이 곁에서 함께 길을 나선다",
+      "아브라함과 서른 살 남짓한 젊은 이삭이 산 위에 서 있고 하나님의 빛이 임한다",
+      "제단 위에 누운 서른 살 남짓한 젊은 이삭 곁에서 아브라함의 손이 떨린다",
+      "아브라함이 풀숲 뒤의 숫양을 보고 서른 살 남짓한 젊은 이삭을 풀어준다"
+    ],
+    "scene_persons": [
+      [
+        "abraham",
+        "isaac"
+      ],
+      [
+        "abraham",
+        "isaac",
+        "god"
+      ],
+      [
+        "abraham",
+        "isaac"
+      ],
+      [
+        "abraham",
+        "isaac"
+      ]
+    ],
+    "scene_reference_persons": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ]
+    ]
+  },
+  {
+    "title": "024 사라의 죽음과 막벨라 굴",
+    "era": "era_patriarch",
+    "persons": [
+      "abraham",
+      "sarah"
+    ],
+    "place_name": "헤브론(막벨라, 전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "summary": "아브라함은 약속의 땅에서 첫 소유지로 묘지를 산다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "23:1",
+        "to": "23:20"
+      }
+    ],
+    "start_year": -2030,
+    "end_year": -2030,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사라의 죽음 앞에서 아브라함이 조용히 울며 고개를 숙인다",
+      "성문 앞에서 아브라함이 예의를 지키며 매장지를 요청한다",
+      "아브라함이 은을 세어 땅값을 직접 지불한다",
+      "막벨라 굴에 장사한 뒤 아브라함이 오래 서 있다"
+    ],
+    "scene_persons": [
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ]
+    ]
+  },
+  {
+    "title": "025 리브가: 이삭의 결혼",
+    "era": "era_patriarch",
+    "persons": [
+      "isaac",
+      "rebekah",
+      "abraham_servant"
+    ],
+    "place_name": "하란 주변(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "summary": "기도와 만남을 통해 리브가가 이삭의 아내로 선택된다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "24:1",
+        "to": "24:67"
+      }
+    ],
+    "start_year": -2026,
+    "end_year": -2026,
+    "time_precision": "approx",
+    "story_scenes": [
+      "늙은 종이 여러 낙타를 끌고 우물 곁으로 천천히 다가간다",
+      "우물가에서 리브가가 물을 길어 낙타들에게까지 먹인다",
+      "늙은 종과 낙타들, 리브가가 함께 리브가의 집으로 들어간다",
+      "사십 대쯤의 젊은 이삭이 들판에서 리브가를 처음 맞이한다"
+    ],
+    "scene_persons": [
+      [
+        "abraham_servant"
+      ],
+      [
+        "rebekah"
+      ],
+      [
+        "abraham_servant",
+        "rebekah"
+      ],
+      [
+        "isaac",
+        "rebekah"
+      ]
+    ],
+    "scene_reference_persons": [
+      [
+        "abraham_servant"
+      ],
+      [
+        "rebekah"
+      ],
+      [
+        "abraham_servant",
+        "rebekah"
+      ],
+      [
+        "rebekah"
+      ]
+    ]
+  },
+  {
+    "title": "026 장자권: 한 그릇의 거래",
+    "era": "era_patriarch",
+    "persons": [
+      "esau",
+      "jacob"
+    ],
+    "place_name": "브엘세바 일대(전승)",
+    "lat": 31.25,
+    "lng": 34.8,
+    "summary": "에서는 배고픔에 장자의 권리를 가볍게 팔고 야곱은 그것을 붙잡는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "25:19",
+        "to": "25:34"
+      }
+    ],
+    "start_year": -2006,
+    "end_year": -2006,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사냥에서 돌아온 에서가 지친 몸으로 장막으로 들어온다",
+      "붉은 죽 냄새 앞에서 에서가 허기를 참지 못하고 야곱을 바라본다",
+      "야곱이 장자권을 요구하고 에서가 망설인다",
+      "에서가 허겁지겁 먹고, 뒤편에서는 야곱이 그 모습을 지켜본다"
+    ],
+    "scene_persons": [
+      [
+        "esau"
+      ],
+      [
+        "esau",
+        "jacob"
+      ],
+      [
+        "esau",
+        "jacob"
+      ],
+      [
+        "esau",
+        "jacob"
+      ]
+    ]
+  },
+  {
+    "title": "027 축복 가로채기: 속임수의 밤",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "esau",
+      "isaac",
+      "rebekah"
+    ],
+    "place_name": "브엘세바 일대(전승)",
+    "lat": 31.25,
+    "lng": 34.8,
+    "summary": "야곱은 속임수로 이삭의 축복을 받고 도망길에 오른다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "27:1",
+        "to": "27:45"
+      }
+    ],
+    "start_year": -1985,
+    "end_year": -1985,
+    "time_precision": "approx",
+    "story_scenes": [
+      "늙은 리브가가 급히 계획을 말하고 야곱이 망설인다",
+      "야곱이 염소 가죽을 두르고 늙은 이삭 앞에 선다, 숨죽인 긴장",
+      "에서가 이삭 앞에서 기도해 달라고 간청하지만, 이삭은 더 줄 축복이 없다는 듯 고개를 떨군다",
+      "에서가 돌아와 울부짖고, 야곱은 짐을 챙겨 도망친다"
+    ],
+    "scene_persons": [
+      [
+        "jacob",
+        "rebekah"
+      ],
+      [
+        "jacob",
+        "isaac"
+      ],
+      [
+        "esau",
+        "isaac"
+      ],
+      [
+        "jacob",
+        "esau"
+      ]
+    ]
+  },
+  {
+    "title": "028 벧엘의 꿈: 사다리와 약속",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "god"
+    ],
+    "place_name": "벧엘(전승)",
+    "lat": 31.93,
+    "lng": 35.22,
+    "summary": "도망자 야곱은 길 위에서 ‘함께하심’의 약속을 받는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "28:10",
+        "to": "28:22"
+      }
+    ],
+    "start_year": -1985,
+    "end_year": -1985,
+    "time_precision": "approx",
+    "story_scenes": [
+      "야곱이 돌을 베고 누운다, 밤바람 소리만 들린다",
+      "배경과 분위기만 보이는",
+      "하나님의 빛이 임한다",
+      "야곱이 돌기둥을 세우고 기름을 붓는다, 여기가 하나님의 집이다"
+    ],
+    "scene_persons": [
+      [
+        "jacob"
+      ],
+      [],
+      [
+        "god"
+      ],
+      [
+        "jacob",
+        "god"
+      ]
+    ]
+  },
+  {
+    "title": "029 라반의 집: 레아와 라헬",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "laban",
+      "leah",
+      "rachel"
+    ],
+    "place_name": "하란(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "summary": "야곱은 라헬을 사랑하지만 속임수로 레아와도 결혼하게 된다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "29:1",
+        "to": "29:30"
+      }
+    ],
+    "start_year": -1984,
+    "end_year": -1977,
+    "time_precision": "approx",
+    "story_scenes": [
+      "우물가에서 라헬을 처음 본 야곱이 큰 돌을 옮긴다",
+      "라반이 야곱과 계약을 맺고, 라반은 야곱보다 훨씬 늙어 보인다",
+      "혼인 밤, 얼굴을 가린 신부를 두고 아침에 레아임을 알아차린 야곱이 충격을 받는다",
+      "야곱이 다시 7년을 약속하고 라헬을 맞는다"
+    ],
+    "scene_persons": [
+      [
+        "jacob",
+        "rachel"
+      ],
+      [
+        "laban",
+        "jacob"
+      ],
+      [
+        "jacob",
+        "leah"
+      ],
+      [
+        "jacob",
+        "rachel"
+      ]
+    ]
+  },
+  {
+    "title": "030 열두 아들의 시작: 이름에 담긴 마음",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "leah",
+      "rachel",
+      "bilhah",
+      "zilpah"
+    ],
+    "place_name": "하란(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "summary": "경쟁과 상처 속에서도 열두 지파의 뿌리가 형성된다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "29:31",
+        "to": "30:24"
+      }
+    ],
+    "start_year": -1977,
+    "end_year": -1965,
+    "time_precision": "approx",
+    "story_scenes": [
+      "레아가 결연한 표정으로 선다",
+      "라헬이 앞쪽에 서서 표정과 몸짓이 또렷하게 보인다",
+      "아이들이 늘어나고 장막 사이 경쟁이 깊어진다",
+      "마지막에 라헬이 요셉을 낳고 안도의 숨을 쉰다"
+    ],
+    "scene_persons": [
+      [
+        "leah"
+      ],
+      [
+        "rachel"
+      ],
+      [],
+      [
+        "rachel"
+      ]
+    ]
+  },
+  {
+    "title": "031 야곱의 번성: 양떼의 기묘한 계약",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "laban"
+    ],
+    "place_name": "하란(전승)",
+    "lat": 36.87,
+    "lng": 39.03,
+    "summary": "야곱은 라반의 집에서 번성하고 라반과 갈등이 깊어진다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "30:25",
+        "to": "31:16"
+      }
+    ],
+    "start_year": -1965,
+    "end_year": -1961,
+    "time_precision": "approx",
+    "story_scenes": [
+      "야곱이 떠나겠다고 말하자 라반이 붙잡는다",
+      "양떼 계약이 정해지고, 야곱이 표식을 구분한다",
+      "야곱의 떼가 늘어나며 라반의 얼굴이 굳는다",
+      "야곱이 가족에게 속삭인다, 이제 떠나야 한다"
+    ],
+    "scene_persons": [
+      [
+        "jacob",
+        "laban"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "jacob",
+        "laban"
+      ],
+      [
+        "jacob"
+      ]
+    ]
+  },
+  {
+    "title": "032 도피와 언약: 라반과의 마지막",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "laban"
+    ],
+    "place_name": "길르앗(전승)",
+    "lat": 32.0,
+    "lng": 35.7,
+    "summary": "야곱은 라반을 떠나고, 추격 끝에 언약으로 갈등을 마무리한다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "31:17",
+        "to": "31:55"
+      }
+    ],
+    "start_year": -1961,
+    "end_year": -1961,
+    "time_precision": "approx",
+    "story_scenes": [
+      "야곱이 밤에 장막을 접고 몰래 길을 나선다",
+      "라반이 분노한 얼굴로 추격해 따라잡는다",
+      "야곱과 라반이 격한 말다툼 끝에 돌무더기를 쌓아 경계 표를 만든다",
+      "야곱과 라반이 서로 맹세하고 각자의 길로 갈라진다"
+    ],
+    "scene_persons": [
+      [
+        "jacob"
+      ],
+      [
+        "laban"
+      ],
+      [
+        "jacob",
+        "laban"
+      ],
+      [
+        "jacob",
+        "laban"
+      ]
+    ]
+  },
+  {
+    "title": "033 얍복강 씨름: 이스라엘",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "mysterious_man"
+    ],
+    "place_name": "얍복 강가(전승)",
+    "lat": 32.06,
+    "lng": 35.74,
+    "summary": "야곱은 밤새 씨름하며 새 이름 ‘이스라엘’을 받는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "32:24",
+        "to": "32:32"
+      }
+    ],
+    "start_year": -1960,
+    "end_year": -1960,
+    "time_precision": "approx",
+    "story_scenes": [
+      "강가의 어둠 속에서 야곱이 혼자 숨을 고른다",
+      "천사 같은 신비한 존재가 야곱을 붙잡고 서로 씨름을 시작한다",
+      "신비한 존재가 야곱을 쓰러뜨리며 야곱이 땅에 넘어간다",
+      "이스라엘이라는 새 이름을 받은 야곱이 절뚝이며 동틀 무렵 선다"
+    ],
+    "scene_persons": [
+      [
+        "jacob"
+      ],
+      [
+        "jacob",
+        "mysterious_man"
+      ],
+      [
+        "jacob",
+        "mysterious_man"
+      ],
+      [
+        "jacob"
+      ]
+    ],
+    "scene_reference_persons": [
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ]
+    ]
+  },
+  {
+    "title": "034 에서와 화해: 달려오는 형",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "esau"
+    ],
+    "place_name": "야복/에돔 경계(전승)",
+    "lat": 32.1,
+    "lng": 35.6,
+    "summary": "두려움으로 맞이한 재회는 포옹과 눈물로 풀린다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "33:1",
+        "to": "33:11"
+      }
+    ],
+    "start_year": -1960,
+    "end_year": -1960,
+    "time_precision": "approx",
+    "story_scenes": [
+      "야곱이 가족을 줄 세우고 멀리 에서를 보며 긴장한다",
+      "에서가 달려오고 야곱이 땅에 엎드린다",
+      "에서가 야곱을 껴안고 울고 야곱도 울음을 삼킨다",
+      "야곱이 준비한 선물을 에서에게 직접 건네며 화해를 확인한다"
+    ],
+    "scene_persons": [
+      [
+        "jacob",
+        "esau"
+      ],
+      [
+        "jacob",
+        "esau"
+      ],
+      [
+        "jacob",
+        "esau"
+      ],
+      [
+        "jacob",
+        "esau"
+      ]
+    ]
+  },
+  {
+    "title": "035 디나 사건: 복수의 폭발",
+    "era": "era_patriarch",
+    "persons": [
+      "dinah",
+      "simeon",
+      "levi",
+      "jacob"
+    ],
+    "place_name": "세겜(전승)",
+    "lat": 32.22,
+    "lng": 35.28,
+    "summary": "상처는 복수로 번지고 야곱의 가족은 더 큰 위험에 놓인다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "34:1",
+        "to": "34:31"
+      }
+    ],
+    "start_year": -1958,
+    "end_year": -1958,
+    "time_precision": "approx",
+    "story_scenes": [
+      "디나 사건 이후 장막 안의 공기가 얼어붙고 모두가 충격에 잠긴다",
+      "협상 테이블에서 시므온과 레위는 싸늘한 눈빛으로 앉아 있고 다른 남자들은 옅은 미소를 지으며 말을 건넨다",
+      "시므온과 레위가 칼을 들고 급히 달아나고 뒤편에는 어떤 남자가 침대에 누워 있는 실루엣이 보인다",
+      "야곱이 절망한 얼굴로 고개를 감싸 쥔다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "simeon",
+        "levi"
+      ],
+      [
+        "simeon",
+        "levi"
+      ],
+      [
+        "jacob"
+      ]
+    ]
+  },
+  {
+    "title": "036 벧엘 귀환: 라헬의 죽음",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "rachel",
+      "benjamin"
+    ],
+    "place_name": "베들레헴 길(전승)",
+    "lat": 31.7,
+    "lng": 35.2,
+    "summary": "야곱의 가정은 이동 중 큰 상실을 겪고도 약속의 길을 이어간다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "35:1",
+        "to": "35:20"
+      }
+    ],
+    "start_year": -1955,
+    "end_year": -1955,
+    "time_precision": "approx",
+    "story_scenes": [
+      "야곱이 결연한 표정으로 귀환 길을 재촉한다",
+      "길 위에서 라헬이 진통하고 그 곁에 선 야곱이 초조하게 지켜본다",
+      "라헬의 숨이 가늘어지고 갓난 베냐민 옆에서 야곱이 비통한 얼굴로 서 있다",
+      "야곱이 무덤 기둥을 세우고 오래 서 있다"
+    ],
+    "scene_persons": [
+      [
+        "jacob"
+      ],
+      [
+        "rachel",
+        "jacob"
+      ],
+      [
+        "rachel",
+        "benjamin",
+        "jacob"
+      ],
+      [
+        "jacob"
+      ]
+    ]
+  },
+  {
+    "title": "037 요셉의 꿈: 형제들의 시기",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "jacob",
+      "brothers"
+    ],
+    "place_name": "헤브론 주변(전승)",
+    "lat": 31.53,
+    "lng": 35.1,
+    "summary": "요셉의 꿈과 편애가 형제들의 마음을 뒤틀리게 한다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "37:1",
+        "to": "37:11"
+      }
+    ],
+    "start_year": -1915,
+    "end_year": -1915,
+    "time_precision": "approx",
+    "story_scenes": [
+      "17세 안팎의 어린 요셉이 채색옷을 입고 형들 사이를 지나가자 미묘한 거리감이 흐른다",
+      "17세 안팎의 어린 요셉이 꿈을 이야기하자 형들의 표정이 굳는다",
+      "야곱이 17세 안팎의 어린 요셉을 꾸짖지만 마음속에는 그 말을 담아둔다",
+      "형제들의 시기와 긴장이 장막 사이에 짙게 깔린다"
+    ],
+    "scene_persons": [
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "jacob",
+        "joseph"
+      ],
+      []
+    ],
+    "scene_prompt_notes": [
+      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
+      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
+      "Joseph should look about 17 years old beside Jacob: youthful face, slim build, and little or no beard.",
+      ""
+    ]
+  },
+  {
+    "title": "038 요셉이 팔리다: 구덩이와 은",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "judah",
+      "brothers"
+    ],
+    "place_name": "도단(전승)",
+    "lat": 32.42,
+    "lng": 35.18,
+    "summary": "시기는 요셉을 구덩이에 던지고 끝내 종으로 팔아넘긴다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "37:12",
+        "to": "37:36"
+      }
+    ],
+    "start_year": -1915,
+    "end_year": -1915,
+    "time_precision": "approx",
+    "story_scenes": [
+      "17세 안팎의 어린 요셉이 멀리서 오자 형들이 모여 속삭인다",
+      "17세 안팎의 어린 요셉의 옷을 빼앗고 구덩이에 던지자 절규가 메아리친다",
+      "유다가 다른 형들을 말리며 손을 뻗어 제지한다",
+      "형들의 손에 은이 쥐어지고 멀리서는 17세 안팎의 어린 요셉이 상인들에게 끌려가듯 팔려간다"
+    ],
+    "scene_persons": [
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "judah",
+        "brothers"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
+      "Joseph should look about 17 years old even in distress: youthful face, slim build, and little or no beard.",
+      "",
+      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard."
+    ]
+  },
+  {
+    "title": "040 보디발의 집: 성실과 누명",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "potiphar_wife",
+      "potiphar"
+    ],
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "요셉은 유혹을 거절하지만 누명을 쓰고 감옥으로 내려간다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "39:1",
+        "to": "39:23"
+      }
+    ],
+    "start_year": -1910,
+    "end_year": -1909,
+    "time_precision": "approx",
+    "story_scenes": [
+      "요셉이 보디발의 집 살림을 정리하며 신뢰를 얻고 열쇠를 넘겨받는다",
+      "한 여자가 침대에 앉아 다리를 꼰 채 요셉에게 말을 걸고, 요셉은 앞쪽에 서서 굳은 표정으로 대답한다",
+      "옷을 남기고 달아나는 요셉 뒤로 여자의 고함이 터진다",
+      "감옥에 갇힌 요셉이 죄수들의 일을 맡아 분주히 정리한다"
+    ],
+    "scene_persons": [
+      [
+        "joseph"
+      ],
+      [
+        "joseph",
+        "potiphar_wife"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ]
+    ],
+    "scene_reference_persons": [
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ]
+    ]
+  },
+  {
+    "title": "041 감옥의 꿈: 술 맡은 관원장",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "chief_cupbearer",
+      "chief_baker"
+    ],
+    "place_name": "애굽 감옥(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "요셉은 감옥에서 두 관원의 꿈을 해석하고도 잊혀진다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "40:1",
+        "to": "40:23"
+      }
+    ],
+    "start_year": -1909,
+    "end_year": -1909,
+    "time_precision": "approx",
+    "story_scenes": [
+      "감옥의 아침에 두 관원의 얼굴이 어둡게 가라앉아 있다",
+      "요셉이 두 관원의 꿈 이야기를 차분히 듣는다",
+      "꿈 해석이 맞아 술 맡은 관원장이 바로에게 잔을 바친다",
+      "술 맡은 자는 복귀하지만 요셉은 감옥 창살 곁에 홀로 남는다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "joseph"
+      ],
+      [
+        "chief_cupbearer"
+      ],
+      [
+        "joseph"
+      ]
+    ],
+    "scene_reference_persons": [
+      [],
+      [
+        "joseph"
+      ],
+      [],
+      [
+        "joseph"
+      ]
+    ]
+  },
+  {
+    "title": "042 바로의 꿈: 총리 요셉",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "pharaoh"
+    ],
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "바로의 꿈을 해석한 요셉은 애굽의 총리로 세워진다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "41:1",
+        "to": "41:57"
+      }
+    ],
+    "start_year": -1900,
+    "end_year": -1900,
+    "time_precision": "approx",
+    "story_scenes": [
+      "바로가 꿈에서 깨어 불안해하고 신하들이 술렁인다",
+      "요셉이 궁전으로 들어가는 긴 복도를 빠르게 걸어간다",
+      "요셉이 일곱 해 풍년과 일곱 해 흉년을 설명하며 계획을 제시한다",
+      "바로가 옆에서 지켜보는 가운데, 요셉은 파라오가 아닌 애굽의 총리로서 절제된 흰 관복과 금청 장식, 얇은 머리띠를 하고 사람들 앞에 선다"
+    ],
+    "scene_persons": [
+      [
+        "pharaoh"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "pharaoh",
+        "joseph"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "",
+      "Joseph should appear on the way into the Egyptian palace, moments before his promotion.",
+      "Joseph is still in audience with Pharaoh, not yet in travel clothes.",
+      "Joseph should look like an Egyptian prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no bare-chested pharaoh styling. Keep Joseph's recognizable Semitic face and dignified but restrained Egyptian court-official clothing."
+    ]
+  },
+  {
+    "title": "043 기근: 형제들의 1차 방문",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "brothers"
+    ],
+    "place_name": "애굽(곡물 창고, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "기근 속에 형제들은 애굽으로 오고, 요셉은 그들을 시험하기 시작한다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "42:1",
+        "to": "42:38"
+      }
+    ],
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "story_scenes": [
+      "애굽 성문으로 들어오는 형제들을, 파라오처럼 보이지 않는 애굽 총리 요셉이 절제된 관복 차림으로 지켜본다",
+      "파라오처럼 보이지 않는 애굽 총리 요셉 앞에 형제들이 무릎 꿇는다",
+      "파라오처럼 보이지 않는 애굽 총리 요셉이 형제들에게 화를 내며 날카롭게 몰아붙인다",
+      "시므온이 묶이고, 형제들은 두려움 속에 애굽을 떠나 가나안으로 돌아간다"
+    ],
+    "scene_persons": [
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "brothers",
+        "simeon"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      ""
+    ]
+  },
+  {
+    "title": "044 2차 방문: 잔치와 긴장",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "brothers",
+      "benjamin"
+    ],
+    "place_name": "애굽(요셉의 집, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "베냐민과 함께 돌아온 형제들에게 요셉은 예상 밖의 잔치를 베푼다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "43:1",
+        "to": "43:34"
+      }
+    ],
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "story_scenes": [
+      "베냐민이 결연한 표정으로 선다",
+      "파라오처럼 보이지 않는 애굽 총리 요셉이 베냐민을 보자 눈빛이 흔들리고 자리를 피한다",
+      "파라오처럼 보이지 않는 애굽 총리 요셉이 주재하는 잔치에서 형제들이 불안해하며 앉는다",
+      "베냐민에게 유독 많은 몫이 주어지고, 형제들이 서로 눈치를 본다"
+    ],
+    "scene_persons": [
+      [
+        "benjamin"
+      ],
+      [
+        "joseph",
+        "benjamin"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "brothers",
+        "benjamin"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "",
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      ""
+    ]
+  },
+  {
+    "title": "045 은잔 사건: 유다의 탄원",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "judah",
+      "brothers",
+      "benjamin"
+    ],
+    "place_name": "애굽-가나안 길(전승)",
+    "lat": 30.3,
+    "lng": 32.0,
+    "summary": "은잔이 베냐민 자루에서 발견되고 유다는 자신을 대신 내놓는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "44:1",
+        "to": "44:34"
+      }
+    ],
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "story_scenes": [
+      "형제들이 떠나자마자 추격자가 따라붙는다",
+      "자루를 뒤지다 베냐민 자루에서 잔이 나온다, 얼굴이 하얘진다",
+      "파라오처럼 보이지 않는 애굽 총리 요셉 앞에 유다가 앞으로 나온다",
+      "유다가 앞쪽에 서 있고, 형제들의 눈에 눈물이 맺힌다"
+    ],
+    "scene_persons": [
+      [
+        "brothers"
+      ],
+      [
+        "benjamin"
+      ],
+      [
+        "joseph",
+        "judah"
+      ],
+      [
+        "judah",
+        "brothers"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "",
+      "",
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      ""
+    ]
+  },
+  {
+    "title": "046 요셉의 정체 공개: 울음의 방",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "brothers"
+    ],
+    "place_name": "애굽(요셉의 집, 전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "요셉은 더 이상 참지 못하고 형제들에게 자신을 드러낸다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "45:1",
+        "to": "45:15"
+      }
+    ],
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "story_scenes": [
+      "파라오처럼 보이지 않는 애굽 총리 요셉이 종들에게 모두 물러가라고 손짓한다",
+      "파라오처럼 보이지 않는 애굽 총리 요셉이 형들 앞에서 울음을 터뜨리자 형들은 당황해 얼어붙는다",
+      "요셉이 총리의 겉모습 일부를 내려놓고 자신이 요셉임을 밝히자 형들이 크게 놀란다",
+      "파라오처럼 보이지 않는 총리 차림의 요셉이 베냐민을 끌어안고, 형들은 뒤에서 놀란 얼굴로 그 모습을 바라본다"
+    ],
+    "scene_persons": [
+      [
+        "joseph"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "joseph",
+        "benjamin",
+        "brothers"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
+      "Joseph is revealing his identity after laying aside some outer official symbols, but he still must not resemble Pharaoh.",
+      "Joseph remains recognizable as Egypt's prime minister, not Pharaoh. The embrace with Benjamin is the focus."
+    ]
+  },
+  {
+    "title": "048 고센 정착: 만남과 눈물",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "joseph",
+      "pharaoh"
+    ],
+    "place_name": "고센 땅(나일 델타, 전승)",
+    "lat": 30.8,
+    "lng": 31.85,
+    "summary": "요셉은 야곱을 맞이하고, 이스라엘은 고센에 자리 잡는다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "46:28",
+        "to": "47:12"
+      }
+    ],
+    "start_year": -1880,
+    "end_year": -1879,
+    "time_precision": "approx",
+    "story_scenes": [
+      "애굽 총리의 옷을 입은 요셉이 전차를 타고 고센으로 급히 달려간다",
+      "애굽 총리의 옷을 입은 요셉과 야곱이 마주 보고 끌어안는다",
+      "애굽 총리의 옷을 입은 요셉이 가족을 바로 앞에 세우며 예의를 지킨다",
+      "바로와 야곱이 서로 이야기하고 그 사이에 애굽 총리의 옷을 입은 요셉이 서 있다"
+    ],
+    "scene_persons": [
+      [
+        "joseph"
+      ],
+      [
+        "jacob",
+        "joseph"
+      ],
+      [
+        "joseph",
+        "pharaoh"
+      ],
+      [
+        "pharaoh",
+        "jacob",
+        "joseph"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Joseph is wearing Egyptian prime minister clothing.",
+      "Joseph is wearing Egyptian prime minister clothing.",
+      "Joseph is wearing Egyptian prime minister clothing.",
+      "Joseph is wearing Egyptian prime minister clothing and stands between Pharaoh and Jacob."
+    ]
+  },
+  {
+    "title": "049 야곱의 축복: 열두 아들",
+    "era": "era_patriarch",
+    "persons": [
+      "jacob",
+      "joseph",
+      "reuben",
+      "judah",
+      "benjamin"
+    ],
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "야곱은 마지막 순간 아들들을 불러 각 지파의 길을 예언적으로 선언한다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "48:1",
+        "to": "48:22"
+      },
+      {
+        "book": "창",
+        "from": "49:1",
+        "to": "49:28"
+      }
+    ],
+    "start_year": -1860,
+    "end_year": -1860,
+    "time_precision": "approx",
+    "story_scenes": [
+      "늙은 야곱이 침상에서 상체를 일으킨다",
+      "애굽 총리의 옷을 입은 요셉이 두 아들을 데려오고 야곱의 손이 교차한다",
+      "늙은 야곱이 아들들을 바라보며 무거운 축복의 말을 남긴다",
+      "턱수염과 머리가 하얗게 센 늙은 야곱이 마지막 숨을 고르며 눈을 감는다"
+    ],
+    "scene_persons": [
+      [
+        "jacob"
+      ],
+      [
+        "jacob",
+        "joseph"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "",
+      "Joseph is wearing Egyptian prime minister clothing.",
+      "",
+      "Jacob should look very old with white hair and a white beard."
+    ]
+  },
+  {
+    "title": "050 요셉의 마지막: 뼈를 기억하라",
+    "era": "era_patriarch",
+    "persons": [
+      "joseph",
+      "brothers"
+    ],
+    "place_name": "애굽(전승)",
+    "lat": 29.85,
+    "lng": 31.25,
+    "summary": "요셉은 용서를 확증하고, 언젠가 돌아갈 땅을 바라보며 마지막을 남긴다.",
+    "bible_ref": [
+      {
+        "book": "창",
+        "from": "50:1",
+        "to": "50:26"
+      }
+    ],
+    "start_year": -1805,
+    "end_year": -1805,
+    "time_precision": "approx",
+    "story_scenes": [
+      "애굽 총리의 옷을 입은 요셉이 형들과 함께 아버지를 장사하는 행렬 속에 서 있다",
+      "애굽 총리의 옷을 입은 요셉이 두려워하는 형들을 향해 손을 저으며 위로한다",
+      "늙은 요셉이 애굽의 도시를 바라보며 먼 미래를 생각한다",
+      "요셉이 관 속에 평안히 누워 있다"
+    ],
+    "scene_persons": [
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "joseph",
+        "brothers"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Joseph is wearing Egyptian prime minister clothing.",
+      "Joseph is wearing Egyptian prime minister clothing.",
+      "Joseph is now elderly but still recognizable as the same person.",
+      "Joseph is shown lying in a coffin at the end of his life."
+    ]
+  }
+]

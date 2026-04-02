@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+3
+version: 1.0.0+6
 
 environment:
   sdk: ^3.8.1
@@ -37,6 +37,9 @@ dependencies:
   flutter_map: ^8.2.1
   latlong2: ^0.9.1
   flutter_dotenv: ^5.2.1
+  sign_in_with_apple: ^6.1.4
+  image_picker: ^1.1.2
+  crypto: ^3.0.6
 
 dev_dependencies:
   flutter_test:
@@ -62,9 +65,219 @@ flutter:
   assets:
     - .env
     - assets/maps/ne_50m_admin_0_countries.geojson
-    - assets/avatars/
+    - assets/avatars_thumbs/
     - assets/elements/
-
+    - assets/story_images_thumbs/001 창조_ 7일과 안식/
+    - assets/story_images_thumbs/002 에덴_ 사람의 창조와 사명/
+    - assets/story_images_thumbs/003 타락_ 뱀의 유혹과 선택/
+    - assets/story_images_thumbs/004 추방_ 동산 밖으로/
+    - assets/story_images_thumbs/005 가인과 아벨_ 들판의 비극/
+    - assets/story_images_thumbs/006 셋의 계보_ 다시 부르다/
+    - assets/story_images_thumbs/007 홍수 전의 타락_ 노아를 주목하다/
+    - assets/story_images_thumbs/008 방주와 홍수_ 문이 닫히다/
+    - assets/story_images_thumbs/009 무지개 언약_ 다시는/
+    - assets/story_images_thumbs/010 바벨탑_ 언어가 갈라지다/
+    - assets/story_images_thumbs/011 아브라함의 부르심_ 떠나라/
+    - assets/story_images_thumbs/012 애굽 우회_ 두려움의 선택/
+    - assets/story_images_thumbs/013 롯과 분리_ 시선의 선택/
+    - assets/story_images_thumbs/014 전쟁과 멜기세덱_ 축복의 만남/
+    - assets/story_images_thumbs/015 별 언약_ 믿음이 의로/
+    - assets/story_images_thumbs/016 하갈과 이스마엘_ 사람의 방법/
+    - assets/story_images_thumbs/017 할례 언약_ 이름이 바뀌다/
+    - assets/story_images_thumbs/018 세 손님_ 웃음과 약속/
+    - assets/story_images_thumbs/019 소돔을 위한 중보_ 숫자가 줄어들다/
+    - assets/story_images_thumbs/020 소돔 멸망과 롯 구출/
+    - assets/story_images_thumbs/021 아브라함과 아비멜렉_ 오해와 보호/
+    - assets/story_images_thumbs/022 이삭 탄생과 하갈 추방/
+    - assets/story_images_thumbs/023 이삭 번제_ 멈추게 하시는 하나님/
+    - assets/story_images_thumbs/024 사라의 죽음과 막벨라 굴/
+    - assets/story_images_thumbs/025 리브가_ 이삭의 결혼/
+    - assets/story_images_thumbs/026 장자권_ 한 그릇의 거래/
+    - assets/story_images_thumbs/027 축복 가로채기_ 속임수의 밤/
+    - assets/story_images_thumbs/028 벧엘의 꿈_ 사다리와 약속/
+    - assets/story_images_thumbs/029 라반의 집_ 레아와 라헬/
+    - assets/story_images_thumbs/030 열두 아들의 시작_ 이름에 담긴 마음/
+    - assets/story_images_thumbs/031 야곱의 번성_ 양떼의 기묘한 계약/
+    - assets/story_images_thumbs/032 도피와 언약_ 라반과의 마지막/
+    - assets/story_images_thumbs/033 얍복강 씨름_ 이스라엘/
+    - assets/story_images_thumbs/034 에서와 화해_ 달려오는 형/
+    - assets/story_images_thumbs/035 디나 사건_ 복수의 폭발/
+    - assets/story_images_thumbs/036 벧엘 귀환_ 라헬의 죽음/
+    - assets/story_images_thumbs/037 요셉의 꿈_ 형제들의 시기/
+    - assets/story_images_thumbs/038 요셉이 팔리다_ 구덩이와 은/
+    - assets/story_images_thumbs/040 보디발의 집_ 성실과 누명/
+    - assets/story_images_thumbs/041 감옥의 꿈_ 술 맡은 관원장/
+    - assets/story_images_thumbs/042 바로의 꿈_ 총리 요셉/
+    - assets/story_images_thumbs/043 기근_ 형제들의 1차 방문/
+    - assets/story_images_thumbs/044 2차 방문_ 잔치와 긴장/
+    - assets/story_images_thumbs/045 은잔 사건_ 유다의 탄원/
+    - assets/story_images_thumbs/046 요셉의 정체 공개_ 울음의 방/
+    - assets/story_images_thumbs/048 고센 정착_ 만남과 눈물/
+    - assets/story_images_thumbs/049 야곱의 축복_ 열두 아들/
+    - assets/story_images_thumbs/050 요셉의 마지막_ 뼈를 기억하라/
+    - assets/story_images_thumbs/051 이스라엘의 압제와 산파들/
+    - assets/story_images_thumbs/052 모세의 탄생과 갈대상자/
+    - assets/story_images_thumbs/053 모세의 분노와 미디안 도피/
+    - assets/story_images_thumbs/054 불타는 떨기나무_ 모세의 소명/
+    - assets/story_images_thumbs/055 바로 앞 첫 대면_ 짐이 더 무거워지다/
+    - assets/story_images_thumbs/056 재앙의 시작_ 물이 변하다/
+    - assets/story_images_thumbs/057 유월절_ 피로 표시된 문/
+    - assets/story_images_thumbs/058 출애굽의 밤_ 떠나라는 명령/
+    - assets/story_images_thumbs/059 홍해_ 길이 열리다/
+    - assets/story_images_thumbs/060 마라_ 쓴 물이 달아지다/
+    - assets/story_images_thumbs/061 만나와 메추라기_ 하늘의 양식/
+    - assets/story_images_thumbs/062 아말렉 전투_ 팔이 내려갈 때/
+    - assets/story_images_thumbs/063 시내산 도착_ 산이 떨리다/
+    - assets/story_images_thumbs/064 시내산 도착_ 십계명과 하나님 기준/
+    - assets/story_images_thumbs/064 십계명_ 하나님 나라의 기준/
+    - assets/story_images_thumbs/066 금송아지_ 아래에서 벌어진 일/
+    - assets/story_images_thumbs/067 모세의 중보_ 다시 시작/
+    - assets/story_images_thumbs/068 성막_ 영광이 임하다/
+    - assets/story_images_thumbs/069 나답·아비후_ 가까이함의 무게/
+    - assets/story_images_thumbs/070 가데스 정탐_ 불신의 보고/
+    - assets/story_images_thumbs/071 고라의 반역_ 땅이 갈라지다/
+    - assets/story_images_thumbs/072 놋뱀_ 바라보라/
+    - assets/story_images_thumbs/074 모압의 유혹과 비느하스/
+    - assets/story_images_thumbs/075 모세의 마지막_ 느보 산/
+    - assets/story_images_thumbs/076 요단강 도하_ 물이 멈추다/
+    - assets/story_images_thumbs/077 여리고_ 침묵의 행진/
+    - assets/story_images_thumbs/078 아간_ 감춘 것이 드러나다/
+    - assets/story_images_thumbs/079 기브온 조약_ 속임수의 동맹/
+    - assets/story_images_thumbs/080 세겜 언약 갱신_ 선택하라/
+    - assets/story_images_thumbs/081 사사 시대의 반복_ 잊고, 부르짖고, 구원받고/
+    - assets/story_images_thumbs/082 에훗_ 왼손의 반전/
+    - assets/story_images_thumbs/084 기드온의 소명_ 두려움 속의 표징/
+    - assets/story_images_thumbs/085 기드온 300_ 횃불과 나팔/
+    - assets/story_images_thumbs/086 아비멜렉_ 왕 노릇의 비극/
+    - assets/story_images_thumbs/087 입다_ 서원과 상처/
+    - assets/story_images_thumbs/088 삼손_ 힘의 비밀과 마지막 기도/
+    - assets/story_images_thumbs/089 미가의 우상_ 마음대로의 신앙/
+    - assets/story_images_thumbs/090 베냐민 전쟁_ 공동체의 붕괴/
+    - assets/story_images_thumbs/091 룻의 귀향_ 따라가겠습니다/
+    - assets/story_images_thumbs/092 보아스의 은혜_ 이삭 줍는 자리/
+    - assets/story_images_thumbs/093 기업 무를 자_ 문 앞의 결정/
+    - assets/story_images_thumbs/094 사무엘의 탄생_ 한나의 눈물/
+    - assets/story_images_thumbs/095 언약궤 사건_ 회개와 승리/
+    - assets/story_images_thumbs/096 왕을 요구하다_ 우리도 왕을/
+    - assets/story_images_thumbs/097 사울의 기름부음_ 숨은 청년/
+    - assets/story_images_thumbs/098 사울의 첫 승리_ 얍베스 길르앗/
+    - assets/story_images_thumbs/099 사울의 불순종_ 왕의 균열/
+    - assets/story_images_thumbs/100 다윗의 기름부음_ 새로운 선택/
+    - assets/story_images_thumbs/101 다윗과 골리앗_ 돌 하나/
+    - assets/story_images_thumbs/102 사울의 시기_ 다윗의 도망 시작/
+    - assets/story_images_thumbs/103 다윗이 사울을 살려주다_ 동굴의 순간/
+    - assets/story_images_thumbs/104 사울의 최후_ 엔돌과 길보아/
+    - assets/story_images_thumbs/105 다윗 즉위_ 한 왕국으로/
+    - assets/story_images_thumbs/106 언약궤 입성_ 춤과 기쁨/
+    - assets/story_images_thumbs/107 다윗 언약_ 집을 세우리라/
+    - assets/story_images_thumbs/108 밧세바 사건_ 나단의 책망/
+    - assets/story_images_thumbs/109 압살롬의 반역_ 도망치는 왕/
+    - assets/story_images_thumbs/110 인구조사와 제단_ 다윗의 선택/
+    - assets/story_images_thumbs/111 솔로몬 즉위_ 지혜의 선택/
+    - assets/story_images_thumbs/112 성전 건축_ 손으로 짓는 집/
+    - assets/story_images_thumbs/113 성전 봉헌_ 기도와 영광/
+    - assets/story_images_thumbs/114 솔로몬_ 이방의 경탄부터 타락까지/
+    - assets/story_images_thumbs/114 스바 여왕_ 지혜를 시험하다/
+    - assets/story_images_thumbs/115 왕국의 분열과 역사/
+    - assets/story_images_thumbs/116 엘리야와 갈멜_ 불의 응답/
+    - assets/story_images_thumbs/117 호렙의 엘리야_ 조용한 음성/
+    - assets/story_images_thumbs/118 나봇의 포도원_ 빼앗긴 정의/
+    - assets/story_images_thumbs/119 엘리야 승천_ 겉옷의 계승/
+    - assets/story_images_thumbs/120 나아만_ 요단의 일곱 번/
+    - assets/story_images_thumbs/121 예후의 혁명_ 칼날의 교체/
+    - assets/story_images_thumbs/122 북왕국 멸망_ 사마리아 함락/
+    - assets/story_images_thumbs/123 히스기야와 산헤립_ 두려움의 편지/
+    - assets/story_images_thumbs/124 히스기야의 병과 바벨론 사신/
+    - assets/story_images_thumbs/125 요시야의 개혁_ 율법책을 찾다/
+    - assets/story_images_thumbs/126 예레미야의 소명_ 불타는 말씀/
+    - assets/story_images_thumbs/127 바벨론의 압박_ 첫 포로/
+    - assets/story_images_thumbs/128 예루살렘 포위_ 왕의 몰락/
+    - assets/story_images_thumbs/129 예루살렘 함락_ 성전이 불타다/
+    - assets/story_images_thumbs/130 남은 자의 선택_ 두 갈래 길/
+    - assets/story_images_thumbs/131 에스겔의 소명_ 보좌의 환상/
+    - assets/story_images_thumbs/132 마른 뼈_ 숨이 들어오다/
+    - assets/story_images_thumbs/133 다니엘_ 뜻을 정하다/
+    - assets/story_images_thumbs/134 풀무불_ 다니엘과 세 친구/
+    - assets/story_images_thumbs/135 벨사살의 잔치_ 벽에 쓴 글/
+    - assets/story_images_thumbs/136 사자굴_ 멈추지 않는 기도/
+    - assets/story_images_thumbs/137 고레스 칙령_ 돌아가라/
+    - assets/story_images_thumbs/138 제단과 예배 회복/
+    - assets/story_images_thumbs/139 성전 재건_ 방해와 완공/
+    - assets/story_images_thumbs/140 에스더_ 왕후가 되다/
+    - assets/story_images_thumbs/141 하만의 음모_ 유다인을 없애라/
+    - assets/story_images_thumbs/142 에스더의 결단_ 죽으면 죽으리라/
+    - assets/story_images_thumbs/143 잔치의 반전_ 하만의 몰락/
+    - assets/story_images_thumbs/144 부림절_ 살아남은 날/
+    - assets/story_images_thumbs/145 에스라의 귀환_ 말씀으로 정리하다/
+    - assets/story_images_thumbs/146 느헤미야의 파송_ 무너진 성벽 소식/
+    - assets/story_images_thumbs/147 성벽 재건_ 밤의 조사와 한 손엔 무기/
+    - assets/story_images_thumbs/149 율법 낭독_ 울음에서 기쁨으로/
+    - assets/story_images_thumbs/150 언약 갱신_ 다시 서명하다/
+    - assets/story_images_thumbs/151 세례 요한의 탄생 예고/
+    - assets/story_images_thumbs/152 마리아 수태고지와 찬양/
+    - assets/story_images_thumbs/153 예수 탄생과 목자들/
+    - assets/story_images_thumbs/154 동방박사와 피신/
+    - assets/story_images_thumbs/155 어린 예수의 성전 사건/
+    - assets/story_images_thumbs/156 예수의 세례/
+    - assets/story_images_thumbs/157 광야 시험/
+    - assets/story_images_thumbs/158 제자 부르심_ 그물을 버리다/
+    - assets/story_images_thumbs/159 산상수훈_ 복 있는 사람/
+    - assets/story_images_thumbs/160 폭풍을 잠잠케 하심/
+    - assets/story_images_thumbs/161 야이로의 딸과 혈루증 여인/
+    - assets/story_images_thumbs/162 오병이어/
+    - assets/story_images_thumbs/163 변화산/
+    - assets/story_images_thumbs/164 베드로의 고백과 수난 예고/
+    - assets/story_images_thumbs/165 비유_ 선한 사마리아인/
+    - assets/story_images_thumbs/166 비유_ 탕자의 귀환/
+    - assets/story_images_thumbs/167 나사로의 부활/
+    - assets/story_images_thumbs/168 예루살렘 입성/
+    - assets/story_images_thumbs/169 성전 정화/
+    - assets/story_images_thumbs/170 최후의 만찬/
+    - assets/story_images_thumbs/171 겟세마네_ 뜻이 이루어지다/
+    - assets/story_images_thumbs/172 체포_ 배신의 입맞춤/
+    - assets/story_images_thumbs/173 재판_ 빌라도 앞/
+    - assets/story_images_thumbs/174 십자가_ 끝까지 사랑/
+    - assets/story_images_thumbs/175 부활과 승천_ 새 시작/
+    - assets/story_images_thumbs/176 오순절_ 성령강림/
+    - assets/story_images_thumbs/177 베드로 설교_ 하루에 삼천/
+    - assets/story_images_thumbs/178 성전 미문 치유와 첫 박해/
+    - assets/story_images_thumbs/179 아나니아와 삽비라/
+    - assets/story_images_thumbs/180 일곱 집사와 스데반 순교/
+    - assets/story_images_thumbs/181 사마리아 복음_ 빌립의 전도/
+    - assets/story_images_thumbs/182 에티오피아 내시_ 길 위의 만남/
+    - assets/story_images_thumbs/183 사울 회심_ 다메섹의 빛/
+    - assets/story_images_thumbs/184 고넬료_ 이방인에게도/
+    - assets/story_images_thumbs/185 안디옥 교회_ 선교의 출발/
+    - assets/story_images_thumbs/186 1차 선교(1)_ 구브로 살라미–바보/
+    - assets/story_images_thumbs/187 1차 선교(2)_ 비시디아 안디옥/
+    - assets/story_images_thumbs/188 1차 선교(3)_ 이고니온/
+    - assets/story_images_thumbs/189 1차 선교(4)_ 루스드라–더베/
+    - assets/story_images_thumbs/190 1차 선교(5)_ 안디옥(시리아)로 귀환 보고/
+    - assets/story_images_thumbs/191 2차 선교(1)_ 드로아에서 마게도냐로/
+    - assets/story_images_thumbs/192 2차 선교(2)_ 빌립보—루디아와 감옥의 찬양/
+    - assets/story_images_thumbs/193 2차 선교(3)_ 데살로니가—소동과 도피/
+    - assets/story_images_thumbs/194 2차 선교(4)_ 베뢰아—말씀을 상고하다/
+    - assets/story_images_thumbs/195 2차 선교(5)_ 아덴—아레오바고 설교/
+    - assets/story_images_thumbs/196 2차 선교(6)_ 고린도—정착과 견딤/
+    - assets/story_images_thumbs/197 3차 선교(1)_ 에베소—확장과 충돌/
+    - assets/story_images_thumbs/198 3차 선교(2)_ 마게도냐—교회를 굳게 하다/
+    - assets/story_images_thumbs/199 3차 선교(3)_ 헬라(고린도)—머무름과 결심/
+    - assets/story_images_thumbs/200 3차 선교(4)_ 밀레도—에베소 장로들과 작별/
+    - assets/story_images_thumbs/201 로마행(1)_ 예루살렘 체포/
+    - assets/story_images_thumbs/202 로마행(2)_ 가이사랴 재판과 상소/
+    - assets/story_images_thumbs/203 로마행(3)_ 폭풍의 항해/
+    - assets/story_images_thumbs/204 로마행(4)_ 멜리데(몰타) 표류/
+    - assets/story_images_thumbs/205 로마행(5)_ 로마 도착/
+    - assets/story_images_thumbs/206 성전 파괴_ 예루살렘의 큰 전환/
+    - assets/story_images_thumbs/207 밧모섬의 요한_ 계시의 시작/
+    - assets/story_images_thumbs/208 일곱 교회 편지_ 촛대 사이의 말씀/
+    - assets/story_images_thumbs/209 하늘 보좌_ 문이 열리다/
+    - assets/story_images_thumbs/210 어린양_ 두루마리를 받다/
+    - assets/story_images_thumbs/211 일곱 인_ 역사의 문이 열리다/
+    - assets/story_images_thumbs/212 일곱 나팔_ 경고의 울림/
+    - assets/story_images_thumbs/213 용과 두 짐승_ 대립의 정점/
+    - assets/story_images_thumbs/214 바벨론의 멸망_ 무너지는 화려함/
+    - assets/story_images_thumbs/215 최후 심판과 새 하늘 새 땅/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

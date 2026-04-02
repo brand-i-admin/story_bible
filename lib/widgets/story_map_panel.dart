@@ -8,7 +8,40 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../models/story_event.dart';
-import 'game_ui_skin.dart';
+
+BoxDecoration _mapCalloutDecoration() {
+  return BoxDecoration(
+    gradient: const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFF9F2E5), Color(0xFFF0E1C6)],
+    ),
+    borderRadius: BorderRadius.circular(18),
+    border: Border.all(color: const Color(0xBC9A7A4C), width: 1.0),
+    boxShadow: const [
+      BoxShadow(
+        color: Color(0x30000000),
+        blurRadius: 18,
+        offset: Offset(0, 10),
+      ),
+    ],
+  );
+}
+
+BoxDecoration _mapActionButtonDecoration() {
+  return BoxDecoration(
+    gradient: const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFD89A47), Color(0xFFB96B2D)],
+    ),
+    borderRadius: BorderRadius.circular(12),
+    border: Border.all(color: const Color(0xFFF2D8A6), width: 1.0),
+    boxShadow: const [
+      BoxShadow(color: Color(0x26A35B22), blurRadius: 10, offset: Offset(0, 5)),
+    ],
+  );
+}
 
 class StoryMapPanel extends StatefulWidget {
   const StoryMapPanel({
@@ -16,6 +49,7 @@ class StoryMapPanel extends StatefulWidget {
     required this.events,
     required this.selectedEventId,
     required this.onSelectEvent,
+    this.onCloseSelectedCallout,
     this.onOpenDetail,
     required this.colorForPerson,
     required this.avatarAssetForPerson,
@@ -23,13 +57,23 @@ class StoryMapPanel extends StatefulWidget {
     this.controller,
     this.bottomOverlay,
     this.decorate = true,
+    this.showSelectedCallout = true,
+    this.animateReveal = true,
+    this.centerSelectedOnReady = false,
+    this.fitAllEventsOnReady = false,
+    this.fitAllZoomAdjust = -0.95,
+    this.selectedFocusZoom,
+    this.pinScale = 1.0,
     this.initialCenter,
     this.initialZoom,
+    this.bottomObscuredFraction = 0.0,
+    this.topObscuredPixels = 0.0,
   });
 
   final List<StoryEvent> events;
   final String? selectedEventId;
   final ValueChanged<String> onSelectEvent;
+  final VoidCallback? onCloseSelectedCallout;
   final ValueChanged<String>? onOpenDetail;
   final Color Function(String personId) colorForPerson;
   final String Function(String personId) avatarAssetForPerson;
@@ -37,8 +81,17 @@ class StoryMapPanel extends StatefulWidget {
   final StoryMapPanelController? controller;
   final Widget? bottomOverlay;
   final bool decorate;
+  final bool showSelectedCallout;
+  final bool animateReveal;
+  final bool centerSelectedOnReady;
+  final bool fitAllEventsOnReady;
+  final double fitAllZoomAdjust;
+  final double? selectedFocusZoom;
+  final double pinScale;
   final LatLng? initialCenter;
   final double? initialZoom;
+  final double bottomObscuredFraction;
+  final double topObscuredPixels;
 
   @override
   State<StoryMapPanel> createState() => _StoryMapPanelState();
@@ -55,22 +108,37 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   bool _isAnimatingPath = false;
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
+  bool _mapReady = false;
 
   static const _PinStyle _normalPinStyle = _PinStyle(
-    // Doubled from the previous size.
-    size: 70,
-    avatarDiameter: 30,
-    avatarAlignment: Alignment(-0.002, -0.34),
+    badgeHeight: 24,
+    labelFontSize: 12.5,
+    arrowWidth: 14,
+    arrowHeight: 8,
+    anchorGap: 3,
   );
   static const _PinStyle _selectedPinStyle = _PinStyle(
-    // Keep selected marker at the same size as normal to avoid jump on select.
-    size: 70,
-    avatarDiameter: 30,
-    avatarAlignment: Alignment(-0.002, -0.34),
+    badgeHeight: 28,
+    labelFontSize: 13.5,
+    arrowWidth: 16,
+    arrowHeight: 9,
+    anchorGap: 3,
   );
 
-  static const double _selectedCalloutEstimatedHeight = 176;
+  static const double _selectedCalloutEstimatedWidth = 268;
+  static const double _selectedCalloutEstimatedHeight = 196;
   static const double _selectedCalloutTopMargin = 14;
+
+  _PinStyle _scaledPinStyle(_PinStyle base) {
+    final scale = widget.pinScale.clamp(0.6, 1.25);
+    return _PinStyle(
+      badgeHeight: base.badgeHeight * scale,
+      labelFontSize: base.labelFontSize * scale,
+      arrowWidth: base.arrowWidth * scale,
+      arrowHeight: base.arrowHeight * scale,
+      anchorGap: base.anchorGap * scale,
+    );
+  }
 
   @override
   void initState() {
@@ -100,6 +168,19 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (_signature(oldWidget.events) != _signature(widget.events) ||
         oldWidget.selectedPersonIds != widget.selectedPersonIds) {
       _startRevealAnimation();
+      if (_mapReady &&
+          (widget.centerSelectedOnReady || widget.fitAllEventsOnReady)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) {
+            return;
+          }
+          if (widget.fitAllEventsOnReady) {
+            _focusAllEvents(duration: const Duration(milliseconds: 360));
+          } else {
+            _centerSelectedEvent();
+          }
+        });
+      }
     }
 
     if (oldWidget.selectedEventId != widget.selectedEventId) {
@@ -107,7 +188,28 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         if (!mounted) {
           return;
         }
-        _focusSelectedEventIfNeeded();
+        if (widget.fitAllEventsOnReady) {
+          return;
+        }
+        if (widget.centerSelectedOnReady) {
+          _centerSelectedEvent();
+        } else {
+          _focusSelectedEventIfNeeded();
+        }
+      });
+    }
+
+    if ((oldWidget.bottomObscuredFraction - widget.bottomObscuredFraction)
+                .abs() >
+            0.015 &&
+        widget.selectedEventId != null &&
+        !widget.fitAllEventsOnReady &&
+        !widget.centerSelectedOnReady) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        _focusSelectedEventIfNeeded(force: true);
       });
     }
   }
@@ -152,6 +254,38 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   initialZoom: zoom,
                   minZoom: 2.4,
                   maxZoom: 13,
+                  onMapReady: () {
+                    _mapReady = true;
+                    _startRevealAnimation();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) {
+                        return;
+                      }
+                      if (widget.fitAllEventsOnReady) {
+                        _focusAllEvents(
+                          duration: const Duration(milliseconds: 360),
+                        );
+                        Future.delayed(const Duration(milliseconds: 180), () {
+                          if (!mounted) {
+                            return;
+                          }
+                          _focusAllEvents(
+                            duration: const Duration(milliseconds: 240),
+                          );
+                        });
+                      } else if (widget.centerSelectedOnReady) {
+                        _centerSelectedEvent();
+                        Future.delayed(const Duration(milliseconds: 180), () {
+                          if (!mounted) {
+                            return;
+                          }
+                          _centerSelectedEvent();
+                        });
+                      } else {
+                        _focusSelectedEventIfNeeded();
+                      }
+                    });
+                  },
                   interactionOptions: const InteractionOptions(
                     flags: InteractiveFlag.all,
                   ),
@@ -177,15 +311,30 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   PolylineLayer(polylines: polylines),
                   MarkerLayer(markers: _buildRegionLabels()),
                   MarkerLayer(markers: _buildMarkers(widget.events)),
-                  const RichAttributionWidget(
-                    popupInitialDisplayDuration: Duration(seconds: 4),
-                    attributions: [
-                      TextSourceAttribution('OpenStreetMap contributors'),
-                      TextSourceAttribution('CARTO basemap'),
-                      TextSourceAttribution(
-                        'Country boundaries: Natural Earth',
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: IgnorePointer(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 6, bottom: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0x88FFFFFF),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          '© OpenStreetMap · CARTO · Natural Earth',
+                          style: TextStyle(
+                            fontSize: 8.5,
+                            color: Color(0xFF2D2D2D),
+                            fontWeight: FontWeight.w600,
+                            height: 1.1,
+                          ),
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                   if (widget.bottomOverlay != null)
                     Align(
@@ -258,47 +407,101 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final withCoordinate = events
         .where((event) => event.hasCoordinate)
         .toList();
-    final visible = withCoordinate.take(_visibleCount).toList();
-    final orderedEntries = visible.asMap().entries.toList()
-      ..sort((a, b) {
-        final aSelected = a.value.id == widget.selectedEventId;
-        final bSelected = b.value.id == widget.selectedEventId;
-        if (aSelected == bSelected) {
-          return 0;
-        }
-        return aSelected ? 1 : -1;
-      });
-    // Keep offsets stable by calculating from the full visible timeline.
-    final adjustedPoints = _buildAdjustedPoints(withCoordinate);
+    final visible = withCoordinate.take(_visibleCount).toList(growable: true);
+    final selectedEventId = widget.selectedEventId;
+    if (selectedEventId != null &&
+        !visible.any((event) => event.id == selectedEventId)) {
+      final selectedEvent = withCoordinate
+          .where((event) => event.id == selectedEventId)
+          .firstOrNull;
+      if (selectedEvent != null) {
+        visible.add(selectedEvent);
+      }
+    }
+    final eventOrder = <String, int>{};
+    for (var i = 0; i < events.length; i++) {
+      eventOrder.putIfAbsent(events[i].id, () => i + 1);
+    }
 
-    return orderedEntries.map((entry) {
-      final event = entry.value;
-      final selected = widget.selectedEventId == event.id;
-      final colors = _colorsForEvent(event);
-      final pinAsset = selected ? kPinSelectedAsset : kPinNormalAsset;
-      final pinStyle = selected ? _selectedPinStyle : _normalPinStyle;
-      final primaryPersonId = _primaryPersonIdForEvent(event);
-      final avatarAssetPath = primaryPersonId == null
-          ? ''
-          : widget.avatarAssetForPerson(primaryPersonId);
-      final shortText =
-          (event.shortStory ??
-                  event.shortText ??
-                  event.story ??
-                  event.summary ??
-                  '')
-              .trim();
-      final markerWidth = selected ? 338.0 : 150.0;
-      final markerHeight = selected ? 320.0 : pinStyle.size;
+    final adjustedPoints = _buildAdjustedPoints(withCoordinate);
+    final nodes = <_MarkerNode>[];
+    for (final event in visible) {
+      final basePoint = adjustedPoints[event.id] ?? event.latLng;
+      final order = eventOrder[event.id] ?? 0;
       final placeName = (event.placeName ?? '').trim();
-      final hasPlaceName = placeName.isNotEmpty;
+      final colors = _colorsForEvent(event);
+      if (_hasMultiPlacePin(placeName) && order > 0) {
+        final parts = _splitPlaceParts(placeName);
+        final points = _buildSplitPinPoints(basePoint);
+        nodes.add(
+          _MarkerNode(
+            event: event,
+            point: points.$1,
+            pinLabel: '$order-1',
+            placeLabel: parts.$1,
+            showCallout: true,
+            personColors: colors,
+          ),
+        );
+        nodes.add(
+          _MarkerNode(
+            event: event,
+            point: points.$2,
+            pinLabel: '$order-2',
+            placeLabel: parts.$2,
+            showCallout: false,
+            personColors: colors,
+          ),
+        );
+      } else {
+        nodes.add(
+          _MarkerNode(
+            event: event,
+            point: basePoint,
+            pinLabel: order > 0 ? '$order' : '?',
+            placeLabel: placeName,
+            showCallout: true,
+            personColors: colors,
+          ),
+        );
+      }
+    }
+
+    final orderedNodes = nodes.toList()
+      ..sort((a, b) {
+        final aSelected = a.event.id == widget.selectedEventId;
+        final bSelected = b.event.id == widget.selectedEventId;
+        if (aSelected != bSelected) {
+          return aSelected ? 1 : -1;
+        }
+        if (a.event.id == b.event.id && a.showCallout != b.showCallout) {
+          return a.showCallout ? 1 : -1;
+        }
+        return 0;
+      });
+
+    return orderedNodes.map((node) {
+      final event = node.event;
+      final selected = widget.selectedEventId == event.id;
+      final pinStyle = _scaledPinStyle(
+        selected ? _selectedPinStyle : _normalPinStyle,
+      );
+      final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
+          .trim();
+      final pinWidth = math.max(
+        pinStyle.badgeWidthFor(node.pinLabel) + 10,
+        pinStyle.arrowWidth + 10,
+      );
+      final markerWidth = selected && node.showCallout ? 320.0 : pinWidth;
+      final markerHeight = selected && node.showCallout
+          ? 238.0
+          : pinStyle.markerHeight;
+      final hasPlaceName = node.placeLabel.isNotEmpty;
 
       return Marker(
-        point: adjustedPoints[event.id] ?? event.latLng,
+        point: node.point,
         width: markerWidth,
         height: markerHeight,
-        // Anchor geographic point to the marker widget's bottom center
-        // (pin tip), so zoom/selection never drifts.
         alignment: Alignment.topCenter,
         child: SizedBox(
           width: markerWidth,
@@ -307,12 +510,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             clipBehavior: Clip.none,
             alignment: Alignment.bottomCenter,
             children: [
-              if (selected)
+              if (selected && widget.showSelectedCallout && node.showCallout)
                 Positioned(
-                  bottom: pinStyle.size - 8,
+                  bottom: pinStyle.visualHeight + 12,
                   child: _buildEventCallout(
                     event: event,
                     shortText: shortText,
+                    onClose: widget.onCloseSelectedCallout,
                     onOpenDetail: widget.onOpenDetail,
                   ),
                 ),
@@ -320,22 +524,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                 behavior: HitTestBehavior.translucent,
                 onTap: () => widget.onSelectEvent(event.id),
                 child: SizedBox(
-                  width: pinStyle.size,
-                  height: pinStyle.size,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(pinAsset, fit: BoxFit.contain),
-                      Align(
-                        alignment: pinStyle.avatarAlignment,
-                        child: _buildPinAvatar(
-                          event: event,
-                          avatarAssetPath: avatarAssetPath,
-                          diameter: pinStyle.avatarDiameter,
-                          selected: selected,
-                        ),
-                      ),
-                    ],
+                  width: pinWidth,
+                  height: pinStyle.markerHeight,
+                  child: _CompactPinMarker(
+                    label: node.pinLabel,
+                    selected: selected,
+                    style: pinStyle,
                   ),
                 ),
               ),
@@ -343,13 +537,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                 Positioned(
                   bottom: -24,
                   child: IgnorePointer(
-                    child: _buildPlaceChip(placeName, selected: selected),
+                    child: _buildPlaceChip(node.placeLabel, selected: selected),
                   ),
                 ),
-              if (colors.length > 1)
+              if (node.personColors.length > 1)
                 Positioned(
                   bottom: hasPlaceName ? -40 : -16,
-                  child: IgnorePointer(child: _buildPersonColorDots(colors)),
+                  child: IgnorePointer(
+                    child: _buildPersonColorDots(node.personColors),
+                  ),
                 ),
             ],
           ),
@@ -410,150 +606,147 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
-  String? _primaryPersonIdForEvent(StoryEvent event) {
-    for (final personId in event.personIds) {
-      if (widget.selectedPersonIds.contains(personId)) {
-        return personId;
-      }
+  bool _hasMultiPlacePin(String placeName) {
+    return placeName.contains('→') || placeName.contains('->');
+  }
+
+  (String, String) _splitPlaceParts(String placeName) {
+    final arrow = placeName.contains('→') ? '→' : '->';
+    final parts = placeName
+        .split(arrow)
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+    if (parts.length >= 2) {
+      return (parts.first, parts.last);
     }
-    return event.personIds.firstOrNull;
+    return (placeName, placeName);
   }
 
-  Widget _buildPinAvatar({
-    required StoryEvent event,
-    required String avatarAssetPath,
-    required double diameter,
-    required bool selected,
-  }) {
-    final path = avatarAssetPath.trim();
-    final fallbackText = _avatarFallbackText(event);
-    return Container(
-      width: diameter,
-      height: diameter,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: selected ? const Color(0xFFFFF3D3) : const Color(0xFFF3E7CC),
-          width: selected ? 1.8 : 1.4,
-        ),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.28), blurRadius: 2),
-        ],
-      ),
-      child: ClipOval(
-        child: path.isNotEmpty
-            ? Image.asset(
-                path,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    _buildAvatarFallback(fallbackText, selected: selected),
-              )
-            : _buildAvatarFallback(fallbackText, selected: selected),
-      ),
+  (LatLng, LatLng) _buildSplitPinPoints(LatLng basePoint) {
+    const radiusDeg = 0.038;
+    final cosLat = math
+        .cos(basePoint.latitude * math.pi / 180)
+        .abs()
+        .clamp(0.3, 1.0);
+    final dLng = (radiusDeg / cosLat) * 0.75;
+    final dLat = radiusDeg * 0.30;
+    return (
+      basePoint,
+      LatLng(basePoint.latitude - dLat, basePoint.longitude + dLng),
     );
-  }
-
-  Widget _buildAvatarFallback(String fallbackText, {required bool selected}) {
-    return Container(
-      color: selected ? const Color(0xFFC88A31) : const Color(0xFF8C6337),
-      alignment: Alignment.center,
-      child: Text(
-        fallbackText,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: selected ? const Color(0xFFFFF8E9) : const Color(0xFFF3EAD6),
-          fontSize: 10,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
-  }
-
-  String _avatarFallbackText(StoryEvent event) {
-    final title = event.title.trim();
-    if (title.isEmpty) {
-      return '?';
-    }
-    return title.substring(0, 1);
   }
 
   Widget _buildEventCallout({
     required StoryEvent event,
     required String shortText,
+    required VoidCallback? onClose,
     required ValueChanged<String>? onOpenDetail,
   }) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 268),
       child: Material(
         color: Colors.transparent,
-        child: Container(
-          decoration: shortDescriptionDecoration(),
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                event.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF3D2D18),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              if (shortText.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  shortText,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color(0xFF4C3A21),
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 9),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: onOpenDetail == null
-                      ? null
-                      : () => onOpenDetail(event.id),
-                  behavior: HitTestBehavior.translucent,
-                  child: Container(
-                    constraints: const BoxConstraints(
-                      minWidth: 96,
-                      minHeight: 30,
-                    ),
-                    decoration: actionButtonDecoration(selected: true),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 5,
-                    ),
-                    child: const Text(
-                      '자세히 보기',
-                      style: TextStyle(
-                        color: Color(0xFFFDF8EE),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        shadows: [
-                          Shadow(
-                            color: Color(0xAA000000),
-                            blurRadius: 2,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
+        child: Stack(
+          children: [
+            Container(
+              decoration: _mapCalloutDecoration(),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 22),
+                    child: Text(
+                      event.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF3D2D18),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
+                  if (shortText.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      shortText,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF4C3A21),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 9),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: onOpenDetail == null
+                          ? null
+                          : () => onOpenDetail(event.id),
+                      behavior: HitTestBehavior.translucent,
+                      child: Container(
+                        constraints: const BoxConstraints(
+                          minWidth: 96,
+                          minHeight: 30,
+                        ),
+                        decoration: _mapActionButtonDecoration(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
+                        child: const Text(
+                          '자세히 보기',
+                          style: TextStyle(
+                            color: Color(0xFFFDF8EE),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            shadows: [
+                              Shadow(
+                                color: Color(0xAA000000),
+                                blurRadius: 2,
+                                offset: Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: GestureDetector(
+                onTap: onClose,
+                behavior: HitTestBehavior.translucent,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: const Color(0xCCF8EEDC),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: const Color(0xAA9A7A4B),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    size: 15,
+                    color: Color(0xFF7A5B33),
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -807,13 +1000,25 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return;
     }
 
+    if (!widget.animateReveal) {
+      setState(() {
+        _visibleCount = withCoordinate.length;
+        _segmentT = 1;
+        _isAnimatingPath = false;
+      });
+      return;
+    }
+
     setState(() {
       _visibleCount = 1;
       _segmentT = 0;
       _isAnimatingPath = withCoordinate.length > 1;
     });
 
-    final points = withCoordinate.map((event) => event.latLng).toList();
+    final adjusted = _buildAdjustedPoints(withCoordinate);
+    final points = withCoordinate
+        .map((event) => adjusted[event.id] ?? event.latLng)
+        .toList();
     final bounds = LatLngBounds.fromPoints(points);
     // Slightly wider framing: zoom out one step from current auto-focus.
     final animationZoom = (_computeRevealZoom(points) - 1.0).clamp(2.4, 13.0);
@@ -857,7 +1062,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     });
   }
 
-  void _focusSelectedEventIfNeeded() {
+  void _focusSelectedEventIfNeeded({bool force = false}) {
+    if (!_mapReady) {
+      return;
+    }
+    if (!widget.showSelectedCallout) {
+      return;
+    }
     final selectedEventId = widget.selectedEventId;
     if (selectedEventId == null) {
       return;
@@ -875,32 +1086,76 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     final adjusted = _buildAdjustedPoints(withCoordinate);
     final selectedPoint = adjusted[selectedEvent.id] ?? selectedEvent.latLng;
-    final camera = _controller.camera;
+    final camera = _safeCamera();
+    if (camera == null) {
+      return;
+    }
     final size = camera.nonRotatedSize;
     if (size.width <= 0 || size.height <= 0) {
       return;
     }
 
     final selectedOffset = camera.latLngToScreenOffset(selectedPoint);
+    final selectedMarkerHeight = _scaledPinStyle(
+      _selectedPinStyle,
+    ).visualHeight;
+    final obscuredBottom =
+        size.height * widget.bottomObscuredFraction.clamp(0.0, 0.82);
+    final obscuredTop = widget.topObscuredPixels.clamp(0.0, size.height * 0.45);
+    final minimumCalloutTop = math.max(
+      _selectedCalloutTopMargin,
+      obscuredTop + 12,
+    );
     final calloutTop =
         selectedOffset.dy -
-        _selectedPinStyle.size -
+        selectedMarkerHeight -
         _selectedCalloutEstimatedHeight;
     final minimumPointY =
-        _selectedPinStyle.size +
+        selectedMarkerHeight +
         _selectedCalloutEstimatedHeight +
-        _selectedCalloutTopMargin;
+        minimumCalloutTop;
+    final horizontalMargin = math.min(
+      (size.width / 2) - 12,
+      (_selectedCalloutEstimatedWidth / 2) + 20,
+    );
+    final verticalBottomMargin = math.max(28.0, selectedMarkerHeight * 0.95);
+    final visibleBottom = math.max(
+      minimumPointY + verticalBottomMargin + 8,
+      size.height - obscuredBottom - 12,
+    );
+    final outOfHorizontalBounds =
+        selectedOffset.dx < horizontalMargin ||
+        selectedOffset.dx > size.width - horizontalMargin;
+    final outOfVerticalBounds =
+        selectedOffset.dy < minimumPointY ||
+        selectedOffset.dy > visibleBottom - verticalBottomMargin;
     final needsFocus =
-        calloutTop < _selectedCalloutTopMargin ||
-        selectedOffset.dy < minimumPointY;
-    if (!needsFocus) {
+        calloutTop < minimumCalloutTop ||
+        outOfHorizontalBounds ||
+        outOfVerticalBounds;
+    if (!needsFocus && !force) {
       return;
     }
 
-    final maxPointY = math.max(minimumPointY, size.height - 88);
-    final targetY = (size.height * 0.62).clamp(minimumPointY, maxPointY);
+    final minCalloutCenterY =
+        minimumCalloutTop + (_selectedCalloutEstimatedHeight / 2);
+    final maxCalloutCenterY =
+        visibleBottom - (_selectedCalloutEstimatedHeight / 2) - 18;
+    final desiredCalloutCenterY =
+        (minCalloutCenterY + ((maxCalloutCenterY - minCalloutCenterY) * 0.42))
+            .clamp(minCalloutCenterY, maxCalloutCenterY);
+    final desiredPointY =
+        desiredCalloutCenterY +
+        (_selectedCalloutEstimatedHeight / 2) +
+        selectedMarkerHeight +
+        10;
+    final maxPointY = math.max(
+      minimumPointY,
+      visibleBottom - verticalBottomMargin,
+    );
+    final targetY = desiredPointY.clamp(minimumPointY, maxPointY);
     final targetOffset = Offset(size.width / 2, targetY);
-    final targetZoom = math.min(camera.zoom, 7.7);
+    final targetZoom = math.min(math.max(camera.zoom, 6.6), 7.7);
     final targetCenter = _targetCenterForPointAtScreenOffset(
       geoPoint: selectedPoint,
       targetOffset: targetOffset,
@@ -913,12 +1168,84 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
+  void _centerSelectedEvent() {
+    if (!_mapReady) {
+      return;
+    }
+    final selectedEventId = widget.selectedEventId;
+    if (selectedEventId == null) {
+      return;
+    }
+    final withCoordinate = widget.events
+        .where((event) => event.hasCoordinate)
+        .toList();
+    final selectedEvent = withCoordinate
+        .where((event) => event.id == selectedEventId)
+        .firstOrNull;
+    if (selectedEvent == null) {
+      return;
+    }
+    final selectedPoint = selectedEvent.latLng;
+    final targetZoom = (widget.selectedFocusZoom ?? widget.initialZoom ?? 7.0)
+        .clamp(2.4, 13.0);
+    _focusToPoint(
+      selectedPoint,
+      targetZoom,
+      duration: const Duration(milliseconds: 280),
+    );
+  }
+
+  void _focusAllEvents({
+    Duration duration = const Duration(milliseconds: 360),
+  }) {
+    if (!_mapReady) {
+      return;
+    }
+    final visibleEvents = widget.events
+        .where((event) => event.hasCoordinate)
+        .toList(growable: false);
+    if (visibleEvents.isEmpty) {
+      return;
+    }
+    if (visibleEvents.length == 1) {
+      final singleZoom = ((widget.initialZoom ?? 5.3) + 0.35).clamp(2.4, 13.0);
+      _focusToPoint(visibleEvents.first.latLng, singleZoom, duration: duration);
+      return;
+    }
+
+    final rawPoints = visibleEvents.map((event) => event.latLng).toList();
+    final adjustedPointsById = _buildAdjustedPoints(visibleEvents);
+    final fittedPoints = visibleEvents
+        .map((event) => adjustedPointsById[event.id] ?? event.latLng)
+        .toList(growable: false);
+    final bounds = LatLngBounds.fromPoints(fittedPoints);
+    final rawBounds = LatLngBounds.fromPoints(rawPoints);
+    final rawLonSpan = _normalizedLongitudeDelta(
+      rawBounds.west,
+      rawBounds.east,
+    ).abs();
+    final rawLatSpan = (rawBounds.north - rawBounds.south).abs();
+    final isTightlyClustered = rawLonSpan < 0.35 && rawLatSpan < 0.28;
+    final zoomAdjust = widget.fitAllZoomAdjust.clamp(-2.0, 2.0);
+    var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust).clamp(
+      2.4,
+      13.0,
+    );
+    if (isTightlyClustered) {
+      fittedZoom = math.min(fittedZoom, 7.15);
+    }
+    _focusToPoint(bounds.center, fittedZoom, duration: duration);
+  }
+
   LatLng _targetCenterForPointAtScreenOffset({
     required LatLng geoPoint,
     required Offset targetOffset,
     required double zoom,
   }) {
-    final camera = _controller.camera;
+    final camera = _safeCamera();
+    if (camera == null) {
+      return geoPoint;
+    }
     final projectedPoint = camera.projectAtZoom(geoPoint, zoom);
     final viewportCenter = camera.nonRotatedSize.center(Offset.zero);
     final offsetFromCenter = _rotateOffset(
@@ -943,7 +1270,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     double zoom, {
     Duration duration = const Duration(milliseconds: 600),
   }) {
-    final current = _controller.camera;
+    if (!_mapReady) {
+      return;
+    }
+    final current = _safeCamera();
+    if (current == null) {
+      return;
+    }
     final startCenter = current.center;
     final startZoom = current.zoom;
     if (startCenter == point && (startZoom - zoom).abs() < 0.001) {
@@ -965,6 +1298,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             (point.longitude - startCenter.longitude) * eased,
       );
       final nextZoom = startZoom + (zoom - startZoom) * eased;
+      if (!_mapReady) {
+        timer.cancel();
+        return;
+      }
       _controller.move(next, nextZoom);
 
       if (t >= 1.0) {
@@ -975,7 +1312,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomIn() {
-    final camera = _controller.camera;
+    if (!_mapReady) {
+      return;
+    }
+    final camera = _safeCamera();
+    if (camera == null) {
+      return;
+    }
     final targetZoom = (camera.zoom + 0.7).clamp(2.4, 13.0);
     _focusToPoint(
       camera.center,
@@ -985,7 +1328,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomOut() {
-    final camera = _controller.camera;
+    if (!_mapReady) {
+      return;
+    }
+    final camera = _safeCamera();
+    if (camera == null) {
+      return;
+    }
     final targetZoom = (camera.zoom - 0.7).clamp(2.4, 13.0);
     _focusToPoint(
       camera.center,
@@ -1089,22 +1438,185 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
     return 360.0 - delta;
   }
+
+  dynamic _safeCamera() {
+    try {
+      return _controller.camera;
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 class _PinStyle {
   const _PinStyle({
-    required this.size,
-    required this.avatarDiameter,
-    required this.avatarAlignment,
+    required this.badgeHeight,
+    required this.labelFontSize,
+    required this.arrowWidth,
+    required this.arrowHeight,
+    required this.anchorGap,
   });
 
-  final double size;
-  final double avatarDiameter;
-  final Alignment avatarAlignment;
+  final double badgeHeight;
+  final double labelFontSize;
+  final double arrowWidth;
+  final double arrowHeight;
+  final double anchorGap;
+
+  double badgeWidthFor(String label) {
+    return label.length > 2
+        ? (badgeHeight + 12).clamp(24.0, 42.0)
+        : badgeHeight;
+  }
+
+  double get visualHeight => badgeHeight + 4 + arrowHeight;
+
+  double get markerHeight => visualHeight + anchorGap;
+}
+
+class _MarkerNode {
+  const _MarkerNode({
+    required this.event,
+    required this.point,
+    required this.pinLabel,
+    required this.placeLabel,
+    required this.showCallout,
+    required this.personColors,
+  });
+
+  final StoryEvent event;
+  final LatLng point;
+  final String pinLabel;
+  final String placeLabel;
+  final bool showCallout;
+  final List<Color> personColors;
 }
 
 extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
+}
+
+class _CompactPinMarker extends StatelessWidget {
+  const _CompactPinMarker({
+    required this.label,
+    required this.selected,
+    required this.style,
+  });
+
+  final String label;
+  final bool selected;
+  final _PinStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _PinNumberBadge(
+          label,
+          selected: selected,
+          fontSize: style.labelFontSize,
+          badgeHeight: style.badgeHeight,
+        ),
+        const SizedBox(height: 4),
+        CustomPaint(
+          size: Size(style.arrowWidth, style.arrowHeight),
+          painter: _PinPointerPainter(selected: selected),
+        ),
+        SizedBox(height: style.anchorGap),
+      ],
+    );
+  }
+}
+
+class _PinNumberBadge extends StatelessWidget {
+  const _PinNumberBadge(
+    this.label, {
+    required this.selected,
+    required this.fontSize,
+    required this.badgeHeight,
+  });
+
+  final String label;
+  final bool selected;
+  final double fontSize;
+  final double badgeHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMultiChar = label.length > 2;
+    final badgeWidth = isMultiChar
+        ? (badgeHeight + 12).clamp(24.0, 42.0)
+        : badgeHeight;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: selected
+            ? const Color(0xFFF8E4A8)
+            : Colors.white.withValues(alpha: 0.96),
+        shape: isMultiChar ? BoxShape.rectangle : BoxShape.circle,
+        borderRadius: isMultiChar
+            ? BorderRadius.circular(badgeHeight / 2)
+            : null,
+        border: Border.all(
+          color: selected ? const Color(0xFF7B4B21) : const Color(0xFF2A2A2A),
+          width: 1.0,
+        ),
+      ),
+      child: SizedBox(
+        width: badgeWidth,
+        height: badgeHeight,
+        child: Center(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: selected ? const Color(0xFF5A3519) : Colors.black,
+              fontSize: (fontSize * 0.64).clamp(9.0, 12.0),
+              fontWeight: FontWeight.w900,
+              height: 1.0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PinPointerPainter extends CustomPainter {
+  const _PinPointerPainter({required this.selected});
+
+  final bool selected;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.1
+      ..strokeCap = StrokeCap.round
+      ..color = selected ? const Color(0xFFD18B37) : const Color(0xFF4A3827);
+
+    final shadow = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.8
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.white.withValues(alpha: 0.38);
+
+    final leftTop = Offset(0, 0);
+    final tip = Offset(size.width / 2, size.height);
+    final rightTop = Offset(size.width, 0);
+
+    canvas.drawLine(leftTop, tip, shadow);
+    canvas.drawLine(rightTop, tip, shadow);
+    canvas.drawLine(leftTop, tip, paint);
+    canvas.drawLine(rightTop, tip, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PinPointerPainter oldDelegate) {
+    return oldDelegate.selected != selected;
+  }
 }
 
 class StoryMapPanelController {
@@ -1125,4 +1637,7 @@ class StoryMapPanelController {
   void zoomOut() => _state?.zoomOut();
 
   void skipAnimation() => _state?.skipAnimation();
+
+  void focusSelectedEvent({bool force = true}) =>
+      _state?._focusSelectedEventIfNeeded(force: force);
 }

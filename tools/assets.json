@@ -188,6 +188,30 @@
         "size_px": { "w": 512, "h": 512 },
         "transparent_background": true,
         "prompt": "fantasy mobile game bottom tab button (book), circular or rounded-square button, matte dark brown leather/wood base, carved gold bevel border, subtle inner shadow and soft drop shadow, centered simple book icon in warm ivory/gold tone, icon only (no text), 2D game UI illustration, front view, crisp edges, high resolution, no photorealism, no 3D, no modern neon, PNG with transparent background"
+      },
+      {
+        "id": "calendar_button",
+        "type": "ui_element",
+        "filename": "calendar_button.png",
+        "size_px": { "w": 512, "h": 512 },
+        "transparent_background": true,
+        "prompt": "fantasy mobile game bottom tab button (calendar), circular or rounded-square button, matte dark brown leather/wood base, carved gold bevel border, subtle inner shadow and soft drop shadow, centered simple calendar icon in warm ivory/gold tone, icon only (no text), 2D game UI illustration, front view, crisp edges, high resolution, no photorealism, no 3D, no modern neon, PNG with transparent background"
+      },
+      {
+        "id": "check_box",
+        "type": "ui_element",
+        "filename": "check_box.png",
+        "size_px": { "w": 512, "h": 512 },
+        "transparent_background": true,
+        "prompt": "fantasy mobile game bottom tab button (check_box), circular or rounded-square button, matte dark brown leather/wood base, carved gold bevel border, subtle inner shadow and soft drop shadow, centered simple check_box icon in warm ivory/gold tone, icon only (no text), 2D game UI illustration, front view, crisp edges, high resolution, no photorealism, no 3D, no modern neon, PNG with transparent background"
+      },
+      {
+        "id": "map_background",
+        "type": "ui_element",
+        "filename": "map_background.png",
+        "size_px": { "w": 512, "h": 512 },
+        "transparent_background": true,
+        "prompt": "classic fantasy RPG UI map frame, carved wooden frame with brass corner plates and rivets, warm brown wood grain, slightly worn edges, subtle scratches, soft bevel highlights, inner window is a rounded-rectangle cutout with smooth corner radius, inset inner lip around the cutout to hold the map, soft ambient shadow, clean silhouette, center area fully transparent (hole), no text, no icons, front view, high resolution, PNG with transparent background, 16:9"
       }
     ],
     "notes_for_flutter": {

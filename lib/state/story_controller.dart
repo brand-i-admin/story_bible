@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/story_repository.dart';
+import '../state/auth_providers.dart';
 import '../models/era.dart';
 import '../models/person.dart';
 import '../models/story_event.dart';
@@ -23,7 +25,6 @@ final storyControllerProvider = NotifierProvider<StoryController, StoryState>(
 );
 
 class StoryController extends Notifier<StoryState> {
-  static const _apostolicEraCode = 'era_nt_apostolic';
   Timer? _searchDebounce;
 
   static const _palette = <Color>[
@@ -46,6 +47,7 @@ class StoryController extends Notifier<StoryState> {
     try {
       state = state.copyWith(loading: true, clearError: true);
       final eras = await _repo.fetchEras();
+      final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
       if (eras.isEmpty) {
         state = state.copyWith(
           loading: false,
@@ -63,7 +65,7 @@ class StoryController extends Notifier<StoryState> {
         eras: eras,
         persons: const [],
         events: const [],
-        completedEventIds: const {},
+        completedEventIds: completedEventIds,
         selectedEraId: null,
         selectedPersonIds: const {},
         selectedPersonColors: const {},
@@ -72,10 +74,12 @@ class StoryController extends Notifier<StoryState> {
         searchResults: const [],
         isSearching: false,
         clearSelectedEvent: true,
-        clearSelectedPaulJourney: true,
       );
     } catch (e) {
-      state = state.copyWith(loading: false, error: '초기 데이터를 불러오지 못했습니다: $e');
+      state = state.copyWith(
+        loading: false,
+        error: _buildLoadErrorMessage(prefix: '초기 데이터를 불러오지 못했습니다.', error: e),
+      );
     }
   }
 
@@ -94,7 +98,6 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(
       selectedTestament: normalized,
       clearSelectedEvent: true,
-      clearSelectedPaulJourney: true,
       clearError: true,
     );
 
@@ -115,7 +118,6 @@ class StoryController extends Notifier<StoryState> {
         selectedPersonColors: const {},
         completedEventIds: const {},
         clearSelectedEvent: true,
-        clearSelectedPaulJourney: true,
       );
       return;
     }
@@ -144,7 +146,6 @@ class StoryController extends Notifier<StoryState> {
       searchResults: const [],
       isSearching: false,
       clearSelectedEvent: true,
-      clearSelectedPaulJourney: true,
       clearError: true,
     );
   }
@@ -163,26 +164,28 @@ class StoryController extends Notifier<StoryState> {
         selectedEraId: eraId,
         selectedTestament: eraTestament,
         clearError: true,
-        clearSelectedPaulJourney: true,
       );
       final persons = await _repo.fetchPersonsByEra(eraId);
       final events = await _repo.fetchEventsByEra(eraId);
       final selectedPersonIds = _ensureSelectedPersons(persons, const {});
+      final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
       state = state.copyWith(
         loading: false,
         persons: persons,
         events: events,
-        completedEventIds: const {},
+        completedEventIds: completedEventIds,
         selectedPersonIds: selectedPersonIds,
         selectedPersonColors: _assignSelectedColors(selectedPersonIds),
         searchQuery: '',
         searchResults: const [],
         isSearching: false,
         clearSelectedEvent: true,
-        clearSelectedPaulJourney: true,
       );
     } catch (e) {
-      state = state.copyWith(loading: false, error: '시대 변경 중 오류가 발생했습니다: $e');
+      state = state.copyWith(
+        loading: false,
+        error: _buildLoadErrorMessage(prefix: '시대 변경 중 오류가 발생했습니다.', error: e),
+      );
     }
   }
 
@@ -194,52 +197,20 @@ class StoryController extends Notifier<StoryState> {
       next.add(personId);
     }
 
-    final canKeepJourney = _canApplyPaulJourneyFilter(
-      selectedPersonIds: next,
-      eraId: state.selectedEraId,
-      persons: state.persons,
-    );
     state = state.copyWith(
       selectedPersonIds: next,
       selectedPersonColors: _assignSelectedColors(next),
       clearSelectedEvent: true,
-      clearSelectedPaulJourney: !canKeepJourney,
     );
   }
 
-  void selectPaulJourney(String? journeyKey) {
-    final normalized = _normalizeJourneyKey(journeyKey);
-    if (normalized == null) {
-      state = state.copyWith(
-        clearSelectedPaulJourney: true,
-        clearSelectedEvent: true,
-      );
-      return;
-    }
-
-    final canApply = _canApplyPaulJourneyFilter(
-      selectedPersonIds: state.selectedPersonIds,
-      eraId: state.selectedEraId,
-      persons: state.persons,
-    );
-    if (!canApply) {
-      state = state.copyWith(
-        clearSelectedPaulJourney: true,
-        clearSelectedEvent: true,
-      );
-      return;
-    }
-
-    if (state.selectedPaulJourney == normalized) {
-      state = state.copyWith(
-        clearSelectedPaulJourney: true,
-        clearSelectedEvent: true,
-      );
-      return;
-    }
-
+  void setSelectedPersons(Set<String> personIds) {
+    final next = personIds
+        .where((id) => state.persons.any((person) => person.id == id))
+        .toSet();
     state = state.copyWith(
-      selectedPaulJourney: normalized,
+      selectedPersonIds: next,
+      selectedPersonColors: _assignSelectedColors(next),
       clearSelectedEvent: true,
     );
   }
@@ -257,8 +228,36 @@ class StoryController extends Notifier<StoryState> {
     required int score,
     required bool isCompleted,
   }) async {
-    // Progress persistence is intentionally disabled until user/auth tables are ready.
-    return;
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    await _repo.upsertEventProgress(
+      userId: user.id,
+      eventId: eventId,
+      isCompleted: isCompleted,
+      score: score,
+      xpEarned: isCompleted ? score * 10 : 0,
+    );
+
+    if (isCompleted) {
+      await ref.read(userRepositoryProvider).recordStudyDay(user.id);
+    }
+
+    final nextCompleted = {...state.completedEventIds};
+    if (isCompleted) {
+      nextCompleted.add(eventId);
+    } else {
+      nextCompleted.remove(eventId);
+    }
+
+    state = state.copyWith(completedEventIds: nextCompleted);
+  }
+
+  Future<void> refreshCompletedEventIds() async {
+    final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
+    state = state.copyWith(completedEventIds: completedEventIds);
   }
 
   void setSearchQuery(String query) {
@@ -318,7 +317,6 @@ class StoryController extends Notifier<StoryState> {
         selectedPersonIds: selectedIds,
         selectedPersonColors: _assignSelectedColors(selectedIds),
         selectedEventId: event.id,
-        clearSelectedPaulJourney: true,
         searchQuery: '',
         searchResults: const [],
         isSearching: false,
@@ -354,27 +352,20 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
+  Future<Set<String>> _fetchCompletedEventIdsForCurrentUser() async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return const <String>{};
+    }
+    return _repo.fetchCompletedEventIds(user.id);
+  }
+
   List<StoryEvent> mergedTimeline() {
-    final activeJourney = state.selectedPaulJourney;
-    final requiresJourneySelection = _canApplyPaulJourneyFilter(
-      selectedPersonIds: state.selectedPersonIds,
-      eraId: state.selectedEraId,
-      persons: state.persons,
-    );
     final filtered = state.events.where((event) {
       final hasSelectedPerson = event.personIds.any(
         state.selectedPersonIds.contains,
       );
-      if (!hasSelectedPerson) {
-        return false;
-      }
-      if (requiresJourneySelection && activeJourney == null) {
-        return false;
-      }
-      if (activeJourney == null) {
-        return true;
-      }
-      return _journeyKeyForEventCode(event.code) == activeJourney;
+      return hasSelectedPerson;
     }).toList();
 
     filtered.sort((a, b) {
@@ -447,50 +438,19 @@ class StoryController extends Notifier<StoryState> {
     return 'old';
   }
 
-  bool _canApplyPaulJourneyFilter({
-    required Set<String> selectedPersonIds,
-    required String? eraId,
-    required List<Person> persons,
+  String _buildLoadErrorMessage({
+    required String prefix,
+    required Object error,
   }) {
-    if (eraId == null) {
-      return false;
+    if (error is SocketException) {
+      return '$prefix 네트워크 연결 또는 Supabase 주소 설정을 확인하세요.';
     }
-    final era = state.eras.where((item) => item.id == eraId).firstOrNull;
-    if (era == null || era.code != _apostolicEraCode) {
-      return false;
-    }
-    return persons.any(
-      (person) =>
-          selectedPersonIds.contains(person.id) && person.code == 'paul',
-    );
-  }
 
-  String? _normalizeJourneyKey(String? value) {
-    switch (value) {
-      case 'j1':
-      case 'j2':
-      case 'j3':
-      case 'rome':
-        return value;
-      default:
-        return null;
+    final message = error.toString();
+    if (message.contains('Failed host lookup')) {
+      return '$prefix Supabase 주소를 찾지 못했습니다. .env의 SUPABASE_URL_DEV 설정을 확인하세요.';
     }
-  }
 
-  String? _journeyKeyForEventCode(String code) {
-    final normalized = code.toLowerCase();
-    if (normalized.contains('_j1_')) {
-      return 'j1';
-    }
-    if (normalized.contains('_j2_')) {
-      return 'j2';
-    }
-    if (normalized.contains('_j3_')) {
-      return 'j3';
-    }
-    if (normalized.contains('_rome_')) {
-      return 'rome';
-    }
-    return null;
+    return '$prefix $message';
   }
 }

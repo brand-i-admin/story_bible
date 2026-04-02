@@ -189,11 +189,9 @@ class PersonPanel extends StatelessWidget {
                                   ),
                                   child: ClipOval(
                                     child:
-                                        (person.avatarUrl ?? '')
-                                            .trim()
-                                            .isNotEmpty
+                                        person.avatarAssetPath.trim().isNotEmpty
                                         ? Image.asset(
-                                            person.avatarUrl!,
+                                            person.avatarAssetPath,
                                             fit: BoxFit.cover,
                                             errorBuilder: (_, __, ___) =>
                                                 _AvatarFallback(

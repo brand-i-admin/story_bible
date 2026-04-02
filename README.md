@@ -1,1 +1,161 @@
 # story_bible
+
+## bible_verses 테이블 적재 (Python으로 SQL 생성 -> SQL 실행)
+
+중요: Python이 `bible_verses`에 직접 insert 하지 않습니다.
+
+전체 흐름:
+1. Python 스크립트로 `krv_bible_verses.sql` 생성
+2. 생성된 SQL을 Supabase에서 실행하여 적재
+
+사용 스크립트:
+- `tools/build_krv_seed_sql.py`
+
+입력 데이터:
+- 기본 모드: `assets/bible/*.txt` (예: `01 창세기.txt`, `02 출애굽기.txt`)
+- 파일 모드: CSV/TSV/JSONL (`tools/krv_input_template.csv` 참고)
+
+### 1) SQL 생성
+
+`assets/bible` 디렉토리에서 생성:
+
+```bash
+python3 tools/build_krv_seed_sql.py \
+  --input-dir assets/bible \
+  --output supabase/seeds/krv_bible_verses.sql \
+  --truncate-translation
+```
+
+CSV 파일에서 생성:
+
+```bash
+python3 tools/build_krv_seed_sql.py \
+  --input tools/krv_input_template.csv \
+  --input-format csv \
+  --output supabase/seeds/krv_bible_verses.sql \
+  --truncate-translation
+```
+
+옵션 설명:
+- `--truncate-translation`: 같은 번역본(`KRV`) 기존 데이터를 먼저 지우고 다시 채웁니다.
+- `--translation`: 기본 번역 코드 (기본값 `KRV`)
+
+### 2) Supabase에 반영
+
+아래 중 하나를 선택합니다.
+
+1. Supabase SQL Editor에서 `supabase/seeds/krv_bible_verses.sql` 실행  
+2. 파일이 너무 크면 `supabase/seeds/krv_bible_verses_part_01.sql` ~ `..._10.sql` 순서대로 실행  
+3. DB 접속 문자열이 있으면 `psql`로 실행
+
+```bash
+psql "$SUPABASE_DB_URL" -f supabase/seeds/krv_bible_verses.sql
+```
+
+### 3) 적재 확인
+
+```sql
+select translation, count(*) as verse_count
+from bible_verses
+group by translation;
+```
+
+## 초기 세팅 Flow (권장)
+
+### 0) db_init.sql 을 Supabase Editor 에 실행
+
+### 1) 성경 구절(`bible_verses`)을 Supabase에 넣기
+- 이 문서 상단 `bible_verses 테이블 적재` 절차를 그대로 사용합니다.
+- 핵심: `tools/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31904 개 생성 확인
+
+### 2) `assets/200_stories`에 이야기 JSON 준비
+- `assets/200_stories/*.json` (총 215개 이야기) 형태로 준비합니다.
+- 각 항목은 최소 `title`, `era`, `persons`, `bible_ref`를 포함해야 합니다.
+
+### 3) 아바타 생성용 프롬프트 JSON 생성 (`tools/avatar_prompts.json`)
+- 사용 스크립트: `tools/build_avatar_prompts_json.py`
+- 규칙: `2회 이상 등장 개인`만 포함 (집합/비개인 코드 제거 + group 확장 반영)
+
+```bash
+python3 tools/build_avatar_prompts_json.py \
+  --stories-dir assets/200_stories \
+  --output tools/avatar_prompts.json \
+  --min-mentions 2
+```
+
+### 4) 이야기 JSON을 Supabase 적재용 SQL로 정제/생성 후 적용
+- 사용 스크립트: `tools/build_200_stories_seed_sql.py`
+- 주의: `tools/avatar_prompts.json`이 먼저 있어야 합니다. (3번 단계 선행)
+- 정제 규칙:
+  - `disciples`, `apostles`, `brothers`는 개인 코드로 확장
+  - `mysterious_man`, `babel_people`, `abraham_servant` 등 비개인/집합 코드는 제거
+  - 1회만 등장하는 인물은 제외된 개인 목록(`tools/avatar_prompts.json`) 기준으로 필터링
+
+```bash
+python3 tools/build_200_stories_seed_sql.py \
+  --output-dir supabase/200_stories \
+  --avatar-prompt-json tools/avatar_prompts.json
+```
+
+- 생성 결과:
+  - `supabase/200_stories/200_stories_seed.sql`
+  - `supabase/200_stories/200_stories_report.json`
+  - `supabase/200_stories/200_stories_normalized.json`
+- Supabase SQL Editor에서 `200_stories_seed.sql`를 실행해 `events`, `event_persons`, `event_bible_refs`를 반영합니다.
+- SQL Editor에서 `Query is too large` 에러가 나면 분할 SQL을 생성해 순서대로 실행합니다.
+
+```bash
+# 기본은 2분할 생성
+python3 tools/build_200_stories_seed_sql.py \
+  --output-dir supabase/200_stories \
+  --avatar-prompt-json tools/avatar_prompts.json
+```
+
+### 5) `assets/avatars` 인물 이미지 생성
+- 사용 스크립트: `tools/generate_avatars_vertex.py`
+- 기본 프롬프트 입력은 `tools/avatar_prompts.json`입니다.
+
+```bash
+source .env
+python3 tools/generate_avatars_vertex.py \
+  --output-dir assets/avatars
+```
+
+### 6) 선정 인물을 Supabase `persons`/`person_eras`에 반영
+- SQL 생성 스크립트: `tools/build_persons_seed_sql.py`
+
+```bash
+python3 tools/build_persons_seed_sql.py \
+  --avatar-prompt-json tools/avatar_prompts.json \
+  --stories-dir assets/200_stories \
+  --output supabase/200_stories/persons_seed.sql
+```
+
+- 생성된 `supabase/200_stories/persons_seed.sql`을 Supabase SQL Editor에서 실행합니다.
+
+## 기타 자산 메모
+
+### `assets/elements` 관리
+- 기본 생성: `tools/generate_assets_vertex.py`
+- 생성 후 배경 제거/크기 보정 수작업 필요
+
+### `assets/maps` 재세팅
+- 필요 파일: `assets/maps/ne_50m_admin_0_countries.geojson`
+
+```bash
+mkdir -p assets/maps
+curl -L -o /tmp/ne_50m_admin_0_countries.zip \
+  https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_0_countries.zip
+unzip -o /tmp/ne_50m_admin_0_countries.zip -d /tmp/ne_50m_admin_0_countries
+ogr2ogr -f GeoJSON assets/maps/ne_50m_admin_0_countries.geojson \
+  /tmp/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp
+```
+
+### `assets/story_images` 생성
+- 사용 스크립트: `tools/generate_event_story_images_vertex.py`
+- `assets/200_stories/*.json`의 `story_scenes` 리스트를 읽어 장면(1~4)을 생성합니다.
+
+
+```bash
+python3 tools/generate_event_story_images_vertex.py
+```

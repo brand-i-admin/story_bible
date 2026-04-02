@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'screens/story_home_screen.dart';
 
-class StoryBibleApp extends StatelessWidget {
+class StoryBibleApp extends ConsumerWidget {
   const StoryBibleApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Story Bible',

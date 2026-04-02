@@ -1,0 +1,1085 @@
+[
+  {
+    "title": "185 안디옥 교회: 선교의 출발",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "barnabas",
+      "paul",
+      "church_of_antioch"
+    ],
+    "place_name": "안디옥(시리아)",
+    "lat": 36.202,
+    "lng": 36.16,
+    "summary": "안디옥 교회는 금식과 기도 가운데 바울과 바나바를 파송한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "13:1",
+        "to": "13:3"
+      }
+    ],
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "story_scenes": [
+      "금식과 기도 중 공동체가 조용히 고개를 든다",
+      "따로 세우라는 인도에 모두가 숨을 삼킨다",
+      "안수 앞쪽에 서 있고, 바울과 바나바가 서로를 바라본다",
+      "배가 있는 항구를 향해 걸어 나간다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [
+        "barnabas",
+        "paul"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "186 1차 선교(1): 구브로 살라미–바보",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "barnabas",
+      "john_mark"
+    ],
+    "place_name": "구브로(살라미 → 바보)",
+    "lat": 34.775,
+    "lng": 32.424,
+    "summary": "바울과 바나바는 구브로에서 복음을 전하며 첫 여정을 시작한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "13:4",
+        "to": "13:12"
+      }
+    ],
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "story_scenes": [
+      "배가 항구에 닿고, 회당으로 향하는 발걸음이 빠르다",
+      "반대와 긴장이 오가지만, 복음이 선포된다",
+      "분위기가 뒤집히는 순간, 총독의 표정이 달라진다",
+      "바울이 지도를 펼치며 다음 목적지를 가리킨다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "187 1차 선교(2): 비시디아 안디옥",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "place_name": "비시디아 안디옥(소아시아)",
+    "lat": 38.35,
+    "lng": 31.18,
+    "summary": "바울은 회당에서 설교하고, 복음은 이방인에게 크게 확장된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "13:13",
+        "to": "13:52"
+      }
+    ],
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "story_scenes": [
+      "회당, 사람들이 바울의 말을 기다리며 숨죽인다",
+      "설교 후 이방인들이 기뻐하며 몰려든다",
+      "반대가 커지고 도시의 공기가 갈라진다",
+      "두 사람은 먼지를 털고 다음 도시로 떠난다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "188 1차 선교(3): 이고니온",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "place_name": "이고니온(코니아)",
+    "lat": 37.874,
+    "lng": 32.493,
+    "summary": "표적과 논쟁이 함께 일어나고, 박해의 조짐이 짙어진다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "14:1",
+        "to": "14:7"
+      }
+    ],
+    "start_year": 47,
+    "end_year": 47,
+    "time_precision": "approx",
+    "story_scenes": [
+      "많은 사람이 믿지만, 반대가 조직적으로 커진다",
+      "두 사람이 서로 눈빛을 맞추고 도시를 떠날 결심을 한다"
+    ],
+    "scene_persons": [
+      [],
+      []
+    ]
+  },
+  {
+    "title": "189 1차 선교(4): 루스드라–더베",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "barnabas"
+    ],
+    "place_name": "루스드라 → 더베(갈라디아)",
+    "lat": 37.58,
+    "lng": 32.28,
+    "summary": "루스드라와 더베에서 전도가 이어지지만, 폭력적 박해도 뒤따른다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "14:8",
+        "to": "14:20"
+      }
+    ],
+    "start_year": 47,
+    "end_year": 47,
+    "time_precision": "approx",
+    "story_scenes": [
+      "군중의 열기가 오르며 상황이 급변한다, 긴장",
+      "바울이 상처를 안고도 다시 일어나 다음 도시로 걷는다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "190 1차 선교(5): 안디옥(시리아)로 귀환 보고",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "barnabas",
+      "church_of_antioch"
+    ],
+    "place_name": "안디옥(시리아)",
+    "lat": 36.202,
+    "lng": 36.16,
+    "summary": "1차 여행을 마치고 돌아와 하나님이 하신 일을 교회에 보고한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "14:21",
+        "to": "14:28"
+      }
+    ],
+    "start_year": 48,
+    "end_year": 48,
+    "time_precision": "approx",
+    "story_scenes": [
+      "안디옥 교회에 모인 사람들, 바울이 숨을 고르고 말문을 연다",
+      "이방인에게 믿음의 문이 열렸다는 보고에 모두가 놀라 미소 짓는다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "191 2차 선교(1): 드로아에서 마게도냐로",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "place_name": "드로아",
+    "lat": 39.812,
+    "lng": 26.173,
+    "summary": "드로아에서 ‘마게도냐로 건너오라’는 인도를 받고 방향이 바뀐다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "16:6",
+        "to": "16:10"
+      }
+    ],
+    "start_year": 49,
+    "end_year": 49,
+    "time_precision": "approx",
+    "story_scenes": [
+      "밤의 환상, 바울이 벌떡 일어나 지도를 펼친다",
+      "배가 바다를 건너며 유럽 선교의 문이 열린다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "192 2차 선교(2): 빌립보—루디아와 감옥의 찬양",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "silas",
+      "timothy",
+      "lydia",
+      "jailer"
+    ],
+    "place_name": "빌립보",
+    "lat": 41.012,
+    "lng": 24.286,
+    "summary": "빌립보에서 복음은 가정과 감옥 한복판까지 스며든다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "16:11",
+        "to": "16:34"
+      }
+    ],
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "story_scenes": [
+      "강가에서 루디아가 마음이 열리고 집 문이 열린다",
+      "한밤중 찬양, 큰 흔들림, 과 문이 열리는",
+      "배경과 분위기만 보이는",
+      "집에서 세례와 식탁, 두려움이 기쁨으로 바뀐다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "193 2차 선교(3): 데살로니가—소동과 도피",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "place_name": "데살로니가",
+    "lat": 40.64,
+    "lng": 22.944,
+    "summary": "데살로니가에서 복음이 퍼지자 반대가 폭동으로 번진다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "17:1",
+        "to": "17:9"
+      }
+    ],
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "story_scenes": [
+      "회당의 논쟁이 길어지고, 거리의 소문이 커진다",
+      "밤에 형제들이 바울 일행을 급히 피신시킨다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "194 2차 선교(4): 베뢰아—말씀을 상고하다",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "place_name": "베뢰아",
+    "lat": 40.523,
+    "lng": 22.203,
+    "summary": "베뢰아 사람들은 말씀을 상고하며 복음을 받아들인다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "17:10",
+        "to": "17:15"
+      }
+    ],
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "story_scenes": [
+      "사람들이 두루마리를 펼쳐 확인한다, 고개를 끄덕인다",
+      "데살로니가에서 온 방해 소식에 바울이 홀로 떠날 준비를 한다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "195 2차 선교(5): 아덴—아레오바고 설교",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul"
+    ],
+    "place_name": "아덴(아레오바고)",
+    "lat": 37.972,
+    "lng": 23.725,
+    "summary": "바울은 ‘알지 못하는 신’ 제단을 출발점으로 창조주와 부활을 선포한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "17:16",
+        "to": "17:34"
+      }
+    ],
+    "start_year": 51,
+    "end_year": 51,
+    "time_precision": "approx",
+    "story_scenes": [
+      "우상으로 가득한 거리, 바울이 멈춰 깊게 숨을 쉰다",
+      "배경과 분위기만 보이는",
+      "바울이 부활을 말하자 어떤 이는 비웃고 어떤 이는 더 듣겠다고 남는다",
+      "바울이 조용히 도시를 떠난다, 다음 목적지가 열린다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      [],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "196 2차 선교(6): 고린도—정착과 견딤",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "aquila",
+      "priscilla"
+    ],
+    "place_name": "고린도",
+    "lat": 37.939,
+    "lng": 22.932,
+    "summary": "고린도에서 바울은 오래 머물며 공동체를 세우고 박해를 견딘다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "18:1",
+        "to": "18:18"
+      }
+    ],
+    "start_year": 51,
+    "end_year": 52,
+    "time_precision": "approx",
+    "story_scenes": [
+      "바울이 아굴라·브리스길라와 함께 일하며 밤엔 가르친다",
+      "재판 자리에서 바울이 침착히 선다, 결국 사건이 흩어진다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "197 3차 선교(1): 에베소—확장과 충돌",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul"
+    ],
+    "place_name": "에베소",
+    "lat": 37.949,
+    "lng": 27.364,
+    "summary": "에베소에서 복음이 크게 확장되며 도시의 질서와도 충돌한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "19:1",
+        "to": "19:41"
+      }
+    ],
+    "start_year": 53,
+    "end_year": 55,
+    "time_precision": "approx",
+    "story_scenes": [
+      "두란노 서원, 사람들이 오가며 가르침이 퍼진다",
+      "바울이 소동이 벌어지고 에베소 사람의 아데미!, 함성이 극장에 울린다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "198 3차 선교(2): 마게도냐—교회를 굳게 하다",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul"
+    ],
+    "place_name": "마게도냐(빌립보/데살로니가 권역)",
+    "lat": 40.64,
+    "lng": 22.944,
+    "summary": "바울은 마게도냐를 돌며 성도들을 격려하고 공동체를 세운다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "20:1",
+        "to": "20:2"
+      }
+    ],
+    "start_year": 56,
+    "end_year": 56,
+    "time_precision": "approx",
+    "story_scenes": [
+      "바울이 여러 도시를 지나며 손을 얹고 격려한다, 여정"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "199 3차 선교(3): 헬라(고린도)—머무름과 결심",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul"
+    ],
+    "place_name": "고린도(헬라)",
+    "lat": 37.939,
+    "lng": 22.932,
+    "summary": "바울은 헬라에서 머물며 다음 행선과 위험을 준비한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "20:2",
+        "to": "20:3"
+      }
+    ],
+    "start_year": 56,
+    "end_year": 57,
+    "time_precision": "approx",
+    "story_scenes": [
+      "바울이 편지를 쓰고, 지도 위에 예루살렘을 표시한다, 결심"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "200 3차 선교(4): 밀레도—에베소 장로들과 작별",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "ephesus_elders"
+    ],
+    "place_name": "밀레도",
+    "lat": 37.53,
+    "lng": 27.276,
+    "summary": "바울은 장로들을 불러 눈물로 권면하고 다시는 못 볼지도 모른다고 말한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "20:17",
+        "to": "20:38"
+      }
+    ],
+    "start_year": 57,
+    "end_year": 57,
+    "time_precision": "approx",
+    "story_scenes": [
+      "해변가 작별, 바울이 결연한 표정으로 선다, 내가 다시 얼굴을 보지 못할지라",
+      "모두가 울며 껴안고, 배가 떠나는 것을 오래 바라본다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "201 로마행(1): 예루살렘 체포",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "jerusalem_crowd"
+    ],
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.235,
+    "summary": "성전 소동으로 바울이 붙잡히며 ‘로마까지’의 여정이 시작된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "21:27",
+        "to": "21:36"
+      }
+    ],
+    "start_year": 57,
+    "end_year": 57,
+    "time_precision": "approx",
+    "story_scenes": [
+      "군중의 함성, 바울이 붙잡혀 계단으로 끌려간다"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "202 로마행(2): 가이사랴 재판과 상소",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "festus",
+      "agrippa"
+    ],
+    "place_name": "가이사랴",
+    "lat": 32.5,
+    "lng": 34.89,
+    "summary": "바울은 재판 자리에서 증언하고 ‘가이사에게 상소’한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "24:10",
+        "to": "24:27"
+      },
+      {
+        "book": "행",
+        "from": "25:7",
+        "to": "25:12"
+      },
+      {
+        "book": "행",
+        "from": "26:1",
+        "to": "26:32"
+      }
+    ],
+    "start_year": 59,
+    "end_year": 59,
+    "time_precision": "approx",
+    "story_scenes": [
+      "재판정, 바울이 결연한 표정으로 선다",
+      "아그립바가 속삭인다, 네가 나를 설득하려 하는구나"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "203 로마행(3): 폭풍의 항해",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "ship_crew"
+    ],
+    "place_name": "지중해 항로(그레데 근처, 전승)",
+    "lat": 35.2,
+    "lng": 25.1,
+    "summary": "폭풍 속에서 바울은 ‘두려워 말라’는 약속으로 사람들을 붙든다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "27:13",
+        "to": "27:26"
+      }
+    ],
+    "start_year": 59,
+    "end_year": 59,
+    "time_precision": "approx",
+    "story_scenes": [
+      "파도가 배를 삼킬 듯 흔들고, 사람들은 절망한다",
+      "바울이 결연한 표정으로 선다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "204 로마행(4): 멜리데(몰타) 표류",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul",
+      "islanders"
+    ],
+    "place_name": "몰타(멜리데)",
+    "lat": 35.9,
+    "lng": 14.51,
+    "summary": "난파 후 섬에 도착하고, 바울을 통한 표징으로 사람들이 마음을 연다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "27:39",
+        "to": "27:44"
+      },
+      {
+        "book": "행",
+        "from": "28:1",
+        "to": "28:10"
+      }
+    ],
+    "start_year": 60,
+    "end_year": 60,
+    "time_precision": "approx",
+    "story_scenes": [
+      "비와 추위 속, 섬사람들이 불을 피워 준다",
+      "사람들의 시선이 바울에게 모이고, 분위기가 환대로 바뀐다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "205 로마행(5): 로마 도착",
+    "era": "era_nt_apostolic",
+    "persons": [
+      "paul"
+    ],
+    "place_name": "로마",
+    "lat": 41.902,
+    "lng": 12.496,
+    "summary": "바울은 로마에 도착해 묶인 상태로도 복음을 전한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "28:14",
+        "to": "28:31"
+      }
+    ],
+    "start_year": 60,
+    "end_year": 62,
+    "time_precision": "approx",
+    "story_scenes": [
+      "로마의 길, 바울이 쇠사슬을 찬 채 걸어 들어온다",
+      "집에서 사람들을 맞아 담대히 가르친다, 아무도 금하지 못하더라"
+    ],
+    "scene_persons": [
+      [
+        "paul"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "206 성전 파괴: 예루살렘의 큰 전환",
+    "era": "era_nt_post_apostolic",
+    "persons": [
+      "jerusalem_people"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.235,
+    "summary": "AD 70 예루살렘 성전이 파괴되며 시대의 큰 전환이 일어난다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "24:1",
+        "to": "24:2"
+      },
+      {
+        "book": "눅",
+        "from": "21:5",
+        "to": "21:6"
+      }
+    ],
+    "start_year": 70,
+    "end_year": 70,
+    "time_precision": "exact",
+    "story_scenes": [
+      "배경과 분위기만 보이는",
+      "배경과 분위기만 보이는",
+      "도시에서 연기와 붕괴의 소식이 번진다",
+      "폐허를 바라보는 사람들, 역사의 갈림이 조용히 남는다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "207 밧모섬의 요한: 계시의 시작",
+    "era": "era_nt_post_apostolic",
+    "persons": [
+      "john"
+    ],
+    "place_name": "밧모섬",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "요한은 밧모섬에서 환상 가운데 계시를 받는다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "1:9",
+        "to": "1:20"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_scenes": [
+      "바닷바람 부는 섬, 요한이 홀로 앉아 기도한다",
+      "나팔 소리 같은 큰 음성이 들리고 요한이 뒤돌아본다",
+      "빛나는 환상, 요한이 두려움에 엎드린다",
+      "기록하여 보내라 명령에 요한이 두루마리를 붙잡는다"
+    ],
+    "scene_persons": [
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ]
+    ]
+  },
+  {
+    "title": "208 일곱 교회 편지: 촛대 사이의 말씀",
+    "era": "era_nt_post_apostolic",
+    "persons": [
+      "john"
+    ],
+    "place_name": "소아시아(일곱 교회 중심: 에베소)",
+    "lat": 37.95,
+    "lng": 27.37,
+    "summary": "일곱 교회에 칭찬과 책망, 약속이 전달된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "2:1",
+        "to": "3:22"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_scenes": [
+      "요한이 편지를 쓰기 시작한다, 촛불이 흔들린다",
+      "처음 사랑을 버렸다 같은 말이 떨어지고 요한이 잠깐 멈춘다",
+      "이기는 자에게 약속이 이어진다, 희망의 톤이 스친다",
+      "편지가 봉해지고 사자가 길을 떠난다, 전달의"
+    ],
+    "scene_persons": [
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "209 하늘 보좌: 문이 열리다",
+    "era": "era_nt_consummation",
+    "persons": [
+      "john",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "요한은 하늘 보좌의 환상을 보고 경배의 중심을 목격한다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "4:1",
+        "to": "4:11"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "문이 열리는 듯한",
+      "보좌와 무지개 같은 빛, 번개와 음성이 울린다",
+      "생물들이 거룩하다를 반복하고 요한이 숨을 삼킨다",
+      "배경과 분위기만 보이는"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [
+        "john"
+      ],
+      []
+    ]
+  },
+  {
+    "title": "210 어린양: 두루마리를 받다",
+    "era": "era_nt_consummation",
+    "persons": [
+      "john",
+      "lamb",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "어린양이 두루마리를 받아 역사의 열쇠를 여는 존재로 드러난다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "5:1",
+        "to": "5:14"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "봉인된 두루마리, 누가 열 수 있는가 질문이 울린다",
+      "요한이 울다가 유다 지파의 사자 소리를 듣고 고개를 든다",
+      "어린양이 보좌 앞으로 나아가 두루마리를 받는다",
+      "하늘의 찬양이 폭발하듯 번지고 경배가 가득 찬다"
+    ],
+    "scene_persons": [
+      [],
+      [
+        "john"
+      ],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "211 일곱 인: 역사의 문이 열리다",
+    "era": "era_nt_consummation",
+    "persons": [
+      "lamb",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "봉인이 하나씩 열리며 심판과 경고의 흐름이 전개된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "6:1",
+        "to": "7:17"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "첫 봉인이 열리고 전개가 시작되는 긴장감",
+      "연속되는 봉인들로 세상이 흔들리는 이미지",
+      "사람들의 질문과 두려움이 커지는",
+      "보호의 표가 강조되며 끝까지 버팀의 톤으로 마무리된다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "212 일곱 나팔: 경고의 울림",
+    "era": "era_nt_consummation",
+    "persons": [
+      "angels"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "나팔이 울리며 경고가 반복되고 회개의 촉구가 이어진다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "8:1",
+        "to": "11:19"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "하늘의 잠깐 침묵 후, 첫 나팔이 울린다",
+      "땅과 바다에 재앙 이미지가 번진다",
+      "angels가 angels가 두 증인의 앞쪽에 서 있고, 이 스쳐 지나가며 긴장감이 높아진다",
+      "angels가 angels가 angels가 angels가 angels가 angels가 마지막 나팔과 함께 나라가 주의 것이 되었다 선언이 울린다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [
+        "angels"
+      ],
+      [
+        "angels"
+      ]
+    ]
+  },
+  {
+    "title": "213 용과 두 짐승: 대립의 정점",
+    "era": "era_nt_consummation",
+    "persons": [
+      "dragon",
+      "beasts",
+      "saints"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "거대한 대립이 드러나고, 믿는 자들의 인내가 강조된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "12:1",
+        "to": "13:18"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "하늘의 전쟁 같은 이미지, 대립이 시작된다",
+      "땅 위에 권세가 등장하며 사람들의 시선이 흔들린다",
+      "표와 충성의 선택이 강조되는",
+      "배경과 분위기만 보이는"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "214 바벨론의 멸망: 무너지는 화려함",
+    "era": "era_nt_consummation",
+    "persons": [
+      "heavenly_voice"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "교만한 체계가 무너지고, 애통과 해방의 대비가 나타난다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "17:1",
+        "to": "17:18"
+      },
+      {
+        "book": "계",
+        "from": "18:1",
+        "to": "18:24"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "화려한 도시 이미지가 등장하고, 사람들의 욕망이 번쩍인다",
+      "배경과 분위기만 보이는",
+      "배경과 분위기만 보이는",
+      "하늘의 기쁨과 땅의 애통이 대비되며 마무리된다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "title": "215 최후 심판과 새 하늘 새 땅",
+    "era": "era_nt_consummation",
+    "persons": [
+      "judge",
+      "john",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.31,
+    "lng": 26.55,
+    "summary": "심판이 지나고 새 예루살렘과 영원한 회복이 선포된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "20:11",
+        "to": "20:15"
+      },
+      {
+        "book": "계",
+        "from": "21:1",
+        "to": "22:5"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_scenes": [
+      "큰 보좌 앞에 모두가 서는 앞쪽에 서 있고, 책들이 펼쳐진다",
+      "처음 하늘과 처음 땅이 지나갔다 선언으로 화면이 전환된다",
+      "새 예루살렘이 내려오는 이미지, 빛과 성벽",
+      "눈물을 씻기시니라는 약속과 함께, 밝은 새 아침으로 끝난다"
+    ],
+    "scene_persons": [
+      [],
+      [],
+      [],
+      []
+    ]
+  }
+]
