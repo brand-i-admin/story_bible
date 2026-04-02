@@ -18,6 +18,7 @@ import '../models/person.dart';
 import '../models/person_study_progress.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
+import '../models/user_note.dart';
 import '../models/quiz_question.dart';
 import '../screens/profile_notes_screen.dart';
 import '../screens/saved_verses_screen.dart';
@@ -36,8 +37,11 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
   ConsumerState<StoryHomeScreen> createState() => _StoryHomeScreenState();
 }
 
+enum _ProfileContentTab { notes, verses, prayer }
+
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const int _intercessoryPrayerPageSize = 12;
+  static const int _profilePreviewPageSize = 5;
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
@@ -74,6 +78,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   AppUserProfile? _profileUser;
   Map<String, PersonStudyProgress> _profileStudyProgressByPersonId = const {};
   Map<String, int> _profilePersonTimelineOrderById = const {};
+  _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
+  List<UserNote> _profileNotesPreview = const [];
+  List<SavedBibleVerse> _profileSavedVersesPreview = const [];
+  bool _profileNotesLoading = false;
+  bool _profileSavedVersesLoading = false;
+  String? _profileNotesError;
+  String? _profileSavedVersesError;
   List<IntercessoryPrayerItem> _intercessoryPrayerItems = const [];
   bool _intercessoryPrayerLoading = false;
   bool _intercessoryPrayerLoadingMore = false;
@@ -140,6 +151,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       setState(() {
         _profileUser = null;
         _profileStudyProgressByPersonId = const {};
+        _profileContentTab = _ProfileContentTab.prayer;
+        _profileNotesPreview = const [];
+        _profileSavedVersesPreview = const [];
+        _profileNotesLoading = false;
+        _profileSavedVersesLoading = false;
+        _profileNotesError = null;
+        _profileSavedVersesError = null;
         _intercessoryPrayerItems = const [];
         _intercessoryPrayerLoading = false;
         _intercessoryPrayerLoadingMore = false;
@@ -283,6 +301,117 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       });
       _profilePageSetState?.call(() {});
     }
+  }
+
+  Future<void> _loadProfileNotesPreview({bool showLoading = true}) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileNotesPreview = const [];
+        _profileNotesLoading = false;
+        _profileNotesError = null;
+      });
+      _profilePageSetState?.call(() {});
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        if (showLoading) {
+          _profileNotesLoading = true;
+        }
+        _profileNotesError = null;
+      });
+    }
+
+    try {
+      final result = await ref
+          .read(userRepositoryProvider)
+          .fetchUserNotesPage(
+            userId: user.id,
+            pageIndex: 0,
+            pageSize: _profilePreviewPageSize,
+          );
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileNotesPreview = result.items;
+        _profileNotesLoading = false;
+      });
+      _profilePageSetState?.call(() {});
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileNotesLoading = false;
+        _profileNotesError = '노트를 불러오지 못했습니다.\n$error';
+      });
+      _profilePageSetState?.call(() {});
+    }
+  }
+
+  Future<void> _loadProfileSavedVersesPreview({bool showLoading = true}) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileSavedVersesPreview = const [];
+        _profileSavedVersesLoading = false;
+        _profileSavedVersesError = null;
+      });
+      _profilePageSetState?.call(() {});
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        if (showLoading) {
+          _profileSavedVersesLoading = true;
+        }
+        _profileSavedVersesError = null;
+      });
+    }
+
+    try {
+      final result = await ref
+          .read(userRepositoryProvider)
+          .fetchSavedVersesPage(
+            userId: user.id,
+            pageIndex: 0,
+            pageSize: _profilePreviewPageSize,
+          );
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileSavedVersesPreview = result.items;
+        _profileSavedVersesLoading = false;
+      });
+      _profilePageSetState?.call(() {});
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileSavedVersesLoading = false;
+        _profileSavedVersesError = '저장한 말씀을 불러오지 못했습니다.\n$error';
+      });
+      _profilePageSetState?.call(() {});
+    }
+  }
+
+  Future<void> _refreshProfileTabPreviews({bool showLoading = true}) async {
+    await Future.wait([
+      _loadProfileNotesPreview(showLoading: showLoading),
+      _loadProfileSavedVersesPreview(showLoading: showLoading),
+    ]);
   }
 
   static const List<Color> _draftSelectionPalette = <Color>[
@@ -939,7 +1068,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _profileError = allPeople.isEmpty ? '인물 데이터가 없습니다.' : null;
       });
       if (user != null) {
-        await _loadIntercessoryPrayerPage();
+        await Future.wait([
+          _loadIntercessoryPrayerPage(),
+          _refreshProfileTabPreviews(),
+        ]);
       }
     } catch (error) {
       if (!mounted) {
@@ -1989,8 +2121,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         final h = constraints.maxHeight;
         final orientation = MediaQuery.orientationOf(context);
         final useSplitLayout = orientation == Orientation.landscape || w >= 900;
-        final contentGap = (w * 0.012).clamp(8.0, 16.0).toDouble();
-        final progressHeight = (h * 0.072).clamp(36.0, 48.0).toDouble();
+        final contentGap = (w * 0.011).clamp(8.0, 14.0).toDouble();
+        final progressHeight = (h * 0.084).clamp(44.0, 58.0).toDouble();
         final mapHeightOnNarrow = (h * 0.44).clamp(220.0, 360.0).toDouble();
 
         String avatarAssetForPerson(String personId) {
@@ -2046,10 +2178,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(flex: 6, child: mapPanel),
+                        Expanded(flex: 11, child: mapPanel),
                         SizedBox(width: contentGap),
                         Expanded(
-                          flex: 4,
+                          flex: 9,
                           child: _buildWeeklyListPanel(
                             weekly: weekly,
                             completedEventIds: completedEventIds,
@@ -2087,7 +2219,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _weeklyGuestNoticeBanner() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
         color: const Color(0xFFF4E5BE),
         borderRadius: BorderRadius.circular(10),
@@ -2102,9 +2234,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               '비로그인 상태예요. 금주 인물과 퀴즈는 사용할 수 있지만 진행 상황은 저장되지 않아요.',
               style: TextStyle(
                 color: Color(0xFF6A4A23),
-                fontSize: 10.8,
+                fontSize: 12.2,
                 fontWeight: FontWeight.w700,
-                height: 1.28,
+                height: 1.32,
               ),
             ),
           ),
@@ -2121,71 +2253,95 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }) {
     final clampedProgress = progress.clamp(0.0, 1.0);
     final percentText = '${(clampedProgress * 100).round()}%';
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: const Color(0xAA2A2118),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0x99DDB883), width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 8,
-              child: Text(
-                '이번주 남은 $daysRemainingKst일 · 이야기 $completedCount/$totalCount 달성',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFFFDF8EE),
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w800,
-                  shadows: [
-                    Shadow(
-                      color: Color(0xAA000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 5,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(999),
-                child: LinearProgressIndicator(
-                  minHeight: 8,
-                  value: clampedProgress,
-                  backgroundColor: const Color(0x664E3A26),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFFC6922D),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              percentText,
-              maxLines: 1,
-              style: const TextStyle(
-                color: Color(0xFFFFE5A8),
-                fontSize: 10.5,
-                fontWeight: FontWeight.w900,
-                shadows: [
-                  Shadow(
-                    color: Color(0xAA000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 540;
+        final summaryStyle = TextStyle(
+          color: const Color(0xFFFDF8EE),
+          fontSize: compact ? 12.6 : 14.2,
+          fontWeight: FontWeight.w800,
+          height: compact ? 1.25 : 1.1,
+          shadows: const [
+            Shadow(
+              color: Color(0xAA000000),
+              blurRadius: 2,
+              offset: Offset(0, 1),
             ),
           ],
-        ),
-      ),
+        );
+        final percentStyle = TextStyle(
+          color: const Color(0xFFFFE5A8),
+          fontSize: compact ? 12.8 : 14.2,
+          fontWeight: FontWeight.w900,
+          shadows: const [
+            Shadow(
+              color: Color(0xAA000000),
+              blurRadius: 2,
+              offset: Offset(0, 1),
+            ),
+          ],
+        );
+        final progressBar = ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: LinearProgressIndicator(
+            minHeight: compact ? 10 : 12,
+            value: clampedProgress,
+            backgroundColor: const Color(0x664E3A26),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFC6922D)),
+          ),
+        );
+
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: const Color(0xAA2A2118),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0x99DDB883), width: 1),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? 10 : 14,
+              vertical: compact ? 8 : 10,
+            ),
+            child: compact
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '이번주 남은 $daysRemainingKst일 · 이야기 $completedCount/$totalCount 달성',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: summaryStyle,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(child: progressBar),
+                          const SizedBox(width: 8),
+                          Text(percentText, maxLines: 1, style: percentStyle),
+                        ],
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      Expanded(
+                        flex: 9,
+                        child: Text(
+                          '이번주 남은 $daysRemainingKst일 · 이야기 $completedCount/$totalCount 달성',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: summaryStyle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(flex: 7, child: progressBar),
+                      const SizedBox(width: 8),
+                      Text(percentText, maxLines: 1, style: percentStyle),
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 
@@ -2215,7 +2371,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   ? const Center(
                       child: Text(
                         '선택된 인물의 사건이 없습니다.',
-                        style: TextStyle(color: Color(0xFF5A4327)),
+                        style: TextStyle(
+                          color: Color(0xFF5A4327),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     )
                   : ListView.builder(
@@ -2242,104 +2402,142 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             onTap: () => onSelectEvent(event.id),
                             behavior: HitTestBehavior.opaque,
                             child: Container(
-                              constraints: const BoxConstraints(minHeight: 58),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 8,
-                              ),
                               decoration: _interactiveCardDecoration(
                                 selected: selected,
                                 completed: isCompleted,
                               ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 10,
-                                    height: 10,
-                                    margin: const EdgeInsets.only(right: 8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: colorForPerson(weekly.person.id),
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final isCompactCard =
+                                      constraints.maxWidth < 340;
+                                  final titleFontSize = isCompactCard
+                                      ? 13.2
+                                      : 14.8;
+                                  final bodyFontSize = isCompactCard
+                                      ? 11.2
+                                      : 12.2;
+                                  final checkboxSize = isCompactCard
+                                      ? 26.0
+                                      : 29.0;
+                                  final checkboxIconSize = isCompactCard
+                                      ? 15.0
+                                      : 17.0;
+                                  return Container(
+                                    constraints: BoxConstraints(
+                                      minHeight: isCompactCard ? 64 : 74,
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isCompactCard ? 10 : 12,
+                                      vertical: isCompactCard ? 9 : 10,
+                                    ),
+                                    child: Row(
                                       children: [
-                                        Text(
-                                          '${index + 1}. ${event.title}',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11.4,
-                                            fontWeight: FontWeight.w800,
-                                            color: selected
-                                                ? const Color(0xFFFDF8EE)
-                                                : isCompleted
-                                                ? const Color(0xFF2D5A39)
-                                                : const Color(0xFF4A331D),
-                                            height: 1.16,
+                                        Container(
+                                          width: isCompactCard ? 11 : 12,
+                                          height: isCompactCard ? 11 : 12,
+                                          margin: EdgeInsets.only(
+                                            right: isCompactCard ? 8 : 10,
                                           ),
-                                        ),
-                                        if (shortText.isNotEmpty) ...[
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            shortText,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 9.4,
-                                              fontWeight: FontWeight.w600,
-                                              color: selected
-                                                  ? const Color(0xEAFDF8EE)
-                                                  : isCompleted
-                                                  ? const Color(0xCC44624B)
-                                                  : const Color(0xCC5A4327),
-                                              height: 1.18,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: colorForPerson(
+                                              weekly.person.id,
                                             ),
                                           ),
-                                        ],
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                '${index + 1}. ${event.title}',
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: titleFontSize,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: selected
+                                                      ? const Color(0xFFFDF8EE)
+                                                      : isCompleted
+                                                      ? const Color(0xFF2D5A39)
+                                                      : const Color(0xFF4A331D),
+                                                  height: 1.18,
+                                                ),
+                                              ),
+                                              if (shortText.isNotEmpty) ...[
+                                                SizedBox(
+                                                  height: isCompactCard ? 3 : 4,
+                                                ),
+                                                Text(
+                                                  shortText,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: bodyFontSize,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: selected
+                                                        ? const Color(
+                                                            0xEAFDF8EE,
+                                                          )
+                                                        : isCompleted
+                                                        ? const Color(
+                                                            0xCC44624B,
+                                                          )
+                                                        : const Color(
+                                                            0xCC5A4327,
+                                                          ),
+                                                    height: 1.2,
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: isCompactCard ? 6 : 8),
+                                        GestureDetector(
+                                          onTap: () =>
+                                              onToggleChecked(event.id),
+                                          behavior: HitTestBehavior.opaque,
+                                          child: Container(
+                                            width: checkboxSize,
+                                            height: checkboxSize,
+                                            decoration: BoxDecoration(
+                                              color: isChecked
+                                                  ? const Color(0xFF2D7C55)
+                                                  : const Color(0xFFF8F1E4),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: isChecked
+                                                    ? const Color(0xFF2D7C55)
+                                                    : const Color(0xFFB58E63),
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              isChecked
+                                                  ? Icons.check_rounded
+                                                  : Icons.circle_outlined,
+                                              size: checkboxIconSize,
+                                              color: isChecked
+                                                  ? const Color(0xFFFDF8EE)
+                                                  : const Color(0xFF8E6F48),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        _weeklyInlineQuizButton(
+                                          completed: isCompleted,
+                                          onTap: () => onStartQuiz(event.id),
+                                          roomy: !isCompactCard,
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  GestureDetector(
-                                    onTap: () => onToggleChecked(event.id),
-                                    behavior: HitTestBehavior.opaque,
-                                    child: Container(
-                                      width: 24,
-                                      height: 24,
-                                      decoration: BoxDecoration(
-                                        color: isChecked
-                                            ? const Color(0xFF2D7C55)
-                                            : const Color(0xFFF8F1E4),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: isChecked
-                                              ? const Color(0xFF2D7C55)
-                                              : const Color(0xFFB58E63),
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        isChecked
-                                            ? Icons.check_rounded
-                                            : Icons.circle_outlined,
-                                        size: 14,
-                                        color: isChecked
-                                            ? const Color(0xFFFDF8EE)
-                                            : const Color(0xFF8E6F48),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  _weeklyInlineQuizButton(
-                                    completed: isCompleted,
-                                    onTap: () => onStartQuiz(event.id),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -2356,13 +2554,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget _weeklyInlineQuizButton({
     required bool completed,
     required VoidCallback onTap,
+    bool roomy = false,
   }) {
     return _filledActionButton(
       label: '퀴즈',
       onTap: onTap,
       completed: completed,
       compact: true,
-      minWidth: 50,
+      minWidth: roomy ? 60 : 52,
+      minHeight: roomy ? 40 : 36,
+      fontSize: roomy ? 13.8 : 12.8,
+      horizontalPadding: roomy ? 14 : 12,
     );
   }
 
@@ -2371,19 +2573,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required Person person,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: _headerChipDecoration(),
       child: Row(
         children: [
-          _weeklyPersonAvatar(person: person, size: 28),
-          const SizedBox(width: 8),
+          _weeklyPersonAvatar(person: person, size: 34),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 12.2,
+                fontSize: 16.2,
                 fontWeight: FontWeight.w800,
                 color: Color(0xFF4A331D),
               ),
@@ -2611,9 +2813,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     return LayoutBuilder(
       builder: (context, constraints) {
-        final gap = (constraints.maxWidth * 0.024).clamp(10.0, 18.0).toDouble();
-        final leftWidth = (constraints.maxWidth * 0.33)
-            .clamp(220.0, 270.0)
+        final gap = (constraints.maxWidth * 0.012).clamp(4.0, 10.0).toDouble();
+        final leftWidth = (constraints.maxWidth * 0.425)
+            .clamp(278.0, 416.0)
             .toDouble();
 
         return Padding(
@@ -2675,6 +2877,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     await Navigator.of(
       context,
     ).push(MaterialPageRoute<void>(builder: (_) => const ProfileNotesScreen()));
+    if (!mounted) {
+      return;
+    }
+    await _loadProfileNotesPreview(showLoading: false);
   }
 
   Future<void> _openSavedVersesPage() async {
@@ -2691,6 +2897,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         ),
       ),
     );
+    if (!mounted) {
+      return;
+    }
+    await _loadProfileSavedVersesPreview(showLoading: false);
   }
 
   Future<void> _copyProfileShareId(String shareId) async {
@@ -2705,6 +2915,34 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('공유 ID가 복사되었어요. ($normalized)')));
+  }
+
+  void _openProfilePrayerPreview(String prayerText) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => ParchmentDialog(
+        title: '내 기도',
+        showCloseButton: true,
+        actions: [
+          ParchmentDialogActionButton(
+            label: '닫기',
+            style: ParchmentDialogActionStyle.secondary,
+            onTap: () => Navigator.of(dialogContext).pop(),
+          ),
+        ],
+        child: SingleChildScrollView(
+          child: Text(
+            prayerText,
+            style: const TextStyle(
+              color: Color(0xFF3E2B18),
+              fontSize: 13.2,
+              fontWeight: FontWeight.w700,
+              height: 1.55,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<String?> _showShareIdInputDialog() async {
@@ -2861,7 +3099,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildCurrentUserAvatar(profile: profile, size: 72),
+                _buildCurrentUserAvatar(profile: profile, size: 78),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Padding(
@@ -2896,7 +3134,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Color(0xFF4A331D),
-                            fontSize: 18,
+                            fontSize: 20.5,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -2906,43 +3144,593 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            _profileRoundedCard(
-              title: '기도제목',
-              subtitle: (profile.prayerRequest ?? '').trim().isNotEmpty
-                  ? profile.prayerRequest!.trim()
-                  : '오늘의 기도제목을 적어 보세요.',
-              maxLines: 4,
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: _profileMiniActionButton(
-                    label: '노트',
-                    onTap: _openProfileNotesPage,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _profileMiniActionButton(
-                    label: '말씀',
-                    onTap: _openSavedVersesPage,
-                  ),
-                ),
-              ],
-            ),
+            const SizedBox(height: 12),
+            _buildProfileContentTabs(),
             const SizedBox(height: 10),
             Expanded(
-              child: _buildIntercessoryPrayerSection(
+              child: _buildProfileContentPanel(
+                profile: profile,
                 isAuthenticated: isAuthenticated,
-                shareId: profile.shareId,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildProfileContentTabs() {
+    final selectedIndex = switch (_profileContentTab) {
+      _ProfileContentTab.prayer => 0,
+      _ProfileContentTab.notes => 1,
+      _ProfileContentTab.verses => 2,
+    };
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final tabBarWidth = math.min(constraints.maxWidth, 292.0);
+        final segmentWidth = tabBarWidth / 3;
+        final indicatorWidth = math.min(62.0, segmentWidth - 18);
+        final indicatorLeft =
+            segmentWidth * selectedIndex +
+            ((segmentWidth - indicatorWidth) / 2);
+
+        return SizedBox(
+          height: 40,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: tabBarWidth,
+              child: Stack(
+                children: [
+                  const Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: ColoredBox(
+                      color: Color(0x338E6F48),
+                      child: SizedBox(height: 2),
+                    ),
+                  ),
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOut,
+                    left: indicatorLeft,
+                    bottom: 0,
+                    child: Container(
+                      width: indicatorWidth,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB26B28),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _profileContentTabButton(
+                            label: '기도',
+                            tab: _ProfileContentTab.prayer,
+                          ),
+                        ),
+                        Expanded(
+                          child: _profileContentTabButton(
+                            label: '노트',
+                            tab: _ProfileContentTab.notes,
+                          ),
+                        ),
+                        Expanded(
+                          child: _profileContentTabButton(
+                            label: '말씀',
+                            tab: _ProfileContentTab.verses,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _profileContentTabButton({
+    required String label,
+    required _ProfileContentTab tab,
+  }) {
+    final selected = _profileContentTab == tab;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _profileContentTab = tab;
+          });
+          _profilePageSetState?.call(() {});
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: selected
+                    ? const Color(0xFFB26B28)
+                    : const Color(0xFF7E735F),
+                fontSize: selected ? 16.4 : 15.4,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileContentPanel({
+    required AppUserProfile profile,
+    required bool isAuthenticated,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 2, 2, 0),
+      child: switch (_profileContentTab) {
+        _ProfileContentTab.notes => _buildProfileNotesTabBody(),
+        _ProfileContentTab.verses => _buildProfileVersesTabBody(),
+        _ProfileContentTab.prayer => _buildProfilePrayerTabBody(
+          profile: profile,
+          isAuthenticated: isAuthenticated,
+        ),
+      },
+    );
+  }
+
+  Widget _buildProfileNotesTabBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _profileTabSectionHeader(
+          title: '내 노트',
+          actionLabel: '전체 보기',
+          onAction: _openProfileNotesPage,
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: _profileNotesLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _profileNotesError != null
+              ? _buildProfileTabMessage(
+                  _profileNotesError!,
+                  textColor: const Color(0xFF7E3426),
+                )
+              : _profileNotesPreview.isEmpty
+              ? _buildProfileTabMessage(
+                  '아직 작성한 노트가 없습니다.\n전체 보기에서 노트를 작성해 보세요.',
+                )
+              : ListView.separated(
+                  itemCount: _profileNotesPreview.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final note = _profileNotesPreview[index];
+                    return _buildProfileNotePreviewCard(note);
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileVersesTabBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _profileTabSectionHeader(
+          title: '저장한 말씀',
+          actionLabel: '전체 보기',
+          onAction: _openSavedVersesPage,
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: _profileSavedVersesLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _profileSavedVersesError != null
+              ? _buildProfileTabMessage(
+                  _profileSavedVersesError!,
+                  textColor: const Color(0xFF7E3426),
+                )
+              : _profileSavedVersesPreview.isEmpty
+              ? _buildProfileTabMessage(
+                  '아직 저장한 말씀이 없습니다.\n성경 화면에서 구절을 눌러 저장해 보세요.',
+                )
+              : ListView.separated(
+                  itemCount: _profileSavedVersesPreview.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final verse = _profileSavedVersesPreview[index];
+                    return _buildProfileSavedVersePreviewCard(verse);
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfilePrayerTabBody({
+    required AppUserProfile profile,
+    required bool isAuthenticated,
+  }) {
+    final prayerText = (profile.prayerRequest ?? '').trim().isNotEmpty
+        ? profile.prayerRequest!.trim()
+        : '오늘의 기도제목을 적어 보세요.';
+    final hasItems = _intercessoryPrayerItems.isNotEmpty;
+    const sectionTitleStyle = TextStyle(
+      color: Color(0xFF452F1A),
+      fontWeight: FontWeight.w900,
+      fontSize: 14.7,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                '내 기도',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: sectionTitleStyle,
+              ),
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _openProfilePrayerPreview(prayerText),
+                borderRadius: BorderRadius.circular(10),
+                child: const Padding(
+                  padding: EdgeInsets.all(2),
+                  child: Icon(
+                    Icons.open_in_full_rounded,
+                    size: 16,
+                    color: Color(0xFF8A6A46),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Container(height: 1, color: const Color(0x448E6F48)),
+        const SizedBox(height: 7),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _openProfilePrayerPreview(prayerText),
+            borderRadius: BorderRadius.circular(10),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 2, bottom: 2),
+              child: Text(
+                prayerText,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF5A4326),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13.4,
+                  height: 1.34,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 7),
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                '중보 기도',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: sectionTitleStyle,
+              ),
+            ),
+            if (isAuthenticated)
+              _profileShareIdChip(
+                shareId: profile.shareId,
+                enabled: true,
+                onTap: () => _copyProfileShareId(profile.shareId),
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Container(height: 1, color: const Color(0x448E6F48)),
+        const SizedBox(height: 7),
+        Expanded(
+          child: _intercessoryPrayerLoading && !hasItems
+              ? const Center(child: CircularProgressIndicator())
+              : _intercessoryPrayerError != null && !hasItems
+              ? _buildIntercessoryPrayerErrorCard()
+              : !hasItems
+              ? _buildIntercessoryPrayerEmptyCard(enabled: isAuthenticated)
+              : Stack(
+                  children: [
+                    ListView.separated(
+                      controller: _intercessoryPrayerScrollController,
+                      padding: const EdgeInsets.only(bottom: 52),
+                      itemCount:
+                          _intercessoryPrayerItems.length +
+                          (_intercessoryPrayerLoadingMore ? 1 : 0),
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        if (index >= _intercessoryPrayerItems.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.2,
+                              ),
+                            ),
+                          );
+                        }
+                        final item = _intercessoryPrayerItems[index];
+                        return _buildIntercessoryPrayerItemCard(item);
+                      },
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: _intercessoryPrayerFab(enabled: isAuthenticated),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _profileTabSectionHeader({
+    required String title,
+    required String actionLabel,
+    required VoidCallback onAction,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF452F1A),
+              fontWeight: FontWeight.w900,
+              fontSize: 15.2,
+            ),
+          ),
+        ),
+        _profileInlineTextButton(label: actionLabel, onTap: onAction),
+      ],
+    );
+  }
+
+  Widget _profileInlineTextButton({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          decoration: BoxDecoration(
+            color: const Color(0xDDF7E9D2),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF6C4C28),
+              fontSize: 11.2,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileTabMessage(
+    String text, {
+    Color textColor = const Color(0xFF6D5231),
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 12.4,
+            height: 1.45,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileNotePreviewCard(UserNote note) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openProfileNotePreview(note),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+          decoration: BoxDecoration(
+            color: const Color(0xC9F1E3CB),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      note.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF452F1A),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13.6,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatProfilePreviewDate(note.createdAt),
+                    style: const TextStyle(
+                      color: Color(0xFF8A6A46),
+                      fontSize: 10.2,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                note.previewLine,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF5A4326),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.0,
+                  height: 1.32,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileSavedVersePreviewCard(SavedBibleVerse verse) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openBibleReaderPopup(
+          initialBookNo: verse.bookNo,
+          initialChapterNo: verse.chapterNo,
+          initialVerseNo: verse.verseNo,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+          decoration: BoxDecoration(
+            color: const Color(0xC9F1E3CB),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      verse.referenceText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF452F1A),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13.6,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatProfilePreviewDate(verse.createdAt),
+                    style: const TextStyle(
+                      color: Color(0xFF8A6A46),
+                      fontSize: 10.2,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                verse.verseText,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF5A4326),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.0,
+                  height: 1.32,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openProfileNotePreview(UserNote note) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => ParchmentDialog(
+        title: note.title,
+        subtitle: _formatProfilePreviewDateTime(note.createdAt),
+        showCloseButton: true,
+        actions: [
+          ParchmentDialogActionButton(
+            label: '닫기',
+            style: ParchmentDialogActionStyle.secondary,
+            onTap: () => Navigator.of(dialogContext).pop(),
+          ),
+        ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 320),
+          child: SingleChildScrollView(
+            child: Text(
+              note.content,
+              style: const TextStyle(
+                color: Color(0xFF3E2B18),
+                fontSize: 13.2,
+                fontWeight: FontWeight.w700,
+                height: 1.55,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatProfilePreviewDate(DateTime dateTime) {
+    return '${dateTime.month}.${dateTime.day}';
+  }
+
+  String _formatProfilePreviewDateTime(DateTime dateTime) {
+    return '${dateTime.year}.${dateTime.month}.${dateTime.day}';
   }
 
   Widget _buildCurrentUserAvatar({
@@ -3009,69 +3797,93 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,
   }) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: _floatingPanelDecoration(),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stackHeader = constraints.maxWidth < 400;
+        final headerStats = Row(
           children: [
-            Row(
+            Expanded(
+              child: _profileTopStatCard(
+                title: '연속 출석일',
+                value: '$_profileAttendanceStreak일',
+              ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: _profileTopStatCard(
+                title: '연속 인물 공부',
+                value: '$_profileStudyStreak일',
+              ),
+            ),
+          ],
+        );
+
+        return Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: _floatingPanelDecoration(),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _profileTestamentToggle(
-                  selectedTestament: selectedTestament,
-                  onSelectTestament: onSelectTestament,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _profileTopStatCard(
-                    title: '연속 출석일',
-                    value: '$_profileAttendanceStreak일',
+                if (stackHeader) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: _profileTestamentToggle(
+                      selectedTestament: selectedTestament,
+                      onSelectTestament: onSelectTestament,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _profileTopStatCard(
-                    title: '연속 인물 공부',
-                    value: '$_profileStudyStreak일',
+                  const SizedBox(height: 8),
+                  headerStats,
+                ] else
+                  Row(
+                    children: [
+                      _profileTestamentToggle(
+                        selectedTestament: selectedTestament,
+                        onSelectTestament: onSelectTestament,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(child: headerStats),
+                    ],
                   ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: people.isEmpty
+                      ? Center(
+                          child: Text(
+                            selectedTestament == 'new'
+                                ? '신약 인물 데이터가 없습니다.'
+                                : '구약 인물 데이터가 없습니다.',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Color(0xFF6D5231),
+                              fontWeight: FontWeight.w700,
+                              height: 1.5,
+                              fontSize: 13.2,
+                            ),
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: (people.length / 5).ceil(),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 8),
+                          itemBuilder: (context, rowIndex) {
+                            final start = rowIndex * 5;
+                            final end = math.min(start + 5, people.length);
+                            final rowPeople = people.sublist(start, end);
+                            return _profilePersonProgressRow(
+                              rowPeople: rowPeople,
+                              completedEventIds: completedEventIds,
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: people.isEmpty
-                  ? Center(
-                      child: Text(
-                        selectedTestament == 'new'
-                            ? '신약 인물 데이터가 없습니다.'
-                            : '구약 인물 데이터가 없습니다.',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Color(0xFF6D5231),
-                          fontWeight: FontWeight.w700,
-                          height: 1.5,
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      itemCount: (people.length / 5).ceil(),
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, rowIndex) {
-                        final start = rowIndex * 5;
-                        final end = math.min(start + 5, people.length);
-                        final rowPeople = people.sublist(start, end);
-                        return _profilePersonProgressRow(
-                          rowPeople: rowPeople,
-                          completedEventIds: completedEventIds,
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -3080,7 +3892,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required ValueChanged<String> onSelectTestament,
   }) {
     return Container(
-      height: 48,
+      height: 50,
       padding: const EdgeInsets.all(4),
       decoration: _floatingPanelDecoration(
         color: const Color(0xFFF7E9D2),
@@ -3105,50 +3917,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Widget _profileRoundedCard({
-    required String title,
-    required String subtitle,
-    int maxLines = 2,
-  }) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 66),
-      decoration: BoxDecoration(
-        color: const Color(0xCCF1E2C8),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xAA8E6F48), width: 1.2),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF452F1A),
-              fontWeight: FontWeight.w900,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            subtitle,
-            maxLines: maxLines,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF5A4326),
-              fontWeight: FontWeight.w700,
-              fontSize: 10.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _profileMiniActionButton({
     required String label,
     required VoidCallback onTap,
@@ -3159,7 +3927,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: 40,
+          height: 48,
           decoration: _softButtonDecoration(selected: false),
           alignment: Alignment.center,
           child: Text(
@@ -3168,7 +3936,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color(0xFF4A331D),
-              fontSize: 12,
+              fontSize: 15.2,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -3189,7 +3957,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         onTap: enabled ? onTap : null,
         borderRadius: BorderRadius.circular(8),
         child: Ink(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
           decoration: BoxDecoration(
             color: enabled ? const Color(0xDDF7E9D2) : const Color(0x9BEEDFC4),
             borderRadius: BorderRadius.circular(8),
@@ -3206,7 +3974,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   color: enabled
                       ? const Color(0xFF6C4C28)
                       : const Color(0xAA6C4C28),
-                  fontSize: 7.4,
+                  fontSize: 9.2,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -3214,100 +3982,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 const SizedBox(width: 2),
                 const Icon(
                   Icons.copy_rounded,
-                  size: 9,
+                  size: 10,
                   color: Color(0xFF7A552C),
                 ),
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIntercessoryPrayerSection({
-    required bool isAuthenticated,
-    required String shareId,
-  }) {
-    final hasItems = _intercessoryPrayerItems.isNotEmpty;
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: _floatingPanelDecoration(
-        color: const Color(0xFFF7E9D2),
-        shadowOpacity: 0.08,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                const Text(
-                  '중보할 기도제목',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Color(0xFF452F1A),
-                    fontWeight: FontWeight.w900,
-                    fontSize: 13,
-                  ),
-                ),
-                if (isAuthenticated)
-                  _profileShareIdChip(
-                    shareId: shareId,
-                    enabled: true,
-                    onTap: () => _copyProfileShareId(shareId),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: _intercessoryPrayerLoading && !hasItems
-                  ? const Center(child: CircularProgressIndicator())
-                  : _intercessoryPrayerError != null && !hasItems
-                  ? _buildIntercessoryPrayerErrorCard()
-                  : !hasItems
-                  ? _buildIntercessoryPrayerEmptyCard(enabled: isAuthenticated)
-                  : Stack(
-                      children: [
-                        ListView.separated(
-                          controller: _intercessoryPrayerScrollController,
-                          padding: const EdgeInsets.only(bottom: 52),
-                          itemCount:
-                              _intercessoryPrayerItems.length +
-                              (_intercessoryPrayerLoadingMore ? 1 : 0),
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 8),
-                          itemBuilder: (context, index) {
-                            if (index >= _intercessoryPrayerItems.length) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.2,
-                                  ),
-                                ),
-                              );
-                            }
-                            final item = _intercessoryPrayerItems[index];
-                            return _buildIntercessoryPrayerItemCard(item);
-                          },
-                        ),
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: _intercessoryPrayerFab(
-                            enabled: isAuthenticated,
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
-          ],
         ),
       ),
     );
@@ -3329,7 +4009,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color(0xFF7E3426),
-              fontSize: 10.8,
+              fontSize: 13.0,
               fontWeight: FontWeight.w800,
               height: 1.35,
             ),
@@ -3349,10 +4029,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       builder: (context, constraints) {
         final isVeryCompact = constraints.maxHeight < 150;
         final isCompact = constraints.maxHeight < 180;
-        final buttonSize = isVeryCompact ? 28.0 : (isCompact ? 34.0 : 40.0);
-        final iconSize = isVeryCompact ? 18.0 : (isCompact ? 22.0 : 24.0);
+        final buttonSize = isVeryCompact ? 32.0 : (isCompact ? 38.0 : 44.0);
+        final iconSize = isVeryCompact ? 20.0 : (isCompact ? 24.0 : 26.0);
         final spacing = isVeryCompact ? 4.0 : (isCompact ? 6.0 : 8.0);
-        final fontSize = isVeryCompact ? 8.2 : (isCompact ? 8.8 : 9.6);
+        final fontSize = isVeryCompact ? 10.4 : (isCompact ? 11.2 : 12.3);
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -3414,7 +4094,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           color: const Color(0xFF5A4326),
                           fontSize: fontSize,
                           fontWeight: FontWeight.w800,
-                          height: 1.2,
+                          height: 1.24,
                         ),
                       ),
                     ],
@@ -3445,9 +4125,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           _profileNetworkAvatar(
             nickname: item.nickname,
             photoUrl: item.photoUrl,
-            size: 38,
+            size: 42,
           ),
-          const SizedBox(width: 9),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -3462,7 +4142,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         style: const TextStyle(
                           color: Color(0xFF452F1A),
                           fontWeight: FontWeight.w900,
-                          fontSize: 11.6,
+                          fontSize: 13.4,
                         ),
                       ),
                     ),
@@ -3472,13 +4152,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       maxLines: 1,
                       style: const TextStyle(
                         color: Color(0xFF8A6A46),
-                        fontSize: 9.2,
+                        fontSize: 10.4,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 5),
                 Text(
                   prayerText,
                   maxLines: 4,
@@ -3486,8 +4166,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   style: const TextStyle(
                     color: Color(0xFF5A4326),
                     fontWeight: FontWeight.w700,
-                    fontSize: 10.1,
-                    height: 1.35,
+                    fontSize: 12.6,
+                    height: 1.34,
                   ),
                 ),
               ],
@@ -3605,15 +4285,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onTap: onTap,
           borderRadius: BorderRadius.circular(9),
           child: Container(
-            width: 26,
-            height: 26,
+            width: 32,
+            height: 32,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: const Color(0xCCF7E9D2),
               borderRadius: BorderRadius.circular(9),
               border: Border.all(color: const Color(0xAA8E6F48), width: 1),
             ),
-            child: Icon(icon, size: 14, color: const Color(0xFF7A552C)),
+            child: Icon(icon, size: 17, color: const Color(0xFF7A552C)),
           ),
         ),
       ),
@@ -3643,7 +4323,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               color: selected
                   ? const Color(0xFFFDF8EE)
                   : const Color(0xFF4A331D),
-              fontSize: 11.5,
+              fontSize: 13.2,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -3654,24 +4334,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _profileTopStatCard({required String title, required String value}) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 48),
+      constraints: const BoxConstraints(minHeight: 58),
       decoration: _floatingPanelDecoration(
         color: const Color(0xFFF7E9D2),
         shadowOpacity: 0.08,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color(0xFF6A4C2E),
               fontWeight: FontWeight.w800,
-              fontSize: 11,
+              fontSize: 13.2,
+              height: 1.15,
             ),
           ),
           const SizedBox(height: 2),
@@ -3682,7 +4364,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             style: const TextStyle(
               color: Color(0xFFB06B25),
               fontWeight: FontWeight.w900,
-              fontSize: 13,
+              fontSize: 16.8,
             ),
           ),
         ],
@@ -3695,7 +4377,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required Set<String> completedEventIds,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
         color: const Color(0x88F5E8CF),
         borderRadius: BorderRadius.circular(10),
@@ -3705,8 +4387,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         children: List.generate(rowPeople.length, (index) {
           final person = rowPeople[index];
           final progressData = _profileStudyProgressByPersonId[person.id];
-          final completedCount = progressData?.completedCount ?? 0;
-          final totalCount = progressData?.totalCount ?? 0;
           final progress = progressData?.fraction ?? 0.0;
           return Expanded(
             child: Padding(
@@ -3729,8 +4409,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final width = constraints.maxWidth;
-                        final compact = width < 56;
-                        final stacked = width < 96;
+                        final compact = width < 62;
+                        final stacked = width < 108;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -3739,14 +4419,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               Center(
                                 child: _weeklyPersonAvatar(
                                   person: person,
-                                  size: 20,
+                                  size: 24,
                                 ),
                               )
                             else if (stacked)
                               Column(
                                 children: [
-                                  _weeklyPersonAvatar(person: person, size: 22),
-                                  const SizedBox(height: 4),
+                                  _weeklyPersonAvatar(person: person, size: 26),
+                                  const SizedBox(height: 5),
                                   Text(
                                     person.name,
                                     maxLines: 1,
@@ -3755,7 +4435,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     style: const TextStyle(
                                       color: Color(0xFF4A331D),
                                       fontWeight: FontWeight.w800,
-                                      fontSize: 9.8,
+                                      fontSize: 11.8,
                                     ),
                                   ),
                                 ],
@@ -3763,8 +4443,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             else
                               Row(
                                 children: [
-                                  _weeklyPersonAvatar(person: person, size: 24),
-                                  const SizedBox(width: 5),
+                                  _weeklyPersonAvatar(person: person, size: 28),
+                                  const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
                                       person.name,
@@ -3773,31 +4453,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                       style: const TextStyle(
                                         color: Color(0xFF4A331D),
                                         fontWeight: FontWeight.w800,
-                                        fontSize: 10.5,
+                                        fontSize: 12.6,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '$completedCount / $totalCount',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: compact || stacked
-                                  ? TextAlign.center
-                                  : TextAlign.start,
-                              style: TextStyle(
-                                color: const Color(0xFF8A6A46),
-                                fontWeight: FontWeight.w700,
-                                fontSize: compact ? 8.6 : 9.8,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
+                            const SizedBox(height: 7),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(999),
                               child: LinearProgressIndicator(
-                                minHeight: compact ? 6 : 7,
+                                minHeight: compact ? 7 : 8,
                                 value: progress,
                                 backgroundColor: const Color(0x664E3A26),
                                 valueColor: const AlwaysStoppedAnimation<Color>(
@@ -4312,10 +4978,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             height: tileHeight,
                             child: Image.asset(
                               path,
-                              fit: BoxFit.fitHeight,
+                              fit: BoxFit.cover,
                               width: tileWidth,
                               height: tileHeight,
-                              alignment: Alignment.topCenter,
+                              alignment: Alignment.center,
                             ),
                           ),
                         ),
@@ -5475,7 +6141,7 @@ class _ShareIdInputDialogState extends State<_ShareIdInputDialog> {
   }
 }
 
-class _SubPageScaffold extends StatelessWidget {
+class _SubPageScaffold extends StatefulWidget {
   const _SubPageScaffold({
     required this.title,
     required this.child,
@@ -5485,6 +6151,14 @@ class _SubPageScaffold extends StatelessWidget {
   final String title;
   final Widget child;
   final bool compactBackOnly;
+
+  @override
+  State<_SubPageScaffold> createState() => _SubPageScaffoldState();
+}
+
+class _SubPageScaffoldState extends State<_SubPageScaffold> {
+  static const double _floatingHomeButtonSize = 44;
+  Offset? _floatingHomeOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -5515,23 +6189,52 @@ class _SubPageScaffold extends StatelessWidget {
             ),
           ),
           SafeArea(
-            child: compactBackOnly
-                ? Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 40, top: 10),
-                          child: child,
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: _SubPageCompactBackButton(
-                          onTap: () => Navigator.of(context).pop(),
-                        ),
-                      ),
-                    ],
+            child: widget.compactBackOnly
+                ? LayoutBuilder(
+                    builder: (context, constraints) {
+                      final maxX = math.max(
+                        0.0,
+                        constraints.maxWidth - _floatingHomeButtonSize,
+                      );
+                      final maxY = math.max(
+                        0.0,
+                        constraints.maxHeight - _floatingHomeButtonSize,
+                      );
+                      final resolvedOffset = Offset(
+                        (_floatingHomeOffset?.dx ?? 6).clamp(0.0, maxX),
+                        (_floatingHomeOffset?.dy ?? 6).clamp(0.0, maxY),
+                      );
+
+                      return Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: widget.child,
+                            ),
+                          ),
+                          Positioned(
+                            left: resolvedOffset.dx,
+                            top: resolvedOffset.dy,
+                            child: GestureDetector(
+                              onPanUpdate: (details) {
+                                setState(() {
+                                  _floatingHomeOffset = Offset(
+                                    (resolvedOffset.dx + details.delta.dx)
+                                        .clamp(0.0, maxX),
+                                    (resolvedOffset.dy + details.delta.dy)
+                                        .clamp(0.0, maxY),
+                                  );
+                                });
+                              },
+                              child: _SubPageFloatingHomeButton(
+                                onTap: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   )
                 : Column(
                     children: [
@@ -5557,7 +6260,7 @@ class _SubPageScaffold extends StatelessWidget {
                                   shadowOpacity: 0.08,
                                 ),
                                 child: Text(
-                                  title,
+                                  widget.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -5571,7 +6274,7 @@ class _SubPageScaffold extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Expanded(child: child),
+                      Expanded(child: widget.child),
                     ],
                   ),
           ),
@@ -5758,8 +6461,8 @@ class _InlineLoginPromptCardState
   }
 }
 
-class _SubPageCompactBackButton extends StatelessWidget {
-  const _SubPageCompactBackButton({required this.onTap});
+class _SubPageFloatingHomeButton extends StatelessWidget {
+  const _SubPageFloatingHomeButton({required this.onTap});
 
   final VoidCallback onTap;
 
@@ -5769,19 +6472,26 @@ class _SubPageCompactBackButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         child: Container(
-          width: 38,
-          height: 38,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: const Color(0xD06A401E),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: const Color(0xFFF0C36B), width: 1.4),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
           child: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 16,
+            Icons.chevron_left_rounded,
+            size: 28,
             color: Color(0xFFF8EED9),
           ),
         ),
@@ -5967,15 +6677,20 @@ Widget _filledActionButton({
   bool completed = false,
   bool compact = false,
   double? minWidth,
+  double? minHeight,
+  double? horizontalPadding,
+  double? radius,
+  double? fontSize,
 }) {
-  final height = compact ? 34.0 : 42.0;
-  final horizontal = compact ? 12.0 : 18.0;
-  final radius = compact ? 12.0 : 15.0;
+  final height = minHeight ?? (compact ? 34.0 : 42.0);
+  final horizontal = horizontalPadding ?? (compact ? 12.0 : 18.0);
+  final resolvedRadius = radius ?? (compact ? 12.0 : 15.0);
+  final resolvedFontSize = fontSize ?? (compact ? 11.5 : 12.5);
   return Material(
     color: Colors.transparent,
     child: InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(radius),
+      borderRadius: BorderRadius.circular(resolvedRadius),
       child: Container(
         constraints: BoxConstraints(
           minWidth: minWidth ?? 92,
@@ -5990,7 +6705,7 @@ Widget _filledActionButton({
                 ? const [Color(0xFF58B573), Color(0xFF2D8754)]
                 : const [Color(0xFFD89A47), Color(0xFFB96B2D)],
           ),
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: BorderRadius.circular(resolvedRadius),
           border: Border.all(
             color: completed
                 ? const Color(0xFFD7EFCE)
@@ -6014,7 +6729,7 @@ Widget _filledActionButton({
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: const Color(0xFFFDF8EE),
-            fontSize: compact ? 11.5 : 12.5,
+            fontSize: resolvedFontSize,
             fontWeight: FontWeight.w900,
             height: 1.0,
           ),
@@ -6111,8 +6826,8 @@ Widget _topUtilityButton({
         onTap: enabled ? onTap : null,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: 38,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
             color: resolvedBackgroundColor,
             borderRadius: BorderRadius.circular(12),
@@ -6130,7 +6845,7 @@ Widget _topUtilityButton({
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: resolvedForegroundColor,
-              fontSize: 12,
+              fontSize: 13.4,
               fontWeight: FontWeight.w800,
               height: 1.1,
             ),

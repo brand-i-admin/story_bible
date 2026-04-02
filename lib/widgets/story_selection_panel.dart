@@ -263,7 +263,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
                   Expanded(child: _buildStepRow()),
                   const SizedBox(width: 8),
                   SizedBox(
-                    width: 92,
+                    width: 98,
                     child: _PrimaryActionButton(
                       label: widget.step == 3 ? '퀴즈 시작' : '다음',
                       enabled: canRunPrimaryAction,
@@ -300,7 +300,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             ),
             const SizedBox(width: 10),
             SizedBox(
-              width: 108,
+              width: 116,
               child: _PrimaryActionButton(
                 label: widget.step == 3 ? '퀴즈 시작' : '다음',
                 enabled: canRunPrimaryAction,
@@ -405,7 +405,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             crossAxisCount: 3,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            mainAxisExtent: 58,
+            mainAxisExtent: 66,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final era = widget.eras[index];
@@ -455,7 +455,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            mainAxisExtent: 92,
+            mainAxisExtent: 102,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final person = sortedPersons[index];
@@ -485,7 +485,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            mainAxisExtent: 84,
+            mainAxisExtent: 94,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final event = widget.events[index];
@@ -874,8 +874,8 @@ class _StepChip extends StatelessWidget {
           onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(14),
           child: Ink(
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            height: 44,
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
             decoration: BoxDecoration(
               gradient: background,
               borderRadius: BorderRadius.circular(14),
@@ -894,7 +894,7 @@ class _StepChip extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 12.2,
+                    fontSize: 13.4,
                     fontWeight: FontWeight.w800,
                     height: 1.0,
                     color: selected
@@ -941,7 +941,7 @@ class _StepSummaryPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 72),
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
       decoration: BoxDecoration(
         color: selected ? const Color(0x2FFFFFFF) : const Color(0x28A57B56),
         borderRadius: BorderRadius.circular(999),
@@ -954,7 +954,7 @@ class _StepSummaryPill extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: 6.9,
+          fontSize: 7.8,
           fontWeight: FontWeight.w700,
           color: selected ? const Color(0xFFFDF8EE) : const Color(0xFF6A4A31),
           height: 0.95,
@@ -1027,8 +1027,8 @@ class _CompactSegmentedToggleButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Ink(
-          width: 86,
-          height: 34,
+          width: 92,
+          height: 38,
           decoration: BoxDecoration(
             gradient: selected
                 ? const LinearGradient(
@@ -1054,7 +1054,7 @@ class _CompactSegmentedToggleButton extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 12.5,
+                fontSize: 13.6,
                 fontWeight: FontWeight.w800,
                 color: selected
                     ? const Color(0xFFFDF8EE)
@@ -1122,7 +1122,7 @@ class _PrimaryActionButton extends StatelessWidget {
       child: Opacity(
         opacity: enabled ? 1 : 0.54,
         child: Container(
-          height: compact ? 40 : 44,
+          height: compact ? 42 : 46,
           decoration: BoxDecoration(
             gradient: gradient,
             borderRadius: BorderRadius.circular(compact ? 14 : 16),
@@ -1146,7 +1146,7 @@ class _PrimaryActionButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              fontSize: compact ? 12.5 : 13.5,
+              fontSize: compact ? 13.6 : 14.4,
               fontWeight: FontWeight.w800,
               color: const Color(0xFFFDF8EE),
             ),
@@ -1172,7 +1172,7 @@ class _EmptyStepMessage extends StatelessWidget {
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: Color(0xFF6A4C33),
-            fontSize: 13,
+            fontSize: 14.2,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -1202,7 +1202,7 @@ class _CardShell extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Ink(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
           decoration: BoxDecoration(
             gradient: selected && completed
                 ? const LinearGradient(
@@ -1287,7 +1287,7 @@ class _EraCompactCard extends StatelessWidget {
                   TextSpan(
                     text: era.name,
                     style: TextStyle(
-                      fontSize: 12.4,
+                      fontSize: 13.8,
                       fontWeight: FontWeight.w800,
                       color: selected
                           ? const Color(0xFFFDF8EE)
@@ -1298,7 +1298,7 @@ class _EraCompactCard extends StatelessWidget {
                     TextSpan(
                       text: ' ($dateLabel)',
                       style: TextStyle(
-                        fontSize: 10.6,
+                        fontSize: 11.6,
                         fontWeight: FontWeight.w600,
                         color: selected
                             ? const Color(0xFFF4E6CD)
@@ -1370,7 +1370,7 @@ class _PersonCompactCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12.4,
+                          fontSize: 13.8,
                           fontWeight: FontWeight.w800,
                           color: selected
                               ? const Color(0xFFFDF8EE)
@@ -1395,8 +1395,8 @@ class _PersonCompactCard extends StatelessWidget {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 10.2,
-                    height: 1.14,
+                    fontSize: 11.2,
+                    height: 1.18,
                     color: selected
                         ? const Color(0xFFF4E6CD)
                         : const Color(0xFF75563C),
@@ -1462,7 +1462,7 @@ class _StoryCompactCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 12.2,
+                    fontSize: 13.6,
                     fontWeight: FontWeight.w800,
                     height: 1.12,
                     color: selected
@@ -1478,8 +1478,8 @@ class _StoryCompactCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 10.3,
-                    height: 1.14,
+                    fontSize: 11.3,
+                    height: 1.18,
                     color: selected
                         ? const Color(0xFFF4E6CD)
                         : isCompleted
@@ -1511,8 +1511,8 @@ class _IndexBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 22,
-      height: 22,
+      width: 24,
+      height: 24,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -1522,7 +1522,7 @@ class _IndexBadge extends StatelessWidget {
       child: Text(
         label,
         style: const TextStyle(
-          fontSize: 9.5,
+          fontSize: 10.5,
           fontWeight: FontWeight.w900,
           color: Color(0xFF5A3519),
         ),

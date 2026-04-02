@@ -2,6 +2,11 @@ assets_backup
 assets/bible
 supabase/seeds
 
+android
+macos
+web
+ios
+
 # Miscellaneous
 *.class
 *.log
@@ -49,13 +54,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-/android
-
-# Ios
-/ios
-
-#Web
-/web
 
 # Supabase
 /supabase/.temp
