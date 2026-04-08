@@ -263,12 +263,14 @@ class BibleRef:
 class NormalizedEvent:
     number: int
     code: str
+    display_number: str
     era_code: str
     title: str
     summary: str
     story: str
     short_story: str
     story_scenes_text: str | None
+    timeline_rank: float
     start_year: int | None
     end_year: int | None
     time_precision: str
@@ -415,6 +417,48 @@ def parse_event_number_and_title(raw_title: str) -> tuple[int, str]:
     if match is None:
         raise ValueError(f"Title does not start with 3-digit index: {raw_title!r}")
     return int(match.group(1)), match.group(2).strip()
+
+
+def strip_event_number_prefix(raw_title: str) -> str:
+    match = EVENT_NO_RE.match(raw_title.strip())
+    if match is None:
+        return raw_title.strip()
+    return match.group(2).strip()
+
+
+def parse_story_number_and_title(row: dict[str, Any]) -> tuple[int, str]:
+    raw_number = row.get("number")
+    raw_title = str(row.get("title", "")).strip()
+    if isinstance(raw_number, int):
+        return raw_number, strip_event_number_prefix(raw_title)
+    return parse_event_number_and_title(raw_title)
+
+
+def parse_story_era_code(row: dict[str, Any]) -> str:
+    era_code = str(row.get("era_code") or row.get("era") or "").strip()
+    if not era_code:
+        raise ValueError(f"Story row missing era/era_code: {row!r}")
+    return era_code
+
+
+def parse_story_refs(row: dict[str, Any]) -> list[Any]:
+    value = row.get("bible_ref")
+    if value is None:
+        value = row.get("bible_refs")
+    if not isinstance(value, list):
+        return []
+    return value
+
+
+def parse_optional_timeline_rank(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).strip()
+    if not text:
+        return None
+    return float(text)
 
 
 def load_avatar_prompt_codes(prompt_json_path: Path) -> set[str]:
@@ -678,7 +722,7 @@ def parse_story_rows(input_dir: Path) -> list[dict[str, Any]]:
             if not isinstance(item, dict):
                 raise ValueError(f"Story row is not object in {path}: {item!r}")
             rows.append(item)
-    rows.sort(key=lambda row: parse_event_number_and_title(str(row["title"]))[0])
+    rows.sort(key=lambda row: parse_story_number_and_title(row)[0])
     return rows
 
 
@@ -696,7 +740,7 @@ def normalize_events(
     used_codes: set[str] = set()
 
     for row in rows:
-        number, clean_title = parse_event_number_and_title(str(row["title"]))
+        number, clean_title = parse_story_number_and_title(row)
         raw_persons = [
             str(code).strip() for code in row.get("persons", []) if str(code).strip()
         ]
@@ -705,7 +749,7 @@ def normalize_events(
             for code in expand_person_codes(number, raw_persons)
             if code in allowed_person_codes
         ]
-        refs = [parse_bible_ref(item) for item in row.get("bible_ref", [])]
+        refs = [parse_bible_ref(item) for item in parse_story_refs(row)]
         scene_lines = row.get("story_scenes") or row.get("short_story") or []
         scene_lines = [str(item) for item in scene_lines if str(item).strip()]
 
@@ -739,10 +783,13 @@ def normalize_events(
                 sanitize_scene_lines(scene_lines), ensure_ascii=False
             )
 
-        code = build_event_code(number, clean_title, str(row["era"]), persons)
+        era_code = parse_story_era_code(row)
+        explicit_code = str(row.get("code") or "").strip()
+        code = explicit_code or build_event_code(number, clean_title, era_code, persons)
         if code in used_codes:
             code = f"{code}_{number}"
         used_codes.add(code)
+        display_number = str(row.get("display_number") or "").strip() or f"{number:03d}"
 
         place_name = normalize_space(str(row.get("place_name", "")))
         lat = row.get("lat")
@@ -753,15 +800,21 @@ def normalize_events(
             number, place_name, lat_f, lng_f
         )
 
+        explicit_timeline_rank = parse_optional_timeline_rank(row.get("timeline_rank"))
+
         event = NormalizedEvent(
             number=number,
             code=code,
-            era_code=str(row["era"]).strip(),
+            display_number=display_number,
+            era_code=era_code,
             title=clean_title,
             summary=summary,
             story=story,
             short_story=short_story,
             story_scenes_text=story_scenes_text,
+            timeline_rank=explicit_timeline_rank
+            if explicit_timeline_rank is not None
+            else float(make_time_sort_key(number, start_year_int, end_year_int)),
             start_year=start_year_int,
             end_year=end_year_int,
             time_precision=time_precision,
@@ -783,7 +836,8 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
     for chunk in chunked(events, chunk_size):
         lines.append(
             "with seed_events ("
-            "code, era_code, title, summary, story, short_story, story_scenes, "
+            "code, display_number, era_code, title, summary, story, short_story, story_scenes, "
+            "timeline_rank, "
             "start_year, end_year, time_sort_key, time_precision, place_name, lat, lng"
             ") as ("
         )
@@ -793,12 +847,14 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
             values.append(
                 "    ("
                 f"{sql_value(event.code)}, "
+                f"{sql_value(event.display_number)}, "
                 f"{sql_value(event.era_code)}, "
                 f"{sql_value(event.title)}, "
                 f"{sql_value(event.summary)}, "
                 f"{sql_value(event.story)}, "
                 f"{sql_value(event.short_story)}, "
                 f"{sql_value(event.story_scenes_text)}, "
+                f"{sql_value(event.timeline_rank)}, "
                 f"{sql_value(event.start_year)}, "
                 f"{sql_value(event.end_year)}, "
                 f"{sql_value(event.time_sort_key)}, "
@@ -812,18 +868,21 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append(")")
         lines.append(
             "insert into events ("
-            "code, era_id, title, summary, story, short_story, story_scenes, "
+            "code, display_number, era_id, title, summary, story, short_story, story_scenes, "
+            "timeline_rank, "
             "start_year, end_year, time_sort_key, time_precision, place_name, lat, lng"
             ")"
         )
         lines.append("select")
         lines.append("  s.code,")
+        lines.append("  s.display_number,")
         lines.append("  e.id,")
         lines.append("  s.title,")
         lines.append("  s.summary,")
         lines.append("  s.story,")
         lines.append("  s.short_story,")
         lines.append("  s.story_scenes,")
+        lines.append("  s.timeline_rank,")
         lines.append("  s.start_year,")
         lines.append("  s.end_year,")
         lines.append("  s.time_sort_key,")
@@ -834,12 +893,14 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("from seed_events s")
         lines.append("join eras e on e.code = s.era_code")
         lines.append("on conflict (code) do update set")
+        lines.append("  display_number = excluded.display_number,")
         lines.append("  era_id = excluded.era_id,")
         lines.append("  title = excluded.title,")
         lines.append("  summary = excluded.summary,")
         lines.append("  story = excluded.story,")
         lines.append("  short_story = excluded.short_story,")
         lines.append("  story_scenes = excluded.story_scenes,")
+        lines.append("  timeline_rank = excluded.timeline_rank,")
         lines.append("  start_year = excluded.start_year,")
         lines.append("  end_year = excluded.end_year,")
         lines.append("  time_sort_key = excluded.time_sort_key,")
@@ -1046,9 +1107,11 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
             {
                 "number": event.number,
                 "code": event.code,
+                "display_number": event.display_number,
                 "era_code": event.era_code,
                 "title": event.title,
                 "summary": event.summary,
+                "timeline_rank": event.timeline_rank,
                 "start_year": event.start_year,
                 "end_year": event.end_year,
                 "time_precision": event.time_precision,
