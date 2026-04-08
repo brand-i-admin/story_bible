@@ -6,6 +6,7 @@ class Person {
     required this.tagline,
     required this.description,
     required this.avatarUrl,
+    required this.avatarThumbUrl,
     required this.displayOrder,
   });
 
@@ -15,9 +16,14 @@ class Person {
   final String? tagline;
   final String? description;
   final String? avatarUrl;
+  final String? avatarThumbUrl;
   final int displayOrder;
 
   String get avatarAssetPath {
+    final thumb = avatarThumbUrl?.trim() ?? '';
+    if (thumb.isNotEmpty) {
+      return thumb;
+    }
     if (avatarUrl == null || avatarUrl!.isEmpty) {
       return 'assets/avatars_thumbs/_placeholder.png';
     }

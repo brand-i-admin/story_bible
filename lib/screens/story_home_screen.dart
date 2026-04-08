@@ -18,10 +18,12 @@ import '../models/person.dart';
 import '../models/person_study_progress.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
+import '../models/story_scene_asset.dart';
 import '../models/user_note.dart';
 import '../models/quiz_question.dart';
 import '../screens/profile_notes_screen.dart';
 import '../screens/saved_verses_screen.dart';
+import '../screens/story_json_review_screen.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
@@ -77,7 +79,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Map<String, String> _profilePersonTestamentById = const {};
   AppUserProfile? _profileUser;
   Map<String, PersonStudyProgress> _profileStudyProgressByPersonId = const {};
-  Map<String, int> _profilePersonTimelineOrderById = const {};
+  Map<String, double> _profilePersonTimelineOrderById = const {};
   _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
   List<UserNote> _profileNotesPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
@@ -100,7 +102,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   String _subPageLoadingLabel = '';
   bool _signingOut = false;
   List<String>? _assetManifestCache;
-  final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
+  final Map<String, List<StorySceneAsset>> _sceneAssetsCache =
+      <String, List<StorySceneAsset>>{};
 
   @override
   void initState() {
@@ -207,6 +210,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     _profilePageSetState?.call(() {});
+  }
+
+  Future<void> _openStoryJsonReviewScreen() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const StoryJsonReviewScreen()),
+    );
   }
 
   void _handleIntercessoryPrayerScroll() {
@@ -471,11 +480,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }).toList();
 
     filtered.sort((a, b) {
-      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
-      if (cmp != 0) {
-        return cmp;
-      }
-      return a.id.compareTo(b.id);
+      return a.compareTimelineTo(b);
     });
     return filtered;
   }
@@ -782,11 +787,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           final weeklyEvents =
               [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
                 ..sort((a, b) {
-                  final cmp = a.timeSortKey.compareTo(b.timeSortKey);
-                  if (cmp != 0) {
-                    return cmp;
-                  }
-                  return a.id.compareTo(b.id);
+                  return a.compareTimelineTo(b);
                 });
           final selectedEventId = weeklyEvents.isNotEmpty
               ? weeklyEvents.first.id
@@ -1331,11 +1332,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                   ),
                                 ],
                               ),
-                              FutureBuilder<List<String>>(
+                              FutureBuilder<List<StorySceneAsset>>(
                                 future: sceneAssetsFuture,
                                 builder: (context, snapshot) {
                                   final sceneAssets =
-                                      snapshot.data ?? const <String>[];
+                                      snapshot.data ??
+                                      const <StorySceneAsset>[];
                                   if (sceneAssets.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
@@ -1924,21 +1926,63 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return numeric.toString().padLeft(3, '0');
   }
 
-  Future<List<String>> _loadSceneAssetsForEvent(StoryEvent event) async {
-    return _loadSceneAssetsForLookup(title: event.title, code: event.code);
-  }
-
-  Future<List<String>> _loadSceneAssetsForLookup({
-    required String title,
-    String? code,
-  }) async {
-    final dirName = _sceneDirectoryNameForTitle(title);
-    final cached = _sceneAssetsCache[dirName];
+  Future<List<StorySceneAsset>> _loadSceneAssetsForEvent(
+    StoryEvent event,
+  ) async {
+    final cached = _sceneAssetsCache[event.id];
     if (cached != null) {
       return cached;
     }
 
     final manifest = await _loadAssetManifest();
+    final knownAssetPaths = manifest.toSet();
+    final dbAssets = await ref
+        .read(storyRepositoryProvider)
+        .fetchSceneAssetsForEvent(event.id);
+    final legacyAssets = _loadLegacySceneAssetsForLookup(
+      manifest: manifest,
+      title: event.title,
+      code: event.code,
+    );
+    final mergedAssets = _mergeSceneAssets(
+      dbAssets: dbAssets,
+      legacyAssets: legacyAssets,
+      knownAssetPaths: knownAssetPaths,
+    );
+    _sceneAssetsCache[event.id] = mergedAssets;
+    return mergedAssets;
+  }
+
+  List<StorySceneAsset> _mergeSceneAssets({
+    required List<StorySceneAsset> dbAssets,
+    required List<StorySceneAsset> legacyAssets,
+    required Set<String> knownAssetPaths,
+  }) {
+    final mergedByIndex = <int, StorySceneAsset>{};
+
+    for (final asset in legacyAssets) {
+      mergedByIndex[asset.sceneIndex] = asset;
+    }
+
+    for (final asset in dbAssets) {
+      final displayPath = asset.displayPath;
+      if (displayPath.isEmpty || !knownAssetPaths.contains(displayPath)) {
+        continue;
+      }
+      mergedByIndex[asset.sceneIndex] = asset;
+    }
+
+    final merged = mergedByIndex.values.toList(growable: false)
+      ..sort((a, b) => a.sceneIndex.compareTo(b.sceneIndex));
+    return merged;
+  }
+
+  List<StorySceneAsset> _loadLegacySceneAssetsForLookup({
+    required List<String> manifest,
+    required String title,
+    String? code,
+  }) {
+    final dirName = _sceneDirectoryNameForTitle(title);
     const sceneRoot = 'assets/story_images_thumbs/';
     final allScenePaths = manifest
         .where(
@@ -2035,8 +2079,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             return aIndex.compareTo(bIndex);
           });
 
-    _sceneAssetsCache[dirName] = sceneAssets;
-    return sceneAssets;
+    return sceneAssets
+        .map((path) {
+          final match = _sceneFilenamePattern.firstMatch(path);
+          final sceneIndex = int.tryParse(match?.group(1) ?? '') ?? 0;
+          return StorySceneAsset.legacy(
+            sceneIndex: sceneIndex,
+            assetPath: path,
+          );
+        })
+        .where((asset) => asset.sceneIndex > 0)
+        .toList(growable: false);
   }
 
   Widget _buildWeeklyBody({
@@ -2753,7 +2806,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   int _compareProfilePeople(
     Person a,
     Person b, {
-    required Map<String, int> timelineOrderById,
+    required Map<String, double> timelineOrderById,
   }) {
     final aTimeline = timelineOrderById[a.id];
     final bTimeline = timelineOrderById[b.id];
@@ -4929,7 +4982,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  Widget _storySceneRow(List<String> sceneAssets) {
+  Widget _storySceneRow(List<StorySceneAsset> sceneAssets) {
     final displayedAssets = sceneAssets.take(4).toList(growable: false);
     if (displayedAssets.isEmpty) {
       return const SizedBox.shrink();
@@ -4957,7 +5010,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(displayedAssets.length, (index) {
-                  final path = displayedAssets[index];
+                  final path = displayedAssets[index].displayPath;
                   return Padding(
                     padding: EdgeInsets.only(
                       right: index == displayedAssets.length - 1 ? 0 : tileGap,
@@ -5515,6 +5568,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         _topUtilityButton(
                           label: '금주 인물',
                           onTap: _openWeeklyTab,
+                        ),
+                        const SizedBox(width: 8),
+                        _topUtilityButton(
+                          label: '151-184 검토',
+                          onTap: _openStoryJsonReviewScreen,
                         ),
                         const SizedBox(width: 8),
                         _topUtilityButton(
