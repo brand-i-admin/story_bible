@@ -56,7 +56,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def run_sips(command: list[str]) -> None:
-    subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(
+        command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
 
 
 def ensure_parent(path: Path) -> None:
@@ -67,8 +69,7 @@ def is_up_to_date(src: Path, dest: Path, max_bytes: int) -> bool:
     if not dest.exists():
         return False
     return (
-        dest.stat().st_size <= max_bytes
-        and dest.stat().st_mtime >= src.stat().st_mtime
+        dest.stat().st_size <= max_bytes and dest.stat().st_mtime >= src.stat().st_mtime
     )
 
 
@@ -116,7 +117,9 @@ def build_story_thumb(src: Path, dest: Path, max_bytes: int) -> tuple[Path, bool
         return dest, True
 
 
-def build_avatar_thumb(src: Path, dest: Path, max_bytes: int = 100_000) -> tuple[Path, bool]:
+def build_avatar_thumb(
+    src: Path, dest: Path, max_bytes: int = 100_000
+) -> tuple[Path, bool]:
     if is_up_to_date(src, dest, max_bytes):
         return dest, False
 

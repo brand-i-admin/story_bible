@@ -125,7 +125,9 @@ def load_prompt_config(path: Path) -> dict[str, Any]:
     return data
 
 
-def combine_negative_prompt(base_negative_prompt: str, extra_negative_prompt: str) -> str:
+def combine_negative_prompt(
+    base_negative_prompt: str, extra_negative_prompt: str
+) -> str:
     parts = [
         part.strip()
         for part in (base_negative_prompt, extra_negative_prompt)
@@ -326,8 +328,8 @@ def build_request_body(
     person_generation_override: str = "",
 ) -> dict[str, Any]:
     mime_type = defaults.get("outputMimeType", "image/png")
-    person_generation = (
-        person_generation_override or defaults.get("personGeneration", "allow_adult")
+    person_generation = person_generation_override or defaults.get(
+        "personGeneration", "allow_adult"
     )
     body = {
         "instances": [{"prompt": prompt}],
@@ -385,7 +387,8 @@ def main() -> int:
             prompt = build_final_prompt(
                 item["prompt"],
                 common_style,
-                include_adult_guardrail=(not args.no_adult_guardrail) and (not disable_adult_guardrail),
+                include_adult_guardrail=(not args.no_adult_guardrail)
+                and (not disable_adult_guardrail),
                 use_common_style=use_common_style,
             )
             print(f"[DRY] {item['index']:02d} {item['code']}: {prompt}")
@@ -415,7 +418,8 @@ def main() -> int:
         prompt = build_final_prompt(
             item["prompt"],
             common_style,
-            include_adult_guardrail=(not args.no_adult_guardrail) and (not disable_adult_guardrail),
+            include_adult_guardrail=(not args.no_adult_guardrail)
+            and (not disable_adult_guardrail),
             use_common_style=use_common_style,
         )
         final_negative_prompt = combine_negative_prompt(
@@ -432,7 +436,9 @@ def main() -> int:
             prompt,
             final_negative_prompt,
             defaults,
-            person_generation_override=(args.person_generation or per_item_person_generation),
+            person_generation_override=(
+                args.person_generation or per_item_person_generation
+            ),
         )
         try:
             response = session.post(endpoint, json=body, timeout=180)
@@ -451,9 +457,7 @@ def main() -> int:
                 reason = extract_filter_reason(payload)
                 if reason:
                     hint = get_filter_hint(reason)
-                    print(
-                        f"[FAIL] {index:02d} {code} no predictions ({reason}){hint}"
-                    )
+                    print(f"[FAIL] {index:02d} {code} no predictions ({reason}){hint}")
                 else:
                     print(f"[FAIL] {index:02d} {code} no predictions")
                 continue

@@ -284,7 +284,9 @@ def build_gemini_request_body(
         "Return only generated image content.",
     ]
     if negative_prompt:
-        instruction_parts.append(f"Avoid the following in the image: {negative_prompt}.")
+        instruction_parts.append(
+            f"Avoid the following in the image: {negative_prompt}."
+        )
     prompt_text = f"{prompt}\n\n{' '.join(instruction_parts)}"
 
     return {

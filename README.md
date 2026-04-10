@@ -44,8 +44,8 @@ python3 tools/build_krv_seed_sql.py \
 
 아래 중 하나를 선택합니다.
 
-1. Supabase SQL Editor에서 `supabase/seeds/krv_bible_verses.sql` 실행  
-2. 파일이 너무 크면 `supabase/seeds/krv_bible_verses_part_01.sql` ~ `..._10.sql` 순서대로 실행  
+1. Supabase SQL Editor에서 `supabase/seeds/krv_bible_verses.sql` 실행
+2. 파일이 너무 크면 `supabase/seeds/krv_bible_verses_part_01.sql` ~ `..._10.sql` 순서대로 실행
 3. DB 접속 문자열이 있으면 `psql`로 실행
 
 ```bash
