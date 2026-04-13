@@ -4439,27 +4439,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (compact)
-                              Center(
-                                child: _weeklyPersonAvatar(
-                                  person: person,
-                                  size: 24,
-                                ),
-                              )
-                            else if (stacked)
+                            if (stacked)
                               Column(
                                 children: [
-                                  _weeklyPersonAvatar(person: person, size: 26),
-                                  const SizedBox(height: 5),
+                                  _weeklyPersonAvatar(
+                                    person: person,
+                                    size: compact ? 24 : 26,
+                                  ),
+                                  SizedBox(height: compact ? 4 : 5),
                                   Text(
                                     person.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Color(0xFF4A331D),
                                       fontWeight: FontWeight.w800,
-                                      fontSize: 11.8,
+                                      fontSize: compact ? 10.2 : 11.8,
                                     ),
                                   ),
                                 ],
@@ -6392,6 +6388,33 @@ class _InlineLoginPromptCardState
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    if (_submitting) {
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = '구글 로그인에 실패했습니다.\n$error';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -6443,6 +6466,29 @@ class _InlineLoginPromptCardState
                   ),
                   onPressed: _handleKakaoSignIn,
                   child: const Text('카카오로 로그인'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 40,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF2E2A24),
+                    side: const BorderSide(
+                      color: Color(0xFFCCB79D),
+                      width: 1.1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 13.8,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  onPressed: _handleGoogleSignIn,
+                  child: const Text('Google로 로그인'),
                 ),
               ),
               const SizedBox(height: 8),
