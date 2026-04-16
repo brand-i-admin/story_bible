@@ -30,8 +30,12 @@ dart format .                # 코드 포맷
 백엔드 작업 시 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)를 병행 사용하면 최신 RLS 패턴, 쿼리 최적화, Auth 트러블슈팅 가이드를 함께 활용할 수 있다.
 
 ```bash
-# Claude Code 플러그인 설치 (최초 1회)
+# 1. 마켓플레이스 등록 (최초 1회)
+claude plugin marketplace add supabase/agent-skills
+
+# 2. 플러그인 설치
 claude plugin install supabase@supabase-agent-skills
+claude plugin install postgres-best-practices@supabase-agent-skills
 ```
 
 상세는 `docs/BACKEND.md` §8 참조.

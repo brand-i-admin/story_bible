@@ -232,20 +232,24 @@ explanation text, display_order int
 ### 설치
 
 ```bash
-# Claude Code 플러그인 (권장)
+# 1. 마켓플레이스 등록 (최초 1회)
+claude plugin marketplace add supabase/agent-skills
+
+# 2. 플러그인 설치
 claude plugin install supabase@supabase-agent-skills
+claude plugin install postgres-best-practices@supabase-agent-skills
 
 # 또는 npx로 특정 스킬만
 npx skills add supabase/agent-skills --skill supabase
 npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 ```
 
-### 제공되는 공식 스킬
+### 제공되는 공식 플러그인
 
-| 스킬 | 커버 영역 |
-|------|----------|
+| 플러그인 | 커버 영역 |
+|---------|----------|
 | `supabase` | Database / Auth / Edge Functions / Realtime / Storage / Vectors / Cron / Queues, supabase-js/ssr, Next.js/React/SvelteKit 통합, JWT/RLS 트러블슈팅 |
-| `supabase-postgres-best-practices` | Query Performance, Connection Management, Security & RLS, Schema Design, Concurrency & Locking, Data Access Patterns, Monitoring, Advanced Features — 8개 카테고리 |
+| `postgres-best-practices` | Query Performance, Connection Management, Security & RLS, Schema Design, Concurrency & Locking, Data Access Patterns, Monitoring, Advanced Features — 8개 카테고리 |
 
 ### 사용 가이드
 
