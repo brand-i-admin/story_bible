@@ -11,10 +11,15 @@ import '../models/weekly_study_data.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../utils/weekly_selection.dart';
 import 'shared/event_short_popup.dart';
 import 'story_home_styles.dart';
 import 'story_map_panel.dart';
 import 'sub_page_scaffold.dart';
+
+// 주간 화면 빌더 메소드를 도메인별 part 파일로 분리.
+part 'weekly/weekly_avatar.dart';
+part 'weekly/weekly_list_panel.dart';
 
 /// 금주 인물 학습 탭 페이지.
 ///
@@ -69,25 +74,12 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         .firstOrNull;
   }
 
-  DateTime _weekStartMonday(DateTime date) {
-    final day = DateTime(date.year, date.month, date.day);
-    return day.subtract(Duration(days: day.weekday - DateTime.monday));
-  }
-
-  String _weeklyKeyFor(DateTime monday) {
-    return '${monday.year}-${monday.month}-${monday.day}';
-  }
-
-  int _seedFromKey(String key) {
-    return key.codeUnits.fold<int>(
-      0,
-      (acc, value) => ((acc * 31) + value) & 0x7fffffff,
-    );
-  }
+  // 순수 함수는 lib/utils/weekly_selection.dart로 추출:
+  // - weekStartMonday, weeklyKeyFor, seedFromKey
 
   Future<void> _loadWeeklyData() async {
-    final monday = _weekStartMonday(DateTime.now());
-    final weekKey = _weeklyKeyFor(monday);
+    final monday = weekStartMonday(DateTime.now());
+    final weekKey = weeklyKeyFor(monday);
     setState(() {
       _weeklyLoading = true;
       _weeklyError = null;
@@ -157,7 +149,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
           ? null
           : candidates.where((person) => person.code == forcedCode).firstOrNull;
       final weeklyPerson =
-          forcedPerson ?? candidates[_seedFromKey(weekKey) % candidates.length];
+          forcedPerson ?? candidates[seedFromKey(weekKey) % candidates.length];
       final weeklyEvents =
           [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
             ..sort((a, b) {
@@ -306,7 +298,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         : completedStories / totalStories;
     final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
     final todayKst = DateTime(nowKst.year, nowKst.month, nowKst.day);
-    final weekStartKst = _weekStartMonday(todayKst);
+    final weekStartKst = weekStartMonday(todayKst);
     final weekEndKst = weekStartKst.add(const Duration(days: 6));
     final daysRemainingKst = math.max(
       0,
@@ -567,318 +559,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildWeeklyListPanel({
-    required WeeklyStudyData weekly,
-    required Set<String> completedEventIds,
-    required Color Function(String personId) colorForPerson,
-    required ValueChanged<String> onSelectEvent,
-    required ValueChanged<String> onToggleChecked,
-    required ValueChanged<String> onStartQuiz,
-  }) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: floatingPanelDecoration(),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _weeklyPersonTitleBadge(
-              text: '금주 인물: ${weekly.person.name}',
-              person: weekly.person,
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: weekly.events.isEmpty
-                  ? const Center(
-                      child: Text(
-                        '선택된 인물의 사건이 없습니다.',
-                        style: TextStyle(
-                          color: Color(0xFF5A4327),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: weekly.events.length,
-                      itemBuilder: (context, index) {
-                        final event = weekly.events[index];
-                        final selected = event.id == _weeklySelectedEventId;
-                        final isCompleted = completedEventIds.contains(
-                          event.id,
-                        );
-                        final isChecked = _weeklyCheckedEventIds.contains(
-                          event.id,
-                        );
-                        final shortText =
-                            (event.shortStory ??
-                                    event.story ??
-                                    event.summary ??
-                                    '')
-                                .trim();
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: GestureDetector(
-                            onTap: () => onSelectEvent(event.id),
-                            behavior: HitTestBehavior.opaque,
-                            child: Container(
-                              decoration: interactiveCardDecoration(
-                                selected: selected,
-                                completed: isCompleted,
-                              ),
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  final isCompactCard =
-                                      constraints.maxWidth < 340;
-                                  final titleFontSize = isCompactCard
-                                      ? 13.2
-                                      : 14.8;
-                                  final bodyFontSize = isCompactCard
-                                      ? 11.2
-                                      : 12.2;
-                                  final checkboxSize = isCompactCard
-                                      ? 26.0
-                                      : 29.0;
-                                  final checkboxIconSize = isCompactCard
-                                      ? 15.0
-                                      : 17.0;
-                                  return Container(
-                                    constraints: BoxConstraints(
-                                      minHeight: isCompactCard ? 64 : 74,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: isCompactCard ? 10 : 12,
-                                      vertical: isCompactCard ? 9 : 10,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: isCompactCard ? 11 : 12,
-                                          height: isCompactCard ? 11 : 12,
-                                          margin: EdgeInsets.only(
-                                            right: isCompactCard ? 8 : 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: colorForPerson(
-                                              weekly.person.id,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                '${index + 1}. ${event.title}',
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize: titleFontSize,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: selected
-                                                      ? const Color(0xFFFDF8EE)
-                                                      : isCompleted
-                                                      ? const Color(0xFF2D5A39)
-                                                      : const Color(0xFF4A331D),
-                                                  height: 1.18,
-                                                ),
-                                              ),
-                                              if (shortText.isNotEmpty) ...[
-                                                SizedBox(
-                                                  height: isCompactCard ? 3 : 4,
-                                                ),
-                                                Text(
-                                                  shortText,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontSize: bodyFontSize,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: selected
-                                                        ? const Color(
-                                                            0xEAFDF8EE,
-                                                          )
-                                                        : isCompleted
-                                                        ? const Color(
-                                                            0xCC44624B,
-                                                          )
-                                                        : const Color(
-                                                            0xCC5A4327,
-                                                          ),
-                                                    height: 1.2,
-                                                  ),
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: isCompactCard ? 6 : 8),
-                                        GestureDetector(
-                                          onTap: () =>
-                                              onToggleChecked(event.id),
-                                          behavior: HitTestBehavior.opaque,
-                                          child: Container(
-                                            width: checkboxSize,
-                                            height: checkboxSize,
-                                            decoration: BoxDecoration(
-                                              color: isChecked
-                                                  ? const Color(0xFF2D7C55)
-                                                  : const Color(0xFFF8F1E4),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: isChecked
-                                                    ? const Color(0xFF2D7C55)
-                                                    : const Color(0xFFB58E63),
-                                              ),
-                                            ),
-                                            child: Icon(
-                                              isChecked
-                                                  ? Icons.check_rounded
-                                                  : Icons.circle_outlined,
-                                              size: checkboxIconSize,
-                                              color: isChecked
-                                                  ? const Color(0xFFFDF8EE)
-                                                  : const Color(0xFF8E6F48),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        _weeklyInlineQuizButton(
-                                          completed: isCompleted,
-                                          onTap: () => onStartQuiz(event.id),
-                                          roomy: !isCompactCard,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _weeklyInlineQuizButton({
-    required bool completed,
-    required VoidCallback onTap,
-    bool roomy = false,
-  }) {
-    return filledActionButton(
-      label: '퀴즈',
-      onTap: onTap,
-      completed: completed,
-      compact: true,
-      minWidth: roomy ? 60 : 52,
-      minHeight: roomy ? 40 : 36,
-      fontSize: roomy ? 13.8 : 12.8,
-      horizontalPadding: roomy ? 14 : 12,
-    );
-  }
-
-  Widget _weeklyPersonTitleBadge({
-    required String text,
-    required Person person,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      decoration: headerChipDecoration(),
-      child: Row(
-        children: [
-          _weeklyPersonAvatar(person: person, size: 34),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16.2,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF4A331D),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _weeklyPersonAvatar({required Person person, double size = 32}) {
-    final avatarPath = person.avatarAssetPath.trim();
-    final fallbackText = person.name.trim().isEmpty
-        ? '?'
-        : person.name.trim().substring(0, 1);
-    final borderWidth = (size * 0.045).clamp(1.0, 1.6).toDouble();
-    final fallbackFontSize = (size * 0.34).clamp(9.0, 11.5).toDouble();
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFFF3E7CC), width: borderWidth),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 2),
-        ],
-      ),
-      child: ClipOval(
-        child: avatarPath.isEmpty
-            ? _weeklyAvatarFallback(fallbackText, fontSize: fallbackFontSize)
-            : ColoredBox(
-                color: Colors.white,
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    width: size,
-                    height: size * 2,
-                    child: Image.asset(
-                      avatarPath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      errorBuilder: (_, _, _) => _weeklyAvatarFallback(
-                        fallbackText,
-                        fontSize: fallbackFontSize,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _weeklyAvatarFallback(String text, {double fontSize = 11}) {
-    return Container(
-      color: const Color(0xFF8C6337),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: const Color(0xFFF3EAD6),
-          fontSize: fontSize,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
     );
   }
 }
