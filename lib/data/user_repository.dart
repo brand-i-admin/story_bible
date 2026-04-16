@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_user_profile.dart';
@@ -417,69 +418,95 @@ class UserRepository {
     }
   }
 
-  String? _cleanNullableText(String? value) {
-    final trimmed = value?.trim();
-    return trimmed == null || trimmed.isEmpty ? null : trimmed;
+  String? _cleanNullableText(String? value) => cleanNullableText(value);
+
+  String _normalizeExtension(String raw) => normalizeImageExtension(raw);
+
+  String _contentTypeForExtension(String extension) =>
+      contentTypeForImageExtension(extension);
+
+  DateTime _dateOnly(DateTime dateTime) => dateOnly(dateTime);
+
+  int _computeStreak(List<dynamic> rows, String key) =>
+      computeDailyStreak(rows, key);
+}
+
+/// 공백만 있거나 null인 문자열을 null로 정규화한다.
+@visibleForTesting
+String? cleanNullableText(String? value) {
+  final trimmed = value?.trim();
+  return trimmed == null || trimmed.isEmpty ? null : trimmed;
+}
+
+/// 이미지 확장자를 지원 값(jpg/webp/png 중 하나)으로 정규화한다.
+/// jpeg/JPG 같은 변종도 jpg로, 미지원 확장자는 png로 폴백한다.
+@visibleForTesting
+String normalizeImageExtension(String raw) {
+  final normalized = raw.toLowerCase().replaceAll('.', '');
+  switch (normalized) {
+    case 'jpg':
+    case 'jpeg':
+      return 'jpg';
+    case 'webp':
+      return 'webp';
+    default:
+      return 'png';
+  }
+}
+
+/// 확장자에 대응하는 MIME 타입을 반환한다.
+@visibleForTesting
+String contentTypeForImageExtension(String extension) {
+  switch (extension) {
+    case 'jpg':
+      return 'image/jpeg';
+    case 'webp':
+      return 'image/webp';
+    default:
+      return 'image/png';
+  }
+}
+
+/// 시:분:초를 제외한 날짜만 보존해 동일 날짜 비교를 가능하게 한다.
+@visibleForTesting
+DateTime dateOnly(DateTime dateTime) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day);
+}
+
+/// 출석/학습 연속일수 계산.
+///
+/// rows는 `{key: "YYYY-MM-DD"}` 형태를 가정하고, 오늘 또는 어제가 포함되어 있지
+/// 않으면 연속이 끊긴 것으로 간주해 0을 반환한다. 중복 날짜는 1회로 집계된다.
+@visibleForTesting
+int computeDailyStreak(List<dynamic> rows, String key) {
+  final uniqueDays =
+      rows
+          .map((row) => row[key] as String?)
+          .whereType<String>()
+          .map(DateTime.parse)
+          .map(dateOnly)
+          .toSet()
+          .toList()
+        ..sort((a, b) => b.compareTo(a));
+
+  if (uniqueDays.isEmpty) {
+    return 0;
   }
 
-  String _normalizeExtension(String raw) {
-    final normalized = raw.toLowerCase().replaceAll('.', '');
-    switch (normalized) {
-      case 'jpg':
-      case 'jpeg':
-        return 'jpg';
-      case 'webp':
-        return 'webp';
-      default:
-        return 'png';
-    }
+  final today = dateOnly(DateTime.now());
+  final yesterday = today.subtract(const Duration(days: 1));
+  if (uniqueDays.first != today && uniqueDays.first != yesterday) {
+    return 0;
   }
 
-  String _contentTypeForExtension(String extension) {
-    switch (extension) {
-      case 'jpg':
-        return 'image/jpeg';
-      case 'webp':
-        return 'image/webp';
-      default:
-        return 'image/png';
+  var streak = 1;
+  for (var i = 1; i < uniqueDays.length; i++) {
+    final previous = uniqueDays[i - 1];
+    final expected = previous.subtract(const Duration(days: 1));
+    if (uniqueDays[i] != expected) {
+      break;
     }
+    streak += 1;
   }
-
-  DateTime _dateOnly(DateTime dateTime) {
-    return DateTime(dateTime.year, dateTime.month, dateTime.day);
-  }
-
-  int _computeStreak(List<dynamic> rows, String key) {
-    final uniqueDays =
-        rows
-            .map((row) => row[key] as String?)
-            .whereType<String>()
-            .map(DateTime.parse)
-            .map(_dateOnly)
-            .toSet()
-            .toList()
-          ..sort((a, b) => b.compareTo(a));
-
-    if (uniqueDays.isEmpty) {
-      return 0;
-    }
-
-    final today = _dateOnly(DateTime.now());
-    final yesterday = today.subtract(const Duration(days: 1));
-    if (uniqueDays.first != today && uniqueDays.first != yesterday) {
-      return 0;
-    }
-
-    var streak = 1;
-    for (var i = 1; i < uniqueDays.length; i++) {
-      final previous = uniqueDays[i - 1];
-      final expected = previous.subtract(const Duration(days: 1));
-      if (uniqueDays[i] != expected) {
-        break;
-      }
-      streak += 1;
-    }
-    return streak;
-  }
+  return streak;
 }
