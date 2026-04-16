@@ -1,0 +1,195 @@
+# 프론트엔드 도메인 레퍼런스
+
+> 이 문서는 `$frontend` 스킬이 참조하는 프론트엔드 도메인 가이드이다.
+> UI/UX 상세는 `docs/UI_GUIDE.md`를 함께 참조.
+
+## 1. 파일 범위
+
+```
+lib/
+├── main.dart                          # 엔트리포인트 (54줄)
+├── app.dart                           # MaterialApp + 테마 (23줄)
+├── models/                            # 데이터 모델 (14개)
+├── state/                             # Riverpod 상태 관리 (3개)
+├── screens/                           # 전체 화면 (6개)
+├── widgets/                           # 재사용 UI 컴포넌트 (15개+)
+└── utils/                             # 공통 유틸리티 (1개: bible_book_meta.dart)
+```
+
+## 2. 모델 클래스
+
+| 모델 | 파일 | 핵심 필드 | 팩토리 |
+|------|------|----------|--------|
+| Era | `models/era.dart` (40줄) | id, code, testament, name, displayOrder, mapCenter*, mapZoom | `Era.fromMap()` |
+| Person | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접 |
+| StoryEvent | `models/story_event.dart` (53줄) | id, code, eraId, title, summary, story, shortStory, storyScenes, lat/lng, timeSortKey, personIds, bibleRefs | 생성자 직접 |
+| BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
+| AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
+| UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
+| SavedBibleVerse | `models/saved_bible_verse.dart` (55줄) | id, userId, translation, bookNo, bookName, chapterNo, verseNo, verseText | `SavedBibleVerse.fromMap()` |
+| QuizQuestion | `models/quiz_question.dart` (17줄) | id, question, choices, answerIndex, explanation | 생성자 직접 |
+| PersonStudyProgress | `models/person_study_progress.dart` (20줄) | person, completedCount, totalCount | 생성자 직접 |
+| IntercessoryPrayerItem | `models/intercessory_prayer_item.dart` (33줄) | linkId, nickname, prayerRequest, photoUrl | `IntercessoryPrayerItem.fromMap()` |
+| PagedResult<T> | `models/paged_result.dart` (13줄) | items, pageIndex, pageSize, hasNextPage | 생성자 직접 |
+
+### 패턴 규칙
+- Supabase 행을 받는 모델은 `fromMap(Map<String, dynamic>)` 팩토리 사용
+- 모델은 순수 데이터 클래스 — 비즈니스 로직 없음
+- 모든 필드는 `final` (불변)
+- nullable 필드는 `?` 타입 사용
+
+## 3. 상태 관리 (Riverpod)
+
+### 3.1 Provider 구조
+
+```dart
+// story_controller.dart
+
+supabaseClientProvider          // Provider<SupabaseClient>
+storyRepositoryProvider         // Provider<StoryRepository>
+storyControllerProvider         // NotifierProvider<StoryController, StoryState>
+
+// auth_providers.dart
+authStateProvider               // StreamProvider<AuthState>
+```
+
+### 3.2 StoryState (불변 상태 클래스)
+
+```dart
+class StoryState {
+  final bool loading;
+  final String? error;
+  final List<Era> eras;
+  final List<Person> persons;
+  final List<StoryEvent> events;
+  final String? selectedEraId;
+  final Set<String> selectedPersonIds;
+  final Map<String, Color> selectedPersonColors;
+  final String? selectedEventId;
+  final Set<String> completedEventIds;
+  final String searchQuery;
+  final List<StoryEvent> searchResults;
+  final bool isSearching;
+  final String selectedTestament;  // 'old' | 'new'
+}
+```
+
+### 3.3 StoryController 주요 메서드
+
+| 메서드 | 역할 |
+|--------|------|
+| `initialize()` | 앱 시작 시 eras 로드, 초기 상태 설정 |
+| `selectTestament(String)` | 구약/신약 전환 |
+| `selectEra(String)` | 시대 선택 → persons + events 로드 |
+| `togglePerson(String)` | 인물 선택/해제 토글 |
+| `selectEvent(String?)` | 이벤트 선택/해제 |
+| `markEventCompleted(...)` | 학습 완료 + XP 저장 |
+| `setSearchQuery(String)` | 검색어 변경 (220ms 디바운스) |
+| `selectSearchResult(StoryEvent)` | 검색 결과 → 시대/인물/이벤트 자동 선택 |
+| `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 |
+| `colorForPerson(String)` | 인물별 할당 색상 반환 |
+
+### 3.4 색상 팔레트 (8색)
+
+```dart
+static const _palette = <Color>[
+  Color(0xFF3B6C94), Color(0xFFB6673C), Color(0xFF557C3E), Color(0xFF8A4E5D),
+  Color(0xFF616161), Color(0xFF9E7C24), Color(0xFF7B5D43), Color(0xFF5C6B9F),
+];
+```
+
+## 4. 화면 (Screens)
+
+| 화면 | 파일 | 역할 |
+|------|------|------|
+| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필) |
+| LoginScreen | `screens/login_screen.dart` | 소셜 로그인 |
+| ProfileNotesScreen | `screens/profile_notes_screen.dart` | 노트 목록 |
+| ProfileNoteEditorScreen | `screens/profile_note_editor_screen.dart` | 노트 편집 |
+| SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
+| LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
+
+> **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~3,954줄 (−45%).
+> 프로필 탭(2,700줄+, 40+개 메소드, 20+개 상태 변수)은 상태 공유가 복잡해 단일 세션 분리 시 위험도가 높음.
+> 향후 `$frontend` 스킬을 통해 점진적으로 `ProfileTabPage`로 이동할 예정.
+
+## 5. 위젯 (Widgets)
+
+### 5.1 도메인 위젯
+
+| 위젯 | 파일 | 역할 |
+|------|------|------|
+| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도, 핀/마커 렌더링 |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
+| PersonPanel | `widgets/person_panel.dart` | 인물 카드 (아바타, 설명) |
+| StoryListPanel | `widgets/story_list_panel.dart` | 이벤트 타임라인 리스트 |
+| ParchmentDialog | `widgets/parchment_dialog.dart` | 이야기 상세 모달 |
+| ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 |
+| EraSelector | `widgets/era_selector.dart` | 시대 탭 바 |
+| GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 UI 테마 데코레이션 |
+| SearchBox | `widgets/search_box.dart` | 검색 입력 |
+
+### 5.2 story_home_screen에서 추출한 위젯 (2차 리팩토링)
+
+| 위젯 | 파일 | 역할 |
+|------|------|------|
+| ParchmentTextureLayer | `widgets/parchment_texture_layer.dart` | 양피지 질감 오버레이 |
+| SubPageScaffold | `widgets/sub_page_scaffold.dart` | 서브 페이지 공통 레이아웃 (앱바+배경) |
+| SubPageFloatingHomeButton | `widgets/sub_page_floating_home_button.dart` | 드래그 가능한 홈 버튼 |
+| InlineLoginPromptCard | `widgets/inline_login_prompt_card.dart` | 카카오/Apple 인라인 로그인 카드 |
+| ShareIdInputDialog | `widgets/share_id_input_dialog.dart` | 7자리 공유 ID 입력 다이얼로그 |
+| ProfileEditorDialog | `widgets/profile_editor_dialog.dart` | 프로필(닉네임/사진/기도제목) 수정 |
+
+### 5.3 story_home_screen에서 추출한 페이지 (3차 리팩토링)
+
+| 위젯 | 파일 | 역할 |
+|------|------|------|
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작) |
+| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
+| WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
+| PersonAvatar | `widgets/person_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
+
+### 5.4 스타일 헬퍼
+
+`widgets/story_home_styles.dart` — 양피지/고지도 테마용 공통 데코레이션/위젯 빌더:
+
+| 함수 | 반환 | 용도 |
+|------|------|------|
+| `modalSurfaceDecoration()` | BoxDecoration | 모달 표면 |
+| `floatingPanelDecoration(...)` | BoxDecoration | 플로팅 패널 |
+| `interactiveCardDecoration(...)` | BoxDecoration | 인터랙티브 카드 (selected/completed) |
+| `headerChipDecoration()` | BoxDecoration | 헤더 칩 |
+| `softButtonDecoration(...)` | BoxDecoration | 부드러운 버튼 |
+| `filledActionButton(...)` | Widget | 채워진 액션 버튼 |
+| `modalCloseButton(...)` | Widget | 모달 닫기 버튼 |
+| `mapControlButton(...)` | Widget | 지도 컨트롤 버튼 |
+| `topUtilityButton(...)` | Widget | 상단 유틸리티 버튼 |
+| `bibleDropdownFrame<T>(...)` | Widget | 성경 드롭다운 프레임 |
+| `storySection(...)` | Widget | 이야기 섹션 (제목 + 내용 + action) |
+| `storySceneRow(...)` | Widget | 4장면 이미지 가로 배열 |
+| `bibleMoveButton(...)` | Widget | "이동" 액션 버튼 (성경 리더) |
+| `lockedPreviewOverlay(...)` | Widget | 잠금 프리뷰 오버레이 |
+
+## 6. 의존 패키지
+
+| 패키지 | 버전 | 용도 |
+|--------|------|------|
+| flutter_riverpod | ^2.6.1 | 상태 관리 |
+| supabase_flutter | ^2.9.1 | Supabase SDK |
+| flutter_map | ^8.2.1 | 인터랙티브 지도 |
+| latlong2 | ^0.9.1 | 좌표 계산 |
+| flutter_dotenv | ^5.2.1 | .env 환경변수 |
+| sign_in_with_apple | ^6.1.4 | Apple 로그인 |
+| image_picker | ^1.1.2 | 프로필 이미지 |
+| crypto | ^3.0.6 | SHA256 (Apple 로그인 nonce) |
+| cupertino_icons | ^1.0.8 | iOS 스타일 아이콘 |
+
+## 7. 코딩 컨벤션
+
+- **포맷**: `dart format` (Dart 공식 스타일)
+- **린트**: `flutter_lints` 5.0 (`analysis_options.yaml`)
+- **네이밍**: Dart 공식 — `camelCase` 변수, `PascalCase` 클래스
+- **UI 텍스트**: 한국어로 작성
+- **위젯**: `ConsumerWidget` 또는 `ConsumerStatefulWidget` (Riverpod)
+- **상수**: `const` 생성자 최대 활용
+- **에러 처리**: try-catch + `state.copyWith(error: ...)` 패턴

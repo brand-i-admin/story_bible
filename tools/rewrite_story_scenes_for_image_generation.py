@@ -49,7 +49,9 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _scene_text_and_existing_codes(scene: object, event_person_codes: list[str]) -> tuple[str, list[str]]:
+def _scene_text_and_existing_codes(
+    scene: object, event_person_codes: list[str]
+) -> tuple[str, list[str]]:
     if isinstance(scene, dict):
         text = str(
             scene.get("text")
@@ -78,12 +80,16 @@ def rewrite_event(event: dict, code_to_name: dict[str, str]) -> bool:
     rewritten_scene_persons: list[list[str]] = []
 
     for index, scene in enumerate(story_scenes):
-        raw_text, explicit_codes = _scene_text_and_existing_codes(scene, event_person_codes)
+        raw_text, explicit_codes = _scene_text_and_existing_codes(
+            scene, event_person_codes
+        )
         if not raw_text:
             continue
 
         inherited_codes = []
-        if isinstance(existing_scene_persons, list) and index < len(existing_scene_persons):
+        if isinstance(existing_scene_persons, list) and index < len(
+            existing_scene_persons
+        ):
             inherited_codes = normalize_scene_persons_list(
                 existing_scene_persons[index],
                 event_person_codes,
@@ -132,7 +138,9 @@ def main() -> int:
     code_to_name = parse_person_name_map_from_seed_sql(Path(args.persons_seed_sql))
     files = sorted(stories_dir.glob(args.stories_glob))
     if not files:
-        raise FileNotFoundError(f"no story files found in {stories_dir} matching {args.stories_glob}")
+        raise FileNotFoundError(
+            f"no story files found in {stories_dir} matching {args.stories_glob}"
+        )
 
     changed_files = 0
     changed_events = 0

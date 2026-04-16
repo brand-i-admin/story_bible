@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        name: black (tools)
+        files: ^tools/.*\.py$
+        language_version: python3.10
+
+  - repo: local
+    hooks:
+      - id: dart-format
+        name: dart format
+        entry: dart format --output=none --set-exit-if-changed
+        language: system
+        files: \.dart$
+      - id: flutter-analyze
+        name: flutter analyze
+        entry: flutter analyze
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+      - id: flutter-test
+        name: flutter test
+        entry: flutter test
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

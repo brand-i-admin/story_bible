@@ -70,10 +70,16 @@ def split_sentences(text: str, *, max_sentences: int) -> list[str]:
     if not normalized:
         return []
 
-    primary = [part.strip() for part in SENTENCE_SPLIT_REGEX.split(normalized) if part.strip()]
+    primary = [
+        part.strip() for part in SENTENCE_SPLIT_REGEX.split(normalized) if part.strip()
+    ]
     sentences = primary
     if len(sentences) <= 1:
-        fallback = [part.strip() for part in SENTENCE_FALLBACK_REGEX.findall(normalized) if part.strip()]
+        fallback = [
+            part.strip()
+            for part in SENTENCE_FALLBACK_REGEX.findall(normalized)
+            if part.strip()
+        ]
         if fallback:
             sentences = fallback
 
@@ -102,7 +108,9 @@ def fetch_events(supabase_url: str, supabase_key: str) -> list[dict[str, Any]]:
     return payload
 
 
-def normalize_event(raw: dict[str, Any], *, max_sentences: int) -> dict[str, Any] | None:
+def normalize_event(
+    raw: dict[str, Any], *, max_sentences: int
+) -> dict[str, Any] | None:
     short_story = str(raw.get("short_story") or "").strip()
     if not short_story:
         return None
@@ -149,7 +157,10 @@ def main() -> int:
         print("ERROR: --supabase-url or SUPABASE_URL_DEV is required.", file=sys.stderr)
         return 2
     if not args.supabase_key:
-        print("ERROR: --supabase-key or SUPABASE_ANON_KEY_DEV is required.", file=sys.stderr)
+        print(
+            "ERROR: --supabase-key or SUPABASE_ANON_KEY_DEV is required.",
+            file=sys.stderr,
+        )
         return 2
     if args.sample_size <= 0:
         print("ERROR: --sample-size must be > 0.", file=sys.stderr)
@@ -170,7 +181,9 @@ def main() -> int:
             normalized.append(event)
 
     if not normalized:
-        print("ERROR: no events with non-empty short_story were found.", file=sys.stderr)
+        print(
+            "ERROR: no events with non-empty short_story were found.", file=sys.stderr
+        )
         return 1
 
     rng = random.Random(args.seed)
