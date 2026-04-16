@@ -881,5 +881,4 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       ),
     );
   }
-
 }

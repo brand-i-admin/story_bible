@@ -60,9 +60,7 @@ class EventShortPopup extends StatelessWidget {
         color: const Color(0xFFF9F1E4),
         shadowOpacity: 0.28,
       ),
-      child: maxHeight != null
-          ? SingleChildScrollView(child: body)
-          : body,
+      child: maxHeight != null ? SingleChildScrollView(child: body) : body,
     );
 
     if (maxWidth != null) {
