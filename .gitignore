@@ -1,8 +1,6 @@
 assets_backup
 .venv
 .env
-story_bible_icon.png
-assets/app_icon/story_bible_icon_opaque.png
 assets/bible
 supabase/seeds
 

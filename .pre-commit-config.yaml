@@ -3,6 +3,8 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
+        # 앱 아이콘 원본 등 이미지 원본은 1~2MB가 일반적이므로 상한 상향.
+        args: ['--maxkb=2048']
       - id: check-merge-conflict
       - id: check-yaml
       - id: end-of-file-fixer
