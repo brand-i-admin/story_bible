@@ -18,26 +18,27 @@ repos:
         files: ^tools/.*\.py$
         language_version: python3.10
 
-  # NOTE: `bash -lc`로 login shell을 띄우면 사용자의 ~/.zshrc /
-  # ~/.bashrc가 로드되어 FLUTTER/DART PATH가 반영된다.
-  # 이 설정이 없으면 git worktree에서 git push 시 hook이
-  # 독립된 PATH에서 실행되어 `flutter`를 찾지 못한다.
+  # NOTE: macOS 기본 쉘(zsh) login 모드로 띄워 사용자의 ~/.zshrc
+  # 또는 ~/.zprofile의 PATH(Flutter/Dart 포함)를 로드한다.
+  # 이 설정이 없으면 git worktree에서 git push 시 hook이 제한된 PATH로
+  # 실행되어 `flutter`를 찾지 못한다.
+  # 사용자가 bash를 쓴다면 `zsh` 부분을 `bash`로 바꾸면 된다.
   - repo: local
     hooks:
       - id: dart-format
         name: dart format
-        entry: bash -lc 'dart format --output=none --set-exit-if-changed "$@"' --
+        entry: zsh -lc 'dart format --output=none --set-exit-if-changed "$@"' --
         language: system
         files: \.dart$
       - id: flutter-analyze
         name: flutter analyze
-        entry: bash -lc 'flutter analyze'
+        entry: zsh -lc 'flutter analyze'
         language: system
         pass_filenames: false
         stages: [pre-push]
       - id: flutter-test
         name: flutter test
-        entry: bash -lc 'flutter test'
+        entry: zsh -lc 'flutter test'
         language: system
         pass_filenames: false
         stages: [pre-push]
