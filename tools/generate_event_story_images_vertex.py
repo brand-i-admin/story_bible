@@ -72,7 +72,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--project",
-        default=os.getenv("GOOGLE_CLOUD_PROJECT", "").strip().strip("\""),
+        default=os.getenv("GOOGLE_CLOUD_PROJECT", "").strip().strip('"'),
         help="GCP project id. Defaults to GOOGLE_CLOUD_PROJECT.",
     )
     parser.add_argument(
@@ -175,7 +175,9 @@ def _title_sort_key(title: str) -> tuple[int, str]:
 def load_story_events(stories_dir: Path, stories_glob: str) -> list[dict[str, Any]]:
     files = sorted(stories_dir.glob(stories_glob))
     if not files:
-        raise ValueError(f"No JSON files found in {stories_dir} matching {stories_glob}.")
+        raise ValueError(
+            f"No JSON files found in {stories_dir} matching {stories_glob}."
+        )
 
     events: list[dict[str, Any]] = []
     for path in files:
@@ -212,10 +214,16 @@ def split_sentences(text: str, *, max_sentences: int) -> list[str]:
     if not normalized:
         return []
 
-    primary = [part.strip() for part in SENTENCE_SPLIT_REGEX.split(normalized) if part.strip()]
+    primary = [
+        part.strip() for part in SENTENCE_SPLIT_REGEX.split(normalized) if part.strip()
+    ]
     sentences = primary
     if len(sentences) <= 1:
-        fallback = [part.strip() for part in SENTENCE_FALLBACK_REGEX.findall(normalized) if part.strip()]
+        fallback = [
+            part.strip()
+            for part in SENTENCE_FALLBACK_REGEX.findall(normalized)
+            if part.strip()
+        ]
         if fallback:
             sentences = fallback
     if not sentences:
@@ -248,7 +256,11 @@ def resolve_location_for_model(location: str, model: str) -> str:
 
 
 def build_vertex_endpoint(*, project: str, location: str, model: str) -> str:
-    host = "aiplatform.googleapis.com" if location == "global" else f"{location}-aiplatform.googleapis.com"
+    host = (
+        "aiplatform.googleapis.com"
+        if location == "global"
+        else f"{location}-aiplatform.googleapis.com"
+    )
     return (
         f"https://{host}/v1/projects/{project}/locations/{location}/publishers/google/models/"
         f"{model}:generateContent"
@@ -326,7 +338,9 @@ def normalize_persons(
         }
         for index, code in enumerate(codes, start=1)
     ]
-    persons.sort(key=lambda person: (int(person["person_sequence"]), str(person["code"])))
+    persons.sort(
+        key=lambda person: (int(person["person_sequence"]), str(person["code"]))
+    )
     return persons
 
 
@@ -372,7 +386,9 @@ def match_person_codes(sentence: str, persons: list[dict[str, Any]]) -> list[str
         code = str(person["code"]).strip().lower()
         name = str(person.get("name", "")).strip()
         code_match = bool(code) and code in lowered
-        name_match = bool(name) and (name in sentence or name.replace(" ", "") in sentence.replace(" ", ""))
+        name_match = bool(name) and (
+            name in sentence or name.replace(" ", "") in sentence.replace(" ", "")
+        )
         if code_match or name_match:
             matched.append(code)
     return dedupe_preserve_order(matched)
@@ -415,7 +431,9 @@ def scene_reference_codes_for(
 ) -> list[str]:
     scene_reference_persons = event.get("scene_reference_persons")
     event_person_codes = [str(person["code"]).strip().lower() for person in persons]
-    if isinstance(scene_reference_persons, list) and scene_index < len(scene_reference_persons):
+    if isinstance(scene_reference_persons, list) and scene_index < len(
+        scene_reference_persons
+    ):
         explicit_codes = normalize_scene_persons_list(
             scene_reference_persons[scene_index],
             event_person_codes,
@@ -432,7 +450,7 @@ def choose_reference_avatars(
 ) -> list[tuple[str, Path]]:
     candidate_codes = expand_person_codes(scene_person_codes)
     if max_reference_images > 0:
-        candidate_codes = candidate_codes[: max_reference_images]
+        candidate_codes = candidate_codes[:max_reference_images]
 
     selected: list[tuple[str, Path]] = []
     seen: set[str] = set()
@@ -477,7 +495,9 @@ def credentials_need_refresh(creds) -> bool:
     return expiry <= datetime.now(timezone.utc) + timedelta(minutes=5)
 
 
-def ensure_session_auth(session: requests.Session, creds, request_adapter: Request, *, force: bool = False) -> None:
+def ensure_session_auth(
+    session: requests.Session, creds, request_adapter: Request, *, force: bool = False
+) -> None:
     if force or credentials_need_refresh(creds):
         creds.refresh(request_adapter)
     session.headers.update({"Authorization": f"Bearer {creds.token}"})
@@ -561,7 +581,9 @@ def build_parts(
     ]
     char_text = ", ".join(reference_labels) if reference_labels else "none"
     place_clause = f" Place: {place_name}." if place_name else ""
-    note_clause = f" Additional art direction: {scene_prompt_note}." if scene_prompt_note else ""
+    note_clause = (
+        f" Additional art direction: {scene_prompt_note}." if scene_prompt_note else ""
+    )
     instruction = (
         f"{COMMON_SCENE_STYLE} "
         f"Event title: {event_title}. "
@@ -592,7 +614,9 @@ def build_parts(
     return parts
 
 
-def build_request_body(parts: list[dict[str, Any]], sample_count: int) -> dict[str, Any]:
+def build_request_body(
+    parts: list[dict[str, Any]], sample_count: int
+) -> dict[str, Any]:
     return {
         "contents": [{"role": "user", "parts": parts}],
         "generationConfig": {
@@ -617,7 +641,10 @@ def main() -> int:
     resolved_location = resolve_location_for_model(args.location, resolved_model)
 
     if not resolved_model.lower().startswith("gemini"):
-        print("ERROR: this script currently supports Gemini image models only.", file=sys.stderr)
+        print(
+            "ERROR: this script currently supports Gemini image models only.",
+            file=sys.stderr,
+        )
         return 2
 
     stories_dir = Path(args.stories_dir)

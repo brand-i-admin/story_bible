@@ -47,6 +47,18 @@ class AuthRepository {
     return fullName.isEmpty ? null : fullName;
   }
 
+  Future<void> signInWithGoogle() async {
+    final launched = await _client.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: oauthRedirectUrl,
+      authScreenLaunchMode: LaunchMode.externalApplication,
+    );
+
+    if (!launched) {
+      throw const AuthException('구글 로그인 화면을 열지 못했습니다.');
+    }
+  }
+
   Future<void> signInWithKakao() async {
     final launched = await _client.auth.signInWithOAuth(
       OAuthProvider.kakao,

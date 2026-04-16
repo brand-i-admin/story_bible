@@ -24,13 +24,11 @@ Future<void> main() async {
 
 SupabaseConfig _resolveSupabaseConfig() {
   final normalizedEnv = _runtimeEnv.toLowerCase();
-  // Temporary release workaround:
-  // Keep prod builds pointed to the same dev Supabase project.
   final suffix = switch (normalizedEnv) {
     'dev' => 'DEV',
-    'prod' => 'DEV',
+    'prod' || 'real' => 'PROD',
     _ => throw StateError(
-      'Unsupported ENV="$_runtimeEnv". Use ENV=dev or ENV=prod.',
+      'Unsupported ENV="$_runtimeEnv". Use ENV=dev, ENV=real, or ENV=prod.',
     ),
   };
 

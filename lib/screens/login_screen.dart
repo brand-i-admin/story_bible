@@ -93,6 +93,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    if (_submitting) {
+      return;
+    }
+
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = _buildGoogleSignInErrorMessage(error);
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+
   String _buildAppleSignInErrorMessage(Object error) {
     if (error is SignInWithAppleAuthorizationException &&
         error.code == AuthorizationErrorCode.canceled) {
@@ -123,6 +151,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         '$message\n'
         'Supabase Authentication 설정의 Additional Redirect URLs에 '
         '${AuthRepository.oauthRedirectUrl} 를 추가했는지도 확인해 주세요.';
+  }
+
+  String _buildGoogleSignInErrorMessage(Object error) {
+    final message = error.toString();
+    if (message.contains('Unable to exchange external code')) {
+      return '구글 로그인 화면까지는 정상적으로 다녀왔지만, '
+          'Supabase가 Google 인가 코드를 세션으로 바꾸는 단계에서 실패했습니다.\n'
+          '보통 아래 설정 중 하나가 맞지 않을 때 발생합니다.\n'
+          '1. Google Auth Platform에서 Web application OAuth client를 만들지 않은 경우\n'
+          '2. Authorized redirect URIs에 Supabase Google callback URL을 넣지 않은 경우\n'
+          '3. Supabase Authentication > Providers > Google에 Client ID/Secret을 넣지 않은 경우\n'
+          '4. Supabase URL Configuration의 Additional Redirect URLs에 '
+          '${AuthRepository.oauthRedirectUrl} 를 넣지 않은 경우';
+    }
+
+    return '구글 로그인에 실패했습니다.\n'
+        '$message\n'
+        'Supabase URL Configuration의 Additional Redirect URLs에 '
+        '${AuthRepository.oauthRedirectUrl} 를 넣었는지도 확인해 주세요.';
   }
 
   @override
@@ -188,6 +235,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ),
                                     onPressed: _handleKakaoSignIn,
                                     child: const Text('카카오로 계속하기'),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  height: 50,
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: const Color(0xFF2E2A24),
+                                      side: const BorderSide(
+                                        color: Color(0xFFCCB79D),
+                                        width: 1.2,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      textStyle: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                    onPressed: _handleGoogleSignIn,
+                                    child: const Text('Google로 계속하기'),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
