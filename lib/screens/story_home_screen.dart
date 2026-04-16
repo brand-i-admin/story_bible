@@ -18,6 +18,7 @@ import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_note.dart';
 import '../models/quiz_question.dart';
+import '../screens/legal_documents_screen.dart';
 import '../screens/profile_notes_screen.dart';
 import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
@@ -1430,6 +1431,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     await _loadProfileSavedVersesPreview(showLoading: false);
   }
 
+  Future<void> _openLegalDocumentsPage() async {
+    await _showSubPageLoading('법적 안내 여는 중...');
+    try {
+      if (!mounted) {
+        return;
+      }
+      final navigator = Navigator.of(context);
+      final pushFuture = navigator.push(
+        MaterialPageRoute<void>(builder: (_) => const LegalDocumentsScreen()),
+      );
+      _hideSubPageLoading();
+      await pushFuture;
+    } finally {
+      _hideSubPageLoading();
+    }
+  }
+
   Future<void> _copyProfileShareId(String shareId) async {
     final normalized = shareId.trim();
     if (normalized.isEmpty) {
@@ -1644,6 +1662,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                 tooltip: '프로필 수정',
                                 onTap: _openProfileEditor,
                                 icon: Icons.edit_rounded,
+                              ),
+                              const SizedBox(width: 4),
+                              _profileTinyIconButton(
+                                tooltip: '법적 안내',
+                                onTap: _openLegalDocumentsPage,
+                                icon: Icons.policy_outlined,
                               ),
                               const SizedBox(width: 4),
                               _profileTinyIconButton(
@@ -2942,24 +2966,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (compact)
-                              Center(
-                                child: PersonAvatar(person: person, size: 24),
-                              )
-                            else if (stacked)
+                            if (stacked)
                               Column(
                                 children: [
-                                  PersonAvatar(person: person, size: 26),
-                                  const SizedBox(height: 5),
+                                  PersonAvatar(
+                                    person: person,
+                                    size: compact ? 24 : 26,
+                                  ),
+                                  SizedBox(height: compact ? 4 : 5),
                                   Text(
                                     person.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Color(0xFF4A331D),
                                       fontWeight: FontWeight.w800,
-                                      fontSize: 11.8,
+                                      fontSize: compact ? 10.2 : 11.8,
                                     ),
                                   ),
                                 ],
