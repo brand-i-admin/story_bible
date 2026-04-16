@@ -7,14 +7,34 @@
 
 ```
 lib/
-├── main.dart                          # 엔트리포인트 (54줄)
-├── app.dart                           # MaterialApp + 테마 (23줄)
+├── main.dart                          # 엔트리포인트
+├── app.dart                           # MaterialApp + 테마
 ├── models/                            # 데이터 모델 (14개)
 ├── state/                             # Riverpod 상태 관리 (3개)
 ├── screens/                           # 전체 화면 (6개)
-├── widgets/                           # 재사용 UI 컴포넌트 (15개+)
-└── utils/                             # 공통 유틸리티 (1개: bible_book_meta.dart)
+├── widgets/                           # 재사용 UI 컴포넌트
+│   ├── shared/                        # 도메인 횡단 공유 위젯 (event_short_popup 등)
+│   ├── selection/                     # story_selection_panel part 파일
+│   ├── map/                           # story_map_panel part 파일
+│   ├── profile/                       # profile_tab_page part 파일 (extension)
+│   └── weekly/                        # weekly_tab_page part 파일 (extension)
+└── utils/                             # 공통 유틸리티
+    ├── bible_book_meta.dart           # 성경 책/장 메타데이터
+    ├── scene_asset_loader.dart        # 장면 이미지 로더
+    ├── map_math.dart                  # 지도 수학/지오메트리 순수 함수
+    └── weekly_selection.dart          # 주간 인물 선택 순수 함수
 ```
+
+### 도메인 디렉토리 구성 (part 파일 패턴)
+
+큰 위젯 파일(>1,000줄)은 메소드를 도메인별 part 파일로 분할.
+- `widgets/X/` 디렉토리에 part 파일 위치
+- 각 part 파일은 `part of '../X.dart';` 선언
+- State 클래스 메소드는 `extension on _XState {...}` 형태로 정의
+- private 멤버 접근 가능 (같은 라이브러리)
+- 코드 변경 0건, 메소드 이동만으로 안전한 분해
+
+자세한 패턴/절차는 `.claude/skills/refactor/SKILL.md` 참조.
 
 ## 2. 모델 클래스
 
@@ -149,6 +169,23 @@ static const _palette = <Color>[
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (인물 진행도 + 노트/말씀/중보기도 미리보기, 자체 데이터/상태 25+개) |
 | PersonAvatar | `widgets/person_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
+
+### 5.4 도메인 횡단 공유 위젯 (4차 리팩토링)
+
+| 위젯 | 파일 | 사용처 |
+|------|------|--------|
+| EventShortPopup | `widgets/shared/event_short_popup.dart` | story_map_panel 콜아웃 + weekly_tab_page 단축 팝업 |
+
+### 5.5 큰 화면의 part 파일 분해 (4차 리팩토링)
+
+대규모 파일(>1,000줄)을 도메인별 part 파일로 분해해 가독성 향상. 동작은 동일.
+
+| 부모 파일 | 분해 후 줄 수 | part 파일 |
+|----------|-------------|----------|
+| `widgets/story_selection_panel.dart` | 1648 → 561 (−66%) | `selection/panel_chrome.dart` (~280)<br>`selection/step_chip.dart` (~340)<br>`selection/selection_cards.dart` (~465) |
+| `widgets/story_map_panel.dart` | 1500 → 1244 (−17%) | `map/pin_marker.dart` (~170)<br>+ 순수 함수 9개 → `utils/map_math.dart` |
+| `widgets/profile_tab_page.dart` | 2628 → 1755 (−33%) | `profile/profile_person_overview.dart` (~400)<br>`profile/profile_intercessory_prayer.dart` (~225)<br>`profile/profile_helpers.dart` (~260) |
+| `widgets/weekly_tab_page.dart` | 884 → 574 (−35%) | `weekly/weekly_avatar.dart` (~67)<br>`weekly/weekly_list_panel.dart` (~258)<br>+ 순수 함수 3개 → `utils/weekly_selection.dart` |
 
 ### ProfileTabPage 외부 콜백
 

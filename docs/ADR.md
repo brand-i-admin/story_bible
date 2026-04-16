@@ -95,3 +95,61 @@
   - `docs/BACKEND.md` → `.claude/skills/backend/SKILL.md`
   - `docs/DATA_PIPELINE.md` → `.claude/skills/data-pipeline/SKILL.md`
   - `docs/TESTING.md` → `.claude/skills/testing/SKILL.md`
+
+## ADR-009: 큰 위젯 파일은 part 파일 + extension으로 분해
+
+- **상태**: 채택 (2026-04-16)
+- **맥락**: `profile_tab_page.dart` 2,628줄, `story_selection_panel.dart` 1,648줄 등
+  단일 위젯 파일이 비대해져 가독성·리뷰·작업 분담이 어려움.
+- **결정**: 1,000줄 이상 위젯 파일은 다음 패턴으로 분해.
+  - `widgets/{domain}/` 디렉토리에 part 파일 위치 (예: `selection/`, `map/`, `profile/`, `weekly/`)
+  - 각 part 파일은 `part of '../{parent}.dart';` 선언
+  - Stateful 위젯의 메소드는 `extension on _State` 형태로 정의
+    (같은 라이브러리이므로 private 멤버 접근 가능, 코드 변경 0건)
+  - 자식 private 위젯(`_PinStyle`, `_CardShell` 등)은 그대로 part 파일로 이동
+- **이유**:
+  - **공개 API 시그니처 무변경**: 외부에서 보는 클래스/메소드 이름 동일 → 호출자 영향 없음
+  - **메소드 이동만으로 안전한 분해**: 로직 변경 0, diff는 거의 순수 이동
+  - **part 파일은 같은 라이브러리**로 취급되어 underscore 접근 가능
+  - Riverpod Controller로의 풀 마이그레이션은 위험도/비용이 높아 보류
+- **결과**:
+  - `story_selection_panel.dart` 1648 → 561줄 (−66%)
+  - `story_map_panel.dart` 1500 → 1244줄 (−17%)
+  - `profile_tab_page.dart` 2628 → 1755줄 (−33%)
+  - `weekly_tab_page.dart` 884 → 574줄 (−35%)
+- **트레이드오프**:
+  - part/part of는 modern Dart에서 비주류로 간주되지만, 클래스 분할에는 사실상 유일한 선택
+  - extension 기반이라 일부 도구가 처음에 헷갈릴 수 있음
+  - 진정한 SoC가 필요하면 향후 Riverpod Controller로 단계적 승격 가능
+
+## ADR-010: 순수 함수는 lib/utils로 추출 + 단위 테스트 강제
+
+- **상태**: 채택 (2026-04-16)
+- **맥락**: 위젯 State 내부 private 메소드 중 입출력만 있는 순수 함수
+  (지도 수학, 주간 인물 시드 등)는 테스트 가능하지만 실제 테스트가 없었음.
+- **결정**: 순수 함수는 `lib/utils/{domain}.dart`로 top-level public 함수로 추출,
+  각각에 단위 테스트 동시 추가.
+- **이유**:
+  - 위젯 테스트보다 단위 테스트가 훨씬 빠르고 안정적
+  - 같은 함수가 여러 위젯에서 재사용될 가능성
+  - 리팩토링 시 행위 보존 검증의 핵심 안전망
+- **결과**:
+  - `utils/map_math.dart` (9개 함수) + `test/utils/map_math_test.dart` (27 tests)
+  - `utils/weekly_selection.dart` (3개 함수) + `test/utils/weekly_selection_test.dart` (10 tests)
+
+## ADR-011: $refactor 스킬 신설 + GitHub Actions CI
+
+- **상태**: 채택 (2026-04-16)
+- **맥락**: 대규모 파일 분해/중복 제거 작업이 빈번한데, 도메인 스킬
+  (`$frontend`, `$backend` 등) 어디에도 속하지 않음. 또한 로컬 pre-push hook만 있어
+  `--no-verify`로 우회 가능했음.
+- **결정 1**: `.claude/skills/refactor/SKILL.md` 신설로 분해 절차 강제
+  - 1) Read로 전체 파악 → 2) 분해 계획 → 3) 사용자 승인 → 4) 단계별 실행 → 5) 검증
+  - 가드레일: 공개 API 무변경, 한 PR당 한 파일, flutter analyze + test 전후 비교
+- **결정 2**: `.github/workflows/flutter_ci.yml` 신설로 원격 검증
+  - PR/push 마다 analyze + test + coverage + forbidden patterns + asset paths 자동 실행
+  - `--no-verify` 우회 차단
+- **결정 3**: pre-commit hook 강화
+  - `dart-import-sort` (import_sorter 검증)
+  - `forbidden-patterns` (print(), JWT 시크릿, Google API key 차단)
+  - `verify-asset-paths` (pubspec.yaml과 실제 파일 일치 검증)
