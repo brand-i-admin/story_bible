@@ -23,11 +23,24 @@ dart format .                # 코드 포맷
 | DB 스키마/쿼리/인증 변경 | `$backend` | `docs/BACKEND.md` + 공식 `supabase`, `supabase-postgres-best-practices` | `db_init.sql`, `supabase/`, `lib/data/` |
 | 에셋 생성/DB 시딩 | `$data-pipeline` | `docs/DATA_PIPELINE.md` | `tools/*.py`, `assets/`, `Makefile` |
 | 테스트 작성/실행 | `$testing` | `docs/TESTING.md` | `test/`, `.pre-commit-config.yaml` |
-| 푸시 전 검증/PR 작성 | `$pre-push-pr` | 기존 스킬 | 전체 |
+| 대규모 리팩토링/파일 분해/중복 제거 | `$refactor` | `.claude/skills/refactor/SKILL.md` | 전체 (도메인 횡단) |
 
 ### Supabase 공식 스킬 (신규 환경 세팅 시)
 
 `$backend` 스킬은 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills) 플러그인과 병행 동작한다. 새 개발 환경에서는 최초 1회 설치 필요. 설치 명령과 활용 가이드는 `docs/BACKEND.md` §8 참조.
+
+## 병렬 탐색 권장 케이스
+
+긴 탐색/분석 작업은 메인 에이전트가 직접 하지 말고 `Agent` 도구로 subagent를 띄워 **병렬로 처리**하라. 메인 컨텍스트를 절약하고 응답이 빠르다.
+
+| 케이스 | 권장 방법 |
+|--------|----------|
+| 여러 큰 파일(>1,000줄)의 구조 비교 분석 | 파일별로 `general-purpose` agent를 병렬로 띄움 |
+| grep으로 안 잡히는 영향 범위 조사 | `general-purpose` agent에게 "X를 사용하는 모든 곳 찾고 요약" 위임 |
+| 도메인 횡단 리팩토링 계획 수립 | 도메인별 agent를 병렬로 띄워 각자 분석 → 메인이 통합 |
+| 단일 파일 즉시 수정 | subagent 띄우지 말 것 (오버헤드만 큼) |
+
+**원칙**: 탐색은 병렬, 수정은 직렬. 코드 수정 단계에서 여러 agent를 동시에 띄우면 동일 파일 충돌 가능성이 있으므로 메인이 직접 수정한다.
 
 ## 문서 동기화 규칙 (중요)
 
@@ -83,11 +96,20 @@ dart format .                # 코드 포맷
 - `test/` 구조는 `lib/` 미러링: `test/models/`, `test/state/`, `test/data/`, `test/widgets/`
 - mock: `mocktail` 사용
 
-## Git 훅
+## Git 훅 & CI
 
-- **pre-commit**: `dart format`, `black`, 파일 검사
-- **pre-push**: `flutter analyze` + `flutter test`
+### 로컬 (pre-commit framework)
+- **pre-commit**: `dart format`, `black`, 큰 파일/머지 충돌/YAML/EOL/공백 검사, **import_sorter**, **forbidden pattern**(`print(`/시크릿 차단)
+- **pre-push**: `flutter analyze` + `flutter test` + **에셋 경로 검증**(`tools/verify_asset_paths.py`)
 - 실행: `pre-commit run --all-files` (수동)
+
+### 원격 (GitHub Actions)
+- **`.github/workflows/flutter_ci.yml`** — push/PR 시 analyze + test + coverage 자동 실행
+- 로컬 hook을 `--no-verify`로 우회해도 PR 머지 전에 잡힘
+
+### 룰
+- 시크릿(SUPABASE_SERVICE_ROLE_KEY, API key)은 **절대 커밋 금지** (forbidden pattern hook이 자동 차단)
+- `print(`은 코드에 쓰지 말 것 — 로깅이 필요하면 `debugPrint` 사용
 
 ## 에셋 파이프라인
 

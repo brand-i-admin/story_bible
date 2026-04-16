@@ -2,14 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/story_repository.dart';
-import '../state/auth_providers.dart';
 import '../models/era.dart';
 import '../models/person.dart';
 import '../models/story_event.dart';
+import '../state/auth_providers.dart';
 import 'story_state.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {

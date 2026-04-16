@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+
 import '../models/era.dart';
 import '../models/person.dart';
 import '../models/story_event.dart';
-import 'package:flutter/material.dart';
 
 class StoryState {
   const StoryState({

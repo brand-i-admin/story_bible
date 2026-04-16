@@ -2,22 +2,23 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/era.dart';
-import '../models/story_event.dart';
 import '../models/quiz_question.dart';
+import '../models/story_event.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/event_detail_page.dart';
-import '../widgets/person_panel.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_texture_layer.dart';
+import '../widgets/person_panel.dart';
 import '../widgets/profile_tab_page.dart';
 import '../widgets/search_bottom_sheet.dart';
 import '../widgets/story_home_styles.dart';

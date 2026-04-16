@@ -55,6 +55,9 @@ dev_dependencies:
   # Mock library for unit/widget tests (see docs/TESTING.md)
   mocktail: ^1.0.4
 
+  # Import sorter — pre-commit hook이 dart import 순서를 자동 검증
+  import_sorter: ^4.6.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

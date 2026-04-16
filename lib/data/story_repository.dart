@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/bible_verse.dart';
 import '../models/era.dart';
 import '../models/person.dart';
-import '../models/story_event.dart';
 import '../models/quiz_question.dart';
-import '../models/bible_verse.dart';
+import '../models/story_event.dart';
 
 class StoryRepository {
   StoryRepository(this._client);

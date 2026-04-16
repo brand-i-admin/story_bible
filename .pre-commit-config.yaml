@@ -30,15 +30,43 @@ repos:
         entry: zsh -lc 'dart format --output=none --set-exit-if-changed "$@"' --
         language: system
         files: \.dart$
+
+      # 금지 패턴 체크: print(, JWT 시크릿, Google API key 등.
+      # 자세한 규칙은 tools/check_forbidden_patterns.py 참조.
+      - id: forbidden-patterns
+        name: forbidden patterns (print/secrets)
+        entry: zsh -lc 'python3 tools/check_forbidden_patterns.py "$@"' --
+        language: system
+        files: \.(dart|py|yaml|yml|json)$
+        exclude: ^(\.dart_tool/|build/|coverage/|ios/|android/|web/|macos/|linux/|windows/)
+
+      # Dart import 정렬 검증 (변경 시 차단).
+      # 정렬: dart run import_sorter:main --no-comments
+      - id: dart-import-sort
+        name: dart import sort
+        entry: zsh -lc 'dart run import_sorter:main --no-comments --exit-if-changed >/dev/null 2>&1 || (echo "Import 정렬 필요: dart run import_sorter:main --no-comments" && exit 1)'
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
       - id: flutter-analyze
         name: flutter analyze
         entry: zsh -lc 'flutter analyze'
         language: system
         pass_filenames: false
         stages: [pre-push]
+
       - id: flutter-test
         name: flutter test
         entry: zsh -lc 'flutter test'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      # pubspec.yaml의 assets 경로가 실제 파일과 일치하는지 검증
+      - id: verify-asset-paths
+        name: verify asset paths
+        entry: zsh -lc 'python3 tools/verify_asset_paths.py'
         language: system
         pass_filenames: false
         stages: [pre-push]

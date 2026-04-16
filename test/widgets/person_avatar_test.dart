@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:story_bible/models/person.dart';
 import 'package:story_bible/widgets/person_avatar.dart';
 
