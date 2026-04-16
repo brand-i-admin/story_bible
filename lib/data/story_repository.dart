@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/era.dart';
@@ -276,39 +277,7 @@ class StoryRepository {
     Map<String, dynamic> row, {
     bool includeBibleRefs = false,
   }) {
-    final personRows = (row['event_persons'] as List<dynamic>? ?? const []);
-    final refRows = includeBibleRefs
-        ? (row['event_bible_refs'] as List<dynamic>? ?? const [])
-        : const [];
-
-    return StoryEvent(
-      id: row['id'] as String,
-      code: row['code'] as String,
-      eraId: row['era_id'] as String,
-      title: row['title'] as String,
-      summary: row['summary'] as String?,
-      story: row['story'] as String?,
-      shortStory: row['short_story'] as String?,
-      storyScenes: row['story_scenes'] as String?,
-      startYear: row['start_year'] as int?,
-      endYear: row['end_year'] as int?,
-      timeSortKey: row['time_sort_key'] as int,
-      placeName: row['place_name'] as String?,
-      lat: (row['lat'] as num?)?.toDouble(),
-      lng: (row['lng'] as num?)?.toDouble(),
-      personIds: personRows
-          .whereType<Map<String, dynamic>>()
-          .map((entry) => entry['person_id'] as String?)
-          .whereType<String>()
-          .toList(),
-      bibleRefs: includeBibleRefs
-          ? refRows
-                .whereType<Map<String, dynamic>>()
-                .map((entry) => entry['display_text'] as String?)
-                .whereType<String>()
-                .toList()
-          : const [],
-    );
+    return storyEventFromRow(row, includeBibleRefs: includeBibleRefs);
   }
 
   int _scoreForEvent(
@@ -317,61 +286,121 @@ class StoryRepository {
     List<String> tokens, {
     List<String> personNames = const [],
   }) {
-    final title = event.title.toLowerCase();
-    final summary = (event.summary ?? '').toLowerCase();
-    final story = (event.story ?? '').toLowerCase();
-    final shortStory = (event.shortStory ?? '').toLowerCase();
-    final placeName = (event.placeName ?? '').toLowerCase();
-    final personText = personNames.join(' ').toLowerCase();
-
-    var score = 0;
-
-    if (title.contains(query)) {
-      score += 120;
-    }
-    if (summary.contains(query)) {
-      score += 110;
-    }
-    if (story.contains(query)) {
-      score += 120;
-    }
-    if (shortStory.contains(query)) {
-      score += 130;
-    }
-    if (placeName.contains(query)) {
-      score += 30;
-    }
-    if (personText.contains(query)) {
-      score += 80;
-    }
-
-    for (final token in tokens) {
-      if (title.contains(token)) {
-        score += 25;
-      }
-      if (summary.contains(token)) {
-        score += 16;
-      }
-      if (story.contains(token)) {
-        score += 18;
-      }
-      if (shortStory.contains(token)) {
-        score += 20;
-      }
-      if (placeName.contains(token)) {
-        score += 5;
-      }
-      if (personText.contains(token)) {
-        score += 18;
-      }
-    }
-
-    if (event.title.isNotEmpty && event.title.toLowerCase() == query) {
-      score += 40;
-    }
-
-    return score;
+    return scoreEventMatch(event, query, tokens, personNames: personNames);
   }
+}
+
+/// Supabase 행을 [StoryEvent]로 변환한다.
+///
+/// `event_persons`, `event_bible_refs` 서브쿼리의 누락/null을 안전하게 처리한다.
+/// 테스트 편의를 위해 top-level로 노출되어 있으며 [StoryRepository] 내부에서도
+/// 재사용된다.
+@visibleForTesting
+StoryEvent storyEventFromRow(
+  Map<String, dynamic> row, {
+  bool includeBibleRefs = false,
+}) {
+  final personRows = (row['event_persons'] as List<dynamic>? ?? const []);
+  final refRows = includeBibleRefs
+      ? (row['event_bible_refs'] as List<dynamic>? ?? const [])
+      : const [];
+
+  return StoryEvent(
+    id: row['id'] as String,
+    code: row['code'] as String,
+    eraId: row['era_id'] as String,
+    title: row['title'] as String,
+    summary: row['summary'] as String?,
+    story: row['story'] as String?,
+    shortStory: row['short_story'] as String?,
+    storyScenes: row['story_scenes'] as String?,
+    startYear: row['start_year'] as int?,
+    endYear: row['end_year'] as int?,
+    timeSortKey: row['time_sort_key'] as int,
+    placeName: row['place_name'] as String?,
+    lat: (row['lat'] as num?)?.toDouble(),
+    lng: (row['lng'] as num?)?.toDouble(),
+    personIds: personRows
+        .whereType<Map<String, dynamic>>()
+        .map((entry) => entry['person_id'] as String?)
+        .whereType<String>()
+        .toList(),
+    bibleRefs: includeBibleRefs
+        ? refRows
+              .whereType<Map<String, dynamic>>()
+              .map((entry) => entry['display_text'] as String?)
+              .whereType<String>()
+              .toList()
+        : const [],
+  );
+}
+
+/// 이벤트 검색용 가중치 스코어링.
+///
+/// 제목/요약/본문/단문/장소/인물명 포함 여부와 토큰별 부분 매치에 따라 점수를
+/// 누적한다. 단문(shortStory)이 가장 높은 가중치를 갖고, 제목 정확 일치 시
+/// 보너스가 부여된다.
+@visibleForTesting
+int scoreEventMatch(
+  StoryEvent event,
+  String query,
+  List<String> tokens, {
+  List<String> personNames = const [],
+}) {
+  final title = event.title.toLowerCase();
+  final summary = (event.summary ?? '').toLowerCase();
+  final story = (event.story ?? '').toLowerCase();
+  final shortStory = (event.shortStory ?? '').toLowerCase();
+  final placeName = (event.placeName ?? '').toLowerCase();
+  final personText = personNames.join(' ').toLowerCase();
+
+  var score = 0;
+
+  if (title.contains(query)) {
+    score += 120;
+  }
+  if (summary.contains(query)) {
+    score += 110;
+  }
+  if (story.contains(query)) {
+    score += 120;
+  }
+  if (shortStory.contains(query)) {
+    score += 130;
+  }
+  if (placeName.contains(query)) {
+    score += 30;
+  }
+  if (personText.contains(query)) {
+    score += 80;
+  }
+
+  for (final token in tokens) {
+    if (title.contains(token)) {
+      score += 25;
+    }
+    if (summary.contains(token)) {
+      score += 16;
+    }
+    if (story.contains(token)) {
+      score += 18;
+    }
+    if (shortStory.contains(token)) {
+      score += 20;
+    }
+    if (placeName.contains(token)) {
+      score += 5;
+    }
+    if (personText.contains(token)) {
+      score += 18;
+    }
+  }
+
+  if (event.title.isNotEmpty && event.title.toLowerCase() == query) {
+    score += 40;
+  }
+
+  return score;
 }
 
 class _ScoredEvent {
