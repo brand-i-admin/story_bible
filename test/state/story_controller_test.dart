@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/data/user_repository.dart';
 import 'package:story_bible/models/era.dart';
@@ -9,7 +12,6 @@ import 'package:story_bible/models/person.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
 

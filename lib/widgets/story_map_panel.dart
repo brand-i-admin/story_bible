@@ -9,40 +9,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../models/story_event.dart';
-
-BoxDecoration _mapCalloutDecoration() {
-  return BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [Color(0xFFF9F2E5), Color(0xFFF0E1C6)],
-    ),
-    borderRadius: BorderRadius.circular(18),
-    border: Border.all(color: const Color(0xBC9A7A4C), width: 1.0),
-    boxShadow: const [
-      BoxShadow(
-        color: Color(0x30000000),
-        blurRadius: 18,
-        offset: Offset(0, 10),
-      ),
-    ],
-  );
-}
-
-BoxDecoration _mapActionButtonDecoration() {
-  return BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [Color(0xFFD89A47), Color(0xFFB96B2D)],
-    ),
-    borderRadius: BorderRadius.circular(12),
-    border: Border.all(color: const Color(0xFFF2D8A6), width: 1.0),
-    boxShadow: const [
-      BoxShadow(color: Color(0x26A35B22), blurRadius: 10, offset: Offset(0, 5)),
-    ],
-  );
-}
+import 'shared/event_short_popup.dart';
 
 class StoryMapPanel extends StatefulWidget {
   const StoryMapPanel({
@@ -514,11 +481,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               if (selected && widget.showSelectedCallout && node.showCallout)
                 Positioned(
                   bottom: pinStyle.visualHeight + 12,
-                  child: _buildEventCallout(
+                  child: EventShortPopup(
                     event: event,
                     shortText: shortText,
+                    maxWidth: 268,
                     onClose: widget.onCloseSelectedCallout,
-                    onOpenDetail: widget.onOpenDetail,
+                    onOpenDetail: widget.onOpenDetail == null
+                        ? null
+                        : () => widget.onOpenDetail!(event.id),
                   ),
                 ),
               GestureDetector(
@@ -638,120 +608,6 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
-  Widget _buildEventCallout({
-    required StoryEvent event,
-    required String shortText,
-    required VoidCallback? onClose,
-    required ValueChanged<String>? onOpenDetail,
-  }) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 268),
-      child: Material(
-        color: Colors.transparent,
-        child: Stack(
-          children: [
-            Container(
-              decoration: _mapCalloutDecoration(),
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 22),
-                    child: Text(
-                      event.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF3D2D18),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  if (shortText.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      shortText,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF4C3A21),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 9),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: onOpenDetail == null
-                          ? null
-                          : () => onOpenDetail(event.id),
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                        constraints: const BoxConstraints(
-                          minWidth: 96,
-                          minHeight: 30,
-                        ),
-                        decoration: _mapActionButtonDecoration(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 5,
-                        ),
-                        child: const Text(
-                          '자세히 보기',
-                          style: TextStyle(
-                            color: Color(0xFFFDF8EE),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            shadows: [
-                              Shadow(
-                                color: Color(0xAA000000),
-                                blurRadius: 2,
-                                offset: Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              top: 10,
-              right: 10,
-              child: GestureDetector(
-                onTap: onClose,
-                behavior: HitTestBehavior.translucent,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0xCCF8EEDC),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: const Color(0xAA9A7A4B),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.close_rounded,
-                    size: 15,
-                    color: Color(0xFF7A5B33),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Map<String, LatLng> _buildAdjustedPoints(List<StoryEvent> visible) {
     final grouped = <String, List<StoryEvent>>{};

@@ -11,6 +11,7 @@ import '../models/weekly_study_data.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import 'shared/event_short_popup.dart';
 import 'story_home_styles.dart';
 import 'story_map_panel.dart';
 import 'sub_page_scaffold.dart';
@@ -240,7 +241,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                 alignment: Alignment.center,
                 child: SizedBox(
                   width: 320,
-                  child: _weeklyShortPopup(
+                  child: EventShortPopup(
                     event: selectedEvent,
                     maxHeight: 232,
                     onClose: () {
@@ -881,79 +882,4 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     );
   }
 
-  Widget _weeklyShortPopup({
-    required StoryEvent event,
-    double maxHeight = 232,
-    required VoidCallback onClose,
-    required VoidCallback onOpenDetail,
-  }) {
-    final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
-        .trim();
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxHeight),
-      child: DecoratedBox(
-        decoration: floatingPanelDecoration(
-          color: const Color(0xFFF9F1E4),
-          shadowOpacity: 0.28,
-        ),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(18, 16, 48, 14),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      event.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF3D2D18),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    if (shortText.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        shortText,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xFF4C3A21),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: onOpenDetail,
-                        behavior: HitTestBehavior.translucent,
-                        child: filledActionButton(
-                          label: '자세히 보기',
-                          onTap: onOpenDetail,
-                          compact: true,
-                          minWidth: 96,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              right: 10,
-              top: 8,
-              child: modalCloseButton(size: 24, onTap: onClose),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
