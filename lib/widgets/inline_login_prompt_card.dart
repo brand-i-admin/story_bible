@@ -91,6 +91,33 @@ class _InlineLoginPromptCardState extends ConsumerState<InlineLoginPromptCard> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    if (_submitting) {
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = '구글 로그인에 실패했습니다.\n$error';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -142,6 +169,29 @@ class _InlineLoginPromptCardState extends ConsumerState<InlineLoginPromptCard> {
                   ),
                   onPressed: _handleKakaoSignIn,
                   child: const Text('카카오로 로그인'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 40,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF2E2A24),
+                    side: const BorderSide(
+                      color: Color(0xFFCCB79D),
+                      width: 1.1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 13.8,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  onPressed: _handleGoogleSignIn,
+                  child: const Text('Google로 로그인'),
                 ),
               ),
               const SizedBox(height: 8),
