@@ -136,7 +136,7 @@ static const _palette = <Color>[
 | ParchmentTextureLayer | `widgets/parchment_texture_layer.dart` | 양피지 질감 오버레이 |
 | SubPageScaffold | `widgets/sub_page_scaffold.dart` | 서브 페이지 공통 레이아웃 (앱바+배경) |
 | SubPageFloatingHomeButton | `widgets/sub_page_floating_home_button.dart` | 드래그 가능한 홈 버튼 |
-| InlineLoginPromptCard | `widgets/inline_login_prompt_card.dart` | 카카오/Apple 인라인 로그인 카드 |
+| InlineLoginPromptCard | `widgets/inline_login_prompt_card.dart` | 카카오/Google/Apple 3단 인라인 로그인 카드 (버튼 순서: 카카오 → Google → Apple) |
 | ShareIdInputDialog | `widgets/share_id_input_dialog.dart` | 7자리 공유 ID 입력 다이얼로그 |
 | ProfileEditorDialog | `widgets/profile_editor_dialog.dart` | 프로필(닉네임/사진/기도제목) 수정 |
 
