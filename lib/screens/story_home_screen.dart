@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +19,7 @@ import '../widgets/person_panel.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_texture_layer.dart';
 import '../widgets/profile_tab_page.dart';
+import '../widgets/search_bottom_sheet.dart';
 import '../widgets/story_home_styles.dart';
 import '../widgets/story_map_panel.dart';
 import '../widgets/story_selection_panel.dart';
@@ -381,104 +381,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Future<void> _openSearchSheet() async {
-    await showModalBottomSheet<void>(
+    await showEventSearchSheet(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: const Color(0xFFF5E9D6),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-      ),
-      builder: (context) {
-        final mediaQuery = MediaQuery.of(context);
-        final safeHeight =
-            mediaQuery.size.height -
-            mediaQuery.padding.top -
-            mediaQuery.padding.bottom;
-        final maxSheetHeight = math.min(
-          mediaQuery.orientation == Orientation.landscape ? 520.0 : 560.0,
-          safeHeight - 20,
-        );
-        return Consumer(
-          builder: (context, ref, _) {
-            final state = ref.watch(storyControllerProvider);
-            final controller = ref.read(storyControllerProvider.notifier);
-            final results = controller.searchResults();
-
-            return Padding(
-              padding: EdgeInsets.fromLTRB(
-                12,
-                14,
-                12,
-                mediaQuery.viewInsets.bottom + 14,
-              ),
-              child: SizedBox(
-                height: maxSheetHeight,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      key: ValueKey(state.searchQuery),
-                      initialValue: state.searchQuery,
-                      autofocus: true,
-                      onChanged: controller.setSearchQuery,
-                      decoration: InputDecoration(
-                        hintText: '단어/문장 검색...',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (state.isSearching)
-                      const SizedBox(
-                        height: 28,
-                        child: Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                    Expanded(
-                      child: results.isEmpty
-                          ? const Center(child: Text('검색 결과가 없습니다.'))
-                          : ListView.separated(
-                              itemCount: results.length,
-                              separatorBuilder: (_, __) =>
-                                  const Divider(height: 1),
-                              itemBuilder: (context, index) {
-                                final event = results[index];
-                                return ListTile(
-                                  dense: true,
-                                  title: Text(event.title),
-                                  subtitle: Text(event.placeName ?? '-'),
-                                  onTap: () async {
-                                    await controller.selectSearchResult(event);
-                                    if (mounted) {
-                                      final nextState = ref.read(
-                                        storyControllerProvider,
-                                      );
-                                      setState(() {
-                                        _selectionStep = 3;
-                                        _draftSelectedPersonIds = nextState
-                                            .selectedPersonIds
-                                            .toSet();
-                                      });
-                                    }
-                                    if (!context.mounted) {
-                                      return;
-                                    }
-                                    Navigator.of(context).pop();
-                                    _handleEventSelect(event.id);
-                                  },
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
+      onResultSelected: (event) {
+        if (!mounted) {
+          return;
+        }
+        final nextState = ref.read(storyControllerProvider);
+        setState(() {
+          _selectionStep = 3;
+          _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+        });
+        _handleEventSelect(event.id);
       },
     );
   }
