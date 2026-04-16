@@ -63,3 +63,12 @@ make all                     # 전체 파이프라인
 - Makefile의 의존 관계를 무시하고 타겟을 실행하지 않는다.
 - Vertex AI API 호출은 비용이 발생하므로, 대량 생성 전 `--limit` 옵션으로 테스트한다.
 - 생성된 SQL을 검토 없이 운영 DB에 적용하지 않는다.
+
+## 문서 동기화
+
+`tools/*.py`, `Makefile`, `assets/` 구조가 변경되면 **같은 커밋에서** 아래도 갱신한다. (CLAUDE.md 「문서 동기화 규칙」 참조)
+
+- `docs/DATA_PIPELINE.md` — 스크립트 표(역할/입력/출력/옵션), DAG 그림, Makefile 타겟 매핑
+- `Makefile` — 새 타겟 추가 시 `help` 출력 문자열도 함께 업데이트
+- `docs/ARCHITECTURE.md` §5 (에셋 파이프라인 DAG) — 파이프라인 흐름 변경 시
+- `CLAUDE.md` 「에셋 파이프라인」 섹션 — 자주 쓰는 핵심 타겟이 추가/제거되면

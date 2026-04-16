@@ -25,20 +25,33 @@ dart format .                # 코드 포맷
 | 테스트 작성/실행 | `$testing` | `docs/TESTING.md` | `test/`, `.pre-commit-config.yaml` |
 | 푸시 전 검증/PR 작성 | `$pre-push-pr` | 기존 스킬 | 전체 |
 
-### Supabase 공식 스킬 설치 (권장)
+### Supabase 공식 스킬 (신규 환경 세팅 시)
 
-백엔드 작업 시 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)를 병행 사용하면 최신 RLS 패턴, 쿼리 최적화, Auth 트러블슈팅 가이드를 함께 활용할 수 있다.
+`$backend` 스킬은 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills) 플러그인과 병행 동작한다. 새 개발 환경에서는 최초 1회 설치 필요. 설치 명령과 활용 가이드는 `docs/BACKEND.md` §8 참조.
 
-```bash
-# 1. 마켓플레이스 등록 (최초 1회)
-claude plugin marketplace add supabase/agent-skills
+## 문서 동기화 규칙 (중요)
 
-# 2. 플러그인 설치
-claude plugin install supabase@supabase-agent-skills
-claude plugin install postgres-best-practices@supabase-agent-skills
-```
+코드를 수정할 때 아래 문서들도 함께 업데이트해야 한다. 한 곳만 바뀌면 곧 낡은 정보가 된다.
 
-상세는 `docs/BACKEND.md` §8 참조.
+| 변경 유형 | 업데이트 대상 |
+|----------|--------------|
+| 새 위젯/화면/모델/상태 추가·이동·삭제 | `docs/FRONTEND.md` (파일 표, 위젯 목록), `docs/UI_GUIDE.md` (UI 패턴 변경 시) |
+| DB 스키마/RLS/Repository 변경 | `docs/BACKEND.md` (테이블·함수·Repository 섹션), `db_init.sql` |
+| 새 Python 스크립트/Makefile 타겟 | `docs/DATA_PIPELINE.md`, `Makefile` help 문자열 |
+| 테스트 전략/커버리지 변화 | `docs/TESTING.md` |
+| 중요한 아키텍처 결정 | `docs/ADR.md` (새 ADR 번호로 추가) |
+| 스킬/훅/플러그인 구조 변경 | `CLAUDE.md` (도메인 스킬 표, 문서 인덱스) |
+| 빌드/실행 명령 변경 | `CLAUDE.md` (빌드 & 실행 섹션) |
+| 의존성 추가/제거 | `pubspec.yaml` + `docs/FRONTEND.md` §6 (의존 패키지) |
+| PRD 수준의 기능 추가/삭제 | `docs/PRD.md` |
+
+**작업 흐름 규칙**:
+1. 코드 변경을 마쳤으면 스스로 질문: "이 변경으로 위 표의 어떤 문서가 오래됐는가?"
+2. 해당 문서를 같은 PR/커밋에 포함해 업데이트한다.
+3. 변경이 크면 (예: story_home_screen 대규모 분리) `docs/ARCHITECTURE.md`의 다이어그램/설명도 검토한다.
+4. `docs/ADR.md`는 **결정이 뒤집히거나 새 결정이 생길 때만** 추가한다 (기존 ADR은 역사로 보존).
+
+각 도메인 스킬(`$frontend`, `$backend` 등)은 자신이 담당하는 문서를 유지 관리할 책임이 있다. 스킬 실행 후 관련 md도 최신 상태인지 확인하라.
 
 ## 문서 인덱스
 

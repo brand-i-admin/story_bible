@@ -61,6 +61,14 @@ analysis_options.yaml           # 린트 규칙
 - 테스트가 통과하지 않는 상태로 커밋하지 않는다.
 - 새 기능/버그 수정 시 반드시 테스트를 먼저 작성한다 (TDD).
 
+## 문서 동기화
+
+테스트 구조/전략/커버리지가 변경되면 **같은 커밋에서** 아래도 갱신한다. (CLAUDE.md 「문서 동기화 규칙」 참조)
+
+- `docs/TESTING.md` — 디렉토리 구조, Mock 패턴, 커버리지 목표, 현재 테스트 개수
+- `.pre-commit-config.yaml` — pre-push hook 검증 규칙이 바뀌면
+- 테스트 대상 코드를 `@visibleForTesting`으로 노출한 경우 원본 파일 근처 주석/문서도 반영
+
 ## Mock 예시
 
 ```dart

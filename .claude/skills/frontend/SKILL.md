@@ -50,3 +50,11 @@ lib/
 - 기존 위젯 패턴(ConsumerWidget, GameUiSkin 등)을 따른다.
 - 새 모델에 비즈니스 로직을 넣지 않는다 (Controller에서 처리).
 - 새 기능은 테스트를 먼저 작성한다 (TDD).
+
+## 문서 동기화
+
+프론트엔드 파일(`lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/`)에 추가/이동/삭제/큰 변경이 있으면 **같은 커밋에서** 아래 문서도 갱신한다. (CLAUDE.md 「문서 동기화 규칙」 참조)
+
+- `docs/FRONTEND.md` — 화면/위젯/모델 표, 의존 패키지 목록, Riverpod Provider 트리
+- `docs/UI_GUIDE.md` — 새 UI 패턴, 색상·테마·레이아웃 규칙 변경
+- `docs/ARCHITECTURE.md` — 대규모 구조 변경 시 다이어그램/섹션 3 (화면 구성)
