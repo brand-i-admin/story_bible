@@ -1,6 +1,8 @@
 # 백엔드 도메인 레퍼런스
 
 > 이 문서는 `$backend` 스킬이 참조하는 백엔드 도메인 가이드이다.
+> Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)가 설치되어 있으면
+> 본 프로젝트의 규칙(아래)과 공식 가이드가 함께 적용된다.
 
 ## 1. 파일 범위
 
@@ -222,3 +224,45 @@ explanation text, display_order int
 2. 스키마 변경 시: `db_init.sql` 수정 → `supabase/migrations/` 마이그레이션 생성
 3. 로컬 초기화: `db_init.sql` 전체 실행 (DROP + CREATE)
 4. 운영 반영: 마이그레이션 파일 또는 SQL Editor
+
+## 8. Supabase 공식 Agent Skills
+
+본 프로젝트는 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)와 병행 사용을 권장한다.
+
+### 설치
+
+```bash
+# Claude Code 플러그인 (권장)
+claude plugin install supabase@supabase-agent-skills
+
+# 또는 npx로 특정 스킬만
+npx skills add supabase/agent-skills --skill supabase
+npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
+```
+
+### 제공되는 공식 스킬
+
+| 스킬 | 커버 영역 |
+|------|----------|
+| `supabase` | Database / Auth / Edge Functions / Realtime / Storage / Vectors / Cron / Queues, supabase-js/ssr, Next.js/React/SvelteKit 통합, JWT/RLS 트러블슈팅 |
+| `supabase-postgres-best-practices` | Query Performance, Connection Management, Security & RLS, Schema Design, Concurrency & Locking, Data Access Patterns, Monitoring, Advanced Features — 8개 카테고리 |
+
+### 사용 가이드
+
+- **쿼리 최적화 / EXPLAIN 분석** → postgres-best-practices의 `query-` 규칙 적용
+- **RLS 정책 신규 작성** → supabase 스킬의 RLS 안티패턴 체크리스트 확인
+- **Auth 세션/쿠키/JWT 이슈** → supabase 스킬의 최신 auth 패턴 참조
+- **Storage 업로드/다운로드 정책** → supabase 스킬의 storage 가이드 참조
+- **새 Supabase API 기능** → supabase 스킬이 "훈련 데이터가 금방 낡는다"는 전제로 최신 문서를 재확인하라고 안내
+
+### 본 프로젝트 규칙과의 관계
+
+- 공식 스킬은 **범용 Supabase 베스트 프랙티스**를 제공
+- 본 문서(`docs/BACKEND.md`)는 **프로젝트 고유 규칙** 정의:
+  - `db_init.sql`이 단일 진실 소스
+  - `testament` 필드 규약 (`old` / `new`, `era_nt_` 접두사)
+  - 한국어 UI 텍스트
+  - `generate_profile_share_id()` 등 프로젝트 전용 함수
+  - Riverpod Provider + 생성자 주입 Repository 패턴
+
+충돌 시 **본 문서의 프로젝트 고유 규칙이 우선**한다.

@@ -20,10 +20,21 @@ dart format .                # 코드 포맷
 | 작업 | 스킬 | 참조 문서 | 파일 범위 |
 |------|------|----------|----------|
 | UI/위젯/화면/상태 변경 | `$frontend` | `docs/FRONTEND.md`, `docs/UI_GUIDE.md` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
-| DB 스키마/쿼리/인증 변경 | `$backend` | `docs/BACKEND.md` | `db_init.sql`, `supabase/`, `lib/data/` |
+| DB 스키마/쿼리/인증 변경 | `$backend` | `docs/BACKEND.md` + 공식 `supabase`, `supabase-postgres-best-practices` | `db_init.sql`, `supabase/`, `lib/data/` |
 | 에셋 생성/DB 시딩 | `$data-pipeline` | `docs/DATA_PIPELINE.md` | `tools/*.py`, `assets/`, `Makefile` |
 | 테스트 작성/실행 | `$testing` | `docs/TESTING.md` | `test/`, `.pre-commit-config.yaml` |
 | 푸시 전 검증/PR 작성 | `$pre-push-pr` | 기존 스킬 | 전체 |
+
+### Supabase 공식 스킬 설치 (권장)
+
+백엔드 작업 시 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)를 병행 사용하면 최신 RLS 패턴, 쿼리 최적화, Auth 트러블슈팅 가이드를 함께 활용할 수 있다.
+
+```bash
+# Claude Code 플러그인 설치 (최초 1회)
+claude plugin install supabase@supabase-agent-skills
+```
+
+상세는 `docs/BACKEND.md` §8 참조.
 
 ## 문서 인덱스
 

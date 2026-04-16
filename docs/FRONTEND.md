@@ -109,9 +109,9 @@ static const _palette = <Color>[
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
 
-> **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~3,954줄 (−45%).
-> 프로필 탭(2,700줄+, 40+개 메소드, 20+개 상태 변수)은 상태 공유가 복잡해 단일 세션 분리 시 위험도가 높음.
-> 향후 `$frontend` 스킬을 통해 점진적으로 `ProfileTabPage`로 이동할 예정.
+> **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~1,290줄 (−82%).
+> 프로필 탭 2,700+줄이 `ProfileTabPage`로 분리되어 자체 상태 관리 + 콜백 3개로 결합도 최소화.
+> 퀴즈 완료 시 진행도 새로고침은 `GlobalKey<ProfileTabPageState>`로 처리.
 
 ## 5. 위젯 (Widgets)
 
@@ -147,7 +147,24 @@ static const _palette = <Color>[
 | EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작) |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (인물 진행도 + 노트/말씀/중보기도 미리보기, 자체 데이터/상태 25+개) |
 | PersonAvatar | `widgets/person_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
+
+### ProfileTabPage 외부 콜백
+
+`ProfileTabPage`는 자체 상태(25+개 필드)를 내부에서 모두 관리하며, 외부 의존성은 콜백 3개로만 노출된다:
+
+```dart
+ProfileTabPage(
+  key: _profileTabKey,  // ← 퀴즈 완료 후 진행도 새로고침용
+  onStartQuiz: (eventId) => ...,
+  onOpenEventDetail: (event) => ...,
+  onOpenBibleReader: ({bookNo, chapterNo, verseNo}) => ...,
+)
+
+// 퀴즈 완료 후 호출
+_profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
+```
 
 ### 5.4 스타일 헬퍼
 
