@@ -120,10 +120,10 @@ for each row execute function public.handle_new_user_profile();
 
 -- Grants for user tables
 grant select, insert, update on table public.user_profiles to authenticated;
-grant select, insert, update on table public.user_notes to authenticated;
+grant select, insert, update, delete on table public.user_notes to authenticated;
 grant select, insert, delete on table public.user_saved_verses to authenticated;
-grant select, insert on table public.user_daily_attendance to authenticated;
-grant select, insert on table public.user_daily_study to authenticated;
+grant select, insert, delete on table public.user_daily_attendance to authenticated;
+grant select, insert, delete on table public.user_daily_study to authenticated;
 
 -- RLS policies for user tables
 alter table public.user_profiles enable row level security;
@@ -301,9 +301,8 @@ create table if not exists public.event_scene_generated_assets (
   constraint event_scene_generated_assets_event_scene_key unique (event_id, scene_index)
 );
 
--- Indexes for generated assets
-create index if not exists idx_event_scene_generated_assets_event_scene
-on public.event_scene_generated_assets (event_id, scene_index);
+-- Note: No separate index needed for (event_id, scene_index)
+-- The unique constraint event_scene_generated_assets_event_scene_key already creates an index
 
 -- Triggers for generated assets
 drop trigger if exists set_person_generated_assets_updated_at on public.person_generated_assets;
@@ -323,6 +322,8 @@ grant select on table public.event_scene_generated_assets to anon, authenticated
 -- ============================================================================
 -- IMPORT JOBS AND TIMELINE ORDER
 -- ============================================================================
+-- Note: Import jobs are managed by Edge Functions using service role key
+-- Regular users can view their own submitted jobs for tracking
 
 -- Import jobs table
 create table if not exists public.import_jobs (
@@ -381,6 +382,31 @@ drop trigger if exists set_import_jobs_updated_at on public.import_jobs;
 create trigger set_import_jobs_updated_at
 before update on public.import_jobs
 for each row execute function public.touch_updated_at();
+
+-- Grants for import jobs (read-only for authenticated users to track their submissions)
+grant select on table public.import_jobs to authenticated;
+grant select on table public.import_job_artifacts to authenticated;
+
+-- RLS for import jobs (users can only see their own jobs)
+alter table public.import_jobs enable row level security;
+alter table public.import_job_artifacts enable row level security;
+
+drop policy if exists import_jobs_read_own on public.import_jobs;
+create policy import_jobs_read_own on public.import_jobs
+for select using (
+  auth.uid() = submitted_by_user_id
+  or submitted_by_user_id is null  -- Allow viewing anonymous submissions
+);
+
+drop policy if exists import_job_artifacts_read_own on public.import_job_artifacts;
+create policy import_job_artifacts_read_own on public.import_job_artifacts
+for select using (
+  exists (
+    select 1 from public.import_jobs
+    where import_jobs.id = import_job_artifacts.import_job_id
+    and (auth.uid() = import_jobs.submitted_by_user_id or import_jobs.submitted_by_user_id is null)
+  )
+);
 
 -- Validate events.code uniqueness and add constraint atomically
 do $$
