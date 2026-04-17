@@ -814,7 +814,7 @@ def normalize_events(
             story_scenes_text=story_scenes_text,
             timeline_rank=explicit_timeline_rank
             if explicit_timeline_rank is not None
-            else float(make_time_sort_key(number, start_year_int, end_year_int)),
+            else float(number),  # Use story number directly as timeline_rank
             start_year=start_year_int,
             end_year=end_year_int,
             time_precision=time_precision,
