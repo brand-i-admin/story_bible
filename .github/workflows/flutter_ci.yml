@@ -83,3 +83,16 @@ jobs:
           python-version: '3.10'
       - name: Verify pubspec.yaml asset paths
         run: python3 tools/verify_asset_paths.py
+
+  code-metrics:
+    name: Code Metrics (파일/메소드 크기 제한)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      # NOTE: 현재 기존 코드에 FAIL 6건 있으므로 --ci 없이 보고만.
+      # 기존 FAIL을 해결하면 --ci를 추가해 차단 모드로 전환.
+      - name: Check code metrics
+        run: python3 tools/check_code_metrics.py
