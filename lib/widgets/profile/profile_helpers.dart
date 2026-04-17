@@ -214,7 +214,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: Color(0xFF4A331D),
+                                      color: const Color(0xFF4A331D),
                                       fontWeight: FontWeight.w800,
                                       fontSize: compact ? 10.2 : 11.8,
                                     ),

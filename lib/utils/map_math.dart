@@ -68,7 +68,7 @@ bool hasMultiPlacePin(String placeName) {
       .abs()
       .clamp(0.3, 1.0);
   final dLng = (radiusDeg / cosLat) * 0.75;
-  final dLat = radiusDeg * 0.30;
+  const dLat = radiusDeg * 0.30;
   return (
     basePoint,
     LatLng(basePoint.latitude - dLat, basePoint.longitude + dLng),

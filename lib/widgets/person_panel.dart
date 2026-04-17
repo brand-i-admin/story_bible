@@ -278,10 +278,10 @@ class _AvatarFallback extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initial,
-        style: TextStyle(
-          color: const Color(0xFFFDF8EE),
+        style: const TextStyle(
+          color: Color(0xFFFDF8EE),
           fontWeight: FontWeight.w800,
-          shadows: const [
+          shadows: [
             Shadow(
               color: Color(0x99000000),
               blurRadius: 2,

@@ -96,13 +96,13 @@ void main() {
 
   group('buildSplitPinPoints', () {
     test('출발점은 base와 동일', () {
-      final base = const LatLng(31.7, 35.2);
+      const base = LatLng(31.7, 35.2);
       final (start, _) = buildSplitPinPoints(base);
       expect(start, base);
     });
 
     test('도착점은 동남쪽 오프셋 (위도 더 작고 경도 더 큼)', () {
-      final base = const LatLng(31.7, 35.2);
+      const base = LatLng(31.7, 35.2);
       final (_, end) = buildSplitPinPoints(base);
       expect(end.latitude, lessThan(base.latitude));
       expect(end.longitude, greaterThan(base.longitude));
@@ -151,7 +151,7 @@ void main() {
     test('좌표가 없는 이벤트는 결과에서 제외', () {
       final result = buildAdjustedPoints([
         event('a', 31.7, 35.2),
-        StoryEvent(
+        const StoryEvent(
           id: 'b',
           code: 'b',
           eraId: 'e',
@@ -166,8 +166,8 @@ void main() {
           placeName: null,
           lat: null,
           lng: null,
-          personIds: const [],
-          bibleRefs: const [],
+          personIds: [],
+          bibleRefs: [],
         ),
       ]);
       expect(result.containsKey('a'), true);

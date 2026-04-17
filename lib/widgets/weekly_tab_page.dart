@@ -442,8 +442,8 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xD7D3A051), width: 1),
       ),
-      child: Row(
-        children: const [
+      child: const Row(
+        children: [
           Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF8B632E)),
           SizedBox(width: 8),
           Expanded(

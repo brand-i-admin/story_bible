@@ -159,7 +159,7 @@ class _PinPointerPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..color = Colors.white.withValues(alpha: 0.38);
 
-    final leftTop = Offset(0, 0);
+    const leftTop = Offset(0, 0);
     final tip = Offset(size.width / 2, size.height);
     final rightTop = Offset(size.width, 0);
 

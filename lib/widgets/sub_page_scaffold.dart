@@ -49,11 +49,11 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
               ),
             ),
           ),
-          Positioned.fill(
+          const Positioned.fill(
             child: IgnorePointer(
               child: ParchmentTextureLayer(
                 opacity: 0.11,
-                tint: const Color(0xFFB88955),
+                tint: Color(0xFFB88955),
               ),
             ),
           ),

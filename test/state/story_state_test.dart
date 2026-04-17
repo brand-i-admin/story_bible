@@ -44,7 +44,7 @@ void main() {
     });
 
     test('값을 전달하지 않으면 원래 값을 유지한다', () {
-      final original = StoryState(
+      const original = StoryState(
         loading: true,
         error: '에러',
         selectedEraId: 'e1',
@@ -58,25 +58,25 @@ void main() {
     });
 
     test('clearError=true이면 error를 null로 초기화한다', () {
-      final state = StoryState(error: '무언가 실패');
+      const state = StoryState(error: '무언가 실패');
       final cleared = state.copyWith(clearError: true);
       expect(cleared.error, isNull);
     });
 
     test('clearError=true이면서 error 전달 시 clearError가 우선', () {
-      final state = StoryState(error: '구 에러');
+      const state = StoryState(error: '구 에러');
       final cleared = state.copyWith(clearError: true, error: '신 에러');
       expect(cleared.error, isNull);
     });
 
     test('clearSelectedEra=true이면 selectedEraId를 null로 초기화한다', () {
-      final state = StoryState(selectedEraId: 'e1');
+      const state = StoryState(selectedEraId: 'e1');
       final cleared = state.copyWith(clearSelectedEra: true);
       expect(cleared.selectedEraId, isNull);
     });
 
     test('clearSelectedEvent=true이면 selectedEventId를 null로 초기화한다', () {
-      final state = StoryState(selectedEventId: 'ev1');
+      const state = StoryState(selectedEventId: 'ev1');
       final cleared = state.copyWith(clearSelectedEvent: true);
       expect(cleared.selectedEventId, isNull);
     });

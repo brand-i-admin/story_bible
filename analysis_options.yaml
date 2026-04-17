@@ -3,8 +3,8 @@
 #
 # Run: `flutter analyze`
 #
-# 정책: 신규 규칙은 단계적으로 추가한다. 기존 코드 전체를 위반하게 만드는 규칙은
-# 한 번에 켜지 말고 별도 PR에서 코드 정리와 함께 진행한다.
+# 정책: 신규 규칙은 단계적으로 추가한다. dart fix --apply로 자동 수정 가능한 규칙을
+# 우선 활성화하고, 수동 수정이 필요한 규칙은 별도 PR에서 진행.
 
 include: package:flutter_lints/flutter.yaml
 
@@ -17,30 +17,33 @@ analyzer:
     - ".dart_tool/**"
 
 linter:
-  # flutter_lints 5.0의 기본 규칙에 더해 활성화할 안전한 추가 규칙.
-  # 더 엄격한 규칙(prefer_single_quotes, require_trailing_commas,
-  # prefer_const_constructors 등)은 점진적으로 추가 예정.
   rules:
     # === 안전성 (메모리 누수/비동기 버그 방지) ===
     - cancel_subscriptions              # StreamSubscription 누수 방지
     - close_sinks                       # Sink 닫기 강제
     - unawaited_futures                 # Future 누락 방지
 
-    # === 가독성 ===
+    # === 성능 (const 사용 강제 → Flutter rebuild 최소화) ===
+    - prefer_const_constructors         # const 생성자 적극 사용
+    - prefer_const_declarations         # const 변수 선호
+    - prefer_const_literals_to_create_immutables  # immutable 리터럴은 const
+
+    # === 위젯 품질 ===
+    - sized_box_for_whitespace          # Container() 대신 SizedBox()
+    - use_key_in_widget_constructors    # 위젯 생성자에 Key 파라미터 강제
+
+    # === 코드 품질 ===
+    - prefer_final_locals               # 지역변수 final 선호 (불변성 강화)
+    - prefer_final_fields               # 인스턴스 필드 final 선호
+
     # NOTE: directives_ordering은 import_sorter와 정렬 규칙이 달라 충돌하므로 비활성화.
     # 대신 pre-commit hook으로 import_sorter 정렬을 강제한다.
 
-    # NOTE: 아래는 다음 PR에서 단계적으로 추가:
-    # - prefer_const_constructors
-    # - prefer_const_literals_to_create_immutables
-    # - prefer_final_fields
-    # - prefer_final_locals
-    # - prefer_single_quotes
-    # - require_trailing_commas
-    # - always_declare_return_types
-    # - sized_box_for_whitespace
-    # - use_key_in_widget_constructors
-    # - avoid_dynamic_calls
+    # 아래는 향후 단계적 적용:
+    # - require_trailing_commas          # 트레일링 콤마 강제 (변경량 매우 큼)
+    # - prefer_single_quotes             # 따옴표 통일 (변경량 큼)
+    # - always_declare_return_types      # 반환 타입 명시 (dart fix 미지원)
+    # - avoid_dynamic_calls              # dynamic 호출 금지 (위험도 높음)
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

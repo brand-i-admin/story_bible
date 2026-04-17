@@ -342,7 +342,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           points: [visiblePoints[i], visiblePoints[i + 1]],
           color: eventColor.withValues(alpha: 0.9),
           strokeWidth: 4,
-          pattern: StrokePattern.dashed(segments: [3.5, 7]),
+          pattern: StrokePattern.dashed(segments: const [3.5, 7]),
         ),
       );
     }

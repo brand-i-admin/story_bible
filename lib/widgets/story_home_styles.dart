@@ -199,7 +199,7 @@ Widget filledActionButton({
                   ? const Color(0x223D8758)
                   : const Color(0x26A35B22),
               blurRadius: 10,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
@@ -291,10 +291,10 @@ Widget topUtilityButton({
       boxShadow ??
       (selected
           ? [
-              BoxShadow(
-                color: const Color(0x45F0C36B),
+              const BoxShadow(
+                color: Color(0x45F0C36B),
                 blurRadius: 8,
-                offset: const Offset(0, 2),
+                offset: Offset(0, 2),
               ),
             ]
           : null);

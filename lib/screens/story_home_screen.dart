@@ -834,7 +834,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               final selectionButtonBorder = selectionButtonIsOpen
                   ? const Color(0xFFD4E8BC)
                   : const Color(0xFFF1C98A);
-              final selectionButtonForeground = const Color(0xFFF8EED9);
+              const selectionButtonForeground = Color(0xFFF8EED9);
               final selectionButtonShadow = [
                 BoxShadow(
                   color: selectionButtonIsOpen

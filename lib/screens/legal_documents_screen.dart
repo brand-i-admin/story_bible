@@ -43,8 +43,8 @@ class LegalDocumentsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 18),
-                          Row(
-                            children: const [
+                          const Row(
+                            children: [
                               Expanded(
                                 child: _LegalMetaCard(
                                   label: '운영자',
@@ -451,13 +451,13 @@ class _LegalBackground extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned.fill(
+          const Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  center: const Alignment(-0.25, -0.65),
+                  center: Alignment(-0.25, -0.65),
                   radius: 1.0,
-                  colors: [const Color(0x22FFFFFF), const Color(0x00FFFFFF)],
+                  colors: [Color(0x22FFFFFF), Color(0x00FFFFFF)],
                 ),
               ),
             ),
