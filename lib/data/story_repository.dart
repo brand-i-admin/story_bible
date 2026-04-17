@@ -328,17 +328,35 @@ class StoryRepository {
         ? (row['event_bible_refs'] as List<dynamic>? ?? const [])
         : const [];
 
+    // Validate timeline_rank
+    final timelineRank = (row['timeline_rank'] as num?)?.toDouble();
+    if (timelineRank == null || timelineRank <= 0) {
+      throw StateError(
+        'Event ${row['id']} has invalid timeline_rank: $timelineRank. '
+        'Database integrity check required.',
+      );
+    }
+
+    // Extract or generate display_number
+    String? displayNumber = row['display_number'] as String?;
+    if (displayNumber == null || displayNumber.trim().isEmpty) {
+      // Fallback to code-derived number
+      final code = row['code'] as String;
+      final match = RegExp(r'(\d+)$').firstMatch(code);
+      displayNumber = match?.group(1)?.padLeft(3, '0') ?? '???';
+    }
+
     return StoryEvent(
       id: row['id'] as String,
       code: row['code'] as String,
-      displayNumber: row['display_number'] as String?,
+      displayNumber: displayNumber,
       eraId: row['era_id'] as String,
       title: row['title'] as String,
       summary: row['summary'] as String?,
       story: row['story'] as String?,
       shortStory: row['short_story'] as String?,
       storyScenes: row['story_scenes'] as String?,
-      timelineRank: (row['timeline_rank'] as num?)?.toDouble() ?? 0,
+      timelineRank: timelineRank,
       startYear: row['start_year'] as int?,
       endYear: row['end_year'] as int?,
       timeSortKey: row['time_sort_key'] as int,

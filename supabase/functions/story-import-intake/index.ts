@@ -30,8 +30,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const storyImportsBucket = Deno.env.get("STORY_IMPORTS_BUCKET") ?? "story-imports";
-const triggerImportWebhookUrl = Deno.env.get("TRIGGER_IMPORT_WEBHOOK_URL") ?? "";
+const storyImportsBucket = Deno.env.get("STORY_IMPORTS_BUCKET") ?? "import-jobs";
 const deploymentEnvironment = Deno.env.get("DEPLOYMENT_ENVIRONMENT") ?? "staging";
 
 if (!supabaseUrl || !serviceRoleKey) {
@@ -90,23 +89,29 @@ async function maybeResolveSubmittedByUserId(req: Request) {
   return data.user?.id ?? null;
 }
 
-async function triggerImportJob(payload: TriggerPayload) {
-  if (!triggerImportWebhookUrl) {
-    return;
-  }
+async function invokeValidateFunction(payload: {
+  jobId: string;
+  sourceStoragePath: string;
+}) {
+  const validateUrl = `${supabaseUrl}/functions/v1/story-import-validate`;
 
-  const response = await fetch(triggerImportWebhookUrl, {
+  const response = await fetch(validateUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${serviceRoleKey}`,
     },
     body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(`Trigger.dev webhook failed: ${response.status} ${detail}`);
+    throw new Error(
+      `Validate function failed: ${response.status} ${detail}`,
+    );
   }
+
+  return await response.json();
 }
 
 Deno.serve(async (req) => {
@@ -216,28 +221,23 @@ Deno.serve(async (req) => {
     },
   });
 
-  try {
-    await triggerImportJob({
-      jobId,
-      sourceStoragePath: storagePath,
-      requestedByUserId: submittedByUserId,
-      environment: deploymentEnvironment,
-    });
-  } catch (error) {
+  // Invoke validate function asynchronously (don't wait for completion)
+  invokeValidateFunction({
+    jobId,
+    sourceStoragePath: storagePath,
+  }).catch(async (error) => {
+    // Log error and update job status on failure
+    console.error("Validation invocation failed:", error);
     await admin.from("import_jobs").update({
       status: "failed",
       metadata: {
         ...metadata,
-        triggerError: error instanceof Error ? error.message : String(error),
+        validationInvokeError: error instanceof Error
+          ? error.message
+          : String(error),
       },
     }).eq("id", jobId);
-
-    return jsonResponse(500, {
-      error: "trigger_failed",
-      message: error instanceof Error ? error.message : String(error),
-      jobId,
-    });
-  }
+  });
 
   return jsonResponse(202, {
     ok: true,

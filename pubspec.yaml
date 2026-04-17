@@ -64,6 +64,7 @@ flutter:
 
   assets:
     - .env
+    - assets/200_stories/
     - assets/maps/ne_50m_admin_0_countries.geojson
     - assets/avatars_thumbs/
     - assets/elements/
