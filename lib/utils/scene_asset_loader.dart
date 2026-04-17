@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../models/story_event.dart';
@@ -56,7 +57,8 @@ class SceneAssetLoader {
     return _assetManifestCache!;
   }
 
-  String _sceneDirectoryNameForTitle(String title) {
+  @visibleForTesting
+  String sceneDirectoryNameForTitle(String title) {
     final replaced = title.replaceAll(_sceneInvalidDirChars, '_').trim();
     final trimmedDots = replaced.replaceAll(RegExp(r'^\.+|\.+$'), '');
     final collapsed = trimmedDots
@@ -65,18 +67,21 @@ class SceneAssetLoader {
     return collapsed.isNotEmpty ? collapsed : 'untitled_event';
   }
 
-  String _normalizeSceneLookupKey(String text) {
+  @visibleForTesting
+  String normalizeSceneLookupKey(String text) {
     return text
         .toLowerCase()
         .replaceAll(_sceneLooseNormalizePattern, '')
         .trim();
   }
 
-  String _stripSceneDirectoryPrefix(String directoryName) {
+  @visibleForTesting
+  String stripSceneDirectoryPrefix(String directoryName) {
     return directoryName.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
   }
 
-  String? _scenePrefixForCode(String code) {
+  @visibleForTesting
+  String? scenePrefixForCode(String code) {
     final match = _sceneCodeDigitsPattern.firstMatch(code.trim());
     final digits = match?.group(1);
     if (digits == null || digits.isEmpty) {
@@ -97,7 +102,7 @@ class SceneAssetLoader {
     required String title,
     String? code,
   }) async {
-    final dirName = _sceneDirectoryNameForTitle(title);
+    final dirName = sceneDirectoryNameForTitle(title);
     final cached = _sceneAssetsCache[dirName];
     if (cached != null) {
       return cached;
@@ -129,7 +134,7 @@ class SceneAssetLoader {
       (path) => path.startsWith(directPrefix),
     );
     if (!hasDirect) {
-      final codePrefix = code == null ? null : _scenePrefixForCode(code);
+      final codePrefix = code == null ? null : scenePrefixForCode(code);
       if (codePrefix != null) {
         final codeMatchedDir =
             knownDirs
@@ -147,14 +152,14 @@ class SceneAssetLoader {
       (path) => path.startsWith(chosenPrefixAfterCode),
     );
     if (!hasCodeMatched) {
-      final titleKey = _normalizeSceneLookupKey(title);
-      final dirNameKey = _normalizeSceneLookupKey(dirName);
+      final titleKey = normalizeSceneLookupKey(title);
+      final dirNameKey = normalizeSceneLookupKey(dirName);
       final fallbackCandidates =
           knownDirs
               .map((dir) {
-                final rawKey = _normalizeSceneLookupKey(dir);
-                final strippedKey = _normalizeSceneLookupKey(
-                  _stripSceneDirectoryPrefix(dir),
+                final rawKey = normalizeSceneLookupKey(dir);
+                final strippedKey = normalizeSceneLookupKey(
+                  stripSceneDirectoryPrefix(dir),
                 );
                 var score = -1;
                 if (rawKey == titleKey || rawKey == dirNameKey) {

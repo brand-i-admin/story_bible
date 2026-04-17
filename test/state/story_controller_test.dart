@@ -314,4 +314,208 @@ void main() {
       expect(timeline.map((e) => e.id), orderedEquals(['e3', 'e1']));
     });
   });
+
+  group('StoryController.selectTestament', () {
+    test('구약 → 신약 전환 시 해당 testament의 첫 시대를 선택', () async {
+      final eras = [
+        _era(id: 'e1', code: 'old1', testament: 'old'),
+        _era(id: 'e2', code: 'new1', testament: 'new', displayOrder: 0),
+        _era(id: 'e3', code: 'new2', testament: 'new', displayOrder: 1),
+      ];
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => const []);
+      when(
+        () => mockRepo.fetchEventsByEra(any()),
+      ).thenAnswer((_) async => const []);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      await controller.selectTestament('new');
+      final state = container.read(storyControllerProvider);
+      expect(state.selectedTestament, 'new');
+      // 첫 번째 신약 시대 선택
+      expect(state.selectedEraId, 'e2');
+    });
+
+    test('이미 같은 testament이고 시대도 일치하면 아무 동작 없음', () async {
+      final eras = [_era(id: 'e1', code: 'old1', testament: 'old')];
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(
+        () => mockRepo.fetchEventsByEra(any()),
+      ).thenAnswer((_) async => const []);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+
+      // 같은 testament 다시 호출 — selectEra가 추가 호출되지 않아야 함
+      await controller.selectTestament('old');
+      final state = container.read(storyControllerProvider);
+      expect(state.selectedTestament, 'old');
+      expect(state.selectedEraId, 'e1');
+    });
+
+    test('해당 testament에 시대가 없으면 선택 초기화', () async {
+      final eras = [_era(id: 'e1', code: 'old1', testament: 'old')];
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      await controller.selectTestament('new');
+      final state = container.read(storyControllerProvider);
+      expect(state.selectedTestament, 'new');
+      expect(state.selectedEraId, isNull);
+      expect(state.persons, isEmpty);
+      expect(state.events, isEmpty);
+    });
+  });
+
+  group('StoryController.toggleEra', () {
+    test('선택된 시대를 다시 토글하면 선택 해제', () async {
+      final eras = [_era(id: 'e1', code: 'old1')];
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => const []);
+      when(
+        () => mockRepo.fetchEventsByEra(any()),
+      ).thenAnswer((_) async => const []);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      expect(container.read(storyControllerProvider).selectedEraId, 'e1');
+
+      await controller.toggleEra('e1');
+      expect(container.read(storyControllerProvider).selectedEraId, isNull);
+    });
+
+    test('다른 시대를 토글하면 해당 시대를 선택', () async {
+      final eras = [_era(id: 'e1', code: 'old1'), _era(id: 'e2', code: 'old2')];
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => const []);
+      when(
+        () => mockRepo.fetchEventsByEra(any()),
+      ).thenAnswer((_) async => const []);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      await controller.toggleEra('e2');
+      expect(container.read(storyControllerProvider).selectedEraId, 'e2');
+    });
+  });
+
+  group('StoryController.clearEraSelection', () {
+    test('모든 선택 상태를 초기화', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', personIds: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.togglePerson('p1');
+      controller.selectEvent('ev1');
+
+      controller.clearEraSelection();
+      final state = container.read(storyControllerProvider);
+      expect(state.selectedEraId, isNull);
+      expect(state.selectedEventId, isNull);
+      expect(state.selectedPersonIds, isEmpty);
+      expect(state.persons, isEmpty);
+      expect(state.events, isEmpty);
+      expect(state.searchQuery, '');
+    });
+  });
+
+  group('StoryController.setSelectedPersons', () {
+    test('persons에 없는 id는 필터링된다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(() => mockRepo.fetchPersonsByEra(any())).thenAnswer(
+        (_) async => [
+          _person(id: 'p1', name: 'A'),
+          _person(id: 'p2', name: 'B'),
+        ],
+      );
+      when(
+        () => mockRepo.fetchEventsByEra(any()),
+      ).thenAnswer((_) async => const []);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+
+      controller.setSelectedPersons({'p1', 'p999'});
+      final state = container.read(storyControllerProvider);
+      expect(state.selectedPersonIds, {'p1'});
+      expect(state.selectedPersonColors.containsKey('p1'), true);
+      expect(state.selectedPersonColors.containsKey('p999'), false);
+    });
+  });
+
+  group('StoryController.setSearchQuery', () {
+    test('빈 쿼리면 검색 결과 초기화', () async {
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => const []);
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      controller.setSearchQuery('모세');
+      controller.setSearchQuery('');
+      final state = container.read(storyControllerProvider);
+      expect(state.searchQuery, '');
+      expect(state.isSearching, false);
+      expect(state.searchResults, isEmpty);
+    });
+
+    test('공백만 있는 쿼리도 빈 쿼리 처리', () async {
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => const []);
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      controller.setSearchQuery('   ');
+      final state = container.read(storyControllerProvider);
+      expect(state.isSearching, false);
+    });
+
+    test('유효한 쿼리면 isSearching을 true로 설정', () async {
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => const []);
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      controller.setSearchQuery('모세');
+      final state = container.read(storyControllerProvider);
+      expect(state.searchQuery, '모세');
+      expect(state.isSearching, true);
+    });
+  });
 }
