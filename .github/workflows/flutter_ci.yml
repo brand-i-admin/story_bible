@@ -34,6 +34,13 @@ jobs:
       - name: Verify Flutter installation
         run: flutter --version
 
+      - name: Create dummy .env for CI
+        run: |
+          echo "SUPABASE_URL_DEV=https://dummy.supabase.co" > .env
+          echo "SUPABASE_ANON_KEY_DEV=dummy-anon-key" >> .env
+          echo "SUPABASE_URL_PROD=https://dummy.supabase.co" >> .env
+          echo "SUPABASE_ANON_KEY_PROD=dummy-anon-key" >> .env
+
       - name: Install dependencies
         run: flutter pub get
 

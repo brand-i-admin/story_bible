@@ -62,8 +62,14 @@ def parse_assets() -> list[str]:
     return assets
 
 
+# CI 환경에서 존재하지 않는 파일 (.gitignore 대상이지만 pubspec.yaml에 필요)
+_CI_SKIP_ASSETS = {".env"}
+
+
 def verify(asset: str) -> tuple[bool, str]:
     """Returns (ok, reason)."""
+    if asset in _CI_SKIP_ASSETS:
+        return (True, "skipped (CI)")
     p = REPO_ROOT / asset
     if asset.endswith("/"):
         if not p.exists():

@@ -72,7 +72,7 @@ supabaseClientProvider (Provider<SupabaseClient>)
 | 화면 | 파일 | 역할 |
 |------|------|------|
 | 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인 |
-| 로그인 | `screens/login_screen.dart` | Apple/Google/Kakao 소셜 로그인 |
+| 로그인 | `widgets/inline_login_prompt_card.dart` | 인라인 소셜 로그인 (카카오/Google/Apple) |
 | 노트 목록 | `screens/profile_notes_screen.dart` | 개인 노트 CRUD |
 | 노트 편집 | `screens/profile_note_editor_screen.dart` | 노트 에디터 |
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
@@ -117,7 +117,7 @@ supabaseClientProvider (Provider<SupabaseClient>)
 **앱 시작:**
 ```
 main.dart → Supabase 초기화 + ProviderScope
-  └→ app.dart → MaterialApp + 첫 화면(LoginScreen)
+  └→ app.dart → MaterialApp + 첫 화면(StoryHomeScreen)
 ```
 
 **데이터 계층 (아래→위 방향):**
@@ -164,14 +164,12 @@ state/ (비즈니스 로직)
 **UI 계층 (메인 화면 허브):**
 ```
 story_home_screen.dart (메인 화면 — 모든 것의 허브)
-  ├── EraSelector           → 시대 탭 바
-  ├── StorySelectionPanel   → 시대→인물→사건 3단계 선택
+  ├── StorySelectionPanel   → 시대→인물→사건 3단계 선택 (EraSelector 기능 통합)
   │     ├── selection/panel_chrome.dart     (part)
   │     ├── selection/step_chip.dart        (part)
   │     └── selection/selection_cards.dart  (part)
   ├── StoryMapPanel         → flutter_map 지도 + 핀/마커
   │     └── map/pin_marker.dart            (part)
-  ├── StoryListPanel        → 이벤트 타임라인 리스트
   ├── WeeklyTabPage         → 주간 인물 학습
   │     ├── weekly/weekly_avatar.dart      (part)
   │     └── weekly/weekly_list_panel.dart  (part)

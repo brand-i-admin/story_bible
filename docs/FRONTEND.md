@@ -123,13 +123,13 @@ static const _palette = <Color>[
 | 화면 | 파일 | 역할 |
 |------|------|------|
 | StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필) |
-| LoginScreen | `screens/login_screen.dart` | 소셜 로그인 |
+| ~~LoginScreen~~ | ~~`screens/login_screen.dart`~~ | 삭제됨 — InlineLoginPromptCard로 대체 |
 | ProfileNotesScreen | `screens/profile_notes_screen.dart` | 노트 목록 |
 | ProfileNoteEditorScreen | `screens/profile_note_editor_screen.dart` | 노트 편집 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
 
-> **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~1,290줄 (−82%).
+> **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~1,016줄 (−86%).
 > 프로필 탭 2,700+줄이 `ProfileTabPage`로 분리되어 자체 상태 관리 + 콜백 3개로 결합도 최소화.
 > 퀴즈 완료 시 진행도 새로고침은 `GlobalKey<ProfileTabPageState>`로 처리.
 
@@ -142,12 +142,12 @@ static const _palette = <Color>[
 | StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도, 핀/마커 렌더링 |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
 | PersonPanel | `widgets/person_panel.dart` | 인물 카드 (아바타, 설명) |
-| StoryListPanel | `widgets/story_list_panel.dart` | 이벤트 타임라인 리스트 |
+| ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 |
-| EraSelector | `widgets/era_selector.dart` | 시대 탭 바 |
+| ~~EraSelector~~ | ~~`widgets/era_selector.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 UI 테마 데코레이션 |
-| SearchBox | `widgets/search_box.dart` | 검색 입력 |
+| ~~SearchBox~~ | ~~`widgets/search_box.dart`~~ | 삭제됨 — SearchBottomSheet로 대체 (필요 시 재생성) |
 
 ### 5.2 story_home_screen에서 추출한 위젯 (2차 리팩토링)
 
