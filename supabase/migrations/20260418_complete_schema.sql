@@ -383,30 +383,14 @@ create trigger set_import_jobs_updated_at
 before update on public.import_jobs
 for each row execute function public.touch_updated_at();
 
--- Grants for import jobs (read-only for authenticated users to track their submissions)
-grant select on table public.import_jobs to authenticated;
-grant select on table public.import_job_artifacts to authenticated;
-
--- RLS for import jobs (users can only see their own jobs)
+-- Import jobs access control: Service role only
+-- Regular app users do not interact with import jobs
+-- These tables are managed by Edge Functions and admin tools
 alter table public.import_jobs enable row level security;
 alter table public.import_job_artifacts enable row level security;
 
-drop policy if exists import_jobs_read_own on public.import_jobs;
-create policy import_jobs_read_own on public.import_jobs
-for select using (
-  auth.uid() = submitted_by_user_id
-  or submitted_by_user_id is null  -- Allow viewing anonymous submissions
-);
-
-drop policy if exists import_job_artifacts_read_own on public.import_job_artifacts;
-create policy import_job_artifacts_read_own on public.import_job_artifacts
-for select using (
-  exists (
-    select 1 from public.import_jobs
-    where import_jobs.id = import_job_artifacts.import_job_id
-    and (auth.uid() = import_jobs.submitted_by_user_id or import_jobs.submitted_by_user_id is null)
-  )
-);
+-- No policies needed - service_role bypasses RLS
+-- This effectively restricts access to service_role and postgres roles only
 
 -- Validate events.code uniqueness and add constraint atomically
 do $$
