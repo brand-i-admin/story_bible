@@ -78,7 +78,125 @@ supabaseClientProvider (Provider<SupabaseClient>)
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
 | 법률 문서 | `screens/legal_documents_screen.dart` | 이용약관, 개인정보처리방침 |
 
-## 3. DB 스키마 개요
+## 3. 데이터 흐름 — 파일 간 연결 관계
+
+### 3.1 전체 흐름
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    Supabase (DB)                     │
+└────────────┬────────────────┬────────────────────────┘
+             │                │
+    ┌────────▼──────┐  ┌──────▼──────────┐
+    │StoryRepository│  │UserRepository   │
+    │ (이야기/시대)  │  │(사용자/노트/구절)│
+    └────────┬──────┘  └──────┬──────────┘
+             │                │
+             │ Model 객체로 변환 (fromMap)
+             │                │
+      ┌──────▼────────────────▼──────┐
+      │      StoryController         │
+      │ (비즈니스 로직 + 상태 갱신)    │
+      └──────────────┬───────────────┘
+                     │
+              ┌──────▼──────┐
+              │  StoryState  │  ← 불변 데이터 클래스
+              │  (ref.watch)  │
+              └──────┬───────┘
+                     │
+    ┌────────────────┼────────────────────┐
+    │                │                    │
+┌───▼────┐   ┌──────▼──────┐   ┌─────────▼──────┐
+│지도 패널│   │선택 패널    │   │  프로필 탭     │
+│(핀 표시)│   │(시대/인물)  │   │  (진행도)      │
+└────────┘   └─────────────┘   └────────────────┘
+```
+
+### 3.2 파일별 역할과 연결
+
+**앱 시작:**
+```
+main.dart → Supabase 초기화 + ProviderScope
+  └→ app.dart → MaterialApp + 첫 화면(LoginScreen)
+```
+
+**데이터 계층 (아래→위 방향):**
+```
+models/ (순수 데이터 상자)
+  ├── Era, Person, StoryEvent     ← 이야기 도메인
+  ├── AppUserProfile, UserNote    ← 사용자 도메인
+  └── BibleVerse, QuizQuestion    ← 보조 도메인
+
+data/ (Supabase 쿼리 + Model 변환)
+  ├── story_repository.dart
+  │     fetchEras() → List<Era>
+  │     fetchPersonsByEra() → List<Person>
+  │     fetchEventsByEra() → List<StoryEvent>
+  │     fetchEventsForPerson() → List<StoryEvent>
+  │     searchEventsByText() → 퍼지 검색
+  │     fetchQuizQuestions() → List<QuizQuestion>
+  │     upsertEventProgress() → 학습 진행도 저장
+  │
+  ├── user_repository.dart
+  │     fetchUserProfile() → AppUserProfile
+  │     fetchUserNotesPage() → 노트 페이지네이션
+  │     fetchSavedVersesPage() → 저장 구절 페이지네이션
+  │     fetchIntercessoryPrayerPage() → 중보기도 목록
+  │     fetchPersonStudyProgress() → 인물별 진행도
+  │     recordAttendance() / recordStudyDay() → 출석/학습 기록
+  │
+  └── auth_repository.dart
+        signInWithApple/Google/Kakao() → 소셜 로그인
+
+state/ (비즈니스 로직)
+  ├── story_controller.dart (Riverpod Notifier)
+  │     ← story_repository, user_repository 사용
+  │     → StoryState 갱신
+  │
+  ├── story_state.dart (불변 상태)
+  │     eras, persons, events, selectedEraId
+  │     selectedPersonIds, completedEventIds, searchQuery
+  │
+  └── auth_providers.dart
+        authStateProvider → 현재 로그인 사용자
+```
+
+**UI 계층 (메인 화면 허브):**
+```
+story_home_screen.dart (메인 화면 — 모든 것의 허브)
+  ├── EraSelector           → 시대 탭 바
+  ├── StorySelectionPanel   → 시대→인물→사건 3단계 선택
+  │     ├── selection/panel_chrome.dart     (part)
+  │     ├── selection/step_chip.dart        (part)
+  │     └── selection/selection_cards.dart  (part)
+  ├── StoryMapPanel         → flutter_map 지도 + 핀/마커
+  │     └── map/pin_marker.dart            (part)
+  ├── StoryListPanel        → 이벤트 타임라인 리스트
+  ├── WeeklyTabPage         → 주간 인물 학습
+  │     ├── weekly/weekly_avatar.dart      (part)
+  │     └── weekly/weekly_list_panel.dart  (part)
+  ├── ProfileTabPage        → 프로필 + 진행도
+  │     ├── profile/profile_left_panel.dart       (part)
+  │     ├── profile/profile_right_panel.dart      (part)
+  │     ├── profile/profile_helpers.dart          (part)
+  │     ├── profile/profile_intercessory_prayer.dart (part)
+  │     └── profile/profile_person_overview.dart  (part)
+  ├── ParchmentDialog       → 이야기 상세 모달
+  ├── BibleReaderPage       → 성경 리더
+  ├── EventDetailPage       → 사건 상세
+  └── SearchBottomSheet     → 검색
+```
+
+**유틸 (어디서든 import 가능한 순수 함수):**
+```
+utils/
+  ├── bible_book_meta.dart     ← BibleReaderPage, SearchBottomSheet
+  ├── map_math.dart            ← StoryMapPanel
+  ├── scene_asset_loader.dart  ← EventDetailPage, ParchmentDialog
+  └── weekly_selection.dart    ← WeeklyTabPage
+```
+
+## 4. DB 스키마 개요 (번호 조정됨: 이전 §3)
 
 상세는 `docs/BACKEND.md` 참조. 핵심 테이블:
 

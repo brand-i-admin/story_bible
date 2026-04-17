@@ -78,6 +78,7 @@ dart format .                # 코드 포맷
 | `docs/BACKEND.md` | 백엔드 도메인 상세 |
 | `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
 | `docs/TESTING.md` | 테스트 전략 상세 |
+| `docs/WORKFLOW_GUIDE.md` | 작업 흐름 + 유지보수 규칙 (스킬/Agent 동작 방식, 커밋/푸시 정책, DB 변경 체크리스트) |
 
 ## 코딩 컨벤션
 
@@ -96,6 +97,15 @@ dart format .                # 코드 포맷
 - `test/` 구조는 `lib/` 미러링: `test/models/`, `test/state/`, `test/data/`, `test/widgets/`
 - mock: `mocktail` 사용
 
+### 테스트 변경 정책 (중요)
+
+테스트 코드는 **"이 기능이 이렇게 동작해야 한다"는 명세(spec)**이다. 따라서:
+
+- **새 테스트 추가**: 자유롭게 가능 (기존 동작을 바꾸지 않으므로)
+- **기존 테스트 수정**: 반드시 **사용자에게 먼저 확인**받는다. "이 테스트를 이렇게 바꿔도 될까요?" 형태로 질문.
+- **기존 테스트 삭제**: 반드시 **사용자에게 먼저 확인**받는다. 삭제 이유와 영향을 설명.
+- 예외: `dart fix --apply`에 의한 순수 문법 변경(const 추가 등)은 동작이 안 바뀌므로 확인 불필요.
+
 ## Git 훅 & CI
 
 ### 로컬 (pre-commit framework)
@@ -110,6 +120,8 @@ dart format .                # 코드 포맷
 ### 룰
 - 시크릿(SUPABASE_SERVICE_ROLE_KEY, API key)은 **절대 커밋 금지** (forbidden pattern hook이 자동 차단)
 - `print(`은 코드에 쓰지 말 것 — 로깅이 필요하면 `debugPrint` 사용
+- **`git push`는 사용자가 명시적으로 "푸시해줘"라고 지시할 때만 실행한다.** 커밋은 지시받으면 하되, push는 절대 자동으로 하지 않는다.
+- **커밋도 사용자가 "커밋해줘"라고 지시할 때만.** 코드 변경 후 자동 커밋하지 않는다.
 
 ## 에셋 파이프라인
 
