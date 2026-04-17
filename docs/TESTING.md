@@ -210,3 +210,69 @@ test/
 - 경로: 원본 `lib/` 구조를 미러링
 - 그룹: `group('클래스명', () { ... })`
 - 테스트명: 한국어 또는 영어 설명 (`'parses valid map'`)
+
+## 8. 코드 메트릭 검사
+
+`tools/check_code_metrics.py`가 파일/메소드 크기를 자동 검사한다:
+
+| 항목 | 경고 기준 | 차단 기준 |
+|------|----------|----------|
+| 파일 줄 수 | 500줄 | 1,500줄 |
+| 메소드/함수 수 | 20개 | 40개 |
+| 단일 메소드 줄 수 | 80줄 | 200줄 |
+
+- `test/` 파일은 기준이 2배로 완화
+- `part of` 파일은 부모에 귀속되므로 자동 제외
+- CI에서 자동 실행 (`--ci` 플래그 시 차단 모드)
+
+```bash
+python3 tools/check_code_metrics.py        # 보고 모드
+python3 tools/check_code_metrics.py --ci    # 차단 모드 (FAIL 시 exit 1)
+```
+
+## 9. Golden Test (UI 스크린샷 비교)
+
+**목적**: 위젯 렌더링 결과를 "골든 이미지(정답 스크린샷)"와 픽셀 단위로 비교하여 UI regression 자동 감지.
+
+**세팅 완료 사항**:
+- `golden_toolkit` dev_dependency 설치
+- `test/flutter_test_config.dart` — 폰트 로딩 설정
+
+**사용법**:
+```dart
+// test/golden/my_widget_golden_test.dart
+import 'package:golden_toolkit/golden_toolkit.dart';
+
+testGoldens('MyWidget 스냅샷', (tester) async {
+  await tester.pumpWidgetBuilder(
+    const MyWidget(),
+    surfaceSize: const Size(200, 200),
+  );
+  await screenMatchesGolden(tester, 'my_widget_snapshot');
+});
+```
+
+```bash
+# 골든 이미지 생성/갱신
+flutter test --update-goldens test/golden/
+
+# 골든 비교 실행 (차이 나면 실패)
+flutter test test/golden/
+```
+
+**주의사항**:
+- `Image.asset`을 사용하는 위젯은 테스트 환경에서 에셋 로드 실패 → `errorBuilder` 표시됨. 이런 위젯은 mock image provider를 주입하거나 에셋 번들을 세팅해야 함.
+- 골든 이미지는 OS/Flutter 버전에 따라 렌더링이 미묘하게 다를 수 있음 → CI에서는 특정 Flutter 버전 고정 필요.
+- `.gitignore`에 `test/golden/failures/` 추가 (실패 diff 이미지 제외).
+
+## 10. 테스트 현황 (2026-04-17)
+
+| 영역 | 파일 수 | 테스트 수 | 커버리지 |
+|------|---------|----------|---------|
+| 모델 fromMap/로직 | 8 | 35 | ✅ 전체 모델 완전 |
+| 상태 (Controller + State) | 2 | 38 | ✅ 주요 메소드 27개 + copyWith 11개 |
+| 리포지토리 순수 함수 | 2 | 29 | ✅ @visibleForTesting 전부 |
+| 유틸 순수 함수 | 4 | 70 | ✅ 전 함수 완전 |
+| 위젯 | 1 | 6 | PersonAvatar fallback |
+| 기본 | 1 | 1 | sanity |
+| **합계** | **19** | **183** | — |
