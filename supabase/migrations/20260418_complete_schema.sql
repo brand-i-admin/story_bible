@@ -382,11 +382,12 @@ create trigger set_import_jobs_updated_at
 before update on public.import_jobs
 for each row execute function public.touch_updated_at();
 
--- Validate events.code uniqueness before proceeding
+-- Validate events.code uniqueness and add constraint atomically
 do $$
 declare
   duplicate_count int;
 begin
+  -- Check for duplicates
   select count(*) into duplicate_count
   from (
     select code, count(*) as cnt
@@ -398,11 +399,11 @@ begin
   if duplicate_count > 0 then
     raise exception 'Found % duplicate event codes. Manual cleanup required before migration.', duplicate_count;
   end if;
-end $$;
 
--- Ensure unique constraint exists on events.code
-alter table public.events drop constraint if exists events_code_key;
-alter table public.events add constraint events_code_key unique (code);
+  -- Add unique constraint if validation passed (within same transaction)
+  alter table public.events drop constraint if exists events_code_key;
+  alter table public.events add constraint events_code_key unique (code);
+end $$;
 
 -- Add source_import_job_id to events
 alter table public.events
@@ -420,13 +421,15 @@ add column if not exists timeline_rank double precision;
 do $$
 declare
   uninitialized_count int;
+  invalid_rank_count int;
   duplicate_rank_count int;
 begin
   -- Initialize timeline_rank from story number portion of time_sort_key
-  -- time_sort_key format: year * 1000 + number, so extract number with modulo
+  -- IMPORTANT: Assumes time_sort_key format is (year * 1000 + story_number)
+  -- Example: year 30 story 151 → time_sort_key = 30151 → timeline_rank = 151
   update public.events
   set timeline_rank = (time_sort_key % 1000)::double precision
-  where timeline_rank is null or timeline_rank = 0;
+  where timeline_rank is null;
 
   -- Initialize display_number from code if not set
   update public.events
@@ -443,10 +446,19 @@ begin
   -- Verify all events have valid timeline_rank
   select count(*) into uninitialized_count
   from public.events
-  where timeline_rank is null or timeline_rank <= 0;
+  where timeline_rank is null;
 
   if uninitialized_count > 0 then
     raise exception 'Failed to initialize timeline_rank for % events', uninitialized_count;
+  end if;
+
+  -- Validate timeline_rank is in expected range (1-999)
+  select count(*) into invalid_rank_count
+  from public.events
+  where timeline_rank < 1 or timeline_rank > 999;
+
+  if invalid_rank_count > 0 then
+    raise exception 'Found % events with timeline_rank outside expected range (1-999). Check time_sort_key format.', invalid_rank_count;
   end if;
 
   -- Check for timeline_rank collisions within same era
@@ -459,7 +471,20 @@ begin
   ) duplicates;
 
   if duplicate_rank_count > 0 then
-    raise warning 'Found % timeline_rank collisions within eras. These will need manual adjustment.', duplicate_rank_count;
+    -- Auto-fix collisions by adding small increments
+    raise notice 'Found % timeline_rank collisions. Auto-fixing by adding 0.001 increments...', duplicate_rank_count;
+
+    with ranked as (
+      select id, era_id, timeline_rank,
+             row_number() over (partition by era_id, timeline_rank order by id) - 1 as dup_rank
+      from public.events
+    )
+    update public.events e
+    set timeline_rank = timeline_rank + (r.dup_rank * 0.001)
+    from ranked r
+    where e.id = r.id and r.dup_rank > 0;
+
+    raise notice 'Collision auto-fix complete.';
   end if;
 end $$;
 
