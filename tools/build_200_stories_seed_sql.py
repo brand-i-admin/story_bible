@@ -478,7 +478,9 @@ def load_avatar_prompt_codes(prompt_json_path: Path) -> set[str]:
         if code and code not in ROSTER_EXCLUDED_CODES:
             codes.add(code)
     if not codes:
-        raise ValueError(f"No character codes found in avatar prompt JSON: {prompt_json_path}")
+        raise ValueError(
+            f"No character codes found in avatar prompt JSON: {prompt_json_path}"
+        )
     return codes
 
 
@@ -525,7 +527,9 @@ def normalize_person_name(code: str) -> str:
     return " ".join(part.capitalize() for part in parts)
 
 
-def build_ref_display_text(book_abbr: str, ch_s: int, v_s: int, ch_e: int, v_e: int) -> str:
+def build_ref_display_text(
+    book_abbr: str, ch_s: int, v_s: int, ch_e: int, v_e: int
+) -> str:
     if ch_s == ch_e and v_s == v_e:
         return f"{book_abbr} {ch_s}:{v_s}"
     if ch_s == ch_e:
@@ -617,12 +621,20 @@ def sanitize_scene_lines(lines: list[str]) -> list[str]:
     return cleaned
 
 
-def build_short_story(summary: str, verse_lines: list[str], scene_lines: list[str]) -> str:
+def build_short_story(
+    summary: str, verse_lines: list[str], scene_lines: list[str]
+) -> str:
     if verse_lines:
         if len(verse_lines) <= 5:
             picked = verse_lines
         else:
-            indexes = [0, len(verse_lines) // 4, len(verse_lines) // 2, (len(verse_lines) * 3) // 4, len(verse_lines) - 1]
+            indexes = [
+                0,
+                len(verse_lines) // 4,
+                len(verse_lines) // 2,
+                (len(verse_lines) * 3) // 4,
+                len(verse_lines) - 1,
+            ]
             picked = []
             seen: set[int] = set()
             for idx in indexes:
@@ -645,7 +657,9 @@ def build_short_story(summary: str, verse_lines: list[str], scene_lines: list[st
     return normalize_space(summary)
 
 
-def build_story(summary: str, refs: list[BibleRef], all_ref_verses: list[list[str]], max_chars: int) -> str:
+def build_story(
+    summary: str, refs: list[BibleRef], all_ref_verses: list[list[str]], max_chars: int
+) -> str:
     paragraphs: list[str] = []
     summary_text = normalize_space(summary)
     if summary_text:
@@ -685,7 +699,9 @@ def normalize_timeline(
     return start_year, end_year, precision
 
 
-def make_time_sort_key(number: int, start_year: int | None, end_year: int | None) -> int:
+def make_time_sort_key(
+    number: int, start_year: int | None, end_year: int | None
+) -> int:
     year = start_year
     if year is None:
         year = end_year
@@ -913,7 +929,9 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
     return lines
 
 
-def render_event_persons_sql(events: list[NormalizedEvent], chunk_size: int) -> list[str]:
+def render_event_persons_sql(
+    events: list[NormalizedEvent], chunk_size: int
+) -> list[str]:
     rows: list[tuple[str, str, int, str]] = []
     for event in events:
         seen: set[str] = set()
@@ -938,7 +956,9 @@ def render_event_persons_sql(events: list[NormalizedEvent], chunk_size: int) -> 
         ]
         lines.append(",\n".join(values))
         lines.append(")")
-        lines.append("insert into event_persons (event_id, person_id, person_sequence, role)")
+        lines.append(
+            "insert into event_persons (event_id, person_id, person_sequence, role)"
+        )
         lines.append("select")
         lines.append("  e.id,")
         lines.append("  p.id,")
@@ -1082,7 +1102,9 @@ def build_seed_sql(
     return "\n".join(lines)
 
 
-def write_report(report_path: Path, events: list[NormalizedEvent], missing_verse_segments: int) -> None:
+def write_report(
+    report_path: Path, events: list[NormalizedEvent], missing_verse_segments: int
+) -> None:
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "event_count": len(events),

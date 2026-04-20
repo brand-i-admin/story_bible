@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pre-Push PR"
+  short_description: "Validate, draft PR, commit, and push"
+  default_prompt: "Use $pre-push-pr to validate this repo, draft the PR, commit the changes, and push the branch."

@@ -272,12 +272,8 @@ HAMAN_NEGATIVE_PROMPT_EXTRA = (
     "multiple people, crowd, group, duo, pair, two people, extra person, background person, "
     "king, queen, banquet crowd, attendants, throne scene"
 )
-DANIEL_NEGATIVE_PROMPT_EXTRA = (
-    "multiple people, crowd, group, duo, pair, two people, extra person, background person"
-)
-DAN_NEGATIVE_PROMPT_EXTRA = (
-    "multiple people, crowd, group, duo, pair, two people, extra person, background person"
-)
+DANIEL_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra person, background person"
+DAN_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra person, background person"
 
 FEMALE_CODES = {
     "bathsheba",
@@ -406,8 +402,16 @@ ERA_ROLE_FALLBACKS = {
 CODE_SIGNATURE_HINTS = {
     "abraham": ["nomadic patriarch silhouette", "travel-worn layered robe"],
     "aaron": ["ceremonial leader silhouette", "priestly layered sash"],
-    "daniel": ["court-wise exile silhouette", "calm dignified bearing", "rolled scroll accent"],
-    "david": ["shepherd-king silhouette", "bold agile bearing", "sling and small stone pouch"],
+    "daniel": [
+        "court-wise exile silhouette",
+        "calm dignified bearing",
+        "rolled scroll accent",
+    ],
+    "david": [
+        "shepherd-king silhouette",
+        "bold agile bearing",
+        "sling and small stone pouch",
+    ],
     "elijah": ["storm-like prophet silhouette", "rough mantle energy"],
     "esther": [
         "beautiful queenly silhouette",
@@ -426,7 +430,11 @@ CODE_SIGNATURE_HINTS = {
         "warm gentle expression",
         "soft feminine presence",
     ],
-    "ezra": ["scribe-teacher silhouette", "measured studious bearing", "rolled scroll accent"],
+    "ezra": [
+        "scribe-teacher silhouette",
+        "measured studious bearing",
+        "rolled scroll accent",
+    ],
     "jesus": [
         "calm teacher-and-healer silhouette",
         "deep red outer robe over a light inner tunic",
@@ -437,17 +445,41 @@ CODE_SIGNATURE_HINTS = {
         "small net bundle and rolled scroll satchel",
         "quiet witness-like presence",
     ],
-    "joseph": ["dream-marked survivor silhouette", "protected-yet-resilient bearing", "patterned robe accent"],
-    "mary": ["humble courageous mother silhouette", "calm grounded presence", "layered travel veil"],
+    "joseph": [
+        "dream-marked survivor silhouette",
+        "protected-yet-resilient bearing",
+        "patterned robe accent",
+    ],
+    "mary": [
+        "humble courageous mother silhouette",
+        "calm grounded presence",
+        "layered travel veil",
+    ],
     "haman": [
         "scheming court-official silhouette",
         "sealed decree scroll and signet ring",
         "single arrogant court-villain presence",
     ],
-    "moses": ["liberator silhouette shaped by wilderness", "steady leader's presence", "wooden staff"],
-    "nehemiah": ["wall-rebuilder silhouette", "focused civic resolve", "builder's belt with wooden tools"],
-    "noah": ["ark-builder silhouette", "weathered survivor presence", "builder's belt with wooden tools"],
-    "paul": ["road-worn missionary silhouette", "intense teacher's focus", "rolled scroll or letter satchel"],
+    "moses": [
+        "liberator silhouette shaped by wilderness",
+        "steady leader's presence",
+        "wooden staff",
+    ],
+    "nehemiah": [
+        "wall-rebuilder silhouette",
+        "focused civic resolve",
+        "builder's belt with wooden tools",
+    ],
+    "noah": [
+        "ark-builder silhouette",
+        "weathered survivor presence",
+        "builder's belt with wooden tools",
+    ],
+    "paul": [
+        "road-worn missionary silhouette",
+        "intense teacher's focus",
+        "rolled scroll or letter satchel",
+    ],
     "rachel": [
         "radiant beautiful beloved matriarch silhouette",
         "elegant luminous presence",
@@ -583,7 +615,16 @@ STORY_PROP_RULES = [
     },
     {
         "phrase": "rolled scroll or letter satchel",
-        "patterns": ["두루마리", "편지", "율법", "설교", "가르치", "회당", "서신", "계시"],
+        "patterns": [
+            "두루마리",
+            "편지",
+            "율법",
+            "설교",
+            "가르치",
+            "회당",
+            "서신",
+            "계시",
+        ],
     },
     {
         "phrase": "sling and small stone pouch",
@@ -807,7 +848,9 @@ def build_story_prompt_fragments(
             limit=1,
         )
     )
-    prop_fragments = [] if code_hints else select_story_fragments(text, STORY_PROP_RULES, limit=1)
+    prop_fragments = (
+        [] if code_hints else select_story_fragments(text, STORY_PROP_RULES, limit=1)
+    )
     if code in CHARACTER_MOOD_OVERRIDES:
         mood_fragments = CHARACTER_MOOD_OVERRIDES[code]
     else:
@@ -818,7 +861,9 @@ def build_story_prompt_fragments(
     if role_fragments:
         fragments.extend(role_fragments)
     elif not code_hints:
-        fragments.append(ERA_ROLE_FALLBACKS.get(era_style, ERA_ROLE_FALLBACKS["patriarch"]))
+        fragments.append(
+            ERA_ROLE_FALLBACKS.get(era_style, ERA_ROLE_FALLBACKS["patriarch"])
+        )
     fragments.extend(prop_fragments)
     fragments.extend(mood_fragments)
     return dedupe_preserve_order([fragment for fragment in fragments if fragment])
@@ -863,7 +908,9 @@ def build_character_prompt(
         f"palette: {palette_text}",
         name_en,
         identity_text,
-        *build_story_prompt_fragments(code=code, era_style=era_style, story_rows=story_rows),
+        *build_story_prompt_fragments(
+            code=code, era_style=era_style, story_rows=story_rows
+        ),
         *build_visual_variation_fragments(code=code),
         "ancient Near Eastern inspired clothing",
         "clean iconic silhouette",
@@ -896,7 +943,13 @@ def load_prompt_json(path: Path) -> dict[str, Any]:
 
 def has_style_keys(data: dict[str, Any]) -> bool:
     return all(
-        key in data for key in ["common_style", "negative_prompt", "palettes", "generation_defaults"]
+        key in data
+        for key in [
+            "common_style",
+            "negative_prompt",
+            "palettes",
+            "generation_defaults",
+        ]
     )
 
 
@@ -940,7 +993,9 @@ def build_avatar_prompts(
     for row in rows:
         number = parse_event_number(str(row.get("title", "")))
         era_style = normalize_style_era(str(row.get("era", "")))
-        raw_persons = [str(code).strip() for code in row.get("persons", []) if str(code).strip()]
+        raw_persons = [
+            str(code).strip() for code in row.get("persons", []) if str(code).strip()
+        ]
         persons = expand_person_codes(number, raw_persons)
         for code in persons:
             if not is_individual_code(code):
@@ -990,7 +1045,11 @@ def build_avatar_prompts(
         use_common_style = bool(template.get("use_common_style", True))
         disable_adult_guardrail = bool(template.get("disable_adult_guardrail", False))
         person_generation = str(template.get("person_generation", "")).strip()
-        prompt_source = template_prompt_source if template_prompt_source == "manual" else AUTO_PROMPT_SOURCE
+        prompt_source = (
+            template_prompt_source
+            if template_prompt_source == "manual"
+            else AUTO_PROMPT_SOURCE
+        )
 
         story_rows = list(story_profiles.get(code, {}).get(era_style, []))
         if not story_rows:
@@ -1096,7 +1155,9 @@ def main() -> int:
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    output_path.write_text(
+        json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     print(f"stories dir   : {stories_dir}")
     print(f"template base : {style_source_path}")

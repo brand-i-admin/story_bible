@@ -107,7 +107,7 @@
         "transparent_background": true,
         "prompt": "fantasy game UI button (disabled state), desaturated gold/bronze metal plate, no glow, beveled edges, pointed triangular caps on left and right, empty center for text, no text, no icon, soft shadow, PNG with transparent background, front view, high resolution"
       },
-  
+
       {
         "id": "map_pin_normal",
         "type": "map_pin",
@@ -132,7 +132,7 @@
         "transparent_background": true,
         "prompt": "fantasy map pin marker icon (completed state), same shape as normal pin, subtle greenish-gold accent, small checkmark badge as a tiny icon (no text), clear silhouette, empty center circle, PNG with transparent background, front view, high resolution"
       },
-  
+
       {
         "id": "scroll_popup_base",
         "type": "popup",

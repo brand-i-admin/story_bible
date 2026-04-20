@@ -112,7 +112,9 @@ def parse_person_name_map_from_seed_sql(path: Path) -> dict[str, str]:
     text = path.read_text(encoding="utf-8")
     start = text.find("with seed_persons")
     if start == -1:
-        raise ValueError("Could not find 'with seed_persons' block in persons seed SQL.")
+        raise ValueError(
+            "Could not find 'with seed_persons' block in persons seed SQL."
+        )
     end = text.find("insert into persons", start)
     block = text[start:end] if end != -1 else text[start:]
 
@@ -174,7 +176,9 @@ def expand_person_codes(codes: list[str]) -> list[str]:
 
 
 def normalize_scene_text(raw: str) -> str:
-    return MULTI_SPACE_REGEX.sub(" ", SCENE_PREFIX_REGEX.sub("", str(raw).strip())).strip()
+    return MULTI_SPACE_REGEX.sub(
+        " ", SCENE_PREFIX_REGEX.sub("", str(raw).strip())
+    ).strip()
 
 
 def aliases_for_person(code: str, code_to_name: dict[str, str]) -> list[str]:
@@ -224,7 +228,9 @@ def detect_scene_person_codes(
     if matched:
         return dedupe_preserve_order(matched)
 
-    non_group_codes = [code for code in event_person_codes if code not in GROUP_EXPANSIONS]
+    non_group_codes = [
+        code for code in event_person_codes if code not in GROUP_EXPANSIONS
+    ]
     if len(non_group_codes) == 1:
         has_human_action = bool(HUMAN_ACTION_HINT_REGEX.search(text))
         looks_environment_only = bool(ENVIRONMENT_ONLY_HINT_REGEX.search(text))
@@ -317,7 +323,9 @@ def _strip_meta_words(text: str) -> str:
     cleaned = META_SCENE_REGEX.sub("", text)
     cleaned = cleaned.replace("장면으로 끝난다", "마무리된다")
     cleaned = cleaned.replace("예고가 이어진다", "놀람이 번진다")
-    cleaned = cleaned.replace("큰 기쁨의 좋은 소식을 전한다", "천사가 나타나고 목자들이 놀라 눈을 들어 올린다")
+    cleaned = cleaned.replace(
+        "큰 기쁨의 좋은 소식을 전한다", "천사가 나타나고 목자들이 놀라 눈을 들어 올린다"
+    )
     cleaned = cleaned.replace("그가 누구이기에", "두려움과 놀람이 엇갈린다")
     cleaned = cleaned.replace("하나님이 대답하시리이다", "")
     cleaned = MULTI_PUNCT_REGEX.sub(r"\1 ", cleaned)
@@ -339,7 +347,9 @@ def _rewrite_dialogue_labels(
 
     match = matches[0]
     speaker_fragment = match.group("speaker").strip()
-    speaker_codes = detect_scene_person_codes(speaker_fragment, codes, code_to_name) or codes
+    speaker_codes = (
+        detect_scene_person_codes(speaker_fragment, codes, code_to_name) or codes
+    )
     subject = join_names_for_subject(speaker_codes, code_to_name)
     if not subject:
         subject = speaker_fragment
@@ -370,7 +380,9 @@ def _strip_trailing_speech_content(
         return match.group("head").strip()
     if detect_scene_person_codes(trail, codes, code_to_name):
         return text
-    if HUMAN_ACTION_HINT_REGEX.search(trail) or ENVIRONMENT_ONLY_HINT_REGEX.search(trail):
+    if HUMAN_ACTION_HINT_REGEX.search(trail) or ENVIRONMENT_ONLY_HINT_REGEX.search(
+        trail
+    ):
         return text
     if SPEECH_CONTENT_HINT_REGEX.search(trail):
         return match.group("head").strip()
@@ -431,7 +443,8 @@ def _visual_fragment_for_speech(
 
     if not SPEECH_VERB_REGEX.search(stripped):
         if SPEECH_CONTENT_HINT_REGEX.search(stripped) and not (
-            HUMAN_ACTION_HINT_REGEX.search(stripped) or ENVIRONMENT_ONLY_HINT_REGEX.search(stripped)
+            HUMAN_ACTION_HINT_REGEX.search(stripped)
+            or ENVIRONMENT_ONLY_HINT_REGEX.search(stripped)
         ):
             return ""
         return stripped
@@ -465,7 +478,11 @@ def _rewrite_speech_fragments(
     codes: list[str],
     code_to_name: dict[str, str],
 ) -> str:
-    fragments = [fragment.strip() for fragment in re.split(r"(?<=[.!?])\s+", text) if fragment.strip()]
+    fragments = [
+        fragment.strip()
+        for fragment in re.split(r"(?<=[.!?])\s+", text)
+        if fragment.strip()
+    ]
     if len(fragments) <= 1:
         rewritten = _visual_fragment_for_speech(text, codes, code_to_name)
         return rewritten or ""
@@ -512,7 +529,9 @@ def _dedupe_subject_prefixes(
     return cleaned
 
 
-def _is_name_only_text(text: str, codes: list[str], code_to_name: dict[str, str]) -> bool:
+def _is_name_only_text(
+    text: str, codes: list[str], code_to_name: dict[str, str]
+) -> bool:
     if not text:
         return True
 

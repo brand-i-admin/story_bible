@@ -1,11 +1,8 @@
 assets_backup
+.venv
+.env
 assets/bible
 supabase/seeds
-
-android
-macos
-web
-ios
 
 # Miscellaneous
 *.class
@@ -36,7 +33,6 @@ pubspec.lock
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -44,20 +40,54 @@ pubspec.lock
 .pub/
 /build/
 
+# iOS — Flutter-generated artifacts only (platform source is version controlled)
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Pods/
+**/ios/Podfile.lock
+**/ios/.symlinks/
+**/ios/Runner.xcworkspace/xcuserdata/
+**/ios/Runner.xcodeproj/xcuserdata/
+**/ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Android — Flutter-generated artifacts only
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/android/key.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+# Web — ephemeral outputs only
+**/web/.dart_tool/
+
+# macOS (if ever enabled)
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/Podfile.lock
+
 # Symbolication related
 app.*.symbols
 
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-
 # Supabase
 /supabase/.temp
 
+# Generated/large media — kept out of git
 assets/story_images/
 assets/avatars/
 .omx/
+
+# Claude worktrees
+.claude/worktrees/
