@@ -7,6 +7,7 @@ import '../models/era.dart';
 import '../models/person.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
+import '../models/story_scene_asset.dart';
 
 class StoryRepository {
   StoryRepository(this._client);
@@ -26,7 +27,7 @@ class StoryRepository {
     final rows = await _client
         .from('person_eras')
         .select(
-          'display_order, persons!inner(id, code, name, tagline, description, avatar_url)',
+          'display_order, persons!inner(id, code, name, tagline, description, avatar_url, avatar_thumb_url)',
         )
         .eq('era_id', eraId)
         .order('display_order', ascending: true);
@@ -40,6 +41,7 @@ class StoryRepository {
         tagline: person['tagline'] as String?,
         description: person['description'] as String?,
         avatarUrl: person['avatar_url'] as String?,
+        avatarThumbUrl: person['avatar_thumb_url'] as String?,
         displayOrder: row['display_order'] as int,
       );
     }).toList();
@@ -51,22 +53,29 @@ class StoryRepository {
         .select('''
           id,
           code,
+          display_number,
           era_id,
           title,
           summary,
           story,
           short_story,
           story_scenes,
+          timeline_rank,
           start_year,
           end_year,
           time_sort_key,
           place_name,
           lat,
           lng,
+          thumb_url,
+          story_asset_dir,
+          story_thumbnail_dir,
+          story_scene_count,
           event_persons(person_id),
           event_bible_refs(display_text)
         ''')
         .eq('era_id', eraId)
+        .order('timeline_rank', ascending: true)
         .order('time_sort_key', ascending: true);
 
     return rows
@@ -82,22 +91,29 @@ class StoryRepository {
         .select('''
           id,
           code,
+          display_number,
           era_id,
           title,
           summary,
           story,
           short_story,
           story_scenes,
+          timeline_rank,
           start_year,
           end_year,
           time_sort_key,
           place_name,
           lat,
           lng,
+          thumb_url,
+          story_asset_dir,
+          story_thumbnail_dir,
+          story_scene_count,
           event_persons!inner(person_id),
           event_bible_refs(display_text)
         ''')
         .eq('event_persons.person_id', personId)
+        .order('timeline_rank', ascending: true)
         .order('time_sort_key', ascending: true);
 
     return rows
@@ -107,22 +123,23 @@ class StoryRepository {
         .toList();
   }
 
-  Future<Map<String, int>> fetchPersonTimelineOrder() async {
+  Future<Map<String, double>> fetchPersonTimelineOrder() async {
     final rows = await _client
         .from('events')
-        .select('time_sort_key, event_persons(person_id)')
+        .select('timeline_rank, event_persons(person_id)')
+        .order('timeline_rank', ascending: true)
         .order('time_sort_key', ascending: true);
 
-    final firstAppearanceByPersonId = <String, int>{};
+    final firstAppearanceByPersonId = <String, double>{};
     for (final row in rows) {
-      final timeSortKey = row['time_sort_key'] as int? ?? 0;
+      final timelineRank = (row['timeline_rank'] as num?)?.toDouble() ?? 0;
       final personRows = row['event_persons'] as List<dynamic>? ?? const [];
       for (final personRow in personRows.whereType<Map<String, dynamic>>()) {
         final personId = personRow['person_id'] as String?;
         if (personId == null) {
           continue;
         }
-        firstAppearanceByPersonId.putIfAbsent(personId, () => timeSortKey);
+        firstAppearanceByPersonId.putIfAbsent(personId, () => timelineRank);
       }
     }
     return firstAppearanceByPersonId;
@@ -139,20 +156,27 @@ class StoryRepository {
         .select('''
           id,
           code,
+          display_number,
           era_id,
           title,
           summary,
           story,
           short_story,
           story_scenes,
+          timeline_rank,
           start_year,
           end_year,
           time_sort_key,
           place_name,
           lat,
           lng,
+          thumb_url,
+          story_asset_dir,
+          story_thumbnail_dir,
+          story_scene_count,
           event_persons(person_id, persons(name))
         ''')
+        .order('timeline_rank', ascending: true)
         .order('time_sort_key', ascending: true);
 
     final tokens = normalized
@@ -189,7 +213,7 @@ class StoryRepository {
       if (scoreDiff != 0) {
         return scoreDiff;
       }
-      return a.event.timeSortKey.compareTo(b.event.timeSortKey);
+      return a.event.compareTimelineTo(b.event);
     });
 
     return scored.take(20).map((entry) => entry.event).toList();
@@ -224,6 +248,29 @@ class StoryRepository {
         displayOrder: row['display_order'] as int? ?? 0,
       );
     }).toList();
+  }
+
+  Future<List<StorySceneAsset>> fetchSceneAssetsForEvent(String eventId) async {
+    final rows = await _client
+        .from('event_scene_generated_assets')
+        .select('scene_index, original_path, thumbnail_path, status, metadata')
+        .eq('event_id', eventId)
+        .order('scene_index', ascending: true);
+
+    return rows
+        .whereType<Map<String, dynamic>>()
+        .map(
+          (row) => StorySceneAsset(
+            sceneIndex: row['scene_index'] as int? ?? 0,
+            originalPath: row['original_path'] as String?,
+            thumbnailPath: row['thumbnail_path'] as String?,
+            status: row['status'] as String? ?? 'unknown',
+            metadata:
+                (row['metadata'] as Map?)?.cast<String, dynamic>() ?? const {},
+          ),
+        )
+        .where((asset) => asset.sceneIndex > 0)
+        .toList(growable: false);
   }
 
   Future<List<BibleVerse>> fetchBibleVersesByChapter({
@@ -306,21 +353,42 @@ StoryEvent storyEventFromRow(
       ? (row['event_bible_refs'] as List<dynamic>? ?? const [])
       : const [];
 
+  final timelineRank = (row['timeline_rank'] as num?)?.toDouble();
+  if (timelineRank == null || timelineRank <= 0) {
+    throw StateError(
+      'Event ${row['id']} has invalid timeline_rank: $timelineRank. '
+      'Database integrity check required.',
+    );
+  }
+
+  String? displayNumber = row['display_number'] as String?;
+  if (displayNumber == null || displayNumber.trim().isEmpty) {
+    final code = row['code'] as String;
+    final match = RegExp(r'(\d+)$').firstMatch(code);
+    displayNumber = match?.group(1)?.padLeft(3, '0') ?? '???';
+  }
+
   return StoryEvent(
     id: row['id'] as String,
     code: row['code'] as String,
+    displayNumber: displayNumber,
     eraId: row['era_id'] as String,
     title: row['title'] as String,
     summary: row['summary'] as String?,
     story: row['story'] as String?,
     shortStory: row['short_story'] as String?,
     storyScenes: row['story_scenes'] as String?,
+    timelineRank: timelineRank,
     startYear: row['start_year'] as int?,
     endYear: row['end_year'] as int?,
     timeSortKey: row['time_sort_key'] as int,
     placeName: row['place_name'] as String?,
     lat: (row['lat'] as num?)?.toDouble(),
     lng: (row['lng'] as num?)?.toDouble(),
+    thumbUrl: row['thumb_url'] as String?,
+    storyAssetDir: row['story_asset_dir'] as String?,
+    storyThumbnailDir: row['story_thumbnail_dir'] as String?,
+    storySceneCount: row['story_scene_count'] as int? ?? 0,
     personIds: personRows
         .whereType<Map<String, dynamic>>()
         .map((entry) => entry['person_id'] as String?)

@@ -370,11 +370,7 @@ class StoryController extends Notifier<StoryState> {
     }).toList();
 
     filtered.sort((a, b) {
-      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
-      if (cmp != 0) {
-        return cmp;
-      }
-      return a.id.compareTo(b.id);
+      return a.compareTimelineTo(b);
     });
 
     return filtered;

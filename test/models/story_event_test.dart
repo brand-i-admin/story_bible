@@ -14,12 +14,14 @@ void main() {
       return StoryEvent(
         id: 'e1',
         code: 'evt_001',
+        displayNumber: '001',
         eraId: 'era_primeval',
         title: '001 창조: 7일과 안식',
         summary: summary,
         story: story,
         shortStory: shortStory,
         storyScenes: null,
+        timelineRank: 1.0,
         startYear: -4000,
         endYear: -4000,
         timeSortKey: -4000000,
@@ -28,6 +30,10 @@ void main() {
         lng: lng,
         personIds: const ['god'],
         bibleRefs: const ['창 1:1-2:3'],
+        thumbUrl: null,
+        storyAssetDir: null,
+        storyThumbnailDir: null,
+        storySceneCount: 0,
       );
     }
 

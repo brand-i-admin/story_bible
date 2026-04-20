@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import base64
 from datetime import datetime, timedelta, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -38,6 +39,8 @@ from story_scene_utils import (
 
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
+MANIFEST_SCHEMA_VERSION = 1
+STORY_SCENE_MANIFEST_PATH = Path("supabase/generated_media/story_scenes.json")
 INVALID_FILENAME_CHARS = re.compile(r"[\\/:*?\"<>|]+")
 WHITESPACE_REGEX = re.compile(r"\s+")
 SENTENCE_SPLIT_REGEX = re.compile(r"(?<=[.!?。！？])\s+")
@@ -635,6 +638,136 @@ def scene_prompt_note_for(event: dict[str, Any], *, scene_index: int) -> str:
     return ""
 
 
+def natural_key(
+    *,
+    owner_type: str,
+    owner_code: str,
+    asset_role: str,
+    variant: str,
+    scene_index: int | None = None,
+) -> str:
+    scene_part = str(scene_index) if scene_index is not None else "none"
+    return f"{owner_type}:{owner_code}:{asset_role}:{scene_part}:{variant}"
+
+
+def repo_relative_path(path: Path) -> str:
+    if not path.is_absolute():
+        return path.as_posix()
+    try:
+        return path.relative_to(Path.cwd()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def sha256_for_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def build_story_scene_asset(
+    *,
+    event_code: str,
+    event_title: str,
+    event_manifest: dict[str, Any],
+    entry: dict[str, Any],
+    file_path: Path,
+) -> dict[str, Any]:
+    scene_index = int(entry["scene_index"])
+    return {
+        "natural_key": natural_key(
+            owner_type="event",
+            owner_code=event_code,
+            asset_role="story_scene",
+            scene_index=scene_index,
+            variant="original",
+        ),
+        "owner_type": "event",
+        "owner_code": event_code,
+        "asset_role": "story_scene",
+        "scene_index": scene_index,
+        "variant": "original",
+        "relative_path": repo_relative_path(file_path),
+        "source_relative_path": None,
+        "mime_type": "image/png",
+        "byte_size": file_path.stat().st_size,
+        "content_hash": sha256_for_file(file_path),
+        "generator": "tools/generate_event_story_images_vertex.py",
+        "generator_model": str(event_manifest.get("model") or "").strip() or None,
+        "metadata": {
+            "event_title": event_title,
+            "scene_prompt": str(entry.get("scene_prompt") or "").strip(),
+            "scene_prompt_note": str(entry.get("scene_prompt_note") or "").strip(),
+            "scene_person_codes": list(entry.get("scene_person_codes") or []),
+            "scene_reference_person_codes": list(
+                entry.get("scene_reference_person_codes") or []
+            ),
+            "reference_avatar_codes": list(entry.get("reference_avatar_codes") or []),
+            "missing_reference_avatar_codes": list(
+                entry.get("missing_reference_avatar_codes") or []
+            ),
+            "source_json": str(event_manifest.get("source_json") or "").strip(),
+            "source_index": int(event_manifest.get("source_index") or 0),
+            "generator_location": str(event_manifest.get("location") or "").strip(),
+        },
+    }
+
+
+def write_story_scene_manifest(output_root: Path) -> None:
+    assets: list[dict[str, Any]] = []
+    for manifest_path in sorted(output_root.rglob("manifest.json")):
+        event_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        entries = event_manifest.get("entries", [])
+        if not isinstance(entries, list):
+            continue
+
+        event_code = str(event_manifest.get("event_code") or "").strip()
+        event_title = str(event_manifest.get("title") or "").strip()
+        if not event_code:
+            continue
+
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            filename = str(entry.get("file") or "").strip()
+            if not filename:
+                continue
+            file_path = manifest_path.parent / filename
+            if not file_path.exists():
+                continue
+            scene_index = entry.get("scene_index")
+            if not isinstance(scene_index, int):
+                continue
+            assets.append(
+                build_story_scene_asset(
+                    event_code=event_code,
+                    event_title=event_title,
+                    event_manifest=event_manifest,
+                    entry=entry,
+                    file_path=file_path,
+                )
+            )
+
+    assets.sort(key=lambda item: item["natural_key"])
+    STORY_SCENE_MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
+    STORY_SCENE_MANIFEST_PATH.write_text(
+        json.dumps(
+            {
+                "schema_version": MANIFEST_SCHEMA_VERSION,
+                "asset_family": "story_scenes",
+                "assets": assets,
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
 def main() -> int:
     args = parse_args()
     resolved_model = resolve_model_alias(args.model)
@@ -746,6 +879,13 @@ def main() -> int:
             )
 
             manifest_entry = {
+                "natural_key": natural_key(
+                    owner_type="event",
+                    owner_code=event_code,
+                    asset_role="story_scene",
+                    scene_index=scene_index,
+                    variant="original",
+                ),
                 "scene_index": scene_index,
                 "scene_prompt": visual_scene_text,
                 "scene_prompt_note": scene_prompt_note,
@@ -754,6 +894,7 @@ def main() -> int:
                 "reference_avatar_codes": reference_codes,
                 "missing_reference_avatar_codes": missing_reference_codes,
                 "file": out_file.name,
+                "relative_path": repo_relative_path(out_file),
                 "status": "pending",
             }
 
@@ -935,6 +1076,8 @@ def main() -> int:
             encoding="utf-8",
         )
 
+    write_story_scene_manifest(output_root)
+    print(f"[OK]   wrote manifest -> {STORY_SCENE_MANIFEST_PATH}")
     print(f"Done. success={success} failure={failure} skipped={skipped}")
     return 0 if failure == 0 else 1
 

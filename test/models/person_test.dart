@@ -12,6 +12,7 @@ void main() {
         tagline: null,
         description: null,
         avatarUrl: null,
+        avatarThumbUrl: null,
         displayOrder: 1,
       );
 
@@ -26,6 +27,7 @@ void main() {
         tagline: null,
         description: null,
         avatarUrl: '',
+        avatarThumbUrl: null,
         displayOrder: 1,
       );
 
@@ -40,6 +42,7 @@ void main() {
         tagline: null,
         description: null,
         avatarUrl: 'assets/avatars/abraham.png',
+        avatarThumbUrl: null,
         displayOrder: 1,
       );
 
@@ -54,6 +57,7 @@ void main() {
         tagline: null,
         description: null,
         avatarUrl: 'https://example.com/avatar.png',
+        avatarThumbUrl: null,
         displayOrder: 1,
       );
 
@@ -68,6 +72,7 @@ void main() {
         tagline: null,
         description: null,
         avatarUrl: '  assets/avatars/abraham.png  ',
+        avatarThumbUrl: null,
         displayOrder: 1,
       );
 

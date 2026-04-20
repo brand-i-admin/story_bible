@@ -11,6 +11,7 @@ void main() {
     tagline: '최초의 사람',
     description: null,
     avatarUrl: null,
+    avatarThumbUrl: null,
     displayOrder: 1,
   );
 

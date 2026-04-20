@@ -8,6 +8,10 @@ create extension if not exists vector;
 -- Re-initialize safely when rerunning this script locally or via CI.
 -- We keep this as "drop then recreate" for predictable bootstrap.
 drop table if exists search_embeddings cascade;
+drop table if exists event_scene_generated_assets cascade;
+drop table if exists person_generated_assets cascade;
+drop table if exists import_job_artifacts cascade;
+drop table if exists import_jobs cascade;
 drop table if exists user_daily_study cascade;
 drop table if exists user_daily_attendance cascade;
 drop table if exists user_intercessory_prayers cascade;
@@ -50,6 +54,7 @@ create table if not exists persons (
   name text not null,
   tagline text,
   avatar_url text,
+  avatar_thumb_url text,
   description text,
   is_active boolean not null default true,
   created_at timestamptz not null default now()
@@ -66,12 +71,14 @@ create table if not exists person_eras (
 create table if not exists events (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
+  display_number text,
   era_id uuid not null references eras(id),
   title text not null,
   summary text,
   story text,
   short_story text,
   story_scenes text,
+  timeline_rank double precision not null,
   start_year int,
   end_year int,
   time_sort_key bigint not null,
@@ -81,6 +88,9 @@ create table if not exists events (
   lng double precision,
   video_url text,
   thumb_url text,
+  story_asset_dir text,
+  story_thumbnail_dir text,
+  story_scene_count integer not null default 0,
   created_at timestamptz not null default now()
 );
 
@@ -239,7 +249,100 @@ create table if not exists search_embeddings (
   updated_at timestamptz not null default now()
 );
 
+-- -----------------------------------------------------------------------------
+-- Import jobs (service role only - managed by Edge Functions)
+-- -----------------------------------------------------------------------------
+create table if not exists import_jobs (
+  id uuid primary key default gen_random_uuid(),
+  submitted_by_user_id uuid references auth.users(id) on delete set null,
+  source_name text not null,
+  source_sha256 text not null,
+  source_storage_key text,
+  status text not null default 'received' check (
+    status in (
+      'received',
+      'failed_validation',
+      'validated',
+      'under_review',
+      'build_ready',
+      'approved',
+      'promoted',
+      'failed',
+      'cancelled'
+    )
+  ),
+  requested_at timestamptz not null default now(),
+  validated_at timestamptz,
+  approved_at timestamptz,
+  promoted_at timestamptz,
+  notes text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists import_job_artifacts (
+  id uuid primary key default gen_random_uuid(),
+  import_job_id uuid not null references import_jobs(id) on delete cascade,
+  artifact_type text not null,
+  relative_path text,
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  constraint import_job_artifacts_job_type_path_key unique (
+    import_job_id,
+    artifact_type,
+    relative_path
+  )
+);
+
+-- -----------------------------------------------------------------------------
+-- Generated media (AI-generated assets for persons/events)
+-- -----------------------------------------------------------------------------
+create table if not exists person_generated_assets (
+  id uuid primary key default gen_random_uuid(),
+  person_id uuid not null references persons(id) on delete cascade,
+  original_path text,
+  thumbnail_path text,
+  status text not null default 'ready',
+  generator text,
+  generator_model text,
+  generated_at timestamptz,
+  content_hash text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint person_generated_assets_person_id_key unique (person_id)
+);
+
+create table if not exists event_scene_generated_assets (
+  id uuid primary key default gen_random_uuid(),
+  event_id uuid not null references events(id) on delete cascade,
+  scene_index integer not null check (scene_index > 0),
+  original_path text,
+  thumbnail_path text,
+  status text not null default 'ready',
+  prompt_text text,
+  generator text,
+  generator_model text,
+  generated_at timestamptz,
+  content_hash text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint event_scene_generated_assets_event_scene_key unique (event_id, scene_index)
+);
+
+-- Link events to the import job that produced them (added after import_jobs exists).
+alter table events
+  add column if not exists source_import_job_id uuid references import_jobs(id) on delete restrict;
+
 create index if not exists idx_events_era_time on events (era_id, time_sort_key);
+create index if not exists idx_events_timeline_order on events (era_id, timeline_rank, time_sort_key, id);
+create unique index if not exists idx_events_era_timeline_rank_unique on events (era_id, timeline_rank);
+create index if not exists idx_events_display_number on events (display_number) where display_number is not null;
+create index if not exists idx_events_source_import_job on events (source_import_job_id) where source_import_job_id is not null;
+create index if not exists idx_import_jobs_status_requested on import_jobs (status, requested_at desc);
+create index if not exists idx_import_job_artifacts_job on import_job_artifacts (import_job_id, artifact_type);
 create index if not exists idx_event_persons_person_seq on event_persons (person_id, person_sequence);
 create index if not exists idx_event_persons_person_event on event_persons (person_id, event_id);
 create index if not exists idx_progress_user_completed on user_event_progress (user_id, is_completed);
@@ -270,6 +373,21 @@ for each row execute function public.touch_updated_at();
 drop trigger if exists set_user_notes_updated_at on user_notes;
 create trigger set_user_notes_updated_at
 before update on user_notes
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_import_jobs_updated_at on import_jobs;
+create trigger set_import_jobs_updated_at
+before update on import_jobs
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_person_generated_assets_updated_at on person_generated_assets;
+create trigger set_person_generated_assets_updated_at
+before update on person_generated_assets
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_event_scene_generated_assets_updated_at on event_scene_generated_assets;
+create trigger set_event_scene_generated_assets_updated_at
+before update on event_scene_generated_assets
 for each row execute function public.touch_updated_at();
 
 create or replace function public.handle_new_user_profile()
@@ -426,6 +544,11 @@ grant select, insert, delete on table user_saved_verses to authenticated;
 grant select, insert on table user_daily_attendance to authenticated;
 grant select, insert on table user_daily_study to authenticated;
 
+-- Generated media is readable by all app users (served via app UI).
+grant select on table person_generated_assets to anon, authenticated;
+grant select on table event_scene_generated_assets to anon, authenticated;
+-- Import jobs have no user-role grants: service_role bypasses RLS and is the only writer/reader.
+
 alter table eras enable row level security;
 alter table persons enable row level security;
 alter table person_eras enable row level security;
@@ -441,6 +564,11 @@ alter table user_notes enable row level security;
 alter table user_saved_verses enable row level security;
 alter table user_daily_attendance enable row level security;
 alter table user_daily_study enable row level security;
+alter table person_generated_assets enable row level security;
+alter table event_scene_generated_assets enable row level security;
+-- Import jobs: RLS enabled with no policies → service_role only (bypasses RLS).
+alter table import_jobs enable row level security;
+alter table import_job_artifacts enable row level security;
 
 drop policy if exists eras_read_all on eras;
 create policy eras_read_all on eras for select using (true);
@@ -465,6 +593,12 @@ create policy bible_verses_read_all on bible_verses for select using (true);
 
 drop policy if exists quiz_questions_read_all on quiz_questions;
 create policy quiz_questions_read_all on quiz_questions for select using (true);
+
+drop policy if exists person_generated_assets_read_all on person_generated_assets;
+create policy person_generated_assets_read_all on person_generated_assets for select using (true);
+
+drop policy if exists event_scene_generated_assets_read_all on event_scene_generated_assets;
+create policy event_scene_generated_assets_read_all on event_scene_generated_assets for select using (true);
 
 drop policy if exists user_event_progress_read_own on user_event_progress;
 create policy user_event_progress_read_own on user_event_progress

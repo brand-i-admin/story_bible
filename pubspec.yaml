@@ -72,6 +72,7 @@ flutter:
 
   assets:
     - .env
+    - assets/200_stories/
     - assets/maps/ne_50m_admin_0_countries.geojson
     - assets/avatars_thumbs/
     - assets/story_images_thumbs/001 창조_ 7일과 안식/

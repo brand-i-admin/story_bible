@@ -54,6 +54,7 @@ Person _person({
     tagline: null,
     description: null,
     avatarUrl: null,
+    avatarThumbUrl: null,
     displayOrder: displayOrder,
   );
 }
@@ -67,12 +68,14 @@ StoryEvent _event({
   return StoryEvent(
     id: id,
     code: id,
+    displayNumber: '001',
     eraId: eraId,
     title: '사건 $id',
     summary: null,
     story: null,
     shortStory: null,
     storyScenes: null,
+    timelineRank: 1.0,
     startYear: null,
     endYear: null,
     timeSortKey: timeSortKey,
@@ -81,6 +84,10 @@ StoryEvent _event({
     lng: null,
     personIds: personIds,
     bibleRefs: const [],
+    thumbUrl: null,
+    storyAssetDir: null,
+    storyThumbnailDir: null,
+    storySceneCount: 0,
   );
 }
 
