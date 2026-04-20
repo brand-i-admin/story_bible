@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   supabase_flutter: ^2.9.1
   flutter_map: ^8.2.1
@@ -52,6 +51,15 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+  # Mock library for unit/widget tests (see docs/TESTING.md)
+  mocktail: ^1.0.4
+
+  # Import sorter — pre-commit hook이 dart import 순서를 자동 검증
+  import_sorter: ^4.6.0
+
+  # Golden test — 위젯 렌더링 결과를 골든 이미지와 비교하여 UI regression 감지
+  golden_toolkit: ^0.15.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -66,7 +74,6 @@ flutter:
     - .env
     - assets/maps/ne_50m_admin_0_countries.geojson
     - assets/avatars_thumbs/
-    - assets/elements/
     - assets/story_images_thumbs/001 창조_ 7일과 안식/
     - assets/story_images_thumbs/002 에덴_ 사람의 창조와 사명/
     - assets/story_images_thumbs/003 타락_ 뱀의 유혹과 선택/
@@ -278,6 +285,7 @@ flutter:
     - assets/story_images_thumbs/213 용과 두 짐승_ 대립의 정점/
     - assets/story_images_thumbs/214 바벨론의 멸망_ 무너지는 화려함/
     - assets/story_images_thumbs/215 최후 심판과 새 하늘 새 땅/
+    - assets/elements/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

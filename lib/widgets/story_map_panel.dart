@@ -4,44 +4,16 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../models/story_event.dart';
+import '../utils/map_math.dart' as map_math;
+import 'shared/event_short_popup.dart';
 
-BoxDecoration _mapCalloutDecoration() {
-  return BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [Color(0xFFF9F2E5), Color(0xFFF0E1C6)],
-    ),
-    borderRadius: BorderRadius.circular(18),
-    border: Border.all(color: const Color(0xBC9A7A4C), width: 1.0),
-    boxShadow: const [
-      BoxShadow(
-        color: Color(0x30000000),
-        blurRadius: 18,
-        offset: Offset(0, 10),
-      ),
-    ],
-  );
-}
-
-BoxDecoration _mapActionButtonDecoration() {
-  return BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [Color(0xFFD89A47), Color(0xFFB96B2D)],
-    ),
-    borderRadius: BorderRadius.circular(12),
-    border: Border.all(color: const Color(0xFFF2D8A6), width: 1.0),
-    boxShadow: const [
-      BoxShadow(color: Color(0x26A35B22), blurRadius: 10, offset: Offset(0, 5)),
-    ],
-  );
-}
+// 핀 마커 위젯/데이터 클래스를 별도 파트 파일로 분리.
+part 'map/pin_marker.dart';
 
 class StoryMapPanel extends StatefulWidget {
   const StoryMapPanel({
@@ -165,7 +137,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       widget.controller?._bind(this);
     }
 
-    if (_signature(oldWidget.events) != _signature(widget.events) ||
+    if (map_math.eventListSignature(oldWidget.events) !=
+            map_math.eventListSignature(widget.events) ||
         oldWidget.selectedPersonIds != widget.selectedPersonIds) {
       _startRevealAnimation();
       if (_mapReady &&
@@ -352,7 +325,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   List<Polyline> _buildPolylines(List<StoryEvent> events) {
     final allWithCoords = events.where((event) => event.hasCoordinate).toList();
-    final adjustedAll = _buildAdjustedPoints(allWithCoords);
+    final adjustedAll = map_math.buildAdjustedPoints(allWithCoords);
     final visible = events
         .where((event) => event.hasCoordinate)
         .take(_visibleCount)
@@ -369,7 +342,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           points: [visiblePoints[i], visiblePoints[i + 1]],
           color: eventColor.withValues(alpha: 0.9),
           strokeWidth: 4,
-          pattern: StrokePattern.dashed(segments: [3.5, 7]),
+          pattern: StrokePattern.dashed(segments: const [3.5, 7]),
         ),
       );
     }
@@ -423,16 +396,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       eventOrder.putIfAbsent(events[i].id, () => i + 1);
     }
 
-    final adjustedPoints = _buildAdjustedPoints(withCoordinate);
+    final adjustedPoints = map_math.buildAdjustedPoints(withCoordinate);
     final nodes = <_MarkerNode>[];
     for (final event in visible) {
       final basePoint = adjustedPoints[event.id] ?? event.latLng;
       final order = eventOrder[event.id] ?? 0;
       final placeName = (event.placeName ?? '').trim();
       final colors = _colorsForEvent(event);
-      if (_hasMultiPlacePin(placeName) && order > 0) {
-        final parts = _splitPlaceParts(placeName);
-        final points = _buildSplitPinPoints(basePoint);
+      if (map_math.hasMultiPlacePin(placeName) && order > 0) {
+        final parts = map_math.splitPlaceParts(placeName);
+        final points = map_math.buildSplitPinPoints(basePoint);
         nodes.add(
           _MarkerNode(
             event: event,
@@ -513,11 +486,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               if (selected && widget.showSelectedCallout && node.showCallout)
                 Positioned(
                   bottom: pinStyle.visualHeight + 12,
-                  child: _buildEventCallout(
+                  child: EventShortPopup(
                     event: event,
                     shortText: shortText,
+                    maxWidth: 268,
                     onClose: widget.onCloseSelectedCallout,
-                    onOpenDetail: widget.onOpenDetail,
+                    onOpenDetail: widget.onOpenDetail == null
+                        ? null
+                        : () => widget.onOpenDetail!(event.id),
                   ),
                 ),
               GestureDetector(
@@ -606,181 +582,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
-  bool _hasMultiPlacePin(String placeName) {
-    return placeName.contains('→') || placeName.contains('->');
-  }
-
-  (String, String) _splitPlaceParts(String placeName) {
-    final arrow = placeName.contains('→') ? '→' : '->';
-    final parts = placeName
-        .split(arrow)
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toList(growable: false);
-    if (parts.length >= 2) {
-      return (parts.first, parts.last);
-    }
-    return (placeName, placeName);
-  }
-
-  (LatLng, LatLng) _buildSplitPinPoints(LatLng basePoint) {
-    const radiusDeg = 0.038;
-    final cosLat = math
-        .cos(basePoint.latitude * math.pi / 180)
-        .abs()
-        .clamp(0.3, 1.0);
-    final dLng = (radiusDeg / cosLat) * 0.75;
-    final dLat = radiusDeg * 0.30;
-    return (
-      basePoint,
-      LatLng(basePoint.latitude - dLat, basePoint.longitude + dLng),
-    );
-  }
-
-  Widget _buildEventCallout({
-    required StoryEvent event,
-    required String shortText,
-    required VoidCallback? onClose,
-    required ValueChanged<String>? onOpenDetail,
-  }) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 268),
-      child: Material(
-        color: Colors.transparent,
-        child: Stack(
-          children: [
-            Container(
-              decoration: _mapCalloutDecoration(),
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 22),
-                    child: Text(
-                      event.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF3D2D18),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  if (shortText.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      shortText,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF4C3A21),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 9),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: onOpenDetail == null
-                          ? null
-                          : () => onOpenDetail(event.id),
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                        constraints: const BoxConstraints(
-                          minWidth: 96,
-                          minHeight: 30,
-                        ),
-                        decoration: _mapActionButtonDecoration(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 5,
-                        ),
-                        child: const Text(
-                          '자세히 보기',
-                          style: TextStyle(
-                            color: Color(0xFFFDF8EE),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            shadows: [
-                              Shadow(
-                                color: Color(0xAA000000),
-                                blurRadius: 2,
-                                offset: Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              top: 10,
-              right: 10,
-              child: GestureDetector(
-                onTap: onClose,
-                behavior: HitTestBehavior.translucent,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0xCCF8EEDC),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: const Color(0xAA9A7A4B),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.close_rounded,
-                    size: 15,
-                    color: Color(0xFF7A5B33),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Map<String, LatLng> _buildAdjustedPoints(List<StoryEvent> visible) {
-    final grouped = <String, List<StoryEvent>>{};
-    for (final event in visible) {
-      final key =
-          '${event.lat!.toStringAsFixed(2)}:${event.lng!.toStringAsFixed(2)}';
-      grouped.putIfAbsent(key, () => []).add(event);
-    }
-
-    final adjusted = <String, LatLng>{};
-    for (final group in grouped.values) {
-      if (group.length == 1) {
-        final event = group.first;
-        adjusted[event.id] = event.latLng;
-        continue;
-      }
-
-      final radiusDeg = group.length > 6 ? 0.10 : 0.065;
-      final baseLat = group.first.lat!;
-      final cosLat = math.cos(baseLat * math.pi / 180).abs().clamp(0.3, 1.0);
-      for (var i = 0; i < group.length; i++) {
-        final angle = (2 * math.pi * i) / group.length;
-        final dLat = radiusDeg * math.sin(angle);
-        final dLng = (radiusDeg * math.cos(angle)) / cosLat;
-        final event = group[i];
-        adjusted[event.id] = LatLng(event.lat! + dLat, event.lng! + dLng);
-      }
-    }
-    return adjusted;
-  }
+  // 순수 함수들은 lib/utils/map_math.dart로 추출됨.
+  // - hasMultiPlacePin, splitPlaceParts, buildSplitPinPoints,
+  //   buildAdjustedPoints, easeInOut, mercatorY, normalizedLongitudeDelta,
+  //   rotateOffset, eventListSignature
 
   List<Marker> _buildRegionLabels() {
     final labels = <(String, LatLng)>[
@@ -1015,7 +820,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       _isAnimatingPath = withCoordinate.length > 1;
     });
 
-    final adjusted = _buildAdjustedPoints(withCoordinate);
+    final adjusted = map_math.buildAdjustedPoints(withCoordinate);
     final points = withCoordinate
         .map((event) => adjusted[event.id] ?? event.latLng)
         .toList();
@@ -1084,7 +889,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return;
     }
 
-    final adjusted = _buildAdjustedPoints(withCoordinate);
+    final adjusted = map_math.buildAdjustedPoints(withCoordinate);
     final selectedPoint = adjusted[selectedEvent.id] ?? selectedEvent.latLng;
     final camera = _safeCamera();
     if (camera == null) {
@@ -1214,16 +1019,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
 
     final rawPoints = visibleEvents.map((event) => event.latLng).toList();
-    final adjustedPointsById = _buildAdjustedPoints(visibleEvents);
+    final adjustedPointsById = map_math.buildAdjustedPoints(visibleEvents);
     final fittedPoints = visibleEvents
         .map((event) => adjustedPointsById[event.id] ?? event.latLng)
         .toList(growable: false);
     final bounds = LatLngBounds.fromPoints(fittedPoints);
     final rawBounds = LatLngBounds.fromPoints(rawPoints);
-    final rawLonSpan = _normalizedLongitudeDelta(
-      rawBounds.west,
-      rawBounds.east,
-    ).abs();
+    final rawLonSpan = map_math
+        .normalizedLongitudeDelta(rawBounds.west, rawBounds.east)
+        .abs();
     final rawLatSpan = (rawBounds.north - rawBounds.south).abs();
     final isTightlyClustered = rawLonSpan < 0.35 && rawLatSpan < 0.28;
     final zoomAdjust = widget.fitAllZoomAdjust.clamp(-2.0, 2.0);
@@ -1248,21 +1052,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
     final projectedPoint = camera.projectAtZoom(geoPoint, zoom);
     final viewportCenter = camera.nonRotatedSize.center(Offset.zero);
-    final offsetFromCenter = _rotateOffset(
+    final offsetFromCenter = map_math.rotateOffset(
       targetOffset - viewportCenter,
       camera.rotationRad,
     );
     final projectedCenter = projectedPoint - offsetFromCenter;
     return camera.unprojectAtZoom(projectedCenter, zoom);
-  }
-
-  Offset _rotateOffset(Offset value, double radians) {
-    final cosTheta = math.cos(radians);
-    final sinTheta = math.sin(radians);
-    return Offset(
-      value.dx * cosTheta - value.dy * sinTheta,
-      value.dx * sinTheta + value.dy * cosTheta,
-    );
   }
 
   void _focusToPoint(
@@ -1290,7 +1085,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     _cameraTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
       final t = (DateTime.now().difference(startAt).inMilliseconds / durationMs)
           .clamp(0.0, 1.0);
-      final eased = _easeInOut(t);
+      final eased = map_math.easeInOut(t);
 
       final next = LatLng(
         startCenter.latitude + (point.latitude - startCenter.latitude) * eased,
@@ -1385,14 +1180,6 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return _colorsForEvent(event).firstOrNull ?? const Color(0xFF6C5A44);
   }
 
-  double _easeInOut(double t) {
-    return t < 0.5 ? 4 * t * t * t : 1 - math.pow(-2 * t + 2, 3).toDouble() / 2;
-  }
-
-  String _signature(List<StoryEvent> events) {
-    return events.map((event) => event.id).join('|');
-  }
-
   double _computeRevealZoom(List<LatLng> points) {
     const minZoom = 2.4;
     const maxZoom = 13.0;
@@ -1405,12 +1192,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
 
     final bounds = LatLngBounds.fromPoints(points);
-    final lonSpan = _normalizedLongitudeDelta(
-      bounds.west,
-      bounds.east,
-    ).clamp(0.000001, 360.0);
-    final northY = _mercatorY(bounds.north);
-    final southY = _mercatorY(bounds.south);
+    final lonSpan = map_math
+        .normalizedLongitudeDelta(bounds.west, bounds.east)
+        .clamp(0.000001, 360.0);
+    final northY = map_math.mercatorY(bounds.north);
+    final southY = map_math.mercatorY(bounds.south);
     final latFraction = (southY - northY).abs().clamp(0.000001, 1.0);
 
     final viewportWidth = math.max(180.0, _lastMapSize.width * 0.86);
@@ -1425,197 +1211,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return fittedZoom.clamp(minZoom, maxZoom);
   }
 
-  double _mercatorY(double latitude) {
-    final clampedLatitude = latitude.clamp(-85.05112878, 85.05112878);
-    final sinValue = math.sin(clampedLatitude * math.pi / 180.0);
-    return 0.5 - math.log((1 + sinValue) / (1 - sinValue)) / (4 * math.pi);
-  }
-
-  double _normalizedLongitudeDelta(double west, double east) {
-    final delta = (east - west).abs();
-    if (delta <= 180.0) {
-      return delta;
-    }
-    return 360.0 - delta;
-  }
-
   dynamic _safeCamera() {
     try {
       return _controller.camera;
     } catch (_) {
       return null;
     }
-  }
-}
-
-class _PinStyle {
-  const _PinStyle({
-    required this.badgeHeight,
-    required this.labelFontSize,
-    required this.arrowWidth,
-    required this.arrowHeight,
-    required this.anchorGap,
-  });
-
-  final double badgeHeight;
-  final double labelFontSize;
-  final double arrowWidth;
-  final double arrowHeight;
-  final double anchorGap;
-
-  double badgeWidthFor(String label) {
-    return label.length > 2
-        ? (badgeHeight + 12).clamp(24.0, 42.0)
-        : badgeHeight;
-  }
-
-  double get visualHeight => badgeHeight + 4 + arrowHeight;
-
-  double get markerHeight => visualHeight + anchorGap;
-}
-
-class _MarkerNode {
-  const _MarkerNode({
-    required this.event,
-    required this.point,
-    required this.pinLabel,
-    required this.placeLabel,
-    required this.showCallout,
-    required this.personColors,
-  });
-
-  final StoryEvent event;
-  final LatLng point;
-  final String pinLabel;
-  final String placeLabel;
-  final bool showCallout;
-  final List<Color> personColors;
-}
-
-extension _IterableX<E> on Iterable<E> {
-  E? get firstOrNull => isEmpty ? null : first;
-}
-
-class _CompactPinMarker extends StatelessWidget {
-  const _CompactPinMarker({
-    required this.label,
-    required this.selected,
-    required this.style,
-  });
-
-  final String label;
-  final bool selected;
-  final _PinStyle style;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _PinNumberBadge(
-          label,
-          selected: selected,
-          fontSize: style.labelFontSize,
-          badgeHeight: style.badgeHeight,
-        ),
-        const SizedBox(height: 4),
-        CustomPaint(
-          size: Size(style.arrowWidth, style.arrowHeight),
-          painter: _PinPointerPainter(selected: selected),
-        ),
-        SizedBox(height: style.anchorGap),
-      ],
-    );
-  }
-}
-
-class _PinNumberBadge extends StatelessWidget {
-  const _PinNumberBadge(
-    this.label, {
-    required this.selected,
-    required this.fontSize,
-    required this.badgeHeight,
-  });
-
-  final String label;
-  final bool selected;
-  final double fontSize;
-  final double badgeHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    final isMultiChar = label.length > 2;
-    final badgeWidth = isMultiChar
-        ? (badgeHeight + 12).clamp(24.0, 42.0)
-        : badgeHeight;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: selected
-            ? const Color(0xFFF8E4A8)
-            : Colors.white.withValues(alpha: 0.96),
-        shape: isMultiChar ? BoxShape.rectangle : BoxShape.circle,
-        borderRadius: isMultiChar
-            ? BorderRadius.circular(badgeHeight / 2)
-            : null,
-        border: Border.all(
-          color: selected ? const Color(0xFF7B4B21) : const Color(0xFF2A2A2A),
-          width: 1.0,
-        ),
-      ),
-      child: SizedBox(
-        width: badgeWidth,
-        height: badgeHeight,
-        child: Center(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: selected ? const Color(0xFF5A3519) : Colors.black,
-              fontSize: (fontSize * 0.64).clamp(9.0, 12.0),
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PinPointerPainter extends CustomPainter {
-  const _PinPointerPainter({required this.selected});
-
-  final bool selected;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.1
-      ..strokeCap = StrokeCap.round
-      ..color = selected ? const Color(0xFFD18B37) : const Color(0xFF4A3827);
-
-    final shadow = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.8
-      ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withValues(alpha: 0.38);
-
-    final leftTop = Offset(0, 0);
-    final tip = Offset(size.width / 2, size.height);
-    final rightTop = Offset(size.width, 0);
-
-    canvas.drawLine(leftTop, tip, shadow);
-    canvas.drawLine(rightTop, tip, shadow);
-    canvas.drawLine(leftTop, tip, paint);
-    canvas.drawLine(rightTop, tip, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _PinPointerPainter oldDelegate) {
-    return oldDelegate.selected != selected;
   }
 }
 

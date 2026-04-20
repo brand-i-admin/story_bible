@@ -1,28 +1,50 @@
 # This file configures the analyzer, which statically analyzes Dart code to
 # check for errors, warnings, and lints.
 #
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
+# Run: `flutter analyze`
+#
+# 정책: 신규 규칙은 단계적으로 추가한다. dart fix --apply로 자동 수정 가능한 규칙을
+# 우선 활성화하고, 수동 수정이 필요한 규칙은 별도 PR에서 진행.
 
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  # 생성된 파일은 분석 제외
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "build/**"
+    - ".dart_tool/**"
+
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # === 안전성 (메모리 누수/비동기 버그 방지) ===
+    - cancel_subscriptions              # StreamSubscription 누수 방지
+    - close_sinks                       # Sink 닫기 강제
+    - unawaited_futures                 # Future 누락 방지
+
+    # === 성능 (const 사용 강제 → Flutter rebuild 최소화) ===
+    - prefer_const_constructors         # const 생성자 적극 사용
+    - prefer_const_declarations         # const 변수 선호
+    - prefer_const_literals_to_create_immutables  # immutable 리터럴은 const
+
+    # === 위젯 품질 ===
+    - sized_box_for_whitespace          # Container() 대신 SizedBox()
+    - use_key_in_widget_constructors    # 위젯 생성자에 Key 파라미터 강제
+    - use_build_context_synchronously   # await 이후 BuildContext 사용 금지 (mounted 체크 강제)
+
+    # === 코드 품질 ===
+    - prefer_final_locals               # 지역변수 final 선호 (불변성 강화)
+    - prefer_final_fields               # 인스턴스 필드 final 선호
+
+    # NOTE: directives_ordering은 import_sorter와 정렬 규칙이 달라 충돌하므로 비활성화.
+    # 대신 pre-commit hook으로 import_sorter 정렬을 강제한다.
+
+    # 아래는 향후 단계적 적용:
+    # - require_trailing_commas          # 트레일링 콤마 강제 (변경량 매우 큼)
+    # - prefer_single_quotes             # 따옴표 통일 (변경량 큼)
+    # - always_declare_return_types      # 반환 타입 명시 (dart fix 미지원)
+    # - avoid_dynamic_calls              # dynamic 호출 금지 (위험도 높음)
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -3,6 +3,8 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
+        # 앱 아이콘 원본 등 이미지 원본은 1~2MB가 일반적이므로 상한 상향.
+        args: ['--maxkb=2048']
       - id: check-merge-conflict
       - id: check-yaml
       - id: end-of-file-fixer
@@ -16,22 +18,71 @@ repos:
         files: ^tools/.*\.py$
         language_version: python3.10
 
+  # NOTE: macOS 기본 쉘(zsh) login 모드로 띄워 사용자의 ~/.zshrc
+  # 또는 ~/.zprofile의 PATH(Flutter/Dart 포함)를 로드한다.
+  # 이 설정이 없으면 git worktree에서 git push 시 hook이 제한된 PATH로
+  # 실행되어 `flutter`를 찾지 못한다.
+  # 사용자가 bash를 쓴다면 `zsh` 부분을 `bash`로 바꾸면 된다.
   - repo: local
     hooks:
       - id: dart-format
         name: dart format
-        entry: dart format --output=none --set-exit-if-changed
+        entry: zsh -lc 'dart format --output=none --set-exit-if-changed "$@"' --
         language: system
         files: \.dart$
+
+      # 금지 패턴 체크: print(, JWT 시크릿, Google API key 등.
+      # 자세한 규칙은 tools/check_forbidden_patterns.py 참조.
+      - id: forbidden-patterns
+        name: forbidden patterns (print/secrets)
+        entry: zsh -lc 'python3 tools/check_forbidden_patterns.py "$@"' --
+        language: system
+        files: \.(dart|py|yaml|yml|json)$
+        exclude: ^(\.dart_tool/|build/|coverage/|ios/|android/|web/|macos/|linux/|windows/)
+
+      # Dart import 정렬 검증 (변경 시 차단).
+      # 정렬: dart run import_sorter:main --no-comments
+      - id: dart-import-sort
+        name: dart import sort
+        entry: zsh -lc 'dart run import_sorter:main --no-comments --exit-if-changed >/dev/null 2>&1 || (echo "Import 정렬이 필요합니다. 실행 -> dart run import_sorter:main --no-comments" && exit 1)'
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
+      # NOTE: git worktree에서 hook을 실행하면 Flutter tool이 자기 SDK 경로를
+      # 호출자의 git repo와 혼동해 flutter.version.json 캐시를 "0.0.0-unknown"
+      # + 본 프로젝트 URL/해시로 덮어쓰는 이슈가 있다 (WORKFLOW_GUIDE.md §15).
+      # 근본 원인: pre-commit framework가 훅 실행 시 GIT_DIR/GIT_WORK_TREE를 주입 →
+      # Flutter tool이 내부 git 명령을 story_bible의 git에 대고 실행 → 캐시 오염.
+      # 대응: (1) GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE unset, (2) FLUTTER_ROOT 명시,
+      # (3) 오염 캐시 선제거 + SDK 디렉토리에서 --version 선실행으로 정상화.
       - id: flutter-analyze
         name: flutter analyze
-        entry: flutter analyze
+        entry: zsh -lc 'unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; export FLUTTER_ROOT="${FLUTTER_ROOT:-$HOME/development/flutter}"; rm -f "$FLUTTER_ROOT/bin/cache/flutter.version.json" "$FLUTTER_ROOT/bin/cache/flutter_tools.stamp"; (cd "$FLUTTER_ROOT" && flutter --version >/dev/null 2>&1); flutter analyze'
         language: system
         pass_filenames: false
         stages: [pre-push]
+
       - id: flutter-test
         name: flutter test
-        entry: flutter test
+        entry: zsh -lc 'unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; export FLUTTER_ROOT="${FLUTTER_ROOT:-$HOME/development/flutter}"; rm -f "$FLUTTER_ROOT/bin/cache/flutter.version.json" "$FLUTTER_ROOT/bin/cache/flutter_tools.stamp"; (cd "$FLUTTER_ROOT" && flutter --version >/dev/null 2>&1); flutter test'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      # pubspec.yaml의 assets 경로가 실제 파일과 일치하는지 검증
+      - id: verify-asset-paths
+        name: verify asset paths
+        entry: zsh -lc 'python3 tools/verify_asset_paths.py'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      # 코드 메트릭: 파일/메소드 크기 제한 (경고 500줄/80줄, 차단 1500줄/200줄)
+      # NOTE: 현재 기존 코드에 FAIL이 있으므로 보고만. --ci 추가 시 차단 모드.
+      - id: code-metrics
+        name: code metrics (파일/메소드 크기)
+        entry: zsh -lc 'python3 tools/check_code_metrics.py'
         language: system
         pass_filenames: false
         stages: [pre-push]

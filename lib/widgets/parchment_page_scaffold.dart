@@ -39,7 +39,7 @@ class ParchmentPageScaffold extends StatelessWidget {
               ),
             ),
           ),
-          Positioned.fill(
+          const Positioned.fill(
             child: IgnorePointer(
               child: Opacity(
                 opacity: 0.08,

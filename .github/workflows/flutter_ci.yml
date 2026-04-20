@@ -1,0 +1,105 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: Analyze + Test (Flutter ${{ matrix.flutter-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter-version: ['3.32.4']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+          channel: stable
+          cache: true
+
+      - name: Verify Flutter installation
+        run: flutter --version
+
+      - name: Create dummy .env for CI
+        run: |
+          echo "SUPABASE_URL_DEV=https://dummy.supabase.co" > .env
+          echo "SUPABASE_ANON_KEY_DEV=dummy-anon-key" >> .env
+          echo "SUPABASE_URL_PROD=https://dummy.supabase.co" >> .env
+          echo "SUPABASE_ANON_KEY_PROD=dummy-anon-key" >> .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 빌드를 멈추진 않지만 PR 코멘트 등에 노출되도록 검사 결과 저장
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Verify import order
+        run: |
+          dart run import_sorter:main --no-comments --exit-if-changed > /dev/null 2>&1 || {
+            echo "::error::Imports are not sorted. Run: dart run import_sorter:main --no-comments"
+            exit 1
+          }
+
+      - name: Static analysis
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests with coverage
+        run: flutter test --coverage --reporter expanded
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-flutter-${{ matrix.flutter-version }}
+          path: coverage/lcov.info
+          retention-days: 14
+
+  forbidden-patterns:
+    name: Forbidden Patterns Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Run forbidden pattern check
+        run: python3 tools/check_forbidden_patterns.py
+
+  asset-paths:
+    name: Asset Paths Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Verify pubspec.yaml asset paths
+        run: python3 tools/verify_asset_paths.py
+
+  code-metrics:
+    name: Code Metrics (파일/메소드 크기 제한)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      # NOTE: 현재 기존 코드에 FAIL 6건 있으므로 --ci 없이 보고만.
+      # 기존 FAIL을 해결하면 --ci를 추가해 차단 모드로 전환.
+      - name: Check code metrics
+        run: python3 tools/check_code_metrics.py
