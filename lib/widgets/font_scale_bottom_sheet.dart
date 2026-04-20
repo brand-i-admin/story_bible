@@ -134,12 +134,16 @@ class _FontScaleChoiceButton extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (selected)
-                const Icon(
-                  Icons.check,
-                  size: 18,
-                  color: Color(0xFF6A401E),
-                ),
+              SizedBox(
+                height: 18,
+                child: selected
+                    ? const Icon(
+                        Icons.check,
+                        size: 18,
+                        color: Color(0xFF6A401E),
+                      )
+                    : null,
+              ),
               Text(
                 scale.label,
                 style: const TextStyle(
