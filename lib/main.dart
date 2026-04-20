@@ -1,10 +1,15 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
 
+// Package imports:
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Project imports:
 import 'app.dart';
+import 'state/font_scale_providers.dart';
 
 const _runtimeEnv = String.fromEnvironment('ENV', defaultValue: 'dev');
 
@@ -20,7 +25,16 @@ Future<void> main() async {
     anonKey: supabaseConfig.anonKey,
   );
 
-  runApp(const ProviderScope(child: StoryBibleApp()));
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const StoryBibleApp(),
+    ),
+  );
 }
 
 SupabaseConfig _resolveSupabaseConfig() {
