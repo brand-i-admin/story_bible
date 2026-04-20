@@ -437,8 +437,11 @@ begin
   -- Initialize timeline_rank from story number portion of time_sort_key
   -- IMPORTANT: Assumes time_sort_key format is (year * 1000 + story_number)
   -- Example: year 30 story 151 → time_sort_key = 30151 → timeline_rank = 151
+  -- For BC events (negative year), PostgreSQL's modulo preserves the dividend's sign,
+  -- so use ((x % 1000) + 1000) % 1000 to always get a value in [0, 999].
+  -- Example: year -4000 story 1 → time_sort_key = -3999999 → ((-999 + 1000) % 1000) = 1
   update public.events
-  set timeline_rank = (time_sort_key % 1000)::double precision
+  set timeline_rank = (((time_sort_key % 1000) + 1000) % 1000)::double precision
   where timeline_rank is null;
 
   -- Initialize display_number from code if not set
