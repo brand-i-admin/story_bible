@@ -152,8 +152,34 @@ make all                     # 전체 파이프라인
 ## 환경 설정
 
 - `.env` 파일에 `SUPABASE_URL_DEV`, `SUPABASE_ANON_KEY_DEV`, `GOOGLE_CLOUD_PROJECT` 등
+  - 신규 환경 세팅: `cp .env.example .env` 후 실제 값 채우기
+  - `.env`는 `.gitignore` 대상 (시크릿 포함) — **절대 커밋 금지**
 - `ENV` 환경 전환: `--dart-define=ENV=dev|prod`
 - Python: `.venv` 활성화 필수 (`source .venv/bin/activate`)
+
+## Worktree 작업 규칙 (중요)
+
+Claude Code는 작업 격리를 위해 `.claude/worktrees/<name>` 에 git worktree를 만든다.
+worktree는 git이 추적하지 않는 파일(`.env`, `.venv`, `build/` 등)을 **자체 복사본으로
+보유**하므로 제거 시 주의 필요.
+
+### Worktree 생성 시
+1. 메인 repo의 `.env`를 새 worktree로 복사: `cp /path/to/main/.env <worktree>/.env`
+2. `flutter pub get` 실행으로 `pubspec.lock`/`.dart_tool/` 재생성
+
+### Worktree 제거 시 (사용자 지시 받은 경우만)
+**반드시 사용자에게 아래 체크리스트를 안내하고 승인받은 후 실행한다:**
+
+```
+⚠️ worktree 제거 전 확인:
+□ 작업 브랜치가 원격에 푸시되고 머지 완료되었는가?
+□ worktree 안에 .env, .venv, 로컬 편집 중 파일이 남아 있지 않은가?
+  (.env는 .gitignore라 git worktree remove 시 복원 불가 — 필요하면 먼저 복사)
+□ 브랜치를 로컬에서도 삭제할 것인가? (git branch -d <branch>)
+```
+
+제거 명령: `git worktree remove <path>` → 실패 시 `--force`. 폴더 직접 `rm -rf` 금지
+(고아 레코드 남음, `git worktree prune` 필요).
 
 ## DB 변경 규칙
 
