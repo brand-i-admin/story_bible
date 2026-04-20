@@ -31,6 +31,7 @@ linter:
     # === 위젯 품질 ===
     - sized_box_for_whitespace          # Container() 대신 SizedBox()
     - use_key_in_widget_constructors    # 위젯 생성자에 Key 파라미터 강제
+    - use_build_context_synchronously   # await 이후 BuildContext 사용 금지 (mounted 체크 강제)
 
     # === 코드 품질 ===
     - prefer_final_locals               # 지역변수 final 선호 (불변성 강화)

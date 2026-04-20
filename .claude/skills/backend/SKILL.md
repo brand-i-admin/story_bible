@@ -83,6 +83,9 @@ lib/data/
 - 인증 정보(비밀번호, 토큰, API 키)를 코드/로그/URL 파라미터에 노출하지 않는다 (공식 skill 체크리스트 준수).
 - Repository 메서드는 적절한 에러 처리를 포함한다.
 - 성능 최적화 시 `supabase-postgres-best-practices`의 CRITICAL 규칙(query/connection/security)을 우선 확인한다.
+- **TDD**: Repository 메소드를 추가/수정하기 전에 `test/data/`의 해당 테스트를 먼저
+  작성/수정한다. mocktail로 `SupabaseClient` mock → 기대 호출 검증 → 구현.
+  기존 테스트와 요구사항이 충돌하면 **사용자 확인 후** 테스트부터 변경.
 
 ## 문서 동기화
 

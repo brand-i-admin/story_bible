@@ -44,7 +44,7 @@ repos:
       # 정렬: dart run import_sorter:main --no-comments
       - id: dart-import-sort
         name: dart import sort
-        entry: zsh -lc 'dart run import_sorter:main --no-comments --exit-if-changed >/dev/null 2>&1 || (echo "Import 정렬 필요: dart run import_sorter:main --no-comments" && exit 1)'
+        entry: zsh -lc 'dart run import_sorter:main --no-comments --exit-if-changed >/dev/null 2>&1 || (echo "Import 정렬이 필요합니다. 실행 -> dart run import_sorter:main --no-comments" && exit 1)'
         language: system
         files: \.dart$
         pass_filenames: false
