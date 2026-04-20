@@ -609,10 +609,39 @@ gh pr create → 사용자가 "PR 만들어줘" 할 때만
 
 ---
 
-## 15. 이 문서의 유지보수 규칙
+## 15. 알려진 이슈 / Gotchas
+
+### 15.1 git worktree에서 pre-push 훅이 Flutter SDK 캐시를 오염시키는 문제
+
+**증상**: `git push` 시 pre-push 훅의 `flutter analyze`/`flutter test`가
+`The current Flutter SDK version is 0.0.0-unknown` 로 실패. `sign_in_with_apple`
+등 SDK 버전 요구 패키지의 version solving이 깨진다.
+
+**근본 원인**: pre-commit framework가 훅 실행 시 `GIT_DIR`/`GIT_WORK_TREE`
+환경변수를 주입한다. Flutter tool이 자기 SDK 캐시를 갱신할 때 내부적으로
+`git` 명령을 실행하는데, 이 환경변수 때문에 Flutter SDK가 아닌 **story_bible
+프로젝트의 git에 대고 명령을 실행** → `flutter.version.json`이 story_bible의
+repository URL/commit hash로 덮어씌워진다.
+
+**대응**: `.pre-commit-config.yaml`의 `flutter-analyze`/`flutter-test` 엔트리에서
+`GIT_DIR`/`GIT_WORK_TREE`/`GIT_INDEX_FILE`를 `unset` 한 뒤 `FLUTTER_ROOT` 명시,
+오염된 캐시를 선제거하고 SDK 디렉토리에서 `flutter --version`을 먼저 실행해
+정상 캐시를 확보한 다음 프로젝트 명령을 수행한다 (이미 적용됨). 캐시가 이미
+오염된 경우 수동 복구:
+
+```bash
+rm $FLUTTER_ROOT/bin/cache/flutter.version.json
+rm $FLUTTER_ROOT/bin/cache/flutter_tools.stamp
+flutter --version  # 재생성
+```
+
+---
+
+## 16. 이 문서의 유지보수 규칙
 
 - 새 스킬/훅/CI job 추가 시 → §2, §13, §14 갱신
 - 새 도메인 문서 추가 시 → §14.2 갱신
 - TDD/테스트 정책 변경 시 → §5, §7 갱신
 - 커밋/푸시 정책 변경 시 → §8, §14.6 갱신
+- 알려진 이슈 발견 시 → §15에 증상/원인/대응 추가
 - 의문점/오해를 사용자가 지적할 때마다 → 해당 섹션에 Q&A 형태로 추가 고려

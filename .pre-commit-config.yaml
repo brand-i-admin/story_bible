@@ -49,16 +49,23 @@ repos:
         files: \.dart$
         pass_filenames: false
 
+      # NOTE: git worktree에서 hook을 실행하면 Flutter tool이 자기 SDK 경로를
+      # 호출자의 git repo와 혼동해 flutter.version.json 캐시를 "0.0.0-unknown"
+      # + 본 프로젝트 URL/해시로 덮어쓰는 이슈가 있다 (WORKFLOW_GUIDE.md §15).
+      # 근본 원인: pre-commit framework가 훅 실행 시 GIT_DIR/GIT_WORK_TREE를 주입 →
+      # Flutter tool이 내부 git 명령을 story_bible의 git에 대고 실행 → 캐시 오염.
+      # 대응: (1) GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE unset, (2) FLUTTER_ROOT 명시,
+      # (3) 오염 캐시 선제거 + SDK 디렉토리에서 --version 선실행으로 정상화.
       - id: flutter-analyze
         name: flutter analyze
-        entry: zsh -lc 'flutter analyze'
+        entry: zsh -lc 'unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; export FLUTTER_ROOT="${FLUTTER_ROOT:-$HOME/development/flutter}"; rm -f "$FLUTTER_ROOT/bin/cache/flutter.version.json" "$FLUTTER_ROOT/bin/cache/flutter_tools.stamp"; (cd "$FLUTTER_ROOT" && flutter --version >/dev/null 2>&1); flutter analyze'
         language: system
         pass_filenames: false
         stages: [pre-push]
 
       - id: flutter-test
         name: flutter test
-        entry: zsh -lc 'flutter test'
+        entry: zsh -lc 'unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; export FLUTTER_ROOT="${FLUTTER_ROOT:-$HOME/development/flutter}"; rm -f "$FLUTTER_ROOT/bin/cache/flutter.version.json" "$FLUTTER_ROOT/bin/cache/flutter_tools.stamp"; (cd "$FLUTTER_ROOT" && flutter --version >/dev/null 2>&1); flutter test'
         language: system
         pass_filenames: false
         stages: [pre-push]
