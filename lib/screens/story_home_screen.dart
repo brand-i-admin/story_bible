@@ -1,12 +1,16 @@
+// Dart imports:
 import 'dart:async';
 
+// Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Project imports:
 import '../models/era.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
@@ -16,6 +20,7 @@ import '../state/story_state.dart';
 import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/event_detail_page.dart';
+import '../widgets/font_scale_bottom_sheet.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_texture_layer.dart';
 import '../widgets/person_panel.dart';
@@ -969,6 +974,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         ),
                         const SizedBox(width: 8),
                         topUtilityButton(label: '프로필', onTap: _openProfileTab),
+                        const SizedBox(width: 8),
+                        topFontScaleButton(
+                          onTap: () => showFontScaleSheet(context),
+                        ),
                       ],
                     ),
                   ),
