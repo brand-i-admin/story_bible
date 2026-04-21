@@ -947,22 +947,46 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   }
 
   // 선택된 인물들이 등장하는 기존 이야기 좌표 — 지도 picker 에 힌트로 표시.
+  // Step 2 에서 고른 '이 이야기 뒤' 의 이야기는 highlighted 로 표시해 강조.
   List<ProposalReferencePin> _referencePinsForSelectedPersons() {
     if (_personCodes.isEmpty) return const [];
     final selected = _personCodes.toSet();
     final pins = <ProposalReferencePin>[];
     for (final e in _eraEvents) {
       if (e.lat == null || e.lng == null) continue;
-      if (e.personCodes.any(selected.contains)) {
+      final isHighlighted =
+          _afterStoryIndex != null && e.storyIndex == _afterStoryIndex;
+      if (isHighlighted || e.personCodes.any(selected.contains)) {
         pins.add(
-          ProposalReferencePin(lat: e.lat!, lng: e.lng!, label: e.title),
+          ProposalReferencePin(
+            lat: e.lat!,
+            lng: e.lng!,
+            label: e.title,
+            highlighted: isHighlighted,
+          ),
         );
       }
     }
     return pins;
   }
 
-  // 선택된 인물들이 등장하는 기존 이야기의 연도 범위 — 연도 입력 힌트.
+  // "이전 이야기": Step 2 에서 고른 바로 그 이야기 (신규 이야기가 그 뒤에 들어감).
+  StoryEvent? get _prevEvent {
+    if (_afterStoryIndex == null) return null;
+    final match = _eraEvents.where((e) => e.storyIndex == _afterStoryIndex);
+    return match.isEmpty ? null : match.first;
+  }
+
+  // "다음 이야기": 새 이야기 뒤에 밀려날 이야기 (시프트 전 기준 story_index +1).
+  // _afterStoryIndex == null 이면 새 이야기가 맨 앞이므로 현재 story_index=1 인
+  // 이야기가 다음으로 밀려난다.
+  StoryEvent? get _nextEvent {
+    final target = (_afterStoryIndex ?? 0) + 1;
+    final match = _eraEvents.where((e) => e.storyIndex == target);
+    return match.isEmpty ? null : match.first;
+  }
+
+  // 연도 입력 힌트 — 선택 인물 전체 범위 + 이전/다음 이야기 연도.
   Widget _yearHint(ThemeData theme) {
     if (_personCodes.isEmpty) return const SizedBox.shrink();
     final selected = _personCodes.toSet();
@@ -973,24 +997,72 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       if (e.startYear != null) starts.add(e.startYear!);
       if (e.endYear != null) ends.add(e.endYear!);
     }
-    if (starts.isEmpty && ends.isEmpty) return const SizedBox.shrink();
+    final hasRange = starts.isNotEmpty || ends.isNotEmpty;
+    final prev = _prevEvent;
+    final next = _nextEvent;
+    if (!hasRange && prev == null && next == null) {
+      return const SizedBox.shrink();
+    }
     String fmt(int y) => y < 0 ? 'B.C. ${-y}' : 'A.D. $y';
-    final minStart = starts.isEmpty
-        ? null
-        : starts.reduce((a, b) => a < b ? a : b);
-    final maxEnd = ends.isEmpty ? null : ends.reduce((a, b) => a > b ? a : b);
-    final range = [
-      if (minStart != null) fmt(minStart),
-      if (minStart != null || maxEnd != null) '~',
-      if (maxEnd != null) fmt(maxEnd),
-    ].join(' ');
+    String? fmtRange(int? a, int? b) {
+      if (a == null && b == null) return null;
+      if (a == b && a != null) return fmt(a);
+      return '${a != null ? fmt(a) : '?'} ~ ${b != null ? fmt(b) : '?'}';
+    }
+
+    String? eventYearLabel(StoryEvent? ev) {
+      if (ev == null) return null;
+      return fmtRange(ev.startYear, ev.endYear);
+    }
+
+    final rangeLabel = fmtRange(
+      starts.isEmpty ? null : starts.reduce((a, b) => a < b ? a : b),
+      ends.isEmpty ? null : ends.reduce((a, b) => a > b ? a : b),
+    );
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        '선택된 인물의 기존 사건 연도 범위: $range',
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (rangeLabel != null)
+            Text(
+              '• 선택된 인물의 기존 사건 연도 범위: $rangeLabel',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          if (prev != null)
+            Text(
+              '• 이전 이야기: "${prev.title}"'
+              '${eventYearLabel(prev) != null ? ' (${eventYearLabel(prev)})' : ''}',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            )
+          else if (_afterStoryIndex == null)
+            Text(
+              '• 이전 이야기: (맨 앞 선택 — 없음)',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          if (next != null)
+            Text(
+              '• 다음 이야기: "${next.title}"'
+              '${eventYearLabel(next) != null ? ' (${eventYearLabel(next)})' : ''}',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            )
+          else
+            Text(
+              '• 다음 이야기: (이 시대의 마지막으로 배치됩니다)',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+        ],
       ),
     );
   }

@@ -4,15 +4,21 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 /// 지도 위에 참고용 핀으로 보여줄 기존 이야기 좌표.
+///
+/// [highlighted] 가 true 면 "사용자가 Step 2 에서 '이 이야기 뒤에' 고른 이야기"
+/// 로 해석되어 더 눈에 띄는 색(보조 강조 색)으로 렌더한다. 새 이야기는
+/// 보통 이 근처에 있을 확률이 높아 참고하기 쉽다.
 class ProposalReferencePin {
   const ProposalReferencePin({
     required this.lat,
     required this.lng,
     required this.label,
+    this.highlighted = false,
   });
   final double lat;
   final double lng;
   final String label;
+  final bool highlighted;
 }
 
 /// 지도에서 탭/확대로 위도·경도를 고르는 피커.
@@ -121,22 +127,38 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
                     if (widget.referencePins.isNotEmpty)
                       MarkerLayer(
                         markers: [
+                          // 비-강조 핀을 먼저 깔아두고, 강조 핀이 위에 오도록
                           for (final p in widget.referencePins)
-                            Marker(
-                              point: LatLng(p.lat, p.lng),
-                              width: 24,
-                              height: 24,
-                              child: Tooltip(
-                                message: p.label,
-                                child: Icon(
-                                  Icons.place,
-                                  size: 22,
-                                  color: theme.colorScheme.tertiary.withValues(
-                                    alpha: 0.7,
+                            if (!p.highlighted)
+                              Marker(
+                                point: LatLng(p.lat, p.lng),
+                                width: 24,
+                                height: 24,
+                                child: Tooltip(
+                                  message: p.label,
+                                  child: Icon(
+                                    Icons.place,
+                                    size: 22,
+                                    color: theme.colorScheme.tertiary
+                                        .withValues(alpha: 0.55),
                                   ),
                                 ),
                               ),
-                            ),
+                          for (final p in widget.referencePins)
+                            if (p.highlighted)
+                              Marker(
+                                point: LatLng(p.lat, p.lng),
+                                width: 36,
+                                height: 36,
+                                child: Tooltip(
+                                  message: '이전 이야기: ${p.label}',
+                                  child: Icon(
+                                    Icons.star,
+                                    size: 34,
+                                    color: theme.colorScheme.secondary,
+                                  ),
+                                ),
+                              ),
                         ],
                       ),
                     if (_hasValue)
