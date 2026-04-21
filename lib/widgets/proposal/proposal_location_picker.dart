@@ -3,26 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+/// 지도 위에 참고용 핀으로 보여줄 기존 이야기 좌표.
+class ProposalReferencePin {
+  const ProposalReferencePin({
+    required this.lat,
+    required this.lng,
+    required this.label,
+  });
+  final double lat;
+  final double lng;
+  final String label;
+}
+
 /// 지도에서 탭/확대로 위도·경도를 고르는 피커.
 ///
-/// - [initialLat]/[initialLng] 가 주어지면 그 위치로 초기 이동 + 마커
-/// - 유저가 지도 위를 탭하면 마커가 이동 + [onChanged] 로 콜백
-/// - 우상단 "직접 입력" 토글로 숫자 필드 fallback 도 허용 (모바일에서 지도 줌 어려울 때)
-///
-/// 장소명([placeNameController])은 별도 TextField 로 관리 (지도 위치와 독립).
+/// - [referencePins]: 선택된 인물들이 등장하는 기존 이야기의 좌표.
+///   흐린 마커로 미리 박혀 있어 새 이야기를 어디에 둘지 맥락을 준다.
+/// - [initialLat]/[initialLng]: 수정 모드 또는 기존 선택 복원용.
+/// - 탭하면 선택 마커가 이동 + [onChanged] 콜백.
 class ProposalLocationPicker extends StatefulWidget {
   const ProposalLocationPicker({
     super.key,
     required this.initialLat,
     required this.initialLng,
     required this.onChanged,
+    this.referencePins = const [],
   });
 
   final double? initialLat;
   final double? initialLng;
-
-  /// (lat, lng) — 둘 다 null 이면 "미지정".
   final void Function(double? lat, double? lng) onChanged;
+  final List<ProposalReferencePin> referencePins;
 
   @override
   State<ProposalLocationPicker> createState() => _ProposalLocationPickerState();
@@ -34,26 +45,30 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
   late double _lat;
   late double _lng;
   bool _hasValue = false;
-  bool _manualMode = false;
-
-  late final TextEditingController _latCtrl;
-  late final TextEditingController _lngCtrl;
 
   @override
   void initState() {
     super.initState();
-    _lat = widget.initialLat ?? _defaultCenter.latitude;
-    _lng = widget.initialLng ?? _defaultCenter.longitude;
+    _lat =
+        widget.initialLat ?? _pickCenterFromPins() ?? _defaultCenter.latitude;
+    _lng = widget.initialLng ?? _pickCenterLng() ?? _defaultCenter.longitude;
     _hasValue = widget.initialLat != null && widget.initialLng != null;
-    _latCtrl = TextEditingController(text: widget.initialLat?.toString() ?? '');
-    _lngCtrl = TextEditingController(text: widget.initialLng?.toString() ?? '');
   }
 
-  @override
-  void dispose() {
-    _latCtrl.dispose();
-    _lngCtrl.dispose();
-    super.dispose();
+  double? _pickCenterFromPins() {
+    if (widget.referencePins.isEmpty) return null;
+    final avg =
+        widget.referencePins.map((p) => p.lat).reduce((a, b) => a + b) /
+        widget.referencePins.length;
+    return avg;
+  }
+
+  double? _pickCenterLng() {
+    if (widget.referencePins.isEmpty) return null;
+    final avg =
+        widget.referencePins.map((p) => p.lng).reduce((a, b) => a + b) /
+        widget.referencePins.length;
+    return avg;
   }
 
   void _onMapTap(TapPosition _, LatLng point) {
@@ -61,34 +76,13 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
       _lat = point.latitude;
       _lng = point.longitude;
       _hasValue = true;
-      _latCtrl.text = _lat.toStringAsFixed(5);
-      _lngCtrl.text = _lng.toStringAsFixed(5);
     });
     widget.onChanged(_lat, _lng);
-  }
-
-  void _onManualChanged() {
-    final lat = double.tryParse(_latCtrl.text.trim());
-    final lng = double.tryParse(_lngCtrl.text.trim());
-    if (lat != null && lng != null) {
-      setState(() {
-        _lat = lat;
-        _lng = lng;
-        _hasValue = true;
-      });
-      widget.onChanged(lat, lng);
-      _mapController.move(LatLng(lat, lng), _mapController.camera.zoom);
-    } else {
-      setState(() => _hasValue = false);
-      widget.onChanged(null, null);
-    }
   }
 
   void _clear() {
     setState(() {
       _hasValue = false;
-      _latCtrl.clear();
-      _lngCtrl.clear();
     });
     widget.onChanged(null, null);
   }
@@ -102,14 +96,14 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: SizedBox(
-            height: 260,
+            height: 300,
             child: Stack(
               children: [
                 FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
                     initialCenter: LatLng(_lat, _lng),
-                    initialZoom: _hasValue ? 7 : 5,
+                    initialZoom: widget.referencePins.isNotEmpty ? 5.2 : 5,
                     minZoom: 2.4,
                     maxZoom: 16,
                     onTap: _onMapTap,
@@ -124,17 +118,38 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
                       subdomains: const ['a', 'b', 'c', 'd'],
                       userAgentPackageName: 'com.story.bible',
                     ),
+                    if (widget.referencePins.isNotEmpty)
+                      MarkerLayer(
+                        markers: [
+                          for (final p in widget.referencePins)
+                            Marker(
+                              point: LatLng(p.lat, p.lng),
+                              width: 24,
+                              height: 24,
+                              child: Tooltip(
+                                message: p.label,
+                                child: Icon(
+                                  Icons.place,
+                                  size: 22,
+                                  color: theme.colorScheme.tertiary.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     if (_hasValue)
                       MarkerLayer(
                         markers: [
                           Marker(
                             point: LatLng(_lat, _lng),
-                            width: 36,
-                            height: 36,
+                            width: 40,
+                            height: 40,
                             child: Icon(
                               Icons.location_on,
                               color: theme.colorScheme.primary,
-                              size: 36,
+                              size: 40,
                             ),
                           ),
                         ],
@@ -161,6 +176,36 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
                     ),
                   ),
                 ),
+                if (widget.referencePins.isNotEmpty)
+                  Positioned(
+                    left: 8,
+                    top: 8,
+                    child: Material(
+                      color: theme.colorScheme.surface.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.place,
+                              size: 12,
+                              color: theme.colorScheme.tertiary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '기존 이야기 ${widget.referencePins.length}곳',
+                              style: theme.textTheme.labelSmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 if (_hasValue)
                   Positioned(
                     left: 8,
@@ -192,45 +237,6 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: () => setState(() => _manualMode = !_manualMode),
-              icon: Icon(_manualMode ? Icons.map_outlined : Icons.keyboard),
-              label: Text(_manualMode ? '지도로 고르기' : '숫자 직접 입력'),
-            ),
-          ],
-        ),
-        if (_manualMode) ...[
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _latCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: true,
-                  ),
-                  decoration: const InputDecoration(labelText: '위도 lat'),
-                  onChanged: (_) => _onManualChanged(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _lngCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: true,
-                  ),
-                  decoration: const InputDecoration(labelText: '경도 lng'),
-                  onChanged: (_) => _onManualChanged(),
-                ),
-              ),
-            ],
-          ),
-        ],
       ],
     );
   }

@@ -36,7 +36,7 @@ class ProposalSubmitScreen extends ConsumerStatefulWidget {
 
 class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // Top-level wizard step.
-  // 0: era, 1: persons & position, 2: details
+  // 0: intro, 1: era, 2: persons & position, 3: details
   int _step = 0;
 
   // Step 2 내부 sub-phase. 'persons' | 'event:<index>' | 'summary'
@@ -103,8 +103,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             ? List<String>.of(e.scenePersons[i])
             : <String>[],
       );
-      // 수정 모드는 Step 3 에서 바로 시작
-      _step = 2;
+      // 수정 모드는 Step 3 (details) 에서 바로 시작
+      _step = 3;
     }
     _loadOptions();
   }
@@ -213,8 +213,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   bool get _canGoNext {
     switch (_step) {
       case 0:
-        return _eraId != null;
+        return true; // intro — 언제나 진행 가능
       case 1:
+        return _eraId != null;
+      case 2:
         switch (_step2Phase) {
           case 'persons':
             return _personCodes.isNotEmpty;
@@ -227,7 +229,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             final code = _personCodes[idx];
             return _afterByPerson.containsKey(code);
         }
-      case 2:
+      case 3:
         return true; // 제출 버튼이 별도
     }
     return false;
@@ -244,15 +246,18 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       switch (_step) {
         case 0:
           _step = 1;
-          _step2Phase = 'persons';
           break;
         case 1:
+          _step = 2;
+          _step2Phase = 'persons';
+          break;
+        case 2:
           switch (_step2Phase) {
             case 'persons':
               _step2Phase = _personCodes.isEmpty ? 'summary' : 'event:0';
               break;
             case 'summary':
-              _step = 2;
+              _step = 3;
               break;
             default:
               final idx = _currentEventPhaseIndex!;
@@ -263,7 +268,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               }
           }
           break;
-        case 2:
+        case 3:
           // details step 은 제출 버튼으로
           break;
       }
@@ -276,9 +281,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         case 0:
           return;
         case 1:
+          _step = 0;
+          break;
+        case 2:
           switch (_step2Phase) {
             case 'persons':
-              _step = 0;
+              _step = 1;
               break;
             case 'event:0':
               _step2Phase = 'persons';
@@ -293,8 +301,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               _step2Phase = idx > 0 ? 'event:${idx - 1}' : 'persons';
           }
           break;
-        case 2:
-          _step = 1;
+        case 3:
+          _step = 2;
           _step2Phase = 'summary';
           break;
       }
@@ -445,8 +453,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   Widget _buildStepBody(ThemeData theme) {
     switch (_step) {
       case 0:
-        return _buildStep1Era(theme);
+        return _buildStep0Intro(theme);
       case 1:
+        return _buildStep1Era(theme);
+      case 2:
         switch (_step2Phase) {
           case 'persons':
             return _buildStep2Persons(theme);
@@ -455,10 +465,76 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           default:
             return _buildStep2Events(theme);
         }
-      case 2:
+      case 3:
         return _buildStep3Details(theme);
     }
     return const SizedBox.shrink();
+  }
+
+  // ---------- Step 0: 안내 ----------
+  Widget _buildStep0Intro(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 640),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.menu_book_outlined,
+                  size: 48,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '새 성경 이야기를 제안합니다',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  '시작하기 전에 아래 내용을 확인해주세요. 새 이야기는 모든 정보가 입력되어야 관리자 승인 후 지도에 나타날 수 있습니다.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 20),
+                const _IntroBullet(
+                  number: '1',
+                  title: '시대를 고릅니다',
+                  body: '구약 6시대 · 신약 4시대 중 이 이야기가 속한 시대를 선택합니다.',
+                ),
+                const _IntroBullet(
+                  number: '2',
+                  title: '이 이야기에 등장할 모든 인물을 고릅니다',
+                  body: '복수 선택 가능. 해당 시대에 이미 등장한 인물이 우선 정렬되어 나옵니다.',
+                ),
+                const _IntroBullet(
+                  number: '3',
+                  title: '각 인물별로 "어느 사건 뒤"인지 정확히 고릅니다',
+                  body:
+                      '선택한 인물마다 순서대로 그 인물의 사건 리스트가 나옵니다. '
+                      '이 이야기가 어느 사건 뒤에 들어갈지 탭으로 선택하세요. '
+                      '여러 인물이 다른 위치를 고른 경우, 모든 선택을 만족하는 가장 뒤 위치에 배치됩니다.',
+                ),
+                const _IntroBullet(
+                  number: '4',
+                  title: '세부 내용을 작성합니다',
+                  body: '제목 / 요약 / 장소(지도) / 연도 / 성경 본문 / 4장면까지 입력 후 제출합니다.',
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  '제출 후 관리자 검토를 거쳐 승인되면 앱의 지도에 반영됩니다.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   // ---------- Step 1: 시대 ----------
@@ -827,12 +903,14 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ProposalLocationPicker(
           initialLat: _lat,
           initialLng: _lng,
+          referencePins: _referencePinsForSelectedPersons(),
           onChanged: (lat, lng) => setState(() {
             _lat = lat;
             _lng = lng;
           }),
         ),
         _sectionTitle('연도'),
+        _yearHint(theme),
         Row(
           children: [
             Expanded(
@@ -890,6 +968,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           sceneCount: _scenes.length,
           initial: _scenePersons,
           onChanged: (sp) => setState(() => _scenePersons = sp),
+          personNameByCode: {
+            for (final opt in _personOptions) opt.code: opt.name,
+          },
         ),
         const SizedBox(height: 24),
         FilledButton(
@@ -907,6 +988,55 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ),
         const SizedBox(height: 40),
       ],
+    );
+  }
+
+  // 선택된 인물들이 등장하는 기존 이야기 좌표 — 지도 picker 에 힌트로 표시.
+  List<ProposalReferencePin> _referencePinsForSelectedPersons() {
+    if (_personCodes.isEmpty) return const [];
+    final selected = _personCodes.toSet();
+    final pins = <ProposalReferencePin>[];
+    for (final e in _eraEvents) {
+      if (e.lat == null || e.lng == null) continue;
+      if (e.personCodes.any(selected.contains)) {
+        pins.add(
+          ProposalReferencePin(lat: e.lat!, lng: e.lng!, label: e.title),
+        );
+      }
+    }
+    return pins;
+  }
+
+  // 선택된 인물들이 등장하는 기존 이야기의 연도 범위 — 연도 입력 힌트.
+  Widget _yearHint(ThemeData theme) {
+    if (_personCodes.isEmpty) return const SizedBox.shrink();
+    final selected = _personCodes.toSet();
+    final starts = <int>[];
+    final ends = <int>[];
+    for (final e in _eraEvents) {
+      if (!e.personCodes.any(selected.contains)) continue;
+      if (e.startYear != null) starts.add(e.startYear!);
+      if (e.endYear != null) ends.add(e.endYear!);
+    }
+    if (starts.isEmpty && ends.isEmpty) return const SizedBox.shrink();
+    String fmt(int y) => y < 0 ? 'B.C. ${-y}' : 'A.D. $y';
+    final minStart = starts.isEmpty
+        ? null
+        : starts.reduce((a, b) => a < b ? a : b);
+    final maxEnd = ends.isEmpty ? null : ends.reduce((a, b) => a > b ? a : b);
+    final range = [
+      if (minStart != null) fmt(minStart),
+      if (minStart != null || maxEnd != null) '~',
+      if (maxEnd != null) fmt(maxEnd),
+    ].join(' ');
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        '선택된 인물의 기존 사건 연도 범위: $range',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 
@@ -990,7 +1120,7 @@ class _ProgressHeader extends StatelessWidget {
   const _ProgressHeader({required this.step});
   final int step;
 
-  static const _labels = ['시대 선택', '등장인물과 위치', '세부 내용'];
+  static const _labels = ['제안 안내', '시대', '등장인물과 위치', '세부 내용'];
 
   @override
   Widget build(BuildContext context) {
@@ -1228,6 +1358,61 @@ class _SummaryBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: children,
+      ),
+    );
+  }
+}
+
+class _IntroBullet extends StatelessWidget {
+  const _IntroBullet({
+    required this.number,
+    required this.title,
+    required this.body,
+  });
+  final String number;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: theme.colorScheme.secondaryContainer,
+            ),
+            child: Text(
+              number,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(body, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -11,12 +11,16 @@ class ScenePersonsGrid extends StatefulWidget {
     required this.sceneCount,
     required this.initial,
     required this.onChanged,
+    this.personNameByCode = const {},
   });
 
   final List<String> personCodes;
   final int sceneCount;
   final List<List<String>> initial;
   final ValueChanged<List<List<String>>> onChanged;
+
+  /// 표시용 한글 이름 (persons.name). 없으면 code 그대로.
+  final Map<String, String> personNameByCode;
 
   @override
   State<ScenePersonsGrid> createState() => _ScenePersonsGridState();
@@ -121,7 +125,7 @@ class _ScenePersonsGridState extends State<ScenePersonsGrid> {
                               value: _matrix[i].contains(code),
                               onChanged: (v) => _toggle(i, code, v),
                             ),
-                            Text(code),
+                            Text(widget.personNameByCode[code] ?? code),
                             const SizedBox(width: 8),
                           ],
                         ),
