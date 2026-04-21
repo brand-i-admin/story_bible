@@ -148,14 +148,14 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
                             if (p.highlighted)
                               Marker(
                                 point: LatLng(p.lat, p.lng),
-                                width: 36,
-                                height: 36,
+                                width: 30,
+                                height: 30,
                                 child: Tooltip(
                                   message: '이전 이야기: ${p.label}',
-                                  child: Icon(
-                                    Icons.star,
-                                    size: 34,
-                                    color: theme.colorScheme.secondary,
+                                  child: const Icon(
+                                    Icons.place,
+                                    size: 28,
+                                    color: Color(0xFFE8A33D), // 호박색 노랑
                                   ),
                                 ),
                               ),

@@ -1104,6 +1104,27 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     );
   }
 
+  String _afterSelectionChipLabel() {
+    if (_afterStoryIndex == null) {
+      return '선택된 이야기: 없음 (맨 앞에 배치)';
+    }
+    final prev = _prevEvent;
+    if (prev == null) {
+      return '선택된 이야기: #${_afterStoryIndex!}';
+    }
+    final yr = _fmtYearRange(prev.startYear, prev.endYear);
+    return yr == null
+        ? '선택된 이야기: ${prev.title}'
+        : '선택된 이야기: ${prev.title} ($yr)';
+  }
+
+  static String _fmtYear(int y) => y < 0 ? 'B.C. ${-y}' : 'A.D. $y';
+  static String? _fmtYearRange(int? a, int? b) {
+    if (a == null && b == null) return null;
+    if (a == b && a != null) return _fmtYear(a);
+    return '${a != null ? _fmtYear(a) : '?'} ~ ${b != null ? _fmtYear(b) : '?'}';
+  }
+
   Widget _summaryChipRow(ThemeData theme) {
     final era = _selectedEra;
     return _SummaryBox(
@@ -1123,11 +1144,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 avatar: const Icon(Icons.people_alt_outlined, size: 16),
               ),
             Chip(
-              label: Text(
-                _afterStoryIndex == null
-                    ? '위치: 맨 앞'
-                    : '위치: #${_afterStoryIndex!} 뒤',
-              ),
+              label: Text(_afterSelectionChipLabel()),
               avatar: const Icon(Icons.place_outlined, size: 16),
             ),
           ],
