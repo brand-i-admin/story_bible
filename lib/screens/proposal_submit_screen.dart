@@ -108,11 +108,26 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       // 수정 모드는 Step 3 (details) 에서 바로 시작
       _step = 3;
     }
+    // 텍스트 필드 변경 시 제출 버튼 활성화 여부 재평가.
+    _titleCtrl.addListener(_onFormChanged);
+    _summaryCtrl.addListener(_onFormChanged);
+    _placeCtrl.addListener(_onFormChanged);
+    _startYearCtrl.addListener(_onFormChanged);
+    _endYearCtrl.addListener(_onFormChanged);
     _loadOptions();
+  }
+
+  void _onFormChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    _titleCtrl.removeListener(_onFormChanged);
+    _summaryCtrl.removeListener(_onFormChanged);
+    _placeCtrl.removeListener(_onFormChanged);
+    _startYearCtrl.removeListener(_onFormChanged);
+    _endYearCtrl.removeListener(_onFormChanged);
     _titleCtrl.dispose();
     _summaryCtrl.dispose();
     _placeCtrl.dispose();
@@ -179,6 +194,28 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   }
 
   // ===== Derived =====
+
+  /// 제출 버튼 활성화 조건 — 필수 필드가 모두 채워졌는지.
+  /// (시대/등장인물/삽입 위치 는 Step 2 에서 이미 확정된 상태로 Step 3 에 옴)
+  /// 선택 사항: 장면별 등장 인물.
+  bool get _canSubmit {
+    if (_titleCtrl.text.trim().isEmpty) return false;
+    if (_summaryCtrl.text.trim().isEmpty) return false;
+    // 장소: 이름 + 지도 좌표 모두 필수
+    if (_placeCtrl.text.trim().isEmpty) return false;
+    if (_lat == null || _lng == null) return false;
+    // 연도: 시작/끝 둘 다 정수로 파싱 가능해야
+    if (int.tryParse(_startYearCtrl.text.trim()) == null) return false;
+    if (int.tryParse(_endYearCtrl.text.trim()) == null) return false;
+    // 성경 본문: 최소 1개
+    if (_bibleRefs.isEmpty) return false;
+    // 장면: trim 후 non-empty 가 최소 1개
+    final nonEmptyScenes = _scenes
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty);
+    if (nonEmptyScenes.isEmpty) return false;
+    return true;
+  }
 
   List<Era> get _visibleEras =>
       _eras.where((e) => e.testament == _testament).toList()
@@ -929,7 +966,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ),
         const SizedBox(height: 24),
         FilledButton(
-          onPressed: _submitting ? null : _onSubmit,
+          onPressed: (_submitting || !_canSubmit) ? null : _onSubmit,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: _submitting
