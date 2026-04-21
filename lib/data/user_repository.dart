@@ -96,46 +96,18 @@ class UserRepository {
   }
 
   Future<void> recordAttendance(String userId, {DateTime? date}) {
-    final day = _dateOnly(date ?? DateTime.now());
-    return _insertDailyRowIgnoringDuplicate(
-      table: 'user_daily_attendance',
-      values: {
-        'user_id': userId,
-        'attended_on': day.toIso8601String().split('T').first,
-      },
-    );
+    return _markDailyActivity(userId: userId, date: date, field: 'attended');
   }
 
   Future<void> recordStudyDay(String userId, {DateTime? date}) {
-    final day = _dateOnly(date ?? DateTime.now());
-    return _insertDailyRowIgnoringDuplicate(
-      table: 'user_daily_study',
-      values: {
-        'user_id': userId,
-        'studied_on': day.toIso8601String().split('T').first,
-      },
-    );
+    return _markDailyActivity(userId: userId, date: date, field: 'studied');
   }
 
-  Future<int> fetchAttendanceStreak(String userId) async {
-    final rows = await _client
-        .from('user_daily_attendance')
-        .select('attended_on')
-        .eq('user_id', userId)
-        .order('attended_on', ascending: false)
-        .limit(400);
-    return _computeStreak(rows, 'attended_on');
-  }
+  Future<int> fetchAttendanceStreak(String userId) =>
+      _fetchDailyStreak(userId: userId, flag: 'attended');
 
-  Future<int> fetchStudyStreak(String userId) async {
-    final rows = await _client
-        .from('user_daily_study')
-        .select('studied_on')
-        .eq('user_id', userId)
-        .order('studied_on', ascending: false)
-        .limit(400);
-    return _computeStreak(rows, 'studied_on');
-  }
+  Future<int> fetchStudyStreak(String userId) =>
+      _fetchDailyStreak(userId: userId, flag: 'studied');
 
   Future<PagedResult<UserNote>> fetchUserNotesPage({
     required String userId,
@@ -334,24 +306,23 @@ class UserRepository {
         .toSet();
 
     final rows = await _client
-        .from('events')
-        .select('id, event_persons(person_id)')
-        .order('time_sort_key', ascending: true);
+        .from('events_ordered')
+        .select('id, person_codes')
+        .order('global_rank', ascending: true);
 
-    final totalByPerson = <String, Set<String>>{};
-    final completedByPerson = <String, Set<String>>{};
+    final totalByPersonCode = <String, Set<String>>{};
+    final completedByPersonCode = <String, Set<String>>{};
     for (final row in rows) {
       final eventId = row['id'] as String;
-      final personRows = row['event_persons'] as List<dynamic>? ?? const [];
-      for (final personRow in personRows.whereType<Map<String, dynamic>>()) {
-        final personId = personRow['person_id'] as String?;
-        if (personId == null) {
-          continue;
-        }
-        totalByPerson.putIfAbsent(personId, () => <String>{}).add(eventId);
+      final codes = row['person_codes'];
+      if (codes is! List) {
+        continue;
+      }
+      for (final code in codes.whereType<String>()) {
+        totalByPersonCode.putIfAbsent(code, () => <String>{}).add(eventId);
         if (completedIdSet.contains(eventId)) {
-          completedByPerson
-              .putIfAbsent(personId, () => <String>{})
+          completedByPersonCode
+              .putIfAbsent(code, () => <String>{})
               .add(eventId);
         }
       }
@@ -361,8 +332,8 @@ class UserRepository {
         .map(
           (person) => PersonStudyProgress(
             person: person,
-            completedCount: completedByPerson[person.id]?.length ?? 0,
-            totalCount: totalByPerson[person.id]?.length ?? 0,
+            completedCount: completedByPersonCode[person.code]?.length ?? 0,
+            totalCount: totalByPersonCode[person.code]?.length ?? 0,
           ),
         )
         .toList(growable: false);
@@ -403,18 +374,32 @@ class UserRepository {
     return '사용자';
   }
 
-  Future<void> _insertDailyRowIgnoringDuplicate({
-    required String table,
-    required Map<String, dynamic> values,
+  Future<void> _markDailyActivity({
+    required String userId,
+    required DateTime? date,
+    required String field,
   }) async {
-    try {
-      await _client.from(table).insert(values);
-    } on PostgrestException catch (error) {
-      if (error.code == '23505') {
-        return;
-      }
-      rethrow;
-    }
+    final day = _dateOnly(date ?? DateTime.now());
+    final dateStr = day.toIso8601String().split('T').first;
+    await _client.from('user_daily_activity').upsert({
+      'user_id': userId,
+      'activity_date': dateStr,
+      field: true,
+    }, onConflict: 'user_id,activity_date');
+  }
+
+  Future<int> _fetchDailyStreak({
+    required String userId,
+    required String flag,
+  }) async {
+    final rows = await _client
+        .from('user_daily_activity')
+        .select('activity_date')
+        .eq('user_id', userId)
+        .eq(flag, true)
+        .order('activity_date', ascending: false)
+        .limit(400);
+    return _computeStreak(rows, 'activity_date');
   }
 
   String? _cleanNullableText(String? value) => cleanNullableText(value);

@@ -75,10 +75,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       ScrollController();
 
   List<Person> _profileAllPeople = const [];
-  Map<String, String> _profilePersonTestamentById = const {};
+  Map<String, String> _profilePersonTestamentByCode = const {};
   AppUserProfile? _profileUser;
-  Map<String, PersonStudyProgress> _profileStudyProgressByPersonId = const {};
-  Map<String, int> _profilePersonTimelineOrderById = const {};
+  Map<String, PersonStudyProgress> _profileStudyProgressByPersonCode = const {};
+  Map<String, int> _profilePersonTimelineOrderByCode = const {};
   _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
   List<UserNote> _profileNotesPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
@@ -359,33 +359,33 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final peopleByEra = await Future.wait(
         state.eras.map((era) => repo.fetchPersonsByEra(era.id)),
       );
-      final personTimelineOrderById = await repo.fetchPersonTimelineOrder();
+      final personTimelineOrderByCode = await repo.fetchPersonTimelineOrder();
 
-      final personById = <String, Person>{};
-      final testamentByPersonId = <String, String>{};
+      final personByCode = <String, Person>{};
+      final testamentByPersonCode = <String, String>{};
       for (var i = 0; i < state.eras.length; i++) {
         final era = state.eras[i];
         final eraPeople = peopleByEra[i];
         final testament = _eraTestament(era);
         for (final person in eraPeople) {
-          personById.putIfAbsent(person.id, () => person);
-          testamentByPersonId.putIfAbsent(person.id, () => testament);
+          personByCode.putIfAbsent(person.code, () => person);
+          testamentByPersonCode.putIfAbsent(person.code, () => testament);
         }
       }
 
-      final allPeople = personById.values.toList()
+      final allPeople = personByCode.values.toList()
         ..sort(
           (a, b) => _compareProfilePeople(
             a,
             b,
-            timelineOrderById: personTimelineOrderById,
+            timelineOrderByCode: personTimelineOrderByCode,
           ),
         );
 
       AppUserProfile? profile;
       var attendanceStreak = 0;
       var studyStreak = 0;
-      Map<String, PersonStudyProgress> progressByPersonId = const {};
+      Map<String, PersonStudyProgress> progressByPersonCode = const {};
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
@@ -395,8 +395,8 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           userId: user.id,
           people: allPeople,
         );
-        progressByPersonId = {
-          for (final progress in studyProgress) progress.person.id: progress,
+        progressByPersonCode = {
+          for (final progress in studyProgress) progress.person.code: progress,
         };
       }
 
@@ -405,10 +405,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       }
       setState(() {
         _profileAllPeople = allPeople;
-        _profilePersonTestamentById = testamentByPersonId;
+        _profilePersonTestamentByCode = testamentByPersonCode;
         _profileUser = profile;
-        _profileStudyProgressByPersonId = progressByPersonId;
-        _profilePersonTimelineOrderById = personTimelineOrderById;
+        _profileStudyProgressByPersonCode = progressByPersonCode;
+        _profilePersonTimelineOrderByCode = personTimelineOrderByCode;
         if (user == null) {
           _intercessoryPrayerItems = const [];
           _intercessoryPrayerHasNextPage = false;
@@ -441,14 +441,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     final people =
         [...(_profileAllPeople.isNotEmpty ? _profileAllPeople : state.persons)]
           ..retainWhere((person) {
-            final testament = _profilePersonTestamentById[person.id] ?? 'old';
+            final testament =
+                _profilePersonTestamentByCode[person.code] ?? 'old';
             return testament == _profileSelectedTestament;
           })
           ..sort(
             (a, b) => _compareProfilePeople(
               a,
               b,
-              timelineOrderById: _profilePersonTimelineOrderById,
+              timelineOrderByCode: _profilePersonTimelineOrderByCode,
             ),
           );
     return people;
@@ -457,10 +458,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   int _compareProfilePeople(
     Person a,
     Person b, {
-    required Map<String, int> timelineOrderById,
+    required Map<String, int> timelineOrderByCode,
   }) {
-    final aTimeline = timelineOrderById[a.id];
-    final bTimeline = timelineOrderById[b.id];
+    final aTimeline = timelineOrderByCode[a.code];
+    final bTimeline = timelineOrderByCode[b.code];
     if (aTimeline != null || bTimeline != null) {
       final timelineOrder = (aTimeline ?? 1 << 30).compareTo(
         bTimeline ?? 1 << 30,

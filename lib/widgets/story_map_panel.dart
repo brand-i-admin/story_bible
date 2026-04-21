@@ -25,7 +25,7 @@ class StoryMapPanel extends StatefulWidget {
     this.onOpenDetail,
     required this.colorForPerson,
     required this.avatarAssetForPerson,
-    required this.selectedPersonIds,
+    required this.selectedPersonCodes,
     this.controller,
     this.bottomOverlay,
     this.decorate = true,
@@ -49,7 +49,7 @@ class StoryMapPanel extends StatefulWidget {
   final ValueChanged<String>? onOpenDetail;
   final Color Function(String personId) colorForPerson;
   final String Function(String personId) avatarAssetForPerson;
-  final Set<String> selectedPersonIds;
+  final Set<String> selectedPersonCodes;
   final StoryMapPanelController? controller;
   final Widget? bottomOverlay;
   final bool decorate;
@@ -139,7 +139,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     if (map_math.eventListSignature(oldWidget.events) !=
             map_math.eventListSignature(widget.events) ||
-        oldWidget.selectedPersonIds != widget.selectedPersonIds) {
+        oldWidget.selectedPersonCodes != widget.selectedPersonCodes) {
       _startRevealAnimation();
       if (_mapReady &&
           (widget.centerSelectedOnReady || widget.fitAllEventsOnReady)) {
@@ -459,8 +459,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       final pinStyle = _scaledPinStyle(
         selected ? _selectedPinStyle : _normalPinStyle,
       );
-      final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
-          .trim();
+      final shortText = (event.summary ?? '').trim();
       final pinWidth = math.max(
         pinStyle.badgeWidthFor(node.pinLabel) + 10,
         pinStyle.arrowWidth + 10,
@@ -1158,13 +1157,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   List<Color> _colorsForEvent(StoryEvent event) {
-    if (event.personIds.isNotEmpty) {
+    if (event.personCodes.isNotEmpty) {
       final colors = <Color>[];
       final seen = <Color>{};
-      for (final id in event.personIds.where(
-        widget.selectedPersonIds.contains,
+      for (final code in event.personCodes.where(
+        widget.selectedPersonCodes.contains,
       )) {
-        final color = widget.colorForPerson(id);
+        final color = widget.colorForPerson(code);
         if (seen.add(color)) {
           colors.add(color);
         }

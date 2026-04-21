@@ -32,9 +32,9 @@ class StorySelectionPanel extends StatefulWidget {
     required this.persons,
     required this.personSortMode,
     required this.onPersonSortModeChanged,
-    required this.draftSelectedPersonIds,
+    required this.draftSelectedPersonCodes,
     required this.onToggleDraftPerson,
-    required this.committedSelectedPersonIds,
+    required this.committedSelectedPersonCodes,
     required this.hasPendingPersonChanges,
     required this.colorForDraftPerson,
     required this.colorForCommittedPerson,
@@ -64,9 +64,9 @@ class StorySelectionPanel extends StatefulWidget {
   final List<Person> persons;
   final PersonSortMode personSortMode;
   final ValueChanged<PersonSortMode> onPersonSortModeChanged;
-  final Set<String> draftSelectedPersonIds;
+  final Set<String> draftSelectedPersonCodes;
   final ValueChanged<String> onToggleDraftPerson;
-  final Set<String> committedSelectedPersonIds;
+  final Set<String> committedSelectedPersonCodes;
   final bool hasPendingPersonChanges;
   final Color Function(String personId) colorForDraftPerson;
   final Color Function(String personId) colorForCommittedPerson;
@@ -101,11 +101,11 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
   }
 
   List<Person> get _selectedPersonsForSummary {
-    final sourceIds = widget.draftSelectedPersonIds.isNotEmpty
-        ? widget.draftSelectedPersonIds
-        : widget.committedSelectedPersonIds;
+    final sourceIds = widget.draftSelectedPersonCodes.isNotEmpty
+        ? widget.draftSelectedPersonCodes
+        : widget.committedSelectedPersonCodes;
     return widget.persons
-        .where((person) => sourceIds.contains(person.id))
+        .where((person) => sourceIds.contains(person.code))
         .toList(growable: false);
   }
 
@@ -233,7 +233,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       return widget.onNextFromEra;
     }
     if (widget.step == 2) {
-      if (widget.draftSelectedPersonIds.isEmpty) {
+      if (widget.draftSelectedPersonCodes.isEmpty) {
         return null;
       }
       return widget.onNextFromPersons;
@@ -466,10 +466,10 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             final person = sortedPersons[index];
             return _PersonCompactCard(
               person: person,
-              selected: widget.draftSelectedPersonIds.contains(person.id),
-              accentColor: widget.colorForDraftPerson(person.id),
+              selected: widget.draftSelectedPersonCodes.contains(person.code),
+              accentColor: widget.colorForDraftPerson(person.code),
               description: _personDescription(person),
-              onTap: () => widget.onToggleDraftPerson(person.id),
+              onTap: () => widget.onToggleDraftPerson(person.code),
             );
           }, childCount: sortedPersons.length),
         ),
@@ -500,8 +500,8 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
               subtitle: _storySubtitle(event),
               selected: event.id == widget.selectedEventId,
               isCompleted: widget.completedEventIds.contains(event.id),
-              highlightedPersonIds: event.personIds
-                  .where(widget.committedSelectedPersonIds.contains)
+              highlightedPersonCodes: event.personCodes
+                  .where(widget.committedSelectedPersonCodes.contains)
                   .toList(growable: false),
               colorForPerson: widget.colorForCommittedPerson,
               onTap: () => widget.onSelectEvent(event.id),

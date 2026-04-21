@@ -110,26 +110,26 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         }),
       );
 
-      final personById = <String, Person>{};
-      final eventsByPersonId = <String, List<StoryEvent>>{};
+      final personByCode = <String, Person>{};
+      final eventsByPersonCode = <String, List<StoryEvent>>{};
       for (final bundle in eraBundles) {
         for (final person in bundle.persons) {
-          personById.putIfAbsent(person.id, () => person);
+          personByCode.putIfAbsent(person.code, () => person);
         }
         for (final event in bundle.events) {
-          for (final personId in event.personIds) {
-            eventsByPersonId
-                .putIfAbsent(personId, () => <StoryEvent>[])
+          for (final code in event.personCodes) {
+            eventsByPersonCode
+                .putIfAbsent(code, () => <StoryEvent>[])
                 .add(event);
           }
         }
       }
 
       final candidates =
-          personById.values
+          personByCode.values
               .where(
                 (person) =>
-                    (eventsByPersonId[person.id] ?? const <StoryEvent>[])
+                    (eventsByPersonCode[person.code] ?? const <StoryEvent>[])
                         .isNotEmpty,
               )
               .toList()
@@ -151,9 +151,9 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       final weeklyPerson =
           forcedPerson ?? candidates[seedFromKey(weekKey) % candidates.length];
       final weeklyEvents =
-          [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
+          [...(eventsByPersonCode[weeklyPerson.code] ?? const <StoryEvent>[])]
             ..sort((a, b) {
-              final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+              final cmp = a.globalRank.compareTo(b.globalRank);
               if (cmp != 0) {
                 return cmp;
               }
@@ -342,12 +342,12 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         final progressHeight = (h * 0.084).clamp(44.0, 58.0).toDouble();
         final mapHeightOnNarrow = (h * 0.44).clamp(220.0, 360.0).toDouble();
 
-        String avatarAssetForPerson(String personId) {
-          if (personId == weekly.person.id) {
+        String avatarAssetForPerson(String personCode) {
+          if (personCode == weekly.person.code) {
             return weekly.person.avatarAssetPath;
           }
           final person = state.persons
-              .where((p) => p.id == personId)
+              .where((p) => p.code == personCode)
               .firstOrNull;
           return person?.avatarAssetPath ?? weekly.person.avatarAssetPath;
         }
@@ -360,7 +360,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             onSelectEvent: onSelectEvent,
             colorForPerson: controller.colorForPerson,
             avatarAssetForPerson: avatarAssetForPerson,
-            selectedPersonIds: {weekly.person.id},
+            selectedPersonCodes: {weekly.person.code},
             decorate: false,
             showSelectedCallout: false,
             animateReveal: false,

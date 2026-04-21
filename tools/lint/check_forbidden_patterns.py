@@ -8,7 +8,7 @@ Pre-commit hook: 금지 패턴 검사.
 - TODO 코멘트가 이슈 번호 없이 작성된 경우 경고만 (차단하지 않음)
 
 사용법:
-    python3 tools/check_forbidden_patterns.py [<file>...]
+    python3 tools/lint/check_forbidden_patterns.py [<file>...]
 
 pre-commit이 변경된 파일을 인자로 넘긴다. 인자가 없으면 lib/ test/ tools/ 전체를 검사.
 """

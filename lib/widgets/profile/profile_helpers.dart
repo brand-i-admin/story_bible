@@ -171,7 +171,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
       child: Row(
         children: List.generate(rowPeople.length, (index) {
           final person = rowPeople[index];
-          final progressData = _profileStudyProgressByPersonId[person.id];
+          final progressData = _profileStudyProgressByPersonCode[person.code];
           final progress = progressData?.fraction ?? 0.0;
           return Expanded(
             child: Padding(

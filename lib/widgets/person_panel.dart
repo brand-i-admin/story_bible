@@ -9,7 +9,7 @@ class PersonPanel extends StatelessWidget {
   const PersonPanel({
     super.key,
     required this.persons,
-    required this.selectedPersonIds,
+    required this.selectedPersonCodes,
     required this.onToggle,
     required this.colorForPerson,
     required this.sortMode,
@@ -17,9 +17,9 @@ class PersonPanel extends StatelessWidget {
   });
 
   final List<Person> persons;
-  final Set<String> selectedPersonIds;
+  final Set<String> selectedPersonCodes;
   final ValueChanged<String> onToggle;
-  final Color Function(String personId) colorForPerson;
+  final Color Function(String personCode) colorForPerson;
   final PersonSortMode sortMode;
   final ValueChanged<PersonSortMode> onSortModeChanged;
 
@@ -139,14 +139,16 @@ class PersonPanel extends StatelessWidget {
                     itemCount: sortedPersons.length,
                     itemBuilder: (context, index) {
                       final person = sortedPersons[index];
-                      final selected = selectedPersonIds.contains(person.id);
+                      final selected = selectedPersonCodes.contains(
+                        person.code,
+                      );
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 4,
                           vertical: 2.5,
                         ),
                         child: GestureDetector(
-                          onTap: () => onToggle(person.id),
+                          onTap: () => onToggle(person.code),
                           behavior: HitTestBehavior.opaque,
                           child: Container(
                             constraints: const BoxConstraints(minHeight: 60),
@@ -161,7 +163,7 @@ class PersonPanel extends StatelessWidget {
                                   width: 4,
                                   height: 42,
                                   decoration: BoxDecoration(
-                                    color: colorForPerson(person.id),
+                                    color: colorForPerson(person.code),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),

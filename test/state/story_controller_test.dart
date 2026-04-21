@@ -61,25 +61,28 @@ Person _person({
 StoryEvent _event({
   required String id,
   required String eraId,
-  required List<String> personIds,
-  int timeSortKey = 0,
+  required List<String> personCodes,
+  int globalRank = 0,
+  int rankInEra = 0,
+  int storyIndex = 0,
 }) {
   return StoryEvent(
     id: id,
-    code: id,
     eraId: eraId,
     title: '사건 $id',
     summary: null,
-    story: null,
-    shortStory: null,
-    storyScenes: null,
+    storyScenes: const <String>[],
+    scenePersons: const <List<String>>[],
     startYear: null,
     endYear: null,
-    timeSortKey: timeSortKey,
+    timePrecision: 'approx',
+    storyIndex: storyIndex,
+    rankInEra: rankInEra,
+    globalRank: globalRank,
     placeName: null,
     lat: null,
     lng: null,
-    personIds: personIds,
+    personCodes: personCodes,
     bibleRefs: const [],
   );
 }
@@ -179,7 +182,7 @@ void main() {
       ).thenAnswer((_) async => [_person(id: 'p1', name: '아담')]);
       when(() => mockRepo.fetchEventsByEra('era1')).thenAnswer(
         (_) async => [
-          _event(id: 'e1', eraId: 'era1', personIds: ['p1']),
+          _event(id: 'e1', eraId: 'era1', personCodes: ['p1']),
         ],
       );
 
@@ -220,7 +223,7 @@ void main() {
       controller.togglePerson('p1');
 
       expect(
-        container.read(storyControllerProvider).selectedPersonIds,
+        container.read(storyControllerProvider).selectedPersonCodes,
         containsAll(['p1']),
       );
     });
@@ -235,7 +238,7 @@ void main() {
       controller.togglePerson('p1');
 
       expect(
-        container.read(storyControllerProvider).selectedPersonIds,
+        container.read(storyControllerProvider).selectedPersonCodes,
         isEmpty,
       );
     });
@@ -298,9 +301,9 @@ void main() {
       );
       when(() => mockRepo.fetchEventsByEra('era1')).thenAnswer(
         (_) async => [
-          _event(id: 'e1', eraId: 'era1', personIds: ['p1'], timeSortKey: 20),
-          _event(id: 'e2', eraId: 'era1', personIds: ['p2'], timeSortKey: 10),
-          _event(id: 'e3', eraId: 'era1', personIds: ['p1'], timeSortKey: 5),
+          _event(id: 'e1', eraId: 'era1', personCodes: ['p1'], globalRank: 20),
+          _event(id: 'e2', eraId: 'era1', personCodes: ['p2'], globalRank: 10),
+          _event(id: 'e3', eraId: 'era1', personCodes: ['p1'], globalRank: 5),
         ],
       );
 
@@ -430,7 +433,7 @@ void main() {
       ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
       when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
         (_) async => [
-          _event(id: 'ev1', eraId: 'e1', personIds: ['p1']),
+          _event(id: 'ev1', eraId: 'e1', personCodes: ['p1']),
         ],
       );
 
@@ -445,7 +448,7 @@ void main() {
       final state = container.read(storyControllerProvider);
       expect(state.selectedEraId, isNull);
       expect(state.selectedEventId, isNull);
-      expect(state.selectedPersonIds, isEmpty);
+      expect(state.selectedPersonCodes, isEmpty);
       expect(state.persons, isEmpty);
       expect(state.events, isEmpty);
       expect(state.searchQuery, '');
@@ -474,7 +477,7 @@ void main() {
 
       controller.setSelectedPersons({'p1', 'p999'});
       final state = container.read(storyControllerProvider);
-      expect(state.selectedPersonIds, {'p1'});
+      expect(state.selectedPersonCodes, {'p1'});
       expect(state.selectedPersonColors.containsKey('p1'), true);
       expect(state.selectedPersonColors.containsKey('p999'), false);
     });

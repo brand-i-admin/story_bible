@@ -10,11 +10,11 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
     required Set<String> completedEventIds,
   }) async {
     final repo = ref.read(storyRepositoryProvider);
-    final progressData = _profileStudyProgressByPersonId[person.id];
+    final progressData = _profileStudyProgressByPersonCode[person.code];
     final completedCount = progressData?.completedCount ?? 0;
     final totalCount = progressData?.totalCount ?? 0;
     final progress = progressData?.fraction ?? 0.0;
-    final eventsFuture = repo.fetchEventsForPerson(person.id);
+    final eventsFuture = repo.fetchEventsForPerson(person.code);
 
     await showGeneralDialog<void>(
       context: context,
@@ -210,12 +210,8 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
                                       final metaText = placeText.isEmpty
                                           ? yearText
                                           : '$placeText · $yearText';
-                                      final summary =
-                                          (event.shortStory ??
-                                                  event.story ??
-                                                  event.summary ??
-                                                  '')
-                                              .trim();
+                                      final summary = (event.summary ?? '')
+                                          .trim();
 
                                       return Material(
                                         color: Colors.transparent,

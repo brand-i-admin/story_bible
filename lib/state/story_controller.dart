@@ -68,7 +68,7 @@ class StoryController extends Notifier<StoryState> {
         events: const [],
         completedEventIds: completedEventIds,
         selectedEraId: null,
-        selectedPersonIds: const {},
+        selectedPersonCodes: const {},
         selectedPersonColors: const {},
         selectedTestament: hasOldTestament ? 'old' : _eraTestament(eras.first),
         searchQuery: '',
@@ -115,7 +115,7 @@ class StoryController extends Notifier<StoryState> {
         clearSelectedEra: true,
         persons: const [],
         events: const [],
-        selectedPersonIds: const {},
+        selectedPersonCodes: const {},
         selectedPersonColors: const {},
         completedEventIds: const {},
         clearSelectedEvent: true,
@@ -140,7 +140,7 @@ class StoryController extends Notifier<StoryState> {
       clearSelectedEra: true,
       persons: const [],
       events: const [],
-      selectedPersonIds: const {},
+      selectedPersonCodes: const {},
       selectedPersonColors: const {},
       completedEventIds: const {},
       searchQuery: '',
@@ -168,15 +168,15 @@ class StoryController extends Notifier<StoryState> {
       );
       final persons = await _repo.fetchPersonsByEra(eraId);
       final events = await _repo.fetchEventsByEra(eraId);
-      final selectedPersonIds = _ensureSelectedPersons(persons, const {});
+      final selectedPersonCodes = _ensureSelectedPersonCodes(persons, const {});
       final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
       state = state.copyWith(
         loading: false,
         persons: persons,
         events: events,
         completedEventIds: completedEventIds,
-        selectedPersonIds: selectedPersonIds,
-        selectedPersonColors: _assignSelectedColors(selectedPersonIds),
+        selectedPersonCodes: selectedPersonCodes,
+        selectedPersonColors: _assignSelectedColors(selectedPersonCodes),
         searchQuery: '',
         searchResults: const [],
         isSearching: false,
@@ -190,27 +190,27 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
-  void togglePerson(String personId) {
-    final next = {...state.selectedPersonIds};
-    if (next.contains(personId)) {
-      next.remove(personId);
+  void togglePerson(String personCode) {
+    final next = {...state.selectedPersonCodes};
+    if (next.contains(personCode)) {
+      next.remove(personCode);
     } else {
-      next.add(personId);
+      next.add(personCode);
     }
 
     state = state.copyWith(
-      selectedPersonIds: next,
+      selectedPersonCodes: next,
       selectedPersonColors: _assignSelectedColors(next),
       clearSelectedEvent: true,
     );
   }
 
-  void setSelectedPersons(Set<String> personIds) {
-    final next = personIds
-        .where((id) => state.persons.any((person) => person.id == id))
+  void setSelectedPersons(Set<String> personCodes) {
+    final next = personCodes
+        .where((code) => state.persons.any((person) => person.code == code))
         .toSet();
     state = state.copyWith(
-      selectedPersonIds: next,
+      selectedPersonCodes: next,
       selectedPersonColors: _assignSelectedColors(next),
       clearSelectedEvent: true,
     );
@@ -226,7 +226,6 @@ class StoryController extends Notifier<StoryState> {
 
   Future<void> markEventCompleted({
     required String eventId,
-    required int score,
     required bool isCompleted,
   }) async {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
@@ -238,8 +237,6 @@ class StoryController extends Notifier<StoryState> {
       userId: user.id,
       eventId: eventId,
       isCompleted: isCompleted,
-      score: score,
-      xpEarned: isCompleted ? score * 10 : 0,
     );
 
     if (isCompleted) {
@@ -288,35 +285,34 @@ class StoryController extends Notifier<StoryState> {
         await selectEra(event.eraId);
       }
 
-      final searchSelectedIds = event.personIds.toSet();
-      var selectedIds = {
-        ...searchSelectedIds.where(
-          (personId) => state.persons.any((person) => person.id == personId),
+      final searchSelectedCodes = event.personCodes.toSet();
+      var selectedCodes = {
+        ...searchSelectedCodes.where(
+          (code) => state.persons.any((person) => person.code == code),
         ),
       };
 
-      if (selectedIds.isEmpty &&
+      if (selectedCodes.isEmpty &&
           state.events.where((e) => e.id == event.id).isNotEmpty) {
-        selectedIds.addAll(
+        selectedCodes.addAll(
           state.events
               .firstWhere((e) => e.id == event.id)
-              .personIds
+              .personCodes
               .where(
-                (personId) =>
-                    state.persons.any((person) => person.id == personId),
+                (code) => state.persons.any((person) => person.code == code),
               ),
         );
       }
-      if (selectedIds.isEmpty) {
-        selectedIds = {
-          if (searchSelectedIds.isNotEmpty) searchSelectedIds.first,
+      if (selectedCodes.isEmpty) {
+        selectedCodes = {
+          if (searchSelectedCodes.isNotEmpty) searchSelectedCodes.first,
         };
       }
 
       state = state.copyWith(
         loading: false,
-        selectedPersonIds: selectedIds,
-        selectedPersonColors: _assignSelectedColors(selectedIds),
+        selectedPersonCodes: selectedCodes,
+        selectedPersonColors: _assignSelectedColors(selectedCodes),
         selectedEventId: event.id,
         searchQuery: '',
         searchResults: const [],
@@ -363,14 +359,11 @@ class StoryController extends Notifier<StoryState> {
 
   List<StoryEvent> mergedTimeline() {
     final filtered = state.events.where((event) {
-      final hasSelectedPerson = event.personIds.any(
-        state.selectedPersonIds.contains,
-      );
-      return hasSelectedPerson;
+      return event.personCodes.any(state.selectedPersonCodes.contains);
     }).toList();
 
     filtered.sort((a, b) {
-      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+      final cmp = a.globalRank.compareTo(b.globalRank);
       if (cmp != 0) {
         return cmp;
       }
@@ -384,31 +377,31 @@ class StoryController extends Notifier<StoryState> {
     return state.searchResults;
   }
 
-  Color colorForPerson(String personId) {
-    final assigned = state.selectedPersonColors[personId];
+  Color colorForPerson(String personCode) {
+    final assigned = state.selectedPersonColors[personCode];
     if (assigned != null) {
       return assigned;
     }
     return const Color(0xFF8E7B61);
   }
 
-  Person? personById(String personId) {
+  Person? personByCode(String personCode) {
     for (final person in state.persons) {
-      if (person.id == personId) {
+      if (person.code == personCode) {
         return person;
       }
     }
     return null;
   }
 
-  Set<String> _ensureSelectedPersons(
+  Set<String> _ensureSelectedPersonCodes(
     List<Person> persons,
     Set<String> current,
   ) {
     if (persons.isEmpty) {
       return const {};
     }
-    return current.where((id) => persons.any((p) => p.id == id)).toSet();
+    return current.where((code) => persons.any((p) => p.code == code)).toSet();
   }
 
   void _focusOnSearchSelection(String eventId) {

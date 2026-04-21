@@ -56,7 +56,7 @@ BROTHERS_ALL = [
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
 # Explicit roster exclusions for codes that are technically person names
 # but should not appear as selectable characters in the app.
-ROSTER_EXCLUDED_CODES = {"dan"}
+ROSTER_EXCLUDED_CODES = {"dan", "lot_wife"}
 
 DEFAULT_STYLE_SOURCE: dict[str, Any] = {
     "common_style": (
@@ -254,6 +254,52 @@ KO_NAME_OVERRIDES = {
     "thaddaeus": "다대오(유다)",
     "timothy": "디모데",
     "zebulun": "스불론",
+    "jonathan": "요나단",
+    "abel": "아벨",
+    "abihu": "아비후",
+    "achan": "아간",
+    "agrippa": "아그립바",
+    "aquila": "아굴라",
+    "cain": "가인",
+    "caleb": "갈렙",
+    "cornelius": "고넬료",
+    "cyrus": "고레스",
+    "delilah": "들릴라",
+    "dinah": "디나",
+    "eglon": "에글론",
+    "ehud": "에훗",
+    "eli": "엘리",
+    "festus": "베스도",
+    "goliath": "골리앗",
+    "hannah": "한나",
+    "herod": "헤롯",
+    "jairus": "야이로",
+    "jehoiachin": "여호야긴",
+    "jehu": "예후",
+    "jephthah": "입다",
+    "jesse": "이새",
+    "john_mark": "마가 요한",
+    "john_the_baptist": "세례 요한",
+    "josiah": "요시야",
+    "korah": "고라",
+    "lazarus": "나사로",
+    "lydia": "루디아",
+    "martha": "마르다",
+    "mary_magdalene": "막달라 마리아",
+    "melchizedek": "멜기세덱",
+    "micah": "미가",
+    "miriam": "미리암",
+    "naaman": "나아만",
+    "nadab": "나답",
+    "phinehas": "비느하스",
+    "pilate": "빌라도",
+    "potiphar": "보디발",
+    "samson": "삼손",
+    "sapphira": "삽비라",
+    "seth": "셋",
+    "stephen": "스데반",
+    "zechariah": "사가랴",
+    "zedekiah": "시드기야",
 }
 
 AUTO_PROMPT_SOURCE = "auto_story_v2"

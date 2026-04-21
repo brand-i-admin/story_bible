@@ -3,7 +3,7 @@
 
 Usage:
   source .env
-  python3 tools/export_event_short_story_examples.py
+  python3 tools/export/export_event_short_story_examples.py
 """
 
 from __future__ import annotations
@@ -19,7 +19,6 @@ import sys
 from typing import Any
 
 import requests
-
 
 SENTENCE_SPLIT_REGEX = re.compile(r"(?<=[.!?。！？])\s+")
 SENTENCE_FALLBACK_REGEX = re.compile(r"[^.!?。！？]+[.!?。！？]?")

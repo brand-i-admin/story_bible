@@ -21,6 +21,7 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "금식과 기도 중 공동체가 조용히 고개를 든다",
       "따로 세우라는 인도에 모두가 숨을 삼킨다",
@@ -59,6 +60,7 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "배가 항구에 닿고, 회당으로 향하는 발걸음이 빠르다",
       "반대와 긴장이 오가지만, 복음이 선포된다",
@@ -95,6 +97,7 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "회당, 사람들이 바울의 말을 기다리며 숨죽인다",
       "설교 후 이방인들이 기뻐하며 몰려든다",
@@ -131,6 +134,7 @@
     "start_year": 47,
     "end_year": 47,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "많은 사람이 믿지만, 반대가 조직적으로 커진다",
       "두 사람이 서로 눈빛을 맞추고 도시를 떠날 결심을 한다"
@@ -161,6 +165,7 @@
     "start_year": 47,
     "end_year": 47,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "군중의 열기가 오르며 상황이 급변한다, 긴장",
       "바울이 상처를 안고도 다시 일어나 다음 도시로 걷는다"
@@ -194,6 +199,7 @@
     "start_year": 48,
     "end_year": 48,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "안디옥 교회에 모인 사람들, 바울이 숨을 고르고 말문을 연다",
       "이방인에게 믿음의 문이 열렸다는 보고에 모두가 놀라 미소 짓는다"
@@ -227,6 +233,7 @@
     "start_year": 49,
     "end_year": 49,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "밤의 환상, 바울이 벌떡 일어나 지도를 펼친다",
       "배가 바다를 건너며 유럽 선교의 문이 열린다"
@@ -245,8 +252,7 @@
       "paul",
       "silas",
       "timothy",
-      "lydia",
-      "jailer"
+      "lydia"
     ],
     "place_name": "빌립보",
     "lat": 41.012,
@@ -262,6 +268,7 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "강가에서 루디아가 마음이 열리고 집 문이 열린다",
       "한밤중 찬양, 큰 흔들림, 과 문이 열리는",
@@ -297,6 +304,7 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "회당의 논쟁이 길어지고, 거리의 소문이 커진다",
       "밤에 형제들이 바울 일행을 급히 피신시킨다"
@@ -330,6 +338,7 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "사람들이 두루마리를 펼쳐 확인한다, 고개를 끄덕인다",
       "데살로니가에서 온 방해 소식에 바울이 홀로 떠날 준비를 한다"
@@ -361,6 +370,7 @@
     "start_year": 51,
     "end_year": 51,
     "time_precision": "approx",
+    "story_index": 20,
     "story_scenes": [
       "우상으로 가득한 거리, 바울이 멈춰 깊게 숨을 쉰다",
       "배경과 분위기만 보이는",
@@ -385,8 +395,7 @@
     "era": "era_nt_apostolic",
     "persons": [
       "paul",
-      "aquila",
-      "priscilla"
+      "aquila"
     ],
     "place_name": "고린도",
     "lat": 37.939,
@@ -402,6 +411,7 @@
     "start_year": 51,
     "end_year": 52,
     "time_precision": "approx",
+    "story_index": 21,
     "story_scenes": [
       "바울이 아굴라·브리스길라와 함께 일하며 밤엔 가르친다",
       "재판 자리에서 바울이 침착히 선다, 결국 사건이 흩어진다"
@@ -435,6 +445,7 @@
     "start_year": 53,
     "end_year": 55,
     "time_precision": "approx",
+    "story_index": 22,
     "story_scenes": [
       "두란노 서원, 사람들이 오가며 가르침이 퍼진다",
       "바울이 소동이 벌어지고 에베소 사람의 아데미!, 함성이 극장에 울린다"
@@ -466,6 +477,7 @@
     "start_year": 56,
     "end_year": 56,
     "time_precision": "approx",
+    "story_index": 23,
     "story_scenes": [
       "바울이 여러 도시를 지나며 손을 얹고 격려한다, 여정"
     ],
@@ -495,6 +507,7 @@
     "start_year": 56,
     "end_year": 57,
     "time_precision": "approx",
+    "story_index": 24,
     "story_scenes": [
       "바울이 편지를 쓰고, 지도 위에 예루살렘을 표시한다, 결심"
     ],
@@ -525,6 +538,7 @@
     "start_year": 57,
     "end_year": 57,
     "time_precision": "approx",
+    "story_index": 25,
     "story_scenes": [
       "해변가 작별, 바울이 결연한 표정으로 선다, 내가 다시 얼굴을 보지 못할지라",
       "모두가 울며 껴안고, 배가 떠나는 것을 오래 바라본다"
@@ -557,6 +571,7 @@
     "start_year": 57,
     "end_year": 57,
     "time_precision": "approx",
+    "story_index": 26,
     "story_scenes": [
       "군중의 함성, 바울이 붙잡혀 계단으로 끌려간다"
     ],
@@ -598,6 +613,7 @@
     "start_year": 59,
     "end_year": 59,
     "time_precision": "approx",
+    "story_index": 27,
     "story_scenes": [
       "재판정, 바울이 결연한 표정으로 선다",
       "아그립바가 속삭인다, 네가 나를 설득하려 하는구나"
@@ -630,6 +646,7 @@
     "start_year": 59,
     "end_year": 59,
     "time_precision": "approx",
+    "story_index": 28,
     "story_scenes": [
       "파도가 배를 삼킬 듯 흔들고, 사람들은 절망한다",
       "바울이 결연한 표정으로 선다"
@@ -667,6 +684,7 @@
     "start_year": 60,
     "end_year": 60,
     "time_precision": "approx",
+    "story_index": 29,
     "story_scenes": [
       "비와 추위 속, 섬사람들이 불을 피워 준다",
       "사람들의 시선이 바울에게 모이고, 분위기가 환대로 바뀐다"
@@ -698,6 +716,7 @@
     "start_year": 60,
     "end_year": 62,
     "time_precision": "approx",
+    "story_index": 30,
     "story_scenes": [
       "로마의 길, 바울이 쇠사슬을 찬 채 걸어 들어온다",
       "집에서 사람들을 맞아 담대히 가르친다, 아무도 금하지 못하더라"
@@ -734,6 +753,7 @@
     "start_year": 70,
     "end_year": 70,
     "time_precision": "exact",
+    "story_index": 1,
     "story_scenes": [
       "배경과 분위기만 보이는",
       "배경과 분위기만 보이는",
@@ -767,6 +787,7 @@
     "start_year": 95,
     "end_year": 95,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "바닷바람 부는 섬, 요한이 홀로 앉아 기도한다",
       "나팔 소리 같은 큰 음성이 들리고 요한이 뒤돌아본다",
@@ -808,6 +829,7 @@
     "start_year": 95,
     "end_year": 95,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "요한이 편지를 쓰기 시작한다, 촛불이 흔들린다",
       "처음 사랑을 버렸다 같은 말이 떨어지고 요한이 잠깐 멈춘다",
@@ -846,6 +868,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "문이 열리는 듯한",
       "보좌와 무지개 같은 빛, 번개와 음성이 울린다",
@@ -883,6 +906,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "봉인된 두루마리, 누가 열 수 있는가 질문이 울린다",
       "요한이 울다가 유다 지파의 사자 소리를 듣고 고개를 든다",
@@ -919,6 +943,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "첫 봉인이 열리고 전개가 시작되는 긴장감",
       "연속되는 봉인들로 세상이 흔들리는 이미지",
@@ -952,6 +977,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "하늘의 잠깐 침묵 후, 첫 나팔이 울린다",
       "땅과 바다에 재앙 이미지가 번진다",
@@ -991,6 +1017,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "하늘의 전쟁 같은 이미지, 대립이 시작된다",
       "땅 위에 권세가 등장하며 사람들의 시선이 흔들린다",
@@ -1029,6 +1056,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "화려한 도시 이미지가 등장하고, 사람들의 욕망이 번쩍인다",
       "배경과 분위기만 보이는",
@@ -1069,6 +1097,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "큰 보좌 앞에 모두가 서는 앞쪽에 서 있고, 책들이 펼쳐진다",
       "처음 하늘과 처음 땅이 지나갔다 선언으로 화면이 전환된다",

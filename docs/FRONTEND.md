@@ -42,7 +42,8 @@ lib/
 |------|------|----------|--------|
 | Era | `models/era.dart` (40줄) | id, code, testament, name, displayOrder, mapCenter*, mapZoom | `Era.fromMap()` |
 | Person | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접 |
-| StoryEvent | `models/story_event.dart` (53줄) | id, code, eraId, title, summary, story, shortStory, storyScenes, lat/lng, timeSortKey, personIds, bibleRefs | 생성자 직접 |
+| StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), scenePersons (List<List<String>>), lat/lng, storyIndex, rankInEra, globalRank, personCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
+| BibleRef | `models/bible_ref.dart` | book, from, to (`displayText` getter) | `BibleRef.fromMap`, `BibleRef.fromList` |
 | BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
 | AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
 | UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
@@ -83,8 +84,8 @@ class StoryState {
   final List<Person> persons;
   final List<StoryEvent> events;
   final String? selectedEraId;
-  final Set<String> selectedPersonIds;
-  final Map<String, Color> selectedPersonColors;
+  final Set<String> selectedPersonCodes;        // person.code 기반
+  final Map<String, Color> selectedPersonColors; // key = person.code
   final String? selectedEventId;
   final Set<String> completedEventIds;
   final String searchQuery;
@@ -101,13 +102,14 @@ class StoryState {
 | `initialize()` | 앱 시작 시 eras 로드, 초기 상태 설정 |
 | `selectTestament(String)` | 구약/신약 전환 |
 | `selectEra(String)` | 시대 선택 → persons + events 로드 |
-| `togglePerson(String)` | 인물 선택/해제 토글 |
+| `togglePerson(String code)` | 인물 선택/해제 토글 (person.code 기반) |
 | `selectEvent(String?)` | 이벤트 선택/해제 |
-| `markEventCompleted(...)` | 학습 완료 + XP 저장 |
+| `markEventCompleted({eventId, isCompleted})` | 이벤트 완료 여부 기록 + 학습 출석일 갱신 |
 | `setSearchQuery(String)` | 검색어 변경 (220ms 디바운스) |
 | `selectSearchResult(StoryEvent)` | 검색 결과 → 시대/인물/이벤트 자동 선택 |
-| `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 |
-| `colorForPerson(String)` | 인물별 할당 색상 반환 |
+| `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 (`globalRank` 정렬) |
+| `colorForPerson(String code)` | 인물 코드별 할당 색상 반환 |
+| `personByCode(String code)` | 코드로 Person 객체 조회 |
 
 ### 3.4 색상 팔레트 (8색)
 

@@ -37,14 +37,14 @@ class EventDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shortStoryText = (event.shortStory ?? '').trim();
-    final fallbackText = (event.story ?? event.summary ?? '').trim();
-    final storyText = shortStoryText.isNotEmpty ? shortStoryText : fallbackText;
+    final storyText = (event.summary ?? '').trim();
     final placeText = (event.placeName ?? '').trim();
     final yearText = event.startYear?.toString() ?? '-';
     final metaText = placeText.isEmpty ? yearText : '$placeText · $yearText';
     final refs = event.bibleRefs;
-    final moveTarget = parseBibleNavigationTarget(event.bibleRefs.firstOrNull);
+    final moveTarget = parseBibleNavigationTarget(
+      event.bibleRefs.firstOrNull?.displayText,
+    );
 
     final currentState = ref.watch(storyControllerProvider);
     final isCompleted = currentState.completedEventIds.contains(event.id);
@@ -121,7 +121,9 @@ class EventDetailPage extends ConsumerWidget {
                         const SizedBox(height: 12),
                         storySection(
                           title: '관련 본문',
-                          content: refs.map((ref) => '• $ref').join('\n'),
+                          content: refs
+                              .map((ref) => '• ${ref.displayText}')
+                              .join('\n'),
                           action: moveTarget == null
                               ? null
                               : bibleMoveButton(

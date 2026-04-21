@@ -4,8 +4,6 @@
     "era": "era_exodus",
     "persons": [
       "pharaoh",
-      "shiphrah",
-      "puah",
       "israelites"
     ],
     "place_name": "애굽(고센 일대, 전승)",
@@ -22,6 +20,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "벽돌 굽는 현장, 감독의 고함과 지친 얼굴들",
       "바로의 명령이 내려온다, 남자 아기는 죽여라",
@@ -60,6 +59,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "어머니가 아기를 꼭 안고 숨죽인다, 밖에서 발소리가 지나간다",
       "갈대상자에 역청을 바르고 조심히 물가에 띄운다",
@@ -94,6 +94,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "모세가 노역 현장을 바라보다 주먹을 꽉 쥔다",
       "폭력이 터지고, 모세가 숨 가쁘게 멈춰 선다, 후회",
@@ -141,6 +142,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "모세가 양을 몰다 불타는 떨기나무를 발견하고 멈춘다",
       "모세가 신을 벗고 떨며 선다",
@@ -185,6 +187,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "모세와 아론이 바로 앞에 선다",
       "바로가 모세와 아론을 비웃는다",
@@ -232,6 +235,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "세로 3등분 구도: 위에는 나일강 물이 피로 변해 사람들이 충격에 빠진 모습, 가운데에는 개구리가 집과 궁으로 몰려 올라오는 모습, 아래에는 이가 사람과 가축의 몸에 달라붙어 모두가 괴로워하는 모습",
       "세로 3등분 구도: 위에는 파리가 바로의 궁을 가득 메운 모습, 가운데에는 애굽의 가축들이 들판에서 떼죽음을 당해 사람들이 망연한 모습, 아래에는 악성 종기로 고통스러워하는 사람들이 몸을 움츠린 모습",
@@ -269,6 +273,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "가족들이 급히 무교병을 준비한다, 집 안은 숨죽인 긴장",
       "모세의 지시가 전달된다, 이 밤은 여호와의 유월절이라",
@@ -306,6 +311,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 8,
     "story_scenes": [
       "밤의 애굽, 집집마다 초태생의 죽음으로 사람들이 침상 곁에서 오열한다, 시신은 직접적으로 보이지 않고 슬픔과 충격만 절제되게 표현",
       "밤에 바로가 모세에게 당장 나가라고 말한다, 궁정은 무겁고 다급하다",
@@ -346,6 +352,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 9,
     "story_scenes": [
       "뒤엔 군대, 앞엔 바다, 백성이 원망하며 멈춰 선다",
       "모세가 두 손을 들어 다급하게 몸짓한다",
@@ -384,6 +391,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "사람들이 물을 마시고 뱉는다, 써서 못 마신다!",
       "원망이 커지고 모세가 한쪽으로 물러나 기도한다",
@@ -422,6 +430,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "백성이 불평한다, 애굽의 냄비가 그립다",
       "아침, 땅 위에 하얀 것들이 덮인다, 이것이 무엇이냐?",
@@ -443,8 +452,7 @@
     "persons": [
       "moses",
       "joshua",
-      "aaron",
-      "hur"
+      "aaron"
     ],
     "place_name": "르비딤(전승)",
     "lat": 28.75,
@@ -460,6 +468,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "여호수아가 병력을 정리하고 달려나간다",
       "언덕 위 모세가 손을 들자 이스라엘이 밀어붙인다",
@@ -503,6 +512,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "광야 끝, 산이 보이고 백성이 진을 친다",
       "모세가 산을 오르며 뒤돌아본다, 사람들은 숨죽인다",
@@ -542,6 +552,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "하나님의 빛이 산 위에서 음성이 울린다",
       "계명이 차례로 선포되고 백성은 떨며 뒤로 물러선다",
@@ -583,6 +594,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "백성이 아론을 둘러싼다",
       "금이 모이고 송아지 형상이 세워진다, 환호가 터진다",
@@ -628,6 +640,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "모세가 장막 밖에서 기도한다, 얼굴에 간절함",
       "모세가 앞쪽에 서 있다",
@@ -670,6 +683,7 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "사람들이 예물을 가져온다, 손마다 재료가 들려 있다",
       "장인들이 천과 기구를 만들고 기둥을 세운다, 빠른",
@@ -708,6 +722,7 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "제사장들이 분주히 움직인다, 분위기가 들떠 있다",
       "분향단 앞에 두 사람이 쓰러져 움직이지 않고, 그 위로 여호와의 불이 크게 타오르며 주변 사람들이 놀라 뒤로 물러난다, 피는 보이지 않음",
@@ -755,6 +770,7 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "정탐꾼들이 큰 포도송이를 들고 돌아온다, 기대가 오른다",
       "거인은 크다는 말이 퍼지며 군중의 얼굴이 창백해진다",
@@ -794,6 +810,7 @@
     "start_year": -1444,
     "end_year": -1444,
     "time_precision": "approx",
+    "story_index": 20,
     "story_scenes": [
       "세 명의 남자가 한편이 되어 모세 앞에서 거칠게 반항하고 주변 무리가 숨죽여 지켜본다",
       "모세가 그들을 향해 분노와 슬픔이 섞인 얼굴로 강하게 말한다",
@@ -835,6 +852,7 @@
     "start_year": -1408,
     "end_year": -1408,
     "time_precision": "approx",
+    "story_index": 21,
     "story_scenes": [
       "백성이 모세를 둘러싸고 원망을 쏟아낸다, 왜 우리를 이 광야로 데려왔느냐",
       "불뱀들이 진영에 나타나 백성을 물어 사람들이 공포에 빠진다, 피나 상처는 직접 보이지 않음",
@@ -871,6 +889,7 @@
     "start_year": -1407,
     "end_year": -1407,
     "time_precision": "approx",
+    "story_index": 22,
     "story_scenes": [
       "배경과 분위기만 보이는",
       "진영에 긴장과 슬픔이 번진다, 모세가 고개를 숙인다",
@@ -905,6 +924,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 23,
     "story_scenes": [
       "모세가 산길을 오르며 숨을 고른다",
       "정상에서 멀리 땅을 바라본다, 눈빛이 오래 머문다",
@@ -945,6 +965,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "여호수아가 시켜 제사장들이 언약궤를 메고 요단강 앞에 선다",
       "제사장들의 발이 물을 밟자 요단강 물이 갈라진다",
@@ -985,6 +1006,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "여리고 성벽 아래, 침묵 속 행렬이 한 바퀴 돈다",
       "나팔 소리만 울리고 사람들은 말이 없다",
@@ -1019,6 +1041,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "아이 성 공격이 실패하고 군이 흩어진다, 여호수아가 찢어진 옷으로 엎드린다",
       "이스라엘 중에 범죄함이 있다는 선언, 진영이 술렁인다",
@@ -1060,6 +1083,7 @@
     "start_year": -1405,
     "end_year": -1405,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "해진 옷과 마른 떡을 든 기브온 사절단이 여호수아를 찾아온다",
       "여호수아가 그들의 말을 믿고 조약을 맺는다, 긴장감이 흐른다",
@@ -1103,6 +1127,7 @@
     "start_year": -1380,
     "end_year": -1380,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "세겜에 모인 백성, 여호수아가 지팡이를 짚고 선다",
       "여호수아가 앞쪽에 서 있다",
@@ -1146,6 +1171,7 @@
     "start_year": -1375,
     "end_year": -1375,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "시간이 흐르고 세대가 바뀌며 기억이 희미해진다",
       "우상이 들어오고 억압이 시작된다, 어두운 톤",
@@ -1181,6 +1207,7 @@
     "start_year": -1320,
     "end_year": -1320,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "이스라엘 백성이 여호와 앞에서 악을 행하며 우상을 숭배한다",
       "이스라엘 백성이 모압 왕 에글론을 섬기며 무거운 조공을 바친다",
@@ -1225,6 +1252,7 @@
     "start_year": -1160,
     "end_year": -1160,
     "time_precision": "approx",
+    "story_index": 8,
     "story_scenes": [
       "기드온이 포도주 틀에서 몰래 타작한다, 눈치 보는 표정",
       "큰 용사여라는 부름에 기드온이 어이없어한다",
@@ -1267,6 +1295,7 @@
     "start_year": -1160,
     "end_year": -1160,
     "time_precision": "approx",
+    "story_index": 9,
     "story_scenes": [
       "병력이 줄어드는 앞쪽에 서 있고, 기드온이 놀라지만 고개를 끄덕인다",
       "밤, 300명이 항아리·횃불·나팔을 든다",
@@ -1304,6 +1333,7 @@
     "start_year": -1135,
     "end_year": -1135,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "욕심 가득한 얼굴의 아비멜렉이 형제들을 죽인 뒤 차갑게 서 있고, 뒤에는 형제들이 쓰러져 있다",
       "한 아이가 사람들에게 나무들이 서로 대화하는 비유를 들려준다",
@@ -1343,6 +1373,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "전쟁 전, 입다가 혼자 서원하며 중얼거린다",
       "전투의 승전 소식, 사람들이 환호한다",
@@ -1383,6 +1414,7 @@
     "start_year": -1080,
     "end_year": -1080,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "배경과 분위기만 보이는 앞쪽에 서 있고, 삼손은 웃으며 넘기다 점점 지친다",
       "비밀을 말하는 순간, 공기가 싸늘해진다, 삼손의 눈빛이 흔들린다",
@@ -1428,6 +1460,7 @@
     "start_year": -1070,
     "end_year": -1070,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "미가가 어머니의 저주를 듣고 훔친 돈을 고백한 뒤, 은신상을 만들고 집안에 신당을 차려 우상 숭배를 시작한다",
       "미가가 레위인 요나단을 개인 제사장으로 세우고 집 신당 앞에 세운다",
@@ -1472,6 +1505,7 @@
     "start_year": -1060,
     "end_year": -1060,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "충격적 소식이 지파들에 퍼지고 분노가 폭발한다",
       "지파들이 모여 결의를 다진다, 분위기가 살벌해진다",
@@ -1508,6 +1542,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "나오미가 결연한 표정으로 선다, 룻이 고개를 젓는다",
       "룻이 결연한 표정으로 선다",
@@ -1552,6 +1587,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "룻이 베들레헴 들판에서 고개 숙여 이삭을 줍는다",
       "보아스가 들판에서 룻을 바라보는 장면",
@@ -1598,6 +1634,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "성문에 장로들이 모인다, 보아스가 결연한 표정으로 선다",
       "보아스가 엘리멜렉의 소유지를 사는 장면",
@@ -1643,6 +1680,7 @@
     "start_year": -1105,
     "end_year": -1105,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "실로 성막 앞, 한나가 입술만 움직이며 울고 있다",
       "엘리가 오해하지만, 한나의 진심을 듣고 축복한다",
@@ -1689,6 +1727,7 @@
     "start_year": -1075,
     "end_year": -1075,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "전투에서 언약궤를 들고 나가지만 패배한다",
       "블레셋 땅에서 재앙이 번지며 언약궤가 불편한 존재가 된다",
@@ -1725,6 +1764,7 @@
     "start_year": -1050,
     "end_year": -1050,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "사무엘이 결연한 표정으로 선다",
       "사무엘이 마음 아파하며 기도한다, 고요한 밤",
@@ -1767,6 +1807,7 @@
     "start_year": -1050,
     "end_year": -1050,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "젊은 청년 사울이 길에서 나귀를 찾으며 헤맨다",
       "젊은 사울이 사무엘을 만나 대화하며 놀라는 장면",
@@ -1812,6 +1853,7 @@
     "start_year": -1049,
     "end_year": -1049,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "위협 소식이 전해진다, 사람들의 얼굴이 창백해진다",
       "사울이 전령을 보내 이스라엘 병력을 소집하는 장면",
@@ -1856,6 +1898,7 @@
     "start_year": -1045,
     "end_year": -1045,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "전투 전, 사울이 조급해하며 제사를 대신 드린다",
       "사무엘이 상대를 바라보며 기다린다",
@@ -1901,6 +1944,7 @@
     "start_year": -1030,
     "end_year": -1030,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "사무엘이 어떤 집에 들어가는 장면",
       "사무엘이 여러 청년들 앞에서 고개를 젓는 모습",

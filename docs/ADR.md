@@ -153,3 +153,68 @@
   - `dart-import-sort` (import_sorter 검증)
   - `forbidden-patterns` (print(), JWT 시크릿, Google API key 차단)
   - `verify-asset-paths` (pubspec.yaml과 실제 파일 일치 검증)
+
+## ADR-012: 정렬 컬럼 → view 기반으로 전환 (time_sort_key 폐기)
+
+- **상태**: 채택 (2026-04-21)
+- **맥락**: `events.time_sort_key`(year × 1000 + 이벤트 번호)는 빌드 타임에 고정.
+  외부 기여자가 새 이야기를 끼워 넣으면 기존 키와 충돌하거나 전 이야기 재생성 필요.
+- **결정**:
+  - `events.story_index`(int, era 내 unique) 컬럼만 저장.
+  - `events_ordered` view가 `(era_id, story_index)`로 `rank_in_era` + `global_rank`를 계산.
+  - `person_eras`도 view로 전환 — 인물 첫 등장 story_index 기준으로 era 내 자동 정렬.
+  - 어드민의 새 이야기 삽입은 RPC `insert_event_at_position` (선후 이야기 사이에 끼워 넣고 뒤 인덱스 +1 시프트)로 처리.
+- **이유**:
+  - 외부 기여 워크플로우에서 "기존 215개 사이에 추가" 시 정렬값을 사전 협상할 필요 없음
+  - view가 항상 1..N 연속 정수를 보장 → 클라이언트 정렬 코드 단순
+  - `time_sort_key` 보정 메타데이터(`YEAR_OVERRIDES` 등)도 빌더에서 사용처가 줄어 의도가 분명해짐
+
+## ADR-013: events 비정규화 — person_codes / bible_refs를 컬럼으로 흡수
+
+- **상태**: 채택 (2026-04-21)
+- **맥락**: `event_persons.role`, `event_bible_refs.book/chapter/verse` 컬럼이 앱에서
+  어디에도 안 쓰이고 `display_text`/`person_id`만 소비되고 있었음. 정규화의 효용 없음.
+- **결정**:
+  - `events.person_codes text[]`(GIN 인덱스)로 인물 매핑 흡수 → `event_persons` 테이블 제거.
+  - `events.bible_refs jsonb`로 성경 참조 통합 → `event_bible_refs` 테이블 제거.
+  - `events.story_scenes`/`scene_persons`도 jsonb로 events row에 보관.
+- **이유**:
+  - 한 이벤트 select로 인물 + 성경 참조 + 장면을 모두 회수 (네트워크 round-trip 1회)
+  - 인물별 이벤트 조회는 `person_codes @> ARRAY[code]` + GIN 인덱스로 빠름
+  - 향후 어드민 등록도 events 한 번 INSERT로 끝남 (3개 테이블 트랜잭션 불필요)
+- **트레이드오프**: events row 크기는 늘어나지만 215~수천 건 규모에서 무의미.
+
+## ADR-014: persons.is_active 어드민 토글 + mention_count 분리
+
+- **상태**: 채택 (2026-04-21)
+- **맥락**: 기존 `mention_count >= 2` 필터가 빌드 타임 결정이라 1회 등장 인물은
+  중요해도 아바타가 안 만들어짐. 또한 잡음 인물(2회 등장이지만 중요도 낮음)도 노출됨.
+- **결정**:
+  - 빌더는 모든 개인 인물의 아바타 prompt를 생성 (`--min-mentions 1`).
+  - 신규 인물의 `is_active`는 기본 `false` (mention_count >= 2 이상이면 빌더가 `true`).
+  - 어드민이 토글한 `is_active` 값은 시드 재실행 시 보존 (`on conflict ... do update`에서 제외).
+  - `mention_count` 컬럼은 어드민 화면에서 참고용으로 표시.
+- **이유**:
+  - "1회 등장이지만 중요한 인물" / "여러 번 등장이지만 노출 불필요한 인물"을 어드민이 직접 선별
+  - RLS 정책에서 `persons.is_active = true`만 노출 → 클라이언트가 별도 필터링할 필요 없음
+- **결과**: 132명 모두 prompts.json 포함, 그 중 77명만 시드에서 활성으로 INSERT.
+
+## ADR-015: 외부 기여 제출 폐기 + 스키마 경량화
+
+- **상태**: 채택 (2026-04-21)
+- **맥락**: 앱 내부에 "외부 기여자가 이야기 제출 → 어드민 검토 → 배포" 흐름을
+  위해 `events.submitted_by`, `events.status = 'pending_review'`, `publish_event` RPC,
+  `audit_log` 테이블/트리거가 준비되어 있었으나 실제 사용자 검증 전 방향 전환.
+  등록 요청은 앱 밖(구글폼/노션 등)에서 수집하고, 어드민이 직접 등록하는 것으로 확정.
+- **결정**: 외부 기여 관련 객체 일괄 제거.
+  - `events.submitted_by`, `events.thumb_url` 컬럼 DROP
+  - `events.status` CHECK → `('draft','published')` 로 축소
+  - `publish_event(uuid)` RPC 제거, `insert_event_at_position` RPC 는 admin 전용으로 단순화 (status 항상 'published', submitted_by 없음)
+  - `audit_log` 테이블 + `record_audit()` 함수 + `trg_events_audit`/`trg_persons_audit` 트리거 제거
+  - 그 외 동시 정리: `eras.theme_color`, `persons.mention_count`, `user_event_progress.score`/`xp_earned`, `idx_bible_verses_book_name` 제거
+- **이유**:
+  - 제출→검토 UX 는 앱 밖 도구가 이미 충분 (폼/노션). DB 레벨 상태 머신은 불필요.
+  - `audit_log` 는 git + seed SQL 재실행으로 복구 경로 확보됨. 공간/복잡도 대비 가치 낮음.
+  - 게이미피케이션(score/xp) 계획 현재 없음. 완료 여부(`is_completed`)만 사용 중.
+- **결과**: `db_init.sql` 약 180줄 감소, RLS/트리거/RPC 단순화. admin 앱은 관리자
+  전용으로 축소 (pending_review 검토 화면 제거, 즉시 published 등록).

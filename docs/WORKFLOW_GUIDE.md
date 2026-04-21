@@ -293,7 +293,7 @@ pre-commit + pre-push의 모든 검사를 원격에서 한 번 더 실행.
 
 ## 10. 코드 메트릭 기준
 
-거대 파일 재발 방지용 자동 검사 (`tools/check_code_metrics.py`):
+거대 파일 재발 방지용 자동 검사 (`tools/lint/check_code_metrics.py`):
 
 | 항목 | 경고 | 차단 |
 |---|---|---|
@@ -561,9 +561,9 @@ gh pr create → 사용자가 "PR 만들어줘" 할 때만
 |---|---|---|---|
 | `analysis_options.yaml` | 루트 | 11개 린트 규칙 | IDE + `flutter analyze` |
 | `.pre-commit-config.yaml` | 루트 | git hook 정의 | 커밋/푸시 시 |
-| `tools/check_forbidden_patterns.py` | tools/ | print/시크릿 차단 | pre-commit |
-| `tools/check_code_metrics.py` | tools/ | 파일/메소드 크기 감시 (500/1500줄, 80/200줄) | pre-push (보고) + CI |
-| `tools/verify_asset_paths.py` | tools/ | pubspec ↔ 실제 파일 정합성 | pre-push + CI |
+| `tools/lint/check_forbidden_patterns.py` | tools/ | print/시크릿 차단 | pre-commit |
+| `tools/lint/check_code_metrics.py` | tools/ | 파일/메소드 크기 감시 (500/1500줄, 80/200줄) | pre-push (보고) + CI |
+| `tools/app/verify_asset_paths.py` | tools/ | pubspec ↔ 실제 파일 정합성 | pre-push + CI |
 | `.github/workflows/flutter_ci.yml` | .github/ | 원격 CI (4 jobs) | push/PR |
 | `pubspec.yaml` | 루트 | 의존성 + 에셋 목록 | `flutter pub get` |
 | `db_init.sql` | 루트 | DB 스키마 단일 진실 소스 | 수동 (Supabase SQL Editor) |

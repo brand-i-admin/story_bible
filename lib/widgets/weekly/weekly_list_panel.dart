@@ -49,12 +49,7 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                         final isChecked = _weeklyCheckedEventIds.contains(
                           event.id,
                         );
-                        final shortText =
-                            (event.shortStory ??
-                                    event.story ??
-                                    event.summary ??
-                                    '')
-                                .trim();
+                        final shortText = (event.summary ?? '').trim();
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 6),
                           child: GestureDetector(
@@ -100,7 +95,7 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: colorForPerson(
-                                              weekly.person.id,
+                                              weekly.person.code,
                                             ),
                                           ),
                                         ),

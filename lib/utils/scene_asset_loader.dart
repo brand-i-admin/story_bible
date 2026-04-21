@@ -17,7 +17,7 @@ class SceneAssetLoader {
     r'/scene_(\d+)\.(?:png|jpe?g|webp)$',
     caseSensitive: false,
   );
-  static final RegExp _sceneCodeDigitsPattern = RegExp(r'(\d+)$');
+  static final RegExp _sceneTitleNumberPattern = RegExp(r'^\s*(\d{1,4})\b');
   static final RegExp _sceneInvalidDirChars = RegExp(r'[\\/:*?"<>|]+');
   static final RegExp _sceneWhitespacePattern = RegExp(r'\s+');
   static final RegExp _sceneLooseNormalizePattern = RegExp(
@@ -81,8 +81,8 @@ class SceneAssetLoader {
   }
 
   @visibleForTesting
-  String? scenePrefixForCode(String code) {
-    final match = _sceneCodeDigitsPattern.firstMatch(code.trim());
+  String? scenePrefixForTitle(String title) {
+    final match = _sceneTitleNumberPattern.firstMatch(title.trim());
     final digits = match?.group(1);
     if (digits == null || digits.isEmpty) {
       return null;
@@ -95,13 +95,10 @@ class SceneAssetLoader {
   }
 
   Future<List<String>> loadForEvent(StoryEvent event) async {
-    return loadForTitle(title: event.title, code: event.code);
+    return loadForTitle(title: event.title);
   }
 
-  Future<List<String>> loadForTitle({
-    required String title,
-    String? code,
-  }) async {
+  Future<List<String>> loadForTitle({required String title}) async {
     final dirName = sceneDirectoryNameForTitle(title);
     final cached = _sceneAssetsCache[dirName];
     if (cached != null) {
@@ -134,24 +131,24 @@ class SceneAssetLoader {
       (path) => path.startsWith(directPrefix),
     );
     if (!hasDirect) {
-      final codePrefix = code == null ? null : scenePrefixForCode(code);
-      if (codePrefix != null) {
-        final codeMatchedDir =
+      final titlePrefix = scenePrefixForTitle(title);
+      if (titlePrefix != null) {
+        final titleMatchedDir =
             knownDirs
-                .where((dir) => dir.startsWith('$codePrefix '))
+                .where((dir) => dir.startsWith('$titlePrefix '))
                 .toList(growable: false)
               ..sort((a, b) => a.length.compareTo(b.length));
-        if (codeMatchedDir.isNotEmpty) {
-          chosenDir = codeMatchedDir.first;
+        if (titleMatchedDir.isNotEmpty) {
+          chosenDir = titleMatchedDir.first;
         }
       }
     }
 
-    final chosenPrefixAfterCode = '$sceneRoot$chosenDir/';
-    final hasCodeMatched = allScenePaths.any(
-      (path) => path.startsWith(chosenPrefixAfterCode),
+    final chosenPrefixAfterTitle = '$sceneRoot$chosenDir/';
+    final hasTitleMatched = allScenePaths.any(
+      (path) => path.startsWith(chosenPrefixAfterTitle),
     );
-    if (!hasCodeMatched) {
+    if (!hasTitleMatched) {
       final titleKey = normalizeSceneLookupKey(title);
       final dirNameKey = normalizeSceneLookupKey(dirName);
       final fallbackCandidates =

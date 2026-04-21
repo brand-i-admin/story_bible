@@ -14,7 +14,7 @@ part 파일은 부모 파일에 포함되므로 제외.
 test/ 파일은 검사하되 기준을 2배로 완화.
 
 사용법:
-    python3 tools/check_code_metrics.py [--ci]
+    python3 tools/lint/check_code_metrics.py [--ci]
 
 --ci: 차단 기준 위반 시 exit 1 (CI용). 없으면 경고만 출력.
 """

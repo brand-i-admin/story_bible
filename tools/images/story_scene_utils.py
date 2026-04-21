@@ -7,7 +7,6 @@ import re
 from pathlib import Path
 from typing import Any
 
-
 DISCIPLES_WITH_JUDAS = [
     "peter",
     "andrew",

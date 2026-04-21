@@ -47,85 +47,42 @@ class StoryRepository {
 
   Future<List<StoryEvent>> fetchEventsByEra(String eraId) async {
     final rows = await _client
-        .from('events')
-        .select('''
-          id,
-          code,
-          era_id,
-          title,
-          summary,
-          story,
-          short_story,
-          story_scenes,
-          start_year,
-          end_year,
-          time_sort_key,
-          place_name,
-          lat,
-          lng,
-          event_persons(person_id),
-          event_bible_refs(display_text)
-        ''')
+        .from('events_ordered')
+        .select()
         .eq('era_id', eraId)
-        .order('time_sort_key', ascending: true);
-
-    return rows
-        .map<StoryEvent>(
-          (row) => _storyEventFromRow(row, includeBibleRefs: true),
-        )
-        .toList();
+        .order('rank_in_era', ascending: true);
+    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 
-  Future<List<StoryEvent>> fetchEventsForPerson(String personId) async {
+  Future<List<StoryEvent>> fetchEventsForPerson(String personCode) async {
     final rows = await _client
-        .from('events')
-        .select('''
-          id,
-          code,
-          era_id,
-          title,
-          summary,
-          story,
-          short_story,
-          story_scenes,
-          start_year,
-          end_year,
-          time_sort_key,
-          place_name,
-          lat,
-          lng,
-          event_persons!inner(person_id),
-          event_bible_refs(display_text)
-        ''')
-        .eq('event_persons.person_id', personId)
-        .order('time_sort_key', ascending: true);
-
-    return rows
-        .map<StoryEvent>(
-          (row) => _storyEventFromRow(row, includeBibleRefs: true),
-        )
-        .toList();
+        .from('events_ordered')
+        .select()
+        .contains('person_codes', <String>[personCode])
+        .order('global_rank', ascending: true);
+    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 
+  /// 인물별 첫 등장 시점을 [StoryEvent.globalRank] 기준으로 반환한다.
+  /// 키는 `persons.code` (어드민/외부 기여 모두 코드 기반).
   Future<Map<String, int>> fetchPersonTimelineOrder() async {
     final rows = await _client
-        .from('events')
-        .select('time_sort_key, event_persons(person_id)')
-        .order('time_sort_key', ascending: true);
+        .from('events_ordered')
+        .select('global_rank, person_codes')
+        .order('global_rank', ascending: true);
 
-    final firstAppearanceByPersonId = <String, int>{};
+    final firstAppearanceByCode = <String, int>{};
     for (final row in rows) {
-      final timeSortKey = row['time_sort_key'] as int? ?? 0;
-      final personRows = row['event_persons'] as List<dynamic>? ?? const [];
-      for (final personRow in personRows.whereType<Map<String, dynamic>>()) {
-        final personId = personRow['person_id'] as String?;
-        if (personId == null) {
-          continue;
-        }
-        firstAppearanceByPersonId.putIfAbsent(personId, () => timeSortKey);
+      final globalRank = (row['global_rank'] as num?)?.toInt() ?? 0;
+      final codes = row['person_codes'];
+      if (codes is! List) {
+        continue;
+      }
+      for (final code in codes.whereType<String>()) {
+        firstAppearanceByCode.putIfAbsent(code, () => globalRank);
       }
     }
-    return firstAppearanceByPersonId;
+    return firstAppearanceByCode;
   }
 
   Future<List<StoryEvent>> searchEventsByText(String query) async {
@@ -135,25 +92,11 @@ class StoryRepository {
     }
 
     final rows = await _client
-        .from('events')
-        .select('''
-          id,
-          code,
-          era_id,
-          title,
-          summary,
-          story,
-          short_story,
-          story_scenes,
-          start_year,
-          end_year,
-          time_sort_key,
-          place_name,
-          lat,
-          lng,
-          event_persons(person_id, persons(name))
-        ''')
-        .order('time_sort_key', ascending: true);
+        .from('events_ordered')
+        .select()
+        .order('global_rank', ascending: true);
+
+    final personNameByCode = await _fetchActivePersonNamesByCode();
 
     final tokens = normalized
         .split(RegExp(r'\s+'))
@@ -162,18 +105,13 @@ class StoryRepository {
 
     final scored = <_ScoredEvent>[];
     for (final row in rows) {
-      final event = _storyEventFromRow(row);
-      final personRows = (row['event_persons'] as List<dynamic>? ?? const []);
-      final personNames = personRows
-          .whereType<Map<String, dynamic>>()
-          .map((entry) {
-            final person = entry['persons'] as Map<String, dynamic>?;
-            return person?['name'] as String?;
-          })
+      final event = StoryEvent.fromMap(row);
+      final personNames = event.personCodes
+          .map((code) => personNameByCode[code])
           .whereType<String>()
           .map((name) => name.toLowerCase())
           .toList();
-      final score = _scoreForEvent(
+      final score = scoreEventMatch(
         event,
         normalized,
         tokens,
@@ -189,10 +127,23 @@ class StoryRepository {
       if (scoreDiff != 0) {
         return scoreDiff;
       }
-      return a.event.timeSortKey.compareTo(b.event.timeSortKey);
+      return a.event.globalRank.compareTo(b.event.globalRank);
     });
 
     return scored.take(20).map((entry) => entry.event).toList();
+  }
+
+  Future<Map<String, String>> _fetchActivePersonNamesByCode() async {
+    final rows = await _client.from('persons').select('code, name');
+    final result = <String, String>{};
+    for (final row in rows) {
+      final code = row['code'] as String?;
+      final name = row['name'] as String?;
+      if (code != null && name != null) {
+        result[code] = name;
+      }
+    }
+    return result;
   }
 
   Future<List<QuizQuestion>> fetchQuizQuestions(String eventId) async {
@@ -261,86 +212,21 @@ class StoryRepository {
     required String userId,
     required String eventId,
     required bool isCompleted,
-    required int score,
-    required int xpEarned,
   }) async {
     await _client.from('user_event_progress').upsert({
       'user_id': userId,
       'event_id': eventId,
       'is_completed': isCompleted,
-      'score': score,
-      'xp_earned': xpEarned,
       'completed_at': isCompleted ? DateTime.now().toIso8601String() : null,
     }, onConflict: 'user_id,event_id');
   }
-
-  StoryEvent _storyEventFromRow(
-    Map<String, dynamic> row, {
-    bool includeBibleRefs = false,
-  }) {
-    return storyEventFromRow(row, includeBibleRefs: includeBibleRefs);
-  }
-
-  int _scoreForEvent(
-    StoryEvent event,
-    String query,
-    List<String> tokens, {
-    List<String> personNames = const [],
-  }) {
-    return scoreEventMatch(event, query, tokens, personNames: personNames);
-  }
-}
-
-/// Supabase 행을 [StoryEvent]로 변환한다.
-///
-/// `event_persons`, `event_bible_refs` 서브쿼리의 누락/null을 안전하게 처리한다.
-/// 테스트 편의를 위해 top-level로 노출되어 있으며 [StoryRepository] 내부에서도
-/// 재사용된다.
-@visibleForTesting
-StoryEvent storyEventFromRow(
-  Map<String, dynamic> row, {
-  bool includeBibleRefs = false,
-}) {
-  final personRows = (row['event_persons'] as List<dynamic>? ?? const []);
-  final refRows = includeBibleRefs
-      ? (row['event_bible_refs'] as List<dynamic>? ?? const [])
-      : const [];
-
-  return StoryEvent(
-    id: row['id'] as String,
-    code: row['code'] as String,
-    eraId: row['era_id'] as String,
-    title: row['title'] as String,
-    summary: row['summary'] as String?,
-    story: row['story'] as String?,
-    shortStory: row['short_story'] as String?,
-    storyScenes: row['story_scenes'] as String?,
-    startYear: row['start_year'] as int?,
-    endYear: row['end_year'] as int?,
-    timeSortKey: row['time_sort_key'] as int,
-    placeName: row['place_name'] as String?,
-    lat: (row['lat'] as num?)?.toDouble(),
-    lng: (row['lng'] as num?)?.toDouble(),
-    personIds: personRows
-        .whereType<Map<String, dynamic>>()
-        .map((entry) => entry['person_id'] as String?)
-        .whereType<String>()
-        .toList(),
-    bibleRefs: includeBibleRefs
-        ? refRows
-              .whereType<Map<String, dynamic>>()
-              .map((entry) => entry['display_text'] as String?)
-              .whereType<String>()
-              .toList()
-        : const [],
-  );
 }
 
 /// 이벤트 검색용 가중치 스코어링.
 ///
-/// 제목/요약/본문/단문/장소/인물명 포함 여부와 토큰별 부분 매치에 따라 점수를
-/// 누적한다. 단문(shortStory)이 가장 높은 가중치를 갖고, 제목 정확 일치 시
-/// 보너스가 부여된다.
+/// summary/title/장면/장소/인물명 매치에 따라 점수를 누적한다.
+/// 새 스키마에는 `story`/`short_story` 컬럼이 없으므로 `story_scenes` 합본으로
+/// 본문 매치를 평가한다.
 @visibleForTesting
 int scoreEventMatch(
   StoryEvent event,
@@ -350,24 +236,20 @@ int scoreEventMatch(
 }) {
   final title = event.title.toLowerCase();
   final summary = (event.summary ?? '').toLowerCase();
-  final story = (event.story ?? '').toLowerCase();
-  final shortStory = (event.shortStory ?? '').toLowerCase();
+  final scenesText = event.storyScenes.join(' ').toLowerCase();
   final placeName = (event.placeName ?? '').toLowerCase();
   final personText = personNames.join(' ').toLowerCase();
 
   var score = 0;
 
   if (title.contains(query)) {
-    score += 120;
+    score += 130;
   }
   if (summary.contains(query)) {
-    score += 110;
-  }
-  if (story.contains(query)) {
     score += 120;
   }
-  if (shortStory.contains(query)) {
-    score += 130;
+  if (scenesText.contains(query)) {
+    score += 100;
   }
   if (placeName.contains(query)) {
     score += 30;
@@ -381,13 +263,10 @@ int scoreEventMatch(
       score += 25;
     }
     if (summary.contains(token)) {
-      score += 16;
-    }
-    if (story.contains(token)) {
       score += 18;
     }
-    if (shortStory.contains(token)) {
-      score += 20;
+    if (scenesText.contains(token)) {
+      score += 15;
     }
     if (placeName.contains(token)) {
       score += 5;

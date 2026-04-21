@@ -12,7 +12,7 @@ class StoryState {
     this.persons = const [],
     this.events = const [],
     this.selectedEraId,
-    this.selectedPersonIds = const {},
+    this.selectedPersonCodes = const {},
     this.selectedPersonColors = const {},
     this.selectedEventId,
     this.completedEventIds = const {},
@@ -28,7 +28,7 @@ class StoryState {
   final List<Person> persons;
   final List<StoryEvent> events;
   final String? selectedEraId;
-  final Set<String> selectedPersonIds;
+  final Set<String> selectedPersonCodes;
   final Map<String, Color> selectedPersonColors;
   final String? selectedEventId;
   final Set<String> completedEventIds;
@@ -46,7 +46,7 @@ class StoryState {
     List<StoryEvent>? events,
     String? selectedEraId,
     bool clearSelectedEra = false,
-    Set<String>? selectedPersonIds,
+    Set<String>? selectedPersonCodes,
     Map<String, Color>? selectedPersonColors,
     String? selectedEventId,
     Set<String>? completedEventIds,
@@ -65,7 +65,7 @@ class StoryState {
       selectedEraId: clearSelectedEra
           ? null
           : selectedEraId ?? this.selectedEraId,
-      selectedPersonIds: selectedPersonIds ?? this.selectedPersonIds,
+      selectedPersonCodes: selectedPersonCodes ?? this.selectedPersonCodes,
       selectedPersonColors: selectedPersonColors ?? this.selectedPersonColors,
       selectedEventId: clearSelectedEvent
           ? null

@@ -15,7 +15,7 @@ void main() {
       expect(state.persons, isEmpty);
       expect(state.events, isEmpty);
       expect(state.selectedEraId, isNull);
-      expect(state.selectedPersonIds, isEmpty);
+      expect(state.selectedPersonCodes, isEmpty);
       expect(state.selectedPersonColors, isEmpty);
       expect(state.selectedEventId, isNull);
       expect(state.completedEventIds, isEmpty);
@@ -81,10 +81,10 @@ void main() {
       expect(cleared.selectedEventId, isNull);
     });
 
-    test('selectedPersonIds는 Set으로 교체된다', () {
+    test('selectedPersonCodes는 Set으로 교체된다', () {
       const original = StoryState();
-      final updated = original.copyWith(selectedPersonIds: {'p1', 'p2'});
-      expect(updated.selectedPersonIds, {'p1', 'p2'});
+      final updated = original.copyWith(selectedPersonCodes: {'p1', 'p2'});
+      expect(updated.selectedPersonCodes, {'p1', 'p2'});
     });
 
     test('selectedPersonColors는 Map으로 교체된다', () {

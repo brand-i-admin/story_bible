@@ -6,7 +6,7 @@ Input JSON format is expected from:
 
 Usage:
   source .env
-  python3 tools/generate_event_story_images_vertex.py --dry-run
+  python3 tools/images/generate_event_story_images_vertex.py --dry-run
 """
 
 from __future__ import annotations
@@ -35,7 +35,6 @@ from story_scene_utils import (
     parse_person_name_map_from_seed_sql,
     sanitize_scene_text_for_visual,
 )
-
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
 INVALID_FILENAME_CHARS = re.compile(r"[\\/:*?\"<>|]+")

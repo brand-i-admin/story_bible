@@ -213,7 +213,7 @@ test/
 
 ## 8. 코드 메트릭 검사
 
-`tools/check_code_metrics.py`가 파일/메소드 크기를 자동 검사한다:
+`tools/lint/check_code_metrics.py`가 파일/메소드 크기를 자동 검사한다:
 
 | 항목 | 경고 기준 | 차단 기준 |
 |------|----------|----------|
@@ -226,8 +226,8 @@ test/
 - CI에서 자동 실행 (`--ci` 플래그 시 차단 모드)
 
 ```bash
-python3 tools/check_code_metrics.py        # 보고 모드
-python3 tools/check_code_metrics.py --ci    # 차단 모드 (FAIL 시 exit 1)
+python3 tools/lint/check_code_metrics.py        # 보고 모드
+python3 tools/lint/check_code_metrics.py --ci    # 차단 모드 (FAIL 시 exit 1)
 ```
 
 ## 9. Golden Test (UI 스크린샷 비교)

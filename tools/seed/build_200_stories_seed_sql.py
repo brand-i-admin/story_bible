@@ -199,7 +199,7 @@ BROTHERS_ALL = [
     "benjamin",
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
-ROSTER_EXCLUDED_CODES = {"dan"}
+ROSTER_EXCLUDED_CODES = {"dan", "lot_wife"}
 
 # Commonly used NT anchor years (kept conservative; mostly still approx).
 # AD 70 temple destruction is treated as exact.

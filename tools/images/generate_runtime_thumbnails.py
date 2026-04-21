@@ -10,7 +10,6 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-
 STORY_SIZE_CANDIDATES = (768, 720, 672, 640, 608, 576, 544, 512, 480, 448, 416, 384)
 STORY_QUALITY_CANDIDATES = (72, 66, 60, 54, 48, 42, 36)
 AVATAR_SIZE_CANDIDATES = (192, 176, 160, 144, 128)

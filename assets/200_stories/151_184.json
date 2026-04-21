@@ -21,6 +21,7 @@
     "start_year": 5,
     "end_year": 5,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "성전 안, 사가랴가 향을 사르며 조용히 서 있다",
       "갑자기 빛, 가브리엘이 나타나 사가랴가 굳어 선다",
@@ -58,6 +59,7 @@
     "start_year": 5,
     "end_year": 5,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "나사렛의 집, 가브리엘이 결연한 표정으로 선다",
       "마리아가 조용히 고개를 끄덕인다",
@@ -103,6 +105,7 @@
     "start_year": 4,
     "end_year": 4,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "인구조사로 붐비는 베들레헴, 요셉과 마리아가 자리를 찾지 못한다",
       "조용한 밤, 아기가 태어나 구유에 눕혀진다",
@@ -143,6 +146,7 @@
     "start_year": 4,
     "end_year": 4,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "예루살렘 궁정, 별 이야기에 헤롯의 얼굴이 굳는다",
       "베들레헴의 집, 박사들이 예물을 드리며 경배한다",
@@ -180,6 +184,7 @@
     "start_year": 8,
     "end_year": 8,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "유월절 후 귀가 행렬 속, 마리아가 예수를 찾다가 멈칫한다",
       "부모가 예루살렘으로 되돌아가 급히 찾아다닌다",
@@ -236,6 +241,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "요단강가, 요한이 사람들을 세례 주는 가운데 예수가 앞으로 나온다",
       "요한이 망설이자 예수가 조용히 고개를 끄덕인다",
@@ -286,6 +292,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "끝없는 광야, 예수가 지친 얼굴로 걷다가 멈춘다",
       "예수님이 조용히 고개를 끄덕인다",
@@ -346,6 +353,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
+    "story_index": 8,
     "story_scenes": [
       "호숫가, 그물을 손질하는 어부들, 예수가 다가온다",
       "베드로가 멈칫한다",
@@ -385,6 +393,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
+    "story_index": 9,
     "story_scenes": [
       "산비탈에 사람들이 모여 앉고, 예수가 자리에 앉는다",
       "복이 있나니, 선포가 이어지고 사람들의 표정이 바뀐다",
@@ -433,6 +442,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "배 위, 폭풍이 몰아치고 제자들이 물을 퍼낸다",
       "제자들이 두 손을 들어 다급하게 몸짓한다",
@@ -487,6 +497,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "야이로가 무릎 꿇고 간청한다",
       "군중 속 여인이 예수의 옷자락을 만지고 멈춘다",
@@ -540,6 +551,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "제자들이 결연한 표정으로 선다",
       "제자들이 당황한다",
@@ -596,6 +608,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "예수와 세 제자가 산을 오르며 숨을 고른다",
       "예수의 모습이 빛나고, 모세와 엘리야가 함께 선다",
@@ -649,6 +662,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "제자들이 멈춘다",
       "베드로가 앞쪽에 서 있고, 공기가 바뀐다",
@@ -693,6 +707,7 @@
     "start_year": 30,
     "end_year": 30,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "배경과 분위기만 보이는 앞쪽에 서 있고, 내 이웃이 누구입니까?",
       "길가에 쓰러진 사람, 제사장과 레위인이 지나친다",
@@ -731,6 +746,7 @@
     "start_year": 30,
     "end_year": 30,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "아들이 집을 나가 돈을 쥐고 달아난다, 흥분",
       "먼 나라, 빈손이 된 아들이 돼지우리 옆에서 고개를 떨군다",
@@ -767,6 +783,7 @@
     "start_year": 32,
     "end_year": 32,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "배경과 분위기만 보이는",
       "예수 앞쪽에 서 있고, 마르다의 눈이 흔들린다",
@@ -821,6 +838,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "감람산 길, 제자들이 나귀를 끌고 온다",
       "예수가 나귀를 타고 내려오자 군중이 옷과 가지를 펼친다",
@@ -876,6 +894,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "성전 뜰, 거래 소리와 동전 소리가 가득하다",
       "예수가 분명한 손짓으로 흐름을 멈춘다, 사람들의 놀란 얼굴",
@@ -928,6 +947,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 20,
     "story_scenes": [
       "다락방에 둘러앉은 제자들, 예수가 조용히 떡을 든다",
       "배경과 분위기만 보이는",
@@ -981,6 +1001,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 21,
     "story_scenes": [
       "밤의 감람산, 예수님이 결연한 표정으로 선다",
       "예수가 홀로 무릎 꿇고 기도한다, 숨소리가 거칠다",
@@ -1039,6 +1060,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 22,
     "story_scenes": [
       "횃불과 무장한 무리가 숲길로 들어온다",
       "유다가 다가와 입맞춤한다, 예수의 눈빛이 흔들리지 않는다",
@@ -1097,6 +1119,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 23,
     "story_scenes": [
       "빌라도 앞, 고발이 쏟아지고 예수는 잠깐 고개를 든다",
       "배경과 분위기만 보이는",
@@ -1149,6 +1172,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 24,
     "story_scenes": [
       "언덕으로 오르는 행렬, 하늘이 점점 어두워지는 톤",
       "십자가가 세워지고, 주변은 조롱과 침묵이 엇갈린다, 직접 묘사 최소",
@@ -1203,6 +1227,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 25,
     "story_scenes": [
       "새벽 무덤, 돌이 옮겨져 있고 여인들이 멈춰 선다",
       "예수님이 결연한 표정으로 선다",
@@ -1245,6 +1270,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "다락방, 사람들이 기도하며 숨죽인 채 기다린다",
       "갑자기 큰 바람 같은 소리, 모두가 놀라 고개를 든다",
@@ -1279,6 +1305,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "군중 앞에 선 베드로, 두려움 대신 담대함이 얼굴에 있다",
       "이 예수를 하나님이 주와 그리스도가 되게 하셨다가 울린다",
@@ -1321,6 +1348,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "성전 문, 앉은 사람이 손을 내민다, 베드로가 멈춰 선다",
       "나사렛 예수 이름으로 일어나 걸어라, 사람이 벌떡 일어선다",
@@ -1360,6 +1388,7 @@
     "start_year": 34,
     "end_year": 34,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "아나니아가 앞쪽에 서서 표정과 몸짓이 또렷하게 보인다",
       "베드로가 상대를 바라보며 기다린다",
@@ -1404,6 +1433,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "구제 문제로 다툼이 생기고 사도들이 일곱 사람을 세운다",
       "배경과 분위기만 보이는",
@@ -1442,6 +1472,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "사람들이 짐을 싸며 흩어진다, 도시마다 소문이 번진다",
       "빌립이 사마리아에서 복음을 전하고 사람들이 몰려든다",
@@ -1478,6 +1509,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "얼굴에 의문이 가득하다",
       "빌립이 상대를 바라보며 기다린다",
@@ -1516,6 +1548,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
+    "story_index": 8,
     "story_scenes": [
       "사울이 공문을 들고 다메섹으로 달린다, 눈빛이 날카롭다",
       "강한 빛이 비치고 사울이 쓰러진다, 사울아, 네가 어찌하여",
@@ -1564,6 +1597,7 @@
     "start_year": 38,
     "end_year": 38,
     "time_precision": "approx",
+    "story_index": 9,
     "story_scenes": [
       "고넬료가 기도하다 환상을 보고 사람을 보낸다",
       "베드로가 환상 속 천을 보고 멈칫한다",

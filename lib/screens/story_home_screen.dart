@@ -47,7 +47,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   StorySelectionPanelStage _selectionPanelStage =
       StorySelectionPanelStage.expanded;
   double _selectionSheetExtent = _selectionSheetExpandedSize;
-  Set<String> _draftSelectedPersonIds = <String>{};
+  Set<String> _draftSelectedPersonCodes = <String>{};
 
   @override
   void initState() {
@@ -119,24 +119,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     Color(0xFF5C6B9F),
   ];
 
-  Set<String> _sanitizeDraftSelectedPersonIds(StoryState state) {
-    return _draftSelectedPersonIds
-        .where((id) => state.persons.any((person) => person.id == id))
+  Set<String> _sanitizeDraftSelectedPersonCodes(StoryState state) {
+    return _draftSelectedPersonCodes
+        .where((code) => state.persons.any((person) => person.code == code))
         .toSet();
   }
 
   Map<String, Color> _draftPersonColors(StoryState state) {
-    final selectedIds = _sanitizeDraftSelectedPersonIds(state).toList();
+    final selectedCodes = _sanitizeDraftSelectedPersonCodes(state).toList();
     final next = <String, Color>{};
-    for (var i = 0; i < selectedIds.length; i++) {
-      next[selectedIds[i]] =
+    for (var i = 0; i < selectedCodes.length; i++) {
+      next[selectedCodes[i]] =
           _draftSelectionPalette[i % _draftSelectionPalette.length];
     }
     return next;
   }
 
-  Color _colorForDraftPerson(String personId, StoryState state) {
-    return _draftPersonColors(state)[personId] ?? const Color(0xFF8E7B61);
+  Color _colorForDraftPerson(String personCode, StoryState state) {
+    return _draftPersonColors(state)[personCode] ?? const Color(0xFF8E7B61);
   }
 
   bool _sameStringSet(Set<String> a, Set<String> b) {
@@ -152,20 +152,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   bool _hasPendingPersonSelectionChanges(StoryState state) {
-    final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
-    return !_sameStringSet(sanitizedDraft, state.selectedPersonIds);
+    final sanitizedDraft = _sanitizeDraftSelectedPersonCodes(state);
+    return !_sameStringSet(sanitizedDraft, state.selectedPersonCodes);
   }
 
   List<StoryEvent> _timelineForSelectedPersons(
     StoryState state,
-    Set<String> selectedPersonIds,
+    Set<String> selectedPersonCodes,
   ) {
     final filtered = state.events.where((event) {
-      return event.personIds.any(selectedPersonIds.contains);
+      return event.personCodes.any(selectedPersonCodes.contains);
     }).toList();
 
     filtered.sort((a, b) {
-      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+      final cmp = a.globalRank.compareTo(b.globalRank);
       if (cmp != 0) {
         return cmp;
       }
@@ -181,7 +181,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (step == 2) {
       return state.selectedEraId != null;
     }
-    return state.selectedPersonIds.isNotEmpty &&
+    return state.selectedPersonCodes.isNotEmpty &&
         !_hasPendingPersonSelectionChanges(state);
   }
 
@@ -212,7 +212,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final nextState = ref.read(storyControllerProvider);
     setState(() {
       _selectionStep = 1;
-      _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+      _draftSelectedPersonCodes = nextState.selectedPersonCodes.toSet();
     });
   }
 
@@ -225,19 +225,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final nextState = ref.read(storyControllerProvider);
     setState(() {
       _selectionStep = 1;
-      _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+      _draftSelectedPersonCodes = nextState.selectedPersonCodes.toSet();
     });
   }
 
   void _toggleDraftPerson(String personId) {
     setState(() {
-      final next = {..._draftSelectedPersonIds};
+      final next = {..._draftSelectedPersonCodes};
       if (next.contains(personId)) {
         next.remove(personId);
       } else {
         next.add(personId);
       }
-      _draftSelectedPersonIds = next;
+      _draftSelectedPersonCodes = next;
     });
   }
 
@@ -300,9 +300,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     setState(() {
       if (step == 2) {
-        final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
-        _draftSelectedPersonIds = _selectionStep == 3
-            ? state.selectedPersonIds.toSet()
+        final sanitizedDraft = _sanitizeDraftSelectedPersonCodes(state);
+        _draftSelectedPersonCodes = _selectionStep == 3
+            ? state.selectedPersonCodes.toSet()
             : sanitizedDraft;
       }
       _selectionStep = step;
@@ -315,14 +315,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     setState(() {
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedPersonCodes = state.selectedPersonCodes.toSet();
       _selectionStep = 2;
     });
   }
 
   void _proceedFromPersonStep() {
     final state = ref.read(storyControllerProvider);
-    final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
+    final sanitizedDraft = _sanitizeDraftSelectedPersonCodes(state);
     if (sanitizedDraft.isEmpty) {
       return;
     }
@@ -335,7 +335,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       StorySelectionPanelStage.collapsed,
     );
     setState(() {
-      _draftSelectedPersonIds = sanitizedDraft;
+      _draftSelectedPersonCodes = sanitizedDraft;
       _selectionStep = 3;
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
@@ -391,7 +391,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         final nextState = ref.read(storyControllerProvider);
         setState(() {
           _selectionStep = 3;
-          _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+          _draftSelectedPersonCodes = nextState.selectedPersonCodes.toSet();
         });
         _handleEventSelect(event.id);
       },
@@ -410,7 +410,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     controller.selectEvent(event.id);
     setState(() {
       _selectionStep = 3;
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedPersonCodes = state.selectedPersonCodes.toSet();
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
     });
@@ -435,7 +435,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     setState(() {
       _selectionStep = 3;
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedPersonCodes = state.selectedPersonCodes.toSet();
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = targetSheetExtent;
     });
@@ -459,7 +459,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     controller.selectEvent(event.id);
     setState(() {
       _selectionStep = 3;
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedPersonCodes = state.selectedPersonCodes.toSet();
     });
     _openEventDetailPage(event);
   }
@@ -752,7 +752,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     await ref
         .read(storyControllerProvider.notifier)
-        .markEventCompleted(eventId: eventId, score: score, isCompleted: true);
+        .markEventCompleted(eventId: eventId, isCompleted: true);
     await _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
   }
 
@@ -762,7 +762,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final controller = ref.read(storyControllerProvider.notifier);
     final timeline = _timelineForSelectedPersons(
       state,
-      state.selectedPersonIds,
+      state.selectedPersonCodes,
     );
     final testamentEras =
         state.eras
@@ -773,8 +773,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selectedEra = state.eras
         .where((era) => era.id == state.selectedEraId)
         .firstOrNull;
-    final avatarByPersonId = <String, String>{
-      for (final person in state.persons) person.id: person.avatarAssetPath,
+    final avatarByPersonCode = <String, String>{
+      for (final person in state.persons) person.code: person.avatarAssetPath,
     };
 
     final mapCenter =
@@ -798,9 +798,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               onCloseSelectedCallout: _closeSelectedEventPopup,
               onOpenDetail: _openEventDetail,
               colorForPerson: controller.colorForPerson,
-              avatarAssetForPerson: (personId) =>
-                  avatarByPersonId[personId] ?? '',
-              selectedPersonIds: state.selectedPersonIds,
+              avatarAssetForPerson: (personCode) =>
+                  avatarByPersonCode[personCode] ?? '',
+              selectedPersonCodes: state.selectedPersonCodes,
               controller: _mapPanelController,
               initialCenter: mapCenter,
               initialZoom: mapZoom,
@@ -889,11 +889,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             _personSortMode = mode;
                           });
                         },
-                        draftSelectedPersonIds: _sanitizeDraftSelectedPersonIds(
-                          state,
-                        ),
+                        draftSelectedPersonCodes:
+                            _sanitizeDraftSelectedPersonCodes(state),
                         onToggleDraftPerson: _toggleDraftPerson,
-                        committedSelectedPersonIds: state.selectedPersonIds,
+                        committedSelectedPersonCodes: state.selectedPersonCodes,
                         hasPendingPersonChanges:
                             _hasPendingPersonSelectionChanges(state),
                         colorForDraftPerson: (personId) =>

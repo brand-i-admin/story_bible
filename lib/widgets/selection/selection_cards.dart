@@ -241,7 +241,7 @@ class _StoryCompactCard extends StatelessWidget {
     required this.subtitle,
     required this.selected,
     required this.isCompleted,
-    required this.highlightedPersonIds,
+    required this.highlightedPersonCodes,
     required this.colorForPerson,
     required this.onTap,
   });
@@ -251,8 +251,8 @@ class _StoryCompactCard extends StatelessWidget {
   final String subtitle;
   final bool selected;
   final bool isCompleted;
-  final List<String> highlightedPersonIds;
-  final Color Function(String personId) colorForPerson;
+  final List<String> highlightedPersonCodes;
+  final Color Function(String personCode) colorForPerson;
   final VoidCallback onTap;
 
   @override
@@ -313,10 +313,10 @@ class _StoryCompactCard extends StatelessWidget {
               ],
             ),
           ),
-          if (highlightedPersonIds.isNotEmpty) ...[
+          if (highlightedPersonCodes.isNotEmpty) ...[
             const SizedBox(width: 6),
             _PersonDots(
-              personIds: highlightedPersonIds,
+              personCodes: highlightedPersonCodes,
               colorForPerson: colorForPerson,
             ),
           ],
@@ -355,16 +355,16 @@ class _IndexBadge extends StatelessWidget {
 }
 
 class _PersonDots extends StatelessWidget {
-  const _PersonDots({required this.personIds, required this.colorForPerson});
+  const _PersonDots({required this.personCodes, required this.colorForPerson});
 
-  final List<String> personIds;
-  final Color Function(String personId) colorForPerson;
+  final List<String> personCodes;
+  final Color Function(String personCode) colorForPerson;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: personIds
+      children: personCodes
           .take(3)
           .map((personId) {
             return Container(
