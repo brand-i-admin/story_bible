@@ -46,8 +46,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   String _testament = 'old';
   String? _eraId;
   List<String> _personCodes = const [];
-  // 인물별 '이 사건 뒤에' 선택 — storyIndex (null = 맨 앞). 인물 code → int?.
-  Map<String, int?> _afterByPerson = {};
+  // 최종 삽입 위치. null = 맨 앞 또는 미선택 — _positionPicked 로 구분.
+  int? _afterStoryIndex;
+  bool _positionPicked = false;
 
   // Options loaded once
   List<Era> _eras = const [];
@@ -81,7 +82,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       _personCodes = List.of(e.personCodes);
       // 기존 after_story_index 가 있으면 모든 인물에 동일하게 기록
       if (e.afterStoryIndex != null) {
-        _afterByPerson = {for (final c in _personCodes) c: e.afterStoryIndex};
+        _afterStoryIndex = e.afterStoryIndex;
+        _positionPicked = true;
       }
       _lat = e.lat;
       _lng = e.lng;
@@ -185,27 +187,19 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   List<StoryEvent> get _eraEvents =>
       _eraId != null ? (_eventsByEra[_eraId!] ?? const []) : const [];
 
-  List<StoryEvent> _eventsForPerson(String code) {
-    return _eraEvents.where((e) => e.personCodes.contains(code)).toList();
-  }
-
   Era? get _selectedEra {
     if (_eraId == null) return null;
     final match = _eras.where((e) => e.id == _eraId);
     return match.isEmpty ? null : match.first;
   }
 
-  /// 모든 인물별 선택이 완료되었는지
-  bool get _allPersonsChosePosition {
-    if (_personCodes.isEmpty) return false;
-    return _personCodes.every(_afterByPerson.containsKey);
-  }
-
-  /// 최종 삽입 위치 = 선택된 인물들이 고른 storyIndex 중 최댓값. 하나도 없으면 null.
-  int? get _finalAfterStoryIndex {
-    final picks = _afterByPerson.values.whereType<int>().toList();
-    if (picks.isEmpty) return null;
-    return picks.reduce((a, b) => a > b ? a : b);
+  /// 선택된 인물이 한 명 이상 등장하는 events — position phase 리스트용.
+  List<StoryEvent> _eventsForPositionList() {
+    if (_personCodes.isEmpty) return const [];
+    final selected = _personCodes.toSet();
+    return _eraEvents
+        .where((e) => e.personCodes.any(selected.contains))
+        .toList();
   }
 
   // ===== Step navigation =====
@@ -220,24 +214,17 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         switch (_step2Phase) {
           case 'persons':
             return _personCodes.isNotEmpty;
+          case 'position':
+            return _positionPicked;
           case 'summary':
-            return _allPersonsChosePosition;
+            return _positionPicked;
           default:
-            // 'event:<idx>' — 해당 인물 선택 완료 시 다음으로
-            final idx = _currentEventPhaseIndex;
-            if (idx == null) return false;
-            final code = _personCodes[idx];
-            return _afterByPerson.containsKey(code);
+            return false;
         }
       case 3:
         return true; // 제출 버튼이 별도
     }
     return false;
-  }
-
-  int? get _currentEventPhaseIndex {
-    if (!_step2Phase.startsWith('event:')) return null;
-    return int.tryParse(_step2Phase.substring('event:'.length));
   }
 
   void _onNext() {
@@ -254,18 +241,14 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         case 2:
           switch (_step2Phase) {
             case 'persons':
-              _step2Phase = _personCodes.isEmpty ? 'summary' : 'event:0';
+              _step2Phase = 'position';
+              break;
+            case 'position':
+              _step2Phase = 'summary';
               break;
             case 'summary':
               _step = 3;
               break;
-            default:
-              final idx = _currentEventPhaseIndex!;
-              if (idx + 1 < _personCodes.length) {
-                _step2Phase = 'event:${idx + 1}';
-              } else {
-                _step2Phase = 'summary';
-              }
           }
           break;
         case 3:
@@ -288,17 +271,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             case 'persons':
               _step = 1;
               break;
-            case 'event:0':
+            case 'position':
               _step2Phase = 'persons';
               break;
             case 'summary':
-              _step2Phase = _personCodes.isEmpty
-                  ? 'persons'
-                  : 'event:${_personCodes.length - 1}';
+              _step2Phase = 'position';
               break;
-            default:
-              final idx = _currentEventPhaseIndex!;
-              _step2Phase = idx > 0 ? 'event:${idx - 1}' : 'persons';
           }
           break;
         case 3:
@@ -342,7 +320,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final refsAsDynamic = _bibleRefs
         .map<Map<String, dynamic>>((m) => Map<String, dynamic>.from(m))
         .toList();
-    final afterIdx = _finalAfterStoryIndex;
+    final afterIdx = _afterStoryIndex;
 
     try {
       if (widget.existing == null) {
@@ -460,10 +438,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         switch (_step2Phase) {
           case 'persons':
             return _buildStep2Persons(theme);
+          case 'position':
+            return _buildStep2Position(theme);
           case 'summary':
             return _buildStep2Summary(theme);
           default:
-            return _buildStep2Events(theme);
+            return const SizedBox.shrink();
         }
       case 3:
         return _buildStep3Details(theme);
@@ -511,11 +491,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 ),
                 const _IntroBullet(
                   number: '3',
-                  title: '각 등장인물마다 새 이야기의 배치 위치를 고릅니다',
+                  title: '새 이야기가 들어갈 위치를 고릅니다',
                   body:
-                      '새 이야기의 등장인물 모두에게, 각각 어떤 사건 다음에 이 이야기가 '
-                      '배치되면 좋을지 골라주세요. 여러 선택이 서로 다르면 모든 선택을 '
-                      '만족하는 가장 뒤 위치에 배치됩니다.',
+                      '선택한 등장인물들이 나오는 이야기들이 시대 순서대로 한 페이지에 나열됩니다. '
+                      '그 중 새 이야기가 어느 이야기 뒤에 들어가면 좋을지 하나 골라주세요.',
                 ),
                 const _IntroBullet(
                   number: '4',
@@ -555,7 +534,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               // era 선택이 필터 밖으로 밀려나면 리셋
               if (_selectedEra?.testament != _testament) {
                 _eraId = null;
-                _afterByPerson.clear();
+                _afterStoryIndex = null;
+                _positionPicked = false;
               }
             }),
           ),
@@ -586,7 +566,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     setState(() {
       _eraId = era.id;
       // era 바뀌면 이전 선택 리셋
-      _afterByPerson.clear();
+      _afterStoryIndex = null;
+      _positionPicked = false;
     });
     _loadEventsForEra(era.id);
   }
@@ -698,7 +679,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     setState(() {
       final next = List<String>.of(_personCodes);
       if (next.remove(code)) {
-        _afterByPerson.remove(code);
+        // 인물 제외 시 이미 한 위치 선택이 있었으면 유지 (era 단위 선택이라 유효)
       } else {
         next.add(code);
       }
@@ -711,24 +692,20 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     return match.isNotEmpty ? match.first.name : code;
   }
 
-  // ---------- Step 2b~2n: 인물별 사건 선택 ----------
-  Widget _buildStep2Events(ThemeData theme) {
-    final idx = _currentEventPhaseIndex!;
-    final code = _personCodes[idx];
-    final events = _eventsForPerson(code);
-    final selectedStoryIndex = _afterByPerson[code];
+  // ---------- Step 2b: 통합 위치 선택 (인물 라벨 포함) ----------
+  Widget _buildStep2Position(ThemeData theme) {
+    final events = _eventsForPositionList();
+    final selectedSet = _personCodes.toSet();
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            '${_displayName(code)} (${idx + 1}/${_personCodes.length})',
-            style: theme.textTheme.titleMedium,
-          ),
+          Text('새 이야기가 들어갈 위치를 하나 고르세요', style: theme.textTheme.titleMedium),
           const SizedBox(height: 4),
           Text(
-            '${_displayName(code)} 의 어느 사건 뒤에 이 이야기가 들어가나요? 해당 사건을 탭하세요.',
+            '선택한 등장인물들이 나오는 이야기들이 시대 순서대로 나열됩니다. '
+            '탭한 이야기 "뒤"에 새 이야기가 들어갑니다.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -741,12 +718,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                     children: [
                       _InsertionCard(
                         title: '맨 앞에 배치',
-                        subtitle: '이 인물 관점에서 첫 사건이 됩니다',
-                        selected:
-                            _afterByPerson.containsKey(code) &&
-                            selectedStoryIndex == null,
+                        subtitle: '이 시대의 첫 이야기가 됩니다',
+                        selected: _positionPicked && _afterStoryIndex == null,
                         onTap: () => setState(() {
-                          _afterByPerson[code] = null;
+                          _afterStoryIndex = null;
+                          _positionPicked = true;
                         }),
                       ),
                       if (events.isEmpty)
@@ -754,7 +730,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                           padding: const EdgeInsets.all(24),
                           child: Center(
                             child: Text(
-                              '이 인물이 등장하는 이야기가 아직 없습니다. "맨 앞" 선택이 가능합니다.',
+                              '선택한 인물들이 등장하는 이야기가 아직 없습니다. "맨 앞" 선택만 가능합니다.',
                               textAlign: TextAlign.center,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
@@ -768,10 +744,21 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                             title: e.title,
                             subtitle: e.summary ?? '',
                             storyIndex: e.storyIndex,
-                            personCodes: e.personCodes,
-                            selected: _afterByPerson[code] == e.storyIndex,
+                            // 카드에 "이 이야기에 등장하는" 인물 중 현재 선택된 것 강조.
+                            personLabels: [
+                              for (final c in e.personCodes)
+                                if (selectedSet.contains(c))
+                                  _PersonLabel(
+                                    name: _displayName(c),
+                                    highlighted: true,
+                                  ),
+                            ],
+                            selected:
+                                _positionPicked &&
+                                _afterStoryIndex == e.storyIndex,
                             onTap: () => setState(() {
-                              _afterByPerson[code] = e.storyIndex;
+                              _afterStoryIndex = e.storyIndex;
+                              _positionPicked = true;
                             }),
                           ),
                     ],
@@ -785,7 +772,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // ---------- Step 2 summary ----------
   Widget _buildStep2Summary(ThemeData theme) {
     final era = _selectedEra;
-    final finalIdx = _finalAfterStoryIndex;
+    final finalIdx = _afterStoryIndex;
     final selectedEventTitle = finalIdx == null
         ? '맨 앞'
         : _eraEvents
@@ -810,50 +797,18 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                     : _personCodes.map(_displayName).join(', '),
               ),
               const Divider(height: 20),
-              Text(
-                '인물별 선택',
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 6),
-              for (final code in _personCodes)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    '• ${_displayName(code)} → ${_labelForPersonSelection(code)}',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ),
-              const Divider(height: 20),
               _kv(
                 theme,
-                '최종 삽입 위치',
+                '삽입 위치',
                 finalIdx == null
-                    ? '시대의 맨 앞'
+                    ? '${era?.name ?? '시대'} 의 맨 앞'
                     : '$selectedEventTitle (#$finalIdx) 뒤',
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '(여러 인물이 다른 위치를 고른 경우, 가장 뒤 위치 기준으로 삽입되어 모든 선택을 만족합니다)',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
               ),
             ],
           ),
         ],
       ),
     );
-  }
-
-  String _labelForPersonSelection(String code) {
-    if (!_afterByPerson.containsKey(code)) return '미선택';
-    final idx = _afterByPerson[code];
-    if (idx == null) return '맨 앞';
-    final match = _eraEvents.where((e) => e.storyIndex == idx).toList();
-    final title = match.isNotEmpty ? match.first.title : '#$idx';
-    return '$title 뒤';
   }
 
   Widget _kv(ThemeData theme, String k, String v) {
@@ -1060,9 +1015,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               ),
             Chip(
               label: Text(
-                _finalAfterStoryIndex == null
+                _afterStoryIndex == null
                     ? '위치: 맨 앞'
-                    : '위치: #${_finalAfterStoryIndex!} 뒤',
+                    : '위치: #${_afterStoryIndex!} 뒤',
               ),
               avatar: const Icon(Icons.place_outlined, size: 16),
             ),
@@ -1248,11 +1203,17 @@ class _EraCard extends StatelessWidget {
   }
 }
 
+class _PersonLabel {
+  const _PersonLabel({required this.name, this.highlighted = false});
+  final String name;
+  final bool highlighted;
+}
+
 class _InsertionCard extends StatelessWidget {
   const _InsertionCard({
     required this.title,
     required this.subtitle,
-    this.personCodes,
+    this.personLabels,
     this.storyIndex,
     required this.selected,
     required this.onTap,
@@ -1260,7 +1221,7 @@ class _InsertionCard extends StatelessWidget {
 
   final String title;
   final String subtitle;
-  final List<String>? personCodes;
+  final List<_PersonLabel>? personLabels;
   final int? storyIndex;
   final bool selected;
   final VoidCallback onTap;
@@ -1321,6 +1282,44 @@ class _InsertionCard extends StatelessWidget {
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
+                        ),
+                      ],
+                      if (personLabels != null && personLabels!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: [
+                            for (final l in personLabels!)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: l.highlighted
+                                      ? highlight.withValues(alpha: 0.18)
+                                      : theme.colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: l.highlighted
+                                        ? highlight.withValues(alpha: 0.6)
+                                        : theme.colorScheme.outlineVariant,
+                                  ),
+                                ),
+                                child: Text(
+                                  l.name,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: l.highlighted
+                                        ? highlight
+                                        : theme.colorScheme.onSurfaceVariant,
+                                    fontWeight: l.highlighted
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ],
