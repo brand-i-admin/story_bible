@@ -265,31 +265,16 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                   child: Center(child: CircularProgressIndicator()),
                 ),
                 error: (e, _) => Text('댓글 불러오기 실패: $e'),
-                data: (comments) => _CommentList(comments: comments),
+                data: (comments) => _CommentList(
+                  comments: comments,
+                  currentUserId: currentUser?.id,
+                ),
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _commentCtrl,
-                      decoration: const InputDecoration(hintText: '댓글을 입력하세요'),
-                      minLines: 1,
-                      maxLines: 3,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: _commentSubmitting ? null : _sendComment,
-                    child: _commentSubmitting
-                        ? const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('등록'),
-                  ),
-                ],
+              const SizedBox(height: 12),
+              _CommentComposer(
+                controller: _commentCtrl,
+                submitting: _commentSubmitting,
+                onSubmit: _sendComment,
               ),
               const SizedBox(height: 40),
             ],
@@ -322,46 +307,224 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
 }
 
 class _CommentList extends StatelessWidget {
-  const _CommentList({required this.comments});
+  const _CommentList({required this.comments, required this.currentUserId});
   final List<ProposalComment> comments;
+  final String? currentUserId;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (comments.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Text(
-          '아직 댓글이 없습니다',
-          style: Theme.of(context).textTheme.bodySmall,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(
+                Icons.chat_bubble_outline,
+                size: 36,
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '아직 댓글이 없습니다',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
     return Column(
       children: [
         for (final c in comments)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatDate(c.createdAt),
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(c.body),
-                ],
-              ),
-            ),
+          _CommentBubble(
+            comment: c,
+            isOwn: currentUserId != null && c.authorUserId == currentUserId,
           ),
       ],
     );
   }
+}
+
+class _CommentBubble extends StatelessWidget {
+  const _CommentBubble({required this.comment, required this.isOwn});
+  final ProposalComment comment;
+  final bool isOwn;
+
+  static const _avatarPalette = <Color>[
+    Color(0xFF6E4A2B),
+    Color(0xFF8B5A2B),
+    Color(0xFF6F5D3E),
+    Color(0xFF3D6E6E),
+    Color(0xFF5C6B9F),
+    Color(0xFF8A4E5D),
+    Color(0xFF557C3E),
+    Color(0xFFB6673C),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bubbleBg = isOwn
+        ? theme.colorScheme.primary.withValues(alpha: 0.10)
+        : theme.colorScheme.surfaceContainerHighest;
+    final bubbleBorder = isOwn
+        ? theme.colorScheme.primary.withValues(alpha: 0.35)
+        : theme.colorScheme.outlineVariant;
+    final avatarColor =
+        _avatarPalette[comment.authorUserId.hashCode.abs() %
+            _avatarPalette.length];
+    final initial = _initialFromId(comment.authorUserId, isOwn);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: avatarColor,
+            child: Text(
+              initial,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: bubbleBg,
+                border: Border.all(color: bubbleBorder),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(4),
+                  topRight: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        isOwn ? '나' : '사용자 ${_shortId(comment.authorUserId)}',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: isOwn
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        _formatDate(comment.createdAt),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(comment.body, style: theme.textTheme.bodyMedium),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static String _initialFromId(String id, bool isOwn) {
+    if (isOwn) return '나';
+    if (id.isEmpty) return '?';
+    return id.substring(0, 1).toUpperCase();
+  }
+
+  static String _shortId(String id) {
+    if (id.length <= 6) return id;
+    return id.substring(0, 6);
+  }
 
   static String _formatDate(DateTime dt) {
     final local = dt.toLocal();
-    return '${local.year}.${local.month.toString().padLeft(2, '0')}.${local.day.toString().padLeft(2, '0')} '
-        '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+    final now = DateTime.now();
+    final diff = now.difference(local);
+    if (diff.inMinutes < 1) return '방금';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
+    if (diff.inHours < 24) return '${diff.inHours}시간 전';
+    if (diff.inDays < 7) return '${diff.inDays}일 전';
+    return '${local.year}.${local.month.toString().padLeft(2, '0')}.${local.day.toString().padLeft(2, '0')}';
+  }
+}
+
+class _CommentComposer extends StatelessWidget {
+  const _CommentComposer({
+    required this.controller,
+    required this.submitting,
+    required this.onSubmit,
+  });
+
+  final TextEditingController controller;
+  final bool submitting;
+  final VoidCallback onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 4, 6, 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              minLines: 1,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                hintText: '댓글을 입력하세요',
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 12),
+                isDense: true,
+              ),
+              textInputAction: TextInputAction.newline,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            child: IconButton.filled(
+              tooltip: '댓글 등록',
+              onPressed: submitting ? null : onSubmit,
+              icon: submitting
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.send_rounded, size: 18),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

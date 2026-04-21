@@ -204,9 +204,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     // 장소: 이름 + 지도 좌표 모두 필수
     if (_placeCtrl.text.trim().isEmpty) return false;
     if (_lat == null || _lng == null) return false;
-    // 연도: 시작/끝 둘 다 정수로 파싱 가능해야
-    if (int.tryParse(_startYearCtrl.text.trim()) == null) return false;
-    if (int.tryParse(_endYearCtrl.text.trim()) == null) return false;
+    // 연도: 시작/끝 둘 다 정수 + 끝 ≥ 시작
+    final sy = int.tryParse(_startYearCtrl.text.trim());
+    final ey = int.tryParse(_endYearCtrl.text.trim());
+    if (sy == null || ey == null) return false;
+    if (ey < sy) return false;
     // 성경 본문: 최소 1개
     if (_bibleRefs.isEmpty) return false;
     // 장면: trim 후 non-empty 가 최소 1개
@@ -215,6 +217,15 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         .where((s) => s.isNotEmpty);
     if (nonEmptyScenes.isEmpty) return false;
     return true;
+  }
+
+  /// 연도 입력 에러 (끝 < 시작 인 경우에만). 비어있거나 파싱 실패는 null.
+  String? get _yearError {
+    final sy = int.tryParse(_startYearCtrl.text.trim());
+    final ey = int.tryParse(_endYearCtrl.text.trim());
+    if (sy == null || ey == null) return null;
+    if (ey < sy) return '끝 연도는 시작 연도와 같거나 더 뒤여야 합니다.';
+    return null;
   }
 
   List<Era> get _visibleEras =>
@@ -926,6 +937,16 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             ),
           ],
         ),
+        if (_yearError != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              _yearError!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _timePrecision,
