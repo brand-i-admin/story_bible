@@ -4,7 +4,7 @@
 Usage example:
   export GOOGLE_CLOUD_PROJECT="your-project-id"
   export GOOGLE_CLOUD_LOCATION="us-central1"
-  python tools/generate_avatars_vertex.py
+  python tools/images/generate_avatars_vertex.py
 """
 
 from __future__ import annotations
@@ -14,7 +14,6 @@ import base64
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 import time
 from typing import Any
@@ -22,7 +21,6 @@ from typing import Any
 import google.auth
 from google.auth.transport.requests import Request
 import requests
-
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
 ADULT_GUARDRAIL = (
@@ -37,9 +35,9 @@ def parse_args() -> argparse.Namespace:
         description="Generate character avatars with Vertex AI Imagen."
     )
     parser.add_argument(
-        "--prompt-json",
-        default="tools/avatar_prompts.json",
-        help="Path to prompt JSON file.",
+        "--person-meta-json",
+        default="tools/seed/person_meta.json",
+        help="Path to person meta JSON file (source of avatar prompts).",
     )
     parser.add_argument(
         "--project",
@@ -97,27 +95,10 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do not append adult-only guardrail text to prompts.",
     )
-    parser.add_argument(
-        "--no-normalize-framing",
-        action="store_true",
-        help="Do not normalize avatar framing after generation.",
-    )
-    parser.add_argument(
-        "--content-ratio",
-        type=float,
-        default=0.90,
-        help="Target visible content ratio inside the avatar canvas. Default is 0.90.",
-    )
-    parser.add_argument(
-        "--white-threshold",
-        type=int,
-        default=248,
-        help="Near-white threshold used by the framing normalizer. Default is 248.",
-    )
     return parser.parse_args()
 
 
-def load_prompt_config(path: Path) -> dict[str, Any]:
+def load_person_meta(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
     if "characters" not in data or not isinstance(data["characters"], list):
@@ -162,35 +143,6 @@ def build_final_prompt(
     if "no children" in lower or "no minors" in lower or "age 25+" in lower:
         return prompt
     return f"{prompt}, {ADULT_GUARDRAIL}"
-
-
-def normalize_avatar_files(
-    paths: list[Path],
-    *,
-    content_ratio: float,
-    white_threshold: int,
-) -> None:
-    if not paths:
-        return
-
-    script_path = Path(__file__).with_name("normalize_avatar_pngs.swift")
-    if not script_path.exists():
-        raise FileNotFoundError(f"Normalizer script not found: {script_path}")
-
-    cmd = [
-        "swift",
-        str(script_path),
-        "--content-ratio",
-        f"{content_ratio:.4f}",
-        "--white-threshold",
-        str(white_threshold),
-    ]
-    cmd.extend(str(path) for path in paths)
-    module_cache_dir = Path("/tmp/swift-module-cache")
-    module_cache_dir.mkdir(parents=True, exist_ok=True)
-    env = os.environ.copy()
-    env.setdefault("CLANG_MODULE_CACHE_PATH", str(module_cache_dir))
-    subprocess.run(cmd, check=True, env=env)
 
 
 def get_access_token() -> str:
@@ -355,12 +307,12 @@ def main() -> int:
         )
         return 2
 
-    prompt_path = Path(args.prompt_json)
-    if not prompt_path.exists():
-        print(f"ERROR: prompt json not found: {prompt_path}", file=sys.stderr)
+    meta_path = Path(args.person_meta_json)
+    if not meta_path.exists():
+        print(f"ERROR: person meta json not found: {meta_path}", file=sys.stderr)
         return 2
 
-    config = load_prompt_config(prompt_path)
+    config = load_person_meta(meta_path)
     common_style = config.get("common_style", "").strip()
     negative_prompt = config.get("negative_prompt", "").strip()
     defaults = config.get("generation_defaults", {})
@@ -406,7 +358,6 @@ def main() -> int:
 
     success = 0
     failure = 0
-    generated_files: list[Path] = []
 
     for item in characters:
         code = item["code"]
@@ -480,7 +431,6 @@ def main() -> int:
                 continue
 
             out_file.write_bytes(img_bytes)
-            generated_files.append(out_file)
             success += 1
             print(f"[OK]   {index:02d} {code} -> {out_file}")
         except Exception as exc:  # noqa: BLE001
@@ -489,21 +439,6 @@ def main() -> int:
 
         if args.sleep_sec > 0:
             time.sleep(args.sleep_sec)
-
-    if generated_files and not args.no_normalize_framing:
-        try:
-            normalize_avatar_files(
-                generated_files,
-                content_ratio=args.content_ratio,
-                white_threshold=args.white_threshold,
-            )
-            print(
-                "[OK]   normalized framing "
-                f"({len(generated_files)} files, target ratio={args.content_ratio:.2f})"
-            )
-        except Exception as exc:  # noqa: BLE001
-            failure += 1
-            print(f"[FAIL] framing normalization error={exc}")
 
     print(f"Done. success={success} failure={failure}")
     return 0 if failure == 0 else 1
