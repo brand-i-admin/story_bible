@@ -51,6 +51,18 @@ class UserRepository {
     return AppUserProfile.fromMap(row);
   }
 
+  /// user_profiles.is_pastor 플래그 조회. RLS 상 본인 행만 읽을 수 있으므로
+  /// 호출자는 `userId == auth.uid()` 이어야 한다. 미로그인/미존재 시 false.
+  Future<bool> fetchIsPastor(String userId) async {
+    final row = await _client
+        .from('user_profiles')
+        .select('is_pastor')
+        .eq('user_id', userId)
+        .maybeSingle();
+    if (row == null) return false;
+    return (row['is_pastor'] as bool?) ?? false;
+  }
+
   Future<AppUserProfile> updateUserProfile({
     required String userId,
     required String nickname,

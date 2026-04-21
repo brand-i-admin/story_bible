@@ -78,7 +78,7 @@ dart format .                # 코드 포맷
 | `docs/BACKEND.md` | 백엔드 도메인 상세 |
 | `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
 | `docs/TESTING.md` | 테스트 전략 상세 |
-| `docs/CONTENT_UPDATE.md` | 새 인물·이야기 등록 → 앱 반영 워크플로우 (어드민 웹 ↔ 운영자 ↔ 사용자) |
+| `docs/CONTENT_UPDATE.md` | 새 인물·이야기 등록 → 앱 반영 워크플로우 (사역자 제안 → 관리자 승인 → 운영자 이미지·앱 출시 → 사용자) |
 | `docs/WORKFLOW_GUIDE.md` | 작업 흐름 + 유지보수 규칙 (스킬/Agent 동작 방식, 커밋/푸시 정책, DB 변경 체크리스트) |
 
 ## 코딩 컨벤션

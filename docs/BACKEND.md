@@ -96,9 +96,55 @@ FROM first;
 - 인물 첫 등장 story_index 기준으로 era별 1..N 순서를 동적으로 부여.
 - `is_active=false` 인물은 자동 제외.
 
-#### 새 이야기 삽입 패턴 (어드민용 RPC, 향후 작업)
+#### 새 이야기 삽입 패턴 (관리자 직접 / 사역자 제안→관리자 승인)
 - `(era_id, story_index)` UNIQUE 제약 → 끼워넣기는 `story_index >= 새값`인 행을 +1 시프트한 뒤 INSERT.
 - 동시성: era별 advisory lock 또는 deferred constraint 권장.
+- 관리자 직접 경로: `insert_event_at_position(...)` RPC 호출.
+- 사역자 제안 경로: `event_proposals` 에 `submit_event_proposal(...)` 로 INSERT → 관리자가 `approve_event_proposal(proposal_id)` 호출 시 내부에서 `insert_event_at_position` 이 실행됨. 상세는 §6 Story proposal workflow.
+
+### 2.2b Story proposal workflow (2026-04 도입, ADR-016)
+
+별도 `admin/` Flutter Web 앱 폐기 후 메인 앱의 웹 버전에 "사역자 제안 → 관리자 승인" 게시판을 도입했다 (Phase 0~1 DB 완료, Phase 2~6 UI 구축 예정).
+
+#### `user_profiles.is_pastor boolean` — 사역자 플래그
+- 기본 `false`. 외부 사역자가 메일(admin@brand-i.net)로 성함/소속/직책을 제출하면 운영자가 Supabase 대시보드에서 수동으로 `true` 토글.
+- `is_pastor()` SECURITY DEFINER 함수가 RLS/RPC 내부에서 호출자의 값을 읽는다 (`is_admin()` 와 대칭).
+
+#### `event_proposals` — 제안 테이블
+```sql
+id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras,
+title text, summary text, person_codes text[], place_name text, lat/lng,
+start_year/end_year/time_precision, bible_refs jsonb,
+story_scenes jsonb, scene_persons jsonb, after_story_index int,
+status text CHECK ('pending'/'approved'/'rejected'),
+reviewed_by_user_id, reviewed_at, review_note, approved_event_id uuid FK→events,
+created_at, updated_at
+```
+- 승인 전까지 `events` 와 격리되므로 모바일 앱 쿼리(`events_ordered` view, `events.status='published'`)에 영향 0.
+- `approve_event_proposal` RPC 가 `insert_event_at_position` 을 호출해 events 에 반영 + `approved_event_id` 역참조 기록.
+
+#### `event_proposal_comments` — 댓글
+```sql
+id uuid PK, proposal_id uuid FK→event_proposals, author_user_id uuid FK→auth.users,
+body text, created_at, updated_at
+```
+
+#### RLS 요약
+- 게시판 SELECT: `is_pastor() or is_admin()` (동료 사역자 간 열람·댓글 공개)
+- 제안 INSERT: pastor 만, `proposer_user_id = auth.uid()` 강제, 초기 `status='pending'`
+- 제안 UPDATE: pastor 는 본인 것 + pending 에 한함 (내용 수정), admin 은 status/review 필드 변경용
+- 댓글: pastor + admin 작성 가능, 본인 것만 UPDATE, 삭제는 본인 또는 admin
+- 제안 DELETE: admin 만
+
+#### RPC 4종
+| 이름 | 호출자 | 역할 |
+|------|------|------|
+| `submit_event_proposal(...)` | pastor | 제안 INSERT (status='pending' 강제) |
+| `approve_event_proposal(proposal_id, after_override)` | admin | 내부에서 `insert_event_at_position` 호출 → events 반영 + proposal status='approved' |
+| `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 |
+| `add_proposal_comment(proposal_id, body)` | pastor/admin | 댓글 INSERT 편의 함수 |
+
+상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow, 마이그레이션: [supabase/migrations/20260421_event_proposals.sql](../supabase/migrations/20260421_event_proposals.sql).
 
 #### `bible_verses` — KRV 성경 전문 (31,904절)
 ```sql
@@ -309,3 +355,49 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
   - Riverpod Provider + 생성자 주입 Repository 패턴
 
 충돌 시 **본 문서의 프로젝트 고유 규칙이 우선**한다.
+
+## Story proposal workflow (ADR-016)
+
+### 역할 체계
+- `is_admin()` — `auth.jwt().app_metadata.role == 'admin'` (기존). events/persons 쓰기 권한.
+- `is_pastor()` — `user_profiles.is_pastor = true`. 이야기 제안 제출 권한. 운영자가 수동으로 토글 (admin@brand-i.net 이메일 수신 후 Supabase 대시보드에서 set true).
+
+두 역할은 **독립적** — pastor 는 admin 아니고, admin 은 자동으로 pastor 가 아니다. 단, 두 역할 모두 댓글 작성이 가능.
+
+### 테이블
+#### `event_proposals`
+사역자가 제출하는 이야기 초안. 승인 전까지 `events` 와 격리 → 모바일 앱 쿼리(`events.status='published'`)에 섞이지 않음.
+
+| 컬럼 | 타입 | 의미 |
+|---|---|---|
+| `id` | uuid PK | |
+| `proposer_user_id` | uuid | 작성자 (auth.users) |
+| `era_id` | uuid | `eras(id)` 참조 |
+| `title`, `summary`, `person_codes[]`, `place_name`, `lat`, `lng`, `start_year`, `end_year`, `time_precision`, `bible_refs`, `story_scenes`, `scene_persons`, `after_story_index` | | `events` 와 동일한 콘텐츠 필드 + 삽입 위치 힌트 |
+| `status` | text CHECK | `pending` → `approved` / `rejected` |
+| `reviewed_by_user_id`, `reviewed_at`, `review_note` | | admin 승인/거절 메타 |
+| `approved_event_id` | uuid | 승인 시 생성된 `events.id` 참조 (이후 추적용) |
+| `created_at`, `updated_at` | timestamptz | `touch_updated_at` 트리거 |
+
+#### `event_proposal_comments`
+제안별 댓글. pastor + admin 모두 읽기·쓰기 가능 (커뮤니티 형태).
+
+### RLS 요약
+
+| 대상 | SELECT | INSERT | UPDATE | DELETE |
+|---|---|---|---|---|
+| `event_proposals` | pastor + admin | pastor (본인 proposer, `status=pending`) | pastor 본인 `pending` 수정 / admin status 변경 | admin |
+| `event_proposal_comments` | pastor + admin | pastor + admin (본인 author) | 본인 author | 본인 author 또는 admin |
+
+모든 "pastor + admin" SELECT 는 게시판 공개 의도 — pastor 는 본인 제안뿐 아니라 동료 사역자의 제안도 열람·댓글 가능.
+
+### RPC
+- `submit_event_proposal(p_era_id, p_title, p_summary, p_person_codes, p_place_name, p_lat, p_lng, p_start_year, p_end_year, p_time_precision, p_bible_refs, p_story_scenes, p_scene_persons, p_after_story_index) returns uuid` — pastor 만, proposer=auth.uid() 로 강제 INSERT.
+- `approve_event_proposal(p_proposal_id, p_after_story_index_override default null) returns uuid` — admin 만, 내부에서 `eras.code` 조회 후 기존 `insert_event_at_position` 재호출하여 events 에 반영. 반환값은 생성된 event.id. proposal.status='approved', approved_event_id 갱신.
+- `reject_event_proposal(p_proposal_id, p_note default null) returns void` — admin 만, pending → rejected + note 저장.
+- `add_proposal_comment(p_proposal_id, p_body) returns uuid` — pastor + admin, author=auth.uid() 로 강제 INSERT.
+
+### 운영 주의
+- 목회자 인증 토글은 수동: `update user_profiles set is_pastor = true where user_id = '...'` 또는 Supabase 대시보드. ADR-016 참조.
+- 승인된 제안의 `events` row 는 `insert_event_at_position` 가 era 내 뒤 인덱스를 +1 시프트하는 기존 로직을 그대로 따름.
+- 댓글 삭제는 본인 또는 admin 만. 스팸/부적절 댓글은 admin 이 직접 수동 삭제.

@@ -218,3 +218,38 @@
   - 게이미피케이션(score/xp) 계획 현재 없음. 완료 여부(`is_completed`)만 사용 중.
 - **결과**: `db_init.sql` 약 180줄 감소, RLS/트리거/RPC 단순화. admin 앱은 관리자
   전용으로 축소 (pending_review 검토 화면 제거, 즉시 published 등록).
+
+## ADR-016: admin/ 폐기 → 메인 앱 웹 버전 통합 + pastor 역할 + event_proposals 승인 워크플로우
+
+- **상태**: 채택 (2026-04-21)
+- **맥락**: 별도 `admin/` Flutter Web 프로젝트를 유지하던 동안 빌드·의존성·문서
+  이중화 비용이 누적되고 있었고, 원래 관리자 전용이던 이야기 등록 흐름을
+  **"사역자(목회자) 자격이 있는 사용자"** 에게도 열어 크라우드소싱하고 싶다는
+  요구가 생겼다. 단, 누구나 글쓰기는 부적절하므로 제출 전 단계에 "인증된 목회자"
+  게이트가 필요하고, 콘텐츠 품질 보장을 위해 관리자 승인 게이트도 필요하다.
+- **결정**:
+  1. `admin/` 디렉토리 폐기. 재사용 위젯 (`bible_refs_picker`,
+     `person_codes_picker`, `scene_persons_grid`) 만 `lib/widgets/proposal/` 로
+     이주해 메인 앱에서 재사용.
+  2. 메인 앱 Flutter 코드베이스에 **웹에서만** 노출되는 "이야기 제안" 게시판 탭을
+     `kIsWeb` 분기로 추가 (후속 Phase 2~6).
+  3. `user_profiles.is_pastor boolean default false` 컬럼과 `is_pastor()` SECURITY
+     DEFINER 함수를 도입. 운영자가 이메일(admin@brand-i.net) 확인 후 Supabase
+     대시보드에서 수동 토글.
+  4. 제안 전용 테이블 `event_proposals` 신설 — 승인 전까지 `events` 와 격리되어
+     모바일 앱 쿼리(`events.status='published'`)에 섞이지 않는다. 승인 시 기존
+     `insert_event_at_position` RPC 를 통해 `events` 에 반영.
+  5. RPC 4개 도입: `submit_event_proposal`(pastor), `approve_event_proposal`(admin),
+     `reject_event_proposal`(admin), `add_proposal_comment`(pastor+admin).
+  6. 댓글 테이블 `event_proposal_comments` 로 동료 사역자 피드백 가능.
+- **이유**:
+  - `event_proposals` 를 별도 테이블로 두면 RLS 분리가 명확하고, 승인 전 proposal
+    이 실수로 모바일 앱 쿼리에 섞여 보이는 리스크가 구조적으로 0이다.
+  - `is_pastor` 를 `is_admin` 과 분리함으로써 "콘텐츠 기여" 와 "운영 승인" 권한을
+    독립적으로 관리한다. 목회자 인증은 수동 이메일 검증으로 스팸 방지.
+  - 웹 전용 탭은 `kIsWeb` 런타임 분기로 충분 — 모바일 번들에 등록 UI 코드가
+    포함되지만 버튼이 노출되지 않아 UX 충돌 없음.
+  - `admin/` 폐기로 유지보수 대상 코드베이스가 1개로 단일화.
+- **결과**: admin/ 디렉토리 제거, `lib/widgets/proposal/` 위젯 3개 대기, DB 에
+  `event_proposals`/`event_proposal_comments` + 관련 RPC/RLS 준비. 후속 Phase 에서
+  UI 탭·게시판 리스트·상세·댓글·관리자 승인 UI 를 메인 앱에 구축한다.
