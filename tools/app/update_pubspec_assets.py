@@ -6,7 +6,7 @@ Flutter는 assets 목록에서 디렉토리를 하나 지정하면 그 디렉토
 이미지 폴더마다 개별 라인이 필요하다.
 
 사용법:
-    python3 tools/update_pubspec_assets.py \
+    python3 tools/app/update_pubspec_assets.py \
         --pubspec pubspec.yaml \
         --images-dir assets/story_images_thumbs
 
@@ -22,7 +22,6 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-
 
 PREFIX = "assets/story_images_thumbs/"
 LINE_PREFIX = f"    - {PREFIX}"

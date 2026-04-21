@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Build tools/avatar_prompts.json from assets/200_stories JSON files.
+"""Build tools/seed/person_meta.json from assets/200_stories JSON files.
 
 Rules:
 - Expand group codes: disciples/apostles/brothers -> individual person codes.
 - Remove non-individual codes (groups/placeholders like mysterious_man, babel_people).
-- Keep only person codes with mention_count >= min_mentions.
+- Include EVERY individual person, regardless of mention_count.
+  Visibility in the app is controlled at runtime by ``persons.is_active``.
+- Each character carries an ``is_active_default`` hint for the persons-seed
+  builder: people with mention_count >= ACTIVE_DEFAULT_THRESHOLD start
+  active, single-mention newcomers start inactive (admin opts them in later).
 - Reuse existing prompt metadata only when prompt_source=manual.
 - If no manual style exists, use built-in default style/palette config.
 """
@@ -253,6 +257,7 @@ KO_NAME_OVERRIDES = {
 }
 
 AUTO_PROMPT_SOURCE = "auto_story_v2"
+ACTIVE_DEFAULT_THRESHOLD = 2
 GOD_NEGATIVE_PROMPT_EXTRA = (
     "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, "
     "religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, "
@@ -275,8 +280,82 @@ HAMAN_NEGATIVE_PROMPT_EXTRA = (
 DANIEL_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra person, background person"
 DAN_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra person, background person"
 
+# Codes that the model tends to draw as multiple/symbolic figures.
+# Force them to render as exactly one solo character.
+SOLO_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra person, "
+    "background person, twin, mirrored figure, second character, secondary figure, "
+    "scene with brother, scene with father, scene with attendants"
+)
+SOLO_FORCED_CODES = {"cyrus"}
+
+# potiphar 는 solo 강제 + 헤브루 족장처럼 묘사되지 않도록 추가 차단.
+POTIPHAR_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra person, "
+    "background person, twin, mirrored figure, second character, "
+    "Hebrew patriarch, Hebrew nomad, desert traveler robe, full-length flowing robe, "
+    "long beard, wrapped turban, long staff, sandals only outfit, biblical patriarch costume"
+)
+
+# cain 은 형제 아벨/부모와 함께 그려지는 경향이 강해 강한 solo 차단 필요.
+# 주의: 그림체가 다른 인물과 일치하도록 표현 묘사 단어는 가볍게 유지.
+CAIN_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, three people, extra person, "
+    "background person, twin, mirrored figure, second character, "
+    "scene with brother, scene with sibling, brother nearby, abel, "
+    "scene with parents, family scene, mother, father, child, "
+    "shepherd staff, sheep, lamb, flock"
+)
+
+# achan 은 죄인/도둑 캐릭터라 영웅적/멋진 묘사를 차단해야 톤이 맞는다.
+ACHAN_NEGATIVE_PROMPT_EXTRA = (
+    "heroic posture, proud stance, noble bearing, kingly presence, regal aura, "
+    "shining bright armor, polished cuirass, golden crown, royal robe, royal sash, "
+    "elegant features, glamorous beautiful face, model-like proportions, idealized hero, "
+    "warrior champion silhouette, victorious pose, raised sword pose, commander baton"
+)
+
+# delilah 가 자꾸 남성형으로 나와서 명시적 차단 필요.
+DELILAH_NEGATIVE_PROMPT_EXTRA = (
+    "male, man, masculine face, broad male jaw, square male shoulders, "
+    "beard, mustache, facial hair, "
+    "warrior, armor, soldier, samson, second person, multiple people, scene with samson"
+)
+
+# lydia 도 같은 이유로 여성형 강제. 빌립보 자색 옷감 장수.
+LYDIA_NEGATIVE_PROMPT_EXTRA = (
+    "male, man, masculine face, broad male jaw, square male shoulders, "
+    "beard, mustache, facial hair, "
+    "warrior, armor, soldier, slave, prisoner, jailer, second person, multiple people"
+)
+
+# mary_magdalene 도 자꾸 수염 있는 남성으로 그려져서 강한 여성 강제 필요.
+MARY_MAGDALENE_NEGATIVE_PROMPT_EXTRA = (
+    "male, man, masculine face, broad male jaw, square male shoulders, "
+    "beard, mustache, facial hair, stubble, "
+    "warrior, armor, disciple man, peter, paul, second person, multiple people, "
+    "extra hands, three hands, multiple hands, extra arms, third arm, "
+    "deformed hands, fused fingers, extra fingers, too many fingers, "
+    "oil flask, alabaster jar, perfume bottle, ointment container, anointing vessel"
+)
+
+# naomi 는 노년 강제. 어린/청년 묘사 차단.
+NAOMI_NEGATIVE_PROMPT_EXTRA = (
+    "young woman, youthful face, smooth skin, child, teenager, glamorous beauty, "
+    "model-like proportions, dark hair without gray, "
+    "male, man, masculine face, broad male jaw, beard, mustache, "
+    "second person, multiple people, scene with ruth"
+)
+
+GOLIATH_NEGATIVE_PROMPT_EXTRA = (
+    "kind smile, friendly expression, gentle posture, peaceful aura, warm welcoming gesture, "
+    "slim build, delicate features, child, teenager, slim shoulders, small stature, "
+    "unarmed, empty hands"
+)
+
 FEMALE_CODES = {
     "bathsheba",
+    "bilhah",
     "deborah",
     "delilah",
     "elizabeth",
@@ -285,6 +364,7 @@ FEMALE_CODES = {
     "hagar",
     "jezebel",
     "leah",
+    "lydia",
     "martha",
     "mary",
     "mary_magdalene",
@@ -368,6 +448,54 @@ CHARACTER_VISUAL_OVERRIDES = {
         "soft feminine oval face with gentle features",
         "soft layered veil framing the face",
     ],
+    "goliath": [
+        "towering oversized warrior build, clearly larger than other characters in the cast",
+        "wide square jaw with strong heavy brow planes and deep-set narrow eyes",
+        "short cropped dark hair under a polished bronze helmet with cheek plates",
+    ],
+    "potiphar": [
+        "broad-shouldered authoritative ancient Egyptian officer build",
+        "angular Egyptian profile with straight strong nose and clean shaven trimmed jaw",
+        "kohl-lined dark eyes characteristic of ancient Egyptian art style",
+        "short blunt black hair under a striped Egyptian nemes headcloth",
+    ],
+    "cain": [
+        "lean compact farmer build",
+        "long narrow face with sharp angular jaw and heavy brow",
+        "medium-length dark hair pulled loosely back",
+        "short trimmed beard",
+    ],
+    "naaman": [
+        "tall straight-backed commander build with broad shoulders",
+        "sharp angular face with strong straight nose and trimmed jawline",
+        "short well-groomed dark hair and trimmed beard befitting an officer",
+    ],
+    "achan": [
+        "lean ordinary build, no commanding presence",
+        "narrow uneasy face with sunken anxious eyes",
+        "tangled medium-length dark hair with plain look",
+        "short scruffy uneven beard",
+    ],
+    "delilah": [
+        "slender feminine build with soft graceful proportions",
+        "soft elegant oval face with refined alluring feminine features",
+        "long flowing wavy dark hair partly draped over one shoulder",
+    ],
+    "lydia": [
+        "slender feminine build with poised graceful proportions",
+        "soft elegant oval face with warm intelligent features",
+        "long dark hair partly covered by a soft shawl or simple veil",
+    ],
+    "mary_magdalene": [
+        "slender feminine build with graceful proportions",
+        "soft oval face with gentle devout feminine features",
+        "long dark hair partly covered by a soft head veil",
+    ],
+    "naomi": [
+        "modest elderly feminine build with slightly stooped slim shoulders",
+        "soft elderly face with kind weathered features and gentle wrinkles",
+        "gray streaked hair tucked under a layered widow's veil",
+    ],
 }
 
 CHARACTER_MOOD_OVERRIDES = {
@@ -377,6 +505,36 @@ CHARACTER_MOOD_OVERRIDES = {
     "rachel": ["warm radiant smile and elegant tender posture"],
     "leah": ["quiet modest smile and gentle reserved posture"],
     "ruth": ["warm humble smile and gentle posture"],
+    "goliath": [
+        "menacing forward-leaning stance, intimidating fierce expression with stern brow",
+    ],
+    "potiphar": [
+        "stern authoritative officer's posture with formal upright bearing, arms held with disciplined command",
+    ],
+    "cain": [
+        "brooding upright posture with downcast resentful gaze",
+    ],
+    "naaman": [
+        "proud upright commander's posture, chin held with disciplined dignity",
+    ],
+    "achan": [
+        "shrinking nervous posture with shoulders hunched, guilty downcast expression",
+    ],
+    "delilah": [
+        "alluring graceful posture with subtle sly smile, charming and confident",
+    ],
+    "lydia": [
+        "warm welcoming posture with quiet faithful smile, dignified and gracious",
+    ],
+    "josiah": [
+        "earnest determined royal posture, scroll held to the heart, devout reformer's bearing",
+    ],
+    "mary_magdalene": [
+        "reverent devout posture with hopeful upward gaze, gentle hands clasped",
+    ],
+    "naomi": [
+        "weathered patient posture, gentle wise expression of an older mother figure",
+    ],
 }
 
 BEARD_VARIANTS = [
@@ -559,6 +717,71 @@ CODE_SIGNATURE_HINTS = {
         "measured judicial calm",
         "simple geometric crown band or royal sash",
     ],
+    "goliath": [
+        "towering Philistine giant warrior silhouette",
+        "thick bronze scale armor over a heavy padded tunic, bronze greaves on shins",
+        "massive oversized iron sword held high in one hand",
+        "large rectangular shield slung at the back",
+        "imposing intimidating presence with heavy brow",
+    ],
+    "potiphar": [
+        "ancient Egyptian captain of Pharaoh's guard silhouette",
+        "white linen wrapped kilt (shendyt) with broad gold-banded usekh collar over bare chest",
+        "wide leather officer's belt with a bronze short sword (khopesh) at the hip",
+        "striped Egyptian nemes headcloth or short blunt black wig framing the face",
+        "stern disciplined officer presence, distinctly Egyptian rather than Hebrew nomad",
+    ],
+    "cain": [
+        "first farmer silhouette from the primeval era",
+        "simple sleeveless tunic in earthy tones, bare arms",
+        "wooden farming implement in one hand: simple short hoe or hand sickle",
+        "subtle small dark mark on the forehead (mark of Cain)",
+        "brooding exiled wanderer presence",
+    ],
+    "naaman": [
+        "Aramean (Syrian) army commander silhouette from the divided-kingdom era",
+        "polished bronze scale armor cuirass over a tunic, decorative shoulder plates",
+        "richly trimmed military cloak fastened at one shoulder",
+        "short bronze sword at the belt and a small commander's baton in one hand",
+        "proud authoritative officer presence, distinctly a general not a priest",
+    ],
+    "achan": [
+        "guilty Israelite soldier silhouette caught in shame",
+        "plain dusty Israelite tunic and simple leather belt, no special armor",
+        "one hand clutching a hidden cloth bundle (stolen spoils) close to the chest",
+        "furtive uneasy stance with downcast nervous eyes",
+        "ordinary plain look, not heroic",
+    ],
+    "delilah": [
+        "Philistine seductress silhouette from the era of judges, distinctly female",
+        "richly draped long dress with decorative jeweled neckline and waist sash",
+        "subtle gold ornaments and bangles, distinctly Philistine cultural look",
+        "alluring captivating presence, distinctly feminine",
+    ],
+    "lydia": [
+        "Greco-Roman era merchant woman silhouette, distinctly female",
+        "rich purple dyed long dress with neat sash, modest gold ornaments at neckline",
+        "small bolt of purple cloth tucked under one arm (purple-cloth dealer)",
+        "dignified faithful host presence",
+    ],
+    "josiah": [
+        "young righteous king of Judah silhouette, devout reformer",
+        "geometric royal crown band on the head and embroidered royal robe with sash",
+        "rolled scroll of the Law held close to the chest with one hand",
+        "earnest reverent royal presence",
+    ],
+    "mary_magdalene": [
+        "devout female disciple silhouette from the gospels era, distinctly female",
+        "long modest robe in cream and soft rose with gentle layered shawl",
+        "hands gently clasped at chest level, clearly two hands total and no object in hand",
+        "reverent resurrection-witness presence at dawn",
+    ],
+    "naomi": [
+        "elderly Moabite-returning widow silhouette, distinctly older woman",
+        "long modest layered widow's robe in earthen tones with simple sash",
+        "soft layered head veil framing a kind aged face",
+        "patient wise matriarch presence, distinctly elderly not young",
+    ],
 }
 
 STORY_ROLE_RULES = [
@@ -674,7 +897,7 @@ STORY_MOOD_RULES = [
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build avatar prompt JSON from assets/200_stories data."
+        description="Build person meta JSON (codes, names, avatar prompts) from assets/200_stories data."
     )
     parser.add_argument(
         "--stories-dir",
@@ -682,20 +905,33 @@ def parse_args() -> argparse.Namespace:
         help="Directory containing 200 story JSON files.",
     )
     parser.add_argument(
-        "--base-prompt-json",
-        default="tools/avatar_prompts_51.json",
+        "--base-meta-json",
+        default="tools/seed/person_meta_51.json",
         help="Deprecated. Ignored (kept only for CLI backward compatibility).",
     )
     parser.add_argument(
         "--output",
-        default="tools/avatar_prompts.json",
-        help="Output avatar prompt JSON path.",
+        default="tools/seed/person_meta.json",
+        help="Output person meta JSON path.",
     )
     parser.add_argument(
         "--min-mentions",
         type=int,
-        default=2,
-        help="Minimum mention count to include.",
+        default=1,
+        help=(
+            "Minimum mention count to include. Defaults to 1 so every "
+            "individual person is generated; runtime visibility is controlled "
+            "by persons.is_active in the database."
+        ),
+    )
+    parser.add_argument(
+        "--active-threshold",
+        type=int,
+        default=ACTIVE_DEFAULT_THRESHOLD,
+        help=(
+            "Mention count at or above which is_active_default=true. "
+            "Below this threshold, is_active_default=false (admin opts in)."
+        ),
     )
     return parser.parse_args()
 
@@ -978,11 +1214,12 @@ def build_template_map(*json_paths: Path) -> dict[str, dict[str, Any]]:
     return templates
 
 
-def build_avatar_prompts(
+def build_person_meta(
     rows: list[dict[str, Any]],
     style_source: dict[str, Any],
     template_map: dict[str, dict[str, Any]],
     min_mentions: int,
+    active_threshold: int,
 ) -> dict[str, Any]:
     mention_counts: Counter[str] = Counter()
     era_votes: dict[str, Counter[str]] = defaultdict(Counter)
@@ -1084,6 +1321,7 @@ def build_avatar_prompts(
             "prompt": prompt,
             "prompt_source": prompt_source,
             "mention_count": mention_counts[code],
+            "is_active_default": mention_counts[code] >= active_threshold,
         }
         if not use_common_style:
             character["use_common_style"] = False
@@ -1101,20 +1339,39 @@ def build_avatar_prompts(
             character["negative_prompt_extra"] = DANIEL_NEGATIVE_PROMPT_EXTRA
         if code == "ruth":
             character["negative_prompt_extra"] = RUTH_NEGATIVE_PROMPT_EXTRA
+        if code == "goliath":
+            character["negative_prompt_extra"] = GOLIATH_NEGATIVE_PROMPT_EXTRA
+        if code == "potiphar":
+            character["negative_prompt_extra"] = POTIPHAR_NEGATIVE_PROMPT_EXTRA
+        if code == "cain":
+            character["negative_prompt_extra"] = CAIN_NEGATIVE_PROMPT_EXTRA
+        if code == "achan":
+            character["negative_prompt_extra"] = ACHAN_NEGATIVE_PROMPT_EXTRA
+        if code == "delilah":
+            character["negative_prompt_extra"] = DELILAH_NEGATIVE_PROMPT_EXTRA
+        if code == "lydia":
+            character["negative_prompt_extra"] = LYDIA_NEGATIVE_PROMPT_EXTRA
+        if code == "mary_magdalene":
+            character["negative_prompt_extra"] = MARY_MAGDALENE_NEGATIVE_PROMPT_EXTRA
+        if code == "naomi":
+            character["negative_prompt_extra"] = NAOMI_NEGATIVE_PROMPT_EXTRA
+        if code in SOLO_FORCED_CODES:
+            character["negative_prompt_extra"] = SOLO_NEGATIVE_PROMPT_EXTRA
         characters.append(character)
 
     output = {
         "meta": {
-            "title": "Bible avatar prompts (2+ mentions, individual-only from 200 stories)",
-            "version": "2.0",
+            "title": "Bible avatar prompts (all individuals from 200 stories)",
+            "version": "3.0",
             "count": len(characters),
             "style_source": AUTO_PROMPT_SOURCE,
+            "active_threshold": active_threshold,
             "note": (
                 "Generated from assets/200_stories with "
-                "disciples/apostles/brothers expanded to individuals, then filtered "
-                f"to mention_count >= {min_mentions}. "
-                "Prompts are story-aware geometric avatars; set prompt_source=manual "
-                "on a character to keep a custom prompt."
+                "disciples/apostles/brothers expanded to individuals. "
+                f"All persons with mention_count >= {min_mentions} are emitted; "
+                f"is_active_default=true when mention_count >= {active_threshold}. "
+                "Runtime visibility is controlled by persons.is_active in DB."
             ),
         },
         "common_style": style_source["common_style"],
@@ -1147,11 +1404,12 @@ def main() -> int:
     rows = load_story_rows(stories_dir)
     template_map = build_template_map(*template_paths)
 
-    output = build_avatar_prompts(
+    output = build_person_meta(
         rows=rows,
         style_source=style_source,
         template_map=template_map,
         min_mentions=max(1, int(args.min_mentions)),
+        active_threshold=max(1, int(args.active_threshold)),
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

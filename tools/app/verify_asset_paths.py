@@ -47,7 +47,11 @@ def parse_assets() -> list[str]:
             # flutter 블록 끝
             break
 
-        if in_flutter and stripped.startswith("assets:") and indent == flutter_indent + 2:
+        if (
+            in_flutter
+            and stripped.startswith("assets:")
+            and indent == flutter_indent + 2
+        ):
             in_assets = True
             continue
 
