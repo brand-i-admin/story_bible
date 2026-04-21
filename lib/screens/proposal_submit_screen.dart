@@ -9,11 +9,21 @@ import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../widgets/proposal/bible_refs_picker.dart';
 import '../widgets/proposal/person_codes_picker.dart';
+import '../widgets/proposal/proposal_insertion_picker.dart';
+import '../widgets/proposal/proposal_location_picker.dart';
+import '../widgets/proposal/proposal_scenes_editor.dart';
 import '../widgets/proposal/scene_persons_grid.dart';
 
-/// 이야기 제안 등록/수정 폼. 사역자(is_pastor)만 진입하도록 상위에서 게이트한다.
+/// 이야기 제안 등록/수정 폼.
 ///
-/// [existing] 이 주어지면 수정 모드 (status=pending 인 본인 제안만 가능).
+/// 흐름 (홈 UI 톤 유지):
+/// 1) 시대 선택 (chip)
+/// 2) 등장 인물 복수 선택
+/// 3) 이야기 카드 리스트에서 "이 이야기 뒤" 위치 선택 (맨 앞 옵션 포함)
+/// 4) 제목 / 요약 / 장소(지도 picker) / 연도 / 성경 본문 / 4장면(동적) /
+///    장면별 인물
+///
+/// [existing] 이 주어지면 수정 모드 (본인 pending 만 RLS 허용).
 class ProposalSubmitScreen extends ConsumerStatefulWidget {
   const ProposalSubmitScreen({super.key, this.existing});
 
@@ -26,24 +36,22 @@ class ProposalSubmitScreen extends ConsumerStatefulWidget {
 
 class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _titleCtrl = TextEditingController();
   final _summaryCtrl = TextEditingController();
   final _placeCtrl = TextEditingController();
-  final _latCtrl = TextEditingController();
-  final _lngCtrl = TextEditingController();
   final _startYearCtrl = TextEditingController();
   final _endYearCtrl = TextEditingController();
-  final _afterIndexCtrl = TextEditingController();
-  final List<TextEditingController> _sceneCtrls = List.generate(
-    4,
-    (_) => TextEditingController(),
-  );
 
   String? _eraId;
   String _timePrecision = 'approx';
   List<String> _personCodes = const [];
+  int? _afterStoryIndex;
+  double? _lat;
+  double? _lng;
   List<Map<String, String>> _bibleRefs = const [];
-  List<List<String>> _scenePersons = const [[], [], [], []];
+  List<String> _scenes = const [''];
+  List<List<String>> _scenePersons = const [[]];
 
   List<Era> _eras = const [];
   List<PersonOption> _personOptions = const [];
@@ -54,36 +62,30 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   @override
   void initState() {
     super.initState();
-    final existing = widget.existing;
-    if (existing != null) {
-      _eraId = existing.eraId;
-      _titleCtrl.text = existing.title;
-      _summaryCtrl.text = existing.summary ?? '';
-      _placeCtrl.text = existing.placeName ?? '';
-      _latCtrl.text = existing.lat?.toString() ?? '';
-      _lngCtrl.text = existing.lng?.toString() ?? '';
-      _startYearCtrl.text = existing.startYear?.toString() ?? '';
-      _endYearCtrl.text = existing.endYear?.toString() ?? '';
-      _afterIndexCtrl.text = existing.afterStoryIndex?.toString() ?? '';
-      _timePrecision = existing.timePrecision;
-      _personCodes = List.of(existing.personCodes);
-      _bibleRefs = existing.bibleRefs
+    final e = widget.existing;
+    if (e != null) {
+      _eraId = e.eraId;
+      _titleCtrl.text = e.title;
+      _summaryCtrl.text = e.summary ?? '';
+      _placeCtrl.text = e.placeName ?? '';
+      _startYearCtrl.text = e.startYear?.toString() ?? '';
+      _endYearCtrl.text = e.endYear?.toString() ?? '';
+      _timePrecision = e.timePrecision;
+      _personCodes = List.of(e.personCodes);
+      _afterStoryIndex = e.afterStoryIndex;
+      _lat = e.lat;
+      _lng = e.lng;
+      _bibleRefs = e.bibleRefs
           .map<Map<String, String>>(
             (m) => m.map((k, v) => MapEntry(k, v?.toString() ?? '')),
           )
           .toList();
-      for (
-        var i = 0;
-        i < _sceneCtrls.length && i < existing.storyScenes.length;
-        i++
-      ) {
-        _sceneCtrls[i].text = existing.storyScenes[i];
-      }
+      _scenes = e.storyScenes.isEmpty ? [''] : List.of(e.storyScenes);
       _scenePersons = List.generate(
-        4,
-        (i) => i < existing.scenePersons.length
-            ? List.of(existing.scenePersons[i])
-            : const [],
+        _scenes.length,
+        (i) => i < e.scenePersons.length
+            ? List<String>.of(e.scenePersons[i])
+            : <String>[],
       );
     }
     _loadOptions();
@@ -94,14 +96,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     _titleCtrl.dispose();
     _summaryCtrl.dispose();
     _placeCtrl.dispose();
-    _latCtrl.dispose();
-    _lngCtrl.dispose();
     _startYearCtrl.dispose();
     _endYearCtrl.dispose();
-    _afterIndexCtrl.dispose();
-    for (final c in _sceneCtrls) {
-      c.dispose();
-    }
     super.dispose();
   }
 
@@ -142,16 +138,26 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       setState(() => _errorText = '시대를 선택해주세요.');
       return;
     }
+    final scenes = _scenes
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    if (scenes.isEmpty) {
+      setState(() => _errorText = '장면을 최소 1개 입력해주세요.');
+      return;
+    }
+
     setState(() {
       _submitting = true;
       _errorText = null;
     });
 
     final repo = ref.read(proposalRepositoryProvider);
-    final scenes = _sceneCtrls
-        .map((c) => c.text.trim())
-        .where((s) => s.isNotEmpty)
-        .toList();
+    final sceneCount = scenes.length;
+    final paddedScenePersons = List<List<String>>.generate(
+      sceneCount,
+      (i) => i < _scenePersons.length ? _scenePersons[i] : const [],
+    );
     final refsAsDynamic = _bibleRefs
         .map<Map<String, dynamic>>((m) => Map<String, dynamic>.from(m))
         .toList();
@@ -161,44 +167,36 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         await repo.submit(
           eraId: _eraId!,
           title: _titleCtrl.text.trim(),
-          summary: _summaryCtrl.text.trim().isEmpty
-              ? null
-              : _summaryCtrl.text.trim(),
+          summary: _emptyAsNull(_summaryCtrl.text),
           personCodes: _personCodes,
-          placeName: _placeCtrl.text.trim().isEmpty
-              ? null
-              : _placeCtrl.text.trim(),
-          lat: double.tryParse(_latCtrl.text.trim()),
-          lng: double.tryParse(_lngCtrl.text.trim()),
+          placeName: _emptyAsNull(_placeCtrl.text),
+          lat: _lat,
+          lng: _lng,
           startYear: int.tryParse(_startYearCtrl.text.trim()),
           endYear: int.tryParse(_endYearCtrl.text.trim()),
           timePrecision: _timePrecision,
           bibleRefs: _bibleRefs,
           storyScenes: scenes,
-          scenePersons: _scenePersons,
-          afterStoryIndex: int.tryParse(_afterIndexCtrl.text.trim()),
+          scenePersons: paddedScenePersons,
+          afterStoryIndex: _afterStoryIndex,
         );
       } else {
         await repo.updateProposal(
           proposalId: widget.existing!.id,
           eraId: _eraId!,
           title: _titleCtrl.text.trim(),
-          summary: _summaryCtrl.text.trim().isEmpty
-              ? null
-              : _summaryCtrl.text.trim(),
+          summary: _emptyAsNull(_summaryCtrl.text),
           personCodes: _personCodes,
-          placeName: _placeCtrl.text.trim().isEmpty
-              ? null
-              : _placeCtrl.text.trim(),
-          lat: double.tryParse(_latCtrl.text.trim()),
-          lng: double.tryParse(_lngCtrl.text.trim()),
+          placeName: _emptyAsNull(_placeCtrl.text),
+          lat: _lat,
+          lng: _lng,
           startYear: int.tryParse(_startYearCtrl.text.trim()),
           endYear: int.tryParse(_endYearCtrl.text.trim()),
           timePrecision: _timePrecision,
           bibleRefs: refsAsDynamic,
           storyScenes: scenes,
-          scenePersons: _scenePersons,
-          afterStoryIndex: int.tryParse(_afterIndexCtrl.text.trim()),
+          scenePersons: paddedScenePersons,
+          afterStoryIndex: _afterStoryIndex,
         );
       }
       if (!mounted) return;
@@ -225,13 +223,18 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     }
   }
 
+  String? _emptyAsNull(String v) {
+    final t = v.trim();
+    return t.isEmpty ? null : t;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     if (_loadingOptions) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.existing == null ? '새 이야기 제안' : '제안 수정'),
@@ -255,75 +258,56 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                     ),
                   ),
                 ),
-              _sectionTitle('시대'),
-              DropdownButtonFormField<String>(
-                value: _eraId,
-                items: [
-                  for (final e in _eras)
-                    DropdownMenuItem(value: e.id, child: Text(e.name)),
-                ],
-                onChanged: (v) => setState(() => _eraId = v),
-                validator: (v) => v == null ? '시대를 선택해주세요' : null,
+
+              // [1~3] 시대 + 인물 + 삽입 위치 (통합 위젯)
+              ProposalInsertionPicker(
+                eras: _eras,
+                availablePersons: _personOptions,
+                eventsFetcher: (eraId) =>
+                    ref.read(storyRepositoryProvider).fetchEventsByEra(eraId),
+                initialEraId: _eraId,
+                initialPersonCodes: _personCodes,
+                initialAfterStoryIndex: _afterStoryIndex,
+                onEraChanged: (id) => setState(() => _eraId = id),
+                onPersonCodesChanged: (codes) =>
+                    setState(() => _personCodes = codes),
+                onAfterStoryIndexChanged: (idx) =>
+                    setState(() => _afterStoryIndex = idx),
               ),
-              _sectionTitle('이 이야기 다음 위치에 배치 (선택)'),
-              TextFormField(
-                controller: _afterIndexCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  hintText: '기존 이야기의 story_index. 비우면 맨 앞.',
-                ),
-              ),
+
               _sectionTitle('제목'),
               TextFormField(
                 controller: _titleCtrl,
-                decoration: const InputDecoration(
-                  hintText: '예: 001 창조: 7일과 안식',
-                ),
+                decoration: const InputDecoration(hintText: '예: 창조: 7일과 안식'),
                 validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? '제목은 필수' : null,
+                    (v == null || v.trim().isEmpty) ? '제목은 필수입니다' : null,
               ),
+
               _sectionTitle('요약'),
               TextFormField(
                 controller: _summaryCtrl,
-                maxLines: 3,
-                decoration: const InputDecoration(hintText: '한두 문장으로 요약'),
+                maxLines: 5,
+                minLines: 2,
+                decoration: const InputDecoration(hintText: '최대 4문장으로 요약'),
               ),
-              _sectionTitle('등장 인물 코드'),
-              PersonCodesPicker(
-                available: _personOptions,
-                initial: _personCodes,
-                onChanged: (codes) => setState(() => _personCodes = codes),
-              ),
+
               _sectionTitle('장소'),
               TextFormField(
                 controller: _placeCtrl,
-                decoration: const InputDecoration(hintText: '예: 베들레헴'),
+                decoration: const InputDecoration(
+                  hintText: '예: 베들레헴 (좌표는 아래 지도에서 고릅니다)',
+                ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _latCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                        signed: true,
-                      ),
-                      decoration: const InputDecoration(labelText: '위도 lat'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _lngCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                        signed: true,
-                      ),
-                      decoration: const InputDecoration(labelText: '경도 lng'),
-                    ),
-                  ),
-                ],
+              const SizedBox(height: 8),
+              ProposalLocationPicker(
+                initialLat: _lat,
+                initialLng: _lng,
+                onChanged: (lat, lng) => setState(() {
+                  _lat = lat;
+                  _lng = lng;
+                }),
               ),
+
               _sectionTitle('연도'),
               Row(
                 children: [
@@ -361,29 +345,35 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                     setState(() => _timePrecision = v ?? 'approx'),
                 decoration: const InputDecoration(labelText: '연도 정확도'),
               ),
+
               _sectionTitle('성경 본문'),
               BibleRefsPicker(
                 initial: _bibleRefs,
                 onChanged: (refs) => setState(() => _bibleRefs = refs),
               ),
-              _sectionTitle('4장면 (각 한두 문장)'),
-              for (var i = 0; i < _sceneCtrls.length; i++) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: TextFormField(
-                    controller: _sceneCtrls[i],
-                    maxLines: 2,
-                    decoration: InputDecoration(labelText: '장면 ${i + 1}'),
-                  ),
-                ),
-              ],
+
+              _sectionTitle('장면 (이미지 생성용)'),
+              ProposalScenesEditor(
+                initial: _scenes,
+                onChanged: (scenes) => setState(() {
+                  _scenes = scenes;
+                  _scenePersons = List.generate(
+                    scenes.length,
+                    (i) => i < _scenePersons.length
+                        ? _scenePersons[i]
+                        : const <String>[],
+                  );
+                }),
+              ),
+
               _sectionTitle('장면별 등장 인물'),
               ScenePersonsGrid(
                 personCodes: _personCodes,
-                sceneCount: 4,
+                sceneCount: _scenes.length,
                 initial: _scenePersons,
                 onChanged: (sp) => setState(() => _scenePersons = sp),
               ),
+
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: _submitting ? null : _onSubmit,
@@ -408,7 +398,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   Widget _sectionTitle(String text) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 6),
+      padding: const EdgeInsets.only(top: 20, bottom: 6),
       child: Text(
         text,
         style: Theme.of(
