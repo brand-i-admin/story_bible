@@ -511,11 +511,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 ),
                 const _IntroBullet(
                   number: '3',
-                  title: '각 인물별로 "어느 사건 뒤"인지 정확히 고릅니다',
+                  title: '각 등장인물마다 새 이야기의 배치 위치를 고릅니다',
                   body:
-                      '선택한 인물마다 순서대로 그 인물의 사건 리스트가 나옵니다. '
-                      '이 이야기가 어느 사건 뒤에 들어갈지 탭으로 선택하세요. '
-                      '여러 인물이 다른 위치를 고른 경우, 모든 선택을 만족하는 가장 뒤 위치에 배치됩니다.',
+                      '새 이야기의 등장인물 모두에게, 각각 어떤 사건 다음에 이 이야기가 '
+                      '배치되면 좋을지 골라주세요. 여러 선택이 서로 다르면 모든 선택을 '
+                      '만족하는 가장 뒤 위치에 배치됩니다.',
                 ),
                 const _IntroBullet(
                   number: '4',
@@ -1087,7 +1087,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // ---------- Bottom Nav ----------
   Widget _buildBottomNav(ThemeData theme) {
     final isFirst = _step == 0;
-    final isLast = _step == 2;
+    final isLast = _step == 3;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
