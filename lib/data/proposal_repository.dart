@@ -1,5 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/event_proposal.dart';
+import '../models/proposal_comment.dart';
+
 /// 이야기 제안(event_proposals) 데이터 계층.
 ///
 /// - 사역자(user_profiles.is_pastor=true)가 제안을 제출 → DB의
@@ -86,5 +89,93 @@ class ProposalRepository {
       params: {'p_proposal_id': proposalId, 'p_body': body},
     );
     return result as String;
+  }
+
+  /// 제안 목록 조회.
+  ///
+  /// [status] 필터: `pending` | `approved` | `rejected` | null(전체).
+  /// [proposerUserId] 가 주어지면 본인 제안만.
+  /// RLS: pastor/admin 만 읽을 수 있다.
+  Future<List<EventProposal>> fetchProposals({
+    String? status,
+    String? proposerUserId,
+  }) async {
+    dynamic query = _client.from('event_proposals').select();
+    if (status != null) {
+      query = query.eq('status', status);
+    }
+    if (proposerUserId != null) {
+      query = query.eq('proposer_user_id', proposerUserId);
+    }
+    final rows = await query.order('created_at', ascending: false);
+    return (rows as List)
+        .map<EventProposal>(
+          (row) => EventProposal.fromMap(row as Map<String, dynamic>),
+        )
+        .toList();
+  }
+
+  /// 제안 단건 조회 (상세 화면 전용).
+  Future<EventProposal> fetchProposal(String proposalId) async {
+    final row = await _client
+        .from('event_proposals')
+        .select()
+        .eq('id', proposalId)
+        .single();
+    return EventProposal.fromMap(row);
+  }
+
+  /// 제안에 달린 댓글 목록 (작성 순).
+  Future<List<ProposalComment>> fetchComments(String proposalId) async {
+    final rows = await _client
+        .from('event_proposal_comments')
+        .select()
+        .eq('proposal_id', proposalId)
+        .order('created_at', ascending: true);
+    return (rows as List)
+        .map<ProposalComment>(
+          (row) => ProposalComment.fromMap(row as Map<String, dynamic>),
+        )
+        .toList();
+  }
+
+  /// 본인 pending 제안 수정. RLS `event_proposals_update` 정책에 의해
+  /// proposer 이면서 status=pending 이어야 통과.
+  Future<void> updateProposal({
+    required String proposalId,
+    required String eraId,
+    required String title,
+    String? summary,
+    List<String> personCodes = const [],
+    String? placeName,
+    double? lat,
+    double? lng,
+    int? startYear,
+    int? endYear,
+    String timePrecision = 'approx',
+    List<Map<String, dynamic>> bibleRefs = const [],
+    List<String> storyScenes = const [],
+    List<List<String>> scenePersons = const [],
+    int? afterStoryIndex,
+  }) async {
+    await _client
+        .from('event_proposals')
+        .update({
+          'era_id': eraId,
+          'title': title,
+          'summary': summary,
+          'person_codes': personCodes,
+          'place_name': placeName,
+          'lat': lat,
+          'lng': lng,
+          'start_year': startYear,
+          'end_year': endYear,
+          'time_precision': timePrecision,
+          'bible_refs': bibleRefs,
+          'story_scenes': storyScenes,
+          'scene_persons': scenePersons,
+          'after_story_index': afterStoryIndex,
+        })
+        .eq('id', proposalId);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,6 +12,7 @@ import '../models/era.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 import '../state/auth_providers.dart';
+import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../utils/scene_asset_loader.dart';
@@ -20,11 +22,13 @@ import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_texture_layer.dart';
 import '../widgets/person_panel.dart';
 import '../widgets/profile_tab_page.dart';
+import '../widgets/proposal/pastor_gate_dialog.dart';
 import '../widgets/search_bottom_sheet.dart';
 import '../widgets/story_home_styles.dart';
 import '../widgets/story_map_panel.dart';
 import '../widgets/story_selection_panel.dart';
 import '../widgets/weekly_tab_page.dart';
+import 'proposal_board_screen.dart';
 
 class StoryHomeScreen extends ConsumerStatefulWidget {
   const StoryHomeScreen({super.key});
@@ -353,6 +357,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onOpenEventDetail: _openEventDetailPage,
         ),
       ),
+    );
+  }
+
+  /// 웹 한정 "이야기 등록" 탭 핸들러.
+  /// - 비로그인: 안내 스낵바 → 프로필 탭으로 이동 (그쪽에 로그인 UI 있음)
+  /// - 로그인 + is_pastor=false: PastorGateDialog (메일 안내)
+  /// - 로그인 + is_pastor=true OR admin: ProposalBoardScreen 진입
+  Future<void> _openProposalBoardOrGate() async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('먼저 로그인해주세요 (프로필 탭에서 로그인)')));
+      await _openProfileTab();
+      return;
+    }
+    final isAdmin = ref.read(isAdminProvider);
+    final isPastor = await ref.read(isPastorProvider.future);
+    if (!mounted) return;
+    if (!isPastor && !isAdmin) {
+      await PastorGateDialog.show(context);
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const ProposalBoardScreen()),
     );
   }
 
@@ -968,6 +998,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         ),
                         const SizedBox(width: 8),
                         topUtilityButton(label: '프로필', onTap: _openProfileTab),
+                        if (kIsWeb) ...[
+                          const SizedBox(width: 8),
+                          topUtilityButton(
+                            label: '이야기 등록',
+                            onTap: _openProposalBoardOrGate,
+                          ),
+                        ],
                       ],
                     ),
                   ),
