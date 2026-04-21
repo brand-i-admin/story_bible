@@ -23,24 +23,23 @@ class StoryRepository {
   }
 
   Future<List<Person>> fetchPersonsByEra(String eraId) async {
-    final rows = await _client
-        .from('person_eras')
-        .select(
-          'display_order, persons!inner(id, code, name, tagline, description, avatar_url)',
-        )
-        .eq('era_id', eraId)
-        .order('display_order', ascending: true);
+    // 과거에는 person_eras view + persons!inner resource embedding 으로 조인했으나,
+    // view 가 WITH + group by + row_number() 구조라 PostgREST 가 FK 를 자동
+    // 추론하지 못해 PGRST200 이 발생한다. list_persons_by_era RPC 로 우회.
+    final rows =
+        await _client.rpc('list_persons_by_era', params: {'p_era_id': eraId})
+            as List<dynamic>;
 
     return rows.map<Person>((row) {
-      final person = row['persons'] as Map<String, dynamic>;
+      final map = row as Map<String, dynamic>;
       return Person(
-        id: person['id'] as String,
-        code: person['code'] as String,
-        name: person['name'] as String,
-        tagline: person['tagline'] as String?,
-        description: person['description'] as String?,
-        avatarUrl: person['avatar_url'] as String?,
-        displayOrder: row['display_order'] as int,
+        id: map['id'] as String,
+        code: map['code'] as String,
+        name: map['name'] as String,
+        tagline: map['tagline'] as String?,
+        description: map['description'] as String?,
+        avatarUrl: map['avatar_url'] as String?,
+        displayOrder: (map['display_order'] as num).toInt(),
       );
     }).toList();
   }

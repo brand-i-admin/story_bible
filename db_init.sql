@@ -70,6 +70,18 @@ drop function if exists public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
   int, int, text, text, double precision, double precision
 ) cascade;
+drop function if exists public.is_pastor() cascade;
+drop function if exists public.list_persons_by_era(uuid) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], text,
+  double precision, double precision, int, int, text,
+  jsonb, jsonb, jsonb, int
+) cascade;
+drop function if exists public.approve_event_proposal(uuid, int) cascade;
+drop function if exists public.reject_event_proposal(uuid, text) cascade;
+drop function if exists public.add_proposal_comment(uuid, text) cascade;
+drop table if exists event_proposal_comments cascade;
+drop table if exists event_proposals cascade;
 
 create table if not exists eras (
   id uuid primary key default gen_random_uuid(),
@@ -152,6 +164,53 @@ create view person_eras as
       order by first_story_index, person_code
     ) as display_order
   from person_first;
+
+-- person_eras 는 view 라 WITH + group by + row_number() 탓에 PostgREST 가
+-- persons 로의 FK 를 자동 추론하지 못한다 (PGRST200). 클라이언트는 이 RPC 로
+-- 호출해 우회한다. persons.is_active = true 조건을 함수 내부에서 유지.
+create or replace function public.list_persons_by_era(p_era_id uuid)
+returns table (
+  id uuid,
+  code text,
+  name text,
+  tagline text,
+  description text,
+  avatar_url text,
+  display_order int
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  with person_first as (
+    select
+      p.id as person_id,
+      p.code as person_code,
+      min(e.story_index) as first_story_index
+    from persons p
+    join events e
+      on e.person_codes @> array[p.code]
+     and e.status = 'published'
+     and e.era_id = p_era_id
+    where p.is_active = true
+    group by p.id, p.code
+  )
+  select
+    p.id,
+    p.code,
+    p.name,
+    p.tagline,
+    p.description,
+    p.avatar_url,
+    (row_number() over (order by pf.first_story_index, pf.person_code))::int
+      as display_order
+  from person_first pf
+  join persons p on p.id = pf.person_id
+  order by display_order;
+$$;
+
+grant execute on function public.list_persons_by_era(uuid) to anon, authenticated;
 
 create table if not exists bible_verses (
   translation text not null default 'KRV',
@@ -913,9 +972,7 @@ $$;
 grant execute on function public.is_pastor() to authenticated;
 
 -- 3) event_proposals: pastor 가 제출하는 이야기 초안 (승인되기 전까지 events 와 격리)
-drop table if exists event_proposal_comments cascade;
-drop table if exists event_proposals cascade;
-
+--    (파일 상단 drop 섹션에서 이미 drop 처리됨 — 여기서는 create 만)
 create table if not exists event_proposals (
   id uuid primary key default gen_random_uuid(),
   proposer_user_id uuid not null references auth.users(id) on delete cascade,
