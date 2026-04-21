@@ -78,6 +78,7 @@ dart format .                # 코드 포맷
 | `docs/BACKEND.md` | 백엔드 도메인 상세 |
 | `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
 | `docs/TESTING.md` | 테스트 전략 상세 |
+| `docs/CONTENT_UPDATE.md` | 새 인물·이야기 등록 → 앱 반영 워크플로우 (어드민 웹 ↔ 운영자 ↔ 사용자) |
 | `docs/WORKFLOW_GUIDE.md` | 작업 흐름 + 유지보수 규칙 (스킬/Agent 동작 방식, 커밋/푸시 정책, DB 변경 체크리스트) |
 
 ## 코딩 컨벤션
@@ -122,7 +123,7 @@ dart format .                # 코드 포맷
 
 ### 로컬 (pre-commit framework)
 - **pre-commit**: `dart format`, `black`, 큰 파일/머지 충돌/YAML/EOL/공백 검사, **import_sorter**, **forbidden pattern**(`print(`/시크릿 차단)
-- **pre-push**: `flutter analyze` + `flutter test` + **에셋 경로 검증**(`tools/verify_asset_paths.py`)
+- **pre-push**: `flutter analyze` + `flutter test` + **에셋 경로 검증**(`tools/app/verify_asset_paths.py`)
 - 실행: `pre-commit run --all-files` (수동)
 
 ### 원격 (GitHub Actions)
@@ -141,8 +142,8 @@ dart format .                # 코드 포맷
 
 ```bash
 make seed-bible-verses       # 성경 구절 SQL 생성
-make build-avatar-prompts    # 아바타 프롬프트 생성
-make seed-stories            # 이야기 SQL 생성
+make build-person-meta       # 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
+make seed-stories-persons    # 이야기 + 인물 SQL 생성 (권장)
 make generate-avatars        # Vertex AI 아바타 생성
 make generate-story-images   # Vertex AI 장면 이미지
 make thumbnails              # 썸네일 생성

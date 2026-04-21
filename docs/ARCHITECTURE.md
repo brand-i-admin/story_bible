@@ -199,22 +199,29 @@ utils/
 상세는 `docs/BACKEND.md` 참조. 핵심 테이블:
 
 ```
-eras ──< person_eras >── persons
-  │                         │
-  └──< events ──< event_persons >──┘
-          │
-          ├──< event_bible_refs
-          ├──< quiz_questions
-          └──< user_event_progress >── (auth.users)
+eras ──< events                          (events.era_id)
+              │
+              ├── person_codes text[]    (인물 매핑은 events row 자체에 임베드)
+              ├── bible_refs jsonb       (성경 참조 임베드)
+              ├── story_scenes jsonb     (장면 텍스트 임베드)
+              └── scene_persons jsonb    (장면별 인물 임베드)
+
+events ──< quiz_questions
+       └──< user_event_progress >── (auth.users)
+
+persons       (어드민이 is_active 토글로 노출 제어)
+events_ordered (view: rank_in_era / global_rank 동적 계산)
+person_eras    (view: 인물 첫 등장 story_index 기반 era별 순서)
 
 bible_verses (독립 — 31,904절 KRV)
 
 user_profiles ──< user_notes
               ├──< user_saved_verses
               ├──< user_intercessory_prayers
-              ├──< user_daily_attendance
-              └──< user_daily_study
+              └──< user_daily_activity  (attended + studied 플래그)
 ```
+
+> v3 schema: `event_persons` / `event_bible_refs` 테이블, `events.code` / `events.time_sort_key` / `events.story` / `events.short_story` 컬럼 폐기. 자세한 사유는 ADR-012/013 참조.
 
 ## 4. 인증 흐름
 
@@ -231,15 +238,14 @@ user_profiles ──< user_notes
 상세는 `docs/DATA_PIPELINE.md` 참조. 의존 관계:
 
 ```
-stories JSON (소스)
-  ├→ build_avatar_prompts_json.py → avatar_prompts.json
-  │     ├→ generate_avatars_vertex.py → assets/avatars/
+stories JSON (소스 — 각 항목에 story_index 직접 박힘)
+  ├→ build_person_meta_json.py   → person_meta.json (모든 개인 인물 + 아바타 프롬프트)
+  │     ├→ generate_avatars_vertex.py → assets/avatars/ (기존 png 보존)
   │     │     └→ generate_runtime_thumbnails.py → assets/avatars_thumbs/
-  │     ├→ build_persons_seed_sql.py → persons_seed.sql
-  │     └→ build_200_stories_seed_sql.py → 200_stories_seed.sql
-  ├→ rewrite_story_scenes_for_image_generation.py → story_scenes 보강
-  │     └→ generate_event_story_images_vertex.py → assets/story_images/
-  │           └→ generate_runtime_thumbnails.py → assets/story_images_thumbs/
+  │     ├→ build_persons_seed_sql.py → persons_seed.sql (is_active 토글 보존 UPSERT)
+  │     └→ build_200_stories_seed_sql.py → 200_stories_seed.sql (events 한 테이블)
+  ├→ generate_event_story_images_vertex.py → assets/story_images/
+  │     └→ generate_runtime_thumbnails.py → assets/story_images_thumbs/
   └→ build_krv_seed_sql.py → krv_bible_verses.sql (독립)
 ```
 

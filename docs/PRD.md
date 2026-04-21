@@ -41,7 +41,7 @@
 - 핀 클릭 → 이야기 상세 다이얼로그
 
 #### 이야기 상세
-- 요약, 본문(short_story), 4장면 이미지
+- 요약(summary), 4장면 이미지 + 장면별 등장인물
 - 성경 구절 참조 (KRV)
 - 학습 완료 체크 + XP 획득 (score × 10)
 
@@ -63,11 +63,11 @@
 
 | 기능 | 상태 | 비고 |
 |------|------|------|
+| 어드민 웹 | 기본 구현 완료 (admin/) | 관리자 전용 이야기 등록 폼 (지도 클릭 lat/lng, 선후 이야기로 story_index). 외부 기여 제출 기능은 2026-04 폐기 — 등록 요청은 별도 채널(구글폼 등)로 수집 후 어드민이 직접 등록. |
 | 퀴즈 시스템 | DB 스키마 있음, 데이터 미구축 | `quiz_questions` 테이블 존재 |
 | 시맨틱 검색 | 스키마 있음 | `search_embeddings` (pgvector 1536차원) |
 | 다국어 지원 | 미착수 | bible_verses.translation 컬럼 대응 가능 |
 | 소셜 확장 | 기본만 | 랭킹, 친구, 그룹 스터디 |
-| 관리자 CMS | 미착수 | 이야기/퀴즈 편집 |
 
 ## 5. 데이터 파이프라인 개요
 
@@ -76,10 +76,11 @@
 
 ```
 assets/bible/*.txt ─→ build_krv_seed_sql.py ─→ bible_verses SQL
-assets/200_stories/ ─→ build_avatar_prompts_json.py ─→ avatar_prompts.json
-                    ├→ build_200_stories_seed_sql.py ─→ events SQL
-                    ├→ build_persons_seed_sql.py ─→ persons SQL
-                    ├→ generate_avatars_vertex.py ─→ 아바타 PNG
+assets/200_stories/ (각 항목에 story_index 직접 박힘)
+                    ├→ build_person_meta_json.py    ─→ person_meta.json (모든 인물 + 아바타 프롬프트)
+                    ├→ build_200_stories_seed_sql.py ─→ events SQL (jsonb/배열 흡수)
+                    ├→ build_persons_seed_sql.py ─→ persons SQL (is_active 토글 보존)
+                    ├→ generate_avatars_vertex.py ─→ 아바타 PNG (기존 보존)
                     └→ generate_event_story_images_vertex.py ─→ 장면 이미지
 ```
 
