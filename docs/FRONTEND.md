@@ -49,6 +49,9 @@ lib/
 | UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
 | SavedBibleVerse | `models/saved_bible_verse.dart` (55줄) | id, userId, translation, bookNo, bookName, chapterNo, verseNo, verseText | `SavedBibleVerse.fromMap()` |
 | QuizQuestion | `models/quiz_question.dart` (17줄) | id, question, choices, answerIndex, explanation | 생성자 직접 |
+| EventProposal | `models/event_proposal.dart` | id, proposalType ('new'/'delete'), targetEventId, 제안 본문 전체 필드, proposedCharacters, quizQuestions, status, reviewed* | `EventProposal.fromMap()` |
+| QuizDraft | `models/event_proposal.dart` | question, choices(4), answerIndex(0~3), explanation. `isValid` getter 로 4지선다 + 해설 필수 검증. | `QuizDraft.fromMap()` / `.toMap()` |
+| ProposedCharacter | `models/event_proposal.dart` | code, name, prompt, storagePath. 제안 시 신규 생성한 캐릭터 메타 | `ProposedCharacter.fromMap()` |
 | CharacterStudyProgress | `models/character_study_progress.dart` (20줄) | person, completedCount, totalCount | 생성자 직접 |
 | IntercessoryPrayerItem | `models/intercessory_prayer_item.dart` (33줄) | linkId, nickname, prayerRequest, photoUrl | `IntercessoryPrayerItem.fromMap()` |
 | PagedResult<T> | `models/paged_result.dart` (13줄) | items, pageIndex, pageSize, hasNextPage | 생성자 직접 |
@@ -131,8 +134,8 @@ static const _palette = <Color>[
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
 | ProposalBoardScreen | `screens/proposal_board_screen.dart` | 제안 게시판 (웹 전용) |
-| ProposalSubmitScreen | `screens/proposal_submit_screen.dart` | 제안 작성/수정 |
-| ProposalDetailScreen | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글 |
+| ProposalSubmitScreen | `screens/proposal_submit_screen.dart` | 새 이야기 제안 작성/수정 (5-step wizard: 안내 → 시대 → 인물·위치 → 세부 → **퀴즈**). 마지막 Step 4 는 4지선다 퀴즈 1~3개 + 제출 버튼. |
+| ProposalDetailScreen | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글. `proposal_type='delete'` 일 때 빨간 삭제 제안 배너 + "수정" 버튼 비노출 + 승인 시 `approveDelete` 분기. |
 | NotificationHistoryScreen | `screens/notification_history_screen.dart` | 알림 전체보기 (최근 30일, 2026-04-22) |
 
 > **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~1,016줄 (−86%).
@@ -170,7 +173,7 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작) |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작). 사역자/관리자에게만 **"이 이야기 삭제 제안"** 버튼 노출 (`_DeleteProposalButton` 서브 위젯). |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (인물 진행도 + 노트/말씀/중보기도 미리보기, 자체 데이터/상태 25+개) |
@@ -196,6 +199,21 @@ static const _palette = <Color>[
 | Providers | `state/notification_providers.dart` | `unreadNotificationCountProvider` (polling Stream) + 목록 Future providers |
 
 Firebase 설정 가이드: `docs/PUSH_SETUP.md`.
+
+### 5.7 Proposal (사역자 제안 워크플로)
+
+| 위젯/파일 | 파일 | 역할 |
+|----------|------|------|
+| BibleRefsPicker | `widgets/proposal/bible_refs_picker.dart` | 성경 구절 참조 picker |
+| CharacterCodesPicker | `widgets/proposal/character_codes_picker.dart` | 기존 characters 다중 선택 |
+| NewCharacterDialog | `widgets/proposal/new_character_dialog.dart` | 신규 캐릭터(아바타 포함) 생성 다이얼로그 |
+| ProposalCharacterRow | `widgets/proposal/proposal_character_row.dart` | 선택된 등장인물 아바타 줄 |
+| ProposalLocationPicker | `widgets/proposal/proposal_location_picker.dart` | 지도 핀 선택 |
+| ProposalScenesEditor | `widgets/proposal/proposal_scenes_editor.dart` | 장면 텍스트 + 장면 이미지 편집 |
+| ProposalStatusChip | `widgets/proposal/proposal_status_chip.dart` | pending/approved/rejected 칩 |
+| SceneCharactersGrid | `widgets/proposal/scene_characters_grid.dart` | 장면별 등장 인물 체크 그리드 |
+| **ProposalQuizEditor** | `widgets/proposal/proposal_quiz_editor.dart` | 4지선다 퀴즈 1~3개 편집기 (2026-04-22). Step 4 에서 사용. |
+| **DeleteEventProposalSheet** | `widgets/proposal/delete_event_proposal_sheet.dart` | 기존 이야기 삭제 제안 바텀시트 (2026-04-22). EventDetailPage 에서 호출. |
 
 ### 5.5 큰 화면의 part 파일 분해 (4차 리팩토링)
 

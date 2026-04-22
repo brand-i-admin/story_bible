@@ -32,10 +32,11 @@ class ProposalRepository {
 
   final SupabaseClient _client;
 
-  /// 새 제안 저장. 성공 시 생성된 proposal id(uuid) 반환.
+  /// 새 이야기 제안 저장 (proposal_type='new'). 성공 시 생성된 proposal id(uuid) 반환.
   /// 권한: 호출자가 `is_pastor=true` 여야 한다 (RPC 내부 체크).
   /// [sceneImagePaths] / [sceneImagePrompts] 는 모든 장면이 생성 완료된 뒤에만
   /// 전달한다 (길이가 storyScenes 와 일치해야 DB 에서 통과).
+  /// [quizQuestions] 는 1~3개의 4지선다 퀴즈. 해설까지 필수 (RPC CHECK).
   Future<String> submit({
     required String eraId,
     int? afterStoryIndex,
@@ -54,6 +55,7 @@ class ProposalRepository {
     List<String> sceneImagePaths = const [],
     List<String> sceneImagePrompts = const [],
     List<ProposedCharacter> proposedCharacters = const [],
+    List<QuizDraft> quizQuestions = const [],
   }) async {
     final result = await _client.rpc(
       'submit_event_proposal',
@@ -76,8 +78,25 @@ class ProposalRepository {
         'p_proposed_characters': proposedCharacters
             .map((c) => c.toMap())
             .toList(),
+        'p_quiz_questions': quizQuestions.map((q) => q.toMap()).toList(),
         'p_after_story_index': afterStoryIndex,
       },
+    );
+    return result as String;
+  }
+
+  /// 기존 이야기 삭제 제안 (proposal_type='delete').
+  ///
+  /// `targetEventId` 가 이미 soft-delete 된 이벤트면 서버에서 예외. 동일 대상에
+  /// pending 삭제 제안이 이미 존재하면 partial unique index 가 violate 를 던져
+  /// `PostgrestException` 이 발생한다.
+  Future<String> submitDeleteProposal({
+    required String targetEventId,
+    required String reason,
+  }) async {
+    final result = await _client.rpc(
+      'submit_delete_proposal',
+      params: {'p_target_event_id': targetEventId, 'p_reason': reason},
     );
     return result as String;
   }
@@ -181,7 +200,8 @@ class ProposalRepository {
     return _client.storage.from(bucket).getPublicUrl(path);
   }
 
-  /// 관리자용 승인. 성공 시 생성된 events.id 반환.
+  /// 관리자용 승인 (proposal_type='new' 전용).
+  /// 성공 시 생성된 events.id 반환.
   /// [afterStoryIndexOverride] 로 삽입 위치를 재지정할 수 있다.
   Future<String> approve(
     String proposalId, {
@@ -193,6 +213,17 @@ class ProposalRepository {
         'p_proposal_id': proposalId,
         'p_after_story_index_override': afterStoryIndexOverride,
       },
+    );
+    return result as String;
+  }
+
+  /// 관리자용 삭제 제안 승인 (proposal_type='delete' 전용).
+  /// 대상 이벤트의 `events.deleted_at` 이 set 되어 soft delete 된다.
+  /// 성공 시 삭제된 target event_id 반환.
+  Future<String> approveDelete(String proposalId) async {
+    final result = await _client.rpc(
+      'approve_delete_proposal',
+      params: {'p_proposal_id': proposalId},
     );
     return result as String;
   }
@@ -277,7 +308,8 @@ class ProposalRepository {
   }
 
   /// 본인 pending 제안 수정. RLS `event_proposals_update` 정책에 의해
-  /// proposer 이면서 status=pending 이어야 통과.
+  /// proposer 이면서 status=pending 이어야 통과. `proposal_type='new'` 제안만
+  /// 이 메서드로 수정한다 ('delete' 는 취소 후 재제출 권장).
   Future<void> updateProposal({
     required String proposalId,
     required String eraId,
@@ -296,6 +328,7 @@ class ProposalRepository {
     List<String> sceneImagePaths = const [],
     List<String> sceneImagePrompts = const [],
     List<ProposedCharacter> proposedCharacters = const [],
+    List<QuizDraft> quizQuestions = const [],
     int? afterStoryIndex,
   }) async {
     await _client
@@ -319,6 +352,7 @@ class ProposalRepository {
           'proposed_characters': proposedCharacters
               .map((c) => c.toMap())
               .toList(),
+          'quiz_questions': quizQuestions.map((q) => q.toMap()).toList(),
           'after_story_index': afterStoryIndex,
         })
         .eq('id', proposalId);

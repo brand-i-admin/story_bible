@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/story_event.dart';
+import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../utils/bible_book_meta.dart';
+import 'proposal/delete_event_proposal_sheet.dart';
 import 'story_home_styles.dart';
 import 'sub_page_scaffold.dart';
 
@@ -148,12 +150,55 @@ class EventDetailPage extends ConsumerWidget {
                           completed: isCompleted,
                         ),
                       ),
+                      _DeleteProposalButton(event: event),
                     ],
                   ),
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 사역자/관리자 전용 — 이 이야기에 대한 삭제 제안을 내는 TextButton.
+///
+/// 일반 사용자에게는 아예 렌더되지 않는다. 권한 프로바이더가 로딩 중이면 빈
+/// 공간으로 fallback 해 레이아웃이 흔들리지 않도록 한다.
+class _DeleteProposalButton extends ConsumerWidget {
+  const _DeleteProposalButton({required this.event});
+
+  final StoryEvent event;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAdmin = ref.watch(isAdminProvider);
+    final isPastorAsync = ref.watch(isPastorProvider);
+    final isPastor = isPastorAsync.maybeWhen(
+      data: (v) => v,
+      orElse: () => false,
+    );
+    if (!isAdmin && !isPastor) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: TextButton.icon(
+          icon: const Icon(Icons.delete_outline, size: 18),
+          label: const Text('이 이야기 삭제 제안'),
+          style: TextButton.styleFrom(foregroundColor: const Color(0xFF8C4A3A)),
+          onPressed: () {
+            showModalBottomSheet<bool>(
+              context: context,
+              isScrollControlled: true,
+              showDragHandle: true,
+              builder: (_) => DeleteEventProposalSheet(event: event),
+            );
+          },
         ),
       ),
     );

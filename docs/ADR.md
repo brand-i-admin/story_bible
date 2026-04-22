@@ -253,3 +253,48 @@
 - **결과**: admin/ 디렉토리 제거, `lib/widgets/proposal/` 위젯 3개 대기, DB 에
   `event_proposals`/`event_proposal_comments` + 관련 RPC/RLS 준비. 후속 Phase 에서
   UI 탭·게시판 리스트·상세·댓글·관리자 승인 UI 를 메인 앱에 구축한다.
+
+## ADR-017: 이야기 삭제 제안 + soft delete + 퀴즈 필수화
+
+- **날짜**: 2026-04-22
+- **상태**: 승인
+- **맥락**: ADR-016 에서 도입한 제안 워크플로가 "새 이야기 추가" 만 지원했다.
+  이후 사역자가 잘못 등록된 이야기를 **삭제** 하거나 기존 이야기를 **수정** 할
+  방법이 필요하다는 요구가 나왔다. 그리고 새 이야기 제안 시 퀴즈가 누락되어
+  사용자 학습 사이클이 완성되지 않는 문제도 있었다.
+- **고려한 대안**:
+  - (A) 기존 이야기 수정 제안 (amendment) 지원 — `events` 를 UPDATE. 장면·인물·
+    장면 이미지 부분 수정 UX 가 복잡하고 "아바타 교체/인물 삭제/장면 부분
+    재생성" 등 엣지 케이스가 많아 놓치기 쉬움. 이번 라운드에서는 제외.
+  - (B) 기존 이야기 **삭제 제안** 만 도입 + 재등록은 기존 "새 이야기 제안" 플로우
+    재사용. 사용자 UX 2단계(삭제 → 신규)지만 구조가 단순.
+  - (C) 삭제를 hard delete 로 처리. `quiz_questions` / `user_event_progress` 에
+    걸린 `ON DELETE CASCADE` 때문에 사용자 진도까지 연쇄 삭제 → UX 치명적.
+- **결정**:
+  1. 옵션 **B + soft delete** 채택. `event_proposals.proposal_type` 컬럼 추가
+     (`'new'`/`'delete'`) + `target_event_id` 로 대상 지정.
+  2. `events.deleted_at timestamptz` 추가. `events_ordered` view / `character_eras`
+     view / `list_characters_by_era` RPC 세 곳에 `deleted_at IS NULL` 필터를 걸어
+     앱 전체에서 자동으로 숨긴다. 퀴즈/진도 row 는 보존 — rollback 쉬움.
+  3. 새 이야기 제안 Step 4 로 **퀴즈 1~3개** 강제. 각 문제는 4지선다 + 해설 필수.
+     `event_proposals.quiz_questions jsonb` 에 스냅샷으로 담기고, 승인 RPC 가
+     `quiz_questions` 테이블에 row 로 풀어 넣음.
+  4. 중복 방지: `uniq_pending_delete_target` partial unique index 로 동일 이벤트
+     에 pending 삭제 제안이 여러 건 쌓이지 않도록 차단.
+  5. RPC 2개 신규 (`submit_delete_proposal`, `approve_delete_proposal`) + 기존
+     `submit_event_proposal` / `approve_event_proposal` 에 퀴즈 검증·insert 추가.
+- **이유**:
+  - 수정 제안은 인물·장면 구성 요소가 얽혀 "어느 필드만 바꾸고 어느 에셋을
+    재사용할지" 결정 지점이 많다. MVP 제약으로 쳐내기 어렵다고 판단.
+  - CASCADE 를 끄는 방식은 스키마 전반 재검토가 필요하고, 향후 실제 hard-delete
+    가 필요한 경우도 막아 버리므로 soft delete 가 더 유연하다.
+  - 퀴즈 강제화는 사용자 학습 사이클 완결성과 사역자 책임감 모두에 기여.
+    기존 215개 이야기는 퀴즈가 아직 없어 backfill 작업이 별도 필요 — 본 ADR
+    에서는 **새 제안만 강제**, 기존 이야기 backfill 은 별도 운영 작업.
+  - "수정" 니즈는 사역자가 삭제 후 다시 새 이야기를 제안하는 경로로 우회 가능.
+    실제 수요가 확인되면 amendment 기능을 추가 ADR 로 뒤따라 도입.
+- **결과**: 마이그레이션 `20260422_proposal_type_soft_delete_quiz.sql`, Step 4 퀴즈
+  편집기 UI (`ProposalQuizEditor`), 삭제 제안 바텀시트 (`DeleteEventProposalSheet`),
+  `ProposalRepository` 에 `submitDeleteProposal` / `approveDelete` 추가.
+  제안 상세 화면은 `proposal_type='delete'` 를 감지해 붉은 배너 + 수정 버튼 숨김
+  + 승인 시 `approve_delete_proposal` 분기.

@@ -113,15 +113,28 @@ FROM first;
 #### `event_proposals` — 제안 테이블
 ```sql
 id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras,
+proposal_type text CHECK ('new'/'delete') DEFAULT 'new',
+target_event_id uuid FK→events (NULL for 'new', required for 'delete'),
 title text, summary text, character_codes text[], place_name text, lat/lng,
 start_year/end_year/time_precision, bible_refs jsonb,
-story_scenes jsonb, scene_characters jsonb, after_story_index int,
+story_scenes jsonb, scene_characters jsonb,
+scene_image_paths text[], scene_image_prompts text[],
+proposed_characters jsonb, quiz_questions jsonb,
+after_story_index int,
 status text CHECK ('pending'/'approved'/'rejected'),
 reviewed_by_user_id, reviewed_at, review_note, approved_event_id uuid FK→events,
-created_at, updated_at
+synced_to_local_at timestamptz, created_at, updated_at
 ```
-- 승인 전까지 `events` 와 격리되므로 모바일 앱 쿼리(`events_ordered` view, `events.status='published'`)에 영향 0.
-- `approve_event_proposal` RPC 가 `insert_event_at_position` 을 호출해 events 에 반영 + `approved_event_id` 역참조 기록.
+- 제안 종류 (`proposal_type`, 2026-04-22 도입):
+  - `'new'`: 새 이야기 제안 — 기존 플로우, `quiz_questions` 1~3개 강제 (4지선다 + 해설 필수).
+  - `'delete'`: 기존 이야기 삭제 제안 — `target_event_id` 필수, `quiz_questions` 빈 배열 강제. `summary` 에 삭제 사유 저장.
+- CHECK 제약:
+  - `chk_proposal_type_target`: new ↔ target_event_id IS NULL / delete ↔ target_event_id IS NOT NULL
+  - `chk_quiz_count_by_type`: new → 1~3개, delete → 0개
+- Partial unique index `uniq_pending_delete_target`: 동일 이벤트에 pending 삭제 제안은 1건만 허용 (두 명이 동시에 같은 이야기 삭제 못 냄).
+- 승인 전까지 `events` 와 격리되므로 모바일 앱 쿼리(`events_ordered` view, `events.status='published' AND deleted_at IS NULL`)에 영향 0.
+- `approve_event_proposal` RPC 가 `insert_event_at_position` 호출 + 퀴즈 1~3개를 `quiz_questions` 로 풀어 넣음 + `approved_event_id` 역참조 기록.
+- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다.
 
 #### `event_proposal_comments` — 댓글
 ```sql
@@ -136,15 +149,31 @@ body text, created_at, updated_at
 - 댓글: pastor + admin 작성 가능, 본인 것만 UPDATE, 삭제는 본인 또는 admin
 - 제안 DELETE: admin 만
 
-#### RPC 4종
+#### RPC 6종
 | 이름 | 호출자 | 역할 |
 |------|------|------|
-| `submit_event_proposal(...)` | pastor | 제안 INSERT (status='pending' 강제) |
-| `approve_event_proposal(proposal_id, after_override)` | admin | 내부에서 `insert_event_at_position` 호출 → events 반영 + proposal status='approved' |
-| `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 |
+| `submit_event_proposal(..., p_quiz_questions)` | pastor | 새 이야기 제안 INSERT (`proposal_type='new'`). 퀴즈 1~3개 검증 (4지선다 + 해설 필수). |
+| `submit_delete_proposal(target_event_id, reason)` | pastor | 기존 이야기 삭제 제안 INSERT (`proposal_type='delete'`, `summary=reason`). 이미 삭제된 이벤트면 거부. |
+| `approve_event_proposal(proposal_id, after_override)` | admin | `proposal_type='new'` 전용. `insert_event_at_position` 호출 → events 반영 + 퀴즈 rows insert + proposal status='approved'. |
+| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent). 퀴즈/진도는 보존. |
+| `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 (new/delete 공통). |
 | `add_proposal_comment(proposal_id, body)` | pastor/admin | 댓글 INSERT 편의 함수 |
 
-상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow, 마이그레이션: [supabase/migrations/20260421_event_proposals.sql](../supabase/migrations/20260421_event_proposals.sql).
+상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow, 마이그레이션: [supabase/migrations/20260421_event_proposals.sql](../supabase/migrations/20260421_event_proposals.sql), [supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql](../supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql).
+
+#### Soft delete — events.deleted_at
+
+이야기 삭제 제안이 승인되면 `events.deleted_at` 이 `now()` 로 set 된다. `quiz_questions`/`user_event_progress` 의 `ON DELETE CASCADE` 연쇄로 인한 **사용자 진도 유실** 을 막기 위해 hard delete 는 의도적으로 피한다 ([ADR-017](ADR.md#adr-017-이야기-삭제-제안--soft-delete--퀴즈-필수화)).
+
+앱 전체에서 자동으로 숨겨지도록 두 곳에 필터를 건다:
+
+| view/함수 | 필터 |
+|----------|------|
+| `events_ordered` (view) | `where e.status = 'published' and e.deleted_at is null` |
+| `character_eras` (view) | join 조건에 `and e.deleted_at is null` |
+| `list_characters_by_era(era_id)` RPC | join 조건에 `and e.deleted_at is null` |
+
+Flutter 앱은 `events_ordered` / RPC 만 호출하므로 이 두 곳만 필터 걸면 추가 작업 없음. `fetchQuizQuestions(event_id)` 는 앱 흐름상 삭제된 event 로 도달하지 않아 별도 필터 생략 (이미 목록에서 제외됨).
 
 #### `bible_verses` — KRV 성경 전문 (31,904절)
 ```sql

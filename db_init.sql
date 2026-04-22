@@ -118,7 +118,14 @@ drop function if exists public.submit_event_proposal(
   double precision, double precision, int, int, text,
   jsonb, jsonb, jsonb, text[], text[], jsonb, int
 ) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], text,
+  double precision, double precision, int, int, text,
+  jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
+) cascade;
+drop function if exists public.submit_delete_proposal(uuid, text) cascade;
 drop function if exists public.approve_event_proposal(uuid, int) cascade;
+drop function if exists public.approve_delete_proposal(uuid) cascade;
 drop function if exists public.reject_event_proposal(uuid, text) cascade;
 drop function if exists public.add_proposal_comment(uuid, text) cascade;
 drop table if exists event_proposal_comments cascade;
@@ -205,12 +212,22 @@ create table if not exists events (
   video_url text,
   status text not null default 'published'
     check (status in ('draft', 'published')),
+  -- Soft delete 마커. 비어있으면 활성(기본), 값이 있으면 사용자에게 숨김.
+  -- 사역자의 삭제 제안이 승인되면 여기에 타임스탬프가 기록된다. quiz_questions /
+  -- user_event_progress 의 ON DELETE CASCADE 로 인한 진도 유실을 막기 위해
+  -- hard delete 대신 soft delete 를 사용한다. 모든 읽기는 events_ordered view
+  -- 를 경유해 이 컬럼을 자동 필터한다.
+  deleted_at timestamptz,
   created_at timestamptz not null default now(),
   unique (era_id, story_index)
 );
 
+-- 활성 이벤트(not deleted) 만 빠르게 조회하기 위한 partial index.
+create index if not exists idx_events_active on events (id) where deleted_at is null;
+
 -- Era 내 story_index 정렬 결과를 1..N rank 로 노출.
 -- 어드민/외부 기여로 새 이야기가 끼어들어도 view 가 자동으로 재계산된다.
+-- deleted_at IS NULL 필터를 걸어 soft-deleted 이야기는 앱 전체에서 제외된다.
 create view events_ordered as
   select
     e.*,
@@ -218,10 +235,12 @@ create view events_ordered as
     row_number() over (order by er.display_order, e.story_index) as global_rank
   from events e
   join eras er on er.id = e.era_id
-  where e.status = 'published';
+  where e.status = 'published'
+    and e.deleted_at is null;
 
 -- 인물별 첫 등장 era + 첫 등장 story_index 기준으로 era 안의 인물 순서를 동적 계산.
 -- is_active = false 인 인물은 노출 대상에서 제외된다.
+-- Soft-deleted 이벤트(deleted_at IS NOT NULL)는 인물 첫 등장 계산에서도 제외.
 create view character_eras as
   with character_first as (
     select
@@ -232,6 +251,7 @@ create view character_eras as
     from characters p
     join events e on e.character_codes @> array[p.code]
                   and e.status = 'published'
+                  and e.deleted_at is null
     where p.is_active = true
     group by p.id, p.code, e.era_id
   )
@@ -272,6 +292,7 @@ as $$
     join events e
       on e.character_codes @> array[p.code]
      and e.status = 'published'
+     and e.deleted_at is null
      and e.era_id = p_era_id
     where p.is_active = true
     group by p.id, p.code
@@ -1238,6 +1259,20 @@ create table if not exists event_proposals (
   -- 승인 RPC 가 이 배열을 읽어 characters 테이블에 upsert 한다.
   proposed_characters jsonb not null default '[]'::jsonb,
 
+  -- 새 이야기 제안에 포함되는 4지선다 퀴즈(1~3개). 각 요소 구조:
+  --   { question, choices[4], answer_index(0~3), explanation }
+  -- proposal_type='new' 일 때 1~3개 강제 (CHECK), 'delete' 일 때는 항상 빈 배열.
+  -- 승인 시 approve_event_proposal 이 quiz_questions 테이블에 row 로 insert.
+  quiz_questions jsonb not null default '[]'::jsonb,
+
+  -- 제안 종류. 'new' = 새 이야기 만들기, 'delete' = 기존 이야기 삭제 제안.
+  -- 'delete' 는 target_event_id 가 반드시 있어야 하며, 승인 시 해당 이벤트의
+  -- events.deleted_at 이 set 되어 soft delete 된다 (CASCADE 로 인한 진도 유실 방지).
+  proposal_type text not null default 'new',
+
+  -- 'delete' 타입일 때 삭제 대상 이벤트를 가리킴. 'new' 타입에서는 NULL.
+  target_event_id uuid references events(id) on delete set null,
+
   after_story_index int,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected')),
@@ -1254,8 +1289,33 @@ create table if not exists event_proposals (
   synced_to_local_at timestamptz,
 
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+
+  -- proposal_type 값 허용치
+  constraint event_proposals_proposal_type_check
+    check (proposal_type in ('new', 'delete')),
+
+  -- new ↔ target 없음 / delete ↔ target 있음
+  constraint chk_proposal_type_target check (
+    (proposal_type = 'new' and target_event_id is null) or
+    (proposal_type = 'delete' and target_event_id is not null)
+  ),
+
+  -- 퀴즈 개수: new 는 1~3, delete 는 0
+  constraint chk_quiz_count_by_type check (
+    case proposal_type
+      when 'new' then jsonb_array_length(quiz_questions) between 1 and 3
+      when 'delete' then jsonb_array_length(quiz_questions) = 0
+      else false
+    end
+  )
 );
+
+-- 동일 이벤트에 pending 삭제 제안은 최대 1건. 2명이 동시에 같은 이야기를
+-- 삭제하자고 낼 수 없도록 partial unique index 로 막는다.
+create unique index if not exists uniq_pending_delete_target
+  on event_proposals (target_event_id)
+  where proposal_type = 'delete' and status = 'pending';
 
 create index if not exists event_proposals_proposer_idx
   on event_proposals(proposer_user_id);
@@ -1403,6 +1463,7 @@ create or replace function public.submit_event_proposal(
   p_scene_image_paths text[],
   p_scene_image_prompts text[],
   p_proposed_characters jsonb,
+  p_quiz_questions jsonb,
   p_after_story_index int
 )
 returns uuid
@@ -1413,6 +1474,12 @@ as $$
 declare
   v_id uuid;
   v_scene_count int;
+  v_quiz_count int;
+  v_quiz jsonb;
+  v_choices jsonb;
+  v_answer_index int;
+  v_explanation text;
+  v_question text;
 begin
   if not public.is_pastor() then
     raise exception 'permission denied: pastor role required';
@@ -1435,15 +1502,45 @@ begin
       coalesce(array_length(p_scene_image_prompts, 1), 0), v_scene_count;
   end if;
 
+  -- 퀴즈 검증 (1~3개, 4지선다, 해설 필수).
+  v_quiz_count := coalesce(jsonb_array_length(p_quiz_questions), 0);
+  if v_quiz_count < 1 or v_quiz_count > 3 then
+    raise exception 'quiz_questions count must be between 1 and 3 (got %)', v_quiz_count;
+  end if;
+  for v_quiz in
+    select * from jsonb_array_elements(coalesce(p_quiz_questions, '[]'::jsonb))
+  loop
+    v_question := coalesce(v_quiz->>'question', '');
+    v_choices := v_quiz->'choices';
+    v_answer_index := coalesce((v_quiz->>'answer_index')::int, -1);
+    v_explanation := coalesce(v_quiz->>'explanation', '');
+    if trim(v_question) = '' then
+      raise exception 'quiz question must not be empty';
+    end if;
+    if v_choices is null or jsonb_array_length(v_choices) <> 4 then
+      raise exception 'quiz choices must be exactly 4 (got %)',
+        coalesce(jsonb_array_length(v_choices), 0);
+    end if;
+    if v_answer_index < 0 or v_answer_index > 3 then
+      raise exception 'quiz answer_index must be between 0 and 3 (got %)', v_answer_index;
+    end if;
+    if trim(v_explanation) = '' then
+      raise exception 'quiz explanation must not be empty';
+    end if;
+  end loop;
+
   insert into event_proposals (
+    proposal_type,
     proposer_user_id, era_id, title, summary, character_codes,
     place_name, lat, lng, start_year, end_year,
     time_precision, bible_refs, story_scenes, scene_characters,
     scene_image_paths, scene_image_prompts,
     proposed_characters,
+    quiz_questions,
     after_story_index
   )
   values (
+    'new',
     auth.uid(), p_era_id, p_title, p_summary, coalesce(p_character_codes, '{}'),
     p_place_name, p_lat, p_lng, p_start_year, p_end_year,
     coalesce(nullif(trim(p_time_precision), ''), 'approx'),
@@ -1453,6 +1550,7 @@ begin
     coalesce(p_scene_image_paths, '{}'),
     coalesce(p_scene_image_prompts, '{}'),
     coalesce(p_proposed_characters, '[]'::jsonb),
+    coalesce(p_quiz_questions, '[]'::jsonb),
     p_after_story_index
   )
   returning id into v_id;
@@ -1463,8 +1561,64 @@ $$;
 grant execute on function public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
-  jsonb, jsonb, jsonb, text[], text[], jsonb, int
+  jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
 ) to authenticated;
+
+-- 6b) RPC: submit_delete_proposal (pastor 만) — 기존 이야기 삭제 제안 진입점.
+-- target_event_id 를 받고 사유는 summary 컬럼에 저장. hard delete 대신
+-- events.deleted_at 을 set 하는 soft delete 를 승인 RPC 가 수행한다.
+drop function if exists public.submit_delete_proposal(uuid, text) cascade;
+create or replace function public.submit_delete_proposal(
+  p_target_event_id uuid,
+  p_reason text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  v_id uuid;
+  v_era_id uuid;
+  v_title text;
+begin
+  if not public.is_pastor() then
+    raise exception 'permission denied: pastor role required';
+  end if;
+  if p_target_event_id is null then
+    raise exception 'target_event_id is required';
+  end if;
+  if coalesce(trim(p_reason), '') = '' then
+    raise exception 'reason is required';
+  end if;
+
+  select era_id, title into v_era_id, v_title
+  from events
+  where id = p_target_event_id and deleted_at is null;
+  if v_era_id is null then
+    raise exception 'target event not found or already deleted: %', p_target_event_id;
+  end if;
+
+  insert into event_proposals (
+    proposal_type, target_event_id,
+    proposer_user_id, era_id, title, summary,
+    character_codes, story_scenes, scene_characters,
+    scene_image_paths, scene_image_prompts,
+    proposed_characters, quiz_questions, bible_refs
+  )
+  values (
+    'delete', p_target_event_id,
+    auth.uid(), v_era_id, v_title, p_reason,
+    '{}', '[]'::jsonb, '[]'::jsonb,
+    '{}', '{}',
+    '[]'::jsonb, '[]'::jsonb, '[]'::jsonb
+  )
+  returning id into v_id;
+
+  return v_id;
+end;
+$$;
+grant execute on function public.submit_delete_proposal(uuid, text) to authenticated;
 
 -- 7) RPC: approve_event_proposal (admin 만) — 제안을 events 에 published 로 반영
 --    기존 insert_event_at_position 을 재사용해 era 내 뒤 인덱스 시프트까지 처리.
@@ -1488,6 +1642,9 @@ declare
   v_name text;
   v_storage_path text;
   v_description text;
+  v_quiz jsonb;
+  v_quiz_choices jsonb;
+  v_quiz_idx int;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
@@ -1499,6 +1656,10 @@ begin
   end if;
   if v_proposal.status <> 'pending' then
     raise exception 'proposal is not pending (status = %)', v_proposal.status;
+  end if;
+  if v_proposal.proposal_type <> 'new' then
+    raise exception 'approve_event_proposal is only for proposal_type=new (got %). use approve_delete_proposal for deletions',
+      v_proposal.proposal_type;
   end if;
 
   select code into v_era_code from eras where id = v_proposal.era_id;
@@ -1563,6 +1724,36 @@ begin
     v_proposal.scene_image_paths
   );
 
+  -- 3) 퀴즈 insert — proposal 에 담긴 1~3개를 quiz_questions 로 풀어 넣는다.
+  --    choices jsonb array 의 첫 3개는 필수(choice_a/b/c), 네 번째는 choice_d.
+  --    display_order 는 배열 인덱스를 그대로 사용.
+  v_quiz_idx := 0;
+  for v_quiz in
+    select * from jsonb_array_elements(coalesce(v_proposal.quiz_questions, '[]'::jsonb))
+  loop
+    v_quiz_choices := v_quiz->'choices';
+    if v_quiz_choices is null or jsonb_array_length(v_quiz_choices) <> 4 then
+      raise exception 'quiz[%] must have exactly 4 choices', v_quiz_idx;
+    end if;
+    insert into public.quiz_questions (
+      event_id, question,
+      choice_a, choice_b, choice_c, choice_d,
+      answer_index, explanation, display_order
+    )
+    values (
+      v_event_id,
+      coalesce(v_quiz->>'question', ''),
+      coalesce(v_quiz_choices->>0, ''),
+      coalesce(v_quiz_choices->>1, ''),
+      coalesce(v_quiz_choices->>2, ''),
+      v_quiz_choices->>3,
+      coalesce((v_quiz->>'answer_index')::int, 0),
+      coalesce(v_quiz->>'explanation', ''),
+      v_quiz_idx
+    );
+    v_quiz_idx := v_quiz_idx + 1;
+  end loop;
+
   update event_proposals
   set
     status = 'approved',
@@ -1575,6 +1766,60 @@ begin
 end;
 $$;
 grant execute on function public.approve_event_proposal(uuid, int) to authenticated;
+
+-- 7b) RPC: approve_delete_proposal (admin 만) — 대상 이벤트 soft delete + 제안 승인.
+-- hard delete 대신 events.deleted_at 을 set 해 quiz_questions / user_event_progress
+-- 의 CASCADE 로 인한 사용자 진도 유실을 막는다. events_ordered view 가 deleted_at
+-- IS NULL 필터를 걸고 있어 앱 전체에서 자동으로 숨겨진다.
+drop function if exists public.approve_delete_proposal(uuid) cascade;
+create or replace function public.approve_delete_proposal(
+  p_proposal_id uuid
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  v_proposal event_proposals%rowtype;
+begin
+  if not public.is_admin() then
+    raise exception 'permission denied: admin role required';
+  end if;
+
+  select * into v_proposal from event_proposals where id = p_proposal_id;
+  if not found then
+    raise exception 'proposal not found: %', p_proposal_id;
+  end if;
+  if v_proposal.status <> 'pending' then
+    raise exception 'proposal is not pending (status = %)', v_proposal.status;
+  end if;
+  if v_proposal.proposal_type <> 'delete' then
+    raise exception 'approve_delete_proposal is only for proposal_type=delete (got %)',
+      v_proposal.proposal_type;
+  end if;
+  if v_proposal.target_event_id is null then
+    raise exception 'target_event_id is null for delete proposal %', p_proposal_id;
+  end if;
+
+  -- 대상 이벤트 soft delete (idempotent: 이미 삭제된 경우 무시)
+  update events
+  set deleted_at = now()
+  where id = v_proposal.target_event_id
+    and deleted_at is null;
+
+  update event_proposals
+  set
+    status = 'approved',
+    reviewed_by_user_id = auth.uid(),
+    reviewed_at = now(),
+    approved_event_id = v_proposal.target_event_id
+  where id = p_proposal_id;
+
+  return v_proposal.target_event_id;
+end;
+$$;
+grant execute on function public.approve_delete_proposal(uuid) to authenticated;
 
 -- 8) RPC: reject_event_proposal (admin 만) — note 와 함께 status='rejected'
 drop function if exists public.reject_event_proposal(uuid, text) cascade;

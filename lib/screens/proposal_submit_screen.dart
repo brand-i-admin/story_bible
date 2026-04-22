@@ -13,16 +13,19 @@ import '../widgets/proposal/character_codes_picker.dart';
 import '../widgets/proposal/new_character_dialog.dart';
 import '../widgets/proposal/proposal_character_row.dart';
 import '../widgets/proposal/proposal_location_picker.dart';
+import '../widgets/proposal/proposal_quiz_editor.dart';
 import '../widgets/proposal/proposal_scenes_editor.dart';
 import '../widgets/proposal/scene_characters_grid.dart';
 
 /// 이야기 제안 등록/수정 폼 (wizard).
 ///
-/// 홈 UI 톤으로 3 단계:
+/// 홈 UI 톤으로 5 단계:
+///   Step 0. 안내
 ///   Step 1. 시대 선택 (구약/신약 탭 + era 카드 그리드)
 ///   Step 2. 등장인물과 위치 선택
 ///           sub-phase: characters(복수) → event:0 → event:1 → ... → summary
 ///   Step 3. 세부 내용 (제목 / 요약 / 장소(지도) / 연도 / 성경 / 장면)
+///   Step 4. 퀴즈 (4지선다 1~3개) + 최종 "제안 등록" 버튼
 ///
 /// 최종 `after_story_index` 는 **선택된 인물별 사건의 story_index 중 최댓값**.
 /// 이 뒤에 삽입되면 모든 선택된 사건 이상(+) 으로 시프트되어 정합성 유지.
@@ -38,7 +41,7 @@ class ProposalSubmitScreen extends ConsumerStatefulWidget {
 
 class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // Top-level wizard step.
-  // 0: intro, 1: era, 2: characters & position, 3: details
+  // 0: intro, 1: era, 2: characters & position, 3: details, 4: quiz
   int _step = 0;
 
   // Step 2 내부 sub-phase. 'characters' | 'event:<index>' | 'summary'
@@ -77,6 +80,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // Submit 시 `proposed_characters` 컬럼에 그대로 저장된다.
   // key = character code, value = ProposedCharacter.
   final Map<String, ProposedCharacter> _newCharactersByCode = {};
+
+  // Step 4 퀴즈 초안. 최소 1개, 최대 3개. 초기값은 빈 퀴즈 1개.
+  List<QuizDraft> _quizDrafts = const [QuizDraft.empty];
 
   // 이번 제안의 draft 식별자. 서버 bucket 경로(`.../draftId/scene_N.png`) 에
   // 쓰여 같은 draft 안의 scene 들이 한 폴더에 모인다. 제출 성공 후 이 값은
@@ -140,6 +146,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       for (final c in e.proposedCharacters) {
         if (c.code.isNotEmpty) _newCharactersByCode[c.code] = c;
       }
+      // 기존 퀴즈 복원 (빈 배열이면 빈 퀴즈 1개로 초기화해 editor 가 비정상 상태
+      // 로 빠지지 않게 함).
+      _quizDrafts = e.quizQuestions.isEmpty
+          ? const [QuizDraft.empty]
+          : e.quizQuestions;
       // 수정 모드는 Step 3 (details) 에서 바로 시작
       _step = 3;
       // draftId 는 proposal id 를 그대로 사용 — 이미지 덮어쓰기가 같은
@@ -246,10 +257,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   // ===== Derived =====
 
-  /// 제출 버튼 활성화 조건 — 필수 필드가 모두 채워졌는지.
+  /// Step 3 세부사항 검증 — Step 4(퀴즈) 로 넘어가기 위한 최소 조건.
   /// (시대/등장인물/삽입 위치 는 Step 2 에서 이미 확정된 상태로 Step 3 에 옴)
-  /// 선택 사항: 장면별 등장 인물.
-  bool get _canSubmit {
+  bool get _canProceedFromDetails {
     if (_titleCtrl.text.trim().isEmpty) return false;
     if (_summaryCtrl.text.trim().isEmpty) return false;
     // 장소: 이름 + 지도 좌표 모두 필수
@@ -267,9 +277,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty);
     if (nonEmptyScenes.isEmpty) return false;
-    // 장면 이미지: 입력된 모든 장면이 생성 완료되어야 제출 가능
-    // (scene 텍스트가 비어 있으면 이미지도 필요 없음; 서버에서 빈 scene 은
-    // jsonb_array_length 기준 drop 되지 않으므로 프론트에서 filter 동일하게 맞춤)
+    // 장면 이미지: 입력된 모든 장면이 생성 완료되어야 다음 단계로 진행 가능
     for (var i = 0; i < _scenes.length; i++) {
       if (_scenes[i].trim().isEmpty) continue;
       if (i >= _sceneImages.length || !_sceneImages[i].isReady) {
@@ -278,6 +286,15 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     }
     return true;
   }
+
+  /// 퀴즈 검증 — 1~3개 각각 완전히 채워져 있어야 함 (RPC CHECK 와 동일).
+  bool get _canSubmitQuiz {
+    if (_quizDrafts.isEmpty || _quizDrafts.length > 3) return false;
+    return _quizDrafts.every((q) => q.isValid);
+  }
+
+  /// 최종 제출 버튼 활성화 조건 — 세부사항 + 퀴즈 모두 유효.
+  bool get _canSubmit => _canProceedFromDetails && _canSubmitQuiz;
 
   /// 연도 입력 에러 (끝 < 시작 인 경우에만). 비어있거나 파싱 실패는 null.
   String? get _yearError {
@@ -330,7 +347,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             return false;
         }
       case 3:
-        return true; // 제출 버튼이 별도
+        // Step 3 (세부사항) 이 모두 유효해야 Step 4 (퀴즈) 로 이동 가능
+        return _canProceedFromDetails;
+      case 4:
+        return true; // 마지막 단계 — 제출 버튼이 별도
     }
     return false;
   }
@@ -360,7 +380,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           }
           break;
         case 3:
-          // details step 은 제출 버튼으로
+          _step = 4;
+          break;
+        case 4:
+          // 마지막 단계 — 제출 버튼으로만 진행
           break;
       }
     });
@@ -390,6 +413,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         case 3:
           _step = 2;
           _step2Phase = 'summary';
+          break;
+        case 4:
+          _step = 3;
           break;
       }
     });
@@ -466,6 +492,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           sceneImagePaths: sceneImagePaths,
           sceneImagePrompts: sceneImagePrompts,
           proposedCharacters: proposedCharactersPayload,
+          quizQuestions: _quizDrafts,
           afterStoryIndex: afterIdx,
         );
       } else {
@@ -487,6 +514,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           sceneImagePaths: sceneImagePaths,
           sceneImagePrompts: sceneImagePrompts,
           proposedCharacters: proposedCharactersPayload,
+          quizQuestions: _quizDrafts,
           afterStoryIndex: afterIdx,
         );
       }
@@ -583,6 +611,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         }
       case 3:
         return _buildStep3Details(theme);
+      case 4:
+        return _buildStep4Quiz(theme);
     }
     return const SizedBox.shrink();
   }
@@ -1213,6 +1243,36 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           },
         ),
         const SizedBox(height: 24),
+        if (!_canProceedFromDetails)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              '모든 필수 항목을 채우면 "다음" 버튼이 활성화됩니다.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  // ---------- Step 4: 퀴즈 + 제출 ----------
+  Widget _buildStep4Quiz(ThemeData theme) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text(
+          '이야기를 읽은 사람이 풀 4지선다 퀴즈를 1~3개 만들어주세요.',
+          style: theme.textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 12),
+        ProposalQuizEditor(
+          initial: _quizDrafts,
+          onChanged: (drafts) => setState(() => _quizDrafts = drafts),
+        ),
+        const SizedBox(height: 24),
         FilledButton(
           onPressed: (_submitting || !_canSubmit) ? null : _onSubmit,
           child: Padding(
@@ -1226,6 +1286,17 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 : Text(widget.existing == null ? '제안 등록' : '수정 저장'),
           ),
         ),
+        if (!_canSubmit)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              '문제·선택지 4개·해설을 모두 채우면 제출 버튼이 활성화됩니다.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
         const SizedBox(height: 40),
       ],
     );
@@ -1418,7 +1489,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // ---------- Bottom Nav ----------
   Widget _buildBottomNav(ThemeData theme) {
     final isFirst = _step == 0;
-    final isLast = _step == 3;
+    final isLast = _step == 4;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
@@ -1451,43 +1522,49 @@ class _ProgressHeader extends StatelessWidget {
   const _ProgressHeader({required this.step});
   final int step;
 
-  static const _labels = ['제안 안내', '시대', '등장인물과 위치', '세부 내용'];
+  static const _labels = ['제안 안내', '시대', '등장인물과 위치', '세부 내용', '퀴즈'];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Row(
-        children: [
-          for (var i = 0; i < _labels.length; i++) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: step == i
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                '${i + 1}. ${_labels[i]}',
-                style: theme.textTheme.labelMedium?.copyWith(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (var i = 0; i < _labels.length; i++) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
                   color: step == i
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurfaceVariant,
-                  fontWeight: step == i ? FontWeight.w700 : FontWeight.w500,
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${i + 1}. ${_labels[i]}',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: step == i
+                        ? theme.colorScheme.onPrimary
+                        : theme.colorScheme.onSurfaceVariant,
+                    fontWeight: step == i ? FontWeight.w700 : FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-            if (i < _labels.length - 1)
-              Container(
-                width: 12,
-                height: 1,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                color: theme.dividerColor,
-              ),
+              if (i < _labels.length - 1)
+                Container(
+                  width: 12,
+                  height: 1,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  color: theme.dividerColor,
+                ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -4,9 +4,16 @@ import 'dart:convert';
 ///
 /// 상태(status) 는 서버 CHECK 제약에 따라 'pending' | 'approved' | 'rejected'
 /// 셋 중 하나. 승인 시 `approvedEventId` 에 events 테이블 PK 가 세팅된다.
+///
+/// ## proposalType
+/// - `'new'`   : 새 이야기 제안. `targetEventId` 는 null, `quizQuestions` 는 1~3개.
+/// - `'delete'`: 기존 이야기 삭제 제안. `targetEventId` 는 대상 event, `quizQuestions`
+///   는 빈 배열. `summary` 에 삭제 사유가 담긴다. 승인 시 events.deleted_at 이 set.
 class EventProposal {
   const EventProposal({
     required this.id,
+    required this.proposalType,
+    required this.targetEventId,
     required this.proposerUserId,
     required this.eraId,
     required this.title,
@@ -24,6 +31,7 @@ class EventProposal {
     required this.sceneImagePaths,
     required this.sceneImagePrompts,
     required this.proposedCharacters,
+    required this.quizQuestions,
     required this.afterStoryIndex,
     required this.status,
     required this.reviewedByUserId,
@@ -35,6 +43,14 @@ class EventProposal {
   });
 
   final String id;
+
+  /// 'new' | 'delete'. 기본값은 서버에서 'new'. 'delete' 인 제안은 새 이야기
+  /// 제출 UI 를 거치지 않고 별도 진입점(event 상세의 "삭제 제안" 버튼)으로 만들어진다.
+  final String proposalType;
+
+  /// 'delete' 타입일 때만 non-null — 삭제 대상 events.id.
+  final String? targetEventId;
+
   final String proposerUserId;
   final String eraId;
   final String title;
@@ -64,6 +80,10 @@ class EventProposal {
   /// 승인 시 characters 테이블에 upsert 된다.
   final List<ProposedCharacter> proposedCharacters;
 
+  /// 새 이야기 제안 시 포함되는 4지선다 퀴즈 (1~3개). 승인 시
+  /// `quiz_questions` 테이블에 row 로 풀려 들어간다. 삭제 제안에서는 빈 배열.
+  final List<QuizDraft> quizQuestions;
+
   final int? afterStoryIndex;
   final String status; // pending / approved / rejected
   final String? reviewedByUserId;
@@ -77,9 +97,14 @@ class EventProposal {
   bool get isApproved => status == 'approved';
   bool get isRejected => status == 'rejected';
 
+  bool get isNewProposal => proposalType == 'new';
+  bool get isDeleteProposal => proposalType == 'delete';
+
   factory EventProposal.fromMap(Map<String, dynamic> row) {
     return EventProposal(
       id: row['id'] as String,
+      proposalType: (row['proposal_type'] as String?) ?? 'new',
+      targetEventId: row['target_event_id'] as String?,
       proposerUserId: row['proposer_user_id'] as String,
       eraId: row['era_id'] as String,
       title: row['title'] as String,
@@ -97,6 +122,7 @@ class EventProposal {
       sceneImagePaths: _asStringList(row['scene_image_paths']),
       sceneImagePrompts: _asStringList(row['scene_image_prompts']),
       proposedCharacters: _asProposedCharacters(row['proposed_characters']),
+      quizQuestions: _asQuizDrafts(row['quiz_questions']),
       afterStoryIndex: (row['after_story_index'] as num?)?.toInt(),
       status: (row['status'] as String?) ?? 'pending',
       reviewedByUserId: row['reviewed_by_user_id'] as String?,
@@ -164,6 +190,11 @@ class EventProposal {
     return list.map(ProposedCharacter.fromMap).toList(growable: false);
   }
 
+  static List<QuizDraft> _asQuizDrafts(dynamic raw) {
+    final list = _asMapList(raw);
+    return list.map(QuizDraft.fromMap).toList(growable: false);
+  }
+
   static DateTime? _parseDate(dynamic raw) {
     if (raw == null) return null;
     if (raw is DateTime) return raw;
@@ -207,4 +238,74 @@ class ProposedCharacter {
       storagePath: (m['storage_path'] as String?) ?? '',
     );
   }
+}
+
+/// `event_proposals.quiz_questions` jsonb 원소 — 4지선다 퀴즈 한 문항.
+///
+/// - [question] 문제 본문 (빈 문자열 금지)
+/// - [choices]  정확히 4개
+/// - [answerIndex] 0~3 중 정답 인덱스
+/// - [explanation] 해설 (빈 문자열 금지)
+class QuizDraft {
+  const QuizDraft({
+    required this.question,
+    required this.choices,
+    required this.answerIndex,
+    required this.explanation,
+  });
+
+  final String question;
+  final List<String> choices;
+  final int answerIndex;
+  final String explanation;
+
+  bool get isValid {
+    if (question.trim().isEmpty) return false;
+    if (choices.length != 4) return false;
+    if (choices.any((c) => c.trim().isEmpty)) return false;
+    if (answerIndex < 0 || answerIndex > 3) return false;
+    if (explanation.trim().isEmpty) return false;
+    return true;
+  }
+
+  QuizDraft copyWith({
+    String? question,
+    List<String>? choices,
+    int? answerIndex,
+    String? explanation,
+  }) {
+    return QuizDraft(
+      question: question ?? this.question,
+      choices: choices ?? this.choices,
+      answerIndex: answerIndex ?? this.answerIndex,
+      explanation: explanation ?? this.explanation,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'question': question,
+    'choices': choices,
+    'answer_index': answerIndex,
+    'explanation': explanation,
+  };
+
+  factory QuizDraft.fromMap(Map<String, dynamic> m) {
+    final rawChoices = m['choices'];
+    final choices = rawChoices is List
+        ? rawChoices.whereType<String>().toList(growable: false)
+        : const <String>[];
+    return QuizDraft(
+      question: (m['question'] as String?) ?? '',
+      choices: choices,
+      answerIndex: (m['answer_index'] as num?)?.toInt() ?? 0,
+      explanation: (m['explanation'] as String?) ?? '',
+    );
+  }
+
+  static const QuizDraft empty = QuizDraft(
+    question: '',
+    choices: ['', '', '', ''],
+    answerIndex: 0,
+    explanation: '',
+  );
 }

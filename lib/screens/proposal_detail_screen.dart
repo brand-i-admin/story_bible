@@ -62,11 +62,19 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
   Future<void> _approve(EventProposal p) async {
     setState(() => _reviewing = true);
     try {
-      await ref.read(proposalRepositoryProvider).approve(p.id);
+      final repo = ref.read(proposalRepositoryProvider);
+      final String successMessage;
+      if (p.isDeleteProposal) {
+        await repo.approveDelete(p.id);
+        successMessage = '삭제 제안이 승인되어 이야기가 숨겨졌습니다';
+      } else {
+        await repo.approve(p.id);
+        successMessage = '제안이 승인되어 events 에 반영되었습니다';
+      }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('제안이 승인되어 events 에 반영되었습니다')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(successMessage)));
       ref.invalidate(proposalDetailProvider(p.id));
       ref.invalidate(proposalListProvider);
     } catch (e) {
@@ -208,6 +216,34 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // ───── 삭제 제안 안내 배너 ─────
+              if (p.isDeleteProposal) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFBE9E7),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: theme.colorScheme.error),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_outline,
+                        color: theme.colorScheme.error,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          '이 제안은 기존 이야기의 삭제를 요청합니다. 승인하면 대상 '
+                          '이야기가 앱에서 숨겨집니다 (진도는 보존).',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               // ───── 제목 + 장소·연도 (EventDetailPage 스타일) ─────
               _ProposalHeaderRow(proposal: p),
               // ───── 4장면 이미지 그리드 ─────
@@ -294,7 +330,10 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (isOwnerPending)
+                      // 삭제 제안은 사유만 담긴 단순 구조라 수정 UX 가 의미 없음.
+                      // 본인이 철회하고 싶으면 아래 "삭제" 버튼으로 제안 자체를 지우고
+                      // 다시 낸다.
+                      if (isOwnerPending && !p.isDeleteProposal)
                         OutlinedButton.icon(
                           onPressed: _reviewing ? null : () => _edit(p),
                           icon: const Icon(Icons.edit_outlined),
