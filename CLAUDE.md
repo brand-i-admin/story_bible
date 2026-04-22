@@ -141,14 +141,26 @@ dart format .                # 코드 포맷
 `Makefile`로 관리. 상세는 `docs/DATA_PIPELINE.md` 참조.
 
 ```bash
-make seed-bible-verses       # 성경 구절 SQL 생성
-make build-character-meta       # 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
-make seed-stories-characters    # 이야기 + 인물 SQL 생성 (권장)
-make generate-avatars        # Vertex AI 아바타 생성
-make generate-story-images   # Vertex AI 장면 이미지
-make thumbnails              # 썸네일 생성
-make all                     # 전체 파이프라인
+make seed-bible-verses           # 성경 구절 SQL 생성
+make build-character-meta        # 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
+make seed-stories-characters     # 이야기 + 인물 SQL 생성 (권장)
+make generate-avatars            # Vertex AI 아바타 생성
+make generate-story-images       # Vertex AI 장면 이미지
+make thumbnails                  # 썸네일 생성
+make upload-character-avatars    # Supabase Storage `characters/` 버킷으로 아바타 업로드 (1회)
+make all                         # 전체 파이프라인
 ```
+
+## Supabase Edge Functions
+
+웹 앱이 AI 이미지 생성을 안전하게 호출하기 위한 서버리스 함수.
+상세: `docs/BACKEND.md` §7, `supabase/functions/generate-proposal-scene/README.md`
+
+```bash
+supabase functions deploy generate-proposal-scene
+```
+
+필요 secrets: `GOOGLE_CLOUD_PROJECT`, `GCP_SERVICE_ACCOUNT_JSON`.
 
 ## 환경 설정
 

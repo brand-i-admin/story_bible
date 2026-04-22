@@ -21,6 +21,8 @@ class EventProposal {
     required this.bibleRefs,
     required this.storyScenes,
     required this.sceneCharacters,
+    required this.sceneImagePaths,
+    required this.sceneImagePrompts,
     required this.afterStoryIndex,
     required this.status,
     required this.reviewedByUserId,
@@ -46,6 +48,16 @@ class EventProposal {
   final List<Map<String, dynamic>> bibleRefs; // [{book, from, to}, ...]
   final List<String> storyScenes;
   final List<List<String>> sceneCharacters;
+
+  /// 장면별 생성된 이미지의 Supabase Storage 경로. storyScenes 와 동일한 길이여야
+  /// 함. `proposal-scenes/{uid}/{draft}/scene_{idx}.png` 형태. 비어 있으면 아직
+  /// 이미지 생성 전 (pastor 가 작성 중).
+  final List<String> sceneImagePaths;
+
+  /// 장면 이미지 생성 시 Vertex 에 실제 보낸 prompt (참조/재생성용 스냅샷).
+  /// storyScenes 와 동일한 길이.
+  final List<String> sceneImagePrompts;
+
   final int? afterStoryIndex;
   final String status; // pending / approved / rejected
   final String? reviewedByUserId;
@@ -76,6 +88,8 @@ class EventProposal {
       bibleRefs: _asMapList(row['bible_refs']),
       storyScenes: _asStringList(row['story_scenes']),
       sceneCharacters: _asNestedStringList(row['scene_characters']),
+      sceneImagePaths: _asStringList(row['scene_image_paths']),
+      sceneImagePrompts: _asStringList(row['scene_image_prompts']),
       afterStoryIndex: (row['after_story_index'] as num?)?.toInt(),
       status: (row['status'] as String?) ?? 'pending',
       reviewedByUserId: row['reviewed_by_user_id'] as String?,

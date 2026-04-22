@@ -107,6 +107,12 @@ create table if not exists characters (
   name text not null,
   tagline text,
   avatar_url text,
+
+  -- Supabase Storage 경로 — 'characters/<code>.png' 형식.
+  -- 로컬 assets/avatars/*.png 를 upload_character_avatars.py 로 업로드하면 채워짐.
+  -- 앱과 Edge Function 모두 이 경로로 퍼블릭 URL 을 만들어 쓸 수 있다.
+  avatar_storage_path text,
+
   description text,
   is_active boolean not null default false,
   created_at timestamptz not null default now()
@@ -773,6 +779,92 @@ with check (public.is_admin());
 drop policy if exists characters_read_active on characters;
 create policy characters_read_active on characters
 for select using (is_active = true or public.is_admin());
+
+-- ============================================================================
+-- Storage 버킷: 'characters' — 성경 인물 아바타 이미지 (public read)
+--   경로 규칙: characters/<character_code>.png   (예: characters/abraham.png)
+--   쓰기 권한: admin 만 (관리자가 upload_character_avatars.py 실행)
+--   읽기 권한: 누구나 (앱 프론트 + Edge Function 모두 사용)
+-- ============================================================================
+insert into storage.buckets (
+  id, name, public, file_size_limit, allowed_mime_types
+)
+values (
+  'characters', 'characters', true,
+  10485760,  -- 10 MB (Imagen PNG 업스케일 여유)
+  array['image/png', 'image/webp']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists characters_bucket_public_read on storage.objects;
+create policy characters_bucket_public_read on storage.objects
+for select using (bucket_id = 'characters');
+
+drop policy if exists characters_bucket_admin_write on storage.objects;
+create policy characters_bucket_admin_write on storage.objects
+for all to authenticated
+using (bucket_id = 'characters' and public.is_admin())
+with check (bucket_id = 'characters' and public.is_admin());
+
+-- ============================================================================
+-- Storage 버킷: 'proposal-scenes' — 제안 장면 AI 생성 이미지
+--   경로 규칙: proposal-scenes/<user_id>/<draft_id>/scene_<idx>.png
+--     (생성 시점엔 proposal 아직 insert 전이므로 draft_id 는 클라이언트 UUID)
+--   쓰기 권한: 본인 폴더만 (pastor 가 제안 등록하기 전 업로드)
+--   읽기 권한: public — 제안 상세 페이지에서 다른 pastor / admin 이 봄
+--   실제 업로드 주체는 Edge Function (service-role) 이므로 Edge Function 이
+--   본인 서명으로 넣고 frontend 에는 path 만 넘긴다.
+-- ============================================================================
+insert into storage.buckets (
+  id, name, public, file_size_limit, allowed_mime_types
+)
+values (
+  'proposal-scenes', 'proposal-scenes', true,
+  10485760,
+  array['image/png', 'image/jpeg', 'image/webp']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists proposal_scenes_public_read on storage.objects;
+create policy proposal_scenes_public_read on storage.objects
+for select using (bucket_id = 'proposal-scenes');
+
+drop policy if exists proposal_scenes_insert_own on storage.objects;
+create policy proposal_scenes_insert_own on storage.objects
+for insert to authenticated
+with check (
+  bucket_id = 'proposal-scenes'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists proposal_scenes_update_own on storage.objects;
+create policy proposal_scenes_update_own on storage.objects
+for update to authenticated
+using (
+  bucket_id = 'proposal-scenes'
+  and (storage.foldername(name))[1] = auth.uid()::text
+)
+with check (
+  bucket_id = 'proposal-scenes'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists proposal_scenes_delete_own on storage.objects;
+create policy proposal_scenes_delete_own on storage.objects
+for delete to authenticated
+using (
+  bucket_id = 'proposal-scenes'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or public.is_admin()
+  )
+);
 
 -- -----------------------------------------------------------------------------
 -- RPC: 새 이야기를 era 안의 특정 위치에 끼워 넣기.

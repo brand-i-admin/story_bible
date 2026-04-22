@@ -45,6 +45,7 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
         seed-all generate-all \
         export-stories-json \
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
+        upload-character-avatars upload-character-avatars-force \
         update-pubspec-assets check-pubspec-assets \
         clean-generated lint
 
@@ -78,6 +79,10 @@ help:
 	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
 	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds               [ENV=dev]  위 둘 모두 (최초 부트스트랩용)"
+	@echo ""
+	@echo "Supabase Storage (service_role 키 필요):"
+	@echo "  upload-character-avatars        [ENV=dev]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
+	@echo "  upload-character-avatars-force  [ENV=dev]  전부 덮어쓰기 업로드 (--overwrite)"
 	@echo ""
 	@echo "기타:"
 	@echo "  update-pubspec-assets   story_images_thumbs 경로를 pubspec.yaml에 반영"
@@ -151,6 +156,22 @@ thumbnails:
 
 generate-all: generate-avatars generate-story-images thumbnails
 	@echo "[Makefile] 전체 이미지 생성 완료."
+
+# =============================================================================
+# Supabase Storage 업로드 (아바타)
+# =============================================================================
+# 전제: .env 에 SUPABASE_URL_<ENV>, SUPABASE_SERVICE_ROLE_KEY_<ENV> 설정
+# db_init.sql 실행 후 한 번 돌리면 characters/ 버킷에 124개 PNG 업로드
+# + characters.avatar_storage_path 가 채워진다.
+# 재실행 안전: --overwrite 로 덮어쓰기 가능.
+
+upload-character-avatars:
+	@echo "[Makefile] Supabase Storage 에 캐릭터 아바타 업로드 (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(ENV)
+
+upload-character-avatars-force:
+	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(ENV) --overwrite
 
 # =============================================================================
 # Supabase DB 적용 (psql 사용)

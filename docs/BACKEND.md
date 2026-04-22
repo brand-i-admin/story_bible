@@ -298,19 +298,73 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 
 ## 6. Storage
 
-- **버킷**: `profile-images`
-- **제한**: 5MB, PNG/JPEG/WebP
-- **경로 패턴**: `{userId}/profile_{timestamp}.{ext}`
-- **접근**: 본인만 업로드, public URL로 읽기
+세 버킷이 `db_init.sql` 에 선언된다.
 
-## 7. 마이그레이션 관리 규칙
+### `profile-images` (기존)
+- **제한**: 5 MB, PNG/JPEG/WebP
+- **경로 패턴**: `{userId}/profile_{timestamp}.{ext}`
+- **접근**: 본인만 업로드, public URL 로 읽기
+
+### `characters` (신규, 2026-04)
+- 성경 인물 아바타 — `generate_event_story_images_vertex.py` 스타일의 장면
+  생성에서 AI 참조 이미지로 inline 첨부됨.
+- **제한**: 10 MB, PNG/WebP
+- **경로 패턴**: `{code}.png`  (예: `abraham.png`, `jesus.png`)
+- **쓰기 권한**: admin 만 (`is_admin()`). 초기 부트스트랩은
+  `make upload-character-avatars` 로 `assets/avatars/*.png` 일괄 업로드.
+- **읽기 권한**: public — 프론트 `ProposalCharacterRow` 아바타 노출 +
+  Edge Function 이 base64 로 재포장해 Vertex 에 전달.
+- **DB 연동**: `characters.avatar_storage_path` 가 `{code}.png` 값을 보관.
+
+### `proposal-scenes` (신규, 2026-04)
+- 제안 작성 폼에서 생성된 장면 AI 이미지.
+- **제한**: 10 MB, PNG/JPEG/WebP
+- **경로 패턴**: `{user_id}/{draft_id}/scene_{idx}.png`
+- **쓰기 권한**: authenticated 본인 폴더. 실제 업로드 주체는 Edge Function
+  (`generate-proposal-scene`) 으로, service role key 사용.
+- **읽기 권한**: public — 제안 상세 페이지에서 다른 pastor/admin 이 열람.
+- **DB 연동**: `event_proposals.scene_image_paths` 가 이 경로 목록을 유지
+  (인덱스 순서 = 장면 순서).
+
+## 7. Edge Functions
+
+### `generate-proposal-scene`
+- 경로: `supabase/functions/generate-proposal-scene/index.ts`
+- 호출 시점: 제안 작성 폼의 "이미지 생성" 버튼
+- 배포: `supabase functions deploy generate-proposal-scene`
+- 배포 전제 secrets:
+  - `GOOGLE_CLOUD_PROJECT` — GCP 프로젝트 id
+  - `GOOGLE_CLOUD_LOCATION` — Vertex region (기본 `global`)
+  - `GCP_SERVICE_ACCOUNT_JSON` — service account JSON (JSON 전체를 한 줄로)
+- 기능 개요:
+  1. Supabase JWT 로 사용자 인증
+  2. `characters.code` 로 아바타 PNG 조회 → Vertex Gemini multimodal 요청의
+     `inlineData` 로 첨부
+  3. `COMMON_SCENE_STYLE` + 장면 텍스트 + 장소/제목으로 prompt 조립
+  4. 생성된 PNG 를 `proposal-scenes/{uid}/{draft}/scene_{idx}.png` 로 upsert
+  5. 반환: `{ storage_path, prompt }`
+- 동시성: 프론트가 modal overlay 로 블록 (한 번에 한 장만)
+- 상세: `supabase/functions/generate-proposal-scene/README.md`
+
+### 로컬 개발
+
+```bash
+supabase start                                 # 로컬 스택
+supabase functions serve \
+  --env-file .env.supabase.secrets \
+  generate-proposal-scene
+```
+
+브라우저/Flutter 에서 호출 시 base URL 을 로컬 것으로 바꿔 테스트.
+
+## 8. 마이그레이션 관리 규칙
 
 1. `db_init.sql`이 스키마의 **단일 진실 소스** (Single Source of Truth)
 2. 스키마 변경 시: `db_init.sql` 수정 → `supabase/migrations/` 마이그레이션 생성
 3. 로컬 초기화: `db_init.sql` 전체 실행 (DROP + CREATE)
 4. 운영 반영: 마이그레이션 파일 또는 SQL Editor
 
-## 8. Supabase 공식 Agent Skills
+## 9. Supabase 공식 Agent Skills
 
 본 프로젝트는 Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)와 병행 사용을 권장한다.
 

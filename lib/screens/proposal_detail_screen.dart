@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +8,8 @@ import '../models/event_proposal.dart';
 import '../models/proposal_comment.dart';
 import '../state/auth_providers.dart';
 import '../state/proposal_providers.dart';
+import '../utils/bible_book_meta.dart';
+import '../widgets/bible_reader_page.dart';
 import '../widgets/proposal/proposal_status_chip.dart';
 import 'proposal_submit_screen.dart';
 
@@ -155,59 +159,56 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // ───── 제목 + 장소·연도 (EventDetailPage 스타일) ─────
+              _ProposalHeaderRow(proposal: p),
+              // ───── 4장면 이미지 그리드 ─────
+              if (p.sceneImagePaths.any((s) => s.isNotEmpty)) ...[
+                const SizedBox(height: 12),
+                _ProposalSceneGrid(paths: p.sceneImagePaths),
+              ],
+              const SizedBox(height: 14),
+              // ───── 요약 이야기 ─────
+              _DetailSection(
+                title: '요약 이야기',
+                content: (p.summary ?? '').trim().isEmpty
+                    ? '요약 정보가 없습니다.'
+                    : p.summary!,
+              ),
+              // ───── 관련 본문 + 이동 버튼 ─────
+              if (p.bibleRefs.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailSection(
+                  title: '관련 본문',
+                  content: p.bibleRefs
+                      .map(
+                        (r) =>
+                            '• ${r['book'] ?? ''} ${r['from'] ?? ''}${(r['to'] != null && r['to'] != r['from']) ? '-${r['to']}' : ''}',
+                      )
+                      .join('\n'),
+                  action: _bibleMoveButtonFor(p),
+                ),
+              ],
+              // ───── 추가 메타 (장소 좌표, 등장 인물 코드) ─────
+              const SizedBox(height: 12),
+              _MetaKvBlock(proposal: p),
+              // ───── 상태 chip + 거절 사유 ─────
+              const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(
-                    child: Text(p.title, style: theme.textTheme.headlineSmall),
-                  ),
                   ProposalStatusChip(status: p.status),
+                  if (p.isApproved && p.approvedEventId != null) ...[
+                    const SizedBox(width: 8),
+                    Text(
+                      '→ events.id: ${p.approvedEventId!.substring(0, 8)}...',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ],
               ),
-              const SizedBox(height: 12),
-              if (p.summary != null && p.summary!.isNotEmpty) ...[
-                Text(p.summary!, style: theme.textTheme.bodyMedium),
-                const SizedBox(height: 16),
-              ],
-              _kv('장소', p.placeName ?? '—'),
-              _kv(
-                '좌표',
-                p.lat == null || p.lng == null
-                    ? '—'
-                    : '${p.lat!.toStringAsFixed(3)}, ${p.lng!.toStringAsFixed(3)}',
-              ),
-              _kv(
-                '연도',
-                p.startYear == null && p.endYear == null
-                    ? '—'
-                    : '${p.startYear ?? '?'} ~ ${p.endYear ?? '?'} (${p.timePrecision})',
-              ),
-              _kv(
-                '등장 인물',
-                p.characterCodes.isEmpty ? '—' : p.characterCodes.join(', '),
-              ),
-              _kv(
-                '성경 본문',
-                p.bibleRefs.isEmpty
-                    ? '—'
-                    : p.bibleRefs
-                          .map(
-                            (r) =>
-                                '${r['book'] ?? ''} ${r['from'] ?? ''}${(r['to'] != null && r['to'] != r['from']) ? '-${r['to']}' : ''}',
-                          )
-                          .join(' / '),
-              ),
-              const SizedBox(height: 16),
-              if (p.storyScenes.isNotEmpty) ...[
-                Text('4장면', style: theme.textTheme.titleSmall),
-                const SizedBox(height: 8),
-                for (var i = 0; i < p.storyScenes.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: Text('${i + 1}. ${p.storyScenes[i]}'),
-                  ),
-                const SizedBox(height: 16),
-              ],
               if (p.isRejected && (p.reviewNote ?? '').isNotEmpty) ...[
+                const SizedBox(height: 12),
                 Card(
                   color: const Color(0xFFFBE9E7),
                   child: Padding(
@@ -227,9 +228,9 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
               ],
-              // 액션 버튼
+              // ───── 액션 버튼 ─────
+              const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -254,6 +255,7 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                   ],
                 ],
               ),
+              // ───── 댓글 ─────
               const SizedBox(height: 24),
               Divider(color: theme.dividerColor),
               const SizedBox(height: 8),
@@ -284,24 +286,28 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
     );
   }
 
-  Widget _kv(String k, String v) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 72,
-            child: Text(
-              k,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+  /// 관련 본문 카드 우측의 "이동" 버튼 — 첫 ref 로 BibleReaderPage 이동.
+  Widget? _bibleMoveButtonFor(EventProposal p) {
+    if (p.bibleRefs.isEmpty) return null;
+    final first = p.bibleRefs.first;
+    final book = (first['book'] as String?)?.trim() ?? '';
+    final from = (first['from'] as String?)?.trim() ?? '';
+    if (book.isEmpty || from.isEmpty) return null;
+    final target = parseBibleNavigationTarget('$book $from');
+    if (target == null) return null;
+    return FilledButton(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => BibleReaderPage(
+              initialBookNo: target.bookNo,
+              initialChapterNo: target.chapterNo,
+              initialVerseNo: target.verseNo,
             ),
           ),
-          Expanded(child: Text(v)),
-        ],
-      ),
+        );
+      },
+      child: const Text('이동'),
     );
   }
 }
@@ -523,6 +529,255 @@ class _CommentComposer extends StatelessWidget {
                   : const Icon(Icons.send_rounded, size: 18),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================================
+// Proposal detail — EventDetailPage 에 맞춘 신규 레이아웃 블록들
+// ============================================================================
+
+/// 제목 + 장소·연도 메타 한 줄.
+class _ProposalHeaderRow extends StatelessWidget {
+  const _ProposalHeaderRow({required this.proposal});
+  final EventProposal proposal;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final place = (proposal.placeName ?? '').trim();
+    final year = _formatYearRange(proposal.startYear, proposal.endYear);
+    final meta = [
+      if (place.isNotEmpty) place,
+      if (year.isNotEmpty) year,
+    ].join(' · ');
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            proposal.title,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        if (meta.isNotEmpty) ...[
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              meta,
+              textAlign: TextAlign.right,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  static String _formatYearRange(int? start, int? end) {
+    if (start == null && end == null) return '';
+    String fmt(int y) => y < 0 ? 'B.C. ${-y}' : 'A.D. $y';
+    if (start == null) return fmt(end!);
+    if (end == null || start == end) return fmt(start);
+    return '${fmt(start)} ~ ${fmt(end)}';
+  }
+}
+
+/// 4장면 이미지 그리드 (Storage public URL).
+///
+/// 빈 path 는 placeholder 로 대체. 이벤트 상세 페이지의 `storySceneRow` 와
+/// 비슷한 느낌을 Image.network 기반으로 재현.
+class _ProposalSceneGrid extends ConsumerWidget {
+  const _ProposalSceneGrid({required this.paths});
+  final List<String> paths;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repo = ref.read(proposalRepositoryProvider);
+    final visible = paths.take(4).toList(growable: false);
+    const gap = 8.0;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
+        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xF4EFE3CC),
+      ),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final tileW = (constraints.maxWidth - (gap * 3)) / 4;
+          final viewportH = MediaQuery.sizeOf(context).height;
+          final maxTileH = math.max(180.0, viewportH * 0.48);
+          final tileH = math.min(tileW * 1.62, maxTileH);
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(visible.length, (i) {
+              final path = visible[i];
+              final url = path.isEmpty
+                  ? null
+                  : repo.publicUrlForProposalScene(path);
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: i == visible.length - 1 ? 0 : gap,
+                ),
+                child: SizedBox(
+                  width: tileW,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0x9C7C5C39),
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SizedBox(
+                        height: tileH,
+                        child: url == null
+                            ? const ColoredBox(
+                                color: Color(0xFFE7D2B2),
+                                child: Center(
+                                  child: Icon(Icons.image_outlined),
+                                ),
+                              )
+                            : Image.network(
+                                url,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) => const ColoredBox(
+                                  color: Color(0xFFE7D2B2),
+                                  child: Center(
+                                    child: Icon(Icons.broken_image_outlined),
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// EventDetailPage 의 `storySection` 을 미니 포팅. 테두리 카드 + 제목 + 본문 +
+/// 우상단 액션 버튼.
+class _DetailSection extends StatelessWidget {
+  const _DetailSection({
+    required this.title,
+    required this.content,
+    this.action,
+  });
+
+  final String title;
+  final String content;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              if (action != null) action!,
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.55),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 상세 페이지 하단 보조 메타 — 좌표 + 등장 인물 코드 리스트 등.
+/// 사건 상세 페이지에는 없는 "제안 고유" 정보 (pastor 가 입력한 정밀도 등).
+class _MetaKvBlock extends StatelessWidget {
+  const _MetaKvBlock({required this.proposal});
+  final EventProposal proposal;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final rows = <List<String>>[
+      [
+        '좌표',
+        proposal.lat == null || proposal.lng == null
+            ? '—'
+            : '${proposal.lat!.toStringAsFixed(3)}, '
+                  '${proposal.lng!.toStringAsFixed(3)}',
+      ],
+      [
+        '등장 인물',
+        proposal.characterCodes.isEmpty
+            ? '—'
+            : proposal.characterCodes.join(', '),
+      ],
+    ];
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          for (final row in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 72,
+                    child: Text(
+                      row[0],
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(row[1], style: theme.textTheme.bodySmall),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

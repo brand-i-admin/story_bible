@@ -10,6 +10,7 @@ import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../widgets/proposal/bible_refs_picker.dart';
 import '../widgets/proposal/character_codes_picker.dart';
+import '../widgets/proposal/proposal_character_row.dart';
 import '../widgets/proposal/proposal_location_picker.dart';
 import '../widgets/proposal/proposal_scenes_editor.dart';
 import '../widgets/proposal/scene_characters_grid.dart';
@@ -68,6 +69,18 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   List<String> _scenes = const [''];
   List<List<String>> _sceneCharacters = const [[]];
 
+  // 장면별 AI 생성 이미지 상태 (scenes 와 같은 길이로 유지).
+  List<ProposalSceneImage> _sceneImages = const [ProposalSceneImage()];
+
+  // 이번 제안의 draft 식별자. 서버 bucket 경로(`.../draftId/scene_N.png`) 에
+  // 쓰여 같은 draft 안의 scene 들이 한 폴더에 모인다. 제출 성공 후 이 값은
+  // 더 이상 바뀌지 않는다 (수정 모드에서는 기존 proposal.id 를 사용).
+  late String _draftId;
+
+  // 이미지 생성 중 전역 블로킹. AI 에 한 번에 한 장만 보낼 수 있도록.
+  bool _generatingImage = false;
+  int? _generatingSceneIndex;
+
   bool _loadingOptions = true;
   bool _loadingEvents = false;
   bool _submitting = false;
@@ -105,8 +118,26 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             ? List<String>.of(e.sceneCharacters[i])
             : <String>[],
       );
+      // 수정 모드: 기존 이미지 경로 + prompt 를 그대로 복원해 draft 상태에서
+      // "재생성" 으로만 갱신되도록.
+      _sceneImages = List.generate(_scenes.length, (i) {
+        final path = i < e.sceneImagePaths.length ? e.sceneImagePaths[i] : '';
+        final prompt = i < e.sceneImagePrompts.length
+            ? e.sceneImagePrompts[i]
+            : '';
+        return ProposalSceneImage(
+          path: path.isEmpty ? null : path,
+          prompt: prompt.isEmpty ? null : prompt,
+        );
+      });
       // 수정 모드는 Step 3 (details) 에서 바로 시작
       _step = 3;
+      // draftId 는 proposal id 를 그대로 사용 — 이미지 덮어쓰기가 같은
+      // 폴더에 이뤄지도록.
+      _draftId = e.id;
+    } else {
+      _sceneImages = const [ProposalSceneImage()];
+      _draftId = _generateDraftId();
     }
     // 텍스트 필드 변경 시 제출 버튼 활성화 여부 재평가.
     _titleCtrl.addListener(_onFormChanged);
@@ -115,6 +146,16 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     _startYearCtrl.addListener(_onFormChanged);
     _endYearCtrl.addListener(_onFormChanged);
     _loadOptions();
+  }
+
+  /// 간단한 draft id — time + random. supabase storage path 에만 쓰이므로 UUID
+  /// 형식 강제는 불필요. 서버 편에서 폴더 이름으로만 사용.
+  String _generateDraftId() {
+    final ts = DateTime.now().millisecondsSinceEpoch.toRadixString(36);
+    final rand = (DateTime.now().microsecondsSinceEpoch & 0xffff).toRadixString(
+      16,
+    );
+    return 'draft_${ts}_$rand';
   }
 
   void _onFormChanged() {
@@ -216,6 +257,15 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty);
     if (nonEmptyScenes.isEmpty) return false;
+    // 장면 이미지: 입력된 모든 장면이 생성 완료되어야 제출 가능
+    // (scene 텍스트가 비어 있으면 이미지도 필요 없음; 서버에서 빈 scene 은
+    // jsonb_array_length 기준 drop 되지 않으므로 프론트에서 filter 동일하게 맞춤)
+    for (var i = 0; i < _scenes.length; i++) {
+      if (_scenes[i].trim().isEmpty) continue;
+      if (i >= _sceneImages.length || !_sceneImages[i].isReady) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -361,10 +411,21 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     });
 
     final repo = ref.read(proposalRepositoryProvider);
-    final paddedSceneCharacters = List<List<String>>.generate(
-      scenes.length,
-      (i) => i < _sceneCharacters.length ? _sceneCharacters[i] : const [],
-    );
+    // scenes 에 해당하는 (비어있지 않은) 인덱스만 골라 이미지/프롬프트 배열 재구성.
+    final paddedSceneCharacters = <List<String>>[];
+    final sceneImagePaths = <String>[];
+    final sceneImagePrompts = <String>[];
+    for (var i = 0; i < _scenes.length; i++) {
+      if (_scenes[i].trim().isEmpty) continue;
+      paddedSceneCharacters.add(
+        i < _sceneCharacters.length ? _sceneCharacters[i] : const [],
+      );
+      final img = i < _sceneImages.length
+          ? _sceneImages[i]
+          : const ProposalSceneImage();
+      sceneImagePaths.add(img.path ?? '');
+      sceneImagePrompts.add(img.prompt ?? '');
+    }
     final refsAsDynamic = _bibleRefs
         .map<Map<String, dynamic>>((m) => Map<String, dynamic>.from(m))
         .toList();
@@ -386,6 +447,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           bibleRefs: _bibleRefs,
           storyScenes: scenes,
           sceneCharacters: paddedSceneCharacters,
+          sceneImagePaths: sceneImagePaths,
+          sceneImagePrompts: sceneImagePrompts,
           afterStoryIndex: afterIdx,
         );
       } else {
@@ -404,6 +467,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           bibleRefs: refsAsDynamic,
           storyScenes: scenes,
           sceneCharacters: paddedSceneCharacters,
+          sceneImagePaths: sceneImagePaths,
+          sceneImagePrompts: sceneImagePrompts,
           afterStoryIndex: afterIdx,
         );
       }
@@ -448,30 +513,35 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       appBar: AppBar(
         title: Text(widget.existing == null ? '새 이야기 제안' : '제안 수정'),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _ProgressHeader(step: _step),
-            if (_errorText != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Card(
-                  color: theme.colorScheme.errorContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Text(
-                      _errorText!,
-                      style: TextStyle(
-                        color: theme.colorScheme.onErrorContainer,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              children: [
+                _ProgressHeader(step: _step),
+                if (_errorText != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Card(
+                      color: theme.colorScheme.errorContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Text(
+                          _errorText!,
+                          style: TextStyle(
+                            color: theme.colorScheme.onErrorContainer,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            Expanded(child: _buildStepBody(theme)),
-            _buildBottomNav(theme),
-          ],
-        ),
+                Expanded(child: _buildStepBody(theme)),
+                _buildBottomNav(theme),
+              ],
+            ),
+          ),
+          if (_generatingImage) const _GeneratingImageOverlay(),
+        ],
       ),
     );
   }
@@ -740,6 +810,76 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     return match.isNotEmpty ? match.first.name : code;
   }
 
+  // ===== Step 4: 장면 이미지 생성 =====
+
+  /// 이 이야기에 등장할 인물 아바타 row — Step 4 상단에 표시.
+  List<ProposalCharacterRowItem> _characterRowItems() {
+    final client = ref.read(supabaseClientProvider);
+    return _characterCodes.map((code) {
+      final opt = _characterOptions.firstWhere(
+        (c) => c.code == code,
+        orElse: () => CharacterOption(code: code, name: code),
+      );
+      // characters 버킷의 public URL 로 아바타 로드.
+      // (upload_character_avatars.py 로 .png 가 이미 업로드되어 있어야 함.
+      //  안 올라가 있으면 fallback 으로 이니셜 표시)
+      final url = client.storage.from('characters').getPublicUrl('$code.png');
+      return ProposalCharacterRowItem(
+        code: code,
+        name: opt.name,
+        avatarUrl: url,
+      );
+    }).toList();
+  }
+
+  /// `ProposalScenesEditor.onGenerate` 콜백 — Edge Function 에 1장 생성 요청.
+  /// 전역 `_generatingImage` 플래그로 다른 버튼을 블록.
+  Future<ProposalSceneImage?> _onGenerateSceneImage(
+    int sceneIndex,
+    String sceneText,
+  ) async {
+    if (_generatingImage) return null;
+    setState(() {
+      _generatingImage = true;
+      _generatingSceneIndex = sceneIndex;
+      _errorText = null;
+    });
+    try {
+      final repo = ref.read(proposalRepositoryProvider);
+      final result = await repo.generateProposalScene(
+        sceneText: sceneText,
+        characterCodes: _characterCodes,
+        draftId: _draftId,
+        sceneIndex: sceneIndex,
+        eventTitle: _titleCtrl.text.trim().isEmpty
+            ? null
+            : _titleCtrl.text.trim(),
+        placeName: _placeCtrl.text.trim().isEmpty
+            ? null
+            : _placeCtrl.text.trim(),
+      );
+      return ProposalSceneImage(
+        path: result.storagePath,
+        prompt: result.prompt,
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorText = '이미지 생성 실패: $e');
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('이미지 생성 실패: $e')));
+      }
+      return null;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _generatingImage = false;
+          _generatingSceneIndex = null;
+        });
+      }
+    }
+  }
+
   // ---------- Step 2b: 통합 위치 선택 (인물 라벨 포함) ----------
   Widget _buildStep2Position(ThemeData theme) {
     final events = _eventsForPositionList();
@@ -963,9 +1103,17 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           onChanged: (refs) => setState(() => _bibleRefs = refs),
         ),
         _sectionTitle('장면 (이미지 생성용)'),
+        ProposalCharacterRow(characters: _characterRowItems()),
+        const SizedBox(height: 10),
         ProposalScenesEditor(
-          initial: _scenes,
-          onChanged: (scenes) => setState(() {
+          initialScenes: _scenes,
+          initialImages: _sceneImages,
+          busy: _generatingImage,
+          busySceneIndex: _generatingSceneIndex,
+          publicUrlForPath: (path) => ref
+              .read(proposalRepositoryProvider)
+              .publicUrlForProposalScene(path),
+          onChanged: (scenes, images) => setState(() {
             _scenes = scenes;
             _sceneCharacters = List.generate(
               scenes.length,
@@ -973,7 +1121,13 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                   ? _sceneCharacters[i]
                   : const <String>[],
             );
+            // 길이 맞추기. 새 장면이 추가되면 빈 이미지로 초기화.
+            _sceneImages = List.generate(
+              scenes.length,
+              (i) => i < images.length ? images[i] : const ProposalSceneImage(),
+            );
           }),
+          onGenerate: _onGenerateSceneImage,
         ),
         _sectionTitle('장면별 등장 인물'),
         SceneCharactersGrid(
@@ -1569,4 +1723,63 @@ class _IntroBullet extends StatelessWidget {
 
 extension _FirstOrEmptyExt on Iterable<String> {
   String firstOrEmpty() => isEmpty ? '' : first;
+}
+
+/// 이미지 생성 중 전체 화면을 블록하는 모달 overlay.
+///
+/// AI 에 한 번에 한 장만 보낼 수 있으므로 생성이 돌아가는 동안 사용자가 다른
+/// 장면 생성을 시도하지 못하도록 입력 이벤트를 흡수한다. `AbsorbPointer` +
+/// 반투명 배경 + 중앙 안내 카드.
+class _GeneratingImageOverlay extends StatelessWidget {
+  const _GeneratingImageOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Positioned.fill(
+      child: AbsorbPointer(
+        child: ColoredBox(
+          color: Colors.black.withValues(alpha: 0.55),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Card(
+                margin: const EdgeInsets.all(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: CircularProgressIndicator(strokeWidth: 3.5),
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        'AI 가 그림을 생성중입니다',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '한 번에 한 장만 생성할 수 있어요. 잠시만 기다려주세요. '
+                        '완료되면 자동으로 다음 작업을 할 수 있습니다.',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

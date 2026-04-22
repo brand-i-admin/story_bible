@@ -20,6 +20,8 @@ class ProposalRepository {
 
   /// 새 제안 저장. 성공 시 생성된 proposal id(uuid) 반환.
   /// 권한: 호출자가 `is_pastor=true` 여야 한다 (RPC 내부 체크).
+  /// [sceneImagePaths] / [sceneImagePrompts] 는 모든 장면이 생성 완료된 뒤에만
+  /// 전달한다 (길이가 storyScenes 와 일치해야 DB 에서 통과).
   Future<String> submit({
     required String eraId,
     int? afterStoryIndex,
@@ -35,6 +37,8 @@ class ProposalRepository {
     List<Map<String, String>> bibleRefs = const [],
     List<String> storyScenes = const [],
     List<List<String>> sceneCharacters = const [],
+    List<String> sceneImagePaths = const [],
+    List<String> sceneImagePrompts = const [],
   }) async {
     final result = await _client.rpc(
       'submit_event_proposal',
@@ -52,10 +56,64 @@ class ProposalRepository {
         'p_bible_refs': bibleRefs,
         'p_story_scenes': storyScenes,
         'p_scene_characters': sceneCharacters,
+        'p_scene_image_paths': sceneImagePaths,
+        'p_scene_image_prompts': sceneImagePrompts,
         'p_after_story_index': afterStoryIndex,
       },
     );
     return result as String;
+  }
+
+  /// 장면 한 장을 생성하도록 Edge Function 을 호출.
+  ///
+  /// 반환: `(storagePath, prompt)` — storagePath 는 `proposal-scenes/...` 로
+  /// 시작하는 경로, prompt 는 Vertex 에 실제 보낸 instruction 전문.
+  /// 실패 시 [Exception] 을 던진다 (UI 에서 스낵바로 노출).
+  Future<({String storagePath, String prompt})> generateProposalScene({
+    required String sceneText,
+    required List<String> characterCodes,
+    required String draftId,
+    required int sceneIndex,
+    String? eventTitle,
+    String? placeName,
+  }) async {
+    final response = await _client.functions.invoke(
+      'generate-proposal-scene',
+      body: {
+        'sceneText': sceneText,
+        'characterCodes': characterCodes,
+        'draftId': draftId,
+        'sceneIndex': sceneIndex,
+        if (eventTitle != null) 'eventTitle': eventTitle,
+        if (placeName != null) 'placeName': placeName,
+      },
+    );
+    if (response.status < 200 || response.status >= 300) {
+      final data = response.data;
+      final msg = data is Map && data['error'] is String
+          ? data['error'] as String
+          : 'HTTP ${response.status}';
+      throw Exception('이미지 생성 실패: $msg');
+    }
+    final data = response.data;
+    if (data is! Map || data['storage_path'] is! String) {
+      throw Exception('이미지 생성 응답 형식이 올바르지 않습니다');
+    }
+    return (
+      storagePath: data['storage_path'] as String,
+      prompt: (data['prompt'] as String?) ?? '',
+    );
+  }
+
+  /// `proposal-scenes` 버킷의 storage path 로 public URL 을 만든다.
+  /// (`storage_path` 는 `proposal-scenes/{uid}/{draft}/scene_{idx}.png` 형식)
+  String publicUrlForProposalScene(String storagePath) {
+    // bucket 이름 + 내부 경로 분리.
+    final idx = storagePath.indexOf('/');
+    if (idx < 0) return storagePath;
+    final bucket = storagePath.substring(0, idx);
+    final path = storagePath.substring(idx + 1);
+    return _client.storage.from(bucket).getPublicUrl(path);
   }
 
   /// 관리자용 승인. 성공 시 생성된 events.id 반환.
@@ -156,6 +214,8 @@ class ProposalRepository {
     List<Map<String, dynamic>> bibleRefs = const [],
     List<String> storyScenes = const [],
     List<List<String>> sceneCharacters = const [],
+    List<String> sceneImagePaths = const [],
+    List<String> sceneImagePrompts = const [],
     int? afterStoryIndex,
   }) async {
     await _client
@@ -174,6 +234,8 @@ class ProposalRepository {
           'bible_refs': bibleRefs,
           'story_scenes': storyScenes,
           'scene_characters': sceneCharacters,
+          'scene_image_paths': sceneImagePaths,
+          'scene_image_prompts': sceneImagePrompts,
           'after_story_index': afterStoryIndex,
         })
         .eq('id', proposalId);

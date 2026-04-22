@@ -90,3 +90,4 @@ assets/avatars/
 
 # Claude worktrees
 .claude/worktrees/
+.env.supabase.secrets

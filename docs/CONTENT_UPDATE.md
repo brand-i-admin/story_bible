@@ -2,7 +2,16 @@
 
 > 새 인물·이야기를 등록한 뒤 사용자 폰에 실제로 보이기까지의 전체 흐름과 체크리스트.
 
-> ⚠️ **2026-04 구조 전환 (ADR-016)**: 별도 `admin/` Flutter Web 앱은 폐기됐다. 새 워크플로우는 **"사역자(목회자) 제안 → 관리자 승인" 게시판 방식**이며, 메인 앱의 웹 버전에 구축될 예정(Phase 2~6). DB 준비(Phase 1) + `lib/widgets/proposal/` 위젯 이주(Phase 0)는 완료. 그 전까지 이 문서의 §2.1 "어드민 웹" 경로는 **역사적 맥락**이며, 운영자는 §2.1b **JSON 직접 편집 경로**를 사용해야 한다. Phase 2~6 완료 시 §2.1 을 "메인 앱 웹 → 사역자 제안 폼" 설명으로 교체 예정.
+> ✅ **2026-04 Phase 2~6 완료**: 사역자 제안 폼이 메인 앱 웹에 구축되고, AI
+> 장면 이미지 생성(Supabase Edge Function + Vertex Gemini) 이 통합됐다. 이제
+> **사역자가 직접 등록 폼에서 AI 로 그림을 만들어 제안 → 관리자가 승인** 하는
+> 흐름이 가능하다 (아래 §2.1c 참조).
+>
+> - ADR-016: `admin/` 별도 Flutter Web 앱 폐기 → 메인 앱 웹으로 이전
+> - 도메인 용어 전환: `persons` → `characters` (DB / 코드 / 문서 전반)
+> - 신규 Storage 버킷: `characters` (아바타 public), `proposal-scenes` (생성 장면 public)
+> - 신규 Edge Function: `generate-proposal-scene` (Vertex Gemini wrapper)
+> - 신규 컬럼: `event_proposals.scene_image_paths` / `scene_image_prompts` (각 장면 이미지 추적)
 
 ## 0. 한 줄 요약
 

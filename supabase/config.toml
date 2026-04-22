@@ -1,0 +1,12 @@
+# Minimal Supabase CLI config for deploying Edge Functions.
+# The Story Bible schema is managed via `db_init.sql` + `make db-init` (direct
+# psql connection), not Supabase migrations, so we only enable the Functions
+# subsystem here.
+#
+# Link once:  supabase link --project-ref <your-ref>
+# Deploy:     supabase functions deploy generate-proposal-scene
+
+project_id = "story_bible"
+
+[functions.generate-proposal-scene]
+verify_jwt = true  # only authenticated users (pastor/admin) can invoke
