@@ -205,6 +205,20 @@ class ProposalRepository {
     );
   }
 
+  /// 제안 삭제.
+  ///
+  /// RLS 정책 `event_proposals_delete_own_unapproved` 가 실제 권한을 강제:
+  ///   - admin 은 상태 무관 언제든 삭제 가능
+  ///   - proposer 본인은 status != 'approved' 일 때만 가능
+  ///     (pending 또는 rejected 만 본인 삭제 허용; approved 는 불가)
+  ///
+  /// 권한 없이 호출하면 Supabase 가 단순히 "0 rows matched" 로 조용히
+  /// 끝내므로(RLS 의 기본 동작), 호출자가 UI 에서 버튼을 적절히 비활성화
+  /// 해야 사용자가 혼란 없이 경험한다 (proposal_detail_screen 참조).
+  Future<void> deleteProposal(String proposalId) async {
+    await _client.from('event_proposals').delete().eq('id', proposalId);
+  }
+
   /// 제안에 댓글 작성 (사역자 또는 관리자).
   Future<String> addComment(String proposalId, String body) async {
     final result = await _client.rpc(

@@ -1293,11 +1293,19 @@ with check (
   or public.is_admin()
 );
 
--- 제안 DELETE: admin 만
+-- 제안 DELETE:
+--   - admin 은 무조건 허용
+--   - proposer 본인은 **승인되지 않은 상태**(pending / rejected) 에서만 삭제 가능.
+--     승인된 제안은 이미 events 테이블에 published 로 반영됐으므로 원본
+--     삭제는 "이력 보존 + 변경은 별도 프로세스" 원칙으로 막는다.
 drop policy if exists event_proposals_delete_admin on event_proposals;
-create policy event_proposals_delete_admin on event_proposals
+drop policy if exists event_proposals_delete_own_unapproved on event_proposals;
+create policy event_proposals_delete_own_unapproved on event_proposals
 for delete to authenticated
-using (public.is_admin());
+using (
+  public.is_admin()
+  or (proposer_user_id = auth.uid() and status <> 'approved')
+);
 
 -- 댓글 SELECT: pastor 또는 admin
 drop policy if exists event_proposal_comments_read on event_proposal_comments;

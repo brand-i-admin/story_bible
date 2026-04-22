@@ -136,6 +136,55 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
     }
   }
 
+  /// 본인 제안 삭제 — approved 는 UI 에서 이미 버튼 비활성화로 막지만,
+  /// 서버 RLS `event_proposals_delete_own_unapproved` 가 최종 방어.
+  /// 실제 삭제 전 확인 다이얼로그 노출.
+  Future<void> _delete(EventProposal p) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('제안 삭제'),
+        content: Text(
+          '"${p.title}" 제안을 삭제하시겠어요?\n'
+          '${p.isRejected ? "거절 이력 및 댓글" : "작성 중인 내용과 댓글"}이 모두 함께 사라집니다. '
+          '되돌릴 수 없습니다.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('취소'),
+          ),
+          FilledButton.tonal(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.errorContainer,
+              foregroundColor: Theme.of(ctx).colorScheme.onErrorContainer,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    setState(() => _reviewing = true);
+    try {
+      await ref.read(proposalRepositoryProvider).deleteProposal(p.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('제안이 삭제되었습니다')));
+      ref.invalidate(proposalListProvider);
+      Navigator.of(context).pop(true); // 제안 게시판으로 복귀
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+    } finally {
+      if (mounted) setState(() => _reviewing = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -231,29 +280,66 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
               ],
               // ───── 액션 버튼 ─────
               const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  if (isOwnerPending)
-                    OutlinedButton.icon(
-                      onPressed: _reviewing ? null : () => _edit(p),
-                      icon: const Icon(Icons.edit_outlined),
-                      label: const Text('수정'),
-                    ),
-                  if (isAdmin && p.isPending) ...[
-                    FilledButton.icon(
-                      onPressed: _reviewing ? null : () => _approve(p),
-                      icon: const Icon(Icons.check),
-                      label: const Text('승인'),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: _reviewing ? null : () => _reject(p),
-                      icon: const Icon(Icons.close),
-                      label: const Text('거절'),
-                    ),
-                  ],
-                ],
+              Builder(
+                builder: (_) {
+                  // 작성자 삭제 허용 조건:
+                  //   1) 로그인 + 2) 본인 제안 + 3) 승인되지 않은 상태.
+                  //   (pending / rejected 모두 본인 삭제 가능)
+                  // admin 은 승인 여부 무관하게 삭제 가능 (서버 RLS 가 최종 판정).
+                  final isOwner =
+                      currentUser != null && p.proposerUserId == currentUser.id;
+                  final canOwnerDelete = isOwner && !p.isApproved;
+                  final canAdminDelete = isAdmin;
+                  return Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (isOwnerPending)
+                        OutlinedButton.icon(
+                          onPressed: _reviewing ? null : () => _edit(p),
+                          icon: const Icon(Icons.edit_outlined),
+                          label: const Text('수정'),
+                        ),
+                      if (isAdmin && p.isPending) ...[
+                        FilledButton.icon(
+                          onPressed: _reviewing ? null : () => _approve(p),
+                          icon: const Icon(Icons.check),
+                          label: const Text('승인'),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: _reviewing ? null : () => _reject(p),
+                          icon: const Icon(Icons.close),
+                          label: const Text('거절'),
+                        ),
+                      ],
+                      if (canOwnerDelete || canAdminDelete)
+                        Tooltip(
+                          message: p.isApproved
+                              ? '승인된 제안은 삭제할 수 없습니다'
+                              : '이 제안을 삭제합니다',
+                          child: OutlinedButton.icon(
+                            onPressed: (_reviewing || p.isApproved)
+                                ? null
+                                : () => _delete(p),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: p.isApproved
+                                  ? theme.disabledColor
+                                  : theme.colorScheme.error,
+                              side: BorderSide(
+                                color: p.isApproved
+                                    ? theme.colorScheme.outlineVariant
+                                    : theme.colorScheme.error.withValues(
+                                        alpha: 0.6,
+                                      ),
+                              ),
+                            ),
+                            icon: const Icon(Icons.delete_outline, size: 18),
+                            label: const Text('삭제'),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
               // ───── 댓글 ─────
               const SizedBox(height: 24),
