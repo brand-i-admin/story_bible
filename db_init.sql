@@ -19,11 +19,21 @@ drop table if exists study_event_meta cascade;
 drop table if exists study_event_points cascade;
 drop table if exists study_verse_pages cascade;
 
--- character_eras was a real table in v1/v2 schema; v3 promotes it to a view.
--- Detect what kind of object exists right now and drop it accordingly so
--- both first-time migrations and idempotent reruns succeed.
+-- 2026-04 rename: persons → characters. 기존 DB에 옛 이름 객체가 남아있을 수
+-- 있으므로 **옛 이름 + 새 이름 모두** 방어적으로 drop. 이름 간 FK/view 의존성
+-- 때문에 CASCADE 필수.
+-- character_eras (이전 person_eras) 는 v1/v2 에선 실제 테이블, v3 부터 view.
+-- 두 케이스 모두 커버.
 do $$
 begin
+  if exists (
+    select 1 from pg_class
+    where relnamespace = 'public'::regnamespace
+      and relname = 'person_eras'
+      and relkind = 'r'
+  ) then
+    execute 'drop table public.person_eras cascade';
+  end if;
   if exists (
     select 1 from pg_class
     where relnamespace = 'public'::regnamespace
@@ -35,6 +45,7 @@ begin
 end $$;
 
 drop view if exists events_ordered cascade;
+drop view if exists person_eras cascade;
 drop view if exists character_eras cascade;
 drop table if exists audit_log cascade;
 drop table if exists search_embeddings cascade;
@@ -49,10 +60,12 @@ drop table if exists user_event_progress cascade;
 drop table if exists quiz_questions cascade;
 drop table if exists event_bible_refs cascade;
 drop table if exists bible_verses cascade;
-drop table if exists event_characters cascade;
-drop table if exists character_eras cascade;
+-- events 를 먼저 drop 해야 FK (event_persons, event_characters) cascade 안전
 drop table if exists events cascade;
-drop table if exists characters cascade;
+drop table if exists event_persons cascade;      -- 옛 이름 (legacy)
+drop table if exists event_characters cascade;   -- 새 이름 (legacy)
+drop table if exists persons cascade;            -- 옛 이름 — 이번에 drop 안 돼서 남아있음
+drop table if exists characters cascade;         -- 새 이름
 drop table if exists eras cascade;
 drop trigger if exists on_auth_user_created on auth.users;
 drop function if exists public.handle_new_user_profile() cascade;
@@ -75,7 +88,8 @@ drop function if exists public.insert_event_at_position(
   int, int, text, text, double precision, double precision, text[]
 ) cascade;
 drop function if exists public.is_pastor() cascade;
-drop function if exists public.list_characters_by_era(uuid) cascade;
+drop function if exists public.list_persons_by_era(uuid) cascade;       -- 옛 이름 (legacy)
+drop function if exists public.list_characters_by_era(uuid) cascade;    -- 새 이름
 drop function if exists public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
