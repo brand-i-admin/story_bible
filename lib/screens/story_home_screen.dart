@@ -86,6 +86,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     Future.microtask(() {
       ref.read(storyControllerProvider.notifier).initialize();
     });
+    // 앱 시작 시 이미 Supabase 세션이 복원된 상태라면 listenManual 은
+    // "값 변화"를 감지하지 못해 fire 되지 않는다. 이 경우 FCM 토큰 등록 +
+    // ensureSignedInUser 가 건너뛰어지므로, initState 에서 한 번 명시 호출.
+    Future.microtask(() {
+      final initialUser = Supabase.instance.client.auth.currentUser;
+      if (initialUser != null) {
+        _handleAuthUserChanged(initialUser);
+      }
+    });
   }
 
   @override
