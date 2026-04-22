@@ -560,7 +560,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Future<void> _openEventDetailPage(StoryEvent event) async {
-    final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(event);
+    // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
+    // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
+    final client = ref.read(supabaseClientProvider);
+    final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
+      event,
+      publicUrlFor: (storagePath) {
+        final slash = storagePath.indexOf('/');
+        if (slash < 0) return storagePath;
+        final bucket = storagePath.substring(0, slash);
+        final path = storagePath.substring(slash + 1);
+        return client.storage.from(bucket).getPublicUrl(path);
+      },
+    );
     if (!mounted) {
       return;
     }

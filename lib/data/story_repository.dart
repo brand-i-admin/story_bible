@@ -39,6 +39,7 @@ class StoryRepository {
         tagline: map['tagline'] as String?,
         description: map['description'] as String?,
         avatarUrl: map['avatar_url'] as String?,
+        avatarStoragePath: map['avatar_storage_path'] as String?,
         displayOrder: (map['display_order'] as num).toInt(),
       );
     }).toList();

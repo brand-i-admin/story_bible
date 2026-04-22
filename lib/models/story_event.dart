@@ -26,6 +26,7 @@ class StoryEvent {
     required this.lng,
     required this.characterCodes,
     required this.bibleRefs,
+    this.sceneImagePaths = const [],
   });
 
   factory StoryEvent.fromMap(Map<String, dynamic> row) {
@@ -47,6 +48,7 @@ class StoryEvent {
       lng: (row['lng'] as num?)?.toDouble(),
       characterCodes: _stringList(row['character_codes']),
       bibleRefs: BibleRef.fromList(row['bible_refs']),
+      sceneImagePaths: _stringList(row['scene_image_paths']),
     );
   }
 
@@ -67,6 +69,14 @@ class StoryEvent {
   final double? lng;
   final List<String> characterCodes;
   final List<BibleRef> bibleRefs;
+
+  /// 하이브리드 로딩용 Supabase Storage 장면 이미지 경로 목록.
+  /// - 캐논 이벤트(로컬 번들로만 제공): 빈 배열
+  /// - 승인된 제안 이벤트: `proposal-scenes/{uid}/{draft}/scene_N.png`
+  ///   (sync-approved-proposal-assets 실행 후 `characters/...` 로 바뀜)
+  /// UI 는 먼저 `assets/story_images_thumbs/<title>/scene_N.png` 를 시도하고
+  /// 번들에 없으면 이 경로로 public URL 을 만들어 `Image.network` 로 로드.
+  final List<String> sceneImagePaths;
 
   String get shortSummary {
     final trimmed = summary?.trim();

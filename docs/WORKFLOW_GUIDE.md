@@ -770,6 +770,118 @@ git push
 
 실제 업로드는 Edge Function 이 service role 키로 수행. RLS 는 방어선 역할.
 
+### 17.6 하이브리드 에셋 로딩 (로컬 먼저 → Supabase fallback)
+
+**왜**: 앱 번들 이미지는 Store 재심사 없이 바뀔 수 없지만, 제안 승인은 즉시
+이뤄져야 한다. 반대로 모든 이미지를 항상 Supabase 에서 내려받으면 트래픽
+과금이 폭증한다. 절충안은 "로컬 있으면 로컬, 없으면 Supabase":
+
+- **캐릭터 아바타** (`CharacterAvatar` 위젯, `lib/widgets/character_avatar.dart`)
+  - 1순위: `Image.asset('assets/avatars_thumbs/<code>.png')`
+  - 2순위 (errorBuilder): `Image.network(publicUrl(character.avatarStoragePath))`
+  - 3순위: 이름 첫 글자 이니셜 배경
+- **장면 이미지** (`SceneAssetLoader`, `lib/utils/scene_asset_loader.dart`)
+  - 1순위: `assets/story_images_thumbs/<safe_title>/scene_N.png` (AssetManifest 조회)
+  - 2순위: `events.scene_image_paths` → Supabase Storage public URL
+  - 3순위: 빈 리스트 (이미지 row 숨김)
+
+**DB 측 양쪽 경로 저장**:
+- `characters.avatar_url` — 로컬 번들 경로 (`assets/avatars/<code>.png`)
+- `characters.avatar_storage_path` — Supabase 경로 (`characters/<code>.png`
+  또는 `proposal-characters/...`)
+- `events.scene_image_paths text[]` — proposal 승인 시 `proposal-scenes/...` 로
+  채워지고, 운영자가 `sync-approved-proposal-assets` 로 로컬에 내린 뒤에도 그대로
+  남아있음 (로컬 assets 가 1순위로 뜨므로 네트워크 호출 안 됨)
+
+**비용 수렴 모델**:
+1. 승인 직후: 로컬 번들에 없음 → Supabase 호출 발생
+2. 운영자가 `sync-approved-proposal-assets` 실행 + 앱 재빌드 배포
+3. 사용자가 업데이트 받음 → 로컬 번들에 포함 → 그 시점부터 Supabase 비용 0
+
+### 17.7 Edge Function Secrets 셋업 (최초 1회)
+
+Edge Function 이 Vertex AI 를 호출하려면 3개 secret 이 필요.
+
+#### A. GCP service account 키 발급
+
+1. [GCP Console](https://console.cloud.google.com) → 프로젝트 선택
+2. **APIs & Services → Library** → "Vertex AI API" 검색 → Enable
+3. **IAM & Admin → Service Accounts → + CREATE SERVICE ACCOUNT**
+   - Name: `story-bible-vertex`
+   - Role: `Vertex AI User` (`roles/aiplatform.user`)
+4. 생성된 SA 클릭 → **Keys** → **ADD KEY → JSON → CREATE** → JSON 파일 자동 다운로드
+
+#### B. JSON 을 한 줄 문자열로 변환
+
+```bash
+# 다운받은 JSON 경로로 바꿔서 실행
+python3 -c "import json, sys; print(json.dumps(json.load(open(sys.argv[1]))))" \
+  ~/Downloads/story-bible-vertex-abc123.json > /tmp/sa.oneline.json
+```
+
+#### C. Supabase secrets 등록
+
+**CLI 경로** (추천):
+
+```bash
+# .env.supabase.secrets (repo 루트, .gitignore 됨)
+cat > .env.supabase.secrets <<EOF
+GOOGLE_CLOUD_PROJECT=<your GCP project id>
+GOOGLE_CLOUD_LOCATION=us-central1
+GCP_SERVICE_ACCOUNT_JSON=$(cat /tmp/sa.oneline.json)
+EOF
+
+supabase login                           # 최초 1회
+supabase link --project-ref <ref>        # Dashboard URL 의 /project/<ref>
+supabase secrets set --env-file .env.supabase.secrets
+supabase secrets list                    # 3개 다 들어갔는지 확인
+```
+
+**Dashboard 경로** (GUI):
+1. Supabase Dashboard → 프로젝트 선택
+2. 좌측 **Edge Functions** → 우상단 **Manage secrets**
+3. **Add new secret** 로 3개 항목 각각 등록
+   - Name: `GOOGLE_CLOUD_PROJECT`, Value: `<your GCP project id>`
+   - Name: `GOOGLE_CLOUD_LOCATION`, Value: `us-central1`
+   - Name: `GCP_SERVICE_ACCOUNT_JSON`, Value: `<한 줄 JSON 전체>`
+4. 저장 후 CLI 로 함수 배포:
+   ```bash
+   supabase functions deploy generate-proposal-scene
+   supabase functions deploy generate-proposal-character
+   ```
+
+#### D. 동작 스모크 테스트
+
+```bash
+curl -i -X POST \
+  "https://<ref>.supabase.co/functions/v1/generate-proposal-character" \
+  -H "Authorization: Bearer <사용자 JWT>" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"test","characterCode":"_smoketest","characterName":"테스트","draftId":"smoke1"}'
+```
+
+기대 응답 스펙:
+| HTTP | 의미 |
+|------|------|
+| 200 `{"storage_path":...}` | 정상 |
+| 401 | Authorization 헤더 누락/만료 |
+| 409 | 이미 active 인 canonical character code — 다른 code 사용 |
+| 500 `secret not set` | CLI/Dashboard 에서 secrets 등록 안 됨 |
+| 502 `Imagen ...` | SA 권한 부족 or Vertex API 미활성 |
+
+### 17.8 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영
+
+- `user_event_progress(user_id, event_id)` 는 UUID 기반이라, 승인으로 새 event
+  가 생기면 **누구의 user_event_progress 에도 그 UUID 가 없음** → 자동으로
+  "아직 완료 안 함" 상태
+- `CharacterStudyProgress.fetchCharacterStudyProgress` 는 `events_ordered` view
+  를 매번 쿼리 → 새 event 가 포함되면 totalCount 자동 증가
+- `insert_event_at_position` 은 story_index 만 시프트 — UUID 건드리지 않음 →
+  기존 user_event_progress 행 그대로 유효
+- 주의: 홈 화면이 열려있는 상태에서 다른 기기/관리자가 승인하면 — 시대
+  바꾸거나 앱 재시작 전까진 새 이벤트가 안 보임 (pull-to-refresh 추가 여부는
+  향후 과제)
+
 ### 17.5 관련 파일
 
 - **Edge Functions** (장면 + 캐릭터 AI 생성):

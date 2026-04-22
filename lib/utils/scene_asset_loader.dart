@@ -94,8 +94,30 @@ class SceneAssetLoader {
     return numeric.toString().padLeft(3, '0');
   }
 
-  Future<List<String>> loadForEvent(StoryEvent event) async {
-    return loadForTitle(title: event.title);
+  /// 이벤트에 해당하는 장면 이미지 경로/URL 목록을 반환.
+  ///
+  /// ## 하이브리드 로딩 순서
+  /// 1. `assets/story_images_thumbs/<dir>/scene_N.png` 로컬 번들 — 있으면 이것만 반환.
+  /// 2. 번들에 없고 [event.sceneImagePaths] 가 비어있지 않으면 Supabase Storage
+  ///    public URL 로 변환해 반환 (`Image.network` 가 로드).
+  /// 3. 둘 다 없으면 빈 리스트 — UI 는 이미지 row 를 그냥 숨긴다.
+  ///
+  /// 호출자에서 `path.startsWith('http')` 여부로 `Image.asset` vs
+  /// `Image.network` 를 분기할 수 있도록 반환 문자열의 규약을 유지한다.
+  Future<List<String>> loadForEvent(
+    StoryEvent event, {
+    String Function(String storagePath)? publicUrlFor,
+  }) async {
+    final localAssets = await loadForTitle(title: event.title);
+    if (localAssets.isNotEmpty) return localAssets;
+
+    final storagePaths = event.sceneImagePaths
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (storagePaths.isEmpty || publicUrlFor == null) {
+      return const [];
+    }
+    return storagePaths.map(publicUrlFor).toList(growable: false);
   }
 
   Future<List<String>> loadForTitle({required String title}) async {

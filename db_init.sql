@@ -70,6 +70,10 @@ drop function if exists public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
   int, int, text, text, double precision, double precision
 ) cascade;
+drop function if exists public.insert_event_at_position(
+  text, int, text, text, jsonb, jsonb, text[], jsonb,
+  int, int, text, text, double precision, double precision, text[]
+) cascade;
 drop function if exists public.is_pastor() cascade;
 drop function if exists public.list_characters_by_era(uuid) cascade;
 drop function if exists public.submit_event_proposal(
@@ -139,6 +143,14 @@ create table if not exists events (
   place_name text,
   lat double precision,
   lng double precision,
+
+  -- 장면 이미지 Storage 경로 (proposal 승인 시 proposal-scenes/... 경로가 그대로
+  -- 복사됨). 앱은 **로컬 assets/story_images_thumbs/<title>/scene_N.png 를 먼저
+  -- 시도** 하고, 번들에 파일이 없을 때만 이 컬럼의 public URL 로 네트워크 로드.
+  -- 캐논 이벤트(Makefile 파이프라인으로 만든 것들) 는 이 필드를 빈 배열로 두고
+  -- 순수 로컬 로드를 쓴다.
+  scene_image_paths text[] not null default '{}',
+
   video_url text,
   status text not null default 'published'
     check (status in ('draft', 'published')),
@@ -192,6 +204,7 @@ returns table (
   tagline text,
   description text,
   avatar_url text,
+  avatar_storage_path text,
   display_order int
 )
 language sql
@@ -219,6 +232,7 @@ as $$
     p.tagline,
     p.description,
     p.avatar_url,
+    p.avatar_storage_path,
     (row_number() over (order by pf.first_story_index, pf.character_code))::int
       as display_order
   from character_first pf
@@ -958,7 +972,8 @@ create or replace function public.insert_event_at_position(
   p_time_precision text,
   p_place_name text,
   p_lat double precision,
-  p_lng double precision
+  p_lng double precision,
+  p_scene_image_paths text[] default '{}'
 )
 returns uuid
 language plpgsql
@@ -1003,7 +1018,7 @@ begin
     era_id, title, summary,
     story_scenes, scene_characters, character_codes, bible_refs,
     start_year, end_year, time_precision, story_index,
-    place_name, lat, lng, status
+    place_name, lat, lng, scene_image_paths, status
   )
   values (
     v_era_id, p_title, p_summary,
@@ -1015,6 +1030,7 @@ begin
     coalesce(p_time_precision, 'approx'),
     v_target_index,
     p_place_name, p_lat, p_lng,
+    coalesce(p_scene_image_paths, '{}'::text[]),
     'published'
   )
   returning id into v_new_event_id;
@@ -1034,7 +1050,7 @@ $$;
 
 grant execute on function public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
-  int, int, text, text, double precision, double precision
+  int, int, text, text, double precision, double precision, text[]
 ) to authenticated;
 
 -- -----------------------------------------------------------------------------
@@ -1459,6 +1475,9 @@ begin
   end loop;
 
   -- 2) insert_event_at_position — 기존 로직. 남은 누락 코드는 비활성 placeholder.
+  --    proposal 의 scene_image_paths 를 events 로 그대로 복사해 두면
+  --    로컬 assets 가 아직 번들되지 않은 승인 직후 단계에서도 앱이 Supabase
+  --    Storage 를 fallback 으로 읽어 이미지를 보여줄 수 있다 (하이브리드 로딩).
   v_event_id := public.insert_event_at_position(
     v_era_code,
     v_after,
@@ -1473,7 +1492,8 @@ begin
     v_proposal.time_precision,
     v_proposal.place_name,
     v_proposal.lat,
-    v_proposal.lng
+    v_proposal.lng,
+    v_proposal.scene_image_paths
   );
 
   update event_proposals

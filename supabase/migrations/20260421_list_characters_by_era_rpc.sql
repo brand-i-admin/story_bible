@@ -30,6 +30,7 @@ returns table (
   tagline text,
   description text,
   avatar_url text,
+  avatar_storage_path text,
   display_order int
 )
 language sql
@@ -57,6 +58,7 @@ as $$
     c.tagline,
     c.description,
     c.avatar_url,
+    c.avatar_storage_path,
     (row_number() over (order by cf.first_story_index, cf.character_code))::int
       as display_order
   from character_first cf
