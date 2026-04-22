@@ -8,10 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/app_notification.dart';
 import '../models/era.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
+import '../services/push_service.dart';
 import '../state/auth_providers.dart';
+import '../state/notification_providers.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
@@ -19,6 +22,8 @@ import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/character_panel.dart';
 import '../widgets/event_detail_page.dart';
+import '../widgets/notification/notification_bell_button.dart';
+import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_texture_layer.dart';
 import '../widgets/profile_tab_page.dart';
@@ -28,7 +33,9 @@ import '../widgets/story_home_styles.dart';
 import '../widgets/story_map_panel.dart';
 import '../widgets/story_selection_panel.dart';
 import '../widgets/weekly_tab_page.dart';
+import 'notification_history_screen.dart';
 import 'proposal_board_screen.dart';
+import 'proposal_detail_screen.dart';
 
 class StoryHomeScreen extends ConsumerStatefulWidget {
   const StoryHomeScreen({super.key});
@@ -112,6 +119,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await ref
           .read(storyControllerProvider.notifier)
           .refreshCompletedEventIds();
+      // FCM 토큰 upsert — Firebase 미설정/권한 거부면 내부적으로 no-op.
+      try {
+        await PushService.instance.registerCurrentTokenIfAuthenticated();
+      } catch (_) {
+        // 푸시 등록 실패는 앱 동작에 영향 없음
+      }
     } catch (_) {
       // 인증 상태 변경 처리 실패는 무시 (재시도 기회 존재)
     }
@@ -617,6 +630,61 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  /// 알림 탭 처리 — 읽음 처리 + 딥링크 라우팅.
+  /// 제안 관련 알림인데 모바일/태블릿이면 "컴퓨터로 확인하세요" 다이얼로그 후
+  /// 화면 전환은 하지 않는다(편집이 웹 전용).
+  Future<void> _handleNotificationTap(AppNotification notification) async {
+    // 1) 읽음 처리 + 상태 무효화.
+    final repo = ref.read(notificationRepositoryProvider);
+    try {
+      await repo.markRead(notification);
+    } catch (_) {
+      // 읽음 실패는 무시 (다음 refresh 에 반영됨)
+    }
+    ref.invalidate(unreadNotificationsProvider);
+    ref.invalidate(notificationHistoryProvider);
+
+    if (!mounted) return;
+
+    // 2) 모바일/태블릿 + 제안 알림 → 다이얼로그만 띄우고 종료.
+    final proceed = await shouldProceedWithNavigation(context, notification);
+    if (!proceed || !mounted) return;
+
+    // 3) deep_link 파싱 후 화면 전환.
+    final link = NotificationDeepLink.parse(notification.deepLink);
+    switch (link.target) {
+      case NotificationTarget.proposal:
+        if (link.id != null) {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => ProposalDetailScreen(proposalId: link.id!),
+            ),
+          );
+        }
+        break;
+      case NotificationTarget.event:
+        if (link.id != null) {
+          _openEventDetail(link.id!);
+        }
+        break;
+      case NotificationTarget.weekly:
+        await _openWeeklyTab();
+        break;
+      case NotificationTarget.unknown:
+        break;
+    }
+  }
+
+  Future<void> _openNotificationHistory() async {
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            NotificationHistoryScreen(onNavigate: _handleNotificationTap),
+      ),
+    );
+  }
+
   String _eraTestament(Era era) {
     final raw = era.testament.trim().toLowerCase();
     if (raw == 'new' || raw == 'nt' || raw == 'new_testament') {
@@ -856,6 +924,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     await ref
         .read(storyControllerProvider.notifier)
         .markEventCompleted(eventId: eventId, isCompleted: true);
+    // 인앱 알림 row 삽입 — 실패해도 퀴즈 완료 UX 를 막지 않도록 try-catch.
+    try {
+      await ref
+          .read(notificationRepositoryProvider)
+          .notifyQuizCompleted(eventId);
+      ref.invalidate(unreadNotificationsProvider);
+    } catch (_) {
+      // 알림 실패는 조용히 무시
+    }
     await _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
   }
 
@@ -1080,6 +1157,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         ),
                         const SizedBox(width: 8),
                         topUtilityButton(label: '프로필', onTap: _openProfileTab),
+                        const SizedBox(width: 8),
+                        NotificationBellButton(
+                          onNavigate: _handleNotificationTap,
+                          onOpenHistory: _openNotificationHistory,
+                        ),
                         if (kIsWeb) ...[
                           const SizedBox(width: 8),
                           topUtilityButton(
