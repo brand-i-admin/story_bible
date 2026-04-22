@@ -67,6 +67,27 @@ drop table if exists event_characters cascade;   -- 새 이름 (legacy)
 drop table if exists persons cascade;            -- 옛 이름 — 이번에 drop 안 돼서 남아있음
 drop table if exists characters cascade;         -- 새 이름
 drop table if exists eras cascade;
+
+-- ----------------------------------------------------------------------------
+-- Storage 파일 purge — 이 앱이 관리하는 버킷만.
+--
+-- db_init.sql 은 "drop & recreate" 시맨틱이라 Postgres 테이블 뿐 아니라
+-- Storage 에 있는 기존 객체도 같이 비워야 진짜 clean slate.
+-- buckets 자체는 아래 storage.buckets upsert 섹션에서 재설정되므로 여기선
+-- **객체(=실제 파일) 만** 삭제. Supabase 가 storage.objects 행 삭제 시
+-- 실제 스토리지 파일까지 GC 하도록 연결해 둠.
+--
+-- `profile-images` 는 사용자가 올린 프로필 사진이라 **유지** — db-init 한다고
+-- 사용자 데이터가 날아가면 안 되기 때문. 사용자 계정이 없는 테스트 환경이라면
+-- 관리자가 수동으로 Dashboard 에서 purge 가능.
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'storage' and tablename = 'objects') then
+    delete from storage.objects
+     where bucket_id in ('characters', 'proposal-scenes', 'proposal-characters');
+  end if;
+end $$;
+
 drop trigger if exists on_auth_user_created on auth.users;
 drop function if exists public.handle_new_user_profile() cascade;
 drop function if exists public.generate_profile_share_id() cascade;
