@@ -869,7 +869,64 @@ curl -i -X POST \
 | 500 `secret not set` | CLI/Dashboard 에서 secrets 등록 안 됨 |
 | 502 `Imagen ...` | SA 권한 부족 or Vertex API 미활성 |
 
-### 17.8 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영
+### 17.8 고아 이미지 정리 (`cleanup-orphan-proposal-assets`)
+
+**문제**: 사역자가 폼에서 **[이미지 생성]** 버튼을 누르는 순간 이미지는 즉시
+`proposal-scenes` / `proposal-characters` 버킷에 업로드된다. 하지만
+`event_proposals` 행은 **[제안 등록]** 을 눌러야 INSERT 된다. 그 사이에 창을
+닫거나 재생성을 많이 하면 **DB에 참조 없는 고아 파일** 이 Storage 에 남는다.
+GCP 생성 비용은 이미 지출됐지만 Storage 용량은 계속 과금 대상.
+
+**해결**: `make cleanup-orphan-proposal-assets` 주기 실행 (주 1회 권장).
+
+동작 규칙:
+1. 두 버킷(`proposal-scenes`, `proposal-characters`) 의 **모든 파일**을 재귀 열거.
+2. `event_proposals` 전체 행에서 `scene_image_paths` + `proposed_characters[*].storage_path` 를
+   union 해 "참조 중" 경로 집합 생성 (status pending/approved/rejected 모두 포함).
+3. 파일 중 (a) 24h 이상 지났고 (b) 참조되지 않은 것만 삭제. 신규 업로드
+   (= "진행 중인 드래프트") 는 24h grace window 로 보호.
+
+```bash
+# 먼저 dry-run 으로 삭제 후보 확인 (삭제 안 함)
+make cleanup-orphan-proposal-assets-dry
+
+# 실제 삭제 실행
+make cleanup-orphan-proposal-assets
+```
+
+출력 예:
+```
+Cutoff: files older than 24h (created_at < 2026-04-21T00:00+00:00) considered
+Referenced paths in event_proposals: 12
+
+== proposal-scenes
+  total files: 18
+  [orphan] proposal-scenes/<uid>/draft_abcde/scene_0.png  age=2 days, 4:13:22  (deleting)
+  ...
+
+== proposal-characters
+  total files: 5
+  [orphan] proposal-characters/<uid>/draft_abcde/caleb.png  age=2 days, 4:10:01  (deleting)
+
+=== Summary ===
+  deleted:         6
+  kept_referenced: 11
+  kept_too_young:  5
+  skipped:         1
+  dry_run:         False
+```
+
+**주의**:
+- 거절된 제안(status='rejected') 의 이미지는 참조가 남아있으니 **자동 정리 대상 아님**.
+  원한다면 그 제안을 DB 에서 삭제하거나 스크립트를 확장할 수 있음 (현재 미구현).
+- `.env` 에 `SUPABASE_SERVICE_ROLE_KEY_<ENV>` 필요 (service_role 로 실행).
+- cron 등록 예:
+  ```
+  # 매주 일요일 03:00 KST 에 dev 환경 정리
+  0 3 * * 0 cd /path/to/story_bible && make cleanup-orphan-proposal-assets ENV=dev
+  ```
+
+### 17.9 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영
 
 - `user_event_progress(user_id, event_id)` 는 UUID 기반이라, 승인으로 새 event
   가 생기면 **누구의 user_event_progress 에도 그 UUID 가 없음** → 자동으로

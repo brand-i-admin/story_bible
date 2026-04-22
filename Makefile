@@ -47,6 +47,7 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-clean \
+        cleanup-orphan-proposal-assets cleanup-orphan-proposal-assets-dry \
         update-pubspec-assets check-pubspec-assets \
         clean-generated lint
 
@@ -88,6 +89,10 @@ help:
 	@echo "승인된 제안 → 로컬 assets 동기화 (service_role 키 필요):"
 	@echo "  sync-approved-proposal-assets         [ENV=dev]  approved 제안의 scene/character PNG 를 assets/ 로 내려받음"
 	@echo "  sync-approved-proposal-assets-clean   [ENV=dev]  동기화 후 proposal-* 버킷의 원본 파일 삭제"
+	@echo ""
+	@echo "미제출 제안 고아 자산 정리 (주기적 운영 — 24h grace window):"
+	@echo "  cleanup-orphan-proposal-assets-dry    [ENV=dev]  dry-run — 삭제 후보만 나열"
+	@echo "  cleanup-orphan-proposal-assets        [ENV=dev]  실제 삭제"
 	@echo ""
 	@echo "기타:"
 	@echo "  update-pubspec-assets   story_images_thumbs 경로를 pubspec.yaml에 반영"
@@ -194,6 +199,22 @@ sync-approved-proposal-assets:
 sync-approved-proposal-assets-clean:
 	@echo "[Makefile] 승인된 제안 자산 동기화 + 원본 버킷 정리 (ENV=$(ENV))"
 	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --delete-source
+
+# -----------------------------------------------------------------------------
+# 미제출 / 버려진 제안 자산 청소
+# -----------------------------------------------------------------------------
+# 사역자가 이미지 생성 버튼을 누른 뒤 [제안 등록] 안 하고 창을 닫으면 Storage
+# 에 고아 이미지가 남는다. 이 타겟은 24시간 이상 지났고 event_proposals
+# 어디에도 참조되지 않은 proposal-* 파일을 정리한다. 주 1회 cron 이나 운영
+# 루틴에 끼워 넣으면 깔끔.
+
+cleanup-orphan-proposal-assets-dry:
+	@echo "[Makefile] 고아 제안 자산 dry-run — 실제 삭제 없이 나열만 (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/cleanup_orphan_proposal_assets.py --env $(ENV) --dry-run
+
+cleanup-orphan-proposal-assets:
+	@echo "[Makefile] 고아 제안 자산 정리 — 24시간 이상 지난 미참조 파일 삭제 (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/cleanup_orphan_proposal_assets.py --env $(ENV)
 
 # =============================================================================
 # Supabase DB 적용 (psql 사용)
