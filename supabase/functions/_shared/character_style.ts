@@ -33,8 +33,28 @@ export const CHARACTER_NEGATIVE_PROMPT =
   "cropped feet, marshmallow body, gritty, dark, horror, complex " +
   "background, text, logo, watermark";
 
-/// Imagen model for text-to-image.
-export const IMAGEN_MODEL = "imagen-4.0-generate-001";
+/// Imagen model candidates (tried in order until one succeeds).
+///
+/// Imagen 4.0 (preview) 는 계정에 따라 allowlist 필요 — 403 이 뜨면
+/// 자동으로 3.0 으로 fallback. 명시적으로 고정하고 싶으면 Supabase
+/// secret `VERTEX_IMAGEN_MODEL` 에 단일 모델 id 지정.
+export const IMAGEN_MODEL_CANDIDATES: string[] = (() => {
+  const override = (
+    // Deno is available in the Edge Function runtime; guard for type safety
+    // in case this file is ever re-used from a Node context.
+    (typeof Deno !== "undefined" ? Deno.env.get("VERTEX_IMAGEN_MODEL") : null) ??
+    ""
+  ).trim();
+  if (override) return [override];
+  return [
+    "imagen-4.0-generate-001",
+    "imagen-3.0-generate-002",
+    "imagen-3.0-generate-001",
+  ];
+})();
+
+/// 과거 호환 alias (generate-proposal-character/index.ts 가 초기 import).
+export const IMAGEN_MODEL = IMAGEN_MODEL_CANDIDATES[0];
 
 /// Compose the final prompt from user-provided description using the same
 /// convention as Python's `resolve_prompt`: if the text contains the literal

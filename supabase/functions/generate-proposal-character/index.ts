@@ -22,7 +22,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { getGcpAccessToken } from "../_shared/gcp_auth.ts";
 import {
   CHARACTER_NEGATIVE_PROMPT,
-  IMAGEN_MODEL,
+  IMAGEN_MODEL_CANDIDATES,
   composeCharacterPrompt,
 } from "../_shared/character_style.ts";
 
@@ -84,13 +84,9 @@ async function callImagen(
   location: string,
   prompt: string,
 ): Promise<Uint8Array> {
-  // Imagen always runs in a regional endpoint (no `global`); default to us-central1
-  // if caller gave us `global`.
+  // Imagen 은 regional endpoint (no `global`); fallback to us-central1.
   const loc = location === "global" ? "us-central1" : location;
   const host = `${loc}-aiplatform.googleapis.com`;
-  const url =
-    `https://${host}/v1/projects/${project}/locations/${loc}/` +
-    `publishers/google/models/${IMAGEN_MODEL}:predict`;
 
   const body = {
     instances: [{ prompt }],
@@ -104,25 +100,39 @@ async function callImagen(
     },
   };
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
+  // Try models in order. 403/404 on one model → try the next (대개 4.0 은
+  // preview allowlist, 3.0 은 GA). 다른 오류는 즉시 raise.
+  const errors: string[] = [];
+  for (const model of IMAGEN_MODEL_CANDIDATES) {
+    const url =
+      `https://${host}/v1/projects/${project}/locations/${loc}/` +
+      `publishers/google/models/${model}:predict`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      const payload = await res.json();
+      const b64 = extractPngBase64(payload);
+      if (!b64) throw new Error(`Imagen ${model} returned no image bytes`);
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
     const text = await res.text();
-    throw new Error(`Imagen ${IMAGEN_MODEL} → ${res.status}: ${text}`);
+    errors.push(`${model} → ${res.status}: ${text.slice(0, 200)}`);
+    // 403/404 는 allowlist/모델 미존재 가능성 → 다음 후보로 fallback.
+    // 401/500 류는 더 심각한 config 문제이므로 계속 try 해도 대부분 동일하지만,
+    // 그래도 모든 후보를 시도해 보고 마지막에 모아서 raise.
   }
-  const payload = await res.json();
-  const b64 = extractPngBase64(payload);
-  if (!b64) throw new Error("Imagen returned no image bytes");
-  const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
+  throw new Error(
+    `All Imagen models failed:\n  ${errors.join("\n  ")}`,
+  );
 }
 
 // Enforce the same naming convention as local avatars (lowercase snake_case).
