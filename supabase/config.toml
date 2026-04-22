@@ -5,11 +5,27 @@
 #
 # Link once:  supabase link --project-ref <your-ref>
 # Deploy:     supabase functions deploy generate-proposal-scene
+#             supabase functions deploy generate-proposal-character
 
 project_id = "story_bible"
 
+# JWT 검증 정책
+# ---------------------------------------------------------------------------
+# verify_jwt = false 로 두는 이유 (2026-04~):
+#   Supabase 가 최근 JWT 서명 알고리즘을 HS256 → ES256 (ECDSA) 로 전환했는데,
+#   Edge Functions 게이트웨이의 JWT verifier 가 아직 ES256 을 지원하지 못해
+#   "UNAUTHORIZED_UNSUPPORTED_TOKEN_ALGORITHM (Unsupported JWT algorithm
+#    ES256)" 401 이 뜬다.
+#
+# 보안은 손상되지 않는다: 두 함수 모두 내부에서 `client.auth.getUser()` 로
+# 호출자의 JWT 를 Supabase Auth 서비스(ES256 지원) 에 위임 검증하고, 유효하지
+# 않으면 직접 401 을 돌려준다. 즉 게이트웨이 대신 함수가 auth 체크를 수행.
+#
+# Supabase 쪽에서 Edge Runtime 의 ES256 지원이 업데이트되면 다시 true 로
+# 되돌리는 것이 더 깔끔하다 (gateway 단에서 먼저 쳐내는 게 성능상 유리).
+
 [functions.generate-proposal-scene]
-verify_jwt = true  # only authenticated users (pastor/admin) can invoke
+verify_jwt = false
 
 [functions.generate-proposal-character]
-verify_jwt = true  # only authenticated users (pastor/admin) can invoke
+verify_jwt = false
