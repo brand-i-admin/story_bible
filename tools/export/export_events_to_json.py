@@ -2,7 +2,7 @@
 """Export published events from Supabase back into assets/200_stories/*.json.
 
 DB-first 운영 흐름을 위해 어드민이 published 한 events 를 정기적으로 JSON 으로
-역추출한다. 이렇게 하면 빌더 (build_person_meta_json.py / build_persons_seed_sql.py /
+역추출한다. 이렇게 하면 빌더 (build_character_meta_json.py / build_characters_seed_sql.py /
 build_200_stories_seed_sql.py) 가 변경 사항을 자동으로 따라잡고, git history 로도
 콘텐츠 변경을 추적할 수 있다.
 
@@ -29,7 +29,7 @@ from typing import Any
 _KEY_ORDER = [
     "title",
     "era",
-    "persons",
+    "characters",
     "place_name",
     "lat",
     "lng",
@@ -40,7 +40,7 @@ _KEY_ORDER = [
     "time_precision",
     "story_index",
     "story_scenes",
-    "scene_persons",
+    "scene_characters",
 ]
 
 
@@ -49,14 +49,14 @@ def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
 
     DB 컬럼 매핑:
       - era_code  → "era"
-      - person_codes (text[]) → "persons"
+      - character_codes (text[]) → "characters"
       - bible_refs (jsonb)    → "bible_ref"
       - 나머지는 그대로
     """
     out: dict[str, Any] = {
         "title": row.get("title", ""),
         "era": row.get("era_code", ""),
-        "persons": list(row.get("person_codes") or []),
+        "characters": list(row.get("character_codes") or []),
         "place_name": row.get("place_name") or "",
         "lat": row.get("lat"),
         "lng": row.get("lng"),
@@ -67,7 +67,9 @@ def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
         "time_precision": row.get("time_precision") or "approx",
         "story_index": int(row.get("story_index") or 0),
         "story_scenes": list(row.get("story_scenes") or []),
-        "scene_persons": [list(s or []) for s in (row.get("scene_persons") or [])],
+        "scene_characters": [
+            list(s or []) for s in (row.get("scene_characters") or [])
+        ],
     }
     # KEY_ORDER 순서로 재구성 (Python 3.7+ dict 는 삽입 순서 유지).
     return {key: out[key] for key in _KEY_ORDER if key in out}
@@ -166,7 +168,7 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
     rest = url.rstrip("/") + "/rest/v1/events"
     params = {
         "select": (
-            "title,summary,person_codes,bible_refs,story_scenes,scene_persons,"
+            "title,summary,character_codes,bible_refs,story_scenes,scene_characters,"
             "place_name,lat,lng,start_year,end_year,time_precision,story_index,"
             "era:era_id(code)"
         ),

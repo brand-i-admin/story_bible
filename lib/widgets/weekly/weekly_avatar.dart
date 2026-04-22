@@ -4,11 +4,14 @@
 part of '../weekly_tab_page.dart';
 
 extension _WeeklyAvatarExt on _WeeklyTabPageState {
-  Widget _weeklyPersonAvatar({required Person person, double size = 32}) {
-    final avatarPath = person.avatarAssetPath.trim();
-    final fallbackText = person.name.trim().isEmpty
+  Widget _weeklyCharacterAvatar({
+    required Character character,
+    double size = 32,
+  }) {
+    final avatarPath = character.avatarAssetPath.trim();
+    final fallbackText = character.name.trim().isEmpty
         ? '?'
-        : person.name.trim().substring(0, 1);
+        : character.name.trim().substring(0, 1);
     final borderWidth = (size * 0.045).clamp(1.0, 1.6).toDouble();
     final fallbackFontSize = (size * 0.34).clamp(9.0, 11.5).toDouble();
     return Container(

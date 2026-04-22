@@ -9,17 +9,17 @@ import '../models/story_event.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../widgets/proposal/bible_refs_picker.dart';
-import '../widgets/proposal/person_codes_picker.dart';
+import '../widgets/proposal/character_codes_picker.dart';
 import '../widgets/proposal/proposal_location_picker.dart';
 import '../widgets/proposal/proposal_scenes_editor.dart';
-import '../widgets/proposal/scene_persons_grid.dart';
+import '../widgets/proposal/scene_characters_grid.dart';
 
 /// 이야기 제안 등록/수정 폼 (wizard).
 ///
 /// 홈 UI 톤으로 3 단계:
 ///   Step 1. 시대 선택 (구약/신약 탭 + era 카드 그리드)
 ///   Step 2. 등장인물과 위치 선택
-///           sub-phase: persons(복수) → event:0 → event:1 → ... → summary
+///           sub-phase: characters(복수) → event:0 → event:1 → ... → summary
 ///   Step 3. 세부 내용 (제목 / 요약 / 장소(지도) / 연도 / 성경 / 장면)
 ///
 /// 최종 `after_story_index` 는 **선택된 인물별 사건의 story_index 중 최댓값**.
@@ -36,23 +36,23 @@ class ProposalSubmitScreen extends ConsumerStatefulWidget {
 
 class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // Top-level wizard step.
-  // 0: intro, 1: era, 2: persons & position, 3: details
+  // 0: intro, 1: era, 2: characters & position, 3: details
   int _step = 0;
 
-  // Step 2 내부 sub-phase. 'persons' | 'event:<index>' | 'summary'
-  String _step2Phase = 'persons';
+  // Step 2 내부 sub-phase. 'characters' | 'event:<index>' | 'summary'
+  String _step2Phase = 'characters';
 
   // Selections
   String _testament = 'old';
   String? _eraId;
-  List<String> _personCodes = const [];
+  List<String> _characterCodes = const [];
   // 최종 삽입 위치. null = 맨 앞 또는 미선택 — _positionPicked 로 구분.
   int? _afterStoryIndex;
   bool _positionPicked = false;
 
   // Options loaded once
   List<Era> _eras = const [];
-  List<PersonOption> _personOptions = const [];
+  List<CharacterOption> _characterOptions = const [];
   final Map<String, List<StoryEvent>> _eventsByEra = {};
 
   // Step 3 fields
@@ -66,7 +66,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   double? _lng;
   List<Map<String, String>> _bibleRefs = const [];
   List<String> _scenes = const [''];
-  List<List<String>> _scenePersons = const [[]];
+  List<List<String>> _sceneCharacters = const [[]];
 
   bool _loadingOptions = true;
   bool _loadingEvents = false;
@@ -79,7 +79,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final e = widget.existing;
     if (e != null) {
       _eraId = e.eraId;
-      _personCodes = List.of(e.personCodes);
+      _characterCodes = List.of(e.characterCodes);
       // 기존 after_story_index 가 있으면 모든 인물에 동일하게 기록
       if (e.afterStoryIndex != null) {
         _afterStoryIndex = e.afterStoryIndex;
@@ -99,10 +99,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           )
           .toList();
       _scenes = e.storyScenes.isEmpty ? [''] : List.of(e.storyScenes);
-      _scenePersons = List.generate(
+      _sceneCharacters = List.generate(
         _scenes.length,
-        (i) => i < e.scenePersons.length
-            ? List<String>.of(e.scenePersons[i])
+        (i) => i < e.sceneCharacters.length
+            ? List<String>.of(e.sceneCharacters[i])
             : <String>[],
       );
       // 수정 모드는 Step 3 (details) 에서 바로 시작
@@ -140,16 +140,16 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     try {
       final client = ref.read(supabaseClientProvider);
       final eras = await ref.read(storyRepositoryProvider).fetchEras();
-      final personRows = await client
-          .from('persons')
+      final characterRows = await client
+          .from('characters')
           .select('code, name')
           .order('name', ascending: true);
       if (!mounted) return;
       setState(() {
         _eras = eras;
-        _personOptions = personRows
-            .map<PersonOption>(
-              (row) => PersonOption(
+        _characterOptions = characterRows
+            .map<CharacterOption>(
+              (row) => CharacterOption(
                 code: row['code'] as String,
                 name: row['name'] as String,
               ),
@@ -243,10 +243,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   /// 선택된 인물이 한 명 이상 등장하는 events — position phase 리스트용.
   List<StoryEvent> _eventsForPositionList() {
-    if (_personCodes.isEmpty) return const [];
-    final selected = _personCodes.toSet();
+    if (_characterCodes.isEmpty) return const [];
+    final selected = _characterCodes.toSet();
     return _eraEvents
-        .where((e) => e.personCodes.any(selected.contains))
+        .where((e) => e.characterCodes.any(selected.contains))
         .toList();
   }
 
@@ -260,8 +260,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         return _eraId != null;
       case 2:
         switch (_step2Phase) {
-          case 'persons':
-            return _personCodes.isNotEmpty;
+          case 'characters':
+            return _characterCodes.isNotEmpty;
           case 'position':
             return _positionPicked;
           case 'summary':
@@ -284,11 +284,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           break;
         case 1:
           _step = 2;
-          _step2Phase = 'persons';
+          _step2Phase = 'characters';
           break;
         case 2:
           switch (_step2Phase) {
-            case 'persons':
+            case 'characters':
               _step2Phase = 'position';
               break;
             case 'position':
@@ -316,11 +316,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           break;
         case 2:
           switch (_step2Phase) {
-            case 'persons':
+            case 'characters':
               _step = 1;
               break;
             case 'position':
-              _step2Phase = 'persons';
+              _step2Phase = 'characters';
               break;
             case 'summary':
               _step2Phase = 'position';
@@ -361,9 +361,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     });
 
     final repo = ref.read(proposalRepositoryProvider);
-    final paddedScenePersons = List<List<String>>.generate(
+    final paddedSceneCharacters = List<List<String>>.generate(
       scenes.length,
-      (i) => i < _scenePersons.length ? _scenePersons[i] : const [],
+      (i) => i < _sceneCharacters.length ? _sceneCharacters[i] : const [],
     );
     final refsAsDynamic = _bibleRefs
         .map<Map<String, dynamic>>((m) => Map<String, dynamic>.from(m))
@@ -376,7 +376,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           eraId: _eraId!,
           title: _titleCtrl.text.trim(),
           summary: _emptyAsNull(_summaryCtrl.text),
-          personCodes: _personCodes,
+          characterCodes: _characterCodes,
           placeName: _emptyAsNull(_placeCtrl.text),
           lat: _lat,
           lng: _lng,
@@ -385,7 +385,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           timePrecision: _timePrecision,
           bibleRefs: _bibleRefs,
           storyScenes: scenes,
-          scenePersons: paddedScenePersons,
+          sceneCharacters: paddedSceneCharacters,
           afterStoryIndex: afterIdx,
         );
       } else {
@@ -394,7 +394,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           eraId: _eraId!,
           title: _titleCtrl.text.trim(),
           summary: _emptyAsNull(_summaryCtrl.text),
-          personCodes: _personCodes,
+          characterCodes: _characterCodes,
           placeName: _emptyAsNull(_placeCtrl.text),
           lat: _lat,
           lng: _lng,
@@ -403,7 +403,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           timePrecision: _timePrecision,
           bibleRefs: refsAsDynamic,
           storyScenes: scenes,
-          scenePersons: paddedScenePersons,
+          sceneCharacters: paddedSceneCharacters,
           afterStoryIndex: afterIdx,
         );
       }
@@ -484,7 +484,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         return _buildStep1Era(theme);
       case 2:
         switch (_step2Phase) {
-          case 'persons':
+          case 'characters':
             return _buildStep2Persons(theme);
           case 'position':
             return _buildStep2Position(theme);
@@ -625,11 +625,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final era = _selectedEra;
     // era 의 published events 에 실제 등장하는 인물 코드만 우선순위로
     final presentCodes = <String>{
-      for (final ev in _eraEvents) ...ev.personCodes,
+      for (final ev in _eraEvents) ...ev.characterCodes,
     };
-    final sorted = <PersonOption>[];
-    final later = <PersonOption>[];
-    for (final opt in _personOptions) {
+    final sorted = <CharacterOption>[];
+    final later = <CharacterOption>[];
+    for (final opt in _characterOptions) {
       if (presentCodes.contains(opt.code)) {
         sorted.add(opt);
       } else {
@@ -661,23 +661,23 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (sorted.isNotEmpty)
-                    _personChipGroup(theme, '이 시대 등장 인물', sorted),
+                    _characterChipGroup(theme, '이 시대 등장 인물', sorted),
                   if (later.isNotEmpty) ...[
                     const SizedBox(height: 16),
-                    _personChipGroup(theme, '전체 인물', later),
+                    _characterChipGroup(theme, '전체 인물', later),
                   ],
                   const SizedBox(height: 16),
                   Text('선택 요약', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 6),
                   _SummaryBox(
-                    children: _personCodes.isEmpty
+                    children: _characterCodes.isEmpty
                         ? const [Text('선택된 인물이 없습니다')]
                         : [
                             Wrap(
                               spacing: 6,
                               runSpacing: 6,
                               children: [
-                                for (final c in _personCodes)
+                                for (final c in _characterCodes)
                                   Chip(label: Text(_displayName(c))),
                               ],
                             ),
@@ -692,10 +692,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     );
   }
 
-  Widget _personChipGroup(
+  Widget _characterChipGroup(
     ThemeData theme,
     String title,
-    List<PersonOption> opts,
+    List<CharacterOption> opts,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -714,8 +714,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             for (final p in opts)
               FilterChip(
                 label: Text(p.name),
-                selected: _personCodes.contains(p.code),
-                onSelected: (sel) => _togglePerson(p.code),
+                selected: _characterCodes.contains(p.code),
+                onSelected: (sel) => _toggleCharacter(p.code),
               ),
           ],
         ),
@@ -723,27 +723,27 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     );
   }
 
-  void _togglePerson(String code) {
+  void _toggleCharacter(String code) {
     setState(() {
-      final next = List<String>.of(_personCodes);
+      final next = List<String>.of(_characterCodes);
       if (next.remove(code)) {
         // 인물 제외 시 이미 한 위치 선택이 있었으면 유지 (era 단위 선택이라 유효)
       } else {
         next.add(code);
       }
-      _personCodes = next;
+      _characterCodes = next;
     });
   }
 
   String _displayName(String code) {
-    final match = _personOptions.where((p) => p.code == code).toList();
+    final match = _characterOptions.where((p) => p.code == code).toList();
     return match.isNotEmpty ? match.first.name : code;
   }
 
   // ---------- Step 2b: 통합 위치 선택 (인물 라벨 포함) ----------
   Widget _buildStep2Position(ThemeData theme) {
     final events = _eventsForPositionList();
-    final selectedSet = _personCodes.toSet();
+    final selectedSet = _characterCodes.toSet();
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -793,10 +793,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                             subtitle: e.summary ?? '',
                             storyIndex: e.storyIndex,
                             // 카드에 "이 이야기에 등장하는" 인물 중 현재 선택된 것 강조.
-                            personLabels: [
-                              for (final c in e.personCodes)
+                            characterLabels: [
+                              for (final c in e.characterCodes)
                                 if (selectedSet.contains(c))
-                                  _PersonLabel(
+                                  _CharacterLabel(
                                     name: _displayName(c),
                                     highlighted: true,
                                   ),
@@ -840,9 +840,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               _kv(
                 theme,
                 '등장 인물',
-                _personCodes.isEmpty
+                _characterCodes.isEmpty
                     ? '—'
-                    : _personCodes.map(_displayName).join(', '),
+                    : _characterCodes.map(_displayName).join(', '),
               ),
               const Divider(height: 20),
               _kv(
@@ -906,7 +906,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ProposalLocationPicker(
           initialLat: _lat,
           initialLng: _lng,
-          referencePins: _referencePinsForSelectedPersons(),
+          referencePins: _referencePinsForSelectedCharacters(),
           onChanged: (lat, lng) => setState(() {
             _lat = lat;
             _lng = lng;
@@ -967,22 +967,22 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           initial: _scenes,
           onChanged: (scenes) => setState(() {
             _scenes = scenes;
-            _scenePersons = List.generate(
+            _sceneCharacters = List.generate(
               scenes.length,
-              (i) => i < _scenePersons.length
-                  ? _scenePersons[i]
+              (i) => i < _sceneCharacters.length
+                  ? _sceneCharacters[i]
                   : const <String>[],
             );
           }),
         ),
         _sectionTitle('장면별 등장 인물'),
-        ScenePersonsGrid(
-          personCodes: _personCodes,
+        SceneCharactersGrid(
+          characterCodes: _characterCodes,
           sceneCount: _scenes.length,
-          initial: _scenePersons,
-          onChanged: (sp) => setState(() => _scenePersons = sp),
-          personNameByCode: {
-            for (final opt in _personOptions) opt.code: opt.name,
+          initial: _sceneCharacters,
+          onChanged: (sp) => setState(() => _sceneCharacters = sp),
+          characterNameByCode: {
+            for (final opt in _characterOptions) opt.code: opt.name,
           },
         ),
         const SizedBox(height: 24),
@@ -1006,15 +1006,15 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   // 선택된 인물들이 등장하는 기존 이야기 좌표 — 지도 picker 에 힌트로 표시.
   // Step 2 에서 고른 '이 이야기 뒤' 의 이야기는 highlighted 로 표시해 강조.
-  List<ProposalReferencePin> _referencePinsForSelectedPersons() {
-    if (_personCodes.isEmpty) return const [];
-    final selected = _personCodes.toSet();
+  List<ProposalReferencePin> _referencePinsForSelectedCharacters() {
+    if (_characterCodes.isEmpty) return const [];
+    final selected = _characterCodes.toSet();
     final pins = <ProposalReferencePin>[];
     for (final e in _eraEvents) {
       if (e.lat == null || e.lng == null) continue;
       final isHighlighted =
           _afterStoryIndex != null && e.storyIndex == _afterStoryIndex;
-      if (isHighlighted || e.personCodes.any(selected.contains)) {
+      if (isHighlighted || e.characterCodes.any(selected.contains)) {
         pins.add(
           ProposalReferencePin(
             lat: e.lat!,
@@ -1046,12 +1046,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   // 연도 입력 힌트 — 선택 인물 전체 범위 + 이전/다음 이야기 연도.
   Widget _yearHint(ThemeData theme) {
-    if (_personCodes.isEmpty) return const SizedBox.shrink();
-    final selected = _personCodes.toSet();
+    if (_characterCodes.isEmpty) return const SizedBox.shrink();
+    final selected = _characterCodes.toSet();
     final starts = <int>[];
     final ends = <int>[];
     for (final e in _eraEvents) {
-      if (!e.personCodes.any(selected.contains)) continue;
+      if (!e.characterCodes.any(selected.contains)) continue;
       if (e.startYear != null) starts.add(e.startYear!);
       if (e.endYear != null) ends.add(e.endYear!);
     }
@@ -1159,9 +1159,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 label: Text('시대: ${era.name}'),
                 avatar: const Icon(Icons.access_time, size: 16),
               ),
-            if (_personCodes.isNotEmpty)
+            if (_characterCodes.isNotEmpty)
               Chip(
-                label: Text('인물: ${_personCodes.map(_displayName).join(', ')}'),
+                label: Text(
+                  '인물: ${_characterCodes.map(_displayName).join(', ')}',
+                ),
                 avatar: const Icon(Icons.people_alt_outlined, size: 16),
               ),
             Chip(
@@ -1350,8 +1352,8 @@ class _EraCard extends StatelessWidget {
   }
 }
 
-class _PersonLabel {
-  const _PersonLabel({required this.name, this.highlighted = false});
+class _CharacterLabel {
+  const _CharacterLabel({required this.name, this.highlighted = false});
   final String name;
   final bool highlighted;
 }
@@ -1360,7 +1362,7 @@ class _InsertionCard extends StatelessWidget {
   const _InsertionCard({
     required this.title,
     required this.subtitle,
-    this.personLabels,
+    this.characterLabels,
     this.storyIndex,
     required this.selected,
     required this.onTap,
@@ -1368,7 +1370,7 @@ class _InsertionCard extends StatelessWidget {
 
   final String title;
   final String subtitle;
-  final List<_PersonLabel>? personLabels;
+  final List<_CharacterLabel>? characterLabels;
   final int? storyIndex;
   final bool selected;
   final VoidCallback onTap;
@@ -1431,13 +1433,14 @@ class _InsertionCard extends StatelessWidget {
                           ),
                         ),
                       ],
-                      if (personLabels != null && personLabels!.isNotEmpty) ...[
+                      if (characterLabels != null &&
+                          characterLabels!.isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Wrap(
                           spacing: 4,
                           runSpacing: 4,
                           children: [
-                            for (final l in personLabels!)
+                            for (final l in characterLabels!)
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,

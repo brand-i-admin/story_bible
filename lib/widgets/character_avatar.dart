@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../models/person.dart';
+import '../models/character.dart';
 
 /// 인물 아바타 (원형, 동그란 테두리 + 그림자).
 ///
 /// 주간 탭, 프로필 탭 등 여러 곳에서 공용으로 사용된다.
 /// 이미지 로드 실패 시 이름의 첫 글자를 표시하는 fallback이 렌더링된다.
-class PersonAvatar extends StatelessWidget {
-  const PersonAvatar({super.key, required this.person, this.size = 32});
+class CharacterAvatar extends StatelessWidget {
+  const CharacterAvatar({super.key, required this.character, this.size = 32});
 
-  final Person person;
+  final Character character;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    final avatarPath = person.avatarAssetPath.trim();
-    final fallbackText = person.name.trim().isEmpty
+    final avatarPath = character.avatarAssetPath.trim();
+    final fallbackText = character.name.trim().isEmpty
         ? '?'
-        : person.name.trim().substring(0, 1);
+        : character.name.trim().substring(0, 1);
     final borderWidth = (size * 0.045).clamp(1.0, 1.6).toDouble();
     final fallbackFontSize = (size * 0.34).clamp(9.0, 11.5).toDouble();
     return Container(

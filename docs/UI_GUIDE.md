@@ -81,7 +81,7 @@ scaffoldBackgroundColor: Color(0xFFEEE0C6)            // 양피지 배경
 |------|------|------|
 | StoryMapPanel | `widgets/story_map_panel.dart` | 인터랙티브 지도, 핀/마커 렌더링 |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 패널 |
-| PersonPanel | `widgets/person_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
+| CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | StoryListPanel | `widgets/story_list_panel.dart` | 이벤트 타임라인 리스트 |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |

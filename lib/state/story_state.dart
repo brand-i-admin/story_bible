@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/character.dart';
 import '../models/era.dart';
-import '../models/person.dart';
 import '../models/story_event.dart';
 
 class StoryState {
@@ -9,11 +9,11 @@ class StoryState {
     this.loading = false,
     this.error,
     this.eras = const [],
-    this.persons = const [],
+    this.characters = const [],
     this.events = const [],
     this.selectedEraId,
-    this.selectedPersonCodes = const {},
-    this.selectedPersonColors = const {},
+    this.selectedCharacterCodes = const {},
+    this.selectedCharacterColors = const {},
     this.selectedEventId,
     this.displayedEventIds = const {},
     this.completedEventIds = const {},
@@ -26,11 +26,11 @@ class StoryState {
   final bool loading;
   final String? error;
   final List<Era> eras;
-  final List<Person> persons;
+  final List<Character> characters;
   final List<StoryEvent> events;
   final String? selectedEraId;
-  final Set<String> selectedPersonCodes;
-  final Map<String, Color> selectedPersonColors;
+  final Set<String> selectedCharacterCodes;
+  final Map<String, Color> selectedCharacterColors;
   final String? selectedEventId;
 
   /// 지도에 핀/화살표로 렌더할 이벤트 id 집합.
@@ -51,12 +51,12 @@ class StoryState {
     String? error,
     bool clearError = false,
     List<Era>? eras,
-    List<Person>? persons,
+    List<Character>? characters,
     List<StoryEvent>? events,
     String? selectedEraId,
     bool clearSelectedEra = false,
-    Set<String>? selectedPersonCodes,
-    Map<String, Color>? selectedPersonColors,
+    Set<String>? selectedCharacterCodes,
+    Map<String, Color>? selectedCharacterColors,
     String? selectedEventId,
     Set<String>? displayedEventIds,
     Set<String>? completedEventIds,
@@ -70,13 +70,15 @@ class StoryState {
       loading: loading ?? this.loading,
       error: clearError ? null : error ?? this.error,
       eras: eras ?? this.eras,
-      persons: persons ?? this.persons,
+      characters: characters ?? this.characters,
       events: events ?? this.events,
       selectedEraId: clearSelectedEra
           ? null
           : selectedEraId ?? this.selectedEraId,
-      selectedPersonCodes: selectedPersonCodes ?? this.selectedPersonCodes,
-      selectedPersonColors: selectedPersonColors ?? this.selectedPersonColors,
+      selectedCharacterCodes:
+          selectedCharacterCodes ?? this.selectedCharacterCodes,
+      selectedCharacterColors:
+          selectedCharacterColors ?? this.selectedCharacterColors,
       selectedEventId: clearSelectedEvent
           ? null
           : selectedEventId ?? this.selectedEventId,

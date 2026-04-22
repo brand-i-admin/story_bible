@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:story_bible/models/person.dart';
-import 'package:story_bible/widgets/person_avatar.dart';
+import 'package:story_bible/models/character.dart';
+import 'package:story_bible/widgets/character_avatar.dart';
 
 Widget _harness(Widget child) {
   return MaterialApp(
@@ -11,8 +11,8 @@ Widget _harness(Widget child) {
   );
 }
 
-Person _person({String name = '아브라함', String? avatarUrl}) {
-  return Person(
+Character _person({String name = '아브라함', String? avatarUrl}) {
+  return Character(
     id: 'p1',
     code: 'abraham',
     name: name,
@@ -24,10 +24,10 @@ Person _person({String name = '아브라함', String? avatarUrl}) {
 }
 
 void main() {
-  group('PersonAvatar', () {
+  group('CharacterAvatar', () {
     testWidgets('이미지 로드 실패 시 이름 첫 글자 fallback을 표시', (tester) async {
       await tester.pumpWidget(
-        _harness(PersonAvatar(person: _person(name: '아브라함'))),
+        _harness(CharacterAvatar(character: _person(name: '아브라함'))),
       );
       // Image.asset이 placeholder를 로드 시도 → 실패 → errorBuilder 호출
       await tester.pumpAndSettle();
@@ -37,7 +37,7 @@ void main() {
 
     testWidgets('이름이 빈 문자열이면 ? fallback', (tester) async {
       await tester.pumpWidget(
-        _harness(PersonAvatar(person: _person(name: ''))),
+        _harness(CharacterAvatar(character: _person(name: ''))),
       );
       await tester.pumpAndSettle();
 
@@ -46,7 +46,7 @@ void main() {
 
     testWidgets('이름이 공백만 있어도 ? fallback', (tester) async {
       await tester.pumpWidget(
-        _harness(PersonAvatar(person: _person(name: '   '))),
+        _harness(CharacterAvatar(character: _person(name: '   '))),
       );
       await tester.pumpAndSettle();
 
@@ -55,7 +55,7 @@ void main() {
 
     testWidgets('size 인자가 Container에 반영된다', (tester) async {
       await tester.pumpWidget(
-        _harness(PersonAvatar(person: _person(), size: 80)),
+        _harness(CharacterAvatar(character: _person(), size: 80)),
       );
 
       final container = tester.widget<Container>(
@@ -71,7 +71,7 @@ void main() {
     });
 
     testWidgets('기본 크기는 32', (tester) async {
-      await tester.pumpWidget(_harness(PersonAvatar(person: _person())));
+      await tester.pumpWidget(_harness(CharacterAvatar(character: _person())));
 
       final container = tester.widget<Container>(
         find
@@ -85,7 +85,7 @@ void main() {
     });
 
     testWidgets('원형 모양 (BoxShape.circle)을 유지한다', (tester) async {
-      await tester.pumpWidget(_harness(PersonAvatar(person: _person())));
+      await tester.pumpWidget(_harness(CharacterAvatar(character: _person())));
 
       final container = tester.widget<Container>(
         find

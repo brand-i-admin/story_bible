@@ -2,31 +2,31 @@ import 'package:flutter/material.dart';
 
 /// scene 별 등장인물 체크박스 grid.
 ///
-/// 행: 장면 1..N (sceneCount). 열: personCodes 각각.
+/// 행: 장면 1..N (sceneCount). 열: characterCodes 각각.
 /// initial 은 [장면당 인물코드 리스트] 형태. 부족하면 빈 리스트로 채움.
-class ScenePersonsGrid extends StatefulWidget {
-  const ScenePersonsGrid({
+class SceneCharactersGrid extends StatefulWidget {
+  const SceneCharactersGrid({
     super.key,
-    required this.personCodes,
+    required this.characterCodes,
     required this.sceneCount,
     required this.initial,
     required this.onChanged,
-    this.personNameByCode = const {},
+    this.characterNameByCode = const {},
   });
 
-  final List<String> personCodes;
+  final List<String> characterCodes;
   final int sceneCount;
   final List<List<String>> initial;
   final ValueChanged<List<List<String>>> onChanged;
 
-  /// 표시용 한글 이름 (persons.name). 없으면 code 그대로.
-  final Map<String, String> personNameByCode;
+  /// 표시용 한글 이름 (characters.name). 없으면 code 그대로.
+  final Map<String, String> characterNameByCode;
 
   @override
-  State<ScenePersonsGrid> createState() => _ScenePersonsGridState();
+  State<SceneCharactersGrid> createState() => _SceneCharactersGridState();
 }
 
-class _ScenePersonsGridState extends State<ScenePersonsGrid> {
+class _SceneCharactersGridState extends State<SceneCharactersGrid> {
   late List<Set<String>> _matrix; // length = sceneCount, 각 칸은 선택된 코드 set
 
   @override
@@ -36,16 +36,16 @@ class _ScenePersonsGridState extends State<ScenePersonsGrid> {
   }
 
   @override
-  void didUpdateWidget(covariant ScenePersonsGrid old) {
+  void didUpdateWidget(covariant SceneCharactersGrid old) {
     super.didUpdateWidget(old);
-    final personsChanged =
-        old.personCodes.length != widget.personCodes.length ||
-        !_listEquals(old.personCodes, widget.personCodes);
+    final charactersChanged =
+        old.characterCodes.length != widget.characterCodes.length ||
+        !_listEquals(old.characterCodes, widget.characterCodes);
     final sceneCountChanged = old.sceneCount != widget.sceneCount;
-    if (personsChanged || sceneCountChanged) {
+    if (charactersChanged || sceneCountChanged) {
       setState(() {
-        // personCodes 가 바뀌면 기존 선택 중 사라진 코드는 제거.
-        final allowed = widget.personCodes.toSet();
+        // characterCodes 가 바뀌면 기존 선택 중 사라진 코드는 제거.
+        final allowed = widget.characterCodes.toSet();
         _matrix = List.generate(
           widget.sceneCount,
           (i) => i < _matrix.length
@@ -60,7 +60,7 @@ class _ScenePersonsGridState extends State<ScenePersonsGrid> {
     return List.generate(
       count,
       (i) => i < raw.length
-          ? raw[i].where(widget.personCodes.contains).toSet()
+          ? raw[i].where(widget.characterCodes.contains).toSet()
           : <String>{},
     );
   }
@@ -90,7 +90,7 @@ class _ScenePersonsGridState extends State<ScenePersonsGrid> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.personCodes.isEmpty) {
+    if (widget.characterCodes.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Text('등장인물 코드를 먼저 추가하면 장면별 인물 체크박스가 나타납니다.'),
@@ -116,7 +116,7 @@ class _ScenePersonsGridState extends State<ScenePersonsGrid> {
                   child: Wrap(
                     spacing: 4,
                     children: [
-                      for (final code in widget.personCodes)
+                      for (final code in widget.characterCodes)
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -125,7 +125,7 @@ class _ScenePersonsGridState extends State<ScenePersonsGrid> {
                               value: _matrix[i].contains(code),
                               onChanged: (v) => _toggle(i, code, v),
                             ),
-                            Text(widget.personNameByCode[code] ?? code),
+                            Text(widget.characterNameByCode[code] ?? code),
                             const SizedBox(width: 8),
                           ],
                         ),

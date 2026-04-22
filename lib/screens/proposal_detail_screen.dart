@@ -183,7 +183,7 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
               ),
               _kv(
                 '등장 인물',
-                p.personCodes.isEmpty ? '—' : p.personCodes.join(', '),
+                p.characterCodes.isEmpty ? '—' : p.characterCodes.join(', '),
               ),
               _kv(
                 '성경 본문',

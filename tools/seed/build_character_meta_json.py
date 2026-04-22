@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build tools/seed/person_meta.json from assets/200_stories JSON files.
+"""Build tools/seed/character_meta.json from assets/200_stories JSON files.
 
 Rules:
-- Expand group codes: disciples/apostles/brothers -> individual person codes.
+- Expand group codes: disciples/apostles/brothers -> individual character codes.
 - Remove non-individual codes (groups/placeholders like mysterious_man, babel_people).
-- Include EVERY individual person, regardless of mention_count.
-  Visibility in the app is controlled at runtime by ``persons.is_active``.
-- Each character carries an ``is_active_default`` hint for the persons-seed
+- Include EVERY individual character, regardless of mention_count.
+  Visibility in the app is controlled at runtime by ``characters.is_active``.
+- Each character carries an ``is_active_default`` hint for the characters-seed
   builder: people with mention_count >= ACTIVE_DEFAULT_THRESHOLD start
   active, single-mention newcomers start inactive (admin opts them in later).
 - Reuse existing prompt metadata only when prompt_source=manual.
@@ -54,7 +54,7 @@ BROTHERS_ALL = [
     "benjamin",
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
-# Explicit roster exclusions for codes that are technically person names
+# Explicit roster exclusions for codes that are technically character names
 # but should not appear as selectable characters in the app.
 ROSTER_EXCLUDED_CODES = {"dan", "lot_wife"}
 
@@ -80,7 +80,7 @@ DEFAULT_STYLE_SOURCE: dict[str, Any] = {
         "chibi, super-deformed, giant head, baby proportions, oversized eyes, "
         "long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, "
         "uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, "
-        "same-face clones, duplicate person, multiple people, crowd, group shot, "
+        "same-face clones, duplicate character, multiple people, crowd, group shot, "
         "companions, side characters, extra faces, extra bodies, twin, mirrored figure, "
         "close-up, portrait crop, bust shot, half body, cropped head, cropped feet, "
         "marshmallow body, gritty, dark, horror, "
@@ -313,32 +313,32 @@ GOD_NEGATIVE_PROMPT_EXTRA = (
 )
 GABRIEL_NEGATIVE_PROMPT_EXTRA = (
     "ordinary human priest, ordinary human man, elderly man, beard, warrior, armor, "
-    "multiple people, crowd, group, duo, pair, two people, extra person, background person, "
+    "multiple people, crowd, group, duo, pair, two people, extra character, background character, "
     "second angel, angel choir, heavenly host, attendants"
 )
 RUTH_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, beard, mustache, warrior, armor"
 )
 HAMAN_NEGATIVE_PROMPT_EXTRA = (
-    "multiple people, crowd, group, duo, pair, two people, extra person, background person, "
+    "multiple people, crowd, group, duo, pair, two people, extra character, background character, "
     "king, queen, banquet crowd, attendants, throne scene"
 )
-DANIEL_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra person, background person"
-DAN_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra person, background person"
+DANIEL_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra character, background character"
+DAN_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra character, background character"
 
 # Codes that the model tends to draw as multiple/symbolic figures.
 # Force them to render as exactly one solo character.
 SOLO_NEGATIVE_PROMPT_EXTRA = (
-    "multiple people, crowd, group, duo, pair, two people, extra person, "
-    "background person, twin, mirrored figure, second character, secondary figure, "
+    "multiple people, crowd, group, duo, pair, two people, extra character, "
+    "background character, twin, mirrored figure, second character, secondary figure, "
     "scene with brother, scene with father, scene with attendants"
 )
 SOLO_FORCED_CODES = {"cyrus"}
 
 # potiphar 는 solo 강제 + 헤브루 족장처럼 묘사되지 않도록 추가 차단.
 POTIPHAR_NEGATIVE_PROMPT_EXTRA = (
-    "multiple people, crowd, group, duo, pair, two people, extra person, "
-    "background person, twin, mirrored figure, second character, "
+    "multiple people, crowd, group, duo, pair, two people, extra character, "
+    "background character, twin, mirrored figure, second character, "
     "Hebrew patriarch, Hebrew nomad, desert traveler robe, full-length flowing robe, "
     "long beard, wrapped turban, long staff, sandals only outfit, biblical patriarch costume"
 )
@@ -346,8 +346,8 @@ POTIPHAR_NEGATIVE_PROMPT_EXTRA = (
 # cain 은 형제 아벨/부모와 함께 그려지는 경향이 강해 강한 solo 차단 필요.
 # 주의: 그림체가 다른 인물과 일치하도록 표현 묘사 단어는 가볍게 유지.
 CAIN_NEGATIVE_PROMPT_EXTRA = (
-    "multiple people, crowd, group, duo, pair, two people, three people, extra person, "
-    "background person, twin, mirrored figure, second character, "
+    "multiple people, crowd, group, duo, pair, two people, three people, extra character, "
+    "background character, twin, mirrored figure, second character, "
     "scene with brother, scene with sibling, brother nearby, abel, "
     "scene with parents, family scene, mother, father, child, "
     "shepherd staff, sheep, lamb, flock"
@@ -365,21 +365,21 @@ ACHAN_NEGATIVE_PROMPT_EXTRA = (
 DELILAH_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, square male shoulders, "
     "beard, mustache, facial hair, "
-    "warrior, armor, soldier, samson, second person, multiple people, scene with samson"
+    "warrior, armor, soldier, samson, second character, multiple people, scene with samson"
 )
 
 # lydia 도 같은 이유로 여성형 강제. 빌립보 자색 옷감 장수.
 LYDIA_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, square male shoulders, "
     "beard, mustache, facial hair, "
-    "warrior, armor, soldier, slave, prisoner, jailer, second person, multiple people"
+    "warrior, armor, soldier, slave, prisoner, jailer, second character, multiple people"
 )
 
 # mary_magdalene 도 자꾸 수염 있는 남성으로 그려져서 강한 여성 강제 필요.
 MARY_MAGDALENE_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, square male shoulders, "
     "beard, mustache, facial hair, stubble, "
-    "warrior, armor, disciple man, peter, paul, second person, multiple people, "
+    "warrior, armor, disciple man, peter, paul, second character, multiple people, "
     "extra hands, three hands, multiple hands, extra arms, third arm, "
     "deformed hands, fused fingers, extra fingers, too many fingers, "
     "oil flask, alabaster jar, perfume bottle, ointment container, anointing vessel"
@@ -390,7 +390,7 @@ NAOMI_NEGATIVE_PROMPT_EXTRA = (
     "young woman, youthful face, smooth skin, child, teenager, glamorous beauty, "
     "model-like proportions, dark hair without gray, "
     "male, man, masculine face, broad male jaw, beard, mustache, "
-    "second person, multiple people, scene with ruth"
+    "second character, multiple people, scene with ruth"
 )
 
 GOLIATH_NEGATIVE_PROMPT_EXTRA = (
@@ -943,7 +943,7 @@ STORY_MOOD_RULES = [
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build person meta JSON (codes, names, avatar prompts) from assets/200_stories data."
+        description="Build character meta JSON (codes, names, avatar prompts) from assets/200_stories data."
     )
     parser.add_argument(
         "--stories-dir",
@@ -957,8 +957,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--output",
-        default="tools/seed/person_meta.json",
-        help="Output person meta JSON path.",
+        default="tools/seed/character_meta.json",
+        help="Output character meta JSON path.",
     )
     parser.add_argument(
         "--min-mentions",
@@ -966,8 +966,8 @@ def parse_args() -> argparse.Namespace:
         default=1,
         help=(
             "Minimum mention count to include. Defaults to 1 so every "
-            "individual person is generated; runtime visibility is controlled "
-            "by persons.is_active in the database."
+            "individual character is generated; runtime visibility is controlled "
+            "by characters.is_active in the database."
         ),
     )
     parser.add_argument(
@@ -1016,10 +1016,10 @@ def dedupe_preserve_order(items: list[str]) -> list[str]:
     return result
 
 
-def expand_person_codes(number: int, persons: list[str]) -> list[str]:
+def expand_person_codes(number: int, characters: list[str]) -> list[str]:
     expanded: list[str] = []
-    persons_set = {code for code in persons}
-    for code in persons:
+    persons_set = {code for code in characters}
+    for code in characters:
         if code == "disciples":
             if "judas" in persons_set or number >= 175:
                 expanded.extend(DISCIPLES_NO_JUDAS)
@@ -1213,7 +1213,7 @@ def build_god_prompt(palette_text: str) -> str:
         "geometric planes, flat matte vector shading with subtle faceted edges, "
         "gentle warm glow, a few short attached glow rays only, large clean empty white space around it, "
         "plain white background, minimal clean composition, "
-        "no person, no human figure, no face, no eyes, no mouth, no hands, no body, "
+        "no character, no human figure, no face, no eyes, no mouth, no hands, no body, "
         "no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, "
         "sacred non-anthropomorphic presence"
     )
@@ -1277,10 +1277,10 @@ def build_person_meta(
         number = parse_event_number(str(row.get("title", "")))
         era_style = normalize_style_era(str(row.get("era", "")))
         raw_persons = [
-            str(code).strip() for code in row.get("persons", []) if str(code).strip()
+            str(code).strip() for code in row.get("characters", []) if str(code).strip()
         ]
-        persons = expand_person_codes(number, raw_persons)
-        for code in persons:
+        characters = expand_person_codes(number, raw_persons)
+        for code in characters:
             if not is_individual_code(code):
                 continue
             mention_counts[code] += 1
@@ -1415,9 +1415,9 @@ def build_person_meta(
             "note": (
                 "Generated from assets/200_stories with "
                 "disciples/apostles/brothers expanded to individuals. "
-                f"All persons with mention_count >= {min_mentions} are emitted; "
+                f"All characters with mention_count >= {min_mentions} are emitted; "
                 f"is_active_default=true when mention_count >= {active_threshold}. "
-                "Runtime visibility is controlled by persons.is_active in DB."
+                "Runtime visibility is controlled by characters.is_active in DB."
             ),
         },
         "common_style": style_source["common_style"],

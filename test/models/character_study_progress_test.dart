@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:story_bible/models/person.dart';
-import 'package:story_bible/models/person_study_progress.dart';
+import 'package:story_bible/models/character.dart';
+import 'package:story_bible/models/character_study_progress.dart';
 
 void main() {
-  const testPerson = Person(
+  const testCharacter = Character(
     id: 'p1',
     code: 'adam',
     name: '아담',
@@ -14,10 +14,10 @@ void main() {
     displayOrder: 1,
   );
 
-  group('PersonStudyProgress.fraction', () {
+  group('CharacterStudyProgress.fraction', () {
     test('totalCount가 0이면 0.0을 반환한다', () {
-      const progress = PersonStudyProgress(
-        person: testPerson,
+      const progress = CharacterStudyProgress(
+        character: testCharacter,
         completedCount: 0,
         totalCount: 0,
       );
@@ -25,8 +25,8 @@ void main() {
     });
 
     test('totalCount가 음수여도 0.0을 반환한다', () {
-      const progress = PersonStudyProgress(
-        person: testPerson,
+      const progress = CharacterStudyProgress(
+        character: testCharacter,
         completedCount: 3,
         totalCount: -1,
       );
@@ -34,8 +34,8 @@ void main() {
     });
 
     test('일부 완료 시 비율을 정확히 계산한다', () {
-      const progress = PersonStudyProgress(
-        person: testPerson,
+      const progress = CharacterStudyProgress(
+        character: testCharacter,
         completedCount: 3,
         totalCount: 10,
       );
@@ -43,8 +43,8 @@ void main() {
     });
 
     test('전부 완료 시 1.0을 반환한다', () {
-      const progress = PersonStudyProgress(
-        person: testPerson,
+      const progress = CharacterStudyProgress(
+        character: testCharacter,
         completedCount: 5,
         totalCount: 5,
       );
@@ -52,8 +52,8 @@ void main() {
     });
 
     test('미완료 시 0.0을 반환한다', () {
-      const progress = PersonStudyProgress(
-        person: testPerson,
+      const progress = CharacterStudyProgress(
+        character: testCharacter,
         completedCount: 0,
         totalCount: 7,
       );

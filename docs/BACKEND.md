@@ -13,14 +13,14 @@ supabase/
 │   └── 20260331_user_personal_features.sql
 ├── 200_stories/                       # 생성된 시드 SQL
 │   ├── 200_stories_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
-│   ├── persons_seed.sql               # persons INSERT (is_active 만, mention_count 는 person_meta.json 메타)
+│   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
 │   └── 200_stories_report.json
 └── seeds/
     └── krv_bible_verses*.sql          # KRV 성경 구절 시드
 
 lib/data/
 ├── auth_repository.dart               # 인증
-├── story_repository.dart              # events_ordered/person_eras view 쿼리
+├── story_repository.dart              # events_ordered/character_eras view 쿼리
 └── user_repository.dart               # 사용자 데이터
 ```
 
@@ -44,7 +44,7 @@ avatar_url text, description text,
 is_active boolean DEFAULT false   -- 어드민이 노출 여부 결정
 ```
 - 모든 개인 코드(그룹/플레이스홀더 제외)가 한 행으로 들어옴.
-- 빌더는 `person_meta.json`의 `is_active_default` 값(등장 2회 이상이면 true)을
+- 빌더는 `character_meta.json`의 `is_active_default` 값(등장 2회 이상이면 true)을
   따라 초기값을 결정한다. 어드민이 토글한 `is_active`는 시드 재실행 시에도
   보존된다 (`on conflict ... do update`에서 `is_active` 제외).
 - 단 `description`은 `coalesce(excluded.description, persons.description)`로 UPSERT되고 excluded가 항상 non-null이므로 **시드에 포함된 인물은 매번 새 description으로 덮어써진다**. 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 description이 엉뚱한 "대표 이야기"로 망가지지 않는다 — 상세 절차는 [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로).
@@ -53,8 +53,8 @@ is_active boolean DEFAULT false   -- 어드민이 노출 여부 결정
 ```sql
 id uuid PK, era_id uuid FK→eras, title text, summary text,
 story_scenes jsonb DEFAULT '[]',     -- ["장면1", ...]
-scene_persons jsonb DEFAULT '[]',    -- [["god"], [], ...]
-person_codes text[] DEFAULT '{}',    -- 평탄화된 인물 코드
+scene_characters jsonb DEFAULT '[]',    -- [["god"], [], ...]
+character_codes text[] DEFAULT '{}',    -- 평탄화된 인물 코드
 bible_refs jsonb DEFAULT '[]',       -- [{book, from, to}, ...]
 start_year int, end_year int,
 time_precision text DEFAULT 'approx',
@@ -66,7 +66,7 @@ status text DEFAULT 'published'      -- draft / published (어드민 전용)
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
 - `story`/`short_story` 컬럼 폐기 — UI는 `summary` + `story_scenes`로 충분.
-- `bible_refs`/`person_codes`가 events row에 직접 임베드 → `event_persons`/`event_bible_refs` 테이블 폐기.
+- `bible_refs`/`character_codes`가 events row에 직접 임베드 → `event_characters`/`event_bible_refs` 테이블 폐기.
 - 외부 기여자 제출 기능 폐기: `submitted_by`/`thumb_url`/`pending_review` 상태 제거됨.
 
 #### `events_ordered` — 정렬 view
@@ -80,12 +80,12 @@ WHERE e.status = 'published';
 - Repository는 `events` 대신 이 view에서 select.
 - 새 이야기가 끼어들면 view가 자동 재계산되므로 사전 정렬값 갱신이 불필요.
 
-#### `person_eras` — 인물-시대 매핑 view
+#### `character_eras` — 인물-시대 매핑 view
 ```sql
 WITH first AS (
   SELECT p.id person_id, p.code, e.era_id, MIN(e.story_index) first_story_index
   FROM persons p JOIN events e
-    ON e.person_codes @> ARRAY[p.code] AND e.status='published'
+    ON e.character_codes @> ARRAY[p.code] AND e.status='published'
   WHERE p.is_active = true
   GROUP BY p.id, p.code, e.era_id
 )
@@ -113,9 +113,9 @@ FROM first;
 #### `event_proposals` — 제안 테이블
 ```sql
 id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras,
-title text, summary text, person_codes text[], place_name text, lat/lng,
+title text, summary text, character_codes text[], place_name text, lat/lng,
 start_year/end_year/time_precision, bible_refs jsonb,
-story_scenes jsonb, scene_persons jsonb, after_story_index int,
+story_scenes jsonb, scene_characters jsonb, after_story_index int,
 status text CHECK ('pending'/'approved'/'rejected'),
 reviewed_by_user_id, reviewed_at, review_note, approved_event_id uuid FK→events,
 created_at, updated_at
@@ -223,7 +223,7 @@ explanation text, display_order int
 | eras, bible_verses, quiz_questions | 공개 (anon) | — |
 | persons | 공개, **`is_active = true`만 노출** (admin은 전체) | admin만 |
 | events | 공개, **`status = 'published'`만 노출** (admin은 전체) | admin만 |
-| events_ordered, person_eras (view) | 공개 | — (view, underlying RLS 따름) |
+| events_ordered, character_eras (view) | 공개 | — (view, underlying RLS 따름) |
 | user_profiles | 본인만 | 본인만 |
 | user_event_progress | 본인만 | 본인만 |
 | user_notes | 본인만 | 본인만 |
@@ -254,10 +254,10 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | 메서드 | 쿼리 | 반환 |
 |--------|------|------|
 | `fetchEras()` | `eras` ORDER BY display_order | `List<Era>` |
-| `fetchPersonsByEra(eraId)` | `person_eras` view JOIN `persons` WHERE era_id ORDER BY display_order | `List<Person>` |
+| `fetchCharactersByEra(eraId)` | `character_eras` view JOIN `persons` WHERE era_id ORDER BY display_order | `List<Character>` |
 | `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era | `List<StoryEvent>` |
-| `fetchEventsForPerson(personCode)` | `events_ordered` WHERE person_codes @> ARRAY[code] ORDER BY global_rank | `List<StoryEvent>` |
-| `fetchPersonTimelineOrder()` | `events_ordered` → personCode별 첫 등장 global_rank | `Map<String, int>` |
+| `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank | `List<StoryEvent>` |
+| `fetchCharacterTimelineOrder()` | `events_ordered` → personCode별 첫 등장 global_rank | `Map<String, int>` |
 | `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
@@ -285,7 +285,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `toggleSavedVerse(...)` | user_saved_verses INSERT/DELETE | `bool` |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |
-| `fetchPersonStudyProgress(...)` | user_event_progress + events_ordered.person_codes (배열 매치) | `List<PersonStudyProgress>` |
+| `fetchCharacterStudyProgress(...)` | user_event_progress + events_ordered.character_codes (배열 매치) | `List<CharacterStudyProgress>` |
 
 ### 5.3 AuthRepository (`lib/data/auth_repository.dart`, 77줄)
 
@@ -373,7 +373,7 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 | `id` | uuid PK | |
 | `proposer_user_id` | uuid | 작성자 (auth.users) |
 | `era_id` | uuid | `eras(id)` 참조 |
-| `title`, `summary`, `person_codes[]`, `place_name`, `lat`, `lng`, `start_year`, `end_year`, `time_precision`, `bible_refs`, `story_scenes`, `scene_persons`, `after_story_index` | | `events` 와 동일한 콘텐츠 필드 + 삽입 위치 힌트 |
+| `title`, `summary`, `character_codes[]`, `place_name`, `lat`, `lng`, `start_year`, `end_year`, `time_precision`, `bible_refs`, `story_scenes`, `scene_characters`, `after_story_index` | | `events` 와 동일한 콘텐츠 필드 + 삽입 위치 힌트 |
 | `status` | text CHECK | `pending` → `approved` / `rejected` |
 | `reviewed_by_user_id`, `reviewed_at`, `review_note` | | admin 승인/거절 메타 |
 | `approved_event_id` | uuid | 승인 시 생성된 `events.id` 참조 (이후 추적용) |
@@ -392,7 +392,7 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 모든 "pastor + admin" SELECT 는 게시판 공개 의도 — pastor 는 본인 제안뿐 아니라 동료 사역자의 제안도 열람·댓글 가능.
 
 ### RPC
-- `submit_event_proposal(p_era_id, p_title, p_summary, p_person_codes, p_place_name, p_lat, p_lng, p_start_year, p_end_year, p_time_precision, p_bible_refs, p_story_scenes, p_scene_persons, p_after_story_index) returns uuid` — pastor 만, proposer=auth.uid() 로 강제 INSERT.
+- `submit_event_proposal(p_era_id, p_title, p_summary, p_character_codes, p_place_name, p_lat, p_lng, p_start_year, p_end_year, p_time_precision, p_bible_refs, p_story_scenes, p_scene_characters, p_after_story_index) returns uuid` — pastor 만, proposer=auth.uid() 로 강제 INSERT.
 - `approve_event_proposal(p_proposal_id, p_after_story_index_override default null) returns uuid` — admin 만, 내부에서 `eras.code` 조회 후 기존 `insert_event_at_position` 재호출하여 events 에 반영. 반환값은 생성된 event.id. proposal.status='approved', approved_event_id 갱신.
 - `reject_event_proposal(p_proposal_id, p_note default null) returns void` — admin 만, pending → rejected + note 저장.
 - `add_proposal_comment(p_proposal_id, p_body) returns uuid` — pastor + admin, author=auth.uid() 로 강제 INSERT.

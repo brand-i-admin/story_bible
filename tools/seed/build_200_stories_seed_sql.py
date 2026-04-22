@@ -3,10 +3,10 @@
 
 The script reads ~215 story JSON entries and generates one INSERT statement
 per chunk into the ``events`` table. Per the new schema:
-  - ``person_codes`` (text[]) embeds the expanded person list — no event_persons
+  - ``character_codes`` (text[]) embeds the expanded character list — no event_persons
   - ``bible_refs`` (jsonb)    embeds [{book, from, to}, ...] — no event_bible_refs
   - ``story_scenes`` (jsonb)  embeds the scene array as-is
-  - ``scene_persons`` (jsonb) embeds the per-scene character lists
+  - ``scene_characters`` (jsonb) embeds the per-scene character lists
   - ``story_index`` is taken straight from the JSON; uniqueness is enforced
     by (era_id, story_index) so the upsert key is the same pair
 
@@ -269,7 +269,7 @@ class NormalizedEvent:
     title: str
     summary: str
     story_scenes: list[str]
-    scene_persons: list[list[str]]
+    scene_characters: list[list[str]]
     start_year: int | None
     end_year: int | None
     time_precision: str
@@ -277,7 +277,7 @@ class NormalizedEvent:
     place_name: str
     lat: float | None
     lng: float | None
-    persons: list[str]
+    characters: list[str]
     refs: list[BibleRef]
 
 
@@ -296,9 +296,9 @@ def parse_args() -> argparse.Namespace:
         help="Output directory for generated SQL and reports.",
     )
     parser.add_argument(
-        "--person-meta-json",
-        default="tools/seed/person_meta.json",
-        help="Person meta JSON used as whitelist for person codes.",
+        "--character-meta-json",
+        default="tools/seed/character_meta.json",
+        help="Character meta JSON used as whitelist for character codes.",
     )
     parser.add_argument(
         "--events-chunk-size",
@@ -392,12 +392,12 @@ def parse_event_number_and_title(raw_title: str) -> tuple[int, str]:
 
 def load_person_meta_codes(meta_json_path: Path) -> set[str]:
     if not meta_json_path.exists():
-        raise FileNotFoundError(f"Person meta JSON not found: {meta_json_path}")
+        raise FileNotFoundError(f"Character meta JSON not found: {meta_json_path}")
     data = json.loads(meta_json_path.read_text(encoding="utf-8"))
     characters = data.get("characters")
     if not isinstance(characters, list):
         raise ValueError(
-            f"Invalid person meta JSON format (missing characters list): {meta_json_path}"
+            f"Invalid character meta JSON format (missing characters list): {meta_json_path}"
         )
     codes: set[str] = set()
     for item in characters:
@@ -408,15 +408,15 @@ def load_person_meta_codes(meta_json_path: Path) -> set[str]:
             codes.add(code)
     if not codes:
         raise ValueError(
-            f"No character codes found in person meta JSON: {meta_json_path}"
+            f"No character codes found in character meta JSON: {meta_json_path}"
         )
     return codes
 
 
-def expand_person_codes(number: int, persons: list[str]) -> list[str]:
+def expand_person_codes(number: int, characters: list[str]) -> list[str]:
     expanded: list[str] = []
-    persons_set = {code for code in persons}
-    for code in persons:
+    persons_set = {code for code in characters}
+    for code in characters:
         if code == "disciples":
             if "judas" in persons_set or number >= 175:
                 expanded.extend(DISCIPLES_NO_JUDAS)
@@ -522,14 +522,14 @@ def normalize_events(
     allowed_person_codes: set[str],
 ) -> tuple[list[NormalizedEvent], set[str]]:
     events: list[NormalizedEvent] = []
-    person_codes: set[str] = set()
+    character_codes: set[str] = set()
 
     for row in rows:
         number, clean_title = parse_event_number_and_title(str(row["title"]))
         raw_persons = [
-            str(code).strip() for code in row.get("persons", []) if str(code).strip()
+            str(code).strip() for code in row.get("characters", []) if str(code).strip()
         ]
-        persons = [
+        characters = [
             code
             for code in expand_person_codes(number, raw_persons)
             if code in allowed_person_codes
@@ -542,8 +542,8 @@ def normalize_events(
         ]
         story_scenes = [scene for scene in story_scenes if scene]
 
-        raw_scene_persons = row.get("scene_persons") or []
-        scene_persons: list[list[str]] = []
+        raw_scene_persons = row.get("scene_characters") or []
+        scene_characters: list[list[str]] = []
         for entry in raw_scene_persons:
             if isinstance(entry, list):
                 expanded = [
@@ -553,16 +553,16 @@ def normalize_events(
                     )
                     if code in allowed_person_codes
                 ]
-                scene_persons.append(expanded)
+                scene_characters.append(expanded)
             else:
-                scene_persons.append([])
+                scene_characters.append([])
         # Pad / trim to align with story_scenes length when both present.
-        if story_scenes and len(scene_persons) < len(story_scenes):
-            scene_persons.extend(
-                [] for _ in range(len(story_scenes) - len(scene_persons))
+        if story_scenes and len(scene_characters) < len(story_scenes):
+            scene_characters.extend(
+                [] for _ in range(len(story_scenes) - len(scene_characters))
             )
-        if story_scenes and len(scene_persons) > len(story_scenes):
-            scene_persons = scene_persons[: len(story_scenes)]
+        if story_scenes and len(scene_characters) > len(story_scenes):
+            scene_characters = scene_characters[: len(story_scenes)]
 
         start_year = row.get("start_year")
         end_year = row.get("end_year")
@@ -601,7 +601,7 @@ def normalize_events(
                 title=str(row["title"]).strip(),
                 summary=summary,
                 story_scenes=story_scenes,
-                scene_persons=scene_persons,
+                scene_characters=scene_characters,
                 start_year=start_year_int,
                 end_year=end_year_int,
                 time_precision=time_precision,
@@ -609,13 +609,13 @@ def normalize_events(
                 place_name=place_name,
                 lat=lat_f,
                 lng=lng_f,
-                persons=persons,
+                characters=characters,
                 refs=refs,
             )
         )
-        person_codes.update(persons)
+        character_codes.update(characters)
 
-    return events, person_codes
+    return events, character_codes
 
 
 def text_array_literal(items: list[str]) -> str:
@@ -644,7 +644,7 @@ def serialize_bible_refs(refs: list[BibleRef]) -> list[dict[str, str]]:
 def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[str]:
     lines: list[str] = []
     columns = (
-        "era_code, title, summary, story_scenes, scene_persons, person_codes, "
+        "era_code, title, summary, story_scenes, scene_characters, character_codes, "
         "bible_refs, start_year, end_year, time_precision, story_index, "
         "place_name, lat, lng, status"
     )
@@ -659,8 +659,8 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
                 f"{sql_value(event.title)}, "
                 f"{sql_value(event.summary)}, "
                 f"{jsonb_literal(event.story_scenes)}, "
-                f"{jsonb_literal(event.scene_persons)}, "
-                f"{text_array_literal(event.persons)}, "
+                f"{jsonb_literal(event.scene_characters)}, "
+                f"{text_array_literal(event.characters)}, "
                 f"{jsonb_literal(serialize_bible_refs(event.refs))}, "
                 f"{sql_value(event.start_year)}, "
                 f"{sql_value(event.end_year)}, "
@@ -676,7 +676,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append(")")
         lines.append(
             "insert into events ("
-            "era_id, title, summary, story_scenes, scene_persons, person_codes, "
+            "era_id, title, summary, story_scenes, scene_characters, character_codes, "
             "bible_refs, start_year, end_year, time_precision, story_index, "
             "place_name, lat, lng, status"
             ")"
@@ -686,8 +686,8 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  s.title,")
         lines.append("  s.summary,")
         lines.append("  s.story_scenes,")
-        lines.append("  s.scene_persons,")
-        lines.append("  s.person_codes,")
+        lines.append("  s.scene_characters,")
+        lines.append("  s.character_codes,")
         lines.append("  s.bible_refs,")
         lines.append("  s.start_year,")
         lines.append("  s.end_year,")
@@ -703,8 +703,8 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  title = excluded.title,")
         lines.append("  summary = excluded.summary,")
         lines.append("  story_scenes = excluded.story_scenes,")
-        lines.append("  scene_persons = excluded.scene_persons,")
-        lines.append("  person_codes = excluded.person_codes,")
+        lines.append("  scene_characters = excluded.scene_characters,")
+        lines.append("  character_codes = excluded.character_codes,")
         lines.append("  bible_refs = excluded.bible_refs,")
         lines.append("  start_year = excluded.start_year,")
         lines.append("  end_year = excluded.end_year,")
@@ -728,7 +728,9 @@ def build_seed_sql(
     lines.append("-- Generated by tools/seed/build_200_stories_seed_sql.py")
     lines.append(f"-- Generated at UTC: {generated_at}")
     lines.append("-- Target table: events")
-    lines.append("-- (person_codes / bible_refs / story_scenes / scene_persons live")
+    lines.append(
+        "-- (character_codes / bible_refs / story_scenes / scene_characters live"
+    )
     lines.append(
         "--  on the events row itself; person_eras and events_ordered are views.)"
     )
@@ -751,9 +753,9 @@ def write_report(report_path: Path, events: list[NormalizedEvent]) -> None:
         "events_by_era": by_era,
         "notes": [
             "story_index is taken straight from JSON (admin UI / manual edit owns it)",
-            "person codes expanded for disciples/apostles/brothers, then filtered by avatar prompt whitelist",
-            "bible_refs/story_scenes/scene_persons are stored as jsonb on events",
-            "person_codes is text[] on events; event_persons table is gone",
+            "character codes expanded for disciples/apostles/brothers, then filtered by avatar prompt whitelist",
+            "bible_refs/story_scenes/scene_characters are stored as jsonb on events",
+            "character_codes is text[] on events; event_persons table is gone",
             "events_ordered (rank_in_era, global_rank) is a view; sorted at read time",
         ],
     }
@@ -778,10 +780,10 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
                 "place_name": event.place_name,
                 "lat": event.lat,
                 "lng": event.lng,
-                "person_codes": event.persons,
+                "character_codes": event.characters,
                 "bible_refs": serialize_bible_refs(event.refs),
                 "story_scenes": event.story_scenes,
-                "scene_persons": event.scene_persons,
+                "scene_characters": event.scene_characters,
             }
         )
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -790,12 +792,12 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
 def main() -> int:
     args = parse_args()
     input_dir = Path(args.input_dir)
-    person_meta_json = Path(args.person_meta_json)
+    character_meta_json = Path(args.character_meta_json)
     output_dir = Path(args.output_dir)
 
     rows = parse_story_rows(input_dir)
-    allowed_person_codes = load_person_meta_codes(person_meta_json)
-    events, person_codes = normalize_events(rows, allowed_person_codes)
+    allowed_person_codes = load_person_meta_codes(character_meta_json)
+    events, character_codes = normalize_events(rows, allowed_person_codes)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     seed_sql_text = build_seed_sql(
@@ -828,9 +830,9 @@ def main() -> int:
             part_paths.append(part_path)
 
     print(f"input dir            : {input_dir}")
-    print(f"person meta json     : {person_meta_json}")
+    print(f"character meta json     : {character_meta_json}")
     print(f"events parsed        : {len(events)}")
-    print(f"unique person codes  : {len(person_codes)}")
+    print(f"unique character codes  : {len(character_codes)}")
     print(f"output sql           : {sql_path}")
     print(f"output report        : {report_path}")
     print(f"output normalized    : {normalized_path}")

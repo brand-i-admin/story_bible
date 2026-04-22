@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared helpers for Bible story scene text cleanup and person matching."""
+"""Shared helpers for Bible story scene text cleanup and character matching."""
 
 from __future__ import annotations
 
@@ -106,15 +106,15 @@ def sql_unescape(value: str) -> str:
 
 def parse_person_name_map_from_seed_sql(path: Path) -> dict[str, str]:
     if not path.exists():
-        raise FileNotFoundError(f"persons seed SQL not found: {path}")
+        raise FileNotFoundError(f"characters seed SQL not found: {path}")
 
     text = path.read_text(encoding="utf-8")
     start = text.find("with seed_persons")
     if start == -1:
         raise ValueError(
-            "Could not find 'with seed_persons' block in persons seed SQL."
+            "Could not find 'with seed_persons' block in characters seed SQL."
         )
-    end = text.find("insert into persons", start)
+    end = text.find("insert into characters", start)
     block = text[start:end] if end != -1 else text[start:]
 
     mapping: dict[str, str] = {}
@@ -129,7 +129,7 @@ def parse_person_name_map_from_seed_sql(path: Path) -> dict[str, str]:
 
 
 def parse_event_person_codes(event: dict[str, Any]) -> list[str]:
-    persons_data = event.get("persons")
+    persons_data = event.get("characters")
     codes: list[str] = []
     if isinstance(persons_data, list):
         for item in persons_data:
@@ -145,10 +145,10 @@ def parse_event_person_codes(event: dict[str, Any]) -> list[str]:
         for item in event["event_persons"]:
             if not isinstance(item, dict):
                 continue
-            person = item.get("persons")
-            if not isinstance(person, dict):
+            character = item.get("characters")
+            if not isinstance(character, dict):
                 continue
-            code = str(person.get("code") or "").strip().lower()
+            code = str(character.get("code") or "").strip().lower()
             if code:
                 codes.append(code)
     return dedupe_preserve_order(codes)

@@ -19,7 +19,7 @@ drop table if exists study_event_meta cascade;
 drop table if exists study_event_points cascade;
 drop table if exists study_verse_pages cascade;
 
--- person_eras was a real table in v1/v2 schema; v3 promotes it to a view.
+-- character_eras was a real table in v1/v2 schema; v3 promotes it to a view.
 -- Detect what kind of object exists right now and drop it accordingly so
 -- both first-time migrations and idempotent reruns succeed.
 do $$
@@ -27,15 +27,15 @@ begin
   if exists (
     select 1 from pg_class
     where relnamespace = 'public'::regnamespace
-      and relname = 'person_eras'
+      and relname = 'character_eras'
       and relkind = 'r'
   ) then
-    execute 'drop table public.person_eras cascade';
+    execute 'drop table public.character_eras cascade';
   end if;
 end $$;
 
 drop view if exists events_ordered cascade;
-drop view if exists person_eras cascade;
+drop view if exists character_eras cascade;
 drop table if exists audit_log cascade;
 drop table if exists search_embeddings cascade;
 drop table if exists user_daily_activity cascade;
@@ -49,10 +49,10 @@ drop table if exists user_event_progress cascade;
 drop table if exists quiz_questions cascade;
 drop table if exists event_bible_refs cascade;
 drop table if exists bible_verses cascade;
-drop table if exists event_persons cascade;
-drop table if exists person_eras cascade;
+drop table if exists event_characters cascade;
+drop table if exists character_eras cascade;
 drop table if exists events cascade;
-drop table if exists persons cascade;
+drop table if exists characters cascade;
 drop table if exists eras cascade;
 drop trigger if exists on_auth_user_created on auth.users;
 drop function if exists public.handle_new_user_profile() cascade;
@@ -71,11 +71,16 @@ drop function if exists public.insert_event_at_position(
   int, int, text, text, double precision, double precision
 ) cascade;
 drop function if exists public.is_pastor() cascade;
-drop function if exists public.list_persons_by_era(uuid) cascade;
+drop function if exists public.list_characters_by_era(uuid) cascade;
 drop function if exists public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
   jsonb, jsonb, jsonb, int
+) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], text,
+  double precision, double precision, int, int, text,
+  jsonb, jsonb, jsonb, text[], text[], int
 ) cascade;
 drop function if exists public.approve_event_proposal(uuid, int) cascade;
 drop function if exists public.reject_event_proposal(uuid, text) cascade;
@@ -96,7 +101,7 @@ create table if not exists eras (
   created_at timestamptz not null default now()
 );
 
-create table if not exists persons (
+create table if not exists characters (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
   name text not null,
@@ -113,8 +118,8 @@ create table if not exists events (
   title text not null,
   summary text,
   story_scenes jsonb not null default '[]'::jsonb,
-  scene_persons jsonb not null default '[]'::jsonb,
-  person_codes text[] not null default '{}',
+  scene_characters jsonb not null default '[]'::jsonb,
+  character_codes text[] not null default '{}',
   bible_refs jsonb not null default '[]'::jsonb,
   start_year int,
   end_year int,
@@ -143,32 +148,32 @@ create view events_ordered as
 
 -- 인물별 첫 등장 era + 첫 등장 story_index 기준으로 era 안의 인물 순서를 동적 계산.
 -- is_active = false 인 인물은 노출 대상에서 제외된다.
-create view person_eras as
-  with person_first as (
+create view character_eras as
+  with character_first as (
     select
-      p.id as person_id,
-      p.code as person_code,
+      p.id as character_id,
+      p.code as character_code,
       e.era_id,
       min(e.story_index) as first_story_index
-    from persons p
-    join events e on e.person_codes @> array[p.code]
+    from characters p
+    join events e on e.character_codes @> array[p.code]
                   and e.status = 'published'
     where p.is_active = true
     group by p.id, p.code, e.era_id
   )
   select
-    person_id,
+    character_id,
     era_id,
     row_number() over (
       partition by era_id
-      order by first_story_index, person_code
+      order by first_story_index, character_code
     ) as display_order
-  from person_first;
+  from character_first;
 
--- person_eras 는 view 라 WITH + group by + row_number() 탓에 PostgREST 가
--- persons 로의 FK 를 자동 추론하지 못한다 (PGRST200). 클라이언트는 이 RPC 로
--- 호출해 우회한다. persons.is_active = true 조건을 함수 내부에서 유지.
-create or replace function public.list_persons_by_era(p_era_id uuid)
+-- character_eras 는 view 라 WITH + group by + row_number() 탓에 PostgREST 가
+-- characters 로의 FK 를 자동 추론하지 못한다 (PGRST200). 클라이언트는 이 RPC 로
+-- 호출해 우회한다. characters.is_active = true 조건을 함수 내부에서 유지.
+create or replace function public.list_characters_by_era(p_era_id uuid)
 returns table (
   id uuid,
   code text,
@@ -183,14 +188,14 @@ stable
 security definer
 set search_path = public
 as $$
-  with person_first as (
+  with character_first as (
     select
-      p.id as person_id,
-      p.code as person_code,
+      p.id as character_id,
+      p.code as character_code,
       min(e.story_index) as first_story_index
-    from persons p
+    from characters p
     join events e
-      on e.person_codes @> array[p.code]
+      on e.character_codes @> array[p.code]
      and e.status = 'published'
      and e.era_id = p_era_id
     where p.is_active = true
@@ -203,14 +208,14 @@ as $$
     p.tagline,
     p.description,
     p.avatar_url,
-    (row_number() over (order by pf.first_story_index, pf.person_code))::int
+    (row_number() over (order by pf.first_story_index, pf.character_code))::int
       as display_order
-  from person_first pf
-  join persons p on p.id = pf.person_id
+  from character_first pf
+  join characters p on p.id = pf.character_id
   order by display_order;
 $$;
 
-grant execute on function public.list_persons_by_era(uuid) to anon, authenticated;
+grant execute on function public.list_characters_by_era(uuid) to anon, authenticated;
 
 create table if not exists bible_verses (
   translation text not null default 'KRV',
@@ -336,7 +341,7 @@ create table if not exists user_daily_activity (
 
 create table if not exists search_embeddings (
   id uuid primary key default gen_random_uuid(),
-  entity_type text not null check (entity_type in ('event', 'person')),
+  entity_type text not null check (entity_type in ('event', 'character')),
   entity_id uuid not null,
   chunk_text text not null,
   embedding vector(1536) not null,
@@ -345,7 +350,7 @@ create table if not exists search_embeddings (
 
 create index if not exists idx_events_era_story_index on events (era_id, story_index);
 create index if not exists idx_events_status on events (status);
-create index if not exists idx_events_person_codes_gin on events using gin (person_codes);
+create index if not exists idx_events_character_codes_gin on events using gin (character_codes);
 create index if not exists idx_progress_user_completed on user_event_progress (user_id, is_completed);
 create unique index if not exists uidx_quiz_event_order on quiz_questions (event_id, display_order);
 create index if not exists idx_embed_ivfflat on search_embeddings using ivfflat (embedding vector_cosine_ops);
@@ -535,12 +540,12 @@ $$;
 grant usage on schema public to anon, authenticated;
 
 grant select on table eras to anon, authenticated;
-grant select on table persons to anon, authenticated;
+grant select on table characters to anon, authenticated;
 grant select on table events to anon, authenticated;
 grant select on table bible_verses to anon, authenticated;
 grant select on table quiz_questions to anon, authenticated;
 grant select on events_ordered to anon, authenticated;
-grant select on person_eras to anon, authenticated;
+grant select on character_eras to anon, authenticated;
 
 grant select, insert, update on table user_event_progress to authenticated;
 grant select, insert, update on table user_profiles to authenticated;
@@ -550,7 +555,7 @@ grant select, insert, delete on table user_saved_verses to authenticated;
 grant select, insert, update on table user_daily_activity to authenticated;
 
 alter table eras enable row level security;
-alter table persons enable row level security;
+alter table characters enable row level security;
 alter table events enable row level security;
 alter table bible_verses enable row level security;
 alter table quiz_questions enable row level security;
@@ -564,8 +569,8 @@ alter table user_daily_activity enable row level security;
 drop policy if exists eras_read_all on eras;
 create policy eras_read_all on eras for select using (true);
 
-drop policy if exists persons_read_active on persons;
-create policy persons_read_active on persons for select using (is_active = true);
+drop policy if exists characters_read_active on characters;
+create policy characters_read_active on characters for select using (is_active = true);
 
 drop policy if exists events_read_published on events;
 create policy events_read_published on events for select using (status = 'published');
@@ -729,10 +734,10 @@ $$;
 
 grant execute on function public.is_admin() to authenticated;
 
--- events / persons 쓰기 권한: 관리자(is_admin())만 INSERT/UPDATE/DELETE 가능.
+-- events / characters 쓰기 권한: 관리자(is_admin())만 INSERT/UPDATE/DELETE 가능.
 -- GRANT 는 authenticated 에 부여하되, RLS 정책이 admin 여부를 체크한다.
 grant insert, update, delete on table events to authenticated;
-grant insert, update, delete on table persons to authenticated;
+grant insert, update, delete on table characters to authenticated;
 
 drop policy if exists events_read_published on events;
 create policy events_read_published on events
@@ -757,16 +762,16 @@ create policy events_delete_admin on events
 for delete to authenticated
 using (public.is_admin());
 
--- persons 는 관리자만 INSERT/UPDATE/DELETE.
-drop policy if exists persons_admin_write on persons;
-create policy persons_admin_write on persons
+-- characters 는 관리자만 INSERT/UPDATE/DELETE.
+drop policy if exists characters_admin_write on characters;
+create policy characters_admin_write on characters
 for all to authenticated
 using (public.is_admin())
 with check (public.is_admin());
 
 -- 관리자는 비활성 인물도 볼 수 있어야 토글 가능.
-drop policy if exists persons_read_active on persons;
-create policy persons_read_active on persons
+drop policy if exists characters_read_active on characters;
+create policy characters_read_active on characters
 for select using (is_active = true or public.is_admin());
 
 -- -----------------------------------------------------------------------------
@@ -778,7 +783,7 @@ for select using (is_active = true or public.is_admin());
 --   - p_after_story_index = NULL  → 맨 앞(1)에 삽입
 --   - p_after_story_index = N     → N+1 위치에 삽입, N+1.. 이상은 +1 시프트
 -- 반환: 새로 만든 events.id
--- 부가 효과: person_codes 중 persons 에 없는 코드는 비활성 placeholder 로 INSERT.
+-- 부가 효과: character_codes 중 characters 에 없는 코드는 비활성 placeholder 로 INSERT.
 -- -----------------------------------------------------------------------------
 create or replace function public.insert_event_at_position(
   p_era_code text,
@@ -786,8 +791,8 @@ create or replace function public.insert_event_at_position(
   p_title text,
   p_summary text,
   p_story_scenes jsonb,
-  p_scene_persons jsonb,
-  p_person_codes text[],
+  p_scene_characters jsonb,
+  p_character_codes text[],
   p_bible_refs jsonb,
   p_start_year int,
   p_end_year int,
@@ -837,15 +842,15 @@ begin
 
   insert into public.events (
     era_id, title, summary,
-    story_scenes, scene_persons, person_codes, bible_refs,
+    story_scenes, scene_characters, character_codes, bible_refs,
     start_year, end_year, time_precision, story_index,
     place_name, lat, lng, status
   )
   values (
     v_era_id, p_title, p_summary,
     coalesce(p_story_scenes, '[]'::jsonb),
-    coalesce(p_scene_persons, '[]'::jsonb),
-    coalesce(p_person_codes, '{}'::text[]),
+    coalesce(p_scene_characters, '[]'::jsonb),
+    coalesce(p_character_codes, '{}'::text[]),
     coalesce(p_bible_refs, '[]'::jsonb),
     p_start_year, p_end_year,
     coalesce(p_time_precision, 'approx'),
@@ -856,9 +861,9 @@ begin
   returning id into v_new_event_id;
 
   -- 누락된 인물 코드는 비활성 placeholder 로 만들어 둠 (관리자가 토글로 활성화).
-  if p_person_codes is not null then
-    foreach v_code in array p_person_codes loop
-      insert into public.persons (code, name, is_active)
+  if p_character_codes is not null then
+    foreach v_code in array p_character_codes loop
+      insert into public.characters (code, name, is_active)
       values (v_code, v_code, false)
       on conflict (code) do nothing;
     end loop;
@@ -896,7 +901,7 @@ values
 ;
 
 -- -----------------------------------------------------------------------------
--- Seed data for persons/person_eras/events/event_persons/event_bible_refs/quiz_questions
+-- Seed data for characters/character_eras/events/event_characters/event_bible_refs/quiz_questions
 -- is intentionally omitted here.
 -- Use generated SQL files under supabase/200_stories instead.
 -- -----------------------------------------------------------------------------
@@ -979,7 +984,7 @@ create table if not exists event_proposals (
   era_id uuid not null references eras(id),
   title text not null,
   summary text,
-  person_codes text[] not null default '{}',
+  character_codes text[] not null default '{}',
   place_name text,
   lat double precision,
   lng double precision,
@@ -988,7 +993,18 @@ create table if not exists event_proposals (
   time_precision text not null default 'approx',
   bible_refs jsonb not null default '[]'::jsonb,
   story_scenes jsonb not null default '[]'::jsonb,
-  scene_persons jsonb not null default '[]'::jsonb,
+  scene_characters jsonb not null default '[]'::jsonb,
+
+  -- 장면 이미지 — Storage 경로 배열. 장면 1..N 과 동일한 길이.
+  -- 각 원소는 'proposal-scenes/{user_id}/{draft_id}/scene_{idx}.png' 형태의 Storage path.
+  -- 비어있으면 아직 생성 전이라는 뜻. 제안 등록 시 모든 장면이 채워져 있어야 함.
+  scene_image_paths text[] not null default '{}',
+
+  -- 각 장면 이미지를 생성할 때 사용한 최종 prompt(참고용 스냅샷).
+  -- 재생성 시 이 값이 새로운 prompt 로 덮어씌워진다.
+  -- 길이는 scene_image_paths 와 동일해야 한다.
+  scene_image_prompts text[] not null default '{}',
+
   after_story_index int,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected')),
@@ -1103,16 +1119,23 @@ for delete to authenticated
 using (author_user_id = auth.uid() or public.is_admin());
 
 -- 6) RPC: submit_event_proposal (pastor 만) — 제안을 event_proposals 에 INSERT
+-- scene_image_paths / scene_image_prompts 는 생성 완료된 장면 이미지를 같이 커밋.
+-- 장면 텍스트 개수와 이미지 개수가 맞아야 한다 (서로 다르면 raise).
 drop function if exists public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
   jsonb, jsonb, jsonb, int
 ) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], text,
+  double precision, double precision, int, int, text,
+  jsonb, jsonb, jsonb, text[], text[], int
+) cascade;
 create or replace function public.submit_event_proposal(
   p_era_id uuid,
   p_title text,
   p_summary text,
-  p_person_codes text[],
+  p_character_codes text[],
   p_place_name text,
   p_lat double precision,
   p_lng double precision,
@@ -1121,7 +1144,9 @@ create or replace function public.submit_event_proposal(
   p_time_precision text,
   p_bible_refs jsonb,
   p_story_scenes jsonb,
-  p_scene_persons jsonb,
+  p_scene_characters jsonb,
+  p_scene_image_paths text[],
+  p_scene_image_prompts text[],
   p_after_story_index int
 )
 returns uuid
@@ -1131,6 +1156,7 @@ set search_path = public, auth
 as $$
 declare
   v_id uuid;
+  v_scene_count int;
 begin
   if not public.is_pastor() then
     raise exception 'permission denied: pastor role required';
@@ -1139,19 +1165,36 @@ begin
     raise exception 'title is required';
   end if;
 
+  -- 장면 배열 길이 일치 검증.
+  v_scene_count := coalesce(jsonb_array_length(p_story_scenes), 0);
+  if v_scene_count = 0 then
+    raise exception 'at least one scene is required';
+  end if;
+  if array_length(coalesce(p_scene_image_paths, '{}'), 1) is distinct from v_scene_count then
+    raise exception 'scene_image_paths length (%) must match story_scenes length (%)',
+      coalesce(array_length(p_scene_image_paths, 1), 0), v_scene_count;
+  end if;
+  if array_length(coalesce(p_scene_image_prompts, '{}'), 1) is distinct from v_scene_count then
+    raise exception 'scene_image_prompts length (%) must match story_scenes length (%)',
+      coalesce(array_length(p_scene_image_prompts, 1), 0), v_scene_count;
+  end if;
+
   insert into event_proposals (
-    proposer_user_id, era_id, title, summary, person_codes,
+    proposer_user_id, era_id, title, summary, character_codes,
     place_name, lat, lng, start_year, end_year,
-    time_precision, bible_refs, story_scenes, scene_persons,
+    time_precision, bible_refs, story_scenes, scene_characters,
+    scene_image_paths, scene_image_prompts,
     after_story_index
   )
   values (
-    auth.uid(), p_era_id, p_title, p_summary, coalesce(p_person_codes, '{}'),
+    auth.uid(), p_era_id, p_title, p_summary, coalesce(p_character_codes, '{}'),
     p_place_name, p_lat, p_lng, p_start_year, p_end_year,
     coalesce(nullif(trim(p_time_precision), ''), 'approx'),
     coalesce(p_bible_refs, '[]'::jsonb),
     coalesce(p_story_scenes, '[]'::jsonb),
-    coalesce(p_scene_persons, '[]'::jsonb),
+    coalesce(p_scene_characters, '[]'::jsonb),
+    coalesce(p_scene_image_paths, '{}'),
+    coalesce(p_scene_image_prompts, '{}'),
     p_after_story_index
   )
   returning id into v_id;
@@ -1162,7 +1205,7 @@ $$;
 grant execute on function public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
-  jsonb, jsonb, jsonb, int
+  jsonb, jsonb, jsonb, text[], text[], int
 ) to authenticated;
 
 -- 7) RPC: approve_event_proposal (admin 만) — 제안을 events 에 published 로 반영
@@ -1208,8 +1251,8 @@ begin
     v_proposal.title,
     v_proposal.summary,
     v_proposal.story_scenes,
-    v_proposal.scene_persons,
-    v_proposal.person_codes,
+    v_proposal.scene_characters,
+    v_proposal.character_codes,
     v_proposal.bible_refs,
     v_proposal.start_year,
     v_proposal.end_year,

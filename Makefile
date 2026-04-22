@@ -21,7 +21,7 @@ ASSETS_DIR := assets
 SUPABASE_DIR := supabase
 
 # 주요 파일 경로
-PERSON_META := $(TOOLS_DIR)/seed/person_meta.json
+CHARACTER_META := $(TOOLS_DIR)/seed/character_meta.json
 STORIES_DIR := $(ASSETS_DIR)/200_stories
 BIBLE_DIR := $(ASSETS_DIR)/bible
 AVATARS_DIR := $(ASSETS_DIR)/avatars
@@ -32,19 +32,19 @@ STORY_IMAGES_THUMBS_DIR := $(ASSETS_DIR)/story_images_thumbs
 # 출력 SQL
 KRV_SQL := $(SUPABASE_DIR)/seeds/krv_bible_verses.sql
 STORIES_SQL := $(SUPABASE_DIR)/200_stories/200_stories_seed.sql
-PERSONS_SQL := $(SUPABASE_DIR)/200_stories/persons_seed.sql
+CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
 
 # =============================================================================
 # .PHONY 선언
 # =============================================================================
 
 .PHONY: help all \
-        seed-bible-verses build-person-meta \
-        seed-stories seed-persons seed-stories-persons \
+        seed-bible-verses build-character-meta \
+        seed-stories seed-characters seed-stories-characters \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         export-stories-json \
-        db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-persons \
+        db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         update-pubspec-assets check-pubspec-assets \
         clean-generated lint
 
@@ -57,16 +57,16 @@ help:
 	@echo ""
 	@echo "개별 타겟:"
 	@echo "  seed-bible-verses       성경 구절 SQL 생성 (독립)"
-	@echo "  build-person-meta       person_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트, 모든 인물 포함)"
-	@echo "  seed-stories            events SQL 생성 (→ person-meta 의존)"
-	@echo "  seed-persons            persons SQL 생성 (→ person-meta 의존)"
-	@echo "  seed-stories-persons    events + persons SQL 한 번에 생성 (권장)"
-	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ person-meta 의존, 기존 png 보존)"
+	@echo "  build-character-meta       character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트, 모든 인물 포함)"
+	@echo "  seed-stories            events SQL 생성 (→ character-meta 의존)"
+	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
+	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
+	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible + stories + persons)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -76,7 +76,7 @@ help:
 	@echo "DB 적용 (psql + .env의 SUPABASE_DB_URL_$(ENV)):"
 	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!)"
 	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
-	@echo "  apply-seeds-stories-persons       [ENV=dev]  persons + 200_stories 적용 (UPSERT — 재실행 안전)"
+	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds               [ENV=dev]  위 둘 모두 (최초 부트스트랩용)"
 	@echo ""
 	@echo "기타:"
@@ -101,43 +101,43 @@ seed-bible-verses:
 		--split-parts 10 \
 		--truncate-translation
 
-build-person-meta:
-	@echo "[Makefile] person_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트)..."
-	$(PYTHON) $(TOOLS_DIR)/seed/build_person_meta_json.py \
+build-character-meta:
+	@echo "[Makefile] character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_character_meta_json.py \
 		--stories-dir $(STORIES_DIR) \
-		--output $(PERSON_META)
+		--output $(CHARACTER_META)
 
-seed-stories: build-person-meta
+seed-stories: build-character-meta
 	@echo "[Makefile] events SQL 생성..."
 	@echo "  → 사전 조건: assets/200_stories/*.json 의 각 항목에 story_index 가 있어야 함"
 	$(PYTHON) $(TOOLS_DIR)/seed/build_200_stories_seed_sql.py \
 		--output-dir $(SUPABASE_DIR)/200_stories \
-		--person-meta-json $(PERSON_META)
+		--character-meta-json $(CHARACTER_META)
 
-seed-persons: build-person-meta
-	@echo "[Makefile] persons SQL 생성..."
-	$(PYTHON) $(TOOLS_DIR)/seed/build_persons_seed_sql.py \
-		--person-meta-json $(PERSON_META) \
+seed-characters: build-character-meta
+	@echo "[Makefile] characters SQL 생성..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_characters_seed_sql.py \
+		--character-meta-json $(CHARACTER_META) \
 		--stories-dir $(STORIES_DIR) \
-		--output $(PERSONS_SQL)
+		--output $(CHARACTERS_SQL)
 
-# events + persons 묶음 — apply-seeds-stories-persons 와 대칭되는 seed 단계.
-# build-person-meta 는 Make 의존성 그래프에서 한 번만 실행된다.
-seed-stories-persons: seed-stories seed-persons
-	@echo "[Makefile] stories + persons SQL 생성 완료."
+# events + characters 묶음 — apply-seeds-stories-characters 와 대칭되는 seed 단계.
+# build-character-meta 는 Make 의존성 그래프에서 한 번만 실행된다.
+seed-stories-characters: seed-stories seed-characters
+	@echo "[Makefile] stories + characters SQL 생성 완료."
 
-seed-all: seed-bible-verses seed-stories seed-persons
+seed-all: seed-bible-verses seed-stories seed-characters
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================
 # 이미지 생성 (Vertex AI)
 # =============================================================================
 
-generate-avatars: build-person-meta
+generate-avatars: build-character-meta
 	@echo "[Makefile] Vertex AI 아바타 생성..."
 	@echo "  → .env의 GOOGLE_CLOUD_PROJECT 확인 필요"
 	$(PYTHON) $(TOOLS_DIR)/images/generate_avatars_vertex.py \
-		--person-meta-json $(PERSON_META) \
+		--character-meta-json $(CHARACTER_META) \
 		--output-dir $(AVATARS_DIR)
 
 generate-story-images:
@@ -171,7 +171,7 @@ ENV ?= dev
 DB_URL_VAR := SUPABASE_DB_URL_$(shell echo $(ENV) | tr a-z A-Z)
 
 # DB의 published events 를 assets/200_stories/*.json 으로 역추출.
-# 빌더(build-person-meta 등)가 로컬 JSON만 스캔하므로, 로컬이 비었거나
+# 빌더(build-character-meta 등)가 로컬 JSON만 스캔하므로, 로컬이 비었거나
 # 오래된 상태에서 빌드하면 description 이 부분 정보로 덮어써질 수 있다.
 # 새 이야기 추가 전에 항상 이 타겟으로 로컬을 DB 와 동기화한 뒤 작업한다.
 # 상세: docs/CONTENT_UPDATE.md §2.1b [0]
@@ -207,12 +207,12 @@ apply-bible-verses-seeds:
 	@echo "[Makefile] KRV 성경 구절 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/seeds/krv_bible_verses_part_*.sql)
 
-# persons / events 는 UPSERT 패턴이라 재실행 안전.
-apply-seeds-stories-persons:
-	@echo "[Makefile] persons + 200_stories 시드 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/persons_seed.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
+# characters / events 는 UPSERT 패턴이라 재실행 안전.
+apply-seeds-stories-characters:
+	@echo "[Makefile] characters + 200_stories 시드 적용 (ENV=$(ENV))"
+	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/characters_seed.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
 
-apply-seeds: apply-bible-verses-seeds apply-seeds-stories-persons
+apply-seeds: apply-bible-verses-seeds apply-seeds-stories-characters
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================
@@ -233,6 +233,6 @@ lint:
 
 clean-generated:
 	@echo "[Makefile] 생성된 SQL 삭제..."
-	rm -f $(KRV_SQL) $(STORIES_SQL) $(PERSONS_SQL)
+	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL)
 	rm -f $(SUPABASE_DIR)/seeds/krv_bible_verses_part_*.sql
-	@echo "  → tools/seed/person_meta.json은 유지됨 (수동 삭제)"
+	@echo "  → tools/seed/character_meta.json은 유지됨 (수동 삭제)"

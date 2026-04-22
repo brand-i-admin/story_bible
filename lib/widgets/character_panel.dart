@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../models/person.dart';
+import '../models/character.dart';
 import 'game_ui_skin.dart';
 
-enum PersonSortMode { alphabetical, eraOrder }
+enum CharacterSortMode { alphabetical, eraOrder }
 
-class PersonPanel extends StatelessWidget {
-  const PersonPanel({
+class CharacterPanel extends StatelessWidget {
+  const CharacterPanel({
     super.key,
-    required this.persons,
-    required this.selectedPersonCodes,
+    required this.characters,
+    required this.selectedCharacterCodes,
     required this.onToggle,
-    required this.colorForPerson,
+    required this.colorForCharacter,
     required this.sortMode,
     required this.onSortModeChanged,
   });
 
-  final List<Person> persons;
-  final Set<String> selectedPersonCodes;
+  final List<Character> characters;
+  final Set<String> selectedCharacterCodes;
   final ValueChanged<String> onToggle;
-  final Color Function(String personCode) colorForPerson;
-  final PersonSortMode sortMode;
-  final ValueChanged<PersonSortMode> onSortModeChanged;
+  final Color Function(String characterCode) colorForCharacter;
+  final CharacterSortMode sortMode;
+  final ValueChanged<CharacterSortMode> onSortModeChanged;
 
   @override
   Widget build(BuildContext context) {
-    final sortedPersons = [...persons]
+    final sortedCharacters = [...characters]
       ..sort((a, b) {
-        if (sortMode == PersonSortMode.eraOrder) {
+        if (sortMode == CharacterSortMode.eraOrder) {
           final byOrder = a.displayOrder.compareTo(b.displayOrder);
           if (byOrder != 0) {
             return byOrder;
@@ -81,7 +81,7 @@ class PersonPanel extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4),
                             child: DropdownButtonHideUnderline(
-                              child: DropdownButton<PersonSortMode>(
+                              child: DropdownButton<CharacterSortMode>(
                                 value: sortMode,
                                 isDense: true,
                                 isExpanded: true,
@@ -103,7 +103,7 @@ class PersonPanel extends StatelessWidget {
                                 ),
                                 items: const [
                                   DropdownMenuItem(
-                                    value: PersonSortMode.alphabetical,
+                                    value: CharacterSortMode.alphabetical,
                                     child: Text(
                                       '가나다순',
                                       maxLines: 1,
@@ -111,7 +111,7 @@ class PersonPanel extends StatelessWidget {
                                     ),
                                   ),
                                   DropdownMenuItem(
-                                    value: PersonSortMode.eraOrder,
+                                    value: CharacterSortMode.eraOrder,
                                     child: Text(
                                       '시대순',
                                       maxLines: 1,
@@ -136,11 +136,11 @@ class PersonPanel extends StatelessWidget {
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.only(top: 4, bottom: 4),
-                    itemCount: sortedPersons.length,
+                    itemCount: sortedCharacters.length,
                     itemBuilder: (context, index) {
-                      final person = sortedPersons[index];
-                      final selected = selectedPersonCodes.contains(
-                        person.code,
+                      final character = sortedCharacters[index];
+                      final selected = selectedCharacterCodes.contains(
+                        character.code,
                       );
                       return Padding(
                         padding: const EdgeInsets.symmetric(
@@ -148,7 +148,7 @@ class PersonPanel extends StatelessWidget {
                           vertical: 2.5,
                         ),
                         child: GestureDetector(
-                          onTap: () => onToggle(person.code),
+                          onTap: () => onToggle(character.code),
                           behavior: HitTestBehavior.opaque,
                           child: Container(
                             constraints: const BoxConstraints(minHeight: 60),
@@ -163,7 +163,7 @@ class PersonPanel extends StatelessWidget {
                                   width: 4,
                                   height: 42,
                                   decoration: BoxDecoration(
-                                    color: colorForPerson(person.code),
+                                    color: colorForCharacter(character.code),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
@@ -191,18 +191,20 @@ class PersonPanel extends StatelessWidget {
                                   ),
                                   child: ClipOval(
                                     child:
-                                        person.avatarAssetPath.trim().isNotEmpty
+                                        character.avatarAssetPath
+                                            .trim()
+                                            .isNotEmpty
                                         ? Image.asset(
-                                            person.avatarAssetPath,
+                                            character.avatarAssetPath,
                                             fit: BoxFit.cover,
                                             errorBuilder: (_, __, ___) =>
                                                 _AvatarFallback(
-                                                  name: person.name,
+                                                  name: character.name,
                                                   selected: selected,
                                                 ),
                                           )
                                         : _AvatarFallback(
-                                            name: person.name,
+                                            name: character.name,
                                             selected: selected,
                                           ),
                                   ),
@@ -214,7 +216,7 @@ class PersonPanel extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        person.name,
+                                        character.name,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
@@ -231,7 +233,7 @@ class PersonPanel extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        person.tagline ?? '',
+                                        character.tagline ?? '',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(

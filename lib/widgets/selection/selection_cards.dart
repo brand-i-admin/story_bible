@@ -138,16 +138,16 @@ class _EraCompactCard extends StatelessWidget {
   }
 }
 
-class _PersonCompactCard extends StatelessWidget {
-  const _PersonCompactCard({
-    required this.person,
+class _CharacterCompactCard extends StatelessWidget {
+  const _CharacterCompactCard({
+    required this.character,
     required this.selected,
     required this.accentColor,
     required this.description,
     required this.onTap,
   });
 
-  final Person person;
+  final Character character;
   final bool selected;
   final Color accentColor;
   final String description;
@@ -163,7 +163,11 @@ class _PersonCompactCard extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              _PortraitAvatar(person: person, selected: selected, size: 60),
+              _PortraitAvatar(
+                character: character,
+                selected: selected,
+                size: 60,
+              ),
               Positioned(
                 left: -2,
                 top: -2,
@@ -189,7 +193,7 @@ class _PersonCompactCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        person.name,
+                        character.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -241,9 +245,9 @@ class _StoryCompactCard extends StatelessWidget {
     required this.subtitle,
     required this.selected,
     required this.isCompleted,
-    required this.highlightedPersonCodes,
-    required this.colorForPerson,
-    required this.nameForPerson,
+    required this.highlightedCharacterCodes,
+    required this.colorForCharacter,
+    required this.nameForCharacter,
     required this.onTap,
   });
 
@@ -252,9 +256,9 @@ class _StoryCompactCard extends StatelessWidget {
   final String subtitle;
   final bool selected;
   final bool isCompleted;
-  final List<String> highlightedPersonCodes;
-  final Color Function(String personCode) colorForPerson;
-  final String Function(String personCode) nameForPerson;
+  final List<String> highlightedCharacterCodes;
+  final Color Function(String characterCode) colorForCharacter;
+  final String Function(String characterCode) nameForCharacter;
   final VoidCallback onTap;
 
   @override
@@ -315,12 +319,12 @@ class _StoryCompactCard extends StatelessWidget {
               ],
             ),
           ),
-          if (highlightedPersonCodes.isNotEmpty) ...[
+          if (highlightedCharacterCodes.isNotEmpty) ...[
             const SizedBox(width: 6),
-            _PersonNamePills(
-              personCodes: highlightedPersonCodes,
-              colorForPerson: colorForPerson,
-              nameForPerson: nameForPerson,
+            _CharacterNamePills(
+              characterCodes: highlightedCharacterCodes,
+              colorForCharacter: colorForCharacter,
+              nameForCharacter: nameForCharacter,
             ),
           ],
         ],
@@ -359,25 +363,25 @@ class _IndexBadge extends StatelessWidget {
 
 /// 이야기 카드 우측 상단의 "등장 인물" 라벨 스택.
 ///
-/// 기존 `_PersonDots` (작은 색 점) 을 대체. 인물별로 배정된 색을 pill 배경으로
+/// 기존 `_CharacterDots` (작은 색 점) 을 대체. 인물별로 배정된 색을 pill 배경으로
 /// 쓰고, 그 위에 인물 이름을 작은 흰색 bold 텍스트로 얹는다. 카드 폭 제한 때문에
 /// 최대 3명까지만 표시하고 초과분은 "+N" 으로 요약.
-class _PersonNamePills extends StatelessWidget {
-  const _PersonNamePills({
-    required this.personCodes,
-    required this.colorForPerson,
-    required this.nameForPerson,
+class _CharacterNamePills extends StatelessWidget {
+  const _CharacterNamePills({
+    required this.characterCodes,
+    required this.colorForCharacter,
+    required this.nameForCharacter,
   });
 
-  final List<String> personCodes;
-  final Color Function(String personCode) colorForPerson;
-  final String Function(String personCode) nameForPerson;
+  final List<String> characterCodes;
+  final Color Function(String characterCode) colorForCharacter;
+  final String Function(String characterCode) nameForCharacter;
 
   @override
   Widget build(BuildContext context) {
     const maxShown = 3;
-    final visible = personCodes.take(maxShown).toList(growable: false);
-    final overflow = personCodes.length - visible.length;
+    final visible = characterCodes.take(maxShown).toList(growable: false);
+    final overflow = characterCodes.length - visible.length;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -387,8 +391,8 @@ class _PersonNamePills extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 3),
             child: _NamePill(
-              color: colorForPerson(code),
-              label: nameForPerson(code),
+              color: colorForCharacter(code),
+              label: nameForCharacter(code),
             ),
           ),
         if (overflow > 0)
@@ -443,21 +447,21 @@ class _NamePill extends StatelessWidget {
 
 class _PortraitAvatar extends StatelessWidget {
   const _PortraitAvatar({
-    required this.person,
+    required this.character,
     required this.selected,
     this.size = 42,
   });
 
-  final Person person;
+  final Character character;
   final bool selected;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    final avatarPath = person.avatarAssetPath.trim();
-    final fallbackText = person.name.trim().isEmpty
+    final avatarPath = character.avatarAssetPath.trim();
+    final fallbackText = character.name.trim().isEmpty
         ? '?'
-        : person.name.trim().substring(0, 1);
+        : character.name.trim().substring(0, 1);
 
     return Container(
       width: size,

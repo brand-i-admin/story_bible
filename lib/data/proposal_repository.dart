@@ -25,7 +25,7 @@ class ProposalRepository {
     int? afterStoryIndex,
     required String title,
     String? summary,
-    List<String> personCodes = const [],
+    List<String> characterCodes = const [],
     String? placeName,
     double? lat,
     double? lng,
@@ -34,7 +34,7 @@ class ProposalRepository {
     String timePrecision = 'approx',
     List<Map<String, String>> bibleRefs = const [],
     List<String> storyScenes = const [],
-    List<List<String>> scenePersons = const [],
+    List<List<String>> sceneCharacters = const [],
   }) async {
     final result = await _client.rpc(
       'submit_event_proposal',
@@ -42,7 +42,7 @@ class ProposalRepository {
         'p_era_id': eraId,
         'p_title': title,
         'p_summary': summary,
-        'p_person_codes': personCodes,
+        'p_character_codes': characterCodes,
         'p_place_name': placeName,
         'p_lat': lat,
         'p_lng': lng,
@@ -51,7 +51,7 @@ class ProposalRepository {
         'p_time_precision': timePrecision,
         'p_bible_refs': bibleRefs,
         'p_story_scenes': storyScenes,
-        'p_scene_persons': scenePersons,
+        'p_scene_characters': sceneCharacters,
         'p_after_story_index': afterStoryIndex,
       },
     );
@@ -146,7 +146,7 @@ class ProposalRepository {
     required String eraId,
     required String title,
     String? summary,
-    List<String> personCodes = const [],
+    List<String> characterCodes = const [],
     String? placeName,
     double? lat,
     double? lng,
@@ -155,7 +155,7 @@ class ProposalRepository {
     String timePrecision = 'approx',
     List<Map<String, dynamic>> bibleRefs = const [],
     List<String> storyScenes = const [],
-    List<List<String>> scenePersons = const [],
+    List<List<String>> sceneCharacters = const [],
     int? afterStoryIndex,
   }) async {
     await _client
@@ -164,7 +164,7 @@ class ProposalRepository {
           'era_id': eraId,
           'title': title,
           'summary': summary,
-          'person_codes': personCodes,
+          'character_codes': characterCodes,
           'place_name': placeName,
           'lat': lat,
           'lng': lng,
@@ -173,7 +173,7 @@ class ProposalRepository {
           'time_precision': timePrecision,
           'bible_refs': bibleRefs,
           'story_scenes': storyScenes,
-          'scene_persons': scenePersons,
+          'scene_characters': sceneCharacters,
           'after_story_index': afterStoryIndex,
         })
         .eq('id', proposalId);

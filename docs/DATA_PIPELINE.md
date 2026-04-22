@@ -34,7 +34,7 @@ DB의 bible_verses 테이블
 
 ```
 tools/                                  # Python 스크립트 (서브디렉토리로 분리)
-├── seed/                               # 1단계: SQL 시드 빌더 + person_meta.json
+├── seed/                               # 1단계: SQL 시드 빌더 + character_meta.json
 ├── images/                             # Vertex AI 호출 + 썸네일 + scene 공용 utils
 ├── app/                                # pubspec/asset 검증
 ├── lint/                               # 금지패턴 + 코드 메트릭
@@ -53,21 +53,21 @@ Makefile                                # 파이프라인 오케스트레이션
                     └──┬──────────────────────────┬───────────────┘
                        │                          │
                        ▼                          ▼
-        build_person_meta_json.py       generate_event_story_images_vertex.py
+        build_character_meta_json.py       generate_event_story_images_vertex.py
                │                                  │
                ▼                                  ▼
-      person_meta.json                     assets/story_images/ (860장)
+      character_meta.json                     assets/story_images/ (860장)
          │        │       │                       │
          ▼        ▼       ▼                       │
   generate_   build_    build_200_                │
-  avatars_    persons_  stories_                  │
+  avatars_    characters_  stories_                  │
   vertex.py   seed_     seed_sql.py               │
     │         sql.py      │                       │
     ▼           │         ▼                       │
   assets/       │   200_stories_                  │
   avatars/      │   seed.sql                      │
     │           ▼                                 │
-    │     persons_seed.sql                        │
+    │     characters_seed.sql                        │
     │                                             │
     └─────────────────────┬───────────────────────┘
                           │
@@ -93,41 +93,41 @@ Makefile                                # 파이프라인 오케스트레이션
   - `--split-parts 10` — 파일 분할 (SQL Editor 크기 제한 대응)
 - **결과**: 31,904절 INSERT
 
-#### `build_person_meta_json.py` — 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
+#### `build_character_meta_json.py` — 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
 - **입력**: `assets/200_stories/*.json` (⚠️ **로컬에 있는 파일만** 스캔 — 부분 스캔 주의)
-- **출력**: `tools/seed/person_meta.json`
-- **역할**: 한 파일이 **persons 테이블 모집단**(code/name/is_active_default), **events FK 화이트리스트**(code 목록), **아바타 이미지 생성 프롬프트**(prompt/negative_prompt_extra)를 모두 담는 단일 진실 소스
+- **출력**: `tools/seed/character_meta.json`
+- **역할**: 한 파일이 **characters 테이블 모집단**(code/name/is_active_default), **events FK 화이트리스트**(code 목록), **아바타 이미지 생성 프롬프트**(prompt/negative_prompt_extra)를 모두 담는 단일 진실 소스
 - **옵션**:
-  - `--min-mentions 1` (기본) — 모든 개인 인물 포함. 노출 여부는 DB의 `persons.is_active`로 제어
+  - `--min-mentions 1` (기본) — 모든 개인 인물 포함. 노출 여부는 DB의 `characters.is_active`로 제어
   - `--active-threshold 2` (기본) — 이 횟수 이상이면 `is_active_default=true` 표시 → seed에서 활성으로 INSERT
 - **규칙**:
   - `disciples`, `apostles`, `brothers` → 개별 인물로 확장
   - `NON_INDIVIDUAL_CODES`(`crowd`, `angels` 등) 제외
   - 결과: 100+ 인물 코드 + 프롬프트 + `is_active_default` 힌트
-- ⚠️ **부분 스캔 주의**: 이 빌더는 로컬 디렉토리에 있는 JSON만 스캔한다. 로컬이 DB와 동기화되지 않은 상태(예: 새 이야기 파일 1개만 있는 상태)에서 생성된 meta로 `build_persons_seed_sql`을 돌리면 그 안에 포함된 **기존 DB 인물의 description이 부분 정보로 덮어써질 수 있다** (UPSERT는 `coalesce(excluded.description, persons.description)` — excluded가 항상 non-null이라 덮어씀). 안전 절차: [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
+- ⚠️ **부분 스캔 주의**: 이 빌더는 로컬 디렉토리에 있는 JSON만 스캔한다. 로컬이 DB와 동기화되지 않은 상태(예: 새 이야기 파일 1개만 있는 상태)에서 생성된 meta로 `build_characters_seed_sql`을 돌리면 그 안에 포함된 **기존 DB 인물의 description이 부분 정보로 덮어써질 수 있다** (UPSERT는 `coalesce(excluded.description, persons.description)` — excluded가 항상 non-null이라 덮어씀). 안전 절차: [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
 
 #### `build_200_stories_seed_sql.py` — events SQL
-- **의존**: `tools/seed/person_meta.json` (인물 화이트리스트). 입력 JSON 각 항목에 `story_index` 키가 있어야 함 (없으면 `ValueError` 즉시 raise).
-- **입력**: `assets/200_stories/*.json` + `tools/seed/person_meta.json`
+- **의존**: `tools/seed/character_meta.json` (인물 화이트리스트). 입력 JSON 각 항목에 `story_index` 키가 있어야 함 (없으면 `ValueError` 즉시 raise).
+- **입력**: `assets/200_stories/*.json` + `tools/seed/character_meta.json`
 - **출력**:
   - `supabase/200_stories/200_stories_seed.sql` — `events` 한 테이블 INSERT (배열 + JSONB 컬럼 포함)
   - `supabase/200_stories/200_stories_seed_part_*.sql` — SQL Editor 분할 파일
   - `supabase/200_stories/200_stories_report.json` — 리포트
   - `supabase/200_stories/200_stories_normalized.json` — 검수용 정규화 JSON
-- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_persons`(jsonb), `person_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `place_name`/`lat`/`lng`, `status='published'`
+- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `place_name`/`lat`/`lng`, `status='published'`
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
-- **참고**: `code`/`story`/`short_story`/`time_sort_key`/`event_persons`/`event_bible_refs` 산출 로직은 폐기됨 (스키마 v3 변경)
+- **참고**: `code`/`story`/`short_story`/`time_sort_key`/`event_characters`/`event_bible_refs` 산출 로직은 폐기됨 (스키마 v3 변경)
 
-#### `build_persons_seed_sql.py` — persons SQL
-- **의존**: `tools/seed/person_meta.json` (선행 필수)
-- **입력**: `tools/seed/person_meta.json` + `assets/200_stories/*.json` (대표 스토리 선택용)
-- **출력**: `supabase/200_stories/persons_seed.sql` — `persons` INSERT (UPSERT — `is_active`는 보존)
-- **참고**: `person_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)
+#### `build_characters_seed_sql.py` — characters SQL
+- **의존**: `tools/seed/character_meta.json` (선행 필수)
+- **입력**: `tools/seed/character_meta.json` + `assets/200_stories/*.json` (대표 스토리 선택용)
+- **출력**: `supabase/200_stories/characters_seed.sql` — `persons` INSERT (UPSERT — `is_active`는 보존)
+- **참고**: `character_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)
 
 ### 3.2 이미지 생성 스크립트
 
 #### `generate_avatars_vertex.py` — 인물 아바타 생성
-- **의존**: `tools/seed/person_meta.json`
+- **의존**: `tools/seed/character_meta.json`
 - **출력**: `assets/avatars/{code}.png`
 - **API**: Google Cloud Vertex AI Imagen
 - **옵션**: `--output-dir`, `--overwrite`, `--limit`
@@ -168,16 +168,16 @@ Makefile                                # 파이프라인 오케스트레이션
 ```makefile
 # 개별 타겟
 make seed-bible-verses       # build_krv_seed_sql.py 실행
-make build-person-meta       # build_person_meta_json.py (모든 인물 카탈로그 + 아바타 프롬프트)
+make build-character-meta       # build_character_meta_json.py (모든 인물 카탈로그 + 아바타 프롬프트)
 make seed-stories            # build_200_stories_seed_sql.py (→ person-meta 의존)
-make seed-persons            # build_persons_seed_sql.py (→ person-meta 의존)
+make seed-characters            # build_characters_seed_sql.py (→ person-meta 의존)
 make generate-avatars        # generate_avatars_vertex.py (→ person-meta 의존, 기존 png 보존)
 make generate-story-images   # generate_event_story_images_vertex.py
 make thumbnails              # generate_runtime_thumbnails.py (→ avatars, story-images)
 
 # 묶음 타겟
-make seed-stories-persons    # seed-stories + seed-persons (권장, apply-seeds-stories-persons 와 대칭)
-make seed-all                # seed-bible-verses + seed-stories + seed-persons
+make seed-stories-characters    # seed-stories + seed-characters (권장, apply-seeds-stories-characters 와 대칭)
+make seed-all                # seed-bible-verses + seed-stories + seed-characters
 make generate-all            # generate-avatars + generate-story-images + thumbnails
 make all                     # seed-all + generate-all
 ```
@@ -222,7 +222,7 @@ assets/
   "time_precision": "approx",
   "story_index": 1,
   "story_scenes": ["장면1 설명", "장면2", "장면3", "장면4"],
-  "scene_persons": [[], ["god"], [], []]
+  "scene_characters": [[], ["god"], [], []]
 }
 ```
 
@@ -244,14 +244,14 @@ gcloud auth application-default login
 
 ## 8. 실행 순서 (전체 초기 세팅 — drop & recreate)
 
-> psql 통해 적용 (`make db-init`, `make apply-bible-verses-seeds`, `make apply-seeds-stories-persons`).
+> psql 통해 적용 (`make db-init`, `make apply-bible-verses-seeds`, `make apply-seeds-stories-characters`).
 
 1. `make seed-bible-verses` → 분할 SQL `krv_bible_verses_part_*.sql` 생성
-2. `make seed-stories-persons` → `persons_seed.sql` + `200_stories_seed_part_*.sql` 생성
-   (내부에서 `build-person-meta`가 한 번 실행되어 `person_meta.json`도 갱신)
+2. `make seed-stories-characters` → `characters_seed.sql` + `200_stories_seed_part_*.sql` 생성
+   (내부에서 `build-character-meta`가 한 번 실행되어 `character_meta.json`도 갱신)
 3. `make db-init` — 스키마, 함수, 트리거, RLS, eras 시드 (drop & recreate)
 4. `make apply-bible-verses-seeds` — KRV 31,904절 적용 (1회만)
-5. `make apply-seeds-stories-persons` — persons + events 적용 (UPSERT)
+5. `make apply-seeds-stories-characters` — persons + events 적용 (UPSERT)
 6. `make generate-avatars` (Vertex 비용; 기존 `assets/avatars/{code}.png`는 자동 보존, 신규만 생성)
 7. `make generate-story-images` (장면 이미지 필요 시)
 8. `make thumbnails` (앱 번들용 썸네일 생성)
@@ -262,6 +262,6 @@ gcloud auth application-default login
 ⚠️ **반드시 먼저**: 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json` (또는 `ENV=prod` 버전) 으로 DB의 published events를 JSON으로 역추출해 복원한다. 이 사전 조건을 빼먹고 부분 상태에서 빌드하면 기존 인물 description이 손상된다.
 
 사전 조건 충족 후:
-`make seed-stories-persons && make apply-seeds-stories-persons && make generate-avatars && make thumbnails && make update-pubspec-assets`.
+`make seed-stories-characters && make apply-seeds-stories-characters && make generate-avatars && make thumbnails && make update-pubspec-assets`.
 
 단계별 동작과 안전성 근거(UPSERT PK, description 덮어쓰기 주의, SKIP 조건)는 [CONTENT_UPDATE.md §2.1b](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.

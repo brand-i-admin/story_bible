@@ -93,9 +93,9 @@ void main() {
 
   tearDown(() => container.dispose());
 
-  test('selectEra loads persons and events', () async {
-    when(() => mockRepo.fetchPersonsByEra(any()))
-        .thenAnswer((_) async => [/* mock persons */]);
+  test('selectEra loads characters and events', () async {
+    when(() => mockRepo.fetchCharactersByEra(any()))
+        .thenAnswer((_) async => [/* mock characters */]);
     when(() => mockRepo.fetchEventsByEra(any()))
         .thenAnswer((_) async => [/* mock events */]);
 
@@ -192,7 +192,7 @@ include: package:flutter_lints/flutter.yaml
 test/
 ├── models/
 │   ├── era_test.dart
-│   ├── person_test.dart
+│   ├── character_test.dart
 │   ├── story_event_test.dart
 │   └── bible_verse_test.dart
 ├── state/
@@ -203,7 +203,7 @@ test/
 └── widgets/
     ├── era_selector_test.dart
     ├── search_box_test.dart
-    └── person_panel_test.dart
+    └── character_panel_test.dart
 ```
 
 - 파일명: `{원본파일명}_test.dart`
@@ -273,6 +273,6 @@ flutter test test/golden/
 | 상태 (Controller + State) | 2 | 38 | ✅ 주요 메소드 27개 + copyWith 11개 |
 | 리포지토리 순수 함수 | 2 | 29 | ✅ @visibleForTesting 전부 |
 | 유틸 순수 함수 | 4 | 70 | ✅ 전 함수 완전 |
-| 위젯 | 1 | 6 | PersonAvatar fallback |
+| 위젯 | 1 | 6 | CharacterAvatar fallback |
 | 기본 | 1 | 1 | sanity |
 | **합계** | **19** | **183** | — |

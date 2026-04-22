@@ -1,5 +1,5 @@
-class Person {
-  const Person({
+class Character {
+  const Character({
     required this.id,
     required this.code,
     required this.name,

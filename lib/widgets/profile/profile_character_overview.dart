@@ -4,17 +4,17 @@
 // ProfileTabPageState 확장으로 정의 (private 멤버 접근 가능).
 part of '../profile_tab_page.dart';
 
-extension ProfilePersonOverviewExt on ProfileTabPageState {
-  Future<void> _openProfilePersonOverview({
-    required Person person,
+extension ProfileCharacterOverviewExt on ProfileTabPageState {
+  Future<void> _openProfileCharacterOverview({
+    required Character character,
     required Set<String> completedEventIds,
   }) async {
     final repo = ref.read(storyRepositoryProvider);
-    final progressData = _profileStudyProgressByPersonCode[person.code];
+    final progressData = _profileStudyProgressByCharacterCode[character.code];
     final completedCount = progressData?.completedCount ?? 0;
     final totalCount = progressData?.totalCount ?? 0;
     final progress = progressData?.fraction ?? 0.0;
-    final eventsFuture = repo.fetchEventsForPerson(person.code);
+    final eventsFuture = repo.fetchEventsForCharacter(character.code);
 
     await showGeneralDialog<void>(
       context: context,
@@ -47,7 +47,7 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                PersonAvatar(person: person, size: 58),
+                                CharacterAvatar(character: character, size: 58),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
@@ -61,7 +61,7 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
                                           Expanded(
                                             flex: 4,
                                             child: Text(
-                                              person.name,
+                                              character.name,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
@@ -121,11 +121,11 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
                                       ),
                                       const SizedBox(height: 10),
                                       Text(
-                                        ((person.description ?? '')
+                                        ((character.description ?? '')
                                                     .trim()
                                                     .isNotEmpty
-                                                ? person.description
-                                                : person.tagline) ??
+                                                ? character.description
+                                                : character.tagline) ??
                                             '아직 등록된 인물 소개가 없습니다.',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,

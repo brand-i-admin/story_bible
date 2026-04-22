@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
-class PersonOption {
-  const PersonOption({required this.code, required this.name});
+class CharacterOption {
+  const CharacterOption({required this.code, required this.name});
   final String code;
   final String name;
 }
 
 /// 등록 폼 안에서 인물 코드 리스트를 관리한다.
 ///
-/// - DB 의 persons 테이블에서 가져온 [available] 을 자동완성 후보로 보여준다.
+/// - DB 의 characters 테이블에서 가져온 [available] 을 자동완성 후보로 보여준다.
 /// - 사용자는 자유롭게 신규 코드도 입력할 수 있다 (배포 시 placeholder 로 자동 생성).
 /// - 선택된 코드는 chip 으로 보여주고, x 로 제거 가능.
-class PersonCodesPicker extends StatefulWidget {
-  const PersonCodesPicker({
+class CharacterCodesPicker extends StatefulWidget {
+  const CharacterCodesPicker({
     super.key,
     required this.available,
     required this.initial,
     required this.onChanged,
   });
 
-  final List<PersonOption> available;
+  final List<CharacterOption> available;
   final List<String> initial;
   final ValueChanged<List<String>> onChanged;
 
   @override
-  State<PersonCodesPicker> createState() => _PersonCodesPickerState();
+  State<CharacterCodesPicker> createState() => _CharacterCodesPickerState();
 }
 
-class _PersonCodesPickerState extends State<PersonCodesPicker> {
+class _CharacterCodesPickerState extends State<CharacterCodesPicker> {
   late List<String> _selected;
   final _inputCtrl = TextEditingController();
 
@@ -72,12 +72,12 @@ class _PersonCodesPickerState extends State<PersonCodesPicker> {
           children: [
             for (final code in _selected)
               InputChip(
-                key: ValueKey('person_chip_$code'),
+                key: ValueKey('character_chip_$code'),
                 label: Text(code),
                 onDeleted: () => _remove(code),
                 deleteIcon: Icon(
                   Icons.close,
-                  key: ValueKey('person_chip_remove_$code'),
+                  key: ValueKey('character_chip_remove_$code'),
                   size: 16,
                 ),
               ),
@@ -87,10 +87,10 @@ class _PersonCodesPickerState extends State<PersonCodesPicker> {
         Row(
           children: [
             Expanded(
-              child: Autocomplete<PersonOption>(
+              child: Autocomplete<CharacterOption>(
                 optionsBuilder: (text) {
                   final q = text.text.trim().toLowerCase();
-                  if (q.isEmpty) return const Iterable<PersonOption>.empty();
+                  if (q.isEmpty) return const Iterable<CharacterOption>.empty();
                   return widget.available.where(
                     (o) =>
                         o.code.toLowerCase().contains(q) ||
@@ -111,7 +111,7 @@ class _PersonCodesPickerState extends State<PersonCodesPicker> {
                         }
                       });
                       return TextField(
-                        key: const ValueKey('person_picker_input'),
+                        key: const ValueKey('character_picker_input'),
                         controller: controller,
                         focusNode: focusNode,
                         decoration: const InputDecoration(
@@ -128,7 +128,7 @@ class _PersonCodesPickerState extends State<PersonCodesPicker> {
             ),
             const SizedBox(width: 8),
             FilledButton.tonal(
-              key: const ValueKey('person_picker_add'),
+              key: const ValueKey('character_picker_add'),
               onPressed: () => _add(_inputCtrl.text),
               child: const Text('추가'),
             ),

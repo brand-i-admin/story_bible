@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/bible_verse.dart';
+import '../models/character.dart';
 import '../models/era.dart';
-import '../models/person.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 
@@ -22,17 +22,17 @@ class StoryRepository {
     return rows.map<Era>((row) => Era.fromMap(row)).toList();
   }
 
-  Future<List<Person>> fetchPersonsByEra(String eraId) async {
-    // 과거에는 person_eras view + persons!inner resource embedding 으로 조인했으나,
+  Future<List<Character>> fetchCharactersByEra(String eraId) async {
+    // 과거에는 character_eras view + characters!inner resource embedding 으로 조인했으나,
     // view 가 WITH + group by + row_number() 구조라 PostgREST 가 FK 를 자동
-    // 추론하지 못해 PGRST200 이 발생한다. list_persons_by_era RPC 로 우회.
+    // 추론하지 못해 PGRST200 이 발생한다. list_characters_by_era RPC 로 우회.
     final rows =
-        await _client.rpc('list_persons_by_era', params: {'p_era_id': eraId})
+        await _client.rpc('list_characters_by_era', params: {'p_era_id': eraId})
             as List<dynamic>;
 
-    return rows.map<Person>((row) {
+    return rows.map<Character>((row) {
       final map = row as Map<String, dynamic>;
-      return Person(
+      return Character(
         id: map['id'] as String,
         code: map['code'] as String,
         name: map['name'] as String,
@@ -53,27 +53,27 @@ class StoryRepository {
     return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 
-  Future<List<StoryEvent>> fetchEventsForPerson(String personCode) async {
+  Future<List<StoryEvent>> fetchEventsForCharacter(String characterCode) async {
     final rows = await _client
         .from('events_ordered')
         .select()
-        .contains('person_codes', <String>[personCode])
+        .contains('character_codes', <String>[characterCode])
         .order('global_rank', ascending: true);
     return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 
   /// 인물별 첫 등장 시점을 [StoryEvent.globalRank] 기준으로 반환한다.
-  /// 키는 `persons.code` (어드민/외부 기여 모두 코드 기반).
-  Future<Map<String, int>> fetchPersonTimelineOrder() async {
+  /// 키는 `characters.code` (어드민/외부 기여 모두 코드 기반).
+  Future<Map<String, int>> fetchCharacterTimelineOrder() async {
     final rows = await _client
         .from('events_ordered')
-        .select('global_rank, person_codes')
+        .select('global_rank, character_codes')
         .order('global_rank', ascending: true);
 
     final firstAppearanceByCode = <String, int>{};
     for (final row in rows) {
       final globalRank = (row['global_rank'] as num?)?.toInt() ?? 0;
-      final codes = row['person_codes'];
+      final codes = row['character_codes'];
       if (codes is! List) {
         continue;
       }
@@ -95,7 +95,7 @@ class StoryRepository {
         .select()
         .order('global_rank', ascending: true);
 
-    final personNameByCode = await _fetchActivePersonNamesByCode();
+    final characterNameByCode = await _fetchActiveCharacterNamesByCode();
 
     final tokens = normalized
         .split(RegExp(r'\s+'))
@@ -105,8 +105,8 @@ class StoryRepository {
     final scored = <_ScoredEvent>[];
     for (final row in rows) {
       final event = StoryEvent.fromMap(row);
-      final personNames = event.personCodes
-          .map((code) => personNameByCode[code])
+      final characterNames = event.characterCodes
+          .map((code) => characterNameByCode[code])
           .whereType<String>()
           .map((name) => name.toLowerCase())
           .toList();
@@ -114,7 +114,7 @@ class StoryRepository {
         event,
         normalized,
         tokens,
-        personNames: personNames,
+        characterNames: characterNames,
       );
       if (score > 0) {
         scored.add(_ScoredEvent(event: event, score: score));
@@ -132,8 +132,8 @@ class StoryRepository {
     return scored.take(20).map((entry) => entry.event).toList();
   }
 
-  Future<Map<String, String>> _fetchActivePersonNamesByCode() async {
-    final rows = await _client.from('persons').select('code, name');
+  Future<Map<String, String>> _fetchActiveCharacterNamesByCode() async {
+    final rows = await _client.from('characters').select('code, name');
     final result = <String, String>{};
     for (final row in rows) {
       final code = row['code'] as String?;
@@ -231,13 +231,13 @@ int scoreEventMatch(
   StoryEvent event,
   String query,
   List<String> tokens, {
-  List<String> personNames = const [],
+  List<String> characterNames = const [],
 }) {
   final title = event.title.toLowerCase();
   final summary = (event.summary ?? '').toLowerCase();
   final scenesText = event.storyScenes.join(' ').toLowerCase();
   final placeName = (event.placeName ?? '').toLowerCase();
-  final personText = personNames.join(' ').toLowerCase();
+  final characterText = characterNames.join(' ').toLowerCase();
 
   var score = 0;
 
@@ -253,7 +253,7 @@ int scoreEventMatch(
   if (placeName.contains(query)) {
     score += 30;
   }
-  if (personText.contains(query)) {
+  if (characterText.contains(query)) {
     score += 80;
   }
 
@@ -270,7 +270,7 @@ int scoreEventMatch(
     if (placeName.contains(token)) {
       score += 5;
     }
-    if (personText.contains(token)) {
+    if (characterText.contains(token)) {
       score += 18;
     }
   }

@@ -4,10 +4,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_user_profile.dart';
 import '../models/bible_verse.dart';
+import '../models/character.dart';
+import '../models/character_study_progress.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/paged_result.dart';
-import '../models/person.dart';
-import '../models/person_study_progress.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/user_note.dart';
 
@@ -304,9 +304,9 @@ class UserRepository {
         .eq('id', prayerLinkId);
   }
 
-  Future<List<PersonStudyProgress>> fetchPersonStudyProgress({
+  Future<List<CharacterStudyProgress>> fetchCharacterStudyProgress({
     required String userId,
-    required List<Person> people,
+    required List<Character> people,
   }) async {
     final completedEventIds = await _client
         .from('user_event_progress')
@@ -319,21 +319,21 @@ class UserRepository {
 
     final rows = await _client
         .from('events_ordered')
-        .select('id, person_codes')
+        .select('id, character_codes')
         .order('global_rank', ascending: true);
 
-    final totalByPersonCode = <String, Set<String>>{};
-    final completedByPersonCode = <String, Set<String>>{};
+    final totalByCharacterCode = <String, Set<String>>{};
+    final completedByCharacterCode = <String, Set<String>>{};
     for (final row in rows) {
       final eventId = row['id'] as String;
-      final codes = row['person_codes'];
+      final codes = row['character_codes'];
       if (codes is! List) {
         continue;
       }
       for (final code in codes.whereType<String>()) {
-        totalByPersonCode.putIfAbsent(code, () => <String>{}).add(eventId);
+        totalByCharacterCode.putIfAbsent(code, () => <String>{}).add(eventId);
         if (completedIdSet.contains(eventId)) {
-          completedByPersonCode
+          completedByCharacterCode
               .putIfAbsent(code, () => <String>{})
               .add(eventId);
         }
@@ -342,10 +342,11 @@ class UserRepository {
 
     return people
         .map(
-          (person) => PersonStudyProgress(
-            person: person,
-            completedCount: completedByPersonCode[person.code]?.length ?? 0,
-            totalCount: totalByPersonCode[person.code]?.length ?? 0,
+          (character) => CharacterStudyProgress(
+            character: character,
+            completedCount:
+                completedByCharacterCode[character.code]?.length ?? 0,
+            totalCount: totalByCharacterCode[character.code]?.length ?? 0,
           ),
         )
         .toList(growable: false);

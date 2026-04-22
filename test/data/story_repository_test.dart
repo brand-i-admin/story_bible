@@ -10,7 +10,7 @@ StoryEvent _event({
   String? summary,
   String? placeName,
   List<String> storyScenes = const [],
-  List<String> personCodes = const [],
+  List<String> characterCodes = const [],
 }) {
   return StoryEvent(
     id: id,
@@ -18,7 +18,7 @@ StoryEvent _event({
     title: title,
     summary: summary,
     storyScenes: storyScenes,
-    scenePersons: const [],
+    sceneCharacters: const [],
     startYear: null,
     endYear: null,
     timePrecision: 'approx',
@@ -28,7 +28,7 @@ StoryEvent _event({
     placeName: placeName,
     lat: null,
     lng: null,
-    personCodes: personCodes,
+    characterCodes: characterCodes,
     bibleRefs: const <BibleRef>[],
   );
 }
@@ -59,7 +59,7 @@ void main() {
         event,
         '모세',
         const ['모세'],
-        personNames: const ['모세'],
+        characterNames: const ['모세'],
       );
       expect(score, 98);
     });

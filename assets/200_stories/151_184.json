@@ -2,7 +2,7 @@
   {
     "title": "151 세례 요한의 탄생 예고",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "zechariah",
       "gabriel",
       "elizabeth"
@@ -28,7 +28,7 @@
       "놀람이 번진다",
       "사가랴가 말을 못하게 되고, 밖에 나온 그는 손짓만 한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "gabriel"
@@ -40,7 +40,7 @@
   {
     "title": "152 마리아 수태고지와 찬양",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "mary",
       "gabriel",
       "elizabeth"
@@ -66,7 +66,7 @@
       "마리아가 길을 떠나 유대 산지로 달려간다",
       "마리아와 엘리사벳이 결연한 표정으로 선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "gabriel"
       ],
@@ -85,7 +85,7 @@
   {
     "title": "153 예수 탄생과 목자들",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "mary",
       "joseph",
@@ -112,7 +112,7 @@
       "들판의 목자들 앞에 천사가 나타나 천사가 나타나고 목자들이 놀라 눈을 들어 올린다",
       "목자들이 급히 달려와 아기를 보고, 돌아가며 소문을 퍼뜨린다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "mary",
         "joseph"
@@ -125,7 +125,7 @@
   {
     "title": "154 동방박사와 피신",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "mary",
       "joseph",
@@ -153,7 +153,7 @@
       "꿈에서 경고를 받고 박사들이 다른 길로 돌아간다",
       "요셉이 급히 가족을 깨워 밤길로 애굽을 향해 떠난다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -165,7 +165,7 @@
   {
     "title": "155 어린 예수의 성전 사건",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "mary",
       "joseph"
@@ -191,7 +191,7 @@
       "성전 안, 예수가 교사들과 질문·대답을 나누고 모두가 놀란다",
       "예수 앞쪽에 서 있고, 부모가 말없이 바라본다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "mary",
         "jesus"
@@ -208,7 +208,7 @@
   {
     "title": "156 예수의 세례",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "john_the_baptist"
     ],
@@ -248,7 +248,7 @@
       "물에서 올라오는 순간 하늘이 열리는 듯한 빛이 비친다",
       "하늘에서 빛이 비치고, 사람들이 숨을 삼킨다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus",
         "john_the_baptist"
@@ -264,7 +264,7 @@
   {
     "title": "157 광야 시험",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "tempter"
     ],
@@ -299,7 +299,7 @@
       "높은 곳의 시험, 예수는 흔들리지 않는다",
       "유혹이 물러가고, 고요 속에 예수가 다시 길을 나선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus"
       ],
@@ -317,7 +317,7 @@
   {
     "title": "158 제자 부르심: 그물을 버리다",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "peter",
       "andrew",
@@ -360,7 +360,7 @@
       "배가 뒤로 밀리며 그물이 가득하다",
       "그들이 그물을 내려놓고 예수를 따라 길을 걷는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus"
       ],
@@ -376,7 +376,7 @@
   {
     "title": "159 산상수훈: 복 있는 사람",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus"
     ],
     "place_name": "갈릴리 산지(전승)",
@@ -400,7 +400,7 @@
       "너희는 빛이라 말하며 예수가 손으로 도시를 가리킨다",
       "반석 위에 집을 짓는 자 비유로 마무리되고 군중이 놀란다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus"
       ],
@@ -414,7 +414,7 @@
   {
     "title": "160 폭풍을 잠잠케 하심",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "disciples"
     ],
@@ -449,7 +449,7 @@
       "예수님이 앞쪽에 서서 표정과 몸짓이 또렷하게 보인다",
       "제자들이 서로를 바라본다, 두려움과 놀람이 엇갈린다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "disciples"
       ],
@@ -467,7 +467,7 @@
   {
     "title": "161 야이로의 딸과 혈루증 여인",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "jairus",
       "bleeding_woman",
@@ -504,7 +504,7 @@
       "예수 앞쪽에 서 있고, 여인이 울며 고개 숙인다",
       "집에 도착해 달리다굼이 울리고, 아이가 일어나는 순간 모두가 숨을 삼킨다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "jesus"
@@ -518,7 +518,7 @@
   {
     "title": "162 오병이어",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "disciples"
     ],
@@ -558,7 +558,7 @@
       "떡과 물고기가 들려오고, 예수가 축사하며 떼어 준다",
       "사람들이 배부르고 바구니가 쌓인다, 제자들이 말없이 서로를 본다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "disciples"
       ],
@@ -576,7 +576,7 @@
   {
     "title": "163 변화산",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "peter",
       "james",
@@ -615,7 +615,7 @@
       "베드로가 결연한 표정으로 선다",
       "하늘에서 빛이 비치고, 제자들이 엎드린다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus"
       ],
@@ -633,7 +633,7 @@
   {
     "title": "164 베드로의 고백과 수난 예고",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "peter",
       "disciples"
@@ -669,7 +669,7 @@
       "예수님과 베드로가 함께 서서 서로를 바라본다",
       "제자들이 충격에 잠긴다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "disciples"
       ],
@@ -688,7 +688,7 @@
   {
     "title": "165 비유: 선한 사마리아인",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "lawyer",
       "good_samaritan"
@@ -714,7 +714,7 @@
       "사마리아인이 멈추어 상처를 싸매고 짐승에 태운다",
       "예수 앞쪽에 서 있고, 교사가 말문이 막힌다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -726,7 +726,7 @@
   {
     "title": "166 비유: 탕자의 귀환",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "prodigal_son",
       "father",
@@ -753,7 +753,7 @@
       "집으로 돌아오는 길, 아버지가 달려가 껴안는다",
       "배경과 분위기만 보이는"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -763,7 +763,7 @@
   {
     "title": "167 나사로의 부활",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "lazarus",
       "martha",
@@ -790,7 +790,7 @@
       "예수님이 두 손을 들어 다급하게 몸짓한다",
       "나사로가 걸어 나오고 군중이 얼어붙는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "jesus"
@@ -804,7 +804,7 @@
   {
     "title": "168 예루살렘 입성",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "disciples",
       "crowd"
@@ -845,7 +845,7 @@
       "호산나!, 환호가 퍼지고 종교 지도자들의 눈빛이 굳는다",
       "예수가 성을 바라보며 잠깐 멈춘다, 분위기가 바뀐다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "disciples"
       ],
@@ -861,7 +861,7 @@
   {
     "title": "169 성전 정화",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "moneychangers"
     ],
@@ -901,7 +901,7 @@
       "내 집은 기도하는 집 선언에 분위기가 얼어붙는다",
       "지도자들이 멀리서 이를 갈며 서로 눈짓한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "jesus"
@@ -913,7 +913,7 @@
   {
     "title": "170 최후의 만찬",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "disciples",
       "judas"
@@ -954,7 +954,7 @@
       "예수님이 결연한 표정으로 선다",
       "유다가 자리에서 일어나 나가고, 문이 닫히며 방 안이 무거워진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "disciples",
         "jesus"
@@ -971,7 +971,7 @@
   {
     "title": "171 겟세마네: 뜻이 이루어지다",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "peter",
       "james",
@@ -1008,7 +1008,7 @@
       "제자들이 잠든 모습을 보고 예수가 조용히 흔든다",
       "예수님이 결연한 표정으로 선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus"
       ],
@@ -1026,7 +1026,7 @@
   {
     "title": "172 체포: 배신의 입맞춤",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "judas",
       "disciples"
@@ -1067,7 +1067,7 @@
       "제자들이 소란에 휩싸이고 누군가 칼을 휘두른다, 직접 묘사 최소",
       "예수가 묶여 끌려가고 제자들은 어둠 속으로 흩어진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "judas",
@@ -1085,7 +1085,7 @@
   {
     "title": "173 재판: 빌라도 앞",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "pilate",
       "chief_priests"
@@ -1126,7 +1126,7 @@
       "배경과 분위기만 보이는",
       "빌라도가 손을 씻는 제스처, 예수에게 판결이 내려진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jesus"
       ],
@@ -1140,7 +1140,7 @@
   {
     "title": "174 십자가: 끝까지 사랑",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus"
     ],
     "place_name": "골고다(예루살렘)",
@@ -1179,7 +1179,7 @@
       "예수의 마지막 말들이 남는다, 다 이루었다",
       "예수님이 휘장이 찢어졌다는 소식, 백부장이 고개 숙인다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -1193,7 +1193,7 @@
   {
     "title": "175 부활과 승천: 새 시작",
     "era": "era_nt_public_ministry",
-    "persons": [
+    "characters": [
       "jesus",
       "mary_magdalene",
       "disciples"
@@ -1234,7 +1234,7 @@
       "예수가 제자들에게 사명을 준다, 땅 끝까지 증인이 되라",
       "감람산에서 승천, 제자들이 하늘을 바라보며 서 있다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "jesus"
@@ -1251,7 +1251,7 @@
   {
     "title": "176 오순절: 성령강림",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "peter",
       "apostles",
       "believers"
@@ -1277,7 +1277,7 @@
       "불의 혀 같은 것이 나타나 머물고, 각기 다른 말이 터져 나온다",
       "밖의 군중이 몰려든다, 무슨 일이냐?, 웅성거림이 커진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -1287,7 +1287,7 @@
   {
     "title": "177 베드로 설교: 하루에 삼천",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "peter",
       "crowd"
     ],
@@ -1312,7 +1312,7 @@
       "배경과 분위기만 보이는",
       "물가에서 세례가 이어지고, 떡을 떼는 공동체 앞쪽에 서 있고, 으로 전환된다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "peter"
       ],
@@ -1324,7 +1324,7 @@
   {
     "title": "178 성전 미문 치유와 첫 박해",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "peter",
       "john",
       "lame_man"
@@ -1355,7 +1355,7 @@
       "군중이 몰려들고 베드로가 예수를 증거한다",
       "관리들이 들이닥쳐 사도들을 붙잡는다, 밤이 깊어간다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "peter"
       ],
@@ -1369,7 +1369,7 @@
   {
     "title": "179 아나니아와 삽비라",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "ananias",
       "sapphira",
       "peter"
@@ -1395,7 +1395,7 @@
       "충격이 퍼지고 회중이 얼어붙는다, 직접 묘사 최소",
       "삽비라가 들어오고 같은 질문이 반복되며 두려움이 공동체를 덮는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "ananias"
       ],
@@ -1409,7 +1409,7 @@
   {
     "title": "180 일곱 집사와 스데반 순교",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "stephen",
       "apostles",
       "saul"
@@ -1440,7 +1440,7 @@
       "분노가 폭발하고 스데반이 하늘을 바라본다, 직접 묘사 최소",
       "사울이 그 광경을 지켜본다, 그의 눈빛이 단단해진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "apostles"
       ],
@@ -1454,7 +1454,7 @@
   {
     "title": "181 사마리아 복음: 빌립의 전도",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "philip",
       "samaritans"
     ],
@@ -1479,7 +1479,7 @@
       "기쁨이 도시를 채우고, 사도들이 내려와 기도한다",
       "새 공동체가 세워지고 경계가 허물어짐을 암시한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "philip"
@@ -1491,7 +1491,7 @@
   {
     "title": "182 에티오피아 내시: 길 위의 만남",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "philip",
       "ethiopian_eunuch"
     ],
@@ -1516,7 +1516,7 @@
       "물가에서 세례, 내시가 환하게 웃는다",
       "내시가 기쁨으로 길을 가고, 빌립은 다른 곳으로 인도된다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "philip"
@@ -1530,7 +1530,7 @@
   {
     "title": "183 사울 회심: 다메섹의 빛",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "saul",
       "ananias"
     ],
@@ -1555,7 +1555,7 @@
       "눈먼 사울이 손에 이끌려 들어간다, 도시가 낯설어진다",
       "아나니아가 안수하자 사울이 다시 보고, 조용히 일어난다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "saul"
       ],
@@ -1574,7 +1574,7 @@
   {
     "title": "184 고넬료: 이방인에게도",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "peter",
       "cornelius"
     ],
@@ -1604,7 +1604,7 @@
       "베드로가 결연한 표정으로 선다",
       "성령의 표징에 모두가 놀란다, 베드로가 고개를 끄덕인다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "peter"

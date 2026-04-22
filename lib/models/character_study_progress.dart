@@ -1,13 +1,13 @@
-import 'person.dart';
+import 'character.dart';
 
-class PersonStudyProgress {
-  const PersonStudyProgress({
-    required this.person,
+class CharacterStudyProgress {
+  const CharacterStudyProgress({
+    required this.character,
     required this.completedCount,
     required this.totalCount,
   });
 
-  final Person person;
+  final Character character;
   final int completedCount;
   final int totalCount;
 

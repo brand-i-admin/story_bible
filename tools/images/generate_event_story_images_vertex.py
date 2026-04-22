@@ -157,9 +157,9 @@ def parse_args() -> argparse.Namespace:
         help="Create folders and manifest only, without API calls.",
     )
     parser.add_argument(
-        "--persons-seed-sql",
-        default="supabase/200_stories/persons_seed.sql",
-        help="Persons seed SQL used to recover canonical Korean person names.",
+        "--characters-seed-sql",
+        default="supabase/200_stories/characters_seed.sql",
+        help="Characters seed SQL used to recover canonical Korean character names.",
     )
     return parser.parse_args()
 
@@ -328,7 +328,7 @@ def normalize_persons(
     code_to_name: dict[str, str],
 ) -> list[dict[str, Any]]:
     codes = parse_event_person_codes(event)
-    persons = [
+    characters = [
         {
             "code": code,
             "name": code_to_name.get(code, code),
@@ -337,10 +337,13 @@ def normalize_persons(
         }
         for index, code in enumerate(codes, start=1)
     ]
-    persons.sort(
-        key=lambda person: (int(person["person_sequence"]), str(person["code"]))
+    characters.sort(
+        key=lambda character: (
+            int(character["person_sequence"]),
+            str(character["code"]),
+        )
     )
-    return persons
+    return characters
 
 
 def sanitize_dirname(raw: str) -> str:
@@ -378,12 +381,12 @@ def build_avatar_index(avatars_dir: Path) -> dict[str, Path]:
     return mapping
 
 
-def match_person_codes(sentence: str, persons: list[dict[str, Any]]) -> list[str]:
+def match_character_codes(sentence: str, characters: list[dict[str, Any]]) -> list[str]:
     lowered = sentence.lower()
     matched: list[str] = []
-    for person in persons:
-        code = str(person["code"]).strip().lower()
-        name = str(person.get("name", "")).strip()
+    for character in characters:
+        code = str(character["code"]).strip().lower()
+        name = str(character.get("name", "")).strip()
         code_match = bool(code) and code in lowered
         name_match = bool(name) and (
             name in sentence or name.replace(" ", "") in sentence.replace(" ", "")
@@ -398,15 +401,17 @@ def scene_person_codes_for(
     *,
     scene_index: int,
     scene_text: str,
-    persons: list[dict[str, Any]],
+    characters: list[dict[str, Any]],
     code_to_name: dict[str, str],
 ) -> list[str]:
-    scene_persons = event.get("scene_persons")
-    event_person_codes = [str(person["code"]).strip().lower() for person in persons]
+    scene_characters = event.get("scene_characters")
+    event_person_codes = [
+        str(character["code"]).strip().lower() for character in characters
+    ]
     explicit_codes: list[str] = []
-    if isinstance(scene_persons, list) and scene_index < len(scene_persons):
+    if isinstance(scene_characters, list) and scene_index < len(scene_characters):
         explicit_codes = normalize_scene_persons_list(
-            scene_persons[scene_index],
+            scene_characters[scene_index],
             event_person_codes,
         )
 
@@ -418,7 +423,7 @@ def scene_person_codes_for(
     if explicit_codes or detected_codes:
         return dedupe_preserve_order(explicit_codes + detected_codes)
 
-    return match_person_codes(scene_text, persons)
+    return match_character_codes(scene_text, characters)
 
 
 def scene_reference_codes_for(
@@ -426,10 +431,12 @@ def scene_reference_codes_for(
     *,
     scene_index: int,
     scene_person_codes: list[str],
-    persons: list[dict[str, Any]],
+    characters: list[dict[str, Any]],
 ) -> list[str]:
     scene_reference_persons = event.get("scene_reference_persons")
-    event_person_codes = [str(person["code"]).strip().lower() for person in persons]
+    event_person_codes = [
+        str(character["code"]).strip().lower() for character in characters
+    ]
     if isinstance(scene_reference_persons, list) and scene_index < len(
         scene_reference_persons
     ):
@@ -593,7 +600,7 @@ def build_parts(
         "If reference avatar images are attached, each attached character is canonical and must stay recognizable. "
         "Preserve the attached character's face identity, hair, and recognizable core design. "
         "If the scene description explicitly requests a different age, costume, role, or physical state, keep the same identity but follow that requested change. "
-        "Do not redesign, replace, or turn the attached character into a different person. "
+        "Do not redesign, replace, or turn the attached character into a different character. "
         f"Scene reference characters: {char_text}."
     )
 
@@ -702,7 +709,7 @@ def main() -> int:
         event_dir = output_root / dirname
         event_dir.mkdir(parents=True, exist_ok=True)
 
-        persons = normalize_persons(event, code_to_name=code_to_name)
+        characters = normalize_persons(event, code_to_name=code_to_name)
         scenes = extract_story_scenes(event, max_scenes=args.max_scenes)
         if not scenes:
             print(f"[SKIP] {idx:03d} {title} -> no usable story_scenes")
@@ -715,14 +722,14 @@ def main() -> int:
                 event,
                 scene_index=scene_index - 1,
                 scene_text=scene_text,
-                persons=persons,
+                characters=characters,
                 code_to_name=code_to_name,
             )
             reference_person_codes = scene_reference_codes_for(
                 event,
                 scene_index=scene_index - 1,
                 scene_person_codes=scene_person_codes,
-                persons=persons,
+                characters=characters,
             )
             visual_scene_text = sanitize_scene_text_for_visual(
                 scene_text,
@@ -769,7 +776,7 @@ def main() -> int:
                 manifest_entries.append(manifest_entry)
                 print(
                     f"[DRY]  {idx:03d}.{scene_index:02d} {title} -> {out_file.name} "
-                    f"(scene_persons={scene_person_codes}, ref_persons={reference_person_codes}, refs={reference_codes}, "
+                    f"(scene_characters={scene_person_codes}, ref_persons={reference_person_codes}, refs={reference_codes}, "
                     f"missing_refs={missing_reference_codes})"
                 )
                 continue

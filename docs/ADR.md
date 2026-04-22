@@ -162,29 +162,29 @@
 - **결정**:
   - `events.story_index`(int, era 내 unique) 컬럼만 저장.
   - `events_ordered` view가 `(era_id, story_index)`로 `rank_in_era` + `global_rank`를 계산.
-  - `person_eras`도 view로 전환 — 인물 첫 등장 story_index 기준으로 era 내 자동 정렬.
+  - `character_eras`도 view로 전환 — 인물 첫 등장 story_index 기준으로 era 내 자동 정렬.
   - 어드민의 새 이야기 삽입은 RPC `insert_event_at_position` (선후 이야기 사이에 끼워 넣고 뒤 인덱스 +1 시프트)로 처리.
 - **이유**:
   - 외부 기여 워크플로우에서 "기존 215개 사이에 추가" 시 정렬값을 사전 협상할 필요 없음
   - view가 항상 1..N 연속 정수를 보장 → 클라이언트 정렬 코드 단순
   - `time_sort_key` 보정 메타데이터(`YEAR_OVERRIDES` 등)도 빌더에서 사용처가 줄어 의도가 분명해짐
 
-## ADR-013: events 비정규화 — person_codes / bible_refs를 컬럼으로 흡수
+## ADR-013: events 비정규화 — character_codes / bible_refs를 컬럼으로 흡수
 
 - **상태**: 채택 (2026-04-21)
-- **맥락**: `event_persons.role`, `event_bible_refs.book/chapter/verse` 컬럼이 앱에서
+- **맥락**: `event_characters.role`, `event_bible_refs.book/chapter/verse` 컬럼이 앱에서
   어디에도 안 쓰이고 `display_text`/`person_id`만 소비되고 있었음. 정규화의 효용 없음.
 - **결정**:
-  - `events.person_codes text[]`(GIN 인덱스)로 인물 매핑 흡수 → `event_persons` 테이블 제거.
+  - `events.character_codes text[]`(GIN 인덱스)로 인물 매핑 흡수 → `event_characters` 테이블 제거.
   - `events.bible_refs jsonb`로 성경 참조 통합 → `event_bible_refs` 테이블 제거.
-  - `events.story_scenes`/`scene_persons`도 jsonb로 events row에 보관.
+  - `events.story_scenes`/`scene_characters`도 jsonb로 events row에 보관.
 - **이유**:
   - 한 이벤트 select로 인물 + 성경 참조 + 장면을 모두 회수 (네트워크 round-trip 1회)
-  - 인물별 이벤트 조회는 `person_codes @> ARRAY[code]` + GIN 인덱스로 빠름
+  - 인물별 이벤트 조회는 `character_codes @> ARRAY[code]` + GIN 인덱스로 빠름
   - 향후 어드민 등록도 events 한 번 INSERT로 끝남 (3개 테이블 트랜잭션 불필요)
 - **트레이드오프**: events row 크기는 늘어나지만 215~수천 건 규모에서 무의미.
 
-## ADR-014: persons.is_active 어드민 토글 + mention_count 분리
+## ADR-014: characters.is_active 어드민 토글 + mention_count 분리
 
 - **상태**: 채택 (2026-04-21)
 - **맥락**: 기존 `mention_count >= 2` 필터가 빌드 타임 결정이라 1회 등장 인물은
@@ -196,7 +196,7 @@
   - `mention_count` 컬럼은 어드민 화면에서 참고용으로 표시.
 - **이유**:
   - "1회 등장이지만 중요한 인물" / "여러 번 등장이지만 노출 불필요한 인물"을 어드민이 직접 선별
-  - RLS 정책에서 `persons.is_active = true`만 노출 → 클라이언트가 별도 필터링할 필요 없음
+  - RLS 정책에서 `characters.is_active = true`만 노출 → 클라이언트가 별도 필터링할 필요 없음
 - **결과**: 132명 모두 prompts.json 포함, 그 중 77명만 시드에서 활성으로 INSERT.
 
 ## ADR-015: 외부 기여 제출 폐기 + 스키마 경량화
@@ -229,7 +229,7 @@
   게이트가 필요하고, 콘텐츠 품질 보장을 위해 관리자 승인 게이트도 필요하다.
 - **결정**:
   1. `admin/` 디렉토리 폐기. 재사용 위젯 (`bible_refs_picker`,
-     `person_codes_picker`, `scene_persons_grid`) 만 `lib/widgets/proposal/` 로
+     `character_codes_picker`, `scene_characters_grid`) 만 `lib/widgets/proposal/` 로
      이주해 메인 앱에서 재사용.
   2. 메인 앱 Flutter 코드베이스에 **웹에서만** 노출되는 "이야기 제안" 게시판 탭을
      `kIsWeb` 분기로 추가 (후속 Phase 2~6).

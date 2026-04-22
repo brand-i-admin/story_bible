@@ -25,7 +25,7 @@ def test_event_row_to_json_basic_published_row() -> None:
         "title": "001 창조: 7일과 안식",
         "era_code": "era_primeval",
         "summary": "하나님이 말씀으로 세상을 창조하신다.",
-        "person_codes": ["god"],
+        "character_codes": ["god"],
         "place_name": "메소포타미아(추정)",
         "lat": 31.018,
         "lng": 47.423,
@@ -35,23 +35,23 @@ def test_event_row_to_json_basic_published_row() -> None:
         "time_precision": "approx",
         "story_index": 1,
         "story_scenes": ["장면 1", "장면 2"],
-        "scene_persons": [["god"], []],
+        "scene_characters": [["god"], []],
     }
     result = event_row_to_json(row)
     assert result["title"] == "001 창조: 7일과 안식"
     assert result["era"] == "era_primeval"
-    assert result["persons"] == ["god"]
+    assert result["characters"] == ["god"]
     assert result["lat"] == 31.018
     assert result["lng"] == 47.423
     assert result["bible_ref"] == [{"book": "창", "from": "1:1", "to": "2:3"}]
     assert result["story_index"] == 1
     assert result["story_scenes"] == ["장면 1", "장면 2"]
-    assert result["scene_persons"] == [["god"], []]
+    assert result["scene_characters"] == [["god"], []]
     # 키 순서: 사람이 보던 JSON 포맷과 일치
     assert list(result.keys()) == [
         "title",
         "era",
-        "persons",
+        "characters",
         "place_name",
         "lat",
         "lng",
@@ -62,7 +62,7 @@ def test_event_row_to_json_basic_published_row() -> None:
         "time_precision",
         "story_index",
         "story_scenes",
-        "scene_persons",
+        "scene_characters",
     ]
 
 
@@ -71,7 +71,7 @@ def test_event_row_to_json_handles_nulls_and_missing_fields() -> None:
         "title": "999 빈 이야기",
         "era_code": "era_judges",
         "summary": None,
-        "person_codes": None,
+        "character_codes": None,
         "place_name": None,
         "lat": None,
         "lng": None,
@@ -81,13 +81,13 @@ def test_event_row_to_json_handles_nulls_and_missing_fields() -> None:
         "time_precision": None,
         "story_index": 5,
         "story_scenes": None,
-        "scene_persons": None,
+        "scene_characters": None,
     }
     result = event_row_to_json(row)
-    assert result["persons"] == []
+    assert result["characters"] == []
     assert result["bible_ref"] == []
     assert result["story_scenes"] == []
-    assert result["scene_persons"] == []
+    assert result["scene_characters"] == []
     assert result["time_precision"] == "approx"
     assert result["lat"] is None
     assert result["summary"] == ""
@@ -114,7 +114,7 @@ def test_group_events_by_bucket_groups_and_sorts_within_each_file() -> None:
         {
             **row,
             "summary": "",
-            "person_codes": [],
+            "character_codes": [],
             "place_name": "",
             "lat": None,
             "lng": None,
@@ -123,7 +123,7 @@ def test_group_events_by_bucket_groups_and_sorts_within_each_file() -> None:
             "end_year": None,
             "time_precision": "approx",
             "story_scenes": [],
-            "scene_persons": [],
+            "scene_characters": [],
         }
         for row in rows
     ]
@@ -140,7 +140,7 @@ def test_round_trip_json_serializable() -> None:
         "title": "001 X",
         "era_code": "era_primeval",
         "summary": "s",
-        "person_codes": ["god"],
+        "character_codes": ["god"],
         "place_name": "p",
         "lat": 1.0,
         "lng": 2.0,
@@ -150,7 +150,7 @@ def test_round_trip_json_serializable() -> None:
         "time_precision": "approx",
         "story_index": 1,
         "story_scenes": ["scene"],
-        "scene_persons": [["god"]],
+        "scene_characters": [["god"]],
     }
     out = event_row_to_json(row)
     encoded = json.dumps(out, ensure_ascii=False)

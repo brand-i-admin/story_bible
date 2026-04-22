@@ -90,7 +90,7 @@ def split_sentences(text: str, *, max_sentences: int) -> list[str]:
 def fetch_events(supabase_url: str, supabase_key: str) -> list[dict[str, Any]]:
     endpoint = f"{supabase_url.rstrip('/')}/rest/v1/events"
     params = {
-        "select": "id,code,title,short_story,event_persons(person_sequence,role,persons(code,name))",
+        "select": "id,code,title,short_story,event_persons(person_sequence,role,characters(code,name))",
         "short_story": "not.is.null",
         "limit": "1000",
     }
@@ -115,19 +115,19 @@ def normalize_event(
         return None
 
     raw_event_persons = raw.get("event_persons")
-    persons: list[dict[str, Any]] = []
+    characters: list[dict[str, Any]] = []
     if isinstance(raw_event_persons, list):
         for item in raw_event_persons:
             if not isinstance(item, dict):
                 continue
-            person = item.get("persons")
-            if not isinstance(person, dict):
+            character = item.get("characters")
+            if not isinstance(character, dict):
                 continue
-            code = str(person.get("code") or "").strip()
-            name = str(person.get("name") or "").strip()
+            code = str(character.get("code") or "").strip()
+            name = str(character.get("name") or "").strip()
             if not code:
                 continue
-            persons.append(
+            characters.append(
                 {
                     "code": code,
                     "name": name,
@@ -136,7 +136,7 @@ def normalize_event(
                 }
             )
 
-    persons.sort(key=lambda p: (p["person_sequence"], p["code"]))
+    characters.sort(key=lambda p: (p["person_sequence"], p["code"]))
     sentences = split_sentences(short_story, max_sentences=max_sentences)
 
     return {
@@ -145,7 +145,7 @@ def normalize_event(
         "title": str(raw.get("title") or "").strip(),
         "short_story": short_story,
         "sentences": sentences,
-        "persons": persons,
+        "characters": characters,
     }
 
 

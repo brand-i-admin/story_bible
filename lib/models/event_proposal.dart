@@ -11,7 +11,7 @@ class EventProposal {
     required this.eraId,
     required this.title,
     required this.summary,
-    required this.personCodes,
+    required this.characterCodes,
     required this.placeName,
     required this.lat,
     required this.lng,
@@ -20,7 +20,7 @@ class EventProposal {
     required this.timePrecision,
     required this.bibleRefs,
     required this.storyScenes,
-    required this.scenePersons,
+    required this.sceneCharacters,
     required this.afterStoryIndex,
     required this.status,
     required this.reviewedByUserId,
@@ -36,7 +36,7 @@ class EventProposal {
   final String eraId;
   final String title;
   final String? summary;
-  final List<String> personCodes;
+  final List<String> characterCodes;
   final String? placeName;
   final double? lat;
   final double? lng;
@@ -45,7 +45,7 @@ class EventProposal {
   final String timePrecision;
   final List<Map<String, dynamic>> bibleRefs; // [{book, from, to}, ...]
   final List<String> storyScenes;
-  final List<List<String>> scenePersons;
+  final List<List<String>> sceneCharacters;
   final int? afterStoryIndex;
   final String status; // pending / approved / rejected
   final String? reviewedByUserId;
@@ -66,7 +66,7 @@ class EventProposal {
       eraId: row['era_id'] as String,
       title: row['title'] as String,
       summary: row['summary'] as String?,
-      personCodes: _asStringList(row['person_codes']),
+      characterCodes: _asStringList(row['character_codes']),
       placeName: row['place_name'] as String?,
       lat: (row['lat'] as num?)?.toDouble(),
       lng: (row['lng'] as num?)?.toDouble(),
@@ -75,7 +75,7 @@ class EventProposal {
       timePrecision: (row['time_precision'] as String?) ?? 'approx',
       bibleRefs: _asMapList(row['bible_refs']),
       storyScenes: _asStringList(row['story_scenes']),
-      scenePersons: _asNestedStringList(row['scene_persons']),
+      sceneCharacters: _asNestedStringList(row['scene_characters']),
       afterStoryIndex: (row['after_story_index'] as num?)?.toInt(),
       status: (row['status'] as String?) ?? 'pending',
       reviewedByUserId: row['reviewed_by_user_id'] as String?,

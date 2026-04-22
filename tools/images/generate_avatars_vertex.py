@@ -26,7 +26,7 @@ CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
 ADULT_GUARDRAIL = (
     "all characters are clearly adults age 25+, adult body proportions, "
     "fully clothed, no children, no minors, non-photoreal 2D cartoon "
-    "illustration, stylized geometric character, not a real person photo"
+    "illustration, stylized geometric character, not a real character photo"
 )
 
 
@@ -35,9 +35,9 @@ def parse_args() -> argparse.Namespace:
         description="Generate character avatars with Vertex AI Imagen."
     )
     parser.add_argument(
-        "--person-meta-json",
-        default="tools/seed/person_meta.json",
-        help="Path to person meta JSON file (source of avatar prompts).",
+        "--character-meta-json",
+        default="tools/seed/character_meta.json",
+        help="Path to character meta JSON file (source of avatar prompts).",
     )
     parser.add_argument(
         "--project",
@@ -55,7 +55,7 @@ def parse_args() -> argparse.Namespace:
         help="Imagen model id.",
     )
     parser.add_argument(
-        "--person-generation",
+        "--character-generation",
         default="",
         choices=["", "allow_adult", "allow_all", "dont_allow"],
         help=(
@@ -195,7 +195,7 @@ def get_filter_hint(reason: str) -> str:
     if "children" in lower or "minors" in lower:
         return (
             " hint=Prompt looked child-like. Try a less childlike style or run "
-            "with --person-generation allow_all."
+            "with --character-generation allow_all."
         )
     return ""
 
@@ -307,9 +307,9 @@ def main() -> int:
         )
         return 2
 
-    meta_path = Path(args.person_meta_json)
+    meta_path = Path(args.character_meta_json)
     if not meta_path.exists():
-        print(f"ERROR: person meta json not found: {meta_path}", file=sys.stderr)
+        print(f"ERROR: character meta json not found: {meta_path}", file=sys.stderr)
         return 2
 
     config = load_person_meta(meta_path)

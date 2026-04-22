@@ -142,8 +142,8 @@ dart format .                # 코드 포맷
 
 ```bash
 make seed-bible-verses       # 성경 구절 SQL 생성
-make build-person-meta       # 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
-make seed-stories-persons    # 이야기 + 인물 SQL 생성 (권장)
+make build-character-meta       # 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
+make seed-stories-characters    # 이야기 + 인물 SQL 생성 (권장)
 make generate-avatars        # Vertex AI 아바타 생성
 make generate-story-images   # Vertex AI 장면 이미지
 make thumbnails              # 썸네일 생성

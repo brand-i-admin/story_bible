@@ -117,7 +117,7 @@ void main() {
         title: id,
         summary: null,
         storyScenes: const <String>[],
-        scenePersons: const <List<String>>[],
+        sceneCharacters: const <List<String>>[],
         startYear: null,
         endYear: null,
         timePrecision: 'approx',
@@ -127,7 +127,7 @@ void main() {
         placeName: null,
         lat: lat,
         lng: lng,
-        personCodes: const [],
+        characterCodes: const [],
         bibleRefs: const [],
       );
     }
@@ -158,7 +158,7 @@ void main() {
           title: 'noCoord',
           summary: null,
           storyScenes: <String>[],
-          scenePersons: <List<String>>[],
+          sceneCharacters: <List<String>>[],
           startYear: null,
           endYear: null,
           timePrecision: 'approx',
@@ -168,7 +168,7 @@ void main() {
           placeName: null,
           lat: null,
           lng: null,
-          personCodes: [],
+          characterCodes: [],
           bibleRefs: [],
         ),
       ]);
@@ -225,7 +225,7 @@ StoryEvent _bareEvent(String id) {
     title: id,
     summary: null,
     storyScenes: const <String>[],
-    scenePersons: const <List<String>>[],
+    sceneCharacters: const <List<String>>[],
     startYear: null,
     endYear: null,
     timePrecision: 'approx',
@@ -235,7 +235,7 @@ StoryEvent _bareEvent(String id) {
     placeName: null,
     lat: null,
     lng: null,
-    personCodes: const [],
+    characterCodes: const [],
     bibleRefs: const [],
   );
 }

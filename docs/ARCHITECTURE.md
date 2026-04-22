@@ -58,8 +58,8 @@ supabaseClientProvider (Provider<SupabaseClient>)
        │          │
        │          └── storyControllerProvider (NotifierProvider<StoryController, StoryState>)
        │                     │
-       │                     └── StoryState: eras, persons, events, selectedEraId,
-       │                                     selectedPersonIds, selectedEventId,
+       │                     └── StoryState: eras, characters, events, selectedEraId,
+       │                                     selectedCharacterIds, selectedEventId,
        │                                     completedEventIds, searchQuery, ...
        │
        ├── userRepositoryProvider (Provider<UserRepository>)
@@ -123,16 +123,16 @@ main.dart → Supabase 초기화 + ProviderScope
 **데이터 계층 (아래→위 방향):**
 ```
 models/ (순수 데이터 상자)
-  ├── Era, Person, StoryEvent     ← 이야기 도메인
+  ├── Era, Character, StoryEvent     ← 이야기 도메인
   ├── AppUserProfile, UserNote    ← 사용자 도메인
   └── BibleVerse, QuizQuestion    ← 보조 도메인
 
 data/ (Supabase 쿼리 + Model 변환)
   ├── story_repository.dart
   │     fetchEras() → List<Era>
-  │     fetchPersonsByEra() → List<Person>
+  │     fetchCharactersByEra() → List<Character>
   │     fetchEventsByEra() → List<StoryEvent>
-  │     fetchEventsForPerson() → List<StoryEvent>
+  │     fetchEventsForCharacter() → List<StoryEvent>
   │     searchEventsByText() → 퍼지 검색
   │     fetchQuizQuestions() → List<QuizQuestion>
   │     upsertEventProgress() → 학습 진행도 저장
@@ -142,7 +142,7 @@ data/ (Supabase 쿼리 + Model 변환)
   │     fetchUserNotesPage() → 노트 페이지네이션
   │     fetchSavedVersesPage() → 저장 구절 페이지네이션
   │     fetchIntercessoryPrayerPage() → 중보기도 목록
-  │     fetchPersonStudyProgress() → 인물별 진행도
+  │     fetchCharacterStudyProgress() → 인물별 진행도
   │     recordAttendance() / recordStudyDay() → 출석/학습 기록
   │
   └── auth_repository.dart
@@ -154,8 +154,8 @@ state/ (비즈니스 로직)
   │     → StoryState 갱신
   │
   ├── story_state.dart (불변 상태)
-  │     eras, persons, events, selectedEraId
-  │     selectedPersonIds, completedEventIds, searchQuery
+  │     eras, characters, events, selectedEraId
+  │     selectedCharacterIds, completedEventIds, searchQuery
   │
   └── auth_providers.dart
         authStateProvider → 현재 로그인 사용자
@@ -178,7 +178,7 @@ story_home_screen.dart (메인 화면 — 모든 것의 허브)
   │     ├── profile/profile_right_panel.dart      (part)
   │     ├── profile/profile_helpers.dart          (part)
   │     ├── profile/profile_intercessory_prayer.dart (part)
-  │     └── profile/profile_person_overview.dart  (part)
+  │     └── profile/profile_character_overview.dart  (part)
   ├── ParchmentDialog       → 이야기 상세 모달
   ├── BibleReaderPage       → 성경 리더
   ├── EventDetailPage       → 사건 상세
@@ -201,17 +201,17 @@ utils/
 ```
 eras ──< events                          (events.era_id)
               │
-              ├── person_codes text[]    (인물 매핑은 events row 자체에 임베드)
+              ├── character_codes text[]    (인물 매핑은 events row 자체에 임베드)
               ├── bible_refs jsonb       (성경 참조 임베드)
               ├── story_scenes jsonb     (장면 텍스트 임베드)
-              └── scene_persons jsonb    (장면별 인물 임베드)
+              └── scene_characters jsonb    (장면별 인물 임베드)
 
 events ──< quiz_questions
        └──< user_event_progress >── (auth.users)
 
 persons       (어드민이 is_active 토글로 노출 제어)
 events_ordered (view: rank_in_era / global_rank 동적 계산)
-person_eras    (view: 인물 첫 등장 story_index 기반 era별 순서)
+character_eras    (view: 인물 첫 등장 story_index 기반 era별 순서)
 
 bible_verses (독립 — 31,904절 KRV)
 
@@ -221,7 +221,7 @@ user_profiles ──< user_notes
               └──< user_daily_activity  (attended + studied 플래그)
 ```
 
-> v3 schema: `event_persons` / `event_bible_refs` 테이블, `events.code` / `events.time_sort_key` / `events.story` / `events.short_story` 컬럼 폐기. 자세한 사유는 ADR-012/013 참조.
+> v3 schema: `event_characters` / `event_bible_refs` 테이블, `events.code` / `events.time_sort_key` / `events.story` / `events.short_story` 컬럼 폐기. 자세한 사유는 ADR-012/013 참조.
 
 ## 4. 인증 흐름
 
@@ -239,10 +239,10 @@ user_profiles ──< user_notes
 
 ```
 stories JSON (소스 — 각 항목에 story_index 직접 박힘)
-  ├→ build_person_meta_json.py   → person_meta.json (모든 개인 인물 + 아바타 프롬프트)
+  ├→ build_character_meta_json.py   → character_meta.json (모든 개인 인물 + 아바타 프롬프트)
   │     ├→ generate_avatars_vertex.py → assets/avatars/ (기존 png 보존)
   │     │     └→ generate_runtime_thumbnails.py → assets/avatars_thumbs/
-  │     ├→ build_persons_seed_sql.py → persons_seed.sql (is_active 토글 보존 UPSERT)
+  │     ├→ build_characters_seed_sql.py → characters_seed.sql (is_active 토글 보존 UPSERT)
   │     └→ build_200_stories_seed_sql.py → 200_stories_seed.sql (events 한 테이블)
   ├→ generate_event_story_images_vertex.py → assets/story_images/
   │     └→ generate_runtime_thumbnails.py → assets/story_images_thumbs/

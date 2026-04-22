@@ -12,11 +12,11 @@ void main() {
       expect(state.loading, false);
       expect(state.error, isNull);
       expect(state.eras, isEmpty);
-      expect(state.persons, isEmpty);
+      expect(state.characters, isEmpty);
       expect(state.events, isEmpty);
       expect(state.selectedEraId, isNull);
-      expect(state.selectedPersonCodes, isEmpty);
-      expect(state.selectedPersonColors, isEmpty);
+      expect(state.selectedCharacterCodes, isEmpty);
+      expect(state.selectedCharacterColors, isEmpty);
       expect(state.selectedEventId, isNull);
       expect(state.completedEventIds, isEmpty);
       expect(state.searchQuery, '');
@@ -81,18 +81,18 @@ void main() {
       expect(cleared.selectedEventId, isNull);
     });
 
-    test('selectedPersonCodes는 Set으로 교체된다', () {
+    test('selectedCharacterCodes는 Set으로 교체된다', () {
       const original = StoryState();
-      final updated = original.copyWith(selectedPersonCodes: {'p1', 'p2'});
-      expect(updated.selectedPersonCodes, {'p1', 'p2'});
+      final updated = original.copyWith(selectedCharacterCodes: {'p1', 'p2'});
+      expect(updated.selectedCharacterCodes, {'p1', 'p2'});
     });
 
-    test('selectedPersonColors는 Map으로 교체된다', () {
+    test('selectedCharacterColors는 Map으로 교체된다', () {
       const original = StoryState();
       final updated = original.copyWith(
-        selectedPersonColors: {'p1': Colors.red},
+        selectedCharacterColors: {'p1': Colors.red},
       );
-      expect(updated.selectedPersonColors['p1'], Colors.red);
+      expect(updated.selectedCharacterColors['p1'], Colors.red);
     });
 
     test('completedEventIds를 교체할 수 있다', () {

@@ -39,7 +39,7 @@ create table if not exists event_proposals (
   era_id uuid not null references eras(id),
   title text not null,
   summary text,
-  person_codes text[] not null default '{}',
+  character_codes text[] not null default '{}',
   place_name text,
   lat double precision,
   lng double precision,
@@ -48,7 +48,7 @@ create table if not exists event_proposals (
   time_precision text not null default 'approx',
   bible_refs jsonb not null default '[]'::jsonb,
   story_scenes jsonb not null default '[]'::jsonb,
-  scene_persons jsonb not null default '[]'::jsonb,
+  scene_characters jsonb not null default '[]'::jsonb,
   after_story_index int,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected')),
@@ -162,7 +162,7 @@ create or replace function public.submit_event_proposal(
   p_era_id uuid,
   p_title text,
   p_summary text,
-  p_person_codes text[],
+  p_character_codes text[],
   p_place_name text,
   p_lat double precision,
   p_lng double precision,
@@ -171,7 +171,7 @@ create or replace function public.submit_event_proposal(
   p_time_precision text,
   p_bible_refs jsonb,
   p_story_scenes jsonb,
-  p_scene_persons jsonb,
+  p_scene_characters jsonb,
   p_after_story_index int
 )
 returns uuid
@@ -190,18 +190,18 @@ begin
   end if;
 
   insert into event_proposals (
-    proposer_user_id, era_id, title, summary, person_codes,
+    proposer_user_id, era_id, title, summary, character_codes,
     place_name, lat, lng, start_year, end_year,
-    time_precision, bible_refs, story_scenes, scene_persons,
+    time_precision, bible_refs, story_scenes, scene_characters,
     after_story_index
   )
   values (
-    auth.uid(), p_era_id, p_title, p_summary, coalesce(p_person_codes, '{}'),
+    auth.uid(), p_era_id, p_title, p_summary, coalesce(p_character_codes, '{}'),
     p_place_name, p_lat, p_lng, p_start_year, p_end_year,
     coalesce(nullif(trim(p_time_precision), ''), 'approx'),
     coalesce(p_bible_refs, '[]'::jsonb),
     coalesce(p_story_scenes, '[]'::jsonb),
-    coalesce(p_scene_persons, '[]'::jsonb),
+    coalesce(p_scene_characters, '[]'::jsonb),
     p_after_story_index
   )
   returning id into v_id;
@@ -257,8 +257,8 @@ begin
     v_proposal.title,
     v_proposal.summary,
     v_proposal.story_scenes,
-    v_proposal.scene_persons,
-    v_proposal.person_codes,
+    v_proposal.scene_characters,
+    v_proposal.character_codes,
     v_proposal.bible_refs,
     v_proposal.start_year,
     v_proposal.end_year,

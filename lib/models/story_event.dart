@@ -14,7 +14,7 @@ class StoryEvent {
     required this.title,
     required this.summary,
     required this.storyScenes,
-    required this.scenePersons,
+    required this.sceneCharacters,
     required this.startYear,
     required this.endYear,
     required this.timePrecision,
@@ -24,7 +24,7 @@ class StoryEvent {
     required this.placeName,
     required this.lat,
     required this.lng,
-    required this.personCodes,
+    required this.characterCodes,
     required this.bibleRefs,
   });
 
@@ -35,7 +35,7 @@ class StoryEvent {
       title: row['title'] as String,
       summary: row['summary'] as String?,
       storyScenes: _stringList(row['story_scenes']),
-      scenePersons: _stringListList(row['scene_persons']),
+      sceneCharacters: _stringListList(row['scene_characters']),
       startYear: row['start_year'] as int?,
       endYear: row['end_year'] as int?,
       timePrecision: (row['time_precision'] as String?) ?? 'approx',
@@ -45,7 +45,7 @@ class StoryEvent {
       placeName: row['place_name'] as String?,
       lat: (row['lat'] as num?)?.toDouble(),
       lng: (row['lng'] as num?)?.toDouble(),
-      personCodes: _stringList(row['person_codes']),
+      characterCodes: _stringList(row['character_codes']),
       bibleRefs: BibleRef.fromList(row['bible_refs']),
     );
   }
@@ -55,7 +55,7 @@ class StoryEvent {
   final String title;
   final String? summary;
   final List<String> storyScenes;
-  final List<List<String>> scenePersons;
+  final List<List<String>> sceneCharacters;
   final int? startYear;
   final int? endYear;
   final String timePrecision;
@@ -65,7 +65,7 @@ class StoryEvent {
   final String? placeName;
   final double? lat;
   final double? lng;
-  final List<String> personCodes;
+  final List<String> characterCodes;
   final List<BibleRef> bibleRefs;
 
   String get shortSummary {
