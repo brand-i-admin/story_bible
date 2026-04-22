@@ -52,6 +52,10 @@ dependencies:
   # iOS/Android 포그라운드 상태에서는 FCM 이 시스템 알림을 자동 발행하지 않음.
   flutter_local_notifications: ^18.0.1
 
+  # Flutter Web 에서 브라우저 `Notification` API 호출용 (conditional import).
+  # 모바일 빌드에서는 사용되지 않으므로 크기 영향 없음.
+  web: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

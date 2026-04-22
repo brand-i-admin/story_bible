@@ -6,6 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// conditional import: 비-웹 플랫폼에서는 stub 선택돼 no-op.
+// 웹 빌드(js_interop 라이브러리 사용 가능할 때)는 web_notification_web.dart 사용.
+import 'web_notification_stub.dart'
+    if (dart.library.js_interop) 'web_notification_web.dart';
+
 /// FCM + 인앱 포그라운드 알림을 관리하는 싱글톤 서비스.
 ///
 /// 호출 절차 (main.dart):
@@ -99,11 +104,23 @@ class PushService {
       await registerCurrentTokenIfAuthenticated();
     });
 
-    // 포그라운드 메시지 수신 → 로컬 알림으로 재발행 (모바일만).
+    // 포그라운드 메시지 수신 → 로컬 알림으로 재발행.
+    //
+    // 웹에서 FCM 은 탭이 visible 상태일 때 `onBackgroundMessage` 를 호출하지
+    // 않아 Service Worker 의 showNotification 이 발동 안 된다. 따라서 여기서
+    // 직접 브라우저 `Notification` API 로 띄운다 (web_notification_web.dart).
+    // 모바일(iOS/Android) 은 flutter_local_notifications 로 시스템 토스트 발행.
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
       if (notification == null) return;
-      if (kIsWeb) return; // 웹은 브라우저가 자체 처리.
+      if (kIsWeb) {
+        showWebNotification(
+          notification.title ?? '알림',
+          body: notification.body,
+          icon: '/icons/Icon-192.png',
+        );
+        return;
+      }
       await _localNotifications.show(
         message.hashCode,
         notification.title ?? '알림',
