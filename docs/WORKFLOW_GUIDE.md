@@ -645,3 +645,146 @@ flutter --version  # 재생성
 - 커밋/푸시 정책 변경 시 → §8, §14.6 갱신
 - 알려진 이슈 발견 시 → §15에 증상/원인/대응 추가
 - 의문점/오해를 사용자가 지적할 때마다 → 해당 섹션에 Q&A 형태로 추가 고려
+
+---
+
+## 17. 승인 후 작동 반영 프로세스 (제안 → 공개 이야기)
+
+2026-04 도입된 **사역자 제안 → 관리자 승인 → 배포** 플로우의 end-to-end 순서.
+이 섹션은 "관리자 / 운영자 관점" 기준. 사역자가 폼에 입력하는 UX 는
+`lib/screens/proposal_submit_screen.dart` 참조.
+
+### 17.1 한 장 요약
+
+```
+[사역자] 웹에서 제안 작성                    [관리자] 제안 상세에서 승인        [운영자] 로컬에서 freeze & publish
+─────────────────────────                 ─────────────────────────         ────────────────────────────
+Step 1 시대 → 2 인물 → 3 사건 → 4 세부      '승인' 버튼                        git pull
+  - 기존 characters 선택                     ↓ approve_event_proposal RPC     make sync-approved-proposal-assets
+  - 없는 인물 → [새 인물 만들기] 다이얼로그     1. proposed_characters 를        make thumbnails
+    · AI 가 Vertex Imagen 으로 아바타 생성       characters 테이블에 upsert     make build-character-meta
+    · proposal-characters/<uid>/<draft>/       (is_active=true)                 (새 인물이 있을 때만)
+      <code>.png 에 업로드                     avatar_storage_path =           make seed-stories-characters
+  - [이미지 생성] 버튼으로 각 장면 AI 생성       'proposal-characters/...'       make apply-seeds-stories-characters
+    proposal-scenes/<uid>/<draft>/scene_N.png 2. insert_event_at_position     (선택) sync-approved-proposal-assets-clean
+[제안 등록] → event_proposals row 생성        으로 events 행 생성                으로 원본 버킷 정리
+                                              3. status='approved'            git commit + 앱 재빌드 → Store 배포
+```
+
+### 17.2 단계별 상세
+
+#### 17.2.1 사역자: 제안 작성
+- 웹에서 **이야기 등록** 진입 (pastor 역할 필요, §17.3 참조).
+- Step 2 에서 등장인물을 고를 때 **[새 인물 만들기]** 버튼으로 기존 characters
+  에 없는 인물도 추가 가능:
+  - 다이얼로그에 이름(한글) + 영문 code + 설명(프롬프트) 입력
+  - [이미지 생성] → Supabase Edge Function `generate-proposal-character` 가
+    Vertex Imagen 4.0 으로 PNG 생성 → `proposal-characters/<uid>/<draft>/<code>.png`
+  - 마음에 들 때까지 [다시 생성]. 확정 시 자동으로 선택 상태로 들어감.
+- Step 4 에서 각 장면에 **[이미지 생성]** 버튼 — Edge Function
+  `generate-proposal-scene` 가 Vertex Gemini 로 장면 PNG 생성 →
+  `proposal-scenes/<uid>/<draft>/scene_N.png`
+- 모든 장면 이미지가 준비되면 [제안 등록] 활성화 → `event_proposals` row 생성
+  (status='pending', scene_image_paths + proposed_characters 포함).
+
+#### 17.2.2 관리자: 승인 / 거절
+- 제안 상세에서 **[승인]** / **[거절]** 버튼 (관리자만).
+- **승인** 시 DB 에서 원자적으로 다음 처리:
+  1. `proposed_characters` 각 원소를 `characters` 테이블에 upsert
+     - 동일 `code` 가 존재하면 name/description/avatar_storage_path 업데이트
+     - `avatar_storage_path` 는 **proposal-characters/... 경로 그대로** (아직
+       `characters` 버킷으로 옮기지 않음)
+     - `is_active = true`
+  2. `insert_event_at_position` RPC 로 `events` 테이블에 published 삽입
+     (era 내 story_index 시프트까지 자동).
+  3. `event_proposals.status = 'approved'`, `approved_event_id` 세팅.
+- **거절** 시엔 `status='rejected'` + review_note. 제안 상세에 이유 표시.
+
+#### 17.2.3 운영자: 로컬 freeze & publish — **이게 이 섹션의 핵심**
+
+승인된 제안의 AI 이미지는 일단 proposal-* 버킷에만 존재. **로컬 번들에
+포함시키려면** 운영자가 로컬에서 pull 해서 assets/ 로 복사한 뒤 썸네일 생성 +
+DB 재반영 + 앱 재빌드 + 스토어 배포 ([ADR-006] 이미지 번들 원칙).
+
+```bash
+# 0) pull
+git checkout main && git pull
+
+# 1) 승인된 제안의 scene + 새 캐릭터 PNG 를 로컬 assets/ 로 내려받기
+#    + proposed_characters 의 avatar_storage_path 를 '{code}.png' 로 정리
+make sync-approved-proposal-assets
+#
+#    결과:
+#    - assets/story_images/<title>/scene_1..N.png
+#    - assets/avatars/<new_code>.png
+#    - characters 버킷에 <code>.png 업로드 (canonical)
+#    - characters.avatar_storage_path = '<code>.png' 로 PATCH
+
+# 2) 런타임 썸네일
+make thumbnails
+
+# 3) (새 캐릭터가 생긴 경우) character_meta.json 업데이트 후 재빌드
+#    - tools/seed/character_meta.json 의 characters[] 배열에 entry 추가
+#      (prompt 는 proposed_characters 에 기록된 값을 사용해도 됨)
+#    - is_active_default: true
+make build-character-meta
+
+# 4) SQL 재생성 + DB 반영 (승인 시 events 는 이미 들어갔지만
+#    character 메타 / 정합성 맞추려면 UPSERT 다시)
+make seed-stories-characters
+make apply-seeds-stories-characters
+
+# 5) (선택) 원본 proposal-* 버킷 정리
+make sync-approved-proposal-assets-clean
+
+# 6) 커밋 + 앱 배포
+git add assets/avatars/<new_code>.png assets/story_images/<title>/ tools/seed/character_meta.json
+git commit -m "content: 승인된 제안 반영 (<사건 제목>)"
+git push
+# → flutter build apk/ipa → 스토어 배포
+```
+
+### 17.3 권한 요약
+
+| 역할 | 검증 방법 | 허용 동작 |
+|------|----------|----------|
+| 일반 사용자 | auth.users 존재만 | 앱 사용, 제안 게시판 진입 시 pastor gate 팝업 |
+| 사역자 (pastor) | `user_profiles.is_pastor = true` | 제안 작성/수정(본인 pending), 댓글, AI 이미지 생성 |
+| 관리자 (admin) | `auth.users.raw_app_meta_data->>'role' = 'admin'` | 위 모든 권한 + 제안 승인/거절, characters 테이블 쓰기, Storage `characters` 버킷 쓰기 |
+
+- pastor 부여: 운영자가 수동으로
+  `update user_profiles set is_pastor=true where user_id=...`
+  — 사역자가 `admin@brand-i.net` 으로 성함/사역 단체/직책을 보내면 처리.
+- admin 부여: Supabase Dashboard SQL Editor 에서
+  `update auth.users set raw_app_meta_data = coalesce(raw_app_meta_data,'{}'::jsonb) || '{"role":"admin"}'::jsonb where id='<uuid>';`
+  — 해당 사용자 **재로그인 필요** (JWT 갱신).
+
+### 17.4 Storage 버킷
+
+| 버킷 | public read | 쓰기 권한 | 경로 |
+|------|:-----------:|----------|------|
+| `profile-images` | ✅ | 본인 폴더 | `{uid}/profile_{ts}.{ext}` |
+| `characters` | ✅ | admin 만 | `{code}.png` (정규 아바타) |
+| `proposal-scenes` | ✅ | 본인 폴더 | `{uid}/{draft}/scene_{n}.png` |
+| `proposal-characters` | ✅ | 본인 폴더 | `{uid}/{draft}/{code}.png` |
+
+실제 업로드는 Edge Function 이 service role 키로 수행. RLS 는 방어선 역할.
+
+### 17.5 관련 파일
+
+- **Edge Functions** (장면 + 캐릭터 AI 생성):
+  - `supabase/functions/generate-proposal-scene/` (Gemini multimodal)
+  - `supabase/functions/generate-proposal-character/` (Imagen 4.0 text-to-image)
+  - `supabase/functions/_shared/{gcp_auth,character_style,cors}.ts`
+- **DB**: `db_init.sql` (테이블 / 버킷 / RPC / RLS)
+- **Repository**: `lib/data/proposal_repository.dart` (RPC + functions.invoke 래퍼)
+- **UI**:
+  - `lib/screens/proposal_submit_screen.dart` (wizard)
+  - `lib/widgets/proposal/new_character_dialog.dart` (새 인물 만들기)
+  - `lib/widgets/proposal/proposal_scenes_editor.dart` (장면 + 이미지)
+  - `lib/widgets/proposal/proposal_character_row.dart` (Step 4 상단 아바타 row)
+  - `lib/screens/proposal_detail_screen.dart` (상세 — EventDetailPage 스타일)
+- **Sync 스크립트**: `tools/supabase/sync_approved_proposal_assets.py`
+- **Makefile 타겟**:
+  - `make upload-character-avatars` (초기 아바타 일괄 업로드)
+  - `make sync-approved-proposal-assets` / `...-clean` (승인 자산 로컬 동기화)

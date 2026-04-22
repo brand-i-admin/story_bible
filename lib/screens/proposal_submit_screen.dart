@@ -10,6 +10,7 @@ import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../widgets/proposal/bible_refs_picker.dart';
 import '../widgets/proposal/character_codes_picker.dart';
+import '../widgets/proposal/new_character_dialog.dart';
 import '../widgets/proposal/proposal_character_row.dart';
 import '../widgets/proposal/proposal_location_picker.dart';
 import '../widgets/proposal/proposal_scenes_editor.dart';
@@ -72,6 +73,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // 장면별 AI 생성 이미지 상태 (scenes 와 같은 길이로 유지).
   List<ProposalSceneImage> _sceneImages = const [ProposalSceneImage()];
 
+  // 이번 제안에서 새로 만든 캐릭터 (기존 characters 에 없던 것).
+  // Submit 시 `proposed_characters` 컬럼에 그대로 저장된다.
+  // key = character code, value = ProposedCharacter.
+  final Map<String, ProposedCharacter> _newCharactersByCode = {};
+
   // 이번 제안의 draft 식별자. 서버 bucket 경로(`.../draftId/scene_N.png`) 에
   // 쓰여 같은 draft 안의 scene 들이 한 폴더에 모인다. 제출 성공 후 이 값은
   // 더 이상 바뀌지 않는다 (수정 모드에서는 기존 proposal.id 를 사용).
@@ -130,6 +136,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           prompt: prompt.isEmpty ? null : prompt,
         );
       });
+      // 수정 모드에서 기존 제안에 있던 새 캐릭터 복원.
+      for (final c in e.proposedCharacters) {
+        if (c.code.isNotEmpty) _newCharactersByCode[c.code] = c;
+      }
       // 수정 모드는 Step 3 (details) 에서 바로 시작
       _step = 3;
       // draftId 는 proposal id 를 그대로 사용 — 이미지 덮어쓰기가 같은
@@ -432,6 +442,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final afterIdx = _afterStoryIndex;
 
     try {
+      // 현재 선택된 인물들 중 실제 "이번에 새로 만든" 것만 proposed 로 보낸다.
+      // 사용자가 선택 해제한 새 캐릭터는 제외.
+      final selectedCodes = _characterCodes.toSet();
+      final proposedCharactersPayload = _newCharactersByCode.values
+          .where((c) => selectedCodes.contains(c.code))
+          .toList(growable: false);
       if (widget.existing == null) {
         await repo.submit(
           eraId: _eraId!,
@@ -449,6 +465,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           sceneCharacters: paddedSceneCharacters,
           sceneImagePaths: sceneImagePaths,
           sceneImagePrompts: sceneImagePrompts,
+          proposedCharacters: proposedCharactersPayload,
           afterStoryIndex: afterIdx,
         );
       } else {
@@ -469,6 +486,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           sceneCharacters: paddedSceneCharacters,
           sceneImagePaths: sceneImagePaths,
           sceneImagePrompts: sceneImagePrompts,
+          proposedCharacters: proposedCharactersPayload,
           afterStoryIndex: afterIdx,
         );
       }
@@ -708,6 +726,15 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     }
     sorted.sort((a, b) => a.name.compareTo(b.name));
     later.sort((a, b) => a.name.compareTo(b.name));
+
+    // "이번 제안에서 새로 만든" 인물 카드 (별도 섹션) — 기존 목록엔 없으므로
+    // 수동 렌더. CharacterOption 으로 변환해 같은 chip group helper 를 재사용.
+    final newOpts =
+        _newCharactersByCode.values
+            .map((c) => CharacterOption(code: c.code, name: c.name))
+            .toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -719,9 +746,19 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            '복수 선택 가능. 다음 단계에서 각 인물별로 이 이야기가 어느 사건 뒤에 들어갈지 고르게 됩니다.',
+            '복수 선택 가능. 다음 단계에서 각 인물별로 이 이야기가 어느 사건 뒤에 들어갈지 고르게 됩니다. '
+            '목록에 없는 인물은 "새 인물 만들기" 로 AI 아바타를 생성해 추가할 수 있습니다.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: _openNewCharacterDialog,
+              icon: const Icon(Icons.person_add_alt, size: 18),
+              label: const Text('새 인물 만들기'),
             ),
           ),
           const SizedBox(height: 12),
@@ -730,6 +767,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (newOpts.isNotEmpty) ...[
+                    _characterChipGroup(theme, '이번 제안에서 새로 만든 인물', newOpts),
+                    const SizedBox(height: 16),
+                  ],
                   if (sorted.isNotEmpty)
                     _characterChipGroup(theme, '이 시대 등장 인물', sorted),
                   if (later.isNotEmpty) ...[
@@ -760,6 +801,35 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ],
       ),
     );
+  }
+
+  /// "새 인물 만들기" 버튼 핸들러.
+  Future<void> _openNewCharacterDialog() async {
+    final existing = <String>{
+      for (final o in _characterOptions) o.code,
+      ..._newCharactersByCode.keys,
+    };
+    final added = await NewCharacterDialog.show(
+      context,
+      draftId: _draftId,
+      existingCodes: existing,
+    );
+    if (added == null || !mounted) return;
+    setState(() {
+      _newCharactersByCode[added.code] = added;
+      // 아바타 row / 장면 생성 시에도 이 코드가 쓰이므로 options 에도 삽입.
+      // 주의: `_characterOptions` 는 DB 로드된 최종 목록이라, 런타임에만 추가.
+      if (!_characterOptions.any((o) => o.code == added.code)) {
+        _characterOptions = [
+          ..._characterOptions,
+          CharacterOption(code: added.code, name: added.name),
+        ];
+      }
+      // 방금 만든 인물은 자동으로 선택 상태로.
+      if (!_characterCodes.contains(added.code)) {
+        _characterCodes = [..._characterCodes, added.code];
+      }
+    });
   }
 
   Widget _characterChipGroup(
@@ -813,17 +883,20 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // ===== Step 4: 장면 이미지 생성 =====
 
   /// 이 이야기에 등장할 인물 아바타 row — Step 4 상단에 표시.
+  /// 새로 만든 캐릭터는 proposal-characters 버킷 경로, 기존 캐릭터는 characters
+  /// 버킷의 `{code}.png` 로 해석.
   List<ProposalCharacterRowItem> _characterRowItems() {
     final client = ref.read(supabaseClientProvider);
+    final repo = ref.read(proposalRepositoryProvider);
     return _characterCodes.map((code) {
       final opt = _characterOptions.firstWhere(
         (c) => c.code == code,
         orElse: () => CharacterOption(code: code, name: code),
       );
-      // characters 버킷의 public URL 로 아바타 로드.
-      // (upload_character_avatars.py 로 .png 가 이미 업로드되어 있어야 함.
-      //  안 올라가 있으면 fallback 으로 이니셜 표시)
-      final url = client.storage.from('characters').getPublicUrl('$code.png');
+      final newChar = _newCharactersByCode[code];
+      final url = newChar != null
+          ? repo.publicUrlForStoragePath(newChar.storagePath)
+          : client.storage.from('characters').getPublicUrl('$code.png');
       return ProposalCharacterRowItem(
         code: code,
         name: opt.name,

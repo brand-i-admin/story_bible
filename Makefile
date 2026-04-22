@@ -46,6 +46,7 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
         export-stories-json \
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         upload-character-avatars upload-character-avatars-force \
+        sync-approved-proposal-assets sync-approved-proposal-assets-clean \
         update-pubspec-assets check-pubspec-assets \
         clean-generated lint
 
@@ -83,6 +84,10 @@ help:
 	@echo "Supabase Storage (service_role 키 필요):"
 	@echo "  upload-character-avatars        [ENV=dev]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
 	@echo "  upload-character-avatars-force  [ENV=dev]  전부 덮어쓰기 업로드 (--overwrite)"
+	@echo ""
+	@echo "승인된 제안 → 로컬 assets 동기화 (service_role 키 필요):"
+	@echo "  sync-approved-proposal-assets         [ENV=dev]  approved 제안의 scene/character PNG 를 assets/ 로 내려받음"
+	@echo "  sync-approved-proposal-assets-clean   [ENV=dev]  동기화 후 proposal-* 버킷의 원본 파일 삭제"
 	@echo ""
 	@echo "기타:"
 	@echo "  update-pubspec-assets   story_images_thumbs 경로를 pubspec.yaml에 반영"
@@ -172,6 +177,23 @@ upload-character-avatars:
 upload-character-avatars-force:
 	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV))"
 	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(ENV) --overwrite
+
+# -----------------------------------------------------------------------------
+# 승인된 제안 → 로컬 assets 동기화
+# -----------------------------------------------------------------------------
+# 관리자가 제안을 승인한 뒤, proposal-scenes / proposal-characters 버킷에 있는
+# AI 생성 이미지를 로컬 assets/ 로 내려받아 번들에 포함시킨다. 동시에 새 캐릭터
+# 는 characters 버킷으로 복사 + characters.avatar_storage_path 도 canonical
+# 경로(`{code}.png`) 로 재세팅. 이 타겟을 돌린 뒤 make thumbnails +
+# apply-seeds-stories-characters 를 실행해 최종 반영.
+
+sync-approved-proposal-assets:
+	@echo "[Makefile] 승인된 제안 자산 동기화 (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV)
+
+sync-approved-proposal-assets-clean:
+	@echo "[Makefile] 승인된 제안 자산 동기화 + 원본 버킷 정리 (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --delete-source
 
 # =============================================================================
 # Supabase DB 적용 (psql 사용)

@@ -82,6 +82,11 @@ drop function if exists public.submit_event_proposal(
   double precision, double precision, int, int, text,
   jsonb, jsonb, jsonb, text[], text[], int
 ) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], text,
+  double precision, double precision, int, int, text,
+  jsonb, jsonb, jsonb, text[], text[], jsonb, int
+) cascade;
 drop function if exists public.approve_event_proposal(uuid, int) cascade;
 drop function if exists public.reject_event_proposal(uuid, text) cascade;
 drop function if exists public.add_proposal_comment(uuid, text) cascade;
@@ -866,6 +871,68 @@ using (
   )
 );
 
+-- ============================================================================
+-- Storage 버킷: 'proposal-characters' — 제안에서 새로 생성한 캐릭터 아바타
+--   경로 규칙: proposal-characters/<user_id>/<draft_id>/<character_code>.png
+--   쓰기 권한: 본인 폴더 (프로포절 작성 중인 pastor 만)
+--   읽기 권한: public — admin / 다른 pastor 가 제안 상세에서 볼 수 있어야.
+--   Edge Function (generate-proposal-character) 이 service role 로 업로드한다.
+--
+--   승인 후 처리:
+--     1. approve_event_proposal RPC 가 characters 테이블에
+--        avatar_storage_path = 이 경로로 upsert.
+--     2. tools/supabase/sync_approved_proposal_assets.py (관리자 수동 실행)
+--        가 proposal-characters/ → characters/ 로 파일 복사 + 경로 교체 +
+--        assets/avatars/<code>.png 로 로컬 다운로드.
+-- ============================================================================
+insert into storage.buckets (
+  id, name, public, file_size_limit, allowed_mime_types
+)
+values (
+  'proposal-characters', 'proposal-characters', true,
+  10485760,
+  array['image/png', 'image/webp']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists proposal_characters_public_read on storage.objects;
+create policy proposal_characters_public_read on storage.objects
+for select using (bucket_id = 'proposal-characters');
+
+drop policy if exists proposal_characters_insert_own on storage.objects;
+create policy proposal_characters_insert_own on storage.objects
+for insert to authenticated
+with check (
+  bucket_id = 'proposal-characters'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists proposal_characters_update_own on storage.objects;
+create policy proposal_characters_update_own on storage.objects
+for update to authenticated
+using (
+  bucket_id = 'proposal-characters'
+  and (storage.foldername(name))[1] = auth.uid()::text
+)
+with check (
+  bucket_id = 'proposal-characters'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists proposal_characters_delete_own on storage.objects;
+create policy proposal_characters_delete_own on storage.objects
+for delete to authenticated
+using (
+  bucket_id = 'proposal-characters'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or public.is_admin()
+  )
+);
+
 -- -----------------------------------------------------------------------------
 -- RPC: 새 이야기를 era 안의 특정 위치에 끼워 넣기.
 -- (era_id, story_index) UNIQUE 제약이 있으므로 뒤 인덱스를 +1 시프트한 뒤 INSERT.
@@ -1097,6 +1164,13 @@ create table if not exists event_proposals (
   -- 길이는 scene_image_paths 와 동일해야 한다.
   scene_image_prompts text[] not null default '{}',
 
+  -- 제안 중 "새로 만든 캐릭터" 의 메타데이터 + Storage 경로 리스트.
+  -- 기존 characters 에 없는 인물을 사역자가 프롬프트로 생성해 제안에 포함시킬 때
+  -- 사용. 각 요소는 { code, name, prompt, storage_path } 객체.
+  -- storage_path 는 'proposal-characters/<uid>/<draft>/<code>.png' 형태.
+  -- 승인 RPC 가 이 배열을 읽어 characters 테이블에 upsert 한다.
+  proposed_characters jsonb not null default '[]'::jsonb,
+
   after_story_index int,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected')),
@@ -1212,6 +1286,7 @@ using (author_user_id = auth.uid() or public.is_admin());
 
 -- 6) RPC: submit_event_proposal (pastor 만) — 제안을 event_proposals 에 INSERT
 -- scene_image_paths / scene_image_prompts 는 생성 완료된 장면 이미지를 같이 커밋.
+-- proposed_characters 는 "이번 제안에서 새로 만든 캐릭터" 메타데이터 배열.
 -- 장면 텍스트 개수와 이미지 개수가 맞아야 한다 (서로 다르면 raise).
 drop function if exists public.submit_event_proposal(
   uuid, text, text, text[], text,
@@ -1222,6 +1297,11 @@ drop function if exists public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
   jsonb, jsonb, jsonb, text[], text[], int
+) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], text,
+  double precision, double precision, int, int, text,
+  jsonb, jsonb, jsonb, text[], text[], jsonb, int
 ) cascade;
 create or replace function public.submit_event_proposal(
   p_era_id uuid,
@@ -1239,6 +1319,7 @@ create or replace function public.submit_event_proposal(
   p_scene_characters jsonb,
   p_scene_image_paths text[],
   p_scene_image_prompts text[],
+  p_proposed_characters jsonb,
   p_after_story_index int
 )
 returns uuid
@@ -1276,6 +1357,7 @@ begin
     place_name, lat, lng, start_year, end_year,
     time_precision, bible_refs, story_scenes, scene_characters,
     scene_image_paths, scene_image_prompts,
+    proposed_characters,
     after_story_index
   )
   values (
@@ -1287,6 +1369,7 @@ begin
     coalesce(p_scene_characters, '[]'::jsonb),
     coalesce(p_scene_image_paths, '{}'),
     coalesce(p_scene_image_prompts, '{}'),
+    coalesce(p_proposed_characters, '[]'::jsonb),
     p_after_story_index
   )
   returning id into v_id;
@@ -1297,7 +1380,7 @@ $$;
 grant execute on function public.submit_event_proposal(
   uuid, text, text, text[], text,
   double precision, double precision, int, int, text,
-  jsonb, jsonb, jsonb, text[], text[], int
+  jsonb, jsonb, jsonb, text[], text[], jsonb, int
 ) to authenticated;
 
 -- 7) RPC: approve_event_proposal (admin 만) — 제안을 events 에 published 로 반영
@@ -1317,6 +1400,11 @@ declare
   v_era_code text;
   v_event_id uuid;
   v_after int;
+  v_proposed_char jsonb;
+  v_code text;
+  v_name text;
+  v_storage_path text;
+  v_description text;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
@@ -1337,6 +1425,40 @@ begin
 
   v_after := coalesce(p_after_story_index_override, v_proposal.after_story_index, 0);
 
+  -- 1) 먼저 "이 제안에서 새로 만든 캐릭터" 를 characters 에 upsert.
+  --    insert_event_at_position 이 placeholder 로 넣어버리기 전에 실제 이름 +
+  --    avatar_storage_path 를 반영해 둔다.
+  --    avatar_storage_path 는 proposal-characters 버킷 경로 그대로 저장
+  --    (후속 make sync-approved-characters 가 characters/ 버킷으로 복사 + 경로 교체).
+  --    is_active = true (관리자가 승인했다는 건 노출 OK 라는 뜻).
+  for v_proposed_char in
+    select * from jsonb_array_elements(coalesce(v_proposal.proposed_characters, '[]'::jsonb))
+  loop
+    v_code := v_proposed_char->>'code';
+    v_name := v_proposed_char->>'name';
+    v_storage_path := v_proposed_char->>'storage_path';
+    v_description := v_proposed_char->>'prompt';
+    if coalesce(trim(v_code), '') = '' then
+      continue;
+    end if;
+    insert into public.characters (
+      code, name, description, avatar_storage_path, is_active
+    )
+    values (
+      v_code,
+      coalesce(nullif(trim(v_name), ''), v_code),
+      v_description,
+      v_storage_path,
+      true
+    )
+    on conflict (code) do update set
+      name = coalesce(nullif(trim(excluded.name), ''), public.characters.name),
+      description = coalesce(excluded.description, public.characters.description),
+      avatar_storage_path = coalesce(excluded.avatar_storage_path, public.characters.avatar_storage_path),
+      is_active = true;
+  end loop;
+
+  -- 2) insert_event_at_position — 기존 로직. 남은 누락 코드는 비활성 placeholder.
   v_event_id := public.insert_event_at_position(
     v_era_code,
     v_after,

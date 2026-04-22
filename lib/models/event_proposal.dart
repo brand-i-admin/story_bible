@@ -23,6 +23,7 @@ class EventProposal {
     required this.sceneCharacters,
     required this.sceneImagePaths,
     required this.sceneImagePrompts,
+    required this.proposedCharacters,
     required this.afterStoryIndex,
     required this.status,
     required this.reviewedByUserId,
@@ -58,6 +59,11 @@ class EventProposal {
   /// storyScenes 와 동일한 길이.
   final List<String> sceneImagePrompts;
 
+  /// 이 제안에서 새로 만든 캐릭터 메타 + Storage 경로 리스트.
+  /// 각 요소는 [ProposedCharacter]. 기존 characters 에 없는 인물만 여기에 담김.
+  /// 승인 시 characters 테이블에 upsert 된다.
+  final List<ProposedCharacter> proposedCharacters;
+
   final int? afterStoryIndex;
   final String status; // pending / approved / rejected
   final String? reviewedByUserId;
@@ -90,6 +96,7 @@ class EventProposal {
       sceneCharacters: _asNestedStringList(row['scene_characters']),
       sceneImagePaths: _asStringList(row['scene_image_paths']),
       sceneImagePrompts: _asStringList(row['scene_image_prompts']),
+      proposedCharacters: _asProposedCharacters(row['proposed_characters']),
       afterStoryIndex: (row['after_story_index'] as num?)?.toInt(),
       status: (row['status'] as String?) ?? 'pending',
       reviewedByUserId: row['reviewed_by_user_id'] as String?,
@@ -152,10 +159,52 @@ class EventProposal {
     return const [];
   }
 
+  static List<ProposedCharacter> _asProposedCharacters(dynamic raw) {
+    final list = _asMapList(raw);
+    return list.map(ProposedCharacter.fromMap).toList(growable: false);
+  }
+
   static DateTime? _parseDate(dynamic raw) {
     if (raw == null) return null;
     if (raw is DateTime) return raw;
     if (raw is String) return DateTime.tryParse(raw);
     return null;
+  }
+}
+
+/// `event_proposals.proposed_characters` jsonb 원소.
+///
+/// 제안 작성자가 기존 characters 테이블에 없는 신규 인물을 만들 때 사용된다.
+/// - [code]: 소문자/숫자/언더스코어만 (Edge Function 이 sanitize)
+/// - [name]: 표시용 이름 (한글)
+/// - [prompt]: Vertex 에 보낸 최종 prompt 스냅샷 (common style 포함)
+/// - [storagePath]: `proposal-characters/{uid}/{draft}/{code}.png`
+class ProposedCharacter {
+  const ProposedCharacter({
+    required this.code,
+    required this.name,
+    required this.prompt,
+    required this.storagePath,
+  });
+
+  final String code;
+  final String name;
+  final String prompt;
+  final String storagePath;
+
+  Map<String, dynamic> toMap() => {
+    'code': code,
+    'name': name,
+    'prompt': prompt,
+    'storage_path': storagePath,
+  };
+
+  factory ProposedCharacter.fromMap(Map<String, dynamic> m) {
+    return ProposedCharacter(
+      code: (m['code'] as String?) ?? '',
+      name: (m['name'] as String?) ?? '',
+      prompt: (m['prompt'] as String?) ?? '',
+      storagePath: (m['storage_path'] as String?) ?? '',
+    );
   }
 }

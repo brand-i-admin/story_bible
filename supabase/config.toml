@@ -10,3 +10,6 @@ project_id = "story_bible"
 
 [functions.generate-proposal-scene]
 verify_jwt = true  # only authenticated users (pastor/admin) can invoke
+
+[functions.generate-proposal-character]
+verify_jwt = true  # only authenticated users (pastor/admin) can invoke

@@ -3,6 +3,20 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/event_proposal.dart';
 import '../models/proposal_comment.dart';
 
+/// Edge Function `generate-proposal-character` 의 응답 래퍼.
+class GeneratedProposalCharacter {
+  const GeneratedProposalCharacter({
+    required this.storagePath,
+    required this.prompt,
+    required this.characterCode,
+    required this.characterName,
+  });
+  final String storagePath;
+  final String prompt;
+  final String characterCode;
+  final String characterName;
+}
+
 /// 이야기 제안(event_proposals) 데이터 계층.
 ///
 /// - 사역자(user_profiles.is_pastor=true)가 제안을 제출 → DB의
@@ -39,6 +53,7 @@ class ProposalRepository {
     List<List<String>> sceneCharacters = const [],
     List<String> sceneImagePaths = const [],
     List<String> sceneImagePrompts = const [],
+    List<ProposedCharacter> proposedCharacters = const [],
   }) async {
     final result = await _client.rpc(
       'submit_event_proposal',
@@ -58,6 +73,9 @@ class ProposalRepository {
         'p_scene_characters': sceneCharacters,
         'p_scene_image_paths': sceneImagePaths,
         'p_scene_image_prompts': sceneImagePrompts,
+        'p_proposed_characters': proposedCharacters
+            .map((c) => c.toMap())
+            .toList(),
         'p_after_story_index': afterStoryIndex,
       },
     );
@@ -103,6 +121,53 @@ class ProposalRepository {
       storagePath: data['storage_path'] as String,
       prompt: (data['prompt'] as String?) ?? '',
     );
+  }
+
+  /// 새 캐릭터 아바타 한 장 생성 — `generate-proposal-character` Edge Function
+  /// 호출. 같은 draftId + characterCode 로 재호출 시 덮어쓰기(재생성).
+  Future<GeneratedProposalCharacter> generateProposalCharacter({
+    required String prompt,
+    required String characterCode,
+    required String characterName,
+    required String draftId,
+  }) async {
+    final response = await _client.functions.invoke(
+      'generate-proposal-character',
+      body: {
+        'prompt': prompt,
+        'characterCode': characterCode,
+        'characterName': characterName,
+        'draftId': draftId,
+      },
+    );
+    if (response.status < 200 || response.status >= 300) {
+      final data = response.data;
+      final msg = data is Map && data['error'] is String
+          ? data['error'] as String
+          : 'HTTP ${response.status}';
+      throw Exception('캐릭터 생성 실패: $msg');
+    }
+    final data = response.data;
+    if (data is! Map || data['storage_path'] is! String) {
+      throw Exception('캐릭터 생성 응답 형식이 올바르지 않습니다');
+    }
+    return GeneratedProposalCharacter(
+      storagePath: data['storage_path'] as String,
+      prompt: (data['prompt'] as String?) ?? '',
+      characterCode: (data['character_code'] as String?) ?? characterCode,
+      characterName: (data['character_name'] as String?) ?? characterName,
+    );
+  }
+
+  /// `proposal-characters` / `proposal-scenes` / `characters` 등 `bucket/path`
+  /// 형태의 storage_path 로 public URL 반환. 모든 세 버킷이 public read 이므로
+  /// 같은 로직으로 안전.
+  String publicUrlForStoragePath(String bucketPath) {
+    final idx = bucketPath.indexOf('/');
+    if (idx < 0) return bucketPath;
+    final bucket = bucketPath.substring(0, idx);
+    final path = bucketPath.substring(idx + 1);
+    return _client.storage.from(bucket).getPublicUrl(path);
   }
 
   /// `proposal-scenes` 버킷의 storage path 로 public URL 을 만든다.
@@ -216,6 +281,7 @@ class ProposalRepository {
     List<List<String>> sceneCharacters = const [],
     List<String> sceneImagePaths = const [],
     List<String> sceneImagePrompts = const [],
+    List<ProposedCharacter> proposedCharacters = const [],
     int? afterStoryIndex,
   }) async {
     await _client
@@ -236,6 +302,9 @@ class ProposalRepository {
           'scene_characters': sceneCharacters,
           'scene_image_paths': sceneImagePaths,
           'scene_image_prompts': sceneImagePrompts,
+          'proposed_characters': proposedCharacters
+              .map((c) => c.toMap())
+              .toList(),
           'after_story_index': afterStoryIndex,
         })
         .eq('id', proposalId);
