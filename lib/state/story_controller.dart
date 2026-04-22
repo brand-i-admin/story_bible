@@ -142,6 +142,7 @@ class StoryController extends Notifier<StoryState> {
       events: const [],
       selectedPersonCodes: const {},
       selectedPersonColors: const {},
+      displayedEventIds: const {},
       completedEventIds: const {},
       searchQuery: '',
       searchResults: const [],
@@ -177,6 +178,8 @@ class StoryController extends Notifier<StoryState> {
         completedEventIds: completedEventIds,
         selectedPersonCodes: selectedPersonCodes,
         selectedPersonColors: _assignSelectedColors(selectedPersonCodes),
+        // 시대 전환 시 지도 표시는 항상 초기화 (사용자가 다시 고르도록)
+        displayedEventIds: const {},
         searchQuery: '',
         searchResults: const [],
         isSearching: false,
@@ -201,6 +204,8 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(
       selectedPersonCodes: next,
       selectedPersonColors: _assignSelectedColors(next),
+      // 인물 구성이 바뀌면 지도 표시를 리셋 — Step 3 에서 다시 고르게 함
+      displayedEventIds: const {},
       clearSelectedEvent: true,
     );
   }
@@ -209,11 +214,28 @@ class StoryController extends Notifier<StoryState> {
     final next = personCodes
         .where((code) => state.persons.any((person) => person.code == code))
         .toSet();
+    final personsChanged = !_personSetsEqual(next, state.selectedPersonCodes);
     state = state.copyWith(
       selectedPersonCodes: next,
       selectedPersonColors: _assignSelectedColors(next),
+      // 인물 구성이 **변경된 경우에만** 지도 표시를 리셋.
+      // (사용자가 Step 3 ↔ Step 2 를 오가며 인물을 안 바꾸고 "다음" 만 눌렀을
+      // 때 지도 선택을 잃지 않도록 보호)
+      displayedEventIds: personsChanged ? const <String>{} : null,
       clearSelectedEvent: true,
     );
+  }
+
+  bool _personSetsEqual(Set<String> a, Set<String> b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final code in a) {
+      if (!b.contains(code)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void selectEvent(String? eventId) {
@@ -222,6 +244,17 @@ class StoryController extends Notifier<StoryState> {
       return;
     }
     state = state.copyWith(selectedEventId: eventId);
+  }
+
+  /// 지도에 핀/화살표로 표시할 이벤트 집합을 커밋한다.
+  ///
+  /// 현재 `state.events` 에 실제 존재하는 id 만 통과시키고, 다음 렌더에서
+  /// `_timelineForSelectedPersons` 가 이 집합으로 필터되어 핀+화살표 애니메이션이
+  /// 시작된다. 홈의 Step 3 "다음" 버튼이 이 메서드를 호출한다.
+  void setDisplayedEvents(Set<String> eventIds) {
+    final validIds = state.events.map((e) => e.id).toSet();
+    final next = eventIds.intersection(validIds);
+    state = state.copyWith(displayedEventIds: next);
   }
 
   Future<void> markEventCompleted({

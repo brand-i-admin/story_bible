@@ -116,5 +116,25 @@ void main() {
       expect(updated.eras.length, 1);
       expect(updated.eras.first.name, '창조');
     });
+
+    test('displayedEventIds 기본값은 빈 Set 이다', () {
+      const state = StoryState();
+      expect(state.displayedEventIds, isEmpty);
+    });
+
+    test('displayedEventIds 를 Set 으로 교체할 수 있다', () {
+      const original = StoryState();
+      final updated = original.copyWith(
+        displayedEventIds: {'ev1', 'ev2', 'ev3'},
+      );
+      expect(updated.displayedEventIds.length, 3);
+      expect(updated.displayedEventIds.contains('ev2'), true);
+    });
+
+    test('displayedEventIds 를 빈 Set 으로 클리어할 수 있다', () {
+      const original = StoryState(displayedEventIds: {'ev1', 'ev2'});
+      final cleared = original.copyWith(displayedEventIds: const <String>{});
+      expect(cleared.displayedEventIds, isEmpty);
+    });
   });
 }

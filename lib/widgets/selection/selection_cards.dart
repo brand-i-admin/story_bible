@@ -243,6 +243,7 @@ class _StoryCompactCard extends StatelessWidget {
     required this.isCompleted,
     required this.highlightedPersonCodes,
     required this.colorForPerson,
+    required this.nameForPerson,
     required this.onTap,
   });
 
@@ -253,6 +254,7 @@ class _StoryCompactCard extends StatelessWidget {
   final bool isCompleted;
   final List<String> highlightedPersonCodes;
   final Color Function(String personCode) colorForPerson;
+  final String Function(String personCode) nameForPerson;
   final VoidCallback onTap;
 
   @override
@@ -315,9 +317,10 @@ class _StoryCompactCard extends StatelessWidget {
           ),
           if (highlightedPersonCodes.isNotEmpty) ...[
             const SizedBox(width: 6),
-            _PersonDots(
+            _PersonNamePills(
               personCodes: highlightedPersonCodes,
               colorForPerson: colorForPerson,
+              nameForPerson: nameForPerson,
             ),
           ],
         ],
@@ -354,30 +357,86 @@ class _IndexBadge extends StatelessWidget {
   }
 }
 
-class _PersonDots extends StatelessWidget {
-  const _PersonDots({required this.personCodes, required this.colorForPerson});
+/// 이야기 카드 우측 상단의 "등장 인물" 라벨 스택.
+///
+/// 기존 `_PersonDots` (작은 색 점) 을 대체. 인물별로 배정된 색을 pill 배경으로
+/// 쓰고, 그 위에 인물 이름을 작은 흰색 bold 텍스트로 얹는다. 카드 폭 제한 때문에
+/// 최대 3명까지만 표시하고 초과분은 "+N" 으로 요약.
+class _PersonNamePills extends StatelessWidget {
+  const _PersonNamePills({
+    required this.personCodes,
+    required this.colorForPerson,
+    required this.nameForPerson,
+  });
 
   final List<String> personCodes;
   final Color Function(String personCode) colorForPerson;
+  final String Function(String personCode) nameForPerson;
 
   @override
   Widget build(BuildContext context) {
+    const maxShown = 3;
+    final visible = personCodes.take(maxShown).toList(growable: false);
+    final overflow = personCodes.length - visible.length;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: personCodes
-          .take(3)
-          .map((personId) {
-            return Container(
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.only(bottom: 4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: colorForPerson(personId),
-              ),
-            );
-          })
-          .toList(growable: false),
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        for (final code in visible)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: _NamePill(
+              color: colorForPerson(code),
+              label: nameForPerson(code),
+            ),
+          ),
+        if (overflow > 0)
+          _NamePill(color: const Color(0xFF8E7B61), label: '+$overflow'),
+      ],
+    );
+  }
+}
+
+class _NamePill extends StatelessWidget {
+  const _NamePill({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 76),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1.5),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.55),
+            width: 0.8,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10.5,
+            fontWeight: FontWeight.w800,
+            height: 1.1,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -464,6 +523,124 @@ class _AvatarFallback extends StatelessWidget {
           color: Colors.white,
           fontWeight: FontWeight.w800,
           fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
+
+/// Step 3 상단 툴바 — 전체 선택 / 전체 해제 버튼과 선택 카운터.
+///
+/// 버튼은 의미 없는 상태(이미 전체 선택됨 → 전체 선택 비활성)에서 null 을
+/// 받아 disabled. 선택 카운터 `N / M` 표시.
+class _StoryBulkActionsBar extends StatelessWidget {
+  const _StoryBulkActionsBar({
+    required this.total,
+    required this.selectedCount,
+    required this.onSelectAll,
+    required this.onDeselectAll,
+  });
+
+  final int total;
+  final int selectedCount;
+  final VoidCallback? onSelectAll;
+  final VoidCallback? onDeselectAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          _BulkActionChip(
+            label: '전체 선택',
+            icon: Icons.done_all_rounded,
+            onTap: onSelectAll,
+          ),
+          const SizedBox(width: 6),
+          _BulkActionChip(
+            label: '전체 해제',
+            icon: Icons.remove_done_rounded,
+            onTap: onDeselectAll,
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4DA91),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: const Color(0xFF7A4B21)),
+            ),
+            child: Text(
+              '$selectedCount / $total',
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF5A3519),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BulkActionChip extends StatelessWidget {
+  const _BulkActionChip({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onTap != null;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: enabled
+                ? const Color(0xFFE7D2B2)
+                : const Color(0xFFE7D2B2).withValues(alpha: 0.35),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: enabled
+                  ? const Color(0xFFB78A63)
+                  : const Color(0xFFB78A63).withValues(alpha: 0.35),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 14,
+                color: enabled
+                    ? const Color(0xFF5C3A20)
+                    : const Color(0xFF5C3A20).withValues(alpha: 0.4),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  color: enabled
+                      ? const Color(0xFF5C3A20)
+                      : const Color(0xFF5C3A20).withValues(alpha: 0.4),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

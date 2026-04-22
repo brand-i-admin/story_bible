@@ -53,6 +53,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   double _selectionSheetExtent = _selectionSheetExpandedSize;
   Set<String> _draftSelectedPersonCodes = <String>{};
 
+  /// Step 3 에서 사용자가 체크박스로 고르고 있는 이벤트 id — 아직 커밋 전.
+  /// "다음" 을 눌러야 `controller.setDisplayedEvents` 로 커밋되어 지도 핀/화살표
+  /// 애니메이션이 실제로 시작된다.
+  Set<String> _draftDisplayedEventIds = <String>{};
+
   @override
   void initState() {
     super.initState();
@@ -160,6 +165,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return !_sameStringSet(sanitizedDraft, state.selectedPersonCodes);
   }
 
+  /// 인물 기반 기본 타임라인 — 선택된 인물 중 하나라도 등장하는 모든 사건을
+  /// globalRank 오름차순으로 정렬해 반환. 정렬 로직의 single source of truth.
   List<StoryEvent> _timelineForSelectedPersons(
     StoryState state,
     Set<String> selectedPersonCodes,
@@ -176,6 +183,29 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return a.id.compareTo(b.id);
     });
     return filtered;
+  }
+
+  /// 지도에 넘길 타임라인: 커밋된 `state.displayedEventIds` 에 속한 사건만.
+  /// 비어 있으면 빈 리스트 → 지도 핀/화살표가 완전히 사라진다.
+  List<StoryEvent> _timelineForMap(
+    StoryState state,
+    List<StoryEvent> basePersonTimeline,
+  ) {
+    if (state.displayedEventIds.isEmpty) {
+      return const <StoryEvent>[];
+    }
+    return basePersonTimeline
+        .where((e) => state.displayedEventIds.contains(e.id))
+        .toList(growable: false);
+  }
+
+  /// draft 집합에서 현재 사용 가능한 이벤트만 남긴다. 인물이 바뀌어 더 이상
+  /// 후보에 없는 id 는 자동으로 빠진다.
+  Set<String> _sanitizeDraftDisplayedEventIds(
+    List<StoryEvent> availableEvents,
+  ) {
+    final valid = availableEvents.map((e) => e.id).toSet();
+    return _draftDisplayedEventIds.intersection(valid);
   }
 
   bool _canOpenSelectionStep(int step, StoryState state) {
@@ -333,14 +363,61 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     ref
         .read(storyControllerProvider.notifier)
         .setSelectedPersons(sanitizedDraft);
+    // 인물 커밋으로 displayedEventIds 가 컨트롤러에서 리셋된다.
+    // Step 3 진입 시 draft 도 깨끗하게 시작.
+    setState(() {
+      _draftSelectedPersonCodes = sanitizedDraft;
+      _draftDisplayedEventIds = <String>{};
+      _selectionStep = 3;
+      // 기존 "즉시 collapse" 동작 제거 — 사용자가 Step 3 에서 체크박스로
+      // 사건을 골라야 하므로 패널을 열어둔 채로 둔다.
+    });
+  }
+
+  void _toggleDraftDisplayedEvent(String eventId) {
+    setState(() {
+      final next = {..._draftDisplayedEventIds};
+      if (next.contains(eventId)) {
+        next.remove(eventId);
+      } else {
+        next.add(eventId);
+      }
+      _draftDisplayedEventIds = next;
+    });
+  }
+
+  void _selectAllDraftDisplayedEvents(List<StoryEvent> availableEvents) {
+    setState(() {
+      _draftDisplayedEventIds = availableEvents.map((e) => e.id).toSet();
+    });
+  }
+
+  void _deselectAllDraftDisplayedEvents() {
+    setState(() {
+      _draftDisplayedEventIds = <String>{};
+    });
+  }
+
+  /// Step 3 "다음" 버튼 핸들러 — draft 를 커밋해 지도 핀/화살표 애니메이션 트리거.
+  /// 커밋 후 선택 패널을 최소화하여 지도를 드러낸다.
+  void _proceedFromStoryStep() {
+    final state = ref.read(storyControllerProvider);
+    final personTimeline = _timelineForSelectedPersons(
+      state,
+      state.selectedPersonCodes,
+    );
+    final sanitized = _sanitizeDraftDisplayedEventIds(personTimeline);
+    if (sanitized.isEmpty) {
+      return;
+    }
+    ref.read(storyControllerProvider.notifier).setDisplayedEvents(sanitized);
     final viewportSize = MediaQuery.sizeOf(context);
     final collapsedExtent = _sheetSizeForStage(
       viewportSize,
       StorySelectionPanelStage.collapsed,
     );
     setState(() {
-      _draftSelectedPersonCodes = sanitizedDraft;
-      _selectionStep = 3;
+      _draftDisplayedEventIds = sanitized;
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
     });
@@ -438,39 +515,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final viewportSize = MediaQuery.sizeOf(context);
     final collapsedExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
     controller.selectEvent(event.id);
+    // 지도에 이 사건이 아직 커밋 표시되지 않았다면(예: 검색 결과에서 진입)
+    // displayedEventIds + draft 모두에 추가해 지도에 핀이 뜨도록.
+    if (!state.displayedEventIds.contains(event.id)) {
+      final nextCommitted = {...state.displayedEventIds, event.id};
+      controller.setDisplayedEvents(nextCommitted);
+      _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
+    }
     setState(() {
       _selectionStep = 3;
       _draftSelectedPersonCodes = state.selectedPersonCodes.toSet();
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-      _mapPanelController.focusSelectedEvent(force: true);
-    });
-  }
-
-  void _handleSelectionPanelEventSelect(String eventId) {
-    final state = ref.read(storyControllerProvider);
-    final controller = ref.read(storyControllerProvider.notifier);
-    final event = state.events.where((e) => e.id == eventId).firstOrNull;
-    if (event == null) {
-      return;
-    }
-
-    final viewportSize = MediaQuery.sizeOf(context);
-    final targetSheetExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
-
-    setState(() {
-      _selectionStep = 3;
-      _draftSelectedPersonCodes = state.selectedPersonCodes.toSet();
-      _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = targetSheetExtent;
-    });
-    controller.selectEvent(event.id);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -790,9 +847,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
-    final timeline = _timelineForSelectedPersons(
+    // 인물 기반 전체 후보: Step 3 선택지 + 정렬 기준.
+    final personTimeline = _timelineForSelectedPersons(
       state,
       state.selectedPersonCodes,
+    );
+    // 지도에 실제로 렌더할 사건: 커밋된 displayedEventIds 로 필터.
+    final mapTimeline = _timelineForMap(state, personTimeline);
+    // 현재 draft 가 후보 밖을 가리키면 자동 정리된 뷰.
+    final sanitizedDraftDisplayed = _sanitizeDraftDisplayedEventIds(
+      personTimeline,
     );
     final testamentEras =
         state.eras
@@ -822,7 +886,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         children: [
           Positioned.fill(
             child: StoryMapPanel(
-              events: timeline,
+              events: mapTimeline,
               selectedEventId: state.selectedEventId,
               onSelectEvent: _handleEventSelect,
               onCloseSelectedCallout: _closeSelectedEventPopup,
@@ -928,19 +992,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         colorForDraftPerson: (personId) =>
                             _colorForDraftPerson(personId, state),
                         colorForCommittedPerson: controller.colorForPerson,
-                        events: timeline,
-                        selectedEventId: state.selectedEventId,
+                        events: personTimeline,
                         completedEventIds: state.completedEventIds,
-                        onSelectEvent: _handleSelectionPanelEventSelect,
+                        draftDisplayedEventIds: sanitizedDraftDisplayed,
+                        committedDisplayedEventIds: state.displayedEventIds,
+                        onToggleDisplayedEvent: _toggleDraftDisplayedEvent,
+                        onSelectAllDisplayedEvents: () =>
+                            _selectAllDraftDisplayedEvents(personTimeline),
+                        onDeselectAllDisplayedEvents:
+                            _deselectAllDraftDisplayedEvents,
+                        onCommitDisplayedEvents: _proceedFromStoryStep,
                         onNextFromEra: _proceedFromEraStep,
                         onNextFromPersons: _proceedFromPersonStep,
-                        onStartQuiz: () {
-                          final eventId = state.selectedEventId;
-                          if (eventId == null) {
-                            return;
-                          }
-                          _startQuiz(eventId);
-                        },
                       ),
                     ),
                   ),

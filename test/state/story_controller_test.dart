@@ -521,4 +521,160 @@ void main() {
       expect(state.isSearching, true);
     });
   });
+
+  group('StoryController.setDisplayedEvents', () {
+    test('전달된 id 중 state.events 에 있는 것만 displayedEventIds 에 저장', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', personCodes: ['p1']),
+          _event(id: 'ev2', eraId: 'e1', personCodes: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+
+      controller.setDisplayedEvents({'ev1', 'evX', 'ev2'});
+      final state = container.read(storyControllerProvider);
+      expect(state.displayedEventIds, {'ev1', 'ev2'});
+    });
+
+    test('빈 Set 을 전달하면 displayedEventIds 가 비워진다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', personCodes: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+
+      controller.setDisplayedEvents({'ev1'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+      });
+
+      controller.setDisplayedEvents(const <String>{});
+      expect(
+        container.read(storyControllerProvider).displayedEventIds,
+        isEmpty,
+      );
+    });
+  });
+
+  group('displayedEventIds 리셋 조건', () {
+    test('setSelectedPersons 호출 시 displayedEventIds 가 초기화된다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(() => mockRepo.fetchPersonsByEra(any())).thenAnswer(
+        (_) async => [
+          _person(id: 'p1', name: 'A'),
+          _person(id: 'p2', name: 'B'),
+        ],
+      );
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', personCodes: ['p1']),
+          _event(id: 'ev2', eraId: 'e1', personCodes: ['p2']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.setSelectedPersons({'p1', 'p2'});
+      controller.setDisplayedEvents({'ev1', 'ev2'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+        'ev2',
+      });
+
+      // 인물을 다시 설정하면 지도 표시 집합도 비어야 한다
+      controller.setSelectedPersons({'p1'});
+      expect(
+        container.read(storyControllerProvider).displayedEventIds,
+        isEmpty,
+      );
+    });
+
+    test('setSelectedPersons 에 동일 집합을 넘기면 displayedEventIds 는 유지된다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(() => mockRepo.fetchPersonsByEra(any())).thenAnswer(
+        (_) async => [
+          _person(id: 'p1', name: 'A'),
+          _person(id: 'p2', name: 'B'),
+        ],
+      );
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', personCodes: ['p1']),
+          _event(id: 'ev2', eraId: 'e1', personCodes: ['p2']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.setSelectedPersons({'p1', 'p2'});
+      controller.setDisplayedEvents({'ev1', 'ev2'});
+
+      // 같은 집합을 다시 커밋 — 지도 표시는 그대로여야 한다
+      controller.setSelectedPersons({'p1', 'p2'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+        'ev2',
+      });
+    });
+
+    test('togglePerson 호출 시 displayedEventIds 가 초기화된다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchPersonsByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', personCodes: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.setSelectedPersons({'p1'});
+      controller.setDisplayedEvents({'ev1'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+      });
+
+      controller.togglePerson('p1');
+      expect(
+        container.read(storyControllerProvider).displayedEventIds,
+        isEmpty,
+      );
+    });
+  });
 }

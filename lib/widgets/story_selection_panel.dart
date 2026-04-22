@@ -39,12 +39,15 @@ class StorySelectionPanel extends StatefulWidget {
     required this.colorForDraftPerson,
     required this.colorForCommittedPerson,
     required this.events,
-    required this.selectedEventId,
     required this.completedEventIds,
-    required this.onSelectEvent,
+    required this.draftDisplayedEventIds,
+    required this.committedDisplayedEventIds,
+    required this.onToggleDisplayedEvent,
+    required this.onSelectAllDisplayedEvents,
+    required this.onDeselectAllDisplayedEvents,
+    required this.onCommitDisplayedEvents,
     required this.onNextFromEra,
     required this.onNextFromPersons,
-    required this.onStartQuiz,
   });
 
   final ScrollController scrollController;
@@ -71,14 +74,30 @@ class StorySelectionPanel extends StatefulWidget {
   final Color Function(String personId) colorForDraftPerson;
   final Color Function(String personId) colorForCommittedPerson;
 
+  /// Step 3 에서 보여줄 후보 이벤트. 선택된 인물이 등장하는 전체 사건을
+  /// globalRank 순서로 전달받는다 (부모가 정렬).
   final List<StoryEvent> events;
-  final String? selectedEventId;
   final Set<String> completedEventIds;
-  final ValueChanged<String> onSelectEvent;
+
+  /// Step 3 체크박스의 "현재 드래프트 선택" 집합 (아직 커밋 전).
+  final Set<String> draftDisplayedEventIds;
+
+  /// 현재 지도에 실제로 렌더 중인 커밋 집합 — 드래프트와 비교해 "변경됨" 뱃지를
+  /// 보이는 데 사용.
+  final Set<String> committedDisplayedEventIds;
+
+  /// 카드 탭 → 드래프트 토글.
+  final ValueChanged<String> onToggleDisplayedEvent;
+
+  /// Step 3 툴바의 전체 선택 / 전체 해제 버튼.
+  final VoidCallback onSelectAllDisplayedEvents;
+  final VoidCallback onDeselectAllDisplayedEvents;
+
+  /// Step 3 "다음" 버튼 — 드래프트를 커밋하고 지도 애니메이션 트리거.
+  final VoidCallback onCommitDisplayedEvents;
 
   final VoidCallback onNextFromEra;
   final VoidCallback onNextFromPersons;
-  final VoidCallback onStartQuiz;
 
   @override
   State<StorySelectionPanel> createState() => _StorySelectionPanelState();
@@ -238,20 +257,24 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       }
       return widget.onNextFromPersons;
     }
-    if (widget.selectedEventId == null) {
+    // Step 3: 체크된 사건이 하나도 없으면 "다음" 비활성. 드래프트가 커밋과
+    // 동일해도 (재커밋 = 재애니메이션) 허용.
+    if (widget.draftDisplayedEventIds.isEmpty) {
       return null;
     }
-    return widget.onStartQuiz;
+    return widget.onCommitDisplayedEvents;
   }
 
   Widget _buildHeaderSection({
     required bool canRunPrimaryAction,
     required VoidCallback? primaryAction,
   }) {
+    // Step 3 기준: 현재 드래프트 사건들이 모두 이수 상태면 "완료" 톤으로.
+    // (과거 단일 선택 모델에서 선택된 사건의 완료 여부로 표시하던 것을 대체)
     final selectedStoryCompleted =
         widget.step == 3 &&
-        widget.selectedEventId != null &&
-        widget.completedEventIds.contains(widget.selectedEventId!);
+        widget.draftDisplayedEventIds.isNotEmpty &&
+        widget.draftDisplayedEventIds.every(widget.completedEventIds.contains);
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
@@ -270,7 +293,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
                   SizedBox(
                     width: 98,
                     child: _PrimaryActionButton(
-                      label: widget.step == 3 ? '퀴즈 시작' : '다음',
+                      label: '다음',
                       enabled: canRunPrimaryAction,
                       pressed: _isPrimaryPressed,
                       completed: selectedStoryCompleted,
@@ -307,7 +330,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             SizedBox(
               width: 116,
               child: _PrimaryActionButton(
-                label: widget.step == 3 ? '퀴즈 시작' : '다음',
+                label: '다음',
                 enabled: canRunPrimaryAction,
                 pressed: _isPrimaryPressed,
                 completed: selectedStoryCompleted,
@@ -482,7 +505,33 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       return <Widget>[_buildEmptyBodySliver('선택된 인물의 사건이 없습니다.')];
     }
 
+    final total = widget.events.length;
+    final selectedCount = widget.events
+        .where((e) => widget.draftDisplayedEventIds.contains(e.id))
+        .length;
+
+    // code → name 룩업을 한 번만 만들어서 카드마다 재사용.
+    final personNameByCode = <String, String>{
+      for (final p in widget.persons) p.code: p.name,
+    };
+    String nameForPerson(String code) => personNameByCode[code] ?? code;
+
     return <Widget>[
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+        sliver: SliverToBoxAdapter(
+          child: _StoryBulkActionsBar(
+            total: total,
+            selectedCount: selectedCount,
+            onSelectAll: selectedCount == total
+                ? null
+                : widget.onSelectAllDisplayedEvents,
+            onDeselectAll: selectedCount == 0
+                ? null
+                : widget.onDeselectAllDisplayedEvents,
+          ),
+        ),
+      ),
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
         sliver: SliverGrid(
@@ -494,17 +543,19 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final event = widget.events[index];
+            final checked = widget.draftDisplayedEventIds.contains(event.id);
             return _StoryCompactCard(
               index: index + 1,
               title: event.title,
               subtitle: _storySubtitle(event),
-              selected: event.id == widget.selectedEventId,
+              selected: checked,
               isCompleted: widget.completedEventIds.contains(event.id),
               highlightedPersonCodes: event.personCodes
                   .where(widget.committedSelectedPersonCodes.contains)
                   .toList(growable: false),
               colorForPerson: widget.colorForCommittedPerson,
-              onTap: () => widget.onSelectEvent(event.id),
+              nameForPerson: nameForPerson,
+              onTap: () => widget.onToggleDisplayedEvent(event.id),
             );
           }, childCount: widget.events.length),
         ),
