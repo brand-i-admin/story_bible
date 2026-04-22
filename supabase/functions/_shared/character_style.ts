@@ -14,21 +14,23 @@ export const CHARACTER_COMMON_STYLE =
   "legs section one-third, same body ratio template across all human " +
   "characters, compact adult proportions, not chibi, simple small eyes " +
   "and nose, mature friendly expression, minimal clean outline, " +
-  "exactly one character only, solo single subject, full body visible " +
-  "from head to toe, both feet visible, whole figure fits inside frame, " +
-  "centered, plain white background, high resolution, consistent design " +
-  "system across the full cast, distinct silhouette and face geometry " +
-  "for each character, distinct hairstyle and story-inspired accessory " +
-  "for each character, no text, no watermark";
+  "full body visible from head to toe, both feet visible, whole figure " +
+  "fits inside frame, centered, plain white background, high resolution, " +
+  "consistent design system across the full cast, distinct silhouette " +
+  "and face geometry, distinct hairstyle and story-inspired accessory, " +
+  "no text, no watermark";
 
+// Multiple people / crowd 를 앞에 배치해 가중치 높임 + "one person only"
+// 강조. Imagen 의 negative_prompt 는 순서에 약간 민감하다.
 export const CHARACTER_NEGATIVE_PROMPT =
+  "multiple people, more than one person, two people, three people, " +
+  "crowd, group shot, companions, side characters, duplicate person, " +
+  "extra faces, extra bodies, twin, mirrored figure, same-face clones, " +
   "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, " +
   "chibi, super-deformed, giant head, baby proportions, oversized eyes, " +
   "long legs, short legs, tiny torso, oversized torso, tiny body, " +
   "stretched body, uneven body ratio, inconsistent body proportions, " +
-  "head larger than torso, legs longer than torso, same-face clones, " +
-  "duplicate person, multiple people, crowd, group shot, companions, " +
-  "side characters, extra faces, extra bodies, twin, mirrored figure, " +
+  "head larger than torso, legs longer than torso, " +
   "close-up, portrait crop, bust shot, half body, cropped head, " +
   "cropped feet, marshmallow body, gritty, dark, horror, complex " +
   "background, text, logo, watermark";
@@ -56,16 +58,38 @@ export const IMAGEN_MODEL_CANDIDATES: string[] = (() => {
 /// 과거 호환 alias (generate-proposal-character/index.ts 가 초기 import).
 export const IMAGEN_MODEL = IMAGEN_MODEL_CANDIDATES[0];
 
-/// Compose the final prompt from user-provided description using the same
-/// convention as Python's `resolve_prompt`: if the text contains the literal
-/// token "COMMON_STYLE", substitute; otherwise prepend.
+/// Compose the final prompt from user-provided description.
+///
+/// 설계 포인트:
+///   1. common_style 먼저 → 브랜드 그림체 고정
+///   2. user 의 구체적 설명을 **별도 문장으로 분리** + 강조 wrapper 로 감쌈
+///      (기존: 쉼표 리스트 item 으로 붙여서 Imagen 이 무시하는 경우가 있었음)
+///   3. **EXACTLY ONE CHARACTER** 를 prompt 끝에 재강조 — Imagen 은 마지막
+///      instruction 을 더 강하게 반영
+///   4. 레거시 Python 스크립트 호환: userPrompt 에 "COMMON_STYLE" 리터럴이
+///      들어있으면 그대로 치환 (명시적 옵트인)
 export function composeCharacterPrompt(userPrompt: string): string {
   const description = (userPrompt ?? "").trim();
   if (description.length === 0) {
-    return CHARACTER_COMMON_STYLE;
+    // 설명이 전혀 없을 때도 "한 명만" 은 강제.
+    return (
+      `${CHARACTER_COMMON_STYLE}. ` +
+      `CRITICAL: draw EXACTLY ONE character, alone, solo in the frame. ` +
+      `Absolutely no additional people or companions.`
+    );
   }
   if (description.includes("COMMON_STYLE")) {
+    // 레거시: Python seed 스크립트 호환 경로. 이 경로를 탈 때도 "one character"
+    // 규칙은 common_style 에 여전히 포함되어 있음.
     return description.replace("COMMON_STYLE", CHARACTER_COMMON_STYLE).trim();
   }
-  return `${CHARACTER_COMMON_STYLE}, ${description}`;
+  // user 가 구체적 설명을 줬을 때: 명시적 섹션으로 분리해 희석 방지.
+  return (
+    `${CHARACTER_COMMON_STYLE}. ` +
+    `Subject description (you MUST follow every detail): ${description}. ` +
+    `CRITICAL: draw EXACTLY ONE character, alone, solo in the frame. ` +
+    `Absolutely no additional people, companions, or background characters. ` +
+    `Every visual element described in the subject description above must be ` +
+    `clearly visible on this one single character.`
+  );
 }
