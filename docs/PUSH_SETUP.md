@@ -64,53 +64,60 @@ flutterfire configure
 - `ios/Runner/GoogleService-Info.plist` 배치
 - `web/index.html` 에 Firebase SDK 스크립트 주입
 
-## 6. 플랫폼별 수동 설정
+## 6. 플랫폼별 설정 — flutterfire 자동 vs 수동
 
-### Android — `android/app/build.gradle`
+`flutterfire configure` 가 처리하는 범위와 남은 수동 작업을 구분해 정리.
 
-```gradle
-// 파일 맨 아래에 추가
-apply plugin: 'com.google.gms.google-services'
-```
+### Android — ✅ 전부 자동
 
-`android/build.gradle` 의 `dependencies` 블록에:
+`flutterfire configure` 가 다음을 모두 처리:
 
-```gradle
-classpath 'com.google.gms:google-services:4.4.2'
-```
+- `android/app/google-services.json` 자동 배치
+- `android/settings.gradle.kts` 에 `com.google.gms.google-services` 플러그인 선언 (`apply false`)
+- `android/app/build.gradle.kts` 의 `plugins {}` 블록에 플러그인 적용
 
-Android 13+ 는 `POST_NOTIFICATIONS` 런타임 권한이 필요하다. `firebase_messaging` 플러그인이 자동 요청.
+Android 13+ 런타임 `POST_NOTIFICATIONS` 권한은 `firebase_messaging` 이 필요 시 자동 요청.
+**추가 수동 작업 없음.**
 
-### iOS — `ios/Runner/Info.plist`
+### iOS — ⚠️ 2가지 수동 필요 (이 프로젝트 저장소에 이미 적용 완료)
 
-```xml
-<key>UIBackgroundModes</key>
-<array>
-  <string>fetch</string>
-  <string>remote-notification</string>
-</array>
-```
+`flutterfire configure` 는 `GoogleService-Info.plist` 만 배치한다. 아래 두 가지는 별도 편집 필요:
 
-Xcode → Runner → Signing & Capabilities → "+ Capability" → "Push Notifications" 추가.
+1. **`ios/Runner/Info.plist`** — 백그라운드 푸시 수신 허용
 
-### Web — Service Worker
+   ```xml
+   <key>UIBackgroundModes</key>
+   <array>
+     <string>fetch</string>
+     <string>remote-notification</string>
+   </array>
+   ```
 
-`web/firebase-messaging-sw.js` 생성 (flutterfire configure 가 생성 안 하면 수동):
+2. **`ios/Runner/Runner.entitlements`** — APNs 환경 등록
 
-```js
-importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js');
+   ```xml
+   <key>aps-environment</key>
+   <string>development</string>
+   ```
 
-firebase.initializeApp({
-  apiKey: '<from firebase_options.dart>',
-  authDomain: '...',
-  projectId: '...',
-  appId: '...',
-  messagingSenderId: '...',
-});
+   Release 빌드 시 `production` 으로 바꾸거나, Xcode "Signing & Capabilities" 로
+   "Push Notifications" capability 를 추가해 Xcode 가 자동 관리하게 둔다.
 
-const messaging = firebase.messaging();
-```
+App Store 배포 시에는 Apple Developer Console 에서 App Identifier 의 Push
+Notifications 기능이 체크되어 있어야 한다 (개발 단계에서는 불필요).
+
+### Web — ⚠️ Service Worker 수동 생성 (이 프로젝트 저장소에 이미 작성됨)
+
+`flutterfire configure` 는 `firebase-messaging-sw.js` 를 생성하지 않는다. 이미
+`web/firebase-messaging-sw.js` 를 작성해 두었으며, 내용은 `lib/firebase_options.dart`
+의 `web` 섹션과 동일한 config 를 가진다. **Firebase config 값이 바뀌면
+(flutterfire 재실행 시) 이 파일도 동기화 필요.**
+
+SW 역할:
+- 백그라운드 메시지 수신 시 브라우저 알림 표시
+- 알림 클릭 시 이미 열린 앱 탭으로 포커스 + `postMessage` 로 deep_link 전달
+
+`web/index.html` 수정은 불필요 — `firebase_messaging` Flutter 플러그인이 JS SDK 로드를 자체 처리한다.
 
 ## 7. Supabase Edge Function 배포
 
