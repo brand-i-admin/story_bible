@@ -65,15 +65,38 @@ def upload_one(
         "cache-control": "3600",
     }
     response = session.post(url, data=png_bytes, headers=headers, timeout=60)
-    if response.status_code == 409 and not overwrite:
-        # Duplicate and we explicitly disabled overwrite.
-        print(f"  [skip] {storage_path} already exists (use --overwrite to replace)")
-        return
+    # Supabase Storage quirk: duplicate objects return HTTP 400 with a JSON
+    # body `{"statusCode": "409", "error": "Duplicate", ...}`. The top-level
+    # status is 400, so we have to peek at the body to detect the dupe case.
+    if response.status_code == 409 or _is_duplicate_body(response):
+        if not overwrite:
+            print(
+                f"  [skip] {storage_path} already exists "
+                "(use --overwrite to replace)"
+            )
+            return
+        # overwrite=True 였는데도 409 가 나온다면 진짜 예외 상황이니 raise
     if not response.ok:
         raise RuntimeError(
             f"upload failed for {storage_path}: "
             f"{response.status_code} {response.text}"
         )
+
+
+def _is_duplicate_body(response: requests.Response) -> bool:
+    """Supabase Storage 가 400 + `error: Duplicate` 로 응답하는 케이스 감지."""
+    try:
+        body = response.json()
+    except ValueError:
+        return False
+    if not isinstance(body, dict):
+        return False
+    if str(body.get("statusCode", "")) == "409":
+        return True
+    if body.get("error") == "Duplicate":
+        return True
+    msg = str(body.get("message", "")).lower()
+    return "already exists" in msg or "duplicate" in msg
 
 
 def update_avatar_path_rpc(
