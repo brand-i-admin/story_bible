@@ -69,24 +69,16 @@ drop table if exists characters cascade;         -- 새 이름
 drop table if exists eras cascade;
 
 -- ----------------------------------------------------------------------------
--- Storage 파일 purge — 이 앱이 관리하는 버킷만.
+-- Storage 파일 purge 는 **SQL 에서 못함**.
+-- Supabase 는 storage.objects / storage.buckets 에 protect_delete() 트리거를
+-- 걸어서 SQL DELETE 를 차단 ("Direct deletion from storage tables is not
+-- allowed. Use the Storage API instead."). 실제 파일이 스토리지 백엔드에
+-- 남는 고아를 방지하기 위한 안전장치.
 --
--- db_init.sql 은 "drop & recreate" 시맨틱이라 Postgres 테이블 뿐 아니라
--- Storage 에 있는 기존 객체도 같이 비워야 진짜 clean slate.
--- buckets 자체는 아래 storage.buckets upsert 섹션에서 재설정되므로 여기선
--- **객체(=실제 파일) 만** 삭제. Supabase 가 storage.objects 행 삭제 시
--- 실제 스토리지 파일까지 GC 하도록 연결해 둠.
---
--- `profile-images` 는 사용자가 올린 프로필 사진이라 **유지** — db-init 한다고
--- 사용자 데이터가 날아가면 안 되기 때문. 사용자 계정이 없는 테스트 환경이라면
--- 관리자가 수동으로 Dashboard 에서 purge 가능.
-do $$
-begin
-  if exists (select 1 from pg_tables where schemaname = 'storage' and tablename = 'objects') then
-    delete from storage.objects
-     where bucket_id in ('characters', 'proposal-scenes', 'proposal-characters');
-  end if;
-end $$;
+-- 따라서 db-init 직전에 REST API (`POST /storage/v1/bucket/<name>/empty`) 로
+-- 비우는 별도 Python 스크립트를 돌린다:
+--   Makefile `db-init:` → tools/supabase/purge_owned_buckets.py --env $(ENV)
+-- 이걸 선행해야 `make upload-character-avatars` 가 clean slate 에서 시작.
 
 drop trigger if exists on_auth_user_created on auth.users;
 drop function if exists public.handle_new_user_profile() cascade;

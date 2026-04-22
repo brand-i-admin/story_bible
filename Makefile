@@ -264,6 +264,9 @@ endef
 
 db-init:
 	@echo "[Makefile] db_init.sql 적용 (ENV=$(ENV)) — DROP & RECREATE 주의"
+	@echo "[Makefile] 선행: Storage buckets 비우기 (SQL 에선 트리거 차단됨 → REST API)"
+	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(ENV) || \
+	  echo "[Makefile] (Storage purge 스킵 — service_role 키 없거나 실패, db-init 은 계속)"
 	$(call PSQL_APPLY,db_init.sql)
 
 # Bible verses 시드는 PK 충돌 시 에러 → 보통 1회만 실행 (db_init.sql 직후).
