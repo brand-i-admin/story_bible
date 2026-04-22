@@ -111,27 +111,34 @@ def list_bucket_recursively(
 
 
 def fetch_referenced_paths(session: requests.Session, base_url: str) -> set[str]:
-    """Union of every bucket path referenced anywhere in event_proposals.
+    """Union of every bucket path referenced anywhere in `event_proposals`,
+    `events`, and `characters`.
 
-    Two sources:
+    We must check all three to avoid deleting a file that's still needed:
       - event_proposals.scene_image_paths (text[])
       - event_proposals.proposed_characters[*].storage_path (jsonb)
+      - events.scene_image_paths (approved event 의 하이브리드 fallback)
+      - characters.avatar_storage_path (proposal-characters/... 또는
+        characters/... — 후자는 이 cleanup 대상 버킷 밖이라 자연 무시되지만
+        set 에 넣어도 안전)
 
-    Both are already `bucket/path` form (see Edge Function response contract).
+    만약 event_proposals 만 보면 어드민이 승인 후 proposal 원본 row 를
+    삭제했을 때 events.scene_image_paths 는 아직 proposal-scenes/... 를
+    가리키는데 cleanup 이 파일을 삭제해 하이브리드 fallback 이 깨진다.
     """
-    url = f"{base_url}/rest/v1/event_proposals"
-    response = session.get(
-        url,
+    refs: set[str] = set()
+
+    # 1) event_proposals
+    r = session.get(
+        f"{base_url}/rest/v1/event_proposals",
         params={"select": "scene_image_paths,proposed_characters"},
         timeout=60,
     )
-    if not response.ok:
+    if not r.ok:
         raise RuntimeError(
-            f"GET event_proposals failed: {response.status_code} {response.text}"
+            f"GET event_proposals failed: {r.status_code} {r.text}"
         )
-
-    refs: set[str] = set()
-    for row in response.json():
+    for row in r.json():
         for path in row.get("scene_image_paths") or []:
             if isinstance(path, str) and path:
                 refs.add(path)
@@ -141,6 +148,41 @@ def fetch_referenced_paths(session: requests.Session, base_url: str) -> set[str]
             path = ch.get("storage_path")
             if isinstance(path, str) and path:
                 refs.add(path)
+
+    # 2) events (approved 이벤트의 하이브리드 fallback URL)
+    r = session.get(
+        f"{base_url}/rest/v1/events",
+        params={"select": "scene_image_paths"},
+        timeout=60,
+    )
+    if r.ok:
+        for row in r.json():
+            for path in row.get("scene_image_paths") or []:
+                if isinstance(path, str) and path:
+                    refs.add(path)
+    else:
+        print(
+            f"[cleanup] WARN: GET events failed ({r.status_code}) — "
+            "events 참조 경로 보호 없이 진행. 값비싼 경우 재시도 권장."
+        )
+
+    # 3) characters.avatar_storage_path (proposal-characters/... 경로가 있을 수 있음)
+    r = session.get(
+        f"{base_url}/rest/v1/characters",
+        params={"select": "avatar_storage_path"},
+        timeout=60,
+    )
+    if r.ok:
+        for row in r.json():
+            path = row.get("avatar_storage_path")
+            if isinstance(path, str) and path:
+                refs.add(path)
+    else:
+        print(
+            f"[cleanup] WARN: GET characters failed ({r.status_code}) — "
+            "characters 참조 경로 보호 없이 진행."
+        )
+
     return refs
 
 

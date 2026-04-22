@@ -1,6 +1,6 @@
 [
   {
-    "title": "101 다윗과 골리앗: 돌 하나",
+    "title": "다윗과 골리앗: 돌 하나",
     "era": "era_monarchy",
     "characters": [
       "david",
@@ -41,7 +41,7 @@
     ]
   },
   {
-    "title": "102 사울의 시기: 다윗의 도망 시작",
+    "title": "사울의 시기: 다윗의 도망 시작",
     "era": "era_monarchy",
     "characters": [
       "david",
@@ -88,7 +88,7 @@
     ]
   },
   {
-    "title": "103 다윗이 사울을 살려주다: 동굴의 순간",
+    "title": "다윗이 사울을 살려주다: 동굴의 순간",
     "era": "era_monarchy",
     "characters": [
       "david",
@@ -133,7 +133,7 @@
     ]
   },
   {
-    "title": "104 사울의 최후: 엔돌과 길보아",
+    "title": "사울의 최후: 엔돌과 길보아",
     "era": "era_monarchy",
     "characters": [
       "saul"
@@ -180,7 +180,7 @@
     ]
   },
   {
-    "title": "105 다윗 즉위: 한 왕국으로",
+    "title": "다윗 즉위: 한 왕국으로",
     "era": "era_monarchy",
     "characters": [
       "david",
@@ -227,7 +227,7 @@
     ]
   },
   {
-    "title": "106 언약궤 입성: 춤과 기쁨",
+    "title": "언약궤 입성: 춤과 기쁨",
     "era": "era_monarchy",
     "characters": [
       "david"
@@ -267,7 +267,7 @@
     ]
   },
   {
-    "title": "107 다윗 언약: 집을 세우리라",
+    "title": "다윗 언약: 집을 세우리라",
     "era": "era_monarchy",
     "characters": [
       "david",
@@ -312,7 +312,7 @@
     ]
   },
   {
-    "title": "108 밧세바 사건: 나단의 책망",
+    "title": "밧세바 사건: 나단의 책망",
     "era": "era_monarchy",
     "characters": [
       "david",
@@ -358,7 +358,7 @@
     ]
   },
   {
-    "title": "109 압살롬의 반역: 도망치는 왕",
+    "title": "압살롬의 반역: 도망치는 왕",
     "era": "era_monarchy",
     "characters": [
       "david"
@@ -402,7 +402,7 @@
     ]
   },
   {
-    "title": "110 인구조사와 제단: 다윗의 선택",
+    "title": "인구조사와 제단: 다윗의 선택",
     "era": "era_monarchy",
     "characters": [
       "david"
@@ -444,7 +444,7 @@
     ]
   },
   {
-    "title": "111 솔로몬 즉위: 지혜의 선택",
+    "title": "솔로몬 즉위: 지혜의 선택",
     "era": "era_monarchy",
     "characters": [
       "solomon",
@@ -490,7 +490,7 @@
     ]
   },
   {
-    "title": "112 성전 건축: 손으로 짓는 집",
+    "title": "성전 건축: 손으로 짓는 집",
     "era": "era_monarchy",
     "characters": [
       "solomon"
@@ -524,7 +524,7 @@
     ]
   },
   {
-    "title": "113 성전 봉헌: 기도와 영광",
+    "title": "성전 봉헌: 기도와 영광",
     "era": "era_monarchy",
     "characters": [
       "solomon"
@@ -562,7 +562,7 @@
     ]
   },
   {
-    "title": "114 솔로몬: 이방의 경탄부터 타락까지",
+    "title": "솔로몬: 이방의 경탄부터 타락까지",
     "era": "era_monarchy",
     "characters": [
       "solomon"
@@ -602,7 +602,7 @@
     ]
   },
   {
-    "title": "115 왕국의 분열과 역사",
+    "title": "왕국의 분열과 역사",
     "era": "era_monarchy",
     "characters": [],
     "place_name": "세겜(전승)",
@@ -634,7 +634,7 @@
     ]
   },
   {
-    "title": "116 엘리야와 갈멜: 불의 응답",
+    "title": "엘리야와 갈멜: 불의 응답",
     "era": "era_monarchy",
     "characters": [
       "elijah"
@@ -674,7 +674,7 @@
     ]
   },
   {
-    "title": "117 호렙의 엘리야: 조용한 음성",
+    "title": "호렙의 엘리야: 조용한 음성",
     "era": "era_monarchy",
     "characters": [
       "elijah"
@@ -716,7 +716,7 @@
     ]
   },
   {
-    "title": "118 나봇의 포도원: 빼앗긴 정의",
+    "title": "나봇의 포도원: 빼앗긴 정의",
     "era": "era_monarchy",
     "characters": [
       "ahab",
@@ -763,7 +763,7 @@
     ]
   },
   {
-    "title": "119 엘리야 승천: 겉옷의 계승",
+    "title": "엘리야 승천: 겉옷의 계승",
     "era": "era_monarchy",
     "characters": [
       "elijah",
@@ -808,7 +808,7 @@
     ]
   },
   {
-    "title": "120 나아만: 요단의 일곱 번",
+    "title": "나아만: 요단의 일곱 번",
     "era": "era_monarchy",
     "characters": [
       "naaman",
@@ -851,7 +851,7 @@
     ]
   },
   {
-    "title": "121 예후의 혁명: 칼날의 교체",
+    "title": "예후의 혁명: 칼날의 교체",
     "era": "era_monarchy",
     "characters": [
       "jehu"
@@ -893,7 +893,7 @@
     ]
   },
   {
-    "title": "122 북왕국 멸망: 사마리아 함락",
+    "title": "북왕국 멸망: 사마리아 함락",
     "era": "era_monarchy",
     "characters": [
       "israelites"
@@ -927,7 +927,7 @@
     ]
   },
   {
-    "title": "123 히스기야와 산헤립: 두려움의 편지",
+    "title": "히스기야와 산헤립: 두려움의 편지",
     "era": "era_monarchy",
     "characters": [
       "hezekiah",
@@ -974,7 +974,7 @@
     ]
   },
   {
-    "title": "124 히스기야의 병과 바벨론 사신",
+    "title": "히스기야의 병과 바벨론 사신",
     "era": "era_monarchy",
     "characters": [
       "hezekiah",
@@ -1024,7 +1024,7 @@
     ]
   },
   {
-    "title": "125 요시야의 개혁: 율법책을 찾다",
+    "title": "요시야의 개혁: 율법책을 찾다",
     "era": "era_monarchy",
     "characters": [
       "josiah"
@@ -1060,7 +1060,7 @@
     ]
   },
   {
-    "title": "126 예레미야의 소명: 불타는 말씀",
+    "title": "예레미야의 소명: 불타는 말씀",
     "era": "era_monarchy",
     "characters": [
       "jeremiah",
@@ -1105,7 +1105,7 @@
     ]
   },
   {
-    "title": "127 바벨론의 압박: 첫 포로",
+    "title": "바벨론의 압박: 첫 포로",
     "era": "era_monarchy",
     "characters": [
       "jehoiachin"
@@ -1143,7 +1143,7 @@
     ]
   },
   {
-    "title": "128 예루살렘 포위: 왕의 몰락",
+    "title": "예루살렘 포위: 왕의 몰락",
     "era": "era_monarchy",
     "characters": [
       "zedekiah"
@@ -1181,7 +1181,7 @@
     ]
   },
   {
-    "title": "129 예루살렘 함락: 성전이 불타다",
+    "title": "예루살렘 함락: 성전이 불타다",
     "era": "era_exile_return",
     "characters": [
       "israelites"
@@ -1217,7 +1217,7 @@
     ]
   },
   {
-    "title": "130 남은 자의 선택: 두 갈래 길",
+    "title": "남은 자의 선택: 두 갈래 길",
     "era": "era_exile_return",
     "characters": [
       "jeremiah"
@@ -1260,7 +1260,7 @@
     ]
   },
   {
-    "title": "131 에스겔의 소명: 보좌의 환상",
+    "title": "에스겔의 소명: 보좌의 환상",
     "era": "era_exile_return",
     "characters": [
       "ezekiel"
@@ -1300,7 +1300,7 @@
     ]
   },
   {
-    "title": "132 마른 뼈: 숨이 들어오다",
+    "title": "마른 뼈: 숨이 들어오다",
     "era": "era_exile_return",
     "characters": [
       "ezekiel"
@@ -1340,7 +1340,7 @@
     ]
   },
   {
-    "title": "133 다니엘: 뜻을 정하다",
+    "title": "다니엘: 뜻을 정하다",
     "era": "era_exile_return",
     "characters": [
       "daniel"
@@ -1382,7 +1382,7 @@
     ]
   },
   {
-    "title": "134 풀무불: 다니엘과 세 친구",
+    "title": "풀무불: 다니엘과 세 친구",
     "era": "era_exile_return",
     "characters": [
       "daniel"
@@ -1436,7 +1436,7 @@
     ]
   },
   {
-    "title": "135 벨사살의 잔치: 벽에 쓴 글",
+    "title": "벨사살의 잔치: 벽에 쓴 글",
     "era": "era_exile_return",
     "characters": [
       "daniel"
@@ -1474,7 +1474,7 @@
     ]
   },
   {
-    "title": "136 사자굴: 멈추지 않는 기도",
+    "title": "사자굴: 멈추지 않는 기도",
     "era": "era_exile_return",
     "characters": [
       "daniel"
@@ -1512,7 +1512,7 @@
     ]
   },
   {
-    "title": "137 고레스 칙령: 돌아가라",
+    "title": "고레스 칙령: 돌아가라",
     "era": "era_exile_return",
     "characters": [
       "cyrus",
@@ -1547,7 +1547,7 @@
     ]
   },
   {
-    "title": "138 제단과 예배 회복",
+    "title": "제단과 예배 회복",
     "era": "era_exile_return",
     "characters": [
       "returnees"
@@ -1589,7 +1589,7 @@
     ]
   },
   {
-    "title": "139 성전 재건: 방해와 완공",
+    "title": "성전 재건: 방해와 완공",
     "era": "era_exile_return",
     "characters": [
       "returnees"
@@ -1632,7 +1632,7 @@
     ]
   },
   {
-    "title": "140 에스더: 왕후가 되다",
+    "title": "에스더: 왕후가 되다",
     "era": "era_exile_return",
     "characters": [
       "esther",
@@ -1675,7 +1675,7 @@
     ]
   },
   {
-    "title": "141 하만의 음모: 유다인을 없애라",
+    "title": "하만의 음모: 유다인을 없애라",
     "era": "era_exile_return",
     "characters": [
       "esther",
@@ -1720,7 +1720,7 @@
     ]
   },
   {
-    "title": "142 에스더의 결단: 죽으면 죽으리라",
+    "title": "에스더의 결단: 죽으면 죽으리라",
     "era": "era_exile_return",
     "characters": [
       "esther",
@@ -1763,7 +1763,7 @@
     ]
   },
   {
-    "title": "143 잔치의 반전: 하만의 몰락",
+    "title": "잔치의 반전: 하만의 몰락",
     "era": "era_exile_return",
     "characters": [
       "esther",
@@ -1809,7 +1809,7 @@
     ]
   },
   {
-    "title": "144 부림절: 살아남은 날",
+    "title": "부림절: 살아남은 날",
     "era": "era_exile_return",
     "characters": [
       "esther",
@@ -1846,7 +1846,7 @@
     ]
   },
   {
-    "title": "145 에스라의 귀환: 말씀으로 정리하다",
+    "title": "에스라의 귀환: 말씀으로 정리하다",
     "era": "era_exile_return",
     "characters": [
       "ezra"
@@ -1886,7 +1886,7 @@
     ]
   },
   {
-    "title": "146 느헤미야의 파송: 무너진 성벽 소식",
+    "title": "느헤미야의 파송: 무너진 성벽 소식",
     "era": "era_exile_return",
     "characters": [
       "nehemiah"
@@ -1933,7 +1933,7 @@
     ]
   },
   {
-    "title": "147 성벽 재건: 밤의 조사와 한 손엔 무기",
+    "title": "성벽 재건: 밤의 조사와 한 손엔 무기",
     "era": "era_exile_return",
     "characters": [
       "nehemiah"
@@ -1980,7 +1980,7 @@
     ]
   },
   {
-    "title": "149 율법 낭독: 울음에서 기쁨으로",
+    "title": "율법 낭독: 울음에서 기쁨으로",
     "era": "era_exile_return",
     "characters": [
       "ezra",
@@ -2022,7 +2022,7 @@
     ]
   },
   {
-    "title": "150 언약 갱신: 다시 서명하다",
+    "title": "언약 갱신: 다시 서명하다",
     "era": "era_exile_return",
     "characters": [
       "nehemiah",

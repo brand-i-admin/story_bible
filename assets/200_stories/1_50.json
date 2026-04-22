@@ -1,6 +1,6 @@
 [
   {
-    "title": "001 창조: 7일과 안식",
+    "title": "창조: 7일과 안식",
     "era": "era_primeval",
     "characters": [
       "god"
@@ -36,7 +36,7 @@
     ]
   },
   {
-    "title": "002 에덴: 사람의 창조와 사명",
+    "title": "에덴: 사람의 창조와 사명",
     "era": "era_primeval",
     "characters": [
       "god",
@@ -82,7 +82,7 @@
     ]
   },
   {
-    "title": "003 타락: 뱀의 유혹과 선택",
+    "title": "타락: 뱀의 유혹과 선택",
     "era": "era_primeval",
     "characters": [
       "eve",
@@ -127,7 +127,7 @@
     ]
   },
   {
-    "title": "004 추방: 동산 밖으로",
+    "title": "추방: 동산 밖으로",
     "era": "era_primeval",
     "characters": [
       "god",
@@ -174,7 +174,7 @@
     ]
   },
   {
-    "title": "005 가인과 아벨: 들판의 비극",
+    "title": "가인과 아벨: 들판의 비극",
     "era": "era_primeval",
     "characters": [
       "cain",
@@ -223,7 +223,7 @@
     ]
   },
   {
-    "title": "006 셋의 계보: 다시 부르다",
+    "title": "셋의 계보: 다시 부르다",
     "era": "era_primeval",
     "characters": [
       "seth"
@@ -261,7 +261,7 @@
     ]
   },
   {
-    "title": "007 홍수 전의 타락: 노아를 주목하다",
+    "title": "홍수 전의 타락: 노아를 주목하다",
     "era": "era_primeval",
     "characters": [
       "god",
@@ -302,7 +302,7 @@
     ]
   },
   {
-    "title": "008 방주와 홍수: 문이 닫히다",
+    "title": "방주와 홍수: 문이 닫히다",
     "era": "era_primeval",
     "characters": [
       "noah"
@@ -338,7 +338,7 @@
     ]
   },
   {
-    "title": "009 무지개 언약: 다시는",
+    "title": "무지개 언약: 다시는",
     "era": "era_primeval",
     "characters": [
       "god",
@@ -379,7 +379,7 @@
     ]
   },
   {
-    "title": "010 바벨탑: 언어가 갈라지다",
+    "title": "바벨탑: 언어가 갈라지다",
     "era": "era_primeval",
     "characters": [
       "babel_people",
@@ -414,7 +414,7 @@
     ]
   },
   {
-    "title": "011 아브라함의 부르심: 떠나라",
+    "title": "아브라함의 부르심: 떠나라",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -458,7 +458,7 @@
     ]
   },
   {
-    "title": "012 애굽 우회: 두려움의 선택",
+    "title": "애굽 우회: 두려움의 선택",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -502,7 +502,7 @@
     ]
   },
   {
-    "title": "013 롯과 분리: 시선의 선택",
+    "title": "롯과 분리: 시선의 선택",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -545,7 +545,7 @@
     ]
   },
   {
-    "title": "014 전쟁과 멜기세덱: 축복의 만남",
+    "title": "전쟁과 멜기세덱: 축복의 만남",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -591,7 +591,7 @@
     ]
   },
   {
-    "title": "015 별 언약: 믿음이 의로",
+    "title": "별 언약: 믿음이 의로",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -635,7 +635,7 @@
     ]
   },
   {
-    "title": "016 하갈과 이스마엘: 사람의 방법",
+    "title": "하갈과 이스마엘: 사람의 방법",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -681,7 +681,7 @@
     ]
   },
   {
-    "title": "017 할례 언약: 이름이 바뀌다",
+    "title": "할례 언약: 이름이 바뀌다",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -725,7 +725,7 @@
     ]
   },
   {
-    "title": "018 세 손님: 웃음과 약속",
+    "title": "세 손님: 웃음과 약속",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -771,7 +771,7 @@
     ]
   },
   {
-    "title": "019 소돔을 위한 중보: 숫자가 줄어들다",
+    "title": "소돔을 위한 중보: 숫자가 줄어들다",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -816,7 +816,7 @@
     ]
   },
   {
-    "title": "020 소돔 멸망과 롯 구출",
+    "title": "소돔 멸망과 롯 구출",
     "era": "era_patriarch",
     "characters": [
       "lot"
@@ -858,7 +858,7 @@
     ]
   },
   {
-    "title": "021 아브라함과 아비멜렉: 오해와 보호",
+    "title": "아브라함과 아비멜렉: 오해와 보호",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -905,7 +905,7 @@
     ]
   },
   {
-    "title": "022 이삭 탄생과 하갈 추방",
+    "title": "이삭 탄생과 하갈 추방",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -956,7 +956,7 @@
     ]
   },
   {
-    "title": "023 이삭 번제: 멈추게 하시는 하나님",
+    "title": "이삭 번제: 멈추게 하시는 하나님",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -1005,7 +1005,7 @@
     ]
   },
   {
-    "title": "024 사라의 죽음과 막벨라 굴",
+    "title": "사라의 죽음과 막벨라 굴",
     "era": "era_patriarch",
     "characters": [
       "abraham",
@@ -1049,7 +1049,7 @@
     ]
   },
   {
-    "title": "025 리브가: 이삭의 결혼",
+    "title": "리브가: 이삭의 결혼",
     "era": "era_patriarch",
     "characters": [
       "isaac",
@@ -1095,7 +1095,7 @@
     ]
   },
   {
-    "title": "026 장자권: 한 그릇의 거래",
+    "title": "장자권: 한 그릇의 거래",
     "era": "era_patriarch",
     "characters": [
       "esau",
@@ -1141,7 +1141,7 @@
     ]
   },
   {
-    "title": "027 축복 가로채기: 속임수의 밤",
+    "title": "축복 가로채기: 속임수의 밤",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1190,7 +1190,7 @@
     ]
   },
   {
-    "title": "028 벧엘의 꿈: 사다리와 약속",
+    "title": "벧엘의 꿈: 사다리와 약속",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1232,7 +1232,7 @@
     ]
   },
   {
-    "title": "029 라반의 집: 레아와 라헬",
+    "title": "라반의 집: 레아와 라헬",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1281,7 +1281,7 @@
     ]
   },
   {
-    "title": "030 열두 아들의 시작: 이름에 담긴 마음",
+    "title": "열두 아들의 시작: 이름에 담긴 마음",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1323,7 +1323,7 @@
     ]
   },
   {
-    "title": "031 야곱의 번성: 양떼의 기묘한 계약",
+    "title": "야곱의 번성: 양떼의 기묘한 계약",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1368,7 +1368,7 @@
     ]
   },
   {
-    "title": "032 도피와 언약: 라반과의 마지막",
+    "title": "도피와 언약: 라반과의 마지막",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1413,7 +1413,7 @@
     ]
   },
   {
-    "title": "033 얍복강 씨름: 이스라엘",
+    "title": "얍복강 씨름: 이스라엘",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1458,7 +1458,7 @@
     ]
   },
   {
-    "title": "034 에서와 화해: 달려오는 형",
+    "title": "에서와 화해: 달려오는 형",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1505,7 +1505,7 @@
     ]
   },
   {
-    "title": "035 디나 사건: 복수의 폭발",
+    "title": "디나 사건: 복수의 폭발",
     "era": "era_patriarch",
     "characters": [
       "dinah",
@@ -1550,7 +1550,7 @@
     ]
   },
   {
-    "title": "036 벧엘 귀환: 라헬의 죽음",
+    "title": "벧엘 귀환: 라헬의 죽음",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -1597,7 +1597,7 @@
     ]
   },
   {
-    "title": "037 요셉의 꿈: 형제들의 시기",
+    "title": "요셉의 꿈: 형제들의 시기",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1646,7 +1646,7 @@
     ]
   },
   {
-    "title": "038 요셉이 팔리다: 구덩이와 은",
+    "title": "요셉이 팔리다: 구덩이와 은",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1698,7 +1698,7 @@
     ]
   },
   {
-    "title": "040 보디발의 집: 성실과 누명",
+    "title": "보디발의 집: 성실과 누명",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1743,7 +1743,7 @@
     ]
   },
   {
-    "title": "041 감옥의 꿈: 술 맡은 관원장",
+    "title": "감옥의 꿈: 술 맡은 관원장",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1785,7 +1785,7 @@
     ]
   },
   {
-    "title": "042 바로의 꿈: 총리 요셉",
+    "title": "바로의 꿈: 총리 요셉",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1835,7 +1835,7 @@
     ]
   },
   {
-    "title": "043 기근: 형제들의 1차 방문",
+    "title": "기근: 형제들의 1차 방문",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1888,7 +1888,7 @@
     ]
   },
   {
-    "title": "044 2차 방문: 잔치와 긴장",
+    "title": "2차 방문: 잔치와 긴장",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1941,7 +1941,7 @@
     ]
   },
   {
-    "title": "045 은잔 사건: 유다의 탄원",
+    "title": "은잔 사건: 유다의 탄원",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -1994,7 +1994,7 @@
     ]
   },
   {
-    "title": "046 요셉의 정체 공개: 울음의 방",
+    "title": "요셉의 정체 공개: 울음의 방",
     "era": "era_patriarch",
     "characters": [
       "joseph",
@@ -2047,7 +2047,7 @@
     ]
   },
   {
-    "title": "048 고센 정착: 만남과 눈물",
+    "title": "고센 정착: 만남과 눈물",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -2101,7 +2101,7 @@
     ]
   },
   {
-    "title": "049 야곱의 축복: 열두 아들",
+    "title": "야곱의 축복: 열두 아들",
     "era": "era_patriarch",
     "characters": [
       "jacob",
@@ -2159,7 +2159,7 @@
     ]
   },
   {
-    "title": "050 요셉의 마지막: 뼈를 기억하라",
+    "title": "요셉의 마지막: 뼈를 기억하라",
     "era": "era_patriarch",
     "characters": [
       "joseph",

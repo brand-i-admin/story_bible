@@ -46,7 +46,8 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
         export-stories-json \
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         upload-character-avatars upload-character-avatars-force \
-        sync-approved-proposal-assets sync-approved-proposal-assets-clean \
+        sync-approved-proposal-assets sync-approved-proposal-assets-all \
+        sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
         cleanup-orphan-proposal-assets cleanup-orphan-proposal-assets-dry \
         update-pubspec-assets check-pubspec-assets \
         clean-generated lint
@@ -86,9 +87,11 @@ help:
 	@echo "  upload-character-avatars        [ENV=dev]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
 	@echo "  upload-character-avatars-force  [ENV=dev]  전부 덮어쓰기 업로드 (--overwrite)"
 	@echo ""
-	@echo "승인된 제안 → 로컬 assets 동기화 (service_role 키 필요):"
-	@echo "  sync-approved-proposal-assets         [ENV=dev]  approved 제안의 scene/character PNG 를 assets/ 로 내려받음"
-	@echo "  sync-approved-proposal-assets-clean   [ENV=dev]  동기화 후 proposal-* 버킷의 원본 파일 삭제"
+	@echo "승인된 제안 → 로컬 assets 동기화 (service_role 키 필요, idempotent):"
+	@echo "  sync-approved-proposal-assets         [ENV=dev]  synced_to_local_at NULL 인 것만"
+	@echo "  sync-approved-proposal-assets-all     [ENV=dev]  마커 무시하고 재동기화"
+	@echo "  sync-approved-proposal-assets-dry     [ENV=dev]  dry-run — 대상 목록만 출력"
+	@echo "  sync-approved-proposal-assets-clean   [ENV=dev]  동기화 후 proposal-* 원본 삭제 (앱 배포 후에만!)"
 	@echo ""
 	@echo "미제출 제안 고아 자산 정리 (주기적 운영 — 24h grace window):"
 	@echo "  cleanup-orphan-proposal-assets-dry    [ENV=dev]  dry-run — 삭제 후보만 나열"
@@ -193,11 +196,20 @@ upload-character-avatars-force:
 # apply-seeds-stories-characters 를 실행해 최종 반영.
 
 sync-approved-proposal-assets:
-	@echo "[Makefile] 승인된 제안 자산 동기화 (ENV=$(ENV))"
+	@echo "[Makefile] 승인된 제안 자산 동기화 (ENV=$(ENV)) — synced_to_local_at NULL 인 것만"
 	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV)
+
+sync-approved-proposal-assets-all:
+	@echo "[Makefile] 승인된 제안 자산 전체 재동기화 (ENV=$(ENV)) — synced marker 무시"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --all
+
+sync-approved-proposal-assets-dry:
+	@echo "[Makefile] 승인된 제안 자산 동기화 dry-run (ENV=$(ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --dry-run
 
 sync-approved-proposal-assets-clean:
 	@echo "[Makefile] 승인된 제안 자산 동기화 + 원본 버킷 정리 (ENV=$(ENV))"
+	@echo "  ⚠️  앱 배포 전이면 하이브리드 fallback 깨짐 — 배포 완료 후 사용 권장"
 	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --delete-source
 
 # -----------------------------------------------------------------------------

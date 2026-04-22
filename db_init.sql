@@ -1221,6 +1221,14 @@ create table if not exists event_proposals (
   reviewed_at timestamptz,
   review_note text,
   approved_event_id uuid references events(id) on delete set null,
+
+  -- 승인된 제안의 이미지 자산이 로컬 assets/ 로 내려와 "고정" 된 시점.
+  -- null = 아직 내려받지 않음(= Supabase Storage 로만 서빙 중) → sync 대상.
+  -- non-null = 이미 로컬 번들에 포함됨(또는 운영자가 동기화 처리 완료).
+  -- tools/supabase/sync_approved_proposal_assets.py 가 이 컬럼으로
+  -- 처음 sync / 재sync 를 구분해 불필요한 네트워크 트래픽을 제거한다.
+  synced_to_local_at timestamptz,
+
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
