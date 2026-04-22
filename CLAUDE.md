@@ -80,6 +80,7 @@ dart format .                # 코드 포맷
 | `docs/TESTING.md` | 테스트 전략 상세 |
 | `docs/CONTENT_UPDATE.md` | 새 인물·이야기 등록 → 앱 반영 워크플로우 (사역자 제안 → 관리자 승인 → 운영자 이미지·앱 출시 → 사용자) |
 | `docs/WORKFLOW_GUIDE.md` | 작업 흐름 + 유지보수 규칙 (스킬/Agent 동작 방식, 커밋/푸시 정책, DB 변경 체크리스트) |
+| `docs/PUSH_SETUP.md` | Firebase/FCM 푸시 알림 설정 가이드 (Firebase Console → flutterfire → Edge Function 배포) |
 
 ## 코딩 컨벤션
 

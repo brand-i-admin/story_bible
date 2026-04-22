@@ -40,6 +40,18 @@ dependencies:
   image_picker: ^1.1.2
   crypto: ^3.0.6
 
+  # Firebase Cloud Messaging — 푸시 알림.
+  # firebase_core 초기화 + firebase_messaging 으로 토큰 발급/수신.
+  # 활성화 절차: docs/PUSH_SETUP.md 참조 (사용자가 Firebase Console 에서
+  # 프로젝트 생성 + flutterfire configure 실행 후 lib/main.dart 에서
+  # PushService.initialize() 호출).
+  firebase_core: ^3.8.0
+  firebase_messaging: ^15.1.5
+
+  # 포그라운드 알림을 로컬 시스템 알림으로 띄우는 데 사용 (모바일).
+  # iOS/Android 포그라운드 상태에서는 FCM 이 시스템 알림을 자동 발행하지 않음.
+  flutter_local_notifications: ^18.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

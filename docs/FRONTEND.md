@@ -130,6 +130,10 @@ static const _palette = <Color>[
 | ProfileNoteEditorScreen | `screens/profile_note_editor_screen.dart` | 노트 편집 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
+| ProposalBoardScreen | `screens/proposal_board_screen.dart` | 제안 게시판 (웹 전용) |
+| ProposalSubmitScreen | `screens/proposal_submit_screen.dart` | 제안 작성/수정 |
+| ProposalDetailScreen | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글 |
+| NotificationHistoryScreen | `screens/notification_history_screen.dart` | 알림 전체보기 (최근 30일, 2026-04-22) |
 
 > **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~1,016줄 (−86%).
 > 프로필 탭 2,700+줄이 `ProfileTabPage`로 분리되어 자체 상태 관리 + 콜백 3개로 결합도 최소화.
@@ -177,6 +181,21 @@ static const _palette = <Color>[
 | 위젯 | 파일 | 사용처 |
 |------|------|--------|
 | EventShortPopup | `widgets/shared/event_short_popup.dart` | story_map_panel 콜아웃 + weekly_tab_page 단축 팝업 |
+
+### 5.6 Notifications (2026-04-22)
+
+| 위젯/파일 | 파일 | 역할 |
+|----------|------|------|
+| NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 배지, Overlay 드롭다운 관리 |
+| NotificationBadge | `widgets/notification/notification_badge.dart` | 빨간색 ! 배지 (미독 1개 이상 시 표시) |
+| NotificationDropdown | `widgets/notification/notification_dropdown.dart` | bell 탭 시 열리는 팝오버 — 미독 5개 + "모두 읽음" / "전체 보기" |
+| NotificationListTile | `widgets/notification/notification_list_tile.dart` | 드롭다운/히스토리 공용 row (타입별 아이콘, 상대시간, 미독 점) |
+| NotificationDeepLink | `widgets/notification/notification_deep_link.dart` | deep_link 파싱 + 모바일/태블릿 "컴퓨터로 확인" 다이얼로그 |
+| PushService | `services/push_service.dart` | FCM 토큰 발급/등록, 포그라운드 메시지 handler |
+| AppNotification 모델 | `models/app_notification.dart` | `list_my_notifications` RPC 반환 row 파싱 |
+| Providers | `state/notification_providers.dart` | `unreadNotificationCountProvider` (polling Stream) + 목록 Future providers |
+
+Firebase 설정 가이드: `docs/PUSH_SETUP.md`.
 
 ### 5.5 큰 화면의 part 파일 분해 (4차 리팩토링)
 
@@ -239,6 +258,9 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 | image_picker | ^1.1.2 | 프로필 이미지 |
 | crypto | ^3.0.6 | SHA256 (Apple 로그인 nonce) |
 | cupertino_icons | ^1.0.8 | iOS 스타일 아이콘 |
+| firebase_core | ^3.8.0 | Firebase 초기화 (FCM) |
+| firebase_messaging | ^15.1.5 | FCM 토큰/메시지 — 푸시 알림 |
+| flutter_local_notifications | ^18.0.1 | 포그라운드 로컬 알림 (iOS/Android) |
 
 ## 7. 코딩 컨벤션
 

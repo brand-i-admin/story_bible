@@ -154,6 +154,71 @@ verse_no int, verse_text text,
 UNIQUE(translation, book_no, chapter_no, verse_no)
 ```
 
+### 2.2c Notifications & Push (2026-04-22 도입)
+
+인앱 알림함(bell 아이콘)과 FCM 푸시를 지원한다. 하이브리드 팬아웃:
+
+#### `notifications` — 개인 알림 (Fan-out on Write)
+```sql
+id uuid PK, user_id uuid FK→auth.users,
+type text CHECK IN (
+  'proposal_comment','proposal_comment_admin','new_proposal_admin',
+  'proposal_approved','proposal_rejected','quiz_completed'
+),
+title text, body text, deep_link text, payload jsonb,
+read_at timestamptz, created_at timestamptz
+```
+- `deep_link`: `/proposal/<id>` | `/event/<id>` | `/weekly` 중 하나.
+- 인덱스: `(user_id, created_at desc)` + unread 필터 부분 인덱스.
+
+#### `broadcast_notifications` — 공지 (Fan-out on Read)
+```sql
+id uuid PK, type text CHECK IN ('new_event','weekly_character','weekly_progress_check'),
+target_audience text CHECK IN ('all','pastor_or_admin'),
+title text, body text, deep_link text, payload jsonb, created_at timestamptz
+```
+
+#### `broadcast_notification_reads` — 읽음 교차표
+```sql
+user_id uuid, broadcast_id uuid, read_at timestamptz,
+PRIMARY KEY(user_id, broadcast_id)
+```
+
+#### `user_push_tokens` — FCM 디바이스 토큰
+```sql
+id uuid PK, user_id uuid, platform text CHECK IN ('web','ios','android'),
+token text UNIQUE, device_label text
+```
+
+#### `weekly_character_selection` — 금주 인물 단일 소스
+```sql
+week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at timestamptz
+```
+- pg_cron 이 월요일 00:00 UTC 에 `pick_weekly_character()` 실행 → 이 테이블에 row + broadcast.
+- Dart 쪽 `weekly_selection.dart` 의 `seedFromKey` 를 plpgsql `_seed_from_week_key` 로 포팅해 동일 결과 보장.
+
+#### 트리거
+- `trg_notify_on_new_proposal` (event_proposals AFTER INSERT) → admin 전원에게 개인 알림
+- `trg_notify_on_proposal_comment` (event_proposal_comments AFTER INSERT) → proposer + admin
+- `trg_notify_on_proposal_reviewed` (event_proposals AFTER UPDATE) → proposer 에게 승인/거절 알림
+- `trg_notify_on_new_event` (events AFTER INSERT) → 전체 대상 브로드캐스트
+
+#### 주요 RPC
+| 함수 | 용도 |
+|------|------|
+| `list_my_notifications(limit, only_unread)` | 개인 + 공지 UNION, 최근 30일 |
+| `unread_notification_count()` | bell 배지용 |
+| `mark_notification_read(id)` / `mark_broadcast_read(id)` | 개별 읽음 |
+| `mark_all_notifications_read()` / `mark_all_broadcasts_read()` | 일괄 읽음 |
+| `notify_quiz_completed(event_id)` | 퀴즈 완료 시 클라이언트가 호출 |
+| `register_push_token(token, platform, label)` | FCM 토큰 upsert |
+| `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
+| `pick_weekly_character()` | pg_cron 월요일 |
+| `notify_weekly_progress()` | pg_cron 수/금 |
+
+#### 30일 보관
+- hard delete 하지 않음. `list_my_notifications` / `unread_notification_count` 가 `WHERE created_at > now() - interval '30 days'` 로 필터.
+
 ### 2.2 사용자 테이블
 
 #### `user_profiles`
@@ -287,6 +352,18 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |
 | `fetchCharacterStudyProgress(...)` | user_event_progress + events_ordered.character_codes (배열 매치) | `List<CharacterStudyProgress>` |
 
+### 5.x NotificationRepository (`lib/data/notification_repository.dart`, 2026-04-22)
+
+| 메서드 | 주요 쿼리 | 반환 |
+|--------|----------|------|
+| `fetchNotifications({limit, onlyUnread})` | RPC `list_my_notifications` | `List<AppNotification>` |
+| `fetchUnreadCount()` | RPC `unread_notification_count` | `int` |
+| `markRead(notification)` | source 에 따라 `mark_notification_read` 또는 `mark_broadcast_read` | void |
+| `markAllRead()` | `mark_all_notifications_read` + `mark_all_broadcasts_read` | void |
+| `watchUnreadCount({interval})` | polling 스트림 (기본 30초) | `Stream<int>` |
+| `registerPushToken(...)` / `unregisterPushToken(token)` | RPC `register_push_token` / `unregister_push_token` | void |
+| `notifyQuizCompleted(eventId)` | RPC `notify_quiz_completed` (퀴즈 완료 시) | void |
+
 ### 5.3 AuthRepository (`lib/data/auth_repository.dart`, 77줄)
 
 | 메서드 | 역할 |
@@ -345,6 +422,20 @@ PL/pgSQL 함수로 RLS 안에서 사용.
   5. 반환: `{ storage_path, prompt }`
 - 동시성: 프론트가 modal overlay 로 블록 (한 번에 한 장만)
 - 상세: `supabase/functions/generate-proposal-scene/README.md`
+
+### `send-push` (2026-04-22)
+- 경로: `supabase/functions/send-push/index.ts`
+- 호출 시점: `notifications` / `broadcast_notifications` INSERT 이후 pg_net 디스패치 (선택적)
+- 배포: `supabase functions deploy send-push`
+- 배포 전제 secrets:
+  - `FIREBASE_SERVICE_ACCOUNT` — Firebase 서비스 계정 JSON 전체
+- 기능 개요:
+  1. 입력 body 의 `user_id`(개인) 또는 `broadcast: true`(공지) 로 대상 판정
+  2. `user_push_tokens` 에서 FCM 토큰 조회
+  3. OAuth 2.0 토큰 발급 (GCP scope: `firebase.messaging`)
+  4. FCM HTTP v1 API `POST /v1/projects/{id}/messages:send` 로 각 디바이스에 전송
+  5. 404/UNREGISTERED 응답은 해당 토큰을 자동 정리
+- 상세: `supabase/functions/send-push/README.md` + `docs/PUSH_SETUP.md`
 
 ### 로컬 개발
 
