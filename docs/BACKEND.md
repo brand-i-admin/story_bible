@@ -464,7 +464,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
   3. OAuth 2.0 토큰 발급 (GCP scope: `firebase.messaging`)
   4. FCM HTTP v1 API `POST /v1/projects/{id}/messages:send` 로 각 디바이스에 전송
   5. 404/UNREGISTERED 응답은 해당 토큰을 자동 정리
-- 상세: `supabase/functions/send-push/README.md` + `docs/PUSH_SETUP.md`
+- 상세: `supabase/functions/send-push/README.md` + `docs/guides/PUSH_SETUP.md`
 
 ### 로컬 개발
 

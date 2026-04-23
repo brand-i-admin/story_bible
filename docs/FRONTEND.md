@@ -198,7 +198,7 @@ static const _palette = <Color>[
 | AppNotification 모델 | `models/app_notification.dart` | `list_my_notifications` RPC 반환 row 파싱 |
 | Providers | `state/notification_providers.dart` | `unreadNotificationCountProvider` (polling Stream) + 목록 Future providers |
 
-Firebase 설정 가이드: `docs/PUSH_SETUP.md`.
+Firebase 설정 가이드: `docs/guides/PUSH_SETUP.md`. 인프라 전반 원리: `docs/guides/INFRA_GUIDE.md`.
 
 ### 5.7 Proposal (사역자 제안 워크플로)
 

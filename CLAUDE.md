@@ -68,19 +68,24 @@ dart format .                # 코드 포맷
 
 ## 문서 인덱스
 
+### 코딩 참조용 — 코드를 수정할 때 같이 봐야 하는 명세/구조
+
 | 문서 | 내용 |
 |------|------|
 | `docs/PRD.md` | 제품 요구사항 — 뭘 만드는지 |
-| `docs/ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 |
-| `docs/ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 |
-| `docs/UI_GUIDE.md` | UI/UX 가이드 — 어떻게 보여야 하는지 |
-| `docs/FRONTEND.md` | 프론트엔드 도메인 상세 |
-| `docs/BACKEND.md` | 백엔드 도메인 상세 |
-| `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
+| `docs/ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 (시스템 구성도 + 파일 연결) |
+| `docs/ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 (ADR-001 ~ ADR-018) |
+| `docs/UI_GUIDE.md` | UI/UX 가이드 — 어떻게 보여야 하는지 (컬러/레이아웃/컴포넌트) |
+| `docs/FRONTEND.md` | 프론트엔드 도메인 상세 (모델/상태/위젯/화면) |
+| `docs/BACKEND.md` | 백엔드 도메인 상세 (DB 테이블/RLS/Repository/Edge Functions) |
+| `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 (tools/*.py + Makefile 타겟) |
 | `docs/TESTING.md` | 테스트 전략 상세 |
-| `docs/CONTENT_UPDATE.md` | 새 인물·이야기 등록 → 앱 반영 워크플로우 (사역자 제안 → 관리자 승인 → 운영자 이미지·앱 출시 → 사용자) |
-| `docs/WORKFLOW_GUIDE.md` | 작업 흐름 + 유지보수 규칙 (스킬/Agent 동작 방식, 커밋/푸시 정책, DB 변경 체크리스트) |
-| `docs/PUSH_SETUP.md` | Firebase/FCM 푸시 알림 설정 가이드 (Firebase Console → flutterfire → Edge Function 배포) |
+
+### 사용자 이해용 — 원리/절차 설명
+
+| 디렉토리 | 내용 |
+|----------|------|
+| `docs/guides/` | 설명 목적 문서들. 코딩에 직접 쓰이지 않지만 인프라/워크플로우 이해용. `INFRA_GUIDE.md` (인프라 동작 원리), `PUSH_SETUP.md` (Firebase 설정 절차), `WORKFLOW_GUIDE.md` (스킬/에이전트/훅 설명), `CONTENT_UPDATE.md` (콘텐츠 등록 → 앱 반영 워크플로우). |
 
 ## 코딩 컨벤션
 
@@ -95,7 +100,7 @@ dart format .                # 코드 포맷
 ## TDD 규칙
 
 **TDD는 "새 기능 개발 방법"이 아니라 "모든 코드 변경의 순서 원칙"이다.** 요청이 들어오면
-코드를 고치기 전에 반드시 다음 순서를 따른다 (상세: `docs/WORKFLOW_GUIDE.md` §5):
+코드를 고치기 전에 반드시 다음 순서를 따른다 (상세: `docs/guides/WORKFLOW_GUIDE.md` §5):
 
 1. 관련 테스트가 이미 있는지 확인 (`test/` grep)
 2. 요구사항 ↔ 기존 테스트 비교 — 충돌 시 "기존 테스트 수정"은 **사용자 확인** 대상

@@ -131,7 +131,7 @@ supabase functions deploy send-push
 
 ## 8. DB 트리거와 send-push 연결 (선택)
 
-`notifications` row 가 생길 때 자동으로 푸시를 보내려면 `pg_net` 확장 + 디스패치 트리거가 필요하다. 상세는 [supabase/functions/send-push/README.md](../supabase/functions/send-push/README.md) §"DB 트리거 연결".
+`notifications` row 가 생길 때 자동으로 푸시를 보내려면 `pg_net` 확장 + 디스패치 트리거가 필요하다. 상세는 [supabase/functions/send-push/README.md](../../supabase/functions/send-push/README.md) §"DB 트리거 연결".
 
 활성화 전에는 **인앱 bell 알림만** 동작 (푸시는 보내지 않음). 인앱 알림이 최우선 UX 이므로 Phase A 로 여기까지만 하고, 푸시 디스패치는 Phase B 에서 활성화해도 괜찮다.
 

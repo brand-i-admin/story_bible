@@ -1,38 +1,46 @@
 # ARCHITECTURE — 이야기 성경 기술 아키텍처
 
-> 최종 수정: 2026-04-16
+> 최종 수정: 2026-04-22 (Notifications + FCM 반영)
 
 ## 1. 시스템 구성도
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   Flutter App                        │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────────┐  │
-│  │ screens/ │←─│  state/   │←─│     data/        │  │
-│  │ widgets/ │  │ Riverpod  │  │  repositories    │  │
-│  └──────────┘  └───────────┘  └────────┬─────────┘  │
-│                                        │             │
-└────────────────────────────────────────┼─────────────┘
-                                         │ supabase_flutter SDK
-                                         ▼
-                            ┌─────────────────────────┐
-                            │       Supabase           │
-                            │  ┌───────────────────┐   │
-                            │  │   PostgreSQL       │   │
-                            │  │  + pgvector        │   │
-                            │  │  + RLS             │   │
-                            │  └───────────────────┘   │
-                            │  ┌───────┐ ┌──────────┐  │
-                            │  │ Auth  │ │ Storage  │  │
-                            │  └───────┘ └──────────┘  │
-                            └─────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Flutter App                                  │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────────┐  ┌────────────┐  │
+│  │ screens/ │←─│  state/   │←─│     data/        │  │ services/  │  │
+│  │ widgets/ │  │ Riverpod  │  │  repositories    │  │ PushService│  │
+│  └──────────┘  └───────────┘  └────────┬─────────┘  └─────┬──────┘  │
+└────────────────────────────────────────┼──────────────────┼────────┘
+                                         │ supabase SDK     │ firebase_messaging
+                                         ▼                  ▼
+                      ┌────────────────────────┐   ┌────────────────┐
+                      │        Supabase        │   │    Firebase    │
+                      │  ┌──────────────────┐  │   │  Cloud Msg     │
+                      │  │  PostgreSQL       │  │   │  (FCM)         │
+                      │  │  + pgvector       │  │   └────┬───────────┘
+                      │  │  + RLS/트리거     │  │        │
+                      │  │  + pg_cron        │  │        ├── APNs (iOS)
+                      │  └──────────────────┘  │        ├── Play Services
+                      │  ┌───────┐ ┌────────┐  │        └── Web Push
+                      │  │ Auth  │ │Storage │  │
+                      │  └───────┘ └────────┘  │
+                      │  ┌──────────────────┐  │
+                      │  │  Edge Functions  │  │──► Vertex AI (GCP)
+                      │  │  - generate-     │  │    - Gemini Image
+                      │  │    proposal-*    │  │    - Imagen
+                      │  │  - send-push     │  │
+                      │  └──────────────────┘  │
+                      └────────────────────────┘
 
-┌─────────────────────────────────────────────────────┐
-│              에셋 파이프라인 (로컬)                    │
-│  tools/*.py → Vertex AI Imagen → assets/            │
-│  tools/*.py → SQL 생성 → Supabase SQL Editor        │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                에셋 파이프라인 (로컬 머신)                         │
+│  tools/*.py → Vertex AI → assets/  (아바타, 장면, 썸네일)         │
+│  tools/*.py → SQL 생성 → psql/Supabase SQL Editor                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+**전체 인프라 원리 설명**: `docs/guides/INFRA_GUIDE.md`
 
 ## 2. Flutter 앱 레이어
 
@@ -71,12 +79,16 @@ supabaseClientProvider (Provider<SupabaseClient>)
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인 |
+| 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인, 상단 bell 아이콘 |
 | 로그인 | `widgets/inline_login_prompt_card.dart` | 인라인 소셜 로그인 (카카오/Google/Apple) |
 | 노트 목록 | `screens/profile_notes_screen.dart` | 개인 노트 CRUD |
 | 노트 편집 | `screens/profile_note_editor_screen.dart` | 노트 에디터 |
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
 | 법률 문서 | `screens/legal_documents_screen.dart` | 이용약관, 개인정보처리방침 |
+| 제안 게시판 | `screens/proposal_board_screen.dart` | 사역자/관리자 제안 목록 (웹 전용) |
+| 제안 작성 | `screens/proposal_submit_screen.dart` | 5단계 제안 작성/수정 |
+| 제안 상세 | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글 + 승인/거절 |
+| 알림 히스토리 | `screens/notification_history_screen.dart` | 최근 30일 알림 전체 보기 |
 
 ## 3. 데이터 흐름 — 파일 간 연결 관계
 

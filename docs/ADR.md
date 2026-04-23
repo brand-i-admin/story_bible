@@ -298,3 +298,43 @@
   `ProposalRepository` 에 `submitDeleteProposal` / `approveDelete` 추가.
   제안 상세 화면은 `proposal_type='delete'` 를 감지해 붉은 배너 + 수정 버튼 숨김
   + 승인 시 `approve_delete_proposal` 분기.
+
+## ADR-018: 인앱 알림 + FCM 푸시 — 하이브리드 팬아웃 구조
+
+- **날짜**: 2026-04-22
+- **상태**: 승인
+- **맥락**: 제안 워크플로(ADR-016/017)가 돌아가려면 사역자/관리자 사이의
+  커뮤니케이션이 즉각 전달돼야 한다. 인앱 bell 아이콘 + 브라우저/모바일 푸시
+  두 경로를 모두 지원하면서 운영 규모(유저 ~1000명 예상) 까지 확장 가능해야 한다.
+- **고려한 대안**:
+  - (A) 모든 알림을 `notifications` 한 테이블에 Fan-out on Write — 유저 수만큼
+    row 를 INSERT. RLS 가 단순하지만 "새 이야기 등록" 같은 전체 대상 알림에서
+    215개 이야기 × 1000명 = 21만 row 가 순식간에 생성 → 부담.
+  - (B) 모든 알림을 공지 1 row + `seen` 교차표 (Fan-out on Read) — 효율은 좋지만
+    개인 알림(내 제안에 댓글) 에는 과한 정규화. 쿼리 JOIN 복잡.
+  - (C) **하이브리드**: 개인 알림은 Fan-out on Write(`notifications`), 전체 대상
+    알림은 Fan-out on Read(`broadcast_notifications` + `broadcast_notification_reads`).
+- **결정**: 옵션 C 채택.
+  1. 테이블 5개 신설: `notifications`(개인), `broadcast_notifications`(공지),
+     `broadcast_notification_reads`(읽음 교차), `user_push_tokens`(FCM),
+     `weekly_character_selection`(금주 인물 단일 소스).
+  2. DB 트리거 4개로 자동 생성: 제안 INSERT → admin 전체, 댓글 INSERT → 관계자,
+     proposal status UPDATE → proposer, events INSERT → broadcast.
+  3. `list_my_notifications` RPC 가 두 소스를 UNION 해 앱엔 하나의 목록으로 반환.
+  4. 30일 보관은 hard delete 없이 `WHERE created_at > now() - 30d` 필터로 처리.
+  5. 푸시 경로는 별도: Supabase Edge Function `send-push` 가 FCM HTTP v1 을 호출.
+     인앱 bell 과 독립 — DB 트리거가 pg_net 으로 send-push 를 호출하면 둘 다 자동화.
+  6. 금주 인물은 Dart `seedFromKey` 알고리즘을 plpgsql `_seed_from_week_key` 로
+     포팅해 앱/pg_cron 양쪽이 동일 결과를 내도록 단일 소스 보장.
+- **이유**:
+  - 유저가 1000명을 넘어도 broadcast 는 유저 수에 비례해 폭증하지 않음.
+  - 개인 알림은 단순 Fan-out on Write 유지로 RLS/쿼리 단순.
+  - 금주 인물 선정을 DB 쪽에 포팅한 이유: pg_cron 에서 "월요일 00:00 UTC 에
+    broadcast 를 보내려면" 서버가 어느 인물이 선정될지 알아야 함. 앱만 아는 상태
+    면 drift 발생 가능.
+  - Firebase FCM 선택 이유: iOS(APNs)/Android/Web 세 프로토콜을 단일 API 로
+    통합, 특히 APNs p8 키 관리를 대행해줌. 자체 구현 부담 회피.
+- **결과**: 8개 커밋으로 Phase 1~4 반영. DB 스키마 + Repository + UI + Firebase/
+  FCM + Edge Function + flutterfire 플랫폼 설정 + 포그라운드 웹 알림 수정
+  + 토큰 등록 타이밍 버그 수정 포함. `docs/guides/INFRA_GUIDE.md` 에 전체
+  동작 원리(JWT, Apple nonce 이중 해싱, GCP access_token 교환 등) 문서화.

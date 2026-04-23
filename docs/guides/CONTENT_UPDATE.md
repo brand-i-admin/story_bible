@@ -21,7 +21,7 @@
 | **인물 아바타 이미지** | persons.avatar_url 갱신 | `assets/avatars_thumbs/{code}.png` 추가 | **앱 재빌드 + Store 재심사 필요** |
 | **이야기 4장면 이미지** | (로컬 번들에 포함) | `assets/story_images_thumbs/{title}/scene_*.png` 추가 | **앱 재빌드 + Store 재심사 필요** |
 
-핵심 한계: 이미지가 앱 번들에 포함되는 구조([ADR-006](ADR.md))이라, 새 이미지가 사용자에게 보이려면 **앱 빌드 + 스토어 배포가 반드시 필요**하다. 이미지를 Supabase Storage로 옮기면 즉시 반영 가능하지만 현재는 그렇게 운영하지 않는다.
+핵심 한계: 이미지가 앱 번들에 포함되는 구조([ADR-006](../ADR.md))이라, 새 이미지가 사용자에게 보이려면 **앱 빌드 + 스토어 배포가 반드시 필요**하다. 이미지를 Supabase Storage로 옮기면 즉시 반영 가능하지만 현재는 그렇게 운영하지 않는다.
 
 핵심 보장 (파이프라인 재실행 안전성):
 - `make build-character-meta`는 **전체 스캔** — `assets/200_stories/*.json`에 있는 **모든 파일**을 읽어 character_meta.json을 통째로 재생성한다 (부분 빌드 아님).
@@ -266,7 +266,7 @@ update persons set is_active = true where code = 'goliath';
 
 ## 6. 관련 문서
 
-- [DATA_PIPELINE.md](DATA_PIPELINE.md) — 빌더 스크립트 상세
-- [BACKEND.md](BACKEND.md) — DB 스키마, RLS, view
-- [FRONTEND.md](FRONTEND.md) — Flutter 모델/상태/위젯
-- [ADR.md](ADR.md) — ADR-006 (이미지 번들 포함), ADR-012/013/014 (스키마 v3)
+- [DATA_PIPELINE.md](../DATA_PIPELINE.md) — 빌더 스크립트 상세
+- [BACKEND.md](../BACKEND.md) — DB 스키마, RLS, view
+- [FRONTEND.md](../FRONTEND.md) — Flutter 모델/상태/위젯
+- [ADR.md](../ADR.md) — ADR-006 (이미지 번들 포함), ADR-012/013/014 (스키마 v3)

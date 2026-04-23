@@ -104,7 +104,7 @@ Makefile                                # 파이프라인 오케스트레이션
   - `disciples`, `apostles`, `brothers` → 개별 인물로 확장
   - `NON_INDIVIDUAL_CODES`(`crowd`, `angels` 등) 제외
   - 결과: 100+ 인물 코드 + 프롬프트 + `is_active_default` 힌트
-- ⚠️ **부분 스캔 주의**: 이 빌더는 로컬 디렉토리에 있는 JSON만 스캔한다. 로컬이 DB와 동기화되지 않은 상태(예: 새 이야기 파일 1개만 있는 상태)에서 생성된 meta로 `build_characters_seed_sql`을 돌리면 그 안에 포함된 **기존 DB 인물의 description이 부분 정보로 덮어써질 수 있다** (UPSERT는 `coalesce(excluded.description, persons.description)` — excluded가 항상 non-null이라 덮어씀). 안전 절차: [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
+- ⚠️ **부분 스캔 주의**: 이 빌더는 로컬 디렉토리에 있는 JSON만 스캔한다. 로컬이 DB와 동기화되지 않은 상태(예: 새 이야기 파일 1개만 있는 상태)에서 생성된 meta로 `build_characters_seed_sql`을 돌리면 그 안에 포함된 **기존 DB 인물의 description이 부분 정보로 덮어써질 수 있다** (UPSERT는 `coalesce(excluded.description, persons.description)` — excluded가 항상 non-null이라 덮어씀). 안전 절차: [guides/CONTENT_UPDATE.md §2.1b \[0\]](guides/CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
 
 #### `build_200_stories_seed_sql.py` — events SQL
 - **의존**: `tools/seed/character_meta.json` (인물 화이트리스트). 입력 JSON 각 항목에 `story_index` 키가 있어야 함 (없으면 `ValueError` 즉시 raise).
@@ -264,4 +264,4 @@ gcloud auth application-default login
 사전 조건 충족 후:
 `make seed-stories-characters && make apply-seeds-stories-characters && make generate-avatars && make thumbnails && make update-pubspec-assets`.
 
-단계별 동작과 안전성 근거(UPSERT PK, description 덮어쓰기 주의, SKIP 조건)는 [CONTENT_UPDATE.md §2.1b](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
+단계별 동작과 안전성 근거(UPSERT PK, description 덮어쓰기 주의, SKIP 조건)는 [guides/CONTENT_UPDATE.md §2.1b](guides/CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.

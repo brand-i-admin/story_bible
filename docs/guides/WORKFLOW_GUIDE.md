@@ -41,14 +41,14 @@ Claude Code는 평소 `CLAUDE.md`(~120줄)만 가진다. 전체 문서를 항상
 $frontend 스킬 호출 시:
   CLAUDE.md
   + .claude/skills/frontend/SKILL.md (지시서)
-    → docs/FRONTEND.md (파일 표, 위젯 목록, 패턴)
-    → docs/UI_GUIDE.md (디자인 가이드)
+    → ../FRONTEND.md (파일 표, 위젯 목록, 패턴)
+    → ../UI_GUIDE.md (디자인 가이드)
   = 프론트엔드 컨텍스트 로드됨
 
 $backend 스킬 호출 시:
   CLAUDE.md
   + .claude/skills/backend/SKILL.md
-    → docs/BACKEND.md (DB 스키마, RLS, Repository)
+    → ../BACKEND.md (DB 스키마, RLS, Repository)
   + Supabase 공식 플러그인 (자동 활성화)
   = 백엔드 컨텍스트 로드됨
 ```
@@ -57,10 +57,10 @@ $backend 스킬 호출 시:
 
 | 스킬 | 언제 호출 | 로드하는 문서 | 파일 범위 |
 |---|---|---|---|
-| `$frontend` | UI/위젯/화면/상태 변경 | `docs/FRONTEND.md`, `docs/UI_GUIDE.md` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
-| `$backend` | DB/쿼리/인증/RLS 변경 | `docs/BACKEND.md` + Supabase 공식 플러그인 2개 | `db_init.sql`, `supabase/`, `lib/data/` |
-| `$data-pipeline` | 에셋/시딩/Python 스크립트 | `docs/DATA_PIPELINE.md` | `tools/*.py`, `assets/`, `Makefile` |
-| `$testing` | 테스트 작성/실행 | `docs/TESTING.md` | `test/` |
+| `$frontend` | UI/위젯/화면/상태 변경 | `../FRONTEND.md`, `../UI_GUIDE.md` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
+| `$backend` | DB/쿼리/인증/RLS 변경 | `../BACKEND.md` + Supabase 공식 플러그인 2개 | `db_init.sql`, `supabase/`, `lib/data/` |
+| `$data-pipeline` | 에셋/시딩/Python 스크립트 | `../DATA_PIPELINE.md` | `tools/*.py`, `assets/`, `Makefile` |
+| `$testing` | 테스트 작성/실행 | `../TESTING.md` | `test/` |
 | `$refactor` | 대규모 분해/중복 제거 | 자체 절차 가이드 | 전체 (도메인 횡단) |
 
 ### 스킬 호출 방식
@@ -279,15 +279,15 @@ pre-commit + pre-push의 모든 검사를 원격에서 한 번 더 실행.
 
 | 변경 유형 | 갱신 대상 |
 |---|---|
-| 새 위젯/화면/모델 추가·이동·삭제 | `docs/FRONTEND.md` |
-| DB 스키마/RLS/Repository 변경 | `docs/BACKEND.md`, `db_init.sql` |
-| 새 Python 스크립트/Makefile 타겟 | `docs/DATA_PIPELINE.md` |
-| 테스트 전략/커버리지 변화 | `docs/TESTING.md` |
-| 중요한 아키텍처 결정 | `docs/ADR.md` |
+| 새 위젯/화면/모델 추가·이동·삭제 | `../FRONTEND.md` |
+| DB 스키마/RLS/Repository 변경 | `../BACKEND.md`, `db_init.sql` |
+| 새 Python 스크립트/Makefile 타겟 | `../DATA_PIPELINE.md` |
+| 테스트 전략/커버리지 변화 | `../TESTING.md` |
+| 중요한 아키텍처 결정 | `../ADR.md` |
 | 스킬/훅/플러그인 변경 | `CLAUDE.md` |
 | 빌드/실행 명령 변경 | `CLAUDE.md` |
-| 의존성 추가/제거 | `pubspec.yaml` + `docs/FRONTEND.md` §6 |
-| PRD 수준의 기능 추가/삭제 | `docs/PRD.md` |
+| 의존성 추가/제거 | `pubspec.yaml` + `../FRONTEND.md` §6 |
+| PRD 수준의 기능 추가/삭제 | `../PRD.md` |
 
 ---
 
@@ -316,7 +316,7 @@ DB를 건드리는 작업 시 반드시:
 □ lib/data/ Repository 메소드 추가/수정
 □ lib/models/ Model 클래스 추가/수정 (fromMap)
 □ test/ 새 Model의 fromMap 테스트 추가
-□ docs/BACKEND.md 테이블·Repository 표 갱신
+□ ../BACKEND.md 테이블·Repository 표 갱신
 □ ⚠️ 사용자가 직접 Supabase Dashboard에서 마이그레이션 실행
 ```
 
@@ -332,15 +332,15 @@ DB를 건드리는 작업 시 반드시:
 | 문서 | 역할 |
 |---|---|
 | `CLAUDE.md` | 메인 컨텍스트 — 빌드/실행/스킬/컨벤션/규칙 |
-| `docs/PRD.md` | 제품 요구사항 — 뭘 만드는지 |
-| `docs/ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 + 파일 연결 관계 |
-| `docs/ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 |
-| `docs/UI_GUIDE.md` | UI/UX 가이드 — 어떻게 보여야 하는지 |
-| `docs/FRONTEND.md` | 프론트엔드 도메인 상세 |
-| `docs/BACKEND.md` | 백엔드 도메인 상세 |
-| `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
-| `docs/TESTING.md` | 테스트 전략 상세 |
-| **`docs/WORKFLOW_GUIDE.md`** | **이 문서 — 작업 흐름 + 유지보수 규칙** |
+| `../PRD.md` | 제품 요구사항 — 뭘 만드는지 |
+| `../ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 + 파일 연결 관계 |
+| `../ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 |
+| `../UI_GUIDE.md` | UI/UX 가이드 — 어떻게 보여야 하는지 |
+| `../FRONTEND.md` | 프론트엔드 도메인 상세 |
+| `../BACKEND.md` | 백엔드 도메인 상세 |
+| `../DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
+| `../TESTING.md` | 테스트 전략 상세 |
+| **`../WORKFLOW_GUIDE.md`** | **이 문서 — 작업 흐름 + 유지보수 규칙** |
 
 ---
 
