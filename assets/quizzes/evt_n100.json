@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n100",
+  "story_title": "다윗의 기름부음: 새로운 선택",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "다윗에게 기름을 부은 사람은 누구입니까?",
+      "choices": ["사무엘", "엘리야", "나단"],
+      "answer_index": 0,
+      "explanation": "삼상 16:13 — '사무엘이 기름 뿔병을 취하여 ... 기름을 부었더니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "사무엘이 이새의 아들들을 볼 때 하나님은 무엇이라 하셨습니까?",
+      "choices": ["외모가 아닌 중심을 보신다", "가장 큰 자를 택하신다", "맏아들을 세우신다"],
+      "answer_index": 0,
+      "explanation": "삼상 16:7 — '나는 중심을 보느니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "다윗의 기름부음 사건이 기록된 성경 책은 무엇입니까?",
+      "choices": ["사무엘상", "사무엘하", "열왕기상"],
+      "answer_index": 0,
+      "explanation": "삼상 16:1-13에 다윗의 기름부음 기사가 기록됨"
+    }
+  ]
+}

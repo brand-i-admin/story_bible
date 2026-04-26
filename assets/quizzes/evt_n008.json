@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n008",
+  "story_title": "방주와 홍수: 문이 닫히다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "홍수가 시작된 것은 노아 몇 세 때입니까?",
+      "choices": ["육백 세", "오백 세", "칠백 세"],
+      "answer_index": 0,
+      "explanation": "창 7:6 — '노아 육백 세 되던 해 이월 곧 그 달 십칠일이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "비둘기가 접족할 곳을 찾지 못하고 돌아오자 노아는 어떻게 하였습니까?",
+      "choices": ["손을 내밀어 방주 속으로 받아들였다", "비둘기를 다시 내보냈다", "창문을 닫았다"],
+      "answer_index": 0,
+      "explanation": "창 8:9 — '그가 손을 내밀어 방주 속 자기에게로 받아 들이고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "방주와 홍수 기사는 성경 어느 책에 기록되어 있습니까?",
+      "choices": ["창세기", "출애굽기", "신명기"],
+      "answer_index": 0,
+      "explanation": "창 7:1-8:19에 방주 입장과 홍수, 물이 빠지는 과정이 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n068",
+  "story_title": "성막: 영광이 임하다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "성막 위에 밤에 나타난 것은 무엇이었습니까?",
+      "choices": ["불", "천사", "무지개"],
+      "answer_index": 0,
+      "explanation": "출 40:38 — '낮에는 여호와의 구름이 성막 위에 있고 밤에는 불이 그 구름 가운데 있음을'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "성막 완성 후 이스라엘 온 족속은 어떻게 하였습니까?",
+      "choices": ["행하는 길에서 구름과 불을 친히 보았다", "성막 앞에 엎드려 경배하였다", "레위인들이 제사를 드렸다"],
+      "answer_index": 0,
+      "explanation": "출 40:38 — '이스라엘의 온 족속이 그 모든 행하는 길에서 친히 보았더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "성막 완성과 하나님 영광 임재가 기록된 성경 책은 어디입니까?",
+      "choices": ["출애굽기", "레위기", "민수기"],
+      "answer_index": 0,
+      "explanation": "출 35:1-40:38에 성막 건축과 영광 임재가 기록됨"
+    }
+  ]
+}

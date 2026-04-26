@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n118",
+  "story_title": "나봇의 포도원: 빼앗긴 정의",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "나봇이 돌에 맞아 죽은 이유는 무엇입니까?",
+      "choices": ["거짓 증인들이 하나님과 왕을 저주했다고 증언하였다", "포도원을 팔지 않아 왕에게 반역했다는 죄목을 받았다", "이세벨의 명을 직접 거역하였다"],
+      "answer_index": 0,
+      "explanation": "왕상 21:13 — '네가 하나님과 왕을 저주하였다 하게 하고 돌로 쳐 죽이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "이세벨은 아합에게 나봇이 죽었다는 소식을 듣고 무엇이라 하였습니까?",
+      "choices": ["일어나서 그 포도원을 취하라고 하였다", "나봇을 불쌍히 여기라고 하였다", "다른 포도원을 찾아보라고 하였다"],
+      "answer_index": 0,
+      "explanation": "왕상 21:15 — '나봇이 살아 있지 아니하고 죽었나이다 ... 그 포도원을 취하소서'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "나봇의 포도원 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["열왕기상", "열왕기하", "아모스"],
+      "answer_index": 0,
+      "explanation": "왕상 21:1-19에 나봇의 포도원 사건과 엘리야의 예언이 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n143",
+  "story_title": "잔치의 반전: 하만의 몰락",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "에스더는 잔치 자리에서 왕에게 누가 대적이라고 하였습니까?",
+      "choices": ["악한 하만이라고 하였다", "산헤립이라고 하였다", "모르드개라고 하였다"],
+      "answer_index": 0,
+      "explanation": "에 7:6 — '대적과 원수는 이 악한 하만이니이다'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "하만은 폭로된 후 어떻게 되었습니까?",
+      "choices": ["모르드개를 달고자 한 나무에 달렸다", "포로로 끌려갔다", "왕에게 처형을 요청받았다"],
+      "answer_index": 0,
+      "explanation": "에 7:10 — '모르드개를 달고자 한 나무에 하만을 다니 왕의 노가 그치니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "하만의 몰락 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["에스더", "에스라", "느헤미야"],
+      "answer_index": 0,
+      "explanation": "에 5:1-8과 7:1-10에 에스더의 잔치와 하만의 몰락이 기록됨"
+    }
+  ]
+}

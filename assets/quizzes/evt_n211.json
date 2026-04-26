@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n211",
+  "story_title": "일곱 인: 역사의 문이 열리다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "다섯째 인이 열릴 때 제단 아래서 본 것은 무엇입니까?",
+      "choices": ["하나님 말씀 때문에 죽임당한 영혼들", "흰 말 탄 자", "큰 지진"],
+      "answer_index": 0,
+      "explanation": "계 6:9 — '하나님의 말씀과 저희의 가진 증거를 인하여 죽임을 당한 영혼들이 제단 아래 있어'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "흰 옷을 입은 큰 무리는 보좌 앞에서 무엇을 하였습니까?",
+      "choices": ["하나님과 어린양께 구원의 찬송을 드렸다", "심판을 피하여 숨었다", "일곱 인이 열리기를 기다렸다"],
+      "answer_index": 0,
+      "explanation": "계 7:10 — '구원하심이 보좌에 앉으신 우리 하나님과 어린 양에게 있도다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "일곱 인 환상이 기록된 성경 책은 어디입니까?",
+      "choices": ["요한계시록", "에스겔서", "다니엘서"],
+      "answer_index": 0,
+      "explanation": "계 6:1-7:17에 일곱 인 환상이 기록됨"
+    }
+  ]
+}

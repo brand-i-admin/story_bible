@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n065",
+  "story_title": "피의 언약: 백성의 대답",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "모세와 함께 여호와께 올라간 장로는 몇 명이었습니까?",
+      "choices": ["칠십 인", "열두 명", "일곱 명"],
+      "answer_index": 0,
+      "explanation": "출 24:1 — '아론과 나답과 아비후와 이스라엘 장로 칠십 인과 함께 여호와에게로 올라와'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "여호와의 말씀을 들은 백성은 어떻게 응답하였습니까?",
+      "choices": ["준행하리이다 하고 한 소리로 응답하였다", "두려워 떨며 모세에게 간구하였다", "침묵하며 고개를 숙였다"],
+      "answer_index": 0,
+      "explanation": "출 24:3 — '그들이 한 소리로 응답하여 ... 여호와의 명하신 모든 말씀을 우리가 준행하리이다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "피의 언약 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["출애굽기", "레위기", "민수기"],
+      "answer_index": 0,
+      "explanation": "출 24:1-8에 피의 언약 체결이 기록됨"
+    }
+  ]
+}

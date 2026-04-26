@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_rome_n202",
+  "story_title": "로마행(2): 가이사랴 재판과 상소",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울이 재판에서 최종적으로 한 요구는 무엇입니까?",
+      "choices": ["가이사에게 상소하는 것", "예루살렘에서 다시 재판받는 것", "아그립바 왕에게 넘겨지는 것"],
+      "answer_index": 0,
+      "explanation": "행 25:11 — '가이사에게 호소하노라 하니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울은 아그립바 왕 앞에서 자신의 삶에 대해 어떻게 말하였습니까?",
+      "choices": ["가장 엄한 바리새인의 생활을 하였다고 하였다", "어려서부터 이방인들과 함께 살았다고 하였다", "율법을 모르고 살았다고 하였다"],
+      "answer_index": 0,
+      "explanation": "행 26:5 — '우리 종교의 가장 엄한 파를 좇아 바리새인의 생활을 하였다고 할 것이라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "바울의 가이사랴 재판과 상소 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "빌립보서", "로마서"],
+      "answer_index": 0,
+      "explanation": "행 24:10-26:32에 가이사랴 재판과 상소 기사가 기록됨"
+    }
+  ]
+}

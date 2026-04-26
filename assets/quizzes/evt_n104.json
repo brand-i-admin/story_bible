@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n104",
+  "story_title": "사울의 최후: 엔돌과 길보아",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "사울과 그 세 아들이 전사한 산은 어디입니까?",
+      "choices": ["길보아 산", "시내산", "다볼 산"],
+      "answer_index": 0,
+      "explanation": "삼상 31:1 — '이스라엘 사람들이 블레셋 사람 앞에서 도망하여 길보아 산에서 엎드러져 죽으니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "블레셋 군대를 보고 두려워한 사울은 무엇을 하였습니까?",
+      "choices": ["엔돌의 신접한 여인을 찾아갔다", "다윗에게 화해를 청하였다", "여호와께 금식하며 기도하였다"],
+      "answer_index": 0,
+      "explanation": "삼상 28:5-7 — '사울이 ... 두려워서 그 마음이 크게 떨린지라 ... 신접한 여인을 찾으라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "사울의 최후가 기록된 성경 책은 어디입니까?",
+      "choices": ["사무엘상", "사무엘하", "열왕기상"],
+      "answer_index": 0,
+      "explanation": "삼상 28:5-20, 31:1-6에 사울의 마지막 날들이 기록됨"
+    }
+  ]
+}

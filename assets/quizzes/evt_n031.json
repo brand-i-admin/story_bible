@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n031",
+  "story_title": "야곱의 번성: 양떼의 기묘한 계약",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "야곱과 라반이 맺은 계약에서 야곱의 품삯은 무엇으로 정해졌습니까?",
+      "choices": ["아롱지고 점 있고 검은 양과 염소", "흰 양 전부", "양떼의 절반"],
+      "answer_index": 0,
+      "explanation": "창 30:32 — '아롱진 자와 점 있는 자와 모든 검은 자를 내 품삯으로 하리이다'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "라반이 자주 계약 내용을 바꾸자 야곱은 어떻게 하였습니까?",
+      "choices": ["나뭇가지를 이용해 양을 번성하게 하였다", "라반에게 항의하고 고향으로 떠났다", "새 계약서를 요청하였다"],
+      "answer_index": 0,
+      "explanation": "창 30:37-39 — 야곱이 껍질 벗긴 나뭇가지를 이용해 자신의 몫이 되는 양을 번성시킴"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "야곱의 양떼 계약과 번성 이야기는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": ["30-31장", "28-29장", "33-34장"],
+      "answer_index": 0,
+      "explanation": "창 30:25-31:16에 야곱과 라반의 품삯 계약과 야곱의 번성이 기록됨"
+    }
+  ]
+}

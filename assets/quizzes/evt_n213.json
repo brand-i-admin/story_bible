@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n213",
+  "story_title": "용과 두 짐승: 대립의 정점",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "요한계시록에서 큰 용은 누구라고 설명됩니까?",
+      "choices": ["옛 뱀 곧 마귀, 사단", "로마 황제", "거짓 선지자"],
+      "answer_index": 0,
+      "explanation": "계 12:9 — '큰 용이 내어쫓기니 옛 뱀 곧 마귀라고도 하고 사단이라고도 하는 자라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "짐승의 박해 앞에서 성도들에게 강조된 것은 무엇입니까?",
+      "choices": ["인내와 믿음", "지혜로운 도피", "비밀스러운 모임"],
+      "answer_index": 0,
+      "explanation": "계 13:10 — '성도들의 인내와 믿음이 여기 있느니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "용과 두 짐승 환상이 기록된 성경 책은 어디입니까?",
+      "choices": ["요한계시록", "다니엘서", "에스겔서"],
+      "answer_index": 0,
+      "explanation": "계 12:1-13:18에 용과 두 짐승 환상이 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n109",
+  "story_title": "압살롬의 반역: 도망치는 왕",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "압살롬이 자신을 위해 준비한 전배는 몇 명이었습니까?",
+      "choices": ["오십 명", "백 명", "삼백 명"],
+      "answer_index": 0,
+      "explanation": "삼하 15:1 — '이 후에 압살롬이 자기를 위하여 병거와 말들을 준비하고 전배 오십 명을 세우니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "다윗은 예루살렘을 떠날 때 가드 사람 잇대에게 어떻게 하였습니까?",
+      "choices": ["돌아가서 왕과 함께 있으라고 권하였다", "함께 피신하자고 설득하였다", "자기 군대를 맡아달라고 부탁하였다"],
+      "answer_index": 0,
+      "explanation": "삼하 15:19 — '어찌하여 너도 우리와 함께 가느냐 너는 쫓겨난 나그네니 돌아가서 왕과 함께 네 곳에 있으라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "압살롬의 반역과 다윗의 도망이 기록된 성경 책은 어디입니까?",
+      "choices": ["사무엘하", "열왕기상", "사무엘상"],
+      "answer_index": 0,
+      "explanation": "삼하 15:1-37에 압살롬의 반역과 다윗의 도망이 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n151",
+  "story_title": "세례 요한의 탄생 예고",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "천사가 사가랴에게 나타난 것은 어디에서였습니까?",
+      "choices": ["성전에서 분향할 때", "꿈에서 자고 있을 때", "요단강 가에서 기도할 때"],
+      "answer_index": 0,
+      "explanation": "눅 1:9-11 — '분향하는 시간에 ... 천사가 나타나'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "사가랴는 천사의 말을 믿지 않아 어떻게 되었습니까?",
+      "choices": ["이 일의 되는 날까지 벙어리가 되었다", "성전에서 쫓겨났다", "그 자리에서 쓰러졌다"],
+      "answer_index": 0,
+      "explanation": "눅 1:20 — '이 일의 되는 날까지 네가 벙어리가 되어 능히 말을 못하리니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "세례 요한의 탄생 예고 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["누가복음", "마태복음", "마가복음"],
+      "answer_index": 0,
+      "explanation": "눅 1:5-25에 사가랴와 천사의 만남과 세례 요한 예고 기사가 기록됨"
+    }
+  ]
+}

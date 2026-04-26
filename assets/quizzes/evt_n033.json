@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n033",
+  "story_title": "얍복강 씨름: 이스라엘",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "야곱이 씨름 후 받은 새 이름은 무엇입니까?",
+      "choices": ["이스라엘", "아브라함", "이삭"],
+      "answer_index": 0,
+      "explanation": "창 32:28 — '네 이름을 다시는 야곱이라 부를 것이 아니요 이스라엘이라 부를 것이니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "씨름 상대가 날이 새니 가게 해 달라 하자 야곱은 어떻게 응답하였습니까?",
+      "choices": ["축복하지 않으면 가게 하지 않겠다 하였다", "즉시 놓아 주었다", "이름을 물어보았다"],
+      "answer_index": 0,
+      "explanation": "창 32:26 — '야곱이 가로되 당신이 내게 축복하지 아니하면 가게 하지 아니하겠나이다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "얍복강 씨름과 이스라엘이라는 이름이 기록된 성경 책은 어디입니까?",
+      "choices": ["창세기", "출애굽기", "호세아"],
+      "answer_index": 0,
+      "explanation": "창 32:24-32에 얍복강 씨름과 새 이름 이스라엘 수여가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n134",
+  "story_title": "풀무불: 함께하시는 분",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "느부갓네살이 두라 평지에 세운 신상의 높이는 얼마였습니까?",
+      "choices": ["육십 규빗", "삼십 규빗", "백 규빗"],
+      "answer_index": 0,
+      "explanation": "단 3:1 — '고는 육십 규빗이요 광은 여섯 규빗이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "사드락과 메삭과 아벳느고는 왕의 명을 받자 어떻게 하였습니까?",
+      "choices": ["왕에게 대답할 필요가 없다며 굴복을 거절하였다", "절을 한 척하고 마음속으로 기도하였다", "도망쳐서 숨었다"],
+      "answer_index": 0,
+      "explanation": "단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "풀무불 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["다니엘", "에스겔", "에스라"],
+      "answer_index": 0,
+      "explanation": "단 3:1-30에 느부갓네살의 신상과 풀무불 기사가 기록됨"
+    }
+  ]
+}

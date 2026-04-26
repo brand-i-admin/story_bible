@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_j2_n191",
+  "story_title": "2차 선교(1): 드로아에서 마게도냐로",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울이 드로아에서 마게도냐로 방향을 바꾸게 된 계기는 무엇입니까?",
+      "choices": ["마게도냐 사람이 건너와 돕기를 청하는 환상", "성령의 직접 음성", "예루살렘 교회의 편지"],
+      "answer_index": 0,
+      "explanation": "행 16:9 — '밤에 환상이 바울에게 보이니 마게도냐 사람 하나가 서서 … 마게도냐로 건너와서 우리를 도우라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울은 마게도냐 환상을 본 후 어떻게 하였습니까?",
+      "choices": ["곧 마게도냐로 떠나기를 힘썼다", "동료들과 열흘 동안 기도하며 결정을 기다렸다", "예루살렘에 사자를 보내 허락을 구하였다"],
+      "answer_index": 0,
+      "explanation": "행 16:10 — '바울이 이 환상을 본 후에 우리가 곧 마게도냐로 떠나기를 힘쓰니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "드로아에서 마게도냐로의 전환 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "빌립보서", "데살로니가전서"],
+      "answer_index": 0,
+      "explanation": "행 16:6-10에 드로아에서 마게도냐로의 전환 기사가 기록됨"
+    }
+  ]
+}

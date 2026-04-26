@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n058",
+  "story_title": "출애굽의 밤: 떠나라는 명령",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "이스라엘 자손이 애굽에 거주한 기간은 얼마입니까?",
+      "choices": ["사백 삼십 년", "사백 년", "삼백 년"],
+      "answer_index": 0,
+      "explanation": "출 12:40 — '이스라엘 자손이 애굽에 거주한지 사백 삼십 년이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "출애굽 길에서 여호와께서 이스라엘을 어떻게 인도하셨습니까?",
+      "choices": ["낮에는 구름 기둥, 밤에는 불기둥으로 인도하셨다", "모세의 지팡이로 길을 여셨다", "천사들을 앞서 보내셨다"],
+      "answer_index": 0,
+      "explanation": "출 13:21 — '낮에는 구름 기둥, 밤에는 불기둥이 백성 앞에서 떠나지 아니하니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "출애굽의 밤과 이스라엘의 출발 기사는 출애굽기 몇 장에 기록되어 있습니까?",
+      "choices": ["12-13장", "11-12장", "14-15장"],
+      "answer_index": 0,
+      "explanation": "출 12:29-13:22에 장자 재앙, 바로의 명령, 출발, 구름·불기둥 인도가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_j1_n189",
+  "story_title": "1차 선교(4): 루스드라–더베",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "루스드라에서 바울이 치유한 사람의 상태는 어떠하였습니까?",
+      "choices": ["나면서부터 앉은뱅이로 걸어본 적이 없었다", "귀신 들려 소리를 지르던 자였다", "나병 환자로 열두 해 된 자였다"],
+      "answer_index": 0,
+      "explanation": "행 14:8 — '나면서 앉은뱅이 되어 걸어 본 적이 없는 자라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "무리가 바울을 신이라 부르자 바울과 바나바는 어떻게 하였습니까?",
+      "choices": ["옷을 찢고 무리 가운데 뛰어 들어가 말렸다", "조용히 물러나 기도하였다", "그들의 오해를 풀기 위해 편지를 썼다"],
+      "answer_index": 0,
+      "explanation": "행 14:14 — '두 사도 바나바와 바울이 듣고 옷을 찢고 무리 가운데 뛰어 들어가서 소리질러'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "루스드라–더베 전도 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "디모데전서", "갈라디아서"],
+      "answer_index": 0,
+      "explanation": "행 14:8-20에 루스드라–더베 전도 기사가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n137",
+  "story_title": "고레스 칙령: 돌아가라",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "고레스 칙령이 내려진 것은 고레스 왕 몇 년이었습니까?",
+      "choices": ["원년", "삼년", "오년"],
+      "answer_index": 0,
+      "explanation": "스 1:1 — '바사 왕 고레스 원년에 여호와께서 ... 고레스의 마음을 감동시키시매'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "고레스는 칙령에서 남아 있는 백성들에게 무엇을 하라고 하였습니까?",
+      "choices": ["은과 금으로 귀환자들을 도와주고 성전 예물을 드리라 하였다", "즉시 군사를 보내 성전을 재건하라 하였다", "이스라엘 사람들을 모두 추방하라 하였다"],
+      "answer_index": 0,
+      "explanation": "스 1:4 — '은과 금과 기타 물건과 짐승으로 도와주고 ... 예물을 즐거이 드릴지니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "고레스 칙령 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["에스라", "느헤미야", "역대하"],
+      "answer_index": 0,
+      "explanation": "스 1:1-4에 고레스 칙령과 귀환 허가 기사가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n163",
+  "story_title": "변화산",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님이 변화산에 데려가신 제자는 누구입니까?",
+      "choices": ["베드로, 야고보, 요한", "베드로, 안드레, 요한", "야고보, 요한, 빌립"],
+      "answer_index": 0,
+      "explanation": "막 9:2 — '베드로와 야고보와 요한을 데리시고 따로 높은 산에 올라가셨더니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "제자들이 하늘 음성을 들었을 때 어떻게 하였습니까?",
+      "choices": ["엎드려 심히 두려워하였다", "큰 소리로 찬양하였다", "산을 내려가자고 하였다"],
+      "answer_index": 0,
+      "explanation": "마 17:6 — '제자들이 듣고 엎드리어 심히 두려워하니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "변화산 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["마가복음", "사도행전", "요한계시록"],
+      "answer_index": 0,
+      "explanation": "막 9:2-13에 변화산 기사가 기록됨"
+    }
+  ]
+}

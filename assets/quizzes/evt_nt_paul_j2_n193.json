@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_j2_n193",
+  "story_title": "2차 선교(3): 데살로니가—소동과 도피",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "데살로니가에서 바울 일행을 집에 들인 사람은 누구입니까?",
+      "choices": ["야손", "루디아", "디오누시오"],
+      "answer_index": 0,
+      "explanation": "행 17:5-7 — '야손의 집에 달려들어 … 야손이 들였도다'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "데살로니가의 유대인들은 복음에 어떻게 반응하였습니까?",
+      "choices": ["시기하여 떼를 지어 성을 소동케 하였다", "회당에서 말씀을 더 들으려 하였다", "조용히 바울을 도시 경계로 안내하였다"],
+      "answer_index": 0,
+      "explanation": "행 17:5 — '유대인들은 시기하여 저자의 어떤 괴악한 사람들을 데리고 떼를 지어 성을 소동케 하여'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "데살로니가 소동 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "데살로니가전서", "데살로니가후서"],
+      "answer_index": 0,
+      "explanation": "행 17:1-9에 데살로니가 소동 기사가 기록됨"
+    }
+  ]
+}

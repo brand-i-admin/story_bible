@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n179",
+  "story_title": "아나니아와 삽비라",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아나니아와 삽비라는 무슨 이유로 심판을 받았습니까?",
+      "choices": ["땅값의 일부를 감추고 전부인 것처럼 속였기 때문에", "헌금을 전혀 드리지 않았기 때문에", "공동체를 떠나 다른 도시로 갔기 때문에"],
+      "answer_index": 0,
+      "explanation": "행 5:3 — '성령을 속이고 땅값 얼마를 감추었느냐'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "이 사건 이후 교회는 어떤 반응을 보였습니까?",
+      "choices": ["온 교회가 크게 두려워하였다", "더욱 기쁘게 찬양하였다", "아나니아의 행동을 본받으려 하였다"],
+      "answer_index": 0,
+      "explanation": "행 5:11 — '온 교회와 이 일을 듣는 사람들이 다 크게 두려워하니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "아나니아와 삽비라 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "고린도전서", "빌립보서"],
+      "answer_index": 0,
+      "explanation": "행 5:1-11에 아나니아와 삽비라 사건이 기록됨"
+    }
+  ]
+}

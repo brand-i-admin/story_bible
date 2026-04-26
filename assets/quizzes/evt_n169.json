@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n169",
+  "story_title": "성전 정화",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님이 성전에서 뒤엎으신 것은 무엇입니까?",
+      "choices": ["돈 바꾸는 자들의 상과 비둘기 파는 자들의 의자", "제사장들의 제단", "서기관들의 책상"],
+      "answer_index": 0,
+      "explanation": "막 11:15 — '돈 바꾸는 자들의 상과 비둘기 파는 자들의 의자를 둘러 엎으시며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "예수님은 성전을 어떤 곳이라 하셨습니까?",
+      "choices": ["기도하는 집", "강도의 굴혈", "장사하는 곳"],
+      "answer_index": 0,
+      "explanation": "막 11:17 — '내 집은 만민의 기도하는 집이라 칭함을 받으리라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "성전 정화 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["요한복음", "사도행전", "히브리서"],
+      "answer_index": 0,
+      "explanation": "요 2:13-17에 성전 정화 기사가 기록됨"
+    }
+  ]
+}

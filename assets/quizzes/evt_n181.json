@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n181",
+  "story_title": "사마리아 복음: 빌립의 전도",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "사마리아에서 전도한 사람은 누구입니까?",
+      "choices": ["빌립", "베드로", "스데반"],
+      "answer_index": 0,
+      "explanation": "행 8:5 — '빌립이 사마리아 성에 내려가 그리스도를 백성에게 전파하니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "시몬이라는 박수는 성령 임하는 것을 보고 어떻게 하였습니까?",
+      "choices": ["돈을 주고 성령 주는 권능을 사려 하였다", "회개하고 세례를 받았다", "도시 밖으로 도망하였다"],
+      "answer_index": 0,
+      "explanation": "행 8:18-19 — '시몬이 사도들의 안수로 성령 받는 것을 보고 돈을 드려 … 이 권능을 내게도 주어'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "빌립의 사마리아 전도 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "빌립보서", "야고보서"],
+      "answer_index": 0,
+      "explanation": "행 8:4-25에 빌립의 사마리아 전도 기사가 기록됨"
+    }
+  ]
+}

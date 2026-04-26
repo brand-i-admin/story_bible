@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_j3_n198",
+  "story_title": "3차 선교(2): 마게도냐—교회를 굳게 하다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "에베소 소요가 그친 후 바울은 어디로 향하였습니까?",
+      "choices": ["마게도냐", "예루살렘", "고린도"],
+      "answer_index": 0,
+      "explanation": "행 20:1 — '소요가 그치매 바울이 … 작별하고 떠나 마게도냐로 가니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울은 마게도냐를 다니며 무엇을 하였습니까?",
+      "choices": ["여러 말로 제자들에게 권하였다", "새 교회를 세우기 위해 지도자들을 임명하였다", "각 교회에서 헌금을 모았다"],
+      "answer_index": 0,
+      "explanation": "행 20:2 — '그 지경으로 다녀가며 여러 말로 제자들에게 권하고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "바울의 마게도냐 순회 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "고린도후서", "빌립보서"],
+      "answer_index": 0,
+      "explanation": "행 20:1-2에 바울의 마게도냐 순회 기사가 기록됨"
+    }
+  ]
+}

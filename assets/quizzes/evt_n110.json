@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n110",
+  "story_title": "인구조사와 제단: 다윗의 선택",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "다윗이 제단을 쌓은 곳은 누구의 타작마당이었습니까?",
+      "choices": ["여부스 사람 아라우나", "보아스", "오르난"],
+      "answer_index": 0,
+      "explanation": "삼하 24:18 — '여부스 사람 아라우나의 타작마당에서 여호와를 위하여 단을 쌓으소서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "다윗은 인구조사 후 자신의 잘못을 어떻게 하였습니까?",
+      "choices": ["여호와께 죄를 고백하고 용서를 구하였다", "재물을 드려 속죄하였다", "선지자를 찾아 자문을 구하였다"],
+      "answer_index": 0,
+      "explanation": "삼하 24:10 — '다윗이 인구 수를 조사한 후에 그 마음에 자책하고 여호와께 아뢰되 내가 이 일을 행함으로 큰 죄를 범하였나이다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "다윗의 인구조사와 제단 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["사무엘하", "역대상", "사무엘상"],
+      "answer_index": 0,
+      "explanation": "삼하 24:10-25에 다윗의 인구조사와 아라우나 타작마당 제단이 기록됨"
+    }
+  ]
+}

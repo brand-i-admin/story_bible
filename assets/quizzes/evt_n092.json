@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n092",
+  "story_title": "보아스의 은혜: 이삭 줍는 자리",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "룻이 저녁까지 주워 떤 보리의 양은 얼마였습니까?",
+      "choices": ["한 에바", "한 오멜", "한 호멜"],
+      "answer_index": 0,
+      "explanation": "룻 2:17 — '룻이 밭에서 저녁까지 줍고 그 주운 것을 떠니 보리가 한 에바쯤 되는지라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "보아스는 룻에게 밭에서 이삭을 줍도록 어떻게 배려하였습니까?",
+      "choices": ["소년들에게 건드리지 말라 명하였다", "일꾼들과 함께 급여를 주었다", "자기 손으로 보리를 가져다 주었다"],
+      "answer_index": 0,
+      "explanation": "룻 2:9 — '내가 그 소년들에게 명하여 너를 건드리지 말라 하였느니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "보아스와 룻의 첫 만남이 기록된 성경 책은 어디입니까?",
+      "choices": ["룻기", "사사기", "사무엘상"],
+      "answer_index": 0,
+      "explanation": "룻 2:1-17에 보아스의 밭에서 룻의 이삭 줍기가 기록됨"
+    }
+  ]
+}

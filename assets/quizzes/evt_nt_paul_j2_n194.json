@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_j2_n194",
+  "story_title": "2차 선교(4): 베뢰아—말씀을 상고하다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "베뢰아 사람들이 데살로니가 사람보다 신사적이었던 이유는 무엇입니까?",
+      "choices": ["날마다 성경을 상고하였기 때문에", "바울에게 더 많은 헌금을 드렸기 때문에", "회당 문을 항상 열어 두었기 때문에"],
+      "answer_index": 0,
+      "explanation": "행 17:11 — '이것이 그러한가 하여 날마다 성경을 상고하므로'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "데살로니가 유대인들이 베뢰아까지 쫓아왔을 때 형제들은 바울을 어떻게 도왔습니까?",
+      "choices": ["바울을 내어보내어 바다까지 가게 하였다", "바울을 숨겨 도시 안에 머물게 하였다", "유대인들과 타협하여 바울을 넘겨 주었다"],
+      "answer_index": 0,
+      "explanation": "행 17:14 — '형제들이 곧 바울을 내어보내어 바다까지 가게 하되'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "베뢰아 전도 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "데살로니가전서", "빌립보서"],
+      "answer_index": 0,
+      "explanation": "행 17:10-15에 베뢰아 전도 기사가 기록됨"
+    }
+  ]
+}

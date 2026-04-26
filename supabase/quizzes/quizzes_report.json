@@ -1,0 +1,1311 @@
+{
+  "generated_at": "2026-04-25T04:15:02+00:00",
+  "total_files": 213,
+  "total_questions": 639,
+  "expected_event_codes": 213,
+  "answer_index_distribution": {
+    "0": 223,
+    "1": 210,
+    "2": 206
+  },
+  "missing_story_codes": [],
+  "unknown_story_codes": [],
+  "length_warnings": [
+    {
+      "story_code": "evt_n006",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n015",
+      "display_order": 1,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "story_code": "evt_n017",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n019",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "story_code": "evt_n019",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n021",
+      "display_order": 1,
+      "field": "question",
+      "length": 45
+    },
+    {
+      "story_code": "evt_n022",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n023",
+      "display_order": 1,
+      "field": "question",
+      "length": 45
+    },
+    {
+      "story_code": "evt_n023",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n023",
+      "display_order": 2,
+      "field": "question",
+      "length": 43
+    },
+    {
+      "story_code": "evt_n024",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n027",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n027",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n027",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n028",
+      "display_order": 1,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "story_code": "evt_n028",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n028",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n028",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "story_code": "evt_n029",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "story_code": "evt_n029",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n029",
+      "display_order": 2,
+      "field": "question",
+      "length": 43
+    },
+    {
+      "story_code": "evt_n030",
+      "display_order": 0,
+      "field": "question",
+      "length": 48
+    },
+    {
+      "story_code": "evt_n030",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "story_code": "evt_n030",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n031",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n032",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n032",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "story_code": "evt_n033",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n035",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "story_code": "evt_n036",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "story_code": "evt_n041",
+      "display_order": 0,
+      "field": "question",
+      "length": 44
+    },
+    {
+      "story_code": "evt_n043",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n044",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n044",
+      "display_order": 2,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "story_code": "evt_n045",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 62
+    },
+    {
+      "story_code": "evt_n045",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "story_code": "evt_n046",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 73
+    },
+    {
+      "story_code": "evt_n046",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n048",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n048",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 73
+    },
+    {
+      "story_code": "evt_n049",
+      "display_order": 0,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "story_code": "evt_n050",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "story_code": "evt_n051",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n052",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n053",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "story_code": "evt_n053",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "story_code": "evt_n054",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n054",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n054",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "story_code": "evt_n054",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n055",
+      "display_order": 0,
+      "field": "question",
+      "length": 46
+    },
+    {
+      "story_code": "evt_n056",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n056",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n056",
+      "display_order": 2,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "story_code": "evt_n057",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "story_code": "evt_n058",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n058",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n065",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n067",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n068",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n071",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n073",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "story_code": "evt_n073",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n074",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n080",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n081",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n083",
+      "display_order": 1,
+      "field": "question",
+      "length": 48
+    },
+    {
+      "story_code": "evt_n083",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n084",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "story_code": "evt_n086",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n089",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n090",
+      "display_order": 0,
+      "field": "question",
+      "length": 44
+    },
+    {
+      "story_code": "evt_n090",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n093",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n093",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "story_code": "evt_n095",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n095",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n096",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n096",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n096",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 79
+    },
+    {
+      "story_code": "evt_n097",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n099",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n099",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "story_code": "evt_n099",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "story_code": "evt_n101",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 64
+    },
+    {
+      "story_code": "evt_n101",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n101",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n102",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "story_code": "evt_n103",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "story_code": "evt_n105",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n106",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n106",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n109",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "story_code": "evt_n110",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n110",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 74
+    },
+    {
+      "story_code": "evt_n111",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n111",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "story_code": "evt_n115",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n118",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n118",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 28
+    },
+    {
+      "story_code": "evt_n119",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n121",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n123",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "story_code": "evt_n123",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n123",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n123",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n125",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n126",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n126",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n128",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n129",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n130",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n131",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n131",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n133",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n133",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n134",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n135",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "story_code": "evt_n135",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n136",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 30
+    },
+    {
+      "story_code": "evt_n137",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "story_code": "evt_n137",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n137",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n138",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n140",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "story_code": "evt_n141",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 29
+    },
+    {
+      "story_code": "evt_n141",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n141",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n141",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 29
+    },
+    {
+      "story_code": "evt_n142",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "story_code": "evt_n142",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n144",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "story_code": "evt_n145",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "story_code": "evt_n145",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n145",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n146",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n148",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "story_code": "evt_n148",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n148",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n149",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n150",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n152",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n153",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n156",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n156",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n156",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n156",
+      "display_order": 2,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n158",
+      "display_order": 2,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n161",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n162",
+      "display_order": 2,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n165",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n166",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n168",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_n169",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_n171",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n172",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "story_code": "evt_n177",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n179",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_n179",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n181",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n182",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n184",
+      "display_order": 1,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_n206",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 30
+    },
+    {
+      "story_code": "evt_n208",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "story_code": "evt_n209",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n210",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_n211",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_n212",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_n215",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n187",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n187",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n188",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n188",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 27
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n189",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n189",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n190",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_nt_paul_j1_n190",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 64
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n191",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n191",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 62
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n191",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n191",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n192",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n192",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n192",
+      "display_order": 1,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n192",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n193",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n194",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n194",
+      "display_order": 1,
+      "field": "question",
+      "length": 44
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n194",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n194",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n195",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 73
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n196",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n196",
+      "display_order": 1,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n196",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n196",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_j2_n196",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n197",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n197",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n197",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n197",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 64
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n198",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n199",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n200",
+      "display_order": 1,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "story_code": "evt_nt_paul_j3_n200",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n201",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n201",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n201",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n202",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n202",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n203",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n203",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n204",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n204",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n205",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n205",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "story_code": "evt_nt_paul_rome_n205",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    }
+  ]
+}

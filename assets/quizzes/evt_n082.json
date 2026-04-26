@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n082",
+  "story_title": "에훗: 왼손의 반전",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "에훗이 만든 칼의 길이는 얼마였습니까?",
+      "choices": ["한 규빗", "두 규빗", "반 규빗"],
+      "answer_index": 0,
+      "explanation": "삿 3:16 — '에훗이 장이 한 규빗 되는 좌우에 날선 칼을 만들어'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "에훗이 에글론 왕을 찌른 후 어떻게 하였습니까?",
+      "choices": ["스이라로 도망하였다", "성문을 닫고 숨었다", "이스라엘 진영으로 달아났다"],
+      "answer_index": 0,
+      "explanation": "삿 3:26 — '에훗이 피하여 돌 뜨는 곳을 지나 스이라로 도망하니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "에훗의 사사 이야기가 기록된 성경 책은 어디입니까?",
+      "choices": ["사사기", "여호수아", "사무엘상"],
+      "answer_index": 0,
+      "explanation": "삿 3:12-30에 에훗의 이야기가 기록됨"
+    }
+  ]
+}

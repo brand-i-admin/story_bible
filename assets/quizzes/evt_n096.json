@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n096",
+  "story_title": "왕을 요구하다: 우리도 왕을",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "백성이 왕을 요구한 이유 중 하나는 무엇이었습니까?",
+      "choices": ["사무엘의 아들들이 그 도를 행하지 않았기 때문이다", "외적이 갑자기 침략하였기 때문이다", "사무엘이 늙어 더 이상 다스릴 수 없었기 때문이다"],
+      "answer_index": 0,
+      "explanation": "삼상 8:3-5 — '그 아들들이 그 아버지의 행위를 따르지 아니하고 ... 이스라엘 모든 장로가 모여 사무엘에게 이르되 우리에게 왕을 주어'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "백성의 왕 요구를 들은 사무엘은 먼저 어떻게 하였습니까?",
+      "choices": ["여호와께 기도하였다", "즉시 왕을 세울 자를 찾았다", "백성을 책망하였다"],
+      "answer_index": 0,
+      "explanation": "삼상 8:6 — '사무엘이 기뻐하지 아니하여 여호와께 기도하매'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "이스라엘의 왕 요구 사건이 기록된 성경 책은 어디입니까?",
+      "choices": ["사무엘상", "사사기", "열왕기상"],
+      "answer_index": 0,
+      "explanation": "삼상 8:1-22에 백성의 왕 요구가 기록됨"
+    }
+  ]
+}

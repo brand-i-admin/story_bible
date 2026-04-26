@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n005",
+  "story_title": "가인과 아벨: 들판의 비극",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "가인이 여호와 앞을 떠나 거한 땅의 이름은 무엇입니까?",
+      "choices": ["놋 땅", "모압 땅", "갈대아 우르"],
+      "answer_index": 0,
+      "explanation": "창 4:16 — '가인이 여호와의 앞을 떠나 나가 에덴 동편 놋 땅에 거하였더니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "가인의 제물이 열납되지 않자 가인은 어떻게 반응하였습니까?",
+      "choices": ["심히 분하여 안색이 변하였다", "울며 회개하였다", "제물을 다시 드렸다"],
+      "answer_index": 0,
+      "explanation": "창 4:5 — '가인이 심히 분하여 안색이 변하니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "가인과 아벨 이야기는 성경 어느 책에 기록되어 있습니까?",
+      "choices": ["창세기", "민수기", "사무엘상"],
+      "answer_index": 0,
+      "explanation": "창 4:1-16에 가인과 아벨의 제사와 살인 사건이 기록됨"
+    }
+  ]
+}

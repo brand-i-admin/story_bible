@@ -40,6 +40,7 @@ PERSONS_SQL := $(SUPABASE_DIR)/200_stories/persons_seed.sql
 
 .PHONY: help all \
         seed-bible-verses build-avatar-prompts seed-stories seed-persons \
+        seed-quizzes \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         update-pubspec-assets check-pubspec-assets \
@@ -57,12 +58,13 @@ help:
 	@echo "  build-avatar-prompts    아바타 프롬프트 JSON 생성"
 	@echo "  seed-stories            이야기 SQL 생성 (→ avatar-prompts 의존)"
 	@echo "  seed-persons            인물 SQL 생성 (→ avatar-prompts 의존)"
+	@echo "  seed-quizzes            퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
 	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ avatar-prompts 의존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible + stories + persons)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + persons + quizzes)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -107,7 +109,15 @@ seed-persons: build-avatar-prompts
 		--stories-dir $(STORIES_DIR) \
 		--output $(PERSONS_SQL)
 
-seed-all: seed-bible-verses seed-stories seed-persons
+seed-quizzes:
+	@echo "[Makefile] 퀴즈 SQL 생성..."
+	$(PYTHON) $(TOOLS_DIR)/build_quizzes_seed_sql.py \
+		--input-dir $(ASSETS_DIR)/quizzes \
+		--output $(SUPABASE_DIR)/quizzes/quizzes_seed.sql \
+		--report $(SUPABASE_DIR)/quizzes/quizzes_report.json \
+		--events-seed-sql $(SUPABASE_DIR)/200_stories/200_stories_seed.sql
+
+seed-all: seed-bible-verses seed-stories seed-persons seed-quizzes
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================

@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n015",
+  "story_title": "별 언약: 믿음이 의로",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "여호와께서 아브람의 믿음을 무엇으로 여기셨습니까?",
+      "choices": ["의로", "제물로", "율법 준수로"],
+      "answer_index": 0,
+      "explanation": "창 15:6 — '아브람이 여호와를 믿으니 여호와께서 이를 그의 의로 여기시고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "언약을 위해 쪼개 놓은 고기 위에 솔개가 내리자 아브람은 어떻게 하였습니까?",
+      "choices": ["솔개를 쫓았다", "그대로 두고 기다렸다", "제단에 불을 붙였다"],
+      "answer_index": 0,
+      "explanation": "창 15:11 — '솔개가 그 사체 위에 내릴 때에는 아브람이 쫓았더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "아브람의 믿음이 의로 여겨진 기사는 성경 어느 책에 기록되어 있습니까?",
+      "choices": ["창세기", "출애굽기", "이사야"],
+      "answer_index": 0,
+      "explanation": "창 15:1-21에 별 언약과 '믿음이 의로' 기록이 담겨 있음"
+    }
+  ]
+}

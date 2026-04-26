@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_nt_paul_j1_n190",
+  "story_title": "1차 선교(5): 안디옥(시리아)로 귀환 보고",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울과 바나바가 귀환하면서 각 교회에서 세운 것은 무엇입니까?",
+      "choices": ["장로들", "집사들", "선지자들"],
+      "answer_index": 0,
+      "explanation": "행 14:23 — '각 교회에서 장로들을 택하여 금식 기도하며 저희를 그 믿은 바 주께 부탁하고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울과 바나바는 안디옥(시리아) 교회에 돌아와 무엇을 하였습니까?",
+      "choices": ["하나님이 함께 행하신 모든 일을 교회에 고하였다", "즉시 다음 선교 여행을 계획하였다", "예루살렘 사도들에게 편지를 보냈다"],
+      "answer_index": 0,
+      "explanation": "행 14:27 — '이르러 교회를 모아 하나님이 함께 행하신 모든 일과 이방인들에게 믿음의 문을 여신 것을 고하고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "1차 선교 귀환 보고가 기록된 성경 책은 어디입니까?",
+      "choices": ["사도행전", "갈라디아서", "고린도후서"],
+      "answer_index": 0,
+      "explanation": "행 14:21-28에 1차 선교 귀환 보고가 기록됨"
+    }
+  ]
+}

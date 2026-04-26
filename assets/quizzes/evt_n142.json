@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n142",
+  "story_title": "에스더의 결단: 죽으면 죽으리라",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "에스더가 왕 앞에 나아가기 전 금식한 기간은 얼마였습니까?",
+      "choices": ["밤낮 삼 일", "칠 일", "사십 일"],
+      "answer_index": 0,
+      "explanation": "에 4:16 — '밤낮 삼일을 먹지도 말고 마시지도 마소서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "에스더는 왕 앞에 나아가겠다고 결단하며 무엇이라 하였습니까?",
+      "choices": ["규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다", "모르드개에게 다른 방법을 찾아보라고 하였다", "왕의 부름을 기다리겠다고 하였다"],
+      "answer_index": 0,
+      "explanation": "에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "에스더의 결단 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["에스더", "에스라", "다니엘"],
+      "answer_index": 0,
+      "explanation": "에 4:10-17에 에스더와 모르드개의 대화와 에스더의 결단이 기록됨"
+    }
+  ]
+}

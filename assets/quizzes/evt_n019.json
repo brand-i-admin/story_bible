@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n019",
+  "story_title": "소돔을 위한 중보: 숫자가 줄어들다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아브라함이 마지막으로 의인의 수를 몇 명까지 낮추어 간구하였습니까?",
+      "choices": ["십 명", "오십 명", "이십 명"],
+      "answer_index": 0,
+      "explanation": "창 18:32 — '혹 거기서 십 인을 찾으시면 어찌 하시려나이까 ... 십 인을 인하여도 멸하지 아니하리라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아브라함은 소돔을 위해 의인의 수를 어떻게 간구하였습니까?",
+      "choices": ["여러 번 반복해 숫자를 낮추어 구하였다", "한 번만 간구하고 침묵하였다", "소돔을 용서해 달라고만 구하였다"],
+      "answer_index": 0,
+      "explanation": "창 18:23-32 — 아브라함이 오십 명에서 십 명까지 반복해 간구함"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "아브라함의 소돔 중보 기도는 성경 어느 책에 기록되어 있습니까?",
+      "choices": ["창세기", "시편", "예레미야"],
+      "answer_index": 0,
+      "explanation": "창 18:16-33에 아브라함의 소돔을 위한 중보 간구가 기록됨"
+    }
+  ]
+}

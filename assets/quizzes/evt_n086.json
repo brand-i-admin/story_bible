@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n086",
+  "story_title": "아비멜렉: 왕 노릇의 비극",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아비멜렉은 누구의 아들이었습니까?",
+      "choices": ["여룹바알(기드온)", "입다", "삼손"],
+      "answer_index": 0,
+      "explanation": "삿 9:1 — '여룹바알의 아들 아비멜렉이 세겜에 가서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아비멜렉의 마지막은 어떻게 되었습니까?",
+      "choices": ["세겜 사람들의 악을 하나님이 그 머리에 갚으셨다", "전장에서 적군에 죽임당하였다", "왕위를 빼앗기고 추방되었다"],
+      "answer_index": 0,
+      "explanation": "삿 9:57 — '세겜 사람들의 모든 악을 하나님이 그들의 머리에 갚으셨으니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "아비멜렉의 이야기가 기록된 성경 책은 어디입니까?",
+      "choices": ["사사기", "사무엘상", "열왕기상"],
+      "answer_index": 0,
+      "explanation": "삿 9:1-57에 아비멜렉의 왕 노릇과 비극적 결말이 기록됨"
+    }
+  ]
+}

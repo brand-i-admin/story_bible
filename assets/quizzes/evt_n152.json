@@ -1,0 +1,31 @@
+{
+  "story_code": "evt_n152",
+  "story_title": "마리아 수태고지와 찬양",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "천사 가브리엘이 마리아에게 찾아온 곳은 어디였습니까?",
+      "choices": ["갈릴리 나사렛", "유대 베들레헴", "예루살렘 성전"],
+      "answer_index": 0,
+      "explanation": "눅 1:26 — '천사 가브리엘이 ... 갈릴리 나사렛이란 동네에 가서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "마리아는 엘리사벳을 만난 후 어떻게 하였습니까?",
+      "choices": ["능하신 이가 큰 일을 내게 행하셨다고 찬양하였다", "집으로 돌아가 금식 기도하였다", "요셉에게 소식을 전하러 갔다"],
+      "answer_index": 0,
+      "explanation": "눅 1:49 — '능하신 이가 큰 일을 내게 행하셨으니 그 이름이 거룩하시며'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "마리아의 수태고지와 찬양 기사가 기록된 성경 책은 어디입니까?",
+      "choices": ["누가복음", "마태복음", "요한복음"],
+      "answer_index": 0,
+      "explanation": "눅 1:26-56에 마리아의 수태고지와 마리아 찬가가 기록됨"
+    }
+  ]
+}
