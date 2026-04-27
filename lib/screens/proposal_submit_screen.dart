@@ -379,12 +379,29 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   }
 
   /// 선택된 인물이 한 명 이상 등장하는 events — position phase 리스트용.
+  ///
+  /// fallback: 결과가 빈 배열이면 (= 신규 인물 단독 케이스, 선택 인물이 등장하는
+  /// 기존 이야기가 0개) era 의 전체 events 를 반환. 사역자가 시대 흐름 기준으로
+  /// 어느 위치에 끼울지 직접 고를 수 있게.
   List<StoryEvent> _eventsForPositionList() {
     if (_characterCodes.isEmpty) return const [];
     final selected = _characterCodes.toSet();
-    return _eraEvents
+    final highlighted = _eraEvents
         .where((e) => e.characterCodes.any(selected.contains))
         .toList();
+    if (highlighted.isNotEmpty) return highlighted;
+    return List<StoryEvent>.from(_eraEvents);
+  }
+
+  /// position list 가 fallback (= 선택 인물이 등장하는 기존 이야기가 없어 era
+  /// 전체를 보여주는 모드) 인지. UI 의 안내 문구 분기에 사용.
+  bool get _isPositionListFallback {
+    if (_characterCodes.isEmpty) return false;
+    final selected = _characterCodes.toSet();
+    final hasAnyMatch = _eraEvents.any(
+      (e) => e.characterCodes.any(selected.contains),
+    );
+    return !hasAnyMatch && _eraEvents.isNotEmpty;
   }
 
   // ===== Step navigation =====
@@ -1060,8 +1077,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           Text('새 이야기가 들어갈 위치를 하나 고르세요', style: theme.textTheme.titleMedium),
           const SizedBox(height: 4),
           Text(
-            '선택한 등장인물들이 나오는 이야기들이 시대 순서대로 나열됩니다. '
-            '탭한 이야기 "뒤"에 새 이야기가 들어갑니다.',
+            _isPositionListFallback
+                ? '선택한 인물이 등장하는 기존 이야기가 없어 이 시대의 모든 이야기를 '
+                      '보여드립니다. 시대 흐름상 어느 이야기 "뒤"에 들어갈지 골라주세요. '
+                      '맨 앞도 선택 가능합니다.'
+                : '선택한 등장인물들이 나오는 이야기들이 시대 순서대로 나열됩니다. '
+                      '탭한 이야기 "뒤"에 새 이야기가 들어갑니다.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -1086,7 +1107,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                           padding: const EdgeInsets.all(24),
                           child: Center(
                             child: Text(
-                              '선택한 인물들이 등장하는 이야기가 아직 없습니다. "맨 앞" 선택만 가능합니다.',
+                              '이 시대에 등록된 이야기가 아직 없습니다. "맨 앞" 선택만 가능합니다.',
                               textAlign: TextAlign.center,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
@@ -1300,6 +1321,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               ),
             ),
           ),
+        // 시작 연도가 입력되면 같은 era 의 비슷한 연도 이벤트 앞뒤 3개를 보여줌.
+        // 사역자가 "내가 입력한 연도가 시대 흐름에 맞는가" 를 직접 검증할 수 있게.
+        _nearbyYearPreview(theme),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _timePrecision,
@@ -1603,6 +1627,75 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  /// 사역자가 시작 연도를 입력하면 같은 era 에서 그 연도와 가까운 이벤트들의
+  /// 앞뒤 3개씩 (총 최대 6개) 을 story_index 순으로 보여준다. 신규 인물 단독
+  /// 케이스(맨 앞 강제)에서 연도가 시대 흐름에 진짜로 맞는지 사역자가 한 번 더
+  /// 확인하라는 안내 박스. 시작 연도가 입력되지 않았거나 era 가 비어있으면
+  /// 표시하지 않음.
+  Widget _nearbyYearPreview(ThemeData theme) {
+    final sy = int.tryParse(_startYearCtrl.text.trim());
+    if (sy == null) return const SizedBox.shrink();
+    if (_eraEvents.isEmpty) return const SizedBox.shrink();
+
+    // 같은 era 의 연도 정보가 있는 이벤트만 골라 시작 연도와의 거리 산정.
+    // distance = abs(start_year - sy). null start_year 는 제외.
+    final scored = <({StoryEvent ev, int distance})>[];
+    for (final ev in _eraEvents) {
+      if (ev.startYear == null) continue;
+      scored.add((ev: ev, distance: (ev.startYear! - sy).abs()));
+    }
+    if (scored.isEmpty) return const SizedBox.shrink();
+
+    // 가까운 순으로 정렬 후 상위 6개 선택, 다시 story_index 순으로 정렬해 표시.
+    scored.sort((a, b) => a.distance.compareTo(b.distance));
+    final picked = scored.take(6).map((e) => e.ev).toList()
+      ..sort((a, b) => a.storyIndex.compareTo(b.storyIndex));
+
+    String fmt(int y) => y < 0 ? 'B.C. ${-y}' : 'A.D. $y';
+    String yearLabel(StoryEvent ev) {
+      final s = ev.startYear, e = ev.endYear;
+      if (s == null && e == null) return '';
+      if (s == e && s != null) return ' (${fmt(s)})';
+      return ' (${s != null ? fmt(s) : '?'} ~ ${e != null ? fmt(e) : '?'})';
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: theme.colorScheme.outlineVariant),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '입력한 시작 연도(${fmt(sy)}) 부근의 이 시대 이야기들이에요. '
+              '실제 이 위치가 맞는지 정확히 확인하고 연도를 입력해주세요.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 6),
+            for (final ev in picked)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  '#${ev.storyIndex}  "${ev.title}"${yearLabel(ev)}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
