@@ -34,6 +34,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 import { corsHeaders } from "../_shared/cors.ts";
 import { getGcpAccessToken } from "../_shared/gcp_auth.ts";
+import { translateForImagePrompt } from "../_shared/translate.ts";
 
 // Same visual preamble used by tools/images/generate_event_story_images_vertex.py
 // so user-generated proposal scenes blend with production scene art.
@@ -99,11 +100,27 @@ function buildVertexParts(input: {
   eventTitle: string;
   sceneText: string;
   placeName?: string;
-  references: { code: string; name: string; base64: string }[];
+  references: {
+    code: string;
+    name: string;
+    description: string;
+    base64: string;
+  }[];
 }): Array<Record<string, unknown>> {
   const refLabels = input.references.map((r) => `${r.name} (${r.code})`);
   const charText = refLabels.length ? refLabels.join(", ") : "none";
+  const namesOnly = input.references.map((r) => r.name);
   const placeClause = input.placeName ? ` Place: ${input.placeName}.` : "";
+
+  // Reference characters are this scene's *exact and only* cast.
+  // The attached avatar images define their canonical look — face, hair,
+  // costume, age. The scene must depict precisely these characters and no
+  // other named persons.
+  const exactCastClause = namesOnly.length
+    ? ` This scene MUST depict exactly these characters and only these: ${namesOnly.join(
+        ", ",
+      )}. Do not add other named figures. Each attached avatar image is the canonical look of that character.`
+    : "";
 
   const instruction =
     `${COMMON_SCENE_STYLE} ` +
@@ -112,18 +129,25 @@ function buildVertexParts(input: {
     "Keep the composition suitable for mobile storytelling. " +
     "Show only visible action, facial expression, body pose, props, weather, light, and environment. " +
     "Do not add spoken words, dialogue balloons, captions, written letters, scripture text, or logos. " +
-    "If reference avatar images are attached, each attached character is canonical and must stay recognizable. " +
-    "Preserve the attached character's face identity, hair, and recognizable core design. " +
-    "If the scene description explicitly requests a different age, costume, role, or physical state, keep the same identity but follow that requested change. " +
-    "Do not redesign, replace, or turn the attached character into a different character. " +
-    `Scene reference characters: ${charText}.`;
+    "CRITICAL CHARACTER CONSISTENCY: each attached avatar image is the EXACT canonical appearance of that character. " +
+    "You MUST faithfully copy the face geometry, hair color and style, skin tone, body proportions, clothing colors, and any held props or accessories from each attached avatar. " +
+    "The same person must look like the SAME person across every scene — do NOT redesign, age them, swap their clothing, or invent a new face. " +
+    "If the scene description explicitly requests a different physical state (e.g., older, wounded, kneeling), keep the same identity (face/hair) but apply only the requested change. " +
+    "Do not introduce extra characters that are not on the attached cast list. " +
+    `Scene reference characters: ${charText}.${exactCastClause}`;
 
   const parts: Array<Record<string, unknown>> = [{ text: instruction }];
   for (const ref of input.references) {
+    const descClause = ref.description.trim().length > 0
+      ? ` Visual identity reference (must match): ${ref.description.trim()}.`
+      : "";
     parts.push({
       text:
         `Attached canonical character reference: ${ref.name} (${ref.code}). ` +
-        "Keep this character visually consistent in the generated scene.",
+        "Use the attached avatar image as the SINGLE SOURCE OF TRUTH for face, " +
+        "hair, costume, age, body type, and skin tone of this character. " +
+        "Every appearance of this character in the scene must look like the avatar." +
+        descClause,
     });
     parts.push({
       inlineData: { mimeType: "image/png", data: ref.base64 },
@@ -274,40 +298,84 @@ Deno.serve(async (req: Request) => {
     return errJson("missing/invalid sceneText | draftId | sceneIndex", 400);
   }
 
-  // Look up character display names (for prompt readability) — one RPC.
+  // Look up character display names + descriptions — name 은 prompt 텍스트에,
+  // description 은 reference 옆에 붙여 모델이 외형 단서까지 알게 한다.
   const codeToName: Record<string, string> = {};
+  const codeToDesc: Record<string, string> = {};
   if (characterCodes.length > 0) {
     const { data: rows, error: nameErr } = await client
       .from("characters")
-      .select("code, name")
+      .select("code, name, description")
       .in("code", characterCodes);
     if (nameErr) console.warn("[characters] lookup failed", nameErr.message);
     for (const row of rows ?? []) {
-      codeToName[row.code as string] = row.name as string;
+      const code = row.code as string;
+      codeToName[code] = row.name as string;
+      codeToDesc[code] = (row.description as string | null) ?? "";
     }
   }
+
+  // GCP 토큰 1회 발급 (번역 + Vertex 둘 다 사용).
+  let accessToken: string;
+  try {
+    const sa = JSON.parse(saJsonStr);
+    accessToken = await getGcpAccessToken(sa);
+  } catch (e) {
+    return errJson(
+      `gcp token failed: ${e instanceof Error ? e.message : String(e)}`,
+      500,
+    );
+  }
+
+  // 한국어 sceneText → 영어 번역 (한국어 미포함 시 그대로). Imagen/Gemini Image
+  // 가 한국어 명사(지팡이/책/안경/특정 행동 등)를 자주 무시하는 문제 해결.
+  const englishSceneText = await translateForImagePrompt(
+    sceneText,
+    accessToken,
+    gcpProject,
+    gcpLocation,
+  );
+  // 캐릭터 description 도 한국어면 번역 — 모델이 영문 visual identity 단서를 받음.
+  const codeToDescEn: Record<string, string> = {};
+  await Promise.all(
+    Object.entries(codeToDesc).map(async ([code, desc]) => {
+      if (!desc.trim()) {
+        codeToDescEn[code] = "";
+        return;
+      }
+      codeToDescEn[code] = await translateForImagePrompt(
+        desc,
+        accessToken,
+        gcpProject,
+        gcpLocation,
+      );
+    }),
+  );
 
   // Pull avatar PNGs (public bucket, fetch parallel).
   const references = await Promise.all(
     characterCodes.map(async (code) => {
       const base64 = await fetchAvatarAsBase64(supabaseUrl, code);
       if (!base64) return null;
-      return { code, name: codeToName[code] ?? code, base64 };
+      return {
+        code,
+        name: codeToName[code] ?? code,
+        description: codeToDescEn[code] ?? "",
+        base64,
+      };
     }),
   ).then((list) => list.filter((x): x is NonNullable<typeof x> => x !== null));
 
   const parts = buildVertexParts({
     eventTitle: eventTitle || "Untitled Bible scene",
-    sceneText,
+    sceneText: englishSceneText,
     placeName,
     references,
   });
 
-  // Mint GCP token, call Vertex, get image bytes.
+  // Vertex 호출 (위에서 이미 토큰 발급 완료).
   let imageBytes: Uint8Array;
   try {
-    const sa = JSON.parse(saJsonStr);
-    const accessToken = await getGcpAccessToken(sa);
     imageBytes = await callVertex(accessToken, gcpProject, gcpLocation, parts);
   } catch (e) {
     return errJson(

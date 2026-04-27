@@ -983,9 +983,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def parse_event_number(raw_title: str) -> int:
+    """제목 앞 3자리 번호가 있으면 반환, 없으면 0.
+
+    번호가 빠진 신 JSON 포맷에서는 0 을 반환 → caller 가 row['story_index'] 로
+    fallback 정렬해야 한다 (load_story_rows 가 처리).
+    """
     match = EVENT_NO_RE.match(raw_title.strip())
     if match is None:
-        raise ValueError(f"Title does not start with 3-digit index: {raw_title!r}")
+        return 0
     return int(match.group(1))
 
 
@@ -1001,7 +1006,13 @@ def load_story_rows(stories_dir: Path) -> list[dict[str, Any]]:
             if not isinstance(item, dict):
                 raise ValueError(f"Story row must be object in {path}: {item!r}")
             rows.append(item)
-    rows.sort(key=lambda row: parse_event_number(str(row.get("title", ""))))
+    # title 앞 번호가 없는 새 포맷 → story_index 로 안정 정렬.
+    rows.sort(
+        key=lambda row: (
+            int(row["story_index"]) if isinstance(row.get("story_index"), int) else 0,
+            str(row.get("title", "")),
+        )
+    )
     return rows
 
 
@@ -1274,7 +1285,10 @@ def build_person_meta(
     )
 
     for row in rows:
+        # title 앞 번호 우선, 없으면 story_index 로 fallback.
         number = parse_event_number(str(row.get("title", "")))
+        if number == 0 and isinstance(row.get("story_index"), int):
+            number = int(row["story_index"])
         era_style = normalize_style_era(str(row.get("era", "")))
         raw_persons = [
             str(code).strip() for code in row.get("characters", []) if str(code).strip()

@@ -1,47 +1,47 @@
 #!/usr/bin/env python3
-"""Download approved proposal assets (scene images + new character avatars)
-to the local `assets/` tree, then clean up source buckets.
+"""Sync approved proposals AND deletion approvals to the local `assets/` tree.
 
-After an admin approves a proposal via `approve_event_proposal` RPC:
-  - event_proposals.status = 'approved', approved_event_id set.
-  - characters rows for `proposed_characters` get avatar_storage_path =
-    'proposal-characters/<uid>/<draft>/<code>.png' (still in proposal bucket).
-  - scene_image_paths still point to 'proposal-scenes/<uid>/<draft>/scene_<n>.png'.
+이 스크립트는 두 가지 phase 를 한 번에 처리한다:
 
-This script (run by an operator after approval is done) performs the final
-"freeze & migrate to canonical assets":
+Phase A — **추가** (approved proposals):
+  - event_proposals.status = 'approved' AND synced_to_local_at IS NULL
+  - 장면 이미지/아바타 PNG 를 proposal-* 버킷에서 로컬로 다운로드
+  - characters/<code>.png 로 다시 업로드 + characters.avatar_storage_path 패치
+  - 완료 시 synced_to_local_at = now() 로 멱등 마커 세팅
+  - (--delete-source) proposal-* 버킷의 원본 파일 삭제
 
-  1. Query approved proposals where `synced_to_local_at IS NULL`
-     (i.e., not yet synced to local). `--all` overrides to re-sync everything.
-  2. For each approved proposal:
-       a. Download each proposal-scenes/*.png to
-          `assets/story_images/{title}/scene_{i}.png` (for Vertex output
-          parity with generate-story-images output).
-       b. Download each proposal-characters/*.png to
-          `assets/avatars/{code}.png`.
-       c. Re-upload the PNGs to the `characters/` bucket with clean path
-          `{code}.png` and update characters.avatar_storage_path = '{code}.png'.
-       d. PATCH event_proposals.synced_to_local_at = now() so subsequent
-          runs skip this proposal (idempotency).
-       e. (Optional) delete source proposal-* objects.
+Phase B — **삭제** (NEW: approve_delete_proposal 결과 반영):
+  - events 중 deleted_at IS NOT NULL → 로컬 `assets/story_images/<title>/`
+    디렉토리(장면 PNG) 제거. 이미 없으면 스킵.
+  - characters 중 is_active = false AND avatar_url/avatar_storage_path 가
+    있는 것 → 로컬 `assets/avatars/<code>.png` 와
+    `assets/avatars_thumbs/<code>.png` 제거. 이미 없으면 스킵.
+  - Supabase Storage 의 잔존 파일도 best-effort 로 한 번 더 정리(approve_delete
+    RPC 가 이미 시도했으나 실패했을 경우의 안전망).
 
-After running, the operator proceeds with the regular content pipeline:
-    make thumbnails                   # makes runtime thumbnails
-    make build-character-meta         # if character_meta.json needs new entry
-    make seed-stories-characters      # regenerate SQL
-    make apply-seeds-stories-characters  # push to DB
-    ...then rebuild + release the app.
+  Phase B 는 별도 마커 없이 **파일 존재 여부**로 멱등성 보장 — 이미 정리된
+  것은 자연스럽게 skip. 사용자가 요청한 "이전에 sync 할 때 이미 삭제했다면
+  진행 안 함" 의미를 그대로 따른다.
+
+후처리(추천):
+    make thumbnails                   # 새 캐릭터 썸네일
+    make build-character-meta         # character_meta.json 갱신
+    make seed-stories-characters      # SQL 재생성
+    make apply-seeds-stories-characters  # DB 반영
+    ...앱 재빌드/배포.
 
 Usage:
     python3 tools/supabase/sync_approved_proposal_assets.py --env dev [--dry-run]
                                                              [--all]
                                                              [--delete-source]
+                                                             [--skip-deletions]
 
-  --all            : 재sync — 이미 synced_to_local_at 가 세팅된 것도 다시 처리
-                     (예: 로컬 assets 날리고 통째로 다시 내려받을 때)
-  --dry-run        : 실제 파일/DB 수정 없이 대상 목록만 출력
-  --delete-source  : 동기화 후 proposal-* 버킷의 원본 파일 삭제
-                     ⚠️ 앱 배포 전엔 위험 — `하이브리드 로딩 fallback 이 깨짐`
+  --all             : 재sync — synced_to_local_at 가 세팅된 것도 다시 처리
+                      (Phase A only; Phase B 는 항상 모든 deleted/inactive 처리)
+  --dry-run         : 실제 파일/DB 수정 없이 대상 목록만 출력
+  --delete-source   : Phase A 후 proposal-* 버킷의 원본 파일 삭제
+                      ⚠️ 앱 배포 전엔 하이브리드 fallback 이 깨질 수 있음
+  --skip-deletions  : Phase B 를 건너뜀 (Phase A 만 실행)
 
 Env vars required (.env):
     SUPABASE_URL_{ENV}
@@ -68,7 +68,9 @@ except ImportError:
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 AVATARS_DIR = REPO_ROOT / "assets" / "avatars"
+AVATARS_THUMBS_DIR = REPO_ROOT / "assets" / "avatars_thumbs"
 STORIES_IMG_DIR = REPO_ROOT / "assets" / "story_images"
+STORIES_IMG_THUMBS_DIR = REPO_ROOT / "assets" / "story_images_thumbs"
 
 AVATAR_BUCKET = "characters"
 PROPOSAL_SCENES_BUCKET = "proposal-scenes"
@@ -289,6 +291,196 @@ def sync_one_proposal(
     return all_ok
 
 
+# =====================================================================
+# Phase B — deletion sync: soft-deleted events / inactive characters 정리.
+# =====================================================================
+
+def fetch_all_events(
+    session: requests.Session,
+    base_url: str,
+) -> list[dict]:
+    """모든 events 를 가져온다 (hard delete 모델: row 가 있으면 살아있음)."""
+    url = f"{base_url}/rest/v1/events"
+    params: dict[str, str] = {"select": "id,title,scene_image_paths"}
+    r = sb_get(session, url, params=params)
+    return r.json()
+
+
+def fetch_all_characters(
+    session: requests.Session,
+    base_url: str,
+) -> list[dict]:
+    """모든 characters 를 가져온다 (hard delete 모델: row 가 있으면 살아있음)."""
+    url = f"{base_url}/rest/v1/characters"
+    params: dict[str, str] = {
+        "select": "code,avatar_url,avatar_storage_path",
+    }
+    r = sb_get(session, url, params=params)
+    return r.json()
+
+
+def remove_local_path(
+    path: Path,
+    *,
+    dry_run: bool,
+) -> bool:
+    """파일/디렉토리 삭제. 이미 없으면 False 반환(no-op)."""
+    if not path.exists():
+        return False
+    print(f"  delete local: {path.relative_to(REPO_ROOT)}")
+    if dry_run:
+        return True
+    if path.is_dir():
+        # 디렉토리 안의 파일들도 함께 제거.
+        for child in sorted(path.rglob("*"), reverse=True):
+            try:
+                if child.is_file():
+                    child.unlink()
+                elif child.is_dir():
+                    child.rmdir()
+            except OSError as exc:
+                print(f"    WARN: {child}: {exc}")
+        try:
+            path.rmdir()
+        except OSError:
+            pass  # 비어있지 않으면 그냥 둠
+    else:
+        try:
+            path.unlink()
+        except OSError as exc:
+            print(f"    WARN: {exc}")
+    return True
+
+
+def cleanup_storage_paths(
+    session: requests.Session,
+    base_url: str,
+    paths: list[str],
+    *,
+    dry_run: bool,
+) -> None:
+    """'bucket/sub/path.png' 경로 묶음을 best-effort 로 storage 에서 제거.
+
+    approve_delete_proposal RPC 가 이미 시도하지만, 그 시점에 권한/네트워크로
+    실패했을 수 있어 sync 시점에 한 번 더 청소한다. 404 는 무시.
+    """
+    for p in paths:
+        if not p:
+            continue
+        print(f"  delete storage: {p}")
+        if dry_run:
+            continue
+        try:
+            sb_delete(session, f"{base_url}/storage/v1/object/{p}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"    WARN: {exc}")
+
+
+def sync_deletions(
+    *,
+    session: requests.Session,
+    base_url: str,
+    dry_run: bool,
+) -> dict[str, int]:
+    """**Diff-based** 정리. hard delete 모델이라 "삭제된 row" 자체가 사라져
+    있으므로:
+
+      - events 테이블의 title 집합을 가져와, 로컬 `assets/story_images/` 와
+        `assets/story_images_thumbs/` 의 디렉토리 중 **그 집합에 없는** 디렉토리
+        를 삭제.
+      - characters 테이블의 code 집합을 가져와, 로컬 `assets/avatars/` 와
+        `assets/avatars_thumbs/` 의 PNG 중 **그 집합에 없는** 파일을 삭제.
+
+    멱등성: file-exists check 으로 자연스럽게 skip. 이미 일치하면 카운터 0.
+    """
+    print("\n=== Phase B: deletions (diff-based) ===")
+    totals = {"event_dirs": 0, "avatars": 0, "thumbs": 0}
+
+    # 1) events.title diff
+    events = fetch_all_events(session, base_url)
+    db_safe_titles = {safe_dirname(ev.get("title") or "") for ev in events}
+    print(f"DB events: {len(events)} (unique safe-titles {len(db_safe_titles)})")
+
+    for parent in (STORIES_IMG_DIR, STORIES_IMG_THUMBS_DIR):
+        if not parent.exists():
+            continue
+        for child in sorted(parent.iterdir()):
+            if not child.is_dir():
+                continue
+            if child.name in db_safe_titles:
+                continue
+            print(
+                f"\n-- {parent.name}/{child.name}  (DB 에 없음 → 삭제)"
+            )
+            if remove_local_path(child, dry_run=dry_run):
+                totals["event_dirs"] += 1
+
+    # 2) characters.code diff
+    chars = fetch_all_characters(session, base_url)
+    db_codes = {(c.get("code") or "").strip() for c in chars if c.get("code")}
+    print(f"\nDB characters: {len(chars)} (unique codes {len(db_codes)})")
+
+    for path in sorted(AVATARS_DIR.glob("*.png")) if AVATARS_DIR.exists() else []:
+        code = path.stem
+        if code in db_codes:
+            continue
+        print(f"\n-- avatars/{path.name}  (DB 에 code={code} 없음 → 삭제)")
+        if remove_local_path(path, dry_run=dry_run):
+            totals["avatars"] += 1
+
+    for path in (
+        sorted(AVATARS_THUMBS_DIR.glob("*.png")) if AVATARS_THUMBS_DIR.exists() else []
+    ):
+        code = path.stem
+        if code in db_codes:
+            continue
+        # _placeholder 같은 시스템 파일이 있으면 보호 (현 코드베이스엔 없지만 방어).
+        if code.startswith("_"):
+            continue
+        print(f"\n-- avatars_thumbs/{path.name}  (DB 에 code={code} 없음 → 삭제)")
+        if remove_local_path(path, dry_run=dry_run):
+            totals["thumbs"] += 1
+
+    return totals
+
+
+def run_thumbnails(*, dry_run: bool) -> bool:
+    """`make thumbnails` 를 호출해 새로 내려받은 PNG 의 썸네일 생성.
+
+    sync 의 마지막 단계. 실패해도 sync 자체는 성공으로 친다 (스크립트 별도
+    실행 가능). dry-run 이면 명령만 출력.
+    """
+    import subprocess
+
+    cmd = ["make", "thumbnails"]
+    print(f"\n=== Step C: thumbnails ===\n  $ {' '.join(cmd)}")
+    if dry_run:
+        return True
+    try:
+        subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+        return True
+    except subprocess.CalledProcessError as exc:
+        print(f"  WARN: thumbnails 실패: {exc}")
+        return False
+
+
+def run_pubspec_update(*, dry_run: bool) -> bool:
+    """`make update-pubspec-assets` 호출 — story_images_thumbs/<title>/ 의 dir
+    목록을 pubspec.yaml flutter.assets 섹션에 동기화."""
+    import subprocess
+
+    cmd = ["make", "update-pubspec-assets"]
+    print(f"\n=== Step D: pubspec.yaml ===\n  $ {' '.join(cmd)}")
+    if dry_run:
+        return True
+    try:
+        subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+        return True
+    except subprocess.CalledProcessError as exc:
+        print(f"  WARN: pubspec 업데이트 실패: {exc}")
+        return False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", default="dev", choices=["dev", "prod"])
@@ -310,6 +502,22 @@ def main() -> int:
         ),
     )
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--skip-deletions",
+        action="store_true",
+        help=(
+            "Phase B (DB 와 로컬 자산 diff 정리) 를 건너뜀. "
+            "Phase A(추가) 만 실행"
+        ),
+    )
+    parser.add_argument(
+        "--skip-post-processing",
+        action="store_true",
+        help=(
+            "Step C (make thumbnails) + Step D (make update-pubspec-assets) 를 "
+            "건너뜀. 별도 워크플로우에서 처리할 때 사용"
+        ),
+    )
     args = parser.parse_args()
 
     base_url = env_var("SUPABASE_URL", args.env)
@@ -338,14 +546,13 @@ def main() -> int:
     )
     scope_label = "all approved" if args.all else "approved & unsynced"
     print(f"{scope_label}: {len(proposals)} proposal(s)")
-    if not proposals:
-        print(
-            "Nothing to do. "
-            "(Use --all to force re-sync of previously-synced proposals.)"
-        )
-        return 0
 
     totals = {"synced": 0, "failed": 0, "skipped": 0}
+    if not proposals:
+        print(
+            "Phase A: nothing to add. "
+            "(Use --all to force re-sync of previously-synced proposals.)"
+        )
     for p in proposals:
         try:
             ok = sync_one_proposal(
@@ -373,19 +580,53 @@ def main() -> int:
         else:
             totals["failed"] += 1
 
-    print("\n=== Summary ===")
-    print(f"  synced (marker 업데이트됨): {totals['synced']}")
-    print(f"  failed (마커 미세팅 — 다음 run 에서 재시도): {totals['failed']}")
-    if args.dry_run:
-        print(f"  skipped (dry-run): {totals['skipped']}")
+    # Phase B — DB 와의 diff 로 로컬에 남은 이미지/디렉토리 정리.
+    deletion_totals: dict[str, int] = {
+        "event_dirs": 0,
+        "avatars": 0,
+        "thumbs": 0,
+    }
+    if not args.skip_deletions:
+        try:
+            deletion_totals = sync_deletions(
+                session=session, base_url=base_url, dry_run=args.dry_run
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f"  WARN: Phase B failed: {exc}")
+    else:
+        print("\n=== Phase B: skipped (--skip-deletions) ===")
 
-    if totals["synced"] > 0 and not args.dry_run:
-        print("\nNext steps (recommended):")
-        print("  make thumbnails                        # runtime thumbs")
-        print("  make build-character-meta              # if new characters")
-        print("  make seed-stories-characters           # regenerate SQL")
-        print("  make apply-seeds-stories-characters    # push to DB")
-        print("  ...then rebuild + release the app.")
+    any_change = (
+        totals["synced"] > 0
+        or deletion_totals["event_dirs"] > 0
+        or deletion_totals["avatars"] > 0
+        or deletion_totals["thumbs"] > 0
+    )
+
+    # Step C — 썸네일 생성 (스토리/아바타 모두 로컬에 새 PNG 가 들어왔으니 재생성).
+    # Step D — pubspec.yaml 의 story_images_thumbs/<title>/ 엔트리 동기화.
+    # 둘 다 변경이 있을 때만 실행 (멱등이긴 하지만 빠른 종료 위해).
+    if any_change and not args.skip_post_processing:
+        run_thumbnails(dry_run=args.dry_run)
+        run_pubspec_update(dry_run=args.dry_run)
+
+    print("\n=== Summary ===")
+    print(f"  Phase A — synced (marker 업데이트됨): {totals['synced']}")
+    print(f"  Phase A — failed (마커 미세팅 — 다음 run 에서 재시도): {totals['failed']}")
+    if args.dry_run:
+        print(f"  Phase A — skipped (dry-run): {totals['skipped']}")
+    print(
+        f"  Phase B — local 정리: "
+        f"event_dirs={deletion_totals['event_dirs']}, "
+        f"avatars={deletion_totals['avatars']}, "
+        f"thumbs={deletion_totals['thumbs']}"
+    )
+
+    if any_change and not args.dry_run:
+        print(
+            "\nNext steps: 앱 재빌드 + 배포. (build-character-meta / seed-* / apply-* 는 "
+            "DB seed 가 갱신될 때만 — 신규 코드/이야기 시 별도로 돌리세요.)"
+        )
     return 0
 
 

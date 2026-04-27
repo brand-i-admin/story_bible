@@ -458,10 +458,84 @@ class _PortraitAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 로컬 번들에 자산이 없으면 (신규 승인 캐릭터) Storage URL 로 fallback.
+    // CharacterAvatar 의 정책과 동일.
+    return _PortraitAvatarBody(
+      character: character,
+      selected: selected,
+      size: size,
+    );
+  }
+}
+
+class _PortraitAvatarBody extends ConsumerWidget {
+  const _PortraitAvatarBody({
+    required this.character,
+    required this.selected,
+    required this.size,
+  });
+
+  final Character character;
+  final bool selected;
+  final double size;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final avatarPath = character.avatarAssetPath.trim();
+    final storagePath = character.avatarStoragePath?.trim();
     final fallbackText = character.name.trim().isEmpty
         ? '?'
         : character.name.trim().substring(0, 1);
+    final fallback = _AvatarFallback(name: fallbackText, selected: selected);
+
+    String? storageUrl;
+    if (storagePath != null && storagePath.isNotEmpty) {
+      try {
+        final client = ref.read(supabaseClientProvider);
+        final slash = storagePath.indexOf('/');
+        if (slash < 0) {
+          storageUrl = client.storage
+              .from('characters')
+              .getPublicUrl(storagePath);
+        } else {
+          final bucket = storagePath.substring(0, slash);
+          final p = storagePath.substring(slash + 1);
+          storageUrl = client.storage.from(bucket).getPublicUrl(p);
+        }
+      } catch (_) {
+        storageUrl = null;
+      }
+    }
+
+    Widget child;
+    if (avatarPath.isNotEmpty) {
+      // canonical 로컬 thumb (인물 머리 상단 1/3 비율) — height*2 위쪽 자르기.
+      child = ColoredBox(
+        color: Colors.white,
+        child: FittedBox(
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: size,
+            height: size * 2,
+            child: Image.asset(
+              avatarPath,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              errorBuilder: (_, _, _) {
+                if (storageUrl == null) return fallback;
+                return _StorageAvatar(url: storageUrl, fallback: fallback);
+              },
+            ),
+          ),
+        ),
+      );
+    } else if (storageUrl != null) {
+      // 로컬 자산 없음 → Storage 원본 (정사각 정중앙 cover).
+      child = _StorageAvatar(url: storageUrl, fallback: fallback);
+    } else {
+      child = fallback;
+    }
 
     return Container(
       width: size,
@@ -480,29 +554,35 @@ class _PortraitAvatar extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipOval(
-        child: avatarPath.isEmpty
-            ? _AvatarFallback(name: fallbackText, selected: selected)
-            : ColoredBox(
-                color: Colors.white,
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    width: size,
-                    height: size * 2,
-                    child: Image.asset(
-                      avatarPath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      errorBuilder: (_, __, ___) => _AvatarFallback(
-                        name: fallbackText,
-                        selected: selected,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+      child: ClipOval(child: child),
+    );
+  }
+}
+
+class _StorageAvatar extends StatelessWidget {
+  const _StorageAvatar({required this.url, required this.fallback});
+  final String url;
+  final Widget fallback;
+
+  @override
+  Widget build(BuildContext context) {
+    // Imagen 1024×1024 인물 정중앙 → 상반신만 보이도록 topCenter 기준 1.5× 확대.
+    return ColoredBox(
+      color: Colors.white,
+      child: Transform.scale(
+        scale: 1.5,
+        alignment: Alignment.topCenter,
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          errorBuilder: (_, error, _) {
+            debugPrint('[portrait] storage failed url=$url error=$error');
+            return fallback;
+          },
+          loadingBuilder: (_, child, progress) => progress == null
+              ? child
+              : const ColoredBox(color: Color(0xFFE7D2B2)),
+        ),
       ),
     );
   }

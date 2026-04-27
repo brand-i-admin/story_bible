@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'image_zoom_dialog.dart';
+
 /// 장면별 생성된 이미지 상태.
 /// - `path`: Storage 경로 ('proposal-scenes/...') — 성공 시에만 세팅
 /// - `prompt`: Vertex 에 실제 보낸 instruction (재생성 시 참고)
@@ -27,6 +29,9 @@ class ProposalScenesEditor extends StatefulWidget {
     super.key,
     required this.initialScenes,
     required this.initialImages,
+    required this.initialSceneCharacters,
+    required this.availableCharacterCodes,
+    required this.characterNameByCode,
     required this.onChanged,
     required this.onGenerate,
     this.busy = false,
@@ -38,14 +43,33 @@ class ProposalScenesEditor extends StatefulWidget {
   final List<String> initialScenes;
   final List<ProposalSceneImage> initialImages;
 
-  /// 텍스트 또는 이미지 집합이 바뀔 때 부모로 최신 스냅샷 전달.
-  final void Function(List<String> scenes, List<ProposalSceneImage> images)
+  /// 장면별 선택된 등장 인물 코드 — 길이가 부족하면 빈 리스트로 채움.
+  final List<List<String>> initialSceneCharacters;
+
+  /// Step 2/3 에서 확정된 후보 인물 코드 (전체).
+  final List<String> availableCharacterCodes;
+
+  /// 코드 → 표시 이름. 새 캐릭터는 사용자가 지은 한글 이름.
+  final Map<String, String> characterNameByCode;
+
+  /// 텍스트/이미지/장면별 인물 집합이 바뀔 때 부모로 최신 스냅샷 전달.
+  final void Function(
+    List<String> scenes,
+    List<ProposalSceneImage> images,
+    List<List<String>> sceneCharacters,
+  )
   onChanged;
 
   /// 부모가 실제 생성 로직을 수행한다 (Repository 호출).
+  /// [sceneCharacterCodes] 는 이 장면에 v 표시된 인물만 — Edge Function 이
+  /// 이 인물들의 아바타만 reference 로 첨부해 일관성을 보장한다.
   /// 반환된 [ProposalSceneImage] 를 해당 인덱스에 반영.
   /// 실패 시 부모는 예외를 던지거나 null 반환.
-  final Future<ProposalSceneImage?> Function(int sceneIndex, String sceneText)
+  final Future<ProposalSceneImage?> Function(
+    int sceneIndex,
+    String sceneText,
+    List<String> sceneCharacterCodes,
+  )
   onGenerate;
 
   final bool busy;
@@ -62,6 +86,7 @@ class ProposalScenesEditor extends StatefulWidget {
 class _ProposalScenesEditorState extends State<ProposalScenesEditor> {
   late List<TextEditingController> _ctrls;
   late List<ProposalSceneImage> _images;
+  late List<Set<String>> _sceneChars;
 
   @override
   void initState() {
@@ -80,6 +105,37 @@ class _ProposalScenesEditorState extends State<ProposalScenesEditor> {
       if (i < widget.initialImages.length) return widget.initialImages[i];
       return const ProposalSceneImage();
     });
+    final allowed = widget.availableCharacterCodes.toSet();
+    _sceneChars = List.generate(_ctrls.length, (i) {
+      if (i < widget.initialSceneCharacters.length) {
+        return widget.initialSceneCharacters[i].where(allowed.contains).toSet();
+      }
+      return <String>{};
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant ProposalScenesEditor old) {
+    super.didUpdateWidget(old);
+    // 부모가 후보 인물을 바꾸면 (Step 2 수정) 사라진 코드는 정리.
+    if (!_listEquals(
+      old.availableCharacterCodes,
+      widget.availableCharacterCodes,
+    )) {
+      final allowed = widget.availableCharacterCodes.toSet();
+      setState(() {
+        _sceneChars = _sceneChars.map((s) => s.intersection(allowed)).toList();
+      });
+      _notify();
+    }
+  }
+
+  bool _listEquals(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   @override
@@ -91,7 +147,11 @@ class _ProposalScenesEditorState extends State<ProposalScenesEditor> {
   }
 
   void _notify() {
-    widget.onChanged(_ctrls.map((c) => c.text).toList(), List.of(_images));
+    widget.onChanged(
+      _ctrls.map((c) => c.text).toList(),
+      List.of(_images),
+      _sceneChars.map((s) => s.toList()).toList(),
+    );
   }
 
   void _addScene() {
@@ -99,6 +159,7 @@ class _ProposalScenesEditorState extends State<ProposalScenesEditor> {
     setState(() {
       _ctrls.add(TextEditingController());
       _images.add(const ProposalSceneImage());
+      _sceneChars.add(<String>{});
     });
     _notify();
   }
@@ -109,15 +170,42 @@ class _ProposalScenesEditorState extends State<ProposalScenesEditor> {
       _ctrls[index].dispose();
       _ctrls.removeAt(index);
       _images.removeAt(index);
+      _sceneChars.removeAt(index);
     });
     _notify();
+  }
+
+  void _toggleSceneChar(int sceneIdx, String code, bool selected) {
+    setState(() {
+      if (selected) {
+        _sceneChars[sceneIdx].add(code);
+      } else {
+        _sceneChars[sceneIdx].remove(code);
+      }
+    });
+    _notify();
+  }
+
+  /// 그 장면에서 v 표시한 인물 중 텍스트에 이름이 빠진 목록.
+  /// 빈 리스트면 "이미지 생성" 가능.
+  List<String> _missingNames(int index) {
+    final text = _ctrls[index].text;
+    final missing = <String>[];
+    for (final code in _sceneChars[index]) {
+      final name = widget.characterNameByCode[code] ?? code;
+      if (name.trim().isEmpty) continue;
+      if (!text.contains(name)) missing.add(name);
+    }
+    return missing;
   }
 
   Future<void> _onGeneratePressed(int index) async {
     if (widget.busy) return;
     final text = _ctrls[index].text.trim();
     if (text.isEmpty) return;
-    final result = await widget.onGenerate(index, text);
+    if (_missingNames(index).isNotEmpty) return; // gating
+    final selectedCodes = _sceneChars[index].toList(growable: false);
+    final result = await widget.onGenerate(index, text, selectedCodes);
     if (!mounted || result == null) return;
     setState(() {
       if (index < _images.length) {
@@ -149,7 +237,15 @@ class _ProposalScenesEditorState extends State<ProposalScenesEditor> {
             index: i,
             controller: _ctrls[i],
             image: _images[i],
-            onTextChanged: _notify,
+            availableCharacterCodes: widget.availableCharacterCodes,
+            characterNameByCode: widget.characterNameByCode,
+            selectedCharCodes: _sceneChars[i],
+            missingNames: _missingNames(i),
+            onToggleChar: (code, sel) => _toggleSceneChar(i, code, sel),
+            onTextChanged: () {
+              setState(() {}); // missingNames 재계산
+              _notify();
+            },
             onGenerate: () => _onGeneratePressed(i),
             onRemove: _ctrls.length > 1 ? () => _removeScene(i) : null,
             busy: widget.busy,
@@ -180,6 +276,11 @@ class _SceneRow extends StatelessWidget {
     required this.index,
     required this.controller,
     required this.image,
+    required this.availableCharacterCodes,
+    required this.characterNameByCode,
+    required this.selectedCharCodes,
+    required this.missingNames,
+    required this.onToggleChar,
     required this.onTextChanged,
     required this.onGenerate,
     required this.onRemove,
@@ -191,6 +292,11 @@ class _SceneRow extends StatelessWidget {
   final int index;
   final TextEditingController controller;
   final ProposalSceneImage image;
+  final List<String> availableCharacterCodes;
+  final Map<String, String> characterNameByCode;
+  final Set<String> selectedCharCodes;
+  final List<String> missingNames;
+  final void Function(String code, bool selected) onToggleChar;
   final VoidCallback onTextChanged;
   final Future<void> Function() onGenerate;
   final VoidCallback? onRemove;
@@ -198,105 +304,176 @@ class _SceneRow extends StatelessWidget {
   final bool isBusyHere;
   final String Function(String)? publicUrlForPath;
 
+  /// 우측 이미지 박스의 정사각 변. 좌측 텍스트 col 높이가 이 값보다 짧으면
+  /// IntrinsicHeight + crossAxisStretch 로 좌측이 확장된다.
+  static const double _imageBoxSize = 220;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textHasContent = controller.text.trim().isNotEmpty;
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 42,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 14),
-                  child: Text(
-                    '장면 ${index + 1}',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 좌측: 라벨 + 인물 체크박스 + 입력 + 상태 + 생성 버튼.
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(
+                      '장면 ${index + 1}',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  maxLines: 3,
-                  minLines: 1,
-                  enabled: !busy,
-                  decoration: InputDecoration(
-                    hintText: index == 0
-                        ? '필수 — 예: 하늘이 열리고 빛이 내리는 순간'
-                        : '선택 — 한 문장',
+                  if (availableCharacterCodes.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        '이전 단계에서 등장 인물을 먼저 골라야 이 장면에 인물을 지정할 수 있어요.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '이 장면에 등장하는 인물을 먼저 체크하세요',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 0,
+                            children: [
+                              for (final code in availableCharacterCodes)
+                                FilterChip(
+                                  label: Text(
+                                    characterNameByCode[code] ?? code,
+                                  ),
+                                  selected: selectedCharCodes.contains(code),
+                                  onSelected: busy
+                                      ? null
+                                      : (sel) => onToggleChar(code, sel),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          maxLines: 3,
+                          minLines: 2,
+                          enabled: !busy,
+                          decoration: InputDecoration(
+                            labelText: '장면 설명',
+                            hintText: index == 0
+                                ? '필수 — 체크한 인물의 이름을 정확히 한 번 이상 포함해 주세요'
+                                : '선택 — 체크한 인물의 이름을 정확히 포함',
+                          ),
+                          onChanged: (_) => onTextChanged(),
+                        ),
+                      ),
+                      if (onRemove != null)
+                        IconButton(
+                          tooltip: '이 장면 삭제',
+                          onPressed: busy ? null : onRemove,
+                          icon: const Icon(Icons.remove_circle_outline),
+                        ),
+                    ],
                   ),
-                  onChanged: (_) => onTextChanged(),
-                ),
+                  const SizedBox(height: 12),
+                  Text(
+                    image.isReady ? '이미지 생성 완료' : '아직 이미지 없음',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: image.isReady
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurfaceVariant,
+                      fontWeight: image.isReady
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      FilledButton.icon(
+                        onPressed:
+                            (!textHasContent || busy || missingNames.isNotEmpty)
+                            ? null
+                            : () => onGenerate(),
+                        icon: Icon(
+                          image.isReady ? Icons.refresh : Icons.auto_awesome,
+                          size: 16,
+                        ),
+                        label: Text(image.isReady ? '재생성' : '이미지 생성'),
+                      ),
+                    ],
+                  ),
+                  if (missingNames.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        '선택된 인물이 모두 정확히 동일한 이름으로 언급되어야 합니다. '
+                        '누락된 이름: ${missingNames.join(", ")}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  if (image.isReady)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        '이미지를 누르면 크게 볼 수 있어요.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              if (onRemove != null)
-                IconButton(
-                  tooltip: '이 장면 삭제',
-                  onPressed: busy ? null : onRemove,
-                  icon: const Icon(Icons.remove_circle_outline),
-                ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _SceneImageThumb(
+            ),
+            const SizedBox(width: 14),
+            // 우측: 큰 정사각 이미지 (220x220). 클릭 시 풀스크린 zoom.
+            SizedBox(
+              width: _imageBoxSize,
+              height: _imageBoxSize,
+              child: _SceneImageThumb(
                 image: image,
                 publicUrlForPath: publicUrlForPath,
                 loading: isBusyHere,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      image.isReady ? '이미지 생성 완료' : '아직 이미지 없음',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: image.isReady
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurfaceVariant,
-                        fontWeight: image.isReady
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: [
-                        FilledButton.icon(
-                          onPressed: (!textHasContent || busy)
-                              ? null
-                              : () => onGenerate(),
-                          icon: Icon(
-                            image.isReady ? Icons.refresh : Icons.auto_awesome,
-                            size: 16,
-                          ),
-                          label: Text(image.isReady ? '재생성' : '이미지 생성'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -316,39 +493,60 @@ class _SceneImageThumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const size = 96.0;
+    final url = (image.isReady && publicUrlForPath != null)
+        ? publicUrlForPath!(image.path!)
+        : null;
+
     Widget inner;
     if (loading) {
       inner = const Center(
         child: SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
+          width: 36,
+          height: 36,
+          child: CircularProgressIndicator(strokeWidth: 3),
         ),
       );
-    } else if (image.isReady && publicUrlForPath != null) {
+    } else if (url != null) {
       inner = Image.network(
-        publicUrlForPath!(image.path!),
+        url,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => const Icon(Icons.broken_image_outlined),
+        errorBuilder: (_, _, _) => Center(
+          child: Icon(
+            Icons.broken_image_outlined,
+            size: 48,
+            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          ),
+        ),
       );
     } else {
-      inner = Icon(
-        Icons.image_outlined,
-        size: 32,
-        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+      inner = Center(
+        child: Icon(
+          Icons.image_outlined,
+          size: 56,
+          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+        ),
       );
     }
-    return Container(
-      width: size,
-      height: size,
+
+    final box = Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: inner,
+      child: SizedBox.expand(child: inner),
+    );
+
+    if (url == null) return box;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(10),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => showImageZoomDialog(context, url: url),
+        child: box,
+      ),
     );
   }
 }

@@ -203,36 +203,157 @@ class ProposalRepository {
   /// 관리자용 승인 (proposal_type='new' 전용).
   /// 성공 시 생성된 events.id 반환.
   /// [afterStoryIndexOverride] 로 삽입 위치를 재지정할 수 있다.
+  /// [characterActiveOverrides] 는 `{ code: bool }` 매핑으로, 승인 다이얼로그
+  /// 에서 관리자가 각 등장 인물의 `is_active` 를 어떻게 둘지 결정한 결과.
+  /// 키 없는 코드는 RPC 가 기본값(true) 으로 처리.
   Future<String> approve(
     String proposalId, {
     int? afterStoryIndexOverride,
+    Map<String, bool> characterActiveOverrides = const {},
   }) async {
     final result = await _client.rpc(
       'approve_event_proposal',
       params: {
         'p_proposal_id': proposalId,
         'p_after_story_index_override': afterStoryIndexOverride,
+        'p_character_active_overrides': characterActiveOverrides,
       },
     );
     return result as String;
   }
 
   /// 관리자용 삭제 제안 승인 (proposal_type='delete' 전용).
-  /// 대상 이벤트의 `events.deleted_at` 이 set 되어 soft delete 된다.
-  /// 성공 시 삭제된 target event_id 반환.
+  ///
+  /// 서버 RPC `approve_delete_proposal` 가:
+  ///   1) `events.deleted_at = now()` (soft delete) — events_ordered view 가
+  ///      앱 전체에서 자동으로 숨김.
+  ///   2) 이 이벤트가 마지막 출연이었던 캐릭터를 `characters.is_active = false`
+  ///      로 비활성화 — characters_read_active 정책이 활성 인물만 노출하므로
+  ///      앱 캐릭터 목록 fetch 결과에 들어가지 않는다 (로컬 번들에 PNG 가
+  ///      남아있어도 사용자에게는 안 보임).
+  ///   3) 정리할 storage 경로 묶음(jsonb) 반환:
+  ///        - scene_image_paths: 이 이벤트의 장면 이미지 경로
+  ///        - inactive_character_avatar_paths: 방금 비활성화된 캐릭터 아바타 경로
+  ///
+  /// 이 메서드는 그 두 묶음에 대해 **best-effort** 로 Supabase Storage 에서
+  /// 파일을 제거한다. 이미 삭제됐거나 권한 문제로 실패해도 무시(앱 동작에는
+  /// 영향 없음) — 고아 파일은 향후 cleanup 잡으로 정리 가능.
+  ///
+  /// **이미 sync 됐다면 정리 불필요한 이유**: `make sync-approved-proposal-assets`
+  /// 가 `--delete-source` 로 돌면 proposal-* 원본 파일이 사라지고 path 도
+  /// `characters/<code>.png` / 새 bucket 으로 패치된 상태일 수 있다. 이 경우
+  /// remove() 가 404 에 가깝게 무반응으로 끝나고, 클라이언트는 그걸 정상으로
+  /// 간주한다.
+  ///
+  /// 반환값: 삭제된 target event_id.
   Future<String> approveDelete(String proposalId) async {
     final result = await _client.rpc(
       'approve_delete_proposal',
       params: {'p_proposal_id': proposalId},
     );
-    return result as String;
+
+    final map = (result is Map) ? Map<String, dynamic>.from(result) : null;
+    if (map == null) {
+      // 구 버전 RPC (return uuid) 와의 호환 — 정리는 스킵하고 id 만 반환.
+      return result.toString();
+    }
+
+    final eventId = map['event_id']?.toString() ?? '';
+    final scenePaths =
+        (map['scene_image_paths'] as List?)
+            ?.map((e) => e.toString())
+            .where((p) => p.isNotEmpty)
+            .toList() ??
+        const <String>[];
+    // 키 호환: 신 RPC = deleted_character_avatar_paths (hard delete),
+    //           구 RPC = inactive_character_avatar_paths (soft delete) — 둘 다 본다.
+    final avatarPaths =
+        (map['deleted_character_avatar_paths'] as List? ??
+                map['inactive_character_avatar_paths'] as List?)
+            ?.map((e) => e.toString())
+            .where((p) => p.isNotEmpty)
+            .toList() ??
+        const <String>[];
+
+    await _bestEffortRemoveStoragePaths([...scenePaths, ...avatarPaths]);
+    return eventId;
+  }
+
+  /// 'bucket/path' 또는 'path'(이 경우 characters 버킷 가정) 형식의 경로 묶음을
+  /// 버킷별로 묶어 한 번에 remove. 어떤 단일 실패도 다른 버킷 정리를 막지 않는다.
+  Future<void> _bestEffortRemoveStoragePaths(List<String> paths) async {
+    if (paths.isEmpty) return;
+    final byBucket = <String, List<String>>{};
+    for (final raw in paths) {
+      final p = raw.trim();
+      if (p.isEmpty) continue;
+      final slash = p.indexOf('/');
+      final bucket = slash > 0 ? p.substring(0, slash) : 'characters';
+      final inner = slash > 0 ? p.substring(slash + 1) : p;
+      byBucket.putIfAbsent(bucket, () => <String>[]).add(inner);
+    }
+    for (final entry in byBucket.entries) {
+      try {
+        await _client.storage.from(entry.key).remove(entry.value);
+      } catch (_) {
+        // 무시 — 이미 삭제됐거나 권한이 없거나, 어느 쪽이든 사용자 경험에는 영향 없음.
+      }
+    }
   }
 
   /// 관리자용 거절. [note] 는 거절 사유(optional).
+  ///
+  /// 서버는 `position_invalidated_at IS NOT NULL` 인 제안은 거부한다 — 제안자가
+  /// 위치를 다시 결정한 뒤에야 admin 이 다시 reject 가능.
+  ///
+  /// 거절 시 row 는 history 보존을 위해 남기지만 **proposal-* 버킷의 장면/
+  /// 캐릭터 이미지는 더 이상 쓰이지 않아** 정리한다. 서버 RPC 가 정리할 경로
+  /// 묶음을 jsonb 로 돌려주고, 클라이언트가 best-effort 로 storage 에서 제거.
   Future<void> reject(String proposalId, {String? note}) async {
-    await _client.rpc(
+    final result = await _client.rpc(
       'reject_event_proposal',
       params: {'p_proposal_id': proposalId, 'p_note': note},
+    );
+    if (result is Map) {
+      final map = Map<String, dynamic>.from(result);
+      final scenePaths =
+          (map['scene_image_paths'] as List?)
+              ?.map((e) => e.toString())
+              .where((p) => p.isNotEmpty)
+              .toList() ??
+          const <String>[];
+      final charPaths =
+          (map['rejected_character_storage_paths'] as List?)
+              ?.map((e) => e.toString())
+              .where((p) => p.isNotEmpty)
+              .toList() ??
+          const <String>[];
+      await _bestEffortRemoveStoragePaths([...scenePaths, ...charPaths]);
+    }
+  }
+
+  /// 제안자 본인이 무효화된(position_invalidated_at set) 제안의 위치 + 연도를
+  /// 다시 결정. 성공 시 `position_invalidated_at` 이 NULL 로 복구되어 admin 이
+  /// 다시 approve/reject 할 수 있게 된다.
+  ///
+  /// [afterStoryIndex] : 새 위치 (era 안의 0..N — 0 은 맨 앞)
+  /// [startYear]/[endYear] : 새 연도 범위. 둘 다 null 이면 변경 없음. RPC 가
+  ///   prev/next 이벤트 연도와 정합 검증 (`prev.end_year <= start_year <=
+  ///   end_year <= next.start_year`).
+  Future<void> revisePosition({
+    required String proposalId,
+    required int afterStoryIndex,
+    int? startYear,
+    int? endYear,
+  }) async {
+    await _client.rpc(
+      'revise_proposal_position',
+      params: {
+        'p_proposal_id': proposalId,
+        'p_after_story_index': afterStoryIndex,
+        'p_start_year': startYear,
+        'p_end_year': endYear,
+      },
     );
   }
 
@@ -248,6 +369,74 @@ class ProposalRepository {
   /// 해야 사용자가 혼란 없이 경험한다 (proposal_detail_screen 참조).
   Future<void> deleteProposal(String proposalId) async {
     await _client.from('event_proposals').delete().eq('id', proposalId);
+  }
+
+  /// 제안 row + Storage 정리 일괄 처리.
+  ///
+  /// 1) `proposal-scenes` 의 모든 장면 이미지 삭제 (`scene_image_paths`)
+  /// 2) `proposed_characters` 의 storage_path 삭제. 단, 같은 code 가
+  ///    `characters` 테이블에 이미 published 상태(=관리자 또는 다른 경로로
+  ///    이미 등록된 인물) 이면 **삭제하지 않는다** — 다른 이야기에서 재사용 중일
+  ///    수 있기 때문.
+  /// 3) DB row 삭제 (RLS 가 권한 검증).
+  ///
+  /// Storage 삭제 실패는 무시 (DB row 삭제까지는 진행) — 고아 파일이 남아도
+  /// 보드 동작에는 영향 없음. 향후 cleanup job 으로 정리.
+  Future<void> deleteProposalWithAssets(EventProposal proposal) async {
+    // 1) 장면 이미지 삭제 — bucket 별로 묶어서 한 번에 remove.
+    final scenesByBucket = <String, List<String>>{};
+    for (final p in proposal.sceneImagePaths) {
+      final slash = p.indexOf('/');
+      if (slash <= 0) continue;
+      final bucket = p.substring(0, slash);
+      final path = p.substring(slash + 1);
+      scenesByBucket.putIfAbsent(bucket, () => []).add(path);
+    }
+    for (final entry in scenesByBucket.entries) {
+      try {
+        await _client.storage.from(entry.key).remove(entry.value);
+      } catch (_) {
+        // 고아 파일 — 무시
+      }
+    }
+
+    // 2) 신규 캐릭터 아바타 삭제. 단 characters 테이블에 같은 code 가 이미
+    //    있으면 (published) 다른 이야기에서 재사용 중일 수 있어 보존.
+    if (proposal.proposedCharacters.isNotEmpty) {
+      final codes = proposal.proposedCharacters.map((c) => c.code).toList();
+      List<String> publishedCodes = const [];
+      try {
+        final rows = await _client
+            .from('characters')
+            .select('code')
+            .inFilter('code', codes);
+        publishedCodes = (rows as List)
+            .map((r) => (r as Map)['code'] as String)
+            .toList();
+      } catch (_) {
+        // 조회 실패 시 보수적으로 모두 보존 (삭제 안 함).
+        publishedCodes = codes;
+      }
+      final published = publishedCodes.toSet();
+      final charsByBucket = <String, List<String>>{};
+      for (final c in proposal.proposedCharacters) {
+        if (published.contains(c.code)) continue; // 이미 등록된 인물 — 보존
+        final p = c.storagePath;
+        final slash = p.indexOf('/');
+        if (slash <= 0) continue;
+        final bucket = p.substring(0, slash);
+        final path = p.substring(slash + 1);
+        charsByBucket.putIfAbsent(bucket, () => []).add(path);
+      }
+      for (final entry in charsByBucket.entries) {
+        try {
+          await _client.storage.from(entry.key).remove(entry.value);
+        } catch (_) {}
+      }
+    }
+
+    // 3) DB row 삭제 (RLS 가 status != 'approved' + proposer 본인 또는 admin 검증).
+    await _client.from('event_proposals').delete().eq('id', proposal.id);
   }
 
   /// 제안에 댓글 작성 (사역자 또는 관리자).

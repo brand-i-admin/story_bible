@@ -10,7 +10,9 @@ import '../state/auth_providers.dart';
 import '../state/proposal_providers.dart';
 import '../utils/bible_book_meta.dart';
 import '../widgets/bible_reader_page.dart';
+import '../widgets/proposal/approve_proposal_dialog.dart';
 import '../widgets/proposal/proposal_status_chip.dart';
+import '../widgets/proposal/revise_position_dialog.dart';
 import 'proposal_submit_screen.dart';
 
 /// 제안 상세 화면.
@@ -60,6 +62,33 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
   }
 
   Future<void> _approve(EventProposal p) async {
+    // 새 이야기 제안: 승인 전 등장 인물 is_active 결정 다이얼로그.
+    // 삭제 제안은 인물 토글 의미가 없으니 단순 yes/no 확인.
+    Map<String, bool>? overrides;
+    if (!p.isDeleteProposal) {
+      overrides = await ApproveProposalDialog.show(context, p);
+      if (overrides == null) return; // 취소
+    } else {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('삭제 제안 승인'),
+          content: Text('"${p.title}" 이(가) 앱에서 숨겨집니다. 진행할까요?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('취소'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('승인'),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
+    if (!mounted) return;
     setState(() => _reviewing = true);
     try {
       final repo = ref.read(proposalRepositoryProvider);
@@ -68,7 +97,10 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
         await repo.approveDelete(p.id);
         successMessage = '삭제 제안이 승인되어 이야기가 숨겨졌습니다';
       } else {
-        await repo.approve(p.id);
+        await repo.approve(
+          p.id,
+          characterActiveOverrides: overrides ?? const {},
+        );
         successMessage = '제안이 승인되어 events 에 반영되었습니다';
       }
       if (!mounted) return;
@@ -132,6 +164,25 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
         ],
       ),
     );
+  }
+
+  /// 위치 재선택 다이얼로그 — 제안자 본인이 invalidate 된 자기 제안의 위치/연도를
+  /// 새로 고른다. 내부 RPC `revise_proposal_position` 가 prev/next 이벤트 연도와
+  /// 정합 검증해 부적합하면 예외. 성공 시 invalidated 가 풀려 admin 이 다시
+  /// approve/reject 가능.
+  Future<void> _openRevisePositionDialog(EventProposal p) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => RevisePositionDialog(proposal: p),
+    );
+    if (ok == true) {
+      ref.invalidate(proposalDetailProvider(p.id));
+      ref.invalidate(proposalListProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('위치/연도가 갱신되었습니다 (관리자 검토 대기)')),
+      );
+    }
   }
 
   Future<void> _edit(EventProposal p) async {
@@ -246,10 +297,12 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
               ],
               // ───── 제목 + 장소·연도 (EventDetailPage 스타일) ─────
               _ProposalHeaderRow(proposal: p),
-              // ───── 4장면 이미지 그리드 ─────
+              // ───── 미리보기 섹션 (4장면 이미지) ─────
               if (p.sceneImagePaths.any((s) => s.isNotEmpty)) ...[
                 const SizedBox(height: 12),
-                _ProposalSceneGrid(paths: p.sceneImagePaths),
+                _PreviewSection(
+                  child: _ProposalSceneGrid(paths: p.sceneImagePaths),
+                ),
               ],
               const SizedBox(height: 14),
               // ───── 요약 이야기 ─────
@@ -276,6 +329,11 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
               // ───── 추가 메타 (장소 좌표, 등장 인물 코드) ─────
               const SizedBox(height: 12),
               _MetaKvBlock(proposal: p),
+              // ───── 퀴즈 (4지선다) ─────
+              if (p.quizQuestions.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _QuizSection(quizzes: p.quizQuestions),
+              ],
               // ───── 상태 chip + 거절 사유 ─────
               const SizedBox(height: 12),
               Row(
@@ -314,6 +372,48 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                   ),
                 ),
               ],
+              // ───── 위치 재선택 안내 배너 (invalidate 된 경우) ─────
+              if (p.needsPositionRevision) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFEBEE),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFE53935)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.report_problem_outlined,
+                        color: Color(0xFFE53935),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '위치 재선택이 필요해요',
+                              style: TextStyle(
+                                color: Color(0xFFB71C1C),
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              p.positionInvalidationReason ??
+                                  '같은 위치에 다른 이야기가 먼저 승인되었어요. 새 위치와 연도를 골라주세요.',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               // ───── 액션 버튼 ─────
               const SizedBox(height: 16),
               Builder(
@@ -326,6 +426,9 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                       currentUser != null && p.proposerUserId == currentUser.id;
                   final canOwnerDelete = isOwner && !p.isApproved;
                   final canAdminDelete = isAdmin;
+                  // invalidate 된 동안은 admin 의 approve/reject 가 RPC 에서도
+                  // 거부됨. UI 에서도 잠가 혼란을 줄임.
+                  final reviewLocked = p.needsPositionRevision;
                   return Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -339,16 +442,43 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                           icon: const Icon(Icons.edit_outlined),
                           label: const Text('수정'),
                         ),
-                      if (isAdmin && p.isPending) ...[
+                      // 작성자 본인이 invalidate 된 자기 제안의 위치/연도를 다시 결정.
+                      if (isOwner && p.needsPositionRevision)
                         FilledButton.icon(
-                          onPressed: _reviewing ? null : () => _approve(p),
-                          icon: const Icon(Icons.check),
-                          label: const Text('승인'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFFE53935),
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: _reviewing
+                              ? null
+                              : () => _openRevisePositionDialog(p),
+                          icon: const Icon(Icons.edit_location_alt_outlined),
+                          label: const Text('위치 재선택'),
                         ),
-                        OutlinedButton.icon(
-                          onPressed: _reviewing ? null : () => _reject(p),
-                          icon: const Icon(Icons.close),
-                          label: const Text('거절'),
+                      if (isAdmin && p.isPending) ...[
+                        Tooltip(
+                          message: reviewLocked
+                              ? '제안자가 위치를 다시 결정한 뒤에 승인할 수 있어요'
+                              : '',
+                          child: FilledButton.icon(
+                            onPressed: (_reviewing || reviewLocked)
+                                ? null
+                                : () => _approve(p),
+                            icon: const Icon(Icons.check),
+                            label: const Text('승인'),
+                          ),
+                        ),
+                        Tooltip(
+                          message: reviewLocked
+                              ? '제안자가 위치를 다시 결정한 뒤에 거절할 수 있어요'
+                              : '',
+                          child: OutlinedButton.icon(
+                            onPressed: (_reviewing || reviewLocked)
+                                ? null
+                                : () => _reject(p),
+                            icon: const Icon(Icons.close),
+                            label: const Text('거절'),
+                          ),
                         ),
                       ],
                       if (canOwnerDelete || canAdminDelete)
@@ -846,6 +976,197 @@ class _DetailSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "미리보기" 섹션 — 제목 라벨이 붙은 카드 안에 자식 (장면 이미지 등) 을 감싼다.
+/// 승인 후 events 페이지에서 어떻게 보일지 작성자/관리자가 미리 볼 수 있게 함.
+class _PreviewSection extends StatelessWidget {
+  const _PreviewSection({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.visibility_outlined,
+                size: 18,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '미리보기',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '— 승인되면 사용자에게 이렇게 보여요',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+/// 퀴즈 섹션 — 4지선다 1~3문항 표시. 정답은 초록 ✓ 로 강조.
+class _QuizSection extends StatelessWidget {
+  const _QuizSection({required this.quizzes});
+  final List<QuizDraft> quizzes;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.quiz_outlined,
+                size: 18,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '퀴즈 (${quizzes.length}문항)',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          for (var qi = 0; qi < quizzes.length; qi++) ...[
+            if (qi > 0)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Divider(
+                  color: theme.colorScheme.outlineVariant,
+                  height: 1,
+                ),
+              ),
+            _QuizCard(index: qi, quiz: quizzes[qi]),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _QuizCard extends StatelessWidget {
+  const _QuizCard({required this.index, required this.quiz});
+  final int index;
+  final QuizDraft quiz;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Q${index + 1}. ${quiz.question}',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (var ci = 0; ci < quiz.choices.length; ci++)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  ci == quiz.answerIndex
+                      ? Icons.check_circle
+                      : Icons.radio_button_unchecked,
+                  size: 18,
+                  color: ci == quiz.answerIndex
+                      ? const Color(0xFF2D7B4D)
+                      : theme.colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.6,
+                        ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    quiz.choices[ci],
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: ci == quiz.answerIndex
+                          ? const Color(0xFF2D7B4D)
+                          : theme.colorScheme.onSurface,
+                      fontWeight: ci == quiz.answerIndex
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (quiz.explanation.trim().isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    quiz.explanation,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      height: 1.45,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

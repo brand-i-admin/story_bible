@@ -174,6 +174,8 @@ class _DeleteProposalButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 삭제 제안은 pastor 또는 admin 누구나 가능. (admin 은 직접 DB 조작도
+    // 가능하지만, 제안 채널을 통해 history/댓글이 남도록 일관성 유지)
     final isAdmin = ref.watch(isAdminProvider);
     final isPastorAsync = ref.watch(isPastorProvider);
     final isPastor = isPastorAsync.maybeWhen(

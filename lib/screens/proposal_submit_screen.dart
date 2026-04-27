@@ -15,7 +15,6 @@ import '../widgets/proposal/proposal_character_row.dart';
 import '../widgets/proposal/proposal_location_picker.dart';
 import '../widgets/proposal/proposal_quiz_editor.dart';
 import '../widgets/proposal/proposal_scenes_editor.dart';
-import '../widgets/proposal/scene_characters_grid.dart';
 
 /// 이야기 제안 등록/수정 폼 (wizard).
 ///
@@ -270,6 +269,14 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final ey = int.tryParse(_endYearCtrl.text.trim());
     if (sy == null || ey == null) return false;
     if (ey < sy) return false;
+    final prev = _prevEvent;
+    if (prev != null && prev.endYear != null && sy < prev.endYear!) {
+      return false;
+    }
+    final next = _nextEvent;
+    if (next != null && next.startYear != null && ey > next.startYear!) {
+      return false;
+    }
     // 성경 본문: 최소 1개
     if (_bibleRefs.isEmpty) return false;
     // 장면: trim 후 non-empty 가 최소 1개
@@ -296,12 +303,65 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   /// 최종 제출 버튼 활성화 조건 — 세부사항 + 퀴즈 모두 유효.
   bool get _canSubmit => _canProceedFromDetails && _canSubmitQuiz;
 
-  /// 연도 입력 에러 (끝 < 시작 인 경우에만). 비어있거나 파싱 실패는 null.
+  /// Step 3 에서 아직 채워지지 않은 필수 항목 목록 — 사용자에게 어디가 비었는지
+  /// 한눈에 보여주기 위한 동적 체크리스트. setState 가 발생할 때마다 재계산되어
+  /// 채워진 항목은 자동으로 사라진다.
+  List<String> get _missingDetailsItems {
+    final items = <String>[];
+    if (_titleCtrl.text.trim().isEmpty) items.add('제목');
+    if (_summaryCtrl.text.trim().isEmpty) items.add('요약');
+    if (_placeCtrl.text.trim().isEmpty) items.add('장소 이름');
+    if (_lat == null || _lng == null) items.add('지도에서 좌표 선택 (지도를 클릭)');
+    final sy = int.tryParse(_startYearCtrl.text.trim());
+    final ey = int.tryParse(_endYearCtrl.text.trim());
+    if (sy == null) items.add('시작 연도 (숫자)');
+    if (ey == null) items.add('끝 연도 (숫자)');
+    if (sy != null && ey != null && ey < sy) {
+      items.add('끝 연도는 시작 연도와 같거나 더 뒤');
+    }
+    if (sy != null) {
+      final prev = _prevEvent;
+      if (prev != null && prev.endYear != null && sy < prev.endYear!) {
+        items.add('시작 연도 ≥ 이전 이야기 끝 연도 (${prev.endYear})');
+      }
+    }
+    if (ey != null) {
+      final next = _nextEvent;
+      if (next != null && next.startYear != null && ey > next.startYear!) {
+        items.add('끝 연도 ≤ 다음 이야기 시작 연도 (${next.startYear})');
+      }
+    }
+    if (_bibleRefs.isEmpty) items.add('성경 본문 1개 이상');
+    final nonEmptyScenes = _scenes
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty);
+    if (nonEmptyScenes.isEmpty) items.add('장면 1개 이상 (텍스트)');
+    for (var i = 0; i < _scenes.length; i++) {
+      if (_scenes[i].trim().isEmpty) continue;
+      if (i >= _sceneImages.length || !_sceneImages[i].isReady) {
+        items.add('장면 ${i + 1} 이미지 생성');
+      }
+    }
+    return items;
+  }
+
+  /// 연도 입력 에러.
+  /// - 끝 < 시작
+  /// - 시작 < 이전 이야기 끝 연도 (= 이전보다 앞이면 안 됨, 같은 건 OK)
+  /// - 끝 > 다음 이야기 시작 연도 (= 다음보다 뒤면 안 됨, 같은 건 OK)
   String? get _yearError {
     final sy = int.tryParse(_startYearCtrl.text.trim());
     final ey = int.tryParse(_endYearCtrl.text.trim());
     if (sy == null || ey == null) return null;
     if (ey < sy) return '끝 연도는 시작 연도와 같거나 더 뒤여야 합니다.';
+    final prev = _prevEvent;
+    if (prev != null && prev.endYear != null && sy < prev.endYear!) {
+      return '시작 연도는 이전 이야기 "${prev.title}" 의 끝 연도(${prev.endYear}) 이상이어야 합니다.';
+    }
+    final next = _nextEvent;
+    if (next != null && next.startYear != null && ey > next.startYear!) {
+      return '끝 연도는 다음 이야기 "${next.title}" 의 시작 연도(${next.startYear}) 이하여야 합니다.';
+    }
     return null;
   }
 
@@ -919,19 +979,21 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final client = ref.read(supabaseClientProvider);
     final repo = ref.read(proposalRepositoryProvider);
     return _characterCodes.map((code) {
-      final opt = _characterOptions.firstWhere(
-        (c) => c.code == code,
-        orElse: () => CharacterOption(code: code, name: code),
-      );
       final newChar = _newCharactersByCode[code];
+      // 신규 캐릭터는 사용자가 입력한 한글 이름이 보장돼 있으므로 최우선.
+      // DB fetch 가 영문 fallback 이거나 일시적으로 안 끝났을 때도 한글로 표시.
+      String name = newChar?.name.trim() ?? '';
+      if (name.isEmpty) {
+        final opt = _characterOptions.firstWhere(
+          (c) => c.code == code,
+          orElse: () => CharacterOption(code: code, name: code),
+        );
+        name = opt.name;
+      }
       final url = newChar != null
           ? repo.publicUrlForStoragePath(newChar.storagePath)
           : client.storage.from('characters').getPublicUrl('$code.png');
-      return ProposalCharacterRowItem(
-        code: code,
-        name: opt.name,
-        avatarUrl: url,
-      );
+      return ProposalCharacterRowItem(code: code, name: name, avatarUrl: url);
     }).toList();
   }
 
@@ -940,6 +1002,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   Future<ProposalSceneImage?> _onGenerateSceneImage(
     int sceneIndex,
     String sceneText,
+    List<String> sceneCharacterCodes,
   ) async {
     if (_generatingImage) return null;
     setState(() {
@@ -949,9 +1012,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     });
     try {
       final repo = ref.read(proposalRepositoryProvider);
+      // 이 장면에 v 표시한 인물만 reference 로 전달 → AI 가 그 인물의 아바타와
+      // 이름만 받아 일관성 있게 그릴 수 있다.
       final result = await repo.generateProposalScene(
         sceneText: sceneText,
-        characterCodes: _characterCodes,
+        characterCodes: sceneCharacterCodes,
         draftId: _draftId,
         sceneIndex: sceneIndex,
         eventTitle: _titleCtrl.text.trim().isEmpty
@@ -1139,21 +1204,66 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           decoration: const InputDecoration(hintText: '최대 4문장으로 요약'),
         ),
         _sectionTitle('장소'),
-        TextField(
-          controller: _placeCtrl,
-          decoration: const InputDecoration(
-            hintText: '예: 베들레헴 (좌표는 아래 지도에서 고릅니다)',
+        // 좌우 2-col: col1 = 장소 이름 입력 + 좌표 안내, col2 = 지도 (위아래로 더 큼)
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: 280,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _placeCtrl,
+                      decoration: const InputDecoration(
+                        labelText: '장소 이름',
+                        hintText: '예: 베들레헴',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '오른쪽 지도를 클릭해 좌표를 선택하세요.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    if (_lat != null && _lng != null)
+                      Text(
+                        '선택된 좌표\n${_lat!.toStringAsFixed(4)}, '
+                        '${_lng!.toStringAsFixed(4)}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: theme.colorScheme.primary,
+                        ),
+                      )
+                    else
+                      Text(
+                        '아직 좌표 미선택',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ProposalLocationPicker(
+                  initialLat: _lat,
+                  initialLng: _lng,
+                  referencePins: _referencePinsForSelectedCharacters(),
+                  height: 420,
+                  onChanged: (lat, lng) => setState(() {
+                    _lat = lat;
+                    _lng = lng;
+                  }),
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 8),
-        ProposalLocationPicker(
-          initialLat: _lat,
-          initialLng: _lng,
-          referencePins: _referencePinsForSelectedCharacters(),
-          onChanged: (lat, lng) => setState(() {
-            _lat = lat;
-            _lng = lng;
-          }),
         ),
         _sectionTitle('연도'),
         _yearHint(theme),
@@ -1211,20 +1321,22 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ProposalScenesEditor(
           initialScenes: _scenes,
           initialImages: _sceneImages,
+          initialSceneCharacters: _sceneCharacters,
+          availableCharacterCodes: _characterCodes,
+          characterNameByCode: {
+            for (final opt in _characterOptions) opt.code: opt.name,
+            // 신규 캐릭터의 사용자 한글 이름이 항상 우선 (DB lookup 결과 덮어씀).
+            for (final c in _newCharactersByCode.values)
+              if (c.name.trim().isNotEmpty) c.code: c.name,
+          },
           busy: _generatingImage,
           busySceneIndex: _generatingSceneIndex,
           publicUrlForPath: (path) => ref
               .read(proposalRepositoryProvider)
               .publicUrlForProposalScene(path),
-          onChanged: (scenes, images) => setState(() {
+          onChanged: (scenes, images, sceneCharacters) => setState(() {
             _scenes = scenes;
-            _sceneCharacters = List.generate(
-              scenes.length,
-              (i) => i < _sceneCharacters.length
-                  ? _sceneCharacters[i]
-                  : const <String>[],
-            );
-            // 길이 맞추기. 새 장면이 추가되면 빈 이미지로 초기화.
+            _sceneCharacters = sceneCharacters;
             _sceneImages = List.generate(
               scenes.length,
               (i) => i < images.length ? images[i] : const ProposalSceneImage(),
@@ -1232,29 +1344,101 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           }),
           onGenerate: _onGenerateSceneImage,
         ),
-        _sectionTitle('장면별 등장 인물'),
-        SceneCharactersGrid(
-          characterCodes: _characterCodes,
-          sceneCount: _scenes.length,
-          initial: _sceneCharacters,
-          onChanged: (sp) => setState(() => _sceneCharacters = sp),
-          characterNameByCode: {
-            for (final opt in _characterOptions) opt.code: opt.name,
-          },
-        ),
         const SizedBox(height: 24),
-        if (!_canProceedFromDetails)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              '모든 필수 항목을 채우면 "다음" 버튼이 활성화됩니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
+        _missingDetailsChecklist(theme),
         const SizedBox(height: 40),
       ],
+    );
+  }
+
+  /// Step 3 하단의 동적 누락 항목 체크리스트.
+  /// - 채워야 할 게 있으면 노란 박스 + 항목 리스트 (체크박스 빈 칸 아이콘)
+  /// - 모두 채워지면 초록 박스 "모든 항목 완료 — 다음으로 이동 가능"
+  Widget _missingDetailsChecklist(ThemeData theme) {
+    final missing = _missingDetailsItems;
+    if (missing.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE3F3DE),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFF7FB07B)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Color(0xFF2D7B4D), size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '모든 필수 항목 완료 — 하단 "다음" 버튼으로 이동할 수 있어요.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF2D7B4D),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF4D6),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFD9A536)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: Color(0xFFB07A1A),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '"다음" 버튼을 활성화하려면 아래 ${missing.length}개 항목을 채워주세요',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF6B4A14),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          for (final item in missing)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 2),
+                    child: Icon(
+                      Icons.check_box_outline_blank,
+                      color: Color(0xFFB07A1A),
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF6B4A14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 

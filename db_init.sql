@@ -185,10 +185,13 @@ create table if not exists characters (
   created_at timestamptz not null default now()
 );
 
+-- events.title 은 GLOBAL UNIQUE — 로컬 번들이 `assets/story_images_thumbs/<title>/`
+-- 디렉토리 이름으로 사용되기 때문에 같은 제목 두 개가 있으면 빌드 시 자산이
+-- 충돌한다. submit_event_proposal 에서도 동일 검증을 미리 raise 한다.
 create table if not exists events (
   id uuid primary key default gen_random_uuid(),
   era_id uuid not null references eras(id),
-  title text not null,
+  title text not null unique,
   summary text,
   story_scenes jsonb not null default '[]'::jsonb,
   scene_characters jsonb not null default '[]'::jsonb,
@@ -1288,6 +1291,14 @@ create table if not exists event_proposals (
   -- 처음 sync / 재sync 를 구분해 불필요한 네트워크 트래픽을 제거한다.
   synced_to_local_at timestamptz,
 
+  -- 같은 era + 같은 after_story_index 에 다른 제안이 먼저 승인되어 이 제안의
+  -- 위치 의미가 모호해진 시점. set 되면:
+  --   - approve/reject RPC 가 거부 (제안자가 revise 할 때까지 락)
+  --   - UI 가 빨간색 "수정 필요" 라벨 + 사유 안내
+  -- 제안자가 revise_proposal_position RPC 로 새 위치/연도 제출 시 NULL 로 복구.
+  position_invalidated_at timestamptz,
+  position_invalidation_reason text,
+
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
 
@@ -1323,6 +1334,9 @@ create index if not exists event_proposals_status_idx
   on event_proposals(status);
 create index if not exists event_proposals_era_idx
   on event_proposals(era_id);
+create index if not exists event_proposals_invalidated_idx
+  on event_proposals(position_invalidated_at)
+  where position_invalidated_at is not null;
 
 drop trigger if exists set_event_proposals_updated_at on event_proposals;
 create trigger set_event_proposals_updated_at
@@ -1365,7 +1379,7 @@ drop policy if exists event_proposals_insert_pastor on event_proposals;
 create policy event_proposals_insert_pastor on event_proposals
 for insert to authenticated
 with check (
-  public.is_pastor()
+  (public.is_pastor() or public.is_admin())
   and proposer_user_id = auth.uid()
   and status = 'pending'
 );
@@ -1481,11 +1495,31 @@ declare
   v_explanation text;
   v_question text;
 begin
-  if not public.is_pastor() then
-    raise exception 'permission denied: pastor role required';
+  if not (public.is_pastor() or public.is_admin()) then
+    raise exception 'permission denied: pastor or admin role required';
   end if;
   if coalesce(trim(p_title), '') = '' then
     raise exception 'title is required';
+  end if;
+
+  -- 제목 충돌 사전 검증. events.title 은 UNIQUE 제약이라 승인 시에도 막히지만
+  -- 사역자가 일찍 알도록 제출 단계에서 raise. (1) 활성 events 와 (2) 다른
+  -- pending NEW 제안과 비교. 본인이 자기 제안을 수정하는 경우는 제외.
+  if exists (
+    select 1 from events
+    where trim(lower(title)) = trim(lower(p_title))
+      and deleted_at is null
+  ) then
+    raise exception '동일한 제목의 이야기가 이미 등록되어 있습니다: "%"', p_title;
+  end if;
+  if exists (
+    select 1 from event_proposals
+    where trim(lower(title)) = trim(lower(p_title))
+      and proposal_type = 'new'
+      and status = 'pending'
+      and proposer_user_id <> auth.uid()
+  ) then
+    raise exception '동일한 제목의 다른 제안이 검토 대기 중입니다: "%"', p_title;
   end if;
 
   -- 장면 배열 길이 일치 검증.
@@ -1582,8 +1616,8 @@ declare
   v_era_id uuid;
   v_title text;
 begin
-  if not public.is_pastor() then
-    raise exception 'permission denied: pastor role required';
+  if not (public.is_pastor() or public.is_admin()) then
+    raise exception 'permission denied: pastor or admin role required';
   end if;
   if p_target_event_id is null then
     raise exception 'target_event_id is required';
@@ -1623,9 +1657,11 @@ grant execute on function public.submit_delete_proposal(uuid, text) to authentic
 -- 7) RPC: approve_event_proposal (admin 만) — 제안을 events 에 published 로 반영
 --    기존 insert_event_at_position 을 재사용해 era 내 뒤 인덱스 시프트까지 처리.
 drop function if exists public.approve_event_proposal(uuid, int) cascade;
+drop function if exists public.approve_event_proposal(uuid, int, jsonb) cascade;
 create or replace function public.approve_event_proposal(
   p_proposal_id uuid,
-  p_after_story_index_override int default null
+  p_after_story_index_override int default null,
+  p_character_active_overrides jsonb default '{}'::jsonb
 )
 returns uuid
 language plpgsql
@@ -1642,6 +1678,8 @@ declare
   v_name text;
   v_storage_path text;
   v_description text;
+  v_active_for_code boolean;
+  v_existing_code text;
   v_quiz jsonb;
   v_quiz_choices jsonb;
   v_quiz_idx int;
@@ -1661,6 +1699,14 @@ begin
     raise exception 'approve_event_proposal is only for proposal_type=new (got %). use approve_delete_proposal for deletions',
       v_proposal.proposal_type;
   end if;
+  -- 위치가 무효화된(다른 제안이 같은 자리에 먼저 들어가서) 제안은 제안자가
+  -- 새 위치를 정하기 전엔 승인할 수 없다. UI 에서도 버튼이 잠기지만 RPC 단에서
+  -- 한 번 더 방어.
+  if v_proposal.position_invalidated_at is not null then
+    raise exception
+      'proposal % needs position revision first (invalidated at %)',
+      p_proposal_id, v_proposal.position_invalidated_at;
+  end if;
 
   select code into v_era_code from eras where id = v_proposal.era_id;
   if v_era_code is null then
@@ -1669,22 +1715,30 @@ begin
 
   v_after := coalesce(p_after_story_index_override, v_proposal.after_story_index, 0);
 
-  -- 1) 먼저 "이 제안에서 새로 만든 캐릭터" 를 characters 에 upsert.
-  --    insert_event_at_position 이 placeholder 로 넣어버리기 전에 실제 이름 +
-  --    avatar_storage_path 를 반영해 둔다.
-  --    avatar_storage_path 는 proposal-characters 버킷 경로 그대로 저장
-  --    (후속 make sync-approved-characters 가 characters/ 버킷으로 복사 + 경로 교체).
-  --    is_active = true (관리자가 승인했다는 건 노출 OK 라는 뜻).
+  -- 1) "이 제안에서 새로 만든 캐릭터" 를 characters 에 upsert.
+  --    p_character_active_overrides 는 { code: bool } 매핑. 관리자가 승인 다이얼로그
+  --    에서 각 인물의 is_active 를 직접 결정한다 (기본은 true — 키 없으면 노출 ON).
   for v_proposed_char in
     select * from jsonb_array_elements(coalesce(v_proposal.proposed_characters, '[]'::jsonb))
   loop
     v_code := v_proposed_char->>'code';
     v_name := v_proposed_char->>'name';
     v_storage_path := v_proposed_char->>'storage_path';
-    v_description := v_proposed_char->>'prompt';
+    -- description 우선순위:
+    --   1) 사용자가 별도 입력한 한글 'description' (홈 화면 카드 표시용)
+    --   2) 없으면 AI prompt 를 fallback (호환성)
+    -- prompt 만 채우면 영문 + COMMON_STYLE 토큰이 사용자에게 노출되므로 비권장.
+    v_description := coalesce(
+      nullif(trim(v_proposed_char->>'description'), ''),
+      v_proposed_char->>'prompt'
+    );
     if coalesce(trim(v_code), '') = '' then
       continue;
     end if;
+    v_active_for_code := coalesce(
+      (p_character_active_overrides->>v_code)::boolean,
+      true
+    );
     insert into public.characters (
       code, name, description, avatar_storage_path, is_active
     )
@@ -1693,13 +1747,33 @@ begin
       coalesce(nullif(trim(v_name), ''), v_code),
       v_description,
       v_storage_path,
-      true
+      v_active_for_code
     )
     on conflict (code) do update set
       name = coalesce(nullif(trim(excluded.name), ''), public.characters.name),
       description = coalesce(excluded.description, public.characters.description),
       avatar_storage_path = coalesce(excluded.avatar_storage_path, public.characters.avatar_storage_path),
-      is_active = true;
+      is_active = v_active_for_code;
+  end loop;
+
+  -- 1b) "기존 캐릭터" 들도 override 가 들어왔으면 적용 — 이번 이야기 등장 인물의
+  --     is_active 를 관리자가 새로 지정 가능. override 키 없으면 기존 값 유지.
+  for v_existing_code in
+    select unnest(v_proposal.character_codes)
+  loop
+    if v_existing_code is null then continue; end if;
+    if not (p_character_active_overrides ? v_existing_code) then continue; end if;
+    -- 신규로 위에서 이미 처리한 코드는 건너뛴다 (중복 update 회피).
+    if exists (
+      select 1
+      from jsonb_array_elements(coalesce(v_proposal.proposed_characters, '[]'::jsonb)) e
+      where e->>'code' = v_existing_code
+    ) then
+      continue;
+    end if;
+    update public.characters
+       set is_active = (p_character_active_overrides->>v_existing_code)::boolean
+     where code = v_existing_code;
   end loop;
 
   -- 2) insert_event_at_position — 기존 로직. 남은 누락 코드는 비활성 placeholder.
@@ -1725,34 +1799,64 @@ begin
   );
 
   -- 3) 퀴즈 insert — proposal 에 담긴 1~3개를 quiz_questions 로 풀어 넣는다.
-  --    choices jsonb array 의 첫 3개는 필수(choice_a/b/c), 네 번째는 choice_d.
-  --    display_order 는 배열 인덱스를 그대로 사용.
+  --    승인 시점에 choices 배열을 **랜덤으로 셔플** 하고 정답 인덱스를 다시 계산
+  --    한다. 사역자가 제출 시 항상 1번째 자리에 정답을 두는 습관이 있어도
+  --    실제 사용자에게는 위치가 분산돼 패턴이 안 잡힌다.
+  --    display_order 는 배열 인덱스 (퀴즈 N개 사이 순서) 를 그대로 사용.
   v_quiz_idx := 0;
-  for v_quiz in
-    select * from jsonb_array_elements(coalesce(v_proposal.quiz_questions, '[]'::jsonb))
-  loop
-    v_quiz_choices := v_quiz->'choices';
-    if v_quiz_choices is null or jsonb_array_length(v_quiz_choices) <> 4 then
-      raise exception 'quiz[%] must have exactly 4 choices', v_quiz_idx;
-    end if;
-    insert into public.quiz_questions (
-      event_id, question,
-      choice_a, choice_b, choice_c, choice_d,
-      answer_index, explanation, display_order
-    )
-    values (
-      v_event_id,
-      coalesce(v_quiz->>'question', ''),
-      coalesce(v_quiz_choices->>0, ''),
-      coalesce(v_quiz_choices->>1, ''),
-      coalesce(v_quiz_choices->>2, ''),
-      v_quiz_choices->>3,
-      coalesce((v_quiz->>'answer_index')::int, 0),
-      coalesce(v_quiz->>'explanation', ''),
-      v_quiz_idx
-    );
-    v_quiz_idx := v_quiz_idx + 1;
-  end loop;
+  declare
+    v_shuffled jsonb;
+    v_orig_answer int;
+    v_new_answer int;
+  begin
+    for v_quiz in
+      select * from jsonb_array_elements(coalesce(v_proposal.quiz_questions, '[]'::jsonb))
+    loop
+      v_quiz_choices := v_quiz->'choices';
+      if v_quiz_choices is null or jsonb_array_length(v_quiz_choices) <> 4 then
+        raise exception 'quiz[%] must have exactly 4 choices', v_quiz_idx;
+      end if;
+      v_orig_answer := coalesce((v_quiz->>'answer_index')::int, 0);
+      if v_orig_answer < 0 or v_orig_answer > 3 then
+        raise exception 'quiz[%] answer_index out of range (got %)',
+          v_quiz_idx, v_orig_answer;
+      end if;
+
+      -- 셔플: 0..3 의 무작위 순열을 만들어 choices 를 재배치, 정답이 새로 어느
+      -- 인덱스로 갔는지 추적. random() 기반이라 결정적이지 않으나 보안 목적은
+      -- 아니라 충분.
+      with perm as (
+        select g, row_number() over (order by random()) - 1 as new_pos
+        from generate_series(0, 3) g
+      ),
+      remap as (
+        select
+          jsonb_agg(v_quiz_choices->old.g order by perm.new_pos) as new_choices,
+          max(case when old.g = v_orig_answer then perm.new_pos end) as new_answer
+        from generate_series(0, 3) old(g)
+        join perm on perm.g = old.g
+      )
+      select new_choices, new_answer into v_shuffled, v_new_answer from remap;
+
+      insert into public.quiz_questions (
+        event_id, question,
+        choice_a, choice_b, choice_c, choice_d,
+        answer_index, explanation, display_order
+      )
+      values (
+        v_event_id,
+        coalesce(v_quiz->>'question', ''),
+        coalesce(v_shuffled->>0, ''),
+        coalesce(v_shuffled->>1, ''),
+        coalesce(v_shuffled->>2, ''),
+        v_shuffled->>3,
+        v_new_answer,
+        coalesce(v_quiz->>'explanation', ''),
+        v_quiz_idx
+      );
+      v_quiz_idx := v_quiz_idx + 1;
+    end loop;
+  end;
 
   update event_proposals
   set
@@ -1762,26 +1866,91 @@ begin
     approved_event_id = v_event_id
   where id = p_proposal_id;
 
+  -- 4) 충돌 감지 — 같은 era 에서 같은 after_story_index 를 노린 다른 pending
+  --    NEW 제안들을 "위치 재선택 필요" 상태로 invalidate.
+  --
+  --    왜 이게 필요한가: insert_event_at_position 이 v_after 다음 자리를
+  --    차지하면서 그 뒤 모든 story_index 가 +1 시프트됐다. 다른 제안자가
+  --    같은 v_after 를 골랐다면 그들의 의도(="원래 5번 다음")가 이제 "방금
+  --    승인된 새 6번 다음" 이 되어 모호해진다. 또한 그 제안의 start/end_year
+  --    이 새 6번 이벤트의 연도 범위와 겹치거나 어긋날 수 있어 위치+연도를
+  --    제안자가 다시 결정해야 한다.
+  --
+  --    invalidate 된 제안은:
+  --      - approve/reject RPC 가 거부 (제안자 revise 전엔 잠김)
+  --      - UI 가 빨간 라벨로 "수정 필요" 노출
+  --      - 알림 트리거가 제안자에게 푸시/인앱 통지
+  declare
+    v_invalidated_id uuid;
+    v_reason text;
+  begin
+    v_reason := '같은 위치(' ||
+      case when v_after = 0 then '맨 앞'
+           else 'story_index ' || v_after::text || ' 다음' end ||
+      ')에 다른 이야기 "' || coalesce(v_proposal.title, '') ||
+      '" 이(가) 먼저 승인되었어요. 이 제안의 위치와 연도를 다시 골라주세요.';
+
+    for v_invalidated_id in
+      select id
+      from event_proposals
+      where era_id = v_proposal.era_id
+        and proposal_type = 'new'
+        and status = 'pending'
+        and id <> p_proposal_id
+        and position_invalidated_at is null
+        and after_story_index is not distinct from v_proposal.after_story_index
+    loop
+      update event_proposals
+      set
+        position_invalidated_at = now(),
+        position_invalidation_reason = v_reason
+      where id = v_invalidated_id;
+      -- 알림은 trg_notify_on_proposal_invalidated 트리거가 이 update 를 보고
+      -- 자동 dispatch. 여기서는 row 만 갱신.
+    end loop;
+  end;
+
   return v_event_id;
 end;
 $$;
-grant execute on function public.approve_event_proposal(uuid, int) to authenticated;
+grant execute on function public.approve_event_proposal(uuid, int, jsonb) to authenticated;
 
--- 7b) RPC: approve_delete_proposal (admin 만) — 대상 이벤트 soft delete + 제안 승인.
--- hard delete 대신 events.deleted_at 을 set 해 quiz_questions / user_event_progress
--- 의 CASCADE 로 인한 사용자 진도 유실을 막는다. events_ordered view 가 deleted_at
--- IS NULL 필터를 걸고 있어 앱 전체에서 자동으로 숨겨진다.
+-- 7b) RPC: approve_delete_proposal (admin 만) — 대상 이벤트 HARD DELETE +
+--     마지막 등장이었던 인물 row HARD DELETE + 클라이언트 storage 정리 경로 반환.
+--
+-- 처리 순서:
+--   1) target events row 의 character_codes / scene_image_paths 스냅샷 후
+--      DELETE FROM events. ON DELETE CASCADE 로 quiz_questions / user_event_progress
+--      도 함께 정리됨 (사용자 진도는 유실되지만 사용자가 더 이상 보지 않을 이야기
+--      이므로 수용).
+--   2) 스냅샷한 character_codes 각 코드에 대해, 다른 events 가 여전히 그 코드를
+--      참조하는지 카운트. 0건 → 그 캐릭터의 마지막 출연 → DELETE FROM characters.
+--      character_eras 는 view 라 자동 갱신, 로컬 번들에 PNG 가 남아있어도 앱이
+--      characters 테이블 fetch 결과에 그 코드를 못 받으므로 더 이상 표시 안 됨.
+--   3) 클라이언트 storage 정리용 jsonb 반환:
+--        - scene_image_paths              : 이 이벤트의 장면 이미지 (proposal-scenes/...)
+--        - deleted_character_avatar_paths : hard delete 된 캐릭터의 아바타 경로
+--      sync 스크립트의 diff 단계가 이 이후에 로컬 PNG 디렉토리/파일도 정리.
+--
+-- 멱등성: target event row 가 이미 없으면 character 정리도 skip 후 그대로 통과.
 drop function if exists public.approve_delete_proposal(uuid) cascade;
 create or replace function public.approve_delete_proposal(
   p_proposal_id uuid
 )
-returns uuid
+returns jsonb
 language plpgsql
 security definer
 set search_path = public, auth
 as $$
 declare
   v_proposal event_proposals%rowtype;
+  v_event events%rowtype;
+  v_deleted_char_paths text[] := '{}';
+  v_scene_paths text[] := '{}';
+  v_codes text[] := '{}';
+  v_code text;
+  v_other_count int;
+  v_avatar_path text;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
@@ -1802,40 +1971,121 @@ begin
     raise exception 'target_event_id is null for delete proposal %', p_proposal_id;
   end if;
 
-  -- 대상 이벤트 soft delete (idempotent: 이미 삭제된 경우 무시)
-  update events
-  set deleted_at = now()
-  where id = v_proposal.target_event_id
-    and deleted_at is null;
+  -- 1) 스냅샷 + HARD DELETE FROM events (cascade quiz_questions / user_event_progress)
+  select * into v_event from events where id = v_proposal.target_event_id;
+  if found then
+    v_scene_paths := coalesce(v_event.scene_image_paths, '{}'::text[]);
+    v_codes := coalesce(v_event.character_codes, '{}'::text[]);
+    delete from events where id = v_event.id;
+  end if;
+  -- target row 가 이미 사라진 경우 (다른 admin 동시 처리 등) 도 그대로 진행 —
+  -- v_codes 가 비어있어 character 정리 루프가 no-op.
 
+  -- 2) 마지막 출연이었던 캐릭터 hard delete
+  foreach v_code in array v_codes
+  loop
+    select count(*) into v_other_count
+    from events e
+    where v_code = any(e.character_codes);
+    if v_other_count = 0 then
+      delete from characters
+      where code = v_code
+      returning avatar_storage_path into v_avatar_path;
+      if v_avatar_path is not null and v_avatar_path <> '' then
+        v_deleted_char_paths := array_append(v_deleted_char_paths, v_avatar_path);
+      end if;
+    end if;
+  end loop;
+
+  -- 3) 제안 승인 처리. approved_event_id 는 이벤트가 이미 사라졌으므로 NULL.
   update event_proposals
   set
     status = 'approved',
     reviewed_by_user_id = auth.uid(),
     reviewed_at = now(),
-    approved_event_id = v_proposal.target_event_id
+    approved_event_id = null
   where id = p_proposal_id;
 
-  return v_proposal.target_event_id;
+  return jsonb_build_object(
+    'event_id', v_proposal.target_event_id,
+    'scene_image_paths', v_scene_paths,
+    'deleted_character_avatar_paths', v_deleted_char_paths
+  );
 end;
 $$;
 grant execute on function public.approve_delete_proposal(uuid) to authenticated;
 
--- 8) RPC: reject_event_proposal (admin 만) — note 와 함께 status='rejected'
+-- 8) RPC: reject_event_proposal (admin 만) — note 와 함께 status='rejected'.
+--
+-- position_invalidated_at 가 set 인 제안은 거부할 수 없다 (제안자가 위치를 다시
+-- 정한 다음에야 실제로 평가가 가능). UI 도 버튼을 잠그지만 RPC 단에서 한 번 더 방어.
+--
+-- 거절 시 storage cleanup: row 자체는 history 보존을 위해 남기되, **proposal-***
+-- 버킷의 장면 이미지 + 새로 만든 캐릭터 이미지** 는 더 이상 쓰이지 않으므로
+-- 클라이언트가 정리할 경로 묶음을 jsonb 로 반환. proposed_characters 의 storage_path
+-- 는 같은 code 가 다른 활성 row(events.character_codes 또는 다른 pending 제안)
+-- 에서 재사용 중일 때만 보존.
 drop function if exists public.reject_event_proposal(uuid, text) cascade;
 create or replace function public.reject_event_proposal(
   p_proposal_id uuid,
   p_note text default null
 )
-returns void
+returns jsonb
 language plpgsql
 security definer
 set search_path = public, auth
 as $$
+declare
+  v_proposal event_proposals%rowtype;
+  v_scene_paths text[];
+  v_char_paths text[] := '{}';
+  v_pc jsonb;
+  v_code text;
+  v_path text;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
   end if;
+
+  select * into v_proposal from event_proposals where id = p_proposal_id;
+  if not found then
+    raise exception 'proposal not found: %', p_proposal_id;
+  end if;
+  if v_proposal.position_invalidated_at is not null then
+    raise exception
+      'proposal % needs position revision first (invalidated at %)',
+      p_proposal_id, v_proposal.position_invalidated_at;
+  end if;
+  if v_proposal.status <> 'pending' then
+    raise exception 'proposal is not pending (status = %)', v_proposal.status;
+  end if;
+
+  v_scene_paths := coalesce(v_proposal.scene_image_paths, '{}'::text[]);
+
+  -- proposed_characters 의 storage_path 수집. 단, 같은 code 가 이미 published
+  -- characters 테이블에 있거나 (= 다른 이야기에 정착) 다른 pending 제안에서
+  -- 재사용 중이면 정리에서 제외.
+  for v_pc in
+    select * from jsonb_array_elements(coalesce(v_proposal.proposed_characters, '[]'::jsonb))
+  loop
+    v_code := v_pc->>'code';
+    v_path := v_pc->>'storage_path';
+    if coalesce(trim(v_code), '') = '' or coalesce(trim(v_path), '') = '' then
+      continue;
+    end if;
+    if exists (select 1 from characters where code = v_code) then
+      continue;
+    end if;
+    if exists (
+      select 1 from event_proposals ep, jsonb_array_elements(coalesce(ep.proposed_characters, '[]'::jsonb)) e
+      where ep.id <> p_proposal_id
+        and ep.status = 'pending'
+        and e->>'code' = v_code
+    ) then
+      continue;
+    end if;
+    v_char_paths := array_append(v_char_paths, v_path);
+  end loop;
 
   update event_proposals
   set
@@ -1843,11 +2093,144 @@ begin
     reviewed_by_user_id = auth.uid(),
     reviewed_at = now(),
     review_note = p_note
-  where id = p_proposal_id
-    and status = 'pending';
+  where id = p_proposal_id;
+
+  return jsonb_build_object(
+    'proposal_id', p_proposal_id,
+    'scene_image_paths', v_scene_paths,
+    'rejected_character_storage_paths', v_char_paths
+  );
 end;
 $$;
 grant execute on function public.reject_event_proposal(uuid, text) to authenticated;
+
+-- 8b) RPC: revise_proposal_position — 제안자 본인이 invalidated 된 자기 제안의
+--     위치/연도를 다시 결정. 성공 시 position_invalidated_at NULL 로 복구되어
+--     관리자가 다시 approve/reject 가능.
+--
+--   인자:
+--     p_proposal_id        — 자기 자신의 pending NEW 제안만 가능
+--     p_after_story_index  — 새 위치 (era 안의 0..N — 0 은 맨 앞)
+--     p_start_year/end_year — 새 연도 범위 (둘 다 NULL 이면 변경 안 함)
+--
+--   검증:
+--     1) auth.uid() 가 proposer 본인이어야 함
+--     2) 제안 상태가 pending + position_invalidated_at IS NOT NULL
+--     3) p_after_story_index 가 같은 era 안의 활성 이벤트 카운트(N)를 초과하지 않음
+--     4) start_year/end_year 가 새 위치 기준 prev/next 이벤트 연도와 정합
+--        (prev.end_year <= start_year <= end_year <= next.start_year)
+drop function if exists public.revise_proposal_position(uuid, int, int, int) cascade;
+create or replace function public.revise_proposal_position(
+  p_proposal_id uuid,
+  p_after_story_index int,
+  p_start_year int default null,
+  p_end_year int default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  v_proposal event_proposals%rowtype;
+  v_count int;
+  v_prev_end int;
+  v_next_start int;
+  v_start int;
+  v_end int;
+begin
+  if auth.uid() is null then
+    raise exception 'authentication required';
+  end if;
+
+  select * into v_proposal from event_proposals where id = p_proposal_id;
+  if not found then
+    raise exception 'proposal not found: %', p_proposal_id;
+  end if;
+  if v_proposal.proposer_user_id <> auth.uid() then
+    raise exception 'permission denied: only the proposer can revise';
+  end if;
+  if v_proposal.proposal_type <> 'new' then
+    raise exception 'revise_proposal_position only applies to new proposals';
+  end if;
+  if v_proposal.status <> 'pending' then
+    raise exception 'cannot revise non-pending proposal (status = %)',
+      v_proposal.status;
+  end if;
+  if v_proposal.position_invalidated_at is null then
+    raise exception 'proposal is not in revision-required state';
+  end if;
+  if p_after_story_index < 0 then
+    raise exception 'p_after_story_index must be >= 0 (got %)', p_after_story_index;
+  end if;
+
+  -- 같은 era 의 활성 이벤트 개수 — after_story_index 가 그 이상이면 정의 불가.
+  select count(*) into v_count
+  from events
+  where era_id = v_proposal.era_id
+    and deleted_at is null
+    and status = 'published';
+  if p_after_story_index > v_count then
+    raise exception
+      'p_after_story_index (%) exceeds active event count (%) in era',
+      p_after_story_index, v_count;
+  end if;
+
+  v_start := coalesce(p_start_year, v_proposal.start_year);
+  v_end := coalesce(p_end_year, v_proposal.end_year);
+
+  -- 새 위치 prev/next 의 연도 범위 — story_index 가 정확히 (after_story_index)
+  -- 인 이벤트가 prev, story_index 가 그 다음으로 큰 이벤트가 next.
+  -- p_after_story_index = 0 → prev 없음 (맨 앞 삽입).
+  if p_after_story_index = 0 then
+    v_prev_end := null;
+  else
+    select e.end_year into v_prev_end
+    from events e
+    where e.era_id = v_proposal.era_id
+      and e.deleted_at is null
+      and e.status = 'published'
+      and e.story_index = p_after_story_index;
+  end if;
+
+  select e.start_year into v_next_start
+  from events e
+  where e.era_id = v_proposal.era_id
+    and e.deleted_at is null
+    and e.status = 'published'
+    and e.story_index > p_after_story_index
+  order by e.story_index
+  limit 1;
+
+  if v_start is not null and v_end is not null then
+    if v_end < v_start then
+      raise exception 'end_year (%) must be >= start_year (%)', v_end, v_start;
+    end if;
+    if v_prev_end is not null and v_start < v_prev_end then
+      raise exception
+        'start_year (%) must be >= previous event end_year (%)',
+        v_start, v_prev_end;
+    end if;
+    if v_next_start is not null and v_end > v_next_start then
+      raise exception
+        'end_year (%) must be <= next event start_year (%)',
+        v_end, v_next_start;
+    end if;
+  end if;
+
+  update event_proposals
+  set
+    after_story_index = p_after_story_index,
+    start_year = v_start,
+    end_year = v_end,
+    position_invalidated_at = null,
+    position_invalidation_reason = null,
+    updated_at = now()
+  where id = p_proposal_id;
+end;
+$$;
+grant execute on function public.revise_proposal_position(uuid, int, int, int)
+  to authenticated;
 
 -- 9) RPC: add_proposal_comment (pastor + admin) — 댓글 한 개 INSERT 편의 함수
 drop function if exists public.add_proposal_comment(uuid, text) cascade;
@@ -1974,6 +2357,15 @@ grant select on table broadcast_notifications to authenticated;
 grant select, insert on table broadcast_notification_reads to authenticated;
 grant select, insert, update, delete on table user_push_tokens to authenticated;
 grant select on table weekly_character_selection to authenticated;
+
+-- 안전망: drop+create 만으로 비어있어야 정상이지만, 시드/마이그레이션 도중에
+-- 트리거가 깨워 broadcast_notifications 가 채워지는 사고를 막기 위해 명시적
+-- TRUNCATE 한 번. db_init 종료 시 알림 4종 테이블이 확실히 비어있도록 보장.
+truncate table notifications restart identity cascade;
+truncate table broadcast_notifications restart identity cascade;
+truncate table broadcast_notification_reads restart identity cascade;
+truncate table user_push_tokens restart identity cascade;
+truncate table weekly_character_selection restart identity cascade;
 
 alter table notifications enable row level security;
 alter table broadcast_notifications enable row level security;
@@ -2197,6 +2589,49 @@ drop trigger if exists trg_notify_on_proposal_reviewed on event_proposals;
 create trigger trg_notify_on_proposal_reviewed
 after update on event_proposals
 for each row execute function public.notify_on_proposal_reviewed();
+
+-- 트리거: notify_on_proposal_invalidated — 다른 제안이 같은 위치에 먼저 승인되어
+--   이 제안의 position_invalidated_at 이 set 된 순간, 제안자에게 인앱 + 푸시
+--   알림을 보낸다. payload 의 deep_link 는 제안 상세로 가서 "위치 다시 선택"
+--   버튼이 노출되도록 한다.
+drop function if exists public.notify_on_proposal_invalidated() cascade;
+create or replace function public.notify_on_proposal_invalidated()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+begin
+  -- transition: NULL → non-null (set 된 순간만 알림). 재 invalidate(이미 set 된
+  -- row 가 다시 update 되는 경우)는 스킵해 알림 폭탄 방지.
+  if old.position_invalidated_at is not null then return new; end if;
+  if new.position_invalidated_at is null then return new; end if;
+
+  insert into notifications (user_id, type, title, body, deep_link, payload)
+  values (
+    new.proposer_user_id,
+    'proposal_position_invalidated',
+    '제안 위치 재선택이 필요해요',
+    coalesce(
+      nullif(trim(new.position_invalidation_reason), ''),
+      '"' || coalesce(new.title, '제안') ||
+      '" 의 위치가 다른 이야기 승인으로 이동했어요. 위치/연도를 다시 골라주세요.'
+    ),
+    '/proposal/' || new.id::text,
+    jsonb_build_object(
+      'proposal_id', new.id,
+      'proposal_title', new.title,
+      'reason', new.position_invalidation_reason
+    )
+  );
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_proposal_invalidated on event_proposals;
+create trigger trg_notify_on_proposal_invalidated
+after update of position_invalidated_at on event_proposals
+for each row execute function public.notify_on_proposal_invalidated();
 
 -- 트리거: notify_on_new_event
 create or replace function public.notify_on_new_event()

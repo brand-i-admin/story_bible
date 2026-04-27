@@ -326,9 +326,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def parse_event_number(raw_title: str) -> int:
+    """제목 앞 3자리 번호 → int. 신 포맷(번호 없음) 은 0 반환."""
     match = EVENT_NO_RE.match(raw_title.strip())
     if match is None:
-        raise ValueError(f"Title does not start with 3-digit index: {raw_title!r}")
+        return 0
     return int(match.group(1))
 
 
@@ -344,7 +345,13 @@ def load_story_rows(stories_dir: Path) -> list[dict[str, Any]]:
             if not isinstance(item, dict):
                 raise ValueError(f"Story row must be object in {path}: {item!r}")
             rows.append(item)
-    rows.sort(key=lambda row: parse_event_number(str(row.get("title", ""))))
+    # title 에 번호가 없으면 0 → story_index 를 보조 키로.
+    rows.sort(
+        key=lambda row: (
+            int(row["story_index"]) if isinstance(row.get("story_index"), int) else 0,
+            str(row.get("title", "")),
+        )
+    )
     return rows
 
 
@@ -600,6 +607,8 @@ def main() -> int:
     story_appearances_by_code: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in story_rows:
         number = parse_event_number(str(row.get("title", "")))
+        if number == 0 and isinstance(row.get("story_index"), int):
+            number = int(row["story_index"])
         raw_persons = [
             str(code).strip() for code in row.get("characters", []) if str(code).strip()
         ]

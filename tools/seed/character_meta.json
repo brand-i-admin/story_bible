@@ -5,10 +5,10 @@
     "count": 123,
     "style_source": "auto_story_v2",
     "active_threshold": 2,
-    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All persons with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2. Runtime visibility is controlled by persons.is_active in DB."
+    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2. Runtime visibility is controlled by characters.is_active in DB."
   },
   "common_style": "stylized geometric biblical character illustration, blocky low-poly faceted planes, angular polygon face and hair, flat matte vector shading with subtle cut-paper facets, strict canonical body proportions, head:torso:legs = 1:1:1 exactly, head section one-third of total height, torso section one-third, legs section one-third, same body ratio template across all human characters, compact adult proportions, not chibi, simple small eyes and nose, mature friendly expression, minimal clean outline, exactly one character only, solo single subject, full body visible from head to toe, both feet visible, whole figure fits inside frame, centered, plain white background, high resolution, consistent design system across the full cast, distinct silhouette and face geometry for each character, distinct hairstyle and story-inspired accessory for each character, no text, no watermark",
-  "negative_prompt": "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, chibi, super-deformed, giant head, baby proportions, oversized eyes, long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, same-face clones, duplicate person, multiple people, crowd, group shot, companions, side characters, extra faces, extra bodies, twin, mirrored figure, close-up, portrait crop, bust shot, half body, cropped head, cropped feet, marshmallow body, gritty, dark, horror, complex background, text, logo, watermark",
+  "negative_prompt": "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, chibi, super-deformed, giant head, baby proportions, oversized eyes, long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, same-face clones, duplicate character, multiple people, crowd, group shot, companions, side characters, extra faces, extra bodies, twin, mirrored figure, close-up, portrait crop, bust shot, half body, cropped head, cropped feet, marshmallow body, gritty, dark, horror, complex background, text, logo, watermark",
   "palettes": {
     "primeval": "soft beige + olive + sky blue accents",
     "patriarch": "warm sand + cream + muted teal accents",
@@ -67,7 +67,7 @@
       "name_ko": "하나님",
       "name_en": "God",
       "era": "primeval",
-      "prompt": "palette: soft beige + olive + sky blue accents, simple faceted form of light in the same blocky low-poly biblical illustration style as the cast, just a soft glowing light shape, not a symbol, not an emblem, not an icon, one centered light form only, simple vertical tapered silhouette made of a few large geometric planes, flat matte vector shading with subtle faceted edges, gentle warm glow, a few short attached glow rays only, large clean empty white space around it, plain white background, minimal clean composition, no person, no human figure, no face, no eyes, no mouth, no hands, no body, no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, sacred non-anthropomorphic presence",
+      "prompt": "palette: soft beige + olive + sky blue accents, simple faceted form of light in the same blocky low-poly biblical illustration style as the cast, just a soft glowing light shape, not a symbol, not an emblem, not an icon, one centered light form only, simple vertical tapered silhouette made of a few large geometric planes, flat matte vector shading with subtle faceted edges, gentle warm glow, a few short attached glow rays only, large clean empty white space around it, plain white background, minimal clean composition, no character, no human figure, no face, no eyes, no mouth, no hands, no body, no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, sacred non-anthropomorphic presence",
       "prompt_source": "auto_story_v2",
       "mention_count": 19,
       "is_active_default": true,
@@ -254,6 +254,17 @@
     },
     {
       "index": 21,
+      "code": "benjamin",
+      "name_ko": "베냐민",
+      "name_en": "Benjamin",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Benjamin, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 8,
+      "is_active_default": true
+    },
+    {
+      "index": 22,
       "code": "joshua",
       "name_ko": "여호수아",
       "name_en": "Joshua",
@@ -264,7 +275,7 @@
       "is_active_default": true
     },
     {
-      "index": 22,
+      "index": 23,
       "code": "judah",
       "name_ko": "유다",
       "name_en": "Judah",
@@ -275,7 +286,18 @@
       "is_active_default": true
     },
     {
-      "index": 23,
+      "index": 24,
+      "code": "judas",
+      "name_ko": "유다",
+      "name_en": "Judas",
+      "era": "gospels",
+      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Judas, adult biblical man (age 25+), treasurer disciple silhouette, money pouch and small account bag, guarded calculating presence, light celebratory posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 8,
+      "is_active_default": true
+    },
+    {
+      "index": 25,
       "code": "levi",
       "name_ko": "레위",
       "name_en": "Levi",
@@ -286,7 +308,7 @@
       "is_active_default": true
     },
     {
-      "index": 24,
+      "index": 26,
       "code": "reuben",
       "name_ko": "르우벤",
       "name_en": "Reuben",
@@ -297,7 +319,7 @@
       "is_active_default": true
     },
     {
-      "index": 25,
+      "index": 27,
       "code": "samuel",
       "name_ko": "사무엘",
       "name_en": "Samuel",
@@ -308,7 +330,7 @@
       "is_active_default": true
     },
     {
-      "index": 26,
+      "index": 28,
       "code": "simeon",
       "name_ko": "시므온",
       "name_en": "Simeon",
@@ -319,7 +341,7 @@
       "is_active_default": true
     },
     {
-      "index": 27,
+      "index": 29,
       "code": "asher",
       "name_ko": "아셀",
       "name_en": "Asher",
@@ -330,18 +352,7 @@
       "is_active_default": true
     },
     {
-      "index": 28,
-      "code": "benjamin",
-      "name_ko": "베냐민",
-      "name_en": "Benjamin",
-      "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Benjamin, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 7,
-      "is_active_default": true
-    },
-    {
-      "index": 29,
+      "index": 30,
       "code": "gad",
       "name_ko": "갓",
       "name_en": "Gad",
@@ -352,23 +363,12 @@
       "is_active_default": true
     },
     {
-      "index": 30,
+      "index": 31,
       "code": "issachar",
       "name_ko": "잇사갈",
       "name_en": "Issachar",
       "era": "patriarch",
       "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Issachar, adult biblical man (age 25+), dream-marked survivor silhouette, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 7,
-      "is_active_default": true
-    },
-    {
-      "index": 31,
-      "code": "judas",
-      "name_ko": "유다",
-      "name_en": "Judas",
-      "era": "gospels",
-      "prompt": "COMMON_STYLE, palette: cream + sky blue + soft rose accents, Judas, adult biblical man (age 25+), treasurer disciple silhouette, money pouch and small account bag, guarded calculating presence, light celebratory posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 7,
       "is_active_default": true
@@ -493,7 +493,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 4,
       "is_active_default": true,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra person, background person"
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character"
     },
     {
       "index": 43,
@@ -737,7 +737,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "ordinary human priest, ordinary human man, elderly man, beard, warrior, armor, multiple people, crowd, group, duo, pair, two people, extra person, background person, second angel, angel choir, heavenly host, attendants"
+      "negative_prompt_extra": "ordinary human priest, ordinary human man, elderly man, beard, warrior, armor, multiple people, crowd, group, duo, pair, two people, extra character, background character, second angel, angel choir, heavenly host, attendants"
     },
     {
       "index": 65,
@@ -771,7 +771,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra person, background person, king, queen, banquet crowd, attendants, throne scene"
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, king, queen, banquet crowd, attendants, throne scene"
     },
     {
       "index": 68,
@@ -860,7 +860,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "young woman, youthful face, smooth skin, child, teenager, glamorous beauty, model-like proportions, dark hair without gray, male, man, masculine face, broad male jaw, beard, mustache, second person, multiple people, scene with ruth"
+      "negative_prompt_extra": "young woman, youthful face, smooth skin, child, teenager, glamorous beauty, model-like proportions, dark hair without gray, male, man, masculine face, broad male jaw, beard, mustache, second character, multiple people, scene with ruth"
     },
     {
       "index": 76,
@@ -961,7 +961,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, three people, extra person, background person, twin, mirrored figure, second character, scene with brother, scene with sibling, brother nearby, abel, scene with parents, family scene, mother, father, child, shepherd staff, sheep, lamb, flock"
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, three people, extra character, background character, twin, mirrored figure, second character, scene with brother, scene with sibling, brother nearby, abel, scene with parents, family scene, mother, father, child, shepherd staff, sheep, lamb, flock"
     },
     {
       "index": 85,
@@ -995,7 +995,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra person, background person, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants"
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants"
     },
     {
       "index": 88,
@@ -1007,7 +1007,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
-      "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, samson, second person, multiple people, scene with samson"
+      "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, samson, second character, multiple people, scene with samson"
     },
     {
       "index": 89,
@@ -1218,7 +1218,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
-      "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, slave, prisoner, jailer, second person, multiple people"
+      "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, slave, prisoner, jailer, second character, multiple people"
     },
     {
       "index": 108,
@@ -1241,7 +1241,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
-      "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, disciple man, peter, paul, second person, multiple people, extra hands, three hands, multiple hands, extra arms, third arm, deformed hands, fused fingers, extra fingers, too many fingers, oil flask, alabaster jar, perfume bottle, ointment container, anointing vessel"
+      "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, disciple man, peter, paul, second character, multiple people, extra hands, three hands, multiple hands, extra arms, third arm, deformed hands, fused fingers, extra fingers, too many fingers, oil flask, alabaster jar, perfume bottle, ointment container, anointing vessel"
     },
     {
       "index": 110,
@@ -1330,7 +1330,7 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra person, background person, twin, mirrored figure, second character, Hebrew patriarch, Hebrew nomad, desert traveler robe, full-length flowing robe, long beard, wrapped turban, long staff, sandals only outfit, biblical patriarch costume"
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, Hebrew patriarch, Hebrew nomad, desert traveler robe, full-length flowing robe, long beard, wrapped turban, long staff, sandals only outfit, biblical patriarch costume"
     },
     {
       "index": 118,

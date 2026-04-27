@@ -53,13 +53,34 @@ class Character {
   /// 있다고 가정**한 경로. 실제 번들에 없을 수 있으므로 `AssetManifest` 로
   /// 검증한 뒤 storage 로 fallback 하는 건 `CharacterAvatar` 위젯 쪽 책임.
   String get avatarAssetPath {
+    // 로컬 번들 경로가 없으면 빈 문자열 반환 — 호출처가 isEmpty 체크로 fallback
+    // (storage 또는 이니셜) 분기를 타도록 한다. 이전에는 존재하지 않는
+    // `assets/avatars_thumbs/_placeholder.png` 를 반환해 위젯들이 이걸 1차로
+    // Image.asset 호출 → 404 후 갈색 fallback 으로 떨어지는 버그가 있었다.
     if (avatarUrl == null || avatarUrl!.isEmpty) {
-      return 'assets/avatars_thumbs/_placeholder.png';
+      return '';
     }
     final trimmed = avatarUrl!.trim();
+    if (!trimmed.startsWith('assets/')) {
+      // 'http://...' 등 로컬 자산이 아닌 값이 들어왔다면 로컬 path 로 취급하지
+      // 않음. 호출처가 storage 경로로 빠지도록.
+      return '';
+    }
     if (trimmed.startsWith('assets/avatars/')) {
       return trimmed.replaceFirst('assets/avatars/', 'assets/avatars_thumbs/');
     }
     return trimmed;
+  }
+
+  /// 이 캐릭터가 **앱 번들에 포함된 로컬 아바타**를 갖는지.
+  ///
+  /// `avatar_url` 이 비어있거나 `assets/...` 로 시작하지 않는 경우 (예: 승인은
+  /// 됐지만 아직 `make sync-approved-proposal-assets` 가 안 돈 신규 캐릭터)
+  /// 는 false → `CharacterAvatar` 가 storage 를 1차 경로로 사용한다.
+  bool get hasLocalAvatar {
+    final url = avatarUrl?.trim() ?? '';
+    if (url.isEmpty) return false;
+    return url.startsWith('assets/avatars/') ||
+        url.startsWith('assets/avatars_thumbs/');
   }
 }

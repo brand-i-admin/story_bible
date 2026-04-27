@@ -28,16 +28,20 @@ class SceneAssetLoader {
   final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
 
   Future<List<String>> loadAssetManifest() async {
+    // 정상 캐시(비어있지 않음)만 재사용. 빈 결과(에러로 인한 일시적 실패)는
+    // 캐시하지 않아 dev server 가 복구되면 다음 호출에서 재시도되도록 한다.
     final cached = _assetManifestCache;
-    if (cached != null) {
+    if (cached != null && cached.isNotEmpty) {
       return cached;
     }
 
     try {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       final assetKeys = manifest.listAssets();
-      _assetManifestCache = assetKeys;
-      return assetKeys;
+      if (assetKeys.isNotEmpty) {
+        _assetManifestCache = assetKeys;
+        return assetKeys;
+      }
     } catch (_) {
       // Fall through to JSON manifest for older/alternate environments.
     }
@@ -47,14 +51,16 @@ class SceneAssetLoader {
       final decoded = json.decode(rawManifest);
       if (decoded is Map<String, dynamic>) {
         final assetKeys = decoded.keys.toList(growable: false);
-        _assetManifestCache = assetKeys;
-        return assetKeys;
+        if (assetKeys.isNotEmpty) {
+          _assetManifestCache = assetKeys;
+          return assetKeys;
+        }
       }
     } catch (_) {
       // Return empty manifest when assets are unavailable in current build.
     }
-    _assetManifestCache = const <String>[];
-    return _assetManifestCache!;
+    // 실패 시: 캐시 없이 빈 배열 반환. 다음 호출 때 다시 시도.
+    return const <String>[];
   }
 
   @visibleForTesting

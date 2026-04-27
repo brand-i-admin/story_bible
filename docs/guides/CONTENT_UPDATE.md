@@ -30,6 +30,7 @@
 
 > ⚠️ **사전 조건 (중요)**: `build-character-meta`는 **로컬 `assets/200_stories/*.json`에 있는 것만 스캔한다**. 만약 운영자 머신에 일부 이야기 JSON만 있는 상태(예: 새로 받은 `1.json` 한 개뿐)에서 빌드·apply하면 **그 seed에 포함된 기존 DB 인물의 `description`이 부분 정보로 덮어써질 수 있다** (description UPSERT는 `coalesce(excluded.description, persons.description)` 방식이라 excluded가 항상 non-null ⇒ 무조건 덮어씀). 기존 DB에 있던 "대표 이야기" 문구가 신규 이야기 제목으로 바뀌는 식.
 >
+
 > 따라서 **빌드 전에 반드시 로컬 `assets/200_stories/`가 DB와 동기화된 상태**여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json`(DB의 published events를 JSON으로 역추출)으로 먼저 복원한다. 상세 절차는 아래 §2.1b **[0] 단계**. `is_active` / 기존 events / seed에 없는 인물은 영향받지 않지만, seed에 등장하는 기존 인물의 description은 덮어써진다.
 
 ## 1. 단계별 흐름 (관리자 등록 표준 경로)

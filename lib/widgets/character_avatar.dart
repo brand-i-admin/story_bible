@@ -26,7 +26,11 @@ class CharacterAvatar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final assetPath = character.avatarAssetPath.trim();
+    // 로컬 번들 아바타가 실제로 있는 캐릭터만 assetPath 를 1차로 시도.
+    // 그렇지 않으면(승인은 됐으나 아직 번들 sync 전인 신규 캐릭터) storage 가
+    // 1차 경로 — placeholder PNG 가 errorBuilder 를 못 트리거하던 버그 방지.
+    final hasLocal = character.hasLocalAvatar;
+    final assetPath = hasLocal ? character.avatarAssetPath.trim() : '';
     final storagePath = character.avatarStoragePath?.trim();
     final fallbackText = character.name.trim().isEmpty
         ? '?'
@@ -83,6 +87,9 @@ class CharacterAvatar extends ConsumerWidget {
     }
 
     // Case 2: 로컬 경로가 있으면 그걸 1차로 시도, 실패 시 네트워크 → 실패 시 이니셜.
+    // 로컬 thumb 은 canonical 비율(인물 머리가 상단 1/3) 이므로 _squareAvatar
+    // 의 height=size*2 위쪽 자르기를 적용한다. 네트워크 fallback 은 proposal
+    // 원본 비율이라 단순 정사각 cover.
     if (assetPath.isNotEmpty) {
       return _squareAvatar(
         child: Image.asset(
@@ -91,30 +98,47 @@ class CharacterAvatar extends ConsumerWidget {
           alignment: Alignment.topCenter,
           errorBuilder: (_, _, _) {
             if (storageUrl == null) return fallback;
-            return Image.network(
-              storageUrl,
-              fit: BoxFit.cover,
-              alignment: Alignment.topCenter,
-              errorBuilder: (_, _, _) => fallback,
-            );
+            return _zoomedNetworkAvatar(storageUrl, fallback);
           },
         ),
       );
     }
 
     // Case 3: 로컬 경로 비어있고 storage 만 있음 (승인은 됐지만 아직 로컬 sync 전).
+    //
+    // proposal 원본 PNG 는 Imagen 4.0 1024×1024, 인물이 화면 정중앙에 그려진다.
+    // 그대로 cover 만 쓰면 머리부터 발끝까지 전부 보여 canonical thumb(상체
+    // 위주) 과 시각 비율이 맞지 않는다. → topCenter 기준 1.5× 확대해 상반신
+    // 위주로 자른다. 부모 ClipOval 이 자연스럽게 외곽을 클립한다.
     if (storageUrl != null) {
-      return _squareAvatar(
-        child: Image.network(
-          storageUrl,
-          fit: BoxFit.cover,
-          alignment: Alignment.topCenter,
-          errorBuilder: (_, _, _) => fallback,
-        ),
-      );
+      return _zoomedNetworkAvatar(storageUrl, fallback);
     }
 
     return fallback;
+  }
+
+  Widget _zoomedNetworkAvatar(String url, Widget fallback) {
+    return ColoredBox(
+      color: Colors.white,
+      child: Transform.scale(
+        scale: 1.5,
+        alignment: Alignment.topCenter,
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          errorBuilder: (_, error, _) {
+            debugPrint(
+              '[avatar] storage Image.network failed url=$url error=$error',
+            );
+            return fallback;
+          },
+          loadingBuilder: (_, child, progress) {
+            if (progress == null) return child;
+            return const ColoredBox(color: Color(0xFFE7D2B2));
+          },
+        ),
+      ),
+    );
   }
 
   /// characters 버킷 또는 proposal-characters 버킷에서 public URL 생성.

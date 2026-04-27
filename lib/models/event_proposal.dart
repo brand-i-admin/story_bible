@@ -40,6 +40,8 @@ class EventProposal {
     required this.approvedEventId,
     required this.createdAt,
     required this.updatedAt,
+    this.positionInvalidatedAt,
+    this.positionInvalidationReason,
   });
 
   final String id;
@@ -93,12 +95,23 @@ class EventProposal {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// 다른 제안이 같은 era + same after_story_index 에 먼저 승인되어 이 제안의
+  /// 위치 의미가 모호해진 시점. null 이면 정상.
+  /// set 인 동안:
+  ///   - admin 의 approve/reject 가 RPC 단에서 거부됨 (UI 도 버튼 잠금)
+  ///   - 제안자가 `revise_proposal_position` RPC 로 새 위치/연도 제출 시 NULL 로 복구
+  final DateTime? positionInvalidatedAt;
+  final String? positionInvalidationReason;
+
   bool get isPending => status == 'pending';
   bool get isApproved => status == 'approved';
   bool get isRejected => status == 'rejected';
 
   bool get isNewProposal => proposalType == 'new';
   bool get isDeleteProposal => proposalType == 'delete';
+
+  /// "위치 재선택 필요" 상태인지. UI 가 빨간 라벨/배너를 띄울 때 쓴다.
+  bool get needsPositionRevision => positionInvalidatedAt != null;
 
   factory EventProposal.fromMap(Map<String, dynamic> row) {
     return EventProposal(
@@ -131,6 +144,9 @@ class EventProposal {
       approvedEventId: row['approved_event_id'] as String?,
       createdAt: _parseDate(row['created_at']) ?? DateTime.now(),
       updatedAt: _parseDate(row['updated_at']) ?? DateTime.now(),
+      positionInvalidatedAt: _parseDate(row['position_invalidated_at']),
+      positionInvalidationReason:
+          row['position_invalidation_reason'] as String?,
     );
   }
 
@@ -216,18 +232,28 @@ class ProposedCharacter {
     required this.name,
     required this.prompt,
     required this.storagePath,
+    this.description,
   });
 
   final String code;
   final String name;
+
+  /// AI 생성에 사용된 영문 prompt (COMMON_STYLE + 사용자 입력 영문 번역).
+  /// 내부 디버깅/감사 목적, 사용자에게 노출되지 않는다.
   final String prompt;
   final String storagePath;
+
+  /// 사용자가 본인 이야기 카드 등에서 보게 될 **공개용 한글 설명**.
+  /// approve 시 `characters.description` 에 들어간다.
+  /// null/빈 문자열이면 RPC 가 fallback 으로 prompt 를 쓰지만, 가급적 채울 것.
+  final String? description;
 
   Map<String, dynamic> toMap() => {
     'code': code,
     'name': name,
     'prompt': prompt,
     'storage_path': storagePath,
+    if (description != null) 'description': description,
   };
 
   factory ProposedCharacter.fromMap(Map<String, dynamic> m) {
@@ -236,6 +262,7 @@ class ProposedCharacter {
       name: (m['name'] as String?) ?? '',
       prompt: (m['prompt'] as String?) ?? '',
       storagePath: (m['storage_path'] as String?) ?? '',
+      description: m['description'] as String?,
     );
   }
 }

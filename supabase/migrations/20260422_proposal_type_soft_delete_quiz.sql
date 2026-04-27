@@ -209,8 +209,8 @@ declare
   v_explanation text;
   v_question text;
 begin
-  if not public.is_pastor() then
-    raise exception 'permission denied: pastor role required';
+  if not (public.is_pastor() or public.is_admin()) then
+    raise exception 'permission denied: pastor or admin role required';
   end if;
   if coalesce(trim(p_title), '') = '' then
     raise exception 'title is required';
@@ -312,8 +312,8 @@ declare
   v_era_id uuid;
   v_title text;
 begin
-  if not public.is_pastor() then
-    raise exception 'permission denied: pastor role required';
+  if not (public.is_pastor() or public.is_admin()) then
+    raise exception 'permission denied: pastor or admin role required';
   end if;
   if p_target_event_id is null then
     raise exception 'target_event_id is required';

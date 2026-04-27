@@ -384,9 +384,16 @@ def parse_cv(raw: str) -> tuple[int, int]:
 
 
 def parse_event_number_and_title(raw_title: str) -> tuple[int, str]:
+    """제목 앞 3자리 번호가 있으면 분리, 없으면 (0, 원본 title) 반환.
+
+    히스토리: 예전엔 모든 제목이 "001 창조: 7일과 안식" 형태였으나, JSON 에서
+    번호를 빼는 변경으로 이제 "창조: 7일과 안식" 만 남는다. 이 함수는 (a) 번호
+    없는 새 포맷도 받아들이고, (b) caller 가 number 가 필요하면 row.story_index
+    로부터 받도록 권장하기 위한 호환 래퍼다.
+    """
     match = EVENT_NO_RE.match(raw_title.strip())
     if match is None:
-        raise ValueError(f"Title does not start with 3-digit index: {raw_title!r}")
+        return 0, raw_title.strip()
     return int(match.group(1)), match.group(2).strip()
 
 
@@ -513,7 +520,14 @@ def parse_story_rows(input_dir: Path) -> list[dict[str, Any]]:
             if not isinstance(item, dict):
                 raise ValueError(f"Story row is not object in {path}: {item!r}")
             rows.append(item)
-    rows.sort(key=lambda row: parse_event_number_and_title(str(row["title"]))[0])
+    # 번호 없는 새 JSON 포맷에서는 title 앞 3자리가 없어 parse_* 가 0 을 반환 →
+    # 정렬이 무의미. story_index 로 안정 정렬한다.
+    rows.sort(
+        key=lambda row: (
+            int(row["story_index"]) if isinstance(row.get("story_index"), int) else 0,
+            str(row.get("title", "")),
+        )
+    )
     return rows
 
 
@@ -525,7 +539,15 @@ def normalize_events(
     character_codes: set[str] = set()
 
     for row in rows:
-        number, clean_title = parse_event_number_and_title(str(row["title"]))
+        # JSON 의 새 포맷은 title 에 번호가 없으므로 number 는 story_index 에서 가져온다.
+        # parse_event_number_and_title 는 번호가 있으면 분리하고 없으면 (0, title) 반환 →
+        # 양쪽 모두 호환되도록 story_index 를 우선 신뢰한다.
+        _, clean_title = parse_event_number_and_title(str(row["title"]))
+        story_index_for_number = row.get("story_index")
+        if isinstance(story_index_for_number, int):
+            number = story_index_for_number
+        else:
+            number = _
         raw_persons = [
             str(code).strip() for code in row.get("characters", []) if str(code).strip()
         ]
@@ -736,8 +758,18 @@ def build_seed_sql(
     )
     lines.append("begin;")
     lines.append("")
+    # 시드 INSERT 가 notify_on_new_event 트리거를 깨워 broadcast_notifications 에
+    # 215개 알림을 만드는 부작용 방지. 시드 적용 동안만 비활성화 후 복구.
+    # set_config 의 두번째 인자 true → tx-local. 운영 트래픽엔 영향 없음.
+    lines.append(
+        "-- 시드 INSERT 가 알림 트리거(broadcast)를 깨우는 것 방지. tx 종료 후 자동 복구."
+    )
+    lines.append("alter table events disable trigger trg_notify_on_new_event;")
+    lines.append("")
     lines.append("-- Upsert events from 200 stories")
     lines.extend(render_events_sql(events, events_chunk_size))
+    lines.append("")
+    lines.append("alter table events enable trigger trg_notify_on_new_event;")
     lines.append("commit;")
     lines.append("")
     return "\n".join(lines)

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/character.dart';
+import '../state/story_controller.dart';
 import 'game_ui_skin.dart';
 
 enum CharacterSortMode { alphabetical, eraOrder }
 
-class CharacterPanel extends StatelessWidget {
+class CharacterPanel extends ConsumerWidget {
   const CharacterPanel({
     super.key,
     required this.characters,
@@ -24,7 +27,7 @@ class CharacterPanel extends StatelessWidget {
   final ValueChanged<CharacterSortMode> onSortModeChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final sortedCharacters = [...characters]
       ..sort((a, b) {
         if (sortMode == CharacterSortMode.eraOrder) {
@@ -190,23 +193,11 @@ class CharacterPanel extends StatelessWidget {
                                     ],
                                   ),
                                   child: ClipOval(
-                                    child:
-                                        character.avatarAssetPath
-                                            .trim()
-                                            .isNotEmpty
-                                        ? Image.asset(
-                                            character.avatarAssetPath,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) =>
-                                                _AvatarFallback(
-                                                  name: character.name,
-                                                  selected: selected,
-                                                ),
-                                          )
-                                        : _AvatarFallback(
-                                            name: character.name,
-                                            selected: selected,
-                                          ),
+                                    child: _PanelAvatarImage(
+                                      character: character,
+                                      selected: selected,
+                                      ref: ref,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -263,6 +254,79 @@ class CharacterPanel extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// 좌측 인물 패널의 42×42 아바타. CharacterAvatar 와 거의 같지만 선택 여부에
+/// 따른 fallback 색(D58E2D vs E3CDAA) 을 유지하기 위해 별도 위젯으로 둔다.
+///
+/// 1순위 로컬 번들 → 2순위 Supabase Storage → 3순위 이니셜.
+class _PanelAvatarImage extends StatelessWidget {
+  const _PanelAvatarImage({
+    required this.character,
+    required this.selected,
+    required this.ref,
+  });
+
+  final Character character;
+  final bool selected;
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasLocal = character.hasLocalAvatar;
+    final assetPath = hasLocal ? character.avatarAssetPath.trim() : '';
+    final storagePath = character.avatarStoragePath?.trim();
+    final fallback = _AvatarFallback(name: character.name, selected: selected);
+
+    String? storageUrl;
+    if (storagePath != null && storagePath.isNotEmpty) {
+      try {
+        final client = ref.read(supabaseClientProvider);
+        final slash = storagePath.indexOf('/');
+        if (slash < 0) {
+          storageUrl = client.storage
+              .from('characters')
+              .getPublicUrl(storagePath);
+        } else {
+          storageUrl = client.storage
+              .from(storagePath.substring(0, slash))
+              .getPublicUrl(storagePath.substring(slash + 1));
+        }
+      } catch (_) {
+        storageUrl = null;
+      }
+    }
+
+    if (assetPath.isNotEmpty) {
+      return Image.asset(
+        assetPath,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) {
+          if (storageUrl == null) return fallback;
+          return _network(storageUrl, fallback);
+        },
+      );
+    }
+    if (storageUrl != null) {
+      return _network(storageUrl, fallback);
+    }
+    return fallback;
+  }
+
+  Widget _network(String url, Widget fallback) {
+    // Imagen 1024×1024 정중앙 → 상반신 위주로 1.5× 확대 (canonical thumb 와 톤 맞춤).
+    return Transform.scale(
+      scale: 1.5,
+      alignment: Alignment.topCenter,
+      child: Image.network(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => fallback,
+        loadingBuilder: (_, w, p) =>
+            p == null ? w : const ColoredBox(color: Color(0xFFE7D2B2)),
       ),
     );
   }

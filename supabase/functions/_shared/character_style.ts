@@ -83,13 +83,28 @@ export function composeCharacterPrompt(userPrompt: string): string {
     // 규칙은 common_style 에 여전히 포함되어 있음.
     return description.replace("COMMON_STYLE", CHARACTER_COMMON_STYLE).trim();
   }
-  // user 가 구체적 설명을 줬을 때: 명시적 섹션으로 분리해 희석 방지.
+  // user 가 구체적 설명을 줬을 때:
+  //
+  // (a) 사용자 설명을 prompt 의 **최우선** 위치(맨 앞)에 둔다 — Imagen 은
+  //     prompt 의 첫 토큰들을 가장 강하게 반영.
+  // (b) common_style 은 그림체 고정 용도로 **보조**. 사용자 설명을 덮지 않는다.
+  // (c) 동일 설명을 prompt 끝에서 한 번 더 반복 + props/clothing 명시적 강조 —
+  //     Imagen 은 마지막 instruction 도 강하게 반영해 양 끝에 배치해 희석 방지.
+  // (d) 호출 측에서 이미 한국어→영어 번역(translate.ts)이 적용된 description 이
+  //     들어온다고 가정. 한국어가 들어와도 작동은 하지만 영어가 훨씬 정확.
   return (
-    `${CHARACTER_COMMON_STYLE}. ` +
-    `Subject description (you MUST follow every detail): ${description}. ` +
+    `Subject: ${description}. ` +
+    `Style: ${CHARACTER_COMMON_STYLE}. ` +
+    `MANDATORY VISUAL ELEMENTS — every concrete object, garment, ` +
+    `accessory, prop, age cue, hair attribute, and physical feature ` +
+    `mentioned in the subject description below must be CLEARLY and ` +
+    `LITERALLY visible on the character: ${description}. ` +
+    `If the subject mentions an item the character holds (e.g., staff, ` +
+    `book, sword), the character MUST be holding that item. ` +
+    `If the subject mentions a worn accessory (e.g., glasses, hat, crown), ` +
+    `the character MUST wear that accessory. ` +
+    `Do not replace, omit, or invent details that contradict the subject. ` +
     `CRITICAL: draw EXACTLY ONE character, alone, solo in the frame. ` +
-    `Absolutely no additional people, companions, or background characters. ` +
-    `Every visual element described in the subject description above must be ` +
-    `clearly visible on this one single character.`
+    `Absolutely no additional people, companions, or background characters.`
   );
 }

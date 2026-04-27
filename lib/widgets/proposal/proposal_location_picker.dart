@@ -34,12 +34,16 @@ class ProposalLocationPicker extends StatefulWidget {
     required this.initialLng,
     required this.onChanged,
     this.referencePins = const [],
+    this.height = 300,
   });
 
   final double? initialLat;
   final double? initialLng;
   final void Function(double? lat, double? lng) onChanged;
   final List<ProposalReferencePin> referencePins;
+
+  /// 지도 영역의 픽셀 높이. 기본 300, Step3 좌우 분할 레이아웃에서는 더 크게.
+  final double height;
 
   @override
   State<ProposalLocationPicker> createState() => _ProposalLocationPickerState();
@@ -102,7 +106,7 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: SizedBox(
-            height: 300,
+            height: widget.height,
             child: Stack(
               children: [
                 FlutterMap(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,6 +52,10 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
   final _nameCtrl = TextEditingController();
   final _codeCtrl = TextEditingController();
   final _promptCtrl = TextEditingController();
+  // 사용자가 작성한 공개용 한글 설명 — 홈 화면 인물 카드의 우측 본문에 표시.
+  // AI 생성용 prompt(_promptCtrl) 와 분리한 이유: prompt 는 "지팡이를 든 ..." +
+  // COMMON_STYLE 영문 토큰이 섞여 사용자에게 보이기엔 부적합.
+  final _descCtrl = TextEditingController();
   bool _userEditedCode = false;
   bool _generating = false;
   String? _errorText;
@@ -68,6 +73,7 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
     _nameCtrl.dispose();
     _codeCtrl.dispose();
     _promptCtrl.dispose();
+    _descCtrl.dispose();
     super.dispose();
   }
 
@@ -109,7 +115,10 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
 
   bool get _canGenerate {
     if (_generating) return false;
-    if (_codeCtrl.text.trim().isEmpty) return false;
+    final code = _codeCtrl.text.trim();
+    if (code.isEmpty) return false;
+    // 서버 sanitize 와 동일 규칙 — 빈 결과로 떨어질 입력은 미리 차단.
+    if (!RegExp(r'^[a-z0-9_]+$').hasMatch(code)) return false;
     if (_promptCtrl.text.trim().isEmpty) return false;
     return true;
   }
@@ -149,6 +158,7 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
   void _onConfirm() {
     final result = _result;
     if (result == null) return;
+    final desc = _descCtrl.text.trim();
     Navigator.of(context).pop(
       ProposedCharacter(
         code: result.characterCode,
@@ -157,6 +167,7 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
             : _nameCtrl.text.trim(),
         prompt: result.prompt,
         storagePath: result.storagePath,
+        description: desc.isEmpty ? null : desc,
       ),
     );
   }
@@ -193,6 +204,10 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
               const SizedBox(height: 10),
               TextField(
                 controller: _codeCtrl,
+                inputFormatters: [
+                  // 영문 소문자/숫자/밑줄만 허용. 한글·대문자·공백·특수문자 차단.
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-z0-9_]')),
+                ],
                 decoration: const InputDecoration(
                   labelText: '영문 코드 (snake_case)',
                   hintText: '예: caleb_disciple',
@@ -209,9 +224,22 @@ class _NewCharacterDialogState extends ConsumerState<NewCharacterDialog> {
                 decoration: const InputDecoration(
                   labelText: '인물 설명 (AI 가 참고할 프롬프트)',
                   hintText: '예: 30대 남성, 어두운 곱슬머리, 거친 아마천 튜닉, 지팡이를 든 목자의 분위기',
+                  helperText: 'AI 이미지 생성용 — 사용자에게는 보이지 않아요.',
                 ),
                 enabled: !_generating,
                 onChanged: (_) => setState(() {}),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _descCtrl,
+                maxLines: 3,
+                minLines: 2,
+                decoration: const InputDecoration(
+                  labelText: '인물 한 줄 소개 (홈 화면 카드에 표시)',
+                  hintText: '예: 갈렙을 따라 가나안 정탐에 나선 젊은 제자.',
+                  helperText: '선택 — 비워두면 위 프롬프트가 대신 사용됩니다.',
+                ),
+                enabled: !_generating,
               ),
               const SizedBox(height: 14),
               _PreviewPanel(

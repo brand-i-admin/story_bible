@@ -25,6 +25,7 @@ import {
   IMAGEN_MODEL_CANDIDATES,
   composeCharacterPrompt,
 } from "../_shared/character_style.ts";
+import { translateForImagePrompt } from "../_shared/translate.ts";
 
 const BUCKET = "proposal-characters";
 
@@ -93,7 +94,7 @@ async function callImagen(
     parameters: {
       sampleCount: 1,
       aspectRatio: "1:1",
-      enhancePrompt: false,
+      enhancePrompt: true,
       personGeneration: "allow_adult",
       negativePrompt: CHARACTER_NEGATIVE_PROMPT,
       outputOptions: { mimeType: "image/png" },
@@ -206,14 +207,34 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  // Compose the full Imagen prompt.
-  const fullPrompt = composeCharacterPrompt(prompt);
-
-  // Mint GCP token and call Imagen.
-  let imageBytes: Uint8Array;
+  // 1) GCP token 발급 (Imagen + Gemini 둘 다 같은 토큰 사용)
+  let accessToken: string;
   try {
     const sa = JSON.parse(saJson);
-    const accessToken = await getGcpAccessToken(sa);
+    accessToken = await getGcpAccessToken(sa);
+  } catch (e) {
+    return err(
+      `gcp token failed: ${e instanceof Error ? e.message : String(e)}`,
+      500,
+    );
+  }
+
+  // 2) 사용자 한국어 prompt → 영어로 번역 (한국어 미포함 시 그대로).
+  //    Imagen 4/3 가 한국어 명사(지팡이/책/안경 등)를 자주 무시하는 문제를
+  //    해결하기 위해 영어 prompt 로 변환해 정확한 시각 요소 반영.
+  const englishDescription = await translateForImagePrompt(
+    prompt,
+    accessToken,
+    project,
+    location,
+  );
+
+  // 3) common style + description (영어) 합쳐 최종 Imagen prompt 구성.
+  const fullPrompt = composeCharacterPrompt(englishDescription);
+
+  // 4) Imagen 호출.
+  let imageBytes: Uint8Array;
+  try {
     imageBytes = await callImagen(accessToken, project, location, fullPrompt);
   } catch (e) {
     return err(
