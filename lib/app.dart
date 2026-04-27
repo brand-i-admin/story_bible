@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'screens/story_home_screen.dart';
+import 'theme/app_theme.dart';
 
 class StoryBibleApp extends ConsumerWidget {
   const StoryBibleApp({super.key});
@@ -12,11 +13,7 @@ class StoryBibleApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Story Bible',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8B5A2B)),
-        scaffoldBackgroundColor: const Color(0xFFEEE0C6),
-      ),
+      theme: AppTheme.light(),
       home: const StoryHomeScreen(),
     );
   }

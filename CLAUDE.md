@@ -90,6 +90,20 @@ dart format .                # 코드 포맷
 - **모델**: 순수 데이터 클래스, `fromMap()` 팩토리 패턴
 - **에러**: try-catch + `state.copyWith(error: ...)` 패턴
 
+## 디자인 시스템 규칙 (중요)
+
+`lib/theme/`가 시각 토큰의 **단일 진실 소스**다. Claude Design 핸드오프 번들의 `colors_and_type.css`에서 도출됨.
+
+- 색상은 `AppColors` (`lib/theme/tokens.dart`)만 사용. 위젯/화면에 `Color(0x...)`를 직접 쓰지 말 것.
+- 라운딩은 `AppRadii`, 간격은 `AppSpacing`, 그림자는 `AppShadows`.
+- 폰트 사이즈/라인 높이는 `AppFontSizes`, `AppLineHeights`.
+- 시맨틱 텍스트는 `AppTextStyles` (`lib/theme/typography.dart`) — h1/body/buttonLabel 등.
+- 모달·다이얼로그·플로팅 패널·카드 표면은 `AppSurfaces` (`lib/theme/surfaces.dart`) 팩토리.
+- 인물 색상은 `AppColors.characterAt(index)` (i % 8 순환).
+- 새 hex/패딩/라운딩이 필요하면 먼저 토큰을 추가한 뒤 그 토큰을 참조한다.
+
+예외: 기존 `widgets/story_home_styles.dart`, `widgets/game_ui_skin.dart`에는 시그니처 데코(스크롤 모달, 양피지 패널 등)에 한해 일부 인라인 hex가 남아있을 수 있다. 신규 코드는 토큰만 사용한다.
+
 ## TDD 규칙
 
 **TDD는 "새 기능 개발 방법"이 아니라 "모든 코드 변경의 순서 원칙"이다.** 요청이 들어오면

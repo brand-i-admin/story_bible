@@ -8,7 +8,12 @@
 ```
 lib/
 ├── main.dart                          # 엔트리포인트
-├── app.dart                           # MaterialApp + 테마
+├── app.dart                           # MaterialApp + 테마 (AppTheme.light)
+├── theme/                             # 디자인 시스템 단일 진실 소스
+│   ├── tokens.dart                    # AppColors / AppRadii / AppSpacing / AppShadows / AppFontSizes
+│   ├── typography.dart                # AppTextStyles (sb-h1/h2/h3/body/...)
+│   ├── surfaces.dart                  # AppSurfaces (modal/dialog/floating/card)
+│   └── app_theme.dart                 # ThemeData 빌더
 ├── models/                            # 데이터 모델 (14개)
 ├── state/                             # Riverpod 상태 관리 (3개)
 ├── screens/                           # 전체 화면 (6개)

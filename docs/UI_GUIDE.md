@@ -11,22 +11,32 @@
 
 ## 2. 컬러 팔레트
 
+> **단일 진실 소스**: `lib/theme/tokens.dart` (`AppColors` / `AppRadii` / `AppSpacing` / `AppShadows`).
+> 위젯/화면에서 `Color(0x...)`를 직접 쓰지 말고 토큰만 참조한다. 출처: Claude Design 핸드오프 번들 `colors_and_type.css`.
+
 ### 2.1 기본 테마
 
 ```dart
 // app.dart
-ColorScheme.fromSeed(seedColor: Color(0xFF8B5A2B))  // 브라운 시드
-scaffoldBackgroundColor: Color(0xFFEEE0C6)            // 양피지 배경
+import 'theme/app_theme.dart';
+
+MaterialApp(theme: AppTheme.light(), ...)
+// 내부적으로 ColorScheme.fromSeed(seedColor: AppColors.seed)
+//        + scaffoldBackgroundColor: AppColors.parchmentBg
 ```
 
-| 용도 | 색상 | 코드 |
+| 용도 | 토큰 | 코드 |
 |------|------|------|
-| 배경 (양피지) | 연한 베이지 | `#EEE0C6` |
-| 주 액센트 (브라운) | 따뜻한 갈색 | `#8B5A2B` |
-| 골드 액션 버튼 | 골드 | `#D4A439` |
-| 텍스트 (본문) | 다크 브라운 | `#3E2723` |
+| 배경 (양피지) | `AppColors.parchmentBg` | `#EEE0C6` |
+| 주 액센트 (브라운 시드) | `AppColors.seed` | `#8B5A2B` |
+| 골드 액션 | `AppColors.gold` | `#D4A439` |
+| 텍스트 본문 | `AppColors.ink700` | `#3E2723` |
+| 카드 표면 | `AppColors.parchmentCard` | `#F7EBD8` |
+| 완료 그린 | `AppColors.greenTop` / `greenBot` | `#48A86B` / `#2D7B4D` |
 
 ### 2.2 인물 색상 팔레트 (8색 고정)
+
+> 코드: `AppColors.characterAt(index)` — `i % 8` 자동 순환.
 
 복수 인물 선택 시 각 인물에 순서대로 할당:
 
@@ -96,6 +106,20 @@ scaffoldBackgroundColor: Color(0xFFEEE0C6)            // 양피지 배경
 - 보더: 골드/브라운 테두리
 - 그림자: 부드러운 드롭섀도
 - 버튼: 골드 액션, 브라운 보조
+
+### 4.3 디자인 시스템 모듈 (`lib/theme/`)
+
+| 파일 | 책임 |
+|------|------|
+| `tokens.dart` | `AppColors` · `AppRadii` · `AppSpacing` · `AppShadows` · `AppFontSizes` · `AppLineHeights` |
+| `typography.dart` | `AppTextStyles` — `.sb-h1/h2/h3/body/subtitle/chip/buttonLabel/hint/counter` |
+| `surfaces.dart` | `AppSurfaces.modal/dialog/floating/card` BoxDecoration 팩토리 |
+| `app_theme.dart` | `AppTheme.light()` 전역 ThemeData |
+
+**규칙**:
+- 신규 위젯은 토큰만 사용. `Color(0x...)`, 임의 패딩, 임의 라운딩 금지.
+- 모달·다이얼로그·카드 등 표면은 `AppSurfaces` 팩토리부터 검토.
+- 새 값이 정말 필요하면 토큰에 추가한 뒤 참조한다.
 
 ## 5. 인터랙션 패턴
 
