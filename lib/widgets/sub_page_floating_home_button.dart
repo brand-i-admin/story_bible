@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/tokens.dart';
+
 /// 서브 페이지 상단/모서리에 떠있는 홈 이동 버튼.
 ///
 /// [SubPageScaffold]의 compactBackOnly 모드에서 사용한다.
@@ -22,7 +24,7 @@ class SubPageFloatingHomeButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xD06A401E),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFF0C36B), width: 1.4),
+            border: Border.all(color: AppColors.goldRim, width: 1.4),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),
@@ -34,7 +36,7 @@ class SubPageFloatingHomeButton extends StatelessWidget {
           child: const Icon(
             Icons.chevron_left_rounded,
             size: 28,
-            color: Color(0xFFF8EED9),
+            color: AppColors.fgOnDark,
           ),
         ),
       ),

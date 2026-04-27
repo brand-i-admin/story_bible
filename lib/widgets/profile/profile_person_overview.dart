@@ -1,3 +1,4 @@
+
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 인물별 학습 진행도 다이얼로그.
@@ -130,7 +131,7 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          color: Color(0xFF4D381F),
+                                          color: AppColors.ink450,
                                           fontSize: 13,
                                           height: 1.48,
                                           fontWeight: FontWeight.w700,
@@ -146,7 +147,7 @@ extension ProfilePersonOverviewExt on ProfileTabPageState {
                             const Text(
                               '사건 목록',
                               style: TextStyle(
-                                color: Color(0xFF4D381F),
+                                color: AppColors.ink450,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w900,
                               ),

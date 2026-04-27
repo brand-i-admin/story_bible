@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/era.dart';
 import '../models/person.dart';
 import '../models/story_event.dart';
+import '../theme/tokens.dart';
 import 'person_panel.dart';
 
 // 패널 외곽/단계 UI/카드를 별도 파트 파일로 분리하여 가독성과 작업 단위를 유지.

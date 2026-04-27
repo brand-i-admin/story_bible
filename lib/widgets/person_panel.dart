@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/person.dart';
+import '../theme/tokens.dart';
 import 'game_ui_skin.dart';
 
 enum PersonSortMode { alphabetical, eraOrder }
@@ -88,11 +89,11 @@ class PersonPanel extends StatelessWidget {
                                 iconSize: 12,
                                 dropdownColor: const Color(0xFF4E3A26),
                                 borderRadius: BorderRadius.circular(10),
-                                iconEnabledColor: const Color(0xFFFDF8EE),
+                                iconEnabledColor: AppColors.parchmentCream,
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFFFDF8EE),
+                                  color: AppColors.parchmentCream,
                                   shadows: [
                                     Shadow(
                                       color: Color(0xAA000000),
@@ -218,7 +219,7 @@ class PersonPanel extends StatelessWidget {
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w800,
                                           fontSize: 14,
-                                          color: Color(0xFFFDF8EE),
+                                          color: AppColors.parchmentCream,
                                           shadows: [
                                             Shadow(
                                               color: Color(0x99000000),
@@ -279,7 +280,7 @@ class _AvatarFallback extends StatelessWidget {
       child: Text(
         initial,
         style: const TextStyle(
-          color: Color(0xFFFDF8EE),
+          color: AppColors.parchmentCream,
           fontWeight: FontWeight.w800,
           shadows: [
             Shadow(

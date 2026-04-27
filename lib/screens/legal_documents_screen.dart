@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/tokens.dart';
+
 class LegalDocumentsScreen extends StatelessWidget {
   const LegalDocumentsScreen({super.key});
 
@@ -200,7 +202,7 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                                       Text(
                                         section.title,
                                         style: const TextStyle(
-                                          color: Color(0xFF4A331D),
+                                          color: AppColors.ink500,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w900,
                                         ),
@@ -214,7 +216,7 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                                           child: Text(
                                             paragraph,
                                             style: const TextStyle(
-                                              color: Color(0xFF5E4528),
+                                              color: AppColors.ink350,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w700,
                                               height: 1.6,
@@ -287,7 +289,7 @@ class _LegalDocCard extends StatelessWidget {
                     colors: [Color(0xFFDFA85A), Color(0xFF7EA45B)],
                   ),
                 ),
-                child: Icon(icon, color: const Color(0xFFFDF8EE), size: 24),
+                child: Icon(icon, color: AppColors.parchmentCream, size: 24),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -316,7 +318,7 @@ class _LegalDocCard extends StatelessWidget {
                     Text(
                       filePath,
                       style: const TextStyle(
-                        color: Color(0xFF9B805D),
+                        color: AppColors.ink150,
                         fontSize: 11.2,
                         fontWeight: FontWeight.w800,
                       ),
@@ -427,7 +429,7 @@ class _CompactBackButton extends StatelessWidget {
           ),
           child: const Icon(
             Icons.chevron_left_rounded,
-            color: Color(0xFFFDF8EE),
+            color: AppColors.parchmentCream,
             size: 26,
           ),
         ),

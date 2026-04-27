@@ -1,3 +1,4 @@
+
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 중보기도(intercessory prayer) 카드 빌더 모음.
@@ -89,7 +90,7 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
                         ),
                         child: Icon(
                           Icons.add_rounded,
-                          color: const Color(0xFFFDF8EE),
+                          color: AppColors.parchmentCream,
                           size: iconSize,
                         ),
                       ),
@@ -162,7 +163,7 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
                       item.shareId,
                       maxLines: 1,
                       style: const TextStyle(
-                        color: Color(0xFF8A6A46),
+                        color: AppColors.ink200,
                         fontSize: 10.4,
                         fontWeight: FontWeight.w800,
                       ),
@@ -220,11 +221,11 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
                     end: Alignment.bottomRight,
                     colors: [Color(0xFFD7CCB9), Color(0xFFB6A38A)],
                   ),
-            border: Border.all(color: const Color(0xFFF2D8A6), width: 1.1),
+            border: Border.all(color: AppColors.goldHi, width: 1.1),
           ),
           child: const Icon(
             Icons.add_rounded,
-            color: Color(0xFFFDF8EE),
+            color: AppColors.parchmentCream,
             size: 21,
           ),
         ),

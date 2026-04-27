@@ -1,3 +1,4 @@
+
 // 부모 라이브러리: lib/widgets/story_selection_panel.dart
 //
 // 단계 칩, 요약 필, 분절 토글, 주요 액션 버튼, 빈 단계 메시지 등
@@ -65,7 +66,7 @@ class _StepChip extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     height: 1.0,
                     color: selected
-                        ? const Color(0xFFFDF8EE)
+                        ? AppColors.parchmentCream
                         : const Color(0xFF6A4A31),
                   ),
                 ),
@@ -123,7 +124,7 @@ class _StepSummaryPill extends StatelessWidget {
         style: TextStyle(
           fontSize: 7.8,
           fontWeight: FontWeight.w700,
-          color: selected ? const Color(0xFFFDF8EE) : const Color(0xFF6A4A31),
+          color: selected ? AppColors.parchmentCream : const Color(0xFF6A4A31),
           height: 0.95,
         ),
       ),
@@ -224,7 +225,7 @@ class _CompactSegmentedToggleButton extends StatelessWidget {
                 fontSize: 13.6,
                 fontWeight: FontWeight.w800,
                 color: selected
-                    ? const Color(0xFFFDF8EE)
+                    ? AppColors.parchmentCream
                     : const Color(0xFF654A31),
               ),
             ),
@@ -315,7 +316,7 @@ class _PrimaryActionButton extends StatelessWidget {
             style: TextStyle(
               fontSize: compact ? 13.6 : 14.4,
               fontWeight: FontWeight.w800,
-              color: const Color(0xFFFDF8EE),
+              color: AppColors.parchmentCream,
             ),
           ),
         ),

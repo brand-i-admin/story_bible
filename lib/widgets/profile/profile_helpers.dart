@@ -1,3 +1,4 @@
+
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 작은 재사용 헬퍼 위젯 모음:
@@ -35,7 +36,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                     child: Text(
                       initials,
                       style: TextStyle(
-                        color: const Color(0xFF4A331D),
+                        color: AppColors.ink500,
                         fontSize: size * 0.34,
                         fontWeight: FontWeight.w900,
                       ),
@@ -47,7 +48,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                 child: Text(
                   initials,
                   style: TextStyle(
-                    color: const Color(0xFF4A331D),
+                    color: AppColors.ink500,
                     fontSize: size * 0.34,
                     fontWeight: FontWeight.w900,
                   ),
@@ -106,8 +107,8 @@ extension ProfileHelpersExt on ProfileTabPageState {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: selected
-                  ? const Color(0xFFFDF8EE)
-                  : const Color(0xFF4A331D),
+                  ? AppColors.parchmentCream
+                  : AppColors.ink500,
               fontSize: 13.2,
               fontWeight: FontWeight.w900,
             ),
@@ -214,7 +215,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: const Color(0xFF4A331D),
+                                      color: AppColors.ink500,
                                       fontWeight: FontWeight.w800,
                                       fontSize: compact ? 10.2 : 11.8,
                                     ),
@@ -232,7 +233,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
-                                        color: Color(0xFF4A331D),
+                                        color: AppColors.ink500,
                                         fontWeight: FontWeight.w800,
                                         fontSize: 12.6,
                                       ),

@@ -13,6 +13,7 @@ import '../models/story_event.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/tokens.dart';
 import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/event_detail_page.dart';
@@ -834,7 +835,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               final selectionButtonBorder = selectionButtonIsOpen
                   ? const Color(0xFFD4E8BC)
                   : const Color(0xFFF1C98A);
-              const selectionButtonForeground = Color(0xFFF8EED9);
+              const selectionButtonForeground = AppColors.fgOnDark;
               final selectionButtonShadow = [
                 BoxShadow(
                   color: selectionButtonIsOpen

@@ -1,3 +1,4 @@
+
 // 부모 라이브러리: lib/widgets/story_selection_panel.dart
 //
 // 시대/인물/이야기 선택 카드와 카드 셸, 인덱스 배지, 인물 도트, 초상 아바타
@@ -113,7 +114,7 @@ class _EraCompactCard extends StatelessWidget {
                       fontSize: 13.8,
                       fontWeight: FontWeight.w800,
                       color: selected
-                          ? const Color(0xFFFDF8EE)
+                          ? AppColors.parchmentCream
                           : const Color(0xFF5C3A20),
                     ),
                   ),
@@ -196,7 +197,7 @@ class _PersonCompactCard extends StatelessWidget {
                           fontSize: 13.8,
                           fontWeight: FontWeight.w800,
                           color: selected
-                              ? const Color(0xFFFDF8EE)
+                              ? AppColors.parchmentCream
                               : const Color(0xFF5C3A20),
                         ),
                       ),
@@ -289,7 +290,7 @@ class _StoryCompactCard extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     height: 1.12,
                     color: selected
-                        ? const Color(0xFFFDF8EE)
+                        ? AppColors.parchmentCream
                         : isCompleted
                         ? const Color(0xFF2F5D3B)
                         : const Color(0xFF5C3A20),
