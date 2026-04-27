@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/story_selection_panel.dart
 //
 // 단계 칩, 요약 필, 분절 토글, 주요 액션 버튼, 빈 단계 메시지 등

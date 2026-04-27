@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 인물별 학습 진행도 다이얼로그.

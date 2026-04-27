@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/weekly_tab_page.dart
 //
 // 주간 이벤트 리스트 패널 + 인라인 퀴즈 버튼 + 인물 타이틀 배지.

@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 중보기도(intercessory prayer) 카드 빌더 모음.

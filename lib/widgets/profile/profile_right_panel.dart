@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 프로필 우측 패널 (인물 진행도 + 구약/신약 토글 + 공유 ID).

@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/story_selection_panel.dart
 //
 // 시대/인물/이야기 선택 카드와 카드 셸, 인덱스 배지, 인물 도트, 초상 아바타

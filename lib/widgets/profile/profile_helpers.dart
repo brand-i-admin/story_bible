@@ -1,4 +1,3 @@
-
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
 // 작은 재사용 헬퍼 위젯 모음:
@@ -106,9 +105,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: selected
-                  ? AppColors.parchmentCream
-                  : AppColors.ink500,
+              color: selected ? AppColors.parchmentCream : AppColors.ink500,
               fontSize: 13.2,
               fontWeight: FontWeight.w900,
             ),
