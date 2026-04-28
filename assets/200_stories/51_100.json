@@ -1,11 +1,9 @@
 [
   {
-    "title": "051 이스라엘의 압제와 산파들",
+    "title": "이스라엘의 압제와 산파들",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "pharaoh",
-      "shiphrah",
-      "puah",
       "israelites"
     ],
     "place_name": "애굽(고센 일대, 전승)",
@@ -22,13 +20,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "벽돌 굽는 현장, 감독의 고함과 지친 얼굴들",
       "바로의 명령이 내려온다, 남자 아기는 죽여라",
       "산파들이 서로를 바라본다, 떨리지만 고개를 끄덕인다",
       "아기가 숨 쉬는 소리, 산파들이 조용히 아이를 품고 숨긴다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "pharaoh"
@@ -38,9 +37,9 @@
     ]
   },
   {
-    "title": "052 모세의 탄생과 갈대상자",
+    "title": "모세의 탄생과 갈대상자",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "moses_mother",
       "miriam",
@@ -60,13 +59,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "어머니가 아기를 꼭 안고 숨죽인다, 밖에서 발소리가 지나간다",
       "갈대상자에 역청을 바르고 조심히 물가에 띄운다",
       "아기의 누이가 멀리서 상자가 어떻게 되는지 지켜본다",
       "바로의 딸이 상자를 열고 아기를 안는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -74,9 +74,9 @@
     ]
   },
   {
-    "title": "053 모세의 분노와 미디안 도피",
+    "title": "모세의 분노와 미디안 도피",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "egyptian_taskmaster"
     ],
@@ -94,13 +94,14 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "모세가 노역 현장을 바라보다 주먹을 꽉 쥔다",
       "폭력이 터지고, 모세가 숨 가쁘게 멈춰 선다, 후회",
       "소문이 퍼지고 바로의 분노가 번진다, 모세가 급히 떠난다",
       "미디안 우물가, 모세가 낯선 사람들을 돕고 물을 길어준다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "moses"
       ],
@@ -116,9 +117,9 @@
     ]
   },
   {
-    "title": "054 불타는 떨기나무: 모세의 소명",
+    "title": "불타는 떨기나무: 모세의 소명",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "god"
     ],
@@ -141,13 +142,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "모세가 양을 몰다 불타는 떨기나무를 발견하고 멈춘다",
       "모세가 신을 벗고 떨며 선다",
       "하나님의 빛이 임한다",
       "모세가 망설이자 내가 너와 함께하리라가 울린다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "moses"
       ],
@@ -163,9 +165,9 @@
     ]
   },
   {
-    "title": "055 바로 앞 첫 대면: 짐이 더 무거워지다",
+    "title": "바로 앞 첫 대면: 짐이 더 무거워지다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "aaron",
       "pharaoh",
@@ -185,13 +187,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "모세와 아론이 바로 앞에 선다",
       "바로가 모세와 아론을 비웃는다",
       "벽돌 공장, 짚이 끊기고 사람들이 절망한다",
       "모세가 바로 앞에 지팡이를 던지자 뱀이 되고 궁정이 술렁인다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "moses",
         "aaron",
@@ -211,9 +214,9 @@
     ]
   },
   {
-    "title": "056 재앙의 시작: 물이 변하다",
+    "title": "재앙의 시작: 물이 변하다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "aaron",
       "pharaoh"
@@ -232,13 +235,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "세로 3등분 구도: 위에는 나일강 물이 피로 변해 사람들이 충격에 빠진 모습, 가운데에는 개구리가 집과 궁으로 몰려 올라오는 모습, 아래에는 이가 사람과 가축의 몸에 달라붙어 모두가 괴로워하는 모습",
       "세로 3등분 구도: 위에는 파리가 바로의 궁을 가득 메운 모습, 가운데에는 애굽의 가축들이 들판에서 떼죽음을 당해 사람들이 망연한 모습, 아래에는 악성 종기로 고통스러워하는 사람들이 몸을 움츠린 모습",
       "세로 3등분 구도: 위에는 우박이 애굽 전역에 쏟아지는 모습, 가운데에는 메뚜기가 땅을 뒤덮는 모습, 아래에는 흑암이 온 땅을 덮어 사람들이 더듬으며 서 있는 모습",
       "모세가 바로 앞에서 애굽의 초태생이 모두 죽게 될 것이라고 엄중히 경고한다, 궁정의 공기가 얼어붙는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -249,9 +253,9 @@
     ]
   },
   {
-    "title": "057 유월절: 피로 표시된 문",
+    "title": "유월절: 피로 표시된 문",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites"
     ],
@@ -269,13 +273,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "가족들이 급히 무교병을 준비한다, 집 안은 숨죽인 긴장",
       "모세의 지시가 전달된다, 이 밤은 여호와의 유월절이라",
       "문설주에 표식을 남긴다, 손의 떨림과 결심",
       "밤, 바깥의 공포와 안의 침묵이 대비된다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "moses"
@@ -285,9 +290,9 @@
     ]
   },
   {
-    "title": "058 출애굽의 밤: 떠나라는 명령",
+    "title": "출애굽의 밤: 떠나라는 명령",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "pharaoh",
       "israelites"
@@ -306,13 +311,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 8,
     "story_scenes": [
       "밤의 애굽, 집집마다 초태생의 죽음으로 사람들이 침상 곁에서 오열한다, 시신은 직접적으로 보이지 않고 슬픔과 충격만 절제되게 표현",
       "밤에 바로가 모세에게 당장 나가라고 말한다, 궁정은 무겁고 다급하다",
       "모세와 백성들이 반죽과 짐을 들고 애굽을 떠나 광야로 나아간다",
       "불기둥/구름기둥, 이스라엘이 전진한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "moses",
@@ -325,9 +331,9 @@
     ]
   },
   {
-    "title": "059 홍해: 길이 열리다",
+    "title": "홍해: 길이 열리다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites",
       "pharaoh"
@@ -346,13 +352,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 9,
     "story_scenes": [
       "뒤엔 군대, 앞엔 바다, 백성이 원망하며 멈춰 선다",
       "모세가 두 손을 들어 다급하게 몸짓한다",
       "갈라진 물 벽 사이로 모세가 앞서고 백성들이 아이들과 짐을 이끌며 건너간다",
       "모두가 건넌 뒤, 물이 합쳐지고 백성은 숨을 몰아쉬며 찬양한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "moses"
@@ -364,9 +371,9 @@
     ]
   },
   {
-    "title": "060 마라: 쓴 물이 달아지다",
+    "title": "마라: 쓴 물이 달아지다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites"
     ],
@@ -384,13 +391,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "사람들이 물을 마시고 뱉는다, 써서 못 마신다!",
       "원망이 커지고 모세가 한쪽으로 물러나 기도한다",
       "모세가 지시받은 나무를 물에 던진다",
       "사람들이 다시 물을 마신다, 표정이 풀리며 행렬이 움직인다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "moses"
@@ -402,9 +410,9 @@
     ]
   },
   {
-    "title": "061 만나와 메추라기: 하늘의 양식",
+    "title": "만나와 메추라기: 하늘의 양식",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites"
     ],
@@ -422,13 +430,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "백성이 불평한다, 애굽의 냄비가 그립다",
       "아침, 땅 위에 하얀 것들이 덮인다, 이것이 무엇이냐?",
       "모세가 결연한 표정으로 선다",
       "집 안에 쌓아 둔 만나가 벌레가 생기고 냄새가 나며 썩어 간다, 사람들이 놀라 뒤로 물러선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -438,13 +447,12 @@
     ]
   },
   {
-    "title": "062 아말렉 전투: 팔이 내려갈 때",
+    "title": "아말렉 전투: 팔이 내려갈 때",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "joshua",
-      "aaron",
-      "hur"
+      "aaron"
     ],
     "place_name": "르비딤(전승)",
     "lat": 28.75,
@@ -460,13 +468,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "여호수아가 병력을 정리하고 달려나간다",
       "언덕 위 모세가 손을 들자 이스라엘이 밀어붙인다",
       "아론과 훌이 양쪽에서 받친다",
       "해 질 무렵 승리, 모세가 결연한 표정으로 선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "joshua"
       ],
@@ -483,9 +492,9 @@
     ]
   },
   {
-    "title": "063 시내산 도착: 산이 떨리다",
+    "title": "시내산 도착: 산이 떨리다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites"
     ],
@@ -503,13 +512,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "광야 끝, 산이 보이고 백성이 진을 친다",
       "모세가 산을 오르며 뒤돌아본다, 사람들은 숨죽인다",
       "천둥과 연기, 백성이 울타리 밖에서 떤다",
       "모세가 결연한 표정으로 선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "moses"
@@ -521,9 +531,9 @@
     ]
   },
   {
-    "title": "064 시내산 도착: 십계명과 하나님 기준",
+    "title": "시내산 도착: 십계명과 하나님 기준",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites",
       "god"
@@ -542,13 +552,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "하나님의 빛이 산 위에서 음성이 울린다",
       "계명이 차례로 선포되고 백성은 떨며 뒤로 물러선다",
       "모세가 고개를 끄덕인다",
       "모세가 어두운 구름 속으로 들어간다, 결단의 뒷모습"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "god"
       ],
@@ -562,9 +573,9 @@
     ]
   },
   {
-    "title": "066 금송아지: 아래에서 벌어진 일",
+    "title": "금송아지: 아래에서 벌어진 일",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "aaron",
       "israelites"
@@ -583,13 +594,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "백성이 아론을 둘러싼다",
       "금이 모이고 송아지 형상이 세워진다, 환호가 터진다",
       "산에서 내려오는 모세, 소리를 듣고 표정이 굳는다",
       "모세가 돌판을 던져 깨뜨린다, 진영이 얼어붙는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "aaron"
       ],
@@ -603,9 +615,9 @@
     ]
   },
   {
-    "title": "067 모세의 중보: 다시 시작",
+    "title": "모세의 중보: 다시 시작",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "god"
     ],
@@ -628,13 +640,14 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "모세가 장막 밖에서 기도한다, 얼굴에 간절함",
       "모세가 앞쪽에 서 있다",
       "하나님의 빛이 임한다",
       "새 돌판을 들고 내려오는 모세, 관계의 재출발"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "moses"
       ],
@@ -650,9 +663,9 @@
     ]
   },
   {
-    "title": "068 성막: 영광이 임하다",
+    "title": "성막: 영광이 임하다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites"
     ],
@@ -670,13 +683,14 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "사람들이 예물을 가져온다, 손마다 재료가 들려 있다",
       "장인들이 천과 기구를 만들고 기둥을 세운다, 빠른",
       "모세가 성막을 세우고 마지막 천을 당긴다",
       "구름이 덮이고 영광이 임한다, 사람들은 말없이 바라본다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -686,9 +700,9 @@
     ]
   },
   {
-    "title": "069 나답·아비후: 가까이함의 무게",
+    "title": "나답·아비후: 가까이함의 무게",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "aaron",
       "nadab",
       "abihu",
@@ -708,13 +722,14 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "제사장들이 분주히 움직인다, 분위기가 들떠 있다",
       "분향단 앞에 두 사람이 쓰러져 움직이지 않고, 그 위로 여호와의 불이 크게 타오르며 주변 사람들이 놀라 뒤로 물러난다, 피는 보이지 않음",
       "모세가 결연한 표정으로 선다",
       "공동체가 침묵 속에 정돈된다, 거룩의 무게가 남는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "nadab",
         "abihu"
@@ -728,9 +743,9 @@
     ]
   },
   {
-    "title": "070 가데스 정탐: 불신의 보고",
+    "title": "가데스 정탐: 불신의 보고",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "joshua",
       "caleb",
@@ -755,13 +770,14 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "정탐꾼들이 큰 포도송이를 들고 돌아온다, 기대가 오른다",
       "거인은 크다는 말이 퍼지며 군중의 얼굴이 창백해진다",
       "여호수아가 두 손을 들어 다급하게 몸짓한다",
       "원망이 폭발하고, 모세가 얼굴을 땅에 대며 중보한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -773,9 +789,9 @@
     ]
   },
   {
-    "title": "071 고라의 반역: 땅이 갈라지다",
+    "title": "고라의 반역: 땅이 갈라지다",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "korah",
       "aaron"
@@ -794,13 +810,14 @@
     "start_year": -1444,
     "end_year": -1444,
     "time_precision": "approx",
+    "story_index": 20,
     "story_scenes": [
       "세 명의 남자가 한편이 되어 모세 앞에서 거칠게 반항하고 주변 무리가 숨죽여 지켜본다",
       "모세가 그들을 향해 분노와 슬픔이 섞인 얼굴로 강하게 말한다",
       "갈라진 땅과 지진의 긴장 옆에서 모세가 결연하게 서 있다",
       "군중이 뒤로 물러난다, 두려움이 진을 덮는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "korah"
       ],
@@ -815,9 +832,9 @@
     ]
   },
   {
-    "title": "072 놋뱀: 바라보라",
+    "title": "놋뱀: 바라보라",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "israelites"
     ],
@@ -835,13 +852,14 @@
     "start_year": -1408,
     "end_year": -1408,
     "time_precision": "approx",
+    "story_index": 21,
     "story_scenes": [
       "백성이 모세를 둘러싸고 원망을 쏟아낸다, 왜 우리를 이 광야로 데려왔느냐",
       "불뱀들이 진영에 나타나 백성을 물어 사람들이 공포에 빠진다, 피나 상처는 직접 보이지 않음",
       "모세가 장대를 세우고 표징을 올린다",
       "사람들이 고개를 들어 바라본다, 얼굴이 서서히 안정된다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -851,9 +869,9 @@
     ]
   },
   {
-    "title": "074 모압의 유혹과 비느하스",
+    "title": "모압의 유혹과 비느하스",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "israelites",
       "phinehas"
     ],
@@ -871,13 +889,14 @@
     "start_year": -1407,
     "end_year": -1407,
     "time_precision": "approx",
+    "story_index": 22,
     "story_scenes": [
       "배경과 분위기만 보이는",
       "진영에 긴장과 슬픔이 번진다, 모세가 고개를 숙인다",
       "비느하스가 앞으로 나와 결단한다, 빠른 움직임",
       "혼란이 멈추고, 진영에 다시 질서가 돌아온다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -885,9 +904,9 @@
     ]
   },
   {
-    "title": "075 모세의 마지막: 느보 산",
+    "title": "모세의 마지막: 느보 산",
     "era": "era_exodus",
-    "persons": [
+    "characters": [
       "moses",
       "joshua"
     ],
@@ -905,13 +924,14 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 23,
     "story_scenes": [
       "모세가 산길을 오르며 숨을 고른다",
       "정상에서 멀리 땅을 바라본다, 눈빛이 오래 머문다",
       "모세가 조용히 고개를 숙인다, 말 없는 작별",
       "여호수아가 백성 앞에 서서 말하고, 백성들이 그의 말을 경청하며 따를 준비를 한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "moses"
       ],
@@ -925,9 +945,9 @@
     ]
   },
   {
-    "title": "076 요단강 도하: 물이 멈추다",
+    "title": "요단강 도하: 물이 멈추다",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "joshua",
       "israelites"
     ],
@@ -945,13 +965,14 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "여호수아가 시켜 제사장들이 언약궤를 메고 요단강 앞에 선다",
       "제사장들의 발이 물을 밟자 요단강 물이 갈라진다",
       "이스라엘 백성이 마른 땅으로 요단강을 건너간다",
       "여호수아가 시켜 열두 사람이 제사장들의 발이 섰던 곳에 돌을 세운다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "joshua"
       ],
@@ -965,9 +986,9 @@
     ]
   },
   {
-    "title": "077 여리고: 침묵의 행진",
+    "title": "여리고: 침묵의 행진",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "joshua",
       "israelites"
     ],
@@ -985,13 +1006,14 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "여리고 성벽 아래, 침묵 속 행렬이 한 바퀴 돈다",
       "나팔 소리만 울리고 사람들은 말이 없다",
       "일곱째 날, 일곱 바퀴, 긴장감이 최고조가 된다",
       "외쳐라!, 함성과 함께 성벽이 흔들리며 무너진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -999,9 +1021,9 @@
     ]
   },
   {
-    "title": "078 아간: 감춘 것이 드러나다",
+    "title": "아간: 감춘 것이 드러나다",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "joshua",
       "achan"
     ],
@@ -1019,13 +1041,14 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "아이 성 공격이 실패하고 군이 흩어진다, 여호수아가 찢어진 옷으로 엎드린다",
       "이스라엘 중에 범죄함이 있다는 선언, 진영이 술렁인다",
       "제비가 좁혀지며 아간이 떨며 선다",
       "여호수아가 뒤에 서 있고, 사람들이 아간에게 돌을 던지며 심판한다, 직접 묘사는 절제한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "joshua"
       ],
@@ -1040,9 +1063,9 @@
     ]
   },
   {
-    "title": "079 기브온 조약: 속임수의 동맹",
+    "title": "기브온 조약: 속임수의 동맹",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "joshua",
       "gibeonites"
     ],
@@ -1060,13 +1083,14 @@
     "start_year": -1405,
     "end_year": -1405,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "해진 옷과 마른 떡을 든 기브온 사절단이 여호수아를 찾아온다",
       "여호수아가 그들의 말을 믿고 조약을 맺는다, 긴장감이 흐른다",
       "정체가 드러나자 진영이 분노한다",
       "여호수아가 그들에게 나무 패는 자와 물 긷는 자가 되라고 명령한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "joshua",
         "gibeonites"
@@ -1083,9 +1107,9 @@
     ]
   },
   {
-    "title": "080 세겜 언약 갱신: 선택하라",
+    "title": "세겜 언약 갱신: 선택하라",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "joshua",
       "israelites"
     ],
@@ -1103,13 +1127,14 @@
     "start_year": -1380,
     "end_year": -1380,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "세겜에 모인 백성, 여호수아가 지팡이를 짚고 선다",
       "여호수아가 앞쪽에 서 있다",
       "백성들이 여호수아에게 고개 숙여 인사하며 우리도 하나님을 따르겠다고 말한다",
       "여호수아가 상수리나무 아래 큰 돌을 세우고, 백성들이 지켜본다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "joshua"
       ],
@@ -1127,9 +1152,9 @@
     ]
   },
   {
-    "title": "081 사사 시대의 반복: 잊고, 부르짖고, 구원받고",
+    "title": "사사 시대의 반복: 잊고, 부르짖고, 구원받고",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "israelites"
     ],
     "place_name": "가나안(전승)",
@@ -1146,13 +1171,14 @@
     "start_year": -1375,
     "end_year": -1375,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "시간이 흐르고 세대가 바뀌며 기억이 희미해진다",
       "우상이 들어오고 억압이 시작된다, 어두운 톤",
       "배경과 분위기만 보이는",
       "사사가 일어나고 평안이 오지만, 다시 반복될 기미가 보인다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -1160,9 +1186,9 @@
     ]
   },
   {
-    "title": "082 에훗: 왼손의 반전",
+    "title": "에훗: 왼손의 반전",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "ehud",
       "eglon",
       "israelites"
@@ -1181,13 +1207,14 @@
     "start_year": -1320,
     "end_year": -1320,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "이스라엘 백성이 여호와 앞에서 악을 행하며 우상을 숭배한다",
       "이스라엘 백성이 모압 왕 에글론을 섬기며 무거운 조공을 바친다",
       "에훗이 조공을 들고 모압 왕 에글론에게 들어간다",
       "왕은 왕좌 앞 바닥에 움직이지 않게 누워 있고, 에훗은 재빨리 도망간다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "israelites"
       ],
@@ -1206,9 +1233,9 @@
     ]
   },
   {
-    "title": "084 기드온의 소명: 두려움 속의 표징",
+    "title": "기드온의 소명: 두려움 속의 표징",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "gideon"
     ],
     "place_name": "오브라(전승)",
@@ -1225,13 +1252,14 @@
     "start_year": -1160,
     "end_year": -1160,
     "time_precision": "approx",
+    "story_index": 8,
     "story_scenes": [
       "기드온이 포도주 틀에서 몰래 타작한다, 눈치 보는 표정",
       "큰 용사여라는 부름에 기드온이 어이없어한다",
       "기드온이 제물을 놓고 기다린다, 순간 불빛이 일어난다",
       "기드온이 숨을 몰아쉬며 무릎 꿇는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "gideon"
       ],
@@ -1247,9 +1275,9 @@
     ]
   },
   {
-    "title": "085 기드온 300: 횃불과 나팔",
+    "title": "기드온 300: 횃불과 나팔",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "gideon",
       "israelites"
     ],
@@ -1267,13 +1295,14 @@
     "start_year": -1160,
     "end_year": -1160,
     "time_precision": "approx",
+    "story_index": 9,
     "story_scenes": [
       "병력이 줄어드는 앞쪽에 서 있고, 기드온이 놀라지만 고개를 끄덕인다",
       "밤, 300명이 항아리·횃불·나팔을 든다",
       "여호와와 기드온의 칼!, 항아리를 깨뜨리고 빛이 터진다",
       "이스라엘이 추격한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "gideon"
       ],
@@ -1285,9 +1314,9 @@
     ]
   },
   {
-    "title": "086 아비멜렉: 왕 노릇의 비극",
+    "title": "아비멜렉: 왕 노릇의 비극",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "abimelech"
     ],
     "place_name": "세겜(전승)",
@@ -1304,13 +1333,14 @@
     "start_year": -1135,
     "end_year": -1135,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "욕심 가득한 얼굴의 아비멜렉이 형제들을 죽인 뒤 차갑게 서 있고, 뒤에는 형제들이 쓰러져 있다",
       "한 아이가 사람들에게 나무들이 서로 대화하는 비유를 들려준다",
       "욕심 가득한 아비멜렉이 여러 전쟁을 일으켜 많은 사람이 쓰러지고 성읍이 불타는 모습",
       "한 여인이 성 위에서 맷돌을 떨어뜨리고, 아래의 아비멜렉은 치명상을 입고 무너진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "abimelech"
       ],
@@ -1324,9 +1354,9 @@
     ]
   },
   {
-    "title": "087 입다: 서원과 상처",
+    "title": "입다: 서원과 상처",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "jephthah"
     ],
     "place_name": "길르앗(전승)",
@@ -1343,13 +1373,14 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "전쟁 전, 입다가 혼자 서원하며 중얼거린다",
       "전투의 승전 소식, 사람들이 환호한다",
       "집 문이 열리고 가장 먼저 달려나온 딸을 보고 입다의 얼굴이 굳는다",
       "입다와 딸이 침묵 속에 마주 서 있고, 서원의 무게가 장면을 누른다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jephthah"
       ],
@@ -1363,9 +1394,9 @@
     ]
   },
   {
-    "title": "088 삼손: 힘의 비밀과 마지막 기도",
+    "title": "삼손: 힘의 비밀과 마지막 기도",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "samson",
       "delilah"
     ],
@@ -1383,13 +1414,14 @@
     "start_year": -1080,
     "end_year": -1080,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "배경과 분위기만 보이는 앞쪽에 서 있고, 삼손은 웃으며 넘기다 점점 지친다",
       "비밀을 말하는 순간, 공기가 싸늘해진다, 삼손의 눈빛이 흔들린다",
       "붙잡힌 삼손이 어둠 속에서 고개를 숙인다, 침묵",
       "삼손이 마지막으로 기도한다, 나를 기억하소서"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "samson",
         "delilah"
@@ -1407,9 +1439,9 @@
     ]
   },
   {
-    "title": "089 미가의 우상: 마음대로의 신앙",
+    "title": "미가의 우상: 마음대로의 신앙",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "micah",
       "jonathan",
       "danites"
@@ -1428,13 +1460,14 @@
     "start_year": -1070,
     "end_year": -1070,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "미가가 어머니의 저주를 듣고 훔친 돈을 고백한 뒤, 은신상을 만들고 집안에 신당을 차려 우상 숭배를 시작한다",
       "미가가 레위인 요나단을 개인 제사장으로 세우고 집 신당 앞에 세운다",
       "단 지파 사람들이 미가의 집에서 은신상과 에봇과 드라빔과 제사장을 빼앗아 간다",
       "단 지파가 평화롭게 살던 라이스 사람들을 멸하고 그 땅을 차지한 뒤, 강탈한 우상을 세워 숭배한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "micah"
       ],
@@ -1453,9 +1486,9 @@
     ]
   },
   {
-    "title": "090 베냐민 전쟁: 공동체의 붕괴",
+    "title": "베냐민 전쟁: 공동체의 붕괴",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "israelites"
     ],
     "place_name": "기브아(전승)",
@@ -1472,13 +1505,14 @@
     "start_year": -1060,
     "end_year": -1060,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "충격적 소식이 지파들에 퍼지고 분노가 폭발한다",
       "지파들이 모여 결의를 다진다, 분위기가 살벌해진다",
       "israelites가 israelites가 israelites가 israelites가 israelites가 israelites가 전투가 반복되고, 승리에도 얼굴에는 슬픔이 남는다",
       "마지막에 왕이 없으므로 각기 소견대로라는 공허가 남는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -1488,9 +1522,9 @@
     ]
   },
   {
-    "title": "091 룻의 귀향: 따라가겠습니다",
+    "title": "룻의 귀향: 따라가겠습니다",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "ruth",
       "naomi"
     ],
@@ -1508,13 +1542,14 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "나오미가 결연한 표정으로 선다, 룻이 고개를 젓는다",
       "룻이 결연한 표정으로 선다",
       "두 사람이 길을 걸어 베들레헴에 도착한다",
       "마을 사람들이 웅성거린다, 나오미는 씁쓸히 웃는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "ruth",
         "naomi"
@@ -1532,9 +1567,9 @@
     ]
   },
   {
-    "title": "092 보아스의 은혜: 이삭 줍는 자리",
+    "title": "보아스의 은혜: 이삭 줍는 자리",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "ruth",
       "boaz"
     ],
@@ -1552,13 +1587,14 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "룻이 베들레헴 들판에서 고개 숙여 이삭을 줍는다",
       "보아스가 들판에서 룻을 바라보는 장면",
       "밤에 룻이 보아스의 잠자리 발치에 조용히 누워 있다",
       "룻이 곡식단을 들고 나오미에게 돌아간다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "ruth"
       ],
@@ -1577,9 +1613,9 @@
     ]
   },
   {
-    "title": "093 기업 무를 자: 문 앞의 결정",
+    "title": "기업 무를 자: 문 앞의 결정",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "boaz",
       "ruth",
       "naomi"
@@ -1598,13 +1634,14 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "성문에 장로들이 모인다, 보아스가 결연한 표정으로 선다",
       "보아스가 엘리멜렉의 소유지를 사는 장면",
       "보아스와 룻이 결혼하는 장면",
       "룻이 아이를 낳고, 나오미가 웃으며 아기를 품에 안고 있다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "boaz"
       ],
@@ -1622,9 +1659,9 @@
     ]
   },
   {
-    "title": "094 사무엘의 탄생: 한나의 눈물",
+    "title": "사무엘의 탄생: 한나의 눈물",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "hannah",
       "eli",
       "samuel"
@@ -1643,13 +1680,14 @@
     "start_year": -1105,
     "end_year": -1105,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "실로 성막 앞, 한나가 입술만 움직이며 울고 있다",
       "엘리가 오해하지만, 한나의 진심을 듣고 축복한다",
       "아이가 태어나고, 한나가 품에 안고 조용히 웃는다",
       "사무엘이 결연한 표정으로 선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [],
@@ -1659,9 +1697,9 @@
     ]
   },
   {
-    "title": "095 언약궤 사건: 회개와 승리",
+    "title": "언약궤 사건: 회개와 승리",
     "era": "era_judges",
-    "persons": [
+    "characters": [
       "samuel",
       "israelites"
     ],
@@ -1689,13 +1727,14 @@
     "start_year": -1075,
     "end_year": -1075,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "전투에서 언약궤를 들고 나가지만 패배한다",
       "블레셋 땅에서 재앙이 번지며 언약궤가 불편한 존재가 된다",
       "사무엘이 두 손을 들어 다급하게 몸짓한다",
       "블레셋이 올라오지만, 하나님이 도우시고 백성이 승리한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [],
       [
@@ -1705,9 +1744,9 @@
     ]
   },
   {
-    "title": "096 왕을 요구하다: 우리도 왕을",
+    "title": "왕을 요구하다: 우리도 왕을",
     "era": "era_monarchy",
-    "persons": [
+    "characters": [
       "samuel",
       "israelites"
     ],
@@ -1725,13 +1764,14 @@
     "start_year": -1050,
     "end_year": -1050,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "사무엘이 결연한 표정으로 선다",
       "사무엘이 마음 아파하며 기도한다, 고요한 밤",
       "사무엘이 왕의 폐해를 설명한다, 사람들의 표정이 굳는다",
       "백성들이 사무엘에게 그래도 왕을 달라고 말한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "samuel"
       ],
@@ -1747,9 +1787,9 @@
     ]
   },
   {
-    "title": "097 사울의 기름부음: 숨은 청년",
+    "title": "사울의 기름부음: 숨은 청년",
     "era": "era_monarchy",
-    "persons": [
+    "characters": [
       "saul",
       "samuel"
     ],
@@ -1767,13 +1807,14 @@
     "start_year": -1050,
     "end_year": -1050,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "젊은 청년 사울이 길에서 나귀를 찾으며 헤맨다",
       "젊은 사울이 사무엘을 만나 대화하며 놀라는 장면",
       "사무엘이 젊은 사울에게 기름을 붓는 장면",
       "젊은 사울이 결연한 표정으로 곧게 선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "saul"
       ],
@@ -1791,9 +1832,9 @@
     ]
   },
   {
-    "title": "098 사울의 첫 승리: 얍베스 길르앗",
+    "title": "사울의 첫 승리: 얍베스 길르앗",
     "era": "era_monarchy",
-    "persons": [
+    "characters": [
       "saul",
       "israelites",
       "samuel"
@@ -1812,13 +1853,14 @@
     "start_year": -1049,
     "end_year": -1049,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "위협 소식이 전해진다, 사람들의 얼굴이 창백해진다",
       "사울이 전령을 보내 이스라엘 병력을 소집하는 장면",
       "전투 후, 얍베스가 구원받고 환호가 터진다",
       "길갈에서 사울의 왕권이 확인된다, 사무엘이 축복한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [],
       [
         "saul"
@@ -1831,9 +1873,9 @@
     ]
   },
   {
-    "title": "099 사울의 불순종: 왕의 균열",
+    "title": "사울의 불순종: 왕의 균열",
     "era": "era_monarchy",
-    "persons": [
+    "characters": [
       "saul",
       "samuel"
     ],
@@ -1856,13 +1898,14 @@
     "start_year": -1045,
     "end_year": -1045,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "전투 전, 사울이 조급해하며 제사를 대신 드린다",
       "사무엘이 상대를 바라보며 기다린다",
       "사무엘이 사울을 엄하게 꾸짖는다",
       "사무엘이 뒤돌아서 떠나자 사울이 옷자락을 붙잡고, 옷자락이 찢어진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "saul"
       ],
@@ -1880,9 +1923,9 @@
     ]
   },
   {
-    "title": "100 다윗의 기름부음: 새로운 선택",
+    "title": "다윗의 기름부음: 새로운 선택",
     "era": "era_monarchy",
-    "persons": [
+    "characters": [
       "david",
       "samuel",
       "jesse"
@@ -1901,13 +1944,14 @@
     "start_year": -1030,
     "end_year": -1030,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "사무엘이 어떤 집에 들어가는 장면",
       "사무엘이 여러 청년들 앞에서 고개를 젓는 모습",
       "젊은 다윗이 들판에서 양을 치다가 집으로 불려온다",
       "사무엘이 젊은 다윗에게 기름을 붓는 장면"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "samuel"
       ],

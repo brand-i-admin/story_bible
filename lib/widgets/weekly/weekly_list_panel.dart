@@ -7,7 +7,7 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
   Widget _buildWeeklyListPanel({
     required WeeklyStudyData weekly,
     required Set<String> completedEventIds,
-    required Color Function(String personId) colorForPerson,
+    required Color Function(String characterId) colorForCharacter,
     required ValueChanged<String> onSelectEvent,
     required ValueChanged<String> onToggleChecked,
     required ValueChanged<String> onStartQuiz,
@@ -20,9 +20,9 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _weeklyPersonTitleBadge(
-              text: '금주 인물: ${weekly.person.name}',
-              person: weekly.person,
+            _weeklyCharacterTitleBadge(
+              text: '금주 인물: ${weekly.character.name}',
+              character: weekly.character,
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -49,12 +49,7 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                         final isChecked = _weeklyCheckedEventIds.contains(
                           event.id,
                         );
-                        final shortText =
-                            (event.shortStory ??
-                                    event.story ??
-                                    event.summary ??
-                                    '')
-                                .trim();
+                        final shortText = (event.summary ?? '').trim();
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 6),
                           child: GestureDetector(
@@ -99,8 +94,8 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                                           ),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: colorForPerson(
-                                              weekly.person.id,
+                                            color: colorForCharacter(
+                                              weekly.character.code,
                                             ),
                                           ),
                                         ),
@@ -227,16 +222,16 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
     );
   }
 
-  Widget _weeklyPersonTitleBadge({
+  Widget _weeklyCharacterTitleBadge({
     required String text,
-    required Person person,
+    required Character character,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: headerChipDecoration(),
       child: Row(
         children: [
-          _weeklyPersonAvatar(person: person, size: 34),
+          _weeklyCharacterAvatar(character: character, size: 34),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

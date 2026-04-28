@@ -7,8 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/data/user_repository.dart';
+import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
-import 'package:story_bible/models/person.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
@@ -42,19 +42,18 @@ Era _era({
   );
 }
 
-Person _person({
+Character _person({
   required String id,
   required String name,
   int displayOrder = 0,
 }) {
-  return Person(
+  return Character(
     id: id,
     code: id,
     name: name,
     tagline: null,
     description: null,
     avatarUrl: null,
-    avatarThumbUrl: null,
     displayOrder: displayOrder,
   );
 }
@@ -62,32 +61,29 @@ Person _person({
 StoryEvent _event({
   required String id,
   required String eraId,
-  required List<String> personIds,
-  int timeSortKey = 0,
+  required List<String> characterCodes,
+  int globalRank = 0,
+  int rankInEra = 0,
+  int storyIndex = 0,
 }) {
   return StoryEvent(
     id: id,
-    code: id,
-    displayNumber: '001',
     eraId: eraId,
     title: '사건 $id',
     summary: null,
-    story: null,
-    shortStory: null,
-    storyScenes: null,
-    timelineRank: 1.0,
+    storyScenes: const <String>[],
+    sceneCharacters: const <List<String>>[],
     startYear: null,
     endYear: null,
-    timeSortKey: timeSortKey,
+    timePrecision: 'approx',
+    storyIndex: storyIndex,
+    rankInEra: rankInEra,
+    globalRank: globalRank,
     placeName: null,
     lat: null,
     lng: null,
-    personIds: personIds,
+    characterCodes: characterCodes,
     bibleRefs: const [],
-    thumbUrl: null,
-    storyAssetDir: null,
-    storyThumbnailDir: null,
-    storySceneCount: 0,
   );
 }
 
@@ -180,13 +176,13 @@ void main() {
       ).thenAnswer((_) async => [_era(id: 'era1', code: 'era_primeval')]);
     });
 
-    test('persons와 events를 로드하고 selectedEraId를 설정', () async {
+    test('characters와 events를 로드하고 selectedEraId를 설정', () async {
       when(
-        () => mockRepo.fetchPersonsByEra('era1'),
+        () => mockRepo.fetchCharactersByEra('era1'),
       ).thenAnswer((_) async => [_person(id: 'p1', name: '아담')]);
       when(() => mockRepo.fetchEventsByEra('era1')).thenAnswer(
         (_) async => [
-          _event(id: 'e1', eraId: 'era1', personIds: ['p1']),
+          _event(id: 'e1', eraId: 'era1', characterCodes: ['p1']),
         ],
       );
 
@@ -197,14 +193,14 @@ void main() {
 
       final state = container.read(storyControllerProvider);
       expect(state.selectedEraId, 'era1');
-      expect(state.persons, hasLength(1));
+      expect(state.characters, hasLength(1));
       expect(state.events, hasLength(1));
       expect(state.loading, isFalse);
     });
 
     test('실패 시 error 메시지 설정', () async {
       when(
-        () => mockRepo.fetchPersonsByEra('era1'),
+        () => mockRepo.fetchCharactersByEra('era1'),
       ).thenThrow(Exception('boom'));
 
       final container = buildContainer();
@@ -217,17 +213,17 @@ void main() {
     });
   });
 
-  group('StoryController.togglePerson', () {
+  group('StoryController.toggleCharacter', () {
     test('비어있는 set에 id 추가', () async {
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => []);
       final container = buildContainer();
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      controller.togglePerson('p1');
+      controller.toggleCharacter('p1');
 
       expect(
-        container.read(storyControllerProvider).selectedPersonIds,
+        container.read(storyControllerProvider).selectedCharacterCodes,
         containsAll(['p1']),
       );
     });
@@ -238,11 +234,11 @@ void main() {
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      controller.togglePerson('p1');
-      controller.togglePerson('p1');
+      controller.toggleCharacter('p1');
+      controller.toggleCharacter('p1');
 
       expect(
-        container.read(storyControllerProvider).selectedPersonIds,
+        container.read(storyControllerProvider).selectedCharacterCodes,
         isEmpty,
       );
     });
@@ -253,12 +249,12 @@ void main() {
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      controller.togglePerson('p1');
-      controller.togglePerson('p2');
+      controller.toggleCharacter('p1');
+      controller.toggleCharacter('p2');
 
       final colors = container
           .read(storyControllerProvider)
-          .selectedPersonColors;
+          .selectedCharacterColors;
       expect(colors['p1'], isNotNull);
       expect(colors['p2'], isNotNull);
       expect(colors['p1'], isNot(equals(colors['p2'])));
@@ -280,14 +276,14 @@ void main() {
     });
   });
 
-  group('StoryController.colorForPerson', () {
+  group('StoryController.colorForCharacter', () {
     test('미선택 인물은 기본 색상 반환', () async {
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => []);
       final container = buildContainer();
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      final color = controller.colorForPerson('unknown');
+      final color = controller.colorForCharacter('unknown');
       expect(color, const Color(0xFF8E7B61));
     });
   });
@@ -297,7 +293,7 @@ void main() {
       when(
         () => mockRepo.fetchEras(),
       ).thenAnswer((_) async => [_era(id: 'era1', code: 'era_primeval')]);
-      when(() => mockRepo.fetchPersonsByEra('era1')).thenAnswer(
+      when(() => mockRepo.fetchCharactersByEra('era1')).thenAnswer(
         (_) async => [
           _person(id: 'p1', name: '아담'),
           _person(id: 'p2', name: '이브', displayOrder: 1),
@@ -305,9 +301,24 @@ void main() {
       );
       when(() => mockRepo.fetchEventsByEra('era1')).thenAnswer(
         (_) async => [
-          _event(id: 'e1', eraId: 'era1', personIds: ['p1'], timeSortKey: 20),
-          _event(id: 'e2', eraId: 'era1', personIds: ['p2'], timeSortKey: 10),
-          _event(id: 'e3', eraId: 'era1', personIds: ['p1'], timeSortKey: 5),
+          _event(
+            id: 'e1',
+            eraId: 'era1',
+            characterCodes: ['p1'],
+            globalRank: 20,
+          ),
+          _event(
+            id: 'e2',
+            eraId: 'era1',
+            characterCodes: ['p2'],
+            globalRank: 10,
+          ),
+          _event(
+            id: 'e3',
+            eraId: 'era1',
+            characterCodes: ['p1'],
+            globalRank: 5,
+          ),
         ],
       );
 
@@ -315,7 +326,7 @@ void main() {
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
       await controller.selectEra('era1');
-      controller.setSelectedPersons({'p1'});
+      controller.setSelectedCharacters({'p1'});
 
       final timeline = controller.mergedTimeline();
       expect(timeline.map((e) => e.id), orderedEquals(['e3', 'e1']));
@@ -331,7 +342,7 @@ void main() {
       ];
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
       when(
-        () => mockRepo.fetchPersonsByEra(any()),
+        () => mockRepo.fetchCharactersByEra(any()),
       ).thenAnswer((_) async => const []);
       when(
         () => mockRepo.fetchEventsByEra(any()),
@@ -352,7 +363,7 @@ void main() {
       final eras = [_era(id: 'e1', code: 'old1', testament: 'old')];
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
       when(
-        () => mockRepo.fetchPersonsByEra(any()),
+        () => mockRepo.fetchCharactersByEra(any()),
       ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
       when(
         () => mockRepo.fetchEventsByEra(any()),
@@ -382,7 +393,7 @@ void main() {
       final state = container.read(storyControllerProvider);
       expect(state.selectedTestament, 'new');
       expect(state.selectedEraId, isNull);
-      expect(state.persons, isEmpty);
+      expect(state.characters, isEmpty);
       expect(state.events, isEmpty);
     });
   });
@@ -392,7 +403,7 @@ void main() {
       final eras = [_era(id: 'e1', code: 'old1')];
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
       when(
-        () => mockRepo.fetchPersonsByEra(any()),
+        () => mockRepo.fetchCharactersByEra(any()),
       ).thenAnswer((_) async => const []);
       when(
         () => mockRepo.fetchEventsByEra(any()),
@@ -412,7 +423,7 @@ void main() {
       final eras = [_era(id: 'e1', code: 'old1'), _era(id: 'e2', code: 'old2')];
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
       when(
-        () => mockRepo.fetchPersonsByEra(any()),
+        () => mockRepo.fetchCharactersByEra(any()),
       ).thenAnswer((_) async => const []);
       when(
         () => mockRepo.fetchEventsByEra(any()),
@@ -433,11 +444,11 @@ void main() {
         () => mockRepo.fetchEras(),
       ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
       when(
-        () => mockRepo.fetchPersonsByEra(any()),
+        () => mockRepo.fetchCharactersByEra(any()),
       ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
       when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
         (_) async => [
-          _event(id: 'ev1', eraId: 'e1', personIds: ['p1']),
+          _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
         ],
       );
 
@@ -445,26 +456,26 @@ void main() {
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
       await controller.selectEra('e1');
-      controller.togglePerson('p1');
+      controller.toggleCharacter('p1');
       controller.selectEvent('ev1');
 
       controller.clearEraSelection();
       final state = container.read(storyControllerProvider);
       expect(state.selectedEraId, isNull);
       expect(state.selectedEventId, isNull);
-      expect(state.selectedPersonIds, isEmpty);
-      expect(state.persons, isEmpty);
+      expect(state.selectedCharacterCodes, isEmpty);
+      expect(state.characters, isEmpty);
       expect(state.events, isEmpty);
       expect(state.searchQuery, '');
     });
   });
 
-  group('StoryController.setSelectedPersons', () {
-    test('persons에 없는 id는 필터링된다', () async {
+  group('StoryController.setSelectedCharacters', () {
+    test('characters에 없는 id는 필터링된다', () async {
       when(
         () => mockRepo.fetchEras(),
       ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
-      when(() => mockRepo.fetchPersonsByEra(any())).thenAnswer(
+      when(() => mockRepo.fetchCharactersByEra(any())).thenAnswer(
         (_) async => [
           _person(id: 'p1', name: 'A'),
           _person(id: 'p2', name: 'B'),
@@ -479,11 +490,11 @@ void main() {
       await controller.initialize();
       await controller.selectEra('e1');
 
-      controller.setSelectedPersons({'p1', 'p999'});
+      controller.setSelectedCharacters({'p1', 'p999'});
       final state = container.read(storyControllerProvider);
-      expect(state.selectedPersonIds, {'p1'});
-      expect(state.selectedPersonColors.containsKey('p1'), true);
-      expect(state.selectedPersonColors.containsKey('p999'), false);
+      expect(state.selectedCharacterCodes, {'p1'});
+      expect(state.selectedCharacterColors.containsKey('p1'), true);
+      expect(state.selectedCharacterColors.containsKey('p999'), false);
     });
   });
 
@@ -523,6 +534,165 @@ void main() {
       final state = container.read(storyControllerProvider);
       expect(state.searchQuery, '모세');
       expect(state.isSearching, true);
+    });
+  });
+
+  group('StoryController.setDisplayedEvents', () {
+    test('전달된 id 중 state.events 에 있는 것만 displayedEventIds 에 저장', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchCharactersByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
+          _event(id: 'ev2', eraId: 'e1', characterCodes: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+
+      controller.setDisplayedEvents({'ev1', 'evX', 'ev2'});
+      final state = container.read(storyControllerProvider);
+      expect(state.displayedEventIds, {'ev1', 'ev2'});
+    });
+
+    test('빈 Set 을 전달하면 displayedEventIds 가 비워진다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchCharactersByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+
+      controller.setDisplayedEvents({'ev1'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+      });
+
+      controller.setDisplayedEvents(const <String>{});
+      expect(
+        container.read(storyControllerProvider).displayedEventIds,
+        isEmpty,
+      );
+    });
+  });
+
+  group('displayedEventIds 리셋 조건', () {
+    test('setSelectedCharacters 호출 시 displayedEventIds 가 초기화된다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(() => mockRepo.fetchCharactersByEra(any())).thenAnswer(
+        (_) async => [
+          _person(id: 'p1', name: 'A'),
+          _person(id: 'p2', name: 'B'),
+        ],
+      );
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
+          _event(id: 'ev2', eraId: 'e1', characterCodes: ['p2']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.setSelectedCharacters({'p1', 'p2'});
+      controller.setDisplayedEvents({'ev1', 'ev2'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+        'ev2',
+      });
+
+      // 인물을 다시 설정하면 지도 표시 집합도 비어야 한다
+      controller.setSelectedCharacters({'p1'});
+      expect(
+        container.read(storyControllerProvider).displayedEventIds,
+        isEmpty,
+      );
+    });
+
+    test(
+      'setSelectedCharacters 에 동일 집합을 넘기면 displayedEventIds 는 유지된다',
+      () async {
+        when(
+          () => mockRepo.fetchEras(),
+        ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+        when(() => mockRepo.fetchCharactersByEra(any())).thenAnswer(
+          (_) async => [
+            _person(id: 'p1', name: 'A'),
+            _person(id: 'p2', name: 'B'),
+          ],
+        );
+        when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+          (_) async => [
+            _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
+            _event(id: 'ev2', eraId: 'e1', characterCodes: ['p2']),
+          ],
+        );
+
+        final container = buildContainer();
+        final controller = container.read(storyControllerProvider.notifier);
+        await controller.initialize();
+        await controller.selectEra('e1');
+        controller.setSelectedCharacters({'p1', 'p2'});
+        controller.setDisplayedEvents({'ev1', 'ev2'});
+
+        // 같은 집합을 다시 커밋 — 지도 표시는 그대로여야 한다
+        controller.setSelectedCharacters({'p1', 'p2'});
+        expect(container.read(storyControllerProvider).displayedEventIds, {
+          'ev1',
+          'ev2',
+        });
+      },
+    );
+
+    test('toggleCharacter 호출 시 displayedEventIds 가 초기화된다', () async {
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(
+        () => mockRepo.fetchCharactersByEra(any()),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra(any())).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
+        ],
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.setSelectedCharacters({'p1'});
+      controller.setDisplayedEvents({'ev1'});
+      expect(container.read(storyControllerProvider).displayedEventIds, {
+        'ev1',
+      });
+
+      controller.toggleCharacter('p1');
+      expect(
+        container.read(storyControllerProvider).displayedEventIds,
+        isEmpty,
+      );
     });
   });
 }
