@@ -102,6 +102,27 @@ if key_ref != expected_ref:
 PY
 }
 
+## .env 한 줄에서 KEY=VALUE 형식으로 값을 추출한다. 없으면 빈 문자열.
+## 양끝 따옴표(`"` 또는 `'`)는 벗겨낸다. 주석(#) 라인은 무시.
+## validate_supabase_env 와 같은 파서를 쓰지만 단일 키 조회용.
+read_env_value() {
+  local key="$1"
+  [[ -f "$ENV_FILE" ]] || return 0
+  local line
+  line=$(grep -E "^${key}=" "$ENV_FILE" | tail -n1 || true)
+  [[ -n "$line" ]] || return 0
+  local value="${line#${key}=}"
+  # 양끝 동일한 따옴표로 감싸여 있으면 제거.
+  if [[ ${#value} -ge 2 ]]; then
+    local first="${value:0:1}"
+    local last="${value: -1}"
+    if [[ "$first" == "$last" ]] && [[ "$first" == '"' || "$first" == "'" ]]; then
+      value="${value:1:${#value}-2}"
+    fi
+  fi
+  printf '%s' "$value"
+}
+
 run_flutter() {
   local runtime_env="$1"
   shift
@@ -110,8 +131,21 @@ run_flutter() {
   validate_supabase_env "$runtime_env"
   print_target "$runtime_env"
 
+  # .env 의 FCM_VAPID_KEY 를 --dart-define 으로 주입 (Flutter Web 전용 키).
+  # 값이 비어 있으면 네이티브와 마찬가지로 웹 푸시가 비활성화되며,
+  # lib/services/push_service.dart 의 String.fromEnvironment fallback 이 빈
+  # 문자열을 반환해 앱은 정상 동작한다.
+  local fcm_vapid_key
+  fcm_vapid_key="$(read_env_value FCM_VAPID_KEY)"
+
   cd "$ROOT_DIR"
-  exec flutter "$@" --dart-define=ENV="$runtime_env"
+  if [[ -n "$fcm_vapid_key" ]]; then
+    exec flutter "$@" \
+      --dart-define=ENV="$runtime_env" \
+      --dart-define=FCM_VAPID_KEY="$fcm_vapid_key"
+  else
+    exec flutter "$@" --dart-define=ENV="$runtime_env"
+  fi
 }
 
 run_app() {

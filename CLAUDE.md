@@ -68,17 +68,24 @@ dart format .                # 코드 포맷
 
 ## 문서 인덱스
 
+### 코딩 참조용 — 코드를 수정할 때 같이 봐야 하는 명세/구조
+
 | 문서 | 내용 |
 |------|------|
 | `docs/PRD.md` | 제품 요구사항 — 뭘 만드는지 |
-| `docs/ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 |
-| `docs/ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 |
-| `docs/UI_GUIDE.md` | UI/UX 가이드 — 어떻게 보여야 하는지 |
-| `docs/FRONTEND.md` | 프론트엔드 도메인 상세 |
-| `docs/BACKEND.md` | 백엔드 도메인 상세 |
-| `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 |
+| `docs/ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 (시스템 구성도 + 파일 연결) |
+| `docs/ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 (ADR-001 ~ ADR-018) |
+| `docs/UI_GUIDE.md` | UI/UX 가이드 — 어떻게 보여야 하는지 (컬러/레이아웃/컴포넌트) |
+| `docs/FRONTEND.md` | 프론트엔드 도메인 상세 (모델/상태/위젯/화면) |
+| `docs/BACKEND.md` | 백엔드 도메인 상세 (DB 테이블/RLS/Repository/Edge Functions) |
+| `docs/DATA_PIPELINE.md` | 데이터 파이프라인 상세 (tools/*.py + Makefile 타겟) |
 | `docs/TESTING.md` | 테스트 전략 상세 |
-| `docs/WORKFLOW_GUIDE.md` | 작업 흐름 + 유지보수 규칙 (스킬/Agent 동작 방식, 커밋/푸시 정책, DB 변경 체크리스트) |
+
+### 사용자 이해용 — 원리/절차 설명
+
+| 디렉토리 | 내용 |
+|----------|------|
+| `docs/guides/` | 설명 목적 문서들. 코딩에 직접 쓰이지 않지만 인프라/워크플로우 이해용. `INFRA_GUIDE.md` (인프라 동작 원리), `PUSH_SETUP.md` (Firebase 설정 절차), `WORKFLOW_GUIDE.md` (스킬/에이전트/훅 설명), `CONTENT_UPDATE.md` (콘텐츠 등록 → 앱 반영 워크플로우). |
 
 ## 코딩 컨벤션
 
@@ -93,7 +100,7 @@ dart format .                # 코드 포맷
 ## TDD 규칙
 
 **TDD는 "새 기능 개발 방법"이 아니라 "모든 코드 변경의 순서 원칙"이다.** 요청이 들어오면
-코드를 고치기 전에 반드시 다음 순서를 따른다 (상세: `docs/WORKFLOW_GUIDE.md` §5):
+코드를 고치기 전에 반드시 다음 순서를 따른다 (상세: `docs/guides/WORKFLOW_GUIDE.md` §5):
 
 1. 관련 테스트가 이미 있는지 확인 (`test/` grep)
 2. 요구사항 ↔ 기존 테스트 비교 — 충돌 시 "기존 테스트 수정"은 **사용자 확인** 대상
@@ -122,7 +129,7 @@ dart format .                # 코드 포맷
 
 ### 로컬 (pre-commit framework)
 - **pre-commit**: `dart format`, `black`, 큰 파일/머지 충돌/YAML/EOL/공백 검사, **import_sorter**, **forbidden pattern**(`print(`/시크릿 차단)
-- **pre-push**: `flutter analyze` + `flutter test` + **에셋 경로 검증**(`tools/verify_asset_paths.py`)
+- **pre-push**: `flutter analyze` + `flutter test` + **에셋 경로 검증**(`tools/app/verify_asset_paths.py`)
 - 실행: `pre-commit run --all-files` (수동)
 
 ### 원격 (GitHub Actions)
@@ -140,20 +147,58 @@ dart format .                # 코드 포맷
 `Makefile`로 관리. 상세는 `docs/DATA_PIPELINE.md` 참조.
 
 ```bash
-make seed-bible-verses       # 성경 구절 SQL 생성
-make build-avatar-prompts    # 아바타 프롬프트 생성
-make seed-stories            # 이야기 SQL 생성
-make generate-avatars        # Vertex AI 아바타 생성
-make generate-story-images   # Vertex AI 장면 이미지
-make thumbnails              # 썸네일 생성
-make all                     # 전체 파이프라인
+make seed-bible-verses           # 성경 구절 SQL 생성
+make build-character-meta        # 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
+make seed-stories-characters     # 이야기 + 인물 SQL 생성 (권장)
+make generate-avatars            # Vertex AI 아바타 생성
+make generate-story-images       # Vertex AI 장면 이미지
+make thumbnails                  # 썸네일 생성
+make upload-character-avatars    # Supabase Storage `characters/` 버킷으로 아바타 업로드 (1회)
+make all                         # 전체 파이프라인
 ```
+
+## Supabase Edge Functions
+
+웹 앱이 AI 이미지 생성을 안전하게 호출하기 위한 서버리스 함수.
+상세: `docs/BACKEND.md` §7, `supabase/functions/generate-proposal-scene/README.md`
+
+```bash
+supabase functions deploy generate-proposal-scene
+```
+
+필요 secrets: `GOOGLE_CLOUD_PROJECT`, `GCP_SERVICE_ACCOUNT_JSON`.
 
 ## 환경 설정
 
 - `.env` 파일에 `SUPABASE_URL_DEV`, `SUPABASE_ANON_KEY_DEV`, `GOOGLE_CLOUD_PROJECT` 등
+  - 신규 환경 세팅: `cp .env.example .env` 후 실제 값 채우기
+  - `.env`는 `.gitignore` 대상 (시크릿 포함) — **절대 커밋 금지**
 - `ENV` 환경 전환: `--dart-define=ENV=dev|prod`
 - Python: `.venv` 활성화 필수 (`source .venv/bin/activate`)
+
+## Worktree 작업 규칙 (중요)
+
+Claude Code는 작업 격리를 위해 `.claude/worktrees/<name>` 에 git worktree를 만든다.
+worktree는 git이 추적하지 않는 파일(`.env`, `.venv`, `build/` 등)을 **자체 복사본으로
+보유**하므로 제거 시 주의 필요.
+
+### Worktree 생성 시
+1. 메인 repo의 `.env`를 새 worktree로 복사: `cp /path/to/main/.env <worktree>/.env`
+2. `flutter pub get` 실행으로 `pubspec.lock`/`.dart_tool/` 재생성
+
+### Worktree 제거 시 (사용자 지시 받은 경우만)
+**반드시 사용자에게 아래 체크리스트를 안내하고 승인받은 후 실행한다:**
+
+```
+⚠️ worktree 제거 전 확인:
+□ 작업 브랜치가 원격에 푸시되고 머지 완료되었는가?
+□ worktree 안에 .env, .venv, 로컬 편집 중 파일이 남아 있지 않은가?
+  (.env는 .gitignore라 git worktree remove 시 복원 불가 — 필요하면 먼저 복사)
+□ 브랜치를 로컬에서도 삭제할 것인가? (git branch -d <branch>)
+```
+
+제거 명령: `git worktree remove <path>` → 실패 시 `--force`. 폴더 직접 `rm -rf` 금지
+(고아 레코드 남음, `git worktree prune` 필요).
 
 ## DB 변경 규칙
 

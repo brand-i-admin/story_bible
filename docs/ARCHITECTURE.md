@@ -1,38 +1,46 @@
 # ARCHITECTURE — 이야기 성경 기술 아키텍처
 
-> 최종 수정: 2026-04-16
+> 최종 수정: 2026-04-22 (Notifications + FCM 반영)
 
 ## 1. 시스템 구성도
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   Flutter App                        │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────────┐  │
-│  │ screens/ │←─│  state/   │←─│     data/        │  │
-│  │ widgets/ │  │ Riverpod  │  │  repositories    │  │
-│  └──────────┘  └───────────┘  └────────┬─────────┘  │
-│                                        │             │
-└────────────────────────────────────────┼─────────────┘
-                                         │ supabase_flutter SDK
-                                         ▼
-                            ┌─────────────────────────┐
-                            │       Supabase           │
-                            │  ┌───────────────────┐   │
-                            │  │   PostgreSQL       │   │
-                            │  │  + pgvector        │   │
-                            │  │  + RLS             │   │
-                            │  └───────────────────┘   │
-                            │  ┌───────┐ ┌──────────┐  │
-                            │  │ Auth  │ │ Storage  │  │
-                            │  └───────┘ └──────────┘  │
-                            └─────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Flutter App                                  │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────────┐  ┌────────────┐  │
+│  │ screens/ │←─│  state/   │←─│     data/        │  │ services/  │  │
+│  │ widgets/ │  │ Riverpod  │  │  repositories    │  │ PushService│  │
+│  └──────────┘  └───────────┘  └────────┬─────────┘  └─────┬──────┘  │
+└────────────────────────────────────────┼──────────────────┼────────┘
+                                         │ supabase SDK     │ firebase_messaging
+                                         ▼                  ▼
+                      ┌────────────────────────┐   ┌────────────────┐
+                      │        Supabase        │   │    Firebase    │
+                      │  ┌──────────────────┐  │   │  Cloud Msg     │
+                      │  │  PostgreSQL       │  │   │  (FCM)         │
+                      │  │  + pgvector       │  │   └────┬───────────┘
+                      │  │  + RLS/트리거     │  │        │
+                      │  │  + pg_cron        │  │        ├── APNs (iOS)
+                      │  └──────────────────┘  │        ├── Play Services
+                      │  ┌───────┐ ┌────────┐  │        └── Web Push
+                      │  │ Auth  │ │Storage │  │
+                      │  └───────┘ └────────┘  │
+                      │  ┌──────────────────┐  │
+                      │  │  Edge Functions  │  │──► Vertex AI (GCP)
+                      │  │  - generate-     │  │    - Gemini Image
+                      │  │    proposal-*    │  │    - Imagen
+                      │  │  - send-push     │  │
+                      │  └──────────────────┘  │
+                      └────────────────────────┘
 
-┌─────────────────────────────────────────────────────┐
-│              에셋 파이프라인 (로컬)                    │
-│  tools/*.py → Vertex AI Imagen → assets/            │
-│  tools/*.py → SQL 생성 → Supabase SQL Editor        │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                에셋 파이프라인 (로컬 머신)                         │
+│  tools/*.py → Vertex AI → assets/  (아바타, 장면, 썸네일)         │
+│  tools/*.py → SQL 생성 → psql/Supabase SQL Editor                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+**전체 인프라 원리 설명**: `docs/guides/INFRA_GUIDE.md`
 
 ## 2. Flutter 앱 레이어
 
@@ -58,8 +66,8 @@ supabaseClientProvider (Provider<SupabaseClient>)
        │          │
        │          └── storyControllerProvider (NotifierProvider<StoryController, StoryState>)
        │                     │
-       │                     └── StoryState: eras, persons, events, selectedEraId,
-       │                                     selectedPersonIds, selectedEventId,
+       │                     └── StoryState: eras, characters, events, selectedEraId,
+       │                                     selectedCharacterIds, selectedEventId,
        │                                     completedEventIds, searchQuery, ...
        │
        ├── userRepositoryProvider (Provider<UserRepository>)
@@ -71,12 +79,16 @@ supabaseClientProvider (Provider<SupabaseClient>)
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인 |
+| 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인, 상단 bell 아이콘 |
 | 로그인 | `widgets/inline_login_prompt_card.dart` | 인라인 소셜 로그인 (카카오/Google/Apple) |
 | 노트 목록 | `screens/profile_notes_screen.dart` | 개인 노트 CRUD |
 | 노트 편집 | `screens/profile_note_editor_screen.dart` | 노트 에디터 |
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
 | 법률 문서 | `screens/legal_documents_screen.dart` | 이용약관, 개인정보처리방침 |
+| 제안 게시판 | `screens/proposal_board_screen.dart` | 사역자/관리자 제안 목록 (웹 전용) |
+| 제안 작성 | `screens/proposal_submit_screen.dart` | 5단계 제안 작성/수정 |
+| 제안 상세 | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글 + 승인/거절 |
+| 알림 히스토리 | `screens/notification_history_screen.dart` | 최근 30일 알림 전체 보기 |
 
 ## 3. 데이터 흐름 — 파일 간 연결 관계
 
@@ -123,16 +135,16 @@ main.dart → Supabase 초기화 + ProviderScope
 **데이터 계층 (아래→위 방향):**
 ```
 models/ (순수 데이터 상자)
-  ├── Era, Person, StoryEvent     ← 이야기 도메인
+  ├── Era, Character, StoryEvent     ← 이야기 도메인
   ├── AppUserProfile, UserNote    ← 사용자 도메인
   └── BibleVerse, QuizQuestion    ← 보조 도메인
 
 data/ (Supabase 쿼리 + Model 변환)
   ├── story_repository.dart
   │     fetchEras() → List<Era>
-  │     fetchPersonsByEra() → List<Person>
+  │     fetchCharactersByEra() → List<Character>
   │     fetchEventsByEra() → List<StoryEvent>
-  │     fetchEventsForPerson() → List<StoryEvent>
+  │     fetchEventsForCharacter() → List<StoryEvent>
   │     searchEventsByText() → 퍼지 검색
   │     fetchQuizQuestions() → List<QuizQuestion>
   │     upsertEventProgress() → 학습 진행도 저장
@@ -142,7 +154,7 @@ data/ (Supabase 쿼리 + Model 변환)
   │     fetchUserNotesPage() → 노트 페이지네이션
   │     fetchSavedVersesPage() → 저장 구절 페이지네이션
   │     fetchIntercessoryPrayerPage() → 중보기도 목록
-  │     fetchPersonStudyProgress() → 인물별 진행도
+  │     fetchCharacterStudyProgress() → 인물별 진행도
   │     recordAttendance() / recordStudyDay() → 출석/학습 기록
   │
   └── auth_repository.dart
@@ -154,8 +166,8 @@ state/ (비즈니스 로직)
   │     → StoryState 갱신
   │
   ├── story_state.dart (불변 상태)
-  │     eras, persons, events, selectedEraId
-  │     selectedPersonIds, completedEventIds, searchQuery
+  │     eras, characters, events, selectedEraId
+  │     selectedCharacterIds, completedEventIds, searchQuery
   │
   └── auth_providers.dart
         authStateProvider → 현재 로그인 사용자
@@ -178,7 +190,7 @@ story_home_screen.dart (메인 화면 — 모든 것의 허브)
   │     ├── profile/profile_right_panel.dart      (part)
   │     ├── profile/profile_helpers.dart          (part)
   │     ├── profile/profile_intercessory_prayer.dart (part)
-  │     └── profile/profile_person_overview.dart  (part)
+  │     └── profile/profile_character_overview.dart  (part)
   ├── ParchmentDialog       → 이야기 상세 모달
   ├── BibleReaderPage       → 성경 리더
   ├── EventDetailPage       → 사건 상세
@@ -199,22 +211,29 @@ utils/
 상세는 `docs/BACKEND.md` 참조. 핵심 테이블:
 
 ```
-eras ──< person_eras >── persons
-  │                         │
-  └──< events ──< event_persons >──┘
-          │
-          ├──< event_bible_refs
-          ├──< quiz_questions
-          └──< user_event_progress >── (auth.users)
+eras ──< events                          (events.era_id)
+              │
+              ├── character_codes text[]    (인물 매핑은 events row 자체에 임베드)
+              ├── bible_refs jsonb       (성경 참조 임베드)
+              ├── story_scenes jsonb     (장면 텍스트 임베드)
+              └── scene_characters jsonb    (장면별 인물 임베드)
+
+events ──< quiz_questions
+       └──< user_event_progress >── (auth.users)
+
+persons       (어드민이 is_active 토글로 노출 제어)
+events_ordered (view: rank_in_era / global_rank 동적 계산)
+character_eras    (view: 인물 첫 등장 story_index 기반 era별 순서)
 
 bible_verses (독립 — 31,904절 KRV)
 
 user_profiles ──< user_notes
               ├──< user_saved_verses
               ├──< user_intercessory_prayers
-              ├──< user_daily_attendance
-              └──< user_daily_study
+              └──< user_daily_activity  (attended + studied 플래그)
 ```
+
+> v3 schema: `event_characters` / `event_bible_refs` 테이블, `events.code` / `events.time_sort_key` / `events.story` / `events.short_story` 컬럼 폐기. 자세한 사유는 ADR-012/013 참조.
 
 ## 4. 인증 흐름
 
@@ -231,15 +250,14 @@ user_profiles ──< user_notes
 상세는 `docs/DATA_PIPELINE.md` 참조. 의존 관계:
 
 ```
-stories JSON (소스)
-  ├→ build_avatar_prompts_json.py → avatar_prompts.json
-  │     ├→ generate_avatars_vertex.py → assets/avatars/
+stories JSON (소스 — 각 항목에 story_index 직접 박힘)
+  ├→ build_character_meta_json.py   → character_meta.json (모든 개인 인물 + 아바타 프롬프트)
+  │     ├→ generate_avatars_vertex.py → assets/avatars/ (기존 png 보존)
   │     │     └→ generate_runtime_thumbnails.py → assets/avatars_thumbs/
-  │     ├→ build_persons_seed_sql.py → persons_seed.sql
-  │     └→ build_200_stories_seed_sql.py → 200_stories_seed.sql
-  ├→ rewrite_story_scenes_for_image_generation.py → story_scenes 보강
-  │     └→ generate_event_story_images_vertex.py → assets/story_images/
-  │           └→ generate_runtime_thumbnails.py → assets/story_images_thumbs/
+  │     ├→ build_characters_seed_sql.py → characters_seed.sql (is_active 토글 보존 UPSERT)
+  │     └→ build_200_stories_seed_sql.py → 200_stories_seed.sql (events 한 테이블)
+  ├→ generate_event_story_images_vertex.py → assets/story_images/
+  │     └→ generate_runtime_thumbnails.py → assets/story_images_thumbs/
   └→ build_krv_seed_sql.py → krv_bible_verses.sql (독립)
 ```
 

@@ -46,4 +46,5 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 - `run_*` 스크립트는 `flutter run --dart-define=ENV=...`를 호출합니다.
 - `build_ios_*` 스크립트는 `flutter build ipa --release --dart-define=ENV=...`를 호출합니다.
 - `build_android_*` 스크립트는 `flutter build appbundle --release --dart-define=ENV=...`를 호출합니다.
+- `.env`에 `FCM_VAPID_KEY`가 있으면 `--dart-define=FCM_VAPID_KEY=...`도 자동 주입합니다 (Flutter Web 푸시용). 비어 있거나 없으면 주입 생략.
 - 로컬에 `flutter`와 `python3`가 설치되어 있어야 합니다.

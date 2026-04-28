@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,24 +8,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/app_notification.dart';
 import '../models/era.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
+import '../services/push_service.dart';
 import '../state/auth_providers.dart';
+import '../state/notification_providers.dart';
+import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
+import '../widgets/character_panel.dart';
 import '../widgets/event_detail_page.dart';
+import '../widgets/notification/notification_bell_button.dart';
+import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_texture_layer.dart';
-import '../widgets/person_panel.dart';
 import '../widgets/profile_tab_page.dart';
+import '../widgets/proposal/pastor_gate_dialog.dart';
 import '../widgets/search_bottom_sheet.dart';
 import '../widgets/story_home_styles.dart';
 import '../widgets/story_map_panel.dart';
 import '../widgets/story_selection_panel.dart';
 import '../widgets/weekly_tab_page.dart';
+import 'notification_history_screen.dart';
+import 'proposal_board_screen.dart';
+import 'proposal_detail_screen.dart';
 
 class StoryHomeScreen extends ConsumerStatefulWidget {
   const StoryHomeScreen({super.key});
@@ -42,12 +53,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       GlobalKey<ProfileTabPageState>();
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   ProviderSubscription<User?>? _authUserSubscription;
-  PersonSortMode _personSortMode = PersonSortMode.eraOrder;
+  CharacterSortMode _characterSortMode = CharacterSortMode.eraOrder;
   int _selectionStep = 1;
   StorySelectionPanelStage _selectionPanelStage =
       StorySelectionPanelStage.expanded;
   double _selectionSheetExtent = _selectionSheetExpandedSize;
-  Set<String> _draftSelectedPersonIds = <String>{};
+  Set<String> _draftSelectedCharacterCodes = <String>{};
+
+  /// Step 3 에서 사용자가 체크박스로 고르고 있는 이벤트 id — 아직 커밋 전.
+  /// "다음" 을 눌러야 `controller.setDisplayedEvents` 로 커밋되어 지도 핀/화살표
+  /// 애니메이션이 실제로 시작된다.
+  Set<String> _draftDisplayedEventIds = <String>{};
 
   @override
   void initState() {
@@ -69,6 +85,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
     Future.microtask(() {
       ref.read(storyControllerProvider.notifier).initialize();
+    });
+    // 앱 시작 시 이미 Supabase 세션이 복원된 상태라면 listenManual 은
+    // "값 변화"를 감지하지 못해 fire 되지 않는다. 이 경우 FCM 토큰 등록 +
+    // ensureSignedInUser 가 건너뛰어지므로, initState 에서 한 번 명시 호출.
+    Future.microtask(() {
+      final initialUser = Supabase.instance.client.auth.currentUser;
+      if (initialUser != null) {
+        _handleAuthUserChanged(initialUser);
+      }
     });
   }
 
@@ -103,6 +128,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await ref
           .read(storyControllerProvider.notifier)
           .refreshCompletedEventIds();
+      // FCM 토큰 upsert — Firebase 미설정/권한 거부면 내부적으로 no-op.
+      try {
+        await PushService.instance.registerCurrentTokenIfAuthenticated();
+      } catch (_) {
+        // 푸시 등록 실패는 앱 동작에 영향 없음
+      }
     } catch (_) {
       // 인증 상태 변경 처리 실패는 무시 (재시도 기회 존재)
     }
@@ -119,24 +150,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     Color(0xFF5C6B9F),
   ];
 
-  Set<String> _sanitizeDraftSelectedPersonIds(StoryState state) {
-    return _draftSelectedPersonIds
-        .where((id) => state.persons.any((person) => person.id == id))
+  Set<String> _sanitizeDraftSelectedCharacterCodes(StoryState state) {
+    return _draftSelectedCharacterCodes
+        .where(
+          (code) => state.characters.any((character) => character.code == code),
+        )
         .toSet();
   }
 
-  Map<String, Color> _draftPersonColors(StoryState state) {
-    final selectedIds = _sanitizeDraftSelectedPersonIds(state).toList();
+  Map<String, Color> _draftCharacterColors(StoryState state) {
+    final selectedCodes = _sanitizeDraftSelectedCharacterCodes(state).toList();
     final next = <String, Color>{};
-    for (var i = 0; i < selectedIds.length; i++) {
-      next[selectedIds[i]] =
+    for (var i = 0; i < selectedCodes.length; i++) {
+      next[selectedCodes[i]] =
           _draftSelectionPalette[i % _draftSelectionPalette.length];
     }
     return next;
   }
 
-  Color _colorForDraftPerson(String personId, StoryState state) {
-    return _draftPersonColors(state)[personId] ?? const Color(0xFF8E7B61);
+  Color _colorForDraftCharacter(String characterCode, StoryState state) {
+    return _draftCharacterColors(state)[characterCode] ??
+        const Color(0xFF8E7B61);
   }
 
   bool _sameStringSet(Set<String> a, Set<String> b) {
@@ -151,27 +185,52 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return true;
   }
 
-  bool _hasPendingPersonSelectionChanges(StoryState state) {
-    final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
-    return !_sameStringSet(sanitizedDraft, state.selectedPersonIds);
+  bool _hasPendingCharacterSelectionChanges(StoryState state) {
+    final sanitizedDraft = _sanitizeDraftSelectedCharacterCodes(state);
+    return !_sameStringSet(sanitizedDraft, state.selectedCharacterCodes);
   }
 
-  List<StoryEvent> _timelineForSelectedPersons(
+  /// 인물 기반 기본 타임라인 — 선택된 인물 중 하나라도 등장하는 모든 사건을
+  /// globalRank 오름차순으로 정렬해 반환. 정렬 로직의 single source of truth.
+  List<StoryEvent> _timelineForSelectedCharacters(
     StoryState state,
-    Set<String> selectedPersonIds,
+    Set<String> selectedCharacterCodes,
   ) {
     final filtered = state.events.where((event) {
-      return event.personIds.any(selectedPersonIds.contains);
+      return event.characterCodes.any(selectedCharacterCodes.contains);
     }).toList();
 
     filtered.sort((a, b) {
-      final cmp = a.timeSortKey.compareTo(b.timeSortKey);
+      final cmp = a.globalRank.compareTo(b.globalRank);
       if (cmp != 0) {
         return cmp;
       }
       return a.id.compareTo(b.id);
     });
     return filtered;
+  }
+
+  /// 지도에 넘길 타임라인: 커밋된 `state.displayedEventIds` 에 속한 사건만.
+  /// 비어 있으면 빈 리스트 → 지도 핀/화살표가 완전히 사라진다.
+  List<StoryEvent> _timelineForMap(
+    StoryState state,
+    List<StoryEvent> baseCharacterTimeline,
+  ) {
+    if (state.displayedEventIds.isEmpty) {
+      return const <StoryEvent>[];
+    }
+    return baseCharacterTimeline
+        .where((e) => state.displayedEventIds.contains(e.id))
+        .toList(growable: false);
+  }
+
+  /// draft 집합에서 현재 사용 가능한 이벤트만 남긴다. 인물이 바뀌어 더 이상
+  /// 후보에 없는 id 는 자동으로 빠진다.
+  Set<String> _sanitizeDraftDisplayedEventIds(
+    List<StoryEvent> availableEvents,
+  ) {
+    final valid = availableEvents.map((e) => e.id).toSet();
+    return _draftDisplayedEventIds.intersection(valid);
   }
 
   bool _canOpenSelectionStep(int step, StoryState state) {
@@ -181,8 +240,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (step == 2) {
       return state.selectedEraId != null;
     }
-    return state.selectedPersonIds.isNotEmpty &&
-        !_hasPendingPersonSelectionChanges(state);
+    return state.selectedCharacterCodes.isNotEmpty &&
+        !_hasPendingCharacterSelectionChanges(state);
   }
 
   bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
@@ -212,7 +271,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final nextState = ref.read(storyControllerProvider);
     setState(() {
       _selectionStep = 1;
-      _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+      _draftSelectedCharacterCodes = nextState.selectedCharacterCodes.toSet();
     });
   }
 
@@ -225,19 +284,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final nextState = ref.read(storyControllerProvider);
     setState(() {
       _selectionStep = 1;
-      _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+      _draftSelectedCharacterCodes = nextState.selectedCharacterCodes.toSet();
     });
   }
 
-  void _toggleDraftPerson(String personId) {
+  void _toggleDraftCharacter(String characterId) {
     setState(() {
-      final next = {..._draftSelectedPersonIds};
-      if (next.contains(personId)) {
-        next.remove(personId);
+      final next = {..._draftSelectedCharacterCodes};
+      if (next.contains(characterId)) {
+        next.remove(characterId);
       } else {
-        next.add(personId);
+        next.add(characterId);
       }
-      _draftSelectedPersonIds = next;
+      _draftSelectedCharacterCodes = next;
     });
   }
 
@@ -300,9 +359,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     setState(() {
       if (step == 2) {
-        final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
-        _draftSelectedPersonIds = _selectionStep == 3
-            ? state.selectedPersonIds.toSet()
+        final sanitizedDraft = _sanitizeDraftSelectedCharacterCodes(state);
+        _draftSelectedCharacterCodes = _selectionStep == 3
+            ? state.selectedCharacterCodes.toSet()
             : sanitizedDraft;
       }
       _selectionStep = step;
@@ -315,28 +374,75 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     setState(() {
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedCharacterCodes = state.selectedCharacterCodes.toSet();
       _selectionStep = 2;
     });
   }
 
-  void _proceedFromPersonStep() {
+  void _proceedFromCharacterStep() {
     final state = ref.read(storyControllerProvider);
-    final sanitizedDraft = _sanitizeDraftSelectedPersonIds(state);
+    final sanitizedDraft = _sanitizeDraftSelectedCharacterCodes(state);
     if (sanitizedDraft.isEmpty) {
       return;
     }
     ref
         .read(storyControllerProvider.notifier)
-        .setSelectedPersons(sanitizedDraft);
+        .setSelectedCharacters(sanitizedDraft);
+    // 인물 커밋으로 displayedEventIds 가 컨트롤러에서 리셋된다.
+    // Step 3 진입 시 draft 도 깨끗하게 시작.
+    setState(() {
+      _draftSelectedCharacterCodes = sanitizedDraft;
+      _draftDisplayedEventIds = <String>{};
+      _selectionStep = 3;
+      // 기존 "즉시 collapse" 동작 제거 — 사용자가 Step 3 에서 체크박스로
+      // 사건을 골라야 하므로 패널을 열어둔 채로 둔다.
+    });
+  }
+
+  void _toggleDraftDisplayedEvent(String eventId) {
+    setState(() {
+      final next = {..._draftDisplayedEventIds};
+      if (next.contains(eventId)) {
+        next.remove(eventId);
+      } else {
+        next.add(eventId);
+      }
+      _draftDisplayedEventIds = next;
+    });
+  }
+
+  void _selectAllDraftDisplayedEvents(List<StoryEvent> availableEvents) {
+    setState(() {
+      _draftDisplayedEventIds = availableEvents.map((e) => e.id).toSet();
+    });
+  }
+
+  void _deselectAllDraftDisplayedEvents() {
+    setState(() {
+      _draftDisplayedEventIds = <String>{};
+    });
+  }
+
+  /// Step 3 "다음" 버튼 핸들러 — draft 를 커밋해 지도 핀/화살표 애니메이션 트리거.
+  /// 커밋 후 선택 패널을 최소화하여 지도를 드러낸다.
+  void _proceedFromStoryStep() {
+    final state = ref.read(storyControllerProvider);
+    final characterTimeline = _timelineForSelectedCharacters(
+      state,
+      state.selectedCharacterCodes,
+    );
+    final sanitized = _sanitizeDraftDisplayedEventIds(characterTimeline);
+    if (sanitized.isEmpty) {
+      return;
+    }
+    ref.read(storyControllerProvider.notifier).setDisplayedEvents(sanitized);
     final viewportSize = MediaQuery.sizeOf(context);
     final collapsedExtent = _sheetSizeForStage(
       viewportSize,
       StorySelectionPanelStage.collapsed,
     );
     setState(() {
-      _draftSelectedPersonIds = sanitizedDraft;
-      _selectionStep = 3;
+      _draftDisplayedEventIds = sanitized;
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
     });
@@ -353,6 +459,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onOpenEventDetail: _openEventDetailPage,
         ),
       ),
+    );
+  }
+
+  /// 웹 한정 "이야기 등록" 탭 핸들러.
+  /// - 비로그인: 안내 스낵바 → 프로필 탭으로 이동 (그쪽에 로그인 UI 있음)
+  /// - 로그인 + is_pastor=false: PastorGateDialog (메일 안내)
+  /// - 로그인 + is_pastor=true OR admin: ProposalBoardScreen 진입
+  Future<void> _openProposalBoardOrGate() async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('먼저 로그인해주세요 (프로필 탭에서 로그인)')));
+      await _openProfileTab();
+      return;
+    }
+    final isAdmin = ref.read(isAdminProvider);
+    final isPastor = await ref.read(isPastorProvider.future);
+    if (!mounted) return;
+    if (!isPastor && !isAdmin) {
+      await PastorGateDialog.show(context);
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const ProposalBoardScreen()),
     );
   }
 
@@ -391,7 +523,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         final nextState = ref.read(storyControllerProvider);
         setState(() {
           _selectionStep = 3;
-          _draftSelectedPersonIds = nextState.selectedPersonIds.toSet();
+          _draftSelectedCharacterCodes = nextState.selectedCharacterCodes
+              .toSet();
         });
         _handleEventSelect(event.id);
       },
@@ -408,39 +541,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final viewportSize = MediaQuery.sizeOf(context);
     final collapsedExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
     controller.selectEvent(event.id);
+    // 지도에 이 사건이 아직 커밋 표시되지 않았다면(예: 검색 결과에서 진입)
+    // displayedEventIds + draft 모두에 추가해 지도에 핀이 뜨도록.
+    if (!state.displayedEventIds.contains(event.id)) {
+      final nextCommitted = {...state.displayedEventIds, event.id};
+      controller.setDisplayedEvents(nextCommitted);
+      _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
+    }
     setState(() {
       _selectionStep = 3;
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedCharacterCodes = state.selectedCharacterCodes.toSet();
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-      _mapPanelController.focusSelectedEvent(force: true);
-    });
-  }
-
-  void _handleSelectionPanelEventSelect(String eventId) {
-    final state = ref.read(storyControllerProvider);
-    final controller = ref.read(storyControllerProvider.notifier);
-    final event = state.events.where((e) => e.id == eventId).firstOrNull;
-    if (event == null) {
-      return;
-    }
-
-    final viewportSize = MediaQuery.sizeOf(context);
-    final targetSheetExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
-
-    setState(() {
-      _selectionStep = 3;
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
-      _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = targetSheetExtent;
-    });
-    controller.selectEvent(event.id);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -459,7 +572,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     controller.selectEvent(event.id);
     setState(() {
       _selectionStep = 3;
-      _draftSelectedPersonIds = state.selectedPersonIds.toSet();
+      _draftSelectedCharacterCodes = state.selectedCharacterCodes.toSet();
     });
     _openEventDetailPage(event);
   }
@@ -469,7 +582,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Future<void> _openEventDetailPage(StoryEvent event) async {
-    final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(event);
+    // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
+    // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
+    final client = ref.read(supabaseClientProvider);
+    final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
+      event,
+      publicUrlFor: (storagePath) {
+        final slash = storagePath.indexOf('/');
+        if (slash < 0) return storagePath;
+        final bucket = storagePath.substring(0, slash);
+        final path = storagePath.substring(slash + 1);
+        return client.storage.from(bucket).getPublicUrl(path);
+      },
+    );
     if (!mounted) {
       return;
     }
@@ -510,6 +635,61 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           initialChapterNo: initialChapterNo,
           initialVerseNo: initialVerseNo,
         ),
+      ),
+    );
+  }
+
+  /// 알림 탭 처리 — 읽음 처리 + 딥링크 라우팅.
+  /// 제안 관련 알림인데 모바일/태블릿이면 "컴퓨터로 확인하세요" 다이얼로그 후
+  /// 화면 전환은 하지 않는다(편집이 웹 전용).
+  Future<void> _handleNotificationTap(AppNotification notification) async {
+    // 1) 읽음 처리 + 상태 무효화.
+    final repo = ref.read(notificationRepositoryProvider);
+    try {
+      await repo.markRead(notification);
+    } catch (_) {
+      // 읽음 실패는 무시 (다음 refresh 에 반영됨)
+    }
+    ref.invalidate(unreadNotificationsProvider);
+    ref.invalidate(notificationHistoryProvider);
+
+    if (!mounted) return;
+
+    // 2) 모바일/태블릿 + 제안 알림 → 다이얼로그만 띄우고 종료.
+    final proceed = await shouldProceedWithNavigation(context, notification);
+    if (!proceed || !mounted) return;
+
+    // 3) deep_link 파싱 후 화면 전환.
+    final link = NotificationDeepLink.parse(notification.deepLink);
+    switch (link.target) {
+      case NotificationTarget.proposal:
+        if (link.id != null) {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => ProposalDetailScreen(proposalId: link.id!),
+            ),
+          );
+        }
+        break;
+      case NotificationTarget.event:
+        if (link.id != null) {
+          _openEventDetail(link.id!);
+        }
+        break;
+      case NotificationTarget.weekly:
+        await _openWeeklyTab();
+        break;
+      case NotificationTarget.unknown:
+        break;
+    }
+  }
+
+  Future<void> _openNotificationHistory() async {
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            NotificationHistoryScreen(onNavigate: _handleNotificationTap),
       ),
     );
   }
@@ -752,7 +932,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     await ref
         .read(storyControllerProvider.notifier)
-        .markEventCompleted(eventId: eventId, score: score, isCompleted: true);
+        .markEventCompleted(eventId: eventId, isCompleted: true);
+    // 인앱 알림 row 삽입 — 실패해도 퀴즈 완료 UX 를 막지 않도록 try-catch.
+    try {
+      await ref
+          .read(notificationRepositoryProvider)
+          .notifyQuizCompleted(eventId);
+      ref.invalidate(unreadNotificationsProvider);
+    } catch (_) {
+      // 알림 실패는 조용히 무시
+    }
     await _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
   }
 
@@ -760,9 +949,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
-    final timeline = _timelineForSelectedPersons(
+    // 인물 기반 전체 후보: Step 3 선택지 + 정렬 기준.
+    final characterTimeline = _timelineForSelectedCharacters(
       state,
-      state.selectedPersonIds,
+      state.selectedCharacterCodes,
+    );
+    // 지도에 실제로 렌더할 사건: 커밋된 displayedEventIds 로 필터.
+    final mapTimeline = _timelineForMap(state, characterTimeline);
+    // 현재 draft 가 후보 밖을 가리키면 자동 정리된 뷰.
+    final sanitizedDraftDisplayed = _sanitizeDraftDisplayedEventIds(
+      characterTimeline,
     );
     final testamentEras =
         state.eras
@@ -773,8 +969,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selectedEra = state.eras
         .where((era) => era.id == state.selectedEraId)
         .firstOrNull;
-    final avatarByPersonId = <String, String>{
-      for (final person in state.persons) person.id: person.avatarAssetPath,
+    final avatarByCharacterCode = <String, String>{
+      for (final character in state.characters)
+        character.code: character.avatarAssetPath,
     };
 
     final mapCenter =
@@ -792,15 +989,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         children: [
           Positioned.fill(
             child: StoryMapPanel(
-              events: timeline,
+              events: mapTimeline,
               selectedEventId: state.selectedEventId,
               onSelectEvent: _handleEventSelect,
               onCloseSelectedCallout: _closeSelectedEventPopup,
               onOpenDetail: _openEventDetail,
-              colorForPerson: controller.colorForPerson,
-              avatarAssetForPerson: (personId) =>
-                  avatarByPersonId[personId] ?? '',
-              selectedPersonIds: state.selectedPersonIds,
+              colorForCharacter: controller.colorForCharacter,
+              avatarAssetForCharacter: (characterCode) =>
+                  avatarByCharacterCode[characterCode] ?? '',
+              selectedCharacterCodes: state.selectedCharacterCodes,
               controller: _mapPanelController,
               initialCenter: mapCenter,
               initialZoom: mapZoom,
@@ -882,36 +1079,36 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         onSelectTestament: (testament) {
                           _handleStepTestamentSelect(testament);
                         },
-                        persons: state.persons,
-                        personSortMode: _personSortMode,
-                        onPersonSortModeChanged: (mode) {
+                        characters: state.characters,
+                        characterSortMode: _characterSortMode,
+                        onCharacterSortModeChanged: (mode) {
                           setState(() {
-                            _personSortMode = mode;
+                            _characterSortMode = mode;
                           });
                         },
-                        draftSelectedPersonIds: _sanitizeDraftSelectedPersonIds(
-                          state,
-                        ),
-                        onToggleDraftPerson: _toggleDraftPerson,
-                        committedSelectedPersonIds: state.selectedPersonIds,
-                        hasPendingPersonChanges:
-                            _hasPendingPersonSelectionChanges(state),
-                        colorForDraftPerson: (personId) =>
-                            _colorForDraftPerson(personId, state),
-                        colorForCommittedPerson: controller.colorForPerson,
-                        events: timeline,
-                        selectedEventId: state.selectedEventId,
+                        draftSelectedCharacterCodes:
+                            _sanitizeDraftSelectedCharacterCodes(state),
+                        onToggleDraftCharacter: _toggleDraftCharacter,
+                        committedSelectedCharacterCodes:
+                            state.selectedCharacterCodes,
+                        hasPendingCharacterChanges:
+                            _hasPendingCharacterSelectionChanges(state),
+                        colorForDraftCharacter: (characterId) =>
+                            _colorForDraftCharacter(characterId, state),
+                        colorForCommittedCharacter:
+                            controller.colorForCharacter,
+                        events: characterTimeline,
                         completedEventIds: state.completedEventIds,
-                        onSelectEvent: _handleSelectionPanelEventSelect,
+                        draftDisplayedEventIds: sanitizedDraftDisplayed,
+                        committedDisplayedEventIds: state.displayedEventIds,
+                        onToggleDisplayedEvent: _toggleDraftDisplayedEvent,
+                        onSelectAllDisplayedEvents: () =>
+                            _selectAllDraftDisplayedEvents(characterTimeline),
+                        onDeselectAllDisplayedEvents:
+                            _deselectAllDraftDisplayedEvents,
+                        onCommitDisplayedEvents: _proceedFromStoryStep,
                         onNextFromEra: _proceedFromEraStep,
-                        onNextFromPersons: _proceedFromPersonStep,
-                        onStartQuiz: () {
-                          final eventId = state.selectedEventId;
-                          if (eventId == null) {
-                            return;
-                          }
-                          _startQuiz(eventId);
-                        },
+                        onNextFromCharacters: _proceedFromCharacterStep,
                       ),
                     ),
                   ),
@@ -969,6 +1166,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         ),
                         const SizedBox(width: 8),
                         topUtilityButton(label: '프로필', onTap: _openProfileTab),
+                        const SizedBox(width: 8),
+                        NotificationBellButton(
+                          onNavigate: _handleNotificationTap,
+                          onOpenHistory: _openNotificationHistory,
+                        ),
+                        if (kIsWeb) ...[
+                          const SizedBox(width: 8),
+                          topUtilityButton(
+                            label: '이야기 등록',
+                            onTap: _openProposalBoardOrGate,
+                          ),
+                        ],
                       ],
                     ),
                   ),

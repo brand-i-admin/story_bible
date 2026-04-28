@@ -77,23 +77,27 @@ void main() {
     });
   });
 
-  group('scenePrefixForCode', () {
-    test('코드 끝의 숫자를 3자리 패딩', () {
-      expect(loader.scenePrefixForCode('EVT1'), '001');
-      expect(loader.scenePrefixForCode('EVT42'), '042');
-      expect(loader.scenePrefixForCode('EVT215'), '215');
+  group('scenePrefixForTitle', () {
+    test('제목 앞부분의 숫자를 3자리 패딩', () {
+      expect(loader.scenePrefixForTitle('001 창조'), '001');
+      expect(loader.scenePrefixForTitle('042 출애굽'), '042');
+      expect(loader.scenePrefixForTitle('215 새 하늘'), '215');
     });
 
-    test('숫자가 없으면 null', () {
-      expect(loader.scenePrefixForCode('NONUM'), isNull);
+    test('숫자 1자리도 3자리로 패딩', () {
+      expect(loader.scenePrefixForTitle('5 짧은 제목'), '005');
+    });
+
+    test('숫자 없으면 null', () {
+      expect(loader.scenePrefixForTitle('숫자 없음'), isNull);
     });
 
     test('빈 문자열이면 null', () {
-      expect(loader.scenePrefixForCode(''), isNull);
+      expect(loader.scenePrefixForTitle(''), isNull);
     });
 
     test('앞뒤 공백을 trim', () {
-      expect(loader.scenePrefixForCode('  EVT5  '), '005');
+      expect(loader.scenePrefixForTitle('  005 trim test  '), '005');
     });
   });
 }

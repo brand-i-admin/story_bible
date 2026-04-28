@@ -41,7 +41,7 @@
 - 핀 클릭 → 이야기 상세 다이얼로그
 
 #### 이야기 상세
-- 요약, 본문(short_story), 4장면 이미지
+- 요약(summary), 4장면 이미지 + 장면별 등장인물
 - 성경 구절 참조 (KRV)
 - 학습 완료 체크 + XP 획득 (score × 10)
 
@@ -63,11 +63,11 @@
 
 | 기능 | 상태 | 비고 |
 |------|------|------|
+| 어드민 웹 | admin/ 폐기, 메인 앱 웹 버전으로 이전 진행 중 (ADR-016) | 2026-04 구조 전환: 별도 `admin/` Flutter Web 제거 → 메인 앱의 웹 버전에 "이야기 제안" 게시판 탭 신설. 사역자(목회자)로 인증된 사용자만 제안 가능, 관리자가 승인하면 events 로 반영. DB 준비(Phase 1) 완료, UI 구현(Phase 2~6) 진행 예정. |
 | 퀴즈 시스템 | DB 스키마 있음, 데이터 미구축 | `quiz_questions` 테이블 존재 |
 | 시맨틱 검색 | 스키마 있음 | `search_embeddings` (pgvector 1536차원) |
 | 다국어 지원 | 미착수 | bible_verses.translation 컬럼 대응 가능 |
 | 소셜 확장 | 기본만 | 랭킹, 친구, 그룹 스터디 |
-| 관리자 CMS | 미착수 | 이야기/퀴즈 편집 |
 
 ## 5. 데이터 파이프라인 개요
 
@@ -76,10 +76,11 @@
 
 ```
 assets/bible/*.txt ─→ build_krv_seed_sql.py ─→ bible_verses SQL
-assets/200_stories/ ─→ build_avatar_prompts_json.py ─→ avatar_prompts.json
-                    ├→ build_200_stories_seed_sql.py ─→ events SQL
-                    ├→ build_persons_seed_sql.py ─→ persons SQL
-                    ├→ generate_avatars_vertex.py ─→ 아바타 PNG
+assets/200_stories/ (각 항목에 story_index 직접 박힘)
+                    ├→ build_character_meta_json.py    ─→ character_meta.json (모든 인물 + 아바타 프롬프트)
+                    ├→ build_200_stories_seed_sql.py ─→ events SQL (jsonb/배열 흡수)
+                    ├→ build_characters_seed_sql.py ─→ characters SQL (is_active 토글 보존)
+                    ├→ generate_avatars_vertex.py ─→ 아바타 PNG (기존 보존)
                     └→ generate_event_story_images_vertex.py ─→ 장면 이미지
 ```
 
