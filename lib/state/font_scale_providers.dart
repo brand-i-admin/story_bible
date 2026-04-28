@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Project imports:
 import '../data/font_scale_repository.dart';
 
 /// 앱 전역 글자 크기 배율.

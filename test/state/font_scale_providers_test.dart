@@ -1,9 +1,7 @@
-// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-// Project imports:
 import 'package:story_bible/data/font_scale_repository.dart';
 import 'package:story_bible/state/font_scale_providers.dart';
 
