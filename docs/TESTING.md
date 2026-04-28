@@ -93,9 +93,9 @@ void main() {
 
   tearDown(() => container.dispose());
 
-  test('selectEra loads persons and events', () async {
-    when(() => mockRepo.fetchPersonsByEra(any()))
-        .thenAnswer((_) async => [/* mock persons */]);
+  test('selectEra loads characters and events', () async {
+    when(() => mockRepo.fetchCharactersByEra(any()))
+        .thenAnswer((_) async => [/* mock characters */]);
     when(() => mockRepo.fetchEventsByEra(any()))
         .thenAnswer((_) async => [/* mock events */]);
 
@@ -192,7 +192,7 @@ include: package:flutter_lints/flutter.yaml
 test/
 ├── models/
 │   ├── era_test.dart
-│   ├── person_test.dart
+│   ├── character_test.dart
 │   ├── story_event_test.dart
 │   └── bible_verse_test.dart
 ├── state/
@@ -203,7 +203,7 @@ test/
 └── widgets/
     ├── era_selector_test.dart
     ├── search_box_test.dart
-    └── person_panel_test.dart
+    └── character_panel_test.dart
 ```
 
 - 파일명: `{원본파일명}_test.dart`
@@ -213,7 +213,7 @@ test/
 
 ## 8. 코드 메트릭 검사
 
-`tools/check_code_metrics.py`가 파일/메소드 크기를 자동 검사한다:
+`tools/lint/check_code_metrics.py`가 파일/메소드 크기를 자동 검사한다:
 
 | 항목 | 경고 기준 | 차단 기준 |
 |------|----------|----------|
@@ -226,8 +226,8 @@ test/
 - CI에서 자동 실행 (`--ci` 플래그 시 차단 모드)
 
 ```bash
-python3 tools/check_code_metrics.py        # 보고 모드
-python3 tools/check_code_metrics.py --ci    # 차단 모드 (FAIL 시 exit 1)
+python3 tools/lint/check_code_metrics.py        # 보고 모드
+python3 tools/lint/check_code_metrics.py --ci    # 차단 모드 (FAIL 시 exit 1)
 ```
 
 ## 9. Golden Test (UI 스크린샷 비교)
@@ -265,14 +265,16 @@ flutter test test/golden/
 - 골든 이미지는 OS/Flutter 버전에 따라 렌더링이 미묘하게 다를 수 있음 → CI에서는 특정 Flutter 버전 고정 필요.
 - `.gitignore`에 `test/golden/failures/` 추가 (실패 diff 이미지 제외).
 
-## 10. 테스트 현황 (2026-04-17)
+## 10. 테스트 현황 (2026-04-22)
 
 | 영역 | 파일 수 | 테스트 수 | 커버리지 |
 |------|---------|----------|---------|
-| 모델 fromMap/로직 | 8 | 35 | ✅ 전체 모델 완전 |
+| 모델 fromMap/로직 | 10+ | 50+ | ✅ 전체 모델 완전 (AppNotification 포함) |
 | 상태 (Controller + State) | 2 | 38 | ✅ 주요 메소드 27개 + copyWith 11개 |
 | 리포지토리 순수 함수 | 2 | 29 | ✅ @visibleForTesting 전부 |
 | 유틸 순수 함수 | 4 | 70 | ✅ 전 함수 완전 |
-| 위젯 | 1 | 6 | PersonAvatar fallback |
+| 위젯 | 2+ | 15+ | CharacterAvatar + NotificationDeepLink 파서 |
 | 기본 | 1 | 1 | sanity |
-| **합계** | **19** | **183** | — |
+| **합계 (최근 기준)** | **21+** | **214** | — |
+
+> 정확한 수치는 `flutter test` 실행 시 마지막 줄 `All tests passed!` 앞의 카운트로 확인.

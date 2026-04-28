@@ -1,8 +1,8 @@
 [
   {
-    "title": "186 안디옥 교회: 선교의 출발",
+    "title": "안디옥 교회: 선교의 출발",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "barnabas",
       "paul",
       "church_of_antioch"
@@ -21,13 +21,14 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
+    "story_index": 10,
     "story_scenes": [
       "안디옥 교회는 금식하며 함께 기도한다",
       "성령께서 바울과 바나바를 따로 세우라고 하신다",
       "공동체는 두 사람에게 안수하며 파송한다",
       "바울과 바나바는 길을 나서며 선교를 시작한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "church_of_antioch"
       ],
@@ -48,9 +49,9 @@
     ]
   },
   {
-    "title": "187 1차 선교(1): 구브로 살라미–바보",
+    "title": "1차 선교(1): 구브로 살라미–바보",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "barnabas",
       "john_mark"
@@ -69,13 +70,14 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
+    "story_index": 11,
     "story_scenes": [
       "바울과 바나바는 구브로에 도착해 회당에서 말씀을 전한다",
       "섬을 지나며 여러 곳에 복음을 전한다",
       "총독 앞에서 복음이 선포되고 분위기가 바뀐다",
       "일행은 다음 선교지를 향해 다시 길을 나선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "barnabas",
@@ -98,9 +100,9 @@
     ]
   },
   {
-    "title": "188 1차 선교(2): 비시디아 안디옥",
+    "title": "1차 선교(2): 비시디아 안디옥",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "barnabas"
     ],
@@ -118,13 +120,14 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
+    "story_index": 12,
     "story_scenes": [
       "회당에 모인 사람들이 바울의 말을 듣는다",
       "바울은 예수를 통한 구원을 길게 전한다",
       "이방인들은 기뻐하지만 반대도 함께 커진다",
       "바울과 바나바는 다음 도시로 떠난다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "barnabas"
@@ -143,9 +146,9 @@
     ]
   },
   {
-    "title": "189 1차 선교(3): 이고니온",
+    "title": "1차 선교(3): 이고니온",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "barnabas"
     ],
@@ -163,13 +166,14 @@
     "start_year": 47,
     "end_year": 47,
     "time_precision": "approx",
+    "story_index": 13,
     "story_scenes": [
       "바울과 바나바는 이고니온 회당에서 복음을 전한다",
       "많은 사람이 믿지만 반대도 빠르게 커진다",
       "도시는 둘로 갈리고 긴장이 높아진다",
       "두 사람은 박해를 피해 다른 곳으로 옮긴다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "barnabas"
@@ -189,9 +193,9 @@
     ]
   },
   {
-    "title": "190 1차 선교(4): 루스드라–더베",
+    "title": "1차 선교(4): 루스드라–더베",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "barnabas"
     ],
@@ -209,13 +213,14 @@
     "start_year": 47,
     "end_year": 47,
     "time_precision": "approx",
+    "story_index": 14,
     "story_scenes": [
       "루스드라에서 걷지 못하던 사람이 바울의 말을 듣고 일어나자 무리가 크게 술렁인다",
       "사람들은 바울과 바나바를 신들로 여기며 제사를 드리려 하고, 두 사람은 급히 이를 말린다",
       "바울은 심한 박해를 겪고도 다시 일어선다",
       "일행은 더베로 가서 복음을 이어 전한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "barnabas"
@@ -234,9 +239,9 @@
     ]
   },
   {
-    "title": "191 1차 선교(5): 안디옥(시리아)로 귀환 보고",
+    "title": "1차 선교(5): 안디옥(시리아)로 귀환 보고",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "barnabas",
       "church_of_antioch"
@@ -255,13 +260,14 @@
     "start_year": 48,
     "end_year": 48,
     "time_precision": "approx",
+    "story_index": 15,
     "story_scenes": [
       "바울과 바나바는 안디옥 교회로 돌아온다",
       "교회가 모이고 두 사람은 선교 이야기를 전한다",
       "이방인에게 믿음의 문이 열렸다는 소식이 퍼진다",
       "공동체는 하나님이 하신 일을 함께 기뻐한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "barnabas"
@@ -282,9 +288,9 @@
     ]
   },
   {
-    "title": "192 2차 선교(1): 드로아에서 마게도냐로",
+    "title": "2차 선교(1): 드로아에서 마게도냐로",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "silas",
       "timothy"
@@ -303,13 +309,14 @@
     "start_year": 49,
     "end_year": 49,
     "time_precision": "approx",
+    "story_index": 16,
     "story_scenes": [
       "바울 일행은 드로아에서 다음 길을 기다린다",
       "밤에 바울은 마게도냐로 오라는 환상을 본다",
       "일행은 그 인도를 따라 방향을 정한다",
       "배는 바다를 건너 새로운 땅으로 향한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "silas",
@@ -331,14 +338,13 @@
     ]
   },
   {
-    "title": "193 2차 선교(2): 빌립보—루디아와 감옥의 찬양",
+    "title": "2차 선교(2): 빌립보—루디아와 감옥의 찬양",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "silas",
       "timothy",
-      "lydia",
-      "jailer"
+      "lydia"
     ],
     "place_name": "빌립보",
     "lat": 41.012,
@@ -354,13 +360,14 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
+    "story_index": 17,
     "story_scenes": [
       "강가에서 루디아가 복음을 듣고 마음을 연다",
       "바울과 실라는 감옥에 갇히지만 밤중에도 찬양한다",
       "큰 흔들림 속에 옥문이 열리고 간수는 두려워한다",
       "간수의 집은 말씀을 듣고 하나님을 믿게 되며 기쁨으로 가득해진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "silas",
@@ -385,9 +392,9 @@
     ]
   },
   {
-    "title": "194 2차 선교(3): 데살로니가—소동과 도피",
+    "title": "2차 선교(3): 데살로니가—소동과 도피",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "silas",
       "timothy"
@@ -406,13 +413,14 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
+    "story_index": 18,
     "story_scenes": [
       "바울 일행은 회당에서 복음을 전한다",
       "몇 사람은 믿지만 반대의 목소리도 커진다",
       "도시에는 소동이 일어나고 긴장이 번진다",
       "형제들은 밤에 바울 일행을 급히 피신시킨다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "silas",
@@ -436,9 +444,9 @@
     ]
   },
   {
-    "title": "195 2차 선교(4): 베뢰아—말씀을 상고하다",
+    "title": "2차 선교(4): 베뢰아—말씀을 상고하다",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "silas",
       "timothy"
@@ -457,13 +465,14 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
+    "story_index": 19,
     "story_scenes": [
       "베뢰아 사람들은 열린 마음으로 말씀을 듣는다",
       "그들은 두루마리를 펴고 날마다 확인한다",
       "많은 이가 믿지만 방해도 다시 따라온다",
       "바울은 떠나고 실라와 디모데는 남아 돕는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "silas",
@@ -487,9 +496,9 @@
     ]
   },
   {
-    "title": "196 2차 선교(5): 아덴—아레오바고 설교",
+    "title": "2차 선교(5): 아덴—아레오바고 설교",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul"
     ],
     "place_name": "아덴(아레오바고)",
@@ -506,13 +515,14 @@
     "start_year": 51,
     "end_year": 51,
     "time_precision": "approx",
+    "story_index": 20,
     "story_scenes": [
       "아덴의 거리는 우상으로 가득하고 바울은 깊이 생각한다",
       "바울은 사람들과 토론하며 아레오바고에 선다",
       "그는 알지 못하는 신을 말하며 창조주를 전한다",
       "부활의 말을 들은 사람들은 서로 다른 반응을 보인다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul"
       ],
@@ -528,12 +538,11 @@
     ]
   },
   {
-    "title": "197 2차 선교(6): 고린도—정착과 견딤",
+    "title": "2차 선교(6): 고린도—정착과 견딤",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
-      "aquila",
-      "priscilla"
+      "aquila"
     ],
     "place_name": "고린도",
     "lat": 37.939,
@@ -549,13 +558,14 @@
     "start_year": 51,
     "end_year": 52,
     "time_precision": "approx",
+    "story_index": 21,
     "story_scenes": [
       "바울은 아굴라와 브리스길라를 만나 함께 지낸다",
       "그는 일하며 꾸준히 복음을 전한다",
       "반대와 재판 속에서도 바울은 물러서지 않는다",
       "바울은 고린도를 떠나 다음 여정을 향해 길을 나선다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "aquila",
@@ -577,9 +587,9 @@
     ]
   },
   {
-    "title": "198 3차 선교(1): 에베소—확장과 충돌",
+    "title": "3차 선교(1): 에베소—확장과 충돌",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul"
     ],
     "place_name": "에베소",
@@ -596,13 +606,14 @@
     "start_year": 53,
     "end_year": 55,
     "time_precision": "approx",
+    "story_index": 22,
     "story_scenes": [
       "에베소에서 바울의 가르침이 널리 퍼져 간다",
       "많은 사람이 말씀을 듣고 삶을 돌이킨다",
       "복음의 영향이 커지자 도시에도 긴장이 생긴다",
       "소동이 일어나지만 말씀의 흐름은 멈추지 않는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul"
       ],
@@ -618,9 +629,9 @@
     ]
   },
   {
-    "title": "199 3차 선교(2): 마게도냐—교회를 굳게 하다",
+    "title": "3차 선교(2): 마게도냐—교회를 굳게 하다",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul"
     ],
     "place_name": "마게도냐(빌립보/데살로니가 권역)",
@@ -637,13 +648,14 @@
     "start_year": 56,
     "end_year": 56,
     "time_precision": "approx",
+    "story_index": 23,
     "story_scenes": [
       "바울은 여러 도시를 다시 찾아간다",
       "그는 성도들을 만나 말씀으로 격려한다",
       "공동체들은 다시 힘을 얻고 굳게 선다",
       "바울은 다음 여정을 향해 계속 나아간다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul"
       ],
@@ -659,9 +671,9 @@
     ]
   },
   {
-    "title": "200 3차 선교(3): 헬라(고린도)—머무름과 결심",
+    "title": "3차 선교(3): 헬라(고린도)—머무름과 결심",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul"
     ],
     "place_name": "고린도(헬라)",
@@ -678,13 +690,14 @@
     "start_year": 56,
     "end_year": 57,
     "time_precision": "approx",
+    "story_index": 24,
     "story_scenes": [
       "바울은 헬라에 머물며 사역을 이어 간다",
       "그는 시간을 보내며 다음 길을 준비한다",
       "위험의 기척 속에서도 바울의 결심은 더 분명해진다",
       "바울은 다음 여정을 향해 길을 다시 정한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul"
       ],
@@ -700,9 +713,9 @@
     ]
   },
   {
-    "title": "201 3차 선교(4): 밀레도—에베소 장로들과 작별",
+    "title": "3차 선교(4): 밀레도—에베소 장로들과 작별",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "ephesus_elders"
     ],
@@ -720,13 +733,14 @@
     "start_year": 57,
     "end_year": 57,
     "time_precision": "approx",
+    "story_index": 25,
     "story_scenes": [
       "밀레도에 모인 장로들 앞에 바울이 선다",
       "바울은 지난 사역을 돌아보며 마지막 권면을 전한다",
       "그는 다시는 서로 얼굴을 보지 못할 수 있다고 말한다",
       "모두가 울며 작별하고 바울은 배에 오른다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "ephesus_elders"
@@ -746,9 +760,9 @@
     ]
   },
   {
-    "title": "202 로마행(1): 예루살렘 체포",
+    "title": "로마행(1): 예루살렘 체포",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "jerusalem_crowd"
     ],
@@ -766,13 +780,14 @@
     "start_year": 57,
     "end_year": 57,
     "time_precision": "approx",
+    "story_index": 26,
     "story_scenes": [
       "예루살렘 성전에서 바울을 둘러싼 소동이 일어난다",
       "군중은 바울을 붙잡고 거세게 몰아붙인다",
       "병사들이 바울을 계단 위로 데려가며 상황을 수습한다",
       "묶인 바울 앞에 로마로 이어질 긴 여정이 시작된다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "jerusalem_crowd"
@@ -790,9 +805,9 @@
     ]
   },
   {
-    "title": "203 로마행(2): 가이사랴 재판과 상소",
+    "title": "로마행(2): 가이사랴 재판과 상소",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "festus",
       "agrippa"
@@ -821,13 +836,14 @@
     "start_year": 59,
     "end_year": 59,
     "time_precision": "approx",
+    "story_index": 27,
     "story_scenes": [
       "가이사랴 재판정에 바울이 다시 선다",
       "총독들과 왕 앞에서 바울은 자신의 믿음을 증언한다",
       "논의가 이어지지만 바울은 흔들리지 않는다",
       "바울은 끝내 가이사에게 상소한다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "festus",
@@ -850,9 +866,9 @@
     ]
   },
   {
-    "title": "204 로마행(3): 폭풍의 항해",
+    "title": "로마행(3): 폭풍의 항해",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "ship_crew"
     ],
@@ -870,13 +886,14 @@
     "start_year": 59,
     "end_year": 59,
     "time_precision": "approx",
+    "story_index": 28,
     "story_scenes": [
       "거센 바람이 배를 뒤흔들고 사람들은 두려움에 빠진다",
       "오랜 폭풍 속에 모두가 지쳐 간다",
       "바울은 하나님이 살려 주실 것이라며 사람들을 붙든다",
       "배는 계속 흔들리지만 사람들은 다시 버틸 힘을 얻는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "ship_crew"
       ],
@@ -894,9 +911,9 @@
     ]
   },
   {
-    "title": "205 로마행(4): 멜리데(몰타) 표류",
+    "title": "로마행(4): 멜리데(몰타) 표류",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul",
       "islanders"
     ],
@@ -919,13 +936,14 @@
     "start_year": 60,
     "end_year": 60,
     "time_precision": "approx",
+    "story_index": 29,
     "story_scenes": [
       "난파한 사람들이 멜리데 섬 해안에 간신히 오른다",
       "섬사람들은 비와 추위 속에서 불을 피워 맞아 준다",
       "바울이 독사에 물리고도 해를 입지 않자 섬사람들은 크게 놀란다",
       "바울이 병든 이들을 고치자 섬사람들은 일행을 존중하며 필요한 것을 채워 준다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul",
         "islanders"
@@ -944,9 +962,9 @@
     ]
   },
   {
-    "title": "206 로마행(5): 로마 도착",
+    "title": "로마행(5): 로마 도착",
     "era": "era_nt_apostolic",
-    "persons": [
+    "characters": [
       "paul"
     ],
     "place_name": "로마",
@@ -963,13 +981,14 @@
     "start_year": 60,
     "end_year": 62,
     "time_precision": "approx",
+    "story_index": 30,
     "story_scenes": [
       "바울은 마침내 로마에 들어선다",
       "그는 묶인 몸이지만 머물 곳을 얻게 된다",
       "찾아오는 사람들에게 하나님 나라를 전한다",
       "복음은 로마 한가운데서도 막히지 않는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "paul"
       ],
@@ -985,9 +1004,9 @@
     ]
   },
   {
-    "title": "207 성전 파괴: 예루살렘의 큰 전환",
+    "title": "성전 파괴: 예루살렘의 큰 전환",
     "era": "era_nt_post_apostolic",
-    "persons": [
+    "characters": [
       "jerusalem_people"
     ],
     "place_name": "예루살렘",
@@ -1009,13 +1028,14 @@
     "start_year": 70,
     "end_year": 70,
     "time_precision": "exact",
+    "story_index": 1,
     "story_scenes": [
       "예루살렘에는 전쟁의 긴장이 가득해진다",
       "성전과 도시는 무너지는 소식으로 뒤덮인다",
       "사람들은 연기와 폐허 앞에서 말을 잃는다",
       "예루살렘의 파괴는 시대의 큰 전환으로 남는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "jerusalem_people"
       ],
@@ -1031,9 +1051,9 @@
     ]
   },
   {
-    "title": "208 밧모섬의 요한: 계시의 시작",
+    "title": "밧모섬의 요한: 계시의 시작",
     "era": "era_nt_post_apostolic",
-    "persons": [
+    "characters": [
       "john"
     ],
     "place_name": "밧모섬",
@@ -1050,13 +1070,14 @@
     "start_year": 95,
     "end_year": 95,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "밧모섬에서 요한은 홀로 기도한다",
       "큰 음성이 들리고 요한은 뒤를 돌아본다",
       "눈부신 환상 앞에 요한은 두려움에 사로잡힌다",
       "요한은 본 것을 기록하라는 명령을 받는다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "john"
       ],
@@ -1072,9 +1093,9 @@
     ]
   },
   {
-    "title": "209 일곱 교회 편지: 촛대 사이의 말씀",
+    "title": "일곱 교회 편지: 촛대 사이의 말씀",
     "era": "era_nt_post_apostolic",
-    "persons": [
+    "characters": [
       "john"
     ],
     "place_name": "소아시아(일곱 교회 중심: 에베소)",
@@ -1091,13 +1112,14 @@
     "start_year": 95,
     "end_year": 95,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "요한은 일곱 교회를 향한 말씀을 기록한다",
       "각 교회에는 칭찬과 책망이 함께 전해진다",
       "회개를 부르는 경고와 약속이 이어진다",
       "편지는 교회들을 향해 보내진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "john"
       ],
@@ -1113,9 +1135,9 @@
     ]
   },
   {
-    "title": "210 하늘 보좌: 문이 열리다",
+    "title": "하늘 보좌: 문이 열리다",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "john",
       "heavenly_beings"
     ],
@@ -1133,13 +1155,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 1,
     "story_scenes": [
       "하늘에 열린 문이 요한 앞에 나타난다",
       "보좌와 빛과 음성이 하늘을 가득 채운다",
       "하늘의 존재들은 보좌 앞에서 끊임없이 경배한다",
       "요한은 경배의 중심이 보좌에 있음을 본다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "john"
       ],
@@ -1156,9 +1179,9 @@
     ]
   },
   {
-    "title": "211 어린양: 두루마리를 받다",
+    "title": "어린양: 두루마리를 받다",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "john",
       "lamb",
       "heavenly_beings"
@@ -1177,13 +1200,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 2,
     "story_scenes": [
       "봉인된 두루마리 앞에 하늘은 긴장에 잠긴다",
       "요한은 열 수 있는 이가 없는 듯해 슬퍼한다",
       "어린양이 보좌 앞으로 나아가 두루마리를 받는다",
       "하늘은 어린양을 향한 찬양으로 가득 찬다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "john",
         "heavenly_beings"
@@ -1202,9 +1226,9 @@
     ]
   },
   {
-    "title": "212 일곱 인: 역사의 문이 열리다",
+    "title": "일곱 인: 역사의 문이 열리다",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "lamb",
       "heavenly_beings"
     ],
@@ -1222,13 +1246,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 3,
     "story_scenes": [
       "어린양이 첫 봉인을 떼며 역사의 흐름이 열린다",
       "봉인이 이어 열리며 세상은 흔들리기 시작한다",
       "두려움과 질문이 사람들 사이에 커져 간다",
       "그 가운데서도 끝까지 보호받는 이들이 드러난다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "lamb"
       ],
@@ -1245,9 +1270,9 @@
     ]
   },
   {
-    "title": "213 일곱 나팔: 경고의 울림",
+    "title": "일곱 나팔: 경고의 울림",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "angels"
     ],
     "place_name": "밧모섬(추정)",
@@ -1264,13 +1289,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 4,
     "story_scenes": [
       "하늘의 침묵 뒤에 첫 나팔이 울린다",
       "나팔이 이어질수록 경고의 장면이 넓게 퍼진다",
       "고난 속에서도 하나님의 증언은 멈추지 않는다",
       "마지막 나팔과 함께 하나님의 통치가 선포된다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "angels"
       ],
@@ -1286,9 +1312,9 @@
     ]
   },
   {
-    "title": "214 용과 두 짐승: 대립의 정점",
+    "title": "용과 두 짐승: 대립의 정점",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "dragon",
       "beasts",
       "saints"
@@ -1307,13 +1333,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 5,
     "story_scenes": [
       "용과 짐승의 세력이 드러나며 대립이 깊어진다",
       "땅의 사람들은 두려움과 유혹 사이에 흔들린다",
       "성도들은 압박 속에서도 인내를 붙든다",
       "마지막까지 누구를 따를 것인가가 분명해진다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "dragon",
         "beasts"
@@ -1332,9 +1359,9 @@
     ]
   },
   {
-    "title": "215 바벨론의 멸망: 무너지는 화려함",
+    "title": "바벨론의 멸망: 무너지는 화려함",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "heavenly_voice"
     ],
     "place_name": "밧모섬(추정)",
@@ -1356,13 +1383,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 6,
     "story_scenes": [
       "화려하던 바벨론의 모습이 먼저 드러난다",
       "심판이 임하며 그 번영은 무너지기 시작한다",
       "땅의 세력은 무너짐을 바라보며 애통한다",
       "하늘에서는 해방과 기쁨의 노래가 울린다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "heavenly_voice"
       ],
@@ -1378,9 +1406,9 @@
     ]
   },
   {
-    "title": "216 최후 심판과 새 하늘 새 땅",
+    "title": "최후 심판과 새 하늘 새 땅",
     "era": "era_nt_consummation",
-    "persons": [
+    "characters": [
       "judge",
       "john",
       "heavenly_beings"
@@ -1404,13 +1432,14 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
+    "story_index": 7,
     "story_scenes": [
       "큰 보좌 앞에 모두가 서고 책들이 펼쳐진다",
       "심판이 이루어지고 옛 세상은 지나간다",
       "새 하늘과 새 땅, 새 예루살렘이 모습을 드러낸다",
       "하나님은 눈물을 닦으시고 새 창조를 완성하신다"
     ],
-    "scene_persons": [
+    "scene_characters": [
       [
         "judge",
         "john"

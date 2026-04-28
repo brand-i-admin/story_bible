@@ -1,15 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/bible_verse.dart';
+import '../models/character.dart';
 import '../models/era.dart';
-import '../models/person.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
-import '../models/story_scene_asset.dart';
 
 class StoryRepository {
   StoryRepository(this._client);
@@ -25,105 +22,128 @@ class StoryRepository {
     return rows.map<Era>((row) => Era.fromMap(row)).toList();
   }
 
-  Future<List<Person>> fetchPersonsByEra(String eraId) async {
-    final eraRows = await _client
-        .from('character_eras')
-        .select('character_id, display_order')
-        .eq('era_id', eraId);
+  Future<List<Character>> fetchCharactersByEra(String eraId) async {
+    // 과거에는 character_eras view + characters!inner resource embedding 으로 조인했으나,
+    // view 가 WITH + group by + row_number() 구조라 PostgREST 가 FK 를 자동
+    // 추론하지 못해 PGRST200 이 발생한다. list_characters_by_era RPC 로 우회.
+    final rows =
+        await _client.rpc('list_characters_by_era', params: {'p_era_id': eraId})
+            as List<dynamic>;
 
-    if (eraRows.isEmpty) return const [];
-
-    final orderById = <String, int>{};
-    for (final row in eraRows) {
-      final id = row['character_id'] as String?;
-      if (id == null) continue;
-      orderById[id] = (row['display_order'] as num?)?.toInt() ?? 0;
-    }
-    if (orderById.isEmpty) return const [];
-
-    final charRows = await _client
-        .from('characters')
-        .select('id, code, name, tagline, description, avatar_url')
-        .inFilter('id', orderById.keys.toList());
-
-    final persons = charRows.map<Person>((row) {
-      final id = row['id'] as String;
-      final code = row['code'] as String;
-      return Person(
-        id: code,
-        code: code,
-        name: row['name'] as String,
-        tagline: row['tagline'] as String?,
-        description: row['description'] as String?,
-        avatarUrl: row['avatar_url'] as String?,
-        avatarThumbUrl: null,
-        displayOrder: orderById[id] ?? 0,
+    return rows.map<Character>((row) {
+      final map = row as Map<String, dynamic>;
+      return Character(
+        id: map['id'] as String,
+        code: map['code'] as String,
+        name: map['name'] as String,
+        tagline: map['tagline'] as String?,
+        description: map['description'] as String?,
+        avatarUrl: map['avatar_url'] as String?,
+        avatarStoragePath: map['avatar_storage_path'] as String?,
+        displayOrder: (map['display_order'] as num).toInt(),
       );
     }).toList();
-
-    persons.sort((a, b) {
-      final byOrder = a.displayOrder.compareTo(b.displayOrder);
-      return byOrder != 0 ? byOrder : a.code.compareTo(b.code);
-    });
-    return persons;
   }
 
   Future<List<StoryEvent>> fetchEventsByEra(String eraId) async {
     final rows = await _client
-        .from('events')
-        .select(_eventSelectColumns)
+        .from('events_ordered')
+        .select()
         .eq('era_id', eraId)
-        .isFilter('deleted_at', null)
-        .order('story_index', ascending: true);
-
-    return rows.map<StoryEvent>((row) => _eventFromNewRow(row)).toList();
+        .order('rank_in_era', ascending: true);
+    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 
-  Future<List<StoryEvent>> fetchEventsForPerson(String personCode) async {
+  Future<List<StoryEvent>> fetchEventsForCharacter(String characterCode) async {
     final rows = await _client
-        .from('events')
-        .select(_eventSelectColumns)
-        .isFilter('deleted_at', null)
-        .contains('character_codes', [personCode])
-        .order('story_index', ascending: true);
-
-    return rows.map<StoryEvent>((row) => _eventFromNewRow(row)).toList();
+        .from('events_ordered')
+        .select()
+        .contains('character_codes', <String>[characterCode])
+        .order('global_rank', ascending: true);
+    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 
-  Future<Map<String, double>> fetchPersonTimelineOrder() async {
+  /// 인물별 첫 등장 시점을 [StoryEvent.globalRank] 기준으로 반환한다.
+  /// 키는 `characters.code` (어드민/외부 기여 모두 코드 기반).
+  Future<Map<String, int>> fetchCharacterTimelineOrder() async {
     final rows = await _client
         .from('events_ordered')
         .select('global_rank, character_codes')
-        .isFilter('deleted_at', null)
         .order('global_rank', ascending: true);
 
-    final firstAppearanceByCode = <String, double>{};
+    final firstAppearanceByCode = <String, int>{};
     for (final row in rows) {
-      final rank = (row['global_rank'] as num?)?.toDouble() ?? 0;
-      final codes = (row['character_codes'] as List<dynamic>? ?? const [])
-          .whereType<String>();
-      for (final code in codes) {
-        firstAppearanceByCode.putIfAbsent(code, () => rank);
+      final globalRank = (row['global_rank'] as num?)?.toInt() ?? 0;
+      final codes = row['character_codes'];
+      if (codes is! List) {
+        continue;
+      }
+      for (final code in codes.whereType<String>()) {
+        firstAppearanceByCode.putIfAbsent(code, () => globalRank);
       }
     }
     return firstAppearanceByCode;
   }
 
   Future<List<StoryEvent>> searchEventsByText(String query) async {
-    final normalized = query.trim();
+    final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) {
       return const [];
     }
-    final like = '%${normalized.replaceAll('%', r'\%')}%';
-    final rows = await _client
-        .from('events')
-        .select(_eventSelectColumns)
-        .isFilter('deleted_at', null)
-        .or('title.ilike.$like,summary.ilike.$like,place_name.ilike.$like')
-        .order('story_index', ascending: true)
-        .limit(20);
 
-    return rows.map<StoryEvent>((row) => _eventFromNewRow(row)).toList();
+    final rows = await _client
+        .from('events_ordered')
+        .select()
+        .order('global_rank', ascending: true);
+
+    final characterNameByCode = await _fetchActiveCharacterNamesByCode();
+
+    final tokens = normalized
+        .split(RegExp(r'\s+'))
+        .where((token) => token.isNotEmpty)
+        .toList();
+
+    final scored = <_ScoredEvent>[];
+    for (final row in rows) {
+      final event = StoryEvent.fromMap(row);
+      final characterNames = event.characterCodes
+          .map((code) => characterNameByCode[code])
+          .whereType<String>()
+          .map((name) => name.toLowerCase())
+          .toList();
+      final score = scoreEventMatch(
+        event,
+        normalized,
+        tokens,
+        characterNames: characterNames,
+      );
+      if (score > 0) {
+        scored.add(_ScoredEvent(event: event, score: score));
+      }
+    }
+
+    scored.sort((a, b) {
+      final scoreDiff = b.score.compareTo(a.score);
+      if (scoreDiff != 0) {
+        return scoreDiff;
+      }
+      return a.event.globalRank.compareTo(b.event.globalRank);
+    });
+
+    return scored.take(20).map((entry) => entry.event).toList();
+  }
+
+  Future<Map<String, String>> _fetchActiveCharacterNamesByCode() async {
+    final rows = await _client.from('characters').select('code, name');
+    final result = <String, String>{};
+    for (final row in rows) {
+      final code = row['code'] as String?;
+      final name = row['name'] as String?;
+      if (code != null && name != null) {
+        result[code] = name;
+      }
+    }
+    return result;
   }
 
   Future<List<QuizQuestion>> fetchQuizQuestions(String eventId) async {
@@ -155,10 +175,6 @@ class StoryRepository {
         displayOrder: row['display_order'] as int? ?? 0,
       );
     }).toList();
-  }
-
-  Future<List<StorySceneAsset>> fetchSceneAssetsForEvent(String eventId) async {
-    return const [];
   }
 
   Future<List<BibleVerse>> fetchBibleVersesByChapter({
@@ -196,8 +212,6 @@ class StoryRepository {
     required String userId,
     required String eventId,
     required bool isCompleted,
-    required int score,
-    required int xpEarned,
   }) async {
     await _client.from('user_event_progress').upsert({
       'user_id': userId,
@@ -206,181 +220,41 @@ class StoryRepository {
       'completed_at': isCompleted ? DateTime.now().toIso8601String() : null,
     }, onConflict: 'user_id,event_id');
   }
-
-  static const String _eventSelectColumns = '''
-    id, era_id, title, summary, story_scenes, character_codes, bible_refs,
-    start_year, end_year, story_index, place_name, lat, lng, scene_image_paths
-  ''';
-
-  StoryEvent _eventFromNewRow(Map<String, dynamic> row) {
-    final title = row['title'] as String? ?? '';
-    final displayMatch = RegExp(r'^(\d{3})\s').firstMatch(title);
-    final displayNumber = displayMatch?.group(1) ?? '???';
-
-    final scenesRaw = row['story_scenes'];
-    final List<dynamic> scenes = scenesRaw is List
-        ? scenesRaw
-        : (scenesRaw is String && scenesRaw.isNotEmpty
-              ? jsonDecode(scenesRaw) as List<dynamic>
-              : const []);
-
-    final bibleRaw = row['bible_refs'];
-    final List<dynamic> bibleList = bibleRaw is List
-        ? bibleRaw
-        : (bibleRaw is String && bibleRaw.isNotEmpty
-              ? jsonDecode(bibleRaw) as List<dynamic>
-              : const []);
-    final bibleRefs = bibleList
-        .whereType<Map<String, dynamic>>()
-        .map(_formatBibleRef)
-        .where((s) => s.isNotEmpty)
-        .toList();
-
-    final storyIndex = (row['story_index'] as num?)?.toDouble() ?? 0;
-
-    return StoryEvent(
-      id: row['id'] as String,
-      code: title,
-      displayNumber: displayNumber,
-      eraId: row['era_id'] as String,
-      title: title,
-      summary: row['summary'] as String?,
-      story: null,
-      shortStory: null,
-      storyScenes: jsonEncode(scenes),
-      timelineRank: storyIndex,
-      startYear: row['start_year'] as int?,
-      endYear: row['end_year'] as int?,
-      timeSortKey: storyIndex.toInt(),
-      placeName: row['place_name'] as String?,
-      lat: (row['lat'] as num?)?.toDouble(),
-      lng: (row['lng'] as num?)?.toDouble(),
-      thumbUrl: null,
-      storyAssetDir: null,
-      storyThumbnailDir: null,
-      storySceneCount: scenes.length,
-      personIds: (row['character_codes'] as List<dynamic>? ?? const [])
-          .whereType<String>()
-          .toList(),
-      bibleRefs: bibleRefs,
-    );
-  }
-
-  static String _formatBibleRef(Map<String, dynamic> ref) {
-    final book = (ref['book'] ?? '').toString().trim();
-    final from = (ref['from'] ?? '').toString().trim();
-    final to = (ref['to'] ?? '').toString().trim();
-    if (book.isEmpty) return '';
-    if (from.isEmpty) return book;
-    if (to.isEmpty || to == from) return '$book $from';
-    return '$book $from-$to';
-  }
-
-}
-
-/// Supabase 행을 [StoryEvent]로 변환한다.
-///
-/// `event_persons`, `event_bible_refs` 서브쿼리의 누락/null을 안전하게 처리한다.
-/// 테스트 편의를 위해 top-level로 노출되어 있으며 [StoryRepository] 내부에서도
-/// 재사용된다.
-@visibleForTesting
-StoryEvent storyEventFromRow(
-  Map<String, dynamic> row, {
-  bool includeBibleRefs = false,
-}) {
-  final personRows = (row['event_persons'] as List<dynamic>? ?? const []);
-  final refRows = includeBibleRefs
-      ? (row['event_bible_refs'] as List<dynamic>? ?? const [])
-      : const [];
-
-  final timelineRank = (row['timeline_rank'] as num?)?.toDouble();
-  if (timelineRank == null || timelineRank <= 0) {
-    throw StateError(
-      'Event ${row['id']} has invalid timeline_rank: $timelineRank. '
-      'Database integrity check required.',
-    );
-  }
-
-  String? displayNumber = row['display_number'] as String?;
-  if (displayNumber == null || displayNumber.trim().isEmpty) {
-    final code = row['code'] as String;
-    final match = RegExp(r'(\d+)$').firstMatch(code);
-    displayNumber = match?.group(1)?.padLeft(3, '0') ?? '???';
-  }
-
-  return StoryEvent(
-    id: row['id'] as String,
-    code: row['code'] as String,
-    displayNumber: displayNumber,
-    eraId: row['era_id'] as String,
-    title: row['title'] as String,
-    summary: row['summary'] as String?,
-    story: row['story'] as String?,
-    shortStory: row['short_story'] as String?,
-    storyScenes: row['story_scenes'] as String?,
-    timelineRank: timelineRank,
-    startYear: row['start_year'] as int?,
-    endYear: row['end_year'] as int?,
-    timeSortKey: row['time_sort_key'] as int,
-    placeName: row['place_name'] as String?,
-    lat: (row['lat'] as num?)?.toDouble(),
-    lng: (row['lng'] as num?)?.toDouble(),
-    thumbUrl: row['thumb_url'] as String?,
-    storyAssetDir: row['story_asset_dir'] as String?,
-    storyThumbnailDir: row['story_thumbnail_dir'] as String?,
-    storySceneCount: row['story_scene_count'] as int? ?? 0,
-    personIds: personRows
-        .whereType<Map<String, dynamic>>()
-        .map((entry) => entry['person_id'] as String?)
-        .whereType<String>()
-        .toList(),
-    bibleRefs: includeBibleRefs
-        ? refRows
-              .whereType<Map<String, dynamic>>()
-              .map((entry) => entry['display_text'] as String?)
-              .whereType<String>()
-              .toList()
-        : const [],
-  );
 }
 
 /// 이벤트 검색용 가중치 스코어링.
 ///
-/// 제목/요약/본문/단문/장소/인물명 포함 여부와 토큰별 부분 매치에 따라 점수를
-/// 누적한다. 단문(shortStory)이 가장 높은 가중치를 갖고, 제목 정확 일치 시
-/// 보너스가 부여된다.
+/// summary/title/장면/장소/인물명 매치에 따라 점수를 누적한다.
+/// 새 스키마에는 `story`/`short_story` 컬럼이 없으므로 `story_scenes` 합본으로
+/// 본문 매치를 평가한다.
 @visibleForTesting
 int scoreEventMatch(
   StoryEvent event,
   String query,
   List<String> tokens, {
-  List<String> personNames = const [],
+  List<String> characterNames = const [],
 }) {
   final title = event.title.toLowerCase();
   final summary = (event.summary ?? '').toLowerCase();
-  final story = (event.story ?? '').toLowerCase();
-  final shortStory = (event.shortStory ?? '').toLowerCase();
+  final scenesText = event.storyScenes.join(' ').toLowerCase();
   final placeName = (event.placeName ?? '').toLowerCase();
-  final personText = personNames.join(' ').toLowerCase();
+  final characterText = characterNames.join(' ').toLowerCase();
 
   var score = 0;
 
   if (title.contains(query)) {
-    score += 120;
+    score += 130;
   }
   if (summary.contains(query)) {
-    score += 110;
-  }
-  if (story.contains(query)) {
     score += 120;
   }
-  if (shortStory.contains(query)) {
-    score += 130;
+  if (scenesText.contains(query)) {
+    score += 100;
   }
   if (placeName.contains(query)) {
     score += 30;
   }
-  if (personText.contains(query)) {
+  if (characterText.contains(query)) {
     score += 80;
   }
 
@@ -389,18 +263,15 @@ int scoreEventMatch(
       score += 25;
     }
     if (summary.contains(token)) {
-      score += 16;
-    }
-    if (story.contains(token)) {
       score += 18;
     }
-    if (shortStory.contains(token)) {
-      score += 20;
+    if (scenesText.contains(token)) {
+      score += 15;
     }
     if (placeName.contains(token)) {
       score += 5;
     }
-    if (personText.contains(token)) {
+    if (characterText.contains(token)) {
       score += 18;
     }
   }
@@ -412,3 +283,9 @@ int scoreEventMatch(
   return score;
 }
 
+class _ScoredEvent {
+  const _ScoredEvent({required this.event, required this.score});
+
+  final StoryEvent event;
+  final int score;
+}

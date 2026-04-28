@@ -37,7 +37,7 @@ class _MarkerNode {
     required this.pinLabel,
     required this.placeLabel,
     required this.showCallout,
-    required this.personColors,
+    required this.characterColors,
   });
 
   final StoryEvent event;
@@ -45,7 +45,7 @@ class _MarkerNode {
   final String pinLabel;
   final String placeLabel;
   final bool showCallout;
-  final List<Color> personColors;
+  final List<Color> characterColors;
 }
 
 extension _IterableX<E> on Iterable<E> {

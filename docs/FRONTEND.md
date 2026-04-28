@@ -41,14 +41,18 @@ lib/
 | 모델 | 파일 | 핵심 필드 | 팩토리 |
 |------|------|----------|--------|
 | Era | `models/era.dart` (40줄) | id, code, testament, name, displayOrder, mapCenter*, mapZoom | `Era.fromMap()` |
-| Person | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접 |
-| StoryEvent | `models/story_event.dart` (53줄) | id, code, eraId, title, summary, story, shortStory, storyScenes, lat/lng, timeSortKey, personIds, bibleRefs | 생성자 직접 |
+| Character | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접 |
+| StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), sceneCharacters (List<List<String>>), lat/lng, storyIndex, rankInEra, globalRank, personCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
+| BibleRef | `models/bible_ref.dart` | book, from, to (`displayText` getter) | `BibleRef.fromMap`, `BibleRef.fromList` |
 | BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
 | AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
 | UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
 | SavedBibleVerse | `models/saved_bible_verse.dart` (55줄) | id, userId, translation, bookNo, bookName, chapterNo, verseNo, verseText | `SavedBibleVerse.fromMap()` |
 | QuizQuestion | `models/quiz_question.dart` (17줄) | id, question, choices, answerIndex, explanation | 생성자 직접 |
-| PersonStudyProgress | `models/person_study_progress.dart` (20줄) | person, completedCount, totalCount | 생성자 직접 |
+| EventProposal | `models/event_proposal.dart` | id, proposalType ('new'/'delete'), targetEventId, 제안 본문 전체 필드, proposedCharacters, quizQuestions, status, reviewed* | `EventProposal.fromMap()` |
+| QuizDraft | `models/event_proposal.dart` | question, choices(4), answerIndex(0~3), explanation. `isValid` getter 로 4지선다 + 해설 필수 검증. | `QuizDraft.fromMap()` / `.toMap()` |
+| ProposedCharacter | `models/event_proposal.dart` | code, name, prompt, storagePath. 제안 시 신규 생성한 캐릭터 메타 | `ProposedCharacter.fromMap()` |
+| CharacterStudyProgress | `models/character_study_progress.dart` (20줄) | person, completedCount, totalCount | 생성자 직접 |
 | IntercessoryPrayerItem | `models/intercessory_prayer_item.dart` (33줄) | linkId, nickname, prayerRequest, photoUrl | `IntercessoryPrayerItem.fromMap()` |
 | PagedResult<T> | `models/paged_result.dart` (13줄) | items, pageIndex, pageSize, hasNextPage | 생성자 직접 |
 
@@ -80,11 +84,11 @@ class StoryState {
   final bool loading;
   final String? error;
   final List<Era> eras;
-  final List<Person> persons;
+  final List<Character> persons;
   final List<StoryEvent> events;
   final String? selectedEraId;
-  final Set<String> selectedPersonIds;
-  final Map<String, Color> selectedPersonColors;
+  final Set<String> selectedCharacterCodes;        // person.code 기반
+  final Map<String, Color> selectedCharacterColors; // key = person.code
   final String? selectedEventId;
   final Set<String> completedEventIds;
   final String searchQuery;
@@ -101,13 +105,14 @@ class StoryState {
 | `initialize()` | 앱 시작 시 eras 로드, 초기 상태 설정 |
 | `selectTestament(String)` | 구약/신약 전환 |
 | `selectEra(String)` | 시대 선택 → persons + events 로드 |
-| `togglePerson(String)` | 인물 선택/해제 토글 |
+| `toggleCharacter(String code)` | 인물 선택/해제 토글 (person.code 기반) |
 | `selectEvent(String?)` | 이벤트 선택/해제 |
-| `markEventCompleted(...)` | 학습 완료 + XP 저장 |
+| `markEventCompleted({eventId, isCompleted})` | 이벤트 완료 여부 기록 + 학습 출석일 갱신 |
 | `setSearchQuery(String)` | 검색어 변경 (220ms 디바운스) |
 | `selectSearchResult(StoryEvent)` | 검색 결과 → 시대/인물/이벤트 자동 선택 |
-| `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 |
-| `colorForPerson(String)` | 인물별 할당 색상 반환 |
+| `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 (`globalRank` 정렬) |
+| `colorForCharacter(String code)` | 인물 코드별 할당 색상 반환 |
+| `personByCode(String code)` | 코드로 Character 객체 조회 |
 
 ### 3.4 색상 팔레트 (8색)
 
@@ -128,6 +133,10 @@ static const _palette = <Color>[
 | ProfileNoteEditorScreen | `screens/profile_note_editor_screen.dart` | 노트 편집 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
+| ProposalBoardScreen | `screens/proposal_board_screen.dart` | 제안 게시판 (웹 전용) |
+| ProposalSubmitScreen | `screens/proposal_submit_screen.dart` | 새 이야기 제안 작성/수정 (5-step wizard: 안내 → 시대 → 인물·위치 → 세부 → **퀴즈**). 마지막 Step 4 는 4지선다 퀴즈 1~3개 + 제출 버튼. |
+| ProposalDetailScreen | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글. `proposal_type='delete'` 일 때 빨간 삭제 제안 배너 + "수정" 버튼 비노출 + 승인 시 `approveDelete` 분기. |
+| NotificationHistoryScreen | `screens/notification_history_screen.dart` | 알림 전체보기 (최근 30일, 2026-04-22) |
 
 > **리팩토링 상태**: `story_home_screen.dart`는 초기 7,172줄 → 현재 ~1,016줄 (−86%).
 > 프로필 탭 2,700+줄이 `ProfileTabPage`로 분리되어 자체 상태 관리 + 콜백 3개로 결합도 최소화.
@@ -141,7 +150,7 @@ static const _palette = <Color>[
 |------|------|------|
 | StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도, 핀/마커 렌더링 |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
-| PersonPanel | `widgets/person_panel.dart` | 인물 카드 (아바타, 설명) |
+| CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 |
@@ -164,17 +173,47 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작) |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작). 사역자/관리자에게만 **"이 이야기 삭제 제안"** 버튼 노출 (`_DeleteProposalButton` 서브 위젯). |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (인물 진행도 + 노트/말씀/중보기도 미리보기, 자체 데이터/상태 25+개) |
-| PersonAvatar | `widgets/person_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
+| CharacterAvatar | `widgets/character_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
 
 ### 5.4 도메인 횡단 공유 위젯 (4차 리팩토링)
 
 | 위젯 | 파일 | 사용처 |
 |------|------|--------|
 | EventShortPopup | `widgets/shared/event_short_popup.dart` | story_map_panel 콜아웃 + weekly_tab_page 단축 팝업 |
+
+### 5.6 Notifications (2026-04-22)
+
+| 위젯/파일 | 파일 | 역할 |
+|----------|------|------|
+| NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 배지, Overlay 드롭다운 관리 |
+| NotificationBadge | `widgets/notification/notification_badge.dart` | 빨간색 ! 배지 (미독 1개 이상 시 표시) |
+| NotificationDropdown | `widgets/notification/notification_dropdown.dart` | bell 탭 시 열리는 팝오버 — 미독 5개 + "모두 읽음" / "전체 보기" |
+| NotificationListTile | `widgets/notification/notification_list_tile.dart` | 드롭다운/히스토리 공용 row (타입별 아이콘, 상대시간, 미독 점) |
+| NotificationDeepLink | `widgets/notification/notification_deep_link.dart` | deep_link 파싱 + 모바일/태블릿 "컴퓨터로 확인" 다이얼로그 |
+| PushService | `services/push_service.dart` | FCM 토큰 발급/등록, 포그라운드 메시지 handler |
+| AppNotification 모델 | `models/app_notification.dart` | `list_my_notifications` RPC 반환 row 파싱 |
+| Providers | `state/notification_providers.dart` | `unreadNotificationCountProvider` (polling Stream) + 목록 Future providers |
+
+Firebase 설정 가이드: `docs/guides/PUSH_SETUP.md`. 인프라 전반 원리: `docs/guides/INFRA_GUIDE.md`.
+
+### 5.7 Proposal (사역자 제안 워크플로)
+
+| 위젯/파일 | 파일 | 역할 |
+|----------|------|------|
+| BibleRefsPicker | `widgets/proposal/bible_refs_picker.dart` | 성경 구절 참조 picker |
+| CharacterCodesPicker | `widgets/proposal/character_codes_picker.dart` | 기존 characters 다중 선택 |
+| NewCharacterDialog | `widgets/proposal/new_character_dialog.dart` | 신규 캐릭터(아바타 포함) 생성 다이얼로그 |
+| ProposalCharacterRow | `widgets/proposal/proposal_character_row.dart` | 선택된 등장인물 아바타 줄 |
+| ProposalLocationPicker | `widgets/proposal/proposal_location_picker.dart` | 지도 핀 선택 |
+| ProposalScenesEditor | `widgets/proposal/proposal_scenes_editor.dart` | 장면 텍스트 + 장면 이미지 편집 |
+| ProposalStatusChip | `widgets/proposal/proposal_status_chip.dart` | pending/approved/rejected 칩 |
+| SceneCharactersGrid | `widgets/proposal/scene_characters_grid.dart` | 장면별 등장 인물 체크 그리드 |
+| **ProposalQuizEditor** | `widgets/proposal/proposal_quiz_editor.dart` | 4지선다 퀴즈 1~3개 편집기 (2026-04-22). Step 4 에서 사용. |
+| **DeleteEventProposalSheet** | `widgets/proposal/delete_event_proposal_sheet.dart` | 기존 이야기 삭제 제안 바텀시트 (2026-04-22). EventDetailPage 에서 호출. |
 
 ### 5.5 큰 화면의 part 파일 분해 (4차 리팩토링)
 
@@ -184,7 +223,7 @@ static const _palette = <Color>[
 |----------|-------------|----------|
 | `widgets/story_selection_panel.dart` | 1648 → 561 (−66%) | `selection/panel_chrome.dart` (~280)<br>`selection/step_chip.dart` (~340)<br>`selection/selection_cards.dart` (~465) |
 | `widgets/story_map_panel.dart` | 1500 → 1244 (−17%) | `map/pin_marker.dart` (~170)<br>+ 순수 함수 9개 → `utils/map_math.dart` |
-| `widgets/profile_tab_page.dart` | 2628 → 1755 (−33%) | `profile/profile_person_overview.dart` (~400)<br>`profile/profile_intercessory_prayer.dart` (~225)<br>`profile/profile_helpers.dart` (~260) |
+| `widgets/profile_tab_page.dart` | 2628 → 1755 (−33%) | `profile/profile_character_overview.dart` (~400)<br>`profile/profile_intercessory_prayer.dart` (~225)<br>`profile/profile_helpers.dart` (~260) |
 | `widgets/weekly_tab_page.dart` | 884 → 574 (−35%) | `weekly/weekly_avatar.dart` (~67)<br>`weekly/weekly_list_panel.dart` (~258)<br>+ 순수 함수 3개 → `utils/weekly_selection.dart` |
 
 ### ProfileTabPage 외부 콜백
@@ -237,6 +276,9 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 | image_picker | ^1.1.2 | 프로필 이미지 |
 | crypto | ^3.0.6 | SHA256 (Apple 로그인 nonce) |
 | cupertino_icons | ^1.0.8 | iOS 스타일 아이콘 |
+| firebase_core | ^3.8.0 | Firebase 초기화 (FCM) |
+| firebase_messaging | ^15.1.5 | FCM 토큰/메시지 — 푸시 알림 |
+| flutter_local_notifications | ^18.0.1 | 포그라운드 로컬 알림 (iOS/Android) |
 
 ## 7. 코딩 컨벤션
 

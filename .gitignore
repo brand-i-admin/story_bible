@@ -87,7 +87,7 @@ app.*.map.json
 # Generated/large media — kept out of git
 assets/story_images/
 assets/avatars/
-.omx/
 
 # Claude worktrees
 .claude/worktrees/
+.env.supabase.secrets

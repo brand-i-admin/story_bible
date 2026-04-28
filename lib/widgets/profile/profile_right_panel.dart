@@ -5,7 +5,7 @@ part of '../profile_tab_page.dart';
 
 extension ProfileRightPanelExt on ProfileTabPageState {
   Widget _buildProfileRightPanel({
-    required List<Person> people,
+    required List<Character> people,
     required Set<String> completedEventIds,
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,
@@ -85,7 +85,7 @@ extension ProfileRightPanelExt on ProfileTabPageState {
                             final start = rowIndex * 5;
                             final end = math.min(start + 5, people.length);
                             final rowPeople = people.sublist(start, end);
-                            return _profilePersonProgressRow(
+                            return _profileCharacterProgressRow(
                               rowPeople: rowPeople,
                               completedEventIds: completedEventIds,
                             );

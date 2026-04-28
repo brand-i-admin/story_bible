@@ -9,18 +9,18 @@
 2. 생성된 SQL을 Supabase에서 실행하여 적재
 
 사용 스크립트:
-- `tools/build_krv_seed_sql.py`
+- `tools/seed/build_krv_seed_sql.py`
 
 입력 데이터:
 - 기본 모드: `assets/bible/*.txt` (예: `01 창세기.txt`, `02 출애굽기.txt`)
-- 파일 모드: CSV/TSV/JSONL (`tools/krv_input_template.csv` 참고)
+- 파일 모드: CSV/TSV/JSONL (`assets/bible/  # 텍스트 디렉토리 모드 사용` 참고)
 
 ### 1) SQL 생성
 
 `assets/bible` 디렉토리에서 생성:
 
 ```bash
-python3 tools/build_krv_seed_sql.py \
+python3 tools/seed/build_krv_seed_sql.py \
   --input-dir assets/bible \
   --output supabase/seeds/krv_bible_verses.sql \
   --truncate-translation
@@ -29,8 +29,8 @@ python3 tools/build_krv_seed_sql.py \
 CSV 파일에서 생성:
 
 ```bash
-python3 tools/build_krv_seed_sql.py \
-  --input tools/krv_input_template.csv \
+python3 tools/seed/build_krv_seed_sql.py \
+  --input assets/bible/  # 텍스트 디렉토리 모드 사용 \
   --input-format csv \
   --output supabase/seeds/krv_bible_verses.sql \
   --truncate-translation
@@ -66,35 +66,36 @@ group by translation;
 
 ### 1) 성경 구절(`bible_verses`)을 Supabase에 넣기
 - 이 문서 상단 `bible_verses 테이블 적재` 절차를 그대로 사용합니다.
-- 핵심: `tools/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31904 개 생성 확인
+- 핵심: `tools/seed/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31904 개 생성 확인
 
 ### 2) `assets/200_stories`에 이야기 JSON 준비
 - `assets/200_stories/*.json` (총 215개 이야기) 형태로 준비합니다.
 - 각 항목은 최소 `title`, `era`, `persons`, `bible_ref`를 포함해야 합니다.
 
-### 3) 아바타 생성용 프롬프트 JSON 생성 (`tools/avatar_prompts.json`)
-- 사용 스크립트: `tools/build_avatar_prompts_json.py`
+### 3) 인물 메타 JSON 생성 (`tools/seed/person_meta.json`)
+- 사용 스크립트: `tools/seed/build_person_meta_json.py`
+- 한 파일에 **인물 카탈로그**(code/name/is_active_default)와 **아바타 프롬프트**가 함께 들어감
 - 규칙: `2회 이상 등장 개인`만 포함 (집합/비개인 코드 제거 + group 확장 반영)
 
 ```bash
-python3 tools/build_avatar_prompts_json.py \
+python3 tools/seed/build_person_meta_json.py \
   --stories-dir assets/200_stories \
-  --output tools/avatar_prompts.json \
+  --output tools/seed/person_meta.json \
   --min-mentions 2
 ```
 
 ### 4) 이야기 JSON을 Supabase 적재용 SQL로 정제/생성 후 적용
-- 사용 스크립트: `tools/build_200_stories_seed_sql.py`
-- 주의: `tools/avatar_prompts.json`이 먼저 있어야 합니다. (3번 단계 선행)
+- 사용 스크립트: `tools/seed/build_200_stories_seed_sql.py`
+- 주의: `tools/seed/person_meta.json`이 먼저 있어야 합니다. (3번 단계 선행)
 - 정제 규칙:
   - `disciples`, `apostles`, `brothers`는 개인 코드로 확장
   - `mysterious_man`, `babel_people`, `abraham_servant` 등 비개인/집합 코드는 제거
-  - 1회만 등장하는 인물은 제외된 개인 목록(`tools/avatar_prompts.json`) 기준으로 필터링
+  - 1회만 등장하는 인물은 제외된 개인 목록(`tools/seed/person_meta.json`) 기준으로 필터링
 
 ```bash
-python3 tools/build_200_stories_seed_sql.py \
+python3 tools/seed/build_200_stories_seed_sql.py \
   --output-dir supabase/200_stories \
-  --avatar-prompt-json tools/avatar_prompts.json
+  --person-meta-json tools/seed/person_meta.json
 ```
 
 - 생성 결과:
@@ -106,27 +107,27 @@ python3 tools/build_200_stories_seed_sql.py \
 
 ```bash
 # 기본은 2분할 생성
-python3 tools/build_200_stories_seed_sql.py \
+python3 tools/seed/build_200_stories_seed_sql.py \
   --output-dir supabase/200_stories \
-  --avatar-prompt-json tools/avatar_prompts.json
+  --person-meta-json tools/seed/person_meta.json
 ```
 
 ### 5) `assets/avatars` 인물 이미지 생성
-- 사용 스크립트: `tools/generate_avatars_vertex.py`
-- 기본 프롬프트 입력은 `tools/avatar_prompts.json`입니다.
+- 사용 스크립트: `tools/images/generate_avatars_vertex.py`
+- 기본 입력은 `tools/seed/person_meta.json`입니다 (여기서 아바타 프롬프트를 읽음).
 
 ```bash
 source .env
-python3 tools/generate_avatars_vertex.py \
+python3 tools/images/generate_avatars_vertex.py \
   --output-dir assets/avatars
 ```
 
 ### 6) 선정 인물을 Supabase `persons`/`person_eras`에 반영
-- SQL 생성 스크립트: `tools/build_persons_seed_sql.py`
+- SQL 생성 스크립트: `tools/seed/build_persons_seed_sql.py`
 
 ```bash
-python3 tools/build_persons_seed_sql.py \
-  --avatar-prompt-json tools/avatar_prompts.json \
+python3 tools/seed/build_persons_seed_sql.py \
+  --person-meta-json tools/seed/person_meta.json \
   --stories-dir assets/200_stories \
   --output supabase/200_stories/persons_seed.sql
 ```
@@ -136,7 +137,7 @@ python3 tools/build_persons_seed_sql.py \
 ## 기타 자산 메모
 
 ### `assets/elements` 관리
-- 기본 생성: `tools/generate_assets_vertex.py`
+- 기본 생성: `(제거됨)`
 - 생성 후 배경 제거/크기 보정 수작업 필요
 
 ### `assets/maps` 재세팅
@@ -152,10 +153,10 @@ ogr2ogr -f GeoJSON assets/maps/ne_50m_admin_0_countries.geojson \
 ```
 
 ### `assets/story_images` 생성
-- 사용 스크립트: `tools/generate_event_story_images_vertex.py`
+- 사용 스크립트: `tools/images/generate_event_story_images_vertex.py`
 - `assets/200_stories/*.json`의 `story_scenes` 리스트를 읽어 장면(1~4)을 생성합니다.
 
 
 ```bash
-python3 tools/generate_event_story_images_vertex.py
+python3 tools/images/generate_event_story_images_vertex.py
 ```
