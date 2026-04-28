@@ -65,6 +65,19 @@ class AppColors {
   static const fgOnGold = parchmentCream;
   static const borderHairlineDark = Color(0xFFD8BF99);
 
+  // Alpha 적용 보더(브라운 계열) — surfaces 팩토리에서 사용
+  static const borderModalDialog = Color(0xC29E7A4C); // brownEdge2 @ 0.76
+  static const borderFloating = Color(0xB88E6F48); // ink100 @ 0.72
+  static const borderCard = Color(0xB58E6F48); // ink100 @ 0.71
+
+  // 표면 기본/오버레이
+  static const floatingSurfaceDefault = Color(0xF5F7E9D1);
+  static const dialogTopHighlight = Color(0xFFFBF5EA);
+  static const overlayWhiteSoft = Color(0x14FFFFFF); // 8% white, alpha-blend용
+
+  // 인물 색상 fallback — selectedCharacterColors에 매핑이 없을 때
+  static const characterFallback = Color(0xFF8E7B61);
+
   // CHARACTER PALETTE — 8색 순환 (i % 8)
   static const characters = <Color>[
     Color(0xFF3B6C94), // 0 blue
@@ -130,7 +143,7 @@ class AppShadows {
     BoxShadow(color: Color(0x26A35B22), blurRadius: 10, offset: Offset(0, 5)),
   ];
   static const green = <BoxShadow>[
-    BoxShadow(color: Color(0x223D8758), blurRadius: 10, offset: Offset(0, 5)),
+    BoxShadow(color: Color(0x213D8758), blurRadius: 10, offset: Offset(0, 5)),
   ];
   static const goldGlow = <BoxShadow>[
     BoxShadow(color: Color(0x45F0C36B), blurRadius: 8, offset: Offset(0, 2)),

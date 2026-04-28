@@ -4,6 +4,7 @@ import 'tokens.dart';
 
 // .sb-surface-* CSS 클래스의 Flutter 대응. 모달/다이얼로그/플로팅/카드 표면.
 // 위젯에서 동일한 BoxDecoration을 직접 만들지 말고 여기 팩토리를 호출한다.
+// 색상/보더는 모두 AppColors 토큰을 참조한다 — 단일 진실 소스.
 
 class AppSurfaces {
   AppSurfaces._();
@@ -16,7 +17,7 @@ class AppSurfaces {
         colors: [AppColors.parchmentLight, AppColors.parchmentWarm],
       ),
       borderRadius: BorderRadius.circular(AppRadii.x4l),
-      border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),
+      border: Border.all(color: AppColors.borderModalDialog, width: 1.2),
       boxShadow: AppShadows.xl,
     );
   }
@@ -26,26 +27,26 @@ class AppSurfaces {
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFFBF5EA), AppColors.parchmentMid],
+        colors: [AppColors.dialogTopHighlight, AppColors.parchmentMid],
       ),
       borderRadius: BorderRadius.circular(AppRadii.xxxl),
-      border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),
+      border: Border.all(color: AppColors.borderModalDialog, width: 1.2),
       boxShadow: AppShadows.lg,
     );
   }
 
   static BoxDecoration floating({
-    Color color = const Color(0xF5F7E9D1),
+    Color color = AppColors.floatingSurfaceDefault,
     double shadowOpacity = 0.12,
   }) {
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color.alphaBlend(const Color(0x14FFFFFF), color), color],
+        colors: [Color.alphaBlend(AppColors.overlayWhiteSoft, color), color],
       ),
       borderRadius: BorderRadius.circular(AppRadii.xxl),
-      border: Border.all(color: const Color(0xB88E6F48), width: 1.0),
+      border: Border.all(color: AppColors.borderFloating, width: 1.0),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withValues(alpha: shadowOpacity),
@@ -60,7 +61,7 @@ class AppSurfaces {
     return BoxDecoration(
       color: AppColors.parchmentCard,
       borderRadius: BorderRadius.circular(AppRadii.xl),
-      border: Border.all(color: const Color(0xB58E6F48), width: 1.0),
+      border: Border.all(color: AppColors.borderCard, width: 1.0),
     );
   }
 }

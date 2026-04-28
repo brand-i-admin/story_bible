@@ -14,7 +14,7 @@ BoxDecoration modalSurfaceDecoration() {
 }
 
 BoxDecoration floatingPanelDecoration({
-  Color color = const Color(0xF5F7E9D1),
+  Color color = AppColors.floatingSurfaceDefault,
   double shadowOpacity = 0.12,
 }) {
   return AppSurfaces.floating(color: color, shadowOpacity: shadowOpacity);

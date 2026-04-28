@@ -109,7 +109,14 @@ dart format .                # 코드 포맷
 - 인물 색상은 `AppColors.characterAt(index)` (i % 8 순환).
 - 새 hex/패딩/라운딩이 필요하면 먼저 토큰을 추가한 뒤 그 토큰을 참조한다.
 
-예외: 기존 `widgets/story_home_styles.dart`, `widgets/game_ui_skin.dart`에는 시그니처 데코(스크롤 모달, 양피지 패널 등)에 한해 일부 인라인 hex가 남아있을 수 있다. 신규 코드는 토큰만 사용한다.
+### 잔존 인라인 hex 처리 정책
+
+`lib/theme/`에 정의된 토큰과 정확히 일치하는 hex는 모두 토큰 참조로 옮겼다. 그러나 lib/screens, lib/widgets에는 아직 토큰화되지 않은 인라인 hex가 다수 존재한다 — 시그니처 데코(스크롤 모달·양피지 패널 등)의 고유 색조이거나 향후 점진 마이그레이션 대상.
+
+**규칙**:
+- **신규 코드**는 토큰만 사용. `Color(0x...)`, 임의 패딩, 임의 라운딩 금지.
+- 기존 hex가 자주 반복되거나 의미가 명확하면 `lib/theme/tokens.dart`에 토큰을 먼저 추가하고 참조한다.
+- 시그니처 데코(`widgets/story_home_styles.dart`, `widgets/game_ui_skin.dart`)는 일부 인라인 hex가 의도적으로 남아있을 수 있다 — 이 두 파일에 한해 hex 직접 사용을 허용한다.
 
 ## TDD 규칙
 
