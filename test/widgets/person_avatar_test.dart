@@ -19,7 +19,6 @@ Person _person({String name = '아브라함', String? avatarUrl}) {
     tagline: null,
     description: null,
     avatarUrl: avatarUrl,
-    avatarThumbUrl: null,
     displayOrder: 0,
   );
 }
