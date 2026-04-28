@@ -896,8 +896,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                 _QuizChoiceCard(
                                   index: i,
                                   text: question.choices[i],
-                                  selected:
-                                      selectedAnswers[currentIndex] == i,
+                                  selected: selectedAnswers[currentIndex] == i,
                                   onTap: () {
                                     setDialogState(() {
                                       selectedAnswers[currentIndex] = i;
@@ -1314,9 +1313,7 @@ class _QuizChoiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = selected ? const Color(0xFFEFD9A2) : const Color(0xFFFAF1DD);
-    final border = selected
-        ? const Color(0xFFB58A47)
-        : const Color(0xFFD9C18B);
+    final border = selected ? const Color(0xFFB58A47) : const Color(0xFFD9C18B);
     final badgeBg = selected
         ? const Color(0xFFB58A47)
         : const Color(0xFFE5D2A8);
@@ -1361,9 +1358,7 @@ class _QuizChoiceCard extends StatelessWidget {
                     text,
                     style: TextStyle(
                       color: const Color(0xFF332A1D),
-                      fontWeight: selected
-                          ? FontWeight.w800
-                          : FontWeight.w600,
+                      fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
                       fontSize: 14,
                       height: 1.4,
                     ),
@@ -1438,9 +1433,7 @@ class _QuizResultDialog extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    didPass
-                        ? Icons.emoji_events
-                        : Icons.fact_check_outlined,
+                    didPass ? Icons.emoji_events : Icons.fact_check_outlined,
                     color: headerColor,
                     size: 24,
                   ),
@@ -1542,9 +1535,7 @@ class _QuizResultDialog extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w800),
                   ),
                   child: const Text('확인'),
                 ),
