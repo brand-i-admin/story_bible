@@ -19,18 +19,14 @@ Future<ProviderContainer> _pumpSheet(
   });
   final prefs = await SharedPreferences.getInstance();
   final container = ProviderContainer(
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(prefs),
-    ],
+    overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
   );
   addTearDown(container.dispose);
 
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: const MaterialApp(
-        home: Scaffold(body: FontScaleBottomSheet()),
-      ),
+      child: const MaterialApp(home: Scaffold(body: FontScaleBottomSheet())),
     ),
   );
   return container;
@@ -66,9 +62,7 @@ void main() {
     testWidgets('다른 버튼 탭 시 fontScaleProvider.set이 호출된다', (tester) async {
       final container = await _pumpSheet(tester, initial: FontScale.normal);
 
-      await tester.tap(
-        find.byKey(const ValueKey('font-scale-button-large')),
-      );
+      await tester.tap(find.byKey(const ValueKey('font-scale-button-large')));
       await tester.pump();
 
       expect(container.read(fontScaleProvider), FontScale.large);
@@ -77,9 +71,7 @@ void main() {
     testWidgets('동일한 단계 탭은 state를 변경하지 않는다', (tester) async {
       final container = await _pumpSheet(tester, initial: FontScale.normal);
 
-      await tester.tap(
-        find.byKey(const ValueKey('font-scale-button-normal')),
-      );
+      await tester.tap(find.byKey(const ValueKey('font-scale-button-normal')));
       await tester.pump();
 
       expect(container.read(fontScaleProvider), FontScale.normal);
@@ -88,8 +80,7 @@ void main() {
     testWidgets('미리보기 Text가 현재 textScaler로 렌더된다', (tester) async {
       await _pumpSheet(tester, initial: FontScale.large);
 
-      expect(find.text('태초에 하나님이 천지를 창조하시니라 (창세기 1:1)'),
-          findsOneWidget);
+      expect(find.text('태초에 하나님이 천지를 창조하시니라 (창세기 1:1)'), findsOneWidget);
     });
   });
 }

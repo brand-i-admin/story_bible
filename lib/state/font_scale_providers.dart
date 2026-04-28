@@ -39,8 +39,9 @@ final fontScaleRepositoryProvider = Provider<FontScaleRepository>(
   (ref) => FontScaleRepository(ref.watch(sharedPreferencesProvider)),
 );
 
-final fontScaleProvider =
-    NotifierProvider<FontScaleNotifier, FontScale>(FontScaleNotifier.new);
+final fontScaleProvider = NotifierProvider<FontScaleNotifier, FontScale>(
+  FontScaleNotifier.new,
+);
 
 class FontScaleNotifier extends Notifier<FontScale> {
   @override

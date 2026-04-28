@@ -478,10 +478,7 @@ Widget bibleDropdownFrame<T>({
 ///
 /// `topUtilityButton`과 동일한 스타일을 공유하지만 고정 라벨과 고정 폭을 사용한다.
 Widget topFontScaleButton({required VoidCallback onTap}) {
-  return topUtilityButton(
-    label: 'Aa',
-    onTap: onTap,
-  );
+  return topUtilityButton(label: 'Aa', onTap: onTap);
 }
 
 /// 로컬 asset vs Supabase Storage URL 구분 후 적절한 Image 위젯 반환.

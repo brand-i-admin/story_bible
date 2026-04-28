@@ -21,9 +21,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
             builder: fontScaleBuilder,
             home: const Scaffold(body: Text('probe')),
@@ -38,28 +36,23 @@ void main() {
     },
   );
 
-  testWidgets(
-    'fontScaleBuilder는 저장값이 없으면 normal(1.0×)을 사용한다',
-    (tester) async {
-      SharedPreferences.setMockInitialValues(<String, Object>{});
-      final prefs = await SharedPreferences.getInstance();
+  testWidgets('fontScaleBuilder는 저장값이 없으면 normal(1.0×)을 사용한다', (tester) async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final prefs = await SharedPreferences.getInstance();
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
-          child: MaterialApp(
-            builder: fontScaleBuilder,
-            home: const Scaffold(body: Text('probe')),
-          ),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: MaterialApp(
+          builder: fontScaleBuilder,
+          home: const Scaffold(body: Text('probe')),
         ),
-      );
+      ),
+    );
 
-      final BuildContext innerContext = tester.element(find.text('probe'));
-      final textScaler = MediaQuery.textScalerOf(innerContext);
+    final BuildContext innerContext = tester.element(find.text('probe'));
+    final textScaler = MediaQuery.textScalerOf(innerContext);
 
-      expect(textScaler.scale(10), closeTo(10.0, 0.001));
-    },
-  );
+    expect(textScaler.scale(10), closeTo(10.0, 0.001));
+  });
 }

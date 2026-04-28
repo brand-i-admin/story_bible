@@ -74,9 +74,8 @@ class FontScaleBottomSheet extends ConsumerWidget {
                         child: _FontScaleChoiceButton(
                           scale: scale,
                           selected: scale == current,
-                          onTap: () => ref
-                              .read(fontScaleProvider.notifier)
-                              .set(scale),
+                          onTap: () =>
+                              ref.read(fontScaleProvider.notifier).set(scale),
                         ),
                       ),
                     ),
@@ -97,7 +96,6 @@ class FontScaleBottomSheet extends ConsumerWidget {
     );
   }
 }
-
 
 class _FontScaleChoiceButton extends StatelessWidget {
   const _FontScaleChoiceButton({
@@ -122,9 +120,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 56),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
           decoration: BoxDecoration(
-            color: selected
-                ? const Color(0xFFE9D18E)
-                : const Color(0xFFFDF5E2),
+            color: selected ? const Color(0xFFE9D18E) : const Color(0xFFFDF5E2),
             border: Border.all(
               color: selected
                   ? const Color(0xFFB27A2B)
@@ -156,10 +152,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
               ),
               Text(
                 '${scale.ratio.toStringAsFixed(1)}×',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF6A401E),
-                ),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF6A401E)),
               ),
             ],
           ),

@@ -20,9 +20,7 @@ Widget fontScaleBuilder(BuildContext context, Widget? child) {
       final fontScale = ref.watch(fontScaleProvider);
       final media = MediaQuery.of(context);
       return MediaQuery(
-        data: media.copyWith(
-          textScaler: TextScaler.linear(fontScale.ratio),
-        ),
+        data: media.copyWith(textScaler: TextScaler.linear(fontScale.ratio)),
         child: child,
       );
     },

@@ -62,9 +62,7 @@ void main() {
     ProviderContainer makeContainer(FontScale initial) {
       when(repo.read).thenReturn(initial);
       return ProviderContainer(
-        overrides: [
-          fontScaleRepositoryProvider.overrideWithValue(repo),
-        ],
+        overrides: [fontScaleRepositoryProvider.overrideWithValue(repo)],
       );
     }
 
@@ -80,9 +78,7 @@ void main() {
       final container = makeContainer(FontScale.normal);
       addTearDown(container.dispose);
 
-      await container
-          .read(fontScaleProvider.notifier)
-          .set(FontScale.large);
+      await container.read(fontScaleProvider.notifier).set(FontScale.large);
 
       expect(container.read(fontScaleProvider), FontScale.large);
       verify(() => repo.write(FontScale.large)).called(1);
@@ -92,9 +88,7 @@ void main() {
       final container = makeContainer(FontScale.normal);
       addTearDown(container.dispose);
 
-      await container
-          .read(fontScaleProvider.notifier)
-          .set(FontScale.normal);
+      await container.read(fontScaleProvider.notifier).set(FontScale.normal);
 
       verifyNever(() => repo.write(any()));
     });
