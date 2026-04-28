@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../models/person.dart';
+import '../models/character.dart';
 import '../models/story_event.dart';
 import '../models/weekly_study_data.dart';
 import '../state/auth_providers.dart';
@@ -47,7 +47,7 @@ class WeeklyTabPage extends ConsumerStatefulWidget {
 }
 
 class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
-  static const Map<String, String> _forcedWeeklyPersonCodeByWeekKey = {
+  static const Map<String, String> _forcedWeeklyCharacterCodeByWeekKey = {
     // Monday, February 23, 2026 week
     '2026-2-23': 'abraham',
   };
@@ -101,36 +101,37 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       final eraBundles = await Future.wait(
         state.eras.map((era) async {
           final responses = await Future.wait([
-            repo.fetchPersonsByEra(era.id),
+            repo.fetchCharactersByEra(era.id),
             repo.fetchEventsByEra(era.id),
           ]);
           return (
-            persons: responses[0] as List<Person>,
+            characters: responses[0] as List<Character>,
             events: responses[1] as List<StoryEvent>,
           );
         }),
       );
 
-      final personById = <String, Person>{};
-      final eventsByPersonId = <String, List<StoryEvent>>{};
+      final characterByCode = <String, Character>{};
+      final eventsByCharacterCode = <String, List<StoryEvent>>{};
       for (final bundle in eraBundles) {
-        for (final person in bundle.persons) {
-          personById.putIfAbsent(person.id, () => person);
+        for (final character in bundle.characters) {
+          characterByCode.putIfAbsent(character.code, () => character);
         }
         for (final event in bundle.events) {
-          for (final personId in event.personIds) {
-            eventsByPersonId
-                .putIfAbsent(personId, () => <StoryEvent>[])
+          for (final code in event.characterCodes) {
+            eventsByCharacterCode
+                .putIfAbsent(code, () => <StoryEvent>[])
                 .add(event);
           }
         }
       }
 
       final candidates =
-          personById.values
+          characterByCode.values
               .where(
-                (person) =>
-                    (eventsByPersonId[person.id] ?? const <StoryEvent>[])
+                (character) =>
+                    (eventsByCharacterCode[character.code] ??
+                            const <StoryEvent>[])
                         .isNotEmpty,
               )
               .toList()
@@ -145,21 +146,26 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         throw StateError('주간 추천 인물을 찾지 못했습니다.');
       }
 
-      final forcedCode = _forcedWeeklyPersonCodeByWeekKey[weekKey];
-      final forcedPerson = forcedCode == null
+      final forcedCode = _forcedWeeklyCharacterCodeByWeekKey[weekKey];
+      final forcedCharacter = forcedCode == null
           ? null
-          : candidates.where((person) => person.code == forcedCode).firstOrNull;
-      final weeklyPerson =
-          forcedPerson ?? candidates[seedFromKey(weekKey) % candidates.length];
+          : candidates
+                .where((character) => character.code == forcedCode)
+                .firstOrNull;
+      final weeklyCharacter =
+          forcedCharacter ??
+          candidates[seedFromKey(weekKey) % candidates.length];
       final weeklyEvents =
-          [...(eventsByPersonId[weeklyPerson.id] ?? const <StoryEvent>[])]
-            ..sort((a, b) {
-              final cmp = a.timeSortKey.compareTo(b.timeSortKey);
-              if (cmp != 0) {
-                return cmp;
-              }
-              return a.id.compareTo(b.id);
-            });
+          [
+            ...(eventsByCharacterCode[weeklyCharacter.code] ??
+                const <StoryEvent>[]),
+          ]..sort((a, b) {
+            final cmp = a.globalRank.compareTo(b.globalRank);
+            if (cmp != 0) {
+              return cmp;
+            }
+            return a.id.compareTo(b.id);
+          });
       final selectedEventId = weeklyEvents.isNotEmpty
           ? weeklyEvents.first.id
           : null;
@@ -169,7 +175,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       }
       setState(() {
         _weeklyStudyData = WeeklyStudyData(
-          person: weeklyPerson,
+          character: weeklyCharacter,
           events: weeklyEvents,
           weekStartMonday: monday,
         );
@@ -343,14 +349,14 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         final progressHeight = (h * 0.084).clamp(44.0, 58.0).toDouble();
         final mapHeightOnNarrow = (h * 0.44).clamp(220.0, 360.0).toDouble();
 
-        String avatarAssetForPerson(String personId) {
-          if (personId == weekly.person.id) {
-            return weekly.person.avatarAssetPath;
+        String avatarAssetForCharacter(String characterCode) {
+          if (characterCode == weekly.character.code) {
+            return weekly.character.avatarAssetPath;
           }
-          final person = state.persons
-              .where((p) => p.id == personId)
+          final character = state.characters
+              .where((p) => p.code == characterCode)
               .firstOrNull;
-          return person?.avatarAssetPath ?? weekly.person.avatarAssetPath;
+          return character?.avatarAssetPath ?? weekly.character.avatarAssetPath;
         }
 
         final mapPanel = ClipRRect(
@@ -359,9 +365,9 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             events: weekly.events,
             selectedEventId: _weeklySelectedEventId,
             onSelectEvent: onSelectEvent,
-            colorForPerson: controller.colorForPerson,
-            avatarAssetForPerson: avatarAssetForPerson,
-            selectedPersonIds: {weekly.person.id},
+            colorForCharacter: controller.colorForCharacter,
+            avatarAssetForCharacter: avatarAssetForCharacter,
+            selectedCharacterCodes: {weekly.character.code},
             decorate: false,
             showSelectedCallout: false,
             animateReveal: false,
@@ -403,7 +409,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                           child: _buildWeeklyListPanel(
                             weekly: weekly,
                             completedEventIds: completedEventIds,
-                            colorForPerson: controller.colorForPerson,
+                            colorForCharacter: controller.colorForCharacter,
                             onSelectEvent: onSelectEvent,
                             onToggleChecked: onToggleChecked,
                             onStartQuiz: onStartQuiz,
@@ -420,7 +426,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                           child: _buildWeeklyListPanel(
                             weekly: weekly,
                             completedEventIds: completedEventIds,
-                            colorForPerson: controller.colorForPerson,
+                            colorForCharacter: controller.colorForCharacter,
                             onSelectEvent: onSelectEvent,
                             onToggleChecked: onToggleChecked,
                             onStartQuiz: onStartQuiz,

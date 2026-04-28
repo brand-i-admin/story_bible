@@ -2,7 +2,7 @@
 //
 // 작은 재사용 헬퍼 위젯 모음:
 // _profileNetworkAvatar, _profileTinyIconButton, _profileTestamentToggleButton,
-// _profileTopStatCard, _profilePersonProgressRow.
+// _profileTopStatCard, _profileCharacterProgressRow.
 part of '../profile_tab_page.dart';
 
 extension ProfileHelpersExt on ProfileTabPageState {
@@ -155,8 +155,8 @@ extension ProfileHelpersExt on ProfileTabPageState {
     );
   }
 
-  Widget _profilePersonProgressRow({
-    required List<Person> rowPeople,
+  Widget _profileCharacterProgressRow({
+    required List<Character> rowPeople,
     required Set<String> completedEventIds,
   }) {
     return Container(
@@ -168,8 +168,9 @@ extension ProfileHelpersExt on ProfileTabPageState {
       ),
       child: Row(
         children: List.generate(rowPeople.length, (index) {
-          final person = rowPeople[index];
-          final progressData = _profileStudyProgressByPersonId[person.id];
+          final character = rowPeople[index];
+          final progressData =
+              _profileStudyProgressByCharacterCode[character.code];
           final progress = progressData?.fraction ?? 0.0;
           return Expanded(
             child: Padding(
@@ -179,8 +180,8 @@ extension ProfileHelpersExt on ProfileTabPageState {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => _openProfilePersonOverview(
-                    person: person,
+                  onTap: () => _openProfileCharacterOverview(
+                    character: character,
                     completedEventIds: completedEventIds,
                   ),
                   borderRadius: BorderRadius.circular(12),
@@ -201,13 +202,13 @@ extension ProfileHelpersExt on ProfileTabPageState {
                             if (stacked)
                               Column(
                                 children: [
-                                  PersonAvatar(
-                                    person: person,
+                                  CharacterAvatar(
+                                    character: character,
                                     size: compact ? 24 : 26,
                                   ),
                                   SizedBox(height: compact ? 4 : 5),
                                   Text(
-                                    person.name,
+                                    character.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
@@ -222,11 +223,14 @@ extension ProfileHelpersExt on ProfileTabPageState {
                             else
                               Row(
                                 children: [
-                                  PersonAvatar(person: person, size: 28),
+                                  CharacterAvatar(
+                                    character: character,
+                                    size: 28,
+                                  ),
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
-                                      person.name,
+                                      character.name,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(

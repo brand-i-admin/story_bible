@@ -77,72 +77,72 @@ void main() {
 
   group('computeDailyStreak', () {
     test('빈 rows면 0', () {
-      expect(computeDailyStreak(const [], 'attended_on'), 0);
+      expect(computeDailyStreak(const [], 'activity_date'), 0);
     });
 
     test('오늘과 어제 모두 없으면 0 (연속 끊김)', () {
       final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
       final rows = [
-        {'attended_on': twoDaysAgo.toIso8601String().split('T').first},
+        {'activity_date': twoDaysAgo.toIso8601String().split('T').first},
       ];
-      expect(computeDailyStreak(rows, 'attended_on'), 0);
+      expect(computeDailyStreak(rows, 'activity_date'), 0);
     });
 
     test('오늘 포함 연속 3일', () {
       final today = dateOnly(DateTime.now());
       final rows = [
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 2))
               .toIso8601String()
               .split('T')
               .first,
         },
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 1))
               .toIso8601String()
               .split('T')
               .first,
         },
-        {'attended_on': today.toIso8601String().split('T').first},
+        {'activity_date': today.toIso8601String().split('T').first},
       ];
-      expect(computeDailyStreak(rows, 'attended_on'), 3);
+      expect(computeDailyStreak(rows, 'activity_date'), 3);
     });
 
     test('어제 시작 연속 2일 (오늘은 미출석)', () {
       final today = dateOnly(DateTime.now());
       final rows = [
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 2))
               .toIso8601String()
               .split('T')
               .first,
         },
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 1))
               .toIso8601String()
               .split('T')
               .first,
         },
       ];
-      expect(computeDailyStreak(rows, 'attended_on'), 2);
+      expect(computeDailyStreak(rows, 'activity_date'), 2);
     });
 
     test('중간에 빠지면 오늘부터 연속된 것만 집계', () {
       final today = dateOnly(DateTime.now());
       final rows = [
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 5))
               .toIso8601String()
               .split('T')
               .first,
         },
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 4))
               .toIso8601String()
               .split('T')
@@ -150,26 +150,26 @@ void main() {
         },
         // gap: -3일 누락
         {
-          'attended_on': today
+          'activity_date': today
               .subtract(const Duration(days: 1))
               .toIso8601String()
               .split('T')
               .first,
         },
-        {'attended_on': today.toIso8601String().split('T').first},
+        {'activity_date': today.toIso8601String().split('T').first},
       ];
-      expect(computeDailyStreak(rows, 'attended_on'), 2);
+      expect(computeDailyStreak(rows, 'activity_date'), 2);
     });
 
     test('중복 날짜는 1회로 집계', () {
       final today = dateOnly(DateTime.now());
       final todayStr = today.toIso8601String().split('T').first;
       final rows = [
-        {'attended_on': todayStr},
-        {'attended_on': todayStr},
-        {'attended_on': todayStr},
+        {'activity_date': todayStr},
+        {'activity_date': todayStr},
+        {'activity_date': todayStr},
       ];
-      expect(computeDailyStreak(rows, 'attended_on'), 1);
+      expect(computeDailyStreak(rows, 'activity_date'), 1);
     });
   });
 }

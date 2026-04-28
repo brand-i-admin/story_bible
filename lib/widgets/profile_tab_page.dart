@@ -9,10 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_user_profile.dart';
+import '../models/character.dart';
+import '../models/character_study_progress.dart';
 import '../models/era.dart';
 import '../models/intercessory_prayer_item.dart';
-import '../models/person.dart';
-import '../models/person_study_progress.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_note.dart';
@@ -23,9 +23,9 @@ import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/tokens.dart';
+import 'character_avatar.dart';
 import 'inline_login_prompt_card.dart';
 import 'parchment_dialog.dart';
-import 'person_avatar.dart';
 import 'profile_editor_dialog.dart';
 import 'share_id_input_dialog.dart';
 import 'story_home_styles.dart';
@@ -36,7 +36,7 @@ import 'sub_page_scaffold.dart';
 part 'profile/profile_helpers.dart';
 part 'profile/profile_intercessory_prayer.dart';
 part 'profile/profile_left_panel.dart';
-part 'profile/profile_person_overview.dart';
+part 'profile/profile_character_overview.dart';
 part 'profile/profile_right_panel.dart';
 
 /// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 노트/말씀/중보기도 미리보기).
@@ -75,11 +75,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   final ScrollController _intercessoryPrayerScrollController =
       ScrollController();
 
-  List<Person> _profileAllPeople = const [];
-  Map<String, String> _profilePersonTestamentById = const {};
+  List<Character> _profileAllPeople = const [];
+  Map<String, String> _profileCharacterTestamentByCode = const {};
   AppUserProfile? _profileUser;
-  Map<String, PersonStudyProgress> _profileStudyProgressByPersonId = const {};
-  Map<String, double> _profilePersonTimelineOrderById = const {};
+  Map<String, CharacterStudyProgress> _profileStudyProgressByCharacterCode =
+      const {};
+  Map<String, int> _profileCharacterTimelineOrderByCode = const {};
   _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
   List<UserNote> _profileNotesPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
@@ -358,46 +359,48 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final repo = ref.read(storyRepositoryProvider);
       final userRepo = ref.read(userRepositoryProvider);
       final peopleByEra = await Future.wait(
-        state.eras.map((era) => repo.fetchPersonsByEra(era.id)),
+        state.eras.map((era) => repo.fetchCharactersByEra(era.id)),
       );
-      final personTimelineOrderById = await repo.fetchPersonTimelineOrder();
+      final characterTimelineOrderByCode = await repo
+          .fetchCharacterTimelineOrder();
 
-      final personById = <String, Person>{};
-      final testamentByPersonId = <String, String>{};
+      final characterByCode = <String, Character>{};
+      final testamentByCharacterCode = <String, String>{};
       for (var i = 0; i < state.eras.length; i++) {
         final era = state.eras[i];
         final eraPeople = peopleByEra[i];
         final testament = _eraTestament(era);
-        for (final person in eraPeople) {
-          personById.putIfAbsent(person.id, () => person);
-          testamentByPersonId.putIfAbsent(person.id, () => testament);
+        for (final character in eraPeople) {
+          characterByCode.putIfAbsent(character.code, () => character);
+          testamentByCharacterCode.putIfAbsent(character.code, () => testament);
         }
       }
 
-      final allPeople = personById.values.toList()
+      final allPeople = characterByCode.values.toList()
         ..sort(
           (a, b) => _compareProfilePeople(
             a,
             b,
-            timelineOrderById: personTimelineOrderById,
+            timelineOrderByCode: characterTimelineOrderByCode,
           ),
         );
 
       AppUserProfile? profile;
       var attendanceStreak = 0;
       var studyStreak = 0;
-      Map<String, PersonStudyProgress> progressByPersonId = const {};
+      Map<String, CharacterStudyProgress> progressByCharacterCode = const {};
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
         attendanceStreak = await userRepo.fetchAttendanceStreak(user.id);
         studyStreak = await userRepo.fetchStudyStreak(user.id);
-        final studyProgress = await userRepo.fetchPersonStudyProgress(
+        final studyProgress = await userRepo.fetchCharacterStudyProgress(
           userId: user.id,
           people: allPeople,
         );
-        progressByPersonId = {
-          for (final progress in studyProgress) progress.person.id: progress,
+        progressByCharacterCode = {
+          for (final progress in studyProgress)
+            progress.character.code: progress,
         };
       }
 
@@ -406,10 +409,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       }
       setState(() {
         _profileAllPeople = allPeople;
-        _profilePersonTestamentById = testamentByPersonId;
+        _profileCharacterTestamentByCode = testamentByCharacterCode;
         _profileUser = profile;
-        _profileStudyProgressByPersonId = progressByPersonId;
-        _profilePersonTimelineOrderById = personTimelineOrderById;
+        _profileStudyProgressByCharacterCode = progressByCharacterCode;
+        _profileCharacterTimelineOrderByCode = characterTimelineOrderByCode;
         if (user == null) {
           _intercessoryPrayerItems = const [];
           _intercessoryPrayerHasNextPage = false;
@@ -438,33 +441,38 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     }
   }
 
-  List<Person> _profilePeople(StoryState state) {
+  List<Character> _profilePeople(StoryState state) {
     final people =
-        [...(_profileAllPeople.isNotEmpty ? _profileAllPeople : state.persons)]
-          ..retainWhere((person) {
-            final testament = _profilePersonTestamentById[person.id] ?? 'old';
+        [
+            ...(_profileAllPeople.isNotEmpty
+                ? _profileAllPeople
+                : state.characters),
+          ]
+          ..retainWhere((character) {
+            final testament =
+                _profileCharacterTestamentByCode[character.code] ?? 'old';
             return testament == _profileSelectedTestament;
           })
           ..sort(
             (a, b) => _compareProfilePeople(
               a,
               b,
-              timelineOrderById: _profilePersonTimelineOrderById,
+              timelineOrderByCode: _profileCharacterTimelineOrderByCode,
             ),
           );
     return people;
   }
 
   int _compareProfilePeople(
-    Person a,
-    Person b, {
-    required Map<String, double> timelineOrderById,
+    Character a,
+    Character b, {
+    required Map<String, int> timelineOrderByCode,
   }) {
-    final aTimeline = timelineOrderById[a.id];
-    final bTimeline = timelineOrderById[b.id];
+    final aTimeline = timelineOrderByCode[a.code];
+    final bTimeline = timelineOrderByCode[b.code];
     if (aTimeline != null || bTimeline != null) {
-      final timelineOrder = (aTimeline ?? double.infinity).compareTo(
-        bTimeline ?? double.infinity,
+      final timelineOrder = (aTimeline ?? 1 << 30).compareTo(
+        bTimeline ?? 1 << 30,
       );
       if (timelineOrder != 0) {
         return timelineOrder;

@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/story_repository.dart';
+import '../models/character.dart';
 import '../models/era.dart';
-import '../models/person.dart';
 import '../models/story_event.dart';
 import '../state/auth_providers.dart';
 import 'story_state.dart';
@@ -53,7 +53,7 @@ class StoryController extends Notifier<StoryState> {
         state = state.copyWith(
           loading: false,
           eras: const [],
-          persons: const [],
+          characters: const [],
           events: const [],
           error: '시대 데이터가 없습니다.',
         );
@@ -64,12 +64,12 @@ class StoryController extends Notifier<StoryState> {
       state = state.copyWith(
         loading: false,
         eras: eras,
-        persons: const [],
+        characters: const [],
         events: const [],
         completedEventIds: completedEventIds,
         selectedEraId: null,
-        selectedPersonIds: const {},
-        selectedPersonColors: const {},
+        selectedCharacterCodes: const {},
+        selectedCharacterColors: const {},
         selectedTestament: hasOldTestament ? 'old' : _eraTestament(eras.first),
         searchQuery: '',
         searchResults: const [],
@@ -113,10 +113,10 @@ class StoryController extends Notifier<StoryState> {
     if (available.isEmpty) {
       state = state.copyWith(
         clearSelectedEra: true,
-        persons: const [],
+        characters: const [],
         events: const [],
-        selectedPersonIds: const {},
-        selectedPersonColors: const {},
+        selectedCharacterCodes: const {},
+        selectedCharacterColors: const {},
         completedEventIds: const {},
         clearSelectedEvent: true,
       );
@@ -138,10 +138,11 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(
       loading: false,
       clearSelectedEra: true,
-      persons: const [],
+      characters: const [],
       events: const [],
-      selectedPersonIds: const {},
-      selectedPersonColors: const {},
+      selectedCharacterCodes: const {},
+      selectedCharacterColors: const {},
+      displayedEventIds: const {},
       completedEventIds: const {},
       searchQuery: '',
       searchResults: const [],
@@ -152,7 +153,7 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> selectEra(String eraId) async {
-    if (state.selectedEraId == eraId && state.persons.isNotEmpty) {
+    if (state.selectedEraId == eraId && state.characters.isNotEmpty) {
       return;
     }
     final selectedEra = state.eras.where((era) => era.id == eraId).firstOrNull;
@@ -166,17 +167,22 @@ class StoryController extends Notifier<StoryState> {
         selectedTestament: eraTestament,
         clearError: true,
       );
-      final persons = await _repo.fetchPersonsByEra(eraId);
+      final characters = await _repo.fetchCharactersByEra(eraId);
       final events = await _repo.fetchEventsByEra(eraId);
-      final selectedPersonIds = _ensureSelectedPersons(persons, const {});
+      final selectedCharacterCodes = _ensureSelectedCharacterCodes(
+        characters,
+        const {},
+      );
       final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
       state = state.copyWith(
         loading: false,
-        persons: persons,
+        characters: characters,
         events: events,
         completedEventIds: completedEventIds,
-        selectedPersonIds: selectedPersonIds,
-        selectedPersonColors: _assignSelectedColors(selectedPersonIds),
+        selectedCharacterCodes: selectedCharacterCodes,
+        selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
+        // 시대 전환 시 지도 표시는 항상 초기화 (사용자가 다시 고르도록)
+        displayedEventIds: const {},
         searchQuery: '',
         searchResults: const [],
         isSearching: false,
@@ -190,30 +196,54 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
-  void togglePerson(String personId) {
-    final next = {...state.selectedPersonIds};
-    if (next.contains(personId)) {
-      next.remove(personId);
+  void toggleCharacter(String characterCode) {
+    final next = {...state.selectedCharacterCodes};
+    if (next.contains(characterCode)) {
+      next.remove(characterCode);
     } else {
-      next.add(personId);
+      next.add(characterCode);
     }
 
     state = state.copyWith(
-      selectedPersonIds: next,
-      selectedPersonColors: _assignSelectedColors(next),
+      selectedCharacterCodes: next,
+      selectedCharacterColors: _assignSelectedColors(next),
+      // 인물 구성이 바뀌면 지도 표시를 리셋 — Step 3 에서 다시 고르게 함
+      displayedEventIds: const {},
       clearSelectedEvent: true,
     );
   }
 
-  void setSelectedPersons(Set<String> personIds) {
-    final next = personIds
-        .where((id) => state.persons.any((person) => person.id == id))
+  void setSelectedCharacters(Set<String> characterCodes) {
+    final next = characterCodes
+        .where(
+          (code) => state.characters.any((character) => character.code == code),
+        )
         .toSet();
+    final charactersChanged = !_characterSetsEqual(
+      next,
+      state.selectedCharacterCodes,
+    );
     state = state.copyWith(
-      selectedPersonIds: next,
-      selectedPersonColors: _assignSelectedColors(next),
+      selectedCharacterCodes: next,
+      selectedCharacterColors: _assignSelectedColors(next),
+      // 인물 구성이 **변경된 경우에만** 지도 표시를 리셋.
+      // (사용자가 Step 3 ↔ Step 2 를 오가며 인물을 안 바꾸고 "다음" 만 눌렀을
+      // 때 지도 선택을 잃지 않도록 보호)
+      displayedEventIds: charactersChanged ? const <String>{} : null,
       clearSelectedEvent: true,
     );
+  }
+
+  bool _characterSetsEqual(Set<String> a, Set<String> b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final code in a) {
+      if (!b.contains(code)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void selectEvent(String? eventId) {
@@ -224,9 +254,19 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(selectedEventId: eventId);
   }
 
+  /// 지도에 핀/화살표로 표시할 이벤트 집합을 커밋한다.
+  ///
+  /// 현재 `state.events` 에 실제 존재하는 id 만 통과시키고, 다음 렌더에서
+  /// `_timelineForSelectedCharacters` 가 이 집합으로 필터되어 핀+화살표 애니메이션이
+  /// 시작된다. 홈의 Step 3 "다음" 버튼이 이 메서드를 호출한다.
+  void setDisplayedEvents(Set<String> eventIds) {
+    final validIds = state.events.map((e) => e.id).toSet();
+    final next = eventIds.intersection(validIds);
+    state = state.copyWith(displayedEventIds: next);
+  }
+
   Future<void> markEventCompleted({
     required String eventId,
-    required int score,
     required bool isCompleted,
   }) async {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
@@ -238,8 +278,6 @@ class StoryController extends Notifier<StoryState> {
       userId: user.id,
       eventId: eventId,
       isCompleted: isCompleted,
-      score: score,
-      xpEarned: isCompleted ? score * 10 : 0,
     );
 
     if (isCompleted) {
@@ -288,35 +326,35 @@ class StoryController extends Notifier<StoryState> {
         await selectEra(event.eraId);
       }
 
-      final searchSelectedIds = event.personIds.toSet();
-      var selectedIds = {
-        ...searchSelectedIds.where(
-          (personId) => state.persons.any((person) => person.id == personId),
+      final searchSelectedCodes = event.characterCodes.toSet();
+      var selectedCodes = {
+        ...searchSelectedCodes.where(
+          (code) => state.characters.any((character) => character.code == code),
         ),
       };
 
-      if (selectedIds.isEmpty &&
+      if (selectedCodes.isEmpty &&
           state.events.where((e) => e.id == event.id).isNotEmpty) {
-        selectedIds.addAll(
+        selectedCodes.addAll(
           state.events
               .firstWhere((e) => e.id == event.id)
-              .personIds
+              .characterCodes
               .where(
-                (personId) =>
-                    state.persons.any((person) => person.id == personId),
+                (code) =>
+                    state.characters.any((character) => character.code == code),
               ),
         );
       }
-      if (selectedIds.isEmpty) {
-        selectedIds = {
-          if (searchSelectedIds.isNotEmpty) searchSelectedIds.first,
+      if (selectedCodes.isEmpty) {
+        selectedCodes = {
+          if (searchSelectedCodes.isNotEmpty) searchSelectedCodes.first,
         };
       }
 
       state = state.copyWith(
         loading: false,
-        selectedPersonIds: selectedIds,
-        selectedPersonColors: _assignSelectedColors(selectedIds),
+        selectedCharacterCodes: selectedCodes,
+        selectedCharacterColors: _assignSelectedColors(selectedCodes),
         selectedEventId: event.id,
         searchQuery: '',
         searchResults: const [],
@@ -363,14 +401,15 @@ class StoryController extends Notifier<StoryState> {
 
   List<StoryEvent> mergedTimeline() {
     final filtered = state.events.where((event) {
-      final hasSelectedPerson = event.personIds.any(
-        state.selectedPersonIds.contains,
-      );
-      return hasSelectedPerson;
+      return event.characterCodes.any(state.selectedCharacterCodes.contains);
     }).toList();
 
     filtered.sort((a, b) {
-      return a.compareTimelineTo(b);
+      final cmp = a.globalRank.compareTo(b.globalRank);
+      if (cmp != 0) {
+        return cmp;
+      }
+      return a.id.compareTo(b.id);
     });
 
     return filtered;
@@ -380,31 +419,33 @@ class StoryController extends Notifier<StoryState> {
     return state.searchResults;
   }
 
-  Color colorForPerson(String personId) {
-    final assigned = state.selectedPersonColors[personId];
+  Color colorForCharacter(String characterCode) {
+    final assigned = state.selectedCharacterColors[characterCode];
     if (assigned != null) {
       return assigned;
     }
     return const Color(0xFF8E7B61);
   }
 
-  Person? personById(String personId) {
-    for (final person in state.persons) {
-      if (person.id == personId) {
-        return person;
+  Character? characterByCode(String characterCode) {
+    for (final character in state.characters) {
+      if (character.code == characterCode) {
+        return character;
       }
     }
     return null;
   }
 
-  Set<String> _ensureSelectedPersons(
-    List<Person> persons,
+  Set<String> _ensureSelectedCharacterCodes(
+    List<Character> characters,
     Set<String> current,
   ) {
-    if (persons.isEmpty) {
+    if (characters.isEmpty) {
       return const {};
     }
-    return current.where((id) => persons.any((p) => p.id == id)).toSet();
+    return current
+        .where((code) => characters.any((p) => p.code == code))
+        .toSet();
   }
 
   void _focusOnSearchSelection(String eventId) {

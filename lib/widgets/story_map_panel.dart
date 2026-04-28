@@ -24,9 +24,9 @@ class StoryMapPanel extends StatefulWidget {
     required this.onSelectEvent,
     this.onCloseSelectedCallout,
     this.onOpenDetail,
-    required this.colorForPerson,
-    required this.avatarAssetForPerson,
-    required this.selectedPersonIds,
+    required this.colorForCharacter,
+    required this.avatarAssetForCharacter,
+    required this.selectedCharacterCodes,
     this.controller,
     this.bottomOverlay,
     this.decorate = true,
@@ -48,9 +48,9 @@ class StoryMapPanel extends StatefulWidget {
   final ValueChanged<String> onSelectEvent;
   final VoidCallback? onCloseSelectedCallout;
   final ValueChanged<String>? onOpenDetail;
-  final Color Function(String personId) colorForPerson;
-  final String Function(String personId) avatarAssetForPerson;
-  final Set<String> selectedPersonIds;
+  final Color Function(String characterId) colorForCharacter;
+  final String Function(String characterId) avatarAssetForCharacter;
+  final Set<String> selectedCharacterCodes;
   final StoryMapPanelController? controller;
   final Widget? bottomOverlay;
   final bool decorate;
@@ -140,7 +140,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     if (map_math.eventListSignature(oldWidget.events) !=
             map_math.eventListSignature(widget.events) ||
-        oldWidget.selectedPersonIds != widget.selectedPersonIds) {
+        oldWidget.selectedCharacterCodes != widget.selectedCharacterCodes) {
       _startRevealAnimation();
       if (_mapReady &&
           (widget.centerSelectedOnReady || widget.fitAllEventsOnReady)) {
@@ -414,7 +414,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             pinLabel: '$order-1',
             placeLabel: parts.$1,
             showCallout: true,
-            personColors: colors,
+            characterColors: colors,
           ),
         );
         nodes.add(
@@ -424,7 +424,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             pinLabel: '$order-2',
             placeLabel: parts.$2,
             showCallout: false,
-            personColors: colors,
+            characterColors: colors,
           ),
         );
       } else {
@@ -435,7 +435,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             pinLabel: order > 0 ? '$order' : '?',
             placeLabel: placeName,
             showCallout: true,
-            personColors: colors,
+            characterColors: colors,
           ),
         );
       }
@@ -460,8 +460,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       final pinStyle = _scaledPinStyle(
         selected ? _selectedPinStyle : _normalPinStyle,
       );
-      final shortText = (event.shortStory ?? event.story ?? event.summary ?? '')
-          .trim();
+      final shortText = (event.summary ?? '').trim();
       final pinWidth = math.max(
         pinStyle.badgeWidthFor(node.pinLabel) + 10,
         pinStyle.arrowWidth + 10,
@@ -517,11 +516,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                     child: _buildPlaceChip(node.placeLabel, selected: selected),
                   ),
                 ),
-              if (node.personColors.length > 1)
+              if (node.characterColors.length > 1)
                 Positioned(
                   bottom: hasPlaceName ? -40 : -16,
                   child: IgnorePointer(
-                    child: _buildPersonColorDots(node.personColors),
+                    child: _buildCharacterColorDots(node.characterColors),
                   ),
                 ),
             ],
@@ -554,7 +553,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     );
   }
 
-  Widget _buildPersonColorDots(List<Color> colors) {
+  Widget _buildCharacterColorDots(List<Color> colors) {
     return SizedBox(
       width: 84,
       child: Wrap(
@@ -1159,13 +1158,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   List<Color> _colorsForEvent(StoryEvent event) {
-    if (event.personIds.isNotEmpty) {
+    if (event.characterCodes.isNotEmpty) {
       final colors = <Color>[];
       final seen = <Color>{};
-      for (final id in event.personIds.where(
-        widget.selectedPersonIds.contains,
+      for (final code in event.characterCodes.where(
+        widget.selectedCharacterCodes.contains,
       )) {
-        final color = widget.colorForPerson(id);
+        final color = widget.colorForCharacter(code);
         if (seen.add(color)) {
           colors.add(color);
         }

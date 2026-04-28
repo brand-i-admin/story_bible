@@ -138,16 +138,16 @@ class _EraCompactCard extends StatelessWidget {
   }
 }
 
-class _PersonCompactCard extends StatelessWidget {
-  const _PersonCompactCard({
-    required this.person,
+class _CharacterCompactCard extends StatelessWidget {
+  const _CharacterCompactCard({
+    required this.character,
     required this.selected,
     required this.accentColor,
     required this.description,
     required this.onTap,
   });
 
-  final Person person;
+  final Character character;
   final bool selected;
   final Color accentColor;
   final String description;
@@ -163,7 +163,11 @@ class _PersonCompactCard extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              _PortraitAvatar(person: person, selected: selected, size: 60),
+              _PortraitAvatar(
+                character: character,
+                selected: selected,
+                size: 60,
+              ),
               Positioned(
                 left: -2,
                 top: -2,
@@ -189,7 +193,7 @@ class _PersonCompactCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        person.name,
+                        character.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -241,8 +245,9 @@ class _StoryCompactCard extends StatelessWidget {
     required this.subtitle,
     required this.selected,
     required this.isCompleted,
-    required this.highlightedPersonIds,
-    required this.colorForPerson,
+    required this.highlightedCharacterCodes,
+    required this.colorForCharacter,
+    required this.nameForCharacter,
     required this.onTap,
   });
 
@@ -251,8 +256,9 @@ class _StoryCompactCard extends StatelessWidget {
   final String subtitle;
   final bool selected;
   final bool isCompleted;
-  final List<String> highlightedPersonIds;
-  final Color Function(String personId) colorForPerson;
+  final List<String> highlightedCharacterCodes;
+  final Color Function(String characterCode) colorForCharacter;
+  final String Function(String characterCode) nameForCharacter;
   final VoidCallback onTap;
 
   @override
@@ -313,11 +319,12 @@ class _StoryCompactCard extends StatelessWidget {
               ],
             ),
           ),
-          if (highlightedPersonIds.isNotEmpty) ...[
+          if (highlightedCharacterCodes.isNotEmpty) ...[
             const SizedBox(width: 6),
-            _PersonDots(
-              personIds: highlightedPersonIds,
-              colorForPerson: colorForPerson,
+            _CharacterNamePills(
+              characterCodes: highlightedCharacterCodes,
+              colorForCharacter: colorForCharacter,
+              nameForCharacter: nameForCharacter,
             ),
           ],
         ],
@@ -354,51 +361,181 @@ class _IndexBadge extends StatelessWidget {
   }
 }
 
-class _PersonDots extends StatelessWidget {
-  const _PersonDots({required this.personIds, required this.colorForPerson});
+/// 이야기 카드 우측 상단의 "등장 인물" 라벨 스택.
+///
+/// 기존 `_CharacterDots` (작은 색 점) 을 대체. 인물별로 배정된 색을 pill 배경으로
+/// 쓰고, 그 위에 인물 이름을 작은 흰색 bold 텍스트로 얹는다. 카드 폭 제한 때문에
+/// 최대 3명까지만 표시하고 초과분은 "+N" 으로 요약.
+class _CharacterNamePills extends StatelessWidget {
+  const _CharacterNamePills({
+    required this.characterCodes,
+    required this.colorForCharacter,
+    required this.nameForCharacter,
+  });
 
-  final List<String> personIds;
-  final Color Function(String personId) colorForPerson;
+  final List<String> characterCodes;
+  final Color Function(String characterCode) colorForCharacter;
+  final String Function(String characterCode) nameForCharacter;
 
   @override
   Widget build(BuildContext context) {
+    const maxShown = 3;
+    final visible = characterCodes.take(maxShown).toList(growable: false);
+    final overflow = characterCodes.length - visible.length;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: personIds
-          .take(3)
-          .map((personId) {
-            return Container(
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.only(bottom: 4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: colorForPerson(personId),
-              ),
-            );
-          })
-          .toList(growable: false),
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        for (final code in visible)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: _NamePill(
+              color: colorForCharacter(code),
+              label: nameForCharacter(code),
+            ),
+          ),
+        if (overflow > 0)
+          _NamePill(color: const Color(0xFF8E7B61), label: '+$overflow'),
+      ],
+    );
+  }
+}
+
+class _NamePill extends StatelessWidget {
+  const _NamePill({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 76),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1.5),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.55),
+            width: 0.8,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10.5,
+            fontWeight: FontWeight.w800,
+            height: 1.1,
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _PortraitAvatar extends StatelessWidget {
   const _PortraitAvatar({
-    required this.person,
+    required this.character,
     required this.selected,
     this.size = 42,
   });
 
-  final Person person;
+  final Character character;
   final bool selected;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    final avatarPath = person.avatarAssetPath.trim();
-    final fallbackText = person.name.trim().isEmpty
+    // 로컬 번들에 자산이 없으면 (신규 승인 캐릭터) Storage URL 로 fallback.
+    // CharacterAvatar 의 정책과 동일.
+    return _PortraitAvatarBody(
+      character: character,
+      selected: selected,
+      size: size,
+    );
+  }
+}
+
+class _PortraitAvatarBody extends ConsumerWidget {
+  const _PortraitAvatarBody({
+    required this.character,
+    required this.selected,
+    required this.size,
+  });
+
+  final Character character;
+  final bool selected;
+  final double size;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final avatarPath = character.avatarAssetPath.trim();
+    final storagePath = character.avatarStoragePath?.trim();
+    final fallbackText = character.name.trim().isEmpty
         ? '?'
-        : person.name.trim().substring(0, 1);
+        : character.name.trim().substring(0, 1);
+    final fallback = _AvatarFallback(name: fallbackText, selected: selected);
+
+    String? storageUrl;
+    if (storagePath != null && storagePath.isNotEmpty) {
+      try {
+        final client = ref.read(supabaseClientProvider);
+        final slash = storagePath.indexOf('/');
+        if (slash < 0) {
+          storageUrl = client.storage
+              .from('characters')
+              .getPublicUrl(storagePath);
+        } else {
+          final bucket = storagePath.substring(0, slash);
+          final p = storagePath.substring(slash + 1);
+          storageUrl = client.storage.from(bucket).getPublicUrl(p);
+        }
+      } catch (_) {
+        storageUrl = null;
+      }
+    }
+
+    Widget child;
+    if (avatarPath.isNotEmpty) {
+      // canonical 로컬 thumb (인물 머리 상단 1/3 비율) — height*2 위쪽 자르기.
+      child = ColoredBox(
+        color: Colors.white,
+        child: FittedBox(
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: size,
+            height: size * 2,
+            child: Image.asset(
+              avatarPath,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              errorBuilder: (_, _, _) {
+                if (storageUrl == null) return fallback;
+                return _StorageAvatar(url: storageUrl, fallback: fallback);
+              },
+            ),
+          ),
+        ),
+      );
+    } else if (storageUrl != null) {
+      // 로컬 자산 없음 → Storage 원본 (정사각 정중앙 cover).
+      child = _StorageAvatar(url: storageUrl, fallback: fallback);
+    } else {
+      child = fallback;
+    }
 
     return Container(
       width: size,
@@ -417,29 +554,35 @@ class _PortraitAvatar extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipOval(
-        child: avatarPath.isEmpty
-            ? _AvatarFallback(name: fallbackText, selected: selected)
-            : ColoredBox(
-                color: Colors.white,
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    width: size,
-                    height: size * 2,
-                    child: Image.asset(
-                      avatarPath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      errorBuilder: (_, __, ___) => _AvatarFallback(
-                        name: fallbackText,
-                        selected: selected,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+      child: ClipOval(child: child),
+    );
+  }
+}
+
+class _StorageAvatar extends StatelessWidget {
+  const _StorageAvatar({required this.url, required this.fallback});
+  final String url;
+  final Widget fallback;
+
+  @override
+  Widget build(BuildContext context) {
+    // Imagen 1024×1024 인물 정중앙 → 상반신만 보이도록 topCenter 기준 1.5× 확대.
+    return ColoredBox(
+      color: Colors.white,
+      child: Transform.scale(
+        scale: 1.5,
+        alignment: Alignment.topCenter,
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          errorBuilder: (_, error, _) {
+            debugPrint('[portrait] storage failed url=$url error=$error');
+            return fallback;
+          },
+          loadingBuilder: (_, child, progress) => progress == null
+              ? child
+              : const ColoredBox(color: Color(0xFFE7D2B2)),
+        ),
       ),
     );
   }
@@ -464,6 +607,124 @@ class _AvatarFallback extends StatelessWidget {
           color: Colors.white,
           fontWeight: FontWeight.w800,
           fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
+
+/// Step 3 상단 툴바 — 전체 선택 / 전체 해제 버튼과 선택 카운터.
+///
+/// 버튼은 의미 없는 상태(이미 전체 선택됨 → 전체 선택 비활성)에서 null 을
+/// 받아 disabled. 선택 카운터 `N / M` 표시.
+class _StoryBulkActionsBar extends StatelessWidget {
+  const _StoryBulkActionsBar({
+    required this.total,
+    required this.selectedCount,
+    required this.onSelectAll,
+    required this.onDeselectAll,
+  });
+
+  final int total;
+  final int selectedCount;
+  final VoidCallback? onSelectAll;
+  final VoidCallback? onDeselectAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          _BulkActionChip(
+            label: '전체 선택',
+            icon: Icons.done_all_rounded,
+            onTap: onSelectAll,
+          ),
+          const SizedBox(width: 6),
+          _BulkActionChip(
+            label: '전체 해제',
+            icon: Icons.remove_done_rounded,
+            onTap: onDeselectAll,
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4DA91),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: const Color(0xFF7A4B21)),
+            ),
+            child: Text(
+              '$selectedCount / $total',
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF5A3519),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BulkActionChip extends StatelessWidget {
+  const _BulkActionChip({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onTap != null;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: enabled
+                ? const Color(0xFFE7D2B2)
+                : const Color(0xFFE7D2B2).withValues(alpha: 0.35),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: enabled
+                  ? const Color(0xFFB78A63)
+                  : const Color(0xFFB78A63).withValues(alpha: 0.35),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 14,
+                color: enabled
+                    ? const Color(0xFF5C3A20)
+                    : const Color(0xFF5C3A20).withValues(alpha: 0.4),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  color: enabled
+                      ? const Color(0xFF5C3A20)
+                      : const Color(0xFF5C3A20).withValues(alpha: 0.4),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

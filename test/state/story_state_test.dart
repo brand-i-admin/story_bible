@@ -12,11 +12,11 @@ void main() {
       expect(state.loading, false);
       expect(state.error, isNull);
       expect(state.eras, isEmpty);
-      expect(state.persons, isEmpty);
+      expect(state.characters, isEmpty);
       expect(state.events, isEmpty);
       expect(state.selectedEraId, isNull);
-      expect(state.selectedPersonIds, isEmpty);
-      expect(state.selectedPersonColors, isEmpty);
+      expect(state.selectedCharacterCodes, isEmpty);
+      expect(state.selectedCharacterColors, isEmpty);
       expect(state.selectedEventId, isNull);
       expect(state.completedEventIds, isEmpty);
       expect(state.searchQuery, '');
@@ -81,18 +81,18 @@ void main() {
       expect(cleared.selectedEventId, isNull);
     });
 
-    test('selectedPersonIds는 Set으로 교체된다', () {
+    test('selectedCharacterCodes는 Set으로 교체된다', () {
       const original = StoryState();
-      final updated = original.copyWith(selectedPersonIds: {'p1', 'p2'});
-      expect(updated.selectedPersonIds, {'p1', 'p2'});
+      final updated = original.copyWith(selectedCharacterCodes: {'p1', 'p2'});
+      expect(updated.selectedCharacterCodes, {'p1', 'p2'});
     });
 
-    test('selectedPersonColors는 Map으로 교체된다', () {
+    test('selectedCharacterColors는 Map으로 교체된다', () {
       const original = StoryState();
       final updated = original.copyWith(
-        selectedPersonColors: {'p1': Colors.red},
+        selectedCharacterColors: {'p1': Colors.red},
       );
-      expect(updated.selectedPersonColors['p1'], Colors.red);
+      expect(updated.selectedCharacterColors['p1'], Colors.red);
     });
 
     test('completedEventIds를 교체할 수 있다', () {
@@ -115,6 +115,26 @@ void main() {
       final updated = original.copyWith(eras: [era]);
       expect(updated.eras.length, 1);
       expect(updated.eras.first.name, '창조');
+    });
+
+    test('displayedEventIds 기본값은 빈 Set 이다', () {
+      const state = StoryState();
+      expect(state.displayedEventIds, isEmpty);
+    });
+
+    test('displayedEventIds 를 Set 으로 교체할 수 있다', () {
+      const original = StoryState();
+      final updated = original.copyWith(
+        displayedEventIds: {'ev1', 'ev2', 'ev3'},
+      );
+      expect(updated.displayedEventIds.length, 3);
+      expect(updated.displayedEventIds.contains('ev2'), true);
+    });
+
+    test('displayedEventIds 를 빈 Set 으로 클리어할 수 있다', () {
+      const original = StoryState(displayedEventIds: {'ev1', 'ev2'});
+      final cleared = original.copyWith(displayedEventIds: const <String>{});
+      expect(cleared.displayedEventIds, isEmpty);
     });
   });
 }

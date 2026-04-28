@@ -346,6 +346,9 @@ Widget storySection({
   );
 }
 
+/// 장면 이미지 row. [sceneAssets] 의 각 원소는 로컬 asset 경로
+/// (`assets/...`) 또는 Supabase Storage public URL (`http...`) 이다.
+/// `SceneAssetLoader` 가 하이브리드 로딩에서 둘 중 적절한 것을 채워 넘긴다.
 Widget storySceneRow(List<String> sceneAssets) {
   final displayedAssets = sceneAssets.take(4).toList(growable: false);
   if (displayedAssets.isEmpty) {
@@ -393,12 +396,10 @@ Widget storySceneRow(List<String> sceneAssets) {
                         ),
                         child: SizedBox(
                           height: tileHeight,
-                          child: Image.asset(
-                            path,
-                            fit: BoxFit.cover,
+                          child: _hybridSceneImage(
+                            path: path,
                             width: tileWidth,
                             height: tileHeight,
-                            alignment: Alignment.center,
                           ),
                         ),
                       ),
@@ -468,5 +469,40 @@ Widget bibleDropdownFrame<T>({
         ),
       ),
     ),
+  );
+}
+
+/// 로컬 asset vs Supabase Storage URL 구분 후 적절한 Image 위젯 반환.
+/// 둘 다 실패하면 진흙 배경 + 파손 아이콘.
+Widget _hybridSceneImage({
+  required String path,
+  required double width,
+  required double height,
+}) {
+  final isNetwork = path.startsWith('http://') || path.startsWith('https://');
+  Widget fallback() => Container(
+    width: width,
+    height: height,
+    color: const Color(0xFFE7D2B2),
+    alignment: Alignment.center,
+    child: const Icon(Icons.broken_image_outlined, color: Color(0xFF7A4B21)),
+  );
+  if (isNetwork) {
+    return Image.network(
+      path,
+      fit: BoxFit.cover,
+      width: width,
+      height: height,
+      alignment: Alignment.center,
+      errorBuilder: (_, _, _) => fallback(),
+    );
+  }
+  return Image.asset(
+    path,
+    fit: BoxFit.cover,
+    width: width,
+    height: height,
+    alignment: Alignment.center,
+    errorBuilder: (_, _, _) => fallback(),
   );
 }

@@ -2,11 +2,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../models/character.dart';
 import '../models/era.dart';
-import '../models/person.dart';
 import '../models/story_event.dart';
+import '../state/story_controller.dart';
 import '../theme/tokens.dart';
-import 'person_panel.dart';
+import 'character_panel.dart';
 
 // 패널 외곽/단계 UI/카드를 별도 파트 파일로 분리하여 가독성과 작업 단위를 유지.
 part 'selection/panel_chrome.dart';
@@ -30,22 +33,25 @@ class StorySelectionPanel extends StatefulWidget {
     required this.selectedTestament,
     required this.onSelectEra,
     required this.onSelectTestament,
-    required this.persons,
-    required this.personSortMode,
-    required this.onPersonSortModeChanged,
-    required this.draftSelectedPersonIds,
-    required this.onToggleDraftPerson,
-    required this.committedSelectedPersonIds,
-    required this.hasPendingPersonChanges,
-    required this.colorForDraftPerson,
-    required this.colorForCommittedPerson,
+    required this.characters,
+    required this.characterSortMode,
+    required this.onCharacterSortModeChanged,
+    required this.draftSelectedCharacterCodes,
+    required this.onToggleDraftCharacter,
+    required this.committedSelectedCharacterCodes,
+    required this.hasPendingCharacterChanges,
+    required this.colorForDraftCharacter,
+    required this.colorForCommittedCharacter,
     required this.events,
-    required this.selectedEventId,
     required this.completedEventIds,
-    required this.onSelectEvent,
+    required this.draftDisplayedEventIds,
+    required this.committedDisplayedEventIds,
+    required this.onToggleDisplayedEvent,
+    required this.onSelectAllDisplayedEvents,
+    required this.onDeselectAllDisplayedEvents,
+    required this.onCommitDisplayedEvents,
     required this.onNextFromEra,
-    required this.onNextFromPersons,
-    required this.onStartQuiz,
+    required this.onNextFromCharacters,
   });
 
   final ScrollController scrollController;
@@ -62,24 +68,40 @@ class StorySelectionPanel extends StatefulWidget {
   final ValueChanged<String> onSelectEra;
   final ValueChanged<String> onSelectTestament;
 
-  final List<Person> persons;
-  final PersonSortMode personSortMode;
-  final ValueChanged<PersonSortMode> onPersonSortModeChanged;
-  final Set<String> draftSelectedPersonIds;
-  final ValueChanged<String> onToggleDraftPerson;
-  final Set<String> committedSelectedPersonIds;
-  final bool hasPendingPersonChanges;
-  final Color Function(String personId) colorForDraftPerson;
-  final Color Function(String personId) colorForCommittedPerson;
+  final List<Character> characters;
+  final CharacterSortMode characterSortMode;
+  final ValueChanged<CharacterSortMode> onCharacterSortModeChanged;
+  final Set<String> draftSelectedCharacterCodes;
+  final ValueChanged<String> onToggleDraftCharacter;
+  final Set<String> committedSelectedCharacterCodes;
+  final bool hasPendingCharacterChanges;
+  final Color Function(String characterId) colorForDraftCharacter;
+  final Color Function(String characterId) colorForCommittedCharacter;
 
+  /// Step 3 에서 보여줄 후보 이벤트. 선택된 인물이 등장하는 전체 사건을
+  /// globalRank 순서로 전달받는다 (부모가 정렬).
   final List<StoryEvent> events;
-  final String? selectedEventId;
   final Set<String> completedEventIds;
-  final ValueChanged<String> onSelectEvent;
+
+  /// Step 3 체크박스의 "현재 드래프트 선택" 집합 (아직 커밋 전).
+  final Set<String> draftDisplayedEventIds;
+
+  /// 현재 지도에 실제로 렌더 중인 커밋 집합 — 드래프트와 비교해 "변경됨" 뱃지를
+  /// 보이는 데 사용.
+  final Set<String> committedDisplayedEventIds;
+
+  /// 카드 탭 → 드래프트 토글.
+  final ValueChanged<String> onToggleDisplayedEvent;
+
+  /// Step 3 툴바의 전체 선택 / 전체 해제 버튼.
+  final VoidCallback onSelectAllDisplayedEvents;
+  final VoidCallback onDeselectAllDisplayedEvents;
+
+  /// Step 3 "다음" 버튼 — 드래프트를 커밋하고 지도 애니메이션 트리거.
+  final VoidCallback onCommitDisplayedEvents;
 
   final VoidCallback onNextFromEra;
-  final VoidCallback onNextFromPersons;
-  final VoidCallback onStartQuiz;
+  final VoidCallback onNextFromCharacters;
 
   @override
   State<StorySelectionPanel> createState() => _StorySelectionPanelState();
@@ -101,12 +123,12 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     return null;
   }
 
-  List<Person> get _selectedPersonsForSummary {
-    final sourceIds = widget.draftSelectedPersonIds.isNotEmpty
-        ? widget.draftSelectedPersonIds
-        : widget.committedSelectedPersonIds;
-    return widget.persons
-        .where((person) => sourceIds.contains(person.id))
+  List<Character> get _selectedCharactersForSummary {
+    final sourceIds = widget.draftSelectedCharacterCodes.isNotEmpty
+        ? widget.draftSelectedCharacterCodes
+        : widget.committedSelectedCharacterCodes;
+    return widget.characters
+        .where((character) => sourceIds.contains(character.code))
         .toList(growable: false);
   }
 
@@ -234,25 +256,29 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       return widget.onNextFromEra;
     }
     if (widget.step == 2) {
-      if (widget.draftSelectedPersonIds.isEmpty) {
+      if (widget.draftSelectedCharacterCodes.isEmpty) {
         return null;
       }
-      return widget.onNextFromPersons;
+      return widget.onNextFromCharacters;
     }
-    if (widget.selectedEventId == null) {
+    // Step 3: 체크된 사건이 하나도 없으면 "다음" 비활성. 드래프트가 커밋과
+    // 동일해도 (재커밋 = 재애니메이션) 허용.
+    if (widget.draftDisplayedEventIds.isEmpty) {
       return null;
     }
-    return widget.onStartQuiz;
+    return widget.onCommitDisplayedEvents;
   }
 
   Widget _buildHeaderSection({
     required bool canRunPrimaryAction,
     required VoidCallback? primaryAction,
   }) {
+    // Step 3 기준: 현재 드래프트 사건들이 모두 이수 상태면 "완료" 톤으로.
+    // (과거 단일 선택 모델에서 선택된 사건의 완료 여부로 표시하던 것을 대체)
     final selectedStoryCompleted =
         widget.step == 3 &&
-        widget.selectedEventId != null &&
-        widget.completedEventIds.contains(widget.selectedEventId!);
+        widget.draftDisplayedEventIds.isNotEmpty &&
+        widget.draftDisplayedEventIds.every(widget.completedEventIds.contains);
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
@@ -271,7 +297,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
                   SizedBox(
                     width: 98,
                     child: _PrimaryActionButton(
-                      label: widget.step == 3 ? '퀴즈 시작' : '다음',
+                      label: '다음',
                       enabled: canRunPrimaryAction,
                       pressed: _isPrimaryPressed,
                       completed: selectedStoryCompleted,
@@ -308,7 +334,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             SizedBox(
               width: 116,
               child: _PrimaryActionButton(
-                label: widget.step == 3 ? '퀴즈 시작' : '다음',
+                label: '다음',
                 enabled: canRunPrimaryAction,
                 pressed: _isPrimaryPressed,
                 completed: selectedStoryCompleted,
@@ -324,12 +350,12 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
   }
 
   Widget _buildStepRow() {
-    final selectedPersons = _selectedPersonsForSummary;
-    final stepTwoLabels = selectedPersons.length > 3
-        ? [selectedPersons[0].name, selectedPersons[1].name, '...']
-        : selectedPersons
+    final selectedCharacters = _selectedCharactersForSummary;
+    final stepTwoLabels = selectedCharacters.length > 3
+        ? [selectedCharacters[0].name, selectedCharacters[1].name, '...']
+        : selectedCharacters
               .take(3)
-              .map((person) => person.name)
+              .map((character) => character.name)
               .toList(growable: false);
 
     return Row(
@@ -380,11 +406,11 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       2 => _CompactSegmentedToggle(
         firstLabel: '시대순',
         secondLabel: '가나다',
-        firstSelected: widget.personSortMode == PersonSortMode.eraOrder,
+        firstSelected: widget.characterSortMode == CharacterSortMode.eraOrder,
         onSelectFirst: () =>
-            widget.onPersonSortModeChanged(PersonSortMode.eraOrder),
+            widget.onCharacterSortModeChanged(CharacterSortMode.eraOrder),
         onSelectSecond: () =>
-            widget.onPersonSortModeChanged(PersonSortMode.alphabetical),
+            widget.onCharacterSortModeChanged(CharacterSortMode.alphabetical),
       ),
       _ => null,
     };
@@ -393,7 +419,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
   List<Widget> _buildBodySlivers() {
     return switch (widget.step) {
       1 => _buildEraBodySlivers(),
-      2 => _buildPersonBodySlivers(),
+      2 => _buildCharacterBodySlivers(),
       _ => _buildStoryBodySlivers(),
     };
   }
@@ -428,10 +454,10 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     ];
   }
 
-  List<Widget> _buildPersonBodySlivers() {
-    final sortedPersons = [...widget.persons]
+  List<Widget> _buildCharacterBodySlivers() {
+    final sortedCharacters = [...widget.characters]
       ..sort((a, b) {
-        if (widget.personSortMode == PersonSortMode.eraOrder) {
+        if (widget.characterSortMode == CharacterSortMode.eraOrder) {
           final byOrder = a.displayOrder.compareTo(b.displayOrder);
           if (byOrder != 0) {
             return byOrder;
@@ -449,7 +475,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
         return a.code.compareTo(b.code);
       });
 
-    if (sortedPersons.isEmpty) {
+    if (sortedCharacters.isEmpty) {
       return <Widget>[_buildEmptyBodySliver('선택 가능한 인물이 없습니다.')];
     }
 
@@ -464,15 +490,17 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             mainAxisExtent: 102,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
-            final person = sortedPersons[index];
-            return _PersonCompactCard(
-              person: person,
-              selected: widget.draftSelectedPersonIds.contains(person.id),
-              accentColor: widget.colorForDraftPerson(person.id),
-              description: _personDescription(person),
-              onTap: () => widget.onToggleDraftPerson(person.id),
+            final character = sortedCharacters[index];
+            return _CharacterCompactCard(
+              character: character,
+              selected: widget.draftSelectedCharacterCodes.contains(
+                character.code,
+              ),
+              accentColor: widget.colorForDraftCharacter(character.code),
+              description: _characterDescription(character),
+              onTap: () => widget.onToggleDraftCharacter(character.code),
             );
-          }, childCount: sortedPersons.length),
+          }, childCount: sortedCharacters.length),
         ),
       ),
     ];
@@ -483,7 +511,33 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       return <Widget>[_buildEmptyBodySliver('선택된 인물의 사건이 없습니다.')];
     }
 
+    final total = widget.events.length;
+    final selectedCount = widget.events
+        .where((e) => widget.draftDisplayedEventIds.contains(e.id))
+        .length;
+
+    // code → name 룩업을 한 번만 만들어서 카드마다 재사용.
+    final characterNameByCode = <String, String>{
+      for (final p in widget.characters) p.code: p.name,
+    };
+    String nameForCharacter(String code) => characterNameByCode[code] ?? code;
+
     return <Widget>[
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+        sliver: SliverToBoxAdapter(
+          child: _StoryBulkActionsBar(
+            total: total,
+            selectedCount: selectedCount,
+            onSelectAll: selectedCount == total
+                ? null
+                : widget.onSelectAllDisplayedEvents,
+            onDeselectAll: selectedCount == 0
+                ? null
+                : widget.onDeselectAllDisplayedEvents,
+          ),
+        ),
+      ),
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
         sliver: SliverGrid(
@@ -495,17 +549,19 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final event = widget.events[index];
+            final checked = widget.draftDisplayedEventIds.contains(event.id);
             return _StoryCompactCard(
               index: index + 1,
               title: event.title,
               subtitle: _storySubtitle(event),
-              selected: event.id == widget.selectedEventId,
+              selected: checked,
               isCompleted: widget.completedEventIds.contains(event.id),
-              highlightedPersonIds: event.personIds
-                  .where(widget.committedSelectedPersonIds.contains)
+              highlightedCharacterCodes: event.characterCodes
+                  .where(widget.committedSelectedCharacterCodes.contains)
                   .toList(growable: false),
-              colorForPerson: widget.colorForCommittedPerson,
-              onTap: () => widget.onSelectEvent(event.id),
+              colorForCharacter: widget.colorForCommittedCharacter,
+              nameForCharacter: nameForCharacter,
+              onTap: () => widget.onToggleDisplayedEvent(event.id),
             );
           }, childCount: widget.events.length),
         ),
@@ -519,12 +575,12 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     );
   }
 
-  String _personDescription(Person person) {
-    final description = (person.description ?? '').trim();
+  String _characterDescription(Character character) {
+    final description = (character.description ?? '').trim();
     if (description.isNotEmpty) {
       return description;
     }
-    final tagline = (person.tagline ?? '').trim();
+    final tagline = (character.tagline ?? '').trim();
     if (tagline.isNotEmpty) {
       return tagline;
     }

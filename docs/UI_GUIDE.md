@@ -1,6 +1,6 @@
 # UI 가이드 — 이야기 성경
 
-> 최종 수정: 2026-04-16
+> 최종 수정: 2026-04-22 (알림/제안/금주 인물 반영)
 > 기존 `docs/story_bible_prototype_design.md`의 UX 설계를 기반으로 정리.
 
 ## 1. 디자인 철학
@@ -55,24 +55,25 @@ MaterialApp(theme: AppTheme.light(), ...)
 
 ## 3. 레이아웃
 
-### 3.1 메인 화면 (3열)
+### 3.1 메인 화면 (풀스크린 지도 + 오버레이)
 
 ```
-┌──────────────────────────────────────────────────┐
-│ [구약/신약 토글]              [검색 🔍]  [프로필] │
-├─────────┬───────────────────────┬────────────────┤
-│         │                       │                │
-│  인물   │       지도            │   이벤트       │
-│  패널   │   (flutter_map)      │   타임라인     │
-│         │                       │                │
-│ [아바타]│   [핀] [핀] [핀]      │ [이벤트 카드]  │
-│ [이름]  │                       │ [이벤트 카드]  │
-│ [진행률]│                       │ [이벤트 카드]  │
-│         │                       │                │
-├─────────┴───────────────────────┴────────────────┤
-│    [태초]  [족장]  [출애굽]  [정복]  ...          │
-│                 시대 선택 바                       │
-└──────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ [사건선택] [금주 인물] [성경] [프로필] [🔔] [이야기 등록*]  🔍 │
+│                                                              + │
+│                      (flutter_map 전체화면)                  - │
+│                                                              ▶ │
+│   [핀]        [핀]         [핀]                                │
+│          [핀]      [핀]                                        │
+│                                                                │
+│   ┌─────────────────────────────────────────┐                 │
+│   │   [1.시대] [2.인물] [3.사건] [구약|신약]  [다음] │           │
+│   │   (3단계 선택 Panel, 드래그로 접기 가능)   │                 │
+│   └─────────────────────────────────────────┘                 │
+└─────────────────────────────────────────────────────────────┘
+
+*'이야기 등록'은 웹 전용 (kIsWeb 분기).
+🔔 = NotificationBellButton — 미독 1개 이상이면 빨간 `!` 배지.
 ```
 
 ### 3.2 반응형 기준
@@ -90,14 +91,20 @@ MaterialApp(theme: AppTheme.light(), ...)
 | 위젯 | 파일 | 역할 |
 |------|------|------|
 | StoryMapPanel | `widgets/story_map_panel.dart` | 인터랙티브 지도, 핀/마커 렌더링 |
-| StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 패널 |
-| PersonPanel | `widgets/person_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
-| StoryListPanel | `widgets/story_list_panel.dart` | 이벤트 타임라인 리스트 |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널 |
+| CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |
-| EraSelector | `widgets/era_selector.dart` | 시대 탭 바 (하단) |
-| GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 (그림자, 보더) |
-| SearchBox | `widgets/search_box.dart` | 검색 입력 + 결과 드롭다운 |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (장면 이미지 + 퀴즈) |
+| WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (진행도, 노트, 구절, 기도) |
+| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (구절 북마크) |
+| SearchBottomSheet | `widgets/search_bottom_sheet.dart` | 검색 입력 + 결과 (bottom sheet) |
+| GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |
+| NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 빨간 ! 배지 + 드롭다운 |
+| NotificationDropdown | `widgets/notification/notification_dropdown.dart` | 미독 최대 5개 + 모두 읽음 / 전체 보기 |
+
+> 삭제된 위젯 (참고): `StoryListPanel`, `EraSelector`, `SearchBox` — 역할이 `StorySelectionPanel`·`SearchBottomSheet` 로 통합됨.
 
 ### 4.2 GameUiSkin 테마 시스템
 
@@ -138,10 +145,19 @@ MaterialApp(theme: AppTheme.light(), ...)
 
 ### 5.3 학습 완료
 
-1. 이야기 상세 → 퀴즈 시작 (향후)
-2. 완료 체크 → XP 획득 (score × 10)
-3. 인물별 진행률 업데이트
-4. 연속 학습일수 갱신
+1. 이야기 상세 → 퀴즈 시작 (4지선다)
+2. 정답 제출 → `user_event_progress.is_completed=true` 저장
+3. `notify_quiz_completed` RPC 호출 → 본인 인앱 bell 에 완료 알림 + 전체 진도율 표시
+4. 인물별 진행률 / 출석·학습 연속일수 프로필 탭에서 갱신
+5. 게이미피케이션(score/xp) 없음 — 완료 플래그만 기록 (ADR 참조)
+
+### 5.4 알림 (Bell)
+
+1. 상단 🔔 아이콘 클릭 → 드롭다운 오픈 (미독 최대 5개)
+2. 알림 탭 → `mark_notification_read` RPC + deep link 라우팅
+   (`/proposal/<id>`, `/event/<id>`, `/weekly` 중 하나)
+3. 모바일/태블릿에서 제안 관련 알림 탭 → "컴퓨터에서 확인하세요" 다이얼로그
+4. "전체 보기" → `NotificationHistoryScreen` (최근 30일, 읽은 것 포함)
 
 ## 6. 이미지 에셋 규격
 

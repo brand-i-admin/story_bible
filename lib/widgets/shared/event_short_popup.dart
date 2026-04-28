@@ -42,7 +42,7 @@ class EventShortPopup extends StatelessWidget {
 
   String _resolvedShortText() {
     if (shortText != null) return shortText!.trim();
-    return (event.shortStory ?? event.story ?? event.summary ?? '').trim();
+    return (event.summary ?? '').trim();
   }
 
   @override
