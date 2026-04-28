@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/user_note.dart';
 import '../state/auth_providers.dart';
+import '../theme/tokens.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_page_scaffold.dart';
 import 'profile_note_editor_screen.dart';
@@ -345,7 +346,7 @@ class _ProfileNotesScreenState extends ConsumerState<ProfileNotesScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: Color(0xFF4A331D),
+                                  color: AppColors.ink500,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -355,7 +356,7 @@ class _ProfileNotesScreenState extends ConsumerState<ProfileNotesScreen> {
                             Text(
                               _formatListDate(note.createdAt),
                               style: const TextStyle(
-                                color: Color(0xFF8A6A46),
+                                color: AppColors.ink200,
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -448,7 +449,7 @@ class _ProfileNotesScreenState extends ConsumerState<ProfileNotesScreen> {
                   '${page + 1}',
                   style: TextStyle(
                     color: selected
-                        ? const Color(0xFF4A331D)
+                        ? AppColors.ink500
                         : const Color(0xFF7B603D),
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
@@ -518,7 +519,7 @@ class _ProfileNotesFab extends StatelessWidget {
           child: const Icon(
             Icons.add_rounded,
             size: 30,
-            color: Color(0xFFFDF8EE),
+            color: AppColors.parchmentCream,
           ),
         ),
       ),
@@ -551,7 +552,7 @@ class _PageArrowButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: enabled ? const Color(0xFF4A331D) : const Color(0x557B603D),
+            color: enabled ? AppColors.ink500 : const Color(0x557B603D),
             fontSize: 12,
             fontWeight: FontWeight.w900,
           ),

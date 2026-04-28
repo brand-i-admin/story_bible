@@ -11,6 +11,7 @@ import '../models/weekly_study_data.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/tokens.dart';
 import '../utils/weekly_selection.dart';
 import 'shared/event_short_popup.dart';
 import 'story_home_styles.dart';
@@ -285,7 +286,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
           child: Text(
             _weeklyError!,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Color(0xFFFDF8EE)),
+            style: const TextStyle(color: AppColors.parchmentCream),
           ),
         ),
       );
@@ -480,7 +481,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 540;
         final summaryStyle = TextStyle(
-          color: const Color(0xFFFDF8EE),
+          color: AppColors.parchmentCream,
           fontSize: compact ? 12.6 : 14.2,
           fontWeight: FontWeight.w800,
           height: compact ? 1.25 : 1.1,

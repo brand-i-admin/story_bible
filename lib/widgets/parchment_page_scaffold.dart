@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/tokens.dart';
+
 class ParchmentPageScaffold extends StatelessWidget {
   const ParchmentPageScaffold({
     super.key,
@@ -122,7 +124,7 @@ class ParchmentPageScaffold extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Color(0xFF4A331D),
+                                    color: AppColors.ink500,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -205,16 +207,14 @@ class _HeaderButton extends StatelessWidget {
             color: selected ? const Color(0xD06A401E) : const Color(0xB02A2118),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: selected
-                  ? const Color(0xFFF0C36B)
-                  : const Color(0xBFD8BF99),
+              color: selected ? AppColors.goldRim : const Color(0xBFD8BF99),
               width: selected ? 1.4 : 1,
             ),
           ),
           child: Text(
             label,
             style: const TextStyle(
-              color: Color(0xFFF8EED9),
+              color: AppColors.fgOnDark,
               fontSize: 12,
               fontWeight: FontWeight.w800,
             ),
@@ -244,12 +244,12 @@ class _CompactBackButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xD06A401E),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFF0C36B), width: 1.4),
+            border: Border.all(color: AppColors.goldRim, width: 1.4),
           ),
           child: const Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 16,
-            color: Color(0xFFF8EED9),
+            color: AppColors.fgOnDark,
           ),
         ),
       ),

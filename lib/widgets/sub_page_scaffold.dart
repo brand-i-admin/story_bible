@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../theme/tokens.dart';
 import 'parchment_texture_layer.dart';
 import 'story_home_styles.dart';
 import 'sub_page_floating_home_button.dart';
@@ -133,7 +134,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Color(0xFF4A331D),
+                                    color: AppColors.ink500,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                   ),

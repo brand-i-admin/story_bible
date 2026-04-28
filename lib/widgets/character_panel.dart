@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/character.dart';
 import '../state/story_controller.dart';
+import '../theme/tokens.dart';
 import 'game_ui_skin.dart';
 
 enum CharacterSortMode { alphabetical, eraOrder }
@@ -91,11 +92,11 @@ class CharacterPanel extends ConsumerWidget {
                                 iconSize: 12,
                                 dropdownColor: const Color(0xFF4E3A26),
                                 borderRadius: BorderRadius.circular(10),
-                                iconEnabledColor: const Color(0xFFFDF8EE),
+                                iconEnabledColor: AppColors.parchmentCream,
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFFFDF8EE),
+                                  color: AppColors.parchmentCream,
                                   shadows: [
                                     Shadow(
                                       color: Color(0xAA000000),
@@ -213,7 +214,7 @@ class CharacterPanel extends ConsumerWidget {
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w800,
                                           fontSize: 14,
-                                          color: Color(0xFFFDF8EE),
+                                          color: AppColors.parchmentCream,
                                           shadows: [
                                             Shadow(
                                               color: Color(0x99000000),
@@ -347,7 +348,7 @@ class _AvatarFallback extends StatelessWidget {
       child: Text(
         initial,
         style: const TextStyle(
-          color: Color(0xFFFDF8EE),
+          color: AppColors.parchmentCream,
           fontWeight: FontWeight.w800,
           shadows: [
             Shadow(

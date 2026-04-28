@@ -148,7 +148,7 @@ extension ProfileRightPanelExt on ProfileTabPageState {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Color(0xFF4A331D),
+              color: AppColors.ink500,
               fontSize: 15.2,
               fontWeight: FontWeight.w900,
             ),

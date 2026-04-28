@@ -9,6 +9,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../models/story_event.dart';
+import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
 import 'shared/event_short_popup.dart';
 
@@ -612,7 +613,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   label.$1,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Color(0xFFF8EED9),
+                    color: AppColors.fgOnDark,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

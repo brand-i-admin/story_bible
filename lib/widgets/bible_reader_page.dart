@@ -6,6 +6,7 @@ import '../models/bible_verse.dart';
 import '../models/saved_bible_verse.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
+import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import 'story_home_styles.dart';
 import 'sub_page_scaffold.dart';
@@ -339,7 +340,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                             Text(
                               '${selectedBook.name} $selectedChapterSafe장',
                               style: const TextStyle(
-                                color: Color(0xFF3B2A17),
+                                color: AppColors.ink800,
                                 fontSize: 17,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -386,10 +387,10 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: RichText(
-                                        text: TextSpan(
+                                      child: Text.rich(
+                                        TextSpan(
                                           style: const TextStyle(
-                                            color: Color(0xFF3B2A17),
+                                            color: AppColors.ink800,
                                             fontSize: 15,
                                             height: 1.25,
                                           ),

@@ -11,6 +11,7 @@ import '../models/character.dart';
 import '../models/era.dart';
 import '../models/story_event.dart';
 import '../state/auth_providers.dart';
+import '../theme/tokens.dart';
 import 'story_state.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -27,17 +28,6 @@ final storyControllerProvider = NotifierProvider<StoryController, StoryState>(
 
 class StoryController extends Notifier<StoryState> {
   Timer? _searchDebounce;
-
-  static const _palette = <Color>[
-    Color(0xFF3B6C94),
-    Color(0xFFB6673C),
-    Color(0xFF557C3E),
-    Color(0xFF8A4E5D),
-    Color(0xFF616161),
-    Color(0xFF9E7C24),
-    Color(0xFF7B5D43),
-    Color(0xFF5C6B9F),
-  ];
 
   StoryRepository get _repo => ref.read(storyRepositoryProvider);
 
@@ -424,7 +414,7 @@ class StoryController extends Notifier<StoryState> {
     if (assigned != null) {
       return assigned;
     }
-    return const Color(0xFF8E7B61);
+    return AppColors.characterFallback;
   }
 
   Character? characterByCode(String characterCode) {
@@ -460,7 +450,7 @@ class StoryController extends Notifier<StoryState> {
     final next = <String, Color>{};
     final ordered = selectedIds.toList();
     for (var i = 0; i < ordered.length; i++) {
-      next[ordered[i]] = _palette[i % _palette.length];
+      next[ordered[i]] = AppColors.characterAt(i);
     }
     return next;
   }
