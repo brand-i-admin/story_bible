@@ -102,10 +102,10 @@ class _EraCompactCard extends StatelessWidget {
           _IndexBadge(label: '$index'),
           const SizedBox(width: 8),
           Expanded(
-            child: RichText(
+            child: Text.rich(
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              text: TextSpan(
+              TextSpan(
                 children: [
                   TextSpan(
                     text: era.name,

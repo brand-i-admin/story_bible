@@ -387,8 +387,8 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: RichText(
-                                        text: TextSpan(
+                                      child: Text.rich(
+                                        TextSpan(
                                           style: const TextStyle(
                                             color: AppColors.ink800,
                                             fontSize: 15,

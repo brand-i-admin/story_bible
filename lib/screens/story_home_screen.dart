@@ -1,13 +1,17 @@
+// Dart imports:
 import 'dart:async';
 
+// Flutter imports:
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Project imports:
 import '../models/app_notification.dart';
 import '../models/era.dart';
 import '../models/quiz_question.dart';
@@ -23,6 +27,7 @@ import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/character_panel.dart';
 import '../widgets/event_detail_page.dart';
+import '../widgets/font_scale_bottom_sheet.dart';
 import '../widgets/notification/notification_bell_button.dart';
 import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
@@ -1171,6 +1176,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         NotificationBellButton(
                           onNavigate: _handleNotificationTap,
                           onOpenHistory: _openNotificationHistory,
+                        ),
+                        const SizedBox(width: 8),
+                        topFontScaleButton(
+                          onTap: () => showFontScaleSheet(context),
                         ),
                         if (kIsWeb) ...[
                           const SizedBox(width: 8),

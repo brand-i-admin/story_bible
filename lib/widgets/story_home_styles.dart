@@ -1,5 +1,7 @@
+// Dart imports:
 import 'dart:math' as math;
 
+// Flutter imports:
 import 'package:flutter/material.dart';
 
 import '../theme/surfaces.dart';
@@ -470,6 +472,13 @@ Widget bibleDropdownFrame<T>({
       ),
     ),
   );
+}
+
+/// 상단 row에 "Aa" 라벨로 표시되는 글자 크기 토글 버튼.
+///
+/// `topUtilityButton`과 동일한 스타일을 공유하지만 고정 라벨과 고정 폭을 사용한다.
+Widget topFontScaleButton({required VoidCallback onTap}) {
+  return topUtilityButton(label: 'Aa', onTap: onTap);
 }
 
 /// 로컬 asset vs Supabase Storage URL 구분 후 적절한 Image 위젯 반환.
