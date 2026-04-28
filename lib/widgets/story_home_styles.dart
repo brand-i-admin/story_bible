@@ -4,51 +4,22 @@ import 'dart:math' as math;
 // Flutter imports:
 import 'package:flutter/material.dart';
 
-// story_home_screen.dart에서 추출한 공통 스타일 헬퍼 모음.
-//
-// 양피지/고지도 테마를 유지하면서 패널/버튼/카드를 렌더링하기 위한
-// BoxDecoration / Widget 빌더를 제공한다. 다이얼로그/서브 페이지를
-// 별도 파일로 분리할 때 이 함수들을 재사용한다.
+import '../theme/surfaces.dart';
+import '../theme/tokens.dart';
+
+// story_home_screen.dart에서 추출한 공통 스타일 헬퍼.
+// 시각 값은 lib/theme/tokens.dart에 정의된 토큰을 참조한다.
+// 새 위젯은 가능하면 AppSurfaces / AppColors를 직접 사용할 것.
 
 BoxDecoration modalSurfaceDecoration() {
-  return BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [Color(0xFFF8F1E4), Color(0xFFF1E2C6)],
-    ),
-    borderRadius: BorderRadius.circular(28),
-    border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),
-    boxShadow: const [
-      BoxShadow(
-        color: Color(0x33000000),
-        blurRadius: 30,
-        offset: Offset(0, 18),
-      ),
-    ],
-  );
+  return AppSurfaces.modal();
 }
 
 BoxDecoration floatingPanelDecoration({
   Color color = const Color(0xF5F7E9D1),
   double shadowOpacity = 0.12,
 }) {
-  return BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [Color.alphaBlend(const Color(0x14FFFFFF), color), color],
-    ),
-    borderRadius: BorderRadius.circular(22),
-    border: Border.all(color: const Color(0xB88E6F48), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: shadowOpacity),
-        blurRadius: 18,
-        offset: const Offset(0, 8),
-      ),
-    ],
-  );
+  return AppSurfaces.floating(color: color, shadowOpacity: shadowOpacity);
 }
 
 BoxDecoration interactiveCardDecoration({
@@ -60,10 +31,10 @@ BoxDecoration interactiveCardDecoration({
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF48A86B), Color(0xFF2D7B4D)],
+        colors: [AppColors.greenTop, AppColors.greenBot],
       ),
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: const Color(0xFFD9F0D0), width: 1.2),
+      borderRadius: BorderRadius.circular(AppRadii.xl),
+      border: Border.all(color: AppColors.greenRim, width: 1.2),
       boxShadow: const [
         BoxShadow(
           color: Color(0x24408F5E),
@@ -78,10 +49,10 @@ BoxDecoration interactiveCardDecoration({
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFC8863B), Color(0xFFA85B25)],
+        colors: [AppColors.brownWarm, AppColors.brownWarm2],
       ),
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: const Color(0xFFF1D39C), width: 1.2),
+      borderRadius: BorderRadius.circular(AppRadii.xl),
+      border: Border.all(color: AppColors.brownRim, width: 1.2),
       boxShadow: const [
         BoxShadow(
           color: Color(0x26A35B22),
@@ -96,10 +67,10 @@ BoxDecoration interactiveCardDecoration({
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFE3F3DE), Color(0xFFD2EBCB)],
+        colors: [AppColors.greenTint1, AppColors.greenTint2],
       ),
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: const Color(0xFF7FB07B), width: 1.0),
+      borderRadius: BorderRadius.circular(AppRadii.xl),
+      border: Border.all(color: AppColors.greenBorder, width: 1.0),
       boxShadow: const [
         BoxShadow(
           color: Color(0x183A7A4B),
@@ -111,7 +82,7 @@ BoxDecoration interactiveCardDecoration({
   }
   return BoxDecoration(
     color: const Color(0xEEF7EBD8),
-    borderRadius: BorderRadius.circular(18),
+    borderRadius: BorderRadius.circular(AppRadii.xl),
     border: Border.all(color: const Color(0xB58E6F48), width: 1.0),
   );
 }
@@ -130,16 +101,16 @@ BoxDecoration softButtonDecoration({required bool selected}) {
         ? const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFC8863B), Color(0xFFA85B25)],
+            colors: [AppColors.brownWarm, AppColors.brownWarm2],
           )
         : const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [Color(0xFFF8F0E2), Color(0xFFEEDDC1)],
           ),
-    borderRadius: BorderRadius.circular(14),
+    borderRadius: BorderRadius.circular(AppRadii.lg),
     border: Border.all(
-      color: selected ? const Color(0xFFF1D39C) : const Color(0xBC9A7A4C),
+      color: selected ? AppColors.brownRim : const Color(0xBC9A7A4C),
       width: 1.0,
     ),
     boxShadow: selected
@@ -168,7 +139,7 @@ Widget filledActionButton({
   final height = minHeight ?? (compact ? 34.0 : 42.0);
   final horizontal = horizontalPadding ?? (compact ? 12.0 : 18.0);
   final resolvedRadius = radius ?? (compact ? 12.0 : 15.0);
-  final resolvedFontSize = fontSize ?? (compact ? 11.5 : 12.5);
+  final resolvedFontSize = fontSize ?? (compact ? 11.5 : AppFontSizes.btn);
   return Material(
     color: Colors.transparent,
     child: InkWell(
@@ -185,14 +156,12 @@ Widget filledActionButton({
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: completed
-                ? const [Color(0xFF58B573), Color(0xFF2D8754)]
-                : const [Color(0xFFD89A47), Color(0xFFB96B2D)],
+                ? const [AppColors.greenBtnTop, AppColors.greenBtnBot]
+                : const [AppColors.goldLight, AppColors.goldDeep],
           ),
           borderRadius: BorderRadius.circular(resolvedRadius),
           border: Border.all(
-            color: completed
-                ? const Color(0xFFD7EFCE)
-                : const Color(0xFFF2D8A6),
+            color: completed ? const Color(0xFFD7EFCE) : AppColors.goldHi,
             width: 1.1,
           ),
           boxShadow: [
@@ -211,7 +180,7 @@ Widget filledActionButton({
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: const Color(0xFFFDF8EE),
+            color: AppColors.parchmentCream,
             fontSize: resolvedFontSize,
             fontWeight: FontWeight.w900,
             height: 1.0,
@@ -246,7 +215,7 @@ Widget modalCloseButton({required VoidCallback onTap, double size = 34}) {
         child: Icon(
           Icons.close_rounded,
           size: size * 0.52,
-          color: const Color(0xFF5C4326),
+          color: AppColors.ink400,
         ),
       ),
     ),
@@ -261,13 +230,13 @@ Widget mapControlButton({
   return Container(
     decoration: BoxDecoration(
       color: const Color(0xCC2A2118),
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all(color: const Color(0xFFD8BF99)),
+      borderRadius: BorderRadius.circular(AppRadii.xs),
+      border: Border.all(color: AppColors.borderHairlineDark),
     ),
     child: IconButton(
       tooltip: tooltip,
       onPressed: onTap,
-      icon: Icon(icon, color: const Color(0xFFF8EED9), size: 20),
+      icon: Icon(icon, color: AppColors.fgOnDark, size: 20),
     ),
   );
 }
@@ -286,20 +255,10 @@ Widget topUtilityButton({
       backgroundColor ??
       (selected ? const Color(0xD06A401E) : const Color(0xB02A2118));
   final resolvedBorderColor =
-      borderColor ??
-      (selected ? const Color(0xFFF0C36B) : const Color(0xBFD8BF99));
-  final resolvedForegroundColor = foregroundColor ?? const Color(0xFFF8EED9);
+      borderColor ?? (selected ? AppColors.goldRim : const Color(0xBFD8BF99));
+  final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
   final resolvedBoxShadow =
-      boxShadow ??
-      (selected
-          ? [
-              const BoxShadow(
-                color: Color(0x45F0C36B),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ]
-          : null);
+      boxShadow ?? (selected ? AppShadows.goldGlow : null);
 
   return Opacity(
     opacity: enabled ? 1 : 0.42,
@@ -307,13 +266,13 @@ Widget topUtilityButton({
       color: Colors.transparent,
       child: InkWell(
         onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         child: Container(
           height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
             color: resolvedBackgroundColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadii.md),
             border: Border.all(
               color: resolvedBorderColor,
               width: selected ? 1.4 : 1,
@@ -328,9 +287,9 @@ Widget topUtilityButton({
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: resolvedForegroundColor,
-              fontSize: 13.4,
+              fontSize: AppFontSizes.chip,
               fontWeight: FontWeight.w800,
-              height: 1.1,
+              height: AppLineHeights.tight,
             ),
           ),
         ),
@@ -350,7 +309,7 @@ Widget storySection({
     child: Container(
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         color: const Color(0xF4EFE3CC),
       ),
       padding: const EdgeInsets.all(12),
@@ -364,9 +323,9 @@ Widget storySection({
                 child: Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: AppFontSizes.body,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF4D381F),
+                    color: AppColors.ink450,
                   ),
                 ),
               ),
@@ -377,9 +336,9 @@ Widget storySection({
           Text(
             content,
             style: const TextStyle(
-              fontSize: 13,
-              height: 1.45,
-              color: Color(0xFF3B2A17),
+              fontSize: AppFontSizes.body,
+              height: AppLineHeights.body,
+              color: AppColors.ink800,
             ),
           ),
           if (footer != null) footer,
@@ -404,7 +363,7 @@ Widget storySceneRow(List<String> sceneAssets) {
     child: Container(
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         color: const Color(0xF4EFE3CC),
       ),
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
@@ -428,14 +387,14 @@ Widget storySceneRow(List<String> sceneAssets) {
                   child: SizedBox(
                     width: tileWidth,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppRadii.md),
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color(0x9C7C5C39),
                             width: 1.0,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(AppRadii.md),
                         ),
                         child: SizedBox(
                           height: tileHeight,
@@ -498,13 +457,13 @@ Widget bibleDropdownFrame<T>({
             isDense: true,
             isExpanded: true,
             iconSize: 12,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppRadii.sm),
             dropdownColor: const Color(0xFFF3E4CC),
             iconEnabledColor: const Color(0xFF5B4327),
             style: const TextStyle(
-              color: Color(0xFF4A331D),
+              color: AppColors.ink500,
               fontWeight: FontWeight.w900,
-              fontSize: 12,
+              fontSize: AppFontSizes.base,
             ),
             items: items,
             onChanged: onChanged,

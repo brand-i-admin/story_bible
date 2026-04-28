@@ -22,6 +22,7 @@ import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/tokens.dart';
 import 'character_avatar.dart';
 import 'inline_login_prompt_card.dart';
 import 'parchment_dialog.dart';
@@ -518,7 +519,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           child: Text(
             _profileError!,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Color(0xFFFDF8EE)),
+            style: const TextStyle(color: AppColors.parchmentCream),
           ),
         ),
       );

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/saved_bible_verse.dart';
 import '../state/auth_providers.dart';
+import '../theme/tokens.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_page_scaffold.dart';
 
@@ -221,7 +222,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: Color(0xFF4A331D),
+                                  color: AppColors.ink500,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -231,7 +232,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
                             Text(
                               _formatListDate(verse.createdAt),
                               style: const TextStyle(
-                                color: Color(0xFF8A6A46),
+                                color: AppColors.ink200,
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -325,7 +326,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
                   '${page + 1}',
                   style: TextStyle(
                     color: selected
-                        ? const Color(0xFF4A331D)
+                        ? AppColors.ink500
                         : const Color(0xFF7B603D),
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
@@ -383,7 +384,7 @@ class _PageArrowButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: enabled ? const Color(0xFF4A331D) : const Color(0x557B603D),
+            color: enabled ? AppColors.ink500 : const Color(0x557B603D),
             fontSize: 12,
             fontWeight: FontWeight.w900,
           ),

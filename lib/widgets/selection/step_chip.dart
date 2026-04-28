@@ -65,7 +65,7 @@ class _StepChip extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     height: 1.0,
                     color: selected
-                        ? const Color(0xFFFDF8EE)
+                        ? AppColors.parchmentCream
                         : const Color(0xFF6A4A31),
                   ),
                 ),
@@ -123,7 +123,7 @@ class _StepSummaryPill extends StatelessWidget {
         style: TextStyle(
           fontSize: 7.8,
           fontWeight: FontWeight.w700,
-          color: selected ? const Color(0xFFFDF8EE) : const Color(0xFF6A4A31),
+          color: selected ? AppColors.parchmentCream : const Color(0xFF6A4A31),
           height: 0.95,
         ),
       ),
@@ -224,7 +224,7 @@ class _CompactSegmentedToggleButton extends StatelessWidget {
                 fontSize: 13.6,
                 fontWeight: FontWeight.w800,
                 color: selected
-                    ? const Color(0xFFFDF8EE)
+                    ? AppColors.parchmentCream
                     : const Color(0xFF654A31),
               ),
             ),
@@ -315,7 +315,7 @@ class _PrimaryActionButton extends StatelessWidget {
             style: TextStyle(
               fontSize: compact ? 13.6 : 14.4,
               fontWeight: FontWeight.w800,
-              color: const Color(0xFFFDF8EE),
+              color: AppColors.parchmentCream,
             ),
           ),
         ),

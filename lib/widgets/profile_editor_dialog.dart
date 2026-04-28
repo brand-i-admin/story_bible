@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/app_user_profile.dart';
 import '../state/auth_providers.dart';
+import '../theme/tokens.dart';
 import 'story_home_styles.dart';
 
 /// 사용자 프로필(닉네임/사진/기도제목)을 수정하는 모달 다이얼로그.
@@ -145,7 +146,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFF4A331D),
+            color: AppColors.ink500,
             fontSize: 13,
             fontWeight: FontWeight.w900,
           ),
@@ -158,7 +159,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                color: Color(0xFF8A6A46),
+                color: AppColors.ink200,
                 fontSize: 10.4,
                 fontWeight: FontWeight.w700,
                 height: 1.2,
@@ -179,7 +180,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: const TextStyle(
-        color: Color(0xFF9B805D),
+        color: AppColors.ink150,
         fontSize: 12.4,
         fontWeight: FontWeight.w600,
       ),
@@ -249,7 +250,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
                       child: Text(
                         initials,
                         style: const TextStyle(
-                          color: Color(0xFF4A331D),
+                          color: AppColors.ink500,
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
                         ),
@@ -263,7 +264,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
                           child: Text(
                             initials,
                             style: const TextStyle(
-                              color: Color(0xFF4A331D),
+                              color: AppColors.ink500,
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
                             ),
@@ -315,7 +316,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
             maxLength: 24,
             textInputAction: TextInputAction.next,
             style: const TextStyle(
-              color: Color(0xFF402B18),
+              color: AppColors.ink600,
               fontSize: 14,
               fontWeight: FontWeight.w800,
             ),
@@ -338,7 +339,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
             minLines: 3,
             maxLines: 4,
             style: const TextStyle(
-              color: Color(0xFF4A331D),
+              color: AppColors.ink500,
               fontSize: 12.8,
               fontWeight: FontWeight.w700,
               height: 1.45,
@@ -444,7 +445,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
                               ),
                               child: const Icon(
                                 Icons.close_rounded,
-                                color: Color(0xFF6E512C),
+                                color: AppColors.ink300,
                                 size: 22,
                               ),
                             ),

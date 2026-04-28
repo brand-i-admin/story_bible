@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../state/auth_providers.dart';
+import '../theme/tokens.dart';
 import 'story_home_styles.dart';
 
 /// 로그인이 필요한 영역에 인라인으로 표시되는 카카오/Apple 로그인 카드.
@@ -136,7 +137,7 @@ class _InlineLoginPromptCardState extends ConsumerState<InlineLoginPromptCard> {
                 widget.title,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: Color(0xFF4A331D),
+                  color: AppColors.ink500,
                   fontSize: 16.5,
                   fontWeight: FontWeight.w900,
                   height: 1.2,

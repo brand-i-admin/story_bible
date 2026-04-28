@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Project imports:
 import 'screens/story_home_screen.dart';
 import 'state/font_scale_providers.dart';
+import 'theme/app_theme.dart';
 
 /// `MaterialApp.builder`에 주입되어 `MediaQuery.textScaler`를 `fontScaleProvider`
 /// 값에 동기화한다. 테스트에서도 재사용하기 위해 top-level로 분리.
@@ -36,11 +37,7 @@ class StoryBibleApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Story Bible',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8B5A2B)),
-        scaffoldBackgroundColor: const Color(0xFFEEE0C6),
-      ),
+      theme: AppTheme.light(),
       builder: fontScaleBuilder,
       home: const StoryHomeScreen(),
     );

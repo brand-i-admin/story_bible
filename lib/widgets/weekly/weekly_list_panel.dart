@@ -114,10 +114,10 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                                                   fontSize: titleFontSize,
                                                   fontWeight: FontWeight.w800,
                                                   color: selected
-                                                      ? const Color(0xFFFDF8EE)
+                                                      ? AppColors.parchmentCream
                                                       : isCompleted
                                                       ? const Color(0xFF2D5A39)
-                                                      : const Color(0xFF4A331D),
+                                                      : AppColors.ink500,
                                                   height: 1.18,
                                                 ),
                                               ),
@@ -162,7 +162,7 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                                             decoration: BoxDecoration(
                                               color: isChecked
                                                   ? const Color(0xFF2D7C55)
-                                                  : const Color(0xFFF8F1E4),
+                                                  : AppColors.parchmentLight,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               border: Border.all(
@@ -177,8 +177,8 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
                                                   : Icons.circle_outlined,
                                               size: checkboxIconSize,
                                               color: isChecked
-                                                  ? const Color(0xFFFDF8EE)
-                                                  : const Color(0xFF8E6F48),
+                                                  ? AppColors.parchmentCream
+                                                  : AppColors.ink100,
                                             ),
                                           ),
                                         ),
@@ -241,7 +241,7 @@ extension _WeeklyListPanelExt on _WeeklyTabPageState {
               style: const TextStyle(
                 fontSize: 16.2,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF4A331D),
+                color: AppColors.ink500,
               ),
             ),
           ),

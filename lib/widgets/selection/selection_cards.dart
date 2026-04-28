@@ -113,7 +113,7 @@ class _EraCompactCard extends StatelessWidget {
                       fontSize: 13.8,
                       fontWeight: FontWeight.w800,
                       color: selected
-                          ? const Color(0xFFFDF8EE)
+                          ? AppColors.parchmentCream
                           : const Color(0xFF5C3A20),
                     ),
                   ),
@@ -200,7 +200,7 @@ class _CharacterCompactCard extends StatelessWidget {
                           fontSize: 13.8,
                           fontWeight: FontWeight.w800,
                           color: selected
-                              ? const Color(0xFFFDF8EE)
+                              ? AppColors.parchmentCream
                               : const Color(0xFF5C3A20),
                         ),
                       ),
@@ -295,7 +295,7 @@ class _StoryCompactCard extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     height: 1.12,
                     color: selected
-                        ? const Color(0xFFFDF8EE)
+                        ? AppColors.parchmentCream
                         : isCompleted
                         ? const Color(0xFF2F5D3B)
                         : const Color(0xFF5C3A20),
