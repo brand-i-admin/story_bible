@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import argparse
 import base64
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -26,8 +25,6 @@ import requests
 
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
-MANIFEST_SCHEMA_VERSION = 1
-AVATAR_MANIFEST_PATH = Path("supabase/generated_media/avatars.json")
 ADULT_GUARDRAIL = (
     "all characters are clearly adults age 25+, adult body proportions, "
     "fully clothed, no children, no minors, non-photoreal 2D cartoon "
@@ -348,110 +345,6 @@ def build_request_body(
     return body
 
 
-def natural_key(
-    *,
-    owner_type: str,
-    owner_code: str,
-    asset_role: str,
-    variant: str,
-    scene_index: int | None = None,
-) -> str:
-    scene_part = str(scene_index) if scene_index is not None else "none"
-    return f"{owner_type}:{owner_code}:{asset_role}:{scene_part}:{variant}"
-
-
-def repo_relative_path(path: Path) -> str:
-    if not path.is_absolute():
-        return path.as_posix()
-    try:
-        return path.relative_to(Path.cwd()).as_posix()
-    except ValueError:
-        return path.as_posix()
-
-
-def sha256_for_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def build_avatar_manifest_asset(
-    *,
-    path: Path,
-    prompt_item: dict[str, Any] | None,
-    model: str,
-) -> dict[str, Any]:
-    code = path.stem
-    metadata: dict[str, Any] = {}
-    if prompt_item is not None:
-        prompt_index = prompt_item.get("index")
-        if isinstance(prompt_index, int):
-            metadata["prompt_index"] = prompt_index
-        name_ko = str(prompt_item.get("name_ko") or "").strip()
-        if name_ko:
-            metadata["name_ko"] = name_ko
-        name_en = str(prompt_item.get("name_en") or "").strip()
-        if name_en:
-            metadata["name_en"] = name_en
-
-    return {
-        "natural_key": natural_key(
-            owner_type="person",
-            owner_code=code,
-            asset_role="avatar",
-            variant="original",
-        ),
-        "owner_type": "person",
-        "owner_code": code,
-        "asset_role": "avatar",
-        "scene_index": None,
-        "variant": "original",
-        "relative_path": repo_relative_path(path),
-        "source_relative_path": None,
-        "mime_type": "image/png",
-        "byte_size": path.stat().st_size,
-        "content_hash": sha256_for_file(path),
-        "generator": "tools/generate_avatars_vertex.py",
-        "generator_model": model,
-        "metadata": metadata,
-    }
-
-
-def write_avatar_manifest(
-    *,
-    out_dir: Path,
-    prompt_items_by_code: dict[str, dict[str, Any]],
-    model: str,
-) -> None:
-    assets = [
-        build_avatar_manifest_asset(
-            path=path,
-            prompt_item=prompt_items_by_code.get(path.stem),
-            model=model,
-        )
-        for path in sorted(out_dir.glob("*.png"))
-    ]
-    assets.sort(key=lambda item: item["natural_key"])
-
-    AVATAR_MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
-    AVATAR_MANIFEST_PATH.write_text(
-        json.dumps(
-            {
-                "schema_version": MANIFEST_SCHEMA_VERSION,
-                "asset_family": "avatars",
-                "assets": assets,
-            },
-            ensure_ascii=False,
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-
-
 def main() -> int:
     args = parse_args()
 
@@ -475,11 +368,6 @@ def main() -> int:
         config["characters"],
         key=lambda c: int(c.get("index", 0)),
     )
-    prompt_items_by_code = {
-        str(item.get("code", "")).strip(): item
-        for item in config["characters"]
-        if isinstance(item, dict) and str(item.get("code", "")).strip()
-    }
     if args.limit > 0:
         characters = characters[: args.limit]
 
@@ -616,13 +504,6 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             failure += 1
             print(f"[FAIL] framing normalization error={exc}")
-
-    write_avatar_manifest(
-        out_dir=out_dir,
-        prompt_items_by_code=prompt_items_by_code,
-        model=args.model,
-    )
-    print(f"[OK]   wrote manifest -> {AVATAR_MANIFEST_PATH}")
 
     print(f"Done. success={success} failure={failure}")
     return 0 if failure == 0 else 1

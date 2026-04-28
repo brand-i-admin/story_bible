@@ -78,7 +78,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   Map<String, String> _profilePersonTestamentById = const {};
   AppUserProfile? _profileUser;
   Map<String, PersonStudyProgress> _profileStudyProgressByPersonId = const {};
-  Map<String, double> _profilePersonTimelineOrderById = const {};
+  Map<String, int> _profilePersonTimelineOrderById = const {};
   _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
   List<UserNote> _profileNotesPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
@@ -457,13 +457,13 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   int _compareProfilePeople(
     Person a,
     Person b, {
-    required Map<String, double> timelineOrderById,
+    required Map<String, int> timelineOrderById,
   }) {
     final aTimeline = timelineOrderById[a.id];
     final bTimeline = timelineOrderById[b.id];
     if (aTimeline != null || bTimeline != null) {
-      final timelineOrder = (aTimeline ?? double.infinity).compareTo(
-        bTimeline ?? double.infinity,
+      final timelineOrder = (aTimeline ?? 1 << 30).compareTo(
+        bTimeline ?? 1 << 30,
       );
       if (timelineOrder != 0) {
         return timelineOrder;

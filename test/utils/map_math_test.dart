@@ -114,14 +114,12 @@ void main() {
       return StoryEvent(
         id: id,
         code: id,
-        displayNumber: '001',
         eraId: 'e',
         title: id,
         summary: null,
         story: null,
         shortStory: null,
         storyScenes: null,
-        timelineRank: 1.0,
         startYear: null,
         endYear: null,
         timeSortKey: 0,
@@ -130,10 +128,6 @@ void main() {
         lng: lng,
         personIds: const [],
         bibleRefs: const [],
-        thumbUrl: null,
-        storyAssetDir: null,
-        storyThumbnailDir: null,
-        storySceneCount: 0,
       );
     }
 
@@ -160,14 +154,12 @@ void main() {
         const StoryEvent(
           id: 'b',
           code: 'b',
-          displayNumber: '001',
           eraId: 'e',
           title: 'noCoord',
           summary: null,
           story: null,
           shortStory: null,
           storyScenes: null,
-          timelineRank: 1.0,
           startYear: null,
           endYear: null,
           timeSortKey: 0,
@@ -176,10 +168,6 @@ void main() {
           lng: null,
           personIds: [],
           bibleRefs: [],
-          thumbUrl: null,
-          storyAssetDir: null,
-          storyThumbnailDir: null,
-          storySceneCount: 0,
         ),
       ]);
       expect(result.containsKey('a'), true);
@@ -232,14 +220,12 @@ StoryEvent _bareEvent(String id) {
   return StoryEvent(
     id: id,
     code: id,
-    displayNumber: '001',
     eraId: 'e',
     title: id,
     summary: null,
     story: null,
     shortStory: null,
     storyScenes: null,
-    timelineRank: 1.0,
     startYear: null,
     endYear: null,
     timeSortKey: 0,
@@ -248,9 +234,5 @@ StoryEvent _bareEvent(String id) {
     lng: null,
     personIds: const [],
     bibleRefs: const [],
-    thumbUrl: null,
-    storyAssetDir: null,
-    storyThumbnailDir: null,
-    storySceneCount: 0,
   );
 }
