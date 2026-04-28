@@ -14,6 +14,7 @@ Future<void> showFontScaleSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: const Color(0xFFF8F1E4),
+    isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -32,7 +33,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
 
     return SafeArea(
       top: false,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -96,6 +97,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
     );
   }
 }
+
 
 class _FontScaleChoiceButton extends StatelessWidget {
   const _FontScaleChoiceButton({
