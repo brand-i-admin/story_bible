@@ -173,5 +173,43 @@ void main() {
         expect(p.isRejected, status == 'rejected');
       }
     });
+
+    test('general 타입은 era_id null 허용 + image_paths 보존 + 다른 타입과 구분', () {
+      final row = baseRow();
+      row['proposal_type'] = 'general';
+      row['era_id'] = null;
+      row['target_event_id'] = null;
+      row['quiz_questions'] = [];
+      row['scene_image_paths'] = [];
+      row['scene_image_prompts'] = [];
+      row['image_paths'] = [
+        'proposal-general-images/u-1/d/0.png',
+        'proposal-general-images/u-1/d/1.jpg',
+      ];
+      final p = EventProposal.fromMap(row);
+      expect(p.isGeneralProposal, isTrue);
+      expect(p.isNewProposal, isFalse);
+      expect(p.isDeleteProposal, isFalse);
+      expect(p.eraId, isNull);
+      expect(p.imagePaths, [
+        'proposal-general-images/u-1/d/0.png',
+        'proposal-general-images/u-1/d/1.jpg',
+      ]);
+    });
+
+    test('image_paths 가 row 에 없으면 빈 배열로 파싱', () {
+      final row = baseRow()
+        ..['quiz_questions'] = [
+          {
+            'question': 'q',
+            'choices': ['a', 'b', 'c', 'd'],
+            'answer_index': 0,
+            'explanation': 'e',
+          },
+        ];
+      // row 에 image_paths 키 자체가 없는 경우 (구버전 row)
+      final p = EventProposal.fromMap(row);
+      expect(p.imagePaths, isEmpty);
+    });
   });
 }

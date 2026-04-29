@@ -1022,6 +1022,60 @@ using (
   )
 );
 
+-- ============================================================================
+-- Storage 버킷: 'proposal-general-images' — 일반 제안에 첨부된 이미지 (최대 5장).
+--   경로 규칙: proposal-general-images/<user_id>/<draft_id>/<idx>.<ext>
+--   쓰기 권한: 본인 폴더 (제출 전 pastor/admin 이 직접 업로드)
+--   읽기 권한: public — 다른 사역자/관리자가 상세에서 봄.
+-- ============================================================================
+insert into storage.buckets (
+  id, name, public, file_size_limit, allowed_mime_types
+)
+values (
+  'proposal-general-images', 'proposal-general-images', true,
+  10485760,
+  array['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists proposal_general_images_public_read on storage.objects;
+create policy proposal_general_images_public_read on storage.objects
+for select using (bucket_id = 'proposal-general-images');
+
+drop policy if exists proposal_general_images_insert_own on storage.objects;
+create policy proposal_general_images_insert_own on storage.objects
+for insert to authenticated
+with check (
+  bucket_id = 'proposal-general-images'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists proposal_general_images_update_own on storage.objects;
+create policy proposal_general_images_update_own on storage.objects
+for update to authenticated
+using (
+  bucket_id = 'proposal-general-images'
+  and (storage.foldername(name))[1] = auth.uid()::text
+)
+with check (
+  bucket_id = 'proposal-general-images'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists proposal_general_images_delete_own on storage.objects;
+create policy proposal_general_images_delete_own on storage.objects
+for delete to authenticated
+using (
+  bucket_id = 'proposal-general-images'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or public.is_admin()
+  )
+);
+
 -- -----------------------------------------------------------------------------
 -- RPC: 새 이야기를 era 안의 특정 위치에 끼워 넣기.
 -- (era_id, story_index) UNIQUE 제약이 있으므로 뒤 인덱스를 +1 시프트한 뒤 INSERT.
@@ -1231,7 +1285,9 @@ grant execute on function public.is_pastor() to authenticated;
 create table if not exists event_proposals (
   id uuid primary key default gen_random_uuid(),
   proposer_user_id uuid not null references auth.users(id) on delete cascade,
-  era_id uuid not null references eras(id),
+  -- era_id 는 'general' 제안에서는 NULL. 'new' / 'delete' 에서는 NOT NULL
+  -- (chk_era_id_required_unless_general 가 강제).
+  era_id uuid references eras(id),
   title text not null,
   summary text,
   character_codes text[] not null default '{}',
@@ -1264,17 +1320,25 @@ create table if not exists event_proposals (
 
   -- 새 이야기 제안에 포함되는 4지선다 퀴즈(1~3개). 각 요소 구조:
   --   { question, choices[4], answer_index(0~3), explanation }
-  -- proposal_type='new' 일 때 1~3개 강제 (CHECK), 'delete' 일 때는 항상 빈 배열.
+  -- proposal_type='new' 일 때 1~3개 강제 (CHECK), 그 외 타입은 항상 빈 배열.
   -- 승인 시 approve_event_proposal 이 quiz_questions 테이블에 row 로 insert.
   quiz_questions jsonb not null default '[]'::jsonb,
 
-  -- 제안 종류. 'new' = 새 이야기 만들기, 'delete' = 기존 이야기 삭제 제안.
-  -- 'delete' 는 target_event_id 가 반드시 있어야 하며, 승인 시 해당 이벤트의
-  -- events.deleted_at 이 set 되어 soft delete 된다 (CASCADE 로 인한 진도 유실 방지).
+  -- 제안 종류.
+  --   'new'     : 새 이야기 만들기 (era_id, target NULL, scenes/quiz 필수)
+  --   'delete'  : 기존 이야기 삭제 (target_event_id 필수). 승인 시 events.deleted_at
+  --              이 set 되어 soft delete 된다 (CASCADE 로 인한 진도 유실 방지).
+  --   'general' : 앱 전체에 대한 일반 제안 — title + summary(=본문) + image_paths
+  --              (최대 5장). era_id/target NULL. 승인/거절은 status 만 갱신.
   proposal_type text not null default 'new',
 
-  -- 'delete' 타입일 때 삭제 대상 이벤트를 가리킴. 'new' 타입에서는 NULL.
+  -- 'delete' 타입일 때 삭제 대상 이벤트를 가리킴. 'new'/'general' 에서는 NULL.
   target_event_id uuid references events(id) on delete set null,
+
+  -- 'general' 제안에서 첨부 이미지 Storage 경로 (최대 5장).
+  -- 'proposal-general-images/<uid>/<draft>/<idx>.<ext>' 형태.
+  -- 'new'/'delete' 에서는 항상 빈 배열.
+  image_paths text[] not null default '{}',
 
   after_story_index int,
   status text not null default 'pending'
@@ -1304,21 +1368,33 @@ create table if not exists event_proposals (
 
   -- proposal_type 값 허용치
   constraint event_proposals_proposal_type_check
-    check (proposal_type in ('new', 'delete')),
+    check (proposal_type in ('new', 'delete', 'general')),
 
-  -- new ↔ target 없음 / delete ↔ target 있음
+  -- type 별 target_event_id 강제. delete 만 NOT NULL, 나머지는 NULL.
   constraint chk_proposal_type_target check (
     (proposal_type = 'new' and target_event_id is null) or
-    (proposal_type = 'delete' and target_event_id is not null)
+    (proposal_type = 'delete' and target_event_id is not null) or
+    (proposal_type = 'general' and target_event_id is null)
   ),
 
-  -- 퀴즈 개수: new 는 1~3, delete 는 0
+  -- 퀴즈 개수: new 는 1~3, delete/general 은 0
   constraint chk_quiz_count_by_type check (
     case proposal_type
       when 'new' then jsonb_array_length(quiz_questions) between 1 and 3
       when 'delete' then jsonb_array_length(quiz_questions) = 0
+      when 'general' then jsonb_array_length(quiz_questions) = 0
       else false
     end
+  ),
+
+  -- era_id 필수 여부: 'general' 만 NULL 허용
+  constraint chk_era_id_required_unless_general check (
+    proposal_type = 'general' or era_id is not null
+  ),
+
+  -- 'general' 의 image_paths 는 최대 5장
+  constraint chk_general_image_count check (
+    proposal_type <> 'general' or coalesce(array_length(image_paths, 1), 0) <= 5
   )
 );
 
@@ -1915,24 +1991,18 @@ end;
 $$;
 grant execute on function public.approve_event_proposal(uuid, int, jsonb) to authenticated;
 
--- 7b) RPC: approve_delete_proposal (admin 만) — 대상 이벤트 HARD DELETE +
---     마지막 등장이었던 인물 row HARD DELETE + 클라이언트 storage 정리 경로 반환.
+-- 7b) RPC: approve_delete_proposal (admin 만) — 대상 이벤트 SOFT DELETE.
 --
--- 처리 순서:
---   1) target events row 의 character_codes / scene_image_paths 스냅샷 후
---      DELETE FROM events. ON DELETE CASCADE 로 quiz_questions / user_event_progress
---      도 함께 정리됨 (사용자 진도는 유실되지만 사용자가 더 이상 보지 않을 이야기
---      이므로 수용).
---   2) 스냅샷한 character_codes 각 코드에 대해, 다른 events 가 여전히 그 코드를
---      참조하는지 카운트. 0건 → 그 캐릭터의 마지막 출연 → DELETE FROM characters.
---      character_eras 는 view 라 자동 갱신, 로컬 번들에 PNG 가 남아있어도 앱이
---      characters 테이블 fetch 결과에 그 코드를 못 받으므로 더 이상 표시 안 됨.
---   3) 클라이언트 storage 정리용 jsonb 반환:
---        - scene_image_paths              : 이 이벤트의 장면 이미지 (proposal-scenes/...)
---        - deleted_character_avatar_paths : hard delete 된 캐릭터의 아바타 경로
---      sync 스크립트의 diff 단계가 이 이후에 로컬 PNG 디렉토리/파일도 정리.
+-- HARD DELETE 를 쓰지 않는 이유:
+--   (a) target_event_id 의 FK 가 ON DELETE SET NULL 이라, events row 가 사라지면
+--       proposal.target_event_id 가 NULL 로 세팅 → 즉시 chk_proposal_type_target
+--       (delete ↔ target NOT NULL) CHECK 위반 (PostgrestException 23514).
+--   (b) quiz_questions / user_event_progress 가 cascade 로 같이 사라지면
+--       사용자 진도가 통째로 유실된다.
 --
--- 멱등성: target event row 가 이미 없으면 character 정리도 skip 후 그대로 통과.
+-- events_ordered 뷰가 deleted_at IS NULL 만 노출하므로 앱에서는 자동으로 숨김.
+-- 캐릭터 비활성화 / 고아 이미지 정리는 의도적으로 하지 않는다 (재등록 가능성 보존).
+-- 멱등성: 이미 deleted_at 이 set 인 이벤트는 다시 건드리지 않음.
 drop function if exists public.approve_delete_proposal(uuid) cascade;
 create or replace function public.approve_delete_proposal(
   p_proposal_id uuid
@@ -1945,12 +2015,6 @@ as $$
 declare
   v_proposal event_proposals%rowtype;
   v_event events%rowtype;
-  v_deleted_char_paths text[] := '{}';
-  v_scene_paths text[] := '{}';
-  v_codes text[] := '{}';
-  v_code text;
-  v_other_count int;
-  v_avatar_path text;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
@@ -1971,45 +2035,26 @@ begin
     raise exception 'target_event_id is null for delete proposal %', p_proposal_id;
   end if;
 
-  -- 1) 스냅샷 + HARD DELETE FROM events (cascade quiz_questions / user_event_progress)
+  -- soft delete: idempotent (이미 deleted_at 인 경우는 noop)
   select * into v_event from events where id = v_proposal.target_event_id;
-  if found then
-    v_scene_paths := coalesce(v_event.scene_image_paths, '{}'::text[]);
-    v_codes := coalesce(v_event.character_codes, '{}'::text[]);
-    delete from events where id = v_event.id;
+  if found and v_event.deleted_at is null then
+    update events set deleted_at = now() where id = v_event.id;
   end if;
-  -- target row 가 이미 사라진 경우 (다른 admin 동시 처리 등) 도 그대로 진행 —
-  -- v_codes 가 비어있어 character 정리 루프가 no-op.
 
-  -- 2) 마지막 출연이었던 캐릭터 hard delete
-  foreach v_code in array v_codes
-  loop
-    select count(*) into v_other_count
-    from events e
-    where v_code = any(e.character_codes);
-    if v_other_count = 0 then
-      delete from characters
-      where code = v_code
-      returning avatar_storage_path into v_avatar_path;
-      if v_avatar_path is not null and v_avatar_path <> '' then
-        v_deleted_char_paths := array_append(v_deleted_char_paths, v_avatar_path);
-      end if;
-    end if;
-  end loop;
-
-  -- 3) 제안 승인 처리. approved_event_id 는 이벤트가 이미 사라졌으므로 NULL.
   update event_proposals
   set
     status = 'approved',
     reviewed_by_user_id = auth.uid(),
     reviewed_at = now(),
-    approved_event_id = null
+    approved_event_id = v_proposal.target_event_id
   where id = p_proposal_id;
 
+  -- 호환성을 위해 키는 남기되, 정리 대상 없음을 의미하는 빈 배열 반환.
   return jsonb_build_object(
     'event_id', v_proposal.target_event_id,
-    'scene_image_paths', v_scene_paths,
-    'deleted_character_avatar_paths', v_deleted_char_paths
+    'scene_image_paths', '{}'::text[],
+    'inactive_character_avatar_paths', '{}'::text[],
+    'deleted_character_avatar_paths', '{}'::text[]
   );
 end;
 $$;
@@ -2103,6 +2148,133 @@ begin
 end;
 $$;
 grant execute on function public.reject_event_proposal(uuid, text) to authenticated;
+
+-- 8a-1) RPC: submit_general_proposal (pastor + admin) — 앱 일반 제안 등록.
+-- title + body(=summary) 필수, image_paths 최대 5장. era_id / target / scenes /
+-- quizzes 모두 빈 값으로 들어간다.
+drop function if exists public.submit_general_proposal(text, text, text[]) cascade;
+create or replace function public.submit_general_proposal(
+  p_title text,
+  p_body text,
+  p_image_paths text[]
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  v_id uuid;
+  v_paths text[];
+begin
+  if not (public.is_pastor() or public.is_admin()) then
+    raise exception 'permission denied: pastor or admin role required';
+  end if;
+  if coalesce(trim(p_title), '') = '' then
+    raise exception 'title is required';
+  end if;
+  if coalesce(trim(p_body), '') = '' then
+    raise exception 'body is required';
+  end if;
+  v_paths := coalesce(p_image_paths, '{}'::text[]);
+  if coalesce(array_length(v_paths, 1), 0) > 5 then
+    raise exception 'image_paths must have at most 5 entries (got %)',
+      array_length(v_paths, 1);
+  end if;
+
+  insert into event_proposals (
+    proposal_type, proposer_user_id,
+    era_id, title, summary,
+    character_codes, story_scenes, scene_characters,
+    scene_image_paths, scene_image_prompts,
+    proposed_characters, quiz_questions, bible_refs,
+    image_paths
+  )
+  values (
+    'general', auth.uid(),
+    null, p_title, p_body,
+    '{}', '[]'::jsonb, '[]'::jsonb,
+    '{}', '{}',
+    '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
+    v_paths
+  )
+  returning id into v_id;
+  return v_id;
+end;
+$$;
+grant execute on function public.submit_general_proposal(text, text, text[]) to authenticated;
+
+-- 8a-2) RPC: approve_general_proposal (admin) — 단순 status 갱신.
+drop function if exists public.approve_general_proposal(uuid) cascade;
+create or replace function public.approve_general_proposal(p_proposal_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  v_proposal event_proposals%rowtype;
+begin
+  if not public.is_admin() then
+    raise exception 'permission denied: admin role required';
+  end if;
+  select * into v_proposal from event_proposals where id = p_proposal_id;
+  if not found then
+    raise exception 'proposal not found: %', p_proposal_id;
+  end if;
+  if v_proposal.proposal_type <> 'general' then
+    raise exception 'approve_general_proposal is only for proposal_type=general (got %)',
+      v_proposal.proposal_type;
+  end if;
+  if v_proposal.status <> 'pending' then
+    raise exception 'proposal is not pending (status = %)', v_proposal.status;
+  end if;
+  update event_proposals
+  set status = 'approved',
+      reviewed_by_user_id = auth.uid(),
+      reviewed_at = now()
+  where id = p_proposal_id;
+end;
+$$;
+grant execute on function public.approve_general_proposal(uuid) to authenticated;
+
+-- 8a-3) RPC: reject_general_proposal (admin) — 단순 status 갱신 + 사유.
+drop function if exists public.reject_general_proposal(uuid, text) cascade;
+create or replace function public.reject_general_proposal(
+  p_proposal_id uuid,
+  p_note text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  v_proposal event_proposals%rowtype;
+begin
+  if not public.is_admin() then
+    raise exception 'permission denied: admin role required';
+  end if;
+  select * into v_proposal from event_proposals where id = p_proposal_id;
+  if not found then
+    raise exception 'proposal not found: %', p_proposal_id;
+  end if;
+  if v_proposal.proposal_type <> 'general' then
+    raise exception 'reject_general_proposal is only for proposal_type=general (got %)',
+      v_proposal.proposal_type;
+  end if;
+  if v_proposal.status <> 'pending' then
+    raise exception 'proposal is not pending (status = %)', v_proposal.status;
+  end if;
+  update event_proposals
+  set status = 'rejected',
+      reviewed_by_user_id = auth.uid(),
+      reviewed_at = now(),
+      review_note = p_note
+  where id = p_proposal_id;
+end;
+$$;
+grant execute on function public.reject_general_proposal(uuid, text) to authenticated;
 
 -- 8b) RPC: revise_proposal_position — 제안자 본인이 invalidated 된 자기 제안의
 --     위치/연도를 다시 결정. 성공 시 position_invalidated_at NULL 로 복구되어
