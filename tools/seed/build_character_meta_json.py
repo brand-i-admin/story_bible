@@ -368,6 +368,14 @@ DELILAH_NEGATIVE_PROMPT_EXTRA = (
     "warrior, armor, soldier, samson, second character, multiple people, scene with samson"
 )
 
+# 단순 여성형 강제용 공통 차단. 새로 FEMALE_CODES 에 추가된 dinah/hannah/sapphira
+# 처럼 모델이 종종 남성으로 그리는 인물들에 일괄로 적용.
+FEMALE_FORCE_NEGATIVE_PROMPT_EXTRA = (
+    "male, man, masculine face, broad male jaw, square male shoulders, "
+    "beard, mustache, facial hair, stubble, warrior, armor, soldier"
+)
+FEMALE_FORCE_CODES = {"dinah", "hannah", "sapphira"}
+
 # lydia 도 같은 이유로 여성형 강제. 빌립보 자색 옷감 장수.
 LYDIA_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, square male shoulders, "
@@ -404,10 +412,12 @@ FEMALE_CODES = {
     "bilhah",
     "deborah",
     "delilah",
+    "dinah",
     "elizabeth",
     "esther",
     "eve",
     "hagar",
+    "hannah",
     "jezebel",
     "leah",
     "lydia",
@@ -420,6 +430,7 @@ FEMALE_CODES = {
     "rachel",
     "rebekah",
     "ruth",
+    "sapphira",
     "sarah",
 }
 
@@ -1415,6 +1426,8 @@ def build_person_meta(
             character["negative_prompt_extra"] = MARY_MAGDALENE_NEGATIVE_PROMPT_EXTRA
         if code == "naomi":
             character["negative_prompt_extra"] = NAOMI_NEGATIVE_PROMPT_EXTRA
+        if code in FEMALE_FORCE_CODES:
+            character["negative_prompt_extra"] = FEMALE_FORCE_NEGATIVE_PROMPT_EXTRA
         if code in SOLO_FORCED_CODES:
             character["negative_prompt_extra"] = SOLO_NEGATIVE_PROMPT_EXTRA
         characters.append(character)

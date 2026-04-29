@@ -161,7 +161,45 @@ def parse_args() -> argparse.Namespace:
         default="supabase/200_stories/characters_seed.sql",
         help="Characters seed SQL used to recover canonical Korean character names.",
     )
+    parser.add_argument(
+        "--no-prune-orphans",
+        action="store_true",
+        help=(
+            "기본 동작은 현재 stories JSON 에 없는 event 디렉토리를 삭제한다. "
+            "이 플래그를 주면 정리 단계를 스킵한다."
+        ),
+    )
     return parser.parse_args()
+
+
+def prune_orphan_event_dirs(
+    output_root: Path,
+    active_dirnames: set[str],
+) -> list[Path]:
+    """현재 stories JSON 의 title 로 만들어지는 디렉토리 외에는 모두 삭제.
+
+    user 가 title 을 바꾸거나 story 자체를 삭제하면 sanitize_dirname() 결과가
+    달라지면서 옛날 폴더가 남는다. 여기서 깔끔하게 정리한다.
+
+    macOS 파일시스템은 NFD(분해) 정규화를 쓰므로, JSON 의 NFC 와 비교하기 전에
+    NFC 로 통일한다.
+    """
+    if not output_root.exists():
+        return []
+    import shutil
+    import unicodedata
+
+    active_nfc = {unicodedata.normalize("NFC", n) for n in active_dirnames}
+    removed: list[Path] = []
+    for child in sorted(output_root.iterdir()):
+        if not child.is_dir():
+            continue
+        if unicodedata.normalize("NFC", child.name) in active_nfc:
+            continue
+        shutil.rmtree(child)
+        removed.append(child)
+        print(f"[PRUNE] removed orphan event dir: {child}")
+    return removed
 
 
 def _title_sort_key(title: str) -> tuple[int, str]:
@@ -409,19 +447,28 @@ def scene_person_codes_for(
         str(character["code"]).strip().lower() for character in characters
     ]
     explicit_codes: list[str] = []
+    explicit_provided = False
     if isinstance(scene_characters, list) and scene_index < len(scene_characters):
+        explicit_provided = True
         explicit_codes = normalize_scene_persons_list(
             scene_characters[scene_index],
             event_person_codes,
         )
+
+    # user 가 scene_characters[i] = [] 로 명시적으로 비워둔 경우는 의도다.
+    # 자동 추론(detect_scene_person_codes / match_character_codes) 으로
+    # 인물을 다시 끼워 넣지 않는다 — 그러면 prompt 에 "하나님의 빛이 …" 같은
+    # 원치 않는 prefix 가 붙어 이미지가 의도와 달라진다.
+    if explicit_provided:
+        return explicit_codes
 
     detected_codes = detect_scene_person_codes(
         scene_text,
         event_person_codes,
         code_to_name,
     )
-    if explicit_codes or detected_codes:
-        return dedupe_preserve_order(explicit_codes + detected_codes)
+    if detected_codes:
+        return detected_codes
 
     return match_character_codes(scene_text, characters)
 
@@ -672,8 +719,26 @@ def main() -> int:
 
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
+
+    if not args.no_prune_orphans:
+        # 본 처리에서 unique_dirname 이 충돌 시 접미사를 붙여 늘릴 수 있으므로
+        # 먼저 같은 로직으로 active dirname 집합을 만들어 그 외만 정리한다.
+        preview_used: set[str] = set()
+        active_dirnames: set[str] = set()
+        for preview_idx, preview_event in enumerate(events, start=1):
+            preview_title = (
+                str(preview_event.get("title") or "").strip()
+                or f"event_{preview_idx:03d}"
+            )
+            preview_code = event_code_for(preview_event, preview_idx)
+            preview_dirname = unique_dirname(
+                sanitize_dirname(preview_title), preview_code, preview_used
+            )
+            active_dirnames.add(preview_dirname)
+        prune_orphan_event_dirs(output_root, active_dirnames)
+
     avatar_index = build_avatar_index(avatars_dir)
-    code_to_name = parse_person_name_map_from_seed_sql(Path(args.persons_seed_sql))
+    code_to_name = parse_person_name_map_from_seed_sql(Path(args.characters_seed_sql))
     request_models = request_model_candidates(resolved_model)
 
     session: requests.Session | None = None
