@@ -403,6 +403,13 @@ def sql_value(value: Any) -> str:
     return sql_literal(str(value))
 
 
+def sql_text_array(values: list[str]) -> str:
+    if not values:
+        return "ARRAY[]::text[]"
+    inner = ", ".join(sql_literal(v) for v in values)
+    return f"ARRAY[{inner}]::text[]"
+
+
 def split_chunks(items: list[Any], size: int) -> list[list[Any]]:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
@@ -551,7 +558,7 @@ def build_sql(character_rows: list[dict[str, Any]]) -> str:
         lines.append(f"delete from characters where code not in ({in_values});")
         lines.append("")
 
-    columns = "code, name, tagline, avatar_url, description, is_active"
+    columns = "code, name, tagline, avatar_url, description, is_active, era_codes"
     for chunk in split_chunks(character_rows, 120):
         lines.append(f"with seed_persons ({columns}) as (")
         lines.append("  values")
@@ -564,7 +571,8 @@ def build_sql(character_rows: list[dict[str, Any]]) -> str:
                 f"{sql_value(row['tagline'])}, "
                 f"{sql_value(row['avatar_url'])}, "
                 f"{sql_value(row['description'])}, "
-                f"{sql_value(row['is_active'])}"
+                f"{sql_value(row['is_active'])}, "
+                f"{sql_text_array(row.get('era_codes') or [])}"
                 ")"
             )
         lines.append(",\n".join(values))
@@ -576,8 +584,11 @@ def build_sql(character_rows: list[dict[str, Any]]) -> str:
         lines.append("  tagline = coalesce(excluded.tagline, characters.tagline),")
         lines.append("  avatar_url = excluded.avatar_url,")
         lines.append(
-            "  description = coalesce(excluded.description, characters.description)"
+            "  description = coalesce(excluded.description, characters.description),"
         )
+        # era_codes 는 파이프라인에서 결정한다 (인물 카드 노출 era).
+        # admin override 가 필요하면 별도 마이그레이션으로 처리.
+        lines.append("  era_codes = excluded.era_codes")
         # is_active intentionally NOT overwritten on conflict: the admin's
         # runtime toggle wins over the pipeline default.
         lines.append(";")
@@ -650,6 +661,9 @@ def main() -> int:
             ch,
             story_appearances_by_code,
         )
+        era_short = str(ch.get("era", "")).strip()
+        era_code = STYLE_TO_ERA_CODE.get(era_short, "")
+        era_codes = [era_code] if era_code else []
         character_rows.append(
             {
                 "code": code,
@@ -662,6 +676,7 @@ def main() -> int:
                     representative_story_title=representative_story_title,
                 ),
                 "is_active": bool(ch.get("is_active_default", True)),
+                "era_codes": era_codes,
             }
         )
 

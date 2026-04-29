@@ -182,6 +182,12 @@ create table if not exists characters (
 
   description text,
   is_active boolean not null default false,
+
+  -- 인물이 속한 시대(들). 인물 카드 화면(시대별 필터)이 이 값으로 1차 노출 대상을
+  -- 결정한다. events.character_codes 는 "이 사건에 누가 등장했는가"의 사실 데이터를
+  -- 그대로 보존하므로 변화산처럼 OT 인물이 NT 사건에 환상으로 나타나도 사건 데이터는
+  -- 손상되지 않는다. 한 인물이 두 시대에 걸쳐 활동하면 배열에 여러 era code 를 둔다.
+  era_codes text[] not null default '{}',
   created_at timestamptz not null default now()
 );
 
@@ -255,7 +261,10 @@ create view character_eras as
     join events e on e.character_codes @> array[p.code]
                   and e.status = 'published'
                   and e.deleted_at is null
+    join eras er on er.id = e.era_id
     where p.is_active = true
+      -- p.era_codes 가 비어있으면 후방 호환 통과, 값이 있으면 era code 매칭만 노출
+      and (p.era_codes = '{}'::text[] or p.era_codes && array[er.code])
     group by p.id, p.code, e.era_id
   )
   select
@@ -286,18 +295,25 @@ stable
 security definer
 set search_path = public
 as $$
-  with character_first as (
+  with target_era as (
+    select code from eras where id = p_era_id
+  ),
+  character_first as (
     select
       p.id as character_id,
       p.code as character_code,
       min(e.story_index) as first_story_index
     from characters p
+    cross join target_era te
     join events e
       on e.character_codes @> array[p.code]
      and e.status = 'published'
      and e.deleted_at is null
      and e.era_id = p_era_id
     where p.is_active = true
+      -- 인물 마스터의 era_codes 가 비어있지 않으면 era 소속 필터를 적용한다.
+      -- 비어있으면 (legacy/시드 미반영) 후방 호환을 위해 통과시킨다.
+      and (p.era_codes = '{}'::text[] or p.era_codes && array[te.code])
     group by p.id, p.code
   )
   select
@@ -451,6 +467,7 @@ create table if not exists search_embeddings (
 create index if not exists idx_events_era_story_index on events (era_id, story_index);
 create index if not exists idx_events_status on events (status);
 create index if not exists idx_events_character_codes_gin on events using gin (character_codes);
+create index if not exists idx_characters_era_codes_gin on characters using gin (era_codes);
 create index if not exists idx_progress_user_completed on user_event_progress (user_id, is_completed);
 create unique index if not exists uidx_quiz_event_order on quiz_questions (event_id, display_order);
 create index if not exists idx_embed_ivfflat on search_embeddings using ivfflat (embedding vector_cosine_ops);

@@ -84,9 +84,11 @@ WHERE e.status = 'published';
 ```sql
 WITH first AS (
   SELECT p.id person_id, p.code, e.era_id, MIN(e.story_index) first_story_index
-  FROM persons p JOIN events e
-    ON e.character_codes @> ARRAY[p.code] AND e.status='published'
+  FROM characters p
+  JOIN events e ON e.character_codes @> ARRAY[p.code] AND e.status='published' AND e.deleted_at IS NULL
+  JOIN eras   er ON er.id = e.era_id
   WHERE p.is_active = true
+    AND (p.era_codes = '{}'::text[] OR p.era_codes && ARRAY[er.code])  -- 인물 era 소속 필터
   GROUP BY p.id, p.code, e.era_id
 )
 SELECT person_id, era_id,
@@ -95,6 +97,13 @@ FROM first;
 ```
 - 인물 첫 등장 story_index 기준으로 era별 1..N 순서를 동적으로 부여.
 - `is_active=false` 인물은 자동 제외.
+- `characters.era_codes` 가 비어있지 않으면 인물 카드 노출 era 를 추가로 제한한다 (변화산처럼 OT 인물이 NT 사건 character_codes 에 포함되어도 NT 시대 카드엔 안 뜸). 비어있으면 후방 호환을 위해 통과.
+
+#### `characters.era_codes text[]` — 인물 카드 노출 시대
+- 인물이 어느 시대(들)의 카드 화면에 나타날지 정의하는 인물 단위 정책 필드.
+- `events.character_codes` 는 "이 사건에 누가 등장했는가"의 사실 데이터로 손대지 않는다 — 변화산 사건의 `character_codes` 에는 모세/엘리야가 그대로 남아 사건 본문/검색에서 보존됨.
+- 동명이인은 코드를 분리한다. 현재 분리된 케이스: `saul`(왕 사울, era_monarchy) vs `paul`(=청년 사울, era_nt_apostolic), `joseph`(야곱의 아들, era_patriarch) vs `joseph_nazareth`(예수 양아버지, era_nt_public_ministry).
+- 시드 빌더(`tools/seed/build_characters_seed_sql.py`)가 `character_meta.json` 의 `era` 단축형(예: `monarchy`)을 `STYLE_TO_ERA_CODE` 매핑으로 era code(예: `era_monarchy`)로 변환해 채운다. 다중 시대 인물은 향후 character_meta 측에서 배열 확장이 필요할 때 추가.
 
 #### 새 이야기 삽입 패턴 (관리자 직접 / 사역자 제안→관리자 승인)
 - `(era_id, story_index)` UNIQUE 제약 → 끼워넣기는 `story_index >= 새값`인 행을 +1 시프트한 뒤 INSERT.

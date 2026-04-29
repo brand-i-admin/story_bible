@@ -1107,7 +1107,7 @@
     "character_codes": [
       "jesus",
       "mary",
-      "joseph"
+      "joseph_nazareth"
     ],
     "bible_refs": [
       {
@@ -1125,7 +1125,7 @@
     "scene_characters": [
       [
         "mary",
-        "joseph"
+        "joseph_nazareth"
       ],
       [],
       [],
@@ -1401,7 +1401,7 @@
     "character_codes": [
       "jesus",
       "mary",
-      "joseph",
+      "joseph_nazareth",
       "herod"
     ],
     "bible_refs": [
@@ -1422,7 +1422,7 @@
       [],
       [],
       [
-        "joseph"
+        "joseph_nazareth"
       ]
     ]
   },
@@ -1917,7 +1917,7 @@
     "character_codes": [
       "jesus",
       "mary",
-      "joseph"
+      "joseph_nazareth"
     ],
     "bible_refs": [
       {
@@ -2005,7 +2005,7 @@
       "thaddaeus",
       "simon_zealot",
       "matthias",
-      "saul"
+      "paul"
     ],
     "bible_refs": [
       {
@@ -2997,7 +2997,7 @@
     "lat": 33.51,
     "lng": 36.29,
     "character_codes": [
-      "saul",
+      "paul",
       "ananias"
     ],
     "bible_refs": [
@@ -3015,16 +3015,16 @@
     ],
     "scene_characters": [
       [
-        "saul"
+        "paul"
       ],
       [
-        "saul"
+        "paul"
       ],
       [
-        "saul"
+        "paul"
       ],
       [
-        "saul",
+        "paul",
         "ananias"
       ]
     ]
