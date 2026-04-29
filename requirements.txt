@@ -1,0 +1,7 @@
+# tools/*.py 가 사용하는 Python 의존성.
+# 신규 환경 세팅:
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   pip install -r requirements.txt
+google-auth>=2.49,<3
+requests>=2.33,<3

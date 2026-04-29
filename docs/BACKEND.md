@@ -112,29 +112,34 @@ FROM first;
 
 #### `event_proposals` — 제안 테이블
 ```sql
-id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras,
-proposal_type text CHECK ('new'/'delete') DEFAULT 'new',
-target_event_id uuid FK→events (NULL for 'new', required for 'delete'),
+id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras (NULL for 'general'),
+proposal_type text CHECK ('new'/'delete'/'general') DEFAULT 'new',
+target_event_id uuid FK→events (NULL for 'new'/'general', required for 'delete'),
 title text, summary text, character_codes text[], place_name text, lat/lng,
 start_year/end_year/time_precision, bible_refs jsonb,
 story_scenes jsonb, scene_characters jsonb,
 scene_image_paths text[], scene_image_prompts text[],
 proposed_characters jsonb, quiz_questions jsonb,
+image_paths text[],   -- 'general' 첨부 이미지 (최대 5장)
 after_story_index int,
 status text CHECK ('pending'/'approved'/'rejected'),
 reviewed_by_user_id, reviewed_at, review_note, approved_event_id uuid FK→events,
 synced_to_local_at timestamptz, created_at, updated_at
 ```
-- 제안 종류 (`proposal_type`, 2026-04-22 도입):
+- 제안 종류 (`proposal_type`):
   - `'new'`: 새 이야기 제안 — 기존 플로우, `quiz_questions` 1~3개 강제 (4지선다 + 해설 필수).
   - `'delete'`: 기존 이야기 삭제 제안 — `target_event_id` 필수, `quiz_questions` 빈 배열 강제. `summary` 에 삭제 사유 저장.
+  - `'general'` (2026-04-29 도입): 앱 일반 제안 — `era_id` / `target_event_id` 모두 NULL. `summary` 가 본문, `image_paths` 가 첨부 이미지 (최대 5장). 승인/거절은 단순 status 변경 (events 변경 없음, 정리 없음).
 - CHECK 제약:
-  - `chk_proposal_type_target`: new ↔ target_event_id IS NULL / delete ↔ target_event_id IS NOT NULL
-  - `chk_quiz_count_by_type`: new → 1~3개, delete → 0개
+  - `chk_proposal_type_target`: new ↔ target IS NULL / delete ↔ target IS NOT NULL / general ↔ target IS NULL
+  - `chk_quiz_count_by_type`: new → 1~3개, delete/general → 0개
+  - `chk_era_id_required_unless_general`: 'general' 만 era_id NULL 허용
+  - `chk_general_image_count`: 'general' 의 image_paths 는 최대 5장
 - Partial unique index `uniq_pending_delete_target`: 동일 이벤트에 pending 삭제 제안은 1건만 허용 (두 명이 동시에 같은 이야기 삭제 못 냄).
 - 승인 전까지 `events` 와 격리되므로 모바일 앱 쿼리(`events_ordered` view, `events.status='published' AND deleted_at IS NULL`)에 영향 0.
 - `approve_event_proposal` RPC 가 `insert_event_at_position` 호출 + 퀴즈 1~3개를 `quiz_questions` 로 풀어 넣음 + `approved_event_id` 역참조 기록.
-- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다.
+- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다. ⚠️ **HARD DELETE 사용 금지** — `target_event_id` FK 의 `ON DELETE SET NULL` 가 발화되어 `chk_proposal_type_target` 위반(23514) 을 유발한다.
+- `approve_general_proposal` / `reject_general_proposal` RPC 는 status 만 갱신 (이미지 정리/row 삭제 없음).
 
 #### `event_proposal_comments` — 댓글
 ```sql
@@ -149,17 +154,20 @@ body text, created_at, updated_at
 - 댓글: pastor + admin 작성 가능, 본인 것만 UPDATE, 삭제는 본인 또는 admin
 - 제안 DELETE: admin 만
 
-#### RPC 6종
+#### RPC 9종
 | 이름 | 호출자 | 역할 |
 |------|------|------|
 | `submit_event_proposal(..., p_quiz_questions)` | pastor | 새 이야기 제안 INSERT (`proposal_type='new'`). 퀴즈 1~3개 검증 (4지선다 + 해설 필수). |
 | `submit_delete_proposal(target_event_id, reason)` | pastor | 기존 이야기 삭제 제안 INSERT (`proposal_type='delete'`, `summary=reason`). 이미 삭제된 이벤트면 거부. |
+| `submit_general_proposal(title, body, image_paths)` | pastor | 일반 제안 INSERT (`proposal_type='general'`). 본문 필수, 이미지 최대 5장. |
 | `approve_event_proposal(proposal_id, after_override)` | admin | `proposal_type='new'` 전용. `insert_event_at_position` 호출 → events 반영 + 퀴즈 rows insert + proposal status='approved'. |
-| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent). 퀴즈/진도는 보존. |
-| `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 (new/delete 공통). |
+| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent, soft delete). 퀴즈/진도/캐릭터/이미지 정리 모두 미수행. |
+| `approve_general_proposal(proposal_id)` | admin | `proposal_type='general'` 전용. status='approved' 만. 이미지 정리 없음. |
+| `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 (new/delete 공통). 반환 jsonb 에 정리 후보 storage 경로 포함. |
+| `reject_general_proposal(proposal_id, note)` | admin | `proposal_type='general'` 전용. status='rejected' + 사유만 갱신. |
 | `add_proposal_comment(proposal_id, body)` | pastor/admin | 댓글 INSERT 편의 함수 |
 
-상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow, 마이그레이션: [supabase/migrations/20260421_event_proposals.sql](../supabase/migrations/20260421_event_proposals.sql), [supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql](../supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql).
+상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow, 마이그레이션: [supabase/migrations/20260421_event_proposals.sql](../supabase/migrations/20260421_event_proposals.sql), [supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql](../supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql), [supabase/migrations/20260429_general_proposals.sql](../supabase/migrations/20260429_general_proposals.sql).
 
 #### Soft delete — events.deleted_at
 

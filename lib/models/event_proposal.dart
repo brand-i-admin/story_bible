@@ -6,9 +6,12 @@ import 'dart:convert';
 /// 셋 중 하나. 승인 시 `approvedEventId` 에 events 테이블 PK 가 세팅된다.
 ///
 /// ## proposalType
-/// - `'new'`   : 새 이야기 제안. `targetEventId` 는 null, `quizQuestions` 는 1~3개.
-/// - `'delete'`: 기존 이야기 삭제 제안. `targetEventId` 는 대상 event, `quizQuestions`
-///   는 빈 배열. `summary` 에 삭제 사유가 담긴다. 승인 시 events.deleted_at 이 set.
+/// - `'new'`     : 새 이야기 제안. `targetEventId` 는 null, `quizQuestions` 1~3개.
+/// - `'delete'`  : 기존 이야기 삭제 제안. `targetEventId` 가 대상 event,
+///   `summary` 에 삭제 사유. 승인 시 events.deleted_at 이 set (soft delete).
+/// - `'general'` : 앱 전체에 대한 일반 제안. `eraId` / `targetEventId` 는 null,
+///   `summary` 가 본문, `imagePaths` 가 첨부 이미지(최대 5장). 승인/거절은
+///   단순 status 변경.
 class EventProposal {
   const EventProposal({
     required this.id,
@@ -32,6 +35,7 @@ class EventProposal {
     required this.sceneImagePrompts,
     required this.proposedCharacters,
     required this.quizQuestions,
+    required this.imagePaths,
     required this.afterStoryIndex,
     required this.status,
     required this.reviewedByUserId,
@@ -46,15 +50,19 @@ class EventProposal {
 
   final String id;
 
-  /// 'new' | 'delete'. 기본값은 서버에서 'new'. 'delete' 인 제안은 새 이야기
-  /// 제출 UI 를 거치지 않고 별도 진입점(event 상세의 "삭제 제안" 버튼)으로 만들어진다.
+  /// 'new' | 'delete' | 'general'. 기본값은 서버에서 'new'.
+  /// - 'new'/'delete' 는 이야기 작성 wizard / event 상세의 "삭제 제안" 버튼으로
+  ///   생성된다.
+  /// - 'general' 은 제안 게시판의 "+ 새 제안 → 일반 제안" 분기로 생성된다.
   final String proposalType;
 
   /// 'delete' 타입일 때만 non-null — 삭제 대상 events.id.
   final String? targetEventId;
 
   final String proposerUserId;
-  final String eraId;
+
+  /// 'general' 일 때 null. 'new'/'delete' 는 항상 non-null.
+  final String? eraId;
   final String title;
   final String? summary;
   final List<String> characterCodes;
@@ -83,8 +91,13 @@ class EventProposal {
   final List<ProposedCharacter> proposedCharacters;
 
   /// 새 이야기 제안 시 포함되는 4지선다 퀴즈 (1~3개). 승인 시
-  /// `quiz_questions` 테이블에 row 로 풀려 들어간다. 삭제 제안에서는 빈 배열.
+  /// `quiz_questions` 테이블에 row 로 풀려 들어간다. 삭제/일반 제안에서는 빈 배열.
   final List<QuizDraft> quizQuestions;
+
+  /// 일반 제안(`proposalType == 'general'`) 의 첨부 이미지 Storage 경로 (최대 5장).
+  /// `proposal-general-images/<uid>/<draft>/<idx>.<ext>` 형식.
+  /// 다른 타입에서는 빈 배열.
+  final List<String> imagePaths;
 
   final int? afterStoryIndex;
   final String status; // pending / approved / rejected
@@ -109,6 +122,7 @@ class EventProposal {
 
   bool get isNewProposal => proposalType == 'new';
   bool get isDeleteProposal => proposalType == 'delete';
+  bool get isGeneralProposal => proposalType == 'general';
 
   /// "위치 재선택 필요" 상태인지. UI 가 빨간 라벨/배너를 띄울 때 쓴다.
   bool get needsPositionRevision => positionInvalidatedAt != null;
@@ -119,7 +133,7 @@ class EventProposal {
       proposalType: (row['proposal_type'] as String?) ?? 'new',
       targetEventId: row['target_event_id'] as String?,
       proposerUserId: row['proposer_user_id'] as String,
-      eraId: row['era_id'] as String,
+      eraId: row['era_id'] as String?,
       title: row['title'] as String,
       summary: row['summary'] as String?,
       characterCodes: _asStringList(row['character_codes']),
@@ -136,6 +150,7 @@ class EventProposal {
       sceneImagePrompts: _asStringList(row['scene_image_prompts']),
       proposedCharacters: _asProposedCharacters(row['proposed_characters']),
       quizQuestions: _asQuizDrafts(row['quiz_questions']),
+      imagePaths: _asStringList(row['image_paths']),
       afterStoryIndex: (row['after_story_index'] as num?)?.toInt(),
       status: (row['status'] as String?) ?? 'pending',
       reviewedByUserId: row['reviewed_by_user_id'] as String?,

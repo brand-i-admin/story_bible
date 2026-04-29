@@ -534,6 +534,23 @@ def build_sql(character_rows: list[dict[str, Any]]) -> str:
             lines.append(f"delete from characters where code in ({in_values});")
             lines.append("")
 
+    # 현재 character_meta.json 에 없는 characters 행 삭제. user 가 stories 를
+    # 지워서 언급 수 0이 된 인물이 DB 에 남지 않도록 정리.
+    # weekly_character_selection 은 character_code 를 cascade 없이 참조하므로
+    # FK 위반을 막기 위해 미리 같이 정리한다.
+    if character_rows:
+        keep_codes = sorted({row["code"] for row in character_rows})
+        in_values = ", ".join(sql_value(code) for code in keep_codes)
+        lines.append(
+            "-- Drop weekly_character_selection rows whose character is being removed"
+        )
+        lines.append(
+            f"delete from weekly_character_selection where character_code not in ({in_values});"
+        )
+        lines.append("-- Delete characters not in current character_meta.json")
+        lines.append(f"delete from characters where code not in ({in_values});")
+        lines.append("")
+
     columns = "code, name, tagline, avatar_url, description, is_active"
     for chunk in split_chunks(character_rows, 120):
         lines.append(f"with seed_persons ({columns}) as (")

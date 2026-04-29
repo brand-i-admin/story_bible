@@ -48,9 +48,10 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
       text: widget.proposal.endYear?.toString() ?? '',
     );
     _afterStoryIndex = widget.proposal.afterStoryIndex;
+    // 이 다이얼로그는 'new' 제안 (eraId 필수) 에서만 호출되므로 ! 안전.
     _eventsFuture = ref
         .read(storyRepositoryProvider)
-        .fetchEventsByEra(widget.proposal.eraId);
+        .fetchEventsByEra(widget.proposal.eraId!);
   }
 
   @override

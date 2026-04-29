@@ -3,7 +3,7 @@
 > 이 문서는 Claude Code를 사용해 코드를 수정/추가/삭제할 때의 전체 흐름,
 > 스킬/에이전트가 어떻게 동작하는지, 그리고 유지보수 규칙을 정리한 가이드이다.
 >
-> 최종 수정: 2026-04-17
+> 최종 수정: 2026-04-28
 
 ---
 
@@ -217,8 +217,8 @@ Claude Code는 Supabase에 직접 접속하지 않는다 (보안).
 
 ### 6.1 에디터 (실시간)
 
-`analysis_options.yaml`의 10개 lint 규칙이 에디터에서 코드 치는 순간 경고를 표시.
-빨간/노란 밑줄 → Quick Fix로 자동 수정 가능.
+`analysis_options.yaml`의 11개 lint 규칙이 에디터에서 코드 치는 순간 경고를 표시.
+빨간/노란 밑줄 → Quick Fix로 자동 수정 가능. (선정 근거 + 카테고리는 §13.2 참조)
 
 ### 6.2 Pre-commit (git commit 시 자동)
 
@@ -226,10 +226,13 @@ Claude Code는 Supabase에 직접 접속하지 않는다 (보안).
 |---|---|
 | `dart-format` | Dart 코드 포맷 검증 |
 | `forbidden-patterns` | `print()`, JWT 시크릿, Google API key 차단 |
-| `dart-import-sort` | import 순서 검증 |
+| `dart-import-sort` | import 순서 검증 (`import_sorter`) |
 | `black` | Python 코드 포맷 (tools/) |
-| `check-large-files` | 2MB 이상 파일 차단 |
+| `check-added-large-files` | 2MB 이상 파일 차단 |
 | `check-merge-conflict` | 머지 충돌 마커 차단 |
+| `check-yaml` | YAML 문법 검증 |
+| `end-of-file-fixer` | 파일 끝 개행 보장 |
+| `trailing-whitespace` | 행 끝 공백 제거 |
 
 ### 6.3 Pre-push (git push 시 자동)
 
@@ -356,7 +359,7 @@ DB를 건드리는 작업 시 반드시:
 실제:  코드 먼저 쌓임 → 리팩토링 중 문제 발견 → 재발 방지용 린트/훅을 역으로 추가
 ```
 
-현재의 `analysis_options.yaml` 10개 규칙은 `story_home_screen.dart`가 7,172줄까지
+현재의 `analysis_options.yaml` 11개 규칙은 `story_home_screen.dart`가 7,172줄까지
 비대해진 걸 복구하면서 **역으로** 골라낸 것이다. `pre-commit`/`pre-push` hook도
 같은 경로로 쌓였다. 앞으로의 신규 코드는 **규칙 → 코드** 방향(정방향)으로 작동한다.
 
@@ -648,181 +651,13 @@ flutter --version  # 재생성
 
 ---
 
-## 17. 승인 후 작동 반영 프로세스 (제안 → 공개 이야기)
+## 17. 운영 셋업 — 권한 / 버킷 / Secrets / 정리 작업
 
-2026-04 도입된 **사역자 제안 → 관리자 승인 → 배포** 플로우의 end-to-end 순서.
-이 섹션은 "관리자 / 운영자 관점" 기준. 사역자가 폼에 입력하는 UX 는
-`lib/screens/proposal_submit_screen.dart` 참조.
+> §18~§21 이 제안 라이프사이클(추가/삭제/위치 충돌/종합)을 시점별로 풀어 쓴
+> 본체라면, 이 섹션은 그 흐름이 동작하기 위한 **상수 셋업** 과 **주변 정리
+> 작업** 만 모은다. 단계별 데이터/스토리지 변화 자체는 §18~§21 을 참고.
 
-### 17.1 한 장 요약
-
-```
-[사역자] 웹에서 제안 작성                    [관리자] 제안 상세에서 승인        [운영자] 로컬에서 freeze & publish
-─────────────────────────                 ─────────────────────────         ────────────────────────────
-Step 1 시대 → 2 인물 → 3 사건 → 4 세부      '승인' 버튼                        git pull
-  - 기존 characters 선택                     ↓ approve_event_proposal RPC     make sync-approved-proposal-assets
-  - 없는 인물 → [새 인물 만들기] 다이얼로그     1. proposed_characters 를        make thumbnails
-    · AI 가 Vertex Imagen 으로 아바타 생성       characters 테이블에 upsert     make build-character-meta
-    · proposal-characters/<uid>/<draft>/       (is_active=true)                 (새 인물이 있을 때만)
-      <code>.png 에 업로드                     avatar_storage_path =           make seed-stories-characters
-  - [이미지 생성] 버튼으로 각 장면 AI 생성       'proposal-characters/...'       make apply-seeds-stories-characters
-    proposal-scenes/<uid>/<draft>/scene_N.png 2. insert_event_at_position     (선택) sync-approved-proposal-assets-clean
-[제안 등록] → event_proposals row 생성        으로 events 행 생성                으로 원본 버킷 정리
-                                              3. status='approved'            git commit + 앱 재빌드 → Store 배포
-```
-
-### 17.2 단계별 상세
-
-#### 17.2.1 사역자: 제안 작성
-- 웹에서 **이야기 등록** 진입 (pastor 역할 필요, §17.3 참조).
-- Step 2 에서 등장인물을 고를 때 **[새 인물 만들기]** 버튼으로 기존 characters
-  에 없는 인물도 추가 가능:
-  - 다이얼로그에 이름(한글) + 영문 code + 설명(프롬프트) 입력
-  - [이미지 생성] → Supabase Edge Function `generate-proposal-character` 가
-    Vertex Imagen 4.0 으로 PNG 생성 → `proposal-characters/<uid>/<draft>/<code>.png`
-  - 마음에 들 때까지 [다시 생성]. 확정 시 자동으로 선택 상태로 들어감.
-- Step 4 에서 각 장면에 **[이미지 생성]** 버튼 — Edge Function
-  `generate-proposal-scene` 가 Vertex Gemini 로 장면 PNG 생성 →
-  `proposal-scenes/<uid>/<draft>/scene_N.png`
-- 모든 장면 이미지가 준비되면 [제안 등록] 활성화 → `event_proposals` row 생성
-  (status='pending', scene_image_paths + proposed_characters 포함).
-
-#### 17.2.2 관리자: 승인 / 거절 — 내부 동작 상세
-
-**승인** 버튼 → `approve_event_proposal(proposal_id)` RPC 한 번의 트랜잭션.
-단계별:
-
-1. **admin 권한 확인** — `is_admin()` 아니면 exception
-2. **`proposed_characters` 순회** → 각각 `characters` 테이블에 **upsert**
-   ```sql
-   insert into characters (code, name, description,
-                           avatar_storage_path, is_active)
-   values (code, name, prompt, 'proposal-characters/{uid}/{draft}/{code}.png', true)
-   on conflict (code) do update set
-     name = coalesce(...), description = coalesce(...),
-     avatar_storage_path = coalesce(...), is_active = true;
-   ```
-   - `avatar_storage_path` 는 **proposal-characters/... 경로 그대로** — 아직
-     canonical `characters/` 버킷으로 옮기지 않음 (그건 `make
-     sync-approved-proposal-assets` 시점에 일어남)
-   - `is_active = true` 하드코딩 — admin 이 승인한 것 = 공개 OK 로 간주
-     (수동 토글 원하면 Dashboard 에서 UPDATE)
-3. **`insert_event_at_position` RPC** 로 `events` 테이블에 새 행 삽입
-   - `scene_image_paths` 는 proposal 의 것을 그대로 복사
-     (`proposal-scenes/{uid}/{draft}/scene_N.png`)
-   - era 내 `story_index` 시프트 (+1) 로 자리 확보
-   - `character_codes` 중 characters 테이블에 없는 건 `is_active=false`
-     placeholder 로 INSERT (관리자가 나중에 토글 가능)
-4. **`event_proposals` 상태 업데이트**
-   ```sql
-   update event_proposals set
-     status = 'approved',
-     reviewed_by_user_id = auth.uid(),
-     reviewed_at = now(),
-     approved_event_id = <events.id>
-   where id = proposal_id;
-   ```
-
-**즉각적인 효과** — 승인 직후 모든 사용자가 새 이야기를 본다:
-- 앱 홈 시대 재선택 / 리로드 시 events 테이블을 다시 읽어 새 이벤트 포함
-- 이미지는 **하이브리드 로딩** 으로 로컬 번들에 없는 파일이라 Supabase
-  Storage 에서 받음 (`proposal-scenes/...`, `proposal-characters/...`)
-- `user_event_progress` 는 UUID 기반이라 기존 사용자 자동으로 "미완료"
-
-**거절** 시엔 `status='rejected' + review_note`. 제안자가 상세 페이지에서
-사유 확인 가능. 작성자 본인은 그 상태에서도 제안 삭제 가능 (RLS
-`event_proposals_delete_own_unapproved`).
-
-#### 17.2.3 운영자: 로컬 freeze & publish — **이게 이 섹션의 핵심**
-
-승인된 제안의 AI 이미지는 일단 proposal-* 버킷에만 존재. **로컬 번들에
-포함시키려면** 운영자가 로컬에서 pull 해서 assets/ 로 복사한 뒤 썸네일 생성 +
-DB 재반영 + 앱 재빌드 + 스토어 배포 ([ADR-006] 이미지 번들 원칙).
-
-##### Idempotency 모델 (중요)
-
-`event_proposals.synced_to_local_at timestamptz` 컬럼이 "이 제안이 이미
-로컬로 내려와 번들에 포함된 상태" 를 기록한다.
-
-- 승인 직후: `synced_to_local_at IS NULL` → 다음 sync 대상
-- 스크립트가 성공적으로 내려받으면 `synced_to_local_at = now()` PATCH
-- 다시 `make sync-approved-proposal-assets` 를 돌리면 이 제안은 **자동으로
-  스킵** — 불필요한 트래픽 없음
-- 승인이 10개 쌓인 뒤 한 번에 sync 해도, 이미 7개가 sync 됐었다면 나머지
-  3개만 처리
-
-→ **admin 용 "동기화 상태 리스트 UI" 는 필요 없음.** SQL 로 한 줄:
-```sql
-select title, status, reviewed_at, synced_to_local_at
-from event_proposals
-where status = 'approved'
-order by reviewed_at desc;
-```
-
-##### 표준 운영 레시피
-
-```bash
-# 0) pull
-git checkout main && git pull
-
-# 1) [dry-run] 어떤 제안이 sync 대상인지 먼저 확인
-make sync-approved-proposal-assets-dry
-#   출력 예:
-#   approved & unsynced: 3 proposal(s)
-#   == [uuid1] 엘리야와 까마귀   → scene[0] proposal-scenes/.../scene_1.png → assets/story_images/엘리야와_까마귀/scene_1.png
-#   ...
-
-# 2) 실제 실행 (synced_to_local_at NULL 인 것만)
-make sync-approved-proposal-assets
-#
-#   결과:
-#   - assets/story_images/<title>/scene_1..N.png
-#   - assets/avatars/<new_code>.png
-#   - characters 버킷에 <code>.png 업로드 (canonical)
-#   - characters.avatar_storage_path = '<code>.png' 로 PATCH
-#   - **event_proposals.synced_to_local_at = now()** (마커)
-
-# 3) 런타임 썸네일 (avatars + story_images 양쪽 둘 다 처리)
-make thumbnails
-
-# 4) (새 캐릭터가 생긴 경우) character_meta.json 업데이트 후 재빌드
-make build-character-meta
-
-# 5) SQL 재생성 + DB 반영 (UPSERT, 재실행 안전)
-make seed-stories-characters
-make apply-seeds-stories-characters
-
-# 6) 커밋 + 앱 빌드 + 스토어 배포
-git add assets/avatars/ assets/story_images/ tools/seed/character_meta.json
-git commit -m "content: 승인된 제안 반영 (<사건 제목>)"
-git push
-# → flutter build apk/ipa → 스토어
-
-# 7) (배포 확정 후) proposal-* 버킷 원본 정리
-#    ⚠️ 배포 전엔 절대 사용 금지 — 앱 업데이트 전 사용자는 하이브리드 fallback
-#    으로 proposal-* URL 을 요청하는데 그 파일이 사라지면 이미지 깨짐.
-make sync-approved-proposal-assets-clean
-```
-
-##### 특수 상황
-
-**로컬 assets 를 통째로 날렸다 / 다른 머신에서 작업하다 돌아옴**
-```bash
-# synced_to_local_at 마커를 무시하고 전체 재동기화
-make sync-approved-proposal-assets-all
-```
-
-**부분 실패 복구**
-- sync 중 한 파일이라도 실패하면 그 proposal 은 `synced_to_local_at` 세팅이
-  **안 됨** → 다음 run 에서 자동 재시도
-- 에러 로그는 `[ERROR]` 로 출력됨
-
-**승인 후 운영자가 캐릭터 `is_active` 를 끄고 싶을 때**
-```sql
-update characters set is_active = false where code = '<code>';
-```
-
-### 17.3 권한 요약
+### 17.1 권한 요약
 
 | 역할 | 검증 방법 | 허용 동작 |
 |------|----------|----------|
@@ -837,7 +672,7 @@ update characters set is_active = false where code = '<code>';
   `update auth.users set raw_app_meta_data = coalesce(raw_app_meta_data,'{}'::jsonb) || '{"role":"admin"}'::jsonb where id='<uuid>';`
   — 해당 사용자 **재로그인 필요** (JWT 갱신).
 
-### 17.4 Storage 버킷
+### 17.2 Storage 버킷
 
 | 버킷 | public read | 쓰기 권한 | 경로 |
 |------|:-----------:|----------|------|
@@ -848,35 +683,7 @@ update characters set is_active = false where code = '<code>';
 
 실제 업로드는 Edge Function 이 service role 키로 수행. RLS 는 방어선 역할.
 
-### 17.6 하이브리드 에셋 로딩 (로컬 먼저 → Supabase fallback)
-
-**왜**: 앱 번들 이미지는 Store 재심사 없이 바뀔 수 없지만, 제안 승인은 즉시
-이뤄져야 한다. 반대로 모든 이미지를 항상 Supabase 에서 내려받으면 트래픽
-과금이 폭증한다. 절충안은 "로컬 있으면 로컬, 없으면 Supabase":
-
-- **캐릭터 아바타** (`CharacterAvatar` 위젯, `lib/widgets/character_avatar.dart`)
-  - 1순위: `Image.asset('assets/avatars_thumbs/<code>.png')`
-  - 2순위 (errorBuilder): `Image.network(publicUrl(character.avatarStoragePath))`
-  - 3순위: 이름 첫 글자 이니셜 배경
-- **장면 이미지** (`SceneAssetLoader`, `lib/utils/scene_asset_loader.dart`)
-  - 1순위: `assets/story_images_thumbs/<safe_title>/scene_N.png` (AssetManifest 조회)
-  - 2순위: `events.scene_image_paths` → Supabase Storage public URL
-  - 3순위: 빈 리스트 (이미지 row 숨김)
-
-**DB 측 양쪽 경로 저장**:
-- `characters.avatar_url` — 로컬 번들 경로 (`assets/avatars/<code>.png`)
-- `characters.avatar_storage_path` — Supabase 경로 (`characters/<code>.png`
-  또는 `proposal-characters/...`)
-- `events.scene_image_paths text[]` — proposal 승인 시 `proposal-scenes/...` 로
-  채워지고, 운영자가 `sync-approved-proposal-assets` 로 로컬에 내린 뒤에도 그대로
-  남아있음 (로컬 assets 가 1순위로 뜨므로 네트워크 호출 안 됨)
-
-**비용 수렴 모델**:
-1. 승인 직후: 로컬 번들에 없음 → Supabase 호출 발생
-2. 운영자가 `sync-approved-proposal-assets` 실행 + 앱 재빌드 배포
-3. 사용자가 업데이트 받음 → 로컬 번들에 포함 → 그 시점부터 Supabase 비용 0
-
-### 17.7 Edge Function Secrets 셋업 (최초 1회)
+### 17.3 Edge Function Secrets 셋업 (최초 1회)
 
 Edge Function 이 Vertex AI 를 호출하려면 3개 secret 이 필요.
 
@@ -947,7 +754,7 @@ curl -i -X POST \
 | 500 `secret not set` | CLI/Dashboard 에서 secrets 등록 안 됨 |
 | 502 `Imagen ...` | SA 권한 부족 or Vertex API 미활성 |
 
-### 17.8 고아 이미지 정리 (`cleanup-orphan-proposal-assets`)
+### 17.4 고아 이미지 정리 (`cleanup-orphan-proposal-assets`)
 
 **문제**: 사역자가 폼에서 **[이미지 생성]** 버튼을 누르는 순간 이미지는 즉시
 `proposal-scenes` / `proposal-characters` 버킷에 업로드된다. 하지만
@@ -1011,7 +818,7 @@ Referenced paths in event_proposals: 12
   0 3 * * 0 cd /path/to/story_bible && make cleanup-orphan-proposal-assets ENV=dev
   ```
 
-### 17.9 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영
+### 17.5 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영
 
 - `user_event_progress(user_id, event_id)` 는 UUID 기반이라, 승인으로 새 event
   가 생기면 **누구의 user_event_progress 에도 그 UUID 가 없음** → 자동으로
@@ -1024,24 +831,21 @@ Referenced paths in event_proposals: 12
   바꾸거나 앱 재시작 전까진 새 이벤트가 안 보임 (pull-to-refresh 추가 여부는
   향후 과제)
 
-### 17.5 관련 파일
+### 17.6 관련 파일
 
 - **Edge Functions** (장면 + 캐릭터 AI 생성):
   - `supabase/functions/generate-proposal-scene/` (Gemini multimodal)
   - `supabase/functions/generate-proposal-character/` (Imagen 4.0 text-to-image)
   - `supabase/functions/_shared/{gcp_auth,character_style,cors}.ts`
 - **DB**: `db_init.sql` (테이블 / 버킷 / RPC / RLS)
-- **Repository**: `lib/data/proposal_repository.dart` (RPC + functions.invoke 래퍼)
-- **UI**:
-  - `lib/screens/proposal_submit_screen.dart` (wizard)
-  - `lib/widgets/proposal/new_character_dialog.dart` (새 인물 만들기)
-  - `lib/widgets/proposal/proposal_scenes_editor.dart` (장면 + 이미지)
-  - `lib/widgets/proposal/proposal_character_row.dart` (Step 4 상단 아바타 row)
-  - `lib/screens/proposal_detail_screen.dart` (상세 — EventDetailPage 스타일)
-- **Sync 스크립트**: `tools/supabase/sync_approved_proposal_assets.py`
+- **고아 정리 스크립트**: `tools/supabase/cleanup_orphan_proposal_assets.py` (§17.4)
 - **Makefile 타겟**:
-  - `make upload-character-avatars` (초기 아바타 일괄 업로드)
-  - `make sync-approved-proposal-assets` / `...-clean` (승인 자산 로컬 동기화)
+  - `make upload-character-avatars` (초기 아바타 일괄 업로드, 1회)
+  - `make cleanup-orphan-proposal-assets[-dry]` (§17.4)
+  - `make sync-approved-proposal-assets[-dry|-all|-clean]` — 라이프사이클은 §18~§19 참조
+
+> 라이프사이클 (제안 → 승인 → sync → 재배포) 본체와 관련 UI/Repository 파일은
+> §18.6, §19.5, §20.6, §21.5 의 "관련 파일" 섹션에 정리되어 있다.
 
 ---
 
@@ -1050,7 +854,9 @@ Referenced paths in event_proposals: 12
 > "이야기가 제안되었을 때 / 승인되었지만 앱 재배포 안 됐을 때 / 앱 재배포가
 > 끝났을 때" 세 시점에 각각 어떤 DB row 와 Storage 버킷이 쓰이는지, 그리고
 > 앱 화면이 어느 경로로 이미지를 가져오는지를 한 자리에 정리한 섹션이다.
-> §17 의 운영 절차와 §17.6 의 하이브리드 로딩 정책을 한 흐름에 합쳐서 본다.
+> 여기서 다루는 하이브리드 로딩 정책 (로컬 1순위 → Storage fallback) 의 동작
+> 원리는 §18.2 "사용자가 이미지를 어떻게 보나" / §18.3 "사용자가 이미지를
+> 어떻게 보나 (시점 C)" 절에서 함께 풀어 쓴다. 권한·버킷·Secrets 셋업은 §17 참조.
 
 ### 18.0 시점별 한 장 요약
 
@@ -1241,69 +1047,248 @@ character.avatarUrl ('') + character.avatarStoragePath ('proposal-characters/...
 
 #### 재배포는 어떻게 이루어지는가 (운영자 표준 레시피)
 
+> 핵심은 단 하나의 명령 — `make sync-approved-proposal-assets` 가 Phase A
+> (다운로드) + Phase B (DB↔로컬 diff 정리) + Step C (썸네일) + Step D (pubspec
+> 갱신) **네 단계를 자동으로 실행**한다. 운영자가 따로 `make thumbnails`,
+> `make update-pubspec-assets` 를 부를 필요 없음. 다만 신규 인물이 추가된 경우
+> seed 갱신만 별도로 한 번 더 돌려야 한다 (아래 5번).
+
+##### 사전 준비 (한 번만)
+
 ```bash
-# === 0. 최신 코드 받기 ===
-git checkout main && git pull
+# Python 가상환경 활성 — sync 스크립트가 requests 등 의존
+source .venv/bin/activate
 
-# === 1. (Dry-run) 어떤 제안이 sync 대상인지 확인 ===
+# .env 에 두 키가 있는지 확인 (없으면 sync 가 즉시 ERROR 종료)
+grep -E "SUPABASE_URL_DEV|SUPABASE_SERVICE_ROLE_KEY_DEV" .env
+#   → 둘 다 값이 있어야 함. service_role 키는 Storage 쓰기/PATCH 권한 필요.
+#   → ENV=prod 로 운영 환경에 적용할 거면 SUPABASE_*_PROD 도 필요.
+```
+
+##### 1) 어떤 제안이 sync 대상인지 먼저 확인 (dry-run)
+
+```bash
 make sync-approved-proposal-assets-dry
-#   approved & unsynced: 3 proposal(s)
-#   == [uuid1] 엘리야와 까마귀 → scene[0] proposal-scenes/.../scene_1.png
-#       → assets/story_images/엘리야와_까마귀/scene_1.png
-#   ...
+```
 
-# === 2. 실제 sync (synced_to_local_at NULL 인 것만 처리) ===
+내부 동작:
+- `event_proposals` 에서 `status='approved' AND synced_to_local_at IS NULL`
+  인 행을 모두 읽어 list 출력 (실제 다운로드/DB 변경 없음).
+- 각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.
+
+기대 출력:
+```
+approved & unsynced: 3 proposal(s)
+== [uuid1] 엘리야와 까마귀
+   scene[0] proposal-scenes/<uid>/<draft>/scene_1.png
+     → assets/story_images/엘리야와_까마귀/scene_1.png
+   scene[1] proposal-scenes/<uid>/<draft>/scene_2.png
+     → assets/story_images/엘리야와_까마귀/scene_2.png
+   character[새] proposal-characters/<uid>/<draft>/elijah.png
+     → assets/avatars/elijah.png + characters 버킷 업로드
+...
+Phase B (예상): event_dirs=2 (deleted_at), avatars=1 (is_active=false)
+```
+
+→ 결과를 보고 의도와 일치하는지 확인. 어긋나면 DB 상태 점검 후 재실행.
+
+##### 2) 실제 sync 실행 — 4-phase 자동
+
+```bash
 make sync-approved-proposal-assets
 ```
 
-`tools/supabase/sync_approved_proposal_assets.py` 의 단계별 동작:
+`tools/supabase/sync_approved_proposal_assets.py --env dev` 가 다음 순서로
+실행된다. 각 단계는 멱등 (재실행 안전).
 
+**Phase A — 신규 승인 제안 다운로드**
+1. `event_proposals` 에서 `status='approved' AND synced_to_local_at IS NULL`
+   조회.
+2. 각 제안마다:
+   - `scene_image_paths` 의 PNG 다운로드 (`proposal-scenes/...` public URL)
+     → `assets/story_images/<safe_title>/scene_N.png` 저장.
+   - `proposed_characters[]` 의 PNG 다운로드
+     → `assets/avatars/<code>.png` 저장.
+   - 같은 PNG 바이트를 `characters` 버킷의 canonical `{code}.png` 로
+     **service_role 키로 업로드**. 이걸로 `proposal-characters/...` →
+     `characters/...` 로 자산 이동 완료.
+   - DB PATCH: `characters` 의 `avatar_url='assets/avatars/<code>.png'`,
+     `avatar_storage_path='<code>.png'` 로 갱신 (canonical 두 경로 동시 부여).
+3. 모든 파일이 성공한 제안에만 `event_proposals.synced_to_local_at=now()`
+   PATCH. **한 파일이라도 실패하면 마커 미세팅 → 다음 run 에서 자동 재시도**.
+
+**Phase B — DB↔로컬 diff 정리** (소프트 삭제 / 비활성 캐릭터 흔적 제거)
+1. `events` 중 `deleted_at IS NOT NULL` 행 조회.
+2. 각 행마다:
+   - `assets/story_images/<safe_title>/`, `assets/story_images_thumbs/<safe_title>/`
+     디렉토리 제거 (이미 없으면 skip).
+   - `events.scene_image_paths` 의 storage 파일 best-effort 삭제 (404 무시).
+3. `characters` 중 `is_active=false` 행 조회.
+4. 각 행마다:
+   - `assets/avatars/<code>.png`, `assets/avatars_thumbs/<code>.png` 제거.
+   - `characters.avatar_storage_path` 의 storage 파일 best-effort 삭제.
+
+→ Phase B 만 끄고 싶으면 `--skip-deletions` (별도 워크플로우에서 정리할 때).
+
+**Step C — 썸네일 자동 재생성** (Phase A 또는 B 에서 변경이 있을 때만)
+- 내부적으로 `python tools/images/generate_runtime_thumbnails.py` 호출.
+- `assets/avatars/` → `assets/avatars_thumbs/` (모든 PNG 압축 사본)
+- `assets/story_images/<title>/` → `assets/story_images_thumbs/<title>/`
+- 이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.
+
+**Step D — pubspec.yaml 자동 갱신** (Phase A 또는 B 에서 변경이 있을 때만)
+- 내부적으로 `python tools/app/update_pubspec_assets.py` 호출.
+- `pubspec.yaml` 의 `flutter.assets:` 아래 `story_images_thumbs/<title>/`
+  엔트리를 실제 디렉토리 목록에 맞춰 추가/제거.
+- `avatars_thumbs/` 는 이미 글롭 패턴 (`assets/avatars_thumbs/`) 으로
+  등록돼 있어 손대지 않음.
+
+→ Step C, D 둘 다 끄고 싶으면 `--skip-post-processing`.
+
+기대 출력 (요약):
 ```
-1. event_proposals 에서 status='approved' AND synced_to_local_at IS NULL 조회
-2. 각 제안에 대해:
-   a) scene_image_paths 의 PNG 파일 다운로드 (proposal-scenes/...)
-      → assets/story_images/<safe_title>/scene_N.png 로 저장 (로컬 번들)
-   b) proposed_characters 가 있으면:
-      · proposal-characters/<uid>/<draft>/<code>.png 다운로드
-      · assets/avatars/<code>.png 로 저장
-      · characters 버킷의 canonical 경로 '<code>.png' 로 service_role 키로 업로드
-        (이게 proposal-characters → characters 로 옮기는 단계)
-      · DB UPDATE characters SET avatar_url = 'assets/avatars/<code>.png',
-                                 avatar_storage_path = 'characters/<code>.png'
-                          WHERE code = ?
-        (이제 시점 C 의 두 경로 둘 다 가짐)
-   c) DB UPDATE event_proposals SET synced_to_local_at = now()
-      (이 마커가 시점 C 진입 신호 — 다시 sync 돌려도 이 제안은 자동 skip)
+approved & unsynced: 3 proposal(s)
+== [uuid1] 엘리야와 까마귀  (downloading 4 scene + 1 character)
+   ✓ assets/story_images/엘리야와_까마귀/scene_1.png
+   ✓ assets/avatars/elijah.png + characters bucket upload
+   ✓ PATCH characters.avatar_url, avatar_storage_path
+   ✓ PATCH event_proposals.synced_to_local_at
+...
+=== Phase B ===
+   ✗ events deleted_at: 2 events → 2 dirs removed
+   ✗ characters inactive: 1 → 1 avatar+thumb removed
+
+[thumbnails] generated: 8, skipped: 215
+[pubspec] added: 2 entries, removed: 1
+
+=== Summary ===
+  Phase A — synced (마커 갱신): 3
+  Phase A — failed: 0
+  Phase B — local 정리: event_dirs=2, avatars=1, thumbs=3
+
+Next steps: 앱 재빌드 + 배포.
 ```
 
-이어서:
+##### 3) 빌드 사전 검증
 
 ```bash
-# === 3. 썸네일 갱신 (avatars + story_images 양쪽) ===
-make thumbnails
+# (a) pubspec.yaml 이 실제 파일과 일치하는지 한 번 더 확인 (Step D 가 이미 처리했지만 안전 검증)
+make check-pubspec-assets
 
-# === 4. 신규 캐릭터가 있을 때만 인물 메타 재생성 ===
+# (b) Flutter 정적 분석 — 새 자산 경로 / SafeTitle 충돌 없는지
+flutter analyze
+
+# (c) 테스트 — 하이브리드 로딩 분기 깨지지 않았는지
+flutter test
+```
+
+세 단계 다 0 issues / 0 failure 여야 다음으로 넘어감. 실패 시 sync 결과
+(asset 경로, pubspec 엔트리) 를 점검하고 필요 시 `make
+sync-approved-proposal-assets-all` 로 재동기화.
+
+##### 4) 신규 캐릭터가 있을 때만 — character_meta.json 재생성
+
+신규 인물이 한 명도 없으면 이 단계는 **건너뛴다**.
+
+```bash
 make build-character-meta
+```
 
-# === 5. characters 시드 재생성 + DB UPSERT ===
+내부 동작:
+- `assets/200_stories/*.json` 전체를 스캔 → 등장하는 모든 character code 수집.
+- `tools/seed/character_meta.json` 갱신 (이름/설명/아바타 프롬프트 카탈로그).
+- 이 파일은 다음 빌더 (`seed-characters`, `generate-avatars`) 의 입력.
+
+##### 5) (선택) DB seed 파일을 현재 상태로 재생성
+
+`approve_event_proposal` RPC 가 이미 `events` / `characters` 행을 INSERT 했
+으므로 **운영 DB 자체에는 sync 가 필요 없다**. 다만 `db_init.sql + seed`
+로 클린 부트스트랩하는 시나리오를 지원하려면 seed SQL 도 최신 상태로 유지
+하는 게 좋다.
+
+```bash
+# (a) DB 현재 events 를 로컬 JSON 으로 역추출 (description 등 보존)
+make export-stories-json ENV=dev
+
+# (b) 그 JSON 을 입력으로 events + characters seed SQL 재생성
 make seed-stories-characters
-make apply-seeds-stories-characters
 
-# === 6. 커밋 + 푸시 + 앱 빌드 + 스토어 배포 ===
-git add assets/avatars/ assets/story_images/ tools/seed/character_meta.json
-git commit -m "content: 승인된 제안 반영 (<사건 제목>)"
-git push
-flutter build appbundle --release   # Android
-flutter build ipa --release          # iOS
-# → Play Console / TestFlight 업로드 → 사용자 앱 자동 업데이트
+# (c) 생성된 SQL 을 운영 DB 에 UPSERT 로 재적용 (멱등 — 안전)
+make apply-seeds-stories-characters ENV=dev
+```
 
-# === 7. (배포 확정 후) proposal-* 버킷 원본 정리 ===
+→ **신규 콘텐츠를 추가한 라운드면 5(c) 까지 모두 실행하는 게 안전**.
+순수 삭제만 처리한 라운드면 5 단계 전체 생략 가능 (DB 가 이미 정답).
+
+##### 6) 커밋 + 푸시
+
+```bash
+# 무엇이 변경됐는지 먼저 확인 — 의도하지 않은 파일이 들어가지 않는지 체크
+git status
+git diff --stat
+
+# 변경 대상은 보통 다음 4가지뿐
+git add \
+  assets/avatars/ \
+  assets/avatars_thumbs/ \
+  assets/story_images/ \
+  assets/story_images_thumbs/ \
+  pubspec.yaml \
+  tools/seed/character_meta.json \
+  supabase/200_stories/  # 5번까지 돌렸을 때만
+
+git commit -m "content: 승인된 제안 반영 — <사건 제목>"
+git push origin <branch>   # 사용자 지시 후 실행
+```
+
+> ⚠️ **secrets 확인**: `.env`, `.env.supabase.secrets`, `*.json` 키 파일이
+> 우연히 staging 에 들어가지 않았는지 `git status` 로 한 번 더 본다. forbidden
+> patterns hook 이 자동 차단하지만 수동 확인이 안전.
+
+##### 7) PR + 머지 + 앱 빌드
+
+```bash
+gh pr create   # 사용자 지시 후 실행
+
+# 머지된 main 브랜치에서:
+git checkout main && git pull
+
+# Android (Play Console internal track 권장)
+flutter build appbundle --release --dart-define=ENV=prod
+
+# iOS (TestFlight)
+flutter build ipa --release --dart-define=ENV=prod
+```
+
+이 빌드를 Play Console / App Store Connect 에 업로드 → 심사 통과 → 사용자
+디바이스가 새 번들을 받으면 시점 C 진입 (로컬 1순위 로딩 → Storage 호출 0).
+
+##### 8) 배포 확정 후 — proposal-* 버킷 원본 정리
+
+```bash
 make sync-approved-proposal-assets-clean
 ```
 
-⚠️ **시점 C 주의 사항**: 7번을 6번 *전에* 실행하면 안 된다. 사용자가 아직
-구버전 앱(=시점 B 동작)을 쓰고 있을 때 proposal-* 파일이 사라지면 하이브리드
-fallback 이 깨져 이미지가 broken_image 로 보인다.
+내부 동작 (Phase A 와 동일하지만 `--delete-source` 플래그):
+- 이번 라운드에서 sync 한 제안의 `proposal-scenes/...`, `proposal-characters/...`
+  원본을 **service_role 키로 삭제**.
+- DB 의 `events.scene_image_paths` 는 그대로 (path 값은 더 이상 읽히지
+  않으므로 무해).
+
+> ⚠️ **이걸 8번 *전에* 돌리면 안 된다.** 구버전 앱을 쓰는 사용자는 아직
+> 시점 B 동작 — `events.scene_image_paths` 의 `proposal-scenes/...` 를
+> Storage 에서 가져온다. 그 파일이 사라지면 broken_image 로 보임.
+> 권장 대기 기간: 강제 업데이트 안 걸리는 한 **앱 빌드 출시 후 1~2주**.
+
+##### 트러블슈팅 / 특수 상황
+
+| 상황 | 대응 |
+|------|------|
+| 로컬 `assets/` 를 통째로 날렸다 / 다른 머신에서 작업하다 돌아옴 | `make sync-approved-proposal-assets-all` — `synced_to_local_at` 마커 무시하고 처음부터 재동기화. Phase B 의 정리도 같이 다시 돌림 |
+| Phase A 에서 한 파일이 실패해 마커 미세팅 | 다음 `make sync-approved-proposal-assets` 에 자동 재시도. 영구 실패면 로그의 `[ERROR]` 메시지로 원인 파악 (네트워크 / Storage 권한 / DB 경합) |
+| 승인 후 운영자가 캐릭터 `is_active` 만 끄고 싶을 때 | `update characters set is_active=false where code='<code>';` → 다음 sync 의 Phase B 가 로컬 PNG + storage 파일 정리 |
+| 사용자가 시점 C 도달 전 앱 업데이트를 안 받음 | 구버전 앱은 시점 B 동작 — `events.scene_image_paths` 의 Supabase URL 로 fallback. 8번을 미루면 양쪽 다 정상 동작 (§18.4 참고) |
+| 빌드 파이프라인이 `flutter test` 에서 위젯 골든 차이 fail | 새 PNG 추가가 골든을 깰 가능성 → 의도한 변경이면 골든 갱신 후 별도 PR. sync 와 분리해 처리 |
 
 #### 데이터 위치 (시점 C 완료 후)
 
@@ -1560,7 +1545,7 @@ local 정리를 별도 워크플로우로 하고 싶을 때).
 
 ## 20. 위치 충돌 → 재제출 라이프사이클 (NEW 제안 동시 승인 시나리오)
 
-§17~§19 가 "한 제안의 라이프사이클" 이라면, 이 섹션은 **여러 NEW 제안이 같은
+§18~§19 가 "한 제안의 라이프사이클" 이라면, 이 섹션은 **여러 NEW 제안이 같은
 위치를 노릴 때** 의 충돌 해소 메커니즘을 설명한다.
 
 ### 20.1 시나리오
@@ -1703,7 +1688,7 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
 
 ## 21. 제안 라이프사이클 종합 — 단계별 데이터/스토리지 변화 표
 
-§17~§20 까지의 모든 단계를 한 자리에 모은 **종합 표 + 다이어그램**. 각 단계가
+§18~§20 까지의 모든 단계를 한 자리에 모은 **종합 표 + 다이어그램**. 각 단계가
 어떤 DB 테이블/뷰/스토리지를 어떻게 바꾸는지 한눈에 파악할 수 있다.
 
 ### 21.1 종합 흐름도
