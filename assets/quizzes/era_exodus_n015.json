@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 15,
+  "story_title": "금송아지: 아래에서 벌어진 일",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "금송아지를 만들도록 허락한 사람은 누구입니까?",
+      "choices": [
+        "아론",
+        "모세",
+        "여호수아"
+      ],
+      "answer_index": 0,
+      "explanation": "출 32:1-4 — 백성이 아론에게 신을 만들라 하매 아론이 금 귀고리를 모아 송아지를 만들었더라"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "모세가 산에서 내려와 백성의 소리를 들었을 때 어떻게 말하였습니까?",
+      "choices": [
+        "노래하는 소리라 하였다",
+        "전쟁의 함성이라 하였다",
+        "통곡하는 소리라 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "출 32:18 — '나의 듣기에는 노래하는 소리로다 하고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "금송아지 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "출애굽기",
+        "레위기",
+        "민수기"
+      ],
+      "answer_index": 0,
+      "explanation": "출 32:1-35에 금송아지 사건이 기록됨"
+    }
+  ]
+}

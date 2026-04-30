@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 29,
+  "story_title": "보디발의 집: 성실과 누명",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "요셉에게 누명을 씌운 사람은 누구입니까?",
+      "choices": [
+        "보디발의 아내",
+        "보디발",
+        "파라오"
+      ],
+      "answer_index": 0,
+      "explanation": "창 39:14-18 — 보디발의 아내가 요셉의 옷을 잡고 거짓 고발함"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "보디발의 아내가 유혹할 때 요셉은 어떻게 했습니까?",
+      "choices": [
+        "겉옷을 버리고 밖으로 피했다",
+        "보디발에게 즉시 알렸다",
+        "아무 말 없이 따랐다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 39:12 — '그가 그 옷을 그 손에 버려두고 도망하여 나가니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "이 사건 직후 요셉에게 일어난 일은 무엇입니까?",
+      "choices": [
+        "감옥에 갇혔다",
+        "애굽 총리가 됐다",
+        "형들에게 팔렸다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 39:20 — '요셉의 주인이 그를 잡아 왕의 옥에 넣으니'"
+    }
+  ]
+}

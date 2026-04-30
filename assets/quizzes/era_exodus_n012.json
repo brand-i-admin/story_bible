@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 12,
+  "story_title": "아말렉 전투: 팔이 내려갈 때",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아말렉과 싸운 장소는 어디입니까?",
+      "choices": [
+        "르비딤",
+        "마라",
+        "시내산"
+      ],
+      "answer_index": 0,
+      "explanation": "출 17:8 — '아말렉이 이르러 이스라엘과 르비딤에서 싸우니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "모세의 팔이 피곤할 때 아론과 훌은 어떻게 하였습니까?",
+      "choices": [
+        "모세의 손을 붙들어 올렸다",
+        "모세 대신 산에서 기도하였다",
+        "직접 여호수아와 싸웠다"
+      ],
+      "answer_index": 0,
+      "explanation": "출 17:12 — '아론과 훌이 ... 모세의 손을 붙들어 올렸더니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "아말렉 전투 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "출애굽기",
+        "민수기",
+        "여호수아"
+      ],
+      "answer_index": 0,
+      "explanation": "출 17:8-16에 아말렉 전투가 기록됨"
+    }
+  ]
+}

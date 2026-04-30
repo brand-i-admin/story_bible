@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 21,
+  "story_title": "겟세마네: 뜻이 이루어지다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님이 기도하신 동산의 이름은 무엇입니까?",
+      "choices": [
+        "겟세마네",
+        "감람산",
+        "시온산"
+      ],
+      "answer_index": 0,
+      "explanation": "막 14:32 — '저희가 겟세마네라 하는 곳에 이르매'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "겟세마네에서 예수님은 무엇을 하셨습니까?",
+      "choices": [
+        "엎드려 아버지의 뜻대로 되기를 기도하셨다",
+        "제자들에게 마지막 설교를 하셨다",
+        "홀로 산을 내려가셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "마 26:39 — '내 원대로 마옵시고 아버지의 원대로 하옵소서'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "겟세마네 기도 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마가복음",
+        "사도행전",
+        "히브리서"
+      ],
+      "answer_index": 0,
+      "explanation": "막 14:32-42에 겟세마네 기도 기사가 기록됨"
+    }
+  ]
+}

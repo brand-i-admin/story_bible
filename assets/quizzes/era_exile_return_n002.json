@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exile_return",
+  "story_index": 2,
+  "story_title": "남은 자의 선택: 두 갈래 길",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바벨론이 유다 총독으로 세운 사람은 누구입니까?",
+      "choices": [
+        "아히감의 아들 그다랴",
+        "요하난",
+        "예레미야"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 40:7 — '바벨론 왕이 아히감의 아들 그다랴를 이 땅 총독으로 세우고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "남은 자들은 예레미야의 경고를 어떻게 하였습니까?",
+      "choices": [
+        "여호와의 목소리를 청종치 아니하고 애굽으로 갔다",
+        "경고를 듣고 유다 땅에 남았다",
+        "그다랴에게 순종하여 따랐다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 43:7 — '그들이 여호와의 목소리를 청종치 아니함이 이러하였더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "남은 자들의 애굽행 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "예레미야",
+        "열왕기하",
+        "에스겔"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 40:7-43:7에 그다랴 총독 피살과 남은 자들의 애굽 도피 기사가 기록됨"
+    }
+  ]
+}

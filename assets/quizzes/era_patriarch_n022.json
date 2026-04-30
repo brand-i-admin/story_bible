@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 22,
+  "story_title": "도피와 언약: 라반과의 마지막",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "라반과 야곱이 화해의 표로 쌓은 것은 무엇입니까?",
+      "choices": [
+        "돌 무더기",
+        "나무 기둥",
+        "흙 단"
+      ],
+      "answer_index": 0,
+      "explanation": "창 31:46 — '야곱이 형제들에게 돌을 모으라 하니 그들이 돌을 취하여 무더기를 이루매'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "라반은 야곱 일행을 따라잡은 후 어떻게 작별하였습니까?",
+      "choices": [
+        "손자들과 딸들에게 입맞추며 축복하고 돌아갔다",
+        "야곱을 책망하고 돌아갔다",
+        "일부 재산을 돌려달라 요구하고 갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 ... 고향으로 돌아갔더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "야곱과 라반의 언약 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "31장",
+        "29장",
+        "35장"
+      ],
+      "answer_index": 0,
+      "explanation": "창 31:17-55에 야곱의 도피와 라반과의 추격 및 언약이 기록됨"
+    }
+  ]
+}

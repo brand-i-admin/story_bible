@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 23,
+  "story_title": "재판: 빌라도 앞",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "빌라도가 예수 대신 놓아준 사람은 누구입니까?",
+      "choices": [
+        "바라바",
+        "나사로",
+        "스데반"
+      ],
+      "answer_index": 0,
+      "explanation": "마 27:26 — '바라바는 저희에게 놓아 주고 예수는 채찍질하고 십자가에 못 박히게 넘겨 주니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "빌라도 앞에서 예수님은 고소에 어떻게 대응하셨습니까?",
+      "choices": [
+        "아무 말씀도 대답하지 않으셨다",
+        "변호사를 요청하셨다",
+        "자신이 왕이 아니라고 부인하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "막 15:5 — '예수께서 아무 말씀도 더 대답지 아니하시니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "빌라도 재판 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "누가복음",
+        "사도행전",
+        "에베소서"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 23:1-25에 빌라도 재판 기사가 기록됨"
+    }
+  ]
+}

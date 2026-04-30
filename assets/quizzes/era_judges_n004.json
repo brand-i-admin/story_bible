@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 4,
+  "story_title": "기브온 조약: 속임수의 동맹",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "기브온 사람들이 이스라엘을 속이기 위해 꾸민 것은 무엇이었습니까?",
+      "choices": [
+        "먼 나라에서 왔다고 거짓말하였다",
+        "강한 군대가 있다고 협박하였다",
+        "귀한 예물을 가져왔다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 9:9 — '종들은 ... 심히 먼 지방에서 왔사오니 이는 우리가 그의 명성과 ... 들으며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "속임이 드러난 후 여호수아는 기브온 사람들을 어떻게 처우하였습니까?",
+      "choices": [
+        "나무 패며 물 긷는 자로 삼았다",
+        "진에서 추방하였다",
+        "제사장 직분을 주었다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 9:27 — '그들이 온 회중을 위하여 나무 패며 물 긷는 자가 되었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "기브온 조약 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "여호수아",
+        "사사기",
+        "사무엘상"
+      ],
+      "answer_index": 0,
+      "explanation": "수 9:3-27에 기브온의 속임과 조약 체결이 기록됨"
+    }
+  ]
+}

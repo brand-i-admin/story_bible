@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 8,
+  "story_title": "세 손님: 웃음과 약속",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "손님들이 아브라함을 찾아온 장소는 어디입니까?",
+      "choices": [
+        "마므레 상수리 수풀",
+        "브엘세바",
+        "헤브론 성문"
+      ],
+      "answer_index": 0,
+      "explanation": "창 18:1 — '여호와께서 마므레의 상수리 수풀 근처에서 아브라함에게 나타나시니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아들을 낳을 것이라는 말을 들은 사라는 어떻게 했습니까?",
+      "choices": [
+        "속으로 웃었다",
+        "하나님께 감사했다",
+        "소리 내어 울었다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 18:12 — '사라가 속으로 웃고 이르되 내가 노쇠하였고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "이 사건이 기록된 성경 책은 무엇입니까?",
+      "choices": [
+        "창세기",
+        "민수기",
+        "출애굽기"
+      ],
+      "answer_index": 0,
+      "explanation": "창 18:1-15에 세 손님 방문과 약속이 기록됨"
+    }
+  ]
+}

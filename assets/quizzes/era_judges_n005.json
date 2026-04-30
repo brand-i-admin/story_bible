@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 5,
+  "story_title": "세겜 언약 갱신: 선택하라",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "여호수아가 언약 갱신을 위해 이스라엘 모든 지파를 모은 곳은 어디입니까?",
+      "choices": [
+        "세겜",
+        "실로",
+        "길갈"
+      ],
+      "answer_index": 0,
+      "explanation": "수 24:1 — '여호수아가 이스라엘 모든 지파를 세겜에 모으고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "여호수아가 섬길 자를 택하라고 할 때 그 자신은 어떻게 말하였습니까?",
+      "choices": [
+        "나와 내 집은 여호와를 섬기겠노라 하였다",
+        "이스라엘의 결정을 따르겠노라 하였다",
+        "먼저 여호와의 뜻을 묻겠노라 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 24:15 — '오직 나와 내집은 여호와를 섬기겠노라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "세겜 언약 갱신이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "여호수아",
+        "사사기",
+        "신명기"
+      ],
+      "answer_index": 0,
+      "explanation": "수 24:1-28에 세겜 언약 갱신이 기록됨"
+    }
+  ]
+}

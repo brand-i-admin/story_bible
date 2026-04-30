@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 12,
+  "story_title": "삼손: 힘의 비밀과 마지막 기도",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "삼손의 힘의 비밀을 알아낸 여인의 이름은 무엇입니까?",
+      "choices": [
+        "들릴라",
+        "드보라",
+        "라합"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 16:4 — '삼손이 소렉 골짜기의 들릴라라 이름하는 여인을 사랑하매'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "삼손이 두 기둥 사이에 세워졌을 때 어떻게 하였습니까?",
+      "choices": [
+        "그들을 위하여 재주를 부렸다",
+        "여호와께 기도하였다",
+        "도망치려 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 16:25 — '그들이 삼손을 두 기둥 사이에 세웠더니 ... 삼손이 그들을 위하여 재주를 부리니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "삼손의 마지막 이야기가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사사기",
+        "열왕기상",
+        "사무엘상"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 16:4-31에 삼손과 들릴라, 삼손의 최후가 기록됨"
+    }
+  ]
+}

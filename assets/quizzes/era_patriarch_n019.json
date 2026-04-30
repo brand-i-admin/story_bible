@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 19,
+  "story_title": "라반의 집: 레아와 라헬",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "야곱은 라헬을 아내로 얻기 위해 라반을 위해 몇 년 동안 봉사하였습니까?",
+      "choices": [
+        "칠 년",
+        "십 년",
+        "이 년"
+      ],
+      "answer_index": 0,
+      "explanation": "창 29:20 — '야곱이 라헬을 위하여 칠 년 동안 봉사하였으나'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "라반은 라헬 대신 레아를 야곱에게 준 사실을 어떻게 정당화하였습니까?",
+      "choices": [
+        "이 고장에서 언니보다 아우를 먼저 주는 것은 관례가 아니라 하였다",
+        "라헬이 아직 어리다고 하였다",
+        "야곱이 일을 다 마치지 못했다고 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 29:26 — '우리 지방에서는 언니보다 아우를 먼저 주는 것이 관례가 아니니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "야곱이 레아와 라헬을 아내로 맞이한 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "29장",
+        "24장",
+        "31장"
+      ],
+      "answer_index": 0,
+      "explanation": "창 29:1-30에 야곱이 라반의 집에서 봉사하고 두 아내를 얻는 이야기가 기록됨"
+    }
+  ]
+}

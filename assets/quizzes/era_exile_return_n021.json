@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exile_return",
+  "story_index": 21,
+  "story_title": "언약 갱신: 다시 서명하다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "언약 갱신 집회는 몇 월 몇 일에 있었습니까?",
+      "choices": [
+        "그 달 이십사 일",
+        "칠월 초하루",
+        "정월 십사 일"
+      ],
+      "answer_index": 0,
+      "explanation": "느 9:1 — '그 달 이십사일에 이스라엘 자손이 다 모여 금식하며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "백성은 언약 갱신 집회에서 무엇을 하였습니까?",
+      "choices": [
+        "금식하며 굵은 베를 입고 티끌을 무릅쓰며 모였다",
+        "잔치를 베풀고 기쁨을 표하였다",
+        "성전에 예물을 드리고 돌아갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "느 9:1 — '금식하며 굵은 베를 입고 티끌을 무릅쓰며'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "이스라엘의 언약 갱신 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "느헤미야",
+        "에스라",
+        "에스더"
+      ],
+      "answer_index": 0,
+      "explanation": "느 9:1-10:39에 공동체의 죄 고백과 언약 서명 기사가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 13,
+  "story_title": "미가의 우상: 마음대로의 신앙",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "미가의 집에 제사장이 된 사람은 어느 지파 출신이었습니까?",
+      "choices": [
+        "레위 지파",
+        "에브라임 지파",
+        "유다 지파"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 17:7-12 — '미가가 레위인을 거룩히 구별하매 소년이 미가의 제사장이 되어'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "단 자손이 미가의 신상을 탈취한 후 어떻게 하였습니까?",
+      "choices": [
+        "어린아이들과 가축을 앞에 두고 진행하였다",
+        "미가에게 보상을 주었다",
+        "그 신상을 부수었다"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 18:21 — '그들이 돌이켜서 어린아이들과 가축과 물품을 앞에 두고 진행하더니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "미가의 우상 이야기가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사사기",
+        "여호수아",
+        "사무엘상"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 17:1-18:31에 미가의 우상과 단 지파의 탈취가 기록됨"
+    }
+  ]
+}

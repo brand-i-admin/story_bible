@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 16,
+  "story_title": "장자권: 한 그릇의 거래",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "에서가 야곱에게 장자의 명분을 판 것은 무엇을 받고서입니까?",
+      "choices": [
+        "떡과 팥죽",
+        "은 삼십",
+        "양과 소"
+      ],
+      "answer_index": 0,
+      "explanation": "창 25:34 — '야곱이 떡과 팥죽을 에서에게 주매 에서가 먹으며 마시고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "에서는 장자의 명분을 팔고 일어나서 어떻게 하였습니까?",
+      "choices": [
+        "일어나서 갔다",
+        "뉘우치고 야곱에게 돌려달라 하였다",
+        "아버지 이삭에게 고하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 25:34 — '에서가 먹으며 마시고 일어나서 갔으니 에서가 장자의 명분을 경홀히 여김이었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "에서와 야곱의 장자권 거래는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "25장",
+        "27장",
+        "29장"
+      ],
+      "answer_index": 0,
+      "explanation": "창 25:19-34에 야곱과 에서의 출생 및 장자권 매매 이야기가 기록됨"
+    }
+  ]
+}

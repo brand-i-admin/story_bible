@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 11,
+  "story_title": "입다: 서원과 상처",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "입다가 서원한 대상은 어느 민족이었습니까?",
+      "choices": [
+        "암몬 자손",
+        "블레셋 사람",
+        "모압 사람"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 11:32 — '이에 입다가 암몬 자손에게 이르러 그들과 싸우더니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "입다가 딸을 보았을 때 어떻게 하였습니까?",
+      "choices": [
+        "자기 옷을 찢으며 슬퍼하였다",
+        "딸을 안고 기뻐하였다",
+        "즉시 서원을 이행하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 11:35 — '입다가 이를 보고 자기 옷을 찢으며 가로되 슬프다 내 딸이여'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "입다의 서원 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사사기",
+        "여호수아",
+        "사무엘상"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 11:29-40에 입다의 서원과 그 결과가 기록됨"
+    }
+  ]
+}

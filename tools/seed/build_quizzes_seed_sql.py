@@ -1,9 +1,10 @@
 """Build SQL seed for quiz_questions from assets/quizzes/*.json.
 
-Quiz JSONs are matched to events by `story_title`. Events are keyed by
-`(era_code, story_index)` in the current events seed (codes like `evt_*` are
-no longer used). The generated SQL deletes existing rows for each managed
-event and re-inserts the 3 questions, so the script is safely re-runnable.
+Each quiz JSON is keyed by `(era_code, story_index)`, mirroring how the events
+seed identifies stories. Filenames follow `<era_code>_n<story_index:03d>.json`
+(e.g. `era_primeval_n001.json`). The generated SQL deletes existing rows for
+each managed event and re-inserts the 3 questions, so the script is safely
+re-runnable.
 """
 
 from __future__ import annotations
@@ -19,16 +20,6 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
-
-
-# ---------------------------------------------------------------------------
-# Title aliases — quiz title -> current event title (events seed renames/merges)
-# ---------------------------------------------------------------------------
-TITLE_ALIASES: dict[str, str] = {
-    "십계명: 하나님 나라의 기준": "시내산 도착: 십계명과 하나님 기준",
-    "풀무불: 함께하시는 분": "풀무불: 다니엘과 세 친구",
-    "성벽 재건: 밤의 조사": "성벽 재건: 밤의 조사와 한 손엔 무기",
-}
 
 
 # ---------------------------------------------------------------------------
@@ -57,7 +48,7 @@ _EVENT_ROW_PATTERN = re.compile(
 
 
 def extract_events_from_seed_sql(sql_text: str) -> list[EventKey]:
-    """Return events parsed from the events seed SQL (`(era_code, title, story_index)`)."""
+    """Return events parsed from the events seed SQL."""
     out: list[EventKey] = []
     for m in _EVENT_ROW_PATTERN.finditer(sql_text):
         title = m.group("title").replace("\\'", "'")
@@ -75,15 +66,15 @@ def extract_events_from_seed_sql(sql_text: str) -> list[EventKey]:
 # Deterministic shuffle
 # ---------------------------------------------------------------------------
 def deterministic_shuffle(
-    story_code: str, display_order: int, choices: list[str]
+    seed_key: str, display_order: int, choices: list[str]
 ) -> tuple[list[str], int]:
-    """Shuffle deterministically from `(story_code, display_order)`.
+    """Shuffle deterministically from `(seed_key, display_order)`.
 
     Draft convention: `answer_index == 0`. Returns `(shuffled, new_answer_index)`.
     """
-    seed_key = f"{story_code}:{display_order}"
+    seed_input = f"{seed_key}:{display_order}"
     seed_int = int.from_bytes(
-        hashlib.sha256(seed_key.encode("utf-8")).digest()[:8], "big"
+        hashlib.sha256(seed_input.encode("utf-8")).digest()[:8], "big"
     )
     rng = random.Random(seed_int)
     indexed = list(enumerate(choices))
@@ -116,10 +107,18 @@ class QuizQuestionDraft:
 @dataclass(frozen=True)
 class QuizFile:
     path: Path
-    story_code: str
+    era_code: str
+    story_index: int
     story_title: str
     source_version: str
     questions: list[QuizQuestionDraft]
+
+    @property
+    def seed_key(self) -> str:
+        return f"{self.era_code}:n{self.story_index:03d}"
+
+
+_FILENAME_PATTERN = re.compile(r"^(?P<era>era_[a-z_]+)_n(?P<sidx>\d+)$")
 
 
 def load_quiz_file(path: Path) -> QuizFile:
@@ -127,13 +126,32 @@ def load_quiz_file(path: Path) -> QuizFile:
     if not isinstance(raw, dict):
         raise QuizValidationError(f"{path.name}: root must be an object")
 
-    story_code = str(raw.get("story_code", "")).strip()
-    if not story_code:
-        raise QuizValidationError(f"{path.name}: story_code is required")
-    if path.stem != story_code:
+    era_code = raw.get("era_code")
+    if not isinstance(era_code, str) or not era_code.startswith("era_"):
         raise QuizValidationError(
-            f"{path.name}: filename stem {path.stem!r} must equal story_code "
-            f"{story_code!r}"
+            f"{path.name}: era_code must be a string starting with 'era_'"
+        )
+    story_index = raw.get("story_index")
+    if not isinstance(story_index, int) or story_index < 1:
+        raise QuizValidationError(
+            f"{path.name}: story_index must be a positive integer"
+        )
+
+    m = _FILENAME_PATTERN.match(path.stem)
+    if m is None:
+        raise QuizValidationError(
+            f"{path.name}: filename stem must match '<era_code>_n<int>' "
+            f"(e.g. era_primeval_n001)"
+        )
+    if m.group("era") != era_code:
+        raise QuizValidationError(
+            f"{path.name}: filename era {m.group('era')!r} does not match "
+            f"era_code {era_code!r}"
+        )
+    if int(m.group("sidx")) != story_index:
+        raise QuizValidationError(
+            f"{path.name}: filename story_index {m.group('sidx')!r} does not "
+            f"match story_index {story_index!r}"
         )
 
     questions_raw = raw.get("questions")
@@ -196,27 +214,12 @@ def load_quiz_file(path: Path) -> QuizFile:
 
     return QuizFile(
         path=path,
-        story_code=story_code,
+        era_code=era_code,
+        story_index=story_index,
         story_title=str(raw.get("story_title", "")).strip(),
         source_version=str(raw.get("source_version", "")).strip(),
         questions=questions,
     )
-
-
-# ---------------------------------------------------------------------------
-# Title-based event resolution
-# ---------------------------------------------------------------------------
-def resolve_event_for_quiz(
-    quiz_title: str, title_to_event: dict[str, EventKey]
-) -> EventKey | None:
-    """Try the quiz title verbatim, then via TITLE_ALIASES."""
-    direct = title_to_event.get(quiz_title)
-    if direct is not None:
-        return direct
-    aliased = TITLE_ALIASES.get(quiz_title)
-    if aliased is not None:
-        return title_to_event.get(aliased)
-    return None
 
 
 def _dollar_quote(text: str) -> str:
@@ -230,19 +233,11 @@ def _dollar_quote(text: str) -> str:
 # ---------------------------------------------------------------------------
 # SQL generation
 # ---------------------------------------------------------------------------
-def build_sql_statements(
-    quiz_files: Iterable[QuizFile],
-    title_to_event: dict[str, EventKey],
-) -> str:
+def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
     """Generate idempotent seed SQL.
 
-    For each managed quiz:
-      - Resolve event by `(era_code, story_index)` via title (with aliases).
-      - Delete existing quiz_questions rows for that event.
-      - Insert the 3 shuffled questions.
-
-    Quizzes whose title doesn't resolve are skipped (with a SQL comment) and
-    surfaced in the validation report.
+    For each quiz: delete existing quiz_questions for `(era_code, story_index)`,
+    then insert the 3 shuffled questions via the same lookup.
     """
     lines: list[str] = [
         "-- auto-generated by tools/seed/build_quizzes_seed_sql.py",
@@ -254,27 +249,18 @@ def build_sql_statements(
     ]
 
     for quiz in quiz_files:
-        ek = resolve_event_for_quiz(quiz.story_title, title_to_event)
-        if ek is None:
-            lines.append(
-                f"-- SKIPPED {quiz.story_code}: title {quiz.story_title!r} "
-                f"does not match any event"
-            )
-            lines.append("")
-            continue
-
-        # Idempotent purge.
         lines.append(
-            "delete from quiz_questions q using events e join eras er on er.id = e.era_id"
+            "delete from quiz_questions q using events e "
+            "join eras er on er.id = e.era_id"
         )
         lines.append(
-            f"  where q.event_id = e.id and er.code = '{ek.era_code}' "
-            f"and e.story_index = {ek.story_index};"
+            f"  where q.event_id = e.id and er.code = '{quiz.era_code}' "
+            f"and e.story_index = {quiz.story_index};"
         )
 
         for q in quiz.questions:
             shuffled, new_answer_index = deterministic_shuffle(
-                quiz.story_code, q.display_order, q.choices
+                quiz.seed_key, q.display_order, q.choices
             )
             lines.append(
                 "insert into quiz_questions ("
@@ -293,7 +279,8 @@ def build_sql_statements(
             )
             lines.append(
                 f"from events e join eras er on er.id = e.era_id "
-                f"where er.code = '{ek.era_code}' and e.story_index = {ek.story_index};"
+                f"where er.code = '{quiz.era_code}' "
+                f"and e.story_index = {quiz.story_index};"
             )
             lines.append("")
 
@@ -311,33 +298,48 @@ _LENGTH_LIMITS = {"question": 40, "choice": 20, "explanation": 60}
 def build_report(
     *, quiz_files: list[QuizFile], events: list[EventKey]
 ) -> dict:
-    title_to_event = {e.title: e for e in events}
-    event_titles = set(title_to_event.keys())
-    quiz_resolved_titles: set[str] = set()
-    unresolved_quizzes: list[dict] = []
+    event_by_key: dict[tuple[str, int], EventKey] = {
+        (e.era_code, e.story_index): e for e in events
+    }
 
     answer_dist: Counter[int] = Counter()
     length_warnings: list[dict] = []
+    title_mismatches: list[dict] = []
+    orphan_quizzes: list[dict] = []
+    quiz_keys: set[tuple[str, int]] = set()
 
     for quiz in quiz_files:
-        ek = resolve_event_for_quiz(quiz.story_title, title_to_event)
+        key = (quiz.era_code, quiz.story_index)
+        quiz_keys.add(key)
+        ek = event_by_key.get(key)
         if ek is None:
-            unresolved_quizzes.append(
-                {"story_code": quiz.story_code, "story_title": quiz.story_title}
+            orphan_quizzes.append(
+                {
+                    "filename": quiz.path.name,
+                    "era_code": quiz.era_code,
+                    "story_index": quiz.story_index,
+                    "story_title": quiz.story_title,
+                }
             )
-        else:
-            quiz_resolved_titles.add(ek.title)
+        elif quiz.story_title and quiz.story_title != ek.title:
+            title_mismatches.append(
+                {
+                    "filename": quiz.path.name,
+                    "json_title": quiz.story_title,
+                    "event_title": ek.title,
+                }
+            )
 
         for q in quiz.questions:
             _, shuffled_answer_index = deterministic_shuffle(
-                quiz.story_code, q.display_order, q.choices
+                quiz.seed_key, q.display_order, q.choices
             )
             answer_dist[shuffled_answer_index] += 1
 
             if len(q.question) > _LENGTH_LIMITS["question"]:
                 length_warnings.append(
                     {
-                        "story_code": quiz.story_code,
+                        "filename": quiz.path.name,
                         "display_order": q.display_order,
                         "field": "question",
                         "length": len(q.question),
@@ -347,7 +349,7 @@ def build_report(
                 if len(c) > _LENGTH_LIMITS["choice"]:
                     length_warnings.append(
                         {
-                            "story_code": quiz.story_code,
+                            "filename": quiz.path.name,
                             "display_order": q.display_order,
                             "field": f"choices[{idx}]",
                             "length": len(c),
@@ -356,27 +358,34 @@ def build_report(
             if len(q.explanation) > _LENGTH_LIMITS["explanation"]:
                 length_warnings.append(
                     {
-                        "story_code": quiz.story_code,
+                        "filename": quiz.path.name,
                         "display_order": q.display_order,
                         "field": "explanation",
                         "length": len(q.explanation),
                     }
                 )
 
-    events_without_quiz = sorted(event_titles - quiz_resolved_titles)
+    events_without_quiz = sorted(
+        [
+            {"era_code": e.era_code, "story_index": e.story_index, "title": e.title}
+            for e in events
+            if (e.era_code, e.story_index) not in quiz_keys
+        ],
+        key=lambda d: (d["era_code"], d["story_index"]),
+    )
     total_questions = sum(len(q.questions) for q in quiz_files)
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "total_quiz_files": len(quiz_files),
         "total_events": len(events),
-        "resolved_quiz_count": len(quiz_resolved_titles),
         "total_questions": total_questions,
         "answer_index_distribution": {
             "0": answer_dist.get(0, 0),
             "1": answer_dist.get(1, 0),
             "2": answer_dist.get(2, 0),
         },
-        "unresolved_quizzes": unresolved_quizzes,
+        "orphan_quizzes": orphan_quizzes,
+        "title_mismatches": title_mismatches,
         "events_without_quiz": events_without_quiz,
         "length_warnings": length_warnings,
     }
@@ -408,10 +417,6 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         default=Path("supabase/200_stories/200_stories_seed.sql"),
         help="Events seed SQL used as the authority for (era_code, story_index, title).",
     )
-    parser.add_argument(
-        "--max-unresolved", type=int, default=10,
-        help="Fail if more than this many quizzes can't be matched to an event.",
-    )
     return parser.parse_args(argv)
 
 
@@ -428,8 +433,6 @@ def main(argv: list[str] | None = None) -> int:
         print("ERROR: no events parsed from events seed SQL", file=sys.stderr)
         return 1
 
-    title_to_event = {e.title: e for e in events}
-
     json_paths = sorted(args.input_dir.glob("*.json"))
     quiz_files: list[QuizFile] = []
     for p in json_paths:
@@ -439,19 +442,23 @@ def main(argv: list[str] | None = None) -> int:
             print(f"ERROR: {exc}", file=sys.stderr)
             return 1
 
-    seen_codes: set[str] = set()
+    seen_keys: set[tuple[str, int]] = set()
     for q in quiz_files:
-        if q.story_code in seen_codes:
-            print(f"ERROR: duplicate story_code {q.story_code!r}", file=sys.stderr)
+        key = (q.era_code, q.story_index)
+        if key in seen_keys:
+            print(
+                f"ERROR: duplicate quiz key {key!r} (file {q.path.name})",
+                file=sys.stderr,
+            )
             return 1
-        seen_codes.add(q.story_code)
+        seen_keys.add(key)
 
     report = build_report(quiz_files=quiz_files, events=events)
 
-    if len(report["unresolved_quizzes"]) > args.max_unresolved:
+    if report["orphan_quizzes"]:
         print(
-            f"ERROR: {len(report['unresolved_quizzes'])} unresolved quizzes "
-            f"(max {args.max_unresolved}). See report for details.",
+            f"ERROR: {len(report['orphan_quizzes'])} orphan quizzes "
+            f"(no matching event in seed). See report for details.",
             file=sys.stderr,
         )
         args.report.parent.mkdir(parents=True, exist_ok=True)
@@ -478,14 +485,14 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    if report["unresolved_quizzes"]:
+    if report["title_mismatches"]:
         print(
-            f"WARNING: {len(report['unresolved_quizzes'])} unresolved quizzes "
-            f"will be skipped (see report).",
+            f"WARNING: {len(report['title_mismatches'])} title mismatches "
+            f"(JSON story_title vs event title).",
             file=sys.stderr,
         )
 
-    sql = build_sql_statements(quiz_files, title_to_event)
+    sql = build_sql_statements(quiz_files)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(sql, encoding="utf-8")
@@ -496,8 +503,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     print(
-        f"OK: {report['total_quiz_files']} files "
-        f"({report['resolved_quiz_count']} resolved), "
+        f"OK: {report['total_quiz_files']} files, "
         f"{report['total_questions']} questions -> {args.output}",
         file=sys.stderr,
     )

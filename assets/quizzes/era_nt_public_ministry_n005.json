@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 5,
+  "story_title": "어린 예수의 성전 사건",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수의 부모는 유월절마다 어디로 갔습니까?",
+      "choices": [
+        "예루살렘으로 갔다",
+        "나사렛 회당으로 갔다",
+        "가버나움으로 갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 2:41 — '그 부모가 해마다 유월절을 당하면 예루살렘으로 가더니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "예수는 성전에서 율법교사들과 어떻게 하였습니까?",
+      "choices": [
+        "듣기도 하고 질문하기도 하였다",
+        "가르치고 책망하였다",
+        "침묵하며 앉아 있었다"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 2:46 — '사흘 후에 성전에서 만나니 그가 선생들 중에 앉으사 듣기도 하시며 묻기도 하시니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "소년 예수의 성전 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "누가복음",
+        "마태복음",
+        "마가복음"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 2:41-52에 소년 예수의 성전 방문과 성장 기사가 기록됨"
+    }
+  ]
+}

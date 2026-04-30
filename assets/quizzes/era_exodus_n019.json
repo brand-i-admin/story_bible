@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 19,
+  "story_title": "가데스 정탐: 불신의 보고",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "가나안 정탐 후 불신의 보고를 들은 백성은 누구를 원망하였습니까?",
+      "choices": [
+        "모세와 아론",
+        "여호수아와 갈렙",
+        "열두 정탐꾼 전원"
+      ],
+      "answer_index": 0,
+      "explanation": "민 14:2 — '이스라엘 자손이 다 모세와 아론을 원망하며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "불신의 보고 이후 하나님은 어떤 벌을 선포하셨습니까?",
+      "choices": [
+        "광야에서 소멸되어 죽으리라 하셨다",
+        "애굽으로 돌아가라 하셨다",
+        "사십 일 금식을 명하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "민 14:35 — '그들이 이 광야에서 소멸되어 거기서 죽으리라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "가데스 정탐 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "민수기",
+        "신명기",
+        "여호수아"
+      ],
+      "answer_index": 0,
+      "explanation": "민 13:1-33, 14:1-35에 정탐꾼 파견과 불신 보고가 기록됨"
+    }
+  ]
+}

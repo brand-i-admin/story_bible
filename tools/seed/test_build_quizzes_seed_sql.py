@@ -36,44 +36,12 @@ class ExtractEventsFromSeedSqlTests(unittest.TestCase):
         self.assertEqual(events[2].era_code, "era_exodus")
         self.assertEqual(events[2].story_index, 14)
 
-    def test_returns_empty_for_unrelated_sql(self) -> None:
-        self.assertEqual(
-            mod.extract_events_from_seed_sql(
-                "insert into characters values ('paul'), ('john');"
-            ),
-            [],
-        )
-
-
-class ResolveEventForQuizTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.events = mod.extract_events_from_seed_sql(_EVENTS_SEED_SAMPLE)
-        self.lookup = {e.title: e for e in self.events}
-
-    def test_direct_title_match(self) -> None:
-        ek = mod.resolve_event_for_quiz("창조: 7일과 안식", self.lookup)
-        self.assertIsNotNone(ek)
-        assert ek is not None
-        self.assertEqual(ek.story_index, 1)
-
-    def test_alias_match(self) -> None:
-        ek = mod.resolve_event_for_quiz(
-            "십계명: 하나님 나라의 기준", self.lookup
-        )
-        self.assertIsNotNone(ek)
-        assert ek is not None
-        self.assertEqual(ek.title, "시내산 도착: 십계명과 하나님 기준")
-
-    def test_unmatched_returns_none(self) -> None:
-        self.assertIsNone(
-            mod.resolve_event_for_quiz("가상의 사라진 이야기", self.lookup)
-        )
-
 
 class LoadQuizFileTests(unittest.TestCase):
     def _valid_payload(self) -> dict:
         return {
-            "story_code": "evt_n001",
+            "era_code": "era_primeval",
+            "story_index": 1,
             "story_title": "창조: 7일과 안식",
             "source_version": "2026-04-24",
             "questions": [
@@ -83,7 +51,7 @@ class LoadQuizFileTests(unittest.TestCase):
                     "question": "첫째 날에 만든 것은?",
                     "choices": ["빛", "궁창", "식물"],
                     "answer_index": 0,
-                    "explanation": "창 1:3 — '빛이 있으라'",
+                    "explanation": "창 1:3",
                 },
                 {
                     "type": "attitude",
@@ -111,30 +79,46 @@ class LoadQuizFileTests(unittest.TestCase):
         return path
 
     def test_valid_payload_loads_clean(self) -> None:
-        path = self._write_as(self._valid_payload(), "evt_n001.json")
+        path = self._write_as(self._valid_payload(), "era_primeval_n001.json")
         try:
             quiz = mod.load_quiz_file(path)
-            self.assertEqual(quiz.story_code, "evt_n001")
+            self.assertEqual(quiz.era_code, "era_primeval")
+            self.assertEqual(quiz.story_index, 1)
             self.assertEqual(len(quiz.questions), 3)
-            self.assertEqual(
-                [q.type for q in quiz.questions],
-                ["fact", "attitude", "bible_context"],
-            )
+            self.assertEqual(quiz.seed_key, "era_primeval:n001")
         finally:
             path.unlink()
 
-    def test_wrong_question_count_raises(self) -> None:
-        payload = self._valid_payload()
-        payload["questions"] = payload["questions"][:2]
-        path = self._write_as(payload, "evt_n001.json")
+    def test_filename_must_match_era_code(self) -> None:
+        path = self._write_as(self._valid_payload(), "era_exodus_n001.json")
         try:
             with self.assertRaises(mod.QuizValidationError):
                 mod.load_quiz_file(path)
         finally:
             path.unlink()
 
-    def test_filename_must_match_story_code(self) -> None:
-        path = self._write_as(self._valid_payload(), "evt_wrong.json")
+    def test_filename_must_match_story_index(self) -> None:
+        path = self._write_as(self._valid_payload(), "era_primeval_n002.json")
+        try:
+            with self.assertRaises(mod.QuizValidationError):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_missing_era_code_raises(self) -> None:
+        payload = self._valid_payload()
+        del payload["era_code"]
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaises(mod.QuizValidationError):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_wrong_question_count_raises(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"] = payload["questions"][:2]
+        path = self._write_as(payload, "era_primeval_n001.json")
         try:
             with self.assertRaises(mod.QuizValidationError):
                 mod.load_quiz_file(path)
@@ -145,12 +129,14 @@ class LoadQuizFileTests(unittest.TestCase):
 class BuildSqlStatementsTests(unittest.TestCase):
     def _sample_quiz_file(
         self,
-        story_code: str = "evt_n001",
+        era_code: str = "era_primeval",
+        story_index: int = 1,
         title: str = "창조: 7일과 안식",
     ) -> "mod.QuizFile":
         return mod.QuizFile(
-            path=Path(f"assets/quizzes/{story_code}.json"),
-            story_code=story_code,
+            path=Path(f"assets/quizzes/{era_code}_n{story_index:03d}.json"),
+            era_code=era_code,
+            story_index=story_index,
             story_title=title,
             source_version="2026-04-24",
             questions=[
@@ -181,49 +167,30 @@ class BuildSqlStatementsTests(unittest.TestCase):
             ],
         )
 
-    def setUp(self) -> None:
-        self.events = mod.extract_events_from_seed_sql(_EVENTS_SEED_SAMPLE)
-        self.lookup = {e.title: e for e in self.events}
-
     def test_sql_has_begin_commit_and_lookup_clause(self) -> None:
-        sql = mod.build_sql_statements([self._sample_quiz_file()], self.lookup)
+        sql = mod.build_sql_statements([self._sample_quiz_file()])
         self.assertIn("begin;", sql)
         self.assertIn("commit;", sql)
         self.assertIn("er.code = 'era_primeval'", sql)
         self.assertIn("e.story_index = 1", sql)
 
-    def test_sql_emits_three_inserts_per_resolved_quiz(self) -> None:
-        sql = mod.build_sql_statements([self._sample_quiz_file()], self.lookup)
+    def test_sql_emits_three_inserts_per_quiz(self) -> None:
+        sql = mod.build_sql_statements([self._sample_quiz_file()])
         self.assertEqual(sql.count("insert into quiz_questions"), 3)
 
     def test_sql_emits_delete_before_inserts(self) -> None:
-        sql = mod.build_sql_statements([self._sample_quiz_file()], self.lookup)
+        sql = mod.build_sql_statements([self._sample_quiz_file()])
         self.assertIn("delete from quiz_questions", sql)
         self.assertLess(
             sql.find("delete from quiz_questions"),
             sql.find("insert into quiz_questions"),
         )
 
-    def test_unresolved_quiz_is_skipped_with_marker(self) -> None:
-        unresolved = self._sample_quiz_file(
-            story_code="evt_ghost", title="존재하지 않는 이야기"
-        )
-        sql = mod.build_sql_statements([unresolved], self.lookup)
-        self.assertIn("-- SKIPPED evt_ghost", sql)
-        self.assertNotIn("insert into quiz_questions", sql)
-
-    def test_alias_redirects_to_current_event_title(self) -> None:
-        quiz = self._sample_quiz_file(
-            story_code="evt_n064", title="십계명: 하나님 나라의 기준"
-        )
-        sql = mod.build_sql_statements([quiz], self.lookup)
-        self.assertIn("er.code = 'era_exodus'", sql)
-        self.assertIn("e.story_index = 14", sql)
-
     def test_dollar_quoting_handles_single_quotes(self) -> None:
         q = mod.QuizFile(
-            path=Path("assets/quizzes/evt_n001.json"),
-            story_code="evt_n001",
+            path=Path("assets/quizzes/era_primeval_n001.json"),
+            era_code="era_primeval",
+            story_index=1,
             story_title="창조: 7일과 안식",
             source_version="v",
             questions=[
@@ -238,7 +205,7 @@ class BuildSqlStatementsTests(unittest.TestCase):
                 ),
             ],
         )
-        sql = mod.build_sql_statements([q], self.lookup)
+        sql = mod.build_sql_statements([q])
         self.assertIn("$q$A'B$q$", sql)
         self.assertIn("$q$x'y$q$", sql)
 
@@ -247,43 +214,51 @@ class BuildReportTests(unittest.TestCase):
     def setUp(self) -> None:
         self.events = mod.extract_events_from_seed_sql(_EVENTS_SEED_SAMPLE)
 
-    def test_resolved_and_unresolved_counts(self) -> None:
-        resolved = BuildSqlStatementsTests()._sample_quiz_file()
-        unresolved = BuildSqlStatementsTests()._sample_quiz_file(
-            story_code="evt_ghost", title="존재하지 않는 이야기"
-        )
-        report = mod.build_report(
-            quiz_files=[resolved, unresolved], events=self.events
-        )
-        self.assertEqual(report["total_quiz_files"], 2)
-        self.assertEqual(report["resolved_quiz_count"], 1)
-        self.assertEqual(len(report["unresolved_quizzes"]), 1)
-        self.assertEqual(
-            report["unresolved_quizzes"][0]["story_code"], "evt_ghost"
-        )
+    def test_total_counts(self) -> None:
+        q = BuildSqlStatementsTests()._sample_quiz_file()
+        report = mod.build_report(quiz_files=[q], events=self.events)
+        self.assertEqual(report["total_quiz_files"], 1)
+        self.assertEqual(report["total_questions"], 3)
 
-    def test_events_without_quiz_lists_unmapped_events(self) -> None:
-        resolved = BuildSqlStatementsTests()._sample_quiz_file()
-        report = mod.build_report(quiz_files=[resolved], events=self.events)
+    def test_orphan_quiz_detected(self) -> None:
+        bogus = BuildSqlStatementsTests()._sample_quiz_file(
+            era_code="era_does_not_exist", story_index=999, title="가짜"
+        )
+        report = mod.build_report(quiz_files=[bogus], events=self.events)
+        self.assertEqual(len(report["orphan_quizzes"]), 1)
+        self.assertEqual(report["orphan_quizzes"][0]["era_code"], "era_does_not_exist")
+
+    def test_title_mismatch_detected(self) -> None:
+        wrong_title = BuildSqlStatementsTests()._sample_quiz_file(
+            era_code="era_primeval", story_index=1, title="옛 제목"
+        )
+        report = mod.build_report(quiz_files=[wrong_title], events=self.events)
+        self.assertEqual(len(report["title_mismatches"]), 1)
+        self.assertEqual(report["title_mismatches"][0]["json_title"], "옛 제목")
+
+    def test_events_without_quiz_lists_uncovered(self) -> None:
+        q = BuildSqlStatementsTests()._sample_quiz_file()
+        report = mod.build_report(quiz_files=[q], events=self.events)
+        # 3 events, 1 covered → 2 uncovered.
         self.assertEqual(len(report["events_without_quiz"]), 2)
 
 
 class DeterministicShuffleTests(unittest.TestCase):
     def test_same_seed_produces_same_order(self) -> None:
         choices = ["A-correct", "B-wrong", "C-wrong"]
-        out1 = mod.deterministic_shuffle("evt_n001", 0, choices)
-        out2 = mod.deterministic_shuffle("evt_n001", 0, choices)
+        out1 = mod.deterministic_shuffle("era_primeval:n001", 0, choices)
+        out2 = mod.deterministic_shuffle("era_primeval:n001", 0, choices)
         self.assertEqual(out1, out2)
 
     def test_preserves_all_items(self) -> None:
         choices = ["A", "B", "C"]
-        shuffled, _ = mod.deterministic_shuffle("evt_n042", 1, choices)
+        shuffled, _ = mod.deterministic_shuffle("era_patriarch:n042", 1, choices)
         self.assertEqual(sorted(shuffled), sorted(choices))
 
     def test_answer_index_tracks_original_index_zero(self) -> None:
         choices = ["CORRECT", "wrong1", "wrong2"]
         shuffled, answer_index = mod.deterministic_shuffle(
-            "evt_n099", 2, choices
+            "era_judges:n099", 2, choices
         )
         self.assertEqual(shuffled[answer_index], "CORRECT")
 

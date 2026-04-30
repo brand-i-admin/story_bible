@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 17,
+  "story_title": "축복 가로채기: 속임수의 밤",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "이삭이 야곱을 에서로 착각하게 된 이유는 무엇입니까?",
+      "choices": [
+        "야곱의 손에 털이 있어 분별치 못하였다",
+        "눈이 완전히 멀어 아무것도 보지 못하였다",
+        "리브가가 이삭 옆에 없었다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 27:23 — '그 손이 형 에서의 손과 같이 털이 있으므로 능히 분별치 못하고 축복하였더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "에서가 아버지의 말을 듣고 어떻게 반응하였습니까?",
+      "choices": [
+        "방성대곡하며 자기도 축복해 달라 하였다",
+        "야곱을 즉시 쫓아갔다",
+        "말없이 들에 나갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 27:34 — '에서가 그 아비의 말을 듣고 방성대곡하며 아비에게 이르되 내게도 축복하소서'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "야곱이 이삭의 축복을 가로챈 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "27장",
+        "25장",
+        "32장"
+      ],
+      "answer_index": 0,
+      "explanation": "창 27:1-45에 야곱의 속임수와 이삭의 축복 이야기가 기록됨"
+    }
+  ]
+}

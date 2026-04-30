@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 20,
+  "story_title": "고라의 반역: 땅이 갈라지다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "고라 무리 중 불로 죽임당한 이들은 몇 명이었습니까?",
+      "choices": [
+        "이백 오십 인",
+        "칠십 인",
+        "삼백 명"
+      ],
+      "answer_index": 0,
+      "explanation": "민 16:35 — '여호와께로서 불이 나와서 분향하는 이백 오십인을 소멸하였더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "하나님의 심판 직전 무리는 어떻게 하였습니까?",
+      "choices": [
+        "고라와 다단과 아비람의 장막 사면을 떠났다",
+        "모세에게 용서를 구하였다",
+        "각자 제 집으로 달아났다"
+      ],
+      "answer_index": 0,
+      "explanation": "민 16:27 — '무리가 고라와 다단과 아비람의 장막 사면을 떠나고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "고라의 반역 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "민수기",
+        "출애굽기",
+        "레위기"
+      ],
+      "answer_index": 0,
+      "explanation": "민 16:1-35에 고라의 반역과 심판이 기록됨"
+    }
+  ]
+}

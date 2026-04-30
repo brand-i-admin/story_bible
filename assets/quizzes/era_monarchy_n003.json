@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 3,
+  "story_title": "사울의 첫 승리: 얍베스 길르앗",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "사울이 베섹에서 계수한 이스라엘 군사는 몇 명이었습니까?",
+      "choices": [
+        "삼십만",
+        "십만",
+        "오십만"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 11:8 — '사울이 베섹에서 그들을 계수하니 이스라엘 자손이 삼십만이요'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "얍베스 길르앗 구원 후 백성은 어디서 사울을 왕으로 삼았습니까?",
+      "choices": [
+        "길갈",
+        "세겜",
+        "헤브론"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 11:15 — '모든 백성이 길갈로 가서 거기서 여호와 앞에 사울로 왕을 삼고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "사울의 첫 번째 군사적 승리가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사무엘상",
+        "사사기",
+        "열왕기상"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 11:1-15에 사울의 얍베스 길르앗 구원이 기록됨"
+    }
+  ]
+}

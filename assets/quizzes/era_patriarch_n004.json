@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 4,
+  "story_title": "전쟁과 멜기세덱: 축복의 만남",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "멜기세덱은 아브람에게 축복하며 하나님을 어떻게 불렀습니까?",
+      "choices": [
+        "천지의 주재시요 지극히 높으신 하나님",
+        "이스라엘의 거룩하신 이",
+        "만군의 여호와"
+      ],
+      "answer_index": 0,
+      "explanation": "창 14:19 — '천지의 주재시요 지극히 높으신 하나님이여 아브람에게 복을 주옵소서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아브람은 멜기세덱에게 어떻게 하였습니까?",
+      "choices": [
+        "얻은 것의 십분 일을 주었다",
+        "함께 식사하고 헤어졌다",
+        "그를 자기 제사장으로 삼았다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 14:20 — '아브람이 그 얻은 것에서 십분 일을 멜기세덱에게 주었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "멜기세덱이 등장하는 창세기 14장은 어느 시대의 이야기입니까?",
+      "choices": [
+        "족장 시대",
+        "태초 시대",
+        "출애굽 시대"
+      ],
+      "answer_index": 0,
+      "explanation": "창 14:1-24는 족장(era_patriarch) 시대 아브람의 전쟁과 멜기세덱 만남을 다룸"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 18,
+  "story_title": "성전 봉헌: 기도와 영광",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "언약궤 안에 있었던 것은 무엇입니까?",
+      "choices": [
+        "두 돌판",
+        "만나와 아론의 지팡이",
+        "향단과 제사장 옷"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 8:9 — '궤 안에는 두 돌판 외에 아무것도 없으니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "제사장들이 성전에서 서서 섬기지 못한 이유는 무엇입니까?",
+      "choices": [
+        "여호와의 영광이 전에 가득하였다",
+        "제사장 수가 너무 부족하였다",
+        "제물이 아직 준비되지 않았다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 8:11 — '여호와의 영광이 여호와의 전에 가득함이었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "솔로몬의 성전 봉헌 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "열왕기상",
+        "사무엘상",
+        "역대상"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 8:1-11에 성전 봉헌과 하나님의 영광 기사가 기록됨"
+    }
+  ]
+}

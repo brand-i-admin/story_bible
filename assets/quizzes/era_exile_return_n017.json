@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exile_return",
+  "story_index": 17,
+  "story_title": "에스라의 귀환: 말씀으로 정리하다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "에스라는 어떤 사람이었습니까?",
+      "choices": [
+        "모세의 율법에 익숙한 학사",
+        "바벨론의 지혜자",
+        "왕의 군사 장관"
+      ],
+      "answer_index": 0,
+      "explanation": "스 7:6 — '이스라엘 하나님 여호와께서 주신 바 모세의 율법에 익숙한 학사로서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "에스라는 어떤 것을 결심하였습니까?",
+      "choices": [
+        "여호와의 율법을 연구하여 준행하며 이스라엘에게 가르치기로 결심하였다",
+        "성전 재건 공사를 완료하기로 결심하였다",
+        "왕에게 더 많은 허가를 받아내기로 결심하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "스 7:10 — '여호와의 율법을 연구하여 준행하며 율례와 규례를 이스라엘에게 가르치기로 결심하였었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "에스라의 귀환 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "에스라",
+        "느헤미야",
+        "다니엘"
+      ],
+      "answer_index": 0,
+      "explanation": "스 7:1-10에 에스라의 계보와 귀환 목적 기사가 기록됨"
+    }
+  ]
+}

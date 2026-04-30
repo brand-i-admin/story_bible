@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 18,
+  "story_title": "예루살렘 입성",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님이 입성 때 타신 것은 무엇입니까?",
+      "choices": [
+        "나귀 새끼",
+        "말",
+        "낙타"
+      ],
+      "answer_index": 0,
+      "explanation": "막 11:7 — '나귀 새끼를 예수께로 끌어다가 자기들의 겉옷을 얹어 놓으매 예수께서 타시니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "무리는 예수님의 입성 때 어떻게 하였습니까?",
+      "choices": [
+        "겉옷과 나뭇가지를 길에 펴고 호산나를 외쳤다",
+        "성문을 닫고 들어오지 못하게 하였다",
+        "잠잠히 서서 지켜보았다"
+      ],
+      "answer_index": 0,
+      "explanation": "막 11:8-9 — '겉옷을 길에 펴며 ... 호산나 찬송하리로다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "예루살렘 입성 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마가복음",
+        "사도행전",
+        "로마서"
+      ],
+      "answer_index": 0,
+      "explanation": "막 11:1-11에 예루살렘 입성 기사가 기록됨"
+    }
+  ]
+}

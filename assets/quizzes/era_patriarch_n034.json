@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 34,
+  "story_title": "은잔 사건: 유다의 탄원",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "은잔은 누구의 자루에서 발견되었습니까?",
+      "choices": [
+        "베냐민",
+        "유다",
+        "시므온"
+      ],
+      "answer_index": 0,
+      "explanation": "창 44:12 — '작은 자의 자루에서부터 시작하여 큰 자의 자루까지 ... 잔이 베냐민의 자루에서 발견된지라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "유다는 베냐민 대신 자신을 어떻게 하겠다고 하였습니까?",
+      "choices": [
+        "자기가 종으로 남겠다 하였다",
+        "형들이 돈을 더 내겠다 하였다",
+        "아버지를 데려오겠다 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 44:33 — '청컨대 나로 이 아이를 대신하여 내 주의 종이 되게 하시고 아이는 형들과 함께 올려 보내소서'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "은잔 사건과 유다의 탄원 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "44장",
+        "42장",
+        "46장"
+      ],
+      "answer_index": 0,
+      "explanation": "창 44:1-34에 은잔 함정과 유다의 대속적 탄원이 기록됨"
+    }
+  ]
+}

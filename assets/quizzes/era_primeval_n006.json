@@ -1,0 +1,44 @@
+{
+  "era_code": "era_primeval",
+  "story_index": 6,
+  "story_title": "셋의 계보: 다시 부르다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "하나님과 동행하다가 죽지 않고 데려가심을 받은 사람은 누구입니까?",
+      "choices": [
+        "에녹",
+        "셋",
+        "마할랄렐"
+      ],
+      "answer_index": 0,
+      "explanation": "창 5:24 — '에녹이 하나님과 동행하더니 하나님이 그를 데려가시므로'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "하와는 셋을 낳고 그 의미를 무엇이라 하였습니까?",
+      "choices": [
+        "가인의 죽인 아벨 대신 다른 씨를 주셨다",
+        "하나님이 나를 웃게 하셨다",
+        "하나님이 내 울음을 들으셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 4:25 — '하나님이 내게 가인의 죽인 아벨 대신에 다른 씨를 주셨다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "셋의 계보가 기록된 창세기 5장은 어느 시대의 이야기입니까?",
+      "choices": [
+        "태초 시대",
+        "족장 시대",
+        "출애굽 시대"
+      ],
+      "answer_index": 0,
+      "explanation": "창 4:25-5:24는 태초(era_primeval) 시대, 아담 이후 계보를 다룸"
+    }
+  ]
+}

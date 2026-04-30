@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 6,
+  "story_title": "다윗과 골리앗: 돌 하나",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "다윗이 골리앗을 쓰러뜨리는 데 사용한 무기는 무엇이었습니까?",
+      "choices": [
+        "물매와 돌",
+        "칼",
+        "창"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 17:50 — '다윗이 이같이 물매와 돌로 블레셋 사람을 이기고 그를 쳐 죽였으나 자기 손에는 칼이 없었더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "다윗은 골리앗에게 싸움을 선포할 때 어떻게 말하였습니까?",
+      "choices": [
+        "여호와께서 너를 내 손에 붙이시리라 하였다",
+        "이스라엘 군대의 이름으로 싸운다 하였다",
+        "두려워하지 말라고 외쳤다"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 17:46 — '오늘 여호와께서 너를 내 손에 붙이시리니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "다윗과 골리앗의 전투가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사무엘상",
+        "사무엘하",
+        "열왕기상"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 17:32-50에 다윗과 골리앗의 전투가 기록됨"
+    }
+  ]
+}
