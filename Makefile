@@ -154,11 +154,16 @@ seed-stories-characters: seed-stories seed-characters
 
 seed-quizzes:
 	@echo "[Makefile] 퀴즈 SQL 생성..."
+	@# 권위 소스: supabase/quizzes/db_events.json (dev DB 스냅샷).
+	@# main 의 200_stories_seed.sql 과 dev DB 가 같은 (era,story_index) 키에
+	@# 서로 다른 이야기를 담고 있어, 시드 파일을 기준으로 빌드하면 title이
+	@# 어긋난 SQL 이 생성된다. DB 와 seed 가 일치할 때까지 db_events.json 을
+	@# 단일 진실 소스로 사용한다.
 	$(PYTHON) $(TOOLS_DIR)/seed/build_quizzes_seed_sql.py \
 		--input-dir $(ASSETS_DIR)/quizzes \
 		--output $(SUPABASE_DIR)/quizzes/quizzes_seed.sql \
 		--report $(SUPABASE_DIR)/quizzes/quizzes_report.json \
-		--events-seed-sql $(SUPABASE_DIR)/200_stories/200_stories_seed.sql
+		--events-from-json $(SUPABASE_DIR)/quizzes/db_events.json
 
 seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
