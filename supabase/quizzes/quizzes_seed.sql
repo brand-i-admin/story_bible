@@ -872,8 +872,6 @@ insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, ch
 select e.id, $q$십계명이 기록된 성경 책은 어디입니까?$q$, $q$신명기$q$, $q$출애굽기$q$, $q$레위기$q$, null, 1, $q$출 20:1-21에 십계명이 기록됨$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
 
--- SKIPPED evt_n065: title '피의 언약: 백성의 대답' does not match any event
-
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 15;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
@@ -971,8 +969,6 @@ from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$놋뱀 사건이 기록된 성경 책은 어디입니까?$q$, $q$출애굽기$q$, $q$신명기$q$, $q$민수기$q$, null, 2, $q$민 21:4-9에 놋뱀 사건이 기록됨$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21;
-
--- SKIPPED evt_n073: title '발람: 축복으로 바뀐 저주' does not match any event
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 22;
@@ -1099,8 +1095,6 @@ from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에훗의 사사 이야기가 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$사무엘상$q$, $q$여호수아$q$, null, 0, $q$삿 3:12-30에 에훗의 이야기가 기록됨$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
-
--- SKIPPED evt_n083: title '드보라와 바락: 노래로 끝난 전쟁' does not match any event
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 8;
@@ -1521,10 +1515,6 @@ from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' an
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬의 성전 봉헌 기사가 기록된 성경 책은 어디입니까?$q$, $q$사무엘상$q$, $q$열왕기상$q$, $q$역대상$q$, null, 1, $q$왕상 8:1-11에 성전 봉헌과 하나님의 영광 기사가 기록됨$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
-
--- SKIPPED evt_n114: title '스바 여왕: 지혜를 시험하다' does not match any event
-
--- SKIPPED evt_n115: title '왕국 분열: 북과 남' does not match any event
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 21;
@@ -1973,8 +1963,6 @@ from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야의 야간 성벽 조사 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스라$q$, $q$느헤미야$q$, $q$학개$q$, null, 1, $q$느 2:11-20에 야간 조사와 성벽 재건 선포 기사가 기록됨$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 19;
-
--- SKIPPED evt_n148: title '방어하며 세우다: 한 손엔 무기' does not match any event
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 20;

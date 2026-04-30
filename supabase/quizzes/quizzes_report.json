@@ -1,40 +1,15 @@
 {
-  "generated_at": "2026-04-30T05:39:02+00:00",
-  "total_quiz_files": 213,
+  "generated_at": "2026-04-30T06:14:04+00:00",
+  "total_quiz_files": 207,
   "total_events": 209,
   "resolved_quiz_count": 207,
-  "total_questions": 639,
+  "total_questions": 621,
   "answer_index_distribution": {
-    "0": 223,
-    "1": 210,
-    "2": 206
+    "0": 216,
+    "1": 204,
+    "2": 201
   },
-  "unresolved_quizzes": [
-    {
-      "story_code": "evt_n065",
-      "story_title": "피의 언약: 백성의 대답"
-    },
-    {
-      "story_code": "evt_n073",
-      "story_title": "발람: 축복으로 바뀐 저주"
-    },
-    {
-      "story_code": "evt_n083",
-      "story_title": "드보라와 바락: 노래로 끝난 전쟁"
-    },
-    {
-      "story_code": "evt_n114",
-      "story_title": "스바 여왕: 지혜를 시험하다"
-    },
-    {
-      "story_code": "evt_n115",
-      "story_title": "왕국 분열: 북과 남"
-    },
-    {
-      "story_code": "evt_n148",
-      "story_title": "방어하며 세우다: 한 손엔 무기"
-    }
-  ],
+  "unresolved_quizzes": [],
   "events_without_quiz": [
     "솔로몬: 이방의 경탄부터 타락까지",
     "왕국의 분열과 역사"
@@ -383,12 +358,6 @@
       "length": 41
     },
     {
-      "story_code": "evt_n065",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
       "story_code": "evt_n067",
       "display_order": 1,
       "field": "choices[0]",
@@ -407,18 +376,6 @@
       "length": 23
     },
     {
-      "story_code": "evt_n073",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 28
-    },
-    {
-      "story_code": "evt_n073",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 21
-    },
-    {
       "story_code": "evt_n074",
       "display_order": 1,
       "field": "choices[0]",
@@ -435,18 +392,6 @@
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
-    },
-    {
-      "story_code": "evt_n083",
-      "display_order": 1,
-      "field": "question",
-      "length": 48
-    },
-    {
-      "story_code": "evt_n083",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
     },
     {
       "story_code": "evt_n084",
@@ -621,12 +566,6 @@
       "display_order": 1,
       "field": "explanation",
       "length": 67
-    },
-    {
-      "story_code": "evt_n115",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
     },
     {
       "story_code": "evt_n118",
@@ -855,24 +794,6 @@
       "display_order": 1,
       "field": "choices[2]",
       "length": 24
-    },
-    {
-      "story_code": "evt_n148",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 35
-    },
-    {
-      "story_code": "evt_n148",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 22
-    },
-    {
-      "story_code": "evt_n148",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 22
     },
     {
       "story_code": "evt_n149",
