@@ -51,7 +51,49 @@ def parse_args() -> argparse.Namespace:
         default=max(2, min(8, (os.cpu_count() or 4))),
         help="Number of parallel workers.",
     )
+    parser.add_argument(
+        "--no-prune-orphans",
+        action="store_true",
+        help=(
+            "기본 동작은 source 에 없는 thumbnail 을 자동 삭제한다. "
+            "이 플래그를 주면 정리 단계를 스킵한다."
+        ),
+    )
     return parser.parse_args()
+
+
+def prune_orphan_thumbs(
+    expected: set[Path],
+    output_root: Path,
+    pattern: str,
+) -> list[Path]:
+    """output_root 안의 pattern 매칭 파일 중 expected 에 없는 것을 삭제한다.
+
+    파일이 사라지면 부모 디렉토리도 비어 있으면 정리한다.
+    macOS 의 NFD vs NFC 파일명 차이를 고려해 NFC 정규화로 비교한다.
+    """
+    if not output_root.exists():
+        return []
+    import unicodedata
+
+    def norm(p: Path) -> str:
+        return unicodedata.normalize("NFC", str(p))
+
+    expected_norm = {norm(p) for p in expected}
+    removed: list[Path] = []
+    for path in sorted(output_root.rglob(pattern)):
+        if norm(path) in expected_norm:
+            continue
+        path.unlink()
+        removed.append(path)
+        print(f"[PRUNE] removed orphan thumb: {path}")
+        # 부모 디렉토리가 비면 청소.
+        parent = path.parent
+        while parent != output_root and parent.exists() and not any(parent.iterdir()):
+            parent.rmdir()
+            print(f"[PRUNE] removed empty dir: {parent}")
+            parent = parent.parent
+    return removed
 
 
 def run_sips(command: list[str]) -> None:
@@ -178,6 +220,17 @@ def main() -> int:
 
     story_files = sorted(story_source.rglob("scene_*.png"))
     avatar_files = sorted(avatar_source.glob("*.png"))
+
+    if not args.no_prune_orphans:
+        expected_story_thumbs = {
+            relative_story_dest(story_source, story_output, src) for src in story_files
+        }
+        prune_orphan_thumbs(expected_story_thumbs, story_output, "*.jpg")
+        expected_avatar_thumbs = {
+            relative_avatar_dest(avatar_source, avatar_output, src)
+            for src in avatar_files
+        }
+        prune_orphan_thumbs(expected_avatar_thumbs, avatar_output, "*.png")
 
     built_story = 0
     built_avatar = 0

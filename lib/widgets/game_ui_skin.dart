@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/tokens.dart';
+
 const String kPanelFrameAsset = 'assets/elements/panel_left_and_right.png';
 const String kTabItemInactiveAsset = 'assets/elements/tab_item_inactive.png';
 const String kTabItemActiveAsset = 'assets/elements/tab_item_active.png';
@@ -95,7 +97,7 @@ Widget statesButtonLabel({
   ),
   double fontSize = 12,
   FontWeight fontWeight = FontWeight.w800,
-  Color color = const Color(0xFFFDF8EE),
+  Color color = AppColors.parchmentCream,
 }) {
   return SizedBox(
     width: width,

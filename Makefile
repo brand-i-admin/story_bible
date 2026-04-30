@@ -39,7 +39,7 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
 # =============================================================================
 
 .PHONY: help all \
-        seed-bible-verses build-character-meta \
+        seed-bible-verses build-character-meta renumber-story-indices \
         seed-stories seed-characters seed-stories-characters seed-quizzes \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
@@ -127,6 +127,11 @@ build-character-meta:
 	$(PYTHON) $(TOOLS_DIR)/seed/build_character_meta_json.py \
 		--stories-dir $(STORIES_DIR) \
 		--output $(CHARACTER_META)
+
+renumber-story-indices:
+	@echo "[Makefile] story_index 를 era 별 1..N 으로 재정렬..."
+	$(PYTHON) $(TOOLS_DIR)/seed/renumber_story_indices.py \
+		--stories-dir $(STORIES_DIR)
 
 seed-stories: build-character-meta
 	@echo "[Makefile] events SQL 생성..."

@@ -116,13 +116,22 @@ Makefile                                # 파이프라인 오케스트레이션
   - `supabase/200_stories/200_stories_normalized.json` — 검수용 정규화 JSON
 - **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `place_name`/`lat`/`lng`, `status='published'`
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
+- **stale 정리**: 시드 SQL 머리에 `delete from events where (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 이벤트는 DB 에서도 사라진다. quiz_questions 등 의존 테이블은 cascade.
+- **split 파일 주의**: `200_stories_seed_part_01.sql` 만 stale-delete 를 포함, part_02 는 INSERT 만.
 - **참고**: `code`/`story`/`short_story`/`time_sort_key`/`event_characters`/`event_bible_refs` 산출 로직은 폐기됨 (스키마 v3 변경)
 
 #### `build_characters_seed_sql.py` — characters SQL
 - **의존**: `tools/seed/character_meta.json` (선행 필수)
 - **입력**: `tools/seed/character_meta.json` + `assets/200_stories/*.json` (대표 스토리 선택용)
-- **출력**: `supabase/200_stories/characters_seed.sql` — `persons` INSERT (UPSERT — `is_active`는 보존)
-- **참고**: `character_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)
+- **출력**: `supabase/200_stories/characters_seed.sql` — `characters` UPSERT (`is_active`는 보존)
+- **stale 정리**: meta 에 없는 `characters` 행을 삭제. `weekly_character_selection` 의 FK 위반을 막기 위해 그 테이블도 동시 청소.
+- **참고**: `person_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)
+
+#### `renumber_story_indices.py` — story_index 재정렬
+- **언제**: stories JSON 을 추가/삭제/수정해서 era 안의 `story_index` 가 듬성듬성 비거나 `None` 이 생겼을 때.
+- **동작**: 같은 era 안에서 현재 `story_index` (정수) 순으로 정렬, `None` 항목은 같은 파일의 JSON 배열 위치 기준으로 이웃 사이에 보간(interpolate). 그 결과 1..N 으로 빈틈없이 재할당.
+- **사용**: `python tools/seed/renumber_story_indices.py [--dry-run]`
+- **재실행**: idempotent — 이미 1..N 인 era 는 그대로 둔다.
 
 ### 3.2 이미지 생성 스크립트
 
@@ -130,19 +139,26 @@ Makefile                                # 파이프라인 오케스트레이션
 - **의존**: `tools/seed/character_meta.json`
 - **출력**: `assets/avatars/{code}.png`
 - **API**: Google Cloud Vertex AI Imagen
-- **옵션**: `--output-dir`, `--overwrite`, `--limit`
+- **옵션**: `--output-dir`, `--overwrite`, `--limit`, `--no-prune-orphans`
 - **환경**: `GOOGLE_CLOUD_PROJECT` 환경변수 필요
+- **stale 정리**: 시작 시 `character_meta.json` 의 code 집합과 `assets/avatars/` 의 PNG stem 을 비교, 불일치 PNG 를 삭제. 끄려면 `--no-prune-orphans`.
+- **재생성**: 기존 PNG 가 있으면 skip, 없으면 새로 생성 → 사용자가 마음에 안 드는 PNG 를 지워두면 다음 실행에서 자동 재생성.
 
 #### `generate_event_story_images_vertex.py` — 장면 이미지 생성
 - **입력**: `assets/200_stories/*.json` (story_scenes 필드)
 - **출력**: `assets/story_images/{title}/scene_{1-4}.png`
 - **API**: Google Cloud Vertex AI Imagen
 - **결과**: 215 이벤트 × 4장면 = 최대 860장
+- **옵션**: `--no-prune-orphans`
+- **stale 정리**: 시작 시 현재 stories JSON 의 title 로 만들어진 디렉토리 외에는 모두 삭제 (NFC 정규화 비교).
+- **재생성**: 기존 scene PNG 가 있으면 skip, 없으면 새로 생성 → 마음에 안 드는 scene 을 지워두면 다음 실행에서 자동 재생성.
 
 #### `generate_runtime_thumbnails.py` — 썸네일 생성
 - **입력**: `assets/avatars/`, `assets/story_images/`
 - **출력**: `assets/avatars_thumbs/`, `assets/story_images_thumbs/`
 - **방식**: 로컬 이미지 리사이즈 (Vertex AI 불필요)
+- **옵션**: `--no-prune-orphans`
+- **stale 정리**: source 에 없는 thumbnail 자동 삭제 (빈 부모 디렉토리도 정리).
 
 > 이전에 있던 `generate_assets_vertex.py` (UI 장식 요소 일괄 생성), `generate_app_icons.py` (런처 아이콘 일괄 생성)는 사용 빈도가 낮아 폐기됨. 결과물(`assets/elements/`, iOS/Android 런처 아이콘)은 이미 생성된 상태로 유지.
 

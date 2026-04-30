@@ -130,7 +130,7 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          color: Color(0xFF4D381F),
+                                          color: AppColors.ink450,
                                           fontSize: 13,
                                           height: 1.48,
                                           fontWeight: FontWeight.w700,
@@ -146,7 +146,7 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                             const Text(
                               '사건 목록',
                               style: TextStyle(
-                                color: Color(0xFF4D381F),
+                                color: AppColors.ink450,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w900,
                               ),

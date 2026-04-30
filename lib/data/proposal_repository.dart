@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/event_proposal.dart';
@@ -99,6 +101,75 @@ class ProposalRepository {
       params: {'p_target_event_id': targetEventId, 'p_reason': reason},
     );
     return result as String;
+  }
+
+  /// 일반 제안 제출 (proposal_type='general').
+  ///
+  /// `body` 는 본문 텍스트 (필수), `imagePaths` 는 사전에 업로드된
+  /// `proposal-general-images/...` Storage 경로 (최대 5장).
+  ///
+  /// 권한: pastor 또는 admin (RPC 내부 체크).
+  Future<String> submitGeneralProposal({
+    required String title,
+    required String body,
+    List<String> imagePaths = const [],
+  }) async {
+    final result = await _client.rpc(
+      'submit_general_proposal',
+      params: {'p_title': title, 'p_body': body, 'p_image_paths': imagePaths},
+    );
+    return result as String;
+  }
+
+  /// 일반 제안의 이미지 한 장을 `proposal-general-images` 버킷에 업로드.
+  /// 반환은 `bucket/path` 형태의 storage path (다른 path 와 동일한 규칙).
+  ///
+  /// [draftId] 는 클라이언트에서 만든 임시 식별자. 같은 폴더 안에서 idx 만 다른
+  /// 파일로 업로드된다.
+  /// [extension] 은 점(`.`) 없이 'png', 'jpg', 'webp' 등.
+  Future<String> uploadGeneralProposalImage({
+    required String userId,
+    required String draftId,
+    required int index,
+    required Uint8List bytes,
+    required String extension,
+  }) async {
+    final ext = _normalizeImageExtension(extension);
+    final path = '$userId/$draftId/$index.$ext';
+    await _client.storage
+        .from('proposal-general-images')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(
+            upsert: true,
+            contentType: _contentTypeForImageExtension(ext),
+          ),
+        );
+    return 'proposal-general-images/$path';
+  }
+
+  String _normalizeImageExtension(String ext) {
+    final lower = ext.toLowerCase().trim();
+    if (lower == 'jpeg') return 'jpg';
+    if (lower.isEmpty) return 'png';
+    return lower;
+  }
+
+  String _contentTypeForImageExtension(String ext) {
+    switch (ext.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'webp':
+        return 'image/webp';
+      case 'heic':
+      case 'heif':
+        return 'image/heic';
+      case 'png':
+      default:
+        return 'image/png';
+    }
   }
 
   /// 장면 한 장을 생성하도록 Edge Function 을 호출.
@@ -299,6 +370,23 @@ class ProposalRepository {
         // 무시 — 이미 삭제됐거나 권한이 없거나, 어느 쪽이든 사용자 경험에는 영향 없음.
       }
     }
+  }
+
+  /// 일반 제안 승인 (proposal_type='general' 전용). 부가 효과 없이 status 만
+  /// 갱신. 이미지 정리 / row 정리는 의도적으로 하지 않는다 (요구사항).
+  Future<void> approveGeneral(String proposalId) async {
+    await _client.rpc(
+      'approve_general_proposal',
+      params: {'p_proposal_id': proposalId},
+    );
+  }
+
+  /// 일반 제안 거절 (proposal_type='general' 전용). status='rejected' + 사유 저장만.
+  Future<void> rejectGeneral(String proposalId, {String? note}) async {
+    await _client.rpc(
+      'reject_general_proposal',
+      params: {'p_proposal_id': proposalId, 'p_note': note},
+    );
   }
 
   /// 관리자용 거절. [note] 는 거절 사유(optional).

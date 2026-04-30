@@ -62,18 +62,21 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
   }
 
   Future<void> _approve(EventProposal p) async {
-    // 새 이야기 제안: 승인 전 등장 인물 is_active 결정 다이얼로그.
-    // 삭제 제안은 인물 토글 의미가 없으니 단순 yes/no 확인.
+    // 새 이야기 제안은 승인 전 등장 인물 is_active 결정 다이얼로그.
+    // 삭제/일반 제안은 단순 yes/no.
     Map<String, bool>? overrides;
-    if (!p.isDeleteProposal) {
+    if (p.isNewProposal) {
       overrides = await ApproveProposalDialog.show(context, p);
       if (overrides == null) return; // 취소
     } else {
+      final (title, body) = p.isDeleteProposal
+          ? ('삭제 제안 승인', '"${p.title}" 이(가) 앱에서 숨겨집니다. 진행할까요?')
+          : ('일반 제안 승인', '"${p.title}" 제안을 승인 처리할까요?');
       final ok = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('삭제 제안 승인'),
-          content: Text('"${p.title}" 이(가) 앱에서 숨겨집니다. 진행할까요?'),
+          title: Text(title),
+          content: Text(body),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
@@ -96,6 +99,9 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
       if (p.isDeleteProposal) {
         await repo.approveDelete(p.id);
         successMessage = '삭제 제안이 승인되어 이야기가 숨겨졌습니다';
+      } else if (p.isGeneralProposal) {
+        await repo.approveGeneral(p.id);
+        successMessage = '일반 제안이 승인되었습니다';
       } else {
         await repo.approve(
           p.id,
@@ -124,7 +130,12 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
     if (note == null) return;
     setState(() => _reviewing = true);
     try {
-      await ref.read(proposalRepositoryProvider).reject(p.id, note: note);
+      final repo = ref.read(proposalRepositoryProvider);
+      if (p.isGeneralProposal) {
+        await repo.rejectGeneral(p.id, note: note);
+      } else {
+        await repo.reject(p.id, note: note);
+      }
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -295,44 +306,91 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                   ),
                 ),
               ],
-              // ───── 제목 + 장소·연도 (EventDetailPage 스타일) ─────
-              _ProposalHeaderRow(proposal: p),
-              // ───── 미리보기 섹션 (4장면 이미지) ─────
-              if (p.sceneImagePaths.any((s) => s.isNotEmpty)) ...[
-                const SizedBox(height: 12),
-                _PreviewSection(
-                  child: _ProposalSceneGrid(paths: p.sceneImagePaths),
+              // ───── 일반 제안 안내 배너 ─────
+              if (p.isGeneralProposal) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer.withValues(
+                      alpha: 0.6,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_outline,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          '앱 전반에 대한 일반 제안입니다. 승인/거절은 status 만 갱신합니다.',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-              const SizedBox(height: 14),
-              // ───── 요약 이야기 ─────
-              _DetailSection(
-                title: '요약 이야기',
-                content: (p.summary ?? '').trim().isEmpty
-                    ? '요약 정보가 없습니다.'
-                    : p.summary!,
-              ),
-              // ───── 관련 본문 + 이동 버튼 ─────
-              if (p.bibleRefs.isNotEmpty) ...[
+              // ───── 제목 + 장소·연도 (EventDetailPage 스타일) ─────
+              // 일반 제안은 장소·연도가 없으므로 제목만 표시.
+              _ProposalHeaderRow(proposal: p),
+              // ───── 일반 제안 본문 + 첨부 이미지 ─────
+              if (p.isGeneralProposal) ...[
                 const SizedBox(height: 12),
                 _DetailSection(
-                  title: '관련 본문',
-                  content: p.bibleRefs
-                      .map(
-                        (r) =>
-                            '• ${r['book'] ?? ''} ${r['from'] ?? ''}${(r['to'] != null && r['to'] != r['from']) ? '-${r['to']}' : ''}',
-                      )
-                      .join('\n'),
-                  action: _bibleMoveButtonFor(p),
+                  title: '내용',
+                  content: (p.summary ?? '').trim().isEmpty
+                      ? '내용이 없습니다.'
+                      : p.summary!,
                 ),
-              ],
-              // ───── 추가 메타 (장소 좌표, 등장 인물 코드) ─────
-              const SizedBox(height: 12),
-              _MetaKvBlock(proposal: p),
-              // ───── 퀴즈 (4지선다) ─────
-              if (p.quizQuestions.isNotEmpty) ...[
+                if (p.imagePaths.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _GeneralImageGrid(paths: p.imagePaths),
+                ],
+              ] else ...[
+                // ───── 미리보기 섹션 (4장면 이미지) ─────
+                if (p.sceneImagePaths.any((s) => s.isNotEmpty)) ...[
+                  const SizedBox(height: 12),
+                  _PreviewSection(
+                    child: _ProposalSceneGrid(paths: p.sceneImagePaths),
+                  ),
+                ],
+                const SizedBox(height: 14),
+                // ───── 요약 이야기 ─────
+                _DetailSection(
+                  title: '요약 이야기',
+                  content: (p.summary ?? '').trim().isEmpty
+                      ? '요약 정보가 없습니다.'
+                      : p.summary!,
+                ),
+                // ───── 관련 본문 + 이동 버튼 ─────
+                if (p.bibleRefs.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _DetailSection(
+                    title: '관련 본문',
+                    content: p.bibleRefs
+                        .map(
+                          (r) =>
+                              '• ${r['book'] ?? ''} ${r['from'] ?? ''}${(r['to'] != null && r['to'] != r['from']) ? '-${r['to']}' : ''}',
+                        )
+                        .join('\n'),
+                    action: _bibleMoveButtonFor(p),
+                  ),
+                ],
+                // ───── 추가 메타 (장소 좌표, 등장 인물 코드) ─────
                 const SizedBox(height: 12),
-                _QuizSection(quizzes: p.quizQuestions),
+                _MetaKvBlock(proposal: p),
+                // ───── 퀴즈 (4지선다) ─────
+                if (p.quizQuestions.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _QuizSection(quizzes: p.quizQuestions),
+                ],
               ],
               // ───── 상태 chip + 거절 사유 ─────
               const SizedBox(height: 12),
@@ -436,7 +494,9 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                       // 삭제 제안은 사유만 담긴 단순 구조라 수정 UX 가 의미 없음.
                       // 본인이 철회하고 싶으면 아래 "삭제" 버튼으로 제안 자체를 지우고
                       // 다시 낸다.
-                      if (isOwnerPending && !p.isDeleteProposal)
+                      if (isOwnerPending &&
+                          !p.isDeleteProposal &&
+                          !p.isGeneralProposal)
                         OutlinedButton.icon(
                           onPressed: _reviewing ? null : () => _edit(p),
                           icon: const Icon(Icons.edit_outlined),
@@ -924,6 +984,63 @@ class _ProposalSceneGrid extends ConsumerWidget {
             }),
           );
         },
+      ),
+    );
+  }
+}
+
+/// 일반 제안의 첨부 이미지 그리드 (최대 5장). 가로로 스크롤되는 카드.
+class _GeneralImageGrid extends ConsumerWidget {
+  const _GeneralImageGrid({required this.paths});
+  final List<String> paths;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repo = ref.read(proposalRepositoryProvider);
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: SizedBox(
+        height: 160,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: paths.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          itemBuilder: (_, idx) {
+            final path = paths[idx];
+            final url = path.isEmpty
+                ? null
+                : repo.publicUrlForStoragePath(path);
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                width: 160,
+                height: 160,
+                child: url == null
+                    ? ColoredBox(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        child: const Center(child: Icon(Icons.image_outlined)),
+                      )
+                    : Image.network(
+                        url,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => ColoredBox(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          child: const Center(
+                            child: Icon(Icons.broken_image_outlined),
+                          ),
+                        ),
+                      ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

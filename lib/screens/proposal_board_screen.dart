@@ -6,6 +6,7 @@ import '../models/event_proposal.dart';
 import '../state/auth_providers.dart';
 import '../state/proposal_providers.dart';
 import '../widgets/proposal/proposal_status_chip.dart';
+import 'general_proposal_submit_screen.dart';
 import 'proposal_detail_screen.dart';
 import 'proposal_submit_screen.dart';
 
@@ -117,6 +118,7 @@ class _ProposalBoardScreenState extends ConsumerState<ProposalBoardScreen>
                 final canCancel = isMine && p.status == 'pending';
                 return Card(
                   child: ListTile(
+                    leading: _ProposalTypeIcon(type: p.proposalType),
                     title: Text(
                       p.title,
                       maxLines: 1,
@@ -140,6 +142,7 @@ class _ProposalBoardScreenState extends ConsumerState<ProposalBoardScreen>
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             ProposalStatusChip(status: p.status),
+                            _ProposalTypeChip(type: p.proposalType),
                             // 같은 위치에 다른 제안이 먼저 승인되어 위치가 모호해진
                             // 상태 → 빨간 "수정 필요" 라벨로 강조 (작성자가 한눈에).
                             if (p.needsPositionRevision)
@@ -213,11 +216,67 @@ class _ProposalBoardScreenState extends ConsumerState<ProposalBoardScreen>
   }
 
   Future<void> _goSubmit(BuildContext context) async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const ProposalSubmitScreen()));
+    final navigator = Navigator.of(context);
+    final picked = await _showProposalTypeSheet(context);
+    if (picked == null || !mounted) return;
+    final route = picked == _ProposalKind.story
+        ? MaterialPageRoute<void>(builder: (_) => const ProposalSubmitScreen())
+        : MaterialPageRoute<void>(
+            builder: (_) => const GeneralProposalSubmitScreen(),
+          );
+    await navigator.push(route);
     // 돌아오면 목록 새로고침
     ref.invalidate(proposalListProvider);
+  }
+
+  /// 새 제안 시작 시 어떤 종류인지 먼저 묻는 시트.
+  Future<_ProposalKind?> _showProposalTypeSheet(BuildContext context) {
+    return showModalBottomSheet<_ProposalKind>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  '어떤 제안을 등록할까요?',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '이야기 제안은 새 성경 이야기 후보를, 일반 제안은 앱 전반에 대한 의견·문의를 등록합니다.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _ProposalKindCard(
+                  icon: Icons.menu_book_outlined,
+                  title: '이야기 제안',
+                  subtitle: '새 성경 이야기를 시대·인물·장면·퀴즈와 함께 등록합니다.',
+                  onTap: () => Navigator.of(ctx).pop(_ProposalKind.story),
+                ),
+                const SizedBox(height: 10),
+                _ProposalKindCard(
+                  icon: Icons.lightbulb_outline,
+                  title: '일반 제안',
+                  subtitle: '앱 사용 중 떠오른 의견을 텍스트와 이미지(최대 5장) 로 자유롭게 남깁니다.',
+                  onTap: () => Navigator.of(ctx).pop(_ProposalKind.general),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   /// 본인 pending 제안 취소 확인 → Storage(장면 + 신규 캐릭터) + DB row 일괄 삭제.
@@ -269,4 +328,125 @@ class _TabDef {
   const _TabDef({required this.label, required this.filter});
   final String label;
   final ProposalListFilter filter;
+}
+
+enum _ProposalKind { story, general }
+
+/// 리스트 카드 좌측 leading 아이콘 — 제안 종류 한눈 구분.
+class _ProposalTypeIcon extends StatelessWidget {
+  const _ProposalTypeIcon({required this.type});
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final (icon, color) = switch (type) {
+      'delete' => (Icons.delete_outline, theme.colorScheme.error),
+      'general' => (Icons.lightbulb_outline, theme.colorScheme.primary),
+      _ => (Icons.menu_book_outlined, theme.colorScheme.primary),
+    };
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: color.withValues(alpha: 0.12),
+      child: Icon(icon, color: color, size: 18),
+    );
+  }
+}
+
+/// 상태 chip 옆에 함께 노출되는 종류 chip.
+class _ProposalTypeChip extends StatelessWidget {
+  const _ProposalTypeChip({required this.type});
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final (label, color) = switch (type) {
+      'delete' => ('삭제 제안', theme.colorScheme.error),
+      'general' => ('일반 제안', theme.colorScheme.primary),
+      _ => ('이야기 제안', theme.colorScheme.tertiary),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Text(
+        label,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: color,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProposalKindCard extends StatelessWidget {
+  const _ProposalKindCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      color: theme.colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: theme.colorScheme.primary.withValues(
+                  alpha: 0.12,
+                ),
+                child: Icon(icon, color: theme.colorScheme.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

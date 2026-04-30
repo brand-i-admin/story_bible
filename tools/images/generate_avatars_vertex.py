@@ -95,7 +95,35 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do not append adult-only guardrail text to prompts.",
     )
+    parser.add_argument(
+        "--no-prune-orphans",
+        action="store_true",
+        help=(
+            "기본 동작은 character_meta.json 에 없는 PNG 를 자동 삭제한다. "
+            "이 플래그를 주면 정리 단계를 스킵한다."
+        ),
+    )
     return parser.parse_args()
+
+
+def prune_orphan_avatars(
+    out_dir: Path,
+    active_codes: set[str],
+) -> list[Path]:
+    """character_meta.json 에 없는 *.png 를 삭제한다.
+
+    user 가 stories 에서 인물을 빼면 character_meta.json 에서도 빠지는데,
+    assets/avatars/ 에 PNG 가 남으면 stale 자산이 된다. 여기서 깔끔하게 정리.
+    """
+    if not out_dir.exists():
+        return []
+    removed: list[Path] = []
+    for path in sorted(out_dir.glob("*.png")):
+        if path.stem not in active_codes:
+            path.unlink()
+            removed.append(path)
+            print(f"[PRUNE] removed orphan avatar: {path}")
+    return removed
 
 
 def load_person_meta(path: Path) -> dict[str, Any]:
@@ -300,13 +328,6 @@ def build_request_body(
 def main() -> int:
     args = parse_args()
 
-    if not args.project:
-        print(
-            "ERROR: project id is required. Set --project or GOOGLE_CLOUD_PROJECT.",
-            file=sys.stderr,
-        )
-        return 2
-
     meta_path = Path(args.character_meta_json)
     if not meta_path.exists():
         print(f"ERROR: character meta json not found: {meta_path}", file=sys.stderr)
@@ -325,6 +346,19 @@ def main() -> int:
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Prune 은 GCP project 없이도 안전하게 동작 → project 검증 전에 실행.
+    if not args.no_prune_orphans:
+        active_codes = {str(c.get("code", "")).strip() for c in characters}
+        active_codes.discard("")
+        prune_orphan_avatars(out_dir, active_codes)
+
+    if not args.project:
+        print(
+            "ERROR: project id is required. Set --project or GOOGLE_CLOUD_PROJECT.",
+            file=sys.stderr,
+        )
+        return 2
 
     endpoint = (
         f"https://{args.location}-aiplatform.googleapis.com/v1/projects/"
@@ -388,7 +422,7 @@ def main() -> int:
             final_negative_prompt,
             defaults,
             person_generation_override=(
-                args.person_generation or per_item_person_generation
+                args.character_generation or per_item_person_generation
             ),
         )
         try:
