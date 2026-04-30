@@ -417,20 +417,48 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         default=Path("supabase/200_stories/200_stories_seed.sql"),
         help="Events seed SQL used as the authority for (era_code, story_index, title).",
     )
+    parser.add_argument(
+        "--events-from-json", type=Path, default=None,
+        help=(
+            "If set, read the authoritative events list from a JSON file "
+            "([{era_code,story_index,title}, ...]) instead of parsing seed SQL. "
+            "Useful for aligning to a live DB snapshot."
+        ),
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(list(sys.argv[1:]) if argv is None else argv)
 
-    if not args.events_seed_sql.exists():
-        print(f"ERROR: events seed SQL not found: {args.events_seed_sql}", file=sys.stderr)
-        return 1
-    events = extract_events_from_seed_sql(
-        args.events_seed_sql.read_text(encoding="utf-8")
-    )
+    if args.events_from_json is not None:
+        if not args.events_from_json.exists():
+            print(
+                f"ERROR: events JSON snapshot not found: {args.events_from_json}",
+                file=sys.stderr,
+            )
+            return 1
+        raw = json.loads(args.events_from_json.read_text(encoding="utf-8"))
+        events = [
+            EventKey(
+                era_code=item["era_code"],
+                title=item["title"],
+                story_index=int(item["story_index"]),
+            )
+            for item in raw
+        ]
+    else:
+        if not args.events_seed_sql.exists():
+            print(
+                f"ERROR: events seed SQL not found: {args.events_seed_sql}",
+                file=sys.stderr,
+            )
+            return 1
+        events = extract_events_from_seed_sql(
+            args.events_seed_sql.read_text(encoding="utf-8")
+        )
     if not events:
-        print("ERROR: no events parsed from events seed SQL", file=sys.stderr)
+        print("ERROR: no events parsed", file=sys.stderr)
         return 1
 
     json_paths = sorted(args.input_dir.glob("*.json"))
