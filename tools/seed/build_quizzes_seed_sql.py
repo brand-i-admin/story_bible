@@ -1,41 +1,85 @@
 """Build SQL seed for quiz_questions from assets/quizzes/*.json.
 
-CLI will be wired in Task 7. This module is import-safe from the test harness.
+Quiz JSONs are matched to events by `story_title`. Events are keyed by
+`(era_code, story_index)` in the current events seed (codes like `evt_*` are
+no longer used). The generated SQL deletes existing rows for each managed
+event and re-inserts the 3 questions, so the script is safely re-runnable.
 """
 
 from __future__ import annotations
 
-# Functions will be added task-by-task (TDD order).
-
-import re
-
-
-_EVT_CODE_PATTERN = re.compile(r"'(evt_[a-z0-9_]+)'")
-
-
-def extract_event_codes_from_seed_sql(sql_text: str) -> list[str]:
-    """Return the sorted unique list of `evt_*` string literals appearing in SQL.
-
-    Used to discover which event codes are seeded in
-    `supabase/200_stories/200_stories_seed.sql` so that quiz JSON filenames
-    can be validated against real DB rows.
-    """
-    codes = set(_EVT_CODE_PATTERN.findall(sql_text))
-    return sorted(codes)
-
-
+import argparse
 import hashlib
+import json
 import random
+import re
+import sys
+from collections import Counter
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Iterable
 
 
+# ---------------------------------------------------------------------------
+# Title aliases — quiz title -> current event title (events seed renames/merges)
+# ---------------------------------------------------------------------------
+TITLE_ALIASES: dict[str, str] = {
+    "십계명: 하나님 나라의 기준": "시내산 도착: 십계명과 하나님 기준",
+    "풀무불: 함께하시는 분": "풀무불: 다니엘과 세 친구",
+    "성벽 재건: 밤의 조사": "성벽 재건: 밤의 조사와 한 손엔 무기",
+}
+
+
+# ---------------------------------------------------------------------------
+# Events seed parsing
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class EventKey:
+    era_code: str
+    title: str
+    story_index: int
+
+
+_EVENT_ROW_PATTERN = re.compile(
+    r"""
+    \(\s*'(?P<era>era_[a-z_]+)',\s*
+    '(?P<title>(?:[^'\\]|\\.)+)',\s*
+    .+?,\s*
+    '(?:exact|approx)',\s*
+    (?P<sidx>\d+),\s*
+    '[^']*',\s*
+    -?[\d.]+,\s*-?[\d.]+,\s*
+    '(?:published|draft)'\s*\)
+    """,
+    re.DOTALL | re.VERBOSE,
+)
+
+
+def extract_events_from_seed_sql(sql_text: str) -> list[EventKey]:
+    """Return events parsed from the events seed SQL (`(era_code, title, story_index)`)."""
+    out: list[EventKey] = []
+    for m in _EVENT_ROW_PATTERN.finditer(sql_text):
+        title = m.group("title").replace("\\'", "'")
+        out.append(
+            EventKey(
+                era_code=m.group("era"),
+                title=title,
+                story_index=int(m.group("sidx")),
+            )
+        )
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Deterministic shuffle
+# ---------------------------------------------------------------------------
 def deterministic_shuffle(
     story_code: str, display_order: int, choices: list[str]
 ) -> tuple[list[str], int]:
-    """Shuffle `choices` deterministically from `(story_code, display_order)`.
+    """Shuffle deterministically from `(story_code, display_order)`.
 
-    The draft convention is `answer_index == 0` (correct answer is first).
-    After shuffling, the correct answer lands wherever `choices[0]` moved to.
-    Returns `(shuffled_choices, new_answer_index)`.
+    Draft convention: `answer_index == 0`. Returns `(shuffled, new_answer_index)`.
     """
     seed_key = f"{story_code}:{display_order}"
     seed_int = int.from_bytes(
@@ -49,11 +93,9 @@ def deterministic_shuffle(
     return shuffled, new_answer_index
 
 
-import json
-from dataclasses import dataclass
-from pathlib import Path
-
-
+# ---------------------------------------------------------------------------
+# QuizFile schema
+# ---------------------------------------------------------------------------
 QUESTION_TYPES_IN_ORDER: tuple[str, str, str] = ("fact", "attitude", "bible_context")
 
 
@@ -81,11 +123,6 @@ class QuizFile:
 
 
 def load_quiz_file(path: Path) -> QuizFile:
-    """Load one quiz JSON file, validate its schema, and return a QuizFile.
-
-    Raises QuizValidationError with a human-readable reason on any violation.
-    The file stem (filename without .json) must equal `story_code`.
-    """
     raw = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise QuizValidationError(f"{path.name}: root must be an object")
@@ -166,58 +203,83 @@ def load_quiz_file(path: Path) -> QuizFile:
     )
 
 
-from typing import Iterable
-
-
-_STORY_INDEX_PATTERN = re.compile(r"_n(\d+)$")
-
-
-def _story_index_from_code(story_code: str) -> int:
-    """Extract trailing `_n###` integer from a code like 'evt_n001' or 'evt_nt_paul_j1_n185'.
-
-    The DB events table identifies rows by `story_index` (integer), not by a text
-    code. Every event code in this project ends with `_n<int>`, where the int
-    matches `events.story_index`.
-    """
-    m = _STORY_INDEX_PATTERN.search(story_code)
-    if not m:
-        raise ValueError(
-            f"story_code {story_code!r} does not end with _n<int>; cannot derive story_index"
-        )
-    return int(m.group(1))
+# ---------------------------------------------------------------------------
+# Title-based event resolution
+# ---------------------------------------------------------------------------
+def resolve_event_for_quiz(
+    quiz_title: str, title_to_event: dict[str, EventKey]
+) -> EventKey | None:
+    """Try the quiz title verbatim, then via TITLE_ALIASES."""
+    direct = title_to_event.get(quiz_title)
+    if direct is not None:
+        return direct
+    aliased = TITLE_ALIASES.get(quiz_title)
+    if aliased is not None:
+        return title_to_event.get(aliased)
+    return None
 
 
 def _dollar_quote(text: str) -> str:
-    """Wrap text in a unique dollar-quote tag to avoid quoting headaches.
-
-    If the text accidentally contains `$q$`, bump the tag to `$q2$`, etc.
-    """
+    """Wrap text in a unique dollar-quote tag."""
     tag = "q"
     while f"${tag}$" in text:
         tag = tag + "q"
     return f"${tag}${text}${tag}$"
 
 
-def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
-    """Generate the complete seed SQL (begin + N inserts + commit)."""
+# ---------------------------------------------------------------------------
+# SQL generation
+# ---------------------------------------------------------------------------
+def build_sql_statements(
+    quiz_files: Iterable[QuizFile],
+    title_to_event: dict[str, EventKey],
+) -> str:
+    """Generate idempotent seed SQL.
+
+    For each managed quiz:
+      - Resolve event by `(era_code, story_index)` via title (with aliases).
+      - Delete existing quiz_questions rows for that event.
+      - Insert the 3 shuffled questions.
+
+    Quizzes whose title doesn't resolve are skipped (with a SQL comment) and
+    surfaced in the validation report.
+    """
     lines: list[str] = [
-        "-- auto-generated by tools/build_quizzes_seed_sql.py",
+        "-- auto-generated by tools/seed/build_quizzes_seed_sql.py",
         "-- source: assets/quizzes/*.json",
-        "-- idempotent via on conflict (event_id, display_order)",
+        "-- idempotent: delete-then-insert per (era_code, story_index)",
         "",
         "begin;",
         "",
     ]
 
     for quiz in quiz_files:
+        ek = resolve_event_for_quiz(quiz.story_title, title_to_event)
+        if ek is None:
+            lines.append(
+                f"-- SKIPPED {quiz.story_code}: title {quiz.story_title!r} "
+                f"does not match any event"
+            )
+            lines.append("")
+            continue
+
+        # Idempotent purge.
+        lines.append(
+            "delete from quiz_questions q using events e join eras er on er.id = e.era_id"
+        )
+        lines.append(
+            f"  where q.event_id = e.id and er.code = '{ek.era_code}' "
+            f"and e.story_index = {ek.story_index};"
+        )
+
         for q in quiz.questions:
             shuffled, new_answer_index = deterministic_shuffle(
                 quiz.story_code, q.display_order, q.choices
             )
             lines.append(
-                f"insert into quiz_questions ("
-                f"event_id, question, choice_a, choice_b, choice_c, choice_d, "
-                f"answer_index, explanation, display_order)"
+                "insert into quiz_questions ("
+                "event_id, question, choice_a, choice_b, choice_c, choice_d, "
+                "answer_index, explanation, display_order)"
             )
             lines.append(
                 f"select e.id, {_dollar_quote(q.question)}, "
@@ -229,16 +291,10 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
                 f"{_dollar_quote(q.explanation)}, "
                 f"{q.display_order}"
             )
-            story_index = _story_index_from_code(quiz.story_code)
-            lines.append(f"from events e where e.story_index = {story_index}")
-            lines.append("on conflict (event_id, display_order) do update set")
-            lines.append("    question = excluded.question,")
-            lines.append("    choice_a = excluded.choice_a,")
-            lines.append("    choice_b = excluded.choice_b,")
-            lines.append("    choice_c = excluded.choice_c,")
-            lines.append("    choice_d = excluded.choice_d,")
-            lines.append("    answer_index = excluded.answer_index,")
-            lines.append("    explanation = excluded.explanation;")
+            lines.append(
+                f"from events e join eras er on er.id = e.era_id "
+                f"where er.code = '{ek.era_code}' and e.story_index = {ek.story_index};"
+            )
             lines.append("")
 
     lines.append("commit;")
@@ -246,28 +302,32 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
     return "\n".join(lines)
 
 
-import argparse
-import sys
-from collections import Counter
-from datetime import datetime, timezone
-
-
+# ---------------------------------------------------------------------------
+# Reporting
+# ---------------------------------------------------------------------------
 _LENGTH_LIMITS = {"question": 40, "choice": 20, "explanation": 60}
 
 
 def build_report(
-    *, quiz_files: list[QuizFile], expected_codes: list[str]
+    *, quiz_files: list[QuizFile], events: list[EventKey]
 ) -> dict:
-    file_codes = {q.story_code for q in quiz_files}
-    expected_set = set(expected_codes)
-
-    missing = sorted(expected_set - file_codes)
-    unknown = sorted(file_codes - expected_set)
+    title_to_event = {e.title: e for e in events}
+    event_titles = set(title_to_event.keys())
+    quiz_resolved_titles: set[str] = set()
+    unresolved_quizzes: list[dict] = []
 
     answer_dist: Counter[int] = Counter()
     length_warnings: list[dict] = []
 
     for quiz in quiz_files:
+        ek = resolve_event_for_quiz(quiz.story_title, title_to_event)
+        if ek is None:
+            unresolved_quizzes.append(
+                {"story_code": quiz.story_code, "story_title": quiz.story_title}
+            )
+        else:
+            quiz_resolved_titles.add(ek.title)
+
         for q in quiz.questions:
             _, shuffled_answer_index = deterministic_shuffle(
                 quiz.story_code, q.display_order, q.choices
@@ -303,23 +363,28 @@ def build_report(
                     }
                 )
 
+    events_without_quiz = sorted(event_titles - quiz_resolved_titles)
     total_questions = sum(len(q.questions) for q in quiz_files)
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "total_files": len(quiz_files),
+        "total_quiz_files": len(quiz_files),
+        "total_events": len(events),
+        "resolved_quiz_count": len(quiz_resolved_titles),
         "total_questions": total_questions,
-        "expected_event_codes": len(expected_codes),
         "answer_index_distribution": {
             "0": answer_dist.get(0, 0),
             "1": answer_dist.get(1, 0),
             "2": answer_dist.get(2, 0),
         },
-        "missing_story_codes": missing,
-        "unknown_story_codes": unknown,
+        "unresolved_quizzes": unresolved_quizzes,
+        "events_without_quiz": events_without_quiz,
         "length_warnings": length_warnings,
     }
 
 
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build quiz_questions seed SQL from assets/quizzes/*.json."
@@ -341,15 +406,11 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--events-seed-sql", type=Path,
         default=Path("supabase/200_stories/200_stories_seed.sql"),
-        help="Existing events seed SQL used as the authority for expected event codes.",
+        help="Events seed SQL used as the authority for (era_code, story_index, title).",
     )
     parser.add_argument(
-        "--expected-count", type=int, default=None,
-        help=(
-            "Override the expected JSON file count. Omit for full production run "
-            "(must equal #codes discovered in --events-seed-sql). "
-            "Use during calibration: --expected-count 10."
-        ),
+        "--max-unresolved", type=int, default=10,
+        help="Fail if more than this many quizzes can't be matched to an event.",
     )
     return parser.parse_args(argv)
 
@@ -360,28 +421,16 @@ def main(argv: list[str] | None = None) -> int:
     if not args.events_seed_sql.exists():
         print(f"ERROR: events seed SQL not found: {args.events_seed_sql}", file=sys.stderr)
         return 1
-    expected_codes = extract_event_codes_from_seed_sql(
+    events = extract_events_from_seed_sql(
         args.events_seed_sql.read_text(encoding="utf-8")
     )
+    if not events:
+        print("ERROR: no events parsed from events seed SQL", file=sys.stderr)
+        return 1
+
+    title_to_event = {e.title: e for e in events}
 
     json_paths = sorted(args.input_dir.glob("*.json"))
-    if args.expected_count is not None:
-        if len(json_paths) != args.expected_count:
-            print(
-                f"ERROR: expected {args.expected_count} JSON files, found {len(json_paths)}",
-                file=sys.stderr,
-            )
-            return 1
-    else:
-        if len(json_paths) != len(expected_codes):
-            print(
-                f"ERROR: found {len(json_paths)} JSON files; "
-                f"events seed has {len(expected_codes)} codes. Use "
-                f"--expected-count to override during calibration.",
-                file=sys.stderr,
-            )
-            return 1
-
     quiz_files: list[QuizFile] = []
     for p in json_paths:
         try:
@@ -397,13 +446,12 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         seen_codes.add(q.story_code)
 
-    report = build_report(quiz_files=quiz_files, expected_codes=expected_codes)
+    report = build_report(quiz_files=quiz_files, events=events)
 
-    if args.expected_count is None and (
-        report["missing_story_codes"] or report["unknown_story_codes"]
-    ):
+    if len(report["unresolved_quizzes"]) > args.max_unresolved:
         print(
-            "ERROR: code set mismatch. See report for missing/unknown lists.",
+            f"ERROR: {len(report['unresolved_quizzes'])} unresolved quizzes "
+            f"(max {args.max_unresolved}). See report for details.",
             file=sys.stderr,
         )
         args.report.parent.mkdir(parents=True, exist_ok=True)
@@ -430,7 +478,14 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    sql = build_sql_statements(quiz_files)
+    if report["unresolved_quizzes"]:
+        print(
+            f"WARNING: {len(report['unresolved_quizzes'])} unresolved quizzes "
+            f"will be skipped (see report).",
+            file=sys.stderr,
+        )
+
+    sql = build_sql_statements(quiz_files, title_to_event)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(sql, encoding="utf-8")
@@ -441,7 +496,8 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     print(
-        f"OK: {report['total_files']} files, "
+        f"OK: {report['total_quiz_files']} files "
+        f"({report['resolved_quiz_count']} resolved), "
         f"{report['total_questions']} questions -> {args.output}",
         file=sys.stderr,
     )

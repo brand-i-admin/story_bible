@@ -1,15 +1,44 @@
 {
-  "generated_at": "2026-04-25T04:15:02+00:00",
-  "total_files": 213,
+  "generated_at": "2026-04-30T05:39:02+00:00",
+  "total_quiz_files": 213,
+  "total_events": 209,
+  "resolved_quiz_count": 207,
   "total_questions": 639,
-  "expected_event_codes": 213,
   "answer_index_distribution": {
     "0": 223,
     "1": 210,
     "2": 206
   },
-  "missing_story_codes": [],
-  "unknown_story_codes": [],
+  "unresolved_quizzes": [
+    {
+      "story_code": "evt_n065",
+      "story_title": "피의 언약: 백성의 대답"
+    },
+    {
+      "story_code": "evt_n073",
+      "story_title": "발람: 축복으로 바뀐 저주"
+    },
+    {
+      "story_code": "evt_n083",
+      "story_title": "드보라와 바락: 노래로 끝난 전쟁"
+    },
+    {
+      "story_code": "evt_n114",
+      "story_title": "스바 여왕: 지혜를 시험하다"
+    },
+    {
+      "story_code": "evt_n115",
+      "story_title": "왕국 분열: 북과 남"
+    },
+    {
+      "story_code": "evt_n148",
+      "story_title": "방어하며 세우다: 한 손엔 무기"
+    }
+  ],
+  "events_without_quiz": [
+    "솔로몬: 이방의 경탄부터 타락까지",
+    "왕국의 분열과 역사"
+  ],
   "length_warnings": [
     {
       "story_code": "evt_n006",
