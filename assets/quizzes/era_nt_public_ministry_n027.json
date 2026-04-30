@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 27,
+  "story_title": "부활과 승천: 새 시작",
+  "source_version": "2026-04-30",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님은 부활하신 후 며칠 동안 제자들에게 보이셨습니까?",
+      "choices": [
+        "사십 일",
+        "삼 일",
+        "팔십 일"
+      ],
+      "answer_index": 0,
+      "explanation": "행 1:3 — '사십 일 동안 그들에게 보이시며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "승천 직전 예수님이 제자들에게 주신 약속은 무엇입니까?",
+      "choices": [
+        "성령을 보내주실 것",
+        "곧바로 다시 오심",
+        "땅의 기업을 받음"
+      ],
+      "answer_index": 0,
+      "explanation": "행 1:8 — '성령이 너희에게 임하시면 권능을 받고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "예수님의 승천 기사가 가장 자세히 기록된 책은 어디입니까?",
+      "choices": [
+        "사도행전",
+        "요한복음",
+        "히브리서"
+      ],
+      "answer_index": 0,
+      "explanation": "행 1:9-11에 승천 기사가 자세히 기록됨"
+    }
+  ]
+}

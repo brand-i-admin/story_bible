@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 20,
+  "story_title": "히스기야와 산헤립: 두려움의 편지",
+  "source_version": "2026-04-30",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "히스기야는 산헤립의 편지를 받고 어디서 무엇을 했습니까?",
+      "choices": [
+        "성전에서 펴 놓고 기도하였다",
+        "왕궁에서 신하들을 모았다",
+        "성문에서 군사를 점호하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 19:14 — '여호와 앞에 그 글을 펴 놓고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "히스기야가 위협 앞에서 끝까지 의지한 분은 누구입니까?",
+      "choices": [
+        "이스라엘의 하나님 여호와",
+        "선지자 이사야",
+        "애굽의 바로"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 19:15 — '이스라엘의 하나님 여호와여'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "히스기야와 산헤립 사건이 기록된 성경 책은 무엇입니까?",
+      "choices": [
+        "열왕기하",
+        "사사기",
+        "에스라"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 18-19장과 사 36-37장에 기록됨"
+    }
+  ]
+}

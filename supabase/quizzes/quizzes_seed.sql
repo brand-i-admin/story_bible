@@ -817,6 +817,34 @@ select e.id, $q$솔로몬의 성전 봉헌 기사가 기록된 성경 책은 어
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 19;
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$엘리사가 나아만에게 요단강에 몇 번 몸을 씻으라 했습니까?$q$, $q$일곱 번$q$, $q$열 번$q$, $q$세 번$q$, null, 0, $q$왕하 5:10 — '요단강에 몸을 일곱 번 씻으라'$q$, 0
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$나아만이 엘리사의 명령을 처음 들었을 때 보인 반응은?$q$, $q$분노하여 돌아가려 했다$q$, $q$기쁘게 감사하였다$q$, $q$즉시 순종하였다$q$, null, 0, $q$왕하 5:11 — '나아만이 노하여 물러가며'$q$, 1
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$나아만의 치유 이야기가 기록된 성경 책은 어디입니까?$q$, $q$열왕기하$q$, $q$이사야$q$, $q$역대하$q$, null, 0, $q$왕하 5장에 나아만의 치유 기사가 기록됨$q$, 2
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
+
+delete from quiz_questions q using events e join eras er on er.id = e.era_id
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 20;
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$히스기야는 산헤립의 편지를 받고 어디서 무엇을 했습니까?$q$, $q$성문에서 군사를 점호하였다$q$, $q$성전에서 펴 놓고 기도하였다$q$, $q$왕궁에서 신하들을 모았다$q$, null, 1, $q$왕하 19:14 — '여호와 앞에 그 글을 펴 놓고'$q$, 0
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$히스기야가 위협 앞에서 끝까지 의지한 분은 누구입니까?$q$, $q$이스라엘의 하나님 여호와$q$, $q$애굽의 바로$q$, $q$선지자 이사야$q$, null, 0, $q$왕하 19:15 — '이스라엘의 하나님 여호와여'$q$, 1
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$히스기야와 산헤립 사건이 기록된 성경 책은 무엇입니까?$q$, $q$에스라$q$, $q$열왕기하$q$, $q$사사기$q$, null, 1, $q$왕하 18-19장과 사 36-37장에 기록됨$q$, 2
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
+
+delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 21;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$갈멜 산 대결에서 백성이 마지막에 엎드려 외친 말은 무엇입니까?$q$, $q$바알이 참 신이로다$q$, $q$엘리야가 이겼도다$q$, $q$여호와 그는 하나님이시로다$q$, null, 2, $q$왕상 18:39 — '여호와 그는 하나님이시로다 여호와 그는 하나님이시로다 하니'$q$, 0
@@ -1767,6 +1795,34 @@ from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_mi
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님의 승천 이후를 기록한 성경 책은 무엇입니까?$q$, $q$사도행전$q$, $q$로마서$q$, $q$요한계시록$q$, null, 0, $q$행 1:1-11에 승천 이후 제자들의 행적이 이어짐$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
+
+delete from quiz_questions q using events e join eras er on er.id = e.era_id
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 26;
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$예수님이 십자가에서 마지막에 외치신 말씀은 무엇입니까?$q$, $q$다 이루었다$q$, $q$엘리 엘리$q$, $q$내가 목마르다$q$, null, 0, $q$요 19:30 — '다 이루었다 하시고 영혼이 떠나가시니라'$q$, 0
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$예수님이 자신을 못 박는 자들을 위해 보이신 태도는?$q$, $q$용서를 구하셨다$q$, $q$저주를 선언하셨다$q$, $q$침묵으로 외면하셨다$q$, null, 0, $q$눅 23:34 — '아버지 저들을 사하여 주옵소서'$q$, 1
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$예수님의 십자가 사건은 어디에 기록되어 있습니까?$q$, $q$마태복음에만$q$, $q$요한복음에만$q$, $q$네 복음서 모두$q$, null, 2, $q$마 27, 막 15, 눅 23, 요 19 모두에 기록됨$q$, 2
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
+
+delete from quiz_questions q using events e join eras er on er.id = e.era_id
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 27;
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$예수님은 부활하신 후 며칠 동안 제자들에게 보이셨습니까?$q$, $q$사십 일$q$, $q$삼 일$q$, $q$팔십 일$q$, null, 0, $q$행 1:3 — '사십 일 동안 그들에게 보이시며'$q$, 0
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$승천 직전 예수님이 제자들에게 주신 약속은 무엇입니까?$q$, $q$땅의 기업을 받음$q$, $q$곧바로 다시 오심$q$, $q$성령을 보내주실 것$q$, null, 2, $q$행 1:8 — '성령이 너희에게 임하시면 권능을 받고'$q$, 1
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
+
+insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
+select e.id, $q$예수님의 승천 기사가 가장 자세히 기록된 책은 어디입니까?$q$, $q$사도행전$q$, $q$요한복음$q$, $q$히브리서$q$, null, 0, $q$행 1:9-11에 승천 기사가 자세히 기록됨$q$, 2
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 1;

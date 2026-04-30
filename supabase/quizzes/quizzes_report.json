@@ -1,37 +1,16 @@
 {
-  "generated_at": "2026-04-30T06:23:24+00:00",
-  "total_quiz_files": 164,
+  "generated_at": "2026-04-30T06:25:35+00:00",
+  "total_quiz_files": 168,
   "total_events": 168,
-  "total_questions": 492,
+  "total_questions": 504,
   "answer_index_distribution": {
-    "0": 172,
-    "1": 146,
-    "2": 174
+    "0": 180,
+    "1": 148,
+    "2": 176
   },
   "orphan_quizzes": [],
   "title_mismatches": [],
-  "events_without_quiz": [
-    {
-      "era_code": "era_monarchy",
-      "story_index": 19,
-      "title": "나아만: 요단의 일곱 번"
-    },
-    {
-      "era_code": "era_monarchy",
-      "story_index": 20,
-      "title": "히스기야와 산헤립: 두려움의 편지"
-    },
-    {
-      "era_code": "era_nt_public_ministry",
-      "story_index": 26,
-      "title": "십자가: 끝까지 사랑"
-    },
-    {
-      "era_code": "era_nt_public_ministry",
-      "story_index": 27,
-      "title": "부활과 승천: 새 시작"
-    }
-  ],
+  "events_without_quiz": [],
   "length_warnings": [
     {
       "filename": "era_exile_return_n001.json",
