@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_apostolic",
+  "story_index": 10,
+  "story_title": "안디옥 교회: 선교의 출발",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "안디옥 교회가 파송한 두 사람은 누구입니까?",
+      "choices": [
+        "바울과 바나바",
+        "베드로와 요한",
+        "빌립과 스데반"
+      ],
+      "answer_index": 0,
+      "explanation": "행 13:2 — '바나바와 사울을 따로 세우라 하시니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "안디옥 교회는 두 사람을 파송하기 전에 무엇을 했습니까?",
+      "choices": [
+        "금식하고 기도한 후 안수했다",
+        "예루살렘 교회에 허락을 구했다",
+        "제비를 뽑아 결정했다"
+      ],
+      "answer_index": 0,
+      "explanation": "행 13:3 — '금식하며 기도하고 두 사람에게 안수하여 보내니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "안디옥 교회 파송 기사가 기록된 성경 책은 무엇입니까?",
+      "choices": [
+        "사도행전",
+        "로마서",
+        "갈라디아서"
+      ],
+      "answer_index": 0,
+      "explanation": "행 13:1-3에 안디옥 교회의 선교 파송이 기록됨"
+    }
+  ]
+}

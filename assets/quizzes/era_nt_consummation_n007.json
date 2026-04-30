@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_consummation",
+  "story_index": 7,
+  "story_title": "최후 심판과 새 하늘 새 땅",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "새 예루살렘의 성곽 기초석에는 누구의 이름이 있습니까?",
+      "choices": [
+        "어린양의 십이 사도 이름",
+        "열두 지파의 이름",
+        "이십사 장로의 이름"
+      ],
+      "answer_index": 0,
+      "explanation": "계 21:14 — '그 위에 어린 양의 십이 사도의 열두 이름이 있더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "새 예루살렘에서 하나님은 자기 백성에게 무엇을 하신다고 하셨습니까?",
+      "choices": [
+        "그들의 눈에서 모든 눈물을 씻어 주신다",
+        "새 율법을 주어 다스리신다",
+        "모두를 성전 안에서 살게 하신다"
+      ],
+      "answer_index": 0,
+      "explanation": "계 21:4 — '모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "최후 심판과 새 하늘 새 땅 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "요한계시록",
+        "이사야서",
+        "에스겔서"
+      ],
+      "answer_index": 0,
+      "explanation": "계 20:11-22:5에 최후 심판과 새 하늘 새 땅 기사가 기록됨"
+    }
+  ]
+}

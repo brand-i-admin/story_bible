@@ -1,0 +1,1042 @@
+{
+  "generated_at": "2026-04-30T06:34:31+00:00",
+  "total_quiz_files": 168,
+  "total_events": 168,
+  "total_questions": 504,
+  "answer_index_distribution": {
+    "0": 180,
+    "1": 148,
+    "2": 176
+  },
+  "orphan_quizzes": [],
+  "title_mismatches": [],
+  "events_without_quiz": [],
+  "length_warnings": [
+    {
+      "filename": "era_exile_return_n002.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_exile_return_n002.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_exile_return_n003.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_exile_return_n004.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_exile_return_n004.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_exile_return_n005.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 30
+    },
+    {
+      "filename": "era_exile_return_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "filename": "era_exile_return_n007.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 29
+    },
+    {
+      "filename": "era_exile_return_n007.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_exile_return_n007.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 23
+    },
+    {
+      "filename": "era_exile_return_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 29
+    },
+    {
+      "filename": "era_exile_return_n008.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_exile_return_n008.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_exile_return_n010.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "filename": "era_exile_return_n010.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_exile_return_n010.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 24
+    },
+    {
+      "filename": "era_exile_return_n011.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 24
+    },
+    {
+      "filename": "era_exile_return_n013.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_exodus_n001.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 23
+    },
+    {
+      "filename": "era_exodus_n002.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_exodus_n003.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "filename": "era_exodus_n003.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "filename": "era_exodus_n004.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_exodus_n004.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_exodus_n004.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "filename": "era_exodus_n004.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_exodus_n005.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 46
+    },
+    {
+      "filename": "era_exodus_n006.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_exodus_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_exodus_n006.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "filename": "era_exodus_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_exodus_n008.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_exodus_n008.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_exodus_n015.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_judges_n004.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "filename": "era_judges_n009.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_judges_n009.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_judges_n011.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_judges_n011.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_monarchy_n001.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_monarchy_n003.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_monarchy_n003.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "filename": "era_monarchy_n003.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_monarchy_n005.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 64
+    },
+    {
+      "filename": "era_monarchy_n005.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_monarchy_n005.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_monarchy_n006.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "filename": "era_monarchy_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "filename": "era_monarchy_n009.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_monarchy_n010.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_monarchy_n010.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_monarchy_n012.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_monarchy_n012.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 74
+    },
+    {
+      "filename": "era_monarchy_n013.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_monarchy_n013.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_monarchy_n018.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_monarchy_n020.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_monarchy_n020.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 22
+    },
+    {
+      "filename": "era_monarchy_n020.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_monarchy_n020.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_monarchy_n022.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_monarchy_n023.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_nt_apostolic_n002.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_nt_apostolic_n004.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_nt_apostolic_n004.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n009.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_apostolic_n012.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_nt_apostolic_n012.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n013.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_apostolic_n013.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 27
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n015.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_nt_apostolic_n015.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 64
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 62
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n018.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 73
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 64
+    },
+    {
+      "filename": "era_nt_apostolic_n023.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_apostolic_n024.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n027.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_apostolic_n027.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n029.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_apostolic_n029.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 28
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_consummation_n001.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_consummation_n002.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_consummation_n003.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_consummation_n004.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_consummation_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_post_apostolic_n001.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 30
+    },
+    {
+      "filename": "era_nt_post_apostolic_n003.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_nt_public_ministry_n002.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_nt_public_ministry_n003.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 2,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n008.json",
+      "display_order": 2,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_nt_public_ministry_n014.json",
+      "display_order": 2,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n017.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n024.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "filename": "era_patriarch_n003.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "filename": "era_patriarch_n005.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_patriarch_n007.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "filename": "era_patriarch_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_patriarch_n009.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 45
+    },
+    {
+      "filename": "era_patriarch_n010.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_patriarch_n011.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 45
+    },
+    {
+      "filename": "era_patriarch_n011.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_patriarch_n011.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 43
+    },
+    {
+      "filename": "era_patriarch_n012.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_patriarch_n015.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_patriarch_n015.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 22
+    },
+    {
+      "filename": "era_patriarch_n015.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_patriarch_n016.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 42
+    },
+    {
+      "filename": "era_patriarch_n016.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_patriarch_n016.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_patriarch_n016.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "filename": "era_patriarch_n017.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_patriarch_n017.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_patriarch_n017.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 43
+    },
+    {
+      "filename": "era_patriarch_n018.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 48
+    },
+    {
+      "filename": "era_patriarch_n018.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_patriarch_n018.json",
+      "display_order": 2,
+      "field": "question",
+      "length": 41
+    },
+    {
+      "filename": "era_patriarch_n019.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 21
+    },
+    {
+      "filename": "era_patriarch_n020.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 24
+    },
+    {
+      "filename": "era_patriarch_n020.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_patriarch_n021.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 22
+    },
+    {
+      "filename": "era_patriarch_n023.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "filename": "era_patriarch_n028.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 73
+    },
+    {
+      "filename": "era_patriarch_n028.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 23
+    },
+    {
+      "filename": "era_patriarch_n029.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 26
+    },
+    {
+      "filename": "era_patriarch_n029.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 73
+    },
+    {
+      "filename": "era_patriarch_n030.json",
+      "display_order": 0,
+      "field": "question",
+      "length": 42
+    }
+  ]
+}

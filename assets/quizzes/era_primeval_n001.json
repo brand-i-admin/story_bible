@@ -1,0 +1,44 @@
+{
+  "era_code": "era_primeval",
+  "story_index": 1,
+  "story_title": "창조: 7일과 안식",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "하나님이 빛을 만드신 것은 몇째 날입니까?",
+      "choices": [
+        "첫째 날",
+        "넷째 날",
+        "여섯째 날"
+      ],
+      "answer_index": 0,
+      "explanation": "창 1:3-5 — '빛이 있으라 하시매 ... 첫째 날이니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "일곱째 날에 하나님은 무엇을 하셨습니까?",
+      "choices": [
+        "안식하셨다",
+        "계속 창조하셨다",
+        "사람을 심판하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 2:2 — '일곱째 날에 ... 안식하셨음이더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "창조 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "창세기",
+        "출애굽기",
+        "시편"
+      ],
+      "answer_index": 0,
+      "explanation": "창 1:1-2:3에 창조 기사가 기록됨"
+    }
+  ]
+}

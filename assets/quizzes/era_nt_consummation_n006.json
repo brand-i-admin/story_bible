@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_consummation",
+  "story_index": 6,
+  "story_title": "바벨론의 멸망: 무너지는 화려함",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "큰 음녀 바벨론이 앉아 있던 곳은 어디라고 하였습니까?",
+      "choices": [
+        "많은 물 위",
+        "황금 보좌 위",
+        "불바다 한가운데"
+      ],
+      "answer_index": 0,
+      "explanation": "계 17:1 — '많은 물 위에 앉은 큰 음녀의 받을 심판을 네게 보이리라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바벨론 멸망 앞에서 하늘 음성은 하나님의 백성에게 무엇을 촉구하였습니까?",
+      "choices": [
+        "바벨론에서 나오라고 하였다",
+        "바벨론을 위해 기도하라고 하였다",
+        "인내하며 기다리라고 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "계 18:4 — '내 백성아 거기서 나와 그의 죄에 참여하지 말고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "바벨론의 멸망 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "요한계시록",
+        "예레미야서",
+        "이사야서"
+      ],
+      "answer_index": 0,
+      "explanation": "계 17:1-18:24에 바벨론의 멸망 기사가 기록됨"
+    }
+  ]
+}

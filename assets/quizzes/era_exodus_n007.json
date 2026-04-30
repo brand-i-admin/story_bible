@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 7,
+  "story_title": "유월절: 피로 표시된 문",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "이스라엘은 유월절 어린 양의 피를 어디에 발랐습니까?",
+      "choices": [
+        "문 인방과 좌우 설주",
+        "지붕 위",
+        "제단 뿔"
+      ],
+      "answer_index": 0,
+      "explanation": "출 12:7 — '그 피를 양을 먹을 집 좌우 문설주와 인방에 바르고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "이스라엘은 유월절 음식을 어떤 자세로 먹으라 명령받았습니까?",
+      "choices": [
+        "허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라",
+        "앉아서 천천히 먹으라",
+        "서서 조용히 먹으라"
+      ],
+      "answer_index": 0,
+      "explanation": "출 12:11 — '허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "유월절 제정 기사는 출애굽기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "12장",
+        "10장",
+        "13장"
+      ],
+      "answer_index": 0,
+      "explanation": "출 12:1-14에 유월절 어린 양과 피를 문설주에 바르는 규례가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 9,
+  "story_title": "홍해: 길이 열리다",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "홍해를 갈라지게 한 것은 무엇이었습니까?",
+      "choices": [
+        "큰 동풍",
+        "큰 서풍",
+        "하나님의 번개"
+      ],
+      "answer_index": 0,
+      "explanation": "출 14:21 — '여호와께서 큰 동풍으로 밤새도록 바닷물을 물러가게 하시니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "홍해를 건넌 후 이스라엘 백성은 어떻게 하였습니까?",
+      "choices": [
+        "여호와를 경외하며 모세를 믿었다",
+        "기쁨으로 노래만 불렀다",
+        "속히 광야로 달아났다"
+      ],
+      "answer_index": 0,
+      "explanation": "출 14:31 — '백성이 여호와를 경외하며 여호와와 그 종 모세를 믿었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "홍해 도하 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "출애굽기",
+        "민수기",
+        "여호수아"
+      ],
+      "answer_index": 0,
+      "explanation": "출 14:10-31에 홍해 도하 사건이 기록됨"
+    }
+  ]
+}

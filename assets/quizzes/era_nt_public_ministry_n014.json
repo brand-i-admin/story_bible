@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 14,
+  "story_title": "오병이어",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "오병이어 기적에서 먹은 남자의 수는 몇 명이었습니까?",
+      "choices": [
+        "오천 명",
+        "삼천 명",
+        "만 명"
+      ],
+      "answer_index": 0,
+      "explanation": "막 6:44 — '떡을 먹은 남자가 오천 명이었더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "예수님은 굶주린 무리를 보시고 어떻게 하셨습니까?",
+      "choices": [
+        "불쌍히 여기사 여러 가지로 가르치셨다",
+        "제자들에게 곧 음식을 사 오라 하셨다",
+        "무리에게 집으로 돌아가라 하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "막 6:34 — '그 목자 없는 양 같음을 인하여 불쌍히 여기사 이에 여러 가지로 가르치시더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "오병이어 기적이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마가복음, 마태복음, 누가복음, 요한복음",
+        "마가복음만",
+        "마태복음과 요한복음만"
+      ],
+      "answer_index": 0,
+      "explanation": "막 6:34-44, 마 14:13-21, 눅 9:10-17, 요 6:1-13에 모두 기록됨"
+    }
+  ]
+}

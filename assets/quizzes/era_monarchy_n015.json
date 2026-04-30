@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 15,
+  "story_title": "솔로몬: 이방의 경탄부터 타락까지",
+  "source_version": "2026-04-30",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "솔로몬의 지혜를 시험하러 찾아온 왕은 누구입니까?",
+      "choices": [
+        "스바 여왕",
+        "두로 왕 히람",
+        "애굽의 바로"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 10:1 — '스바 여왕이 ... 어려운 문제로 시험코자 하여 예루살렘에 이르니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "솔로몬의 마음이 여호와에게서 떠나게 된 원인은 무엇입니까?",
+      "choices": [
+        "이방 아내들이 그의 마음을 돌이켰다",
+        "전쟁의 패배에 낙심하였다",
+        "선지자들이 그를 떠나갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "솔로몬의 영광과 타락 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "열왕기상",
+        "사무엘하",
+        "이사야"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 10-11장에 솔로몬의 영광과 말년의 타락이 기록됨"
+    }
+  ]
+}

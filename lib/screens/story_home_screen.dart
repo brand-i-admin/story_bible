@@ -774,94 +774,163 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selectedAnswers = List<int?>.filled(questions.length, null);
     int currentIndex = 0;
     int score = 0;
-    bool didPass = false;
 
     await showDialog<void>(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final question = questions[currentIndex];
             final isLast = currentIndex == questions.length - 1;
             final canMoveNext = selectedAnswers[currentIndex] != null;
+            final progress = (currentIndex + 1) / questions.length;
 
             return Dialog(
-              backgroundColor: const Color(0xFFF6EAD8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 24,
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: 760,
-                  maxHeight: MediaQuery.of(context).size.height * 0.78,
+                  maxWidth: 640,
+                  maxHeight: MediaQuery.of(context).size.height * 0.82,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF6EAD8),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: const Color(0xFFB58A47),
+                      width: 1.5,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x33000000),
+                        blurRadius: 14,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${event.title} - 퀴즈',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              event.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xFF5A4326),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE5D2A8),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '${currentIndex + 1} / ${questions.length}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF5A4326),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
-                      Text('${currentIndex + 1} / ${questions.length}'),
-                      const SizedBox(height: 8),
-                      Expanded(
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 6,
+                          backgroundColor: const Color(0xFFE5D2A8),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            Color(0xFFB58A47),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Flexible(
                         child: SingleChildScrollView(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text(
-                                question.question,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFAF1DD),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFD9C18B),
+                                  ),
+                                ),
+                                child: Text(
+                                  question.question,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 15,
+                                    color: Color(0xFF332A1D),
+                                    height: 1.45,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              ...question.choices.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final choice = entry.value;
-                                return RadioListTile<int>(
-                                  dense: true,
-                                  value: index,
-                                  groupValue: selectedAnswers[currentIndex],
-                                  onChanged: (value) {
-                                    if (value == null) {
-                                      return;
-                                    }
+                              const SizedBox(height: 10),
+                              for (var i = 0; i < question.choices.length; i++)
+                                _QuizChoiceCard(
+                                  index: i,
+                                  text: question.choices[i],
+                                  selected: selectedAnswers[currentIndex] == i,
+                                  onTap: () {
                                     setDialogState(() {
-                                      selectedAnswers[currentIndex] = value;
+                                      selectedAnswers[currentIndex] = i;
                                     });
                                   },
-                                  title: Text(
-                                    choice,
-                                    style: const TextStyle(
-                                      color: Color(0xFF332A1D),
-                                    ),
-                                  ),
-                                );
-                              }),
+                                ),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          if (currentIndex > 0)
-                            TextButton(
-                              onPressed: () {
-                                setDialogState(() {
-                                  currentIndex -= 1;
-                                });
-                              },
-                              child: const Text('이전'),
+                          TextButton(
+                            onPressed: currentIndex > 0
+                                ? () => setDialogState(() {
+                                    currentIndex -= 1;
+                                  })
+                                : null,
+                            style: TextButton.styleFrom(
+                              foregroundColor: const Color(0xFF7A6748),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
                             ),
+                            child: const Text(
+                              '이전',
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          const Spacer(),
                           FilledButton(
                             onPressed: !canMoveNext
                                 ? null
@@ -880,27 +949,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                         score += 1;
                                       }
                                     }
-                                    didPass = score == questions.length;
 
                                     await showDialog<void>(
                                       context: context,
-                                      builder: (dialogContext) => ParchmentDialog(
-                                        title: '제출 결과',
-                                        subtitle: didPass
-                                            ? '총 ${questions.length}문제 중 $score문제를 맞췄습니다.\n모든 문제 정답입니다.'
-                                            : '총 ${questions.length}문제 중 $score문제를 맞췄습니다.',
-                                        actions: [
-                                          ParchmentDialogActionButton(
-                                            label: '확인',
-                                            style: ParchmentDialogActionStyle
-                                                .secondary,
-                                            onTap: () => Navigator.of(
-                                              dialogContext,
-                                            ).pop(),
+                                      builder: (dialogContext) =>
+                                          _QuizResultDialog(
+                                            event: event,
+                                            questions: questions,
+                                            selectedAnswers: selectedAnswers,
+                                            score: score,
                                           ),
-                                        ],
-                                        child: const SizedBox.shrink(),
-                                      ),
                                     );
 
                                     if (!context.mounted) {
@@ -908,6 +966,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     }
                                     Navigator.of(context).pop();
                                   },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFFB58A47),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 22,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                              ),
+                            ),
                             child: Text(isLast ? '제출' : '다음'),
                           ),
                         ],
@@ -1228,4 +1301,481 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
 extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
+}
+
+class _QuizChoiceCard extends StatelessWidget {
+  const _QuizChoiceCard({
+    required this.index,
+    required this.text,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final int index;
+  final String text;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = selected ? const Color(0xFFEFD9A2) : const Color(0xFFFAF1DD);
+    final border = selected ? const Color(0xFFB58A47) : const Color(0xFFD9C18B);
+    final badgeBg = selected
+        ? const Color(0xFFB58A47)
+        : const Color(0xFFE5D2A8);
+    final badgeFg = selected ? Colors.white : const Color(0xFF5A4326);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 130),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: border, width: selected ? 2 : 1),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: badgeBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      color: badgeFg,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: const Color(0xFF332A1D),
+                      fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                if (selected)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 6),
+                    child: Icon(
+                      Icons.check_circle,
+                      size: 18,
+                      color: Color(0xFFB58A47),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuizResultDialog extends StatelessWidget {
+  const _QuizResultDialog({
+    required this.event,
+    required this.questions,
+    required this.selectedAnswers,
+    required this.score,
+  });
+
+  final StoryEvent event;
+  final List<QuizQuestion> questions;
+  final List<int?> selectedAnswers;
+  final int score;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = questions.length;
+    final wrong = total - score;
+    final didPass = score == total;
+    final headerColor = didPass
+        ? const Color(0xFF1F7A3A)
+        : const Color(0xFFB58A47);
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 640,
+          maxHeight: MediaQuery.of(context).size.height * 0.86,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF6EAD8),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFFB58A47), width: 1.5),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 14,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    didPass ? Icons.emoji_events : Icons.fact_check_outlined,
+                    color: headerColor,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      didPass ? '모두 정답!' : '결과 확인',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: headerColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFAF1DD),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD9C18B)),
+                ),
+                child: Row(
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF5A4326),
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '$score',
+                            style: TextStyle(fontSize: 28, color: headerColor),
+                          ),
+                          const TextSpan(
+                            text: ' / ',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          TextSpan(
+                            text: '$total',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: [
+                          _ScorePill(
+                            label: '정답',
+                            count: score,
+                            color: const Color(0xFF1F7A3A),
+                          ),
+                          _ScorePill(
+                            label: '오답',
+                            count: wrong,
+                            color: const Color(0xFFB0392F),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < questions.length; i++)
+                        _QuizReviewItem(
+                          index: i,
+                          question: questions[i],
+                          userAnswer: selectedAnswers[i],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFB58A47),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScorePill extends StatelessWidget {
+  const _ScorePill({
+    required this.label,
+    required this.count,
+    required this.color,
+  });
+
+  final String label;
+  final int count;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Text(
+        '$label $count',
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w800,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+}
+
+class _QuizReviewItem extends StatelessWidget {
+  const _QuizReviewItem({
+    required this.index,
+    required this.question,
+    required this.userAnswer,
+  });
+
+  final int index;
+  final QuizQuestion question;
+  final int? userAnswer;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCorrect = userAnswer == question.answerIndex;
+    final accent = isCorrect
+        ? const Color(0xFF1F7A3A)
+        : const Color(0xFFB0392F);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAF1DD),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFD9C18B)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: accent,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCorrect ? Icons.check : Icons.close,
+                  size: 14,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Q${index + 1}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 13,
+                  color: Color(0xFF5A4326),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                isCorrect ? '정답' : '오답',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: accent,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            question.question,
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 13.5,
+              color: Color(0xFF332A1D),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 8),
+          for (var ci = 0; ci < question.choices.length; ci++)
+            _ReviewChoiceRow(
+              index: ci,
+              text: question.choices[ci],
+              isCorrect: ci == question.answerIndex,
+              isUserPick: ci == userAnswer,
+            ),
+          if ((question.explanation ?? '').trim().isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFE0C5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFFCBB58A).withValues(alpha: 0.6),
+                ),
+              ),
+              child: RichText(
+                text: TextSpan(
+                  style: const TextStyle(
+                    color: Color(0xFF5A4326),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
+                  children: [
+                    const TextSpan(
+                      text: '해설  ',
+                      style: TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                    TextSpan(text: question.explanation!.trim()),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ReviewChoiceRow extends StatelessWidget {
+  const _ReviewChoiceRow({
+    required this.index,
+    required this.text,
+    required this.isCorrect,
+    required this.isUserPick,
+  });
+
+  final int index;
+  final String text;
+  final bool isCorrect;
+  final bool isUserPick;
+
+  @override
+  Widget build(BuildContext context) {
+    Color textColor;
+    Widget marker;
+    FontWeight weight;
+    if (isCorrect) {
+      textColor = const Color(0xFF1F7A3A);
+      marker = const Icon(
+        Icons.check_circle,
+        size: 16,
+        color: Color(0xFF1F7A3A),
+      );
+      weight = FontWeight.w800;
+    } else if (isUserPick) {
+      textColor = const Color(0xFFB0392F);
+      marker = const Icon(Icons.cancel, size: 16, color: Color(0xFFB0392F));
+      weight = FontWeight.w700;
+    } else {
+      textColor = const Color(0xFF7A6748);
+      marker = const Icon(
+        Icons.radio_button_unchecked,
+        size: 16,
+        color: Color(0xFFB89F75),
+      );
+      weight = FontWeight.w500;
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(padding: const EdgeInsets.only(top: 1), child: marker),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              '${index + 1}. $text',
+              style: TextStyle(
+                color: textColor,
+                fontWeight: weight,
+                fontSize: 12.6,
+                height: 1.4,
+              ),
+            ),
+          ),
+          if (isUserPick && !isCorrect)
+            const Padding(
+              padding: EdgeInsets.only(left: 6),
+              child: Text(
+                '내 답',
+                style: TextStyle(
+                  color: Color(0xFFB0392F),
+                  fontWeight: FontWeight.w800,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }

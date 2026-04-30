@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 4,
+  "story_title": "동방박사와 피신",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "동방박사들이 예루살렘을 떠난 후 어디로 피한 것을 본문이 언급합니까?",
+      "choices": [
+        "다른 길로 고국에 돌아갔다",
+        "헤롯에게 보고하러 갔다",
+        "성전으로 올라갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "마 2:12 — '꿈에 헤롯에게로 돌아가지 말라 지시하심을 받아 다른 길로 고국에 돌아가니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "요셉의 가족은 헤롯의 위협을 피해 어디로 피신하였습니까?",
+      "choices": [
+        "애굽으로 피신하였다",
+        "갈릴리로 피신하였다",
+        "사마리아로 피신하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "마 2:14 — '헤롯이 죽기까지 거기 있었으니 ... 애굽에서 내 아들을 불렀다'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "동방박사 방문과 애굽 피신 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마태복음",
+        "누가복음",
+        "요한복음"
+      ],
+      "answer_index": 0,
+      "explanation": "마 2:1-15에 동방박사 방문과 애굽 피신 기사가 기록됨"
+    }
+  ]
+}

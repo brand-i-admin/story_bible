@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 24,
+  "story_title": "요셉의 꿈: 형제들의 시기",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "이스라엘이 요셉을 특별히 사랑하여 만들어 준 것은 무엇입니까?",
+      "choices": [
+        "채색옷",
+        "금 반지",
+        "은 지팡이"
+      ],
+      "answer_index": 0,
+      "explanation": "창 37:3 — '이스라엘이 ... 요셉을 깊이 사랑하여 위하여 채색옷을 지었더니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "요셉의 두 번째 꿈을 들은 형들과 아버지는 각각 어떻게 반응하였습니까?",
+      "choices": [
+        "형들은 시기하고 아비는 마음에 두었다",
+        "형들도 아비도 잊어버렸다",
+        "형들은 놀라고 아비는 꾸짖었다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 37:11 — '그 형들은 시기하되 그 아비는 그 말을 마음에 두었더라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "요셉의 꿈과 형제들의 시기 이야기는 창세기 몇 장에 기록되어 있습니까?",
+      "choices": [
+        "37장",
+        "39장",
+        "41장"
+      ],
+      "answer_index": 0,
+      "explanation": "창 37:1-11에 요셉의 채색옷과 두 가지 꿈 이야기가 기록됨"
+    }
+  ]
+}
