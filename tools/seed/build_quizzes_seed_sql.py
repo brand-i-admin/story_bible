@@ -156,16 +156,12 @@ def load_quiz_file(path: Path) -> QuizFile:
 
     questions_raw = raw.get("questions")
     if not isinstance(questions_raw, list) or len(questions_raw) != 3:
-        raise QuizValidationError(
-            f"{path.name}: questions length must be exactly 3"
-        )
+        raise QuizValidationError(f"{path.name}: questions length must be exactly 3")
 
     questions: list[QuizQuestionDraft] = []
     for i, q in enumerate(questions_raw):
         if not isinstance(q, dict):
-            raise QuizValidationError(
-                f"{path.name}: questions[{i}] must be an object"
-            )
+            raise QuizValidationError(f"{path.name}: questions[{i}] must be an object")
         expected_type = QUESTION_TYPES_IN_ORDER[i]
         if q.get("type") != expected_type:
             raise QuizValidationError(
@@ -295,9 +291,7 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
 _LENGTH_LIMITS = {"question": 40, "choice": 20, "explanation": 60}
 
 
-def build_report(
-    *, quiz_files: list[QuizFile], events: list[EventKey]
-) -> dict:
+def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
     event_by_key: dict[tuple[str, int], EventKey] = {
         (e.era_code, e.story_index): e for e in events
     }
@@ -399,26 +393,33 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         description="Build quiz_questions seed SQL from assets/quizzes/*.json."
     )
     parser.add_argument(
-        "--input-dir", type=Path, default=Path("assets/quizzes"),
+        "--input-dir",
+        type=Path,
+        default=Path("assets/quizzes"),
         help="Directory containing per-event quiz JSON files.",
     )
     parser.add_argument(
-        "--output", type=Path,
+        "--output",
+        type=Path,
         default=Path("supabase/quizzes/quizzes_seed.sql"),
         help="SQL output path.",
     )
     parser.add_argument(
-        "--report", type=Path,
+        "--report",
+        type=Path,
         default=Path("supabase/quizzes/quizzes_report.json"),
         help="Validation report path (JSON).",
     )
     parser.add_argument(
-        "--events-seed-sql", type=Path,
+        "--events-seed-sql",
+        type=Path,
         default=Path("supabase/200_stories/200_stories_seed.sql"),
         help="Events seed SQL used as the authority for (era_code, story_index, title).",
     )
     parser.add_argument(
-        "--events-from-json", type=Path, default=None,
+        "--events-from-json",
+        type=Path,
+        default=None,
         help=(
             "If set, read the authoritative events list from a JSON file "
             "([{era_code,story_index,title}, ...]) instead of parsing seed SQL. "

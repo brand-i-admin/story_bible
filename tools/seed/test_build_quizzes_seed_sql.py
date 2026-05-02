@@ -194,12 +194,8 @@ class BuildSqlStatementsTests(unittest.TestCase):
             story_title="창조: 7일과 안식",
             source_version="v",
             questions=[
-                mod.QuizQuestionDraft(
-                    "fact", 0, "A'B", ["x'y", "a", "b"], 0, "e'e"
-                ),
-                mod.QuizQuestionDraft(
-                    "attitude", 1, "q2", ["A", "B", "C"], 0, "e2"
-                ),
+                mod.QuizQuestionDraft("fact", 0, "A'B", ["x'y", "a", "b"], 0, "e'e"),
+                mod.QuizQuestionDraft("attitude", 1, "q2", ["A", "B", "C"], 0, "e2"),
                 mod.QuizQuestionDraft(
                     "bible_context", 2, "q3", ["A", "B", "C"], 0, "e3"
                 ),
