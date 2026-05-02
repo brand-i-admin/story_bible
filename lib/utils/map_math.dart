@@ -118,3 +118,77 @@ Offset rotateOffset(Offset value, double radians) {
     value.dx * sinTheta + value.dy * cosTheta,
   );
 }
+
+/// 입력 점들의 convex hull (최소 볼록 다각형) 정점 리스트를 반환.
+/// Andrew's monotone chain 알고리즘 — O(n log n).
+///
+/// 시대 폴리곤을 그 시대의 사건/랜드마크 좌표 기반으로 동적 계산할 때 사용.
+/// 점이 3개 미만이면 입력 그대로 반환 (다각형 못 만듦).
+List<LatLng> convexHull(List<LatLng> points) {
+  if (points.length < 3) {
+    return List<LatLng>.from(points);
+  }
+  final unique = <String, LatLng>{};
+  for (final p in points) {
+    unique['${p.latitude.toStringAsFixed(5)},${p.longitude.toStringAsFixed(5)}'] =
+        p;
+  }
+  final sorted = unique.values.toList()
+    ..sort((a, b) {
+      if (a.longitude != b.longitude) {
+        return a.longitude.compareTo(b.longitude);
+      }
+      return a.latitude.compareTo(b.latitude);
+    });
+  if (sorted.length < 3) {
+    return sorted;
+  }
+
+  double cross(LatLng o, LatLng a, LatLng b) {
+    return (a.longitude - o.longitude) * (b.latitude - o.latitude) -
+        (a.latitude - o.latitude) * (b.longitude - o.longitude);
+  }
+
+  final lower = <LatLng>[];
+  for (final p in sorted) {
+    while (lower.length >= 2 &&
+        cross(lower[lower.length - 2], lower.last, p) <= 0) {
+      lower.removeLast();
+    }
+    lower.add(p);
+  }
+
+  final upper = <LatLng>[];
+  for (final p in sorted.reversed) {
+    while (upper.length >= 2 &&
+        cross(upper[upper.length - 2], upper.last, p) <= 0) {
+      upper.removeLast();
+    }
+    upper.add(p);
+  }
+
+  return [
+    ...lower.sublist(0, lower.length - 1),
+    ...upper.sublist(0, upper.length - 1),
+  ];
+}
+
+/// 점 집합을 8 방향으로 [bufferDeg] 만큼 확장 후 convex hull. 사건이 적거나
+/// 한 점에 모여 있어도 자연스러운 영역으로 보이도록 padding 추가.
+/// bufferDeg 0.4 ≈ 약 40km (lat 32°N 기준).
+List<LatLng> bufferedHull(List<LatLng> points, {double bufferDeg = 0.4}) {
+  if (points.isEmpty) return const [];
+  final expanded = <LatLng>[];
+  for (final p in points) {
+    expanded.add(LatLng(p.latitude + bufferDeg, p.longitude));
+    expanded.add(LatLng(p.latitude - bufferDeg, p.longitude));
+    expanded.add(LatLng(p.latitude, p.longitude + bufferDeg));
+    expanded.add(LatLng(p.latitude, p.longitude - bufferDeg));
+    final diag = bufferDeg * 0.7071;
+    expanded.add(LatLng(p.latitude + diag, p.longitude + diag));
+    expanded.add(LatLng(p.latitude + diag, p.longitude - diag));
+    expanded.add(LatLng(p.latitude - diag, p.longitude + diag));
+    expanded.add(LatLng(p.latitude - diag, p.longitude - diag));
+  }
+  return convexHull(expanded);
+}

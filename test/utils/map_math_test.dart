@@ -216,6 +216,109 @@ void main() {
       expect(s1, isNot(s2));
     });
   });
+
+  group('convexHull', () {
+    test('점이 3개 미만이면 입력 그대로 반환', () {
+      final r0 = convexHull(const []);
+      expect(r0, isEmpty);
+      final r1 = convexHull([const LatLng(1, 1)]);
+      expect(r1, hasLength(1));
+      final r2 = convexHull([const LatLng(1, 1), const LatLng(2, 2)]);
+      expect(r2, hasLength(2));
+    });
+
+    test('동일 좌표 다수 → 1개로 collapse 후 hull 못 만듦', () {
+      final hull = convexHull([
+        const LatLng(31.7, 35.2),
+        const LatLng(31.7, 35.2),
+        const LatLng(31.7, 35.2),
+      ]);
+      expect(hull.length, lessThanOrEqualTo(2));
+    });
+
+    test('일직선 점들 — 중간 점은 hull 에서 제외', () {
+      final hull = convexHull([
+        const LatLng(0, 0),
+        const LatLng(0, 1),
+        const LatLng(0, 2),
+        const LatLng(0, 3),
+      ]);
+      // 일직선이라 area 0 → 거의 collapse 됨. 양 끝만 남거나 빈 리스트.
+      expect(hull.length, lessThanOrEqualTo(2));
+    });
+
+    test('정사각 4점 hull — 4점 모두 hull 정점', () {
+      final pts = [
+        const LatLng(0, 0),
+        const LatLng(0, 1),
+        const LatLng(1, 0),
+        const LatLng(1, 1),
+      ];
+      final hull = convexHull(pts);
+      expect(hull, hasLength(4));
+    });
+
+    test('내부 점은 hull 에서 제외 (외곽 4점만)', () {
+      final pts = [
+        const LatLng(0, 0),
+        const LatLng(0, 10),
+        const LatLng(10, 0),
+        const LatLng(10, 10),
+        const LatLng(5, 5), // 내부 점
+        const LatLng(3, 7), // 내부 점
+      ];
+      final hull = convexHull(pts);
+      expect(hull, hasLength(4));
+      for (final inner in [const LatLng(5, 5), const LatLng(3, 7)]) {
+        expect(hull, isNot(contains(inner)));
+      }
+    });
+
+    test('실제 사용 — 메소포타미아 + 가나안 + 이집트 hull', () {
+      final pts = [
+        const LatLng(30.96, 46.10), // 우르
+        const LatLng(36.86, 39.03), // 하란
+        const LatLng(31.53, 35.10), // 헤브론
+        const LatLng(30.78, 31.36), // 고센
+        const LatLng(32.5, 39.0), // 내부 점 (확실히 안)
+      ];
+      final hull = convexHull(pts);
+      // 내부 점은 반드시 빠짐. 외곽 점 중 일부가 변 위에 있을 수 있어
+      // 정점 수는 3 ~ 4 사이.
+      expect(hull.length, inInclusiveRange(3, 4));
+      expect(
+        hull.contains(const LatLng(32.5, 39.0)),
+        isFalse,
+        reason: '내부 점은 hull 에서 제외',
+      );
+    });
+  });
+
+  group('bufferedHull', () {
+    test('빈 입력 → 빈 리스트', () {
+      expect(bufferedHull(const []), isEmpty);
+    });
+
+    test('단일 점 → 8각형 buffer', () {
+      final hull = bufferedHull([const LatLng(31.7, 35.2)], bufferDeg: 0.5);
+      // 8 방향 점 → convex hull 은 보통 8각형 (또는 그 미만).
+      expect(hull.length, greaterThanOrEqualTo(4));
+      // buffer 가 충분히 커서 모든 정점이 원래 좌표에서 떨어져 있어야 한다.
+      for (final p in hull) {
+        final dLat = (p.latitude - 31.7).abs();
+        final dLng = (p.longitude - 35.2).abs();
+        expect(dLat + dLng, greaterThan(0.3));
+      }
+    });
+
+    test('두 점 → 둘러싸는 capsule 모양', () {
+      final hull = bufferedHull([
+        const LatLng(0, 0),
+        const LatLng(0, 5),
+      ], bufferDeg: 0.5);
+      expect(hull.length, greaterThanOrEqualTo(4));
+    });
+  });
 }
 
 StoryEvent _bareEvent(String id) {

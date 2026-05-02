@@ -19,10 +19,12 @@ class _PinStyle {
   final double arrowHeight;
   final double anchorGap;
 
-  double badgeWidthFor(String label) {
-    return label.length > 2
-        ? (badgeHeight + 12).clamp(24.0, 42.0)
-        : badgeHeight;
+  /// 핀 badge 가 캐릭터 아바타 스택을 담을 너비. 인물 1명이면 정원형(=badgeHeight),
+  /// 2~3명이면 살짝 옆으로 펼쳐 캡슐 모양으로 늘어난다.
+  double badgeWidthForAvatars(int count) {
+    if (count <= 1) return badgeHeight;
+    final extra = (count.clamp(2, 3) - 1) * (badgeHeight - 9);
+    return badgeHeight + extra;
   }
 
   double get visualHeight => badgeHeight + 4 + arrowHeight;
@@ -34,17 +36,20 @@ class _MarkerNode {
   const _MarkerNode({
     required this.event,
     required this.point,
-    required this.pinLabel,
     required this.placeLabel,
     required this.showCallout,
+    required this.characterCodes,
     required this.characterColors,
   });
 
   final StoryEvent event;
   final LatLng point;
-  final String pinLabel;
   final String placeLabel;
   final bool showCallout;
+
+  /// 핀 badge 에 얼굴 표시할 인물 코드들 (Step 2 에서 선택된 인물 ∩ event 출연자).
+  /// 없으면 핀 색깔 dot 만.
+  final List<String> characterCodes;
   final List<Color> characterColors;
 }
 
@@ -54,25 +59,39 @@ extension _IterableX<E> on Iterable<E> {
 
 class _CompactPinMarker extends StatelessWidget {
   const _CompactPinMarker({
-    required this.label,
+    required this.characterCodes,
+    required this.characterColors,
     required this.selected,
     required this.style,
+    required this.avatarAssetForCharacter,
+    this.popKey,
   });
 
-  final String label;
+  /// 핀 badge 에 얼굴로 표시할 인물 코드들. 비어 있으면 색 dot fallback.
+  final List<String> characterCodes;
+
+  /// 인물이 없을 때 fallback 색깔 또는 multi-char chip 에 쓰일 색들.
+  final List<Color> characterColors;
   final bool selected;
   final _PinStyle style;
+  final String Function(String characterCode) avatarAssetForCharacter;
+
+  /// pop-in 스케일 애니메이션을 다시 재생할 때 쓰는 key. 같은 key 면 이미 애니메이션
+  /// 이 끝난 인스턴스를 재사용해 깜빡거리지 않고, 새 key 가 들어오면 (예: 다음 버튼
+  /// 으로 reveal 재생) 0 → 1 스케일 애니메이션이 처음부터 다시 돈다.
+  final Object? popKey;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final inner = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _PinNumberBadge(
-          label,
+        _PinAvatarBadge(
+          characterCodes: characterCodes,
+          characterColors: characterColors,
           selected: selected,
-          fontSize: style.labelFontSize,
           badgeHeight: style.badgeHeight,
+          avatarAssetForCharacter: avatarAssetForCharacter,
         ),
         const SizedBox(height: 4),
         CustomPaint(
@@ -82,59 +101,126 @@ class _CompactPinMarker extends StatelessWidget {
         SizedBox(height: style.anchorGap),
       ],
     );
+    return TweenAnimationBuilder<double>(
+      key: popKey == null ? null : ValueKey(popKey),
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutBack,
+      builder: (context, t, child) {
+        return Opacity(
+          opacity: t.clamp(0.0, 1.0),
+          child: Transform.scale(
+            scale: t.clamp(0.0, 1.2),
+            alignment: Alignment.bottomCenter,
+            child: child,
+          ),
+        );
+      },
+      child: inner,
+    );
   }
 }
 
-class _PinNumberBadge extends StatelessWidget {
-  const _PinNumberBadge(
-    this.label, {
+/// 핀 위쪽 badge — 캐릭터 얼굴 스택. 1명이면 원형, 2~3명이면 캡슐 모양으로
+/// 살짝 겹쳐 옆으로 펼친다. 인물 정보가 비어 있으면 색 dot fallback.
+class _PinAvatarBadge extends StatelessWidget {
+  const _PinAvatarBadge({
+    required this.characterCodes,
+    required this.characterColors,
     required this.selected,
-    required this.fontSize,
     required this.badgeHeight,
+    required this.avatarAssetForCharacter,
   });
 
-  final String label;
+  final List<String> characterCodes;
+  final List<Color> characterColors;
   final bool selected;
-  final double fontSize;
   final double badgeHeight;
+  final String Function(String characterCode) avatarAssetForCharacter;
 
   @override
   Widget build(BuildContext context) {
-    final isMultiChar = label.length > 2;
-    final badgeWidth = isMultiChar
-        ? (badgeHeight + 12).clamp(24.0, 42.0)
-        : badgeHeight;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: selected
-            ? const Color(0xFFF8E4A8)
-            : Colors.white.withValues(alpha: 0.96),
-        shape: isMultiChar ? BoxShape.rectangle : BoxShape.circle,
-        borderRadius: isMultiChar
-            ? BorderRadius.circular(badgeHeight / 2)
-            : null,
-        border: Border.all(
-          color: selected ? const Color(0xFF7B4B21) : const Color(0xFF2A2A2A),
-          width: 1.0,
-        ),
-      ),
-      child: SizedBox(
-        width: badgeWidth,
-        height: badgeHeight,
-        child: Center(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: selected ? const Color(0xFF5A3519) : Colors.black,
-              fontSize: (fontSize * 0.64).clamp(9.0, 12.0),
-              fontWeight: FontWeight.w900,
-              height: 1.0,
+    final visibleCodes = characterCodes.take(3).toList();
+    if (visibleCodes.isEmpty) {
+      return _DotBadge(
+        color: characterColors.firstOrNull ?? const Color(0xFF8C5A2E),
+        selected: selected,
+        size: badgeHeight * 0.7,
+      );
+    }
+    final overlap = badgeHeight * 0.36;
+    final stride = badgeHeight - overlap;
+    final width = badgeHeight + (visibleCodes.length - 1) * stride;
+    final borderColor = selected ? const Color(0xFF7B4B21) : Colors.white;
+    return SizedBox(
+      width: width,
+      height: badgeHeight,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          for (var i = 0; i < visibleCodes.length; i++)
+            Positioned(
+              left: i * stride,
+              child: Container(
+                width: badgeHeight,
+                height: badgeHeight,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFEEDFC4),
+                  border: Border.all(
+                    color: borderColor,
+                    width: selected ? 1.6 : 1.2,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x55000000),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: _AvatarImage(
+                  assetPath: avatarAssetForCharacter(visibleCodes[i]),
+                ),
+              ),
             ),
-          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DotBadge extends StatelessWidget {
+  const _DotBadge({
+    required this.color,
+    required this.selected,
+    required this.size,
+  });
+
+  final Color color;
+  final bool selected;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        border: Border.all(
+          color: selected ? const Color(0xFF7B4B21) : Colors.white,
+          width: selected ? 1.8 : 1.4,
         ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x55000000),
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ],
       ),
     );
   }

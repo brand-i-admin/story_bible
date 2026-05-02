@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_notification.dart';
 import '../models/era.dart';
+import '../models/landmark.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 import '../services/push_service.dart';
@@ -60,10 +61,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   double _selectionSheetExtent = _selectionSheetExpandedSize;
   Set<String> _draftSelectedCharacterCodes = <String>{};
 
-  /// Step 3 에서 사용자가 체크박스로 고르고 있는 이벤트 id — 아직 커밋 전.
-  /// "다음" 을 눌러야 `controller.setDisplayedEvents` 로 커밋되어 지도 핀/화살표
-  /// 애니메이션이 실제로 시작된다.
+  /// Step 3 에서 사용자가 체크박스로 고르고 있는 이벤트 id.
+  /// 토글 즉시 `controller.setDisplayedEvents` 로 반영되어 지도에 핀이 박힌다
+  /// (step 2 인물 토글과 같은 패턴). "다음" 버튼은 단순히 선택 패널을 접는
+  /// 역할만 한다.
   Set<String> _draftDisplayedEventIds = <String>{};
+
+  /// 좌측 "랜드마크 목록" 슬라이드인 패널 열림 여부.
+  bool _landmarkPanelOpen = false;
 
   @override
   void initState() {
@@ -289,15 +294,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _toggleDraftCharacter(String characterId) {
+    final next = {..._draftSelectedCharacterCodes};
+    if (next.contains(characterId)) {
+      next.remove(characterId);
+    } else {
+      next.add(characterId);
+    }
     setState(() {
-      final next = {..._draftSelectedCharacterCodes};
-      if (next.contains(characterId)) {
-        next.remove(characterId);
-      } else {
-        next.add(characterId);
-      }
       _draftSelectedCharacterCodes = next;
     });
+    // 지도 미리보기 path 가 step 2 (인물 선택) 에서 "다음" 누르기 전에도 즉시
+    // 반응하도록 controller state 도 같이 업데이트한다. setSelectedCharacters
+    // 는 charactersChanged 가 true 일 때만 displayedEventIds 를 리셋하므로
+    // 같은 set 다시 호출해도 step 3 commit 상태가 유지된다.
+    ref.read(storyControllerProvider.notifier).setSelectedCharacters(next);
   }
 
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
@@ -400,27 +410,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _toggleDraftDisplayedEvent(String eventId) {
+    final next = {..._draftDisplayedEventIds};
+    if (next.contains(eventId)) {
+      next.remove(eventId);
+    } else {
+      next.add(eventId);
+    }
     setState(() {
-      final next = {..._draftDisplayedEventIds};
-      if (next.contains(eventId)) {
-        next.remove(eventId);
-      } else {
-        next.add(eventId);
-      }
       _draftDisplayedEventIds = next;
     });
+    // step 3 사건 토글 시 "다음" 누르기 전이라도 즉시 지도에 핀이 박히도록
+    // controller state 도 같이 업데이트. step 2 인물 토글과 같은 패턴.
+    ref.read(storyControllerProvider.notifier).setDisplayedEvents(next);
   }
 
   void _selectAllDraftDisplayedEvents(List<StoryEvent> availableEvents) {
+    final next = availableEvents.map((e) => e.id).toSet();
     setState(() {
-      _draftDisplayedEventIds = availableEvents.map((e) => e.id).toSet();
+      _draftDisplayedEventIds = next;
     });
+    ref.read(storyControllerProvider.notifier).setDisplayedEvents(next);
   }
 
   void _deselectAllDraftDisplayedEvents() {
     setState(() {
       _draftDisplayedEventIds = <String>{};
     });
+    ref
+        .read(storyControllerProvider.notifier)
+        .setDisplayedEvents(const <String>{});
   }
 
   /// Step 3 "다음" 버튼 핸들러 — draft 를 커밋해 지도 핀/화살표 애니메이션 트리거.
@@ -445,6 +463,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _draftDisplayedEventIds = sanitized;
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
       _selectionSheetExtent = collapsedExtent;
+    });
+    // step 3 toggle 단계에서는 핀이 즉시 노출돼 있다. "다음" 을 누르면 사용자가
+    // 명시적으로 마무리한 시점이므로, 핀들이 시간 순서대로 하나씩 pop-in 되는
+    // reveal 애니메이션을 한 번 더 재생해 시간 흐름을 강조한다.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _mapPanelController.replayReveal();
     });
   }
 
@@ -579,6 +603,184 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   void _closeSelectedEventPopup() {
     ref.read(storyControllerProvider.notifier).selectEvent(null);
+  }
+
+  /// "현 지도에서 검색" 버튼이 눌리면 지도 패널이 콜백으로 viewport 가운데 80%
+  /// 박스를 넘겨 준다. 컨트롤러는 캐시된 사건 풀에서 박스 안 사건들을
+  /// 골라 viewportSearchResults 로 채운다 — 패널이 그걸 별도 핀 레이어로 그림.
+  Future<void> _handleViewportSearch({
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+  }) async {
+    await ref
+        .read(storyControllerProvider.notifier)
+        .searchEventsInViewport(
+          minLat: minLat,
+          maxLat: maxLat,
+          minLng: minLng,
+          maxLng: maxLng,
+        );
+    if (!mounted) {
+      return;
+    }
+    final hits = ref.read(storyControllerProvider).viewportSearchResults;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    messenger?.hideCurrentSnackBar();
+    messenger?.showSnackBar(
+      SnackBar(
+        content: Text(
+          hits.isEmpty
+              ? '이 영역에는 표시할 이야기가 없어요.'
+              : '${hits.length}개의 이야기를 찾았어요. 핀을 눌러보세요.',
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  /// 거리 측정 결과를 한국 거리 비교와 함께 SnackBar 로 보여 준다.
+  void _showMeasureResult(MeasureResult result) {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger == null) {
+      return;
+    }
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        backgroundColor: const Color(0xFF3D2A14),
+        duration: const Duration(seconds: 5),
+        content: Text(
+          '${result.fromName} → ${result.toName}\n'
+          '직선 거리 약 ${result.kilometers.toStringAsFixed(1)}km '
+          '(${result.koreanComparison})',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            height: 1.45,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 랜드마크 마커가 탭됐을 때 간단한 정보 다이얼로그를 띄운다.
+  /// 이모지 + 이름 + 설명 + 카테고리/시대 칩.
+  void _showLandmarkPopup(Landmark landmark) {
+    final state = ref.read(storyControllerProvider);
+    final eraNamesByCode = <String, String>{
+      for (final era in state.eras) era.code: era.name,
+    };
+    final eraNames = landmark.eraCodes
+        .map((code) => eraNamesByCode[code] ?? code)
+        .toList(growable: false);
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Text(
+                landmark.emoji,
+                style: const TextStyle(fontSize: 28, height: 1.0),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  landmark.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if ((landmark.description ?? '').trim().isNotEmpty)
+                Text(
+                  landmark.description!,
+                  style: const TextStyle(fontSize: 14, height: 1.45),
+                ),
+              if (eraNames.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final name in eraNames)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEDFC4),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: const Color(0xFFB89A66),
+                            width: 0.6,
+                          ),
+                        ),
+                        child: Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF3D2A14),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 현재 선택된 시대(selectedEraId) + 카테고리 필터 기준으로 노출할 랜드마크
+  /// 리스트를 반환. 시대 미선택 → 빈 리스트. 카테고리 필터가 비어 있으면 모든
+  /// 카테고리 통과.
+  List<Landmark> _activeLandmarksForEra(StoryState state) {
+    final eraId = state.selectedEraId;
+    if (eraId == null) {
+      return const [];
+    }
+    final eraCode = state.eras
+        .where((era) => era.id == eraId)
+        .firstOrNull
+        ?.code;
+    if (eraCode == null || eraCode.isEmpty) {
+      return const [];
+    }
+    final categories = state.selectedLandmarkCategories;
+    return state.landmarks
+        .where((l) {
+          if (!l.eraCodes.contains(eraCode)) {
+            return false;
+          }
+          if (categories.isEmpty) {
+            return true;
+          }
+          final cat = l.category;
+          return cat != null && categories.contains(cat);
+        })
+        .toList(growable: false);
   }
 
   Future<void> _openEventDetailPage(StoryEvent event) async {
@@ -995,8 +1197,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               onCloseSelectedCallout: _closeSelectedEventPopup,
               onOpenDetail: _openEventDetail,
               colorForCharacter: controller.colorForCharacter,
-              avatarAssetForCharacter: (characterCode) =>
-                  avatarByCharacterCode[characterCode] ?? '',
+              avatarAssetForCharacter: (characterCode) {
+                // 1) 현재 era 의 character 에 있으면 그 경로 사용 (정확한 경로
+                //    포함 — 향후 storage path 확장 가능).
+                final cached = avatarByCharacterCode[characterCode];
+                if (cached != null && cached.isNotEmpty) {
+                  return cached;
+                }
+                // 2) viewport 검색 결과는 다른 era 인물 코드도 포함될 수 있어
+                //    state.characters 에 없는 경우가 흔하다. 이 경우 컨벤션
+                //    경로 `assets/avatars_thumbs/{code}.png` 로 폴백 — 번들에
+                //    실제 파일이 없으면 _AvatarImage 의 errorBuilder 가
+                //    Icons.person 으로 처리.
+                if (characterCode.isEmpty) {
+                  return '';
+                }
+                return 'assets/avatars_thumbs/$characterCode.png';
+              },
               selectedCharacterCodes: state.selectedCharacterCodes,
               controller: _mapPanelController,
               initialCenter: mapCenter,
@@ -1009,8 +1226,62 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       _selectionPanelStage,
                     ),
               decorate: false,
+              activeLandmarks: _activeLandmarksForEra(state),
+              viewportSearchResults: state.viewportSearchResults,
+              onSearchInViewport: _handleViewportSearch,
+              onClearViewportSearch: () => ref
+                  .read(storyControllerProvider.notifier)
+                  .clearViewportSearchResults(),
+              activeEraBoundaries: state.selectedEraId == null
+                  ? const []
+                  : state.eraBoundaries
+                        .where((b) => b.eraId == state.selectedEraId)
+                        .toList(growable: false),
+              onLandmarkTap: _showLandmarkPopup,
+              onMeasureResult: _showMeasureResult,
+              // 그 시대의 모든 사건을 인물별 path 로 항상 보여 준다 (선택 인물
+              // 진하게, 미선택 흐리게). 사용자가 step 3 에서 사건을 골라도 인물
+              // 이동 경로 자체는 사라지면 안 되므로 displayedEventIds 와 무관하게
+              // 미리보기를 켜둔다. 선택된 사건은 그 path 위에 핀으로 표시된다
+              // (`_buildMarkers`).
+              eraPreviewEvents: state.events,
+              // legend 표시용 인물 이름 lookup.
+              nameForCharacter: (code) {
+                for (final ch in state.characters) {
+                  if (ch.code == code) return ch.name;
+                }
+                return code;
+              },
             ),
           ),
+          // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
+          if (state.selectedEraId != null)
+            Positioned(
+              top: topInset + 56,
+              left: 0,
+              right: 0,
+              child: _LandmarkCategoryChipsBar(
+                state: state,
+                onToggle: (cat) => ref
+                    .read(storyControllerProvider.notifier)
+                    .toggleLandmarkCategory(cat),
+                onClear: () => ref
+                    .read(storyControllerProvider.notifier)
+                    .clearLandmarkCategories(),
+              ),
+            ),
+          // 좌측 "랜드마크 목록" 토글 버튼 + 슬라이드인 패널.
+          if (state.selectedEraId != null)
+            _LandmarkListSidePanel(
+              landmarks: _activeLandmarksForEra(state),
+              isOpen: _landmarkPanelOpen,
+              onToggle: () =>
+                  setState(() => _landmarkPanelOpen = !_landmarkPanelOpen),
+              onLandmarkTap: (lm) {
+                _mapPanelController.focusLandmark(lm.latLng);
+                _showLandmarkPopup(lm);
+              },
+            ),
           LayoutBuilder(
             builder: (context, constraints) {
               final sideTop = topInset + 8;
@@ -1222,4 +1493,307 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
 extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
+}
+
+/// 지도 상단의 랜드마크 카테고리 필터 칩 가로 스크롤 바.
+/// 비어 있으면 모든 카테고리 통과(전체 표시), 한 칩 누르면 그 카테고리만.
+class _LandmarkCategoryChipsBar extends StatelessWidget {
+  const _LandmarkCategoryChipsBar({
+    required this.state,
+    required this.onToggle,
+    required this.onClear,
+  });
+
+  final StoryState state;
+  final ValueChanged<String> onToggle;
+  final VoidCallback onClear;
+
+  // 키 = DB category, 값 = (이모지, 한국어 라벨).
+  static const Map<String, (String, String)> _catMeta = {
+    'city': ('🏛️', '도시'),
+    'mountain': ('⛰️', '산'),
+    'water': ('🌊', '물·강'),
+    'wilderness': ('🏜️', '광야'),
+    'battle': ('⚔️', '전투'),
+    'temple': ('⛪', '성전'),
+    'holy_site': ('🕊️', '거룩한 곳'),
+    'tomb': ('⚰️', '무덤'),
+    'monument': ('🪨', '기념비'),
+    'prison': ('⛓️', '감옥'),
+    'city_gate': ('🚪', '성문'),
+    'region': ('🌍', '지역'),
+    'island': ('🏝️', '섬'),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    // 시대별 활성 랜드마크에 실제 존재하는 카테고리만 칩으로 노출.
+    final activeCategories = <String>{};
+    final eraCode = state.eras
+        .where((e) => e.id == state.selectedEraId)
+        .firstOrNull
+        ?.code;
+    if (eraCode != null) {
+      for (final l in state.landmarks) {
+        if (l.eraCodes.contains(eraCode) && l.category != null) {
+          activeCategories.add(l.category!);
+        }
+      }
+    }
+    if (activeCategories.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final ordered = _catMeta.keys
+        .where(activeCategories.contains)
+        .toList(growable: false);
+
+    final selected = state.selectedLandmarkCategories;
+    return SizedBox(
+      height: 38,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        children: [
+          _CategoryChip(
+            label: '전체',
+            emoji: '✨',
+            active: selected.isEmpty,
+            onTap: onClear,
+          ),
+          for (final cat in ordered) ...[
+            const SizedBox(width: 6),
+            _CategoryChip(
+              label: _catMeta[cat]!.$2,
+              emoji: _catMeta[cat]!.$1,
+              active: selected.contains(cat),
+              onTap: () => onToggle(cat),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({
+    required this.label,
+    required this.emoji,
+    required this.active,
+    required this.onTap,
+  });
+  final String label;
+  final String emoji;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: active ? const Color(0xFF8C5A2E) : const Color(0xF2FFFBEF),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: active ? const Color(0xFF8C5A2E) : const Color(0xFFB89A66),
+              width: 0.9,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 3,
+                offset: Offset(0, 1.5),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 13)),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: active ? Colors.white : const Color(0xFF3D2A14),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 좌측에 슬라이드인 되는 랜드마크 목록 패널 + 토글 버튼.
+class _LandmarkListSidePanel extends StatelessWidget {
+  const _LandmarkListSidePanel({
+    required this.landmarks,
+    required this.isOpen,
+    required this.onToggle,
+    required this.onLandmarkTap,
+  });
+
+  final List<Landmark> landmarks;
+  final bool isOpen;
+  final VoidCallback onToggle;
+  final ValueChanged<Landmark> onLandmarkTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final topInset = MediaQuery.of(context).padding.top;
+    return Stack(
+      children: [
+        // 좌측 가장자리 토글 버튼 (지도가 살짝 보이도록 좌상단 비켜둠).
+        Positioned(
+          left: 10,
+          top: topInset + 110,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: onToggle,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: isOpen
+                      ? const Color(0xFF8C5A2E)
+                      : const Color(0xFFD2873E),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x55000000),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isOpen ? Icons.close : Icons.list,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      isOpen ? '닫기' : '랜드마크 ${landmarks.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        // 슬라이드인 패널.
+        if (isOpen)
+          Positioned(
+            left: 10,
+            top: topInset + 150,
+            bottom: 20,
+            width: 280,
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(14),
+              color: const Color(0xFFFFFBEF),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: landmarks.isEmpty
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            '이 시대에 표시할 랜드마크가 없어요',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF3D2A14),
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        itemCount: landmarks.length,
+                        separatorBuilder: (_, _) => const Divider(
+                          height: 1,
+                          color: Color(0x22B89A66),
+                          indent: 12,
+                          endIndent: 12,
+                        ),
+                        itemBuilder: (context, index) {
+                          final lm = landmarks[index];
+                          return InkWell(
+                            onTap: () => onLandmarkTap(lm),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    lm.emoji,
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          lm.name,
+                                          style: const TextStyle(
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color(0xFF3D2A14),
+                                          ),
+                                        ),
+                                        if ((lm.description ?? '')
+                                            .trim()
+                                            .isNotEmpty) ...[
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            lm.description!,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 11.5,
+                                              color: Color(0xFF6B5239),
+                                              height: 1.35,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 }

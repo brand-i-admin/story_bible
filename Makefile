@@ -33,6 +33,9 @@ STORY_IMAGES_THUMBS_DIR := $(ASSETS_DIR)/story_images_thumbs
 KRV_SQL := $(SUPABASE_DIR)/seeds/krv_bible_verses.sql
 STORIES_SQL := $(SUPABASE_DIR)/200_stories/200_stories_seed.sql
 CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
+LANDMARKS_SQL := $(SUPABASE_DIR)/200_stories/landmarks_seed.sql
+ERA_BOUNDARIES_SQL := $(SUPABASE_DIR)/200_stories/era_boundaries_seed.sql
+LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 # =============================================================================
 # .PHONY 선언
@@ -41,10 +44,12 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
 .PHONY: help all \
         seed-bible-verses build-character-meta renumber-story-indices \
         seed-stories seed-characters seed-stories-characters \
+        seed-landmarks seed-era-boundaries \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         export-stories-json \
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
+        apply-seeds-landmarks apply-seeds-era-boundaries \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
@@ -132,6 +137,23 @@ renumber-story-indices:
 	$(PYTHON) $(TOOLS_DIR)/seed/renumber_story_indices.py \
 		--stories-dir $(STORIES_DIR)
 
+# 이벤트 lat/lng 를 매칭되는 landmark 의 정확한 좌표로 정렬.
+# 같은 장소(예: "헤브론") 인 이벤트들이 핀 분산 알고리즘에 의해 떨어져 보이는
+# 문제 + landmark 와 미세 좌표 차이 문제 둘 다 해결. assets/200_stories/*.json
+# 을 직접 수정하므로 실행 후 git diff 로 검증 권장.
+align-events-to-landmarks:
+	@echo "[Makefile] 이벤트 lat/lng → landmark 좌표 정렬..."
+	$(PYTHON) $(TOOLS_DIR)/seed/align_events_to_landmarks.py \
+		--landmarks $(LANDMARKS_DIR)/landmarks.json \
+		--stories-dir $(STORIES_DIR)
+
+align-events-to-landmarks-dry:
+	@echo "[Makefile] 이벤트 정렬 dry-run (변경만 출력)"
+	$(PYTHON) $(TOOLS_DIR)/seed/align_events_to_landmarks.py \
+		--landmarks $(LANDMARKS_DIR)/landmarks.json \
+		--stories-dir $(STORIES_DIR) \
+		--dry-run
+
 seed-stories: build-character-meta
 	@echo "[Makefile] events SQL 생성..."
 	@echo "  → 사전 조건: assets/200_stories/*.json 의 각 항목에 story_index 가 있어야 함"
@@ -151,7 +173,30 @@ seed-characters: build-character-meta
 seed-stories-characters: seed-stories seed-characters
 	@echo "[Makefile] stories + characters SQL 생성 완료."
 
-seed-all: seed-bible-verses seed-stories seed-characters
+seed-landmarks:
+	@echo "[Makefile] landmarks SQL 생성 (assets/landmarks/landmarks.json)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_landmarks_seed_sql.py \
+		--landmarks-dir $(LANDMARKS_DIR) \
+		--output $(LANDMARKS_SQL)
+
+seed-era-boundaries:
+	@echo "[Makefile] era_boundaries SQL 생성 (assets/landmarks/era_boundaries.json)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_era_boundaries_seed_sql.py \
+		--input $(LANDMARKS_DIR)/era_boundaries.json \
+		--output $(ERA_BOUNDARIES_SQL)
+
+# 시대 폴리곤 재생성 — Natural Earth GeoJSON 을 시대별 bbox 로 클립해 정밀한
+# 해안선 폴리곤으로 era_boundaries.json 을 덮어쓴다. 시대 정의 변경 시 (CLIP_REGIONS
+# in tools/seed/build_era_boundaries_from_geojson.py) 실행.
+# ⚠️ 수동 편집한 era_boundaries.json 이 있다면 덮어쓰니 주의.
+regen-era-boundaries:
+	@echo "[Makefile] era_boundaries.json 재생성 (Natural Earth GeoJSON 클립)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_era_boundaries_from_geojson.py \
+		--geojson $(ASSETS_DIR)/maps/ne_50m_admin_0_countries.geojson \
+		--output $(LANDMARKS_DIR)/era_boundaries.json
+	@$(MAKE) seed-era-boundaries
+
+seed-all: seed-bible-verses seed-stories seed-characters seed-landmarks seed-era-boundaries
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================
@@ -298,7 +343,16 @@ apply-seeds-stories-characters:
 	@echo "[Makefile] characters + 200_stories 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/characters_seed.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
 
-apply-seeds: apply-bible-verses-seeds apply-seeds-stories-characters
+# landmarks / era_boundaries 모두 UPSERT 패턴 — 재실행 안전.
+apply-seeds-landmarks:
+	@echo "[Makefile] landmarks 시드 적용 (ENV=$(ENV))"
+	$(call PSQL_APPLY,$(LANDMARKS_SQL))
+
+apply-seeds-era-boundaries:
+	@echo "[Makefile] era_boundaries 시드 적용 (ENV=$(ENV))"
+	$(call PSQL_APPLY,$(ERA_BOUNDARIES_SQL))
+
+apply-seeds: apply-bible-verses-seeds apply-seeds-stories-characters apply-seeds-landmarks apply-seeds-era-boundaries
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================
@@ -319,6 +373,6 @@ lint:
 
 clean-generated:
 	@echo "[Makefile] 생성된 SQL 삭제..."
-	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL)
+	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL) $(LANDMARKS_SQL) $(ERA_BOUNDARIES_SQL)
 	rm -f $(SUPABASE_DIR)/seeds/krv_bible_verses_part_*.sql
 	@echo "  → tools/seed/character_meta.json은 유지됨 (수동 삭제)"

@@ -5,3 +5,6 @@
 #   pip install -r requirements.txt
 google-auth>=2.49,<3
 requests>=2.33,<3
+# era_boundaries 폴리곤 생성 — Natural Earth GeoJSON 을 시대별 bounding box 로
+# 클립해 정밀한 해안선 폴리곤을 만든다 (tools/seed/build_era_boundaries_from_geojson.py).
+shapely>=2.0,<3

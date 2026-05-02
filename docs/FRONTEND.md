@@ -45,6 +45,8 @@ lib/
 | StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), sceneCharacters (List<List<String>>), lat/lng, storyIndex, rankInEra, globalRank, personCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
 | BibleRef | `models/bible_ref.dart` | book, from, to (`displayText` getter) | `BibleRef.fromMap`, `BibleRef.fromList` |
 | BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
+| Landmark | `models/landmark.dart` | id, code, name, description, emoji, category, lat, lng, displayPriority, eraCodes, relatedEventCodes (`latLng` getter) | `Landmark.fromMap()` |
+| EraBoundary | `models/era_boundary.dart` | id, eraId, polygonIndex, polygon (List&lt;LatLng&gt;), color (Color), fillOpacity, displayOrder | `EraBoundary.fromMap()` — `#RRGGBB`/`[[lat,lng], ...]` 자동 파싱 |
 | AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
 | UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
 | SavedBibleVerse | `models/saved_bible_verse.dart` (55줄) | id, userId, translation, bookNo, bookName, chapterNo, verseNo, verseText | `SavedBibleVerse.fromMap()` |
@@ -95,6 +97,12 @@ class StoryState {
   final List<StoryEvent> searchResults;
   final bool isSearching;
   final String selectedTestament;  // 'old' | 'new'
+
+  // 지도 관련 (2026-04-29)
+  final List<Landmark> landmarks;               // 시대별 랜드마크 (전체 카탈로그)
+  final List<StoryEvent> viewportSearchPool;    // "현 지도에서 검색" 풀 (lazy)
+  final List<StoryEvent> viewportSearchResults; // 현재 viewport 검색 결과
+  final List<EraBoundary> eraBoundaries;        // 시대별 거친 영역 폴리곤 (전체)
 }
 ```
 
@@ -113,6 +121,9 @@ class StoryState {
 | `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 (`globalRank` 정렬) |
 | `colorForCharacter(String code)` | 인물 코드별 할당 색상 반환 |
 | `personByCode(String code)` | 코드로 Character 객체 조회 |
+| `ensureViewportSearchPool()` | "현 지도에서 검색" 풀을 lazy-load (전체 사건 좌표 캐시) |
+| `searchEventsInViewport({minLat, maxLat, minLng, maxLng})` | 박스 안 사건들을 `viewportSearchResults` 로 채움 |
+| `clearViewportSearchResults()` | 검색 결과 비우기 |
 
 ### 3.4 색상 팔레트 (8색)
 
@@ -148,7 +159,7 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도, 핀/마커 렌더링 |
+| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `viewportSearchResults` (검색 결과 핀 — 인물 아바타 1~3 겹침 + 제목 패널) ③ `onSearchInViewport` 가 주어지면 우상단 "현 지도에서 검색" 버튼 표시 (가운데 50% 박스). 결과가 있으면 `onClearViewportSearch` 와 함께 "✕ 검색 취소 (N개)" 버튼으로 자동 전환. ④ `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
 | CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |

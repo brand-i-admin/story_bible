@@ -28,6 +28,15 @@ class CharacterPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 시대 내 사건들 → 인물별 등장 사건 카운트. 카드에 "N 사건" 표시 용.
+    final state = ref.watch(storyControllerProvider);
+    final eventCountByCode = <String, int>{};
+    for (final event in state.events) {
+      for (final code in event.characterCodes) {
+        eventCountByCode[code] = (eventCountByCode[code] ?? 0) + 1;
+      }
+    }
+
     final sortedCharacters = [...characters]
       ..sort((a, b) {
         if (sortMode == CharacterSortMode.eraOrder) {
@@ -223,21 +232,54 @@ class CharacterPanel extends ConsumerWidget {
                                           ],
                                         ),
                                       ),
-                                      Text(
-                                        character.tagline ?? '',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFFF4E9D2),
-                                          shadows: [
-                                            Shadow(
-                                              color: Color(0x88000000),
-                                              blurRadius: 2,
-                                              offset: Offset(0, 1),
+                                      Row(
+                                        children: [
+                                          if (eventCountByCode[character
+                                                  .code] !=
+                                              null) ...[
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 1,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: colorForCharacter(
+                                                  character.code,
+                                                ).withValues(alpha: 0.85),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                '${eventCountByCode[character.code]} 사건',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
+                                            const SizedBox(width: 6),
                                           ],
-                                        ),
+                                          Expanded(
+                                            child: Text(
+                                              character.tagline ?? '',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Color(0xFFF4E9D2),
+                                                shadows: [
+                                                  Shadow(
+                                                    color: Color(0x88000000),
+                                                    blurRadius: 2,
+                                                    offset: Offset(0, 1),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
