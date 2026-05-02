@@ -182,6 +182,7 @@ KO_NAME_OVERRIDES = {
     "john": "요한",
     "peter": "베드로",
     "joseph": "요셉",
+    "joseph_nazareth": "요셉(예수의 양아버지)",
     "jacob": "야곱",
     "abraham": "아브라함",
     "philip": "빌립",

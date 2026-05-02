@@ -88,7 +88,7 @@
     "characters": [
       "jesus",
       "mary",
-      "joseph",
+      "joseph_nazareth",
       "shepherds"
     ],
     "place_name": "베들레헴",
@@ -115,7 +115,7 @@
     "scene_characters": [
       [
         "mary",
-        "joseph"
+        "joseph_nazareth"
       ],
       [],
       [],
@@ -128,7 +128,7 @@
     "characters": [
       "jesus",
       "mary",
-      "joseph",
+      "joseph_nazareth",
       "magi",
       "herod"
     ],
@@ -158,7 +158,7 @@
       [],
       [],
       [
-        "joseph"
+        "joseph_nazareth"
       ]
     ]
   },
@@ -168,7 +168,7 @@
     "characters": [
       "jesus",
       "mary",
-      "joseph"
+      "joseph_nazareth"
     ],
     "place_name": "예루살렘 성전",
     "lat": 31.778,
@@ -1599,7 +1599,7 @@
     "characters": [
       "stephen",
       "apostles",
-      "saul"
+      "paul"
     ],
     "place_name": "예루살렘",
     "lat": 31.778,
@@ -1739,7 +1739,7 @@
     "title": "사울 회심: 다메섹의 빛",
     "era": "era_nt_apostolic",
     "characters": [
-      "saul",
+      "paul",
       "ananias"
     ],
     "place_name": "다메섹",
@@ -1765,16 +1765,16 @@
     ],
     "scene_characters": [
       [
-        "saul"
+        "paul"
       ],
       [
-        "saul"
+        "paul"
       ],
       [
-        "saul"
+        "paul"
       ],
       [
-        "saul",
+        "paul",
         "ananias"
       ]
     ]
