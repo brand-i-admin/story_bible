@@ -127,6 +127,25 @@ Makefile                                # 파이프라인 오케스트레이션
 - **stale 정리**: meta 에 없는 `characters` 행을 삭제. `weekly_character_selection` 의 FK 위반을 막기 위해 그 테이블도 동시 청소.
 - **참고**: `person_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)
 
+#### `build_landmarks_seed_sql.py` — 시대별 지도 랜드마크 SQL (독립)
+- **입력**: `assets/landmarks/landmarks.json` (성경 지명·구조물 — 예루살렘 성전, 시내산, 떨기나무 등)
+- **출력**: `supabase/200_stories/landmarks_seed.sql` — `landmarks` UPSERT
+- **스키마**: `code` (unique), `name`, `description`, `emoji`, `category`, `lat`, `lng`, `display_priority`, **`era_codes` (text[])**, `related_event_codes`, `is_active`
+- **의존**: 없음 (인물·이야기와 독립). `db_init.sql` 또는 `make db-init` 으로 `landmarks` 테이블이 먼저 생성되어 있어야 한다 (별도 마이그레이션 없음).
+- **stale 정리**: 현재 JSON 에 없는 `landmarks.code` 행을 삭제. 사용자가 JSON 에서 항목을 빼면 DB 에서도 사라진다.
+- **목적**: 사용자가 시대를 선택하면 그 시대 era_code 가 포함된 랜드마크만 지도에 떠올라 시대별 무대 감각을 잡아 준다. 한 랜드마크가 여러 시대에 의미가 있으면(예: 예루살렘 성전 = 왕정 + 포로/귀환 + 예수 사역) 다중 코드.
+- **PoC 단계**: emoji 컬럼만 사용 (이미지 자산 불필요). 향후 실제 일러스트가 필요하면 `icon_storage_path` 같은 새 컬럼을 추가하는 식으로 확장.
+
+#### `build_era_boundaries_seed_sql.py` — 시대 영역 폴리곤 SQL (독립)
+- **입력**: `assets/landmarks/era_boundaries.json` (시대 코드 + 폴리곤 정점 + 색)
+- **출력**: `supabase/200_stories/era_boundaries_seed.sql` — `era_boundaries` UPSERT
+- **스키마**: `era_id` (eras.code 매칭으로 INSERT 시 SELECT), `polygon_index`, `polygon` (jsonb [[lat,lng], ...]), `color`, `fill_opacity`, `display_order`
+- **on conflict 키**: `(era_id, polygon_index)` — 한 시대의 같은 인덱스 폴리곤은 갱신
+- **의존**: 없음. `db_init.sql` 또는 `make db-init` 으로 `era_boundaries` 테이블이 먼저 생성되어 있어야 한다. JSON 에 적힌 era_code 가 `eras.code` 로 존재해야 INSERT 가 매칭됨.
+- **stale 정리**: 현재 JSON 에 없는 (era_code, polygon_index) 조합은 DB 에서 삭제.
+- **목적**: 사용자가 시대를 선택했을 때 그 시대의 무대를 지도 위에 반투명 폴리곤으로 보여 주어 "이 시대 = 대략 이 영역" 이라는 지리적 감각을 잡아 준다. 인물·사건 핀이 그 영역 안 어디에 있는지 시각적으로 비교 가능.
+- **데이터 작성 가이드**: 각 폴리곤은 정점 3개 이상이어야 한다. 한 시대가 분리된 지역(예: 메소포타미아 + 가나안)을 가지면 `polygons` 배열에 폴리곤 여러 개를 넣는다 (인덱스가 자동 부여됨). 색은 `#RRGGBB` 또는 `#AARRGGBB`, fill_opacity 는 0.0 ~ 1.0.
+
 #### `renumber_story_indices.py` — story_index 재정렬
 - **언제**: stories JSON 을 추가/삭제/수정해서 era 안의 `story_index` 가 듬성듬성 비거나 `None` 이 생겼을 때.
 - **동작**: 같은 era 안에서 현재 `story_index` (정수) 순으로 정렬, `None` 항목은 같은 파일의 JSON 배열 위치 기준으로 이웃 사이에 보간(interpolate). 그 결과 1..N 으로 빈틈없이 재할당.
@@ -187,13 +206,18 @@ make seed-bible-verses       # build_krv_seed_sql.py 실행
 make build-character-meta       # build_character_meta_json.py (모든 인물 카탈로그 + 아바타 프롬프트)
 make seed-stories            # build_200_stories_seed_sql.py (→ person-meta 의존)
 make seed-characters            # build_characters_seed_sql.py (→ person-meta 의존)
+make seed-landmarks          # build_landmarks_seed_sql.py (시대별 랜드마크, 독립)
+make seed-era-boundaries     # build_era_boundaries_seed_sql.py (시대 영역 폴리곤, 독립)
 make generate-avatars        # generate_avatars_vertex.py (→ person-meta 의존, 기존 png 보존)
 make generate-story-images   # generate_event_story_images_vertex.py
 make thumbnails              # generate_runtime_thumbnails.py (→ avatars, story-images)
 
+# DB 적용 (psql)
+make apply-seeds-landmarks   # landmarks_seed.sql 적용 (UPSERT, 재실행 안전)
+
 # 묶음 타겟
 make seed-stories-characters    # seed-stories + seed-characters (권장, apply-seeds-stories-characters 와 대칭)
-make seed-all                # seed-bible-verses + seed-stories + seed-characters
+make seed-all                # seed-bible-verses + seed-stories + seed-characters + seed-landmarks + seed-era-boundaries
 make generate-all            # generate-avatars + generate-story-images + thumbnails
 make all                     # seed-all + generate-all
 ```
@@ -218,6 +242,9 @@ assets/
 ├── elements/                 # UI 장식 요소
 ├── bible/                    # KRV 성경 텍스트 (66 .txt)
 ├── maps/                     # GeoJSON 세계 지도
+├── landmarks/                # 지도용 정적 데이터
+│   ├── landmarks.json        #   - 시대별 랜드마크 (예루살렘 성전, 시내산 등 — era_codes 포함)
+│   └── era_boundaries.json   #   - 시대별 거친 영역 폴리곤
 └── app_icon/                 # 앱 런처 아이콘
 ```
 

@@ -213,6 +213,294 @@ Claude Code는 Supabase에 직접 접속하지 않는다 (보안).
 
 ---
 
+## 5.5 지도 콘텐츠 — 랜드마크 / 시대 영역 워크플로
+
+지도에 항상 표시되는 랜드마크(예루살렘 성전·시내산 등)와 시대별 거친 지리 영역
+폴리곤은 인물·이야기와 별개의 정적 카탈로그다. JSON 편집 → SQL 생성 → DB 적용
+의 단순한 3단계 파이프라인.
+
+### 5.5.1 콘텐츠 워크플로 다이어그램
+
+```mermaid
+flowchart LR
+    subgraph SRC["📝 1. 사용자가 편집"]
+        L[assets/landmarks/<br/>landmarks.json<br/>25개 랜드마크<br/>+ era_codes]
+        E[assets/landmarks/<br/>era_boundaries.json<br/>10개 시대 폴리곤]
+    end
+
+    subgraph BUILD["🔨 2. SQL 생성 (make)"]
+        BO[build_landmarks_<br/>seed_sql.py]
+        BE[build_era_boundaries_<br/>seed_sql.py]
+        OS[supabase/200_stories/<br/>landmarks_seed.sql]
+        ES[supabase/200_stories/<br/>era_boundaries_seed.sql]
+    end
+
+    subgraph DB[("🗄️ 3. Supabase DB")]
+        T1[(landmarks)]
+        T2[(era_boundaries)]
+    end
+
+    subgraph APP["📱 4. 앱"]
+        APP1[시대 선택 시 그 시대<br/>랜드마크 노출<br/>이모지 + 이름]
+        APP2[시대 선택 시 그 시대<br/>반투명 폴리곤]
+    end
+
+    L -->|make seed-landmarks| BO --> OS
+    E -->|make seed-era-boundaries| BE --> ES
+    OS -->|make apply-seeds-landmarks| T1
+    ES -->|make apply-seeds-era-boundaries| T2
+    T1 -->|fetchLandmarks| APP1
+    T2 -->|fetchEraBoundaries| APP2
+
+    style SRC fill:#FFF8E1,stroke:#E6B800
+    style BUILD fill:#E3F2FD,stroke:#1E88E5
+    style DB fill:#E8F5E9,stroke:#2E7D32
+    style APP fill:#FCE4EC,stroke:#C2185B
+```
+
+**한 번에 끝내기**: `make db-init ENV=dev` (스키마 생성, 파괴적!) →
+`make apply-seeds ENV=dev` (인물·사건·랜드마크·시대 폴리곤 모두 적용).
+
+### 5.5.2 데이터 레이어 관계도 (지도 위에서 합쳐지는 구조)
+
+```mermaid
+flowchart TB
+    subgraph DBL["DB 테이블"]
+        ER[(eras<br/>10개 시대)]
+        EV[(events<br/>215개 사건)]
+        EB[(era_boundaries<br/>시대별 폴리곤)]
+        LM[(landmarks<br/>25개 랜드마크<br/>+ era_codes)]
+        CH[(characters<br/>인물)]
+    end
+
+    subgraph STATE["StoryState (Riverpod, 부팅 시 한 번 로드)"]
+        S1[landmarks 전체]
+        S2[eraBoundaries 전체]
+        S3[characters of era]
+        S4[events of era]
+        S5[selectedEraId]
+        S6[selectedCharacterCodes]
+        S7[displayedEventIds]
+    end
+
+    subgraph MAP["StoryMapPanel 레이어 스택 (아래 → 위)"]
+        L0[1. 타일 + 국경]
+        L1[2. era_boundaries<br/>PolygonLayer<br/>반투명 색깔 영역]
+        L2[3. landmarks<br/>시대 era_code 매칭<br/>이모지 라벨]
+        L3[4. events<br/>일반 핀 + 화살표]
+        L4[5. viewport 검색결과<br/>아바타 + 제목 패널]
+    end
+
+    LM --> S1
+    S1 -.filter by era_codes.-> L2
+    EB --> S2
+    S2 -.filter by selectedEraId.-> L1
+    ER --> S5
+    EV --> S4 -.filter by displayedEventIds.-> L3
+    CH --> S3 --> S6
+
+    style DBL fill:#E8F5E9,stroke:#2E7D32
+    style STATE fill:#FFF3E0,stroke:#F57C00
+    style MAP fill:#E1F5FE,stroke:#0277BD
+```
+
+**핵심 설계 원칙**: `landmarks` 와 `era_boundaries` 는 부팅 시 한 번만 전체 로드되어 메모리에 캐시. selectedEraId 가 바뀌면 네트워크 호출 없이 클라이언트에서 필터링 — landmarks 는 `era_codes` 배열에 era code 가 포함된 행, era_boundaries 는 era_id 매칭 행.
+
+### 5.5.3 사용자 인터랙션 시퀀스
+
+```mermaid
+sequenceDiagram
+    actor U as 사용자
+    participant App as Flutter 앱
+    participant State as StoryState
+    participant Map as StoryMapPanel
+    participant DB as Supabase
+
+    Note over App: 앱 부팅
+    App->>DB: fetchEras / fetchLandmarks / fetchEraBoundaries
+    DB-->>State: 10 era + 25 landmark + 10 polygon
+    Note over Map: 시대 미선택 → 지도는 비어 있음
+
+    Note over U,Map: 시대 선택 (Step 1, "다음" 누르기 전)
+    U->>App: "족장시대" 탭
+    App->>State: selectEra(era_patriarch_id)
+    State-->>Map: activeEraBoundaries (1개) + activeLandmarks (era_codes 매칭 항목)
+    Map-->>U: 🟧 우르→가나안→이집트 반투명 영역<br/>+ 🏺 우르, 🏕️ 하란, 🪜 벧엘 등 시대 랜드마크
+
+    Note over U,Map: 인물 선택
+    U->>App: 아브라함 체크
+    App->>State: toggleCharacter("abraham")
+    Note over State: 영역 폴리곤 + 랜드마크는 그대로 유지
+
+    U->>App: Step3 "다음" — 사건 5개 선택
+    App->>State: setDisplayedEvents({...5개 id})
+    State-->>Map: events (filtered)
+    Map-->>U: 폴리곤 + 랜드마크 위에 핀 + 화살표 path<br/>"아브라함이 영역 어디를 다녔는지" 한눈에
+
+    Note over U,Map: 자유 탐색 모드
+    U->>Map: 지도 줌/팬
+    U->>Map: "현 지도에서 검색" 탭
+    Map->>State: searchEventsInViewport(box50%)
+    State->>DB: fetchAllEventsForMapSearch (lazy, 1회)
+    DB-->>State: 모든 사건 좌표
+    Note over State: filterEventsByLatLngBox<br/>(클라이언트, 가운데 50%)
+    State-->>Map: viewportSearchResults
+    Map-->>U: 검색 결과 핀 (아바타 + 제목)<br/>버튼이 "✕ 검색 취소 (N개)" 로 전환
+    U->>Map: "✕ 검색 취소" 탭
+    Map->>State: clearViewportSearchResults()
+    State-->>Map: 결과 비움 → 일반 화면 복귀
+```
+
+**핵심 가치 제안**: 사용자가 "족장시대 = 메소포타미아에서 가나안·이집트로 이어지는 영역" 이라는 거시적 지리 감각을 폴리곤으로 잡고, 그 위에 아브라함 같은 개별 인물의 행적이 그 영역 내 어디를 다녔는지 핀으로 비교할 수 있다. 한국 사용자가 성경 지리에 머릿속 좌표계를 만들기 위한 학습 도구.
+
+### 5.5.4 콘텐츠 수정 흐름 (사용자 작업 절차)
+
+```
+랜드마크 추가/수정:
+  ① assets/landmarks/landmarks.json 편집
+     · code 는 unique, lat/lng/emoji 필수
+     · era_codes 배열에 노출되고 싶은 시대 코드 추가 (eras.code 기준)
+       ex) 예루살렘 성전 → ["era_monarchy", "era_exile_return", "era_nt_public_ministry"]
+  ② make seed-landmarks                  → SQL 재생성
+  ③ make apply-seeds-landmarks ENV=dev   → DB UPSERT (재실행 안전)
+  ④ 앱 재실행 → 그 시대 선택 시 즉시 노출
+
+시대 영역 수정 — 옵션 A: 손으로 정점 편집 (간단한 조정):
+  ① assets/landmarks/era_boundaries.json 편집 (era_code, polygons[][])
+     · 좌표는 [lat, lng] (위·경) — GeoJSON 의 [lng, lat] 과 반대 주의
+     · 정점 3개 이상, 시계/반시계 방향 무관
+     · 한 시대 분리 영역은 polygons 배열에 폴리곤 여러 개
+  ② make seed-era-boundaries
+  ③ make apply-seeds-era-boundaries ENV=dev
+
+시대 영역 수정 — 옵션 B: GeoJSON 기반 자동 생성 (정밀한 해안선 추적, 권장):
+  ① tools/seed/build_era_boundaries_from_geojson.py 의 CLIP_REGIONS 편집
+     · country_iso_a2: 시대에 포함시킬 국가 ISO 코드 (예: ["IQ","TR","IR"])
+     · bbox: (min_lng, min_lat, max_lng, max_lat) — 국가의 어느 부분만 잡을지
+     · color, fill_opacity, display_order
+  ② make regen-era-boundaries
+       → assets/landmarks/era_boundaries.json 자동 덮어쓰기 (Natural Earth
+         GeoJSON 클립 + Douglas-Peucker simplify) → SQL 재생성까지 한 번에
+  ③ make apply-seeds-era-boundaries ENV=dev
+  ⚠️ ②가 era_boundaries.json 을 덮어쓰므로 손으로 편집한 내용이 있다면 백업 후 진행
+
+이벤트 좌표 ↔ 랜드마크 정렬 (모리아·헤브론·막벨라 등 어긋남 보정):
+  ① make align-events-to-landmarks-dry   → 변경 후보만 출력 (검증)
+  ② make align-events-to-landmarks       → assets/200_stories/*.json 의 lat/lng 를
+                                          매칭되는 landmark 좌표로 일괄 갱신
+  ③ make seed-stories                    → events SQL 재생성
+  ④ make apply-seeds-stories-characters ENV=dev
+  ⚠️ 매핑 키워드는 tools/seed/align_events_to_landmarks.py 의 KEYWORD_TO_LANDMARK
+     리스트로 제어. 새 landmark 추가 시 키워드도 함께 등록 권장.
+```
+
+⚠️ **stale 정리**: 빌더는 JSON 에 없는 항목을 DB 에서 자동 삭제한다. JSON 에서 항목을 빼면 DB 에서도 사라진다.
+
+### 5.5.5 명령어 의사결정 — 언제 어떤 make 타겟을 쓰나
+
+> "지금 무엇을 바꿨는지" 만 보고 어디까지 실행할지 결정. 가장 자주 헷갈리는 부분.
+
+```mermaid
+flowchart TD
+    Q{무엇을 바꿨나?}
+
+    Q --> S1[성경 본문 텍스트<br/>assets/bible/*.txt]
+    S1 --> C1[make seed-bible-verses<br/>+ apply-bible-verses-seeds]
+
+    Q --> S2[이야기/인물<br/>assets/200_stories/*.json]
+    S2 --> C2[make seed-stories-characters<br/>+ apply-seeds-stories-characters]
+
+    Q --> S3[랜드마크 추가/수정<br/>assets/landmarks/landmarks.json]
+    S3 --> C3[make seed-landmarks<br/>+ apply-seeds-landmarks]
+
+    Q --> S4{시대 영역}
+    S4 --> S4a[손으로 정점 편집한 경우]
+    S4a --> C4a[make seed-era-boundaries<br/>+ apply-seeds-era-boundaries]
+    S4 --> S4b[CLIP_REGIONS 정의 변경한 경우]
+    S4b --> C4b[make regen-era-boundaries<br/>+ apply-seeds-era-boundaries<br/><i>regen 이 GeoJSON 클립 + SQL 까지 한 번에</i>]
+
+    Q --> S5[이벤트 좌표가 landmark 와<br/>어긋나 보임]
+    S5 --> C5[make align-events-to-landmarks<br/>+ make seed-stories<br/>+ apply-seeds-stories-characters]
+
+    Q --> S6[새 인물 아바타 추가<br/>assets/avatars/*.png]
+    S6 --> C6[make thumbnails<br/>+ upload-character-avatars]
+
+    Q --> S7[DB 스키마 자체 변경<br/>db_init.sql 수정]
+    S7 --> C7[⚠️ make db-init<br/>모든 데이터 사라짐 — 풀 리셋 시퀀스 사용]
+
+    Q --> S8{풀 리셋<br/>전부 처음부터}
+    S8 --> C8[make seed-all<br/>&& make db-init<br/>&& make apply-seeds<br/>&& make upload-character-avatars]
+
+    style C1 fill:#E8F5E9,stroke:#2E7D32
+    style C2 fill:#E8F5E9,stroke:#2E7D32
+    style C3 fill:#E8F5E9,stroke:#2E7D32
+    style C4a fill:#E8F5E9,stroke:#2E7D32
+    style C4b fill:#FFF3E0,stroke:#F57C00
+    style C5 fill:#E3F2FD,stroke:#1E88E5
+    style C6 fill:#FCE4EC,stroke:#C2185B
+    style C7 fill:#FFEBEE,stroke:#C62828
+    style C8 fill:#FFF9C4,stroke:#F57F17
+```
+
+**색상 의미:** 🟢 안전(idempotent) / 🟠 자동 생성 후 정밀화 / 🔵 데이터 정렬 / 🟣 자산 업로드 / 🔴 파괴적 / 🟡 풀 리셋
+
+### 5.5.6 풀 리셋 시퀀스 (신규 환경 / 모든 것 처음부터)
+
+```mermaid
+sequenceDiagram
+    actor U as 운영자
+    participant Local as 로컬 디스크<br/>(assets/, tools/)
+    participant SQL as supabase/<br/>(생성된 SQL)
+    participant DB as Supabase DB
+    participant Storage as Supabase Storage
+
+    Note over U: ① SQL 생성 (전체)
+    U->>Local: make seed-all
+    Local->>SQL: krv_bible_verses_part_*.sql
+    Local->>SQL: 200_stories_seed_part_*.sql
+    Local->>SQL: characters_seed.sql
+    Local->>SQL: landmarks_seed.sql
+    Local->>SQL: era_boundaries_seed.sql
+
+    Note over U: ② 스키마 초기화 (파괴적!)
+    U->>DB: make db-init ENV=dev
+    Note over DB: drop & recreate<br/>landmarks/era_boundaries 테이블 포함
+
+    Note over U: ③ 데이터 시드 (4-체인 자동)
+    U->>DB: make apply-seeds ENV=dev
+    SQL->>DB: bible_verses (31,904절)
+    SQL->>DB: characters + events
+    SQL->>DB: landmarks (95개)
+    SQL->>DB: era_boundaries (108행)
+
+    Note over U: ④ 인물 아바타 Storage 업로드 (1회)
+    U->>Storage: make upload-character-avatars ENV=dev
+    Local->>Storage: assets/avatars/*.png → characters/<code>.png
+
+    Note over U: 완료 — 앱 실행 시 모든 콘텐츠 정상
+```
+
+**한 줄 명령**:
+```bash
+make seed-all && make db-init ENV=dev && make apply-seeds ENV=dev && make upload-character-avatars ENV=dev
+```
+
+### 5.5.7 자주 묻는 질문
+
+**Q. `make db-init && make apply-seeds && make upload-character-avatars` 만 하면 랜드마크/시대 폴리곤도 다 들어가나요?**
+→ **이미 SQL 이 디스크에 있다면 yes** (db_init.sql 이 두 테이블을 만들고, apply-seeds 가 두 시드 파일도 적용). 신규 환경이면 앞에 `make seed-all` 을 붙여 SQL 부터 생성해야 안전.
+
+**Q. landmark 좌표를 바꿨더니 이벤트 핀이 따로 떠 있어요.**
+→ 같은 장소를 가리키는 이벤트의 lat/lng 가 landmark 와 미세 차이 + 핀 분산 알고리즘이 떨어뜨린 것. `make align-events-to-landmarks` → `make seed-stories` → `make apply-seeds-stories-characters` 순으로 정렬.
+
+**Q. 시대 폴리곤이 박스 같아요. 더 정밀하게 만들고 싶어요.**
+→ §5.5.5 의 옵션 B (GeoJSON 클립). `tools/seed/build_era_boundaries_from_geojson.py` 의 CLIP_REGIONS 만 수정하고 `make regen-era-boundaries` 한 번이면 100~500 정점 폴리곤 자동 생성.
+
+**Q. JSON 에서 랜드마크 하나를 지웠는데 DB 에 그대로 남아 있어요.**
+→ stale 정리는 `make apply-seeds-landmarks` 가 실행돼야 발동. seed 만 만들고 apply 안 했을 가능성. 빌더는 "현재 JSON 에 없는 code 를 DELETE" 절을 SQL 머리에 넣어 둠.
+
+---
+
 ## 6. 유지보수 시스템 — 자동 검증 파이프라인
 
 ### 6.1 에디터 (실시간)

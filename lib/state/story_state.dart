@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../models/character.dart';
 import '../models/era.dart';
+import '../models/era_boundary.dart';
+import '../models/landmark.dart';
 import '../models/story_event.dart';
 
 class StoryState {
@@ -21,6 +23,11 @@ class StoryState {
     this.searchResults = const [],
     this.isSearching = false,
     this.selectedTestament = 'old',
+    this.landmarks = const [],
+    this.eraBoundaries = const [],
+    this.viewportSearchPool = const [],
+    this.viewportSearchResults = const [],
+    this.selectedLandmarkCategories = const {},
   });
 
   final bool loading;
@@ -46,6 +53,24 @@ class StoryState {
   final bool isSearching;
   final String selectedTestament;
 
+  /// 시대별 랜드마크 카탈로그 (전체). 클라이언트가 selectedEraId 의 era code 로
+  /// 각 랜드마크의 era_codes 배열과 매칭해 필터링.
+  final List<Landmark> landmarks;
+
+  /// 시대별 거친 지리 영역 폴리곤 (모든 시대 분량). 클라이언트가 selectedEraId
+  /// 로 필터해서 그 시대만 지도에 띄운다.
+  final List<EraBoundary> eraBoundaries;
+
+  /// "현 지도에서 검색" 풀 — 처음 1회 fetch 후 캐시.
+  final List<StoryEvent> viewportSearchPool;
+
+  /// 현재 viewport 가운데 50% 박스 안 사건들 (검색 결과).
+  final List<StoryEvent> viewportSearchResults;
+
+  /// 사용자가 선택한 랜드마크 카테고리 필터 (예: 'mountain', 'battle', 'tomb').
+  /// 비어 있으면 모든 카테고리 통과 (전체 표시).
+  final Set<String> selectedLandmarkCategories;
+
   StoryState copyWith({
     bool? loading,
     String? error,
@@ -65,6 +90,11 @@ class StoryState {
     List<StoryEvent>? searchResults,
     bool? isSearching,
     String? selectedTestament,
+    List<Landmark>? landmarks,
+    List<EraBoundary>? eraBoundaries,
+    List<StoryEvent>? viewportSearchPool,
+    List<StoryEvent>? viewportSearchResults,
+    Set<String>? selectedLandmarkCategories,
   }) {
     return StoryState(
       loading: loading ?? this.loading,
@@ -88,6 +118,13 @@ class StoryState {
       searchResults: searchResults ?? this.searchResults,
       isSearching: isSearching ?? this.isSearching,
       selectedTestament: selectedTestament ?? this.selectedTestament,
+      landmarks: landmarks ?? this.landmarks,
+      eraBoundaries: eraBoundaries ?? this.eraBoundaries,
+      viewportSearchPool: viewportSearchPool ?? this.viewportSearchPool,
+      viewportSearchResults:
+          viewportSearchResults ?? this.viewportSearchResults,
+      selectedLandmarkCategories:
+          selectedLandmarkCategories ?? this.selectedLandmarkCategories,
     );
   }
 }

@@ -9,10 +9,39 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/story_repository.dart';
 import '../models/character.dart';
 import '../models/era.dart';
+import '../models/era_boundary.dart';
+import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../state/auth_providers.dart';
 import '../theme/tokens.dart';
 import 'story_state.dart';
+
+/// 위경도 박스에 포함되는 사건만 골라 반환하는 순수 함수.
+///
+/// 테스트하기 쉽게 controller 밖에 둔다. minLng > maxLng 인 경우(국제 날짜 변경
+/// 선을 넘는 viewport) 는 현재 미지원 — 성경 지도에서는 사실상 등장하지 않음.
+List<StoryEvent> filterEventsByLatLngBox({
+  required List<StoryEvent> events,
+  required double minLat,
+  required double maxLat,
+  required double minLng,
+  required double maxLng,
+}) {
+  final lo = minLat <= maxLat ? minLat : maxLat;
+  final hi = minLat <= maxLat ? maxLat : minLat;
+  final w = minLng <= maxLng ? minLng : maxLng;
+  final e = minLng <= maxLng ? maxLng : minLng;
+  return events
+      .where((event) {
+        final lat = event.lat;
+        final lng = event.lng;
+        if (lat == null || lng == null) {
+          return false;
+        }
+        return lat >= lo && lat <= hi && lng >= w && lng <= e;
+      })
+      .toList(growable: false);
+}
 
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
   return Supabase.instance.client;
@@ -50,6 +79,29 @@ class StoryController extends Notifier<StoryState> {
         return;
       }
 
+      // 시대별 랜드마크 + 시대 영역 폴리곤은 시대/인물 선택과 무관하게 부팅 시
+      // 한 번만 전체 로드. 실패해도 나머지 화면은 살려야 하므로 swallow.
+      List<Landmark> landmarks = const [];
+      List<EraBoundary> eraBoundaries = const [];
+      try {
+        landmarks = await _repo.fetchLandmarks();
+      } catch (e) {
+        debugPrint(
+          '[StoryController] fetchLandmarks failed: $e — '
+          'apply-seeds-landmarks 가 적용됐는지 확인하세요.',
+        );
+        landmarks = const [];
+      }
+      try {
+        eraBoundaries = await _repo.fetchEraBoundaries();
+      } catch (e) {
+        debugPrint(
+          '[StoryController] fetchEraBoundaries failed: $e — '
+          'apply-seeds-era-boundaries 가 적용됐는지 확인하세요.',
+        );
+        eraBoundaries = const [];
+      }
+
       final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
       state = state.copyWith(
         loading: false,
@@ -65,6 +117,8 @@ class StoryController extends Notifier<StoryState> {
         searchResults: const [],
         isSearching: false,
         clearSelectedEvent: true,
+        landmarks: landmarks,
+        eraBoundaries: eraBoundaries,
       );
     } catch (e) {
       state = state.copyWith(
@@ -72,6 +126,67 @@ class StoryController extends Notifier<StoryState> {
         error: _buildLoadErrorMessage(prefix: '초기 데이터를 불러오지 못했습니다.', error: e),
       );
     }
+  }
+
+  /// "현 지도에서 검색" 풀을 lazy-load 한다. 처음 한 번만 네트워크 호출.
+  Future<void> ensureViewportSearchPool() async {
+    if (state.viewportSearchPool.isNotEmpty) {
+      return;
+    }
+    try {
+      final all = await _repo.fetchAllEventsForMapSearch();
+      state = state.copyWith(viewportSearchPool: all);
+    } catch (_) {
+      // 실패하면 다음 시도에서 다시 받도록 그대로 둔다.
+    }
+  }
+
+  /// 현재 지도 viewport 가운데 80% 영역에 들어오는 사건들을 검색 결과로 채운다.
+  ///
+  /// [southWest], [northEast] 는 화면 가운데 80% 박스의 좌하/우상 좌표 (픽셀
+  /// 좌표가 아닌 위경도). 클라이언트가 MapController.camera.visibleBounds 와
+  /// 화면 비율을 이용해 미리 축소시킨 박스를 넘긴다.
+  Future<void> searchEventsInViewport({
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+  }) async {
+    await ensureViewportSearchPool();
+    final hits = filterEventsByLatLngBox(
+      events: state.viewportSearchPool,
+      minLat: minLat,
+      maxLat: maxLat,
+      minLng: minLng,
+      maxLng: maxLng,
+    );
+    state = state.copyWith(viewportSearchResults: hits);
+  }
+
+  void clearViewportSearchResults() {
+    if (state.viewportSearchResults.isEmpty) {
+      return;
+    }
+    state = state.copyWith(viewportSearchResults: const []);
+  }
+
+  /// 랜드마크 카테고리 필터 토글. 비어 있는 상태(=전체 통과)에서 한 카테고리를
+  /// 누르면 그 카테고리만 노출, 다시 같은 걸 누르면 다시 전체.
+  void toggleLandmarkCategory(String category) {
+    final next = {...state.selectedLandmarkCategories};
+    if (next.contains(category)) {
+      next.remove(category);
+    } else {
+      next.add(category);
+    }
+    state = state.copyWith(selectedLandmarkCategories: next);
+  }
+
+  void clearLandmarkCategories() {
+    if (state.selectedLandmarkCategories.isEmpty) {
+      return;
+    }
+    state = state.copyWith(selectedLandmarkCategories: const <String>{});
   }
 
   Future<void> selectTestament(String testament) async {
@@ -410,11 +525,20 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Color colorForCharacter(String characterCode) {
+    // 1) 사용자가 선택한 인물은 미리 할당된 8색 팔레트에서 정해진 색을 사용
+    //    (선택 순서대로 분배 — 시각적으로 비교 가능).
     final assigned = state.selectedCharacterColors[characterCode];
     if (assigned != null) {
       return assigned;
     }
-    return AppColors.characterFallback;
+    // 2) 미선택 인물도 코드 hash 로 안정적 색을 부여한다 (앱을 다시 켜도 같은 색).
+    //    "시대 미리보기" 모드에서 모든 인물 path 가 자기만의 색을 갖도록 하기
+    //    위한 fallback. 같은 길이의 코드가 비슷한 색에 몰리지 않게 단순 해시 +
+    //    팔레트 길이 모듈로 사용.
+    if (characterCode.isEmpty) {
+      return AppColors.characterFallback;
+    }
+    return AppColors.characterAt(characterCode.hashCode);
   }
 
   Character? characterByCode(String characterCode) {

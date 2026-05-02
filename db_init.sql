@@ -47,6 +47,9 @@ end $$;
 drop view if exists events_ordered cascade;
 drop view if exists person_eras cascade;
 drop view if exists character_eras cascade;
+drop table if exists era_boundaries cascade;
+drop table if exists landmarks cascade;
+drop table if exists map_objects cascade;  -- legacy 이름 (2026-04-29 이전)
 drop table if exists audit_log cascade;
 drop table if exists search_embeddings cascade;
 drop table if exists user_daily_activity cascade;
@@ -233,6 +236,54 @@ create table if not exists events (
 
 -- 활성 이벤트(not deleted) 만 빠르게 조회하기 위한 partial index.
 create index if not exists idx_events_active on events (id) where deleted_at is null;
+
+-- ----------------------------------------------------------------------------
+-- landmarks: 시대별로 지도 위에 표시되는 성경 랜드마크 (정적 카탈로그)
+-- ----------------------------------------------------------------------------
+-- 예루살렘 성전 · 시내산 · 떨기나무 같은 핵심 장소를 이모지 + 이름으로 노출한다.
+-- 시대(era_codes 배열) 단위로 묶여 있어 사용자가 시대를 선택하면 그 시대에 해당
+-- 하는 랜드마크만 지도에 떠올라 시대별 무대 감각을 잡아 준다. events 와 별개의
+-- 정적 카탈로그 — 시드는 assets/landmarks/landmarks.json →
+-- tools/seed/build_landmarks_seed_sql.py → supabase/200_stories/landmarks_seed.sql.
+create table if not exists landmarks (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,
+  name text not null,
+  description text,
+  emoji text not null default '📍',
+  category text,
+  lat double precision not null,
+  lng double precision not null,
+  display_priority int not null default 0,
+  -- 이 랜드마크가 노출되는 시대 코드 배열. 예수님 시대 + 사도 시대 등 다중 시대
+  -- 가능. 비어 있으면 어떤 시대에서도 노출되지 않는다 (모든 시대 통과 의도면
+  -- eras 의 모든 code 를 명시).
+  era_codes text[] not null default '{}',
+  related_event_codes text[] not null default '{}',
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index if not exists idx_landmarks_active on landmarks (id) where is_active = true;
+create index if not exists idx_landmarks_era_codes_gin on landmarks using gin (era_codes);
+
+-- ----------------------------------------------------------------------------
+-- era_boundaries: 시대별 거친 지리 영역 (지도 위 반투명 폴리곤)
+-- ----------------------------------------------------------------------------
+-- 사용자가 시대를 선택했을 때 그 시대 이야기가 펼쳐진 영역을 색깔 폴리곤으로
+-- 보여 준다. 한 시대가 분리된 지역(예: 메소포타미아 + 가나안)을 포함하면
+-- 여러 행으로 표현. polygon 은 jsonb 배열 [[lat, lng], [lat, lng], ...].
+create table if not exists era_boundaries (
+  id uuid primary key default gen_random_uuid(),
+  era_id uuid not null references eras(id) on delete cascade,
+  polygon_index int not null default 0,
+  polygon jsonb not null,
+  color text not null default '#FF8800',
+  fill_opacity numeric(3,2) not null default 0.18,
+  display_order int not null default 0,
+  created_at timestamptz not null default now(),
+  unique (era_id, polygon_index)
+);
+create index if not exists idx_era_boundaries_era on era_boundaries (era_id);
 
 -- Era 내 story_index 정렬 결과를 1..N rank 로 노출.
 -- 어드민/외부 기여로 새 이야기가 끼어들어도 view 가 자동으로 재계산된다.
@@ -659,6 +710,8 @@ grant usage on schema public to anon, authenticated;
 grant select on table eras to anon, authenticated;
 grant select on table characters to anon, authenticated;
 grant select on table events to anon, authenticated;
+grant select on table landmarks to anon, authenticated;
+grant select on table era_boundaries to anon, authenticated;
 grant select on table bible_verses to anon, authenticated;
 grant select on table quiz_questions to anon, authenticated;
 grant select on events_ordered to anon, authenticated;
@@ -674,6 +727,8 @@ grant select, insert, update on table user_daily_activity to authenticated;
 alter table eras enable row level security;
 alter table characters enable row level security;
 alter table events enable row level security;
+alter table landmarks enable row level security;
+alter table era_boundaries enable row level security;
 alter table bible_verses enable row level security;
 alter table quiz_questions enable row level security;
 alter table user_event_progress enable row level security;
@@ -691,6 +746,12 @@ create policy characters_read_active on characters for select using (is_active =
 
 drop policy if exists events_read_published on events;
 create policy events_read_published on events for select using (status = 'published');
+
+drop policy if exists landmarks_read_active on landmarks;
+create policy landmarks_read_active on landmarks for select using (is_active = true);
+
+drop policy if exists era_boundaries_read_all on era_boundaries;
+create policy era_boundaries_read_all on era_boundaries for select using (true);
 
 drop policy if exists bible_verses_read_all on bible_verses;
 create policy bible_verses_read_all on bible_verses for select using (true);

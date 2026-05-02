@@ -19,9 +19,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-          child: MaterialApp(
+          child: const MaterialApp(
             builder: fontScaleBuilder,
-            home: const Scaffold(body: Text('probe')),
+            home: Scaffold(body: Text('probe')),
           ),
         ),
       );
@@ -40,9 +40,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-        child: MaterialApp(
+        child: const MaterialApp(
           builder: fontScaleBuilder,
-          home: const Scaffold(body: Text('probe')),
+          home: Scaffold(body: Text('probe')),
         ),
       ),
     );

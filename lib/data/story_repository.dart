@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/bible_verse.dart';
 import '../models/character.dart';
 import '../models/era.dart';
+import '../models/era_boundary.dart';
+import '../models/landmark.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 
@@ -51,6 +53,38 @@ class StoryRepository {
         .select()
         .eq('era_id', eraId)
         .order('rank_in_era', ascending: true);
+    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
+  }
+
+  /// 시대별로 지도에 표시되는 랜드마크 카탈로그. 클라이언트가 selectedEraId 의
+  /// era code 로 era_codes 배열 매칭 필터링해서 노출.
+  Future<List<Landmark>> fetchLandmarks() async {
+    final rows = await _client
+        .from('landmarks')
+        .select()
+        .order('display_priority', ascending: true)
+        .order('name', ascending: true);
+    return rows.map<Landmark>(Landmark.fromMap).toList();
+  }
+
+  /// 시대별 거친 지리 영역 폴리곤. 시대 선택 시 지도에 반투명 영역으로 그려진다.
+  Future<List<EraBoundary>> fetchEraBoundaries() async {
+    final rows = await _client
+        .from('era_boundaries')
+        .select()
+        .order('display_order', ascending: true)
+        .order('polygon_index', ascending: true);
+    return rows.map<EraBoundary>(EraBoundary.fromMap).toList();
+  }
+
+  /// "현 지도에서 검색" 풀 — published 사건 좌표 전체.
+  Future<List<StoryEvent>> fetchAllEventsForMapSearch() async {
+    final rows = await _client
+        .from('events_ordered')
+        .select()
+        .not('lat', 'is', null)
+        .not('lng', 'is', null)
+        .order('global_rank', ascending: true);
     return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
   }
 

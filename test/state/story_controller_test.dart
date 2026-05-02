@@ -277,14 +277,28 @@ void main() {
   });
 
   group('StoryController.colorForCharacter', () {
-    test('미선택 인물은 기본 색상 반환', () async {
+    test('미선택 인물도 hash 기반 안정 색상을 반환한다 (시대 미리보기 path 색)', () async {
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => []);
       final container = buildContainer();
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      final color = controller.colorForCharacter('unknown');
-      expect(color, const Color(0xFF8E7B61));
+      // 같은 코드는 항상 같은 색 — 화면 새로고침/시대 전환에도 일관됨.
+      final c1 = controller.colorForCharacter('unknown_a');
+      final c2 = controller.colorForCharacter('unknown_a');
+      expect(c1, c2);
+      // 다른 코드는 다른 팔레트 슬롯에 매핑되므로 보통 다른 색 (충돌 가능하지만
+      // 같은 코드끼리의 stability 만 검증).
+      expect(c1, isNot(equals(const Color(0x00000000))));
+    });
+
+    test('빈 코드면 fallback 갈색 반환', () async {
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => []);
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      expect(controller.colorForCharacter(''), const Color(0xFF8E7B61));
     });
   });
 
