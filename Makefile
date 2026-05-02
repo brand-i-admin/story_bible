@@ -43,7 +43,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 .PHONY: help all \
         seed-bible-verses build-character-meta renumber-story-indices \
-        seed-stories seed-characters seed-stories-characters \
+        seed-stories seed-characters seed-stories-characters seed-quizzes \
         seed-landmarks seed-era-boundaries \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
@@ -70,12 +70,13 @@ help:
 	@echo "  seed-stories            events SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
+	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
 	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -196,7 +197,20 @@ regen-era-boundaries:
 		--output $(LANDMARKS_DIR)/era_boundaries.json
 	@$(MAKE) seed-era-boundaries
 
-seed-all: seed-bible-verses seed-stories seed-characters seed-landmarks seed-era-boundaries
+seed-quizzes:
+	@echo "[Makefile] 퀴즈 SQL 생성..."
+	@# 권위 소스: supabase/quizzes/db_events.json (dev DB 스냅샷).
+	@# main 의 200_stories_seed.sql 과 dev DB 가 같은 (era,story_index) 키에
+	@# 서로 다른 이야기를 담고 있어, 시드 파일을 기준으로 빌드하면 title이
+	@# 어긋난 SQL 이 생성된다. DB 와 seed 가 일치할 때까지 db_events.json 을
+	@# 단일 진실 소스로 사용한다.
+	$(PYTHON) $(TOOLS_DIR)/seed/build_quizzes_seed_sql.py \
+		--input-dir $(ASSETS_DIR)/quizzes \
+		--output $(SUPABASE_DIR)/quizzes/quizzes_seed.sql \
+		--report $(SUPABASE_DIR)/quizzes/quizzes_report.json \
+		--events-from-json $(SUPABASE_DIR)/quizzes/db_events.json
+
+seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-landmarks seed-era-boundaries
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 20,
+  "story_title": "히스기야와 산헤립: 두려움의 편지",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "히스기야가 침략 위기에 어떤 기도를 드렸습니까?",
+      "choices": [
+        "천하 만국이 여호와만 하나님인 줄 알게 해달라고 구하였다",
+        "앗수르 왕을 치는 군사를 달라고 구하였다",
+        "예루살렘 성벽을 강하게 해달라고 구하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 19:19 — '천하 만국이 주 여호와는 홀로 하나님이신줄 알리이다'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "히스기야는 산헤립의 편지를 받은 후 어떻게 하였습니까?",
+      "choices": [
+        "성전에 올라가서 여호와 앞에 펼치고 기도하였다",
+        "편지를 불태웠다",
+        "즉시 항복을 선언하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 19:14 — '히스기야가 ... 성전에 올라가서 여호와 앞에 그것을 펴놓고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "히스기야와 산헤립의 대결 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "열왕기하와 이사야",
+        "열왕기상과 역대하",
+        "예레미야와 에스겔"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 18:13-19:19와 사 36:1-37:20에 같은 사건이 평행 기록됨"
+    }
+  ]
+}

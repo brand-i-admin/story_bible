@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 7,
+  "story_title": "광야 시험",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님은 광야에서 몇 일 동안 시험을 받으셨습니까?",
+      "choices": [
+        "사십 일",
+        "삼 일",
+        "칠 일"
+      ],
+      "answer_index": 0,
+      "explanation": "마 4:2 — '사십 일을 밤낮으로 금식하신 후에 주리신지라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "예수님은 마귀의 시험에 어떻게 대응하셨습니까?",
+      "choices": [
+        "성경 말씀으로 대답하셨다",
+        "기적으로 마귀를 물리치셨다",
+        "침묵하시고 물러나셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "마 4:4 — '예수께서 대답하여 가라사대 기록되었으되'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "예수님의 광야 시험 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마태복음, 마가복음, 누가복음",
+        "마태복음만",
+        "요한복음만"
+      ],
+      "answer_index": 0,
+      "explanation": "마 4:1-11, 막 1:12-13, 눅 4:1-13에 광야 시험 기사가 기록됨"
+    }
+  ]
+}

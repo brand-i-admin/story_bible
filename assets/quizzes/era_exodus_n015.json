@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 15,
+  "story_title": "모세의 중보: 다시 시작",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "모세가 진 밖에 친 장막의 이름은 무엇이었습니까?",
+      "choices": [
+        "회막",
+        "성막",
+        "증거막"
+      ],
+      "answer_index": 0,
+      "explanation": "출 33:7 — '모세가 ... 진 밖에 쳐서 ... 회막이라 이름하니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "새 돌판을 받으러 시내산에 오를 때 모세는 어떻게 하였습니까?",
+      "choices": [
+        "아침에 일찌기 일어나 돌판을 들고 올라갔다",
+        "아론과 함께 올라갔다",
+        "백성 앞에 서약하고 올라갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "출 34:4 — '모세가 ... 아침에 일찌기 일어나 그 두 돌판을 손에 들고 ... 시내 산에 올라가니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "모세의 중보와 언약 갱신이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "출애굽기",
+        "신명기",
+        "민수기"
+      ],
+      "answer_index": 0,
+      "explanation": "출 33:7-23, 34:1-10에 모세의 중보와 언약 갱신이 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_apostolic",
+  "story_index": 9,
+  "story_title": "고넬료: 이방인에게도",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "고넬료는 어느 부대 소속 백부장이었습니까?",
+      "choices": [
+        "이달리야대",
+        "로마 수비대",
+        "가이사랴 기마대"
+      ],
+      "answer_index": 0,
+      "explanation": "행 10:1 — '이달리야대라 하는 군대의 백부장이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "베드로가 고넬료의 집에서 이방인에게 성령 임함을 본 후 어떻게 하였습니까?",
+      "choices": [
+        "물로 세례 주기를 명하였다",
+        "예루살렘 교회에 먼저 보고하였다",
+        "그 자리를 즉시 떠났다"
+      ],
+      "answer_index": 0,
+      "explanation": "행 10:48 — '베드로가 저희에게 예수 그리스도의 이름으로 세례를 베풀라 명하니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "고넬료 이야기가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사도행전",
+        "로마서",
+        "에베소서"
+      ],
+      "answer_index": 0,
+      "explanation": "행 10:1-48에 고넬료 이야기가 기록됨"
+    }
+  ]
+}

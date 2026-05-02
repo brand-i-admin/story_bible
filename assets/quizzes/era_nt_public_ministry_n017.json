@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 17,
+  "story_title": "비유: 선한 사마리아인",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "상처 입은 사람을 먼저 보고 피한 사람은 누구입니까?",
+      "choices": [
+        "제사장",
+        "선한 사마리아인",
+        "율법사"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 10:31 — '마침 한 제사장이 그 길로 내려가다가 그를 보고 피하여 지나가고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "선한 사마리아인은 상처 입은 자에게 무엇을 하였습니까?",
+      "choices": [
+        "기름과 포도주를 붓고 싸매어 주막으로 데려갔다",
+        "돈을 주고 다른 사람을 불렀다",
+        "근처 마을에 소식을 알렸다"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 10:34 — '기름과 포도주를 그 상처에 붓고 싸매고 … 주막으로 데리고 가서'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "선한 사마리아인 비유가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "누가복음",
+        "마태복음",
+        "요한복음"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 10:25-37에 선한 사마리아인 비유가 기록됨"
+    }
+  ]
+}

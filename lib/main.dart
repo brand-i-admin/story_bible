@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'firebase_options.dart';
 import 'services/push_service.dart';
+import 'state/font_scale_providers.dart';
 
 const _runtimeEnv = String.fromEnvironment('ENV', defaultValue: 'dev');
 
@@ -35,7 +37,14 @@ Future<void> main() async {
     debugPrint('[push] Firebase 비활성 상태 — 푸시 알림 없이 진행합니다: $e');
   }
 
-  runApp(const ProviderScope(child: StoryBibleApp()));
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      child: const StoryBibleApp(),
+    ),
+  );
 }
 
 SupabaseConfig _resolveSupabaseConfig() {

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 9,
+  "story_title": "기업 무를 자: 문 앞의 결정",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "보아스와 룻이 낳은 아들의 이름은 무엇입니까?",
+      "choices": [
+        "오벧",
+        "이새",
+        "다윗"
+      ],
+      "answer_index": 0,
+      "explanation": "룻 4:17 — '그 이름을 오벧이라 하였는데 그는 다윗의 아비인 이새의 아비였더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "보아스는 성문에서 기업 무를 결정을 어떻게 공개하였습니까?",
+      "choices": [
+        "장로들과 모든 백성에게 자신이 산다고 선언하였다",
+        "제비를 뽑아 결정하였다",
+        "성전에서 제사를 드리고 선포하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "룻 4:9 — '보아스가 장로들과 모든 백성에게 이르되 내가 엘리멜렉과 ... 모든 것을 산 일에 너희가 오늘날 증인이 되었고'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "보아스가 룻을 아내로 취하는 사건이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "룻기",
+        "사사기",
+        "사무엘상"
+      ],
+      "answer_index": 0,
+      "explanation": "룻 4:1-17에 기업 무를 자 결정과 보아스의 결혼이 기록됨"
+    }
+  ]
+}

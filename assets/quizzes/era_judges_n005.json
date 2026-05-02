@@ -1,0 +1,44 @@
+{
+  "era_code": "era_judges",
+  "story_index": 5,
+  "story_title": "기드온 300: 횃불과 나팔",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "기드온의 최종 선발된 군사는 몇 명이었습니까?",
+      "choices": [
+        "삼백 명",
+        "천 명",
+        "삼만 명"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 7:7 — '손으로 움켜 입에 대고 핥는 자의 수는 삼백 명이요'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "삼백 명이 나팔을 불었을 때 여호와는 어떻게 하셨습니까?",
+      "choices": [
+        "적군으로 동무끼리 칼날로 치게 하셨다",
+        "강한 바람을 일으키셨다",
+        "번개를 내리셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 7:22 — '여호와께서 그 온 적군으로 동무끼리 칼날로 치게 하시므로'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "기드온 300 용사의 승리가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사사기",
+        "여호수아",
+        "사무엘상"
+      ],
+      "answer_index": 0,
+      "explanation": "삿 7:1-22에 기드온 300 용사의 전투가 기록됨"
+    }
+  ]
+}

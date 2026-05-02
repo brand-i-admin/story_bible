@@ -8,9 +8,15 @@
 ```
 lib/
 ├── main.dart                          # 엔트리포인트
-├── app.dart                           # MaterialApp + 테마
+├── app.dart                           # MaterialApp + 테마 (AppTheme.light)
+├── theme/                             # 디자인 시스템 단일 진실 소스
+│   ├── tokens.dart                    # AppColors / AppRadii / AppSpacing / AppShadows / AppFontSizes
+│   ├── typography.dart                # AppTextStyles (sb-h1/h2/h3/body/...)
+│   ├── surfaces.dart                  # AppSurfaces (modal/dialog/floating/card)
+│   └── app_theme.dart                 # ThemeData 빌더
 ├── models/                            # 데이터 모델 (14개)
-├── state/                             # Riverpod 상태 관리 (3개)
+├── state/                             # Riverpod 상태 관리
+├── data/                              # 로컬 저장소 래퍼 (SharedPreferences 등)
 ├── screens/                           # 전체 화면 (6개)
 ├── widgets/                           # 재사용 UI 컴포넌트
 │   ├── shared/                        # 도메인 횡단 공유 위젯 (event_short_popup 등)
@@ -77,7 +83,15 @@ storyControllerProvider         // NotifierProvider<StoryController, StoryState>
 
 // auth_providers.dart
 authStateProvider               // StreamProvider<AuthState>
+
+// font_scale_providers.dart
+fontScaleRepositoryProvider     // Provider<FontScaleRepository>
+fontScaleProvider               // NotifierProvider<FontScaleController, FontScale>
 ```
+
+### 3.1.1 FontScale (앱 전역 글자 크기)
+
+`state/font_scale_providers.dart` — `FontScale` enum(`small` 0.9× / `normal` 1.0× / `large` 1.2×)과 Riverpod 프로바이더. `fontScaleBuilder`가 `MediaQuery.textScaler`에 주입해 앱 전역 텍스트에 적용된다. 저장소는 `data/font_scale_repository.dart`의 `SharedPreferences` 래퍼 사용.
 
 ### 3.2 StoryState (불변 상태 클래스)
 
@@ -166,6 +180,7 @@ static const _palette = <Color>[
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 |
 | ~~EraSelector~~ | ~~`widgets/era_selector.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
+| FontScaleBottomSheet | `widgets/font_scale_bottom_sheet.dart` | 글자 크기 3단계 선택 바텀시트 + `showFontScaleSheet` 헬퍼 |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 UI 테마 데코레이션 |
 | ~~SearchBox~~ | ~~`widgets/search_box.dart`~~ | 삭제됨 — SearchBottomSheet로 대체 (필요 시 재생성) |
 
@@ -283,6 +298,7 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 | flutter_map | ^8.2.1 | 인터랙티브 지도 |
 | latlong2 | ^0.9.1 | 좌표 계산 |
 | flutter_dotenv | ^5.2.1 | .env 환경변수 |
+| shared_preferences | ^2.5.5 | 로컬 키-값 저장 (글자 크기 등 사용자 선호 설정) |
 | sign_in_with_apple | ^6.1.4 | Apple 로그인 |
 | image_picker | ^1.1.2 | 프로필 이미지 |
 | crypto | ^3.0.6 | SHA256 (Apple 로그인 nonce) |

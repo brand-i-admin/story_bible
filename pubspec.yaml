@@ -40,6 +40,7 @@ dependencies:
   sign_in_with_apple: ^6.1.4
   image_picker: ^1.1.2
   crypto: ^3.0.6
+  shared_preferences: ^2.5.3
 
   # Firebase Cloud Messaging — 푸시 알림.
   # firebase_core 초기화 + firebase_messaging 으로 토큰 발급/수신.

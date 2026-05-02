@@ -1,0 +1,44 @@
+{
+  "era_code": "era_patriarch",
+  "story_index": 11,
+  "story_title": "이삭 번제: 멈추게 하시는 하나님",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아브라함이 번제할 어린 양 대신 드린 것은 무엇입니까?",
+      "choices": [
+        "뿔이 수풀에 걸린 숫양",
+        "비둘기 두 마리",
+        "소 한 마리"
+      ],
+      "answer_index": 0,
+      "explanation": "창 22:13 — '아브라함이 ... 뿔이 수풀에 걸린 숫양을 ... 가져다가 번제로 드렸더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "이삭이 번제 재료는 있는데 어린 양이 없다고 묻자 아브라함은 뭐라 대답하였습니까?",
+      "choices": [
+        "하나님이 자기를 위하여 친히 준비하시리라",
+        "내가 사 오리라",
+        "하나님께 맡기고 계속 가자"
+      ],
+      "answer_index": 0,
+      "explanation": "창 22:8 — '아브라함이 가로되 아들아 번제할 어린 양은 하나님이 자기를 위하여 친히 준비하시리라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "아브라함이 이삭을 번제로 드리려 한 사건은 성경 어느 책에 기록되어 있습니까?",
+      "choices": [
+        "창세기",
+        "레위기",
+        "히브리서"
+      ],
+      "answer_index": 0,
+      "explanation": "창 22:1-14에 모리아 산에서의 이삭 번제 시험 기사가 기록됨"
+    }
+  ]
+}

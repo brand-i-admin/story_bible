@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 1,
+  "story_title": "성전 파괴: 예루살렘의 큰 전환",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예수님은 성전에 대해 어떻게 예언하셨습니까?",
+      "choices": [
+        "돌 하나도 돌 위에 남지 않고 다 무너질 것이라 하셨다",
+        "성전이 영원히 서 있을 것이라 하셨다",
+        "적군이 성전을 차지할 것이라 하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "마 24:2 — '돌 하나도 돌 위에 남지 않고 다 무너뜨리우리라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "제자들은 성전을 보며 예수님께 어떻게 하였습니까?",
+      "choices": [
+        "성전 건물들을 가리켜 보이려 하였다",
+        "성전에 들어가 함께 기도하였다",
+        "성전 무너질 날을 두려워하며 울었다"
+      ],
+      "answer_index": 0,
+      "explanation": "마 24:1 — '제자들이 성전 건물들을 가리켜 보이려고 나아오니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "성전 파괴 예언이 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마태복음",
+        "요한계시록",
+        "다니엘서"
+      ],
+      "answer_index": 0,
+      "explanation": "마 24:1-2에 성전 파괴 예언이 기록됨"
+    }
+  ]
+}

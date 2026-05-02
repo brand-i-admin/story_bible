@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../theme/tokens.dart';
+
 enum ParchmentDialogActionStyle { primary, secondary, danger }
 
 class ParchmentDialog extends StatelessWidget {
@@ -73,7 +75,7 @@ class ParchmentDialog extends StatelessWidget {
                           Text(
                             subtitle!.trim(),
                             style: const TextStyle(
-                              color: Color(0xFF8A6A46),
+                              color: AppColors.ink200,
                               fontSize: 11.2,
                               fontWeight: FontWeight.w700,
                               height: 1.4,
@@ -128,18 +130,18 @@ class ParchmentDialogActionButton extends StatelessWidget {
     final isDanger = style == ParchmentDialogActionStyle.danger;
     final isEnabled = onTap != null;
     final background = isPrimary
-        ? const [Color(0xFFD89A47), Color(0xFFB96B2D)]
+        ? const [AppColors.goldLight, AppColors.goldDeep]
         : isDanger
-        ? const [Color(0xFFD97C60), Color(0xFFB4583B)]
+        ? const [AppColors.dangerTop, AppColors.dangerBot]
         : const [Color(0xFFF8F0E2), Color(0xFFEEDDC1)];
     final borderColor = isPrimary
-        ? const Color(0xFFF2D8A6)
+        ? AppColors.goldHi
         : isDanger
-        ? const Color(0xFFF2C2B3)
+        ? AppColors.dangerRim
         : const Color(0xBC9A7A4C);
     final foreground = isPrimary || isDanger
-        ? const Color(0xFFFDF8EE)
-        : const Color(0xFF5E4528);
+        ? AppColors.parchmentCream
+        : AppColors.ink350;
 
     return Material(
       color: Colors.transparent,
@@ -224,19 +226,19 @@ class ParchmentDialogTextField extends StatelessWidget {
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
       style: const TextStyle(
-        color: Color(0xFF402B18),
+        color: AppColors.ink600,
         fontSize: 14.5,
         fontWeight: FontWeight.w800,
       ),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(
-          color: Color(0xFF9B805D),
+          color: AppColors.ink150,
           fontSize: 13.6,
           fontWeight: FontWeight.w600,
         ),
         counterStyle: const TextStyle(
-          color: Color(0xFF9B805D),
+          color: AppColors.ink150,
           fontSize: 10.4,
           fontWeight: FontWeight.w700,
         ),
@@ -287,7 +289,7 @@ class _ParchmentDialogCloseButton extends StatelessWidget {
           ),
           child: const Icon(
             Icons.close_rounded,
-            color: Color(0xFF6E512C),
+            color: AppColors.ink300,
             size: 19,
           ),
         ),
@@ -301,7 +303,7 @@ BoxDecoration _surfaceDecoration() {
     gradient: const LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFFFBF5EA), Color(0xFFF2E5CC)],
+      colors: [Color(0xFFFBF5EA), AppColors.parchmentMid],
     ),
     borderRadius: BorderRadius.circular(24),
     border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),

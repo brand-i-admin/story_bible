@@ -59,7 +59,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Color(0xFF4A331D),
+                            color: AppColors.ink500,
                             fontSize: 20.5,
                             fontWeight: FontWeight.w900,
                           ),
@@ -323,7 +323,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                   child: Icon(
                     Icons.open_in_full_rounded,
                     size: 16,
-                    color: Color(0xFF8A6A46),
+                    color: AppColors.ink200,
                   ),
                 ),
               ),
@@ -527,7 +527,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                   Text(
                     _formatProfilePreviewDate(note.createdAt),
                     style: const TextStyle(
-                      color: Color(0xFF8A6A46),
+                      color: AppColors.ink200,
                       fontSize: 10.2,
                       fontWeight: FontWeight.w800,
                     ),
@@ -591,7 +591,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                   Text(
                     _formatProfilePreviewDate(verse.createdAt),
                     style: const TextStyle(
-                      color: Color(0xFF8A6A46),
+                      color: AppColors.ink200,
                       fontSize: 10.2,
                       fontWeight: FontWeight.w800,
                     ),
@@ -689,7 +689,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                 child: Text(
                   initials,
                   style: TextStyle(
-                    color: const Color(0xFF4A331D),
+                    color: AppColors.ink500,
                     fontSize: size * 0.34,
                     fontWeight: FontWeight.w900,
                   ),
@@ -703,7 +703,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                     child: Text(
                       initials,
                       style: TextStyle(
-                        color: const Color(0xFF4A331D),
+                        color: AppColors.ink500,
                         fontSize: size * 0.34,
                         fontWeight: FontWeight.w900,
                       ),

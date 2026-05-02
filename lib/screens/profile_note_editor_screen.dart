@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/tokens.dart';
 import '../widgets/parchment_page_scaffold.dart';
 
 class ProfileNoteEditorScreen extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ProfileNoteEditorScreenState extends State<ProfileNoteEditorScreen> {
           onPressed: _submit,
           style: FilledButton.styleFrom(
             backgroundColor: const Color(0xFFB7742B),
-            foregroundColor: const Color(0xFFFDF8EE),
+            foregroundColor: AppColors.parchmentCream,
           ),
           child: const Text('저장'),
         ),

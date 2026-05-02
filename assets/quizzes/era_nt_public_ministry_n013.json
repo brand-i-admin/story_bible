@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 13,
+  "story_title": "야이로의 딸과 혈루증 여인",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "혈루증 여인이 예수님 옷에 손을 대자 어떻게 되었습니까?",
+      "choices": [
+        "혈루증이 즉시 그쳤다",
+        "병이 서서히 나았다",
+        "아무런 변화가 없었다"
+      ],
+      "answer_index": 0,
+      "explanation": "막 5:29 — '예수의 뒤로 와서 그 옷가에 손을 대니 혈루증이 즉시 그쳤더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "혈루증 여인은 치유된 후 예수님 앞에서 어떻게 하였습니까?",
+      "choices": [
+        "두려워하여 떨며 와서 엎드려 모든 사실을 여쭈었다",
+        "즉시 집으로 돌아갔다",
+        "예수님을 더 따르겠다고 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "막 5:33 — '두려워하여 떨며 와서 그 앞에 엎드려 모든 사실을 여짜온대'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "야이로의 딸과 혈루증 여인 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "마가복음, 마태복음, 누가복음",
+        "요한복음만",
+        "마태복음만"
+      ],
+      "answer_index": 0,
+      "explanation": "막 5:21-43, 마 9:18-26, 눅 8:40-56에 두 기적 기사가 기록됨"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_primeval",
+  "story_index": 7,
+  "story_title": "무지개 언약: 다시는",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "하나님이 세상과의 언약의 증거로 구름 속에 두신 것은 무엇입니까?",
+      "choices": [
+        "무지개",
+        "불기둥",
+        "돌 제단"
+      ],
+      "answer_index": 0,
+      "explanation": "창 9:13 — '내가 내 무지개를 구름 속에 두었나니 이것이 나의 세상과의 언약의 증거니라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "방주에서 나온 노아는 가장 먼저 무엇을 하였습니까?",
+      "choices": [
+        "여호와를 위하여 단을 쌓았다",
+        "밭을 갈고 씨를 뿌렸다",
+        "가족과 함께 식사하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "창 8:20 — '노아가 여호와를 위하여 단을 쌓고 ... 번제로 단에 드렸더니'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "무지개 언약 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "창세기",
+        "레위기",
+        "여호수아"
+      ],
+      "answer_index": 0,
+      "explanation": "창 8:20-9:17에 노아의 제사와 무지개 언약이 기록됨"
+    }
+  ]
+}

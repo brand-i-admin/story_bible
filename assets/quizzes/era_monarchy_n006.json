@@ -1,0 +1,44 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 6,
+  "story_title": "사울의 시기: 다윗의 도망 시작",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "다윗과 헤어질 때 요나단이 한 맹세는 누구의 이름으로 하였습니까?",
+      "choices": [
+        "여호와의 이름",
+        "이스라엘의 이름",
+        "다윗 아버지의 이름"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 20:42 — '우리 두 사람이 여호와의 이름으로 맹세하여'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "다윗이 블레셋 사람을 죽이고 돌아올 때 여인들은 어떻게 하였습니까?",
+      "choices": [
+        "노래하며 춤추며 왕 사울을 환영하였다",
+        "다윗을 왕으로 높이는 노래를 불렀다",
+        "성문에서 침묵으로 맞이하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 18:6 — '여인들이 이스라엘 모든 성에서 나와서 노래하며 춤추며 소고와 경쇠를 가지고 왕 사울을 환영하는데'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "사울의 시기와 다윗의 도망 이야기가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사무엘상",
+        "사무엘하",
+        "열왕기상"
+      ],
+      "answer_index": 0,
+      "explanation": "삼상 18:6-20:42에 사울의 시기와 다윗의 도망이 기록됨"
+    }
+  ]
+}

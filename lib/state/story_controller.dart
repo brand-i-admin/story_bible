@@ -13,6 +13,7 @@ import '../models/era_boundary.dart';
 import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../state/auth_providers.dart';
+import '../theme/tokens.dart';
 import 'story_state.dart';
 
 /// 위경도 박스에 포함되는 사건만 골라 반환하는 순수 함수.
@@ -56,17 +57,6 @@ final storyControllerProvider = NotifierProvider<StoryController, StoryState>(
 
 class StoryController extends Notifier<StoryState> {
   Timer? _searchDebounce;
-
-  static const _palette = <Color>[
-    Color(0xFF3B6C94),
-    Color(0xFFB6673C),
-    Color(0xFF557C3E),
-    Color(0xFF8A4E5D),
-    Color(0xFF616161),
-    Color(0xFF9E7C24),
-    Color(0xFF7B5D43),
-    Color(0xFF5C6B9F),
-  ];
 
   StoryRepository get _repo => ref.read(storyRepositoryProvider);
 
@@ -542,14 +532,13 @@ class StoryController extends Notifier<StoryState> {
       return assigned;
     }
     // 2) 미선택 인물도 코드 hash 로 안정적 색을 부여한다 (앱을 다시 켜도 같은 색).
-    //    이 색은 "시대 미리보기" 모드에서 모든 인물 path 가 자기만의 색을 갖도록
-    //    하기 위한 fallback. 현재 era 내 인물 별로 같은 길이의 hash 가 비슷한
-    //    색에 몰리지 않도록 단순 해시 + 팔레트 길이 모듈로 사용.
+    //    "시대 미리보기" 모드에서 모든 인물 path 가 자기만의 색을 갖도록 하기
+    //    위한 fallback. 같은 길이의 코드가 비슷한 색에 몰리지 않게 단순 해시 +
+    //    팔레트 길이 모듈로 사용.
     if (characterCode.isEmpty) {
-      return const Color(0xFF8E7B61);
+      return AppColors.characterFallback;
     }
-    final idx = characterCode.hashCode.abs() % _palette.length;
-    return _palette[idx];
+    return AppColors.characterAt(characterCode.hashCode);
   }
 
   Character? characterByCode(String characterCode) {
@@ -585,7 +574,7 @@ class StoryController extends Notifier<StoryState> {
     final next = <String, Color>{};
     final ordered = selectedIds.toList();
     for (var i = 0; i < ordered.length; i++) {
-      next[ordered[i]] = _palette[i % _palette.length];
+      next[ordered[i]] = AppColors.characterAt(i);
     }
     return next;
   }

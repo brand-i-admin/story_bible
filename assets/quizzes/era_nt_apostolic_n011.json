@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_apostolic",
+  "story_index": 11,
+  "story_title": "1차 선교(1): 구브로 살라미–바보",
+  "source_version": "2026-04-24",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "구브로 바보에서 바울이 대적한 유대인 박수의 이름은 무엇입니까?",
+      "choices": [
+        "바예수(엘루마)",
+        "시몬",
+        "아나니아"
+      ],
+      "answer_index": 0,
+      "explanation": "행 13:6-8 — '바예수라 하는 유대인 거짓 선지자 박수를 만나니 … 이 박수 엘루마는'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "총독 서기오 바울은 바울의 사역을 본 후 어떻게 하였습니까?",
+      "choices": [
+        "믿으며 주의 가르치심을 기이히 여겼다",
+        "바울을 즉시 추방하였다",
+        "박수 엘루마의 말을 따랐다"
+      ],
+      "answer_index": 0,
+      "explanation": "행 13:12 — '이에 총독이 그렇게 된 것을 보고 믿으며 주의 가르치심을 기이히 여기니라'"
+    },
+    {
+      "type": "bible_context",
+      "display_order": 2,
+      "question": "바울의 구브로 전도 기사가 기록된 성경 책은 어디입니까?",
+      "choices": [
+        "사도행전",
+        "갈라디아서",
+        "빌립보서"
+      ],
+      "answer_index": 0,
+      "explanation": "행 13:4-12에 구브로 살라미–바보 전도 기사가 기록됨"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import '../models/character.dart';
 import '../models/era.dart';
 import '../models/story_event.dart';
 import '../state/story_controller.dart';
+import '../theme/tokens.dart';
 import 'character_panel.dart';
 
 // 패널 외곽/단계 UI/카드를 별도 파트 파일로 분리하여 가독성과 작업 단위를 유지.
