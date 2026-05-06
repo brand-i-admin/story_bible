@@ -289,10 +289,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     };
   }
 
-  double _sheetFocusSizeForSelectedEvent(Size size) {
-    return _sheetCollapsedPeekSizeFor(size);
-  }
-
   Future<void> _handleStepEraSelect(String eraId) async {
     final controller = ref.read(storyControllerProvider.notifier);
     await controller.selectEra(eraId);
@@ -739,8 +735,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (event == null) {
       return;
     }
-    final viewportSize = MediaQuery.sizeOf(context);
-    final collapsedExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
     controller.selectEvent(event.id);
     // 지도에 이 사건이 아직 커밋 표시되지 않았다면 displayedEventIds + draft
     // 모두에 추가해 지도에 핀이 뜨도록.
@@ -752,9 +746,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     setState(() {
       _selectionStep = 3;
       _draftSelectedCharacterCodes = state.selectedCharacterCodes.toSet();
-      _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = collapsedExtent;
     });
+    // 핀 클릭 시 panel 을 카드 사이즈로 올려 선택된 이야기가 보이도록.
+    // _animateSelectionPanelToStage 가 _isInRevealMode 분기로 카드/expanded 자동 결정.
+    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
