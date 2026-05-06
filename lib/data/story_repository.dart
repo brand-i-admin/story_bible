@@ -77,17 +77,6 @@ class StoryRepository {
     return rows.map<EraBoundary>(EraBoundary.fromMap).toList();
   }
 
-  /// "현 지도에서 검색" 풀 — published 사건 좌표 전체.
-  Future<List<StoryEvent>> fetchAllEventsForMapSearch() async {
-    final rows = await _client
-        .from('events_ordered')
-        .select()
-        .not('lat', 'is', null)
-        .not('lng', 'is', null)
-        .order('global_rank', ascending: true);
-    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
-  }
-
   Future<List<StoryEvent>> fetchEventsForCharacter(String characterCode) async {
     final rows = await _client
         .from('events_ordered')

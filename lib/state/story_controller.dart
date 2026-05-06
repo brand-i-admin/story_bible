@@ -16,33 +16,6 @@ import '../state/auth_providers.dart';
 import '../theme/tokens.dart';
 import 'story_state.dart';
 
-/// 위경도 박스에 포함되는 사건만 골라 반환하는 순수 함수.
-///
-/// 테스트하기 쉽게 controller 밖에 둔다. minLng > maxLng 인 경우(국제 날짜 변경
-/// 선을 넘는 viewport) 는 현재 미지원 — 성경 지도에서는 사실상 등장하지 않음.
-List<StoryEvent> filterEventsByLatLngBox({
-  required List<StoryEvent> events,
-  required double minLat,
-  required double maxLat,
-  required double minLng,
-  required double maxLng,
-}) {
-  final lo = minLat <= maxLat ? minLat : maxLat;
-  final hi = minLat <= maxLat ? maxLat : minLat;
-  final w = minLng <= maxLng ? minLng : maxLng;
-  final e = minLng <= maxLng ? maxLng : minLng;
-  return events
-      .where((event) {
-        final lat = event.lat;
-        final lng = event.lng;
-        if (lat == null || lng == null) {
-          return false;
-        }
-        return lat >= lo && lat <= hi && lng >= w && lng <= e;
-      })
-      .toList(growable: false);
-}
-
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
   return Supabase.instance.client;
 });
@@ -128,48 +101,6 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
-  /// "현 지도에서 검색" 풀을 lazy-load 한다. 처음 한 번만 네트워크 호출.
-  Future<void> ensureViewportSearchPool() async {
-    if (state.viewportSearchPool.isNotEmpty) {
-      return;
-    }
-    try {
-      final all = await _repo.fetchAllEventsForMapSearch();
-      state = state.copyWith(viewportSearchPool: all);
-    } catch (_) {
-      // 실패하면 다음 시도에서 다시 받도록 그대로 둔다.
-    }
-  }
-
-  /// 현재 지도 viewport 가운데 80% 영역에 들어오는 사건들을 검색 결과로 채운다.
-  ///
-  /// [southWest], [northEast] 는 화면 가운데 80% 박스의 좌하/우상 좌표 (픽셀
-  /// 좌표가 아닌 위경도). 클라이언트가 MapController.camera.visibleBounds 와
-  /// 화면 비율을 이용해 미리 축소시킨 박스를 넘긴다.
-  Future<void> searchEventsInViewport({
-    required double minLat,
-    required double maxLat,
-    required double minLng,
-    required double maxLng,
-  }) async {
-    await ensureViewportSearchPool();
-    final hits = filterEventsByLatLngBox(
-      events: state.viewportSearchPool,
-      minLat: minLat,
-      maxLat: maxLat,
-      minLng: minLng,
-      maxLng: maxLng,
-    );
-    state = state.copyWith(viewportSearchResults: hits);
-  }
-
-  void clearViewportSearchResults() {
-    if (state.viewportSearchResults.isEmpty) {
-      return;
-    }
-    state = state.copyWith(viewportSearchResults: const []);
-  }
-
   /// 랜드마크 카테고리 필터 토글. 비어 있는 상태(=전체 통과)에서 한 카테고리를
   /// 누르면 그 카테고리만 노출, 다시 같은 걸 누르면 다시 전체.
   void toggleLandmarkCategory(String category) {
@@ -237,6 +168,49 @@ class StoryController extends Notifier<StoryState> {
       return;
     }
     await selectEra(eraId);
+  }
+
+  /// 단일 시대 선택 — 멀티 시대 기능은 제거됨. 선택된 시대를 다시 누르면 해제.
+  /// 외부에서 [setSelectedEras] / [toggleEraMulti] 를 부르던 호출자는 이 메서드
+  /// 한 번으로 통일.
+  Future<void> setSelectedEra(String? eraId) async {
+    if (eraId == null) {
+      clearEraSelection();
+      return;
+    }
+    await selectEra(eraId);
+  }
+
+  /// v2 — 사용자가 시대 선택 후 모달에서 [SelectionMode.region] 또는
+  /// [SelectionMode.character] 를 골랐을 때 호출.
+  void setSelectionMode(SelectionMode mode) {
+    state = state.copyWith(
+      selectionMode: mode,
+      clearSelectedLandmark: true,
+      clearSelectedEvent: true,
+      // 모드 전환 시 인물 선택은 character 모드에서 다시 정하고, region 모드는
+      // 인물 선택을 무시(지역 단위로 사건 표시).
+      selectedCharacterCodes: mode == SelectionMode.character
+          ? state.selectedCharacterCodes
+          : const {},
+      displayedEventIds: const {},
+    );
+  }
+
+  void clearSelectionMode() {
+    state = state.copyWith(
+      clearSelectionMode: true,
+      clearSelectedLandmark: true,
+    );
+  }
+
+  /// v2 — region 모드에서 landmark(region/anchor/minor) 선택 시.
+  void selectLandmark(String? id) {
+    state = state.copyWith(
+      selectedLandmarkId: id,
+      clearSelectedLandmark: id == null,
+      clearSelectedEvent: true,
+    );
   }
 
   void clearEraSelection() {

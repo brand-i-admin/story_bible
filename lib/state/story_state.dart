@@ -6,6 +6,12 @@ import '../models/era_boundary.dart';
 import '../models/landmark.dart';
 import '../models/story_event.dart';
 
+/// 시대 선택 후 사용자가 선택할 수 있는 두 가지 탐색 모드.
+/// - region: 지도 위 region(영역) 들이 라벨 + 사건 있는 인물 아바타와 함께 표시되고,
+///   region 을 누르면 그 region 안의 사건들이 카드 슬라이딩으로 펼쳐진다.
+/// - character: 인물 멀티 선택 → 사건 카드 5열 그리드 + 점선 연결 + 좌우 화살표.
+enum SelectionMode { region, character }
+
 class StoryState {
   const StoryState({
     this.loading = false,
@@ -14,6 +20,8 @@ class StoryState {
     this.characters = const [],
     this.events = const [],
     this.selectedEraId,
+    this.selectionMode,
+    this.selectedLandmarkId,
     this.selectedCharacterCodes = const {},
     this.selectedCharacterColors = const {},
     this.selectedEventId,
@@ -25,8 +33,6 @@ class StoryState {
     this.selectedTestament = 'old',
     this.landmarks = const [],
     this.eraBoundaries = const [],
-    this.viewportSearchPool = const [],
-    this.viewportSearchResults = const [],
     this.selectedLandmarkCategories = const {},
   });
 
@@ -35,40 +41,34 @@ class StoryState {
   final List<Era> eras;
   final List<Character> characters;
   final List<StoryEvent> events;
+
+  /// 단일 시대 선택. 멀티 시대 기능은 제거됨.
   final String? selectedEraId;
+
+  /// 호환 getter — 기존 호출자가 set 형태로 접근하던 것을 단일 시대 set 으로
+  /// derive. 항상 0 또는 1 개 원소를 가진다.
+  Set<String> get selectedEraIds =>
+      selectedEraId == null ? const <String>{} : {selectedEraId!};
+
+  /// v2 — 시대 선택 후 사용자가 고른 탐색 모드. null 이면 아직 모달이 안 떴거나
+  /// 닫힌 상태.
+  final SelectionMode? selectionMode;
+
+  /// v2 — region 모드에서 사용자가 선택한 landmark (region/anchor/minor) id.
+  /// 선택 시 하단 시트가 최소화되고 그 landmark 의 사건들이 카드로 펼쳐진다.
+  final String? selectedLandmarkId;
+
   final Set<String> selectedCharacterCodes;
   final Map<String, Color> selectedCharacterColors;
   final String? selectedEventId;
-
-  /// 지도에 핀/화살표로 렌더할 이벤트 id 집합.
-  ///
-  /// 홈 화면의 Step 3 에서 사용자가 체크박스로 고르고 "다음" 을 눌러야만
-  /// 커밋된다. 비어 있으면 지도에 아무 것도 표시하지 않는다 (인물을 골라도
-  /// 자동으로 모든 사건이 튀어나오지 않도록 하기 위함).
   final Set<String> displayedEventIds;
-
   final Set<String> completedEventIds;
   final String searchQuery;
   final List<StoryEvent> searchResults;
   final bool isSearching;
   final String selectedTestament;
-
-  /// 시대별 랜드마크 카탈로그 (전체). 클라이언트가 selectedEraId 의 era code 로
-  /// 각 랜드마크의 era_codes 배열과 매칭해 필터링.
   final List<Landmark> landmarks;
-
-  /// 시대별 거친 지리 영역 폴리곤 (모든 시대 분량). 클라이언트가 selectedEraId
-  /// 로 필터해서 그 시대만 지도에 띄운다.
   final List<EraBoundary> eraBoundaries;
-
-  /// "현 지도에서 검색" 풀 — 처음 1회 fetch 후 캐시.
-  final List<StoryEvent> viewportSearchPool;
-
-  /// 현재 viewport 가운데 50% 박스 안 사건들 (검색 결과).
-  final List<StoryEvent> viewportSearchResults;
-
-  /// 사용자가 선택한 랜드마크 카테고리 필터 (예: 'mountain', 'battle', 'tomb').
-  /// 비어 있으면 모든 카테고리 통과 (전체 표시).
   final Set<String> selectedLandmarkCategories;
 
   StoryState copyWith({
@@ -80,6 +80,10 @@ class StoryState {
     List<StoryEvent>? events,
     String? selectedEraId,
     bool clearSelectedEra = false,
+    SelectionMode? selectionMode,
+    bool clearSelectionMode = false,
+    String? selectedLandmarkId,
+    bool clearSelectedLandmark = false,
     Set<String>? selectedCharacterCodes,
     Map<String, Color>? selectedCharacterColors,
     String? selectedEventId,
@@ -92,8 +96,6 @@ class StoryState {
     String? selectedTestament,
     List<Landmark>? landmarks,
     List<EraBoundary>? eraBoundaries,
-    List<StoryEvent>? viewportSearchPool,
-    List<StoryEvent>? viewportSearchResults,
     Set<String>? selectedLandmarkCategories,
   }) {
     return StoryState(
@@ -105,6 +107,12 @@ class StoryState {
       selectedEraId: clearSelectedEra
           ? null
           : selectedEraId ?? this.selectedEraId,
+      selectionMode: clearSelectionMode
+          ? null
+          : selectionMode ?? this.selectionMode,
+      selectedLandmarkId: clearSelectedLandmark
+          ? null
+          : selectedLandmarkId ?? this.selectedLandmarkId,
       selectedCharacterCodes:
           selectedCharacterCodes ?? this.selectedCharacterCodes,
       selectedCharacterColors:
@@ -120,11 +128,25 @@ class StoryState {
       selectedTestament: selectedTestament ?? this.selectedTestament,
       landmarks: landmarks ?? this.landmarks,
       eraBoundaries: eraBoundaries ?? this.eraBoundaries,
-      viewportSearchPool: viewportSearchPool ?? this.viewportSearchPool,
-      viewportSearchResults:
-          viewportSearchResults ?? this.viewportSearchResults,
       selectedLandmarkCategories:
           selectedLandmarkCategories ?? this.selectedLandmarkCategories,
     );
+  }
+
+  /// id 로 landmark 찾기 (region/anchor/minor 통합 lookup).
+  Landmark? landmarkById(String? id) {
+    if (id == null) return null;
+    for (final lm in landmarks) {
+      if (lm.id == id) return lm;
+    }
+    return null;
+  }
+
+  /// landmark 의 region 부모. 이미 region 이면 자기 자신.
+  Landmark? regionForLandmark(String landmarkId) {
+    final lm = landmarkById(landmarkId);
+    if (lm == null) return null;
+    if (lm.isRegion) return lm;
+    return landmarkById(lm.parentLandmarkId);
   }
 }

@@ -336,19 +336,6 @@ sequenceDiagram
     App->>State: setDisplayedEvents({...5개 id})
     State-->>Map: events (filtered)
     Map-->>U: 폴리곤 + 랜드마크 위에 핀 + 화살표 path<br/>"아브라함이 영역 어디를 다녔는지" 한눈에
-
-    Note over U,Map: 자유 탐색 모드
-    U->>Map: 지도 줌/팬
-    U->>Map: "현 지도에서 검색" 탭
-    Map->>State: searchEventsInViewport(box50%)
-    State->>DB: fetchAllEventsForMapSearch (lazy, 1회)
-    DB-->>State: 모든 사건 좌표
-    Note over State: filterEventsByLatLngBox<br/>(클라이언트, 가운데 50%)
-    State-->>Map: viewportSearchResults
-    Map-->>U: 검색 결과 핀 (아바타 + 제목)<br/>버튼이 "✕ 검색 취소 (N개)" 로 전환
-    U->>Map: "✕ 검색 취소" 탭
-    Map->>State: clearViewportSearchResults()
-    State-->>Map: 결과 비움 → 일반 화면 복귀
 ```
 
 **핵심 가치 제안**: 사용자가 "족장시대 = 메소포타미아에서 가나안·이집트로 이어지는 영역" 이라는 거시적 지리 감각을 폴리곤으로 잡고, 그 위에 아브라함 같은 개별 인물의 행적이 그 영역 내 어디를 다녔는지 핀으로 비교할 수 있다. 한국 사용자가 성경 지리에 머릿속 좌표계를 만들기 위한 학습 도구.

@@ -48,10 +48,10 @@ lib/
 |------|------|----------|--------|
 | Era | `models/era.dart` (40줄) | id, code, testament, name, displayOrder, mapCenter*, mapZoom | `Era.fromMap()` |
 | Character | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접 |
-| StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), sceneCharacters (List<List<String>>), lat/lng, storyIndex, rankInEra, globalRank, personCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
+| StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), sceneCharacters (List<List<String>>), **landmarkId** (v2 위치 모델 진실 소스), placeName/lat/lng (events_ordered view derive), storyIndex, rankInEra, globalRank, characterCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
 | BibleRef | `models/bible_ref.dart` | book, from, to (`displayText` getter) | `BibleRef.fromMap`, `BibleRef.fromList` |
 | BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
-| Landmark | `models/landmark.dart` | id, code, name, description, emoji, category, lat, lng, displayPriority, eraCodes, relatedEventCodes (`latLng` getter) | `Landmark.fromMap()` |
+| Landmark | `models/landmark.dart` | id, code, name, description, emoji, category, lat, lng, **kind** ('region'/'anchor'/'minor'/'point'), **polygon** (region 만, List<LatLng>), **parentLandmarkId**, **aliasGroupId**, displayPriority, eraCodes, relatedEventCodes (`isRegion/isAnchor/isMinor/latLng` getter) | `Landmark.fromMap()` |
 | EraBoundary | `models/era_boundary.dart` | id, eraId, polygonIndex, polygon (List&lt;LatLng&gt;), color (Color), fillOpacity, displayOrder | `EraBoundary.fromMap()` — `#RRGGBB`/`[[lat,lng], ...]` 자동 파싱 |
 | AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
 | UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
@@ -102,9 +102,12 @@ class StoryState {
   final List<Era> eras;
   final List<Character> persons;
   final List<StoryEvent> events;
-  final String? selectedEraId;
-  final Set<String> selectedCharacterCodes;        // person.code 기반
-  final Map<String, Color> selectedCharacterColors; // key = person.code
+  final String? selectedEraId;             // 단수 (호환). v2 에서는 selectedEraIds.last 와 sync
+  final Set<String> selectedEraIds;        // v2 — 시대 멀티 선택
+  final SelectionMode? selectionMode;      // v2 — 'region' | 'character' (시대 선택 후 분기)
+  final String? selectedLandmarkId;        // v2 — region 모드에서 선택된 landmark id
+  final Set<String> selectedCharacterCodes;        // character.code 기반
+  final Map<String, Color> selectedCharacterColors; // key = character.code
   final String? selectedEventId;
   final Set<String> completedEventIds;
   final String searchQuery;
@@ -114,8 +117,6 @@ class StoryState {
 
   // 지도 관련 (2026-04-29)
   final List<Landmark> landmarks;               // 시대별 랜드마크 (전체 카탈로그)
-  final List<StoryEvent> viewportSearchPool;    // "현 지도에서 검색" 풀 (lazy)
-  final List<StoryEvent> viewportSearchResults; // 현재 viewport 검색 결과
   final List<EraBoundary> eraBoundaries;        // 시대별 거친 영역 폴리곤 (전체)
 }
 ```
@@ -126,7 +127,11 @@ class StoryState {
 |--------|------|
 | `initialize()` | 앱 시작 시 eras 로드, 초기 상태 설정 |
 | `selectTestament(String)` | 구약/신약 전환 |
-| `selectEra(String)` | 시대 선택 → persons + events 로드 |
+| `selectEra(String)` | 시대 단수 선택 → characters + events 로드 |
+| `toggleEraMulti(String)` | v2 — 시대 멀티 선택 토글 |
+| `setSelectedEras(Set<String>)` | v2 — 여러 시대 events/characters 합산 |
+| `setSelectionMode(SelectionMode)` | v2 — region/character 모드 진입 |
+| `selectLandmark(String?)` | v2 — region 모드에서 선택된 landmark 변경 |
 | `toggleCharacter(String code)` | 인물 선택/해제 토글 (person.code 기반) |
 | `selectEvent(String?)` | 이벤트 선택/해제 |
 | `markEventCompleted({eventId, isCompleted})` | 이벤트 완료 여부 기록 + 학습 출석일 갱신 |
@@ -135,9 +140,6 @@ class StoryState {
 | `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 (`globalRank` 정렬) |
 | `colorForCharacter(String code)` | 인물 코드별 할당 색상 반환 |
 | `personByCode(String code)` | 코드로 Character 객체 조회 |
-| `ensureViewportSearchPool()` | "현 지도에서 검색" 풀을 lazy-load (전체 사건 좌표 캐시) |
-| `searchEventsInViewport({minLat, maxLat, minLng, maxLng})` | 박스 안 사건들을 `viewportSearchResults` 로 채움 |
-| `clearViewportSearchResults()` | 검색 결과 비우기 |
 
 ### 3.4 색상 팔레트 (8색)
 
@@ -173,7 +175,7 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `viewportSearchResults` (검색 결과 핀 — 인물 아바타 1~3 겹침 + 제목 패널) ③ `onSearchInViewport` 가 주어지면 우상단 "현 지도에서 검색" 버튼 표시 (가운데 50% 박스). 결과가 있으면 `onClearViewportSearch` 와 함께 "✕ 검색 취소 (N개)" 버튼으로 자동 전환. ④ `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). |
+| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
 | CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
