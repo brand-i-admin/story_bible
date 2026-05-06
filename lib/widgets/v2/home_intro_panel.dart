@@ -11,8 +11,8 @@ import '../story_home_styles.dart';
 ///
 /// 두 단계로 구성:
 ///   1. 여행할 시대를 골라보세요 — 구약/신약 두 줄로 분리된 시대 칩. **단일 선택**.
-///      각 칩은 그 시대의 고유 색 ([EraColors.forCode]) 으로 활성 표시되고,
-///      같은 색이 지도 폴리곤에도 사용된다.
+///      비선택 시 시대 고유 색 ([EraColors.forCode]) 을 점·아이콘으로 미리 보여주고,
+///      선택 시 갈색 그라데이션으로 활성 표시한다. 같은 시대 색은 지도 폴리곤에도 사용된다.
 ///   2. 어떻게 볼까요? — 시대가 선택된 경우에만 활성. [장소에서 시작하기 / 인물과 걷기].
 class HomeIntroPanel extends StatelessWidget {
   const HomeIntroPanel({
@@ -270,6 +270,7 @@ class _EraChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (!selected) ...[
+                // 시대 색 점 — 지도 폴리곤 색과 같은 톤이라는 시각적 단서.
                 Container(
                   width: 8,
                   height: 8,
