@@ -1744,6 +1744,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       onStepTap: _handleStepperTap,
                     ),
                   ),
+                  // stepper 바로 아래 — +/– 줌 컨트롤. _mapPanelController 가 줌 처리.
+                  Positioned(
+                    right: outerMargin,
+                    top: sideTop + 132,
+                    child: Column(
+                      children: [
+                        mapControlButton(
+                          icon: Icons.add,
+                          tooltip: '줌 인',
+                          onTap: _mapPanelController.zoomIn,
+                        ),
+                        const SizedBox(height: 6),
+                        mapControlButton(
+                          icon: Icons.remove,
+                          tooltip: '줌 아웃',
+                          onTap: _mapPanelController.zoomOut,
+                        ),
+                      ],
+                    ),
+                  ),
                   Positioned(
                     left: outerMargin,
                     top: sideTop,
