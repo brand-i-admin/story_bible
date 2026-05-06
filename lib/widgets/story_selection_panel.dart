@@ -9,8 +9,6 @@ import '../models/era.dart';
 import '../models/story_event.dart';
 import '../state/story_controller.dart';
 import '../theme/tokens.dart';
-import '../utils/scene_asset_loader.dart';
-import 'character_avatar.dart';
 import 'character_panel.dart';
 import 'event_timeline_row.dart';
 
