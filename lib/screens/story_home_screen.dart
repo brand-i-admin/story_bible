@@ -1733,32 +1733,29 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             ),
                     ),
                   ),
-                  // v3 — 우측 사이드 버튼들(검색·줌·skip) 제거. 마우스 휠 /
-                  // 터치 핀치로 줌. 이 자리에 _SelectionStepper 가 들어간다.
+                  // v3 — 우측 사이드 컬럼: _SelectionStepper + 핀치/휠 줌을 보조하는 +/– 컨트롤.
+                  // stepper 가 자체 높이를 결정하므로 정해진 offset 없이 Column 으로 자연 배치.
                   Positioned(
                     right: outerMargin,
                     top: sideTop,
-                    child: _SelectionStepper(
-                      currentStep: _currentStepperIndex(),
-                      mode: _mode,
-                      onStepTap: _handleStepperTap,
-                    ),
-                  ),
-                  // stepper 바로 아래 — +/– 줌 컨트롤. _mapPanelController 가 줌 처리.
-                  Positioned(
-                    right: outerMargin,
-                    top: sideTop + 132,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        _SelectionStepper(
+                          currentStep: _currentStepperIndex(),
+                          mode: _mode,
+                          onStepTap: _handleStepperTap,
+                        ),
+                        const SizedBox(height: 12),
                         mapControlButton(
                           icon: Icons.add,
-                          tooltip: '줌 인',
+                          tooltip: '확대',
                           onTap: _mapPanelController.zoomIn,
                         ),
                         const SizedBox(height: 6),
                         mapControlButton(
                           icon: Icons.remove,
-                          tooltip: '줌 아웃',
+                          tooltip: '축소',
                           onTap: _mapPanelController.zoomOut,
                         ),
                       ],
