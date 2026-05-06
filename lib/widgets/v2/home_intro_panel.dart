@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../models/era.dart';
 import '../../state/story_state.dart';
 import '../../theme/era_colors.dart';
+import '../../theme/tokens.dart';
+import '../../theme/typography.dart';
 
 /// 첫 화면 — "오늘은 성경 어디를 여행해볼까요?" 패널.
 ///
@@ -43,8 +45,9 @@ class HomeIntroPanel extends StatelessWidget {
           Center(
             child: Text(
               '🌿  오늘은 성경 어디를 여행해볼까요?  🌿',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+              style: AppTextStyles.h3.copyWith(
+                color: AppColors.ink800,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
@@ -124,9 +127,7 @@ class HomeIntroPanel extends StatelessWidget {
           Center(
             child: Text(
               '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.outline,
-              ),
+              style: AppTextStyles.hint.copyWith(color: AppColors.ink450),
             ),
           ),
         ],
@@ -376,5 +377,34 @@ class _ModeCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// 시대 코드 → Material 아이콘 매핑.
+/// 향후 일러스트 PNG로 교체할 수 있게 한 곳에 격리한다.
+IconData _eraIconFor(String code) {
+  switch (code) {
+    case 'era_primeval':
+      return Icons.terrain;
+    case 'era_patriarch':
+      return Icons.holiday_village;
+    case 'era_exodus':
+      return Icons.directions_walk;
+    case 'era_judges':
+      return Icons.shield;
+    case 'era_monarchy':
+      return Icons.workspace_premium;
+    case 'era_exile_return':
+      return Icons.location_city;
+    case 'era_nt_public_ministry':
+      return Icons.auto_awesome;
+    case 'era_nt_apostolic':
+      return Icons.sailing;
+    case 'era_nt_post_apostolic':
+      return Icons.menu_book;
+    case 'era_nt_consummation':
+      return Icons.local_fire_department;
+    default:
+      return Icons.place;
   }
 }
