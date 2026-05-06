@@ -705,7 +705,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           // 비침. strength 0.55 로 parchment image 의 flat 영역은 ~white 가
           // 되어 water 같은 균일색 영역은 거의 영향 없음. grain spot 만 land
           // 에 visible.
-          const Positioned.fill(child: ParchmentMultiplyLayer(strength: 0.55)),
+          const Positioned.fill(child: ParchmentMultiplyLayer(strength: 0.78)),
         ],
       ),
     );

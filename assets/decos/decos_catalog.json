@@ -11,88 +11,1104 @@
     },
     "render_rule": "지도 z=5~9 사이에서 적절히 보이고, 줌아웃 시 자동 축소 (Marker px 단위)."
   },
-
   "kinds": [
-    {"kind": "mountain", "label": "산 (단봉)",
-     "prompt": "a tiny mountain icon as drawn on an old fantasy treasure map, simple cartoon-style single triangular mountain peak with light snow on top, classic map symbol, side-on view, clear black ink outline, flat brown and gray watercolor fill"},
-    {"kind": "mountain_range", "label": "산맥",
-     "prompt": "a tiny mountain range icon as drawn on an old fantasy treasure map, simple cartoon-style row of three or four overlapping triangular peaks, classic map symbol, side-on view, clear black ink outline, flat brown and gray watercolor fill"},
-    {"kind": "tree_oak", "label": "참나무 한 그루",
-     "prompt": "a tiny tree icon as drawn on an old fantasy treasure map, simple cartoon-style oak tree with a thick brown trunk and a single round green leafy crown, classic map symbol, side-on view, clear black ink outline, flat olive-green and brown watercolor fill"},
-    {"kind": "palm", "label": "야자수",
-     "prompt": "a tiny palm tree icon as drawn on an old fantasy treasure map, simple cartoon-style single palm tree with a slim curved brown trunk and a few green fronds at the top, classic map symbol, side-on view, clear black ink outline, flat green and brown watercolor fill"},
-    {"kind": "tree_cluster", "label": "나무 군락",
-     "prompt": "a tiny forest icon as drawn on an old fantasy treasure map, simple cartoon-style cluster of three pointed pine trees side by side, classic map symbol, side-on view, clear black ink outline, flat dark-green and brown watercolor fill"},
-    {"kind": "city_walled", "label": "성벽 도시",
-     "prompt": "a tiny city icon as drawn on an old fantasy treasure map, simple cartoon-style walled town with one tall tower and two small houses behind a curved stone wall, classic map symbol, side-on view, clear black ink outline, flat brown and tan watercolor fill"},
-    {"kind": "city_ruins", "label": "폐허",
-     "prompt": "a tiny ruins icon as drawn on an old fantasy treasure map, simple cartoon-style crumbling tower with two broken stone columns beside it, classic map symbol, side-on view, clear black ink outline, flat tan and gray watercolor fill"},
-    {"kind": "pyramid", "label": "피라미드",
-     "prompt": "a tiny pyramid icon as drawn on an old fantasy treasure map, simple cartoon-style single Egyptian pyramid as a triangle with horizontal stone block lines, classic map symbol, side-on view, clear black ink outline, flat tan and brown watercolor fill"},
-    {"kind": "temple", "label": "성전",
-     "prompt": "a tiny temple icon as drawn on an old fantasy treasure map, simple cartoon-style ancient temple with four columns and a flat triangular roof, classic map symbol, side-on view, clear black ink outline, flat tan and brown watercolor fill"},
-    {"kind": "wilderness_dunes", "label": "사구",
-     "prompt": "a tiny desert icon as drawn on an old fantasy treasure map, simple cartoon-style three curved sand dunes with one tall cactus, classic map symbol, side-on view, clear black ink outline, flat tan watercolor fill"},
-    {"kind": "wilderness_rock", "label": "광야 바위",
-     "prompt": "a tiny rocky desert icon as drawn on an old fantasy treasure map, simple cartoon-style three rounded boulders sitting on flat ground, classic map symbol, side-on view, clear black ink outline, flat tan and gray watercolor fill"},
-    {"kind": "olive_tree", "label": "올리브 나무",
-     "prompt": "a tiny olive tree icon as drawn on an old fantasy treasure map, simple cartoon-style olive tree with a gnarled brown trunk and a small silvery-green canopy of small leaves, classic map symbol, side-on view, clear black ink outline, flat sage-green and brown watercolor fill"},
-    {"kind": "vineyard", "label": "포도원",
-     "prompt": "a tiny vineyard icon as drawn on an old fantasy treasure map, simple cartoon-style short trellis with three grape vines and a few purple grape clusters, classic map symbol, side-on view, clear black ink outline, flat green and purple watercolor fill"},
-    {"kind": "shepherd_tent", "label": "유목민 천막",
-     "prompt": "a tiny tent icon as drawn on an old fantasy treasure map, simple cartoon-style black nomadic tent with a triangular roof and two small sheep standing beside it, classic map symbol, side-on view, clear black ink outline, flat brown and white watercolor fill"},
-    {"kind": "ship", "label": "범선",
-     "prompt": "a tiny ship icon as drawn on an old fantasy treasure map, simple cartoon-style small wooden sailing ship with one tall mast and a single curved white sail, classic map symbol, side-on view, clear black ink outline, flat brown and white watercolor fill"},
-    {"kind": "oasis", "label": "오아시스",
-     "prompt": "a tiny oasis icon as drawn on an old fantasy treasure map, simple cartoon-style small round blue pool of water surrounded by three short palm trees, classic map symbol, top-down view, clear black ink outline, flat blue green and brown watercolor fill"}
+    {
+      "kind": "mountain",
+      "label": "산 (단봉)",
+      "prompt": "a tiny mountain icon as drawn on an old fantasy treasure map, simple cartoon-style single triangular mountain peak with light snow on top, classic map symbol, side-on view, clear black ink outline, flat brown and gray watercolor fill"
+    },
+    {
+      "kind": "mountain_range",
+      "label": "산맥",
+      "prompt": "a tiny mountain range icon as drawn on an old fantasy treasure map, simple cartoon-style row of three or four overlapping triangular peaks, classic map symbol, side-on view, clear black ink outline, flat brown and gray watercolor fill"
+    },
+    {
+      "kind": "tree_oak",
+      "label": "참나무 한 그루",
+      "prompt": "a tiny tree icon as drawn on an old fantasy treasure map, simple cartoon-style oak tree with a thick brown trunk and a single round green leafy crown, classic map symbol, side-on view, clear black ink outline, flat olive-green and brown watercolor fill"
+    },
+    {
+      "kind": "palm",
+      "label": "야자수",
+      "prompt": "a tiny palm tree icon as drawn on an old fantasy treasure map, simple cartoon-style single palm tree with a slim curved brown trunk and a few green fronds at the top, classic map symbol, side-on view, clear black ink outline, flat green and brown watercolor fill"
+    },
+    {
+      "kind": "tree_cluster",
+      "label": "나무 군락",
+      "prompt": "a tiny forest icon as drawn on an old fantasy treasure map, simple cartoon-style cluster of three pointed pine trees side by side, classic map symbol, side-on view, clear black ink outline, flat dark-green and brown watercolor fill"
+    },
+    {
+      "kind": "city_walled",
+      "label": "성벽 도시",
+      "prompt": "a tiny city icon as drawn on an old fantasy treasure map, simple cartoon-style walled town with one tall tower and two small houses behind a curved stone wall, classic map symbol, side-on view, clear black ink outline, flat brown and tan watercolor fill"
+    },
+    {
+      "kind": "city_ruins",
+      "label": "폐허",
+      "prompt": "a tiny ruins icon as drawn on an old fantasy treasure map, simple cartoon-style crumbling tower with two broken stone columns beside it, classic map symbol, side-on view, clear black ink outline, flat tan and gray watercolor fill"
+    },
+    {
+      "kind": "pyramid",
+      "label": "피라미드",
+      "prompt": "a tiny pyramid icon as drawn on an old fantasy treasure map, simple cartoon-style single Egyptian pyramid as a triangle with horizontal stone block lines, classic map symbol, side-on view, clear black ink outline, flat tan and brown watercolor fill"
+    },
+    {
+      "kind": "temple",
+      "label": "성전",
+      "prompt": "a tiny temple icon as drawn on an old fantasy treasure map, simple cartoon-style ancient temple with four columns and a flat triangular roof, classic map symbol, side-on view, clear black ink outline, flat tan and brown watercolor fill"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "label": "사구",
+      "prompt": "a tiny desert icon as drawn on an old fantasy treasure map, simple cartoon-style three curved sand dunes with one tall cactus, classic map symbol, side-on view, clear black ink outline, flat tan watercolor fill"
+    },
+    {
+      "kind": "wilderness_rock",
+      "label": "광야 바위",
+      "prompt": "a tiny rocky desert icon as drawn on an old fantasy treasure map, simple cartoon-style three rounded boulders sitting on flat ground, classic map symbol, side-on view, clear black ink outline, flat tan and gray watercolor fill"
+    },
+    {
+      "kind": "olive_tree",
+      "label": "올리브 나무",
+      "prompt": "a tiny olive tree icon as drawn on an old fantasy treasure map, simple cartoon-style olive tree with a gnarled brown trunk and a small silvery-green canopy of small leaves, classic map symbol, side-on view, clear black ink outline, flat sage-green and brown watercolor fill"
+    },
+    {
+      "kind": "vineyard",
+      "label": "포도원",
+      "prompt": "a tiny vineyard icon as drawn on an old fantasy treasure map, simple cartoon-style short trellis with three grape vines and a few purple grape clusters, classic map symbol, side-on view, clear black ink outline, flat green and purple watercolor fill"
+    },
+    {
+      "kind": "shepherd_tent",
+      "label": "유목민 천막",
+      "prompt": "a tiny tent icon as drawn on an old fantasy treasure map, simple cartoon-style black nomadic tent with a triangular roof and two small sheep standing beside it, classic map symbol, side-on view, clear black ink outline, flat brown and white watercolor fill"
+    },
+    {
+      "kind": "ship",
+      "label": "범선",
+      "prompt": "a tiny ship icon as drawn on an old fantasy treasure map, simple cartoon-style small wooden sailing ship with one tall mast and a single curved white sail, classic map symbol, side-on view, clear black ink outline, flat brown and white watercolor fill"
+    },
+    {
+      "kind": "oasis",
+      "label": "오아시스",
+      "prompt": "a tiny oasis icon as drawn on an old fantasy treasure map, simple cartoon-style small round blue pool of water surrounded by three short palm trees, classic map symbol, top-down view, clear black ink outline, flat blue green and brown watercolor fill"
+    }
   ],
-
   "common_style": "isolated illustration of {SUBJECT} on a pure plain white background, hand-drawn ink and watercolor sketch in vintage cartography style, fine sepia pen lines and soft watercolor wash, the subject occupies the center of the frame with generous white margin around it, the rest of the image is solid pure white",
   "negative_prompt": "parchment, scroll, paper texture, weathered paper, tan paper, cream background, frame, border, torn edges, decorative border, scroll edges, ribbon, photorealistic, photograph, photo, stock photo, realistic plant, real flower, rose, flower, bouquet, moss, rock, dewdrops, modern, 3D render, harsh shadows, vibrant saturated colors, neon, glow, text, labels, hashtag, caption, watermark, signature, multiple subjects, repeated elements, grid",
-
   "placements": [
     "// v4 — 산/도시/성전 3가지 kind 만 사용. 다른 kind (palm, oasis, pyramid,",
     "// 나무, 광야, 천막, 배 등) PNG 는 catalog 의 kinds 에 남겨두지만 placement",
     "// 에서 제외 → 지도 위에 노출 안 됨. 디자인 정돈 단계.",
-
     "// === 산맥 / 산 ===",
-
-    {"kind": "mountain_range", "lat": 32.74, "lng": 35.05, "era_codes": [], "scale": 1.0, "comment": "갈멜 산"},
-    {"kind": "mountain_range", "lat": 33.40, "lng": 35.85, "era_codes": [], "scale": 1.15, "comment": "헤르몬 산맥"},
-    {"kind": "mountain_range", "lat": 32.30, "lng": 35.85, "era_codes": [], "scale": 1.0, "comment": "길르앗 산지"},
-    {"kind": "mountain_range", "lat": 32.30, "lng": 35.30, "era_codes": [], "scale": 0.95, "comment": "사마리아 산지"},
-    {"kind": "mountain_range", "lat": 31.50, "lng": 35.20, "era_codes": [], "scale": 1.0, "comment": "유다 산지"},
-    {"kind": "mountain_range", "lat": 31.30, "lng": 35.65, "era_codes": [], "scale": 0.95, "comment": "모압 산지"},
-    {"kind": "mountain_range", "lat": 30.50, "lng": 35.40, "era_codes": [], "scale": 1.0, "comment": "에돔 산지"},
-    {"kind": "mountain_range", "lat": 28.54, "lng": 33.97, "era_codes": [], "scale": 1.2, "comment": "시내 산맥"},
-    {"kind": "mountain_range", "lat": 39.70, "lng": 44.30, "era_codes": ["era_primeval"], "scale": 1.1, "comment": "아라랏"},
-    {"kind": "mountain_range", "lat": 37.30, "lng": 33.50, "era_codes": ["era_nt_apostolic"], "scale": 1.0, "comment": "토로스 산맥"},
-    {"kind": "mountain_range", "lat": 34.80, "lng": 36.40, "era_codes": [], "scale": 0.95, "comment": "레바논 산맥"},
-    {"kind": "mountain_range", "lat": 35.20, "lng": 47.00, "era_codes": ["era_exile_return","era_patriarch"], "scale": 1.0, "comment": "자그로스 산맥"},
-
-    {"kind": "mountain", "lat": 32.69, "lng": 35.39, "era_codes": [], "scale": 0.9, "comment": "다볼 산"},
-    {"kind": "mountain", "lat": 31.768, "lng": 35.725, "era_codes": ["era_exodus"], "scale": 0.9, "comment": "느보산"},
-    {"kind": "mountain", "lat": 32.91, "lng": 35.51, "era_codes": ["era_nt_public_ministry"], "scale": 0.85, "comment": "갈릴리 산지"},
-    {"kind": "mountain", "lat": 32.543, "lng": 35.406, "era_codes": ["era_monarchy"], "scale": 0.85, "comment": "길보아 산"},
-    {"kind": "mountain", "lat": 31.78, "lng": 35.24, "era_codes": ["era_patriarch"], "scale": 0.85, "comment": "모리아 산"},
-
+    {
+      "kind": "mountain_range",
+      "lat": 32.74,
+      "lng": 35.05,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "갈멜 산"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 33.4,
+      "lng": 35.85,
+      "era_codes": [],
+      "scale": 1.15,
+      "comment": "헤르몬 산맥"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 32.3,
+      "lng": 35.85,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "길르앗 산지"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 32.3,
+      "lng": 35.3,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "사마리아 산지"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 31.5,
+      "lng": 35.2,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "유다 산지"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 31.3,
+      "lng": 35.65,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "모압 산지"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 30.5,
+      "lng": 35.4,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "에돔 산지"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 28.54,
+      "lng": 33.97,
+      "era_codes": [],
+      "scale": 1.2,
+      "comment": "시내 산맥"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 39.7,
+      "lng": 44.3,
+      "era_codes": [
+        "era_primeval"
+      ],
+      "scale": 1.1,
+      "comment": "아라랏"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 37.3,
+      "lng": 33.5,
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "scale": 1.0,
+      "comment": "토로스 산맥"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 34.8,
+      "lng": 36.4,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "레바논 산맥"
+    },
+    {
+      "kind": "mountain_range",
+      "lat": 35.2,
+      "lng": 47.0,
+      "era_codes": [
+        "era_exile_return",
+        "era_patriarch"
+      ],
+      "scale": 1.0,
+      "comment": "자그로스 산맥"
+    },
+    {
+      "kind": "mountain",
+      "lat": 32.69,
+      "lng": 35.39,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "다볼 산"
+    },
+    {
+      "kind": "mountain",
+      "lat": 31.768,
+      "lng": 35.725,
+      "era_codes": [
+        "era_exodus"
+      ],
+      "scale": 0.9,
+      "comment": "느보산"
+    },
+    {
+      "kind": "mountain",
+      "lat": 32.91,
+      "lng": 35.51,
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "scale": 0.85,
+      "comment": "갈릴리 산지"
+    },
+    {
+      "kind": "mountain",
+      "lat": 32.543,
+      "lng": 35.406,
+      "era_codes": [
+        "era_monarchy"
+      ],
+      "scale": 0.85,
+      "comment": "길보아 산"
+    },
+    {
+      "kind": "mountain",
+      "lat": 31.78,
+      "lng": 35.24,
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "scale": 0.85,
+      "comment": "모리아 산"
+    },
     "// === 도시 (성벽 도시) ===",
-
-    {"kind": "city_walled", "lat": 32.54, "lng": 44.42, "era_codes": ["era_primeval","era_exile_return"], "scale": 1.0, "comment": "바벨/바벨론"},
-    {"kind": "city_walled", "lat": 30.96, "lng": 46.10, "era_codes": ["era_patriarch"], "scale": 0.9, "comment": "우르"},
-    {"kind": "city_walled", "lat": 36.86, "lng": 39.04, "era_codes": ["era_patriarch"], "scale": 0.9, "comment": "하란"},
-    {"kind": "city_walled", "lat": 36.36, "lng": 43.16, "era_codes": ["era_monarchy"], "scale": 1.0, "comment": "니느웨"},
-    {"kind": "city_walled", "lat": 33.27, "lng": 35.20, "era_codes": ["era_monarchy","era_nt_public_ministry"], "scale": 0.85, "comment": "두로"},
-    {"kind": "city_walled", "lat": 33.56, "lng": 35.37, "era_codes": ["era_monarchy"], "scale": 0.85, "comment": "시돈"},
-    {"kind": "city_walled", "lat": 33.51, "lng": 36.30, "era_codes": ["era_monarchy","era_nt_apostolic"], "scale": 0.9, "comment": "다메섹"},
-    {"kind": "city_walled", "lat": 32.18, "lng": 48.26, "era_codes": ["era_exile_return"], "scale": 0.95, "comment": "수산궁"},
-    {"kind": "city_walled", "lat": 36.20, "lng": 36.16, "era_codes": ["era_nt_apostolic"], "scale": 0.95, "comment": "안디옥"},
-    {"kind": "city_walled", "lat": 37.94, "lng": 27.34, "era_codes": ["era_nt_apostolic"], "scale": 0.9, "comment": "에베소"},
-    {"kind": "city_walled", "lat": 37.94, "lng": 22.93, "era_codes": ["era_nt_apostolic"], "scale": 0.9, "comment": "고린도"},
-    {"kind": "city_walled", "lat": 41.90, "lng": 12.49, "era_codes": ["era_nt_apostolic"], "scale": 1.0, "comment": "로마"},
-
+    {
+      "kind": "city_walled",
+      "lat": 32.54,
+      "lng": 44.42,
+      "era_codes": [
+        "era_primeval",
+        "era_exile_return"
+      ],
+      "scale": 1.0,
+      "comment": "바벨/바벨론"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 30.96,
+      "lng": 46.1,
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "scale": 0.9,
+      "comment": "우르"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 36.86,
+      "lng": 39.04,
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "scale": 0.9,
+      "comment": "하란"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 36.36,
+      "lng": 43.16,
+      "era_codes": [
+        "era_monarchy"
+      ],
+      "scale": 1.0,
+      "comment": "니느웨"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 33.27,
+      "lng": 35.2,
+      "era_codes": [
+        "era_monarchy",
+        "era_nt_public_ministry"
+      ],
+      "scale": 0.85,
+      "comment": "두로"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 33.56,
+      "lng": 35.37,
+      "era_codes": [
+        "era_monarchy"
+      ],
+      "scale": 0.85,
+      "comment": "시돈"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 33.51,
+      "lng": 36.3,
+      "era_codes": [
+        "era_monarchy",
+        "era_nt_apostolic"
+      ],
+      "scale": 0.9,
+      "comment": "다메섹"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 32.18,
+      "lng": 48.26,
+      "era_codes": [
+        "era_exile_return"
+      ],
+      "scale": 0.95,
+      "comment": "수산궁"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 36.2,
+      "lng": 36.16,
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "scale": 0.95,
+      "comment": "안디옥"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 37.94,
+      "lng": 27.34,
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "scale": 0.9,
+      "comment": "에베소"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 37.94,
+      "lng": 22.93,
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "scale": 0.9,
+      "comment": "고린도"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 41.9,
+      "lng": 12.49,
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "scale": 1.0,
+      "comment": "로마"
+    },
     "// === 성전 ===",
-
-    {"kind": "temple", "lat": 31.78, "lng": 35.22, "era_codes": ["era_monarchy","era_exile_return","era_nt_public_ministry"], "scale": 1.0, "comment": "예루살렘 성전"}
+    {
+      "kind": "temple",
+      "lat": 31.78,
+      "lng": 35.22,
+      "era_codes": [
+        "era_monarchy",
+        "era_exile_return",
+        "era_nt_public_ministry"
+      ],
+      "scale": 1.0,
+      "comment": "예루살렘 성전"
+    },
+    "// === 이집트 나일 / 하이집트 ===",
+    {
+      "kind": "pyramid",
+      "lat": 29.97,
+      "lng": 31.13,
+      "era_codes": [],
+      "scale": 1.1,
+      "comment": "기자 피라미드"
+    },
+    {
+      "kind": "pyramid",
+      "lat": 29.87,
+      "lng": 31.22,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "사카라 피라미드"
+    },
+    {
+      "kind": "pyramid",
+      "lat": 29.83,
+      "lng": 31.25,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "멤피스 근처 피라미드"
+    },
+    {
+      "kind": "palm",
+      "lat": 30.3,
+      "lng": 31.48,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "나일 삼각주 야자수"
+    },
+    {
+      "kind": "palm",
+      "lat": 30.1,
+      "lng": 31.55,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "나일 동안 야자수"
+    },
+    {
+      "kind": "palm",
+      "lat": 29.96,
+      "lng": 31.35,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "멤피스 인근 나일 야자"
+    },
+    {
+      "kind": "palm",
+      "lat": 30.2,
+      "lng": 30.85,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "나일 서안 야자수"
+    },
+    {
+      "kind": "palm",
+      "lat": 30.45,
+      "lng": 31.2,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "나일 강변 야자"
+    },
+    {
+      "kind": "palm",
+      "lat": 30.6,
+      "lng": 31.55,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "삼각주 북부 야자수"
+    },
+    {
+      "kind": "oasis",
+      "lat": 29.58,
+      "lng": 30.73,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "파이윰 오아시스"
+    },
+    {
+      "kind": "oasis",
+      "lat": 29.44,
+      "lng": 30.55,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "파이윰 남부 습지"
+    },
+    {
+      "kind": "city_walled",
+      "lat": 30.12,
+      "lng": 31.3,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "헬리오폴리스 (온)"
+    },
+    "// === 시나이 반도 / 광야 ===",
+    {
+      "kind": "wilderness_dunes",
+      "lat": 30.3,
+      "lng": 33.2,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "시나이 북부 사구"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 29.95,
+      "lng": 33.55,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "시나이 동부 광야 사구"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 29.6,
+      "lng": 33.8,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "시나이 중부 사구"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 30.1,
+      "lng": 34.0,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "네게브 서쪽 사구"
+    },
+    {
+      "kind": "wilderness_rock",
+      "lat": 29.35,
+      "lng": 33.48,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "시내산 주변 바위 광야"
+    },
+    {
+      "kind": "wilderness_rock",
+      "lat": 29.7,
+      "lng": 34.1,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "에돔 서편 바위 광야"
+    },
+    {
+      "kind": "wilderness_rock",
+      "lat": 30.15,
+      "lng": 33.9,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "숩 광야 바위"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 30.55,
+      "lng": 33.3,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "출애굽 진영 천막 — 에담 광야"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 29.85,
+      "lng": 33.65,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "시나이 진영 천막"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 30.25,
+      "lng": 34.2,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "가데스바네아 근처 천막"
+    },
+    {
+      "kind": "oasis",
+      "lat": 29.55,
+      "lng": 32.95,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "엘림 오아시스 (샘 12개)"
+    },
+    {
+      "kind": "oasis",
+      "lat": 29.45,
+      "lng": 34.2,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "르비딤 근처 오아시스"
+    },
+    {
+      "kind": "mountain",
+      "lat": 28.54,
+      "lng": 33.98,
+      "era_codes": [],
+      "scale": 1.1,
+      "comment": "시내산 단봉 (호렙)"
+    },
+    "// === 네게브 / 사해 동편 ===",
+    {
+      "kind": "wilderness_rock",
+      "lat": 30.65,
+      "lng": 35.1,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "네게브 고원 바위"
+    },
+    {
+      "kind": "wilderness_rock",
+      "lat": 31.1,
+      "lng": 35.55,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "사해 남단 바위 광야"
+    },
+    {
+      "kind": "wilderness_rock",
+      "lat": 30.85,
+      "lng": 35.35,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "아라바 광야 바위"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 30.75,
+      "lng": 34.85,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "네게브 서부 사구"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 31.2,
+      "lng": 35.75,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "사해 동편 사구"
+    },
+    {
+      "kind": "palm",
+      "lat": 31.46,
+      "lng": 35.38,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "엔게디 종려 오아시스"
+    },
+    {
+      "kind": "palm",
+      "lat": 31.83,
+      "lng": 35.55,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "여리고 종려나무 (종려성)"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 30.9,
+      "lng": 35.2,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "헤브론 남부 올리브"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 31.3,
+      "lng": 35.9,
+      "era_codes": [],
+      "scale": 0.85,
+      "comment": "모압 들판 유목 천막"
+    },
+    "// === 유다 산지 / 예루살렘 ===",
+    {
+      "kind": "olive_tree",
+      "lat": 31.78,
+      "lng": 35.25,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "감람산 올리브 숲"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 31.75,
+      "lng": 35.28,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "게세마네 올리브 동산"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 31.7,
+      "lng": 35.2,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "베다니 올리브 나무"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 31.88,
+      "lng": 35.12,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "라마 북쪽 올리브"
+    },
+    {
+      "kind": "vineyard",
+      "lat": 31.6,
+      "lng": 35.1,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "헤브론 포도원"
+    },
+    {
+      "kind": "vineyard",
+      "lat": 31.5,
+      "lng": 35.05,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "소렉 골짜기 포도원"
+    },
+    {
+      "kind": "vineyard",
+      "lat": 31.92,
+      "lng": 35.22,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "기브온 부근 포도원"
+    },
+    {
+      "kind": "tree_oak",
+      "lat": 32.15,
+      "lng": 35.3,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "모레 상수리나무 (세겜 근처)"
+    },
+    {
+      "kind": "city_ruins",
+      "lat": 31.85,
+      "lng": 35.45,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "여리고 성터 폐허"
+    },
+    "// === 갈릴리 / 가나안 북부 ===",
+    {
+      "kind": "olive_tree",
+      "lat": 32.7,
+      "lng": 35.28,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "나사렛 올리브 언덕"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 32.82,
+      "lng": 35.5,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "갈릴리 호수 서안 올리브"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 32.55,
+      "lng": 35.18,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "이스르엘 평야 올리브"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 33.0,
+      "lng": 35.3,
+      "era_codes": [],
+      "scale": 1.1,
+      "comment": "갈릴리 북부 산림"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 32.9,
+      "lng": 35.45,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "갈릴리 호수 북안 나무 군락"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 32.65,
+      "lng": 35.08,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "갈멜 서사면 수림"
+    },
+    {
+      "kind": "vineyard",
+      "lat": 32.45,
+      "lng": 35.2,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "나블루스 사마리아 포도원"
+    },
+    {
+      "kind": "vineyard",
+      "lat": 32.8,
+      "lng": 35.2,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "가나안 북부 포도원"
+    },
+    {
+      "kind": "palm",
+      "lat": 32.4,
+      "lng": 35.56,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "요단 강변 야자 — 벳산 부근"
+    },
+    {
+      "kind": "palm",
+      "lat": 32.7,
+      "lng": 35.58,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "요단 하류 야자나무"
+    },
+    "// === 길르앗 / 요단 동편 ===",
+    {
+      "kind": "tree_oak",
+      "lat": 32.5,
+      "lng": 35.72,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "길르앗 참나무 숲"
+    },
+    {
+      "kind": "tree_oak",
+      "lat": 32.25,
+      "lng": 35.8,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "야복 강 계곡 참나무"
+    },
+    {
+      "kind": "tree_oak",
+      "lat": 32.7,
+      "lng": 36.0,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "바산 참나무 지대"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 32.85,
+      "lng": 35.9,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "바산 평야 나무 군락"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 32.45,
+      "lng": 36.2,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "하우란 동쪽 나무 군락"
+    },
+    {
+      "kind": "mountain",
+      "lat": 32.6,
+      "lng": 36.1,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "바산 단봉"
+    },
+    {
+      "kind": "mountain",
+      "lat": 31.9,
+      "lng": 35.95,
+      "era_codes": [],
+      "scale": 0.85,
+      "comment": "길르앗 산 단봉"
+    },
+    "// === 레바논 / 시리아 ===",
+    {
+      "kind": "tree_cluster",
+      "lat": 34.1,
+      "lng": 36.05,
+      "era_codes": [],
+      "scale": 1.1,
+      "comment": "레바논 백향목 숲 (베카 서편)"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 34.5,
+      "lng": 36.0,
+      "era_codes": [],
+      "scale": 1.15,
+      "comment": "레바논 산 백향목"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 33.8,
+      "lng": 35.75,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "레바논 남부 수림"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 35.0,
+      "lng": 36.5,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "시리아 북부 수림"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 33.6,
+      "lng": 36.55,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "다메섹 오아시스 올리브"
+    },
+    {
+      "kind": "olive_tree",
+      "lat": 34.2,
+      "lng": 35.9,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "페니키아 해안 올리브"
+    },
+    {
+      "kind": "mountain",
+      "lat": 34.8,
+      "lng": 36.8,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "시리아 중부 단봉"
+    },
+    {
+      "kind": "mountain",
+      "lat": 35.4,
+      "lng": 37.2,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "시리아 북부 고지 단봉"
+    },
+    "// === 메소포타미아 ===",
+    {
+      "kind": "palm",
+      "lat": 33.4,
+      "lng": 44.3,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "티그리스 강변 야자수"
+    },
+    {
+      "kind": "palm",
+      "lat": 33.8,
+      "lng": 42.5,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "유프라테스 상류 야자"
+    },
+    {
+      "kind": "palm",
+      "lat": 34.2,
+      "lng": 41.8,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "유프라테스 중류 야자"
+    },
+    {
+      "kind": "palm",
+      "lat": 32.5,
+      "lng": 45.8,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "하류 메소포타미아 야자"
+    },
+    {
+      "kind": "palm",
+      "lat": 31.8,
+      "lng": 47.4,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "갈대아 야자 — 우르 근처"
+    },
+    {
+      "kind": "palm",
+      "lat": 35.0,
+      "lng": 40.5,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "유프라테스 북서 야자"
+    },
+    {
+      "kind": "city_ruins",
+      "lat": 32.55,
+      "lng": 44.42,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "바벨론 폐허"
+    },
+    {
+      "kind": "city_ruins",
+      "lat": 36.36,
+      "lng": 43.15,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "니느웨 폐허"
+    },
+    {
+      "kind": "city_ruins",
+      "lat": 34.6,
+      "lng": 40.5,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "유프라테스 고대 도시 폐허"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 34.5,
+      "lng": 43.0,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "메소포타미아 유목 천막"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 33.0,
+      "lng": 46.5,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "하류 평야 유목 천막"
+    },
+    {
+      "kind": "tree_cluster",
+      "lat": 36.5,
+      "lng": 41.8,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "유프라테스 북부 하브르 강 수림"
+    },
+    "// === 지중해 ===",
+    {
+      "kind": "ship",
+      "lat": 33.8,
+      "lng": 33.8,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "레반트 앞바다 범선"
+    },
+    {
+      "kind": "ship",
+      "lat": 34.4,
+      "lng": 33.2,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "페니키아 해상 범선"
+    },
+    {
+      "kind": "ship",
+      "lat": 32.8,
+      "lng": 33.5,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "욥바 앞바다 범선 (요나)"
+    },
+    "// === 아라비아 북부 ===",
+    {
+      "kind": "wilderness_dunes",
+      "lat": 29.5,
+      "lng": 37.2,
+      "era_codes": [],
+      "scale": 1.05,
+      "comment": "히자즈 북부 사구"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 30.5,
+      "lng": 38.5,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "아라비아 북서 광야 사구"
+    },
+    {
+      "kind": "wilderness_dunes",
+      "lat": 29.0,
+      "lng": 39.5,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "아라비아 사막 사구"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 30.0,
+      "lng": 37.8,
+      "era_codes": [],
+      "scale": 0.9,
+      "comment": "아라비아 유목 천막"
+    },
+    {
+      "kind": "shepherd_tent",
+      "lat": 29.2,
+      "lng": 38.9,
+      "era_codes": [],
+      "scale": 0.95,
+      "comment": "히자즈 광야 천막"
+    },
+    {
+      "kind": "oasis",
+      "lat": 29.8,
+      "lng": 37.5,
+      "era_codes": [],
+      "scale": 1.0,
+      "comment": "아라비아 북부 오아시스"
+    }
   ]
 }
