@@ -359,7 +359,6 @@ class _ModeCard extends StatelessWidget {
                             title,
                             style: AppTextStyles.sectionTitle.copyWith(
                               color: AppColors.ink800,
-                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
