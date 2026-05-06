@@ -52,7 +52,12 @@ class HomeIntroPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const _StepHeader(number: 1, title: '여행할 시대를 골라보세요', enabled: true),
+          const _StepHeader(
+            number: 1,
+            title: '여행할 시대를 골라보세요',
+            enabled: true,
+            iconData: Icons.schedule_outlined,
+          ),
           const SizedBox(height: 8),
           _EraRow(
             label: '구약',
@@ -68,7 +73,12 @@ class HomeIntroPanel extends StatelessWidget {
             onSelectEra: onSelectEra,
           ),
           const SizedBox(height: 18),
-          _StepHeader(number: 2, title: '어떻게 볼까요?', enabled: canPickMode),
+          _StepHeader(
+            number: 2,
+            title: '어떻게 볼까요?',
+            enabled: canPickMode,
+            iconData: Icons.explore_outlined,
+          ),
           const SizedBox(height: 8),
           Opacity(
             opacity: canPickMode ? 1.0 : 0.45,
@@ -152,26 +162,23 @@ class _StepHeader extends StatelessWidget {
     required this.number,
     required this.title,
     required this.enabled,
+    required this.iconData,
   });
   final int number;
   final String title;
   final bool enabled;
+  final IconData iconData;
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = enabled
-        ? theme.colorScheme.onSurface
-        : theme.colorScheme.outline;
+    final color = enabled ? AppColors.ink450 : AppColors.ink150;
     return Row(
       children: [
-        Icon(Icons.access_time, size: 16, color: color),
+        Icon(iconData, size: 16, color: color),
         const SizedBox(width: 6),
         Text(
           '$number. $title',
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
+          style: AppTextStyles.sectionTitle.copyWith(color: color),
         ),
       ],
     );
