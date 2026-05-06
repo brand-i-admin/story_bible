@@ -105,9 +105,7 @@ class HomeIntroPanel extends StatelessWidget {
                     ),
                     child: Text(
                       '또는',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.outline,
-                      ),
+                      style: AppTextStyles.counter.copyWith(color: AppColors.ink450),
                     ),
                   );
                   final right = Expanded(
@@ -327,19 +325,16 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Material(
-      color: accent.withValues(alpha: 0.06),
-      borderRadius: BorderRadius.circular(16),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
+        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
         child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: accent.withValues(alpha: 0.18)),
-          ),
+          padding: const EdgeInsets.all(AppSpacing.x6),
+          decoration: softButtonDecoration(selected: false),
           child: Row(
             children: [
               Container(
@@ -350,9 +345,9 @@ class _ModeCard extends StatelessWidget {
                   color: accent,
                 ),
                 alignment: Alignment.center,
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: AppColors.parchmentCream, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.x5),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,25 +357,31 @@ class _ModeCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
+                            style: AppTextStyles.sectionTitle.copyWith(
+                              color: AppColors.ink800,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right,
-                          color: theme.colorScheme.outline,
+                          color: AppColors.ink450,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: theme.textTheme.bodySmall),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.x1),
+                    Text(
+                      subtitle,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.ink600,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.x2),
                     Text(
                       sample,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: AppTextStyles.counter.copyWith(
                         color: accent,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
