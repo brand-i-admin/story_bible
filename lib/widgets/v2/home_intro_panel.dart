@@ -5,6 +5,7 @@ import '../../state/story_state.dart';
 import '../../theme/era_colors.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
+import '../story_home_styles.dart';
 
 /// 첫 화면 — "오늘은 성경 어디를 여행해볼까요?" 패널.
 ///
@@ -247,52 +248,57 @@ class _EraChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final eraColor = EraColors.forCode(era.code);
-
-    final bg = selected ? eraColor : theme.colorScheme.surfaceContainerLow;
-    final fg = selected ? Colors.white : theme.colorScheme.onSurface;
-    final border = selected ? eraColor : eraColor.withValues(alpha: 0.45);
+    final iconData = _eraIconFor(era.code);
 
     return Material(
-      color: bg,
-      borderRadius: BorderRadius.circular(28),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(28),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: border, width: selected ? 2 : 1.4),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
+        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x6,
+            vertical: AppSpacing.x4,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: softButtonDecoration(selected: selected),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 시대 색 점 — 비선택 상태에서도 어떤 색인지 미리 보여 줌.
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: selected ? Colors.white : eraColor,
-                  border: selected
-                      ? Border.all(color: Colors.white, width: 1)
-                      : null,
+              if (!selected) ...[
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: eraColor,
+                  ),
                 ),
+                const SizedBox(width: 8),
+              ],
+              Icon(
+                iconData,
+                size: 18,
+                color: selected ? AppColors.parchmentCream : eraColor,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Text(
                 era.name,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: fg,
+                style: AppTextStyles.chipLabel.copyWith(
+                  color: selected ? AppColors.parchmentCream : AppColors.ink800,
                 ),
               ),
               if (selected) ...[
                 const SizedBox(width: 6),
-                const Icon(Icons.check_circle, size: 16, color: Colors.white),
+                const Icon(
+                  Icons.check_circle,
+                  size: 16,
+                  color: AppColors.parchmentCream,
+                ),
               ],
             ],
           ),
