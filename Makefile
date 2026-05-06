@@ -46,7 +46,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         seed-stories seed-characters seed-stories-characters seed-quizzes \
         seed-landmarks seed-era-boundaries \
         apply-seeds-landmarks-v2 \
-        generate-avatars generate-story-images thumbnails \
+        generate-avatars generate-story-images generate-basemap thumbnails \
         seed-all generate-all \
         export-stories-json \
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
@@ -74,6 +74,7 @@ help:
 	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
 	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
+	@echo "  generate-basemap        Vertex AI 양피지 일러스트 베이스맵 1장 생성 (assets/maps/)"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
@@ -227,6 +228,9 @@ generate-story-images:
 	@echo "[Makefile] Vertex AI 장면 이미지 생성..."
 	@echo "  → .env의 GOOGLE_CLOUD_PROJECT 확인 필요"
 	$(PYTHON) $(TOOLS_DIR)/images/generate_event_story_images_vertex.py
+
+generate-basemap:
+	@. .venv/bin/activate && python $(TOOLS_DIR)/images/generate_illustrated_basemap.py
 
 thumbnails:
 	@echo "[Makefile] 썸네일 생성..."
