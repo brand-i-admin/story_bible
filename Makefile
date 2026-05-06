@@ -45,6 +45,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         seed-bible-verses build-character-meta renumber-story-indices \
         seed-stories seed-characters seed-stories-characters seed-quizzes \
         seed-landmarks seed-era-boundaries \
+        apply-seeds-landmarks-v2 \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         export-stories-json \
@@ -176,9 +177,7 @@ seed-stories-characters: seed-stories seed-characters
 
 seed-landmarks:
 	@echo "[Makefile] landmarks SQL 생성 (assets/landmarks/landmarks.json)..."
-	$(PYTHON) $(TOOLS_DIR)/seed/build_landmarks_seed_sql.py \
-		--landmarks-dir $(LANDMARKS_DIR) \
-		--output $(LANDMARKS_SQL)
+	$(PYTHON) $(TOOLS_DIR)/seed/build_landmarks_seed_sql.py
 
 seed-era-boundaries:
 	@echo "[Makefile] era_boundaries SQL 생성 (assets/landmarks/era_boundaries.json)..."
@@ -360,13 +359,13 @@ apply-seeds-stories-characters:
 # landmarks / era_boundaries 모두 UPSERT 패턴 — 재실행 안전.
 apply-seeds-landmarks:
 	@echo "[Makefile] landmarks 시드 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(LANDMARKS_SQL))
+	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/landmarks_seed.sql)
 
 apply-seeds-era-boundaries:
 	@echo "[Makefile] era_boundaries 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(ERA_BOUNDARIES_SQL))
 
-apply-seeds: apply-bible-verses-seeds apply-seeds-stories-characters apply-seeds-landmarks apply-seeds-era-boundaries
+apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-era-boundaries
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================

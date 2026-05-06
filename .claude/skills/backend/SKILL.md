@@ -43,8 +43,8 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 2. Supabase 공식 스킬이 활성화되어 있으면, 작업 맥락(쿼리 최적화/RLS/Auth 등)에 맞는 가이드도 함께 참조한다.
 3. 수정 대상 파일을 읽고 현재 코드를 확인한다.
 4. 변경을 구현한다:
-   - 스키마 변경: `db_init.sql` 수정 (단일 진실 소스)
-   - 마이그레이션: `supabase/migrations/` 에 날짜 접두사로 파일 생성
+   - 스키마 변경: `db_init.sql` 만 수정 (단일 진실 소스 — 별도 증분 마이그레이션
+     파일은 만들지 않는다, `supabase/migrations/` 폐기됨)
    - RLS: 새 테이블에 반드시 RLS 정책 추가 (공식 스킬의 RLS 체크리스트 준수)
    - Repository: 기존 패턴 (SupabaseClient 주입, 결과를 모델로 변환) 유지
    - 쿼리: 성능 best-practices 준수 (N+1 방지, 인덱스 활용, RLS 함수 인라인화 등)
@@ -56,9 +56,8 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 ## 파일 범위
 
 ```
-db_init.sql                     # 스키마 정의 (단일 진실 소스)
+db_init.sql                     # 스키마 정의 (단일 진실 소스 — DROP & CREATE 전체)
 supabase/
-├── migrations/                 # 마이그레이션 SQL
 ├── 200_stories/                # 이야기 시드 SQL
 └── seeds/                      # 성경 구절 시드 SQL
 lib/data/

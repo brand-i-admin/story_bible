@@ -59,7 +59,7 @@ bible_refs jsonb DEFAULT '[]',       -- [{book, from, to}, ...]
 start_year int, end_year int,
 time_precision text DEFAULT 'approx',
 story_index int NOT NULL,            -- era 내 정수 (UNIQUE: era_id+story_index)
-place_name text, lat float8, lng float8,
+landmark_id uuid NOT NULL → landmarks(id),    -- v2 위치 모델
 video_url text,
 status text DEFAULT 'published'      -- draft / published (어드민 전용)
   CHECK (status in ('draft','published'))
@@ -124,7 +124,7 @@ FROM first;
 id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras (NULL for 'general'),
 proposal_type text CHECK ('new'/'delete'/'general') DEFAULT 'new',
 target_event_id uuid FK→events (NULL for 'new'/'general', required for 'delete'),
-title text, summary text, character_codes text[], place_name text, lat/lng,
+title text, summary text, character_codes text[], landmark_id uuid → landmarks(id),
 start_year/end_year/time_precision, bible_refs jsonb,
 story_scenes jsonb, scene_characters jsonb,
 scene_image_paths text[], scene_image_prompts text[],
@@ -176,7 +176,7 @@ body text, created_at, updated_at
 | `reject_general_proposal(proposal_id, note)` | admin | `proposal_type='general'` 전용. status='rejected' + 사유만 갱신. |
 | `add_proposal_comment(proposal_id, body)` | pastor/admin | 댓글 INSERT 편의 함수 |
 
-상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow, 마이그레이션: [supabase/migrations/20260421_event_proposals.sql](../supabase/migrations/20260421_event_proposals.sql), [supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql](../supabase/migrations/20260422_proposal_type_soft_delete_quiz.sql), [supabase/migrations/20260429_general_proposals.sql](../supabase/migrations/20260429_general_proposals.sql).
+상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow. (개별 증분 마이그레이션 파일은 폐기 — `db_init.sql` 이 단일 진실 소스.)
 
 #### Soft delete — events.deleted_at
 
@@ -200,18 +200,28 @@ verse_no int, verse_text text,
 UNIQUE(translation, book_no, chapter_no, verse_no)
 ```
 
-#### `landmarks` — 시대별 지도 랜드마크 (정적 카탈로그)
+#### `landmarks` — 위치 모델 v2 (region/anchor/minor 통합)
 ```sql
 id uuid PK, code text UNIQUE, name text,
 description text, emoji text DEFAULT '📍', category text,
 lat double precision, lng double precision,
+kind text DEFAULT 'point'
+  CHECK (kind in ('region','anchor','minor','point')),
+polygon jsonb,                          -- kind='region' 만 채움
+parent_landmark_id uuid → landmarks(id),  -- anchor/minor 의 region
+alias_group_id uuid → landmark_alias_groups(id),  -- 같은 점 다른 시대 이름
 display_priority int DEFAULT 0,
-era_codes text[] DEFAULT '{}',         -- 노출되는 시대 코드 배열 (eras.code)
+era_codes text[] DEFAULT '{}',
 related_event_codes text[] DEFAULT '{}',
 is_active boolean DEFAULT true
 ```
-- 시대별로 지도에 노출되는 핵심 장소(예루살렘 성전·시내산·떨기나무 등). era_codes 배열에 그 시대 코드가 포함된 행만 사용자가 그 시대 선택 시 지도에 떠오른다. 한 랜드마크가 여러 시대에 의미가 있으면(예: 예루살렘 성전 = 왕정 + 포로/귀환 + 예수 사역) 다중 코드.
-- `events` 와 별개의 정적 카탈로그. 시드 파이프라인은 `assets/landmarks/landmarks.json` → `tools/seed/build_landmarks_seed_sql.py` → `supabase/200_stories/landmarks_seed.sql`.
+- **v2 위치 모델 (2026-05-04)**: `events.lat/lng/place_name` 직접 좌표 → `events.landmark_id` FK 로 전환. 시드: `assets/landmarks/landmarks_v2_draft.json` → `tools/seed/build_landmarks_v2_seed_sql.py` → `supabase/200_stories/landmarks_v2_seed.sql`.
+- **3 종**:
+  - `region`: 폴리곤으로 영역 표시. 사건 발생 가능 영역을 빈틈없이 덮음. parent 없음.
+  - `anchor`: region 의 대표 점, 자주 사건이 일어나는 핵심 위치 (예: 예루살렘, 시내산). parent = region.
+  - `minor`: region 안의 작은 위치 (예: 베다니, 골고다). parent = region.
+- **alias_group_id**: 같은 지리적 위치인데 시대마다 다른 이름인 경우 같은 그룹 (예: 모리아산 ↔ 예루살렘 성전, 시내산 ↔ 호렙산, 시날 ↔ 바벨론).
+- **관련 테이블**: `landmark_alias_groups (id, group_key UNIQUE, description)`.
 - RLS: `landmarks_read_active` (is_active = true). `anon, authenticated` 에 SELECT grant.
 - 인덱스: `idx_landmarks_active` (활성 partial), `idx_landmarks_era_codes_gin` (era 필터 GIN).
 - 스키마: `db_init.sql` 에 통합. 별도 마이그레이션 없음.
@@ -533,10 +543,14 @@ supabase functions serve \
 
 ## 8. 마이그레이션 관리 규칙
 
-1. `db_init.sql`이 스키마의 **단일 진실 소스** (Single Source of Truth)
-2. 스키마 변경 시: `db_init.sql` 수정 → `supabase/migrations/` 마이그레이션 생성
-3. 로컬 초기화: `db_init.sql` 전체 실행 (DROP + CREATE)
-4. 운영 반영: 마이그레이션 파일 또는 SQL Editor
+1. `db_init.sql`이 스키마의 **단일 진실 소스** (Single Source of Truth — 단일 파일에서
+   DROP & CREATE 전체).
+2. 스키마 변경 시: `db_init.sql` 만 수정. 별도 증분 마이그레이션 파일은 만들지
+   않는다 (`supabase/migrations/` 디렉토리 폐기).
+3. 로컬/원격 초기화 동일하게: `make db-init` → DROP + CREATE 전체 재실행.
+4. 운영 반영: SQL Editor 또는 `make db-init` (대상 환경 ENV 지정).
+5. 이전에 폐기된 증분 마이그레이션의 의도/맥락은 [ADR.md](ADR.md) 와
+   [guides/WORKFLOW_GUIDE.md](guides/WORKFLOW_GUIDE.md) 의 역사 섹션에 보존.
 
 ## 9. Supabase 공식 Agent Skills
 
@@ -601,7 +615,7 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 | `id` | uuid PK | |
 | `proposer_user_id` | uuid | 작성자 (auth.users) |
 | `era_id` | uuid | `eras(id)` 참조 |
-| `title`, `summary`, `character_codes[]`, `place_name`, `lat`, `lng`, `start_year`, `end_year`, `time_precision`, `bible_refs`, `story_scenes`, `scene_characters`, `after_story_index` | | `events` 와 동일한 콘텐츠 필드 + 삽입 위치 힌트 |
+| `title`, `summary`, `character_codes[]`, `landmark_id` (uuid → landmarks), `start_year`, `end_year`, `time_precision`, `bible_refs`, `story_scenes`, `scene_characters`, `after_story_index` | | `events` 와 동일한 콘텐츠 필드 + 삽입 위치 힌트 |
 | `status` | text CHECK | `pending` → `approved` / `rejected` |
 | `reviewed_by_user_id`, `reviewed_at`, `review_note` | | admin 승인/거절 메타 |
 | `approved_event_id` | uuid | 승인 시 생성된 `events.id` 참조 (이후 추적용) |
@@ -620,7 +634,7 @@ npx skills add supabase/agent-skills --skill supabase-postgres-best-practices
 모든 "pastor + admin" SELECT 는 게시판 공개 의도 — pastor 는 본인 제안뿐 아니라 동료 사역자의 제안도 열람·댓글 가능.
 
 ### RPC
-- `submit_event_proposal(p_era_id, p_title, p_summary, p_character_codes, p_place_name, p_lat, p_lng, p_start_year, p_end_year, p_time_precision, p_bible_refs, p_story_scenes, p_scene_characters, p_after_story_index) returns uuid` — pastor 만, proposer=auth.uid() 로 강제 INSERT.
+- `submit_event_proposal(p_era_id, p_title, p_summary, p_character_codes, p_landmark_id (uuid), p_start_year, p_end_year, p_time_precision, p_bible_refs, p_story_scenes, p_scene_characters, p_scene_image_paths, p_scene_image_prompts, p_proposed_characters, p_quiz_questions, p_after_story_index) returns uuid` — pastor 만, proposer=auth.uid() 로 강제 INSERT. v2 위치 모델 — landmark_id 필수.
 - `approve_event_proposal(p_proposal_id, p_after_story_index_override default null) returns uuid` — admin 만, 내부에서 `eras.code` 조회 후 기존 `insert_event_at_position` 재호출하여 events 에 반영. 반환값은 생성된 event.id. proposal.status='approved', approved_event_id 갱신.
 - `reject_event_proposal(p_proposal_id, p_note default null) returns void` — admin 만, pending → rejected + note 저장.
 - `add_proposal_comment(p_proposal_id, p_body) returns uuid` — pastor + admin, author=auth.uid() 로 강제 INSERT.

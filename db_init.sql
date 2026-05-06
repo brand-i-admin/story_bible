@@ -103,6 +103,11 @@ drop function if exists public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
   int, int, text, text, double precision, double precision, text[]
 ) cascade;
+-- v2 시그니처 (landmark_id) 도 사전 drop.
+drop function if exists public.insert_event_at_position(
+  text, int, text, text, jsonb, jsonb, text[], jsonb,
+  int, int, text, uuid, text[]
+) cascade;
 drop function if exists public.is_pastor() cascade;
 drop function if exists public.list_persons_by_era(uuid) cascade;       -- 옛 이름 (legacy)
 drop function if exists public.list_characters_by_era(uuid) cascade;    -- 새 이름
@@ -126,6 +131,13 @@ drop function if exists public.submit_event_proposal(
   double precision, double precision, int, int, text,
   jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
 ) cascade;
+-- v2 시그니처 (landmark_id).
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text[], uuid,
+  int, int, text,
+  jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
+) cascade;
+drop function if exists public.revise_proposal_position(uuid, int, int, int, uuid) cascade;
 drop function if exists public.submit_delete_proposal(uuid, text) cascade;
 drop function if exists public.approve_event_proposal(uuid, int) cascade;
 drop function if exists public.approve_delete_proposal(uuid) cascade;
@@ -210,9 +222,11 @@ create table if not exists events (
   end_year int,
   time_precision text not null default 'approx',
   story_index int not null,
-  place_name text,
-  lat double precision,
-  lng double precision,
+
+  -- v2 위치 모델 — landmarks.id (region/anchor/minor) FK. NOT NULL.
+  -- FK 제약은 forward reference 를 피하기 위해 landmarks 테이블 정의 뒤
+  -- ALTER TABLE 로 추가한다 (이 파일 마지막 부근).
+  landmark_id uuid not null,
 
   -- 장면 이미지 Storage 경로 (proposal 승인 시 proposal-scenes/... 경로가 그대로
   -- 복사됨). 앱은 **로컬 assets/story_images_thumbs/<title>/scene_N.png 를 먼저
@@ -245,6 +259,8 @@ create index if not exists idx_events_active on events (id) where deleted_at is 
 -- 하는 랜드마크만 지도에 떠올라 시대별 무대 감각을 잡아 준다. events 와 별개의
 -- 정적 카탈로그 — 시드는 assets/landmarks/landmarks.json →
 -- tools/seed/build_landmarks_seed_sql.py → supabase/200_stories/landmarks_seed.sql.
+-- v3 — region(영역) + 시각 마크(point 종류) 통합 단일 테이블.
+-- alias_group 기능은 v3 에서 제거 (시대별 별개 landmark 로 자연 분리).
 create table if not exists landmarks (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
@@ -252,19 +268,61 @@ create table if not exists landmarks (
   description text,
   emoji text not null default '📍',
   category text,
-  lat double precision not null,
-  lng double precision not null,
+  -- v3 — lat/lng nullable. 비지리적 region (요한계시록 환상 등) 은 NULL 가능.
+  -- 지리적 region 과 모든 non-region 마커는 채워져야 함 (앱 측에서 검증).
+  lat double precision,
+  lng double precision,
+  -- v3 — 'region' 은 폴리곤 영역. 그 외 모두 시각 마크 (mountain/city/sea/...).
+  -- v2 호환을 위해 'anchor', 'minor', 'point' 도 허용 (deprecated).
+  kind text not null default 'city'
+    check (kind in (
+      'region',
+      'mountain', 'city', 'sea', 'river', 'island',
+      'palace', 'wilderness', 'holy_site', 'campsite',
+      'anchor', 'minor', 'point'
+    )),
+  -- region 일 때만 채워짐. [[lat,lng], [lat,lng], ...] (시계/반시계 무관).
+  polygon jsonb,
+  -- non-region → 자기가 속한 region 의 landmark id. region 자체는 NULL.
+  parent_landmark_id uuid references landmarks(id) on delete set null,
+  -- (deprecated) v2 alias_group 기능 잔존 컬럼. v3 에서는 항상 NULL.
+  alias_group_id uuid,
   display_priority int not null default 0,
-  -- 이 랜드마크가 노출되는 시대 코드 배열. 예수님 시대 + 사도 시대 등 다중 시대
-  -- 가능. 비어 있으면 어떤 시대에서도 노출되지 않는다 (모든 시대 통과 의도면
-  -- eras 의 모든 code 를 명시).
   era_codes text[] not null default '{}',
   related_event_codes text[] not null default '{}',
   is_active boolean not null default true,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- region 은 polygon 필수 (단 비지리적 region 은 빈 배열도 허용).
+  constraint landmarks_polygon_check check (
+    (kind = 'region' and polygon is not null)
+    or (kind <> 'region')
+  ),
+  -- region 은 parent_landmark_id NULL, 그 외는 parent 필수 (단 v2 'point' 호환).
+  constraint landmarks_parent_check check (
+    (kind = 'region' and parent_landmark_id is null)
+    or (kind in ('anchor', 'minor', 'point'))
+    or (kind not in ('region') and parent_landmark_id is not null)
+  )
 );
 create index if not exists idx_landmarks_active on landmarks (id) where is_active = true;
 create index if not exists idx_landmarks_era_codes_gin on landmarks using gin (era_codes);
+create index if not exists idx_landmarks_kind on landmarks (kind);
+create index if not exists idx_landmarks_parent on landmarks (parent_landmark_id);
+
+-- events.landmark_id 의 FK 를 이제(landmarks 테이블 정의 후) 추가.
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.table_constraints
+    where table_schema = 'public'
+      and table_name = 'events'
+      and constraint_name = 'events_landmark_id_fkey'
+  ) then
+    execute 'alter table events add constraint events_landmark_id_fkey '
+            'foreign key (landmark_id) references landmarks(id) on delete restrict';
+  end if;
+end $$;
+create index if not exists idx_events_landmark on events (landmark_id);
 
 -- ----------------------------------------------------------------------------
 -- era_boundaries: 시대별 거친 지리 영역 (지도 위 반투명 폴리곤)
@@ -290,11 +348,23 @@ create index if not exists idx_era_boundaries_era on era_boundaries (era_id);
 -- deleted_at IS NULL 필터를 걸어 soft-deleted 이야기는 앱 전체에서 제외된다.
 create view events_ordered as
   select
-    e.*,
+    e.id, e.era_id, e.title, e.summary,
+    e.story_scenes, e.scene_characters, e.character_codes,
+    e.bible_refs, e.start_year, e.end_year, e.time_precision,
+    e.story_index, e.scene_image_paths, e.status, e.deleted_at,
+    e.created_at, e.landmark_id,
+    -- v2 — 좌표/이름은 landmarks JOIN derived.
+    lm.lat as lat,
+    lm.lng as lng,
+    lm.name as place_name,
+    lm.kind as landmark_kind,
+    lm.parent_landmark_id as landmark_parent_id,
+    lm.alias_group_id as landmark_alias_group_id,
     row_number() over (partition by e.era_id order by e.story_index) as rank_in_era,
     row_number() over (order by er.display_order, e.story_index) as global_rank
   from events e
   join eras er on er.id = e.era_id
+  join landmarks lm on lm.id = e.landmark_id
   where e.status = 'published'
     and e.deleted_at is null;
 
@@ -1177,9 +1247,7 @@ create or replace function public.insert_event_at_position(
   p_start_year int,
   p_end_year int,
   p_time_precision text,
-  p_place_name text,
-  p_lat double precision,
-  p_lng double precision,
+  p_landmark_id uuid,
   p_scene_image_paths text[] default '{}'
 )
 returns uuid
@@ -1195,6 +1263,13 @@ declare
 begin
   if not public.is_admin() then
     raise exception '관리자만 이야기를 등록할 수 있습니다.';
+  end if;
+
+  if p_landmark_id is null then
+    raise exception 'p_landmark_id 는 필수입니다 (위치 모델 v2).';
+  end if;
+  if not exists (select 1 from landmarks where id = p_landmark_id) then
+    raise exception '존재하지 않는 landmark_id: %', p_landmark_id;
   end if;
 
   select id into v_era_id from public.eras where code = p_era_code;
@@ -1225,7 +1300,7 @@ begin
     era_id, title, summary,
     story_scenes, scene_characters, character_codes, bible_refs,
     start_year, end_year, time_precision, story_index,
-    place_name, lat, lng, scene_image_paths, status
+    landmark_id, scene_image_paths, status
   )
   values (
     v_era_id, p_title, p_summary,
@@ -1236,7 +1311,7 @@ begin
     p_start_year, p_end_year,
     coalesce(p_time_precision, 'approx'),
     v_target_index,
-    p_place_name, p_lat, p_lng,
+    p_landmark_id,
     coalesce(p_scene_image_paths, '{}'::text[]),
     'published'
   )
@@ -1257,7 +1332,7 @@ $$;
 
 grant execute on function public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
-  int, int, text, text, double precision, double precision, text[]
+  int, int, text, uuid, text[]
 ) to authenticated;
 
 -- -----------------------------------------------------------------------------
@@ -1369,9 +1444,8 @@ create table if not exists event_proposals (
   title text not null,
   summary text,
   character_codes text[] not null default '{}',
-  place_name text,
-  lat double precision,
-  lng double precision,
+  -- v2 위치 모델 — 'general' 타입에서는 NULL.
+  landmark_id uuid references landmarks(id) on delete restrict,
   start_year int,
   end_year int,
   time_precision text not null default 'approx',
@@ -1619,9 +1693,7 @@ create or replace function public.submit_event_proposal(
   p_title text,
   p_summary text,
   p_character_codes text[],
-  p_place_name text,
-  p_lat double precision,
-  p_lng double precision,
+  p_landmark_id uuid,
   p_start_year int,
   p_end_year int,
   p_time_precision text,
@@ -1720,7 +1792,7 @@ begin
   insert into event_proposals (
     proposal_type,
     proposer_user_id, era_id, title, summary, character_codes,
-    place_name, lat, lng, start_year, end_year,
+    landmark_id, start_year, end_year,
     time_precision, bible_refs, story_scenes, scene_characters,
     scene_image_paths, scene_image_prompts,
     proposed_characters,
@@ -1730,7 +1802,7 @@ begin
   values (
     'new',
     auth.uid(), p_era_id, p_title, p_summary, coalesce(p_character_codes, '{}'),
-    p_place_name, p_lat, p_lng, p_start_year, p_end_year,
+    p_landmark_id, p_start_year, p_end_year,
     coalesce(nullif(trim(p_time_precision), ''), 'approx'),
     coalesce(p_bible_refs, '[]'::jsonb),
     coalesce(p_story_scenes, '[]'::jsonb),
@@ -1747,8 +1819,8 @@ begin
 end;
 $$;
 grant execute on function public.submit_event_proposal(
-  uuid, text, text, text[], text,
-  double precision, double precision, int, int, text,
+  uuid, text, text, text[], uuid,
+  int, int, text,
   jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
 ) to authenticated;
 
@@ -1946,9 +2018,7 @@ begin
     v_proposal.start_year,
     v_proposal.end_year,
     v_proposal.time_precision,
-    v_proposal.place_name,
-    v_proposal.lat,
-    v_proposal.lng,
+    v_proposal.landmark_id,
     v_proposal.scene_image_paths
   );
 
@@ -2374,7 +2444,8 @@ create or replace function public.revise_proposal_position(
   p_proposal_id uuid,
   p_after_story_index int,
   p_start_year int default null,
-  p_end_year int default null
+  p_end_year int default null,
+  p_landmark_id uuid default null
 )
 returns void
 language plpgsql
@@ -2388,6 +2459,7 @@ declare
   v_next_start int;
   v_start int;
   v_end int;
+  v_new_landmark_id uuid;
 begin
   if auth.uid() is null then
     raise exception 'authentication required';
@@ -2412,6 +2484,14 @@ begin
   end if;
   if p_after_story_index < 0 then
     raise exception 'p_after_story_index must be >= 0 (got %)', p_after_story_index;
+  end if;
+
+  v_new_landmark_id := coalesce(p_landmark_id, v_proposal.landmark_id);
+  if v_new_landmark_id is null then
+    raise exception 'landmark_id 는 필수입니다.';
+  end if;
+  if not exists (select 1 from landmarks where id = v_new_landmark_id) then
+    raise exception '존재하지 않는 landmark_id: %', v_new_landmark_id;
   end if;
 
   -- 같은 era 의 활성 이벤트 개수 — after_story_index 가 그 이상이면 정의 불가.
@@ -2473,13 +2553,14 @@ begin
     after_story_index = p_after_story_index,
     start_year = v_start,
     end_year = v_end,
+    landmark_id = v_new_landmark_id,
     position_invalidated_at = null,
     position_invalidation_reason = null,
     updated_at = now()
   where id = p_proposal_id;
 end;
 $$;
-grant execute on function public.revise_proposal_position(uuid, int, int, int)
+grant execute on function public.revise_proposal_position(uuid, int, int, int, uuid)
   to authenticated;
 
 -- 9) RPC: add_proposal_comment (pastor + admin) — 댓글 한 개 INSERT 편의 함수

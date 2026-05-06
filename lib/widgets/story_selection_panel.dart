@@ -10,6 +10,7 @@ import '../models/story_event.dart';
 import '../state/story_controller.dart';
 import '../theme/tokens.dart';
 import 'character_panel.dart';
+import 'event_timeline_row.dart';
 
 // 패널 외곽/단계 UI/카드를 별도 파트 파일로 분리하여 가독성과 작업 단위를 유지.
 part 'selection/panel_chrome.dart';
@@ -52,6 +53,8 @@ class StorySelectionPanel extends StatefulWidget {
     required this.onCommitDisplayedEvents,
     required this.onNextFromEra,
     required this.onNextFromCharacters,
+    this.onOpenEventDetail,
+    this.currentSelectedEventId,
   });
 
   final ScrollController scrollController;
@@ -103,39 +106,22 @@ class StorySelectionPanel extends StatefulWidget {
   final VoidCallback onNextFromEra;
   final VoidCallback onNextFromCharacters;
 
+  /// 사건 카드 클릭 시 즉시 호출 — 부모가 EventDetailPage 로 이동.
+  /// v3 — 체크박스 토글 + '다음' 흐름 대신 카드 즉시 클릭으로 통일.
+  final ValueChanged<StoryEvent>? onOpenEventDetail;
+
+  /// 지도 핀 클릭 등으로 controller 가 가지고 있는 "현재 강조 사건" id.
+  /// EventTimelineRow 의 selectedEventId 로 그대로 전달 → 그 카드에 '현재 이야기'
+  /// 라벨 + viewport 중앙으로 자동 스크롤.
+  final String? currentSelectedEventId;
+
   @override
   State<StorySelectionPanel> createState() => _StorySelectionPanelState();
 }
 
 class _StorySelectionPanelState extends State<StorySelectionPanel> {
-  bool _isPrimaryPressed = false;
-
-  Era? get _selectedEra {
-    final selectedEraId = widget.selectedEraId;
-    if (selectedEraId == null) {
-      return null;
-    }
-    for (final era in widget.eras) {
-      if (era.id == selectedEraId) {
-        return era;
-      }
-    }
-    return null;
-  }
-
-  List<Character> get _selectedCharactersForSummary {
-    final sourceIds = widget.draftSelectedCharacterCodes.isNotEmpty
-        ? widget.draftSelectedCharacterCodes
-        : widget.committedSelectedCharacterCodes;
-    return widget.characters
-        .where((character) => sourceIds.contains(character.code))
-        .toList(growable: false);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final primaryAction = _primaryAction();
-    final canRunPrimaryAction = primaryAction != null;
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final collapsedStubThreshold = math.max(72.0, bottomInset + 54.0);
 
@@ -174,25 +160,22 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
                         slivers: [
                           const SliverToBoxAdapter(child: SizedBox(height: 10)),
                           SliverToBoxAdapter(
-                            child: Center(
-                              child: _SelectionSheetTopBar(
-                                stage: widget.panelStage,
-                                onStepUp: widget.onStepUp,
-                                onStepDown: widget.onStepDown,
-                              ),
+                            child: _PanelTopRow(
+                              stage: widget.panelStage,
+                              onStepUp: widget.onStepUp,
+                              onStepDown: widget.onStepDown,
+                              // step 2 + 선택 있을 때만 우측 작은 '다음' 핀.
+                              showCharacterNext:
+                                  widget.step == 2 &&
+                                  widget.draftSelectedCharacterCodes.isNotEmpty,
+                              characterCount:
+                                  widget.draftSelectedCharacterCodes.length,
+                              onNextFromCharacters: widget.onNextFromCharacters,
                             ),
                           ),
-                          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            sliver: SliverToBoxAdapter(
-                              child: _buildHeaderSection(
-                                canRunPrimaryAction: canRunPrimaryAction,
-                                primaryAction: primaryAction,
-                              ),
-                            ),
-                          ),
-                          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                          // v3 — step 1/2/3 칩 + '다음' 버튼 헤더 제거.
+                          // 우측 상단 _SelectionStepper 가 단계 이동 담당.
+                          const SliverToBoxAdapter(child: SizedBox(height: 6)),
                           ..._buildBodySlivers(),
                           SliverToBoxAdapter(
                             child: SizedBox(height: bottomInset + 18),
@@ -213,15 +196,6 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
         );
       },
     );
-  }
-
-  void _handlePressedState(bool pressed) {
-    if (_isPrimaryPressed == pressed) {
-      return;
-    }
-    setState(() {
-      _isPrimaryPressed = pressed;
-    });
   }
 
   BoxDecoration _panelDecoration(Color accentColor) {
@@ -248,173 +222,9 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     );
   }
 
-  VoidCallback? _primaryAction() {
-    if (widget.step == 1) {
-      if (widget.selectedEraId == null) {
-        return null;
-      }
-      return widget.onNextFromEra;
-    }
-    if (widget.step == 2) {
-      if (widget.draftSelectedCharacterCodes.isEmpty) {
-        return null;
-      }
-      return widget.onNextFromCharacters;
-    }
-    // Step 3: 체크된 사건이 하나도 없으면 "다음" 비활성. 드래프트가 커밋과
-    // 동일해도 (재커밋 = 재애니메이션) 허용.
-    if (widget.draftDisplayedEventIds.isEmpty) {
-      return null;
-    }
-    return widget.onCommitDisplayedEvents;
-  }
-
-  Widget _buildHeaderSection({
-    required bool canRunPrimaryAction,
-    required VoidCallback? primaryAction,
-  }) {
-    // Step 3 기준: 현재 드래프트 사건들이 모두 이수 상태면 "완료" 톤으로.
-    // (과거 단일 선택 모델에서 선택된 사건의 완료 여부로 표시하던 것을 대체)
-    final selectedStoryCompleted =
-        widget.step == 3 &&
-        widget.draftDisplayedEventIds.isNotEmpty &&
-        widget.draftDisplayedEventIds.every(widget.completedEventIds.contains);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final isNarrow = width < 620;
-        final headerControl = _buildHeaderControl();
-
-        if (isNarrow) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: _buildStepRow()),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 98,
-                    child: _PrimaryActionButton(
-                      label: '다음',
-                      enabled: canRunPrimaryAction,
-                      pressed: _isPrimaryPressed,
-                      completed: selectedStoryCompleted,
-                      onPressed: primaryAction,
-                      onPressedStateChanged: _handlePressedState,
-                      compact: true,
-                    ),
-                  ),
-                ],
-              ),
-              if (headerControl != null) ...[
-                const SizedBox(height: 8),
-                Align(alignment: Alignment.centerLeft, child: headerControl),
-              ],
-            ],
-          );
-        }
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(flex: 7, child: _buildStepRow()),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 4,
-              child: headerControl == null
-                  ? const SizedBox.shrink()
-                  : Align(
-                      alignment: Alignment.centerLeft,
-                      child: headerControl,
-                    ),
-            ),
-            const SizedBox(width: 10),
-            SizedBox(
-              width: 116,
-              child: _PrimaryActionButton(
-                label: '다음',
-                enabled: canRunPrimaryAction,
-                pressed: _isPrimaryPressed,
-                completed: selectedStoryCompleted,
-                onPressed: primaryAction,
-                onPressedStateChanged: _handlePressedState,
-                compact: true,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildStepRow() {
-    final selectedCharacters = _selectedCharactersForSummary;
-    final stepTwoLabels = selectedCharacters.length > 3
-        ? [selectedCharacters[0].name, selectedCharacters[1].name, '...']
-        : selectedCharacters
-              .take(3)
-              .map((character) => character.name)
-              .toList(growable: false);
-
-    return Row(
-      children: [
-        Expanded(
-          child: _StepChip(
-            title: '1. 시대 선택',
-            selected: widget.step == 1,
-            enabled: widget.canOpenStep(1),
-            summaryLabels: _selectedEra == null
-                ? const []
-                : [_selectedEra!.name],
-            onTap: () => widget.onSelectStep(1),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: _StepChip(
-            title: '2. 인물 선택',
-            selected: widget.step == 2,
-            enabled: widget.canOpenStep(2),
-            summaryLabels: stepTwoLabels,
-            onTap: () => widget.onSelectStep(2),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: _StepChip(
-            title: '3. 사건 선택',
-            selected: widget.step == 3,
-            enabled: widget.canOpenStep(3),
-            onTap: () => widget.onSelectStep(3),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget? _buildHeaderControl() {
-    return switch (widget.step) {
-      1 => _CompactSegmentedToggle(
-        firstLabel: '구약',
-        secondLabel: '신약',
-        firstSelected: widget.selectedTestament != 'new',
-        onSelectFirst: () => widget.onSelectTestament('old'),
-        onSelectSecond: () => widget.onSelectTestament('new'),
-      ),
-      2 => _CompactSegmentedToggle(
-        firstLabel: '시대순',
-        secondLabel: '가나다',
-        firstSelected: widget.characterSortMode == CharacterSortMode.eraOrder,
-        onSelectFirst: () =>
-            widget.onCharacterSortModeChanged(CharacterSortMode.eraOrder),
-        onSelectSecond: () =>
-            widget.onCharacterSortModeChanged(CharacterSortMode.alphabetical),
-      ),
-      _ => null,
-    };
-  }
+  // v3 — _primaryAction / _buildHeaderSection / _buildStepRow /
+  // _buildHeaderControl 모두 제거. 헤더는 우측 상단 _SelectionStepper 가
+  // 담당하고, '다음' 버튼은 흐름이 자동 진입으로 변경되어 불필요.
 
   List<Widget> _buildBodySlivers() {
     return switch (widget.step) {
@@ -503,6 +313,8 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           }, childCount: sortedCharacters.length),
         ),
       ),
+      // v3 — '다음' 버튼은 panel 상단 핸들 우측의 작은 핀으로 이동.
+      // _PanelTopRow.showCharacterNext 가 step 2 + 선택 있을 때만 노출.
     ];
   }
 
@@ -510,60 +322,28 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     if (widget.events.isEmpty) {
       return <Widget>[_buildEmptyBodySliver('선택된 인물의 사건이 없습니다.')];
     }
-
-    final total = widget.events.length;
-    final selectedCount = widget.events
-        .where((e) => widget.draftDisplayedEventIds.contains(e.id))
-        .length;
-
-    // code → name 룩업을 한 번만 만들어서 카드마다 재사용.
-    final characterNameByCode = <String, String>{
-      for (final p in widget.characters) p.code: p.name,
+    // v3 — 카드 클릭 즉시 EventDetailPage 이동. selectedEventId 로 '현재 이야기'
+    // 강조 + 자동 스크롤. EventTimelineRow 가 region 모드와 동일하게 동작.
+    final charactersByCode = <String, Character>{
+      for (final p in widget.characters) p.code: p,
     };
-    String nameForCharacter(String code) => characterNameByCode[code] ?? code;
-
+    // 지도 핀 클릭 시 controller 가 selectEvent 로 selectedEventId 를 갱신하면
+    // 그 카드가 강조 + 자동 스크롤. committed 가 1개일 땐 fallback.
+    final selectedEventId =
+        widget.currentSelectedEventId ??
+        (widget.committedDisplayedEventIds.length == 1
+            ? widget.committedDisplayedEventIds.first
+            : null);
     return <Widget>[
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-        sliver: SliverToBoxAdapter(
-          child: _StoryBulkActionsBar(
-            total: total,
-            selectedCount: selectedCount,
-            onSelectAll: selectedCount == total
-                ? null
-                : widget.onSelectAllDisplayedEvents,
-            onDeselectAll: selectedCount == 0
-                ? null
-                : widget.onDeselectAllDisplayedEvents,
-          ),
-        ),
-      ),
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            mainAxisExtent: 94,
-          ),
-          delegate: SliverChildBuilderDelegate((context, index) {
-            final event = widget.events[index];
-            final checked = widget.draftDisplayedEventIds.contains(event.id);
-            return _StoryCompactCard(
-              index: index + 1,
-              title: event.title,
-              subtitle: _storySubtitle(event),
-              selected: checked,
-              isCompleted: widget.completedEventIds.contains(event.id),
-              highlightedCharacterCodes: event.characterCodes
-                  .where(widget.committedSelectedCharacterCodes.contains)
-                  .toList(growable: false),
-              colorForCharacter: widget.colorForCommittedCharacter,
-              nameForCharacter: nameForCharacter,
-              onTap: () => widget.onToggleDisplayedEvent(event.id),
-            );
-          }, childCount: widget.events.length),
+      SliverToBoxAdapter(
+        child: EventTimelineRow(
+          events: widget.events,
+          allEras: widget.eras,
+          charactersByCode: charactersByCode,
+          selectedEventId: selectedEventId,
+          onTapEvent: (event) => widget.onOpenEventDetail?.call(event),
+          // SliverToBoxAdapter 안 — fixed height 필요.
+          rowHeight: 232,
         ),
       ),
     ];
@@ -585,18 +365,6 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       return tagline;
     }
     return '이 인물과 관련된 성경 이야기를 이어서 살펴볼 수 있습니다.';
-  }
-
-  String _storySubtitle(StoryEvent event) {
-    final placeName = (event.placeName ?? '').trim();
-    if (placeName.isNotEmpty) {
-      return placeName;
-    }
-    final shortSummary = event.shortSummary.trim();
-    if (shortSummary.isNotEmpty) {
-      return shortSummary;
-    }
-    return '사건을 선택해 자세한 내용을 확인하세요.';
   }
 
   String? _eraDateLabel(Era era) {
@@ -621,3 +389,104 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     return 'A.D. $year';
   }
 }
+
+/// 패널 상단 핸들 행 — 가운데 chevron pill, (step 2 + 선택 있을 때) 우측에
+/// 작은 "다음" 핀. 큰 바닥 버튼 대신 핸들과 같은 줄에 자그마하게 배치한다.
+class _PanelTopRow extends StatelessWidget {
+  const _PanelTopRow({
+    required this.stage,
+    required this.onStepUp,
+    required this.onStepDown,
+    required this.showCharacterNext,
+    required this.characterCount,
+    required this.onNextFromCharacters,
+  });
+
+  final StorySelectionPanelStage stage;
+  final VoidCallback onStepUp;
+  final VoidCallback onStepDown;
+  final bool showCharacterNext;
+  final int characterCount;
+  final VoidCallback onNextFromCharacters;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _SelectionSheetTopBar(
+            stage: stage,
+            onStepUp: onStepUp,
+            onStepDown: onStepDown,
+          ),
+          if (showCharacterNext)
+            Positioned(
+              right: 0,
+              child: _CharacterStepNextPill(
+                count: characterCount,
+                onPressed: onNextFromCharacters,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 인물 step 2 의 "다음" 작은 핀 — chevron pill 우측 정렬. 1명 이상 선택돼야
+/// 노출되며, 누르면 부모가 step 3 진입 + 사건 timeline reveal 시작.
+class _CharacterStepNextPill extends StatelessWidget {
+  const _CharacterStepNextPill({required this.count, required this.onPressed});
+  final int count;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xFF8C5A2E),
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 4,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$count명 다음',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white,
+                size: 14,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// _EventCardConnector / _DashedConnectorPainter 는 lib/widgets/event_timeline_row.dart
+// 로 이동 — region 모드와 character 모드가 같은 위젯 (EventTimelineRow) 을 공유.

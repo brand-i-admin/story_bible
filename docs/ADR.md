@@ -338,3 +338,37 @@
   FCM + Edge Function + flutterfire 플랫폼 설정 + 포그라운드 웹 알림 수정
   + 토큰 등록 타이밍 버그 수정 포함. `docs/guides/INFRA_GUIDE.md` 에 전체
   동작 원리(JWT, Apple nonce 이중 해싱, GCP access_token 교환 등) 문서화.
+
+## ADR-019: 위치 모델 v2 — region/anchor/minor + landmark_id FK (2026-05-04)
+
+- **결정**: events 의 위치를 직접 좌표(`lat/lng/place_name`) 에서 `landmark_id` (uuid → landmarks) FK 로 전환. landmarks 테이블을 region(폴리곤 영역) / anchor(region 의 대표 점) / minor(region 안의 작은 점) 3 종으로 확장. `alias_group_id` 로 같은 점 다른 시대 이름(모리아산 ↔ 예루살렘 성전, 시내산 ↔ 호렙산, 시날 ↔ 바벨론) 묶음.
+- **이유**:
+  1. 새 이야기 제안 시 사용자(목사)가 자유 좌표를 찍으면 일관성/품질이 떨어짐. 미리 정해진 region/anchor/minor 칩에서 고르도록 하면 데이터 정합성 유지.
+  2. "이 지역에서 일어난 사건들" 같은 쿼리가 단순 FK 조회로 가능 → "지역으로 탐색" UX 가능.
+  3. 같은 위치 다른 시대 이름 처리(alias_group)로 시대 멀티 선택 시에도 같은 점에 라벨을 합쳐 표시.
+- **마이그레이션**:
+  - `supabase/migrations/20260504_landmarks_v2.sql` (스키마 + landmark_id 컬럼)
+  - `supabase/200_stories/landmarks_v2_seed.sql` (31 region + 66 anchor + 17 minor + 4 alias_group)
+  - `supabase/200_stories/event_landmark_update.sql` (168 events 의 landmark_id 채움)
+  - `supabase/migrations/20260504_landmarks_v2_finalize.sql` (NOT NULL + RPC 시그니처 변경 + lat/lng/place_name DROP + events_ordered view 재정의)
+- **RPC 시그니처 변경 4건**:
+  - `insert_event_at_position`: `p_place_name/p_lat/p_lng` → `p_landmark_id uuid`
+  - `submit_event_proposal`: 동일
+  - `approve_event_proposal`: 내부에서 `v_proposal.landmark_id` 사용
+  - `revise_proposal_position`: `p_landmark_id uuid default null` 추가 (위치 재선택 가능)
+- **호환 정책**: `events_ordered` view 가 landmarks JOIN 으로 `lat/lng/place_name` 을 derived 로 노출 → 기존 클라이언트 호출처 변경 최소화. `StoryEvent.lat/lng/placeName` 은 view derive 값, `landmarkId` 가 진실 소스.
+- **UI**:
+  - 시대 단수 → `selectedEraIds: Set<String>` 멀티.
+  - 시대 선택 후 `SelectionModeDialog` 가 [지역(region) / 인물(character)] 분기.
+  - region 모드: 지도 region 폴리곤 + anchor/minor 점 + region 클릭 시 `RegionModeCardStrip` 가로 카드 슬라이딩.
+  - character 모드: 인물 칩 멀티 선택 + `CharacterModeGrid` 5열 세로 카드 + 점선 연결 + 좌우 화살표.
+- **결과**: 새 위치 v2 카탈로그 (`assets/landmarks/landmarks_v2_draft.json`) + 168 events 매핑 (`assets/landmarks/event_landmark_mapping_draft.json`). v2 흐름 진입은 메인 화면 상단 "탐색 v2" 버튼 → `V2ExploreScreen`.
+
+
+- **Phase 2 (2026-05-04 추가)**: app.dart 의 home 을 `V2ExploreScreen` 으로 교체. 기존 StoryHomeScreen 은 V2ExploreScreen 의 AppBar 의 'history' 아이콘에서 진입 가능 (레거시 utility 풀세트 — 검색/주간/성경/프로필/알림/Aa/이야기 등록).
+- **Phase 3 (2026-05-04 추가)**:
+  - 지역 모드 region 마커에 그곳에서 발생한 사건의 인물 아바타(첫 4명) 동그라미 stack 표시 (`_RegionMarkerWithAvatars`).
+  - 사건 카드 탭 → 미리보기 다이얼로그 (제목/요약/장소·연도 메타 + 닫기). 풀 EventDetailPage 진입은 추후 v2 화면용 콜백 통합 후.
+  - `RevisePositionDialog` 가 landmark ChoiceChip 그룹으로 region/anchor/minor 재선택 가능. `revise_proposal_position` RPC 의 `p_landmark_id` 파라미터로 전달.
+- **시드 빌더 변경**: `build_200_stories_seed_sql.py` 가 `assets/landmarks/event_landmark_mapping_draft.json` 을 읽어 events.landmark_id 를 INSERT 시 lookup. 별도 event_landmark_update.sql 적용 불필요.
+- **Make pipeline**: `make seed-all` 이 `seed-landmarks-v2` 를 포함, `make apply-seeds` 가 v2 landmarks 를 stories 보다 먼저 적용.

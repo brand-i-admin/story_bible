@@ -1,15 +1,15 @@
 import 'package:latlong2/latlong.dart';
 
-/// 시대별로 지도 위에 표시되는 성경 랜드마크 (예루살렘 성전, 시내산, 떨기나무 등).
+/// 위치 모델 v3 — 단일 [Landmark] 모델로 region 폴리곤 + 점 마커를 모두 표현.
 ///
-/// 사용자가 시대를 선택하면 [eraCodes] 배열에 해당 시대 코드를 가진 랜드마크만
-/// 지도에 노출되어 시대별 무대 감각을 잡아 준다. 한 랜드마크가 여러 시대에 걸쳐
-/// 의미를 가지면(예: 예루살렘 성전 = 왕정 + 포로/귀환 + 예수 사역) 배열에 여러
-/// era code 를 둔다.
+/// - **region**: kind='region'. polygon 으로 영역 표시. parentLandmarkId 없음.
+///   anchor_lat/lng = lat/lng 은 region 라벨 위치(중심 근사).
+/// - **point** (kind != 'region'): mountain / city / sea / river / island /
+///   palace / wilderness / holy_site / campsite 등. lat/lng 정확한 좌표.
+///   parentLandmarkId = 자기가 속한 region 의 id.
 ///
-/// 시드 파이프라인: `assets/landmarks/landmarks.json` →
-/// `tools/seed/build_landmarks_seed_sql.py` →
-/// `supabase/200_stories/landmarks_seed.sql`.
+/// alias_group 기능은 v3 에서 제거. 같은 좌표를 시대마다 다른 이름으로 부르는
+/// 케이스는 별개 landmark 두 개의 era_codes 로 자연 분리한다.
 class Landmark {
   const Landmark({
     required this.id,
@@ -21,6 +21,9 @@ class Landmark {
     required this.displayPriority,
     required this.eraCodes,
     required this.relatedEventCodes,
+    required this.kind,
+    this.polygon = const [],
+    this.parentLandmarkId,
     this.description,
     this.category,
   });
@@ -33,11 +36,15 @@ class Landmark {
       description: row['description'] as String?,
       emoji: (row['emoji'] as String?) ?? '📍',
       category: row['category'] as String?,
-      lat: (row['lat'] as num).toDouble(),
-      lng: (row['lng'] as num).toDouble(),
+      // v3 — lat/lng nullable (비지리적 region). null 이면 0 으로 폴백.
+      lat: (row['lat'] as num?)?.toDouble() ?? 0.0,
+      lng: (row['lng'] as num?)?.toDouble() ?? 0.0,
       displayPriority: (row['display_priority'] as num?)?.toInt() ?? 0,
       eraCodes: _stringList(row['era_codes']),
       relatedEventCodes: _stringList(row['related_event_codes']),
+      kind: (row['kind'] as String?) ?? 'point',
+      polygon: _parsePolygon(row['polygon']),
+      parentLandmarkId: row['parent_landmark_id'] as String?,
     );
   }
 
@@ -51,11 +58,21 @@ class Landmark {
   final double lng;
   final int displayPriority;
 
-  /// 이 랜드마크가 노출되는 시대 코드 배열 (eras.code 기준).
-  /// 비어 있으면 어떤 시대에서도 노출되지 않는다.
-  final List<String> eraCodes;
+  /// 'region' | 'point' (또는 v2 잔존: 'anchor' | 'minor').
+  final String kind;
 
+  /// kind='region' 일 때만 채워짐. 폴리곤 정점 [lat, lng] 시퀀스.
+  final List<LatLng> polygon;
+
+  /// non-region 마커 → 자기가 속한 region 의 landmark id. region 자체는 null.
+  final String? parentLandmarkId;
+
+  final List<String> eraCodes;
   final List<String> relatedEventCodes;
+
+  bool get isRegion => kind == 'region';
+  bool get isAnchor => kind == 'anchor'; // v2 호환 — v3 에서는 'point' 권장
+  bool get isMinor => kind == 'minor'; // v2 호환
 
   LatLng get latLng => LatLng(lat, lng);
 }
@@ -65,4 +82,20 @@ List<String> _stringList(Object? raw) {
     return const [];
   }
   return raw.whereType<String>().toList(growable: false);
+}
+
+List<LatLng> _parsePolygon(Object? raw) {
+  if (raw is! List) {
+    return const [];
+  }
+  final result = <LatLng>[];
+  for (final pair in raw) {
+    if (pair is! List || pair.length < 2) continue;
+    final lat = pair[0];
+    final lng = pair[1];
+    if (lat is num && lng is num) {
+      result.add(LatLng(lat.toDouble(), lng.toDouble()));
+    }
+  }
+  return result;
 }

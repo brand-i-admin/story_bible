@@ -12,22 +12,15 @@ import 'package:latlong2/latlong.dart';
 import '../models/era_boundary.dart';
 import '../models/landmark.dart';
 import '../models/story_event.dart';
+import '../theme/era_colors.dart';
 import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
+import 'map_deco_layer.dart';
+import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
 
 // 핀 마커 위젯/데이터 클래스를 별도 파트 파일로 분리.
 part 'map/pin_marker.dart';
-
-/// "현 지도에서 검색" 콜백. 사용자가 buton 을 누르면 현재 viewport 의 가운데
-/// 80% 영역(lat/lng 박스)을 인자로 받아 부모가 검색을 트리거한다.
-typedef ViewportSearchCallback =
-    void Function({
-      required double minLat,
-      required double maxLat,
-      required double minLng,
-      required double maxLng,
-    });
 
 /// 두 랜드마크 사이 거리 측정 결과. 부모 (Home) 가 SnackBar / 다이얼로그로
 /// 사용자에게 표시한다.
@@ -59,6 +52,25 @@ double haversineKm(LatLng a, LatLng b) {
 }
 
 double _deg2rad(double deg) => deg * (math.pi / 180.0);
+
+/// 폴리곤 bbox 면적 (단위: deg²) — 정확한 면적이 아니라 폴리곤 hit 우선순위
+/// 비교용. 작은 region (예: 밧단아람) 이 큰 region (예: 메소포타미아) 안에
+/// 있을 때 작은 쪽이 hit 우선이 되도록 면적 정렬에 쓰인다.
+double _polygonBboxArea(Landmark lm) {
+  final pts = lm.polygon;
+  if (pts.length < 3) return double.maxFinite; // polygon 없으면 가장 큰 값으로
+  var minLat = pts.first.latitude;
+  var maxLat = minLat;
+  var minLng = pts.first.longitude;
+  var maxLng = minLng;
+  for (final p in pts) {
+    if (p.latitude < minLat) minLat = p.latitude;
+    if (p.latitude > maxLat) maxLat = p.latitude;
+    if (p.longitude < minLng) minLng = p.longitude;
+    if (p.longitude > maxLng) maxLng = p.longitude;
+  }
+  return (maxLat - minLat) * (maxLng - minLng);
+}
 
 /// 거리(km)를 가까운 한국 도시 간 거리에 비유해 한 줄로 반환.
 String koreanDistanceComparison(double km) {
@@ -111,15 +123,37 @@ class StoryMapPanel extends StatefulWidget {
     this.bottomObscuredFraction = 0.0,
     this.topObscuredPixels = 0.0,
     this.activeLandmarks = const [],
-    this.viewportSearchResults = const [],
-    this.onSearchInViewport,
-    this.onClearViewportSearch,
     this.activeEraBoundaries = const [],
     this.onLandmarkTap,
     this.onMeasureResult,
     this.eraPreviewEvents = const [],
+    this.hullEvents = const [],
+    this.eraRegionLandmarks = const [],
+    this.selectedLandmarkId,
+    this.revealEventsKey,
+    this.revealInstantly = false,
+    this.onRevealComplete,
     this.nameForCharacter,
+    this.eraCodeForId,
+    this.eventCountByLandmarkId,
   });
+
+  /// 현재 선택된 region/landmark id. 선택된 region 핀에 ripple 애니메이션 활성.
+  final String? selectedLandmarkId;
+
+  /// 사건 핀 0.3초 순차 reveal 트리거 키. 같은 키면 reveal 재시작 안 함.
+  /// 부모가 region 변경/인물 변경/step 진입마다 새 키를 넘기면 reveal 재시작.
+  /// null 이면 reveal 안 함 (또는 selectedLandmarkId 변화로 폴백).
+  final String? revealEventsKey;
+
+  /// true 면 0.3초 순차 reveal 을 건너뛰고 즉시 모든 핀을 보여 줌. 사용자가
+  /// reveal 도중 panel ^ 클릭으로 수동 expand 했을 때 부모가 toggle 한다.
+  final bool revealInstantly;
+
+  /// 핀 reveal 이 마지막 핀까지 도달했을 때 1회 호출. 부모는 이 콜백으로
+  /// panel 을 자동 expand 한다. (수동 expand 시 [revealInstantly]=true 로
+  /// 즉시 reveal 된 경우에도 동일하게 호출.)
+  final VoidCallback? onRevealComplete;
 
   final List<StoryEvent> events;
   final String? selectedEventId;
@@ -148,18 +182,6 @@ class StoryMapPanel extends StatefulWidget {
   /// 부모가 selectedEraId 의 era code 로 필터해 넘긴다. 비어 있으면 미표시.
   final List<Landmark> activeLandmarks;
 
-  /// "현 지도에서 검색" 결과 사건들. 비어있으면 결과 핀 미표시.
-  /// 일반 events 와는 별도 레이어로 그려진다 (얼굴 + 제목 패널 핀).
-  final List<StoryEvent> viewportSearchResults;
-
-  /// "현 지도에서 검색" 버튼 콜백. null 이면 버튼 미표시.
-  /// 인자: 현재 viewport 의 가운데 50% 영역 (lat/lng 박스).
-  final ViewportSearchCallback? onSearchInViewport;
-
-  /// 검색 결과를 비우고 일반 핀 표시로 돌아가는 콜백. viewportSearchResults 가
-  /// 비어있지 않을 때 우상단 버튼이 "✕ 검색 취소 (N개)" 로 바뀌어 이 콜백을 호출.
-  final VoidCallback? onClearViewportSearch;
-
   /// 지도에 그릴 시대 영역 폴리곤. 일반적으로 부모가 selectedEraId 로 필터해
   /// 현재 시대 분량만 넘긴다. 비어있으면 폴리곤 미표시.
   final List<EraBoundary> activeEraBoundaries;
@@ -180,9 +202,28 @@ class StoryMapPanel extends StatefulWidget {
   /// 미선택은 흐리게. 비어있으면 미리보기 path 미표시.
   final List<StoryEvent> eraPreviewEvents;
 
+  /// 시대 영역(dynamic hull) 폴리곤을 빌드할 입력 사건들. 인물 모드 + 인물
+  /// 선택 시 그 인물 사건만 넘겨 폴리곤을 사건 분포에 정확히 맞춰 잡는다.
+  /// 비어 있으면 [eraPreviewEvents] 로 폴백.
+  final List<StoryEvent> hullEvents;
+
+  /// 현재 시대(activeEraBoundaries 의 eraId 들)에 속하는 region 종류 landmark.
+  /// 이 region 들의 polygon 합집합을 시대 영역 폴리곤으로 그린다 (사건 hull
+  /// 대신). 비어 있으면 폴리곤 미표시.
+  final List<Landmark> eraRegionLandmarks;
+
   /// 인물 코드 → 표시 이름 반환. legend 에서 사용. null 이면 코드를 이름으로
   /// 사용 (fallback).
   final String Function(String characterCode)? nameForCharacter;
+
+  /// era_id (uuid) → era_code (text) 매핑. 시대 폴리곤 색상을 [EraColors]
+  /// 와 동일하게 맞추기 위함. null 이면 era_id 자체로 fallback.
+  final String? Function(String eraId)? eraCodeForId;
+
+  /// region 마커 라벨에 표시할 사건 개수 — landmark.id → count.
+  /// 부모가 region(+ 자식 anchor/minor + alias_group) 사건 합산해 넘겨 준다.
+  /// null 이거나 키 없으면 배지 미표시.
+  final Map<String, int>? eventCountByLandmarkId;
 
   @override
   State<StoryMapPanel> createState() => _StoryMapPanelState();
@@ -194,16 +235,30 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   Timer? _cameraTimer;
   List<Polyline> _countryBorderPolylines = const [];
   List<Marker> _countryLabelMarkers = const [];
-  // 시대 영역이 바다로 흘러나가지 않게 ray-cast point-in-polygon 으로 검출하기
-  // 위해 country GeoJSON 의 outer ring 들을 평면 좌표 그대로 보관한다.
-  List<List<LatLng>> _landRings = const [];
   int _visibleCount = 0;
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
   bool _mapReady = false;
 
+  /// 시대 region 폴리곤 클릭 hit-test 용. flutter_map 8.x 의 hitNotifier API.
+  /// Polygon 에 hitValue=Landmark 부여 → 사용자가 onTap 시 hitValue 로 어떤
+  /// region 이 눌렸는지 식별.
+  final LayerHitNotifier<Landmark> _polygonHitNotifier = LayerHitNotifier(null);
+
+  /// 사건 핀 0.3초 순차 reveal 카운터. revealEventsKey 또는 selectedLandmarkId
+  /// 가 변경되면 0 으로 리셋 후 매 300ms +1.
+  int _eventRevealCount = 0;
+  Timer? _eventRevealTimer;
+  String? _lastRevealKey;
+
+  /// 시간순 번호 핀 모드 활성 여부 — region 선택 OR revealEventsKey set.
+  bool get _orderedEventsActive =>
+      widget.selectedLandmarkId != null ||
+      (widget.revealEventsKey != null && widget.revealEventsKey!.isNotEmpty);
+
   /// 거리 측정 모드. true 면 랜드마크 탭이 측정 시작/끝점 선택으로 바뀐다.
-  bool _measureMode = false;
+  // v3 — 거리 재기 기능 제거. 호환을 위해 final false 로 남겨둠 (기존 분기 dead).
+  final bool _measureMode = false;
   Landmark? _measureFirst;
   Landmark? _measureSecond;
 
@@ -249,6 +304,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   void dispose() {
     _revealTimer?.cancel();
     _cameraTimer?.cancel();
+    _eventRevealTimer?.cancel();
     widget.controller?._unbind(this);
     super.dispose();
   }
@@ -311,6 +367,57 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       });
     }
 
+    // 사건 핀 0.3초 순차 reveal 트리거 — revealEventsKey 또는 selectedLandmarkId
+    // 가 변경되면 reveal 재시작 (region 모드/character step 3 모두 대응).
+    final newKey = widget.revealEventsKey ?? widget.selectedLandmarkId;
+    if (newKey != _lastRevealKey) {
+      _lastRevealKey = newKey;
+      _eventRevealTimer?.cancel();
+      _eventRevealCount = 0;
+      if (newKey != null && newKey.isNotEmpty) {
+        final total = widget.events.where((e) => e.hasCoordinate).length;
+        if (total > 0) {
+          if (widget.revealInstantly) {
+            // 수동 expand 등으로 즉시 reveal 요청 — Timer 스킵, 한 번에 노출.
+            _eventRevealCount = total;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) widget.onRevealComplete?.call();
+            });
+          } else {
+            _eventRevealTimer = Timer.periodic(
+              const Duration(milliseconds: 300),
+              (timer) {
+                if (!mounted) {
+                  timer.cancel();
+                  return;
+                }
+                if (_eventRevealCount >= total) {
+                  timer.cancel();
+                  // 마지막 핀까지 노출 완료 — 부모에게 알려 panel auto-expand.
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) widget.onRevealComplete?.call();
+                  });
+                  return;
+                }
+                setState(() => _eventRevealCount++);
+              },
+            );
+          }
+        }
+      }
+    } else if (widget.revealInstantly && !oldWidget.revealInstantly) {
+      // 같은 reveal 키 안에서 instant 토글 — 진행 중인 stagger 를 건너뛰고
+      // 즉시 모든 핀 노출. 사용자 ^ 클릭 케이스.
+      _eventRevealTimer?.cancel();
+      final total = widget.events.where((e) => e.hasCoordinate).length;
+      if (total > 0) {
+        setState(() => _eventRevealCount = total);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) widget.onRevealComplete?.call();
+        });
+      }
+    }
+
     if ((oldWidget.bottomObscuredFraction - widget.bottomObscuredFraction)
                 .abs() >
             0.015 &&
@@ -366,6 +473,30 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   initialZoom: zoom,
                   minZoom: 2.4,
                   maxZoom: 13,
+                  // 지도 빈 곳 또는 폴리곤 위 클릭 시 호출. 폴리곤 hit 가 있으면
+                  // 그 region 을 선택. 마커 클릭은 자체 GestureDetector 가 먼저
+                  // 처리하므로 onTap 은 빈 곳 + 폴리곤 위만 잡는다.
+                  onTap: (tapPos, latlng) {
+                    final hit = _polygonHitNotifier.value;
+                    if (hit != null && hit.hitValues.isNotEmpty) {
+                      // 여러 폴리곤이 동시에 hit 되면 가장 작은(specific) 폴리곤
+                      // 우선. 예: 메소포타미아 안의 밧단아람을 클릭하면 밧단아람
+                      // 이 선택돼야 함. polygon 면적 = lat-bbox * lng-bbox 근사.
+                      Landmark pick = hit.hitValues.first;
+                      double pickArea = _polygonBboxArea(pick);
+                      for (final lm in hit.hitValues.skip(1)) {
+                        final a = _polygonBboxArea(lm);
+                        if (a < pickArea) {
+                          pick = lm;
+                          pickArea = a;
+                        }
+                      }
+                      // 사건 0 region 은 클릭 비활성 (회색 핀과 일관).
+                      final cnt = widget.eventCountByLandmarkId?[pick.id] ?? 0;
+                      if (cnt == 0) return;
+                      widget.onLandmarkTap?.call(pick);
+                    }
+                  },
                   onMapReady: () {
                     _mapReady = true;
                     _startRevealAnimation();
@@ -403,43 +534,79 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   ),
                 ),
                 children: [
+                  // 양피지/세피아 톤 + 강·바다 파랑 (Carto voyager_nolabels).
+                  // 이전에 G 채널만 약화하는 ColorFilter.matrix 를 시도했으나
+                  // 베이지(R~G~B 비슷한 영역) 에서 G 만 줄이면 R/B 가 dominant
+                  // 가 되어 land 전체가 핑크/보라로 변색되는 부작용. 매트릭스
+                  // 는 폐기하고 단순 sepia overlay 만 사용 — voyager 의
+                  // 산림 연두는 sepia 에 살짝 묻히면서 부드러운 베이지·올리브
+                  // 톤이 된다.
                   TileLayer(
                     urlTemplate:
-                        'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+                        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
                     subdomains: const ['a', 'b', 'c', 'd'],
                     userAgentPackageName: 'com.story.bible',
                     tileBuilder: (context, tileWidget, _) {
+                      // v3.7 — desaturate 매트릭스 완전히 제거. 매트릭스 자체가
+                      // 채도를 깎아 (a) 화면을 뿌옇게 만들고 (b) water 의 blue
+                      // 를 회색으로 죽임. voyager 의 자연 컬러를 그대로 두고
+                      // 매우 가벼운 tan multiply (α 13%) 만 더해 살짝 sepia 톤.
+                      // water blue 가 vibrant 하게 살아남고 land 는 부드럽게
+                      // warm 해진다. 양피지 입자감은 ParchmentTextureLayer
+                      // (화면 오버레이) 가 담당.
                       return ColorFiltered(
                         colorFilter: const ColorFilter.mode(
-                          Color(0x2EB99563),
-                          BlendMode.srcATop,
+                          Color(0x22A88555), // 알파 13%, very light tan
+                          BlendMode.multiply,
                         ),
                         child: tileWidget,
                       );
                     },
                   ),
                   PolylineLayer(polylines: _countryBorderPolylines),
-                  // 시대 영역 폴리곤 — 사건/랜드마크 좌표 기반 동적 convex hull.
-                  // GeoJSON 정밀 폴리곤(`activeEraBoundaries`) 대신 그 시대에
-                  // 실제로 등장하는 사건들이 모인 영역만 보여주므로 새 사건
-                  // 추가 시 자동으로 영역이 확장된다.
-                  if (widget.activeEraBoundaries.isNotEmpty &&
-                      widget.eraPreviewEvents.isNotEmpty)
-                    PolygonLayer(polygons: _buildDynamicEraHullPolygons()),
+                  // 시대 영역 폴리곤 — 그 시대의 region 들의 polygon 합집합을
+                  // 같은 시대 색으로 칠해 표시. hitNotifier 로 클릭 hit-test
+                  // 정보를 노출하고, MapOptions.onTap 에서 hit.hitValues 로 어느
+                  // region 이 눌렸는지 식별 → onLandmarkTap 호출.
+                  if (widget.eraRegionLandmarks.isNotEmpty)
+                    PolygonLayer<Landmark>(
+                      hitNotifier: _polygonHitNotifier,
+                      polygons: _buildEraRegionUnionPolygons(),
+                    ),
+                  // 양피지 톤 데코 레이어 — 산·도시·나무·피라미드 등 분위기
+                  // 일러스트. 시대 필터로 그 시대 데코만 보임. PNG 가 아직 없는
+                  // kind 는 자연스럽게 미표시.
+                  MapDecoLayer(
+                    activeEraCodes: {
+                      for (final b in widget.activeEraBoundaries)
+                        if (widget.eraCodeForId?.call(b.eraId) != null)
+                          widget.eraCodeForId!.call(b.eraId)!,
+                      for (final r in widget.eraRegionLandmarks) ...r.eraCodes,
+                    },
+                  ),
                   MarkerLayer(markers: _countryLabelMarkers),
                   // 시대 미리보기 — 인물별 사건 path 를 색깔 실선으로.
                   // 선택 인물 alpha 0.95 + 굵기 4.5, 미선택 alpha 0.40 + 2.5.
-                  if (widget.eraPreviewEvents.isNotEmpty)
-                    PolylineLayer(polylines: _buildEraPreviewPolylines()),
-                  // 미리보기 dot 마커 — 사건 위치마다 작은 색깔 동그라미. 선택
-                  // 인물 큰 dot, 미선택 작은 dot. 단일 사건 인물도 점으로 시각화.
-                  if (widget.eraPreviewEvents.isNotEmpty)
-                    MarkerLayer(markers: _buildEraPreviewDots()),
-                  // 선택 인물 path 끝점 화살표 — 마지막 사건 위치에 ▶ 모양.
-                  // 시간 흐름의 종착지를 명확히 보여줌.
+                  // step 3 (_orderedEventsActive) 진입 시에는 dashed path + 번호
+                  // 핀이 그 자리를 대체하므로 실선 preview 를 숨겨 화면을 정리.
                   if (widget.eraPreviewEvents.isNotEmpty &&
-                      widget.selectedCharacterCodes.isNotEmpty)
+                      !_orderedEventsActive)
+                    PolylineLayer(polylines: _buildEraPreviewPolylines()),
+                  if (widget.eraPreviewEvents.isNotEmpty &&
+                      !_orderedEventsActive)
+                    MarkerLayer(markers: _buildEraPreviewDots()),
+                  if (widget.eraPreviewEvents.isNotEmpty &&
+                      widget.selectedCharacterCodes.isNotEmpty &&
+                      !_orderedEventsActive)
                     MarkerLayer(markers: _buildEraPreviewArrowHeads()),
+                  // region(영역) 폴리곤 — 큰 묶음 region 의 polygon 을 시대 색
+                  // 으로 채워 어떤 영역이 어디까지 커버하는지 시각화. 사용자가
+                  // region 마커 대신 폴리곤을 직접 탭해도 region 선택과 동일하게
+                  // 다룰 수 있다 (마커가 폴리곤 위에 겹쳐 그려진다).
+                  if (widget.activeLandmarks.isNotEmpty)
+                    PolygonLayer(
+                      polygons: _buildRegionPolygons(widget.activeLandmarks),
+                    ),
                   // 시대별 랜드마크 — 클러스터링 없이 단순 표시. 시대 필터로
                   // 이미 충분히 적어 (15~25개), 클러스터로 묶이는 게 정보를
                   // 압축해 오히려 가린다.
@@ -449,15 +616,23 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                     ),
                   PolylineLayer(polylines: polylines),
                   MarkerLayer(markers: _buildRegionLabels()),
-                  MarkerLayer(markers: _buildMarkers(widget.events)),
-                  // "현 지도에서 검색" 결과 핀 (얼굴 + 제목 패널). 일반 사건 핀
-                  // 위 레이어에 배치해 상호작용 우선.
-                  if (widget.viewportSearchResults.isNotEmpty)
-                    MarkerLayer(
-                      markers: _buildViewportSearchMarkers(
-                        widget.viewportSearchResults,
-                      ),
+                  // 순서 점선 path + 번호 핀 — region 선택이든 character step3
+                  // 든 revealEventsKey 가 set 되었으면 활성. widget.events 가
+                  // 시간순으로 정렬된 사건들이라고 가정.
+                  if (_orderedEventsActive && widget.events.length >= 2)
+                    PolylineLayer(
+                      polylines: _buildOrderedEventPath(widget.events),
                     ),
+                  if (_orderedEventsActive && widget.events.length >= 2)
+                    MarkerLayer(
+                      markers: _buildOrderedPathArrows(widget.events),
+                    ),
+                  if (_orderedEventsActive)
+                    MarkerLayer(
+                      markers: _buildNumberedEventMarkers(widget.events),
+                    )
+                  else
+                    MarkerLayer(markers: _buildMarkers(widget.events)),
                   // 거리 측정 폴리라인 (두 점이 모두 선택됐을 때만).
                   if (_measureMode)
                     PolylineLayer(polylines: _buildMeasurePolylines()),
@@ -505,78 +680,37 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                         ),
                       ),
                     ),
-                  if (widget.onSearchInViewport != null)
+                  // 비지리적 region 카드 — 종말 환상(하늘 보좌·새 예루살렘 등)
+                  // 처럼 polygon 이 빈 region 을 지도 좌하단 카드로 표시.
+                  // era_nt_consummation 시대에서만 활성화.
+                  if (_nonGeographicRegions.isNotEmpty)
                     Align(
-                      alignment: Alignment.topRight,
+                      alignment: Alignment.bottomLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10, right: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            widget.viewportSearchResults.isNotEmpty &&
-                                    widget.onClearViewportSearch != null
-                                ? _ViewportSearchClearButton(
-                                    count: widget.viewportSearchResults.length,
-                                    onTap: widget.onClearViewportSearch!,
-                                  )
-                                : _ViewportSearchButton(
-                                    onTap: _handleViewportSearchTap,
-                                  ),
-                            const SizedBox(height: 8),
-                            _MeasureToggleButton(
-                              active: _measureMode,
-                              onTap: _toggleMeasureMode,
-                            ),
-                            if (_measureMode) ...[
-                              const SizedBox(height: 6),
-                              _MeasureHintBanner(
-                                first: _measureFirst,
-                                second: _measureSecond,
-                              ),
-                            ],
-                          ],
+                        padding: const EdgeInsets.only(left: 10, bottom: 30),
+                        child: _NonGeographicRegionCard(
+                          regions: _nonGeographicRegions,
                         ),
                       ),
                     ),
+                  // v3 — 우측 상단 검색/거리 측정 버튼 제거. 부모(StoryHomeScreen)
+                  // 가 같은 위치에 _SelectionStepper 를 둔다.
                 ],
               );
             },
           ),
+          // 양피지 grain — BlendMode.multiply 로 paper grain 이 backdrop 에
+          // 비침. strength 0.55 로 parchment image 의 flat 영역은 ~white 가
+          // 되어 water 같은 균일색 영역은 거의 영향 없음. grain spot 만 land
+          // 에 visible.
+          const Positioned.fill(child: ParchmentMultiplyLayer(strength: 0.55)),
         ],
       ),
     );
   }
 
-  /// 현재 카메라 viewport 의 가운데 50% 박스를 lat/lng 로 계산해 콜백으로 전달.
-  /// 화면 중심 기준으로 양쪽에서 25% 씩 깎아 들어간 "포커스 영역" — 사용자가
-  /// 보고 있는 화면 한가운데에 들어온 사건만 검색 결과로 잡히게 한다.
-  void _handleViewportSearchTap() {
-    final callback = widget.onSearchInViewport;
-    if (callback == null) {
-      return;
-    }
-    final camera = _safeCamera();
-    if (camera == null) {
-      return;
-    }
-    final bounds = camera.visibleBounds;
-    final minLat = bounds.southWest.latitude;
-    final maxLat = bounds.northEast.latitude;
-    final minLng = bounds.southWest.longitude;
-    final maxLng = bounds.northEast.longitude;
-    final latShrink = (maxLat - minLat) * 0.25;
-    final lngShrink = (maxLng - minLng) * 0.25;
-    callback(
-      minLat: minLat + latShrink,
-      maxLat: maxLat - latShrink,
-      minLng: minLng + lngShrink,
-      maxLng: maxLng - lngShrink,
-    );
-  }
-
-  /// 랜드마크 탭 처리. 일반 모드 → onLandmarkTap 콜백 (popup). 거리 측정 모드
-  /// → 첫 번째/두 번째 점 선택해 두 점이 모이면 거리 계산 후 onMeasureResult.
+  /// 랜드마크 탭 처리. onLandmarkTap 콜백 (popup) 호출.
+  /// (거리 측정 모드는 v3 에서 제거됨.)
   void _handleLandmarkTap(Landmark landmark) {
     if (!_measureMode) {
       widget.onLandmarkTap?.call(landmark);
@@ -620,13 +754,39 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
   }
 
-  /// 거리 측정 모드 토글 (우상단 작은 버튼).
-  void _toggleMeasureMode() {
-    setState(() {
-      _measureMode = !_measureMode;
-      _measureFirst = null;
-      _measureSecond = null;
-    });
+  /// region polygon 의 모든 정점이 화면에 들어오도록 카메라 fit.
+  /// 하단 시트가 가리는 영역(bottomObscuredFraction)만큼 bottom padding 을 늘려
+  /// 선택된 region 핀이 시트 위쪽에 보이도록 보정.
+  void _focusRegionPolygon(List<LatLng> polygon) {
+    if (!_mapReady || polygon.isEmpty) return;
+    try {
+      double minLat = polygon.first.latitude;
+      double maxLat = polygon.first.latitude;
+      double minLng = polygon.first.longitude;
+      double maxLng = polygon.first.longitude;
+      for (final p in polygon) {
+        if (p.latitude < minLat) minLat = p.latitude;
+        if (p.latitude > maxLat) maxLat = p.latitude;
+        if (p.longitude < minLng) minLng = p.longitude;
+        if (p.longitude > maxLng) maxLng = p.longitude;
+      }
+      // 시트가 화면 아래 가리는 만큼 bottom padding 확장 → 폴리곤이 시트 위로
+      // 들리며 핀의 ripple 애니메이션도 가시 영역에 그려진다.
+      final bottomGap = (widget.bottomObscuredFraction * _lastMapSize.height)
+          .clamp(0.0, 600.0);
+      final bottomPadding = math.max(80.0, bottomGap + 60.0);
+      _controller.fitCamera(
+        CameraFit.bounds(
+          bounds: LatLngBounds(
+            LatLng(minLat - 0.3, minLng - 0.3),
+            LatLng(maxLat + 0.3, maxLng + 0.3),
+          ),
+          padding: EdgeInsets.fromLTRB(60, 80, 60, bottomPadding),
+        ),
+      );
+    } catch (_) {
+      /* 비가용 무시 */
+    }
   }
 
   /// 측정 점 두 개를 잇는 폴리라인 1개. 한쪽만 선택된 상태면 빈 리스트.
@@ -995,191 +1155,230 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   /// 동적 시대 영역 — 사건/랜드마크 좌표 + **해안선 정점** 의 convex hull.
   ///
   /// 핵심 아이디어: 이미 로드된 country GeoJSON 의 해안선/국경 정점들 중
-  /// 사건 bbox 안에 있는 것들을 hull input 에 추가한다. hull 이 land 정점에
-  /// 의해 외곽이 잡혀 자동으로 바다(만, 해변)를 회피하는 자연스러운 모양이
-  /// 된다. 더 많은 land 정점이 있을수록 hull 이 정확한 해안선을 따라간다.
+  /// 시대 영역 폴리곤 — 그 시대에 속하는 region(kind='region') 들의 polygon 을
+  /// 같은 시대 색으로 칠해 [Polygon] 리스트로 반환. flutter_map 은 단일 다각형
+  /// 리스트를 union 으로 그릴 별도 API 가 없어, 인접한 region 들이 같은 색·같은
+  /// alpha 로 칠해지면 시각적으로 한 덩어리로 보이는 효과를 사용한다.
   ///
-  /// 예: 가나안 ↔ 우르 두 점만 있으면 직선이 사우디 사막 + 페르시아만 가로
-  /// 지른다. 해안선 정점이 hull input 에 들어가면 hull 변이 메소포타미아 +
-  /// 시리아 land 정점들로 휘어 바다 회피.
-  List<Polygon> _buildDynamicEraHullPolygons() {
-    final eventPoints = <LatLng>[];
-    for (final event in widget.eraPreviewEvents) {
-      if (event.hasCoordinate) {
-        eventPoints.add(event.latLng);
-      }
-    }
-    for (final lm in widget.activeLandmarks) {
-      eventPoints.add(lm.latLng);
-    }
-    if (eventPoints.length < 3) {
-      return const [];
-    }
+  /// 색은 region 의 era_codes 중 현재 표시 중인 시대(eraCodeForId 콜백으로 푼
+  /// activeEraBoundaries 의 eraId 가 매칭되는 코드)를 우선 사용해 [EraColors]
+  /// 에서 받는다.
+  /// 비지리적 region (polygon 빈 배열) — 종말 환상 등. 지도 모서리 카드로
+  /// 표시하기 위해 따로 뽑아낸다. eraRegionLandmarks 에서 lat/lng=0 + polygon
+  /// 빈 region 들을 필터.
+  List<Landmark> get _nonGeographicRegions => widget.eraRegionLandmarks
+      .where((lm) => lm.isRegion && lm.polygon.isEmpty)
+      .toList(growable: false);
 
-    // 1) 사건 점들의 bbox + padding (해안선 정점 추출 범위)
-    var minLat = eventPoints.first.latitude;
-    var maxLat = eventPoints.first.latitude;
-    var minLng = eventPoints.first.longitude;
-    var maxLng = eventPoints.first.longitude;
-    for (final p in eventPoints) {
-      if (p.latitude < minLat) minLat = p.latitude;
-      if (p.latitude > maxLat) maxLat = p.latitude;
-      if (p.longitude < minLng) minLng = p.longitude;
-      if (p.longitude > maxLng) maxLng = p.longitude;
-    }
-    // 해안선 정점이 사건 외곽까지 들어가야 hull 변이 land 따라 휘므로
-    // padding 을 충분히 크게 잡는다 (사건 영역 외곽 ~3° = ~330km).
-    const paddingDeg = 3.0;
-    minLat -= paddingDeg;
-    maxLat += paddingDeg;
-    minLng -= paddingDeg;
-    maxLng += paddingDeg;
-
-    // 2) 이미 로드된 국경/해안선 정점 중 bbox 안 → hull input 의 추가 attractor
-    final coastPoints = <LatLng>[];
-    for (final polyline in _countryBorderPolylines) {
-      for (final p in polyline.points) {
-        if (p.latitude >= minLat &&
-            p.latitude <= maxLat &&
-            p.longitude >= minLng &&
-            p.longitude <= maxLng) {
-          coastPoints.add(p);
-        }
-      }
+  List<Polygon<Landmark>> _buildEraRegionUnionPolygons() {
+    // 현재 표시 중인 시대(들)의 era_code 집합. activeEraBoundaries 가 비어 있으면
+    // region 의 첫 era_code 로 폴백.
+    final visibleEraCodes = <String>{};
+    for (final b in widget.activeEraBoundaries) {
+      final code = widget.eraCodeForId?.call(b.eraId);
+      if (code != null && code.isNotEmpty) visibleEraCodes.add(code);
     }
 
-    // 3) hull 계산 — 사건 + 해안선 정점 모두 input. land 정점이 외곽을 잡아
-    //    hull 이 자연스럽게 land 따라간다.
-    final all = <LatLng>[...eventPoints, ...coastPoints];
-    final hull = map_math.convexHull(all);
-    if (hull.length < 3) {
-      return const [];
-    }
-
-    // 4) 변 densification — 등분 수 16, pullFactor 0.85 로 끌어당겨 hull 의
-    //    긴 변(예: 가나안 → 우르)이 land 정점들을 따라 zigzag 로 휘게 한다.
-    final densified = _densifyHullToward(
-      hull: hull,
-      attractors: all,
-      segmentsPerEdge: 16,
-      pullFactor: 0.85,
-    );
-
-    // 5) land mask 투영 — densification 후에도 바다 위에 떠 있는 정점은
-    //    가장 가까운 land 정점(coastPoints) 으로 옮긴다. country GeoJSON 의
-    //    outer ring 에 ray-cast 해서 inside/outside 판정. 이게 진짜 바다 회피.
-    final clipped = _projectOntoLand(densified, coastPoints);
-
-    final ref = widget.activeEraBoundaries.firstOrNull;
-    final color = ref?.color ?? const Color(0xFFB89A66);
-    final fillAlpha = (ref?.fillOpacity ?? 0.18).clamp(0.0, 1.0);
-    return [
-      Polygon(
-        points: clipped,
-        color: color.withValues(alpha: fillAlpha),
-        borderColor: color.withValues(alpha: 0.85),
-        borderStrokeWidth: 2.0,
-      ),
-    ];
-  }
-
-  /// densified hull 정점 중 land mask(국가 폴리곤 union) 밖에 있는 점을 가장
-  /// 가까운 land 정점으로 옮긴다. land mask 가 비어 있으면(GeoJSON 로딩 전)
-  /// 입력을 그대로 반환.
-  List<LatLng> _projectOntoLand(
-    List<LatLng> points,
-    List<LatLng> landAttractors,
-  ) {
-    if (_landRings.isEmpty || landAttractors.isEmpty) {
-      return points;
-    }
-    final result = <LatLng>[];
-    for (final p in points) {
-      if (_isInsideAnyLand(p)) {
-        result.add(p);
-      } else {
-        result.add(_nearestPoint(p.latitude, p.longitude, landAttractors));
-      }
+    final result = <Polygon<Landmark>>[];
+    for (final lm in widget.eraRegionLandmarks) {
+      if (!lm.isRegion || lm.polygon.isEmpty) continue;
+      final eventCount = widget.eventCountByLandmarkId?[lm.id] ?? 0;
+      final disabled = eventCount == 0;
+      // 사건 0 region 은 회색·옅게 + hitValue=null 로 클릭 비활성.
+      final fillColor = disabled
+          ? const Color(0xFF9E9285).withValues(alpha: 0.10)
+          : EraColors.forCode(
+              lm.eraCodes.firstWhere(
+                visibleEraCodes.contains,
+                orElse: () => lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '',
+              ),
+            ).withValues(alpha: 0.22);
+      final borderColor = disabled
+          ? const Color(0xFFB8B0A4).withValues(alpha: 0.55)
+          : EraColors.forCode(
+              lm.eraCodes.firstWhere(
+                visibleEraCodes.contains,
+                orElse: () => lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '',
+              ),
+            ).withValues(alpha: 0.95);
+      result.add(
+        Polygon<Landmark>(
+          points: lm.polygon,
+          color: fillColor,
+          borderColor: borderColor,
+          borderStrokeWidth: disabled ? 1.2 : 2.0,
+          // disabled region 은 hitValue 를 null 로 둘 수 없으니 onTap 단계에서
+          // 사건 0 인 region 무시.
+          hitValue: lm,
+        ),
+      );
     }
     return result;
-  }
-
-  /// 국가 outer ring 들에 대해 ray-cast point-in-polygon. 한 개라도 inside 면 true.
-  bool _isInsideAnyLand(LatLng p) {
-    for (final ring in _landRings) {
-      if (_pointInRing(p, ring)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// 표준 even-odd ray casting. ring 은 닫혀 있다고 가정하지 않고 마지막 →
-  /// 첫 정점도 변으로 친다.
-  bool _pointInRing(LatLng p, List<LatLng> ring) {
-    final lat = p.latitude;
-    final lng = p.longitude;
-    var inside = false;
-    final n = ring.length;
-    for (var i = 0, j = n - 1; i < n; j = i++) {
-      final yi = ring[i].latitude;
-      final xi = ring[i].longitude;
-      final yj = ring[j].latitude;
-      final xj = ring[j].longitude;
-      final intersect =
-          ((yi > lat) != (yj > lat)) &&
-          (lng < (xj - xi) * (lat - yi) / (yj - yi + 1e-12) + xi);
-      if (intersect) {
-        inside = !inside;
-      }
-    }
-    return inside;
-  }
-
-  /// hull 의 각 변을 [segmentsPerEdge] 등분 → 각 중간점을 가장 가까운 attractor
-  /// 좌표 쪽으로 [pullFactor] 비율만큼 끌어당긴 정점 리스트 반환.
-  /// 결과: 변이 사건 점 따라 휘어 바다 가로지르는 직선이 안쪽으로 굽어진다.
-  List<LatLng> _densifyHullToward({
-    required List<LatLng> hull,
-    required List<LatLng> attractors,
-    required int segmentsPerEdge,
-    required double pullFactor,
-  }) {
-    final result = <LatLng>[];
-    for (var i = 0; i < hull.length; i++) {
-      final p1 = hull[i];
-      final p2 = hull[(i + 1) % hull.length];
-      result.add(p1);
-      for (var k = 1; k < segmentsPerEdge; k++) {
-        final t = k / segmentsPerEdge;
-        final midLat = p1.latitude + (p2.latitude - p1.latitude) * t;
-        final midLng = p1.longitude + (p2.longitude - p1.longitude) * t;
-        final nearest = _nearestPoint(midLat, midLng, attractors);
-        final pulledLat = midLat + (nearest.latitude - midLat) * pullFactor;
-        final pulledLng = midLng + (nearest.longitude - midLng) * pullFactor;
-        result.add(LatLng(pulledLat, pulledLng));
-      }
-    }
-    return result;
-  }
-
-  LatLng _nearestPoint(double lat, double lng, List<LatLng> candidates) {
-    var nearest = candidates.first;
-    var minDist = double.infinity;
-    for (final c in candidates) {
-      final dLat = c.latitude - lat;
-      final dLng = c.longitude - lng;
-      final d = dLat * dLat + dLng * dLng;
-      if (d < minDist) {
-        minDist = d;
-        nearest = c;
-      }
-    }
-    return nearest;
   }
 
   /// 시대별 랜드마크 마커 빌드.
   /// 이모지 + 작은 라벨. 일반 사건 핀과 시각적으로 구분되게 둥근 캡슐 디자인.
+  /// region(영역) 폴리곤 — 사용자가 어떤 영역이 어디까지 커버하는지 직관적으로
+  /// 보게 하기 위해 polygon 이 비어있지 않은 region kind landmark 만 렌더.
+  /// 색은 region 의 era_codes 첫 시대 → [EraColors] 매핑.
+  List<Polygon> _buildRegionPolygons(List<Landmark> landmarks) {
+    final polygons = <Polygon>[];
+    for (final lm in landmarks) {
+      if (!lm.isRegion) continue;
+      if (lm.polygon.isEmpty) continue;
+      final eraCode = lm.eraCodes.isNotEmpty ? lm.eraCodes.first : null;
+      final color = EraColors.forCode(eraCode);
+      polygons.add(
+        Polygon(
+          points: lm.polygon,
+          color: color.withValues(alpha: 0.16),
+          borderColor: color.withValues(alpha: 0.85),
+          borderStrokeWidth: 2.0,
+        ),
+      );
+    }
+    return polygons;
+  }
+
+  /// 시간순 사건 좌표 — 같은 lat/lng 사건은 [buildAdjustedPoints] 로 살짝
+  /// 분산해 핀/path/화살표가 겹치지 않게 한다.
+  List<({StoryEvent event, LatLng point})> _adjustedOrderedEventPoints(
+    List<StoryEvent> events,
+  ) {
+    final ordered = events.where((e) => e.hasCoordinate).toList()
+      ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
+    final visible = ordered.take(_eventRevealCount).toList(growable: false);
+    final adjusted = map_math.buildAdjustedPoints(visible);
+    return [
+      for (final e in visible) (event: e, point: adjusted[e.id] ?? e.latLng),
+    ];
+  }
+
+  /// region/character 선택 시 사건들을 시간순으로 잇는 점선 path.
+  List<Polyline> _buildOrderedEventPath(List<StoryEvent> events) {
+    final pts = _adjustedOrderedEventPoints(events);
+    if (pts.length < 2) return const [];
+    return [
+      Polyline(
+        points: pts.map((e) => e.point).toList(growable: false),
+        color: const Color(0xFF3D6BB8),
+        strokeWidth: 2.5,
+        pattern: StrokePattern.dashed(segments: const [8, 6]),
+      ),
+    ];
+  }
+
+  /// path 중간 방향 화살표. 두 사건이 서로 너무 가까우면(겹친 좌표) 화살표
+  /// 생략 — 회전이 의미 없고 시각만 어수선해짐.
+  List<Marker> _buildOrderedPathArrows(List<StoryEvent> events) {
+    final pts = _adjustedOrderedEventPoints(events);
+    if (pts.length < 2) return const [];
+    final result = <Marker>[];
+    const minDeltaDeg = 0.05; // 약 5km 이상 떨어진 segment 만 화살표
+    for (var i = 0; i < pts.length - 1; i++) {
+      final a = pts[i].point;
+      final b = pts[i + 1].point;
+      final dy = b.latitude - a.latitude;
+      final dx = b.longitude - a.longitude;
+      if (dx.abs() < minDeltaDeg && dy.abs() < minDeltaDeg) continue;
+      final mid = LatLng(
+        (a.latitude + b.latitude) / 2,
+        (a.longitude + b.longitude) / 2,
+      );
+      final angle = math.atan2(-dy, dx);
+      result.add(
+        Marker(
+          point: mid,
+          width: 24,
+          height: 24,
+          alignment: Alignment.center,
+          child: IgnorePointer(
+            child: Transform.rotate(
+              angle: angle,
+              child: Container(
+                width: 18,
+                height: 18,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF3D6BB8),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x44000000),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.play_arrow,
+                  size: 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return result;
+  }
+
+  /// region 선택 시 그 region 사건 마커 — 핀 + 큰 순서 번호.
+  /// 그림 3 처럼 1, 2, 3... 표시. 클릭 시 onSelectEvent 호출.
+  /// _eventRevealCount 만큼만 그려져 0.3초 간격 순차 reveal.
+  /// 선택된 사건 핀은 다른 핀들 위(z-order 끝)로 옮겨 가려지지 않게 한다.
+  /// 같은 좌표 사건들은 buildAdjustedPoints 로 분산되어 핀이 겹치지 않는다.
+  List<Marker> _buildNumberedEventMarkers(List<StoryEvent> events) {
+    final pts = _adjustedOrderedEventPoints(events);
+    final markers = pts.asMap().entries.map((entry) {
+      final order = entry.key + 1;
+      final event = entry.value.event;
+      final point = entry.value.point;
+      final selected = widget.selectedEventId == event.id;
+      return _MarkerWithSelection(
+        selected: selected,
+        marker: _buildSingleEventMarker(event, point, order, selected),
+      );
+    }).toList();
+    // 선택된 사건 핀이 list 마지막 → MarkerLayer 가 마지막을 위에 그림.
+    markers.sort((a, b) => (a.selected ? 1 : 0).compareTo(b.selected ? 1 : 0));
+    return markers.map((m) => m.marker).toList(growable: false);
+  }
+
+  Marker _buildSingleEventMarker(
+    StoryEvent event,
+    LatLng point,
+    int order,
+    bool selected,
+  ) {
+    return Marker(
+      point: point,
+      width: 80,
+      height: 80,
+      alignment: Alignment.center,
+      child: Builder(
+        builder: (context) {
+          final zoom = MapCamera.of(context).zoom;
+          final scale = (zoom / 8.0).clamp(0.5, 1.0).toDouble();
+          return Transform.scale(
+            scale: scale,
+            alignment: Alignment.center,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => widget.onSelectEvent(event.id),
+              child: _NumberedEventPin(
+                number: order,
+                placeName: (event.placeName ?? '').trim(),
+                isSelected: selected,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   List<Marker> _buildLandmarkMarkers(List<Landmark> landmarks) {
     return landmarks
         .map((obj) {
@@ -1187,186 +1386,26 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               _measureMode &&
               (obj.code == _measureFirst?.code ||
                   obj.code == _measureSecond?.code);
+          // region 핀은 더 큰 location pin + ripple, non-region 은 작은 둥근
+          // 아이콘. 둘 다 MapCamera.zoom 에 비례해 축소.
+          final isRegion = obj.isRegion;
+          final isSelectedRegion =
+              isRegion && obj.id == widget.selectedLandmarkId;
           return Marker(
             point: obj.latLng,
-            width: 100,
-            height: 56,
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+            width: isRegion ? 120 : 80,
+            height: isRegion ? 110 : 60,
+            alignment: Alignment.center,
+            child: _ZoomScaledLandmark(
+              landmark: obj,
+              isMeasureSelected: isMeasureSelected,
+              isSelected: isSelectedRegion,
+              eventCount: widget.eventCountByLandmarkId?[obj.id] ?? 0,
               onTap: () => _handleLandmarkTap(obj),
-              child: ColorFiltered(
-                colorFilter: isMeasureSelected
-                    ? const ColorFilter.mode(
-                        Color(0x55FF6B35),
-                        BlendMode.srcATop,
-                      )
-                    : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xF2FFFBEF),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFFB89A66),
-                          width: 0.8,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x33000000),
-                            blurRadius: 3,
-                            offset: Offset(0, 1.5),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            obj.emoji,
-                            style: const TextStyle(fontSize: 13, height: 1.0),
-                          ),
-                          const SizedBox(width: 3),
-                          Flexible(
-                            child: Text(
-                              obj.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF3D2A14),
-                                height: 1.05,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFB89A66),
-                        border: Border.all(color: Colors.white, width: 1),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           );
         })
         .toList(growable: false);
-  }
-
-  /// "현 지도에서 검색" 결과 사건 핀. 인물 아바타(최대 3개 겹침) + 짧은 제목.
-  List<Marker> _buildViewportSearchMarkers(List<StoryEvent> events) {
-    final visibleEvents = events.where((e) => e.hasCoordinate).toList();
-    return visibleEvents
-        .map((event) {
-          final firstThreeCodes = event.characterCodes.take(3).toList();
-          return Marker(
-            point: event.latLng,
-            width: 180,
-            height: 78,
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                widget.onSelectEvent(event.id);
-                widget.onOpenDetail?.call(event.id);
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 174),
-                    padding: const EdgeInsets.fromLTRB(6, 4, 8, 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xF5FFFFFF),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: const Color(0xFF8C5A2E),
-                        width: 1.0,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x40000000),
-                          blurRadius: 5,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (firstThreeCodes.isNotEmpty)
-                          _StackedAvatars(
-                            characterCodes: firstThreeCodes,
-                            avatarAssetForCharacter:
-                                widget.avatarAssetForCharacter,
-                          ),
-                        if (firstThreeCodes.isNotEmpty)
-                          const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            _stripLeadingNumber(event.title),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF2D1A06),
-                              height: 1.15,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFF8C5A2E),
-                      border: Border.all(color: Colors.white, width: 1.5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x55000000),
-                          blurRadius: 2,
-                          offset: Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        })
-        .toList(growable: false);
-  }
-
-  String _stripLeadingNumber(String title) {
-    final trimmed = title.trim();
-    final match = RegExp(r'^\d{1,3}\s+(.*)$').firstMatch(trimmed);
-    if (match == null) {
-      return trimmed;
-    }
-    return (match.group(1) ?? trimmed).trim();
   }
 
   List<Polyline> _buildPolylines(List<StoryEvent> events) {
@@ -1724,7 +1763,6 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       setState(() {
         _countryBorderPolylines = borderPolylines;
         _countryLabelMarkers = labelMarkers;
-        _landRings = landRings;
       });
     } catch (_) {
       // Keep map usable even if GeoJSON parsing fails.
@@ -2249,239 +2287,522 @@ class StoryMapPanelController {
 
   /// 외부(랜드마크 목록 패널)에서 특정 좌표로 카메라를 옮기고 싶을 때 사용.
   void focusLandmark(LatLng point) => _state?._focusLandmark(point);
+
+  /// region polygon 모든 정점이 화면에 들어오도록 카메라 fit.
+  void focusRegion(List<LatLng> polygon) =>
+      _state?._focusRegionPolygon(polygon);
 }
 
-/// 지도 우상단의 "현 지도에서 검색" 플로팅 버튼.
-/// 네이버 지도의 동일 버튼과 비슷한 컨셉.
-class _ViewportSearchButton extends StatelessWidget {
-  const _ViewportSearchButton({required this.onTap});
+/// 줌에 비례해 축소되는 landmark 마커. region 인 경우 큰 location pin +
+/// ripple 애니메이션 (선택 시), non-region 은 작은 둥근 아이콘.
+class _ZoomScaledLandmark extends StatelessWidget {
+  const _ZoomScaledLandmark({
+    required this.landmark,
+    required this.isMeasureSelected,
+    required this.isSelected,
+    required this.eventCount,
+    required this.onTap,
+  });
 
+  final Landmark landmark;
+  final bool isMeasureSelected;
+  final bool isSelected;
+  final int eventCount;
   final VoidCallback onTap;
+
+  static const double _baseZoom = 8.0;
+  static const double _minScale = 0.4;
+  static const double _maxScale = 1.0;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF8C5A2E),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x55000000),
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.search, size: 16, color: Colors.white),
-              SizedBox(width: 5),
-              Text(
-                '현 지도에서 검색',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
+    final zoom = MapCamera.of(context).zoom;
+    // region + 사건 0개 → 작게 + 회색 + 클릭 비활성. 새 이야기가 추가되어
+    // eventCount > 0 이 되면 자동으로 활성 상태로 전환.
+    final disabled = landmark.isRegion && eventCount == 0;
+    final disabledScale = disabled ? 0.55 : 1.0;
+    final scale =
+        (zoom / _baseZoom).clamp(_minScale, _maxScale).toDouble() *
+        disabledScale;
+    final inner = landmark.isRegion
+        ? _RegionPin(
+            name: landmark.name,
+            eventCount: eventCount,
+            isSelected: isSelected,
+            disabled: disabled,
+          )
+        : _PointPin(emoji: landmark.emoji, name: landmark.name);
+    return Transform.scale(
+      scale: scale,
+      alignment: Alignment.center,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: disabled ? null : onTap,
+        child: ColorFiltered(
+          colorFilter: isMeasureSelected
+              ? const ColorFilter.mode(Color(0x55FF6B35), BlendMode.srcATop)
+              : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
+          child: inner,
         ),
       ),
     );
   }
 }
 
-/// 검색 결과가 표시 중일 때 같은 자리에 나오는 "✕ 검색 취소 (N개)" 버튼.
-class _ViewportSearchClearButton extends StatelessWidget {
-  const _ViewportSearchClearButton({required this.count, required this.onTap});
+/// 사건 마커 + 선택 여부 페어. z-order 정렬 위해 사용.
+class _MarkerWithSelection {
+  const _MarkerWithSelection({required this.selected, required this.marker});
+  final bool selected;
+  final Marker marker;
+}
 
-  final int count;
-  final VoidCallback onTap;
+/// 사건 핀 — 핀 모양 + 안에 큰 순서 번호 (1, 2, 3...). 핀 아래 작은 장소명.
+/// 선택 시 더 큰 사이즈 + 진한 색.
+class _NumberedEventPin extends StatelessWidget {
+  const _NumberedEventPin({
+    required this.number,
+    required this.placeName,
+    required this.isSelected,
+  });
+
+  final int number;
+  final String placeName;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF3D2A14),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x55000000),
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+    final pinColor = isSelected
+        ? const Color(0xFF3D6BB8)
+        : const Color(0xFF6B4A2A);
+    final pinSize = isSelected ? 38.0 : 32.0;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: pinSize,
+          height: pinSize * 1.3,
+          child: Stack(
             children: [
-              const Icon(Icons.close, size: 16, color: Colors.white),
-              const SizedBox(width: 5),
-              Text(
-                '검색 취소 ($count개)',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+              // 핀 모양 — 흰 점 없이 그림 (그 자리에 숫자가 들어가야).
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _LocationPinPainter(
+                    color: pinColor,
+                    drawCenterDot: false,
+                  ),
+                ),
+              ),
+              // 핀 머리 가운데에 큰 흰 숫자.
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                height: pinSize * 0.9, // 핀 머리 영역
+                child: Center(
+                  child: Text(
+                    '$number',
+                    style: TextStyle(
+                      fontSize: isSelected ? 17 : 14,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      height: 1.0,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ),
+        if (placeName.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3D2A14),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              placeName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF5E9C8),
+                height: 1.05,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
 
-/// 거리 측정 모드 토글 버튼 (우상단 검색 버튼 아래).
-class _MeasureToggleButton extends StatelessWidget {
-  const _MeasureToggleButton({required this.active, required this.onTap});
+/// 큰 region 핀 — 위 둥근 머리 + 아래 핀촉 + 라벨. 선택 시 ripple 애니메이션.
+/// 라벨 폭이 핀 부모 width 를 넘지 않도록 maxWidth 제약 + ellipsis.
+class _RegionPin extends StatelessWidget {
+  const _RegionPin({
+    required this.name,
+    required this.eventCount,
+    required this.isSelected,
+    this.disabled = false,
+  });
 
-  final bool active;
-  final VoidCallback onTap;
+  final String name;
+  final int eventCount;
+  final bool isSelected;
+
+  /// 사건 0개인 region — 회색 톤 + 사용자가 클릭해도 동작 X (부모 GestureDetector
+  /// 가 onTap=null 처리). 새 이야기가 추가되어 사건이 1개 이상이면 자동 활성.
+  final bool disabled;
+
+  static const Color _pinColorDefault = Color(0xFF3D2A14); // 갈색
+  static const Color _pinColorSelected = Color(0xFFE8A33D); // 금색
+  static const Color _pinColorDisabled = Color(0xFF9E9285); // 회색
+  static const Color _accentColor = Color(0xFF8C6743);
+  static const Color _accentColorDisabled = Color(0xFFB8B0A4);
+  static const Color _rippleColor = Color(0xFFE8A33D);
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: active ? const Color(0xFFFF6B35) : const Color(0xFF7B5D43),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x55000000),
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
+    final pinColor = disabled
+        ? _pinColorDisabled
+        : (isSelected ? _pinColorSelected : _pinColorDefault);
+    final labelTextColor = disabled
+        ? const Color(0xFFE6DFD2)
+        : (isSelected ? const Color(0xFF3D2A14) : const Color(0xFFF5E9C8));
+    final accent = disabled ? _accentColorDisabled : _accentColor;
+    return Stack(
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: [
+        // ripple 애니메이션 — 선택된 경우만. 핀 아래 동심원 4겹 (금색).
+        // disabled (사건 0) 일 땐 선택 자체가 안 되므로 ripple 도 자동 안 그려짐.
+        if (isSelected && !disabled)
+          const Positioned.fill(
+            child: IgnorePointer(child: _RegionRipple(color: _rippleColor)),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.straighten, size: 16, color: Colors.white),
-              const SizedBox(width: 5),
-              Text(
-                active ? '거리 재기 종료' : '거리 재기',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+        // 핀 + 라벨 (세로 정렬)
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 핀 머리(둥근 원 + 흰 점) + 핀촉 — 선택 시 금색.
+            CustomPaint(
+              size: const Size(38, 50),
+              painter: _LocationPinPainter(color: pinColor),
+            ),
+            const SizedBox(height: 3),
+            // 라벨 — 핀 색깔 캡슐 + 사건 개수 배지. maxWidth 로 overflow 방지.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 130),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
                 ),
+                decoration: BoxDecoration(
+                  color: pinColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: accent, width: 1.2),
+                  boxShadow: disabled
+                      ? const []
+                      : const [
+                          BoxShadow(
+                            color: Color(0x44000000),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: labelTextColor,
+                          height: 1.1,
+                        ),
+                      ),
+                    ),
+                    if (eventCount > 0) ...[
+                      const SizedBox(width: 5),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFF3D2A14)
+                              : const Color(0xFFE8A33D),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '$eventCount',
+                          style: TextStyle(
+                            color: isSelected
+                                ? const Color(0xFFE8A33D)
+                                : const Color(0xFF3D2A14),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// 작은 non-region 마커 — 원형 배경 없이 이모지 + 그 아래 plain text 라벨.
+/// 흰 stroke shadow 로 가독성 보강 (지도 위 어떤 색에서도 잘 보이게).
+class _PointPin extends StatelessWidget {
+  const _PointPin({required this.emoji, required this.name});
+  final String emoji;
+  final String name;
+
+  static const List<Shadow> _textOutline = [
+    Shadow(color: Color(0xFFFFFBEF), blurRadius: 3),
+    Shadow(color: Color(0xFFFFFBEF), blurRadius: 3),
+    Shadow(color: Color(0xFFFFFBEF), blurRadius: 2),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 이모지만 — 원형 배경 없음.
+        Text(
+          emoji,
+          style: const TextStyle(
+            fontSize: 22,
+            height: 1.0,
+            shadows: [
+              Shadow(
+                color: Color(0x44000000),
+                blurRadius: 2,
+                offset: Offset(0, 1),
               ),
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 1),
+        // plain text 라벨 (rounded rectangle 없음)
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 90),
+          child: Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF3D2A14),
+              height: 1.1,
+              shadows: _textOutline,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-/// 거리 측정 모드 안내 + 진행 상태 표시.
-class _MeasureHintBanner extends StatelessWidget {
-  const _MeasureHintBanner({required this.first, required this.second});
-
-  final Landmark? first;
-  final Landmark? second;
+/// region 핀 머리(둥근 원 + 흰 점) + 핀촉(아래로 뾰족) Custom 페인터.
+/// [drawCenterDot] 가 true 면 머리 가운데 작은 흰 점을 그린다 (region 핀).
+/// false 면 텍스트(숫자) 가 위에 그려질 자리를 비워둔다 (numbered 사건 핀).
+class _LocationPinPainter extends CustomPainter {
+  _LocationPinPainter({required this.color, this.drawCenterDot = true});
+  final Color color;
+  final bool drawCenterDot;
 
   @override
-  Widget build(BuildContext context) {
-    final String text;
-    if (first == null) {
-      text = '시작 랜드마크를 탭하세요';
-    } else if (second == null) {
-      text = '${first!.name} → 도착 랜드마크 탭';
-    } else {
-      text = '${first!.name} → ${second!.name}';
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final headR = w * 0.45;
+    final headCx = w / 2;
+    final headCy = headR + 1;
+
+    // 그림자
+    final shadow = Paint()
+      ..color = Colors.black26
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+    canvas.drawCircle(Offset(headCx, headCy + 2), headR, shadow);
+
+    // 핀촉 (아래로 뾰족) — dart:ui.Path 명시 (flutter_map 의 Path<R> 와 충돌 회피).
+    final pinPaint = Paint()..color = color;
+    final tip = Offset(headCx, h - 1);
+    final leftBase = Offset(headCx - headR * 0.85, headCy + headR * 0.5);
+    final rightBase = Offset(headCx + headR * 0.85, headCy + headR * 0.5);
+    final path = ui.Path()
+      ..moveTo(leftBase.dx, leftBase.dy)
+      ..quadraticBezierTo(headCx - headR * 0.3, h - 6, tip.dx, tip.dy)
+      ..quadraticBezierTo(
+        headCx + headR * 0.3,
+        h - 6,
+        rightBase.dx,
+        rightBase.dy,
+      )
+      ..close();
+    canvas.drawPath(path, pinPaint);
+
+    // 머리 원
+    canvas.drawCircle(Offset(headCx, headCy), headR, pinPaint);
+
+    // 머리 안 흰 점 — region 핀 등 식별용. drawCenterDot=false 면 그 자리에
+    // 텍스트(숫자) 가 그려질 거라 비워둔다.
+    if (drawCenterDot) {
+      final whitePaint = Paint()..color = Colors.white;
+      canvas.drawCircle(Offset(headCx, headCy), headR * 0.32, whitePaint);
     }
+  }
+
+  @override
+  bool shouldRepaint(covariant _LocationPinPainter old) =>
+      old.color != color || old.drawCenterDot != drawCenterDot;
+}
+
+/// 선택된 region 핀 아래 ripple 애니메이션 — 동심원 4겹 fade.
+class _RegionRipple extends StatefulWidget {
+  const _RegionRipple({required this.color});
+  final Color color;
+
+  @override
+  State<_RegionRipple> createState() => _RegionRippleState();
+}
+
+class _RegionRippleState extends State<_RegionRipple>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _ctl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctl,
+      builder: (_, __) {
+        return CustomPaint(
+          painter: _RipplePainter(t: _ctl.value, color: widget.color),
+        );
+      },
+    );
+  }
+}
+
+class _RipplePainter extends CustomPainter {
+  _RipplePainter({required this.t, required this.color});
+  final double t; // 0 ~ 1
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    // 핀촉이 아래쪽이라 ripple 의 중심은 핀촉(=핀 머리에서 약간 아래)
+    final cy = size.height * 0.4;
+    final maxR = math.min(size.width, size.height) * 0.55;
+    for (var i = 0; i < 4; i++) {
+      final phase = (t + i * 0.25) % 1.0;
+      final r = phase * maxR;
+      final alpha = ((1.0 - phase) * 0.6).clamp(0.0, 1.0);
+      final paint = Paint()
+        ..color = color.withValues(alpha: alpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6;
+      canvas.drawCircle(Offset(cx, cy), r, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _RipplePainter old) =>
+      old.t != t || old.color != color;
+}
+
+/// 비지리적 region (요한계시록 환상 등) 을 지도 좌하단에 작은 카드로 표시.
+/// polygon 이 비어 지도에 그릴 수 없는 region 들을 사용자에게 노출하는 수단.
+class _NonGeographicRegionCard extends StatelessWidget {
+  const _NonGeographicRegionCard({required this.regions});
+
+  final List<Landmark> regions;
+
+  @override
+  Widget build(BuildContext context) {
+    if (regions.isEmpty) return const SizedBox.shrink();
     return Container(
       constraints: const BoxConstraints(maxWidth: 220),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: const Color(0xF2FFFBEF),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFFF6B35), width: 1.0),
+        border: Border.all(color: const Color(0xFFB89A66), width: 1.0),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33000000),
-            blurRadius: 3,
-            offset: Offset(0, 1.5),
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF3D2A14),
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-}
-
-/// 검색 결과 핀의 인물 아바타 1~3명 겹쳐 보여주는 위젯.
-class _StackedAvatars extends StatelessWidget {
-  const _StackedAvatars({
-    required this.characterCodes,
-    required this.avatarAssetForCharacter,
-  });
-
-  final List<String> characterCodes;
-  final String Function(String characterId) avatarAssetForCharacter;
-
-  static const double _avatarSize = 24;
-  static const double _stackOverlap = 9;
-
-  @override
-  Widget build(BuildContext context) {
-    final visible = characterCodes.take(3).toList();
-    final width =
-        _avatarSize +
-        (visible.length - 1).clamp(0, 2) * (_avatarSize - _stackOverlap);
-    return SizedBox(
-      width: width.toDouble(),
-      height: _avatarSize,
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          for (var i = 0; i < visible.length; i++)
-            Positioned(
-              left: i * (_avatarSize - _stackOverlap),
-              child: Container(
-                width: _avatarSize,
-                height: _avatarSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: const Color(0xFFEEDFC4),
-                  border: Border.all(color: Colors.white, width: 1.2),
-                  boxShadow: const [
-                    BoxShadow(color: Color(0x33000000), blurRadius: 1.5),
-                  ],
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: _AvatarImage(
-                  assetPath: avatarAssetForCharacter(visible[i]),
-                ),
+          const Text(
+            '✨ 환상 / 비지리적',
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF8C6743),
+              letterSpacing: 0.3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          for (final r in regions)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 1.5),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(r.emoji, style: const TextStyle(fontSize: 13)),
+                  const SizedBox(width: 5),
+                  Flexible(
+                    child: Text(
+                      r.name,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF3D2A14),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
@@ -2490,8 +2811,6 @@ class _StackedAvatars extends StatelessWidget {
   }
 }
 
-/// 선택 인물 색깔 범례 — 지도 좌상단 카드. 색깔 dot + 이름 가로 나열.
-/// 인물이 5명 이상이면 두 줄로 wrap. 선택 인물이 0명이면 빌드 안 됨.
 class _CharacterColorLegend extends StatelessWidget {
   const _CharacterColorLegend({
     required this.codes,

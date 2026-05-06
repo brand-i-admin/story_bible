@@ -45,9 +45,7 @@ class ProposalRepository {
     required String title,
     String? summary,
     List<String> characterCodes = const [],
-    String? placeName,
-    double? lat,
-    double? lng,
+    required String landmarkId,
     int? startYear,
     int? endYear,
     String timePrecision = 'approx',
@@ -66,9 +64,7 @@ class ProposalRepository {
         'p_title': title,
         'p_summary': summary,
         'p_character_codes': characterCodes,
-        'p_place_name': placeName,
-        'p_lat': lat,
-        'p_lng': lng,
+        'p_landmark_id': landmarkId,
         'p_start_year': startYear,
         'p_end_year': endYear,
         'p_time_precision': timePrecision,
@@ -433,6 +429,7 @@ class ProposalRepository {
     required int afterStoryIndex,
     int? startYear,
     int? endYear,
+    String? landmarkId,
   }) async {
     await _client.rpc(
       'revise_proposal_position',
@@ -441,6 +438,7 @@ class ProposalRepository {
         'p_after_story_index': afterStoryIndex,
         'p_start_year': startYear,
         'p_end_year': endYear,
+        'p_landmark_id': landmarkId,
       },
     );
   }
@@ -545,7 +543,9 @@ class ProposalRepository {
     String? status,
     String? proposerUserId,
   }) async {
-    dynamic query = _client.from('event_proposals').select();
+    dynamic query = _client
+        .from('event_proposals')
+        .select('*, landmark:landmarks(id, name, lat, lng, kind)');
     if (status != null) {
       query = query.eq('status', status);
     }
@@ -564,7 +564,7 @@ class ProposalRepository {
   Future<EventProposal> fetchProposal(String proposalId) async {
     final row = await _client
         .from('event_proposals')
-        .select()
+        .select('*, landmark:landmarks(id, name, lat, lng, kind)')
         .eq('id', proposalId)
         .single();
     return EventProposal.fromMap(row);
@@ -593,9 +593,7 @@ class ProposalRepository {
     required String title,
     String? summary,
     List<String> characterCodes = const [],
-    String? placeName,
-    double? lat,
-    double? lng,
+    required String landmarkId,
     int? startYear,
     int? endYear,
     String timePrecision = 'approx',
@@ -615,9 +613,7 @@ class ProposalRepository {
           'title': title,
           'summary': summary,
           'character_codes': characterCodes,
-          'place_name': placeName,
-          'lat': lat,
-          'lng': lng,
+          'landmark_id': landmarkId,
           'start_year': startYear,
           'end_year': endYear,
           'time_precision': timePrecision,

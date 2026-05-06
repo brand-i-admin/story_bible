@@ -8,9 +8,7 @@
     "start_year": -585,
     "end_year": -585,
     "time_precision": "approx",
-    "place_name": "그발 강가(추정)",
-    "lat": 32.65,
-    "lng": 44.6,
+    "landmark_code": "lm_exi_chebar",
     "character_codes": [
       "ezekiel"
     ],
@@ -49,9 +47,7 @@
     "start_year": -1050,
     "end_year": -1050,
     "time_precision": "approx",
-    "place_name": "라마(전승)",
-    "lat": 31.92,
-    "lng": 35.21,
+    "landmark_code": "lm_mon_ramah",
     "character_codes": [
       "saul",
       "samuel"
@@ -95,9 +91,7 @@
     "start_year": 70,
     "end_year": 70,
     "time_precision": "exact",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_post_jerusalem",
     "character_codes": [],
     "bible_refs": [
       {
@@ -133,9 +127,7 @@
     "start_year": 5,
     "end_year": 5,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "zechariah",
       "gabriel",
@@ -172,9 +164,7 @@
     "start_year": -2100,
     "end_year": -2100,
     "time_precision": "approx",
-    "place_name": "하란",
-    "lat": 36.8589,
-    "lng": 39.0314,
+    "landmark_code": "lm_pat_haran",
     "character_codes": [
       "abraham",
       "god"
@@ -217,9 +207,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem",
     "character_codes": [
       "peter",
       "andrew",
@@ -302,9 +290,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "place_name": "요단강(여리고 맞은편, 전승)",
-    "lat": 31.8744,
-    "lng": 35.4441,
+    "landmark_code": "lm_jud_jericho",
     "character_codes": [
       "joshua"
     ],
@@ -341,9 +327,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "애굽(고센 일대, 전승)",
-    "lat": 30.78,
-    "lng": 31.36,
+    "landmark_code": "lm_exo_goshen",
     "character_codes": [
       "pharaoh"
     ],
@@ -376,9 +360,7 @@
     "start_year": -4000,
     "end_year": -4000,
     "time_precision": "approx",
-    "place_name": "메소포타미아(추정)",
-    "lat": 31.018,
-    "lng": 47.423,
+    "landmark_code": "lm_prim_unknown",
     "character_codes": [
       "god"
     ],
@@ -413,9 +395,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [
       "john"
     ],
@@ -452,9 +432,7 @@
     "start_year": -605,
     "end_year": -605,
     "time_precision": "approx",
-    "place_name": "바벨론",
-    "lat": 32.5421,
-    "lng": 44.4209,
+    "landmark_code": "lm_exi_babylon",
     "character_codes": [
       "daniel"
     ],
@@ -495,9 +473,7 @@
     "start_year": -2098,
     "end_year": -2098,
     "time_precision": "approx",
-    "place_name": "요단 들(전승)",
-    "lat": 32.311,
-    "lng": 35.5688,
+    "landmark_code": "lm_pat_jordan_river",
     "character_codes": [
       "abraham",
       "lot"
@@ -539,9 +515,7 @@
     "start_year": 5,
     "end_year": 5,
     "time_precision": "approx",
-    "place_name": "나사렛 → 유대 산지(전승)",
-    "lat": 32.6996,
-    "lng": 35.3035,
+    "landmark_code": "lm_nt_pm_nazareth",
     "character_codes": [
       "mary",
       "gabriel",
@@ -585,9 +559,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "나일강(전승)",
-    "lat": 29.9,
-    "lng": 31.25,
+    "landmark_code": "lm_exo_nile",
     "character_codes": [
       "moses"
     ],
@@ -622,9 +594,7 @@
     "start_year": 95,
     "end_year": 95,
     "time_precision": "approx",
-    "place_name": "밧모섬",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_post_patmos",
     "character_codes": [
       "john"
     ],
@@ -665,9 +635,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem",
     "character_codes": [
       "peter"
     ],
@@ -706,9 +674,7 @@
     "start_year": -1049,
     "end_year": -1049,
     "time_precision": "approx",
-    "place_name": "얍베스 길르앗(전승)",
-    "lat": 32.38,
-    "lng": 35.56,
+    "landmark_code": "lm_mon_jabesh_gilead",
     "character_codes": [
       "saul",
       "samuel"
@@ -749,9 +715,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [
       "john"
     ],
@@ -788,9 +752,7 @@
     "start_year": -4000,
     "end_year": -4000,
     "time_precision": "approx",
-    "place_name": "에덴 지역(추정)",
-    "lat": 33.0,
-    "lng": 44.5,
+    "landmark_code": "lm_prim_eden",
     "character_codes": [
       "god",
       "adam",
@@ -835,9 +797,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "place_name": "여리고",
-    "lat": 31.8744,
-    "lng": 35.4441,
+    "landmark_code": "lm_jud_jericho",
     "character_codes": [
       "joshua"
     ],
@@ -868,9 +828,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "place_name": "애굽 → 미디안(전승)",
-    "lat": 29.9,
-    "lng": 31.25,
+    "landmark_code": "lm_exo_midian_desert",
     "character_codes": [
       "moses"
     ],
@@ -911,9 +869,7 @@
     "start_year": -2096,
     "end_year": -2096,
     "time_precision": "approx",
-    "place_name": "가나안(전승)",
-    "lat": 31.5,
-    "lng": 35.0,
+    "landmark_code": "lm_pat_mamre",
     "character_codes": [
       "abraham",
       "god"
@@ -956,9 +912,7 @@
     "start_year": -1045,
     "end_year": -1045,
     "time_precision": "approx",
-    "place_name": "길갈(전승)",
-    "lat": 31.85,
-    "lng": 35.5,
+    "landmark_code": "lm_mon_gilgal",
     "character_codes": [
       "saul",
       "samuel"
@@ -1003,9 +957,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전 미문",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem",
     "character_codes": [
       "peter",
       "john"
@@ -1056,9 +1008,7 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "place_name": "아이 성 근처(전승)",
-    "lat": 31.93,
-    "lng": 35.25,
+    "landmark_code": "lm_jud_ai",
     "character_codes": [
       "joshua",
       "achan"
@@ -1101,9 +1051,7 @@
     "start_year": 4,
     "end_year": 4,
     "time_precision": "approx",
-    "place_name": "베들레헴",
-    "lat": 31.7054,
-    "lng": 35.2024,
+    "landmark_code": "lm_nt_pm_bethlehem",
     "character_codes": [
       "jesus",
       "mary",
@@ -1141,9 +1089,7 @@
     "start_year": 95,
     "end_year": 95,
     "time_precision": "approx",
-    "place_name": "소아시아(일곱 교회 중심: 에베소)",
-    "lat": 37.949,
-    "lng": 27.366,
+    "landmark_code": "lm_nt_post_ephesus",
     "character_codes": [
       "john"
     ],
@@ -1184,9 +1130,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [],
     "bible_refs": [
       {
@@ -1217,9 +1161,7 @@
     "start_year": -3995,
     "end_year": -3995,
     "time_precision": "approx",
-    "place_name": "에덴 지역(추정)",
-    "lat": 33.0,
-    "lng": 44.5,
+    "landmark_code": "lm_prim_eden",
     "character_codes": [
       "eve",
       "adam"
@@ -1263,9 +1205,7 @@
     "start_year": -585,
     "end_year": -585,
     "time_precision": "approx",
-    "place_name": "바벨론(전승)",
-    "lat": 32.5421,
-    "lng": 44.4209,
+    "landmark_code": "lm_exi_babylon",
     "character_codes": [
       "daniel"
     ],
@@ -1306,9 +1246,7 @@
     "start_year": -1160,
     "end_year": -1160,
     "time_precision": "approx",
-    "place_name": "오브라(전승)",
-    "lat": 32.5,
-    "lng": 35.3,
+    "landmark_code": "lm_jud_ophrah",
     "character_codes": [
       "gideon"
     ],
@@ -1349,9 +1287,7 @@
     "start_year": -1030,
     "end_year": -1030,
     "time_precision": "approx",
-    "place_name": "베들레헴",
-    "lat": 31.7054,
-    "lng": 35.2024,
+    "landmark_code": "lm_mon_bethlehem",
     "character_codes": [
       "david",
       "samuel",
@@ -1395,9 +1331,7 @@
     "start_year": 4,
     "end_year": 4,
     "time_precision": "approx",
-    "place_name": "예루살렘 → 베들레헴 → 애굽(전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_bethlehem",
     "character_codes": [
       "jesus",
       "mary",
@@ -1435,9 +1369,7 @@
     "start_year": -539,
     "end_year": -539,
     "time_precision": "approx",
-    "place_name": "바벨론",
-    "lat": 32.5421,
-    "lng": 44.4209,
+    "landmark_code": "lm_exi_babylon",
     "character_codes": [
       "daniel"
     ],
@@ -1474,9 +1406,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "호렙 산(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "landmark_code": "lm_exo_mt_horeb",
     "character_codes": [
       "moses",
       "god"
@@ -1516,9 +1446,7 @@
     "start_year": 34,
     "end_year": 34,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem",
     "character_codes": [
       "ananias",
       "sapphira",
@@ -1564,9 +1492,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [],
     "bible_refs": [
       {
@@ -1597,9 +1523,7 @@
     "start_year": -3995,
     "end_year": -3995,
     "time_precision": "approx",
-    "place_name": "에덴 동쪽(추정)",
-    "lat": 33.0,
-    "lng": 44.5,
+    "landmark_code": "lm_prim_eden_east",
     "character_codes": [
       "god",
       "adam",
@@ -1645,9 +1569,7 @@
     "start_year": -2090,
     "end_year": -2090,
     "time_precision": "approx",
-    "place_name": "가나안(전승)",
-    "lat": 31.5,
-    "lng": 35.0,
+    "landmark_code": "lm_pat_mamre",
     "character_codes": [
       "abraham",
       "sarah",
@@ -1695,9 +1617,7 @@
     "start_year": -3950,
     "end_year": -3950,
     "time_precision": "approx",
-    "place_name": "에덴 밖 들판(추정)",
-    "lat": 33.0,
-    "lng": 44.5,
+    "landmark_code": "lm_prim_eden",
     "character_codes": [
       "cain",
       "abel",
@@ -1745,9 +1665,7 @@
     "start_year": -1160,
     "end_year": -1160,
     "time_precision": "approx",
-    "place_name": "미디안 진(전승)",
-    "lat": 32.35,
-    "lng": 35.55,
+    "landmark_code": "lm_jud_unknown",
     "character_codes": [
       "gideon"
     ],
@@ -1784,9 +1702,7 @@
     "start_year": -1025,
     "end_year": -1025,
     "time_precision": "approx",
-    "place_name": "엘라 골짜기",
-    "lat": 31.69,
-    "lng": 34.97,
+    "landmark_code": "lm_mon_elah_valley",
     "character_codes": [
       "david",
       "goliath",
@@ -1829,9 +1745,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "애굽 궁정(전승)",
-    "lat": 29.9,
-    "lng": 31.25,
+    "landmark_code": "lm_exo_egypt_court",
     "character_codes": [
       "moses",
       "aaron",
@@ -1872,9 +1786,7 @@
     "start_year": -537,
     "end_year": -537,
     "time_precision": "approx",
-    "place_name": "바벨론/메대-바사(전승)",
-    "lat": 32.5421,
-    "lng": 44.4209,
+    "landmark_code": "lm_exi_babylon",
     "character_codes": [
       "daniel"
     ],
@@ -1911,9 +1823,7 @@
     "start_year": 8,
     "end_year": 8,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "jesus",
       "mary",
@@ -1955,9 +1865,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [],
     "bible_refs": [
       {
@@ -1988,9 +1896,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem",
     "character_codes": [
       "stephen",
       "peter",
@@ -2061,9 +1967,7 @@
     "start_year": -2088,
     "end_year": -2088,
     "time_precision": "approx",
-    "place_name": "가나안(전승)",
-    "lat": 31.5,
-    "lng": 35.0,
+    "landmark_code": "lm_pat_mamre",
     "character_codes": [
       "abraham",
       "sarah",
@@ -2106,9 +2010,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [],
     "bible_refs": [
       {
@@ -2144,9 +2046,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
-    "place_name": "사마리아",
-    "lat": 32.279,
-    "lng": 35.19,
+    "landmark_code": "lm_nt_ap_samaria_city",
     "character_codes": [
       "philip"
     ],
@@ -2187,9 +2087,7 @@
     "start_year": -1024,
     "end_year": -1015,
     "time_precision": "approx",
-    "place_name": "기브아(사울의 성, 전승)",
-    "lat": 31.85,
-    "lng": 35.25,
+    "landmark_code": "lm_mon_gibeah",
     "character_codes": [
       "david",
       "saul",
@@ -2235,9 +2133,7 @@
     "start_year": -1080,
     "end_year": -1080,
     "time_precision": "approx",
-    "place_name": "블레셋 지역(가사/소렉, 전승)",
-    "lat": 31.5,
-    "lng": 34.45,
+    "landmark_code": "lm_jud_philistia_gaza",
     "character_codes": [
       "samson",
       "delilah"
@@ -2280,9 +2176,7 @@
     "start_year": -2087,
     "end_year": -2087,
     "time_precision": "approx",
-    "place_name": "마므레(헤브론, 전승)",
-    "lat": 31.5326,
-    "lng": 35.0998,
+    "landmark_code": "lm_pat_hebron",
     "character_codes": [
       "abraham",
       "sarah",
@@ -2324,9 +2218,7 @@
     "start_year": -480,
     "end_year": -480,
     "time_precision": "approx",
-    "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
       "mordecai"
@@ -2368,9 +2260,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
-    "place_name": "요단강(여리고 근처, 전승)",
-    "lat": 31.8744,
-    "lng": 35.4441,
+    "landmark_code": "lm_nt_pm_jericho",
     "character_codes": [
       "jesus",
       "john_the_baptist"
@@ -2425,9 +2315,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "나일강(전승)",
-    "lat": 29.9,
-    "lng": 31.25,
+    "landmark_code": "lm_exo_nile",
     "character_codes": [
       "moses",
       "pharaoh"
@@ -2464,9 +2352,7 @@
     "start_year": -2500,
     "end_year": -2500,
     "time_precision": "approx",
-    "place_name": "근동",
-    "lat": 33.0,
-    "lng": 44.0,
+    "landmark_code": "lm_prim_unknown",
     "character_codes": [
       "god",
       "noah"
@@ -2507,9 +2393,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
-    "place_name": "유대 광야(전승)",
-    "lat": 31.75,
-    "lng": 35.3,
+    "landmark_code": "lm_nt_pm_unknown",
     "character_codes": [
       "jesus"
     ],
@@ -2560,9 +2444,7 @@
     "start_year": -1012,
     "end_year": -1012,
     "time_precision": "approx",
-    "place_name": "엔게디(전승)",
-    "lat": 31.46,
-    "lng": 35.39,
+    "landmark_code": "lm_mon_engedi",
     "character_codes": [
       "david",
       "saul"
@@ -2606,9 +2488,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
-    "place_name": "모압 → 베들레헴",
-    "lat": 31.7054,
-    "lng": 35.2024,
+    "landmark_code": "lm_jud_bethlehem",
     "character_codes": [
       "ruth",
       "naomi"
@@ -2652,9 +2532,7 @@
     "start_year": -2500,
     "end_year": -2499,
     "time_precision": "approx",
-    "place_name": "방주(근동)",
-    "lat": 39.7,
-    "lng": 44.3,
+    "landmark_code": "lm_prim_unknown",
     "character_codes": [
       "noah"
     ],
@@ -2693,9 +2571,7 @@
     "start_year": -2087,
     "end_year": -2087,
     "time_precision": "approx",
-    "place_name": "마므레(전승)",
-    "lat": 31.5326,
-    "lng": 35.0998,
+    "landmark_code": "lm_pat_mamre",
     "character_codes": [
       "abraham",
       "god"
@@ -2739,9 +2615,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
-    "place_name": "예루살렘-가사 길(전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem_gaza_road",
     "character_codes": [
       "philip"
     ],
@@ -2780,9 +2654,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "고센(전승)",
-    "lat": 30.78,
-    "lng": 31.36,
+    "landmark_code": "lm_exo_goshen",
     "character_codes": [
       "moses"
     ],
@@ -2815,9 +2687,7 @@
     "start_year": null,
     "end_year": null,
     "time_precision": "approx",
-    "place_name": "밧모섬(추정)",
-    "lat": 37.32,
-    "lng": 26.55,
+    "landmark_code": "lm_nt_con_patmos",
     "character_codes": [
       "john"
     ],
@@ -2863,9 +2733,7 @@
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
-    "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
       "haman",
@@ -2909,9 +2777,7 @@
     "start_year": -2200,
     "end_year": -2200,
     "time_precision": "approx",
-    "place_name": "시날 평지(바벨론, 전승)",
-    "lat": 32.5421,
-    "lng": 44.4209,
+    "landmark_code": "lm_prim_babel",
     "character_codes": [
       "god"
     ],
@@ -2946,9 +2812,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
-    "place_name": "베들레헴 들판",
-    "lat": 31.7054,
-    "lng": 35.2024,
+    "landmark_code": "lm_jud_bethlehem",
     "character_codes": [
       "ruth",
       "boaz"
@@ -2993,9 +2857,7 @@
     "start_year": 35,
     "end_year": 35,
     "time_precision": "approx",
-    "place_name": "다메섹",
-    "lat": 33.5138,
-    "lng": 36.2765,
+    "landmark_code": "lm_nt_ap_damascus",
     "character_codes": [
       "paul",
       "ananias"
@@ -3038,9 +2900,7 @@
     "start_year": -1010,
     "end_year": -1010,
     "time_precision": "approx",
-    "place_name": "길보아 산(전승)",
-    "lat": 32.543,
-    "lng": 35.406,
+    "landmark_code": "lm_mon_mt_gilboa",
     "character_codes": [
       "saul"
     ],
@@ -3086,9 +2946,7 @@
     "start_year": -2086,
     "end_year": -2086,
     "time_precision": "approx",
-    "place_name": "소돔 일대(사해 남부, 전승)",
-    "lat": 31.0667,
-    "lng": 35.45,
+    "landmark_code": "lm_pat_sodom",
     "character_codes": [
       "lot"
     ],
@@ -3125,9 +2983,7 @@
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
-    "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
       "mordecai"
@@ -3169,9 +3025,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
-    "place_name": "갈릴리 호수(가버나움 근처)",
-    "lat": 32.881,
-    "lng": 35.575,
+    "landmark_code": "lm_nt_pm_sea_of_galilee",
     "character_codes": [
       "jesus",
       "peter",
@@ -3229,9 +3083,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "애굽 → 광야(전승)",
-    "lat": 30.8,
-    "lng": 31.85,
+    "landmark_code": "lm_exo_unknown",
     "character_codes": [
       "moses",
       "pharaoh"
@@ -3272,9 +3124,7 @@
     "start_year": 38,
     "end_year": 38,
     "time_precision": "approx",
-    "place_name": "가이사랴",
-    "lat": 32.5,
-    "lng": 34.89,
+    "landmark_code": "lm_nt_ap_caesarea_maritima",
     "character_codes": [
       "peter",
       "cornelius"
@@ -3323,9 +3173,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
-    "place_name": "베들레헴 성문",
-    "lat": 31.7054,
-    "lng": 35.2024,
+    "landmark_code": "lm_jud_bethlehem",
     "character_codes": [
       "boaz",
       "ruth",
@@ -3370,9 +3218,7 @@
     "start_year": -1005,
     "end_year": -1000,
     "time_precision": "approx",
-    "place_name": "헤브론 → 예루살렘(전승)",
-    "lat": 31.5326,
-    "lng": 35.0998,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
       "samuel"
@@ -3416,9 +3262,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "place_name": "갈릴리 산지(전승)",
-    "lat": 32.85,
-    "lng": 35.55,
+    "landmark_code": "lm_nt_pm_galilee_hills",
     "character_codes": [
       "jesus"
     ],
@@ -3459,9 +3303,7 @@
     "start_year": -2085,
     "end_year": -2085,
     "time_precision": "approx",
-    "place_name": "그랄(전승)",
-    "lat": 31.37,
-    "lng": 34.45,
+    "landmark_code": "lm_pat_gerar",
     "character_codes": [
       "abraham",
       "sarah",
@@ -3507,9 +3349,7 @@
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
-    "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
       "haman",
@@ -3554,9 +3394,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "홍해/갈대바다(전승)",
-    "lat": 28.0,
-    "lng": 33.5,
+    "landmark_code": "lm_exo_red_sea_crossing",
     "character_codes": [
       "moses",
       "pharaoh"
@@ -3594,9 +3432,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "마라(전승)",
-    "lat": 28.7,
-    "lng": 33.4,
+    "landmark_code": "lm_exo_marah",
     "character_codes": [
       "moses"
     ],
@@ -3633,9 +3469,7 @@
     "start_year": -1105,
     "end_year": -1105,
     "time_precision": "approx",
-    "place_name": "실로",
-    "lat": 32.056,
-    "lng": 35.29,
+    "landmark_code": "lm_jud_shiloh",
     "character_codes": [
       "samuel"
     ],
@@ -3670,9 +3504,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "place_name": "갈릴리 산지(전승)",
-    "lat": 32.85,
-    "lng": 35.55,
+    "landmark_code": "lm_nt_pm_galilee_hills",
     "character_codes": [],
     "bible_refs": [
       {
@@ -3711,9 +3543,7 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
-    "place_name": "안디옥(시리아)",
-    "lat": 36.2055,
-    "lng": 36.1611,
+    "landmark_code": "lm_nt_ap_antioch_syria",
     "character_codes": [
       "barnabas",
       "paul"
@@ -3756,9 +3586,7 @@
     "start_year": -1000,
     "end_year": -1000,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david"
     ],
@@ -3797,9 +3625,7 @@
     "start_year": -458,
     "end_year": -458,
     "time_precision": "approx",
-    "place_name": "바벨론 → 예루살렘(전승)",
-    "lat": 32.5421,
-    "lng": 44.4209,
+    "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "ezra"
     ],
@@ -3838,9 +3664,7 @@
     "start_year": -2066,
     "end_year": -2066,
     "time_precision": "approx",
-    "place_name": "브엘세바 주변(전승)",
-    "lat": 31.252,
-    "lng": 34.792,
+    "landmark_code": "lm_pat_beersheba",
     "character_codes": [
       "sarah",
       "isaac",
@@ -3889,9 +3713,7 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
-    "place_name": "구브로(살라미 → 바보)",
-    "lat": 35.181,
-    "lng": 33.904,
+    "landmark_code": "lm_nt_ap_cyprus_salamis_paphos",
     "character_codes": [
       "paul",
       "barnabas",
@@ -3941,9 +3763,7 @@
     "start_year": -445,
     "end_year": -445,
     "time_precision": "approx",
-    "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "landmark_code": "lm_exi_susa",
     "character_codes": [
       "nehemiah"
     ],
@@ -3989,9 +3809,7 @@
     "start_year": -995,
     "end_year": -995,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
       "nathan"
@@ -4035,9 +3853,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "신 광야(전승)",
-    "lat": 30.5,
-    "lng": 34.7,
+    "landmark_code": "lm_exo_wilderness_of_sin",
     "character_codes": [
       "moses"
     ],
@@ -4072,9 +3888,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "place_name": "갈릴리 산지(전승)",
-    "lat": 32.85,
-    "lng": 35.55,
+    "landmark_code": "lm_nt_pm_galilee_hills",
     "character_codes": [],
     "bible_refs": [
       {
@@ -4113,9 +3927,7 @@
     "start_year": -1075,
     "end_year": -1075,
     "time_precision": "approx",
-    "place_name": "미스바",
-    "lat": 31.831,
-    "lng": 35.18,
+    "landmark_code": "lm_jud_mizpah",
     "character_codes": [
       "samuel"
     ],
@@ -4158,9 +3970,7 @@
     "start_year": -2055,
     "end_year": -2055,
     "time_precision": "approx",
-    "place_name": "모리아(예루살렘, 전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_pat_moriah",
     "character_codes": [
       "abraham",
       "isaac",
@@ -4203,9 +4013,7 @@
     "start_year": 46,
     "end_year": 46,
     "time_precision": "approx",
-    "place_name": "비시디아 안디옥(소아시아)",
-    "lat": 38.31,
-    "lng": 31.19,
+    "landmark_code": "lm_nt_ap_pisidian_antioch",
     "character_codes": [
       "paul",
       "barnabas"
@@ -4250,9 +4058,7 @@
     "start_year": -2030,
     "end_year": -2030,
     "time_precision": "approx",
-    "place_name": "헤브론(막벨라, 전승)",
-    "lat": 31.5246,
-    "lng": 35.111,
+    "landmark_code": "lm_pat_machpelah",
     "character_codes": [
       "abraham",
       "sarah"
@@ -4295,9 +4101,7 @@
     "start_year": -445,
     "end_year": -445,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "nehemiah"
     ],
@@ -4343,9 +4147,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "르비딤(전승)",
-    "lat": 28.7,
-    "lng": 33.6,
+    "landmark_code": "lm_exo_rephidim",
     "character_codes": [
       "moses",
       "joshua",
@@ -4389,9 +4191,7 @@
     "start_year": -970,
     "end_year": -970,
     "time_precision": "approx",
-    "place_name": "예루살렘(아라우나 타작마당, 전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david"
     ],
@@ -4432,9 +4232,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "place_name": "갈릴리 호수",
-    "lat": 32.8333,
-    "lng": 35.5833,
+    "landmark_code": "lm_nt_pm_sea_of_galilee",
     "character_codes": [
       "jesus",
       "peter",
@@ -4530,9 +4328,7 @@
     "start_year": 47,
     "end_year": 47,
     "time_precision": "approx",
-    "place_name": "이고니온(코니아)",
-    "lat": 37.874,
-    "lng": 32.493,
+    "landmark_code": "lm_nt_ap_iconium",
     "character_codes": [
       "paul",
       "barnabas"
@@ -4578,9 +4374,7 @@
     "start_year": -2026,
     "end_year": -2026,
     "time_precision": "approx",
-    "place_name": "하란 주변(전승)",
-    "lat": 36.8589,
-    "lng": 39.0314,
+    "landmark_code": "lm_pat_haran",
     "character_codes": [
       "isaac",
       "rebekah"
@@ -4619,9 +4413,7 @@
     "start_year": -970,
     "end_year": -967,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon",
       "david",
@@ -4666,9 +4458,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "시내산(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "landmark_code": "lm_exo_mt_sinai",
     "character_codes": [
       "moses",
       "god"
@@ -4706,9 +4496,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "place_name": "가버나움(전승)",
-    "lat": 32.881,
-    "lng": 35.575,
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [
       "jesus",
       "jairus",
@@ -4768,9 +4556,7 @@
     "start_year": -444,
     "end_year": -444,
     "time_precision": "approx",
-    "place_name": "예루살렘 수문 앞 광장(전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "ezra",
       "nehemiah"
@@ -4809,9 +4595,7 @@
     "start_year": 47,
     "end_year": 47,
     "time_precision": "approx",
-    "place_name": "루스드라 → 더베(갈라디아)",
-    "lat": 37.578,
-    "lng": 32.448,
+    "landmark_code": "lm_nt_ap_lystra_derbe",
     "character_codes": [
       "paul",
       "barnabas"
@@ -4856,9 +4640,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "시내산 진(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "landmark_code": "lm_exo_mt_sinai",
     "character_codes": [
       "moses",
       "aaron"
@@ -4898,9 +4680,7 @@
     "start_year": -966,
     "end_year": -959,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전 터(전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon"
     ],
@@ -4933,9 +4713,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
-    "place_name": "갈릴리 호숫가 들판(전승)",
-    "lat": 32.84,
-    "lng": 35.54,
+    "landmark_code": "lm_nt_pm_sea_of_galilee",
     "character_codes": [
       "jesus",
       "peter",
@@ -5036,9 +4814,7 @@
     "start_year": -2006,
     "end_year": -2006,
     "time_precision": "approx",
-    "place_name": "브엘세바 일대(전승)",
-    "lat": 31.252,
-    "lng": 34.792,
+    "landmark_code": "lm_pat_beersheba",
     "character_codes": [
       "esau",
       "jacob"
@@ -5083,9 +4859,7 @@
     "start_year": 48,
     "end_year": 48,
     "time_precision": "approx",
-    "place_name": "안디옥(시리아)",
-    "lat": 36.2055,
-    "lng": 36.1611,
+    "landmark_code": "lm_nt_ap_antioch_syria",
     "character_codes": [
       "paul",
       "barnabas"
@@ -5128,9 +4902,7 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "place_name": "시내산(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "landmark_code": "lm_exo_mt_sinai",
     "character_codes": [
       "moses",
       "god"
@@ -5168,9 +4940,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
-    "place_name": "변화산(전승, 다볼/헤르몬 견해)",
-    "lat": 33.416,
-    "lng": 35.857,
+    "landmark_code": "lm_nt_pm_mt_transfiguration",
     "character_codes": [
       "jesus",
       "peter",
@@ -5226,9 +4996,7 @@
     "start_year": -950,
     "end_year": -950,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon"
     ],
@@ -5267,9 +5035,7 @@
     "start_year": -1985,
     "end_year": -1985,
     "time_precision": "approx",
-    "place_name": "브엘세바 일대(전승)",
-    "lat": 31.252,
-    "lng": 34.792,
+    "landmark_code": "lm_pat_beersheba",
     "character_codes": [
       "jacob",
       "esau",
@@ -5317,9 +5083,7 @@
     "start_year": 49,
     "end_year": 49,
     "time_precision": "approx",
-    "place_name": "드로아",
-    "lat": 39.76,
-    "lng": 26.16,
+    "landmark_code": "lm_nt_ap_troas",
     "character_codes": [
       "paul",
       "silas",
@@ -5368,9 +5132,7 @@
     "start_year": -1408,
     "end_year": -1408,
     "time_precision": "approx",
-    "place_name": "광야(에돔 길, 전승)",
-    "lat": 30.0,
-    "lng": 35.5,
+    "landmark_code": "lm_exo_edom_road",
     "character_codes": [
       "moses"
     ],
@@ -5405,9 +5167,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
-    "place_name": "가이사랴 빌립보",
-    "lat": 33.248,
-    "lng": 35.695,
+    "landmark_code": "lm_nt_pm_caesarea_philippi",
     "character_codes": [
       "jesus",
       "peter",
@@ -5493,9 +5253,7 @@
     "start_year": -1985,
     "end_year": -1985,
     "time_precision": "approx",
-    "place_name": "벧엘(전승)",
-    "lat": 31.9269,
-    "lng": 35.2192,
+    "landmark_code": "lm_pat_bethel",
     "character_codes": [
       "jacob",
       "god"
@@ -5534,9 +5292,7 @@
     "start_year": -860,
     "end_year": -860,
     "time_precision": "approx",
-    "place_name": "갈멜 산",
-    "lat": 32.7333,
-    "lng": 35.05,
+    "landmark_code": "lm_mon_mt_carmel",
     "character_codes": [
       "elijah"
     ],
@@ -5571,9 +5327,7 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
-    "place_name": "빌립보",
-    "lat": 41.014,
-    "lng": 24.286,
+    "landmark_code": "lm_nt_ap_philippi",
     "character_codes": [
       "paul",
       "silas",
@@ -5624,9 +5378,7 @@
     "start_year": -1984,
     "end_year": -1977,
     "time_precision": "approx",
-    "place_name": "하란(전승)",
-    "lat": 36.8589,
-    "lng": 39.0314,
+    "landmark_code": "lm_pat_haran",
     "character_codes": [
       "jacob",
       "laban",
@@ -5674,9 +5426,7 @@
     "start_year": 30,
     "end_year": 30,
     "time_precision": "approx",
-    "place_name": "예루살렘-여리고 길(전승)",
-    "lat": 31.8744,
-    "lng": 35.4441,
+    "landmark_code": "lm_nt_pm_jericho",
     "character_codes": [
       "jesus"
     ],
@@ -5711,9 +5461,7 @@
     "start_year": -860,
     "end_year": -860,
     "time_precision": "approx",
-    "place_name": "호렙 산(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "landmark_code": "lm_mon_mt_horeb",
     "character_codes": [
       "elijah"
     ],
@@ -5750,9 +5498,7 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
-    "place_name": "데살로니가",
-    "lat": 40.64,
-    "lng": 22.944,
+    "landmark_code": "lm_nt_ap_thessalonica",
     "character_codes": [
       "paul",
       "silas",
@@ -5803,9 +5549,7 @@
     "start_year": 30,
     "end_year": 30,
     "time_precision": "approx",
-    "place_name": "베레아(요단 동편, 추정)",
-    "lat": 32.311,
-    "lng": 35.5688,
+    "landmark_code": "lm_nt_pm_perea",
     "character_codes": [
       "jesus"
     ],
@@ -5838,9 +5582,7 @@
     "start_year": -850,
     "end_year": -850,
     "time_precision": "approx",
-    "place_name": "요단강 근처(전승)",
-    "lat": 32.311,
-    "lng": 35.5688,
+    "landmark_code": "lm_mon_jordan_river",
     "character_codes": [
       "elijah",
       "elisha"
@@ -5884,9 +5626,7 @@
     "start_year": -1977,
     "end_year": -1965,
     "time_precision": "approx",
-    "place_name": "하란(전승)",
-    "lat": 36.8589,
-    "lng": 39.0314,
+    "landmark_code": "lm_pat_haran",
     "character_codes": [
       "jacob",
       "leah",
@@ -5927,9 +5667,7 @@
     "start_year": 50,
     "end_year": 50,
     "time_precision": "approx",
-    "place_name": "베뢰아",
-    "lat": 40.525,
-    "lng": 22.201,
+    "landmark_code": "lm_nt_ap_berea",
     "character_codes": [
       "paul",
       "silas",
@@ -5980,9 +5718,7 @@
     "start_year": 32,
     "end_year": 32,
     "time_precision": "approx",
-    "place_name": "베다니",
-    "lat": 31.771,
-    "lng": 35.257,
+    "landmark_code": "lm_nt_pm_bethany",
     "character_codes": [
       "jesus",
       "lazarus",
@@ -6029,9 +5765,7 @@
     "start_year": -845,
     "end_year": -845,
     "time_precision": "approx",
-    "place_name": "사마리아/요단강(전승)",
-    "lat": 32.279,
-    "lng": 35.19,
+    "landmark_code": "lm_mon_jordan_river",
     "character_codes": [
       "naaman",
       "elisha"
@@ -6073,9 +5807,7 @@
     "start_year": -1965,
     "end_year": -1961,
     "time_precision": "approx",
-    "place_name": "하란(전승)",
-    "lat": 36.8589,
-    "lng": 39.0314,
+    "landmark_code": "lm_pat_haran",
     "character_codes": [
       "jacob",
       "laban"
@@ -6119,9 +5851,7 @@
     "start_year": 51,
     "end_year": 51,
     "time_precision": "approx",
-    "place_name": "아덴(아레오바고)",
-    "lat": 37.975,
-    "lng": 23.735,
+    "landmark_code": "lm_nt_ap_athens",
     "character_codes": [
       "paul"
     ],
@@ -6162,9 +5892,7 @@
     "start_year": -1961,
     "end_year": -1961,
     "time_precision": "approx",
-    "place_name": "길르앗(전승)",
-    "lat": 32.0,
-    "lng": 35.7,
+    "landmark_code": "lm_pat_gilead",
     "character_codes": [
       "jacob",
       "laban"
@@ -6209,9 +5937,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "jesus",
       "peter",
@@ -6300,9 +6026,7 @@
     "start_year": -701,
     "end_year": -701,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "hezekiah",
       "isaiah"
@@ -6348,9 +6072,7 @@
     "start_year": 51,
     "end_year": 52,
     "time_precision": "approx",
-    "place_name": "고린도",
-    "lat": 37.939,
-    "lng": 22.918,
+    "landmark_code": "lm_nt_ap_corinth",
     "character_codes": [
       "paul",
       "aquila"
@@ -6395,9 +6117,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "jesus"
     ],
@@ -6451,9 +6171,7 @@
     "start_year": -1960,
     "end_year": -1960,
     "time_precision": "approx",
-    "place_name": "얍복 강가(전승)",
-    "lat": 32.06,
-    "lng": 35.74,
+    "landmark_code": "lm_pat_jabbok",
     "character_codes": [
       "jacob"
     ],
@@ -6494,9 +6212,7 @@
     "start_year": -700,
     "end_year": -700,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "hezekiah",
       "isaiah"
@@ -6545,9 +6261,7 @@
     "start_year": 53,
     "end_year": 55,
     "time_precision": "approx",
-    "place_name": "에베소",
-    "lat": 37.949,
-    "lng": 27.366,
+    "landmark_code": "lm_nt_ap_ephesus",
     "character_codes": [
       "paul"
     ],
@@ -6588,9 +6302,7 @@
     "start_year": -1960,
     "end_year": -1960,
     "time_precision": "approx",
-    "place_name": "야복/에돔 경계(전승)",
-    "lat": 32.1,
-    "lng": 35.6,
+    "landmark_code": "lm_pat_jabbok",
     "character_codes": [
       "jacob",
       "esau"
@@ -6636,9 +6348,7 @@
     "start_year": -622,
     "end_year": -622,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "josiah"
     ],
@@ -6671,9 +6381,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘 다락방(전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_jerusalem_upper_room",
     "character_codes": [
       "jesus",
       "peter",
@@ -6778,9 +6486,7 @@
     "start_year": 56,
     "end_year": 56,
     "time_precision": "approx",
-    "place_name": "마게도냐(빌립보/데살로니가 권역)",
-    "lat": 41.014,
-    "lng": 24.286,
+    "landmark_code": "lm_nt_ap_philippi",
     "character_codes": [
       "paul"
     ],
@@ -6821,9 +6527,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "겟세마네(감람산)",
-    "lat": 31.779,
-    "lng": 35.243,
+    "landmark_code": "lm_nt_pm_gethsemane",
     "character_codes": [
       "jesus",
       "peter",
@@ -6883,9 +6587,7 @@
     "start_year": -1955,
     "end_year": -1955,
     "time_precision": "approx",
-    "place_name": "베들레헴 길(전승)",
-    "lat": 31.7054,
-    "lng": 35.2024,
+    "landmark_code": "lm_pat_bethlehem",
     "character_codes": [
       "jacob",
       "rachel",
@@ -6931,9 +6633,7 @@
     "start_year": -588,
     "end_year": -586,
     "time_precision": "approx",
-    "place_name": "예루살렘",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "zedekiah"
     ],
@@ -6970,9 +6670,7 @@
     "start_year": 56,
     "end_year": 57,
     "time_precision": "approx",
-    "place_name": "고린도(헬라)",
-    "lat": 37.939,
-    "lng": 22.918,
+    "landmark_code": "lm_nt_ap_corinth",
     "character_codes": [
       "paul"
     ],
@@ -7013,9 +6711,7 @@
     "start_year": -1915,
     "end_year": -1915,
     "time_precision": "approx",
-    "place_name": "헤브론 주변(전승)",
-    "lat": 31.5326,
-    "lng": 35.0998,
+    "landmark_code": "lm_pat_hebron",
     "character_codes": [
       "joseph",
       "jacob",
@@ -7064,9 +6760,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "겟세마네(감람산)",
-    "lat": 31.779,
-    "lng": 35.243,
+    "landmark_code": "lm_nt_pm_gethsemane",
     "character_codes": [
       "jesus",
       "judas",
@@ -7158,9 +6852,7 @@
     "start_year": 57,
     "end_year": 57,
     "time_precision": "approx",
-    "place_name": "밀레도",
-    "lat": 37.53,
-    "lng": 27.278,
+    "landmark_code": "lm_nt_ap_miletus",
     "character_codes": [
       "paul"
     ],
@@ -7201,9 +6893,7 @@
     "start_year": -1915,
     "end_year": -1915,
     "time_precision": "approx",
-    "place_name": "도단(전승)",
-    "lat": 32.41,
-    "lng": 35.24,
+    "landmark_code": "lm_pat_dothan",
     "character_codes": [
       "joseph",
       "judah"
@@ -7246,9 +6936,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘(총독 관저, 전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "jesus",
       "pilate"
@@ -7308,9 +6996,7 @@
     "start_year": 57,
     "end_year": 57,
     "time_precision": "approx",
-    "place_name": "예루살렘 성전",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "landmark_code": "lm_nt_ap_jerusalem",
     "character_codes": [
       "paul"
     ],
@@ -7351,9 +7037,7 @@
     "start_year": -1910,
     "end_year": -1909,
     "time_precision": "approx",
-    "place_name": "애굽(전승)",
-    "lat": 29.85,
-    "lng": 31.25,
+    "landmark_code": "lm_pat_unknown",
     "character_codes": [
       "joseph",
       "potiphar"
@@ -7396,9 +7080,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "골고다(예루살렘)",
-    "lat": 31.7783,
-    "lng": 35.2298,
+    "landmark_code": "lm_nt_pm_golgotha",
     "character_codes": [
       "jesus"
     ],
@@ -7454,9 +7136,7 @@
     "start_year": 59,
     "end_year": 59,
     "time_precision": "approx",
-    "place_name": "가이사랴",
-    "lat": 32.5,
-    "lng": 34.89,
+    "landmark_code": "lm_nt_ap_caesarea_maritima",
     "character_codes": [
       "paul",
       "festus",
@@ -7516,9 +7196,7 @@
     "start_year": -1900,
     "end_year": -1900,
     "time_precision": "approx",
-    "place_name": "애굽(전승)",
-    "lat": 29.85,
-    "lng": 31.25,
+    "landmark_code": "lm_pat_unknown",
     "character_codes": [
       "joseph",
       "pharaoh"
@@ -7557,9 +7235,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "place_name": "예루살렘(무덤) → 감람산(전승)",
-    "lat": 31.779,
-    "lng": 35.243,
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "jesus",
       "mary_magdalene",
@@ -7653,9 +7329,7 @@
     "start_year": 59,
     "end_year": 59,
     "time_precision": "approx",
-    "place_name": "지중해 항로(그레데 근처, 전승)",
-    "lat": 35.2,
-    "lng": 25.1,
+    "landmark_code": "lm_nt_ap_crete",
     "character_codes": [
       "paul"
     ],
@@ -7692,9 +7366,7 @@
     "start_year": -1885,
     "end_year": -1885,
     "time_precision": "approx",
-    "place_name": "애굽(요셉의 집, 전승)",
-    "lat": 29.85,
-    "lng": 31.25,
+    "landmark_code": "lm_pat_egypt_court",
     "character_codes": [
       "joseph"
     ],
@@ -7732,9 +7404,7 @@
     "start_year": -1880,
     "end_year": -1879,
     "time_precision": "approx",
-    "place_name": "고센 땅(나일 델타, 전승)",
-    "lat": 30.78,
-    "lng": 31.36,
+    "landmark_code": "lm_pat_goshen",
     "character_codes": [
       "jacob",
       "joseph",
@@ -7781,9 +7451,7 @@
     "start_year": 60,
     "end_year": 60,
     "time_precision": "approx",
-    "place_name": "몰타(멜리데)",
-    "lat": 35.937,
-    "lng": 14.375,
+    "landmark_code": "lm_nt_ap_malta",
     "character_codes": [
       "paul"
     ],
@@ -7827,9 +7495,7 @@
     "start_year": 60,
     "end_year": 62,
     "time_precision": "approx",
-    "place_name": "로마",
-    "lat": 41.8967,
-    "lng": 12.4823,
+    "landmark_code": "lm_nt_ap_rome",
     "character_codes": [
       "paul"
     ],
@@ -7870,9 +7536,7 @@
     "start_year": -1860,
     "end_year": -1860,
     "time_precision": "approx",
-    "place_name": "애굽(전승)",
-    "lat": 29.85,
-    "lng": 31.25,
+    "landmark_code": "lm_pat_unknown",
     "character_codes": [
       "jacob",
       "joseph"

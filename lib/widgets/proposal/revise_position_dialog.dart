@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../models/era.dart';
 import '../../models/event_proposal.dart';
+import '../../models/landmark.dart';
 import '../../models/story_event.dart';
 import '../../state/proposal_providers.dart';
 import '../../state/story_controller.dart';
@@ -34,7 +36,10 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
   late final TextEditingController _startYearCtrl;
   late final TextEditingController _endYearCtrl;
   int? _afterStoryIndex; // null 이면 미선택, 0 이면 맨 앞
+  String? _landmarkId;
   Future<List<StoryEvent>>? _eventsFuture;
+  Future<List<Landmark>>? _landmarksFuture;
+  Future<List<Era>>? _erasFuture;
   bool _submitting = false;
   String? _errorText;
 
@@ -48,10 +53,12 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
       text: widget.proposal.endYear?.toString() ?? '',
     );
     _afterStoryIndex = widget.proposal.afterStoryIndex;
+    _landmarkId = widget.proposal.landmarkId;
     // 이 다이얼로그는 'new' 제안 (eraId 필수) 에서만 호출되므로 ! 안전.
-    _eventsFuture = ref
-        .read(storyRepositoryProvider)
-        .fetchEventsByEra(widget.proposal.eraId!);
+    final repo = ref.read(storyRepositoryProvider);
+    _eventsFuture = repo.fetchEventsByEra(widget.proposal.eraId!);
+    _landmarksFuture = repo.fetchLandmarks();
+    _erasFuture = repo.fetchEras();
   }
 
   @override
@@ -77,6 +84,7 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
   /// 클라이언트 측 사전 검증. RPC 가 동일 규칙으로 한 번 더 본다.
   String? _validate(List<StoryEvent> events) {
     if (_afterStoryIndex == null) return '위치를 선택해주세요.';
+    if (_landmarkId == null) return '지도 위치(region/anchor/minor)를 선택해주세요.';
     final sy = int.tryParse(_startYearCtrl.text.trim());
     final ey = int.tryParse(_endYearCtrl.text.trim());
     if (sy == null || ey == null) return '시작/끝 연도를 입력해주세요.';
@@ -110,6 +118,7 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
             afterStoryIndex: _afterStoryIndex!,
             startYear: int.parse(_startYearCtrl.text.trim()),
             endYear: int.parse(_endYearCtrl.text.trim()),
+            landmarkId: _landmarkId,
           );
       if (!mounted) return;
       Navigator.of(context).pop(true);
@@ -220,6 +229,71 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '지도 위치 (region/anchor/minor)',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  FutureBuilder<List<Era>>(
+                    future: _erasFuture,
+                    builder: (_, eraSnap) {
+                      return FutureBuilder<List<Landmark>>(
+                        future: _landmarksFuture,
+                        builder: (_, lmSnap) {
+                          if (lmSnap.connectionState != ConnectionState.done ||
+                              eraSnap.connectionState != ConnectionState.done) {
+                            return const SizedBox(
+                              height: 40,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          final all = lmSnap.data ?? const <Landmark>[];
+                          final eras = eraSnap.data ?? const <Era>[];
+                          final eraCode = eras
+                              .where((e) => e.id == widget.proposal.eraId)
+                              .map((e) => e.code)
+                              .toList();
+                          final filtered = eraCode.isEmpty
+                              ? all
+                              : all
+                                    .where(
+                                      (lm) =>
+                                          lm.eraCodes.isEmpty ||
+                                          lm.eraCodes.contains(eraCode.first),
+                                    )
+                                    .toList();
+                          return Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              for (final lm in filtered)
+                                ChoiceChip(
+                                  avatar: Text(
+                                    lm.emoji,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  label: Text('${lm.name} (${lm.kind})'),
+                                  selected: lm.id == _landmarkId,
+                                  onSelected: (_) =>
+                                      setState(() => _landmarkId = lm.id),
+                                ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
                   if (_errorText != null) ...[
                     const SizedBox(height: 8),

@@ -1,0 +1,98 @@
+{
+  "_doc": {
+    "purpose": "지도 위에 양피지 톤 일러스트로 깔리는 데코(decoration) 카탈로그. 시대마다 어디에 어떤 일러스트가 떠야 하는지 정의. 사건과 무관한 분위기용 시각 요소.",
+    "rules": {
+      "kind": "데코 종류 — 'mountain' | 'mountain_range' | 'tree_oak' | 'palm' | 'tree_cluster' | 'city_walled' | 'city_ruins' | 'pyramid' | 'temple' | 'wilderness_dunes' | 'wilderness_rock' | 'olive_tree' | 'vineyard' | 'shepherd_tent' | 'ship' | 'oasis' (battle_swords 폐기 — landmark 성격)",
+      "asset": "PNG 파일명. tools/images/generate_decos_vertex.py 가 assets/decos/{kind}.png 로 저장 (kind당 1장).",
+      "lat_lng": "지도 위 표시 위치 (decorative — 정확한 위치보다 분위기). 보통 region 폴리곤 안 빈 공간을 채워 시각 풍성하게.",
+      "era_codes": "이 데코가 보이는 시대들. 비어있으면 모든 시대.",
+      "scale": "기본 1.0. 0.7~1.3 범위로 강조/축소.",
+      "rotation_deg": "0이 기본. 산처럼 회전하면 부자연스러운 데코는 0 유지."
+    },
+    "render_rule": "지도 z=5~9 사이에서 적절히 보이고, 줌아웃 시 자동 축소 (Marker px 단위)."
+  },
+
+  "kinds": [
+    {"kind": "mountain", "label": "산 (단봉)",
+     "prompt": "a tiny mountain icon as drawn on an old fantasy treasure map, simple cartoon-style single triangular mountain peak with light snow on top, classic map symbol, side-on view, clear black ink outline, flat brown and gray watercolor fill"},
+    {"kind": "mountain_range", "label": "산맥",
+     "prompt": "a tiny mountain range icon as drawn on an old fantasy treasure map, simple cartoon-style row of three or four overlapping triangular peaks, classic map symbol, side-on view, clear black ink outline, flat brown and gray watercolor fill"},
+    {"kind": "tree_oak", "label": "참나무 한 그루",
+     "prompt": "a tiny tree icon as drawn on an old fantasy treasure map, simple cartoon-style oak tree with a thick brown trunk and a single round green leafy crown, classic map symbol, side-on view, clear black ink outline, flat olive-green and brown watercolor fill"},
+    {"kind": "palm", "label": "야자수",
+     "prompt": "a tiny palm tree icon as drawn on an old fantasy treasure map, simple cartoon-style single palm tree with a slim curved brown trunk and a few green fronds at the top, classic map symbol, side-on view, clear black ink outline, flat green and brown watercolor fill"},
+    {"kind": "tree_cluster", "label": "나무 군락",
+     "prompt": "a tiny forest icon as drawn on an old fantasy treasure map, simple cartoon-style cluster of three pointed pine trees side by side, classic map symbol, side-on view, clear black ink outline, flat dark-green and brown watercolor fill"},
+    {"kind": "city_walled", "label": "성벽 도시",
+     "prompt": "a tiny city icon as drawn on an old fantasy treasure map, simple cartoon-style walled town with one tall tower and two small houses behind a curved stone wall, classic map symbol, side-on view, clear black ink outline, flat brown and tan watercolor fill"},
+    {"kind": "city_ruins", "label": "폐허",
+     "prompt": "a tiny ruins icon as drawn on an old fantasy treasure map, simple cartoon-style crumbling tower with two broken stone columns beside it, classic map symbol, side-on view, clear black ink outline, flat tan and gray watercolor fill"},
+    {"kind": "pyramid", "label": "피라미드",
+     "prompt": "a tiny pyramid icon as drawn on an old fantasy treasure map, simple cartoon-style single Egyptian pyramid as a triangle with horizontal stone block lines, classic map symbol, side-on view, clear black ink outline, flat tan and brown watercolor fill"},
+    {"kind": "temple", "label": "성전",
+     "prompt": "a tiny temple icon as drawn on an old fantasy treasure map, simple cartoon-style ancient temple with four columns and a flat triangular roof, classic map symbol, side-on view, clear black ink outline, flat tan and brown watercolor fill"},
+    {"kind": "wilderness_dunes", "label": "사구",
+     "prompt": "a tiny desert icon as drawn on an old fantasy treasure map, simple cartoon-style three curved sand dunes with one tall cactus, classic map symbol, side-on view, clear black ink outline, flat tan watercolor fill"},
+    {"kind": "wilderness_rock", "label": "광야 바위",
+     "prompt": "a tiny rocky desert icon as drawn on an old fantasy treasure map, simple cartoon-style three rounded boulders sitting on flat ground, classic map symbol, side-on view, clear black ink outline, flat tan and gray watercolor fill"},
+    {"kind": "olive_tree", "label": "올리브 나무",
+     "prompt": "a tiny olive tree icon as drawn on an old fantasy treasure map, simple cartoon-style olive tree with a gnarled brown trunk and a small silvery-green canopy of small leaves, classic map symbol, side-on view, clear black ink outline, flat sage-green and brown watercolor fill"},
+    {"kind": "vineyard", "label": "포도원",
+     "prompt": "a tiny vineyard icon as drawn on an old fantasy treasure map, simple cartoon-style short trellis with three grape vines and a few purple grape clusters, classic map symbol, side-on view, clear black ink outline, flat green and purple watercolor fill"},
+    {"kind": "shepherd_tent", "label": "유목민 천막",
+     "prompt": "a tiny tent icon as drawn on an old fantasy treasure map, simple cartoon-style black nomadic tent with a triangular roof and two small sheep standing beside it, classic map symbol, side-on view, clear black ink outline, flat brown and white watercolor fill"},
+    {"kind": "ship", "label": "범선",
+     "prompt": "a tiny ship icon as drawn on an old fantasy treasure map, simple cartoon-style small wooden sailing ship with one tall mast and a single curved white sail, classic map symbol, side-on view, clear black ink outline, flat brown and white watercolor fill"},
+    {"kind": "oasis", "label": "오아시스",
+     "prompt": "a tiny oasis icon as drawn on an old fantasy treasure map, simple cartoon-style small round blue pool of water surrounded by three short palm trees, classic map symbol, top-down view, clear black ink outline, flat blue green and brown watercolor fill"}
+  ],
+
+  "common_style": "isolated illustration of {SUBJECT} on a pure plain white background, hand-drawn ink and watercolor sketch in vintage cartography style, fine sepia pen lines and soft watercolor wash, the subject occupies the center of the frame with generous white margin around it, the rest of the image is solid pure white",
+  "negative_prompt": "parchment, scroll, paper texture, weathered paper, tan paper, cream background, frame, border, torn edges, decorative border, scroll edges, ribbon, photorealistic, photograph, photo, stock photo, realistic plant, real flower, rose, flower, bouquet, moss, rock, dewdrops, modern, 3D render, harsh shadows, vibrant saturated colors, neon, glow, text, labels, hashtag, caption, watermark, signature, multiple subjects, repeated elements, grid",
+
+  "placements": [
+    "// v4 — 산/도시/성전 3가지 kind 만 사용. 다른 kind (palm, oasis, pyramid,",
+    "// 나무, 광야, 천막, 배 등) PNG 는 catalog 의 kinds 에 남겨두지만 placement",
+    "// 에서 제외 → 지도 위에 노출 안 됨. 디자인 정돈 단계.",
+
+    "// === 산맥 / 산 ===",
+
+    {"kind": "mountain_range", "lat": 32.74, "lng": 35.05, "era_codes": [], "scale": 1.0, "comment": "갈멜 산"},
+    {"kind": "mountain_range", "lat": 33.40, "lng": 35.85, "era_codes": [], "scale": 1.15, "comment": "헤르몬 산맥"},
+    {"kind": "mountain_range", "lat": 32.30, "lng": 35.85, "era_codes": [], "scale": 1.0, "comment": "길르앗 산지"},
+    {"kind": "mountain_range", "lat": 32.30, "lng": 35.30, "era_codes": [], "scale": 0.95, "comment": "사마리아 산지"},
+    {"kind": "mountain_range", "lat": 31.50, "lng": 35.20, "era_codes": [], "scale": 1.0, "comment": "유다 산지"},
+    {"kind": "mountain_range", "lat": 31.30, "lng": 35.65, "era_codes": [], "scale": 0.95, "comment": "모압 산지"},
+    {"kind": "mountain_range", "lat": 30.50, "lng": 35.40, "era_codes": [], "scale": 1.0, "comment": "에돔 산지"},
+    {"kind": "mountain_range", "lat": 28.54, "lng": 33.97, "era_codes": [], "scale": 1.2, "comment": "시내 산맥"},
+    {"kind": "mountain_range", "lat": 39.70, "lng": 44.30, "era_codes": ["era_primeval"], "scale": 1.1, "comment": "아라랏"},
+    {"kind": "mountain_range", "lat": 37.30, "lng": 33.50, "era_codes": ["era_nt_apostolic"], "scale": 1.0, "comment": "토로스 산맥"},
+    {"kind": "mountain_range", "lat": 34.80, "lng": 36.40, "era_codes": [], "scale": 0.95, "comment": "레바논 산맥"},
+    {"kind": "mountain_range", "lat": 35.20, "lng": 47.00, "era_codes": ["era_exile_return","era_patriarch"], "scale": 1.0, "comment": "자그로스 산맥"},
+
+    {"kind": "mountain", "lat": 32.69, "lng": 35.39, "era_codes": [], "scale": 0.9, "comment": "다볼 산"},
+    {"kind": "mountain", "lat": 31.768, "lng": 35.725, "era_codes": ["era_exodus"], "scale": 0.9, "comment": "느보산"},
+    {"kind": "mountain", "lat": 32.91, "lng": 35.51, "era_codes": ["era_nt_public_ministry"], "scale": 0.85, "comment": "갈릴리 산지"},
+    {"kind": "mountain", "lat": 32.543, "lng": 35.406, "era_codes": ["era_monarchy"], "scale": 0.85, "comment": "길보아 산"},
+    {"kind": "mountain", "lat": 31.78, "lng": 35.24, "era_codes": ["era_patriarch"], "scale": 0.85, "comment": "모리아 산"},
+
+    "// === 도시 (성벽 도시) ===",
+
+    {"kind": "city_walled", "lat": 32.54, "lng": 44.42, "era_codes": ["era_primeval","era_exile_return"], "scale": 1.0, "comment": "바벨/바벨론"},
+    {"kind": "city_walled", "lat": 30.96, "lng": 46.10, "era_codes": ["era_patriarch"], "scale": 0.9, "comment": "우르"},
+    {"kind": "city_walled", "lat": 36.86, "lng": 39.04, "era_codes": ["era_patriarch"], "scale": 0.9, "comment": "하란"},
+    {"kind": "city_walled", "lat": 36.36, "lng": 43.16, "era_codes": ["era_monarchy"], "scale": 1.0, "comment": "니느웨"},
+    {"kind": "city_walled", "lat": 33.27, "lng": 35.20, "era_codes": ["era_monarchy","era_nt_public_ministry"], "scale": 0.85, "comment": "두로"},
+    {"kind": "city_walled", "lat": 33.56, "lng": 35.37, "era_codes": ["era_monarchy"], "scale": 0.85, "comment": "시돈"},
+    {"kind": "city_walled", "lat": 33.51, "lng": 36.30, "era_codes": ["era_monarchy","era_nt_apostolic"], "scale": 0.9, "comment": "다메섹"},
+    {"kind": "city_walled", "lat": 32.18, "lng": 48.26, "era_codes": ["era_exile_return"], "scale": 0.95, "comment": "수산궁"},
+    {"kind": "city_walled", "lat": 36.20, "lng": 36.16, "era_codes": ["era_nt_apostolic"], "scale": 0.95, "comment": "안디옥"},
+    {"kind": "city_walled", "lat": 37.94, "lng": 27.34, "era_codes": ["era_nt_apostolic"], "scale": 0.9, "comment": "에베소"},
+    {"kind": "city_walled", "lat": 37.94, "lng": 22.93, "era_codes": ["era_nt_apostolic"], "scale": 0.9, "comment": "고린도"},
+    {"kind": "city_walled", "lat": 41.90, "lng": 12.49, "era_codes": ["era_nt_apostolic"], "scale": 1.0, "comment": "로마"},
+
+    "// === 성전 ===",
+
+    {"kind": "temple", "lat": 31.78, "lng": 35.22, "era_codes": ["era_monarchy","era_exile_return","era_nt_public_ministry"], "scale": 1.0, "comment": "예루살렘 성전"}
+  ]
+}
