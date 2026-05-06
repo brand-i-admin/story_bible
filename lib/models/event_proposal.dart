@@ -22,9 +22,10 @@ class EventProposal {
     required this.title,
     required this.summary,
     required this.characterCodes,
-    required this.placeName,
-    required this.lat,
-    required this.lng,
+    required this.landmarkId,
+    this.placeName,
+    this.lat,
+    this.lng,
     required this.startYear,
     required this.endYear,
     required this.timePrecision,
@@ -66,9 +67,17 @@ class EventProposal {
   final String title;
   final String? summary;
   final List<String> characterCodes;
+
+  /// v2 위치 모델 — landmarks.id (region/anchor/minor) FK. 'general' 타입에서는 null.
+  final String? landmarkId;
+
+  /// landmarks 테이블에서 derive 된 표시용 필드.
+  /// `ProposalRepository` 가 `.select('*, landmark:landmarks(name,lat,lng)')` 식으로
+  /// 채운다. 'general' 타입이거나 join 결과가 없으면 null.
   final String? placeName;
   final double? lat;
   final double? lng;
+
   final int? startYear;
   final int? endYear;
   final String timePrecision;
@@ -137,9 +146,10 @@ class EventProposal {
       title: row['title'] as String,
       summary: row['summary'] as String?,
       characterCodes: _asStringList(row['character_codes']),
-      placeName: row['place_name'] as String?,
-      lat: (row['lat'] as num?)?.toDouble(),
-      lng: (row['lng'] as num?)?.toDouble(),
+      landmarkId: row['landmark_id'] as String?,
+      placeName: _landmarkField(row, 'name') as String?,
+      lat: (_landmarkField(row, 'lat') as num?)?.toDouble(),
+      lng: (_landmarkField(row, 'lng') as num?)?.toDouble(),
       startYear: (row['start_year'] as num?)?.toInt(),
       endYear: (row['end_year'] as num?)?.toInt(),
       timePrecision: (row['time_precision'] as String?) ?? 'approx',
@@ -224,6 +234,16 @@ class EventProposal {
   static List<QuizDraft> _asQuizDrafts(dynamic raw) {
     final list = _asMapList(raw);
     return list.map(QuizDraft.fromMap).toList(growable: false);
+  }
+
+  /// `.select('*, landmark:landmarks(name,lat,lng)')` 로 Supabase 가 nested
+  /// 객체로 박아준 landmark 필드를 풀어 읽는 헬퍼.
+  static dynamic _landmarkField(Map<String, dynamic> row, String key) {
+    final lm = row['landmark'];
+    if (lm is Map) {
+      return lm[key];
+    }
+    return null;
   }
 
   static DateTime? _parseDate(dynamic raw) {

@@ -28,7 +28,6 @@ import '../widgets/font_scale_bottom_sheet.dart';
 import '../widgets/notification/notification_bell_button.dart';
 import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
-import '../widgets/parchment_texture_layer.dart';
 import '../widgets/profile_tab_page.dart';
 import '../widgets/proposal/pastor_gate_dialog.dart';
 import '../widgets/story_home_styles.dart';
@@ -515,6 +514,33 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     // character 모드 — _selectionStep 이 3 일 때만 3, 그 외(2,1) 는 2.
     return _selectionStep >= 3 ? 3 : 2;
+  }
+
+  /// 장소 모드에서 region 선택 (지도 폴리곤·핀 클릭 OR RegionPickPanel 카드 클릭)
+  /// 시 호출. 인물 모드의 _proceedFromCharacterStep 과 같은 패턴 — panel 을
+  /// collapsed 로 내리고, MapPanel 이 핀을 0.3s 간격 reveal, 마지막 핀 노출 시
+  /// onRevealComplete 가 panel 을 다시 expand.
+  ///
+  /// 사용자가 reveal 도중 ^ 클릭으로 수동 expand 하면 _animateSelectionPanelToStage
+  /// 안에서 _revealInstantly=true 로 바뀌어 즉시 모든 핀 노출.
+  void _selectRegionLandmark(Landmark lm) {
+    final ctl = ref.read(storyControllerProvider.notifier);
+    ctl.selectLandmark(lm.id);
+    final state = ref.read(storyControllerProvider);
+    final regionEvents = _eventsAtLandmark(state, lm)
+      ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
+    ctl.setDisplayedEvents(regionEvents.map((e) => e.id).toSet());
+    setState(() {
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _awaitingRevealComplete = true;
+      _revealInstantly = false;
+    });
+    if (lm.polygon.isNotEmpty) {
+      _mapPanelController.focusRegion(lm.polygon);
+    } else {
+      _mapPanelController.focusLandmark(lm.latLng);
+    }
   }
 
   void _proceedFromCharacterStep() {
@@ -1518,26 +1544,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               // expand 한 경우 _awaitingRevealComplete 가 false 라 noop.)
               onRevealComplete: _handleRevealComplete,
               onLandmarkTap: (lm) {
-                // 지역 모드 + region 클릭 → 사건 시트 + 시간순 사건 핀.
-                // 지역 모드 + non-region (산·도시·강 등) → 정보 팝업만.
+                // 지역 모드 + region 클릭 → collapse → reveal → expand 자동
+                // 흐름 (인물 모드 _proceedFromCharacterStep 과 동일 패턴).
                 if (_mode == _SelectionMode.region && lm.isRegion) {
-                  final ctl = ref.read(storyControllerProvider.notifier);
-                  ctl.selectLandmark(lm.id);
-                  // region 의 사건들을 자동으로 지도에 시간순 표시.
-                  final regionEvents = _eventsAtLandmark(state, lm);
-                  regionEvents.sort(
-                    (a, b) => a.globalRank.compareTo(b.globalRank),
-                  );
-                  ctl.setDisplayedEvents(regionEvents.map((e) => e.id).toSet());
-                  _animateSelectionPanelToStage(
-                    StorySelectionPanelStage.expanded,
-                  );
-                  if (lm.polygon.isNotEmpty) {
-                    _mapPanelController.focusRegion(lm.polygon);
-                  } else {
-                    _mapPanelController.focusLandmark(lm.latLng);
-                  }
-                  setState(() {});
+                  _selectRegionLandmark(lm);
                   return;
                 }
                 // 그 외(인물 모드 + 어떤 마커든, 지역 모드 + non-region 마커) →
@@ -1643,14 +1653,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
               return Stack(
                 children: [
-                  const Positioned.fill(
-                    child: IgnorePointer(
-                      child: ParchmentTextureLayer(
-                        opacity: 0.075,
-                        tint: Color(0xFFB88A57),
-                      ),
-                    ),
-                  ),
+                  // 양피지 grain 은 StoryMapPanel 내부에서 ParchmentMultiplyLayer
+                  // (BlendMode.multiply CustomPainter) 로 처리. 단순 Opacity
+                  // overlay 는 화면을 뿌옇게 만들어서 폐기.
                   Positioned(
                     left: sheetHorizontalMargin,
                     right: sheetHorizontalMargin,
@@ -1722,6 +1727,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     .selectEvent(event.id);
                                 _openEventDetailPage(event);
                               },
+                              // 지도 핀 클릭 등으로 controller 가 가진 현재
+                              // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
+                              currentSelectedEventId: state.selectedEventId,
                             ),
                     ),
                   ),
@@ -1989,50 +1997,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final regions = regionsOnly.isNotEmpty ? regionsOnly : eraFiltered;
     final selected = state.landmarkById(state.selectedLandmarkId);
 
-    final theme = Theme.of(context);
     return Container(
       decoration: _parchmentPanelDecoration(),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           _panelStageHandle(),
-          // region 선택 전 단계: 외부 헤더(← 시대 다시 선택 + 안내 텍스트)
-          // region 선택 후: RegionEventList 가 자체 헤더 + '지역 다시 선택' 을
-          // 가지므로 외부 헤더 hide (중복 방지).
-          if (selected == null) ...[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    tooltip: '시대 다시 선택',
-                    onPressed: () {
-                      ref
-                          .read(storyControllerProvider.notifier)
-                          .clearSelectionMode();
-                      _animateSelectionPanelToStage(
-                        StorySelectionPanelStage.expanded,
-                      );
-                      setState(() {
-                        _mode = null;
-                        _selectionStep = 1;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: Text(
-                      '여행할 지역을 골라주세요',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-          ],
+          // v3 — region 선택 전후 모두 panel 자체 헤더 제거. 인물 모드 흐름과
+          // 동일하게, 단계 이동은 우측 상단 _SelectionStepper 1·2·3 으로 처리.
+          // region 카드/사건 카드 영역에 바로 진입.
           Expanded(
             child: selected == null
                 ? RegionPickPanel(
@@ -2040,12 +2013,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     allEras: state.eras,
                     selectedEraIds: state.selectedEraIds,
                     selectedLandmarkId: state.selectedLandmarkId,
-                    onSelect: (lm) {
-                      ref
-                          .read(storyControllerProvider.notifier)
-                          .selectLandmark(lm.id);
-                      setState(() {});
-                    },
+                    onSelect: _selectRegionLandmark,
                   )
                 : RegionEventList(
                     landmark: selected,

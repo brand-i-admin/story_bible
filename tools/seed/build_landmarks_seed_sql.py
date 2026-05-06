@@ -1,214 +1,162 @@
 #!/usr/bin/env python3
-"""Build SQL seed for the landmarks table from assets/landmarks/landmarks.json.
+"""landmarks.json → supabase/200_stories/landmarks_seed.sql.
 
-landmarks 는 시대별로 지도 위에 표시되는 성경 랜드마크(예루살렘 성전, 시내산,
-떨기나무 등). 사용자가 시대를 선택하면 era_codes 배열에 그 시대 코드를 가진
-랜드마크만 지도에 노출된다.
+성경 전체 시대 region/landmark 카탈로그를 landmarks 테이블에 UPSERT 한다.
 
-JSON 스키마 (한 항목):
-    {
-      "code": "jerusalem_temple",          # unique key
-      "name": "예루살렘 성전",
-      "description": "...",                # optional
-      "emoji": "🏛️",                       # 이모지 1자, default '📍'
-      "category": "temple",                # optional
-      "lat": 31.7780,
-      "lng": 35.2354,
-      "display_priority": 0,
-      "era_codes": ["era_monarchy", "era_exile_return"],
-      "related_event_codes": ["solomon", "david"]
-    }
+Output schema 가정:
+  landmarks (
+    id, code, name, description, emoji, category,
+    lat, lng,                       -- non-region 의 정확한 점, region 의 라벨 위치
+    polygon jsonb,                  -- kind='region' 만 채움
+    kind text,                       -- 'region' | 'mountain' | 'city' | ...
+    parent_landmark_id uuid,         -- non-region → 그 region. region 은 NULL.
+    alias_group_id uuid,             -- (deprecated, 항상 NULL — 호환만 유지)
+    display_priority int,
+    era_codes text[],
+    related_event_codes text[],
+    is_active bool,
+    ...
+  )
+
+규칙:
+  - region: era_codes 다중 가능
+  - landmark (non-region): era_codes 단일, 코드 prefix 'lm_<era_short>_<name>'
 """
-
 from __future__ import annotations
 
-import argparse
 import json
 from pathlib import Path
-from typing import Any
+
+ROOT = Path(__file__).resolve().parents[2]
+CATALOG_PATH = ROOT / "assets" / "landmarks" / "landmarks.json"
+OUT_PATH = ROOT / "supabase" / "200_stories" / "landmarks_seed.sql"
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Build SQL seed for the landmarks table."
-    )
-    parser.add_argument(
-        "--landmarks-dir",
-        default="assets/landmarks",
-        help="Directory containing landmark JSON files.",
-    )
-    parser.add_argument(
-        "--output",
-        default="supabase/200_stories/landmarks_seed.sql",
-        help="Output SQL path.",
-    )
-    return parser.parse_args()
-
-
-def sql_literal(value: str) -> str:
-    return "'" + value.replace("'", "''") + "'"
-
-
-def sql_value(value: Any) -> str:
+def sql_str(value) -> str:
     if value is None:
         return "null"
     if isinstance(value, bool):
         return "true" if value else "false"
-    if isinstance(value, int):
+    if isinstance(value, (int, float)):
         return str(value)
-    if isinstance(value, float):
-        return repr(value)
-    return sql_literal(str(value))
+    s = str(value).replace("'", "''")
+    return f"'{s}'"
 
 
-def sql_text_array(values: list[str]) -> str:
+def sql_text_array(values) -> str:
     if not values:
-        return "ARRAY[]::text[]"
-    inner = ", ".join(sql_literal(v) for v in values)
-    return f"ARRAY[{inner}]::text[]"
+        return "'{}'::text[]"
+    parts = ",".join(f'"{v}"' for v in values)
+    return f"'{{{parts}}}'::text[]"
 
 
-def load_landmark_rows(landmarks_dir: Path) -> list[dict[str, Any]]:
-    if not landmarks_dir.exists():
-        raise FileNotFoundError(f"Landmarks dir not found: {landmarks_dir}")
-    rows: list[dict[str, Any]] = []
-    seen_codes: set[str] = set()
-    target = landmarks_dir / "landmarks.json"
-    if not target.exists():
-        raise FileNotFoundError(f"Expected file not found: {target}")
-    data = json.loads(target.read_text(encoding="utf-8"))
-    if not isinstance(data, list):
-        raise ValueError(f"JSON root must be list: {target}")
-    for item in data:
-        if not isinstance(item, dict):
-            raise ValueError(f"Landmark row must be object in {target}: {item!r}")
-        code = str(item.get("code", "")).strip()
-        if not code:
-            raise ValueError(f"Landmark row missing 'code' in {target}: {item!r}")
-        if code in seen_codes:
-            raise ValueError(f"Duplicate code '{code}' in {target}")
-        seen_codes.add(code)
-        for required in ("name", "lat", "lng"):
-            if required not in item:
-                raise ValueError(f"Landmark '{code}' missing '{required}' in {target}")
-        rows.append(item)
-    rows.sort(key=lambda row: str(row.get("code", "")))
-    return rows
+def sql_polygon(polygon) -> str:
+    # polygon=None → null (non-region), polygon=[] → '[]'::jsonb (비지리적 region),
+    # polygon=[[lat,lng], ...] → 정상 jsonb. region 의 빈 배열도 NOT NULL 제약 통과.
+    if polygon is None:
+        return "null"
+    return f"'{json.dumps(polygon)}'::jsonb"
 
 
-def normalize_row(row: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "code": str(row["code"]).strip(),
-        "name": str(row["name"]).strip(),
-        "description": (
-            str(row["description"]).strip() if row.get("description") else None
-        ),
-        "emoji": str(row.get("emoji") or "📍").strip(),
-        "category": (str(row["category"]).strip() if row.get("category") else None),
-        "lat": float(row["lat"]),
-        "lng": float(row["lng"]),
-        "display_priority": int(row.get("display_priority") or 0),
-        "era_codes": [
-            str(code).strip()
-            for code in (row.get("era_codes") or [])
-            if str(code).strip()
-        ],
-        "related_event_codes": [
-            str(code).strip()
-            for code in (row.get("related_event_codes") or [])
-            if str(code).strip()
-        ],
-        "is_active": bool(row.get("is_active", True)),
-    }
+def emit_row(row, kind, parent_code):
+    code = row["code"]
+    name = row["name"]
+    description = row.get("description")
+    emoji = row.get("emoji", "📍")
+    category = row.get("category")
+    lat = row.get("lat") or row.get("anchor_lat")
+    lng = row.get("lng") or row.get("anchor_lng")
+    polygon = row.get("polygon") if kind == "region" else None
+    display_priority = row.get("display_priority", 0)
+    era_codes = row.get("era_codes", [])
+    related = row.get("related_event_codes", [])
 
-
-def split_chunks(items: list[Any], size: int) -> list[list[Any]]:
-    return [items[i : i + size] for i in range(0, len(items), size)]
-
-
-def build_sql(rows: list[dict[str, Any]]) -> str:
-    lines: list[str] = []
-    lines.append("-- Generated by tools/seed/build_landmarks_seed_sql.py")
-    lines.append("-- Target table: landmarks (시대별 랜드마크 정적 카탈로그)")
-    lines.append("begin;")
-    lines.append("")
-
-    if rows:
-        keep_codes = sorted({row["code"] for row in rows})
-        in_values = ", ".join(sql_literal(code) for code in keep_codes)
-        lines.append(
-            "-- Drop landmarks rows not present in current assets/landmarks/landmarks.json"
-        )
-        lines.append(f"delete from landmarks where code not in ({in_values});")
-        lines.append("")
-
-    columns = (
-        "code, name, description, emoji, category, lat, lng, "
-        "display_priority, era_codes, related_event_codes, is_active"
+    parent_clause = (
+        f"(select id from landmarks where code = {sql_str(parent_code)})"
+        if parent_code
+        else "null"
     )
-    for chunk in split_chunks(rows, 60):
-        lines.append(f"with seed_landmarks ({columns}) as (")
-        lines.append("  values")
-        values: list[str] = []
-        for row in chunk:
-            values.append(
-                "    ("
-                f"{sql_value(row['code'])}, "
-                f"{sql_value(row['name'])}, "
-                f"{sql_value(row['description'])}, "
-                f"{sql_value(row['emoji'])}, "
-                f"{sql_value(row['category'])}, "
-                f"{sql_value(row['lat'])}, "
-                f"{sql_value(row['lng'])}, "
-                f"{sql_value(row['display_priority'])}, "
-                f"{sql_text_array(row['era_codes'])}, "
-                f"{sql_text_array(row['related_event_codes'])}, "
-                f"{sql_value(row['is_active'])}"
-                ")"
-            )
-        lines.append(",\n".join(values))
-        lines.append(")")
-        lines.append(f"insert into landmarks ({columns})")
-        lines.append(f"select {columns} from seed_landmarks")
-        lines.append("on conflict (code) do update set")
-        lines.append("  name = excluded.name,")
-        lines.append("  description = excluded.description,")
-        lines.append("  emoji = excluded.emoji,")
-        lines.append("  category = excluded.category,")
-        lines.append("  lat = excluded.lat,")
-        lines.append("  lng = excluded.lng,")
-        lines.append("  display_priority = excluded.display_priority,")
-        lines.append("  era_codes = excluded.era_codes,")
-        lines.append("  related_event_codes = excluded.related_event_codes,")
-        lines.append("  is_active = excluded.is_active")
-        lines.append(";")
+    # alias_group 기능 제거. 컬럼은 호환 위해 유지하되 항상 null.
+    alias_clause = "null"
+
+    return (
+        f"  ({sql_str(code)}, {sql_str(name)}, {sql_str(description)}, "
+        f"{sql_str(emoji)}, {sql_str(category)}, "
+        f"{sql_str(lat)}, {sql_str(lng)}, "
+        f"{sql_polygon(polygon)}, {sql_str(kind)}, "
+        f"{parent_clause}, {alias_clause}, "
+        f"{display_priority}, {sql_text_array(era_codes)}, {sql_text_array(related)})"
+    )
+
+
+UPSERT_COLUMNS = (
+    "code, name, description, emoji, category, "
+    "lat, lng, polygon, kind, parent_landmark_id, alias_group_id, "
+    "display_priority, era_codes, related_event_codes"
+)
+
+UPSERT_UPDATE = """\
+on conflict (code) do update set
+  name = excluded.name,
+  description = excluded.description,
+  emoji = excluded.emoji,
+  category = excluded.category,
+  lat = excluded.lat,
+  lng = excluded.lng,
+  polygon = excluded.polygon,
+  kind = excluded.kind,
+  parent_landmark_id = excluded.parent_landmark_id,
+  alias_group_id = excluded.alias_group_id,
+  display_priority = excluded.display_priority,
+  era_codes = excluded.era_codes,
+  related_event_codes = excluded.related_event_codes;"""
+
+
+def main() -> None:
+    with CATALOG_PATH.open() as fp:
+        catalog = json.load(fp)
+
+    lines: list[str] = []
+    lines.append("-- AUTO-GENERATED by tools/seed/build_landmarks_seed_sql.py")
+    lines.append("-- Source: assets/landmarks/landmarks.json")
+    lines.append("")
+    lines.append("set search_path = public;")
+    lines.append("")
+
+    # 1. Regions (parent_landmark_id 없음)
+    lines.append("-- ----- regions (큰 영역, polygon 으로 표시) -----")
+    if catalog.get("regions"):
+        lines.append(f"insert into landmarks ({UPSERT_COLUMNS}) values")
+        region_rows = [emit_row(r, "region", None) for r in catalog["regions"]]
+        lines.append(",\n".join(region_rows))
+        lines.append(UPSERT_UPDATE)
         lines.append("")
 
-    lines.append("commit;")
-    lines.append("")
-    return "\n".join(lines)
+    # 2. Landmarks (non-region 마커, parent_landmark_id = region code)
+    # JSON 호환: 'anchors' 또는 'landmarks' 키 모두 허용. v3 부터는 'landmarks' 권장.
+    point_rows = []
+    for key in ("landmarks", "anchors", "minors"):
+        for r in catalog.get(key, []) or []:
+            kind = r.get("kind") or (
+                "anchor"
+                if key == "anchors"
+                else "minor" if key == "minors" else "point"
+            )
+            point_rows.append(emit_row(r, kind, r["parent_region_code"]))
 
+    if point_rows:
+        lines.append("-- ----- landmarks (non-region 마커, region 에 속함) -----")
+        lines.append(f"insert into landmarks ({UPSERT_COLUMNS}) values")
+        lines.append(",\n".join(point_rows))
+        lines.append(UPSERT_UPDATE)
+        lines.append("")
 
-def main() -> int:
-    args = parse_args()
-    landmarks_dir = Path(args.landmarks_dir)
-    output_path = Path(args.output)
-
-    raw_rows = load_landmark_rows(landmarks_dir)
-    rows = [normalize_row(row) for row in raw_rows]
-
-    sql_text = build_sql(rows)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(sql_text, encoding="utf-8")
-
-    active_count = sum(1 for row in rows if row["is_active"])
-    print(f"landmarks dir        : {landmarks_dir}")
-    print(f"landmarks total      : {len(rows)}")
-    print(f"landmarks is_active  : {active_count}")
-    print(f"output               : {output_path}")
-    print("done")
-    return 0
+    OUT_PATH.write_text("\n".join(lines))
+    region_count = len(catalog.get("regions") or [])
+    landmark_count = len(point_rows)
+    print(f"Wrote {OUT_PATH}")
+    print(f"  {region_count} regions, {landmark_count} landmarks")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

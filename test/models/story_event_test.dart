@@ -20,6 +20,7 @@ StoryEvent _buildEvent({
 }) {
   return StoryEvent(
     id: 'e1',
+    landmarkId: 'lm_test',
     eraId: 'era_primeval',
     title: '001 창조: 7일과 안식',
     summary: summary,
@@ -90,6 +91,7 @@ void main() {
           'rank_in_era': 1,
           'global_rank': 1,
           'place_name': '메소포타미아',
+          'landmark_id': 'lm_test',
           'lat': 31.018,
           'lng': 47.423,
         });
@@ -125,6 +127,7 @@ void main() {
           'rank_in_era': null,
           'global_rank': null,
           'place_name': null,
+          'landmark_id': 'lm_test',
           'lat': null,
           'lng': null,
         });
@@ -152,6 +155,7 @@ void main() {
           'rank_in_era': 0,
           'global_rank': 0,
           'place_name': null,
+          'landmark_id': 'lm_test',
           'lat': 31,
           'lng': 47,
         });

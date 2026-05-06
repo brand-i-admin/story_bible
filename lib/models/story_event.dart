@@ -2,11 +2,9 @@ import 'package:latlong2/latlong.dart';
 
 import 'bible_ref.dart';
 
-/// 한 이야기(이벤트) 한 건. `events_ordered` view 결과를 그대로 매핑한다.
-///
-/// 정렬 컬럼은 두 가지: era 내부에서는 [rankInEra], 전체 타임라인에서는
-/// [globalRank]. 수동으로 부여하는 [storyIndex]는 era 내 unique 정수이며
-/// 새 이야기를 끼워 넣을 때 RPC가 시프트해 준다.
+/// 한 이야기(이벤트) 한 건. v2 위치 모델 — `landmarkId` 가 진실 소스이고,
+/// `lat/lng/placeName` 은 events_ordered view 가 landmarks 와 JOIN 해서 derived
+/// 로 노출하는 호환 필드. 클라이언트는 양쪽 다 사용 가능.
 class StoryEvent {
   const StoryEvent({
     required this.id,
@@ -21,12 +19,15 @@ class StoryEvent {
     required this.storyIndex,
     required this.rankInEra,
     required this.globalRank,
+    required this.landmarkId,
     required this.placeName,
     required this.lat,
     required this.lng,
     required this.characterCodes,
     required this.bibleRefs,
     this.sceneImagePaths = const [],
+    this.landmarkKind,
+    this.landmarkParentId,
   });
 
   factory StoryEvent.fromMap(Map<String, dynamic> row) {
@@ -43,12 +44,15 @@ class StoryEvent {
       storyIndex: (row['story_index'] as num?)?.toInt() ?? 0,
       rankInEra: (row['rank_in_era'] as num?)?.toInt() ?? 0,
       globalRank: (row['global_rank'] as num?)?.toInt() ?? 0,
+      landmarkId: row['landmark_id'] as String,
       placeName: row['place_name'] as String?,
       lat: (row['lat'] as num?)?.toDouble(),
       lng: (row['lng'] as num?)?.toDouble(),
       characterCodes: _stringList(row['character_codes']),
       bibleRefs: BibleRef.fromList(row['bible_refs']),
       sceneImagePaths: _stringList(row['scene_image_paths']),
+      landmarkKind: row['landmark_kind'] as String?,
+      landmarkParentId: row['landmark_parent_id'] as String?,
     );
   }
 
@@ -64,18 +68,24 @@ class StoryEvent {
   final int storyIndex;
   final int rankInEra;
   final int globalRank;
+
+  /// v2 위치 모델 — landmarks.id (region/anchor/minor) FK. 진실 소스.
+  final String landmarkId;
+
+  /// landmarks.name 의 derived. UI 표시용.
   final String? placeName;
+
+  /// landmarks.lat/lng 의 derived. region 이면 anchor 좌표(라벨 위치).
   final double? lat;
   final double? lng;
+
+  /// 'region' | 'point' (또는 v2 잔존 'anchor' | 'minor').
+  final String? landmarkKind;
+  final String? landmarkParentId;
+
   final List<String> characterCodes;
   final List<BibleRef> bibleRefs;
 
-  /// 하이브리드 로딩용 Supabase Storage 장면 이미지 경로 목록.
-  /// - 캐논 이벤트(로컬 번들로만 제공): 빈 배열
-  /// - 승인된 제안 이벤트: `proposal-scenes/{uid}/{draft}/scene_N.png`
-  ///   (sync-approved-proposal-assets 실행 후 `characters/...` 로 바뀜)
-  /// UI 는 먼저 `assets/story_images_thumbs/<title>/scene_N.png` 를 시도하고
-  /// 번들에 없으면 이 경로로 public URL 을 만들어 `Image.network` 로 로드.
   final List<String> sceneImagePaths;
 
   String get shortSummary {

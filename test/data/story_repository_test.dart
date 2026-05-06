@@ -14,6 +14,7 @@ StoryEvent _event({
 }) {
   return StoryEvent(
     id: id,
+    landmarkId: 'lm_test',
     eraId: 'era1',
     title: title,
     summary: summary,

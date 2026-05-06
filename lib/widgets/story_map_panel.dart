@@ -16,6 +16,7 @@ import '../theme/era_colors.dart';
 import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
 import 'map_deco_layer.dart';
+import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
 
 // 핀 마커 위젯/데이터 클래스를 별도 파트 파일로 분리.
@@ -51,6 +52,25 @@ double haversineKm(LatLng a, LatLng b) {
 }
 
 double _deg2rad(double deg) => deg * (math.pi / 180.0);
+
+/// 폴리곤 bbox 면적 (단위: deg²) — 정확한 면적이 아니라 폴리곤 hit 우선순위
+/// 비교용. 작은 region (예: 밧단아람) 이 큰 region (예: 메소포타미아) 안에
+/// 있을 때 작은 쪽이 hit 우선이 되도록 면적 정렬에 쓰인다.
+double _polygonBboxArea(Landmark lm) {
+  final pts = lm.polygon;
+  if (pts.length < 3) return double.maxFinite; // polygon 없으면 가장 큰 값으로
+  var minLat = pts.first.latitude;
+  var maxLat = minLat;
+  var minLng = pts.first.longitude;
+  var maxLng = minLng;
+  for (final p in pts) {
+    if (p.latitude < minLat) minLat = p.latitude;
+    if (p.latitude > maxLat) maxLat = p.latitude;
+    if (p.longitude < minLng) minLng = p.longitude;
+    if (p.longitude > maxLng) maxLng = p.longitude;
+  }
+  return (maxLat - minLat) * (maxLng - minLng);
+}
 
 /// 거리(km)를 가까운 한국 도시 간 거리에 비유해 한 줄로 반환.
 String koreanDistanceComparison(double km) {
@@ -459,11 +479,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   onTap: (tapPos, latlng) {
                     final hit = _polygonHitNotifier.value;
                     if (hit != null && hit.hitValues.isNotEmpty) {
-                      final lm = hit.hitValues.first;
+                      // 여러 폴리곤이 동시에 hit 되면 가장 작은(specific) 폴리곤
+                      // 우선. 예: 메소포타미아 안의 밧단아람을 클릭하면 밧단아람
+                      // 이 선택돼야 함. polygon 면적 = lat-bbox * lng-bbox 근사.
+                      Landmark pick = hit.hitValues.first;
+                      double pickArea = _polygonBboxArea(pick);
+                      for (final lm in hit.hitValues.skip(1)) {
+                        final a = _polygonBboxArea(lm);
+                        if (a < pickArea) {
+                          pick = lm;
+                          pickArea = a;
+                        }
+                      }
                       // 사건 0 region 은 클릭 비활성 (회색 핀과 일관).
-                      final cnt = widget.eventCountByLandmarkId?[lm.id] ?? 0;
+                      final cnt = widget.eventCountByLandmarkId?[pick.id] ?? 0;
                       if (cnt == 0) return;
-                      widget.onLandmarkTap?.call(lm);
+                      widget.onLandmarkTap?.call(pick);
                     }
                   },
                   onMapReady: () {
@@ -516,28 +547,19 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                     subdomains: const ['a', 'b', 'c', 'd'],
                     userAgentPackageName: 'com.story.bible',
                     tileBuilder: (context, tileWidget, _) {
-                      // v3.1 — 양피지 톤 재조정: 이전 매트릭스는 G 채널 0.65 보존
-                      // 이라 era 폴리곤이 안 덮인 영역(예: step 1 풀맵, step 3 의
-                      // 광역 줌아웃) 에서 voyager 의 산림 연두가 그대로 드러남.
-                      // 새 매트릭스 = G 가중치 약화 + R 가중치 강화 + B 약화 →
-                      // land 베이스 자체를 따뜻한 베이지로 전환. 그 위에 brown
-                      // multiply 알파 40% 로 sepia 마감. water 도 같이 sepia 톤
-                      // 으로 변환되지만 ancient parchment map 스타일에 적합.
-                      const desaturate = ColorFilter.matrix(<double>[
-                        0.50, 0.45, 0.20, 0, 22, // R 따뜻하게
-                        0.35, 0.45, 0.15, 0, 12, // G 약화 (녹색 끄기)
-                        0.20, 0.30, 0.35, 0, 6, // B 약화 (sepia)
-                        0, 0, 0, 1, 0,
-                      ]);
+                      // v3.7 — desaturate 매트릭스 완전히 제거. 매트릭스 자체가
+                      // 채도를 깎아 (a) 화면을 뿌옇게 만들고 (b) water 의 blue
+                      // 를 회색으로 죽임. voyager 의 자연 컬러를 그대로 두고
+                      // 매우 가벼운 tan multiply (α 13%) 만 더해 살짝 sepia 톤.
+                      // water blue 가 vibrant 하게 살아남고 land 는 부드럽게
+                      // warm 해진다. 양피지 입자감은 ParchmentTextureLayer
+                      // (화면 오버레이) 가 담당.
                       return ColorFiltered(
-                        colorFilter: desaturate,
-                        child: ColorFiltered(
-                          colorFilter: const ColorFilter.mode(
-                            Color(0x66A87A40), // 갈색 알파 ~40%, 더 진한 sepia
-                            BlendMode.multiply,
-                          ),
-                          child: tileWidget,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0x22A88555), // 알파 13%, very light tan
+                          BlendMode.multiply,
                         ),
+                        child: tileWidget,
                       );
                     },
                   ),
@@ -677,6 +699,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               );
             },
           ),
+          // 양피지 grain — BlendMode.multiply 로 paper grain 이 backdrop 에
+          // 비침. strength 0.55 로 parchment image 의 flat 영역은 ~white 가
+          // 되어 water 같은 균일색 영역은 거의 영향 없음. grain spot 만 land
+          // 에 visible.
+          const Positioned.fill(child: ParchmentMultiplyLayer(strength: 0.55)),
         ],
       ),
     );

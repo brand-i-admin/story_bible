@@ -85,7 +85,7 @@ dart format .                # 코드 포맷
 
 | 디렉토리 | 내용 |
 |----------|------|
-| `docs/guides/` | 설명 목적 문서들. 코딩에 직접 쓰이지 않지만 인프라/워크플로우 이해용. `INFRA_GUIDE.md` (인프라 동작 원리), `PUSH_SETUP.md` (Firebase 설정 절차), `WORKFLOW_GUIDE.md` (스킬/에이전트/훅 설명), `CONTENT_UPDATE.md` (콘텐츠 등록 → 앱 반영 워크플로우). |
+| `docs/guides/` | 설명 목적 문서들. 코딩에 직접 쓰이지 않지만 인프라/워크플로우 이해용. `INFRA_GUIDE.md` (인프라 동작 원리), `PUSH_SETUP.md` (Firebase 설정 절차), `WORKFLOW_GUIDE.md` (스킬/에이전트/훅 설명), `CONTENT_UPDATE.md` (콘텐츠 등록 → 앱 반영 워크플로우), `deco_guide.md` (지도 데코 일러스트 Vertex AI 생성 + 배치), `story_guide.md` (시대별 사건·인물·성경본문 검수용 카탈로그 — 자동 생성). |
 
 ## 코딩 컨벤션
 

@@ -274,9 +274,7 @@ class NormalizedEvent:
     end_year: int | None
     time_precision: str
     story_index: int
-    place_name: str
-    lat: float | None
-    lng: float | None
+    landmark_code: str  # v2 위치 모델 — events.landmark_id 의 source
     characters: list[str]
     refs: list[BibleRef]
 
@@ -299,6 +297,14 @@ def parse_args() -> argparse.Namespace:
         "--character-meta-json",
         default="tools/seed/character_meta.json",
         help="Character meta JSON used as whitelist for character codes.",
+    )
+    parser.add_argument(
+        "--landmark-mapping",
+        default="assets/landmarks/event_region_mapping.json",
+        help=(
+            "Mapping JSON: (era, story_index) → (region_code, landmark_code). "
+            "v3 카탈로그 기준 — landmark_code 가 lm_<era>_<name> 형식."
+        ),
     )
     parser.add_argument(
         "--events-chunk-size",
@@ -534,6 +540,7 @@ def parse_story_rows(input_dir: Path) -> list[dict[str, Any]]:
 def normalize_events(
     rows: list[dict[str, Any]],
     allowed_person_codes: set[str],
+    landmark_mapping: dict[tuple[str, int], str],
 ) -> tuple[list[NormalizedEvent], set[str]]:
     events: list[NormalizedEvent] = []
     character_codes: set[str] = set()
@@ -607,19 +614,21 @@ def normalize_events(
                 "(era-scoped 1..N). Add it manually or via the admin web UI."
             )
 
-        place_name = normalize_space(str(row.get("place_name", "")))
-        lat = row.get("lat")
-        lng = row.get("lng")
-        lat_f = float(lat) if isinstance(lat, (int, float)) else None
-        lng_f = float(lng) if isinstance(lng, (int, float)) else None
-        place_name, lat_f, lng_f = apply_approx_location_override(
-            number, place_name, lat_f, lng_f
-        )
+        era_code = str(row["era"]).strip()
+        story_index_int = int(story_index)
+        landmark_code = landmark_mapping.get((era_code, story_index_int))
+        if not landmark_code:
+            raise ValueError(
+                f"매핑 누락: era={era_code} story_index={story_index_int} "
+                f"title={row.get('title')!r} — "
+                "assets/landmarks/event_landmark_mapping_draft.json 에서 "
+                "이 (era, story_index) 키에 대응하는 region/anchor/minor code 를 추가하세요."
+            )
 
         events.append(
             NormalizedEvent(
                 number=number,
-                era_code=str(row["era"]).strip(),
+                era_code=era_code,
                 title=str(row["title"]).strip(),
                 summary=summary,
                 story_scenes=story_scenes,
@@ -627,10 +636,8 @@ def normalize_events(
                 start_year=start_year_int,
                 end_year=end_year_int,
                 time_precision=time_precision,
-                story_index=int(story_index),
-                place_name=place_name,
-                lat=lat_f,
-                lng=lng_f,
+                story_index=story_index_int,
+                landmark_code=landmark_code,
                 characters=characters,
                 refs=refs,
             )
@@ -668,7 +675,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
     columns = (
         "era_code, title, summary, story_scenes, scene_characters, character_codes, "
         "bible_refs, start_year, end_year, time_precision, story_index, "
-        "place_name, lat, lng, status"
+        "landmark_code, status"
     )
     for chunk in chunked(events, chunk_size):
         lines.append(f"with seed_events ({columns}) as (")
@@ -688,9 +695,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
                 f"{sql_value(event.end_year)}, "
                 f"{sql_value(event.time_precision)}, "
                 f"{sql_value(event.story_index)}, "
-                f"{sql_value(event.place_name)}, "
-                f"{sql_value(event.lat)}, "
-                f"{sql_value(event.lng)}, "
+                f"{sql_value(event.landmark_code)}, "
                 f"{sql_value('published')}"
                 ")"
             )
@@ -700,7 +705,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
             "insert into events ("
             "era_id, title, summary, story_scenes, scene_characters, character_codes, "
             "bible_refs, start_year, end_year, time_precision, story_index, "
-            "place_name, lat, lng, status"
+            "landmark_id, status"
             ")"
         )
         lines.append("select")
@@ -715,12 +720,11 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  s.end_year,")
         lines.append("  s.time_precision,")
         lines.append("  s.story_index,")
-        lines.append("  s.place_name,")
-        lines.append("  s.lat,")
-        lines.append("  s.lng,")
+        lines.append("  lm.id,")
         lines.append("  s.status")
         lines.append("from seed_events s")
         lines.append("join eras e on e.code = s.era_code")
+        lines.append("join landmarks lm on lm.code = s.landmark_code")
         lines.append("on conflict (era_id, story_index) do update set")
         lines.append("  title = excluded.title,")
         lines.append("  summary = excluded.summary,")
@@ -731,9 +735,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  start_year = excluded.start_year,")
         lines.append("  end_year = excluded.end_year,")
         lines.append("  time_precision = excluded.time_precision,")
-        lines.append("  place_name = excluded.place_name,")
-        lines.append("  lat = excluded.lat,")
-        lines.append("  lng = excluded.lng,")
+        lines.append("  landmark_id = excluded.landmark_id,")
         lines.append("  status = excluded.status")
         lines.append(";")
         lines.append("")
@@ -856,9 +858,7 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
                 "start_year": event.start_year,
                 "end_year": event.end_year,
                 "time_precision": event.time_precision,
-                "place_name": event.place_name,
-                "lat": event.lat,
-                "lng": event.lng,
+                "landmark_code": event.landmark_code,
                 "character_codes": event.characters,
                 "bible_refs": serialize_bible_refs(event.refs),
                 "story_scenes": event.story_scenes,
@@ -868,15 +868,38 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def load_landmark_mapping(path: Path) -> dict[tuple[str, int], str]:
+    """매핑 JSON → (era_code, story_index) → landmark_code (region/anchor/minor)."""
+    if not path.exists():
+        raise FileNotFoundError(
+            f"landmark mapping not found at {path}. "
+            "tools/seed/map_events_to_landmarks_v2.py 를 먼저 실행하세요."
+        )
+    data = json.loads(path.read_text(encoding="utf-8"))
+    out: dict[tuple[str, int], str] = {}
+    for row in data.get("rows", []):
+        era = str(row.get("era") or "").strip()
+        idx = row.get("story_index")
+        target = row.get("landmark_code") or row.get("region_code")
+        if not era or not isinstance(idx, int) or not target:
+            continue
+        out[(era, idx)] = target
+    return out
+
+
 def main() -> int:
     args = parse_args()
     input_dir = Path(args.input_dir)
     character_meta_json = Path(args.character_meta_json)
     output_dir = Path(args.output_dir)
+    landmark_mapping_path = Path(args.landmark_mapping)
 
     rows = parse_story_rows(input_dir)
     allowed_person_codes = load_person_meta_codes(character_meta_json)
-    events, character_codes = normalize_events(rows, allowed_person_codes)
+    landmark_mapping = load_landmark_mapping(landmark_mapping_path)
+    events, character_codes = normalize_events(
+        rows, allowed_person_codes, landmark_mapping
+    )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     seed_sql_text = build_seed_sql(

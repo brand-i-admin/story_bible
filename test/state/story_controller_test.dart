@@ -68,6 +68,7 @@ StoryEvent _event({
 }) {
   return StoryEvent(
     id: id,
+    landmarkId: 'lm_test',
     eraId: eraId,
     title: '사건 $id',
     summary: null,

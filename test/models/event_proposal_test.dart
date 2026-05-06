@@ -79,6 +79,7 @@ void main() {
       'summary': '요약',
       'character_codes': ['joseph'],
       'place_name': '애굽',
+      'landmark_id': 'lm_test',
       'lat': 30.0,
       'lng': 31.0,
       'start_year': -1800,

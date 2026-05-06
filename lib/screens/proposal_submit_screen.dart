@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/era.dart';
 import '../models/event_proposal.dart';
+import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
@@ -62,12 +63,14 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // Step 3 fields
   final _titleCtrl = TextEditingController();
   final _summaryCtrl = TextEditingController();
-  final _placeCtrl = TextEditingController();
   final _startYearCtrl = TextEditingController();
   final _endYearCtrl = TextEditingController();
   String _timePrecision = 'approx';
-  double? _lat;
-  double? _lng;
+
+  /// v2 위치 모델 — landmarks.id (region/anchor/minor 중 하나) FK.
+  /// 새 이야기 제안 시 반드시 한 개를 골라야 한다.
+  String? _landmarkId;
+  List<Landmark> _landmarks = const [];
   List<Map<String, String>> _bibleRefs = const [];
   List<String> _scenes = const [''];
   List<List<String>> _sceneCharacters = const [[]];
@@ -109,12 +112,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         _afterStoryIndex = e.afterStoryIndex;
         _positionPicked = true;
       }
-      _lat = e.lat;
-      _lng = e.lng;
+      _landmarkId = e.landmarkId;
       _timePrecision = e.timePrecision;
       _titleCtrl.text = e.title;
       _summaryCtrl.text = e.summary ?? '';
-      _placeCtrl.text = e.placeName ?? '';
       _startYearCtrl.text = e.startYear?.toString() ?? '';
       _endYearCtrl.text = e.endYear?.toString() ?? '';
       _bibleRefs = e.bibleRefs
@@ -162,7 +163,6 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     // 텍스트 필드 변경 시 제출 버튼 활성화 여부 재평가.
     _titleCtrl.addListener(_onFormChanged);
     _summaryCtrl.addListener(_onFormChanged);
-    _placeCtrl.addListener(_onFormChanged);
     _startYearCtrl.addListener(_onFormChanged);
     _endYearCtrl.addListener(_onFormChanged);
     _loadOptions();
@@ -186,12 +186,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   void dispose() {
     _titleCtrl.removeListener(_onFormChanged);
     _summaryCtrl.removeListener(_onFormChanged);
-    _placeCtrl.removeListener(_onFormChanged);
     _startYearCtrl.removeListener(_onFormChanged);
     _endYearCtrl.removeListener(_onFormChanged);
     _titleCtrl.dispose();
     _summaryCtrl.dispose();
-    _placeCtrl.dispose();
     _startYearCtrl.dispose();
     _endYearCtrl.dispose();
     super.dispose();
@@ -205,9 +203,13 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           .from('characters')
           .select('code, name')
           .order('name', ascending: true);
+      final landmarks = await ref
+          .read(storyRepositoryProvider)
+          .fetchLandmarks();
       if (!mounted) return;
       setState(() {
         _eras = eras;
+        _landmarks = landmarks;
         _characterOptions = characterRows
             .map<CharacterOption>(
               (row) => CharacterOption(
@@ -261,9 +263,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   bool get _canProceedFromDetails {
     if (_titleCtrl.text.trim().isEmpty) return false;
     if (_summaryCtrl.text.trim().isEmpty) return false;
-    // 장소: 이름 + 지도 좌표 모두 필수
-    if (_placeCtrl.text.trim().isEmpty) return false;
-    if (_lat == null || _lng == null) return false;
+    // v2 위치 모델 — landmark 한 개 필수.
+    if (_landmarkId == null) return false;
     // 연도: 시작/끝 둘 다 정수 + 끝 ≥ 시작
     final sy = int.tryParse(_startYearCtrl.text.trim());
     final ey = int.tryParse(_endYearCtrl.text.trim());
@@ -310,8 +311,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final items = <String>[];
     if (_titleCtrl.text.trim().isEmpty) items.add('제목');
     if (_summaryCtrl.text.trim().isEmpty) items.add('요약');
-    if (_placeCtrl.text.trim().isEmpty) items.add('장소 이름');
-    if (_lat == null || _lng == null) items.add('지도에서 좌표 선택 (지도를 클릭)');
+    if (_landmarkId == null) items.add('지도/칩에서 위치(region/anchor/minor) 선택');
     final sy = int.tryParse(_startYearCtrl.text.trim());
     final ey = int.tryParse(_endYearCtrl.text.trim());
     if (sy == null) items.add('시작 연도 (숫자)');
@@ -557,9 +557,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           title: _titleCtrl.text.trim(),
           summary: _emptyAsNull(_summaryCtrl.text),
           characterCodes: _characterCodes,
-          placeName: _emptyAsNull(_placeCtrl.text),
-          lat: _lat,
-          lng: _lng,
+          landmarkId: _landmarkId!,
           startYear: int.tryParse(_startYearCtrl.text.trim()),
           endYear: int.tryParse(_endYearCtrl.text.trim()),
           timePrecision: _timePrecision,
@@ -579,9 +577,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           title: _titleCtrl.text.trim(),
           summary: _emptyAsNull(_summaryCtrl.text),
           characterCodes: _characterCodes,
-          placeName: _emptyAsNull(_placeCtrl.text),
-          lat: _lat,
-          lng: _lng,
+          landmarkId: _landmarkId!,
           startYear: int.tryParse(_startYearCtrl.text.trim()),
           endYear: int.tryParse(_endYearCtrl.text.trim()),
           timePrecision: _timePrecision,
@@ -1039,9 +1035,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         eventTitle: _titleCtrl.text.trim().isEmpty
             ? null
             : _titleCtrl.text.trim(),
-        placeName: _placeCtrl.text.trim().isEmpty
-            ? null
-            : _placeCtrl.text.trim(),
+        placeName: _selectedLandmark?.name,
       );
       return ProposalSceneImage(
         path: result.storagePath,
@@ -1235,25 +1229,17 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextField(
-                      controller: _placeCtrl,
-                      decoration: const InputDecoration(
-                        labelText: '장소 이름',
-                        hintText: '예: 베들레헴',
-                      ),
-                    ),
-                    const SizedBox(height: 12),
                     Text(
-                      '오른쪽 지도를 클릭해 좌표를 선택하세요.',
+                      '오른쪽 지도/칩에서 위치를 선택하세요.\n반드시 region 1개는 골라야 합니다.\n해당 region 의 anchor/minor 점도 선택할 수 있습니다.',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    if (_lat != null && _lng != null)
+                    const SizedBox(height: 12),
+                    if (_selectedLandmark != null)
                       Text(
-                        '선택된 좌표\n${_lat!.toStringAsFixed(4)}, '
-                        '${_lng!.toStringAsFixed(4)}',
+                        '선택: ${_selectedLandmark!.name}\n'
+                        '(${_selectedLandmark!.kind})',
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: theme.colorScheme.primary,
@@ -1261,7 +1247,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                       )
                     else
                       Text(
-                        '아직 좌표 미선택',
+                        '아직 위치 미선택',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.error,
                           fontWeight: FontWeight.w600,
@@ -1273,14 +1259,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: ProposalLocationPicker(
-                  initialLat: _lat,
-                  initialLng: _lng,
+                  eraLandmarks: _landmarksForSelectedEra(),
+                  initialLandmarkId: _landmarkId,
                   referencePins: _referencePinsForSelectedCharacters(),
                   height: 420,
-                  onChanged: (lat, lng) => setState(() {
-                    _lat = lat;
-                    _lng = lng;
-                  }),
+                  onChanged: (id) => setState(() => _landmarkId = id),
                 ),
               ),
             ],
@@ -1505,6 +1488,30 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         const SizedBox(height: 40),
       ],
     );
+  }
+
+  /// 현재 시대(era)에 노출되는 landmarks 만 picker 로 넘긴다.
+  /// 시대 코드가 era_codes 배열에 포함된 region/anchor/minor 만 통과.
+  List<Landmark> _landmarksForSelectedEra() {
+    final eraCode = _selectedEraCode;
+    if (eraCode == null) return _landmarks;
+    return _landmarks
+        .where((lm) => lm.eraCodes.isEmpty || lm.eraCodes.contains(eraCode))
+        .toList(growable: false);
+  }
+
+  String? get _selectedEraCode {
+    if (_eraId == null) return null;
+    final match = _eras.where((e) => e.id == _eraId);
+    return match.isEmpty ? null : match.first.code;
+  }
+
+  Landmark? get _selectedLandmark {
+    if (_landmarkId == null) return null;
+    for (final lm in _landmarks) {
+      if (lm.id == _landmarkId) return lm;
+    }
+    return null;
   }
 
   // 선택된 인물들이 등장하는 기존 이야기 좌표 — 지도 picker 에 힌트로 표시.

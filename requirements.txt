@@ -8,3 +8,6 @@ requests>=2.33,<3
 # era_boundaries 폴리곤 생성 — Natural Earth GeoJSON 을 시대별 bounding box 로
 # 클립해 정밀한 해안선 폴리곤을 만든다 (tools/seed/build_era_boundaries_from_geojson.py).
 shapely>=2.0,<3
+# Vertex Imagen 데코 PNG 후처리 — 평면 흰색 배경을 chroma-key 로 투명화
+# (tools/images/generate_decos_vertex.py).
+Pillow>=10.0,<12

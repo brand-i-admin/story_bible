@@ -113,6 +113,7 @@ void main() {
     StoryEvent event(String id, double lat, double lng) {
       return StoryEvent(
         id: id,
+        landmarkId: 'lm_test',
         eraId: 'e',
         title: id,
         summary: null,
@@ -154,6 +155,7 @@ void main() {
         event('a', 31.7, 35.2),
         const StoryEvent(
           id: 'b',
+          landmarkId: 'lm_test',
           eraId: 'e',
           title: 'noCoord',
           summary: null,
@@ -324,6 +326,7 @@ void main() {
 StoryEvent _bareEvent(String id) {
   return StoryEvent(
     id: id,
+    landmarkId: 'lm_test',
     eraId: 'e',
     title: id,
     summary: null,

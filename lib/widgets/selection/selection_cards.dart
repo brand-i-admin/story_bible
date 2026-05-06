@@ -238,95 +238,273 @@ class _CharacterCompactCard extends StatelessWidget {
   }
 }
 
+/// step 3 사건 선택 카드 — 그림 1 디자인.
+/// 원형 썸네일(SceneAssetLoader 첫 장면) + 제목 + 위치·연도(같은 줄) + 인물 라벨(아바타+이름).
 class _StoryCompactCard extends StatelessWidget {
   const _StoryCompactCard({
     required this.index,
-    required this.title,
-    required this.subtitle,
+    required this.event,
     required this.selected,
     required this.isCompleted,
     required this.highlightedCharacterCodes,
-    required this.colorForCharacter,
-    required this.nameForCharacter,
+    required this.charactersByCode,
+    required this.sceneAssetLoader,
     required this.onTap,
   });
 
   final int index;
-  final String title;
-  final String subtitle;
+  final StoryEvent event;
   final bool selected;
   final bool isCompleted;
   final List<String> highlightedCharacterCodes;
-  final Color Function(String characterCode) colorForCharacter;
-  final String Function(String characterCode) nameForCharacter;
+
+  /// code → Character 매핑 (아바타 표시용).
+  final Map<String, Character> charactersByCode;
+  final SceneAssetLoader sceneAssetLoader;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final titleColor = selected
+        ? AppColors.parchmentCream
+        : isCompleted
+        ? const Color(0xFF2F5D3B)
+        : const Color(0xFF5C3A20);
+    final placeName = event.placeName;
+    final startYear = event.startYear;
+    final yearLabel = startYear == null
+        ? null
+        : (startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear');
+
     return _CardShell(
       selected: selected,
       completed: isCompleted,
       onTap: onTap,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: isCompleted
-                ? const Icon(
-                    Icons.check_circle_rounded,
-                    color: Color(0xFF92E3A3),
-                    size: 18,
-                  )
-                : _IndexBadge(label: '$index'),
+          // 원형 썸네일 + 좌상단 인덱스 배지
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              ClipOval(
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  color: const Color(0xFFF1E4C8),
+                  alignment: Alignment.center,
+                  child: _StoryCardThumbnail(
+                    event: event,
+                    loader: sceneAssetLoader,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -4,
+                left: -4,
+                child: isCompleted
+                    ? Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.check_circle_rounded,
+                          color: Color(0xFF49A357),
+                          size: 18,
+                        ),
+                      )
+                    : _IndexBadge(label: '$index'),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 6),
+          // 제목
+          Text(
+            event.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w800,
+              height: 1.15,
+              color: titleColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          // 지역 + 연도 같은 줄
+          if ((placeName != null && placeName.isNotEmpty) || yearLabel != null)
+            Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 13.6,
-                    fontWeight: FontWeight.w800,
-                    height: 1.12,
-                    color: selected
-                        ? AppColors.parchmentCream
-                        : isCompleted
-                        ? const Color(0xFF2F5D3B)
-                        : const Color(0xFF5C3A20),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.3,
-                    height: 1.18,
+                if (placeName != null && placeName.isNotEmpty) ...[
+                  Icon(
+                    Icons.location_on,
+                    size: 10,
                     color: selected
                         ? const Color(0xFFF4E6CD)
-                        : isCompleted
-                        ? const Color(0xFF52725B)
-                        : const Color(0xFF75563C),
+                        : const Color(0xFF8C6743),
                   ),
-                ),
+                  const SizedBox(width: 1),
+                  Flexible(
+                    child: Text(
+                      placeName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: selected
+                            ? const Color(0xFFF4E6CD)
+                            : const Color(0xFF8C6743),
+                      ),
+                    ),
+                  ),
+                ],
+                if (placeName != null &&
+                    placeName.isNotEmpty &&
+                    yearLabel != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      '·',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: selected
+                            ? const Color(0xFFF4E6CD)
+                            : const Color(0xFF8C6743),
+                      ),
+                    ),
+                  ),
+                if (yearLabel != null)
+                  Text(
+                    yearLabel,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: selected
+                          ? const Color(0xFFF4E6CD)
+                          : const Color(0xFF8C6743),
+                    ),
+                  ),
               ],
             ),
-          ),
-          if (highlightedCharacterCodes.isNotEmpty) ...[
-            const SizedBox(width: 6),
-            _CharacterNamePills(
-              characterCodes: highlightedCharacterCodes,
-              colorForCharacter: colorForCharacter,
-              nameForCharacter: nameForCharacter,
+          const SizedBox(height: 4),
+          // 인물 라벨 — 작은 아바타 + 이름
+          if (highlightedCharacterCodes.isNotEmpty)
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 3,
+              runSpacing: 3,
+              children: [
+                for (final code in highlightedCharacterCodes.take(3))
+                  _CharacterPillWithAvatar(
+                    character: charactersByCode[code],
+                    name: charactersByCode[code]?.name ?? code,
+                    selected: selected,
+                  ),
+              ],
             ),
-          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// 카드 썸네일 — SceneAssetLoader 로 첫 장면 이미지 비동기 로드.
+/// 자세히 보기 팝업이 사용하는 동일 로직(loadForEvent) 으로 첫 결과 사용.
+class _StoryCardThumbnail extends StatelessWidget {
+  const _StoryCardThumbnail({required this.event, required this.loader});
+  final StoryEvent event;
+  final SceneAssetLoader loader;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<String>>(
+      future: loader.loadForEvent(event),
+      builder: (_, snap) {
+        const placeholder = Icon(
+          Icons.menu_book,
+          color: Color(0xFF8C6743),
+          size: 22,
+        );
+        if (!snap.hasData || snap.data!.isEmpty) return placeholder;
+        final path = snap.data!.first;
+        if (path.startsWith('http')) {
+          return Image.network(
+            path,
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => placeholder,
+          );
+        }
+        return Image.asset(
+          path,
+          width: 60,
+          height: 60,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => placeholder,
+        );
+      },
+    );
+  }
+}
+
+class _CharacterPillWithAvatar extends StatelessWidget {
+  const _CharacterPillWithAvatar({
+    required this.character,
+    required this.name,
+    required this.selected,
+  });
+  final Character? character;
+  final String name;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(2, 2, 6, 2),
+      decoration: BoxDecoration(
+        color: selected
+            ? const Color(0xFFF4E6CD).withValues(alpha: 0.4)
+            : const Color(0xFF3F8FB6).withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (character != null)
+            ClipOval(
+              child: SizedBox(
+                width: 14,
+                height: 14,
+                child: CharacterAvatar(character: character!, size: 14),
+              ),
+            )
+          else
+            Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: selected
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : const Color(0xFF3F8FB6),
+              ),
+            ),
+          const SizedBox(width: 3),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 9.5,
+              fontWeight: FontWeight.w800,
+              color: selected ? Colors.white : const Color(0xFF2A6F92),
+            ),
+          ),
         ],
       ),
     );
@@ -355,90 +533,6 @@ class _IndexBadge extends StatelessWidget {
           fontSize: 10.5,
           fontWeight: FontWeight.w900,
           color: Color(0xFF5A3519),
-        ),
-      ),
-    );
-  }
-}
-
-/// 이야기 카드 우측 상단의 "등장 인물" 라벨 스택.
-///
-/// 기존 `_CharacterDots` (작은 색 점) 을 대체. 인물별로 배정된 색을 pill 배경으로
-/// 쓰고, 그 위에 인물 이름을 작은 흰색 bold 텍스트로 얹는다. 카드 폭 제한 때문에
-/// 최대 3명까지만 표시하고 초과분은 "+N" 으로 요약.
-class _CharacterNamePills extends StatelessWidget {
-  const _CharacterNamePills({
-    required this.characterCodes,
-    required this.colorForCharacter,
-    required this.nameForCharacter,
-  });
-
-  final List<String> characterCodes;
-  final Color Function(String characterCode) colorForCharacter;
-  final String Function(String characterCode) nameForCharacter;
-
-  @override
-  Widget build(BuildContext context) {
-    const maxShown = 3;
-    final visible = characterCodes.take(maxShown).toList(growable: false);
-    final overflow = characterCodes.length - visible.length;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        for (final code in visible)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: _NamePill(
-              color: colorForCharacter(code),
-              label: nameForCharacter(code),
-            ),
-          ),
-        if (overflow > 0)
-          _NamePill(color: const Color(0xFF8E7B61), label: '+$overflow'),
-      ],
-    );
-  }
-}
-
-class _NamePill extends StatelessWidget {
-  const _NamePill({required this.color, required this.label});
-
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 76),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1.5),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.55),
-            width: 0.8,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10.5,
-            fontWeight: FontWeight.w800,
-            height: 1.1,
-          ),
         ),
       ),
     );
