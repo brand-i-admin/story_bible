@@ -612,7 +612,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   // 압축해 오히려 가린다.
                   if (widget.activeLandmarks.isNotEmpty)
                     MarkerLayer(
-                      markers: _buildLandmarkMarkers(widget.activeLandmarks),
+                      markers: _buildLandmarkMarkers(
+                        _landmarksHidingEventLocations(),
+                      ),
                     ),
                   PolylineLayer(polylines: polylines),
                   MarkerLayer(markers: _buildRegionLabels()),
@@ -1289,32 +1291,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       result.add(
         Marker(
           point: mid,
-          width: 24,
-          height: 24,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           child: IgnorePointer(
             child: Transform.rotate(
               angle: angle,
-              child: Container(
-                width: 18,
-                height: 18,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF3D6BB8),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x44000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.play_arrow,
-                  size: 14,
-                  color: Colors.white,
-                ),
+              child: Icon(
+                Icons.arrow_right_alt,
+                size: 38,
+                color: const Color(0xFF3D6BB8),
+                shadows: [
+                  Shadow(
+                    color: AppColors.parchmentCream.withValues(alpha: 0.85),
+                    blurRadius: 2,
+                  ),
+                ],
               ),
             ),
           ),
@@ -1377,6 +1369,20 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         },
       ),
     );
+  }
+
+  /// 사건 핀 reveal 중일 때, 사건과 동일 landmark id 의 landmark 마커는
+  /// 가린다 (사건 핀이 이미 그 장소를 표현하므로 시각적 중복).
+  List<Landmark> _landmarksHidingEventLocations() {
+    if (!_orderedEventsActive || widget.events.isEmpty) {
+      return widget.activeLandmarks;
+    }
+    final hidden = <String>{
+      for (final e in widget.events) e.landmarkId,
+    };
+    return widget.activeLandmarks
+        .where((lm) => !hidden.contains(lm.id))
+        .toList(growable: false);
   }
 
   List<Marker> _buildLandmarkMarkers(List<Landmark> landmarks) {
