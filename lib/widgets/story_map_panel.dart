@@ -1298,8 +1298,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             child: Transform.rotate(
               angle: angle,
               child: Icon(
-                Icons.arrow_right_alt,
-                size: 38,
+                Icons.play_arrow,
+                size: 36,
                 color: const Color(0xFF3D6BB8),
                 shadows: [
                   Shadow(
@@ -2067,14 +2067,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final rawLatSpan = (rawBounds.north - rawBounds.south).abs();
     final isTightlyClustered = rawLonSpan < 0.35 && rawLatSpan < 0.28;
     final zoomAdjust = widget.fitAllZoomAdjust.clamp(-2.0, 2.0);
-    var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust + zoomBoost)
-        .clamp(
-          2.4,
-          13.0,
-        );
+    // 자동 fit 줌 → tight cluster cap → 그 위에 사용자 요청 zoomBoost.
+    // boost 를 cap 보다 먼저 더하면 cap 이 무효화되므로 단계 분리.
+    var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust).clamp(
+      2.4,
+      13.0,
+    );
     if (isTightlyClustered) {
-      fittedZoom = math.min(fittedZoom, 7.15 + zoomBoost.clamp(0.0, 2.0));
+      fittedZoom = math.min(fittedZoom, 7.15);
     }
+    fittedZoom = (fittedZoom + zoomBoost).clamp(2.4, 13.0);
     _focusToPoint(bounds.center, fittedZoom, duration: duration);
   }
 
