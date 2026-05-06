@@ -2036,6 +2036,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   void _focusAllEvents({
     Duration duration = const Duration(milliseconds: 360),
+    double zoomBoost = 0.0,
   }) {
     if (!_mapReady) {
       return;
@@ -2047,7 +2048,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return;
     }
     if (visibleEvents.length == 1) {
-      final singleZoom = ((widget.initialZoom ?? 5.3) + 0.35).clamp(2.4, 13.0);
+      final singleZoom =
+          ((widget.initialZoom ?? 5.3) + 0.35 + zoomBoost).clamp(2.4, 13.0);
       _focusToPoint(visibleEvents.first.latLng, singleZoom, duration: duration);
       return;
     }
@@ -2065,12 +2067,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final rawLatSpan = (rawBounds.north - rawBounds.south).abs();
     final isTightlyClustered = rawLonSpan < 0.35 && rawLatSpan < 0.28;
     final zoomAdjust = widget.fitAllZoomAdjust.clamp(-2.0, 2.0);
-    var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust).clamp(
-      2.4,
-      13.0,
-    );
+    var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust + zoomBoost)
+        .clamp(
+          2.4,
+          13.0,
+        );
     if (isTightlyClustered) {
-      fittedZoom = math.min(fittedZoom, 7.15);
+      fittedZoom = math.min(fittedZoom, 7.15 + zoomBoost.clamp(0.0, 2.0));
     }
     _focusToPoint(bounds.center, fittedZoom, duration: duration);
   }
@@ -2297,6 +2300,11 @@ class StoryMapPanelController {
   /// region polygon 모든 정점이 화면에 들어오도록 카메라 fit.
   void focusRegion(List<LatLng> polygon) =>
       _state?._focusRegionPolygon(polygon);
+
+  /// 사건들의 좌표 영역을 viewport 에 fit + 추가 줌인. 사건 reveal 트리거 시점에
+  /// 호출하면 핀이 화면 가운데 모이고 자세히 보인다.
+  void focusEvents({double zoomBoost = 1.0}) =>
+      _state?._focusAllEvents(zoomBoost: zoomBoost);
 }
 
 /// 줌에 비례해 축소되는 landmark 마커. region 인 경우 큰 location pin +

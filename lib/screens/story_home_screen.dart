@@ -55,6 +55,11 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
+
+  /// 사건 핀 reveal 모드(region 선택 후 또는 character step 3) 의 panel 크기.
+  /// 카드 232 + 핸들 + padding 정도만 차지하도록 작게 — 카드 위주로 보여주기 위함.
+  /// 0.32 * 700px = 224 으로 카드(232)보다 살짝 부족해 0.34 로 설정.
+  static const double _selectionSheetCardOnlySize = 0.34;
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
   final ScrollController _selectionPanelScrollController = ScrollController();
   final GlobalKey<ProfileTabPageState> _profileTabKey =
@@ -267,7 +272,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
 
-  double _sheetMaxSizeFor(Size size) => _selectionSheetExpandedSize;
+  double _sheetMaxSizeFor(Size size) {
+    final state = ref.read(storyControllerProvider);
+    return _isInRevealMode(state)
+        ? _selectionSheetCardOnlySize
+        : _selectionSheetExpandedSize;
+  }
 
   double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
 
@@ -325,9 +335,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
+    final state = ref.read(storyControllerProvider);
+    final maxExtent = _isInRevealMode(state)
+        ? _selectionSheetCardOnlySize
+        : _selectionSheetExpandedSize;
     final targetExtent = stage == StorySelectionPanelStage.collapsed
         ? _selectionSheetCollapsedSize
-        : _selectionSheetExpandedSize;
+        : maxExtent;
     setState(() {
       _selectionPanelStage = stage;
       _selectionSheetExtent = targetExtent;
@@ -346,10 +360,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 이미 _awaitingRevealComplete=false 면 noop.)
   void _handleRevealComplete() {
     if (!_awaitingRevealComplete) return;
+    final state = ref.read(storyControllerProvider);
+    // reveal 완료 후에도 reveal 모드이므로 카드 사이즈만 사용.
+    final expandExtent = _isInRevealMode(state)
+        ? _selectionSheetCardOnlySize
+        : _selectionSheetExpandedSize;
     setState(() {
       _awaitingRevealComplete = false;
       _selectionPanelStage = StorySelectionPanelStage.expanded;
-      _selectionSheetExtent = _selectionSheetExpandedSize;
+      _selectionSheetExtent = expandExtent;
     });
   }
 
@@ -516,6 +535,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return _selectionStep >= 3 ? 3 : 2;
   }
 
+  /// 핀 reveal 모드 판정. region 모드에서 landmark 가 선택됐거나, character
+  /// 모드에서 step 3 진입 후 displayedEventIds 가 set 된 상태.
+  bool _isInRevealMode(StoryState state) {
+    if (_mode == _SelectionMode.region && state.selectedLandmarkId != null) {
+      return true;
+    }
+    if (_mode == _SelectionMode.character &&
+        _selectionStep == 3 &&
+        state.displayedEventIds.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
+
   /// 장소 모드에서 region 선택 (지도 폴리곤·핀 클릭 OR RegionPickPanel 카드 클릭)
   /// 시 호출. 인물 모드의 _proceedFromCharacterStep 과 같은 패턴 — panel 을
   /// collapsed 로 내리고, MapPanel 이 핀을 0.3s 간격 reveal, 마지막 핀 노출 시
@@ -536,11 +569,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _awaitingRevealComplete = true;
       _revealInstantly = false;
     });
-    if (lm.polygon.isNotEmpty) {
-      _mapPanelController.focusRegion(lm.polygon);
-    } else {
-      _mapPanelController.focusLandmark(lm.latLng);
-    }
+    // 사건들이 분포한 영역에 fit + 줌인. region 폴리곤 fit 보다 사건 자체에
+    // 포커스가 맞아 자세히 보임.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
+    });
   }
 
   void _proceedFromCharacterStep() {
@@ -565,6 +598,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionSheetExtent = _selectionSheetCollapsedSize;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
     });
   }
 
