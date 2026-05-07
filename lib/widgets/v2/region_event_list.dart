@@ -188,15 +188,15 @@ class StoryEventThumbCard extends StatelessWidget {
                     ),
                   ClipOval(
                     child: SizedBox(
-                      width: 72,
-                      height: 72,
+                      width: 64,
+                      height: 64,
                       child: ColoredBox(
                         color: const Color(0xFFF1E4C8),
                         child: _CardThumbnail(event: event, loader: loader),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     event.title,
                     maxLines: 2,

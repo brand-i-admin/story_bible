@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import '../../models/era.dart';
 import '../../state/story_state.dart';
 import '../../theme/era_colors.dart';
+import '../../theme/tokens.dart';
+import '../../theme/typography.dart';
+import '../story_home_styles.dart';
 
 /// 첫 화면 — "오늘은 성경 어디를 여행해볼까요?" 패널.
 ///
 /// 두 단계로 구성:
 ///   1. 여행할 시대를 골라보세요 — 구약/신약 두 줄로 분리된 시대 칩. **단일 선택**.
-///      각 칩은 그 시대의 고유 색 ([EraColors.forCode]) 으로 활성 표시되고,
-///      같은 색이 지도 폴리곤에도 사용된다.
+///      비선택 시 시대 고유 색 ([EraColors.forCode]) 을 점·아이콘으로 미리 보여주고,
+///      선택 시 갈색 그라데이션으로 활성 표시한다. 같은 시대 색은 지도 폴리곤에도 사용된다.
 ///   2. 어떻게 볼까요? — 시대가 선택된 경우에만 활성. [장소에서 시작하기 / 인물과 걷기].
 class HomeIntroPanel extends StatelessWidget {
   const HomeIntroPanel({
@@ -43,13 +46,19 @@ class HomeIntroPanel extends StatelessWidget {
           Center(
             child: Text(
               '🌿  오늘은 성경 어디를 여행해볼까요?  🌿',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+              style: AppTextStyles.h3.copyWith(
+                color: AppColors.ink800,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
           const SizedBox(height: 16),
-          const _StepHeader(number: 1, title: '여행할 시대를 골라보세요', enabled: true),
+          const _StepHeader(
+            number: 1,
+            title: '여행할 시대를 골라보세요',
+            enabled: true,
+            iconData: Icons.schedule_outlined,
+          ),
           const SizedBox(height: 8),
           _EraRow(
             label: '구약',
@@ -65,7 +74,12 @@ class HomeIntroPanel extends StatelessWidget {
             onSelectEra: onSelectEra,
           ),
           const SizedBox(height: 18),
-          _StepHeader(number: 2, title: '어떻게 볼까요?', enabled: canPickMode),
+          _StepHeader(
+            number: 2,
+            title: '어떻게 볼까요?',
+            enabled: canPickMode,
+            iconData: Icons.explore_outlined,
+          ),
           const SizedBox(height: 8),
           Opacity(
             opacity: canPickMode ? 1.0 : 0.45,
@@ -91,9 +105,7 @@ class HomeIntroPanel extends StatelessWidget {
                     ),
                     child: Text(
                       '또는',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.outline,
-                      ),
+                      style: AppTextStyles.counter.copyWith(color: AppColors.ink450),
                     ),
                   );
                   final right = Expanded(
@@ -124,9 +136,7 @@ class HomeIntroPanel extends StatelessWidget {
           Center(
             child: Text(
               '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.outline,
-              ),
+              style: AppTextStyles.hint.copyWith(color: AppColors.ink450),
             ),
           ),
         ],
@@ -151,26 +161,23 @@ class _StepHeader extends StatelessWidget {
     required this.number,
     required this.title,
     required this.enabled,
+    required this.iconData,
   });
   final int number;
   final String title;
   final bool enabled;
+  final IconData iconData;
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = enabled
-        ? theme.colorScheme.onSurface
-        : theme.colorScheme.outline;
+    final color = enabled ? AppColors.ink450 : AppColors.ink150;
     return Row(
       children: [
-        Icon(Icons.access_time, size: 16, color: color),
+        Icon(iconData, size: 16, color: color),
         const SizedBox(width: 6),
         Text(
           '$number. $title',
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
+          style: AppTextStyles.sectionTitle.copyWith(color: color),
         ),
       ],
     );
@@ -239,52 +246,58 @@ class _EraChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final eraColor = EraColors.forCode(era.code);
-
-    final bg = selected ? eraColor : theme.colorScheme.surfaceContainerLow;
-    final fg = selected ? Colors.white : theme.colorScheme.onSurface;
-    final border = selected ? eraColor : eraColor.withValues(alpha: 0.45);
+    final iconData = _eraIconFor(era.code);
 
     return Material(
-      color: bg,
-      borderRadius: BorderRadius.circular(28),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(28),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: border, width: selected ? 2 : 1.4),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
+        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x6,
+            vertical: AppSpacing.x4,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: softButtonDecoration(selected: selected),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 시대 색 점 — 비선택 상태에서도 어떤 색인지 미리 보여 줌.
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: selected ? Colors.white : eraColor,
-                  border: selected
-                      ? Border.all(color: Colors.white, width: 1)
-                      : null,
+              if (!selected) ...[
+                // 시대 색 점 — 지도 폴리곤 색과 같은 톤이라는 시각적 단서.
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: eraColor,
+                  ),
                 ),
+                const SizedBox(width: 8),
+              ],
+              Icon(
+                iconData,
+                size: 18,
+                color: selected ? AppColors.parchmentCream : eraColor,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Text(
                 era.name,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: fg,
+                style: AppTextStyles.chipLabel.copyWith(
+                  color: selected ? AppColors.parchmentCream : AppColors.ink800,
                 ),
               ),
               if (selected) ...[
                 const SizedBox(width: 6),
-                const Icon(Icons.check_circle, size: 16, color: Colors.white),
+                const Icon(
+                  Icons.check_circle,
+                  size: 16,
+                  color: AppColors.parchmentCream,
+                ),
               ],
             ],
           ),
@@ -312,19 +325,16 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Material(
-      color: accent.withValues(alpha: 0.06),
-      borderRadius: BorderRadius.circular(16),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
+        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
         child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: accent.withValues(alpha: 0.18)),
-          ),
+          padding: const EdgeInsets.all(AppSpacing.x6),
+          decoration: softButtonDecoration(selected: false),
           child: Row(
             children: [
               Container(
@@ -335,9 +345,9 @@ class _ModeCard extends StatelessWidget {
                   color: accent,
                 ),
                 alignment: Alignment.center,
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: AppColors.parchmentCream, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.x5),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,25 +357,30 @@ class _ModeCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
+                            style: AppTextStyles.sectionTitle.copyWith(
+                              color: AppColors.ink800,
                             ),
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right,
-                          color: theme.colorScheme.outline,
+                          color: AppColors.ink450,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: theme.textTheme.bodySmall),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.x1),
+                    Text(
+                      subtitle,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.ink600,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.x2),
                     Text(
                       sample,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: AppTextStyles.counter.copyWith(
                         color: accent,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
@@ -376,5 +391,34 @@ class _ModeCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// 시대 코드 → Material 아이콘 매핑.
+/// 향후 일러스트 PNG로 교체할 수 있게 한 곳에 격리한다.
+IconData _eraIconFor(String code) {
+  switch (code) {
+    case 'era_primeval':
+      return Icons.terrain;
+    case 'era_patriarch':
+      return Icons.holiday_village;
+    case 'era_exodus':
+      return Icons.directions_walk;
+    case 'era_judges':
+      return Icons.shield;
+    case 'era_monarchy':
+      return Icons.workspace_premium;
+    case 'era_exile_return':
+      return Icons.location_city;
+    case 'era_nt_public_ministry':
+      return Icons.auto_awesome;
+    case 'era_nt_apostolic':
+      return Icons.sailing;
+    case 'era_nt_post_apostolic':
+      return Icons.menu_book;
+    case 'era_nt_consummation':
+      return Icons.local_fire_department;
+    default:
+      return Icons.place;
   }
 }

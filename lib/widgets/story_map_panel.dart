@@ -612,7 +612,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   // 압축해 오히려 가린다.
                   if (widget.activeLandmarks.isNotEmpty)
                     MarkerLayer(
-                      markers: _buildLandmarkMarkers(widget.activeLandmarks),
+                      markers: _buildLandmarkMarkers(
+                        _landmarksHidingEventLocations(),
+                      ),
                     ),
                   PolylineLayer(polylines: polylines),
                   MarkerLayer(markers: _buildRegionLabels()),
@@ -1289,32 +1291,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       result.add(
         Marker(
           point: mid,
-          width: 24,
-          height: 24,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           child: IgnorePointer(
             child: Transform.rotate(
               angle: angle,
-              child: Container(
-                width: 18,
-                height: 18,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF3D6BB8),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x44000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.play_arrow,
-                  size: 14,
-                  color: Colors.white,
-                ),
+              child: Icon(
+                Icons.play_arrow,
+                size: 36,
+                color: const Color(0xFF3D6BB8),
+                shadows: [
+                  Shadow(
+                    color: AppColors.parchmentCream.withValues(alpha: 0.85),
+                    blurRadius: 2,
+                  ),
+                ],
               ),
             ),
           ),
@@ -1377,6 +1369,20 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         },
       ),
     );
+  }
+
+  /// 사건 핀 reveal 중일 때, 사건과 동일 landmark id 의 landmark 마커는
+  /// 가린다 (사건 핀이 이미 그 장소를 표현하므로 시각적 중복).
+  List<Landmark> _landmarksHidingEventLocations() {
+    if (!_orderedEventsActive || widget.events.isEmpty) {
+      return widget.activeLandmarks;
+    }
+    final hidden = <String>{
+      for (final e in widget.events) e.landmarkId,
+    };
+    return widget.activeLandmarks
+        .where((lm) => !hidden.contains(lm.id))
+        .toList(growable: false);
   }
 
   List<Marker> _buildLandmarkMarkers(List<Landmark> landmarks) {
@@ -2030,6 +2036,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   void _focusAllEvents({
     Duration duration = const Duration(milliseconds: 360),
+    double zoomBoost = 0.0,
   }) {
     if (!_mapReady) {
       return;
@@ -2041,7 +2048,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return;
     }
     if (visibleEvents.length == 1) {
-      final singleZoom = ((widget.initialZoom ?? 5.3) + 0.35).clamp(2.4, 13.0);
+      final singleZoom =
+          ((widget.initialZoom ?? 5.3) + 0.35 + zoomBoost).clamp(2.4, 13.0);
       _focusToPoint(visibleEvents.first.latLng, singleZoom, duration: duration);
       return;
     }
@@ -2059,6 +2067,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final rawLatSpan = (rawBounds.north - rawBounds.south).abs();
     final isTightlyClustered = rawLonSpan < 0.35 && rawLatSpan < 0.28;
     final zoomAdjust = widget.fitAllZoomAdjust.clamp(-2.0, 2.0);
+    // 자동 fit 줌 → tight cluster cap → 그 위에 사용자 요청 zoomBoost.
+    // boost 를 cap 보다 먼저 더하면 cap 이 무효화되므로 단계 분리.
     var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust).clamp(
       2.4,
       13.0,
@@ -2066,6 +2076,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (isTightlyClustered) {
       fittedZoom = math.min(fittedZoom, 7.15);
     }
+    fittedZoom = (fittedZoom + zoomBoost).clamp(2.4, 13.0);
     _focusToPoint(bounds.center, fittedZoom, duration: duration);
   }
 
@@ -2291,6 +2302,11 @@ class StoryMapPanelController {
   /// region polygon 모든 정점이 화면에 들어오도록 카메라 fit.
   void focusRegion(List<LatLng> polygon) =>
       _state?._focusRegionPolygon(polygon);
+
+  /// 사건들의 좌표 영역을 viewport 에 fit + 추가 줌인. 사건 reveal 트리거 시점에
+  /// 호출하면 핀이 화면 가운데 모이고 자세히 보인다.
+  void focusEvents({double zoomBoost = 1.0}) =>
+      _state?._focusAllEvents(zoomBoost: zoomBoost);
 }
 
 /// 줌에 비례해 축소되는 landmark 마커. region 인 경우 큰 location pin +

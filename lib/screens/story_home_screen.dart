@@ -55,6 +55,11 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
+
+  /// 사건 핀 reveal 모드(region 선택 후 또는 character step 3) 의 panel 크기.
+  /// 카드 232 + 핸들 + padding 정도만 차지하도록 작게 — 카드 위주로 보여주기 위함.
+  /// 0.32 * 700px = 224 으로 카드(232)보다 살짝 부족해 0.34 로 설정.
+  static const double _selectionSheetCardOnlySize = 0.34;
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
   final ScrollController _selectionPanelScrollController = ScrollController();
   final GlobalKey<ProfileTabPageState> _profileTabKey =
@@ -267,7 +272,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
 
-  double _sheetMaxSizeFor(Size size) => _selectionSheetExpandedSize;
+  double _sheetMaxSizeFor(Size size) {
+    final state = ref.read(storyControllerProvider);
+    return _isInRevealMode(state)
+        ? _selectionSheetCardOnlySize
+        : _selectionSheetExpandedSize;
+  }
 
   double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
 
@@ -277,10 +287,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       StorySelectionPanelStage.half => _sheetMaxSizeFor(size),
       StorySelectionPanelStage.expanded => _sheetMaxSizeFor(size),
     };
-  }
-
-  double _sheetFocusSizeForSelectedEvent(Size size) {
-    return _sheetCollapsedPeekSizeFor(size);
   }
 
   Future<void> _handleStepEraSelect(String eraId) async {
@@ -325,9 +331,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
+    final state = ref.read(storyControllerProvider);
+    final maxExtent = _isInRevealMode(state)
+        ? _selectionSheetCardOnlySize
+        : _selectionSheetExpandedSize;
     final targetExtent = stage == StorySelectionPanelStage.collapsed
         ? _selectionSheetCollapsedSize
-        : _selectionSheetExpandedSize;
+        : maxExtent;
     setState(() {
       _selectionPanelStage = stage;
       _selectionSheetExtent = targetExtent;
@@ -346,10 +356,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 이미 _awaitingRevealComplete=false 면 noop.)
   void _handleRevealComplete() {
     if (!_awaitingRevealComplete) return;
+    final state = ref.read(storyControllerProvider);
+    // reveal 완료 후에도 reveal 모드이므로 카드 사이즈만 사용.
+    final expandExtent = _isInRevealMode(state)
+        ? _selectionSheetCardOnlySize
+        : _selectionSheetExpandedSize;
     setState(() {
       _awaitingRevealComplete = false;
       _selectionPanelStage = StorySelectionPanelStage.expanded;
-      _selectionSheetExtent = _selectionSheetExpandedSize;
+      _selectionSheetExtent = expandExtent;
     });
   }
 
@@ -516,6 +531,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return _selectionStep >= 3 ? 3 : 2;
   }
 
+  /// 핀 reveal 모드 판정. region 모드에서 landmark 가 선택됐거나, character
+  /// 모드에서 step 3 진입 후 displayedEventIds 가 set 된 상태.
+  bool _isInRevealMode(StoryState state) {
+    if (_mode == _SelectionMode.region && state.selectedLandmarkId != null) {
+      return true;
+    }
+    if (_mode == _SelectionMode.character &&
+        _selectionStep == 3 &&
+        state.displayedEventIds.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
+
   /// 장소 모드에서 region 선택 (지도 폴리곤·핀 클릭 OR RegionPickPanel 카드 클릭)
   /// 시 호출. 인물 모드의 _proceedFromCharacterStep 과 같은 패턴 — panel 을
   /// collapsed 로 내리고, MapPanel 이 핀을 0.3s 간격 reveal, 마지막 핀 노출 시
@@ -536,11 +565,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _awaitingRevealComplete = true;
       _revealInstantly = false;
     });
-    if (lm.polygon.isNotEmpty) {
-      _mapPanelController.focusRegion(lm.polygon);
-    } else {
-      _mapPanelController.focusLandmark(lm.latLng);
-    }
+    // 사건들이 분포한 영역에 fit + 줌인. region 폴리곤 fit 보다 사건 자체에
+    // 포커스가 맞아 자세히 보임.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
+    });
   }
 
   void _proceedFromCharacterStep() {
@@ -565,6 +594,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionSheetExtent = _selectionSheetCollapsedSize;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
     });
   }
 
@@ -703,8 +735,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (event == null) {
       return;
     }
-    final viewportSize = MediaQuery.sizeOf(context);
-    final collapsedExtent = _sheetFocusSizeForSelectedEvent(viewportSize);
     controller.selectEvent(event.id);
     // 지도에 이 사건이 아직 커밋 표시되지 않았다면 displayedEventIds + draft
     // 모두에 추가해 지도에 핀이 뜨도록.
@@ -716,9 +746,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     setState(() {
       _selectionStep = 3;
       _draftSelectedCharacterCodes = state.selectedCharacterCodes.toSet();
-      _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = collapsedExtent;
     });
+    // 핀 클릭 시 panel 을 카드 사이즈로 올려 선택된 이야기가 보이도록.
+    // _animateSelectionPanelToStage 가 _isInRevealMode 분기로 카드/expanded 자동 결정.
+    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -1733,15 +1764,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             ),
                     ),
                   ),
-                  // v3 — 우측 사이드 버튼들(검색·줌·skip) 제거. 마우스 휠 /
-                  // 터치 핀치로 줌. 이 자리에 _SelectionStepper 가 들어간다.
+                  // v3 — 우측 사이드 컬럼: _SelectionStepper + 핀치/휠 줌을 보조하는 +/– 컨트롤.
+                  // stepper 가 자체 높이를 결정하므로 정해진 offset 없이 Column 으로 자연 배치.
                   Positioned(
                     right: outerMargin,
                     top: sideTop,
-                    child: _SelectionStepper(
-                      currentStep: _currentStepperIndex(),
-                      mode: _mode,
-                      onStepTap: _handleStepperTap,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _SelectionStepper(
+                          currentStep: _currentStepperIndex(),
+                          mode: _mode,
+                          onStepTap: _handleStepperTap,
+                        ),
+                        const SizedBox(height: 12),
+                        mapControlButton(
+                          icon: Icons.add,
+                          tooltip: '확대',
+                          onTap: _mapPanelController.zoomIn,
+                        ),
+                        const SizedBox(height: 6),
+                        mapControlButton(
+                          icon: Icons.remove,
+                          tooltip: '축소',
+                          onTap: _mapPanelController.zoomOut,
+                        ),
+                      ],
                     ),
                   ),
                   Positioned(
