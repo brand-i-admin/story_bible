@@ -92,8 +92,6 @@ flutter:
     - .env
     - assets/maps/ne_50m_admin_0_countries.geojson
     - assets/avatars_thumbs/
-    - assets/decos/
-    - assets/decos/decos_catalog.json
     - assets/story_images_thumbs/1차 선교(1)_ 구브로 살라미–바보/
     - assets/story_images_thumbs/1차 선교(2)_ 비시디아 안디옥/
     - assets/story_images_thumbs/1차 선교(3)_ 이고니온/

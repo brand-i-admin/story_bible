@@ -27,6 +27,9 @@ class StoryState {
     this.selectedEventId,
     this.displayedEventIds = const {},
     this.completedEventIds = const {},
+    this.bibleReadEventIds = const {},
+    this.quizCompletedEventIds = const {},
+    this.lastQuizScores = const {},
     this.searchQuery = '',
     this.searchResults = const [],
     this.isSearching = false,
@@ -63,6 +66,17 @@ class StoryState {
   final String? selectedEventId;
   final Set<String> displayedEventIds;
   final Set<String> completedEventIds;
+
+  /// 본문 읽기 완료 이벤트 ID. 사용자가 [event_detail] 의 '읽기' 버튼을 눌러
+  /// bible reader 를 보고 돌아오면 추가됨. completedEventIds 와 별개로 추적해
+  /// 부분 진행도(읽기만 했고 퀴즈 미완료) 를 표현한다.
+  final Set<String> bibleReadEventIds;
+
+  /// 퀴즈 완료 이벤트 ID. 모든 문제를 풀고 해설까지 본 경우만 추가됨.
+  final Set<String> quizCompletedEventIds;
+
+  /// 가장 최근 퀴즈 결과 (eventId → "맞춘수/총문제"). UI 표시용.
+  final Map<String, ({int correct, int total})> lastQuizScores;
   final String searchQuery;
   final List<StoryEvent> searchResults;
   final bool isSearching;
@@ -89,6 +103,9 @@ class StoryState {
     String? selectedEventId,
     Set<String>? displayedEventIds,
     Set<String>? completedEventIds,
+    Set<String>? bibleReadEventIds,
+    Set<String>? quizCompletedEventIds,
+    Map<String, ({int correct, int total})>? lastQuizScores,
     bool clearSelectedEvent = false,
     String? searchQuery,
     List<StoryEvent>? searchResults,
@@ -122,6 +139,10 @@ class StoryState {
           : selectedEventId ?? this.selectedEventId,
       displayedEventIds: displayedEventIds ?? this.displayedEventIds,
       completedEventIds: completedEventIds ?? this.completedEventIds,
+      bibleReadEventIds: bibleReadEventIds ?? this.bibleReadEventIds,
+      quizCompletedEventIds:
+          quizCompletedEventIds ?? this.quizCompletedEventIds,
+      lastQuizScores: lastQuizScores ?? this.lastQuizScores,
       searchQuery: searchQuery ?? this.searchQuery,
       searchResults: searchResults ?? this.searchResults,
       isSearching: isSearching ?? this.isSearching,

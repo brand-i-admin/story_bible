@@ -3025,7 +3025,7 @@
     "start_year": 27,
     "end_year": 27,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_sea_of_galilee",
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [
       "jesus",
       "peter",
@@ -3262,7 +3262,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_galilee_hills",
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [
       "jesus"
     ],
@@ -3504,7 +3504,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_galilee_hills",
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [],
     "bible_refs": [
       {
@@ -3888,7 +3888,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_galilee_hills",
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [],
     "bible_refs": [
       {
@@ -4232,7 +4232,7 @@
     "start_year": 28,
     "end_year": 28,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_sea_of_galilee",
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [
       "jesus",
       "peter",
@@ -4713,7 +4713,7 @@
     "start_year": 29,
     "end_year": 29,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_sea_of_galilee",
+    "landmark_code": "lm_nt_pm_capernaum",
     "character_codes": [
       "jesus",
       "peter",
@@ -6381,7 +6381,7 @@
     "start_year": 33,
     "end_year": 33,
     "time_precision": "approx",
-    "landmark_code": "lm_nt_pm_jerusalem_upper_room",
+    "landmark_code": "lm_nt_pm_jerusalem",
     "character_codes": [
       "jesus",
       "peter",

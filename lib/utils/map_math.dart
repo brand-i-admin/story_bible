@@ -108,6 +108,63 @@ Map<String, LatLng> buildAdjustedPoints(List<StoryEvent> visible) {
   return adjusted;
 }
 
+/// 거리 기반으로 가까운 점들을 묶어 원형 분산. [thresholdDeg] 이내 거리의 점들을
+/// 한 그룹으로 (transitive) 묶어 [radiusDeg] 반경의 원에 분산.
+///
+/// 격자 키 방식(소수점 2자리 동일)은 31.55 vs 31.53 처럼 같은 셀 경계 양쪽에
+/// 걸친 점을 못 묶는 문제가 있어, 거리 직접 비교로 변경. region(영역) 핀은
+/// 폴리곤 중심 근처에 한 개라 겹칠 일이 없으므로 호출 측에서 non-region
+/// landmark 만 골라 넘기는 것을 권장.
+Map<String, LatLng> spreadColocatedPoints(
+  Map<String, LatLng> input, {
+  double radiusDeg = 0.05,
+  double thresholdDeg = 0.04,
+}) {
+  final entries = input.entries.toList(growable: false);
+  final visited = List<bool>.filled(entries.length, false);
+  final adjusted = <String, LatLng>{};
+
+  for (var i = 0; i < entries.length; i++) {
+    if (visited[i]) continue;
+    visited[i] = true;
+    final group = <MapEntry<String, LatLng>>[entries[i]];
+    final base = entries[i].value;
+    for (var j = i + 1; j < entries.length; j++) {
+      if (visited[j]) continue;
+      final p = entries[j].value;
+      final d = math.sqrt(
+        math.pow(p.latitude - base.latitude, 2) +
+            math.pow(p.longitude - base.longitude, 2),
+      );
+      if (d < thresholdDeg) {
+        visited[j] = true;
+        group.add(entries[j]);
+      }
+    }
+
+    if (group.length == 1) {
+      adjusted[group.first.key] = group.first.value;
+      continue;
+    }
+    final r = group.length > 6 ? radiusDeg * 1.5 : radiusDeg;
+    final cosLat = math
+        .cos(base.latitude * math.pi / 180)
+        .abs()
+        .clamp(0.3, 1.0);
+    for (var k = 0; k < group.length; k++) {
+      final angle = (2 * math.pi * k) / group.length;
+      final dLat = r * math.sin(angle);
+      final dLng = (r * math.cos(angle)) / cosLat;
+      final entry = group[k];
+      adjusted[entry.key] = LatLng(
+        entry.value.latitude + dLat,
+        entry.value.longitude + dLng,
+      );
+    }
+  }
+  return adjusted;
+}
+
 /// 화면 좌표 오프셋을 `radians`만큼 회전.
 /// 카메라 회전(rotationRad) 보정에 사용.
 Offset rotateOffset(Offset value, double radians) {

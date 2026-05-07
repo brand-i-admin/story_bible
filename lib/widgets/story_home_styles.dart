@@ -226,6 +226,8 @@ Widget mapControlButton({
   required VoidCallback onTap,
 }) {
   return Container(
+    width: 30,
+    height: 30,
     decoration: BoxDecoration(
       color: const Color(0xCC2A2118),
       borderRadius: BorderRadius.circular(AppRadii.xs),
@@ -234,7 +236,8 @@ Widget mapControlButton({
     child: IconButton(
       tooltip: tooltip,
       onPressed: onTap,
-      icon: Icon(icon, color: AppColors.fgOnDark, size: 20),
+      padding: EdgeInsets.zero,
+      icon: Icon(icon, color: AppColors.fgOnDark, size: 16),
     ),
   );
 }
@@ -258,22 +261,22 @@ Widget topUtilityButton({
   final resolvedBoxShadow =
       boxShadow ?? (selected ? AppShadows.goldGlow : null);
 
+  // 랜드마크 필터 칩과 시각적 균형을 맞추기 위해 padding/radius/font 동일하게.
   return Opacity(
     opacity: enabled ? 1 : 0.42,
     child: Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: resolvedBackgroundColor,
-            borderRadius: BorderRadius.circular(AppRadii.md),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: resolvedBorderColor,
-              width: selected ? 1.4 : 1,
+              width: selected ? 1.2 : 0.9,
             ),
             boxShadow: resolvedBoxShadow,
           ),
@@ -285,7 +288,7 @@ Widget topUtilityButton({
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: resolvedForegroundColor,
-              fontSize: AppFontSizes.chip,
+              fontSize: 12,
               fontWeight: FontWeight.w800,
               height: AppLineHeights.tight,
             ),
@@ -356,61 +359,53 @@ Widget storySceneRow(List<String> sceneAssets) {
   }
 
   const tileGap = 8.0;
-  return SizedBox(
-    width: double.infinity,
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        color: const Color(0xF4EFE3CC),
-      ),
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final tileWidth = (constraints.maxWidth - (tileGap * 3)) / 4;
-          final viewportHeight = MediaQuery.sizeOf(context).height;
-          final maxTileHeight = math.max(180.0, viewportHeight * 0.48);
-          final tileHeight = math.min(tileWidth * 1.62, maxTileHeight);
-          return Align(
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(displayedAssets.length, (index) {
-                final path = displayedAssets[index];
-                return Padding(
-                  padding: EdgeInsets.only(
-                    right: index == displayedAssets.length - 1 ? 0 : tileGap,
-                  ),
-                  child: SizedBox(
-                    width: tileWidth,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0x9C7C5C39),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(AppRadii.md),
-                        ),
-                        child: SizedBox(
-                          height: tileHeight,
-                          child: _hybridSceneImage(
-                            path: path,
-                            width: tileWidth,
-                            height: tileHeight,
-                          ),
-                        ),
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      color: const Color(0xF4EFE3CC),
+    ),
+    padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        // 한 화면에 약 2.3개 노출 → 부모 폭의 1/2.3 ≈ 0.435 가 한 타일 폭.
+        final tileWidth = (constraints.maxWidth - tileGap) / 2.3;
+        final viewportHeight = MediaQuery.sizeOf(context).height;
+        final maxTileHeight = math.max(220.0, viewportHeight * 0.42);
+        final tileHeight = math.min(tileWidth * 1.62, maxTileHeight);
+        return SizedBox(
+          height: tileHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
+            itemCount: displayedAssets.length,
+            separatorBuilder: (_, __) => const SizedBox(width: tileGap),
+            itemBuilder: (context, index) {
+              final path = displayedAssets[index];
+              return SizedBox(
+                width: tileWidth,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadii.md),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: const Color(0x9C7C5C39),
+                        width: 1.0,
                       ),
+                      borderRadius: BorderRadius.circular(AppRadii.md),
+                    ),
+                    child: _hybridSceneImage(
+                      path: path,
+                      width: tileWidth,
+                      height: tileHeight,
                     ),
                   ),
-                );
-              }),
-            ),
-          );
-        },
-      ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     ),
   );
 }

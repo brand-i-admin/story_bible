@@ -15,7 +15,6 @@ import '../models/story_event.dart';
 import '../theme/era_colors.dart';
 import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
-import 'map_deco_layer.dart';
 import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
 
@@ -136,7 +135,12 @@ class StoryMapPanel extends StatefulWidget {
     this.nameForCharacter,
     this.eraCodeForId,
     this.eventCountByLandmarkId,
+    this.regionPickerMode = false,
   });
+
+  /// true 일 때 step 2 (장소 선택) UI: 나라/region 핀 라벨 숨기고, 폴리곤 자체가
+  /// 선택 가능한 큰 단위로 노출 (폴리곤 중앙에 region 이름 + 사건 개수 배지).
+  final bool regionPickerMode;
 
   /// 현재 선택된 region/landmark id. 선택된 region 핀에 ripple 애니메이션 활성.
   final String? selectedLandmarkId;
@@ -229,8 +233,13 @@ class StoryMapPanel extends StatefulWidget {
   State<StoryMapPanel> createState() => _StoryMapPanelState();
 }
 
-class _StoryMapPanelState extends State<StoryMapPanel> {
+class _StoryMapPanelState extends State<StoryMapPanel>
+    with SingleTickerProviderStateMixin {
   final MapController _controller = MapController();
+  late final AnimationController _polygonGlowCtl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  )..repeat();
   Timer? _revealTimer;
   Timer? _cameraTimer;
   List<Polyline> _countryBorderPolylines = const [];
@@ -239,6 +248,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
   bool _mapReady = false;
+
+  /// 줌 변경 디버그 로깅용 — 0.05 이상 변하면 콘솔 로그.
+  double? _lastLoggedZoom;
 
   /// 시대 region 폴리곤 클릭 hit-test 용. flutter_map 8.x 의 hitNotifier API.
   /// Polygon 에 hitValue=Landmark 부여 → 사용자가 onTap 시 hitValue 로 어떤
@@ -305,6 +317,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     _revealTimer?.cancel();
     _cameraTimer?.cancel();
     _eventRevealTimer?.cancel();
+    _polygonGlowCtl.dispose();
     widget.controller?._unbind(this);
     super.dispose();
   }
@@ -391,15 +404,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   timer.cancel();
                   return;
                 }
-                if (_eventRevealCount >= total) {
+                final next = _eventRevealCount + 1;
+                setState(() => _eventRevealCount = next);
+                // 마지막 핀이 박히는 순간 = 즉시 시트 expand 트리거
+                // (이전엔 다음 tick 까지 ~300ms 대기해서 visual delay).
+                if (next >= total) {
                   timer.cancel();
-                  // 마지막 핀까지 노출 완료 — 부모에게 알려 panel auto-expand.
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) widget.onRevealComplete?.call();
                   });
-                  return;
                 }
-                setState(() => _eventRevealCount++);
               },
             );
           }
@@ -445,7 +459,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             ? coordinateEvents.first.latLng
             : const LatLng(31.8, 35.2));
 
-    final zoom = widget.initialZoom ?? 5.3;
+    final zoom = widget.initialZoom ?? 6.0;
     final polylines = _buildPolylines(widget.events);
 
     return Container(
@@ -471,8 +485,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                 options: MapOptions(
                   initialCenter: center,
                   initialZoom: zoom,
-                  minZoom: 2.4,
-                  maxZoom: 13,
+                  minZoom: 3.0,
+                  maxZoom: 9.0,
                   // 지도 빈 곳 또는 폴리곤 위 클릭 시 호출. 폴리곤 hit 가 있으면
                   // 그 region 을 선택. 마커 클릭은 자체 GestureDetector 가 먼저
                   // 처리하므로 onTap 은 빈 곳 + 폴리곤 위만 잡는다.
@@ -497,8 +511,21 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                       widget.onLandmarkTap?.call(pick);
                     }
                   },
+                  // 디버그 — 줌 변경 시 콘솔에 로깅 (0.05 이상 변할 때만).
+                  // min/max 줌 튜닝용. release 시 제거.
+                  onMapEvent: (event) {
+                    final z = event.camera.zoom;
+                    final last = _lastLoggedZoom;
+                    if (last == null || (z - last).abs() > 0.05) {
+                      _lastLoggedZoom = z;
+                      debugPrint('[Map] zoom: ${z.toStringAsFixed(2)}');
+                    }
+                  },
                   onMapReady: () {
                     _mapReady = true;
+                    debugPrint(
+                      '[Map] onMapReady — initialZoom: ${widget.initialZoom}',
+                    );
                     _startRevealAnimation();
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (!mounted) {
@@ -546,22 +573,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                         'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
                     subdomains: const ['a', 'b', 'c', 'd'],
                     userAgentPackageName: 'com.story.bible',
-                    tileBuilder: (context, tileWidget, _) {
-                      // v3.7 — desaturate 매트릭스 완전히 제거. 매트릭스 자체가
-                      // 채도를 깎아 (a) 화면을 뿌옇게 만들고 (b) water 의 blue
-                      // 를 회색으로 죽임. voyager 의 자연 컬러를 그대로 두고
-                      // 매우 가벼운 tan multiply (α 13%) 만 더해 살짝 sepia 톤.
-                      // water blue 가 vibrant 하게 살아남고 land 는 부드럽게
-                      // warm 해진다. 양피지 입자감은 ParchmentTextureLayer
-                      // (화면 오버레이) 가 담당.
-                      return ColorFiltered(
-                        colorFilter: const ColorFilter.mode(
-                          Color(0x22A88555), // 알파 13%, very light tan
-                          BlendMode.multiply,
-                        ),
-                        child: tileWidget,
-                      );
-                    },
+                    // sepia/tan multiply 오버레이 제거 — 모바일에서 얼룩처럼 보여
+                    // 자연스러운 voyager 톤 그대로 사용.
                   ),
                   PolylineLayer(polylines: _countryBorderPolylines),
                   // 시대 영역 폴리곤 — 그 시대의 region 들의 polygon 합집합을
@@ -569,44 +582,37 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   // 정보를 노출하고, MapOptions.onTap 에서 hit.hitValues 로 어느
                   // region 이 눌렸는지 식별 → onLandmarkTap 호출.
                   if (widget.eraRegionLandmarks.isNotEmpty)
-                    PolygonLayer<Landmark>(
-                      hitNotifier: _polygonHitNotifier,
-                      polygons: _buildEraRegionUnionPolygons(),
+                    AnimatedBuilder(
+                      animation: _polygonGlowCtl,
+                      builder: (_, __) => PolygonLayer<Landmark>(
+                        hitNotifier: _polygonHitNotifier,
+                        polygons: _buildEraRegionUnionPolygons(
+                          glowT: _polygonGlowCtl.value,
+                        ),
+                      ),
                     ),
-                  // 양피지 톤 데코 레이어 — 산·도시·나무·피라미드 등 분위기
-                  // 일러스트. 시대 필터로 그 시대 데코만 보임. PNG 가 아직 없는
-                  // kind 는 자연스럽게 미표시.
-                  MapDecoLayer(
-                    activeEraCodes: {
-                      for (final b in widget.activeEraBoundaries)
-                        if (widget.eraCodeForId?.call(b.eraId) != null)
-                          widget.eraCodeForId!.call(b.eraId)!,
-                      for (final r in widget.eraRegionLandmarks) ...r.eraCodes,
-                    },
-                  ),
-                  MarkerLayer(markers: _countryLabelMarkers),
-                  // 시대 미리보기 — 인물별 사건 path 를 색깔 실선으로.
-                  // 선택 인물 alpha 0.95 + 굵기 4.5, 미선택 alpha 0.40 + 2.5.
+                  if (!widget.regionPickerMode)
+                    MarkerLayer(markers: _countryLabelMarkers),
+                  // 시대 미리보기 — 선택된 인물의 사건 path 만 색깔 실선으로 표시
+                  // (인물 미선택 시 + region picker mode 에서는 path 도 숨김).
                   // step 3 (_orderedEventsActive) 진입 시에는 dashed path + 번호
                   // 핀이 그 자리를 대체하므로 실선 preview 를 숨겨 화면을 정리.
-                  if (widget.eraPreviewEvents.isNotEmpty &&
-                      !_orderedEventsActive)
-                    PolylineLayer(polylines: _buildEraPreviewPolylines()),
-                  if (widget.eraPreviewEvents.isNotEmpty &&
-                      !_orderedEventsActive)
-                    MarkerLayer(markers: _buildEraPreviewDots()),
+                  // 사건 dot 마커는 v3 에서 제거 — region 선택 후에만 사건 핀 노출.
                   if (widget.eraPreviewEvents.isNotEmpty &&
                       widget.selectedCharacterCodes.isNotEmpty &&
-                      !_orderedEventsActive)
+                      !_orderedEventsActive &&
+                      !widget.regionPickerMode)
+                    PolylineLayer(polylines: _buildEraPreviewPolylines()),
+                  if (widget.eraPreviewEvents.isNotEmpty &&
+                      widget.selectedCharacterCodes.isNotEmpty &&
+                      !_orderedEventsActive &&
+                      !widget.regionPickerMode)
                     MarkerLayer(markers: _buildEraPreviewArrowHeads()),
-                  // region(영역) 폴리곤 — 큰 묶음 region 의 polygon 을 시대 색
-                  // 으로 채워 어떤 영역이 어디까지 커버하는지 시각화. 사용자가
-                  // region 마커 대신 폴리곤을 직접 탭해도 region 선택과 동일하게
-                  // 다룰 수 있다 (마커가 폴리곤 위에 겹쳐 그려진다).
-                  if (widget.activeLandmarks.isNotEmpty)
-                    PolygonLayer(
-                      polygons: _buildRegionPolygons(widget.activeLandmarks),
-                    ),
+                  // region(영역) 폴리곤 — 시대 영역 폴리곤(_buildEraRegionUnion
+                  // Polygons, hitNotifier 보유)이 이미 위쪽에서 모든 era region
+                  // 을 그리므로 여기서는 별도 layer 를 추가하지 않는다. 과거에는
+                  // hitValue/hitNotifier 없는 두 번째 PolygonLayer 가 hit 을
+                  // 가로채 폴리곤 클릭이 동작하지 않았다.
                   // 시대별 랜드마크 — 클러스터링 없이 단순 표시. 시대 필터로
                   // 이미 충분히 적어 (15~25개), 클러스터로 묶이는 게 정보를
                   // 압축해 오히려 가린다.
@@ -617,7 +623,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                       ),
                     ),
                   PolylineLayer(polylines: polylines),
-                  MarkerLayer(markers: _buildRegionLabels()),
+                  if (!widget.regionPickerMode)
+                    MarkerLayer(markers: _buildRegionLabels()),
+                  // 폴리곤 중앙에 region 이름 + 사건 개수 라벨.
+                  // step 2 (regionPickerMode): 모든 era region 라벨 표시 (갈색).
+                  // step 3 (region 선택됨): 선택된 region 만 노란 캡슐 라벨로 표시.
+                  if (widget.eraRegionLandmarks.isNotEmpty &&
+                      (widget.regionPickerMode ||
+                          widget.selectedLandmarkId != null))
+                    MarkerLayer(markers: _buildPolygonCenterLabels()),
                   // 순서 점선 path + 번호 핀 — region 선택이든 character step3
                   // 든 revealEventsKey 가 set 되었으면 활성. widget.events 가
                   // 시간순으로 정렬된 사건들이라고 가정.
@@ -701,11 +715,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               );
             },
           ),
-          // 양피지 grain — BlendMode.multiply 로 paper grain 이 backdrop 에
-          // 비침. strength 0.55 로 parchment image 의 flat 영역은 ~white 가
-          // 되어 water 같은 균일색 영역은 거의 영향 없음. grain spot 만 land
-          // 에 visible.
-          const Positioned.fill(child: ParchmentMultiplyLayer(strength: 0.55)),
+          // 양피지 텍스처 overlay — 지도 위에 multiply 로 합성해 결을 살린다.
+          // tileScale 0.5 → 텍스처를 절반 크기로 반복(stretch 시 흐릿한 얼룩 방지).
+          // strength 0.35 → 약한 그레인. 너무 진하면 지도 색이 가려진다.
+          const Positioned.fill(
+            child: IgnorePointer(
+              child: ParchmentMultiplyLayer(strength: 0.32, tileScale: 0.5),
+            ),
+          ),
         ],
       ),
     );
@@ -776,14 +793,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       // 들리며 핀의 ripple 애니메이션도 가시 영역에 그려진다.
       final bottomGap = (widget.bottomObscuredFraction * _lastMapSize.height)
           .clamp(0.0, 600.0);
-      final bottomPadding = math.max(80.0, bottomGap + 60.0);
+      // 폴리곤이 화면을 가득 채우도록 padding 최소화. 단 시트/툴바 가림 영역만큼은
+      // 보존해서 잘리지 않게.
+      final bottomPadding = math.max(16.0, bottomGap + 8.0);
+      final topPadding = math.max(16.0, widget.topObscuredPixels + 8.0);
       _controller.fitCamera(
         CameraFit.bounds(
-          bounds: LatLngBounds(
-            LatLng(minLat - 0.3, minLng - 0.3),
-            LatLng(maxLat + 0.3, maxLng + 0.3),
-          ),
-          padding: EdgeInsets.fromLTRB(60, 80, 60, bottomPadding),
+          bounds: LatLngBounds(LatLng(minLat, minLng), LatLng(maxLat, maxLng)),
+          padding: EdgeInsets.fromLTRB(12, topPadding, 12, bottomPadding),
         ),
       );
     } catch (_) {
@@ -877,7 +894,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       final isSelected = selected.contains(code);
       if (isSelected) {
         // 선택 인물 — segment 별 alpha 그라디언트 (시작 0.6 → 끝 1.0)
-        // + 굵은 6.0px 실선. 시간 흐름이 진해지는 자연스러운 방향성.
+        // + 가는 3.0px 실선. 시간 흐름이 진해지는 자연스러운 방향성.
         for (var i = 0; i < points.length - 1; i++) {
           final t = (points.length <= 2) ? 1.0 : (i + 1) / (points.length - 1);
           final segAlpha = 0.6 + 0.4 * t;
@@ -885,7 +902,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             Polyline(
               points: [points[i], points[i + 1]],
               color: color.withValues(alpha: segAlpha),
-              strokeWidth: 6.0,
+              strokeWidth: 3.0,
             ),
           );
         }
@@ -904,11 +921,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return result;
   }
 
-  /// 시대 미리보기 dot 마커.
-  /// - **선택 인물의 시작점** = 36px 아바타 + 4px 인물색 테두리 (탭하면 사건 진입)
-  /// - **선택 인물의 중간 점** = 12px 인물색 dot (탭하면 사건 진입)
-  /// - **선택 인물의 끝점** = `_buildEraPreviewArrowHeads` 가 화살촉으로 처리 → dot 생략
-  /// - **미선택 인물 사건 위치** = 5px alpha 0.35 dot (식별 정도만)
+  /// (v3 — 사용 안 함) 시대 미리보기 dot 마커. 사용자가 dot 이 화면을 어수선하게
+  /// 만든다고 판단해 비활성화. 인물 path polyline + 화살촉만 노출하며, 사건 핀은
+  /// region 선택 후 `_buildNumberedEventMarkers` 가 그린다. 코드는 향후 재사용
+  /// 가능성을 위해 보존하되 호출 지점만 제거.
+  // ignore: unused_element
   List<Marker> _buildEraPreviewDots() {
     final events = widget.eraPreviewEvents;
     if (events.isEmpty) return const [];
@@ -1172,7 +1189,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       .where((lm) => lm.isRegion && lm.polygon.isEmpty)
       .toList(growable: false);
 
-  List<Polygon<Landmark>> _buildEraRegionUnionPolygons() {
+  List<Polygon<Landmark>> _buildEraRegionUnionPolygons({double glowT = 0.0}) {
     // 현재 표시 중인 시대(들)의 era_code 집합. activeEraBoundaries 가 비어 있으면
     // region 의 첫 era_code 로 폴백.
     final visibleEraCodes = <String>{};
@@ -1181,36 +1198,36 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       if (code != null && code.isNotEmpty) visibleEraCodes.add(code);
     }
 
+    // 선택된 region 은 빛나는 노란색 fill + 펄스 border 로 표시.
+    // glowT 0~1 한 사이클 → sin 으로 0~1 펄스. strokeWidth 2.5~5.5, alpha 0.6~1.0.
+    final pulse = (math.sin(glowT * 2 * math.pi) + 1.0) / 2.0; // 0..1
+    final selectedStroke = 2.5 + pulse * 3.0;
+    final selectedBorderAlpha = 0.65 + pulse * 0.35;
+    const selectedFillColor = Color(0xFFFFCB47); // 빛나는 노랑
+
     final result = <Polygon<Landmark>>[];
     for (final lm in widget.eraRegionLandmarks) {
       if (!lm.isRegion || lm.polygon.isEmpty) continue;
       final eventCount = widget.eventCountByLandmarkId?[lm.id] ?? 0;
-      final disabled = eventCount == 0;
-      // 사건 0 region 은 회색·옅게 + hitValue=null 로 클릭 비활성.
-      final fillColor = disabled
-          ? const Color(0xFF9E9285).withValues(alpha: 0.10)
-          : EraColors.forCode(
-              lm.eraCodes.firstWhere(
-                visibleEraCodes.contains,
-                orElse: () => lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '',
-              ),
-            ).withValues(alpha: 0.22);
-      final borderColor = disabled
-          ? const Color(0xFFB8B0A4).withValues(alpha: 0.55)
-          : EraColors.forCode(
-              lm.eraCodes.firstWhere(
-                visibleEraCodes.contains,
-                orElse: () => lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '',
-              ),
-            ).withValues(alpha: 0.95);
+      // 사건 0 region 은 폴리곤 자체를 그리지 않는다. 새 이야기 제안이 승인되어
+      // eventCount > 0 이 되면 자동으로 폴리곤이 등장한다.
+      if (eventCount == 0) continue;
+      final isSelected = lm.id == widget.selectedLandmarkId;
+      final eraCode = lm.eraCodes.firstWhere(
+        visibleEraCodes.contains,
+        orElse: () => lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '',
+      );
+      final color = EraColors.forCode(eraCode);
       result.add(
         Polygon<Landmark>(
           points: lm.polygon,
-          color: fillColor,
-          borderColor: borderColor,
-          borderStrokeWidth: disabled ? 1.2 : 2.0,
-          // disabled region 은 hitValue 를 null 로 둘 수 없으니 onTap 단계에서
-          // 사건 0 인 region 무시.
+          color: isSelected
+              ? selectedFillColor.withValues(alpha: 0.45 + pulse * 0.20)
+              : color.withValues(alpha: 0.22),
+          borderColor: isSelected
+              ? const Color(0xFFE8A33D).withValues(alpha: selectedBorderAlpha)
+              : color.withValues(alpha: 0.95),
+          borderStrokeWidth: isSelected ? selectedStroke : 2.0,
           hitValue: lm,
         ),
       );
@@ -1218,39 +1235,21 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return result;
   }
 
-  /// 시대별 랜드마크 마커 빌드.
-  /// 이모지 + 작은 라벨. 일반 사건 핀과 시각적으로 구분되게 둥근 캡슐 디자인.
-  /// region(영역) 폴리곤 — 사용자가 어떤 영역이 어디까지 커버하는지 직관적으로
-  /// 보게 하기 위해 polygon 이 비어있지 않은 region kind landmark 만 렌더.
-  /// 색은 region 의 era_codes 첫 시대 → [EraColors] 매핑.
-  List<Polygon> _buildRegionPolygons(List<Landmark> landmarks) {
-    final polygons = <Polygon>[];
-    for (final lm in landmarks) {
-      if (!lm.isRegion) continue;
-      if (lm.polygon.isEmpty) continue;
-      final eraCode = lm.eraCodes.isNotEmpty ? lm.eraCodes.first : null;
-      final color = EraColors.forCode(eraCode);
-      polygons.add(
-        Polygon(
-          points: lm.polygon,
-          color: color.withValues(alpha: 0.16),
-          borderColor: color.withValues(alpha: 0.85),
-          borderStrokeWidth: 2.0,
-        ),
-      );
-    }
-    return polygons;
-  }
-
-  /// 시간순 사건 좌표 — 같은 lat/lng 사건은 [buildAdjustedPoints] 로 살짝
-  /// 분산해 핀/path/화살표가 겹치지 않게 한다.
+  /// 시간순 사건 좌표 — 가까운 좌표 사건들을 거리 기반(spreadColocatedPoints) 으로
+  /// 원형 분산해 핀/path/화살표가 겹치지 않게 한다. buildAdjustedPoints 의
+  /// 2자리-반올림 키 방식은 31.52 vs 31.53 같은 경계 케이스를 못 묶음.
   List<({StoryEvent event, LatLng point})> _adjustedOrderedEventPoints(
     List<StoryEvent> events,
   ) {
     final ordered = events.where((e) => e.hasCoordinate).toList()
       ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
     final visible = ordered.take(_eventRevealCount).toList(growable: false);
-    final adjusted = map_math.buildAdjustedPoints(visible);
+    final input = <String, LatLng>{for (final e in visible) e.id: e.latLng};
+    final adjusted = map_math.spreadColocatedPoints(
+      input,
+      radiusDeg: 0.045,
+      thresholdDeg: 0.04,
+    );
     return [
       for (final e in visible) (event: e, point: adjusted[e.id] ?? e.latLng),
     ];
@@ -1263,7 +1262,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return [
       Polyline(
         points: pts.map((e) => e.point).toList(growable: false),
-        color: const Color(0xFF3D6BB8),
+        color: const Color(0xFF6B4A2A),
         strokeWidth: 2.5,
         pattern: StrokePattern.dashed(segments: const [8, 6]),
       ),
@@ -1291,16 +1290,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       result.add(
         Marker(
           point: mid,
-          width: 44,
-          height: 44,
+          width: 24,
+          height: 24,
           alignment: Alignment.center,
           child: IgnorePointer(
             child: Transform.rotate(
               angle: angle,
               child: Icon(
                 Icons.play_arrow,
-                size: 36,
-                color: const Color(0xFF3D6BB8),
+                size: 18,
+                color: const Color(0xFF6B4A2A),
                 shadows: [
                   Shadow(
                     color: AppColors.parchmentCream.withValues(alpha: 0.85),
@@ -1346,24 +1345,23 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   ) {
     return Marker(
       point: point,
-      width: 80,
-      height: 80,
+      width: 22,
+      height: 22,
       alignment: Alignment.center,
       child: Builder(
         builder: (context) {
           final zoom = MapCamera.of(context).zoom;
-          final scale = (zoom / 8.0).clamp(0.5, 1.0).toDouble();
+          // 줌아웃 시만 살짝 작아짐. 확대해도 더 안 커짐 → 시트 카드 배지보다
+          // 작게 유지해 폴리곤·라벨이 시야 우위.
+          final raw = 0.55 + (zoom - 3.0) * 0.075;
+          final scale = raw.clamp(0.55, 1.0).toDouble();
           return Transform.scale(
             scale: scale,
             alignment: Alignment.center,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => widget.onSelectEvent(event.id),
-              child: _NumberedEventPin(
-                number: order,
-                placeName: (event.placeName ?? '').trim(),
-                isSelected: selected,
-              ),
+              child: _NumberedEventPin(number: order, isSelected: selected),
             ),
           );
         },
@@ -1377,16 +1375,28 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (!_orderedEventsActive || widget.events.isEmpty) {
       return widget.activeLandmarks;
     }
-    final hidden = <String>{
-      for (final e in widget.events) e.landmarkId,
-    };
+    final hidden = <String>{for (final e in widget.events) e.landmarkId};
     return widget.activeLandmarks
         .where((lm) => !hidden.contains(lm.id))
         .toList(growable: false);
   }
 
   List<Marker> _buildLandmarkMarkers(List<Landmark> landmarks) {
-    return landmarks
+    // v3 — region 핀(검정 capsule + 노랑 selected ripple) 은 모든 단계에서 숨긴다.
+    // step 2: 폴리곤 중앙 라벨이 region 을 표현, step 3: 선택 region 은 폴리곤
+    // 자체가 노랑 glow 로 강조된다. non-region 랜드마크만 렌더.
+    final filtered = landmarks
+        .where((l) => !l.isRegion)
+        .toList(growable: false);
+    // 같은 좌표(2자리 lat/lng) 의 non-region 랜드마크들은 원형 분산해 PNG 가
+    // 서로 가리지 않도록 한다. region 은 폴리곤 중심에 단일 핀이라 분산 불필요.
+    final nonRegionPoints = <String, LatLng>{
+      for (final lm in filtered)
+        if (!lm.isRegion) lm.id: lm.latLng,
+    };
+    final adjusted = map_math.spreadColocatedPoints(nonRegionPoints);
+
+    return filtered
         .map((obj) {
           final isMeasureSelected =
               _measureMode &&
@@ -1397,16 +1407,23 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           final isRegion = obj.isRegion;
           final isSelectedRegion =
               isRegion && obj.id == widget.selectedLandmarkId;
+          final point = isRegion
+              ? obj.latLng
+              : (adjusted[obj.id] ?? obj.latLng);
+          // Marker 박스 크기는 시각적으로 필요한 만큼 (이모지 + 라벨 column).
+          // 줄여 두면 _PointPin 의 Column 이 overflow 한다. regionPickerMode 의
+          // 폴리곤 hit-through 는 GestureDetector 의 HitTestBehavior 로 처리.
           return Marker(
-            point: obj.latLng,
-            width: isRegion ? 120 : 80,
-            height: isRegion ? 110 : 60,
+            point: point,
+            width: isRegion ? 88 : 64,
+            height: isRegion ? 78 : 50,
             alignment: Alignment.center,
             child: _ZoomScaledLandmark(
               landmark: obj,
               isMeasureSelected: isMeasureSelected,
               isSelected: isSelectedRegion,
               eventCount: widget.eventCountByLandmarkId?[obj.id] ?? 0,
+              compactHit: widget.regionPickerMode,
               onTap: () => _handleLandmarkTap(obj),
             ),
           );
@@ -1636,6 +1653,108 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   //   buildAdjustedPoints, easeInOut, mercatorY, normalizedLongitudeDelta,
   //   rotateOffset, eventListSignature
 
+  /// step 2 — 폴리곤 중앙에 region 이름 + 사건 개수 배지. 사용자가 폴리곤
+  /// 자체를 큰 단위로 선택하도록 시각적으로 안내. 폴리곤 클릭은 PolygonLayer 의
+  /// hitNotifier 가 처리.
+  List<Marker> _buildPolygonCenterLabels() {
+    final markers = <Marker>[];
+    final selectedId = widget.selectedLandmarkId;
+    for (final lm in widget.eraRegionLandmarks) {
+      if (!lm.isRegion || lm.polygon.isEmpty) continue;
+      // step 3 (region 선택됨): 선택된 region 라벨만 표시 (다른 region 라벨은
+      // 사건 핀과 충돌). step 2 (regionPickerMode): 모든 region 라벨 표시.
+      if (selectedId != null && lm.id != selectedId) continue;
+      // 사건이 0개인 region 은 폴리곤이 안 그려지므로 라벨도 생략.
+      final cnt = widget.eventCountByLandmarkId?[lm.id] ?? 0;
+      if (cnt == 0) continue;
+      // bbox 중심을 라벨 위치로 사용 (centroid 보다 직관적이고 빠름).
+      double minLat = lm.polygon.first.latitude;
+      double maxLat = minLat;
+      double minLng = lm.polygon.first.longitude;
+      double maxLng = minLng;
+      for (final p in lm.polygon) {
+        if (p.latitude < minLat) minLat = p.latitude;
+        if (p.latitude > maxLat) maxLat = p.latitude;
+        if (p.longitude < minLng) minLng = p.longitude;
+        if (p.longitude > maxLng) maxLng = p.longitude;
+      }
+      final isSelected = lm.id == widget.selectedLandmarkId;
+      // 위치: 비선택 region 은 폴리곤 중앙, 선택 region 은 폴리곤 하단(아래쪽 가장자리)
+      // — 가운데에 두면 사건 핀과 겹쳐 답답해 보임.
+      final point = isSelected
+          ? LatLng(minLat, (minLng + maxLng) / 2)
+          : LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
+      final alignment = isSelected ? Alignment.bottomCenter : Alignment.center;
+      final bgColor = isSelected
+          ? const Color(0xF2FFE7A6) // 옅은 노랑 (95% opacity)
+          : const Color(0xF2FBF1DC); // 양피지 크림
+      final borderColor = isSelected
+          ? const Color(0xFFB87A2E)
+          : const Color(0xFFB89A66);
+      const nameColor = Color(0xFF3D2A14);
+      const countColor = Color(0xFF6B4A2A);
+      markers.add(
+        Marker(
+          point: point,
+          width: 110,
+          height: 28,
+          alignment: alignment,
+          child: IgnorePointer(
+            // Center 로 감싸 Container 가 marker box(110×22) 에 stretch 되지 않고
+            // 내부 Row 의 intrinsic width 로 줄어들도록 한다.
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(7),
+                  border: Border.all(color: borderColor, width: 0.8),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x1F000000),
+                      blurRadius: 2.5,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        lm.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: nameColor,
+                          height: 1.0,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      '+$cnt',
+                      style: const TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: countColor,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return markers;
+  }
+
   List<Marker> _buildRegionLabels() {
     final labels = <(String, LatLng)>[
       ('가나안', const LatLng(31.7, 35.2)),
@@ -1815,23 +1934,28 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   Marker _countryLabelMarker(String nameKo, LatLng point) {
     return Marker(
       point: point,
-      width: 86,
-      height: 24,
+      width: 64,
+      height: 16,
       child: IgnorePointer(
         child: Container(
           alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
           decoration: BoxDecoration(
-            color: const Color(0xBFEDE2CC),
-            borderRadius: BorderRadius.circular(9),
-            border: Border.all(color: const Color(0xAA6B5438), width: 0.8),
+            // 70% → 35% 알파로 더 투명하게. 다른 정보를 가리지 않도록.
+            color: const Color(0x59EDE2CC),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: const Color(0x66745A3C), width: 0.6),
           ),
           child: Text(
             nameKo,
             style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF3A2D1D),
-              fontWeight: FontWeight.w700,
+              fontSize: 7.5,
+              color: Color(0x99332518),
+              fontWeight: FontWeight.w600,
+              height: 1.1,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -1865,7 +1989,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         .toList();
     final bounds = LatLngBounds.fromPoints(points);
     // Slightly wider framing: zoom out one step from current auto-focus.
-    final animationZoom = (_computeRevealZoom(points) - 1.0).clamp(2.4, 13.0);
+    final animationZoom = (_computeRevealZoom(points) - 1.0).clamp(3.0, 9.0);
     _focusToPoint(
       bounds.center,
       animationZoom,
@@ -2026,7 +2150,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
     final selectedPoint = selectedEvent.latLng;
     final targetZoom = (widget.selectedFocusZoom ?? widget.initialZoom ?? 7.0)
-        .clamp(2.4, 13.0);
+        .clamp(3.0, 9.0);
     _focusToPoint(
       selectedPoint,
       targetZoom,
@@ -2048,8 +2172,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       return;
     }
     if (visibleEvents.length == 1) {
-      final singleZoom =
-          ((widget.initialZoom ?? 5.3) + 0.35 + zoomBoost).clamp(2.4, 13.0);
+      final singleZoom = ((widget.initialZoom ?? 6.0) + 0.35 + zoomBoost).clamp(
+        3.0,
+        9.0,
+      );
       _focusToPoint(visibleEvents.first.latLng, singleZoom, duration: duration);
       return;
     }
@@ -2070,13 +2196,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     // 자동 fit 줌 → tight cluster cap → 그 위에 사용자 요청 zoomBoost.
     // boost 를 cap 보다 먼저 더하면 cap 이 무효화되므로 단계 분리.
     var fittedZoom = (_computeRevealZoom(fittedPoints) + zoomAdjust).clamp(
-      2.4,
-      13.0,
+      3.0,
+      9.0,
     );
     if (isTightlyClustered) {
       fittedZoom = math.min(fittedZoom, 7.15);
     }
-    fittedZoom = (fittedZoom + zoomBoost).clamp(2.4, 13.0);
+    fittedZoom = (fittedZoom + zoomBoost).clamp(3.0, 9.0);
     _focusToPoint(bounds.center, fittedZoom, duration: duration);
   }
 
@@ -2153,7 +2279,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (camera == null) {
       return;
     }
-    final targetZoom = (camera.zoom + 0.7).clamp(2.4, 13.0);
+    final targetZoom = (camera.zoom + 0.7).clamp(3.0, 9.0);
     _focusToPoint(
       camera.center,
       targetZoom,
@@ -2169,7 +2295,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (camera == null) {
       return;
     }
-    final targetZoom = (camera.zoom - 0.7).clamp(2.4, 13.0);
+    final targetZoom = (camera.zoom - 0.7).clamp(3.0, 9.0);
     _focusToPoint(
       camera.center,
       targetZoom,
@@ -2231,14 +2357,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   double _computeRevealZoom(List<LatLng> points) {
-    const minZoom = 2.4;
-    const maxZoom = 13.0;
-    final baseZoom = widget.initialZoom ?? 5.3;
+    const minZoom = 3.0;
+    const maxZoom = 9.0;
+    final baseZoom = widget.initialZoom ?? 6.0;
     if (points.isEmpty) {
       return baseZoom.clamp(minZoom, maxZoom);
     }
     if (points.length == 1) {
-      return math.max(baseZoom, 8.8).clamp(minZoom, maxZoom);
+      return math.max(baseZoom, 9.0).clamp(minZoom, maxZoom);
     }
 
     final bounds = LatLngBounds.fromPoints(points);
@@ -2318,6 +2444,7 @@ class _ZoomScaledLandmark extends StatelessWidget {
     required this.isSelected,
     required this.eventCount,
     required this.onTap,
+    this.compactHit = false,
   });
 
   final Landmark landmark;
@@ -2326,9 +2453,15 @@ class _ZoomScaledLandmark extends StatelessWidget {
   final int eventCount;
   final VoidCallback onTap;
 
-  static const double _baseZoom = 8.0;
-  static const double _minScale = 0.4;
-  static const double _maxScale = 1.0;
+  /// true 면 GestureDetector 의 hit-test 영역을 child 가 그리는 부분으로 한정
+  /// (HitTestBehavior.deferToChild). regionPickerMode 에서 폴리곤 hit-through 를
+  /// 보장하기 위해 사용.
+  final bool compactHit;
+
+  // 줌 3 (전 지역 보기) 에서는 핀이 거의 안 보이고, 줌 8+ 에서 풀 사이즈.
+  // 사용자: "확대했을때만 잘 보이면 되기 때문" — 줌아웃 시 더 적극적으로 축소.
+  static const double _minScale = 0.18;
+  static const double _maxScale = 1.3;
 
   @override
   Widget build(BuildContext context) {
@@ -2337,9 +2470,10 @@ class _ZoomScaledLandmark extends StatelessWidget {
     // eventCount > 0 이 되면 자동으로 활성 상태로 전환.
     final disabled = landmark.isRegion && eventCount == 0;
     final disabledScale = disabled ? 0.55 : 1.0;
-    final scale =
-        (zoom / _baseZoom).clamp(_minScale, _maxScale).toDouble() *
-        disabledScale;
+    // zoom 3 → 0.18 (cap), zoom 5 → 0.50, zoom 7 → 0.96, zoom 8+ → 1.3 (cap).
+    // 줌아웃 시 가독 부담을 줄여 폴리곤·라벨에 시야 집중되게 한다.
+    final raw = 0.18 + (zoom - 3.0) * 0.225;
+    final scale = raw.clamp(_minScale, _maxScale).toDouble() * disabledScale;
     final inner = landmark.isRegion
         ? _RegionPin(
             name: landmark.name,
@@ -2352,7 +2486,9 @@ class _ZoomScaledLandmark extends StatelessWidget {
       scale: scale,
       alignment: Alignment.center,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+        behavior: compactHit
+            ? HitTestBehavior.deferToChild
+            : HitTestBehavior.opaque,
         onTap: disabled ? null : onTap,
         child: ColorFiltered(
           colorFilter: isMeasureSelected
@@ -2372,83 +2508,48 @@ class _MarkerWithSelection {
   final Marker marker;
 }
 
-/// 사건 핀 — 핀 모양 + 안에 큰 순서 번호 (1, 2, 3...). 핀 아래 작은 장소명.
-/// 선택 시 더 큰 사이즈 + 진한 색.
+/// 사건 핀 — 동그라미 + 안에 큰 순서 번호. 핀 모양/장소 라벨 모두 제거.
+/// 선택 시 더 큰 사이즈 + 노란 색 (현재 이야기). 미선택은 갈색 동그라미.
 class _NumberedEventPin extends StatelessWidget {
-  const _NumberedEventPin({
-    required this.number,
-    required this.placeName,
-    required this.isSelected,
-  });
+  const _NumberedEventPin({required this.number, required this.isSelected});
 
   final int number;
-  final String placeName;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    final pinColor = isSelected
-        ? const Color(0xFF3D6BB8)
-        : const Color(0xFF6B4A2A);
-    final pinSize = isSelected ? 38.0 : 32.0;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: pinSize,
-          height: pinSize * 1.3,
-          child: Stack(
-            children: [
-              // 핀 모양 — 흰 점 없이 그림 (그 자리에 숫자가 들어가야).
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: _LocationPinPainter(
-                    color: pinColor,
-                    drawCenterDot: false,
-                  ),
-                ),
-              ),
-              // 핀 머리 가운데에 큰 흰 숫자.
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 0,
-                height: pinSize * 0.9, // 핀 머리 영역
-                child: Center(
-                  child: Text(
-                    '$number',
-                    style: TextStyle(
-                      fontSize: isSelected ? 17 : 14,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                      height: 1.0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+    final fillColor = isSelected
+        ? const Color(0xFFE8A33D) // 노랑 (현재 이야기)
+        : const Color(0xFF6B4A2A); // 갈색 (일반 사건)
+    final size = isSelected ? 16.0 : 14.0;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: fillColor,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isSelected ? const Color(0xFFFFE9B0) : Colors.white,
+          width: isSelected ? 1.4 : 1.0,
         ),
-        if (placeName.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-            decoration: BoxDecoration(
-              color: const Color(0xFF3D2A14),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              placeName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFFF5E9C8),
-                height: 1.05,
-              ),
-            ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 2,
+            offset: Offset(0, 1),
           ),
-      ],
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '$number',
+        style: TextStyle(
+          fontSize: isSelected ? 9 : 8,
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+          height: 1.0,
+        ),
+      ),
     );
   }
 }
@@ -2476,7 +2577,7 @@ class _RegionPin extends StatelessWidget {
   static const Color _pinColorDisabled = Color(0xFF9E9285); // 회색
   static const Color _accentColor = Color(0xFF8C6743);
   static const Color _accentColorDisabled = Color(0xFFB8B0A4);
-  static const Color _rippleColor = Color(0xFFE8A33D);
+  static const Color _rippleColor = Color(0xFF38B860); // 초록 — 더 두껍고 눈에 띔
 
   @override
   Widget build(BuildContext context) {
@@ -2501,31 +2602,32 @@ class _RegionPin extends StatelessWidget {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 핀 머리(둥근 원 + 흰 점) + 핀촉 — 선택 시 금색.
+            // 핀 머리(둥근 원 + 흰 점) + 핀촉 — 선택 시 금색. 장소 핀은 point pin
+            // 보다 살짝 크게 (region 이 더 중요한 진입점이라 시각적 위계 부여).
             CustomPaint(
-              size: const Size(38, 50),
+              size: const Size(28, 38),
               painter: _LocationPinPainter(color: pinColor),
             ),
-            const SizedBox(height: 3),
+            const SizedBox(height: 2),
             // 라벨 — 핀 색깔 캡슐 + 사건 개수 배지. maxWidth 로 overflow 방지.
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 130),
+              constraints: const BoxConstraints(maxWidth: 110),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
+                  horizontal: 7,
+                  vertical: 2.5,
                 ),
                 decoration: BoxDecoration(
                   color: pinColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: accent, width: 1.2),
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: accent, width: 1),
                   boxShadow: disabled
                       ? const []
                       : const [
                           BoxShadow(
                             color: Color(0x44000000),
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
+                            blurRadius: 3,
+                            offset: Offset(0, 1.5),
                           ),
                         ],
                 ),
@@ -2538,7 +2640,7 @@ class _RegionPin extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 8.5,
                           fontWeight: FontWeight.w800,
                           color: labelTextColor,
                           height: 1.1,
@@ -2564,7 +2666,7 @@ class _RegionPin extends StatelessWidget {
                             color: isSelected
                                 ? const Color(0xFFE8A33D)
                                 : const Color(0xFF3D2A14),
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
                           ),
@@ -2582,53 +2684,56 @@ class _RegionPin extends StatelessWidget {
   }
 }
 
-/// 작은 non-region 마커 — 원형 배경 없이 이모지 + 그 아래 plain text 라벨.
-/// 흰 stroke shadow 로 가독성 보강 (지도 위 어떤 색에서도 잘 보이게).
+/// 작은 non-region 마커 — 핀 모양 없이 이모지만 + 아래 plain text 라벨.
+/// 흰 stroke shadow 로 가독성 보강.
 class _PointPin extends StatelessWidget {
   const _PointPin({required this.emoji, required this.name});
   final String emoji;
   final String name;
-
-  static const List<Shadow> _textOutline = [
-    Shadow(color: Color(0xFFFFFBEF), blurRadius: 3),
-    Shadow(color: Color(0xFFFFFBEF), blurRadius: 3),
-    Shadow(color: Color(0xFFFFFBEF), blurRadius: 2),
-  ];
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 이모지만 — 원형 배경 없음.
-        Text(
-          emoji,
-          style: const TextStyle(
-            fontSize: 22,
-            height: 1.0,
-            shadows: [
-              Shadow(
-                color: Color(0x44000000),
-                blurRadius: 2,
-                offset: Offset(0, 1),
-              ),
-            ],
+        // 이모지만 — 원형/핀 배경 없음. 폴리곤·라벨이 주인공이라 살짝 투명.
+        Opacity(
+          opacity: 0.7,
+          child: Text(
+            emoji,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.0,
+              shadows: [
+                Shadow(
+                  color: Color(0x33000000),
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 1),
-        // plain text 라벨 (rounded rectangle 없음)
+        // plain text 라벨 — 살짝 짙은 갈색으로 가독성 보강.
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 90),
-          child: Text(
-            name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF3D2A14),
-              height: 1.1,
-              shadows: _textOutline,
+          constraints: const BoxConstraints(maxWidth: 64),
+          child: Opacity(
+            opacity: 0.85,
+            child: Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 7,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF8C7355), // 살짝 짙은 갈색 (이전 톤의 중간)
+                height: 1.1,
+                shadows: [
+                  Shadow(color: Color(0xCCFBF1DC), blurRadius: 2),
+                  Shadow(color: Color(0xCCFBF1DC), blurRadius: 2),
+                ],
+              ),
             ),
           ),
         ),
@@ -2638,12 +2743,9 @@ class _PointPin extends StatelessWidget {
 }
 
 /// region 핀 머리(둥근 원 + 흰 점) + 핀촉(아래로 뾰족) Custom 페인터.
-/// [drawCenterDot] 가 true 면 머리 가운데 작은 흰 점을 그린다 (region 핀).
-/// false 면 텍스트(숫자) 가 위에 그려질 자리를 비워둔다 (numbered 사건 핀).
 class _LocationPinPainter extends CustomPainter {
-  _LocationPinPainter({required this.color, this.drawCenterDot = true});
+  _LocationPinPainter({required this.color});
   final Color color;
-  final bool drawCenterDot;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -2679,17 +2781,13 @@ class _LocationPinPainter extends CustomPainter {
     // 머리 원
     canvas.drawCircle(Offset(headCx, headCy), headR, pinPaint);
 
-    // 머리 안 흰 점 — region 핀 등 식별용. drawCenterDot=false 면 그 자리에
-    // 텍스트(숫자) 가 그려질 거라 비워둔다.
-    if (drawCenterDot) {
-      final whitePaint = Paint()..color = Colors.white;
-      canvas.drawCircle(Offset(headCx, headCy), headR * 0.32, whitePaint);
-    }
+    // 머리 안 흰 점 — region 핀 식별용.
+    final whitePaint = Paint()..color = Colors.white;
+    canvas.drawCircle(Offset(headCx, headCy), headR * 0.32, whitePaint);
   }
 
   @override
-  bool shouldRepaint(covariant _LocationPinPainter old) =>
-      old.color != color || old.drawCenterDot != drawCenterDot;
+  bool shouldRepaint(covariant _LocationPinPainter old) => old.color != color;
 }
 
 /// 선택된 region 핀 아래 ripple 애니메이션 — 동심원 4겹 fade.
@@ -2747,11 +2845,11 @@ class _RipplePainter extends CustomPainter {
     for (var i = 0; i < 4; i++) {
       final phase = (t + i * 0.25) % 1.0;
       final r = phase * maxR;
-      final alpha = ((1.0 - phase) * 0.6).clamp(0.0, 1.0);
+      final alpha = ((1.0 - phase) * 0.85).clamp(0.0, 1.0);
       final paint = Paint()
         ..color = color.withValues(alpha: alpha)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.6;
+        ..strokeWidth = 3.2;
       canvas.drawCircle(Offset(cx, cy), r, paint);
     }
   }

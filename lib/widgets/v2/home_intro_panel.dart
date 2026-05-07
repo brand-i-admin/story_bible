@@ -85,50 +85,28 @@ class HomeIntroPanel extends StatelessWidget {
             opacity: canPickMode ? 1.0 : 0.45,
             child: IgnorePointer(
               ignoring: !canPickMode,
-              child: LayoutBuilder(
-                builder: (_, c) {
-                  final wide = c.maxWidth >= 720;
-                  final left = Expanded(
+              child: Row(
+                children: [
+                  Expanded(
                     child: _ModeCard(
                       icon: Icons.location_on,
                       title: '장소에서 시작하기',
-                      subtitle: '한 장소에 쌓인 여러 시대의 이야기를\n시간순으로 봅니다.',
-                      sample: '예: 베들레헴, 요단강, 예루살렘',
+                      subtitle: '한 장소의 이야기를\n시간순으로 봅니다.',
                       accent: theme.colorScheme.primary,
                       onTap: () => onPickMode(SelectionMode.region),
                     ),
-                  );
-                  final orWidget = Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    child: Text(
-                      '또는',
-                      style: AppTextStyles.counter.copyWith(color: AppColors.ink450),
-                    ),
-                  );
-                  final right = Expanded(
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
                     child: _ModeCard(
                       icon: Icons.people,
                       title: '인물과 걷기',
-                      subtitle: '선택한 인물들의 사건을 시간의\n흐름에 따라 비교합니다.',
-                      sample: '예: 예수님, 세례 요한, 베드로, 마리아',
+                      subtitle: '선택한 인물들의\n사건을 비교합니다.',
                       accent: theme.colorScheme.tertiary,
                       onTap: () => onPickMode(SelectionMode.character),
                     ),
-                  );
-                  if (wide) {
-                    return Row(children: [left, orWidget, right]);
-                  }
-                  return Column(
-                    children: [
-                      Row(children: [left]),
-                      const SizedBox(height: 8),
-                      Row(children: [right]),
-                    ],
-                  );
-                },
+                  ),
+                ],
               ),
             ),
           ),
@@ -216,17 +194,20 @@ class _EraRow extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final e in eras)
-                _EraChip(
-                  era: e,
-                  selected: selectedEraId == e.id,
-                  onTap: () => onSelectEra(e.id),
-                ),
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                for (var i = 0; i < eras.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  _EraChip(
+                    era: eras[i],
+                    selected: selectedEraId == eras[i].id,
+                    onTap: () => onSelectEra(eras[i].id),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ],
@@ -260,8 +241,8 @@ class _EraChip extends StatelessWidget {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.x6,
-            vertical: AppSpacing.x4,
+            horizontal: AppSpacing.x3,
+            vertical: AppSpacing.x2,
           ),
           decoration: softButtonDecoration(selected: selected),
           child: Row(
@@ -270,32 +251,33 @@ class _EraChip extends StatelessWidget {
               if (!selected) ...[
                 // 시대 색 점 — 지도 폴리곤 색과 같은 톤이라는 시각적 단서.
                 Container(
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: eraColor,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 5),
               ],
               Icon(
                 iconData,
-                size: 18,
+                size: 14,
                 color: selected ? AppColors.parchmentCream : eraColor,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 4),
               Text(
                 era.name,
                 style: AppTextStyles.chipLabel.copyWith(
+                  fontSize: 11.5,
                   color: selected ? AppColors.parchmentCream : AppColors.ink800,
                 ),
               ),
               if (selected) ...[
-                const SizedBox(width: 6),
+                const SizedBox(width: 4),
                 const Icon(
                   Icons.check_circle,
-                  size: 16,
+                  size: 13,
                   color: AppColors.parchmentCream,
                 ),
               ],
@@ -312,14 +294,12 @@ class _ModeCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.sample,
     required this.accent,
     required this.onTap,
   });
   final IconData icon;
   final String title;
   final String subtitle;
-  final String sample;
   final Color accent;
   final VoidCallback onTap;
 
@@ -329,61 +309,54 @@ class _ModeCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
         highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.x6),
+          padding: const EdgeInsets.all(8),
           decoration: softButtonDecoration(selected: false),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: accent,
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, color: AppColors.parchmentCream, size: 20),
-              ),
-              const SizedBox(width: AppSpacing.x5),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: AppTextStyles.sectionTitle.copyWith(
-                              color: AppColors.ink800,
-                            ),
-                          ),
-                        ),
-                        const Icon(
-                          Icons.chevron_right,
-                          color: AppColors.ink450,
-                        ),
-                      ],
+              Row(
+                children: [
+                  Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: accent,
                     ),
-                    const SizedBox(height: AppSpacing.x1),
-                    Text(
-                      subtitle,
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.ink600,
-                      ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      icon,
+                      color: AppColors.parchmentCream,
+                      size: 15,
                     ),
-                    const SizedBox(height: AppSpacing.x2),
-                    Text(
-                      sample,
-                      style: AppTextStyles.counter.copyWith(
-                        color: accent,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
                         fontWeight: FontWeight.w800,
+                        color: AppColors.ink800,
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  height: 1.25,
+                  color: AppColors.ink600,
                 ),
               ),
             ],

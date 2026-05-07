@@ -319,7 +319,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "갈릴리 호수(가버나움 근처)",
       "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_sea_of_galilee"
+      "landmark_code": "lm_nt_pm_capernaum"
     },
     {
       "story_index": 9,
@@ -327,7 +327,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "갈릴리 산지(전승)",
       "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_galilee_hills"
+      "landmark_code": "lm_nt_pm_capernaum"
     },
     {
       "story_index": 10,
@@ -335,7 +335,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "갈릴리 산지(전승)",
       "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_galilee_hills"
+      "landmark_code": "lm_nt_pm_capernaum"
     },
     {
       "story_index": 11,
@@ -343,7 +343,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "갈릴리 산지(전승)",
       "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_galilee_hills"
+      "landmark_code": "lm_nt_pm_capernaum"
     },
     {
       "story_index": 12,
@@ -351,7 +351,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "갈릴리 호수",
       "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_sea_of_galilee"
+      "landmark_code": "lm_nt_pm_capernaum"
     },
     {
       "story_index": 13,
@@ -367,7 +367,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "갈릴리 호숫가 들판(전승)",
       "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_sea_of_galilee"
+      "landmark_code": "lm_nt_pm_capernaum"
     },
     {
       "story_index": 15,
@@ -431,7 +431,7 @@
       "era": "era_nt_public_ministry",
       "place_name": "예루살렘 다락방(전승)",
       "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_jerusalem_upper_room"
+      "landmark_code": "lm_nt_pm_jerusalem"
     },
     {
       "story_index": 23,

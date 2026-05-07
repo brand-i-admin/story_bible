@@ -109,12 +109,12 @@ class _NotificationBellButtonState
         onTap: _toggleDropdown,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: 40,
-          width: 44,
+          height: 36,
+          width: 38,
           decoration: BoxDecoration(
             color: const Color(0xB02A2118),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xBFD8BF99), width: 1),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xBFD8BF99), width: 0.9),
           ),
           alignment: Alignment.center,
           child: Stack(
@@ -123,7 +123,7 @@ class _NotificationBellButtonState
               const Icon(
                 Icons.notifications_outlined,
                 color: Color(0xFFF8EED9),
-                size: 22,
+                size: 19,
               ),
               NotificationBadge(visible: unread > 0),
             ],
