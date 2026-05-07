@@ -569,12 +569,16 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                   // 산림 연두는 sepia 에 살짝 묻히면서 부드러운 베이지·올리브
                   // 톤이 된다.
                   TileLayer(
-                    // Stamen Watercolor (Stadia Maps 호스팅, CC BY 4.0).
-                    // 시안의 vintage watercolor 톤. development localhost 는
-                    // API key 없이 호출 가능, production 은 key 필요.
-                    // attribution: Map tiles by Stamen Design, CC BY 4.0.
+                    // Stamen Watercolor — Cooper Hewitt (Smithsonian Design
+                    // Museum) 영구 archive 호스팅. Stamen 공식 README 가
+                    // 안내한 archive 엔드포인트. CC BY 4.0, API key 불필요,
+                    // 무료, 무제한 사용 (fair use).
+                    //   https://github.com/CooperHewittCollection/watercolor_examples
+                    // attribution: Map tiles by Stamen Design (CC BY 4.0),
+                    //   data by OpenStreetMap (ODbL),
+                    //   archive hosted by Cooper Hewitt, Smithsonian.
                     urlTemplate:
-                        'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
+                        'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
                     userAgentPackageName: 'com.story.bible',
                   ),
                   PolylineLayer(polylines: _countryBorderPolylines),
@@ -667,7 +671,11 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
-                          '© OpenStreetMap · CARTO · Natural Earth',
+                          // Stamen Watercolor (CC BY 4.0) + OSM (ODbL) +
+                          // Cooper Hewitt (Smithsonian) 영구 archive 호스팅 +
+                          // Natural Earth (수계/국경 보조).
+                          '© Stamen Design (CC BY 4.0) · OpenStreetMap (ODbL) '
+                          '· Cooper Hewitt · Natural Earth',
                           style: TextStyle(
                             fontSize: 8.5,
                             color: Color(0xFF2D2D2D),
