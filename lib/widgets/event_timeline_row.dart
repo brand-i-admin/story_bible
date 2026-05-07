@@ -21,8 +21,9 @@ class EventTimelineRow extends StatefulWidget {
     required this.charactersByCode,
     required this.selectedEventId,
     required this.onTapEvent,
-    this.cardWidth = 156,
-    this.connectorWidth = 28,
+    this.completedEventIds = const <String>{},
+    this.cardWidth = 148,
+    this.connectorWidth = 22,
     this.rowHeight,
     this.padding = const EdgeInsets.fromLTRB(14, 18, 14, 14),
   });
@@ -34,6 +35,9 @@ class EventTimelineRow extends StatefulWidget {
   /// 현재 "현재 이야기" 라벨이 붙어야 하는 사건 id. null 이면 미강조.
   /// set 변경 시 자동 스크롤로 그 카드를 viewport 중앙에 배치.
   final String? selectedEventId;
+
+  /// 본문 + 퀴즈 모두 완료된 사건 id 셋 — 카드 배경을 초록 톤으로 표시.
+  final Set<String> completedEventIds;
 
   final ValueChanged<StoryEvent> onTapEvent;
 
@@ -127,6 +131,7 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
             era: era,
             charactersByCode: widget.charactersByCode,
             selected: event.id == widget.selectedEventId,
+            completed: widget.completedEventIds.contains(event.id),
             orderNumber: idx + 1,
             loader: _loader,
             onTap: () => widget.onTapEvent(event),

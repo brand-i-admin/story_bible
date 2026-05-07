@@ -526,6 +526,44 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     }
     return LayoutBuilder(
       builder: (context, constraints) {
+        // 세로 모드(좁은 폭): 내 정보(왼쪽 패널) 를 위에, 출석/인물 정보(오른쪽
+        // 패널) 를 아래에 세로로 쌓는다. 두 패널 내부에 Expanded + ListView 가
+        // 있어서 부모 Column 에서 unbounded height 가 되면 안 되므로 각각 고정
+        // 높이로 감싼다.
+        final isNarrow = constraints.maxWidth < 720;
+        if (isNarrow) {
+          final totalHeight = constraints.maxHeight;
+          final leftPanelHeight = (totalHeight * 0.55).clamp(360.0, 560.0);
+          final rightPanelHeight = (totalHeight * 0.55).clamp(320.0, 480.0);
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: leftPanelHeight.toDouble(),
+                  child: _buildProfileLeftPanel(
+                    profile: profile,
+                    isAuthenticated: isAuthenticated,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: rightPanelHeight.toDouble(),
+                  child: _buildProfileRightPanel(
+                    people: people,
+                    completedEventIds: state.completedEventIds,
+                    selectedTestament: _profileSelectedTestament,
+                    onSelectTestament: (testament) {
+                      setState(() {
+                        _profileSelectedTestament = testament;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
         final gap = (constraints.maxWidth * 0.012).clamp(4.0, 10.0).toDouble();
         final leftWidth = (constraints.maxWidth * 0.425)
             .clamp(278.0, 416.0)

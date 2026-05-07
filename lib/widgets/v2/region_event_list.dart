@@ -21,6 +21,7 @@ class RegionEventList extends StatelessWidget {
     required this.selectedEventId,
     required this.onSelectEvent,
     required this.onClose,
+    this.completedEventIds = const <String>{},
   });
 
   final Landmark landmark;
@@ -32,6 +33,9 @@ class RegionEventList extends StatelessWidget {
   final String? selectedEventId;
   final ValueChanged<StoryEvent> onSelectEvent;
   final VoidCallback onClose;
+
+  /// 본문 + 퀴즈 모두 완료된 사건 id 셋. 카드 배경을 초록 톤으로 표시.
+  final Set<String> completedEventIds;
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +75,15 @@ class RegionEventList extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 physics: const NeverScrollableScrollPhysics(),
                 child: SizedBox(
-                  height: 232,
+                  height: 280,
                   child: EventTimelineRow(
                     events: sorted,
                     allEras: allEras,
                     charactersByCode: charsByCode,
                     selectedEventId: selectedEventId,
+                    completedEventIds: completedEventIds,
                     onTapEvent: onSelectEvent,
-                    rowHeight: 232,
+                    rowHeight: 280,
                   ),
                 ),
               ),
@@ -119,12 +124,14 @@ class StoryEventThumbCard extends StatelessWidget {
     required this.selected,
     required this.loader,
     required this.onTap,
+    this.completed = false,
     this.orderNumber,
   });
   final StoryEvent event;
   final Era? era;
   final Map<String, Character> charactersByCode;
   final bool selected;
+  final bool completed;
   final int? orderNumber;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
@@ -138,13 +145,18 @@ class StoryEventThumbCard extends StatelessWidget {
         ? null
         : (startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear');
 
+    // 완료 사건 → 초록 배경 + 초록 보더. 선택 우선순위 > 완료.
+    const completedBg = Color(0xFFDDEFD0); // 연한 초록
+    const completedBorder = Color(0xFF7AAC4C);
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Material(
           color: selected
               ? theme.colorScheme.primary.withValues(alpha: 0.10)
-              : Colors.white.withValues(alpha: 0.85),
+              : (completed
+                    ? completedBg
+                    : Colors.white.withValues(alpha: 0.85)),
           borderRadius: BorderRadius.circular(14),
           child: InkWell(
             onTap: onTap,
@@ -155,37 +167,15 @@ class StoryEventThumbCard extends StatelessWidget {
                 border: Border.all(
                   color: selected
                       ? theme.colorScheme.primary
-                      : const Color(0xFFD9C9A2),
-                  width: selected ? 2 : 1.2,
+                      : (completed ? completedBorder : const Color(0xFFD9C9A2)),
+                  width: selected ? 2 : (completed ? 1.6 : 1.2),
                 ),
               ),
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // selected = "현재 이야기" — 상세 페이지에서 빠져나온 사건.
-                  if (selected)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 6),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8A33D),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        '현재 이야기',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF3D2A14),
-                          height: 1.0,
-                        ),
-                      ),
-                    ),
                   ClipOval(
                     child: SizedBox(
                       width: 64,
@@ -258,6 +248,21 @@ class StoryEventThumbCard extends StatelessWidget {
                           ),
                       ],
                     ),
+                  // 요약 (2줄). 위치/연도 와 인물 라벨 사이에 표시.
+                  if ((event.summary ?? '').trim().isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      event.summary!.trim(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        height: 1.3,
+                        color: Color(0xFF6B5430),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 6),
                   if (event.characterCodes.isNotEmpty)
                     Wrap(
@@ -306,6 +311,40 @@ class StoryEventThumbCard extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
                   height: 1.0,
+                ),
+              ),
+            ),
+          ),
+        // "현재 이야기" 라벨 — 카드 상단 가장자리에 걸쳐 표시.
+        // 좌상단 숫자 배지(24px) 와 같은 row, 카드 가운데로 정렬.
+        if (selected)
+          Positioned(
+            top: -10,
+            left: 28,
+            right: 8,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8A33D),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFF8C5A2E), width: 1),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x33000000),
+                      blurRadius: 3,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  '현재 이야기',
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF3D2A14),
+                    height: 1.0,
+                  ),
                 ),
               ),
             ),

@@ -123,14 +123,14 @@ class _CharacterCompactCard extends StatelessWidget {
     required this.character,
     required this.selected,
     required this.accentColor,
-    required this.description,
+    required this.eventCount,
     required this.onTap,
   });
 
   final Character character;
   final bool selected;
   final Color accentColor;
-  final String description;
+  final int eventCount;
   final VoidCallback onTap;
 
   @override
@@ -138,7 +138,8 @@ class _CharacterCompactCard extends StatelessWidget {
     return _CardShell(
       selected: selected,
       onTap: onTap,
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
             clipBehavior: Clip.none,
@@ -146,14 +147,14 @@ class _CharacterCompactCard extends StatelessWidget {
               _PortraitAvatar(
                 character: character,
                 selected: selected,
-                size: 60,
+                size: 48,
               ),
               Positioned(
                 left: -2,
                 top: -2,
                 child: Container(
-                  width: 10,
-                  height: 10,
+                  width: 9,
+                  height: 9,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: accentColor,
@@ -161,55 +162,43 @@ class _CharacterCompactCard extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        character.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13.8,
-                          fontWeight: FontWeight.w800,
-                          color: selected
-                              ? AppColors.parchmentCream
-                              : const Color(0xFF5C3A20),
-                        ),
-                      ),
-                    ),
-                    if (selected)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 6),
-                        child: Icon(
-                          Icons.check_circle_rounded,
-                          color: Color(0xFFF7D881),
-                          size: 16,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.2,
-                    height: 1.18,
-                    color: selected
-                        ? const Color(0xFFF4E6CD)
-                        : const Color(0xFF75563C),
+              if (selected)
+                const Positioned(
+                  right: -2,
+                  top: -2,
+                  child: Icon(
+                    Icons.check_circle_rounded,
+                    color: Color(0xFFF7D881),
+                    size: 14,
+                    shadows: [Shadow(color: Color(0xFF3A2308), blurRadius: 2)],
                   ),
                 ),
-              ],
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            character.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: selected
+                  ? AppColors.parchmentCream
+                  : const Color(0xFF5C3A20),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '사건 $eventCount개',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: selected
+                  ? const Color(0xFFF4E6CD)
+                  : const Color(0xFF75563C),
             ),
           ),
         ],

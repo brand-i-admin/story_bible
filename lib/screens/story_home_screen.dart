@@ -56,10 +56,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
 
+  /// 인트로 패널(시대/모드 선택 단계) 의 expanded 사이즈 — 컨텐츠가 짧아 0.46
+  /// 정도면 충분하다 (그 이상이면 빈 공간이 생김).
+  static const double _selectionSheetIntroSize = 0.46;
+
   /// 사건 핀 reveal 모드(region 선택 후 또는 character step 3) 의 panel 크기.
-  /// 카드 232 + 핸들 + padding 정도만 차지하도록 작게 — 카드 위주로 보여주기 위함.
-  /// 0.32 * 700px = 224 으로 카드(232)보다 살짝 부족해 0.34 로 설정.
-  static const double _selectionSheetCardOnlySize = 0.34;
+  /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding 으로 ~0.36.
+  static const double _selectionSheetCardOnlySize = 0.36;
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
   final ScrollController _selectionPanelScrollController = ScrollController();
   final GlobalKey<ProfileTabPageState> _profileTabKey =
@@ -92,10 +95,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     _authUserSubscription = ref.listenManual<User?>(signedInUserProvider, (
       previous,
       next,
@@ -125,11 +125,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   void dispose() {
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 
@@ -274,9 +270,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   double _sheetMaxSizeFor(Size size) {
     final state = ref.read(storyControllerProvider);
-    return _isInRevealMode(state)
-        ? _selectionSheetCardOnlySize
-        : _selectionSheetExpandedSize;
+    if (_isInRevealMode(state)) {
+      return _selectionSheetCardOnlySize;
+    }
+    // 인트로 패널 (시대 미선택 또는 모드 미선택) — 콘텐츠가 짧아 빈 공간이
+    // 생기므로 살짝 작은 비율 사용. 컨텐츠가 더 길어지면 SingleChildScrollView
+    // 가 알아서 스크롤.
+    if (_mode == null) {
+      return _selectionSheetIntroSize;
+    }
+    // 인물 모드 step 2 — 인물 카드 줄 수에 맞춰 sheet 높이 동적 계산.
+    // 카드 mainAxisExtent 108 + spacing 8 = 행당 ~116px. 1행/2행/2.2행.
+    if (_mode == _SelectionMode.character && _selectionStep == 2) {
+      final charCount = state.characters.length;
+      final rowCount = (charCount / 4).ceil(); // 4 cols
+      const rowPx = 116.0; // 카드 108 + spacing 8
+      const chromePx = 110.0; // 핸들 + 헤더 + grid padding 등
+      final visibleRows = rowCount <= 1
+          ? 1.0
+          : rowCount == 2
+          ? 2.0
+          : 2.2;
+      final px = chromePx + visibleRows * rowPx;
+      // viewport 높이 대비 비율 — 안전한 범위로 clamp.
+      return (px / size.height).clamp(0.28, _selectionSheetExpandedSize);
+    }
+    return _selectionSheetExpandedSize;
   }
 
   double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
@@ -806,6 +825,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 랜드마크 마커가 탭됐을 때 간단한 정보 다이얼로그를 띄운다.
   /// 이모지 + 이름 + 설명 + 카테고리/시대 칩.
   void _showLandmarkPopup(Landmark landmark) {
+    // 지도 포커스를 그 랜드마크로 이동 (설명 팝업과 함께).
+    _mapPanelController.focusLandmark(landmark.latLng);
     final desc = (landmark.description ?? '').trim();
     showDialog<void>(
       context: context,
@@ -899,14 +920,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           .where((l) => l.eraCodes.any(eraCodes.contains) && passesCategory(l))
           .toList(growable: false);
     }
-    // 특정 region 을 누른 뒤: 그 region + 자식 non-region 마커만.
+    // 특정 region 을 누른 뒤(step 3): 선택한 region + 그 region 의 자식 +
+    // 시대 전체의 다른 non-region 랜드마크도 함께 노출 (카테고리 필터 적용).
+    // 선택 region 이외의 region 마커는 가린다 (선택 region 만 강조).
     if (_mode == _SelectionMode.region && state.selectedLandmarkId != null) {
       final id = state.selectedLandmarkId!;
       return state.landmarks
-          .where(
-            (l) =>
-                (l.id == id || l.parentLandmarkId == id) && passesCategory(l),
-          )
+          .where((l) {
+            if (!l.eraCodes.any(eraCodes.contains)) return false;
+            // 선택 region 본인 + 그 자식: 무조건 노출 (카테고리만 통과시키면 됨).
+            if (l.id == id || l.parentLandmarkId == id) {
+              return passesCategory(l);
+            }
+            // 그 외 region 마커는 숨김 (선택 region 만 큰 핀으로 강조).
+            if (l.isRegion) return false;
+            // 시대 전체의 다른 non-region 랜드마크: 카테고리 필터 적용.
+            return passesCategory(l);
+          })
           .toList(growable: false);
     }
     // 인물 모드: 그 시대의 모든 non-region landmark.
@@ -975,15 +1005,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         builder: (_) => EventDetailPage(
           event: event,
           sceneAssetsFuture: sceneAssetsFuture,
-          onOpenBibleReader: (bookNo, chapterNo, verseNo) {
+          onOpenBibleReader: (bookNo, chapterNo, verseNo) async {
             if (!mounted) {
               return;
             }
-            _openBibleReaderPopup(
+            await _openBibleReaderPopup(
               initialBookNo: bookNo,
               initialChapterNo: chapterNo,
               initialVerseNo: verseNo,
             );
+            // 사용자가 본문을 보고 돌아왔으면 '읽기' 완료 처리.
+            if (!mounted) return;
+            await ref
+                .read(storyControllerProvider.notifier)
+                .setBibleRead(eventId: event.id, isRead: true);
           },
           onStartQuiz: _startQuiz,
           prevEvent: prev,
@@ -1207,10 +1242,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         context: context,
         builder: (dialogContext) => ParchmentDialog(
           title: event.title,
-          subtitle: '해당 사건의 퀴즈가 아직 준비되지 않았습니다.',
+          subtitle: '해당 사건의 퀴즈가 아직 준비되지 않았습니다. 퀴즈 단계를 완료 처리합니다.',
           actions: [
             ParchmentDialogActionButton(
-              label: '닫기',
+              label: '확인',
               style: ParchmentDialogActionStyle.secondary,
               onTap: () => Navigator.of(dialogContext).pop(),
             ),
@@ -1218,12 +1253,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           child: const SizedBox.shrink(),
         ),
       );
+      // 퀴즈가 없는 사건도 본문 읽기와 함께 진행률에 들어가도록 자동 완료.
+      // 점수는 0/0 로 기록 (실제 풀어야 할 문제가 없으므로).
+      if (mounted) {
+        await ref
+            .read(storyControllerProvider.notifier)
+            .setQuizCompleted(
+              eventId: eventId,
+              isCompleted: true,
+              correct: 0,
+              total: 0,
+            );
+        await _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
+      }
       return;
     }
 
     final selectedAnswers = List<int?>.filled(questions.length, null);
     int currentIndex = 0;
     int score = 0;
+    bool quizFinished = false;
 
     await showDialog<void>(
       context: context,
@@ -1411,6 +1460,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                           ),
                                     );
 
+                                    // 결과/해설 다이얼로그까지 본 경우만 완료 처리.
+                                    quizFinished = true;
+
                                     if (!context.mounted) {
                                       return;
                                     }
@@ -1445,6 +1497,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       },
     );
 
+    // 사용자가 퀴즈를 끝까지 풀고 해설 다이얼로그까지 봐야만 완료 처리.
+    // 중간에 빠져나오면 (Android back / 외부 dismiss) quizFinished 가 false.
+    if (!quizFinished) {
+      return;
+    }
+
     if (!isAuthenticated) {
       if (!mounted) {
         return;
@@ -1455,9 +1513,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
+    // 퀴즈 완료 + 점수 저장. 본문 읽기도 완료된 상태면 controller 가 자동으로
+    // markEventCompleted 까지 동기화해 준다 (_syncOverallCompletion).
     await ref
         .read(storyControllerProvider.notifier)
-        .markEventCompleted(eventId: eventId, isCompleted: true);
+        .setQuizCompleted(
+          eventId: eventId,
+          isCompleted: true,
+          correct: score,
+          total: questions.length,
+        );
     // 인앱 알림 row 삽입 — 실패해도 퀴즈 완료 UX 를 막지 않도록 try-catch.
     try {
       await ref
@@ -1499,15 +1564,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         character.code: character.avatarAssetPath,
     };
 
-    final mapCenter =
-        selectedEra?.mapCenterLat != null && selectedEra?.mapCenterLng != null
-        ? LatLng(selectedEra!.mapCenterLat!, selectedEra.mapCenterLng!)
-        : null;
+    // 첫 화면 (시대 미선택) 은 줌 6 (저배율) 로 가나안~광야~메소포타미아 일대가
+    // 한눈에 들어오도록 중심 잡음. 하단 시트 0.46 으로 visible 영역의 중앙이
+    // 가나안이 되도록 lat 을 약간 남쪽으로 offset.
+    final mapCenter = state.selectedEraIds.isEmpty
+        ? const LatLng(28.5, 35.20)
+        : (selectedEra?.mapCenterLat != null &&
+                  selectedEra?.mapCenterLng != null
+              ? LatLng(selectedEra!.mapCenterLat!, selectedEra.mapCenterLng!)
+              : null);
 
-    final mapZoom = selectedEra?.mapZoom;
+    final mapZoom = state.selectedEraIds.isEmpty ? 6.0 : selectedEra?.mapZoom;
     final topInset = MediaQuery.of(context).padding.top;
     const outerMargin = 20.0;
-    final mapCalloutTopObscuredPixels = topInset + 56;
+    // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
+    final mapCalloutTopObscuredPixels = topInset + 88;
 
     return Scaffold(
       body: Stack(
@@ -1595,6 +1666,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               // region 마커에 표시할 사건 개수 — region 본인 + 자식 anchor/minor
               // + alias_group 멤버들의 landmark_id 를 가진 events 수.
               eventCountByLandmarkId: _regionEventCounts(state),
+              // step 2 (장소 선택) — region 미선택 상태 = 폴리곤을 큰 단위로
+              // 직접 탭하는 UI. 핀/나라 라벨 숨기고 폴리곤 중앙 라벨만 노출.
+              regionPickerMode:
+                  _mode == _SelectionMode.region &&
+                  state.selectedLandmarkId == null,
               // 그 시대의 모든 사건을 인물별 path 로 항상 보여 준다 (선택 인물
               // 진하게, 미선택 흐리게). 사용자가 step 3 에서 사건을 골라도 인물
               // 이동 경로 자체는 사라지면 안 되므로 displayedEventIds 와 무관하게
@@ -1635,7 +1711,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           // dropdown 안 열고 필터만 끔.
           if (state.selectedEraId != null)
             Positioned(
-              top: topInset + 56,
+              // 세로 모드: toolbar 바로 아래. 좌우 끝까지 가득 채우고
+              // 추가 칩은 horizontal scroll 로 노출.
+              top: topInset + 50,
               left: 0,
               right: 0,
               child: _LandmarkCategoryChipsBar(
@@ -1704,6 +1782,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               scrollController: _selectionPanelScrollController,
                               step: _selectionStep,
                               panelStage: _selectionPanelStage,
+                              // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
+                              headerOverride: _panelStageHandle(),
+                              // step 2 인물 카드의 "사건 N개" 카운트 source.
+                              eraEvents: state.events,
                               onStepUp: _stepSelectionPanelUp,
                               onStepDown: _stepSelectionPanelDown,
                               canOpenStep: (step) =>
@@ -1764,20 +1846,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             ),
                     ),
                   ),
-                  // v3 — 우측 사이드 컬럼: _SelectionStepper + 핀치/휠 줌을 보조하는 +/– 컨트롤.
-                  // stepper 가 자체 높이를 결정하므로 정해진 offset 없이 Column 으로 자연 배치.
+                  // 우측 사이드: 줌 +/- 만 (stepper 는 시트 헤더로 이동).
+                  // toolbar(38) + 8 + chip bar(28) + 8 ≈ topInset + 90 부터 노출.
                   Positioned(
                     right: outerMargin,
-                    top: sideTop,
+                    top: topInset + 90,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        _SelectionStepper(
-                          currentStep: _currentStepperIndex(),
-                          mode: _mode,
-                          onStepTap: _handleStepperTap,
-                        ),
-                        const SizedBox(height: 12),
                         mapControlButton(
                           icon: Icons.add,
                           tooltip: '확대',
@@ -1792,46 +1868,62 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       ],
                     ),
                   ),
+                  // 세로 모드: 4개 핵심 버튼 + 알림/Aa/이야기등록을
+                  // 좌우 끝까지 가득 펼치고 horizontal scroll 로 추가 노출.
                   Positioned(
-                    left: outerMargin,
+                    left: 0,
+                    right: 0,
                     top: sideTop,
-                    child: Row(
-                      children: [
-                        topUtilityButton(
-                          label: '사건선택',
-                          selected: selectionButtonIsOpen,
-                          backgroundColor: selectionButtonBackground,
-                          borderColor: selectionButtonBorder,
-                          foregroundColor: selectionButtonForeground,
-                          boxShadow: selectionButtonShadow,
-                          onTap: _toggleSelectionPanelFromTopButton,
+                    child: SizedBox(
+                      height: 38,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          children: [
+                            topUtilityButton(
+                              label: '사건선택',
+                              selected: selectionButtonIsOpen,
+                              backgroundColor: selectionButtonBackground,
+                              borderColor: selectionButtonBorder,
+                              foregroundColor: selectionButtonForeground,
+                              boxShadow: selectionButtonShadow,
+                              onTap: _toggleSelectionPanelFromTopButton,
+                            ),
+                            const SizedBox(width: 4),
+                            topUtilityButton(
+                              label: '금주 인물',
+                              onTap: _openWeeklyTab,
+                            ),
+                            const SizedBox(width: 4),
+                            topUtilityButton(
+                              label: '성경',
+                              onTap: _openBibleReaderPopup,
+                            ),
+                            const SizedBox(width: 4),
+                            topUtilityButton(
+                              label: '프로필',
+                              onTap: _openProfileTab,
+                            ),
+                            const SizedBox(width: 4),
+                            NotificationBellButton(
+                              onNavigate: _handleNotificationTap,
+                              onOpenHistory: _openNotificationHistory,
+                            ),
+                            const SizedBox(width: 4),
+                            topFontScaleButton(
+                              onTap: () => showFontScaleSheet(context),
+                            ),
+                            if (kIsWeb) ...[
+                              const SizedBox(width: 4),
+                              topUtilityButton(
+                                label: '이야기 등록',
+                                onTap: _openProposalBoardOrGate,
+                              ),
+                            ],
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        topUtilityButton(label: '금주 인물', onTap: _openWeeklyTab),
-                        const SizedBox(width: 8),
-                        topUtilityButton(
-                          label: '성경',
-                          onTap: _openBibleReaderPopup,
-                        ),
-                        const SizedBox(width: 8),
-                        topUtilityButton(label: '프로필', onTap: _openProfileTab),
-                        const SizedBox(width: 8),
-                        NotificationBellButton(
-                          onNavigate: _handleNotificationTap,
-                          onOpenHistory: _openNotificationHistory,
-                        ),
-                        const SizedBox(width: 8),
-                        topFontScaleButton(
-                          onTap: () => showFontScaleSheet(context),
-                        ),
-                        if (kIsWeb) ...[
-                          const SizedBox(width: 8),
-                          topUtilityButton(
-                            label: '이야기 등록',
-                            onTap: _openProposalBoardOrGate,
-                          ),
-                        ],
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -1902,49 +1994,91 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// V1 panel 의 ▲▼ 화살표 (최소화/최대화 직접 토글) 와 동일한 모양의 컨트롤.
-  /// 사용자가 panel 영역을 직접 끌지 않아도 화살표 한 번에 stage 전환.
+  /// 시트 헤더 — ▲▼ 토글 + 가운데 인디케이터 + 우측 stepper(1-2-3-?).
+  /// 우측 상단 stepper Positioned 는 제거하고 여기에 통합해 화면 공간 확보.
   Widget _panelStageHandle() {
     final stage = _selectionPanelStage;
+    final state = ref.read(storyControllerProvider);
+    // 인물 모드 step 2 + 1명 이상 선택 → 좌측에 "N명 다음" 핀.
+    final draftCharacters = _sanitizeDraftSelectedCharacterCodes(state);
+    final showCharacterNext =
+        _mode == _SelectionMode.character &&
+        _selectionStep == 2 &&
+        draftCharacters.isNotEmpty;
     return Padding(
-      padding: const EdgeInsets.only(top: 6, bottom: 4),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            iconSize: 20,
-            visualDensity: VisualDensity.compact,
-            tooltip: '아래로',
-            onPressed: stage == StorySelectionPanelStage.collapsed
-                ? null
-                : () => _animateSelectionPanelToStage(
-                    stage == StorySelectionPanelStage.expanded
-                        ? StorySelectionPanelStage.half
-                        : StorySelectionPanelStage.collapsed,
-                  ),
-            icon: const Icon(Icons.keyboard_arrow_down),
+          // 좌측 — "N명 다음" 핀 (조건부) 또는 stepper 균형용 빈 공간.
+          SizedBox(
+            width: 110,
+            child: showCharacterNext
+                ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: _CharacterNextPill(
+                      count: draftCharacters.length,
+                      onPressed: _proceedFromCharacterStep,
+                    ),
+                  )
+                : null,
           ),
-          Container(
-            width: 36,
-            height: 4,
-            margin: const EdgeInsets.symmetric(horizontal: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8C6743).withValues(alpha: 0.45),
-              borderRadius: BorderRadius.circular(2),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  iconSize: 18,
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 28,
+                    minHeight: 28,
+                  ),
+                  tooltip: '아래로',
+                  onPressed: stage == StorySelectionPanelStage.collapsed
+                      ? null
+                      : () => _animateSelectionPanelToStage(
+                          stage == StorySelectionPanelStage.expanded
+                              ? StorySelectionPanelStage.half
+                              : StorySelectionPanelStage.collapsed,
+                        ),
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                ),
+                Container(
+                  width: 28,
+                  height: 3,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF8C6743).withValues(alpha: 0.45),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                IconButton(
+                  iconSize: 18,
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 28,
+                    minHeight: 28,
+                  ),
+                  tooltip: '위로',
+                  onPressed: stage == StorySelectionPanelStage.expanded
+                      ? null
+                      : () => _animateSelectionPanelToStage(
+                          stage == StorySelectionPanelStage.collapsed
+                              ? StorySelectionPanelStage.half
+                              : StorySelectionPanelStage.expanded,
+                        ),
+                  icon: const Icon(Icons.keyboard_arrow_up),
+                ),
+              ],
             ),
           ),
-          IconButton(
-            iconSize: 20,
-            visualDensity: VisualDensity.compact,
-            tooltip: '위로',
-            onPressed: stage == StorySelectionPanelStage.expanded
-                ? null
-                : () => _animateSelectionPanelToStage(
-                    stage == StorySelectionPanelStage.collapsed
-                        ? StorySelectionPanelStage.half
-                        : StorySelectionPanelStage.expanded,
-                  ),
-            icon: const Icon(Icons.keyboard_arrow_up),
+          // 우측 stepper (1-2-3-?) — 기존 우측 상단에서 이동.
+          _SelectionStepper(
+            currentStep: _currentStepperIndex(),
+            mode: _mode,
+            onStepTap: _handleStepperTap,
           ),
         ],
       ),
@@ -1974,6 +2108,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           // 같은 시대 다시 누르면 해제, 아니면 새 시대로 교체 (단일 선택).
           final next = state.selectedEraId == eraId ? null : eraId;
           await ref.read(storyControllerProvider.notifier).setSelectedEra(next);
+          // 새 시대 선택 시 그 시대 region 폴리곤이 모두 화면에 들어오도록
+          // 카메라 fit. 다음 frame 에 _eraRegionLandmarks 가 build 되어야 하므로
+          // post-frame.
+          if (!mounted || next == null) return;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _focusOnEraRegions(ref.read(storyControllerProvider));
+          });
         },
         onPickMode: (mode) => _handlePickMode(mode, state),
       ),
@@ -2015,19 +2157,30 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
-  /// 현재 시대의 모든 region 폴리곤이 한눈에 들어오도록 카메라 fit.
-  /// "장소에서 시작" 클릭 시 또는 stepper 2 로 돌아갈 때 호출.
+  /// 현재 시대의 region 폴리곤이 한눈에 들어오도록 카메라 fit.
+  /// 실제로 화면에 그려지는 폴리곤(사건 ≥ 1) 만 fit 대상에 포함 — 비활성 region
+  /// 까지 포함하면 카메라가 불필요하게 줌아웃된다.
+  /// 시대 선택, "장소에서 시작" 클릭, stepper 2 로 돌아갈 때 호출.
   void _focusOnEraRegions(StoryState state) {
-    final regions = _eraRegionLandmarks(state);
+    final counts = _regionEventCounts(state);
+    final regions = _eraRegionLandmarks(
+      state,
+    ).where((r) => (counts[r.id] ?? 0) > 0);
     final allPoints = <LatLng>[];
     for (final r in regions) {
       for (final p in r.polygon) {
         allPoints.add(p);
       }
     }
+    // fallback — 사건이 어디에도 없으면 전체 region 으로 폴백.
+    if (allPoints.isEmpty) {
+      for (final r in _eraRegionLandmarks(state)) {
+        for (final p in r.polygon) {
+          allPoints.add(p);
+        }
+      }
+    }
     if (allPoints.length < 2) return;
-    // 모든 좌표를 하나의 합집합 폴리곤으로 처리해 fitCamera. focusRegion 함수가
-    // 단일 polygon 만 받으므로 아예 합쳐서 넘긴다.
     _mapPanelController.focusRegion(allPoints);
   }
 
@@ -2041,7 +2194,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           (lm) => lm.eraCodes.isEmpty || lm.eraCodes.any(eraCodes.contains),
         )
         .toList();
-    final regionsOnly = eraFiltered.where((lm) => lm.isRegion).toList();
+    // 사건이 있는 region 만 카드로 노출 — 지도 위 폴리곤(사건 ≥ 1) 과 1:1 매칭.
+    final eventCounts = _regionEventCounts(state);
+    final regionsOnly = eraFiltered
+        .where((lm) => lm.isRegion && (eventCounts[lm.id] ?? 0) > 0)
+        .toList();
     final regions = regionsOnly.isNotEmpty ? regionsOnly : eraFiltered;
     final selected = state.landmarkById(state.selectedLandmarkId);
 
@@ -2069,6 +2226,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     allEras: state.eras,
                     allCharacters: state.characters,
                     selectedEventId: state.selectedEventId,
+                    completedEventIds: state.completedEventIds,
                     onSelectEvent: (event) {
                       ref
                           .read(storyControllerProvider.notifier)
@@ -2156,6 +2314,19 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
   /// selectedLandmarkCategories 와는 별개 — 토글 끄기 시에는 dropdown 안 펼쳐짐.
   String? _expandedCat;
 
+  /// 칩별 LayerLink — dropdown 이 그 칩 아래에 정확히 anchor 되도록.
+  final Map<String, LayerLink> _chipLinks = {};
+
+  /// Overlay 에 dropdown 을 렌더해 부모 Positioned hit-test 영역 제약을 우회.
+  final OverlayPortalController _portalController = OverlayPortalController();
+
+  /// 현재 build 컨텍스트에서 사용한 dropdown payload 를 overlay child 빌더가
+  /// 참조하도록 캐시. expanded 가 바뀔 때마다 setState 로 재할당.
+  _DropdownPayload? _dropdownPayload;
+
+  LayerLink _linkFor(String cat) =>
+      _chipLinks.putIfAbsent(cat, () => LayerLink());
+
   void _onChipTap(String cat) {
     final wasActive = widget.state.selectedLandmarkCategories.contains(cat);
     widget.onToggle(cat);
@@ -2213,50 +2384,115 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
         ? landmarksByCategory[expanded]
         : null;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          height: 40,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            children: [
-              _CategoryChip(
+    final allLink = _linkFor('__all__');
+
+    // dropdown payload 갱신 + portal 노출 토글
+    final hasDropdown =
+        expanded != null && expandedItems != null && expandedItems.isNotEmpty;
+    if (hasDropdown) {
+      _dropdownPayload = _DropdownPayload(
+        link: _linkFor(expanded),
+        emoji: meta[expanded]?.$1 ?? '📍',
+        label: meta[expanded]?.$2 ?? expanded,
+        items: expandedItems,
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (!_portalController.isShowing) _portalController.show();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_portalController.isShowing) _portalController.hide();
+      });
+    }
+
+    return OverlayPortal(
+      controller: _portalController,
+      overlayChildBuilder: (_) {
+        final payload = _dropdownPayload;
+        if (payload == null) return const SizedBox.shrink();
+        // Overlay 의 Stack 안에 Positioned 로 배치 (CompositedTransformFollower
+        // 가 동작하려면 Stack 내부여야 함). offset 은 follower 가 결정.
+        return Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: CompositedTransformFollower(
+                link: payload.link,
+                showWhenUnlinked: false,
+                targetAnchor: Alignment.bottomLeft,
+                followerAnchor: Alignment.topLeft,
+                offset: const Offset(0, 6),
+                child: SizedBox(
+                  width: 260,
+                  child: _LandmarkCategoryDropdown(
+                    categoryEmoji: payload.emoji,
+                    categoryLabel: payload.label,
+                    items: payload.items,
+                    onClose: () => setState(() => _expandedCat = null),
+                    onLandmarkTap: (lm) {
+                      // dropdown 에서 랜드마크를 누르면 dropdown 을 닫고
+                      // 부모 콜백 (포커스 + 설명 팝업) 을 호출.
+                      setState(() => _expandedCat = null);
+                      widget.onLandmarkTap(lm);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      child: SizedBox(
+        height: 28,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          children: [
+            CompositedTransformTarget(
+              link: allLink,
+              child: _CategoryChip(
                 label: '전체',
                 emoji: '✨',
                 count: totalCount,
                 active: selected.isEmpty,
                 onTap: _onClearAll,
               ),
-              for (final cat in ordered) ...[
-                const SizedBox(width: 6),
-                _CategoryChip(
+            ),
+            for (final cat in ordered) ...[
+              const SizedBox(width: 6),
+              CompositedTransformTarget(
+                link: _linkFor(cat),
+                child: _CategoryChip(
                   label: meta[cat]?.$2 ?? cat,
                   emoji: meta[cat]?.$1 ?? '📍',
                   count: countByCategory[cat]!,
                   active: selected.contains(cat),
                   onTap: () => _onChipTap(cat),
                 ),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
-        // dropdown — 활성 칩 바로 아래에 펼쳐진다. 닫기 버튼 또는 칩 재클릭으로
-        // 닫음. 비활성화 토글 시에는 _expandedCat 이 null 이라 안 보임.
-        if (expanded != null &&
-            expandedItems != null &&
-            expandedItems.isNotEmpty)
-          _LandmarkCategoryDropdown(
-            categoryEmoji: meta[expanded]?.$1 ?? '📍',
-            categoryLabel: meta[expanded]?.$2 ?? expanded,
-            items: expandedItems,
-            onClose: () => setState(() => _expandedCat = null),
-            onLandmarkTap: widget.onLandmarkTap,
-          ),
-      ],
+      ),
     );
   }
+}
+
+/// dropdown 의 overlay child 가 참조할 데이터 묶음.
+class _DropdownPayload {
+  const _DropdownPayload({
+    required this.link,
+    required this.emoji,
+    required this.label,
+    required this.items,
+  });
+  final LayerLink link;
+  final String emoji;
+  final String label;
+  final List<Landmark> items;
 }
 
 /// 카테고리 칩 바로 아래에 펼쳐지는 inline dropdown — 그 카테고리에 들어있는
@@ -2279,144 +2515,139 @@ class _LandmarkCategoryDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      // 칩과 dropdown 의 좌우 정렬을 맞춰 칩 바로 아래에 매달리는 느낌.
-      padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-      child: Material(
-        color: Colors.transparent,
-        elevation: 0,
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFFBF5E9),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF8C6743), width: 1.0),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x33000000),
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ConstrainedBox(
-            // 너무 길어지지 않게 max 높이 제한 — 안에 스크롤.
-            constraints: const BoxConstraints(maxHeight: 320),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 헤더 — 라벨 + 갯수 + 닫기 버튼
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 6, 6),
-                  child: Row(
-                    children: [
-                      Text(
-                        categoryEmoji,
-                        style: const TextStyle(fontSize: 18, height: 1.0),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '$categoryLabel · ${items.length}곳',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF332A1D),
-                          ),
+    return Material(
+      color: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFFBF5E9),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFF8C6743), width: 1.0),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x33000000),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ConstrainedBox(
+          // 너무 길어지지 않게 max 높이 제한 — 안에 스크롤.
+          constraints: const BoxConstraints(maxHeight: 320),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 헤더 — 라벨 + 갯수 + 닫기 버튼
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 6, 6),
+                child: Row(
+                  children: [
+                    Text(
+                      categoryEmoji,
+                      style: const TextStyle(fontSize: 18, height: 1.0),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '$categoryLabel · ${items.length}곳',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF332A1D),
                         ),
                       ),
-                      TextButton.icon(
-                        onPressed: onClose,
-                        icon: const Icon(Icons.close, size: 14),
-                        label: const Text('닫기', style: TextStyle(fontSize: 13)),
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF5A4326),
+                    ),
+                    TextButton.icon(
+                      onPressed: onClose,
+                      icon: const Icon(Icons.close, size: 14),
+                      label: const Text('닫기', style: TextStyle(fontSize: 13)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF5A4326),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        minimumSize: const Size(0, 32),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, color: Color(0x22000000)),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 4),
+                  itemBuilder: (_, i) {
+                    final lm = items[i];
+                    final desc = (lm.description ?? '').trim();
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => onLandmarkTap(lm),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 4,
+                            vertical: 6,
                           ),
-                          minimumSize: const Size(0, 32),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                lm.emoji,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  height: 1.1,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      lm.name,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF332A1D),
+                                      ),
+                                    ),
+                                    if (desc.isNotEmpty)
+                                      Text(
+                                        desc,
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          height: 1.35,
+                                          color: Color(0xFF6B5430),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.chevron_right,
+                                size: 16,
+                                color: Color(0xFF8C6743),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-                const Divider(height: 1, color: Color(0x22000000)),
-                Flexible(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 6,
-                    ),
-                    itemCount: items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 4),
-                    itemBuilder: (_, i) {
-                      final lm = items[i];
-                      final desc = (lm.description ?? '').trim();
-                      return Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => onLandmarkTap(lm),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 6,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  lm.emoji,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    height: 1.1,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        lm.name,
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF332A1D),
-                                        ),
-                                      ),
-                                      if (desc.isNotEmpty)
-                                        Text(
-                                          desc,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            height: 1.35,
-                                            color: Color(0xFF6B5430),
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(
-                                  Icons.chevron_right,
-                                  size: 16,
-                                  color: Color(0xFF8C6743),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -2843,18 +3074,17 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fg = active ? Colors.white : const Color(0xFF3D2A14);
-    final badgeBg = active ? const Color(0xCCFFFBEF) : const Color(0xFF8C5A2E);
-    final badgeFg = active ? const Color(0xFF8C5A2E) : Colors.white;
+    final countFg = active ? const Color(0xFFE8D7B0) : const Color(0xFF8C5A2E);
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: active ? const Color(0xFF8C5A2E) : const Color(0xF2FFFBEF),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: active ? const Color(0xFF8C5A2E) : const Color(0xFFB89A66),
               width: 0.9,
@@ -2862,43 +3092,33 @@ class _CategoryChip extends StatelessWidget {
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),
-                blurRadius: 3,
-                offset: Offset(0, 1.5),
+                blurRadius: 2,
+                offset: Offset(0, 1),
               ),
             ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 13)),
-              const SizedBox(width: 5),
+              Text(emoji, style: const TextStyle(fontSize: 11)),
+              const SizedBox(width: 3),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
                   color: fg,
                 ),
               ),
               if (count != null) ...[
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 1,
-                  ),
-                  decoration: BoxDecoration(
-                    color: badgeBg,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '$count',
-                    style: TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w900,
-                      color: badgeFg,
-                      height: 1.0,
-                    ),
+                const SizedBox(width: 3),
+                Text(
+                  '+$count',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    color: countFg,
+                    height: 1.0,
                   ),
                 ),
               ],
@@ -2985,6 +3205,59 @@ class _ReviewChoiceRow extends StatelessWidget {
   }
 }
 
+/// 인물 step 2 의 "N명 다음" 작은 핀 — 패널 핸들 좌측에 표시. 인물 1명 이상
+/// 선택 시 노출되며, 누르면 step 3 진입 + 사건 reveal 시작.
+class _CharacterNextPill extends StatelessWidget {
+  const _CharacterNextPill({required this.count, required this.onPressed});
+  final int count;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: const Color(0xFF8C5A2E),
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 4,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$count명 다음',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const SizedBox(width: 3),
+              const Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white,
+                size: 13,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// 선택 진행 단계 stepper — 우측 상단 1-2-3 동그라미 + 활성 단계 설명.
 /// - 활성(=현재 진행 중): 초록
 /// - 완료(=이전 단계, 클릭 시 그 단계로 돌아가며 reset): 노랑
@@ -3005,24 +3278,6 @@ class _SelectionStepper extends StatelessWidget {
   static const Color _doneColor = Color(0xFFE8A33D); // 노랑
   static const Color _futureColor = Color(0xFF8C6743); // 갈색
 
-  String _descriptionFor(int step) {
-    switch (step) {
-      case 1:
-        return '시대를 선택하고\n보는 방법을 골라보세요';
-      case 2:
-        if (mode == _SelectionMode.region) {
-          return '특정 장소를 눌러\n사건들을 알아보세요';
-        }
-        if (mode == _SelectionMode.character) {
-          return '인물을 선택해\n사건들을 알아보세요';
-        }
-        return '장소 또는 인물을\n선택해 보세요';
-      case 3:
-      default:
-        return '사건을 눌러\n여행해 보세요';
-    }
-  }
-
   Color _colorFor(int step) {
     if (step == currentStep) return _activeColor;
     if (step < currentStep) return _doneColor;
@@ -3031,60 +3286,41 @@ class _SelectionStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 세로 모드: 3 dots + ? 버튼만 노출. 상세 설명은 ? 버튼 탭으로 팝업에서 본다.
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       decoration: BoxDecoration(
         color: const Color(0xF2FFFBEF),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFB89A66), width: 1.0),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFB89A66), width: 0.9),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33000000),
-            blurRadius: 6,
+            blurRadius: 5,
             offset: Offset(0, 2),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var i = 1; i <= 3; i++) ...[
-                _StepDot(
-                  number: i,
-                  color: _colorFor(i),
-                  enabled: i <= currentStep,
-                  onTap: () => onStepTap(i),
-                ),
-                if (i < 3)
-                  Container(
-                    width: 16,
-                    height: 1.6,
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                    color: i < currentStep ? _doneColor : _futureColor,
-                  ),
-              ],
-              const SizedBox(width: 12),
-              _StepperHelpButton(onTap: () => _showStepperHelp(context)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 150),
-            child: Text(
-              _descriptionFor(currentStep),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF3D2A14),
-                height: 1.25,
-              ),
+          for (var i = 1; i <= 3; i++) ...[
+            _StepDot(
+              number: i,
+              color: _colorFor(i),
+              enabled: i <= currentStep,
+              onTap: () => onStepTap(i),
             ),
-          ),
+            if (i < 3)
+              Container(
+                width: 8,
+                height: 1.4,
+                margin: const EdgeInsets.symmetric(horizontal: 1),
+                color: i < currentStep ? _doneColor : _futureColor,
+              ),
+          ],
+          const SizedBox(width: 6),
+          _StepperHelpButton(onTap: () => _showStepperHelp(context)),
         ],
       ),
     );
@@ -3111,18 +3347,18 @@ class _StepDot extends StatelessWidget {
       child: GestureDetector(
         onTap: enabled ? onTap : null,
         child: Container(
-          width: 28,
-          height: 28,
+          width: 20,
+          height: 20,
           decoration: BoxDecoration(
             color: color.withValues(alpha: enabled ? 1.0 : 0.55),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 1.5),
+            border: Border.all(color: Colors.white, width: 1.2),
             boxShadow: enabled
                 ? [
                     BoxShadow(
                       color: color.withValues(alpha: 0.45),
-                      blurRadius: 6,
-                      spreadRadius: 1,
+                      blurRadius: 4,
+                      spreadRadius: 0.5,
                     ),
                   ]
                 : null,
@@ -3132,7 +3368,7 @@ class _StepDot extends StatelessWidget {
             '$number',
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 13,
+              fontSize: 10.5,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -3154,12 +3390,12 @@ class _StepperHelpButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          width: 26,
-          height: 26,
+          width: 20,
+          height: 20,
           decoration: BoxDecoration(
             color: const Color(0xFFF5E9C8),
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF8C6743), width: 1.4),
+            border: Border.all(color: const Color(0xFF8C6743), width: 1.2),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),
@@ -3173,7 +3409,7 @@ class _StepperHelpButton extends StatelessWidget {
             '?',
             style: TextStyle(
               color: Color(0xFF8C6743),
-              fontSize: 15,
+              fontSize: 12,
               fontWeight: FontWeight.w900,
               height: 1.0,
             ),

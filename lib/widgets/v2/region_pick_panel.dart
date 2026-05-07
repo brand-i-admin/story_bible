@@ -107,17 +107,24 @@ class RegionPickPanel extends StatelessWidget {
               ],
             ),
           ),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final r in entry.value)
-                _RegionCard(
-                  landmark: r,
-                  selected: r.id == selectedLandmarkId,
-                  onTap: () => onSelect(r),
-                ),
-            ],
+          LayoutBuilder(
+            builder: (_, constraints) {
+              // 2개씩 한 줄에 표시 — 부모 폭에서 spacing 8 빼고 절반.
+              final cardWidth = (constraints.maxWidth - 8) / 2;
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final r in entry.value)
+                    _RegionCard(
+                      landmark: r,
+                      selected: r.id == selectedLandmarkId,
+                      onTap: () => onSelect(r),
+                      width: cardWidth,
+                    ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 12),
         ],
@@ -152,10 +159,12 @@ class _RegionCard extends StatelessWidget {
     required this.landmark,
     required this.selected,
     required this.onTap,
+    required this.width,
   });
   final Landmark landmark;
   final bool selected;
   final VoidCallback onTap;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -167,11 +176,11 @@ class _RegionCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: 200,
+          width: width,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected
                   ? theme.colorScheme.primary
@@ -179,11 +188,11 @@ class _RegionCard extends StatelessWidget {
               width: selected ? 2 : 1,
             ),
           ),
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           child: Row(
             children: [
-              Text(landmark.emoji, style: const TextStyle(fontSize: 22)),
-              const SizedBox(width: 8),
+              Text(landmark.emoji, style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 6),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,8 +202,9 @@ class _RegionCard extends StatelessWidget {
                       landmark.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w700,
+                        fontSize: 12,
                       ),
                     ),
                     if ((landmark.description ?? '').isNotEmpty)
@@ -204,6 +214,8 @@ class _RegionCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 10,
+                          height: 1.25,
                         ),
                       ),
                   ],
@@ -213,7 +225,7 @@ class _RegionCard extends StatelessWidget {
                 Icon(
                   Icons.check_circle,
                   color: theme.colorScheme.primary,
-                  size: 18,
+                  size: 14,
                 ),
             ],
           ),

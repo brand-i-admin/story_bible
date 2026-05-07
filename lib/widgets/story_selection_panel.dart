@@ -55,6 +55,8 @@ class StorySelectionPanel extends StatefulWidget {
     required this.onNextFromCharacters,
     this.onOpenEventDetail,
     this.currentSelectedEventId,
+    this.headerOverride,
+    this.eraEvents = const <StoryEvent>[],
   });
 
   final ScrollController scrollController;
@@ -115,6 +117,16 @@ class StorySelectionPanel extends StatefulWidget {
   /// 라벨 + viewport 중앙으로 자동 스크롤.
   final String? currentSelectedEventId;
 
+  /// 부모가 _panelStageHandle (위/아래 chevron + stepper) 를 직접 주입할 수 있도록
+  /// 한다. 지정 시 기본 [_PanelTopRow] 를 대체. 장소 모드와 동일한 헤더 UX 를
+  /// 제공하기 위해 사용.
+  final Widget? headerOverride;
+
+  /// step 2 인물 카드에 표시할 "사건 N개" 카운트의 source. step 3 의 [events]
+  /// 는 선택된 인물 timeline 만 갖고 있어, 선택 전(빈 상태) 에는 모든 카드가
+  /// 0개로 표시되는 문제가 있다. 부모가 era 의 전체 사건을 그대로 넘긴다.
+  final List<StoryEvent> eraEvents;
+
   @override
   State<StorySelectionPanel> createState() => _StorySelectionPanelState();
 }
@@ -158,21 +170,30 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
                         controller: widget.scrollController,
                         physics: const ClampingScrollPhysics(),
                         slivers: [
-                          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                          SliverToBoxAdapter(
-                            child: _PanelTopRow(
-                              stage: widget.panelStage,
-                              onStepUp: widget.onStepUp,
-                              onStepDown: widget.onStepDown,
-                              // step 2 + 선택 있을 때만 우측 작은 '다음' 핀.
-                              showCharacterNext:
-                                  widget.step == 2 &&
-                                  widget.draftSelectedCharacterCodes.isNotEmpty,
-                              characterCount:
-                                  widget.draftSelectedCharacterCodes.length,
-                              onNextFromCharacters: widget.onNextFromCharacters,
+                          if (widget.headerOverride != null)
+                            SliverToBoxAdapter(child: widget.headerOverride!)
+                          else ...[
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 10),
                             ),
-                          ),
+                            SliverToBoxAdapter(
+                              child: _PanelTopRow(
+                                stage: widget.panelStage,
+                                onStepUp: widget.onStepUp,
+                                onStepDown: widget.onStepDown,
+                                // step 2 + 선택 있을 때만 우측 작은 '다음' 핀.
+                                showCharacterNext:
+                                    widget.step == 2 &&
+                                    widget
+                                        .draftSelectedCharacterCodes
+                                        .isNotEmpty,
+                                characterCount:
+                                    widget.draftSelectedCharacterCodes.length,
+                                onNextFromCharacters:
+                                    widget.onNextFromCharacters,
+                              ),
+                            ),
+                          ],
                           // v3 — step 1/2/3 칩 + '다음' 버튼 헤더 제거.
                           // 우측 상단 _SelectionStepper 가 단계 이동 담당.
                           const SliverToBoxAdapter(child: SizedBox(height: 6)),
@@ -297,17 +318,25 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            mainAxisExtent: 102,
+            mainAxisExtent: 108,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final character = sortedCharacters[index];
+            // step 2 의 카운트는 era 전체 사건 기준 — widget.events 는 step 3
+            // 의 선택된 인물 timeline 이라 빈 상태에서 0 으로 잘못 표시됨.
+            final countSource = widget.eraEvents.isNotEmpty
+                ? widget.eraEvents
+                : widget.events;
+            final count = countSource
+                .where((e) => e.characterCodes.contains(character.code))
+                .length;
             return _CharacterCompactCard(
               character: character,
               selected: widget.draftSelectedCharacterCodes.contains(
                 character.code,
               ),
               accentColor: widget.colorForDraftCharacter(character.code),
-              description: _characterDescription(character),
+              eventCount: count,
               onTap: () => widget.onToggleDraftCharacter(character.code),
             );
           }, childCount: sortedCharacters.length),
@@ -341,9 +370,10 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           allEras: widget.eras,
           charactersByCode: charactersByCode,
           selectedEventId: selectedEventId,
+          completedEventIds: widget.completedEventIds,
           onTapEvent: (event) => widget.onOpenEventDetail?.call(event),
           // SliverToBoxAdapter 안 — fixed height 필요.
-          rowHeight: 232,
+          rowHeight: 248,
         ),
       ),
     ];
@@ -353,18 +383,6 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     return SliverToBoxAdapter(
       child: SizedBox(height: 180, child: _EmptyStepMessage(text: text)),
     );
-  }
-
-  String _characterDescription(Character character) {
-    final description = (character.description ?? '').trim();
-    if (description.isNotEmpty) {
-      return description;
-    }
-    final tagline = (character.tagline ?? '').trim();
-    if (tagline.isNotEmpty) {
-      return tagline;
-    }
-    return '이 인물과 관련된 성경 이야기를 이어서 살펴볼 수 있습니다.';
   }
 
   String? _eraDateLabel(Era era) {

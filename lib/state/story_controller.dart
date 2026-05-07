@@ -378,6 +378,60 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(completedEventIds: completedEventIds);
   }
 
+  /// 본문 읽기 완료/취소 토글. 본문 + 퀴즈 둘 다 완료 시 자동으로
+  /// `markEventCompleted` 호출.
+  Future<void> setBibleRead({
+    required String eventId,
+    required bool isRead,
+  }) async {
+    final next = {...state.bibleReadEventIds};
+    if (isRead) {
+      next.add(eventId);
+    } else {
+      next.remove(eventId);
+    }
+    state = state.copyWith(bibleReadEventIds: next);
+    await _syncOverallCompletion(eventId);
+  }
+
+  /// 퀴즈 완료/취소 토글. 본문 + 퀴즈 둘 다 완료 시 자동으로
+  /// `markEventCompleted` 호출. 점수가 있으면 함께 저장.
+  Future<void> setQuizCompleted({
+    required String eventId,
+    required bool isCompleted,
+    int? correct,
+    int? total,
+  }) async {
+    final next = {...state.quizCompletedEventIds};
+    if (isCompleted) {
+      next.add(eventId);
+    } else {
+      next.remove(eventId);
+    }
+    final nextScores = {...state.lastQuizScores};
+    if (isCompleted && correct != null && total != null) {
+      nextScores[eventId] = (correct: correct, total: total);
+    } else if (!isCompleted) {
+      nextScores.remove(eventId);
+    }
+    state = state.copyWith(
+      quizCompletedEventIds: next,
+      lastQuizScores: nextScores,
+    );
+    await _syncOverallCompletion(eventId);
+  }
+
+  /// bibleRead + quizCompleted 둘 다 완료면 [markEventCompleted] 호출,
+  /// 어느 한쪽이라도 미완이면 false 로 호출하여 DB 와 동기화.
+  Future<void> _syncOverallCompletion(String eventId) async {
+    final read = state.bibleReadEventIds.contains(eventId);
+    final quiz = state.quizCompletedEventIds.contains(eventId);
+    final shouldComplete = read && quiz;
+    final isCurrentlyCompleted = state.completedEventIds.contains(eventId);
+    if (shouldComplete == isCurrentlyCompleted) return;
+    await markEventCompleted(eventId: eventId, isCompleted: shouldComplete);
+  }
+
   void setSearchQuery(String query) {
     state = state.copyWith(searchQuery: query);
     _searchDebounce?.cancel();
