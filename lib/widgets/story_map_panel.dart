@@ -569,12 +569,13 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                   // 산림 연두는 sepia 에 살짝 묻히면서 부드러운 베이지·올리브
                   // 톤이 된다.
                   TileLayer(
+                    // Stamen Watercolor (Stadia Maps 호스팅, CC BY 4.0).
+                    // 시안의 vintage watercolor 톤. development localhost 는
+                    // API key 없이 호출 가능, production 은 key 필요.
+                    // attribution: Map tiles by Stamen Design, CC BY 4.0.
                     urlTemplate:
-                        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c', 'd'],
+                        'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
                     userAgentPackageName: 'com.story.bible',
-                    // sepia/tan multiply 오버레이 제거 — 모바일에서 얼룩처럼 보여
-                    // 자연스러운 voyager 톤 그대로 사용.
                   ),
                   PolylineLayer(polylines: _countryBorderPolylines),
                   // 시대 영역 폴리곤 — 그 시대의 region 들의 polygon 합집합을
