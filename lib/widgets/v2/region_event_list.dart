@@ -264,18 +264,39 @@ class StoryEventThumbCard extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 6),
+                  // 인물 pill — 한 줄 가로 스크롤. 카드 height overflow 방지를
+                  // 위해 Wrap 대신 단일 Row + horizontal scroll 사용. pill 이
+                  // 카드 width 를 넘으면 사용자가 옆으로 스크롤해서 더 본다.
                   if (event.characterCodes.isNotEmpty)
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 3,
-                      runSpacing: 3,
-                      children: [
-                        for (final code in event.characterCodes.take(3))
-                          _CharPillAvatar(
-                            character: charactersByCode[code],
-                            name: charactersByCode[code]?.name ?? code,
-                          ),
-                      ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const ClampingScrollPhysics(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            for (
+                              var i = 0;
+                              i < event.characterCodes.take(3).length;
+                              i++
+                            )
+                              Padding(
+                                padding: EdgeInsets.only(left: i == 0 ? 0 : 3),
+                                child: _CharPillAvatar(
+                                  character: charactersByCode[event
+                                      .characterCodes
+                                      .elementAt(i)],
+                                  name:
+                                      charactersByCode[event.characterCodes
+                                              .elementAt(i)]
+                                          ?.name ??
+                                      event.characterCodes.elementAt(i),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
                 ],
               ),
