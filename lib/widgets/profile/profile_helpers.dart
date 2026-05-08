@@ -2,7 +2,7 @@
 //
 // 작은 재사용 헬퍼 위젯 모음:
 // _profileNetworkAvatar, _profileTinyIconButton, _profileTestamentToggleButton,
-// _profileTopStatCard, _profileCharacterProgressRow.
+// _profileCharacterProgressRow.
 part of '../profile_tab_page.dart';
 
 extension ProfileHelpersExt on ProfileTabPageState {
@@ -115,46 +115,6 @@ extension ProfileHelpersExt on ProfileTabPageState {
     );
   }
 
-  Widget _profileTopStatCard({required String title, required String value}) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 58),
-      decoration: floatingPanelDecoration(
-        color: const Color(0xFFF7E9D2),
-        shadowOpacity: 0.08,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0xFF6A4C2E),
-              fontWeight: FontWeight.w800,
-              fontSize: 13.2,
-              height: 1.15,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFFB06B25),
-              fontWeight: FontWeight.w900,
-              fontSize: 16.8,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _profileCharacterProgressRow({
     required List<Character> rowPeople,
     required Set<String> completedEventIds,
@@ -173,10 +133,10 @@ extension ProfileHelpersExt on ProfileTabPageState {
               _profileStudyProgressByCharacterCode[character.code];
           final progress = progressData?.fraction ?? 0.0;
           return Expanded(
+            // 좌우 균등 패딩 — 마지막 셀만 right:0 으로 두면 그 셀의 inner 폭이
+            // 더 넓어져 ringSize 가 커지는 문제 발생. 모든 셀을 동일 폭으로.
             child: Padding(
-              padding: EdgeInsets.only(
-                right: index == rowPeople.length - 1 ? 0 : 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 3),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -196,65 +156,21 @@ extension ProfileHelpersExt on ProfileTabPageState {
                         final compact = width < 62;
                         final stacked = width < 108;
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (stacked)
-                              Column(
-                                children: [
-                                  CharacterAvatar(
-                                    character: character,
-                                    size: compact ? 24 : 26,
-                                  ),
-                                  SizedBox(height: compact ? 4 : 5),
-                                  Text(
-                                    character.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: AppColors.ink500,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: compact ? 10.2 : 11.8,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            else
-                              Row(
-                                children: [
-                                  CharacterAvatar(
-                                    character: character,
-                                    size: 28,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Text(
-                                      character.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: AppColors.ink500,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 12.6,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            const SizedBox(height: 7),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(999),
-                              child: LinearProgressIndicator(
-                                minHeight: compact ? 7 : 8,
-                                value: progress,
-                                backgroundColor: const Color(0x664E3A26),
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFFC6922D),
-                                ),
-                              ),
-                            ),
-                          ],
+                        // 이름은 ring 안쪽 하단에 오버레이로 표시 → 외부 텍스트
+                        // 라인 제거하고 그만큼 아바타 키움. 셀 폭에 맞춰 ring 사이즈
+                        // 동적 결정 (clamp 으로 너무 좁은 폭에서도 overflow 방지).
+                        final ringSize = math.min(
+                          width - 4,
+                          compact ? 52.0 : (stacked ? 62.0 : 72.0),
+                        );
+
+                        return Center(
+                          child: AvatarProgressRing(
+                            character: character,
+                            size: ringSize,
+                            progress: progress,
+                            name: character.name,
+                          ),
                         );
                       },
                     ),

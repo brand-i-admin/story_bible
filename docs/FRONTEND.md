@@ -201,10 +201,18 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerWidget, 콜백으로 동작). 사역자/관리자에게만 **"이 이야기 삭제 제안"** 버튼 노출 (`_DeleteProposalButton` 서브 위젯). |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerStatefulWidget, 콜백으로 동작). 사역자/관리자에게만 **"이 이야기 삭제 제안"** 버튼 노출 (`_DeleteProposalButton` 서브 위젯). 본문 읽기 + 퀴즈 둘 다 완료되는 전이 시점에 `CompletionCelebration` 으로 별가루 burst + 초록 글로우 + 금박 "완료" 도장. 도장이 끝나거나 이미 완료된 사건으로 진입한 경우 우측 "다음 이야기" 카드를 `PulseHighlight` 로 박동. |
+| CompletionCelebration | `widgets/completion_celebration.dart` | 자식 위젯을 감싸 GlobalKey 로 `play()` 호출 시 두 단계 축하 효과: (1) 별가루 + 초록 글로우 1.2s, (2) 끝나면 금박 "완료" 도장이 슬램+흔듦+페이드 0.95s. 도장 종료 시 옵션 `onComplete` 콜백 호출. EventDetailPage 의 read+quiz 박스에 부착. |
+| PulseHighlight | `widgets/pulse_highlight.dart` | `active` 인 동안 자식 외곽에 1.4s 사이클로 0→1→0 박동하는 골드 glow 를 그리는 래퍼. EventDetailPage 의 "다음 이야기" 카드에 부착해 다음 이동 동선을 시각적으로 유도. |
+| AvatarProgressRing | `widgets/avatar_progress_ring.dart` | 아바타 둘레에 초록 원형 progress 호를 그리는 래퍼 (12시 방향 시계방향, 항상 초록). 옵션 `name` 을 주면 아바타 내부 하단에 솔리드 다크 pill 라벨을 오버레이해 외부 텍스트 라인을 제거. ProfileTabPage 인물 진행도 행에서 LinearProgressIndicator 대체로 사용. |
+| EraPickRows | `widgets/v2/era_pick_rows.dart` | 시대 선택 칩 — 구약/신약 두 줄. HomeIntroPanel + ProfileTabPage 의 "장소로 시작" 탭 공유. `eraIconFor(code)` 도 export. |
+| ProfileMiniMap | `widgets/profile/profile_mini_map.dart` | 프로필 "장소로 시작" 탭의 미니 맵. 선택된 시대의 region 폴리곤을 진행률로 알파 채움(검정→시대컬러), 100% region 은 황금 깃발 마커. 상단에 "정복: X / N" 칩. point-in-polygon 으로 사건↔region 매핑. |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
-| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (인물 진행도 + 노트/말씀/중보기도 미리보기, 자체 데이터/상태 25+개) |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭. 컴팩트 헤더(아바타 40px + 이름 + **수정 / 설정(톱니)** 두 버튼) + 노트/말씀/중보기도 미리보기(중보 ~3.5명 fixed 320px) + **"진행률 표시" 섹션** (탭 pinned, 컨텐츠 스크롤). 설정 시트(`profile_settings_sheet.dart`)에 개인정보 보호 / 글자 크기 변경 / 로그아웃 + admin@brand-i.net 푸터. |
+| QuizTabPage | `widgets/quiz/quiz_tab_page.dart` | 홈 상단 "퀴즈" 버튼이 여는 페이지. 두 탭: **매일 퀴즈** (4지선다 + 제출 → 도장+별가루 + 해설) + **주간 퀴즈** (embedded WeeklyTabPage). |
+| DailyQuizSection | `widgets/quiz/daily_quiz_section.dart` | `daily_quiz` 테이블의 최신 1문제. 선택 → 제출 → CompletionCelebration 발화 + 정/오답 결과 + 해설. |
+| WeeklyTabPage | `widgets/weekly_tab_page.dart` | 주간 학습 (embedded 모드 지원). **두 모드** — `WeeklyMode.character` (랜덤 인물 + 그 인물의 사건) / `WeeklyMode.region` (랜덤 시대 + 사건이 있는 랜덤 region + 그 region 사건). 시드(`seedFromKey(weekKey)`)로 50/50 결정. 헤더는 모드별 분기 ("금주 인물" / "금주 지역: 시대 · 지역"). 지도 = StoryMapPanel(decorate=false, region 모드는 `eraRegionLandmarks: [region]`). 하단 = EventTimelineRow (홈과 동일 카드/스크롤/포커스 동기). 카드 탭 시 `quizWeekKey` 함께 EventDetailPage 진입 → 진행도가 `weekly_quiz_progress` 테이블에 독립 저장. |
 | CharacterAvatar | `widgets/character_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
 
 ### 5.4 도메인 횡단 공유 위젯 (4차 리팩토링)
@@ -251,7 +259,7 @@ Firebase 설정 가이드: `docs/guides/PUSH_SETUP.md`. 인프라 전반 원리:
 |----------|-------------|----------|
 | `widgets/story_selection_panel.dart` | 1648 → 561 (−66%) | `selection/panel_chrome.dart` (~280)<br>`selection/step_chip.dart` (~340)<br>`selection/selection_cards.dart` (~465) |
 | `widgets/story_map_panel.dart` | 1500 → 1244 (−17%) | `map/pin_marker.dart` (~170)<br>+ 순수 함수 9개 → `utils/map_math.dart` |
-| `widgets/profile_tab_page.dart` | 2628 → 1755 (−33%) | `profile/profile_character_overview.dart` (~400)<br>`profile/profile_intercessory_prayer.dart` (~225)<br>`profile/profile_helpers.dart` (~260) |
+| `widgets/profile_tab_page.dart` | 2628 → 1755 (−33%) | `profile/profile_character_overview.dart` (~400)<br>`profile/profile_intercessory_prayer.dart` (~225)<br>`profile/profile_helpers.dart` (~260)<br>`profile/profile_left_panel.dart`<br>`profile/profile_right_panel.dart` (헬퍼만 잔존)<br>`profile/profile_progress_section.dart` (2026-05-08, "진행률 표시" 섹션)<br>`profile/profile_settings_sheet.dart` (2026-05-08, 설정 시트) |
 | `widgets/weekly_tab_page.dart` | 884 → 574 (−35%) | `weekly/weekly_avatar.dart` (~67)<br>`weekly/weekly_list_panel.dart` (~258)<br>+ 순수 함수 3개 → `utils/weekly_selection.dart` |
 
 ### ProfileTabPage 외부 콜백

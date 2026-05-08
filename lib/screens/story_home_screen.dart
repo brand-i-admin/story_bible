@@ -19,24 +19,22 @@ import '../state/notification_providers.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
-import '../theme/tokens.dart';
 import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/character_panel.dart';
 import '../widgets/event_detail_page.dart';
-import '../widgets/font_scale_bottom_sheet.dart';
 import '../widgets/notification/notification_bell_button.dart';
 import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/profile_tab_page.dart';
 import '../widgets/proposal/pastor_gate_dialog.dart';
+import '../widgets/quiz/quiz_tab_page.dart';
 import '../widgets/story_home_styles.dart';
 import '../widgets/story_map_panel.dart';
 import '../widgets/story_selection_panel.dart';
 import '../widgets/v2/home_intro_panel.dart';
 import '../widgets/v2/region_event_list.dart';
 import '../widgets/v2/region_pick_panel.dart';
-import '../widgets/weekly_tab_page.dart';
 import 'notification_history_screen.dart';
 import 'proposal_board_screen.dart';
 import 'proposal_detail_screen.dart';
@@ -391,10 +389,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _animateSelectionPanelToStage(StorySelectionPanelStage.collapsed);
   }
 
-  void _expandSelectionPanelToHalf() {
-    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
-  }
-
   void _expandSelectionPanelFully() {
     _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
   }
@@ -419,14 +413,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       case StorySelectionPanelStage.collapsed:
         return;
     }
-  }
-
-  void _toggleSelectionPanelFromTopButton() {
-    if (_selectionPanelStage == StorySelectionPanelStage.collapsed) {
-      _expandSelectionPanelToHalf();
-      return;
-    }
-    _collapseSelectionPanel();
   }
 
   void _goToSelectionStep(int step) {
@@ -688,7 +674,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => WeeklyTabPage(
+        builder: (_) => QuizTabPage(
           onStartQuiz: _startQuiz,
           onOpenEventDetail: _openEventDetailPage,
         ),
@@ -973,7 +959,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         .toList(growable: false);
   }
 
-  Future<void> _openEventDetailPage(StoryEvent event) async {
+  Future<void> _openEventDetailPage(
+    StoryEvent event, {
+    String? quizWeekKey,
+  }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
     // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
     final client = ref.read(supabaseClientProvider);
@@ -1004,6 +993,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       MaterialPageRoute<void>(
         builder: (_) => EventDetailPage(
           event: event,
+          quizWeekKey: quizWeekKey,
           sceneAssetsFuture: sceneAssetsFuture,
           onOpenBibleReader: (bookNo, chapterNo, verseNo) async {
             if (!mounted) {
@@ -1014,21 +1004,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               initialChapterNo: chapterNo,
               initialVerseNo: verseNo,
             );
-            // 사용자가 본문을 보고 돌아왔으면 '읽기' 완료 처리.
+            // 사용자가 본문을 보고 돌아왔으면 '읽기' 완료 처리. 퀴즈 모드면
+            // 별도 weekly_quiz_progress 에 저장 (프로필 진행도 영향 X).
             if (!mounted) return;
-            await ref
-                .read(storyControllerProvider.notifier)
-                .setBibleRead(eventId: event.id, isRead: true);
+            final notifier = ref.read(storyControllerProvider.notifier);
+            if (quizWeekKey != null) {
+              await notifier.setWeeklyQuizBibleRead(
+                weekKey: quizWeekKey,
+                eventId: event.id,
+                isRead: true,
+              );
+            } else {
+              await notifier.setBibleRead(eventId: event.id, isRead: true);
+            }
           },
-          onStartQuiz: _startQuiz,
+          onStartQuiz: (eventId) =>
+              _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
           prevEvent: prev,
           nextEvent: next,
           onNavigateToEvent: (target) {
             // 같은 페이지를 새 사건으로 교체 (push stack 무한 증가 방지).
+            // quizWeekKey 가 있으면 prev/next 이동 후에도 퀴즈 모드 유지.
             ref.read(storyControllerProvider.notifier).selectEvent(target.id);
             Navigator.of(context).pushReplacement(
               MaterialPageRoute<void>(
-                builder: (_) => _buildDetailPageForEvent(target),
+                builder: (_) =>
+                    _buildDetailPageForEvent(target, quizWeekKey: quizWeekKey),
               ),
             );
           },
@@ -1063,7 +1064,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   /// pushReplacement 시 동일 detail page 빌드 — 새 prev/next 도 다시 계산.
-  Widget _buildDetailPageForEvent(StoryEvent event) {
+  /// quizWeekKey 가 있으면 prev/next 이동 후에도 퀴즈 모드 유지.
+  Widget _buildDetailPageForEvent(StoryEvent event, {String? quizWeekKey}) {
     final client = ref.read(supabaseClientProvider);
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
@@ -1084,23 +1086,38 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         : null;
     return EventDetailPage(
       event: event,
+      quizWeekKey: quizWeekKey,
       sceneAssetsFuture: sceneAssetsFuture,
-      onOpenBibleReader: (bookNo, chapterNo, verseNo) {
+      onOpenBibleReader: (bookNo, chapterNo, verseNo) async {
         if (!mounted) return;
-        _openBibleReaderPopup(
+        await _openBibleReaderPopup(
           initialBookNo: bookNo,
           initialChapterNo: chapterNo,
           initialVerseNo: verseNo,
         );
+        if (!mounted) return;
+        // 본문 읽기 완료 처리 — quiz 모드면 weekly 진행도, 아니면 일반.
+        final notifier = ref.read(storyControllerProvider.notifier);
+        if (quizWeekKey != null) {
+          await notifier.setWeeklyQuizBibleRead(
+            weekKey: quizWeekKey,
+            eventId: event.id,
+            isRead: true,
+          );
+        } else {
+          await notifier.setBibleRead(eventId: event.id, isRead: true);
+        }
       },
-      onStartQuiz: _startQuiz,
+      onStartQuiz: (eventId) =>
+          _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
       prevEvent: prev,
       nextEvent: next,
       onNavigateToEvent: (target) {
         ref.read(storyControllerProvider.notifier).selectEvent(target.id);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute<void>(
-            builder: (_) => _buildDetailPageForEvent(target),
+            builder: (_) =>
+                _buildDetailPageForEvent(target, quizWeekKey: quizWeekKey),
           ),
         );
       },
@@ -1192,12 +1209,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return 'old';
   }
 
-  Future<void> _startQuiz(String eventId) async {
+  Future<void> _startQuiz(
+    String eventId, {
+    String? quizWeekKey,
+    StoryEvent? event,
+  }) async {
     final state = ref.read(storyControllerProvider);
     final repo = ref.read(storyRepositoryProvider);
     final isAuthenticated = ref.read(signedInUserProvider) != null;
-    final event = state.events.where((e) => e.id == eventId).firstOrNull;
-    if (event == null) {
+    // 호출자가 event 를 직접 넘겼으면 그걸 사용 (주간 퀴즈처럼 state.events
+    // 에 없는 이벤트도 처리). 아니면 state.events 에서 lookup.
+    final resolvedEvent =
+        event ?? state.events.where((e) => e.id == eventId).firstOrNull;
+    if (resolvedEvent == null) {
       return;
     }
 
@@ -1211,7 +1235,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await showDialog<void>(
         context: context,
         builder: (dialogContext) => ParchmentDialog(
-          title: event.title,
+          title: resolvedEvent.title,
           subtitle: '퀴즈를 불러오지 못했습니다. 다시 시도해 주세요.',
           actions: [
             ParchmentDialogActionButton(
@@ -1241,7 +1265,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await showDialog<void>(
         context: context,
         builder: (dialogContext) => ParchmentDialog(
-          title: event.title,
+          title: resolvedEvent.title,
           subtitle: '해당 사건의 퀴즈가 아직 준비되지 않았습니다. 퀴즈 단계를 완료 처리합니다.',
           actions: [
             ParchmentDialogActionButton(
@@ -1256,15 +1280,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 퀴즈가 없는 사건도 본문 읽기와 함께 진행률에 들어가도록 자동 완료.
       // 점수는 0/0 로 기록 (실제 풀어야 할 문제가 없으므로).
       if (mounted) {
-        await ref
-            .read(storyControllerProvider.notifier)
-            .setQuizCompleted(
-              eventId: eventId,
-              isCompleted: true,
-              correct: 0,
-              total: 0,
-            );
-        await _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
+        final notifier = ref.read(storyControllerProvider.notifier);
+        if (quizWeekKey != null) {
+          await notifier.setWeeklyQuizCompleted(
+            weekKey: quizWeekKey,
+            eventId: eventId,
+            isCompleted: true,
+            correct: 0,
+            total: 0,
+          );
+        } else {
+          await notifier.setQuizCompleted(
+            eventId: eventId,
+            isCompleted: true,
+            correct: 0,
+            total: 0,
+          );
+          await _profileTabKey.currentState
+              ?.refreshProgressAfterQuizCompletion();
+        }
       }
       return;
     }
@@ -1321,7 +1355,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              event.title,
+                              resolvedEvent.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -1453,7 +1487,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                       context: context,
                                       builder: (dialogContext) =>
                                           _QuizResultDialog(
-                                            event: event,
+                                            event: resolvedEvent,
                                             questions: questions,
                                             selectedAnswers: selectedAnswers,
                                             score: score,
@@ -1513,16 +1547,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
-    // 퀴즈 완료 + 점수 저장. 본문 읽기도 완료된 상태면 controller 가 자동으로
-    // markEventCompleted 까지 동기화해 준다 (_syncOverallCompletion).
-    await ref
-        .read(storyControllerProvider.notifier)
-        .setQuizCompleted(
-          eventId: eventId,
-          isCompleted: true,
-          correct: score,
-          total: questions.length,
-        );
+    // 퀴즈 완료 + 점수 저장. quizWeekKey 가 있으면 주간 퀴즈 진행도(별도
+    // 테이블)에, 없으면 일반 진행도에 저장. 일반은 controller 가 자동으로
+    // markEventCompleted 까지 동기화 (_syncOverallCompletion).
+    final notifier = ref.read(storyControllerProvider.notifier);
+    if (quizWeekKey != null) {
+      await notifier.setWeeklyQuizCompleted(
+        weekKey: quizWeekKey,
+        eventId: eventId,
+        isCompleted: true,
+        correct: score,
+        total: questions.length,
+      );
+    } else {
+      await notifier.setQuizCompleted(
+        eventId: eventId,
+        isCompleted: true,
+        correct: score,
+        total: questions.length,
+      );
+    }
     // 인앱 알림 row 삽입 — 실패해도 퀴즈 완료 UX 를 막지 않도록 try-catch.
     try {
       await ref
@@ -1741,24 +1785,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               final sheetHeight =
                   constraints.maxHeight *
                   _sheetSizeForStage(viewportSize, _selectionPanelStage);
-              final selectionButtonIsOpen =
-                  _selectionPanelStage == StorySelectionPanelStage.expanded;
-              final selectionButtonBackground = selectionButtonIsOpen
-                  ? const Color(0xFF74A856)
-                  : const Color(0xFFD2873E);
-              final selectionButtonBorder = selectionButtonIsOpen
-                  ? const Color(0xFFD4E8BC)
-                  : const Color(0xFFF1C98A);
-              const selectionButtonForeground = AppColors.fgOnDark;
-              final selectionButtonShadow = [
-                BoxShadow(
-                  color: selectionButtonIsOpen
-                      ? const Color(0x3977A85A)
-                      : const Color(0x33D2873E),
-                  blurRadius: selectionButtonIsOpen ? 9 : 8,
-                  offset: const Offset(0, 2),
-                ),
-              ];
 
               return Stack(
                 children: [
@@ -1881,24 +1907,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
                           children: [
-                            topUtilityButton(
-                              label: '사건선택',
-                              selected: selectionButtonIsOpen,
-                              backgroundColor: selectionButtonBackground,
-                              borderColor: selectionButtonBorder,
-                              foregroundColor: selectionButtonForeground,
-                              boxShadow: selectionButtonShadow,
-                              onTap: _toggleSelectionPanelFromTopButton,
-                            ),
-                            const SizedBox(width: 4),
-                            topUtilityButton(
-                              label: '금주 인물',
-                              onTap: _openWeeklyTab,
-                            ),
-                            const SizedBox(width: 4),
+                            // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
+                            // 항상 일부 보이므로 별도 토글 불필요.
+                            // "Aa" (글자크기) 버튼 제거 — 프로필 설정 시트로 이전.
                             topUtilityButton(
                               label: '성경',
                               onTap: _openBibleReaderPopup,
+                            ),
+                            const SizedBox(width: 4),
+                            topUtilityButton(
+                              label: '퀴즈',
+                              onTap: _openWeeklyTab,
                             ),
                             const SizedBox(width: 4),
                             topUtilityButton(
@@ -1909,10 +1928,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             NotificationBellButton(
                               onNavigate: _handleNotificationTap,
                               onOpenHistory: _openNotificationHistory,
-                            ),
-                            const SizedBox(width: 4),
-                            topFontScaleButton(
-                              onTap: () => showFontScaleSheet(context),
                             ),
                             if (kIsWeb) ...[
                               const SizedBox(width: 4),

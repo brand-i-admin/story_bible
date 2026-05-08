@@ -6,21 +6,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../models/character.dart';
+import '../models/era.dart';
+import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../models/weekly_study_data.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/tokens.dart';
+import '../utils/region_membership.dart';
 import '../utils/weekly_selection.dart';
-import 'shared/event_short_popup.dart';
+import 'event_timeline_row.dart';
 import 'story_home_styles.dart';
 import 'story_map_panel.dart';
 import 'sub_page_scaffold.dart';
 
 // 주간 화면 빌더 메소드를 도메인별 part 파일로 분리.
 part 'weekly/weekly_avatar.dart';
-part 'weekly/weekly_list_panel.dart';
 
 /// 금주 인물 학습 탭 페이지.
 ///
@@ -37,10 +39,19 @@ class WeeklyTabPage extends ConsumerStatefulWidget {
     super.key,
     required this.onStartQuiz,
     required this.onOpenEventDetail,
+    this.embedded = false,
   });
 
   final void Function(String eventId) onStartQuiz;
-  final void Function(StoryEvent event) onOpenEventDetail;
+
+  /// 사건 상세 페이지 열기. 주간 퀴즈 모드는 `quizWeekKey` 를 함께 넘겨 진행도가
+  /// `weekly_quiz_progress` 에 독립 저장되도록 한다.
+  final void Function(StoryEvent event, {String? quizWeekKey})
+  onOpenEventDetail;
+
+  /// `true` 면 SubPageScaffold 를 생략하고 본문만 반환 — QuizTabPage 같은 부모
+  /// scaffold 안에 그대로 넣을 수 있게 한다.
+  final bool embedded;
 
   @override
   ConsumerState<WeeklyTabPage> createState() => _WeeklyTabPageState();
@@ -54,25 +65,97 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
 
   WeeklyStudyData? _weeklyStudyData;
   String? _weeklySelectedEventId;
-  final Set<String> _weeklyCheckedEventIds = <String>{};
   bool _weeklyLoading = true;
   String? _weeklyError;
-  bool _weeklyShowShortPopup = false;
 
   @override
   void initState() {
     super.initState();
     _loadWeeklyData();
+    // 주간 퀴즈 진행도 로드 (현재 week_key) — 캐시 hit 시 noop.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final weekKey = weeklyKeyFor(weekStartMonday(DateTime.now()));
+      ref
+          .read(storyControllerProvider.notifier)
+          .ensureWeeklyQuizProgressLoaded(weekKey);
+    });
   }
 
-  StoryEvent? get _weeklySelectedEvent {
-    final data = _weeklyStudyData;
-    if (data == null || _weeklySelectedEventId == null) {
+  /// 이번 주의 weekly_quiz_progress 키. 다음 주가 되면 자동 변경 → 진행도 reset.
+  String get _currentWeekKey => weeklyKeyFor(weekStartMonday(DateTime.now()));
+
+  /// region 모드 시드 기반 후보 선택. 사건 보유 region 이 있는 era 풀에서
+  /// 시드 모듈로 era 1개 → 그 era 의 사건 보유 region 1개를 결정적으로 선택.
+  /// 후보가 비어 있으면 null 반환 → 호출자가 character 모드로 fallback.
+  ({Era era, Landmark region, List<StoryEvent> events})? _pickWeeklyRegion({
+    required int seed,
+    required StoryState state,
+  }) {
+    if (state.eras.isEmpty || state.landmarks.isEmpty || state.events.isEmpty) {
       return null;
     }
-    return data.events
-        .where((event) => event.id == _weeklySelectedEventId)
-        .firstOrNull;
+    final landmarkById = {for (final l in state.landmarks) l.id: l};
+    // era 별로 사건 보유 region 모음. 사건 → landmark.parentLandmarkId 또는
+    // landmark 자체(kind=region) 로 region 추적.
+    final regionsWithEventsByEra = <String, Map<String, List<StoryEvent>>>{};
+    for (final ev in state.events) {
+      final lm = landmarkById[ev.landmarkId];
+      if (lm == null) continue;
+      Landmark? region;
+      if (lm.kind == 'region' && lm.polygon.length >= 3) {
+        region = lm;
+      } else if (lm.parentLandmarkId != null) {
+        final parent = landmarkById[lm.parentLandmarkId];
+        if (parent != null &&
+            parent.kind == 'region' &&
+            parent.polygon.length >= 3) {
+          region = parent;
+        }
+      }
+      // Fallback: point-in-polygon over all regions.
+      if (region == null && ev.lat != null && ev.lng != null) {
+        final p = LatLng(ev.lat!, ev.lng!);
+        for (final r in state.landmarks) {
+          if (r.kind == 'region' &&
+              r.polygon.length >= 3 &&
+              isPointInPolygon(p, r.polygon)) {
+            region = r;
+            break;
+          }
+        }
+      }
+      if (region == null) continue;
+
+      final byRegion = regionsWithEventsByEra.putIfAbsent(
+        ev.eraId,
+        () => <String, List<StoryEvent>>{},
+      );
+      byRegion.putIfAbsent(region.id, () => <StoryEvent>[]).add(ev);
+    }
+
+    final eraIds = regionsWithEventsByEra.keys.toList()..sort();
+    if (eraIds.isEmpty) return null;
+    final eraId = eraIds[seed % eraIds.length];
+    final era = state.eras.where((e) => e.id == eraId).firstOrNull;
+    if (era == null) return null;
+
+    final regionMap = regionsWithEventsByEra[eraId]!;
+    final regionIds = regionMap.keys.toList()..sort();
+    if (regionIds.isEmpty) return null;
+    // 시드를 era 선택 후 한 번 더 변형해 region 인덱스 분산.
+    final regionId =
+        regionIds[(seed ~/ math.max(1, eraIds.length)) % regionIds.length];
+    final region = landmarkById[regionId];
+    if (region == null) return null;
+
+    final events = [...regionMap[regionId]!]
+      ..sort((a, b) {
+        final cmp = a.globalRank.compareTo(b.globalRank);
+        if (cmp != 0) return cmp;
+        return a.id.compareTo(b.id);
+      });
+    return (era: era, region: region, events: events);
   }
 
   // 순수 함수는 lib/utils/weekly_selection.dart로 추출:
@@ -146,44 +229,68 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         throw StateError('주간 추천 인물을 찾지 못했습니다.');
       }
 
+      final seed = seedFromKey(weekKey);
       final forcedCode = _forcedWeeklyCharacterCodeByWeekKey[weekKey];
-      final forcedCharacter = forcedCode == null
-          ? null
-          : candidates
-                .where((character) => character.code == forcedCode)
-                .firstOrNull;
-      final weeklyCharacter =
-          forcedCharacter ??
-          candidates[seedFromKey(weekKey) % candidates.length];
-      final weeklyEvents =
-          [
-            ...(eventsByCharacterCode[weeklyCharacter.code] ??
-                const <StoryEvent>[]),
-          ]..sort((a, b) {
-            final cmp = a.globalRank.compareTo(b.globalRank);
-            if (cmp != 0) {
-              return cmp;
-            }
-            return a.id.compareTo(b.id);
-          });
-      final selectedEventId = weeklyEvents.isNotEmpty
-          ? weeklyEvents.first.id
+      // forced 인물이 있으면 character 모드 강제, 아니면 시드 기반 모드 결정.
+      final mode = forcedCode != null
+          ? WeeklyMode.character
+          : weeklyModeForSeed(seed);
+
+      final pick = mode == WeeklyMode.region
+          ? _pickWeeklyRegion(seed: seed, state: state)
+          : null;
+
+      final WeeklyStudyData weeklyData;
+      if (pick != null) {
+        weeklyData = WeeklyStudyData.region(
+          era: pick.era,
+          region: pick.region,
+          events: pick.events,
+          weekStartMonday: monday,
+        );
+      } else {
+        // character 모드 (또는 region fallback).
+        final forcedCharacter = forcedCode == null
+            ? null
+            : candidates
+                  .where((character) => character.code == forcedCode)
+                  .firstOrNull;
+        final weeklyCharacter =
+            forcedCharacter ?? candidates[seed % candidates.length];
+        final weeklyEvents =
+            [
+              ...(eventsByCharacterCode[weeklyCharacter.code] ??
+                  const <StoryEvent>[]),
+            ]..sort((a, b) {
+              final cmp = a.globalRank.compareTo(b.globalRank);
+              if (cmp != 0) {
+                return cmp;
+              }
+              return a.id.compareTo(b.id);
+            });
+        weeklyData = WeeklyStudyData.character(
+          character: weeklyCharacter,
+          events: weeklyEvents,
+          weekStartMonday: monday,
+        );
+      }
+
+      final selectedEventId = weeklyData.events.isNotEmpty
+          ? weeklyData.events.first.id
           : null;
 
       if (!mounted) {
         return;
       }
       setState(() {
-        _weeklyStudyData = WeeklyStudyData(
-          character: weeklyCharacter,
-          events: weeklyEvents,
-          weekStartMonday: monday,
-        );
+        _weeklyStudyData = weeklyData;
         _weeklySelectedEventId = selectedEventId;
-        _weeklyCheckedEventIds.clear();
-        _weeklyShowShortPopup = false;
         _weeklyLoading = false;
-        _weeklyError = weeklyEvents.isEmpty ? '추천 인물의 이야기가 아직 없습니다.' : null;
+        _weeklyError = weeklyData.events.isEmpty
+            ? (weeklyData.mode == WeeklyMode.region
+                  ? '이번 주 지역의 사건이 아직 없습니다.'
+                  : '추천 인물의 이야기가 아직 없습니다.')
+            : null;
       });
     } catch (error) {
       if (!mounted) {
@@ -201,66 +308,26 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
     final isAuthenticated = ref.watch(signedInUserProvider) != null;
-    final selectedEvent = _weeklySelectedEvent;
 
-    return SubPageScaffold(
-      title: '금주 인물',
-      compactBackOnly: true,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-              child: _buildWeeklyBody(
-                state: state,
-                controller: controller,
-                isAuthenticated: isAuthenticated,
-                onSelectEvent: (eventId) {
-                  setState(() {
-                    _weeklySelectedEventId = eventId;
-                    _weeklyShowShortPopup = true;
-                  });
-                },
-                onToggleChecked: (eventId) {
-                  setState(() {
-                    if (_weeklyCheckedEventIds.contains(eventId)) {
-                      _weeklyCheckedEventIds.remove(eventId);
-                    } else {
-                      _weeklyCheckedEventIds.add(eventId);
-                    }
-                  });
-                },
-                onStartQuiz: widget.onStartQuiz,
-              ),
-            ),
-          ),
-          if (selectedEvent != null && _weeklyShowShortPopup)
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 320,
-                  child: EventShortPopup(
-                    event: selectedEvent,
-                    maxHeight: 232,
-                    onClose: () {
-                      setState(() {
-                        _weeklyShowShortPopup = false;
-                      });
-                    },
-                    onOpenDetail: () {
-                      setState(() {
-                        _weeklyShowShortPopup = false;
-                      });
-                      widget.onOpenEventDetail(selectedEvent);
-                    },
-                  ),
-                ),
-              ),
-            ),
-        ],
+    // 핀 탭 = 카드 포커스 (popup 없음, 직접 상세는 카드 탭으로).
+    void onSelectEvent(String eventId) {
+      setState(() => _weeklySelectedEventId = eventId);
+    }
+
+    final body = Padding(
+      padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+      child: _buildWeeklyBody(
+        state: state,
+        controller: controller,
+        isAuthenticated: isAuthenticated,
+        onSelectEvent: onSelectEvent,
       ),
     );
+
+    if (widget.embedded) {
+      return body;
+    }
+    return SubPageScaffold(title: '금주 인물', compactBackOnly: true, child: body);
   }
 
   Widget _buildWeeklyBody({
@@ -268,8 +335,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     required StoryController controller,
     required bool isAuthenticated,
     required ValueChanged<String> onSelectEvent,
-    required ValueChanged<String> onToggleChecked,
-    required ValueChanged<String> onStartQuiz,
   }) {
     final weekly = _weeklyStudyData;
     if (_weeklyLoading) {
@@ -295,7 +360,12 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       return const SizedBox.shrink();
     }
 
-    final completedEventIds = state.completedEventIds;
+    // 주간 퀴즈 모드 — 본문 + 퀴즈 둘 다 완료된 이벤트만 "완료" 로 본다.
+    // 프로필 진행도(state.completedEventIds)와는 독립.
+    final completedEventIds = <String>{
+      for (final id in state.weeklyQuizBibleReadEventIds)
+        if (state.weeklyQuizCompletedEventIds.contains(id)) id,
+    };
     final totalStories = weekly.events.length;
     final completedStories = weekly.events
         .where((event) => completedEventIds.contains(event.id))
@@ -343,22 +413,23 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       builder: (context, constraints) {
         final w = constraints.maxWidth;
         final h = constraints.maxHeight;
-        final orientation = MediaQuery.orientationOf(context);
-        final useSplitLayout = orientation == Orientation.landscape || w >= 900;
         final contentGap = (w * 0.011).clamp(8.0, 14.0).toDouble();
-        final progressHeight = (h * 0.084).clamp(44.0, 58.0).toDouble();
-        final mapHeightOnNarrow = (h * 0.44).clamp(220.0, 360.0).toDouble();
+        // compact 모드에서 본문(요약 텍스트 + gap + bar)이 약 50px 필요 + 컨테이너
+        // padding 16 = 66 minimum. 하한을 넉넉히.
+        final progressHeight = (h * 0.10).clamp(66.0, 78.0).toDouble();
 
         String avatarAssetForCharacter(String characterCode) {
-          if (characterCode == weekly.character.code) {
-            return weekly.character.avatarAssetPath;
-          }
           final character = state.characters
               .where((p) => p.code == characterCode)
               .firstOrNull;
-          return character?.avatarAssetPath ?? weekly.character.avatarAssetPath;
+          if (character != null) return character.avatarAssetPath;
+          if (weekly.character?.code == characterCode) {
+            return weekly.character!.avatarAssetPath;
+          }
+          return '';
         }
 
+        final isRegionMode = weekly.mode == WeeklyMode.region;
         final mapPanel = ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: StoryMapPanel(
@@ -367,7 +438,21 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             onSelectEvent: onSelectEvent,
             colorForCharacter: controller.colorForCharacter,
             avatarAssetForCharacter: avatarAssetForCharacter,
-            selectedCharacterCodes: {weekly.character.code},
+            // selectedCharacterCodes 는 path polyline 색 결정용. 인물 모드면
+            // 그 인물 코드 1개 전달 → 갈색 점선 + ▶ 화살촉이 그 인물 색.
+            selectedCharacterCodes: weekly.character == null
+                ? const <String>{}
+                : {weekly.character!.code},
+            // region 모드면 그 region 폴리곤 한 개를 강조.
+            eraRegionLandmarks: isRegionMode && weekly.region != null
+                ? [weekly.region!]
+                : const <Landmark>[],
+            // 시간순 숫자 핀 + 점선 + 화살촉 모드 활성 — 홈 step3 와 동일.
+            // revealEventsKey 가 set 되면 _orderedEventsActive=true → numbered
+            // pin 빌더 사용. revealInstantly:true 라 0.3초 stagger 건너뛰고 즉시.
+            revealEventsKey:
+                'weekly:${weekly.mode.name}:${weekly.weekStartMonday.toIso8601String()}',
+            revealInstantly: true,
             decorate: false,
             showSelectedCallout: false,
             animateReveal: false,
@@ -397,43 +482,42 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
               _weeklyGuestNoticeBanner(),
             ],
             SizedBox(height: contentGap),
+            // 헤더 — 모드별 타이틀.
+            _weeklyHeaderBadge(weekly),
+            SizedBox(height: contentGap),
+            // 지도 — 홈과 같은 StoryMapPanel (decorate=false). 핀 = 시간순 숫자.
             Expanded(
-              child: useSplitLayout
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(flex: 11, child: mapPanel),
-                        SizedBox(width: contentGap),
-                        Expanded(
-                          flex: 9,
-                          child: _buildWeeklyListPanel(
-                            weekly: weekly,
-                            completedEventIds: completedEventIds,
-                            colorForCharacter: controller.colorForCharacter,
-                            onSelectEvent: onSelectEvent,
-                            onToggleChecked: onToggleChecked,
-                            onStartQuiz: onStartQuiz,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(height: mapHeightOnNarrow, child: mapPanel),
-                        SizedBox(height: contentGap),
-                        Expanded(
-                          child: _buildWeeklyListPanel(
-                            weekly: weekly,
-                            completedEventIds: completedEventIds,
-                            colorForCharacter: controller.colorForCharacter,
-                            onSelectEvent: onSelectEvent,
-                            onToggleChecked: onToggleChecked,
-                            onStartQuiz: onStartQuiz,
-                          ),
-                        ),
-                      ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: mapPanel),
+                  SizedBox(height: contentGap),
+                  // 사건 카드 row — 홈과 같은 EventTimelineRow.
+                  // 카드 탭 → 사건 상세, 핀 탭은 onSelectEvent 로 카드 포커스.
+                  Container(
+                    // 카드 자연 높이(~210) + 패딩 + ‘현재 이야기' 라벨 overflow
+                    // 여유를 위해 250 — overflow 5px 방지.
+                    height: 250,
+                    decoration: floatingPanelDecoration(),
+                    child: EventTimelineRow(
+                      events: weekly.events,
+                      allEras: state.eras,
+                      charactersByCode: {
+                        for (final c in state.characters) c.code: c,
+                      },
+                      selectedEventId: _weeklySelectedEventId,
+                      completedEventIds: completedEventIds,
+                      onTapEvent: (event) {
+                        // 주간 퀴즈 진행도가 별도 테이블에 저장되도록 weekKey 전달.
+                        widget.onOpenEventDetail(
+                          event,
+                          quizWeekKey: _currentWeekKey,
+                        );
+                      },
                     ),
+                  ),
+                ],
+              ),
             ),
           ],
         );
@@ -461,6 +545,86 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                 fontSize: 12.2,
                 fontWeight: FontWeight.w700,
                 height: 1.32,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 모드별 헤더 — 인물 모드는 아바타 + "금주 인물: xxx", 지역 모드는 깃발
+  /// 아이콘 + "금주 지역: 시대명 · 지역명".
+  Widget _weeklyHeaderBadge(WeeklyStudyData weekly) {
+    if (weekly.mode == WeeklyMode.character && weekly.character != null) {
+      return _weeklyCharacterTitleBadge(
+        text: '금주 인물: ${weekly.character!.name}',
+        character: weekly.character!,
+      );
+    }
+    if (weekly.mode == WeeklyMode.region &&
+        weekly.era != null &&
+        weekly.region != null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        decoration: headerChipDecoration(),
+        child: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFB07220),
+                border: Border.all(color: const Color(0xFFF3E7CC), width: 1.4),
+              ),
+              child: const Icon(
+                Icons.flag_rounded,
+                size: 18,
+                color: Color(0xFFFFF6E2),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                '금주 지역: ${weekly.era!.name} · ${weekly.region!.name}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 16.2,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _weeklyCharacterTitleBadge({
+    required String text,
+    required Character character,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      decoration: headerChipDecoration(),
+      child: Row(
+        children: [
+          _weeklyCharacterAvatar(character: character, size: 34),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16.2,
+                fontWeight: FontWeight.w800,
+                color: AppColors.ink500,
               ),
             ),
           ),

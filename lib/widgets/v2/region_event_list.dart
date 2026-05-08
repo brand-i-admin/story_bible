@@ -145,17 +145,18 @@ class StoryEventThumbCard extends StatelessWidget {
         ? null
         : (startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear');
 
-    // 완료 사건 → 초록 배경 + 초록 보더. 선택 우선순위 > 완료.
+    // 완료 사건 → 초록 배경 + 초록 보더. 완료가 색을 결정하고, 선택은
+    // "현재 이야기" 라벨과 보더 두께(2)로 표시 — 둘이 동시에 보이도록.
     const completedBg = Color(0xFFDDEFD0); // 연한 초록
     const completedBorder = Color(0xFF7AAC4C);
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Material(
-          color: selected
-              ? theme.colorScheme.primary.withValues(alpha: 0.10)
-              : (completed
-                    ? completedBg
+          color: completed
+              ? completedBg
+              : (selected
+                    ? theme.colorScheme.primary.withValues(alpha: 0.10)
                     : Colors.white.withValues(alpha: 0.85)),
           borderRadius: BorderRadius.circular(14),
           child: InkWell(
@@ -165,9 +166,11 @@ class StoryEventThumbCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: selected
-                      ? theme.colorScheme.primary
-                      : (completed ? completedBorder : const Color(0xFFD9C9A2)),
+                  color: completed
+                      ? completedBorder
+                      : (selected
+                            ? theme.colorScheme.primary
+                            : const Color(0xFFD9C9A2)),
                   width: selected ? 2 : (completed ? 1.6 : 1.2),
                 ),
               ),
@@ -264,37 +267,37 @@ class StoryEventThumbCard extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 6),
-                  // 인물 pill — 한 줄 가로 스크롤. 카드 height overflow 방지를
-                  // 위해 Wrap 대신 단일 Row + horizontal scroll 사용. pill 이
-                  // 카드 width 를 넘으면 사용자가 옆으로 스크롤해서 더 본다.
+                  // 인물 pill — 한 줄에 가로 스크롤. 인물 라벨이 2줄로 wrap
+                  // 되어 카드가 overflow 되는 것을 방지. ShaderMask 우측
+                  // 페이드로 "더 있음" 힌트.
                   if (event.characterCodes.isNotEmpty)
                     SizedBox(
-                      width: double.infinity,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const ClampingScrollPhysics(),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (
-                              var i = 0;
-                              i < event.characterCodes.take(3).length;
-                              i++
-                            )
-                              Padding(
-                                padding: EdgeInsets.only(left: i == 0 ? 0 : 3),
-                                child: _CharPillAvatar(
-                                  character: charactersByCode[event
-                                      .characterCodes
-                                      .elementAt(i)],
-                                  name:
-                                      charactersByCode[event.characterCodes
-                                              .elementAt(i)]
-                                          ?.name ??
-                                      event.characterCodes.elementAt(i),
-                                ),
-                              ),
+                      height: 18,
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          stops: [0.0, 0.85, 1.0],
+                          colors: [
+                            Colors.white,
+                            Colors.white,
+                            Color(0x00FFFFFF),
                           ],
+                        ).createShader(bounds),
+                        blendMode: BlendMode.dstIn,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.zero,
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: event.characterCodes.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 3),
+                          itemBuilder: (_, i) {
+                            final code = event.characterCodes[i];
+                            return _CharPillAvatar(
+                              character: charactersByCode[code],
+                              name: charactersByCode[code]?.name ?? code,
+                            );
+                          },
                         ),
                       ),
                     ),
