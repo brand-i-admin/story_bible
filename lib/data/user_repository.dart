@@ -36,7 +36,6 @@ class UserRepository {
           .eq('user_id', user.id);
     }
 
-    await recordAttendance(user.id);
     return fetchUserProfile(user.id);
   }
 
@@ -106,20 +105,6 @@ class UserRepository {
         );
     return _client.storage.from(profileImageBucket).getPublicUrl(path);
   }
-
-  Future<void> recordAttendance(String userId, {DateTime? date}) {
-    return _markDailyActivity(userId: userId, date: date, field: 'attended');
-  }
-
-  Future<void> recordStudyDay(String userId, {DateTime? date}) {
-    return _markDailyActivity(userId: userId, date: date, field: 'studied');
-  }
-
-  Future<int> fetchAttendanceStreak(String userId) =>
-      _fetchDailyStreak(userId: userId, flag: 'attended');
-
-  Future<int> fetchStudyStreak(String userId) =>
-      _fetchDailyStreak(userId: userId, flag: 'studied');
 
   Future<PagedResult<UserNote>> fetchUserNotesPage({
     required String userId,
@@ -387,45 +372,12 @@ class UserRepository {
     return '사용자';
   }
 
-  Future<void> _markDailyActivity({
-    required String userId,
-    required DateTime? date,
-    required String field,
-  }) async {
-    final day = _dateOnly(date ?? DateTime.now());
-    final dateStr = day.toIso8601String().split('T').first;
-    await _client.from('user_daily_activity').upsert({
-      'user_id': userId,
-      'activity_date': dateStr,
-      field: true,
-    }, onConflict: 'user_id,activity_date');
-  }
-
-  Future<int> _fetchDailyStreak({
-    required String userId,
-    required String flag,
-  }) async {
-    final rows = await _client
-        .from('user_daily_activity')
-        .select('activity_date')
-        .eq('user_id', userId)
-        .eq(flag, true)
-        .order('activity_date', ascending: false)
-        .limit(400);
-    return _computeStreak(rows, 'activity_date');
-  }
-
   String? _cleanNullableText(String? value) => cleanNullableText(value);
 
   String _normalizeExtension(String raw) => normalizeImageExtension(raw);
 
   String _contentTypeForExtension(String extension) =>
       contentTypeForImageExtension(extension);
-
-  DateTime _dateOnly(DateTime dateTime) => dateOnly(dateTime);
-
-  int _computeStreak(List<dynamic> rows, String key) =>
-      computeDailyStreak(rows, key);
 }
 
 /// 공백만 있거나 null인 문자열을 null로 정규화한다.
@@ -462,48 +414,4 @@ String contentTypeForImageExtension(String extension) {
     default:
       return 'image/png';
   }
-}
-
-/// 시:분:초를 제외한 날짜만 보존해 동일 날짜 비교를 가능하게 한다.
-@visibleForTesting
-DateTime dateOnly(DateTime dateTime) {
-  return DateTime(dateTime.year, dateTime.month, dateTime.day);
-}
-
-/// 출석/학습 연속일수 계산.
-///
-/// rows는 `{key: "YYYY-MM-DD"}` 형태를 가정하고, 오늘 또는 어제가 포함되어 있지
-/// 않으면 연속이 끊긴 것으로 간주해 0을 반환한다. 중복 날짜는 1회로 집계된다.
-@visibleForTesting
-int computeDailyStreak(List<dynamic> rows, String key) {
-  final uniqueDays =
-      rows
-          .map((row) => row[key] as String?)
-          .whereType<String>()
-          .map(DateTime.parse)
-          .map(dateOnly)
-          .toSet()
-          .toList()
-        ..sort((a, b) => b.compareTo(a));
-
-  if (uniqueDays.isEmpty) {
-    return 0;
-  }
-
-  final today = dateOnly(DateTime.now());
-  final yesterday = today.subtract(const Duration(days: 1));
-  if (uniqueDays.first != today && uniqueDays.first != yesterday) {
-    return 0;
-  }
-
-  var streak = 1;
-  for (var i = 1; i < uniqueDays.length; i++) {
-    final previous = uniqueDays[i - 1];
-    final expected = previous.subtract(const Duration(days: 1));
-    if (uniqueDays[i] != expected) {
-      break;
-    }
-    streak += 1;
-  }
-  return streak;
 }

@@ -54,6 +54,9 @@ drop table if exists audit_log cascade;
 drop table if exists search_embeddings cascade;
 drop table if exists user_daily_activity cascade;
 drop table if exists user_daily_study cascade;
+drop table if exists user_daily_quiz_attempts cascade;
+drop table if exists daily_quiz cascade;
+drop table if exists weekly_quiz_progress cascade;
 drop table if exists user_daily_attendance cascade;
 drop table if exists user_intercessory_prayers cascade;
 drop table if exists user_saved_verses cascade;
@@ -564,17 +567,49 @@ create table if not exists user_saved_verses (
   unique (user_id, translation, book_no, chapter_no, verse_no)
 );
 
--- 하루 한 row 로 출석/학습 플래그를 함께 기록한다. PostgREST upsert 는
--- 요청에 포함된 컬럼만 excluded 로 SET 하므로 두 플래그가 서로 덮어쓰이지 않는다.
-create table if not exists user_daily_activity (
+-- 주간 퀴즈 진행도 — 사용자/주차/사건 키. 퀴즈 탭의 진행도는 프로필의
+-- user_event_progress 와 독립적. 다음 주에 같은 인물이 또 뽑히면 week_key 가
+-- 달라져 처음부터 다시 풀어야 한다 (자동 reset).
+create table if not exists weekly_quiz_progress (
   user_id uuid not null references auth.users(id) on delete cascade,
-  activity_date date not null,
-  attended boolean not null default false,
-  studied boolean not null default false,
-  created_at timestamptz not null default now(),
+  week_key text not null,
+  event_id uuid not null references events(id) on delete cascade,
+  is_bible_read boolean not null default false,
+  is_quiz_completed boolean not null default false,
+  last_score_correct smallint,
+  last_score_total smallint,
   updated_at timestamptz not null default now(),
-  primary key (user_id, activity_date)
+  primary key (user_id, week_key, event_id)
 );
+create index if not exists idx_weekly_quiz_progress_user_week
+  on weekly_quiz_progress (user_id, week_key);
+
+-- 매일 퀴즈 — 1 row 가 한 문제. 4지선다 + 정답 + 해설.
+create table if not exists daily_quiz (
+  id uuid primary key default gen_random_uuid(),
+  question text not null,
+  choice_1 text not null,
+  choice_2 text not null,
+  choice_3 text not null,
+  choice_4 text not null,
+  answer_index smallint not null check (answer_index between 1 and 4),
+  explanation text not null,
+  created_at timestamptz not null default now()
+);
+
+-- 매일 퀴즈 사용자 시도 — 한 사용자가 한 daily_quiz 에 한 번 답을 고른 기록.
+-- 같은 daily_quiz 가 active 인 동안엔 같은 row 유지 (수정 불가). daily_quiz 가
+-- 새로 등록되면 새 row 가 자연스럽게 생기므로 "초기화" 가 자동.
+create table if not exists user_daily_quiz_attempts (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  daily_quiz_id uuid not null references daily_quiz(id) on delete cascade,
+  selected_index smallint not null check (selected_index between 1 and 4),
+  is_correct boolean not null,
+  created_at timestamptz not null default now(),
+  primary key (user_id, daily_quiz_id)
+);
+create index if not exists idx_user_daily_quiz_attempts_user
+  on user_daily_quiz_attempts (user_id);
 
 create table if not exists search_embeddings (
   id uuid primary key default gen_random_uuid(),
@@ -597,12 +632,6 @@ create index if not exists idx_user_notes_user_created on user_notes (user_id, c
 create index if not exists idx_user_saved_verses_user_created on user_saved_verses (user_id, created_at desc);
 create index if not exists idx_user_intercessory_prayers_user_created on user_intercessory_prayers (user_id, created_at desc);
 create index if not exists idx_user_intercessory_prayers_target on user_intercessory_prayers (target_user_id);
-create index if not exists idx_user_daily_activity_attended
-  on user_daily_activity (user_id, activity_date desc)
-  where attended = true;
-create index if not exists idx_user_daily_activity_studied
-  on user_daily_activity (user_id, activity_date desc)
-  where studied = true;
 
 create or replace function public.touch_updated_at()
 returns trigger
@@ -622,11 +651,6 @@ for each row execute function public.touch_updated_at();
 drop trigger if exists set_user_notes_updated_at on user_notes;
 create trigger set_user_notes_updated_at
 before update on user_notes
-for each row execute function public.touch_updated_at();
-
-drop trigger if exists set_user_daily_activity_updated_at on user_daily_activity;
-create trigger set_user_daily_activity_updated_at
-before update on user_daily_activity
 for each row execute function public.touch_updated_at();
 
 create or replace function public.handle_new_user_profile()
@@ -784,6 +808,7 @@ grant select on table landmarks to anon, authenticated;
 grant select on table era_boundaries to anon, authenticated;
 grant select on table bible_verses to anon, authenticated;
 grant select on table quiz_questions to anon, authenticated;
+grant select on table daily_quiz to anon, authenticated;
 grant select on events_ordered to anon, authenticated;
 grant select on character_eras to anon, authenticated;
 
@@ -792,7 +817,8 @@ grant select, insert, update on table user_profiles to authenticated;
 grant select, insert, delete on table user_intercessory_prayers to authenticated;
 grant select, insert, update, delete on table user_notes to authenticated;
 grant select, insert, delete on table user_saved_verses to authenticated;
-grant select, insert, update on table user_daily_activity to authenticated;
+grant select, insert, update, delete on table weekly_quiz_progress to authenticated;
+grant select, insert, update on table user_daily_quiz_attempts to authenticated;
 
 alter table eras enable row level security;
 alter table characters enable row level security;
@@ -801,12 +827,14 @@ alter table landmarks enable row level security;
 alter table era_boundaries enable row level security;
 alter table bible_verses enable row level security;
 alter table quiz_questions enable row level security;
+alter table daily_quiz enable row level security;
 alter table user_event_progress enable row level security;
 alter table user_profiles enable row level security;
 alter table user_intercessory_prayers enable row level security;
 alter table user_notes enable row level security;
 alter table user_saved_verses enable row level security;
-alter table user_daily_activity enable row level security;
+alter table weekly_quiz_progress enable row level security;
+alter table user_daily_quiz_attempts enable row level security;
 
 drop policy if exists eras_read_all on eras;
 create policy eras_read_all on eras for select using (true);
@@ -825,6 +853,29 @@ create policy era_boundaries_read_all on era_boundaries for select using (true);
 
 drop policy if exists bible_verses_read_all on bible_verses;
 create policy bible_verses_read_all on bible_verses for select using (true);
+
+drop policy if exists daily_quiz_read_all on daily_quiz;
+create policy daily_quiz_read_all on daily_quiz for select using (true);
+
+drop policy if exists weekly_quiz_progress_read_own on weekly_quiz_progress;
+create policy weekly_quiz_progress_read_own on weekly_quiz_progress
+for select using (auth.uid() = user_id);
+
+drop policy if exists weekly_quiz_progress_write_own on weekly_quiz_progress;
+create policy weekly_quiz_progress_write_own on weekly_quiz_progress
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+drop policy if exists user_daily_quiz_attempts_read_own on user_daily_quiz_attempts;
+create policy user_daily_quiz_attempts_read_own on user_daily_quiz_attempts
+for select using (auth.uid() = user_id);
+
+drop policy if exists user_daily_quiz_attempts_write_own on user_daily_quiz_attempts;
+create policy user_daily_quiz_attempts_write_own on user_daily_quiz_attempts
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
 
 drop policy if exists quiz_questions_read_all on quiz_questions;
 create policy quiz_questions_read_all on quiz_questions for select using (true);
@@ -894,16 +945,6 @@ for insert with check (auth.uid() = user_id);
 drop policy if exists user_saved_verses_delete_own on user_saved_verses;
 create policy user_saved_verses_delete_own on user_saved_verses
 for delete using (auth.uid() = user_id);
-
-drop policy if exists user_daily_activity_read_own on user_daily_activity;
-create policy user_daily_activity_read_own on user_daily_activity
-for select using (auth.uid() = user_id);
-
-drop policy if exists user_daily_activity_write_own on user_daily_activity;
-create policy user_daily_activity_write_own on user_daily_activity
-for all to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
 
 insert into storage.buckets (
   id,
