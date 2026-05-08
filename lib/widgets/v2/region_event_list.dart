@@ -267,9 +267,10 @@ class StoryEventThumbCard extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 6),
+                  // 인물 pill — 한 줄에 가로 스크롤. 인물 라벨이 2줄로 wrap
+                  // 되어 카드가 overflow 되는 것을 방지. ShaderMask 우측
+                  // 페이드로 "더 있음" 힌트.
                   if (event.characterCodes.isNotEmpty)
-                    // 한 줄에 가로 스크롤 — 인물 라벨이 2줄로 wrap 되어 카드가
-                    // overflow 되는 것을 방지. 우측 페이드로 "더 있음" 힌트.
                     SizedBox(
                       height: 18,
                       child: ShaderMask(

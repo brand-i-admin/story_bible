@@ -58,6 +58,15 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
   final ScrollController _ctl = ScrollController();
   final SceneAssetLoader _loader = SceneAssetLoader();
   String? _lastScrolledTo;
+  bool _didInitialNudge = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _maybeRunInitialNudge();
+    });
+  }
 
   @override
   void didUpdateWidget(covariant EventTimelineRow old) {
@@ -70,6 +79,51 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
       });
     } else if (id == null) {
       _lastScrolledTo = null;
+    }
+    // events 가 바뀌면 (region 재선택) shimmy 한 번 더.
+    if (!_eventsIdentical(old.events, widget.events)) {
+      _didInitialNudge = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _maybeRunInitialNudge();
+      });
+    }
+  }
+
+  bool _eventsIdentical(List<StoryEvent> a, List<StoryEvent> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].id != b[i].id) return false;
+    }
+    return true;
+  }
+
+  /// 카드가 viewport 보다 길고 selectedEventId 가 없을 때, 등장 시
+  /// 0 → 60 → 0 으로 한 번 들썩여 "오른쪽에 더 있음" affordance.
+  Future<void> _maybeRunInitialNudge() async {
+    if (_didInitialNudge) return;
+    if (!_ctl.hasClients) return;
+    if (_ctl.position.maxScrollExtent <= 0) return;
+    if (widget.selectedEventId != null) {
+      // _scrollToSelected 가 따로 돌므로 nudge 는 skip.
+      _didInitialNudge = true;
+      return;
+    }
+    _didInitialNudge = true;
+    const peak = 60.0;
+    try {
+      await _ctl.animateTo(
+        peak,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+      );
+      if (!mounted || !_ctl.hasClients) return;
+      await _ctl.animateTo(
+        0,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+      );
+    } catch (_) {
+      // dispose 등으로 controller 가 detach 되면 무시.
     }
   }
 
@@ -139,9 +193,37 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
         );
       },
     );
+    // 우측 페이드 — overflow 가 있고 끝까지 안 갔을 때만 fade. ShaderMask 는
+    // 항상 배치하고 색만 토글해서 setState 없이 _ctl 알림만으로 동기.
+    final faded = AnimatedBuilder(
+      animation: _ctl,
+      builder: (context, child) {
+        final hasOverflow =
+            _ctl.hasClients && _ctl.position.maxScrollExtent > 0;
+        final atEnd =
+            !hasOverflow ||
+            _ctl.position.pixels >= _ctl.position.maxScrollExtent - 4;
+        final fadeOn = hasOverflow && !atEnd;
+        return ShaderMask(
+          shaderCallback: (bounds) => LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            stops: const [0.0, 0.92, 1.0],
+            colors: [
+              Colors.white,
+              Colors.white,
+              fadeOn ? const Color(0x00FFFFFF) : Colors.white,
+            ],
+          ).createShader(bounds),
+          blendMode: BlendMode.dstIn,
+          child: child!,
+        );
+      },
+      child: list,
+    );
     return widget.rowHeight != null
-        ? SizedBox(height: widget.rowHeight, child: list)
-        : list;
+        ? SizedBox(height: widget.rowHeight, child: faded)
+        : faded;
   }
 }
 

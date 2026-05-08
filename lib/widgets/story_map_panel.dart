@@ -609,12 +609,26 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                   // 산림 연두는 sepia 에 살짝 묻히면서 부드러운 베이지·올리브
                   // 톤이 된다.
                   TileLayer(
+                    // Stamen Watercolor — Cooper Hewitt (Smithsonian Design
+                    // Museum) 영구 archive 호스팅. Stamen 공식 README 가
+                    // 안내한 archive 엔드포인트. CC BY 4.0, API key 불필요,
+                    // 무료, 무제한 사용 (fair use).
+                    //   https://github.com/CooperHewittCollection/watercolor_examples
+                    // attribution: Map tiles by Stamen Design (CC BY 4.0),
+                    //   data by OpenStreetMap (ODbL),
+                    //   archive hosted by Cooper Hewitt, Smithsonian.
                     urlTemplate:
-                        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c', 'd'],
+                        'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
                     userAgentPackageName: 'com.story.bible',
-                    // sepia/tan multiply 오버레이 제거 — 모바일에서 얼룩처럼 보여
-                    // 자연스러운 voyager 톤 그대로 사용.
+                    // Cooper Hewitt 가 Cache-Control 헤더를 안 보내 freshness
+                    // age 가 fallback (168h) 로 매 tile 마다 warning. 30일
+                    // overrideFreshAge 명시로 console noise 제거 + 안정적 캐시.
+                    tileProvider: NetworkTileProvider(
+                      cachingProvider:
+                          BuiltInMapCachingProvider.getOrCreateInstance(
+                            overrideFreshAge: const Duration(days: 30),
+                          ),
+                    ),
                   ),
                   PolylineLayer(polylines: _countryBorderPolylines),
                   // 시대 영역 폴리곤 — 그 시대의 region 들의 polygon 합집합을
@@ -692,31 +706,9 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                   // 거리 측정 폴리라인 (두 점이 모두 선택됐을 때만).
                   if (_measureMode)
                     PolylineLayer(polylines: _buildMeasurePolylines()),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: IgnorePointer(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 6, bottom: 6),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0x88FFFFFF),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          '© OpenStreetMap · CARTO · Natural Earth',
-                          style: TextStyle(
-                            fontSize: 8.5,
-                            color: Color(0xFF2D2D2D),
-                            fontWeight: FontWeight.w600,
-                            height: 1.1,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // attribution 은 home screen 우측 상단 ⓘ 버튼으로 이동.
+                  // 이전 좌하단 inline 텍스트는 bottomOverlay (사건 패널·intro 등)
+                  // 에 가려져 의무 가시성을 충족하지 못해 제거.
                   if (widget.bottomOverlay != null)
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -1844,6 +1836,15 @@ class _StoryMapPanelState extends State<StoryMapPanel>
       'Saudi Arabia': '사우디아라비아',
       'Turkey': '튀르키예',
       'Cyprus': '키프로스',
+      // Arabian Peninsula 인접국 — border 만 그리고 라벨도 표시되도록 추가.
+      // 매핑 없으면 polygon 처리 자체가 skip 되어 사우디–예멘/오만 같은
+      // land border 가 한 쪽만 그려져 비대칭으로 보임.
+      'Yemen': '예멘',
+      'Oman': '오만',
+      'United Arab Emirates': '아랍에미리트',
+      'Qatar': '카타르',
+      'Bahrain': '바레인',
+      'Kuwait': '쿠웨이트',
       // Europe (Paul's journey region)
       'Greece': '그리스',
       'Italy': '이탈리아',
@@ -1907,11 +1908,49 @@ class _StoryMapPanelState extends State<StoryMapPanel>
           if (ring.length < 3) {
             continue;
           }
+          // 색연필 같은 질감 — 3중 stroke + 미세 jitter 로 손그림 갈색 색연필
+          // 결을 흉내. wide halo(매우 옅음) + medium halo + ink core 가 겹쳐
+          // 단단한 vector 라인이 아닌 거친 결의 색연필 효과.
+          final ringRand = math.Random(
+            ring.fold<int>(
+              0,
+              (acc, p) =>
+                  acc ^ p.latitude.hashCode ^ (p.longitude.hashCode << 1),
+            ),
+          );
+          final jittered = ring.map((p) {
+            final dx = (ringRand.nextDouble() - 0.5) * 0.012;
+            final dy = (ringRand.nextDouble() - 0.5) * 0.012;
+            return LatLng(p.latitude + dy, p.longitude + dx);
+          }).toList();
+          final ringWithClose = [...jittered, jittered.first];
+          // 색연필 톤 — dusty rose (#9C5757). 갈색이 겹치면 너무 진해보여
+          // 분홍빛 색연필 결로. watercolor sage/blue 와 보색 vintage 톤.
           borderPolylines.add(
             Polyline(
-              points: [...ring, ring.first],
-              color: const Color(0xA05A4A33),
-              strokeWidth: 1.05,
+              points: ringWithClose,
+              color: const Color(0x209C5757), // wide halo (12%)
+              strokeWidth: 3.0,
+              strokeCap: StrokeCap.round,
+              strokeJoin: StrokeJoin.round,
+            ),
+          );
+          borderPolylines.add(
+            Polyline(
+              points: ringWithClose,
+              color: const Color(0x489C5757), // medium halo (28%)
+              strokeWidth: 1.6,
+              strokeCap: StrokeCap.round,
+              strokeJoin: StrokeJoin.round,
+            ),
+          );
+          borderPolylines.add(
+            Polyline(
+              points: ringWithClose,
+              color: const Color(0xA09C5757), // 진한 코어 (63%)
+              strokeWidth: 0.7,
+              strokeCap: StrokeCap.round,
+              strokeJoin: StrokeJoin.round,
             ),
           );
           landRings.add(ring);
@@ -1974,14 +2013,14 @@ class _StoryMapPanelState extends State<StoryMapPanel>
   Marker _countryLabelMarker(String nameKo, LatLng point) {
     return Marker(
       point: point,
-      width: 64,
-      height: 16,
+      width: 76,
+      height: 20,
       child: IgnorePointer(
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
           decoration: BoxDecoration(
-            // 70% → 35% 알파로 더 투명하게. 다른 정보를 가리지 않도록.
+            // 35% 알파 — 다른 정보 안 가리는 옅은 캡슐.
             color: const Color(0x59EDE2CC),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: const Color(0x66745A3C), width: 0.6),
@@ -1989,9 +2028,9 @@ class _StoryMapPanelState extends State<StoryMapPanel>
           child: Text(
             nameKo,
             style: const TextStyle(
-              fontSize: 7.5,
-              color: Color(0x99332518),
-              fontWeight: FontWeight.w600,
+              fontSize: 9.5,
+              color: Color(0xCC332518), // 60→80% 알파, 더 또렷하게
+              fontWeight: FontWeight.w800, // w600 → w800 굵게
               height: 1.1,
             ),
             maxLines: 1,
