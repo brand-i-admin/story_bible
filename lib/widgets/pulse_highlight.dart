@@ -29,14 +29,17 @@ class PulseHighlight extends StatefulWidget {
 
 class _PulseHighlightState extends State<PulseHighlight>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1400),
-  );
+  // dispose 시점에 처음 초기화되면 deactivated context 에서 TickerMode 를
+  // 조회하면서 assert 가 터진다. initState 에서 즉시 생성해 그 경로 차단.
+  late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    );
     if (widget.active) _controller.repeat();
   }
 

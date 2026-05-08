@@ -61,6 +61,17 @@ class _NotificationBellButtonState
 
     _overlay = OverlayEntry(
       builder: (ctx) {
+        // Dropdown 을 종 버튼 우측에 맞춰 정렬하고 viewport 안에 clamp.
+        // 종이 화면 right edge 가까이 있을 때 dropdown 이 잘리지 않도록.
+        const dropdownWidth = 340.0;
+        const screenPadding = 8.0;
+        final screenWidth = MediaQuery.of(ctx).size.width;
+        final preferredLeft =
+            anchorPosition.dx + anchorSize.width - dropdownWidth;
+        final left = preferredLeft.clamp(
+          screenPadding,
+          screenWidth - dropdownWidth - screenPadding,
+        );
         return Stack(
           children: [
             // Barrier: 바깥 탭으로 닫기.
@@ -72,7 +83,7 @@ class _NotificationBellButtonState
               ),
             ),
             Positioned(
-              left: anchorPosition.dx,
+              left: left,
               top: anchorPosition.dy + anchorSize.height + 6,
               child: NotificationDropdown(
                 onClose: _closeDropdown,

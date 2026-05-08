@@ -813,41 +813,52 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   void _showLandmarkPopup(Landmark landmark) {
     // 지도 포커스를 그 랜드마크로 이동 (설명 팝업과 함께).
     _mapPanelController.focusLandmark(landmark.latLng);
-    final desc = (landmark.description ?? '').trim();
     showDialog<void>(
       context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Text(
-                landmark.emoji,
-                style: const TextStyle(fontSize: 28, height: 1.0),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  landmark.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            desc.isEmpty ? '이 랜드마크에 대한 설명이 아직 없습니다.' : desc,
-            style: const TextStyle(fontSize: 14, height: 1.55),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('닫기'),
+      barrierColor: const Color(0x66000000),
+      builder: (ctx) => _LandmarkScrollDialog(
+        landmark: landmark,
+        onClose: () => Navigator.of(ctx).pop(),
+      ),
+    );
+  }
+
+  /// 지도 출처/라이선스 dialog — Stamen Watercolor (CC BY 4.0) + OpenStreetMap
+  /// (ODbL) + Cooper Hewitt(Smithsonian) archive + Natural Earth. CC BY 4.0
+  /// 과 ODbL 모두 attribution 의무이므로 사용자 view 에 노출되어야 한다.
+  void _showMapAttributionDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => ParchmentDialog(
+        title: '지도 출처',
+        subtitle: '본 지도는 다음 오픈 데이터/타일을 사용합니다.',
+        showCloseButton: true,
+        onClose: () => Navigator.of(dialogContext).pop(),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _AttributionLine(
+              source: 'Stamen Watercolor 타일',
+              license: 'CC BY 4.0',
+            ),
+            SizedBox(height: 8),
+            _AttributionLine(
+              source: 'OpenStreetMap 데이터',
+              license: 'ODbL',
+            ),
+            SizedBox(height: 8),
+            _AttributionLine(
+              source: '아카이브 호스팅: Cooper Hewitt, Smithsonian Design Museum',
+            ),
+            SizedBox(height: 8),
+            _AttributionLine(
+              source: '국경/수계 보조: Natural Earth',
+              license: 'Public Domain',
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -1891,6 +1902,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           tooltip: '축소',
                           onTap: _mapPanelController.zoomOut,
                         ),
+                        const SizedBox(height: 6),
+                        // 지도 출처/라이선스 — CC BY 4.0(Stamen Watercolor) +
+                        // ODbL(OpenStreetMap) attribution 의무 충족.
+                        mapControlButton(
+                          icon: Icons.info_outline,
+                          tooltip: '지도 출처',
+                          onTap: _showMapAttributionDialog,
+                        ),
                       ],
                     ),
                   ),
@@ -2329,8 +2348,9 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
   /// selectedLandmarkCategories 와는 별개 — 토글 끄기 시에는 dropdown 안 펼쳐짐.
   String? _expandedCat;
 
-  /// 칩별 LayerLink — dropdown 이 그 칩 아래에 정확히 anchor 되도록.
-  final Map<String, LayerLink> _chipLinks = {};
+  /// 칩별 GlobalKey — dropdown 이 그 칩 RenderBox 좌표를 읽어
+  /// viewport 안으로 clamp 되도록 위치 계산.
+  final Map<String, GlobalKey> _chipKeys = {};
 
   /// Overlay 에 dropdown 을 렌더해 부모 Positioned hit-test 영역 제약을 우회.
   final OverlayPortalController _portalController = OverlayPortalController();
@@ -2339,8 +2359,8 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
   /// 참조하도록 캐시. expanded 가 바뀔 때마다 setState 로 재할당.
   _DropdownPayload? _dropdownPayload;
 
-  LayerLink _linkFor(String cat) =>
-      _chipLinks.putIfAbsent(cat, () => LayerLink());
+  GlobalKey _keyFor(String cat) =>
+      _chipKeys.putIfAbsent(cat, () => GlobalKey());
 
   void _onChipTap(String cat) {
     final wasActive = widget.state.selectedLandmarkCategories.contains(cat);
@@ -2399,14 +2419,12 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
         ? landmarksByCategory[expanded]
         : null;
 
-    final allLink = _linkFor('__all__');
-
     // dropdown payload 갱신 + portal 노출 토글
     final hasDropdown =
         expanded != null && expandedItems != null && expandedItems.isNotEmpty;
     if (hasDropdown) {
       _dropdownPayload = _DropdownPayload(
-        link: _linkFor(expanded),
+        targetKey: _keyFor(expanded),
         emoji: meta[expanded]?.$1 ?? '📍',
         label: meta[expanded]?.$2 ?? expanded,
         items: expandedItems,
@@ -2424,36 +2442,44 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
 
     return OverlayPortal(
       controller: _portalController,
-      overlayChildBuilder: (_) {
+      overlayChildBuilder: (ctx) {
         final payload = _dropdownPayload;
         if (payload == null) return const SizedBox.shrink();
-        // Overlay 의 Stack 안에 Positioned 로 배치 (CompositedTransformFollower
-        // 가 동작하려면 Stack 내부여야 함). offset 은 follower 가 결정.
+        // chip RenderBox 의 글로벌 좌표를 읽어 dropdown 위치를 계산하고,
+        // viewport 안으로 clamp — chip 이 화면 우측 끝 가까이 있어도
+        // dropdown 이 잘리지 않도록.
+        final box =
+            payload.targetKey.currentContext?.findRenderObject() as RenderBox?;
+        if (box == null || !box.attached) return const SizedBox.shrink();
+        final chipPos = box.localToGlobal(Offset.zero);
+        final chipSize = box.size;
+        final screen = MediaQuery.of(ctx).size;
+        const dropdownWidth = 260.0;
+        const screenPadding = 8.0;
+        final preferredLeft = chipPos.dx;
+        final left = preferredLeft.clamp(
+          screenPadding,
+          screen.width - dropdownWidth - screenPadding,
+        );
+        final top = chipPos.dy + chipSize.height + 6;
         return Stack(
           children: [
             Positioned(
-              left: 0,
-              top: 0,
-              child: CompositedTransformFollower(
-                link: payload.link,
-                showWhenUnlinked: false,
-                targetAnchor: Alignment.bottomLeft,
-                followerAnchor: Alignment.topLeft,
-                offset: const Offset(0, 6),
-                child: SizedBox(
-                  width: 260,
-                  child: _LandmarkCategoryDropdown(
-                    categoryEmoji: payload.emoji,
-                    categoryLabel: payload.label,
-                    items: payload.items,
-                    onClose: () => setState(() => _expandedCat = null),
-                    onLandmarkTap: (lm) {
-                      // dropdown 에서 랜드마크를 누르면 dropdown 을 닫고
-                      // 부모 콜백 (포커스 + 설명 팝업) 을 호출.
-                      setState(() => _expandedCat = null);
-                      widget.onLandmarkTap(lm);
-                    },
-                  ),
+              left: left,
+              top: top,
+              child: SizedBox(
+                width: dropdownWidth,
+                child: _LandmarkCategoryDropdown(
+                  categoryEmoji: payload.emoji,
+                  categoryLabel: payload.label,
+                  items: payload.items,
+                  onClose: () => setState(() => _expandedCat = null),
+                  onLandmarkTap: (lm) {
+                    // dropdown 에서 랜드마크를 누르면 dropdown 을 닫고
+                    // 부모 콜백 (포커스 + 설명 팝업) 을 호출.
+                    setState(() => _expandedCat = null);
+                    widget.onLandmarkTap(lm);
+                  },
                 ),
               ),
             ),
@@ -2466,27 +2492,22 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           children: [
-            CompositedTransformTarget(
-              link: allLink,
-              child: _CategoryChip(
-                label: '전체',
-                emoji: '✨',
-                count: totalCount,
-                active: selected.isEmpty,
-                onTap: _onClearAll,
-              ),
+            _CategoryChip(
+              label: '전체',
+              emoji: '✨',
+              count: totalCount,
+              active: selected.isEmpty,
+              onTap: _onClearAll,
             ),
             for (final cat in ordered) ...[
               const SizedBox(width: 6),
-              CompositedTransformTarget(
-                link: _linkFor(cat),
-                child: _CategoryChip(
-                  label: meta[cat]?.$2 ?? cat,
-                  emoji: meta[cat]?.$1 ?? '📍',
-                  count: countByCategory[cat]!,
-                  active: selected.contains(cat),
-                  onTap: () => _onChipTap(cat),
-                ),
+              _CategoryChip(
+                key: _keyFor(cat),
+                label: meta[cat]?.$2 ?? cat,
+                emoji: meta[cat]?.$1 ?? '📍',
+                count: countByCategory[cat]!,
+                active: selected.contains(cat),
+                onTap: () => _onChipTap(cat),
               ),
             ],
           ],
@@ -2499,12 +2520,12 @@ class _LandmarkCategoryChipsBarState extends State<_LandmarkCategoryChipsBar> {
 /// dropdown 의 overlay child 가 참조할 데이터 묶음.
 class _DropdownPayload {
   const _DropdownPayload({
-    required this.link,
+    required this.targetKey,
     required this.emoji,
     required this.label,
     required this.items,
   });
-  final LayerLink link;
+  final GlobalKey targetKey;
   final String emoji;
   final String label;
   final List<Landmark> items;
@@ -3074,6 +3095,7 @@ class _QuizReviewItem extends StatelessWidget {
 
 class _CategoryChip extends StatelessWidget {
   const _CategoryChip({
+    super.key,
     required this.label,
     required this.emoji,
     required this.active,
@@ -3698,6 +3720,269 @@ class _ColorLegendRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// 양피지 두루마리(scroll) 형식 landmark 팝업.
+/// 가로로 펼치는 unfurl 애니메이션 → 콘텐츠 fade-in.
+/// 좌·우 끝 어두운 갈색 cylindrical curl + 가운데 양피지 cream panel.
+class _LandmarkScrollDialog extends StatefulWidget {
+  const _LandmarkScrollDialog({required this.landmark, required this.onClose});
+  final Landmark landmark;
+  final VoidCallback onClose;
+
+  @override
+  State<_LandmarkScrollDialog> createState() => _LandmarkScrollDialogState();
+}
+
+class _LandmarkScrollDialogState extends State<_LandmarkScrollDialog>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _unfurl;
+  late final Animation<double> _fade;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 620),
+    );
+    _unfurl = CurvedAnimation(
+      parent: _ctrl,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+    );
+    _fade = CurvedAnimation(
+      parent: _ctrl,
+      curve: const Interval(0.45, 1.0, curve: Curves.easeIn),
+    );
+    _ctrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final desc = (widget.landmark.description ?? '').trim();
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 380),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: AnimatedBuilder(
+              animation: _ctrl,
+              builder: (context, child) {
+                return ClipRect(
+                  child: Align(
+                    alignment: Alignment.center,
+                    widthFactor: _unfurl.value.clamp(0.001, 1.0),
+                    child: child,
+                  ),
+                );
+              },
+              child: _ScrollBody(
+                landmark: widget.landmark,
+                desc: desc,
+                fade: _fade,
+                onClose: widget.onClose,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScrollBody extends StatelessWidget {
+  const _ScrollBody({
+    required this.landmark,
+    required this.desc,
+    required this.fade,
+    required this.onClose,
+  });
+  final Landmark landmark;
+  final String desc;
+  final Animation<double> fade;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/elements/parchment_scroll_frame.png'),
+          fit: BoxFit.fill,
+        ),
+      ),
+      child: Padding(
+        // 양피지 frame PNG 의 jagged edges/curls 영역 피해 안쪽 콘텐츠 padding.
+        padding: const EdgeInsets.fromLTRB(40, 50, 40, 56),
+        child: FadeTransition(
+          opacity: fade,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // 양피지 grain — 위·아래 옅은 그림자 (말림 결)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFB8965E).withValues(alpha: 0.18),
+                          const Color(0x00000000),
+                          const Color(0x00000000),
+                          const Color(0xFFB8965E).withValues(alpha: 0.18),
+                        ],
+                        stops: const [0.0, 0.18, 0.82, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        landmark.emoji,
+                        style: const TextStyle(fontSize: 30, height: 1.0),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          landmark.name,
+                          style: const TextStyle(
+                            fontSize: 19,
+                            color: Color(0xFF2A1D11),
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.4,
+                            height: 1.1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // 잉크 dashed 분리 라인
+                  Row(
+                    children: List.generate(
+                      26,
+                      (_) => Expanded(
+                        child: Container(
+                          height: 1,
+                          margin: const EdgeInsets.symmetric(horizontal: 1),
+                          color: const Color(0x886B4A2A),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    desc.isEmpty
+                        ? '이 랜드마크에 대한 설명이 아직 없습니다.'
+                        : desc,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF3B2A17),
+                      height: 1.65,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: onClose,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3B2A17),
+                          borderRadius: BorderRadius.circular(2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x44000000),
+                              blurRadius: 2,
+                              offset: Offset(0.5, 1),
+                            ),
+                          ],
+                        ),
+                        child: const Text(
+                          '닫기',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFFF4E5C5),
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 지도 출처 dialog 의 한 줄 — "출처명 · 라이선스" 형태.
+class _AttributionLine extends StatelessWidget {
+  const _AttributionLine({required this.source, this.license});
+
+  final String source;
+  final String? license;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 6, right: 8),
+          child: Icon(Icons.circle, size: 5, color: Color(0xFF9A7A4C)),
+        ),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                color: Color(0xFF3A2A1A),
+              ),
+              children: [
+                TextSpan(text: source),
+                if (license != null) ...[
+                  const TextSpan(text: ' · '),
+                  TextSpan(
+                    text: license!,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

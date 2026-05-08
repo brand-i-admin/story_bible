@@ -353,29 +353,108 @@ Widget storySection({
 /// (`assets/...`) 또는 Supabase Storage public URL (`http...`) 이다.
 /// `SceneAssetLoader` 가 하이브리드 로딩에서 둘 중 적절한 것을 채워 넘긴다.
 Widget storySceneRow(List<String> sceneAssets) {
-  final displayedAssets = sceneAssets.take(4).toList(growable: false);
-  if (displayedAssets.isEmpty) {
-    return const SizedBox.shrink();
+  return StorySceneRow(sceneAssets: sceneAssets);
+}
+
+/// 장면 이미지 가로 스크롤 row. 한 화면에 ~2.3 타일 노출이라 3장 이상이면
+/// 우측에 잘려 있다. 등장 시 한 번 살짝 들썩이고(nudge), 평소엔 우측 페이드로
+/// "더 있음" affordance.
+class StorySceneRow extends StatefulWidget {
+  const StorySceneRow({super.key, required this.sceneAssets});
+
+  final List<String> sceneAssets;
+
+  @override
+  State<StorySceneRow> createState() => _StorySceneRowState();
+}
+
+class _StorySceneRowState extends State<StorySceneRow> {
+  final ScrollController _ctl = ScrollController();
+  bool _didInitialNudge = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _maybeRunInitialNudge();
+    });
   }
 
-  const tileGap = 8.0;
-  return Container(
-    decoration: BoxDecoration(
-      border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
-      borderRadius: BorderRadius.circular(AppRadii.md),
-      color: const Color(0xF4EFE3CC),
-    ),
-    padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-    child: LayoutBuilder(
-      builder: (context, constraints) {
-        // 한 화면에 약 2.3개 노출 → 부모 폭의 1/2.3 ≈ 0.435 가 한 타일 폭.
-        final tileWidth = (constraints.maxWidth - tileGap) / 2.3;
-        final viewportHeight = MediaQuery.sizeOf(context).height;
-        final maxTileHeight = math.max(220.0, viewportHeight * 0.42);
-        final tileHeight = math.min(tileWidth * 1.62, maxTileHeight);
-        return SizedBox(
-          height: tileHeight,
-          child: ListView.separated(
+  @override
+  void didUpdateWidget(covariant StorySceneRow old) {
+    super.didUpdateWidget(old);
+    if (!_assetsIdentical(old.sceneAssets, widget.sceneAssets)) {
+      _didInitialNudge = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _maybeRunInitialNudge();
+      });
+    }
+  }
+
+  static bool _assetsIdentical(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  Future<void> _maybeRunInitialNudge() async {
+    if (_didInitialNudge) return;
+    if (!_ctl.hasClients) return;
+    if (_ctl.position.maxScrollExtent <= 0) return;
+    _didInitialNudge = true;
+    // 0 → 60 → 0 한 번 들썩여서 "오른쪽에 더 있음" affordance.
+    // 거리는 충분히 크게(60), 총 ~640ms.
+    const peak = 60.0;
+    try {
+      await _ctl.animateTo(
+        peak,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+      );
+      if (!mounted || !_ctl.hasClients) return;
+      await _ctl.animateTo(
+        0,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+      );
+    } catch (_) {
+      // dispose 등으로 controller 가 detach 되면 무시.
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final displayedAssets = widget.sceneAssets.take(4).toList(growable: false);
+    if (displayedAssets.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    const tileGap = 8.0;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        color: const Color(0xF4EFE3CC),
+      ),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 한 화면에 약 2.3개 노출 → 부모 폭의 1/2.3 ≈ 0.435 가 한 타일 폭.
+          final tileWidth = (constraints.maxWidth - tileGap) / 2.3;
+          final viewportHeight = MediaQuery.sizeOf(context).height;
+          final maxTileHeight = math.max(220.0, viewportHeight * 0.42);
+          final tileHeight = math.min(tileWidth * 1.62, maxTileHeight);
+
+          final list = ListView.separated(
+            controller: _ctl,
             scrollDirection: Axis.horizontal,
             physics: const ClampingScrollPhysics(),
             itemCount: displayedAssets.length,
@@ -403,11 +482,43 @@ Widget storySceneRow(List<String> sceneAssets) {
                 ),
               );
             },
-          ),
-        );
-      },
-    ),
-  );
+          );
+
+          // 우측 페이드 — overflow 가 있고 끝까지 안 갔을 때만 fade. ShaderMask
+          // 는 항상 배치하고 색만 토글해서 setState 없이 _ctl 알림만으로 동기.
+          return SizedBox(
+            height: tileHeight,
+            child: AnimatedBuilder(
+              animation: _ctl,
+              builder: (context, child) {
+                final hasOverflow =
+                    _ctl.hasClients && _ctl.position.maxScrollExtent > 0;
+                final atEnd =
+                    !hasOverflow ||
+                    _ctl.position.pixels >= _ctl.position.maxScrollExtent - 4;
+                final fadeOn = hasOverflow && !atEnd;
+                return ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    stops: const [0.0, 0.92, 1.0],
+                    colors: [
+                      Colors.white,
+                      Colors.white,
+                      fadeOn ? const Color(0x00FFFFFF) : Colors.white,
+                    ],
+                  ).createShader(bounds),
+                  blendMode: BlendMode.dstIn,
+                  child: child!,
+                );
+              },
+              child: list,
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 Widget bibleMoveButton({required VoidCallback onTap}) {
