@@ -347,17 +347,28 @@ id uuid PK, subscriber_id uuid FK→auth.users,
 target_user_id uuid FK→auth.users
 ```
 
-#### `user_daily_activity`
+_(2026-05-08: `user_daily_activity` 테이블 — "연속 출석일 / 연속 인물 공부"
+스트릭 기능 — 제거됨. db_init.sql 의 `drop table if exists` 만 정리용으로 유지.)_
+
+#### `daily_quiz` (2026-05-15)
 ```sql
-user_id uuid FK→auth.users, activity_date date,
-attended boolean DEFAULT false, studied boolean DEFAULT false,
-created_at, updated_at,
-PRIMARY KEY (user_id, activity_date)
+id uuid PK, question text, choice_1..4 text,
+answer_index smallint, explanation text, created_at
 ```
-- 하루 한 row 로 출석/학습을 함께 기록. PostgREST upsert 는 요청에 포함된
-  컬럼만 SET 하므로 `attended`/`studied` 플래그가 서로 덮어쓰이지 않는다.
-- Partial index: `(user_id, activity_date desc) where attended|studied = true`
-  로 streak 조회 최적화.
+- 매일 퀴즈 1문제. 4지선다. 공개 read.
+- 시드: `supabase/seeds/daily_quiz.sql` (샘플 1건).
+
+#### `weekly_quiz_progress` (2026-05-15)
+```sql
+user_id uuid FK→auth.users, week_key text, event_id uuid FK→events,
+is_bible_read boolean, is_quiz_completed boolean,
+last_score_correct, last_score_total, updated_at,
+PRIMARY KEY (user_id, week_key, event_id)
+```
+- 퀴즈 탭의 주간 퀴즈 진행도 — `user_event_progress` (프로필 진행도) 와 독립.
+- `week_key` 는 ISO week 형식 (예: "2026-21"). 다음 주가 되면 자동으로 비
+  cache 되므로 같은 인물이 또 뽑혀도 새로 풀어야 한다.
+- RLS: 본인만 read/write.
 
 ### 2.3 검색/ML (향후)
 
@@ -387,7 +398,6 @@ explanation text, display_order int
 | user_notes | 본인만 | 본인만 |
 | user_saved_verses | 본인만 | 본인만 |
 | user_intercessory_prayers | 본인 구독 | 본인만 |
-| user_daily_activity | 본인만 | 본인만 |
 
 관리자 식별: `auth.users.raw_app_meta_data ->> 'role' = 'admin'`. `is_admin()`
 PL/pgSQL 함수로 RLS 안에서 사용.
@@ -432,10 +442,9 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchUserProfile(userId)` | user_profiles SELECT | `AppUserProfile` |
 | `updateUserProfile(...)` | user_profiles UPDATE | `AppUserProfile` |
 | `uploadProfileImage(...)` | Storage uploadBinary | `String` (public URL) |
-| `recordAttendance(userId)` | user_daily_activity UPSERT attended=true | void |
-| `recordStudyDay(userId)` | user_daily_activity UPSERT studied=true | void |
-| `fetchAttendanceStreak(userId)` | user_daily_activity WHERE attended → 연속일 계산 | `int` |
-| `fetchStudyStreak(userId)` | user_daily_activity WHERE studied → 연속일 계산 | `int` |
+| `fetchWeeklyQuizProgress(userId, weekKey)` | weekly_quiz_progress SELECT 본인+week | `Map<eventId, (bibleRead, quizCompleted)>` |
+| `upsertWeeklyQuizProgress(...)` | weekly_quiz_progress UPSERT (사용자/주차/사건) | void |
+| `fetchLatestDailyQuiz()` | daily_quiz ORDER BY created_at desc LIMIT 1 | `DailyQuiz?` |
 | `fetchUserNotesPage(...)` | user_notes SELECT + 페이지네이션 | `PagedResult<UserNote>` |
 | `createUserNote(...)` | user_notes INSERT | `UserNote` |
 | `deleteUserNote(noteId)` | user_notes DELETE | void |

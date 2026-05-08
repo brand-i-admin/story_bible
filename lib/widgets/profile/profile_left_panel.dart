@@ -16,63 +16,40 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // 컴팩트 헤더 — 한 줄에 [아바타 40][이름][수정][개인정보][로그아웃].
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildCurrentUserAvatar(profile: profile, size: 78),
-                const SizedBox(width: 12),
+                _buildCurrentUserAvatar(profile: profile, size: 40),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _profileTinyIconButton(
-                                tooltip: '프로필 수정',
-                                onTap: _openProfileEditor,
-                                icon: Icons.edit_rounded,
-                              ),
-                              const SizedBox(width: 4),
-                              _profileTinyIconButton(
-                                tooltip: '법적 안내',
-                                onTap: _openLegalDocumentsPage,
-                                icon: Icons.policy_outlined,
-                              ),
-                              const SizedBox(width: 4),
-                              _profileTinyIconButton(
-                                tooltip: '로그아웃',
-                                onTap: _signOut,
-                                icon: Icons.logout_rounded,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          profile.nickname,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: AppColors.ink500,
-                            fontSize: 20.5,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
+                  child: Text(
+                    profile.nickname,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.ink500,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
+                _profileTinyIconButton(
+                  tooltip: '프로필 수정',
+                  onTap: _openProfileEditor,
+                  icon: Icons.edit_rounded,
+                ),
+                const SizedBox(width: 4),
+                _profileTinyIconButton(
+                  tooltip: '설정',
+                  onTap: _openProfileSettingsSheet,
+                  icon: Icons.settings_outlined,
+                ),
               ],
             ),
-            const SizedBox(height: 12),
+            // 헤더와 탭 사이 간격 0 — 컴팩트.
             _buildProfileContentTabs(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Expanded(
               child: _buildProfileContentPanel(
                 profile: profile,
@@ -102,7 +79,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             ((segmentWidth - indicatorWidth) / 2);
 
         return SizedBox(
-          height: 40,
+          height: 34,
           child: Align(
             alignment: Alignment.centerLeft,
             child: SizedBox(
@@ -180,16 +157,17 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         borderRadius: BorderRadius.circular(8),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 5),
             child: Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+              // "내 기도/중보 기도" 섹션 타이틀과 동일한 14.7pt 통일.
               style: TextStyle(
                 color: selected
                     ? const Color(0xFFB26B28)
                     : const Color(0xFF7E735F),
-                fontSize: selected ? 16.4 : 15.4,
+                fontSize: 14.7,
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -376,6 +354,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         const SizedBox(height: 6),
         Container(height: 1, color: const Color(0x448E6F48)),
         const SizedBox(height: 7),
+        // 중보 기도 리스트 — 부모 leftPanel 의 남은 높이를 채움. 넘치면 내부
+        // 스크롤. leftPanel 자체가 30% 비율로 제한되므로 자연스럽게 짧음.
         Expanded(
           child: _intercessoryPrayerLoading && !hasItems
               ? const Center(child: CircularProgressIndicator())

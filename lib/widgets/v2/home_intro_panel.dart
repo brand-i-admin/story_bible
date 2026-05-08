@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../models/era.dart';
 import '../../state/story_state.dart';
-import '../../theme/era_colors.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import '../story_home_styles.dart';
+import 'era_pick_rows.dart';
 
 /// 첫 화면 — "오늘은 성경 어디를 여행해볼까요?" 패널.
 ///
@@ -35,9 +35,6 @@ class HomeIntroPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final canPickMode = selectedEraId != null;
 
-    final old = _filterAndSort(eras, isNew: false);
-    final newT = _filterAndSort(eras, isNew: true);
-
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       child: Column(
@@ -60,16 +57,8 @@ class HomeIntroPanel extends StatelessWidget {
             iconData: Icons.schedule_outlined,
           ),
           const SizedBox(height: 8),
-          _EraRow(
-            label: '구약',
-            eras: old,
-            selectedEraId: selectedEraId,
-            onSelectEra: onSelectEra,
-          ),
-          const SizedBox(height: 8),
-          _EraRow(
-            label: '신약',
-            eras: newT,
+          EraPickRows(
+            eras: eras,
             selectedEraId: selectedEraId,
             onSelectEra: onSelectEra,
           ),
@@ -121,17 +110,6 @@ class HomeIntroPanel extends StatelessWidget {
       ),
     );
   }
-
-  static List<Era> _filterAndSort(List<Era> all, {required bool isNew}) {
-    bool isNt(Era e) {
-      final t = e.testament.toLowerCase().trim();
-      return t == 'new' || t == 'nt' || t == 'new_testament';
-    }
-
-    final filtered = all.where((e) => isNt(e) == isNew).toList()
-      ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
-    return filtered;
-  }
 }
 
 class _StepHeader extends StatelessWidget {
@@ -158,133 +136,6 @@ class _StepHeader extends StatelessWidget {
           style: AppTextStyles.sectionTitle.copyWith(color: color),
         ),
       ],
-    );
-  }
-}
-
-class _EraRow extends StatelessWidget {
-  const _EraRow({
-    required this.label,
-    required this.eras,
-    required this.selectedEraId,
-    required this.onSelectEra,
-  });
-  final String label;
-  final List<Era> eras;
-  final String? selectedEraId;
-  final ValueChanged<String> onSelectEra;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 44,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              '$label:',
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (var i = 0; i < eras.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 8),
-                  _EraChip(
-                    era: eras[i],
-                    selected: selectedEraId == eras[i].id,
-                    onTap: () => onSelectEra(eras[i].id),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _EraChip extends StatelessWidget {
-  const _EraChip({
-    required this.era,
-    required this.selected,
-    required this.onTap,
-  });
-  final Era era;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final eraColor = EraColors.forCode(era.code);
-    final iconData = _eraIconFor(era.code);
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
-        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.x3,
-            vertical: AppSpacing.x2,
-          ),
-          decoration: softButtonDecoration(selected: selected),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (!selected) ...[
-                // 시대 색 점 — 지도 폴리곤 색과 같은 톤이라는 시각적 단서.
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: eraColor,
-                  ),
-                ),
-                const SizedBox(width: 5),
-              ],
-              Icon(
-                iconData,
-                size: 14,
-                color: selected ? AppColors.parchmentCream : eraColor,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                era.name,
-                style: AppTextStyles.chipLabel.copyWith(
-                  fontSize: 11.5,
-                  color: selected ? AppColors.parchmentCream : AppColors.ink800,
-                ),
-              ),
-              if (selected) ...[
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.check_circle,
-                  size: 13,
-                  color: AppColors.parchmentCream,
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -364,34 +215,5 @@ class _ModeCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-/// 시대 코드 → Material 아이콘 매핑.
-/// 향후 일러스트 PNG로 교체할 수 있게 한 곳에 격리한다.
-IconData _eraIconFor(String code) {
-  switch (code) {
-    case 'era_primeval':
-      return Icons.terrain;
-    case 'era_patriarch':
-      return Icons.holiday_village;
-    case 'era_exodus':
-      return Icons.directions_walk;
-    case 'era_judges':
-      return Icons.shield;
-    case 'era_monarchy':
-      return Icons.workspace_premium;
-    case 'era_exile_return':
-      return Icons.location_city;
-    case 'era_nt_public_ministry':
-      return Icons.auto_awesome;
-    case 'era_nt_apostolic':
-      return Icons.sailing;
-    case 'era_nt_post_apostolic':
-      return Icons.menu_book;
-    case 'era_nt_consummation':
-      return Icons.local_fire_department;
-    default:
-      return Icons.place;
   }
 }

@@ -236,10 +236,11 @@ class StoryMapPanel extends StatefulWidget {
 class _StoryMapPanelState extends State<StoryMapPanel>
     with SingleTickerProviderStateMixin {
   final MapController _controller = MapController();
-  late final AnimationController _polygonGlowCtl = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1600),
-  )..repeat();
+  // initState 에서 eager 초기화. `late final` 로 두면 빌드 동안 한 번도 접근
+  // 안 된 경우 dispose 에서 처음 액세스되며 vsync 가 deactivated 위젯에서
+  // ancestor lookup 을 시도해 "Looking up a deactivated widget's ancestor is
+  // unsafe" 예외 발생.
+  late final AnimationController _polygonGlowCtl;
   Timer? _revealTimer;
   Timer? _cameraTimer;
   List<Polyline> _countryBorderPolylines = const [];
@@ -307,9 +308,48 @@ class _StoryMapPanelState extends State<StoryMapPanel>
   @override
   void initState() {
     super.initState();
+    _polygonGlowCtl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat();
     widget.controller?._bind(this);
     _loadCountryBoundaries();
     _startRevealAnimation();
+    // numbered pin reveal 초기 설정. didUpdateWidget 은 같은 로직을 키 변경 시
+    // 재트리거하지만, 첫 마운트에는 그게 안 불려서 _eventRevealCount=0 으로
+    // 핀이 그려지지 않는다 (주간 퀴즈 첫 진입 시 발생).
+    _initEventReveal();
+  }
+
+  void _initEventReveal() {
+    final newKey = widget.revealEventsKey ?? widget.selectedLandmarkId;
+    if (newKey == null || newKey.isEmpty) return;
+    _lastRevealKey = newKey;
+    final total = widget.events.where((e) => e.hasCoordinate).length;
+    if (total <= 0) return;
+    if (widget.revealInstantly) {
+      _eventRevealCount = total;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onRevealComplete?.call();
+      });
+    } else {
+      _eventRevealTimer = Timer.periodic(const Duration(milliseconds: 300), (
+        timer,
+      ) {
+        if (!mounted) {
+          timer.cancel();
+          return;
+        }
+        final next = _eventRevealCount + 1;
+        setState(() => _eventRevealCount = next);
+        if (next >= total) {
+          timer.cancel();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) widget.onRevealComplete?.call();
+          });
+        }
+      });
+    }
   }
 
   @override

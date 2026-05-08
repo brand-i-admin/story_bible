@@ -369,7 +369,12 @@ apply-seeds-era-boundaries:
 	@echo "[Makefile] era_boundaries 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(ERA_BOUNDARIES_SQL))
 
-apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-era-boundaries
+# 매일 퀴즈 — UPSERT 가 아닌 단순 INSERT (on conflict do nothing) 라 재실행 안전.
+apply-seeds-daily-quiz:
+	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV))"
+	$(call PSQL_APPLY,$(SUPABASE_DIR)/seeds/daily_quiz.sql)
+
+apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-era-boundaries apply-seeds-daily-quiz
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================

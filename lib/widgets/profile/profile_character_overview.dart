@@ -10,11 +10,16 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
     required Set<String> completedEventIds,
   }) async {
     final repo = ref.read(storyRepositoryProvider);
+    final state = ref.read(storyControllerProvider);
     final progressData = _profileStudyProgressByCharacterCode[character.code];
     final completedCount = progressData?.completedCount ?? 0;
     final totalCount = progressData?.totalCount ?? 0;
     final progress = progressData?.fraction ?? 0.0;
     final eventsFuture = repo.fetchEventsForCharacter(character.code);
+    // StoryEventThumbCard 가 받는 charactersByCode + era 조회용 lookup.
+    final charactersByCode = {for (final c in state.characters) c.code: c};
+    final eraById = {for (final e in state.eras) e.id: e};
+    final loader = SceneAssetLoader();
 
     await showGeneralDialog<void>(
       context: context,
@@ -190,183 +195,37 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                       ),
                                     );
                                   }
+                                  // 홈 화면 하단 패널과 같은 StoryEventThumbCard
+                                  // 를 재사용 — 완료 시 초록 카드. 3열 그리드.
+                                  // childAspectRatio 는 카드의 자연 높이(아바타+
+                                  // 제목+메타+요약+인물 pill 행) 에 맞춰 0.78.
                                   return GridView.builder(
+                                    padding: const EdgeInsets.only(top: 4),
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 3,
-                                          mainAxisSpacing: 8,
-                                          crossAxisSpacing: 8,
-                                          childAspectRatio: 1.48,
+                                          mainAxisSpacing: 14,
+                                          crossAxisSpacing: 12,
+                                          childAspectRatio: 0.78,
                                         ),
                                     itemCount: events.length,
                                     itemBuilder: (context, index) {
                                       final event = events[index];
-                                      final isCompleted = completedEventIds
-                                          .contains(event.id);
-                                      final placeText = (event.placeName ?? '')
-                                          .trim();
-                                      final yearText =
-                                          event.startYear?.toString() ?? '-';
-                                      final metaText = placeText.isEmpty
-                                          ? yearText
-                                          : '$placeText · $yearText';
-                                      final summary = (event.summary ?? '')
-                                          .trim();
-
-                                      return Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(dialogContext).pop();
-                                            widget.onOpenEventDetail(event);
-                                          },
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              12,
-                                              10,
-                                              12,
-                                              10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: isCompleted
-                                                  ? const Color(0xFFF3E0BE)
-                                                  : const Color(0xEEF7EBD8),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                              border: Border.all(
-                                                color: isCompleted
-                                                    ? const Color(0xD2C78956)
-                                                    : const Color(0xB58E6F48),
-                                                width: 1.0,
-                                              ),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width: 24,
-                                                      height: 24,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                        color: isCompleted
-                                                            ? const Color(
-                                                                0xFFC8863B,
-                                                              )
-                                                            : const Color(
-                                                                0xFFF4ECDE,
-                                                              ),
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                          color: isCompleted
-                                                              ? const Color(
-                                                                  0xFFF1D39C,
-                                                                )
-                                                              : const Color(
-                                                                  0xBC9A7A4C,
-                                                                ),
-                                                          width: 1.0,
-                                                        ),
-                                                      ),
-                                                      child: Icon(
-                                                        isCompleted
-                                                            ? Icons
-                                                                  .check_rounded
-                                                            : Icons
-                                                                  .circle_outlined,
-                                                        size: isCompleted
-                                                            ? 14
-                                                            : 11.5,
-                                                        color: isCompleted
-                                                            ? const Color(
-                                                                0xFFFDF8EE,
-                                                              )
-                                                            : const Color(
-                                                                0xFF8A6A46,
-                                                              ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        isCompleted
-                                                            ? '완료'
-                                                            : '미완료',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textAlign:
-                                                            TextAlign.right,
-                                                        style: TextStyle(
-                                                          color: isCompleted
-                                                              ? const Color(
-                                                                  0xFFB26D26,
-                                                                )
-                                                              : const Color(
-                                                                  0xFF8A6A46,
-                                                                ),
-                                                          fontSize: 10.5,
-                                                          fontWeight:
-                                                              FontWeight.w900,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  event.title,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    color: Color(0xFF3D2D18),
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w900,
-                                                    height: 1.2,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  metaText,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    color: Color(0xFF7A5E38),
-                                                    fontSize: 10.5,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                ),
-                                                if (summary.isNotEmpty) ...[
-                                                  const SizedBox(height: 6),
-                                                  Expanded(
-                                                    child: Text(
-                                                      summary,
-                                                      maxLines: 3,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                        color: Color(
-                                                          0xFF5A4326,
-                                                        ),
-                                                        fontSize: 10.6,
-                                                        height: 1.35,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ] else
-                                                  const Spacer(),
-                                              ],
-                                            ),
-                                          ),
+                                      final era = eraById[event.eraId];
+                                      return StoryEventThumbCard(
+                                        event: event,
+                                        era: era,
+                                        charactersByCode: charactersByCode,
+                                        selected: false,
+                                        completed: completedEventIds.contains(
+                                          event.id,
                                         ),
+                                        orderNumber: index + 1,
+                                        loader: loader,
+                                        onTap: () {
+                                          Navigator.of(dialogContext).pop();
+                                          widget.onOpenEventDetail(event);
+                                        },
                                       );
                                     },
                                   );

@@ -372,3 +372,57 @@
   - `RevisePositionDialog` 가 landmark ChoiceChip 그룹으로 region/anchor/minor 재선택 가능. `revise_proposal_position` RPC 의 `p_landmark_id` 파라미터로 전달.
 - **시드 빌더 변경**: `build_200_stories_seed_sql.py` 가 `assets/landmarks/event_landmark_mapping_draft.json` 을 읽어 events.landmark_id 를 INSERT 시 lookup. 별도 event_landmark_update.sql 적용 불필요.
 - **Make pipeline**: `make seed-all` 이 `seed-landmarks-v2` 를 포함, `make apply-seeds` 가 v2 landmarks 를 stories 보다 먼저 적용.
+
+## ADR-020: 프로필 "진행률 표시" 섹션 + 지도 region 정복(D안) (2026-05-08)
+
+- **결정**:
+  - "연속 출석일" / "연속 인물 공부" 스트릭 기능 제거. 관련 테이블(`user_daily_activity`), Repository 메서드(`recordAttendance`/`recordStudyDay`/`fetchAttendanceStreak`/`fetchStudyStreak`/`computeDailyStreak`/`dateOnly`), UI 카드, 테스트 모두 삭제.
+  - 프로필 우측 패널을 "진행률 표시" 탭형 섹션으로 교체. 좌측 상단 제목 + 두 탭(`장소로 시작` / `인물과 걷기`) — 탭은 섹션 최상단 pinned, 탭 아래 컨텐츠는 `Expanded(SingleChildScrollView)` 로 스크롤.
+  - **장소로 시작** 탭: `EraPickRows`(구약/신약 시대 칩) + `ProfileMiniMap`. 시대 미선택 시 안내 빈 상태("시대를 골라보세요").
+  - **인물과 걷기** 탭: 기존 구약/신약 토글 + 5열 character grid (AvatarProgressRing) 그대로 이전.
+  - **지도 딱지 모으기 (D안)**: region 폴리곤이 진행률(완료/총 이벤트)에 따라 검정→시대컬러로 알파 보간 채움. 100% region 은 골드 보더 + 중심에 작은 황금 깃발 마커. 상단에 "정복: X / N" 다크 칩 카운터.
+  - 사건↔region 매핑은 클라이언트에서 point-in-polygon (ray-casting, `lib/utils/region_membership.dart`).
+  - 프로필 헤더 컴팩트화: 아바타 78 → 40, 이름 + 수정/안내/로그아웃 버튼 한 줄. 중보 기도 리스트는 320px fixed 로 ~3.5명 보이게 + 내부 스크롤.
+- **이유**:
+  1. 스트릭은 사용 가치가 낮고 동기부여가 약했음. region 정복 시각화 + 인물 progress ring 이 학습 진행도를 더 직관적으로 전달.
+  2. 두 탭 구조는 앱의 핵심 두 축("장소로 시작" / "인물과 걷기") 과 1:1 대응 — 홈 화면의 EraPickRows 를 그대로 재사용해 일관성 확보.
+  3. D안(채움 + 정복 깃발 + 카운터) 은 부분 진행 가시화 + 완료 보상 + 게이미피케이션 카운터 세 가지를 모두 제공하면서 양피지 톤과 자연스럽게 어울림 (B안 = 정보 손실, C안 = 별 배치 알고리즘 부담, E안 = 톤 충돌).
+- **공유 컴포넌트 추출**:
+  - `lib/widgets/v2/era_pick_rows.dart` — `EraPickRows`/`EraPickRow`/`eraIconFor()`. HomeIntroPanel 도 이 위젯을 사용 (구 `_EraRow`/`_EraChip`/`_eraIconFor` 제거).
+  - `lib/utils/region_membership.dart` — `isPointInPolygon` + `polygonCenter`. ray-casting 알고리즘.
+  - `lib/widgets/profile/profile_mini_map.dart` — 미니 맵 (flutter_map 8.x).
+  - `lib/widgets/profile/profile_progress_section.dart` — part 파일, 섹션 wrapper + 두 탭 본문.
+- **DB 변경**: `db_init.sql` 에서 `user_daily_activity` 테이블 정의/index/trigger/grant/RLS 모두 제거. 상단 cleanup 섹션의 `drop table if exists user_daily_activity cascade;` 만 잔존(idempotent 정리용).
+- **결과**:
+  - 프로필 상단(헤더 + 중보) 높이 약 35% 감소 → 진행률 섹션이 더 큰 비중.
+  - region 정복 카운터로 "다음 어느 region 을 마저 끝낼까" 동기 형성.
+  - 홈/프로필이 동일 era picker 컴포넌트 공유 → 시대별 색·아이콘 일관성 자동 보장.
+
+## ADR-021: 퀴즈 페이지 (매일+주간) + 독립 진행도 + 인물/지역 모드 (2026-05-15)
+
+- **결정**:
+  - 홈 상단 "금주 인물" 버튼 → **"퀴즈"** (성경 옆, 프로필 앞). 클릭 시 `QuizTabPage` 가 두 탭으로 열린다 — **매일 퀴즈** + **주간 퀴즈**.
+  - **매일 퀴즈**: `daily_quiz` 테이블의 최신 1건. 4지선다 + 제출 → CompletionCelebration (도장+별가루) + 정/오답 결과 + 해설.
+  - **주간 퀴즈**: 기존 WeeklyTabPage embedded. 지도(StoryMapPanel) + 하단 EventTimelineRow (홈과 동일).
+  - **두 모드** — 시드 짝/홀수로 50/50 결정:
+    - `WeeklyMode.character`: 랜덤 인물 + 그 인물의 사건 (기존).
+    - `WeeklyMode.region`: 랜덤 시대 + 사건이 있는 랜덤 region + 그 region 사건. 헤더 = "금주 지역: 시대명 · 지역명". 지도 = region 폴리곤 강조 (`eraRegionLandmarks: [region]`).
+  - **독립 진행도**: `weekly_quiz_progress(user_id, week_key, event_id, is_bible_read, is_quiz_completed, last_score_correct/total)` 신설. 프로필의 `user_event_progress` 와 무관 — 같은 인물이 다음 주에 또 뽑혀도 `week_key` 가 달라 자동 reset.
+  - **EventDetailPage**: 옵셔널 `quizWeekKey: String?` prop. 비-null 이면 read/write 가 weekly* state/setter 로 분기. CompletionCelebration·"다음 이야기" glow 도 weekly 기준.
+  - **HomeScreen**: `_openEventDetailPage(event, {quizWeekKey})` + `_startQuiz(eventId, {quizWeekKey})` — `setBibleRead`/`setQuizCompleted` 호출이 quizWeekKey 유무로 분기.
+- **이유**:
+  1. 인물 학습이 단조로워 같은 인물 반복이 지루해질 수 있음 → 지역 모드 추가로 "한 지역의 사건들" 학습 흐름 확보.
+  2. 프로필 진행도 (캐릭터 학습 완료) 와 퀴즈 풀이가 섞이면 동기 부여가 약해짐 — 퀴즈는 "이번 주에 풀었나" 라는 이벤트 단위 완료에 집중.
+  3. 독립 테이블(`weekly_quiz_progress`) 로 분리하면 프로필 진행도에 영향 없이 같은 인물/지역 재방문 가능.
+- **DB 변경**:
+  - `db_init.sql`: `daily_quiz` (4지선다 + 해설), `weekly_quiz_progress` (사용자/주차/사건 키) 추가. 둘 다 RLS 적용 — daily_quiz 공개 read, weekly_quiz_progress 본인만 r/w.
+  - 시드: `supabase/seeds/daily_quiz.sql` 1건.
+- **아키텍처 변경**:
+  - `WeeklyStudyData` — 단일 character 필드 → mode + character/era/region 옵셔널.
+  - `weekly_selection.dart` — `WeeklyMode` enum + `weeklyModeForSeed()` 추가.
+  - `EventTimelineRow` 재사용으로 weekly 의 사건 카드가 홈 하단 패널과 100% 일치.
+  - `CompletionCelebration` 재사용으로 매일 퀴즈 제출 시에도 같은 도장+별가루 효과.
+- **결과**:
+  - 한 페이지에서 매일/주간 두 가지 학습 흐름.
+  - 같은 인물/지역 반복 가능 — 매주 새로 풀어 보는 의식적 학습.
+  - 홈/주간이 같은 카드 코드로 일관 (시각·동작 동일).

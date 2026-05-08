@@ -23,13 +23,19 @@ import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/tokens.dart';
+import '../utils/scene_asset_loader.dart';
+import 'avatar_progress_ring.dart';
 import 'character_avatar.dart';
+import 'font_scale_bottom_sheet.dart';
 import 'inline_login_prompt_card.dart';
 import 'parchment_dialog.dart';
+import 'profile/profile_mini_map.dart';
 import 'profile_editor_dialog.dart';
 import 'share_id_input_dialog.dart';
 import 'story_home_styles.dart';
 import 'sub_page_scaffold.dart';
+import 'v2/era_pick_rows.dart';
+import 'v2/region_event_list.dart' show StoryEventThumbCard;
 
 // 화면 코드를 도메인별로 part 파일로 분리.
 // 각 part 파일은 ProfileTabPageState에 대한 extension으로 메소드를 추가한다.
@@ -37,7 +43,9 @@ part 'profile/profile_helpers.dart';
 part 'profile/profile_intercessory_prayer.dart';
 part 'profile/profile_left_panel.dart';
 part 'profile/profile_character_overview.dart';
+part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
+part 'profile/profile_settings_sheet.dart';
 
 /// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 노트/말씀/중보기도 미리보기).
 ///
@@ -68,6 +76,10 @@ class ProfileTabPage extends ConsumerStatefulWidget {
 
 enum _ProfileContentTab { notes, verses, prayer }
 
+/// "진행률 표시" 섹션의 탭. `place` = 장소로 시작 (지도+region),
+/// `walk` = 인물과 걷기 (구약/신약 + 인물 grid).
+enum _ProfileProgressTab { place, walk }
+
 class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   static const int _intercessoryPrayerPageSize = 12;
   static const int _profilePreviewPageSize = 5;
@@ -94,9 +106,11 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   bool _intercessoryPrayerHasNextPage = false;
   String? _intercessoryPrayerError;
   int _intercessoryPrayerPageIndex = 0;
-  int _profileAttendanceStreak = 0;
-  int _profileStudyStreak = 0;
   String _profileSelectedTestament = 'old';
+  // 진행률 섹션 — 기본 탭은 장소로 시작 (지도 기반 첫인상 강조).
+  _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.place;
+  // "장소로 시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
+  String? _profileProgressSelectedEraId;
   bool _profileLoading = false;
   String? _profileError;
   bool _signingOut = false;
@@ -386,14 +400,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         );
 
       AppUserProfile? profile;
-      var attendanceStreak = 0;
-      var studyStreak = 0;
       Map<String, CharacterStudyProgress> progressByCharacterCode = const {};
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
-        attendanceStreak = await userRepo.fetchAttendanceStreak(user.id);
-        studyStreak = await userRepo.fetchStudyStreak(user.id);
         final studyProgress = await userRepo.fetchCharacterStudyProgress(
           userId: user.id,
           people: allPeople,
@@ -419,8 +429,6 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           _intercessoryPrayerPageIndex = 0;
           _intercessoryPrayerError = null;
         }
-        _profileAttendanceStreak = attendanceStreak;
-        _profileStudyStreak = studyStreak;
         _profileLoading = false;
         _profileError = allPeople.isEmpty ? '인물 데이터가 없습니다.' : null;
       });
@@ -533,8 +541,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         final isNarrow = constraints.maxWidth < 720;
         if (isNarrow) {
           final totalHeight = constraints.maxHeight;
-          final leftPanelHeight = (totalHeight * 0.55).clamp(360.0, 560.0);
-          final rightPanelHeight = (totalHeight * 0.55).clamp(320.0, 480.0);
+          // 프로필(좌측) 패널 = 화면 30% 정도. 진행률(우측) 섹션이 더 큰 비중.
+          // 중보 리스트는 Expanded 라 패널 높이에 맞춰 자동 신축.
+          final leftPanelHeight = (totalHeight * 0.30).clamp(280.0, 400.0);
+          final rightPanelHeight = (totalHeight * 0.65).clamp(420.0, 720.0);
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Column(
@@ -549,7 +559,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                 const SizedBox(height: 12),
                 SizedBox(
                   height: rightPanelHeight.toDouble(),
-                  child: _buildProfileRightPanel(
+                  child: _buildProfileProgressSection(
                     people: people,
                     completedEventIds: state.completedEventIds,
                     selectedTestament: _profileSelectedTestament,
@@ -582,7 +592,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
               ),
               SizedBox(width: gap),
               Expanded(
-                child: _buildProfileRightPanel(
+                child: _buildProfileProgressSection(
                   people: people,
                   completedEventIds: state.completedEventIds,
                   selectedTestament: _profileSelectedTestament,

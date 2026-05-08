@@ -6,9 +6,12 @@ import '../models/bible_ref.dart';
 import '../models/story_event.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
+import '../state/story_state.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';
+import 'completion_celebration.dart';
 import 'proposal/delete_event_proposal_sheet.dart';
+import 'pulse_highlight.dart';
 import 'story_home_styles.dart';
 import 'sub_page_scaffold.dart';
 
@@ -21,7 +24,7 @@ import 'sub_page_scaffold.dart';
 /// 5. 퀴즈 시작 버튼
 ///
 /// 완료 여부는 [storyControllerProvider]의 `completedEventIds`로 판정한다.
-class EventDetailPage extends ConsumerWidget {
+class EventDetailPage extends ConsumerStatefulWidget {
   const EventDetailPage({
     super.key,
     required this.event,
@@ -31,6 +34,7 @@ class EventDetailPage extends ConsumerWidget {
     this.prevEvent,
     this.nextEvent,
     this.onNavigateToEvent,
+    this.quizWeekKey,
   });
 
   final StoryEvent event;
@@ -52,8 +56,62 @@ class EventDetailPage extends ConsumerWidget {
   /// 페이지를 새 사건으로 pushReplacement 하는 식으로 처리한다.
   final void Function(StoryEvent target)? onNavigateToEvent;
 
+  /// 비-null 이면 "퀴즈 모드" — 본문 읽기/퀴즈 완료 진행도가 프로필 진행도와
+  /// 독립된 `weekly_quiz_progress` 테이블에 저장된다. 같은 인물이 다음 주에
+  /// 또 뽑혀도 week_key 가 달라 자동 reset.
+  final String? quizWeekKey;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EventDetailPage> createState() => _EventDetailPageState();
+}
+
+class _EventDetailPageState extends ConsumerState<EventDetailPage> {
+  // 본문 읽기 + 퀴즈가 모두 완료되는 전이 시점에 별가루 burst 를 한 번 트리거.
+  final GlobalKey<CompletionCelebrationState> _celebrationKey =
+      GlobalKey<CompletionCelebrationState>();
+
+  /// 다음 이야기 카드 glow 활성 여부.
+  /// - 진입 시 이미 완료된 사건이면 즉시 true (post-frame 으로 setState).
+  /// - 페이지 안에서 둘 다 완료해서 축하 애니메이션이 끝났을 때도 true.
+  /// - 완료 취소되면 다시 false.
+  bool _glowNext = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final weekKey = widget.quizWeekKey;
+    if (weekKey != null) {
+      // 주간 퀴즈 모드 — 진행도를 미리 로드 (캐시 hit 시 noop).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref
+            .read(storyControllerProvider.notifier)
+            .ensureWeeklyQuizProgressLoaded(weekKey);
+      });
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final state = ref.read(storyControllerProvider);
+      final eventId = widget.event.id;
+      final isCompleted = _isCompletedFor(state, eventId);
+      if (isCompleted && widget.nextEvent != null) {
+        setState(() => _glowNext = true);
+      }
+    });
+  }
+
+  bool _isCompletedFor(StoryState state, String eventId) {
+    if (widget.quizWeekKey != null) {
+      return state.weeklyQuizBibleReadEventIds.contains(eventId) &&
+          state.weeklyQuizCompletedEventIds.contains(eventId);
+    }
+    return state.bibleReadEventIds.contains(eventId) &&
+        state.quizCompletedEventIds.contains(eventId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final event = widget.event;
     final storyText = (event.summary ?? '').trim();
     final placeText = (event.placeName ?? '').trim();
     final yearText = event.startYear?.toString() ?? '-';
@@ -63,12 +121,32 @@ class EventDetailPage extends ConsumerWidget {
       event.bibleRefs.firstOrNull?.displayText,
     );
 
+    // 완료 전이(false → true) 감지. 페이지 진입 시 이미 완료라면 발화하지 않음.
+    // 반대 전이(true → false, 완료 취소)에는 다음 이야기 glow 도 끔.
+    // quiz 모드는 weekly* 필드, 일반 모드는 그대로 bible/quiz* 필드 사용.
+    ref.listen<StoryState>(storyControllerProvider, (previous, next) {
+      if (previous == null) return;
+      final wasCompleted = _isCompletedFor(previous, event.id);
+      final isCompleted = _isCompletedFor(next, event.id);
+      if (!wasCompleted && isCompleted) {
+        _celebrationKey.currentState?.play();
+      }
+      if (!isCompleted && _glowNext) {
+        setState(() => _glowNext = false);
+      }
+    });
+
     final currentState = ref.watch(storyControllerProvider);
-    final isBibleRead = currentState.bibleReadEventIds.contains(event.id);
-    final isQuizCompleted = currentState.quizCompletedEventIds.contains(
-      event.id,
-    );
-    final lastScore = currentState.lastQuizScores[event.id];
+    final isQuizMode = widget.quizWeekKey != null;
+    final isBibleRead = isQuizMode
+        ? currentState.weeklyQuizBibleReadEventIds.contains(event.id)
+        : currentState.bibleReadEventIds.contains(event.id);
+    final isQuizCompleted = isQuizMode
+        ? currentState.weeklyQuizCompletedEventIds.contains(event.id)
+        : currentState.quizCompletedEventIds.contains(event.id);
+    final lastScore = isQuizMode
+        ? currentState.weeklyQuizLastScores[event.id]
+        : currentState.lastQuizScores[event.id];
 
     return SubPageScaffold(
       title: event.title,
@@ -77,10 +155,10 @@ class EventDetailPage extends ConsumerWidget {
         // 좌우 스와이프로 prev/next 이동 (수평 fling).
         onHorizontalDragEnd: (details) {
           final v = details.primaryVelocity ?? 0;
-          if (v < -200 && nextEvent != null) {
-            onNavigateToEvent?.call(nextEvent!);
-          } else if (v > 200 && prevEvent != null) {
-            onNavigateToEvent?.call(prevEvent!);
+          if (v < -200 && widget.nextEvent != null) {
+            widget.onNavigateToEvent?.call(widget.nextEvent!);
+          } else if (v > 200 && widget.prevEvent != null) {
+            widget.onNavigateToEvent?.call(widget.prevEvent!);
           }
         },
         child: Padding(
@@ -137,7 +215,7 @@ class EventDetailPage extends ConsumerWidget {
                                 ],
                               ),
                               FutureBuilder<List<String>>(
-                                future: sceneAssetsFuture,
+                                future: widget.sceneAssetsFuture,
                                 builder: (context, snapshot) {
                                   final sceneAssets =
                                       snapshot.data ?? const <String>[];
@@ -162,27 +240,59 @@ class EventDetailPage extends ConsumerWidget {
                                   content: '요약 정보가 없습니다.',
                                 ),
                               const SizedBox(height: 12),
-                              _ReadAndQuizSection(
-                                eventId: event.id,
-                                refs: refs,
-                                moveTarget: moveTarget,
-                                isBibleRead: isBibleRead,
-                                isQuizCompleted: isQuizCompleted,
-                                lastScore: lastScore,
-                                onOpenBibleReader: onOpenBibleReader,
-                                onStartQuiz: () => onStartQuiz(event.id),
-                                onUndoBibleRead: () => ref
-                                    .read(storyControllerProvider.notifier)
-                                    .setBibleRead(
-                                      eventId: event.id,
-                                      isRead: false,
-                                    ),
-                                onUndoQuiz: () => ref
-                                    .read(storyControllerProvider.notifier)
-                                    .setQuizCompleted(
-                                      eventId: event.id,
-                                      isCompleted: false,
-                                    ),
+                              CompletionCelebration(
+                                key: _celebrationKey,
+                                onComplete: () {
+                                  if (!mounted) return;
+                                  if (widget.nextEvent != null && !_glowNext) {
+                                    setState(() => _glowNext = true);
+                                  }
+                                },
+                                child: _ReadAndQuizSection(
+                                  eventId: event.id,
+                                  refs: refs,
+                                  moveTarget: moveTarget,
+                                  isBibleRead: isBibleRead,
+                                  isQuizCompleted: isQuizCompleted,
+                                  lastScore: lastScore,
+                                  onOpenBibleReader: widget.onOpenBibleReader,
+                                  onStartQuiz: () =>
+                                      widget.onStartQuiz(event.id),
+                                  onUndoBibleRead: () {
+                                    final notifier = ref.read(
+                                      storyControllerProvider.notifier,
+                                    );
+                                    if (isQuizMode) {
+                                      notifier.setWeeklyQuizBibleRead(
+                                        weekKey: widget.quizWeekKey!,
+                                        eventId: event.id,
+                                        isRead: false,
+                                      );
+                                    } else {
+                                      notifier.setBibleRead(
+                                        eventId: event.id,
+                                        isRead: false,
+                                      );
+                                    }
+                                  },
+                                  onUndoQuiz: () {
+                                    final notifier = ref.read(
+                                      storyControllerProvider.notifier,
+                                    );
+                                    if (isQuizMode) {
+                                      notifier.setWeeklyQuizCompleted(
+                                        weekKey: widget.quizWeekKey!,
+                                        eventId: event.id,
+                                        isCompleted: false,
+                                      );
+                                    } else {
+                                      notifier.setQuizCompleted(
+                                        eventId: event.id,
+                                        isCompleted: false,
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                               _DeleteProposalButton(event: event),
                             ],
@@ -192,29 +302,37 @@ class EventDetailPage extends ConsumerWidget {
                     ),
                     // 아래쪽 prev/next 네비 카드 — 한 줄에 좌(이전) + 우(다음).
                     // 각 45% width + 가운데 여백으로 답답하지 않게.
-                    if ((prevEvent != null || nextEvent != null) &&
-                        onNavigateToEvent != null) ...[
+                    if ((widget.prevEvent != null ||
+                            widget.nextEvent != null) &&
+                        widget.onNavigateToEvent != null) ...[
                       const SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
-                            child: prevEvent != null
+                            child: widget.prevEvent != null
                                 ? _NavRow(
                                     label: '이전 이야기',
-                                    event: prevEvent!,
+                                    event: widget.prevEvent!,
                                     isPrev: true,
-                                    onTap: () => onNavigateToEvent!(prevEvent!),
+                                    onTap: () => widget.onNavigateToEvent!(
+                                      widget.prevEvent!,
+                                    ),
                                   )
                                 : const SizedBox.shrink(),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: nextEvent != null
-                                ? _NavRow(
-                                    label: '다음 이야기',
-                                    event: nextEvent!,
-                                    isPrev: false,
-                                    onTap: () => onNavigateToEvent!(nextEvent!),
+                            child: widget.nextEvent != null
+                                ? PulseHighlight(
+                                    active: _glowNext,
+                                    child: _NavRow(
+                                      label: '다음 이야기',
+                                      event: widget.nextEvent!,
+                                      isPrev: false,
+                                      onTap: () => widget.onNavigateToEvent!(
+                                        widget.nextEvent!,
+                                      ),
+                                    ),
                                   )
                                 : const SizedBox.shrink(),
                           ),

@@ -1,105 +1,11 @@
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
-// 프로필 우측 패널 (인물 진행도 + 구약/신약 토글 + 공유 ID).
+// 프로필에서 공유되는 헬퍼 (구약/신약 토글, 공유 ID 칩, mini action button).
+// "진행률 표시" 섹션 도입 후 우측 패널 자체는 사라졌지만, 헬퍼들은 다른
+// part 파일에서 재사용된다.
 part of '../profile_tab_page.dart';
 
 extension ProfileRightPanelExt on ProfileTabPageState {
-  Widget _buildProfileRightPanel({
-    required List<Character> people,
-    required Set<String> completedEventIds,
-    required String selectedTestament,
-    required ValueChanged<String> onSelectTestament,
-  }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final stackHeader = constraints.maxWidth < 400;
-        final headerStats = Row(
-          children: [
-            Expanded(
-              child: _profileTopStatCard(
-                title: '연속 출석일',
-                value: '$_profileAttendanceStreak일',
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: _profileTopStatCard(
-                title: '연속 인물 공부',
-                value: '$_profileStudyStreak일',
-              ),
-            ),
-          ],
-        );
-
-        return Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: floatingPanelDecoration(),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (stackHeader) ...[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: _profileTestamentToggle(
-                      selectedTestament: selectedTestament,
-                      onSelectTestament: onSelectTestament,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  headerStats,
-                ] else
-                  Row(
-                    children: [
-                      _profileTestamentToggle(
-                        selectedTestament: selectedTestament,
-                        onSelectTestament: onSelectTestament,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(child: headerStats),
-                    ],
-                  ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: people.isEmpty
-                      ? Center(
-                          child: Text(
-                            selectedTestament == 'new'
-                                ? '신약 인물 데이터가 없습니다.'
-                                : '구약 인물 데이터가 없습니다.',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Color(0xFF6D5231),
-                              fontWeight: FontWeight.w700,
-                              height: 1.5,
-                              fontSize: 13.2,
-                            ),
-                          ),
-                        )
-                      : ListView.separated(
-                          itemCount: (people.length / 5).ceil(),
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 8),
-                          itemBuilder: (context, rowIndex) {
-                            final start = rowIndex * 5;
-                            final end = math.min(start + 5, people.length);
-                            final rowPeople = people.sublist(start, end);
-                            return _profileCharacterProgressRow(
-                              rowPeople: rowPeople,
-                              completedEventIds: completedEventIds,
-                            );
-                          },
-                        ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _profileTestamentToggle({
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,

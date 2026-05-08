@@ -5,9 +5,9 @@ import '../theme/tokens.dart';
 class LegalDocumentsScreen extends StatelessWidget {
   const LegalDocumentsScreen({super.key});
 
-  static const _operatorName = 'Story Bible / 최현석';
-  static const _contactEmail = 'cresilience91@gmail.com';
-  static const _effectiveDate = '2026-04-02';
+  static const _operatorName = 'Story Bible';
+  static const _contactEmail = 'admin@brand-i.net';
+  static const _effectiveDate = '2026-05-15';
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +30,16 @@ class LegalDocumentsScreen extends StatelessWidget {
                             '법적 안내',
                             style: TextStyle(
                               color: Color(0xFF3F2A17),
-                              fontSize: 24,
+                              fontSize: 20,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           const Text(
                             '앱 안에서는 아래에서 바로 확인할 수 있고, 공개용 웹 문서는 https://brand-i-admin.github.io/story-bible-pages/ 에서 확인할 수 있습니다.',
                             style: TextStyle(
                               color: Color(0xFF7B603D),
-                              fontSize: 13.4,
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w700,
                               height: 1.45,
                             ),
@@ -300,26 +300,26 @@ class _LegalDocCard extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         color: Color(0xFF432D1A),
-                        fontSize: 17,
+                        fontSize: 14,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       subtitle,
                       style: const TextStyle(
                         color: Color(0xFF785D39),
-                        fontSize: 12.8,
+                        fontSize: 11.2,
                         fontWeight: FontWeight.w700,
-                        height: 1.45,
+                        height: 1.4,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       filePath,
                       style: const TextStyle(
                         color: AppColors.ink150,
-                        fontSize: 11.2,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -350,7 +350,7 @@ class _LegalMetaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: _cardDecoration(),
-      padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+      padding: const EdgeInsets.fromLTRB(11, 10, 11, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -358,16 +358,16 @@ class _LegalMetaCard extends StatelessWidget {
             label,
             style: const TextStyle(
               color: Color(0xFF8E7150),
-              fontSize: 11.2,
+              fontSize: 10,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             value,
             style: const TextStyle(
               color: Color(0xFF432D1A),
-              fontSize: 13,
+              fontSize: 11,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -553,9 +553,9 @@ const _termsDocument = _LegalDocument(
   title: '서비스 이용약관',
   summary:
       'Story Bible(이야기 성경) 서비스 이용과 관련한 계정, 기능, 금지행위, 탈퇴 및 책임 제한 기준을 안내합니다.',
-  effectiveDate: '2026-04-02',
-  updatedDate: '2026-04-02',
-  contactEmail: 'cresilience91@gmail.com',
+  effectiveDate: '2026-05-15',
+  updatedDate: '2026-05-15',
+  contactEmail: 'admin@brand-i.net',
   sections: [
     _LegalSection(
       title: '1. 목적',
@@ -604,7 +604,7 @@ const _termsDocument = _LegalDocument(
     ),
     _LegalSection(
       title: '8. 문의',
-      paragraphs: ['서비스 관련 문의는 이메일(cresilience91@gmail.com)로 접수할 수 있습니다.'],
+      paragraphs: ['서비스 관련 문의는 이메일(admin@brand-i.net)로 접수할 수 있습니다.'],
     ),
   ],
 );
@@ -613,9 +613,9 @@ const _privacyDocument = _LegalDocument(
   title: '개인정보 처리방침',
   summary:
       'Story Bible(이야기 성경)에서 로그인, 프로필 저장, 노트, 말씀 저장, 기도제목 공유 기능을 제공하는 과정에서 처리되는 개인정보 기준을 안내합니다.',
-  effectiveDate: '2026-04-02',
-  updatedDate: '2026-04-02',
-  contactEmail: 'cresilience91@gmail.com',
+  effectiveDate: '2026-05-15',
+  updatedDate: '2026-05-15',
+  contactEmail: 'admin@brand-i.net',
   sections: [
     _LegalSection(
       title: '1. 수집하는 정보',
@@ -664,7 +664,7 @@ const _privacyDocument = _LegalDocument(
     ),
     _LegalSection(
       title: '8. 문의',
-      paragraphs: ['개인정보 처리에 관한 문의는 이메일(cresilience91@gmail.com)로 접수할 수 있습니다.'],
+      paragraphs: ['개인정보 처리에 관한 문의는 이메일(admin@brand-i.net)로 접수할 수 있습니다.'],
     ),
   ],
 );

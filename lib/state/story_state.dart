@@ -30,6 +30,10 @@ class StoryState {
     this.bibleReadEventIds = const {},
     this.quizCompletedEventIds = const {},
     this.lastQuizScores = const {},
+    this.weeklyQuizBibleReadEventIds = const {},
+    this.weeklyQuizCompletedEventIds = const {},
+    this.weeklyQuizLastScores = const {},
+    this.weeklyQuizWeekKey,
     this.searchQuery = '',
     this.searchResults = const [],
     this.isSearching = false,
@@ -77,6 +81,19 @@ class StoryState {
 
   /// 가장 최근 퀴즈 결과 (eventId → "맞춘수/총문제"). UI 표시용.
   final Map<String, ({int correct, int total})> lastQuizScores;
+
+  /// 주간 퀴즈 — 이번 주에 본문 읽기 완료한 사건 ID. 프로필 진행도와 독립.
+  /// week_key 가 바뀌면 (다음 주) 자동으로 비워진다.
+  final Set<String> weeklyQuizBibleReadEventIds;
+
+  /// 주간 퀴즈 — 이번 주에 퀴즈 완료한 사건 ID. 위와 한 쌍.
+  final Set<String> weeklyQuizCompletedEventIds;
+
+  /// 주간 퀴즈 — 이번 주 최근 퀴즈 점수 (eventId → 맞춘수/총문제).
+  final Map<String, ({int correct, int total})> weeklyQuizLastScores;
+
+  /// 현재 캐시된 주간 진행도가 어느 week_key 의 것인지. null 이면 미로드.
+  final String? weeklyQuizWeekKey;
   final String searchQuery;
   final List<StoryEvent> searchResults;
   final bool isSearching;
@@ -106,6 +123,11 @@ class StoryState {
     Set<String>? bibleReadEventIds,
     Set<String>? quizCompletedEventIds,
     Map<String, ({int correct, int total})>? lastQuizScores,
+    Set<String>? weeklyQuizBibleReadEventIds,
+    Set<String>? weeklyQuizCompletedEventIds,
+    Map<String, ({int correct, int total})>? weeklyQuizLastScores,
+    String? weeklyQuizWeekKey,
+    bool clearWeeklyQuizWeekKey = false,
     bool clearSelectedEvent = false,
     String? searchQuery,
     List<StoryEvent>? searchResults,
@@ -143,6 +165,14 @@ class StoryState {
       quizCompletedEventIds:
           quizCompletedEventIds ?? this.quizCompletedEventIds,
       lastQuizScores: lastQuizScores ?? this.lastQuizScores,
+      weeklyQuizBibleReadEventIds:
+          weeklyQuizBibleReadEventIds ?? this.weeklyQuizBibleReadEventIds,
+      weeklyQuizCompletedEventIds:
+          weeklyQuizCompletedEventIds ?? this.weeklyQuizCompletedEventIds,
+      weeklyQuizLastScores: weeklyQuizLastScores ?? this.weeklyQuizLastScores,
+      weeklyQuizWeekKey: clearWeeklyQuizWeekKey
+          ? null
+          : weeklyQuizWeekKey ?? this.weeklyQuizWeekKey,
       searchQuery: searchQuery ?? this.searchQuery,
       searchResults: searchResults ?? this.searchResults,
       isSearching: isSearching ?? this.isSearching,
