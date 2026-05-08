@@ -843,10 +843,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               license: 'CC BY 4.0',
             ),
             SizedBox(height: 8),
-            _AttributionLine(
-              source: 'OpenStreetMap 데이터',
-              license: 'ODbL',
-            ),
+            _AttributionLine(source: 'OpenStreetMap 데이터', license: 'ODbL'),
             SizedBox(height: 8),
             _AttributionLine(
               source: '아카이브 호스팅: Cooper Hewitt, Smithsonian Design Museum',
@@ -3892,9 +3889,7 @@ class _ScrollBody extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    desc.isEmpty
-                        ? '이 랜드마크에 대한 설명이 아직 없습니다.'
-                        : desc,
+                    desc.isEmpty ? '이 랜드마크에 대한 설명이 아직 없습니다.' : desc,
                     style: const TextStyle(
                       fontSize: 14,
                       color: Color(0xFF3B2A17),
