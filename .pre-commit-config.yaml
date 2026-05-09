@@ -78,6 +78,15 @@ repos:
         pass_filenames: false
         stages: [pre-push]
 
+      # 사건 좌표가 모두 region polygon 내부에 있는지 검증
+      # — 새 사건 추가/이동 시 polygon 밖으로 빠져 시각 모순이 생기는 것을 차단.
+      - id: verify-polygons-contain-events
+        name: verify polygons contain all events
+        entry: zsh -lc 'python3 tools/seed/verify_polygons_contain_events.py'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
       # 코드 메트릭: 파일/메소드 크기 제한 (경고 500줄/80줄, 차단 1500줄/200줄)
       # NOTE: 현재 기존 코드에 FAIL이 있으므로 보고만. --ci 추가 시 차단 모드.
       - id: code-metrics

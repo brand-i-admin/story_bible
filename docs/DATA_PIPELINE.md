@@ -198,6 +198,24 @@ Makefile                                # 파이프라인 오케스트레이션
 - **옵션**: `--check` (변경 없이 diff만 확인, CI용)
 - **배경**: Flutter는 assets 디렉토리 등록 시 직접 자식 파일만 포함하므로, 각 이야기 폴더를 개별 등록해야 한다.
 
+#### `verify_polygons_contain_events.py`
+- **입력**: `assets/landmarks/landmarks.json` + `assets/200_stories/*.json`
+- **출력**: stdout 에 `OK: N events, all inside their region polygon.` (성공) 또는 stderr 에 위반 목록 + exit code 1 (실패)
+- **목적**: 모든 사건의 (lat, lng) 가 소속 region polygon 안에 있는지 ray-casting 으로 검증. 새 이야기 추가 시 좌표가 polygon 밖으로 빠져 사건 핀이 색칠된 영역 밖에 표시되는 시각 모순을 차단.
+- **옵션**: `--landmarks <path>`, `--stories <path>` (디렉토리이면 *.json 글롭). 기본값은 프로젝트 표준 경로.
+- **자동 실행**: `.pre-commit-config.yaml` 의 pre-push 훅 — `landmarks.json` 또는 `assets/200_stories/*.json` 변경 시 push 전에 검증.
+
+#### `refine_landmark_polygons_from_geojson.py`
+- **입력**: `assets/landmarks/landmarks.json` + `assets/maps/ne_50m_admin_0_countries.geojson` (Natural Earth 1:50m 국경)
+- **출력**: 기본 `tools/seed/refined_polygons.json` (검토용), `--in-place` 옵션 시 `landmarks.json` 의 polygon 직접 교체
+- **목적**: 사람이 사각형으로 그린 region polygon 을 Natural Earth 해안선/국경 정점에 스냅해 자연 곡선으로 정밀화. era_boundaries 와 같은 GeoJSON 클립 방식이지만 region 단위.
+- **동작**: 각 region 의 polygon bbox 를 `BBOX_PADDING_DEG` 만큼 패딩 → 그 영역과 교차하는 country feature 들을 union/intersect → 결과 polygon 에서 가장 큰 ring 채택 + simplify
+- **자동 필터**: 결과 정점 수가 `MIN_REFINEMENT_VERTICES` (10) 미만이면 skip — country bbox 슬라이스(사각형)에 그치는 sub-country region (유대/사마리아 등) 은 원본 hand-drawn 이 더 나음
+- **명시 skip**: `SKIP_CODES` (홍해 같은 수역, 비지리적 region)
+- **옵션**: `--regions rgn_xxx,rgn_yyy` 일부만, `--simplify <deg>`, `--in-place`
+- **재실행**: idempotent — 같은 입력이면 같은 결과
+- **의존**: `pip install shapely` (`requirements.txt` 에 이미 포함)
+
 ## 4. Makefile 타겟
 
 ```makefile

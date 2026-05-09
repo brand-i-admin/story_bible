@@ -15,6 +15,7 @@ import '../models/story_event.dart';
 import '../theme/era_colors.dart';
 import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
+import 'map/era_polygon_glow_layer.dart';
 import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
 
@@ -220,8 +221,9 @@ class StoryMapPanel extends StatefulWidget {
   /// 사용 (fallback).
   final String Function(String characterCode)? nameForCharacter;
 
-  /// era_id (uuid) → era_code (text) 매핑. 시대 폴리곤 색상을 [EraColors]
-  /// 와 동일하게 맞추기 위함. null 이면 era_id 자체로 fallback.
+  /// era_id (uuid) → era_code (text) 매핑. 시대 정보를 코드 단위로 다뤄야
+  /// 하는 기능에서 사용 (legend/필터/외부 리소스 매칭 등). null 이면 era_id
+  /// 자체로 fallback.
   final String? Function(String eraId)? eraCodeForId;
 
   /// region 마커 라벨에 표시할 사건 개수 — landmark.id → count.
@@ -638,12 +640,24 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                   if (widget.eraRegionLandmarks.isNotEmpty)
                     AnimatedBuilder(
                       animation: _polygonGlowCtl,
-                      builder: (_, __) => PolygonLayer<Landmark>(
-                        hitNotifier: _polygonHitNotifier,
-                        polygons: _buildEraRegionUnionPolygons(
-                          glowT: _polygonGlowCtl.value,
-                        ),
-                      ),
+                      builder: (_, __) {
+                        final glowT = _polygonGlowCtl.value;
+                        return Stack(
+                          children: [
+                            // 시각 layer — 짙은 세피아 외곽 + amber inner glow
+                            EraPolygonGlowLayer(
+                              entries: _buildEraRegionGlowEntries(glowT: glowT),
+                            ),
+                            // hit-test layer — 동일 좌표 투명 폴리곤.
+                            // 시각은 EraPolygonGlowLayer 가, 클릭은 PolygonLayer 의
+                            // hitNotifier 가 책임 분리.
+                            PolygonLayer<Landmark>(
+                              hitNotifier: _polygonHitNotifier,
+                              polygons: _buildEraRegionHitPolygons(),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   if (!widget.regionPickerMode)
                     MarkerLayer(markers: _countryLabelMarkers),
@@ -1206,14 +1220,6 @@ class _StoryMapPanelState extends State<StoryMapPanel>
   /// 동적 시대 영역 — 사건/랜드마크 좌표 + **해안선 정점** 의 convex hull.
   ///
   /// 핵심 아이디어: 이미 로드된 country GeoJSON 의 해안선/국경 정점들 중
-  /// 시대 영역 폴리곤 — 그 시대에 속하는 region(kind='region') 들의 polygon 을
-  /// 같은 시대 색으로 칠해 [Polygon] 리스트로 반환. flutter_map 은 단일 다각형
-  /// 리스트를 union 으로 그릴 별도 API 가 없어, 인접한 region 들이 같은 색·같은
-  /// alpha 로 칠해지면 시각적으로 한 덩어리로 보이는 효과를 사용한다.
-  ///
-  /// 색은 region 의 era_codes 중 현재 표시 중인 시대(eraCodeForId 콜백으로 푼
-  /// activeEraBoundaries 의 eraId 가 매칭되는 코드)를 우선 사용해 [EraColors]
-  /// 에서 받는다.
   /// 비지리적 region (polygon 빈 배열) — 종말 환상 등. 지도 모서리 카드로
   /// 표시하기 위해 따로 뽑아낸다. eraRegionLandmarks 에서 lat/lng=0 + polygon
   /// 빈 region 들을 필터.
@@ -1221,45 +1227,61 @@ class _StoryMapPanelState extends State<StoryMapPanel>
       .where((lm) => lm.isRegion && lm.polygon.isEmpty)
       .toList(growable: false);
 
-  List<Polygon<Landmark>> _buildEraRegionUnionPolygons({double glowT = 0.0}) {
-    // 현재 표시 중인 시대(들)의 era_code 집합. activeEraBoundaries 가 비어 있으면
-    // region 의 첫 era_code 로 폴백.
-    final visibleEraCodes = <String>{};
+  /// 시각 layer (EraPolygonGlowLayer) 용 entry 생성. 사건 0건 region 은
+  /// polygon 자체를 그리지 않는다 — 새 이야기 제안이 승인되어 eventCount > 0
+  /// 이 되면 자동으로 polygon 이 등장한다.
+  ///
+  /// 색은 region 의 시대 색(`EraColors.forCode`) — 같은 시대 region 들은
+  /// 같은 색으로 묶여 시각적으로 한 시대 영역으로 인지된다.
+  List<EraPolygonEntry> _buildEraRegionGlowEntries({double glowT = 0.0}) {
+    final entries = <EraPolygonEntry>[];
+    for (final lm in widget.eraRegionLandmarks) {
+      if (!lm.isRegion || lm.polygon.isEmpty) continue;
+      final eventCount = widget.eventCountByLandmarkId?[lm.id] ?? 0;
+      if (eventCount == 0) continue;
+      entries.add(
+        EraPolygonEntry(
+          polygon: lm.polygon,
+          eraColor: _eraColorForRegion(lm),
+          isSelected: lm.id == widget.selectedLandmarkId,
+          pulseT: glowT,
+        ),
+      );
+    }
+    return entries;
+  }
+
+  /// region polygon 색 결정. **선택된 시대 색을 region 의 era_codes 와
+  /// 무관하게 일관되게 사용한다** — 같은 region 이 여러 시대에 속해도
+  /// (예: 유대 = 족장+사사+왕정+포로귀환+신약공생애+사도) 사용자가 선택한
+  /// 시대 색으로 칠해져 컨텍스트가 바뀌어도 색이 흔들리지 않음.
+  ///
+  /// activeEraBoundaries 가 비어 있을 때만 region 의 첫 era_code 로 폴백.
+  Color _eraColorForRegion(Landmark lm) {
     for (final b in widget.activeEraBoundaries) {
       final code = widget.eraCodeForId?.call(b.eraId);
-      if (code != null && code.isNotEmpty) visibleEraCodes.add(code);
+      if (code != null && code.isNotEmpty) {
+        return EraColors.forCode(code);
+      }
     }
+    return EraColors.forCode(lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '');
+  }
 
-    // 선택된 region 은 빛나는 노란색 fill + 펄스 border 로 표시.
-    // glowT 0~1 한 사이클 → sin 으로 0~1 펄스. strokeWidth 2.5~5.5, alpha 0.6~1.0.
-    final pulse = (math.sin(glowT * 2 * math.pi) + 1.0) / 2.0; // 0..1
-    final selectedStroke = 2.5 + pulse * 3.0;
-    final selectedBorderAlpha = 0.65 + pulse * 0.35;
-    const selectedFillColor = Color(0xFFFFCB47); // 빛나는 노랑
-
+  /// hit-test layer 용 투명 폴리곤. 시각 효과는 EraPolygonGlowLayer 가
+  /// 담당하고 클릭만 flutter_map 의 `PolygonLayer<Landmark>.hitNotifier` 가
+  /// 책임진다.
+  List<Polygon<Landmark>> _buildEraRegionHitPolygons() {
     final result = <Polygon<Landmark>>[];
     for (final lm in widget.eraRegionLandmarks) {
       if (!lm.isRegion || lm.polygon.isEmpty) continue;
       final eventCount = widget.eventCountByLandmarkId?[lm.id] ?? 0;
-      // 사건 0 region 은 폴리곤 자체를 그리지 않는다. 새 이야기 제안이 승인되어
-      // eventCount > 0 이 되면 자동으로 폴리곤이 등장한다.
       if (eventCount == 0) continue;
-      final isSelected = lm.id == widget.selectedLandmarkId;
-      final eraCode = lm.eraCodes.firstWhere(
-        visibleEraCodes.contains,
-        orElse: () => lm.eraCodes.isNotEmpty ? lm.eraCodes.first : '',
-      );
-      final color = EraColors.forCode(eraCode);
       result.add(
         Polygon<Landmark>(
           points: lm.polygon,
-          color: isSelected
-              ? selectedFillColor.withValues(alpha: 0.45 + pulse * 0.20)
-              : color.withValues(alpha: 0.22),
-          borderColor: isSelected
-              ? const Color(0xFFE8A33D).withValues(alpha: selectedBorderAlpha)
-              : color.withValues(alpha: 0.95),
-          borderStrokeWidth: isSelected ? selectedStroke : 2.0,
+          color: const Color(0x00000000),
+          borderColor: const Color(0x00000000),
+          borderStrokeWidth: 0.0,
           hitValue: lm,
         ),
       );
