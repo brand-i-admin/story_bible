@@ -8,17 +8,22 @@ class EraColors {
   EraColors._();
 
   /// era_code → 대표 색.
+  ///
+  /// 색 선정 기준: Stamen Watercolor 베이스 지도(파스텔 sage·블루·크림 톤)
+  /// 위에서 또렷하게 인지되도록 채도 강하고/또는 명도 어두운 색을 채택.
+  /// 기존 6개 색 (청록·황토·올리브·청색·카키 등) 이 베이스 톤에 묻혀
+  /// 가시성이 떨어져 더 짙은 변형으로 교체.
   static const Map<String, Color> byCode = {
-    'era_primeval': Color(0xFF5C8D8B), // 청록 (원역사)
-    'era_patriarch': Color(0xFFB89A66), // 황토 (족장)
-    'era_exodus': Color(0xFFC8723E), // 적갈 (출애굽)
-    'era_judges': Color(0xFF6F8F58), // 올리브 (사사)
-    'era_monarchy': Color(0xFFD0A23B), // 황금 (왕정)
-    'era_exile_return': Color(0xFF7A6BB1), // 자주 (포로/포로후기)
-    'era_nt_public_ministry': Color(0xFFC85B5B), // 코랄 (예수 공생애)
-    'era_nt_apostolic': Color(0xFF3F8FB6), // 청색 (사도)
-    'era_nt_post_apostolic': Color(0xFF8C7B57), // 카키 (후기 사도)
-    'era_nt_consummation': Color(0xFFA13F5F), // 와인 (역사의 종결)
+    'era_primeval': Color(0xFF1F5563), // 짙은 청록 (원역사) — 깊은 바다/원시
+    'era_patriarch': Color(0xFF8E5424), // 짙은 황토 (족장) — 흙·천막
+    'era_exodus': Color(0xFFC8723E), // 적갈 (출애굽) — 유지
+    'era_judges': Color(0xFF4F7028), // 짙은 올리브 (사사) — 산림
+    'era_monarchy': Color(0xFFD0A23B), // 황금 (왕정) — 유지
+    'era_exile_return': Color(0xFF7A6BB1), // 자주 (포로/포로후기) — 유지
+    'era_nt_public_ministry': Color(0xFFC85B5B), // 코랄 (예수 공생애) — 유지
+    'era_nt_apostolic': Color(0xFF1F4E78), // 짙은 네이비 (사도) — 항해/지중해
+    'era_nt_post_apostolic': Color(0xFF5C3A1F), // 짙은 카키-브라운 (후기 사도)
+    'era_nt_consummation': Color(0xFFA13F5F), // 와인 (역사의 종결) — 유지
   };
 
   /// 알려지지 않은 era code 의 fallback (같은 코드에는 같은 색이 안정적으로

@@ -175,7 +175,8 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). |
+| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). region polygon 시각은 `EraPolygonGlowLayer` 로 분리, hit-test 만 투명 `PolygonLayer<Landmark>` 가 담당. |
+| EraPolygonGlowLayer | `widgets/map/era_polygon_glow_layer.dart` | region polygon 시각 전용 layer. **Ancient atlas discovery 양식** — 4-layer (outer glow / parchment radial fill / ink border halo+main / discovery particles) + Catmull-Rom spline 곡선화. era 색 기반, 선택 시 펄스 강조 + edge 따라 빛 입자 twinkle. fantasy atlas / fog-of-war reveal 톤. flutter_map 의 `PolygonLayer` 가 단색 fill 만 지원하므로 별도 `CustomPainter` 레이어. 클릭 hit-test 는 동일 좌표의 투명 PolygonLayer 가 담당. |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
 | CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |

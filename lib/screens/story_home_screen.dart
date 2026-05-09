@@ -1672,14 +1672,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     ),
               decorate: false,
               activeLandmarks: _activeLandmarksForEra(state),
-              activeEraBoundaries:
-                  state.selectedEraIds.isEmpty || _mode == _SelectionMode.region
-                  // 지역 모드 진입 시 시대 영역 폴리곤은 숨기고 region 폴리곤
-                  // 만 보이게 한다 (마커가 region kind 만 필터되는 것과 동일).
+              activeEraBoundaries: state.selectedEraIds.isEmpty
                   ? const []
                   : state.eraBoundaries
                         .where((b) => state.selectedEraIds.contains(b.eraId))
                         .toList(growable: false),
+              // 주: region 모드라도 activeEraBoundaries 는 그대로 넘긴다.
+              // StoryMapPanel 은 이 데이터를 era 폴리곤 그리기에 쓰지 않고
+              // (1) era 변경 카메라 fit 트리거, (2) `_eraColorForRegion` 의
+              // 시대 색 lookup 에만 사용한다. 비우면 여러 시대에 속하는
+              // region 의 색이 lm.eraCodes.first 로 폴백되어 사용자가 선택한
+              // 시대와 다른 색으로 보임.
               selectedLandmarkId: state.selectedLandmarkId,
               // reveal trigger: region 모드면 landmark id, character 모드 step3
               // 면 인물 코드 정렬한 키. 키가 변경되면 사건 핀 0.3초 순차 reveal.
@@ -3770,9 +3773,9 @@ class _LandmarkScrollDialogState extends State<_LandmarkScrollDialog>
       child: Material(
         color: Colors.transparent,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 380),
+          constraints: const BoxConstraints(maxWidth: 460),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: AnimatedBuilder(
               animation: _ctrl,
               builder: (context, child) {
@@ -3810,129 +3813,173 @@ class _ScrollBody extends StatelessWidget {
   final Animation<double> fade;
   final VoidCallback onClose;
 
+  // 양피지 PNG 의 원본 비율 (1536 × 1024).
+  static const double _aspect = 1536 / 1024;
+
+  // 본문 스타일 — TextPainter 측정 시 동일 스타일 사용해야 정확.
+  static const TextStyle _bodyStyle = TextStyle(
+    fontSize: 13,
+    color: Color(0xFF3B2A17),
+    height: 1.55,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.2,
+  );
+
+  /// 본문을 양피지 폭에 맞게 가공한다:
+  /// 1. 문장 끝 부호(`. `, `? `, `! `) 다음 → 줄바꿈 (한 줄에 한 문장).
+  /// 2. 괄호 안 공백을 NBSP 로 묶어 자연 줄바꿈이 괄호 내부에서 일어나지
+  ///    않게 한다 (예: `(창 31장)`이 `(창` / `31장)` 으로 분리되는 것 방지).
+  /// 3. 괄호 앞에 줄바꿈을 넣었을 때(시도) **전체 줄 수가 2 이하면** 적용,
+  ///    3 줄 이상이면 적용하지 않는다 — 사용자 요구.
+  static String _formatDescription(String raw, double maxWidth) {
+    if (raw.isEmpty) return raw;
+    final byPeriod = raw.replaceAllMapped(
+      RegExp(r'([.?!])\s'),
+      (m) => '${m[1]}\n',
+    );
+    // 괄호 내부 공백을 NBSP 로 변환 — 괄호 콘텐츠는 한 토큰처럼 묶임.
+    final nbsp = byPeriod.replaceAllMapped(RegExp(r'\(([^)]*)\)'), (m) {
+      return '(${m[1]!.replaceAll(RegExp(r'\s'), ' ')})';
+    });
+    // 괄호 앞 줄바꿈 후보.
+    final withParenBreak = nbsp.replaceAll(RegExp(r'\s+\('), '\n(');
+    if (withParenBreak == nbsp) return nbsp; // 괄호가 없거나 처리 불가
+    // 측정: 괄호를 떼어놓은 결과가 2 줄 이하인지 확인.
+    final tp = TextPainter(
+      text: TextSpan(text: withParenBreak, style: _bodyStyle),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+      maxLines: 10,
+    )..layout(maxWidth: maxWidth);
+    final lineCount = tp.computeLineMetrics().length;
+    return lineCount <= 2 ? withParenBreak : nbsp;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/elements/parchment_scroll_frame.png'),
-          fit: BoxFit.fill,
-        ),
-      ),
-      child: Padding(
-        // 양피지 frame PNG 의 jagged edges/curls 영역 피해 안쪽 콘텐츠 padding.
-        padding: const EdgeInsets.fromLTRB(40, 50, 40, 56),
-        child: FadeTransition(
-          opacity: fade,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // 양피지 grain — 위·아래 옅은 그림자 (말림 결)
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          const Color(0xFFB8965E).withValues(alpha: 0.18),
-                          const Color(0x00000000),
-                          const Color(0x00000000),
-                          const Color(0xFFB8965E).withValues(alpha: 0.18),
-                        ],
-                        stops: const [0.0, 0.18, 0.82, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
+    return GestureDetector(
+      onTap: onClose,
+      behavior: HitTestBehavior.opaque,
+      child: AspectRatio(
+        aspectRatio: _aspect,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                'assets/elements/parchment_scroll_landmark.png',
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        landmark.emoji,
-                        style: const TextStyle(fontSize: 30, height: 1.0),
+              fit: BoxFit.contain,
+            ),
+          ),
+          child: FadeTransition(
+            opacity: fade,
+            child: LayoutBuilder(
+              builder: (context, c) {
+                final w = c.maxWidth;
+                final h = c.maxHeight;
+                final formattedDesc = _formatDescription(desc, w * (1 - 0.36));
+                // 양피지 PNG 의 안전 영역(시뮬레이터 실측 기반):
+                // - 좌우 두루마리 ≈ 13%, 그 안쪽 사각 테두리 ≈ 18%
+                //   → 텍스트는 18% 부터 (테두리 내부에 머무르도록).
+                // - 상단 십자가 장식 ≈ 12~28% → 제목은 32% 부터
+                // - 1번 다이아몬드 구분선 ≈ 46%
+                // - 2번 다이아몬드 구분선 ≈ 68%
+                // - 하단 왁스 씰 ≈ 78~95% → 본문은 2번 구분선 위에서 끝남
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        w * 0.18,
+                        h * 0.32,
+                        w * 0.18,
+                        h * 0.32,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          landmark.name,
-                          style: const TextStyle(
-                            fontSize: 19,
-                            color: Color(0xFF2A1D11),
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.4,
-                            height: 1.1,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  // 잉크 dashed 분리 라인
-                  Row(
-                    children: List.generate(
-                      26,
-                      (_) => Expanded(
-                        child: Container(
-                          height: 1,
-                          margin: const EdgeInsets.symmetric(horizontal: 1),
-                          color: const Color(0x886B4A2A),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Text(
-                    desc.isEmpty ? '이 랜드마크에 대한 설명이 아직 없습니다.' : desc,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF3B2A17),
-                      height: 1.65,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: onClose,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3B2A17),
-                          borderRadius: BorderRadius.circular(2),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x44000000),
-                              blurRadius: 2,
-                              offset: Offset(0.5, 1),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // 제목은 한 줄로 고정 — 길면 폭에 맞춰 축소.
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.center,
+                            child: Text(
+                              landmark.name,
+                              maxLines: 1,
+                              softWrap: false,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 19,
+                                color: Color(0xFF4B321B),
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.6,
+                                height: 1.15,
+                              ),
                             ),
-                          ],
-                        ),
-                        child: const Text(
-                          '닫기',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFFF4E5C5),
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.2,
+                          ),
+                          // 1번 다이아몬드 구분선(이미지에 그려져 있음) 영역.
+                          SizedBox(height: h * 0.07),
+                          Expanded(
+                            // 짧은 본문은 가운데 정렬, 긴 본문은 스크롤.
+                            // ConstrainedBox 의 minHeight = 사용 가능 높이로
+                            // 강제해서 짧을 때 Center 가 동작, 길어지면 자연
+                            // 스럽게 스크롤로 전환.
+                            child: LayoutBuilder(
+                              builder: (context, bodyC) =>
+                                  SingleChildScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: bodyC.maxHeight,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          formattedDesc.isEmpty
+                                              ? '이 랜드마크에 대한 설명이\n아직 없습니다.'
+                                              : formattedDesc,
+                                          textAlign: TextAlign.center,
+                                          style: _bodyStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 우상단 X 닫기 버튼 — 안쪽 사각 테두리 모서리에 위치.
+                    Positioned(
+                      top: h * 0.16,
+                      right: w * 0.18,
+                      child: GestureDetector(
+                        onTap: onClose,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: const Color(
+                              0xFFEDE0BC,
+                            ).withValues(alpha: 0.55),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(
+                                0xFF7A5A3A,
+                              ).withValues(alpha: 0.45),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 14,
+                            color: Color(0xFF4B321B),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

@@ -128,6 +128,55 @@ MaterialApp(theme: AppTheme.light(), ...)
 - 모달·다이얼로그·카드 등 표면은 `AppSurfaces` 팩토리부터 검토.
 - 새 값이 정말 필요하면 토큰에 추가한 뒤 참조한다.
 
+### 4.4 Polygon — 장소로 보기 region 표현 (Ancient Atlas Discovery 양식)
+
+"지도에서 영역을 선택했다" 가 아니라 **"고대 성경 세계의 한 지역을 발견했다"**
+느낌. GIS 식 striped/sharp polygon overlay 금지 — fantasy atlas / ancient
+parchment / fog-of-war reveal 톤. 색은 `_eraColorForRegion` 으로 결정 —
+선택된 시대(`activeEraBoundaries`)의 색을 region 의 era_codes 와 무관하게
+일관되게 사용해, 같은 region 이 여러 시대에 속해도 컨텍스트가 바뀌어도
+색이 흔들리지 않음.
+
+**3-layer 양식**:
+
+| Layer | 값 | 의도 |
+|-------|------|------|
+| 1. Outer Glow | era 색 alpha 0.25~0.45, `MaskFilter.blur(outer, 12~18)` | 폴리곤 바깥 후광 — "발견된 영역" halo |
+| 2. Parchment Fill | **선택 시 노란색 `#FFCB47` (`selectedFillColor`)** / 비선택 era 색. radial gradient (중앙 0.36~0.46 / 가장자리 0.22~0.30), `MaskFilter.blur(solid, 2.5)` | 비선택은 watercolor 톤 시대 색, 선택은 또렷한 노란 highlight ("발견됨") |
+| 3. Ink Border | **선택 시 fill 과 동일한 노란색** / 비선택 era 색 ↔ #3A2418 lerp 0.55. halo (strokeWidth 6~11 + blur 4) + inner fade gradient (clipPath + 굵은 blurred stroke 12~22px, 메인과 같은 alpha 시작 → 안쪽으로 부드럽게 머징) + 메인 (strokeWidth 2.5~4 + blur 0.8) 세 패스 | 선택 시 fill 과 같은 노란색이라 한 덩어리 인지, 비선택은 잉크 번진 결 |
+
+**Selection settle 애니메이션 (production-grade, 500ms)** — region 이 새로
+선택되면 2-phase 곡선으로 elevated state 에 settle:
+
+- **Scale (500ms)**: 1.0 → +6% overshoot peak (~100ms, easeOutCubic) →
+  +3% elevated (~400ms, easeOutQuad). **1.0 으로 안 돌아가고 +3% 에서 머무름**
+  — 선택된 region 은 영구히 살짝 부풀어 시각적으로 "선택됨" 강조.
+- **Glow boost (500ms)**: factor 1.0 (peak alpha +0.35 / sigma +12px / halo
+  alpha +0.25) → ~150ms peak hold → factor 0.35 elevated 유지 (peak alpha
+  +0.12 / sigma +4.2px / halo alpha +0.09). Scale 보다 늦게 settle 시작해
+  layered depth 감.
+- **발동 트리거**: `EraPolygonGlowLayer` (`StatefulWidget`) 가
+  `didUpdateWidget` 에서 selection key 변화를 감지해
+  `AnimationController.forward(from: 0)`. AnimationController 가 1.0 에서
+  멈춘 뒤에도 painter 는 계속 elevated 값을 적용.
+
+> 이전 sin hump (1.0 → 1.10 → 1.0) 디자인은 만화적 "boing" 효과로 production
+> 미달이라 폐기. Apple/Linear 같은 production app 의 selection 패턴을 따라
+> "도착 후 elevated 유지" 로 재설계.
+
+추가: 정점은 **Catmull-Rom spline** 으로 곡선화 (tension 0.5) — 사람이 손으로
+찍은 jagged polygon 도 부드러운 양피지 곡선으로 재현. closed loop wrap-around.
+
+구현은 `lib/widgets/map/era_polygon_glow_layer.dart` 의 `EraPolygonGlowLayer`.
+`flutter_map` 의 `PolygonLayer` 가 단색 fill 만 지원해 multi-layer + shader +
+MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 hit-test 는
+동일 좌표의 투명 `PolygonLayer<Landmark>` 가 담당.
+
+구현은 `lib/widgets/map/era_polygon_glow_layer.dart` 의 `EraPolygonGlowLayer`.
+`flutter_map` 의 `PolygonLayer` 가 단색 fill 만 지원해 multi-pass wash 효과를
+적용할 수 없어 별도 `CustomPainter` 레이어로 분리. 클릭 hit-test 는 동일
+좌표의 투명 `PolygonLayer<Landmark>` 가 담당해 책임 분리.
+
 ## 5. 인터랙션 패턴
 
 ### 5.1 시대 → 인물 → 이벤트 흐름
