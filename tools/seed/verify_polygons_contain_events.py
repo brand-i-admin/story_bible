@@ -35,9 +35,7 @@ def point_in_polygon(point, polygon):
     for i in range(n):
         yi, xi = polygon[i][0], polygon[i][1]
         yj, xj = polygon[j][0], polygon[j][1]
-        if ((yi > y) != (yj > y)) and (
-            x < (xj - xi) * (y - yi) / (yj - yi) + xi
-        ):
+        if ((yi > y) != (yj > y)) and (x < (xj - xi) * (y - yi) / (yj - yi) + xi):
             inside = not inside
         j = i
     return inside
