@@ -24,6 +24,8 @@ android {
     ndkVersion = "27.0.12077973"
 
     compileOptions {
+        // flutter_local_notifications 가 Java 8+ API 사용 → desugaring 필요.
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -69,4 +71,9 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Java 8+ API 백포팅 (flutter_local_notifications 의존성).
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

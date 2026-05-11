@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 
+import '../../theme/tokens.dart';
+
 /// 단일 region polygon entry — 시각 layer 가 그릴 한 단위.
 class EraPolygonEntry {
   const EraPolygonEntry({
@@ -18,8 +20,9 @@ class EraPolygonEntry {
   /// LatLng 정점들. ring 종결은 자동 — 마지막을 첫 정점으로 잇는다.
   final List<LatLng> polygon;
 
-  /// 이 region 에 적용할 시대 색 (`EraColors.forCode`). glow / fill / border /
-  /// particle 모두 이 색을 변형해 사용.
+  /// 호환성 유지를 위한 필드. layer 는 더 이상 사용하지 않고, `isSelected` 만
+  /// 보고 `AppColors.regionCandidate / regionSelected` 두 색으로 렌더한다.
+  /// 향후 별도 cleanup PR 에서 호출자(`story_map_panel.dart`) 와 함께 제거 가능.
   final Color eraColor;
 
   /// 선택된 region 인지 — true 면 glow/fill alpha 가 강조되고 discovery
@@ -37,14 +40,16 @@ class EraPolygonEntry {
 /// 라는 느낌을 목표로 한다. GIS 식 striped/sharp polygon overlay 가 아니라
 /// 3-layer 양식 + 정점 곡선화:
 ///
-///   1. **Outer Glow** — `BlurStyle.outer` 로 폴리곤 바깥쪽으로 퍼지는 era
-///      색 후광.
+///   1. **Outer Glow** — `BlurStyle.outer` 로 폴리곤 바깥쪽으로 퍼지는 후광.
 ///   2. **Parchment Fill** — 폴리곤 안쪽 radial gradient (중앙 밝게, 가장
-///      자리 페이드) + soft edge blur. 비선택 era 색 / **선택 시 노란
-///      `selectedFillColor`**. watercolor 베이스 텍스처 비쳐 보임.
+///      자리 페이드) + soft edge blur. watercolor 베이스 텍스처 비쳐 보임.
 ///   3. **Ancient Ink Border** — outer halo + inner fade gradient + 메인 ink
-///      line 세 패스. 비선택은 era 색 ↔ 짙은 갈색 lerp / **선택 시 fill 과
-///      동일한 노란 `selectedFillColor`** 로 한 덩어리 강조.
+///      line 세 패스로 한 덩어리 강조.
+///
+/// **색 톤** — 후보(`AppColors.regionCandidate`, 따뜻한 금색) vs 선택
+/// (`AppColors.regionSelected`, sage green) 두 가지로 통일된다. era 식별
+/// 정보는 `lib/widgets/v2/era_pick_rows.dart` 의 점·아이콘 색이 별도로
+/// 제공하므로 폴리곤 톤은 후보/선택의 두 상태만 표현.
 ///
 /// **Selection settle 애니메이션** — 500ms production-grade 2-phase:
 /// 빠른 attack 으로 region 이 +6% scale overshoot 에 도달 (~100ms, easeOutCubic),
@@ -101,98 +106,96 @@ class EraPolygonGlowLayer extends StatefulWidget {
   static const double _glowPeakHoldUntil = 0.30;
 
   // ─────────────────── Outer glow ────────────────────────
+  //
+  // 정적 단일 값 — 펄스 제거. 옛 sin 기반 alpha/sigma 변동이 사용자에게
+  // "어두운 색의 깜빡거림" 으로 인식돼 양피지 톤과 충돌했음. entry.pulseT 인자는
+  // 호환성 위해 EraPolygonEntry 에 남기되 더 이상 참조하지 않는다.
 
-  /// Outer glow alpha. 비선택 0.25, 선택 시 펄스 0.32~0.45.
+  /// Outer glow alpha. 비선택 0.12, 선택 0.18 (옛 0.18/0.22~0.30 → 더 절제).
   static double outerGlowAlphaFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 0.25;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 0.32 + pulse * 0.13;
+    return entry.isSelected ? 0.18 : 0.12;
   }
 
-  /// Outer glow blur sigma. 비선택 12, 선택 시 펄스 14~18.
+  /// Outer glow blur sigma. 비선택 9, 선택 12 (옛 10/11~14 → 살짝 축소).
   static double outerGlowSigmaFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 12.0;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 14.0 + pulse * 4.0;
+    return entry.isSelected ? 12.0 : 9.0;
   }
 
   // ─────────────────── Parchment fill ────────────────────
 
-  /// Parchment fill 중앙 alpha (radial gradient 안쪽 stop). 비선택 0.20,
-  /// 선택 시 펄스 0.36~0.46 (노란 highlight 가 또렷하게 보이도록 boost).
+  /// Parchment fill 중앙 alpha. 비선택 0.50, 선택 0.62.
+  /// (white wash 위로 칠해지므로 베이스 비침 차단된 상태에서 의도된 톤이
+  /// 또렷이 살아남는 알파. 펄스 제거로 안정적 표시.)
   static double fillCenterAlphaFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 0.20;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 0.36 + pulse * 0.10;
+    return entry.isSelected ? 0.62 : 0.50;
   }
 
-  /// Parchment fill 가장자리 alpha (radial gradient 바깥쪽 stop). 비선택
-  /// 0.10, 선택 시 0.22~0.30 (노란 highlight 의 가장자리도 같이 boost).
+  /// Parchment fill 가장자리 alpha. 비선택 0.36, 선택 0.48.
+  /// (가장자리까지 균일하게 톤이 살아남도록 boost. center↔edge 격차를 줄여
+  /// "안쪽만 진하고 가장자리 비는" 인상 회피.)
   static double fillEdgeAlphaFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 0.10;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 0.22 + pulse * 0.08;
+    return entry.isSelected ? 0.48 : 0.36;
   }
 
-  /// Parchment fill 색 — 선택된 region 은 따뜻한 노란 amber(#FFCB47) 로
-  /// "발견된 영역" highlight, 비선택은 entry.eraColor 로 시대 색.
-  /// outer glow / border / particle 은 era 색 그대로 두어 시대 식별 기능
-  /// 보존 (interior 만 노란 강조).
-  static const Color selectedFillColor = Color(0xFFFFCB47);
+  /// White wash 레이어 alpha — 양피지 베이스 중성화 강도.
+  /// 0.45 ≈ 베이스가 거의 보이지 않지만 watercolor 결은 너머로 살짝 비치는 정도.
+  static const double parchmentWashAlpha = 0.45;
 
-  static Color fillColorFor({required EraPolygonEntry entry}) {
-    return entry.isSelected ? selectedFillColor : entry.eraColor;
+  /// Region 강조의 단일 진실 소스. glow / fill / border 가 모두 이 색을 변형해
+  /// 사용한다. era 색은 무시 — era 식별은 era_pick_rows 의 점·아이콘으로 별도 제공.
+  ///
+  /// 후보(시대 선택 시 자동 노출 region): 따뜻한 금색 → 양피지 톤과 자연 조화.
+  /// 선택(특정 region 탭): sage green → "이 영역을 골랐다" 명확히 분리.
+  static Color highlightColorFor({required EraPolygonEntry entry}) {
+    return entry.isSelected
+        ? AppColors.regionSelected
+        : AppColors.regionCandidate;
   }
+
+  /// Parchment fill 색 — 후보/선택 동일 톤 사용.
+  static Color fillColorFor({required EraPolygonEntry entry}) =>
+      highlightColorFor(entry: entry);
 
   // ─────────────────── Ink border ────────────────────────
 
-  /// Border 색 — 비선택은 era 색을 짙은 갈색(잉크) 과 lerp 해 ancient ink 톤,
-  /// **선택 시 fill 과 동일한 노란색** (`selectedFillColor`) 으로 전환해 영역
-  /// 강조. fill 과 같은 색이라 한 덩어리로 인지되고 "발견된 영역" 느낌 강화.
-  static Color borderColorFor({required EraPolygonEntry entry}) {
-    if (entry.isSelected) return selectedFillColor;
-    return Color.lerp(entry.eraColor, const Color(0xFF3A2418), 0.55)!;
-  }
+  /// Border 색 — 후보/선택 모두 fill 과 동일한 candidate/selected 색을 그대로
+  /// 사용. 옛 lerp(candidate, #3A2418, 0.20) 는 갈색이 섞여 사용자가 "어두운
+  /// 노란"으로 인식했음. 같은 색이라도 strokeWidth + alpha + halo 로 충분히
+  /// 외곽선이 식별된다.
+  static Color borderColorFor({required EraPolygonEntry entry}) =>
+      highlightColorFor(entry: entry);
 
-  /// Border 메인 stroke width. 비선택 2.5, 선택 시 펄스 3.2~4.0.
+  /// Border 메인 stroke width. 비선택 2.0, 선택 2.6 (펄스 제거).
   static double borderStrokeWidthFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 2.5;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 3.2 + pulse * 0.8;
+    return entry.isSelected ? 2.6 : 2.0;
   }
 
-  /// Border 메인 stroke alpha. 비선택 0.80, 선택 시 0.92~1.0.
+  /// Border 메인 stroke alpha. 비선택 0.70, 선택 0.85 (펄스 제거).
   static double borderAlphaFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 0.80;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 0.92 + pulse * 0.08;
+    return entry.isSelected ? 0.85 : 0.70;
   }
 
-  /// Border halo (잉크 번짐) stroke width. 비선택 6, 선택 시 8~11.
+  /// Border halo (잉크 번짐) stroke width. 비선택 4.0, 선택 6.0 (펄스 제거).
   static double borderHaloStrokeWidthFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 6.0;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 8.0 + pulse * 3.0;
+    return entry.isSelected ? 6.0 : 4.0;
   }
 
-  /// Border halo alpha. 비선택 0.20, 선택 시 0.30~0.45.
+  /// Border halo alpha. 비선택 0.12, 선택 0.20 (펄스 제거 + 절제).
+  /// (옛 0.16 / 0.22~0.32 → halo 자체가 진하게 깜빡여 "어두운 애니메이션" 으로
+  /// 인식 — alpha 낮추고 정적 값으로.)
   static double borderHaloAlphaFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 0.20;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 0.30 + pulse * 0.15;
+    return entry.isSelected ? 0.20 : 0.12;
   }
 
   /// 안쪽 페이드 띠의 폭(px) — 폴리곤 가장자리에서 안쪽으로 잉크가 번지는
-  /// 효과의 너비. 비선택 12, 선택 시 펄스 16~22.
+  /// 효과의 너비. 비선택 8, 선택 12 (펄스 제거).
   ///
   /// 구현: 이 폭의 굵은 blurred stroke 를 폴리곤 path 에 그리고 내부로 clip
   /// 한다. stroke 가 path 위에 중심을 두므로 절반은 외부(잘림), 절반은
   /// 내부(보임). blur 가 가장자리부터 안쪽으로 부드럽게 페이드 → 선이 안쪽
   /// 으로 자연스럽게 머징되는 느낌.
   static double innerFadeWidthFor({required EraPolygonEntry entry}) {
-    if (!entry.isSelected) return 12.0;
-    final pulse = (math.sin(entry.pulseT * 2 * math.pi) + 1.0) / 2.0;
-    return 16.0 + pulse * 6.0;
+    return entry.isSelected ? 12.0 : 8.0;
   }
 
   // ─────────────────── Settle helpers (테스트/외부 참조) ─
@@ -388,11 +391,20 @@ class _AncientHighlightPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..maskFilter = MaskFilter.blur(BlurStyle.outer, sigma)
-      ..color = entry.eraColor.withValues(alpha: alpha);
+      ..color = EraPolygonGlowLayer.highlightColorFor(
+        entry: entry,
+      ).withValues(alpha: alpha);
     canvas.drawPath(path, paint);
   }
 
   // ─────────────────── Layer 2: Parchment fill ───────────
+  //
+  // 2-pass 구조:
+  //   2a) White wash — cream-white 한 겹으로 양피지 베이지 베이스 중성화.
+  //   2b) Color fill — radial gradient 로 candidate/selected 색을 입힘.
+  // wash 가 베이스 톤을 중성화하므로 의도된 노랑/초록이 베이스+색 blend 로
+  // 갈색·짙은녹이 되지 않고 또렷이 살아남는다. watercolor 결은 wash 너머로
+  // 은은히 비쳐 ancient atlas 톤 유지.
 
   void _paintParchmentFill(
     Canvas canvas,
@@ -400,6 +412,16 @@ class _AncientHighlightPainter extends CustomPainter {
     Rect bounds,
     EraPolygonEntry entry,
   ) {
+    // 2a) White wash — 베이스 중성화.
+    final washPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = AppColors.regionParchmentWash.withValues(
+        alpha: EraPolygonGlowLayer.parchmentWashAlpha,
+      )
+      ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 2.5);
+    canvas.drawPath(path, washPaint);
+
+    // 2b) Color fill — radial gradient.
     final fillColor = EraPolygonGlowLayer.fillColorFor(entry: entry);
     final centerAlpha = EraPolygonGlowLayer.fillCenterAlphaFor(entry: entry);
     final edgeAlpha = EraPolygonGlowLayer.fillEdgeAlphaFor(entry: entry);
