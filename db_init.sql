@@ -165,6 +165,9 @@ drop function if exists public.register_push_token(text, text, text) cascade;
 drop function if exists public.unregister_push_token(text) cascade;
 drop function if exists public.pick_weekly_character() cascade;
 drop function if exists public.notify_weekly_progress() cascade;
+drop function if exists public.dispatch_daily_quiz_push() cascade;
+drop function if exists public._fire_push_broadcast(text, text, text, text) cascade;
+drop function if exists public._push_after_broadcast() cascade;
 drop function if exists public._notify_admins(text, text, text, text, jsonb, uuid) cascade;
 drop function if exists public._seed_from_week_key(text) cascade;
 drop table if exists broadcast_notification_reads cascade;
@@ -1950,10 +1953,17 @@ declare
   v_quiz jsonb;
   v_quiz_choices jsonb;
   v_quiz_idx int;
+  v_new_character_names text[] := '{}';
+  v_broadcast_body text;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
   end if;
+
+  -- events 의 AFTER INSERT 트리거(notify_on_new_event) 가 단순 "새 이야기"
+  -- broadcast 를 자동 생성하지 않도록 트랜잭션 범위에서 suppress.
+  -- 이 RPC 가 마지막에 신규 인물 정보까지 묶어서 broadcast row 1건을 직접 만든다.
+  perform set_config('app.suppress_event_broadcast', 'true', true);
 
   select * into v_proposal from event_proposals where id = p_proposal_id;
   if not found then
@@ -2021,6 +2031,12 @@ begin
       description = coalesce(excluded.description, public.characters.description),
       avatar_storage_path = coalesce(excluded.avatar_storage_path, public.characters.avatar_storage_path),
       is_active = v_active_for_code;
+
+    -- "신규 활성화된" 인물만 broadcast 본문에 표시. 사용자에게 보일 이름이 없으면 code.
+    if v_active_for_code then
+      v_new_character_names := v_new_character_names ||
+        coalesce(nullif(trim(v_name), ''), v_code);
+    end if;
   end loop;
 
   -- 1b) "기존 캐릭터" 들도 override 가 들어왔으면 적용 — 이번 이야기 등장 인물의
@@ -2174,6 +2190,36 @@ begin
       -- 자동 dispatch. 여기서는 row 만 갱신.
     end loop;
   end;
+
+  -- 5) 사건 + 신규 활성화 인물을 한 건의 broadcast 로 합쳐 발송.
+  --    suppress 플래그로 events 트리거가 자동 broadcast 를 만들지 않게 했으니
+  --    여기서 우리가 정확한 본문을 만들어 INSERT 한다.
+  --    이 INSERT 가 trg_push_after_broadcast → _fire_push_broadcast → send-push
+  --    경로로 FCM 까지 자동 발송.
+  if array_length(v_new_character_names, 1) is null then
+    v_broadcast_body := '"' || coalesce(v_proposal.title, '제목 없음') ||
+      '" 이야기를 확인해 보세요.';
+  elsif array_length(v_new_character_names, 1) = 1 then
+    v_broadcast_body := '"' || coalesce(v_proposal.title, '제목 없음') ||
+      '" — 새 인물 ' || v_new_character_names[1] || ' 도 함께 만나봐요.';
+  else
+    v_broadcast_body := '"' || coalesce(v_proposal.title, '제목 없음') ||
+      '" — 새 인물 ' || v_new_character_names[1] || ' 외 ' ||
+      (array_length(v_new_character_names, 1) - 1)::text || '명도 함께 만나봐요.';
+  end if;
+
+  insert into broadcast_notifications (type, target_audience, title, body, deep_link, payload)
+  values (
+    'new_event', 'all',
+    '새 이야기가 등록되었어요',
+    v_broadcast_body,
+    '/event/' || v_event_id::text,
+    jsonb_build_object(
+      'event_id', v_event_id,
+      'event_title', v_proposal.title,
+      'new_character_names', to_jsonb(v_new_character_names)
+    )
+  );
 
   return v_event_id;
 end;
@@ -2639,7 +2685,6 @@ grant execute on function public.add_proposal_comment(uuid, text) to authenticat
 -- =========================================================
 -- 인앱 알림함(bell 아이콘 드롭다운)과 FCM 푸시 알림을 위한 스키마.
 -- 상세 설계: docs/BACKEND.md §(Notifications & Push) 참조.
--- 동일 내용이 supabase/migrations/20260422_notifications.sql 에도 있다.
 
 -- 1) notifications — 개인 알림 (Fan-out on Write)
 create table if not exists notifications (
@@ -2669,12 +2714,13 @@ create index if not exists idx_notifications_created_at
   on notifications(created_at desc);
 
 -- 2) broadcast_notifications — 공지 (Fan-out on Read)
+-- 주간 인물/진도와 매일 퀴즈는 broadcast 를 거치지 않고 send-push 로 직접
+-- 발송한다 (bell drop 에 안 쌓임). broadcast 는 인앱 알림함 + 푸시 둘 다 필요한
+-- 케이스(새 이야기/인물 등록 등) 에만 사용.
 create table if not exists broadcast_notifications (
   id uuid primary key default gen_random_uuid(),
   type text not null check (type in (
-    'new_event',
-    'weekly_character',
-    'weekly_progress_check'
+    'new_event'
   )),
   target_audience text not null default 'all'
     check (target_audience in ('all', 'pastor_or_admin')),
@@ -3006,6 +3052,11 @@ after update of position_invalidated_at on event_proposals
 for each row execute function public.notify_on_proposal_invalidated();
 
 -- 트리거: notify_on_new_event
+--
+-- 직접 events 에 INSERT 가 일어나는 경로 (시드/관리자 SQL 등) 에서만 동작.
+-- approve_event_proposal RPC 는 인물 정보까지 묶어서 broadcast row 를 직접 만들기
+-- 때문에 세션 플래그 app.suppress_event_broadcast='true' 를 set 해 트리거가 자동
+-- broadcast 를 만들지 않게 한다.
 create or replace function public.notify_on_new_event()
 returns trigger
 language plpgsql
@@ -3013,6 +3064,9 @@ security definer
 set search_path = public, auth
 as $$
 begin
+  if current_setting('app.suppress_event_broadcast', true) = 'true' then
+    return new;
+  end if;
   if coalesce(new.status, 'published') <> 'published' then
     return new;
   end if;
@@ -3250,18 +3304,13 @@ begin
   insert into weekly_character_selection (week_key, character_code)
   values (v_week_key, v_character_code);
 
-  insert into broadcast_notifications (type, target_audience, title, body, deep_link, payload)
-  values (
-    'weekly_character', 'all',
+  -- bell drop 에 쌓이지 않게 broadcast 를 거치지 않고 send-push 로 직접 발송.
+  perform public._fire_push_broadcast(
     '이번주 금주의 인물',
     '이번주 인물은 "' || coalesce(v_character_name, v_character_code) ||
       '" 입니다. 함께 공부해봐요!',
     '/weekly',
-    jsonb_build_object(
-      'character_code', v_character_code,
-      'character_name', v_character_name,
-      'week_key', v_week_key
-    )
+    'weekly_character'
   );
 end;
 $$;
@@ -3299,35 +3348,182 @@ begin
 
   v_percent := round(v_avg_completed)::int;
 
-  insert into broadcast_notifications (type, target_audience, title, body, deep_link, payload)
-  values (
-    'weekly_progress_check', 'all',
+  -- push-only — broadcast_notifications 에 row 안 만듦 (bell 안 쌓임).
+  perform public._fire_push_broadcast(
     coalesce(v_character_name, v_character_code) || ' 공부 진도 ' || v_percent || '%',
     '금주 인물을 함께 공부해봐요. 남은 이야기를 마저 만나봐요!',
     '/weekly',
-    jsonb_build_object(
-      'character_code', v_character_code,
-      'character_name', v_character_name,
-      'week_key', v_week_key,
-      'avg_percent', v_percent
-    )
+    'weekly_progress_check'
   );
 end;
 $$;
 grant execute on function public.notify_weekly_progress() to authenticated;
 
+-- ─────────────────────────────────────────────────────────────────────────
+-- Push 디스패치 인프라
+-- ─────────────────────────────────────────────────────────────────────────
+-- DB 트리거/스케줄에서 Edge Function `send-push` 를 호출하기 위한 헬퍼.
+-- Vault 에 등록된 두 secret 을 사용:
+--   * service_role_key — Edge Function 호출 시 Authorization 헤더
+--   * supabase_url     — 프로젝트 URL (예: https://abc.supabase.co)
+-- pg_net 확장이 활성화돼 있어야 동작 (Dashboard → Database → Extensions).
+create or replace function public._fire_push_broadcast(
+  p_title text,
+  p_body text,
+  p_deep_link text,
+  p_type text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, extensions, vault
+as $$
+declare
+  v_url text;
+  v_service_role_key text;
+  v_supabase_url text;
+begin
+  select decrypted_secret into v_service_role_key
+    from vault.decrypted_secrets where name = 'service_role_key';
+  select decrypted_secret into v_supabase_url
+    from vault.decrypted_secrets where name = 'supabase_url';
+
+  -- secret 누락 시 raise warning 후 silent return — 알림 실패가 트리거를 깨우는
+  -- 트랜잭션(예: events INSERT) 자체를 막으면 안 되므로.
+  if v_service_role_key is null or v_supabase_url is null then
+    raise warning '[_fire_push_broadcast] Vault secrets missing (service_role_key/supabase_url) — push skipped';
+    return;
+  end if;
+
+  v_url := rtrim(v_supabase_url, '/') || '/functions/v1/send-push';
+
+  perform net.http_post(
+    url := v_url,
+    headers := jsonb_build_object(
+      'Authorization', 'Bearer ' || v_service_role_key,
+      'Content-Type', 'application/json'
+    ),
+    body := jsonb_build_object(
+      'broadcast', true,
+      'title', p_title,
+      'body', p_body,
+      'deep_link', p_deep_link,
+      'type', p_type,
+      'target', 'all'
+    )
+  );
+exception when others then
+  raise warning '[_fire_push_broadcast] http_post failed: %', sqlerrm;
+end;
+$$;
+
+-- broadcast_notifications row 가 만들어지면 자동으로 send-push 호출 → FCM 발송.
+-- (bell drop 에 띄우면서 동시에 푸시도 가야 하는 알림 — 현재는 'new_event' 뿐.)
+create or replace function public._push_after_broadcast()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  perform public._fire_push_broadcast(
+    new.title,
+    new.body,
+    new.deep_link,
+    new.type
+  );
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_push_after_broadcast on broadcast_notifications;
+create trigger trg_push_after_broadcast
+after insert on broadcast_notifications
+for each row execute function public._push_after_broadcast();
+
+-- 매일 퀴즈 푸시 — KST 9시 (= UTC 0시) 에 가장 최신 daily_quiz 1건의 question 을
+-- 본문에 담아 전체 사용자에게 push-only 발송. broadcast_notifications 안 거침.
+-- 매일 KST 9시 cron 이 호출. daily_quiz 풀에서 random 1건을 뽑아 같은 내용으로
+-- **새 row INSERT** → 새 daily_quiz_id 가 발급되므로 user_daily_quiz_attempts
+-- (PK: user_id, daily_quiz_id) 가 자연스럽게 새 row 가 되어 사용자 입장에선
+-- "어제 푼 결과가 사라지고 오늘 다시 풀 수 있는" 초기화가 자동으로 일어남.
+-- 풀이 1건뿐이면 같은 문제가 또 보이지만, 그래도 PK 가 다르니 다시 풀 수 있다.
+-- 다양화를 원하면 daily_quiz 시드에 sample 을 더 추가하면 됨.
+create or replace function public.dispatch_daily_quiz_push()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_picked record;
+  v_new_id uuid;
+  v_body text;
+begin
+  -- 풀에서 random 1건 pick. cron 이 만든 옛 row 와 시드 row 가 섞여 있어도
+  -- 모두 동일하게 풀로 취급 — 단순함 우선. 같은 quiz 가 자주 뽑히는 게
+  -- 거슬리면 daily_quiz 에 시드 sample 을 추가하라.
+  select question, choice_1, choice_2, choice_3, choice_4, answer_index, explanation
+    into v_picked
+    from daily_quiz
+    order by random()
+    limit 1;
+
+  if v_picked.question is null then
+    raise warning '[dispatch_daily_quiz_push] daily_quiz pool is empty — skipped';
+    return;
+  end if;
+
+  -- 같은 content 로 새 row INSERT (created_at 자동 = now()). 새 PK 발급으로
+  -- 클라이언트의 fetchLatestDailyQuiz 가 이 새 row 를 가져오게 되고
+  -- user_daily_quiz_attempts 매핑도 자동 분리된다.
+  insert into daily_quiz (
+    question, choice_1, choice_2, choice_3, choice_4, answer_index, explanation
+  )
+  values (
+    v_picked.question, v_picked.choice_1, v_picked.choice_2,
+    v_picked.choice_3, v_picked.choice_4, v_picked.answer_index, v_picked.explanation
+  )
+  returning id into v_new_id;
+
+  -- 푸시 본문 길이 제한(iOS ~178자) 고려해 길면 자른다.
+  if length(v_picked.question) > 110 then
+    v_body := substr(v_picked.question, 1, 107) || '...';
+  else
+    v_body := v_picked.question;
+  end if;
+
+  -- deep_link='/weekly' — 매일 퀴즈는 QuizTabPage 안의 한 섹션이라 weekly 화면을
+  -- 그대로 연다. 클라이언트의 NotificationDeepLink.parse 는 weekly 만 인식.
+  perform public._fire_push_broadcast(
+    '오늘의 퀴즈가 도착했어요',
+    v_body,
+    '/weekly',
+    'daily_quiz'
+  );
+end;
+$$;
+grant execute on function public.dispatch_daily_quiz_push() to authenticated;
+
 -- pg_cron 스케줄 — 확장 활성화되어 있으면 등록.
+-- 모든 시간은 KST 9시 = UTC 0시 기준.
 do $$
 begin
   if exists (select 1 from pg_extension where extname = 'pg_cron') then
     perform cron.unschedule(jobname)
     from cron.job
     where jobname in (
+      'daily-quiz-9am-kst',
       'weekly-character-monday',
       'weekly-progress-wed',
       'weekly-progress-fri'
     );
 
+    perform cron.schedule(
+      'daily-quiz-9am-kst',
+      '0 0 * * *',
+      $cmd$ select public.dispatch_daily_quiz_push(); $cmd$
+    );
     perform cron.schedule(
       'weekly-character-monday',
       '0 0 * * 1',

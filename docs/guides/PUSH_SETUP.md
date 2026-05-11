@@ -129,33 +129,51 @@ supabase secrets set FIREBASE_SERVICE_ACCOUNT="$(cat firebase-admin-sdk.json)"
 supabase functions deploy send-push
 ```
 
-## 8. DB 트리거와 send-push 연결 (선택)
+## 8. DB → send-push 자동 디스패치 (2026-05-11 도입)
 
-`notifications` row 가 생길 때 자동으로 푸시를 보내려면 `pg_net` 확장 + 디스패치 트리거가 필요하다. 상세는 [supabase/functions/send-push/README.md](../../supabase/functions/send-push/README.md) §"DB 트리거 연결".
+DB 트리거/pg_cron 이 `send-push` 를 직접 호출하는 인프라가 `db_init.sql` 에 통합돼 있다. 다음 3가지를 만족하면 자동 동작한다:
 
-활성화 전에는 **인앱 bell 알림만** 동작 (푸시는 보내지 않음). 인앱 알림이 최우선 UX 이므로 Phase A 로 여기까지만 하고, 푸시 디스패치는 Phase B 에서 활성화해도 괜찮다.
+1. **pg_net 확장 활성화** — Dashboard → Database → Extensions → `pg_net` ON
+2. **Supabase Vault 에 두 secret 등록** — Dashboard → Integrations → Vault → Secrets → New secret
+   - `service_role_key` — ⚙ Project Settings → API Keys → `service_role` 값
+   - `supabase_url` — ⚙ Project Settings → API → "Project URL" (예: `https://<ref>.supabase.co`)
+3. **db_init.sql 적용** — `make db-init ENV=<env>` 또는 Dashboard → SQL Editor 에 `db_init.sql` 전체 붙여넣고 Run. 새 헬퍼/트리거/`dispatch_daily_quiz_push`/pg_cron 모두 자동 등록된다.
+
+자동 발송 경로:
+- 새 이야기/인물 승인 (admin → `approve_event_proposal`) → broadcast row INSERT → 트리거 → push
+- 매일 KST 9시 → `dispatch_daily_quiz_push()` (push-only, bell drop 안 쌓임)
+- 매주 월요일 KST 9시 → `pick_weekly_character()` (push-only)
+- 매주 수/금 KST 9시 → `notify_weekly_progress()` (push-only)
+
+설정 검증 SQL:
+```sql
+-- Vault secret 2건
+select name, length(decrypted_secret) as len
+  from vault.decrypted_secrets where name in ('service_role_key','supabase_url');
+-- broadcast 트리거
+select tgname from pg_trigger where tgname = 'trg_push_after_broadcast';
+-- pg_cron 4건
+select jobname, schedule, active from cron.job order by jobname;
+```
 
 ## 9. 동작 확인
 
 1. 앱 재빌드 후 콘솔에 `[push] token: <긴 문자열>` 출력 확인.
 2. Supabase Dashboard → Table Editor → `user_push_tokens` 에서 해당 토큰 row 확인.
-3. Supabase SQL Editor 에서 직접 호출:
+3. Supabase SQL Editor 에서 즉시 푸쉬 테스트:
 
    ```sql
-   select public.notify_quiz_completed('<임의 event uuid>');
+   -- 매일 퀴즈 푸쉬 발송 (전체 유저 + 본인 디바이스)
+   select public.dispatch_daily_quiz_push();
    ```
 
-   → `notifications` 테이블에 row 삽입, bell 배지 표시.
+   → 본인 휴대폰에 "오늘의 퀴즈가 도착했어요" 알림이 오면 통과.
 
-4. send-push 테스트 (Supabase Dashboard → Functions 로그):
+4. send-push 함수 로그 (Supabase Dashboard → Functions → send-push → Logs):
+   - 정상: `[send-push] sent: N, failed: 0`
+   - 실패 시: `FIREBASE_SERVICE_ACCOUNT` 누락이 가장 흔한 원인
 
-   ```bash
-   curl -X POST \
-     -H "Authorization: Bearer <service_role_key>" \
-     -H "Content-Type: application/json" \
-     -d '{"user_id":"<uuid>","title":"테스트","body":"FCM 연결 확인"}' \
-     "https://<project>.functions.supabase.co/send-push"
-   ```
+5. broadcast 흐름 테스트 — 관리자 계정으로 임의 제안을 승인하면 본인+다른 사용자 디바이스에 "새 이야기가 등록되었어요" 푸쉬 + bell drop 둘 다 옴.
 
 ## 장애 시 확인 순서
 

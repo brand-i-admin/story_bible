@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/map/era_polygon_glow_layer.dart';
 
 EraPolygonEntry _entry({
@@ -21,52 +22,62 @@ EraPolygonEntry _entry({
 
 void main() {
   group('EraPolygonGlowLayer outer glow', () {
-    test('outerGlowAlphaFor 비선택 0.25, 선택 시 0.32~0.45', () {
+    test('outerGlowAlphaFor: 비선택 0.12, 선택 0.18 (정적 — pulse 무관)', () {
       expect(
         EraPolygonGlowLayer.outerGlowAlphaFor(entry: _entry(selected: false)),
-        closeTo(0.25, 0.001),
+        closeTo(0.12, 0.001),
       );
       expect(
         EraPolygonGlowLayer.outerGlowAlphaFor(
           entry: _entry(selected: true, pulse: 0.25),
         ),
-        closeTo(0.45, 0.01),
+        closeTo(0.18, 0.001),
+      );
+      // pulse 입력값을 바꿔도 결과 동일 (정적).
+      expect(
+        EraPolygonGlowLayer.outerGlowAlphaFor(
+          entry: _entry(selected: true, pulse: 0.0),
+        ),
+        EraPolygonGlowLayer.outerGlowAlphaFor(
+          entry: _entry(selected: true, pulse: 0.75),
+        ),
       );
     });
 
-    test('outerGlowSigmaFor 비선택 12, 선택 시 14~18', () {
+    test('outerGlowSigmaFor: 비선택 9, 선택 12 (정적)', () {
       expect(
         EraPolygonGlowLayer.outerGlowSigmaFor(entry: _entry(selected: false)),
-        12.0,
+        9.0,
       );
       expect(
         EraPolygonGlowLayer.outerGlowSigmaFor(
           entry: _entry(selected: true, pulse: 0.25),
         ),
-        closeTo(18.0, 0.01),
+        12.0,
       );
     });
   });
 
   group('EraPolygonGlowLayer parchment fill', () {
-    test(
-      'fillCenterAlphaFor 비선택 0.20, 선택 시 0.36~0.46 (노란 highlight boost)',
-      () {
-        expect(
-          EraPolygonGlowLayer.fillCenterAlphaFor(
-            entry: _entry(selected: false),
-          ),
-          closeTo(0.20, 0.001),
-        );
-        // pulseT=0.25 → pulse=1.0 → 0.36 + 1.0*0.10 = 0.46
-        expect(
-          EraPolygonGlowLayer.fillCenterAlphaFor(
-            entry: _entry(selected: true, pulse: 0.25),
-          ),
-          closeTo(0.46, 0.01),
-        );
-      },
-    );
+    test('fillCenterAlphaFor: 비선택 0.50, 선택 0.62 (정적, white wash 위에서 또렷)', () {
+      expect(
+        EraPolygonGlowLayer.fillCenterAlphaFor(entry: _entry(selected: false)),
+        closeTo(0.50, 0.001),
+      );
+      expect(
+        EraPolygonGlowLayer.fillCenterAlphaFor(
+          entry: _entry(selected: true, pulse: 0.25),
+        ),
+        closeTo(0.62, 0.001),
+      );
+    });
+
+    test('parchmentWashAlpha 는 0.45 — 베이스 중성화 + 결은 비침', () {
+      // 너무 높으면 양피지 결 사라짐, 너무 낮으면 효과 없음. 0.45 는 균형점.
+      expect(EraPolygonGlowLayer.parchmentWashAlpha, closeTo(0.45, 0.001));
+      expect(EraPolygonGlowLayer.parchmentWashAlpha, greaterThan(0.3));
+      expect(EraPolygonGlowLayer.parchmentWashAlpha, lessThan(0.6));
+    });
 
     test('fillEdgeAlphaFor 가 fillCenterAlphaFor 보다 작아 radial fade', () {
       final entry = _entry(selected: false);
@@ -76,53 +87,50 @@ void main() {
       );
     });
 
-    test('fillColorFor: 선택 시 selectedFillColor (노란색), 비선택 시 era 색', () {
-      expect(
-        EraPolygonGlowLayer.fillColorFor(entry: _entry(selected: true)),
-        EraPolygonGlowLayer.selectedFillColor,
-      );
-      const sage = Color(0xFF6F8F58);
-      expect(
-        EraPolygonGlowLayer.fillColorFor(
-          entry: _entry(selected: false, color: sage),
-        ),
-        sage,
-      );
-    });
+    test(
+      'fillColorFor: 선택 시 regionSelected (sage green), 비선택 시 regionCandidate (gold)',
+      () {
+        // era 색은 무시 — 후보/선택의 두 톤으로 통일.
+        expect(
+          EraPolygonGlowLayer.fillColorFor(entry: _entry(selected: true)),
+          AppColors.regionSelected,
+        );
+        // entry.eraColor 를 임의 색으로 줘도 fill 은 candidate 색.
+        expect(
+          EraPolygonGlowLayer.fillColorFor(
+            entry: _entry(selected: false, color: const Color(0xFF6F8F58)),
+          ),
+          AppColors.regionCandidate,
+        );
+      },
+    );
   });
 
   group('EraPolygonGlowLayer ink border', () {
-    test('borderColorFor 비선택: era 색을 짙은 갈색 (#3A2418) 과 lerp', () {
-      const sage = Color(0xFF6F8F58);
-      final border = EraPolygonGlowLayer.borderColorFor(
-        entry: _entry(selected: false, color: sage),
+    test('borderColorFor: 후보/선택 모두 fill 과 동일한 톤 (lerp 제거)', () {
+      // 옛 lerp(candidate, #3A2418, 0.20) 은 갈색이 섞여 어두워 보임 — 제거.
+      expect(
+        EraPolygonGlowLayer.borderColorFor(entry: _entry(selected: false)),
+        AppColors.regionCandidate,
       );
-      // Color.lerp(sage, brown, 0.55) — sage 의 green/blue 성분이 brown 쪽으로
-      // 당겨져 어두워짐 (brown 의 R/G/B 가 sage 보다 모두 작음).
-      expect(border.r, lessThan(sage.r));
-      expect(border.g, lessThan(sage.g));
-    });
-
-    test('borderColorFor 선택: fill 과 동일한 selectedFillColor (노란색)', () {
-      // 선택 시 border 가 fill 과 같은 노란색 → 한 덩어리로 인지.
       expect(
         EraPolygonGlowLayer.borderColorFor(entry: _entry(selected: true)),
-        EraPolygonGlowLayer.selectedFillColor,
+        AppColors.regionSelected,
       );
     });
 
-    test('borderStrokeWidthFor 비선택 2.5, 선택 시 3.2~4.0', () {
+    test('borderStrokeWidthFor: 비선택 2.0, 선택 2.6 (정적)', () {
       expect(
         EraPolygonGlowLayer.borderStrokeWidthFor(
           entry: _entry(selected: false),
         ),
-        2.5,
+        2.0,
       );
       expect(
         EraPolygonGlowLayer.borderStrokeWidthFor(
           entry: _entry(selected: true, pulse: 0.25),
         ),
-        closeTo(4.0, 0.01),
+        2.6,
       );
     });
 
@@ -134,27 +142,26 @@ void main() {
       );
     });
 
-    test('innerFadeWidthFor 비선택 12, 선택 시 16~22', () {
+    test('innerFadeWidthFor: 비선택 8, 선택 12 (정적)', () {
       expect(
         EraPolygonGlowLayer.innerFadeWidthFor(entry: _entry(selected: false)),
-        12.0,
+        8.0,
       );
-      // pulseT=0.25 → pulse=1.0 → 16 + 1.0*6 = 22
       expect(
         EraPolygonGlowLayer.innerFadeWidthFor(
           entry: _entry(selected: true, pulse: 0.25),
         ),
-        closeTo(22.0, 0.01),
+        12.0,
       );
     });
 
-    test('innerFadeWidthFor 가 메인 borderStrokeWidthFor 보다 훨씬 굵음', () {
-      // inner fade 가 폴리곤 안쪽으로 충분히 번질 수 있도록 메인 라인보다
-      // 4배 이상 굵어야 함.
+    test('innerFadeWidthFor 가 메인 borderStrokeWidthFor 보다 굵어 잉크 번짐 효과', () {
+      // inner fade 가 폴리곤 안쪽으로 번지려면 메인 라인보다 충분히 굵어야 함.
+      // 옛 4배 조건은 너무 빡빡 — 3배 이상이면 시각적으로 inner-fade 가 식별됨.
       final entry = _entry(selected: false);
       expect(
         EraPolygonGlowLayer.innerFadeWidthFor(entry: entry),
-        greaterThan(EraPolygonGlowLayer.borderStrokeWidthFor(entry: entry) * 4),
+        greaterThan(EraPolygonGlowLayer.borderStrokeWidthFor(entry: entry) * 3),
       );
     });
   });

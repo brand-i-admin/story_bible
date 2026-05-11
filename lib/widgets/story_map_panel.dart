@@ -235,14 +235,11 @@ class StoryMapPanel extends StatefulWidget {
   State<StoryMapPanel> createState() => _StoryMapPanelState();
 }
 
-class _StoryMapPanelState extends State<StoryMapPanel>
-    with SingleTickerProviderStateMixin {
+class _StoryMapPanelState extends State<StoryMapPanel> {
+  // 옛 _polygonGlowCtl + SingleTickerProviderStateMixin 제거됨 —
+  // EraPolygonGlowLayer 의 pulse 가 정적 값으로 바뀌어 매 프레임 rebuild 가
+  // 불필요. settle 애니메이션은 layer 내부 _settleCtl 이 자체 처리.
   final MapController _controller = MapController();
-  // initState 에서 eager 초기화. `late final` 로 두면 빌드 동안 한 번도 접근
-  // 안 된 경우 dispose 에서 처음 액세스되며 vsync 가 deactivated 위젯에서
-  // ancestor lookup 을 시도해 "Looking up a deactivated widget's ancestor is
-  // unsafe" 예외 발생.
-  late final AnimationController _polygonGlowCtl;
   Timer? _revealTimer;
   Timer? _cameraTimer;
   List<Polyline> _countryBorderPolylines = const [];
@@ -310,10 +307,6 @@ class _StoryMapPanelState extends State<StoryMapPanel>
   @override
   void initState() {
     super.initState();
-    _polygonGlowCtl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1600),
-    )..repeat();
     widget.controller?._bind(this);
     _loadCountryBoundaries();
     _startRevealAnimation();
@@ -359,7 +352,6 @@ class _StoryMapPanelState extends State<StoryMapPanel>
     _revealTimer?.cancel();
     _cameraTimer?.cancel();
     _eventRevealTimer?.cancel();
-    _polygonGlowCtl.dispose();
     widget.controller?._unbind(this);
     super.dispose();
   }
@@ -638,26 +630,22 @@ class _StoryMapPanelState extends State<StoryMapPanel>
                   // 정보를 노출하고, MapOptions.onTap 에서 hit.hitValues 로 어느
                   // region 이 눌렸는지 식별 → onLandmarkTap 호출.
                   if (widget.eraRegionLandmarks.isNotEmpty)
-                    AnimatedBuilder(
-                      animation: _polygonGlowCtl,
-                      builder: (_, __) {
-                        final glowT = _polygonGlowCtl.value;
-                        return Stack(
-                          children: [
-                            // 시각 layer — 짙은 세피아 외곽 + amber inner glow
-                            EraPolygonGlowLayer(
-                              entries: _buildEraRegionGlowEntries(glowT: glowT),
-                            ),
-                            // hit-test layer — 동일 좌표 투명 폴리곤.
-                            // 시각은 EraPolygonGlowLayer 가, 클릭은 PolygonLayer 의
-                            // hitNotifier 가 책임 분리.
-                            PolygonLayer<Landmark>(
-                              hitNotifier: _polygonHitNotifier,
-                              polygons: _buildEraRegionHitPolygons(),
-                            ),
-                          ],
-                        );
-                      },
+                    // 시각 layer — 정적 candidate/selected 색 (펄스 제거).
+                    // settle 애니메이션은 EraPolygonGlowLayer 내부 _settleCtl 이
+                    // 자체 처리하므로 외부 AnimatedBuilder 불필요.
+                    Stack(
+                      children: [
+                        EraPolygonGlowLayer(
+                          entries: _buildEraRegionGlowEntries(),
+                        ),
+                        // hit-test layer — 동일 좌표 투명 폴리곤.
+                        // 시각은 EraPolygonGlowLayer 가, 클릭은 PolygonLayer 의
+                        // hitNotifier 가 책임 분리.
+                        PolygonLayer<Landmark>(
+                          hitNotifier: _polygonHitNotifier,
+                          polygons: _buildEraRegionHitPolygons(),
+                        ),
+                      ],
                     ),
                   if (!widget.regionPickerMode)
                     MarkerLayer(markers: _countryLabelMarkers),
@@ -1231,9 +1219,9 @@ class _StoryMapPanelState extends State<StoryMapPanel>
   /// polygon 자체를 그리지 않는다 — 새 이야기 제안이 승인되어 eventCount > 0
   /// 이 되면 자동으로 polygon 이 등장한다.
   ///
-  /// 색은 region 의 시대 색(`EraColors.forCode`) — 같은 시대 region 들은
-  /// 같은 색으로 묶여 시각적으로 한 시대 영역으로 인지된다.
-  List<EraPolygonEntry> _buildEraRegionGlowEntries({double glowT = 0.0}) {
+  /// EraPolygonGlowLayer 는 후보/선택의 두 톤만 그리므로 eraColor 와 pulseT 는
+  /// 호환성 위해 채우되 layer 내부에서 사용되지 않는다.
+  List<EraPolygonEntry> _buildEraRegionGlowEntries() {
     final entries = <EraPolygonEntry>[];
     for (final lm in widget.eraRegionLandmarks) {
       if (!lm.isRegion || lm.polygon.isEmpty) continue;
@@ -1244,7 +1232,7 @@ class _StoryMapPanelState extends State<StoryMapPanel>
           polygon: lm.polygon,
           eraColor: _eraColorForRegion(lm),
           isSelected: lm.id == widget.selectedLandmarkId,
-          pulseT: glowT,
+          pulseT: 0.0,
         ),
       );
     }

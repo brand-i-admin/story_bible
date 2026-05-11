@@ -266,10 +266,12 @@ read_at timestamptz, created_at timestamptz
 
 #### `broadcast_notifications` — 공지 (Fan-out on Read)
 ```sql
-id uuid PK, type text CHECK IN ('new_event','weekly_character','weekly_progress_check'),
+id uuid PK, type text CHECK IN ('new_event'),
 target_audience text CHECK IN ('all','pastor_or_admin'),
 title text, body text, deep_link text, payload jsonb, created_at timestamptz
 ```
+- `new_event` 만 broadcast 테이블을 사용한다 (bell + 푸시 둘 다 필요).
+- 주간 인물/진도, 매일 퀴즈는 **push-only** — broadcast 테이블에 row 안 만들고 `send-push` 만 호출 (bell drop 에 안 쌓임).
 
 #### `broadcast_notification_reads` — 읽음 교차표
 ```sql
@@ -287,14 +289,20 @@ token text UNIQUE, device_label text
 ```sql
 week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at timestamptz
 ```
-- pg_cron 이 월요일 00:00 UTC 에 `pick_weekly_character()` 실행 → 이 테이블에 row + broadcast.
+- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 `_fire_push_broadcast` 로 FCM 직접 발송.
 - Dart 쪽 `weekly_selection.dart` 의 `seedFromKey` 를 plpgsql `_seed_from_week_key` 로 포팅해 동일 결과 보장.
 
 #### 트리거
 - `trg_notify_on_new_proposal` (event_proposals AFTER INSERT) → admin 전원에게 개인 알림
 - `trg_notify_on_proposal_comment` (event_proposal_comments AFTER INSERT) → proposer + admin
 - `trg_notify_on_proposal_reviewed` (event_proposals AFTER UPDATE) → proposer 에게 승인/거절 알림
-- `trg_notify_on_new_event` (events AFTER INSERT) → 전체 대상 브로드캐스트
+- `trg_notify_on_new_event` (events AFTER INSERT) → 전체 대상 브로드캐스트. **세션 플래그 `app.suppress_event_broadcast='true'` 가 set 돼 있으면 skip** — `approve_event_proposal` RPC 는 사건+신규 인물 정보를 직접 묶어 broadcast row 1건을 만들기 위해 이 플래그를 사용.
+- `trg_push_after_broadcast` (broadcast_notifications AFTER INSERT) → `_fire_push_broadcast` 호출 → `send-push` Edge Function 으로 FCM 자동 발송.
+
+#### Push 디스패치 인프라 (2026-05-11 도입)
+- **`_fire_push_broadcast(title, body, deep_link, type)`** — Vault 의 `service_role_key` + `supabase_url` 두 secret 을 읽어 `pg_net.http_post` 로 `send-push` Edge Function 호출. 실패 시 raise warning 후 silent return (호출 트랜잭션 안 깨짐).
+- 사전 조건: ① `pg_net` 확장 활성화, ② Vault 에 두 secret 등록 (`service_role_key`, `supabase_url`), ③ `send-push` 함수 배포.
+- 적용: `make db-init ENV=<env>` (db_init.sql 전체 DROP & CREATE).
 
 #### 주요 RPC
 | 함수 | 용도 |
@@ -306,8 +314,9 @@ week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at ti
 | `notify_quiz_completed(event_id)` | 퀴즈 완료 시 클라이언트가 호출 |
 | `register_push_token(token, platform, label)` | FCM 토큰 upsert |
 | `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
-| `pick_weekly_character()` | pg_cron 월요일 |
-| `notify_weekly_progress()` | pg_cron 수/금 |
+| `pick_weekly_character()` | pg_cron 월요일 KST 9시 (push-only) |
+| `notify_weekly_progress()` | pg_cron 수/금 KST 9시 (push-only) |
+| `dispatch_daily_quiz_push()` | pg_cron 매일 KST 9시 — daily_quiz 풀에서 random 1건 pick → 같은 content로 **새 row INSERT** → 그 question을 push 본문에 담아 push-only. 새 PK 가 생성되므로 user_daily_quiz_attempts 가 자동으로 다음 날 row 와 분리됨. |
 
 #### 30일 보관
 - hard delete 하지 않음. `list_my_notifications` / `unread_notification_count` 가 `WHERE created_at > now() - interval '30 days'` 로 필터.
@@ -525,9 +534,12 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 - 동시성: 프론트가 modal overlay 로 블록 (한 번에 한 장만)
 - 상세: `supabase/functions/generate-proposal-scene/README.md`
 
-### `send-push` (2026-04-22)
+### `send-push` (2026-04-22, 자동 디스패치 2026-05-11)
 - 경로: `supabase/functions/send-push/index.ts`
-- 호출 시점: `notifications` / `broadcast_notifications` INSERT 이후 pg_net 디스패치 (선택적)
+- 호출 경로:
+  - **broadcast_notifications AFTER INSERT** → `trg_push_after_broadcast` → `_fire_push_broadcast` → 이 함수 (자동)
+  - **주간/매일 cron** → `_fire_push_broadcast` 직접 호출 (broadcast 테이블 우회)
+  - 수동 발송: `supabase.functions.invoke('send-push', { ... })`
 - 배포: `supabase functions deploy send-push`
 - 배포 전제 secrets:
   - `FIREBASE_SERVICE_ACCOUNT` — Firebase 서비스 계정 JSON 전체

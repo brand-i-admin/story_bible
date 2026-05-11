@@ -60,6 +60,20 @@ class AppColors {
   static const dangerBot = Color(0xFFB4583B);
   static const dangerRim = Color(0xFFF2C2B3);
 
+  // REGION HIGHLIGHT — 지도 era 폴리곤 영역 표시 (story_map_panel + era_polygon_glow_layer).
+  // 후보 = 밝은 옐로우 골드, 선택 = 밝은 sage green. ancient atlas 양피지 위에서
+  // 또렷이 살아남도록 stepper accent(panel_chrome._stageAccentColor) 의 어두운
+  // 톤(D2873E/77A85A) 보다 더 밝고 채도 높은 값을 사용.
+  // era 식별은 era_pick_rows 의 점·아이콘 색으로 별도 제공.
+  static const regionCandidate = Color(0xFFF2C04F); // bright warm yellow gold
+  static const regionSelected = Color(0xFF9CCB75); // bright fresh sage green
+
+  /// region fill 칠하기 전 베이스를 중성화하는 cream-white wash.
+  /// watercolor 양피지 베이스가 따뜻한 베이지라 그 위에 candidate/selected
+  /// 색을 alpha 로 얹으면 베이스+색 blend 가 갈색/어두운 톤으로 보임.
+  /// 이 wash 를 한 겹 먼저 깔아 베이스를 중성화하면 의도된 노랑/초록이 살아남는다.
+  static const regionParchmentWash = Color(0xFFFFF7E8);
+
   // Semantic
   static const fgOnDark = Color(0xFFF8EED9);
   static const fgOnGold = parchmentCream;

@@ -1,6 +1,11 @@
 # send-push Edge Function
 
-인앱 `notifications` / `broadcast_notifications` row 가 생성될 때 FCM HTTP v1 API 로 푸시 알림을 실제로 발송하는 함수.
+인앱 알림 시스템의 푸시 발송 엔드포인트. FCM HTTP v1 API 로 디바이스 푸시를 전송한다.
+
+호출 경로(2026-05-11 이후):
+- **`broadcast_notifications` AFTER INSERT 트리거** → `_fire_push_broadcast` → 이 함수 (자동, 새 이야기/인물 등록 시)
+- **pg_cron 스케줄** → `_fire_push_broadcast` 직접 호출 (매일 퀴즈/주간 인물/주간 진도)
+- 수동: `supabase.functions.invoke('send-push', ...)`
 
 ## 배포
 
@@ -43,49 +48,34 @@ supabase functions deploy send-push
 { "sent": 3, "failed": 1, "cleaned_tokens": 0 }
 ```
 
-## DB 트리거 연결 (pg_net)
+## DB 트리거 연결 (2026-05-11 자동 연결됨)
 
-현재 DB 트리거 (`notify_on_proposal_comment` 등) 는 `notifications` row 만 INSERT 한다. 푸시 발송까지 자동화하려면 다음 두 가지 중 하나로 연결:
+`broadcast_notifications` AFTER INSERT → `trg_push_after_broadcast` → `_fire_push_broadcast`
+→ 이 함수 호출. 별도 설정 없이 자동 발송. 상세는 `db_init.sql` "Push 디스패치 인프라" 섹션.
 
-### A. `notifications` AFTER INSERT 트리거 + pg_net (권장)
+전제 조건(신규 환경 세팅 시):
+1. `pg_net` 확장 활성화 (Dashboard → Database → Extensions → pg_net ON)
+2. Supabase Vault 에 두 secret 등록 (Dashboard → Integrations → Vault → Secrets → New secret):
+   - `service_role_key` — ⚙ Project Settings → API Keys → `service_role` 값
+   - `supabase_url` — ⚙ Project Settings → API → "Project URL" (예: `https://<ref>.supabase.co`)
+3. `supabase functions deploy send-push` (이 README의 상단 배포 절차)
 
-Supabase 프로젝트에서 `pg_net` 확장 활성화 후:
-
+설정 검증 SQL:
 ```sql
-create or replace function public._dispatch_push_on_notification()
-returns trigger
-language plpgsql
-security definer
-as $$
-begin
-  perform net.http_post(
-    url := 'https://<project>.functions.supabase.co/send-push',
-    headers := jsonb_build_object(
-      'Authorization', 'Bearer ' || current_setting('app.supabase_service_role_key'),
-      'Content-Type', 'application/json'
-    ),
-    body := jsonb_build_object(
-      'user_id', new.user_id,
-      'title', new.title,
-      'body', new.body,
-      'deep_link', new.deep_link,
-      'type', new.type
-    )
-  );
-  return new;
-end;
-$$;
-
-create trigger trg_dispatch_push
-after insert on notifications
-for each row execute function public._dispatch_push_on_notification();
+select name, length(decrypted_secret) as len
+from vault.decrypted_secrets
+where name in ('service_role_key', 'supabase_url');
 ```
+2줄 결과가 나오면 성공. 인프라 변경 적용: `make db-init ENV=<env>` (db_init.sql 단일 진실 소스).
 
-`app.supabase_service_role_key` 는 Supabase 대시보드 → Database → Settings → Parameters 에서 설정.
+### 수동 발송 (테스트)
 
-### B. 클라이언트에서 supabase.functions.invoke
-
-테스트/수동 발송 경로. 일상 운영에는 부적합 (클라이언트가 꺼져 있으면 발송 안 됨).
+```ts
+await supabase.functions.invoke('send-push', {
+  body: { broadcast: true, title: '테스트', body: '본문', type: 'test' },
+});
+```
+일상 운영용으로는 부적합 (클라이언트 종료 시 발송 안 됨).
 
 ## 설계 메모
 

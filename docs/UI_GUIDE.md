@@ -132,18 +132,31 @@ MaterialApp(theme: AppTheme.light(), ...)
 
 "지도에서 영역을 선택했다" 가 아니라 **"고대 성경 세계의 한 지역을 발견했다"**
 느낌. GIS 식 striped/sharp polygon overlay 금지 — fantasy atlas / ancient
-parchment / fog-of-war reveal 톤. 색은 `_eraColorForRegion` 으로 결정 —
-선택된 시대(`activeEraBoundaries`)의 색을 region 의 era_codes 와 무관하게
-일관되게 사용해, 같은 region 이 여러 시대에 속해도 컨텍스트가 바뀌어도
-색이 흔들리지 않음.
+parchment / fog-of-war reveal 톤. **색 톤은 후보/선택 두 상태만 표현**:
 
-**3-layer 양식**:
+- **후보** (`AppColors.regionCandidate` = 0xFFF2C04F) — 밝은 따뜻한 옐로우 골드.
+  시대를 켰을 때 그 시대의 모든 region 이 노란색으로 떠오른다.
+- **선택** (`AppColors.regionSelected` = 0xFF9CCB75) — 밝은 fresh sage green.
+  특정 region 을 탭하면 초록으로 전환되어 후보들과 명확히 분리된다.
+
+ancient atlas 양피지 위에서 또렷이 살아남도록 stepper accent 의 어두운 톤
+(D2873E/77A85A) 보다 더 밝고 채도 높은 값을 사용. era 식별은 era_pick_rows 의
+점·아이콘 색(`EraColors.forCode`)이 별도로 표시한다.
+
+**4-layer 양식** (모두 정적 — pulse 애니메이션 제거):
 
 | Layer | 값 | 의도 |
 |-------|------|------|
-| 1. Outer Glow | era 색 alpha 0.25~0.45, `MaskFilter.blur(outer, 12~18)` | 폴리곤 바깥 후광 — "발견된 영역" halo |
-| 2. Parchment Fill | **선택 시 노란색 `#FFCB47` (`selectedFillColor`)** / 비선택 era 색. radial gradient (중앙 0.36~0.46 / 가장자리 0.22~0.30), `MaskFilter.blur(solid, 2.5)` | 비선택은 watercolor 톤 시대 색, 선택은 또렷한 노란 highlight ("발견됨") |
-| 3. Ink Border | **선택 시 fill 과 동일한 노란색** / 비선택 era 색 ↔ #3A2418 lerp 0.55. halo (strokeWidth 6~11 + blur 4) + inner fade gradient (clipPath + 굵은 blurred stroke 12~22px, 메인과 같은 alpha 시작 → 안쪽으로 부드럽게 머징) + 메인 (strokeWidth 2.5~4 + blur 0.8) 세 패스 | 선택 시 fill 과 같은 노란색이라 한 덩어리 인지, 비선택은 잉크 번진 결 |
+| 1. Outer Glow | candidate/selected 색 alpha 비선택 0.12 / 선택 0.18, `MaskFilter.blur(outer, 9~12)` | 폴리곤 바깥 후광 — 절제. 옛 sin 펄스로 인한 "어두운 깜빡거림" 인상 제거 |
+| **2a. White Wash** | `AppColors.regionParchmentWash` (#FFF7E8) alpha **0.45**, `MaskFilter.blur(solid, 2.5)` | **베이지 양피지 베이스 중성화** — 색 fill 위로 베이스가 비쳐 갈색·짙은녹으로 흐려지는 문제 차단. watercolor 결은 wash 너머로 은은히 비침 |
+| 2b. Color Fill | candidate/selected 색 radial gradient (비선택 중앙 0.50 / 가장자리 0.36, 선택 중앙 0.62 / 가장자리 0.48), `MaskFilter.blur(solid, 2.5)` | wash 위로 의도된 톤이 또렷이 살아남. ancient atlas / fantasy map 의 정통 parchment+ink wash 2-pass 기법 |
+| 3. Ink Border | 후보/선택 모두 fill 과 동일한 candidate/selected 색 그대로 (lerp 제거 — 갈색 섞임 없음). halo (strokeWidth 4~6 alpha 0.12~0.20 + blur 4) + inner fade gradient (clipPath + blurred stroke 8~12px) + 메인 (strokeWidth 2.0~2.6 alpha 0.70~0.85 + blur 0.8) 세 패스 | 한 덩어리 인지 + 잉크 번진 결. 외곽선 색이 fill 과 같아 시각적으로 한 영역으로 묶임 |
+
+**Pulse 애니메이션 제거** — 옛 1.6초 주기 sin 펄스(alpha/sigma/width 변동)는
+양피지 톤과 어울리지 않는 "어두운 색의 깜빡거림" 으로 인식돼 제거. `EraPolygonEntry.pulseT`
+필드와 `story_map_panel._polygonGlowCtl` 도 함께 사라져 매 프레임 rebuild 비용 절감.
+**Selection settle 애니메이션**(scale overshoot + glow boost, 500ms 1회)은 유지 —
+선택 진입 시 한 번만 강조되고 끝나므로 거슬리지 않음.
 
 **Selection settle 애니메이션 (production-grade, 500ms)** — region 이 새로
 선택되면 2-phase 곡선으로 elevated state 에 settle:

@@ -426,3 +426,29 @@
   - 한 페이지에서 매일/주간 두 가지 학습 흐름.
   - 같은 인물/지역 반복 가능 — 매주 새로 풀어 보는 의식적 학습.
   - 홈/주간이 같은 카드 코드로 일관 (시각·동작 동일).
+
+## ADR-022: 푸쉬 디스패치 자동화 + 매일/주간 퀴즈 push-only 전환 (2026-05-11)
+
+- **배경**: ADR-018 에서 broadcast/personal 알림 + FCM 토큰 인프라를 도입했지만, DB row INSERT → `send-push` Edge Function 호출의 마지막 연결고리(`pg_net`)가 누락돼 실제 푸시가 발송되지 않았다. 또 매일 퀴즈/주간 인물·진도 알림이 모두 `broadcast_notifications` 에 row 를 만들어 bell drop 에 누적되면서 사용자 수가 늘수록 무한 누적 + 시각적 노이즈 우려.
+- **결정**:
+  1. **자동 디스패치**: `broadcast_notifications` AFTER INSERT 트리거 `trg_push_after_broadcast` 추가. row 가 만들어지면 헬퍼 `_fire_push_broadcast(title, body, deep_link, type)` 가 `net.http_post` 로 `send-push` Edge Function 호출.
+  2. **Vault 기반 시크릿**: Supabase Vault 에 `service_role_key`, `supabase_url` 두 secret 저장. 헬퍼가 `vault.decrypted_secrets` 에서 읽어 헤더 구성. ALTER DATABASE SET 보다 안전(백업·덤프에 평문 노출 없음).
+  3. **푸시 only 채널**: 매일/주간 알림은 broadcast 테이블을 거치지 않고 `_fire_push_broadcast` 를 직접 호출. bell drop 에 row 가 안 쌓이고 푸시 알림으로만 전달.
+  4. **이벤트+인물 묶음 broadcast**: `approve_event_proposal` RPC 가 세션 플래그 `app.suppress_event_broadcast='true'` 로 events 트리거 자동 broadcast 를 막고, 사건 INSERT 후 신규 활성화 인물 이름까지 모아 broadcast row 1건을 직접 생성. 본문 예: `"새 이야기 '<title>' — 새 인물 '<name>' 외 N명도 함께 만나봐요"`.
+  5. **스케줄**: pg_cron 4개 — `daily-quiz-9am-kst (0 0 * * *)`, `weekly-character-monday (0 0 * * 1)`, `weekly-progress-wed (0 0 * * 3)`, `weekly-progress-fri (0 0 * * 5)`. 모두 KST 9시 = UTC 0시.
+- **이유**:
+  1. 모든 사용자에게 `notifications` 테이블 row 를 fan-out 하면 N×M 폭발 — push 채널은 본질적으로 broadcast 라 토큰 N개에 한 번 발송이면 끝.
+  2. 매일 발생하는 퀴즈 알림이 bell drop 에 누적되면 사용자 인식 부담 큼. 푸시는 클릭/dismiss 시 사라져 일시적.
+  3. 새 이야기 + 인물을 별도 broadcast row 2개로 보내면 사용자 입장에서 같은 사건의 알림이 둘로 쪼개져 노이즈. 한 건으로 묶는 게 자연스러움.
+- **DB 변경** (`db_init.sql` 단일 진실 소스 — `make db-init ENV=<env>` 로 적용):
+  - 신규 함수: `_fire_push_broadcast`, `_push_after_broadcast`, `dispatch_daily_quiz_push`.
+  - `notify_on_new_event` 트리거에 suppress 분기 추가.
+  - `pick_weekly_character`, `notify_weekly_progress` 의 broadcast INSERT 제거 → `_fire_push_broadcast` 호출.
+  - `broadcast_notifications.type` CHECK 에서 `weekly_*` 두 값 제거 (현재는 `new_event` 만).
+  - pg_cron `daily-quiz-9am-kst` 추가.
+- **운영 적용 전제**: `pg_net` 확장 ON + Vault 두 secret 등록 + `send-push` 배포. 누락 시 헬퍼가 raise warning 후 silent return — 호출 트랜잭션(이벤트 승인 등)은 항상 성공.
+- **결과**:
+  - 사용자가 사용하지 않아도 매일/주간 알림이 자동 발송.
+  - bell drop 은 "새 이야기" 같은 영구 기록성 알림만 받음.
+  - service_role_key 가 SQL 함수 본문에 박히지 않아 코드 리뷰 시 노출 방지.
+- **보충 (매일 퀴즈 자동 초기화)**: `dispatch_daily_quiz_push` 는 단순히 푸시만 발송하지 않고 매 호출마다 daily_quiz 풀에서 random 1건을 pick 해 같은 content 로 **새 row 를 INSERT** 한다. 이렇게 하면 새 daily_quiz_id 가 발급되고, `user_daily_quiz_attempts` (PK: user_id, daily_quiz_id) 가 자연스럽게 다음 날 row 와 분리되어 사용자는 "어제 푼 결과가 사라진" 상태로 매일 새로 풀 수 있다. 주간 퀴즈는 `weekly_quiz_progress` 의 week_key 가 매주 자동으로 달라져서 별도 처리 불필요.
