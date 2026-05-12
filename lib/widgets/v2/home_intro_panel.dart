@@ -34,6 +34,9 @@ class HomeIntroPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final canPickMode = selectedEraId != null;
+    // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
+    // 칩 자체는 클릭 가능 — 사용자가 시대를 다른 것으로 바꿀 수 있게 IgnorePointer X.
+    final eraStepOpacity = canPickMode ? 0.55 : 1.0;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -41,37 +44,55 @@ class HomeIntroPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: Text(
-              '🌿  오늘은 성경 어디를 여행해볼까요?  🌿',
-              style: AppTextStyles.h3.copyWith(
-                color: AppColors.ink800,
-                fontWeight: FontWeight.w800,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '🌿  오늘은 성경 어디를 여행해볼까요?  🌿',
+                maxLines: 1,
+                style: AppTextStyles.h3.copyWith(
+                  color: AppColors.ink800,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 16),
-          const _StepHeader(
-            number: 1,
-            title: '여행할 시대를 골라보세요',
-            enabled: true,
-            iconData: Icons.schedule_outlined,
-          ),
-          const SizedBox(height: 8),
-          EraPickRows(
-            eras: eras,
-            selectedEraId: selectedEraId,
-            onSelectEra: onSelectEra,
+          AnimatedOpacity(
+            opacity: eraStepOpacity,
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeOut,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _StepHeader(
+                  number: 1,
+                  title: '여행할 시대를 골라보세요',
+                  enabled: true,
+                  done: canPickMode,
+                  iconData: Icons.schedule_outlined,
+                ),
+                const SizedBox(height: 8),
+                EraPickRows(
+                  eras: eras,
+                  selectedEraId: selectedEraId,
+                  onSelectEra: onSelectEra,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 18),
           _StepHeader(
             number: 2,
             title: '어떻게 볼까요?',
             enabled: canPickMode,
+            highlighted: canPickMode,
             iconData: Icons.explore_outlined,
           ),
           const SizedBox(height: 8),
-          Opacity(
+          AnimatedOpacity(
             opacity: canPickMode ? 1.0 : 0.45,
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeOut,
             child: IgnorePointer(
               ignoring: !canPickMode,
               child: Row(
@@ -101,9 +122,13 @@ class HomeIntroPanel extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Center(
-            child: Text(
-              '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
-              style: AppTextStyles.hint.copyWith(color: AppColors.ink450),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
+                maxLines: 1,
+                style: AppTextStyles.hint.copyWith(color: AppColors.ink450),
+              ),
             ),
           ),
         ],
@@ -118,23 +143,49 @@ class _StepHeader extends StatelessWidget {
     required this.title,
     required this.enabled,
     required this.iconData,
+    this.done = false,
+    this.highlighted = false,
   });
   final int number;
   final String title;
   final bool enabled;
   final IconData iconData;
 
+  /// 이 단계가 이미 완료된 상태(다음 단계로 넘어가야 함). 완료 표식(✓) 노출.
+  final bool done;
+
+  /// 사용자가 지금 눌러야 할 단계임을 강조. 색을 ink800 + 굵은 글씨로 차별화.
+  final bool highlighted;
+
   @override
   Widget build(BuildContext context) {
-    final color = enabled ? AppColors.ink450 : AppColors.ink150;
+    final Color color;
+    if (!enabled) {
+      color = AppColors.ink150;
+    } else if (highlighted) {
+      color = AppColors.ink800;
+    } else {
+      color = AppColors.ink450;
+    }
     return Row(
       children: [
         Icon(iconData, size: 16, color: color),
         const SizedBox(width: 6),
         Text(
           '$number. $title',
-          style: AppTextStyles.sectionTitle.copyWith(color: color),
+          style: AppTextStyles.sectionTitle.copyWith(
+            color: color,
+            fontWeight: highlighted ? FontWeight.w800 : null,
+          ),
         ),
+        if (done) ...[
+          const SizedBox(width: 6),
+          Icon(
+            Icons.check_circle,
+            size: 14,
+            color: color.withValues(alpha: 0.8),
+          ),
+        ],
       ],
     );
   }

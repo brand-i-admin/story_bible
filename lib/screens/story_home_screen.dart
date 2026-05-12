@@ -33,6 +33,7 @@ import '../widgets/story_home_styles.dart';
 import '../widgets/story_map_panel.dart';
 import '../widgets/story_selection_panel.dart';
 import '../widgets/v2/home_intro_panel.dart';
+import '../widgets/v2/map_hint_overlay.dart';
 import '../widgets/v2/region_event_list.dart';
 import '../widgets/v2/region_pick_panel.dart';
 import 'notification_history_screen.dart';
@@ -89,6 +90,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// (step 2 인물 토글과 같은 패턴). "다음" 버튼은 단순히 선택 패널을 접는
   /// 역할만 한다.
   Set<String> _draftDisplayedEventIds = <String>{};
+
+  /// 지도 위 안내 오버레이([MapHintOverlay])를 사용자가 한 번이라도 dismiss
+  /// 했는지. 새 단계 진입 (`_handlePickMode` / `_handleStepperTap`) 시 false 로
+  /// reset 되어 안내가 다시 보이고, 사용자가 지도를 만지거나 region/인물을
+  /// 선택하면 true 가 되어 사라진다. step·mode 자체가 "안내가 필요 없는" 상태
+  /// (예: region 선택 완료, character step 3) 면 _currentMapHint() 가 null 을
+  /// 반환해 이 플래그와 무관하게 hint 가 안 뜬다.
+  bool _mapHintDismissed = false;
 
   @override
   void initState() {
@@ -347,6 +356,44 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     ref.read(storyControllerProvider.notifier).setSelectedCharacters(next);
   }
 
+  /// 현재 단계/모드에 어울리는 지도 안내 문구. null 이면 hint 미표시.
+  /// 사용자가 dismiss (지도 제스처/region 선택 등) 했으면 null.
+  ({String message, IconData icon})? _currentMapHint() {
+    if (_mapHintDismissed) return null;
+    if (_mode == _SelectionMode.region) {
+      final state = ref.read(storyControllerProvider);
+      if (state.selectedLandmarkId == null) {
+        return (
+          message: '노란 지역을 눌러 그곳의 사건을 보세요.\n손가락 동작으로 지도를 확대·축소할 수 있어요.',
+          icon: Icons.touch_app_rounded,
+        );
+      }
+      return null;
+    }
+    if (_mode == _SelectionMode.character && _selectionStep == 2) {
+      return (
+        message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「다음」 버튼을 눌러주세요.',
+        icon: Icons.people_alt_rounded,
+      );
+    }
+    return null;
+  }
+
+  /// 사용자가 지도를 만지면(드래그/줌/탭 등) hint dismiss. _mapHintDismissed=true
+  /// 로 다음 단계 진입 전까지 hint 가 다시 안 뜬다.
+  void _handleMapInteraction() {
+    if (_mapHintDismissed) return;
+    setState(() {
+      _mapHintDismissed = true;
+    });
+  }
+
+  /// 새 단계로 들어갔거나 mode 가 바뀌었을 때 hint 를 다시 보여 줄 수 있도록
+  /// dismiss flag 를 reset. setState 안에서 호출해야 build 에 반영된다.
+  void _resetMapHint() {
+    _mapHintDismissed = false;
+  }
+
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
     final state = ref.read(storyControllerProvider);
     final maxExtent = _isInRevealMode(state)
@@ -479,6 +526,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _mode = null;
         _selectionStep = 1;
         _draftSelectedCharacterCodes = const <String>{};
+        // intro 화면은 자체 안내가 충분하므로 hint overlay 는 dismiss.
+        _mapHintDismissed = true;
       });
       _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
       return;
@@ -492,6 +541,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       setState(() {
         _selectionStep = 2;
         _draftSelectedCharacterCodes = const <String>{};
+        // 새 단계 시작 — hint overlay 다시 보여줌.
+        _resetMapHint();
       });
       // region 모드는 사용자가 지도에서 폴리곤/핀을 직접 누르는 단계 — 패널은
       // 최소화해 지도가 보이게. character 모드는 인물 카드를 골라야 하니 expand.
@@ -569,6 +620,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionSheetExtent = _selectionSheetCollapsedSize;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
+      // region 선택 완료 — hint overlay 사라짐.
+      _mapHintDismissed = true;
     });
     // 사건들이 분포한 영역에 fit + 줌인. region 폴리곤 fit 보다 사건 자체에
     // 포커스가 맞아 자세히 보임.
@@ -599,6 +652,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionSheetExtent = _selectionSheetCollapsedSize;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
+      // character step 3 진입 — 인물 선택 안내 hint 사라짐.
+      _mapHintDismissed = true;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
@@ -1628,6 +1683,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     final mapZoom = state.selectedEraIds.isEmpty ? 6.0 : selectedEra?.mapZoom;
     final topInset = MediaQuery.of(context).padding.top;
+    // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
+    // 차지하는 픽셀. gesture-only / 풀스크린 모드면 0. 이 값만큼 시트를 위로
+    // 띄워야 패널 하단이 nav bar 에 가려지지 않는다 (사용자 보고).
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     const outerMargin = 20.0;
     // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
     final mapCalloutTopObscuredPixels = topInset + 88;
@@ -1664,12 +1723,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               initialCenter: mapCenter,
               initialZoom: mapZoom,
               topObscuredPixels: mapCalloutTopObscuredPixels,
-              bottomObscuredFraction: _selectionSheetExtent > 0
-                  ? _selectionSheetExtent
-                  : _sheetSizeForStage(
-                      MediaQuery.sizeOf(context),
-                      _selectionPanelStage,
-                    ),
+              // 시트 비율 + nav bar 비율 합산. nav bar 영역까지 obscured 로 처리해
+              // 콜아웃이 그 위에 그려지지 않게 한다 (panel 을 nav bar 위로 띄운
+              // 만큼 panel + nav bar 가 같이 가린다).
+              bottomObscuredFraction:
+                  (_selectionSheetExtent > 0
+                      ? _selectionSheetExtent
+                      : _sheetSizeForStage(
+                          MediaQuery.sizeOf(context),
+                          _selectionPanelStage,
+                        )) +
+                  (bottomInset / MediaQuery.sizeOf(context).height),
               decorate: false,
               activeLandmarks: _activeLandmarksForEra(state),
               activeEraBoundaries: state.selectedEraIds.isEmpty
@@ -1757,6 +1821,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 }
                 return code;
               },
+              // 사용자가 지도와 상호작용하면(드래그/줌/탭 등) hint overlay 를
+              // dismiss. region/character 단계 진입 시 _resetMapHint() 가
+              // 다시 보여줌.
+              onMapInteraction: _handleMapInteraction,
+              // 인물 모드에서는 region 검정 캡슐 라벨(가나안·시내 광야·애굽 등)
+              // 이 인물 path 점선을 가리는 문제가 있어 라벨을 숨긴다.
+              suppressRegionLabels: _mode == _SelectionMode.character,
             ),
           ),
           // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
@@ -1796,6 +1867,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               final sheetHeight =
                   constraints.maxHeight *
                   _sheetSizeForStage(viewportSize, _selectionPanelStage);
+              // 모드별 지도 안내 문구. null 이면 hint overlay 미표시.
+              final mapHint = _currentMapHint();
 
               return Stack(
                 children: [
@@ -1805,16 +1878,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   Positioned(
                     left: sheetHorizontalMargin,
                     right: sheetHorizontalMargin,
+                    // 시트는 화면 맨 아래까지 차지하고 height 를 sheetHeight +
+                    // bottomInset 으로 키운다 — panel 자체의 양피지 deco 가 그
+                    // height 에 맞게 늘어나 nav bar 영역까지 자연스럽게 양피지가
+                    // 이어진다. 각 panel 은 자체적으로 bottomInset 만큼 마지막
+                    // spacer 를 두어 컨텐츠를 nav bar 위로 띄운다.
+                    // (gesture-only 단말은 bottomInset=0 이라 기존과 동일한 동작.)
                     bottom: 0,
                     child: AnimatedContainer(
                       key: const ValueKey<String>('selection-sheet'),
                       duration: const Duration(milliseconds: 280),
                       curve: Curves.easeOutCubic,
-                      height: sheetHeight,
+                      height: sheetHeight + bottomInset,
                       child: _mode == _SelectionMode.region
-                          ? _buildRegionPanel(state)
+                          ? _buildRegionPanel(state, bottomInset)
                           : (_mode == null && _selectionStep == 1)
-                          ? _buildHomeIntroPanel(state)
+                          ? _buildHomeIntroPanel(state, bottomInset)
                           : StorySelectionPanel(
                               scrollController: _selectionPanelScrollController,
                               step: _selectionStep,
@@ -1960,6 +2039,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       ),
                     ),
                   ),
+                  // 지도 위 모드별 안내 오버레이. 사용자가 무엇을 해야 할지
+                  // 모를 때 가운데 흐리게 떠 있다가, 지도 제스처/region 선택/
+                  // 인물 「다음」 등 한 번의 행동으로 dismiss. IgnorePointer 로
+                  // 감싸 hint 가 떠 있어도 폴리곤·핀 클릭은 그대로 가능.
+                  if (mapHint != null)
+                    Positioned(
+                      top: topInset + 96,
+                      left: 0,
+                      right: 0,
+                      bottom: bottomInset + sheetHeight + 16,
+                      child: IgnorePointer(
+                        child: MapHintOverlay(
+                          message: mapHint.message,
+                          icon: mapHint.icon,
+                        ),
+                      ),
+                    ),
                 ],
               );
             },
@@ -2028,8 +2124,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 시트 헤더 — ▲▼ 토글 + 가운데 인디케이터 + 우측 stepper(1-2-3-?).
-  /// 우측 상단 stepper Positioned 는 제거하고 여기에 통합해 화면 공간 확보.
+  /// 시트 헤더 — 가운데 핸들(인디케이터 + 단일 toggle 화살표) + 우측
+  /// stepper(홈·1·2·?). 좌측은 stepper 와 균형을 맞춘 빈 공간 (또는
+  /// 인물 모드 step 1 의 "N명 다음" 핀).
+  ///
+  /// 옛 ▲▼ 두 IconButton 은 stepper 와 시각적으로 충돌해 사용자가 ▲ 를
+  /// 인지하지 못하는 문제가 있었다 (panel half stage 도 실질적으로 expanded 와
+  /// 동일 사이즈라 두 버튼이 redundant). 핸들 영역 전체가 하나의 InkWell —
+  /// 탭하면 collapsed ↔ expanded 토글.
   Widget _panelStageHandle() {
     final stage = _selectionPanelStage;
     final state = ref.read(storyControllerProvider);
@@ -2039,13 +2141,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _mode == _SelectionMode.character &&
         _selectionStep == 2 &&
         draftCharacters.isNotEmpty;
+    // stepper 의 estimated width (3 dots × 20 + 2 separators × 10 + helpButton
+    // 20 + paddings 12 + 6 ≈ 128). 좌측 SizedBox 도 같은 width 로 맞춰
+    // 가운데 핸들 영역이 정확히 화면 중앙에 오게 한다.
+    const headerSideSlot = 128.0;
+    final isExpanded = stage == StorySelectionPanelStage.expanded;
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
       child: Row(
         children: [
-          // 좌측 — "N명 다음" 핀 (조건부) 또는 stepper 균형용 빈 공간.
           SizedBox(
-            width: 110,
+            width: headerSideSlot,
             child: showCharacterNext
                 ? Align(
                     alignment: Alignment.centerLeft,
@@ -2057,69 +2163,65 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 : null,
           ),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  iconSize: 18,
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 28,
-                    minHeight: 28,
+            child: Center(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => _animateSelectionPanelToStage(
+                    isExpanded
+                        ? StorySelectionPanelStage.collapsed
+                        : StorySelectionPanelStage.expanded,
                   ),
-                  tooltip: '아래로',
-                  onPressed: stage == StorySelectionPanelStage.collapsed
-                      ? null
-                      : () => _animateSelectionPanelToStage(
-                          stage == StorySelectionPanelStage.expanded
-                              ? StorySelectionPanelStage.half
-                              : StorySelectionPanelStage.collapsed,
+                  child: Tooltip(
+                    message: isExpanded ? '아래로 접기' : '위로 펼치기',
+                    child: Container(
+                      width: 48,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
+                        // tint 로 panel toggle 임을 색으로 시그널링.
+                        color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(
+                            0xFF2E8B57,
+                          ).withValues(alpha: 0.45),
+                          width: 1,
                         ),
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                ),
-                Container(
-                  width: 28,
-                  height: 3,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF8C6743).withValues(alpha: 0.45),
-                    borderRadius: BorderRadius.circular(2),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        isExpanded
+                            ? Icons.keyboard_arrow_down
+                            : Icons.keyboard_arrow_up,
+                        size: 22,
+                        color: const Color(0xFF2E8B57),
+                        semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
+                      ),
+                    ),
                   ),
                 ),
-                IconButton(
-                  iconSize: 18,
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 28,
-                    minHeight: 28,
-                  ),
-                  tooltip: '위로',
-                  onPressed: stage == StorySelectionPanelStage.expanded
-                      ? null
-                      : () => _animateSelectionPanelToStage(
-                          stage == StorySelectionPanelStage.collapsed
-                              ? StorySelectionPanelStage.half
-                              : StorySelectionPanelStage.expanded,
-                        ),
-                  icon: const Icon(Icons.keyboard_arrow_up),
-                ),
-              ],
+              ),
             ),
           ),
-          // 우측 stepper (1-2-3-?) — 기존 우측 상단에서 이동.
-          _SelectionStepper(
-            currentStep: _currentStepperIndex(),
-            mode: _mode,
-            onStepTap: _handleStepperTap,
+          SizedBox(
+            width: headerSideSlot,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _SelectionStepper(
+                currentStep: _currentStepperIndex(),
+                mode: _mode,
+                onStepTap: _handleStepperTap,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHomeIntroPanel(StoryState state) {
+  Widget _buildHomeIntroPanel(StoryState state, double bottomInset) {
     return Container(
       decoration: _parchmentPanelDecoration(),
       clipBehavior: Clip.antiAlias,
@@ -2127,6 +2229,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         children: [
           _panelStageHandle(),
           Expanded(child: _buildHomeIntroBody(state)),
+          // nav bar 영역에는 panel 양피지만 노출 — 컨텐츠는 그 위로 띄움.
+          if (bottomInset > 0) SizedBox(height: bottomInset),
         ],
       ),
     );
@@ -2162,6 +2266,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       ctl.setSelectionMode(SelectionMode.region);
       setState(() {
         _mode = _SelectionMode.region;
+        _resetMapHint();
       });
       // 슬라이딩 패널을 collapsed 로 내려서 사용자가 지도에서 region 마커를
       // 직접 클릭해 선택할 수 있게 한다.
@@ -2188,6 +2293,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     setState(() {
       _mode = _SelectionMode.character;
       _selectionStep = 2;
+      _resetMapHint();
     });
   }
 
@@ -2218,7 +2324,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _mapPanelController.focusRegion(allPoints);
   }
 
-  Widget _buildRegionPanel(StoryState state) {
+  Widget _buildRegionPanel(StoryState state, double bottomInset) {
     final eraCodes = state.eras
         .where((e) => state.selectedEraIds.contains(e.id))
         .map((e) => e.code)
@@ -2278,6 +2384,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     },
                   ),
           ),
+          // nav bar 영역에는 panel 양피지만 노출 — 컨텐츠는 그 위로 띄움.
+          if (bottomInset > 0) SizedBox(height: bottomInset),
         ],
       ),
     );
@@ -3343,10 +3451,27 @@ class _SelectionStepper extends StatelessWidget {
         children: [
           for (var i = 1; i <= 3; i++) ...[
             _StepDot(
-              number: i,
               color: _colorFor(i),
               enabled: i <= currentStep,
               onTap: () => onStepTap(i),
+              tooltip: i == 1 ? '홈으로 (시대·보는 방법 다시 선택)' : '${i - 1}단계',
+              // step 1 = "홈" (intro 화면 복귀), step 2/3 = "1"/"2".
+              // 사용자가 시대 선택 후 첫 화면으로 다시 가는 방법을 직관적으로
+              // 인지할 수 있도록 라벨 변경 (이전엔 "1"이라 헷갈렸음).
+              child: i == 1
+                  ? const Icon(
+                      Icons.home_rounded,
+                      size: 12,
+                      color: Colors.white,
+                    )
+                  : Text(
+                      '${i - 1}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
             ),
             if (i < 3)
               Container(
@@ -3366,20 +3491,22 @@ class _SelectionStepper extends StatelessWidget {
 
 class _StepDot extends StatelessWidget {
   const _StepDot({
-    required this.number,
+    required this.child,
     required this.color,
     required this.enabled,
     required this.onTap,
+    this.tooltip,
   });
 
-  final int number;
+  final Widget child;
   final Color color;
   final bool enabled;
   final VoidCallback onTap;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
+    final dot = MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
         onTap: enabled ? onTap : null,
@@ -3401,17 +3528,12 @@ class _StepDot extends StatelessWidget {
                 : null,
           ),
           alignment: Alignment.center,
-          child: Text(
-            '$number',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10.5,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
+          child: child,
         ),
       ),
     );
+    if (tooltip == null) return dot;
+    return Tooltip(message: tooltip!, child: dot);
   }
 }
 
@@ -3535,16 +3657,28 @@ void _showStepperHelp(BuildContext context) {
                   margin: const EdgeInsets.only(bottom: 14),
                 ),
                 const _HelpStep(
-                  number: 1,
-                  title: '시대 + 보는 방법 선택',
+                  badge: Icon(
+                    Icons.home_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  title: '홈 — 시대 + 보는 방법 선택',
                   body:
                       '먼저 여행할 시대를 한 가지 고르세요. 그 다음 「장소에서 시작」 또는 '
-                      '「인물과 걷기」 두 보는 방법 중 하나를 선택합니다.',
+                      '「인물과 걷기」 두 보는 방법 중 하나를 선택합니다. 언제든지 「홈」 '
+                      '동그라미를 눌러 이 화면으로 돌아올 수 있습니다.',
                 ),
                 const SizedBox(height: 12),
                 const _HelpStep(
-                  number: 2,
-                  title: '장소 또는 인물 선택',
+                  badge: Text(
+                    '1',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
+                  ),
+                  title: '1단계 — 장소 또는 인물 선택',
                   body:
                       '「장소에서 시작」을 골랐다면 지도 위 폴리곤이나 핀을 눌러 한 지역을 '
                       '고르세요. 「인물과 걷기」를 골랐다면 등장 인물을 한 명 이상 고른 뒤 '
@@ -3552,8 +3686,15 @@ void _showStepperHelp(BuildContext context) {
                 ),
                 const SizedBox(height: 12),
                 const _HelpStep(
-                  number: 3,
-                  title: '사건 선택',
+                  badge: Text(
+                    '2',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
+                  ),
+                  title: '2단계 — 사건 선택',
                   body:
                       '선택한 지역 또는 인물에 얽힌 사건들이 시간 순서대로 지도에 핀으로 '
                       '박힙니다. 사건 카드를 누르면 자세한 이야기 페이지로 이동합니다.',
@@ -3626,11 +3767,11 @@ void _showStepperHelp(BuildContext context) {
 
 class _HelpStep extends StatelessWidget {
   const _HelpStep({
-    required this.number,
+    required this.badge,
     required this.title,
     required this.body,
   });
-  final int number;
+  final Widget badge;
   final String title;
   final String body;
 
@@ -3647,14 +3788,7 @@ class _HelpStep extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
-          child: Text(
-            '$number',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              fontSize: 14,
-            ),
-          ),
+          child: badge,
         ),
         const SizedBox(width: 10),
         Expanded(

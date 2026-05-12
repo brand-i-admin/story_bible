@@ -126,6 +126,8 @@ class StoryEventThumbCard extends StatelessWidget {
     required this.onTap,
     this.completed = false,
     this.orderNumber,
+    this.highlightedCharacterCodes = const <String>{},
+    this.colorForHighlightedCharacter,
   });
   final StoryEvent event;
   final Era? era;
@@ -135,6 +137,33 @@ class StoryEventThumbCard extends StatelessWidget {
   final int? orderNumber;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
+
+  /// 사용자가 명시적으로 고른 인물 코드(예: 인물 모드 step 3 의 선택된 인물).
+  /// 이 인물들의 pill 은 [colorForHighlightedCharacter] 색으로 강조되고
+  /// pills 가로 스크롤에서 가장 앞쪽에 배치된다. 비어 있으면 모든 pill 이
+  /// default 파랑 톤 + 원래 순서.
+  final Set<String> highlightedCharacterCodes;
+
+  /// highlighted 인물의 강조 색을 반환. null 이면 인물 코드와 무관하게
+  /// 모두 default 파랑. 일반적으로 부모가 지도 path 색과 동일한 함수를 넘겨
+  /// "지도 점선 색 = 카드 라벨 색" 시각 일관성을 만든다.
+  final Color Function(String characterCode)? colorForHighlightedCharacter;
+
+  /// pill 정렬 순서: highlighted 인물 먼저(원래 순서 유지), 그 다음 나머지
+  /// (원래 순서 유지). highlighted set 이 비어 있으면 원래 순서 그대로.
+  List<String> _orderedCharacterCodes() {
+    if (highlightedCharacterCodes.isEmpty) return event.characterCodes;
+    final highlighted = <String>[];
+    final rest = <String>[];
+    for (final code in event.characterCodes) {
+      if (highlightedCharacterCodes.contains(code)) {
+        highlighted.add(code);
+      } else {
+        rest.add(code);
+      }
+    }
+    return [...highlighted, ...rest];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,37 +298,49 @@ class StoryEventThumbCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   // 인물 pill — 한 줄에 가로 스크롤. 인물 라벨이 2줄로 wrap
                   // 되어 카드가 overflow 되는 것을 방지. ShaderMask 우측
-                  // 페이드로 "더 있음" 힌트.
+                  // 페이드로 "더 있음" 힌트. highlighted 인물(부모가 명시적으로
+                  // 고른 인물) 은 가장 앞쪽 + 자기 색으로 강조.
                   if (event.characterCodes.isNotEmpty)
-                    SizedBox(
-                      height: 18,
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          stops: [0.0, 0.85, 1.0],
-                          colors: [
-                            Colors.white,
-                            Colors.white,
-                            Color(0x00FFFFFF),
-                          ],
-                        ).createShader(bounds),
-                        blendMode: BlendMode.dstIn,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.zero,
-                          physics: const ClampingScrollPhysics(),
-                          itemCount: event.characterCodes.length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 3),
-                          itemBuilder: (_, i) {
-                            final code = event.characterCodes[i];
-                            return _CharPillAvatar(
-                              character: charactersByCode[code],
-                              name: charactersByCode[code]?.name ?? code,
-                            );
-                          },
-                        ),
-                      ),
+                    Builder(
+                      builder: (_) {
+                        final ordered = _orderedCharacterCodes();
+                        return SizedBox(
+                          height: 18,
+                          child: ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              stops: [0.0, 0.85, 1.0],
+                              colors: [
+                                Colors.white,
+                                Colors.white,
+                                Color(0x00FFFFFF),
+                              ],
+                            ).createShader(bounds),
+                            blendMode: BlendMode.dstIn,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.zero,
+                              physics: const ClampingScrollPhysics(),
+                              itemCount: ordered.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 3),
+                              itemBuilder: (_, i) {
+                                final code = ordered[i];
+                                final isHighlighted = highlightedCharacterCodes
+                                    .contains(code);
+                                return _CharPillAvatar(
+                                  character: charactersByCode[code],
+                                  name: charactersByCode[code]?.name ?? code,
+                                  accentColor: isHighlighted
+                                      ? colorForHighlightedCharacter?.call(code)
+                                      : null,
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     ),
                 ],
               ),
@@ -410,16 +451,35 @@ class _CardThumbnail extends StatelessWidget {
 }
 
 class _CharPillAvatar extends StatelessWidget {
-  const _CharPillAvatar({required this.character, required this.name});
+  const _CharPillAvatar({
+    required this.character,
+    required this.name,
+    this.accentColor,
+  });
   final Character? character;
   final String name;
+
+  /// 부모가 명시적으로 강조하라고 지정한 색. null 이면 default 파랑 톤
+  /// (0xFF3F8FB6) 으로 표시. 사용자가 인물 모드에서 고른 인물의 pill 에
+  /// 지도 path 점선 색과 동일한 색을 넘기면 시각적 매칭이 된다.
+  final Color? accentColor;
+
   @override
   Widget build(BuildContext context) {
+    const defaultColor = Color(0xFF3F8FB6);
+    const defaultText = Color(0xFF2A6F92);
+    final color = accentColor ?? defaultColor;
+    final textColor = accentColor != null
+        ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)
+        : defaultText;
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 2, 6, 2),
       decoration: BoxDecoration(
-        color: const Color(0xFF3F8FB6).withValues(alpha: 0.18),
+        color: color.withValues(alpha: 0.20),
         borderRadius: BorderRadius.circular(10),
+        border: accentColor != null
+            ? Border.all(color: color.withValues(alpha: 0.55), width: 0.8)
+            : null,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -436,18 +496,15 @@ class _CharPillAvatar extends StatelessWidget {
             Container(
               width: 14,
               height: 14,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF3F8FB6),
-              ),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: color),
             ),
           const SizedBox(width: 3),
           Text(
             name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 9.5,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF2A6F92),
+              color: textColor,
             ),
           ),
         ],

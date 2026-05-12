@@ -164,50 +164,55 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
                     onStepDown: widget.onStepDown,
                   )
                 else
-                  Stack(
+                  // 헤더(toggle + stepper) 는 Column 으로 분리해 sticky.
+                  // 옛 구조(headerOverride 도 SliverToBoxAdapter) 에서는
+                  // 사건 카드 스크롤 시 헤더가 함께 위로 사라져 카드가 잘린
+                  // 인상을 주었다. 이제 헤더 아래까지만 컨텐츠가 스크롤된다.
+                  Column(
                     children: [
-                      CustomScrollView(
-                        controller: widget.scrollController,
-                        physics: const ClampingScrollPhysics(),
-                        slivers: [
-                          if (widget.headerOverride != null)
-                            SliverToBoxAdapter(child: widget.headerOverride!)
-                          else ...[
-                            const SliverToBoxAdapter(
-                              child: SizedBox(height: 10),
+                      if (widget.headerOverride != null)
+                        widget.headerOverride!
+                      else ...[
+                        const SizedBox(height: 10),
+                        _PanelTopRow(
+                          stage: widget.panelStage,
+                          onStepUp: widget.onStepUp,
+                          onStepDown: widget.onStepDown,
+                          // step 2 + 선택 있을 때만 우측 작은 '다음' 핀.
+                          showCharacterNext:
+                              widget.step == 2 &&
+                              widget.draftSelectedCharacterCodes.isNotEmpty,
+                          characterCount:
+                              widget.draftSelectedCharacterCodes.length,
+                          onNextFromCharacters: widget.onNextFromCharacters,
+                        ),
+                      ],
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            CustomScrollView(
+                              controller: widget.scrollController,
+                              physics: const ClampingScrollPhysics(),
+                              slivers: [
+                                // v3 — step 1/2/3 칩 + '다음' 버튼 헤더 제거.
+                                // 우측 상단 _SelectionStepper 가 단계 이동 담당.
+                                const SliverToBoxAdapter(
+                                  child: SizedBox(height: 6),
+                                ),
+                                ..._buildBodySlivers(),
+                                SliverToBoxAdapter(
+                                  child: SizedBox(height: bottomInset + 18),
+                                ),
+                              ],
                             ),
-                            SliverToBoxAdapter(
-                              child: _PanelTopRow(
-                                stage: widget.panelStage,
-                                onStepUp: widget.onStepUp,
-                                onStepDown: widget.onStepDown,
-                                // step 2 + 선택 있을 때만 우측 작은 '다음' 핀.
-                                showCharacterNext:
-                                    widget.step == 2 &&
-                                    widget
-                                        .draftSelectedCharacterCodes
-                                        .isNotEmpty,
-                                characterCount:
-                                    widget.draftSelectedCharacterCodes.length,
-                                onNextFromCharacters:
-                                    widget.onNextFromCharacters,
-                              ),
+                            const Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: IgnorePointer(child: _BottomFadeHint()),
                             ),
                           ],
-                          // v3 — step 1/2/3 칩 + '다음' 버튼 헤더 제거.
-                          // 우측 상단 _SelectionStepper 가 단계 이동 담당.
-                          const SliverToBoxAdapter(child: SizedBox(height: 6)),
-                          ..._buildBodySlivers(),
-                          SliverToBoxAdapter(
-                            child: SizedBox(height: bottomInset + 18),
-                          ),
-                        ],
-                      ),
-                      const Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: IgnorePointer(child: _BottomFadeHint()),
+                        ),
                       ),
                     ],
                   ),
@@ -374,6 +379,11 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           onTapEvent: (event) => widget.onOpenEventDetail?.call(event),
           // SliverToBoxAdapter 안 — fixed height 필요.
           rowHeight: 248,
+          // 카드 안 인물 pill: 사용자가 인물 모드에서 고른 인물을 가장 앞쪽에
+          // 배치하고 지도 path 색과 동일한 톤으로 강조 — 모든 등장 인물이
+          // 똑같이 보여서 헷갈리던 문제 해결.
+          highlightedCharacterCodes: widget.committedSelectedCharacterCodes,
+          colorForHighlightedCharacter: widget.colorForCommittedCharacter,
         ),
       ),
     ];

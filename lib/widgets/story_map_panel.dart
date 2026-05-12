@@ -137,7 +137,20 @@ class StoryMapPanel extends StatefulWidget {
     this.eraCodeForId,
     this.eventCountByLandmarkId,
     this.regionPickerMode = false,
+    this.onMapInteraction,
+    this.suppressRegionLabels = false,
   });
+
+  /// 사용자가 지도와 상호작용 (drag/zoom/pan/탭) 했을 때 호출. 부모는 이를
+  /// 활용해 "지도를 움직여 보세요" 같은 hint overlay 를 dismiss 한다.
+  /// programmatic 카메라 이동(focusEvents 등) 은 제외 — `MapEventSource` 가
+  /// 사용자 제스처일 때만 호출된다.
+  final VoidCallback? onMapInteraction;
+
+  /// true 면 `_buildRegionLabels` 가 그리는 검정 캡슐 라벨(가나안·시내 광야·
+  /// 애굽 등) 을 숨긴다. 인물 모드에서 인물 path 점선이 그 라벨에 가려져
+  /// 잘 안 보이는 문제를 해결하기 위해 부모가 토글한다.
+  final bool suppressRegionLabels;
 
   /// true 일 때 step 2 (장소 선택) UI: 나라/region 핀 라벨 숨기고, 폴리곤 자체가
   /// 선택 가능한 큰 단위로 노출 (폴리곤 중앙에 region 이름 + 사건 개수 배지).
@@ -251,6 +264,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   /// 줌 변경 디버그 로깅용 — 0.05 이상 변하면 콘솔 로그.
   double? _lastLoggedZoom;
+
+  /// flutter_map [MapEventSource] 중 사용자 제스처(드래그·핀치·스크롤·탭·키보드
+  /// 등) 인 경우 true. programmatic 카메라 이동 / fitCamera / size change 는
+  /// false. hint overlay dismiss 등 "사용자가 지도를 만졌다" 를 판정할 때 사용.
+  static bool _isUserGestureSource(MapEventSource s) {
+    switch (s) {
+      case MapEventSource.mapController:
+      case MapEventSource.fitCamera:
+      case MapEventSource.nonRotatedSizeChange:
+      case MapEventSource.interactiveFlagsChanged:
+      case MapEventSource.custom:
+        return false;
+      default:
+        return true;
+    }
+  }
 
   /// 시대 region 폴리곤 클릭 hit-test 용. flutter_map 8.x 의 hitNotifier API.
   /// Polygon 에 hitValue=Landmark 부여 → 사용자가 onTap 시 hitValue 로 어떤
@@ -547,12 +576,18 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   },
                   // 디버그 — 줌 변경 시 콘솔에 로깅 (0.05 이상 변할 때만).
                   // min/max 줌 튜닝용. release 시 제거.
+                  // 추가로, 사용자 제스처(드래그/멀티터치/스크롤휠/더블탭) 시
+                  // [onMapInteraction] 호출 — 부모의 hint overlay dismiss 트리거.
+                  // programmatic 이동(focusEvents 등 mapController source) 은 제외.
                   onMapEvent: (event) {
                     final z = event.camera.zoom;
                     final last = _lastLoggedZoom;
                     if (last == null || (z - last).abs() > 0.05) {
                       _lastLoggedZoom = z;
                       debugPrint('[Map] zoom: ${z.toStringAsFixed(2)}');
+                    }
+                    if (_isUserGestureSource(event.source)) {
+                      widget.onMapInteraction?.call();
                     }
                   },
                   onMapReady: () {
@@ -679,7 +714,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                       ),
                     ),
                   PolylineLayer(polylines: polylines),
-                  if (!widget.regionPickerMode)
+                  if (!widget.regionPickerMode && !widget.suppressRegionLabels)
                     MarkerLayer(markers: _buildRegionLabels()),
                   // 폴리곤 중앙에 region 이름 + 사건 개수 라벨.
                   // step 2 (regionPickerMode): 모든 era region 라벨 표시 (갈색).
@@ -1233,6 +1268,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           eraColor: _eraColorForRegion(lm),
           isSelected: lm.id == widget.selectedLandmarkId,
           pulseT: 0.0,
+          // region 선택 단계에서 후보 폴리곤 (선택되지 않은 것) 을 시각적으로
+          // 강화 — 사용자가 "여기를 누르세요" 안내와 함께 더 또렷하게 인식.
+          pickerHighlight:
+              widget.regionPickerMode && lm.id != widget.selectedLandmarkId,
         ),
       );
     }
@@ -1385,6 +1424,21 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     int order,
     bool selected,
   ) {
+    // 인물 모드: 사건에 등장하는 인물 중 사용자가 고른 인물의 색을 모은다.
+    // 핀 동그라미를 N 색 가로 띠로 채워 "어느 인물 사건인지" 색으로 식별.
+    // - 1명: 단색 fill
+    // - 2명: 위/아래 반반
+    // - 3+명: 균등 N 등분
+    // 매칭이 없으면 (예: region 모드) 빈 리스트 → 기존 갈색 fill 폴백.
+    // event.characterCodes 의 원래 순서를 유지해 카드 안 pill 정렬과 일치.
+    final characterColors = <Color>[];
+    if (widget.selectedCharacterCodes.isNotEmpty) {
+      for (final code in event.characterCodes) {
+        if (widget.selectedCharacterCodes.contains(code)) {
+          characterColors.add(widget.colorForCharacter(code));
+        }
+      }
+    }
     return Marker(
       point: point,
       width: 22,
@@ -1403,7 +1457,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => widget.onSelectEvent(event.id),
-              child: _NumberedEventPin(number: order, isSelected: selected),
+              child: _NumberedEventPin(
+                number: order,
+                isSelected: selected,
+                characterColors: characterColors,
+              ),
             ),
           );
         },
@@ -2600,13 +2658,25 @@ class _MarkerWithSelection {
 /// 사건 핀 — 동그라미 + 안에 큰 순서 번호. 핀 모양/장소 라벨 모두 제거.
 /// 선택 시 더 큰 사이즈 + 노란 색 (현재 이야기). 미선택은 갈색 동그라미.
 class _NumberedEventPin extends StatelessWidget {
-  const _NumberedEventPin({required this.number, required this.isSelected});
+  const _NumberedEventPin({
+    required this.number,
+    required this.isSelected,
+    this.characterColors = const <Color>[],
+  });
 
   final int number;
   final bool isSelected;
 
+  /// 사건에 포함된 "사용자가 고른 인물" 의 색 리스트. 비어 있으면 기존
+  /// 단색 fill (selected → 노랑, else → 갈색). 1+ 면 [_MultiColorCirclePainter]
+  /// 가 핀 동그라미를 N 등분 가로 띠로 채워 인물별 식별을 시각화한다.
+  /// selected 일 때도 character color 를 우선 표시하고 노란 outer border 와
+  /// 두꺼운 stroke 로 "현재 이야기" 강조.
+  final List<Color> characterColors;
+
   @override
   Widget build(BuildContext context) {
+    final hasColors = characterColors.isNotEmpty;
     final fillColor = isSelected
         ? const Color(0xFFE8A33D) // 노랑 (현재 이야기)
         : const Color(0xFF6B4A2A); // 갈색 (일반 사건)
@@ -2615,7 +2685,8 @@ class _NumberedEventPin extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: fillColor,
+        // hasColors 면 fill 은 painter 가 담당 → 컨테이너 배경 투명.
+        color: hasColors ? null : fillColor,
         shape: BoxShape.circle,
         border: Border.all(
           color: isSelected ? const Color(0xFFFFE9B0) : Colors.white,
@@ -2630,16 +2701,66 @@ class _NumberedEventPin extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child: Text(
-        '$number',
-        style: TextStyle(
-          fontSize: isSelected ? 9 : 8,
-          fontWeight: FontWeight.w900,
-          color: Colors.white,
-          height: 1.0,
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (hasColors)
+            ClipOval(
+              child: SizedBox(
+                width: size,
+                height: size,
+                child: CustomPaint(
+                  painter: _MultiColorCirclePainter(colors: characterColors),
+                ),
+              ),
+            ),
+          Text(
+            '$number',
+            style: TextStyle(
+              fontSize: isSelected ? 9 : 8,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              height: 1.0,
+              shadows: hasColors
+                  ? const [Shadow(color: Color(0xCC000000), blurRadius: 1.6)]
+                  : null,
+            ),
+          ),
+        ],
       ),
     );
+  }
+}
+
+/// `_NumberedEventPin` 안의 가로 띠 N 등분 painter — 인물 모드에서 사건에
+/// 포함된 선택 인물의 색을 위에서 아래로 같은 높이로 칠한다. ClipOval 안에
+/// 그려져 정사각형 painter 가 원형으로 잘린다. N=1 이면 단색 채움.
+class _MultiColorCirclePainter extends CustomPainter {
+  const _MultiColorCirclePainter({required this.colors});
+
+  final List<Color> colors;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (colors.isEmpty) return;
+    final n = colors.length;
+    final stripeH = size.height / n;
+    for (var i = 0; i < n; i++) {
+      final paint = Paint()..color = colors[i];
+      // 마지막 띠는 1px 여유로 fill — rounding 으로 hairline 안 생기게.
+      final top = i * stripeH;
+      final bottom = i == n - 1 ? size.height : (i + 1) * stripeH;
+      canvas.drawRect(Rect.fromLTRB(0, top, size.width, bottom), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MultiColorCirclePainter old) {
+    if (old.colors.length != colors.length) return true;
+    for (var i = 0; i < colors.length; i++) {
+      if (old.colors[i] != colors[i]) return true;
+    }
+    return false;
   }
 }
 
