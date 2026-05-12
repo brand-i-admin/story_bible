@@ -562,16 +562,80 @@ supabase functions serve \
 
 브라우저/Flutter 에서 호출 시 base URL 을 로컬 것으로 바꿔 테스트.
 
-## 8. 마이그레이션 관리 규칙
+## 8. 마이그레이션 관리 규칙 (ADR-023, 2026-05-12 개정)
 
-1. `db_init.sql`이 스키마의 **단일 진실 소스** (Single Source of Truth — 단일 파일에서
-   DROP & CREATE 전체).
-2. 스키마 변경 시: `db_init.sql` 만 수정. 별도 증분 마이그레이션 파일은 만들지
-   않는다 (`supabase/migrations/` 디렉토리 폐기).
-3. 로컬/원격 초기화 동일하게: `make db-init` → DROP + CREATE 전체 재실행.
-4. 운영 반영: SQL Editor 또는 `make db-init` (대상 환경 ENV 지정).
-5. 이전에 폐기된 증분 마이그레이션의 의도/맥락은 [ADR.md](ADR.md) 와
-   [guides/WORKFLOW_GUIDE.md](guides/WORKFLOW_GUIDE.md) 의 역사 섹션에 보존.
+> ⚠️ **정책 변경**: ADR-022 의 `daily_quiz` cron 이 prod 에 누락된 사고를 계기로
+> 옛 "supabase/migrations/ 폐기" 정책을 뒤집었다. 이제 **`db_init.sql` + `supabase/migrations/`
+> 두 곳을 동기화** 한다.
+
+### 8.1 두 트랙의 역할
+
+| 트랙 | 역할 | 적용 환경 | 적용 명령 |
+|------|------|----------|----------|
+| `db_init.sql` | 스키마 **단일 진실 소스** (전체 DROP & CREATE 한 파일에 응축) | **신규 환경 부트스트랩** | `make db-init ENV=<env>` (파괴적!) |
+| `supabase/migrations/<ts>_<slug>.sql` | 직전 prod 상태 → 현재 desired 상태로 가는 **증분 패치** | **기존 prod 증분 적용** | `make db-migrate ENV=prod` |
+
+`make db-init` 은 db_init.sql 적용 직후 자동으로 `make db-migrate` 까지 실행하므로,
+신규 환경 부트스트랩 시퀀스는 변경되지 않는다:
+
+```bash
+make seed-all && make db-init && make apply-seeds && make upload-character-avatars
+#                  └─ db_init.sql + db-migrate 자동 (idempotent)
+```
+
+기존 prod 에 새 변경분만 안전하게 반영하려면:
+
+```bash
+make db-migrate ENV=prod
+```
+
+### 8.2 변경 시 작업 흐름
+
+스키마/함수/RLS/cron/extension 등 DB 가 변경될 때마다 다음 두 곳을 **항상 동시에** 수정한다:
+
+1. **`db_init.sql`** — 변경 후 최종 상태로 갱신 (DROP & CREATE 한 파일에 응축).
+2. **`supabase/migrations/YYYYMMDD_HHMM_<slug>.sql`** — 변경분만 담은 증분 파일.
+   - 파일명: 적용 시점 timestamp (KST 기준 권장) + 짧은 의도 slug.
+   - 모든 SQL 은 **idempotent** 하게 작성 (재실행 안전):
+     - 함수: `create or replace function ...`
+     - 테이블/컬럼: `if not exists`, `add column if not exists`
+     - 인덱스/policy: `drop ... if exists` → `create ...`
+     - cron: `cron.unschedule(jobname) where ... ; cron.schedule(...)`
+     - 시드: `on conflict do nothing` 또는 `do update`
+   - 파일 첫 주석에 의도 + ADR 참조 + idempotent 보장 근거 명시.
+
+PR 머지 전 reviewer 는 두 파일이 같은 변경을 표현하는지 확인.
+
+### 8.3 prod 적용 절차
+
+PR 머지 직후 (또는 hot fix 시점에):
+
+```bash
+# 1. main 최신 상태로 update
+git checkout main && git pull
+
+# 2. prod 적용 — supabase/migrations/*.sql 을 알파벳 순으로 모두 실행 (idempotent 라 안전)
+make db-migrate ENV=prod
+
+# 3. 검증 (예: 새 cron 등록됐는지)
+psql "$SUPABASE_DB_URL_PROD" -c "select jobname, active from cron.job order by jobname;"
+```
+
+### 8.4 이력 보존
+
+- `supabase/migrations/` 가 시간순 변경 이력 (각 파일이 한 PR 의 desired delta).
+- 옛 ADR (ADR-009 이전의 폐기된 증분 마이그레이션) 의 의도/맥락은
+  [ADR.md](ADR.md) 와 [guides/WORKFLOW_GUIDE.md](guides/WORKFLOW_GUIDE.md) 에서 역사로 참조.
+
+### 8.5 자주 빠트리는 것
+
+- **새 함수가 `cron.schedule` 에 등록될 때**: 그 함수 정의도 마이그레이션에 포함해야
+  prod 에 함수가 없어도 안전. 의존 함수가 이미 prod 에 있다고 확신할 수 없으면
+  마이그레이션에 함께 포함하거나, 별도 선행 마이그레이션을 먼저 만든다.
+- **`pg_cron` 같은 extension 의존**: 마이그레이션이 `if exists pg_extension where extname='pg_cron'`
+  가드를 두지 않으면 미설치 환경에서 실패한다. 가드 + `raise warning` 으로 명시적 skip 알림.
+- **데이터 변경 (UPDATE/DELETE/INSERT)** 은 마이그레이션 파일에 넣지 말고 `apply-seeds`
+  계열로 별도 분리 — 마이그레이션은 schema·function·trigger·cron·policy 등 *구조* 만 다룬다.
 
 ## 9. Supabase 공식 Agent Skills
 
