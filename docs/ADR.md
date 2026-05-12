@@ -452,3 +452,30 @@
   - bell drop 은 "새 이야기" 같은 영구 기록성 알림만 받음.
   - service_role_key 가 SQL 함수 본문에 박히지 않아 코드 리뷰 시 노출 방지.
 - **보충 (매일 퀴즈 자동 초기화)**: `dispatch_daily_quiz_push` 는 단순히 푸시만 발송하지 않고 매 호출마다 daily_quiz 풀에서 random 1건을 pick 해 같은 content 로 **새 row 를 INSERT** 한다. 이렇게 하면 새 daily_quiz_id 가 발급되고, `user_daily_quiz_attempts` (PK: user_id, daily_quiz_id) 가 자연스럽게 다음 날 row 와 분리되어 사용자는 "어제 푼 결과가 사라진" 상태로 매일 새로 풀 수 있다. 주간 퀴즈는 `weekly_quiz_progress` 의 week_key 가 매주 자동으로 달라져서 별도 처리 불필요.
+
+## ADR-023: supabase/migrations/ 부활 + db-migrate 타겟 (2026-05-12)
+
+- **배경**: ADR-022 가 `dispatch_daily_quiz_push` 함수 + pg_cron 4개 스케줄을 `db_init.sql` 에 추가했으나, 그 변경분을 prod DB 에 별도로 적용하지 않아 매일 KST 9시의 자동 새 quiz 발급이 누락됐다. 사용자는 "어제 답한 quiz/답안이 그대로" 라고 보고했고, 진단 결과 `cron.job` 테이블에 4개 cron 이 모두 미등록 상태였다 (수동 SQL 실행 후 복구). 같은 형태의 사고 — `db_init.sql` 에는 들어갔으나 prod 적용 누락 — 가 이 PR 이전에도 잠재적으로 있었을 가능성이 있고, 향후 DB 변경 시마다 반복될 위험.
+- **결정**: 옛 정책 ("`supabase/migrations/` 디렉토리 폐기, `db_init.sql` 만 단일 진실 소스") 을 뒤집어 **두 트랙을 동시에** 운영한다.
+  1. **`db_init.sql`** — 여전히 단일 진실 소스. 신규 환경 부트스트랩 (DROP & CREATE) 용.
+  2. **`supabase/migrations/<YYYYMMDD>_<HHMM>_<slug>.sql`** — 직전 prod 상태 → 현재 desired 상태로 가는 증분 패치. 모두 idempotent (`create or replace`, `if exists`, `cron.unschedule + cron.schedule` 등) 패턴 강제.
+  3. **`make db-migrate`** 신규 타겟 — `supabase/migrations/*.sql` 알파벳 순 적용. `make db-init` 끝에 자동 호출되어 신규 환경에서도 동일 적용 (idempotent 라 no-op). prod 증분 적용은 `make db-migrate ENV=prod`.
+  4. **PR 워크플로 강화**: schema/function/cron 등 DB 변경 PR 은 항상 두 곳을 동시 수정 (db_init.sql + supabase/migrations/). reviewer 가 두 파일이 같은 변경을 표현하는지 확인.
+- **이유**:
+  1. db_init.sql 이 완벽하게 prod 의 desired state 를 표현해도, prod 에 그 SQL 을 누군가 실행하지 않으면 무의미. `make db-init ENV=prod` 는 파괴적이라 사실상 못 돌리고, 결국 운영자가 SQL Editor 에 발췌해 수동 실행 — 누락 위험이 누적된다.
+  2. 증분 마이그레이션 트랙이 있으면 prod 적용이 한 명령 (`make db-migrate ENV=prod`) 으로 통일되고, idempotent 파일이라 머지 후 언제 돌려도 안전.
+  3. 신규 환경 부트스트랩은 `db_init.sql` 한 번이면 충분하므로 두 트랙이 redundant 해 보이지만, 두 곳 동기화 비용은 한 PR 당 SQL 한 블록 복사 정도로 작은 반면 prod 누락 사고를 원천 차단할 수 있음.
+- **사용자 워크플로 변경**: 없음. 신규 환경 부트스트랩 시퀀스 — `make seed-all && make db-init && make apply-seeds && make upload-character-avatars` — 는 그대로 유지. `make db-init` 안에서 `make db-migrate` 가 자동 호출되어 마이그레이션 파일도 함께 적용된다 (idempotent 라 no-op). 신규 워크플로는 "prod 증분 적용 = `make db-migrate ENV=prod`" 한 줄만 추가.
+- **DB/파일 변경**:
+  - 신규 디렉토리: `supabase/migrations/`
+  - 첫 마이그레이션 파일: `20260512_1144_pg_cron_dispatch_and_schedules.sql` — ADR-022 의 dispatch_daily_quiz_push 함수 + pg_cron 4개 스케줄 등록 (idempotent). prod 에는 이미 수동 적용됐지만 신규 환경 / 다른 prod (향후) / 정책 reference 로 명문화.
+  - `Makefile`: `db-migrate` 타겟 추가, `db-init` 끝에 `make db-migrate` 자동 호출 추가, `.PHONY`/help 갱신.
+  - `docs/BACKEND.md §8` 전면 개정 (위 정책 반영).
+- **결과**:
+  - 향후 DB 변경은 PR 단계에서 두 파일이 함께 들어와야 하므로 reviewer 가 prod 적용 누락을 사전에 catch.
+  - prod 운영자는 `make db-migrate ENV=prod` 한 줄로 모든 idempotent 변경분 일괄 적용 가능.
+  - dev 환경은 기존 `make db-init` 워크플로 그대로 — 마이그레이션은 bonus 로 자동 적용.
+- **남은 옵션 (향후)**:
+  - 마이그레이션 적용 이력 추적 테이블 (`_schema_migrations`) 도입해 같은 파일 중복 실행 방지 — 현재는 idempotent 패턴으로 안전하지만, 마이그레이션 수가 누적되면 매번 모두 실행은 비효율.
+  - GitHub Actions 로 main 머지 시 dev `make db-migrate` 자동 실행 — prod 자동 적용은 위험하니 수동 trigger 유지.
+  - Supabase CLI 의 정식 마이그레이션 (`supabase db push`) 으로 전환 — `supabase_migrations.schema_migrations` 자동 추적 + Studio 통합. 다만 본 프로젝트는 db_init.sql 을 신규 환경 부트스트랩 용도로 유지하고 싶어 두 트랙 병행 (CLI 는 마이그레이션만 추적).
