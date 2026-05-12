@@ -26,11 +26,22 @@ class EventTimelineRow extends StatefulWidget {
     this.connectorWidth = 22,
     this.rowHeight,
     this.padding = const EdgeInsets.fromLTRB(14, 18, 14, 14),
+    this.highlightedCharacterCodes = const <String>{},
+    this.colorForHighlightedCharacter,
   });
 
   final List<StoryEvent> events;
   final List<Era> allEras;
   final Map<String, Character> charactersByCode;
+
+  /// 카드 안 인물 pill 중 강조해 앞쪽에 배치할 인물 코드. 인물 모드 step 3
+  /// 에서 사용자가 고른 인물 set 을 부모가 넘긴다. 비어 있으면 모든 pill
+  /// default 톤 + 원래 순서.
+  final Set<String> highlightedCharacterCodes;
+
+  /// highlighted 인물의 강조 색을 반환. 일반적으로 부모의 `colorForCharacter`
+  /// (지도 path 색) 을 그대로 넘긴다.
+  final Color Function(String characterCode)? colorForHighlightedCharacter;
 
   /// 현재 "현재 이야기" 라벨이 붙어야 하는 사건 id. null 이면 미강조.
   /// set 변경 시 자동 스크롤로 그 카드를 viewport 중앙에 배치.
@@ -189,6 +200,8 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
             orderNumber: idx + 1,
             loader: _loader,
             onTap: () => widget.onTapEvent(event),
+            highlightedCharacterCodes: widget.highlightedCharacterCodes,
+            colorForHighlightedCharacter: widget.colorForHighlightedCharacter,
           ),
         );
       },

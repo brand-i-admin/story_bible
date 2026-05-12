@@ -15,6 +15,7 @@ class EraPolygonEntry {
     required this.eraColor,
     required this.isSelected,
     required this.pulseT,
+    this.pickerHighlight = false,
   });
 
   /// LatLng 정점들. ring 종결은 자동 — 마지막을 첫 정점으로 잇는다.
@@ -31,6 +32,11 @@ class EraPolygonEntry {
 
   /// 0..1 한 사이클 펄스 위상. glow/border 펄스 + particle 위상에 사용.
   final double pulseT;
+
+  /// region 선택 단계(`regionPickerMode`)의 후보 폴리곤인지. true 면 outer
+  /// glow / fill alpha 가 +0.06~0.08 부스트되어 "여기를 누르세요" 인상을 강화.
+  /// `isSelected` 가 우선되므로 선택된 폴리곤에는 영향 없음.
+  final bool pickerHighlight;
 }
 
 /// flutter_map 위에 ancient parchment atlas 톤으로 region polygon 을 그리는
@@ -111,30 +117,33 @@ class EraPolygonGlowLayer extends StatefulWidget {
   // "어두운 색의 깜빡거림" 으로 인식돼 양피지 톤과 충돌했음. entry.pulseT 인자는
   // 호환성 위해 EraPolygonEntry 에 남기되 더 이상 참조하지 않는다.
 
-  /// Outer glow alpha. 비선택 0.12, 선택 0.18 (옛 0.18/0.22~0.30 → 더 절제).
+  /// Outer glow alpha. 비선택 0.12, 선택 0.18, picker 후보 0.20 (사용자가
+  /// "노란 영역을 누르세요" 안내를 받을 때 시각적으로 더 또렷하게).
   static double outerGlowAlphaFor({required EraPolygonEntry entry}) {
-    return entry.isSelected ? 0.18 : 0.12;
+    if (entry.isSelected) return 0.18;
+    return entry.pickerHighlight ? 0.20 : 0.12;
   }
 
-  /// Outer glow blur sigma. 비선택 9, 선택 12 (옛 10/11~14 → 살짝 축소).
+  /// Outer glow blur sigma. 비선택 9, 선택 12, picker 후보 11.
   static double outerGlowSigmaFor({required EraPolygonEntry entry}) {
-    return entry.isSelected ? 12.0 : 9.0;
+    if (entry.isSelected) return 12.0;
+    return entry.pickerHighlight ? 11.0 : 9.0;
   }
 
   // ─────────────────── Parchment fill ────────────────────
 
-  /// Parchment fill 중앙 alpha. 비선택 0.50, 선택 0.62.
+  /// Parchment fill 중앙 alpha. 비선택 0.50, 선택 0.62, picker 후보 0.56.
   /// (white wash 위로 칠해지므로 베이스 비침 차단된 상태에서 의도된 톤이
   /// 또렷이 살아남는 알파. 펄스 제거로 안정적 표시.)
   static double fillCenterAlphaFor({required EraPolygonEntry entry}) {
-    return entry.isSelected ? 0.62 : 0.50;
+    if (entry.isSelected) return 0.62;
+    return entry.pickerHighlight ? 0.56 : 0.50;
   }
 
-  /// Parchment fill 가장자리 alpha. 비선택 0.36, 선택 0.48.
-  /// (가장자리까지 균일하게 톤이 살아남도록 boost. center↔edge 격차를 줄여
-  /// "안쪽만 진하고 가장자리 비는" 인상 회피.)
+  /// Parchment fill 가장자리 alpha. 비선택 0.36, 선택 0.48, picker 후보 0.42.
   static double fillEdgeAlphaFor({required EraPolygonEntry entry}) {
-    return entry.isSelected ? 0.48 : 0.36;
+    if (entry.isSelected) return 0.48;
+    return entry.pickerHighlight ? 0.42 : 0.36;
   }
 
   /// White wash 레이어 alpha — 양피지 베이스 중성화 강도.

@@ -11,12 +11,14 @@ EraPolygonEntry _entry({
   required bool selected,
   double pulse = 0.0,
   Color color = const Color(0xFF6F8F58),
+  bool pickerHighlight = false,
 }) {
   return EraPolygonEntry(
     polygon: [const LatLng(0, 0), const LatLng(0, 1), const LatLng(1, 0)],
     eraColor: color,
     isSelected: selected,
     pulseT: pulse,
+    pickerHighlight: pickerHighlight,
   );
 }
 
@@ -54,6 +56,38 @@ void main() {
           entry: _entry(selected: true, pulse: 0.25),
         ),
         12.0,
+      );
+    });
+
+    test('pickerHighlight: 비선택 후보가 일반(0.12) 보다 부스트(>0.12), 선택(0.18) '
+        '보다는 약함 — "여기를 누르세요" 안내 강화하되 선택 폴리곤이 더 또렷', () {
+      final base = EraPolygonGlowLayer.outerGlowAlphaFor(
+        entry: _entry(selected: false),
+      );
+      final picker = EraPolygonGlowLayer.outerGlowAlphaFor(
+        entry: _entry(selected: false, pickerHighlight: true),
+      );
+      final selected = EraPolygonGlowLayer.outerGlowAlphaFor(
+        entry: _entry(selected: true),
+      );
+      expect(picker, greaterThan(base));
+      expect(picker, lessThanOrEqualTo(selected + 0.05));
+
+      // fill 도 같은 방향 (center 기준).
+      final fillBase = EraPolygonGlowLayer.fillCenterAlphaFor(
+        entry: _entry(selected: false),
+      );
+      final fillPicker = EraPolygonGlowLayer.fillCenterAlphaFor(
+        entry: _entry(selected: false, pickerHighlight: true),
+      );
+      expect(fillPicker, greaterThan(fillBase));
+
+      // 선택된 폴리곤은 pickerHighlight 와 무관 (isSelected 가 우선).
+      expect(
+        EraPolygonGlowLayer.outerGlowAlphaFor(
+          entry: _entry(selected: true, pickerHighlight: true),
+        ),
+        EraPolygonGlowLayer.outerGlowAlphaFor(entry: _entry(selected: true)),
       );
     });
   });

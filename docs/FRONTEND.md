@@ -154,7 +154,7 @@ static const _palette = <Color>[
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필) |
+| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 우측 stepper 는 **홈·1·2·?** 라벨 — step 1 dot 은 `Icons.home_rounded` 로 "intro 화면 복귀" 가 직관적. 시트는 화면 맨 아래(`bottom: 0`) 까지 차지하고 height 를 `sheetHeight + bottomInset` 으로 키운다 — 각 panel(`_buildHomeIntroPanel` / `_buildRegionPanel` / `StorySelectionPanel`) 의 자체 양피지 deco 가 nav bar 영역까지 자연스럽게 이어지고, 컨텐츠는 panel Column 마지막의 `SizedBox(bottomInset)` 로 nav bar 위에 위치 (gesture-only 단말은 bottomInset=0 → 기존 동작). 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드(`_SelectionMode.character`) 진입 시 `StoryMapPanel.suppressRegionLabels=true` 로 가나안·시내 광야·애굽 등 검정 캡슐 라벨을 숨겨 인물 path 점선이 가려지지 않게 한다. |
 | ~~LoginScreen~~ | ~~`screens/login_screen.dart`~~ | 삭제됨 — InlineLoginPromptCard로 대체 |
 | ProfileNotesScreen | `screens/profile_notes_screen.dart` | 노트 목록 |
 | ProfileNoteEditorScreen | `screens/profile_note_editor_screen.dart` | 노트 편집 |
@@ -175,9 +175,9 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). region polygon 시각은 `EraPolygonGlowLayer` 로 분리, hit-test 만 투명 `PolygonLayer<Landmark>` 가 담당. |
-| EraPolygonGlowLayer | `widgets/map/era_polygon_glow_layer.dart` | region polygon 시각 전용 layer. **Ancient atlas discovery 양식** — 4-layer (outer glow / parchment radial fill / ink border halo+main / discovery particles) + Catmull-Rom spline 곡선화. era 색 기반, 선택 시 펄스 강조 + edge 따라 빛 입자 twinkle. fantasy atlas / fog-of-war reveal 톤. flutter_map 의 `PolygonLayer` 가 단색 fill 만 지원하므로 별도 `CustomPainter` 레이어. 클릭 hit-test 는 동일 좌표의 투명 PolygonLayer 가 담당. |
-| StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합 |
+| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). region polygon 시각은 `EraPolygonGlowLayer` 로 분리, hit-test 만 투명 `PolygonLayer<Landmark>` 가 담당. **`onMapInteraction`** 콜백 — `_isUserGestureSource` 로 사용자 제스처(드래그·핀치·스크롤·탭) 만 식별해 부모의 hint overlay dismiss 트리거. **`suppressRegionLabels`** prop — 인물 모드에서 검정 캡슐 region 라벨이 path 점선을 가리지 않도록 부모가 토글. 인물 모드 step 3 의 번호 핀(`_NumberedEventPin`) 은 사건에 포함된 선택 인물 색을 모아 `_MultiColorCirclePainter` 로 위→아래 균등 N 등분 띠를 그려 인물별 식별. selected 핀은 character color 위에 노란 outer border 로 강조. |
+| EraPolygonGlowLayer | `widgets/map/era_polygon_glow_layer.dart` | region polygon 시각 전용 layer. **Ancient atlas discovery 양식** — 4-layer (outer glow / parchment radial fill / ink border halo+main / discovery particles) + Catmull-Rom spline 곡선화. era 색 기반, 선택 시 펄스 강조 + edge 따라 빛 입자 twinkle. fantasy atlas / fog-of-war reveal 톤. flutter_map 의 `PolygonLayer` 가 단색 fill 만 지원하므로 별도 `CustomPainter` 레이어. 클릭 hit-test 는 동일 좌표의 투명 PolygonLayer 가 담당. **`EraPolygonEntry.pickerHighlight`** — region picker 단계의 후보 폴리곤이면 outer glow / fill alpha 가 0.06~0.08 부스트되어 "여기를 누르세요" 인상을 강화 (선택 폴리곤이 항상 더 또렷하도록 isSelected 가 우선). |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합. **헤더(`headerOverride`) 는 sticky** — `Column [header, Expanded(CustomScrollView)]` 구조로 사건 카드 스크롤 시 헤더(toggle + stepper) 가 함께 위로 사라지지 않는다. step 3 사건 카드(`EventTimelineRow`) 는 `committedSelectedCharacterCodes` + `colorForCommittedCharacter` 를 그대로 forwarding 해 카드 안 인물 pill 이 지도 path 색과 매칭된다. |
 | CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 이야기 상세 모달 |
@@ -207,6 +207,8 @@ static const _palette = <Color>[
 | PulseHighlight | `widgets/pulse_highlight.dart` | `active` 인 동안 자식 외곽에 1.4s 사이클로 0→1→0 박동하는 골드 glow 를 그리는 래퍼. EventDetailPage 의 "다음 이야기" 카드에 부착해 다음 이동 동선을 시각적으로 유도. |
 | AvatarProgressRing | `widgets/avatar_progress_ring.dart` | 아바타 둘레에 초록 원형 progress 호를 그리는 래퍼 (12시 방향 시계방향, 항상 초록). 옵션 `name` 을 주면 아바타 내부 하단에 솔리드 다크 pill 라벨을 오버레이해 외부 텍스트 라인을 제거. ProfileTabPage 인물 진행도 행에서 LinearProgressIndicator 대체로 사용. |
 | EraPickRows | `widgets/v2/era_pick_rows.dart` | 시대 선택 칩 — 구약/신약 두 줄. HomeIntroPanel + ProfileTabPage 의 "장소로 시작" 탭 공유. `eraIconFor(code)` 도 export. |
+| HomeIntroPanel | `widgets/v2/home_intro_panel.dart` | 첫 화면 "오늘은 성경 어디를 여행해볼까요?" 패널. 두 단계: ① **여행할 시대** (구약/신약 칩, 단일 선택) ② **어떻게 볼까요?** (장소에서 시작 / 인물과 걷기). 시대를 고른 뒤에는 ① 영역(헤더+칩) 이 `AnimatedOpacity` 0.55 로 흐려지고 ② 헤더는 `ink800` + 굵은 글씨로 차별화되어 다음 행동을 유도. 제목/하단 안내 문구는 `FittedBox.scaleDown` + `maxLines:1` 로 좁은 폰에서도 1줄 보장. |
+| MapHintOverlay | `widgets/v2/map_hint_overlay.dart` | 지도 위 흐릿한 검정 패널 안내 문구. 모드별로 다른 메시지: region picker 단계 = "노란 지역을 눌러…", character step 2 = "인물을 골라 「다음」…". 사용자가 지도 제스처/region 선택/character 다음 한 번만 하면 dismiss. `IgnorePointer` 로 감싸 폴리곤·핀 클릭은 그대로 통과. dismiss flag 는 `StoryHomeScreen._mapHintDismissed`. |
 | ProfileMiniMap | `widgets/profile/profile_mini_map.dart` | 프로필 "장소로 시작" 탭의 미니 맵. 선택된 시대의 region 폴리곤을 진행률로 알파 채움(검정→시대컬러), 100% region 은 황금 깃발 마커. 상단에 "정복: X / N" 칩. point-in-polygon 으로 사건↔region 매핑. |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
