@@ -174,6 +174,17 @@ final Map<String, int> bibleRefBookLookup = () {
   return map;
 }();
 
+/// 책 번호(1~66) → 짧은 한글 약어 (예: 1 → "창", 9 → "삼상").
+/// `bibleRefAliasBookLookup` 의 역매핑. events.bible_refs 가 약어를 사용하므로
+/// 현재 책+장 → era 를 찾을 때 필요하다.
+final Map<int, String> bibleBookNoToAlias = () {
+  final map = <int, String>{};
+  bibleRefAliasBookLookup.forEach((alias, bookNo) {
+    map.putIfAbsent(bookNo, () => alias);
+  });
+  return Map<int, String>.unmodifiable(map);
+}();
+
 BibleNavigationTarget? parseBibleNavigationTarget(String? rawRef) {
   if (rawRef == null) {
     return null;
