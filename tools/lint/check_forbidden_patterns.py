@@ -19,7 +19,17 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+DEFAULT_SCAN_DIRS = ("lib", "test", "tools", ".github", ".cursor", ".agents")
+DEFAULT_ROOT_FILES = (
+    ".pre-commit-config.yaml",
+    "pubspec.yaml",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+)
+SCAN_SUFFIXES = {".dart", ".py", ".yaml", ".yml", ".json", ".md"}
 
 # (정규식, 설명, 차단 여부)
 PATTERNS: list[tuple[re.Pattern[str], str, bool]] = [
@@ -44,7 +54,13 @@ PATTERNS: list[tuple[re.Pattern[str], str, bool]] = [
     # Google API key 패턴
     (
         re.compile(r"AIza[0-9A-Za-z_-]{35}"),
-        "Google API key가 노출되어 있습니다. .env로 옮기세요.",
+        "Google API key가 노출되어 있습니다. Firebase client config가 아니라면 .env로 옮기세요.",
+        True,
+    ),
+    # Supabase personal access token / management token.
+    (
+        re.compile(r"sbp_[0-9a-fA-F]{40,}"),
+        "Supabase access token이 코드/설정에 포함되어 있습니다. 로컬 설정이나 secret store로 옮기세요.",
         True,
     ),
     # 이슈 번호 없는 TODO (경고만)
@@ -60,14 +76,17 @@ def files_to_check(args: list[str]) -> list[Path]:
     if args:
         return [REPO_ROOT / a if not Path(a).is_absolute() else Path(a) for a in args]
     targets: list[Path] = []
-    for sub in ("lib", "test", "tools"):
+    for sub in DEFAULT_SCAN_DIRS:
         root = REPO_ROOT / sub
         if not root.exists():
             continue
-        for p in root.rglob("*.dart"):
-            targets.append(p)
-        for p in root.rglob("*.py"):
-            targets.append(p)
+        for p in root.rglob("*"):
+            if p.is_file() and p.suffix in SCAN_SUFFIXES:
+                targets.append(p)
+    for filename in DEFAULT_ROOT_FILES:
+        path = REPO_ROOT / filename
+        if path.exists():
+            targets.append(path)
     return targets
 
 
@@ -97,6 +116,10 @@ def check_file(path: Path) -> tuple[int, int]:
                 continue
             # print( 패턴은 코멘트 라인이면 스킵
             if "print" in pattern.pattern and is_pure_comment:
+                continue
+            # FlutterFire가 생성한 Firebase client apiKey는 public client config다.
+            # Firebase service account JSON/private_key는 이 예외에 해당하지 않는다.
+            if "AIza" in pattern.pattern and path.name == "firebase_options.dart":
                 continue
 
             if pattern.search(line):

@@ -91,6 +91,34 @@ jobs:
       - name: Verify pubspec.yaml asset paths
         run: python3 tools/app/verify_asset_paths.py
 
+  python-tools:
+    name: Python Tools Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Run Python tool tests
+        run: python3 tools/run_unit_tests.py
+
+  edge-functions:
+    name: Supabase Edge Function Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type check Edge Functions
+        run: |
+          deno check \
+            supabase/functions/generate-proposal-character/index.ts \
+            supabase/functions/generate-proposal-scene/index.ts \
+            supabase/functions/send-push/index.ts
+
   code-metrics:
     name: Code Metrics (파일/메소드 크기 제한)
     runs-on: ubuntu-latest
@@ -99,7 +127,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      # NOTE: 현재 기존 코드에 FAIL 6건 있으므로 --ci 없이 보고만.
+      # NOTE: 현재 기존 코드에 차단 기준 초과 항목이 있으므로 --ci 없이 보고만.
       # 기존 FAIL을 해결하면 --ci를 추가해 차단 모드로 전환.
       - name: Check code metrics
         run: python3 tools/lint/check_code_metrics.py

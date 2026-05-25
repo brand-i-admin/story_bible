@@ -1,0 +1,4 @@
+interface:
+  display_name: "리팩터링"
+  short_description: "대형 파일 분리, 추출, 아키텍처 정리"
+  default_prompt: "$refactor 스킬로 의존성을 확인하고, 리팩터링을 단계별로 계획/구현한 뒤 동작을 검증한다."

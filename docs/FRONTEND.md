@@ -1,6 +1,6 @@
 # 프론트엔드 도메인 레퍼런스
 
-> 이 문서는 `$frontend` 스킬이 참조하는 프론트엔드 도메인 가이드이다.
+> 이 문서는 `.agents/skills/frontend` 스킬이 참조하는 프론트엔드 도메인 가이드이다.
 > UI/UX 상세는 `docs/UI_GUIDE.md`를 함께 참조.
 
 ## 1. 파일 범위
@@ -40,7 +40,7 @@ lib/
 - private 멤버 접근 가능 (같은 라이브러리)
 - 코드 변경 0건, 메소드 이동만으로 안전한 분해
 
-자세한 패턴/절차는 `.claude/skills/refactor/SKILL.md` 참조.
+자세한 패턴/절차는 `.agents/skills/refactor/SKILL.md` 참조.
 
 ## 2. 모델 클래스
 

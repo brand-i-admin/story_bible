@@ -25,7 +25,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parents[2]
 LIB_DIR = REPO_ROOT / "lib"
 TEST_DIR = REPO_ROOT / "test"
 

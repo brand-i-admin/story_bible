@@ -213,17 +213,90 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = widget.initialProfile;
-    final initials = profile.nickname.trim().isEmpty
-        ? '?'
-        : profile.nickname.trim().substring(0, 1);
-    final ImageProvider? imageProvider = _selectedBytes != null
-        ? MemoryImage(_selectedBytes!)
-        : ((profile.photoUrl ?? '').trim().isNotEmpty
-              ? NetworkImage(profile.photoUrl!.trim())
-              : null);
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Container(
+          decoration: modalSurfaceDecoration(),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+          child: SingleChildScrollView(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth >= 500;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeader(context),
+                    const SizedBox(height: 14),
+                    _buildResponsiveBody(isWide),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-    final photoCard = Container(
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Expanded(
+          child: Text(
+            '프로필 수정',
+            style: TextStyle(
+              color: Color(0xFF3F2A17),
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: _saving ? null : _saveProfile,
+          style: TextButton.styleFrom(
+            foregroundColor: const Color(0xFF9B5C1E),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            textStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          child: Text(_saving ? '저장 중' : '저장'),
+        ),
+        const SizedBox(width: 8),
+        _CloseButton(
+          enabled: !_saving,
+          onTap: () => Navigator.of(context).pop(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResponsiveBody(bool isWide) {
+    final photoCard = _buildPhotoCard();
+    final formCard = _buildFormCard();
+    if (!isWide) {
+      return Column(
+        children: [photoCard, const SizedBox(height: 14), formCard],
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(width: 156, child: photoCard),
+        const SizedBox(width: 14),
+        Expanded(child: formCard),
+      ],
+    );
+  }
+
+  Widget _buildPhotoCard() {
+    return Container(
       decoration: floatingPanelDecoration(
         color: const Color(0xFFF4E6CF),
         shadowOpacity: 0.06,
@@ -232,47 +305,9 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
-              ),
-              border: Border.all(color: const Color(0xFF8C6743), width: 1.8),
-            ),
-            child: ClipOval(
-              child: imageProvider == null
-                  ? Center(
-                      child: Text(
-                        initials,
-                        style: const TextStyle(
-                          color: AppColors.ink500,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    )
-                  : Image(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) {
-                        return Center(
-                          child: Text(
-                            initials,
-                            style: const TextStyle(
-                              color: AppColors.ink500,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
+          _ProfileImagePreview(
+            initials: _initials(),
+            imageProvider: _imageProvider(),
           ),
           const SizedBox(height: 10),
           SizedBox(
@@ -298,8 +333,10 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
         ],
       ),
     );
+  }
 
-    final formCard = Container(
+  Widget _buildFormCard() {
+    return Container(
       decoration: floatingPanelDecoration(
         color: const Color(0xFFF6EAD4),
         shadowOpacity: 0.05,
@@ -310,169 +347,225 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
         children: [
           _editorSectionLabel('닉네임', subtitle: '다른 사람에게 보이는 이름이에요.'),
           const SizedBox(height: 6),
-          TextField(
+          _NicknameField(
             controller: _nicknameController,
             enabled: !_saving,
-            maxLength: 24,
-            textInputAction: TextInputAction.next,
-            style: const TextStyle(
-              color: AppColors.ink600,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-            ),
-            onChanged: (_) {
-              if (_localError != null) {
-                setState(() {
-                  _localError = null;
-                });
-              }
-            },
             decoration: _editorInputDecoration(hintText: '예: 기도왕, 다윗러버'),
+            onChanged: _clearLocalError,
           ),
           const SizedBox(height: 12),
           _editorSectionLabel('기도제목', subtitle: '함께 기도받고 싶은 내용을 짧게 적어보세요.'),
           const SizedBox(height: 6),
-          TextField(
+          _PrayerField(
             controller: _prayerController,
             enabled: !_saving,
-            maxLength: 120,
-            minLines: 3,
-            maxLines: 4,
-            style: const TextStyle(
-              color: AppColors.ink500,
-              fontSize: 12.8,
-              fontWeight: FontWeight.w700,
-              height: 1.45,
-            ),
-            onChanged: (_) {
-              if (_localError != null) {
-                setState(() {
-                  _localError = null;
-                });
-              }
-            },
             decoration: _editorInputDecoration(
               hintText: '예: 이번 주에 마음이 지치지 않도록 함께 기도해주세요.',
               multiLine: true,
             ),
+            onChanged: _clearLocalError,
           ),
           if (_localError != null) ...[
             const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0x14A63F2D),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0x55A63F2D), width: 1),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Text(
-                _localError!,
-                style: const TextStyle(
-                  color: Color(0xFF8E3626),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  height: 1.4,
-                ),
-              ),
-            ),
+            _ErrorMessageBox(message: _localError!),
           ],
         ],
       ),
     );
+  }
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600),
-        child: Container(
-          decoration: modalSurfaceDecoration(),
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-          child: SingleChildScrollView(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth >= 500;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            '프로필 수정',
-                            style: TextStyle(
-                              color: Color(0xFF3F2A17),
-                              fontSize: 26,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _saving ? null : _saveProfile,
-                          style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF9B5C1E),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 8,
-                            ),
-                            textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          child: Text(_saving ? '저장 중' : '저장'),
-                        ),
-                        const SizedBox(width: 8),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _saving
-                                ? null
-                                : () => Navigator.of(context).pop(),
-                            borderRadius: BorderRadius.circular(14),
-                            child: Ink(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: const Color(0x90FFFFFF),
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: const Color(0xAA8E6F48),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.close_rounded,
-                                color: AppColors.ink300,
-                                size: 22,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    if (isWide)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 156, child: photoCard),
-                          const SizedBox(width: 14),
-                          Expanded(child: formCard),
-                        ],
-                      )
-                    else ...[
-                      photoCard,
-                      const SizedBox(height: 14),
-                      formCard,
-                    ],
-                  ],
-                );
-              },
-            ),
+  String _initials() {
+    final nickname = widget.initialProfile.nickname.trim();
+    return nickname.isEmpty ? '?' : nickname.substring(0, 1);
+  }
+
+  ImageProvider? _imageProvider() {
+    if (_selectedBytes != null) return MemoryImage(_selectedBytes!);
+    final photoUrl = (widget.initialProfile.photoUrl ?? '').trim();
+    return photoUrl.isEmpty ? null : NetworkImage(photoUrl);
+  }
+
+  void _clearLocalError() {
+    if (_localError != null) {
+      setState(() => _localError = null);
+    }
+  }
+}
+
+class _CloseButton extends StatelessWidget {
+  const _CloseButton({required this.enabled, required this.onTap});
+
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: const Color(0x90FFFFFF),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
           ),
+          child: const Icon(
+            Icons.close_rounded,
+            color: AppColors.ink300,
+            size: 22,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileImagePreview extends StatelessWidget {
+  const _ProfileImagePreview({
+    required this.initials,
+    required this.imageProvider,
+  });
+
+  final String initials;
+  final ImageProvider? imageProvider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90,
+      height: 90,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+        ),
+        border: Border.all(color: const Color(0xFF8C6743), width: 1.8),
+      ),
+      child: ClipOval(
+        child: imageProvider == null
+            ? _InitialsFallback(initials: initials)
+            : Image(
+                image: imageProvider!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) =>
+                    _InitialsFallback(initials: initials),
+              ),
+      ),
+    );
+  }
+}
+
+class _InitialsFallback extends StatelessWidget {
+  const _InitialsFallback({required this.initials});
+
+  final String initials;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: AppColors.ink500,
+          fontSize: 28,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _NicknameField extends StatelessWidget {
+  const _NicknameField({
+    required this.controller,
+    required this.enabled,
+    required this.decoration,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final bool enabled;
+  final InputDecoration decoration;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      enabled: enabled,
+      maxLength: 24,
+      textInputAction: TextInputAction.next,
+      style: const TextStyle(
+        color: AppColors.ink600,
+        fontSize: 14,
+        fontWeight: FontWeight.w800,
+      ),
+      onChanged: (_) => onChanged(),
+      decoration: decoration,
+    );
+  }
+}
+
+class _PrayerField extends StatelessWidget {
+  const _PrayerField({
+    required this.controller,
+    required this.enabled,
+    required this.decoration,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final bool enabled;
+  final InputDecoration decoration;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      enabled: enabled,
+      maxLength: 120,
+      minLines: 3,
+      maxLines: 4,
+      style: const TextStyle(
+        color: AppColors.ink500,
+        fontSize: 12.8,
+        fontWeight: FontWeight.w700,
+        height: 1.45,
+      ),
+      onChanged: (_) => onChanged(),
+      decoration: decoration,
+    );
+  }
+}
+
+class _ErrorMessageBox extends StatelessWidget {
+  const _ErrorMessageBox({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0x14A63F2D),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x55A63F2D), width: 1),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Text(
+        message,
+        style: const TextStyle(
+          color: Color(0xFF8E3626),
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          height: 1.4,
         ),
       ),
     );

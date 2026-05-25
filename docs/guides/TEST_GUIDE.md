@@ -338,6 +338,7 @@ flutter test --coverage              # coverage/lcov.info 생성
 - `flutter test` (전체 테스트)
 - `tools/app/verify_asset_paths.py` (pubspec.yaml 자산 경로 검증)
 - `tools/lint/check_code_metrics.py` (파일 ≤1500줄, 메소드 ≤200줄)
+- `tools/run_unit_tests.py` (Python 도구 단위 테스트)
 
 ### 8.3 GitHub Actions (`.github/workflows/flutter_ci.yml`)
 
@@ -368,7 +369,7 @@ push/PR 시 cloud 실행:
 1. 해당 영역의 디렉토리(`test/models/`, `test/widgets/` 등)에 파일 생성 — `lib/` 미러링.
 2. `flutter_test` import + 필요시 `mocktail`.
 3. 기존 같은 영역 파일을 참고해 group/test 명을 한국어로 자연스럽게 작성.
-4. 기존 테스트 **수정/삭제** 는 `CLAUDE.md` 의 TDD 규칙에 따라 사용자 확인 필수.
+4. 기존 테스트 **수정/삭제** 는 `AGENTS.md` 의 TDD 규칙에 따라 사유를 명확히 하고 범위를 작게 유지.
 5. `flutter test` 로 그린 확인 → commit.
 
-자세한 TDD 규칙은 [WORKFLOW_GUIDE.md §5](WORKFLOW_GUIDE.md) 와 [CLAUDE.md](../../CLAUDE.md) 의 "TDD 규칙" 섹션 참조.
+자세한 TDD 규칙은 [WORKFLOW_GUIDE.md §5](WORKFLOW_GUIDE.md) 와 [AGENTS.md](../../AGENTS.md) 의 "TDD And Tests" 섹션 참조.

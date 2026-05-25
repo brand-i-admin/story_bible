@@ -18,8 +18,6 @@ supabase/seeds
 .swiftpm/
 migrate_working_dir/
 
-pubspec.lock
-
 # IntelliJ related
 *.iml
 *.ipr
@@ -83,6 +81,10 @@ app.*.map.json
 
 # Supabase
 /supabase/.temp
+
+# Local agent/editor settings
+.claude/settings.local.json
+.cursor/mcp.local.json
 
 # Generated/large media — kept out of git
 assets/story_images/

@@ -1,0 +1,4 @@
+interface:
+  display_name: "백엔드"
+  short_description: "Supabase 스키마, RLS, RPC, Edge Function, Repository 작업"
+  default_prompt: "$backend 스킬로 Supabase/backend 컨텍스트를 확인하고, 구현을 수정한 뒤 검증한다."

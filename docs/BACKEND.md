@@ -1,8 +1,8 @@
 # 백엔드 도메인 레퍼런스
 
-> 이 문서는 `$backend` 스킬이 참조하는 백엔드 도메인 가이드이다.
-> Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)가 설치되어 있으면
-> 본 프로젝트의 규칙(아래)과 공식 가이드가 함께 적용된다.
+> 이 문서는 `.agents/skills/backend` 스킬이 참조하는 백엔드 도메인 가이드이다.
+> Supabase 관련 최신 동작이 중요하면 공식 Supabase 문서나 사용 가능한 Supabase
+> 도구로 확인하고, 본 프로젝트의 규칙(아래)을 함께 적용한다.
 
 ## 1. 파일 범위
 
@@ -10,7 +10,7 @@
 db_init.sql                            # 스키마 정의 — 단일 진실 소스
 supabase/
 ├── migrations/
-│   └── 20260331_user_personal_features.sql
+│   └── 20260512_1144_pg_cron_dispatch_and_schedules.sql
 ├── 200_stories/                       # 생성된 시드 SQL
 │   ├── 200_stories_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
 │   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
@@ -561,6 +561,15 @@ supabase functions serve \
 ```
 
 브라우저/Flutter 에서 호출 시 base URL 을 로컬 것으로 바꿔 테스트.
+
+배포 전 타입 체크:
+
+```bash
+tools/supabase/check_edge_functions.sh
+```
+
+이 스크립트는 `generate-proposal-character`, `generate-proposal-scene`,
+`send-push` 의 `index.ts` 를 모두 `deno check` 한다.
 
 ## 8. 마이그레이션 관리 규칙 (ADR-023, 2026-05-12 개정)
 

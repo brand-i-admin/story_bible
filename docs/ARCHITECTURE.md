@@ -261,16 +261,16 @@ stories JSON (소스 — 각 항목에 story_index 직접 박힘)
   └→ build_krv_seed_sql.py → krv_bible_verses.sql (독립)
 ```
 
-## 6. 서브에이전트 아키텍처
+## 6. Codex 스킬 아키텍처
 
-도메인별 레퍼런스 MD + Claude 스킬로 컨텍스트를 분리:
+도메인별 레퍼런스 MD + Codex 프로젝트 스킬로 컨텍스트를 분리:
 
 | 도메인 | 레퍼런스 | 스킬 | 파일 범위 |
 |--------|----------|------|----------|
-| 프론트엔드 | `docs/FRONTEND.md` | `$frontend` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
-| 백엔드 | `docs/BACKEND.md` | `$backend` | `db_init.sql`, `supabase/`, `lib/data/` |
-| 데이터 파이프라인 | `docs/DATA_PIPELINE.md` | `$data-pipeline` | `tools/*.py`, `assets/`, `Makefile` |
-| 테스트 | `docs/TESTING.md` | `$testing` | `test/`, `.pre-commit-config.yaml` |
+| 프론트엔드 | `docs/FRONTEND.md`, `docs/UI_GUIDE.md` | `.agents/skills/frontend` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
+| 백엔드 | `docs/BACKEND.md` | `.agents/skills/backend` | `db_init.sql`, `supabase/`, `lib/data/` |
+| 데이터 파이프라인 | `docs/DATA_PIPELINE.md` | `.agents/skills/data-pipeline` | `tools/`, `assets/`, `Makefile` |
+| 테스트 | `docs/TESTING.md`, `docs/guides/TEST_GUIDE.md` | `.agents/skills/testing` | `test/`, `tools/**/test_*.py`, `.pre-commit-config.yaml` |
 
 ## 7. 환경 설정
 

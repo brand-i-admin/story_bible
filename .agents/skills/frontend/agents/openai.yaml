@@ -1,0 +1,4 @@
+interface:
+  display_name: "프론트엔드"
+  short_description: "Flutter UI, 상태, 모델, 테마 작업"
+  default_prompt: "$frontend 스킬로 Flutter UI 컨텍스트를 확인하고, 구현을 수정한 뒤 검증한다."

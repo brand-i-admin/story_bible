@@ -1,12 +1,12 @@
 # 테스트 도메인 레퍼런스
 
-> 이 문서는 `$testing` 스킬이 참조하는 테스트 전략 가이드이다.
+> 이 문서는 `.agents/skills/testing` 스킬이 참조하는 테스트 전략 가이드이다.
 
 ## 1. 파일 범위
 
 ```
 test/
-├── widget_test.dart           # 기존 sanity test (1+1=2)
+├── widget_test.dart           # Flutter sanity test
 ├── models/                    # 모델 단위 테스트
 ├── state/                     # Controller/Provider 테스트
 ├── data/                      # Repository 테스트 (mock)
@@ -15,6 +15,7 @@ test/
 .pre-commit-config.yaml        # pre-commit/pre-push 훅
 analysis_options.yaml           # 린트 규칙
 pubspec.yaml                   # dev_dependencies
+tools/**/test_*.py             # Python 도구 단위 테스트
 ```
 
 ## 2. 테스트 전략
@@ -160,6 +161,15 @@ void main() {
 #### pre-push 단계 (푸시 시)
 - `flutter analyze` — 린트 검사
 - `flutter test` — 전체 테스트
+- `verify-asset-paths` — pubspec assets 경로 검증
+- `verify-polygons-contain-events` — 사건 좌표가 region polygon 안에 있는지 검증
+- `python-tools-test` — `tools/**/test_*.py` 단위 테스트
+- `code-metrics` — 파일/메소드 크기 보고
+
+#### 수동 로컬 검증
+- `tools/supabase/check_edge_functions.sh` — Deno 로 Supabase Edge Function
+  `index.ts` 타입 체크. CI 의 edge-functions job 과 같은 목적이며, Deno/npm
+  캐시가 없으면 첫 실행 때 네트워크가 필요하다.
 
 ### 실행 명령어
 
@@ -174,6 +184,8 @@ pre-commit run --hook-stage pre-push --all-files
 flutter analyze
 flutter test
 flutter test --coverage  # 커버리지 포함
+python3 tools/run_unit_tests.py
+tools/supabase/check_edge_functions.sh
 ```
 
 ## 6. 린트 규칙
@@ -183,8 +195,7 @@ flutter test --coverage  # 커버리지 포함
 include: package:flutter_lints/flutter.yaml
 ```
 
-- Flutter 공식 추천 린트 세트 사용
-- 추가 커스텀 규칙 없음 (필요 시 추가)
+- Flutter 공식 추천 린트 세트 + `analysis_options.yaml`의 프로젝트 추가 규칙 사용
 
 ## 7. 테스트 디렉토리 명명 규칙
 
@@ -223,7 +234,8 @@ test/
 
 - `test/` 파일은 기준이 2배로 완화
 - `part of` 파일은 부모에 귀속되므로 자동 제외
-- CI에서 자동 실행 (`--ci` 플래그 시 차단 모드)
+- CI에서 보고 모드로 자동 실행한다. 기존 차단 기준 초과 항목을 정리한 뒤
+  `--ci` 플래그를 추가하면 차단 모드로 전환할 수 있다.
 
 ```bash
 python3 tools/lint/check_code_metrics.py        # 보고 모드
