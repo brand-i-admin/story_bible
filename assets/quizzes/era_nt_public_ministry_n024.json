@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 24,
   "story_title": "체포: 배신의 입맞춤",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 26:56 — '이에 제자들이 다 예수를 버리고 도망하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님 체포 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「체포: 배신의 입맞춤」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마가복음",
-        "로마서",
-        "갈라디아서"
+        "유다의 배신으로 예수님이 체포되고 제자들은 흩어진다.",
+        "베들레헴에서 예수님이 태어나고 목자들이 기쁜 소식을 듣는다.",
+        "마침내 바로가 떠나라 말하고, 이스라엘은 급히 길을 나선다."
       ],
       "answer_index": 0,
-      "explanation": "막 14:43-52에 예수님 체포 기사가 기록됨"
+      "explanation": "막 14:43 — '말씀하실 때에 곧 열둘 중의 하나인 유다가 왔는데 대제사장들과 서기관들과 장로들에게서 파송된 무리가 검과 몽치를 가지고 그와 함께 하였더라'"
     }
   ]
 }

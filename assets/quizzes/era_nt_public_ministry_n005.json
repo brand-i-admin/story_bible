@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 5,
   "story_title": "어린 예수의 성전 사건",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 2:46 — '사흘 후에 성전에서 만나니 그가 선생들 중에 앉으사 듣기도 하시며 묻기도 하시니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "소년 예수의 성전 사건이 기록된 성경 책은 어디입니까?",
+      "question": "「어린 예수의 성전 사건」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "누가복음",
-        "마태복음",
-        "마가복음"
+        "소년 예수는 성전에서 율법교사들과 대화하며 자신의 정체를 드러낸다.",
+        "다윗은 언약궤가 들어올 때 온 마음으로 기뻐하며 예배한다.",
+        "야곱은 라반의 집에서 번성하고 라반과 갈등이 깊어진다."
       ],
       "answer_index": 0,
-      "explanation": "눅 2:41-52에 소년 예수의 성전 방문과 성장 기사가 기록됨"
+      "explanation": "눅 2:41 — '그 부모가 해마다 유월절을 당하면 예루살렘으로 가더니'"
     }
   ]
 }

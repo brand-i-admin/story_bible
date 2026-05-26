@@ -72,16 +72,19 @@ class _MarkerWithSelection {
 }
 
 /// 사건 핀 — 동그라미 + 안에 큰 순서 번호. 핀 모양/장소 라벨 모두 제거.
-/// 선택 시 더 큰 사이즈 + 노란 색 (현재 이야기). 미선택은 갈색 동그라미.
+/// 감정 새김이 있으면 같은 지름 안에 완료 톤을 주고, 작은 감정 아이콘 배지를
+/// 붙여 숫자 중심 정렬은 그대로 유지한다.
 class _NumberedEventPin extends StatelessWidget {
   const _NumberedEventPin({
     required this.number,
     required this.isSelected,
     this.characterColors = const <Color>[],
+    this.emotionKey,
   });
 
   final int number;
   final bool isSelected;
+  final String? emotionKey;
 
   /// 사건에 포함된 "사용자가 고른 인물" 의 색 리스트. 비어 있으면 기존
   /// 단색 fill (selected → 노랑, else → 갈색). 1+ 면 [_MultiColorCirclePainter]
@@ -96,18 +99,108 @@ class _NumberedEventPin extends StatelessWidget {
     final fillColor = isSelected
         ? const Color(0xFFE8A33D) // 노랑 (현재 이야기)
         : const Color(0xFF6B4A2A); // 갈색 (일반 사건)
-    final size = isSelected ? 16.0 : 14.0;
+    final hasEmotion = emotionKey != null && emotionKey!.isNotEmpty;
+    final size = hasEmotion
+        ? (isSelected ? 27.0 : 25.0)
+        : (isSelected ? 16.0 : 14.0);
+    final orderBadgeSize = hasEmotion ? 12.0 : 0.0;
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          if (hasEmotion)
+            EmotionBadgeIcon(
+              emotionKey: emotionKey!,
+              size: size,
+              iconSize: size * 0.58,
+              borderColor: isSelected
+                  ? const Color(0xFFFFE9B0)
+                  : const Color(0xFFE0B465),
+              elevation: false,
+            )
+          else
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                // hasColors 면 fill 은 painter 가 담당 → 컨테이너 배경 투명.
+                color: hasColors ? null : fillColor,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? const Color(0xFFFFE9B0) : Colors.white,
+                  width: isSelected ? 1.6 : 1.0,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x33000000),
+                    blurRadius: 2,
+                    offset: Offset(0, 1),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (hasColors)
+                    ClipOval(
+                      child: SizedBox(
+                        width: size,
+                        height: size,
+                        child: CustomPaint(
+                          painter: _MultiColorCirclePainter(
+                            colors: characterColors,
+                          ),
+                        ),
+                      ),
+                    ),
+                  Text(
+                    '$number',
+                    style: TextStyle(
+                      fontSize: isSelected ? 9 : 8,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      height: 1.0,
+                      shadows: hasColors
+                          ? const [
+                              Shadow(color: Color(0xCC000000), blurRadius: 1.6),
+                            ]
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (hasEmotion)
+            Positioned(
+              right: -2,
+              bottom: -2,
+              child: _TinyOrderBadge(number: number, size: orderBadgeSize),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TinyOrderBadge extends StatelessWidget {
+  const _TinyOrderBadge({required this.number, required this.size});
+
+  final int number;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        // hasColors 면 fill 은 painter 가 담당 → 컨테이너 배경 투명.
-        color: hasColors ? null : fillColor,
+        color: const Color(0xFF2F9462),
         shape: BoxShape.circle,
-        border: Border.all(
-          color: isSelected ? const Color(0xFFFFE9B0) : Colors.white,
-          width: isSelected ? 1.4 : 1.0,
-        ),
+        border: Border.all(color: AppColors.greenRim, width: 0.9),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33000000),
@@ -117,32 +210,14 @@ class _NumberedEventPin extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (hasColors)
-            ClipOval(
-              child: SizedBox(
-                width: size,
-                height: size,
-                child: CustomPaint(
-                  painter: _MultiColorCirclePainter(colors: characterColors),
-                ),
-              ),
-            ),
-          Text(
-            '$number',
-            style: TextStyle(
-              fontSize: isSelected ? 9 : 8,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
-              height: 1.0,
-              shadows: hasColors
-                  ? const [Shadow(color: Color(0xCC000000), blurRadius: 1.6)]
-                  : null,
-            ),
-          ),
-        ],
+      child: Text(
+        '$number',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 7,
+          fontWeight: FontWeight.w900,
+          height: 1.0,
+        ),
       ),
     );
   }

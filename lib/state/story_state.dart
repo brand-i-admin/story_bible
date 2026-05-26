@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/character.dart';
 import '../models/era.dart';
 import '../models/era_boundary.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 
 /// 시대 선택 후 사용자가 선택할 수 있는 두 가지 탐색 모드.
@@ -30,6 +32,9 @@ class StoryState {
     this.bibleReadEventIds = const {},
     this.quizCompletedEventIds = const {},
     this.lastQuizScores = const {},
+    this.quizAttemptSummaries = const {},
+    this.eventEmotionMarks = const {},
+    this.savedEventIds = const {},
     this.weeklyQuizBibleReadEventIds = const {},
     this.weeklyQuizCompletedEventIds = const {},
     this.weeklyQuizLastScores = const {},
@@ -82,6 +87,16 @@ class StoryState {
   /// 가장 최근 퀴즈 결과 (eventId → "맞춘수/총문제"). UI 표시용.
   final Map<String, ({int correct, int total})> lastQuizScores;
 
+  /// 가장 최근 이야기별 퀴즈 풀이 결과. 오답/헷갈림이 있으면 프로필과 카드에서
+  /// 복습 대상으로 보여 준다.
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+
+  /// 사용자가 이야기별로 지도 위에 새긴 감정. eventId → 감정/메모.
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+
+  /// 사용자가 별표로 저장한 이야기 id 셋.
+  final Set<String> savedEventIds;
+
   /// 주간 퀴즈 — 이번 주에 본문 읽기 완료한 사건 ID. 프로필 진행도와 독립.
   /// week_key 가 바뀌면 (다음 주) 자동으로 비워진다.
   final Set<String> weeklyQuizBibleReadEventIds;
@@ -123,6 +138,9 @@ class StoryState {
     Set<String>? bibleReadEventIds,
     Set<String>? quizCompletedEventIds,
     Map<String, ({int correct, int total})>? lastQuizScores,
+    Map<String, QuizAttemptSummary>? quizAttemptSummaries,
+    Map<String, EventEmotionMark>? eventEmotionMarks,
+    Set<String>? savedEventIds,
     Set<String>? weeklyQuizBibleReadEventIds,
     Set<String>? weeklyQuizCompletedEventIds,
     Map<String, ({int correct, int total})>? weeklyQuizLastScores,
@@ -165,6 +183,9 @@ class StoryState {
       quizCompletedEventIds:
           quizCompletedEventIds ?? this.quizCompletedEventIds,
       lastQuizScores: lastQuizScores ?? this.lastQuizScores,
+      quizAttemptSummaries: quizAttemptSummaries ?? this.quizAttemptSummaries,
+      eventEmotionMarks: eventEmotionMarks ?? this.eventEmotionMarks,
+      savedEventIds: savedEventIds ?? this.savedEventIds,
       weeklyQuizBibleReadEventIds:
           weeklyQuizBibleReadEventIds ?? this.weeklyQuizBibleReadEventIds,
       weeklyQuizCompletedEventIds:

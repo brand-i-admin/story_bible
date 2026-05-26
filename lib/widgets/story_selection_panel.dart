@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/character.dart';
 import '../models/era.dart';
+import '../models/event_emotion_mark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../state/story_controller.dart';
 import '../theme/tokens.dart';
@@ -45,6 +47,14 @@ class StorySelectionPanel extends StatefulWidget {
     required this.colorForCommittedCharacter,
     required this.events,
     required this.completedEventIds,
+    this.eventEmotionMarks = const {},
+    this.quizAttemptSummaries = const {},
+    this.celebrationEventId,
+    this.celebrationStampLabel,
+    this.celebrationNonce = 0,
+    this.onCelebrationComplete,
+    this.quizReviewEventIds = const <String>{},
+    this.quizConfusedEventIds = const <String>{},
     required this.draftDisplayedEventIds,
     required this.committedDisplayedEventIds,
     required this.onToggleDisplayedEvent,
@@ -87,6 +97,14 @@ class StorySelectionPanel extends StatefulWidget {
   /// globalRank 순서로 전달받는다 (부모가 정렬).
   final List<StoryEvent> events;
   final Set<String> completedEventIds;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final String? celebrationEventId;
+  final String? celebrationStampLabel;
+  final int celebrationNonce;
+  final VoidCallback? onCelebrationComplete;
+  final Set<String> quizReviewEventIds;
+  final Set<String> quizConfusedEventIds;
 
   /// Step 3 체크박스의 "현재 드래프트 선택" 집합 (아직 커밋 전).
   final Set<String> draftDisplayedEventIds;
@@ -376,6 +394,14 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           charactersByCode: charactersByCode,
           selectedEventId: selectedEventId,
           completedEventIds: widget.completedEventIds,
+          eventEmotionMarks: widget.eventEmotionMarks,
+          quizAttemptSummaries: widget.quizAttemptSummaries,
+          celebrationEventId: widget.celebrationEventId,
+          celebrationStampLabel: widget.celebrationStampLabel,
+          celebrationNonce: widget.celebrationNonce,
+          onCelebrationComplete: widget.onCelebrationComplete,
+          quizReviewEventIds: widget.quizReviewEventIds,
+          quizConfusedEventIds: widget.quizConfusedEventIds,
           onTapEvent: (event) => widget.onOpenEventDetail?.call(event),
           // SliverToBoxAdapter 안 — fixed height 필요.
           rowHeight: 248,

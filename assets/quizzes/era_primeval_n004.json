@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 4,
   "story_title": "추방: 동산 밖으로",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 3:16 — '내가 네게 잉태하는 고통을 크게 더하리니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에덴 추방 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "「추방: 동산 밖으로」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "3장",
-        "5장",
-        "11장"
+        "죄의 결과로 사람은 에덴을 떠나고, 길은 막힌다.",
+        "아브라함의 두려움이 다시 거짓을 낳지만 하나님이 사라를 지키신다.",
+        "데살로니가에서 복음이 퍼지자 반대가 폭동으로 번진다."
       ],
       "answer_index": 0,
-      "explanation": "창 3:14-24에 뱀의 저주와 에덴 추방 기사가 기록됨"
+      "explanation": "창 3:14 — '여호와 하나님이 뱀에게 이르시되 네가 이렇게 하였으니 네가 모든 육축과 들의 모든 짐승보다 더 욱 저주를 받아 배로 다니고 종신토록 흙을 먹을지니라'"
     }
   ]
 }

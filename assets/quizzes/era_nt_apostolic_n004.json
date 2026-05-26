@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 4,
   "story_title": "아나니아와 삽비라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 5:11 — '온 교회와 이 일을 듣는 사람들이 다 크게 두려워하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "아나니아와 삽비라 사건이 기록된 성경 책은 어디입니까?",
+      "question": "「아나니아와 삽비라」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "고린도전서",
-        "빌립보서"
+        "거짓은 공동체를 흔들고, 사건은 거룩함의 경고가 된다.",
+        "다윗은 점진적으로 왕이 되어 마침내 온 이스라엘을 다스린다.",
+        "예수님은 선한 사마리아인 비유로 참된 이웃 사랑이 무엇인지 가르치신다."
       ],
       "answer_index": 0,
-      "explanation": "행 5:1-11에 아나니아와 삽비라 사건이 기록됨"
+      "explanation": "행 5:1 — '아나니아라 하는 사람이 그 아내 삽비라로 더불어 소유를 팔아'"
     }
   ]
 }

@@ -9,6 +9,7 @@ import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/data/user_repository.dart';
 import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
+import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
@@ -22,6 +23,25 @@ class _MockUserRepository extends Mock implements UserRepository {}
 class _MockSupabaseClient extends Mock implements SupabaseClient {}
 
 class _MockGoTrueClient extends Mock implements GoTrueClient {}
+
+const _fallbackEmotionMark = EventEmotionMark(
+  eventId: 'fallback',
+  emotionKey: 'joy',
+  emotionLabel: '기쁨',
+  emotionEmoji: '✨',
+  note: '',
+  updatedAt: null,
+);
+
+User _user({required String id}) {
+  return User(
+    id: id,
+    appMetadata: const {},
+    userMetadata: const {},
+    aud: 'authenticated',
+    createdAt: DateTime(2026).toIso8601String(),
+  );
+}
 
 Era _era({
   required String id,

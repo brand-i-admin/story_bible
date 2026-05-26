@@ -486,17 +486,19 @@ class _QuizResultDialog extends StatelessWidget {
     required this.questions,
     required this.selectedAnswers,
     required this.score,
+    required this.confusedCount,
   });
 
   final StoryEvent event;
   final List<QuizQuestion> questions;
   final List<int?> selectedAnswers;
   final int score;
+  final int confusedCount;
 
   @override
   Widget build(BuildContext context) {
     final total = questions.length;
-    final wrong = total - score;
+    final wrong = total - score - confusedCount;
     final didPass = score == total;
     final headerColor = didPass
         ? const Color(0xFF1F7A3A)
@@ -593,9 +595,15 @@ class _QuizResultDialog extends StatelessWidget {
                           ),
                           _ScorePill(
                             label: '오답',
-                            count: wrong,
+                            count: wrong < 0 ? 0 : wrong,
                             color: const Color(0xFFB0392F),
                           ),
+                          if (confusedCount > 0)
+                            _ScorePill(
+                              label: '헷갈림',
+                              count: confusedCount,
+                              color: const Color(0xFFB58A47),
+                            ),
                         ],
                       ),
                     ),
@@ -692,8 +700,11 @@ class _QuizReviewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCorrect = userAnswer == question.answerIndex;
+    final isConfused = question.isConfusedChoiceIndex(userAnswer);
     final accent = isCorrect
         ? const Color(0xFF1F7A3A)
+        : isConfused
+        ? const Color(0xFFB58A47)
         : const Color(0xFFB0392F);
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -733,7 +744,11 @@ class _QuizReviewItem extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                isCorrect ? '정답' : '오답',
+                isCorrect
+                    ? '정답'
+                    : isConfused
+                    ? '헷갈렸어요'
+                    : '오답',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,

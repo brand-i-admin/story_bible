@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 22,
   "story_title": "최후의 만찬",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 14:24 — '이것은 많은 사람을 위하여 흘리는 나의 피 곧 언약의 피니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "최후의 만찬 직후에 일어난 사건은 무엇입니까?",
+      "question": "「최후의 만찬」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "겟세마네 기도",
-        "빈 무덤 발견",
-        "오순절 성령 강림"
+        "예수님은 떡과 잔으로 새 언약을 세우시고 배신을 예고하신다.",
+        "사람은 에덴에서 돌보고 지키는 사명을 받는다.",
+        "자기 이름을 세우려던 계획은 언어의 혼잡으로 멈춘다."
       ],
       "answer_index": 0,
-      "explanation": "막 14:26-32 — 찬미 후 감람 산으로 나가 겟세마네에서 기도하심"
+      "explanation": "막 14:12 — '무교절의 첫 날 곧 유월절 양 잡는 날에 제자들이 예수께 여짜오되 우리가 어디로 가서 선생님으 로 유월절을 잡수시게 예비하기를 원하시나이까 하매'"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-08T11:08:19+00:00",
+  "generated_at": "2026-05-26T07:37:53+00:00",
   "total_quiz_files": 168,
   "total_events": 168,
   "total_questions": 504,
@@ -163,12 +163,6 @@
       "length": 63
     },
     {
-      "filename": "era_exodus_n004.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 41
-    },
-    {
       "filename": "era_exodus_n005.json",
       "display_order": 0,
       "field": "question",
@@ -187,12 +181,6 @@
       "length": 23
     },
     {
-      "filename": "era_exodus_n006.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 42
-    },
-    {
       "filename": "era_exodus_n007.json",
       "display_order": 1,
       "field": "choices[0]",
@@ -203,12 +191,6 @@
       "display_order": 1,
       "field": "choices[0]",
       "length": 26
-    },
-    {
-      "filename": "era_exodus_n008.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 41
     },
     {
       "filename": "era_exodus_n015.json",
@@ -269,6 +251,12 @@
       "display_order": 1,
       "field": "explanation",
       "length": 67
+    },
+    {
+      "filename": "era_monarchy_n004.json",
+      "display_order": 2,
+      "field": "explanation",
+      "length": 158
     },
     {
       "filename": "era_monarchy_n005.json",
@@ -775,18 +763,6 @@
       "length": 22
     },
     {
-      "filename": "era_nt_public_ministry_n006.json",
-      "display_order": 2,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_public_ministry_n008.json",
-      "display_order": 2,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
       "filename": "era_nt_public_ministry_n010.json",
       "display_order": 1,
       "field": "choices[0]",
@@ -797,12 +773,6 @@
       "display_order": 1,
       "field": "choices[0]",
       "length": 27
-    },
-    {
-      "filename": "era_nt_public_ministry_n014.json",
-      "display_order": 2,
-      "field": "choices[0]",
-      "length": 22
     },
     {
       "filename": "era_nt_public_ministry_n017.json",
@@ -847,12 +817,6 @@
       "length": 42
     },
     {
-      "filename": "era_patriarch_n005.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 41
-    },
-    {
       "filename": "era_patriarch_n007.json",
       "display_order": 0,
       "field": "explanation",
@@ -887,12 +851,6 @@
       "display_order": 1,
       "field": "choices[0]",
       "length": 22
-    },
-    {
-      "filename": "era_patriarch_n011.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 43
     },
     {
       "filename": "era_patriarch_n012.json",
@@ -955,12 +913,6 @@
       "length": 21
     },
     {
-      "filename": "era_patriarch_n017.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 43
-    },
-    {
       "filename": "era_patriarch_n018.json",
       "display_order": 0,
       "field": "question",
@@ -971,12 +923,6 @@
       "display_order": 1,
       "field": "explanation",
       "length": 69
-    },
-    {
-      "filename": "era_patriarch_n018.json",
-      "display_order": 2,
-      "field": "question",
-      "length": 41
     },
     {
       "filename": "era_patriarch_n019.json",

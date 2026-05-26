@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 23,
   "story_title": "3차 선교(2): 마게도냐—교회를 굳게 하다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 20:2 — '그 지경으로 다녀가며 여러 말로 제자들에게 권하고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바울의 마게도냐 순회 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「3차 선교(2): 마게도냐—교회를 굳게 하다」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "고린도후서",
-        "빌립보서"
+        "바울은 마게도냐를 돌며 성도들을 격려하고 공동체를 세운다.",
+        "상식을 깨는 순종의 행진 끝에 성벽이 무너진다.",
+        "룻은 이삭을 줍다 보아스를 만나고, 보호와 은혜를 경험한다."
       ],
       "answer_index": 0,
-      "explanation": "행 20:1-2에 바울의 마게도냐 순회 기사가 기록됨"
+      "explanation": "행 20:1 — '소요가 그치매 바울이 제자들을 불러 권한 후에 작별하고 떠나 마게도냐로 가니라'"
     }
   ]
 }

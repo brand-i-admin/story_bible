@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 16,
   "story_title": "베드로의 고백과 수난 예고",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 8:32 — '베드로가 예수를 붙들고 간하매'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "베드로의 고백 사건이 기록된 성경 책은 어디입니까?",
+      "question": "「베드로의 고백과 수난 예고」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마태복음",
-        "사도행전",
-        "갈라디아서"
+        "베드로의 고백 이후 예수님은 십자가의 길을 처음으로 분명히 예고하신다.",
+        "바로의 꿈을 해석한 요셉은 애굽의 총리로 세워진다.",
+        "적은 수의 300명이 공포를 뒤집는 소리로 승리를 만든다."
       ],
       "answer_index": 0,
-      "explanation": "마 16:13-23에 베드로의 고백과 수난 예고가 기록됨"
+      "explanation": "막 8:27 — '예수와 제자들이 가이사랴 빌립보 여러 마을로 나가실새 노중에서 제자들에게 물어 가라사대 사람 들이 나를 누구라고 하느냐'"
     }
   ]
 }

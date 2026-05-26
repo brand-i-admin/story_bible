@@ -1,6 +1,6 @@
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
-// 프로필 좌측 패널 (아바타/헤더/콘텐츠 탭/노트·말씀·기도 미리보기).
+// 프로필 좌측 패널 (아바타/헤더/콘텐츠 탭/기록·기도·저장·말씀 미리보기).
 part of '../profile_tab_page.dart';
 
 extension ProfileLeftPanelExt on ProfileTabPageState {
@@ -64,16 +64,17 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Widget _buildProfileContentTabs() {
     final selectedIndex = switch (_profileContentTab) {
-      _ProfileContentTab.prayer => 0,
-      _ProfileContentTab.notes => 1,
-      _ProfileContentTab.verses => 2,
+      _ProfileContentTab.records => 0,
+      _ProfileContentTab.prayer => 1,
+      _ProfileContentTab.saved => 2,
+      _ProfileContentTab.verses => 3,
     };
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final tabBarWidth = math.min(constraints.maxWidth, 292.0);
-        final segmentWidth = tabBarWidth / 3;
-        final indicatorWidth = math.min(62.0, segmentWidth - 18);
+        final tabBarWidth = math.min(constraints.maxWidth, 336.0);
+        final segmentWidth = tabBarWidth / 4;
+        final indicatorWidth = math.min(54.0, segmentWidth - 14);
         final indicatorLeft =
             segmentWidth * selectedIndex +
             ((segmentWidth - indicatorWidth) / 2);
@@ -114,14 +115,20 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                       children: [
                         Expanded(
                           child: _profileContentTabButton(
+                            label: '기록',
+                            tab: _ProfileContentTab.records,
+                          ),
+                        ),
+                        Expanded(
+                          child: _profileContentTabButton(
                             label: '기도',
                             tab: _ProfileContentTab.prayer,
                           ),
                         ),
                         Expanded(
                           child: _profileContentTabButton(
-                            label: '노트',
-                            tab: _ProfileContentTab.notes,
+                            label: '저장',
+                            tab: _ProfileContentTab.saved,
                           ),
                         ),
                         Expanded(
@@ -184,7 +191,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 2, 2, 0),
       child: switch (_profileContentTab) {
-        _ProfileContentTab.notes => _buildProfileNotesTabBody(),
+        _ProfileContentTab.records => _buildProfileRecordsTabBody(),
+        _ProfileContentTab.saved => _buildProfileSavedStoriesTabBody(),
         _ProfileContentTab.verses => _buildProfileVersesTabBody(),
         _ProfileContentTab.prayer => _buildProfilePrayerTabBody(
           profile: profile,
@@ -194,36 +202,64 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Widget _buildProfileNotesTabBody() {
+  Widget _buildProfileRecordsTabBody() {
+    final state = ref.watch(storyControllerProvider);
+    final stats = buildProfileQuizStats(state.quizAttemptSummaries);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _ProfileQuizStatsStrip(
+          stats: stats,
+          selected: null,
+          onTapWrong: () {
+            _openProfileQuizReviewDialog(
+              filter: _ProfileQuizReviewFilter.wrong,
+              eventIds: stats.wrongEventIds,
+            );
+          },
+          onTapConfused: () {
+            _openProfileQuizReviewDialog(
+              filter: _ProfileQuizReviewFilter.confused,
+              eventIds: stats.confusedEventIds,
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: _buildProfileTabMessage(
+            stats.total == 0
+                ? '아직 푼 이야기가 없습니다.\n퀴즈를 풀면 기록이 쌓여요.'
+                : '오답이나 헷갈려요를 누르면\n복습할 이야기를 볼 수 있어요.',
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileSavedStoriesTabBody() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _profileTabSectionHeader(
-          title: '내 노트',
+          title: '저장한 이야기',
           actionLabel: '전체 보기',
-          onAction: _openProfileNotesPage,
+          onAction: _openSavedStoriesOverview,
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: _profileNotesLoading
+          child: _profileSavedEventsLoading
               ? const Center(child: CircularProgressIndicator())
-              : _profileNotesError != null
+              : _profileSavedEventsError != null
               ? _buildProfileTabMessage(
-                  _profileNotesError!,
+                  _profileSavedEventsError!,
                   textColor: const Color(0xFF7E3426),
                 )
-              : _profileNotesPreview.isEmpty
+              : _profileSavedEventsPreview.isEmpty
               ? _buildProfileTabMessage(
-                  '아직 작성한 노트가 없습니다.\n전체 보기에서 노트를 작성해 보세요.',
+                  '아직 저장한 이야기가 없습니다.\n사건 상세에서 별표를 눌러 저장해 보세요.',
                 )
-              : ListView.separated(
-                  itemCount: _profileNotesPreview.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final note = _profileNotesPreview[index];
-                    return _buildProfileNotePreviewCard(note);
-                  },
-                ),
+              : _buildSavedStoryCarousel(_profileSavedEventsPreview),
         ),
       ],
     );
@@ -233,10 +269,15 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _profileTabSectionHeader(
-          title: '저장한 말씀',
-          actionLabel: '전체 보기',
-          onAction: _openSavedVersesPage,
+        const Text(
+          '저장한 말씀',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Color(0xFF452F1A),
+            fontWeight: FontWeight.w900,
+            fontSize: 15.2,
+          ),
         ),
         const SizedBox(height: 8),
         Expanded(
@@ -251,14 +292,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               ? _buildProfileTabMessage(
                   '아직 저장한 말씀이 없습니다.\n성경 화면에서 구절을 눌러 저장해 보세요.',
                 )
-              : ListView.separated(
-                  itemCount: _profileSavedVersesPreview.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final verse = _profileSavedVersesPreview[index];
-                    return _buildProfileSavedVersePreviewCard(verse);
-                  },
-                ),
+              : _buildProfileSavedVersesPreview(),
         ),
       ],
     );
@@ -473,168 +507,363 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Widget _buildProfileNotePreviewCard(UserNote note) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _openProfileNotePreview(note),
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-          decoration: BoxDecoration(
-            color: const Color(0xC9F1E3CB),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      note.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF452F1A),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 13.6,
-                      ),
-                    ),
+  Widget _buildProfileSavedVersesPreview() {
+    final preview = _profileSavedVersesPreview.take(3).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ClipRect(
+              child: SizedBox(
+                height: 150,
+                child: OverflowBox(
+                  alignment: Alignment.topCenter,
+                  minHeight: 0,
+                  maxHeight: double.infinity,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var index = 0; index < preview.length; index++) ...[
+                        if (index > 0) const SizedBox(height: 8),
+                        SavedVerseRow(
+                          verse: preview[index],
+                          compact: true,
+                          onTap: () => widget.onOpenBibleReader(
+                            initialBookNo: preview[index].bookNo,
+                            initialChapterNo: preview[index].chapterNo,
+                            initialVerseNo: preview[index].verseNo,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _formatProfilePreviewDate(note.createdAt),
-                    style: const TextStyle(
-                      color: AppColors.ink200,
-                      fontSize: 10.2,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                note.previewLine,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF5A4326),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12.0,
-                  height: 1.32,
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileSavedVersePreviewCard(SavedBibleVerse verse) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => widget.onOpenBibleReader(
-          initialBookNo: verse.bookNo,
-          initialChapterNo: verse.chapterNo,
-          initialVerseNo: verse.verseNo,
-        ),
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-          decoration: BoxDecoration(
-            color: const Color(0xC9F1E3CB),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      verse.referenceText,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF452F1A),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 13.6,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _formatProfilePreviewDate(verse.createdAt),
-                    style: const TextStyle(
-                      color: AppColors.ink200,
-                      fontSize: 10.2,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                verse.verseText,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF5A4326),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12.0,
-                  height: 1.32,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _openProfileNotePreview(UserNote note) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => ParchmentDialog(
-        title: note.title,
-        subtitle: _formatProfilePreviewDateTime(note.createdAt),
-        showCloseButton: true,
-        actions: [
-          ParchmentDialogActionButton(
-            label: '닫기',
-            style: ParchmentDialogActionStyle.secondary,
-            onTap: () => Navigator.of(dialogContext).pop(),
-          ),
-        ],
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 320),
-          child: SingleChildScrollView(
-            child: Text(
-              note.content,
-              style: const TextStyle(
-                color: Color(0xFF3E2B18),
-                fontSize: 13.2,
-                fontWeight: FontWeight.w700,
-                height: 1.55,
               ),
             ),
           ),
         ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerRight,
+          child: _profileInlineTextButton(
+            label: '전체 보기',
+            onTap: _openSavedVersesPage,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileReviewEventList({
+    required Set<String> eventIds,
+    required String emptyText,
+  }) {
+    if (eventIds.isEmpty) {
+      return _buildProfileTabMessage(emptyText);
+    }
+    return FutureBuilder<List<StoryEvent>>(
+      future: ref.read(storyRepositoryProvider).fetchEventsByIds(eventIds),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return _buildProfileTabMessage(
+            '복습할 이야기를 불러오지 못했습니다.\n${snapshot.error}',
+            textColor: const Color(0xFF7E3426),
+          );
+        }
+        final state = ref.read(storyControllerProvider);
+        final events = _sortEventsByEraThenIndex(
+          snapshot.data ?? const <StoryEvent>[],
+          state.eras,
+        );
+        if (events.isEmpty) {
+          return _buildProfileTabMessage(emptyText);
+        }
+        return _buildEventGroupsByEra(
+          events: events,
+          state: state,
+          compact: true,
+        );
+      },
+    );
+  }
+
+  Future<void> _openProfileQuizReviewDialog({
+    required _ProfileQuizReviewFilter filter,
+    required Set<String> eventIds,
+  }) async {
+    final title = switch (filter) {
+      _ProfileQuizReviewFilter.wrong => '오답 이야기',
+      _ProfileQuizReviewFilter.confused => '헷갈려요 이야기',
+    };
+    final emptyText = switch (filter) {
+      _ProfileQuizReviewFilter.wrong => '틀린 이야기가 없습니다.',
+      _ProfileQuizReviewFilter.confused => '헷갈렸던 이야기가 없습니다.',
+    };
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'close',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 260),
+      pageBuilder: (dialogContext, _, __) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 820,
+              maxHeight: MediaQuery.of(dialogContext).size.height * 0.84,
+              minWidth: 320,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: modalSurfaceDecoration(),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                color: Color(0xFF3A2B15),
+                                fontSize: 21,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Expanded(
+                              child: _buildProfileReviewEventList(
+                                eventIds: eventIds,
+                                emptyText: emptyText,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        right: 12,
+                        top: 12,
+                        child: modalCloseButton(
+                          onTap: () => Navigator.of(dialogContext).pop(),
+                          size: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSavedStoryCarousel(List<StoryEvent> events) {
+    final state = ref.watch(storyControllerProvider);
+    final charactersByCode = <String, Character>{
+      for (final character in _profileAllPeople) character.code: character,
+      for (final character in state.characters) character.code: character,
+    };
+    final loader = SceneAssetLoader();
+    final eraById = {for (final era in state.eras) era.id: era};
+    return ShaderMask(
+      shaderCallback: (bounds) => const LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        stops: [0.0, 0.88, 1.0],
+        colors: [Colors.white, Colors.white, Color(0x00FFFFFF)],
+      ).createShader(bounds),
+      blendMode: BlendMode.dstIn,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(2, 12, 20, 10),
+        itemCount: events.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final event = events[index];
+          return SizedBox(
+            width: 92,
+            child: StoryEventThumbCard(
+              event: event,
+              era: eraById[event.eraId],
+              charactersByCode: charactersByCode,
+              selected: false,
+              completed: state.completedEventIds.contains(event.id),
+              emotionKey: state.eventEmotionMarks[event.id]?.emotionKey,
+              attemptSummary: state.quizAttemptSummaries[event.id],
+              orderNumber: event.storyIndex,
+              loader: loader,
+              onTap: () => widget.onOpenEventDetail(event),
+            ),
+          );
+        },
       ),
     );
   }
 
-  String _formatProfilePreviewDate(DateTime dateTime) {
-    return '${dateTime.month}.${dateTime.day}';
+  Widget _buildEventGroupsByEra({
+    required List<StoryEvent> events,
+    required StoryState state,
+    bool compact = false,
+  }) {
+    final charactersByCode = <String, Character>{
+      for (final character in _profileAllPeople) character.code: character,
+      for (final character in state.characters) character.code: character,
+    };
+    final loader = SceneAssetLoader();
+    final eventsByEra = <String, List<StoryEvent>>{};
+    for (final event in events) {
+      eventsByEra.putIfAbsent(event.eraId, () => <StoryEvent>[]).add(event);
+    }
+    for (final eraEvents in eventsByEra.values) {
+      eraEvents.sort((a, b) {
+        final storyOrder = a.storyIndex.compareTo(b.storyIndex);
+        if (storyOrder != 0) {
+          return storyOrder;
+        }
+        return a.globalRank.compareTo(b.globalRank);
+      });
+    }
+    final orderedEraIds = eventsByEra.keys.toList()
+      ..sort((a, b) {
+        final ao = state.eras
+            .where((era) => era.id == a)
+            .map((era) => era.displayOrder)
+            .firstOrNull;
+        final bo = state.eras
+            .where((era) => era.id == b)
+            .map((era) => era.displayOrder)
+            .firstOrNull;
+        return (ao ?? 1 << 30).compareTo(bo ?? 1 << 30);
+      });
+
+    return ListView.separated(
+      padding: EdgeInsets.fromLTRB(2, compact ? 0 : 6, 2, 12),
+      itemCount: orderedEraIds.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final eraId = orderedEraIds[index];
+        final era = state.eras.where((entry) => entry.id == eraId).firstOrNull;
+        final eraEvents = eventsByEra[eraId] ?? const <StoryEvent>[];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _ProfileEraSectionLabel(
+              label: era == null ? '시대 미상' : era.name,
+              count: eraEvents.length,
+            ),
+            const SizedBox(height: 8),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(4, compact ? 4 : 8, 4, 2),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                mainAxisExtent: compact ? 226 : 242,
+              ),
+              itemCount: eraEvents.length,
+              itemBuilder: (context, eventIndex) {
+                final event = eraEvents[eventIndex];
+                return StoryEventThumbCard(
+                  event: event,
+                  era: era,
+                  charactersByCode: charactersByCode,
+                  selected: false,
+                  completed: state.completedEventIds.contains(event.id),
+                  emotionKey: state.eventEmotionMarks[event.id]?.emotionKey,
+                  attemptSummary: state.quizAttemptSummaries[event.id],
+                  loader: loader,
+                  onTap: () => widget.onOpenEventDetail(event),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  String _formatProfilePreviewDateTime(DateTime dateTime) {
-    return '${dateTime.year}.${dateTime.month}.${dateTime.day}';
+  Future<void> _openSavedStoriesOverview() async {
+    if (_profileSavedEventsPreview.isEmpty) {
+      return;
+    }
+    final state = ref.read(storyControllerProvider);
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'close',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 260),
+      pageBuilder: (dialogContext, _, __) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 820,
+              maxHeight: MediaQuery.of(dialogContext).size.height * 0.84,
+              minWidth: 320,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: modalSurfaceDecoration(),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Text(
+                              '저장한 이야기',
+                              style: TextStyle(
+                                color: Color(0xFF3A2B15),
+                                fontSize: 21,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Expanded(
+                              child: _buildEventGroupsByEra(
+                                events: _profileSavedEventsPreview,
+                                state: state,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        right: 12,
+                        top: 12,
+                        child: modalCloseButton(
+                          onTap: () => Navigator.of(dialogContext).pop(),
+                          size: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildCurrentUserAvatar({
@@ -691,6 +920,211 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                   );
                 },
               ),
+      ),
+    );
+  }
+}
+
+class _ProfileQuizStatsStrip extends StatelessWidget {
+  const _ProfileQuizStatsStrip({
+    required this.stats,
+    required this.selected,
+    required this.onTapWrong,
+    required this.onTapConfused,
+  });
+
+  final ProfileQuizStats stats;
+  final _ProfileQuizReviewFilter? selected;
+  final VoidCallback onTapWrong;
+  final VoidCallback onTapConfused;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xEFFFF8E9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x55A8834D), width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x16000000),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _ProfileQuizStatItem(
+              icon: Icons.check_rounded,
+              label: '정답',
+              count: stats.correct,
+              percent: stats.percentFor(stats.correct),
+              color: const Color(0xFF4BA36A),
+              selected: false,
+              onTap: null,
+            ),
+          ),
+          const _ProfileStatsDivider(),
+          Expanded(
+            child: _ProfileQuizStatItem(
+              icon: Icons.close_rounded,
+              label: '오답',
+              count: stats.wrong,
+              percent: stats.percentFor(stats.wrong),
+              color: const Color(0xFFC75245),
+              selected: selected == _ProfileQuizReviewFilter.wrong,
+              onTap: onTapWrong,
+            ),
+          ),
+          const _ProfileStatsDivider(),
+          Expanded(
+            child: _ProfileQuizStatItem(
+              icon: Icons.question_mark_rounded,
+              label: '헷갈려요',
+              count: stats.confused,
+              percent: stats.percentFor(stats.confused),
+              color: const Color(0xFFC7923D),
+              selected: selected == _ProfileQuizReviewFilter.confused,
+              onTap: onTapConfused,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileQuizStatItem extends StatelessWidget {
+  const _ProfileQuizStatItem({
+    required this.icon,
+    required this.label,
+    required this.count,
+    required this.percent,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final int count;
+  final int percent;
+  final Color color;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+      decoration: BoxDecoration(
+        color: selected ? color.withValues(alpha: 0.12) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: selected
+            ? Border.all(color: color.withValues(alpha: 0.45), width: 1)
+            : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon, size: 21, color: color),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF5A4326),
+              fontSize: 11.2,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '$count',
+            style: const TextStyle(
+              color: Color(0xFF2E2114),
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              height: 1.0,
+            ),
+          ),
+          Text(
+            '($percent%)',
+            style: const TextStyle(
+              color: Color(0xFF7C6B55),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (onTap == null) {
+      return content;
+    }
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: content,
+      ),
+    );
+  }
+}
+
+class _ProfileStatsDivider extends StatelessWidget {
+  const _ProfileStatsDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 70,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      color: const Color(0x338E6F48),
+    );
+  }
+}
+
+class _ProfileEraSectionLabel extends StatelessWidget {
+  const _ProfileEraSectionLabel({required this.label, required this.count});
+
+  final String label;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAD6AE),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: const Color(0x998E6F48), width: 1),
+      ),
+      child: Text(
+        '$label · $count개',
+        style: const TextStyle(
+          color: Color(0xFF5A4326),
+          fontSize: 11.5,
+          fontWeight: FontWeight.w900,
+        ),
       ),
     );
   }

@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 18,
   "story_title": "비유: 탕자의 귀환",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 15:23 — '살진 송아지를 끌어다가 잡으라 우리가 먹고 즐기자'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "탕자의 귀환 비유가 기록된 성경 책은 어디입니까?",
+      "question": "「비유: 탕자의 귀환」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "누가복음",
-        "마가복음",
-        "마태복음"
+        "잃은 아들을 맞이하는 아버지의 품이 하나님 나라의 심장을 드러낸다.",
+        "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다.",
+        "교만한 체계가 무너지고, 애통과 해방의 대비가 나타난다."
       ],
       "answer_index": 0,
-      "explanation": "눅 15:11-32에 탕자의 귀환 비유가 기록됨"
+      "explanation": "눅 15:11 — '또 가라사대 어떤 사람이 두 아들이 있는데'"
     }
   ]
 }

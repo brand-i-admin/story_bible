@@ -356,7 +356,7 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                 // ───── 추가 메타 (장소 좌표, 등장 인물 코드) ─────
                 const SizedBox(height: 12),
                 _MetaKvBlock(proposal: p),
-                // ───── 퀴즈 (4지선다) ─────
+                // ───── 퀴즈 (작성 선택지 3개 + 자동 헷갈림 보기) ─────
                 if (p.quizQuestions.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   _QuizSection(quizzes: p.quizQuestions),

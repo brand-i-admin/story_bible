@@ -81,8 +81,6 @@ supabaseClientProvider (Provider<SupabaseClient>)
 |------|------|------|
 | 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인, 상단 bell 아이콘 |
 | 로그인 | `widgets/inline_login_prompt_card.dart` | 인라인 소셜 로그인 (카카오/Google/Apple) |
-| 노트 목록 | `screens/profile_notes_screen.dart` | 개인 노트 CRUD |
-| 노트 편집 | `screens/profile_note_editor_screen.dart` | 노트 에디터 |
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
 | 법률 문서 | `screens/legal_documents_screen.dart` | 이용약관, 개인정보처리방침 |
 | 제안 게시판 | `screens/proposal_board_screen.dart` | 사역자/관리자 제안 목록 (웹 전용) |
@@ -101,7 +99,7 @@ supabaseClientProvider (Provider<SupabaseClient>)
              │                │
     ┌────────▼──────┐  ┌──────▼──────────┐
     │StoryRepository│  │UserRepository   │
-    │ (이야기/시대)  │  │(사용자/노트/구절)│
+    │ (이야기/시대)  │  │(사용자/구절/기도)│
     └────────┬──────┘  └──────┬──────────┘
              │                │
              │ Model 객체로 변환 (fromMap)
@@ -136,7 +134,7 @@ main.dart → Supabase 초기화 + ProviderScope
 ```
 models/ (순수 데이터 상자)
   ├── Era, Character, StoryEvent     ← 이야기 도메인
-  ├── AppUserProfile, UserNote    ← 사용자 도메인
+  ├── AppUserProfile              ← 사용자 도메인
   └── BibleVerse, QuizQuestion    ← 보조 도메인
 
 data/ (Supabase 쿼리 + Model 변환)
@@ -148,10 +146,10 @@ data/ (Supabase 쿼리 + Model 변환)
   │     searchEventsByText() → 퍼지 검색
   │     fetchQuizQuestions() → List<QuizQuestion>
   │     upsertEventProgress() → 학습 진행도 저장
+  │     fetchSavedEventIds() / toggleSavedEvent() → 저장한 이야기
   │
   ├── user_repository.dart
   │     fetchUserProfile() → AppUserProfile
-  │     fetchUserNotesPage() → 노트 페이지네이션
   │     fetchSavedVersesPage() → 저장 구절 페이지네이션
   │     fetchIntercessoryPrayerPage() → 중보기도 목록
   │     fetchCharacterStudyProgress() → 인물별 진행도
@@ -219,7 +217,9 @@ eras ──< events                          (events.era_id)
               └── scene_characters jsonb    (장면별 인물 임베드)
 
 events ──< quiz_questions
-       └──< user_event_progress >── (auth.users)
+       ├──< user_event_progress >── (auth.users)
+       ├──< user_quiz_attempts >── (auth.users)
+       └──< user_event_emotion_marks >── (auth.users)
 
 persons       (어드민이 is_active 토글로 노출 제어)
 events_ordered (view: rank_in_era / global_rank 동적 계산)

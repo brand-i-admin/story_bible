@@ -90,15 +90,15 @@ MaterialApp(theme: AppTheme.light(), ...)
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | 인터랙티브 지도, 핀/마커 렌더링 |
-| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널 |
+| StoryMapPanel | `widgets/story_map_panel.dart` | 인터랙티브 지도, 핀/마커 렌더링, 감정 새김이 있으면 큰 감정 아이콘을 중심에 두고 우측 아래 작은 초록 원에 순서 번호를 표시, 이야기 간 이동 시 실제 번호 핀 분산 좌표에 맞춘 현재/목표 사건 핀 동시 glow 애니메이션 |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널. 사건 카드 배지도 감정 새김이 있으면 큰 감정 아이콘 + 우측 아래 작은 초록 순서 번호로 표시하고, 퀴즈 결과가 있으면 카드 배경색으로 정답 0개=빨강 / 일부 정답=주황 / 모두 정답=초록 상태를 보여 준다. 감정 새김 직후 0.5초 뒤 해당 카드 위에 감정 도장+별가루를 기존 속도로 재생하고, 도장 완료 후 1초 뒤 상세로 복귀한다 |
 | CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (장면 이미지 + 퀴즈) |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 퀴즈) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
-| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (진행도, 노트, 구절, 기도) |
-| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (구절 북마크) |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
+| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (구절 북마크 + 이야기 본문 범위 임시 하이라이트) |
 | SearchBottomSheet | `widgets/search_bottom_sheet.dart` | 검색 입력 + 결과 (bottom sheet) |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |
 | NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 빨간 ! 배지 + 드롭다운 |
@@ -207,11 +207,22 @@ MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 h
 
 ### 5.3 학습 완료
 
-1. 이야기 상세 → 퀴즈 시작 (4지선다)
-2. 정답 제출 → `user_event_progress.is_completed=true` 저장
-3. `notify_quiz_completed` RPC 호출 → 본인 인앱 bell 에 완료 알림 + 전체 진도율 표시
-4. 인물별 진행률 / 출석·학습 연속일수 프로필 탭에서 갱신
-5. 게이미피케이션(score/xp) 없음 — 완료 플래그만 기록 (ADR 참조)
+1. 이야기 상세 → 본문 읽기 + 퀴즈 시작 (4번 보기는 항상 "헷갈렸어요")
+2. 정답 제출 → 정답/오답/헷갈림을 `user_quiz_attempts`에 저장
+3. 본문 읽기와 퀴즈가 모두 완료되면 **지도 위에 새기기** 버튼 활성화
+4. 감정 8개 중 하나를 고르고 100자 메모를 남기면 `user_event_emotion_marks` 저장
+5. 읽기+퀴즈+감정 새김이 모두 끝났을 때 `user_event_progress.is_completed=true` 저장, 도장 문구는 "완료" 대신 선택 감정 심볼. 감정 새김 버튼은 `감정 - 메모`로 표시하고 "완료 취소" 시 감정 row를 삭제해 지도/카드 아이콘을 제거한다
+6. `notify_quiz_completed` RPC 호출 → 본인 인앱 bell 에 완료 알림 + 전체 진도율 표시
+7. 퀴즈 버튼은 `정답 N · 오답 N · 헷갈림 N` 으로 표시하고 정답 0개=빨강, 일부 정답=주황, 모두 정답=초록으로 상태를 보여 준다
+8. 지도 번호 핀은 숫자 중심을 유지하고 작은 감정 아이콘 배지를 붙인다. 하단 사건 카드는 감정 새김이 있으면 좌상단 배지를 감정 아이콘으로 바꾸고, 우측 하단 작은 초록 원에 이야기 순번을 표시한다
+9. 감정 저장 직후 상세 페이지를 잠시 닫아 지도 화면에서 핀/카드 변화를 먼저 보여 주고, 0.5초 뒤 사건 카드 위 감정 도장+별가루를 기존 속도로 재생한 다음 도장 완료 후 1초 뒤 같은 상세로 복귀한다. 지도 위 감정 도장 및 이전/다음 이야기 전환 애니메이션 중에는 투명 입력 차단막으로 다른 화면 조작을 막는다
+10. 프로필 미니맵 지역 라벨은 완료 이야기 수와 퀴즈 정답/풀이 수를 `x/x`로 표시해 오답/헷갈림이 있는 지역을 드러낸다
+11. 프로필 미니맵에서 region 폴리곤이나 라벨을 누르면 지역별 사건 카드 팝업을 열고, 사건 카드 순서대로 순번·첫 장면 썸네일·정답/오답/헷갈림을 표시하며 각 카드 배경색으로 미풀이/빨강/주황/초록 복습 상태를 보여 준다
+12. 프로필 미니맵은 모든 이야기에 감정을 새긴 지역을 옅은 채움 + 경계선만 남겨 딱지를 모은 느낌으로 표시한다
+13. 프로필 기록 탭의 오답/헷갈려요 섹션은 탭 시 팝업에서 해당 사건 카드를 순서대로 보여 준다
+14. 프로필 말씀 탭은 전체 저장 말씀 화면과 같은 `SavedVerseRow`를 재사용하고, 미리보기는 최대 2.5개만 보여 준 뒤 하단 전체 보기로 전체 목록에 진입한다
+15. 프로필 "내 삶의 지도"는 감정 선택지 8개(기쁨/기대/감사/놀라움/안타까움/위로/두려움/기타)와 영역을 1:1로 대응시켜, 지도에 없는 별도 정서 이름이 카테고리처럼 보이지 않게 한다
+16. 게이미피케이션(score/xp) 없음 — 완료 플래그만 기록 (ADR 참조)
 
 ### 5.4 알림 (Bell)
 

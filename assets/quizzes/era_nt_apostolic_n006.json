@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 6,
   "story_title": "사마리아 복음: 빌립의 전도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 8:18-19 — '시몬이 사도들의 안수로 성령 받는 것을 보고 돈을 드려 … 이 권능을 내게도 주어'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "빌립의 사마리아 전도 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「사마리아 복음: 빌립의 전도」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "빌립보서",
-        "야고보서"
+        "박해로 흩어진 자리에서 복음은 사마리아까지 확장된다.",
+        "하나님은 다윗에게 ‘네 집과 왕위를 견고케 하겠다’는 약속을 주신다.",
+        "고린도에서 바울은 오래 머물며 공동체를 세우고 박해를 견딘다."
       ],
       "answer_index": 0,
-      "explanation": "행 8:4-25에 빌립의 사마리아 전도 기사가 기록됨"
+      "explanation": "행 8:4 — '그 흩어진 사람들이 두루 다니며 복음의 말씀을 전할새'"
     }
   ]
 }

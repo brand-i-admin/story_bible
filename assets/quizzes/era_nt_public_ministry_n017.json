@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 17,
   "story_title": "비유: 선한 사마리아인",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 10:34 — '기름과 포도주를 그 상처에 붓고 싸매고 … 주막으로 데리고 가서'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "선한 사마리아인 비유가 기록된 성경 책은 어디입니까?",
+      "question": "「비유: 선한 사마리아인」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "누가복음",
-        "마태복음",
-        "요한복음"
+        "예수님은 선한 사마리아인 비유로 참된 이웃 사랑이 무엇인지 가르치신다.",
+        "난파 후 섬에 도착하고, 바울을 통한 표징으로 사람들이 마음을 연다.",
+        "거대한 대립이 드러나고, 믿는 자들의 인내가 강조된다."
       ],
       "answer_index": 0,
-      "explanation": "눅 10:25-37에 선한 사마리아인 비유가 기록됨"
+      "explanation": "눅 10:25 — '어떤 율법사가 일어나 예수를 시험하여 가로되 선생님 내가 무엇을 하여야 영생을 얻으리이까'"
     }
   ]
 }

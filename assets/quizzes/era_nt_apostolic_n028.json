@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 28,
   "story_title": "로마행(3): 폭풍의 항해",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 27:22,25 — '이제도 안심하라 … 나는 하나님을 믿노라 내 말한 대로 되리라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바울의 폭풍 항해 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「로마행(3): 폭풍의 항해」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "로마서",
-        "고린도후서"
+        "폭풍 속에서 바울은 ‘두려워 말라’는 약속으로 사람들을 붙든다.",
+        "거짓은 공동체를 흔들고, 사건은 거룩함의 경고가 된다.",
+        "예수님은 율법을 완성하시며 겉이 아니라 마음의 의를 가르치신다."
       ],
       "answer_index": 0,
-      "explanation": "행 27:13-26에 폭풍 항해 기사가 기록됨"
+      "explanation": "행 27:13 — '남풍이 순하게 불매 저희가 득의한 줄 알고 닻을 감아 그레데 해변을 가까이 하고 행선하더니'"
     }
   ]
 }

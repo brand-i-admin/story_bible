@@ -2,7 +2,7 @@
 
 이 문서는 `test/` 디렉토리에 있는 모든 테스트가 **무엇을 검증하는지** 한눈에 볼 수 있도록 정리한 카탈로그다. 코드 변경 시 어느 테스트가 영향받는지, 새 기능에 어떤 테스트를 추가해야 하는지 판단하는 출발점.
 
-총 **234개 테스트** (2026-04-27 기준), `flutter test` 실행 시간 약 10초.
+총 **240개+ 테스트** (2026-05-25 기준), `flutter test` 실행 시간 약 10초.
 
 ---
 
@@ -10,7 +10,7 @@
 
 | 디렉토리 | 파일 수 | 테스트 수 (대략) | 주된 검증 대상 |
 |----------|--------|------------------|----------------|
-| `test/models/` | 12 | 90+ | DB row → Dart 객체 변환, getter / equality / 직렬화 |
+| `test/models/` | 16 | 100+ | DB row → Dart 객체 변환, getter / equality / 직렬화 |
 | `test/data/` | 2 | 20+ | repository helper 함수 (검색 점수, 일별 streak 계산 등) |
 | `test/state/` | 2 | 30+ | Riverpod controller 의 상태 전이 (mocktail) |
 | `test/utils/` | 4 | 50+ | 순수 함수 (지도 좌표 보정, 성경 책 메타, 주차 계산, 자산 경로 정규화) |
@@ -53,7 +53,7 @@ DB row → Dart 객체 변환의 정확성을 보장하는 핵심 보호막. 대
 
 | 그룹 | 검증 |
 |------|------|
-| `QuizDraft.isValid` | 유효한 4지선다는 true; 선택지 개수 ≠4 / 빈 선택지 / answer_index 범위 초과 / 빈 해설은 false |
+| `QuizDraft.isValid` | 유효한 작성 선택지 3개 퀴즈는 true; 선택지 개수 ≠3 / 빈 선택지 / answer_index 범위 초과 / 빈 해설은 false |
 | `QuizDraft.fromMap`/`toMap` | 왕복 직렬화 정합 |
 | `EventProposal.fromMap` | proposal_type 기본값 'new', delete 타입은 target_event_id + 빈 quiz_questions, quiz_questions jsonb 가 QuizDraft 리스트로 파싱, isPending/isApproved/isRejected/isNewProposal/isDeleteProposal getter 정합 |
 
@@ -123,6 +123,18 @@ DB row → Dart 객체 변환의 정확성을 보장하는 핵심 보호막. 대
 | `isProposalRelated` | 제안 관련 5종 → true (모바일/태블릿 다이얼로그 분기용), 무관 타입 → false |
 | `AppNotification.fromMap` | personal source 전체 필드, broadcast source + is_read 기본값 false, source 누락 시 personal 폴백, payload Map<dynamic,dynamic> → Map<String,dynamic> 정규화 |
 | `copyWith` | isRead 만 바꿔 새 객체 |
+
+### 1.13 [quiz_attempt_summary_test.dart](../../test/models/quiz_attempt_summary_test.dart) — 이야기 퀴즈 풀이 요약
+
+| 검증 |
+|------|
+| 오답/헷갈림이 있으면 복습 대상, 모두 정답이면 복습 대상 아님, selected_answers jsonb 와 updated_at 파싱 |
+
+### 1.14 [event_emotion_mark_test.dart](../../test/models/event_emotion_mark_test.dart) — 지도 위 감정 새김
+
+| 검증 |
+|------|
+| 감정 선택지 8개와 기타/감사 이모지, Supabase row → 모델 변환, upsert payload 생성 |
 
 ---
 

@@ -27,7 +27,7 @@ part 'proposal_submit_screen_state.dart';
 ///   Step 2. 등장인물과 위치 선택
 ///           sub-phase: characters(복수) → event:0 → event:1 → ... → summary
 ///   Step 3. 세부 내용 (제목 / 요약 / 장소(지도) / 연도 / 성경 / 장면)
-///   Step 4. 퀴즈 (4지선다 1~3개) + 최종 "제안 등록" 버튼
+///   Step 4. 퀴즈 (작성 선택지 3개, 1~3문항) + 최종 "제안 등록" 버튼
 ///
 /// 최종 `after_story_index` 는 **선택된 인물별 사건의 story_index 중 최댓값**.
 /// 이 뒤에 삽입되면 모든 선택된 사건 이상(+) 으로 시프트되어 정합성 유지.

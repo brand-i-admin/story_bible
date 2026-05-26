@@ -281,7 +281,7 @@ flutter test test/golden/
 
 | 영역 | 파일 수 | 테스트 수 | 커버리지 |
 |------|---------|----------|---------|
-| 모델 fromMap/로직 | 10+ | 50+ | ✅ 전체 모델 완전 (AppNotification 포함) |
+| 모델 fromMap/로직 | 16 | 100+ | ✅ 전체 모델 완전 (QuizAttemptSummary, EventEmotionMark 포함) |
 | 상태 (Controller + State) | 2 | 38 | ✅ 주요 메소드 27개 + copyWith 11개 |
 | 리포지토리 순수 함수 | 2 | 29 | ✅ @visibleForTesting 전부 |
 | 유틸 순수 함수 | 4 | 70 | ✅ 전 함수 완전 |

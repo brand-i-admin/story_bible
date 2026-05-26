@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 4,
   "story_title": "동방박사와 피신",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 2:14 — '헤롯이 죽기까지 거기 있었으니 ... 애굽에서 내 아들을 불렀다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "동방박사 방문과 애굽 피신 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「동방박사와 피신」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마태복음",
-        "누가복음",
-        "요한복음"
+        "동방박사가 경배하고, 헤롯의 위협으로 가족은 애굽으로 피신한다.",
+        "마침내 바로가 떠나라 말하고, 이스라엘은 급히 길을 나선다.",
+        "엘리야는 하나님이 참 하나님이심을 불의 응답으로 드러낸다."
       ],
       "answer_index": 0,
-      "explanation": "마 2:1-15에 동방박사 방문과 애굽 피신 기사가 기록됨"
+      "explanation": "마 2:1 — '헤롯 왕 때에 예수께서 유대 베들레헴에서 나시매 동방으로부터 박사들이 예루살렘에 이르러 말하되'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_nt_post_apostolic",
   "story_index": 2,
   "story_title": "밧모섬의 요한: 계시의 시작",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 1:12 — '나더러 말한 음성을 알아 보려고 하여 돌이킬 때에'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "밧모섬에서의 계시 시작이 기록된 성경 책은 어디입니까?",
+      "question": "「밧모섬의 요한: 계시의 시작」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "요한계시록",
-        "요한복음",
-        "요한일서"
+        "요한은 밧모섬에서 환상 가운데 계시를 받는다.",
+        "하나님은 열 가지 재앙으로 바로의 완강함을 흔드시지만, 바로는 끝까지 마음을 굳힌다.",
+        "솔로몬은 왕으로 세워지고 ‘지혜’를 구해 길을 연다."
       ],
       "answer_index": 0,
-      "explanation": "계 1:9-20에 밧모섬 계시의 시작이 기록됨"
+      "explanation": "계 1:9 — '나 요한은 너희 형제요 예수의 환난과 나라와 참음에 동참하는 자라 하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니'"
     }
   ]
 }

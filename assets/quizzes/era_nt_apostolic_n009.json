@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 9,
   "story_title": "고넬료: 이방인에게도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 10:48 — '베드로가 저희에게 예수 그리스도의 이름으로 세례를 베풀라 명하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "고넬료 이야기가 기록된 성경 책은 어디입니까?",
+      "question": "「고넬료: 이방인에게도」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "로마서",
-        "에베소서"
+        "베드로는 편견을 넘어 이방인에게도 성령이 임함을 목격한다.",
+        "솔로몬의 지혜와 영화는 이방을 놀라게 했지만, 말년의 타락은 왕국의 균열을 예고했다.",
+        "요셉은 더 이상 참지 못하고 형제들에게 자신을 드러낸다."
       ],
       "answer_index": 0,
-      "explanation": "행 10:1-48에 고넬료 이야기가 기록됨"
+      "explanation": "행 10:1 — '가이사랴에 고넬료라 하는 사람이 있으니 이달리야대라 하는 군대의 백부장이라'"
     }
   ]
 }

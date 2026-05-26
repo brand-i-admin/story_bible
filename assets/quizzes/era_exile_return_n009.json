@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 9,
   "story_title": "잔치의 반전: 하만의 몰락",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "에 7:10 — '모르드개를 달고자 한 나무에 하만을 다니 왕의 노가 그치니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "하만의 몰락 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「잔치의 반전: 하만의 몰락」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "에스더",
-        "에스라",
-        "느헤미야"
+        "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다.",
+        "도망자 야곱은 길 위에서 ‘함께하심’의 약속을 받는다.",
+        "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다."
       ],
       "answer_index": 0,
-      "explanation": "에 5:1-8과 7:1-10에 에스더의 잔치와 하만의 몰락이 기록됨"
+      "explanation": "에 5:1 — '제삼일에 에스더가 왕후의 예복을 입고 왕궁 안뜰 곧 어전 맞은 편에 서니 왕이 어전에서 전 문을 대하여 보좌에 앉았다가'"
     }
   ]
 }

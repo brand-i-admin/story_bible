@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 2,
   "story_title": "에덴: 사람의 창조와 사명",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 2:20 — '아담이 모든 육축과 공중의 새와 들의 모든 짐승에게 이름을 주니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에덴 동산 창조 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「에덴: 사람의 창조와 사명」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "창세기",
-        "출애굽기",
-        "레위기"
+        "사람은 에덴에서 돌보고 지키는 사명을 받는다.",
+        "룻은 모든 것을 내려놓고 나오미를 따라 약속의 땅으로 돌아온다.",
+        "루스드라와 더베에서 전도가 이어지지만, 폭력적 박해도 뒤따른다."
       ],
       "answer_index": 0,
-      "explanation": "창 2:4-25에 에덴과 사람 창조 기사가 기록됨"
+      "explanation": "창 2:4 — '여호와 하나님이 천지를 창조하신 때에 천지의 창조된 대략이 이러하니라'"
     }
   ]
 }

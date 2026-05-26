@@ -14,4 +14,13 @@ class QuizQuestion {
   final int answerIndex;
   final String? explanation;
   final int displayOrder;
+
+  static const confusedChoiceLabel = '헷갈렸어요';
+
+  bool isConfusedChoiceIndex(int? index) {
+    if (index == null || index < 0 || index >= choices.length) {
+      return false;
+    }
+    return choices[index].trim() == confusedChoiceLabel;
+  }
 }

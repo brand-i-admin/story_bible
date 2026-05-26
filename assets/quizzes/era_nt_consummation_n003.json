@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 3,
   "story_title": "일곱 인: 역사의 문이 열리다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 7:10 — '구원하심이 보좌에 앉으신 우리 하나님과 어린 양에게 있도다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "일곱 인 환상이 기록된 성경 책은 어디입니까?",
+      "question": "「일곱 인: 역사의 문이 열리다」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "요한계시록",
-        "에스겔서",
-        "다니엘서"
+        "봉인이 하나씩 열리며 심판과 경고의 흐름이 전개된다.",
+        "박해자 사울은 부르심을 만나고 방향이 완전히 바뀐다.",
+        "야곱은 속임수로 이삭의 축복을 받고 도망길에 오른다."
       ],
       "answer_index": 0,
-      "explanation": "계 6:1-7:17에 일곱 인 환상이 기록됨"
+      "explanation": "계 6:1 — '내가 보매 어린 양이 일곱 인 중에 하나를 떼시는 그 때에 내가 들으니 네 생물 중에 하나가 우뢰 소리같이 말하되 오라 하기로'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 10,
   "story_title": "마라: 쓴 물이 달아지다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 15:24 — '백성이 모세를 원망하여 가로되 우리가 무엇을 마시리요'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "마라의 쓴 물 사건이 기록된 성경 책은 어디입니까?",
+      "question": "「마라: 쓴 물이 달아지다」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "출애굽기",
-        "민수기",
-        "신명기"
+        "광야의 첫 위기에서 하나님은 쓴 물을 바꾸며 백성을 가르치신다.",
+        "빌립보에서 복음은 가정과 감옥 한복판까지 스며든다.",
+        "AD 70 예루살렘 성전이 파괴되며 시대의 큰 전환이 일어난다."
       ],
       "answer_index": 0,
-      "explanation": "출 15:22-27에 마라 사건이 기록됨"
+      "explanation": "출 15:22 — '모세가 홍해에서 이스라엘을 인도하매 그들이 나와서 수르 광야로 들어가서 거기서 사흘길을 행하 였으나 물을 얻지 못하고'"
     }
   ]
 }

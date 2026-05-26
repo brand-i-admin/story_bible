@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 5,
   "story_title": "일곱 집사와 스데반 순교",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 8:1 — '사도 외에는 다 유대와 사마리아 모든 땅으로 흩어지니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "스데반 순교 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「일곱 집사와 스데반 순교」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "스데반서",
-        "히브리서"
+        "섬김의 구조가 세워지고, 스데반의 죽음은 흩어짐의 불씨가 된다.",
+        "약속의 아들이 태어나지만 가정의 갈등은 하갈을 광야로 내몬다.",
+        "야곱은 라반을 떠나고, 추격 끝에 언약으로 갈등을 마무리한다."
       ],
       "answer_index": 0,
-      "explanation": "행 7:54-8:1에 스데반 순교 기사가 기록됨"
+      "explanation": "행 6:1 — '그때에 제자가 더 많아졌는데 헬라파 유대인들이 자기의 과부들이 그 매일 구제에 빠지므로 히브리 파 사람을 원망한대'"
     }
   ]
 }

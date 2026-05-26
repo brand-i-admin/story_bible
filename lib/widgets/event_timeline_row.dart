@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../models/character.dart';
 import '../models/era.dart';
+import '../models/event_emotion_mark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../utils/scene_asset_loader.dart';
+import 'completion_celebration.dart';
 import 'v2/region_event_list.dart' show StoryEventThumbCard;
 
 /// 가로 스크롤 사건 타임라인 — 인물 모드 step 3 와 장소 모드(region 선택 후)
@@ -22,12 +25,21 @@ class EventTimelineRow extends StatefulWidget {
     required this.selectedEventId,
     required this.onTapEvent,
     this.completedEventIds = const <String>{},
+    this.quizReviewEventIds = const <String>{},
+    this.quizConfusedEventIds = const <String>{},
+    this.eventEmotionMarks = const {},
+    this.quizAttemptSummaries = const {},
     this.cardWidth = 148,
     this.connectorWidth = 22,
     this.rowHeight,
     this.padding = const EdgeInsets.fromLTRB(14, 18, 14, 14),
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
+    this.orderNumberBuilder,
+    this.celebrationEventId,
+    this.celebrationStampLabel,
+    this.celebrationNonce = 0,
+    this.onCelebrationComplete,
   });
 
   final List<StoryEvent> events;
@@ -43,12 +55,34 @@ class EventTimelineRow extends StatefulWidget {
   /// (지도 path 색) 을 그대로 넘긴다.
   final Color Function(String characterCode)? colorForHighlightedCharacter;
 
+  /// 카드 좌상단 순서 번호를 외부 정렬 기준으로 맞춰야 할 때 사용한다.
+  /// null 이면 현재 row 안의 1-based index 를 쓴다.
+  final int Function(StoryEvent event, int index)? orderNumberBuilder;
+
   /// 현재 "현재 이야기" 라벨이 붙어야 하는 사건 id. null 이면 미강조.
   /// set 변경 시 자동 스크롤로 그 카드를 viewport 중앙에 배치.
   final String? selectedEventId;
 
   /// 본문 + 퀴즈 모두 완료된 사건 id 셋 — 카드 배경을 초록 톤으로 표시.
   final Set<String> completedEventIds;
+
+  /// 최근 퀴즈에서 오답이나 "헷갈렸어요"가 있었던 사건 id 셋.
+  final Set<String> quizReviewEventIds;
+
+  /// 최근 퀴즈에서 "헷갈렸어요" 선택이 있었던 사건 id 셋.
+  final Set<String> quizConfusedEventIds;
+
+  /// 사용자가 지도 위에 새긴 감정. 카드 번호 배지 옆의 작은 아이콘으로 표시한다.
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+
+  /// 이야기별 최근 퀴즈 결과. 카드 배경색으로 복습 필요 정도를 표시한다.
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+
+  /// 지도 화면에서 특정 사건 카드 위에 완료 축하 효과를 1회 재생할 때 사용.
+  final String? celebrationEventId;
+  final String? celebrationStampLabel;
+  final int celebrationNonce;
+  final VoidCallback? onCelebrationComplete;
 
   final ValueChanged<StoryEvent> onTapEvent;
 
@@ -68,8 +102,12 @@ class EventTimelineRow extends StatefulWidget {
 class _EventTimelineRowState extends State<EventTimelineRow> {
   final ScrollController _ctl = ScrollController();
   final SceneAssetLoader _loader = SceneAssetLoader();
+  final GlobalKey<CompletionCelebrationState> _celebrationKey =
+      GlobalKey<CompletionCelebrationState>();
   String? _lastScrolledTo;
   bool _didInitialNudge = false;
+  int _lastCelebrationNonce = 0;
+  int? _playedCelebrationNonce;
 
   @override
   void initState() {
@@ -77,6 +115,7 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _maybeRunInitialNudge();
     });
+    _maybeTriggerCelebration();
   }
 
   @override
@@ -98,6 +137,37 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
         if (mounted) _maybeRunInitialNudge();
       });
     }
+    _maybeTriggerCelebration();
+  }
+
+  void _maybeTriggerCelebration() {
+    if (widget.celebrationEventId == null || widget.celebrationNonce <= 0) {
+      return;
+    }
+    if (widget.celebrationNonce == _lastCelebrationNonce) {
+      return;
+    }
+    final nonce = widget.celebrationNonce;
+    _lastCelebrationNonce = nonce;
+    _playedCelebrationNonce = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _tryPlayCelebration(nonce);
+    });
+    Future<void>.delayed(const Duration(milliseconds: 430), () {
+      if (mounted) _tryPlayCelebration(nonce);
+    });
+  }
+
+  void _tryPlayCelebration(int nonce) {
+    if (_playedCelebrationNonce == nonce || widget.celebrationNonce != nonce) {
+      return;
+    }
+    final celebrationState = _celebrationKey.currentState;
+    if (celebrationState == null) {
+      return;
+    }
+    _playedCelebrationNonce = nonce;
+    celebrationState.play(stampLabel: widget.celebrationStampLabel);
   }
 
   bool _eventsIdentical(List<StoryEvent> a, List<StoryEvent> b) {
@@ -189,20 +259,32 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
         final era = widget.allEras
             .where((e) => e.id == event.eraId)
             .firstOrNull;
+        final card = StoryEventThumbCard(
+          event: event,
+          era: era,
+          charactersByCode: widget.charactersByCode,
+          selected: event.id == widget.selectedEventId,
+          completed: widget.completedEventIds.contains(event.id),
+          needsQuizReview: widget.quizReviewEventIds.contains(event.id),
+          hasConfusedQuiz: widget.quizConfusedEventIds.contains(event.id),
+          emotionKey: widget.eventEmotionMarks[event.id]?.emotionKey,
+          attemptSummary: widget.quizAttemptSummaries[event.id],
+          orderNumber: widget.orderNumberBuilder?.call(event, idx) ?? idx + 1,
+          loader: _loader,
+          onTap: () => widget.onTapEvent(event),
+          highlightedCharacterCodes: widget.highlightedCharacterCodes,
+          colorForHighlightedCharacter: widget.colorForHighlightedCharacter,
+        );
         return SizedBox(
           width: widget.cardWidth,
-          child: StoryEventThumbCard(
-            event: event,
-            era: era,
-            charactersByCode: widget.charactersByCode,
-            selected: event.id == widget.selectedEventId,
-            completed: widget.completedEventIds.contains(event.id),
-            orderNumber: idx + 1,
-            loader: _loader,
-            onTap: () => widget.onTapEvent(event),
-            highlightedCharacterCodes: widget.highlightedCharacterCodes,
-            colorForHighlightedCharacter: widget.colorForHighlightedCharacter,
-          ),
+          child: event.id == widget.celebrationEventId
+              ? CompletionCelebration(
+                  key: _celebrationKey,
+                  stampLabel: widget.celebrationStampLabel ?? '완료',
+                  onComplete: widget.onCelebrationComplete,
+                  child: card,
+                )
+              : card,
         );
       },
     );

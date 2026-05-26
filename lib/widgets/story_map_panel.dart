@@ -10,11 +10,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../models/era_boundary.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../theme/era_colors.dart';
 import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
+import 'emotion_badge_icon.dart';
 import 'map/era_polygon_glow_layer.dart';
 import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
@@ -138,6 +140,7 @@ class StoryMapPanel extends StatefulWidget {
     this.nameForCharacter,
     this.eraCodeForId,
     this.eventCountByLandmarkId,
+    this.eventEmotionMarks = const {},
     this.regionPickerMode = false,
     this.onMapInteraction,
     this.suppressRegionLabels = false,
@@ -246,6 +249,9 @@ class StoryMapPanel extends StatefulWidget {
   /// null 이거나 키 없으면 배지 미표시.
   final Map<String, int>? eventCountByLandmarkId;
 
+  /// 사용자가 지도 위에 새긴 감정. 번호 핀 옆의 작은 아이콘 배지로 표시한다.
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+
   @override
   State<StoryMapPanel> createState() => _StoryMapPanelState();
 }
@@ -287,6 +293,15 @@ class StoryMapPanelController {
   /// 호출하면 핀이 화면 가운데 모이고 자세히 보인다.
   void focusEvents({double zoomBoost = 1.0}) =>
       _state?._focusAllEvents(zoomBoost: zoomBoost);
+
+  /// 상세 페이지 prev/next 이동 전, 지도 위에서 현재 사건과 목표 사건 핀을
+  /// 함께 빛나게 하는 1회성 전환 애니메이션을 재생한다.
+  Future<void> playEventTransition({
+    required StoryEvent from,
+    required StoryEvent to,
+  }) {
+    return _state?._playEventTransition(from: from, to: to) ?? Future.value();
+  }
 }
 
 /// 줌에 비례해 축소되는 landmark 마커. region 인 경우 큰 location pin +

@@ -99,8 +99,9 @@ class EventProposal {
   /// 승인 시 characters 테이블에 upsert 된다.
   final List<ProposedCharacter> proposedCharacters;
 
-  /// 새 이야기 제안 시 포함되는 4지선다 퀴즈 (1~3개). 승인 시
-  /// `quiz_questions` 테이블에 row 로 풀려 들어간다. 삭제/일반 제안에서는 빈 배열.
+  /// 새 이야기 제안 시 포함되는 퀴즈 (1~3개). 목회자는 선택지 3개만 작성하고,
+  /// 승인 시 4번 보기 "헷갈렸어요"가 붙어 `quiz_questions` 로 풀려 들어간다.
+  /// 삭제/일반 제안에서는 빈 배열.
   final List<QuizDraft> quizQuestions;
 
   /// 일반 제안(`proposalType == 'general'`) 의 첨부 이미지 Storage 경로 (최대 5장).
@@ -302,12 +303,14 @@ class ProposedCharacter {
   }
 }
 
-/// `event_proposals.quiz_questions` jsonb 원소 — 4지선다 퀴즈 한 문항.
+/// `event_proposals.quiz_questions` jsonb 원소 — 본문 기반 퀴즈 한 문항.
 ///
 /// - [question] 문제 본문 (빈 문자열 금지)
-/// - [choices]  정확히 4개
-/// - [answerIndex] 0~3 중 정답 인덱스
+/// - [choices]  목회자가 작성하는 선택지 3개
+/// - [answerIndex] 0~2 중 정답 인덱스
 /// - [explanation] 해설 (빈 문자열 금지)
+///
+/// 사용자에게 보이는 4번 보기 "헷갈렸어요"는 승인/시드 반영 시 자동으로 붙는다.
 class QuizDraft {
   const QuizDraft({
     required this.question,
@@ -321,11 +324,14 @@ class QuizDraft {
   final int answerIndex;
   final String explanation;
 
+  static const confusedChoiceLabel = '헷갈렸어요';
+  static const authoredChoiceCount = 3;
+
   bool get isValid {
     if (question.trim().isEmpty) return false;
-    if (choices.length != 4) return false;
+    if (choices.length != authoredChoiceCount) return false;
     if (choices.any((c) => c.trim().isEmpty)) return false;
-    if (answerIndex < 0 || answerIndex > 3) return false;
+    if (answerIndex < 0 || answerIndex >= authoredChoiceCount) return false;
     if (explanation.trim().isEmpty) return false;
     return true;
   }
@@ -356,17 +362,27 @@ class QuizDraft {
     final choices = rawChoices is List
         ? rawChoices.whereType<String>().toList(growable: false)
         : const <String>[];
+    final authoredChoices = choices
+        .where((choice) => choice.trim() != confusedChoiceLabel)
+        .take(authoredChoiceCount)
+        .toList(growable: false);
+    final rawAnswerIndex = (m['answer_index'] as num?)?.toInt() ?? 0;
+    final answerIndex = rawAnswerIndex < 0
+        ? 0
+        : (rawAnswerIndex >= authoredChoiceCount
+              ? authoredChoiceCount - 1
+              : rawAnswerIndex);
     return QuizDraft(
       question: (m['question'] as String?) ?? '',
-      choices: choices,
-      answerIndex: (m['answer_index'] as num?)?.toInt() ?? 0,
+      choices: authoredChoices,
+      answerIndex: answerIndex,
       explanation: (m['explanation'] as String?) ?? '',
     );
   }
 
   static const QuizDraft empty = QuizDraft(
     question: '',
-    choices: ['', '', '', ''],
+    choices: ['', '', ''],
     answerIndex: 0,
     explanation: '',
   );

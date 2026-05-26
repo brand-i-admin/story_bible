@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 27,
   "story_title": "부활과 승천: 새 시작",
-  "source_version": "2026-04-30",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 1:8 — '성령이 너희에게 임하시면 권능을 받고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님의 승천 기사가 가장 자세히 기록된 책은 어디입니까?",
+      "question": "「부활과 승천: 새 시작」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "요한복음",
-        "히브리서"
+        "부활하신 예수님은 제자들에게 사명을 주시고 승천하신다.",
+        "광야에서 하나님은 모세를 부르시고 ‘내가 너와 함께’라는 약속을 주신다.",
+        "한나는 눈물의 기도로 사무엘을 얻고, 약속대로 하나님께 드린다."
       ],
       "answer_index": 0,
-      "explanation": "행 1:9-11에 승천 기사가 자세히 기록됨"
+      "explanation": "마 28:1 — '안식일이 다하여 가고 안식 후 첫 날이 되려는 미명에 막달라 마리아와 다른 마리아가 무덤을 보려 고 왔더니'"
     }
   ]
 }

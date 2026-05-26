@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 5,
   "story_title": "사자굴: 멈추지 않는 기도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "다니엘의 사자굴 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「사자굴: 멈추지 않는 기도」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "다니엘",
-        "에스라",
-        "느헤미야"
+        "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
+        "안디옥 교회는 금식과 기도 가운데 바울과 바나바를 파송한다.",
+        "자존심을 내려놓을 때 치유가 찾아온다."
       ],
       "answer_index": 0,
-      "explanation": "단 6:1-28에 다리오 왕의 금령과 다니엘의 사자굴 사건이 기록됨"
+      "explanation": "단 6:1 — '다리오가 자기의 심원대로 방백 일백이십 명을 세워 전국을 통치하게 하고'"
     }
   ]
 }

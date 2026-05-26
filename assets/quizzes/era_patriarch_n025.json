@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 25,
   "story_title": "요셉이 팔리다: 구덩이와 은",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 37:31-32 — '요셉의 옷을 가져다가 숫염소를 죽여 그 옷을 피에 적시고 ... 아비에게로 보내어'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "요셉이 구덩이에 던져지고 팔린 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "「요셉이 팔리다: 구덩이와 은」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "37장",
-        "39장",
-        "40장"
+        "시기는 요셉을 구덩이에 던지고 끝내 종으로 팔아넘긴다.",
+        "봉인이 하나씩 열리며 심판과 경고의 흐름이 전개된다.",
+        "보아스는 공적인 자리에서 룻을 맞아들이며 가문을 세운다."
       ],
       "answer_index": 0,
-      "explanation": "창 37:12-36에 요셉이 형들에게 팔려 애굽으로 가는 이야기가 기록됨"
+      "explanation": "창 37:12 — '그 형들이 세겜에 가서 아비의 양떼를 칠 때에'"
     }
   ]
 }

@@ -1413,7 +1413,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       padding: const EdgeInsets.all(16),
       children: [
         Text(
-          '이야기를 읽은 사람이 풀 4지선다 퀴즈를 1~3개 만들어주세요.',
+          '이야기를 읽은 사람이 풀 퀴즈를 1~3개 만들어주세요. 4번 보기는 승인 시 자동으로 붙습니다.',
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 12),
@@ -1439,7 +1439,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              '문제·선택지 4개·해설을 모두 채우면 제출 버튼이 활성화됩니다.',
+              '문제·선택지 3개·해설을 모두 채우면 제출 버튼이 활성화됩니다.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,

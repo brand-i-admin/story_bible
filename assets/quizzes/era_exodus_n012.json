@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 12,
   "story_title": "아말렉 전투: 팔이 내려갈 때",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 17:12 — '아론과 훌이 ... 모세의 손을 붙들어 올렸더니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "아말렉 전투 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「아말렉 전투: 팔이 내려갈 때」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "출애굽기",
-        "민수기",
-        "여호수아"
+        "전투의 승패는 숫자가 아니라 ‘붙드는 손’에서 드러난다.",
+        "예수님은 성전을 ‘기도의 집’으로 회복시키려 하신다.",
+        "상식을 깨는 순종의 행진 끝에 성벽이 무너진다."
       ],
       "answer_index": 0,
-      "explanation": "출 17:8-16에 아말렉 전투가 기록됨"
+      "explanation": "출 17:8 — '때에 아말렉이 이르러 이스라엘과 르비딤에서 싸우니라'"
     }
   ]
 }

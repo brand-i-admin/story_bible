@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 8,
   "story_title": "에스더의 결단: 죽으면 죽으리라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에스더의 결단 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「에스더의 결단: 죽으면 죽으리라」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "에스더",
-        "에스라",
-        "다니엘"
+        "에스더는 금식 후 왕 앞에 나아가기로 결단한다.",
+        "1차 여행을 마치고 돌아와 하나님이 하신 일을 교회에 보고한다.",
+        "바로의 꿈을 해석한 요셉은 애굽의 총리로 세워진다."
       ],
       "answer_index": 0,
-      "explanation": "에 4:10-17에 에스더와 모르드개의 대화와 에스더의 결단이 기록됨"
+      "explanation": "에 4:10 — '에스더가 하닥에게 이르되 너는 모르드개에게 고하기를'"
     }
   ]
 }

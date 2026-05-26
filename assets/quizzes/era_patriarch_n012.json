@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 12,
   "story_title": "사라의 죽음과 막벨라 굴",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 23:2 — '아브라함이 들어가서 사라를 위하여 슬퍼하며 애통하다가'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "사라의 죽음과 막벨라 굴 구입 기사는 창세기 몇 장입니까?",
+      "question": "「사라의 죽음과 막벨라 굴」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "23장",
-        "20장",
-        "27장"
+        "아브라함은 약속의 땅에서 첫 소유지로 묘지를 산다.",
+        "포위 속에서 히스기야는 편지를 성전에 펼치고 하나님께 매달린다.",
+        "어린양이 두루마리를 받아 역사의 열쇠를 여는 존재로 드러난다."
       ],
       "answer_index": 0,
-      "explanation": "창 23:1-20에 사라의 사망과 막벨라 굴 매입이 기록됨"
+      "explanation": "창 23:1 — '사라가 일백 이십 칠 세를 살았으니 이것이 곧 사라의 향년이라'"
     }
   ]
 }

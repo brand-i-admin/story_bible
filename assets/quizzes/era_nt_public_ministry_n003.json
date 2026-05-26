@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 3,
   "story_title": "예수 탄생과 목자들",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 2:20 — '하나님께 영광을 돌리고 찬송하며 돌아가니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수 탄생과 목자들의 방문 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「예수 탄생과 목자들」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "누가복음",
-        "마태복음",
-        "요한복음"
+        "베들레헴에서 예수님이 태어나고 목자들이 기쁜 소식을 듣는다.",
+        "자기 이름을 세우려던 계획은 언어의 혼잡으로 멈춘다.",
+        "예수님의 영광이 드러나고 제자들은 ‘그의 말을 들으라’는 음성을 듣는다."
       ],
       "answer_index": 0,
-      "explanation": "눅 2:1-20에 예수 탄생과 목자들의 방문 기사가 기록됨"
+      "explanation": "눅 2:1 — '이때에 가이사 아구스도가 영을 내려 천하로 다 호적하라 하였으니'"
     }
   ]
 }

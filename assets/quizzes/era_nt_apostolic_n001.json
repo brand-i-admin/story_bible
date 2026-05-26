@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 1,
   "story_title": "오순절: 성령강림",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 2:4 — '성령이 말하게 하심을 따라 다른 방언으로 말하기를 시작하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "오순절 성령강림 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「오순절: 성령강림」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "고린도전서",
-        "에베소서"
+        "성령이 임하며 교회의 시대가 힘 있게 시작된다.",
+        "섬김의 구조가 세워지고, 스데반의 죽음은 흩어짐의 불씨가 된다.",
+        "극한의 시험 속에서 하나님은 아브라함을 멈추게 하시고 대안을 준비하신다."
       ],
       "answer_index": 0,
-      "explanation": "행 2:1-13에 오순절 성령강림 기사가 기록됨"
+      "explanation": "행 2:1 — '오순절날이 이미 이르매 저희가 다 같이 한 곳에 모였더니'"
     }
   ]
 }

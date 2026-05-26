@@ -7,12 +7,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   final MapController _controller = MapController();
   Timer? _revealTimer;
   Timer? _cameraTimer;
+  Timer? _eventTransitionTimer;
   List<Polyline> _countryBorderPolylines = const [];
   List<Marker> _countryLabelMarkers = const [];
   int _visibleCount = 0;
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
+  int _eventTransitionRunId = 0;
   bool _mapReady = false;
+  _EventTransitionOverlay? _eventTransitionOverlay;
+  Completer<void>? _eventTransitionCompleter;
 
   /// 줌 변경 디버그 로깅용 — 0.05 이상 변하면 콘솔 로그.
   double? _lastLoggedZoom;
@@ -132,6 +136,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   void dispose() {
     _revealTimer?.cancel();
     _cameraTimer?.cancel();
+    _eventTransitionTimer?.cancel();
+    _eventTransitionCompleter?.complete();
     _eventRevealTimer?.cancel();
     widget.controller?._unbind(this);
     super.dispose();
@@ -492,6 +498,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                     )
                   else
                     MarkerLayer(markers: _buildMarkers(widget.events)),
+                  if (_eventTransitionOverlay != null)
+                    MarkerLayer(markers: _buildEventTransitionMarkers()),
                   // 거리 측정 폴리라인 (두 점이 모두 선택됐을 때만).
                   if (_measureMode)
                     PolylineLayer(polylines: _buildMeasurePolylines()),
@@ -1077,15 +1085,20 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final ordered = events.where((e) => e.hasCoordinate).toList()
       ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
     final visible = ordered.take(_eventRevealCount).toList(growable: false);
-    final input = <String, LatLng>{for (final e in visible) e.id: e.latLng};
-    final adjusted = map_math.spreadColocatedPoints(
-      input,
-      radiusDeg: 0.045,
-      thresholdDeg: 0.04,
+    final adjusted = map_math.buildRankedEventPointMap(
+      events,
+      visibleCount: _eventRevealCount,
     );
     return [
       for (final e in visible) (event: e, point: adjusted[e.id] ?? e.latLng),
     ];
+  }
+
+  Map<String, LatLng> _numberedEventPointMap({required bool includeHidden}) {
+    return map_math.buildRankedEventPointMap(
+      widget.events,
+      visibleCount: includeHidden ? null : _eventRevealCount,
+    );
   }
 
   /// region/character 선택 시 사건들을 시간순으로 잇는 점선 path.
@@ -1148,6 +1161,30 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return result;
   }
 
+  List<Marker> _buildEventTransitionMarkers() {
+    final overlay = _eventTransitionOverlay;
+    if (overlay == null) return const [];
+    return [
+      _transitionGlowMarker(overlay.fromPoint, overlay.progress),
+      _transitionGlowMarker(overlay.toPoint, overlay.progress),
+    ];
+  }
+
+  Marker _transitionGlowMarker(LatLng point, double progress) {
+    return Marker(
+      point: point,
+      width: 72,
+      height: 72,
+      alignment: Alignment.center,
+      child: IgnorePointer(
+        child: CustomPaint(
+          size: const Size.square(72),
+          painter: _EventTransitionGlowPainter(progress: progress),
+        ),
+      ),
+    );
+  }
+
   /// region 선택 시 그 region 사건 마커 — 핀 + 큰 순서 번호.
   /// 그림 3 처럼 1, 2, 3... 표시. 클릭 시 onSelectEvent 호출.
   /// _eventRevealCount 만큼만 그려져 0.3초 간격 순차 reveal.
@@ -1191,10 +1228,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         }
       }
     }
+    final emotionKey = widget.eventEmotionMarks[event.id]?.emotionKey;
+    final hasEmotion = emotionKey != null && emotionKey.isNotEmpty;
     return Marker(
       point: point,
-      width: 22,
-      height: 22,
+      width: hasEmotion ? 30 : 22,
+      height: hasEmotion ? 30 : 22,
       alignment: Alignment.center,
       child: Builder(
         builder: (context) {
@@ -1213,6 +1252,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                 number: order,
                 isSelected: selected,
                 characterColors: characterColors,
+                emotionKey: emotionKey,
               ),
             ),
           );
@@ -2214,6 +2254,86 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     _startRevealAnimation();
   }
 
+  Future<void> _playEventTransition({
+    required StoryEvent from,
+    required StoryEvent to,
+  }) async {
+    if (!_mapReady || !from.hasCoordinate || !to.hasCoordinate) {
+      return;
+    }
+    if (from.id == to.id) {
+      return;
+    }
+
+    _eventTransitionRunId += 1;
+    final runId = _eventTransitionRunId;
+    _eventTransitionTimer?.cancel();
+    if (_eventTransitionCompleter?.isCompleted == false) {
+      _eventTransitionCompleter!.complete();
+    }
+    final completer = Completer<void>();
+    _eventTransitionCompleter = completer;
+
+    final visiblePoints = _numberedEventPointMap(includeHidden: false);
+    final finalPoints = _numberedEventPointMap(includeHidden: true);
+    final fromPoint =
+        visiblePoints[from.id] ?? finalPoints[from.id] ?? from.latLng;
+    final toPoint = visiblePoints[to.id] ?? finalPoints[to.id] ?? to.latLng;
+    final bounds = LatLngBounds.fromPoints([fromPoint, toPoint]);
+    final targetZoom = (_computeRevealZoom([fromPoint, toPoint]) - 0.28).clamp(
+      3.0,
+      8.8,
+    );
+
+    _focusToPoint(
+      bounds.center,
+      targetZoom,
+      duration: const Duration(milliseconds: 360),
+    );
+    setState(() {
+      _eventTransitionOverlay = _EventTransitionOverlay(
+        fromPoint: fromPoint,
+        toPoint: toPoint,
+        progress: 0,
+      );
+    });
+
+    const duration = Duration(seconds: 2);
+    final startAt = DateTime.now();
+    _eventTransitionTimer = Timer.periodic(const Duration(milliseconds: 16), (
+      timer,
+    ) {
+      if (!mounted || runId != _eventTransitionRunId) {
+        timer.cancel();
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
+        return;
+      }
+      final elapsed = DateTime.now().difference(startAt).inMilliseconds;
+      final rawT = (elapsed / duration.inMilliseconds).clamp(0.0, 1.0);
+      setState(() {
+        _eventTransitionOverlay = _EventTransitionOverlay(
+          fromPoint: fromPoint,
+          toPoint: toPoint,
+          progress: rawT,
+        );
+      });
+      if (rawT >= 1.0) {
+        timer.cancel();
+        _eventTransitionTimer = null;
+        if (mounted && runId == _eventTransitionRunId) {
+          setState(() => _eventTransitionOverlay = null);
+        }
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
+      }
+    });
+
+    return completer.future;
+  }
+
   /// 토글류 변화로 events 가 바뀌었을 때 핀을 즉시 모두 노출. 시간 순 애니메이션
   /// 없이 "선택 즉시 핀이 박혀 보이는" 상태를 유지한다.
   void _showAllPinsImmediately() {
@@ -2292,5 +2412,60 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     } catch (_) {
       return null;
     }
+  }
+}
+
+class _EventTransitionOverlay {
+  const _EventTransitionOverlay({
+    required this.fromPoint,
+    required this.toPoint,
+    required this.progress,
+  });
+
+  final LatLng fromPoint;
+  final LatLng toPoint;
+  final double progress;
+}
+
+class _EventTransitionGlowPainter extends CustomPainter {
+  const _EventTransitionGlowPainter({required this.progress});
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final t = progress.clamp(0.0, 1.0).toDouble();
+    final fadeIn = Curves.easeOut.transform(
+      (t / 0.16).clamp(0.0, 1.0).toDouble(),
+    );
+    final fadeOut =
+        1.0 -
+        Curves.easeIn.transform(((t - 0.82) / 0.18).clamp(0.0, 1.0).toDouble());
+    final wave = 0.5 + 0.5 * math.sin((t * math.pi * 4) - math.pi / 2);
+    final intensity = (0.48 + wave * 0.52) * fadeIn * fadeOut;
+    if (intensity <= 0.01) return;
+
+    final glowPaint = Paint()
+      ..color = AppColors.gold.withValues(alpha: 0.34 * intensity)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 13 + wave * 8);
+    canvas.drawCircle(center, 15 + wave * 9, glowPaint);
+
+    final haloPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4 + wave * 1.4
+      ..color = AppColors.goldDeep.withValues(alpha: 0.58 * intensity);
+    canvas.drawCircle(center, 17 + wave * 10, haloPaint);
+
+    final corePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = AppColors.parchmentCream.withValues(alpha: 0.72 * intensity);
+    canvas.drawCircle(center, 13 + wave * 4, corePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _EventTransitionGlowPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }

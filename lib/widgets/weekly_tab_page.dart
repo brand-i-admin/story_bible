@@ -443,6 +443,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             selectedCharacterCodes: weekly.character == null
                 ? const <String>{}
                 : {weekly.character!.code},
+            eventEmotionMarks: state.eventEmotionMarks,
             // region 모드면 그 region 폴리곤 한 개를 강조.
             eraRegionLandmarks: isRegionMode && weekly.region != null
                 ? [weekly.region!]
@@ -507,6 +508,16 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                       },
                       selectedEventId: _weeklySelectedEventId,
                       completedEventIds: completedEventIds,
+                      eventEmotionMarks: state.eventEmotionMarks,
+                      quizAttemptSummaries: state.quizAttemptSummaries,
+                      quizReviewEventIds: state.quizAttemptSummaries.values
+                          .where((attempt) => attempt.needsReview)
+                          .map((attempt) => attempt.eventId)
+                          .toSet(),
+                      quizConfusedEventIds: state.quizAttemptSummaries.values
+                          .where((attempt) => attempt.confusedCount > 0)
+                          .map((attempt) => attempt.eventId)
+                          .toSet(),
                       onTapEvent: (event) {
                         // 주간 퀴즈 진행도가 별도 테이블에 저장되도록 weekKey 전달.
                         widget.onOpenEventDetail(

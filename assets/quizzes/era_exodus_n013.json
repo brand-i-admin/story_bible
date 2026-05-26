@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 13,
   "story_title": "시내산 도착: 십계명과 하나님 기준",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 20:21 — '백성은 멀리 섰고 모세는 하나님의 계신 암흑으로 가까이 가니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "십계명이 기록된 성경 책은 어디입니까?",
+      "question": "「시내산 도착: 십계명과 하나님 기준」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "출애굽기",
-        "신명기",
-        "레위기"
+        "하나님은 구원받은 백성에게 살아갈 길을 선포하신다.",
+        "예수님은 떡과 잔으로 새 언약을 세우시고 배신을 예고하신다.",
+        "베들레헴에서 예수님이 태어나고 목자들이 기쁜 소식을 듣는다."
       ],
       "answer_index": 0,
-      "explanation": "출 20:1-21에 십계명이 기록됨"
+      "explanation": "출 20:1 — '하나님이 이 모든 말씀으로 일러 가라사대'"
     }
   ]
 }

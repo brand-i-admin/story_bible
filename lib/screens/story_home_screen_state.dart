@@ -11,6 +11,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 사건 핀 reveal 모드(region 선택 후 또는 character step 3) 의 panel 크기.
   /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding 으로 ~0.36.
   static const double _selectionSheetCardOnlySize = 0.36;
+  static const Duration _emotionMapPreStampDelay = Duration(milliseconds: 500);
+  static const Duration _emotionMapPostStampDelay = Duration(seconds: 1);
+  static const Duration _emotionMapStampFallbackSlack = Duration(
+    milliseconds: 650,
+  );
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
   final ScrollController _selectionPanelScrollController = ScrollController();
   final GlobalKey<ProfileTabPageState> _profileTabKey =
@@ -18,6 +23,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   ProviderSubscription<User?>? _authUserSubscription;
   CharacterSortMode _characterSortMode = CharacterSortMode.eraOrder;
+  String? _mapCelebrationEventId;
+  String? _mapCelebrationStampLabel;
+  int _mapCelebrationNonce = 0;
+  Completer<void>? _mapCelebrationCompleter;
+  bool _mapAnimationInputLocked = false;
   late int _selectionStep = widget.initialStep.clamp(1, 3);
 
   /// 시대 선택 후 사용자가 고른 탐색 모드. null = intro 패널(시대+모드 카드).
@@ -79,10 +89,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   @override
   void dispose() {
+    _completeMapCelebration();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
+  }
+
+  void _completeMapCelebration([int? nonce]) {
+    if (nonce != null && nonce != _mapCelebrationNonce) {
+      return;
+    }
+    final completer = _mapCelebrationCompleter;
+    if (completer != null && !completer.isCompleted) {
+      completer.complete();
+    }
+  }
+
+  VoidCallback _mapCelebrationCompleteCallback() {
+    final nonce = _mapCelebrationNonce;
+    return () => _completeMapCelebration(nonce);
+  }
+
+  void _setMapAnimationInputLocked(bool locked) {
+    if (!mounted || _mapAnimationInputLocked == locked) {
+      return;
+    }
+    setState(() {
+      _mapAnimationInputLocked = locked;
+    });
   }
 
   Future<void> _handleAuthUserChanged(User? user) async {
@@ -641,7 +676,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         .setDisplayedEvents(const <String>{});
   }
 
-  /// Step 3 "다음" 버튼 핸들러 — draft 를 커밋해 지도 핀/화살표 애니메이션 트리거.
+  /// Step 3 "다음" 버튼 핸들러 — draft 를 커밋해 지도 핀 reveal 애니메이션 트리거.
   /// 커밋 후 선택 패널을 최소화하여 지도를 드러낸다.
   void _proceedFromStoryStep() {
     final state = ref.read(storyControllerProvider);
@@ -1007,14 +1042,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           event: event,
           quizWeekKey: quizWeekKey,
           sceneAssetsFuture: sceneAssetsFuture,
-          onOpenBibleReader: (bookNo, chapterNo, verseNo) async {
+          onOpenBibleReader: (target) async {
             if (!mounted) {
               return;
             }
             await _openBibleReaderPopup(
-              initialBookNo: bookNo,
-              initialChapterNo: chapterNo,
-              initialVerseNo: verseNo,
+              initialBookNo: target.bookNo,
+              initialChapterNo: target.chapterNo,
+              initialVerseNo: target.verseNo,
+              highlightTarget: target,
             );
             // 사용자가 본문을 보고 돌아왔으면 '읽기' 완료 처리. 퀴즈 모드면
             // 별도 weekly_quiz_progress 에 저장 (프로필 진행도 영향 X).
@@ -1032,16 +1068,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           },
           onStartQuiz: (eventId) =>
               _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
+          onEmotionEngraved: (event, option) => _showEmotionCelebrationOnMap(
+            event: event,
+            option: option,
+            quizWeekKey: quizWeekKey,
+          ),
           prevEvent: prev,
           nextEvent: next,
           onNavigateToEvent: (target) {
-            // 같은 페이지를 새 사건으로 교체 (push stack 무한 증가 방지).
-            // quizWeekKey 가 있으면 prev/next 이동 후에도 퀴즈 모드 유지.
-            ref.read(storyControllerProvider.notifier).selectEvent(target.id);
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    _buildDetailPageForEvent(target, quizWeekKey: quizWeekKey),
+            unawaited(
+              _navigateDetailThroughMap(
+                from: event,
+                target: target,
+                quizWeekKey: quizWeekKey,
               ),
             );
           },
@@ -1100,12 +1139,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       event: event,
       quizWeekKey: quizWeekKey,
       sceneAssetsFuture: sceneAssetsFuture,
-      onOpenBibleReader: (bookNo, chapterNo, verseNo) async {
+      onOpenBibleReader: (target) async {
         if (!mounted) return;
         await _openBibleReaderPopup(
-          initialBookNo: bookNo,
-          initialChapterNo: chapterNo,
-          initialVerseNo: verseNo,
+          initialBookNo: target.bookNo,
+          initialChapterNo: target.chapterNo,
+          initialVerseNo: target.verseNo,
+          highlightTarget: target,
         );
         if (!mounted) return;
         // 본문 읽기 완료 처리 — quiz 모드면 weekly 진행도, 아니면 일반.
@@ -1122,24 +1162,160 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       },
       onStartQuiz: (eventId) =>
           _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
+      onEmotionEngraved: (event, option) => _showEmotionCelebrationOnMap(
+        event: event,
+        option: option,
+        quizWeekKey: quizWeekKey,
+      ),
       prevEvent: prev,
       nextEvent: next,
       onNavigateToEvent: (target) {
-        ref.read(storyControllerProvider.notifier).selectEvent(target.id);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(
-            builder: (_) =>
-                _buildDetailPageForEvent(target, quizWeekKey: quizWeekKey),
+        unawaited(
+          _navigateDetailThroughMap(
+            from: event,
+            target: target,
+            quizWeekKey: quizWeekKey,
           ),
         );
       },
     );
   }
 
+  Future<void> _showEmotionCelebrationOnMap({
+    required StoryEvent event,
+    required EventEmotionOption option,
+    String? quizWeekKey,
+  }) async {
+    if (!mounted || _mapAnimationInputLocked) return;
+    _setMapAnimationInputLocked(true);
+    try {
+      _completeMapCelebration();
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        await Future<void>.delayed(const Duration(milliseconds: 280));
+      }
+      if (!mounted) return;
+
+      final notifier = ref.read(storyControllerProvider.notifier);
+      final state = ref.read(storyControllerProvider);
+      notifier.selectEvent(event.id);
+      if (!state.displayedEventIds.contains(event.id)) {
+        notifier.setDisplayedEvents({...state.displayedEventIds, event.id});
+      }
+
+      setState(() {
+        _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
+        _selectionStep = 3;
+        _selectionPanelStage = StorySelectionPanelStage.expanded;
+        _selectionSheetExtent = _selectionSheetCardOnlySize;
+        _mapHintDismissed = true;
+        _mapCelebrationEventId = null;
+        _mapCelebrationStampLabel = null;
+      });
+
+      await WidgetsBinding.instance.endOfFrame;
+      await Future<void>.delayed(_emotionMapPreStampDelay);
+      if (!mounted) return;
+
+      final celebrationCompleter = Completer<void>();
+      _mapCelebrationCompleter = celebrationCompleter;
+      setState(() {
+        _mapCelebrationEventId = event.id;
+        _mapCelebrationStampLabel = option.emoji;
+        _mapCelebrationNonce += 1;
+      });
+
+      await WidgetsBinding.instance.endOfFrame;
+      await Future.any<void>([
+        celebrationCompleter.future,
+        Future<void>.delayed(
+          CompletionCelebration.stampDuration + _emotionMapStampFallbackSlack,
+        ),
+      ]);
+      if (_mapCelebrationCompleter == celebrationCompleter) {
+        _mapCelebrationCompleter = null;
+      }
+      if (!mounted) return;
+
+      await Future<void>.delayed(_emotionMapPostStampDelay);
+      if (!mounted) return;
+
+      _setMapAnimationInputLocked(false);
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) =>
+              _buildDetailPageForEvent(event, quizWeekKey: quizWeekKey),
+        ),
+      );
+    } finally {
+      _setMapAnimationInputLocked(false);
+    }
+  }
+
+  Future<void> _navigateDetailThroughMap({
+    required StoryEvent from,
+    required StoryEvent target,
+    String? quizWeekKey,
+  }) async {
+    if (!mounted || _mapAnimationInputLocked) return;
+    _setMapAnimationInputLocked(true);
+    try {
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+      }
+      if (!mounted) return;
+
+      final notifier = ref.read(storyControllerProvider.notifier);
+      final state = ref.read(storyControllerProvider);
+      final nextDisplayed = {...state.displayedEventIds, from.id, target.id};
+      notifier.setDisplayedEvents(nextDisplayed);
+      if (state.selectedEventId != from.id) {
+        notifier.selectEvent(from.id);
+      }
+      setState(() {
+        _draftDisplayedEventIds = {
+          ..._draftDisplayedEventIds,
+          from.id,
+          target.id,
+        };
+        _selectionPanelStage = StorySelectionPanelStage.collapsed;
+        _selectionSheetExtent = _sheetSizeForStage(
+          MediaQuery.sizeOf(context),
+          StorySelectionPanelStage.collapsed,
+        );
+        _mapHintDismissed = true;
+      });
+
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+
+      await _mapPanelController.playEventTransition(from: from, to: target);
+      if (!mounted) return;
+
+      notifier.selectEvent(target.id);
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      if (!mounted) return;
+
+      _setMapAnimationInputLocked(false);
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) =>
+              _buildDetailPageForEvent(target, quizWeekKey: quizWeekKey),
+        ),
+      );
+    } finally {
+      _setMapAnimationInputLocked(false);
+    }
+  }
+
   Future<void> _openBibleReaderPopup({
     int? initialBookNo,
     int? initialChapterNo,
     int? initialVerseNo,
+    BibleNavigationTarget? highlightTarget,
   }) async {
     if (!mounted) {
       return;
@@ -1150,6 +1326,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           initialBookNo: initialBookNo,
           initialChapterNo: initialChapterNo,
           initialVerseNo: initialVerseNo,
+          highlightTarget: highlightTarget,
         ),
       ),
     );
@@ -1318,11 +1495,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selectedAnswers = List<int?>.filled(questions.length, null);
     int currentIndex = 0;
     int score = 0;
+    int confusedCount = 0;
     bool quizFinished = false;
 
     await showDialog<void>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -1393,6 +1571,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                 fontSize: 12,
                                 fontWeight: FontWeight.w800,
                                 color: Color(0xFF5A4326),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Material(
+                            color: const Color(0xFFEBD9B2),
+                            borderRadius: BorderRadius.circular(999),
+                            child: InkWell(
+                              onTap: () => Navigator.of(context).pop(),
+                              borderRadius: BorderRadius.circular(999),
+                              child: const SizedBox(
+                                width: 32,
+                                height: 32,
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  color: Color(0xFF6A4A25),
+                                  size: 20,
+                                ),
                               ),
                             ),
                           ),
@@ -1488,8 +1684,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     }
 
                                     score = 0;
+                                    confusedCount = 0;
                                     for (var i = 0; i < questions.length; i++) {
-                                      if (selectedAnswers[i] ==
+                                      final selected = selectedAnswers[i];
+                                      if (questions[i].isConfusedChoiceIndex(
+                                        selected,
+                                      )) {
+                                        confusedCount += 1;
+                                      } else if (selected ==
                                           questions[i].answerIndex) {
                                         score += 1;
                                       }
@@ -1503,6 +1705,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                             questions: questions,
                                             selectedAnswers: selectedAnswers,
                                             score: score,
+                                            confusedCount: confusedCount,
                                           ),
                                     );
 
@@ -1570,6 +1773,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         isCompleted: true,
         correct: score,
         total: questions.length,
+        confusedCount: confusedCount,
+        selectedAnswers: selectedAnswers,
       );
     } else {
       await notifier.setQuizCompleted(
@@ -1577,6 +1782,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         isCompleted: true,
         correct: score,
         total: questions.length,
+        confusedCount: confusedCount,
+        selectedAnswers: selectedAnswers,
       );
     }
     // 인앱 알림 row 삽입 — 실패해도 퀴즈 완료 UX 를 막지 않도록 try-catch.
@@ -1606,6 +1813,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final sanitizedDraftDisplayed = _sanitizeDraftDisplayedEventIds(
       characterTimeline,
     );
+    final quizReviewEventIds = state.quizAttemptSummaries.values
+        .where((attempt) => attempt.needsReview)
+        .map((attempt) => attempt.eventId)
+        .toSet();
+    final quizConfusedEventIds = state.quizAttemptSummaries.values
+        .where((attempt) => attempt.confusedCount > 0)
+        .map((attempt) => attempt.eventId)
+        .toSet();
     final testamentEras =
         state.eras
             .where((era) => _eraTestament(era) == state.selectedTestament)
@@ -1668,6 +1883,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 return 'assets/avatars_thumbs/$characterCode.png';
               },
               selectedCharacterCodes: state.selectedCharacterCodes,
+              eventEmotionMarks: state.eventEmotionMarks,
               controller: _mapPanelController,
               initialCenter: mapCenter,
               initialZoom: mapZoom,
@@ -1885,6 +2101,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                   controller.colorForCharacter,
                               events: characterTimeline,
                               completedEventIds: state.completedEventIds,
+                              eventEmotionMarks: state.eventEmotionMarks,
+                              quizAttemptSummaries: state.quizAttemptSummaries,
+                              celebrationEventId: _mapCelebrationEventId,
+                              celebrationStampLabel: _mapCelebrationStampLabel,
+                              celebrationNonce: _mapCelebrationNonce,
+                              onCelebrationComplete:
+                                  _mapCelebrationCompleteCallback(),
+                              quizReviewEventIds: quizReviewEventIds,
+                              quizConfusedEventIds: quizConfusedEventIds,
                               draftDisplayedEventIds: sanitizedDraftDisplayed,
                               committedDisplayedEventIds:
                                   state.displayedEventIds,
@@ -2029,6 +2254,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
+              ),
+            ),
+          if (_mapAnimationInputLocked)
+            const Positioned.fill(
+              child: ModalBarrier(
+                color: Colors.transparent,
+                dismissible: false,
               ),
             ),
           if (state.loading)
@@ -2274,6 +2506,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Widget _buildRegionPanel(StoryState state, double bottomInset) {
+    final quizReviewEventIds = state.quizAttemptSummaries.values
+        .where((attempt) => attempt.needsReview)
+        .map((attempt) => attempt.eventId)
+        .toSet();
+    final quizConfusedEventIds = state.quizAttemptSummaries.values
+        .where((attempt) => attempt.confusedCount > 0)
+        .map((attempt) => attempt.eventId)
+        .toSet();
     final eraCodes = state.eras
         .where((e) => state.selectedEraIds.contains(e.id))
         .map((e) => e.code)
@@ -2316,6 +2556,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     allCharacters: state.characters,
                     selectedEventId: state.selectedEventId,
                     completedEventIds: state.completedEventIds,
+                    eventEmotionMarks: state.eventEmotionMarks,
+                    quizAttemptSummaries: state.quizAttemptSummaries,
+                    celebrationEventId: _mapCelebrationEventId,
+                    celebrationStampLabel: _mapCelebrationStampLabel,
+                    celebrationNonce: _mapCelebrationNonce,
+                    onCelebrationComplete: _mapCelebrationCompleteCallback(),
+                    quizReviewEventIds: quizReviewEventIds,
+                    quizConfusedEventIds: quizConfusedEventIds,
                     onSelectEvent: (event) {
                       ref
                           .read(storyControllerProvider.notifier)

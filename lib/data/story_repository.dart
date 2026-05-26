@@ -7,7 +7,9 @@ import '../models/character.dart';
 import '../models/daily_quiz.dart';
 import '../models/era.dart';
 import '../models/era_boundary.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 
@@ -85,6 +87,55 @@ class StoryRepository {
         .contains('character_codes', <String>[characterCode])
         .order('global_rank', ascending: true);
     return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
+  }
+
+  Future<List<StoryEvent>> fetchEventsByIds(Set<String> eventIds) async {
+    if (eventIds.isEmpty) {
+      return const [];
+    }
+    final rows = await _client
+        .from('events_ordered')
+        .select()
+        .inFilter('id', eventIds.toList())
+        .order('global_rank', ascending: true);
+    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
+  }
+
+  Future<Set<String>> fetchSavedEventIds(String userId) async {
+    final rows = await _client
+        .from('user_saved_events')
+        .select('event_id')
+        .eq('user_id', userId)
+        .order('created_at', ascending: false);
+
+    return rows.map((row) => row['event_id'] as String).toSet();
+  }
+
+  Future<bool> toggleSavedEvent({
+    required String userId,
+    required String eventId,
+  }) async {
+    final existing = await _client
+        .from('user_saved_events')
+        .select('event_id')
+        .eq('user_id', userId)
+        .eq('event_id', eventId)
+        .maybeSingle();
+
+    if (existing != null) {
+      await _client
+          .from('user_saved_events')
+          .delete()
+          .eq('user_id', userId)
+          .eq('event_id', eventId);
+      return false;
+    }
+
+    await _client.from('user_saved_events').insert({
+      'user_id': userId,
+      'event_id': eventId,
+    });
+    return true;
   }
 
   /// 인물별 첫 등장 시점을 [StoryEvent.globalRank] 기준으로 반환한다.
@@ -246,6 +297,8 @@ class StoryRepository {
       final c4 = row['choice_d'] as String?;
       if (c4 != null && c4.trim().isNotEmpty) {
         choices.add(c4);
+      } else {
+        choices.add(QuizQuestion.confusedChoiceLabel);
       }
 
       return QuizQuestion(
@@ -290,17 +343,113 @@ class StoryRepository {
         .toSet();
   }
 
+  Future<Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>>
+  fetchEventProgress(String userId) async {
+    final rows = await _client
+        .from('user_event_progress')
+        .select('event_id, is_bible_read, is_quiz_completed, is_completed')
+        .eq('user_id', userId);
+
+    return {
+      for (final row in rows)
+        row['event_id'] as String: (
+          bibleRead: (row['is_bible_read'] as bool?) ?? false,
+          quizCompleted: (row['is_quiz_completed'] as bool?) ?? false,
+          completed: (row['is_completed'] as bool?) ?? false,
+        ),
+    };
+  }
+
+  Future<Map<String, QuizAttemptSummary>> fetchQuizAttemptSummaries(
+    String userId,
+  ) async {
+    final rows = await _client
+        .from('user_quiz_attempts')
+        .select(
+          'event_id, correct_count, total_count, wrong_count, confused_count, selected_answers, updated_at',
+        )
+        .eq('user_id', userId)
+        .order('updated_at', ascending: false);
+
+    return {
+      for (final row in rows)
+        row['event_id'] as String: QuizAttemptSummary.fromMap(row),
+    };
+  }
+
+  Future<void> upsertQuizAttempt({
+    required String userId,
+    required QuizAttemptSummary summary,
+  }) async {
+    await _client
+        .from('user_quiz_attempts')
+        .upsert(summary.toMap(userId: userId), onConflict: 'user_id,event_id');
+  }
+
+  Future<Map<String, EventEmotionMark>> fetchEventEmotionMarks(
+    String userId,
+  ) async {
+    final rows = await _client
+        .from('user_event_emotion_marks')
+        .select(
+          'event_id, emotion_key, emotion_label, emotion_emoji, note, updated_at',
+        )
+        .eq('user_id', userId)
+        .order('updated_at', ascending: false);
+
+    return {
+      for (final row in rows)
+        row['event_id'] as String: EventEmotionMark.fromMap(row),
+    };
+  }
+
+  Future<void> upsertEventEmotionMark({
+    required String userId,
+    required EventEmotionMark mark,
+  }) async {
+    await _client
+        .from('user_event_emotion_marks')
+        .upsert(mark.toMap(userId: userId), onConflict: 'user_id,event_id');
+  }
+
+  Future<void> deleteEventEmotionMark({
+    required String userId,
+    required String eventId,
+  }) async {
+    await _client
+        .from('user_event_emotion_marks')
+        .delete()
+        .eq('user_id', userId)
+        .eq('event_id', eventId);
+  }
+
   Future<void> upsertEventProgress({
     required String userId,
     required String eventId,
-    required bool isCompleted,
+    bool? isBibleRead,
+    bool? isQuizCompleted,
+    bool? isCompleted,
   }) async {
-    await _client.from('user_event_progress').upsert({
+    final payload = <String, dynamic>{
       'user_id': userId,
       'event_id': eventId,
-      'is_completed': isCompleted,
-      'completed_at': isCompleted ? DateTime.now().toIso8601String() : null,
-    }, onConflict: 'user_id,event_id');
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+    if (isBibleRead != null) {
+      payload['is_bible_read'] = isBibleRead;
+    }
+    if (isQuizCompleted != null) {
+      payload['is_quiz_completed'] = isQuizCompleted;
+    }
+    if (isCompleted != null) {
+      payload['is_completed'] = isCompleted;
+      payload['completed_at'] = isCompleted
+          ? DateTime.now().toIso8601String()
+          : null;
+    }
+    await _client
+        .from('user_event_progress')
+        .upsert(payload, onConflict: 'user_id,event_id');
   }
 
   /// 주간 퀴즈 진행도 — 특정 user_id + week_key 의 모든 row.

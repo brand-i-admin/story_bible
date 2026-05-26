@@ -87,11 +87,79 @@ def deterministic_shuffle(
 # ---------------------------------------------------------------------------
 # QuizFile schema
 # ---------------------------------------------------------------------------
-QUESTION_TYPES_IN_ORDER: tuple[str, str, str] = ("fact", "attitude", "bible_context")
+QUESTION_TYPES_IN_ORDER: tuple[str, str, str] = ("fact", "attitude", "story_context")
+CONFUSED_CHOICE_LABEL = "헷갈렸어요"
+SOURCE_LOCATION_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"성경\s*(책|어느\s*책|무슨\s*책)"),
+    re.compile(r"(어느|무슨)\s*성경\s*책"),
+    re.compile(r"기록.*(성경\s*)?책"),
+    re.compile(r"기록.*(몇|어느|무슨)\s*장(?!면|막)"),
+    re.compile(r"기록.*(몇|어느|무슨)\s*절"),
+    re.compile(r"(몇|어느|무슨)\s*절.*(기록|나옵니까|나오나요)"),
+    re.compile(r"(몇|어느|무슨)\s*구절"),
+    re.compile(
+        r"(창세기|출애굽기|마태복음|마가복음|누가복음|요한복음)\s*(몇|어느|무슨)\s*장(?!면|막)"
+    ),
+    re.compile(r"(몇|어느|무슨)\s*장(?!면|막).*(기록|나옵니까|나오나요)"),
+    re.compile(r"성경\s*책과\s*장"),
+)
+TITLE_MATCH_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"설명에\s*맞는\s*이야기"),
+    re.compile(r"맞는\s*이야기는\s*무엇"),
+    re.compile(r"이야기\s*제목"),
+    re.compile(r"제목을?\s*(고르|맞추)"),
+)
+SUMMARY_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"핵심\s*내용"),
+    re.compile(r"중심\s*내용"),
+    re.compile(r"요약\s*(내용|문장)"),
+)
+BLANK_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"빈\s*칸|빈칸"),
+    re.compile(r"_{2,}"),
+)
+GENERIC_STORY_CONTEXT_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"본문에\s*따르면\s*다음\s*중\s*맞는\s*내용"),
+    re.compile(r"본문에\s*따르면\s*맞는\s*설명"),
+    re.compile(r"다음\s*중\s*이\s*이야기\s*본문에서\s*확인되는\s*표현"),
+    re.compile(r"본문에서\s*확인되는\s*표현"),
+)
+VERSE_EVIDENCE_PATTERN = re.compile(r"^[가-힣0-9]+\s+\d+:\d+(?:-\d+)?\s+—\s+'[^']+'$")
+MAX_STORY_CONTEXT_CHOICE_CHARS = 72
 
 
 class QuizValidationError(ValueError):
     """Raised when a quiz JSON file fails schema validation."""
+
+
+def asks_for_source_location(question_text: str) -> bool:
+    """Return True if a question asks users to recall book/chapter location."""
+    return any(pattern.search(question_text) for pattern in SOURCE_LOCATION_PATTERNS)
+
+
+def asks_for_story_title(question_text: str) -> bool:
+    """Return True if a question asks users to identify a story title."""
+    return any(pattern.search(question_text) for pattern in TITLE_MATCH_PATTERNS)
+
+
+def asks_for_summary_choice(question_text: str) -> bool:
+    """Return True if a question asks users to pick a core/summary sentence."""
+    return any(pattern.search(question_text) for pattern in SUMMARY_CHOICE_PATTERNS)
+
+
+def asks_for_blank_choice(question_text: str) -> bool:
+    """Return True if a question asks users to fill a blank in the passage."""
+    return any(pattern.search(question_text) for pattern in BLANK_CHOICE_PATTERNS)
+
+
+def asks_generic_story_context(question_text: str) -> bool:
+    """Return True if a story-context question is a generic passage prompt."""
+    return any(pattern.search(question_text) for pattern in GENERIC_STORY_CONTEXT_PATTERNS)
+
+
+def has_verse_evidence(explanation: str) -> bool:
+    """Return True when the explanation points to a concrete verse quote."""
+    return VERSE_EVIDENCE_PATTERN.search(explanation.strip()) is not None
 
 
 @dataclass(frozen=True)
@@ -154,6 +222,7 @@ def load_quiz_file(path: Path) -> QuizFile:
             f"match story_index {story_index!r}"
         )
 
+    story_title = str(raw.get("story_title", "")).strip()
     questions_raw = raw.get("questions")
     if not isinstance(questions_raw, list) or len(questions_raw) != 3:
         raise QuizValidationError(f"{path.name}: questions length must be exactly 3")
@@ -193,9 +262,55 @@ def load_quiz_file(path: Path) -> QuizFile:
             raise QuizValidationError(
                 f"{path.name}: questions[{i}].question must be a non-empty string"
             )
+        if expected_type == "story_context" and asks_for_source_location(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question asks for Bible source "
+                "location; use story-context comprehension instead"
+            )
+        if expected_type == "story_context" and asks_for_story_title(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question asks learners to match "
+                "a story title; use passage comprehension instead"
+            )
+        if expected_type == "story_context" and asks_for_summary_choice(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question asks learners to pick "
+                "a core/summary sentence; use a normal story question instead"
+            )
+        if expected_type == "story_context" and asks_for_blank_choice(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question asks learners to fill "
+                "a blank; use passage fact choices instead"
+            )
+        if expected_type == "story_context" and asks_generic_story_context(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question is too generic; ask "
+                "about a concrete fact from a specific verse"
+            )
+        if (
+            expected_type == "story_context"
+            and story_title
+            and any(c.strip() == story_title for c in choices)
+        ):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].choices include the story title; "
+                "use passage-content choices instead"
+            )
+        if expected_type == "story_context":
+            for j, choice in enumerate(choices):
+                if len(choice.strip()) > MAX_STORY_CONTEXT_CHOICE_CHARS:
+                    raise QuizValidationError(
+                        f"{path.name}: questions[{i}].choices[{j}] is too long; "
+                        "use a short fact answer instead of a full verse"
+                    )
         if not isinstance(explanation, str):
             raise QuizValidationError(
                 f"{path.name}: questions[{i}].explanation must be a string"
+            )
+        if expected_type == "story_context" and not has_verse_evidence(explanation):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].explanation must cite a verse "
+                "and quote the passage evidence"
             )
         questions.append(
             QuizQuestionDraft(
@@ -212,7 +327,7 @@ def load_quiz_file(path: Path) -> QuizFile:
         path=path,
         era_code=era_code,
         story_index=story_index,
-        story_title=str(raw.get("story_title", "")).strip(),
+        story_title=story_title,
         source_version=str(raw.get("source_version", "")).strip(),
         questions=questions,
     )
@@ -268,7 +383,7 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
                 f"{_dollar_quote(shuffled[0])}, "
                 f"{_dollar_quote(shuffled[1])}, "
                 f"{_dollar_quote(shuffled[2])}, "
-                f"null, "
+                f"{_dollar_quote(CONFUSED_CHOICE_LABEL)}, "
                 f"{new_answer_index}, "
                 f"{_dollar_quote(q.explanation)}, "
                 f"{q.display_order}"
@@ -289,6 +404,17 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
 # Reporting
 # ---------------------------------------------------------------------------
 _LENGTH_LIMITS = {"question": 40, "choice": 20, "explanation": 60}
+_STORY_CONTEXT_LENGTH_LIMITS = {
+    "question": 58,
+    "choice": MAX_STORY_CONTEXT_CHOICE_CHARS,
+    "explanation": 140,
+}
+
+
+def _length_limits_for(question: QuizQuestionDraft) -> dict[str, int]:
+    if question.type == "story_context":
+        return _STORY_CONTEXT_LENGTH_LIMITS
+    return _LENGTH_LIMITS
 
 
 def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
@@ -329,8 +455,9 @@ def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
                 quiz.seed_key, q.display_order, q.choices
             )
             answer_dist[shuffled_answer_index] += 1
+            length_limits = _length_limits_for(q)
 
-            if len(q.question) > _LENGTH_LIMITS["question"]:
+            if len(q.question) > length_limits["question"]:
                 length_warnings.append(
                     {
                         "filename": quiz.path.name,
@@ -340,7 +467,7 @@ def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
                     }
                 )
             for idx, c in enumerate(q.choices):
-                if len(c) > _LENGTH_LIMITS["choice"]:
+                if len(c) > length_limits["choice"]:
                     length_warnings.append(
                         {
                             "filename": quiz.path.name,
@@ -349,7 +476,7 @@ def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
                             "length": len(c),
                         }
                     )
-            if len(q.explanation) > _LENGTH_LIMITS["explanation"]:
+            if len(q.explanation) > length_limits["explanation"]:
                 length_warnings.append(
                     {
                         "filename": quiz.path.name,

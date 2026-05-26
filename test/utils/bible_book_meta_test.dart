@@ -84,6 +84,42 @@ void main() {
       expect(target!.chapterNo, 1);
       expect(target.verseNo, 1);
     });
+
+    test('같은 장의 범위를 파싱하고 포함 여부를 확인한다', () {
+      final target = parseBibleNavigationTarget('창 39:1-23');
+      expect(target, isNotNull);
+      expect(target!.bookNo, 1);
+      expect(target.chapterNo, 39);
+      expect(target.verseNo, 1);
+      expect(target.endChapterNo, 39);
+      expect(target.endVerseNo, 23);
+      expect(
+        target.containsVerse(bookNo: 1, chapterNo: 39, verseNo: 12),
+        isTrue,
+      );
+      expect(
+        target.containsVerse(bookNo: 1, chapterNo: 39, verseNo: 24),
+        isFalse,
+      );
+    });
+
+    test('여러 장에 걸친 범위를 파싱한다', () {
+      final target = parseBibleNavigationTarget('창 1:31-2:3');
+      expect(target, isNotNull);
+      expect(target!.chapterNo, 1);
+      expect(target.verseNo, 31);
+      expect(target.endChapterNo, 2);
+      expect(target.endVerseNo, 3);
+      expect(target.containsVerse(bookNo: 1, chapterNo: 2, verseNo: 1), isTrue);
+      expect(
+        target.isBoundaryVerse(bookNo: 1, chapterNo: 2, verseNo: 3),
+        isTrue,
+      );
+      expect(
+        target.containsVerse(bookNo: 1, chapterNo: 2, verseNo: 4),
+        isFalse,
+      );
+    });
   });
 
   group('normalizeBibleBookKey', () {

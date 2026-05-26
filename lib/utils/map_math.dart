@@ -108,6 +108,32 @@ Map<String, LatLng> buildAdjustedPoints(List<StoryEvent> visible) {
   return adjusted;
 }
 
+/// 시간순 번호 핀에서 사용하는 사건 좌표 맵.
+///
+/// [visibleCount]가 있으면 현재 reveal 된 사건까지만 포함한다. 같은 장소의
+/// 사건들은 [spreadColocatedPoints]로 분산해 실제 번호 핀 중심과 path/glow
+/// 중심이 같은 좌표계를 공유하게 한다.
+Map<String, LatLng> buildRankedEventPointMap(
+  List<StoryEvent> events, {
+  int? visibleCount,
+  double radiusDeg = 0.045,
+  double thresholdDeg = 0.04,
+}) {
+  final ordered = events.where((event) => event.hasCoordinate).toList()
+    ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
+  final visible = visibleCount == null
+      ? ordered
+      : ordered.take(math.max(0, visibleCount)).toList(growable: false);
+  final input = <String, LatLng>{
+    for (final event in visible) event.id: event.latLng,
+  };
+  return spreadColocatedPoints(
+    input,
+    radiusDeg: radiusDeg,
+    thresholdDeg: thresholdDeg,
+  );
+}
+
 /// 거리 기반으로 가까운 점들을 묶어 원형 분산. [thresholdDeg] 이내 거리의 점들을
 /// 한 그룹으로 (transitive) 묶어 [radiusDeg] 반경의 원에 분산.
 ///

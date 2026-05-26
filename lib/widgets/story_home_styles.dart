@@ -133,6 +133,9 @@ Widget filledActionButton({
   double? horizontalPadding,
   double? radius,
   double? fontSize,
+  List<Color>? gradientColors,
+  Color? borderColor,
+  Color? shadowColor,
 }) {
   final height = minHeight ?? (compact ? 34.0 : 42.0);
   final horizontal = horizontalPadding ?? (compact ? 12.0 : 18.0);
@@ -153,20 +156,26 @@ Widget filledActionButton({
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: completed
-                ? const [AppColors.greenBtnTop, AppColors.greenBtnBot]
-                : const [AppColors.goldLight, AppColors.goldDeep],
+            colors:
+                gradientColors ??
+                (completed
+                    ? const [AppColors.greenBtnTop, AppColors.greenBtnBot]
+                    : const [AppColors.goldLight, AppColors.goldDeep]),
           ),
           borderRadius: BorderRadius.circular(resolvedRadius),
           border: Border.all(
-            color: completed ? const Color(0xFFD7EFCE) : AppColors.goldHi,
+            color:
+                borderColor ??
+                (completed ? const Color(0xFFD7EFCE) : AppColors.goldHi),
             width: 1.1,
           ),
           boxShadow: [
             BoxShadow(
-              color: completed
-                  ? const Color(0x223D8758)
-                  : const Color(0x26A35B22),
+              color:
+                  shadowColor ??
+                  (completed
+                      ? const Color(0x223D8758)
+                      : const Color(0x26A35B22)),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

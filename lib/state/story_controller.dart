@@ -10,7 +10,9 @@ import '../data/story_repository.dart';
 import '../models/character.dart';
 import '../models/era.dart';
 import '../models/era_boundary.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../theme/tokens.dart';
 import 'auth_providers.dart';
@@ -40,7 +42,15 @@ class StoryController extends Notifier<StoryState> {
     try {
       state = state.copyWith(loading: true, clearError: true);
       final eras = await _repo.fetchEras();
-      final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
+      final eventProgress = await _fetchEventProgressForCurrentUser();
+      final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+      final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+      final completedEventIds = _completedIdsFromProgress(
+        eventProgress,
+        eventEmotionMarks,
+      );
+      final quizAttemptSummaries =
+          await _fetchQuizAttemptSummariesForCurrentUser();
       if (eras.isEmpty) {
         state = state.copyWith(
           loading: false,
@@ -82,6 +92,12 @@ class StoryController extends Notifier<StoryState> {
         characters: const [],
         events: const [],
         completedEventIds: completedEventIds,
+        bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
+        quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
+        lastQuizScores: _scoresFromAttempts(quizAttemptSummaries),
+        quizAttemptSummaries: quizAttemptSummaries,
+        eventEmotionMarks: eventEmotionMarks,
+        savedEventIds: savedEventIds,
         selectedEraId: null,
         selectedCharacterCodes: const {},
         selectedCharacterColors: const {},
@@ -252,12 +268,26 @@ class StoryController extends Notifier<StoryState> {
         characters,
         const {},
       );
-      final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
+      final eventProgress = await _fetchEventProgressForCurrentUser();
+      final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+      final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+      final completedEventIds = _completedIdsFromProgress(
+        eventProgress,
+        eventEmotionMarks,
+      );
+      final quizAttemptSummaries =
+          await _fetchQuizAttemptSummariesForCurrentUser();
       state = state.copyWith(
         loading: false,
         characters: characters,
         events: events,
         completedEventIds: completedEventIds,
+        bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
+        quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
+        lastQuizScores: _scoresFromAttempts(quizAttemptSummaries),
+        quizAttemptSummaries: quizAttemptSummaries,
+        eventEmotionMarks: eventEmotionMarks,
+        savedEventIds: savedEventIds,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
         // 시대 전환 시 지도 표시는 항상 초기화 (사용자가 다시 고르도록)
@@ -370,8 +400,64 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshCompletedEventIds() async {
-    final completedEventIds = await _fetchCompletedEventIdsForCurrentUser();
-    state = state.copyWith(completedEventIds: completedEventIds);
+    final eventProgress = await _fetchEventProgressForCurrentUser();
+    final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+    state = state.copyWith(
+      completedEventIds: _completedIdsFromProgress(
+        eventProgress,
+        eventEmotionMarks,
+      ),
+      bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
+      quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
+      eventEmotionMarks: eventEmotionMarks,
+    );
+  }
+
+  Future<void> refreshQuizAttemptSummaries() async {
+    final summaries = await _fetchQuizAttemptSummariesForCurrentUser();
+    state = state.copyWith(
+      quizAttemptSummaries: summaries,
+      lastQuizScores: _scoresFromAttempts(summaries),
+    );
+  }
+
+  Future<void> refreshEventEmotionMarks() async {
+    final eventProgress = await _fetchEventProgressForCurrentUser();
+    final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+    state = state.copyWith(
+      eventEmotionMarks: eventEmotionMarks,
+      completedEventIds: _completedIdsFromProgress(
+        eventProgress,
+        eventEmotionMarks,
+      ),
+    );
+  }
+
+  Future<void> refreshSavedEventIds() async {
+    final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+    if (_characterSetsEqual(savedEventIds, state.savedEventIds)) {
+      return;
+    }
+    state = state.copyWith(savedEventIds: savedEventIds);
+  }
+
+  Future<bool> toggleSavedEvent(String eventId) async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return false;
+    }
+    final nowSaved = await _repo.toggleSavedEvent(
+      userId: user.id,
+      eventId: eventId,
+    );
+    final next = {...state.savedEventIds};
+    if (nowSaved) {
+      next.add(eventId);
+    } else {
+      next.remove(eventId);
+    }
+    state = state.copyWith(savedEventIds: next);
+    return nowSaved;
   }
 
   /// 본문 읽기 완료/취소 토글. 본문 + 퀴즈 둘 다 완료 시 자동으로
@@ -387,6 +473,14 @@ class StoryController extends Notifier<StoryState> {
       next.remove(eventId);
     }
     state = state.copyWith(bibleReadEventIds: next);
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user != null) {
+      await _repo.upsertEventProgress(
+        userId: user.id,
+        eventId: eventId,
+        isBibleRead: isRead,
+      );
+    }
     await _syncOverallCompletion(eventId);
   }
 
@@ -397,6 +491,8 @@ class StoryController extends Notifier<StoryState> {
     required bool isCompleted,
     int? correct,
     int? total,
+    int? confusedCount,
+    List<int?> selectedAnswers = const [],
   }) async {
     final next = {...state.quizCompletedEventIds};
     if (isCompleted) {
@@ -410,19 +506,82 @@ class StoryController extends Notifier<StoryState> {
     } else if (!isCompleted) {
       nextScores.remove(eventId);
     }
+    final nextAttempts = {...state.quizAttemptSummaries};
+    QuizAttemptSummary? attemptSummary;
+    if (isCompleted && correct != null && total != null) {
+      attemptSummary = _buildQuizAttemptSummary(
+        eventId: eventId,
+        correct: correct,
+        total: total,
+        confusedCount: confusedCount ?? 0,
+        selectedAnswers: selectedAnswers,
+      );
+      nextAttempts[eventId] = attemptSummary;
+    }
     state = state.copyWith(
       quizCompletedEventIds: next,
       lastQuizScores: nextScores,
+      quizAttemptSummaries: nextAttempts,
+    );
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user != null && attemptSummary != null) {
+      await _repo.upsertQuizAttempt(userId: user.id, summary: attemptSummary);
+    }
+    if (user != null) {
+      await _repo.upsertEventProgress(
+        userId: user.id,
+        eventId: eventId,
+        isQuizCompleted: isCompleted,
+      );
+    }
+    await _syncOverallCompletion(eventId);
+  }
+
+  Future<void> setEmotionMark({
+    required String eventId,
+    required EventEmotionOption option,
+    required String note,
+  }) async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return;
+    }
+    final normalizedNote = note.trim();
+    final mark = EventEmotionMark(
+      eventId: eventId,
+      emotionKey: option.key,
+      emotionLabel: option.label,
+      emotionEmoji: option.emoji,
+      note: normalizedNote.length > 100
+          ? normalizedNote.substring(0, 100)
+          : normalizedNote,
+      updatedAt: DateTime.now().toUtc(),
+    );
+    await _repo.upsertEventEmotionMark(userId: user.id, mark: mark);
+    state = state.copyWith(
+      eventEmotionMarks: {...state.eventEmotionMarks, eventId: mark},
     );
     await _syncOverallCompletion(eventId);
   }
 
-  /// bibleRead + quizCompleted 둘 다 완료면 [markEventCompleted] 호출,
+  Future<void> clearEmotionMark({required String eventId}) async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return;
+    }
+    await _repo.deleteEventEmotionMark(userId: user.id, eventId: eventId);
+    final nextMarks = {...state.eventEmotionMarks}..remove(eventId);
+    state = state.copyWith(eventEmotionMarks: nextMarks);
+    await _syncOverallCompletion(eventId);
+  }
+
+  /// bibleRead + quizCompleted + emotion mark 모두 완료면 [markEventCompleted] 호출,
   /// 어느 한쪽이라도 미완이면 false 로 호출하여 DB 와 동기화.
   Future<void> _syncOverallCompletion(String eventId) async {
     final read = state.bibleReadEventIds.contains(eventId);
     final quiz = state.quizCompletedEventIds.contains(eventId);
-    final shouldComplete = read && quiz;
+    final engraved = state.eventEmotionMarks.containsKey(eventId);
+    final shouldComplete = read && quiz && engraved;
     final isCurrentlyCompleted = state.completedEventIds.contains(eventId);
     if (shouldComplete == isCurrentlyCompleted) return;
     await markEventCompleted(eventId: eventId, isCompleted: shouldComplete);
@@ -493,6 +652,8 @@ class StoryController extends Notifier<StoryState> {
     required bool isCompleted,
     int? correct,
     int? total,
+    int? confusedCount,
+    List<int?> selectedAnswers = const [],
   }) async {
     final next = {...state.weeklyQuizCompletedEventIds};
     if (isCompleted) {
@@ -506,13 +667,29 @@ class StoryController extends Notifier<StoryState> {
     } else if (!isCompleted) {
       nextScores.remove(eventId);
     }
+    final nextAttempts = {...state.quizAttemptSummaries};
+    QuizAttemptSummary? attemptSummary;
+    if (isCompleted && correct != null && total != null) {
+      attemptSummary = _buildQuizAttemptSummary(
+        eventId: eventId,
+        correct: correct,
+        total: total,
+        confusedCount: confusedCount ?? 0,
+        selectedAnswers: selectedAnswers,
+      );
+      nextAttempts[eventId] = attemptSummary;
+    }
     state = state.copyWith(
       weeklyQuizCompletedEventIds: next,
       weeklyQuizLastScores: nextScores,
       weeklyQuizWeekKey: weekKey,
+      quizAttemptSummaries: nextAttempts,
     );
     final user = ref.read(signedInUserProvider);
     if (user == null) return;
+    if (attemptSummary != null) {
+      await _repo.upsertQuizAttempt(userId: user.id, summary: attemptSummary);
+    }
     await _repo.upsertWeeklyQuizProgress(
       userId: user.id,
       weekKey: weekKey,
@@ -615,12 +792,111 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
-  Future<Set<String>> _fetchCompletedEventIdsForCurrentUser() async {
+  Future<Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>>
+  _fetchEventProgressForCurrentUser() async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return const <
+        String,
+        ({bool bibleRead, bool quizCompleted, bool completed})
+      >{};
+    }
+    return _repo.fetchEventProgress(user.id);
+  }
+
+  Future<Map<String, QuizAttemptSummary>>
+  _fetchQuizAttemptSummariesForCurrentUser() async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return const <String, QuizAttemptSummary>{};
+    }
+    return _repo.fetchQuizAttemptSummaries(user.id);
+  }
+
+  Future<Map<String, EventEmotionMark>>
+  _fetchEventEmotionMarksForCurrentUser() async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return const <String, EventEmotionMark>{};
+    }
+    return _repo.fetchEventEmotionMarks(user.id);
+  }
+
+  Future<Set<String>> _fetchSavedEventIdsForCurrentUser() async {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (user == null) {
       return const <String>{};
     }
-    return _repo.fetchCompletedEventIds(user.id);
+    return _repo.fetchSavedEventIds(user.id);
+  }
+
+  Set<String> _bibleReadIdsFromProgress(
+    Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>
+    progress,
+  ) {
+    return {
+      for (final entry in progress.entries)
+        if (entry.value.bibleRead) entry.key,
+    };
+  }
+
+  Set<String> _quizCompletedIdsFromProgress(
+    Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>
+    progress,
+  ) {
+    return {
+      for (final entry in progress.entries)
+        if (entry.value.quizCompleted) entry.key,
+    };
+  }
+
+  Set<String> _completedIdsFromProgress(
+    Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>
+    progress,
+    Map<String, EventEmotionMark> emotionMarks,
+  ) {
+    return {
+      for (final entry in progress.entries)
+        if (entry.value.bibleRead &&
+            entry.value.quizCompleted &&
+            emotionMarks.containsKey(entry.key))
+          entry.key,
+    };
+  }
+
+  Map<String, ({int correct, int total})> _scoresFromAttempts(
+    Map<String, QuizAttemptSummary> summaries,
+  ) {
+    return {
+      for (final entry in summaries.entries)
+        entry.key: (
+          correct: entry.value.correctCount,
+          total: entry.value.totalCount,
+        ),
+    };
+  }
+
+  QuizAttemptSummary _buildQuizAttemptSummary({
+    required String eventId,
+    required int correct,
+    required int total,
+    required int confusedCount,
+    required List<int?> selectedAnswers,
+  }) {
+    final normalizedConfused = confusedCount < 0
+        ? 0
+        : (confusedCount > total ? total : confusedCount);
+    final rawWrong = total - correct - normalizedConfused;
+    final wrong = rawWrong < 0 ? 0 : (rawWrong > total ? total : rawWrong);
+    return QuizAttemptSummary(
+      eventId: eventId,
+      correctCount: correct,
+      totalCount: total,
+      wrongCount: wrong,
+      confusedCount: normalizedConfused,
+      selectedAnswers: selectedAnswers,
+      updatedAt: DateTime.now().toUtc(),
+    );
   }
 
   List<StoryEvent> mergedTimeline() {

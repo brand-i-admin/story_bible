@@ -2,7 +2,7 @@
   "era_code": "era_judges",
   "story_index": 8,
   "story_title": "보아스의 은혜: 이삭 줍는 자리",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "룻 2:9 — '내가 그 소년들에게 명하여 너를 건드리지 말라 하였느니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "보아스와 룻의 첫 만남이 기록된 성경 책은 어디입니까?",
+      "question": "「보아스의 은혜: 이삭 줍는 자리」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "룻기",
-        "사사기",
-        "사무엘상"
+        "룻은 이삭을 줍다 보아스를 만나고, 보호와 은혜를 경험한다.",
+        "기다림을 견디지 못한 백성은 우상을 만들고 언약을 깨뜨린다.",
+        "성전 소동으로 바울이 붙잡히며 ‘로마까지’의 여정이 시작된다."
       ],
       "answer_index": 0,
-      "explanation": "룻 2:1-17에 보아스의 밭에서 룻의 이삭 줍기가 기록됨"
+      "explanation": "룻 2:1 — '나오미의 남편 엘리멜렉의 친족 중 유력한 자가 있으니 이름은 보아스더라'"
     }
   ]
 }

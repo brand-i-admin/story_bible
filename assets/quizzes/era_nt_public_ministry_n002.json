@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 2,
   "story_title": "마리아 수태고지와 찬양",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 1:49 — '능하신 이가 큰 일을 내게 행하셨으니 그 이름이 거룩하시며'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "마리아의 수태고지와 찬양 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「마리아 수태고지와 찬양」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "누가복음",
-        "마태복음",
-        "요한복음"
+        "마리아는 천사의 소식을 받고 엘리사벳을 찾아가 찬양한다.",
+        "에스더는 예상치 못한 자리에서 왕후가 되어 때를 기다린다.",
+        "표적과 논쟁이 함께 일어나고, 박해의 조짐이 짙어진다."
       ],
       "answer_index": 0,
-      "explanation": "눅 1:26-56에 마리아의 수태고지와 마리아 찬가가 기록됨"
+      "explanation": "눅 1:26 — '여섯째 달에 천사 가브리엘이 하나님의 보내심을 받들어 갈릴리 나사렛이란 동네에 가서'"
     }
   ]
 }
