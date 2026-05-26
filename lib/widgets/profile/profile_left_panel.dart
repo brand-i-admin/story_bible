@@ -8,56 +8,69 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required AppUserProfile profile,
     required bool isAuthenticated,
   }) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: floatingPanelDecoration(),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 컴팩트 헤더 — 한 줄에 [아바타 40][이름][수정][개인정보][로그아웃].
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildCurrentUserAvatar(profile: profile, size: 40),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    profile.nickname,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.ink500,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildProfileHeader(profile: profile),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: floatingPanelDecoration(),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildProfileContentTabs(),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: _buildProfileContentPanel(
+                      profile: profile,
+                      isAuthenticated: isAuthenticated,
                     ),
                   ),
-                ),
-                _profileTinyIconButton(
-                  tooltip: '프로필 수정',
-                  onTap: _openProfileEditor,
-                  icon: Icons.edit_rounded,
-                ),
-                const SizedBox(width: 4),
-                _profileTinyIconButton(
-                  tooltip: '설정',
-                  onTap: _openProfileSettingsSheet,
-                  icon: Icons.settings_outlined,
-                ),
-              ],
-            ),
-            // 헤더와 탭 사이 간격 0 — 컴팩트.
-            _buildProfileContentTabs(),
-            const SizedBox(height: 8),
-            Expanded(
-              child: _buildProfileContentPanel(
-                profile: profile,
-                isAuthenticated: isAuthenticated,
+                ],
               ),
             ),
-          ],
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildProfileHeader({required AppUserProfile profile}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildCurrentUserAvatar(profile: profile, size: 40),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              profile.nickname,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: AppColors.ink500,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          _profileTinyIconButton(
+            tooltip: '프로필 수정',
+            onTap: _openProfileEditor,
+            icon: Icons.edit_rounded,
+          ),
+          const SizedBox(width: 4),
+          _profileTinyIconButton(
+            tooltip: '설정',
+            onTap: _openProfileSettingsSheet,
+            icon: Icons.settings_outlined,
+          ),
+        ],
       ),
     );
   }
@@ -225,13 +238,13 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             );
           },
         ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: _buildProfileTabMessage(
-            stats.total == 0
-                ? '아직 푼 이야기가 없습니다.\n퀴즈를 풀면 기록이 쌓여요.'
-                : '오답이나 헷갈려요를 누르면\n복습할 이야기를 볼 수 있어요.',
-          ),
+        const SizedBox(height: 4),
+        _buildProfileTabMessage(
+          stats.total == 0
+              ? '퀴즈를 풀면 기록이 쌓여요.'
+              : '오답이나 헷갈려요를 누르면 복습할 이야기를 볼 수 있어요.',
+          fontSize: stats.total == 0 ? 10.8 : 10.6,
+          scaleDownSingleLine: true,
         ),
       ],
     );
@@ -489,20 +502,26 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileTabMessage(
     String text, {
     Color textColor = const Color(0xFF6D5231),
+    double fontSize = 12.4,
+    bool scaleDownSingleLine = false,
   }) {
+    final textWidget = Text(
+      text,
+      textAlign: TextAlign.center,
+      maxLines: scaleDownSingleLine ? 1 : null,
+      style: TextStyle(
+        color: textColor,
+        fontWeight: FontWeight.w700,
+        fontSize: fontSize,
+        height: scaleDownSingleLine ? 1.05 : 1.45,
+      ),
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.w700,
-            fontSize: 12.4,
-            height: 1.45,
-          ),
-        ),
+        child: scaleDownSingleLine
+            ? FittedBox(fit: BoxFit.scaleDown, child: textWidget)
+            : textWidget,
       ),
     );
   }
@@ -707,7 +726,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         itemBuilder: (context, index) {
           final event = events[index];
           return SizedBox(
-            width: 92,
+            width: 128,
             child: StoryEventThumbCard(
               event: event,
               era: eraById[event.eraId],
@@ -717,6 +736,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               emotionKey: state.eventEmotionMarks[event.id]?.emotionKey,
               attemptSummary: state.quizAttemptSummaries[event.id],
               orderNumber: event.storyIndex,
+              showSummary: false,
               loader: loader,
               onTap: () => widget.onOpenEventDetail(event),
             ),
@@ -955,7 +975,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
       decoration: BoxDecoration(
         color: const Color(0xEFFFF8E9),
         borderRadius: BorderRadius.circular(14),
@@ -975,7 +995,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
               icon: Icons.check_rounded,
               label: '정답',
               count: stats.correct,
-              percent: stats.percentFor(stats.correct),
+              eventCount: stats.correctEventCount,
               color: const Color(0xFF4BA36A),
               selected: false,
               onTap: null,
@@ -987,7 +1007,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
               icon: Icons.close_rounded,
               label: '오답',
               count: stats.wrong,
-              percent: stats.percentFor(stats.wrong),
+              eventCount: stats.wrongEventCount,
               color: const Color(0xFFC75245),
               selected: selected == _ProfileQuizReviewFilter.wrong,
               onTap: onTapWrong,
@@ -999,7 +1019,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
               icon: Icons.question_mark_rounded,
               label: '헷갈려요',
               count: stats.confused,
-              percent: stats.percentFor(stats.confused),
+              eventCount: stats.confusedEventCount,
               color: const Color(0xFFC7923D),
               selected: selected == _ProfileQuizReviewFilter.confused,
               onTap: onTapConfused,
@@ -1016,7 +1036,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.count,
-    required this.percent,
+    required this.eventCount,
     required this.color,
     required this.selected,
     required this.onTap,
@@ -1025,7 +1045,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final int count;
-  final int percent;
+  final int eventCount;
   final Color color;
   final bool selected;
   final VoidCallback? onTap;
@@ -1034,7 +1054,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 160),
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
       decoration: BoxDecoration(
         color: selected ? color.withValues(alpha: 0.12) : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
@@ -1046,43 +1066,41 @@ class _ProfileQuizStatItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 34,
-            height: 34,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.16),
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: Icon(icon, size: 21, color: color),
+            child: Icon(icon, size: 19, color: color),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 3),
           Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color(0xFF5A4326),
-              fontSize: 11.2,
+              fontSize: 10.8,
               fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 2),
-          Text(
-            '$count',
-            style: const TextStyle(
-              color: Color(0xFF2E2114),
-              fontSize: 20,
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
-          ),
-          Text(
-            '($percent%)',
-            style: const TextStyle(
-              color: Color(0xFF7C6B55),
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              height: 1.2,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 1),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                profileQuizCountLabel(quizCount: count, storyCount: eventCount),
+                maxLines: 1,
+                style: const TextStyle(
+                  color: Color(0xFF2E2114),
+                  fontSize: 14.4,
+                  fontWeight: FontWeight.w900,
+                  height: 1.0,
+                ),
+              ),
             ),
           ),
         ],
@@ -1110,7 +1128,7 @@ class _ProfileStatsDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 1,
-      height: 70,
+      height: 66,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       color: const Color(0x338E6F48),
     );

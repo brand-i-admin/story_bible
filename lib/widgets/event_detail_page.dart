@@ -984,9 +984,13 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
           ),
         ),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 2.05,
           children: [
             for (final option in EventEmotionOption.options)
               _EmotionChoiceChip(
@@ -1091,8 +1095,7 @@ class _EmotionChoiceChip extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Ink(
-          width: 104,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
           decoration: BoxDecoration(
             color: selected ? const Color(0xFFFFE7B8) : const Color(0xFFF8F0E2),
             borderRadius: BorderRadius.circular(14),
@@ -1108,10 +1111,10 @@ class _EmotionChoiceChip extends StatelessWidget {
             children: [
               EmotionBadgeIcon(
                 emotionKey: option.key,
-                size: 22,
+                size: 18,
                 elevation: false,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 5),
               Flexible(
                 child: Text(
                   option.label,
@@ -1121,7 +1124,7 @@ class _EmotionChoiceChip extends StatelessWidget {
                     color: selected
                         ? const Color(0xFF7C4716)
                         : const Color(0xFF5E4427),
-                    fontSize: 12.4,
+                    fontSize: 11.2,
                     fontWeight: FontWeight.w900,
                     height: 1.0,
                   ),

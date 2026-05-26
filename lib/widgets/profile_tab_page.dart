@@ -660,9 +660,22 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     final needsPreviewHeight =
         _profileContentTab == _ProfileContentTab.saved ||
         _profileContentTab == _ProfileContentTab.verses;
-    final preferredRatio = needsPreviewHeight ? 0.42 : 0.30;
-    final minHeight = needsPreviewHeight ? 360.0 : 280.0;
-    final maxHeight = needsPreviewHeight ? 460.0 : 400.0;
+    final isRecords = _profileContentTab == _ProfileContentTab.records;
+    final preferredRatio = needsPreviewHeight
+        ? 0.42
+        : isRecords
+        ? 0.27
+        : 0.30;
+    final minHeight = needsPreviewHeight
+        ? 360.0
+        : isRecords
+        ? 252.0
+        : 280.0;
+    final maxHeight = needsPreviewHeight
+        ? 460.0
+        : isRecords
+        ? 340.0
+        : 400.0;
     return (totalHeight * preferredRatio).clamp(minHeight, maxHeight);
   }
 

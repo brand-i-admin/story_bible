@@ -166,6 +166,18 @@ class LoadQuizFileTests(unittest.TestCase):
         finally:
             path.unlink()
 
+    def test_story_context_rejects_title_wrapped_summary_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = "「창조: 7일과 안식」에서 실제로 일어난 일은 무엇입니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "story title"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
     def test_story_context_rejects_story_title_choice(self) -> None:
         payload = self._valid_payload()
         payload["questions"][2]["choices"][0] = "창조: 7일과 안식"
@@ -232,7 +244,19 @@ class LoadQuizFileTests(unittest.TestCase):
         )
         path = self._write_as(payload, "era_primeval_n001.json")
         try:
-            with self.assertRaisesRegex(mod.QuizValidationError, "too long"):
+            with self.assertRaisesRegex(
+                mod.QuizValidationError, "too long|verse fragment"
+            ):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_rejects_verse_fragment_choice_wording(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0]["choices"][0] = "빛이 있으라 하시니라"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "verse fragment"):
                 mod.load_quiz_file(path)
         finally:
             path.unlink()

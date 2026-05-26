@@ -197,6 +197,8 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
                       eventEmotionMarks: widget.eventEmotionMarks,
                       quizAttemptSummaries: widget.quizAttemptSummaries,
                       emptyText: '이 감정으로 새긴 이야기가 없습니다.',
+                      crossAxisCount: 2,
+                      mainAxisExtent: 242,
                       onOpenEventDetail: (event) {
                         Navigator.of(dialogContext).pop();
                         widget.onOpenEventDetail(event);

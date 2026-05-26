@@ -18,6 +18,9 @@ class ProfileQuizStats {
   final Set<String> confusedEventIds;
 
   int get total => correct + wrong + confused;
+  int get correctEventCount => correctEventIds.length;
+  int get wrongEventCount => wrongEventIds.length;
+  int get confusedEventCount => confusedEventIds.length;
 
   int percentFor(int value) {
     if (total == 0) {
@@ -73,3 +76,10 @@ ProfileQuizStats buildProfileQuizStats(
 }
 
 int _nonNegative(int value) => value < 0 ? 0 : value;
+
+String profileQuizCountLabel({
+  required int quizCount,
+  required int storyCount,
+}) {
+  return '$quizCount문항 · $storyCount이야기';
+}

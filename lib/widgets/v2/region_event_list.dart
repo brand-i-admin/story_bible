@@ -168,6 +168,7 @@ class StoryEventThumbCard extends StatelessWidget {
     this.emotionKey,
     this.attemptSummary,
     this.orderNumber,
+    this.showSummary = true,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
   });
@@ -181,6 +182,7 @@ class StoryEventThumbCard extends StatelessWidget {
   final String? emotionKey;
   final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
+  final bool showSummary;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
 
@@ -269,7 +271,7 @@ class StoryEventThumbCard extends StatelessWidget {
         _ThumbTitle(event: event, theme: theme),
         const SizedBox(height: 4),
         _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
-        if (summary.isNotEmpty) ...[
+        if (showSummary && summary.isNotEmpty) ...[
           const SizedBox(height: 6),
           _ThumbSummary(summary: summary),
         ],

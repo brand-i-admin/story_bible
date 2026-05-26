@@ -108,6 +108,8 @@ TITLE_MATCH_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"맞는\s*이야기는\s*무엇"),
     re.compile(r"이야기\s*제목"),
     re.compile(r"제목을?\s*(고르|맞추)"),
+    re.compile(r"「[^」]+」에서\s*실제로\s*일어난\s*일"),
+    re.compile(r"이야기에서\s*실제로\s*일어난\s*일"),
 )
 SUMMARY_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"핵심\s*내용"),
@@ -123,6 +125,13 @@ GENERIC_STORY_CONTEXT_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"본문에\s*따르면\s*맞는\s*설명"),
     re.compile(r"다음\s*중\s*이\s*이야기\s*본문에서\s*확인되는\s*표현"),
     re.compile(r"본문에서\s*확인되는\s*표현"),
+)
+VERSE_LIKE_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"(가로되|이르되|가라사대)"),
+    re.compile(r"(하시니라|하니라|하였더라|하였더니|되니라|되었더라)"),
+    re.compile(r"(하였으며|하였고|하매)"),
+    re.compile(r"고\s*말했다$"),
+    re.compile(r"(더라|니라)$"),
 )
 VERSE_EVIDENCE_PATTERN = re.compile(r"^[가-힣0-9]+\s+\d+:\d+(?:-\d+)?\s+—\s+'[^']+'$")
 MAX_STORY_CONTEXT_CHOICE_CHARS = 72
@@ -157,6 +166,11 @@ def asks_generic_story_context(question_text: str) -> bool:
     return any(
         pattern.search(question_text) for pattern in GENERIC_STORY_CONTEXT_PATTERNS
     )
+
+
+def choice_looks_like_verse_fragment(choice_text: str) -> bool:
+    """Return True if a choice keeps KRV-style verse wording instead of paraphrase."""
+    return any(pattern.search(choice_text) for pattern in VERSE_LIKE_CHOICE_PATTERNS)
 
 
 def has_verse_evidence(explanation: str) -> bool:
@@ -252,6 +266,11 @@ def load_quiz_file(path: Path) -> QuizFile:
             if not isinstance(c, str) or not c.strip():
                 raise QuizValidationError(
                     f"{path.name}: questions[{i}].choices[{j}] must be a non-empty string"
+                )
+            if choice_looks_like_verse_fragment(c.strip()):
+                raise QuizValidationError(
+                    f"{path.name}: questions[{i}].choices[{j}] looks like a "
+                    "copied verse fragment; use everyday fact wording instead"
                 )
         answer_index = q.get("answer_index")
         if answer_index not in (0, 1, 2):

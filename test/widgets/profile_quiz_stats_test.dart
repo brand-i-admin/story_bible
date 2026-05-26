@@ -42,6 +42,9 @@ void main() {
       expect(stats.wrong, 1);
       expect(stats.confused, 2);
       expect(stats.total, 6);
+      expect(stats.correctEventCount, 2);
+      expect(stats.wrongEventCount, 1);
+      expect(stats.confusedEventCount, 1);
       expect(stats.percentFor(stats.correct), 50);
     });
 
@@ -57,6 +60,10 @@ void main() {
 
       expect(stats.wrongEventIds, {'event-1'});
       expect(stats.confusedEventIds, {'event-1'});
+    });
+
+    test('퀴즈와 이야기 개수를 함께 표시할 라벨을 만든다', () {
+      expect(profileQuizCountLabel(quizCount: 6, storyCount: 2), '6문항 · 2이야기');
     });
   });
 }

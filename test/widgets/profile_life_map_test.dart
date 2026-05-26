@@ -12,7 +12,12 @@ import 'package:story_bible/widgets/profile/profile_life_map.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
 
-StoryEvent _event({required String id, required String title}) {
+StoryEvent _event({
+  required String id,
+  required String title,
+  int storyIndex = 1,
+  int globalRank = 1,
+}) {
   return StoryEvent(
     id: id,
     landmarkId: 'landmark_$id',
@@ -24,9 +29,9 @@ StoryEvent _event({required String id, required String title}) {
     startYear: null,
     endYear: null,
     timePrecision: 'approx',
-    storyIndex: 1,
-    rankInEra: 1,
-    globalRank: 1,
+    storyIndex: storyIndex,
+    rankInEra: storyIndex,
+    globalRank: globalRank,
     placeName: null,
     lat: null,
     lng: null,
@@ -116,6 +121,51 @@ void main() {
     expect(find.text('기쁨의 정원'), findsWidgets);
     expect(find.text('홍해를 건너다'), findsWidgets);
     expect(find.text('구원의 기쁨을 기억합니다.'), findsWidgets);
+  });
+
+  testWidgets('감정 지역 팝업은 이야기 카드를 한 줄에 두 개씩 배치한다', (tester) async {
+    final repository = _MockStoryRepository();
+    final events = [
+      _event(id: 'event_1', title: '첫째 이야기', storyIndex: 1, globalRank: 1),
+      _event(id: 'event_2', title: '둘째 이야기', storyIndex: 2, globalRank: 2),
+      _event(id: 'event_3', title: '셋째 이야기', storyIndex: 3, globalRank: 3),
+    ];
+    final marks = {
+      for (final event in events)
+        event.id: EventEmotionMark(
+          eventId: event.id,
+          emotionKey: 'joy',
+          emotionLabel: '기쁨',
+          emotionEmoji: '✨',
+          note: '기쁨을 기억합니다.',
+          updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
+        ),
+    };
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => events);
+
+    await tester.pumpWidget(_wrap(repository: repository, marks: marks));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('기쁨의 정원'));
+    await tester.pumpAndSettle();
+
+    final dialog = find.byType(Dialog);
+    final first = tester.getTopLeft(
+      find.descendant(of: dialog, matching: find.text('첫째 이야기')),
+    );
+    final second = tester.getTopLeft(
+      find.descendant(of: dialog, matching: find.text('둘째 이야기')),
+    );
+    final third = tester.getTopLeft(
+      find.descendant(of: dialog, matching: find.text('셋째 이야기')),
+    );
+
+    expect((first.dy - second.dy).abs(), lessThan(1));
+    expect(first.dx, lessThan(second.dx));
+    expect(third.dy, greaterThan(first.dy + 40));
+    expect((third.dx - first.dx).abs(), lessThan(1));
   });
 
   testWidgets('최근 남긴 한 줄은 제목을 코멘트 위에 표시한다', (tester) async {

@@ -28,6 +28,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   int _mapCelebrationNonce = 0;
   Completer<void>? _mapCelebrationCompleter;
   bool _mapAnimationInputLocked = false;
+  OverlayEntry? _mapAnimationInputBlockerEntry;
   late int _selectionStep = widget.initialStep.clamp(1, 3);
 
   /// 시대 선택 후 사용자가 고른 탐색 모드. null = intro 패널(시대+모드 카드).
@@ -90,6 +91,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   @override
   void dispose() {
     _completeMapCelebration();
+    _removeMapAnimationInputBlocker();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -112,12 +114,41 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _setMapAnimationInputLocked(bool locked) {
-    if (!mounted || _mapAnimationInputLocked == locked) {
+    if (!mounted) {
       return;
     }
-    setState(() {
-      _mapAnimationInputLocked = locked;
-    });
+    if (locked) {
+      _insertMapAnimationInputBlocker();
+    } else {
+      _removeMapAnimationInputBlocker();
+    }
+    if (_mapAnimationInputLocked != locked) {
+      setState(() {
+        _mapAnimationInputLocked = locked;
+      });
+    }
+  }
+
+  void _insertMapAnimationInputBlocker() {
+    if (_mapAnimationInputBlockerEntry != null) {
+      return;
+    }
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay == null) {
+      return;
+    }
+    final entry = OverlayEntry(
+      builder: (_) => const Positioned.fill(
+        child: ModalBarrier(color: Colors.transparent, dismissible: false),
+      ),
+    );
+    _mapAnimationInputBlockerEntry = entry;
+    overlay.insert(entry);
+  }
+
+  void _removeMapAnimationInputBlocker() {
+    _mapAnimationInputBlockerEntry?.remove();
+    _mapAnimationInputBlockerEntry = null;
   }
 
   Future<void> _handleAuthUserChanged(User? user) async {
