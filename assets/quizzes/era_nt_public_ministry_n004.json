@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 4,
   "story_title": "동방박사와 피신",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 2:14 — '헤롯이 죽기까지 거기 있었으니 ... 애굽에서 내 아들을 불렀다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "동방박사 방문과 애굽 피신 기사가 기록된 성경 책은 어디입니까?",
+      "question": "예수님의 가족이 애굽에 머문 일은 무엇과 연결되었습니까?",
       "choices": [
-        "마태복음",
-        "누가복음",
-        "요한복음"
+        "선지자를 통해 하신 말씀이 이루어진 일",
+        "헤롯이 가족을 보호한 일",
+        "동방박사들이 길을 잃은 일"
       ],
       "answer_index": 0,
-      "explanation": "마 2:1-15에 동방박사 방문과 애굽 피신 기사가 기록됨"
+      "explanation": "마 2:15 — '헤롯이 죽기까지 거기 있었으니 이는 주께서 선지자로 말씀하신 바 애굽에서 내 아들을 불렀다 함 을 이루려 하심이니라'"
     }
   ]
 }

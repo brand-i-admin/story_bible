@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 7,
   "story_title": "다윗이 사울을 살려주다: 동굴의 순간",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "삼상 24:6 — '내가 손을 들어 여호와의 기름 부음을 받은 내 주를 치는 것은 여호와의 금하시는 것이니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "다윗이 사울을 살려준 사건이 기록된 성경 책은 어디입니까?",
+      "question": "다윗이 막은 뒤 사울은 어떻게 했습니까?",
       "choices": [
-        "사무엘상",
-        "사무엘하",
-        "시편"
+        "굴에서 나와 자기 길로 갔다",
+        "다윗에게 곧바로 절했다",
+        "다윗의 사람들을 잡아갔다"
       ],
       "answer_index": 0,
-      "explanation": "삼상 24:1-22에 엔게디 동굴에서 다윗이 사울을 살려준 사건이 기록됨"
+      "explanation": "삼상 24:7 — '다윗이 이 말로 자기 사람들을 금하여 사울을 해하지 못하게 하니라 사울이 일어나 굴에서 나가 자 기 길을 가니라'"
     }
   ]
 }

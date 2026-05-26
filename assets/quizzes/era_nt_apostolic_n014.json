@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 14,
   "story_title": "1차 선교(4): 루스드라–더베",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 14:14 — '두 사도 바나바와 바울이 듣고 옷을 찢고 무리 가운데 뛰어 들어가서 소리질러'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "루스드라–더베 전도 기사가 기록된 성경 책은 어디입니까?",
+      "question": "하나님은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "디모데전서",
-        "갈라디아서"
+        "지나간 세대에는 모든 족속으로 자기의 길들을 다니게 묵인하셨으나",
+        "귀신 들려 소리를 지르던 자였다",
+        "나병 환자로 열두 해 된 자였다"
       ],
       "answer_index": 0,
-      "explanation": "행 14:8-20에 루스드라–더베 전도 기사가 기록됨"
+      "explanation": "행 14:16 — '하나님이 지나간 세대에는 모든 족속으로 자기의 길들을 다니게 묵인하셨으나'"
     }
   ]
 }

@@ -15,7 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import build_quizzes_seed_sql as mod  # noqa: E402
 
-
 _EVENTS_SEED_SAMPLE = """\
 with seed_events (era_code, title, summary, story_scenes, scene_characters, character_codes, bible_refs, start_year, end_year, time_precision, story_index, place_name, lat, lng, status) as (
   values
@@ -62,12 +61,16 @@ class LoadQuizFileTests(unittest.TestCase):
                     "explanation": "창 2:2",
                 },
                 {
-                    "type": "bible_context",
+                    "type": "story_context",
                     "display_order": 2,
-                    "question": "이 사건이 기록된 성경 책은?",
-                    "choices": ["창세기", "출애굽기", "레위기"],
+                    "question": "하나님이 무엇을 했습니까?",
+                    "choices": [
+                        "말씀으로 세상을 창조하셨다",
+                        "빛과 어두움을 나누셨다",
+                        "일곱째 날에 안식하셨다",
+                    ],
                     "answer_index": 0,
-                    "explanation": "창세기 1장",
+                    "explanation": "창 1:1 — '하나님이 말씀으로 세상을 창조하시니라'",
                 },
             ],
         }
@@ -125,6 +128,151 @@ class LoadQuizFileTests(unittest.TestCase):
         finally:
             path.unlink()
 
+    def test_story_context_rejects_source_location_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2]["question"] = "이 사건이 기록된 성경 책은?"
+        payload["questions"][2]["choices"] = ["창세기", "출애굽기", "레위기"]
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "source location"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_verse_location_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2]["question"] = "이 사건은 어느 구절에 나옵니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "source location"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_story_title_matching_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = "이 설명에 맞는 이야기는 무엇입니까? 하나님이 세상을 창조하신다."
+        payload["questions"][2]["choices"] = [
+            "창조: 7일과 안식",
+            "홍해: 길이 열리다",
+            "가나의 혼인잔치",
+        ]
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "story title"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_title_wrapped_summary_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = "「창조: 7일과 안식」에서 실제로 일어난 일은 무엇입니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "story title"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_story_title_choice(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2]["choices"][0] = "창조: 7일과 안식"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "story title"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_core_summary_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = "본문을 읽고 알 수 있는 핵심 내용으로 알맞은 것은 무엇입니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "summary"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_blank_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = '본문의 빈칸에 들어갈 말은 무엇입니까? "하나님이 ____ 하시니라"'
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "blank"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_generic_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = "본문에 따르면 다음 중 맞는 내용은 무엇입니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "generic"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_expression_lookup_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "question"
+        ] = "다음 중 이 이야기 본문에서 확인되는 표현은 무엇입니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "generic"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_rejects_full_verse_choice(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2]["choices"][0] = (
+            "하나님이 말씀으로 세상을 창조하시니라 그리고 빛과 어두움을 나누셨으며 "
+            "하늘과 땅과 바다와 모든 생물을 차례로 만드시고 일곱째 날에는 안식하셨다"
+        )
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(
+                mod.QuizValidationError, "too long|verse fragment"
+            ):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_rejects_verse_fragment_choice_wording(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0]["choices"][0] = "빛이 있으라 하시니라"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "verse fragment"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_story_context_requires_verse_evidence(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][2][
+            "explanation"
+        ] = "이 이야기에서는 하나님이 세상을 창조하신다."
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "verse"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
 
 class BuildSqlStatementsTests(unittest.TestCase):
     def _sample_quiz_file(
@@ -157,12 +305,16 @@ class BuildSqlStatementsTests(unittest.TestCase):
                     explanation="창 2:2",
                 ),
                 mod.QuizQuestionDraft(
-                    type="bible_context",
+                    type="story_context",
                     display_order=2,
-                    question="이 사건이 기록된 성경 책은?",
-                    choices=["창세기", "출애굽기", "레위기"],
+                    question="하나님이 무엇을 했습니까?",
+                    choices=[
+                        "말씀으로 세상을 창조하셨다",
+                        "빛과 어두움을 나누셨다",
+                        "일곱째 날에 안식하셨다",
+                    ],
                     answer_index=0,
-                    explanation="창세기 1장",
+                    explanation="창 1:1 — '하나님이 말씀으로 세상을 창조하시니라'",
                 ),
             ],
         )
@@ -177,6 +329,10 @@ class BuildSqlStatementsTests(unittest.TestCase):
     def test_sql_emits_three_inserts_per_quiz(self) -> None:
         sql = mod.build_sql_statements([self._sample_quiz_file()])
         self.assertEqual(sql.count("insert into quiz_questions"), 3)
+
+    def test_sql_adds_confused_choice_as_fourth_choice(self) -> None:
+        sql = mod.build_sql_statements([self._sample_quiz_file()])
+        self.assertEqual(sql.count("$q$헷갈렸어요$q$"), 3)
 
     def test_sql_emits_delete_before_inserts(self) -> None:
         sql = mod.build_sql_statements([self._sample_quiz_file()])
@@ -197,7 +353,7 @@ class BuildSqlStatementsTests(unittest.TestCase):
                 mod.QuizQuestionDraft("fact", 0, "A'B", ["x'y", "a", "b"], 0, "e'e"),
                 mod.QuizQuestionDraft("attitude", 1, "q2", ["A", "B", "C"], 0, "e2"),
                 mod.QuizQuestionDraft(
-                    "bible_context", 2, "q3", ["A", "B", "C"], 0, "e3"
+                    "story_context", 2, "q3", ["A", "B", "C"], 0, "e3"
                 ),
             ],
         )
@@ -237,6 +393,35 @@ class BuildReportTests(unittest.TestCase):
         report = mod.build_report(quiz_files=[q], events=self.events)
         # 3 events, 1 covered → 2 uncovered.
         self.assertEqual(len(report["events_without_quiz"]), 2)
+
+    def test_story_context_uses_longer_length_limits(self) -> None:
+        q = mod.QuizFile(
+            path=Path("assets/quizzes/era_primeval_n001.json"),
+            era_code="era_primeval",
+            story_index=1,
+            story_title="창조: 7일과 안식",
+            source_version="v",
+            questions=[
+                mod.QuizQuestionDraft("fact", 0, "짧은 질문?", ["A", "B", "C"], 0, ""),
+                mod.QuizQuestionDraft(
+                    "attitude", 1, "또 짧은 질문?", ["A", "B", "C"], 0, ""
+                ),
+                mod.QuizQuestionDraft(
+                    "story_context",
+                    2,
+                    "하나님이 무엇을 했습니까?",
+                    [
+                        "말씀으로 세상을 창조하셨다",
+                        "빛과 어두움을 나누셨다",
+                        "일곱째 날에 안식하셨다",
+                    ],
+                    0,
+                    "창 1:1 — '하나님이 말씀으로 세상을 창조하시니라'",
+                ),
+            ],
+        )
+        report = mod.build_report(quiz_files=[q], events=self.events)
+        self.assertEqual(report["length_warnings"], [])
 
 
 class DeterministicShuffleTests(unittest.TestCase):

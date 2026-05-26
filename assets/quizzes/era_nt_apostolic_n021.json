@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 21,
   "story_title": "2차 선교(6): 고린도—정착과 견딤",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 18:9-10 — '두려워하지 말며 … 이 성중에 내 백성이 많음이라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "고린도 정착 기사가 기록된 성경 책은 어디입니까?",
+      "question": "백성은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "고린도전서",
-        "고린도후서"
+        "많음이라 하시었다",
+        "루디아와 그 남편",
+        "막달라 마리아와 요안나"
       ],
       "answer_index": 0,
-      "explanation": "행 18:1-18에 고린도 정착 기사가 기록됨"
+      "explanation": "행 18:10 — '내가 너와 함께 있으매 아무 사람도 너를 대적하여 해롭게 할 자가 없을 것이니 이는 이 성중에 내 백성이 많음이라 하시더라'"
     }
   ]
 }

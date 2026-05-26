@@ -16,11 +16,60 @@ class BibleNavigationTarget {
     required this.bookNo,
     required this.chapterNo,
     required this.verseNo,
+    this.endChapterNo,
+    this.endVerseNo,
   });
 
   final int bookNo;
   final int chapterNo;
   final int verseNo;
+  final int? endChapterNo;
+  final int? endVerseNo;
+
+  bool containsVerse({
+    required int bookNo,
+    required int chapterNo,
+    required int verseNo,
+  }) {
+    if (bookNo != this.bookNo) {
+      return false;
+    }
+    final start = (chapter: this.chapterNo, verse: this.verseNo);
+    final end = (
+      chapter: endChapterNo ?? this.chapterNo,
+      verse: endVerseNo ?? this.verseNo,
+    );
+    final lo = _compareBiblePosition(start, end) <= 0 ? start : end;
+    final hi = _compareBiblePosition(start, end) <= 0 ? end : start;
+    final current = (chapter: chapterNo, verse: verseNo);
+    return _compareBiblePosition(lo, current) <= 0 &&
+        _compareBiblePosition(current, hi) <= 0;
+  }
+
+  bool isBoundaryVerse({
+    required int bookNo,
+    required int chapterNo,
+    required int verseNo,
+  }) {
+    if (bookNo != this.bookNo) {
+      return false;
+    }
+    final endChapter = endChapterNo ?? this.chapterNo;
+    final endVerse = endVerseNo ?? this.verseNo;
+    return (chapterNo == this.chapterNo && verseNo == this.verseNo) ||
+        (chapterNo == endChapter && verseNo == endVerse);
+  }
+}
+
+int _compareBiblePosition(
+  ({int chapter, int verse}) left,
+  ({int chapter, int verse}) right,
+) {
+  final chapterCompare = left.chapter.compareTo(right.chapter);
+  if (chapterCompare != 0) {
+    return chapterCompare;
+  }
+  return left.verse.compareTo(right.verse);
 }
 
 String normalizeBibleBookKey(String raw) {
@@ -193,13 +242,15 @@ BibleNavigationTarget? parseBibleNavigationTarget(String? rawRef) {
       .replaceAll('：', ':')
       .replaceAll('∼', '-')
       .replaceAll('~', '-')
+      .replaceAll('–', '-')
+      .replaceAll('—', '-')
       .trim();
   if (normalized.isEmpty) {
     return null;
   }
 
   final match = RegExp(
-    r'^([가-힣]+)\s*(\d+)\s*[:장]\s*(\d+)',
+    r'^([가-힣]+)\s*(\d+)\s*[:장]\s*(\d+)(?:\s*-\s*(?:(\d+)\s*[:장]\s*)?(\d+))?',
   ).firstMatch(normalized);
   if (match == null) {
     return null;
@@ -213,15 +264,35 @@ BibleNavigationTarget? parseBibleNavigationTarget(String? rawRef) {
 
   final chapterNo = int.tryParse(match.group(2) ?? '');
   final verseNo = int.tryParse(match.group(3) ?? '');
+  final rawEndChapter = match.group(4);
+  final rawEndVerse = match.group(5);
+  final endChapterNo = rawEndChapter == null || rawEndChapter.isEmpty
+      ? chapterNo
+      : int.tryParse(rawEndChapter);
+  final endVerseNo = rawEndVerse == null || rawEndVerse.isEmpty
+      ? null
+      : int.tryParse(rawEndVerse);
   if (chapterNo == null || chapterNo <= 0 || verseNo == null || verseNo <= 0) {
+    return null;
+  }
+  if (rawEndVerse != null &&
+      (endChapterNo == null ||
+          endChapterNo <= 0 ||
+          endVerseNo == null ||
+          endVerseNo <= 0)) {
     return null;
   }
 
   final maxChapter = bibleBooks[bookNo - 1].chapters;
   final safeChapter = chapterNo > maxChapter ? maxChapter : chapterNo;
+  final safeEndChapter = endChapterNo == null || endChapterNo > maxChapter
+      ? maxChapter
+      : endChapterNo;
   return BibleNavigationTarget(
     bookNo: bookNo,
     chapterNo: safeChapter,
     verseNo: verseNo,
+    endChapterNo: rawEndVerse == null ? null : safeEndChapter,
+    endVerseNo: rawEndVerse == null ? null : endVerseNo,
   );
 }

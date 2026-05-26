@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 9,
   "story_title": "고넬료: 이방인에게도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 10:48 — '베드로가 저희에게 예수 그리스도의 이름으로 세례를 베풀라 명하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "고넬료 이야기가 기록된 성경 책은 어디입니까?",
+      "question": "베드로는 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "로마서",
-        "에베소서"
+        "예루살렘에 올라갔을 때에 할례자들이 힐난하여",
+        "로마 수비대",
+        "가이사랴 기마대"
       ],
       "answer_index": 0,
-      "explanation": "행 10:1-48에 고넬료 이야기가 기록됨"
+      "explanation": "행 11:2 — '베드로가 예루살렘에 올라갔을 때에 할례자들이 힐난하여'"
     }
   ]
 }

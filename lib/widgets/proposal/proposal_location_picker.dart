@@ -113,212 +113,244 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: SizedBox(
-            height: widget.height,
-            child: Stack(
+        _buildMap(theme, regions, points, selected),
+        const SizedBox(height: 12),
+        _buildChipSection(
+          label: '지역(region) — 빈 폴리곤 영역',
+          landmarks: regions,
+          bottomGap: points.isNotEmpty ? 12 : 0,
+        ),
+        _buildChipSection(label: '랜드마크 (산·도시·강·섬 등)', landmarks: points),
+      ],
+    );
+  }
+
+  Widget _buildMap(
+    ThemeData theme,
+    List<Landmark> regions,
+    List<Landmark> points,
+    Landmark? selected,
+  ) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        height: widget.height,
+        child: Stack(
+          children: [
+            FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: _initialCenter(),
+                initialZoom: 5.0,
+                minZoom: 2.4,
+                maxZoom: 16,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.all,
+                ),
+              ),
               children: [
-                FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    initialCenter: _initialCenter(),
-                    initialZoom: 5.0,
-                    minZoom: 2.4,
-                    maxZoom: 16,
-                    interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.all,
-                    ),
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                      subdomains: const ['a', 'b', 'c', 'd'],
-                      userAgentPackageName: 'com.story.bible',
-                    ),
-                    PolygonLayer(
-                      polygons: [
-                        for (final rgn in regions)
-                          if (rgn.polygon.isNotEmpty)
-                            Polygon(
-                              points: rgn.polygon,
-                              color: rgn.id == _selectedId
-                                  ? theme.colorScheme.primary.withValues(
-                                      alpha: 0.30,
-                                    )
-                                  : theme.colorScheme.tertiary.withValues(
-                                      alpha: 0.12,
-                                    ),
-                              borderColor: rgn.id == _selectedId
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.tertiary.withValues(
-                                      alpha: 0.55,
-                                    ),
-                              borderStrokeWidth: rgn.id == _selectedId
-                                  ? 2.5
-                                  : 1.2,
-                            ),
-                      ],
-                    ),
-                    if (widget.referencePins.isNotEmpty)
-                      MarkerLayer(
-                        markers: [
-                          for (final p in widget.referencePins)
-                            if (!p.highlighted)
-                              Marker(
-                                point: LatLng(p.lat, p.lng),
-                                width: 18,
-                                height: 18,
-                                child: Tooltip(
-                                  message: p.label,
-                                  child: Icon(
-                                    Icons.place,
-                                    size: 16,
-                                    color: theme.colorScheme.tertiary
-                                        .withValues(alpha: 0.45),
-                                  ),
-                                ),
-                              ),
-                          for (final p in widget.referencePins)
-                            if (p.highlighted)
-                              Marker(
-                                point: LatLng(p.lat, p.lng),
-                                width: 24,
-                                height: 24,
-                                child: Tooltip(
-                                  message: '이전 이야기: ${p.label}',
-                                  child: const Icon(
-                                    Icons.place,
-                                    size: 22,
-                                    color: Color(0xFFE8A33D),
-                                  ),
-                                ),
-                              ),
-                        ],
-                      ),
-                    MarkerLayer(
-                      markers: [
-                        for (final lm in [...regions, ...points])
-                          Marker(
-                            point: lm.latLng,
-                            width: 36,
-                            height: 36,
-                            child: GestureDetector(
-                              onTap: () => _select(lm),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: lm.id == _selectedId
-                                      ? theme.colorScheme.primary
-                                      : theme.colorScheme.surface.withValues(
-                                          alpha: 0.92,
-                                        ),
-                                  border: Border.all(
-                                    color: lm.id == _selectedId
-                                        ? theme.colorScheme.primary
-                                        : theme.colorScheme.outline,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  lm.emoji,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
+                TileLayer(
+                  urlTemplate:
+                      'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+                  subdomains: const ['a', 'b', 'c', 'd'],
+                  userAgentPackageName: 'com.story.bible',
                 ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Material(
-                    color: theme.colorScheme.surface.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      child: Text(
-                        selected != null
-                            ? '선택: ${selected.name}'
-                            : '지도 마커/아래 칩에서 위치 선택',
-                        style: theme.textTheme.labelSmall,
-                      ),
-                    ),
-                  ),
-                ),
-                if (selected != null)
-                  Positioned(
-                    left: 8,
-                    bottom: 8,
-                    child: Material(
-                      color: theme.colorScheme.surface.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(8),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: _clear,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.close, size: 14),
-                              SizedBox(width: 4),
-                              Text('초기화', style: TextStyle(fontSize: 12)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                PolygonLayer(polygons: _regionPolygons(theme, regions)),
+                if (widget.referencePins.isNotEmpty)
+                  MarkerLayer(markers: _referenceMarkers(theme)),
+                MarkerLayer(markers: _landmarkMarkers(theme, regions, points)),
+              ],
+            ),
+            _MapStatusBadge(selected: selected, theme: theme),
+            if (selected != null)
+              _ResetSelectionButton(theme: theme, onClear: _clear),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Polygon> _regionPolygons(ThemeData theme, List<Landmark> regions) {
+    return [
+      for (final rgn in regions)
+        if (rgn.polygon.isNotEmpty)
+          Polygon(
+            points: rgn.polygon,
+            color: rgn.id == _selectedId
+                ? theme.colorScheme.primary.withValues(alpha: 0.30)
+                : theme.colorScheme.tertiary.withValues(alpha: 0.12),
+            borderColor: rgn.id == _selectedId
+                ? theme.colorScheme.primary
+                : theme.colorScheme.tertiary.withValues(alpha: 0.55),
+            borderStrokeWidth: rgn.id == _selectedId ? 2.5 : 1.2,
+          ),
+    ];
+  }
+
+  List<Marker> _referenceMarkers(ThemeData theme) {
+    return [
+      for (final p in widget.referencePins)
+        Marker(
+          point: LatLng(p.lat, p.lng),
+          width: p.highlighted ? 24 : 18,
+          height: p.highlighted ? 24 : 18,
+          child: Tooltip(
+            message: p.highlighted ? '이전 이야기: ${p.label}' : p.label,
+            child: Icon(
+              Icons.place,
+              size: p.highlighted ? 22 : 16,
+              color: p.highlighted
+                  ? const Color(0xFFE8A33D)
+                  : theme.colorScheme.tertiary.withValues(alpha: 0.45),
+            ),
+          ),
+        ),
+    ];
+  }
+
+  List<Marker> _landmarkMarkers(
+    ThemeData theme,
+    List<Landmark> regions,
+    List<Landmark> points,
+  ) {
+    return [
+      for (final lm in [...regions, ...points])
+        Marker(
+          point: lm.latLng,
+          width: 36,
+          height: 36,
+          child: _LandmarkMapMarker(
+            landmark: lm,
+            selected: lm.id == _selectedId,
+            theme: theme,
+            onTap: () => _select(lm),
+          ),
+        ),
+    ];
+  }
+
+  Widget _buildChipSection({
+    required String label,
+    required List<Landmark> landmarks,
+    double bottomGap = 0,
+  }) {
+    if (landmarks.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ChipGroupHeader(label: label),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final lm in landmarks)
+              _LandmarkChip(
+                landmark: lm,
+                selected: lm.id == _selectedId,
+                onTap: () => _select(lm),
+              ),
+          ],
+        ),
+        if (bottomGap > 0) SizedBox(height: bottomGap),
+      ],
+    );
+  }
+}
+
+class _MapStatusBadge extends StatelessWidget {
+  const _MapStatusBadge({required this.selected, required this.theme});
+
+  final Landmark? selected;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 8,
+      top: 8,
+      child: Material(
+        color: theme.colorScheme.surface.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Text(
+            selected != null ? '선택: ${selected!.name}' : '지도 마커/아래 칩에서 위치 선택',
+            style: theme.textTheme.labelSmall,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ResetSelectionButton extends StatelessWidget {
+  const _ResetSelectionButton({required this.theme, required this.onClear});
+
+  final ThemeData theme;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 8,
+      bottom: 8,
+      child: Material(
+        color: theme.colorScheme.surface.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: onClear,
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.close, size: 14),
+                SizedBox(width: 4),
+                Text('초기화', style: TextStyle(fontSize: 12)),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        if (regions.isNotEmpty) ...[
-          const _ChipGroupHeader(label: '지역(region) — 빈 폴리곤 영역'),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final lm in regions)
-                _LandmarkChip(
-                  landmark: lm,
-                  selected: lm.id == _selectedId,
-                  onTap: () => _select(lm),
-                ),
-            ],
+      ),
+    );
+  }
+}
+
+class _LandmarkMapMarker extends StatelessWidget {
+  const _LandmarkMapMarker({
+    required this.landmark,
+    required this.selected,
+    required this.theme,
+    required this.onTap,
+  });
+
+  final Landmark landmark;
+  final bool selected;
+  final ThemeData theme;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: selected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surface.withValues(alpha: 0.92),
+          border: Border.all(
+            color: selected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline,
+            width: 1.5,
           ),
-          const SizedBox(height: 12),
-        ],
-        if (points.isNotEmpty) ...[
-          const _ChipGroupHeader(label: '랜드마크 (산·도시·강·섬 등)'),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final lm in points)
-                _LandmarkChip(
-                  landmark: lm,
-                  selected: lm.id == _selectedId,
-                  onTap: () => _select(lm),
-                ),
-            ],
-          ),
-        ],
-      ],
+        ),
+        alignment: Alignment.center,
+        child: Text(landmark.emoji, style: const TextStyle(fontSize: 16)),
+      ),
     );
   }
 }

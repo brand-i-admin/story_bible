@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 29,
   "story_title": "고센 정착: 만남과 눈물",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 47:3 — '바로가 요셉의 형들에게 묻되 너희 생업이 무엇이냐 그들이 ... 종들은 목자이온데 우리와 선조가 다 그러하니이다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "야곱의 고센 정착 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "포위된 성 안에는 어떤 일이 일어났습니까?",
       "choices": [
-        "46-47장",
-        "44-45장",
-        "48-49장"
+        "기근이 심해 먹을 것이 떨어졌다",
+        "가나안 땅",
+        "나일 강가"
       ],
       "answer_index": 0,
-      "explanation": "창 46:28-47:12에 야곱 가족의 고센 입주와 바로 알현이 기록됨"
+      "explanation": "창 47:4 — '그들이 또 바로에게 고하되 가나안 땅에 기근이 심하여 종들의 떼를 칠 곳이 없기로 종들이 이곳에 우거하러 왔사오니 청컨대 종들로 고센 땅에 거하게 하소서'"
     }
   ]
 }

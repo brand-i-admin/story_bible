@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 18,
   "story_title": "비유: 탕자의 귀환",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 15:23 — '살진 송아지를 끌어다가 잡으라 우리가 먹고 즐기자'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "탕자의 귀환 비유가 기록된 성경 책은 어디입니까?",
+      "question": "아버지는 어떻게 했습니까?",
       "choices": [
-        "누가복음",
-        "마가복음",
-        "마태복음"
+        "나와서 권한대",
+        "금과 은과 밭",
+        "양과 소와 비둘기"
       ],
       "answer_index": 0,
-      "explanation": "눅 15:11-32에 탕자의 귀환 비유가 기록됨"
+      "explanation": "눅 15:28 — '저가 노하여 들어가기를 즐겨 아니하거늘 아버지가 나와서 권한대'"
     }
   ]
 }

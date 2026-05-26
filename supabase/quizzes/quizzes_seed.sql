@@ -7,2353 +7,2353 @@ begin;
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마른 뼈 환상에서 뼈들은 무엇을 상징합니까?$q$, $q$죽은 선지자들$q$, $q$이스라엘 온 족속$q$, $q$바벨론의 군대$q$, null, 1, $q$겔 37:11 — '이 뼈들은 이스라엘 온 족속이라'$q$, 0
+select e.id, $q$에스겔은 하나님의 명령에 따라 마른 뼈들에게 어떻게 하였습니까?$q$, $q$뼈들 위에 손을 얹어 기도하였다$q$, $q$뼈들에게 대언하였다$q$, $q$뼈들을 모아 매장하였다$q$, $q$헷갈렸어요$q$, 1, $q$겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스겔은 하나님의 명령에 따라 마른 뼈들에게 어떻게 하였습니까?$q$, $q$뼈들을 모아 매장하였다$q$, $q$뼈들에게 대언하였다$q$, $q$뼈들 위에 손을 얹어 기도하였다$q$, null, 1, $q$겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'$q$, 1
+select e.id, $q$주 여호와는 어떻게 했습니까?$q$, $q$바벨론의 군대$q$, $q$뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라$q$, $q$죽은 선지자들$q$, $q$헷갈렸어요$q$, 1, $q$겔 37:5 — '주 여호와께서 이 뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마른 뼈 환상이 기록된 성경 책은 어디입니까?$q$, $q$에스겔$q$, $q$예레미야$q$, $q$이사야$q$, null, 0, $q$겔 37:1-14에 마른 뼈 환상과 이스라엘 회복 예언이 기록됨$q$, 2
+select e.id, $q$마른 뼈 환상에서 뼈들은 무엇을 상징합니까?$q$, $q$이스라엘 온 족속$q$, $q$바벨론의 군대$q$, $q$죽은 선지자들$q$, $q$헷갈렸어요$q$, 0, $q$겔 37:11 — '이 뼈들은 이스라엘 온 족속이라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다니엘이 뜻을 정하여 먹지 않겠다고 한 것은 무엇이었습니까?$q$, $q$이방 신에게 제사한 음식$q$, $q$왕의 진미와 포도주$q$, $q$피로 만든 음식$q$, null, 1, $q$단 1:8 — '왕의 진미와 그의 마시는 포도주로 자기를 더럽히지 아니하리라'$q$, 0
+select e.id, $q$다니엘이 뜻을 정하여 먹지 않겠다고 한 것은 무엇이었습니까?$q$, $q$이방 신에게 제사한 음식$q$, $q$왕의 진미와 포도주$q$, $q$피로 만든 음식$q$, $q$헷갈렸어요$q$, 1, $q$단 1:8 — '왕의 진미와 그의 마시는 포도주로 자기를 더럽히지 아니하리라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다니엘과 세 친구가 열흘 시험 후 어떠하였습니까?$q$, $q$왕의 진미를 먹은 자보다 더 윤택하였다$q$, $q$여위어 보여 다시 왕의 음식을 먹게 되었다$q$, $q$건강에 차이가 없었다$q$, null, 0, $q$단 1:15 — '열흘 후에 ... 왕의 진미를 먹는 자보다 더욱 아름답고 윤택하여'$q$, 1
+select e.id, $q$다니엘과 세 친구가 열흘 시험 후 어떠하였습니까?$q$, $q$왕의 진미를 먹은 자보다 더 윤택하였다$q$, $q$여위어 보여 다시 왕의 음식을 먹게 되었다$q$, $q$건강에 차이가 없었다$q$, $q$헷갈렸어요$q$, 0, $q$단 1:15 — '열흘 후에 ... 왕의 진미를 먹는 자보다 더욱 아름답고 윤택하여'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다니엘이 뜻을 정한 기사가 기록된 성경 책은 어디입니까?$q$, $q$다니엘$q$, $q$에스겔$q$, $q$에스라$q$, null, 0, $q$단 1:8-20에 다니엘의 결단과 하나님의 복 주심이 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$모든 이상과 몽조를 깨달아 알었다$q$, $q$이방 신에게 제사한 음식$q$, $q$피로 만든 음식$q$, $q$헷갈렸어요$q$, 0, $q$단 1:17 — '하나님이 이 네 소년에게 지식을 얻게 하시며 모든 학문과 재주에 명철하게 하신 외에 다니엘은 또 모든 이상과 몽조를 깨달아 알더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느부갓네살이 두라 평지에 세운 신상의 높이는 얼마였습니까?$q$, $q$삼십 규빗$q$, $q$백 규빗$q$, $q$육십 규빗$q$, null, 2, $q$단 3:1 — '고는 육십 규빗이요 광은 여섯 규빗이라'$q$, 0
+select e.id, $q$느부갓네살이 두라 평지에 세운 신상의 높이는 얼마였습니까?$q$, $q$삼십 규빗$q$, $q$백 규빗$q$, $q$육십 규빗$q$, $q$헷갈렸어요$q$, 2, $q$단 3:1 — '고는 육십 규빗이요 광은 여섯 규빗이라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사드락과 메삭과 아벳느고는 왕의 명을 받자 어떻게 하였습니까?$q$, $q$도망쳐서 숨었다$q$, $q$절을 한 척하고 마음속으로 기도하였다$q$, $q$왕에게 대답할 필요가 없다며 굴복을 거절하였다$q$, null, 2, $q$단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'$q$, 1
+select e.id, $q$사드락과 메삭과 아벳느고는 왕의 명을 받자 어떻게 하였습니까?$q$, $q$도망쳐서 숨었다$q$, $q$절을 한 척하고 마음속으로 기도하였다$q$, $q$왕에게 대답할 필요가 없다며 굴복을 거절하였다$q$, $q$헷갈렸어요$q$, 2, $q$단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$풀무불 사건이 기록된 성경 책은 어디입니까?$q$, $q$에스라$q$, $q$에스겔$q$, $q$다니엘$q$, null, 2, $q$단 3:1-30에 느부갓네살의 신상과 풀무불 기사가 기록됨$q$, 2
+select e.id, $q$왕은 무엇이라고 말했습니까?$q$, $q$백 규빗$q$, $q$삼십 규빗$q$, $q$왕이여 옳소이다$q$, $q$헷갈렸어요$q$, 2, $q$단 3:24 — '때에 느부갓네살 왕이 놀라 급히 일어나서 모사들에게 물어 가로되 우리가 결박하여 불가운데 던진 자는 세 사람이 아니었느냐 그들이 왕에게 대답하여 가로되 왕이여 옳소이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$벨사살의 잔치에 초대된 귀인의 수는 몇 명이었습니까?$q$, $q$칠십 명$q$, $q$오백 명$q$, $q$일천 명$q$, null, 2, $q$단 5:1 — '벨사살 왕이 그 귀인 일천 명을 위하여 큰 잔치를 배설하고'$q$, 0
+select e.id, $q$벨사살의 잔치에 초대된 귀인의 수는 몇 명이었습니까?$q$, $q$칠십 명$q$, $q$오백 명$q$, $q$일천 명$q$, $q$헷갈렸어요$q$, 2, $q$단 5:1 — '벨사살 왕이 그 귀인 일천 명을 위하여 큰 잔치를 배설하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다니엘은 왕이 제안한 상급을 받겠느냐는 질문에 어떻게 하였습니까?$q$, $q$상급은 왕이 취하고 글을 읽어 해석을 알려주겠다고 하였다$q$, $q$상급을 기꺼이 받겠다고 하였다$q$, $q$상급을 거절하고 아무 말도 하지 않았다$q$, null, 0, $q$단 5:17 — '왕의 예물은 왕이 취하시고 ... 글을 읽어 해석을 알려드리겠나이다'$q$, 1
+select e.id, $q$다니엘은 왕이 제안한 상급을 받겠느냐는 질문에 어떻게 하였습니까?$q$, $q$상급은 왕이 취하고 글을 읽어 해석을 알려주겠다고 하였다$q$, $q$상급을 기꺼이 받겠다고 하였다$q$, $q$상급을 거절하고 아무 말도 하지 않았다$q$, $q$헷갈렸어요$q$, 0, $q$단 5:17 — '왕의 예물은 왕이 취하시고 ... 글을 읽어 해석을 알려드리겠나이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$벨사살의 잔치와 벽에 쓰인 글 기사가 기록된 책은 어디입니까?$q$, $q$다니엘$q$, $q$이사야$q$, $q$에스겔$q$, null, 0, $q$단 5:1-31에 벨사살의 잔치와 벽의 글씨 해석 기사가 기록됨$q$, 2
+select e.id, $q$왕은 어떻게 했습니까?$q$, $q$저울에 달려서 부족함이 뵈었다 함이요$q$, $q$칠십 명$q$, $q$오백 명$q$, $q$헷갈렸어요$q$, 0, $q$단 5:27 — '데겔은 왕이 저울에 달려서 부족함이 뵈었다 함이요'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다리오 왕이 세운 방백의 수는 몇 명이었습니까?$q$, $q$칠십 명$q$, $q$일백이십 명$q$, $q$삼백 명$q$, null, 1, $q$단 6:1 — '다리오가 방백 일백이십 명을 세워 전국을 통치하게 하고'$q$, 0
+select e.id, $q$다리오 왕이 세운 방백의 수는 몇 명이었습니까?$q$, $q$칠십 명$q$, $q$일백이십 명$q$, $q$삼백 명$q$, $q$헷갈렸어요$q$, 1, $q$단 6:1 — '다리오가 방백 일백이십 명을 세워 전국을 통치하게 하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다니엘은 기도 금지령이 내려진 후에도 어떻게 하였습니까?$q$, $q$몰래 방에 숨어서 기도하였다$q$, $q$금지 기간 동안만 기도를 멈추었다$q$, $q$전에 하던 대로 하루 세 번 예루살렘을 향해 기도하였다$q$, null, 2, $q$단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'$q$, 1
+select e.id, $q$다니엘은 기도 금지령이 내려진 후에도 어떻게 하였습니까?$q$, $q$몰래 방에 숨어서 기도하였다$q$, $q$금지 기간 동안만 기도를 멈추었다$q$, $q$전에 하던 대로 하루 세 번 예루살렘을 향해 기도하였다$q$, $q$헷갈렸어요$q$, 2, $q$단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다니엘의 사자굴 기사가 기록된 성경 책은 어디입니까?$q$, $q$다니엘$q$, $q$에스라$q$, $q$느헤미야$q$, null, 0, $q$단 6:1-28에 다리오 왕의 금령과 다니엘의 사자굴 사건이 기록됨$q$, 2
+select e.id, $q$왕은 무엇이라고 말했습니까?$q$, $q$원컨대 많은 평강이 너희에게 있을지어다$q$, $q$칠십 명$q$, $q$삼백 명$q$, $q$헷갈렸어요$q$, 0, $q$단 6:25 — '이에 다리오 왕이 온 땅에 있는 모든 백성과 나라들과 각 방언하는 자들에게 조서를 내려 가로되 원컨대 많은 평강이 너희에게 있을지어다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더가 왕에게 나아가기 전 몸을 정결케 하는 기한은 얼마였습니까?$q$, $q$칠 일$q$, $q$열두 달$q$, $q$사십 일$q$, null, 1, $q$에 2:12 — '열두 달 동안을 행하되 여섯 달은 몰약 기름을 쓰고'$q$, 0
+select e.id, $q$에스더가 왕에게 나아가기 전 몸을 정결케 하는 기한은 얼마였습니까?$q$, $q$칠 일$q$, $q$열두 달$q$, $q$사십 일$q$, $q$헷갈렸어요$q$, 1, $q$에 2:12 — '열두 달 동안을 행하되 여섯 달은 몰약 기름을 쓰고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더는 왕에게 나아갈 때 어떻게 하였습니까?$q$, $q$왕비 와스디의 예를 따라 준비하였다$q$, $q$많은 장신구와 예물을 준비하였다$q$, $q$헤개가 정한 것 외에는 다른 것을 구하지 아니하였다$q$, null, 2, $q$에 2:15 — '헤개의 정한 것 외에는 다른 것을 구하지 아니하였으나 모든 보는 자에게 굄을 얻더라'$q$, 1
+select e.id, $q$에스더는 왕에게 나아갈 때 어떻게 하였습니까?$q$, $q$왕비 와스디의 예를 따라 준비하였다$q$, $q$많은 장신구와 예물을 준비하였다$q$, $q$헤개가 정한 것 외에는 다른 것을 구하지 아니하였다$q$, $q$헷갈렸어요$q$, 2, $q$에 2:15 — '헤개의 정한 것 외에는 다른 것을 구하지 아니하였으나 모든 보는 자에게 굄을 얻더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더가 왕후가 된 기사가 기록된 성경 책은 어디입니까?$q$, $q$느헤미야$q$, $q$에스더$q$, $q$에스라$q$, null, 1, $q$에 2:5-18에 에스더의 등장과 왕후 즉위 기사가 기록됨$q$, 2
+select e.id, $q$에스더는 어떻게 했습니까?$q$, $q$칠 일$q$, $q$끌려 왕궁에 들어가서 왕의 앞에 나아가니$q$, $q$사십 일$q$, $q$헷갈렸어요$q$, 1, $q$에 2:16 — '아하수에로 왕의 칠 년 시월 곧 데벳 월에 에스더가 이끌려 왕궁에 들어가서 왕의 앞에 나아가니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하만이 모르드개에게 분노하게 된 이유는 무엇입니까?$q$, $q$모르드개가 왕의 재물을 훔쳤기 때문이다$q$, $q$모르드개가 절하지 않고 경의를 표하지 않았기 때문이다$q$, $q$모르드개가 하만을 왕에게 고발했기 때문이다$q$, null, 1, $q$에 3:2 — '날마다 권하되 모르드개가 듣지 아니하고'$q$, 0
+select e.id, $q$하만이 모르드개에게 분노하게 된 이유는 무엇입니까?$q$, $q$모르드개가 왕의 재물을 훔쳤기 때문이다$q$, $q$모르드개가 절하지 않고 경의를 표하지 않았기 때문이다$q$, $q$모르드개가 하만을 왕에게 고발했기 때문이다$q$, $q$헷갈렸어요$q$, 1, $q$에 3:2 — '날마다 권하되 모르드개가 듣지 아니하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하만은 모르드개에 대한 분노를 어떻게 확대하였습니까?$q$, $q$모르드개만 죽이도록 왕에게 청하였다$q$, $q$모르드개를 옥에 가두게 하였다$q$, $q$온 나라에 있는 유다인을 모두 멸하려는 음모를 꾸몄다$q$, null, 2, $q$에 3:6 — '유다인을 죽이고 멸하려 하더니'$q$, 1
+select e.id, $q$하만은 모르드개에 대한 분노를 어떻게 확대하였습니까?$q$, $q$모르드개만 죽이도록 왕에게 청하였다$q$, $q$모르드개를 옥에 가두게 하였다$q$, $q$온 나라에 있는 유다인을 모두 멸하려는 음모를 꾸몄다$q$, $q$헷갈렸어요$q$, 2, $q$에 3:6 — '유다인을 죽이고 멸하려 하더니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하만의 유다인 학살 음모 기사가 기록된 성경 책은 어디입니까?$q$, $q$느헤미야$q$, $q$에스라$q$, $q$에스더$q$, null, 2, $q$에 3:1-15에 하만의 음모와 조서 반포 기사가 기록됨$q$, 2
+select e.id, $q$왕은 어떻게 했습니까?$q$, $q$모르드개가 하만을 왕에게 고발했기 때문이다$q$, $q$모르드개가 왕의 재물을 훔쳤기 때문이다$q$, $q$하만과 함께 앉아 마시되 수산 성은 어지럽었다$q$, $q$헷갈렸어요$q$, 2, $q$에 3:15 — '역졸이 왕의 명을 받들어 급히 나가매 그 조서가 도성 수산에도 반포되니 왕은 하만과 함께 앉아 마시되 수산 성은 어지럽더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더가 왕 앞에 나아가기 전 금식한 기간은 얼마였습니까?$q$, $q$사십 일$q$, $q$칠 일$q$, $q$밤낮 삼 일$q$, null, 2, $q$에 4:16 — '밤낮 삼일을 먹지도 말고 마시지도 마소서'$q$, 0
+select e.id, $q$에스더가 왕 앞에 나아가기 전 금식한 기간은 얼마였습니까?$q$, $q$사십 일$q$, $q$칠 일$q$, $q$밤낮 삼 일$q$, $q$헷갈렸어요$q$, 2, $q$에 4:16 — '밤낮 삼일을 먹지도 말고 마시지도 마소서'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더는 왕 앞에 나아가겠다고 결단하며 무엇이라 하였습니까?$q$, $q$규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다$q$, $q$모르드개에게 다른 방법을 찾아보라고 하였다$q$, $q$왕의 부름을 기다리겠다고 하였다$q$, null, 0, $q$에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'$q$, 1
+select e.id, $q$에스더는 왕 앞에 나아가겠다고 결단하며 무엇이라 하였습니까?$q$, $q$규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다$q$, $q$모르드개에게 다른 방법을 찾아보라고 하였다$q$, $q$왕의 부름을 기다리겠다고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더의 결단 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스더$q$, $q$다니엘$q$, $q$에스라$q$, null, 0, $q$에 4:10-17에 에스더와 모르드개의 대화와 에스더의 결단이 기록됨$q$, 2
+select e.id, $q$모르드개는 어떻게 했습니까?$q$, $q$서 에스더의 명한 대로 다 행했다$q$, $q$사십 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 0, $q$에 4:17 — '모르드개가 가서 에스더의 명한 대로 다 행하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더는 잔치 자리에서 왕에게 누가 대적이라고 하였습니까?$q$, $q$악한 하만이라고 하였다$q$, $q$산헤립이라고 하였다$q$, $q$모르드개라고 하였다$q$, null, 0, $q$에 7:6 — '대적과 원수는 이 악한 하만이니이다'$q$, 0
+select e.id, $q$에스더는 잔치 자리에서 왕에게 누가 대적이라고 하였습니까?$q$, $q$악한 하만이라고 하였다$q$, $q$산헤립이라고 하였다$q$, $q$모르드개라고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$에 7:6 — '대적과 원수는 이 악한 하만이니이다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하만은 폭로된 후 어떻게 되었습니까?$q$, $q$모르드개를 달고자 한 나무에 달렸다$q$, $q$포로로 끌려갔다$q$, $q$왕에게 처형을 요청받았다$q$, null, 0, $q$에 7:10 — '모르드개를 달고자 한 나무에 하만을 다니 왕의 노가 그치니라'$q$, 1
+select e.id, $q$무리는 어떻게 했습니까?$q$, $q$하만의 얼굴을 싸었다$q$, $q$포로로 끌려갔다$q$, $q$왕에게 처형을 요청받았다$q$, $q$헷갈렸어요$q$, 0, $q$에 7:8 — '왕이 후원으로부터 잔치 자리에 돌아오니 하만이 에스더의 앉은 걸상 위에 엎드렸거늘 왕이 가로되 저가 궁중 내 앞에서 왕후를 강간까지 하고자 하는가 이 말이 왕의 입에서 나오매 무리가 하만의 얼굴을 싸더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하만의 몰락 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스라$q$, $q$느헤미야$q$, $q$에스더$q$, null, 2, $q$에 5:1-8과 7:1-10에 에스더의 잔치와 하만의 몰락이 기록됨$q$, 2
+select e.id, $q$하만이 준비한 나무에는 결국 누가 달리게 되었습니까?$q$, $q$모르드개가 그대로 달리게 되었다$q$, $q$왕의 내시가 대신 달리게 되었다$q$, $q$하만 자신이 달리게 되었다$q$, $q$헷갈렸어요$q$, 2, $q$에 7:9 — '왕을 모신 내시 중에 하르보나가 왕에게 아뢰되 왕을 위하여 충성된 말로 고발한 모르드개를 달고자 하여 하만이 고가 오십 규빗되는 나무를 준비하였는데 이제 그 나무가 하만의 집에 섰나이다 왕이 가로 되 하만을 그 나무에 달라 하매'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스라는 어떤 사람이었습니까?$q$, $q$왕의 군사 장관$q$, $q$바벨론의 지혜자$q$, $q$모세의 율법에 익숙한 학사$q$, null, 2, $q$스 7:6 — '이스라엘 하나님 여호와께서 주신 바 모세의 율법에 익숙한 학사로서'$q$, 0
+select e.id, $q$에스라는 어떤 사람이었습니까?$q$, $q$왕의 군사 장관$q$, $q$바벨론의 지혜자$q$, $q$모세의 율법에 익숙한 학사$q$, $q$헷갈렸어요$q$, 2, $q$스 7:6 — '이스라엘 하나님 여호와께서 주신 바 모세의 율법에 익숙한 학사로서'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스라는 어떤 것을 결심하였습니까?$q$, $q$여호와의 율법을 연구하여 준행하며 이스라엘에게 가르치기로 결심하였다$q$, $q$왕에게 더 많은 허가를 받아내기로 결심하였다$q$, $q$성전 재건 공사를 완료하기로 결심하였다$q$, null, 0, $q$스 7:10 — '여호와의 율법을 연구하여 준행하며 율례와 규례를 이스라엘에게 가르치기로 결심하였었더라'$q$, 1
+select e.id, $q$에스라는 어떻게 했습니까?$q$, $q$올라왔으니 왕의 칠 년 오 월이라$q$, $q$왕에게 더 많은 허가를 받아내기로 결심하였다$q$, $q$성전 재건 공사를 완료하기로 결심하였다$q$, $q$헷갈렸어요$q$, 0, $q$스 7:8 — '이 에스라가 올라왔으니 왕의 칠 년 오 월이라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스라의 귀환 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스라$q$, $q$느헤미야$q$, $q$다니엘$q$, null, 0, $q$스 7:1-10에 에스라의 계보와 귀환 목적 기사가 기록됨$q$, 2
+select e.id, $q$에스라는 하나님의 율법을 어떻게 대하려고 결심했습니까?$q$, $q$배우고 지키며 백성에게 가르치려 했다$q$, $q$왕의 명령보다 덜 중요하게 여겼다$q$, $q$제사장들에게만 맡기려 했다$q$, $q$헷갈렸어요$q$, 0, $q$스 7:10 — '에스라가 여호와의 율법을 연구하여 준행하며 율례와 규례를 이스라엘에게 가르치기로 결심하였었 더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야는 예루살렘 소식을 어디에서 들었습니까?$q$, $q$수산 궁에서 들었다$q$, $q$예루살렘 성벽 앞에서 들었다$q$, $q$바벨론 강가에서 들었다$q$, null, 0, $q$느 1:1 — '아닥사스다왕 제 이십년 기슬르월에 내가 수산 궁에 있더니'$q$, 0
+select e.id, $q$느헤미야는 예루살렘 소식을 어디에서 들었습니까?$q$, $q$수산 궁에서 들었다$q$, $q$예루살렘 성벽 앞에서 들었다$q$, $q$바벨론 강가에서 들었다$q$, $q$헷갈렸어요$q$, 0, $q$느 1:1 — '아닥사스다왕 제 이십년 기슬르월에 내가 수산 궁에 있더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야는 왕의 질문에 무엇을 원하느냐는 말을 듣고 어떻게 하였습니까?$q$, $q$바로 예루살렘으로 가겠다고 하였다$q$, $q$하늘의 하나님께 묵도하고 대답하였다$q$, $q$왕의 허락을 기다리며 아무 말도 하지 않았다$q$, null, 1, $q$느 2:4 — '내가 곧 하늘의 하나님께 묵도하고'$q$, 1
+select e.id, $q$느헤미야는 왕의 질문에 무엇을 원하느냐는 말을 듣고 어떻게 하였습니까?$q$, $q$바로 예루살렘으로 가겠다고 하였다$q$, $q$하늘의 하나님께 묵도하고 대답하였다$q$, $q$왕의 허락을 기다리며 아무 말도 하지 않았다$q$, $q$헷갈렸어요$q$, 1, $q$느 2:4 — '내가 곧 하늘의 하나님께 묵도하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야의 기도와 파송 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스더$q$, $q$에스라$q$, $q$느헤미야$q$, null, 2, $q$느 1:1-11과 2:1-8에 느헤미야의 기도와 파송 기사가 기록됨$q$, 2
+select e.id, $q$왕은 어떻게 했습니까?$q$, $q$예루살렘 성벽 앞에서 들었다$q$, $q$바벨론 강가에서 들었다$q$, $q$허락하고$q$, $q$헷갈렸어요$q$, 2, $q$느 2:8 — '또 왕의 삼림 감독 아삽에게 조서를 내리사 저로 전에 속한 영문의 문과 성곽과 나의 거할 집을 위 하여 들보 재목을 주게 하옵소서 하매 내 하나님의 선한 손이 나를 도우심으로 왕이 허락하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 12;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야가 예루살렘에 이르러 며칠 만에 밤에 성벽을 조사하였습니까?$q$, $q$하룻밤 만에 조사하였다$q$, $q$삼 일 만에 조사하였다$q$, $q$칠 일 만에 조사하였다$q$, null, 1, $q$느 2:11 — '내가 예루살렘에 이르러 거한지 삼일에'$q$, 0
+select e.id, $q$느헤미야가 예루살렘에 이르러 며칠 만에 밤에 성벽을 조사하였습니까?$q$, $q$하룻밤 만에 조사하였다$q$, $q$삼 일 만에 조사하였다$q$, $q$칠 일 만에 조사하였다$q$, $q$헷갈렸어요$q$, 1, $q$느 2:11 — '내가 예루살렘에 이르러 거한지 삼일에'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야는 방백들에게 폐허의 상황을 알린 후 무엇이라 하였습니까?$q$, $q$왕의 허락을 더 받아야 한다고 하였다$q$, $q$일어나 건축하자고 선언하였다$q$, $q$먼저 성전을 재건하자고 하였다$q$, null, 1, $q$느 2:17 — '저희의 말이 일어나 건축하자 하고 모두 힘을 내어 이 선한 일을 하려 하매'$q$, 1
+select e.id, $q$느헤미야는 방백들에게 폐허의 상황을 알린 후 무엇이라 하였습니까?$q$, $q$왕의 허락을 더 받아야 한다고 하였다$q$, $q$일어나 건축하자고 선언하였다$q$, $q$먼저 성전을 재건하자고 하였다$q$, $q$헷갈렸어요$q$, 1, $q$느 2:17 — '저희의 말이 일어나 건축하자 하고 모두 힘을 내어 이 선한 일을 하려 하매'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야의 야간 성벽 조사 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스라$q$, $q$학개$q$, $q$느헤미야$q$, null, 2, $q$느 2:11-20에 야간 조사와 성벽 재건 선포 기사가 기록됨$q$, 2
+select e.id, $q$성벽을 다시 쌓던 사람들은 어떤 어려움을 느꼈습니까?$q$, $q$일할 사람이 너무 많아 혼란스러웠다$q$, $q$성벽이 이미 다 완성되었다고 생각했다$q$, $q$돌무더기는 많고 일할 힘은 줄었다고 느꼈다$q$, $q$헷갈렸어요$q$, 2, $q$느 4:10 — '유다 사람들은 이르기를 흙 무더기가 아직도 많거늘 담부(擔負)하는 자의 힘이 쇠하였으니 우리가 성을 건축하지 못하리라 하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 13;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$백성에게 율법을 낭독한 사람은 누구였습니까?$q$, $q$학사 에스라$q$, $q$대제사장 힐기야$q$, $q$느헤미야$q$, null, 0, $q$느 8:5 — '때에 학사 에스라가 특별히 지은 나무 강단에 서매'$q$, 0
+select e.id, $q$백성에게 율법을 낭독한 사람은 누구였습니까?$q$, $q$학사 에스라$q$, $q$대제사장 힐기야$q$, $q$느헤미야$q$, $q$헷갈렸어요$q$, 0, $q$느 8:5 — '때에 학사 에스라가 특별히 지은 나무 강단에 서매'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$느헤미야는 율법을 듣고 우는 백성에게 무엇이라 하였습니까?$q$, $q$더욱 금식하며 통곡하라 하였다$q$, $q$율법을 깨닫지 못함을 책망하였다$q$, $q$여호와를 기뻐하는 것이 너희의 힘이니라 하였다$q$, null, 2, $q$느 8:10 — '여호와를 기뻐하는 것이 너희의 힘이니라'$q$, 1
+select e.id, $q$느헤미야는 율법을 듣고 우는 백성에게 무엇이라 하였습니까?$q$, $q$더욱 금식하며 통곡하라 하였다$q$, $q$율법을 깨닫지 못함을 책망하였다$q$, $q$여호와를 기뻐하는 것이 너희의 힘이니라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$느 8:10 — '여호와를 기뻐하는 것이 너희의 힘이니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$수문 앞 광장에서의 율법 낭독 기사가 기록된 책은 어디입니까?$q$, $q$에스더$q$, $q$에스라$q$, $q$느헤미야$q$, null, 2, $q$느 8:1-12에 에스라의 율법 낭독과 백성의 반응 기사가 기록됨$q$, 2
+select e.id, $q$율법의 뜻을 알게 된 백성은 어떻게 반응했습니까?$q$, $q$다시 성벽 공사를 멈추었다$q$, $q$모두 흩어져 숨어 버렸다$q$, $q$먹고 나누며 크게 기뻐했다$q$, $q$헷갈렸어요$q$, 2, $q$느 8:12 — '모든 백성이 곧 가서 먹고 마시며 나누어 주고 크게 즐거워하였으니 이는 그 읽어 들린 말을 밝히 앎이니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로가 이스라엘 남자 아이에 대해 신민에게 내린 명령은 무엇입니까?$q$, $q$하수에 던지라$q$, $q$노예로 팔라$q$, $q$광야로 내보내라$q$, null, 0, $q$출 1:22 — '남자가 나거든 너희는 그를 하수에 던지고 여자여든 살리라 하였더라'$q$, 0
+select e.id, $q$산파들은 왜 바로의 명을 어기고 남자 아이를 살렸습니까?$q$, $q$하나님을 두려워하였기 때문이다$q$, $q$바로를 불쌍히 여겼기 때문이다$q$, $q$히브리 여자들이 먼저 낳아 버렸기 때문이다$q$, $q$헷갈렸어요$q$, 0, $q$출 1:17 — '그러나 산파들이 하나님을 두려워하여 애굽 왕의 명을 어기고 남자를 살린지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$산파들은 왜 바로의 명을 어기고 남자 아이를 살렸습니까?$q$, $q$히브리 여자들이 먼저 낳아 버렸기 때문이다$q$, $q$하나님을 두려워하였기 때문이다$q$, $q$바로를 불쌍히 여겼기 때문이다$q$, null, 1, $q$출 1:17 — '그러나 산파들이 하나님을 두려워하여 애굽 왕의 명을 어기고 남자를 살린지라'$q$, 1
+select e.id, $q$바로는 산파들에게 무엇을 물었습니까?$q$, $q$왜 강가에 아이를 두었느냐고 물었다$q$, $q$왜 남자아이들을 살렸느냐고 물었다$q$, $q$왜 애굽을 떠나려 하느냐고 물었다$q$, $q$헷갈렸어요$q$, 1, $q$출 1:18 — '애굽 왕이 산파를 불러서 그들에게 이르되 너희가 어찌 이같이 하여 남자를 살렸느냐'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이스라엘 압제와 산파들 이야기는 어느 성경 책에 기록되어 있습니까?$q$, $q$창세기$q$, $q$민수기$q$, $q$출애굽기$q$, null, 2, $q$출 1:1-22에 이스라엘의 애굽 압제와 산파들의 저항이 기록됨$q$, 2
+select e.id, $q$바로가 이스라엘 남자 아이에 대해 신민에게 내린 명령은 무엇입니까?$q$, $q$노예로 팔라$q$, $q$광야로 내보내라$q$, $q$하수에 던지라$q$, $q$헷갈렸어요$q$, 2, $q$출 1:22 — '남자가 나거든 너희는 그를 하수에 던지고 여자여든 살리라 하였더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로의 딸은 아이를 건져 무엇이라 이름 지었습니까?$q$, $q$아론$q$, $q$모세$q$, $q$미리암$q$, null, 1, $q$출 2:10 — '그가 그 이름을 모세라 하여 가로되 이는 내가 그를 물에서 건져 내었음이라'$q$, 0
+select e.id, $q$모세의 어머니는 더 숨길 수 없게 되자 어떻게 했습니까?$q$, $q$아이를 바로의 궁으로 직접 데려갔다$q$, $q$갈대상자에 아이를 담아 강가에 두었다$q$, $q$아이를 이웃집에 맡겼다$q$, $q$헷갈렸어요$q$, 1, $q$출 2:3 — '갈 상자를 가져다가 역청과 나무 진을 칠하고 아이를 거기 담아 하숫가 갈대 사이에 두고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로의 딸이 갈대상자를 발견하고 아이를 보았을 때 어떻게 반응하였습니까?$q$, $q$아이를 다시 강에 돌려보냈다$q$, $q$즉시 신하에게 알렸다$q$, $q$불쌍히 여겨 히브리 사람의 아이로다 하였다$q$, null, 2, $q$출 2:6 — '열고 그 아이를 보니 아이가 우는지라 그가 불쌍히 여겨 가로되 이는 히브리 사람의 아이로다'$q$, 1
+select e.id, $q$바로의 딸은 우는 아이를 보고 어떻게 반응했습니까?$q$, $q$아무도 모르게 그 자리를 떠났다$q$, $q$아이를 다시 강물에 띄워 보냈다$q$, $q$불쌍히 여기고 히브리 아이임을 알아보았다$q$, $q$헷갈렸어요$q$, 2, $q$출 2:6 — '열고 그 아이를 보니 아이가 우는지라 그가 불쌍히 여겨 가로되 이는 히브리 사람의 아이로다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세의 탄생과 갈대상자 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$4장$q$, $q$1장$q$, $q$2장$q$, null, 2, $q$출 2:1-10에 모세의 출생과 갈대상자, 바로의 딸에 의한 구출이 기록됨$q$, 2
+select e.id, $q$바로의 딸은 아이에게 어떤 이름을 지었습니까?$q$, $q$궁에서 자랐다는 뜻으로 아론이라 불렀다$q$, $q$강가에서 찾았다는 뜻으로 요셉이라 불렀다$q$, $q$물에서 건졌다는 뜻으로 모세라 불렀다$q$, $q$헷갈렸어요$q$, 2, $q$출 2:10 — '그가 그 이름을 모세라 하여 가로되 이는 내가 그를 물에서 건져 내었음이라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세가 미디안에서 얻은 아들의 이름은 무엇입니까?$q$, $q$비느하스$q$, $q$엘리에셀$q$, $q$게르솜$q$, null, 2, $q$출 2:22 — '그가 아들을 낳으매 모세가 그 이름을 게르솜이라 하여 가로되 내가 타국에서 객이 되었음이라'$q$, 0
+select e.id, $q$모세가 히브리 사람을 치는 애굽인을 보고 어떻게 하였습니까?$q$, $q$히브리인에게 피하라 외쳤다$q$, $q$바로에게 달려가 고발하였다$q$, $q$좌우를 살피고 그 애굽인을 죽여 모래 속에 감추었다$q$, $q$헷갈렸어요$q$, 2, $q$출 2:12 — '좌우를 살펴 사람이 없음을 보고 그 애굽 사람을 쳐죽여 모래 속에 감추니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세가 히브리 사람을 치는 애굽인을 보고 어떻게 하였습니까?$q$, $q$바로에게 달려가 고발하였다$q$, $q$히브리인에게 피하라 외쳤다$q$, $q$좌우를 살피고 그 애굽인을 죽여 모래 속에 감추었다$q$, null, 2, $q$출 2:12 — '좌우를 살펴 사람이 없음을 보고 그 애굽 사람을 쳐죽여 모래 속에 감추니라'$q$, 1
+select e.id, $q$모세가 미디안에서 얻은 아들의 이름은 무엇입니까?$q$, $q$엘리에셀$q$, $q$비느하스$q$, $q$게르솜$q$, $q$헷갈렸어요$q$, 2, $q$출 2:22 — '그가 아들을 낳으매 모세가 그 이름을 게르솜이라 하여 가로되 내가 타국에서 객이 되었음이라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세의 분노와 미디안 도피 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$2장$q$, $q$3장$q$, $q$1장$q$, null, 0, $q$출 2:11-25에 모세의 살인 사건, 도피, 미디안 정착이 기록됨$q$, 2
+select e.id, $q$모세는 무엇이라고 말했습니까?$q$, $q$내가 타국에서 객이 되었음이라 하 였다$q$, $q$엘리에셀$q$, $q$비느하스$q$, $q$헷갈렸어요$q$, 0, $q$출 2:22 — '그가 아들을 낳으매 모세가 그 이름을 게르솜이라 하여 가로되 내가 타국에서 객이 되었음이라 하 였더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 모세에게 나타나신 불타는 떨기나무가 있던 산의 이름은 무엇입니까?$q$, $q$호렙 산$q$, $q$시내 산$q$, $q$모리아 산$q$, null, 0, $q$출 3:1 — '그 무리를 광야 서편으로 인도하여 하나님의 산 호렙에 이르매'$q$, 0
+select e.id, $q$하나님이 모세에게 나타나신 불타는 떨기나무가 있던 산의 이름은 무엇입니까?$q$, $q$호렙 산$q$, $q$시내 산$q$, $q$모리아 산$q$, $q$헷갈렸어요$q$, 0, $q$출 3:1 — '그 무리를 광야 서편으로 인도하여 하나님의 산 호렙에 이르매'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세는 소명을 받을 때 자신의 부족함을 들어 어떻게 반응하였습니까?$q$, $q$내가 누구이기에 바로에게 가겠냐며 거절하였다$q$, $q$즉시 '예'라 하고 출발하였다$q$, $q$아론에게 맡기자고 하였다$q$, null, 0, $q$출 3:11 — '모세가 하나님께 고하되 내가 누구관대 바로에게 가며 이스라엘 자손을 애굽에서 인도하여 내리이까'$q$, 1
+select e.id, $q$모세는 소명을 받을 때 자신의 부족함을 들어 어떻게 반응하였습니까?$q$, $q$내가 누구이기에 바로에게 가겠냐며 거절하였다$q$, $q$즉시 '예'라 하고 출발하였다$q$, $q$아론에게 맡기자고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$출 3:11 — '모세가 하나님께 고하되 내가 누구관대 바로에게 가며 이스라엘 자손을 애굽에서 인도하여 내리이까'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$불타는 떨기나무와 모세의 소명 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$3장$q$, $q$6장$q$, $q$2장$q$, null, 0, $q$출 3:1-22에 떨기나무 불꽃과 하나님의 소명, 출 4:1-17에 이적의 표징이 기록됨$q$, 2
+select e.id, $q$하나님은 무엇이라고 말했습니까?$q$, $q$스스로 있는 자가 나를 너희에게 보내셨다 하라$q$, $q$모리아 산$q$, $q$시내 산$q$, $q$헷갈렸어요$q$, 0, $q$출 3:14 — '하나님이 모세에게 이르시되 나는 스스로 있는 자니라 또 이르시되 너는 이스라엘 자손에게 이같이 이르기를 스스로 있는 자가 나를 너희에게 보내셨다 하라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로는 모세와 아론의 요구 이후 이스라엘에게 무엇을 더 이상 주지 말라 하였습니까?$q$, $q$식량 배급$q$, $q$벽돌 만들 짚$q$, $q$쉬는 날$q$, null, 1, $q$출 5:7 — '너희는 이제부터 백성에게 벽돌 굽는 짚을 전과 같이 주지 말고'$q$, 0
+select e.id, $q$바로는 모세와 아론의 요구 이후 이스라엘에게 무엇을 더 이상 주지 말라 하였습니까?$q$, $q$식량 배급$q$, $q$벽돌 만들 짚$q$, $q$쉬는 날$q$, $q$헷갈렸어요$q$, 1, $q$출 5:7 — '너희는 이제부터 백성에게 벽돌 굽는 짚을 전과 같이 주지 말고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이스라엘 자손은 짐이 더해진 후 모세의 말에 어떻게 반응하였습니까?$q$, $q$마음의 상함으로 모세를 듣지 않았다$q$, $q$바로에게 탄원서를 올렸다$q$, $q$모세에게 힘을 내자 하였다$q$, null, 0, $q$출 6:9 — '이스라엘 자손이 ... 마음의 상함과 역사의 혹독함을 인하여 모세를 듣지 아니하였더라'$q$, 1
+select e.id, $q$이스라엘 자손은 짐이 더해진 후 모세의 말에 어떻게 반응하였습니까?$q$, $q$마음의 상함으로 모세를 듣지 않았다$q$, $q$바로에게 탄원서를 올렸다$q$, $q$모세에게 힘을 내자 하였다$q$, $q$헷갈렸어요$q$, 0, $q$출 6:9 — '이스라엘 자손이 ... 마음의 상함과 역사의 혹독함을 인하여 모세를 듣지 아니하였더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세와 아론의 바로 첫 대면 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$3장$q$, $q$7장$q$, $q$5장$q$, null, 2, $q$출 5:1-6:9에 모세·아론의 바로 첫 방문과 노역 가중이 기록됨$q$, 2
+select e.id, $q$하나님은 무거운 짐에 눌린 백성 다음으로 모세에게 무엇을 하셨습니까?$q$, $q$백성에게 짚을 직접 나누어 주셨다$q$, $q$바로를 바로 왕에서 내리셨다$q$, $q$모세에게 다시 말씀하셨다$q$, $q$헷갈렸어요$q$, 2, $q$출 6:10 — '여호와께서 모세에게 일러 가라사대'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아론이 지팡이로 땅의 티끌을 치자 무엇이 되어 사람과 짐승에게 올랐습니까?$q$, $q$개구리$q$, $q$메뚜기$q$, $q$이$q$, null, 2, $q$출 8:17 — '아론이 지팡이를 잡고 손을 들어 땅의 티끌을 치매 애굽 온 땅의 티끌이 다 이가 되어'$q$, 0
+select e.id, $q$아론이 지팡이로 땅의 티끌을 치자 무엇이 되어 사람과 짐승에게 올랐습니까?$q$, $q$개구리$q$, $q$메뚜기$q$, $q$이$q$, $q$헷갈렸어요$q$, 2, $q$출 8:17 — '아론이 지팡이를 잡고 손을 들어 땅의 티끌을 치매 애굽 온 땅의 티끌이 다 이가 되어'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$재앙마다 여호와께서 파리를 제거해 주신 후 바로는 어떻게 하였습니까?$q$, $q$모세에게 화해를 청하였다$q$, $q$마음을 강퍅하게 하여 백성을 보내지 않았다$q$, $q$이스라엘을 광야로 내보냈다$q$, null, 1, $q$출 8:32 — '바로가 이때에도 마음을 완강케 하여 백성을 보내지 아니하였더라'$q$, 1
+select e.id, $q$재앙마다 여호와께서 파리를 제거해 주신 후 바로는 어떻게 하였습니까?$q$, $q$모세에게 화해를 청하였다$q$, $q$마음을 강퍅하게 하여 백성을 보내지 않았다$q$, $q$이스라엘을 광야로 내보냈다$q$, $q$헷갈렸어요$q$, 1, $q$출 8:32 — '바로가 이때에도 마음을 완강케 하여 백성을 보내지 아니하였더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$애굽에 내린 처음 몇 가지 재앙 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$7-9장$q$, $q$5-6장$q$, $q$10-11장$q$, null, 0, $q$출 7:14-9:12에 물 재앙, 개구리, 이, 파리, 가축 역병, 악창 재앙이 기록됨$q$, 2
+select e.id, $q$바로는 무엇이라고 말했습니까?$q$, $q$내가 너희 하나님 여호와와 너희에게 득죄했다$q$, $q$개구리$q$, $q$메뚜기$q$, $q$헷갈렸어요$q$, 0, $q$출 10:16 — '바로가 모세와 아론을 급히 불러서 이르되 내가 너희 하나님 여호와와 너희에게 득죄하였으니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이스라엘은 유월절 어린 양의 피를 어디에 발랐습니까?$q$, $q$문 인방과 좌우 설주$q$, $q$지붕 위$q$, $q$제단 뿔$q$, null, 0, $q$출 12:7 — '그 피를 양을 먹을 집 좌우 문설주와 인방에 바르고'$q$, 0
+select e.id, $q$이스라엘은 유월절 어린 양의 피를 어디에 발랐습니까?$q$, $q$문 인방과 좌우 설주$q$, $q$지붕 위$q$, $q$제단 뿔$q$, $q$헷갈렸어요$q$, 0, $q$출 12:7 — '그 피를 양을 먹을 집 좌우 문설주와 인방에 바르고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이스라엘은 유월절 음식을 어떤 자세로 먹으라 명령받았습니까?$q$, $q$허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라$q$, $q$서서 조용히 먹으라$q$, $q$앉아서 천천히 먹으라$q$, null, 0, $q$출 12:11 — '허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라'$q$, 1
+select e.id, $q$이스라엘은 유월절 음식을 어떤 자세로 먹으라 명령받았습니까?$q$, $q$허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라$q$, $q$서서 조용히 먹으라$q$, $q$앉아서 천천히 먹으라$q$, $q$헷갈렸어요$q$, 0, $q$출 12:11 — '허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$유월절 제정 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$12장$q$, $q$10장$q$, $q$13장$q$, null, 0, $q$출 12:1-14에 유월절 어린 양과 피를 문설주에 바르는 규례가 기록됨$q$, 2
+select e.id, $q$너희는 어떻게 했습니까?$q$, $q$너희는 이 날을 기념하여 여호와의 절기를 삼아 영원한 규례로 대대에 지킬지다$q$, $q$그 일을 그냥 지나쳤다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$헷갈렸어요$q$, 0, $q$출 12:14 — '너희는 이 날을 기념하여 여호와의 절기를 삼아 영원한 규례로 대대에 지킬지니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이스라엘 자손이 애굽에 거주한 기간은 얼마입니까?$q$, $q$삼백 년$q$, $q$사백 삼십 년$q$, $q$사백 년$q$, null, 1, $q$출 12:40 — '이스라엘 자손이 애굽에 거주한지 사백 삼십 년이라'$q$, 0
+select e.id, $q$이스라엘 자손이 애굽에 거주한 기간은 얼마입니까?$q$, $q$삼백 년$q$, $q$사백 삼십 년$q$, $q$사백 년$q$, $q$헷갈렸어요$q$, 1, $q$출 12:40 — '이스라엘 자손이 애굽에 거주한지 사백 삼십 년이라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$출애굽 길에서 여호와께서 이스라엘을 어떻게 인도하셨습니까?$q$, $q$낮에는 구름 기둥, 밤에는 불기둥으로 인도하셨다$q$, $q$모세의 지팡이로 길을 여셨다$q$, $q$천사들을 앞서 보내셨다$q$, null, 0, $q$출 13:21 — '낮에는 구름 기둥, 밤에는 불기둥이 백성 앞에서 떠나지 아니하니라'$q$, 1
+select e.id, $q$출애굽 길에서 여호와께서 이스라엘을 어떻게 인도하셨습니까?$q$, $q$낮에는 구름 기둥, 밤에는 불기둥으로 인도하셨다$q$, $q$모세의 지팡이로 길을 여셨다$q$, $q$천사들을 앞서 보내셨다$q$, $q$헷갈렸어요$q$, 0, $q$출 13:21 — '낮에는 구름 기둥, 밤에는 불기둥이 백성 앞에서 떠나지 아니하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$출애굽의 밤과 이스라엘의 출발 기사는 출애굽기 몇 장에 기록되어 있습니까?$q$, $q$14-15장$q$, $q$12-13장$q$, $q$11-12장$q$, null, 1, $q$출 12:29-13:22에 장자 재앙, 바로의 명령, 출발, 구름·불기둥 인도가 기록됨$q$, 2
+select e.id, $q$낮에는 어떻게 했습니까?$q$, $q$삼백 년$q$, $q$구름 기둥, 밤에는 불기둥이 백성 앞에서 떠나지 아니했다$q$, $q$사백 년$q$, $q$헷갈렸어요$q$, 1, $q$출 13:22 — '낮에는 구름 기둥, 밤에는 불기둥이 백성 앞에서 떠나지 아니하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$홍해를 갈라지게 한 것은 무엇이었습니까?$q$, $q$하나님의 번개$q$, $q$큰 동풍$q$, $q$큰 서풍$q$, null, 1, $q$출 14:21 — '여호와께서 큰 동풍으로 밤새도록 바닷물을 물러가게 하시니'$q$, 0
+select e.id, $q$홍해를 갈라지게 한 것은 무엇이었습니까?$q$, $q$하나님의 번개$q$, $q$큰 동풍$q$, $q$큰 서풍$q$, $q$헷갈렸어요$q$, 1, $q$출 14:21 — '여호와께서 큰 동풍으로 밤새도록 바닷물을 물러가게 하시니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$홍해를 건넌 후 이스라엘 백성은 어떻게 하였습니까?$q$, $q$속히 광야로 달아났다$q$, $q$여호와를 경외하며 모세를 믿었다$q$, $q$기쁨으로 노래만 불렀다$q$, null, 1, $q$출 14:31 — '백성이 여호와를 경외하며 여호와와 그 종 모세를 믿었더라'$q$, 1
+select e.id, $q$애굽 사람들은 홍해에서 무엇을 깨달았습니까?$q$, $q$바다가 곧 다시 마를 것이라고 생각했다$q$, $q$하나님이 이스라엘을 위해 싸우신다고 깨달았다$q$, $q$이스라엘이 길을 잃었다고 생각했다$q$, $q$헷갈렸어요$q$, 1, $q$출 14:25 — '그 병거 바퀴를 벗겨서 달리기에 극난하게 하시니 애굽 사람들이 가로되 이스라엘 앞에서 우리가 도망하자 여호와가 그들을 위하여 싸워 애굽 사람들을 치는도다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$홍해 도하 사건이 기록된 성경 책은 어디입니까?$q$, $q$출애굽기$q$, $q$여호수아$q$, $q$민수기$q$, null, 0, $q$출 14:10-31에 홍해 도하 사건이 기록됨$q$, 2
+select e.id, $q$이스라엘은 어떻게 했습니까?$q$, $q$여호와께서 애굽 사람들에게 베푸신 큰 일을 보았으므로 백성이 여호와를 경외$q$, $q$하나님의 번개$q$, $q$큰 서풍$q$, $q$헷갈렸어요$q$, 0, $q$출 14:31 — '이스라엘이 여호와께서 애굽 사람들에게 베푸신 큰 일을 보았으므로 백성이 여호와를 경외하며 여 호와와 그 종 모세를 믿었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마라에서 쓴 물을 달게 한 것은 무엇이었습니까?$q$, $q$하나님이 지시하신 나무$q$, $q$모세의 지팡이$q$, $q$소금 한 줌$q$, null, 0, $q$출 15:25 — '여호와께서 그에게 한 나무를 지시하시니 그가 물에 던지매 물이 달아졌더라'$q$, 0
+select e.id, $q$마라에서 물을 마시지 못한 백성은 어떻게 하였습니까?$q$, $q$원망하였다$q$, $q$다른 물을 찾아 떠났다$q$, $q$금식하며 기도하였다$q$, $q$헷갈렸어요$q$, 0, $q$출 15:24 — '백성이 모세를 원망하여 가로되 우리가 무엇을 마시리요'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마라에서 물을 마시지 못한 백성은 어떻게 하였습니까?$q$, $q$원망하였다$q$, $q$금식하며 기도하였다$q$, $q$다른 물을 찾아 떠났다$q$, null, 0, $q$출 15:24 — '백성이 모세를 원망하여 가로되 우리가 무엇을 마시리요'$q$, 1
+select e.id, $q$마라에서 쓴 물을 달게 한 것은 무엇이었습니까?$q$, $q$하나님이 지시하신 나무$q$, $q$소금 한 줌$q$, $q$모세의 지팡이$q$, $q$헷갈렸어요$q$, 0, $q$출 15:25 — '여호와께서 그에게 한 나무를 지시하시니 그가 물에 던지매 물이 달아졌더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마라의 쓴 물 사건이 기록된 성경 책은 어디입니까?$q$, $q$신명기$q$, $q$민수기$q$, $q$출애굽기$q$, null, 2, $q$출 15:22-27에 마라 사건이 기록됨$q$, 2
+select e.id, $q$쓴 물 때문에 모세가 부르짖자 어떤 일이 일어났습니까?$q$, $q$물이 더 써져 아무도 마시지 못했다$q$, $q$백성이 다른 우물을 찾아 떠났다$q$, $q$하나님이 알려 주신 나무로 물이 달아졌다$q$, $q$헷갈렸어요$q$, 2, $q$출 15:25 — '모세가 여호와께 부르짖었더니 여호와께서 그에게 한 나무를 지시하시니 그가 물에 던지매 물이 달아졌더라 거기서 여호와께서 그들을 위하여 법도와 율례를 정하시고 그들을 시험하실새'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$한 오멜은 에바의 몇 분의 일입니까?$q$, $q$십분의 일$q$, $q$사분의 일$q$, $q$오분의 일$q$, null, 0, $q$출 16:36 — '오멜은 에바 십분의 일이더라'$q$, 0
+select e.id, $q$일부 백성은 만나를 어떻게 하였습니까?$q$, $q$아침까지 남겨 두었다$q$, $q$먹기를 거부하였다$q$, $q$안식일에도 거두러 나갔다$q$, $q$헷갈렸어요$q$, 0, $q$출 16:20 — '모세의 말을 청종하지 않고 ... 아침까지 두매 벌레가 생기고 냄새가 난지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일부 백성은 만나를 어떻게 하였습니까?$q$, $q$먹기를 거부하였다$q$, $q$안식일에도 거두러 나갔다$q$, $q$아침까지 남겨 두었다$q$, null, 2, $q$출 16:20 — '모세의 말을 청종하지 않고 ... 아침까지 두매 벌레가 생기고 냄새가 난지라'$q$, 1
+select e.id, $q$모세는 안식일에 만나를 어떻게 하라고 말했습니까?$q$, $q$그날은 만나를 먹지 말라고 했다$q$, $q$그날도 평소처럼 새로 거두라고 했다$q$, $q$그날은 들에서 얻지 못하니 남은 것을 먹으라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$출 16:25 — '모세가 가로되 오늘은 그것을 먹으라 오늘은 여호와께 안식일인즉 오늘은 너희가 그것을 들에서 얻지 못하리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$만나와 메추라기 사건이 기록된 성경 책은 어디입니까?$q$, $q$레위기$q$, $q$신명기$q$, $q$출애굽기$q$, null, 2, $q$출 16:1-36에 만나와 메추라기 기사가 기록됨$q$, 2
+select e.id, $q$한 오멜은 에바의 몇 분의 일입니까?$q$, $q$오분의 일$q$, $q$사분의 일$q$, $q$십분의 일$q$, $q$헷갈렸어요$q$, 2, $q$출 16:36 — '오멜은 에바 십분의 일이더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 12;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아말렉과 싸운 장소는 어디입니까?$q$, $q$시내산$q$, $q$르비딤$q$, $q$마라$q$, null, 1, $q$출 17:8 — '아말렉이 이르러 이스라엘과 르비딤에서 싸우니라'$q$, 0
+select e.id, $q$아말렉과 싸운 장소는 어디입니까?$q$, $q$시내산$q$, $q$르비딤$q$, $q$마라$q$, $q$헷갈렸어요$q$, 1, $q$출 17:8 — '아말렉이 이르러 이스라엘과 르비딤에서 싸우니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세의 팔이 피곤할 때 아론과 훌은 어떻게 하였습니까?$q$, $q$모세의 손을 붙들어 올렸다$q$, $q$모세 대신 산에서 기도하였다$q$, $q$직접 여호수아와 싸웠다$q$, null, 0, $q$출 17:12 — '아론과 훌이 ... 모세의 손을 붙들어 올렸더니'$q$, 1
+select e.id, $q$모세의 팔이 피곤할 때 아론과 훌은 어떻게 하였습니까?$q$, $q$모세의 손을 붙들어 올렸다$q$, $q$모세 대신 산에서 기도하였다$q$, $q$직접 여호수아와 싸웠다$q$, $q$헷갈렸어요$q$, 0, $q$출 17:12 — '아론과 훌이 ... 모세의 손을 붙들어 올렸더니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아말렉 전투 기사가 기록된 성경 책은 어디입니까?$q$, $q$민수기$q$, $q$출애굽기$q$, $q$여호수아$q$, null, 1, $q$출 17:8-16에 아말렉 전투가 기록됨$q$, 2
+select e.id, $q$여호수아는 어떻게 했습니까?$q$, $q$시내산$q$, $q$칼날로 아말렉과 그 백성을 쳐서 파했다$q$, $q$모세 대신 산에서 기도하였다$q$, $q$헷갈렸어요$q$, 1, $q$출 17:13 — '여호수아가 칼날로 아말렉과 그 백성을 쳐서 파하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 13;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$십계명에서 이웃에 대해 금한 것은 무엇입니까?$q$, $q$도둑질$q$, $q$거짓 증거$q$, $q$살인$q$, null, 1, $q$출 20:16 — '네 이웃에 대하여 거짓 증거하지 말지니라'$q$, 0
+select e.id, $q$십계명에서 이웃에 대해 금한 것은 무엇입니까?$q$, $q$도둑질$q$, $q$거짓 증거$q$, $q$살인$q$, $q$헷갈렸어요$q$, 1, $q$출 20:16 — '네 이웃에 대하여 거짓 증거하지 말지니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$십계명 선포 후 백성은 어디에 있었습니까?$q$, $q$산 아래에 모여 절하였다$q$, $q$성막 앞에 엎드렸다$q$, $q$멀리 섰다$q$, null, 2, $q$출 20:21 — '백성은 멀리 섰고 모세는 하나님의 계신 암흑으로 가까이 가니라'$q$, 1
+select e.id, $q$십계명 선포 후 백성은 어디에 있었습니까?$q$, $q$산 아래에 모여 절하였다$q$, $q$성막 앞에 엎드렸다$q$, $q$멀리 섰다$q$, $q$헷갈렸어요$q$, 2, $q$출 20:21 — '백성은 멀리 섰고 모세는 하나님의 계신 암흑으로 가까이 가니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$십계명이 기록된 성경 책은 어디입니까?$q$, $q$레위기$q$, $q$신명기$q$, $q$출애굽기$q$, null, 2, $q$출 20:1-21에 십계명이 기록됨$q$, 2
+select e.id, $q$상전은 어떻게 했습니까?$q$, $q$산 아래에 모여 절하였다$q$, $q$도둑질$q$, $q$그를 데리고 재판장에게로 갈 것이요$q$, $q$헷갈렸어요$q$, 2, $q$출 21:6 — '상전이 그를 데리고 재판장에게로 갈 것이요 또 그를 문이나 문설주 앞으로 데리고 가서 그것에다 가 송곳으로 그 귀를 뚫을 것이라 그가 영영히 그 상전을 섬기리라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 14;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$금송아지를 만들도록 허락한 사람은 누구입니까?$q$, $q$여호수아$q$, $q$모세$q$, $q$아론$q$, null, 2, $q$출 32:1-4 — 백성이 아론에게 신을 만들라 하매 아론이 금 귀고리를 모아 송아지를 만들었더라$q$, 0
+select e.id, $q$금송아지를 만들도록 허락한 사람은 누구입니까?$q$, $q$여호수아$q$, $q$모세$q$, $q$아론$q$, $q$헷갈렸어요$q$, 2, $q$출 32:1-4 — 백성이 아론에게 신을 만들라 하매 아론이 금 귀고리를 모아 송아지를 만들었더라$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세가 산에서 내려와 백성의 소리를 들었을 때 어떻게 말하였습니까?$q$, $q$통곡하는 소리라 하였다$q$, $q$전쟁의 함성이라 하였다$q$, $q$노래하는 소리라 하였다$q$, null, 2, $q$출 32:18 — '나의 듣기에는 노래하는 소리로다 하고'$q$, 1
+select e.id, $q$모세가 산에서 내려와 백성의 소리를 들었을 때 어떻게 말하였습니까?$q$, $q$통곡하는 소리라 하였다$q$, $q$전쟁의 함성이라 하였다$q$, $q$노래하는 소리라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$출 32:18 — '나의 듣기에는 노래하는 소리로다 하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$금송아지 사건이 기록된 성경 책은 어디입니까?$q$, $q$민수기$q$, $q$레위기$q$, $q$출애굽기$q$, null, 2, $q$출 32:1-35에 금송아지 사건이 기록됨$q$, 2
+select e.id, $q$아론은 무엇이라고 말했습니까?$q$, $q$전쟁의 함성이라 하였다$q$, $q$여호수아$q$, $q$내 주여 노하지 마소서 이 백성의 악함을 당신이 아나이다$q$, $q$헷갈렸어요$q$, 2, $q$출 32:22 — '아론이 가로되 내 주여 노하지 마소서 이 백성의 악함을 당신이 아나이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 15;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세가 진 밖에 친 장막의 이름은 무엇이었습니까?$q$, $q$성막$q$, $q$회막$q$, $q$증거막$q$, null, 1, $q$출 33:7 — '모세가 ... 진 밖에 쳐서 ... 회막이라 이름하니'$q$, 0
+select e.id, $q$모세가 진 밖에 친 장막의 이름은 무엇이었습니까?$q$, $q$성막$q$, $q$회막$q$, $q$증거막$q$, $q$헷갈렸어요$q$, 1, $q$출 33:7 — '모세가 ... 진 밖에 쳐서 ... 회막이라 이름하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$새 돌판을 받으러 시내산에 오를 때 모세는 어떻게 하였습니까?$q$, $q$백성 앞에 서약하고 올라갔다$q$, $q$아침에 일찌기 일어나 돌판을 들고 올라갔다$q$, $q$아론과 함께 올라갔다$q$, null, 1, $q$출 34:4 — '모세가 ... 아침에 일찌기 일어나 그 두 돌판을 손에 들고 ... 시내 산에 올라가니'$q$, 1
+select e.id, $q$새 돌판을 받으러 시내산에 오를 때 모세는 어떻게 하였습니까?$q$, $q$백성 앞에 서약하고 올라갔다$q$, $q$아침에 일찌기 일어나 돌판을 들고 올라갔다$q$, $q$아론과 함께 올라갔다$q$, $q$헷갈렸어요$q$, 1, $q$출 34:4 — '모세가 ... 아침에 일찌기 일어나 그 두 돌판을 손에 들고 ... 시내 산에 올라가니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세의 중보와 언약 갱신이 기록된 성경 책은 어디입니까?$q$, $q$신명기$q$, $q$민수기$q$, $q$출애굽기$q$, null, 2, $q$출 33:7-23, 34:1-10에 모세의 중보와 언약 갱신이 기록됨$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$증거막$q$, $q$아론과 함께 올라갔다$q$, $q$인자와 진실이 많은 하나님이로라$q$, $q$헷갈렸어요$q$, 2, $q$출 34:6 — '여호와께서 그의 앞으로 지나시며 반포하시되 여호와로라 여호와로라 자비롭고 은혜롭고 노하기를 더디하고 인자와 진실이 많은 하나님이로라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 16;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$모세가 만들어 장대 위에 단 것은 무엇이었습니까?$q$, $q$놋뱀$q$, $q$청동 제단$q$, $q$금송아지$q$, null, 0, $q$민 21:9 — '모세가 놋뱀을 만들어 장대 위에 다니'$q$, 0
+select e.id, $q$광야 길에서 백성은 무엇을 원망했습니까?$q$, $q$먹을 것과 물이 부족하다고 불평했다$q$, $q$제사장이 너무 많다고 불평했다$q$, $q$성막을 너무 오래 지었다고 불평했다$q$, $q$헷갈렸어요$q$, 0, $q$민 21:5 — '어찌하여 우리를 애굽에서 인도하여 올려서 이 광야에서 죽게 하는고 이곳에는 식물도 없고 물도 없도다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$뱀에 물린 백성은 살기 위해 어떻게 하였습니까?$q$, $q$놋뱀을 쳐다 보았다$q$, $q$모세에게 달려와 기도를 청하였다$q$, $q$제단에 제물을 드렸다$q$, null, 0, $q$민 21:9 — '뱀에게 물린 자마다 놋뱀을 쳐다 본즉 살더라'$q$, 1
+select e.id, $q$불뱀에 물린 뒤 백성은 모세에게 무엇을 부탁했습니까?$q$, $q$여호와께 기도해 달라고 부탁했다$q$, $q$애굽으로 데려가 달라고 부탁했다$q$, $q$새 지도자를 세워 달라고 부탁했다$q$, $q$헷갈렸어요$q$, 0, $q$민 21:7 — '여호와께 기도하여 이 뱀들을 우리에게서 떠나게 하소서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$놋뱀 사건이 기록된 성경 책은 어디입니까?$q$, $q$민수기$q$, $q$출애굽기$q$, $q$신명기$q$, null, 0, $q$민 21:4-9에 놋뱀 사건이 기록됨$q$, 2
+select e.id, $q$뱀에 물린 사람들은 어떻게 살아났습니까?$q$, $q$장대 위의 놋뱀을 바라보았다$q$, $q$광야 밖으로 도망쳤다$q$, $q$스스로 약초를 찾아 먹었다$q$, $q$헷갈렸어요$q$, 0, $q$민 21:9 — '모세가 놋뱀을 만들어 장대 위에 다니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요단강 도하를 위해 먼저 강으로 들어간 것은 무엇이었습니까?$q$, $q$제사장 열둘$q$, $q$모세의 지팡이$q$, $q$언약궤$q$, null, 2, $q$수 3:11 — '온 땅의 주의 언약궤가 너희 앞서 요단으로 들어가나니'$q$, 0
+select e.id, $q$요단강 도하를 위해 먼저 강으로 들어간 것은 무엇이었습니까?$q$, $q$제사장 열둘$q$, $q$모세의 지팡이$q$, $q$언약궤$q$, $q$헷갈렸어요$q$, 2, $q$수 3:11 — '온 땅의 주의 언약궤가 너희 앞서 요단으로 들어가나니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요단강 도하 이후 이스라엘 백성은 여호수아를 어떻게 대하였습니까?$q$, $q$여호수아를 왕으로 추대하였다$q$, $q$함께 노래와 춤을 추었다$q$, $q$모세를 두려워하던 것같이 두려워하였다$q$, null, 2, $q$수 4:14 — '백성이 두려워하기를 모세를 두려워하던 것같이 하였더라'$q$, 1
+select e.id, $q$요단강 도하 이후 이스라엘 백성은 여호수아를 어떻게 대하였습니까?$q$, $q$여호수아를 왕으로 추대하였다$q$, $q$함께 노래와 춤을 추었다$q$, $q$모세를 두려워하던 것같이 두려워하였다$q$, $q$헷갈렸어요$q$, 2, $q$수 4:14 — '백성이 두려워하기를 모세를 두려워하던 것같이 하였더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요단강 도하 사건이 기록된 성경 책은 어디입니까?$q$, $q$여호수아$q$, $q$사사기$q$, $q$신명기$q$, null, 0, $q$수 3:1-4:24에 요단강 도하가 기록됨$q$, 2
+select e.id, $q$요단강을 건넌 뒤 하나님은 여호수아에게 어떻게 하셨습니까?$q$, $q$여호수아에게 말씀하셨다$q$, $q$백성을 다시 강가로 돌려보내셨다$q$, $q$언약궤를 숨기라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$수 4:15 — '여호와께서 여호수아에게 일러 가라사대'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여리고 성을 함락하기 위해 성을 돈 날수는 총 며칠이었습니까?$q$, $q$사십 일$q$, $q$칠 일$q$, $q$삼 일$q$, null, 1, $q$수 6:3-4 — 엿새 동안 하루 한 번, 일곱째 날 일곱 번 돌아 총 칠 일이었더라$q$, 0
+select e.id, $q$여리고 성을 함락하기 위해 성을 돈 날수는 총 며칠이었습니까?$q$, $q$사십 일$q$, $q$칠 일$q$, $q$삼 일$q$, $q$헷갈렸어요$q$, 1, $q$수 6:3-4 — 엿새 동안 하루 한 번, 일곱째 날 일곱 번 돌아 총 칠 일이었더라$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱째 날 여호수아의 명령에 백성은 어떻게 하였습니까?$q$, $q$성벽을 향해 돌진하였다$q$, $q$소리질러 외쳤다$q$, $q$나팔만 불고 침묵하였다$q$, null, 1, $q$수 6:20 — '백성은 외치고 제사장들은 나팔을 불매 ... 크게 소리질러 외치니 성벽이 무너져 내린지라'$q$, 1
+select e.id, $q$일곱째 날 여호수아는 백성에게 무엇을 하라고 했습니까?$q$, $q$밤이 될 때까지 기다리라고 했다$q$, $q$하나님이 성을 주셨으니 외치라고 했다$q$, $q$조용히 성에서 물러나라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$수 6:16 — '일곱 번째에 제사장들이 나팔을 불 때에 여호수아가 백성에게 이르되 외치라 여호와께서 너희에게 이 성을 주셨느니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여리고 함락 사건이 기록된 성경 책은 어디입니까?$q$, $q$신명기$q$, $q$여호수아$q$, $q$사사기$q$, null, 1, $q$수 6:1-20에 여리고 침묵 행진과 함락이 기록됨$q$, 2
+select e.id, $q$여리고 성 앞에서 백성이 외치자 어떤 일이 일어났습니까?$q$, $q$백성이 겁을 내고 광야로 돌아갔다$q$, $q$성벽이 무너져 백성이 성으로 들어갔다$q$, $q$성문이 더 굳게 닫혔다$q$, $q$헷갈렸어요$q$, 1, $q$수 6:20 — '이에 백성은 외치고 제사장들은 나팔을 불매 백성이 나팔 소리를 듣는 동시에 크게 소리질러 외치 니 성벽이 무너져 내린지라 백성이 각기 앞으로 나아가 성에 들어가서 그 성을 취하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아간은 어느 지파 사람이었습니까?$q$, $q$유다 지파$q$, $q$에브라임 지파$q$, $q$베냐민 지파$q$, null, 0, $q$수 7:1 — '유다 지파 세라의 증손 삽디의 손자 갈미의 아들 아간이 바친 물건을 취하였음이라'$q$, 0
+select e.id, $q$아간은 어느 지파 사람이었습니까?$q$, $q$유다 지파$q$, $q$에브라임 지파$q$, $q$베냐민 지파$q$, $q$헷갈렸어요$q$, 0, $q$수 7:1 — '유다 지파 세라의 증손 삽디의 손자 갈미의 아들 아간이 바친 물건을 취하였음이라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아간은 여호수아 앞에서 어떻게 하였습니까?$q$, $q$자신의 죄를 고백하였다$q$, $q$아무것도 모른다고 부인하였다$q$, $q$도망치려 하였다$q$, null, 0, $q$수 7:20 — '아간이 여호수아에게 대답하여 가로되 참으로 나는 ... 범죄하여 여차여차히 행하였나이다'$q$, 1
+select e.id, $q$아간은 여호수아 앞에서 어떻게 하였습니까?$q$, $q$자신의 죄를 고백하였다$q$, $q$아무것도 모른다고 부인하였다$q$, $q$도망치려 하였다$q$, $q$헷갈렸어요$q$, 0, $q$수 7:20 — '아간이 여호수아에게 대답하여 가로되 참으로 나는 ... 범죄하여 여차여차히 행하였나이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아간의 죄와 심판이 기록된 성경 책은 어디입니까?$q$, $q$여호수아$q$, $q$사사기$q$, $q$민수기$q$, null, 0, $q$수 7:1-26에 아간의 죄와 심판이 기록됨$q$, 2
+select e.id, $q$이스라엘은 어떻게 했습니까?$q$, $q$그를 돌로 치고 그것들도 돌로 치고 불사르고$q$, $q$베냐민 지파$q$, $q$에브라임 지파$q$, $q$헷갈렸어요$q$, 0, $q$수 7:25 — '여호수아가 가로되 네가 어찌하여 우리를 괴롭게 하였느뇨 여호와께서 오늘날 너를 괴롭게 하시리 라하니 온 이스라엘이 그를 돌로 치고 그것들도 돌로 치고 불사르고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$기드온이 미디안을 피해 타작하던 곳은 어디였습니까?$q$, $q$포도주 틀$q$, $q$산꼭대기$q$, $q$성문 앞$q$, null, 0, $q$삿 6:11 — '요아스의 아들 기드온이 미디안 사람에게 알리지 아니하려 하여 밀을 포도주 틀에서 타작하더니'$q$, 0
+select e.id, $q$기드온이 미디안을 피해 타작하던 곳은 어디였습니까?$q$, $q$포도주 틀$q$, $q$산꼭대기$q$, $q$성문 앞$q$, $q$헷갈렸어요$q$, 0, $q$삿 6:11 — '요아스의 아들 기드온이 미디안 사람에게 알리지 아니하려 하여 밀을 포도주 틀에서 타작하더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여호와의 사자가 예물에 불을 내린 후 기드온은 어떻게 하였습니까?$q$, $q$단을 쌓고 여호와 살롬이라 이름하였다$q$, $q$두려워 도망하였다$q$, $q$이스라엘 백성을 불러 모았다$q$, null, 0, $q$삿 6:24 — '기드온이 여호와를 위하여 거기서 단을 쌓고 이름을 여호와 살롬이라 하였더라'$q$, 1
+select e.id, $q$감옥에서도 하나님은 기드온에게 어떻게 하셨습니까?$q$, $q$기드온과 함께하시고 은혜를 주셨다$q$, $q$두려워 도망하였다$q$, $q$이스라엘 백성을 불러 모았다$q$, $q$헷갈렸어요$q$, 0, $q$삿 6:12 — '여호와의 사자가 기드온에게 나타나 이르되 큰 용사여 여호와께서 너와 함께 계시도다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$기드온의 소명이 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$사무엘상$q$, $q$여호수아$q$, null, 0, $q$삿 6:11-24에 기드온의 소명과 표징이 기록됨$q$, 2
+select e.id, $q$기드온은 하나님을 만난 뒤 무엇을 했습니까?$q$, $q$하나님께 제단을 쌓고 이름을 붙였다$q$, $q$자기 집을 버리고 도망쳤다$q$, $q$미디안 군대와 바로 싸우러 갔다$q$, $q$헷갈렸어요$q$, 0, $q$삿 6:24 — '기드온이 여호와를 위하여 거기서 단을 쌓고 이름을 여호와 살롬이라 하였더라 그것이 오늘까지 아 비에셀 사람에게 속한 오브라에 있더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$기드온의 최종 선발된 군사는 몇 명이었습니까?$q$, $q$천 명$q$, $q$삼백 명$q$, $q$삼만 명$q$, null, 1, $q$삿 7:7 — '손으로 움켜 입에 대고 핥는 자의 수는 삼백 명이요'$q$, 0
+select e.id, $q$기드온의 최종 선발된 군사는 몇 명이었습니까?$q$, $q$천 명$q$, $q$삼백 명$q$, $q$삼만 명$q$, $q$헷갈렸어요$q$, 1, $q$삿 7:7 — '손으로 움켜 입에 대고 핥는 자의 수는 삼백 명이요'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$삼백 명이 나팔을 불었을 때 여호와는 어떻게 하셨습니까?$q$, $q$번개를 내리셨다$q$, $q$적군으로 동무끼리 칼날로 치게 하셨다$q$, $q$강한 바람을 일으키셨다$q$, null, 1, $q$삿 7:22 — '여호와께서 그 온 적군으로 동무끼리 칼날로 치게 하시므로'$q$, 1
+select e.id, $q$기드온이 들은 꿈에는 무엇이 등장했습니까?$q$, $q$강물이 미디안 장막을 휩쓸었다$q$, $q$보리떡 한 덩이가 미디안 진으로 굴러 들어왔다$q$, $q$큰 바람이 미디안 진을 모두 덮었다$q$, $q$헷갈렸어요$q$, 1, $q$삿 7:13 — '기드온이 그 곳에 이른즉 어떤 사람이 그 동무에게 꿈을 말하여 이르기를 내가 한 꿈을 꾸었는데 꿈에 보리떡 한 덩어리가 미디안 진으로 굴러 들어와서 한 장막에 이르러 그것을 쳐서 무너뜨려 엎드러 뜨리니 곧 쓰러지더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$기드온 300 용사의 승리가 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$사무엘상$q$, $q$여호수아$q$, null, 0, $q$삿 7:1-22에 기드온 300 용사의 전투가 기록됨$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$답밧에 가까운 아벨므홀라의 경계에 이르렀으며$q$, $q$삼만 명$q$, $q$천 명$q$, $q$헷갈렸어요$q$, 0, $q$삿 7:22 — '삼백 명이 나팔을 불 때에 여호와께서 그 온 적군으로 동무끼리 칼날로 치게 하시므로 적군이 도망 하여 스레라의 벧 싯다에 이르고 또 답밧에 가까운 아벨므홀라의 경계에 이르렀으며'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$삼손의 힘의 비밀을 알아낸 여인의 이름은 무엇입니까?$q$, $q$라합$q$, $q$드보라$q$, $q$들릴라$q$, null, 2, $q$삿 16:4 — '삼손이 소렉 골짜기의 들릴라라 이름하는 여인을 사랑하매'$q$, 0
+select e.id, $q$삼손의 힘의 비밀을 알아낸 여인의 이름은 무엇입니까?$q$, $q$라합$q$, $q$드보라$q$, $q$들릴라$q$, $q$헷갈렸어요$q$, 2, $q$삿 16:4 — '삼손이 소렉 골짜기의 들릴라라 이름하는 여인을 사랑하매'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$삼손이 두 기둥 사이에 세워졌을 때 어떻게 하였습니까?$q$, $q$그들을 위하여 재주를 부렸다$q$, $q$도망치려 하였다$q$, $q$여호와께 기도하였다$q$, null, 0, $q$삿 16:25 — '그들이 삼손을 두 기둥 사이에 세웠더니 ... 삼손이 그들을 위하여 재주를 부리니라'$q$, 1
+select e.id, $q$삼손이 두 기둥 사이에 세워졌을 때 어떻게 하였습니까?$q$, $q$그들을 위하여 재주를 부렸다$q$, $q$도망치려 하였다$q$, $q$여호와께 기도하였다$q$, $q$헷갈렸어요$q$, 0, $q$삿 16:25 — '그들이 삼손을 두 기둥 사이에 세웠더니 ... 삼손이 그들을 위하여 재주를 부리니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$삼손의 마지막 이야기가 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$사무엘상$q$, $q$열왕기상$q$, null, 0, $q$삿 16:4-31에 삼손과 들릴라, 삼손의 최후가 기록됨$q$, 2
+select e.id, $q$삼손은 무엇이라고 말했습니까?$q$, $q$나로 이집을 버틴 기둥을 찾아서 그것을 의지하게 하라 했다$q$, $q$여호와께 기도하였다$q$, $q$드보라$q$, $q$헷갈렸어요$q$, 0, $q$삿 16:26 — '삼손이 자기 손을 붙든 소년에게 이르되 나로 이집을 버틴 기둥을 찾아서 그것을 의지하게 하라 하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나오미와 룻이 돌아간 곳은 어느 나라였습니까?$q$, $q$이스라엘(유다)$q$, $q$에돔$q$, $q$아람$q$, null, 0, $q$룻 1:7 — '모압 지방에서 돌아오려 하여 ... 이스라엘 땅으로 향하여 길을 가더니'$q$, 0
+select e.id, $q$나오미와 룻이 돌아간 곳은 어느 나라였습니까?$q$, $q$이스라엘(유다)$q$, $q$에돔$q$, $q$아람$q$, $q$헷갈렸어요$q$, 0, $q$룻 1:7 — '모압 지방에서 돌아오려 하여 ... 이스라엘 땅으로 향하여 길을 가더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나오미가 돌아가라 하였을 때 룻은 어떻게 하였습니까?$q$, $q$나오미를 따라가기로 굳게 결심하였다$q$, $q$망설이다 결국 돌아갔다$q$, $q$슬피 울며 고향으로 돌아갔다$q$, null, 0, $q$룻 1:18 — '나오미가 룻의 자기와 함께 가기로 굳게 결심함을 보고 그에게 말하기를 그치니라'$q$, 1
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$너희를 선대하시기를 원하며$q$, $q$망설이다 결국 돌아갔다$q$, $q$슬피 울며 고향으로 돌아갔다$q$, $q$헷갈렸어요$q$, 0, $q$룻 1:8 — '나오미가 두 자부에게 이르되 너희는 각각 어미의 집으로 돌아가라 너희가 죽은 자와 나를 선대한 것같이 여호와께서 너희를 선대하시기를 원하며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$룻의 귀향 결심이 기록된 성경 책은 어디입니까?$q$, $q$룻기$q$, $q$사무엘상$q$, $q$사사기$q$, null, 0, $q$룻 1:6-18에 룻의 귀향 결심이 기록됨$q$, 2
+select e.id, $q$나오미는 어떻게 했습니까?$q$, $q$나오미가 룻의 자기와 함께 가기로 굳게 결심함을 보고 그에게 말하기를 그치다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$그 일을 그냥 지나쳤다$q$, $q$헷갈렸어요$q$, 0, $q$룻 1:18 — '나오미가 룻의 자기와 함께 가기로 굳게 결심함을 보고 그에게 말하기를 그치니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$룻이 저녁까지 주워 떤 보리의 양은 얼마였습니까?$q$, $q$한 에바$q$, $q$한 오멜$q$, $q$한 호멜$q$, null, 0, $q$룻 2:17 — '룻이 밭에서 저녁까지 줍고 그 주운 것을 떠니 보리가 한 에바쯤 되는지라'$q$, 0
+select e.id, $q$보아스는 룻에게 밭에서 이삭을 줍도록 어떻게 배려하였습니까?$q$, $q$소년들에게 건드리지 말라 명하였다$q$, $q$일꾼들과 함께 급여를 주었다$q$, $q$자기 손으로 보리를 가져다 주었다$q$, $q$헷갈렸어요$q$, 0, $q$룻 2:9 — '내가 그 소년들에게 명하여 너를 건드리지 말라 하였느니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보아스는 룻에게 밭에서 이삭을 줍도록 어떻게 배려하였습니까?$q$, $q$일꾼들과 함께 급여를 주었다$q$, $q$자기 손으로 보리를 가져다 주었다$q$, $q$소년들에게 건드리지 말라 명하였다$q$, null, 2, $q$룻 2:9 — '내가 그 소년들에게 명하여 너를 건드리지 말라 하였느니라'$q$, 1
+select e.id, $q$룻이 저녁까지 주워 떤 보리의 양은 얼마였습니까?$q$, $q$한 오멜$q$, $q$한 호멜$q$, $q$한 에바$q$, $q$헷갈렸어요$q$, 2, $q$룻 2:17 — '룻이 밭에서 저녁까지 줍고 그 주운 것을 떠니 보리가 한 에바쯤 되는지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보아스와 룻의 첫 만남이 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$룻기$q$, $q$사무엘상$q$, null, 1, $q$룻 2:1-17에 보아스의 밭에서 룻의 이삭 줍기가 기록됨$q$, 2
+select e.id, $q$룻은 무엇이라고 말했습니까?$q$, $q$한 오멜$q$, $q$오늘 일하게 한 사람의 이름은 보아 스니이다$q$, $q$한 호멜$q$, $q$헷갈렸어요$q$, 1, $q$룻 2:19 — '시모가 그에게 이르되 오늘 어디서 주웠느냐 어디서 일을 하였느냐 너를 돌아본 자에게 복이 있기 를 원하노라 룻이 누구에게서 일한 것을 시모에게 알게 하여 가로되 오늘 일하게 한 사람의 이름은 보아 스니이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보아스와 룻이 낳은 아들의 이름은 무엇입니까?$q$, $q$다윗$q$, $q$이새$q$, $q$오벧$q$, null, 2, $q$룻 4:17 — '그 이름을 오벧이라 하였는데 그는 다윗의 아비인 이새의 아비였더라'$q$, 0
+select e.id, $q$보아스는 성문에서 기업 무를 결정을 어떻게 공개하였습니까?$q$, $q$성전에서 제사를 드리고 선포하였다$q$, $q$제비를 뽑아 결정하였다$q$, $q$장로들과 모든 백성에게 자신이 산다고 선언하였다$q$, $q$헷갈렸어요$q$, 2, $q$룻 4:9 — '보아스가 장로들과 모든 백성에게 이르되 내가 엘리멜렉과 ... 모든 것을 산 일에 너희가 오늘날 증인이 되었고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보아스는 성문에서 기업 무를 결정을 어떻게 공개하였습니까?$q$, $q$제비를 뽑아 결정하였다$q$, $q$성전에서 제사를 드리고 선포하였다$q$, $q$장로들과 모든 백성에게 자신이 산다고 선언하였다$q$, null, 2, $q$룻 4:9 — '보아스가 장로들과 모든 백성에게 이르되 내가 엘리멜렉과 ... 모든 것을 산 일에 너희가 오늘날 증인이 되었고'$q$, 1
+select e.id, $q$성문에 있던 사람들은 보아스에게 무엇을 축복했습니까?$q$, $q$모압으로 다시 돌아가기를 축복했다$q$, $q$성전을 새로 짓기를 축복했다$q$, $q$베들레헴에서 이름이 높아지기를 축복했다$q$, $q$헷갈렸어요$q$, 2, $q$룻 4:11 — '성문에 있는 모든 백성과 장로들이 가로되 우리가 증인이 되노니 여호와께서 네 집에 들어가는 여 인으로 이스라엘 집을 세운 라헬, 레아 두 사람과 같게 하시고 너로 에브랏에서 유력하고 베들레헴에서 유명케 하시기를 원하며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보아스가 룻을 아내로 취하는 사건이 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$사무엘상$q$, $q$룻기$q$, null, 2, $q$룻 4:1-17에 기업 무를 자 결정과 보아스의 결혼이 기록됨$q$, 2
+select e.id, $q$보아스와 룻이 낳은 아들의 이름은 무엇입니까?$q$, $q$이새$q$, $q$다윗$q$, $q$오벧$q$, $q$헷갈렸어요$q$, 2, $q$룻 4:17 — '그 이름을 오벧이라 하였는데 그는 다윗의 아비인 이새의 아비였더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$한나의 남편 엘가나의 출신 지파는 어디입니까?$q$, $q$에브라임 지파$q$, $q$유다 지파$q$, $q$베냐민 지파$q$, null, 0, $q$삼상 1:1 — '에브라임 산지 라마다임소빔에 에브라임 사람 엘가나라 하는 자가 있으니'$q$, 0
+select e.id, $q$한나의 남편 엘가나의 출신 지파는 어디입니까?$q$, $q$에브라임 지파$q$, $q$유다 지파$q$, $q$베냐민 지파$q$, $q$헷갈렸어요$q$, 0, $q$삼상 1:1 — '에브라임 산지 라마다임소빔에 에브라임 사람 엘가나라 하는 자가 있으니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$한나는 사무엘이 젖을 뗀 후 어떻게 하였습니까?$q$, $q$엘리 제사장에게 보냈다$q$, $q$여호와께 데려가 영영히 드렸다$q$, $q$성전에서 함께 살았다$q$, null, 1, $q$삼상 1:28 — '나도 그를 여호와께 드리되 그의 평생을 여호와께 드리나이다'$q$, 1
+select e.id, $q$엘리는 무엇이라고 말했습니까?$q$, $q$엘리 제사장에게 보냈다$q$, $q$네가 언제까지 취하여 있겠느냐 포도주를 끊으라$q$, $q$성전에서 함께 살았다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 1:14 — '엘리가 그에게 이르되 네가 언제까지 취하여 있겠느냐 포도주를 끊으라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$한나의 기도와 사무엘의 탄생이 기록된 성경 책은 어디입니까?$q$, $q$사무엘상$q$, $q$열왕기상$q$, $q$사사기$q$, null, 0, $q$삼상 1:1-28에 한나의 기도와 사무엘 탄생이 기록됨$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$나의 구하여 기도한 바를 허락하신지라$q$, $q$베냐민 지파$q$, $q$유다 지파$q$, $q$헷갈렸어요$q$, 0, $q$삼상 1:27 — '이 아이를 위하여 내가 기도하였더니 여호와께서 나의 구하여 기도한 바를 허락하신지라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$블레셋이 언약궤를 두었을 때 엎드러진 다곤 신상은 어느 성읍에 있었습니까?$q$, $q$에그론$q$, $q$가드$q$, $q$아스돗$q$, null, 2, $q$삼상 5:3 — '아스돗 사람이 이튿날 일찌기 일어나 본즉 다곤이 여호와의 궤 앞에서 엎드러져'$q$, 0
+select e.id, $q$블레셋이 언약궤를 두었을 때 엎드러진 다곤 신상은 어느 성읍에 있었습니까?$q$, $q$에그론$q$, $q$가드$q$, $q$아스돗$q$, $q$헷갈렸어요$q$, 2, $q$삼상 5:3 — '아스돗 사람이 이튿날 일찌기 일어나 본즉 다곤이 여호와의 궤 앞에서 엎드러져'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$언약궤 사건 이후 사무엘의 중보로 블레셋은 어떻게 되었습니까?$q$, $q$굴복하여 이스라엘 경내에 들어오지 못하였다$q$, $q$언약궤를 돌려보내고 화평을 청하였다$q$, $q$새 전쟁을 준비하였다$q$, null, 0, $q$삼상 7:13 — '이에 블레셋 사람이 굴복하여 다시는 이스라엘 경내에 들어오지 못하였으며'$q$, 1
+select e.id, $q$아스돗 사람들은 언약궤를 어떻게 여겼습니까?$q$, $q$자기들과 다곤에게 해가 된다고 여겼다$q$, $q$블레셋을 지켜 줄 보물이라고 여겼다$q$, $q$아무 일도 일으키지 않는 물건이라고 여겼다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 5:7 — '아스돗 사람들이 이를 보고 가로되 이스라엘 신의 궤를 우리와 함께 있게 못할지라 그 손이 우리와 우리 신 다곤을 친다 하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$언약궤 사건과 다곤 신상 붕괴가 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$사무엘상$q$, $q$열왕기상$q$, null, 1, $q$삼상 4:1-11, 5:1-6:21, 7:3-13에 언약궤 사건 전 과정이 기록됨$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$에그론$q$, $q$여기까지 우리를 도우셨다 하고 그이름을 에벤에셀이라 했다$q$, $q$언약궤를 돌려보내고 화평을 청하였다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 7:12 — '사무엘이 돌을 취하여 미스바와 센 사이에 세워 가로되 여호와께서 여기까지 우리를 도우셨다 하고 그이름을 에벤에셀이라 하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울은 어느 지파 출신이었습니까?$q$, $q$유다 지파$q$, $q$베냐민 지파$q$, $q$에브라임 지파$q$, null, 1, $q$삼상 9:1 — '베냐민 지파에 기스라 이름하는 유력한 사람이 있으니 ... 베냐민 사람이더라'$q$, 0
+select e.id, $q$사울은 어느 지파 출신이었습니까?$q$, $q$유다 지파$q$, $q$베냐민 지파$q$, $q$에브라임 지파$q$, $q$헷갈렸어요$q$, 1, $q$삼상 9:1 — '베냐민 지파에 기스라 이름하는 유력한 사람이 있으니 ... 베냐민 사람이더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울은 기름부음 후 나라의 일에 대해 어떻게 하였습니까?$q$, $q$백성에게 즉시 왕이 됐다고 선포하였다$q$, $q$선지자들과 함께 예루살렘으로 갔다$q$, $q$사무엘의 말하던 나라의 일은 고하지 아니하였다$q$, null, 2, $q$삼상 10:16 — '사무엘의 말하던 나라의 일은 고하지 아니하니라'$q$, 1
+select e.id, $q$사울은 암나귀를 찾다가 왜 돌아가려 했습니까?$q$, $q$암나귀를 이미 찾았다고 생각했다$q$, $q$사무엘을 만나고 싶지 않았다$q$, $q$아버지가 자신들을 걱정할까 두려웠다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 9:5 — '그들이 숩 땅에 이른 때에 사울이 함께 하는 사환에게 이르되 돌아가자 내 부친이 암나귀 생각은 고 사하고 우리를 위하여 걱정하실까 두려워하노라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울의 기름부음 이야기가 기록된 성경 책은 어디입니까?$q$, $q$사무엘상$q$, $q$열왕기상$q$, $q$사사기$q$, null, 0, $q$삼상 9:1-10:16에 사울의 기름부음이 기록됨$q$, 2
+select e.id, $q$사울은 숙부에게 사무엘이 말한 왕의 일을 어떻게 했습니까?$q$, $q$그 이야기를 숨겼다$q$, $q$왕이 되기 싫다고 털어놓았다$q$, $q$곧바로 온 가족에게 알렸다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 10:16 — '사울이 그 숙부에게 말하되 그가 암나귀들을 찾았다고 우리에게 분명히 말하더이다 하고 사무엘의 말하던 나라의 일은 고하지 아니하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울이 베섹에서 계수한 이스라엘 군사는 몇 명이었습니까?$q$, $q$삼십만$q$, $q$오십만$q$, $q$십만$q$, null, 0, $q$삼상 11:8 — '사울이 베섹에서 그들을 계수하니 이스라엘 자손이 삼십만이요'$q$, 0
+select e.id, $q$사울이 베섹에서 계수한 이스라엘 군사는 몇 명이었습니까?$q$, $q$삼십만$q$, $q$오십만$q$, $q$십만$q$, $q$헷갈렸어요$q$, 0, $q$삼상 11:8 — '사울이 베섹에서 그들을 계수하니 이스라엘 자손이 삼십만이요'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$얍베스 길르앗 구원 후 백성은 어디서 사울을 왕으로 삼았습니까?$q$, $q$헤브론$q$, $q$세겜$q$, $q$길갈$q$, null, 2, $q$삼상 11:15 — '모든 백성이 길갈로 가서 거기서 여호와 앞에 사울로 왕을 삼고'$q$, 1
+select e.id, $q$사람들은 야베스 주민들에게 어떤 소식을 전했습니까?$q$, $q$길갈로 모두 이사하라고 전했다$q$, $q$사울이 더 이상 돕지 않을 것이라고 전했다$q$, $q$다음 날 해가 더울 때 구원을 얻을 것이라고 전했다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 11:9 — '무리가 온 사자들에게 이르되 너희는 길르앗 야베스 사람에게 이같이 이르기를 내일 해가 더울 때 에 너희가 구원을 얻으리라 하라 사자들이 돌아가서 야베스 사람들에게 고하매 그들이 기뻐하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울의 첫 번째 군사적 승리가 기록된 성경 책은 어디입니까?$q$, $q$사무엘상$q$, $q$사사기$q$, $q$열왕기상$q$, null, 0, $q$삼상 11:1-15에 사울의 얍베스 길르앗 구원이 기록됨$q$, 2
+select e.id, $q$승리 뒤 백성은 길갈에서 무엇을 했습니까?$q$, $q$사울을 왕으로 세우고 함께 기뻐했다$q$, $q$사울을 왕 자리에서 내렸다$q$, $q$각자 집으로 조용히 돌아갔다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 11:15 — '모든 백성이 길갈로 가서 거기서 여호와 앞에 사울로 왕을 삼고 거기서 여호와 앞에 화목제를 드 리고 사울과 이스라엘 모든 사람이 거기서 크게 기뻐하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사무엘이 사울에게 버림받을 것을 선포한 이유는 무엇이었습니까?$q$, $q$아론 자손이 아니었기 때문$q$, $q$블레셋에 패배했기 때문$q$, $q$여호와의 명하신 바를 지키지 않았기 때문$q$, null, 2, $q$삼상 13:13-14 — '여호와의 명하신 바를 왕이 지키지 아니하였으므로 여호와께서 그 마음에 맞는 사람을 구하여'$q$, 0
+select e.id, $q$사무엘이 사울에게 버림받을 것을 선포한 이유는 무엇이었습니까?$q$, $q$아론 자손이 아니었기 때문$q$, $q$블레셋에 패배했기 때문$q$, $q$여호와의 명하신 바를 지키지 않았기 때문$q$, $q$헷갈렸어요$q$, 2, $q$삼상 13:13-14 — '여호와의 명하신 바를 왕이 지키지 아니하였으므로 여호와께서 그 마음에 맞는 사람을 구하여'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울이 아말렉을 칠 때 아각을 어떻게 하였습니까?$q$, $q$살려두었다$q$, $q$제사를 드리고 죽였다$q$, $q$즉시 처형하였다$q$, null, 0, $q$삼상 15:8-9 — '아말렉 사람의 왕 아각을 사로잡고 칼날로 그 모든 백성을 진멸하였으되 ... 아각을 살려두었더라'$q$, 1
+select e.id, $q$사울이 아말렉을 칠 때 아각을 어떻게 하였습니까?$q$, $q$살려두었다$q$, $q$제사를 드리고 죽였다$q$, $q$즉시 처형하였다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 15:8-9 — '아말렉 사람의 왕 아각을 사로잡고 칼날로 그 모든 백성을 진멸하였으되 ... 아각을 살려두었더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울의 불순종이 기록된 성경 책은 어디입니까?$q$, $q$사사기$q$, $q$열왕기상$q$, $q$사무엘상$q$, null, 2, $q$삼상 13:7-14, 15:1-23에 사울의 두 차례 불순종이 기록됨$q$, 2
+select e.id, $q$사무엘은 사울에게 무엇을 전하려 했습니까?$q$, $q$사울의 승리를 칭찬하려 했다$q$, $q$블레셋과 화해하라고 했다$q$, $q$밤에 하나님께 들은 말씀을 전하려 했다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 15:16 — '사무엘이 사울에게 이르되 가만히 계시옵소서 간 밤에 여호와께서 내게 이르신 것을 왕에게 말하 리이다 가로되 말씀하소서'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗에게 기름을 부은 사람은 누구입니까?$q$, $q$나단$q$, $q$엘리야$q$, $q$사무엘$q$, null, 2, $q$삼상 16:13 — '사무엘이 기름 뿔병을 취하여 ... 기름을 부었더니'$q$, 0
+select e.id, $q$사무엘이 이새의 아들들을 볼 때 하나님은 무엇이라 하셨습니까?$q$, $q$맏아들을 세우신다$q$, $q$가장 큰 자를 택하신다$q$, $q$외모가 아닌 중심을 보신다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 16:7 — '나는 중심을 보느니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사무엘이 이새의 아들들을 볼 때 하나님은 무엇이라 하셨습니까?$q$, $q$가장 큰 자를 택하신다$q$, $q$외모가 아닌 중심을 보신다$q$, $q$맏아들을 세우신다$q$, null, 1, $q$삼상 16:7 — '나는 중심을 보느니라'$q$, 1
+select e.id, $q$사무엘은 아비나답을 보고 무엇을 알게 되었습니까?$q$, $q$아비나답이 바로 왕이 된다는 것$q$, $q$하나님이 그를 택하지 않으셨다는 것$q$, $q$이새의 아들들이 모두 선택되었다는 것$q$, $q$헷갈렸어요$q$, 1, $q$삼상 16:8 — '이새가 아비나답을 불러 사무엘의 앞을 지나게 하매 사무엘이 가로되 이도 여호와께서 택하지 아니 하셨느니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗의 기름부음 사건이 기록된 성경 책은 무엇입니까?$q$, $q$사무엘하$q$, $q$열왕기상$q$, $q$사무엘상$q$, null, 2, $q$삼상 16:1-13에 다윗의 기름부음 기사가 기록됨$q$, 2
+select e.id, $q$다윗에게 기름을 부은 사람은 누구입니까?$q$, $q$엘리야$q$, $q$나단$q$, $q$사무엘$q$, $q$헷갈렸어요$q$, 2, $q$삼상 16:13 — '사무엘이 기름 뿔병을 취하여 ... 기름을 부었더니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗이 골리앗을 쓰러뜨리는 데 사용한 무기는 무엇이었습니까?$q$, $q$물매와 돌$q$, $q$창$q$, $q$칼$q$, null, 0, $q$삼상 17:50 — '다윗이 이같이 물매와 돌로 블레셋 사람을 이기고 그를 쳐 죽였으나 자기 손에는 칼이 없었더라'$q$, 0
+select e.id, $q$다윗은 골리앗에게 싸움을 선포할 때 어떻게 말하였습니까?$q$, $q$여호와께서 너를 내 손에 붙이시리라 하였다$q$, $q$두려워하지 말라고 외쳤다$q$, $q$이스라엘 군대의 이름으로 싸운다 하였다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 17:46 — '오늘 여호와께서 너를 내 손에 붙이시리니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗은 골리앗에게 싸움을 선포할 때 어떻게 말하였습니까?$q$, $q$이스라엘 군대의 이름으로 싸운다 하였다$q$, $q$여호와께서 너를 내 손에 붙이시리라 하였다$q$, $q$두려워하지 말라고 외쳤다$q$, null, 1, $q$삼상 17:46 — '오늘 여호와께서 너를 내 손에 붙이시리니'$q$, 1
+select e.id, $q$다윗은 어떻게 했습니까?$q$, $q$이스라엘 군대의 이름으로 싸운다 하였다$q$, $q$블레셋 사람에게로 마주 그 항오를 향하여 빨리 달리며$q$, $q$두려워하지 말라고 외쳤다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 17:48 — '블레셋 사람이 일어나 다윗에게로 마주 가까이 올 때에 다윗이 블레셋 사람에게로 마주 그 항오를 향하여 빨리 달리며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗과 골리앗의 전투가 기록된 성경 책은 어디입니까?$q$, $q$열왕기상$q$, $q$사무엘상$q$, $q$사무엘하$q$, null, 1, $q$삼상 17:32-50에 다윗과 골리앗의 전투가 기록됨$q$, 2
+select e.id, $q$다윗이 골리앗을 쓰러뜨리는 데 사용한 무기는 무엇이었습니까?$q$, $q$창$q$, $q$물매와 돌$q$, $q$칼$q$, $q$헷갈렸어요$q$, 1, $q$삼상 17:50 — '다윗이 이같이 물매와 돌로 블레셋 사람을 이기고 그를 쳐 죽였으나 자기 손에는 칼이 없었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗과 헤어질 때 요나단이 한 맹세는 누구의 이름으로 하였습니까?$q$, $q$이스라엘의 이름$q$, $q$여호와의 이름$q$, $q$다윗 아버지의 이름$q$, null, 1, $q$삼상 20:42 — '우리 두 사람이 여호와의 이름으로 맹세하여'$q$, 0
+select e.id, $q$다윗이 블레셋 사람을 죽이고 돌아올 때 여인들은 어떻게 하였습니까?$q$, $q$다윗을 왕으로 높이는 노래를 불렀다$q$, $q$노래하며 춤추며 왕 사울을 환영하였다$q$, $q$성문에서 침묵으로 맞이하였다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 18:6 — '여인들이 이스라엘 모든 성에서 나와서 노래하며 춤추며 소고와 경쇠를 가지고 왕 사울을 환영하는데'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗이 블레셋 사람을 죽이고 돌아올 때 여인들은 어떻게 하였습니까?$q$, $q$다윗을 왕으로 높이는 노래를 불렀다$q$, $q$성문에서 침묵으로 맞이하였다$q$, $q$노래하며 춤추며 왕 사울을 환영하였다$q$, null, 2, $q$삼상 18:6 — '여인들이 이스라엘 모든 성에서 나와서 노래하며 춤추며 소고와 경쇠를 가지고 왕 사울을 환영하는데'$q$, 1
+select e.id, $q$감옥에서도 하나님은 다윗에게 어떻게 하셨습니까?$q$, $q$이스라엘의 이름$q$, $q$다윗 아버지의 이름$q$, $q$다윗과 함께하시고 은혜를 주셨다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 18:12 — '여호와께서 사울을 떠나 다윗과 함께 계시므로 사울이 그를 두려워한지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울의 시기와 다윗의 도망 이야기가 기록된 성경 책은 어디입니까?$q$, $q$사무엘하$q$, $q$열왕기상$q$, $q$사무엘상$q$, null, 2, $q$삼상 18:6-20:42에 사울의 시기와 다윗의 도망이 기록됨$q$, 2
+select e.id, $q$다윗과 헤어질 때 요나단이 한 맹세는 누구의 이름으로 하였습니까?$q$, $q$이스라엘의 이름$q$, $q$다윗 아버지의 이름$q$, $q$여호와의 이름$q$, $q$헷갈렸어요$q$, 2, $q$삼상 20:42 — '우리 두 사람이 여호와의 이름으로 맹세하여'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울이 동굴에 들어갔을 때 다윗이 있던 곳은 어디입니까?$q$, $q$브엘세바 광야$q$, $q$엔게디 황무지$q$, $q$유다 광야$q$, null, 1, $q$삼상 24:1 — '다윗이 엔게디 황무지에 있더이다'$q$, 0
+select e.id, $q$사울이 동굴에 들어갔을 때 다윗이 있던 곳은 어디입니까?$q$, $q$브엘세바 광야$q$, $q$엔게디 황무지$q$, $q$유다 광야$q$, $q$헷갈렸어요$q$, 1, $q$삼상 24:1 — '다윗이 엔게디 황무지에 있더이다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗은 사울을 해칠 기회를 얻었을 때 어떻게 하였습니까?$q$, $q$부하들에게 명하여 사울을 잡아두었다$q$, $q$여호와의 기름 부음 받은 자이므로 손을 대지 않았다$q$, $q$사울의 겉옷만 베고 용서를 구하였다$q$, null, 1, $q$삼상 24:6 — '내가 손을 들어 여호와의 기름 부음을 받은 내 주를 치는 것은 여호와의 금하시는 것이니'$q$, 1
+select e.id, $q$다윗은 사울을 해칠 기회를 얻었을 때 어떻게 하였습니까?$q$, $q$부하들에게 명하여 사울을 잡아두었다$q$, $q$여호와의 기름 부음 받은 자이므로 손을 대지 않았다$q$, $q$사울의 겉옷만 베고 용서를 구하였다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 24:6 — '내가 손을 들어 여호와의 기름 부음을 받은 내 주를 치는 것은 여호와의 금하시는 것이니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗이 사울을 살려준 사건이 기록된 성경 책은 어디입니까?$q$, $q$시편$q$, $q$사무엘상$q$, $q$사무엘하$q$, null, 1, $q$삼상 24:1-22에 엔게디 동굴에서 다윗이 사울을 살려준 사건이 기록됨$q$, 2
+select e.id, $q$다윗이 막은 뒤 사울은 어떻게 했습니까?$q$, $q$다윗의 사람들을 잡아갔다$q$, $q$굴에서 나와 자기 길로 갔다$q$, $q$다윗에게 곧바로 절했다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 24:7 — '다윗이 이 말로 자기 사람들을 금하여 사울을 해하지 못하게 하니라 사울이 일어나 굴에서 나가 자 기 길을 가니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울과 그 세 아들이 전사한 산은 어디입니까?$q$, $q$길보아 산$q$, $q$다볼 산$q$, $q$시내산$q$, null, 0, $q$삼상 31:1 — '이스라엘 사람들이 블레셋 사람 앞에서 도망하여 길보아 산에서 엎드러져 죽으니라'$q$, 0
+select e.id, $q$블레셋 군대를 보고 두려워한 사울은 무엇을 하였습니까?$q$, $q$엔돌의 신접한 여인을 찾아갔다$q$, $q$여호와께 금식하며 기도하였다$q$, $q$다윗에게 화해를 청하였다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 28:5-7 — '사울이 ... 두려워서 그 마음이 크게 떨린지라 ... 신접한 여인을 찾으라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$블레셋 군대를 보고 두려워한 사울은 무엇을 하였습니까?$q$, $q$다윗에게 화해를 청하였다$q$, $q$엔돌의 신접한 여인을 찾아갔다$q$, $q$여호와께 금식하며 기도하였다$q$, null, 1, $q$삼상 28:5-7 — '사울이 ... 두려워서 그 마음이 크게 떨린지라 ... 신접한 여인을 찾으라'$q$, 1
+select e.id, $q$여인은 어떻게 했습니까?$q$, $q$시내산$q$, $q$있나이다$q$, $q$다볼 산$q$, $q$헷갈렸어요$q$, 1, $q$삼상 28:7 — '사울이 그 신하들에게 이르되 나를 위하여 신접한 여인을 찾으라 내가 그리로 가서 그에게 물으리 라 그 신하들이 그에게 이르되 보소서 엔돌에 신접한 여인이 있나이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울의 최후가 기록된 성경 책은 어디입니까?$q$, $q$사무엘상$q$, $q$열왕기상$q$, $q$사무엘하$q$, null, 0, $q$삼상 28:5-20, 31:1-6에 사울의 마지막 날들이 기록됨$q$, 2
+select e.id, $q$사울과 그 세 아들이 전사한 산은 어디입니까?$q$, $q$길보아 산$q$, $q$다볼 산$q$, $q$시내산$q$, $q$헷갈렸어요$q$, 0, $q$삼상 31:1 — '이스라엘 사람들이 블레셋 사람 앞에서 도망하여 길보아 산에서 엎드러져 죽으니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗이 처음 왕으로 올라간 성읍은 어디입니까?$q$, $q$예루살렘$q$, $q$베들레헴$q$, $q$헤브론$q$, null, 2, $q$삼하 2:1 — '여호와께서 가라사대 올라가라 다윗이 가로되 어디로 가리이까 가라사대 헤브론으로 갈지니라'$q$, 0
+select e.id, $q$다윗이 처음 왕으로 올라간 성읍은 어디입니까?$q$, $q$예루살렘$q$, $q$베들레헴$q$, $q$헤브론$q$, $q$헷갈렸어요$q$, 2, $q$삼하 2:1 — '여호와께서 가라사대 올라가라 다윗이 가로되 어디로 가리이까 가라사대 헤브론으로 갈지니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗이 점점 강성해진 이유는 무엇으로 기록되었습니까?$q$, $q$백성의 지지 때문이다$q$, $q$만군의 하나님 여호와께서 함께 계셨기 때문이다$q$, $q$뛰어난 군사력 때문이다$q$, null, 1, $q$삼하 5:10 — '만군의 하나님 여호와께서 함께 계시니 다윗이 점점 강성하여 가니라'$q$, 1
+select e.id, $q$사람들은 무엇이라고 말했습니까?$q$, $q$백성의 지지 때문이다$q$, $q$사울을 장사한 사람은 길르앗 야베스 사람들이니이다 했다$q$, $q$뛰어난 군사력 때문이다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 2:4 — '유다 사람들이 와서 거기서 다윗에게 기름을 부어 유다 족속의 왕을 삼았더라 혹이 다윗에게 고하여 가로되 사울을 장사한 사람은 길르앗 야베스 사람들이니이다 하매'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗의 즉위 과정이 기록된 성경 책은 어디입니까?$q$, $q$사무엘하$q$, $q$열왕기상$q$, $q$사무엘상$q$, null, 0, $q$삼하 2:1-7, 5:1-10에 다윗의 즉위 과정이 기록됨$q$, 2
+select e.id, $q$감옥에서도 하나님은 다윗에게 어떻게 하셨습니까?$q$, $q$다윗과 함께하시고 은혜를 주셨다$q$, $q$베들레헴$q$, $q$예루살렘$q$, $q$헷갈렸어요$q$, 0, $q$삼하 5:10 — '만군의 하나님 여호와께서 함께 계시니 다윗이 점점 강성하여 가니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$언약궤를 예루살렘으로 옮기기 전에 언약궤가 있던 집은 누구의 집이었습니까?$q$, $q$아론$q$, $q$우사$q$, $q$오벧에돔$q$, null, 2, $q$삼하 6:12 — '여호와께서 하나님의 궤를 인하여 오벧에돔의 집과 그 모든 소유에 복을 주셨다'$q$, 0
+select e.id, $q$언약궤를 예루살렘으로 옮기기 전에 언약궤가 있던 집은 누구의 집이었습니까?$q$, $q$아론$q$, $q$우사$q$, $q$오벧에돔$q$, $q$헷갈렸어요$q$, 2, $q$삼하 6:12 — '여호와께서 하나님의 궤를 인하여 오벧에돔의 집과 그 모든 소유에 복을 주셨다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$언약궤가 들어올 때 다윗 왕은 어떻게 하였습니까?$q$, $q$백성에게 제사를 명하였다$q$, $q$여호와 앞에서 힘을 다하여 춤을 추었다$q$, $q$예복을 갖추어 입고 엄숙히 행진하였다$q$, null, 1, $q$삼하 6:14 — '여호와 앞에서 힘을 다하여 춤을 추는데'$q$, 1
+select e.id, $q$언약궤가 들어올 때 다윗 왕은 어떻게 하였습니까?$q$, $q$백성에게 제사를 명하였다$q$, $q$여호와 앞에서 힘을 다하여 춤을 추었다$q$, $q$예복을 갖추어 입고 엄숙히 행진하였다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 6:14 — '여호와 앞에서 힘을 다하여 춤을 추는데'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗의 언약궤 춤 이야기가 기록된 성경 책은 어디입니까?$q$, $q$열왕기상$q$, $q$사무엘상$q$, $q$사무엘하$q$, null, 2, $q$삼하 6:12-19에 언약궤 입성과 다윗의 춤이 기록됨$q$, 2
+select e.id, $q$다윗은 언약궤가 들어온 뒤 백성에게 무엇을 나누어 주었습니까?$q$, $q$전쟁 무기를 나누어 주었다$q$, $q$왕궁의 금과 은을 나누어 주었다$q$, $q$떡과 고기와 건포도떡을 나누어 주었다$q$, $q$헷갈렸어요$q$, 2, $q$삼하 6:19 — '모든 백성 곧 온 이스라엘 무리의 무론 남녀하고 떡 한개와 고기 한 조각과 건포도떡 한 덩이씩 나 눠주매 모든 백성이 각기 집으로 돌아가니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님의 언약을 다윗에게 전달한 선지자는 누구입니까?$q$, $q$사무엘$q$, $q$엘리야$q$, $q$나단$q$, null, 2, $q$삼하 7:4,17 — '나단이 이 모든 말씀과 이 모든 묵시대로 다윗에게 고하니라'$q$, 0
+select e.id, $q$하나님의 언약을 다윗에게 전달한 선지자는 누구입니까?$q$, $q$사무엘$q$, $q$엘리야$q$, $q$나단$q$, $q$헷갈렸어요$q$, 2, $q$삼하 7:4,17 — '나단이 이 모든 말씀과 이 모든 묵시대로 다윗에게 고하니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님은 다윗의 아들이 지을 것이라고 약속하신 것은 무엇입니까?$q$, $q$하나님의 이름을 위한 집$q$, $q$이스라엘의 큰 성전$q$, $q$다윗 왕의 궁궐$q$, null, 0, $q$삼하 7:13 — '저는 내 이름을 위하여 집을 건축할 것이요'$q$, 1
+select e.id, $q$하나님은 다윗의 아들이 지을 것이라고 약속하신 것은 무엇입니까?$q$, $q$하나님의 이름을 위한 집$q$, $q$이스라엘의 큰 성전$q$, $q$다윗 왕의 궁궐$q$, $q$헷갈렸어요$q$, 0, $q$삼하 7:13 — '저는 내 이름을 위하여 집을 건축할 것이요'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗 언약이 기록된 성경 책은 어디입니까?$q$, $q$사무엘하$q$, $q$열왕기상$q$, $q$사무엘상$q$, null, 0, $q$삼하 7:1-17에 다윗 언약이 기록됨$q$, 2
+select e.id, $q$나단은 어떻게 했습니까?$q$, $q$모든 말씀과 이 모든 묵시대로 다윗에게 고했다$q$, $q$사무엘$q$, $q$엘리야$q$, $q$헷갈렸어요$q$, 0, $q$삼하 7:17 — '나단이 이 모든 말씀과 이 모든 묵시대로 다윗에게 고하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 12;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗이 제단을 쌓은 곳은 누구의 타작마당이었습니까?$q$, $q$보아스$q$, $q$여부스 사람 아라우나$q$, $q$오르난$q$, null, 1, $q$삼하 24:18 — '여부스 사람 아라우나의 타작마당에서 여호와를 위하여 단을 쌓으소서'$q$, 0
+select e.id, $q$다윗은 인구조사 후 자신의 잘못을 어떻게 하였습니까?$q$, $q$재물을 드려 속죄하였다$q$, $q$여호와께 죄를 고백하고 용서를 구하였다$q$, $q$선지자를 찾아 자문을 구하였다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 24:10 — '다윗이 인구 수를 조사한 후에 그 마음에 자책하고 여호와께 아뢰되 내가 이 일을 행함으로 큰 죄를 범하였나이다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗은 인구조사 후 자신의 잘못을 어떻게 하였습니까?$q$, $q$선지자를 찾아 자문을 구하였다$q$, $q$여호와께 죄를 고백하고 용서를 구하였다$q$, $q$재물을 드려 속죄하였다$q$, null, 1, $q$삼하 24:10 — '다윗이 인구 수를 조사한 후에 그 마음에 자책하고 여호와께 아뢰되 내가 이 일을 행함으로 큰 죄를 범하였나이다'$q$, 1
+select e.id, $q$다윗이 제단을 쌓은 곳은 누구의 타작마당이었습니까?$q$, $q$오르난$q$, $q$여부스 사람 아라우나$q$, $q$보아스$q$, $q$헷갈렸어요$q$, 1, $q$삼하 24:18 — '여부스 사람 아라우나의 타작마당에서 여호와를 위하여 단을 쌓으소서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다윗의 인구조사와 제단 사건이 기록된 성경 책은 어디입니까?$q$, $q$역대상$q$, $q$사무엘하$q$, $q$사무엘상$q$, null, 1, $q$삼하 24:10-25에 다윗의 인구조사와 아라우나 타작마당 제단이 기록됨$q$, 2
+select e.id, $q$다윗은 아라우나의 제안을 어떻게 받아들였습니까?$q$, $q$공짜로 받아 제사를 드렸다$q$, $q$값을 치르고 타작마당과 제물을 샀다$q$, $q$제사를 포기하고 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 24:24 — '왕이 아라우나에게 이르되 그렇지 아니하다 내가 값을 주고 네게서 사리라 값 없이는 내 하나님 여호와께 번제를 드리지 아니하리라 하고 은 오십 세겔로 타작 마당과 소를 사고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 13;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬이 꿈에서 하나님께 구한 것은 무엇이었습니까?$q$, $q$백성을 재판하는 지혜$q$, $q$오래 사는 수명$q$, $q$원수의 목숨$q$, null, 0, $q$왕상 3:9 — '지혜로운 마음을 종에게 주사 주의 백성을 재판하여 선악을 분별하게 하옵소서'$q$, 0
+select e.id, $q$솔로몬이 꿈에서 하나님께 구한 것은 무엇이었습니까?$q$, $q$백성을 재판하는 지혜$q$, $q$오래 사는 수명$q$, $q$원수의 목숨$q$, $q$헷갈렸어요$q$, 0, $q$왕상 3:9 — '지혜로운 마음을 종에게 주사 주의 백성을 재판하여 선악을 분별하게 하옵소서'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬은 꿈에서 깨어난 후 무엇을 하였습니까?$q$, $q$즉시 왕위에 올라 선포하였다$q$, $q$다윗에게 꿈의 내용을 알렸다$q$, $q$여호와의 언약궤 앞에 서서 번제와 수은제를 드렸다$q$, null, 2, $q$왕상 3:15 — '솔로몬이 깨어보니 꿈이더라 이에 예루살렘에 이르러 여호와의 언약궤 앞에 서서 번제와 수은제를 드리고'$q$, 1
+select e.id, $q$솔로몬은 어떻게 했습니까?$q$, $q$즉시 왕위에 올라 선포하였다$q$, $q$다윗에게 꿈의 내용을 알렸다$q$, $q$것을 구했다 그 말씀이 주의 마음에 맞은지라$q$, $q$헷갈렸어요$q$, 2, $q$왕상 3:10 — '솔로몬이 이것을 구하매 그 말씀이 주의 마음에 맞은지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬의 즉위와 지혜 구함이 기록된 성경 책은 어디입니까?$q$, $q$역대하$q$, $q$열왕기상$q$, $q$사무엘하$q$, null, 1, $q$왕상 1:28-3:15에 솔로몬의 즉위와 지혜의 꿈이 기록됨$q$, 2
+select e.id, $q$꿈에서 깬 솔로몬은 무엇을 했습니까?$q$, $q$왕궁을 떠나 광야로 갔다$q$, $q$예루살렘에서 제사를 드리고 잔치를 베풀었다$q$, $q$곧바로 전쟁을 시작했다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 3:15 — '솔로몬이 깨어보니 꿈이더라 이에 예루살렘에 이르러 여호와의 언약궤 앞에 서서 번제와 수은제를 드리고 모든 신복을 위하여 잔치하였더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 14;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬이 성전을 건축하는 데 걸린 기간은 얼마입니까?$q$, $q$삼년$q$, $q$칠년$q$, $q$십년$q$, null, 1, $q$왕상 6:38 — '솔로몬이 전을 건축한 동안이 칠년이었더라'$q$, 0
+select e.id, $q$두로 왕 히람은 솔로몬에게 어떻게 하였습니까?$q$, $q$전쟁을 선포하였다$q$, $q$신복을 보내어 협력하였다$q$, $q$거부하고 물러났다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 5:1 — '히람이 평일에 다윗을 사랑하였음이라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$두로 왕 히람은 솔로몬에게 어떻게 하였습니까?$q$, $q$전쟁을 선포하였다$q$, $q$신복을 보내어 협력하였다$q$, $q$거부하고 물러났다$q$, null, 1, $q$왕상 5:1 — '히람이 평일에 다윗을 사랑하였음이라'$q$, 1
+select e.id, $q$감옥에서도 하나님은 솔로몬에게 어떻게 하셨습니까?$q$, $q$전쟁을 선포하였다$q$, $q$솔로몬과 함께하시고 은혜를 주셨다$q$, $q$거부하고 물러났다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 5:12 — '여호와께서 그 말씀대로 솔로몬에게 지혜를 주시므로 히람과 솔로몬이 친목하여 두 사람이 함께 약 조를 맺었더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬의 성전 건축 기사가 기록된 성경 책은 어디입니까?$q$, $q$역대하$q$, $q$열왕기상$q$, $q$출애굽기$q$, null, 1, $q$왕상 5:1-6:38에 솔로몬의 성전 건축 기사가 기록됨$q$, 2
+select e.id, $q$솔로몬이 성전을 건축하는 데 걸린 기간은 얼마입니까?$q$, $q$삼년$q$, $q$칠년$q$, $q$십년$q$, $q$헷갈렸어요$q$, 1, $q$왕상 6:38 — '솔로몬이 전을 건축한 동안이 칠년이었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 15;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬의 지혜를 시험하러 찾아온 왕은 누구입니까?$q$, $q$스바 여왕$q$, $q$두로 왕 히람$q$, $q$애굽의 바로$q$, null, 0, $q$왕상 10:1 — '스바 여왕이 ... 어려운 문제로 시험코자 하여 예루살렘에 이르니'$q$, 0
+select e.id, $q$솔로몬의 지혜를 시험하러 찾아온 왕은 누구입니까?$q$, $q$스바 여왕$q$, $q$두로 왕 히람$q$, $q$애굽의 바로$q$, $q$헷갈렸어요$q$, 0, $q$왕상 10:1 — '스바 여왕이 ... 어려운 문제로 시험코자 하여 예루살렘에 이르니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬의 마음이 여호와에게서 떠나게 된 원인은 무엇입니까?$q$, $q$이방 아내들이 그의 마음을 돌이켰다$q$, $q$전쟁의 패배에 낙심하였다$q$, $q$선지자들이 그를 떠나갔다$q$, null, 0, $q$왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'$q$, 1
+select e.id, $q$솔로몬의 마음이 여호와에게서 떠나게 된 원인은 무엇입니까?$q$, $q$이방 아내들이 그의 마음을 돌이켰다$q$, $q$전쟁의 패배에 낙심하였다$q$, $q$선지자들이 그를 떠나갔다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$솔로몬의 영광과 타락 기사가 기록된 성경 책은 어디입니까?$q$, $q$이사야$q$, $q$열왕기상$q$, $q$사무엘하$q$, null, 1, $q$왕상 10-11장에 솔로몬의 영광과 말년의 타락이 기록됨$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$애굽의 바로$q$, $q$솔로몬에게 말씀하시되 네게 이러한 일이 있었고$q$, $q$두로 왕 히람$q$, $q$헷갈렸어요$q$, 1, $q$왕상 11:11 — '여호와께서 솔로몬에게 말씀하시되 네게 이러한 일이 있었고 또 네가 나의 언약과 내가 네게 명한 법도를 지키지 아니하였으니 내가 결단코 이 나라를 네게서 빼앗아 네 신복에게 주리라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 16;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$갈멜 산 대결에서 백성이 마지막에 엎드려 외친 말은 무엇입니까?$q$, $q$여호와 그는 하나님이시로다$q$, $q$엘리야가 이겼도다$q$, $q$바알이 참 신이로다$q$, null, 0, $q$왕상 18:39 — '여호와 그는 하나님이시로다 여호와 그는 하나님이시로다 하니'$q$, 0
+select e.id, $q$엘리야는 여호와의 단을 어떻게 하였습니까?$q$, $q$무너진 여호와의 단을 수축하였다$q$, $q$바알 제단 위에 올렸다$q$, $q$새 제단을 따로 쌓았다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 18:30 — '저가 무너진 여호와의 단을 수축하되'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$엘리야는 여호와의 단을 어떻게 하였습니까?$q$, $q$새 제단을 따로 쌓았다$q$, $q$무너진 여호와의 단을 수축하였다$q$, $q$바알 제단 위에 올렸다$q$, null, 1, $q$왕상 18:30 — '저가 무너진 여호와의 단을 수축하되'$q$, 1
+select e.id, $q$엘리야는 갈멜산에서 하나님께 무엇을 알게 해 달라고 기도했습니까?$q$, $q$바알이 이스라엘의 하나님임을 알게 해 달라고 했다$q$, $q$여호와가 하나님이시고 자신이 주의 종임을 알게 해 달라고 했다$q$, $q$비가 오지 않을 이유를 숨겨 달라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 18:36 — '저녁 소제 드릴 때에 이르러 선지자 엘리야가 나아가서 말하되 아브라함과 이삭과 이스라엘의 하 나님 여호와여 주께서 이스라엘 중에서 하나님이 되심과 내가 주의 종이 됨과 내가 주의 말씀대로 이 모 든 일을 행하는 것을 오늘날 알게 하옵소서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$엘리야의 갈멜 산 대결이 기록된 성경 책은 어디입니까?$q$, $q$열왕기상$q$, $q$열왕기하$q$, $q$아모스$q$, null, 0, $q$왕상 18:20-39에 엘리야와 바알 선지자들의 대결 기사가 기록됨$q$, 2
+select e.id, $q$갈멜 산 대결에서 백성이 마지막에 엎드려 외친 말은 무엇입니까?$q$, $q$여호와 그는 하나님이시로다$q$, $q$바알이 참 신이로다$q$, $q$엘리야가 이겼도다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 18:39 — '여호와 그는 하나님이시로다 여호와 그는 하나님이시로다 하니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 17;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 이스라엘 가운데 남기리라 하신 자는 몇 명입니까?$q$, $q$오천 명$q$, $q$백 명$q$, $q$칠천 명$q$, null, 2, $q$왕상 19:18 — '내가 이스라엘 가운데 칠천 인을 남기리니'$q$, 0
+select e.id, $q$엘리야는 로뎀 나무 아래에서 무엇을 하였습니까?$q$, $q$기도하며 찬양하였다$q$, $q$말씀을 읽고 있었다$q$, $q$누워 자고 있었다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 19:5 — '로뎀 나무 아래 누워 자더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$엘리야는 로뎀 나무 아래에서 무엇을 하였습니까?$q$, $q$누워 자고 있었다$q$, $q$기도하며 찬양하였다$q$, $q$말씀을 읽고 있었다$q$, null, 0, $q$왕상 19:5 — '로뎀 나무 아래 누워 자더니'$q$, 1
+select e.id, $q$사자는 무엇이라고 말했습니까?$q$, $q$일어나서 먹으라 네가 길을 이기지 못할까 하노 라 하는지라$q$, $q$오천 명$q$, $q$백 명$q$, $q$헷갈렸어요$q$, 0, $q$왕상 19:7 — '여호와의 사자가 또 다시 와서 어루만지며 이르되 일어나서 먹으라 네가 길을 이기지 못할까 하노 라 하는지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$호렙에서 엘리야가 세미한 음성을 들은 기사가 기록된 책은 어디입니까?$q$, $q$열왕기하$q$, $q$이사야$q$, $q$열왕기상$q$, null, 2, $q$왕상 19:1-18에 호렙에서 엘리야가 세미한 음성을 들은 기사가 기록됨$q$, 2
+select e.id, $q$하나님이 이스라엘 가운데 남기리라 하신 자는 몇 명입니까?$q$, $q$오천 명$q$, $q$백 명$q$, $q$칠천 명$q$, $q$헷갈렸어요$q$, 2, $q$왕상 19:18 — '내가 이스라엘 가운데 칠천 인을 남기리니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 18;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$엘리야는 어떤 방법으로 하늘로 올라갔습니까?$q$, $q$회리바람을 타고 승천하였다$q$, $q$불수레를 타고 올라갔다$q$, $q$천사들에게 이끌려 올라갔다$q$, null, 0, $q$왕하 2:11 — '엘리야가 회리바람을 타고 승천하더라'$q$, 0
+select e.id, $q$엘리야는 어떤 방법으로 하늘로 올라갔습니까?$q$, $q$회리바람을 타고 승천하였다$q$, $q$불수레를 타고 올라갔다$q$, $q$천사들에게 이끌려 올라갔다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 2:11 — '엘리야가 회리바람을 타고 승천하더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$엘리사는 엘리야가 승천한 후 무엇을 집어 물을 쳤습니까?$q$, $q$손을 들어 기도하고 물에 던졌다$q$, $q$엘리야의 몸에서 떨어진 겉옷을 가지고 물을 쳤다$q$, $q$지팡이를 들어 물을 쳤다$q$, null, 1, $q$왕하 2:14 — '엘리야의 몸에서 떨어진 그 겉옷을 가지고 물을 치며'$q$, 1
+select e.id, $q$엘리사는 어떻게 했습니까?$q$, $q$손을 들어 기도하고 물에 던졌다$q$, $q$엘리사가 자기의 옷을 잡아 둘에 찢고$q$, $q$지팡이를 들어 물을 쳤다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 2:12 — '엘리사가 보고 소리 지르되 내 아버지여 내 아버지여 이스라엘의 병거와 그 마병이여 하더니 다시 보이지 아니하는지라 이에 엘리사가 자기의 옷을 잡아 둘에 찢고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$엘리야 승천과 엘리사의 계승 기사가 기록된 책은 어디입니까?$q$, $q$역대하$q$, $q$열왕기하$q$, $q$열왕기상$q$, null, 1, $q$왕하 2:1-14에 엘리야 승천과 엘리사의 겉옷 계승 기사가 기록됨$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$천사들에게 이끌려 올라갔다$q$, $q$어디 계시 니이까$q$, $q$불수레를 타고 올라갔다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 2:14 — '엘리야의 몸에서 떨어진 그 겉옷을 가지고 물을 치며 가로되 엘리야의 하나님 여호와는 어디 계시 니이까 하고 저도 물을 치매 물이 이리 저리 갈라지고 엘리사가 건너니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 19;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나아만이 문둥병 치유를 위해 몸을 잠근 횟수는 몇 번입니까?$q$, $q$일곱 번$q$, $q$열 번$q$, $q$세 번$q$, null, 0, $q$왕하 5:14 — '요단 강에 일곱 번 몸을 잠그니 그 살이 깨끗하게 되었더라'$q$, 0
+select e.id, $q$나아만은 엘리사의 지시를 처음 들었을 때 어떻게 하였습니까?$q$, $q$노하여 물러갔다$q$, $q$왕에게 먼저 허락을 구하였다$q$, $q$기뻐하며 즉시 따랐다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 5:11 — '나아만이 노하여 물러가며 가로되'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나아만은 엘리사의 지시를 처음 들었을 때 어떻게 하였습니까?$q$, $q$노하여 물러갔다$q$, $q$왕에게 먼저 허락을 구하였다$q$, $q$기뻐하며 즉시 따랐다$q$, null, 0, $q$왕하 5:11 — '나아만이 노하여 물러가며 가로되'$q$, 1
+select e.id, $q$나아만의 종들은 선지자의 말을 어떻게 받아들이라고 권했습니까?$q$, $q$씻어 깨끗해지라는 말도 따라야 한다고 권했다$q$, $q$엘리사를 왕에게 고발하라고 권했다$q$, $q$요단강에는 절대 들어가지 말라고 권했다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 5:13 — '그 종들이 나아와서 말하여 가로되 내 아버지여 선지자가 당신을 명하여 큰 일을 행하라 하였더면 행치 아니하였으리이까 하물며 당신에게 이르기를 씻어 깨끗하게 하라 함이리이까'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나아만의 치유 기사가 기록된 성경 책은 어디입니까?$q$, $q$열왕기하$q$, $q$누가복음$q$, $q$열왕기상$q$, null, 0, $q$왕하 5:1-14에 나아만의 문둥병 치유 기사가 기록됨$q$, 2
+select e.id, $q$나아만이 문둥병 치유를 위해 몸을 잠근 횟수는 몇 번입니까?$q$, $q$일곱 번$q$, $q$열 번$q$, $q$세 번$q$, $q$헷갈렸어요$q$, 0, $q$왕하 5:14 — '요단 강에 일곱 번 몸을 잠그니 그 살이 깨끗하게 되었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 20;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$히스기야가 침략 위기에 어떤 기도를 드렸습니까?$q$, $q$예루살렘 성벽을 강하게 해달라고 구하였다$q$, $q$천하 만국이 여호와만 하나님인 줄 알게 해달라고 구하였다$q$, $q$앗수르 왕을 치는 군사를 달라고 구하였다$q$, null, 1, $q$왕하 19:19 — '천하 만국이 주 여호와는 홀로 하나님이신줄 알리이다'$q$, 0
+select e.id, $q$히스기야는 산헤립의 편지를 받은 후 어떻게 하였습니까?$q$, $q$즉시 항복을 선언하였다$q$, $q$성전에 올라가서 여호와 앞에 펼치고 기도하였다$q$, $q$편지를 불태웠다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 19:14 — '히스기야가 ... 성전에 올라가서 여호와 앞에 그것을 펴놓고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$히스기야는 산헤립의 편지를 받은 후 어떻게 하였습니까?$q$, $q$성전에 올라가서 여호와 앞에 펼치고 기도하였다$q$, $q$즉시 항복을 선언하였다$q$, $q$편지를 불태웠다$q$, null, 0, $q$왕하 19:14 — '히스기야가 ... 성전에 올라가서 여호와 앞에 그것을 펴놓고'$q$, 1
+select e.id, $q$히스기야가 침략 위기에 어떤 기도를 드렸습니까?$q$, $q$천하 만국이 여호와만 하나님인 줄 알게 해달라고 구하였다$q$, $q$예루살렘 성벽을 강하게 해달라고 구하였다$q$, $q$앗수르 왕을 치는 군사를 달라고 구하였다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 19:19 — '천하 만국이 주 여호와는 홀로 하나님이신줄 알리이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$히스기야와 산헤립의 대결 기사가 기록된 성경 책은 어디입니까?$q$, $q$예레미야와 에스겔$q$, $q$열왕기하와 이사야$q$, $q$열왕기상과 역대하$q$, null, 1, $q$왕하 18:13-19:19와 사 36:1-37:20에 같은 사건이 평행 기록됨$q$, 2
+select e.id, $q$랍사게는 무엇이라고 말했습니까?$q$, $q$예루살렘 성벽을 강하게 해달라고 구하였다$q$, $q$너희는 대왕 앗수르 왕의 말씀을 들으라$q$, $q$앗수르 왕을 치는 군사를 달라고 구하였다$q$, $q$헷갈렸어요$q$, 1, $q$사 36:13 — '이에 랍사게가 일어서서 유다 방언으로 크게 외쳐 가로되 너희는 대왕 앗수르 왕의 말씀을 들으라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 21;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바벨론 사신이 방문했을 때 히스기야가 보여준 것은 무엇입니까?$q$, $q$성전의 제단과 언약궤$q$, $q$예루살렘 성벽과 망대$q$, $q$보물고와 군기고의 모든 것$q$, null, 2, $q$왕하 20:13 — '보물고의 금은과 향품과 보배로운 기름과 그 군기고 ... 보이지 아니한 것이 없으니'$q$, 0
+select e.id, $q$바벨론 사신이 방문했을 때 히스기야가 보여준 것은 무엇입니까?$q$, $q$성전의 제단과 언약궤$q$, $q$예루살렘 성벽과 망대$q$, $q$보물고와 군기고의 모든 것$q$, $q$헷갈렸어요$q$, 2, $q$왕하 20:13 — '보물고의 금은과 향품과 보배로운 기름과 그 군기고 ... 보이지 아니한 것이 없으니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$히스기야는 이사야의 심판 예언을 듣고 무엇이라 하였습니까?$q$, $q$나의 생전에는 평안하리라 하였다$q$, $q$즉시 회개하고 금식을 선포하였다$q$, $q$이사야의 말을 부인하였다$q$, null, 0, $q$왕하 20:19 — '나의 생전에는 평안과 견고함이 있으리로다 하니라'$q$, 1
+select e.id, $q$히스기야는 이사야의 심판 예언을 듣고 무엇이라 하였습니까?$q$, $q$나의 생전에는 평안하리라 하였다$q$, $q$즉시 회개하고 금식을 선포하였다$q$, $q$이사야의 말을 부인하였다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 20:19 — '나의 생전에는 평안과 견고함이 있으리로다 하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$히스기야의 병과 바벨론 사신 기사가 기록된 책은 어디입니까?$q$, $q$열왕기상과 역대상$q$, $q$예레미야와 에스겔$q$, $q$열왕기하와 이사야$q$, null, 2, $q$왕하 20:1-19와 사 38:1-39:8에 같은 사건이 평행 기록됨$q$, 2
+select e.id, $q$히스기야는 무엇이라고 말했습니까?$q$, $q$성전의 제단과 언약궤$q$, $q$예루살렘 성벽과 망대$q$, $q$그들이 원방 곧 바벨론에서 내게 왔나이다$q$, $q$헷갈렸어요$q$, 2, $q$사 39:3 — '이에 선지자 이사야가 히스기야 왕에게 나아와 묻되 그 사람들이 무슨 말을 하였으며 어디서 왕에 게 왔나이까 히스기야가 가로되 그들이 원방 곧 바벨론에서 내게 왔나이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 22;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$성전에서 율법책을 발견한 사람은 누구입니까?$q$, $q$대제사장 힐기야$q$, $q$선지자 훌다$q$, $q$서기관 사반$q$, null, 0, $q$왕하 22:8 — '대제사장 힐기야가 서기관 사반에게 이르되 내가 율법책을 발견하였노라'$q$, 0
+select e.id, $q$성전에서 율법책을 발견한 사람은 누구입니까?$q$, $q$대제사장 힐기야$q$, $q$선지자 훌다$q$, $q$서기관 사반$q$, $q$헷갈렸어요$q$, 0, $q$왕하 22:8 — '대제사장 힐기야가 서기관 사반에게 이르되 내가 율법책을 발견하였노라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요시야는 산에 있는 묘실들을 보고 무엇을 하였습니까?$q$, $q$묘실에서 해골을 취하여 단 위에 불살랐다$q$, $q$묘실들을 허물어 정결케 하였다$q$, $q$묘실 앞에서 회개 기도를 드렸다$q$, null, 0, $q$왕하 23:16 — '그 묘실에서 해골을 취하여다가 단 위에 불살라'$q$, 1
+select e.id, $q$요시야는 산에 있는 묘실들을 보고 무엇을 하였습니까?$q$, $q$묘실에서 해골을 취하여 단 위에 불살랐다$q$, $q$묘실들을 허물어 정결케 하였다$q$, $q$묘실 앞에서 회개 기도를 드렸다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 23:16 — '그 묘실에서 해골을 취하여다가 단 위에 불살라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요시야의 종교 개혁 기사가 기록된 성경 책은 어디입니까?$q$, $q$역대상$q$, $q$열왕기상$q$, $q$열왕기하$q$, null, 2, $q$왕하 22:8-23:25에 율법책 발견과 요시야의 개혁 기사가 기록됨$q$, 2
+select e.id, $q$요시야는 어떻게 했습니까?$q$, $q$선지자 훌다$q$, $q$서기관 사반$q$, $q$다 제하 되 벧엘에서 행한 모든 일대로 행하고$q$, $q$헷갈렸어요$q$, 2, $q$왕하 23:19 — '전에 이스라엘 열왕이 사마리아 각 성읍에 지어서 여호와의 노를 격발한 산당을 요시야가 다 제하 되 벧엘에서 행한 모든 일대로 행하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 23;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$시드기야 왕에게 내려진 처벌은 무엇이었습니까?$q$, $q$두 눈을 빼고 사슬로 결박하여 바벨론으로 끌어갔다$q$, $q$포로로만 끌려갔다$q$, $q$사형을 당하였다$q$, null, 0, $q$왕하 25:7 — '시드기야의 두 눈을 빼고 사슬로 결박하여 바벨론으로 끌어갔더라'$q$, 0
+select e.id, $q$포위가 길어지자 시드기야 왕은 어떻게 하였습니까?$q$, $q$두 성벽 사이 길로 밤중에 도망하였다$q$, $q$성전에서 기도하며 버텼다$q$, $q$항복하고 성문을 열었다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 25:4 — '모든 군사가 밤중에 두 성벽 사이 왕의 동산 곁문 길로 도망하여'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$포위가 길어지자 시드기야 왕은 어떻게 하였습니까?$q$, $q$두 성벽 사이 길로 밤중에 도망하였다$q$, $q$성전에서 기도하며 버텼다$q$, $q$항복하고 성문을 열었다$q$, null, 0, $q$왕하 25:4 — '모든 군사가 밤중에 두 성벽 사이 왕의 동산 곁문 길로 도망하여'$q$, 1
+select e.id, $q$갈대아 군사는 어떻게 했습니까?$q$, $q$왕을 쫓아가서 여리고 평지에 미치매 왕의 모든 군사가 저를 떠나 흩어진지라$q$, $q$포로로만 끌려갔다$q$, $q$사형을 당하였다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 25:5 — '갈대아 군사가 왕을 쫓아가서 여리고 평지에 미치매 왕의 모든 군사가 저를 떠나 흩어진지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$시드기야 왕의 몰락과 예루살렘 포위 기사가 기록된 책은 어디입니까?$q$, $q$에스겔$q$, $q$예레미야$q$, $q$열왕기하$q$, null, 2, $q$왕하 25:1-7에 예루살렘 최후 포위와 시드기야의 몰락 기사가 기록됨$q$, 2
+select e.id, $q$시드기야 왕에게 내려진 처벌은 무엇이었습니까?$q$, $q$포로로만 끌려갔다$q$, $q$사형을 당하였다$q$, $q$두 눈을 빼고 사슬로 결박하여 바벨론으로 끌어갔다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 25:7 — '시드기야의 두 눈을 빼고 사슬로 결박하여 바벨론으로 끌어갔더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$성령이 임하실 때 제자들이 어디에 모여 있었습니까?$q$, $q$갈릴리 호숫가에 있었다$q$, $q$성전 뜰에 흩어져 있었다$q$, $q$한 곳에 다 같이 모여 있었다$q$, null, 2, $q$행 2:1 — '오순절날이 이미 이르매 저희가 다 같이 한 곳에 모였더니'$q$, 0
+select e.id, $q$성령이 임하실 때 제자들이 어디에 모여 있었습니까?$q$, $q$갈릴리 호숫가에 있었다$q$, $q$성전 뜰에 흩어져 있었다$q$, $q$한 곳에 다 같이 모여 있었다$q$, $q$헷갈렸어요$q$, 2, $q$행 2:1 — '오순절날이 이미 이르매 저희가 다 같이 한 곳에 모였더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$성령을 받은 제자들이 한 행동은 무엇입니까?$q$, $q$성전으로 올라가 제사를 드렸다$q$, $q$예루살렘을 떠나 각 도시로 흩어졌다$q$, $q$다른 방언으로 말하기 시작하였다$q$, null, 2, $q$행 2:4 — '성령이 말하게 하심을 따라 다른 방언으로 말하기를 시작하니라'$q$, 1
+select e.id, $q$성령을 받은 제자들이 한 행동은 무엇입니까?$q$, $q$성전으로 올라가 제사를 드렸다$q$, $q$예루살렘을 떠나 각 도시로 흩어졌다$q$, $q$다른 방언으로 말하기 시작하였다$q$, $q$헷갈렸어요$q$, 2, $q$행 2:4 — '성령이 말하게 하심을 따라 다른 방언으로 말하기를 시작하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$오순절 성령강림 기사가 기록된 성경 책은 어디입니까?$q$, $q$고린도전서$q$, $q$에베소서$q$, $q$사도행전$q$, null, 2, $q$행 2:1-13에 오순절 성령강림 기사가 기록됨$q$, 2
+select e.id, $q$우리는 어떻게 했습니까?$q$, $q$성전 뜰에 흩어져 있었다$q$, $q$갈릴리 호숫가에 있었다$q$, $q$바대 인과 메대 인과 엘람 인과$q$, $q$헷갈렸어요$q$, 2, $q$행 2:9 — '우리는 바대 인과 메대 인과 엘람 인과 또 메소보다미아, 유대와 가바도기아, 본도와 아시아,'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베드로의 설교 후 그날 세례를 받은 사람은 몇 명입니까?$q$, $q$삼천 명$q$, $q$오백 명$q$, $q$오천 명$q$, null, 0, $q$행 2:41 — '그 말을 받은 사람들은 세례를 받으매 이 날에 신도의 수가 삼천이나 더하더라'$q$, 0
+select e.id, $q$설교를 들은 무리는 어떤 반응을 보였습니까?$q$, $q$마음에 찔려 베드로에게 어찌하면 되겠느냐고 물었다$q$, $q$박수를 치며 돌아갔다$q$, $q$자리를 박차고 일어나 나갔다$q$, $q$헷갈렸어요$q$, 0, $q$행 2:37 — '저희가 이 말을 듣고 마음에 찔려 … 가로되 형제들아 우리가 어찌할꼬'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$설교를 들은 무리는 어떤 반응을 보였습니까?$q$, $q$박수를 치며 돌아갔다$q$, $q$자리를 박차고 일어나 나갔다$q$, $q$마음에 찔려 베드로에게 어찌하면 되겠느냐고 물었다$q$, null, 2, $q$행 2:37 — '저희가 이 말을 듣고 마음에 찔려 … 가로되 형제들아 우리가 어찌할꼬'$q$, 1
+select e.id, $q$베드로는 마음에 찔린 사람들에게 무엇을 하라고 했습니까?$q$, $q$성전 제사를 더 많이 드리라고 했다$q$, $q$예루살렘을 떠나 숨어 살라고 했다$q$, $q$회개하고 예수님의 이름으로 세례를 받으라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$행 2:38 — '베드로가 가로되 너희가 회개하여 각각 예수 그리스도의 이름으로 세례를 받고 죄 사함을 얻으라 그리하면 성령을 선물로 받으리니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베드로의 오순절 설교가 기록된 성경 책은 어디입니까?$q$, $q$로마서$q$, $q$사도행전$q$, $q$베드로전서$q$, null, 1, $q$행 2:14-47에 베드로의 오순절 설교와 결과가 기록됨$q$, 2
+select e.id, $q$베드로의 설교 후 그날 세례를 받은 사람은 몇 명입니까?$q$, $q$오백 명$q$, $q$삼천 명$q$, $q$오천 명$q$, $q$헷갈렸어요$q$, 1, $q$행 2:41 — '그 말을 받은 사람들은 세례를 받으매 이 날에 신도의 수가 삼천이나 더하더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베드로와 요한이 성전에 올라가던 시간은 언제입니까?$q$, $q$제구시 기도 시간$q$, $q$이른 아침 첫 시각$q$, $q$해가 질 무렵$q$, null, 0, $q$행 3:1 — '제구시 기도 시간에 베드로와 요한이 성전에 올라갈새'$q$, 0
+select e.id, $q$베드로와 요한이 성전에 올라가던 시간은 언제입니까?$q$, $q$제구시 기도 시간$q$, $q$이른 아침 첫 시각$q$, $q$해가 질 무렵$q$, $q$헷갈렸어요$q$, 0, $q$행 3:1 — '제구시 기도 시간에 베드로와 요한이 성전에 올라갈새'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$치유된 사람은 성전에 들어가며 어떻게 하였습니까?$q$, $q$베드로에게 돈을 드리려 하였다$q$, $q$걷고 뛰며 하나님을 찬미하였다$q$, $q$집으로 곧장 돌아갔다$q$, null, 1, $q$행 3:8 — '걷고 뛰며 하나님을 찬미하며 그들과 함께 성전으로 들어가니라'$q$, 1
+select e.id, $q$치유된 사람은 성전에 들어가며 어떻게 하였습니까?$q$, $q$베드로에게 돈을 드리려 하였다$q$, $q$걷고 뛰며 하나님을 찬미하였다$q$, $q$집으로 곧장 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$행 3:8 — '걷고 뛰며 하나님을 찬미하며 그들과 함께 성전으로 들어가니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$성전 미문 치유 기사가 기록된 성경 책은 어디입니까?$q$, $q$베드로전서$q$, $q$사도행전$q$, $q$요한복음$q$, null, 1, $q$행 3:1-26에 성전 미문 치유 기사가 기록됨$q$, 2
+select e.id, $q$붙잡힌 베드로는 어떤 상태로 말했습니까?$q$, $q$두려워 아무 말도 하지 못했다$q$, $q$성령이 충만하여 지도자들 앞에서 말했다$q$, $q$성전 문 밖으로 도망쳤다$q$, $q$헷갈렸어요$q$, 1, $q$행 4:8 — '이에 베드로가 성령이 충만하여 가로되 백성의 관원과 장로들아'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아나니아와 삽비라는 무슨 이유로 심판을 받았습니까?$q$, $q$헌금을 전혀 드리지 않았기 때문에$q$, $q$땅값의 일부를 감추고 전부인 것처럼 속였기 때문에$q$, $q$공동체를 떠나 다른 도시로 갔기 때문에$q$, null, 1, $q$행 5:3 — '성령을 속이고 땅값 얼마를 감추었느냐'$q$, 0
+select e.id, $q$아나니아와 삽비라는 무슨 이유로 심판을 받았습니까?$q$, $q$헌금을 전혀 드리지 않았기 때문에$q$, $q$땅값의 일부를 감추고 전부인 것처럼 속였기 때문에$q$, $q$공동체를 떠나 다른 도시로 갔기 때문에$q$, $q$헷갈렸어요$q$, 1, $q$행 5:3 — '성령을 속이고 땅값 얼마를 감추었느냐'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이 사건 이후 교회는 어떤 반응을 보였습니까?$q$, $q$온 교회가 크게 두려워하였다$q$, $q$아나니아의 행동을 본받으려 하였다$q$, $q$더욱 기쁘게 찬양하였다$q$, null, 0, $q$행 5:11 — '온 교회와 이 일을 듣는 사람들이 다 크게 두려워하니라'$q$, 1
+select e.id, $q$사람들은 어떻게 했습니까?$q$, $q$일어나 시신을 싸서 메고 나가 장사했다$q$, $q$아나니아의 행동을 본받으려 하였다$q$, $q$더욱 기쁘게 찬양하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 5:6 — '젊은 사람들이 일어나 시신을 싸서 메고 나가 장사하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아나니아와 삽비라 사건이 기록된 성경 책은 어디입니까?$q$, $q$고린도전서$q$, $q$빌립보서$q$, $q$사도행전$q$, null, 2, $q$행 5:1-11에 아나니아와 삽비라 사건이 기록됨$q$, 2
+select e.id, $q$온 교회와 이 일을 듣에게 어떤 일이 있었습니까?$q$, $q$그 일을 그냥 지나쳤다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$온 교회와 이 일을 듣는 사람들이 다 크게 두려워했다$q$, $q$헷갈렸어요$q$, 2, $q$행 5:11 — '온 교회와 이 일을 듣는 사람들이 다 크게 두려워하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$스데반이 돌에 맞을 때 증인들이 옷을 맡긴 사람은 누구입니까?$q$, $q$빌립$q$, $q$사울$q$, $q$바나바$q$, null, 1, $q$행 7:58 — '증인들이 옷을 벗어 사울이라 하는 청년의 발 앞에 두니라'$q$, 0
+select e.id, $q$스데반이 돌에 맞을 때 증인들이 옷을 맡긴 사람은 누구입니까?$q$, $q$빌립$q$, $q$사울$q$, $q$바나바$q$, $q$헷갈렸어요$q$, 1, $q$행 7:58 — '증인들이 옷을 벗어 사울이라 하는 청년의 발 앞에 두니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$스데반 순교 후 예루살렘 교회는 어떻게 되었습니까?$q$, $q$더욱 모여 굳건히 섰다$q$, $q$유대 지도자들에게 사죄를 구했다$q$, $q$핍박으로 각지로 흩어졌다$q$, null, 2, $q$행 8:1 — '사도 외에는 다 유대와 사마리아 모든 땅으로 흩어지니라'$q$, 1
+select e.id, $q$돌에 맞던 스데반은 예수님께 무엇을 부탁했습니까?$q$, $q$자기를 해치는 사람들을 벌해 달라고 했다$q$, $q$사울을 바로 사도로 세워 달라고 했다$q$, $q$자기 영혼을 받아 달라고 기도했다$q$, $q$헷갈렸어요$q$, 2, $q$행 7:59 — '저희가 돌로 스데반을 치니 스데반이 부르짖어 가로되 주 예수여 내 영혼을 받으시옵소서 하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$스데반 순교 기사가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$스데반서$q$, $q$히브리서$q$, null, 0, $q$행 7:54-8:1에 스데반 순교 기사가 기록됨$q$, 2
+select e.id, $q$스데반이 죽은 뒤 예루살렘 교회에는 어떤 일이 일어났습니까?$q$, $q$큰 박해가 일어나 사람들이 흩어졌다$q$, $q$모든 사람이 성전에 모여 잔치했다$q$, $q$사울이 곧바로 교회를 보호했다$q$, $q$헷갈렸어요$q$, 0, $q$행 8:1 — '사울이 그의 죽임 당함을 마땅히 여기더라 그 날에 예루살렘에 있는 교회에 큰 핍박이 나서 사도 외 에는 다 유대와 사마리아 모든 땅으로 흩어지니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사마리아에서 전도한 사람은 누구입니까?$q$, $q$스데반$q$, $q$빌립$q$, $q$베드로$q$, null, 1, $q$행 8:5 — '빌립이 사마리아 성에 내려가 그리스도를 백성에게 전파하니'$q$, 0
+select e.id, $q$사마리아에서 전도한 사람은 누구입니까?$q$, $q$스데반$q$, $q$빌립$q$, $q$베드로$q$, $q$헷갈렸어요$q$, 1, $q$행 8:5 — '빌립이 사마리아 성에 내려가 그리스도를 백성에게 전파하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$시몬이라는 박수는 성령 임하는 것을 보고 어떻게 하였습니까?$q$, $q$회개하고 세례를 받았다$q$, $q$돈을 주고 성령 주는 권능을 사려 하였다$q$, $q$도시 밖으로 도망하였다$q$, null, 1, $q$행 8:18-19 — '시몬이 사도들의 안수로 성령 받는 것을 보고 돈을 드려 … 이 권능을 내게도 주어'$q$, 1
+select e.id, $q$시몬이라는 박수는 성령 임하는 것을 보고 어떻게 하였습니까?$q$, $q$회개하고 세례를 받았다$q$, $q$돈을 주고 성령 주는 권능을 사려 하였다$q$, $q$도시 밖으로 도망하였다$q$, $q$헷갈렸어요$q$, 1, $q$행 8:18-19 — '시몬이 사도들의 안수로 성령 받는 것을 보고 돈을 드려 … 이 권능을 내게도 주어'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌립의 사마리아 전도 기사가 기록된 성경 책은 어디입니까?$q$, $q$야고보서$q$, $q$사도행전$q$, $q$빌립보서$q$, null, 1, $q$행 8:4-25에 빌립의 사마리아 전도 기사가 기록됨$q$, 2
+select e.id, $q$베드로는 무엇이라고 말했습니까?$q$, $q$스데반$q$, $q$네가 하나님의 선물을 돈 주고 살 줄로 생각했다 네 은과 네가 함께 망할지어 다$q$, $q$베드로$q$, $q$헷갈렸어요$q$, 1, $q$행 8:20 — '베드로가 가로되 네가 하나님의 선물을 돈 주고 살 줄로 생각하였으니 네 은과 네가 함께 망할지어 다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌립이 에티오피아 내시를 만난 장소는 어디였습니까?$q$, $q$예루살렘에서 가사로 내려가는 광야 길$q$, $q$사마리아 성 안$q$, $q$안디옥 근처 해변$q$, null, 0, $q$행 8:26 — '일어나서 남으로 향하여 예루살렘에서 가사로 내려가는 길까지 가라 … 그 길은 광야라'$q$, 0
+select e.id, $q$빌립이 에티오피아 내시를 만난 장소는 어디였습니까?$q$, $q$예루살렘에서 가사로 내려가는 광야 길$q$, $q$사마리아 성 안$q$, $q$안디옥 근처 해변$q$, $q$헷갈렸어요$q$, 0, $q$행 8:26 — '일어나서 남으로 향하여 예루살렘에서 가사로 내려가는 길까지 가라 … 그 길은 광야라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에티오피아 내시는 빌립에게서 복음을 들은 후 어떻게 하였습니까?$q$, $q$물이 있는 곳에서 세례를 요청하였다$q$, $q$빌립을 수레에 태워 함께 가이사랴로 갔다$q$, $q$수레를 돌려 예루살렘으로 되돌아갔다$q$, null, 0, $q$행 8:36 — '보라 물이 있으니 내가 세례를 받음에 무슨 거리낌이 있느뇨'$q$, 1
+select e.id, $q$에티오피아 내시는 빌립에게서 복음을 들은 후 어떻게 하였습니까?$q$, $q$물이 있는 곳에서 세례를 요청하였다$q$, $q$빌립을 수레에 태워 함께 가이사랴로 갔다$q$, $q$수레를 돌려 예루살렘으로 되돌아갔다$q$, $q$헷갈렸어요$q$, 0, $q$행 8:36 — '보라 물이 있으니 내가 세례를 받음에 무슨 거리낌이 있느뇨'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에티오피아 내시 이야기가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$요한복음$q$, $q$이사야서$q$, null, 0, $q$행 8:26-40에 에티오피아 내시 이야기가 기록됨$q$, 2
+select e.id, $q$빌립은 어떻게 했습니까?$q$, $q$세례를 주고$q$, $q$안디감옥 근처 해변$q$, $q$사마리아 성 안$q$, $q$헷갈렸어요$q$, 0, $q$행 8:38 — '이에 명하여 병거를 머물고 빌립과 내시가 둘 다 물에 내려가 빌립이 세례를 주고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울이 회심한 사건이 일어난 곳은 어디입니까?$q$, $q$가이사랴 해변$q$, $q$다메섹으로 가는 길$q$, $q$예루살렘 성전 앞$q$, null, 1, $q$행 9:3 — '다메섹에 가까이 가더니 홀연히 하늘로서 빛이 저를 둘러 비추는지라'$q$, 0
+select e.id, $q$사울이 회심한 사건이 일어난 곳은 어디입니까?$q$, $q$가이사랴 해변$q$, $q$다메섹으로 가는 길$q$, $q$예루살렘 성전 앞$q$, $q$헷갈렸어요$q$, 1, $q$행 9:3 — '다메섹에 가까이 가더니 홀연히 하늘로서 빛이 저를 둘러 비추는지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빛 가운데 음성을 들은 사울은 어떻게 하였습니까?$q$, $q$칼을 뽑아 싸우려 하였다$q$, $q$땅에 엎드렸다$q$, $q$도망하여 숨었다$q$, null, 1, $q$행 9:4 — '저가 땅에 엎드러져 들으매 소리가 있어 가라사대'$q$, 1
+select e.id, $q$빛 가운데 음성을 들은 사울은 어떻게 하였습니까?$q$, $q$칼을 뽑아 싸우려 하였다$q$, $q$땅에 엎드렸다$q$, $q$도망하여 숨었다$q$, $q$헷갈렸어요$q$, 1, $q$행 9:4 — '저가 땅에 엎드러져 들으매 소리가 있어 가라사대'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사울의 회심 기사가 기록된 성경 책은 어디입니까?$q$, $q$빌립보서$q$, $q$갈라디아서$q$, $q$사도행전$q$, null, 2, $q$행 9:1-19에 사울의 회심 기사가 기록됨$q$, 2
+select e.id, $q$사울은 어떻게 했습니까?$q$, $q$가이사랴 해변$q$, $q$예루살렘 성전 앞$q$, $q$땅에서 일어나 눈은 떴으나 아무 것도 보지 못$q$, $q$헷갈렸어요$q$, 2, $q$행 9:8 — '사울이 땅에서 일어나 눈은 떴으나 아무 것도 보지 못하고 사람의 손에 끌려 다메섹으로 들어가서'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$고넬료는 어느 부대 소속 백부장이었습니까?$q$, $q$가이사랴 기마대$q$, $q$로마 수비대$q$, $q$이달리야대$q$, null, 2, $q$행 10:1 — '이달리야대라 하는 군대의 백부장이라'$q$, 0
+select e.id, $q$고넬료는 어느 부대 소속 백부장이었습니까?$q$, $q$가이사랴 기마대$q$, $q$로마 수비대$q$, $q$이달리야대$q$, $q$헷갈렸어요$q$, 2, $q$행 10:1 — '이달리야대라 하는 군대의 백부장이라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베드로가 고넬료의 집에서 이방인에게 성령 임함을 본 후 어떻게 하였습니까?$q$, $q$그 자리를 즉시 떠났다$q$, $q$예루살렘 교회에 먼저 보고하였다$q$, $q$물로 세례 주기를 명하였다$q$, null, 2, $q$행 10:48 — '베드로가 저희에게 예수 그리스도의 이름으로 세례를 베풀라 명하니라'$q$, 1
+select e.id, $q$베드로가 고넬료의 집에서 이방인에게 성령 임함을 본 후 어떻게 하였습니까?$q$, $q$그 자리를 즉시 떠났다$q$, $q$예루살렘 교회에 먼저 보고하였다$q$, $q$물로 세례 주기를 명하였다$q$, $q$헷갈렸어요$q$, 2, $q$행 10:48 — '베드로가 저희에게 예수 그리스도의 이름으로 세례를 베풀라 명하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$고넬료 이야기가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$에베소서$q$, $q$로마서$q$, null, 0, $q$행 10:1-48에 고넬료 이야기가 기록됨$q$, 2
+select e.id, $q$베드로는 어떻게 했습니까?$q$, $q$예루살렘에 올라갔을 때에 할례자들이 힐난하여$q$, $q$가이사랴 기마대$q$, $q$로마 수비대$q$, $q$헷갈렸어요$q$, 0, $q$행 11:2 — '베드로가 예루살렘에 올라갔을 때에 할례자들이 힐난하여'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$안디옥 교회가 파송한 두 사람은 누구입니까?$q$, $q$바울과 바나바$q$, $q$빌립과 스데반$q$, $q$베드로와 요한$q$, null, 0, $q$행 13:2 — '바나바와 사울을 따로 세우라 하시니'$q$, 0
+select e.id, $q$안디옥 교회에는 어떤 사람들이 있었습니까?$q$, $q$선지자들과 교사들이 있었다$q$, $q$성전 제사장들만 있었다$q$, $q$로마 군인들만 모여 있었다$q$, $q$헷갈렸어요$q$, 0, $q$행 13:1 — '안디옥 교회에 선지자들과 교사들이 있으니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$안디옥 교회는 두 사람을 파송하기 전에 무엇을 했습니까?$q$, $q$제비를 뽑아 결정했다$q$, $q$예루살렘 교회에 허락을 구했다$q$, $q$금식하고 기도한 후 안수했다$q$, null, 2, $q$행 13:3 — '금식하며 기도하고 두 사람에게 안수하여 보내니라'$q$, 1
+select e.id, $q$성령은 교회에 무엇을 하라고 하셨습니까?$q$, $q$선교를 잠시 멈추라고 하셨다$q$, $q$예루살렘으로 모두 돌아가라고 하셨다$q$, $q$바나바와 사울을 따로 세우라고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$행 13:2 — '내가 불러 시키는 일을 위하여 바나바와 사울을 따로 세우라 하시니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$안디옥 교회 파송 기사가 기록된 성경 책은 무엇입니까?$q$, $q$사도행전$q$, $q$로마서$q$, $q$갈라디아서$q$, null, 0, $q$행 13:1-3에 안디옥 교회의 선교 파송이 기록됨$q$, 2
+select e.id, $q$안디옥 교회는 두 사람을 파송하기 전에 무엇을 했습니까?$q$, $q$금식하고 기도한 후 안수했다$q$, $q$예루살렘 교회에 허락을 구했다$q$, $q$제비를 뽑아 결정했다$q$, $q$헷갈렸어요$q$, 0, $q$행 13:3 — '금식하며 기도하고 두 사람에게 안수하여 보내니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$구브로 바보에서 바울이 대적한 유대인 박수의 이름은 무엇입니까?$q$, $q$시몬$q$, $q$바예수(엘루마)$q$, $q$아나니아$q$, null, 1, $q$행 13:6-8 — '바예수라 하는 유대인 거짓 선지자 박수를 만나니 … 이 박수 엘루마는'$q$, 0
+select e.id, $q$구브로 바보에서 바울이 대적한 유대인 박수의 이름은 무엇입니까?$q$, $q$시몬$q$, $q$바예수(엘루마)$q$, $q$아나니아$q$, $q$헷갈렸어요$q$, 1, $q$행 13:6-8 — '바예수라 하는 유대인 거짓 선지자 박수를 만나니 … 이 박수 엘루마는'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$총독 서기오 바울은 바울의 사역을 본 후 어떻게 하였습니까?$q$, $q$바울을 즉시 추방하였다$q$, $q$믿으며 주의 가르치심을 기이히 여겼다$q$, $q$박수 엘루마의 말을 따랐다$q$, null, 1, $q$행 13:12 — '이에 총독이 그렇게 된 것을 보고 믿으며 주의 가르치심을 기이히 여기니라'$q$, 1
+select e.id, $q$성령은 어떻게 했습니까?$q$, $q$바울을 즉시 추방하였다$q$, $q$충만하여 그를 주목하고$q$, $q$박수 엘루마의 말을 따랐다$q$, $q$헷갈렸어요$q$, 1, $q$행 13:9 — '바울이라고 하는 사울이 성령이 충만하여 그를 주목하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 구브로 전도 기사가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$갈라디아서$q$, $q$빌립보서$q$, null, 0, $q$행 13:4-12에 구브로 살라미–바보 전도 기사가 기록됨$q$, 2
+select e.id, $q$총독은 어떻게 했습니까?$q$, $q$이에 총독이 그렇게 된 것을 보고 믿으며 주의 가르치심을 기이히 여기다$q$, $q$그 일을 그냥 지나쳤다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$헷갈렸어요$q$, 0, $q$행 13:12 — '이에 총독이 그렇게 된 것을 보고 믿으며 주의 가르치심을 기이히 여기니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 12;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울 일행이 버가에서 요한과 헤어진 이유는 무엇입니까?$q$, $q$요한이 저희를 떠나 예루살렘으로 돌아갔기 때문에$q$, $q$성령이 요한을 다른 곳으로 보내셨기 때문에$q$, $q$요한이 병이 나서 머물렀기 때문에$q$, null, 0, $q$행 13:13 — '요한은 저희에게서 떠나 예루살렘으로 돌아가고'$q$, 0
+select e.id, $q$바울 일행이 버가에서 요한과 헤어진 이유는 무엇입니까?$q$, $q$요한이 저희를 떠나 예루살렘으로 돌아갔기 때문에$q$, $q$성령이 요한을 다른 곳으로 보내셨기 때문에$q$, $q$요한이 병이 나서 머물렀기 때문에$q$, $q$헷갈렸어요$q$, 0, $q$행 13:13 — '요한은 저희에게서 떠나 예루살렘으로 돌아가고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$비시디아 안디옥에서 이방인들은 복음을 듣고 어떻게 반응하였습니까?$q$, $q$기뻐하며 하나님의 말씀을 찬송하였다$q$, $q$회당으로 몰려와 논쟁을 벌였다$q$, $q$유대인들과 함께 바울을 추방하였다$q$, null, 0, $q$행 13:48 — '이방인들이 듣고 기뻐하여 하나님의 말씀을 찬송하며'$q$, 1
+select e.id, $q$비시디아 안디옥에서 이방인들은 복음을 듣고 어떻게 반응하였습니까?$q$, $q$기뻐하며 하나님의 말씀을 찬송하였다$q$, $q$회당으로 몰려와 논쟁을 벌였다$q$, $q$유대인들과 함께 바울을 추방하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 13:48 — '이방인들이 듣고 기뻐하여 하나님의 말씀을 찬송하며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$비시디아 안디옥 전도 기사가 기록된 성경 책은 어디입니까?$q$, $q$고린도전서$q$, $q$사도행전$q$, $q$갈라디아서$q$, null, 1, $q$행 13:13-52에 비시디아 안디옥 전도 기사가 기록됨$q$, 2
+select e.id, $q$제자들은 어떻게 했습니까?$q$, $q$요한이 병이 나서 머물렀기 때문에$q$, $q$기쁨과 성령이 충만했다$q$, $q$성령이 요한을 다른 곳으로 보내셨기 때문에$q$, $q$헷갈렸어요$q$, 1, $q$행 13:52 — '제자들은 기쁨과 성령이 충만하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 13;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이고니온에서 박해를 피해 바울과 바나바가 도망한 도시는 어디입니까?$q$, $q$루스드라와 더베$q$, $q$안디옥과 베뢰아$q$, $q$버가와 밤빌리아$q$, null, 0, $q$행 14:6 — '저희가 알고 도망하여 루가오니아의 두 성 루스드라와 더베와 및 그 근방으로 가서'$q$, 0
+select e.id, $q$이고니온에서 순종하지 않는 유대인들은 어떻게 하였습니까?$q$, $q$이방인들의 마음을 선동하여 형제들에게 악감을 품게 하였다$q$, $q$바울이 전한 말씀을 반박하는 글을 써서 배포하였다$q$, $q$로마 총독에게 바울을 고발하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 14:2 — '순종치 아니하는 유대인들이 이방인들의 마음을 선동하여 형제들에게 악감을 품게 하거늘'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이고니온에서 순종하지 않는 유대인들은 어떻게 하였습니까?$q$, $q$이방인들의 마음을 선동하여 형제들에게 악감을 품게 하였다$q$, $q$바울이 전한 말씀을 반박하는 글을 써서 배포하였다$q$, $q$로마 총독에게 바울을 고발하였다$q$, null, 0, $q$행 14:2 — '순종치 아니하는 유대인들이 이방인들의 마음을 선동하여 형제들에게 악감을 품게 하거늘'$q$, 1
+select e.id, $q$무리는 어떻게 했습니까?$q$, $q$나뉘어 유대인을 좇는 자도 있고 두 사도를 좇는 자도 있는지라$q$, $q$안디감옥과 베뢰아$q$, $q$버가와 밤빌리아$q$, $q$헷갈렸어요$q$, 0, $q$행 14:4 — '그 성내 무리가 나뉘어 유대인을 좇는 자도 있고 두 사도를 좇는 자도 있는지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이고니온 전도 기사가 기록된 성경 책은 어디입니까?$q$, $q$디모데후서$q$, $q$갈라디아서$q$, $q$사도행전$q$, null, 2, $q$행 14:1-7에 이고니온 전도 기사가 기록됨$q$, 2
+select e.id, $q$이고니온에서 박해를 피해 바울과 바나바가 도망한 도시는 어디입니까?$q$, $q$버가와 밤빌리아$q$, $q$안디옥과 베뢰아$q$, $q$루스드라와 더베$q$, $q$헷갈렸어요$q$, 2, $q$행 14:6 — '저희가 알고 도망하여 루가오니아의 두 성 루스드라와 더베와 및 그 근방으로 가서'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 14;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$루스드라에서 바울이 치유한 사람의 상태는 어떠하였습니까?$q$, $q$나면서부터 앉은뱅이로 걸어본 적이 없었다$q$, $q$귀신 들려 소리를 지르던 자였다$q$, $q$나병 환자로 열두 해 된 자였다$q$, null, 0, $q$행 14:8 — '나면서 앉은뱅이 되어 걸어 본 적이 없는 자라'$q$, 0
+select e.id, $q$루스드라에서 바울이 치유한 사람의 상태는 어떠하였습니까?$q$, $q$나면서부터 앉은뱅이로 걸어본 적이 없었다$q$, $q$귀신 들려 소리를 지르던 자였다$q$, $q$나병 환자로 열두 해 된 자였다$q$, $q$헷갈렸어요$q$, 0, $q$행 14:8 — '나면서 앉은뱅이 되어 걸어 본 적이 없는 자라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$무리가 바울을 신이라 부르자 바울과 바나바는 어떻게 하였습니까?$q$, $q$조용히 물러나 기도하였다$q$, $q$옷을 찢고 무리 가운데 뛰어 들어가 말렸다$q$, $q$그들의 오해를 풀기 위해 편지를 썼다$q$, null, 1, $q$행 14:14 — '두 사도 바나바와 바울이 듣고 옷을 찢고 무리 가운데 뛰어 들어가서 소리질러'$q$, 1
+select e.id, $q$무리가 바울을 신이라 부르자 바울과 바나바는 어떻게 하였습니까?$q$, $q$조용히 물러나 기도하였다$q$, $q$옷을 찢고 무리 가운데 뛰어 들어가 말렸다$q$, $q$그들의 오해를 풀기 위해 편지를 썼다$q$, $q$헷갈렸어요$q$, 1, $q$행 14:14 — '두 사도 바나바와 바울이 듣고 옷을 찢고 무리 가운데 뛰어 들어가서 소리질러'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$루스드라–더베 전도 기사가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$갈라디아서$q$, $q$디모데전서$q$, null, 0, $q$행 14:8-20에 루스드라–더베 전도 기사가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$지나간 세대에는 모든 족속으로 자기의 길들을 다니게 묵인하셨으나$q$, $q$나병 환자로 열두 해 된 자였다$q$, $q$귀신 들려 소리를 지르던 자였다$q$, $q$헷갈렸어요$q$, 0, $q$행 14:16 — '하나님이 지나간 세대에는 모든 족속으로 자기의 길들을 다니게 묵인하셨으나'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 15;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울과 바나바가 귀환하면서 각 교회에서 세운 것은 무엇입니까?$q$, $q$장로들$q$, $q$선지자들$q$, $q$집사들$q$, null, 0, $q$행 14:23 — '각 교회에서 장로들을 택하여 금식 기도하며 저희를 그 믿은 바 주께 부탁하고'$q$, 0
+select e.id, $q$바울과 바나바가 귀환하면서 각 교회에서 세운 것은 무엇입니까?$q$, $q$장로들$q$, $q$선지자들$q$, $q$집사들$q$, $q$헷갈렸어요$q$, 0, $q$행 14:23 — '각 교회에서 장로들을 택하여 금식 기도하며 저희를 그 믿은 바 주께 부탁하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울과 바나바는 안디옥(시리아) 교회에 돌아와 무엇을 하였습니까?$q$, $q$즉시 다음 선교 여행을 계획하였다$q$, $q$하나님이 함께 행하신 모든 일을 교회에 고하였다$q$, $q$예루살렘 사도들에게 편지를 보냈다$q$, null, 1, $q$행 14:27 — '이르러 교회를 모아 하나님이 함께 행하신 모든 일과 이방인들에게 믿음의 문을 여신 것을 고하고'$q$, 1
+select e.id, $q$바울과 바나바는 안디옥(시리아) 교회에 돌아와 무엇을 하였습니까?$q$, $q$즉시 다음 선교 여행을 계획하였다$q$, $q$하나님이 함께 행하신 모든 일을 교회에 고하였다$q$, $q$예루살렘 사도들에게 편지를 보냈다$q$, $q$헷갈렸어요$q$, 1, $q$행 14:27 — '이르러 교회를 모아 하나님이 함께 행하신 모든 일과 이방인들에게 믿음의 문을 여신 것을 고하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$1차 선교 귀환 보고가 기록된 성경 책은 어디입니까?$q$, $q$고린도후서$q$, $q$사도행전$q$, $q$갈라디아서$q$, null, 1, $q$행 14:21-28에 1차 선교 귀환 보고가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$선지자들$q$, $q$함께 행하신 모든 일과 이방인들에게 믿음의 문을 여신 것을 고하고$q$, $q$집사들$q$, $q$헷갈렸어요$q$, 1, $q$행 14:27 — '이르러 교회를 모아 하나님이 함께 행하신 모든 일과 이방인들에게 믿음의 문을 여신 것을 고하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 16;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울이 드로아에서 마게도냐로 방향을 바꾸게 된 계기는 무엇입니까?$q$, $q$예루살렘 교회의 편지$q$, $q$마게도냐 사람이 건너와 돕기를 청하는 환상$q$, $q$성령의 직접 음성$q$, null, 1, $q$행 16:9 — '밤에 환상이 바울에게 보이니 마게도냐 사람 하나가 서서 … 마게도냐로 건너와서 우리를 도우라'$q$, 0
+select e.id, $q$바울이 드로아에서 마게도냐로 방향을 바꾸게 된 계기는 무엇입니까?$q$, $q$예루살렘 교회의 편지$q$, $q$마게도냐 사람이 건너와 돕기를 청하는 환상$q$, $q$성령의 직접 음성$q$, $q$헷갈렸어요$q$, 1, $q$행 16:9 — '밤에 환상이 바울에게 보이니 마게도냐 사람 하나가 서서 … 마게도냐로 건너와서 우리를 도우라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울은 마게도냐 환상을 본 후 어떻게 하였습니까?$q$, $q$곧 마게도냐로 떠나기를 힘썼다$q$, $q$동료들과 열흘 동안 기도하며 결정을 기다렸다$q$, $q$예루살렘에 사자를 보내 허락을 구하였다$q$, null, 0, $q$행 16:10 — '바울이 이 환상을 본 후에 우리가 곧 마게도냐로 떠나기를 힘쓰니'$q$, 1
+select e.id, $q$바울은 마게도냐 환상을 본 후 어떻게 하였습니까?$q$, $q$곧 마게도냐로 떠나기를 힘썼다$q$, $q$동료들과 열흘 동안 기도하며 결정을 기다렸다$q$, $q$예루살렘에 사자를 보내 허락을 구하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 16:10 — '바울이 이 환상을 본 후에 우리가 곧 마게도냐로 떠나기를 힘쓰니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$드로아에서 마게도냐로의 전환 기사가 기록된 성경 책은 어디입니까?$q$, $q$데살로니가전서$q$, $q$사도행전$q$, $q$빌립보서$q$, null, 1, $q$행 16:6-10에 드로아에서 마게도냐로의 전환 기사가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$예루살렘 교회의 편지$q$, $q$저 사람들에게 복음을 전하라고 우리를 부르신 줄로 인정함이러라$q$, $q$성령의 직접 음성$q$, $q$헷갈렸어요$q$, 1, $q$행 16:10 — '바울이 이 환상을 본 후에 우리가 곧 마게도냐로 떠나기를 힘쓰니 이는 하나님이 저 사람들에게 복음을 전하라고 우리를 부르신 줄로 인정함이러라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 17;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울과 실라가 빌립보 감옥에서 지진으로 문이 열렸을 때 어떻게 하였습니까?$q$, $q$간수에게 외쳐 자유를 요구하였다$q$, $q$즉시 탈출하여 루디아 집으로 갔다$q$, $q$아무도 도망하지 않고 그 자리에 있었다$q$, null, 2, $q$행 16:28 — '바울이 크게 소리질러 가로되 네 몸을 상하지 말라 우리가 다 여기 있노라'$q$, 0
+select e.id, $q$바울과 실라가 빌립보 감옥에서 지진으로 문이 열렸을 때 어떻게 하였습니까?$q$, $q$간수에게 외쳐 자유를 요구하였다$q$, $q$즉시 탈출하여 루디아 집으로 갔다$q$, $q$아무도 도망하지 않고 그 자리에 있었다$q$, $q$헷갈렸어요$q$, 2, $q$행 16:28 — '바울이 크게 소리질러 가로되 네 몸을 상하지 말라 우리가 다 여기 있노라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌립보 간수는 자신의 죄수들이 도망하지 않은 것을 보고 어떻게 하였습니까?$q$, $q$바울에게 석방증을 써 주었다$q$, $q$황급히 빌라도에게 보고하였다$q$, $q$무서워 떨며 바울과 실라 앞에 부복하였다$q$, null, 2, $q$행 16:29 — '간수가 등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고'$q$, 1
+select e.id, $q$빌립보 간수는 자신의 죄수들이 도망하지 않은 것을 보고 어떻게 하였습니까?$q$, $q$바울에게 석방증을 써 주었다$q$, $q$황급히 빌라도에게 보고하였다$q$, $q$무서워 떨며 바울과 실라 앞에 부복하였다$q$, $q$헷갈렸어요$q$, 2, $q$행 16:29 — '간수가 등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌립보 전도와 감옥 사건이 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$빌립보서$q$, $q$데살로니가전서$q$, null, 0, $q$행 16:11-34에 빌립보 루디아와 감옥 사건이 기록됨$q$, 2
+select e.id, $q$간수는 어떻게 했습니까?$q$, $q$등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고$q$, $q$즉시 탈출하여 루디아 집으로 갔다$q$, $q$간수에게 외쳐 자유를 요구하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 16:29 — '간수가 등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 18;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$데살로니가에서 바울 일행을 집에 들인 사람은 누구입니까?$q$, $q$디오누시오$q$, $q$야손$q$, $q$루디아$q$, null, 1, $q$행 17:5-7 — '야손의 집에 달려들어 … 야손이 들였도다'$q$, 0
+select e.id, $q$데살로니가에서 바울 일행을 집에 들인 사람은 누구입니까?$q$, $q$디오누시오$q$, $q$야손$q$, $q$루디아$q$, $q$헷갈렸어요$q$, 1, $q$행 17:5-7 — '야손의 집에 달려들어 … 야손이 들였도다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$데살로니가의 유대인들은 복음에 어떻게 반응하였습니까?$q$, $q$시기하여 떼를 지어 성을 소동케 하였다$q$, $q$조용히 바울을 도시 경계로 안내하였다$q$, $q$회당에서 말씀을 더 들으려 하였다$q$, null, 0, $q$행 17:5 — '유대인들은 시기하여 저자의 어떤 괴악한 사람들을 데리고 떼를 지어 성을 소동케 하여'$q$, 1
+select e.id, $q$데살로니가의 유대인들은 복음에 어떻게 반응하였습니까?$q$, $q$시기하여 떼를 지어 성을 소동케 하였다$q$, $q$조용히 바울을 도시 경계로 안내하였다$q$, $q$회당에서 말씀을 더 들으려 하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 17:5 — '유대인들은 시기하여 저자의 어떤 괴악한 사람들을 데리고 떼를 지어 성을 소동케 하여'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$데살로니가 소동 기사가 기록된 성경 책은 어디입니까?$q$, $q$데살로니가전서$q$, $q$데살로니가후서$q$, $q$사도행전$q$, null, 2, $q$행 17:1-9에 데살로니가 소동 기사가 기록됨$q$, 2
+select e.id, $q$사람들은 어떻게 했습니까?$q$, $q$루디아$q$, $q$디오누시오$q$, $q$여기도 이르매$q$, $q$헷갈렸어요$q$, 2, $q$행 17:6 — '발견치 못하매 야손과 및 형제를 끌고 읍장들 앞에 가서 소리질러 가로되 천하를 어지럽게 하던 이 사람들이 여기도 이르매'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 19;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베뢰아 사람들이 데살로니가 사람보다 신사적이었던 이유는 무엇입니까?$q$, $q$날마다 성경을 상고하였기 때문에$q$, $q$바울에게 더 많은 헌금을 드렸기 때문에$q$, $q$회당 문을 항상 열어 두었기 때문에$q$, null, 0, $q$행 17:11 — '이것이 그러한가 하여 날마다 성경을 상고하므로'$q$, 0
+select e.id, $q$베뢰아 사람들이 데살로니가 사람보다 신사적이었던 이유는 무엇입니까?$q$, $q$날마다 성경을 상고하였기 때문에$q$, $q$바울에게 더 많은 헌금을 드렸기 때문에$q$, $q$회당 문을 항상 열어 두었기 때문에$q$, $q$헷갈렸어요$q$, 0, $q$행 17:11 — '이것이 그러한가 하여 날마다 성경을 상고하므로'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$데살로니가 유대인들이 베뢰아까지 쫓아왔을 때 형제들은 바울을 어떻게 도왔습니까?$q$, $q$바울을 내어보내어 바다까지 가게 하였다$q$, $q$유대인들과 타협하여 바울을 넘겨 주었다$q$, $q$바울을 숨겨 도시 안에 머물게 하였다$q$, null, 0, $q$행 17:14 — '형제들이 곧 바울을 내어보내어 바다까지 가게 하되'$q$, 1
+select e.id, $q$데살로니가 유대인들이 베뢰아까지 쫓아왔을 때 형제들은 바울을 어떻게 도왔습니까?$q$, $q$바울을 내어보내어 바다까지 가게 하였다$q$, $q$유대인들과 타협하여 바울을 넘겨 주었다$q$, $q$바울을 숨겨 도시 안에 머물게 하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 17:14 — '형제들이 곧 바울을 내어보내어 바다까지 가게 하되'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베뢰아 전도 기사가 기록된 성경 책은 어디입니까?$q$, $q$데살로니가전서$q$, $q$사도행전$q$, $q$빌립보서$q$, null, 1, $q$행 17:10-15에 베뢰아 전도 기사가 기록됨$q$, 2
+select e.id, $q$바울을 인도한 사람들은 아덴에 도착한 뒤 무엇을 전했습니까?$q$, $q$바울이 더 이상 전도하지 말라는 말을 전했다$q$, $q$실라와 디모데가 빨리 오라는 말을 전했다$q$, $q$베뢰아 사람들이 모두 떠났다는 말을 전했다$q$, $q$헷갈렸어요$q$, 1, $q$행 17:15 — '바울을 인도하는 사람들이 데리고 아덴까지 이르러 바울에게서 실라와 디모데를 자기에게로 속히 오게 하라는 명을 받고 떠나니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 20;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울이 아레오바고 설교의 출발점으로 삼은 것은 무엇입니까?$q$, $q$시장 안 신들의 그림들$q$, $q$성전 앞 우상들$q$, $q$알지 못하는 신에게 드리는 제단$q$, null, 2, $q$행 17:23 — '알지 못하는 신에게라고 새긴 단을 보았으니 그런즉 너희가 알지 못하고 위하는 그것을 내가 너희에게 알게 하리라'$q$, 0
+select e.id, $q$바울이 아레오바고 설교의 출발점으로 삼은 것은 무엇입니까?$q$, $q$시장 안 신들의 그림들$q$, $q$성전 앞 우상들$q$, $q$알지 못하는 신에게 드리는 제단$q$, $q$헷갈렸어요$q$, 2, $q$행 17:23 — '알지 못하는 신에게라고 새긴 단을 보았으니 그런즉 너희가 알지 못하고 위하는 그것을 내가 너희에게 알게 하리라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아레오바고 설교 후 아레오바고 관원 디오누시오는 어떻게 하였습니까?$q$, $q$바울을 친하여 믿었다$q$, $q$바울을 법정에 고발하였다$q$, $q$아무 반응 없이 돌아갔다$q$, null, 0, $q$행 17:34 — '몇 사람이 그를 친하여 믿으니 그 중 아레오바고 관원 디오누시오와 다마리라 하는 여자'$q$, 1
+select e.id, $q$우리는 어떻게 했습니까?$q$, $q$그를 힘입어 살며 기동$q$, $q$바울을 법정에 고발하였다$q$, $q$아무 반응 없이 돌아갔다$q$, $q$헷갈렸어요$q$, 0, $q$행 17:28 — '우리가 그를 힘입어 살며 기동하며 있느니라 너희 시인 중에도 어떤 사람들의 말과 같이 우리가 그의 소생이라 하니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 아레오바고 설교가 기록된 성경 책은 어디입니까?$q$, $q$고린도전서$q$, $q$로마서$q$, $q$사도행전$q$, null, 2, $q$행 17:16-34에 바울의 아레오바고 설교가 기록됨$q$, 2
+select e.id, $q$바울은 어떻게 했습니까?$q$, $q$성전 앞 우상들$q$, $q$시장 안 신들의 그림들$q$, $q$저희 가운데서 떠나매$q$, $q$헷갈렸어요$q$, 2, $q$행 17:33 — '이에 바울이 저희 가운데서 떠나매'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 21;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$고린도에서 바울이 함께 일하며 지낸 부부는 누구입니까?$q$, $q$브리스길라와 아굴라$q$, $q$루디아와 그 남편$q$, $q$막달라 마리아와 요안나$q$, null, 0, $q$행 18:2-3 — '아굴라라 하는 본도 사람 … 브리스길라와 함께 이르매 … 생업이 같으므로 함께 거하여 일을 하니'$q$, 0
+select e.id, $q$고린도에서 바울이 함께 일하며 지낸 부부는 누구입니까?$q$, $q$브리스길라와 아굴라$q$, $q$루디아와 그 남편$q$, $q$막달라 마리아와 요안나$q$, $q$헷갈렸어요$q$, 0, $q$행 18:2-3 — '아굴라라 하는 본도 사람 … 브리스길라와 함께 이르매 … 생업이 같으므로 함께 거하여 일을 하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$유대인들이 바울을 대적할 때 주님은 환상에서 바울에게 무엇을 말씀하셨습니까?$q$, $q$두려워하지 말고 말하라, 이 성에 내 백성이 많다 하셨다$q$, $q$잠잠히 기도만 하면 내가 지키리라 하셨다$q$, $q$속히 고린도를 떠나 로마로 가라 하셨다$q$, null, 0, $q$행 18:9-10 — '두려워하지 말며 … 이 성중에 내 백성이 많음이라'$q$, 1
+select e.id, $q$유대인들이 바울을 대적할 때 주님은 환상에서 바울에게 무엇을 말씀하셨습니까?$q$, $q$두려워하지 말고 말하라, 이 성에 내 백성이 많다 하셨다$q$, $q$잠잠히 기도만 하면 내가 지키리라 하셨다$q$, $q$속히 고린도를 떠나 로마로 가라 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$행 18:9-10 — '두려워하지 말며 … 이 성중에 내 백성이 많음이라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$고린도 정착 기사가 기록된 성경 책은 어디입니까?$q$, $q$고린도전서$q$, $q$고린도후서$q$, $q$사도행전$q$, null, 2, $q$행 18:1-18에 고린도 정착 기사가 기록됨$q$, 2
+select e.id, $q$백성은 어떻게 했습니까?$q$, $q$루디아와 그 남편$q$, $q$막달라 마리아와 요안나$q$, $q$많음이라 하시었다$q$, $q$헷갈렸어요$q$, 2, $q$행 18:10 — '내가 너와 함께 있으매 아무 사람도 너를 대적하여 해롭게 할 자가 없을 것이니 이는 이 성중에 내 백성이 많음이라 하시더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 22;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에베소에서 데메드리오가 바울에게 반대하여 소동을 일으킨 이유는 무엇입니까?$q$, $q$바울이 세금을 내지 않았기 때문에$q$, $q$복음 전파로 아데미 신상 매업이 줄어들까 두려워하였기 때문에$q$, $q$바울이 유대인 회당을 떠났기 때문에$q$, null, 1, $q$행 19:27 — '우리의 이 영업이 천하여질 위험이 있을 뿐 아니라 … 아데미의 신전도 무시 당하겠고'$q$, 0
+select e.id, $q$에베소에서 데메드리오가 바울에게 반대하여 소동을 일으킨 이유는 무엇입니까?$q$, $q$바울이 세금을 내지 않았기 때문에$q$, $q$복음 전파로 아데미 신상 매업이 줄어들까 두려워하였기 때문에$q$, $q$바울이 유대인 회당을 떠났기 때문에$q$, $q$헷갈렸어요$q$, 1, $q$행 19:27 — '우리의 이 영업이 천하여질 위험이 있을 뿐 아니라 … 아데미의 신전도 무시 당하겠고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$연극장 소동이 일어났을 때 바울은 어떻게 하였습니까?$q$, $q$즉시 에베소를 떠났다$q$, $q$연극장에 들어가려 하였으나 제자들이 말렸다$q$, $q$군중 앞에 나가 직접 연설하였다$q$, null, 1, $q$행 19:30-31 — '바울이 백성 가운데로 들어가고자 하나 제자들이 말리고 … 연극장에 들어가지 말라 권하더라'$q$, 1
+select e.id, $q$연극장 소동이 일어났을 때 바울은 어떻게 하였습니까?$q$, $q$즉시 에베소를 떠났다$q$, $q$연극장에 들어가려 하였으나 제자들이 말렸다$q$, $q$군중 앞에 나가 직접 연설하였다$q$, $q$헷갈렸어요$q$, 1, $q$행 19:30-31 — '바울이 백성 가운데로 들어가고자 하나 제자들이 말리고 … 연극장에 들어가지 말라 권하더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에베소 전도와 소동 기사가 기록된 성경 책은 어디입니까?$q$, $q$고린도전서$q$, $q$에베소서$q$, $q$사도행전$q$, null, 2, $q$행 19:1-41에 에베소 전도와 소동 기사가 기록됨$q$, 2
+select e.id, $q$에베소의 서기장은 흥분한 무리에게 어떻게 했습니까?$q$, $q$바울을 직접 재판하려 했다$q$, $q$더 크게 소리치라고 부추겼다$q$, $q$무리를 진정시키며 말하기 시작했다$q$, $q$헷갈렸어요$q$, 2, $q$행 19:35 — '서기장이 무리를 안돈시키고 이르되 에베소 사람들아 에베소 성이 큰 아데미와 및 쓰스에게서 내 려온 우상의 전각 지기가 된 줄을 누가 알지 못하겠느냐'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 23;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에베소 소요가 그친 후 바울은 어디로 향하였습니까?$q$, $q$마게도냐$q$, $q$예루살렘$q$, $q$고린도$q$, null, 0, $q$행 20:1 — '소요가 그치매 바울이 … 작별하고 떠나 마게도냐로 가니라'$q$, 0
+select e.id, $q$에베소 소요가 그친 뒤 바울은 제자들에게 어떻게 했습니까?$q$, $q$그들을 격려하고 작별했다$q$, $q$그들과 논쟁을 벌였다$q$, $q$그들을 모두 예루살렘으로 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$행 20:1 — '소요가 그치매 바울이 제자들을 불러 권한 후에 작별하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울은 마게도냐를 다니며 무엇을 하였습니까?$q$, $q$각 교회에서 헌금을 모았다$q$, $q$새 교회를 세우기 위해 지도자들을 임명하였다$q$, $q$여러 말로 제자들에게 권하였다$q$, null, 2, $q$행 20:2 — '그 지경으로 다녀가며 여러 말로 제자들에게 권하고'$q$, 1
+select e.id, $q$제자들과 작별한 바울은 어디로 떠났습니까?$q$, $q$갈릴리로 돌아갔다$q$, $q$로마로 바로 떠났다$q$, $q$마게도냐로 떠났다$q$, $q$헷갈렸어요$q$, 2, $q$행 20:1 — '떠나 마게도냐로 가니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 마게도냐 순회 기사가 기록된 성경 책은 어디입니까?$q$, $q$고린도후서$q$, $q$사도행전$q$, $q$빌립보서$q$, null, 1, $q$행 20:1-2에 바울의 마게도냐 순회 기사가 기록됨$q$, 2
+select e.id, $q$바울은 마게도냐를 다니며 무엇을 하였습니까?$q$, $q$새 교회를 세우기 위해 지도자들을 임명하였다$q$, $q$여러 말로 제자들에게 권하였다$q$, $q$각 교회에서 헌금을 모았다$q$, $q$헷갈렸어요$q$, 1, $q$행 20:2 — '그 지경으로 다녀가며 여러 말로 제자들에게 권하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 24;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울이 헬라에서 얼마 동안 머물렀습니까?$q$, $q$사십 일$q$, $q$석 달$q$, $q$일 년$q$, null, 1, $q$행 20:3 — '거기 석 달을 있다가'$q$, 0
+select e.id, $q$바울은 헬라에 이르기 전 제자들에게 어떻게 했습니까?$q$, $q$그들에게 사역을 멈추라고 했다$q$, $q$여러 말로 그들을 격려했다$q$, $q$그들을 아무 말 없이 떠났다$q$, $q$헷갈렸어요$q$, 1, $q$행 20:2 — '그 지경으로 다녀가며 여러 말로 제자들에게 권하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$유대인들의 음모를 알게 된 바울은 어떻게 하였습니까?$q$, $q$수리아 대신 마게도냐로 돌아가기를 작정하였다$q$, $q$로마 병사들에게 보호를 요청하였다$q$, $q$즉시 배를 떠나 이스라엘로 향하였다$q$, null, 0, $q$행 20:3 — '유대인들이 자기를 해하려고 공모하므로 마게도냐로 다녀 돌아가기를 작정하니'$q$, 1
+select e.id, $q$바울은 헬라에서 얼마나 머물렀습니까?$q$, $q$석 달 동안 머물렀다$q$, $q$사흘 동안 머물렀다$q$, $q$일 년 동안 머물렀다$q$, $q$헷갈렸어요$q$, 0, $q$행 20:3 — '거기 석 달을 있다가'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 헬라 체류 기사가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$로마서$q$, $q$고린도전서$q$, null, 0, $q$행 20:2-3에 바울의 헬라 체류 기사가 기록됨$q$, 2
+select e.id, $q$바울이 수리아로 가려 할 때 유대인들은 어떻게 했습니까?$q$, $q$바울을 해하려고 공모하였다$q$, $q$바울을 배웅하려고 모였다$q$, $q$바울에게 헬라에 더 머물라 청하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 20:3 — '유대인들이 자기를 해하려고 공모하므로 마게도냐로 다녀 돌아가기를 작정하니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 25;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울은 밀레도에서 누구를 청하여 마지막으로 만났습니까?$q$, $q$에베소 교회 장로들$q$, $q$고린도 교회 지도자들$q$, $q$예루살렘 사도들$q$, null, 0, $q$행 20:17 — '바울이 밀레도에서 사람을 에베소로 보내어 교회 장로들을 청하니'$q$, 0
+select e.id, $q$바울은 밀레도에서 누구를 청하여 마지막으로 만났습니까?$q$, $q$에베소 교회 장로들$q$, $q$고린도 교회 지도자들$q$, $q$예루살렘 사도들$q$, $q$헷갈렸어요$q$, 0, $q$행 20:17 — '바울이 밀레도에서 사람을 에베소로 보내어 교회 장로들을 청하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울이 '다시 얼굴을 보지 못하리라'고 말하자 장로들은 어떻게 하였습니까?$q$, $q$바울을 예루살렘에 가지 못하도록 막았다$q$, $q$더욱 근심하고 배에까지 전송하였다$q$, $q$함께 배를 타고 따라가겠다고 하였다$q$, null, 1, $q$행 20:38 — '다시 그 얼굴을 보지 못하리라 한 말을 인하여 더욱 근심하고 배에까지 그를 전송하니라'$q$, 1
+select e.id, $q$바울은 장로들에게 교회를 어떻게 보라고 말했습니까?$q$, $q$로마가 세운 모임으로 보라고 했다$q$, $q$하나님이 자기 피로 사신 교회로 보라고 했다$q$, $q$잠시 맡아 둔 건물로 보라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$행 20:28 — '너희는 자기를 위하여 또는 온 양 떼를 위하여 삼가라 성령이 저들 가운데 너희로 감독자를 삼고 하나님이 자기 피로 사신 교회를 치게 하셨느니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$밀레도 작별 기사가 기록된 성경 책은 어디입니까?$q$, $q$에베소서$q$, $q$디모데후서$q$, $q$사도행전$q$, null, 2, $q$행 20:17-38에 밀레도 작별 기사가 기록됨$q$, 2
+select e.id, $q$사람들은 어떻게 했습니까?$q$, $q$고린도 교회 지도자들$q$, $q$예루살렘 사도들$q$, $q$일어날 줄을 내가 아노니$q$, $q$헷갈렸어요$q$, 2, $q$행 20:30 — '또한 너희 중에서도 제자들을 끌어 자기를 좇게 하려고 어그러진 말을 하는 사람들이 일어날 줄을 내가 아노니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 26;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울이 예루살렘 성전에서 체포된 이유는 무엇입니까?$q$, $q$율법을 어기고 이방인들과 식사하였기 때문에$q$, $q$이방인을 성전에 데려갔다는 오해를 받았기 때문에$q$, $q$성전에서 설교를 하다 고발당하였기 때문에$q$, null, 1, $q$행 21:29 — '바울이 저를 성전에 데리고 들어간 줄로 생각함일러라'$q$, 0
+select e.id, $q$바울이 예루살렘 성전에서 체포된 이유는 무엇입니까?$q$, $q$율법을 어기고 이방인들과 식사하였기 때문에$q$, $q$이방인을 성전에 데려갔다는 오해를 받았기 때문에$q$, $q$성전에서 설교를 하다 고발당하였기 때문에$q$, $q$헷갈렸어요$q$, 1, $q$행 21:29 — '바울이 저를 성전에 데리고 들어간 줄로 생각함일러라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$천부장이 와서 바울 치기를 그쳤을 때 군중은 어떻게 하였습니까?$q$, $q$물러서서 잠잠히 지켜보았다$q$, $q$천부장에게 바울을 놓아주도록 청하였다$q$, $q$바울을 없이 하자고 외치며 따라갔다$q$, null, 2, $q$행 21:36 — '이는 백성의 무리가 그를 없이 하자고 외치며 따라 감이러라'$q$, 1
+select e.id, $q$천부장은 어떻게 했습니까?$q$, $q$물러서서 잠잠히 지켜보았다$q$, $q$천부장에게 바울을 놓아주도록 청하였다$q$, $q$까이 가서 바울을 잡아 두 쇠사슬로 결박하라 명$q$, $q$헷갈렸어요$q$, 2, $q$행 21:33 — '이에 천부장이 가까이 가서 바울을 잡아 두 쇠사슬로 결박하라 명하고 누구며 무슨 일을 하였느냐 물으니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 예루살렘 체포 기사가 기록된 성경 책은 어디입니까?$q$, $q$로마서$q$, $q$갈라디아서$q$, $q$사도행전$q$, null, 2, $q$행 21:27-36에 바울의 예루살렘 체포 기사가 기록됨$q$, 2
+select e.id, $q$무리는 어떻게 했습니까?$q$, $q$율법을 어기고 이방인들과 식사하였기 때문에$q$, $q$성전에서 설교를 하다 고발당하였기 때문에$q$, $q$그를 없이 하자고 외치며 따라 감이러라$q$, $q$헷갈렸어요$q$, 2, $q$행 21:36 — '이는 백성의 무리가 그를 없이 하자고 외치며 따라 감이러라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 27;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울이 재판에서 최종적으로 한 요구는 무엇입니까?$q$, $q$아그립바 왕에게 넘겨지는 것$q$, $q$예루살렘에서 다시 재판받는 것$q$, $q$가이사에게 상소하는 것$q$, null, 2, $q$행 25:11 — '가이사에게 호소하노라 하니'$q$, 0
+select e.id, $q$바울이 재판에서 최종적으로 한 요구는 무엇입니까?$q$, $q$아그립바 왕에게 넘겨지는 것$q$, $q$예루살렘에서 다시 재판받는 것$q$, $q$가이사에게 상소하는 것$q$, $q$헷갈렸어요$q$, 2, $q$행 25:11 — '가이사에게 호소하노라 하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울은 아그립바 왕 앞에서 자신의 삶에 대해 어떻게 말하였습니까?$q$, $q$어려서부터 이방인들과 함께 살았다고 하였다$q$, $q$율법을 모르고 살았다고 하였다$q$, $q$가장 엄한 바리새인의 생활을 하였다고 하였다$q$, null, 2, $q$행 26:5 — '우리 종교의 가장 엄한 파를 좇아 바리새인의 생활을 하였다고 할 것이라'$q$, 1
+select e.id, $q$바울은 아그립바 왕 앞에서 자신의 삶에 대해 어떻게 말하였습니까?$q$, $q$어려서부터 이방인들과 함께 살았다고 하였다$q$, $q$율법을 모르고 살았다고 하였다$q$, $q$가장 엄한 바리새인의 생활을 하였다고 하였다$q$, $q$헷갈렸어요$q$, 2, $q$행 26:5 — '우리 종교의 가장 엄한 파를 좇아 바리새인의 생활을 하였다고 할 것이라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 가이사랴 재판과 상소 기사가 기록된 성경 책은 어디입니까?$q$, $q$로마서$q$, $q$사도행전$q$, $q$빌립보서$q$, null, 1, $q$행 24:10-26:32에 가이사랴 재판과 상소 기사가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$아그립바 왕에게 넘겨지는 것$q$, $q$우리 조상에게 약속하신 것을 바라는 까닭이니$q$, $q$예루살렘에서 다시 재판받는 것$q$, $q$헷갈렸어요$q$, 1, $q$행 26:6 — '이제도 여기 서서 심문 받는 것은 하나님이 우리 조상에게 약속하신 것을 바라는 까닭이니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 28;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$폭풍 중 바울에게 두려워 말라고 말한 것은 누구입니까?$q$, $q$백부장$q$, $q$선장$q$, $q$하나님의 사자$q$, null, 2, $q$행 27:23-24 — '나의 섬기는 하나님의 사자가 어제 밤에 내 곁에 서서 말하되 … 두려워 말라'$q$, 0
+select e.id, $q$폭풍 중 바울은 사람들에게 어떻게 하였습니까?$q$, $q$배를 포기하고 수영으로 탈출하라 하였다$q$, $q$다들 기도에만 전념하라고 하였다$q$, $q$안심하라고 권하며 하나님의 약속을 선포하였다$q$, $q$헷갈렸어요$q$, 2, $q$행 27:22,25 — '이제도 안심하라 … 나는 하나님을 믿노라 내 말한 대로 되리라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$폭풍 중 바울은 사람들에게 어떻게 하였습니까?$q$, $q$안심하라고 권하며 하나님의 약속을 선포하였다$q$, $q$다들 기도에만 전념하라고 하였다$q$, $q$배를 포기하고 수영으로 탈출하라 하였다$q$, null, 0, $q$행 27:22,25 — '이제도 안심하라 … 나는 하나님을 믿노라 내 말한 대로 되리라'$q$, 1
+select e.id, $q$폭풍 중 바울에게 두려워 말라고 말한 것은 누구입니까?$q$, $q$하나님의 사자$q$, $q$선장$q$, $q$백부장$q$, $q$헷갈렸어요$q$, 0, $q$행 27:23-24 — '나의 섬기는 하나님의 사자가 어제 밤에 내 곁에 서서 말하되 … 두려워 말라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 폭풍 항해 기사가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$고린도후서$q$, $q$로마서$q$, null, 0, $q$행 27:13-26에 폭풍 항해 기사가 기록됨$q$, 2
+select e.id, $q$사자는 어떻게 했습니까?$q$, $q$어제 밤에 내 곁에 서서 말했다$q$, $q$다들 기도에만 전념하라고 하였다$q$, $q$백부장$q$, $q$헷갈렸어요$q$, 0, $q$행 27:23 — '나의 속한 바 곧 나의 섬기는 하나님의 사자가 어제 밤에 내 곁에 서서 말하되'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 29;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$멜리데 섬에서 바울이 불에 뱀을 넣을 때 일어난 일은 무엇입니까?$q$, $q$불이 갑자기 꺼졌다$q$, $q$독사가 나와 그 손을 물었다$q$, $q$뱀이 도망하여 사라졌다$q$, null, 1, $q$행 28:3 — '뜨거움을 인하여 독사가 나와 그 손을 물고 있는지라'$q$, 0
+select e.id, $q$멜리데 섬에서 바울이 불에 뱀을 넣을 때 일어난 일은 무엇입니까?$q$, $q$불이 갑자기 꺼졌다$q$, $q$독사가 나와 그 손을 물었다$q$, $q$뱀이 도망하여 사라졌다$q$, $q$헷갈렸어요$q$, 1, $q$행 28:3 — '뜨거움을 인하여 독사가 나와 그 손을 물고 있는지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$멜리데 섬의 제일 높은 사람 보블리오는 바울 일행에게 어떻게 하였습니까?$q$, $q$영접하여 사흘이나 친절히 유숙하게 하였다$q$, $q$섬에서 떠나라고 명하였다$q$, $q$재판을 받도록 로마 총독에게 신고하였다$q$, null, 0, $q$행 28:7 — '그가 우리를 영접하여 사흘이나 친절히 유숙하게 하더니'$q$, 1
+select e.id, $q$멜리데 섬의 제일 높은 사람 보블리오는 바울 일행에게 어떻게 하였습니까?$q$, $q$영접하여 사흘이나 친절히 유숙하게 하였다$q$, $q$섬에서 떠나라고 명하였다$q$, $q$재판을 받도록 로마 총독에게 신고하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 28:7 — '그가 우리를 영접하여 사흘이나 친절히 유숙하게 하더니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$멜리데(몰타) 표류 기사가 기록된 성경 책은 어디입니까?$q$, $q$빌레몬서$q$, $q$로마서$q$, $q$사도행전$q$, null, 2, $q$행 27:39-28:10에 멜리데 표류 기사가 기록됨$q$, 2
+select e.id, $q$바울은 어떻게 했습니까?$q$, $q$뱀이 도망하여 사라졌다$q$, $q$불이 갑자기 꺼졌다$q$, $q$들어가서 기도하고 그에게 안수하여 낫게 했다$q$, $q$헷갈렸어요$q$, 2, $q$행 28:8 — '보블리오의 부친이 열병과 이질에 걸려 누웠거늘 바울이 들어가서 기도하고 그에게 안수하여 낫게 하매'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 30;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$로마에 도착한 바울은 어떤 상태로 복음을 전하였습니까?$q$, $q$셋집에서 담대히 복음을 전하되 금하는 사람이 없었다$q$, $q$감옥에서 서신만 보내어 전하였다$q$, $q$가이사 궁궐에서 직접 황제에게 전하였다$q$, null, 0, $q$행 28:30-31 — '담대히 하나님 나라를 전파하며 … 금하는 사람이 없었더라'$q$, 0
+select e.id, $q$로마에 도착한 바울이 유대인 지도자들에게 한 행동은 무엇입니까?$q$, $q$아침부터 저녁까지 하나님 나라를 강론하였다$q$, $q$조용히 셋집에 머무르며 기다렸다$q$, $q$먼저 이방인들을 불러 모아 전도하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 28:23 — '바울이 아침부터 저녁까지 강론하여 하나님 나라를 증거하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$로마에 도착한 바울이 유대인 지도자들에게 한 행동은 무엇입니까?$q$, $q$아침부터 저녁까지 하나님 나라를 강론하였다$q$, $q$조용히 셋집에 머무르며 기다렸다$q$, $q$먼저 이방인들을 불러 모아 전도하였다$q$, null, 0, $q$행 28:23 — '바울이 아침부터 저녁까지 강론하여 하나님 나라를 증거하고'$q$, 1
+select e.id, $q$성령은 어떻게 했습니까?$q$, $q$선지자 이사야로 너희 조상 들에게 말씀하신 것이 옳도다$q$, $q$감감옥에서 서신만 보내어 전하였다$q$, $q$가이사 궁궐에서 직접 황제에게 전하였다$q$, $q$헷갈렸어요$q$, 0, $q$행 28:25 — '서로 맞지 아니하여 흩어질 때에 바울이 한 말로 일러 가로되 성령이 선지자 이사야로 너희 조상 들에게 말씀하신 것이 옳도다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바울의 로마 도착 기사가 기록된 성경 책은 어디입니까?$q$, $q$빌립보서$q$, $q$로마서$q$, $q$사도행전$q$, null, 2, $q$행 28:14-31에 바울의 로마 도착 기사가 기록됨$q$, 2
+select e.id, $q$로마에 도착한 바울은 어떤 상태로 복음을 전하였습니까?$q$, $q$가이사 궁궐에서 직접 황제에게 전하였다$q$, $q$감옥에서 서신만 보내어 전하였다$q$, $q$셋집에서 담대히 복음을 전하되 금하는 사람이 없었다$q$, $q$헷갈렸어요$q$, 2, $q$행 28:30-31 — '담대히 하나님 나라를 전파하며 … 금하는 사람이 없었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하늘 보좌 환상에서 보좌 앞에 있던 것은 무엇입니까?$q$, $q$수정과 같은 유리 바다$q$, $q$불타는 제단$q$, $q$황금으로 된 계단$q$, null, 0, $q$계 4:6 — '보좌 앞에 수정과 같은 유리 바다가 있고'$q$, 0
+select e.id, $q$하늘 보좌 환상에서 보좌 앞에 있던 것은 무엇입니까?$q$, $q$수정과 같은 유리 바다$q$, $q$불타는 제단$q$, $q$황금으로 된 계단$q$, $q$헷갈렸어요$q$, 0, $q$계 4:6 — '보좌 앞에 수정과 같은 유리 바다가 있고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$네 생물과 이십사 장로들은 보좌에 앉으신 이 앞에서 어떻게 하였습니까?$q$, $q$엎드려 경배하며 면류관을 보좌 앞에 던졌다$q$, $q$각자의 자리에 서서 찬양하였다$q$, $q$찬송을 부르며 보좌 주위를 돌았다$q$, null, 0, $q$계 4:10 — '이십사 장로들이 … 보좌에 앉으신 이 앞에 엎드려 … 그 면류관을 보좌 앞에 던지며'$q$, 1
+select e.id, $q$네 생물과 이십사 장로들은 보좌에 앉으신 이 앞에서 어떻게 하였습니까?$q$, $q$엎드려 경배하며 면류관을 보좌 앞에 던졌다$q$, $q$각자의 자리에 서서 찬양하였다$q$, $q$찬송을 부르며 보좌 주위를 돌았다$q$, $q$헷갈렸어요$q$, 0, $q$계 4:10 — '이십사 장로들이 … 보좌에 앉으신 이 앞에 엎드려 … 그 면류관을 보좌 앞에 던지며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하늘 보좌 환상이 기록된 성경 책은 어디입니까?$q$, $q$요한계시록$q$, $q$에스겔서$q$, $q$이사야서$q$, null, 0, $q$계 4:1-11에 하늘 보좌 환상이 기록됨$q$, 2
+select e.id, $q$장로들은 어떻게 했습니까?$q$, $q$보좌에 앉으신 이 앞에 엎드려 세세토록 사시는 이에게 경배$q$, $q$황금으로 된 계단$q$, $q$불타는 제단$q$, $q$헷갈렸어요$q$, 0, $q$계 4:10 — '이십사 장로들이 보좌에 앉으신 이 앞에 엎드려 세세토록 사시는 이에게 경배하고 자기의 면류관을 보좌 앞에 던지며 가로되'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보좌에 앉으신 이의 오른손에 있던 두루마리는 어떠하였습니까?$q$, $q$아무것도 쓰이지 않고 비어 있었다$q$, $q$안팎으로 쓰이고 일곱 인으로 봉해져 있었다$q$, $q$겉에만 쓰이고 금 줄로 묶여 있었다$q$, null, 1, $q$계 5:1 — '안팎으로 썼고 일곱 인으로 봉하였더라'$q$, 0
+select e.id, $q$보좌에 앉으신 이의 오른손에 있던 두루마리는 어떠하였습니까?$q$, $q$아무것도 쓰이지 않고 비어 있었다$q$, $q$안팎으로 쓰이고 일곱 인으로 봉해져 있었다$q$, $q$겉에만 쓰이고 금 줄로 묶여 있었다$q$, $q$헷갈렸어요$q$, 1, $q$계 5:1 — '안팎으로 썼고 일곱 인으로 봉하였더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요한은 두루마리를 펼 자가 없음을 보고 어떻게 하였습니까?$q$, $q$천사에게 물었다$q$, $q$어린양에게 간청하였다$q$, $q$크게 울었다$q$, null, 2, $q$계 5:4 — '합당한 자가 보이지 않기로 내가 크게 울었더니'$q$, 1
+select e.id, $q$요한은 두루마리를 펼 자가 없음을 보고 어떻게 하였습니까?$q$, $q$천사에게 물었다$q$, $q$어린양에게 간청하였다$q$, $q$크게 울었다$q$, $q$헷갈렸어요$q$, 2, $q$계 5:4 — '합당한 자가 보이지 않기로 내가 크게 울었더니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$어린양이 두루마리를 받는 장면이 기록된 성경 책은 어디입니까?$q$, $q$다니엘서$q$, $q$히브리서$q$, $q$요한계시록$q$, null, 2, $q$계 5:1-14에 어린양이 두루마리를 받는 장면이 기록됨$q$, 2
+select e.id, $q$요한은 주의 날에 무엇을 들었습니까?$q$, $q$겉에만 쓰이고 금 줄로 묶여 있었다$q$, $q$아무것도 쓰이지 않고 비어 있었다$q$, $q$나팔 소리 같은 큰 음성을 들었다$q$, $q$헷갈렸어요$q$, 2, $q$계 5:12 — '큰 음성으로 가로되 죽임을 당하신 어린 양이 능력과 부와 지혜와 힘과 존귀와 영광과 찬송을 받으 시기에 합당하도다 하더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$다섯째 인이 열릴 때 제단 아래서 본 것은 무엇입니까?$q$, $q$큰 지진$q$, $q$하나님 말씀 때문에 죽임당한 영혼들$q$, $q$흰 말 탄 자$q$, null, 1, $q$계 6:9 — '하나님의 말씀과 저희의 가진 증거를 인하여 죽임을 당한 영혼들이 제단 아래 있어'$q$, 0
+select e.id, $q$다섯째 인이 열릴 때 제단 아래서 본 것은 무엇입니까?$q$, $q$큰 지진$q$, $q$하나님 말씀 때문에 죽임당한 영혼들$q$, $q$흰 말 탄 자$q$, $q$헷갈렸어요$q$, 1, $q$계 6:9 — '하나님의 말씀과 저희의 가진 증거를 인하여 죽임을 당한 영혼들이 제단 아래 있어'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$흰 옷을 입은 큰 무리는 보좌 앞에서 무엇을 하였습니까?$q$, $q$일곱 인이 열리기를 기다렸다$q$, $q$하나님과 어린양께 구원의 찬송을 드렸다$q$, $q$심판을 피하여 숨었다$q$, null, 1, $q$계 7:10 — '구원하심이 보좌에 앉으신 우리 하나님과 어린 양에게 있도다'$q$, 1
+select e.id, $q$흰 옷을 입은 큰 무리는 보좌 앞에서 무엇을 하였습니까?$q$, $q$일곱 인이 열리기를 기다렸다$q$, $q$하나님과 어린양께 구원의 찬송을 드렸다$q$, $q$심판을 피하여 숨었다$q$, $q$헷갈렸어요$q$, 1, $q$계 7:10 — '구원하심이 보좌에 앉으신 우리 하나님과 어린 양에게 있도다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱 인 환상이 기록된 성경 책은 어디입니까?$q$, $q$요한계시록$q$, $q$다니엘서$q$, $q$에스겔서$q$, null, 0, $q$계 6:1-7:17에 일곱 인 환상이 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$저희 눈에서 모든 눈물을 씻어 주실 것임이러라$q$, $q$큰 지진$q$, $q$흰 말 탄 자$q$, $q$헷갈렸어요$q$, 0, $q$계 7:17 — '이는 보좌 가운데 계신 어린 양이 저희의 목자가 되사 생명수 샘으로 인도하시고 하나님께서 저희 눈에서 모든 눈물을 씻어 주실 것임이러라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱째 인이 열렸을 때 하늘은 어떠하였습니까?$q$, $q$큰 우뢰가 울렸다$q$, $q$천사들이 일제히 찬양하였다$q$, $q$반 시 동안쯤 고요하였다$q$, null, 2, $q$계 8:1 — '일곱째 인을 떼실 때에 하늘이 반 시 동안쯤 고요하더니'$q$, 0
+select e.id, $q$일곱째 인이 열렸을 때 하늘은 어떠하였습니까?$q$, $q$큰 우뢰가 울렸다$q$, $q$천사들이 일제히 찬양하였다$q$, $q$반 시 동안쯤 고요하였다$q$, $q$헷갈렸어요$q$, 2, $q$계 8:1 — '일곱째 인을 떼실 때에 하늘이 반 시 동안쯤 고요하더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나팔 재앙에서 살아남은 사람들은 어떻게 하였습니까?$q$, $q$예루살렘으로 올라가 제사를 드렸다$q$, $q$두려워하며 하나님께 돌아왔다$q$, $q$그 손으로 행하는 일을 회개치 아니하였다$q$, null, 2, $q$계 9:20 — '이 재앙에 죽지 않고 남은 사람들은 … 회개치 아니하고'$q$, 1
+select e.id, $q$나팔 재앙에서 살아남은 사람들은 어떻게 하였습니까?$q$, $q$예루살렘으로 올라가 제사를 드렸다$q$, $q$두려워하며 하나님께 돌아왔다$q$, $q$그 손으로 행하는 일을 회개치 아니하였다$q$, $q$헷갈렸어요$q$, 2, $q$계 9:20 — '이 재앙에 죽지 않고 남은 사람들은 … 회개치 아니하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱 나팔 환상이 기록된 성경 책은 어디입니까?$q$, $q$요한계시록$q$, $q$민수기$q$, $q$스가랴서$q$, null, 0, $q$계 8:1-11:19에 일곱 나팔 환상이 기록됨$q$, 2
+select e.id, $q$요한은 주의 날에 무엇을 들었습니까?$q$, $q$나팔 소리 같은 큰 음성을 들었다$q$, $q$천사들이 일제히 찬양하였다$q$, $q$큰 우뢰가 울렸다$q$, $q$헷갈렸어요$q$, 0, $q$계 11:12 — '하늘로부터 큰 음성이 있어 이리로 올라오라 함을 저희가 듣고 구름을 타고 하늘로 올라가니 저희 원수들도 구경하더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요한계시록에서 큰 용은 누구라고 설명됩니까?$q$, $q$거짓 선지자$q$, $q$옛 뱀 곧 마귀, 사단$q$, $q$로마 황제$q$, null, 1, $q$계 12:9 — '큰 용이 내어쫓기니 옛 뱀 곧 마귀라고도 하고 사단이라고도 하는 자라'$q$, 0
+select e.id, $q$요한계시록에서 큰 용은 누구라고 설명됩니까?$q$, $q$거짓 선지자$q$, $q$옛 뱀 곧 마귀, 사단$q$, $q$로마 황제$q$, $q$헷갈렸어요$q$, 1, $q$계 12:9 — '큰 용이 내어쫓기니 옛 뱀 곧 마귀라고도 하고 사단이라고도 하는 자라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$짐승의 박해 앞에서 성도들에게 강조된 것은 무엇입니까?$q$, $q$비밀스러운 모임$q$, $q$인내와 믿음$q$, $q$지혜로운 도피$q$, null, 1, $q$계 13:10 — '성도들의 인내와 믿음이 여기 있느니라'$q$, 1
+select e.id, $q$짐승의 박해 앞에서 성도들에게 강조된 것은 무엇입니까?$q$, $q$비밀스러운 모임$q$, $q$인내와 믿음$q$, $q$지혜로운 도피$q$, $q$헷갈렸어요$q$, 1, $q$계 13:10 — '성도들의 인내와 믿음이 여기 있느니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$용과 두 짐승 환상이 기록된 성경 책은 어디입니까?$q$, $q$다니엘서$q$, $q$에스겔서$q$, $q$요한계시록$q$, null, 2, $q$계 12:1-13:18에 용과 두 짐승 환상이 기록됨$q$, 2
+select e.id, $q$짐승의 수에 대해 어떤 설명이 나옵니까?$q$, $q$그 수는 아무도 셀 수 없다고 했다$q$, $q$그 수는 열두 지파의 수라고 했다$q$, $q$그 수는 사람의 수인 666이라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$계 13:18 — '지혜가 여기 있으니 총명 있는 자는 그 짐승의 수를 세어 보라 그 수는 사람의 수니 육백 육십육 이니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$큰 음녀 바벨론이 앉아 있던 곳은 어디라고 하였습니까?$q$, $q$불바다 한가운데$q$, $q$많은 물 위$q$, $q$황금 보좌 위$q$, null, 1, $q$계 17:1 — '많은 물 위에 앉은 큰 음녀의 받을 심판을 네게 보이리라'$q$, 0
+select e.id, $q$큰 음녀 바벨론이 앉아 있던 곳은 어디라고 하였습니까?$q$, $q$불바다 한가운데$q$, $q$많은 물 위$q$, $q$황금 보좌 위$q$, $q$헷갈렸어요$q$, 1, $q$계 17:1 — '많은 물 위에 앉은 큰 음녀의 받을 심판을 네게 보이리라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바벨론 멸망 앞에서 하늘 음성은 하나님의 백성에게 무엇을 촉구하였습니까?$q$, $q$인내하며 기다리라고 하였다$q$, $q$바벨론을 위해 기도하라고 하였다$q$, $q$바벨론에서 나오라고 하였다$q$, null, 2, $q$계 18:4 — '내 백성아 거기서 나와 그의 죄에 참여하지 말고'$q$, 1
+select e.id, $q$바벨론 멸망 앞에서 하늘 음성은 하나님의 백성에게 무엇을 촉구하였습니까?$q$, $q$인내하며 기다리라고 하였다$q$, $q$바벨론을 위해 기도하라고 하였다$q$, $q$바벨론에서 나오라고 하였다$q$, $q$헷갈렸어요$q$, 2, $q$계 18:4 — '내 백성아 거기서 나와 그의 죄에 참여하지 말고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바벨론의 멸망 기사가 기록된 성경 책은 어디입니까?$q$, $q$예레미야서$q$, $q$이사야서$q$, $q$요한계시록$q$, null, 2, $q$계 17:1-18:24에 바벨론의 멸망 기사가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$황금 보좌 위$q$, $q$불바다 한가운데$q$, $q$그의 불의한 일을 기억하신지라$q$, $q$헷갈렸어요$q$, 2, $q$계 18:5 — '그 죄는 하늘에 사무쳤으며 하나님은 그의 불의한 일을 기억하신지라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$새 예루살렘의 성곽 기초석에는 누구의 이름이 있습니까?$q$, $q$어린양의 십이 사도 이름$q$, $q$이십사 장로의 이름$q$, $q$열두 지파의 이름$q$, null, 0, $q$계 21:14 — '그 위에 어린 양의 십이 사도의 열두 이름이 있더라'$q$, 0
+select e.id, $q$새 예루살렘에서 하나님은 자기 백성에게 무엇을 하신다고 하셨습니까?$q$, $q$그들의 눈에서 모든 눈물을 씻어 주신다$q$, $q$모두를 성전 안에서 살게 하신다$q$, $q$새 율법을 주어 다스리신다$q$, $q$헷갈렸어요$q$, 0, $q$계 21:4 — '모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$새 예루살렘에서 하나님은 자기 백성에게 무엇을 하신다고 하셨습니까?$q$, $q$그들의 눈에서 모든 눈물을 씻어 주신다$q$, $q$새 율법을 주어 다스리신다$q$, $q$모두를 성전 안에서 살게 하신다$q$, null, 0, $q$계 21:4 — '모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고'$q$, 1
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$되고 그는 내 아들이 되리라$q$, $q$열두 지파의 이름$q$, $q$이십사 장로의 이름$q$, $q$헷갈렸어요$q$, 0, $q$계 21:7 — '이기는 자는 이것들을 유업으로 얻으리라 나는 저의 하나님이 되고 그는 내 아들이 되리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$최후 심판과 새 하늘 새 땅 기사가 기록된 성경 책은 어디입니까?$q$, $q$에스겔서$q$, $q$이사야서$q$, $q$요한계시록$q$, null, 2, $q$계 20:11-22:5에 최후 심판과 새 하늘 새 땅 기사가 기록됨$q$, 2
+select e.id, $q$새 예루살렘의 성곽 기초석에는 누구의 이름이 있습니까?$q$, $q$이십사 장로의 이름$q$, $q$열두 지파의 이름$q$, $q$어린양의 십이 사도 이름$q$, $q$헷갈렸어요$q$, 2, $q$계 21:14 — '그 위에 어린 양의 십이 사도의 열두 이름이 있더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 성전에 대해 어떻게 예언하셨습니까?$q$, $q$돌 하나도 돌 위에 남지 않고 다 무너질 것이라 하셨다$q$, $q$성전이 영원히 서 있을 것이라 하셨다$q$, $q$적군이 성전을 차지할 것이라 하셨다$q$, null, 0, $q$마 24:2 — '돌 하나도 돌 위에 남지 않고 다 무너뜨리우리라'$q$, 0
+select e.id, $q$제자들은 성전을 보며 예수님께 어떻게 하였습니까?$q$, $q$성전 건물들을 가리켜 보이려 하였다$q$, $q$성전에 들어가 함께 기도하였다$q$, $q$성전 무너질 날을 두려워하며 울었다$q$, $q$헷갈렸어요$q$, 0, $q$마 24:1 — '제자들이 성전 건물들을 가리켜 보이려고 나아오니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$제자들은 성전을 보며 예수님께 어떻게 하였습니까?$q$, $q$성전 무너질 날을 두려워하며 울었다$q$, $q$성전에 들어가 함께 기도하였다$q$, $q$성전 건물들을 가리켜 보이려 하였다$q$, null, 2, $q$마 24:1 — '제자들이 성전 건물들을 가리켜 보이려고 나아오니'$q$, 1
+select e.id, $q$예수님은 성전에 대해 어떻게 예언하셨습니까?$q$, $q$적군이 성전을 차지할 것이라 하셨다$q$, $q$성전이 영원히 서 있을 것이라 하셨다$q$, $q$돌 하나도 돌 위에 남지 않고 다 무너질 것이라 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$마 24:2 — '돌 하나도 돌 위에 남지 않고 다 무너뜨리우리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$성전 파괴 예언이 기록된 성경 책은 어디입니까?$q$, $q$다니엘서$q$, $q$요한계시록$q$, $q$마태복음$q$, null, 2, $q$마 24:1-2에 성전 파괴 예언이 기록됨$q$, 2
+select e.id, $q$사람들은 성전을 보며 무엇을 이야기했습니까?$q$, $q$성전에 아무 장식이 없다고 여겼다$q$, $q$성전이 이미 모두 무너졌다고 보았다$q$, $q$아름다운 돌과 예물로 꾸며진 모습을 말했다$q$, $q$헷갈렸어요$q$, 2, $q$눅 21:5 — '어떤 사람들이 성전을 가리켜 그 미석과 헌물로 꾸민 것을 말하매 예수께서 가라사대'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요한이 계시를 받은 섬의 이름은 무엇입니까?$q$, $q$구브로$q$, $q$밧모$q$, $q$멜리데$q$, null, 1, $q$계 1:9 — '하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니'$q$, 0
+select e.id, $q$요한이 계시를 받은 섬의 이름은 무엇입니까?$q$, $q$구브로$q$, $q$밧모$q$, $q$멜리데$q$, $q$헷갈렸어요$q$, 1, $q$계 1:9 — '하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요한은 음성을 들었을 때 어떻게 하였습니까?$q$, $q$눈을 감고 더 들으려 하였다$q$, $q$몸을 돌이켜 음성을 알아보려 하였다$q$, $q$머리를 숙이고 기다렸다$q$, null, 1, $q$계 1:12 — '나더러 말한 음성을 알아 보려고 하여 돌이킬 때에'$q$, 1
+select e.id, $q$요한은 주의 날에 무엇을 들었습니까?$q$, $q$멜리데$q$, $q$나팔 소리 같은 큰 음성을 들었다$q$, $q$구브로$q$, $q$헷갈렸어요$q$, 1, $q$계 1:10 — '주의 날에 내가 성령에 감동하여 내 뒤에서 나는 나팔 소리 같은 큰 음성을 들으니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$밧모섬에서의 계시 시작이 기록된 성경 책은 어디입니까?$q$, $q$요한일서$q$, $q$요한계시록$q$, $q$요한복음$q$, null, 1, $q$계 1:9-20에 밧모섬 계시의 시작이 기록됨$q$, 2
+select e.id, $q$요한은 음성을 들었을 때 어떻게 하였습니까?$q$, $q$눈을 감고 더 들으려 하였다$q$, $q$몸을 돌이켜 음성을 알아보려 하였다$q$, $q$머리를 숙이고 기다렸다$q$, $q$헷갈렸어요$q$, 1, $q$계 1:12 — '나더러 말한 음성을 알아 보려고 하여 돌이킬 때에'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱 교회 편지에서 첫 번째로 받은 교회는 어디입니까?$q$, $q$버가모 교회$q$, $q$서머나 교회$q$, $q$에베소 교회$q$, null, 2, $q$계 2:1 — '에베소 교회의 사자에게 편지하기를'$q$, 0
+select e.id, $q$일곱 교회 편지에서 첫 번째로 받은 교회는 어디입니까?$q$, $q$버가모 교회$q$, $q$서머나 교회$q$, $q$에베소 교회$q$, $q$헷갈렸어요$q$, 2, $q$계 2:1 — '에베소 교회의 사자에게 편지하기를'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$버가모 교회의 안디바는 어떻게 하였습니까?$q$, $q$박해를 피해 도망하였다$q$, $q$믿음을 숨기고 침묵하였다$q$, $q$사단의 거하는 곳에서도 믿음을 저버리지 않았다$q$, null, 2, $q$계 2:13 — '내 충성된 증인 안디바가 … 죽임을 당할 때에도 나를 믿는 믿음을 저버리지 아니하였도다'$q$, 1
+select e.id, $q$버가모 교회의 안디바는 어떻게 하였습니까?$q$, $q$박해를 피해 도망하였다$q$, $q$믿음을 숨기고 침묵하였다$q$, $q$사단의 거하는 곳에서도 믿음을 저버리지 않았다$q$, $q$헷갈렸어요$q$, 2, $q$계 2:13 — '내 충성된 증인 안디바가 … 죽임을 당할 때에도 나를 믿는 믿음을 저버리지 아니하였도다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱 교회 편지가 기록된 성경 책은 어디입니까?$q$, $q$고린도후서$q$, $q$에베소서$q$, $q$요한계시록$q$, null, 2, $q$계 2:1-3:22에 일곱 교회 편지가 기록됨$q$, 2
+select e.id, $q$성령은 어떻게 했습니까?$q$, $q$서머나 교회$q$, $q$버가모 교회$q$, $q$교회들에게 하시는 말씀을 들을지어다$q$, $q$헷갈렸어요$q$, 2, $q$계 2:29 — '귀있는 자는 성령이 교회들에게 하시는 말씀을 들을지어다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$천사가 사가랴에게 나타난 것은 어디에서였습니까?$q$, $q$꿈에서 자고 있을 때$q$, $q$요단강 가에서 기도할 때$q$, $q$성전에서 분향할 때$q$, null, 2, $q$눅 1:9-11 — '분향하는 시간에 ... 천사가 나타나'$q$, 0
+select e.id, $q$천사가 사가랴에게 나타난 것은 어디에서였습니까?$q$, $q$꿈에서 자고 있을 때$q$, $q$요단강 가에서 기도할 때$q$, $q$성전에서 분향할 때$q$, $q$헷갈렸어요$q$, 2, $q$눅 1:9-11 — '분향하는 시간에 ... 천사가 나타나'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사가랴는 천사의 말을 믿지 않아 어떻게 되었습니까?$q$, $q$이 일의 되는 날까지 벙어리가 되었다$q$, $q$그 자리에서 쓰러졌다$q$, $q$성전에서 쫓겨났다$q$, null, 0, $q$눅 1:20 — '이 일의 되는 날까지 네가 벙어리가 되어 능히 말을 못하리니'$q$, 1
+select e.id, $q$사가랴는 천사의 말을 믿지 않아 어떻게 되었습니까?$q$, $q$이 일의 되는 날까지 벙어리가 되었다$q$, $q$그 자리에서 쓰러졌다$q$, $q$성전에서 쫓겨났다$q$, $q$헷갈렸어요$q$, 0, $q$눅 1:20 — '이 일의 되는 날까지 네가 벙어리가 되어 능히 말을 못하리니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$세례 요한의 탄생 예고 기사가 기록된 성경 책은 어디입니까?$q$, $q$마태복음$q$, $q$마가복음$q$, $q$누가복음$q$, null, 2, $q$눅 1:5-25에 사가랴와 천사의 만남과 세례 요한 예고 기사가 기록됨$q$, 2
+select e.id, $q$엘리사벳은 어떻게 했습니까?$q$, $q$그 일을 그냥 지나쳤다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$이 후에 그 아내 엘리사벳이 수태하고 다섯 달 동안 숨어 있으며 라고$q$, $q$헷갈렸어요$q$, 2, $q$눅 1:24 — '이 후에 그 아내 엘리사벳이 수태하고 다섯 달 동안 숨어 있으며 가로되'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$천사 가브리엘이 마리아에게 찾아온 곳은 어디였습니까?$q$, $q$유대 베들레헴$q$, $q$예루살렘 성전$q$, $q$갈릴리 나사렛$q$, null, 2, $q$눅 1:26 — '천사 가브리엘이 ... 갈릴리 나사렛이란 동네에 가서'$q$, 0
+select e.id, $q$천사 가브리엘이 마리아에게 찾아온 곳은 어디였습니까?$q$, $q$유대 베들레헴$q$, $q$예루살렘 성전$q$, $q$갈릴리 나사렛$q$, $q$헷갈렸어요$q$, 2, $q$눅 1:26 — '천사 가브리엘이 ... 갈릴리 나사렛이란 동네에 가서'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마리아는 엘리사벳을 만난 후 어떻게 하였습니까?$q$, $q$능하신 이가 큰 일을 내게 행하셨다고 찬양하였다$q$, $q$요셉에게 소식을 전하러 갔다$q$, $q$집으로 돌아가 금식 기도하였다$q$, null, 0, $q$눅 1:49 — '능하신 이가 큰 일을 내게 행하셨으니 그 이름이 거룩하시며'$q$, 1
+select e.id, $q$마리아는 엘리사벳을 만난 후 어떻게 하였습니까?$q$, $q$능하신 이가 큰 일을 내게 행하셨다고 찬양하였다$q$, $q$요셉에게 소식을 전하러 갔다$q$, $q$집으로 돌아가 금식 기도하였다$q$, $q$헷갈렸어요$q$, 0, $q$눅 1:49 — '능하신 이가 큰 일을 내게 행하셨으니 그 이름이 거룩하시며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$마리아의 수태고지와 찬양 기사가 기록된 성경 책은 어디입니까?$q$, $q$마태복음$q$, $q$요한복음$q$, $q$누가복음$q$, null, 2, $q$눅 1:26-56에 마리아의 수태고지와 마리아 찬가가 기록됨$q$, 2
+select e.id, $q$긍휼하심은 어떻게 했습니까?$q$, $q$유대 베들레헴$q$, $q$예루살렘 성전$q$, $q$두려워하는 자에게 대대로 이르는도다$q$, $q$헷갈렸어요$q$, 2, $q$눅 1:50 — '긍휼하심이 두려워하는 자에게 대대로 이르는도다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$천사는 목자들에게 구주가 나신 곳이 어디라고 하였습니까?$q$, $q$나사렛$q$, $q$예루살렘$q$, $q$다윗의 동네$q$, null, 2, $q$눅 2:11 — '오늘날 다윗의 동네에 너희를 위하여 구주가 나셨으니'$q$, 0
+select e.id, $q$천사는 목자들에게 구주가 나신 곳이 어디라고 하였습니까?$q$, $q$나사렛$q$, $q$예루살렘$q$, $q$다윗의 동네$q$, $q$헷갈렸어요$q$, 2, $q$눅 2:11 — '오늘날 다윗의 동네에 너희를 위하여 구주가 나셨으니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$목자들은 아기를 본 후 어떻게 하였습니까?$q$, $q$하나님께 영광을 돌리고 찬송하며 돌아갔다$q$, $q$예물을 준비하여 다시 찾아갔다$q$, $q$집에 돌아가 아무에게도 말하지 않았다$q$, null, 0, $q$눅 2:20 — '하나님께 영광을 돌리고 찬송하며 돌아가니라'$q$, 1
+select e.id, $q$목자들은 천사가 떠난 뒤 무엇을 하자고 했습니까?$q$, $q$베들레헴에 가서 알려진 일을 보자고 했다$q$, $q$헤롯에게 먼저 알리자고 했다$q$, $q$곧바로 집으로 돌아가자고 했다$q$, $q$헷갈렸어요$q$, 0, $q$눅 2:15 — '천사들이 떠나 하늘로 올라가니 목자가 서로 말하되 이제 베들레헴까지 가서 주께서 우리에게 알리 신 바 이 이루어진 일을 보자 하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수 탄생과 목자들의 방문 기사가 기록된 성경 책은 어디입니까?$q$, $q$마태복음$q$, $q$누가복음$q$, $q$요한복음$q$, null, 1, $q$눅 2:1-20에 예수 탄생과 목자들의 방문 기사가 기록됨$q$, 2
+select e.id, $q$목자들은 아기를 본 뒤 어떻게 돌아갔습니까?$q$, $q$아무에게도 말하지 않고 숨었다$q$, $q$하나님께 영광을 돌리고 찬송하며 돌아갔다$q$, $q$헤롯에게 먼저 보고하러 갔다$q$, $q$헷갈렸어요$q$, 1, $q$눅 2:20 — '목자가 자기들에게 이르던 바와 같이 듣고 본 그 모든 것을 인하여 하나님께 영광을 돌리고 찬송하 며 돌아가니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$동방박사들이 예루살렘을 떠난 후 어디로 피한 것을 본문이 언급합니까?$q$, $q$성전으로 올라갔다$q$, $q$다른 길로 고국에 돌아갔다$q$, $q$헤롯에게 보고하러 갔다$q$, null, 1, $q$마 2:12 — '꿈에 헤롯에게로 돌아가지 말라 지시하심을 받아 다른 길로 고국에 돌아가니라'$q$, 0
+select e.id, $q$동방박사들이 예루살렘을 떠난 후 어디로 피한 것을 본문이 언급합니까?$q$, $q$성전으로 올라갔다$q$, $q$다른 길로 고국에 돌아갔다$q$, $q$헤롯에게 보고하러 갔다$q$, $q$헷갈렸어요$q$, 1, $q$마 2:12 — '꿈에 헤롯에게로 돌아가지 말라 지시하심을 받아 다른 길로 고국에 돌아가니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉의 가족은 헤롯의 위협을 피해 어디로 피신하였습니까?$q$, $q$애굽으로 피신하였다$q$, $q$사마리아로 피신하였다$q$, $q$갈릴리로 피신하였다$q$, null, 0, $q$마 2:14 — '헤롯이 죽기까지 거기 있었으니 ... 애굽에서 내 아들을 불렀다'$q$, 1
+select e.id, $q$요셉의 가족은 헤롯의 위협을 피해 어디로 피신하였습니까?$q$, $q$애굽으로 피신하였다$q$, $q$사마리아로 피신하였다$q$, $q$갈릴리로 피신하였다$q$, $q$헷갈렸어요$q$, 0, $q$마 2:14 — '헤롯이 죽기까지 거기 있었으니 ... 애굽에서 내 아들을 불렀다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$동방박사 방문과 애굽 피신 기사가 기록된 성경 책은 어디입니까?$q$, $q$누가복음$q$, $q$마태복음$q$, $q$요한복음$q$, null, 1, $q$마 2:1-15에 동방박사 방문과 애굽 피신 기사가 기록됨$q$, 2
+select e.id, $q$예수님의 가족이 애굽에 머문 일은 무엇과 연결되었습니까?$q$, $q$헤롯이 가족을 보호한 일$q$, $q$선지자를 통해 하신 말씀이 이루어진 일$q$, $q$동방박사들이 길을 잃은 일$q$, $q$헷갈렸어요$q$, 1, $q$마 2:15 — '헤롯이 죽기까지 거기 있었으니 이는 주께서 선지자로 말씀하신 바 애굽에서 내 아들을 불렀다 함 을 이루려 하심이니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수의 부모는 유월절마다 어디로 갔습니까?$q$, $q$예루살렘으로 갔다$q$, $q$나사렛 회당으로 갔다$q$, $q$가버나움으로 갔다$q$, null, 0, $q$눅 2:41 — '그 부모가 해마다 유월절을 당하면 예루살렘으로 가더니'$q$, 0
+select e.id, $q$예수의 부모는 유월절마다 어디로 갔습니까?$q$, $q$예루살렘으로 갔다$q$, $q$나사렛 회당으로 갔다$q$, $q$가버나움으로 갔다$q$, $q$헷갈렸어요$q$, 0, $q$눅 2:41 — '그 부모가 해마다 유월절을 당하면 예루살렘으로 가더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수는 성전에서 율법교사들과 어떻게 하였습니까?$q$, $q$가르치고 책망하였다$q$, $q$듣기도 하고 질문하기도 하였다$q$, $q$침묵하며 앉아 있었다$q$, null, 1, $q$눅 2:46 — '사흘 후에 성전에서 만나니 그가 선생들 중에 앉으사 듣기도 하시며 묻기도 하시니'$q$, 1
+select e.id, $q$예수는 성전에서 율법교사들과 어떻게 하였습니까?$q$, $q$가르치고 책망하였다$q$, $q$듣기도 하고 질문하기도 하였다$q$, $q$침묵하며 앉아 있었다$q$, $q$헷갈렸어요$q$, 1, $q$눅 2:46 — '사흘 후에 성전에서 만나니 그가 선생들 중에 앉으사 듣기도 하시며 묻기도 하시니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$소년 예수의 성전 사건이 기록된 성경 책은 어디입니까?$q$, $q$마가복음$q$, $q$누가복음$q$, $q$마태복음$q$, null, 1, $q$눅 2:41-52에 소년 예수의 성전 방문과 성장 기사가 기록됨$q$, 2
+select e.id, $q$성전에서 예수님은 부모에게 무엇을 알려 주셨습니까?$q$, $q$요셉의 일을 돕느라 늦었다고 하셨다$q$, $q$아버지의 집에 있어야 한다고 말씀하셨다$q$, $q$다시는 성전에 오지 않겠다고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$눅 2:49 — '예수께서 가라사대 어찌하여 나를 찾으셨나이까 내가 내 아버지 집에 있어야 될 줄을 알지 못하셨 나이까 하시니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수가 세례를 받으실 때 하늘에서 들린 음성은 무엇이었습니까?$q$, $q$회개하라 천국이 가까웠느니라$q$, $q$이는 내 사랑하는 아들이요 내 기뻐하는 자라$q$, $q$이 사람이 하나님의 아들이니라$q$, null, 1, $q$마 3:17 — '이는 내 사랑하는 아들이요 내 기뻐하는 자라 하시니라'$q$, 0
+select e.id, $q$예수님이 세례를 받으실 때 하늘에서 어떤 음성이 들렸습니까?$q$, $q$회개하라는 요한의 음성$q$, $q$예수님은 사랑하는 아들이라는 음성$q$, $q$예수님이 제자라는 음성$q$, $q$헷갈렸어요$q$, 1, $q$마 3:17 — '이는 내 사랑하는 아들이요 내 기뻐하는 자라 하시니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$세례 요한은 예수님께 세례를 주고 나서 어떻게 증거하였습니까?$q$, $q$예수님을 향해 더욱 많은 세례를 구하였다$q$, $q$예수를 왕으로 세우려 하였다$q$, $q$그가 하나님의 아들이심을 증거하였노라 하였다$q$, null, 2, $q$요 1:34 — '내가 보고 그가 하나님의 아들이심을 증거하였노라 하니라'$q$, 1
+select e.id, $q$성령은 어떻게 했습니까?$q$, $q$예수님을 향해 더욱 많은 세례를 구하였다$q$, $q$예수를 왕으로 세우려 하였다$q$, $q$비둘기같이 자기에게 내려 오심을 보시더니$q$, $q$헷갈렸어요$q$, 2, $q$막 1:10 — '곧 물에서 올라 오실새 하늘이 갈라짐과 성령이 비둘기같이 자기에게 내려 오심을 보시더니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님의 세례 기사가 기록된 성경 책은 어디입니까?$q$, $q$마태복음, 마가복음, 누가복음, 요한복음$q$, $q$요한복음만$q$, $q$마태복음과 누가복음만$q$, null, 0, $q$마 3:13-17, 막 1:9-11, 눅 3:21-22, 요 1:29-34에 모두 기록됨$q$, 2
+select e.id, $q$요한은 성령이 머무는 분을 누구로 알게 되었습니까?$q$, $q$성령으로 세례를 주시는 분$q$, $q$예루살렘 성전의 제사장$q$, $q$광야에서만 사는 선지자$q$, $q$헷갈렸어요$q$, 0, $q$요 1:33 — '나도 그를 알지 못하였으나 나를 보내어 물로 세례를 주라 하신 그이가 나에게 말씀하시되 성령이 내려서 누구 위에든지 머무는 것을 보거든 그가 곧 성령으로 세례를 주는 이인 줄 알라 하셨기에'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 광야에서 몇 일 동안 시험을 받으셨습니까?$q$, $q$삼 일$q$, $q$사십 일$q$, $q$칠 일$q$, null, 1, $q$마 4:2 — '사십 일을 밤낮으로 금식하신 후에 주리신지라'$q$, 0
+select e.id, $q$예수님은 광야에서 몇 일 동안 시험을 받으셨습니까?$q$, $q$삼 일$q$, $q$사십 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 1, $q$마 4:2 — '사십 일을 밤낮으로 금식하신 후에 주리신지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 마귀의 시험에 어떻게 대응하셨습니까?$q$, $q$성경 말씀으로 대답하셨다$q$, $q$기적으로 마귀를 물리치셨다$q$, $q$침묵하시고 물러나셨다$q$, null, 0, $q$마 4:4 — '예수께서 대답하여 가라사대 기록되었으되'$q$, 1
+select e.id, $q$예수님은 마귀의 시험에 어떻게 대응하셨습니까?$q$, $q$성경 말씀으로 대답하셨다$q$, $q$기적으로 마귀를 물리치셨다$q$, $q$침묵하시고 물러나셨다$q$, $q$헷갈렸어요$q$, 0, $q$마 4:4 — '예수께서 대답하여 가라사대 기록되었으되'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님의 광야 시험 기사가 기록된 성경 책은 어디입니까?$q$, $q$마태복음, 마가복음, 누가복음$q$, $q$마태복음만$q$, $q$요한복음만$q$, null, 0, $q$마 4:1-11, 막 1:12-13, 눅 4:1-13에 광야 시험 기사가 기록됨$q$, 2
+select e.id, $q$예수님은 무엇이라고 말했습니까?$q$, $q$말씀하기를 주 너의 하나님을 시험치 말라 했다$q$, $q$삼 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 0, $q$눅 4:12 — '예수께서 대답하여 가라사대 말씀하기를 주 너의 하나님을 시험치 말라 하였느니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 처음 부르신 제자들은 어떤 직업을 가지고 있었습니까?$q$, $q$목수였다$q$, $q$세리였다$q$, $q$어부였다$q$, null, 2, $q$막 1:16 — '시몬과 그 형제 안드레가 바다에 그물 던지는 것을 보시니 저희는 어부라'$q$, 0
+select e.id, $q$예수님이 처음 부르신 제자들은 어떤 직업을 가지고 있었습니까?$q$, $q$목수였다$q$, $q$세리였다$q$, $q$어부였다$q$, $q$헷갈렸어요$q$, 2, $q$막 1:16 — '시몬과 그 형제 안드레가 바다에 그물 던지는 것을 보시니 저희는 어부라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야고보와 요한은 예수님의 부르심에 어떻게 하였습니까?$q$, $q$먼저 부친에게 허락을 받으러 갔다$q$, $q$다음에 따르겠다고 하였다$q$, $q$배와 부친을 버려두고 예수를 좇았다$q$, null, 2, $q$막 1:20 — '저희가 곧 배와 부친을 버려두고 예수를 좇으니라'$q$, 1
+select e.id, $q$야고보와 요한은 예수님의 부르심에 어떻게 하였습니까?$q$, $q$먼저 부친에게 허락을 받으러 갔다$q$, $q$다음에 따르겠다고 하였다$q$, $q$배와 부친을 버려두고 예수를 좇았다$q$, $q$헷갈렸어요$q$, 2, $q$막 1:20 — '저희가 곧 배와 부친을 버려두고 예수를 좇으니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$제자 부르심 기사가 기록된 성경 책은 어디입니까?$q$, $q$마태복음만$q$, $q$마가복음과 누가복음만$q$, $q$마가복음, 마태복음, 누가복음, 요한복음$q$, null, 2, $q$막 1:16-20, 마 4:18-22, 눅 5:1-11, 요 1:35-51에 기록됨$q$, 2
+select e.id, $q$베드로는 무엇이라고 말했습니까?$q$, $q$세리였다$q$, $q$목수였다$q$, $q$주여 나를 떠나소서 나는 죄인이로소이다 했다$q$, $q$헷갈렸어요$q$, 2, $q$눅 5:8 — '시몬 베드로가 이를 보고 예수의 무릎 아래 엎드려 가로되 주여 나를 떠나소서 나는 죄인이로소이다 하니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 산상수훈을 어디에서 가르치셨습니까?$q$, $q$회당에서 가르치셨다$q$, $q$바닷가에서 가르치셨다$q$, $q$산에 올라가 앉으셔서 가르치셨다$q$, null, 2, $q$마 5:1 — '예수께서 무리를 보시고 산에 올라가 앉으시니'$q$, 0
+select e.id, $q$예수님은 산상수훈을 어디에서 가르치셨습니까?$q$, $q$회당에서 가르치셨다$q$, $q$바닷가에서 가르치셨다$q$, $q$산에 올라가 앉으셔서 가르치셨다$q$, $q$헷갈렸어요$q$, 2, $q$마 5:1 — '예수께서 무리를 보시고 산에 올라가 앉으시니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$무리는 예수님의 가르침을 듣고 어떻게 여겼습니까?$q$, $q$아무 반응 없이 돌아갔다$q$, $q$권세 있는 자와 같다고 기이히 여겼다$q$, $q$서기관들보다 못하다고 하였다$q$, null, 1, $q$마 7:29 — '그 가르치시는 것이 권세 있는 자와 같고 저희 서기관들과 같지 아니함일러라'$q$, 1
+select e.id, $q$예수님은 마음이 가난한 사람이 무엇을 얻는다고 하셨습니까?$q$, $q$사람들의 칭찬만 받는다고 하셨다$q$, $q$천국이 그들의 것이라고 하셨다$q$, $q$땅의 권력을 얻는다고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$마 5:3 — '심령이 가난한 자는 복이 있나니 천국이 저희 것임이요'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$산상수훈이 기록된 성경 책은 어디입니까?$q$, $q$요한복음$q$, $q$마태복음$q$, $q$누가복음$q$, null, 1, $q$마 5:1-7:29에 산상수훈 전체가 기록됨$q$, 2
+select e.id, $q$제자들의 착한 행실은 사람들에게 어떤 영향을 주어야 합니까?$q$, $q$착한 일을 아무도 보지 못하게 해야 한다$q$, $q$하늘 아버지께 영광을 돌리게 해야 한다$q$, $q$제자들만 칭찬하게 해야 한다$q$, $q$헷갈렸어요$q$, 1, $q$마 5:16 — '이같이 너희 빛을 사람 앞에 비취게 하여 저희로 너희 착한 행실을 보고 하늘에 계신 너희 아버지께 영광을 돌리게 하라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 우리의 의가 누구의 의보다 나아야 한다고 말씀하셨습니까?$q$, $q$제사장의 의$q$, $q$이방인의 의$q$, $q$서기관과 바리새인의 의$q$, null, 2, $q$마 5:20 — '서기관과 바리새인의 의보다 더 낫지 못하면'$q$, 0
+select e.id, $q$예수님은 우리의 의가 누구의 의보다 나아야 한다고 말씀하셨습니까?$q$, $q$제사장의 의$q$, $q$이방인의 의$q$, $q$서기관과 바리새인의 의$q$, $q$헷갈렸어요$q$, 2, $q$마 5:20 — '서기관과 바리새인의 의보다 더 낫지 못하면'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 원수에 대해 어떻게 하라고 가르치셨습니까?$q$, $q$악을 악으로 갚으라$q$, $q$원수를 사랑하고 박해하는 자를 위해 기도하라$q$, $q$재판으로 보복하라$q$, null, 1, $q$마 5:44 — '너희 원수를 사랑하며 너희를 박해하는 자를 위하여 기도하라'$q$, 1
+select e.id, $q$예수님은 원수에 대해 어떻게 하라고 가르치셨습니까?$q$, $q$악을 악으로 갚으라$q$, $q$원수를 사랑하고 박해하는 자를 위해 기도하라$q$, $q$재판으로 보복하라$q$, $q$헷갈렸어요$q$, 1, $q$마 5:44 — '너희 원수를 사랑하며 너희를 박해하는 자를 위하여 기도하라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이 가르침은 산상수훈의 어느 장에서 나옵니까?$q$, $q$누가복음 6장$q$, $q$마태복음 7장$q$, $q$마태복음 5장$q$, null, 2, $q$마 5:17-48에 율법의 더 깊은 의에 대한 가르침이 기록됨$q$, 2
+select e.id, $q$예수님은 하나님이 선인과 악인에게 어떻게 하신다고 말씀하셨습니까?$q$, $q$악한 사람에게는 햇빛도 주지 않으신다고 하셨다$q$, $q$선한 사람에게만 비를 주신다고 하셨다$q$, $q$햇빛과 비를 모두에게 주신다고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$마 5:45 — '이같이 한즉 하늘에 계신 너희 아버지의 아들이 되리니 이는 하나님이 그 해를 악인과 선인에게 비 취게 하시며 비를 의로운 자와 불의한 자에게 내리우심이니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 무엇을 먼저 구하라고 말씀하셨습니까?$q$, $q$하나님의 나라와 그 의$q$, $q$내일의 양식$q$, $q$이웃의 칭찬$q$, null, 0, $q$마 6:33 — '먼저 그의 나라와 그의 의를 구하라'$q$, 0
+select e.id, $q$예수님은 염려하는 자에게 무엇을 보라고 하셨습니까?$q$, $q$공중의 새와 들의 백합화$q$, $q$무덤가의 풀들$q$, $q$광야의 가시덤불$q$, $q$헷갈렸어요$q$, 0, $q$마 6:26 — '공중의 새를 보라' / 마 6:28 — '들의 백합화가 어떻게 자라는가'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 염려하는 자에게 무엇을 보라고 하셨습니까?$q$, $q$광야의 가시덤불$q$, $q$공중의 새와 들의 백합화$q$, $q$무덤가의 풀들$q$, null, 1, $q$마 6:26 — '공중의 새를 보라' / 마 6:28 — '들의 백합화가 어떻게 자라는가'$q$, 1
+select e.id, $q$예수님은 백합화가 어떻게 자란다고 말씀하셨습니까?$q$, $q$염려할수록 더 잘 자란다고 하셨다$q$, $q$수고하거나 길쌈하지 않아도 자란다고 하셨다$q$, $q$사람이 매일 옷을 입혀야 자란다고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$마 6:28 — '또 너희가 어찌 의복을 위하여 염려하느냐 들의 백합화가 어떻게 자라는가 생각하여 보아라 수고도 아니하고 길쌈도 아니하느니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$염려하지 말라는 가르침은 어느 본문에 나옵니까?$q$, $q$빌립보서 4장$q$, $q$요한복음 14장$q$, $q$마태복음 6장$q$, null, 2, $q$마 6:25-34에 염려하지 말고 하나님 나라를 구하라는 말씀이 기록됨$q$, 2
+select e.id, $q$예수님은 무엇을 먼저 구하라고 말씀하셨습니까?$q$, $q$이웃의 칭찬$q$, $q$내일의 양식$q$, $q$하나님의 나라와 그 의$q$, $q$헷갈렸어요$q$, 2, $q$마 6:33 — '먼저 그의 나라와 그의 의를 구하라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 12;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$폭풍이 일어날 때 예수님은 배에서 무엇을 하고 계셨습니까?$q$, $q$제자들을 가르치고 계셨다$q$, $q$주무시고 계셨다$q$, $q$기도하고 계셨다$q$, null, 1, $q$막 4:38 — '예수는 주무시는지라'$q$, 0
+select e.id, $q$폭풍이 일어날 때 예수님은 배에서 무엇을 하고 계셨습니까?$q$, $q$제자들을 가르치고 계셨다$q$, $q$주무시고 계셨다$q$, $q$기도하고 계셨다$q$, $q$헷갈렸어요$q$, 1, $q$막 4:38 — '예수는 주무시는지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 폭풍을 잠잠케 하신 후 제자들에게 무엇이라 하셨습니까?$q$, $q$아무 말씀도 하지 않으셨다$q$, $q$너희 믿음이 어디 있느냐 하셨다$q$, $q$폭풍이 두렵지 않았느냐 하셨다$q$, null, 1, $q$눅 8:25 — '제자들에게 이르시되 너희 믿음이 어디 있느냐 하시니'$q$, 1
+select e.id, $q$제자들은 무엇이라고 말했습니까?$q$, $q$아무 말씀도 하지 않으셨다$q$, $q$주여 구원하소서 우리가 죽겠나이다$q$, $q$폭풍이 두렵지 않았느냐 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$마 8:25 — '그 제자들이 나아와 깨우며 가로되 주여 구원하소서 우리가 죽겠나이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$폭풍을 잠잠케 하신 기사가 기록된 성경 책은 어디입니까?$q$, $q$요한복음만$q$, $q$마태복음과 요한복음$q$, $q$마가복음, 마태복음, 누가복음$q$, null, 2, $q$막 4:35-41, 마 8:23-27, 눅 8:22-25에 폭풍 잠잠 기사가 기록됨$q$, 2
+select e.id, $q$제자들이 두려워 깨우자 예수님은 어떻게 하셨습니까?$q$, $q$배에서 내려 혼자 걸어가셨다$q$, $q$제자들에게 헤엄쳐 가라고 하셨다$q$, $q$바람과 물결을 꾸짖어 잠잠하게 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$눅 8:24 — '제자들이 나아와 깨워 가로되 주여 주여 우리가 죽겠나이다 한대 예수께서 잠을 깨사 바람과 물결 을 꾸짖으시니 이에 그쳐 잔잔하여지더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 13;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$혈루증 여인이 예수님 옷에 손을 대자 어떻게 되었습니까?$q$, $q$병이 서서히 나았다$q$, $q$아무런 변화가 없었다$q$, $q$혈루증이 즉시 그쳤다$q$, null, 2, $q$막 5:29 — '예수의 뒤로 와서 그 옷가에 손을 대니 혈루증이 즉시 그쳤더라'$q$, 0
+select e.id, $q$혈루증 여인이 예수님 옷에 손을 대자 어떻게 되었습니까?$q$, $q$병이 서서히 나았다$q$, $q$아무런 변화가 없었다$q$, $q$혈루증이 즉시 그쳤다$q$, $q$헷갈렸어요$q$, 2, $q$막 5:29 — '예수의 뒤로 와서 그 옷가에 손을 대니 혈루증이 즉시 그쳤더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$혈루증 여인은 치유된 후 예수님 앞에서 어떻게 하였습니까?$q$, $q$두려워하여 떨며 와서 엎드려 모든 사실을 여쭈었다$q$, $q$즉시 집으로 돌아갔다$q$, $q$예수님을 더 따르겠다고 하였다$q$, null, 0, $q$막 5:33 — '두려워하여 떨며 와서 그 앞에 엎드려 모든 사실을 여짜온대'$q$, 1
+select e.id, $q$혈루증 여인은 치유된 후 예수님 앞에서 어떻게 하였습니까?$q$, $q$두려워하여 떨며 와서 엎드려 모든 사실을 여쭈었다$q$, $q$즉시 집으로 돌아갔다$q$, $q$예수님을 더 따르겠다고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$막 5:33 — '두려워하여 떨며 와서 그 앞에 엎드려 모든 사실을 여짜온대'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야이로의 딸과 혈루증 여인 기사가 기록된 성경 책은 어디입니까?$q$, $q$마가복음, 마태복음, 누가복음$q$, $q$요한복음만$q$, $q$마태복음만$q$, null, 0, $q$막 5:21-43, 마 9:18-26, 눅 8:40-56에 두 기적 기사가 기록됨$q$, 2
+select e.id, $q$베드로는 무엇이라고 말했습니까?$q$, $q$주여 무 리가 옹위하여 미나이다$q$, $q$병이 서서히 나았다$q$, $q$아무런 변화가 없었다$q$, $q$헷갈렸어요$q$, 0, $q$눅 8:45 — '예수께서 가라사대 내게 손을 댄 자가 누구냐 하시니 다 아니라 할 때에 베드로가 가로되 주여 무 리가 옹위하여 미나이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 14;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$오병이어 기적에서 먹은 남자의 수는 몇 명이었습니까?$q$, $q$만 명$q$, $q$삼천 명$q$, $q$오천 명$q$, null, 2, $q$막 6:44 — '떡을 먹은 남자가 오천 명이었더라'$q$, 0
+select e.id, $q$예수님은 굶주린 무리를 보시고 어떻게 하셨습니까?$q$, $q$무리에게 집으로 돌아가라 하셨다$q$, $q$제자들에게 곧 음식을 사 오라 하셨다$q$, $q$불쌍히 여기사 여러 가지로 가르치셨다$q$, $q$헷갈렸어요$q$, 2, $q$막 6:34 — '그 목자 없는 양 같음을 인하여 불쌍히 여기사 이에 여러 가지로 가르치시더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 굶주린 무리를 보시고 어떻게 하셨습니까?$q$, $q$무리에게 집으로 돌아가라 하셨다$q$, $q$제자들에게 곧 음식을 사 오라 하셨다$q$, $q$불쌍히 여기사 여러 가지로 가르치셨다$q$, null, 2, $q$막 6:34 — '그 목자 없는 양 같음을 인하여 불쌍히 여기사 이에 여러 가지로 가르치시더라'$q$, 1
+select e.id, $q$오병이어 기적에서 먹은 남자의 수는 몇 명이었습니까?$q$, $q$만 명$q$, $q$삼천 명$q$, $q$오천 명$q$, $q$헷갈렸어요$q$, 2, $q$막 6:44 — '떡을 먹은 남자가 오천 명이었더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$오병이어 기적이 기록된 성경 책은 어디입니까?$q$, $q$마태복음과 요한복음만$q$, $q$마가복음만$q$, $q$마가복음, 마태복음, 누가복음, 요한복음$q$, null, 2, $q$막 6:34-44, 마 14:13-21, 눅 9:10-17, 요 6:1-13에 모두 기록됨$q$, 2
+select e.id, $q$예수님은 무엇이라고 말했습니까?$q$, $q$만 명$q$, $q$삼천 명$q$, $q$갈 것 없다 너희가 먹을 것을 주라$q$, $q$헷갈렸어요$q$, 2, $q$마 14:16 — '예수께서 가라사대 갈 것 없다 너희가 먹을 것을 주라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 15;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 변화산에 데려가신 제자는 누구입니까?$q$, $q$야고보, 요한, 빌립$q$, $q$베드로, 안드레, 요한$q$, $q$베드로, 야고보, 요한$q$, null, 2, $q$막 9:2 — '베드로와 야고보와 요한을 데리시고 따로 높은 산에 올라가셨더니'$q$, 0
+select e.id, $q$예수님이 변화산에 데려가신 제자는 누구입니까?$q$, $q$야고보, 요한, 빌립$q$, $q$베드로, 안드레, 요한$q$, $q$베드로, 야고보, 요한$q$, $q$헷갈렸어요$q$, 2, $q$막 9:2 — '베드로와 야고보와 요한을 데리시고 따로 높은 산에 올라가셨더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$제자들이 하늘 음성을 들었을 때 어떻게 하였습니까?$q$, $q$엎드려 심히 두려워하였다$q$, $q$큰 소리로 찬양하였다$q$, $q$산을 내려가자고 하였다$q$, null, 0, $q$마 17:6 — '제자들이 듣고 엎드리어 심히 두려워하니'$q$, 1
+select e.id, $q$제자들이 하늘 음성을 들었을 때 어떻게 하였습니까?$q$, $q$엎드려 심히 두려워하였다$q$, $q$큰 소리로 찬양하였다$q$, $q$산을 내려가자고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$마 17:6 — '제자들이 듣고 엎드리어 심히 두려워하니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$변화산 사건이 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$마가복음$q$, $q$요한계시록$q$, null, 1, $q$막 9:2-13에 변화산 기사가 기록됨$q$, 2
+select e.id, $q$두려워하던 제자들에게 예수님은 어떻게 하셨습니까?$q$, $q$제자들을 산 아래로 먼저 보내셨다$q$, $q$다가가 손을 대시며 두려워하지 말라고 하셨다$q$, $q$두려워하는 이유를 꾸짖기만 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$마 17:7 — '예수께서 나아가 저희에게 손을 대시며 가라사대 일어나라 두려워 말라 하신대'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 16;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 수난을 처음 예고하신 장소는 어디입니까?$q$, $q$예루살렘 성전 앞$q$, $q$갈릴리 바닷가$q$, $q$가이사랴 빌립보 근방$q$, null, 2, $q$막 8:27 — '가이사랴 빌립보 여러 마을로 나가실새'$q$, 0
+select e.id, $q$예수님이 수난을 처음 예고하신 장소는 어디입니까?$q$, $q$예루살렘 성전 앞$q$, $q$갈릴리 바닷가$q$, $q$가이사랴 빌립보 근방$q$, $q$헷갈렸어요$q$, 2, $q$막 8:27 — '가이사랴 빌립보 여러 마을로 나가실새'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베드로가 예수님의 수난 예고를 들은 후 어떻게 하였습니까?$q$, $q$아무 말도 하지 않았다$q$, $q$슬피 울며 물러갔다$q$, $q$예수를 붙들고 간하였다$q$, null, 2, $q$막 8:32 — '베드로가 예수를 붙들고 간하매'$q$, 1
+select e.id, $q$베드로가 예수님의 수난 예고를 들은 후 어떻게 하였습니까?$q$, $q$아무 말도 하지 않았다$q$, $q$슬피 울며 물러갔다$q$, $q$예수를 붙들고 간하였다$q$, $q$헷갈렸어요$q$, 2, $q$막 8:32 — '베드로가 예수를 붙들고 간하매'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$베드로의 고백 사건이 기록된 성경 책은 어디입니까?$q$, $q$갈라디아서$q$, $q$마태복음$q$, $q$사도행전$q$, null, 1, $q$마 16:13-23에 베드로의 고백과 수난 예고가 기록됨$q$, 2
+select e.id, $q$예수님은 기도하신 뒤 제자들에게 무엇을 물으셨습니까?$q$, $q$어디서 떡을 살지 물으셨다$q$, $q$사람들이 자신을 누구라고 하는지 물으셨다$q$, $q$누가 배신할 것인지 물으셨다$q$, $q$헷갈렸어요$q$, 1, $q$눅 9:18 — '예수께서 따로 기도하실 때에 제자들이 주와 함께 있더니 물어 가라사대 무리가 나를 누구라고 하 느냐'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 17;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$상처 입은 사람을 먼저 보고 피한 사람은 누구입니까?$q$, $q$제사장$q$, $q$선한 사마리아인$q$, $q$율법사$q$, null, 0, $q$눅 10:31 — '마침 한 제사장이 그 길로 내려가다가 그를 보고 피하여 지나가고'$q$, 0
+select e.id, $q$상처 입은 사람을 먼저 보고 피한 사람은 누구입니까?$q$, $q$제사장$q$, $q$선한 사마리아인$q$, $q$율법사$q$, $q$헷갈렸어요$q$, 0, $q$눅 10:31 — '마침 한 제사장이 그 길로 내려가다가 그를 보고 피하여 지나가고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$선한 사마리아인은 상처 입은 자에게 무엇을 하였습니까?$q$, $q$근처 마을에 소식을 알렸다$q$, $q$돈을 주고 다른 사람을 불렀다$q$, $q$기름과 포도주를 붓고 싸매어 주막으로 데려갔다$q$, null, 2, $q$눅 10:34 — '기름과 포도주를 그 상처에 붓고 싸매고 … 주막으로 데리고 가서'$q$, 1
+select e.id, $q$선한 사마리아인은 상처 입은 자에게 무엇을 하였습니까?$q$, $q$근처 마을에 소식을 알렸다$q$, $q$돈을 주고 다른 사람을 불렀다$q$, $q$기름과 포도주를 붓고 싸매어 주막으로 데려갔다$q$, $q$헷갈렸어요$q$, 2, $q$눅 10:34 — '기름과 포도주를 그 상처에 붓고 싸매고 … 주막으로 데리고 가서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$선한 사마리아인 비유가 기록된 성경 책은 어디입니까?$q$, $q$마태복음$q$, $q$요한복음$q$, $q$누가복음$q$, null, 2, $q$눅 10:25-37에 선한 사마리아인 비유가 기록됨$q$, 2
+select e.id, $q$예수님은 어떻게 했습니까?$q$, $q$그 일을 그냥 지나쳤다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$자비를 베푼 자니이다 예수께서 이르시되 가서 너도 이와 같이 하라고 했다 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$눅 10:37 — '가로되 자비를 베푼 자니이다 예수께서 이르시되 가서 너도 이와 같이 하라 하시니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 18;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아버지가 돌아온 아들에게 준 것은 무엇입니까?$q$, $q$양과 소와 비둘기$q$, $q$제일 좋은 옷, 가락지, 신발$q$, $q$금과 은과 밭$q$, null, 1, $q$눅 15:22 — '제일 좋은 옷을 내어다가 입히고 손에 가락지를 끼우고 발에 신을 신기라'$q$, 0
+select e.id, $q$아버지가 돌아온 아들에게 준 것은 무엇입니까?$q$, $q$양과 소와 비둘기$q$, $q$제일 좋은 옷, 가락지, 신발$q$, $q$금과 은과 밭$q$, $q$헷갈렸어요$q$, 1, $q$눅 15:22 — '제일 좋은 옷을 내어다가 입히고 손에 가락지를 끼우고 발에 신을 신기라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$돌아온 탕자를 아버지는 어떻게 맞이하였습니까?$q$, $q$살진 송아지를 잡아 기뻐하며 맞이하였다$q$, $q$형에게 판단을 맡겼다$q$, $q$문을 잠그고 돌려보냈다$q$, null, 0, $q$눅 15:23 — '살진 송아지를 끌어다가 잡으라 우리가 먹고 즐기자'$q$, 1
+select e.id, $q$돌아온 탕자를 아버지는 어떻게 맞이하였습니까?$q$, $q$살진 송아지를 잡아 기뻐하며 맞이하였다$q$, $q$형에게 판단을 맡겼다$q$, $q$문을 잠그고 돌려보냈다$q$, $q$헷갈렸어요$q$, 0, $q$눅 15:23 — '살진 송아지를 끌어다가 잡으라 우리가 먹고 즐기자'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$탕자의 귀환 비유가 기록된 성경 책은 어디입니까?$q$, $q$마가복음$q$, $q$누가복음$q$, $q$마태복음$q$, null, 1, $q$눅 15:11-32에 탕자의 귀환 비유가 기록됨$q$, 2
+select e.id, $q$아버지는 어떻게 했습니까?$q$, $q$금과 은과 밭$q$, $q$나와서 권한대$q$, $q$양과 소와 비둘기$q$, $q$헷갈렸어요$q$, 1, $q$눅 15:28 — '저가 노하여 들어가기를 즐겨 아니하거늘 아버지가 나와서 권한대'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 19;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나사로가 살던 마을은 어디입니까?$q$, $q$베다니$q$, $q$가버나움$q$, $q$나사렛$q$, null, 0, $q$요 11:1 — '마리아와 그 형제 마르다의 촌 베다니에 사는 나사로라'$q$, 0
+select e.id, $q$나사로가 살던 마을은 어디입니까?$q$, $q$베다니$q$, $q$가버나움$q$, $q$나사렛$q$, $q$헷갈렸어요$q$, 0, $q$요 11:1 — '마리아와 그 형제 마르다의 촌 베다니에 사는 나사로라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 나사로의 무덤 앞에서 어떻게 하셨습니까?$q$, $q$눈물을 흘리셨다$q$, $q$제자들에게 설교하셨다$q$, $q$기도문을 낭독하셨다$q$, null, 0, $q$요 11:35 — '예수께서 눈물을 흘리시더라'$q$, 1
+select e.id, $q$예수님은 나사로의 무덤 앞에서 어떻게 하셨습니까?$q$, $q$눈물을 흘리셨다$q$, $q$제자들에게 설교하셨다$q$, $q$기도문을 낭독하셨다$q$, $q$헷갈렸어요$q$, 0, $q$요 11:35 — '예수께서 눈물을 흘리시더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$나사로의 부활 기사가 기록된 성경 책은 어디입니까?$q$, $q$요한복음$q$, $q$사도행전$q$, $q$누가복음$q$, null, 0, $q$요 11:1-44에 나사로의 부활 기사가 기록됨$q$, 2
+select e.id, $q$유대인들은 무엇이라고 말했습니까?$q$, $q$이에 유대인들이 말하되 보라 그를 어떻게 사랑하였는가 하며다$q$, $q$다른 사람에게 책임을 돌렸다$q$, $q$그 일을 그냥 지나쳤다$q$, $q$헷갈렸어요$q$, 0, $q$요 11:36 — '이에 유대인들이 말하되 보라 그를 어떻게 사랑하였는가 하며'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 20;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 입성 때 타신 것은 무엇입니까?$q$, $q$말$q$, $q$낙타$q$, $q$나귀 새끼$q$, null, 2, $q$막 11:7 — '나귀 새끼를 예수께로 끌어다가 자기들의 겉옷을 얹어 놓으매 예수께서 타시니'$q$, 0
+select e.id, $q$예수님이 입성 때 타신 것은 무엇입니까?$q$, $q$말$q$, $q$낙타$q$, $q$나귀 새끼$q$, $q$헷갈렸어요$q$, 2, $q$막 11:7 — '나귀 새끼를 예수께로 끌어다가 자기들의 겉옷을 얹어 놓으매 예수께서 타시니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$무리는 예수님의 입성 때 어떻게 하였습니까?$q$, $q$겉옷과 나뭇가지를 길에 펴고 호산나를 외쳤다$q$, $q$잠잠히 서서 지켜보았다$q$, $q$성문을 닫고 들어오지 못하게 하였다$q$, null, 0, $q$막 11:8-9 — '겉옷을 길에 펴며 ... 호산나 찬송하리로다'$q$, 1
+select e.id, $q$무리는 예수님의 입성 때 어떻게 하였습니까?$q$, $q$겉옷과 나뭇가지를 길에 펴고 호산나를 외쳤다$q$, $q$잠잠히 서서 지켜보았다$q$, $q$성문을 닫고 들어오지 못하게 하였다$q$, $q$헷갈렸어요$q$, 0, $q$막 11:8-9 — '겉옷을 길에 펴며 ... 호산나 찬송하리로다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예루살렘 입성 기사가 기록된 성경 책은 어디입니까?$q$, $q$마가복음$q$, $q$로마서$q$, $q$사도행전$q$, null, 0, $q$막 11:1-11에 예루살렘 입성 기사가 기록됨$q$, 2
+select e.id, $q$예수님이 예루살렘에 들어가시자 성 안은 어떻게 되었습니까?$q$, $q$온 성이 술렁이며 예수님이 누구인지 물었다$q$, $q$성문이 닫혀 예수님이 들어가지 못했다$q$, $q$아무도 알아보지 못해 조용했다$q$, $q$헷갈렸어요$q$, 0, $q$마 21:10 — '예수께서 예루살렘에 들어가시니 온 성이 소동하여 가로되 이는 누구뇨 하거늘'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 21;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 성전에서 뒤엎으신 것은 무엇입니까?$q$, $q$제사장들의 제단$q$, $q$돈 바꾸는 자들의 상과 비둘기 파는 자들의 의자$q$, $q$서기관들의 책상$q$, null, 1, $q$막 11:15 — '돈 바꾸는 자들의 상과 비둘기 파는 자들의 의자를 둘러 엎으시며'$q$, 0
+select e.id, $q$예수님이 성전에서 뒤엎으신 것은 무엇입니까?$q$, $q$제사장들의 제단$q$, $q$돈 바꾸는 자들의 상과 비둘기 파는 자들의 의자$q$, $q$서기관들의 책상$q$, $q$헷갈렸어요$q$, 1, $q$막 11:15 — '돈 바꾸는 자들의 상과 비둘기 파는 자들의 의자를 둘러 엎으시며'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 성전을 어떤 곳이라 하셨습니까?$q$, $q$강도의 굴혈$q$, $q$장사하는 곳$q$, $q$기도하는 집$q$, null, 2, $q$막 11:17 — '내 집은 만민의 기도하는 집이라 칭함을 받으리라'$q$, 1
+select e.id, $q$예수님은 성전을 어떤 곳이라 하셨습니까?$q$, $q$강도의 굴혈$q$, $q$장사하는 곳$q$, $q$기도하는 집$q$, $q$헷갈렸어요$q$, 2, $q$막 11:17 — '내 집은 만민의 기도하는 집이라 칭함을 받으리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$성전 정화 기사가 기록된 성경 책은 어디입니까?$q$, $q$요한복음$q$, $q$사도행전$q$, $q$히브리서$q$, null, 0, $q$요 2:13-17에 성전 정화 기사가 기록됨$q$, 2
+select e.id, $q$예수님은 아이들의 찬미에 대해 어떻게 말씀하셨습니까?$q$, $q$하나님이 어린아이들의 찬미도 온전하게 하신다고 하셨다$q$, $q$아이들은 성전에 오면 안 된다고 하셨다$q$, $q$제자들이 아이들을 모두 내보내야 한다고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$마 21:16 — '예수께 말하되 저희의 하는 말을 듣느뇨 예수께서 가라사대 그렇다 어린 아기와 젖먹이들의 입에 서 나오는 찬미를 온전케 하셨나이다 함을 너희가 읽어 본 일이 없느냐 하시고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 22;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 최후의 만찬에서 배신을 예고한 제자는 누구입니까?$q$, $q$도마$q$, $q$베드로$q$, $q$유다$q$, null, 2, $q$막 14:18-20 — '열둘 중의 하나 곧 나와 함께 ... 자니라'$q$, 0
+select e.id, $q$예수님이 최후의 만찬에서 배신을 예고한 제자는 누구입니까?$q$, $q$도마$q$, $q$베드로$q$, $q$유다$q$, $q$헷갈렸어요$q$, 2, $q$막 14:18-20 — '열둘 중의 하나 곧 나와 함께 ... 자니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 만찬에서 떡과 잔을 나누시며 무엇이라 하셨습니까?$q$, $q$제자들을 돌려보내셨다$q$, $q$배신자를 책망하셨다$q$, $q$새 언약의 피라고 하셨다$q$, null, 2, $q$막 14:24 — '이것은 많은 사람을 위하여 흘리는 나의 피 곧 언약의 피니라'$q$, 1
+select e.id, $q$예수님은 만찬에서 떡과 잔을 나누시며 무엇이라 하셨습니까?$q$, $q$제자들을 돌려보내셨다$q$, $q$배신자를 책망하셨다$q$, $q$새 언약의 피라고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$막 14:24 — '이것은 많은 사람을 위하여 흘리는 나의 피 곧 언약의 피니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$최후의 만찬 직후에 일어난 사건은 무엇입니까?$q$, $q$빈 무덤 발견$q$, $q$겟세마네 기도$q$, $q$오순절 성령 강림$q$, null, 1, $q$막 14:26-32 — 찬미 후 감람 산으로 나가 겟세마네에서 기도하심$q$, 2
+select e.id, $q$최후의 만찬에서 예수님은 떡을 어떻게 하셨습니까?$q$, $q$혼자만 드시고 제자들에게 주지 않으셨다$q$, $q$축복하고 떼어 제자들에게 주셨다$q$, $q$떡을 모두 거두어 감추셨다$q$, $q$헷갈렸어요$q$, 1, $q$마 26:26 — '저희가 먹을 때에 예수께서 떡을 가지사 축복하시고 떼어 제자들을 주시며 가라사대 받아 먹으라 이것이 내 몸이니라 하시고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 23;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 기도하신 동산의 이름은 무엇입니까?$q$, $q$감람산$q$, $q$시온산$q$, $q$겟세마네$q$, null, 2, $q$막 14:32 — '저희가 겟세마네라 하는 곳에 이르매'$q$, 0
+select e.id, $q$예수님이 기도하신 동산의 이름은 무엇입니까?$q$, $q$감람산$q$, $q$시온산$q$, $q$겟세마네$q$, $q$헷갈렸어요$q$, 2, $q$막 14:32 — '저희가 겟세마네라 하는 곳에 이르매'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$겟세마네에서 예수님은 무엇을 하셨습니까?$q$, $q$제자들에게 마지막 설교를 하셨다$q$, $q$엎드려 아버지의 뜻대로 되기를 기도하셨다$q$, $q$홀로 산을 내려가셨다$q$, null, 1, $q$마 26:39 — '내 원대로 마옵시고 아버지의 원대로 하옵소서'$q$, 1
+select e.id, $q$겟세마네에서 예수님은 무엇을 하셨습니까?$q$, $q$제자들에게 마지막 설교를 하셨다$q$, $q$엎드려 아버지의 뜻대로 되기를 기도하셨다$q$, $q$홀로 산을 내려가셨다$q$, $q$헷갈렸어요$q$, 1, $q$마 26:39 — '내 원대로 마옵시고 아버지의 원대로 하옵소서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$겟세마네 기도 기사가 기록된 성경 책은 어디입니까?$q$, $q$사도행전$q$, $q$히브리서$q$, $q$마가복음$q$, null, 2, $q$막 14:32-42에 겟세마네 기도 기사가 기록됨$q$, 2
+select e.id, $q$사자는 어떻게 했습니까?$q$, $q$감람산$q$, $q$시온산$q$, $q$하늘로부터 예수께 나타나 힘을 돕었다$q$, $q$헷갈렸어요$q$, 2, $q$눅 22:43 — '사자가 하늘로부터 예수께 나타나 힘을 돕더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 24;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님을 체포하러 온 무리를 인도한 사람은 누구입니까?$q$, $q$유다$q$, $q$베드로$q$, $q$가야바$q$, null, 0, $q$막 14:43 — '열둘 중의 하나인 유다가 왔는데 대제사장들 ... 에게서 파송된 무리가 ... 그와 함께 하였더라'$q$, 0
+select e.id, $q$예수님을 체포하러 온 무리를 인도한 사람은 누구입니까?$q$, $q$유다$q$, $q$베드로$q$, $q$가야바$q$, $q$헷갈렸어요$q$, 0, $q$막 14:43 — '열둘 중의 하나인 유다가 왔는데 대제사장들 ... 에게서 파송된 무리가 ... 그와 함께 하였더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 체포될 때 제자들은 어떻게 하였습니까?$q$, $q$다 예수를 버리고 도망하였다$q$, $q$무릎을 꿇고 기도하였다$q$, $q$칼을 들고 싸웠다$q$, null, 0, $q$마 26:56 — '이에 제자들이 다 예수를 버리고 도망하니라'$q$, 1
+select e.id, $q$예수님이 체포될 때 제자들은 어떻게 하였습니까?$q$, $q$다 예수를 버리고 도망하였다$q$, $q$무릎을 꿇고 기도하였다$q$, $q$칼을 들고 싸웠다$q$, $q$헷갈렸어요$q$, 0, $q$마 26:56 — '이에 제자들이 다 예수를 버리고 도망하니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님 체포 기사가 기록된 성경 책은 어디입니까?$q$, $q$마가복음$q$, $q$갈라디아서$q$, $q$로마서$q$, null, 0, $q$막 14:43-52에 예수님 체포 기사가 기록됨$q$, 2
+select e.id, $q$체포하러 온 무리 앞에서 예수님은 어떻게 하셨습니까?$q$, $q$나아가 누구를 찾느냐고 물으셨다$q$, $q$제자들에게 먼저 도망치라고 하셨다$q$, $q$뒤로 물러나 숨으셨다$q$, $q$헷갈렸어요$q$, 0, $q$요 18:4 — '예수께서 그 당할 일을 다 아시고 나아가 가라사대 너희가 누구를 찾느냐'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 25;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌라도가 예수 대신 놓아준 사람은 누구입니까?$q$, $q$나사로$q$, $q$바라바$q$, $q$스데반$q$, null, 1, $q$마 27:26 — '바라바는 저희에게 놓아 주고 예수는 채찍질하고 십자가에 못 박히게 넘겨 주니라'$q$, 0
+select e.id, $q$빌라도 앞에서 예수님은 고소에 어떻게 대응하셨습니까?$q$, $q$변호사를 요청하셨다$q$, $q$아무 말씀도 대답하지 않으셨다$q$, $q$자신이 왕이 아니라고 부인하셨다$q$, $q$헷갈렸어요$q$, 1, $q$막 15:5 — '예수께서 아무 말씀도 더 대답지 아니하시니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌라도 앞에서 예수님은 고소에 어떻게 대응하셨습니까?$q$, $q$자신이 왕이 아니라고 부인하셨다$q$, $q$아무 말씀도 대답하지 않으셨다$q$, $q$변호사를 요청하셨다$q$, null, 1, $q$막 15:5 — '예수께서 아무 말씀도 더 대답지 아니하시니'$q$, 1
+select e.id, $q$바라바는 왜 감옥에 갇혀 있었습니까?$q$, $q$예수님의 제자였기 때문에 갇혀 있었다$q$, $q$민란과 살인 때문에 갇혀 있었다$q$, $q$성전에서 장사했기 때문에 갇혀 있었다$q$, $q$헷갈렸어요$q$, 1, $q$눅 23:19 — '이 바라바는 성중에서 일어난 민란과 살인을 인하여 옥에 갇힌 자러라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$빌라도 재판 기사가 기록된 성경 책은 어디입니까?$q$, $q$누가복음$q$, $q$사도행전$q$, $q$에베소서$q$, null, 0, $q$눅 23:1-25에 빌라도 재판 기사가 기록됨$q$, 2
+select e.id, $q$빌라도는 결국 백성의 요구를 어떻게 처리했습니까?$q$, $q$바라바를 놓아주고 예수님을 넘겨주었다$q$, $q$예수님과 바라바를 모두 풀어 주었다$q$, $q$재판을 멈추고 예수님을 보호했다$q$, $q$헷갈렸어요$q$, 0, $q$눅 23:25 — '저희의 구하는 자 곧 민란과 살인을 인하여 옥에 갇힌 자를 놓고 예수를 넘겨 주어 저희 뜻대로 하게 하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 26;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 십자가에서 마지막에 외치신 말씀은 무엇입니까?$q$, $q$다 이루었다$q$, $q$엘리 엘리$q$, $q$내가 목마르다$q$, null, 0, $q$요 19:30 — '다 이루었다 하시고 영혼이 떠나가시니라'$q$, 0
+select e.id, $q$십자가에 못 박은 사람들을 위해 예수님은 무엇을 기도하셨습니까?$q$, $q$그들을 용서해 달라고 기도하셨다$q$, $q$제자들이 복수하게 해 달라고 기도하셨다$q$, $q$그들을 당장 벌해 달라고 기도하셨다$q$, $q$헷갈렸어요$q$, 0, $q$눅 23:34 — '이에 예수께서 가라사대 아버지여 저희를 사하여 주옵소서 자기의 하는 것을 알지 못함이니이다 하시더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님이 자신을 못 박는 자들을 위해 보이신 태도는?$q$, $q$용서를 구하셨다$q$, $q$저주를 선언하셨다$q$, $q$침묵으로 외면하셨다$q$, null, 0, $q$눅 23:34 — '아버지 저들을 사하여 주옵소서'$q$, 1
+select e.id, $q$예수님은 함께 달린 사람에게 어떤 약속을 하셨습니까?$q$, $q$오늘 낙원에서 함께 있을 것이라고 하셨다$q$, $q$다음 날 다시 재판받을 것이라고 하셨다$q$, $q$로마 군인에게 풀려날 것이라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$눅 23:43 — '예수께서 이르시되 내가 진실로 네게 이르노니 오늘 네가 나와 함께 낙원에 있으리라 하시니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님의 십자가 사건은 어디에 기록되어 있습니까?$q$, $q$마태복음에만$q$, $q$요한복음에만$q$, $q$네 복음서 모두$q$, null, 2, $q$마 27, 막 15, 눅 23, 요 19 모두에 기록됨$q$, 2
+select e.id, $q$예수님이 죽으신 일을 본 백부장은 어떻게 반응했습니까?$q$, $q$예수님을 조롱하며 떠났다$q$, $q$제자들을 모두 붙잡으려 했다$q$, $q$하나님께 영광을 돌리며 예수님이 의인이라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$눅 23:47 — '백부장이 그 된 일을 보고 하나님께 영광을 돌려 가로되 이 사람은 정녕 의인이었도다 하고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 27;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님은 부활하신 후 며칠 동안 제자들에게 보이셨습니까?$q$, $q$사십 일$q$, $q$삼 일$q$, $q$팔십 일$q$, null, 0, $q$행 1:3 — '사십 일 동안 그들에게 보이시며'$q$, 0
+select e.id, $q$예수님은 부활하신 후 며칠 동안 제자들에게 보이셨습니까?$q$, $q$사십 일$q$, $q$삼 일$q$, $q$팔십 일$q$, $q$헷갈렸어요$q$, 0, $q$행 1:3 — '사십 일 동안 그들에게 보이시며'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$승천 직전 예수님이 제자들에게 주신 약속은 무엇입니까?$q$, $q$땅의 기업을 받음$q$, $q$곧바로 다시 오심$q$, $q$성령을 보내주실 것$q$, null, 2, $q$행 1:8 — '성령이 너희에게 임하시면 권능을 받고'$q$, 1
+select e.id, $q$승천 직전 예수님이 제자들에게 주신 약속은 무엇입니까?$q$, $q$땅의 기업을 받음$q$, $q$곧바로 다시 오심$q$, $q$성령을 보내주실 것$q$, $q$헷갈렸어요$q$, 2, $q$행 1:8 — '성령이 너희에게 임하시면 권능을 받고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$예수님의 승천 기사가 가장 자세히 기록된 책은 어디입니까?$q$, $q$사도행전$q$, $q$요한복음$q$, $q$히브리서$q$, null, 0, $q$행 1:9-11에 승천 기사가 자세히 기록됨$q$, 2
+select e.id, $q$제자들은 어떻게 했습니까?$q$, $q$자세히 하늘을 쳐다 보고 있는데 흰 옷 입은 두 사람이 저희 곁에 서서$q$, $q$삼 일$q$, $q$팔십 일$q$, $q$헷갈렸어요$q$, 0, $q$행 1:10 — '올라가실 때에 제자들이 자세히 하늘을 쳐다 보고 있는데 흰 옷 입은 두 사람이 저희 곁에 서서'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여호와께서 아브람에게 '네 자손에게 주리라' 하신 땅은 어디입니까?$q$, $q$애굽 땅$q$, $q$메소포타미아$q$, $q$가나안 땅$q$, null, 2, $q$창 12:7 — '여호와께서 아브람에게 나타나 ... 내가 이 땅을 네 자손에게 주리라'$q$, 0
+select e.id, $q$여호와의 말씀을 받은 아브람은 어떻게 행동하였습니까?$q$, $q$먼저 하란에 삼 년을 머물렀다$q$, $q$아내와 상의한 후 결정하였다$q$, $q$즉시 떠나 가나안 땅에 들어갔다$q$, $q$헷갈렸어요$q$, 2, $q$창 12:4-5 — '아브람이 ... 마침내 가나안 땅에 들어 갔더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여호와의 말씀을 받은 아브람은 어떻게 행동하였습니까?$q$, $q$아내와 상의한 후 결정하였다$q$, $q$즉시 떠나 가나안 땅에 들어갔다$q$, $q$먼저 하란에 삼 년을 머물렀다$q$, null, 1, $q$창 12:4-5 — '아브람이 ... 마침내 가나안 땅에 들어 갔더라'$q$, 1
+select e.id, $q$여호와께서 아브람에게 '네 자손에게 주리라' 하신 땅은 어디입니까?$q$, $q$메소포타미아$q$, $q$가나안 땅$q$, $q$애굽 땅$q$, $q$헷갈렸어요$q$, 1, $q$창 12:7 — '여호와께서 아브람에게 나타나 ... 내가 이 땅을 네 자손에게 주리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함의 부르심 기사는 성경 어느 책 몇 장에 기록되어 있습니까?$q$, $q$창세기 6장$q$, $q$창세기 12장$q$, $q$출애굽기 3장$q$, null, 1, $q$창 12:1-9에 아브람을 향한 부르심과 가나안 이주가 기록됨$q$, 2
+select e.id, $q$하나님은 아브람에게 그 땅에 대해 무엇을 약속하셨습니까?$q$, $q$아브람이 그 땅을 떠나야 한다고 하셨다$q$, $q$그 땅을 아브람의 자손에게 주겠다고 하셨다$q$, $q$그 땅을 다른 왕에게 넘기겠다고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 12:7 — '여호와께서 아브람에게 나타나 가라사대 내가 이 땅을 네 자손에게 주리라 하신지라 그가 자기에게 나타나신 여호와를 위하여 그 곳에 단을 쌓고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$롯이 눈을 들어 바라보고 선택한 땅은 어디입니까?$q$, $q$헤브론 산지$q$, $q$요단 들$q$, $q$브엘세바 광야$q$, null, 1, $q$창 13:10-11 — '롯이 눈을 들어 요단 들을 바라본즉 ... 그 온 땅에 물이 넉넉하니'$q$, 0
+select e.id, $q$롯이 눈을 들어 바라보고 선택한 땅은 어디입니까?$q$, $q$헤브론 산지$q$, $q$요단 들$q$, $q$브엘세바 광야$q$, $q$헷갈렸어요$q$, 1, $q$창 13:10-11 — '롯이 눈을 들어 요단 들을 바라본즉 ... 그 온 땅에 물이 넉넉하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$롯이 떠난 후 아브람은 어디에 장막을 옮겨 단을 쌓았습니까?$q$, $q$모리아 산$q$, $q$헤브론 마므레 상수리 수풀$q$, $q$브엘세바$q$, null, 1, $q$창 13:18 — '아브람이 장막을 옮겨 헤브론에 있는 마므레 상수리 수풀에 이르러 거하며 단을 쌓았더라'$q$, 1
+select e.id, $q$롯은 어떻게 했습니까?$q$, $q$모리아 산$q$, $q$요단 온 들을 택하고 동으로 옮기니 그들이 서로 떠난지라$q$, $q$브엘세바$q$, $q$헷갈렸어요$q$, 1, $q$창 13:11 — '그러므로 롯이 요단 온 들을 택하고 동으로 옮기니 그들이 서로 떠난지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브람과 롯의 분리 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$13장$q$, $q$19장$q$, $q$15장$q$, null, 0, $q$창 13:1-18에 아브람과 롯의 분리와 헤브론 이주가 기록됨$q$, 2
+select e.id, $q$아브람은 어떻게 했습니까?$q$, $q$장막을 옮겨 헤브론에 있는 마므레 상수리 수풀에 이르러 거$q$, $q$브엘세바 광야$q$, $q$헤브론 산지$q$, $q$헷갈렸어요$q$, 0, $q$창 13:18 — '이에 아브람이 장막을 옮겨 헤브론에 있는 마므레 상수리 수풀에 이르러 거하며 거기서 여호와를 위하여 단을 쌓았더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여호와께서 아브람의 믿음을 무엇으로 여기셨습니까?$q$, $q$제물로$q$, $q$율법 준수로$q$, $q$의로$q$, null, 2, $q$창 15:6 — '아브람이 여호와를 믿으니 여호와께서 이를 그의 의로 여기시고'$q$, 0
+select e.id, $q$여호와께서 아브람의 믿음을 무엇으로 여기셨습니까?$q$, $q$제물로$q$, $q$율법 준수로$q$, $q$의로$q$, $q$헷갈렸어요$q$, 2, $q$창 15:6 — '아브람이 여호와를 믿으니 여호와께서 이를 그의 의로 여기시고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$언약을 위해 쪼개 놓은 고기 위에 솔개가 내리자 아브람은 어떻게 하였습니까?$q$, $q$그대로 두고 기다렸다$q$, $q$제단에 불을 붙였다$q$, $q$솔개를 쫓았다$q$, null, 2, $q$창 15:11 — '솔개가 그 사체 위에 내릴 때에는 아브람이 쫓았더라'$q$, 1
+select e.id, $q$언약을 위해 쪼개 놓은 고기 위에 솔개가 내리자 아브람은 어떻게 하였습니까?$q$, $q$그대로 두고 기다렸다$q$, $q$제단에 불을 붙였다$q$, $q$솔개를 쫓았다$q$, $q$헷갈렸어요$q$, 2, $q$창 15:11 — '솔개가 그 사체 위에 내릴 때에는 아브람이 쫓았더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브람의 믿음이 의로 여겨진 기사는 성경 어느 책에 기록되어 있습니까?$q$, $q$이사야$q$, $q$창세기$q$, $q$출애굽기$q$, null, 1, $q$창 15:1-21에 별 언약과 '믿음이 의로' 기록이 담겨 있음$q$, 2
+select e.id, $q$하나님은 아브람과 언약을 세우며 무엇을 약속하셨습니까?$q$, $q$아브람의 집을 바로 빼앗겠다고 하셨다$q$, $q$넓은 땅을 아브람의 자손에게 주겠다고 하셨다$q$, $q$아브람에게 애굽으로 돌아가라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 15:18 — '그 날에 여호와께서 아브람으로 더불어 언약을 세워 가라사대 내가 이 땅을 애굽강에서부터 그 큰 강 유브라데까지 네 자손에게 주노니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브람이 이스마엘을 낳을 때 아브람의 나이는 몇 세였습니까?$q$, $q$팔십 륙 세$q$, $q$구십 구 세$q$, $q$칠십 오 세$q$, null, 0, $q$창 16:16 — '하갈이 아브람에게 이스마엘을 낳을 때에 아브람이 팔십 륙 세이었더라'$q$, 0
+select e.id, $q$하갈이 광야로 도망쳤을 때 여호와의 사자는 그에게 무엇을 명하였습니까?$q$, $q$여주인에게로 돌아가 복종하라$q$, $q$애굽으로 가라$q$, $q$이스마엘을 낳으면 돌아오라$q$, $q$헷갈렸어요$q$, 0, $q$창 16:9 — '네 여주인에게로 돌아가서 그 수하에 복종하라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하갈이 광야로 도망쳤을 때 여호와의 사자는 그에게 무엇을 명하였습니까?$q$, $q$이스마엘을 낳으면 돌아오라$q$, $q$여주인에게로 돌아가 복종하라$q$, $q$애굽으로 가라$q$, null, 1, $q$창 16:9 — '네 여주인에게로 돌아가서 그 수하에 복종하라'$q$, 1
+select e.id, $q$사자는 무엇이라고 말했습니까?$q$, $q$칠십 오 세$q$, $q$내가 네 자손으로 크게 번성하여 그 수가 많아 셀 수 없게 하 리라$q$, $q$구십 구 세$q$, $q$헷갈렸어요$q$, 1, $q$창 16:10 — '여호와의 사자가 또 그에게 이르되 내가 네 자손으로 크게 번성하여 그 수가 많아 셀 수 없게 하 리라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하갈과 이스마엘 이야기는 창세기 몇 장에 기록되어 있습니까?$q$, $q$12장$q$, $q$21장$q$, $q$16장$q$, null, 2, $q$창 16:1-16에 하갈의 임신과 광야 도피, 여호와 사자의 지시가 기록됨$q$, 2
+select e.id, $q$아브람이 이스마엘을 낳을 때 아브람의 나이는 몇 세였습니까?$q$, $q$구십 구 세$q$, $q$칠십 오 세$q$, $q$팔십 륙 세$q$, $q$헷갈렸어요$q$, 2, $q$창 16:16 — '하갈이 아브람에게 이스마엘을 낳을 때에 아브람이 팔십 륙 세이었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$할례 언약 때 아브람의 나이는 몇 세였습니까?$q$, $q$구십구 세$q$, $q$팔십 세$q$, $q$백 세$q$, null, 0, $q$창 17:1 — '아브람의 구십구세 때에 여호와께서 아브람에게 나타나서'$q$, 0
+select e.id, $q$할례 언약 때 아브람의 나이는 몇 세였습니까?$q$, $q$구십구 세$q$, $q$팔십 세$q$, $q$백 세$q$, $q$헷갈렸어요$q$, 0, $q$창 17:1 — '아브람의 구십구세 때에 여호와께서 아브람에게 나타나서'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$할례 언약이 주어졌을 때 아브라함의 집에서 실제로 어떻게 행하였습니까?$q$, $q$다음 해로 할례를 미루었다$q$, $q$아브라함만 먼저 할례를 받았다$q$, $q$그 집의 모든 남자가 할례를 받았다$q$, null, 2, $q$창 17:27 — '그 집의 모든 남자 ... 가 다 그와 함께 할례를 받았더니'$q$, 1
+select e.id, $q$아브람이 엎드리자 하나님은 어떻게 하셨습니까?$q$, $q$아브람을 애굽으로 보내셨다$q$, $q$할례를 취소하셨다$q$, $q$그에게 다시 말씀하셨다$q$, $q$헷갈렸어요$q$, 2, $q$창 17:3 — '아브람이 엎드린대 하나님이 또 그에게 일러 가라사대'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함이라는 새 이름이 주어진 기사는 어느 성경 책에 기록되어 있습니까?$q$, $q$로마서$q$, $q$느헤미야$q$, $q$창세기$q$, null, 2, $q$창 17:1-27에 할례 언약과 아브람→아브라함 개명이 기록됨$q$, 2
+select e.id, $q$아브라함은 할례를 받을 때 몇 살이었습니까?$q$, $q$백이십 세였다$q$, $q$팔십 세였다$q$, $q$구십구 세였다$q$, $q$헷갈렸어요$q$, 2, $q$창 17:24 — '아브라함이 그 양피를 벤 때는 구십구세이었고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$손님들이 아브라함을 찾아온 장소는 어디입니까?$q$, $q$브엘세바$q$, $q$헤브론 성문$q$, $q$마므레 상수리 수풀$q$, null, 2, $q$창 18:1 — '여호와께서 마므레의 상수리 수풀 근처에서 아브라함에게 나타나시니라'$q$, 0
+select e.id, $q$손님들이 아브라함을 찾아온 장소는 어디입니까?$q$, $q$브엘세바$q$, $q$헤브론 성문$q$, $q$마므레 상수리 수풀$q$, $q$헷갈렸어요$q$, 2, $q$창 18:1 — '여호와께서 마므레의 상수리 수풀 근처에서 아브라함에게 나타나시니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아들을 낳을 것이라는 말을 들은 사라는 어떻게 했습니까?$q$, $q$소리 내어 울었다$q$, $q$속으로 웃었다$q$, $q$하나님께 감사했다$q$, null, 1, $q$창 18:12 — '사라가 속으로 웃고 이르되 내가 노쇠하였고'$q$, 1
+select e.id, $q$아들을 낳을 것이라는 말을 들은 사라는 어떻게 했습니까?$q$, $q$소리 내어 울었다$q$, $q$속으로 웃었다$q$, $q$하나님께 감사했다$q$, $q$헷갈렸어요$q$, 1, $q$창 18:12 — '사라가 속으로 웃고 이르되 내가 노쇠하였고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이 사건이 기록된 성경 책은 무엇입니까?$q$, $q$창세기$q$, $q$민수기$q$, $q$출애굽기$q$, null, 0, $q$창 18:1-15에 세 손님 방문과 약속이 기록됨$q$, 2
+select e.id, $q$사라는 웃은 일을 두려워하며 어떻게 말했습니까?$q$, $q$웃지 않았다고 부인했다$q$, $q$하나님을 처음 보았다고 했다$q$, $q$아브라함이 웃었다고 둘러댔다$q$, $q$헷갈렸어요$q$, 0, $q$창 18:15 — '사라가 두려워서 승인치 아니하여 가로되 내가 웃지 아니하였나이다 가라사대 아니라 네가 웃었느 니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함이 마지막으로 의인의 수를 몇 명까지 낮추어 간구하였습니까?$q$, $q$이십 명$q$, $q$오십 명$q$, $q$십 명$q$, null, 2, $q$창 18:32 — '혹 거기서 십 인을 찾으시면 어찌 하시려나이까 ... 십 인을 인하여도 멸하지 아니하리라'$q$, 0
+select e.id, $q$아브라함은 소돔을 위해 의인의 수를 어떻게 간구하였습니까?$q$, $q$소돔을 용서해 달라고만 구하였다$q$, $q$한 번만 간구하고 침묵하였다$q$, $q$여러 번 반복해 숫자를 낮추어 구하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 18:23-32 — 아브라함이 오십 명에서 십 명까지 반복해 간구함$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함은 소돔을 위해 의인의 수를 어떻게 간구하였습니까?$q$, $q$한 번만 간구하고 침묵하였다$q$, $q$여러 번 반복해 숫자를 낮추어 구하였다$q$, $q$소돔을 용서해 달라고만 구하였다$q$, null, 1, $q$창 18:23-32 — 아브라함이 오십 명에서 십 명까지 반복해 간구함$q$, 1
+select e.id, $q$아브라함은 무엇이라고 말했습니까?$q$, $q$오십 명$q$, $q$티끌과 같은 나라도 감히 주께 고하나이다$q$, $q$이십 명$q$, $q$헷갈렸어요$q$, 1, $q$창 18:27 — '아브라함이 말씀하여 가로되 티끌과 같은 나라도 감히 주께 고하나이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함의 소돔 중보 기도는 성경 어느 책에 기록되어 있습니까?$q$, $q$창세기$q$, $q$시편$q$, $q$예레미야$q$, null, 0, $q$창 18:16-33에 아브라함의 소돔을 위한 중보 간구가 기록됨$q$, 2
+select e.id, $q$아브라함이 마지막으로 의인의 수를 몇 명까지 낮추어 간구하였습니까?$q$, $q$십 명$q$, $q$오십 명$q$, $q$이십 명$q$, $q$헷갈렸어요$q$, 0, $q$창 18:32 — '혹 거기서 십 인을 찾으시면 어찌 하시려나이까 ... 십 인을 인하여도 멸하지 아니하리라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$롯의 처는 소돔을 탈출할 때 뒤를 돌아보아 무엇이 되었습니까?$q$, $q$돌 조각$q$, $q$재 더미$q$, $q$소금 기둥$q$, null, 2, $q$창 19:26 — '롯의 아내는 뒤를 돌아보았으므로 소금 기둥이 되었더라'$q$, 0
+select e.id, $q$천사가 롯에게 떠나라 재촉하자 롯은 어떻게 하였습니까?$q$, $q$이웃에게 알리러 갔다$q$, $q$즉시 달려 나갔다$q$, $q$지체하여 천사가 손을 잡아 이끌었다$q$, $q$헷갈렸어요$q$, 2, $q$창 19:16 — '롯이 지체하매 그 사람들이 롯의 손과 ... 손을 잡아 이끌어 성 밖에 두니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$천사가 롯에게 떠나라 재촉하자 롯은 어떻게 하였습니까?$q$, $q$지체하여 천사가 손을 잡아 이끌었다$q$, $q$즉시 달려 나갔다$q$, $q$이웃에게 알리러 갔다$q$, null, 0, $q$창 19:16 — '롯이 지체하매 그 사람들이 롯의 손과 ... 손을 잡아 이끌어 성 밖에 두니'$q$, 1
+select e.id, $q$롯은 천사들의 재촉에 어떻게 반응했습니까?$q$, $q$그렇게 하지 말아 달라고 부탁했다$q$, $q$즉시 아무 말 없이 순종했다$q$, $q$소돔으로 다시 돌아가겠다고 했다$q$, $q$헷갈렸어요$q$, 0, $q$창 19:18 — '롯이 그들에게 이르되 내 주여 그리 마옵소서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$소돔 멸망과 롯 구출 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$13장$q$, $q$22장$q$, $q$19장$q$, null, 2, $q$창 19:1-29에 소돔 멸망과 롯 가족 구출 사건이 기록됨$q$, 2
+select e.id, $q$롯의 처는 소돔을 탈출할 때 뒤를 돌아보아 무엇이 되었습니까?$q$, $q$재 더미$q$, $q$돌 조각$q$, $q$소금 기둥$q$, $q$헷갈렸어요$q$, 2, $q$창 19:26 — '롯의 아내는 뒤를 돌아보았으므로 소금 기둥이 되었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 9;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아비멜렉은 아브라함에게 사라를 돌려보내며 무엇을 함께 주었습니까?$q$, $q$금과 은과 토지$q$, $q$양과 소와 노비$q$, $q$떡과 포도주$q$, null, 1, $q$창 20:14 — '아비멜렉이 양과 소와 노비를 취하여 아브라함에게 주고 그 아내 사라도 그에게 돌려보내고'$q$, 0
+select e.id, $q$아비멜렉이 사라를 취한 것에 대해 아비멜렉은 자신의 행동을 어떻게 설명하였습니까?$q$, $q$바로의 명령을 따랐다$q$, $q$온전한 마음과 깨끗한 손으로 행하였다$q$, $q$신하들이 권하여 어쩔 수 없었다$q$, $q$헷갈렸어요$q$, 1, $q$창 20:5 — '나는 온전한 마음과 깨끗한 손으로 이렇게 하였나이다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아비멜렉이 사라를 취한 것에 대해 아비멜렉은 자신의 행동을 어떻게 설명하였습니까?$q$, $q$바로의 명령을 따랐다$q$, $q$신하들이 권하여 어쩔 수 없었다$q$, $q$온전한 마음과 깨끗한 손으로 행하였다$q$, null, 2, $q$창 20:5 — '나는 온전한 마음과 깨끗한 손으로 이렇게 하였나이다'$q$, 1
+select e.id, $q$아비멜렉은 아브라함에게 무엇을 물었습니까?$q$, $q$어느 땅을 팔 것인지 물었다$q$, $q$왜 전쟁을 시작했는지 물었다$q$, $q$왜 그렇게 했는지 이유를 물었다$q$, $q$헷갈렸어요$q$, 2, $q$창 20:10 — '아비멜렉이 또 아브라함에게 이르되 네가 무슨 의견으로 이렇게 하였느냐'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아비멜렉과 아브라함의 만남 기사는 어느 성경 책에 기록되어 있습니까?$q$, $q$사무엘상$q$, $q$여호수아$q$, $q$창세기$q$, null, 2, $q$창 20:1-18에 그랄에서의 아브라함과 아비멜렉 사건이 기록됨$q$, 2
+select e.id, $q$아비멜렉은 아브라함에게 사라를 돌려보내며 무엇을 함께 주었습니까?$q$, $q$떡과 포도주$q$, $q$금과 은과 토지$q$, $q$양과 소와 노비$q$, $q$헷갈렸어요$q$, 2, $q$창 20:14 — '아비멜렉이 양과 소와 노비를 취하여 아브라함에게 주고 그 아내 사라도 그에게 돌려보내고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 10;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사라는 이삭을 낳고 하나님이 자신을 어떻게 하셨다고 하였습니까?$q$, $q$웃게 하셨다$q$, $q$높이셨다$q$, $q$눈물을 닦아 주셨다$q$, null, 0, $q$창 21:6 — '사라가 가로되 하나님이 나로 웃게 하시니'$q$, 0
+select e.id, $q$사라는 이삭을 낳고 하나님이 자신을 어떻게 하셨다고 하였습니까?$q$, $q$웃게 하셨다$q$, $q$높이셨다$q$, $q$눈물을 닦아 주셨다$q$, $q$헷갈렸어요$q$, 0, $q$창 21:6 — '사라가 가로되 하나님이 나로 웃게 하시니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하갈이 물이 다 떨어지자 아이에 대해 어떻게 행동하였습니까?$q$, $q$아이를 수풀 아래 두고 떨어져 방성대곡하였다$q$, $q$아이를 이스마엘에게 맡겼다$q$, $q$아이를 안고 계속 걸었다$q$, null, 0, $q$창 21:15-16 — '그 아이를 관목 아래 두고 ... 방성대곡하니'$q$, 1
+select e.id, $q$하갈이 물이 다 떨어지자 아이에 대해 어떻게 행동하였습니까?$q$, $q$아이를 수풀 아래 두고 떨어져 방성대곡하였다$q$, $q$아이를 이스마엘에게 맡겼다$q$, $q$아이를 안고 계속 걸었다$q$, $q$헷갈렸어요$q$, 0, $q$창 21:15-16 — '그 아이를 관목 아래 두고 ... 방성대곡하니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이삭 탄생과 하갈 추방 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$21장$q$, $q$25장$q$, $q$17장$q$, null, 0, $q$창 21:1-21에 이삭 출생, 이스마엘과 하갈의 추방이 기록됨$q$, 2
+select e.id, $q$하나님은 하갈에게 어떤 위로를 주셨습니까?$q$, $q$아이의 소리를 들으셨으니 두려워하지 말라고 하셨다$q$, $q$아이를 혼자 두고 떠나라고 하셨다$q$, $q$이삭에게 돌아가지 말라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$창 21:17 — '하나님이 그 아이의 소리를 들으시므로 하나님의 사자가 하늘에서부터 하갈을 불러 가라사대 하갈 아 무슨 일이냐 두려워 말라 하나님이 거기 있는 아이의 소리를 들으셨나니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 11;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함이 번제할 어린 양 대신 드린 것은 무엇입니까?$q$, $q$비둘기 두 마리$q$, $q$소 한 마리$q$, $q$뿔이 수풀에 걸린 숫양$q$, null, 2, $q$창 22:13 — '아브라함이 ... 뿔이 수풀에 걸린 숫양을 ... 가져다가 번제로 드렸더라'$q$, 0
+select e.id, $q$이삭이 번제 재료는 있는데 어린 양이 없다고 묻자 아브라함은 뭐라 대답하였습니까?$q$, $q$내가 사 오리라$q$, $q$하나님께 맡기고 계속 가자$q$, $q$하나님이 자기를 위하여 친히 준비하시리라$q$, $q$헷갈렸어요$q$, 2, $q$창 22:8 — '아브라함이 가로되 아들아 번제할 어린 양은 하나님이 자기를 위하여 친히 준비하시리라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이삭이 번제 재료는 있는데 어린 양이 없다고 묻자 아브라함은 뭐라 대답하였습니까?$q$, $q$내가 사 오리라$q$, $q$하나님께 맡기고 계속 가자$q$, $q$하나님이 자기를 위하여 친히 준비하시리라$q$, null, 2, $q$창 22:8 — '아브라함이 가로되 아들아 번제할 어린 양은 하나님이 자기를 위하여 친히 준비하시리라'$q$, 1
+select e.id, $q$아브라함은 무엇이라고 말했습니까?$q$, $q$비둘기 두 마리$q$, $q$소 한 마리$q$, $q$내가 여기 있나이다 했다$q$, $q$헷갈렸어요$q$, 2, $q$창 22:11 — '여호와의 사자가 하늘에서부터 그를 불러 가라사대 아브라함아 아브라함아 하시는지라 아브라함이 가로되 내가 여기 있나이다 하매'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함이 이삭을 번제로 드리려 한 사건은 성경 어느 책에 기록되어 있습니까?$q$, $q$레위기$q$, $q$히브리서$q$, $q$창세기$q$, null, 2, $q$창 22:1-14에 모리아 산에서의 이삭 번제 시험 기사가 기록됨$q$, 2
+select e.id, $q$아브라함이 번제할 어린 양 대신 드린 것은 무엇입니까?$q$, $q$비둘기 두 마리$q$, $q$소 한 마리$q$, $q$뿔이 수풀에 걸린 숫양$q$, $q$헷갈렸어요$q$, 2, $q$창 22:13 — '아브라함이 ... 뿔이 수풀에 걸린 숫양을 ... 가져다가 번제로 드렸더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 12;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함이 막벨라 굴과 밭을 사기 위해 에브론에게 지불한 은은 얼마입니까?$q$, $q$사백 세겔$q$, $q$천 세겔$q$, $q$오십 세겔$q$, null, 0, $q$창 23:16 — '은 사백 세겔을 달아 에브론에게 주었더니'$q$, 0
+select e.id, $q$사라가 죽었을 때 아브라함은 어떻게 하였습니까?$q$, $q$사라를 위해 슬퍼하며 애통하였다$q$, $q$이삭에게 소식을 먼저 전하였다$q$, $q$즉시 장사 터를 구하러 떠났다$q$, $q$헷갈렸어요$q$, 0, $q$창 23:2 — '아브라함이 들어가서 사라를 위하여 슬퍼하며 애통하다가'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사라가 죽었을 때 아브라함은 어떻게 하였습니까?$q$, $q$이삭에게 소식을 먼저 전하였다$q$, $q$사라를 위해 슬퍼하며 애통하였다$q$, $q$즉시 장사 터를 구하러 떠났다$q$, null, 1, $q$창 23:2 — '아브라함이 들어가서 사라를 위하여 슬퍼하며 애통하다가'$q$, 1
+select e.id, $q$헷 사람들은 아브라함의 요청에 어떻게 반응했습니까?$q$, $q$장사할 곳을 절대 주지 않겠다고 했다$q$, $q$아브라함에게 대답하려고 나섰다$q$, $q$아브라함을 성 밖으로 쫓아냈다$q$, $q$헷갈렸어요$q$, 1, $q$창 23:5 — '헷족속이 아브라함에게 대답하여 가로되'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$사라의 죽음과 막벨라 굴 구입 기사는 창세기 몇 장입니까?$q$, $q$23장$q$, $q$27장$q$, $q$20장$q$, null, 0, $q$창 23:1-20에 사라의 사망과 막벨라 굴 매입이 기록됨$q$, 2
+select e.id, $q$아브라함이 막벨라 굴과 밭을 사기 위해 에브론에게 지불한 은은 얼마입니까?$q$, $q$사백 세겔$q$, $q$천 세겔$q$, $q$오십 세겔$q$, $q$헷갈렸어요$q$, 0, $q$창 23:16 — '은 사백 세겔을 달아 에브론에게 주었더니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 13;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이삭은 리브가를 인도하여 어느 장막으로 들였습니까?$q$, $q$자기 장막$q$, $q$모친 사라의 장막$q$, $q$아버지 아브라함의 장막$q$, null, 1, $q$창 24:67 — '이삭이 리브가를 인도하여 모친 사라의 장막으로 들이고'$q$, 0
+select e.id, $q$아브라함의 종이 물을 청하자 리브가는 어떻게 행동하였습니까?$q$, $q$먼저 누구인지 물었다$q$, $q$종과 낙타들에게도 물을 길어 주었다$q$, $q$물만 주고 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$창 24:19-20 — '낙타를 위하여도 물을 길어 ... 모든 낙타에게 먹이니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아브라함의 종이 물을 청하자 리브가는 어떻게 행동하였습니까?$q$, $q$종과 낙타들에게도 물을 길어 주었다$q$, $q$먼저 누구인지 물었다$q$, $q$물만 주고 돌아갔다$q$, null, 0, $q$창 24:19-20 — '낙타를 위하여도 물을 길어 ... 모든 낙타에게 먹이니라'$q$, 1
+select e.id, $q$아브라함의 종은 리브가에게 무엇을 부탁했습니까?$q$, $q$물을 조금 마시게 해 달라고 부탁했다$q$, $q$가족을 숨겨 달라고 부탁했다$q$, $q$이삭에게 바로 가 달라고 부탁했다$q$, $q$헷갈렸어요$q$, 0, $q$창 24:45 — '내가 묵도하기를 마치지 못하여 리브가가 물 항아리를 어깨에 메고 나와서 우물로 내려와 긷기로 내가 그에게 이르기를 청컨대 내게 마시우라 한즉'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이삭과 리브가의 혼인 이야기는 성경 어느 책 몇 장에 기록되어 있습니까?$q$, $q$창세기 26장$q$, $q$창세기 24장$q$, $q$룻기 1장$q$, null, 1, $q$창 24:1-67에 아브라함의 종이 리브가를 찾아 이삭에게 데려오는 이야기가 기록됨$q$, 2
+select e.id, $q$이삭은 리브가를 인도하여 어느 장막으로 들였습니까?$q$, $q$아버지 아브라함의 장막$q$, $q$모친 사라의 장막$q$, $q$자기 장막$q$, $q$헷갈렸어요$q$, 1, $q$창 24:67 — '이삭이 리브가를 인도하여 모친 사라의 장막으로 들이고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 14;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에서가 야곱에게 장자의 명분을 판 것은 무엇을 받고서입니까?$q$, $q$양과 소$q$, $q$떡과 팥죽$q$, $q$은 삼십$q$, null, 1, $q$창 25:34 — '야곱이 떡과 팥죽을 에서에게 주매 에서가 먹으며 마시고'$q$, 0
+select e.id, $q$에서는 들에서 돌아왔을 때 어떤 상태였습니까?$q$, $q$아버지에게 축복을 받으러 갔다$q$, $q$몹시 피곤하고 배가 고팠다$q$, $q$사냥감을 많이 가져와 기뻐했다$q$, $q$헷갈렸어요$q$, 1, $q$창 25:29 — '에서가 들에서부터 돌아와서 심히 곤비하여'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에서는 장자의 명분을 팔고 일어나서 어떻게 하였습니까?$q$, $q$일어나서 갔다$q$, $q$뉘우치고 야곱에게 돌려달라 하였다$q$, $q$아버지 이삭에게 고하였다$q$, null, 0, $q$창 25:34 — '에서가 먹으며 마시고 일어나서 갔으니 에서가 장자의 명분을 경홀히 여김이었더라'$q$, 1
+select e.id, $q$야곱은 에서에게 먼저 무엇을 팔라고 했습니까?$q$, $q$장자의 명분$q$, $q$사냥한 고기$q$, $q$아버지의 장막$q$, $q$헷갈렸어요$q$, 0, $q$창 25:31 — '야곱이 가로되 형의 장자의 명분을 오늘날 내게 팔라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에서와 야곱의 장자권 거래는 창세기 몇 장에 기록되어 있습니까?$q$, $q$27장$q$, $q$29장$q$, $q$25장$q$, null, 2, $q$창 25:19-34에 야곱과 에서의 출생 및 장자권 매매 이야기가 기록됨$q$, 2
+select e.id, $q$에서가 야곱에게 장자의 명분을 판 것은 무엇을 받고서입니까?$q$, $q$은 삼십$q$, $q$양과 소$q$, $q$떡과 팥죽$q$, $q$헷갈렸어요$q$, 2, $q$창 25:34 — '야곱이 떡과 팥죽을 에서에게 주매 에서가 먹으며 마시고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 15;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이삭이 야곱을 에서로 착각하게 된 이유는 무엇입니까?$q$, $q$리브가가 이삭 옆에 없었다$q$, $q$눈이 완전히 멀어 아무것도 보지 못하였다$q$, $q$야곱의 손에 털이 있어 분별치 못하였다$q$, null, 2, $q$창 27:23 — '그 손이 형 에서의 손과 같이 털이 있으므로 능히 분별치 못하고 축복하였더라'$q$, 0
+select e.id, $q$이삭이 야곱을 에서로 착각하게 된 이유는 무엇입니까?$q$, $q$리브가가 이삭 옆에 없었다$q$, $q$눈이 완전히 멀어 아무것도 보지 못하였다$q$, $q$야곱의 손에 털이 있어 분별치 못하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 27:23 — '그 손이 형 에서의 손과 같이 털이 있으므로 능히 분별치 못하고 축복하였더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에서가 아버지의 말을 듣고 어떻게 반응하였습니까?$q$, $q$야곱을 즉시 쫓아갔다$q$, $q$말없이 들에 나갔다$q$, $q$방성대곡하며 자기도 축복해 달라 하였다$q$, null, 2, $q$창 27:34 — '에서가 그 아비의 말을 듣고 방성대곡하며 아비에게 이르되 내게도 축복하소서'$q$, 1
+select e.id, $q$에서가 아버지의 말을 듣고 어떻게 반응하였습니까?$q$, $q$야곱을 즉시 쫓아갔다$q$, $q$말없이 들에 나갔다$q$, $q$방성대곡하며 자기도 축복해 달라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 27:34 — '에서가 그 아비의 말을 듣고 방성대곡하며 아비에게 이르되 내게도 축복하소서'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱이 이삭의 축복을 가로챈 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$27장$q$, $q$25장$q$, $q$32장$q$, null, 0, $q$창 27:1-45에 야곱의 속임수와 이삭의 축복 이야기가 기록됨$q$, 2
+select e.id, $q$이삭은 무엇이라고 말했습니까?$q$, $q$네 아우가 간교하게 와서 네 복을 빼앗았도다$q$, $q$눈이 완전히 멀어 아무것도 보지 못하였다$q$, $q$리브가가 이삭 옆에 없었다$q$, $q$헷갈렸어요$q$, 0, $q$창 27:35 — '이삭이 가로되 네 아우가 간교하게 와서 네 복을 빼앗았도다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 16;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱은 자기가 베고 잔 돌을 일어나 무엇으로 세웠습니까?$q$, $q$기둥으로 세웠다$q$, $q$강에 던졌다$q$, $q$제단에 놓았다$q$, null, 0, $q$창 28:18 — '야곱이 아침에 일찌기 일어나 베개하였던 돌을 가져 기둥으로 세우고'$q$, 0
+select e.id, $q$야곱은 꿈에서 깨어 여호와가 그곳에 계신다는 것을 알고 어떻게 말하였습니까?$q$, $q$이 땅이 두렵도다 이곳은 하나님의 집이라 하였다$q$, $q$즉시 무릎 꿇고 기도하였다$q$, $q$내가 하나님을 만났으니 기쁘도다 하였다$q$, $q$헷갈렸어요$q$, 0, $q$창 28:17 — '야곱이 두려워하여 가로되 이 곳이 두렵도다 이것이 다름 아닌 하나님의 전이요 하늘의 문이로다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱은 꿈에서 깨어 여호와가 그곳에 계신다는 것을 알고 어떻게 말하였습니까?$q$, $q$즉시 무릎 꿇고 기도하였다$q$, $q$이 땅이 두렵도다 이곳은 하나님의 집이라 하였다$q$, $q$내가 하나님을 만났으니 기쁘도다 하였다$q$, null, 1, $q$창 28:17 — '야곱이 두려워하여 가로되 이 곳이 두렵도다 이것이 다름 아닌 하나님의 전이요 하늘의 문이로다'$q$, 1
+select e.id, $q$야곱은 자기가 베고 잔 돌을 일어나 무엇으로 세웠습니까?$q$, $q$강에 던졌다$q$, $q$기둥으로 세웠다$q$, $q$제단에 놓았다$q$, $q$헷갈렸어요$q$, 1, $q$창 28:18 — '야곱이 아침에 일찌기 일어나 베개하였던 돌을 가져 기둥으로 세우고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱이 벧엘에서 꿈을 꾼 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$32장$q$, $q$28장$q$, $q$35장$q$, null, 1, $q$창 28:10-22에 야곱의 벧엘 꿈과 서원이 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$제단에 놓았다$q$, $q$되실 것이요$q$, $q$강에 던졌다$q$, $q$헷갈렸어요$q$, 1, $q$창 28:21 — '나로 평안히 아비 집으로 돌아가게 하시오면 여호와께서 나의 하나님이 되실 것이요'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 17;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱은 라헬을 아내로 얻기 위해 라반을 위해 몇 년 동안 봉사하였습니까?$q$, $q$이 년$q$, $q$칠 년$q$, $q$십 년$q$, null, 1, $q$창 29:20 — '야곱이 라헬을 위하여 칠 년 동안 봉사하였으나'$q$, 0
+select e.id, $q$야곱은 라헬을 아내로 얻기 위해 라반을 위해 몇 년 동안 봉사하였습니까?$q$, $q$이 년$q$, $q$칠 년$q$, $q$십 년$q$, $q$헷갈렸어요$q$, 1, $q$창 29:20 — '야곱이 라헬을 위하여 칠 년 동안 봉사하였으나'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라반은 라헬 대신 레아를 야곱에게 준 사실을 어떻게 정당화하였습니까?$q$, $q$야곱이 일을 다 마치지 못했다고 하였다$q$, $q$라헬이 아직 어리다고 하였다$q$, $q$이 고장에서 언니보다 아우를 먼저 주는 것은 관례가 아니라 하였다$q$, null, 2, $q$창 29:26 — '우리 지방에서는 언니보다 아우를 먼저 주는 것이 관례가 아니니라'$q$, 1
+select e.id, $q$라반은 라헬 대신 레아를 야곱에게 준 사실을 어떻게 정당화하였습니까?$q$, $q$야곱이 일을 다 마치지 못했다고 하였다$q$, $q$라헬이 아직 어리다고 하였다$q$, $q$이 고장에서 언니보다 아우를 먼저 주는 것은 관례가 아니라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 29:26 — '우리 지방에서는 언니보다 아우를 먼저 주는 것이 관례가 아니니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱이 레아와 라헬을 아내로 맞이한 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$24장$q$, $q$29장$q$, $q$31장$q$, null, 1, $q$창 29:1-30에 야곱이 라반의 집에서 봉사하고 두 아내를 얻는 이야기가 기록됨$q$, 2
+select e.id, $q$야곱은 어떻게 했습니까?$q$, $q$십 년$q$, $q$그대로 하여 그 칠 일을 채우매 라반이 딸 라헬도 그에게 아내로 주고$q$, $q$이 년$q$, $q$헷갈렸어요$q$, 1, $q$창 29:28 — '야곱이 그대로 하여 그 칠 일을 채우매 라반이 딸 라헬도 그에게 아내로 주고'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 18;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라헬이 아들을 낳고 '다시 다른 아들을 더하시기를 원하노라'며 지은 이름은 무엇입니까?$q$, $q$르우벤$q$, $q$시므온$q$, $q$요셉$q$, null, 2, $q$창 30:24 — '그 이름을 요셉이라 하니 여호와는 다시 다른 아들을 내게 더하시기를 원하노라 함이었더라'$q$, 0
+select e.id, $q$라헬은 자녀가 없자 야곱에게 어떻게 하였습니까?$q$, $q$혼자 하나님께 기도하였다$q$, $q$레아에게 도움을 청하였다$q$, $q$야곱에게 아들을 낳아 달라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 30:1 — '라헬이 자기가 야곱에게 아들을 낳지 못함을 보고 그 형을 시기하여 야곱에게 이르되 내게 자식을 낳게 하라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라헬은 자녀가 없자 야곱에게 어떻게 하였습니까?$q$, $q$야곱에게 아들을 낳아 달라 하였다$q$, $q$레아에게 도움을 청하였다$q$, $q$혼자 하나님께 기도하였다$q$, null, 0, $q$창 30:1 — '라헬이 자기가 야곱에게 아들을 낳지 못함을 보고 그 형을 시기하여 야곱에게 이르되 내게 자식을 낳게 하라'$q$, 1
+select e.id, $q$레아는 무엇이라고 말했습니까?$q$, $q$복되도다 하고 그 이름을 갓이라 했다$q$, $q$시므온$q$, $q$르우벤$q$, $q$헷갈렸어요$q$, 0, $q$창 30:11 — '레아가 가로되 복되도다 하고 그 이름을 갓이라 하였으며'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱의 열두 아들 탄생 이야기는 창세기 어느 장에 주로 기록되어 있습니까?$q$, $q$37-38장$q$, $q$35-36장$q$, $q$29-30장$q$, null, 2, $q$창 29:31-30:24에 야곱의 아들들 출생과 이름의 의미가 기록됨$q$, 2
+select e.id, $q$라헬이 아들을 낳고 '다시 다른 아들을 더하시기를 원하노라'며 지은 이름은 무엇입니까?$q$, $q$시므온$q$, $q$르우벤$q$, $q$요셉$q$, $q$헷갈렸어요$q$, 2, $q$창 30:24 — '그 이름을 요셉이라 하니 여호와는 다시 다른 아들을 내게 더하시기를 원하노라 함이었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 19;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱과 라반이 맺은 계약에서 야곱의 품삯은 무엇으로 정해졌습니까?$q$, $q$양떼의 절반$q$, $q$흰 양 전부$q$, $q$아롱지고 점 있고 검은 양과 염소$q$, null, 2, $q$창 30:32 — '아롱진 자와 점 있는 자와 모든 검은 자를 내 품삯으로 하리이다'$q$, 0
+select e.id, $q$야곱과 라반이 맺은 계약에서 야곱의 품삯은 무엇으로 정해졌습니까?$q$, $q$양떼의 절반$q$, $q$흰 양 전부$q$, $q$아롱지고 점 있고 검은 양과 염소$q$, $q$헷갈렸어요$q$, 2, $q$창 30:32 — '아롱진 자와 점 있는 자와 모든 검은 자를 내 품삯으로 하리이다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라반이 자주 계약 내용을 바꾸자 야곱은 어떻게 하였습니까?$q$, $q$새 계약서를 요청하였다$q$, $q$라반에게 항의하고 고향으로 떠났다$q$, $q$나뭇가지를 이용해 양을 번성하게 하였다$q$, null, 2, $q$창 30:37-39 — 야곱이 껍질 벗긴 나뭇가지를 이용해 자신의 몫이 되는 양을 번성시킴$q$, 1
+select e.id, $q$라반이 자주 계약 내용을 바꾸자 야곱은 어떻게 하였습니까?$q$, $q$새 계약서를 요청하였다$q$, $q$라반에게 항의하고 고향으로 떠났다$q$, $q$나뭇가지를 이용해 양을 번성하게 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 30:37-39 — 야곱이 껍질 벗긴 나뭇가지를 이용해 자신의 몫이 되는 양을 번성시킴$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱의 양떼 계약과 번성 이야기는 창세기 몇 장에 기록되어 있습니까?$q$, $q$30-31장$q$, $q$33-34장$q$, $q$28-29장$q$, null, 0, $q$창 30:25-31:16에 야곱과 라반의 품삯 계약과 야곱의 번성이 기록됨$q$, 2
+select e.id, $q$감옥에서도 하나님은 야곱에게 어떻게 하셨습니까?$q$, $q$야곱과 함께하시고 은혜를 주셨다$q$, $q$양떼의 절반$q$, $q$흰 양 전부$q$, $q$헷갈렸어요$q$, 0, $q$창 31:3 — '여호와께서 야곱에게 이르시되 네 조상의 땅, 네 족속에게로 돌아가라 내가 너와 함께 있으리라 하 신지라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 20;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라반과 야곱이 화해의 표로 쌓은 것은 무엇입니까?$q$, $q$돌 무더기$q$, $q$나무 기둥$q$, $q$흙 단$q$, null, 0, $q$창 31:46 — '야곱이 형제들에게 돌을 모으라 하니 그들이 돌을 취하여 무더기를 이루매'$q$, 0
+select e.id, $q$라반과 야곱이 화해의 표로 쌓은 것은 무엇입니까?$q$, $q$돌 무더기$q$, $q$나무 기둥$q$, $q$흙 단$q$, $q$헷갈렸어요$q$, 0, $q$창 31:46 — '야곱이 형제들에게 돌을 모으라 하니 그들이 돌을 취하여 무더기를 이루매'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라반은 야곱 일행을 따라잡은 후 어떻게 작별하였습니까?$q$, $q$일부 재산을 돌려달라 요구하고 갔다$q$, $q$야곱을 책망하고 돌아갔다$q$, $q$손자들과 딸들에게 입맞추며 축복하고 돌아갔다$q$, null, 2, $q$창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 ... 고향으로 돌아갔더라'$q$, 1
+select e.id, $q$야곱은 어떻게 했습니까?$q$, $q$일부 재산을 돌려달라 요구하고 갔다$q$, $q$야곱을 책망하고 돌아갔다$q$, $q$그것을 갈르엣이라 칭했다$q$, $q$헷갈렸어요$q$, 2, $q$창 31:47 — '라반은 그것을 여갈사하두다라 칭하였고 야곱은 그것을 갈르엣이라 칭하였으니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱과 라반의 언약 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$31장$q$, $q$35장$q$, $q$29장$q$, null, 0, $q$창 31:17-55에 야곱의 도피와 라반과의 추격 및 언약이 기록됨$q$, 2
+select e.id, $q$라반은 어떻게 했습니까?$q$, $q$아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복$q$, $q$흙 단$q$, $q$나무 기둥$q$, $q$헷갈렸어요$q$, 0, $q$창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 떠나 고향으로 돌아 갔더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 21;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱이 씨름 후 받은 새 이름은 무엇입니까?$q$, $q$이삭$q$, $q$이스라엘$q$, $q$아브라함$q$, null, 1, $q$창 32:28 — '네 이름을 다시는 야곱이라 부를 것이 아니요 이스라엘이라 부를 것이니'$q$, 0
+select e.id, $q$씨름 상대가 날이 새니 가게 해 달라 하자 야곱은 어떻게 응답하였습니까?$q$, $q$이름을 물어보았다$q$, $q$축복하지 않으면 가게 하지 않겠다 하였다$q$, $q$즉시 놓아 주었다$q$, $q$헷갈렸어요$q$, 1, $q$창 32:26 — '야곱이 가로되 당신이 내게 축복하지 아니하면 가게 하지 아니하겠나이다'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$씨름 상대가 날이 새니 가게 해 달라 하자 야곱은 어떻게 응답하였습니까?$q$, $q$축복하지 않으면 가게 하지 않겠다 하였다$q$, $q$이름을 물어보았다$q$, $q$즉시 놓아 주었다$q$, null, 0, $q$창 32:26 — '야곱이 가로되 당신이 내게 축복하지 아니하면 가게 하지 아니하겠나이다'$q$, 1
+select e.id, $q$야곱이 씨름 후 받은 새 이름은 무엇입니까?$q$, $q$이스라엘$q$, $q$이삭$q$, $q$아브라함$q$, $q$헷갈렸어요$q$, 0, $q$창 32:28 — '네 이름을 다시는 야곱이라 부를 것이 아니요 이스라엘이라 부를 것이니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$얍복강 씨름과 이스라엘이라는 이름이 기록된 성경 책은 어디입니까?$q$, $q$창세기$q$, $q$출애굽기$q$, $q$호세아$q$, null, 0, $q$창 32:24-32에 얍복강 씨름과 새 이름 이스라엘 수여가 기록됨$q$, 2
+select e.id, $q$야곱이 이름을 묻자 그 사람은 어떻게 했습니까?$q$, $q$이름 대신 야곱을 축복했다$q$, $q$자기 이름을 자세히 알려 주었다$q$, $q$야곱을 다시 에서에게 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$창 32:29 — '야곱이 청하여 가로되 당신의 이름을 고하소서 그 사람이 가로되 어찌 내 이름을 묻느냐 하고 거 기서 야곱에게 축복한지라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 22;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에서는 야곱을 만나러 올 때 몇 명을 거느리고 왔습니까?$q$, $q$사백 명$q$, $q$오십 명$q$, $q$백 명$q$, null, 0, $q$창 33:1 — '에서가 사백인을 거느리고 오는지라'$q$, 0
+select e.id, $q$에서는 야곱을 만나러 올 때 몇 명을 거느리고 왔습니까?$q$, $q$사백 명$q$, $q$오십 명$q$, $q$백 명$q$, $q$헷갈렸어요$q$, 0, $q$창 33:1 — '에서가 사백인을 거느리고 오는지라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱은 형 에서에게 가까이 가며 어떻게 절하였습니까?$q$, $q$한 번 절하고 예물을 내밀었다$q$, $q$멀리서 엎드렸다$q$, $q$몸을 일곱 번 땅에 굽혔다$q$, null, 2, $q$창 33:3 — '자기는 그들 앞에서 나아가되 몸을 일곱 번 땅에 굽히며 그 형 에서에게 가까이 하니'$q$, 1
+select e.id, $q$야곱은 형 에서에게 가까이 가며 어떻게 절하였습니까?$q$, $q$한 번 절하고 예물을 내밀었다$q$, $q$멀리서 엎드렸다$q$, $q$몸을 일곱 번 땅에 굽혔다$q$, $q$헷갈렸어요$q$, 2, $q$창 33:3 — '자기는 그들 앞에서 나아가되 몸을 일곱 번 땅에 굽히며 그 형 에서에게 가까이 하니'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱과 에서의 화해 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$36장$q$, $q$27장$q$, $q$33장$q$, null, 2, $q$창 33:1-11에 야곱과 에서의 재회와 화해가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$백 명$q$, $q$오십 명$q$, $q$주의 종에게 은혜로 주신 자식이니이다$q$, $q$헷갈렸어요$q$, 2, $q$창 33:5 — '에서가 눈을 들어 여인과 자식들을 보고 묻되 너와 함께한 이들 은 누구냐 야곱이 가로되 하나님이 주의 종에게 은혜로 주신 자식이니이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 23;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$라헬은 어디로 가는 길에 아이를 낳다가 죽었습니까?$q$, $q$벧엘로 가는 길$q$, $q$헤브론으로 가는 길$q$, $q$에브랏으로 가는 길$q$, null, 2, $q$창 35:16-17 — '그들이 벧엘에서 발행하여 에브랏에 이르기까지 ... 라헬이 임산하여 심히 신고하더니'$q$, 0
+select e.id, $q$라헬은 어디로 가는 길에 아이를 낳다가 죽었습니까?$q$, $q$벧엘로 가는 길$q$, $q$헤브론으로 가는 길$q$, $q$에브랏으로 가는 길$q$, $q$헷갈렸어요$q$, 2, $q$창 35:16-17 — '그들이 벧엘에서 발행하여 에브랏에 이르기까지 ... 라헬이 임산하여 심히 신고하더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱이 라헬을 장사한 후 어떻게 표시하였습니까?$q$, $q$그 자리에 제단을 쌓았다$q$, $q$큰 돌 무더기를 쌓았다$q$, $q$라헬의 묘에 비를 세웠다$q$, null, 2, $q$창 35:20 — '야곱이 라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫더라'$q$, 1
+select e.id, $q$아비는 어떻게 했습니까?$q$, $q$그 자리에 제단을 쌓았다$q$, $q$큰 돌 무더기를 쌓았다$q$, $q$그를 베 냐민이라 불렀었다$q$, $q$헷갈렸어요$q$, 2, $q$창 35:18 — '그가 죽기에 임하여 그 혼이 떠나려 할 때에 아들의 이름은 베노니라 불렀으나 그 아비가 그를 베 냐민이라 불렀더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$벧엘 귀환과 라헬의 죽음 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$31장$q$, $q$37장$q$, $q$35장$q$, null, 2, $q$창 35:1-20에 벧엘 귀환, 야곱의 새 이름 확인, 라헬의 죽음이 기록됨$q$, 2
+select e.id, $q$야곱은 어떻게 했습니까?$q$, $q$헤브론으로 가는 길$q$, $q$벧엘로 가는 길$q$, $q$라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫었다$q$, $q$헷갈렸어요$q$, 2, $q$창 35:20 — '야곱이 라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 24;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이스라엘이 요셉을 특별히 사랑하여 만들어 준 것은 무엇입니까?$q$, $q$채색옷$q$, $q$금 반지$q$, $q$은 지팡이$q$, null, 0, $q$창 37:3 — '이스라엘이 ... 요셉을 깊이 사랑하여 위하여 채색옷을 지었더니'$q$, 0
+select e.id, $q$이스라엘이 요셉을 특별히 사랑하여 만들어 준 것은 무엇입니까?$q$, $q$채색옷$q$, $q$금 반지$q$, $q$은 지팡이$q$, $q$헷갈렸어요$q$, 0, $q$창 37:3 — '이스라엘이 ... 요셉을 깊이 사랑하여 위하여 채색옷을 지었더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉의 두 번째 꿈을 들은 형들과 아버지는 각각 어떻게 반응하였습니까?$q$, $q$형들도 아비도 잊어버렸다$q$, $q$형들은 놀라고 아비는 꾸짖었다$q$, $q$형들은 시기하고 아비는 마음에 두었다$q$, null, 2, $q$창 37:11 — '그 형들은 시기하되 그 아비는 그 말을 마음에 두었더라'$q$, 1
+select e.id, $q$요셉은 형들에게 무엇을 들으라고 했습니까?$q$, $q$애굽에서 들은 소식$q$, $q$아버지가 준 명령$q$, $q$자기가 꾼 꿈$q$, $q$헷갈렸어요$q$, 2, $q$창 37:6 — '요셉이 그들에게 이르되 청컨대 나의 꾼 꿈을 들으시오'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉의 꿈과 형제들의 시기 이야기는 창세기 몇 장에 기록되어 있습니까?$q$, $q$41장$q$, $q$37장$q$, $q$39장$q$, null, 1, $q$창 37:1-11에 요셉의 채색옷과 두 가지 꿈 이야기가 기록됨$q$, 2
+select e.id, $q$요셉의 꿈 이야기를 들은 형들과 아버지는 어떻게 반응했습니까?$q$, $q$아버지는 요셉을 집 밖으로 내보냈다$q$, $q$형들은 시기했고 아버지는 마음에 두었다$q$, $q$모두 즉시 요셉에게 절했다$q$, $q$헷갈렸어요$q$, 1, $q$창 37:11 — '그 형들은 시기하되 그 아비는 그 말을 마음에 두었더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 25;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$형들이 요셉을 판 미디안 상인들은 요셉을 누구에게 팔았습니까?$q$, $q$바로에게$q$, $q$바로의 신하 시위대장 보디발$q$, $q$애굽의 상인들에게$q$, null, 1, $q$창 37:36 — '미디안 사람이 애굽에서 바로의 신하 시위대장 보디발에게 요셉을 팔았더라'$q$, 0
+select e.id, $q$요셉을 팔고 돌아온 형들은 아버지에게 무엇을 하였습니까?$q$, $q$요셉이 들짐승에게 죽었다고 말하였다$q$, $q$채색옷에 숫염소의 피를 묻혀 보냈다$q$, $q$요셉이 도망쳤다고 거짓말하였다$q$, $q$헷갈렸어요$q$, 1, $q$창 37:31-32 — '요셉의 옷을 가져다가 숫염소를 죽여 그 옷을 피에 적시고 ... 아비에게로 보내어'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉을 팔고 돌아온 형들은 아버지에게 무엇을 하였습니까?$q$, $q$요셉이 들짐승에게 죽었다고 말하였다$q$, $q$요셉이 도망쳤다고 거짓말하였다$q$, $q$채색옷에 숫염소의 피를 묻혀 보냈다$q$, null, 2, $q$창 37:31-32 — '요셉의 옷을 가져다가 숫염소를 죽여 그 옷을 피에 적시고 ... 아비에게로 보내어'$q$, 1
+select e.id, $q$야곱은 피 묻은 옷을 보고 무엇이라고 생각했습니까?$q$, $q$요셉이 애굽의 왕이 되었다고 생각했다$q$, $q$형들이 요셉을 팔았다고 바로 알았다$q$, $q$요셉이 들짐승에게 찢겨 죽었다고 생각했다$q$, $q$헷갈렸어요$q$, 2, $q$창 37:33 — '아비가 그것을 알아보고 가로되 내 아들의 옷이라 악한 짐승이 그를 먹었도다 요셉이 정녕 찢겼도 다 하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉이 구덩이에 던져지고 팔린 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$37장$q$, $q$40장$q$, $q$39장$q$, null, 0, $q$창 37:12-36에 요셉이 형들에게 팔려 애굽으로 가는 이야기가 기록됨$q$, 2
+select e.id, $q$형들이 요셉을 판 미디안 상인들은 요셉을 누구에게 팔았습니까?$q$, $q$바로의 신하 시위대장 보디발$q$, $q$애굽의 상인들에게$q$, $q$바로에게$q$, $q$헷갈렸어요$q$, 0, $q$창 37:36 — '미디안 사람이 애굽에서 바로의 신하 시위대장 보디발에게 요셉을 팔았더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 26;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉에게 누명을 씌운 사람은 누구입니까?$q$, $q$보디발$q$, $q$보디발의 아내$q$, $q$파라오$q$, null, 1, $q$창 39:14-18 — 보디발의 아내가 요셉의 옷을 잡고 거짓 고발함$q$, 0
+select e.id, $q$보디발의 아내가 유혹할 때 요셉은 어떻게 했습니까?$q$, $q$보디발에게 즉시 알렸다$q$, $q$겉옷을 버리고 밖으로 피했다$q$, $q$아무 말 없이 따랐다$q$, $q$헷갈렸어요$q$, 1, $q$창 39:12 — '그가 그 옷을 그 손에 버려두고 도망하여 나가니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$보디발의 아내가 유혹할 때 요셉은 어떻게 했습니까?$q$, $q$아무 말 없이 따랐다$q$, $q$보디발에게 즉시 알렸다$q$, $q$겉옷을 버리고 밖으로 피했다$q$, null, 2, $q$창 39:12 — '그가 그 옷을 그 손에 버려두고 도망하여 나가니라'$q$, 1
+select e.id, $q$요셉에게 누명을 씌운 사람은 누구입니까?$q$, $q$파라오$q$, $q$보디발$q$, $q$보디발의 아내$q$, $q$헷갈렸어요$q$, 2, $q$창 39:14-18 — 보디발의 아내가 요셉의 옷을 잡고 거짓 고발함$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이 사건 직후 요셉에게 일어난 일은 무엇입니까?$q$, $q$형들에게 팔렸다$q$, $q$감옥에 갇혔다$q$, $q$애굽 총리가 됐다$q$, null, 1, $q$창 39:20 — '요셉의 주인이 그를 잡아 왕의 옥에 넣으니'$q$, 2
+select e.id, $q$그 뒤 요셉에게 어떤 일이 있었습니까?$q$, $q$바로의 궁으로 바로 들어갔다$q$, $q$요셉이 감옥에 갇혔다$q$, $q$보디발의 집 주인이 되었다$q$, $q$헷갈렸어요$q$, 1, $q$창 39:20 — '이에 요셉의 주인이 그를 잡아 옥에 넣으니 그 옥은 왕의 죄수를 가두는 곳이었더라 요셉이 옥에 갇혔으나'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 27;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로의 꿈에서 먼저 나온 일곱 마리 소의 상태는 어떠하였습니까?$q$, $q$살지고 아름다운 소$q$, $q$강하고 검은 소$q$, $q$파리하고 흉악한 소$q$, null, 0, $q$창 41:2 — '하수에서 살지고 아름다운 암소 일곱이 올라와 갈밭에서 뜯어먹더니'$q$, 0
+select e.id, $q$바로의 꿈에서 먼저 나온 일곱 마리 소의 상태는 어떠하였습니까?$q$, $q$살지고 아름다운 소$q$, $q$강하고 검은 소$q$, $q$파리하고 흉악한 소$q$, $q$헷갈렸어요$q$, 0, $q$창 41:2 — '하수에서 살지고 아름다운 암소 일곱이 올라와 갈밭에서 뜯어먹더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로는 요셉의 꿈 해석을 듣고 요셉에게 어떻게 하였습니까?$q$, $q$애굽 전국의 총리로 세웠다$q$, $q$신하들과 상의 후 결정하였다$q$, $q$감옥에서 풀어 주었다$q$, null, 0, $q$창 41:41 — '바로가 그로 애굽 전국을 총리하게 하였더라'$q$, 1
+select e.id, $q$바로는 요셉의 꿈 해석을 듣고 요셉에게 어떻게 하였습니까?$q$, $q$애굽 전국의 총리로 세웠다$q$, $q$신하들과 상의 후 결정하였다$q$, $q$감옥에서 풀어 주었다$q$, $q$헷갈렸어요$q$, 0, $q$창 41:41 — '바로가 그로 애굽 전국을 총리하게 하였더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로의 꿈과 요셉의 총리 임명 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$43장$q$, $q$39장$q$, $q$41장$q$, null, 2, $q$창 41:1-57에 바로의 꿈 해석과 요셉의 총리 임명이 기록됨$q$, 2
+select e.id, $q$포위된 성 안에는 어떤 일이 일어났습니까?$q$, $q$강하고 검은 소$q$, $q$파리하고 흉악한 소$q$, $q$기근이 심해 먹을 것이 떨어졌다$q$, $q$헷갈렸어요$q$, 2, $q$창 41:56 — '온 지면에 기근이 있으매 요셉이 모든 창고를 열고 애굽 백성에게 팔새 애굽 땅에 기근이 심하며'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 28;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉이 자신의 정체를 드러낼 때 그와 함께 있었던 사람은 몇 명입니까?$q$, $q$바로의 신하들이 있었다$q$, $q$청지기 한 명이 있었다$q$, $q$아무도 없었다$q$, null, 2, $q$창 45:1 — '요셉이 시종하는 자들 앞에서 ... 모든 사람을 자기에게서 물러가라 하고 ... 때에 그와 함께한 자가 없었더라'$q$, 0
+select e.id, $q$요셉이 자신의 정체를 드러낼 때 그와 함께 있었던 사람은 몇 명입니까?$q$, $q$바로의 신하들이 있었다$q$, $q$청지기 한 명이 있었다$q$, $q$아무도 없었다$q$, $q$헷갈렸어요$q$, 2, $q$창 45:1 — '요셉이 시종하는 자들 앞에서 ... 모든 사람을 자기에게서 물러가라 하고 ... 때에 그와 함께한 자가 없었더라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉은 자신을 팔았던 형들에게 그 일에 대해 어떻게 말하였습니까?$q$, $q$형들의 잘못을 낱낱이 책망하였다$q$, $q$아무 말도 하지 않고 울기만 하였다$q$, $q$나를 이리로 보낸 자는 하나님이시라 하였다$q$, null, 2, $q$창 45:8 — '그런즉 나를 이리로 보낸 자는 당신들이 아니요 하나님이시라'$q$, 1
+select e.id, $q$요셉은 자신을 팔았던 형들에게 그 일에 대해 어떻게 말하였습니까?$q$, $q$형들의 잘못을 낱낱이 책망하였다$q$, $q$아무 말도 하지 않고 울기만 하였다$q$, $q$나를 이리로 보낸 자는 하나님이시라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 45:8 — '그런즉 나를 이리로 보낸 자는 당신들이 아니요 하나님이시라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$요셉이 형들에게 자신을 드러낸 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$43장$q$, $q$45장$q$, $q$47장$q$, null, 1, $q$창 45:1-15에 요셉의 정체 공개와 형제들과의 화해가 기록됨$q$, 2
+select e.id, $q$하나님은 어떻게 했습니까?$q$, $q$청지기 한 명이 있었다$q$, $q$나를 애굽 전국 의 주로 세우셨으니 내게로 지체말고 내려오사$q$, $q$바로의 신하들이 있었다$q$, $q$헷갈렸어요$q$, 1, $q$창 45:9 — '당신들은 속히 아버지께로 올라가서 고하기를 아버지의 아들 요셉의 말에 하나님이 나를 애굽 전국 의 주로 세우셨으니 내게로 지체말고 내려오사'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 29;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱의 가족이 애굽에서 정착한 땅의 이름은 무엇입니까?$q$, $q$나일 강가$q$, $q$고센 땅$q$, $q$가나안 땅$q$, null, 1, $q$창 46:28 — '야곱이 유다를 요셉에게 미리 보내어 자기를 고센으로 인도하게 하고 다 고센 땅에 이르니'$q$, 0
+select e.id, $q$야곱의 가족이 애굽에서 정착한 땅의 이름은 무엇입니까?$q$, $q$나일 강가$q$, $q$고센 땅$q$, $q$가나안 땅$q$, $q$헷갈렸어요$q$, 1, $q$창 46:28 — '야곱이 유다를 요셉에게 미리 보내어 자기를 고센으로 인도하게 하고 다 고센 땅에 이르니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바로가 야곱 가족의 생업을 묻자 그들은 어떻게 대답하였습니까?$q$, $q$종들은 목자라 우리와 선조가 다 그러하다 하였다$q$, $q$장사꾼이라고 하였다$q$, $q$농부라고 하였다$q$, null, 0, $q$창 47:3 — '바로가 요셉의 형들에게 묻되 너희 생업이 무엇이냐 그들이 ... 종들은 목자이온데 우리와 선조가 다 그러하니이다'$q$, 1
+select e.id, $q$바로가 야곱 가족의 생업을 묻자 그들은 어떻게 대답하였습니까?$q$, $q$종들은 목자라 우리와 선조가 다 그러하다 하였다$q$, $q$장사꾼이라고 하였다$q$, $q$농부라고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$창 47:3 — '바로가 요셉의 형들에게 묻되 너희 생업이 무엇이냐 그들이 ... 종들은 목자이온데 우리와 선조가 다 그러하니이다'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱의 고센 정착 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$44-45장$q$, $q$48-49장$q$, $q$46-47장$q$, null, 2, $q$창 46:28-47:12에 야곱 가족의 고센 입주와 바로 알현이 기록됨$q$, 2
+select e.id, $q$포위된 성 안에는 어떤 일이 일어났습니까?$q$, $q$가나안 땅$q$, $q$나일 강가$q$, $q$기근이 심해 먹을 것이 떨어졌다$q$, $q$헷갈렸어요$q$, 2, $q$창 47:4 — '그들이 또 바로에게 고하되 가나안 땅에 기근이 심하여 종들의 떼를 칠 곳이 없기로 종들이 이곳에 우거하러 왔사오니 청컨대 종들로 고센 땅에 거하게 하소서'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 30;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱이 요셉의 두 아들에게 축복할 때 오른손은 어느 아들 머리에 얹었습니까?$q$, $q$요셉$q$, $q$므낫세$q$, $q$에브라임$q$, null, 2, $q$창 48:14 — '이스라엘이 오른손을 펴서 차남 에브라임의 머리에 얹고'$q$, 0
+select e.id, $q$야곱이 요셉의 두 아들에게 축복할 때 오른손은 어느 아들 머리에 얹었습니까?$q$, $q$요셉$q$, $q$므낫세$q$, $q$에브라임$q$, $q$헷갈렸어요$q$, 2, $q$창 48:14 — '이스라엘이 오른손을 펴서 차남 에브라임의 머리에 얹고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱은 임종 전 열두 아들에게 어떻게 축복하였습니까?$q$, $q$한꺼번에 동일한 복을 선언하였다$q$, $q$각인의 분량대로 각각 축복하였다$q$, $q$장자 르우벤에게만 모든 복을 주었다$q$, null, 1, $q$창 49:28 — '그들 각인의 분량대로 축복하였더라'$q$, 1
+select e.id, $q$야곱은 에브라임과 므낫세에 대해 무엇을 말했습니까?$q$, $q$두 아들을 축복하지 않겠다고 했다$q$, $q$동생 에브라임이 더 큰 민족을 이룰 것이라고 했다$q$, $q$므낫세만 축복을 받을 것이라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$창 48:19 — '아비가 허락지 아니하여 가로되 나도 안다 내 아들아 나도 안다 그도 한 족속이 되며 그도 크게 되려니와 그 아우가 그보다 큰 자가 되고 그 자손이 여러 민족을 이루리라 하고'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$야곱의 임종 축복 기사가 기록된 성경 책과 장은 어디입니까?$q$, $q$신명기 33장$q$, $q$창세기 48-49장$q$, $q$창세기 50장$q$, null, 1, $q$창 48:1-22과 창 49:1-28에 야곱이 에브라임·므낫세와 열두 아들을 축복함이 기록됨$q$, 2
+select e.id, $q$아비는 어떻게 했습니까?$q$, $q$장자 르우벤에게만 모든 복을 주었다$q$, $q$그들에게 말하고 그들에게 축복하였으되 곧 그들 각인의 분량대로 축복했다$q$, $q$므낫세$q$, $q$헷갈렸어요$q$, 1, $q$창 49:28 — '이들은 이스라엘의 십이 지파라 이와 같이 그 아비가 그들에게 말하고 그들에게 축복하였으되 곧 그들 각인의 분량대로 축복하였더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 1;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 빛을 만드신 것은 몇째 날입니까?$q$, $q$첫째 날$q$, $q$여섯째 날$q$, $q$넷째 날$q$, null, 0, $q$창 1:3-5 — '빛이 있으라 하시매 ... 첫째 날이니라'$q$, 0
+select e.id, $q$하나님이 빛을 만드신 것은 몇째 날입니까?$q$, $q$첫째 날$q$, $q$여섯째 날$q$, $q$넷째 날$q$, $q$헷갈렸어요$q$, 0, $q$창 1:3-5 — '빛이 있으라 하시매 ... 첫째 날이니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$일곱째 날에 하나님은 무엇을 하셨습니까?$q$, $q$계속 창조하셨다$q$, $q$사람을 심판하셨다$q$, $q$안식하셨다$q$, null, 2, $q$창 2:2 — '일곱째 날에 ... 안식하셨음이더라'$q$, 1
+select e.id, $q$일곱째 날에 하나님은 무엇을 하셨습니까?$q$, $q$계속 창조하셨다$q$, $q$사람을 심판하셨다$q$, $q$안식하셨다$q$, $q$헷갈렸어요$q$, 2, $q$창 2:2 — '일곱째 날에 ... 안식하셨음이더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$창조 기사가 기록된 성경 책은 어디입니까?$q$, $q$출애굽기$q$, $q$창세기$q$, $q$시편$q$, null, 1, $q$창 1:1-2:3에 창조 기사가 기록됨$q$, 2
+select e.id, $q$하나님은 일곱째 날을 어떻게 하셨습니까?$q$, $q$다시 첫째 날로 되돌리셨다$q$, $q$복 주시고 거룩하게 하셨다$q$, $q$사람에게만 일하라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 2:3 — '하나님이 일곱째 날을 복 주사 거룩하게 하셨으니 이는 하나님이 그 창조하시며 만드시던 모든 일을 마치시고 이 날에 안식하셨음이더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 2;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 아담을 두어 맡기신 곳은 어디입니까?$q$, $q$모리아 산$q$, $q$헤브론 들판$q$, $q$에덴 동산$q$, null, 2, $q$창 2:15 — '여호와 하나님이 그 사람을 이끌어 에덴 동산에 두사'$q$, 0
+select e.id, $q$하나님이 아담을 두어 맡기신 곳은 어디입니까?$q$, $q$모리아 산$q$, $q$헤브론 들판$q$, $q$에덴 동산$q$, $q$헷갈렸어요$q$, 2, $q$창 2:15 — '여호와 하나님이 그 사람을 이끌어 에덴 동산에 두사'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아담은 동산의 짐승과 새에게 무엇을 하였습니까?$q$, $q$제물로 드렸다$q$, $q$이름을 지어 주었다$q$, $q$피해 숨었다$q$, null, 1, $q$창 2:20 — '아담이 모든 육축과 공중의 새와 들의 모든 짐승에게 이름을 주니라'$q$, 1
+select e.id, $q$아담은 동산의 짐승과 새에게 무엇을 하였습니까?$q$, $q$제물로 드렸다$q$, $q$이름을 지어 주었다$q$, $q$피해 숨었다$q$, $q$헷갈렸어요$q$, 1, $q$창 2:20 — '아담이 모든 육축과 공중의 새와 들의 모든 짐승에게 이름을 주니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에덴 동산 창조 기사가 기록된 성경 책은 어디입니까?$q$, $q$출애굽기$q$, $q$레위기$q$, $q$창세기$q$, null, 2, $q$창 2:4-25에 에덴과 사람 창조 기사가 기록됨$q$, 2
+select e.id, $q$아담은 여자를 보고 어떻게 불렀습니까?$q$, $q$자기와 상관없는 사람으로 여겼다$q$, $q$동물들 가운데 하나로 불렀다$q$, $q$자기에게서 나온 사람으로 불렀다$q$, $q$헷갈렸어요$q$, 2, $q$창 2:23 — '아담이 가로되 이는 내 뼈 중의 뼈요 살 중의 살이라 이것을 남자에게서 취하였은즉 여자라 칭하리 라 하니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 3;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에덴에서 하와를 유혹한 것은 무엇입니까?$q$, $q$독수리$q$, $q$사자$q$, $q$뱀$q$, null, 2, $q$창 3:1 — '여호와 하나님이 지으신 들짐승 중에 뱀이 가장 간교하니라'$q$, 0
+select e.id, $q$에덴에서 하와를 유혹한 것은 무엇입니까?$q$, $q$독수리$q$, $q$사자$q$, $q$뱀$q$, $q$헷갈렸어요$q$, 2, $q$창 3:1 — '여호와 하나님이 지으신 들짐승 중에 뱀이 가장 간교하니라'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$아담과 하와는 죄를 지은 후 어떻게 했습니까?$q$, $q$하나님께 즉시 고백했다$q$, $q$에덴을 떠났다$q$, $q$나무 사이에 숨었다$q$, null, 2, $q$창 3:8 — '그들이 동산 나무 사이에 숨은지라'$q$, 1
+select e.id, $q$아담과 하와는 죄를 지은 후 어떻게 했습니까?$q$, $q$하나님께 즉시 고백했다$q$, $q$에덴을 떠났다$q$, $q$나무 사이에 숨었다$q$, $q$헷갈렸어요$q$, 2, $q$창 3:8 — '그들이 동산 나무 사이에 숨은지라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이 사건 바로 앞에 기록된 내용은 무엇입니까?$q$, $q$에덴 동산의 창조와 사람$q$, $q$바벨탑 사건$q$, $q$노아 홍수$q$, null, 0, $q$창 2:4-25에 에덴 동산과 사람 창조 기사가 선행함$q$, 2
+select e.id, $q$하나님은 무엇이라고 말했습니까?$q$, $q$뱀이 나를 꾀므 로 내가 먹었나이다$q$, $q$하나님께 즉시 고백했다$q$, $q$독수리$q$, $q$헷갈렸어요$q$, 0, $q$창 3:13 — '여호와 하나님이 여자에게 이르시되 네가 어찌하여 이렇게 하였느냐 여자가 가로되 뱀이 나를 꾀므 로 내가 먹었나이다'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 4;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 에덴 동산 동편에 무엇을 두어 길을 지키게 하셨습니까?$q$, $q$그룹들과 화염검$q$, $q$천사와 물$q$, $q$돌 기둥과 구름$q$, null, 0, $q$창 3:24 — '그룹들과 두루 도는 화염검을 두어 생명 나무의 길을 지키게 하시니라'$q$, 0
+select e.id, $q$여자에게 내리신 형벌로 하나님은 무엇을 크게 더하셨습니까?$q$, $q$잉태하는 고통$q$, $q$언어의 혼란$q$, $q$노동의 무게$q$, $q$헷갈렸어요$q$, 0, $q$창 3:16 — '내가 네게 잉태하는 고통을 크게 더하리니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여자에게 내리신 형벌로 하나님은 무엇을 크게 더하셨습니까?$q$, $q$노동의 무게$q$, $q$잉태하는 고통$q$, $q$언어의 혼란$q$, null, 1, $q$창 3:16 — '내가 네게 잉태하는 고통을 크게 더하리니'$q$, 1
+select e.id, $q$하나님은 아담과 하와를 위해 무엇을 해 주셨습니까?$q$, $q$돌기둥을 세워 주셨다$q$, $q$가죽옷을 만들어 입혀 주셨다$q$, $q$새 동산을 바로 만들어 주셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 3:21 — '여호와 하나님이 아담과 그 아내를 위하여 가죽옷을 지어 입히시니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에덴 추방 기사는 창세기 몇 장에 기록되어 있습니까?$q$, $q$11장$q$, $q$3장$q$, $q$5장$q$, null, 1, $q$창 3:14-24에 뱀의 저주와 에덴 추방 기사가 기록됨$q$, 2
+select e.id, $q$하나님이 에덴 동산 동편에 무엇을 두어 길을 지키게 하셨습니까?$q$, $q$천사와 물$q$, $q$그룹들과 화염검$q$, $q$돌 기둥과 구름$q$, $q$헷갈렸어요$q$, 1, $q$창 3:24 — '그룹들과 두루 도는 화염검을 두어 생명 나무의 길을 지키게 하시니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 5;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$가인이 여호와 앞을 떠나 거한 땅의 이름은 무엇입니까?$q$, $q$갈대아 우르$q$, $q$놋 땅$q$, $q$모압 땅$q$, null, 1, $q$창 4:16 — '가인이 여호와의 앞을 떠나 나가 에덴 동편 놋 땅에 거하였더니'$q$, 0
+select e.id, $q$가인의 제물이 열납되지 않자 가인은 어떻게 반응하였습니까?$q$, $q$제물을 다시 드렸다$q$, $q$심히 분하여 안색이 변하였다$q$, $q$울며 회개하였다$q$, $q$헷갈렸어요$q$, 1, $q$창 4:5 — '가인이 심히 분하여 안색이 변하니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$가인의 제물이 열납되지 않자 가인은 어떻게 반응하였습니까?$q$, $q$제물을 다시 드렸다$q$, $q$울며 회개하였다$q$, $q$심히 분하여 안색이 변하였다$q$, null, 2, $q$창 4:5 — '가인이 심히 분하여 안색이 변하니'$q$, 1
+select e.id, $q$가인은 아벨이 어디 있느냐는 질문에 어떻게 대답했습니까?$q$, $q$아벨이 제물을 다시 드리러 갔다고 했다$q$, $q$아벨이 성을 쌓으러 갔다고 했다$q$, $q$모른다고 하며 자신이 아우를 지키는 사람이냐고 했다$q$, $q$헷갈렸어요$q$, 2, $q$창 4:9 — '여호와께서 가인에게 이르시되 네 아우 아벨이 어디 있느냐 그가 가로되 내가 알지 못하나이다 내 가 내 아우를 지키는 자이니까'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$가인과 아벨 이야기는 성경 어느 책에 기록되어 있습니까?$q$, $q$사무엘상$q$, $q$민수기$q$, $q$창세기$q$, null, 2, $q$창 4:1-16에 가인과 아벨의 제사와 살인 사건이 기록됨$q$, 2
+select e.id, $q$가인이 여호와 앞을 떠나 거한 땅의 이름은 무엇입니까?$q$, $q$갈대아 우르$q$, $q$모압 땅$q$, $q$놋 땅$q$, $q$헷갈렸어요$q$, 2, $q$창 4:16 — '가인이 여호와의 앞을 떠나 나가 에덴 동편 놋 땅에 거하였더니'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 6;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 노아에게 지으라고 명하신 것은 무엇입니까?$q$, $q$제단$q$, $q$성전$q$, $q$방주$q$, null, 2, $q$창 6:14 — '너는 잣나무로 너를 위하여 방주를 짓고'$q$, 0
+select e.id, $q$하나님이 노아에게 지으라고 명하신 것은 무엇입니까?$q$, $q$제단$q$, $q$성전$q$, $q$방주$q$, $q$헷갈렸어요$q$, 2, $q$창 6:14 — '너는 잣나무로 너를 위하여 방주를 짓고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$노아는 하나님의 명령에 어떻게 반응했습니까?$q$, $q$다 준행하였다$q$, $q$이웃과 상의했다$q$, $q$두려워 피했다$q$, null, 0, $q$창 6:22 — '노아가 그와 같이 하되 하나님이 자기에게 명하신 대로 다 준행하였더라'$q$, 1
+select e.id, $q$노아는 하나님의 명령에 어떻게 반응했습니까?$q$, $q$다 준행하였다$q$, $q$이웃과 상의했다$q$, $q$두려워 피했다$q$, $q$헷갈렸어요$q$, 0, $q$창 6:22 — '노아가 그와 같이 하되 하나님이 자기에게 명하신 대로 다 준행하였더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$이 사건과 같은 시대 인물은 누구입니까?$q$, $q$므두셀라$q$, $q$모세$q$, $q$다윗$q$, null, 0, $q$창 5:25-27 — 므두셀라는 노아의 조부로 같은 홍수 이전 시대 인물임$q$, 2
+select e.id, $q$여호와는 어떻게 했습니까?$q$, $q$자기에게 명하신 대로 다 준행했다$q$, $q$이웃과 상의했다$q$, $q$두려워 피했다$q$, $q$헷갈렸어요$q$, 0, $q$창 7:5 — '노아가 여호와께서 자기에게 명하신 대로 다 준행하였더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$하나님이 세상과의 언약의 증거로 구름 속에 두신 것은 무엇입니까?$q$, $q$돌 제단$q$, $q$무지개$q$, $q$불기둥$q$, null, 1, $q$창 9:13 — '내가 내 무지개를 구름 속에 두었나니 이것이 나의 세상과의 언약의 증거니라'$q$, 0
+select e.id, $q$방주에서 나온 노아는 가장 먼저 무엇을 하였습니까?$q$, $q$가족과 함께 식사하였다$q$, $q$여호와를 위하여 단을 쌓았다$q$, $q$밭을 갈고 씨를 뿌렸다$q$, $q$헷갈렸어요$q$, 1, $q$창 8:20 — '노아가 여호와를 위하여 단을 쌓고 ... 번제로 단에 드렸더니'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$방주에서 나온 노아는 가장 먼저 무엇을 하였습니까?$q$, $q$밭을 갈고 씨를 뿌렸다$q$, $q$가족과 함께 식사하였다$q$, $q$여호와를 위하여 단을 쌓았다$q$, null, 2, $q$창 8:20 — '노아가 여호와를 위하여 단을 쌓고 ... 번제로 단에 드렸더니'$q$, 1
+select e.id, $q$사람의 생명을 귀하게 보아야 하는 이유는 무엇입니까?$q$, $q$사람이 방주를 만들 수 있기 때문이다$q$, $q$사람이 무지개를 볼 수 있기 때문이다$q$, $q$사람이 하나님의 형상대로 지음 받았기 때문이다$q$, $q$헷갈렸어요$q$, 2, $q$창 9:6 — '무릇 사람의 피를 흘리면 사람이 그 피를 흘릴 것이니 이는 하나님이 자기 형상대로 사람을 지었음 이니라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$무지개 언약 기사가 기록된 성경 책은 어디입니까?$q$, $q$여호수아$q$, $q$창세기$q$, $q$레위기$q$, null, 1, $q$창 8:20-9:17에 노아의 제사와 무지개 언약이 기록됨$q$, 2
+select e.id, $q$하나님이 세상과의 언약의 증거로 구름 속에 두신 것은 무엇입니까?$q$, $q$돌 제단$q$, $q$무지개$q$, $q$불기둥$q$, $q$헷갈렸어요$q$, 1, $q$창 9:13 — '내가 내 무지개를 구름 속에 두었나니 이것이 나의 세상과의 언약의 증거니라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 8;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바벨탑 건축자들이 돌 대신 사용한 것은 무엇입니까?$q$, $q$나무$q$, $q$돌과 흙$q$, $q$벽돌$q$, null, 2, $q$창 11:3 — '벽돌로 돌을 대신하며 역청으로 진흙을 대신하고'$q$, 0
+select e.id, $q$바벨탑 건축자들이 돌 대신 사용한 것은 무엇입니까?$q$, $q$나무$q$, $q$돌과 흙$q$, $q$벽돌$q$, $q$헷갈렸어요$q$, 2, $q$창 11:3 — '벽돌로 돌을 대신하며 역청으로 진흙을 대신하고'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$여호와께서 언어를 혼잡케 하신 결과 사람들은 어떻게 되었습니까?$q$, $q$바벨에 계속 머물렀다$q$, $q$온 지면에 흩어졌다$q$, $q$다른 탑을 세우려 하였다$q$, null, 1, $q$창 11:8 — '여호와께서 거기서 그들을 온 지면에 흩으셨더라'$q$, 1
+select e.id, $q$여호와께서 언어를 혼잡케 하신 결과 사람들은 어떻게 되었습니까?$q$, $q$바벨에 계속 머물렀다$q$, $q$온 지면에 흩어졌다$q$, $q$다른 탑을 세우려 하였다$q$, $q$헷갈렸어요$q$, 1, $q$창 11:8 — '여호와께서 거기서 그들을 온 지면에 흩으셨더라'$q$, 1
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$바벨탑 이야기는 창세기 몇 장에 기록되어 있습니까?$q$, $q$11장$q$, $q$18장$q$, $q$6장$q$, null, 0, $q$창 11:1-9에 바벨탑 건축과 언어 혼잡 사건이 기록됨$q$, 2
+select e.id, $q$바벨에서 하나님은 사람들의 언어와 거처를 어떻게 하셨습니까?$q$, $q$언어를 흩으시고 사람들을 온 땅에 흩으셨다$q$, $q$언어를 하나로 더 단단히 묶으셨다$q$, $q$모두 한 도시 안에만 살게 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$창 11:9 — '그러므로 그 이름을 바벨이라 하니 이는 여호와께서 거기서 온 땅의 언어를 혼잡케 하셨음이라 여 호와께서 거기서 그들을 온 지면에 흩으셨더라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8;
 
 commit;

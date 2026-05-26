@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 5,
   "story_title": "어린 예수의 성전 사건",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 2:46 — '사흘 후에 성전에서 만나니 그가 선생들 중에 앉으사 듣기도 하시며 묻기도 하시니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "소년 예수의 성전 사건이 기록된 성경 책은 어디입니까?",
+      "question": "성전에서 예수님은 부모에게 무엇을 알려 주셨습니까?",
       "choices": [
-        "누가복음",
-        "마태복음",
-        "마가복음"
+        "아버지의 집에 있어야 한다고 말씀하셨다",
+        "다시는 성전에 오지 않겠다고 하셨다",
+        "요셉의 일을 돕느라 늦었다고 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "눅 2:41-52에 소년 예수의 성전 방문과 성장 기사가 기록됨"
+      "explanation": "눅 2:49 — '예수께서 가라사대 어찌하여 나를 찾으셨나이까 내가 내 아버지 집에 있어야 될 줄을 알지 못하셨 나이까 하시니'"
     }
   ]
 }

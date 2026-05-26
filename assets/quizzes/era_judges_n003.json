@@ -2,7 +2,7 @@
   "era_code": "era_judges",
   "story_index": 3,
   "story_title": "아간: 감춘 것이 드러나다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "수 7:20 — '아간이 여호수아에게 대답하여 가로되 참으로 나는 ... 범죄하여 여차여차히 행하였나이다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "아간의 죄와 심판이 기록된 성경 책은 어디입니까?",
+      "question": "이스라엘은 어떻게 했습니까?",
       "choices": [
-        "여호수아",
-        "사사기",
-        "민수기"
+        "그를 돌로 치고 그것들도 돌로 치고 불사르고",
+        "베냐민 지파",
+        "에브라임 지파"
       ],
       "answer_index": 0,
-      "explanation": "수 7:1-26에 아간의 죄와 심판이 기록됨"
+      "explanation": "수 7:25 — '여호수아가 가로되 네가 어찌하여 우리를 괴롭게 하였느뇨 여호와께서 오늘날 너를 괴롭게 하시리 라하니 온 이스라엘이 그를 돌로 치고 그것들도 돌로 치고 불사르고'"
     }
   ]
 }

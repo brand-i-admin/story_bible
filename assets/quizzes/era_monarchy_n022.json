@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 22,
   "story_title": "요시야의 개혁: 율법책을 찾다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "왕하 23:16 — '그 묘실에서 해골을 취하여다가 단 위에 불살라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "요시야의 종교 개혁 기사가 기록된 성경 책은 어디입니까?",
+      "question": "요시야는 어떻게 했습니까?",
       "choices": [
-        "열왕기하",
-        "열왕기상",
-        "역대상"
+        "다 제하 되 벧엘에서 행한 모든 일대로 행하고",
+        "서기관 사반",
+        "선지자 훌다"
       ],
       "answer_index": 0,
-      "explanation": "왕하 22:8-23:25에 율법책 발견과 요시야의 개혁 기사가 기록됨"
+      "explanation": "왕하 23:19 — '전에 이스라엘 열왕이 사마리아 각 성읍에 지어서 여호와의 노를 격발한 산당을 요시야가 다 제하 되 벧엘에서 행한 모든 일대로 행하고'"
     }
   ]
 }

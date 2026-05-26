@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 15,
   "story_title": "솔로몬: 이방의 경탄부터 타락까지",
-  "source_version": "2026-04-30",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "솔로몬의 영광과 타락 기사가 기록된 성경 책은 어디입니까?",
+      "question": "여호와는 어떻게 했습니까?",
       "choices": [
-        "열왕기상",
-        "사무엘하",
-        "이사야"
+        "솔로몬에게 말씀하시되 네게 이러한 일이 있었고 ",
+        "두로 왕 히람",
+        "애굽의 바로"
       ],
       "answer_index": 0,
-      "explanation": "왕상 10-11장에 솔로몬의 영광과 말년의 타락이 기록됨"
+      "explanation": "왕상 11:11 — '여호와께서 솔로몬에게 말씀하시되 네게 이러한 일이 있었고 또 네가 나의 언약과 내가 네게 명한 법도를 지키지 아니하였으니 내가 결단코 이 나라를 네게서 빼앗아 네 신복에게 주리라'"
     }
   ]
 }

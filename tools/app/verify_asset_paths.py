@@ -14,7 +14,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parents[2]
 PUBSPEC = REPO_ROOT / "pubspec.yaml"
 
 
@@ -100,7 +100,7 @@ def main() -> int:
     assets = parse_assets()
     if not assets:
         print("pubspec.yaml에서 assets 목록을 찾지 못했습니다.")
-        return 0
+        return 1
 
     missing: list[tuple[str, str]] = []
     for asset in assets:

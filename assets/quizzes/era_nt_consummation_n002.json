@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 2,
   "story_title": "어린양: 두루마리를 받다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 5:4 — '합당한 자가 보이지 않기로 내가 크게 울었더니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "어린양이 두루마리를 받는 장면이 기록된 성경 책은 어디입니까?",
+      "question": "요한은 주의 날에 무엇을 들었습니까?",
       "choices": [
-        "요한계시록",
-        "다니엘서",
-        "히브리서"
+        "나팔 소리 같은 큰 음성을 들었다",
+        "겉에만 쓰이고 금 줄로 묶여 있었다",
+        "아무것도 쓰이지 않고 비어 있었다"
       ],
       "answer_index": 0,
-      "explanation": "계 5:1-14에 어린양이 두루마리를 받는 장면이 기록됨"
+      "explanation": "계 5:12 — '큰 음성으로 가로되 죽임을 당하신 어린 양이 능력과 부와 지혜와 힘과 존귀와 영광과 찬송을 받으 시기에 합당하도다 하더라'"
     }
   ]
 }

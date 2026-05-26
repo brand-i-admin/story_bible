@@ -72,30 +72,29 @@ group by translation;
 - `assets/200_stories/*.json` (총 215개 이야기) 형태로 준비합니다.
 - 각 항목은 최소 `title`, `era`, `persons`, `bible_ref`를 포함해야 합니다.
 
-### 3) 인물 메타 JSON 생성 (`tools/seed/person_meta.json`)
-- 사용 스크립트: `tools/seed/build_person_meta_json.py`
+### 3) 인물 메타 JSON 생성 (`tools/seed/character_meta.json`)
+- 사용 스크립트: `tools/seed/build_character_meta_json.py`
 - 한 파일에 **인물 카탈로그**(code/name/is_active_default)와 **아바타 프롬프트**가 함께 들어감
 - 규칙: `2회 이상 등장 개인`만 포함 (집합/비개인 코드 제거 + group 확장 반영)
 
 ```bash
-python3 tools/seed/build_person_meta_json.py \
+python3 tools/seed/build_character_meta_json.py \
   --stories-dir assets/200_stories \
-  --output tools/seed/person_meta.json \
-  --min-mentions 2
+  --output tools/seed/character_meta.json
 ```
 
 ### 4) 이야기 JSON을 Supabase 적재용 SQL로 정제/생성 후 적용
 - 사용 스크립트: `tools/seed/build_200_stories_seed_sql.py`
-- 주의: `tools/seed/person_meta.json`이 먼저 있어야 합니다. (3번 단계 선행)
+- 주의: `tools/seed/character_meta.json`이 먼저 있어야 합니다. (3번 단계 선행)
 - 정제 규칙:
   - `disciples`, `apostles`, `brothers`는 개인 코드로 확장
   - `mysterious_man`, `babel_people`, `abraham_servant` 등 비개인/집합 코드는 제거
-  - 1회만 등장하는 인물은 제외된 개인 목록(`tools/seed/person_meta.json`) 기준으로 필터링
+  - 인물 화이트리스트는 `tools/seed/character_meta.json` 기준으로 필터링
 
 ```bash
 python3 tools/seed/build_200_stories_seed_sql.py \
   --output-dir supabase/200_stories \
-  --person-meta-json tools/seed/person_meta.json
+  --character-meta-json tools/seed/character_meta.json
 ```
 
 - 생성 결과:
@@ -109,30 +108,31 @@ python3 tools/seed/build_200_stories_seed_sql.py \
 # 기본은 2분할 생성
 python3 tools/seed/build_200_stories_seed_sql.py \
   --output-dir supabase/200_stories \
-  --person-meta-json tools/seed/person_meta.json
+  --character-meta-json tools/seed/character_meta.json
 ```
 
 ### 5) `assets/avatars` 인물 이미지 생성
 - 사용 스크립트: `tools/images/generate_avatars_vertex.py`
-- 기본 입력은 `tools/seed/person_meta.json`입니다 (여기서 아바타 프롬프트를 읽음).
+- 기본 입력은 `tools/seed/character_meta.json`입니다 (여기서 아바타 프롬프트를 읽음).
 
 ```bash
 source .env
 python3 tools/images/generate_avatars_vertex.py \
+  --character-meta-json tools/seed/character_meta.json \
   --output-dir assets/avatars
 ```
 
 ### 6) 선정 인물을 Supabase `persons`/`person_eras`에 반영
-- SQL 생성 스크립트: `tools/seed/build_persons_seed_sql.py`
+- SQL 생성 스크립트: `tools/seed/build_characters_seed_sql.py`
 
 ```bash
-python3 tools/seed/build_persons_seed_sql.py \
-  --person-meta-json tools/seed/person_meta.json \
+python3 tools/seed/build_characters_seed_sql.py \
+  --character-meta-json tools/seed/character_meta.json \
   --stories-dir assets/200_stories \
-  --output supabase/200_stories/persons_seed.sql
+  --output supabase/200_stories/characters_seed.sql
 ```
 
-- 생성된 `supabase/200_stories/persons_seed.sql`을 Supabase SQL Editor에서 실행합니다.
+- 생성된 `supabase/200_stories/characters_seed.sql`을 Supabase SQL Editor에서 실행합니다.
 
 ## 기타 자산 메모
 

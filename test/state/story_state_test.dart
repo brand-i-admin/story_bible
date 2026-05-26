@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/era.dart';
+import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/state/story_state.dart';
 
 void main() {
@@ -19,6 +20,8 @@ void main() {
       expect(state.selectedCharacterColors, isEmpty);
       expect(state.selectedEventId, isNull);
       expect(state.completedEventIds, isEmpty);
+      expect(state.eventEmotionMarks, isEmpty);
+      expect(state.savedEventIds, isEmpty);
       expect(state.searchQuery, '');
       expect(state.searchResults, isEmpty);
       expect(state.isSearching, false);
@@ -102,6 +105,26 @@ void main() {
       );
       expect(updated.completedEventIds.length, 3);
       expect(updated.completedEventIds.contains('ev2'), true);
+    });
+
+    test('eventEmotionMarks를 교체할 수 있다', () {
+      const original = StoryState();
+      const mark = EventEmotionMark(
+        eventId: 'ev1',
+        emotionKey: 'joy',
+        emotionLabel: '기쁨',
+        emotionEmoji: '✨',
+        note: '기쁨이 남았다.',
+        updatedAt: null,
+      );
+      final updated = original.copyWith(eventEmotionMarks: const {'ev1': mark});
+      expect(updated.eventEmotionMarks['ev1']?.emotionEmoji, '✨');
+    });
+
+    test('savedEventIds를 교체할 수 있다', () {
+      const original = StoryState();
+      final updated = original.copyWith(savedEventIds: {'ev1', 'ev2'});
+      expect(updated.savedEventIds, {'ev1', 'ev2'});
     });
 
     test('eras를 교체할 수 있다', () {

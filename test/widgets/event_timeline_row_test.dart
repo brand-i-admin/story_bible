@@ -4,7 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/utils/scene_asset_loader.dart';
+import 'package:story_bible/widgets/completion_celebration.dart';
+import 'package:story_bible/widgets/emotion_badge_icon.dart';
 import 'package:story_bible/widgets/event_timeline_row.dart';
+import 'package:story_bible/widgets/v2/region_event_list.dart';
 
 Era _era() => const Era(
   id: 'era_primeval',
@@ -151,5 +155,67 @@ void main() {
         }
       },
     );
+  });
+
+  group('EventTimelineRow celebration', () {
+    testWidgets('도장 애니메이션이 끝나면 onCelebrationComplete를 호출한다', (tester) async {
+      final events = [_event(0)];
+      var completed = 0;
+
+      await tester.pumpWidget(
+        _harness(
+          EventTimelineRow(
+            events: events,
+            allEras: [_era()],
+            charactersByCode: const {},
+            selectedEventId: events.first.id,
+            celebrationEventId: events.first.id,
+            celebrationStampLabel: '✨',
+            celebrationNonce: 1,
+            onCelebrationComplete: () => completed += 1,
+            onTapEvent: (_) {},
+            rowHeight: 280,
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(completed, 0);
+
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(completed, 0);
+
+      await tester.pump(
+        CompletionCelebration.stampDuration + const Duration(milliseconds: 100),
+      );
+      expect(completed, 1);
+    });
+  });
+
+  group('StoryEventThumbCard emotion badge', () {
+    testWidgets('감정 배지 우측 하단에 이야기 순번을 함께 표시한다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(0),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            emotionKey: 'fear',
+            orderNumber: 7,
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      final emotionRect = tester.getRect(find.byType(EmotionBadgeIcon));
+      final orderRect = tester.getRect(find.text('7'));
+
+      expect(orderRect.center.dx, greaterThan(emotionRect.center.dx));
+      expect(orderRect.center.dy, greaterThan(emotionRect.center.dy));
+    });
   });
 }

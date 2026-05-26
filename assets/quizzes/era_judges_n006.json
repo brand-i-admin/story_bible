@@ -2,7 +2,7 @@
   "era_code": "era_judges",
   "story_index": 6,
   "story_title": "삼손: 힘의 비밀과 마지막 기도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "삿 16:25 — '그들이 삼손을 두 기둥 사이에 세웠더니 ... 삼손이 그들을 위하여 재주를 부리니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "삼손의 마지막 이야기가 기록된 성경 책은 어디입니까?",
+      "question": "삼손은 무엇이라고 말했습니까?",
       "choices": [
-        "사사기",
-        "열왕기상",
-        "사무엘상"
+        "나로 이집을 버틴 기둥을 찾아서 그것을 의지하게 하라 했다",
+        "드보라",
+        "여호와께 기도하였다"
       ],
       "answer_index": 0,
-      "explanation": "삿 16:4-31에 삼손과 들릴라, 삼손의 최후가 기록됨"
+      "explanation": "삿 16:26 — '삼손이 자기 손을 붙든 소년에게 이르되 나로 이집을 버틴 기둥을 찾아서 그것을 의지하게 하라 하니라'"
     }
   ]
 }

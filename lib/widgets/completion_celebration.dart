@@ -14,10 +14,15 @@ class CompletionCelebration extends StatefulWidget {
   const CompletionCelebration({
     super.key,
     required this.child,
+    this.stampLabel = '완료',
     this.onComplete,
   });
 
   final Widget child;
+  final String stampLabel;
+
+  static const burstDuration = Duration(milliseconds: 1200);
+  static const stampDuration = Duration(milliseconds: 950);
 
   /// 도장 단계까지 끝났을 때 한 번 호출. (다음 이야기 카드 glow 트리거 등)
   final VoidCallback? onComplete;
@@ -28,18 +33,16 @@ class CompletionCelebration extends StatefulWidget {
 
 class CompletionCelebrationState extends State<CompletionCelebration>
     with TickerProviderStateMixin {
-  static const _burstDuration = Duration(milliseconds: 1200);
-  static const _stampDuration = Duration(milliseconds: 950);
-
   late final AnimationController _burst = AnimationController(
     vsync: this,
-    duration: _burstDuration,
+    duration: CompletionCelebration.burstDuration,
   );
   late final AnimationController _stamp = AnimationController(
     vsync: this,
-    duration: _stampDuration,
+    duration: CompletionCelebration.stampDuration,
   )..addStatusListener(_onStampStatus);
   late final List<_Particle> _particles = _generateParticles();
+  String? _activeStampLabel;
 
   void _onStampStatus(AnimationStatus status) {
     if (status == AnimationStatus.completed && mounted) {
@@ -47,7 +50,8 @@ class CompletionCelebrationState extends State<CompletionCelebration>
     }
   }
 
-  void play() {
+  void play({String? stampLabel}) {
+    _activeStampLabel = stampLabel ?? widget.stampLabel;
     // 별가루 burst 와 도장 슬램을 동시 시작 — 한 번의 묵직한 햅틱으로 함께 알림.
     HapticFeedback.mediumImpact();
     _burst.forward(from: 0);
@@ -93,7 +97,10 @@ class CompletionCelebrationState extends State<CompletionCelebration>
                 if (!_stamp.isAnimating && _stamp.value == 0) {
                   return const SizedBox.shrink();
                 }
-                return _StampOverlay(progress: _stamp.value);
+                return _StampOverlay(
+                  progress: _stamp.value,
+                  label: _activeStampLabel ?? widget.stampLabel,
+                );
               },
             ),
           ),
@@ -211,9 +218,10 @@ class _CelebrationPainter extends CustomPainter {
 ///
 /// 950ms 동안 슬램(0~100ms) → 흔듦(100~500ms) → 페이드(500~950ms) 진행.
 class _StampOverlay extends StatelessWidget {
-  const _StampOverlay({required this.progress});
+  const _StampOverlay({required this.progress, required this.label});
 
   final double progress;
+  final String label;
 
   // 도장 자체의 기본 기울기 (-12°). 실제 도장 같은 느낌.
   static const double _baseTilt = -0.21;
@@ -251,7 +259,10 @@ class _StampOverlay extends StatelessWidget {
         opacity: opacity,
         child: Transform.rotate(
           angle: _baseTilt + shake,
-          child: Transform.scale(scale: scale, child: const _StampVisual()),
+          child: Transform.scale(
+            scale: scale,
+            child: _StampVisual(label: label),
+          ),
         ),
       ),
     );
@@ -259,7 +270,9 @@ class _StampOverlay extends StatelessWidget {
 }
 
 class _StampVisual extends StatelessWidget {
-  const _StampVisual();
+  const _StampVisual({required this.label});
+
+  final String label;
 
   // 짙은 금박. 양피지 톤과 어울리도록 brown 끼 살짝 섞은 골드.
   static const _ink = Color(0xFFB07220);
@@ -283,13 +296,13 @@ class _StampVisual extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: _ink, width: 1.5),
         ),
-        child: const Text(
-          '완료',
+        child: Text(
+          label,
           style: TextStyle(
-            fontSize: 26,
+            fontSize: label == '완료' ? 26 : (label.length <= 2 ? 31 : 24),
             fontWeight: FontWeight.w900,
             color: _ink,
-            letterSpacing: 2,
+            letterSpacing: label == '완료' ? 2 : 0,
             height: 1.0,
           ),
         ),

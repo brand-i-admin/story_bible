@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 10,
   "story_title": "이삭 탄생과 하갈 추방",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 21:15-16 — '그 아이를 관목 아래 두고 ... 방성대곡하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "이삭 탄생과 하갈 추방 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "하나님은 하갈에게 어떤 위로를 주셨습니까?",
       "choices": [
-        "21장",
-        "17장",
-        "25장"
+        "아이의 소리를 들으셨으니 두려워하지 말라고 하셨다",
+        "이삭에게 돌아가지 말라고 하셨다",
+        "아이를 혼자 두고 떠나라고 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "창 21:1-21에 이삭 출생, 이스마엘과 하갈의 추방이 기록됨"
+      "explanation": "창 21:17 — '하나님이 그 아이의 소리를 들으시므로 하나님의 사자가 하늘에서부터 하갈을 불러 가라사대 하갈 아 무슨 일이냐 두려워 말라 하나님이 거기 있는 아이의 소리를 들으셨나니'"
     }
   ]
 }

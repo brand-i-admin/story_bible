@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 1,
   "story_title": "하늘 보좌: 문이 열리다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 4:10 — '이십사 장로들이 … 보좌에 앉으신 이 앞에 엎드려 … 그 면류관을 보좌 앞에 던지며'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "하늘 보좌 환상이 기록된 성경 책은 어디입니까?",
+      "question": "장로들은 어떻게 했습니까?",
       "choices": [
-        "요한계시록",
-        "에스겔서",
-        "이사야서"
+        "보좌에 앉으신 이 앞에 엎드려 세세토록 사시는 이에게 경배",
+        "황금으로 된 계단",
+        "불타는 제단"
       ],
       "answer_index": 0,
-      "explanation": "계 4:1-11에 하늘 보좌 환상이 기록됨"
+      "explanation": "계 4:10 — '이십사 장로들이 보좌에 앉으신 이 앞에 엎드려 세세토록 사시는 이에게 경배하고 자기의 면류관을 보좌 앞에 던지며 가로되'"
     }
   ]
 }

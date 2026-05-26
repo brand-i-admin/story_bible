@@ -2,7 +2,7 @@
   "era_code": "era_judges",
   "story_index": 10,
   "story_title": "사무엘의 탄생: 한나의 눈물",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -19,26 +19,26 @@
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "한나는 사무엘이 젖을 뗀 후 어떻게 하였습니까?",
+      "question": "엘리는 무엇이라고 말했습니까?",
       "choices": [
-        "여호와께 데려가 영영히 드렸다",
+        "네가 언제까지 취하여 있겠느냐 포도주를 끊으라",
         "성전에서 함께 살았다",
         "엘리 제사장에게 보냈다"
       ],
       "answer_index": 0,
-      "explanation": "삼상 1:28 — '나도 그를 여호와께 드리되 그의 평생을 여호와께 드리나이다'"
+      "explanation": "삼상 1:14 — '엘리가 그에게 이르되 네가 언제까지 취하여 있겠느냐 포도주를 끊으라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "한나의 기도와 사무엘의 탄생이 기록된 성경 책은 어디입니까?",
+      "question": "여호와는 어떻게 했습니까?",
       "choices": [
-        "사무엘상",
-        "사사기",
-        "열왕기상"
+        "나의 구하여 기도한 바를 허락하신지라",
+        "유다 지파",
+        "베냐민 지파"
       ],
       "answer_index": 0,
-      "explanation": "삼상 1:1-28에 한나의 기도와 사무엘 탄생이 기록됨"
+      "explanation": "삼상 1:27 — '이 아이를 위하여 내가 기도하였더니 여호와께서 나의 구하여 기도한 바를 허락하신지라'"
     }
   ]
 }

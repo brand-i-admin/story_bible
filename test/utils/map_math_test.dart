@@ -179,6 +179,39 @@ void main() {
     });
   });
 
+  group('buildRankedEventPointMap', () {
+    test('같은 위치의 전체 사건 묶음 기준으로 번호 핀 좌표를 분산한다', () {
+      final events = [
+        _rankedEvent('1', 1, 31.7, 35.2),
+        _rankedEvent('2', 2, 31.7, 35.2),
+        _rankedEvent('3', 3, 31.7, 35.2),
+      ];
+
+      final allPoints = buildRankedEventPointMap(events);
+      final pairOnlyPoints = spreadColocatedPoints({
+        '1': events[0].latLng,
+        '2': events[1].latLng,
+      });
+
+      expect(allPoints.keys, containsAll(['1', '2', '3']));
+      expect(allPoints['1'], isNot(pairOnlyPoints['1']));
+      expect(allPoints['2'], isNot(pairOnlyPoints['2']));
+    });
+
+    test('visibleCount가 있으면 현재 reveal 된 사건까지만 포함한다', () {
+      final events = [
+        _rankedEvent('1', 3, 31.7, 35.2),
+        _rankedEvent('2', 1, 31.7, 35.2),
+        _rankedEvent('3', 2, 31.7, 35.2),
+      ];
+
+      final points = buildRankedEventPointMap(events, visibleCount: 2);
+
+      expect(points.keys, containsAll(['2', '3']));
+      expect(points.containsKey('1'), isFalse);
+    });
+  });
+
   group('rotateOffset', () {
     test('0 라디안은 무회전', () {
       const o = Offset(3, 4);
@@ -321,6 +354,29 @@ void main() {
       expect(hull.length, greaterThanOrEqualTo(4));
     });
   });
+}
+
+StoryEvent _rankedEvent(String id, int globalRank, double lat, double lng) {
+  return StoryEvent(
+    id: id,
+    landmarkId: 'lm_test',
+    eraId: 'e',
+    title: id,
+    summary: null,
+    storyScenes: const <String>[],
+    sceneCharacters: const <List<String>>[],
+    startYear: null,
+    endYear: null,
+    timePrecision: 'approx',
+    storyIndex: globalRank,
+    rankInEra: globalRank,
+    globalRank: globalRank,
+    placeName: null,
+    lat: lat,
+    lng: lng,
+    characterCodes: const [],
+    bibleRefs: const [],
+  );
 }
 
 StoryEvent _bareEvent(String id) {

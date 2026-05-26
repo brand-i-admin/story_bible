@@ -35,6 +35,8 @@ STORIES_SQL := $(SUPABASE_DIR)/200_stories/200_stories_seed.sql
 CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
 LANDMARKS_SQL := $(SUPABASE_DIR)/200_stories/landmarks_seed.sql
 ERA_BOUNDARIES_SQL := $(SUPABASE_DIR)/200_stories/era_boundaries_seed.sql
+QUIZZES_SQL := $(SUPABASE_DIR)/quizzes/quizzes_seed.sql
+QUIZZES_REPORT := $(SUPABASE_DIR)/quizzes/quizzes_report.json
 LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 # =============================================================================
@@ -50,7 +52,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         seed-all generate-all \
         export-stories-json \
         db-init db-migrate apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
-        apply-seeds-landmarks apply-seeds-era-boundaries \
+        apply-seeds-landmarks apply-seeds-era-boundaries apply-seeds-quizzes \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
@@ -90,7 +92,8 @@ help:
 	@echo "  db-migrate                [ENV=dev]  supabase/migrations/*.sql 알파벳 순 적용 (idempotent — prod 증분 적용용)"
 	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
 	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories 적용 (UPSERT — 재실행 안전)"
-	@echo "  apply-seeds               [ENV=dev]  위 둘 모두 (최초 부트스트랩용)"
+	@echo "  apply-seeds-quizzes                  [ENV=dev]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
+	@echo "  apply-seeds               [ENV=dev]  전체 시드 적용 (최초 부트스트랩용)"
 	@echo ""
 	@echo "Supabase Storage (service_role 키 필요):"
 	@echo "  upload-character-avatars        [ENV=dev]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
@@ -207,8 +210,8 @@ seed-quizzes:
 	@# 단일 진실 소스로 사용한다.
 	$(PYTHON) $(TOOLS_DIR)/seed/build_quizzes_seed_sql.py \
 		--input-dir $(ASSETS_DIR)/quizzes \
-		--output $(SUPABASE_DIR)/quizzes/quizzes_seed.sql \
-		--report $(SUPABASE_DIR)/quizzes/quizzes_report.json \
+		--output $(QUIZZES_SQL) \
+		--report $(QUIZZES_REPORT) \
 		--events-from-json $(SUPABASE_DIR)/quizzes/db_events.json
 
 seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-landmarks seed-era-boundaries
@@ -385,12 +388,16 @@ apply-seeds-era-boundaries:
 	@echo "[Makefile] era_boundaries 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(ERA_BOUNDARIES_SQL))
 
+apply-seeds-quizzes:
+	@echo "[Makefile] quiz_questions 시드 적용 (ENV=$(ENV))"
+	$(call PSQL_APPLY,$(QUIZZES_SQL))
+
 # 매일 퀴즈 — UPSERT 가 아닌 단순 INSERT (on conflict do nothing) 라 재실행 안전.
 apply-seeds-daily-quiz:
 	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/seeds/daily_quiz.sql)
 
-apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-era-boundaries apply-seeds-daily-quiz
+apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes apply-seeds-era-boundaries apply-seeds-daily-quiz
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================
@@ -411,6 +418,6 @@ lint:
 
 clean-generated:
 	@echo "[Makefile] 생성된 SQL 삭제..."
-	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL) $(LANDMARKS_SQL) $(ERA_BOUNDARIES_SQL)
+	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL) $(LANDMARKS_SQL) $(ERA_BOUNDARIES_SQL) $(QUIZZES_SQL) $(QUIZZES_REPORT)
 	rm -f $(SUPABASE_DIR)/seeds/krv_bible_verses_part_*.sql
 	@echo "  → tools/seed/character_meta.json은 유지됨 (수동 삭제)"

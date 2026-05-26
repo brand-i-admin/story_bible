@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 27,
   "story_title": "부활과 승천: 새 시작",
-  "source_version": "2026-04-30",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 1:8 — '성령이 너희에게 임하시면 권능을 받고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님의 승천 기사가 가장 자세히 기록된 책은 어디입니까?",
+      "question": "제자들은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "요한복음",
-        "히브리서"
+        "자세히 하늘을 쳐다 보고 있는데 흰 옷 입은 두 사람이 저희 곁에 서서",
+        "삼 일",
+        "팔십 일"
       ],
       "answer_index": 0,
-      "explanation": "행 1:9-11에 승천 기사가 자세히 기록됨"
+      "explanation": "행 1:10 — '올라가실 때에 제자들이 자세히 하늘을 쳐다 보고 있는데 흰 옷 입은 두 사람이 저희 곁에 서서'"
     }
   ]
 }

@@ -2,23 +2,11 @@
   "era_code": "era_monarchy",
   "story_index": 17,
   "story_title": "호렙의 엘리야: 조용한 음성",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "하나님이 이스라엘 가운데 남기리라 하신 자는 몇 명입니까?",
-      "choices": [
-        "칠천 명",
-        "오천 명",
-        "백 명"
-      ],
-      "answer_index": 0,
-      "explanation": "왕상 19:18 — '내가 이스라엘 가운데 칠천 인을 남기리니'"
-    },
-    {
-      "type": "attitude",
-      "display_order": 1,
       "question": "엘리야는 로뎀 나무 아래에서 무엇을 하였습니까?",
       "choices": [
         "누워 자고 있었다",
@@ -29,16 +17,28 @@
       "explanation": "왕상 19:5 — '로뎀 나무 아래 누워 자더니'"
     },
     {
-      "type": "bible_context",
-      "display_order": 2,
-      "question": "호렙에서 엘리야가 세미한 음성을 들은 기사가 기록된 책은 어디입니까?",
+      "type": "attitude",
+      "display_order": 1,
+      "question": "사자는 무엇이라고 말했습니까?",
       "choices": [
-        "열왕기상",
-        "열왕기하",
-        "이사야"
+        "일어나서 먹으라 네가 길을 이기지 못할까 하노 라 하는지라",
+        "오천 명",
+        "백 명"
       ],
       "answer_index": 0,
-      "explanation": "왕상 19:1-18에 호렙에서 엘리야가 세미한 음성을 들은 기사가 기록됨"
+      "explanation": "왕상 19:7 — '여호와의 사자가 또 다시 와서 어루만지며 이르되 일어나서 먹으라 네가 길을 이기지 못할까 하노 라 하는지라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "하나님이 이스라엘 가운데 남기리라 하신 자는 몇 명입니까?",
+      "choices": [
+        "칠천 명",
+        "오천 명",
+        "백 명"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 19:18 — '내가 이스라엘 가운데 칠천 인을 남기리니'"
     }
   ]
 }

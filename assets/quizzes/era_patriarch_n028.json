@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 28,
   "story_title": "요셉의 정체 공개: 울음의 방",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 45:8 — '그런즉 나를 이리로 보낸 자는 당신들이 아니요 하나님이시라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "요셉이 형들에게 자신을 드러낸 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "하나님은 어떻게 했습니까?",
       "choices": [
-        "45장",
-        "43장",
-        "47장"
+        "나를 애굽 전국 의 주로 세우셨으니 내게로 지체말고 내려오사",
+        "청지기 한 명이 있었다",
+        "바로의 신하들이 있었다"
       ],
       "answer_index": 0,
-      "explanation": "창 45:1-15에 요셉의 정체 공개와 형제들과의 화해가 기록됨"
+      "explanation": "창 45:9 — '당신들은 속히 아버지께로 올라가서 고하기를 아버지의 아들 요셉의 말에 하나님이 나를 애굽 전국 의 주로 세우셨으니 내게로 지체말고 내려오사'"
     }
   ]
 }

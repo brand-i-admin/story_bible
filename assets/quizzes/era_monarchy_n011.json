@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 11,
   "story_title": "다윗 언약: 집을 세우리라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "삼하 7:13 — '저는 내 이름을 위하여 집을 건축할 것이요'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "다윗 언약이 기록된 성경 책은 어디입니까?",
+      "question": "나단은 어떻게 했습니까?",
       "choices": [
-        "사무엘하",
-        "사무엘상",
-        "열왕기상"
+        "모든 말씀과 이 모든 묵시대로 다윗에게 고했다",
+        "엘리야",
+        "사무엘"
       ],
       "answer_index": 0,
-      "explanation": "삼하 7:1-17에 다윗 언약이 기록됨"
+      "explanation": "삼하 7:17 — '나단이 이 모든 말씀과 이 모든 묵시대로 다윗에게 고하니라'"
     }
   ]
 }

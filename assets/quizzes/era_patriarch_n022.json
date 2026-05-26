@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 22,
   "story_title": "에서와 화해: 달려오는 형",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 33:3 — '자기는 그들 앞에서 나아가되 몸을 일곱 번 땅에 굽히며 그 형 에서에게 가까이 하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "야곱과 에서의 화해 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "하나님은 어떻게 했습니까?",
       "choices": [
-        "33장",
-        "27장",
-        "36장"
+        "주의 종에게 은혜로 주신 자식이니이다",
+        "오십 명",
+        "백 명"
       ],
       "answer_index": 0,
-      "explanation": "창 33:1-11에 야곱과 에서의 재회와 화해가 기록됨"
+      "explanation": "창 33:5 — '에서가 눈을 들어 여인과 자식들을 보고 묻되 너와 함께한 이들 은 누구냐 야곱이 가로되 하나님이 주의 종에게 은혜로 주신 자식이니이다'"
     }
   ]
 }

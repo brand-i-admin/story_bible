@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 6,
   "story_title": "바벨론의 멸망: 무너지는 화려함",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 18:4 — '내 백성아 거기서 나와 그의 죄에 참여하지 말고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바벨론의 멸망 기사가 기록된 성경 책은 어디입니까?",
+      "question": "하나님은 어떻게 했습니까?",
       "choices": [
-        "요한계시록",
-        "예레미야서",
-        "이사야서"
+        "그의 불의한 일을 기억하신지라",
+        "황금 보좌 위",
+        "불바다 한가운데"
       ],
       "answer_index": 0,
-      "explanation": "계 17:1-18:24에 바벨론의 멸망 기사가 기록됨"
+      "explanation": "계 18:5 — '그 죄는 하늘에 사무쳤으며 하나님은 그의 불의한 일을 기억하신지라'"
     }
   ]
 }

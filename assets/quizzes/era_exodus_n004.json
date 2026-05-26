@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 4,
   "story_title": "불타는 떨기나무: 모세의 소명",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 3:11 — '모세가 하나님께 고하되 내가 누구관대 바로에게 가며 이스라엘 자손을 애굽에서 인도하여 내리이까'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "불타는 떨기나무와 모세의 소명 기사는 출애굽기 몇 장에 기록되어 있습니까?",
+      "question": "하나님은 무엇이라고 말했습니까?",
       "choices": [
-        "3장",
-        "2장",
-        "6장"
+        "스스로 있는 자가 나를 너희에게 보내셨다 하라",
+        "시내 산",
+        "모리아 산"
       ],
       "answer_index": 0,
-      "explanation": "출 3:1-22에 떨기나무 불꽃과 하나님의 소명, 출 4:1-17에 이적의 표징이 기록됨"
+      "explanation": "출 3:14 — '하나님이 모세에게 이르시되 나는 스스로 있는 자니라 또 이르시되 너는 이스라엘 자손에게 이같이 이르기를 스스로 있는 자가 나를 너희에게 보내셨다 하라'"
     }
   ]
 }

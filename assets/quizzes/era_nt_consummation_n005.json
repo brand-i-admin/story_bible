@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 5,
   "story_title": "용과 두 짐승: 대립의 정점",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 13:10 — '성도들의 인내와 믿음이 여기 있느니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "용과 두 짐승 환상이 기록된 성경 책은 어디입니까?",
+      "question": "짐승의 수에 대해 어떤 설명이 나옵니까?",
       "choices": [
-        "요한계시록",
-        "다니엘서",
-        "에스겔서"
+        "그 수는 사람의 수인 666이라고 했다",
+        "그 수는 아무도 셀 수 없다고 했다",
+        "그 수는 열두 지파의 수라고 했다"
       ],
       "answer_index": 0,
-      "explanation": "계 12:1-13:18에 용과 두 짐승 환상이 기록됨"
+      "explanation": "계 13:18 — '지혜가 여기 있으니 총명 있는 자는 그 짐승의 수를 세어 보라 그 수는 사람의 수니 육백 육십육 이니라'"
     }
   ]
 }

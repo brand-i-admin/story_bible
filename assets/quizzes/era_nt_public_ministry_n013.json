@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 13,
   "story_title": "야이로의 딸과 혈루증 여인",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 5:33 — '두려워하여 떨며 와서 그 앞에 엎드려 모든 사실을 여짜온대'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "야이로의 딸과 혈루증 여인 기사가 기록된 성경 책은 어디입니까?",
+      "question": "베드로는 무엇이라고 말했습니까?",
       "choices": [
-        "마가복음, 마태복음, 누가복음",
-        "요한복음만",
-        "마태복음만"
+        "주여 무 리가 옹위하여 미나이다",
+        "병이 서서히 나았다",
+        "아무런 변화가 없었다"
       ],
       "answer_index": 0,
-      "explanation": "막 5:21-43, 마 9:18-26, 눅 8:40-56에 두 기적 기사가 기록됨"
+      "explanation": "눅 8:45 — '예수께서 가라사대 내게 손을 댄 자가 누구냐 하시니 다 아니라 할 때에 베드로가 가로되 주여 무 리가 옹위하여 미나이다'"
     }
   ]
 }

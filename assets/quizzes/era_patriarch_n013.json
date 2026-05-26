@@ -2,23 +2,11 @@
   "era_code": "era_patriarch",
   "story_index": 13,
   "story_title": "리브가: 이삭의 결혼",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "이삭은 리브가를 인도하여 어느 장막으로 들였습니까?",
-      "choices": [
-        "모친 사라의 장막",
-        "아버지 아브라함의 장막",
-        "자기 장막"
-      ],
-      "answer_index": 0,
-      "explanation": "창 24:67 — '이삭이 리브가를 인도하여 모친 사라의 장막으로 들이고'"
-    },
-    {
-      "type": "attitude",
-      "display_order": 1,
       "question": "아브라함의 종이 물을 청하자 리브가는 어떻게 행동하였습니까?",
       "choices": [
         "종과 낙타들에게도 물을 길어 주었다",
@@ -29,16 +17,28 @@
       "explanation": "창 24:19-20 — '낙타를 위하여도 물을 길어 ... 모든 낙타에게 먹이니라'"
     },
     {
-      "type": "bible_context",
-      "display_order": 2,
-      "question": "이삭과 리브가의 혼인 이야기는 성경 어느 책 몇 장에 기록되어 있습니까?",
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아브라함의 종은 리브가에게 무엇을 부탁했습니까?",
       "choices": [
-        "창세기 24장",
-        "창세기 26장",
-        "룻기 1장"
+        "물을 조금 마시게 해 달라고 부탁했다",
+        "이삭에게 바로 가 달라고 부탁했다",
+        "가족을 숨겨 달라고 부탁했다"
       ],
       "answer_index": 0,
-      "explanation": "창 24:1-67에 아브라함의 종이 리브가를 찾아 이삭에게 데려오는 이야기가 기록됨"
+      "explanation": "창 24:45 — '내가 묵도하기를 마치지 못하여 리브가가 물 항아리를 어깨에 메고 나와서 우물로 내려와 긷기로 내가 그에게 이르기를 청컨대 내게 마시우라 한즉'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "이삭은 리브가를 인도하여 어느 장막으로 들였습니까?",
+      "choices": [
+        "모친 사라의 장막",
+        "아버지 아브라함의 장막",
+        "자기 장막"
+      ],
+      "answer_index": 0,
+      "explanation": "창 24:67 — '이삭이 리브가를 인도하여 모친 사라의 장막으로 들이고'"
     }
   ]
 }

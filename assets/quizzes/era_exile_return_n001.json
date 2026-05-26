@@ -2,23 +2,11 @@
   "era_code": "era_exile_return",
   "story_index": 1,
   "story_title": "마른 뼈: 숨이 들어오다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "마른 뼈 환상에서 뼈들은 무엇을 상징합니까?",
-      "choices": [
-        "이스라엘 온 족속",
-        "바벨론의 군대",
-        "죽은 선지자들"
-      ],
-      "answer_index": 0,
-      "explanation": "겔 37:11 — '이 뼈들은 이스라엘 온 족속이라'"
-    },
-    {
-      "type": "attitude",
-      "display_order": 1,
       "question": "에스겔은 하나님의 명령에 따라 마른 뼈들에게 어떻게 하였습니까?",
       "choices": [
         "뼈들에게 대언하였다",
@@ -29,16 +17,28 @@
       "explanation": "겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'"
     },
     {
-      "type": "bible_context",
-      "display_order": 2,
-      "question": "마른 뼈 환상이 기록된 성경 책은 어디입니까?",
+      "type": "attitude",
+      "display_order": 1,
+      "question": "주 여호와는 어떻게 했습니까?",
       "choices": [
-        "에스겔",
-        "예레미야",
-        "이사야"
+        "뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라",
+        "바벨론의 군대",
+        "죽은 선지자들"
       ],
       "answer_index": 0,
-      "explanation": "겔 37:1-14에 마른 뼈 환상과 이스라엘 회복 예언이 기록됨"
+      "explanation": "겔 37:5 — '주 여호와께서 이 뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "마른 뼈 환상에서 뼈들은 무엇을 상징합니까?",
+      "choices": [
+        "이스라엘 온 족속",
+        "바벨론의 군대",
+        "죽은 선지자들"
+      ],
+      "answer_index": 0,
+      "explanation": "겔 37:11 — '이 뼈들은 이스라엘 온 족속이라'"
     }
   ]
 }

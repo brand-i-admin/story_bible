@@ -2,23 +2,11 @@
   "era_code": "era_nt_apostolic",
   "story_index": 2,
   "story_title": "베드로 설교: 하루에 삼천",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "베드로의 설교 후 그날 세례를 받은 사람은 몇 명입니까?",
-      "choices": [
-        "삼천 명",
-        "오천 명",
-        "오백 명"
-      ],
-      "answer_index": 0,
-      "explanation": "행 2:41 — '그 말을 받은 사람들은 세례를 받으매 이 날에 신도의 수가 삼천이나 더하더라'"
-    },
-    {
-      "type": "attitude",
-      "display_order": 1,
       "question": "설교를 들은 무리는 어떤 반응을 보였습니까?",
       "choices": [
         "마음에 찔려 베드로에게 어찌하면 되겠느냐고 물었다",
@@ -29,16 +17,28 @@
       "explanation": "행 2:37 — '저희가 이 말을 듣고 마음에 찔려 … 가로되 형제들아 우리가 어찌할꼬'"
     },
     {
-      "type": "bible_context",
-      "display_order": 2,
-      "question": "베드로의 오순절 설교가 기록된 성경 책은 어디입니까?",
+      "type": "attitude",
+      "display_order": 1,
+      "question": "베드로는 마음에 찔린 사람들에게 무엇을 하라고 했습니까?",
       "choices": [
-        "사도행전",
-        "베드로전서",
-        "로마서"
+        "회개하고 예수님의 이름으로 세례를 받으라고 했다",
+        "예루살렘을 떠나 숨어 살라고 했다",
+        "성전 제사를 더 많이 드리라고 했다"
       ],
       "answer_index": 0,
-      "explanation": "행 2:14-47에 베드로의 오순절 설교와 결과가 기록됨"
+      "explanation": "행 2:38 — '베드로가 가로되 너희가 회개하여 각각 예수 그리스도의 이름으로 세례를 받고 죄 사함을 얻으라 그리하면 성령을 선물로 받으리니'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "베드로의 설교 후 그날 세례를 받은 사람은 몇 명입니까?",
+      "choices": [
+        "삼천 명",
+        "오천 명",
+        "오백 명"
+      ],
+      "answer_index": 0,
+      "explanation": "행 2:41 — '그 말을 받은 사람들은 세례를 받으매 이 날에 신도의 수가 삼천이나 더하더라'"
     }
   ]
 }

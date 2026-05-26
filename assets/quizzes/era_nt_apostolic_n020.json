@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 20,
   "story_title": "2차 선교(5): 아덴—아레오바고 설교",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -19,26 +19,26 @@
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "아레오바고 설교 후 아레오바고 관원 디오누시오는 어떻게 하였습니까?",
+      "question": "우리는 어떻게 했습니까?",
       "choices": [
-        "바울을 친하여 믿었다",
+        "그를 힘입어 살며 기동",
         "바울을 법정에 고발하였다",
         "아무 반응 없이 돌아갔다"
       ],
       "answer_index": 0,
-      "explanation": "행 17:34 — '몇 사람이 그를 친하여 믿으니 그 중 아레오바고 관원 디오누시오와 다마리라 하는 여자'"
+      "explanation": "행 17:28 — '우리가 그를 힘입어 살며 기동하며 있느니라 너희 시인 중에도 어떤 사람들의 말과 같이 우리가 그의 소생이라 하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바울의 아레오바고 설교가 기록된 성경 책은 어디입니까?",
+      "question": "바울은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "고린도전서",
-        "로마서"
+        "저희 가운데서 떠나매",
+        "성전 앞 우상들",
+        "시장 안 신들의 그림들"
       ],
       "answer_index": 0,
-      "explanation": "행 17:16-34에 바울의 아레오바고 설교가 기록됨"
+      "explanation": "행 17:33 — '이에 바울이 저희 가운데서 떠나매'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 14,
   "story_title": "금송아지: 아래에서 벌어진 일",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 32:18 — '나의 듣기에는 노래하는 소리로다 하고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "금송아지 사건이 기록된 성경 책은 어디입니까?",
+      "question": "아론은 무엇이라고 말했습니까?",
       "choices": [
-        "출애굽기",
-        "레위기",
-        "민수기"
+        "내 주여 노하지 마소서 이 백성의 악함을 당신이 아나이다",
+        "여호수아",
+        "전쟁의 함성이라 하였다"
       ],
       "answer_index": 0,
-      "explanation": "출 32:1-35에 금송아지 사건이 기록됨"
+      "explanation": "출 32:22 — '아론이 가로되 내 주여 노하지 마소서 이 백성의 악함을 당신이 아나이다'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 22,
   "story_title": "최후의 만찬",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 14:24 — '이것은 많은 사람을 위하여 흘리는 나의 피 곧 언약의 피니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "최후의 만찬 직후에 일어난 사건은 무엇입니까?",
+      "question": "최후의 만찬에서 예수님은 떡을 어떻게 하셨습니까?",
       "choices": [
-        "겟세마네 기도",
-        "빈 무덤 발견",
-        "오순절 성령 강림"
+        "축복하고 떼어 제자들에게 주셨다",
+        "혼자만 드시고 제자들에게 주지 않으셨다",
+        "떡을 모두 거두어 감추셨다"
       ],
       "answer_index": 0,
-      "explanation": "막 14:26-32 — 찬미 후 감람 산으로 나가 겟세마네에서 기도하심"
+      "explanation": "마 26:26 — '저희가 먹을 때에 예수께서 떡을 가지사 축복하시고 떼어 제자들을 주시며 가라사대 받아 먹으라 이것이 내 몸이니라 하시고'"
     }
   ]
 }

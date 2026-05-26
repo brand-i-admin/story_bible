@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 12,
   "story_title": "성벽 재건: 밤의 조사와 한 손엔 무기",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "느 2:17 — '저희의 말이 일어나 건축하자 하고 모두 힘을 내어 이 선한 일을 하려 하매'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "느헤미야의 야간 성벽 조사 기사가 기록된 성경 책은 어디입니까?",
+      "question": "성벽을 다시 쌓던 사람들은 어떤 어려움을 느꼈습니까?",
       "choices": [
-        "느헤미야",
-        "에스라",
-        "학개"
+        "돌무더기는 많고 일할 힘은 줄었다고 느꼈다",
+        "일할 사람이 너무 많아 혼란스러웠다",
+        "성벽이 이미 다 완성되었다고 생각했다"
       ],
       "answer_index": 0,
-      "explanation": "느 2:11-20에 야간 조사와 성벽 재건 선포 기사가 기록됨"
+      "explanation": "느 4:10 — '유다 사람들은 이르기를 흙 무더기가 아직도 많거늘 담부(擔負)하는 자의 힘이 쇠하였으니 우리가 성을 건축하지 못하리라 하고'"
     }
   ]
 }

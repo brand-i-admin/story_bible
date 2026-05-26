@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 19,
   "story_title": "나사로의 부활",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "요 11:35 — '예수께서 눈물을 흘리시더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "나사로의 부활 기사가 기록된 성경 책은 어디입니까?",
+      "question": "유대인들은 무엇이라고 말했습니까?",
       "choices": [
-        "요한복음",
-        "누가복음",
-        "사도행전"
+        "이에 유대인들이 말하되 보라 그를 어떻게 사랑하였는가 하며다",
+        "그 일을 그냥 지나쳤다",
+        "다른 사람에게 책임을 돌렸다"
       ],
       "answer_index": 0,
-      "explanation": "요 11:1-44에 나사로의 부활 기사가 기록됨"
+      "explanation": "요 11:36 — '이에 유대인들이 말하되 보라 그를 어떻게 사랑하였는가 하며'"
     }
   ]
 }

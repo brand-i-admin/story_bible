@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 2,
   "story_title": "마리아 수태고지와 찬양",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 1:49 — '능하신 이가 큰 일을 내게 행하셨으니 그 이름이 거룩하시며'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "마리아의 수태고지와 찬양 기사가 기록된 성경 책은 어디입니까?",
+      "question": "긍휼하심은 어떻게 했습니까?",
       "choices": [
-        "누가복음",
-        "마태복음",
-        "요한복음"
+        "두려워하는 자에게 대대로 이르는도다",
+        "유대 베들레헴",
+        "예루살렘 성전"
       ],
       "answer_index": 0,
-      "explanation": "눅 1:26-56에 마리아의 수태고지와 마리아 찬가가 기록됨"
+      "explanation": "눅 1:50 — '긍휼하심이 두려워하는 자에게 대대로 이르는도다'"
     }
   ]
 }

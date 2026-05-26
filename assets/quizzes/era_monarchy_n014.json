@@ -2,23 +2,11 @@
   "era_code": "era_monarchy",
   "story_index": 14,
   "story_title": "성전 건축: 손으로 짓는 집",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "솔로몬이 성전을 건축하는 데 걸린 기간은 얼마입니까?",
-      "choices": [
-        "칠년",
-        "삼년",
-        "십년"
-      ],
-      "answer_index": 0,
-      "explanation": "왕상 6:38 — '솔로몬이 전을 건축한 동안이 칠년이었더라'"
-    },
-    {
-      "type": "attitude",
-      "display_order": 1,
       "question": "두로 왕 히람은 솔로몬에게 어떻게 하였습니까?",
       "choices": [
         "신복을 보내어 협력하였다",
@@ -29,16 +17,28 @@
       "explanation": "왕상 5:1 — '히람이 평일에 다윗을 사랑하였음이라'"
     },
     {
-      "type": "bible_context",
-      "display_order": 2,
-      "question": "솔로몬의 성전 건축 기사가 기록된 성경 책은 어디입니까?",
+      "type": "attitude",
+      "display_order": 1,
+      "question": "감옥에서도 하나님은 솔로몬에게 어떻게 하셨습니까?",
       "choices": [
-        "열왕기상",
-        "역대하",
-        "출애굽기"
+        "솔로몬과 함께하시고 은혜를 주셨다",
+        "전쟁을 선포하였다",
+        "거부하고 물러났다"
       ],
       "answer_index": 0,
-      "explanation": "왕상 5:1-6:38에 솔로몬의 성전 건축 기사가 기록됨"
+      "explanation": "왕상 5:12 — '여호와께서 그 말씀대로 솔로몬에게 지혜를 주시므로 히람과 솔로몬이 친목하여 두 사람이 함께 약 조를 맺었더라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "솔로몬이 성전을 건축하는 데 걸린 기간은 얼마입니까?",
+      "choices": [
+        "칠년",
+        "삼년",
+        "십년"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 6:38 — '솔로몬이 전을 건축한 동안이 칠년이었더라'"
     }
   ]
 }

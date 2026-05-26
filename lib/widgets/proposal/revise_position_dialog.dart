@@ -136,204 +136,287 @@ class _RevisePositionDialogState extends ConsumerState<RevisePositionDialog> {
     final theme = Theme.of(context);
     return AlertDialog(
       title: const Text('위치 재선택'),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560, maxHeight: 560),
-        child: FutureBuilder<List<StoryEvent>>(
-          future: _eventsFuture,
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done) {
-              return const SizedBox(
-                height: 200,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            if (snap.hasError) {
-              return Text('이야기 목록 불러오기 실패: ${snap.error}');
-            }
-            final events = snap.data ?? const <StoryEvent>[];
-            final prev = _prevEvent(events);
-            final next = _nextEvent(events);
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '같은 era 의 이야기 목록입니다. 어디 다음에 들어갈지 골라주세요. '
-                    '맨 앞도 선택 가능합니다.',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  _PositionRadio(
-                    label: '맨 앞에 삽입',
-                    selected: _afterStoryIndex == 0,
-                    onTap: () => setState(() => _afterStoryIndex = 0),
-                  ),
-                  ...events.map(
-                    (e) => _PositionRadio(
-                      label:
-                          '${e.title} 다음 (story_index ${e.storyIndex}, '
-                          '${e.startYear ?? '?'}–${e.endYear ?? '?'})',
-                      selected: _afterStoryIndex == e.storyIndex,
-                      onTap: () =>
-                          setState(() => _afterStoryIndex = e.storyIndex),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  if (prev != null || next != null)
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '허용 연도 범위: '
-                        '${prev?.endYear ?? '제한 없음'} ≤ 시작 ≤ 끝 ≤ '
-                        '${next?.startYear ?? '제한 없음'}',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _startYearCtrl,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          decoration: const InputDecoration(labelText: '시작 연도'),
-                          onChanged: (_) {
-                            if (_errorText != null) {
-                              setState(() => _errorText = null);
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          controller: _endYearCtrl,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          decoration: const InputDecoration(labelText: '끝 연도'),
-                          onChanged: (_) {
-                            if (_errorText != null) {
-                              setState(() => _errorText = null);
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '지도 위치 (region/anchor/minor)',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  FutureBuilder<List<Era>>(
-                    future: _erasFuture,
-                    builder: (_, eraSnap) {
-                      return FutureBuilder<List<Landmark>>(
-                        future: _landmarksFuture,
-                        builder: (_, lmSnap) {
-                          if (lmSnap.connectionState != ConnectionState.done ||
-                              eraSnap.connectionState != ConnectionState.done) {
-                            return const SizedBox(
-                              height: 40,
-                              child: Center(
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                          final all = lmSnap.data ?? const <Landmark>[];
-                          final eras = eraSnap.data ?? const <Era>[];
-                          final eraCode = eras
-                              .where((e) => e.id == widget.proposal.eraId)
-                              .map((e) => e.code)
-                              .toList();
-                          final filtered = eraCode.isEmpty
-                              ? all
-                              : all
-                                    .where(
-                                      (lm) =>
-                                          lm.eraCodes.isEmpty ||
-                                          lm.eraCodes.contains(eraCode.first),
-                                    )
-                                    .toList();
-                          return Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: [
-                              for (final lm in filtered)
-                                ChoiceChip(
-                                  avatar: Text(
-                                    lm.emoji,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                  label: Text('${lm.name} (${lm.kind})'),
-                                  selected: lm.id == _landmarkId,
-                                  onSelected: (_) =>
-                                      setState(() => _landmarkId = lm.id),
-                                ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  if (_errorText != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      _errorText!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.error,
-                      ),
-                    ),
-                  ],
-                ],
+      content: _buildContent(theme),
+      actions: _buildActions(),
+    );
+  }
+
+  Widget _buildContent(ThemeData theme) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 560, maxHeight: 560),
+      child: FutureBuilder<List<StoryEvent>>(
+        future: _eventsFuture,
+        builder: (context, snap) {
+          if (snap.connectionState != ConnectionState.done) {
+            return const SizedBox(
+              height: 200,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snap.hasError) {
+            return Text('이야기 목록 불러오기 실패: ${snap.error}');
+          }
+          return _buildLoadedContent(theme, snap.data ?? const <StoryEvent>[]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoadedContent(ThemeData theme, List<StoryEvent> events) {
+    final prev = _prevEvent(events);
+    final next = _nextEvent(events);
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '같은 era 의 이야기 목록입니다. 어디 다음에 들어갈지 골라주세요. 맨 앞도 선택 가능합니다.',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 8),
+          _buildPositionChoices(events),
+          const SizedBox(height: 12),
+          if (prev != null || next != null)
+            _AllowedYearRange(theme: theme, prev: prev, next: next),
+          const SizedBox(height: 12),
+          _buildYearFields(),
+          const SizedBox(height: 16),
+          Text(
+            '지도 위치 (region/anchor/minor)',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          _buildLandmarkSelector(),
+          if (_errorText != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _errorText!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
               ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPositionChoices(List<StoryEvent> events) {
+    return Column(
+      children: [
+        _PositionRadio(
+          label: '맨 앞에 삽입',
+          selected: _afterStoryIndex == 0,
+          onTap: () => setState(() => _afterStoryIndex = 0),
+        ),
+        ...events.map(
+          (e) => _PositionRadio(
+            label:
+                '${e.title} 다음 (story_index ${e.storyIndex}, ${e.startYear ?? '?'}–${e.endYear ?? '?'})',
+            selected: _afterStoryIndex == e.storyIndex,
+            onTap: () => setState(() => _afterStoryIndex = e.storyIndex),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildYearFields() {
+    return Row(
+      children: [
+        Expanded(
+          child: _YearTextField(
+            controller: _startYearCtrl,
+            label: '시작 연도',
+            onChanged: _clearErrorOnInput,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _YearTextField(
+            controller: _endYearCtrl,
+            label: '끝 연도',
+            onChanged: _clearErrorOnInput,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _clearErrorOnInput() {
+    if (_errorText != null) {
+      setState(() => _errorText = null);
+    }
+  }
+
+  Widget _buildLandmarkSelector() {
+    return FutureBuilder<List<Era>>(
+      future: _erasFuture,
+      builder: (_, eraSnap) {
+        return FutureBuilder<List<Landmark>>(
+          future: _landmarksFuture,
+          builder: (_, lmSnap) {
+            if (lmSnap.connectionState != ConnectionState.done ||
+                eraSnap.connectionState != ConnectionState.done) {
+              return const _InlineLoadingIndicator();
+            }
+            final filtered = _filterLandmarksForProposalEra(
+              lmSnap.data ?? const <Landmark>[],
+              eraSnap.data ?? const <Era>[],
+            );
+            return _LandmarkChoiceWrap(
+              landmarks: filtered,
+              selectedLandmarkId: _landmarkId,
+              onSelect: (id) => setState(() => _landmarkId = id),
             );
           },
+        );
+      },
+    );
+  }
+
+  List<Landmark> _filterLandmarksForProposalEra(
+    List<Landmark> landmarks,
+    List<Era> eras,
+  ) {
+    final eraCode = eras
+        .where((e) => e.id == widget.proposal.eraId)
+        .map((e) => e.code)
+        .toList();
+    if (eraCode.isEmpty) {
+      return landmarks;
+    }
+    return landmarks
+        .where(
+          (lm) => lm.eraCodes.isEmpty || lm.eraCodes.contains(eraCode.first),
+        )
+        .toList();
+  }
+
+  List<Widget> _buildActions() {
+    return [
+      TextButton(
+        onPressed: _submitting ? null : () => Navigator.of(context).pop(),
+        child: const Text('취소'),
+      ),
+      FutureBuilder<List<StoryEvent>>(
+        future: _eventsFuture,
+        builder: (context, snap) {
+          final events = snap.data ?? const <StoryEvent>[];
+          return FilledButton(
+            onPressed:
+                (_submitting || snap.connectionState != ConnectionState.done)
+                ? null
+                : () => _submit(events),
+            child: _submitting
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('재제출'),
+          );
+        },
+      ),
+    ];
+  }
+}
+
+class _AllowedYearRange extends StatelessWidget {
+  const _AllowedYearRange({
+    required this.theme,
+    required this.prev,
+    required this.next,
+  });
+
+  final ThemeData theme;
+  final StoryEvent? prev;
+  final StoryEvent? next;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '허용 연도 범위: ${prev?.endYear ?? '제한 없음'} ≤ 시작 ≤ 끝 ≤ ${next?.startYear ?? '제한 없음'}',
+        style: theme.textTheme.bodySmall,
+      ),
+    );
+  }
+}
+
+class _YearTextField extends StatelessWidget {
+  const _YearTextField({
+    required this.controller,
+    required this.label,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      decoration: InputDecoration(labelText: label),
+      onChanged: (_) => onChanged(),
+    );
+  }
+}
+
+class _InlineLoadingIndicator extends StatelessWidget {
+  const _InlineLoadingIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 40,
+      child: Center(
+        child: SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _submitting ? null : () => Navigator.of(context).pop(),
-          child: const Text('취소'),
-        ),
-        FutureBuilder<List<StoryEvent>>(
-          future: _eventsFuture,
-          builder: (context, snap) {
-            final events = snap.data ?? const <StoryEvent>[];
-            return FilledButton(
-              onPressed:
-                  (_submitting || snap.connectionState != ConnectionState.done)
-                  ? null
-                  : () => _submit(events),
-              child: _submitting
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('재제출'),
-            );
-          },
-        ),
+    );
+  }
+}
+
+class _LandmarkChoiceWrap extends StatelessWidget {
+  const _LandmarkChoiceWrap({
+    required this.landmarks,
+    required this.selectedLandmarkId,
+    required this.onSelect,
+  });
+
+  final List<Landmark> landmarks;
+  final String? selectedLandmarkId;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: [
+        for (final lm in landmarks)
+          ChoiceChip(
+            avatar: Text(lm.emoji, style: const TextStyle(fontSize: 12)),
+            label: Text('${lm.name} (${lm.kind})'),
+            selected: lm.id == selectedLandmarkId,
+            onSelected: (_) => onSelect(lm.id),
+          ),
       ],
     );
   }

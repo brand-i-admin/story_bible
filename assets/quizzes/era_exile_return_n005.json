@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 5,
   "story_title": "사자굴: 멈추지 않는 기도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "다니엘의 사자굴 기사가 기록된 성경 책은 어디입니까?",
+      "question": "왕은 무엇이라고 말했습니까?",
       "choices": [
-        "다니엘",
-        "에스라",
-        "느헤미야"
+        "원컨대 많은 평강이 너희에게 있을지어다",
+        "칠십 명",
+        "삼백 명"
       ],
       "answer_index": 0,
-      "explanation": "단 6:1-28에 다리오 왕의 금령과 다니엘의 사자굴 사건이 기록됨"
+      "explanation": "단 6:25 — '이에 다리오 왕이 온 땅에 있는 모든 백성과 나라들과 각 방언하는 자들에게 조서를 내려 가로되 원컨대 많은 평강이 너희에게 있을지어다'"
     }
   ]
 }

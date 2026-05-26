@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 6,
   "story_title": "세 손님: 사래의 웃음과 하나님의 약속",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 18:12 — '사라가 속으로 웃고 이르되 내가 노쇠하였고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "이 사건이 기록된 성경 책은 무엇입니까?",
+      "question": "사라는 웃은 일을 두려워하며 어떻게 말했습니까?",
       "choices": [
-        "창세기",
-        "민수기",
-        "출애굽기"
+        "웃지 않았다고 부인했다",
+        "하나님을 처음 보았다고 했다",
+        "아브라함이 웃었다고 둘러댔다"
       ],
       "answer_index": 0,
-      "explanation": "창 18:1-15에 세 손님 방문과 약속이 기록됨"
+      "explanation": "창 18:15 — '사라가 두려워서 승인치 아니하여 가로되 내가 웃지 아니하였나이다 가라사대 아니라 네가 웃었느 니라'"
     }
   ]
 }

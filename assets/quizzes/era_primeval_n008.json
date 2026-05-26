@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 8,
   "story_title": "바벨탑: 언어가 갈라지다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 11:8 — '여호와께서 거기서 그들을 온 지면에 흩으셨더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바벨탑 이야기는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "바벨에서 하나님은 사람들의 언어와 거처를 어떻게 하셨습니까?",
       "choices": [
-        "11장",
-        "6장",
-        "18장"
+        "언어를 흩으시고 사람들을 온 땅에 흩으셨다",
+        "모두 한 도시 안에만 살게 하셨다",
+        "언어를 하나로 더 단단히 묶으셨다"
       ],
       "answer_index": 0,
-      "explanation": "창 11:1-9에 바벨탑 건축과 언어 혼잡 사건이 기록됨"
+      "explanation": "창 11:9 — '그러므로 그 이름을 바벨이라 하니 이는 여호와께서 거기서 온 땅의 언어를 혼잡케 하셨음이라 여 호와께서 거기서 그들을 온 지면에 흩으셨더라'"
     }
   ]
 }

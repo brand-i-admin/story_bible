@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../models/character.dart';
 import '../../models/era.dart';
+import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
+import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
+import '../../theme/tokens.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../character_avatar.dart';
+import '../emotion_badge_icon.dart';
 import '../event_timeline_row.dart';
 
 /// 지역 모드 — 선택된 region 의 사건들을 시간순 가로 스크롤 (EventTimelineRow)
@@ -22,6 +26,14 @@ class RegionEventList extends StatelessWidget {
     required this.onSelectEvent,
     required this.onClose,
     this.completedEventIds = const <String>{},
+    this.eventEmotionMarks = const {},
+    this.quizAttemptSummaries = const {},
+    this.celebrationEventId,
+    this.celebrationStampLabel,
+    this.celebrationNonce = 0,
+    this.onCelebrationComplete,
+    this.quizReviewEventIds = const <String>{},
+    this.quizConfusedEventIds = const <String>{},
   });
 
   final Landmark landmark;
@@ -36,6 +48,24 @@ class RegionEventList extends StatelessWidget {
 
   /// 본문 + 퀴즈 모두 완료된 사건 id 셋. 카드 배경을 초록 톤으로 표시.
   final Set<String> completedEventIds;
+
+  /// 사용자가 지도 위에 새긴 감정. 카드 번호 배지 옆의 작은 아이콘으로 표시한다.
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+
+  /// 이야기별 최근 퀴즈 결과. 카드 배경색으로 복습 필요 정도를 표시한다.
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+
+  /// 지도 화면에서 특정 사건 카드 위에 완료 축하 효과를 1회 재생할 때 사용.
+  final String? celebrationEventId;
+  final String? celebrationStampLabel;
+  final int celebrationNonce;
+  final VoidCallback? onCelebrationComplete;
+
+  /// 최근 퀴즈에서 오답이나 "헷갈렸어요"가 있었던 사건 id 셋.
+  final Set<String> quizReviewEventIds;
+
+  /// 최근 퀴즈에서 "헷갈렸어요" 선택이 있었던 사건 id 셋.
+  final Set<String> quizConfusedEventIds;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +112,14 @@ class RegionEventList extends StatelessWidget {
                     charactersByCode: charsByCode,
                     selectedEventId: selectedEventId,
                     completedEventIds: completedEventIds,
+                    eventEmotionMarks: eventEmotionMarks,
+                    quizAttemptSummaries: quizAttemptSummaries,
+                    celebrationEventId: celebrationEventId,
+                    celebrationStampLabel: celebrationStampLabel,
+                    celebrationNonce: celebrationNonce,
+                    onCelebrationComplete: onCelebrationComplete,
+                    quizReviewEventIds: quizReviewEventIds,
+                    quizConfusedEventIds: quizConfusedEventIds,
                     onTapEvent: onSelectEvent,
                     rowHeight: 280,
                   ),
@@ -125,7 +163,12 @@ class StoryEventThumbCard extends StatelessWidget {
     required this.loader,
     required this.onTap,
     this.completed = false,
+    this.needsQuizReview = false,
+    this.hasConfusedQuiz = false,
+    this.emotionKey,
+    this.attemptSummary,
     this.orderNumber,
+    this.showSummary = true,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
   });
@@ -134,7 +177,12 @@ class StoryEventThumbCard extends StatelessWidget {
   final Map<String, Character> charactersByCode;
   final bool selected;
   final bool completed;
+  final bool needsQuizReview;
+  final bool hasConfusedQuiz;
+  final String? emotionKey;
+  final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
+  final bool showSummary;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
 
@@ -168,232 +216,261 @@ class StoryEventThumbCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final placeName = event.placeName;
-    final startYear = event.startYear;
-    final yearLabel = startYear == null
-        ? null
-        : (startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear');
-
-    // 완료 사건 → 초록 배경 + 초록 보더. 완료가 색을 결정하고, 선택은
-    // "현재 이야기" 라벨과 보더 두께(2)로 표시 — 둘이 동시에 보이도록.
-    const completedBg = Color(0xFFDDEFD0); // 연한 초록
-    const completedBorder = Color(0xFF7AAC4C);
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Material(
-          color: completed
-              ? completedBg
-              : (selected
-                    ? theme.colorScheme.primary.withValues(alpha: 0.10)
-                    : Colors.white.withValues(alpha: 0.85)),
-          borderRadius: BorderRadius.circular(14),
-          child: InkWell(
-            onTap: onTap,
+        _buildCardSurface(theme),
+        if (orderNumber != null ||
+            (emotionKey != null && emotionKey!.isNotEmpty))
+          _OrderBadge(orderNumber: orderNumber, emotionKey: emotionKey),
+        if (selected) const _CurrentStoryBadge(),
+      ],
+    );
+  }
+
+  Widget _buildCardSurface(ThemeData theme) {
+    final quizTone = _QuizCardTone.fromAttempt(attemptSummary);
+    final surfaceColor =
+        quizTone?.background ??
+        (completed
+            ? AppColors.greenTint1
+            : (selected
+                  ? theme.colorScheme.primary.withValues(alpha: 0.10)
+                  : Colors.white.withValues(alpha: 0.85)));
+    final borderColor =
+        quizTone?.border ??
+        (completed
+            ? AppColors.greenBorder
+            : (selected ? theme.colorScheme.primary : const Color(0xFFD9C9A2)));
+    return Material(
+      color: surfaceColor,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: completed
-                      ? completedBorder
-                      : (selected
-                            ? theme.colorScheme.primary
-                            : const Color(0xFFD9C9A2)),
-                  width: selected ? 2 : (completed ? 1.6 : 1.2),
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipOval(
-                    child: SizedBox(
-                      width: 64,
-                      height: 64,
-                      child: ColoredBox(
-                        color: const Color(0xFFF1E4C8),
-                        child: _CardThumbnail(event: event, loader: loader),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    event.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  if ((placeName != null && placeName.isNotEmpty) ||
-                      yearLabel != null)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (placeName != null && placeName.isNotEmpty) ...[
-                          const Icon(
-                            Icons.location_on,
-                            size: 10,
-                            color: Color(0xFF8C6743),
-                          ),
-                          const SizedBox(width: 1),
-                          Flexible(
-                            child: Text(
-                              placeName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF8C6743),
-                              ),
-                            ),
-                          ),
-                        ],
-                        if (placeName != null &&
-                            placeName.isNotEmpty &&
-                            yearLabel != null)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 3),
-                            child: Text(
-                              '·',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF8C6743),
-                              ),
-                            ),
-                          ),
-                        if (yearLabel != null)
-                          Text(
-                            yearLabel,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF8C6743),
-                            ),
-                          ),
-                      ],
-                    ),
-                  // 요약 (2줄). 위치/연도 와 인물 라벨 사이에 표시.
-                  if ((event.summary ?? '').trim().isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      event.summary!.trim(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        height: 1.3,
-                        color: Color(0xFF6B5430),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 6),
-                  // 인물 pill — 한 줄에 가로 스크롤. 인물 라벨이 2줄로 wrap
-                  // 되어 카드가 overflow 되는 것을 방지. ShaderMask 우측
-                  // 페이드로 "더 있음" 힌트. highlighted 인물(부모가 명시적으로
-                  // 고른 인물) 은 가장 앞쪽 + 자기 색으로 강조.
-                  if (event.characterCodes.isNotEmpty)
-                    Builder(
-                      builder: (_) {
-                        final ordered = _orderedCharacterCodes();
-                        return SizedBox(
-                          height: 18,
-                          child: ShaderMask(
-                            shaderCallback: (bounds) => const LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              stops: [0.0, 0.85, 1.0],
-                              colors: [
-                                Colors.white,
-                                Colors.white,
-                                Color(0x00FFFFFF),
-                              ],
-                            ).createShader(bounds),
-                            blendMode: BlendMode.dstIn,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              padding: EdgeInsets.zero,
-                              physics: const ClampingScrollPhysics(),
-                              itemCount: ordered.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(width: 3),
-                              itemBuilder: (_, i) {
-                                final code = ordered[i];
-                                final isHighlighted = highlightedCharacterCodes
-                                    .contains(code);
-                                return _CharPillAvatar(
-                                  character: charactersByCode[code],
-                                  name: charactersByCode[code]?.name ?? code,
-                                  accentColor: isHighlighted
-                                      ? colorForHighlightedCharacter?.call(code)
-                                      : null,
-                                );
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                ],
-              ),
-            ),
+            border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
           ),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
+          child: _buildCardBody(theme),
         ),
-        // 좌상단 동그라미 숫자 배지 — 지도 핀과 같은 번호. orderNumber 가 null
-        // 이면 (예: EventDetailPage prev/next 카드) 미표시.
-        if (orderNumber != null)
-          Positioned(
-            left: -4,
-            top: -4,
-            child: Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: const Color(0xFF6B4A2A),
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 1.5),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x33000000),
-                    blurRadius: 3,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                '$orderNumber',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  height: 1.0,
-                ),
+      ),
+    );
+  }
+
+  Widget _buildCardBody(ThemeData theme) {
+    final summary = (event.summary ?? '').trim();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _CardThumbnailFrame(event: event, loader: loader),
+        const SizedBox(height: 6),
+        _ThumbTitle(event: event, theme: theme),
+        const SizedBox(height: 4),
+        _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
+        if (showSummary && summary.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          _ThumbSummary(summary: summary),
+        ],
+        const SizedBox(height: 6),
+        if (event.characterCodes.isNotEmpty) _buildCharacterPills(),
+      ],
+    );
+  }
+
+  String? _yearLabel() {
+    final startYear = event.startYear;
+    if (startYear == null) return null;
+    return startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear';
+  }
+
+  Widget _buildCharacterPills() {
+    final ordered = _orderedCharacterCodes();
+    return SizedBox(
+      height: 18,
+      child: ShaderMask(
+        shaderCallback: (bounds) => const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          stops: [0.0, 0.85, 1.0],
+          colors: [Colors.white, Colors.white, Color(0x00FFFFFF)],
+        ).createShader(bounds),
+        blendMode: BlendMode.dstIn,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          physics: const ClampingScrollPhysics(),
+          itemCount: ordered.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 3),
+          itemBuilder: (_, i) {
+            final code = ordered[i];
+            final isHighlighted = highlightedCharacterCodes.contains(code);
+            return _CharPillAvatar(
+              character: charactersByCode[code],
+              name: charactersByCode[code]?.name ?? code,
+              accentColor: isHighlighted
+                  ? colorForHighlightedCharacter?.call(code)
+                  : null,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _CardThumbnailFrame extends StatelessWidget {
+  const _CardThumbnailFrame({required this.event, required this.loader});
+
+  final StoryEvent event;
+  final SceneAssetLoader loader;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: SizedBox(
+        width: 64,
+        height: 64,
+        child: ColoredBox(
+          color: const Color(0xFFF1E4C8),
+          child: _CardThumbnail(event: event, loader: loader),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThumbTitle extends StatelessWidget {
+  const _ThumbTitle({required this.event, required this.theme});
+
+  final StoryEvent event;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      event.title,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
+      style: theme.textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        fontSize: 12,
+      ),
+    );
+  }
+}
+
+class _ThumbMetaRow extends StatelessWidget {
+  const _ThumbMetaRow({required this.placeName, required this.yearLabel});
+
+  final String? placeName;
+  final String? yearLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPlace = placeName != null && placeName!.isNotEmpty;
+    if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (hasPlace) ...[
+          const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
+          const SizedBox(width: 1),
+          Flexible(
+            child: Text(
+              placeName!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF8C6743),
               ),
             ),
           ),
-        // "현재 이야기" 라벨 — 카드 상단 가장자리에 걸쳐 표시.
-        // 좌상단 숫자 배지(24px) 와 같은 row, 카드 가운데로 정렬.
-        if (selected)
-          Positioned(
-            top: -10,
-            left: 28,
-            right: 8,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        ],
+        if (hasPlace && yearLabel != null)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 3),
+            child: Text(
+              '·',
+              style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
+            ),
+          ),
+        if (yearLabel != null)
+          Text(
+            yearLabel!,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF8C6743),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _ThumbSummary extends StatelessWidget {
+  const _ThumbSummary({required this.summary});
+
+  final String summary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      summary,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 10,
+        height: 1.3,
+        color: Color(0xFF6B5430),
+      ),
+    );
+  }
+}
+
+class _OrderBadge extends StatelessWidget {
+  const _OrderBadge({required this.orderNumber, this.emotionKey});
+
+  final int? orderNumber;
+  final String? emotionKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasEmotion = emotionKey != null && emotionKey!.isNotEmpty;
+    return Positioned(
+      left: -4,
+      top: -4,
+      child: SizedBox(
+        width: hasEmotion ? 34 : 24,
+        height: hasEmotion ? 34 : 24,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            if (hasEmotion)
+              EmotionBadgeIcon(
+                emotionKey: emotionKey!,
+                size: 30,
+                iconSize: 17,
+                elevation: true,
+              )
+            else
+              Container(
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8A33D),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFF8C5A2E), width: 1),
+                  color: const Color(0xFF6B4A2A),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1.5),
                   boxShadow: const [
                     BoxShadow(
                       color: Color(0x33000000),
@@ -402,19 +479,134 @@ class StoryEventThumbCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Text(
-                  '현재 이야기',
-                  style: TextStyle(
-                    fontSize: 9.5,
+                alignment: Alignment.center,
+                child: Text(
+                  '${orderNumber ?? ''}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
                     fontWeight: FontWeight.w900,
-                    color: Color(0xFF3D2A14),
                     height: 1.0,
+                    shadows: [
+                      Shadow(color: Color(0xCC000000), blurRadius: 1.8),
+                    ],
                   ),
                 ),
               ),
+            if (hasEmotion && orderNumber != null)
+              Positioned(
+                right: -1,
+                bottom: -1,
+                child: _TinyOrderBadge(number: orderNumber!, size: 13),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TinyOrderBadge extends StatelessWidget {
+  const _TinyOrderBadge({required this.number, required this.size});
+
+  final int number;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: const Color(0xFF2F9462),
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.greenRim, width: 0.9),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '$number',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 7,
+          fontWeight: FontWeight.w900,
+          height: 1.0,
+        ),
+      ),
+    );
+  }
+}
+
+class _QuizCardTone {
+  const _QuizCardTone({required this.background, required this.border});
+
+  final Color background;
+  final Color border;
+
+  static _QuizCardTone? fromAttempt(QuizAttemptSummary? attempt) {
+    if (attempt == null || attempt.totalCount <= 0) {
+      return null;
+    }
+    if (attempt.correctCount <= 0) {
+      return const _QuizCardTone(
+        background: Color(0xFFF7DAD2),
+        border: AppColors.dangerBot,
+      );
+    }
+    if (attempt.correctCount >= attempt.totalCount) {
+      return const _QuizCardTone(
+        background: AppColors.greenTint1,
+        border: AppColors.greenBorder,
+      );
+    }
+    return const _QuizCardTone(
+      background: Color(0xFFF6E7B8),
+      border: AppColors.goldDeep,
+    );
+  }
+}
+
+class _CurrentStoryBadge extends StatelessWidget {
+  const _CurrentStoryBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: -10,
+      left: 28,
+      right: 8,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8A33D),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFF8C5A2E), width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 3,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+          child: const Text(
+            '현재 이야기',
+            style: TextStyle(
+              fontSize: 9.5,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF3D2A14),
+              height: 1.0,
             ),
           ),
-      ],
+        ),
+      ),
     );
   }
 }

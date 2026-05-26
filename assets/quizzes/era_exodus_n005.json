@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 5,
   "story_title": "바로 앞 첫 대면: 짐이 더 무거워지다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 6:9 — '이스라엘 자손이 ... 마음의 상함과 역사의 혹독함을 인하여 모세를 듣지 아니하였더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "모세와 아론의 바로 첫 대면 기사는 출애굽기 몇 장에 기록되어 있습니까?",
+      "question": "하나님은 무거운 짐에 눌린 백성 다음으로 모세에게 무엇을 하셨습니까?",
       "choices": [
-        "5장",
-        "7장",
-        "3장"
+        "모세에게 다시 말씀하셨다",
+        "바로를 바로 왕에서 내리셨다",
+        "백성에게 짚을 직접 나누어 주셨다"
       ],
       "answer_index": 0,
-      "explanation": "출 5:1-6:9에 모세·아론의 바로 첫 방문과 노역 가중이 기록됨"
+      "explanation": "출 6:10 — '여호와께서 모세에게 일러 가라사대'"
     }
   ]
 }

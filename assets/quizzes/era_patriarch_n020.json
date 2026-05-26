@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 20,
   "story_title": "도피와 언약: 라반과의 마지막",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -19,26 +19,26 @@
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "라반은 야곱 일행을 따라잡은 후 어떻게 작별하였습니까?",
+      "question": "야곱은 어떻게 했습니까?",
       "choices": [
-        "손자들과 딸들에게 입맞추며 축복하고 돌아갔다",
+        "그것을 갈르엣이라 칭했다",
         "야곱을 책망하고 돌아갔다",
         "일부 재산을 돌려달라 요구하고 갔다"
       ],
       "answer_index": 0,
-      "explanation": "창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 ... 고향으로 돌아갔더라'"
+      "explanation": "창 31:47 — '라반은 그것을 여갈사하두다라 칭하였고 야곱은 그것을 갈르엣이라 칭하였으니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "야곱과 라반의 언약 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "라반은 어떻게 했습니까?",
       "choices": [
-        "31장",
-        "29장",
-        "35장"
+        "아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복",
+        "나무 기둥",
+        "흙 단"
       ],
       "answer_index": 0,
-      "explanation": "창 31:17-55에 야곱의 도피와 라반과의 추격 및 언약이 기록됨"
+      "explanation": "창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 떠나 고향으로 돌아 갔더라'"
     }
   ]
 }

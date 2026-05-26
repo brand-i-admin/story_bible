@@ -8,8 +8,8 @@
         "--project-ref=emkoqhnzeiwcwgcaasuh"
       ],
       "env": {
-        "SUPABASE_ACCESS_TOKEN": "sbp_f73fe35a24a3b6809070d67d3badec22c4c5b860"
+        "SUPABASE_ACCESS_TOKEN": "<set-this-in-a-local-untracked-config>"
       }
-    },
+    }
   }
 }

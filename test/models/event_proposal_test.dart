@@ -4,20 +4,20 @@ import 'package:story_bible/models/event_proposal.dart';
 
 void main() {
   group('QuizDraft', () {
-    test('유효한 4지선다는 isValid=true', () {
+    test('유효한 목회자 작성 3지선다는 isValid=true', () {
       const q = QuizDraft(
         question: '요셉이 애굽으로 팔려간 이유는?',
-        choices: ['질투', '기근', '전쟁', '순례'],
+        choices: ['질투', '기근', '전쟁'],
         answerIndex: 0,
         explanation: '창세기 37:28 형들이 요셉을 팔았다.',
       );
       expect(q.isValid, isTrue);
     });
 
-    test('선택지 개수가 4가 아니면 invalid', () {
+    test('선택지 개수가 3이 아니면 invalid', () {
       const q = QuizDraft(
         question: 'Q',
-        choices: ['a', 'b', 'c'], // 3개
+        choices: ['a', 'b', 'c', 'd'],
         answerIndex: 0,
         explanation: 'exp',
       );
@@ -27,7 +27,7 @@ void main() {
     test('선택지 중 빈 문자열이 있으면 invalid', () {
       const q = QuizDraft(
         question: 'Q',
-        choices: ['a', '', 'c', 'd'],
+        choices: ['a', '', 'c'],
         answerIndex: 0,
         explanation: 'exp',
       );
@@ -37,8 +37,8 @@ void main() {
     test('answer_index 범위를 벗어나면 invalid', () {
       const q = QuizDraft(
         question: 'Q',
-        choices: ['a', 'b', 'c', 'd'],
-        answerIndex: 4,
+        choices: ['a', 'b', 'c'],
+        answerIndex: 3,
         explanation: 'exp',
       );
       expect(q.isValid, isFalse);
@@ -47,7 +47,7 @@ void main() {
     test('해설이 비면 invalid', () {
       const q = QuizDraft(
         question: 'Q',
-        choices: ['a', 'b', 'c', 'd'],
+        choices: ['a', 'b', 'c'],
         answerIndex: 1,
         explanation: '   ',
       );
@@ -57,16 +57,21 @@ void main() {
     test('fromMap / toMap 왕복', () {
       final map = <String, dynamic>{
         'question': '문제',
-        'choices': ['a', 'b', 'c', 'd'],
+        'choices': ['a', 'b', 'c', QuizDraft.confusedChoiceLabel],
         'answer_index': 2,
         'explanation': '해설',
       };
       final q = QuizDraft.fromMap(map);
       expect(q.question, '문제');
-      expect(q.choices, ['a', 'b', 'c', 'd']);
+      expect(q.choices, ['a', 'b', 'c']);
       expect(q.answerIndex, 2);
       expect(q.explanation, '해설');
-      expect(q.toMap(), map);
+      expect(q.toMap(), {
+        'question': '문제',
+        'choices': ['a', 'b', 'c'],
+        'answer_index': 2,
+        'explanation': '해설',
+      });
     });
   });
 
@@ -109,7 +114,7 @@ void main() {
       row['quiz_questions'] = [
         {
           'question': 'q',
-          'choices': ['a', 'b', 'c', 'd'],
+          'choices': ['a', 'b', 'c', QuizDraft.confusedChoiceLabel],
           'answer_index': 0,
           'explanation': 'e',
         },
@@ -137,14 +142,14 @@ void main() {
       row['quiz_questions'] = [
         {
           'question': 'Q1',
-          'choices': ['a1', 'b1', 'c1', 'd1'],
+          'choices': ['a1', 'b1', 'c1', QuizDraft.confusedChoiceLabel],
           'answer_index': 1,
           'explanation': 'e1',
         },
         {
           'question': 'Q2',
-          'choices': ['a2', 'b2', 'c2', 'd2'],
-          'answer_index': 3,
+          'choices': ['a2', 'b2', 'c2', QuizDraft.confusedChoiceLabel],
+          'answer_index': 2,
           'explanation': 'e2',
         },
       ];
@@ -152,7 +157,7 @@ void main() {
       expect(p.quizQuestions.length, 2);
       expect(p.quizQuestions[0].question, 'Q1');
       expect(p.quizQuestions[0].answerIndex, 1);
-      expect(p.quizQuestions[1].choices, ['a2', 'b2', 'c2', 'd2']);
+      expect(p.quizQuestions[1].choices, ['a2', 'b2', 'c2']);
       expect(p.quizQuestions[1].explanation, 'e2');
     });
 
@@ -163,7 +168,7 @@ void main() {
         row['quiz_questions'] = [
           {
             'question': 'q',
-            'choices': ['a', 'b', 'c', 'd'],
+            'choices': ['a', 'b', 'c'],
             'answer_index': 0,
             'explanation': 'e',
           },
@@ -203,7 +208,7 @@ void main() {
         ..['quiz_questions'] = [
           {
             'question': 'q',
-            'choices': ['a', 'b', 'c', 'd'],
+            'choices': ['a', 'b', 'c', QuizDraft.confusedChoiceLabel],
             'answer_index': 0,
             'explanation': 'e',
           },

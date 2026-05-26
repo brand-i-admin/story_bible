@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 10,
   "story_title": "산상수훈(2): 더 깊은 의",
-  "source_version": "2026-04-30",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 5:44 — '너희 원수를 사랑하며 너희를 박해하는 자를 위하여 기도하라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "이 가르침은 산상수훈의 어느 장에서 나옵니까?",
+      "question": "예수님은 하나님이 선인과 악인에게 어떻게 하신다고 말씀하셨습니까?",
       "choices": [
-        "마태복음 5장",
-        "마태복음 7장",
-        "누가복음 6장"
+        "햇빛과 비를 모두에게 주신다고 하셨다",
+        "선한 사람에게만 비를 주신다고 하셨다",
+        "악한 사람에게는 햇빛도 주지 않으신다고 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "마 5:17-48에 율법의 더 깊은 의에 대한 가르침이 기록됨"
+      "explanation": "마 5:45 — '이같이 한즉 하늘에 계신 너희 아버지의 아들이 되리니 이는 하나님이 그 해를 악인과 선인에게 비 취게 하시며 비를 의로운 자와 불의한 자에게 내리우심이니라'"
     }
   ]
 }

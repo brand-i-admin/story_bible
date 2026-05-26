@@ -2,7 +2,7 @@
   "era_code": "era_nt_post_apostolic",
   "story_index": 3,
   "story_title": "일곱 교회 편지: 촛대 사이의 말씀",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 2:13 — '내 충성된 증인 안디바가 … 죽임을 당할 때에도 나를 믿는 믿음을 저버리지 아니하였도다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "일곱 교회 편지가 기록된 성경 책은 어디입니까?",
+      "question": "성령은 어떻게 했습니까?",
       "choices": [
-        "요한계시록",
-        "고린도후서",
-        "에베소서"
+        "교회들에게 하시는 말씀을 들을지어다",
+        "서머나 교회",
+        "버가모 교회"
       ],
       "answer_index": 0,
-      "explanation": "계 2:1-3:22에 일곱 교회 편지가 기록됨"
+      "explanation": "계 2:29 — '귀있는 자는 성령이 교회들에게 하시는 말씀을 들을지어다'"
     }
   ]
 }

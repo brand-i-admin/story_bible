@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 6,
   "story_title": "에스더: 왕후가 되다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "에 2:15 — '헤개의 정한 것 외에는 다른 것을 구하지 아니하였으나 모든 보는 자에게 굄을 얻더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에스더가 왕후가 된 기사가 기록된 성경 책은 어디입니까?",
+      "question": "에스더는 어떻게 했습니까?",
       "choices": [
-        "에스더",
-        "에스라",
-        "느헤미야"
+        "끌려 왕궁에 들어가서 왕의 앞에 나아가니",
+        "사십 일",
+        "칠 일"
       ],
       "answer_index": 0,
-      "explanation": "에 2:5-18에 에스더의 등장과 왕후 즉위 기사가 기록됨"
+      "explanation": "에 2:16 — '아하수에로 왕의 칠 년 시월 곧 데벳 월에 에스더가 이끌려 왕궁에 들어가서 왕의 앞에 나아가니'"
     }
   ]
 }

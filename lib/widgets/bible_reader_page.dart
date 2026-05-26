@@ -25,18 +25,21 @@ import 'sub_page_scaffold.dart';
 /// 저장 해제 시트가 뜬다.
 ///
 /// [initialBookNo]/[initialChapterNo]/[initialVerseNo]가 주어지면 해당 구절로
-/// 자동 스크롤한다.
+/// 자동 스크롤한다. [highlightTarget]이 있으면 해당 이야기의 읽을 본문 범위를
+/// 저장 상태와 별개인 임시 하이라이트로 표시한다.
 class BibleReaderPage extends ConsumerStatefulWidget {
   const BibleReaderPage({
     super.key,
     this.initialBookNo,
     this.initialChapterNo,
     this.initialVerseNo,
+    this.highlightTarget,
   });
 
   final int? initialBookNo;
   final int? initialChapterNo;
   final int? initialVerseNo;
+  final BibleNavigationTarget? highlightTarget;
 
   @override
   ConsumerState<BibleReaderPage> createState() => _BibleReaderPageState();
@@ -59,12 +62,17 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   @override
   void initState() {
     super.initState();
-    _selectedBookNo = (widget.initialBookNo ?? 1).clamp(1, bibleBooks.length);
+    final initialBookNo =
+        widget.initialBookNo ?? widget.highlightTarget?.bookNo ?? 1;
+    _selectedBookNo = initialBookNo.clamp(1, bibleBooks.length).toInt();
     _selectedTestament = _selectedBookNo >= 40 ? 'new' : 'old';
-    _selectedChapter = widget.initialChapterNo ?? 1;
-    _pendingFocusVerse = (widget.initialVerseNo ?? 0) > 0
-        ? widget.initialVerseNo
-        : null;
+    final maxChapter = bibleBooks[_selectedBookNo - 1].chapters;
+    final initialChapter =
+        widget.initialChapterNo ?? widget.highlightTarget?.chapterNo ?? 1;
+    _selectedChapter = initialChapter.clamp(1, maxChapter).toInt();
+    final initialVerse =
+        widget.initialVerseNo ?? widget.highlightTarget?.verseNo;
+    _pendingFocusVerse = (initialVerse ?? 0) > 0 ? initialVerse : null;
     _loadSavedVerseKeys();
   }
 
@@ -341,11 +349,33 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     });
   }
 
+  void _focusSavedVerse(SavedBibleVerse verse) {
+    final bookNo = verse.bookNo.clamp(1, bibleBooks.length).toInt();
+    final maxChapter = bibleBooks[bookNo - 1].chapters;
+    final chapterNo = verse.chapterNo.clamp(1, maxChapter).toInt();
+    setState(() {
+      _selectedBookNo = bookNo;
+      _selectedTestament = bookNo >= 40 ? 'new' : 'old';
+      _selectedChapter = chapterNo;
+      _pendingFocusVerse = verse.verseNo > 0 ? verse.verseNo : null;
+      _pendingStartVerseNo = null;
+      _pendingEndVerseNo = null;
+    });
+  }
+
   Future<void> _openSavedVerses() async {
     if (!mounted) return;
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => const SavedVersesScreen()));
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SavedVersesScreen(
+          onOpenVerse: (verse) async {
+            if (!mounted) return;
+            _focusSavedVerse(verse);
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+    );
     // 저장 페이지에서 변경 가능 — 돌아오면 키 셋 새로 고침.
     await _loadSavedVerseKeys();
   }
@@ -430,7 +460,15 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               pendingStart: _pendingStartVerseNo,
               pendingEnd: _pendingEndVerseNo,
               focusVerseNo: _pendingFocusVerse,
-              onConsumedFocus: () => _pendingFocusVerse = null,
+              highlightTarget: widget.highlightTarget,
+              onConsumedFocus: () {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  _pendingFocusVerse = null;
+                });
+              },
               savedVerseKeys: _savedVerseKeys,
               onTapVerse: _onTapVerse,
               onTapStar: _onTapStar,
@@ -640,6 +678,7 @@ class _BibleVersesArea extends StatelessWidget {
     required this.pendingStart,
     required this.pendingEnd,
     required this.focusVerseNo,
+    required this.highlightTarget,
     required this.onConsumedFocus,
     required this.savedVerseKeys,
     required this.onTapVerse,
@@ -650,6 +689,7 @@ class _BibleVersesArea extends StatelessWidget {
   final int? pendingStart;
   final int? pendingEnd;
   final int? focusVerseNo;
+  final BibleNavigationTarget? highlightTarget;
   final VoidCallback onConsumedFocus;
   final Set<String> savedVerseKeys;
   final void Function(BibleVerse) onTapVerse;
@@ -689,16 +729,30 @@ class _BibleVersesArea extends StatelessWidget {
         final focus = focusVerseNo;
         if (focus != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            final ctx = focusKey.currentContext;
-            if (ctx != null) {
+            void scrollToFocusedVerse({
+              required Duration duration,
+              double alignment = 0.18,
+            }) {
+              final ctx = focusKey.currentContext;
+              if (ctx == null || !ctx.mounted) {
+                return;
+              }
               Scrollable.ensureVisible(
                 ctx,
-                duration: const Duration(milliseconds: 280),
+                duration: duration,
                 curve: Curves.easeOutCubic,
-                alignment: 0.18,
+                alignment: alignment,
               );
             }
-            onConsumedFocus();
+
+            scrollToFocusedVerse(duration: const Duration(milliseconds: 320));
+            Future<void>.delayed(const Duration(milliseconds: 140), () {
+              scrollToFocusedVerse(
+                duration: const Duration(milliseconds: 220),
+                alignment: 0.16,
+              );
+              onConsumedFocus();
+            });
           });
         }
         final pendingLo = pendingStart == null
@@ -743,6 +797,20 @@ class _BibleVersesArea extends StatelessWidget {
                   verseNo: v.verseNo,
                 );
                 final isSaved = savedVerseKeys.contains(key);
+                final isInReadRange =
+                    highlightTarget?.containsVerse(
+                      bookNo: v.bookNo,
+                      chapterNo: v.chapterNo,
+                      verseNo: v.verseNo,
+                    ) ??
+                    false;
+                final isReadRangeBoundary =
+                    highlightTarget?.isBoundaryVerse(
+                      bookNo: v.bookNo,
+                      chapterNo: v.chapterNo,
+                      verseNo: v.verseNo,
+                    ) ??
+                    false;
                 final inPending =
                     pendingLo != null &&
                     pendingHi != null &&
@@ -775,6 +843,8 @@ class _BibleVersesArea extends StatelessWidget {
                   isInPending: inPending,
                   isPendingStart:
                       pendingStart != null && v.verseNo == pendingStart,
+                  isInReadRange: isInReadRange,
+                  isReadRangeBoundary: isReadRangeBoundary,
                   joinAbove: prevSaved && isSaved,
                   joinBelow: nextSaved && isSaved,
                   isFirst: i == 0,
@@ -798,6 +868,8 @@ class _VerseRow extends StatelessWidget {
     required this.isSaved,
     required this.isInPending,
     required this.isPendingStart,
+    required this.isInReadRange,
+    required this.isReadRangeBoundary,
     required this.joinAbove,
     required this.joinBelow,
     required this.isFirst,
@@ -810,6 +882,8 @@ class _VerseRow extends StatelessWidget {
   final bool isSaved;
   final bool isInPending;
   final bool isPendingStart;
+  final bool isInReadRange;
+  final bool isReadRangeBoundary;
   final bool joinAbove;
   final bool joinBelow;
   final bool isFirst;
@@ -825,12 +899,22 @@ class _VerseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final highlight = isInPending
         ? const Color(0x55E2BE57)
+        : isInReadRange
+        ? const Color(0x44E2BE57)
         : isSaved
         ? const Color(0x33E2BE57)
         : Colors.transparent;
+    final leadingBorder = isInReadRange && !isInPending
+        ? Border(
+            left: BorderSide(
+              color: const Color(0xFFE2A93D),
+              width: isReadRangeBoundary ? 4 : 2,
+            ),
+          )
+        : null;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 160),
-      decoration: BoxDecoration(color: highlight),
+      decoration: BoxDecoration(color: highlight, border: leadingBorder),
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
       child: Material(
         color: Colors.transparent,
@@ -844,7 +928,7 @@ class _VerseRow extends StatelessWidget {
                   number: verse.verseNo,
                   isFirst: isFirst,
                   isLast: isLast,
-                  accent: isInPending || isPendingStart,
+                  accent: isInPending || isPendingStart || isReadRangeBoundary,
                 ),
               ),
               const SizedBox(width: 8),

@@ -7,6 +7,7 @@ import '../state/auth_providers.dart';
 import '../theme/tokens.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_page_scaffold.dart';
+import '../widgets/saved_verse_row.dart';
 
 class SavedVersesScreen extends ConsumerStatefulWidget {
   const SavedVersesScreen({super.key, this.onOpenVerse});
@@ -127,6 +128,23 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
     }
   }
 
+  Future<void> _openVerse(SavedBibleVerse verse) async {
+    final onOpenVerse = widget.onOpenVerse;
+    if (onOpenVerse == null) {
+      return;
+    }
+    try {
+      await onOpenVerse(verse);
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('말씀 위치로 이동하지 못했습니다.\n$error')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ParchmentPageScaffold(
@@ -192,81 +210,10 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
       separatorBuilder: (_, __) => const SizedBox(height: 6),
       itemBuilder: (context, index) {
         final verse = _verses[index];
-        return Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(13),
-            onTap: widget.onOpenVerse == null
-                ? null
-                : () => widget.onOpenVerse!(verse),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(12, 9, 6, 9),
-              decoration: BoxDecoration(
-                color: const Color(0x66FFFFFF),
-                borderRadius: BorderRadius.circular(13),
-                border: Border.all(color: const Color(0xAA8E6F48), width: 1),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                verse.referenceText,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColors.ink500,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _formatListDate(verse.createdAt),
-                              style: const TextStyle(
-                                color: AppColors.ink200,
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          verse.verseText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Color(0xFF6D5231),
-                            fontSize: 11.8,
-                            height: 1.3,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    tooltip: '삭제',
-                    onPressed: () => _deleteVerse(verse),
-                    icon: const Icon(Icons.delete_outline_rounded),
-                    color: const Color(0xFF8C5E2B),
-                    splashRadius: 18,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ],
-              ),
-            ),
-          ),
+        return SavedVerseRow(
+          verse: verse,
+          onTap: widget.onOpenVerse == null ? null : () => _openVerse(verse),
+          onDelete: () => _deleteVerse(verse),
         );
       },
     );
@@ -350,12 +297,6 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
         ),
       ],
     );
-  }
-
-  String _formatListDate(DateTime value) {
-    final month = value.month.toString().padLeft(2, '0');
-    final day = value.day.toString().padLeft(2, '0');
-    return '$month.$day';
   }
 }
 

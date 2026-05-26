@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 11,
   "story_title": "느헤미야의 파송: 무너진 성벽 소식",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "느 2:4 — '내가 곧 하늘의 하나님께 묵도하고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "느헤미야의 기도와 파송 기사가 기록된 성경 책은 어디입니까?",
+      "question": "왕은 어떻게 했습니까?",
       "choices": [
-        "느헤미야",
-        "에스라",
-        "에스더"
+        "허락하고",
+        "바벨론 강가에서 들었다",
+        "예루살렘 성벽 앞에서 들었다"
       ],
       "answer_index": 0,
-      "explanation": "느 1:1-11과 2:1-8에 느헤미야의 기도와 파송 기사가 기록됨"
+      "explanation": "느 2:8 — '또 왕의 삼림 감독 아삽에게 조서를 내리사 저로 전에 속한 영문의 문과 성곽과 나의 거할 집을 위 하여 들보 재목을 주게 하옵소서 하매 내 하나님의 선한 손이 나를 도우심으로 왕이 허락하고'"
     }
   ]
 }

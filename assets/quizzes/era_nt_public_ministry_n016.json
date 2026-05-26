@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 16,
   "story_title": "베드로의 고백과 수난 예고",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 8:32 — '베드로가 예수를 붙들고 간하매'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "베드로의 고백 사건이 기록된 성경 책은 어디입니까?",
+      "question": "예수님은 기도하신 뒤 제자들에게 무엇을 물으셨습니까?",
       "choices": [
-        "마태복음",
-        "사도행전",
-        "갈라디아서"
+        "사람들이 자신을 누구라고 하는지 물으셨다",
+        "누가 배신할 것인지 물으셨다",
+        "어디서 떡을 살지 물으셨다"
       ],
       "answer_index": 0,
-      "explanation": "마 16:13-23에 베드로의 고백과 수난 예고가 기록됨"
+      "explanation": "눅 9:18 — '예수께서 따로 기도하실 때에 제자들이 주와 함께 있더니 물어 가라사대 무리가 나를 누구라고 하 느냐'"
     }
   ]
 }

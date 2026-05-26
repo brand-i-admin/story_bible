@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/bible_ref.dart';
+import '../models/event_emotion_mark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
+import '../state/auth_providers.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';
-import 'completion_celebration.dart';
+import 'emotion_badge_icon.dart';
+import 'parchment_dialog.dart';
 import 'proposal/delete_event_proposal_sheet.dart';
 import 'pulse_highlight.dart';
 import 'story_home_styles.dart';
@@ -17,9 +22,9 @@ import 'sub_page_scaffold.dart';
 
 /// 사건 상세 페이지.
 ///
-/// 1. 제목 + 메타 (장소 · 연도)
-/// 2. 4개 장면 이미지 (있으면)
-/// 3. 요약 이야기
+/// 1. 제목
+/// 2. 요약 이야기
+/// 3. 4개 장면 이미지 (있으면)
 /// 4. 관련 성경 본문 + 이동 버튼
 /// 5. 퀴즈 시작 버튼
 ///
@@ -34,14 +39,15 @@ class EventDetailPage extends ConsumerStatefulWidget {
     this.prevEvent,
     this.nextEvent,
     this.onNavigateToEvent,
+    this.onEmotionEngraved,
     this.quizWeekKey,
   });
 
   final StoryEvent event;
   final Future<List<String>> sceneAssetsFuture;
 
-  /// 성경 리더를 열 때 호출되는 콜백. (bookNo, chapterNo, verseNo)
-  final void Function(int bookNo, int chapterNo, int verseNo) onOpenBibleReader;
+  /// 성경 리더를 열 때 호출되는 콜백. 시작 위치와 읽을 범위를 함께 전달한다.
+  final void Function(BibleNavigationTarget target) onOpenBibleReader;
 
   /// 퀴즈 시작 버튼을 누를 때 호출되는 콜백. (eventId)
   final void Function(String eventId) onStartQuiz;
@@ -56,6 +62,11 @@ class EventDetailPage extends ConsumerStatefulWidget {
   /// 페이지를 새 사건으로 pushReplacement 하는 식으로 처리한다.
   final void Function(StoryEvent target)? onNavigateToEvent;
 
+  /// 감정 새김 저장이 끝난 직후 호출. 부모는 상세 페이지를 닫고 지도 카드 위
+  /// 축하 효과를 재생한 뒤 같은 상세 페이지로 되돌아갈 수 있다.
+  final Future<void> Function(StoryEvent event, EventEmotionOption option)?
+  onEmotionEngraved;
+
   /// 비-null 이면 "퀴즈 모드" — 본문 읽기/퀴즈 완료 진행도가 프로필 진행도와
   /// 독립된 `weekly_quiz_progress` 테이블에 저장된다. 같은 인물이 다음 주에
   /// 또 뽑혀도 week_key 가 달라 자동 reset.
@@ -66,10 +77,6 @@ class EventDetailPage extends ConsumerStatefulWidget {
 }
 
 class _EventDetailPageState extends ConsumerState<EventDetailPage> {
-  // 본문 읽기 + 퀴즈가 모두 완료되는 전이 시점에 별가루 burst 를 한 번 트리거.
-  final GlobalKey<CompletionCelebrationState> _celebrationKey =
-      GlobalKey<CompletionCelebrationState>();
-
   /// 다음 이야기 카드 glow 활성 여부.
   /// - 진입 시 이미 완료된 사건이면 즉시 true (post-frame 으로 setState).
   /// - 페이지 안에서 둘 다 완료해서 축하 애니메이션이 끝났을 때도 true.
@@ -101,21 +108,21 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   }
 
   bool _isCompletedFor(StoryState state, String eventId) {
+    final engraved = state.eventEmotionMarks.containsKey(eventId);
     if (widget.quizWeekKey != null) {
       return state.weeklyQuizBibleReadEventIds.contains(eventId) &&
-          state.weeklyQuizCompletedEventIds.contains(eventId);
+          state.weeklyQuizCompletedEventIds.contains(eventId) &&
+          engraved;
     }
     return state.bibleReadEventIds.contains(eventId) &&
-        state.quizCompletedEventIds.contains(eventId);
+        state.quizCompletedEventIds.contains(eventId) &&
+        engraved;
   }
 
   @override
   Widget build(BuildContext context) {
     final event = widget.event;
     final storyText = (event.summary ?? '').trim();
-    final placeText = (event.placeName ?? '').trim();
-    final yearText = event.startYear?.toString() ?? '-';
-    final metaText = placeText.isEmpty ? yearText : '$placeText · $yearText';
     final refs = event.bibleRefs;
     final moveTarget = parseBibleNavigationTarget(
       event.bibleRefs.firstOrNull?.displayText,
@@ -129,7 +136,9 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       final wasCompleted = _isCompletedFor(previous, event.id);
       final isCompleted = _isCompletedFor(next, event.id);
       if (!wasCompleted && isCompleted) {
-        _celebrationKey.currentState?.play();
+        if (widget.nextEvent != null && !_glowNext) {
+          setState(() => _glowNext = true);
+        }
       }
       if (!isCompleted && _glowNext) {
         setState(() => _glowNext = false);
@@ -147,20 +156,43 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     final lastScore = isQuizMode
         ? currentState.weeklyQuizLastScores[event.id]
         : currentState.lastQuizScores[event.id];
+    final attemptSummary = currentState.quizAttemptSummaries[event.id];
+    final emotionMark = currentState.eventEmotionMarks[event.id];
+    final isSaved = currentState.savedEventIds.contains(event.id);
 
+    return _buildPage(
+      event: event,
+      storyText: storyText,
+      refs: refs,
+      moveTarget: moveTarget,
+      isQuizMode: isQuizMode,
+      isBibleRead: isBibleRead,
+      isQuizCompleted: isQuizCompleted,
+      lastScore: lastScore,
+      attemptSummary: attemptSummary,
+      emotionMark: emotionMark,
+      isSaved: isSaved,
+    );
+  }
+
+  Widget _buildPage({
+    required StoryEvent event,
+    required String storyText,
+    required List<BibleRef> refs,
+    required BibleNavigationTarget? moveTarget,
+    required bool isQuizMode,
+    required bool isBibleRead,
+    required bool isQuizCompleted,
+    required ({int correct, int total})? lastScore,
+    required QuizAttemptSummary? attemptSummary,
+    required EventEmotionMark? emotionMark,
+    required bool isSaved,
+  }) {
     return SubPageScaffold(
       title: event.title,
       compactBackOnly: true,
       child: GestureDetector(
-        // 좌우 스와이프로 prev/next 이동 (수평 fling).
-        onHorizontalDragEnd: (details) {
-          final v = details.primaryVelocity ?? 0;
-          if (v < -200 && widget.nextEvent != null) {
-            widget.onNavigateToEvent?.call(widget.nextEvent!);
-          } else if (v > 200 && widget.prevEvent != null) {
-            widget.onNavigateToEvent?.call(widget.prevEvent!);
-          }
-        },
+        onHorizontalDragEnd: _handleHorizontalSwipe,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
           child: Center(
@@ -171,174 +203,20 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // 본문 카드.
-                    DecoratedBox(
-                      decoration: modalSurfaceDecoration(),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
-                        child: DefaultTextStyle(
-                          style: const TextStyle(
-                            color: Color(0xFF3B2A16),
-                            height: 1.55,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      event.title,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        height: 1.22,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF3A2B15),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Flexible(
-                                    child: Text(
-                                      metaText,
-                                      textAlign: TextAlign.right,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF6A522E),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              FutureBuilder<List<String>>(
-                                future: widget.sceneAssetsFuture,
-                                builder: (context, snapshot) {
-                                  final sceneAssets =
-                                      snapshot.data ?? const <String>[];
-                                  if (sceneAssets.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 12),
-                                    child: storySceneRow(sceneAssets),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 14),
-                              if (storyText.isNotEmpty)
-                                storySection(
-                                  title: '요약 이야기',
-                                  content: storyText,
-                                )
-                              else
-                                storySection(
-                                  title: '요약 이야기',
-                                  content: '요약 정보가 없습니다.',
-                                ),
-                              const SizedBox(height: 12),
-                              CompletionCelebration(
-                                key: _celebrationKey,
-                                onComplete: () {
-                                  if (!mounted) return;
-                                  if (widget.nextEvent != null && !_glowNext) {
-                                    setState(() => _glowNext = true);
-                                  }
-                                },
-                                child: _ReadAndQuizSection(
-                                  eventId: event.id,
-                                  refs: refs,
-                                  moveTarget: moveTarget,
-                                  isBibleRead: isBibleRead,
-                                  isQuizCompleted: isQuizCompleted,
-                                  lastScore: lastScore,
-                                  onOpenBibleReader: widget.onOpenBibleReader,
-                                  onStartQuiz: () =>
-                                      widget.onStartQuiz(event.id),
-                                  onUndoBibleRead: () {
-                                    final notifier = ref.read(
-                                      storyControllerProvider.notifier,
-                                    );
-                                    if (isQuizMode) {
-                                      notifier.setWeeklyQuizBibleRead(
-                                        weekKey: widget.quizWeekKey!,
-                                        eventId: event.id,
-                                        isRead: false,
-                                      );
-                                    } else {
-                                      notifier.setBibleRead(
-                                        eventId: event.id,
-                                        isRead: false,
-                                      );
-                                    }
-                                  },
-                                  onUndoQuiz: () {
-                                    final notifier = ref.read(
-                                      storyControllerProvider.notifier,
-                                    );
-                                    if (isQuizMode) {
-                                      notifier.setWeeklyQuizCompleted(
-                                        weekKey: widget.quizWeekKey!,
-                                        eventId: event.id,
-                                        isCompleted: false,
-                                      );
-                                    } else {
-                                      notifier.setQuizCompleted(
-                                        eventId: event.id,
-                                        isCompleted: false,
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                              _DeleteProposalButton(event: event),
-                            ],
-                          ),
-                        ),
-                      ),
+                    _buildStoryCard(
+                      event: event,
+                      storyText: storyText,
+                      refs: refs,
+                      moveTarget: moveTarget,
+                      isQuizMode: isQuizMode,
+                      isBibleRead: isBibleRead,
+                      isQuizCompleted: isQuizCompleted,
+                      lastScore: lastScore,
+                      attemptSummary: attemptSummary,
+                      emotionMark: emotionMark,
+                      isSaved: isSaved,
                     ),
-                    // 아래쪽 prev/next 네비 카드 — 한 줄에 좌(이전) + 우(다음).
-                    // 각 45% width + 가운데 여백으로 답답하지 않게.
-                    if ((widget.prevEvent != null ||
-                            widget.nextEvent != null) &&
-                        widget.onNavigateToEvent != null) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: widget.prevEvent != null
-                                ? _NavRow(
-                                    label: '이전 이야기',
-                                    event: widget.prevEvent!,
-                                    isPrev: true,
-                                    onTap: () => widget.onNavigateToEvent!(
-                                      widget.prevEvent!,
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: widget.nextEvent != null
-                                ? PulseHighlight(
-                                    active: _glowNext,
-                                    child: _NavRow(
-                                      label: '다음 이야기',
-                                      event: widget.nextEvent!,
-                                      isPrev: false,
-                                      onTap: () => widget.onNavigateToEvent!(
-                                        widget.nextEvent!,
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                          ),
-                        ],
-                      ),
-                    ],
+                    _buildNavigationRow(),
                   ],
                 ),
               ),
@@ -346,6 +224,299 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _handleHorizontalSwipe(DragEndDetails details) {
+    final v = details.primaryVelocity ?? 0;
+    if (v < -200 && widget.nextEvent != null) {
+      widget.onNavigateToEvent?.call(widget.nextEvent!);
+    } else if (v > 200 && widget.prevEvent != null) {
+      widget.onNavigateToEvent?.call(widget.prevEvent!);
+    }
+  }
+
+  Widget _buildStoryCard({
+    required StoryEvent event,
+    required String storyText,
+    required List<BibleRef> refs,
+    required BibleNavigationTarget? moveTarget,
+    required bool isQuizMode,
+    required bool isBibleRead,
+    required bool isQuizCompleted,
+    required ({int correct, int total})? lastScore,
+    required QuizAttemptSummary? attemptSummary,
+    required EventEmotionMark? emotionMark,
+    required bool isSaved,
+  }) {
+    return DecoratedBox(
+      decoration: modalSurfaceDecoration(),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+        child: DefaultTextStyle(
+          style: const TextStyle(color: Color(0xFF3B2A16), height: 1.55),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _StoryHeader(
+                event: event,
+                isSaved: isSaved,
+                onToggleSaved: () => _toggleSavedEvent(event),
+              ),
+              const SizedBox(height: 14),
+              storySection(
+                title: '요약 이야기',
+                content: storyText.isNotEmpty ? storyText : '요약 정보가 없습니다.',
+              ),
+              _buildSceneRow(),
+              const SizedBox(height: 12),
+              _buildReadAndQuizProgress(
+                event: event,
+                refs: refs,
+                moveTarget: moveTarget,
+                isQuizMode: isQuizMode,
+                isBibleRead: isBibleRead,
+                isQuizCompleted: isQuizCompleted,
+                lastScore: lastScore,
+                attemptSummary: attemptSummary,
+                emotionMark: emotionMark,
+              ),
+              _DeleteProposalButton(event: event),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSceneRow() {
+    return FutureBuilder<List<String>>(
+      future: widget.sceneAssetsFuture,
+      builder: (context, snapshot) {
+        final sceneAssets = snapshot.data ?? const <String>[];
+        if (sceneAssets.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: storySceneRow(sceneAssets),
+        );
+      },
+    );
+  }
+
+  Widget _buildReadAndQuizProgress({
+    required StoryEvent event,
+    required List<BibleRef> refs,
+    required BibleNavigationTarget? moveTarget,
+    required bool isQuizMode,
+    required bool isBibleRead,
+    required bool isQuizCompleted,
+    required ({int correct, int total})? lastScore,
+    required QuizAttemptSummary? attemptSummary,
+    required EventEmotionMark? emotionMark,
+  }) {
+    return _ReadAndQuizSection(
+      eventId: event.id,
+      refs: refs,
+      moveTarget: moveTarget,
+      isBibleRead: isBibleRead,
+      isQuizCompleted: isQuizCompleted,
+      emotionMark: emotionMark,
+      lastScore: lastScore,
+      attemptSummary: attemptSummary,
+      onOpenBibleReader: widget.onOpenBibleReader,
+      onStartQuiz: () => widget.onStartQuiz(event.id),
+      onEngraveEmotion: () => _openEmotionEngraving(event),
+      onUndoBibleRead: () => _undoBibleRead(event.id, isQuizMode),
+      onUndoQuiz: () => _undoQuiz(event.id, isQuizMode),
+      onUndoEmotionMark: () => _undoEmotionMark(event.id),
+    );
+  }
+
+  void _undoBibleRead(String eventId, bool isQuizMode) {
+    final notifier = ref.read(storyControllerProvider.notifier);
+    if (isQuizMode) {
+      notifier.setWeeklyQuizBibleRead(
+        weekKey: widget.quizWeekKey!,
+        eventId: eventId,
+        isRead: false,
+      );
+    } else {
+      notifier.setBibleRead(eventId: eventId, isRead: false);
+    }
+  }
+
+  Future<void> _openEmotionEngraving(StoryEvent event) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('로그인 후 지도 위에 감정을 새길 수 있어요.')),
+      );
+      return;
+    }
+
+    final state = ref.read(storyControllerProvider);
+    final existingMark = state.eventEmotionMarks[event.id];
+    final saved = await showDialog<EventEmotionOption>(
+      context: context,
+      builder: (_) {
+        return _EmotionEngravingDialog(
+          eventTitle: event.title,
+          initialMark: existingMark,
+          onSave: (option, note) async {
+            await ref
+                .read(storyControllerProvider.notifier)
+                .setEmotionMark(eventId: event.id, option: option, note: note);
+          },
+        );
+      },
+    );
+    if (!mounted || saved == null) {
+      return;
+    }
+    await widget.onEmotionEngraved?.call(event, saved);
+  }
+
+  void _undoQuiz(String eventId, bool isQuizMode) {
+    final notifier = ref.read(storyControllerProvider.notifier);
+    if (isQuizMode) {
+      notifier.setWeeklyQuizCompleted(
+        weekKey: widget.quizWeekKey!,
+        eventId: eventId,
+        isCompleted: false,
+      );
+    } else {
+      notifier.setQuizCompleted(eventId: eventId, isCompleted: false);
+    }
+  }
+
+  void _undoEmotionMark(String eventId) {
+    ref
+        .read(storyControllerProvider.notifier)
+        .clearEmotionMark(eventId: eventId);
+  }
+
+  Future<void> _toggleSavedEvent(StoryEvent event) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('로그인 후 이야기를 저장할 수 있어요.')));
+      return;
+    }
+    try {
+      final saved = await ref
+          .read(storyControllerProvider.notifier)
+          .toggleSavedEvent(event.id);
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(saved ? '이야기를 저장했어요.' : '저장을 해제했어요.')),
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('저장 상태를 바꾸지 못했습니다.\n$error')));
+    }
+  }
+
+  Widget _buildNavigationRow() {
+    if ((widget.prevEvent == null && widget.nextEvent == null) ||
+        widget.onNavigateToEvent == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: widget.prevEvent != null
+                ? _NavRow(
+                    label: '이전 이야기',
+                    event: widget.prevEvent!,
+                    isPrev: true,
+                    onTap: () => widget.onNavigateToEvent!(widget.prevEvent!),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: widget.nextEvent != null
+                ? PulseHighlight(
+                    active: _glowNext,
+                    child: _NavRow(
+                      label: '다음 이야기',
+                      event: widget.nextEvent!,
+                      isPrev: false,
+                      onTap: () => widget.onNavigateToEvent!(widget.nextEvent!),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StoryHeader extends StatelessWidget {
+  const _StoryHeader({
+    required this.event,
+    required this.isSaved,
+    required this.onToggleSaved,
+  });
+
+  final StoryEvent event;
+  final bool isSaved;
+  final VoidCallback onToggleSaved;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: FittedBox(
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.scaleDown,
+            child: Text(
+              event.title,
+              maxLines: 1,
+              softWrap: false,
+              style: const TextStyle(
+                fontSize: 20,
+                height: 1.22,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF3A2B15),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Tooltip(
+          message: isSaved ? '저장 해제' : '이야기 저장',
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onToggleSaved,
+              borderRadius: BorderRadius.circular(999),
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Icon(
+                  isSaved ? Icons.star_rounded : Icons.star_border_rounded,
+                  color: isSaved ? AppColors.goldDeep : const Color(0xFF9A7A4A),
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -492,11 +663,15 @@ class _ReadAndQuizSection extends StatelessWidget {
     required this.moveTarget,
     required this.isBibleRead,
     required this.isQuizCompleted,
+    required this.emotionMark,
     required this.lastScore,
+    required this.attemptSummary,
     required this.onOpenBibleReader,
     required this.onStartQuiz,
+    required this.onEngraveEmotion,
     required this.onUndoBibleRead,
     required this.onUndoQuiz,
+    required this.onUndoEmotionMark,
   });
 
   final String eventId;
@@ -504,17 +679,27 @@ class _ReadAndQuizSection extends StatelessWidget {
   final BibleNavigationTarget? moveTarget;
   final bool isBibleRead;
   final bool isQuizCompleted;
+  final EventEmotionMark? emotionMark;
   final ({int correct, int total})? lastScore;
-  final void Function(int bookNo, int chapterNo, int verseNo) onOpenBibleReader;
+  final QuizAttemptSummary? attemptSummary;
+  final void Function(BibleNavigationTarget target) onOpenBibleReader;
   final VoidCallback onStartQuiz;
+  final VoidCallback onEngraveEmotion;
   final VoidCallback onUndoBibleRead;
   final VoidCallback onUndoQuiz;
+  final VoidCallback onUndoEmotionMark;
 
   @override
   Widget build(BuildContext context) {
     final readLabel = refs.isEmpty
         ? '본문 읽기'
         : '${refs.map((r) => r.displayText).join(', ')} · 읽기';
+    final quizLabel = _quizLabel();
+    final canEngrave = isBibleRead && isQuizCompleted;
+    final engraved = emotionMark != null;
+    final engravingLabel = engraved
+        ? _engravingLabel(emotionMark!)
+        : '지도 위에 새기기';
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
       decoration: BoxDecoration(
@@ -539,27 +724,76 @@ class _ReadAndQuizSection extends StatelessWidget {
             completed: isBibleRead,
             onTap: moveTarget == null
                 ? null
-                : () => onOpenBibleReader(
-                    moveTarget!.bookNo,
-                    moveTarget!.chapterNo,
-                    moveTarget!.verseNo,
-                  ),
+                : () => onOpenBibleReader(moveTarget!),
             onUndo: onUndoBibleRead,
           ),
           const SizedBox(height: 8),
           _CompletableActionRow(
-            label: !isQuizCompleted
-                ? '퀴즈 시작'
-                : (lastScore == null || lastScore!.total == 0)
-                ? '퀴즈 (없음)'
-                : '퀴즈 (${lastScore!.correct}/${lastScore!.total} 정답)',
+            label: quizLabel,
             completed: isQuizCompleted,
             onTap: onStartQuiz,
             onUndo: onUndoQuiz,
+            tone: _quizButtonTone(),
+          ),
+          const SizedBox(height: 8),
+          _CompletableActionRow(
+            label: engravingLabel,
+            completed: engraved,
+            onTap: canEngrave ? onEngraveEmotion : null,
+            onUndo: onUndoEmotionMark,
           ),
         ],
       ),
     );
+  }
+
+  String _engravingLabel(EventEmotionMark mark) {
+    final note = mark.note.trim();
+    return note.isEmpty ? mark.emotionLabel : '${mark.emotionLabel} - $note';
+  }
+
+  String _quizLabel() {
+    final attempt = attemptSummary;
+    String countsLabel({
+      required int correct,
+      required int total,
+      required int confused,
+    }) {
+      final wrong = (total - correct - confused).clamp(0, total);
+      return '정답 $correct · 오답 $wrong · 헷갈림 $confused';
+    }
+
+    if (!isQuizCompleted) {
+      if (attempt != null && attempt.needsReview) {
+        return '퀴즈 다시 풀기 (${countsLabel(correct: attempt.correctCount, total: attempt.totalCount, confused: attempt.confusedCount)})';
+      }
+      return '퀴즈 시작';
+    }
+    if (lastScore == null || lastScore!.total == 0) {
+      return '퀴즈 (없음)';
+    }
+    if (attempt != null) {
+      return '퀴즈 (${countsLabel(correct: attempt.correctCount, total: attempt.totalCount, confused: attempt.confusedCount)})';
+    }
+    return '퀴즈 (${countsLabel(correct: lastScore!.correct, total: lastScore!.total, confused: 0)})';
+  }
+
+  _ActionButtonTone? _quizButtonTone() {
+    final attempt = attemptSummary;
+    if (attempt != null && attempt.totalCount > 0) {
+      return _ActionButtonTone.fromQuizCounts(
+        correct: attempt.correctCount,
+        total: attempt.totalCount,
+      );
+    }
+    final score = lastScore;
+    if (score != null && score.total > 0) {
+      return _ActionButtonTone.fromQuizCounts(
+        correct: score.correct,
+        total: score.total,
+      );
+    }
+    return null;
   }
 }
 
@@ -570,25 +804,36 @@ class _CompletableActionRow extends StatelessWidget {
     required this.completed,
     required this.onTap,
     required this.onUndo,
+    this.tone,
   });
 
   final String label;
   final bool completed;
   final VoidCallback? onTap;
-  final VoidCallback onUndo;
+  final VoidCallback? onUndo;
+  final _ActionButtonTone? tone;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: filledActionButton(
-            label: label,
-            onTap: onTap ?? () {},
-            completed: completed,
+          child: Opacity(
+            opacity: onTap == null ? 0.48 : 1,
+            child: IgnorePointer(
+              ignoring: onTap == null,
+              child: filledActionButton(
+                label: label,
+                onTap: onTap ?? () {},
+                completed: completed,
+                gradientColors: tone?.gradientColors,
+                borderColor: tone?.borderColor,
+                shadowColor: tone?.shadowColor,
+              ),
+            ),
           ),
         ),
-        if (completed) ...[
+        if (completed && onUndo != null) ...[
           const SizedBox(width: 6),
           TextButton(
             onPressed: onUndo,
@@ -604,6 +849,291 @@ class _CompletableActionRow extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _ActionButtonTone {
+  const _ActionButtonTone({
+    required this.gradientColors,
+    required this.borderColor,
+    required this.shadowColor,
+  });
+
+  final List<Color> gradientColors;
+  final Color borderColor;
+  final Color shadowColor;
+
+  factory _ActionButtonTone.fromQuizCounts({
+    required int correct,
+    required int total,
+  }) {
+    if (total <= 0) {
+      return const _ActionButtonTone(
+        gradientColors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
+        borderColor: AppColors.greenRim,
+        shadowColor: Color(0x223D8758),
+      );
+    }
+    if (correct <= 0) {
+      return const _ActionButtonTone(
+        gradientColors: [AppColors.dangerTop, AppColors.dangerBot],
+        borderColor: AppColors.dangerRim,
+        shadowColor: Color(0x33B4583B),
+      );
+    }
+    if (correct >= total) {
+      return const _ActionButtonTone(
+        gradientColors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
+        borderColor: AppColors.greenRim,
+        shadowColor: Color(0x223D8758),
+      );
+    }
+    return const _ActionButtonTone(
+      gradientColors: [Color(0xFFF39A32), Color(0xFFD96518)],
+      borderColor: Color(0xFFFFD29A),
+      shadowColor: Color(0x33D96518),
+    );
+  }
+}
+
+class _EmotionEngravingDialog extends StatefulWidget {
+  const _EmotionEngravingDialog({
+    required this.eventTitle,
+    required this.initialMark,
+    required this.onSave,
+  });
+
+  final String eventTitle;
+  final EventEmotionMark? initialMark;
+  final Future<void> Function(EventEmotionOption option, String note) onSave;
+
+  @override
+  State<_EmotionEngravingDialog> createState() =>
+      _EmotionEngravingDialogState();
+}
+
+class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
+  EventEmotionOption? _selected;
+  late final TextEditingController _noteController;
+  late int _step;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = EventEmotionOption.byKey(widget.initialMark?.emotionKey ?? '');
+    _noteController = TextEditingController(
+      text: widget.initialMark?.note ?? '',
+    );
+    _step = widget.initialMark == null ? 0 : 1;
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = _selected;
+    return ParchmentDialog(
+      title: '지도 위에 새기기',
+      subtitle: widget.eventTitle,
+      showCloseButton: true,
+      actions: [
+        if (_step == 1)
+          ParchmentDialogActionButton(
+            label: '이전',
+            style: ParchmentDialogActionStyle.secondary,
+            onTap: _saving ? null : () => setState(() => _step = 0),
+          ),
+        ParchmentDialogActionButton(
+          label: _step == 0 ? '다음' : (_saving ? '저장 중' : '새기기'),
+          onTap: _primaryActionEnabled ? _handlePrimaryAction : null,
+        ),
+      ],
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 180),
+        child: _step == 0
+            ? _buildEmotionStep(context)
+            : _buildNoteStep(context, selected),
+      ),
+    );
+  }
+
+  bool get _primaryActionEnabled {
+    if (_saving) return false;
+    if (_step == 0) return _selected != null;
+    return _selected != null && _noteController.text.trim().isNotEmpty;
+  }
+
+  Widget _buildEmotionStep(BuildContext context) {
+    return Column(
+      key: const ValueKey('emotion-step'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          '이 이야기에서 마음에 남은 감정을 하나 골라 주세요.',
+          style: TextStyle(
+            color: Color(0xFF6A4C2E),
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            height: 1.35,
+          ),
+        ),
+        const SizedBox(height: 12),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 2.05,
+          children: [
+            for (final option in EventEmotionOption.options)
+              _EmotionChoiceChip(
+                option: option,
+                selected: _selected?.key == option.key,
+                onTap: () => setState(() => _selected = option),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoteStep(BuildContext context, EventEmotionOption? selected) {
+    final option = selected ?? EventEmotionOption.options.last;
+    return Column(
+      key: const ValueKey('note-step'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(
+              color: Color(0xFF3A2B15),
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              height: 1.45,
+            ),
+            children: [
+              const TextSpan(text: '나는 이 이야기에서 '),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 5),
+                  child: EmotionBadgeIcon(
+                    emotionKey: option.key,
+                    size: 18,
+                    elevation: false,
+                  ),
+                ),
+              ),
+              TextSpan(
+                text: option.label,
+                style: const TextStyle(color: Color(0xFFB07220)),
+              ),
+              const TextSpan(text: '이 남았다.'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        ParchmentDialogTextField(
+          controller: _noteController,
+          hintText: '왜 이 감정이 남았는지 적어 보세요.',
+          maxLength: 100,
+          autofocus: true,
+          onChanged: (_) => setState(() {}),
+        ),
+      ],
+    );
+  }
+
+  void _handlePrimaryAction() {
+    if (_step == 0) {
+      setState(() => _step = 1);
+      return;
+    }
+    final selected = _selected;
+    if (selected == null) return;
+    _save(selected);
+  }
+
+  Future<void> _save(EventEmotionOption selected) async {
+    setState(() => _saving = true);
+    try {
+      await widget.onSave(selected, _noteController.text);
+      if (mounted) {
+        Navigator.of(context).pop(selected);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _saving = false);
+      }
+    }
+  }
+}
+
+class _EmotionChoiceChip extends StatelessWidget {
+  const _EmotionChoiceChip({
+    required this.option,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final EventEmotionOption option;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFFFFE7B8) : const Color(0xFFF8F0E2),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: selected
+                  ? const Color(0xFFB07220)
+                  : const Color(0xAA8E6F48),
+              width: selected ? 1.4 : 1.0,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              EmotionBadgeIcon(
+                emotionKey: option.key,
+                size: 18,
+                elevation: false,
+              ),
+              const SizedBox(width: 5),
+              Flexible(
+                child: Text(
+                  option.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: selected
+                        ? const Color(0xFF7C4716)
+                        : const Color(0xFF5E4427),
+                    fontSize: 11.2,
+                    fontWeight: FontWeight.w900,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 1,
   "story_title": "창조: 7일과 안식",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 2:2 — '일곱째 날에 ... 안식하셨음이더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "창조 기사가 기록된 성경 책은 어디입니까?",
+      "question": "하나님은 일곱째 날을 어떻게 하셨습니까?",
       "choices": [
-        "창세기",
-        "출애굽기",
-        "시편"
+        "복 주시고 거룩하게 하셨다",
+        "다시 첫째 날로 되돌리셨다",
+        "사람에게만 일하라고 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "창 1:1-2:3에 창조 기사가 기록됨"
+      "explanation": "창 2:3 — '하나님이 일곱째 날을 복 주사 거룩하게 하셨으니 이는 하나님이 그 창조하시며 만드시던 모든 일을 마치시고 이 날에 안식하셨음이더라'"
     }
   ]
 }

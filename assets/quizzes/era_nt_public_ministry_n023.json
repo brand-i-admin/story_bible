@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 23,
   "story_title": "겟세마네: 뜻이 이루어지다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 26:39 — '내 원대로 마옵시고 아버지의 원대로 하옵소서'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "겟세마네 기도 기사가 기록된 성경 책은 어디입니까?",
+      "question": "사자는 어떻게 했습니까?",
       "choices": [
-        "마가복음",
-        "사도행전",
-        "히브리서"
+        "하늘로부터 예수께 나타나 힘을 돕었다",
+        "감람산",
+        "시온산"
       ],
       "answer_index": 0,
-      "explanation": "막 14:32-42에 겟세마네 기도 기사가 기록됨"
+      "explanation": "눅 22:43 — '사자가 하늘로부터 예수께 나타나 힘을 돕더라'"
     }
   ]
 }

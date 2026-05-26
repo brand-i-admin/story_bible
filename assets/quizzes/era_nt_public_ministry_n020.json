@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 20,
   "story_title": "예루살렘 입성",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 11:8-9 — '겉옷을 길에 펴며 ... 호산나 찬송하리로다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예루살렘 입성 기사가 기록된 성경 책은 어디입니까?",
+      "question": "예수님이 예루살렘에 들어가시자 성 안은 어떻게 되었습니까?",
       "choices": [
-        "마가복음",
-        "사도행전",
-        "로마서"
+        "온 성이 술렁이며 예수님이 누구인지 물었다",
+        "아무도 알아보지 못해 조용했다",
+        "성문이 닫혀 예수님이 들어가지 못했다"
       ],
       "answer_index": 0,
-      "explanation": "막 11:1-11에 예루살렘 입성 기사가 기록됨"
+      "explanation": "마 21:10 — '예수께서 예루살렘에 들어가시니 온 성이 소동하여 가로되 이는 누구뇨 하거늘'"
     }
   ]
 }

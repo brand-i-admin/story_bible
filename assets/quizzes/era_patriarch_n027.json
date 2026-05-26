@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 27,
   "story_title": "바로의 꿈: 총리 요셉",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 41:41 — '바로가 그로 애굽 전국을 총리하게 하였더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바로의 꿈과 요셉의 총리 임명 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "포위된 성 안에는 어떤 일이 일어났습니까?",
       "choices": [
-        "41장",
-        "39장",
-        "43장"
+        "기근이 심해 먹을 것이 떨어졌다",
+        "파리하고 흉악한 소",
+        "강하고 검은 소"
       ],
       "answer_index": 0,
-      "explanation": "창 41:1-57에 바로의 꿈 해석과 요셉의 총리 임명이 기록됨"
+      "explanation": "창 41:56 — '온 지면에 기근이 있으매 요셉이 모든 창고를 열고 애굽 백성에게 팔새 애굽 땅에 기근이 심하며'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 7,
   "story_title": "하만의 음모: 유다인을 없애라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "에 3:6 — '유다인을 죽이고 멸하려 하더니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "하만의 유다인 학살 음모 기사가 기록된 성경 책은 어디입니까?",
+      "question": "왕은 어떻게 했습니까?",
       "choices": [
-        "에스더",
-        "에스라",
-        "느헤미야"
+        "하만과 함께 앉아 마시되 수산 성은 어지럽었다",
+        "모르드개가 왕의 재물을 훔쳤기 때문이다",
+        "모르드개가 하만을 왕에게 고발했기 때문이다"
       ],
       "answer_index": 0,
-      "explanation": "에 3:1-15에 하만의 음모와 조서 반포 기사가 기록됨"
+      "explanation": "에 3:15 — '역졸이 왕의 명을 받들어 급히 나가매 그 조서가 도성 수산에도 반포되니 왕은 하만과 함께 앉아 마시되 수산 성은 어지럽더라'"
     }
   ]
 }

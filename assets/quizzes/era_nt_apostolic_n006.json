@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 6,
   "story_title": "사마리아 복음: 빌립의 전도",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 8:18-19 — '시몬이 사도들의 안수로 성령 받는 것을 보고 돈을 드려 … 이 권능을 내게도 주어'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "빌립의 사마리아 전도 기사가 기록된 성경 책은 어디입니까?",
+      "question": "베드로는 무엇이라고 말했습니까?",
       "choices": [
-        "사도행전",
-        "빌립보서",
-        "야고보서"
+        "네가 하나님의 선물을 돈 주고 살 줄로 생각했다 네 은과 네가 함께 망할지어 다",
+        "베드로",
+        "스데반"
       ],
       "answer_index": 0,
-      "explanation": "행 8:4-25에 빌립의 사마리아 전도 기사가 기록됨"
+      "explanation": "행 8:20 — '베드로가 가로되 네가 하나님의 선물을 돈 주고 살 줄로 생각하였으니 네 은과 네가 함께 망할지어 다'"
     }
   ]
 }

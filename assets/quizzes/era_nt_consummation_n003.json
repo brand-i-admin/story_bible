@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 3,
   "story_title": "일곱 인: 역사의 문이 열리다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 7:10 — '구원하심이 보좌에 앉으신 우리 하나님과 어린 양에게 있도다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "일곱 인 환상이 기록된 성경 책은 어디입니까?",
+      "question": "하나님은 어떻게 했습니까?",
       "choices": [
-        "요한계시록",
-        "에스겔서",
-        "다니엘서"
+        "저희 눈에서 모든 눈물을 씻어 주실 것임이러라",
+        "흰 말 탄 자",
+        "큰 지진"
       ],
       "answer_index": 0,
-      "explanation": "계 6:1-7:17에 일곱 인 환상이 기록됨"
+      "explanation": "계 7:17 — '이는 보좌 가운데 계신 어린 양이 저희의 목자가 되사 생명수 샘으로 인도하시고 하나님께서 저희 눈에서 모든 눈물을 씻어 주실 것임이러라'"
     }
   ]
 }

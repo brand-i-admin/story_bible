@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 13,
   "story_title": "시내산 도착: 십계명과 하나님 기준",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 20:21 — '백성은 멀리 섰고 모세는 하나님의 계신 암흑으로 가까이 가니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "십계명이 기록된 성경 책은 어디입니까?",
+      "question": "상전은 어떻게 했습니까?",
       "choices": [
-        "출애굽기",
-        "신명기",
-        "레위기"
+        "그를 데리고 재판장에게로 갈 것이요 ",
+        "도둑질",
+        "산 아래에 모여 절하였다"
       ],
       "answer_index": 0,
-      "explanation": "출 20:1-21에 십계명이 기록됨"
+      "explanation": "출 21:6 — '상전이 그를 데리고 재판장에게로 갈 것이요 또 그를 문이나 문설주 앞으로 데리고 가서 그것에다 가 송곳으로 그 귀를 뚫을 것이라 그가 영영히 그 상전을 섬기리라'"
     }
   ]
 }

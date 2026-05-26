@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 17,
   "story_title": "2차 선교(2): 빌립보—루디아와 감옥의 찬양",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 16:29 — '간수가 등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "빌립보 전도와 감옥 사건이 기록된 성경 책은 어디입니까?",
+      "question": "간수는 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "빌립보서",
-        "데살로니가전서"
+        "등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고",
+        "즉시 탈출하여 루디아 집으로 갔다",
+        "간수에게 외쳐 자유를 요구하였다"
       ],
       "answer_index": 0,
-      "explanation": "행 16:11-34에 빌립보 루디아와 감옥 사건이 기록됨"
+      "explanation": "행 16:29 — '간수가 등불을 달라고 하며 뛰어 들어가 무서워 떨며 바울과 실라 앞에 부복하고'"
     }
   ]
 }

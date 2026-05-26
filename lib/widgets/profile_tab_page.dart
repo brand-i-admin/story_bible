@@ -15,9 +15,7 @@ import '../models/era.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
-import '../models/user_note.dart';
 import '../screens/legal_documents_screen.dart';
-import '../screens/profile_notes_screen.dart';
 import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
@@ -29,8 +27,12 @@ import 'character_avatar.dart';
 import 'font_scale_bottom_sheet.dart';
 import 'inline_login_prompt_card.dart';
 import 'parchment_dialog.dart';
+import 'profile/profile_event_review_grid.dart';
+import 'profile/profile_life_map.dart';
 import 'profile/profile_mini_map.dart';
+import 'profile/profile_quiz_stats.dart';
 import 'profile_editor_dialog.dart';
+import 'saved_verse_row.dart';
 import 'share_id_input_dialog.dart';
 import 'story_home_styles.dart';
 import 'sub_page_scaffold.dart';
@@ -47,7 +49,7 @@ part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
 part 'profile/profile_settings_sheet.dart';
 
-/// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 노트/말씀/중보기도 미리보기).
+/// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 기록/기도/저장/말씀).
 ///
 /// 외부 콜백:
 /// - [onStartQuiz]: 인물 상세에서 이벤트 퀴즈 시작
@@ -74,11 +76,13 @@ class ProfileTabPage extends ConsumerStatefulWidget {
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
 }
 
-enum _ProfileContentTab { notes, verses, prayer }
+enum _ProfileContentTab { records, prayer, saved, verses }
 
-/// "진행률 표시" 섹션의 탭. `place` = 장소로 시작 (지도+region),
-/// `walk` = 인물과 걷기 (구약/신약 + 인물 grid).
-enum _ProfileProgressTab { place, walk }
+enum _ProfileQuizReviewFilter { wrong, confused }
+
+/// "진행률 표시" 섹션의 탭. `life` = 내 삶의 지도 (감정 새김 atlas),
+/// `place` = 장소로 시작 (지도+region), `walk` = 인물과 걷기.
+enum _ProfileProgressTab { life, place, walk }
 
 class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   static const int _intercessoryPrayerPageSize = 12;
@@ -93,12 +97,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   Map<String, CharacterStudyProgress> _profileStudyProgressByCharacterCode =
       const {};
   Map<String, int> _profileCharacterTimelineOrderByCode = const {};
-  _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
-  List<UserNote> _profileNotesPreview = const [];
+  _ProfileContentTab _profileContentTab = _ProfileContentTab.records;
+  List<StoryEvent> _profileSavedEventsPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
-  bool _profileNotesLoading = false;
+  bool _profileSavedEventsLoading = false;
   bool _profileSavedVersesLoading = false;
-  String? _profileNotesError;
+  String? _profileSavedEventsError;
   String? _profileSavedVersesError;
   List<IntercessoryPrayerItem> _intercessoryPrayerItems = const [];
   bool _intercessoryPrayerLoading = false;
@@ -107,8 +111,8 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   String? _intercessoryPrayerError;
   int _intercessoryPrayerPageIndex = 0;
   String _profileSelectedTestament = 'old';
-  // 진행률 섹션 — 기본 탭은 장소로 시작 (지도 기반 첫인상 강조).
-  _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.place;
+  // 진행률 섹션 — 기본 탭은 내 삶의 지도 (감정 새김 기반 첫인상 강조).
+  _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.life;
   // "장소로 시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
   String? _profileProgressSelectedEraId;
   bool _profileLoading = false;
@@ -245,16 +249,16 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     }
   }
 
-  Future<void> _loadProfileNotesPreview({bool showLoading = true}) async {
+  Future<void> _loadProfileSavedEventsPreview({bool showLoading = true}) async {
     final user = ref.read(signedInUserProvider);
     if (user == null) {
       if (!mounted) {
         return;
       }
       setState(() {
-        _profileNotesPreview = const [];
-        _profileNotesLoading = false;
-        _profileNotesError = null;
+        _profileSavedEventsPreview = const [];
+        _profileSavedEventsLoading = false;
+        _profileSavedEventsError = null;
       });
       return;
     }
@@ -262,34 +266,36 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     if (mounted) {
       setState(() {
         if (showLoading) {
-          _profileNotesLoading = true;
+          _profileSavedEventsLoading = true;
         }
-        _profileNotesError = null;
+        _profileSavedEventsError = null;
       });
     }
 
     try {
-      final result = await ref
-          .read(userRepositoryProvider)
-          .fetchUserNotesPage(
-            userId: user.id,
-            pageIndex: 0,
-            pageSize: _profilePreviewPageSize,
-          );
+      await ref.read(storyControllerProvider.notifier).refreshSavedEventIds();
+      final savedIds = ref.read(storyControllerProvider).savedEventIds;
+      final events = await ref
+          .read(storyRepositoryProvider)
+          .fetchEventsByIds(savedIds);
+      final sorted = _sortEventsByEraThenIndex(
+        events,
+        ref.read(storyControllerProvider).eras,
+      );
       if (!mounted) {
         return;
       }
       setState(() {
-        _profileNotesPreview = result.items;
-        _profileNotesLoading = false;
+        _profileSavedEventsPreview = sorted;
+        _profileSavedEventsLoading = false;
       });
     } catch (error) {
       if (!mounted) {
         return;
       }
       setState(() {
-        _profileNotesLoading = false;
-        _profileNotesError = '노트를 불러오지 못했습니다.\n$error';
+        _profileSavedEventsLoading = false;
+        _profileSavedEventsError = '저장한 이야기를 불러오지 못했습니다.\n$error';
       });
     }
   }
@@ -345,7 +351,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
   Future<void> _refreshProfileTabPreviews({bool showLoading = true}) async {
     await Future.wait([
-      _loadProfileNotesPreview(showLoading: showLoading),
+      _loadProfileSavedEventsPreview(showLoading: showLoading),
       _loadProfileSavedVersesPreview(showLoading: showLoading),
     ]);
   }
@@ -412,6 +418,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           for (final progress in studyProgress)
             progress.character.code: progress,
         };
+        await ref
+            .read(storyControllerProvider.notifier)
+            .refreshQuizAttemptSummaries();
+        await ref.read(storyControllerProvider.notifier).refreshSavedEventIds();
       }
 
       if (!mounted) {
@@ -471,6 +481,30 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     return people;
   }
 
+  List<StoryEvent> _sortEventsByEraThenIndex(
+    List<StoryEvent> events,
+    List<Era> eras,
+  ) {
+    final orderByEraId = <String, int>{
+      for (final era in eras) era.id: era.displayOrder,
+    };
+    final sorted = [...events];
+    sorted.sort((a, b) {
+      final eraOrder = (orderByEraId[a.eraId] ?? 1 << 30).compareTo(
+        orderByEraId[b.eraId] ?? 1 << 30,
+      );
+      if (eraOrder != 0) {
+        return eraOrder;
+      }
+      final storyOrder = a.storyIndex.compareTo(b.storyIndex);
+      if (storyOrder != 0) {
+        return storyOrder;
+      }
+      return a.globalRank.compareTo(b.globalRank);
+    });
+    return sorted;
+  }
+
   int _compareProfilePeople(
     Character a,
     Character b, {
@@ -492,6 +526,18 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       return displayOrder;
     }
     return a.name.compareTo(b.name);
+  }
+
+  bool _stringSetEquals(Set<String> a, Set<String> b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final value in a) {
+      if (!b.contains(value)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   AppUserProfile _guestPreviewProfile() {
@@ -543,7 +589,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           final totalHeight = constraints.maxHeight;
           // 프로필(좌측) 패널 = 화면 30% 정도. 진행률(우측) 섹션이 더 큰 비중.
           // 중보 리스트는 Expanded 라 패널 높이에 맞춰 자동 신축.
-          final leftPanelHeight = (totalHeight * 0.30).clamp(280.0, 400.0);
+          final leftPanelHeight = _profileLeftPanelHeight(totalHeight);
           final rightPanelHeight = (totalHeight * 0.65).clamp(420.0, 720.0);
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -610,6 +656,29 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     );
   }
 
+  double _profileLeftPanelHeight(double totalHeight) {
+    final needsPreviewHeight =
+        _profileContentTab == _ProfileContentTab.saved ||
+        _profileContentTab == _ProfileContentTab.verses;
+    final isRecords = _profileContentTab == _ProfileContentTab.records;
+    final preferredRatio = needsPreviewHeight
+        ? 0.42
+        : isRecords
+        ? 0.27
+        : 0.30;
+    final minHeight = needsPreviewHeight
+        ? 360.0
+        : isRecords
+        ? 252.0
+        : 280.0;
+    final maxHeight = needsPreviewHeight
+        ? 460.0
+        : isRecords
+        ? 340.0
+        : 400.0;
+    return (totalHeight * preferredRatio).clamp(minHeight, maxHeight);
+  }
+
   Future<void> _openProfileEditor() async {
     final profile = _profileUser;
     final user = ref.read(signedInUserProvider);
@@ -630,16 +699,6 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('프로필이 저장되었어요.')));
-  }
-
-  Future<void> _openProfileNotesPage() async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => const ProfileNotesScreen()));
-    if (!mounted) {
-      return;
-    }
-    await _loadProfileNotesPreview(showLoading: false);
   }
 
   Future<void> _openSavedVersesPage() async {
@@ -826,6 +885,13 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<StoryState>(storyControllerProvider, (previous, next) {
+      if (previous == null ||
+          _stringSetEquals(previous.savedEventIds, next.savedEventIds)) {
+        return;
+      }
+      unawaited(_loadProfileSavedEventsPreview(showLoading: false));
+    });
     final state = ref.watch(storyControllerProvider);
     final isAuthenticated = ref.watch(signedInUserProvider) != null;
     return SubPageScaffold(
@@ -854,7 +920,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
               child: lockedPreviewOverlay(
                 child: InlineLoginPromptCard(
                   title: '프로필을 보려면 로그인이 필요해요',
-                  description: '프로필, 노트, 저장한 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
+                  description: '프로필, 저장한 이야기와 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
                   onSignedIn: () async {
                     if (!mounted) {
                       return;

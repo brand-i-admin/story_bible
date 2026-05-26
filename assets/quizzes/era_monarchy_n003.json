@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 3,
   "story_title": "사울의 불순종: 왕의 균열",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "삼상 15:8-9 — '아말렉 사람의 왕 아각을 사로잡고 칼날로 그 모든 백성을 진멸하였으되 ... 아각을 살려두었더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "사울의 불순종이 기록된 성경 책은 어디입니까?",
+      "question": "사무엘은 사울에게 무엇을 전하려 했습니까?",
       "choices": [
-        "사무엘상",
-        "사사기",
-        "열왕기상"
+        "밤에 하나님께 들은 말씀을 전하려 했다",
+        "사울의 승리를 칭찬하려 했다",
+        "블레셋과 화해하라고 했다"
       ],
       "answer_index": 0,
-      "explanation": "삼상 13:7-14, 15:1-23에 사울의 두 차례 불순종이 기록됨"
+      "explanation": "삼상 15:16 — '사무엘이 사울에게 이르되 가만히 계시옵소서 간 밤에 여호와께서 내게 이르신 것을 왕에게 말하 리이다 가로되 말씀하소서'"
     }
   ]
 }

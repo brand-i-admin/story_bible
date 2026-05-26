@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 8,
   "story_title": "제자 부르심: 그물을 버리다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 1:20 — '저희가 곧 배와 부친을 버려두고 예수를 좇으니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "제자 부르심 기사가 기록된 성경 책은 어디입니까?",
+      "question": "베드로는 무엇이라고 말했습니까?",
       "choices": [
-        "마가복음, 마태복음, 누가복음, 요한복음",
-        "마태복음만",
-        "마가복음과 누가복음만"
+        "주여 나를 떠나소서 나는 죄인이로소이다 했다",
+        "세리였다",
+        "목수였다"
       ],
       "answer_index": 0,
-      "explanation": "막 1:16-20, 마 4:18-22, 눅 5:1-11, 요 1:35-51에 기록됨"
+      "explanation": "눅 5:8 — '시몬 베드로가 이를 보고 예수의 무릎 아래 엎드려 가로되 주여 나를 떠나소서 나는 죄인이로소이다 하니'"
     }
   ]
 }

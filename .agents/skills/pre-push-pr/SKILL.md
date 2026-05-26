@@ -9,6 +9,13 @@ description: "깃허브에 푸시하기 전에 현재 브랜치의 변경 사항
 
 현재 브랜치를 GitHub에 올리기 전에 검증, 리뷰, 문서화 단계를 빠뜨리지 않고 처리한다. 저장소에 이미 있는 자동화를 우선 사용하고, 실제로 통과한 검사 결과만 근거로 커밋과 푸시를 진행한다.
 
+## PDCA 적용
+
+- Plan: 커밋 범위, 관련 없는 변경, 필요한 로컬/CI 검증, PR 초안 범위를 먼저 확인한다.
+- Do: 포맷, pre-commit, 저장소별 lint/test, 필요한 diff 정리를 실행한다.
+- Check: `git diff`, staged diff, 실행한 검증 결과, PR 본문 테스트 섹션이 서로 맞는지 확인한다.
+- Act: 실패한 검사는 수정 후 재실행하고, 통과한 결과만 근거로 커밋/푸시/PR 생성을 진행한다.
+
 ## 작업 순서
 
 1. 먼저 저장소 상태를 파악한다.
@@ -88,5 +95,5 @@ PR 본문 기본 형식:
 
 ## 사용 예시
 
-- `Use $pre-push-pr to run pre-commit, flutter analyze, flutter test, then write the PR in Korean, commit, and push.`
-- `Use $pre-push-pr to inspect the current diff, format Python tools with black, and draft a Korean PR body.`
+- `$pre-push-pr로 pre-commit, flutter analyze, flutter test를 실행하고 한국어 PR 본문을 작성한 뒤 커밋/푸시해줘.`
+- `$pre-push-pr로 현재 diff를 점검하고 Python 도구를 black으로 포맷한 뒤 한국어 PR 초안을 만들어줘.`

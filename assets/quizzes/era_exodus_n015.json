@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 15,
   "story_title": "모세의 중보: 다시 시작",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 34:4 — '모세가 ... 아침에 일찌기 일어나 그 두 돌판을 손에 들고 ... 시내 산에 올라가니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "모세의 중보와 언약 갱신이 기록된 성경 책은 어디입니까?",
+      "question": "여호와는 어떻게 했습니까?",
       "choices": [
-        "출애굽기",
-        "신명기",
-        "민수기"
+        "인자와 진실이 많은 하나님이로라",
+        "증거막",
+        "아론과 함께 올라갔다"
       ],
       "answer_index": 0,
-      "explanation": "출 33:7-23, 34:1-10에 모세의 중보와 언약 갱신이 기록됨"
+      "explanation": "출 34:6 — '여호와께서 그의 앞으로 지나시며 반포하시되 여호와로라 여호와로라 자비롭고 은혜롭고 노하기를 더디하고 인자와 진실이 많은 하나님이로라'"
     }
   ]
 }

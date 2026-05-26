@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 2,
   "story_title": "에덴: 사람의 창조와 사명",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 2:20 — '아담이 모든 육축과 공중의 새와 들의 모든 짐승에게 이름을 주니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에덴 동산 창조 기사가 기록된 성경 책은 어디입니까?",
+      "question": "아담은 여자를 보고 어떻게 불렀습니까?",
       "choices": [
-        "창세기",
-        "출애굽기",
-        "레위기"
+        "자기에게서 나온 사람으로 불렀다",
+        "자기와 상관없는 사람으로 여겼다",
+        "동물들 가운데 하나로 불렀다"
       ],
       "answer_index": 0,
-      "explanation": "창 2:4-25에 에덴과 사람 창조 기사가 기록됨"
+      "explanation": "창 2:23 — '아담이 가로되 이는 내 뼈 중의 뼈요 살 중의 살이라 이것을 남자에게서 취하였은즉 여자라 칭하리 라 하니라'"
     }
   ]
 }

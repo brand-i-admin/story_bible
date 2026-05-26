@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 27,
   "story_title": "로마행(2): 가이사랴 재판과 상소",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 26:5 — '우리 종교의 가장 엄한 파를 좇아 바리새인의 생활을 하였다고 할 것이라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "바울의 가이사랴 재판과 상소 기사가 기록된 성경 책은 어디입니까?",
+      "question": "하나님은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "빌립보서",
-        "로마서"
+        "우리 조상에게 약속하신 것을 바라는 까닭이니",
+        "예루살렘에서 다시 재판받는 것",
+        "아그립바 왕에게 넘겨지는 것"
       ],
       "answer_index": 0,
-      "explanation": "행 24:10-26:32에 가이사랴 재판과 상소 기사가 기록됨"
+      "explanation": "행 26:6 — '이제도 여기 서서 심문 받는 것은 하나님이 우리 조상에게 약속하신 것을 바라는 까닭이니'"
     }
   ]
 }

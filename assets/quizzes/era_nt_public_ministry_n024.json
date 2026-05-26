@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 24,
   "story_title": "체포: 배신의 입맞춤",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 26:56 — '이에 제자들이 다 예수를 버리고 도망하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님 체포 기사가 기록된 성경 책은 어디입니까?",
+      "question": "체포하러 온 무리 앞에서 예수님은 어떻게 하셨습니까?",
       "choices": [
-        "마가복음",
-        "로마서",
-        "갈라디아서"
+        "나아가 누구를 찾느냐고 물으셨다",
+        "뒤로 물러나 숨으셨다",
+        "제자들에게 먼저 도망치라고 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "막 14:43-52에 예수님 체포 기사가 기록됨"
+      "explanation": "요 18:4 — '예수께서 그 당할 일을 다 아시고 나아가 가라사대 너희가 누구를 찾느냐'"
     }
   ]
 }

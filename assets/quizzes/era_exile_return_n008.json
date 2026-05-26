@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 8,
   "story_title": "에스더의 결단: 죽으면 죽으리라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에스더의 결단 기사가 기록된 성경 책은 어디입니까?",
+      "question": "모르드개는 어떻게 했습니까?",
       "choices": [
-        "에스더",
-        "에스라",
-        "다니엘"
+        "서 에스더의 명한 대로 다 행했다",
+        "칠 일",
+        "사십 일"
       ],
       "answer_index": 0,
-      "explanation": "에 4:10-17에 에스더와 모르드개의 대화와 에스더의 결단이 기록됨"
+      "explanation": "에 4:17 — '모르드개가 가서 에스더의 명한 대로 다 행하니라'"
     }
   ]
 }

@@ -1,8 +1,8 @@
 # 백엔드 도메인 레퍼런스
 
-> 이 문서는 `$backend` 스킬이 참조하는 백엔드 도메인 가이드이다.
-> Supabase 공식 [agent-skills](https://github.com/supabase/agent-skills)가 설치되어 있으면
-> 본 프로젝트의 규칙(아래)과 공식 가이드가 함께 적용된다.
+> 이 문서는 `.agents/skills/backend` 스킬이 참조하는 백엔드 도메인 가이드이다.
+> Supabase 관련 최신 동작이 중요하면 공식 Supabase 문서나 사용 가능한 Supabase
+> 도구로 확인하고, 본 프로젝트의 규칙(아래)을 함께 적용한다.
 
 ## 1. 파일 범위
 
@@ -10,7 +10,9 @@
 db_init.sql                            # 스키마 정의 — 단일 진실 소스
 supabase/
 ├── migrations/
-│   └── 20260331_user_personal_features.sql
+│   ├── 20260512_1144_pg_cron_dispatch_and_schedules.sql
+│   ├── 20260526_0001_allow_delete_event_emotion_marks.sql
+│   └── 20260526_0002_create_user_saved_events.sql
 ├── 200_stories/                       # 생성된 시드 SQL
 │   ├── 200_stories_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
 │   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
@@ -136,7 +138,7 @@ reviewed_by_user_id, reviewed_at, review_note, approved_event_id uuid FK→event
 synced_to_local_at timestamptz, created_at, updated_at
 ```
 - 제안 종류 (`proposal_type`):
-  - `'new'`: 새 이야기 제안 — 기존 플로우, `quiz_questions` 1~3개 강제 (4지선다 + 해설 필수).
+  - `'new'`: 새 이야기 제안 — 기존 플로우, `quiz_questions` 1~3개 강제 (목회자 작성 선택지 3개 + 해설 필수, 승인 시 4번 "헷갈렸어요" 자동 추가).
   - `'delete'`: 기존 이야기 삭제 제안 — `target_event_id` 필수, `quiz_questions` 빈 배열 강제. `summary` 에 삭제 사유 저장.
   - `'general'` (2026-04-29 도입): 앱 일반 제안 — `era_id` / `target_event_id` 모두 NULL. `summary` 가 본문, `image_paths` 가 첨부 이미지 (최대 5장). 승인/거절은 단순 status 변경 (events 변경 없음, 정리 없음).
 - CHECK 제약:
@@ -146,7 +148,7 @@ synced_to_local_at timestamptz, created_at, updated_at
   - `chk_general_image_count`: 'general' 의 image_paths 는 최대 5장
 - Partial unique index `uniq_pending_delete_target`: 동일 이벤트에 pending 삭제 제안은 1건만 허용 (두 명이 동시에 같은 이야기 삭제 못 냄).
 - 승인 전까지 `events` 와 격리되므로 모바일 앱 쿼리(`events_ordered` view, `events.status='published' AND deleted_at IS NULL`)에 영향 0.
-- `approve_event_proposal` RPC 가 `insert_event_at_position` 호출 + 퀴즈 1~3개를 `quiz_questions` 로 풀어 넣음 + `approved_event_id` 역참조 기록.
+- `approve_event_proposal` RPC 가 `insert_event_at_position` 호출 + 퀴즈 1~3개를 `quiz_questions` 로 풀어 넣음(작성 선택지 3개만 셔플, `choice_d='헷갈렸어요'`) + `approved_event_id` 역참조 기록.
 - `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다. ⚠️ **HARD DELETE 사용 금지** — `target_event_id` FK 의 `ON DELETE SET NULL` 가 발화되어 `chk_proposal_type_target` 위반(23514) 을 유발한다.
 - `approve_general_proposal` / `reject_general_proposal` RPC 는 status 만 갱신 (이미지 정리/row 삭제 없음).
 
@@ -166,7 +168,7 @@ body text, created_at, updated_at
 #### RPC 9종
 | 이름 | 호출자 | 역할 |
 |------|------|------|
-| `submit_event_proposal(..., p_quiz_questions)` | pastor | 새 이야기 제안 INSERT (`proposal_type='new'`). 퀴즈 1~3개 검증 (4지선다 + 해설 필수). |
+| `submit_event_proposal(..., p_quiz_questions)` | pastor | 새 이야기 제안 INSERT (`proposal_type='new'`). 퀴즈 1~3개 검증 (작성 선택지 3개 + 해설 필수). |
 | `submit_delete_proposal(target_event_id, reason)` | pastor | 기존 이야기 삭제 제안 INSERT (`proposal_type='delete'`, `summary=reason`). 이미 삭제된 이벤트면 거부. |
 | `submit_general_proposal(title, body, image_paths)` | pastor | 일반 제안 INSERT (`proposal_type='general'`). 본문 필수, 이미지 최대 5장. |
 | `approve_event_proposal(proposal_id, after_override)` | admin | `proposal_type='new'` 전용. `insert_event_at_position` 호출 → events 반영 + 퀴즈 rows insert + proposal status='approved'. |
@@ -332,16 +334,30 @@ nickname text, photo_url text, prayer_request text
 #### `user_event_progress`
 ```sql
 user_id uuid FK→auth.users, event_id uuid FK→events,
-is_completed boolean DEFAULT false, completed_at timestamptz,
+is_bible_read boolean DEFAULT false, is_quiz_completed boolean DEFAULT false,
+is_completed boolean DEFAULT false, completed_at timestamptz, created_at, updated_at,
 UNIQUE(user_id, event_id)
 ```
-- 완료 여부만 기록. 게이미피케이션(score/xp) 계획 없어서 제거됨.
+- 본문 읽기/퀴즈 완료/감정 새김이 모두 끝났을 때만 `is_completed=true`.
+- 게이미피케이션(score/xp) 계획 없어서 제거됨.
+
+#### `user_event_emotion_marks` (2026-05-25)
+```sql
+user_id uuid FK→auth.users, event_id uuid FK→events,
+emotion_key text, emotion_label text, emotion_emoji text,
+note text CHECK char_length(note) <= 100, created_at, updated_at,
+UNIQUE(user_id, event_id)
+```
+- 이야기 상세의 "지도 위에 새기기" 결과. 감정 선택지는 앱 모델의 8개 옵션과 DB CHECK가 함께 제한한다.
+- 이 row가 있어야 사건 완료 도장이 찍히고 지도/프로필에 감정 새김이 반영된다.
+- 사용자가 "완료 취소"를 누르면 본인 row를 delete 하고, `user_event_progress.is_completed`도 다시 false로 동기화한다.
 
 #### `user_notes`
 ```sql
 id uuid PK, user_id uuid FK→auth.users,
 title text, content text, created_at, updated_at
 ```
+- 레거시 노트 기능 저장소. 현재 앱 UI/Repository에서는 사용하지 않는다.
 
 #### `user_saved_verses`
 ```sql
@@ -349,6 +365,14 @@ id uuid PK, user_id uuid FK→auth.users,
 translation text, book_no int, book_name text,
 chapter_no int, verse_no int, verse_text text
 ```
+
+#### `user_saved_events` (2026-05-26)
+```sql
+user_id uuid FK→auth.users, event_id uuid FK→events,
+created_at timestamptz, PRIMARY KEY(user_id, event_id)
+```
+- 사건 상세 제목 옆 별표 토글로 저장/해제한다.
+- 프로필 저장 탭에서 era 순, story_index 순으로 카드 목록을 보여 준다.
 
 #### `user_intercessory_prayers`
 ```sql
@@ -379,6 +403,17 @@ PRIMARY KEY (user_id, week_key, event_id)
   cache 되므로 같은 인물이 또 뽑혀도 새로 풀어야 한다.
 - RLS: 본인만 read/write.
 
+#### `user_quiz_attempts` (2026-05-25)
+```sql
+user_id uuid FK→auth.users, event_id uuid FK→events,
+correct_count, total_count, wrong_count, confused_count,
+selected_answers jsonb, updated_at,
+UNIQUE (user_id, event_id)
+```
+- 이야기별 최근 퀴즈 풀이 결과. "헷갈렸어요" 선택과 오답을 프로필/사건 카드의 복습 신호로 보여 주기 위한 본인 전용 기록.
+- 주간 퀴즈에서 푼 결과도 같은 사건 학습 기록으로 저장된다.
+- RLS: 본인만 read/write.
+
 ### 2.3 검색/ML (향후)
 
 #### `search_embeddings`
@@ -393,6 +428,7 @@ id uuid PK, event_id uuid FK→events,
 question text, choice_a~d text, answer_index int,
 explanation text, display_order int
 ```
+- 시드/제안 승인 경로는 `choice_d='헷갈렸어요'`를 자동으로 채우고, 정답은 `choice_a~c` 중 하나만 가리킨다.
 
 ## 3. RLS 정책
 
@@ -404,8 +440,11 @@ explanation text, display_order int
 | events_ordered, character_eras (view) | 공개 | — (view, underlying RLS 따름) |
 | user_profiles | 본인만 | 본인만 |
 | user_event_progress | 본인만 | 본인만 |
-| user_notes | 본인만 | 본인만 |
+| user_quiz_attempts | 본인만 | 본인만 |
+| user_event_emotion_marks | 본인만 | 본인만 |
+| user_notes | 본인만 | 본인만 (레거시, 현재 앱 미사용) |
 | user_saved_verses | 본인만 | 본인만 |
+| user_saved_events | 본인만 | 본인만 |
 | user_intercessory_prayers | 본인 구독 | 본인만 |
 
 관리자 식별: `auth.users.raw_app_meta_data ->> 'role' = 'admin'`. `is_admin()`
@@ -434,12 +473,21 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchCharactersByEra(eraId)` | `character_eras` view JOIN `persons` WHERE era_id ORDER BY display_order | `List<Character>` |
 | `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era | `List<StoryEvent>` |
 | `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank | `List<StoryEvent>` |
+| `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank | `List<StoryEvent>` |
 | `fetchCharacterTimelineOrder()` | `events_ordered` → personCode별 첫 등장 global_rank | `Map<String, int>` |
 | `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
 | `fetchCompletedEventIds(userId)` | `user_event_progress` WHERE is_completed | `Set<String>` |
-| `upsertEventProgress({userId, eventId, isCompleted})` | UPSERT `user_event_progress` ON (user_id, event_id) | void |
+| `fetchEventProgress(userId)` | `user_event_progress` WHERE user_id | `Map<eventId, read/quiz/completed>` |
+| `upsertEventProgress({userId, eventId, isBibleRead, isQuizCompleted, isCompleted})` | UPSERT `user_event_progress` ON (user_id, event_id) | void |
+| `fetchQuizAttemptSummaries(userId)` | `user_quiz_attempts` WHERE user_id ORDER BY updated_at DESC | `Map<eventId, QuizAttemptSummary>` |
+| `upsertQuizAttempt(...)` | UPSERT `user_quiz_attempts` ON (user_id, event_id) | void |
+| `fetchEventEmotionMarks(userId)` | `user_event_emotion_marks` WHERE user_id ORDER BY updated_at DESC | `Map<eventId, EventEmotionMark>` |
+| `upsertEventEmotionMark(...)` | UPSERT `user_event_emotion_marks` ON (user_id, event_id) | void |
+| `deleteEventEmotionMark(...)` | DELETE `user_event_emotion_marks` WHERE user_id AND event_id | void |
+| `fetchSavedEventIds(userId)` | `user_saved_events` WHERE user_id ORDER BY created_at DESC | `Set<String>` |
+| `toggleSavedEvent(...)` | `user_saved_events` INSERT/DELETE | `bool` |
 
 검색 가중치 (`scoreEventMatch`): title +130, summary +120, story_scenes +100, person names +80, place +30. 토큰별 매치 추가점.
 
@@ -454,9 +502,6 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchWeeklyQuizProgress(userId, weekKey)` | weekly_quiz_progress SELECT 본인+week | `Map<eventId, (bibleRead, quizCompleted)>` |
 | `upsertWeeklyQuizProgress(...)` | weekly_quiz_progress UPSERT (사용자/주차/사건) | void |
 | `fetchLatestDailyQuiz()` | daily_quiz ORDER BY created_at desc LIMIT 1 | `DailyQuiz?` |
-| `fetchUserNotesPage(...)` | user_notes SELECT + 페이지네이션 | `PagedResult<UserNote>` |
-| `createUserNote(...)` | user_notes INSERT | `UserNote` |
-| `deleteUserNote(noteId)` | user_notes DELETE | void |
 | `fetchSavedVersesPage(...)` | user_saved_verses SELECT + 페이지네이션 | `PagedResult<SavedBibleVerse>` |
 | `toggleSavedVerse(...)` | user_saved_verses INSERT/DELETE | `bool` |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
@@ -561,6 +606,15 @@ supabase functions serve \
 ```
 
 브라우저/Flutter 에서 호출 시 base URL 을 로컬 것으로 바꿔 테스트.
+
+배포 전 타입 체크:
+
+```bash
+tools/supabase/check_edge_functions.sh
+```
+
+이 스크립트는 `generate-proposal-character`, `generate-proposal-scene`,
+`send-push` 의 `index.ts` 를 모두 `deno check` 한다.
 
 ## 8. 마이그레이션 관리 규칙 (ADR-023, 2026-05-12 개정)
 

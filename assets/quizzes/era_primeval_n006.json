@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 6,
   "story_title": "홍수 전의 타락: 노아가 방주를 만들다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 6:22 — '노아가 그와 같이 하되 하나님이 자기에게 명하신 대로 다 준행하였더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "이 사건과 같은 시대 인물은 누구입니까?",
+      "question": "여호와는 어떻게 했습니까?",
       "choices": [
-        "므두셀라",
-        "모세",
-        "다윗"
+        "자기에게 명하신 대로 다 준행했다",
+        "이웃과 상의했다",
+        "두려워 피했다"
       ],
       "answer_index": 0,
-      "explanation": "창 5:25-27 — 므두셀라는 노아의 조부로 같은 홍수 이전 시대 인물임"
+      "explanation": "창 7:5 — '노아가 여호와께서 자기에게 명하신 대로 다 준행하였더라'"
     }
   ]
 }

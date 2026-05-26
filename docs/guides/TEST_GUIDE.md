@@ -2,7 +2,7 @@
 
 이 문서는 `test/` 디렉토리에 있는 모든 테스트가 **무엇을 검증하는지** 한눈에 볼 수 있도록 정리한 카탈로그다. 코드 변경 시 어느 테스트가 영향받는지, 새 기능에 어떤 테스트를 추가해야 하는지 판단하는 출발점.
 
-총 **234개 테스트** (2026-04-27 기준), `flutter test` 실행 시간 약 10초.
+총 **240개+ 테스트** (2026-05-25 기준), `flutter test` 실행 시간 약 10초.
 
 ---
 
@@ -10,7 +10,7 @@
 
 | 디렉토리 | 파일 수 | 테스트 수 (대략) | 주된 검증 대상 |
 |----------|--------|------------------|----------------|
-| `test/models/` | 12 | 90+ | DB row → Dart 객체 변환, getter / equality / 직렬화 |
+| `test/models/` | 16 | 100+ | DB row → Dart 객체 변환, getter / equality / 직렬화 |
 | `test/data/` | 2 | 20+ | repository helper 함수 (검색 점수, 일별 streak 계산 등) |
 | `test/state/` | 2 | 30+ | Riverpod controller 의 상태 전이 (mocktail) |
 | `test/utils/` | 4 | 50+ | 순수 함수 (지도 좌표 보정, 성경 책 메타, 주차 계산, 자산 경로 정규화) |
@@ -53,7 +53,7 @@ DB row → Dart 객체 변환의 정확성을 보장하는 핵심 보호막. 대
 
 | 그룹 | 검증 |
 |------|------|
-| `QuizDraft.isValid` | 유효한 4지선다는 true; 선택지 개수 ≠4 / 빈 선택지 / answer_index 범위 초과 / 빈 해설은 false |
+| `QuizDraft.isValid` | 유효한 작성 선택지 3개 퀴즈는 true; 선택지 개수 ≠3 / 빈 선택지 / answer_index 범위 초과 / 빈 해설은 false |
 | `QuizDraft.fromMap`/`toMap` | 왕복 직렬화 정합 |
 | `EventProposal.fromMap` | proposal_type 기본값 'new', delete 타입은 target_event_id + 빈 quiz_questions, quiz_questions jsonb 가 QuizDraft 리스트로 파싱, isPending/isApproved/isRejected/isNewProposal/isDeleteProposal getter 정합 |
 
@@ -123,6 +123,18 @@ DB row → Dart 객체 변환의 정확성을 보장하는 핵심 보호막. 대
 | `isProposalRelated` | 제안 관련 5종 → true (모바일/태블릿 다이얼로그 분기용), 무관 타입 → false |
 | `AppNotification.fromMap` | personal source 전체 필드, broadcast source + is_read 기본값 false, source 누락 시 personal 폴백, payload Map<dynamic,dynamic> → Map<String,dynamic> 정규화 |
 | `copyWith` | isRead 만 바꿔 새 객체 |
+
+### 1.13 [quiz_attempt_summary_test.dart](../../test/models/quiz_attempt_summary_test.dart) — 이야기 퀴즈 풀이 요약
+
+| 검증 |
+|------|
+| 오답/헷갈림이 있으면 복습 대상, 모두 정답이면 복습 대상 아님, selected_answers jsonb 와 updated_at 파싱 |
+
+### 1.14 [event_emotion_mark_test.dart](../../test/models/event_emotion_mark_test.dart) — 지도 위 감정 새김
+
+| 검증 |
+|------|
+| 감정 선택지 8개와 기타/감사 이모지, Supabase row → 모델 변환, upsert payload 생성 |
 
 ---
 
@@ -338,6 +350,7 @@ flutter test --coverage              # coverage/lcov.info 생성
 - `flutter test` (전체 테스트)
 - `tools/app/verify_asset_paths.py` (pubspec.yaml 자산 경로 검증)
 - `tools/lint/check_code_metrics.py` (파일 ≤1500줄, 메소드 ≤200줄)
+- `tools/run_unit_tests.py` (Python 도구 단위 테스트)
 
 ### 8.3 GitHub Actions (`.github/workflows/flutter_ci.yml`)
 
@@ -368,7 +381,7 @@ push/PR 시 cloud 실행:
 1. 해당 영역의 디렉토리(`test/models/`, `test/widgets/` 등)에 파일 생성 — `lib/` 미러링.
 2. `flutter_test` import + 필요시 `mocktail`.
 3. 기존 같은 영역 파일을 참고해 group/test 명을 한국어로 자연스럽게 작성.
-4. 기존 테스트 **수정/삭제** 는 `CLAUDE.md` 의 TDD 규칙에 따라 사용자 확인 필수.
+4. 기존 테스트 **수정/삭제** 는 `AGENTS.md` 의 TDD 규칙에 따라 사유를 명확히 하고 범위를 작게 유지.
 5. `flutter test` 로 그린 확인 → commit.
 
-자세한 TDD 규칙은 [WORKFLOW_GUIDE.md §5](WORKFLOW_GUIDE.md) 와 [CLAUDE.md](../../CLAUDE.md) 의 "TDD 규칙" 섹션 참조.
+자세한 TDD 규칙은 [WORKFLOW_GUIDE.md §5](WORKFLOW_GUIDE.md) 와 [AGENTS.md](../../AGENTS.md) 의 "TDD And Tests" 섹션 참조.

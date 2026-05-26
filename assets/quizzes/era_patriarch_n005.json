@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 5,
   "story_title": "할례 언약: 이름이 바뀌다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -19,26 +19,26 @@
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "할례 언약이 주어졌을 때 아브라함의 집에서 실제로 어떻게 행하였습니까?",
+      "question": "아브람이 엎드리자 하나님은 어떻게 하셨습니까?",
       "choices": [
-        "그 집의 모든 남자가 할례를 받았다",
-        "아브라함만 먼저 할례를 받았다",
-        "다음 해로 할례를 미루었다"
+        "그에게 다시 말씀하셨다",
+        "할례를 취소하셨다",
+        "아브람을 애굽으로 보내셨다"
       ],
       "answer_index": 0,
-      "explanation": "창 17:27 — '그 집의 모든 남자 ... 가 다 그와 함께 할례를 받았더니'"
+      "explanation": "창 17:3 — '아브람이 엎드린대 하나님이 또 그에게 일러 가라사대'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "아브라함이라는 새 이름이 주어진 기사는 어느 성경 책에 기록되어 있습니까?",
+      "question": "아브라함은 할례를 받을 때 몇 살이었습니까?",
       "choices": [
-        "창세기",
-        "느헤미야",
-        "로마서"
+        "구십구 세였다",
+        "팔십 세였다",
+        "백이십 세였다"
       ],
       "answer_index": 0,
-      "explanation": "창 17:1-27에 할례 언약과 아브람→아브라함 개명이 기록됨"
+      "explanation": "창 17:24 — '아브라함이 그 양피를 벤 때는 구십구세이었고'"
     }
   ]
 }

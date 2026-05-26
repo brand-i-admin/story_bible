@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 15,
   "story_title": "변화산",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 17:6 — '제자들이 듣고 엎드리어 심히 두려워하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "변화산 사건이 기록된 성경 책은 어디입니까?",
+      "question": "두려워하던 제자들에게 예수님은 어떻게 하셨습니까?",
       "choices": [
-        "마가복음",
-        "사도행전",
-        "요한계시록"
+        "다가가 손을 대시며 두려워하지 말라고 하셨다",
+        "제자들을 산 아래로 먼저 보내셨다",
+        "두려워하는 이유를 꾸짖기만 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "막 9:2-13에 변화산 기사가 기록됨"
+      "explanation": "마 17:7 — '예수께서 나아가 저희에게 손을 대시며 가라사대 일어나라 두려워 말라 하신대'"
     }
   ]
 }

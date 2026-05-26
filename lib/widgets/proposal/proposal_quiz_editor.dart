@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../models/event_proposal.dart';
 
-/// 새 이야기 제안의 Step 5 — 4지선다 퀴즈 1~3개 편집기.
+/// 새 이야기 제안의 Step 5 — 본문 기반 퀴즈 1~3개 편집기.
 ///
 /// 제약:
 ///   - 최소 1개, 최대 3개
-///   - 각 퀴즈는 4지선다 (choices.length == 4) + 정답 인덱스 0~3
-///   - 질문/선택지 4개/해설 모두 비어있으면 안 됨 (RPC CHECK 와 동일)
+///   - 각 퀴즈는 선택지 3개 (choices.length == 3) + 정답 인덱스 0~2
+///   - 사용자용 4번 보기 "헷갈렸어요"는 승인 시 자동 추가
+///   - 질문/선택지 3개/해설 모두 비어있으면 안 됨 (RPC CHECK 와 동일)
 ///
 /// 외부는 [QuizDraft] 리스트만 주고받는다. 내부 TextEditingController 는
 /// question/choices/explanation 갯수에 맞춰 생성·정리되며, 상태 변경 시
@@ -78,8 +79,9 @@ class _ProposalQuizEditorState extends State<ProposalQuizEditor> {
         Padding(
           padding: const EdgeInsets.only(bottom: 6),
           child: Text(
-            '4지선다 문제 ${widget.minCount}~${widget.maxCount}개. '
-            '문제·선택지 4개·해설 모두 필수입니다.',
+            '문제 ${widget.minCount}~${widget.maxCount}개. '
+            '문제·선택지 3개·해설 모두 필수입니다. '
+            '4번 보기는 승인 시 "헷갈렸어요"로 자동 추가됩니다.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -166,7 +168,7 @@ class _QuizCard extends StatelessWidget {
             onChanged: (_) => onChanged(),
           ),
           const SizedBox(height: 8),
-          for (var i = 0; i < 4; i++)
+          for (var i = 0; i < QuizDraft.authoredChoiceCount; i++)
             Padding(
               padding: const EdgeInsets.only(top: 6),
               child: Row(
@@ -224,15 +226,20 @@ class _QuizRowControllers {
 
   factory _QuizRowControllers.fromDraft(QuizDraft d) {
     final choiceCtrls = List<TextEditingController>.generate(
-      4,
+      QuizDraft.authoredChoiceCount,
       (i) =>
           TextEditingController(text: i < d.choices.length ? d.choices[i] : ''),
     );
+    final normalizedAnswerIndex = d.answerIndex < 0
+        ? 0
+        : (d.answerIndex >= QuizDraft.authoredChoiceCount
+              ? QuizDraft.authoredChoiceCount - 1
+              : d.answerIndex);
     return _QuizRowControllers(
       question: TextEditingController(text: d.question),
       choices: choiceCtrls,
       explanation: TextEditingController(text: d.explanation),
-      answerIndex: d.answerIndex.clamp(0, 3),
+      answerIndex: normalizedAnswerIndex,
     );
   }
 

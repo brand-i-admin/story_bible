@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 21,
   "story_title": "성전 정화",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 11:17 — '내 집은 만민의 기도하는 집이라 칭함을 받으리라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "성전 정화 기사가 기록된 성경 책은 어디입니까?",
+      "question": "예수님은 아이들의 찬미에 대해 어떻게 말씀하셨습니까?",
       "choices": [
-        "요한복음",
-        "사도행전",
-        "히브리서"
+        "하나님이 어린아이들의 찬미도 온전하게 하신다고 하셨다",
+        "아이들은 성전에 오면 안 된다고 하셨다",
+        "제자들이 아이들을 모두 내보내야 한다고 하셨다"
       ],
       "answer_index": 0,
-      "explanation": "요 2:13-17에 성전 정화 기사가 기록됨"
+      "explanation": "마 21:16 — '예수께 말하되 저희의 하는 말을 듣느뇨 예수께서 가라사대 그렇다 어린 아기와 젖먹이들의 입에 서 나오는 찬미를 온전케 하셨나이다 함을 너희가 읽어 본 일이 없느냐 하시고'"
     }
   ]
 }

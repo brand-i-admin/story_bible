@@ -87,8 +87,16 @@ repos:
         pass_filenames: false
         stages: [pre-push]
 
+      # Python 도구 단위 테스트. seed/export/app/lint 스크립트의 회귀를 푸시 전에 확인.
+      - id: python-tools-test
+        name: python tools unit tests
+        entry: zsh -lc 'python3 tools/run_unit_tests.py'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
       # 코드 메트릭: 파일/메소드 크기 제한 (경고 500줄/80줄, 차단 1500줄/200줄)
-      # NOTE: 현재 기존 코드에 FAIL이 있으므로 보고만. --ci 추가 시 차단 모드.
+      # NOTE: 현재 기존 코드에 차단 기준 초과 항목이 있으므로 보고만. --ci 추가 시 차단 모드.
       - id: code-metrics
         name: code metrics (파일/메소드 크기)
         entry: zsh -lc 'python3 tools/lint/check_code_metrics.py'

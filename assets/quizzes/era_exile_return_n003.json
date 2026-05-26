@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 3,
   "story_title": "풀무불: 다니엘과 세 친구",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "풀무불 사건이 기록된 성경 책은 어디입니까?",
+      "question": "왕은 무엇이라고 말했습니까?",
       "choices": [
-        "다니엘",
-        "에스겔",
-        "에스라"
+        "왕이여 옳소이다",
+        "삼십 규빗",
+        "백 규빗"
       ],
       "answer_index": 0,
-      "explanation": "단 3:1-30에 느부갓네살의 신상과 풀무불 기사가 기록됨"
+      "explanation": "단 3:24 — '때에 느부갓네살 왕이 놀라 급히 일어나서 모사들에게 물어 가로되 우리가 결박하여 불가운데 던진 자는 세 사람이 아니었느냐 그들이 왕에게 대답하여 가로되 왕이여 옳소이다'"
     }
   ]
 }

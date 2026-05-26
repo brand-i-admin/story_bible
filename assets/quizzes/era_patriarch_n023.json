@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 23,
   "story_title": "벧엘 귀환: 라헬의 죽음",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -19,26 +19,26 @@
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "야곱이 라헬을 장사한 후 어떻게 표시하였습니까?",
+      "question": "아비는 어떻게 했습니까?",
       "choices": [
-        "라헬의 묘에 비를 세웠다",
+        "그를 베 냐민이라 불렀었다",
         "큰 돌 무더기를 쌓았다",
         "그 자리에 제단을 쌓았다"
       ],
       "answer_index": 0,
-      "explanation": "창 35:20 — '야곱이 라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫더라'"
+      "explanation": "창 35:18 — '그가 죽기에 임하여 그 혼이 떠나려 할 때에 아들의 이름은 베노니라 불렀으나 그 아비가 그를 베 냐민이라 불렀더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "벧엘 귀환과 라헬의 죽음 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "야곱은 어떻게 했습니까?",
       "choices": [
-        "35장",
-        "31장",
-        "37장"
+        "라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫었다",
+        "헤브론으로 가는 길",
+        "벧엘로 가는 길"
       ],
       "answer_index": 0,
-      "explanation": "창 35:1-20에 벧엘 귀환, 야곱의 새 이름 확인, 라헬의 죽음이 기록됨"
+      "explanation": "창 35:20 — '야곱이 라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫더라'"
     }
   ]
 }

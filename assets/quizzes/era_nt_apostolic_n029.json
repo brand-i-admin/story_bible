@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 29,
   "story_title": "로마행(4): 멜리데(몰타) 표류",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 28:7 — '그가 우리를 영접하여 사흘이나 친절히 유숙하게 하더니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "멜리데(몰타) 표류 기사가 기록된 성경 책은 어디입니까?",
+      "question": "바울은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "로마서",
-        "빌레몬서"
+        "들어가서 기도하고 그에게 안수하여 낫게 했다",
+        "불이 갑자기 꺼졌다",
+        "뱀이 도망하여 사라졌다"
       ],
       "answer_index": 0,
-      "explanation": "행 27:39-28:10에 멜리데 표류 기사가 기록됨"
+      "explanation": "행 28:8 — '보블리오의 부친이 열병과 이질에 걸려 누웠거늘 바울이 들어가서 기도하고 그에게 안수하여 낫게 하매'"
     }
   ]
 }

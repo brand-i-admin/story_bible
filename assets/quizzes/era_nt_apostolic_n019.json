@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 19,
   "story_title": "2차 선교(4): 베뢰아—말씀을 상고하다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 17:14 — '형제들이 곧 바울을 내어보내어 바다까지 가게 하되'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "베뢰아 전도 기사가 기록된 성경 책은 어디입니까?",
+      "question": "바울을 인도한 사람들은 아덴에 도착한 뒤 무엇을 전했습니까?",
       "choices": [
-        "사도행전",
-        "데살로니가전서",
-        "빌립보서"
+        "실라와 디모데가 빨리 오라는 말을 전했다",
+        "바울이 더 이상 전도하지 말라는 말을 전했다",
+        "베뢰아 사람들이 모두 떠났다는 말을 전했다"
       ],
       "answer_index": 0,
-      "explanation": "행 17:10-15에 베뢰아 전도 기사가 기록됨"
+      "explanation": "행 17:15 — '바울을 인도하는 사람들이 데리고 아덴까지 이르러 바울에게서 실라와 디모데를 자기에게로 속히 오게 하라는 명을 받고 떠나니라'"
     }
   ]
 }

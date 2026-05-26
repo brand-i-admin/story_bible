@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 18,
   "story_title": "2차 선교(3): 데살로니가—소동과 도피",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 17:5 — '유대인들은 시기하여 저자의 어떤 괴악한 사람들을 데리고 떼를 지어 성을 소동케 하여'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "데살로니가 소동 기사가 기록된 성경 책은 어디입니까?",
+      "question": "사람들은 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "데살로니가전서",
-        "데살로니가후서"
+        "여기도 이르매",
+        "루디아",
+        "디오누시오"
       ],
       "answer_index": 0,
-      "explanation": "행 17:1-9에 데살로니가 소동 기사가 기록됨"
+      "explanation": "행 17:6 — '발견치 못하매 야손과 및 형제를 끌고 읍장들 앞에 가서 소리질러 가로되 천하를 어지럽게 하던 이 사람들이 여기도 이르매'"
     }
   ]
 }

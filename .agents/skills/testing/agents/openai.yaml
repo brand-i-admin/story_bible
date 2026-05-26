@@ -1,0 +1,4 @@
+interface:
+  display_name: "테스트"
+  short_description: "Flutter/Python 테스트, hook, CI, TDD"
+  default_prompt: "$testing 스킬로 테스트를 추가/수정하고, 맞는 검증을 실행한 뒤 실제 결과를 보고한다."

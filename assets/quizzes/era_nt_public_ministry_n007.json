@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 7,
   "story_title": "광야 시험",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 4:4 — '예수께서 대답하여 가라사대 기록되었으되'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님의 광야 시험 기사가 기록된 성경 책은 어디입니까?",
+      "question": "예수님은 무엇이라고 말했습니까?",
       "choices": [
-        "마태복음, 마가복음, 누가복음",
-        "마태복음만",
-        "요한복음만"
+        "말씀하기를 주 너의 하나님을 시험치 말라 했다",
+        "삼 일",
+        "칠 일"
       ],
       "answer_index": 0,
-      "explanation": "마 4:1-11, 막 1:12-13, 눅 4:1-13에 광야 시험 기사가 기록됨"
+      "explanation": "눅 4:12 — '예수께서 대답하여 가라사대 말씀하기를 주 너의 하나님을 시험치 말라 하였느니라'"
     }
   ]
 }

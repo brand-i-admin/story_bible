@@ -9,7 +9,6 @@ import '../models/character_study_progress.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/paged_result.dart';
 import '../models/saved_bible_verse.dart';
-import '../models/user_note.dart';
 
 class UserRepository {
   const UserRepository(this._client);
@@ -104,58 +103,6 @@ class UserRepository {
           ),
         );
     return _client.storage.from(profileImageBucket).getPublicUrl(path);
-  }
-
-  Future<PagedResult<UserNote>> fetchUserNotesPage({
-    required String userId,
-    required int pageIndex,
-    int pageSize = 10,
-  }) async {
-    final from = pageIndex * pageSize;
-    final to = from + pageSize;
-    final rows = await _client
-        .from('user_notes')
-        .select('id, user_id, title, content, created_at, updated_at')
-        .eq('user_id', userId)
-        .order('created_at', ascending: false)
-        .range(from, to);
-
-    final notes = rows.map<UserNote>((row) => UserNote.fromMap(row)).toList();
-    final hasNextPage = notes.length > pageSize;
-    return PagedResult<UserNote>(
-      items: hasNextPage ? notes.take(pageSize).toList() : notes,
-      pageIndex: pageIndex,
-      pageSize: pageSize,
-      hasNextPage: hasNextPage,
-    );
-  }
-
-  Future<UserNote> createUserNote({
-    required String userId,
-    required String title,
-    required String content,
-  }) async {
-    final row = await _client
-        .from('user_notes')
-        .insert({
-          'user_id': userId,
-          'title': title.trim(),
-          'content': content.trim(),
-        })
-        .select('id, user_id, title, content, created_at, updated_at')
-        .single();
-    return UserNote.fromMap(row);
-  }
-
-  Future<void> deleteUserNote(String noteId) async {
-    final rows = await _client
-        .from('user_notes')
-        .delete()
-        .eq('id', noteId)
-        .select('id');
-    if ((rows as List<dynamic>).isEmpty) {
-      throw StateError('노트를 삭제하지 못했습니다.');
-    }
   }
 
   Future<PagedResult<SavedBibleVerse>> fetchSavedVersesPage({
@@ -339,11 +286,24 @@ class UserRepository {
   }) async {
     final completedEventIds = await _client
         .from('user_event_progress')
-        .select('event_id, is_completed')
+        .select('event_id, is_bible_read, is_quiz_completed, is_completed')
         .eq('user_id', userId)
         .eq('is_completed', true);
-    final completedIdSet = completedEventIds
+    final emotionRows = await _client
+        .from('user_event_emotion_marks')
+        .select('event_id')
+        .eq('user_id', userId);
+    final emotionIdSet = emotionRows
         .map((row) => row['event_id'] as String)
+        .toSet();
+    final completedIdSet = completedEventIds
+        .where(
+          (row) =>
+              ((row['is_bible_read'] as bool?) ?? false) &&
+              ((row['is_quiz_completed'] as bool?) ?? false),
+        )
+        .map((row) => row['event_id'] as String)
+        .where(emotionIdSet.contains)
         .toSet();
 
     final rows = await _client

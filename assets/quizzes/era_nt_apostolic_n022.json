@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 22,
   "story_title": "3차 선교(1): 에베소—확장과 충돌",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 19:30-31 — '바울이 백성 가운데로 들어가고자 하나 제자들이 말리고 … 연극장에 들어가지 말라 권하더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "에베소 전도와 소동 기사가 기록된 성경 책은 어디입니까?",
+      "question": "에베소의 서기장은 흥분한 무리에게 어떻게 했습니까?",
       "choices": [
-        "사도행전",
-        "에베소서",
-        "고린도전서"
+        "무리를 진정시키며 말하기 시작했다",
+        "더 크게 소리치라고 부추겼다",
+        "바울을 직접 재판하려 했다"
       ],
       "answer_index": 0,
-      "explanation": "행 19:1-41에 에베소 전도와 소동 기사가 기록됨"
+      "explanation": "행 19:35 — '서기장이 무리를 안돈시키고 이르되 에베소 사람들아 에베소 성이 큰 아데미와 및 쓰스에게서 내 려온 우상의 전각 지기가 된 줄을 누가 알지 못하겠느냐'"
     }
   ]
 }

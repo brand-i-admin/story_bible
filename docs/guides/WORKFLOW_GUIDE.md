@@ -1,9 +1,10 @@
 # 워크플로 가이드 — Story Bible 코드 작업 + 유지보수
 
-> 이 문서는 Claude Code를 사용해 코드를 수정/추가/삭제할 때의 전체 흐름,
-> 스킬/에이전트가 어떻게 동작하는지, 그리고 유지보수 규칙을 정리한 가이드이다.
+> 이 문서는 Codex를 사용해 코드를 수정/추가/삭제할 때의 전체 흐름,
+> 프로젝트 스킬/에이전트가 어떻게 동작하는지, 그리고 유지보수 규칙을 정리한 가이드이다.
+> 실제 진입 규칙은 `AGENTS.md`를 우선한다.
 >
-> 최종 수정: 2026-04-28
+> 최종 수정: 2026-05-25
 
 ---
 
@@ -12,8 +13,11 @@
 ```
 [코드 작성 요청]
     │
-    ├─ Claude Code: 작업 분류 + 스킬 호출 + 코드 수정
-    ├─ Claude Code: "변경 완료. 커밋할까요?" ← 여기서 멈춤
+    ├─ Plan: 작업 분류 + 스킬 호출 + 영향 범위/검증 계획
+    ├─ Do: 테스트/구현/문서 수정
+    ├─ Check: diff/format/analyze/test/도구 검증 + 리스크 확인
+    ├─ Act: 실패 반영, 후속 수정, 결과 보고
+    ├─ Codex: "변경 완료. 커밋할까요?" ← 여기서 멈춤
     │
     ├─ 사용자: "커밋해줘" → 로컬 커밋 (pre-commit hooks 자동)
     ├─ 사용자: "푸시해줘" → GitHub push (pre-push hooks 자동)
@@ -21,9 +25,23 @@
 ```
 
 **핵심 원칙**:
-- 코드 변경은 Claude Code가 하지만, **커밋/푸시/PR은 항상 사용자가 지시**.
-- 자동으로 커밋하거나 push하지 않는다. (CLAUDE.md "룰" 참조)
-- 기존 테스트 수정/삭제 시 사용자에게 먼저 확인받는다.
+- 코드 변경은 Codex가 하지만, **커밋/푸시/PR은 항상 사용자가 지시**.
+- 자동으로 커밋하거나 push하지 않는다. (`AGENTS.md` "Git And Safety" 참조)
+- 기존 테스트 수정/삭제 시 이유를 명확히 하고 범위를 작게 유지한다.
+
+### 1.1 PDCA 루프
+
+이 저장소의 Codex 작업은 PDCA(Plan-Do-Check-Act)를 기본 루프로 사용한다.
+
+| 단계 | 의미 | 확인할 것 |
+|---|---|---|
+| Plan | 계획 | 도메인 스킬, 관련 문서, 기존 테스트, 영향 파일, 위험도 |
+| Do | 실행 | TDD, 기존 패턴, 작은 단위 수정, 문서 동기화 |
+| Check | 확인 | `git diff`, format/analyze/test, 의도 밖 변경, secret, 문서 누락, 메트릭 변화 |
+| Act | 조치 | 실패 반영, 후속 수정, 통과/실패 결과, 남은 리스크, 다음 단계 |
+
+TDD는 PDCA 중 Do 단계에 포함된다. 즉 "테스트 먼저" 규칙은 유지하되,
+작업 전후로 Plan/Check/Act가 추가되어 변경 안정성을 높인다.
 
 ---
 
@@ -31,25 +49,25 @@
 
 **한 줄 요약**: "이 도메인 작업할 때 이 참고 문서를 읽어라"라는 지시서.
 
-Claude Code는 평소 `CLAUDE.md`(~120줄)만 가진다. 전체 문서를 항상 읽으면
+Codex는 평소 `AGENTS.md`를 우선 진입점으로 삼는다. 전체 문서를 항상 읽으면
 토큰 낭비이므로, 필요한 도메인의 문서만 **그때그때 로드**한다.
 
 ```
 평소:
-  CLAUDE.md (120줄) ← 빌드/실행/컨벤션/스킬 목록
+  AGENTS.md ← 빌드/실행/컨벤션/스킬 목록
 
 $frontend 스킬 호출 시:
-  CLAUDE.md
-  + .claude/skills/frontend/SKILL.md (지시서)
+  AGENTS.md
+  + .agents/skills/frontend/SKILL.md (지시서)
     → ../FRONTEND.md (파일 표, 위젯 목록, 패턴)
     → ../UI_GUIDE.md (디자인 가이드)
   = 프론트엔드 컨텍스트 로드됨
 
 $backend 스킬 호출 시:
-  CLAUDE.md
-  + .claude/skills/backend/SKILL.md
+  AGENTS.md
+  + .agents/skills/backend/SKILL.md
     → ../BACKEND.md (DB 스키마, RLS, Repository)
-  + Supabase 공식 플러그인 (자동 활성화)
+  + 필요한 경우 Supabase 공식 문서/도구 확인
   = 백엔드 컨텍스트 로드됨
 ```
 
@@ -58,26 +76,26 @@ $backend 스킬 호출 시:
 | 스킬 | 언제 호출 | 로드하는 문서 | 파일 범위 |
 |---|---|---|---|
 | `$frontend` | UI/위젯/화면/상태 변경 | `../FRONTEND.md`, `../UI_GUIDE.md` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
-| `$backend` | DB/쿼리/인증/RLS 변경 | `../BACKEND.md` + Supabase 공식 플러그인 2개 | `db_init.sql`, `supabase/`, `lib/data/` |
+| `$backend` | DB/쿼리/인증/RLS 변경 | `../BACKEND.md` + 필요 시 Supabase 공식 문서/도구 | `db_init.sql`, `supabase/`, `lib/data/` |
 | `$data-pipeline` | 에셋/시딩/Python 스크립트 | `../DATA_PIPELINE.md` | `tools/*.py`, `assets/`, `Makefile` |
 | `$testing` | 테스트 작성/실행 | `../TESTING.md` | `test/` |
 | `$refactor` | 대규모 분해/중복 제거 | 자체 절차 가이드 | 전체 (도메인 횡단) |
 
 ### 스킬 호출 방식
 
-- **자동**: Claude Code가 작업 내용을 보고 "이건 프론트엔드다"라고 판단하면 알아서 호출
+- **자동**: Codex가 작업 내용을 보고 "이건 프론트엔드다"라고 판단하면 알아서 호출
 - **수동**: 사용자가 `$frontend` 또는 `$backend`라고 입력하면 강제 호출
 
 ---
 
 ## 3. Agent(서브에이전트)란?
 
-**한 줄 요약**: 별도의 Claude를 하나 더 띄워서 병렬로 작업시키는 것.
+**한 줄 요약**: 별도 에이전트를 띄워서 병렬로 작업시키는 것.
 
-스킬과 차이: 스킬은 메인 Claude가 문서를 추가 로드, Agent는 **별도 Claude가 독립 작업**.
+스킬과 차이: 스킬은 메인 Codex가 문서를 추가 로드, Agent는 **별도 에이전트가 독립 작업**.
 
 ```
-메인 Claude (사용자와 대화 중)
+메인 Codex (사용자와 대화 중)
   │
   ├── Agent A: "story_map_panel.dart 구조 분석해줘"
   ├── Agent B: "profile_tab_page.dart 구조 분석해줘"
@@ -85,7 +103,7 @@ $backend 스킬 호출 시:
 
   (3개 동시 분석 → 각각 요약 반환)
 
-메인 Claude: 결과 종합 → 리팩토링 계획 수립
+메인 Codex: 결과 종합 → 리팩토링 계획 수립
 ```
 
 ### Agent 사용 규칙
@@ -103,13 +121,16 @@ $backend 스킬 호출 시:
 
 ## 4. 플러그인이란?
 
-**한 줄 요약**: 외부 전문가 도구를 Claude Code에 연결.
+**한 줄 요약**: 외부 전문가 도구와 프로젝트 스킬을 Codex 작업 흐름에 연결.
 
-현재 설치된 2개:
-- `supabase@supabase-agent-skills` — Supabase 공식 가이드 (Auth, Storage, Edge Functions)
-- `postgres-best-practices@supabase-agent-skills` — PostgreSQL 쿼리 최적화, 인덱스, RLS
+현재 저장소 기준 핵심 진입점:
+- `AGENTS.md` — Codex가 가장 먼저 읽는 프로젝트 운영 규칙
+- `.agents/skills/backend` — Supabase, Repository, 마이그레이션 작업 규칙
+- `.agents/skills/frontend` — Flutter UI 작업 규칙
+- `.agents/skills/testing` — 테스트/검증 작업 규칙
 
-`$backend` 스킬 호출 시 자동 활성화된다. 직접 건드릴 일 없음.
+외부 Supabase/PostgreSQL 참고 도구가 있더라도, 이 저장소에서는 `AGENTS.md`와
+프로젝트 스킬의 규칙을 우선 적용한다.
 
 ---
 
@@ -208,8 +229,8 @@ $backend 스킬 호출 시:
       Supabase Dashboard > SQL Editor에서 실행"
 ```
 
-**중요**: Claude Code는 SQL 파일만 만들고, 실제 DB 적용은 사용자가 직접한다.
-Claude Code는 Supabase에 직접 접속하지 않는다 (보안).
+**중요**: Codex는 기본적으로 SQL 파일만 만들고, 실제 DB 적용은 사용자가 직접한다.
+명시 요청 없이 운영 Supabase에 직접 접속하지 않는다 (보안).
 
 ---
 
@@ -542,7 +563,7 @@ pre-commit + pre-push의 모든 검사를 원격에서 한 번 더 실행.
 
 | 행동 | 정책 |
 |---|---|
-| 코드 변경 | Claude Code가 알아서 함 (스킬 기반) |
+| 코드 변경 | Codex가 스킬/문서 규칙을 읽고 진행 |
 | `git commit` | **사용자가 "커밋해줘"라고 지시할 때만** |
 | `git push` | **사용자가 "푸시해줘"라고 지시할 때만** |
 | `gh pr create` | **사용자가 "PR 만들어줘"라고 지시할 때만** |
@@ -552,7 +573,7 @@ pre-commit + pre-push의 모든 검사를 원격에서 한 번 더 실행.
 
 ## 9. 문서 동기화 규칙
 
-코드 변경 후 Claude Code가 스스로 체크:
+코드 변경 후 Codex가 스스로 체크:
 "이 변경으로 어떤 문서가 오래됐는가?"
 
 | 변경 유형 | 갱신 대상 |
@@ -562,8 +583,8 @@ pre-commit + pre-push의 모든 검사를 원격에서 한 번 더 실행.
 | 새 Python 스크립트/Makefile 타겟 | `../DATA_PIPELINE.md` |
 | 테스트 전략/커버리지 변화 | `../TESTING.md` |
 | 중요한 아키텍처 결정 | `../ADR.md` |
-| 스킬/훅/플러그인 변경 | `CLAUDE.md` |
-| 빌드/실행 명령 변경 | `CLAUDE.md` |
+| 스킬/훅/플러그인 변경 | `AGENTS.md`, `.agents/skills/*` |
+| 빌드/실행 명령 변경 | `AGENTS.md` |
 | 의존성 추가/제거 | `pubspec.yaml` + `../FRONTEND.md` §6 |
 | PRD 수준의 기능 추가/삭제 | `../PRD.md` |
 
@@ -600,7 +621,7 @@ DB를 건드리는 작업 시 반드시:
 
 현재 Supabase 접근 권한:
 - 앱: `SUPABASE_ANON_KEY` (읽기/쓰기 — RLS 범위 내)
-- Claude Code: DB 직접 접근 **없음** (SQL 파일만 생성)
+- Codex: 명시 요청 없는 DB 직접 접근 **없음** (SQL 파일만 생성)
 - SERVICE_ROLE_KEY: 코드에 없음 (의도적 보안 설계)
 
 ---
@@ -609,7 +630,7 @@ DB를 건드리는 작업 시 반드시:
 
 | 문서 | 역할 |
 |---|---|
-| `CLAUDE.md` | 메인 컨텍스트 — 빌드/실행/스킬/컨벤션/규칙 |
+| `AGENTS.md` | 메인 컨텍스트 — 빌드/실행/스킬/컨벤션/규칙 |
 | `../PRD.md` | 제품 요구사항 — 뭘 만드는지 |
 | `../ARCHITECTURE.md` | 기술 아키텍처 — 어떻게 만드는지 + 파일 연결 관계 |
 | `../ADR.md` | 아키텍처 결정 기록 — 왜 이렇게 만드는지 |
@@ -736,7 +757,7 @@ pre-commit  (가벼움, 매 커밋)     pre-push     (무거움, 푸시 전)
 ### 14.2 문서 구조 — 무엇이 어디에 적혀 있는가
 
 ```
-CLAUDE.md                      ← 메인 컨텍스트 (항상 로드, 120줄)
+AGENTS.md                      ← 메인 컨텍스트
 ├── 빌드/실행 명령
 ├── 도메인 스킬 인덱스
 ├── 문서 동기화 규칙
@@ -757,13 +778,13 @@ docs/
 ```
 
 **역할 분담 원칙**:
-- `CLAUDE.md`: **인덱스 역할** — 뭐가 어디 있는지만 가리키고 상세는 docs/에 맡김
+- `AGENTS.md`: **인덱스 역할** — 뭐가 어디 있는지만 가리키고 상세는 docs/에 맡김
 - `docs/*.md`: **도메인 레퍼런스** — 스킬이 그때그때 로드해서 컨텍스트로 사용
-- 이 분리 덕분에 메인 Claude는 항상 가벼운 `CLAUDE.md`만 보고 필요할 때만 도메인 문서 로드
+- 이 분리 덕분에 메인 Codex는 가벼운 `AGENTS.md`를 보고 필요할 때만 도메인 문서 로드
 
-### 14.3 `CLAUDE.md` 세팅 — 에이전트에게 강제한 규칙
+### 14.3 `AGENTS.md` 세팅 — 에이전트에게 강제한 규칙
 
-현재 `CLAUDE.md`에 명시된 에이전트 동작 규칙:
+현재 `AGENTS.md`에 명시된 에이전트 동작 규칙:
 
 | 항목 | 규칙 |
 |---|---|
@@ -771,7 +792,7 @@ docs/
 | 병렬 탐색 | 큰 파일 분석은 Agent 병렬, 수정은 메인 직렬 |
 | 문서 동기화 | 9가지 변경 유형별로 갱신해야 할 문서 지정 |
 | TDD | 새 기능·버그 수정 시 테스트 먼저 |
-| **테스트 변경 정책** | 기존 테스트 수정/삭제는 **사용자 확인 필수** |
+| **테스트 변경 정책** | 기존 테스트 수정/삭제는 사유를 명확히 하고 범위 최소화 |
 | **커밋 정책** | 사용자가 "커밋해줘"라고 지시할 때만 |
 | **푸시 정책** | 사용자가 "푸시해줘"라고 지시할 때만, 자동 push 절대 금지 |
 | `print()` 금지 | `debugPrint` 사용 |
@@ -786,8 +807,8 @@ docs/
 | | `$data-pipeline` | 에셋/시딩 | 자동 감지 or 명시 |
 | | `$testing` | 테스트 작성 | 자동 감지 or 명시 |
 | | `$refactor` | 대규모 분해/중복 제거 | 명시 |
-| **Supabase 공식** | `supabase` | Auth, Storage, Edge Functions, RLS 가이드 | `$backend` 시 자동 |
-| | `supabase-postgres-best-practices` | 쿼리 최적화, 인덱스 | `$backend` 시 자동 |
+| **Supabase 공식** | 공식 문서/도구 | Auth, Storage, Edge Functions, RLS 가이드 | `$backend` 작업 중 필요 시 |
+| | Postgres best practices | 쿼리 최적화, 인덱스 | `$backend` 작업 중 필요 시 |
 | **Agent (서브에이전트)** | `general-purpose` | 큰 파일 병렬 분석 | 메인이 호출 |
 | | `Explore` / `Plan` / `code-reviewer` | 탐색/계획/리뷰 | 메인이 호출 |
 
@@ -822,9 +843,9 @@ docs/
 | **`git commit`** | pre-commit hooks | dart format, black, import sort, forbidden patterns, large files, merge conflicts, YAML 검증 |
 | **`git push`** | pre-push hooks | `flutter analyze` (0 issues), `flutter test`, 에셋 경로 검증, code metrics 보고 |
 | **PR 생성** | GitHub Actions | 로컬 검증 전체 재실행 (로컬 우회 방지) + 별도 job으로 forbidden/asset/metrics |
-| **Claude 자동 행동** | CLAUDE.md 규칙 | 사용자 지시 없으면 커밋/푸시 **절대 안 함** |
+| **Codex 자동 행동** | `AGENTS.md` 규칙 | 사용자 지시 없으면 커밋/푸시 **절대 안 함** |
 
-**Claude 규칙 (CLAUDE.md + WORKFLOW_GUIDE.md 중복 명시)**:
+**Codex 규칙 (`AGENTS.md` + `WORKFLOW_GUIDE.md` 중복 명시)**:
 ```
 코드 변경  → 스킬이 자동 수행
 git add   → 스킬이 자동 수행 가능
@@ -853,7 +874,7 @@ gh pr create → 사용자가 "PR 만들어줘" 할 때만
 ```
 [사용자 요청]
    │
-   ├─ 1. 메인 Claude가 작업 분류 + 도메인 스킬 호출
+   ├─ 1. 메인 Codex가 작업 분류 + 도메인 스킬 호출
    │      → 해당 docs/*.md 로드 (컨텍스트 확장)
    │
    ├─ 2. TDD 순서로 작업
@@ -864,7 +885,7 @@ gh pr create → 사용자가 "PR 만들어줘" 할 때만
    │
    ├─ 3. 에디터 실시간 린트 (11개 규칙)
    │
-   ├─ 4. "완료. 커밋할까요?" ← Claude 멈춤
+   ├─ 4. "완료. 커밋할까요?" ← Codex 멈춤
    │
    ├─ 5. 사용자: "커밋해줘"
    │      → pre-commit hooks 통과해야 커밋 생성

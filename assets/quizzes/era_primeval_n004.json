@@ -2,23 +2,11 @@
   "era_code": "era_primeval",
   "story_index": 4,
   "story_title": "추방: 동산 밖으로",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "하나님이 에덴 동산 동편에 무엇을 두어 길을 지키게 하셨습니까?",
-      "choices": [
-        "그룹들과 화염검",
-        "돌 기둥과 구름",
-        "천사와 물"
-      ],
-      "answer_index": 0,
-      "explanation": "창 3:24 — '그룹들과 두루 도는 화염검을 두어 생명 나무의 길을 지키게 하시니라'"
-    },
-    {
-      "type": "attitude",
-      "display_order": 1,
       "question": "여자에게 내리신 형벌로 하나님은 무엇을 크게 더하셨습니까?",
       "choices": [
         "잉태하는 고통",
@@ -29,16 +17,28 @@
       "explanation": "창 3:16 — '내가 네게 잉태하는 고통을 크게 더하리니'"
     },
     {
-      "type": "bible_context",
-      "display_order": 2,
-      "question": "에덴 추방 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "type": "attitude",
+      "display_order": 1,
+      "question": "하나님은 아담과 하와를 위해 무엇을 해 주셨습니까?",
       "choices": [
-        "3장",
-        "5장",
-        "11장"
+        "가죽옷을 만들어 입혀 주셨다",
+        "돌기둥을 세워 주셨다",
+        "새 동산을 바로 만들어 주셨다"
       ],
       "answer_index": 0,
-      "explanation": "창 3:14-24에 뱀의 저주와 에덴 추방 기사가 기록됨"
+      "explanation": "창 3:21 — '여호와 하나님이 아담과 그 아내를 위하여 가죽옷을 지어 입히시니라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "하나님이 에덴 동산 동편에 무엇을 두어 길을 지키게 하셨습니까?",
+      "choices": [
+        "그룹들과 화염검",
+        "돌 기둥과 구름",
+        "천사와 물"
+      ],
+      "answer_index": 0,
+      "explanation": "창 3:24 — '그룹들과 두루 도는 화염검을 두어 생명 나무의 길을 지키게 하시니라'"
     }
   ]
 }
