@@ -559,6 +559,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileReviewEventList({
     required Set<String> eventIds,
     required String emptyText,
+    ValueChanged<StoryEvent>? onOpenEventDetail,
   }) {
     if (eventIds.isEmpty) {
       return _buildProfileTabMessage(emptyText);
@@ -583,10 +584,19 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         if (events.isEmpty) {
           return _buildProfileTabMessage(emptyText);
         }
-        return _buildEventGroupsByEra(
+        final charactersByCode = <String, Character>{
+          for (final character in _profileAllPeople) character.code: character,
+          for (final character in state.characters) character.code: character,
+        };
+        return ProfileEventReviewGrid(
           events: events,
-          state: state,
-          compact: true,
+          eras: state.eras,
+          charactersByCode: charactersByCode,
+          completedEventIds: state.completedEventIds,
+          eventEmotionMarks: state.eventEmotionMarks,
+          quizAttemptSummaries: state.quizAttemptSummaries,
+          emptyText: emptyText,
+          onOpenEventDetail: onOpenEventDetail ?? widget.onOpenEventDetail,
         );
       },
     );
@@ -645,6 +655,10 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                               child: _buildProfileReviewEventList(
                                 eventIds: eventIds,
                                 emptyText: emptyText,
+                                onOpenEventDetail: (event) {
+                                  Navigator.of(dialogContext).pop();
+                                  widget.onOpenEventDetail(event);
+                                },
                               ),
                             ),
                           ],

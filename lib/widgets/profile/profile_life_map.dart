@@ -1,19 +1,18 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/character.dart';
-import '../../models/era.dart';
 import '../../models/event_emotion_mark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
 import '../../state/story_controller.dart';
 import '../../theme/tokens.dart';
 import '../../utils/kst_date.dart';
-import '../../utils/scene_asset_loader.dart';
 import '../emotion_badge_icon.dart';
-import '../v2/region_event_list.dart' show StoryEventThumbCard;
+import 'profile_event_review_grid.dart';
 
 class ProfileLifeMap extends ConsumerStatefulWidget {
   const ProfileLifeMap({
@@ -98,18 +97,13 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
     required Map<String, StoryEvent> eventById,
   }) {
     final state = ref.read(storyControllerProvider);
-    final sortedEvents = _sortEventsByEraThenIndex(
-      marks
-          .map((mark) => eventById[mark.eventId])
-          .whereType<StoryEvent>()
-          .toList(),
-      state.eras,
-    );
+    final events = marks
+        .map((mark) => eventById[mark.eventId])
+        .whereType<StoryEvent>()
+        .toList();
     final charactersByCode = <String, Character>{
       for (final character in state.characters) character.code: character,
     };
-    final eraById = {for (final era in state.eras) era.id: era};
-    final loader = SceneAssetLoader();
     showDialog<void>(
       context: context,
       builder: (dialogContext) {
@@ -195,33 +189,17 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
                   ),
                   const SizedBox(height: 12),
                   Flexible(
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            mainAxisExtent: 228,
-                          ),
-                      itemCount: sortedEvents.length,
-                      itemBuilder: (_, index) {
-                        final event = sortedEvents[index];
-                        return StoryEventThumbCard(
-                          event: event,
-                          era: eraById[event.eraId],
-                          charactersByCode: charactersByCode,
-                          selected: false,
-                          completed: false,
-                          emotionKey:
-                              widget.eventEmotionMarks[event.id]?.emotionKey,
-                          attemptSummary: widget.quizAttemptSummaries[event.id],
-                          loader: loader,
-                          onTap: () {
-                            Navigator.of(dialogContext).pop();
-                            widget.onOpenEventDetail(event);
-                          },
-                        );
+                    child: ProfileEventReviewGrid(
+                      events: events,
+                      eras: state.eras,
+                      charactersByCode: charactersByCode,
+                      completedEventIds: state.completedEventIds,
+                      eventEmotionMarks: widget.eventEmotionMarks,
+                      quizAttemptSummaries: widget.quizAttemptSummaries,
+                      emptyText: '이 감정으로 새긴 이야기가 없습니다.',
+                      onOpenEventDetail: (event) {
+                        Navigator.of(dialogContext).pop();
+                        widget.onOpenEventDetail(event);
                       },
                     ),
                   ),
@@ -232,30 +210,6 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
         );
       },
     );
-  }
-
-  List<StoryEvent> _sortEventsByEraThenIndex(
-    List<StoryEvent> events,
-    List<Era> eras,
-  ) {
-    final orderByEraId = <String, int>{
-      for (final era in eras) era.id: era.displayOrder,
-    };
-    final sorted = [...events];
-    sorted.sort((a, b) {
-      final eraOrder = (orderByEraId[a.eraId] ?? 1 << 30).compareTo(
-        orderByEraId[b.eraId] ?? 1 << 30,
-      );
-      if (eraOrder != 0) {
-        return eraOrder;
-      }
-      final storyOrder = a.storyIndex.compareTo(b.storyIndex);
-      if (storyOrder != 0) {
-        return storyOrder;
-      }
-      return a.globalRank.compareTo(b.globalRank);
-    });
-    return sorted;
   }
 }
 

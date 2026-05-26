@@ -154,7 +154,9 @@ def asks_for_blank_choice(question_text: str) -> bool:
 
 def asks_generic_story_context(question_text: str) -> bool:
     """Return True if a story-context question is a generic passage prompt."""
-    return any(pattern.search(question_text) for pattern in GENERIC_STORY_CONTEXT_PATTERNS)
+    return any(
+        pattern.search(question_text) for pattern in GENERIC_STORY_CONTEXT_PATTERNS
+    )
 
 
 def has_verse_evidence(explanation: str) -> bool:
@@ -282,7 +284,9 @@ def load_quiz_file(path: Path) -> QuizFile:
                 f"{path.name}: questions[{i}].question asks learners to fill "
                 "a blank; use passage fact choices instead"
             )
-        if expected_type == "story_context" and asks_generic_story_context(question_text):
+        if expected_type == "story_context" and asks_generic_story_context(
+            question_text
+        ):
             raise QuizValidationError(
                 f"{path.name}: questions[{i}].question is too generic; ask "
                 "about a concrete fact from a specific verse"

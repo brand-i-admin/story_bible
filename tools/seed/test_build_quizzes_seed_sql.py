@@ -202,7 +202,9 @@ class LoadQuizFileTests(unittest.TestCase):
 
     def test_story_context_rejects_generic_question(self) -> None:
         payload = self._valid_payload()
-        payload["questions"][2]["question"] = "본문에 따르면 다음 중 맞는 내용은 무엇입니까?"
+        payload["questions"][2][
+            "question"
+        ] = "본문에 따르면 다음 중 맞는 내용은 무엇입니까?"
         path = self._write_as(payload, "era_primeval_n001.json")
         try:
             with self.assertRaisesRegex(mod.QuizValidationError, "generic"):

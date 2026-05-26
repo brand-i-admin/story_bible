@@ -4,11 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/utils/scene_asset_loader.dart';
 import 'package:story_bible/widgets/completion_celebration.dart';
 import 'package:story_bible/widgets/emotion_badge_icon.dart';
 import 'package:story_bible/widgets/event_timeline_row.dart';
 import 'package:story_bible/widgets/v2/region_event_list.dart';
-import 'package:story_bible/utils/scene_asset_loader.dart';
 
 Era _era() => const Era(
   id: 'era_primeval',
