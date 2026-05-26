@@ -1,6 +1,6 @@
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
-// "진행률 표시" 섹션 — 좌측 상단 제목 + 두 탭 (장소로 시작 / 인물과 걷기) +
+// "진행률 표시" 섹션 — 좌측 상단 제목 + 세 탭 (내 삶의 지도 / 장소로 시작 / 인물과 걷기) +
 // 그 아래 스크롤 가능한 컨텐츠. 탭 바는 섹션 최상단에 고정(pinned), 컨텐츠만
 // 스크롤되도록 Column[Header, Expanded(SingleChildScrollView)] 구조.
 part of '../profile_tab_page.dart';
@@ -28,6 +28,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
               child: SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
                 child: switch (_profileProgressTab) {
+                  _ProfileProgressTab.life => _profileProgressLifeBody(),
                   _ProfileProgressTab.walk => _profileProgressWalkBody(
                     people: people,
                     completedEventIds: completedEventIds,
@@ -46,7 +47,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     );
   }
 
-  /// 두 탭 토글 — "장소로 시작" / "인물과 걷기".
+  /// 세 탭 토글 — "내 삶의 지도" / "장소로 시작" / "인물과 걷기".
   Widget _profileProgressTabBar() {
     return Container(
       height: 42,
@@ -58,6 +59,17 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
       ),
       child: Row(
         children: [
+          Expanded(
+            child: _progressTabButton(
+              label: '내 삶의 지도',
+              selected: _profileProgressTab == _ProfileProgressTab.life,
+              onTap: () {
+                // ignore: invalid_use_of_protected_member
+                setState(() => _profileProgressTab = _ProfileProgressTab.life);
+              },
+            ),
+          ),
+          const SizedBox(width: 4),
           Expanded(
             child: _progressTabButton(
               label: '장소로 시작',
@@ -111,14 +123,26 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           ),
           child: Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: selected ? Colors.white : const Color(0xFF6A4C2E),
               fontWeight: FontWeight.w900,
-              fontSize: 13.5,
+              fontSize: 12.5,
             ),
           ),
         ),
       ),
+    );
+  }
+
+  // ──────────────────────── 내 삶의 지도 탭 본문 ────────────────────────
+  Widget _profileProgressLifeBody() {
+    final state = ref.watch(storyControllerProvider);
+    return ProfileLifeMap(
+      eventEmotionMarks: state.eventEmotionMarks,
+      quizAttemptSummaries: state.quizAttemptSummaries,
+      onOpenEventDetail: widget.onOpenEventDetail,
     );
   }
 
@@ -209,6 +233,9 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
             era: selectedEra,
             landmarks: state.landmarks,
             completedEventIds: completedEventIds,
+            eventEmotionMarks: state.eventEmotionMarks,
+            quizAttemptSummaries: state.quizAttemptSummaries,
+            onOpenEventDetail: widget.onOpenEventDetail,
           ),
       ],
     );

@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 4,
   "story_title": "벨사살의 잔치: 벽에 쓴 글",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "단 5:17 — '왕의 예물은 왕이 취하시고 ... 글을 읽어 해석을 알려드리겠나이다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "벨사살의 잔치와 벽에 쓰인 글 기사가 기록된 책은 어디입니까?",
+      "question": "「벨사살의 잔치: 벽에 쓴 글」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "다니엘",
-        "에스겔",
-        "이사야"
+        "교만한 잔치에 ‘손 글씨’가 나타나고, 심판이 선포된다.",
+        "베드로는 편견을 넘어 이방인에게도 성령이 임함을 목격한다.",
+        "빌립보에서 복음은 가정과 감옥 한복판까지 스며든다."
       ],
       "answer_index": 0,
-      "explanation": "단 5:1-31에 벨사살의 잔치와 벽의 글씨 해석 기사가 기록됨"
+      "explanation": "단 5:1 — '벨사살 왕이 그 귀인 일천 명을 위하여 큰 잔치를 배설하고 그 일천 명 앞에서 술을 마시니라'"
     }
   ]
 }

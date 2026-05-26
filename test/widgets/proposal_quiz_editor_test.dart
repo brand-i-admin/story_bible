@@ -80,7 +80,7 @@ void main() {
       final initial = [
         const QuizDraft(
           question: '첫 번째 문제',
-          choices: ['가', '나', '다', '라'],
+          choices: ['가', '나', '다'],
           answerIndex: 2,
           explanation: '해설-X',
         ),
@@ -92,6 +92,7 @@ void main() {
 
       expect(find.text('첫 번째 문제'), findsOneWidget);
       expect(find.text('해설-X'), findsOneWidget);
+      expect(find.textContaining('선택지 4'), findsNothing);
     });
 
     testWidgets('onChanged 는 편집 시마다 호출되고 최신 drafts 를 방출한다', (tester) async {

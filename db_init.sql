@@ -59,9 +59,12 @@ drop table if exists daily_quiz cascade;
 drop table if exists weekly_quiz_progress cascade;
 drop table if exists user_daily_attendance cascade;
 drop table if exists user_intercessory_prayers cascade;
+drop table if exists user_saved_events cascade;
 drop table if exists user_saved_verses cascade;
 drop table if exists user_notes cascade;
 drop table if exists user_profiles cascade;
+drop table if exists user_event_emotion_marks cascade;
+drop table if exists user_quiz_attempts cascade;
 drop table if exists user_event_progress cascade;
 drop table if exists quiz_questions cascade;
 drop table if exists event_bible_refs cascade;
@@ -484,12 +487,57 @@ create table if not exists quiz_questions (
   display_order int not null default 0
 );
 
+create table if not exists user_quiz_attempts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  event_id uuid not null references events(id) on delete cascade,
+  correct_count int not null default 0 check (correct_count >= 0),
+  total_count int not null default 0 check (total_count >= 0),
+  wrong_count int not null default 0 check (wrong_count >= 0),
+  confused_count int not null default 0 check (confused_count >= 0),
+  selected_answers jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now(),
+  unique (user_id, event_id),
+  check (correct_count <= total_count),
+  check (wrong_count <= total_count),
+  check (confused_count <= total_count),
+  check (correct_count + wrong_count + confused_count <= total_count)
+);
+
 create table if not exists user_event_progress (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   event_id uuid not null references events(id) on delete cascade,
+  is_bible_read boolean not null default false,
+  is_quiz_completed boolean not null default false,
   is_completed boolean not null default false,
   completed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, event_id)
+);
+
+create table if not exists user_event_emotion_marks (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  event_id uuid not null references events(id) on delete cascade,
+  emotion_key text not null check (
+    emotion_key in (
+      'joy',
+      'anticipation',
+      'gratitude',
+      'wonder',
+      'sadness',
+      'comfort',
+      'fear',
+      'other'
+    )
+  ),
+  emotion_label text not null,
+  emotion_emoji text not null,
+  note text not null check (char_length(note) <= 100),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
   unique (user_id, event_id)
 );
 
@@ -570,6 +618,13 @@ create table if not exists user_saved_verses (
   unique (user_id, translation, book_no, chapter_no, verse_no)
 );
 
+create table if not exists user_saved_events (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  event_id uuid not null references events(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, event_id)
+);
+
 -- 주간 퀴즈 진행도 — 사용자/주차/사건 키. 퀴즈 탭의 진행도는 프로필의
 -- user_event_progress 와 독립적. 다음 주에 같은 인물이 또 뽑히면 week_key 가
 -- 달라져 처음부터 다시 풀어야 한다 (자동 reset).
@@ -628,11 +683,16 @@ create index if not exists idx_events_status on events (status);
 create index if not exists idx_events_character_codes_gin on events using gin (character_codes);
 create index if not exists idx_characters_era_codes_gin on characters using gin (era_codes);
 create index if not exists idx_progress_user_completed on user_event_progress (user_id, is_completed);
+create index if not exists idx_progress_user_updated on user_event_progress (user_id, updated_at desc);
+create index if not exists idx_user_quiz_attempts_user_updated on user_quiz_attempts (user_id, updated_at desc);
+create index if not exists idx_user_event_emotion_marks_user_updated
+  on user_event_emotion_marks (user_id, updated_at desc);
 create unique index if not exists uidx_quiz_event_order on quiz_questions (event_id, display_order);
 create index if not exists idx_embed_ivfflat on search_embeddings using ivfflat (embedding vector_cosine_ops);
 create index if not exists idx_bible_verses_lookup on bible_verses (translation, book_no, chapter_no, verse_no);
 create index if not exists idx_user_notes_user_created on user_notes (user_id, created_at desc);
 create index if not exists idx_user_saved_verses_user_created on user_saved_verses (user_id, created_at desc);
+create index if not exists idx_user_saved_events_user_created on user_saved_events (user_id, created_at desc);
 create index if not exists idx_user_intercessory_prayers_user_created on user_intercessory_prayers (user_id, created_at desc);
 create index if not exists idx_user_intercessory_prayers_target on user_intercessory_prayers (target_user_id);
 
@@ -654,6 +714,22 @@ for each row execute function public.touch_updated_at();
 drop trigger if exists set_user_notes_updated_at on user_notes;
 create trigger set_user_notes_updated_at
 before update on user_notes
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_user_quiz_attempts_updated_at on user_quiz_attempts;
+create trigger set_user_quiz_attempts_updated_at
+before update on user_quiz_attempts
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_user_event_progress_updated_at on user_event_progress;
+create trigger set_user_event_progress_updated_at
+before update on user_event_progress
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_user_event_emotion_marks_updated_at
+  on user_event_emotion_marks;
+create trigger set_user_event_emotion_marks_updated_at
+before update on user_event_emotion_marks
 for each row execute function public.touch_updated_at();
 
 create or replace function public.handle_new_user_profile()
@@ -816,10 +892,13 @@ grant select on events_ordered to anon, authenticated;
 grant select on character_eras to anon, authenticated;
 
 grant select, insert, update on table user_event_progress to authenticated;
+grant select, insert, update on table user_quiz_attempts to authenticated;
+grant select, insert, update, delete on table user_event_emotion_marks to authenticated;
 grant select, insert, update on table user_profiles to authenticated;
 grant select, insert, delete on table user_intercessory_prayers to authenticated;
 grant select, insert, update, delete on table user_notes to authenticated;
 grant select, insert, delete on table user_saved_verses to authenticated;
+grant select, insert, delete on table user_saved_events to authenticated;
 grant select, insert, update, delete on table weekly_quiz_progress to authenticated;
 grant select, insert, update on table user_daily_quiz_attempts to authenticated;
 
@@ -832,10 +911,13 @@ alter table bible_verses enable row level security;
 alter table quiz_questions enable row level security;
 alter table daily_quiz enable row level security;
 alter table user_event_progress enable row level security;
+alter table user_quiz_attempts enable row level security;
+alter table user_event_emotion_marks enable row level security;
 alter table user_profiles enable row level security;
 alter table user_intercessory_prayers enable row level security;
 alter table user_notes enable row level security;
 alter table user_saved_verses enable row level security;
+alter table user_saved_events enable row level security;
 alter table weekly_quiz_progress enable row level security;
 alter table user_daily_quiz_attempts enable row level security;
 
@@ -893,6 +975,28 @@ for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists user_quiz_attempts_read_own on user_quiz_attempts;
+create policy user_quiz_attempts_read_own on user_quiz_attempts
+for select using (auth.uid() = user_id);
+
+drop policy if exists user_quiz_attempts_write_own on user_quiz_attempts;
+create policy user_quiz_attempts_write_own on user_quiz_attempts
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+drop policy if exists user_event_emotion_marks_read_own
+  on user_event_emotion_marks;
+create policy user_event_emotion_marks_read_own on user_event_emotion_marks
+for select using (auth.uid() = user_id);
+
+drop policy if exists user_event_emotion_marks_write_own
+  on user_event_emotion_marks;
+create policy user_event_emotion_marks_write_own on user_event_emotion_marks
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
 drop policy if exists user_profiles_read_own on user_profiles;
 create policy user_profiles_read_own on user_profiles
 for select using (auth.uid() = user_id);
@@ -947,6 +1051,18 @@ for insert with check (auth.uid() = user_id);
 
 drop policy if exists user_saved_verses_delete_own on user_saved_verses;
 create policy user_saved_verses_delete_own on user_saved_verses
+for delete using (auth.uid() = user_id);
+
+drop policy if exists user_saved_events_read_own on user_saved_events;
+create policy user_saved_events_read_own on user_saved_events
+for select using (auth.uid() = user_id);
+
+drop policy if exists user_saved_events_insert_own on user_saved_events;
+create policy user_saved_events_insert_own on user_saved_events
+for insert with check (auth.uid() = user_id);
+
+drop policy if exists user_saved_events_delete_own on user_saved_events;
+create policy user_saved_events_delete_own on user_saved_events
 for delete using (auth.uid() = user_id);
 
 insert into storage.buckets (
@@ -1761,6 +1877,7 @@ declare
   v_quiz_count int;
   v_quiz jsonb;
   v_choices jsonb;
+  v_choice_count int;
   v_answer_index int;
   v_explanation text;
   v_question text;
@@ -1806,7 +1923,8 @@ begin
       coalesce(array_length(p_scene_image_prompts, 1), 0), v_scene_count;
   end if;
 
-  -- 퀴즈 검증 (1~3개, 4지선다, 해설 필수).
+  -- 퀴즈 검증 (1~3개, 목회자 작성 선택지 3개 + 해설 필수).
+  -- 사용자용 4번 보기 "헷갈렸어요"는 승인 시 quiz_questions.choice_d 에 자동 추가.
   v_quiz_count := coalesce(jsonb_array_length(p_quiz_questions), 0);
   if v_quiz_count < 1 or v_quiz_count > 3 then
     raise exception 'quiz_questions count must be between 1 and 3 (got %)', v_quiz_count;
@@ -1816,17 +1934,23 @@ begin
   loop
     v_question := coalesce(v_quiz->>'question', '');
     v_choices := v_quiz->'choices';
+    v_choice_count := coalesce(jsonb_array_length(v_choices), 0);
     v_answer_index := coalesce((v_quiz->>'answer_index')::int, -1);
     v_explanation := coalesce(v_quiz->>'explanation', '');
     if trim(v_question) = '' then
       raise exception 'quiz question must not be empty';
     end if;
-    if v_choices is null or jsonb_array_length(v_choices) <> 4 then
-      raise exception 'quiz choices must be exactly 4 (got %)',
-        coalesce(jsonb_array_length(v_choices), 0);
+    if v_choices is null or v_choice_count not in (3, 4) then
+      raise exception 'quiz choices must be 3 authored choices (got %)',
+        v_choice_count;
     end if;
-    if v_answer_index < 0 or v_answer_index > 3 then
-      raise exception 'quiz answer_index must be between 0 and 3 (got %)', v_answer_index;
+    if trim(coalesce(v_choices->>0, '')) = ''
+      or trim(coalesce(v_choices->>1, '')) = ''
+      or trim(coalesce(v_choices->>2, '')) = '' then
+      raise exception 'quiz authored choices must not be empty';
+    end if;
+    if v_answer_index < 0 or v_answer_index > 2 then
+      raise exception 'quiz answer_index must be between 0 and 2 (got %)', v_answer_index;
     end if;
     if trim(v_explanation) = '' then
       raise exception 'quiz explanation must not be empty';
@@ -2080,9 +2204,8 @@ begin
   );
 
   -- 3) 퀴즈 insert — proposal 에 담긴 1~3개를 quiz_questions 로 풀어 넣는다.
-  --    승인 시점에 choices 배열을 **랜덤으로 셔플** 하고 정답 인덱스를 다시 계산
-  --    한다. 사역자가 제출 시 항상 1번째 자리에 정답을 두는 습관이 있어도
-  --    실제 사용자에게는 위치가 분산돼 패턴이 안 잡힌다.
+  --    승인 시점에 목회자가 작성한 3개 선택지만 **랜덤으로 셔플** 하고 정답
+  --    인덱스를 다시 계산한다. 4번 보기는 항상 "헷갈렸어요"로 자동 추가한다.
   --    display_order 는 배열 인덱스 (퀴즈 N개 사이 순서) 를 그대로 사용.
   v_quiz_idx := 0;
   declare
@@ -2094,27 +2217,33 @@ begin
       select * from jsonb_array_elements(coalesce(v_proposal.quiz_questions, '[]'::jsonb))
     loop
       v_quiz_choices := v_quiz->'choices';
-      if v_quiz_choices is null or jsonb_array_length(v_quiz_choices) <> 4 then
-        raise exception 'quiz[%] must have exactly 4 choices', v_quiz_idx;
+      if v_quiz_choices is null or jsonb_array_length(v_quiz_choices) not in (3, 4) then
+        raise exception 'quiz[%] must have 3 authored choices', v_quiz_idx;
       end if;
       v_orig_answer := coalesce((v_quiz->>'answer_index')::int, 0);
-      if v_orig_answer < 0 or v_orig_answer > 3 then
+      if v_orig_answer < 0 or v_orig_answer > 2 then
         raise exception 'quiz[%] answer_index out of range (got %)',
           v_quiz_idx, v_orig_answer;
       end if;
 
-      -- 셔플: 0..3 의 무작위 순열을 만들어 choices 를 재배치, 정답이 새로 어느
+      if trim(coalesce(v_quiz_choices->>0, '')) = ''
+        or trim(coalesce(v_quiz_choices->>1, '')) = ''
+        or trim(coalesce(v_quiz_choices->>2, '')) = '' then
+        raise exception 'quiz[%] authored choices must not be empty', v_quiz_idx;
+      end if;
+
+      -- 셔플: 0..2 의 무작위 순열을 만들어 choices 를 재배치, 정답이 새로 어느
       -- 인덱스로 갔는지 추적. random() 기반이라 결정적이지 않으나 보안 목적은
       -- 아니라 충분.
       with perm as (
         select g, row_number() over (order by random()) - 1 as new_pos
-        from generate_series(0, 3) g
+        from generate_series(0, 2) g
       ),
       remap as (
         select
           jsonb_agg(v_quiz_choices->old.g order by perm.new_pos) as new_choices,
           max(case when old.g = v_orig_answer then perm.new_pos end) as new_answer
-        from generate_series(0, 3) old(g)
+        from generate_series(0, 2) old(g)
         join perm on perm.g = old.g
       )
       select new_choices, new_answer into v_shuffled, v_new_answer from remap;
@@ -2130,7 +2259,7 @@ begin
         coalesce(v_shuffled->>0, ''),
         coalesce(v_shuffled->>1, ''),
         coalesce(v_shuffled->>2, ''),
-        v_shuffled->>3,
+        '헷갈렸어요',
         v_new_answer,
         coalesce(v_quiz->>'explanation', ''),
         v_quiz_idx

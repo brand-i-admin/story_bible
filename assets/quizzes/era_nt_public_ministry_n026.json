@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 26,
   "story_title": "십자가: 끝까지 사랑",
-  "source_version": "2026-04-30",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 23:34 — '아버지 저들을 사하여 주옵소서'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님의 십자가 사건은 어디에 기록되어 있습니까?",
+      "question": "「십자가: 끝까지 사랑」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "네 복음서 모두",
-        "마태복음에만",
-        "요한복음에만"
+        "예수님은 십자가에서 마지막까지 사랑을 드러내신다.",
+        "하나님은 사람의 기준이 아닌 마음을 보시고 다윗을 택하신다.",
+        "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다."
       ],
       "answer_index": 0,
-      "explanation": "마 27, 막 15, 눅 23, 요 19 모두에 기록됨"
+      "explanation": "막 15:21 — '마침 알렉산더와 루포의 아비인 구레네 사람 시몬이 시골로서 와서 지나가는데 저희가 그를 억지 로 같이 가게 하여 예수의 십자가를 지우고'"
     }
   ]
 }

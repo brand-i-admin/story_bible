@@ -54,11 +54,11 @@ lib/
 | Landmark | `models/landmark.dart` | id, code, name, description, emoji, category, lat, lng, **kind** ('region'/'anchor'/'minor'/'point'), **polygon** (region 만, List<LatLng>), **parentLandmarkId**, **aliasGroupId**, displayPriority, eraCodes, relatedEventCodes (`isRegion/isAnchor/isMinor/latLng` getter) | `Landmark.fromMap()` |
 | EraBoundary | `models/era_boundary.dart` | id, eraId, polygonIndex, polygon (List&lt;LatLng&gt;), color (Color), fillOpacity, displayOrder | `EraBoundary.fromMap()` — `#RRGGBB`/`[[lat,lng], ...]` 자동 파싱 |
 | AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
-| UserNote | `models/user_note.dart` (36줄) | id, userId, title, content, createdAt, updatedAt | `UserNote.fromMap()` |
 | SavedBibleVerse | `models/saved_bible_verse.dart` (55줄) | id, userId, translation, bookNo, bookName, chapterNo, verseNo, verseText | `SavedBibleVerse.fromMap()` |
-| QuizQuestion | `models/quiz_question.dart` (17줄) | id, question, choices, answerIndex, explanation | 생성자 직접 |
+| QuizQuestion | `models/quiz_question.dart` | id, question, choices, answerIndex, explanation, `confusedChoiceLabel` | 생성자 직접 |
+| QuizAttemptSummary | `models/quiz_attempt_summary.dart` | eventId, correctCount, totalCount, wrongCount, confusedCount, selectedAnswers, updatedAt, needsReview | `QuizAttemptSummary.fromMap()` |
 | EventProposal | `models/event_proposal.dart` | id, proposalType ('new'/'delete'), targetEventId, 제안 본문 전체 필드, proposedCharacters, quizQuestions, status, reviewed* | `EventProposal.fromMap()` |
-| QuizDraft | `models/event_proposal.dart` | question, choices(4), answerIndex(0~3), explanation. `isValid` getter 로 4지선다 + 해설 필수 검증. | `QuizDraft.fromMap()` / `.toMap()` |
+| QuizDraft | `models/event_proposal.dart` | question, choices(3), answerIndex(0~2), explanation. `isValid` getter 로 목회자 작성 선택지 3개 + 해설 필수 검증. | `QuizDraft.fromMap()` / `.toMap()` |
 | ProposedCharacter | `models/event_proposal.dart` | code, name, prompt, storagePath. 제안 시 신규 생성한 캐릭터 메타 | `ProposedCharacter.fromMap()` |
 | CharacterStudyProgress | `models/character_study_progress.dart` (20줄) | person, completedCount, totalCount | 생성자 직접 |
 | IntercessoryPrayerItem | `models/intercessory_prayer_item.dart` (33줄) | linkId, nickname, prayerRequest, photoUrl | `IntercessoryPrayerItem.fromMap()` |
@@ -110,6 +110,9 @@ class StoryState {
   final Map<String, Color> selectedCharacterColors; // key = character.code
   final String? selectedEventId;
   final Set<String> completedEventIds;
+  final Set<String> bibleReadEventIds;
+  final Set<String> quizCompletedEventIds;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
   final String searchQuery;
   final List<StoryEvent> searchResults;
   final bool isSearching;
@@ -134,7 +137,9 @@ class StoryState {
 | `selectLandmark(String?)` | v2 — region 모드에서 선택된 landmark 변경 |
 | `toggleCharacter(String code)` | 인물 선택/해제 토글 (person.code 기반) |
 | `selectEvent(String?)` | 이벤트 선택/해제 |
-| `markEventCompleted({eventId, isCompleted})` | 이벤트 완료 여부 기록 + 학습 출석일 갱신 |
+| `setBibleRead(...)` / `setQuizCompleted(...)` | 부분 진행도 저장. 둘 다 완료되면 감정 새김 버튼이 열린다 |
+| `setEmotionMark(...)` | 감정/100자 메모 저장 후 읽기+퀴즈+감정 조건이 모두 맞으면 완료 처리 |
+| `markEventCompleted({eventId, isCompleted})` | 최종 완료 여부 기록 + 학습 출석일 갱신 |
 | `setSearchQuery(String)` | 검색어 변경 (220ms 디바운스) |
 | `selectSearchResult(StoryEvent)` | 검색 결과 → 시대/인물/이벤트 자동 선택 |
 | `mergedTimeline()` | 선택 인물 기준 이벤트 병합 타임라인 반환 (`globalRank` 정렬) |
@@ -156,12 +161,10 @@ static const _palette = <Color>[
 |------|------|------|
 | StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 우측 stepper 는 **홈·1·2·?** 라벨 — step 1 dot 은 `Icons.home_rounded` 로 "intro 화면 복귀" 가 직관적. 시트는 화면 맨 아래(`bottom: 0`) 까지 차지하고 height 를 `sheetHeight + bottomInset` 으로 키운다 — 각 panel(`_buildHomeIntroPanel` / `_buildRegionPanel` / `StorySelectionPanel`) 의 자체 양피지 deco 가 nav bar 영역까지 자연스럽게 이어지고, 컨텐츠는 panel Column 마지막의 `SizedBox(bottomInset)` 로 nav bar 위에 위치 (gesture-only 단말은 bottomInset=0 → 기존 동작). 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드(`_SelectionMode.character`) 진입 시 `StoryMapPanel.suppressRegionLabels=true` 로 가나안·시내 광야·애굽 등 검정 캡슐 라벨을 숨겨 인물 path 점선이 가려지지 않게 한다. |
 | ~~LoginScreen~~ | ~~`screens/login_screen.dart`~~ | 삭제됨 — InlineLoginPromptCard로 대체 |
-| ProfileNotesScreen | `screens/profile_notes_screen.dart` | 노트 목록 |
-| ProfileNoteEditorScreen | `screens/profile_note_editor_screen.dart` | 노트 편집 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
 | ProposalBoardScreen | `screens/proposal_board_screen.dart` | 제안 게시판 (웹 전용) |
-| ProposalSubmitScreen | `screens/proposal_submit_screen.dart` | 새 이야기 제안 작성/수정 (5-step wizard: 안내 → 시대 → 인물·위치 → 세부 → **퀴즈**). 마지막 Step 4 는 4지선다 퀴즈 1~3개 + 제출 버튼. |
+| ProposalSubmitScreen | `screens/proposal_submit_screen.dart` | 새 이야기 제안 작성/수정 (5-step wizard: 안내 → 시대 → 인물·위치 → 세부 → **퀴즈**). 마지막 Step 4 는 목회자 작성 선택지 3개 퀴즈 1~3문항 + 제출 버튼. |
 | ProposalDetailScreen | `screens/proposal_detail_screen.dart` | 제안 상세 + 댓글. `proposal_type='delete'` 일 때 빨간 삭제 제안 배너 + "수정" 버튼 비노출 + 승인 시 `approveDelete` 분기. |
 | NotificationHistoryScreen | `screens/notification_history_screen.dart` | 알림 전체보기 (최근 30일, 2026-04-22) |
 
@@ -175,9 +178,9 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). region polygon 시각은 `EraPolygonGlowLayer` 로 분리, hit-test 만 투명 `PolygonLayer<Landmark>` 가 담당. **`onMapInteraction`** 콜백 — `_isUserGestureSource` 로 사용자 제스처(드래그·핀치·스크롤·탭) 만 식별해 부모의 hint overlay dismiss 트리거. **`suppressRegionLabels`** prop — 인물 모드에서 검정 캡슐 region 라벨이 path 점선을 가리지 않도록 부모가 토글. 인물 모드 step 3 의 번호 핀(`_NumberedEventPin`) 은 사건에 포함된 선택 인물 색을 모아 `_MultiColorCirclePainter` 로 위→아래 균등 N 등분 띠를 그려 인물별 식별. selected 핀은 character color 위에 노란 outer border 로 강조. |
+| StoryMapPanel | `widgets/story_map_panel.dart` | flutter_map 지도. 일반 사건 핀 외에 ① `activeLandmarks` (선택된 시대의 랜드마크만 — 이모지 + 이름) ② `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 `PolygonLayer` 로 반투명 채움 + 외곽선 렌더 (한 시대가 분리 영역을 가지면 여러 폴리곤이 함께 그려짐). region polygon 시각은 `EraPolygonGlowLayer` 로 분리, hit-test 만 투명 `PolygonLayer<Landmark>` 가 담당. **`onMapInteraction`** 콜백 — `_isUserGestureSource` 로 사용자 제스처(드래그·핀치·스크롤·탭) 만 식별해 부모의 hint overlay dismiss 트리거. **`suppressRegionLabels`** prop — 인물 모드에서 검정 캡슐 region 라벨이 path 점선을 가리지 않도록 부모가 토글. 인물 모드 step 3 의 번호 핀(`_NumberedEventPin`) 은 사건에 포함된 선택 인물 색을 모아 `_MultiColorCirclePainter` 로 위→아래 균등 N 등분 띠를 그려 인물별 식별. selected 핀은 character color 위에 노란 outer border 로 강조. 감정 새김이 있으면 다른 번호 핀과 같은 지름을 유지하고 번호는 중앙에 고정한 채 작은 감정 아이콘 배지를 붙인다. 이야기 간 이동 glow 는 같은 위치 사건 분산까지 반영한 번호 핀 좌표 맵을 재사용해 실제 동그라미 중심에 맞춘다. |
 | EraPolygonGlowLayer | `widgets/map/era_polygon_glow_layer.dart` | region polygon 시각 전용 layer. **Ancient atlas discovery 양식** — 4-layer (outer glow / parchment radial fill / ink border halo+main / discovery particles) + Catmull-Rom spline 곡선화. era 색 기반, 선택 시 펄스 강조 + edge 따라 빛 입자 twinkle. fantasy atlas / fog-of-war reveal 톤. flutter_map 의 `PolygonLayer` 가 단색 fill 만 지원하므로 별도 `CustomPainter` 레이어. 클릭 hit-test 는 동일 좌표의 투명 PolygonLayer 가 담당. **`EraPolygonEntry.pickerHighlight`** — region picker 단계의 후보 폴리곤이면 outer glow / fill alpha 가 0.06~0.08 부스트되어 "여기를 누르세요" 인상을 강화 (선택 폴리곤이 항상 더 또렷하도록 isSelected 가 우선). |
-| StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합. **헤더(`headerOverride`) 는 sticky** — `Column [header, Expanded(CustomScrollView)]` 구조로 사건 카드 스크롤 시 헤더(toggle + stepper) 가 함께 위로 사라지지 않는다. step 3 사건 카드(`EventTimelineRow`) 는 `committedSelectedCharacterCodes` + `colorForCommittedCharacter` 를 그대로 forwarding 해 카드 안 인물 pill 이 지도 path 색과 매칭된다. |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합. **헤더(`headerOverride`) 는 sticky** — `Column [header, Expanded(CustomScrollView)]` 구조로 사건 카드 스크롤 시 헤더(toggle + stepper) 가 함께 위로 사라지지 않는다. step 3 사건 카드(`EventTimelineRow`) 는 `committedSelectedCharacterCodes` + `colorForCommittedCharacter` 를 그대로 forwarding 해 카드 안 인물 pill 이 지도 path 색과 매칭된다. 최근 퀴즈 결과가 있으면 카드 배경색으로 상태를 표시한다(정답 0개=빨강, 일부 정답=주황, 모두 정답=초록). 감정 새김이 있으면 사건 카드 좌상단 배지를 감정 아이콘으로 바꾸고 우측 하단의 작은 초록 원에 이야기 순번을 함께 표시한다. 감정 새김 직후에는 상세 페이지를 잠시 닫고 0.5초 뒤 해당 사건 카드 위에 `CompletionCelebration` 감정 도장+별가루를 기존 속도로 재생하며, 도장 완료 후 1초 기다렸다가 같은 상세로 돌아온다. |
 | CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 이야기 상세 모달 |
@@ -202,17 +205,20 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerStatefulWidget, 콜백으로 동작). 사역자/관리자에게만 **"이 이야기 삭제 제안"** 버튼 노출 (`_DeleteProposalButton` 서브 위젯). 본문 읽기 + 퀴즈 둘 다 완료되는 전이 시점에 `CompletionCelebration` 으로 별가루 burst + 초록 글로우 + 금박 "완료" 도장. 도장이 끝나거나 이미 완료된 사건으로 진입한 경우 우측 "다음 이야기" 카드를 `PulseHighlight` 로 박동. |
-| CompletionCelebration | `widgets/completion_celebration.dart` | 자식 위젯을 감싸 GlobalKey 로 `play()` 호출 시 두 단계 축하 효과: (1) 별가루 + 초록 글로우 1.2s, (2) 끝나면 금박 "완료" 도장이 슬램+흔듦+페이드 0.95s. 도장 종료 시 옵션 `onComplete` 콜백 호출. EventDetailPage 의 read+quiz 박스에 부착. |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (ConsumerStatefulWidget, 콜백으로 동작). 상단은 연도 메타 없이 제목과 별표 저장 토글을 한 줄로 보여 주고, **요약 이야기 → 장면 이미지 → 본문 읽고 퀴즈 풀기** 순서로 배치한다. 본문 읽기 버튼은 성경 리더를 시작 절로 이동시키고 해당 이야기의 읽을 범위를 임시 하이라이트로 전달한다. 퀴즈 결과는 정답/오답/헷갈림으로 나누고 `user_quiz_attempts`에 저장해 버튼 라벨과 프로필 지역 복습 팝업에 반영한다. 퀴즈 버튼은 `정답 N · 오답 N · 헷갈림 N` 형식으로 표시하고 정답 0개=빨강, 일부 정답=주황, 모두 정답=초록으로 칠한다. 본문 읽기 + 퀴즈 완료 후에만 **지도 위에 새기기** 버튼이 활성화되고, 8개 감정 중 하나와 100자 메모를 `user_event_emotion_marks`에 저장하면 사건 완료로 전환된다. 감정 선택 보기와 지도/카드 배지는 같은 감정 아이콘 세트를 쓴다. 새김 완료 버튼은 `감정 - 메모` 형식으로 바로 보여 주고 "완료 취소"를 누르면 감정 row를 삭제해 지도 핀/카드 아이콘도 제거한다. 감정 저장이 끝나면 부모 화면에 `onEmotionEngraved`를 알려 상세 페이지를 닫고 지도 핀/카드 감정 배지를 반영한 상태에서 0.5초 뒤 해당 사건 카드 위 감정 도장+별가루를 기존 속도로 재생하며, 도장 완료 후 1초 기다렸다가 같은 상세로 돌아온다. 지도 위 감정 도장 및 이전/다음 이야기 전환 애니메이션 중에는 투명 입력 차단막을 올려 지도·패널·상단 버튼 입력을 막는다. 이전/다음 이야기 카드를 누르면 상세 페이지를 닫고 지도 위 현재 사건과 목표 사건 번호 핀이 약 2초간 함께 빛난 뒤 목표 상세 페이지를 연다. 사역자/관리자에게만 **"이 이야기 삭제 제안"** 버튼 노출 (`_DeleteProposalButton` 서브 위젯). 이미 완료된 사건으로 진입한 경우 우측 "다음 이야기" 카드를 `PulseHighlight` 로 박동. |
+| CompletionCelebration | `widgets/completion_celebration.dart` | 자식 위젯을 감싸 GlobalKey 로 `play(stampLabel:)` 호출 시 두 단계 축하 효과: (1) 별가루 + 초록 글로우 1.2s, (2) 끝나면 금박 도장이 슬램+흔듦+페이드 0.95s. 기본 라벨은 "완료"지만 이야기 완료에서는 선택 감정 심볼을 넘긴다. 도장 종료 시 옵션 `onComplete` 콜백 호출. EventDetailPage 의 read+quiz 박스에 부착. |
 | PulseHighlight | `widgets/pulse_highlight.dart` | `active` 인 동안 자식 외곽에 1.4s 사이클로 0→1→0 박동하는 골드 glow 를 그리는 래퍼. EventDetailPage 의 "다음 이야기" 카드에 부착해 다음 이동 동선을 시각적으로 유도. |
 | AvatarProgressRing | `widgets/avatar_progress_ring.dart` | 아바타 둘레에 초록 원형 progress 호를 그리는 래퍼 (12시 방향 시계방향, 항상 초록). 옵션 `name` 을 주면 아바타 내부 하단에 솔리드 다크 pill 라벨을 오버레이해 외부 텍스트 라인을 제거. ProfileTabPage 인물 진행도 행에서 LinearProgressIndicator 대체로 사용. |
 | EraPickRows | `widgets/v2/era_pick_rows.dart` | 시대 선택 칩 — 구약/신약 두 줄. HomeIntroPanel + ProfileTabPage 의 "장소로 시작" 탭 공유. `eraIconFor(code)` 도 export. |
 | HomeIntroPanel | `widgets/v2/home_intro_panel.dart` | 첫 화면 "오늘은 성경 어디를 여행해볼까요?" 패널. 두 단계: ① **여행할 시대** (구약/신약 칩, 단일 선택) ② **어떻게 볼까요?** (장소에서 시작 / 인물과 걷기). 시대를 고른 뒤에는 ① 영역(헤더+칩) 이 `AnimatedOpacity` 0.55 로 흐려지고 ② 헤더는 `ink800` + 굵은 글씨로 차별화되어 다음 행동을 유도. 제목/하단 안내 문구는 `FittedBox.scaleDown` + `maxLines:1` 로 좁은 폰에서도 1줄 보장. |
 | MapHintOverlay | `widgets/v2/map_hint_overlay.dart` | 지도 위 흐릿한 검정 패널 안내 문구. 모드별로 다른 메시지: region picker 단계 = "노란 지역을 눌러…", character step 2 = "인물을 골라 「다음」…". 사용자가 지도 제스처/region 선택/character 다음 한 번만 하면 dismiss. `IgnorePointer` 로 감싸 폴리곤·핀 클릭은 그대로 통과. dismiss flag 는 `StoryHomeScreen._mapHintDismissed`. |
-| ProfileMiniMap | `widgets/profile/profile_mini_map.dart` | 프로필 "장소로 시작" 탭의 미니 맵. 선택된 시대의 region 폴리곤을 진행률로 알파 채움(검정→시대컬러), 100% region 은 황금 깃발 마커. 상단에 "정복: X / N" 칩. point-in-polygon 으로 사건↔region 매핑. |
-| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글) |
+| ProfileMiniMap | `widgets/profile/profile_mini_map.dart` | 프로필 "장소로 시작" 탭의 미니 맵. 선택된 시대의 region 폴리곤을 진행률로 알파 채움(검정→시대컬러), 라벨에 완료 이야기 수와 지역 퀴즈 정답/풀이 수를 `x/x`로 함께 표시한다. region 폴리곤이나 라벨을 누르면 그 지역 사건 카드 팝업이 열리고, 사건 카드 순서대로 `순번 → 첫 장면 썸네일 → 제목/정답·오답·헷갈림`을 표시하며 빨강/주황/초록 복습 상태를 카드 배경색으로 보여 준다. 모든 사건에 감정이 새겨진 region 은 지도 색과 이질감이 적은 옅은 채움 + 골드 경계선만 남겨 딱지를 모은 느낌을 준다. point-in-polygon 으로 사건↔region 매핑. |
+| ProfileLifeMap | `widgets/profile/profile_life_map.dart` | 프로필 "내 삶의 지도" 탭의 감정 새김 지도. `EventEmotionOption`의 8개 감정(기쁨/기대/감사/놀라움/안타까움/위로/두려움/기타)과 지도 영역을 1:1로 맞추고, 각 영역의 최근 새김 수와 최근 남긴 한 줄을 보여 준다. 감정 영역 배지는 아이콘+개수를 하나의 pill 로 표시하며, 영역 탭 시 `ProfileEventReviewGrid`로 사건 카드를 Era → storyIndex 순서의 3열 스크롤 그리드로 보여 주고 첫 era 및 era 변경 지점에 경계 마커를 표시한다. 최근 한 줄 날짜는 `utils/kst_date.dart`의 KST 달력 날짜 포맷터를 사용해 기기 로컬 시간대에 따라 다음 날로 밀리지 않게 표시한다. |
+| ProfileEventReviewGrid | `widgets/profile/profile_event_review_grid.dart` | 프로필 복습/감정 사건 목록 공용 그리드. `StoryEventThumbCard`를 3열로 배치하고 첫 era 및 era 변경 지점만 가는 경계선+era 이름으로 표시한다. 내 삶의 지도 감정 영역 팝업과 기록 탭 오답/헷갈림 팝업이 공유한다. |
+| StoryMapPanelController | `widgets/story_map_panel.dart` | 지도 외부 제어 API. 줌/포커스/reveal 외에 상세 페이지 이전/다음 이동용 `playEventTransition(from, to)` 로 현재/목표 사건 번호 핀을 함께 빛나게 하는 1회성 전환을 재생한다. 전환 glow 는 `map_math.buildRankedEventPointMap`의 분산 좌표를 사용해 번호 핀 중심과 맞춘다. |
+| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 저장 구절 토글). 이야기 상세에서 진입하면 저장/즐겨찾기와 별개로 읽을 본문 범위를 금색 배경과 왼쪽 선으로 임시 하이라이트한다. |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
-| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭. 컴팩트 헤더(아바타 40px + 이름 + **수정 / 설정(톱니)** 두 버튼) + 노트/말씀/중보기도 미리보기(중보 ~3.5명 fixed 320px) + **"진행률 표시" 섹션** (탭 pinned, 컨텐츠 스크롤). 설정 시트(`profile_settings_sheet.dart`)에 개인정보 보호 / 글자 크기 변경 / 로그아웃 + admin@brand-i.net 푸터. |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭. 컴팩트 헤더(아바타 40px + 이름 + **수정 / 설정(톱니)** 두 버튼) + **기록/기도/저장/말씀** 탭 + **"진행률 표시" 섹션** (탭 pinned, 컨텐츠 스크롤). 기록 탭은 푼 이야기 안의 퀴즈 문항 단위로 정답/오답/헷갈림 개수를 누적해 보여 주고 오답/헷갈림 섹션 탭 시 팝업에서 `ProfileEventReviewGrid`로 해당 사건 카드를 Era → storyIndex 순서의 3열 스크롤 그리드로 표시한다. 저장 탭은 별표 저장한 이야기를 StoryEventThumbCard 가로 캐러셀과 전체 보기로 보여 준다. 말씀 탭은 `SavedVerseRow` 디자인으로 저장한 말씀을 최대 2.5개 미리 보여 주고 하단 전체 보기로 `SavedVersesScreen`에 진입한다. 장소 미니맵의 지역 라벨/폴리곤에서 퀴즈 복습 팝업으로 진입한다. 설정 시트(`profile_settings_sheet.dart`)에 개인정보 보호 / 글자 크기 변경 / 로그아웃 + admin@brand-i.net 푸터. |
 | QuizTabPage | `widgets/quiz/quiz_tab_page.dart` | 홈 상단 "퀴즈" 버튼이 여는 페이지. 두 탭: **매일 퀴즈** (4지선다 + 제출 → 도장+별가루 + 해설) + **주간 퀴즈** (embedded WeeklyTabPage). |
 | DailyQuizSection | `widgets/quiz/daily_quiz_section.dart` | `daily_quiz` 테이블의 최신 1문제. 선택 → 제출 → CompletionCelebration 발화 + 정/오답 결과 + 해설. |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 주간 학습 (embedded 모드 지원). **두 모드** — `WeeklyMode.character` (랜덤 인물 + 그 인물의 사건) / `WeeklyMode.region` (랜덤 시대 + 사건이 있는 랜덤 region + 그 region 사건). 시드(`seedFromKey(weekKey)`)로 50/50 결정. 헤더는 모드별 분기 ("금주 인물" / "금주 지역: 시대 · 지역"). 지도 = StoryMapPanel(decorate=false, region 모드는 `eraRegionLandmarks: [region]`). 하단 = EventTimelineRow (홈과 동일 카드/스크롤/포커스 동기). 카드 탭 시 `quizWeekKey` 함께 EventDetailPage 진입 → 진행도가 `weekly_quiz_progress` 테이블에 독립 저장. |
@@ -251,7 +257,7 @@ Firebase 설정 가이드: `docs/guides/PUSH_SETUP.md`. 인프라 전반 원리:
 | ProposalScenesEditor | `widgets/proposal/proposal_scenes_editor.dart` | 장면 텍스트 + 장면 이미지 편집 |
 | ProposalStatusChip | `widgets/proposal/proposal_status_chip.dart` | pending/approved/rejected 칩 |
 | SceneCharactersGrid | `widgets/proposal/scene_characters_grid.dart` | 장면별 등장 인물 체크 그리드 |
-| **ProposalQuizEditor** | `widgets/proposal/proposal_quiz_editor.dart` | 4지선다 퀴즈 1~3개 편집기 (2026-04-22). Step 4 에서 사용. |
+| **ProposalQuizEditor** | `widgets/proposal/proposal_quiz_editor.dart` | 목회자 작성 선택지 3개 퀴즈 1~3개 편집기. 사용자용 4번 보기 "헷갈렸어요"는 승인 시 자동 추가. Step 4 에서 사용. |
 | **DeleteEventProposalSheet** | `widgets/proposal/delete_event_proposal_sheet.dart` | 기존 이야기 삭제 제안 바텀시트 (2026-04-22). EventDetailPage 에서 호출. |
 
 ### 5.5 큰 화면의 part 파일 분해 (4차 리팩토링)

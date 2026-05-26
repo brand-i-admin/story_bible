@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 3,
   "story_title": "성전 미문 치유와 첫 박해",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 3:8 — '걷고 뛰며 하나님을 찬미하며 그들과 함께 성전으로 들어가니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "성전 미문 치유 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「성전 미문 치유와 첫 박해」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "베드로전서",
-        "요한복음"
+        "치유로 군중이 모이고, 지도자들은 사도들을 막기 시작한다.",
+        "심판이 지나고 새 예루살렘과 영원한 회복이 선포된다.",
+        "1차 여행을 마치고 돌아와 하나님이 하신 일을 교회에 보고한다."
       ],
       "answer_index": 0,
-      "explanation": "행 3:1-26에 성전 미문 치유 기사가 기록됨"
+      "explanation": "행 3:1 — '제구시 기도 시간에 베드로와 요한이 성전에 올라갈새'"
     }
   ]
 }

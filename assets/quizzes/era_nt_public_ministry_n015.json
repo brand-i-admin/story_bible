@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 15,
   "story_title": "변화산",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 17:6 — '제자들이 듣고 엎드리어 심히 두려워하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "변화산 사건이 기록된 성경 책은 어디입니까?",
+      "question": "「변화산」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마가복음",
-        "사도행전",
-        "요한계시록"
+        "예수님의 영광이 드러나고 제자들은 ‘그의 말을 들으라’는 음성을 듣는다.",
+        "예수님은 불의한 재판을 받으시고 침묵 속에서 길을 걸으신다.",
+        "거짓은 공동체를 흔들고, 사건은 거룩함의 경고가 된다."
       ],
       "answer_index": 0,
-      "explanation": "막 9:2-13에 변화산 기사가 기록됨"
+      "explanation": "막 9:2 — '엿새 후에 예수께서 베드로와 야고보와 요한을 데리시고 따로 높은 산에 올라 가셨더니 저희 앞에서 변형되사'"
     }
   ]
 }

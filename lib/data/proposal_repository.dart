@@ -38,7 +38,8 @@ class ProposalRepository {
   /// 권한: 호출자가 `is_pastor=true` 여야 한다 (RPC 내부 체크).
   /// [sceneImagePaths] / [sceneImagePrompts] 는 모든 장면이 생성 완료된 뒤에만
   /// 전달한다 (길이가 storyScenes 와 일치해야 DB 에서 통과).
-  /// [quizQuestions] 는 1~3개의 4지선다 퀴즈. 해설까지 필수 (RPC CHECK).
+  /// [quizQuestions] 는 1~3개의 본문 기반 퀴즈. 사역자는 선택지 3개만
+  /// 작성하고, 사용자용 4번 보기 "헷갈렸어요"는 승인 시 자동 추가된다.
   Future<String> submit({
     required String eraId,
     int? afterStoryIndex,

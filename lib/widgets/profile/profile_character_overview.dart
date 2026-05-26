@@ -220,6 +220,20 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                         completed: completedEventIds.contains(
                                           event.id,
                                         ),
+                                        needsQuizReview:
+                                            state
+                                                .quizAttemptSummaries[event.id]
+                                                ?.needsReview ??
+                                            false,
+                                        hasConfusedQuiz:
+                                            (state
+                                                    .quizAttemptSummaries[event
+                                                        .id]
+                                                    ?.confusedCount ??
+                                                0) >
+                                            0,
+                                        attemptSummary: state
+                                            .quizAttemptSummaries[event.id],
                                         orderNumber: index + 1,
                                         loader: loader,
                                         onTap: () {

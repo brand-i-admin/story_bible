@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 19,
   "story_title": "나사로의 부활",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "요 11:35 — '예수께서 눈물을 흘리시더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "나사로의 부활 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「나사로의 부활」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "요한복음",
-        "누가복음",
-        "사도행전"
+        "예수님은 ‘나는 부활이요 생명’이라 하시며 나사로를 일으키신다.",
+        "하나님이 아브라함을 부르시고 약속의 길을 여신다.",
+        "손님을 맞이한 아브라함의 집에 불가능해 보이던 약속이 다시 선포된다. 사라는 비웃지만 하나님은 약속을 확증하신다"
       ],
       "answer_index": 0,
-      "explanation": "요 11:1-44에 나사로의 부활 기사가 기록됨"
+      "explanation": "요 11:1 — '어떤 병든 자가 있으니 이는 마리아와 그 형제 마르다의 촌 베다니에 사는 나사로라'"
     }
   ]
 }

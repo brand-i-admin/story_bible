@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 7,
   "story_title": "최후 심판과 새 하늘 새 땅",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 21:4 — '모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "최후 심판과 새 하늘 새 땅 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「최후 심판과 새 하늘 새 땅」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "요한계시록",
-        "이사야서",
-        "에스겔서"
+        "심판이 지나고 새 예루살렘과 영원한 회복이 선포된다.",
+        "절박한 믿음이 이어지는 길 위에서 예수님은 치유와 생명의 능력을 보이신다.",
+        "바울은 장로들을 불러 눈물로 권면하고 다시는 못 볼지도 모른다고 말한다."
       ],
       "answer_index": 0,
-      "explanation": "계 20:11-22:5에 최후 심판과 새 하늘 새 땅 기사가 기록됨"
+      "explanation": "계 20:11 — '또 내가 크고 흰 보좌와 그 위에 앉으신 자를 보니 땅과 하늘이 그 앞에서 피하여 간 데 없더라'"
     }
   ]
 }

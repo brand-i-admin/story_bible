@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 20,
   "story_title": "예루살렘 입성",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "막 11:8-9 — '겉옷을 길에 펴며 ... 호산나 찬송하리로다'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예루살렘 입성 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「예루살렘 입성」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마가복음",
-        "사도행전",
-        "로마서"
+        "예수님은 겸손한 왕으로 입성하시고 군중은 환호한다.",
+        "요한은 하늘 보좌의 환상을 보고 경배의 중심을 목격한다.",
+        "예수님은 광야에서 세 가지 시험을 말씀으로 이기신다."
       ],
       "answer_index": 0,
-      "explanation": "막 11:1-11에 예루살렘 입성 기사가 기록됨"
+      "explanation": "막 11:1 — '저희가 예루살렘에 가까이 와서 감람산 벳바게와 베다니에 이르렀을 때에 예수께서 제자 중 둘을 보내시며'"
     }
   ]
 }

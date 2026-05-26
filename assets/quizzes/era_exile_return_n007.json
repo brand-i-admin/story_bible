@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 7,
   "story_title": "하만의 음모: 유다인을 없애라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "에 3:6 — '유다인을 죽이고 멸하려 하더니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "하만의 유다인 학살 음모 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「하만의 음모: 유다인을 없애라」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "에스더",
-        "에스라",
-        "느헤미야"
+        "모르드개의 거절은 하만의 분노를 불러 대규모 학살 음모로 번진다.",
+        "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다.",
+        "시기는 요셉을 구덩이에 던지고 끝내 종으로 팔아넘긴다."
       ],
       "answer_index": 0,
-      "explanation": "에 3:1-15에 하만의 음모와 조서 반포 기사가 기록됨"
+      "explanation": "에 3:1 — '그 후에 아하수에로 왕이 아각 사람 함므다다의 아들 하만의 지위를 높이 올려 모든 함께 있는 대신 위에 두니'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 24,
   "story_title": "요셉의 꿈: 형제들의 시기",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 37:11 — '그 형들은 시기하되 그 아비는 그 말을 마음에 두었더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "요셉의 꿈과 형제들의 시기 이야기는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "「요셉의 꿈: 형제들의 시기」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "37장",
-        "39장",
-        "41장"
+        "요셉의 꿈과 편애가 형제들의 마음을 뒤틀리게 한다.",
+        "숨긴 탐욕이 공동체의 패배로 드러나고, 정리가 시작된다.",
+        "예수님은 어부들을 부르시고 그들은 삶의 방향을 바꾼다."
       ],
       "answer_index": 0,
-      "explanation": "창 37:1-11에 요셉의 채색옷과 두 가지 꿈 이야기가 기록됨"
+      "explanation": "창 37:1 — '야곱이 가나안 땅 곧 그 아비의 우거하던 땅에 거하였으니'"
     }
   ]
 }

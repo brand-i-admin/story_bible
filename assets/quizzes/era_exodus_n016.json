@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 16,
   "story_title": "놋뱀: 바라보라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "민 21:9 — '뱀에게 물린 자마다 놋뱀을 쳐다 본즉 살더라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "놋뱀 사건이 기록된 성경 책은 어디입니까?",
+      "question": "「놋뱀: 바라보라」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "민수기",
-        "출애굽기",
-        "신명기"
+        "원망 속에서 고통이 번지지만, 하나님은 ‘바라봄’으로 살 길을 주신다.",
+        "바울은 재판 자리에서 증언하고 ‘가이사에게 상소’한다.",
+        "분노가 다스려지지 않자 형제가 형제를 해친다."
       ],
       "answer_index": 0,
-      "explanation": "민 21:4-9에 놋뱀 사건이 기록됨"
+      "explanation": "민 21:4 — '백성이 호르 산에서 진행하여 홍해 길로 좇아 에돔 땅을 둘러 행하려 하였다가 길로 인하여 백성의 마음이 상하니라'"
     }
   ]
 }

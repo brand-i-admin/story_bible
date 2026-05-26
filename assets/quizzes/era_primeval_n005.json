@@ -2,7 +2,7 @@
   "era_code": "era_primeval",
   "story_index": 5,
   "story_title": "가인과 아벨: 들판의 비극",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 4:5 — '가인이 심히 분하여 안색이 변하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "가인과 아벨 이야기는 성경 어느 책에 기록되어 있습니까?",
+      "question": "「가인과 아벨: 들판의 비극」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "창세기",
-        "민수기",
-        "사무엘상"
+        "분노가 다스려지지 않자 형제가 형제를 해친다.",
+        "막다른 길에서 하나님이 길을 여시고 백성은 두려움에서 믿음으로 옮겨간다.",
+        "엘리야는 떠나고, 엘리사는 겉옷과 사명을 이어받는다."
       ],
       "answer_index": 0,
-      "explanation": "창 4:1-16에 가인과 아벨의 제사와 살인 사건이 기록됨"
+      "explanation": "창 4:1 — '아담이 그 아내 하와와 동침하매 하와가 잉태하여 가인을 낳고 이르되 내가 여호와로 말미암아 득남 하였다 하니라'"
     }
   ]
 }

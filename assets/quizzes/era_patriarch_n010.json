@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 10,
   "story_title": "이삭 탄생과 하갈 추방",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 21:15-16 — '그 아이를 관목 아래 두고 ... 방성대곡하니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "이삭 탄생과 하갈 추방 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "「이삭 탄생과 하갈 추방」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "21장",
-        "17장",
-        "25장"
+        "약속의 아들이 태어나지만 가정의 갈등은 하갈을 광야로 내몬다.",
+        "엘리야는 떠나고, 엘리사는 겉옷과 사명을 이어받는다.",
+        "하나님이 말씀으로 세상을 창조하시고 안식으로 완성하신다."
       ],
       "answer_index": 0,
-      "explanation": "창 21:1-21에 이삭 출생, 이스마엘과 하갈의 추방이 기록됨"
+      "explanation": "창 21:1 — '여호와께서 그 말씀대로 사라를 권고하셨고 여호와께서 그 말씀대로 사라에게 행하셨으므로'"
     }
   ]
 }

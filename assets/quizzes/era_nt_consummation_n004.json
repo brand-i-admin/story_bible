@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 4,
   "story_title": "일곱 나팔: 경고의 울림",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 9:20 — '이 재앙에 죽지 않고 남은 사람들은 … 회개치 아니하고'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "일곱 나팔 환상이 기록된 성경 책은 어디입니까?",
+      "question": "「일곱 나팔: 경고의 울림」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "요한계시록",
-        "스가랴서",
-        "민수기"
+        "나팔이 울리며 경고가 반복되고 회개의 촉구가 이어진다.",
+        "예수님은 팔복을 선포하시고 하나님 나라 백성이 어떤 사람인지 가르치신다.",
+        "엘리야는 절망 속에서 ‘세미한 음성’으로 다시 부르심을 받는다."
       ],
       "answer_index": 0,
-      "explanation": "계 8:1-11:19에 일곱 나팔 환상이 기록됨"
+      "explanation": "계 8:1 — '일곱째 인을 떼실 때에 하늘이 반 시 동안쯤 고요하더니'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 10,
   "story_title": "산상수훈(2): 더 깊은 의",
-  "source_version": "2026-04-30",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 5:44 — '너희 원수를 사랑하며 너희를 박해하는 자를 위하여 기도하라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "이 가르침은 산상수훈의 어느 장에서 나옵니까?",
+      "question": "「산상수훈(2): 더 깊은 의」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마태복음 5장",
-        "마태복음 7장",
-        "누가복음 6장"
+        "예수님은 율법을 완성하시며 겉이 아니라 마음의 의를 가르치신다.",
+        "예수님은 선한 사마리아인 비유로 참된 이웃 사랑이 무엇인지 가르치신다.",
+        "하나님이 아브라함을 부르시고 약속의 길을 여신다."
       ],
       "answer_index": 0,
-      "explanation": "마 5:17-48에 율법의 더 깊은 의에 대한 가르침이 기록됨"
+      "explanation": "마 5:17 — '내가 율법이나 선지자나 폐하러 온 줄로 생각지 말라 폐하러 온 것이 아니요 완전케 하려 함이로라'"
     }
   ]
 }

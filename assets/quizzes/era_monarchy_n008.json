@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 8,
   "story_title": "사울의 최후: 엔돌과 길보아",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "삼상 28:5-7 — '사울이 ... 두려워서 그 마음이 크게 떨린지라 ... 신접한 여인을 찾으라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "사울의 최후가 기록된 성경 책은 어디입니까?",
+      "question": "「사울의 최후: 엔돌과 길보아」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사무엘상",
-        "사무엘하",
-        "열왕기상"
+        "사울의 두려움은 어두운 선택으로 이어지고 결국 전장에서 끝난다.",
+        "작은 나눔이 시작점이 되어 많은 사람이 먹고 남는다.",
+        "예수님은 십자가에서 마지막까지 사랑을 드러내신다."
       ],
       "answer_index": 0,
-      "explanation": "삼상 28:5-20, 31:1-6에 사울의 마지막 날들이 기록됨"
+      "explanation": "삼상 28:5 — '사울이 블레셋 사람의 군대를 보고 두려워서 그 마음이 크게 떨린지라'"
     }
   ]
 }

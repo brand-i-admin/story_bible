@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 12,
   "story_title": "폭풍을 잠잠케 하심",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "눅 8:25 — '제자들에게 이르시되 너희 믿음이 어디 있느냐 하시니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "폭풍을 잠잠케 하신 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「폭풍을 잠잠케 하심」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마가복음, 마태복음, 누가복음",
-        "요한복음만",
-        "마태복음과 요한복음"
+        "두려움 속 제자들 앞에서 예수님은 바람과 물결을 잠잠케 하신다.",
+        "회복 이후의 자랑은 또 다른 위기를 예고한다.",
+        "하나님은 별처럼 많은 자손을 약속하시고 언약을 확증하신다."
       ],
       "answer_index": 0,
-      "explanation": "막 4:35-41, 마 8:23-27, 눅 8:22-25에 폭풍 잠잠 기사가 기록됨"
+      "explanation": "막 4:35 — '그날 저물 때에 제자들에게 이르시되 우리가 저편으로 건너가자 하시니'"
     }
   ]
 }

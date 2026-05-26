@@ -2,7 +2,7 @@
   "era_code": "era_nt_post_apostolic",
   "story_index": 1,
   "story_title": "성전 파괴: 예루살렘의 큰 전환",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 24:1 — '제자들이 성전 건물들을 가리켜 보이려고 나아오니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "성전 파괴 예언이 기록된 성경 책은 어디입니까?",
+      "question": "「성전 파괴: 예루살렘의 큰 전환」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마태복음",
-        "요한계시록",
-        "다니엘서"
+        "AD 70 예루살렘 성전이 파괴되며 시대의 큰 전환이 일어난다.",
+        "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
+        "먹을 것이 없던 광야에서 하나님은 매일의 양식을 주시며 ‘신뢰’를 훈련하신다."
       ],
       "answer_index": 0,
-      "explanation": "마 24:1-2에 성전 파괴 예언이 기록됨"
+      "explanation": "마 24:1 — '예수께서 성전에서 나와서 가실 때에 제자들이 성전 건물들을 가리켜 보이려고 나아오니'"
     }
   ]
 }

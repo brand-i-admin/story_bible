@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 6,
   "story_title": "예수의 세례",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "요 1:34 — '내가 보고 그가 하나님의 아들이심을 증거하였노라 하니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님의 세례 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「예수의 세례」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마태복음, 마가복음, 누가복음, 요한복음",
-        "마태복음과 누가복음만",
-        "요한복음만"
+        "예수님이 세례를 받으실 때 하늘의 음성과 표징이 나타난다.",
+        "바울은 회당에서 설교하고, 복음은 이방인에게 크게 확장된다.",
+        "두려움으로 맞이한 재회는 포옹과 눈물로 풀린다."
       ],
       "answer_index": 0,
-      "explanation": "마 3:13-17, 막 1:9-11, 눅 3:21-22, 요 1:29-34에 모두 기록됨"
+      "explanation": "마 3:13 — '이 때에 예수께서 갈릴리로서 요단강에 이르러 요한에게 세례를 받으려 하신대'"
     }
   ]
 }

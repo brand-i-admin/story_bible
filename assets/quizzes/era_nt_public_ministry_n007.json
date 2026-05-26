@@ -2,7 +2,7 @@
   "era_code": "era_nt_public_ministry",
   "story_index": 7,
   "story_title": "광야 시험",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "마 4:4 — '예수께서 대답하여 가라사대 기록되었으되'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "예수님의 광야 시험 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「광야 시험」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "마태복음, 마가복음, 누가복음",
-        "마태복음만",
-        "요한복음만"
+        "예수님은 광야에서 세 가지 시험을 말씀으로 이기신다.",
+        "전투의 승패는 숫자가 아니라 ‘붙드는 손’에서 드러난다.",
+        "바울은 마게도냐를 돌며 성도들을 격려하고 공동체를 세운다."
       ],
       "answer_index": 0,
-      "explanation": "마 4:1-11, 막 1:12-13, 눅 4:1-13에 광야 시험 기사가 기록됨"
+      "explanation": "마 4:1 — '그 때에 예수께서 성령에게 이끌리어 마귀에게 시험을 받으러 광야로 가사'"
     }
   ]
 }

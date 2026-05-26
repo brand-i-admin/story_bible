@@ -2,7 +2,7 @@
   "era_code": "era_nt_apostolic",
   "story_index": 8,
   "story_title": "사울 회심: 다메섹의 빛",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "행 9:4 — '저가 땅에 엎드러져 들으매 소리가 있어 가라사대'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "사울의 회심 기사가 기록된 성경 책은 어디입니까?",
+      "question": "「사울 회심: 다메섹의 빛」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사도행전",
-        "갈라디아서",
-        "빌립보서"
+        "박해자 사울은 부르심을 만나고 방향이 완전히 바뀐다.",
+        "솔로몬은 오랜 준비 끝에 성전을 건축한다.",
+        "요셉은 유혹을 거절하지만 누명을 쓰고 감옥으로 내려간다."
       ],
       "answer_index": 0,
-      "explanation": "행 9:1-19에 사울의 회심 기사가 기록됨"
+      "explanation": "행 9:1 — '사울이 주의 제자들을 대하여 여전히 위협과 살기가 등등하여 대제사장에게 가서'"
     }
   ]
 }

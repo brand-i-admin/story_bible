@@ -2,7 +2,7 @@
   "era_code": "era_exodus",
   "story_index": 7,
   "story_title": "유월절: 피로 표시된 문",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "출 12:11 — '허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "유월절 제정 기사는 출애굽기 몇 장에 기록되어 있습니까?",
+      "question": "「유월절: 피로 표시된 문」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "12장",
-        "10장",
-        "13장"
+        "이스라엘은 유월절을 준비하며 ‘보호의 표’를 문에 남긴다.",
+        "하나님은 구원받은 백성에게 살아갈 길을 선포하신다.",
+        "유다의 배신으로 예수님이 체포되고 제자들은 흩어진다."
       ],
       "answer_index": 0,
-      "explanation": "출 12:1-14에 유월절 어린 양과 피를 문설주에 바르는 규례가 기록됨"
+      "explanation": "출 12:1 — '여호와께서 애굽 땅에서 모세와 아론에게 일러 가라사대'"
     }
   ]
 }

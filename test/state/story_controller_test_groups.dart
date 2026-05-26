@@ -6,6 +6,10 @@ void main() {
   late _MockSupabaseClient mockClient;
   late _MockGoTrueClient mockAuth;
 
+  setUpAll(() {
+    registerFallbackValue(_fallbackEmotionMark);
+  });
+
   setUp(() {
     mockRepo = _MockStoryRepository();
     mockUserRepo = _MockUserRepository();
@@ -620,6 +624,88 @@ void main() {
         container.read(storyControllerProvider).displayedEventIds,
         isEmpty,
       );
+    });
+  });
+
+  group('StoryController emotion marks', () {
+    test('clearEmotionMark는 감정 새김을 삭제하고 state에서 제거한다', () async {
+      when(() => mockAuth.currentUser).thenReturn(_user(id: 'u1'));
+      when(
+        () => mockRepo.upsertEventEmotionMark(
+          userId: 'u1',
+          mark: any(named: 'mark'),
+        ),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockRepo.deleteEventEmotionMark(userId: 'u1', eventId: 'e1'),
+      ).thenAnswer((_) async {});
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+
+      await controller.setEmotionMark(
+        eventId: 'e1',
+        option: EventEmotionOption.options.first,
+        note: '기쁨이 남았다',
+      );
+      expect(
+        container.read(storyControllerProvider).eventEmotionMarks['e1']?.note,
+        '기쁨이 남았다',
+      );
+
+      await controller.clearEmotionMark(eventId: 'e1');
+
+      expect(
+        container.read(storyControllerProvider).eventEmotionMarks,
+        isNot(contains('e1')),
+      );
+      verify(
+        () => mockRepo.deleteEventEmotionMark(userId: 'u1', eventId: 'e1'),
+      ).called(1);
+    });
+  });
+
+  group('StoryController saved events', () {
+    test('toggleSavedEvent는 저장 후 state에 eventId를 추가한다', () async {
+      when(() => mockAuth.currentUser).thenReturn(_user(id: 'u1'));
+      when(
+        () => mockRepo.toggleSavedEvent(userId: 'u1', eventId: 'e1'),
+      ).thenAnswer((_) async => true);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+
+      final saved = await controller.toggleSavedEvent('e1');
+
+      expect(saved, true);
+      expect(container.read(storyControllerProvider).savedEventIds, {'e1'});
+      verify(
+        () => mockRepo.toggleSavedEvent(userId: 'u1', eventId: 'e1'),
+      ).called(1);
+    });
+
+    test('toggleSavedEvent는 해제 후 state에서 eventId를 제거한다', () async {
+      when(() => mockAuth.currentUser).thenReturn(_user(id: 'u1'));
+      when(
+        () => mockRepo.toggleSavedEvent(userId: 'u1', eventId: 'e1'),
+      ).thenAnswer((_) async => true);
+      when(
+        () => mockRepo.toggleSavedEvent(userId: 'u1', eventId: 'e2'),
+      ).thenAnswer((_) async => true);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.toggleSavedEvent('e1');
+      await controller.toggleSavedEvent('e2');
+
+      when(
+        () => mockRepo.toggleSavedEvent(userId: 'u1', eventId: 'e1'),
+      ).thenAnswer((_) async => false);
+
+      final saved = await controller.toggleSavedEvent('e1');
+
+      expect(saved, false);
+      expect(container.read(storyControllerProvider).savedEventIds, {'e2'});
     });
   });
 }

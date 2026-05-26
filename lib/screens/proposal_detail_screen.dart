@@ -553,7 +553,8 @@ class _PreviewSection extends StatelessWidget {
   }
 }
 
-/// 퀴즈 섹션 — 4지선다 1~3문항 표시. 정답은 초록 ✓ 로 강조.
+/// 퀴즈 섹션 — 목회자 입력 3개 보기 + 자동 4번 "헷갈렸어요" 표시.
+/// 정답은 초록 ✓ 로 강조.
 class _QuizSection extends StatelessWidget {
   const _QuizSection({required this.quizzes});
   final List<QuizDraft> quizzes;
@@ -614,6 +615,7 @@ class _QuizCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final displayChoices = [...quiz.choices, QuizDraft.confusedChoiceLabel];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -624,7 +626,7 @@ class _QuizCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        for (var ci = 0; ci < quiz.choices.length; ci++)
+        for (var ci = 0; ci < displayChoices.length; ci++)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: Row(
@@ -644,7 +646,7 @@ class _QuizCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    quiz.choices[ci],
+                    displayChoices[ci],
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: ci == quiz.answerIndex
                           ? const Color(0xFF2D7B4D)

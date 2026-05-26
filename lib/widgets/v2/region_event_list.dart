@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../models/character.dart';
 import '../../models/era.dart';
+import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
+import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
+import '../../theme/tokens.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../character_avatar.dart';
+import '../emotion_badge_icon.dart';
 import '../event_timeline_row.dart';
 
 /// 지역 모드 — 선택된 region 의 사건들을 시간순 가로 스크롤 (EventTimelineRow)
@@ -22,6 +26,14 @@ class RegionEventList extends StatelessWidget {
     required this.onSelectEvent,
     required this.onClose,
     this.completedEventIds = const <String>{},
+    this.eventEmotionMarks = const {},
+    this.quizAttemptSummaries = const {},
+    this.celebrationEventId,
+    this.celebrationStampLabel,
+    this.celebrationNonce = 0,
+    this.onCelebrationComplete,
+    this.quizReviewEventIds = const <String>{},
+    this.quizConfusedEventIds = const <String>{},
   });
 
   final Landmark landmark;
@@ -36,6 +48,24 @@ class RegionEventList extends StatelessWidget {
 
   /// 본문 + 퀴즈 모두 완료된 사건 id 셋. 카드 배경을 초록 톤으로 표시.
   final Set<String> completedEventIds;
+
+  /// 사용자가 지도 위에 새긴 감정. 카드 번호 배지 옆의 작은 아이콘으로 표시한다.
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+
+  /// 이야기별 최근 퀴즈 결과. 카드 배경색으로 복습 필요 정도를 표시한다.
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+
+  /// 지도 화면에서 특정 사건 카드 위에 완료 축하 효과를 1회 재생할 때 사용.
+  final String? celebrationEventId;
+  final String? celebrationStampLabel;
+  final int celebrationNonce;
+  final VoidCallback? onCelebrationComplete;
+
+  /// 최근 퀴즈에서 오답이나 "헷갈렸어요"가 있었던 사건 id 셋.
+  final Set<String> quizReviewEventIds;
+
+  /// 최근 퀴즈에서 "헷갈렸어요" 선택이 있었던 사건 id 셋.
+  final Set<String> quizConfusedEventIds;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +112,14 @@ class RegionEventList extends StatelessWidget {
                     charactersByCode: charsByCode,
                     selectedEventId: selectedEventId,
                     completedEventIds: completedEventIds,
+                    eventEmotionMarks: eventEmotionMarks,
+                    quizAttemptSummaries: quizAttemptSummaries,
+                    celebrationEventId: celebrationEventId,
+                    celebrationStampLabel: celebrationStampLabel,
+                    celebrationNonce: celebrationNonce,
+                    onCelebrationComplete: onCelebrationComplete,
+                    quizReviewEventIds: quizReviewEventIds,
+                    quizConfusedEventIds: quizConfusedEventIds,
                     onTapEvent: onSelectEvent,
                     rowHeight: 280,
                   ),
@@ -125,6 +163,10 @@ class StoryEventThumbCard extends StatelessWidget {
     required this.loader,
     required this.onTap,
     this.completed = false,
+    this.needsQuizReview = false,
+    this.hasConfusedQuiz = false,
+    this.emotionKey,
+    this.attemptSummary,
     this.orderNumber,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
@@ -134,6 +176,10 @@ class StoryEventThumbCard extends StatelessWidget {
   final Map<String, Character> charactersByCode;
   final bool selected;
   final bool completed;
+  final bool needsQuizReview;
+  final bool hasConfusedQuiz;
+  final String? emotionKey;
+  final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
@@ -172,21 +218,30 @@ class StoryEventThumbCard extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         _buildCardSurface(theme),
-        if (orderNumber != null) _OrderBadge(orderNumber: orderNumber!),
+        if (orderNumber != null ||
+            (emotionKey != null && emotionKey!.isNotEmpty))
+          _OrderBadge(orderNumber: orderNumber, emotionKey: emotionKey),
         if (selected) const _CurrentStoryBadge(),
       ],
     );
   }
 
   Widget _buildCardSurface(ThemeData theme) {
-    const completedBg = Color(0xFFDDEFD0);
-    const completedBorder = Color(0xFF7AAC4C);
+    final quizTone = _QuizCardTone.fromAttempt(attemptSummary);
+    final surfaceColor =
+        quizTone?.background ??
+        (completed
+            ? AppColors.greenTint1
+            : (selected
+                  ? theme.colorScheme.primary.withValues(alpha: 0.10)
+                  : Colors.white.withValues(alpha: 0.85)));
+    final borderColor =
+        quizTone?.border ??
+        (completed
+            ? AppColors.greenBorder
+            : (selected ? theme.colorScheme.primary : const Color(0xFFD9C9A2)));
     return Material(
-      color: completed
-          ? completedBg
-          : (selected
-                ? theme.colorScheme.primary.withValues(alpha: 0.10)
-                : Colors.white.withValues(alpha: 0.85)),
+      color: surfaceColor,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -194,14 +249,7 @@ class StoryEventThumbCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: completed
-                  ? completedBorder
-                  : (selected
-                        ? theme.colorScheme.primary
-                        : const Color(0xFFD9C9A2)),
-              width: selected ? 2 : (completed ? 1.6 : 1.2),
-            ),
+            border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
           ),
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
           child: _buildCardBody(theme),
@@ -388,41 +436,136 @@ class _ThumbSummary extends StatelessWidget {
 }
 
 class _OrderBadge extends StatelessWidget {
-  const _OrderBadge({required this.orderNumber});
+  const _OrderBadge({required this.orderNumber, this.emotionKey});
 
-  final int orderNumber;
+  final int? orderNumber;
+  final String? emotionKey;
 
   @override
   Widget build(BuildContext context) {
+    final hasEmotion = emotionKey != null && emotionKey!.isNotEmpty;
     return Positioned(
       left: -4,
       top: -4,
-      child: Container(
-        width: 24,
-        height: 24,
-        decoration: BoxDecoration(
-          color: const Color(0xFF6B4A2A),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 1.5),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x33000000),
-              blurRadius: 3,
-              offset: Offset(0, 1),
-            ),
+      child: SizedBox(
+        width: hasEmotion ? 34 : 24,
+        height: hasEmotion ? 34 : 24,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            if (hasEmotion)
+              EmotionBadgeIcon(
+                emotionKey: emotionKey!,
+                size: 30,
+                iconSize: 17,
+                elevation: true,
+              )
+            else
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6B4A2A),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1.5),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x33000000),
+                      blurRadius: 3,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${orderNumber ?? ''}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    height: 1.0,
+                    shadows: [
+                      Shadow(color: Color(0xCC000000), blurRadius: 1.8),
+                    ],
+                  ),
+                ),
+              ),
+            if (hasEmotion && orderNumber != null)
+              Positioned(
+                right: -1,
+                bottom: -1,
+                child: _TinyOrderBadge(number: orderNumber!, size: 13),
+              ),
           ],
         ),
-        alignment: Alignment.center,
-        child: Text(
-          '$orderNumber',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
-            height: 1.0,
+      ),
+    );
+  }
+}
+
+class _TinyOrderBadge extends StatelessWidget {
+  const _TinyOrderBadge({required this.number, required this.size});
+
+  final int number;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: const Color(0xFF2F9462),
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.greenRim, width: 0.9),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 2,
+            offset: Offset(0, 1),
           ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '$number',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 7,
+          fontWeight: FontWeight.w900,
+          height: 1.0,
         ),
       ),
+    );
+  }
+}
+
+class _QuizCardTone {
+  const _QuizCardTone({required this.background, required this.border});
+
+  final Color background;
+  final Color border;
+
+  static _QuizCardTone? fromAttempt(QuizAttemptSummary? attempt) {
+    if (attempt == null || attempt.totalCount <= 0) {
+      return null;
+    }
+    if (attempt.correctCount <= 0) {
+      return const _QuizCardTone(
+        background: Color(0xFFF7DAD2),
+        border: AppColors.dangerBot,
+      );
+    }
+    if (attempt.correctCount >= attempt.totalCount) {
+      return const _QuizCardTone(
+        background: AppColors.greenTint1,
+        border: AppColors.greenBorder,
+      );
+    }
+    return const _QuizCardTone(
+      background: Color(0xFFF6E7B8),
+      border: AppColors.goldDeep,
     );
   }
 }

@@ -2,7 +2,7 @@
   "era_code": "era_nt_consummation",
   "story_index": 2,
   "story_title": "어린양: 두루마리를 받다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "계 5:4 — '합당한 자가 보이지 않기로 내가 크게 울었더니'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "어린양이 두루마리를 받는 장면이 기록된 성경 책은 어디입니까?",
+      "question": "「어린양: 두루마리를 받다」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "요한계시록",
-        "다니엘서",
-        "히브리서"
+        "어린양이 두루마리를 받아 역사의 열쇠를 여는 존재로 드러난다.",
+        "다윗은 복수의 기회를 놓아주며 ‘손대지 않음’으로 자신의 길을 지킨다.",
+        "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다."
       ],
       "answer_index": 0,
-      "explanation": "계 5:1-14에 어린양이 두루마리를 받는 장면이 기록됨"
+      "explanation": "계 5:1 — '내가 보매 보좌에 앉으신 이의 오른손에 책이 있으니 안팎으로 썼고 일곱 인으로 봉하였더라'"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "era_code": "era_exile_return",
   "story_index": 1,
   "story_title": "마른 뼈: 숨이 들어오다",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "마른 뼈 환상이 기록된 성경 책은 어디입니까?",
+      "question": "「마른 뼈: 숨이 들어오다」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "에스겔",
-        "예레미야",
-        "이사야"
+        "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다.",
+        "소년 다윗은 믿음으로 거인을 맞서 전세를 뒤집는다.",
+        "느헤미야는 예루살렘 소식을 듣고 눈물로 기도한 뒤 파송을 받는다."
       ],
       "answer_index": 0,
-      "explanation": "겔 37:1-14에 마른 뼈 환상과 이스라엘 회복 예언이 기록됨"
+      "explanation": "겔 37:1 — '여호와께서 권능으로 내게 임하시고 그 신으로 나를 데리고 가서 골짜기 가운데 두셨는데 거기 뼈 가 가득하더라'"
     }
   ]
 }

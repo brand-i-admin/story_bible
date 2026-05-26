@@ -2,7 +2,7 @@
   "era_code": "era_monarchy",
   "story_index": 11,
   "story_title": "다윗 언약: 집을 세우리라",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "삼하 7:13 — '저는 내 이름을 위하여 집을 건축할 것이요'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "다윗 언약이 기록된 성경 책은 어디입니까?",
+      "question": "「다윗 언약: 집을 세우리라」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "사무엘하",
-        "사무엘상",
-        "열왕기상"
+        "하나님은 다윗에게 ‘네 집과 왕위를 견고케 하겠다’는 약속을 주신다.",
+        "예수님은 ‘나는 부활이요 생명’이라 하시며 나사로를 일으키신다.",
+        "아브라함과 롯이 함께 머물기에 좁아지자 둘은 다른 곳으로 향한다."
       ],
       "answer_index": 0,
-      "explanation": "삼하 7:1-17에 다윗 언약이 기록됨"
+      "explanation": "삼하 7:1 — '여호와께서 사방의 모든 대적을 파하사 왕으로 궁에 평안히 거하게 하신 때에'"
     }
   ]
 }

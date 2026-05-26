@@ -93,7 +93,7 @@ class LegalDocumentsScreen extends StatelessWidget {
                             icon: Icons.verified_user_outlined,
                             title: '개인정보 처리방침',
                             subtitle:
-                                '로그인, 프로필, 노트, 저장한 말씀, 기도제목 공유 기능에서 처리되는 개인정보 기준을 안내합니다.',
+                                '로그인, 프로필, 저장한 이야기와 말씀, 기도제목 공유 기능에서 처리되는 개인정보 기준을 안내합니다.',
                             filePath:
                                 'https://brand-i-admin.github.io/story-bible-pages/privacy-policy.html',
                             onTap: () {
@@ -560,14 +560,14 @@ const _termsDocument = _LegalDocument(
     _LegalSection(
       title: '1. 목적',
       paragraphs: [
-        '이 약관은 Story Bible(이야기 성경) 운영자가 제공하는 성경 이야기 탐색, 지도 보기, 인물 학습, 노트, 저장한 말씀, 기도제목 공유 기능의 이용과 관련하여 운영자와 이용자 간 권리와 의무를 정하는 것을 목적으로 합니다.',
+        '이 약관은 Story Bible(이야기 성경) 운영자가 제공하는 성경 이야기 탐색, 지도 보기, 인물 학습, 이야기와 말씀 저장, 기도제목 공유 기능의 이용과 관련하여 운영자와 이용자 간 권리와 의무를 정하는 것을 목적으로 합니다.',
       ],
     ),
     _LegalSection(
       title: '2. 서비스 내용',
       paragraphs: [
         '이용자는 로그인 없이도 성경 이야기, 사건 지도, 금주 인물, 퀴즈 일부 기능을 사용할 수 있습니다.',
-        '로그인 이용자는 프로필 저장, 노트 작성, 말씀 저장, 기도제목 등록 및 공유, 학습 진행 상황 저장 기능을 사용할 수 있습니다.',
+        '로그인 이용자는 프로필 저장, 이야기와 말씀 저장, 기도제목 등록 및 공유, 학습 진행 상황 저장 기능을 사용할 수 있습니다.',
       ],
     ),
     _LegalSection(
@@ -586,7 +586,7 @@ const _termsDocument = _LegalDocument(
     _LegalSection(
       title: '5. 저장 콘텐츠',
       paragraphs: [
-        '이용자가 작성한 노트, 저장한 말씀, 프로필 정보, 기도제목은 이용자 본인의 책임 아래 관리됩니다.',
+        '이용자가 저장한 이야기와 말씀, 프로필 정보, 기도제목은 이용자 본인의 책임 아래 관리됩니다.',
         '공유 ID를 통해 다른 사람의 기도제목을 추가한 경우, 그 정보는 이용자가 직접 삭제하기 전까지 자신의 계정에 표시될 수 있습니다.',
       ],
     ),
@@ -612,7 +612,7 @@ const _termsDocument = _LegalDocument(
 const _privacyDocument = _LegalDocument(
   title: '개인정보 처리방침',
   summary:
-      'Story Bible(이야기 성경)에서 로그인, 프로필 저장, 노트, 말씀 저장, 기도제목 공유 기능을 제공하는 과정에서 처리되는 개인정보 기준을 안내합니다.',
+      'Story Bible(이야기 성경)에서 로그인, 프로필 저장, 이야기와 말씀 저장, 기도제목 공유 기능을 제공하는 과정에서 처리되는 개인정보 기준을 안내합니다.',
   effectiveDate: '2026-05-15',
   updatedDate: '2026-05-15',
   contactEmail: 'admin@brand-i.net',
@@ -621,13 +621,13 @@ const _privacyDocument = _LegalDocument(
       title: '1. 수집하는 정보',
       paragraphs: [
         '소셜 로그인 시 Apple 또는 Kakao로부터 이용자가 동의한 범위의 계정 식별 정보, 이메일, 공개 프로필 정보가 제공될 수 있습니다.',
-        '앱에서는 닉네임, 프로필 사진, 기도제목, 노트, 저장한 말씀, 퀴즈 진행 기록, 공유받은 기도제목 목록을 저장할 수 있습니다.',
+        '앱에서는 닉네임, 프로필 사진, 기도제목, 저장한 이야기와 말씀, 퀴즈 진행 기록, 공유받은 기도제목 목록을 저장할 수 있습니다.',
       ],
     ),
     _LegalSection(
       title: '2. 이용 목적',
       paragraphs: [
-        '계정 생성 및 로그인 유지, 프로필 표시, 노트와 말씀 저장, 기도제목 공유, 학습 진행 상황 저장, 서비스 안정성 확보를 위해 개인정보를 처리합니다.',
+        '계정 생성 및 로그인 유지, 프로필 표시, 이야기와 말씀 저장, 기도제목 공유, 학습 진행 상황 저장, 서비스 안정성 확보를 위해 개인정보를 처리합니다.',
       ],
     ),
     _LegalSection(
@@ -653,7 +653,7 @@ const _privacyDocument = _LegalDocument(
     _LegalSection(
       title: '6. 이용자 권리',
       paragraphs: [
-        '이용자는 자신의 프로필, 노트, 저장한 말씀, 기도제목을 수정하거나 삭제할 수 있으며, 계정 탈퇴를 요청할 수 있습니다.',
+        '이용자는 자신의 프로필, 저장한 이야기와 말씀, 기도제목을 수정하거나 삭제할 수 있으며, 계정 탈퇴를 요청할 수 있습니다.',
       ],
     ),
     _LegalSection(

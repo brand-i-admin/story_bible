@@ -2,7 +2,7 @@
   "era_code": "era_patriarch",
   "story_index": 17,
   "story_title": "라반의 집: 레아와 라헬",
-  "source_version": "2026-04-24",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
@@ -29,16 +29,16 @@
       "explanation": "창 29:26 — '우리 지방에서는 언니보다 아우를 먼저 주는 것이 관례가 아니니라'"
     },
     {
-      "type": "bible_context",
+      "type": "story_context",
       "display_order": 2,
-      "question": "야곱이 레아와 라헬을 아내로 맞이한 기사는 창세기 몇 장에 기록되어 있습니까?",
+      "question": "「라반의 집: 레아와 라헬」에서 실제로 일어난 일은 무엇입니까?",
       "choices": [
-        "29장",
-        "24장",
-        "31장"
+        "야곱은 라헬을 사랑하지만 속임수로 레아와도 결혼하게 된다.",
+        "요셉은 야곱을 맞이하고, 이스라엘은 고센에 자리 잡는다.",
+        "소년 예수는 성전에서 율법교사들과 대화하며 자신의 정체를 드러낸다."
       ],
       "answer_index": 0,
-      "explanation": "창 29:1-30에 야곱이 라반의 집에서 봉사하고 두 아내를 얻는 이야기가 기록됨"
+      "explanation": "창 29:1 — '야곱이 발행하여 동방 사람의 땅에 이르러'"
     }
   ]
 }
