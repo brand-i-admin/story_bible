@@ -47,6 +47,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   late String _selectedTestament;
   late int _selectedChapter;
   int? _pendingFocusVerse;
+  final ScrollController _verseScrollController = ScrollController();
   final Map<String, Future<List<BibleVerse>>> _chapterCache = {};
   Set<String> _savedVerseKeys = <String>{};
 
@@ -65,6 +66,12 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
         widget.initialVerseNo ?? widget.highlightTarget?.verseNo;
     _pendingFocusVerse = (initialVerse ?? 0) > 0 ? initialVerse : null;
     _loadSavedVerseKeys();
+  }
+
+  @override
+  void dispose() {
+    _verseScrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadSavedVerseKeys() async {
@@ -265,6 +272,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
           Expanded(
             child: _BibleVersesArea(
               versesFuture: versesFuture,
+              scrollController: _verseScrollController,
               focusVerseNo: _pendingFocusVerse,
               highlightTarget: widget.highlightTarget,
               onConsumedFocus: () {
@@ -468,6 +476,7 @@ class _BibleChipsRow extends StatelessWidget {
 class _BibleVersesArea extends StatelessWidget {
   const _BibleVersesArea({
     required this.versesFuture,
+    required this.scrollController,
     required this.focusVerseNo,
     required this.highlightTarget,
     required this.onConsumedFocus,
@@ -476,11 +485,14 @@ class _BibleVersesArea extends StatelessWidget {
   });
 
   final Future<List<BibleVerse>> versesFuture;
+  final ScrollController scrollController;
   final int? focusVerseNo;
   final BibleNavigationTarget? highlightTarget;
   final VoidCallback onConsumedFocus;
   final Set<String> savedVerseKeys;
   final void Function(BibleVerse) onTapStar;
+
+  static const double _estimatedVerseRowExtent = 82;
 
   @override
   Widget build(BuildContext context) {
@@ -516,13 +528,13 @@ class _BibleVersesArea extends StatelessWidget {
         final focus = focusVerseNo;
         if (focus != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            void scrollToFocusedVerse({
+            bool scrollToFocusedVerse({
               required Duration duration,
-              double alignment = 0.18,
+              double alignment = 0.0,
             }) {
               final ctx = focusKey.currentContext;
               if (ctx == null || !ctx.mounted) {
-                return;
+                return false;
               }
               Scrollable.ensureVisible(
                 ctx,
@@ -530,19 +542,41 @@ class _BibleVersesArea extends StatelessWidget {
                 curve: Curves.easeOutCubic,
                 alignment: alignment,
               );
+              return true;
             }
 
-            scrollToFocusedVerse(duration: const Duration(milliseconds: 320));
-            Future<void>.delayed(const Duration(milliseconds: 140), () {
+            if (!context.mounted) {
+              return;
+            }
+            final didFindFocusedVerse = scrollToFocusedVerse(
+              duration: const Duration(milliseconds: 320),
+            );
+            if (!didFindFocusedVerse && scrollController.hasClients) {
+              final focusIndex = verses.indexWhere((v) => v.verseNo == focus);
+              if (focusIndex >= 0) {
+                final position = scrollController.position;
+                final offset = (focusIndex * _estimatedVerseRowExtent).clamp(
+                  position.minScrollExtent,
+                  position.maxScrollExtent,
+                );
+                scrollController.animateTo(
+                  offset,
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeOutCubic,
+                );
+              }
+            }
+            Future<void>.delayed(const Duration(milliseconds: 340), () {
               scrollToFocusedVerse(
                 duration: const Duration(milliseconds: 220),
-                alignment: 0.16,
+                alignment: 0.0,
               );
               onConsumedFocus();
             });
           });
         }
         return ListView(
+          controller: scrollController,
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           children: [
             if (verses.isEmpty)

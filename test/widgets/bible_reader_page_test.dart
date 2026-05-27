@@ -67,6 +67,27 @@ void main() {
         ],
       );
       when(
+        () => storyRepository.fetchBibleVersesByChapter(
+          translation: 'KRV',
+          bookNo: 1,
+          chapterNo: 2,
+        ),
+      ).thenAnswer(
+        (_) async => List.generate(
+          30,
+          (index) => _verse(
+            bookNo: 1,
+            bookName: '창세기',
+            chapterNo: 2,
+            verseNo: index + 1,
+            text:
+                '테스트 본문 ${index + 1} 긴 본문이 이어져 실제 성경 리더처럼 '
+                '여러 줄 높이를 가진 절입니다. 자동 포커스가 화면 밖의 절도 '
+                '찾아야 합니다.',
+          ),
+        ),
+      );
+      when(
         () => userRepository.fetchSavedVersesPage(
           userId: 'user-1',
           pageIndex: 0,
@@ -136,6 +157,37 @@ void main() {
       await tester.pump();
 
       expect(find.text('끝 절을 선택하세요'), findsNothing);
+    });
+
+    testWidgets('초기 절 번호가 있으면 해당 절을 본문 목록 상단으로 올린다', (tester) async {
+      tester.view.physicalSize = const Size(390, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(
+            home: BibleReaderPage(
+              initialBookNo: 1,
+              initialChapterNo: 2,
+              initialVerseNo: 16,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final listTop = tester.getTopLeft(find.byType(ListView)).dy;
+      final verseTop = tester.getTopLeft(find.textContaining('테스트 본문 16')).dy;
+
+      expect(find.text('창세기 2장'), findsOneWidget);
+      expect(verseTop, lessThanOrEqualTo(listTop + 40));
     });
   });
 }

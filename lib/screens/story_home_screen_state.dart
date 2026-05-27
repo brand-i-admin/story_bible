@@ -4,13 +4,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
 
-  /// 인트로 패널(시대/모드 선택 단계) 의 expanded 사이즈 — 컨텐츠가 짧아 0.46
-  /// 정도면 충분하다 (그 이상이면 빈 공간이 생김).
-  static const double _selectionSheetIntroSize = 0.46;
+  /// 인트로 패널(시대/모드 선택 단계) 의 기본 콘텐츠 높이.
+  /// 실제 시트 높이는 화면 높이 대비 비율로 변환하되, 컨텐츠가 짧은 화면에서는
+  /// 내부 스크롤이 맡는다.
+  static const double _selectionSheetIntroHeight = 560;
 
   /// 사건 핀 reveal 모드(region 선택 후 또는 character step 3) 의 panel 크기.
-  /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding 으로 ~0.36.
-  static const double _selectionSheetCardOnlySize = 0.36;
+  /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding.
+  static const double _selectionSheetCardOnlyHeight = 390;
   static const Duration _emotionMapPreStampDelay = Duration(milliseconds: 500);
   static const Duration _emotionMapPostStampDelay = Duration(seconds: 1);
   static const Duration _emotionMapStampFallbackSlack = Duration(
@@ -290,16 +291,66 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
 
+  double _sheetFractionForHeight(
+    Size size,
+    double height, {
+    double min = 0.20,
+    double max = _selectionSheetExpandedSize,
+  }) {
+    if (size.height <= 0) {
+      return min;
+    }
+    return (height / size.height).clamp(min, max);
+  }
+
   double _sheetMaxSizeFor(Size size) {
     final state = ref.read(storyControllerProvider);
     if (_isInRevealMode(state)) {
-      return _selectionSheetCardOnlySize;
+      return _sheetFractionForHeight(
+        size,
+        _selectionSheetCardOnlyHeight,
+        min: 0.24,
+        max: 0.38,
+      );
     }
-    // 인트로 패널 (시대 미선택 또는 모드 미선택) — 콘텐츠가 짧아 빈 공간이
-    // 생기므로 살짝 작은 비율 사용. 컨텐츠가 더 길어지면 SingleChildScrollView
-    // 가 알아서 스크롤.
+    // 인트로 패널 (시대 미선택 또는 모드 미선택) — 화면 비율이 아니라
+    // 콘텐츠 예상 높이를 기준으로 잡아, 내용 아래에 큰 빈 양피지 영역이
+    // 남지 않게 한다.
     if (_mode == null) {
-      return _selectionSheetIntroSize;
+      return _sheetFractionForHeight(
+        size,
+        _selectionSheetIntroHeight,
+        min: 0.30,
+        max: 0.44,
+      );
+    }
+    if (_mode == _SelectionMode.region) {
+      final selectedLandmarkId = state.selectedLandmarkId;
+      if (selectedLandmarkId != null) {
+        return _sheetFractionForHeight(
+          size,
+          _selectionSheetCardOnlyHeight,
+          min: 0.24,
+          max: 0.38,
+        );
+      }
+      final eraCodes = state.eras
+          .where((e) => state.selectedEraIds.contains(e.id))
+          .map((e) => e.code)
+          .toSet();
+      final eventCounts = _regionEventCounts(state);
+      final regionCount = state.landmarks
+          .where(
+            (lm) =>
+                lm.isRegion &&
+                (eventCounts[lm.id] ?? 0) > 0 &&
+                (lm.eraCodes.isEmpty || lm.eraCodes.any(eraCodes.contains)),
+          )
+          .length;
+      final rows = math.max(1, (regionCount / 2).ceil());
+      final visibleRows = rows <= 3 ? rows.toDouble() : 3.2;
+      final px = 132.0 + visibleRows * 122.0;
+      return _sheetFractionForHeight(size, px, min: 0.26, max: 0.46);
     }
     // 인물 모드 step 2 — 인물 카드 줄 수에 맞춰 sheet 높이 동적 계산.
     // 카드 mainAxisExtent 108 + spacing 8 = 행당 ~116px. 1행/2행/2.2행.
@@ -315,9 +366,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           : 2.2;
       final px = chromePx + visibleRows * rowPx;
       // viewport 높이 대비 비율 — 안전한 범위로 clamp.
-      return (px / size.height).clamp(0.28, _selectionSheetExpandedSize);
+      return _sheetFractionForHeight(size, px, min: 0.28, max: 0.48);
     }
-    return _selectionSheetExpandedSize;
+    return _sheetFractionForHeight(
+      size,
+      _selectionSheetCardOnlyHeight,
+      min: 0.24,
+      max: 0.42,
+    );
   }
 
   double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
@@ -410,10 +466,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
-    final state = ref.read(storyControllerProvider);
-    final maxExtent = _isInRevealMode(state)
-        ? _selectionSheetCardOnlySize
-        : _selectionSheetExpandedSize;
+    final viewportSize = MediaQuery.sizeOf(context);
+    final maxExtent = _sheetMaxSizeFor(viewportSize);
     final targetExtent = stage == StorySelectionPanelStage.collapsed
         ? _selectionSheetCollapsedSize
         : maxExtent;
@@ -435,11 +489,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 이미 _awaitingRevealComplete=false 면 noop.)
   void _handleRevealComplete() {
     if (!_awaitingRevealComplete) return;
-    final state = ref.read(storyControllerProvider);
-    // reveal 완료 후에도 reveal 모드이므로 카드 사이즈만 사용.
-    final expandExtent = _isInRevealMode(state)
-        ? _selectionSheetCardOnlySize
-        : _selectionSheetExpandedSize;
+    final expandExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
     setState(() {
       _awaitingRevealComplete = false;
       _selectionPanelStage = StorySelectionPanelStage.expanded;
@@ -1239,7 +1289,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
         _selectionStep = 3;
         _selectionPanelStage = StorySelectionPanelStage.expanded;
-        _selectionSheetExtent = _selectionSheetCardOnlySize;
+        _selectionSheetExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
         _mapHintDismissed = true;
         _mapCelebrationEventId = null;
         _mapCelebrationStampLabel = null;

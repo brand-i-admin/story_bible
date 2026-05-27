@@ -93,6 +93,10 @@ fontScaleProvider               // NotifierProvider<FontScaleController, FontSca
 
 `state/font_scale_providers.dart` — `FontScale` enum(`small` 0.9× / `normal` 1.0× / `large` 1.2×)과 Riverpod 프로바이더. `fontScaleBuilder`가 `MediaQuery.textScaler`에 주입해 앱 전역 텍스트에 적용된다. 저장소는 `data/font_scale_repository.dart`의 `SharedPreferences` 래퍼 사용.
 
+### 3.1.2 하단 시스템 inset 정규화
+
+`utils/system_insets.dart` — 일부 모바일 WebView/브라우저가 내비게이션 바가 없어도 작은 `MediaQuery.padding.bottom` 값을 보고하는 문제를 막는다. `MaterialApp.builder`의 `fontScaleBuilder`가 작은 bottom inset(16px 미만)을 0으로 정규화해 gesture-only/내비바 없음 환경에서는 화면 맨 아래까지 쓰고, 홈 인디케이터나 3-button 내비게이션처럼 의미 있는 inset 은 그대로 보존한다.
+
 ### 3.2 StoryState (불변 상태 클래스)
 
 ```dart
@@ -159,7 +163,7 @@ static const _palette = <Color>[
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 우측 stepper 는 **홈·1·2·?** 라벨 — step 1 dot 은 `Icons.home_rounded` 로 "intro 화면 복귀" 가 직관적. 시트는 화면 맨 아래(`bottom: 0`) 까지 차지하고 height 를 `sheetHeight + bottomInset` 으로 키운다 — 각 panel(`_buildHomeIntroPanel` / `_buildRegionPanel` / `StorySelectionPanel`) 의 자체 양피지 deco 가 nav bar 영역까지 자연스럽게 이어지고, 컨텐츠는 panel Column 마지막의 `SizedBox(bottomInset)` 로 nav bar 위에 위치 (gesture-only 단말은 bottomInset=0 → 기존 동작). 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드(`_SelectionMode.character`) 진입 시 `StoryMapPanel.suppressRegionLabels=true` 로 가나안·시내 광야·애굽 등 검정 캡슐 라벨을 숨겨 인물 path 점선이 가려지지 않게 한다. |
+| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 우측 stepper 는 **홈·1·2·?** 라벨 — step 1 dot 은 `Icons.home_rounded` 로 "intro 화면 복귀" 가 직관적. 하단 시트는 화면 맨 아래(`bottom: 0`) 에 붙되 intro/region picker/event cards 별 예상 콘텐츠 높이를 기준으로 열려, 카드 아래에 큰 빈 양피지 영역을 만들지 않는다. 의미 있는 `bottomInset` 이 있을 때만 시트 높이에 더해 nav bar 영역을 피하고, gesture-only/내비바 없음 환경은 화면 끝까지 사용한다. 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드(`_SelectionMode.character`) 진입 시 `StoryMapPanel.suppressRegionLabels=true` 로 가나안·시내 광야·애굽 등 검정 캡슐 라벨을 숨겨 인물 path 점선이 가려지지 않게 한다. |
 | ~~LoginScreen~~ | ~~`screens/login_screen.dart`~~ | 삭제됨 — InlineLoginPromptCard로 대체 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |

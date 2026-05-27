@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/story_home_screen.dart';
 import 'state/font_scale_providers.dart';
 import 'theme/app_theme.dart';
+import 'utils/system_insets.dart';
 
 /// `MaterialApp.builder`에 주입되어 `MediaQuery.textScaler`를 `fontScaleProvider`
 /// 값에 동기화한다. 테스트에서도 재사용하기 위해 top-level로 분리.
@@ -15,7 +16,7 @@ Widget fontScaleBuilder(BuildContext context, Widget? child) {
   return Consumer(
     builder: (context, ref, _) {
       final fontScale = ref.watch(fontScaleProvider);
-      final media = MediaQuery.of(context);
+      final media = normalizeTinyBottomSystemInset(MediaQuery.of(context));
       return MediaQuery(
         data: media.copyWith(textScaler: TextScaler.linear(fontScale.ratio)),
         child: child,
