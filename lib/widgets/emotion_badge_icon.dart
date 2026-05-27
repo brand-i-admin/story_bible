@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/tokens.dart';
-
 class EmotionBadgeIcon extends StatelessWidget {
   const EmotionBadgeIcon({
     super.key,
@@ -10,7 +8,6 @@ class EmotionBadgeIcon extends StatelessWidget {
     this.iconSize,
     this.backgroundColor,
     this.borderColor,
-    this.iconColor,
     this.elevation = true,
   });
 
@@ -19,32 +16,32 @@ class EmotionBadgeIcon extends StatelessWidget {
   final double? iconSize;
   final Color? backgroundColor;
   final Color? borderColor;
-  final Color? iconColor;
   final bool elevation;
 
-  static IconData iconFor(String emotionKey) {
+  static String emojiFor(String emotionKey) {
     switch (emotionKey) {
       case 'joy':
-        return Icons.auto_awesome;
+        return '🌟';
       case 'anticipation':
-        return Icons.trending_up;
+        return '🌅';
       case 'gratitude':
-        return Icons.favorite;
+        return '💛';
       case 'wonder':
-        return Icons.help_outline;
+        return '😮';
       case 'sadness':
-        return Icons.water_drop_outlined;
+        return '💧';
       case 'comfort':
-        return Icons.eco_outlined;
+        return '🌿';
       case 'fear':
-        return Icons.flash_on;
+        return '⚡';
       default:
-        return Icons.more_horiz;
+        return '🎨';
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final resolvedIconSize = iconSize ?? size * 0.62;
     return Container(
       width: size,
       height: size,
@@ -66,10 +63,23 @@ class EmotionBadgeIcon extends StatelessWidget {
             : null,
       ),
       alignment: Alignment.center,
-      child: Icon(
-        iconFor(emotionKey),
-        size: iconSize ?? size * 0.62,
-        color: iconColor ?? AppColors.ink500,
+      child: Text(
+        emojiFor(emotionKey),
+        textAlign: TextAlign.center,
+        strutStyle: StrutStyle(
+          fontSize: resolvedIconSize,
+          height: 1,
+          forceStrutHeight: true,
+        ),
+        style: TextStyle(
+          fontSize: resolvedIconSize,
+          height: 1,
+          fontFamilyFallback: const [
+            'Apple Color Emoji',
+            'Noto Color Emoji',
+            'Segoe UI Emoji',
+          ],
+        ),
       ),
     );
   }

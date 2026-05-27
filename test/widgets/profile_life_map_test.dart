@@ -102,7 +102,7 @@ void main() {
       eventId: event.id,
       emotionKey: 'joy',
       emotionLabel: '기쁨',
-      emotionEmoji: '✨',
+      emotionEmoji: '🌟',
       note: '구원의 기쁨을 기억합니다.',
       updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
     );
@@ -136,7 +136,7 @@ void main() {
           eventId: event.id,
           emotionKey: 'joy',
           emotionLabel: '기쁨',
-          emotionEmoji: '✨',
+          emotionEmoji: '🌟',
           note: '기쁨을 기억합니다.',
           updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
         ),
@@ -175,7 +175,7 @@ void main() {
       eventId: event.id,
       emotionKey: 'joy',
       emotionLabel: '기쁨',
-      emotionEmoji: '✨',
+      emotionEmoji: '🌟',
       note: '구원의 기쁨을 기억합니다.',
       updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
     );

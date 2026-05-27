@@ -139,7 +139,6 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
                         iconSize: 18,
                         backgroundColor: region.fillColor,
                         borderColor: region.strokeColor,
-                        iconColor: AppColors.ink700,
                       ),
                       const SizedBox(width: 10),
                       Expanded(

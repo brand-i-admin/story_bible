@@ -7,9 +7,13 @@ void main() {
     test('감정 선택지는 여덟 개이고 기타를 포함한다', () {
       expect(EventEmotionOption.options, hasLength(8));
       expect(EventEmotionOption.byKey('other')?.label, '기타');
-      expect(EventEmotionOption.byKey('gratitude')?.emoji, '♥');
+      expect(EventEmotionOption.byKey('joy')?.emoji, '🌟');
+      expect(EventEmotionOption.byKey('anticipation')?.emoji, '🌅');
+      expect(EventEmotionOption.byKey('gratitude')?.emoji, '💛');
+      expect(EventEmotionOption.byKey('wonder')?.emoji, '😮');
       expect(EventEmotionOption.byKey('comfort')?.emoji, '🌿');
       expect(EventEmotionOption.byKey('fear')?.emoji, '⚡');
+      expect(EventEmotionOption.byKey('other')?.emoji, '🎨');
     });
 
     test('fromMap은 Supabase row를 모델로 변환한다', () {
@@ -24,7 +28,7 @@ void main() {
 
       expect(mark.eventId, 'event-1');
       expect(mark.emotionLabel, '기쁨');
-      expect(mark.emotionEmoji, '✨');
+      expect(mark.emotionEmoji, '🌟');
       expect(
         mark.updatedAt?.toUtc().toIso8601String(),
         '2026-05-25T12:00:00.000Z',
