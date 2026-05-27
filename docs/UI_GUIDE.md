@@ -98,7 +98,7 @@ MaterialApp(theme: AppTheme.light(), ...)
 | EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 퀴즈) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
-| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (구절 북마크 + 이야기 본문 범위 임시 하이라이트) |
+| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (우측 별 아이콘 구절 저장 + 이야기 본문 범위 임시 하이라이트). 구절 본문 탭은 선택/저장 동작을 만들지 않는다 |
 | SearchBottomSheet | `widgets/search_bottom_sheet.dart` | 검색 입력 + 결과 (bottom sheet) |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |
 | NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 빨간 ! 배지 + 드롭다운 |

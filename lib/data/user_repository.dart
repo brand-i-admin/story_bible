@@ -189,50 +189,6 @@ class UserRepository {
     return _client.from('user_saved_verses').delete().eq('id', verseId);
   }
 
-  /// 여러 구절을 한 번에 저장한다. 이미 저장된 구절은 unique 제약으로 무시되도록
-  /// upsert(ignoreDuplicates: true) 사용. 빈 목록이면 noop.
-  Future<void> saveVerseRange({
-    required String userId,
-    required List<BibleVerse> verses,
-  }) async {
-    if (verses.isEmpty) return;
-    final rows = verses
-        .map(
-          (v) => {
-            'user_id': userId,
-            'translation': v.translation,
-            'book_no': v.bookNo,
-            'book_name': v.bookName,
-            'chapter_no': v.chapterNo,
-            'verse_no': v.verseNo,
-            'verse_text': v.verseText,
-          },
-        )
-        .toList(growable: false);
-    await _client
-        .from('user_saved_verses')
-        .upsert(
-          rows,
-          onConflict: 'user_id,translation,book_no,chapter_no,verse_no',
-          ignoreDuplicates: true,
-        );
-  }
-
-  /// 단일 구절 저장 해제. 키로 직접 삭제 — toggleSavedVerse 와 달리 항상 delete.
-  Future<void> unsaveVerse({
-    required String userId,
-    required BibleVerse verse,
-  }) async {
-    await _client
-        .from('user_saved_verses')
-        .delete()
-        .eq('user_id', userId)
-        .eq('translation', verse.translation)
-        .eq('book_no', verse.bookNo)
-        .eq('chapter_no', verse.chapterNo)
-        .eq('verse_no', verse.verseNo);
-  }
-
   Future<PagedResult<IntercessoryPrayerItem>> fetchIntercessoryPrayerPage({
     required int pageIndex,
     int pageSize = 12,

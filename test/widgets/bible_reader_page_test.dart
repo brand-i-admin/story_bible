@@ -118,6 +118,25 @@ void main() {
       expect(find.text('창세기 45장'), findsOneWidget);
       expect(find.textContaining('요셉이 시종하는 자들 앞에서'), findsOneWidget);
     });
+
+    testWidgets('본문 절을 눌러도 범위 저장 선택이 시작되지 않는다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+
+      expect(find.text('끝 절을 선택하세요'), findsNothing);
+    });
   });
 }
 

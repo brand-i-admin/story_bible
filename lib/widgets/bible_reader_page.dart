@@ -18,11 +18,8 @@ import 'sub_page_scaffold.dart';
 /// 구절 목록, 그리고 이전/읽기/듣기/다음 장 액션 바를 제공한다. 히어로 카드는
 /// 의도적으로 비워두고, 추후 era/메타 정보가 들어오면 다시 추가할 예정이다.
 ///
-/// **저장 모델**: 별표 토글 대신 **구역(범위) 저장**이다. 사용자가 구절 하나를
-/// 탭하면 펜딩 시작 점이 잡히고, 두 번째 구절을 탭하면 그 사이 범위 전체가
-/// 펜딩 하이라이트된다. 하단 시트에서 "저장"을 누르면 범위 내 모든 구절이
-/// `user_saved_verses` 에 일괄 insert 된다. 이미 저장된 구절을 탭하면 단일 절
-/// 저장 해제 시트가 뜬다.
+/// **저장 모델**: 우측 별 아이콘으로 단일 구절을 저장/해제한다. 구절 본문을
+/// 탭해도 선택 상태는 만들지 않는다.
 ///
 /// [initialBookNo]/[initialChapterNo]/[initialVerseNo]가 주어지면 해당 구절로
 /// 자동 스크롤한다. [highlightTarget]이 있으면 해당 이야기의 읽을 본문 범위를
@@ -52,12 +49,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   int? _pendingFocusVerse;
   final Map<String, Future<List<BibleVerse>>> _chapterCache = {};
   Set<String> _savedVerseKeys = <String>{};
-
-  // 범위 저장 펜딩 상태. 시작 점만 있고 끝 점 미정인 단계와 둘 다 정해진 단계
-  // 둘 다 표현한다. _pendingEnd 가 null 이면 "끝 절을 선택하세요" 상태.
-  int? _pendingStartVerseNo;
-  int? _pendingEndVerseNo;
-  bool _saving = false;
 
   @override
   void initState() {
@@ -124,47 +115,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     );
   }
 
-  void _resetPending() {
-    if (_pendingStartVerseNo == null && _pendingEndVerseNo == null) return;
-    setState(() {
-      _pendingStartVerseNo = null;
-      _pendingEndVerseNo = null;
-    });
-  }
-
-  void _onTapVerse(BibleVerse verse) {
-    final key = SavedBibleVerse.buildVerseKey(
-      translation: verse.translation,
-      bookNo: verse.bookNo,
-      chapterNo: verse.chapterNo,
-      verseNo: verse.verseNo,
-    );
-    final isSaved = _savedVerseKeys.contains(key);
-
-    // 펜딩 중이 아닐 때 저장된 구절 탭 → 해제 시트.
-    if (_pendingStartVerseNo == null && isSaved) {
-      _showUnsaveSheet(verse, key);
-      return;
-    }
-
-    // 시작 점 미정 → 시작 점 잡기.
-    if (_pendingStartVerseNo == null) {
-      setState(() {
-        _pendingStartVerseNo = verse.verseNo;
-        _pendingEndVerseNo = null;
-      });
-      return;
-    }
-
-    // 시작 점 동일 → 단일 절 저장으로 확정 (A→A 탭).
-    // 다른 점 → 범위 끝 점 확정.
-    setState(() {
-      _pendingEndVerseNo = verse.verseNo;
-    });
-  }
-
-  /// 우측 별 아이콘 탭 — 단일 절 저장/해제 토글. 범위 선택 흐름과 독립이다.
-  /// 펜딩 상태가 있어도 영향 주지 않고 단일 절만 즉시 토글한다.
+  /// 우측 별 아이콘 탭 - 단일 절 저장/해제 토글.
   Future<void> _onTapStar(BibleVerse verse) async {
     final user = ref.read(signedInUserProvider);
     if (user == null) {
@@ -204,139 +155,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     }
   }
 
-  Future<void> _confirmSaveRange(List<BibleVerse> versesInChapter) async {
-    final user = ref.read(signedInUserProvider);
-    if (user == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('로그인이 필요합니다.')));
-      return;
-    }
-    final start = _pendingStartVerseNo;
-    final end = _pendingEndVerseNo ?? _pendingStartVerseNo;
-    if (start == null || end == null) return;
-    final lo = start <= end ? start : end;
-    final hi = start <= end ? end : start;
-    final selected = versesInChapter
-        .where((v) => v.verseNo >= lo && v.verseNo <= hi)
-        .toList(growable: false);
-
-    setState(() => _saving = true);
-    try {
-      await ref
-          .read(userRepositoryProvider)
-          .saveVerseRange(userId: user.id, verses: selected);
-      if (!mounted) return;
-      setState(() {
-        for (final v in selected) {
-          _savedVerseKeys.add(
-            SavedBibleVerse.buildVerseKey(
-              translation: v.translation,
-              bookNo: v.bookNo,
-              chapterNo: v.chapterNo,
-              verseNo: v.verseNo,
-            ),
-          );
-        }
-        _pendingStartVerseNo = null;
-        _pendingEndVerseNo = null;
-        _saving = false;
-      });
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(
-        SnackBar(content: Text('${selected.length}개 구절을 저장했어요')),
-      );
-    } catch (error) {
-      if (!mounted) return;
-      setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('저장 중 오류가 발생했습니다.\n$error')));
-    }
-  }
-
-  Future<void> _showUnsaveSheet(BibleVerse verse, String verseKey) async {
-    final user = ref.read(signedInUserProvider);
-    if (user == null) return;
-    final confirmed = await showModalBottomSheet<bool>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) => _BottomSheetContainer(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
-              child: Text(
-                '${verse.bookName} ${verse.chapterNo}:${verse.verseNo}',
-                style: const TextStyle(
-                  color: AppColors.ink800,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 14),
-              child: Text(
-                verse.verseText,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppColors.ink600,
-                  fontSize: 13,
-                  height: 1.5,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _SheetTextButton(
-                      label: '취소',
-                      onTap: () => Navigator.of(ctx).pop(false),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _SheetPrimaryButton(
-                      label: '저장 해제',
-                      tone: _SheetTone.danger,
-                      onTap: () => Navigator.of(ctx).pop(true),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-    try {
-      await ref
-          .read(userRepositoryProvider)
-          .unsaveVerse(userId: user.id, verse: verse);
-      if (!mounted) return;
-      setState(() {
-        _savedVerseKeys.remove(verseKey);
-      });
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(const SnackBar(content: Text('저장이 해제되었어요')));
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('해제 중 오류가 발생했습니다.\n$error')));
-    }
-  }
-
   void _goToChapter(int delta) {
     final maxChapter = bibleBooks[_selectedBookNo - 1].chapters;
     final next = _selectedChapter + delta;
@@ -344,8 +162,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     setState(() {
       _selectedChapter = next;
       _pendingFocusVerse = null;
-      _pendingStartVerseNo = null;
-      _pendingEndVerseNo = null;
     });
   }
 
@@ -358,8 +174,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
       _selectedTestament = bookNo >= 40 ? 'new' : 'old';
       _selectedChapter = chapterNo;
       _pendingFocusVerse = verse.verseNo > 0 ? verse.verseNo : null;
-      _pendingStartVerseNo = null;
-      _pendingEndVerseNo = null;
     });
   }
 
@@ -429,8 +243,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                   _selectedChapter = maxChapter;
                 }
                 _pendingFocusVerse = null;
-                _pendingStartVerseNo = null;
-                _pendingEndVerseNo = null;
               });
             },
             onBookChanged: (bookNo) {
@@ -441,24 +253,18 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                   _selectedChapter = maxChapter;
                 }
                 _pendingFocusVerse = null;
-                _pendingStartVerseNo = null;
-                _pendingEndVerseNo = null;
               });
             },
             onChapterChanged: (chapter) {
               setState(() {
                 _selectedChapter = chapter;
                 _pendingFocusVerse = null;
-                _pendingStartVerseNo = null;
-                _pendingEndVerseNo = null;
               });
             },
           ),
           Expanded(
             child: _BibleVersesArea(
               versesFuture: versesFuture,
-              pendingStart: _pendingStartVerseNo,
-              pendingEnd: _pendingEndVerseNo,
               focusVerseNo: _pendingFocusVerse,
               highlightTarget: widget.highlightTarget,
               onConsumedFocus: () {
@@ -470,7 +276,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                 });
               },
               savedVerseKeys: _savedVerseKeys,
-              onTapVerse: _onTapVerse,
               onTapStar: _onTapStar,
             ),
           ),
@@ -487,18 +292,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               );
             },
           ),
-          if (_pendingStartVerseNo != null)
-            _PendingActionBar(
-              start: _pendingStartVerseNo!,
-              end: _pendingEndVerseNo,
-              saving: _saving,
-              onCancel: _resetPending,
-              onSave: () async {
-                final verses = await versesFuture;
-                if (!mounted) return;
-                await _confirmSaveRange(verses);
-              },
-            ),
         ],
       ),
     );
@@ -675,24 +468,18 @@ class _BibleChipsRow extends StatelessWidget {
 class _BibleVersesArea extends StatelessWidget {
   const _BibleVersesArea({
     required this.versesFuture,
-    required this.pendingStart,
-    required this.pendingEnd,
     required this.focusVerseNo,
     required this.highlightTarget,
     required this.onConsumedFocus,
     required this.savedVerseKeys,
-    required this.onTapVerse,
     required this.onTapStar,
   });
 
   final Future<List<BibleVerse>> versesFuture;
-  final int? pendingStart;
-  final int? pendingEnd;
   final int? focusVerseNo;
   final BibleNavigationTarget? highlightTarget;
   final VoidCallback onConsumedFocus;
   final Set<String> savedVerseKeys;
-  final void Function(BibleVerse) onTapVerse;
   final void Function(BibleVerse) onTapStar;
 
   @override
@@ -755,21 +542,6 @@ class _BibleVersesArea extends StatelessWidget {
             });
           });
         }
-        final pendingLo = pendingStart == null
-            ? null
-            : (pendingEnd == null
-                  ? pendingStart!
-                  : (pendingStart! <= pendingEnd!
-                        ? pendingStart!
-                        : pendingEnd!));
-        final pendingHi = pendingStart == null
-            ? null
-            : (pendingEnd == null
-                  ? pendingStart!
-                  : (pendingStart! <= pendingEnd!
-                        ? pendingEnd!
-                        : pendingStart!));
-
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           children: [
@@ -811,11 +583,6 @@ class _BibleVersesArea extends StatelessWidget {
                       verseNo: v.verseNo,
                     ) ??
                     false;
-                final inPending =
-                    pendingLo != null &&
-                    pendingHi != null &&
-                    v.verseNo >= pendingLo &&
-                    v.verseNo <= pendingHi;
                 final prevSaved =
                     i > 0 &&
                     savedVerseKeys.contains(
@@ -840,16 +607,12 @@ class _BibleVersesArea extends StatelessWidget {
                   key: focus != null && v.verseNo == focus ? focusKey : null,
                   verse: v,
                   isSaved: isSaved,
-                  isInPending: inPending,
-                  isPendingStart:
-                      pendingStart != null && v.verseNo == pendingStart,
                   isInReadRange: isInReadRange,
                   isReadRangeBoundary: isReadRangeBoundary,
                   joinAbove: prevSaved && isSaved,
                   joinBelow: nextSaved && isSaved,
                   isFirst: i == 0,
                   isLast: i == verses.length - 1,
-                  onTap: () => onTapVerse(v),
                   onTapStar: () => onTapStar(v),
                 );
               }),
@@ -866,22 +629,17 @@ class _VerseRow extends StatelessWidget {
     super.key,
     required this.verse,
     required this.isSaved,
-    required this.isInPending,
-    required this.isPendingStart,
     required this.isInReadRange,
     required this.isReadRangeBoundary,
     required this.joinAbove,
     required this.joinBelow,
     required this.isFirst,
     required this.isLast,
-    required this.onTap,
     required this.onTapStar,
   });
 
   final BibleVerse verse;
   final bool isSaved;
-  final bool isInPending;
-  final bool isPendingStart;
   final bool isInReadRange;
   final bool isReadRangeBoundary;
   final bool joinAbove;
@@ -889,22 +647,17 @@ class _VerseRow extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
 
-  /// 행 본문(번호 + 텍스트) 탭. 범위 저장 시작/끝 토글.
-  final VoidCallback onTap;
-
-  /// 우측 별 아이콘 탭. 단일 절 저장/해제 토글. 범위 저장 흐름과 독립.
+  /// 우측 별 아이콘 탭. 단일 절 저장/해제 토글.
   final VoidCallback onTapStar;
 
   @override
   Widget build(BuildContext context) {
-    final highlight = isInPending
-        ? const Color(0x55E2BE57)
-        : isInReadRange
+    final highlight = isInReadRange
         ? const Color(0x44E2BE57)
         : isSaved
         ? const Color(0x33E2BE57)
         : Colors.transparent;
-    final leadingBorder = isInReadRange && !isInPending
+    final leadingBorder = isInReadRange
         ? Border(
             left: BorderSide(
               color: const Color(0xFFE2A93D),
@@ -928,22 +681,19 @@ class _VerseRow extends StatelessWidget {
                   number: verse.verseNo,
                   isFirst: isFirst,
                   isLast: isLast,
-                  accent: isInPending || isPendingStart || isReadRangeBoundary,
+                  accent: isReadRangeBoundary,
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: InkWell(
-                  onTap: onTap,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 8, 4),
-                    child: Text(
-                      verse.verseText,
-                      style: const TextStyle(
-                        color: AppColors.ink800,
-                        fontSize: 15,
-                        height: 1.45,
-                      ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 4, 8, 4),
+                  child: Text(
+                    verse.verseText,
+                    style: const TextStyle(
+                      color: AppColors.ink800,
+                      fontSize: 15,
+                      height: 1.45,
                     ),
                   ),
                 ),
@@ -958,7 +708,7 @@ class _VerseRow extends StatelessWidget {
 }
 
 /// 구절 우측의 즐겨찾기 별 아이콘. 저장 여부에 따라 채워짐/외곽선이 바뀐다.
-/// 범위 저장 UX와 독립 — 탭하면 그 구절 하나만 user_saved_verses 에 토글된다.
+/// 탭하면 그 구절 하나만 user_saved_verses 에 토글된다.
 class _VerseStarButton extends StatelessWidget {
   const _VerseStarButton({required this.saved, required this.onTap});
 
@@ -1198,172 +948,5 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(width: 1, height: 18, color: const Color(0x33745D3F));
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────
-// 펜딩 액션 바 — 시작 점만 잡힌 상태와 끝 점까지 잡힌 상태 둘 다 표현.
-// ─────────────────────────────────────────────────────────────────────────
-
-class _PendingActionBar extends StatelessWidget {
-  const _PendingActionBar({
-    required this.start,
-    required this.end,
-    required this.saving,
-    required this.onCancel,
-    required this.onSave,
-  });
-
-  final int start;
-  final int? end;
-  final bool saving;
-  final VoidCallback onCancel;
-  final Future<void> Function() onSave;
-
-  @override
-  Widget build(BuildContext context) {
-    final hasEnd = end != null;
-    final lo = hasEnd ? (start <= end! ? start : end!) : start;
-    final hi = hasEnd ? (start <= end! ? end! : start) : start;
-    final label = hasEnd
-        ? (lo == hi ? '$lo절 저장' : '$lo–$hi절 저장')
-        : '끝 절을 선택하세요';
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFAF7E9D1),
-        border: Border(top: BorderSide(color: Color(0x44A89364), width: 1)),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: AppColors.ink800,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            _SheetTextButton(label: '취소', onTap: saving ? () {} : onCancel),
-            const SizedBox(width: 8),
-            _SheetPrimaryButton(
-              label: saving ? '저장 중...' : '저장',
-              tone: hasEnd ? _SheetTone.primary : _SheetTone.disabled,
-              onTap: !hasEnd || saving ? () {} : () => onSave(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────
-// 시트 공용 버튼/컨테이너.
-// ─────────────────────────────────────────────────────────────────────────
-
-class _BottomSheetContainer extends StatelessWidget {
-  const _BottomSheetContainer({required this.child});
-  final Widget child;
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: Color(0xFAF7E9D1),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SafeArea(top: false, child: child),
-    );
-  }
-}
-
-enum _SheetTone { primary, danger, disabled }
-
-class _SheetTextButton extends StatelessWidget {
-  const _SheetTextButton({required this.label, required this.onTap});
-  final String label;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF1E2C6),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0x88B89A66), width: 1),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF6A4F2A),
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SheetPrimaryButton extends StatelessWidget {
-  const _SheetPrimaryButton({
-    required this.label,
-    required this.onTap,
-    required this.tone,
-  });
-  final String label;
-  final VoidCallback onTap;
-  final _SheetTone tone;
-  @override
-  Widget build(BuildContext context) {
-    final colors = switch (tone) {
-      _SheetTone.primary => const [
-        AppColors.greenBtnTop,
-        AppColors.greenBtnBot,
-      ],
-      _SheetTone.danger => const [Color(0xFFC25448), Color(0xFF8C3A30)],
-      _SheetTone.disabled => const [Color(0xFFD9C7A4), Color(0xFFB99B6E)],
-    };
-    final fg = tone == _SheetTone.disabled
-        ? const Color(0xCCFFFFFF)
-        : Colors.white;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: colors,
-            ),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: fg,
-              fontWeight: FontWeight.w900,
-              fontSize: 13,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
