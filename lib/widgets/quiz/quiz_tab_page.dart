@@ -11,7 +11,7 @@ import 'daily_quiz_section.dart';
 /// 홈 상단 "퀴즈" 버튼이 여는 페이지.
 ///
 /// 두 탭으로 구성:
-///  - 매일 퀴즈: `daily_quiz` 테이블의 최신 1문제 + 4지선다 + 제출 → 도장+별가루.
+///  - 매일 퀴즈: `daily_quiz` 테이블의 최신 1문제 + 가변 선택지 + 제출 → 도장+별가루.
 ///  - 주간 퀴즈: 기존 [WeeklyTabPage] 본문 (embedded 모드, scaffold 생략).
 class QuizTabPage extends ConsumerStatefulWidget {
   const QuizTabPage({

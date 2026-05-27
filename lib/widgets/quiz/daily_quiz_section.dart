@@ -8,8 +8,8 @@ import '../../state/story_controller.dart';
 import '../../theme/tokens.dart';
 import '../completion_celebration.dart';
 
-/// 매일 퀴즈 섹션 — 4지선다 + 제출 + 정/오답 시 CompletionCelebration (도장+별가루)
-/// + 해설 노출.
+/// 매일 퀴즈 섹션 — 가변 선택지 + 제출 + 정/오답 시 CompletionCelebration
+/// (도장+별가루) + 해설 노출.
 ///
 /// 사용자별 시도는 `user_daily_quiz_attempts` 테이블에 저장 — 같은 daily_quiz
 /// 가 active 인 동안엔 같은 row 유지(재제출 불가). daily_quiz 가 새로 등록되면

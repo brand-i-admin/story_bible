@@ -219,8 +219,8 @@ static const _palette = <Color>[
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (자체 상태 관리, 우측 별 아이콘으로 단일 구절 저장/해제). 구절 본문 탭은 선택 상태를 만들지 않는다. 이야기 상세에서 진입하면 저장/즐겨찾기와 별개로 읽을 본문 범위를 금색 배경과 왼쪽 선으로 임시 하이라이트한다. |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주 인물 학습 탭 (자체 데이터 로딩 + 상태) |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭. 컴팩트 헤더(아바타 40px + 이름 + **수정 / 설정(톱니)** 두 버튼)는 첫 컨텐츠 컨테이너 위에 독립 배치하고, 컨테이너 안에는 **기록/기도/저장/말씀** 탭 + **"진행률 표시" 섹션** (탭 pinned, 컨텐츠 스크롤)을 둔다. 기록 탭은 푼 이야기 안의 퀴즈 문항 단위로 정답/오답/헷갈림 개수를 누적해 `N문항 · M이야기` 형식으로 보여 주고 오답/헷갈림 섹션 탭 시 팝업에서 `ProfileEventReviewGrid`로 해당 사건 카드를 Era → storyIndex 순서의 3열 스크롤 그리드로 표시한다. 저장 탭은 별표 저장한 이야기를 요약 없는 넓은 StoryEventThumbCard 가로 캐러셀과 전체 보기로 보여 준다. 말씀 탭은 `SavedVerseRow` 디자인으로 저장한 말씀을 최대 2.5개 미리 보여 주고 하단 전체 보기로 `SavedVersesScreen`에 진입한다. 장소 미니맵의 지역 라벨/폴리곤에서 퀴즈 복습 팝업으로 진입한다. 설정 시트(`profile_settings_sheet.dart`)에 개인정보 보호 / 글자 크기 변경 / 로그아웃 + admin@brand-i.net 푸터. |
-| QuizTabPage | `widgets/quiz/quiz_tab_page.dart` | 홈 상단 "퀴즈" 버튼이 여는 페이지. 두 탭: **매일 퀴즈** (4지선다 + 제출 → 도장+별가루 + 해설) + **주간 퀴즈** (embedded WeeklyTabPage). |
-| DailyQuizSection | `widgets/quiz/daily_quiz_section.dart` | `daily_quiz` 테이블의 최신 1문제. 선택 → 제출 → CompletionCelebration 발화 + 정/오답 결과 + 해설. |
+| QuizTabPage | `widgets/quiz/quiz_tab_page.dart` | 홈 상단 "퀴즈" 버튼이 여는 페이지. 두 탭: **매일 퀴즈** (가변 선택지 + 제출 → 도장+별가루 + 해설) + **주간 퀴즈** (embedded WeeklyTabPage). |
+| DailyQuizSection | `widgets/quiz/daily_quiz_section.dart` | `daily_quiz` 테이블의 최신 1문제. `choices` 배열 길이만큼 선택지를 렌더링하고, 선택 → 제출 → CompletionCelebration 발화 + 정/오답 결과 + 해설. |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 주간 학습 (embedded 모드 지원). **두 모드** — `WeeklyMode.character` (랜덤 인물 + 그 인물의 사건) / `WeeklyMode.region` (랜덤 시대 + 사건이 있는 랜덤 region + 그 region 사건). 시드(`seedFromKey(weekKey)`)로 50/50 결정. 헤더는 모드별 분기 ("금주 인물" / "금주 지역: 시대 · 지역"). 지도 = StoryMapPanel(decorate=false, region 모드는 `eraRegionLandmarks: [region]`). 하단 = EventTimelineRow (홈과 동일 카드/스크롤/포커스 동기). 카드 탭 시 `quizWeekKey` 함께 EventDetailPage 진입 → 진행도가 `weekly_quiz_progress` 테이블에 독립 저장. |
 | CharacterAvatar | `widgets/character_avatar.dart` | 인물 아바타 (주간/프로필 공용) |
 

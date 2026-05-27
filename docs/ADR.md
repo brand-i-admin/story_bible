@@ -479,3 +479,25 @@
   - 마이그레이션 적용 이력 추적 테이블 (`_schema_migrations`) 도입해 같은 파일 중복 실행 방지 — 현재는 idempotent 패턴으로 안전하지만, 마이그레이션 수가 누적되면 매번 모두 실행은 비효율.
   - GitHub Actions 로 main 머지 시 dev `make db-migrate` 자동 실행 — prod 자동 적용은 위험하니 수동 trigger 유지.
   - Supabase CLI 의 정식 마이그레이션 (`supabase db push`) 으로 전환 — `supabase_migrations.schema_migrations` 자동 추적 + Studio 통합. 다만 본 프로젝트는 db_init.sql 을 신규 환경 부트스트랩 용도로 유지하고 싶어 두 트랙 병행 (CLI 는 마이그레이션만 추적).
+
+## ADR-024: 매일 퀴즈 가변 선택지 + 지도 기반 시드 풀 (2026-05-27)
+
+- **배경**: ADR-021 의 매일 퀴즈는 `choice_1..4` 고정 4지선다 샘플 1건만 전제했다. 그러나 지도 학습 목적의 문항은 앱의 실제 흐름인 "시대 선택 → 사건이 있는 region 선택 → 사건 확인"을 따라야 하며, 어떤 시대는 사건 보유 region 이 2~3개뿐이라 4지선다를 강제하면 존재하지 않는 지역이나 세부 landmark 를 보기로 넣게 된다.
+- **결정**:
+  1. `daily_quiz` 를 `choices jsonb` + `answer_index` 구조로 바꿔 2~6개 선택지를 허용한다.
+  2. `slug text unique` 를 추가해 seed 재실행 시 같은 문항을 UPSERT 한다. pg_cron 이 매일 발급하는 복제 row 는 `slug=NULL` 로 두어 새 PK 를 유지한다.
+  3. `quiz_type` 을 추가해 지도 문항 유형을 보존한다: `event_region_match`, `region_event_exclusion`, `character_region_exclusion`, `character_event_region_match`, `region_event_inclusion`.
+  4. `tools/seed/build_daily_quiz_seed_sql.py` 가 현재 `assets/200_stories`, `assets/landmarks/event_region_mapping.json`, `landmarks.json`, `character_meta.json`, `db_init.sql` 을 읽어 `supabase/seeds/daily_quiz.sql` 100문항과 `docs/DAILY_QUIZ_SEED_GUIDE.md` 를 생성한다.
+  5. Flutter `DailyQuiz` 모델과 `StoryRepository.fetchLatestDailyQuiz()` 는 `choices` 배열을 읽고, `DailyQuizSection` 은 배열 길이만큼 선택지를 렌더링한다.
+- **이유**:
+  1. `수산 궁(페르시아)` 같은 값은 사용자가 선택하는 region 이 아니라 `페르시아` region 안의 세부 landmark 이므로 보기로 쓰면 앱 UX 와 어긋난다.
+  2. 선택지를 실제 사건 보유 region 으로 제한하면 퀴즈를 풀면서 사용자가 지도를 눌러 검증할 수 있다.
+  3. `slug` UPSERT 가 없으면 seed 재실행 시 daily_quiz 풀이 중복으로 쌓인다.
+- **DB/파일 변경**:
+  - `db_init.sql`: `daily_quiz.slug`, `quiz_type`, `choices jsonb`, 가변 `answer_index` check, `user_daily_quiz_attempts.selected_index` 1~6 허용.
+  - `supabase/migrations/20260527_0001_daily_quiz_variable_choices.sql`: 기존 `choice_1..4` 데이터를 `choices` 로 이관하고 `dispatch_daily_quiz_push` 를 새 스키마로 교체.
+  - `supabase/seeds/daily_quiz.sql`: 지도 기반 100문항 seed.
+  - `docs/DAILY_QUIZ_SEED_GUIDE.md`: 생성 규칙과 문항 목록.
+- **결과**:
+  - 매일 퀴즈가 전역 장소 상식이 아니라 앱 지도 탐색을 직접 유도한다.
+  - 포로 및 포로 후기 시대처럼 실제 사건 region 이 3개뿐인 시대도 정확한 3지선다로 출제할 수 있다.

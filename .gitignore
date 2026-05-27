@@ -2,7 +2,9 @@ assets_backup
 .venv
 .env
 assets/bible
-supabase/seeds
+supabase/seeds/*
+!supabase/seeds/
+!supabase/seeds/daily_quiz.sql
 
 # Miscellaneous
 *.class

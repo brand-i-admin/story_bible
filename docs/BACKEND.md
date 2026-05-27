@@ -12,13 +12,15 @@ supabase/
 ├── migrations/
 │   ├── 20260512_1144_pg_cron_dispatch_and_schedules.sql
 │   ├── 20260526_0001_allow_delete_event_emotion_marks.sql
-│   └── 20260526_0002_create_user_saved_events.sql
+│   ├── 20260526_0002_create_user_saved_events.sql
+│   └── 20260527_0001_daily_quiz_variable_choices.sql
 ├── 200_stories/                       # 생성된 시드 SQL
 │   ├── 200_stories_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
 │   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
 │   └── 200_stories_report.json
 └── seeds/
-    └── krv_bible_verses*.sql          # KRV 성경 구절 시드
+    ├── krv_bible_verses*.sql          # KRV 성경 구절 시드
+    └── daily_quiz.sql                 # 매일 지도 퀴즈 시드
 
 lib/data/
 ├── auth_repository.dart               # 인증
@@ -318,7 +320,7 @@ week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at ti
 | `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
 | `pick_weekly_character()` | pg_cron 월요일 KST 9시 (push-only) |
 | `notify_weekly_progress()` | pg_cron 수/금 KST 9시 (push-only) |
-| `dispatch_daily_quiz_push()` | pg_cron 매일 KST 9시 — daily_quiz 풀에서 random 1건 pick → 같은 content로 **새 row INSERT** → 그 question을 push 본문에 담아 push-only. 새 PK 가 생성되므로 user_daily_quiz_attempts 가 자동으로 다음 날 row 와 분리됨. |
+| `dispatch_daily_quiz_push()` | pg_cron 매일 KST 9시 — daily_quiz 풀에서 random 1건 pick → 같은 `quiz_type/question/choices/answer_index/explanation` 로 **새 row INSERT** → 그 question을 push 본문에 담아 push-only. 새 PK 가 생성되므로 user_daily_quiz_attempts 가 자동으로 다음 날 row 와 분리됨. |
 
 #### 30일 보관
 - hard delete 하지 않음. `list_my_notifications` / `unread_notification_count` 가 `WHERE created_at > now() - interval '30 days'` 로 필터.
@@ -383,13 +385,22 @@ target_user_id uuid FK→auth.users
 _(2026-05-08: `user_daily_activity` 테이블 — "연속 출석일 / 연속 인물 공부"
 스트릭 기능 — 제거됨. db_init.sql 의 `drop table if exists` 만 정리용으로 유지.)_
 
-#### `daily_quiz` (2026-05-15)
+#### `daily_quiz` (2026-05-27)
 ```sql
-id uuid PK, question text, choice_1..4 text,
-answer_index smallint, explanation text, created_at
+id uuid PK, slug text UNIQUE NULL, quiz_type text,
+question text, choices jsonb, answer_index smallint,
+explanation text, created_at
 ```
-- 매일 퀴즈 1문제. 4지선다. 공개 read.
-- 시드: `supabase/seeds/daily_quiz.sql` (샘플 1건).
+- 매일 퀴즈 1문제. 선택지는 `choices` jsonb 배열(2~6개)이고
+  `answer_index` 는 1-based 이며 배열 길이 안에 있어야 한다. 공개 read.
+- `slug` 는 seed 재실행용 안정 키다. pg_cron 이 매일 발급하는 복제 row 는
+  `slug=NULL` 로 두어 새 `daily_quiz_id` 가 생기게 한다.
+- `quiz_type`: `event_region_match`, `region_event_exclusion`,
+  `character_region_exclusion`, `character_event_region_match`,
+  `region_event_inclusion`, `general`.
+- 시드: `supabase/seeds/daily_quiz.sql` (지도 기반 100문항, slug UPSERT).
+- 빌더/가이드: `tools/seed/build_daily_quiz_seed_sql.py`,
+  `docs/DAILY_QUIZ_SEED_GUIDE.md`.
 
 #### `weekly_quiz_progress` (2026-05-15)
 ```sql
