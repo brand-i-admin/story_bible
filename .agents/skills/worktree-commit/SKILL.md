@@ -54,11 +54,19 @@ git diff --cached --stat
 ## Detached 또는 보조 Worktree 회수 흐름
 
 detached HEAD이거나 Codex가 만든 보조 worktree처럼 보이는 곳에서 커밋 요청을 받으면,
-커밋이 유실되지 않도록 먼저 구명용 브랜치를 만든다.
+커밋이 유실되지 않도록 먼저 구명용 브랜치를 만든 뒤, 대상 브랜치가 명확하면 반드시
+그 대상 브랜치까지 반영한다. 사용자가 단순히 "커밋해줘"라고만 말해도 현재 위치가
+detached/보조 worktree이고 원래 브랜치를 명확히 판별할 수 있으면, 구명 브랜치에만
+커밋하고 멈추지 말고 원래 브랜치 반영까지 완료한다.
 
 1. 대상 브랜치를 결정한다.
 - 사용자가 브랜치를 지정했으면 그 브랜치를 사용한다.
 - 사용자가 "원래 브랜치"라고만 말했고 명확히 추론할 수 있으면 그 브랜치를 사용한다.
+- 사용자가 단순히 "커밋해줘"라고 했더라도, `git worktree list --porcelain`의 primary
+  worktree가 현재 HEAD와 같은 커밋 또는 직접 조상 커밋 위의 단일 로컬 브랜치를 가리키고
+  있다면 그 브랜치를 원래 브랜치로 본다. 예: primary worktree가
+  `branch refs/heads/feat/foo`이고 보조 worktree가 그 브랜치의 HEAD에서 detached 된
+  상태라면 대상은 `feat/foo`다.
 - `git worktree list --porcelain`, `git branch --contains`, 최근 로그만으로 대상이 애매하면
   추측해서 반영하지 말고 대상 브랜치를 물어본다.
 
@@ -77,6 +85,7 @@ detached HEAD이거나 Codex가 만든 보조 worktree처럼 보이는 곳에서
   그곳에서 cherry-pick 또는 merge를 수행한다.
 - 대상 브랜치가 어디에도 체크아웃되어 있지 않으면 현재 보조 worktree에서 대상 브랜치로
   전환한 뒤 cherry-pick 또는 merge를 수행할 수 있다.
+- 대상 브랜치가 명확한데 반영하지 않고 구명 브랜치 커밋에서 멈추면 작업 미완료로 본다.
 - 충돌이 나면 worktree를 삭제하지 말고, 충돌 파일과 다음 조치를 보고한다.
 
 5. worktree 정리는 성공 조건을 모두 만족할 때만 한다.
