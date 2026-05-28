@@ -22,6 +22,7 @@ import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../utils/bible_book_meta.dart';
+import '../utils/home_back_navigation.dart';
 import '../utils/scene_asset_loader.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/character_panel.dart';
