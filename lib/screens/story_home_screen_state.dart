@@ -443,7 +443,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     if (_mode == _SelectionMode.character && _selectionStep == 2) {
       return (
-        message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「다음」 버튼을 눌러주세요.',
+        message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「→」 버튼을 눌러주세요.',
         icon: Icons.people_alt_rounded,
       );
     }
@@ -690,6 +690,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionSheetExtent = _selectionSheetExpandedSize;
       _resetMapHint();
     });
+  }
+
+  String? _previousStepButtonLabel(StoryState state) {
+    switch (_homeBackAction(state)) {
+      case HomeBackAction.exitApp:
+        return null;
+      case HomeBackAction.clearEraSelection:
+        return state.selectedEraId == null ? null : '시대 다시 선택';
+      case HomeBackAction.returnToHome:
+        return '시대/방법 변경';
+      case HomeBackAction.returnToRegionPicker:
+        return '장소 다시 선택';
+      case HomeBackAction.returnToCharacterPicker:
+        return '인물 다시 선택';
+    }
   }
 
   /// stepper 의 현재 step 결정.
@@ -2463,9 +2478,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 시트 헤더 — 가운데 핸들(인디케이터 + 단일 toggle 화살표) + 우측
-  /// stepper(홈·1·2·?). 좌측은 stepper 와 균형을 맞춘 빈 공간 (또는
-  /// 인물 모드 step 1 의 "N명 다음" 핀).
+  /// 시트 헤더 — 좌측 이전/다음 액션 + 가운데 핸들(인디케이터 + 단일
+  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물·이야기).
   ///
   /// 옛 ▲▼ 두 IconButton 은 stepper 와 시각적으로 충돌해 사용자가 ▲ 를
   /// 인지하지 못하는 문제가 있었다 (panel half stage 도 실질적으로 expanded 와
@@ -2480,83 +2494,113 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _mode == _SelectionMode.character &&
         _selectionStep == 2 &&
         draftCharacters.isNotEmpty;
-    // stepper 의 estimated width (3 dots × 20 + 2 separators × 10 + helpButton
-    // 20 + paddings 12 + 6 ≈ 128). 좌측 SizedBox 도 같은 width 로 맞춰
-    // 가운데 핸들 영역이 정확히 화면 중앙에 오게 한다.
-    const headerSideSlot = 128.0;
     final isExpanded = stage == StorySelectionPanelStage.expanded;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      child: Row(
-        children: [
-          SizedBox(
-            width: headerSideSlot,
-            child: showCharacterNext
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: _CharacterNextPill(
-                      count: draftCharacters.length,
-                      onPressed: _proceedFromCharacterStep,
-                    ),
-                  )
-                : null,
-          ),
-          Expanded(
-            child: Center(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
+    final previousLabel = _previousStepButtonLabel(state);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const horizontalPadding = 16.0;
+        final innerWidth = math.max(
+          0.0,
+          constraints.maxWidth - horizontalPadding,
+        );
+        final hasPreviousAction = previousLabel != null;
+        final actionSlotWidth = showCharacterNext && hasPreviousAction
+            ? math.min(136.0, math.max(118.0, innerWidth * 0.35))
+            : math.min(118.0, math.max(92.0, innerWidth * 0.30));
+        final leftAction = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (previousLabel != null) ...[
+              _PreviousStepPill(
+                label: previousLabel,
+                compact: showCharacterNext,
+                onPressed: _handleHomeBackPressed,
+              ),
+              if (showCharacterNext) const SizedBox(width: 4),
+            ],
+            if (showCharacterNext)
+              _CharacterNextPill(
+                count: draftCharacters.length,
+                compact: previousLabel != null,
+                onPressed: _proceedFromCharacterStep,
+              ),
+          ],
+        );
+
+        final handleButton = Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => _animateSelectionPanelToStage(
+              isExpanded
+                  ? StorySelectionPanelStage.collapsed
+                  : StorySelectionPanelStage.expanded,
+            ),
+            child: Tooltip(
+              message: isExpanded ? '아래로 접기' : '위로 펼치기',
+              child: Container(
+                width: 48,
+                height: 30,
+                decoration: BoxDecoration(
+                  // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
+                  // tint 로 panel toggle 임을 색으로 시그널링.
+                  color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(16),
-                  onTap: () => _animateSelectionPanelToStage(
-                    isExpanded
-                        ? StorySelectionPanelStage.collapsed
-                        : StorySelectionPanelStage.expanded,
+                  border: Border.all(
+                    color: const Color(0xFF2E8B57).withValues(alpha: 0.45),
+                    width: 1,
                   ),
-                  child: Tooltip(
-                    message: isExpanded ? '아래로 접기' : '위로 펼치기',
-                    child: Container(
-                      width: 48,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
-                        // tint 로 panel toggle 임을 색으로 시그널링.
-                        color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(
-                            0xFF2E8B57,
-                          ).withValues(alpha: 0.45),
-                          width: 1,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        isExpanded
-                            ? Icons.keyboard_arrow_down
-                            : Icons.keyboard_arrow_up,
-                        size: 22,
-                        color: const Color(0xFF2E8B57),
-                        semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
-                      ),
-                    ),
-                  ),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_down
+                      : Icons.keyboard_arrow_up,
+                  size: 22,
+                  color: const Color(0xFF2E8B57),
+                  semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
                 ),
               ),
             ),
           ),
-          SizedBox(
-            width: headerSideSlot,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: _SelectionStepper(
-                currentStep: _currentStepperIndex(),
-                mode: _mode,
-                onStepTap: _handleStepperTap,
+        );
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: actionSlotWidth,
+                child: !hasPreviousAction && !showCharacterNext
+                    ? const SizedBox.shrink()
+                    : Align(
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: leftAction,
+                        ),
+                      ),
               ),
-            ),
+              const SizedBox(width: 8),
+              handleButton,
+              const SizedBox(width: 8),
+              SizedBox(
+                width: math.max(0.0, innerWidth - actionSlotWidth - 64),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: _SelectionStepper(
+                    currentStep: _currentStepperIndex(),
+                    mode: _mode,
+                    onStepTap: _handleStepperTap,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
