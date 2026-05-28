@@ -47,7 +47,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 .PHONY: help all \
         seed-bible-verses build-character-meta renumber-story-indices \
         seed-stories seed-characters seed-stories-characters seed-quizzes seed-daily-quiz \
-        seed-landmarks seed-era-boundaries \
+        seed-landmarks seed-era-boundaries audit-landmark-polygons refine-landmark-polygons \
         apply-seeds-landmarks-v2 \
         generate-avatars generate-story-images generate-basemap thumbnails \
         seed-all generate-all \
@@ -76,6 +76,8 @@ help:
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
 	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
 	@echo "  seed-daily-quiz            매일 지도 퀴즈 SQL + docs 가이드 생성"
+	@echo "  audit-landmark-polygons    박스형/저정점 region polygon 감사"
+	@echo "  refine-landmark-polygons   Natural Earth 기반 region polygon 정제 후보 생성"
 	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
 	@echo "  generate-basemap        Vertex AI 양피지 일러스트 베이스맵 1장 생성 (assets/maps/)"
@@ -192,6 +194,21 @@ seed-era-boundaries:
 	$(PYTHON) $(TOOLS_DIR)/seed/build_era_boundaries_seed_sql.py \
 		--input $(LANDMARKS_DIR)/era_boundaries.json \
 		--output $(ERA_BOUNDARIES_SQL)
+
+audit-landmark-polygons:
+	@echo "[Makefile] region polygon 감사 (박스형/저정점 후보)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/audit_landmark_polygons.py \
+		--landmarks $(LANDMARKS_DIR)/landmarks.json
+
+# region 폴리곤 정제 후보 생성 — 기본은 검토용 JSON 만 출력한다.
+# landmarks.json 에 바로 반영하려면 스크립트를 직접 `--in-place` 로 실행하고
+# `python3 tools/seed/verify_polygons_contain_events.py` 로 사건 포함 여부 확인.
+refine-landmark-polygons:
+	@echo "[Makefile] region polygon 정제 후보 생성 (Natural Earth GeoJSON 클립)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/refine_landmark_polygons_from_geojson.py \
+		--landmarks $(LANDMARKS_DIR)/landmarks.json \
+		--geojson $(ASSETS_DIR)/maps/ne_50m_admin_0_countries.geojson \
+		--out $(TOOLS_DIR)/seed/refined_polygons.json
 
 # 시대 폴리곤 재생성 — Natural Earth GeoJSON 을 시대별 bbox 로 클립해 정밀한
 # 해안선 폴리곤으로 era_boundaries.json 을 덮어쓴다. 시대 정의 변경 시 (CLIP_REGIONS

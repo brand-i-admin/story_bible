@@ -282,6 +282,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     final zoom = widget.initialZoom ?? 6.0;
     final polylines = _buildPolylines(widget.events);
+    final tileSource = StoryMapTileStyles.sourceFor(widget.tileStyle);
 
     return Container(
       decoration: widget.decorate
@@ -388,28 +389,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   ),
                 ),
                 children: [
-                  // 양피지/세피아 톤 + 강·바다 파랑 (Carto voyager_nolabels).
-                  // 이전에 G 채널만 약화하는 ColorFilter.matrix 를 시도했으나
-                  // 베이지(R~G~B 비슷한 영역) 에서 G 만 줄이면 R/B 가 dominant
-                  // 가 되어 land 전체가 핑크/보라로 변색되는 부작용. 매트릭스
-                  // 는 폐기하고 단순 sepia overlay 만 사용 — voyager 의
-                  // 산림 연두는 sepia 에 살짝 묻히면서 부드러운 베이지·올리브
-                  // 톤이 된다.
                   TileLayer(
-                    // Stamen Watercolor — Cooper Hewitt (Smithsonian Design
-                    // Museum) 영구 archive 호스팅. Stamen 공식 README 가
-                    // 안내한 archive 엔드포인트. CC BY 4.0, API key 불필요,
-                    // 무료, 무제한 사용 (fair use).
-                    //   https://github.com/CooperHewittCollection/watercolor_examples
-                    // attribution: Map tiles by Stamen Design (CC BY 4.0),
-                    //   data by OpenStreetMap (ODbL),
-                    //   archive hosted by Cooper Hewitt, Smithsonian.
-                    urlTemplate:
-                        'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
+                    // Base tile source is selected by the parent so we can A/B
+                    // the parchment map against terrain/topographic tiles
+                    // without replacing the flutter_map overlay stack.
+                    urlTemplate: tileSource.urlTemplate,
                     userAgentPackageName: 'com.story.bible',
-                    // Cooper Hewitt 가 Cache-Control 헤더를 안 보내 freshness
-                    // age 가 fallback (168h) 로 매 tile 마다 warning. 30일
-                    // overrideFreshAge 명시로 console noise 제거 + 안정적 캐시.
+                    // Some tile sources do not send a long Cache-Control
+                    // freshness. 30일 overrideFreshAge 로 console noise 를
+                    // 줄이고 스타일 전환 후에도 안정적으로 캐시한다.
                     tileProvider: NetworkTileProvider(
                       cachingProvider:
                           BuiltInMapCachingProvider.getOrCreateInstance(
@@ -546,10 +534,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           ),
           // 양피지 텍스처 overlay — 지도 위에 multiply 로 합성해 결을 살린다.
           // tileScale 0.5 → 텍스처를 절반 크기로 반복(stretch 시 흐릿한 얼룩 방지).
-          // strength 0.35 → 약한 그레인. 너무 진하면 지도 색이 가려진다.
-          const Positioned.fill(
+          // 지형 타일은 산지/등고선 식별이 중요하므로 texture 를 더 약하게 둔다.
+          Positioned.fill(
             child: IgnorePointer(
-              child: ParchmentMultiplyLayer(strength: 0.32, tileScale: 0.5),
+              child: ParchmentMultiplyLayer(
+                strength: tileSource.textureStrength,
+                tileScale: 0.5,
+              ),
             ),
           ),
         ],

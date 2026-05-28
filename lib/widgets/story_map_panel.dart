@@ -18,6 +18,7 @@ import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
 import 'emotion_badge_icon.dart';
 import 'map/era_polygon_glow_layer.dart';
+import 'map/map_tile_style.dart';
 import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
 
@@ -144,6 +145,7 @@ class StoryMapPanel extends StatefulWidget {
     this.regionPickerMode = false,
     this.onMapInteraction,
     this.suppressRegionLabels = false,
+    this.tileStyle = StoryMapTileStyles.defaultStyle,
   });
 
   /// 사용자가 지도와 상호작용 (drag/zoom/pan/탭) 했을 때 호출. 부모는 이를
@@ -156,6 +158,10 @@ class StoryMapPanel extends StatefulWidget {
   /// 애굽 등) 을 숨긴다. 인물 모드에서 인물 path 점선이 그 라벨에 가려져
   /// 잘 안 보이는 문제를 해결하기 위해 부모가 토글한다.
   final bool suppressRegionLabels;
+
+  /// Base map tile style. Keeps the same `flutter_map` overlay stack while
+  /// allowing terrain basemaps to be compared against the parchment map.
+  final StoryMapTileStyle tileStyle;
 
   /// true 일 때 step 2 (장소 선택) UI: 나라/region 핀 라벨 숨기고, 폴리곤 자체가
   /// 선택 가능한 큰 단위로 노출 (폴리곤 중앙에 region 이름 + 사건 개수 배지).

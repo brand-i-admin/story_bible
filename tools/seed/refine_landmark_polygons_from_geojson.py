@@ -27,6 +27,7 @@
   python3 tools/seed/refine_landmark_polygons_from_geojson.py --in-place
   python3 tools/seed/refine_landmark_polygons_from_geojson.py --regions rgn_judea,rgn_galilee
 """
+
 from __future__ import annotations
 
 import argparse
@@ -35,8 +36,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from shapely.geometry import box, mapping, shape
-from shapely.ops import unary_union
+try:
+    from shapely.geometry import box, mapping, shape
+    from shapely.ops import unary_union
+except ModuleNotFoundError as exc:
+    raise SystemExit(
+        "shapely dependency is required. Run `python3 -m venv .venv`, "
+        "`source .venv/bin/activate`, then `pip install -r requirements.txt`."
+    ) from exc
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LANDMARKS = ROOT / "assets" / "landmarks" / "landmarks.json"

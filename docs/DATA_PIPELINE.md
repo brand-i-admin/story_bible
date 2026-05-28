@@ -237,6 +237,13 @@ Makefile                                # 파이프라인 오케스트레이션
 - **옵션**: `--landmarks <path>`, `--stories <path>` (디렉토리이면 *.json 글롭). 기본값은 프로젝트 표준 경로.
 - **자동 실행**: `.pre-commit-config.yaml` 의 pre-push 훅 — `landmarks.json` 또는 `assets/200_stories/*.json` 변경 시 push 전에 검증.
 
+#### `audit_landmark_polygons.py`
+- **입력**: `assets/landmarks/landmarks.json`
+- **출력**: 박스형/저정점 region 후보 목록 (`--json` 지정 시 JSON)
+- **목적**: `shapely` 없이도 axis-aligned edge 비율과 정점 수로 사각형에 가까운 region 을 빠르게 찾는다. 정제 우선순위 선정용이며 CI 차단용으로 쓰려면 `--fail-on-findings` 를 명시한다.
+- **옵션**: `--max-vertices`, `--min-axis-ratio`, `--json`, `--fail-on-findings`
+- **Make target**: `make audit-landmark-polygons`
+
 #### `refine_landmark_polygons_from_geojson.py`
 - **입력**: `assets/landmarks/landmarks.json` + `assets/maps/ne_50m_admin_0_countries.geojson` (Natural Earth 1:50m 국경)
 - **출력**: 기본 `tools/seed/refined_polygons.json` (검토용), `--in-place` 옵션 시 `landmarks.json` 의 polygon 직접 교체
@@ -247,6 +254,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - **옵션**: `--regions rgn_xxx,rgn_yyy` 일부만, `--simplify <deg>`, `--in-place`
 - **재실행**: idempotent — 같은 입력이면 같은 결과
 - **의존**: `pip install shapely` (`requirements.txt` 에 이미 포함)
+- **Make target**: `make refine-landmark-polygons` 는 검토용 `tools/seed/refined_polygons.json` 만 생성한다. 실제 반영은 수동 `--in-place` 후 `verify_polygons_contain_events.py` 를 반드시 실행한다.
 
 ## 4. Makefile 타겟
 
@@ -260,6 +268,8 @@ make seed-quizzes            # build_quizzes_seed_sql.py (→ assets/quizzes + d
 make seed-daily-quiz         # build_daily_quiz_seed_sql.py (→ events + region mapping)
 make seed-landmarks          # build_landmarks_seed_sql.py (시대별 랜드마크, 독립)
 make seed-era-boundaries     # build_era_boundaries_seed_sql.py (시대 영역 폴리곤, 독립)
+make audit-landmark-polygons # 박스형/저정점 region polygon 감사
+make refine-landmark-polygons # Natural Earth 기반 region polygon 정제 후보 생성
 make generate-avatars        # generate_avatars_vertex.py (→ person-meta 의존, 기존 png 보존)
 make generate-story-images   # generate_event_story_images_vertex.py
 make thumbnails              # generate_runtime_thumbnails.py (→ avatars, story-images)

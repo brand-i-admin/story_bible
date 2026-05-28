@@ -30,6 +30,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Completer<void>? _mapCelebrationCompleter;
   bool _mapAnimationInputLocked = false;
   OverlayEntry? _mapAnimationInputBlockerEntry;
+  StoryMapTileStyle _mapTileStyle = StoryMapTileStyles.initialStyle;
   late int _selectionStep = widget.initialStep.clamp(1, 3);
 
   /// 시대 선택 후 사용자가 고른 탐색 모드. null = intro 패널(시대+모드 카드).
@@ -692,6 +693,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
+  String? _previousStepButtonLabel(StoryState state) {
+    switch (_homeBackAction(state)) {
+      case HomeBackAction.exitApp:
+        return null;
+      case HomeBackAction.clearEraSelection:
+        return state.selectedEraId == null ? null : '시대 다시 선택';
+      case HomeBackAction.returnToHome:
+        return '시대/방법 변경';
+      case HomeBackAction.returnToRegionPicker:
+        return '장소 다시 선택';
+      case HomeBackAction.returnToCharacterPicker:
+        return '인물 다시 선택';
+    }
+  }
+
   /// stepper 의 현재 step 결정.
   /// - 시대 미선택/모드 미선택 → 1
   /// - region 모드 + region 미선택 → 2
@@ -1001,36 +1017,44 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 지도 출처/라이선스 dialog — Stamen Watercolor (CC BY 4.0) + OpenStreetMap
-  /// (ODbL) + Cooper Hewitt(Smithsonian) archive + Natural Earth. CC BY 4.0
-  /// 과 ODbL 모두 attribution 의무이므로 사용자 view 에 노출되어야 한다.
+  void _cycleMapTileStyle() {
+    final next = StoryMapTileStyles.nextStyle(_mapTileStyle);
+    final source = StoryMapTileStyles.sourceFor(next);
+    setState(() {
+      _mapTileStyle = next;
+    });
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('지도 배경: ${source.label}'),
+          duration: const Duration(milliseconds: 900),
+        ),
+      );
+  }
+
+  /// 지도 출처/라이선스 dialog — 현재 선택된 타일 스타일의 attribution 을 노출.
+  /// Base tile 은 style 토글로 바뀌므로 고정 문구가 아니라 source 설정에서 가져온다.
   void _showMapAttributionDialog() {
+    final source = StoryMapTileStyles.sourceFor(_mapTileStyle);
     showDialog<void>(
       context: context,
       builder: (dialogContext) => ParchmentDialog(
         title: '지도 출처',
-        subtitle: '본 지도는 다음 오픈 데이터/타일을 사용합니다.',
+        subtitle: '현재 배경: ${source.label}',
         showCloseButton: true,
         onClose: () => Navigator.of(dialogContext).pop(),
-        child: const Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _AttributionLine(
-              source: 'Stamen Watercolor 타일',
-              license: 'CC BY 4.0',
-            ),
-            SizedBox(height: 8),
-            _AttributionLine(source: 'OpenStreetMap 데이터', license: 'ODbL'),
-            SizedBox(height: 8),
-            _AttributionLine(
-              source: '아카이브 호스팅: Cooper Hewitt, Smithsonian Design Museum',
-            ),
-            SizedBox(height: 8),
-            _AttributionLine(
-              source: '국경/수계 보조: Natural Earth',
-              license: 'Public Domain',
-            ),
+            for (var i = 0; i < source.attributionLines.length; i++) ...[
+              if (i > 0) const SizedBox(height: 8),
+              _AttributionLine(
+                source: source.attributionLines[i].source,
+                license: source.attributionLines[i].license,
+              ),
+            ],
           ],
         ),
       ),
@@ -1990,7 +2014,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               ? LatLng(selectedEra!.mapCenterLat!, selectedEra.mapCenterLng!)
               : null);
 
-    final mapZoom = state.selectedEraIds.isEmpty ? 6.0 : selectedEra?.mapZoom;
+    final defaultMapZoom = state.selectedEraIds.isEmpty
+        ? 6.0
+        : selectedEra?.mapZoom;
+    final mapZoom = _initialMapZoomOverride(defaultMapZoom);
     final topInset = MediaQuery.of(context).padding.top;
     // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
     // 차지하는 픽셀. gesture-only / 풀스크린 모드면 0. 이 값만큼 시트를 위로
@@ -1999,6 +2026,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     const outerMargin = 20.0;
     // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
     final mapCalloutTopObscuredPixels = topInset + 88;
+    final mapTileSource = StoryMapTileStyles.sourceFor(_mapTileStyle);
 
     return Scaffold(
       body: PopScope<Object?>(
@@ -2146,6 +2174,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 // 인물 모드에서는 region 검정 캡슐 라벨(가나안·시내 광야·애굽 등)
                 // 이 인물 path 점선을 가리는 문제가 있어 라벨을 숨긴다.
                 suppressRegionLabels: _mode == _SelectionMode.character,
+                tileStyle: _mapTileStyle,
               ),
             ),
             // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
@@ -2302,6 +2331,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           mapControlButton(
+                            icon: mapTileSource.icon,
+                            tooltip: '지도 배경: ${mapTileSource.label}',
+                            onTap: _cycleMapTileStyle,
+                          ),
+                          const SizedBox(height: 6),
+                          mapControlButton(
                             icon: Icons.add,
                             tooltip: '확대',
                             onTap: _mapPanelController.zoomIn,
@@ -2433,6 +2468,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  double? _initialMapZoomOverride(double? fallback) {
+    const raw = String.fromEnvironment('STORY_MAP_INITIAL_ZOOM');
+    if (raw.isEmpty) {
+      return fallback;
+    }
+    return double.tryParse(raw) ?? fallback;
+  }
+
   // ===========================================================================
   // 통합 흐름 — 시대+모드 카드 (intro) / 인물 모드 (StorySelectionPanel) /
   // 지역 모드 (RegionPickPanel + RegionEventList) 한 화면에서 swap.
@@ -2463,9 +2506,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 시트 헤더 — 가운데 핸들(인디케이터 + 단일 toggle 화살표) + 우측
-  /// stepper(홈·1·2·?). 좌측은 stepper 와 균형을 맞춘 빈 공간 (또는
-  /// 인물 모드 step 1 의 "N명 다음" 핀).
+  /// 시트 헤더 — 좌측 이전/다음 액션 + 가운데 핸들(인디케이터 + 단일
+  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물·이야기).
   ///
   /// 옛 ▲▼ 두 IconButton 은 stepper 와 시각적으로 충돌해 사용자가 ▲ 를
   /// 인지하지 못하는 문제가 있었다 (panel half stage 도 실질적으로 expanded 와
@@ -2480,83 +2522,113 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _mode == _SelectionMode.character &&
         _selectionStep == 2 &&
         draftCharacters.isNotEmpty;
-    // stepper 의 estimated width (3 dots × 20 + 2 separators × 10 + helpButton
-    // 20 + paddings 12 + 6 ≈ 128). 좌측 SizedBox 도 같은 width 로 맞춰
-    // 가운데 핸들 영역이 정확히 화면 중앙에 오게 한다.
-    const headerSideSlot = 128.0;
     final isExpanded = stage == StorySelectionPanelStage.expanded;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      child: Row(
-        children: [
-          SizedBox(
-            width: headerSideSlot,
-            child: showCharacterNext
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: _CharacterNextPill(
-                      count: draftCharacters.length,
-                      onPressed: _proceedFromCharacterStep,
-                    ),
-                  )
-                : null,
-          ),
-          Expanded(
-            child: Center(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
+    final previousLabel = _previousStepButtonLabel(state);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const horizontalPadding = 16.0;
+        final innerWidth = math.max(
+          0.0,
+          constraints.maxWidth - horizontalPadding,
+        );
+        final hasPreviousAction = previousLabel != null;
+        final actionSlotWidth = showCharacterNext && hasPreviousAction
+            ? math.min(136.0, math.max(118.0, innerWidth * 0.35))
+            : math.min(118.0, math.max(92.0, innerWidth * 0.30));
+        final leftAction = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (previousLabel != null) ...[
+              _PreviousStepPill(
+                label: previousLabel,
+                compact: showCharacterNext,
+                onPressed: _handleHomeBackPressed,
+              ),
+              if (showCharacterNext) const SizedBox(width: 4),
+            ],
+            if (showCharacterNext)
+              _CharacterNextPill(
+                count: draftCharacters.length,
+                compact: previousLabel != null,
+                onPressed: _proceedFromCharacterStep,
+              ),
+          ],
+        );
+
+        final handleButton = Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => _animateSelectionPanelToStage(
+              isExpanded
+                  ? StorySelectionPanelStage.collapsed
+                  : StorySelectionPanelStage.expanded,
+            ),
+            child: Tooltip(
+              message: isExpanded ? '아래로 접기' : '위로 펼치기',
+              child: Container(
+                width: 48,
+                height: 30,
+                decoration: BoxDecoration(
+                  // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
+                  // tint 로 panel toggle 임을 색으로 시그널링.
+                  color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(16),
-                  onTap: () => _animateSelectionPanelToStage(
-                    isExpanded
-                        ? StorySelectionPanelStage.collapsed
-                        : StorySelectionPanelStage.expanded,
+                  border: Border.all(
+                    color: const Color(0xFF2E8B57).withValues(alpha: 0.45),
+                    width: 1,
                   ),
-                  child: Tooltip(
-                    message: isExpanded ? '아래로 접기' : '위로 펼치기',
-                    child: Container(
-                      width: 48,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
-                        // tint 로 panel toggle 임을 색으로 시그널링.
-                        color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(
-                            0xFF2E8B57,
-                          ).withValues(alpha: 0.45),
-                          width: 1,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        isExpanded
-                            ? Icons.keyboard_arrow_down
-                            : Icons.keyboard_arrow_up,
-                        size: 22,
-                        color: const Color(0xFF2E8B57),
-                        semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
-                      ),
-                    ),
-                  ),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_down
+                      : Icons.keyboard_arrow_up,
+                  size: 22,
+                  color: const Color(0xFF2E8B57),
+                  semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
                 ),
               ),
             ),
           ),
-          SizedBox(
-            width: headerSideSlot,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: _SelectionStepper(
-                currentStep: _currentStepperIndex(),
-                mode: _mode,
-                onStepTap: _handleStepperTap,
+        );
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: actionSlotWidth,
+                child: !hasPreviousAction && !showCharacterNext
+                    ? const SizedBox.shrink()
+                    : Align(
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: leftAction,
+                        ),
+                      ),
               ),
-            ),
+              const SizedBox(width: 8),
+              handleButton,
+              const SizedBox(width: 8),
+              SizedBox(
+                width: math.max(0.0, innerWidth - actionSlotWidth - 64),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: _SelectionStepper(
+                    currentStep: _currentStepperIndex(),
+                    mode: _mode,
+                    onStepTap: _handleStepperTap,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
