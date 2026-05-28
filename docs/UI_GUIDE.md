@@ -243,7 +243,7 @@ MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 h
 
 ### 글자 크기 토글 (Aa)
 
-홈 화면 상단 row 우측에 `Aa` 버튼을 배치한다. 탭 시 바텀시트가 열리며 미리보기 문구("태초에 하나님이 천지를 창조하시니라 (창세기 1:1)")와 3단계(작게/보통/크게) 버튼이 표시된다. 선택 즉시 `MediaQuery.textScaler`로 앱 전체 텍스트에 반영되고 `SharedPreferences`에 저장된다. 서브 페이지(`SubPageScaffold`, `ParchmentPageScaffold`)에는 별도 Aa 버튼을 두지 않는다 — 홈에서 한 번 설정하면 모든 화면에 전역 적용되기 때문이다.
+홈 화면 상단 row 우측에 `Aa` 버튼을 배치한다. 탭 시 바텀시트가 열리며 미리보기 문구("태초에 하나님이 천지를 창조하시니라 (창세기 1:1)")와 3단계(보통 1.0x / 크게 1.2x / 아주크게 1.4x) 버튼이 표시된다. 선택 즉시 `MediaQuery.textScaler`로 앱 전체 텍스트에 반영되고 `SharedPreferences`에 저장된다. 서브 페이지(`SubPageScaffold`, `ParchmentPageScaffold`)에는 별도 Aa 버튼을 두지 않는다 — 홈에서 한 번 설정하면 모든 화면에 전역 적용되기 때문이다.
 
 ## 7. 이미지 에셋 규격
 

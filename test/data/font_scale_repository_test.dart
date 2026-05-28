@@ -35,8 +35,8 @@ void main() {
 
     test('write는 동일 키(font_scale)를 사용한다', () async {
       final repo = FontScaleRepository(prefs);
-      await repo.write(FontScale.small);
-      expect(prefs.getString('font_scale'), 'small');
+      await repo.write(FontScale.veryLarge);
+      expect(prefs.getString('font_scale'), 'veryLarge');
     });
   });
 }

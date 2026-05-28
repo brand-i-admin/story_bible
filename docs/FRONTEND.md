@@ -91,7 +91,7 @@ fontScaleProvider               // NotifierProvider<FontScaleController, FontSca
 
 ### 3.1.1 FontScale (앱 전역 글자 크기)
 
-`state/font_scale_providers.dart` — `FontScale` enum(`small` 0.9× / `normal` 1.0× / `large` 1.2×)과 Riverpod 프로바이더. `fontScaleBuilder`가 `MediaQuery.textScaler`에 주입해 앱 전역 텍스트에 적용된다. 저장소는 `data/font_scale_repository.dart`의 `SharedPreferences` 래퍼 사용.
+`state/font_scale_providers.dart` — `FontScale` enum(`normal` 1.0x / `large` 1.2x / `veryLarge` 1.4x)과 Riverpod 프로바이더. `fontScaleBuilder`가 `MediaQuery.textScaler`에 주입해 앱 전역 텍스트에 적용된다. 저장소는 `data/font_scale_repository.dart`의 `SharedPreferences` 래퍼 사용.
 
 ### 3.1.2 하단 시스템 inset 정규화
 
