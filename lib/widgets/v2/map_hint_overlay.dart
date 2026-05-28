@@ -18,11 +18,11 @@ class MapHintOverlay extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         margin: const EdgeInsets.symmetric(horizontal: 32),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         constraints: const BoxConstraints(maxWidth: 360),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.55),
-          borderRadius: BorderRadius.circular(18),
+          color: Colors.black.withValues(alpha: 0.50),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.22),
             width: 1,
@@ -38,8 +38,43 @@ class MapHintOverlay extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.20),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.hourglass_top_rounded,
+                    color: Colors.white.withValues(alpha: 0.86),
+                    size: 13,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      '화면 아무데나 누르면 사라집니다',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.88),
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
             if (icon != null) ...[
-              Icon(icon, color: Colors.white.withValues(alpha: 0.92), size: 26),
+              Icon(icon, color: Colors.white.withValues(alpha: 0.92), size: 25),
               const SizedBox(height: 8),
             ],
             Text(

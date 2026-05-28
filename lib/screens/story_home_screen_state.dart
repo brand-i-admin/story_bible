@@ -435,7 +435,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       final state = ref.read(storyControllerProvider);
       if (state.selectedLandmarkId == null) {
         return (
-          message: '노란 지역을 눌러 그곳의 사건을 보세요.\n손가락 동작으로 지도를 확대·축소할 수 있어요.',
+          message: '노란 지역을 눌러 그곳의 사건을 보세요.\n지도를 확대·축소해도 괜찮아요.',
           icon: Icons.touch_app_rounded,
         );
       }
