@@ -98,7 +98,7 @@ MaterialApp(theme: AppTheme.light(), ...)
 | EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 퀴즈) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
-| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (우측 별 아이콘 구절 저장 + 이야기 본문 범위 임시 하이라이트). 구절 본문 탭은 선택/저장 동작을 만들지 않는다 |
+| BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (우측 별 아이콘 구절 저장 + 이야기 본문 읽기 모드). 일반 성경 진입은 책/장 탐색을 유지하고, 사건 상세에서 진입하면 해당 `bible_refs` 범위의 절만 표시한다. 여러 본문은 **다음**으로 순차 이동하고 마지막 본문에서 **읽기 완료**를 눌러야 읽음 처리된다. 구절 본문 탭은 선택/저장 동작을 만들지 않는다 |
 | SearchBottomSheet | `widgets/search_bottom_sheet.dart` | 검색 입력 + 결과 (bottom sheet) |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |
 | NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 빨간 ! 배지 + 드롭다운 |
@@ -207,7 +207,7 @@ MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 h
 
 ### 5.3 학습 완료
 
-1. 이야기 상세 → 본문 읽기 + 퀴즈 시작 (4번 보기는 항상 "헷갈렸어요")
+1. 이야기 상세 → 본문 읽기 + 퀴즈 시작 (4번 보기는 항상 "헷갈렸어요"). 본문 읽기는 사건에 연결된 절만 성경 리더에서 보여 주며, 여러 본문이면 **다음**으로 이동하고 마지막 **읽기 완료** 버튼을 눌러야 완료된다. 뒤로가기(`<`)로 나가면 읽음 처리하지 않는다
 2. 정답 제출 → 정답/오답/헷갈림을 `user_quiz_attempts`에 저장
 3. 본문 읽기와 퀴즈가 모두 완료되면 **지도 위에 새기기** 버튼 활성화
 4. 감정 8개 중 하나를 고르고 100자 메모를 남기면 `user_event_emotion_marks` 저장

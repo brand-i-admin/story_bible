@@ -843,11 +843,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 int? initialBookNo,
                 int? initialChapterNo,
                 int? initialVerseNo,
-              }) => _openBibleReaderPopup(
-                initialBookNo: initialBookNo,
-                initialChapterNo: initialChapterNo,
-                initialVerseNo: initialVerseNo,
-              ),
+              }) async {
+                await _openBibleReaderPopup(
+                  initialBookNo: initialBookNo,
+                  initialChapterNo: initialChapterNo,
+                  initialVerseNo: initialVerseNo,
+                );
+              },
         ),
       ),
     );
@@ -1123,19 +1125,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           event: event,
           quizWeekKey: quizWeekKey,
           sceneAssetsFuture: sceneAssetsFuture,
-          onOpenBibleReader: (target) async {
+          onOpenBibleReader: (targets) async {
             if (!mounted) {
-              return;
+              return false;
             }
-            await _openBibleReaderPopup(
-              initialBookNo: target.bookNo,
-              initialChapterNo: target.chapterNo,
-              initialVerseNo: target.verseNo,
-              highlightTarget: target,
+            final completedReading = await _openBibleReaderPopup(
+              readingTargets: targets,
             );
-            // 사용자가 본문을 보고 돌아왔으면 '읽기' 완료 처리. 퀴즈 모드면
-            // 별도 weekly_quiz_progress 에 저장 (프로필 진행도 영향 X).
-            if (!mounted) return;
+            if (!completedReading) {
+              return false;
+            }
+            // 리더의 "읽기 완료"로 닫힌 경우에만 완료 처리. 퀴즈 모드면 별도
+            // weekly_quiz_progress 에 저장 (프로필 진행도 영향 X).
+            if (!mounted) return false;
             final notifier = ref.read(storyControllerProvider.notifier);
             if (quizWeekKey != null) {
               await notifier.setWeeklyQuizBibleRead(
@@ -1146,6 +1148,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             } else {
               await notifier.setBibleRead(eventId: event.id, isRead: true);
             }
+            return true;
           },
           onStartQuiz: (eventId) =>
               _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
@@ -1220,15 +1223,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       event: event,
       quizWeekKey: quizWeekKey,
       sceneAssetsFuture: sceneAssetsFuture,
-      onOpenBibleReader: (target) async {
-        if (!mounted) return;
-        await _openBibleReaderPopup(
-          initialBookNo: target.bookNo,
-          initialChapterNo: target.chapterNo,
-          initialVerseNo: target.verseNo,
-          highlightTarget: target,
+      onOpenBibleReader: (targets) async {
+        if (!mounted) return false;
+        final completedReading = await _openBibleReaderPopup(
+          readingTargets: targets,
         );
-        if (!mounted) return;
+        if (!completedReading) {
+          return false;
+        }
+        if (!mounted) return false;
         // 본문 읽기 완료 처리 — quiz 모드면 weekly 진행도, 아니면 일반.
         final notifier = ref.read(storyControllerProvider.notifier);
         if (quizWeekKey != null) {
@@ -1240,6 +1243,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         } else {
           await notifier.setBibleRead(eventId: event.id, isRead: true);
         }
+        return true;
       },
       onStartQuiz: (eventId) =>
           _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
@@ -1392,25 +1396,29 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
   }
 
-  Future<void> _openBibleReaderPopup({
+  Future<bool> _openBibleReaderPopup({
     int? initialBookNo,
     int? initialChapterNo,
     int? initialVerseNo,
     BibleNavigationTarget? highlightTarget,
+    List<BibleNavigationTarget> readingTargets =
+        const <BibleNavigationTarget>[],
   }) async {
     if (!mounted) {
-      return;
+      return false;
     }
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
         builder: (_) => BibleReaderPage(
           initialBookNo: initialBookNo,
           initialChapterNo: initialChapterNo,
           initialVerseNo: initialVerseNo,
           highlightTarget: highlightTarget,
+          readingTargets: readingTargets,
         ),
       ),
     );
+    return result ?? false;
   }
 
   /// 알림 탭 처리 — 읽음 처리 + 딥링크 라우팅.

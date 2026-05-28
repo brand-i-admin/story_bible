@@ -23,7 +23,9 @@ import 'sub_page_scaffold.dart';
 ///
 /// [initialBookNo]/[initialChapterNo]/[initialVerseNo]가 주어지면 해당 구절로
 /// 자동 스크롤한다. [highlightTarget]이 있으면 해당 이야기의 읽을 본문 범위를
-/// 저장 상태와 별개인 임시 하이라이트로 표시한다.
+/// 저장 상태와 별개인 임시 하이라이트로 표시한다. [readingTargets]가 있으면
+/// 사건 읽기 모드로 전환해 지정된 절만 보여 주고 마지막 본문에서 완료 결과를
+/// 반환한다.
 class BibleReaderPage extends ConsumerStatefulWidget {
   const BibleReaderPage({
     super.key,
@@ -31,12 +33,14 @@ class BibleReaderPage extends ConsumerStatefulWidget {
     this.initialChapterNo,
     this.initialVerseNo,
     this.highlightTarget,
+    this.readingTargets = const <BibleNavigationTarget>[],
   });
 
   final int? initialBookNo;
   final int? initialChapterNo;
   final int? initialVerseNo;
   final BibleNavigationTarget? highlightTarget;
+  final List<BibleNavigationTarget> readingTargets;
 
   @override
   ConsumerState<BibleReaderPage> createState() => _BibleReaderPageState();
@@ -46,6 +50,8 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   late int _selectedBookNo;
   late String _selectedTestament;
   late int _selectedChapter;
+  late final List<BibleNavigationTarget> _readingTargets;
+  int _readingTargetIndex = 0;
   int? _pendingFocusVerse;
   final ScrollController _verseScrollController = ScrollController();
   final Map<String, Future<List<BibleVerse>>> _chapterCache = {};
@@ -54,17 +60,29 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   @override
   void initState() {
     super.initState();
+    _readingTargets = widget.readingTargets;
+    final firstReadingTarget = _readingTargets.firstOrNull;
     final initialBookNo =
-        widget.initialBookNo ?? widget.highlightTarget?.bookNo ?? 1;
+        firstReadingTarget?.bookNo ??
+        widget.initialBookNo ??
+        widget.highlightTarget?.bookNo ??
+        1;
     _selectedBookNo = initialBookNo.clamp(1, bibleBooks.length).toInt();
     _selectedTestament = _selectedBookNo >= 40 ? 'new' : 'old';
     final maxChapter = bibleBooks[_selectedBookNo - 1].chapters;
     final initialChapter =
-        widget.initialChapterNo ?? widget.highlightTarget?.chapterNo ?? 1;
+        firstReadingTarget?.chapterNo ??
+        widget.initialChapterNo ??
+        widget.highlightTarget?.chapterNo ??
+        1;
     _selectedChapter = initialChapter.clamp(1, maxChapter).toInt();
     final initialVerse =
-        widget.initialVerseNo ?? widget.highlightTarget?.verseNo;
-    _pendingFocusVerse = (initialVerse ?? 0) > 0 ? initialVerse : null;
+        firstReadingTarget?.verseNo ??
+        widget.initialVerseNo ??
+        widget.highlightTarget?.verseNo;
+    _pendingFocusVerse = _readingTargets.isEmpty && (initialVerse ?? 0) > 0
+        ? initialVerse
+        : null;
     _loadSavedVerseKeys();
   }
 
@@ -122,6 +140,35 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     );
   }
 
+  Future<List<BibleVerse>> _loadVersesForReadingTarget(
+    BibleNavigationTarget target,
+  ) async {
+    final endChapter = target.endChapterNo ?? target.chapterNo;
+    final firstChapter = target.chapterNo <= endChapter
+        ? target.chapterNo
+        : endChapter;
+    final lastChapter = target.chapterNo <= endChapter
+        ? endChapter
+        : target.chapterNo;
+    final verses = <BibleVerse>[];
+    for (var chapter = firstChapter; chapter <= lastChapter; chapter += 1) {
+      final chapterVerses = await _loadVerses(
+        bookNo: target.bookNo,
+        chapterNo: chapter,
+      );
+      verses.addAll(
+        chapterVerses.where(
+          (verse) => target.containsVerse(
+            bookNo: verse.bookNo,
+            chapterNo: verse.chapterNo,
+            verseNo: verse.verseNo,
+          ),
+        ),
+      );
+    }
+    return verses;
+  }
+
   /// 우측 별 아이콘 탭 - 단일 절 저장/해제 토글.
   Future<void> _onTapStar(BibleVerse verse) async {
     final user = ref.read(signedInUserProvider);
@@ -172,6 +219,31 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     });
   }
 
+  void _showReadingTarget(BibleNavigationTarget target) {
+    final bookNo = target.bookNo.clamp(1, bibleBooks.length).toInt();
+    final maxChapter = bibleBooks[bookNo - 1].chapters;
+    final chapterNo = target.chapterNo.clamp(1, maxChapter).toInt();
+    setState(() {
+      _selectedBookNo = bookNo;
+      _selectedTestament = bookNo >= 40 ? 'new' : 'old';
+      _selectedChapter = chapterNo;
+      _pendingFocusVerse = null;
+    });
+  }
+
+  void _goToNextReadingTarget() {
+    if (_readingTargetIndex >= _readingTargets.length - 1) {
+      return;
+    }
+    final nextIndex = _readingTargetIndex + 1;
+    _readingTargetIndex = nextIndex;
+    _showReadingTarget(_readingTargets[nextIndex]);
+  }
+
+  void _completeGuidedReading() {
+    Navigator.of(context).pop(true);
+  }
+
   void _focusSavedVerse(SavedBibleVerse verse) {
     final bookNo = verse.bookNo.clamp(1, bibleBooks.length).toInt();
     final maxChapter = bibleBooks[bookNo - 1].chapters;
@@ -203,6 +275,10 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final readingTarget = _readingTargetIndex < _readingTargets.length
+        ? _readingTargets[_readingTargetIndex]
+        : null;
+    final isGuidedReading = readingTarget != null;
     final testamentBooks = _booksForTestament(_selectedTestament);
     final selectedEntry =
         testamentBooks
@@ -214,10 +290,13 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     final chapterCount = selectedBook.chapters;
     final chapterItems = List<int>.generate(chapterCount, (i) => i + 1);
     final selectedChapterSafe = _selectedChapter.clamp(1, chapterCount);
-    final versesFuture = _loadVerses(
-      bookNo: selectedBookNoSafe,
-      chapterNo: selectedChapterSafe,
-    );
+    final versesFuture = isGuidedReading
+        ? _loadVersesForReadingTarget(readingTarget)
+        : _loadVerses(
+            bookNo: selectedBookNoSafe,
+            chapterNo: selectedChapterSafe,
+          );
+    final highlightedTarget = readingTarget ?? widget.highlightTarget;
 
     return SubPageScaffold(
       title: '성경',
@@ -225,56 +304,65 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
       child: Column(
         children: [
           _BibleReaderHeader(
-            title: '${selectedBook.name} $selectedChapterSafe장',
+            title: isGuidedReading
+                ? _readingTitle(readingTarget)
+                : '${selectedBook.name} $selectedChapterSafe장',
             onTapSavedVerses: _openSavedVerses,
+            showSavedVerses: !isGuidedReading,
           ),
-          _BibleChipsRow(
-            testament: _selectedTestament,
-            bookNo: selectedBookNoSafe,
-            chapter: selectedChapterSafe,
-            books: testamentBooks,
-            chapters: chapterItems,
-            onTestamentChanged: (t) {
-              setState(() {
-                _selectedTestament = t;
-                final next = _booksForTestament(t);
-                if (next.isEmpty) return;
-                final inSame = t == 'new'
-                    ? _selectedBookNo >= 40
-                    : _selectedBookNo <= 39;
-                if (!inSame) {
-                  _selectedBookNo = next.first.key + 1;
-                }
-                final maxChapter = bibleBooks[_selectedBookNo - 1].chapters;
-                if (_selectedChapter > maxChapter) {
-                  _selectedChapter = maxChapter;
-                }
-                _pendingFocusVerse = null;
-              });
-            },
-            onBookChanged: (bookNo) {
-              setState(() {
-                _selectedBookNo = bookNo;
-                final maxChapter = bibleBooks[bookNo - 1].chapters;
-                if (_selectedChapter > maxChapter) {
-                  _selectedChapter = maxChapter;
-                }
-                _pendingFocusVerse = null;
-              });
-            },
-            onChapterChanged: (chapter) {
-              setState(() {
-                _selectedChapter = chapter;
-                _pendingFocusVerse = null;
-              });
-            },
-          ),
+          if (isGuidedReading)
+            _ReadingProgressRow(
+              currentIndex: _readingTargetIndex,
+              totalCount: _readingTargets.length,
+            )
+          else
+            _BibleChipsRow(
+              testament: _selectedTestament,
+              bookNo: selectedBookNoSafe,
+              chapter: selectedChapterSafe,
+              books: testamentBooks,
+              chapters: chapterItems,
+              onTestamentChanged: (t) {
+                setState(() {
+                  _selectedTestament = t;
+                  final next = _booksForTestament(t);
+                  if (next.isEmpty) return;
+                  final inSame = t == 'new'
+                      ? _selectedBookNo >= 40
+                      : _selectedBookNo <= 39;
+                  if (!inSame) {
+                    _selectedBookNo = next.first.key + 1;
+                  }
+                  final maxChapter = bibleBooks[_selectedBookNo - 1].chapters;
+                  if (_selectedChapter > maxChapter) {
+                    _selectedChapter = maxChapter;
+                  }
+                  _pendingFocusVerse = null;
+                });
+              },
+              onBookChanged: (bookNo) {
+                setState(() {
+                  _selectedBookNo = bookNo;
+                  final maxChapter = bibleBooks[bookNo - 1].chapters;
+                  if (_selectedChapter > maxChapter) {
+                    _selectedChapter = maxChapter;
+                  }
+                  _pendingFocusVerse = null;
+                });
+              },
+              onChapterChanged: (chapter) {
+                setState(() {
+                  _selectedChapter = chapter;
+                  _pendingFocusVerse = null;
+                });
+              },
+            ),
           Expanded(
             child: _BibleVersesArea(
               versesFuture: versesFuture,
               scrollController: _verseScrollController,
               focusVerseNo: _pendingFocusVerse,
-              highlightTarget: widget.highlightTarget,
+              highlightTarget: highlightedTarget,
               onConsumedFocus: () {
                 if (!mounted) {
                   return;
@@ -285,24 +373,54 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               },
               savedVerseKeys: _savedVerseKeys,
               onTapStar: _onTapStar,
+              showStars: !isGuidedReading,
             ),
           ),
-          _BibleBottomBar(
-            canPrev: selectedChapterSafe > 1,
-            canNext: selectedChapterSafe < chapterCount,
-            onPrev: () => _goToChapter(-1),
-            onNext: () => _goToChapter(1),
-            onListen: () {
-              final messenger = ScaffoldMessenger.of(context);
-              messenger.hideCurrentSnackBar();
-              messenger.showSnackBar(
-                const SnackBar(content: Text('듣기 기능은 준비 중이에요')),
-              );
-            },
-          ),
+          if (isGuidedReading)
+            _GuidedReadingBottomBar(
+              isLast: _readingTargetIndex == _readingTargets.length - 1,
+              onNext: _goToNextReadingTarget,
+              onComplete: _completeGuidedReading,
+            )
+          else
+            _BibleBottomBar(
+              canPrev: selectedChapterSafe > 1,
+              canNext: selectedChapterSafe < chapterCount,
+              onPrev: () => _goToChapter(-1),
+              onNext: () => _goToChapter(1),
+              onListen: () {
+                final messenger = ScaffoldMessenger.of(context);
+                messenger.hideCurrentSnackBar();
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('듣기 기능은 준비 중이에요')),
+                );
+              },
+            ),
         ],
       ),
     );
+  }
+
+  String _readingTitle(BibleNavigationTarget target) {
+    final reference = _targetReferenceText(target);
+    if (_readingTargets.length == 1) {
+      return reference;
+    }
+    return '${_readingTargetIndex + 1}/${_readingTargets.length} · $reference';
+  }
+
+  String _targetReferenceText(BibleNavigationTarget target) {
+    final book = bibleBooks[target.bookNo - 1].name;
+    final endChapter = target.endChapterNo;
+    final endVerse = target.endVerseNo;
+    final start = '${target.chapterNo}:${target.verseNo}';
+    if (endVerse == null) {
+      return '$book $start';
+    }
+    final end = endChapter == null || endChapter == target.chapterNo
+        ? '$endVerse'
+        : '$endChapter:$endVerse';
+    return '$book $start-$end';
   }
 }
 
@@ -314,10 +432,12 @@ class _BibleReaderHeader extends StatelessWidget {
   const _BibleReaderHeader({
     required this.title,
     required this.onTapSavedVerses,
+    required this.showSavedVerses,
   });
 
   final String title;
   final VoidCallback onTapSavedVerses;
+  final bool showSavedVerses;
 
   @override
   Widget build(BuildContext context) {
@@ -338,12 +458,54 @@ class _BibleReaderHeader extends StatelessWidget {
               ),
             ),
           ),
-          _CircleIconButton(
-            icon: Icons.menu_book_rounded,
-            tooltip: '저장한 구절',
-            onTap: onTapSavedVerses,
-          ),
+          if (showSavedVerses)
+            _CircleIconButton(
+              icon: Icons.menu_book_rounded,
+              tooltip: '저장한 구절',
+              onTap: onTapSavedVerses,
+            )
+          else
+            const SizedBox(width: 38, height: 38),
         ],
+      ),
+    );
+  }
+}
+
+class _ReadingProgressRow extends StatelessWidget {
+  const _ReadingProgressRow({
+    required this.currentIndex,
+    required this.totalCount,
+  });
+
+  final int currentIndex;
+  final int totalCount;
+
+  @override
+  Widget build(BuildContext context) {
+    if (totalCount <= 1) {
+      return const SizedBox(height: 8);
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+      child: Row(
+        children: List.generate(totalCount, (index) {
+          final active = index == currentIndex;
+          final done = index < currentIndex;
+          return Expanded(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              margin: EdgeInsets.only(right: index == totalCount - 1 ? 0 : 6),
+              height: 6,
+              decoration: BoxDecoration(
+                color: done || active
+                    ? AppColors.greenTop
+                    : const Color(0x44B89A66),
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -482,6 +644,7 @@ class _BibleVersesArea extends StatelessWidget {
     required this.onConsumedFocus,
     required this.savedVerseKeys,
     required this.onTapStar,
+    required this.showStars,
   });
 
   final Future<List<BibleVerse>> versesFuture;
@@ -491,6 +654,7 @@ class _BibleVersesArea extends StatelessWidget {
   final VoidCallback onConsumedFocus;
   final Set<String> savedVerseKeys;
   final void Function(BibleVerse) onTapStar;
+  final bool showStars;
 
   static const double _estimatedVerseRowExtent = 82;
 
@@ -648,6 +812,7 @@ class _BibleVersesArea extends StatelessWidget {
                   isFirst: i == 0,
                   isLast: i == verses.length - 1,
                   onTapStar: () => onTapStar(v),
+                  showStar: showStars,
                 );
               }),
             const SizedBox(height: 12),
@@ -670,6 +835,7 @@ class _VerseRow extends StatelessWidget {
     required this.isFirst,
     required this.isLast,
     required this.onTapStar,
+    required this.showStar,
   });
 
   final BibleVerse verse;
@@ -680,6 +846,7 @@ class _VerseRow extends StatelessWidget {
   final bool joinBelow;
   final bool isFirst;
   final bool isLast;
+  final bool showStar;
 
   /// 우측 별 아이콘 탭. 단일 절 저장/해제 토글.
   final VoidCallback onTapStar;
@@ -732,7 +899,10 @@ class _VerseRow extends StatelessWidget {
                   ),
                 ),
               ),
-              _VerseStarButton(saved: isSaved, onTap: onTapStar),
+              if (showStar)
+                _VerseStarButton(saved: isSaved, onTap: onTapStar)
+              else
+                const SizedBox(width: 10),
             ],
           ),
         ),
@@ -761,6 +931,47 @@ class _VerseStarButton extends StatelessWidget {
           size: 22,
           color: saved ? const Color(0xFFE2A93D) : const Color(0xFFB89A66),
           semanticLabel: saved ? '저장 해제' : '저장',
+        ),
+      ),
+    );
+  }
+}
+
+class _GuidedReadingBottomBar extends StatelessWidget {
+  const _GuidedReadingBottomBar({
+    required this.isLast,
+    required this.onNext,
+    required this.onComplete,
+  });
+
+  final bool isLast;
+  final VoidCallback onNext;
+  final VoidCallback onComplete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: isLast ? onComplete : onNext,
+          icon: Icon(
+            isLast ? Icons.check_circle_rounded : Icons.arrow_forward_rounded,
+          ),
+          label: Text(isLast ? '읽기 완료' : '다음'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.greenBtnBot,
+            foregroundColor: Colors.white,
+            minimumSize: const Size.fromHeight(50),
+            textStyle: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
         ),
       ),
     );

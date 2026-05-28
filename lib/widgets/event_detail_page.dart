@@ -46,8 +46,9 @@ class EventDetailPage extends ConsumerStatefulWidget {
   final StoryEvent event;
   final Future<List<String>> sceneAssetsFuture;
 
-  /// 성경 리더를 열 때 호출되는 콜백. 시작 위치와 읽을 범위를 함께 전달한다.
-  final void Function(BibleNavigationTarget target) onOpenBibleReader;
+  /// 성경 리더를 열 때 호출되는 콜백. 읽어야 할 본문 범위들을 함께 전달한다.
+  final Future<bool> Function(List<BibleNavigationTarget> targets)
+  onOpenBibleReader;
 
   /// 퀴즈 시작 버튼을 누를 때 호출되는 콜백. (eventId)
   final void Function(String eventId) onStartQuiz;
@@ -124,9 +125,10 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     final event = widget.event;
     final storyText = (event.summary ?? '').trim();
     final refs = event.bibleRefs;
-    final moveTarget = parseBibleNavigationTarget(
-      event.bibleRefs.firstOrNull?.displayText,
-    );
+    final readTargets = event.bibleRefs
+        .map((ref) => parseBibleNavigationTarget(ref.displayText))
+        .nonNulls
+        .toList(growable: false);
 
     // 완료 전이(false → true) 감지. 페이지 진입 시 이미 완료라면 발화하지 않음.
     // 반대 전이(true → false, 완료 취소)에는 다음 이야기 glow 도 끔.
@@ -164,7 +166,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       event: event,
       storyText: storyText,
       refs: refs,
-      moveTarget: moveTarget,
+      readTargets: readTargets,
       isQuizMode: isQuizMode,
       isBibleRead: isBibleRead,
       isQuizCompleted: isQuizCompleted,
@@ -179,7 +181,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required StoryEvent event,
     required String storyText,
     required List<BibleRef> refs,
-    required BibleNavigationTarget? moveTarget,
+    required List<BibleNavigationTarget> readTargets,
     required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
@@ -207,7 +209,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                       event: event,
                       storyText: storyText,
                       refs: refs,
-                      moveTarget: moveTarget,
+                      readTargets: readTargets,
                       isQuizMode: isQuizMode,
                       isBibleRead: isBibleRead,
                       isQuizCompleted: isQuizCompleted,
@@ -240,7 +242,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required StoryEvent event,
     required String storyText,
     required List<BibleRef> refs,
-    required BibleNavigationTarget? moveTarget,
+    required List<BibleNavigationTarget> readTargets,
     required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
@@ -273,7 +275,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
               _buildReadAndQuizProgress(
                 event: event,
                 refs: refs,
-                moveTarget: moveTarget,
+                readTargets: readTargets,
                 isQuizMode: isQuizMode,
                 isBibleRead: isBibleRead,
                 isQuizCompleted: isQuizCompleted,
@@ -308,7 +310,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   Widget _buildReadAndQuizProgress({
     required StoryEvent event,
     required List<BibleRef> refs,
-    required BibleNavigationTarget? moveTarget,
+    required List<BibleNavigationTarget> readTargets,
     required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
@@ -319,7 +321,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     return _ReadAndQuizSection(
       eventId: event.id,
       refs: refs,
-      moveTarget: moveTarget,
+      readTargets: readTargets,
       isBibleRead: isBibleRead,
       isQuizCompleted: isQuizCompleted,
       emotionMark: emotionMark,
@@ -660,7 +662,7 @@ class _ReadAndQuizSection extends StatelessWidget {
   const _ReadAndQuizSection({
     required this.eventId,
     required this.refs,
-    required this.moveTarget,
+    required this.readTargets,
     required this.isBibleRead,
     required this.isQuizCompleted,
     required this.emotionMark,
@@ -676,13 +678,14 @@ class _ReadAndQuizSection extends StatelessWidget {
 
   final String eventId;
   final List<BibleRef> refs;
-  final BibleNavigationTarget? moveTarget;
+  final List<BibleNavigationTarget> readTargets;
   final bool isBibleRead;
   final bool isQuizCompleted;
   final EventEmotionMark? emotionMark;
   final ({int correct, int total})? lastScore;
   final QuizAttemptSummary? attemptSummary;
-  final void Function(BibleNavigationTarget target) onOpenBibleReader;
+  final Future<bool> Function(List<BibleNavigationTarget> targets)
+  onOpenBibleReader;
   final VoidCallback onStartQuiz;
   final VoidCallback onEngraveEmotion;
   final VoidCallback onUndoBibleRead;
@@ -722,9 +725,9 @@ class _ReadAndQuizSection extends StatelessWidget {
           _CompletableActionRow(
             label: readLabel,
             completed: isBibleRead,
-            onTap: moveTarget == null
+            onTap: readTargets.isEmpty
                 ? null
-                : () => onOpenBibleReader(moveTarget!),
+                : () => onOpenBibleReader(readTargets),
             onUndo: onUndoBibleRead,
           ),
           const SizedBox(height: 8),
