@@ -86,6 +86,10 @@ class DailyQuizDraft:
         return f"daily_map_{self.quiz_type}_{digest}"
 
 
+def _quote_label(value: str) -> str:
+    return f"'{value}'"
+
+
 def _stable_shuffle(seed_key: str, values: Iterable) -> list:
     out = list(values)
     seed = int.from_bytes(hashlib.sha256(seed_key.encode("utf-8")).digest()[:8], "big")
@@ -270,7 +274,7 @@ class DailyQuizBuilder:
                     out,
                     quiz_type="event_region_match",
                     question=(
-                        f"{self.era_names[event.era]}에서 '{event.title}' "
+                        f"{_quote_label(self.era_names[event.era])}에서 {_quote_label(event.title)} "
                         "사건이 속한 지역은 어디입니까?"
                     ),
                     choices=self._region_choices(
@@ -280,8 +284,8 @@ class DailyQuizBuilder:
                     ),
                     answer=answer,
                     explanation=(
-                        f"'{event.title}' 사건은 {answer} 지역의 세부 장소 "
-                        f"'{event.place_name}'에 매핑되어 있습니다."
+                        f"{_quote_label(event.title)} 사건은 {_quote_label(answer)} 지역의 세부 장소 "
+                        f"{_quote_label(event.place_name)}에 매핑되어 있습니다."
                     ),
                     source=f"{event.era}:{event.story_index}",
                 )
@@ -327,14 +331,14 @@ class DailyQuizBuilder:
                     out,
                     quiz_type="region_event_exclusion",
                     question=(
-                        f"{self.era_names[era]}에서 {region_name} 지역을 "
+                        f"{_quote_label(self.era_names[era])}에서 {_quote_label(region_name)} 지역을 "
                         "선택했을 때 볼 수 없는 사건은 무엇입니까?"
                     ),
                     choices=choices,
                     answer=answer_event.title,
                     explanation=(
-                        f"'{answer_event.title}' 사건은 {answer_region} 지역 사건입니다. "
-                        f"나머지 선택지는 {region_name} 지역에서 볼 수 있습니다."
+                        f"{_quote_label(answer_event.title)} 사건은 {_quote_label(answer_region)} 지역 사건입니다. "
+                        f"나머지 선택지는 {_quote_label(region_name)} 지역에서 볼 수 있습니다."
                     ),
                     source=f"{era}:{region_code}",
                 )
@@ -385,14 +389,14 @@ class DailyQuizBuilder:
                     out,
                     quiz_type="character_region_exclusion",
                     question=(
-                        f"{self.era_names[era]}에서 {name} 이야기들과 "
+                        f"{_quote_label(self.era_names[era])}에서 {_quote_label(name)} 이야기들과 "
                         "직접 연결되지 않은 지역은 어디입니까?"
                     ),
                     choices=choices,
                     answer=answer,
                     explanation=(
-                        f"{name} 관련 사건은 현재 seed에서 {connected_text} "
-                        f"지역에 매핑되어 있습니다. {answer} 지역은 이 인물의 "
+                        f"{_quote_label(name)} 관련 사건은 현재 seed에서 {_quote_label(connected_text)} "
+                        f"지역에 매핑되어 있습니다. {_quote_label(answer)} 지역은 이 인물의 "
                         "사건 지역이 아닙니다."
                     ),
                     source=f"{era}:{character}",
@@ -417,8 +421,8 @@ class DailyQuizBuilder:
                         out,
                         quiz_type="character_event_region_match",
                         question=(
-                            f"{self.era_names[era]}에서 {name} 관련 "
-                            f"'{event.title}' 사건은 어느 지역에서 확인할 수 있습니까?"
+                            f"{_quote_label(self.era_names[era])}에서 {_quote_label(name)} 관련 "
+                            f"{_quote_label(event.title)} 사건은 어느 지역에서 확인할 수 있습니까?"
                         ),
                         choices=self._region_choices(
                             era=era,
@@ -430,8 +434,8 @@ class DailyQuizBuilder:
                         ),
                         answer=answer,
                         explanation=(
-                            f"'{event.title}' 사건은 {answer} 지역의 세부 장소 "
-                            f"'{event.place_name}'에 매핑되어 있습니다."
+                            f"{_quote_label(event.title)} 사건은 {_quote_label(answer)} 지역의 세부 장소 "
+                            f"{_quote_label(event.place_name)}에 매핑되어 있습니다."
                         ),
                         source=f"{era}:{event.story_index}:{character}",
                     )
@@ -476,14 +480,14 @@ class DailyQuizBuilder:
                     out,
                     quiz_type="region_event_inclusion",
                     question=(
-                        f"{self.era_names[era]}에서 {region_name} 지역을 "
+                        f"{_quote_label(self.era_names[era])}에서 {_quote_label(region_name)} 지역을 "
                         "선택했을 때 볼 수 있는 사건은 무엇입니까?"
                     ),
                     choices=choices,
                     answer=answer_event.title,
                     explanation=(
-                        f"'{answer_event.title}' 사건은 {region_name} 지역의 세부 장소 "
-                        f"'{answer_event.place_name}'에 매핑되어 있습니다."
+                        f"{_quote_label(answer_event.title)} 사건은 {_quote_label(region_name)} 지역의 세부 장소 "
+                        f"{_quote_label(answer_event.place_name)}에 매핑되어 있습니다."
                     ),
                     source=f"{era}:{region_code}:{answer_event.story_index}",
                 )
@@ -572,11 +576,11 @@ def build_docs(questions: list[DailyQuizDraft]) -> str:
         "",
         "| 유형 | 목적 | 생성 규칙 | 예시 |",
         "|------|------|-----------|------|",
-        "| 사건-지역 매칭형 | 사건을 보고 시대 안의 region을 찾게 한다 | 정답/오답 모두 같은 시대의 사건 보유 region | `출애굽 시대에서 '홍해: 길이 열리다' 사건이 속한 지역은 어디입니까?` |",
-        "| 시대-지역 사건 제외형 | 특정 시대/region에서 보이는 사건과 아닌 사건을 구분한다 | 정답은 같은 시대의 다른 region 사건, 오답은 해당 region 사건 | `포로 및 포로 후기 시대에서 페르시아 지역을 선택했을 때 볼 수 없는 사건은 무엇입니까?` |",
-        "| 인물-지역 대비형 | 인물의 행적이 걸친 region을 비교한다 | 정답은 같은 시대이지만 해당 인물 사건이 없는 region | `족장 시대에서 아브라함 이야기들과 직접 연결되지 않은 지역은 어디입니까?` |",
-        "| 인물 사건-지역 매칭형 | 인물+사건을 같이 보고 region을 찾게 한다 | 사건의 region을 정답으로 두고 같은 시대 region을 오답으로 둔다 | `사도의 시대에서 바울이 등장하는 '빌립보: 감옥의 찬송' 사건은 어느 지역에서 확인할 수 있습니까?` |",
-        "| 지역 사건 포함형 | 특정 region을 선택했을 때 볼 수 있는 사건을 찾게 한다 | 정답은 해당 region 사건, 오답은 같은 시대의 다른 region 사건 | `왕정 시대에서 유대 지역을 선택했을 때 볼 수 있는 사건은 무엇입니까?` |",
+        "| 사건-지역 매칭형 | 사건을 보고 시대 안의 region을 찾게 한다 | 정답/오답 모두 같은 시대의 사건 보유 region | `'출애굽 시대'에서 '홍해: 길이 열리다' 사건이 속한 지역은 어디입니까?` |",
+        "| 시대-지역 사건 제외형 | 특정 시대/region에서 보이는 사건과 아닌 사건을 구분한다 | 정답은 같은 시대의 다른 region 사건, 오답은 해당 region 사건 | `'포로 및 포로 후기 시대'에서 '페르시아' 지역을 선택했을 때 볼 수 없는 사건은 무엇입니까?` |",
+        "| 인물-지역 대비형 | 인물의 행적이 걸친 region을 비교한다 | 정답은 같은 시대이지만 해당 인물 사건이 없는 region | `'족장 시대'에서 '아브라함' 이야기들과 직접 연결되지 않은 지역은 어디입니까?` |",
+        "| 인물 사건-지역 매칭형 | 인물+사건을 같이 보고 region을 찾게 한다 | 사건의 region을 정답으로 두고 같은 시대 region을 오답으로 둔다 | `'사도의 시대'에서 '바울' 관련 '빌립보: 감옥의 찬송' 사건은 어느 지역에서 확인할 수 있습니까?` |",
+        "| 지역 사건 포함형 | 특정 region을 선택했을 때 볼 수 있는 사건을 찾게 한다 | 정답은 해당 region 사건, 오답은 같은 시대의 다른 region 사건 | `'왕정 시대'에서 '유대' 지역을 선택했을 때 볼 수 있는 사건은 무엇입니까?` |",
         "",
         "## 생성 결과 요약",
         "",

@@ -401,6 +401,8 @@ explanation text, created_at
 - 시드: `supabase/seeds/daily_quiz.sql` (지도 기반 100문항, slug UPSERT).
 - 빌더/가이드: `tools/seed/build_daily_quiz_seed_sql.py`,
   `docs/DAILY_QUIZ_SEED_GUIDE.md`.
+- 질문/해설 문구에서는 시대명, 사건명, 인물명, 지역/장소명을 작은따옴표로
+  감싸 사용자가 핵심 단서를 구분하기 쉽게 한다.
 
 #### `weekly_quiz_progress` (2026-05-15)
 ```sql
