@@ -35,6 +35,7 @@ pip install -r requirements.txt
 | 에셋, seed, Python 파이프라인, Makefile | `$data-pipeline` | `docs/DATA_PIPELINE.md` | `tools/`, `assets/`, `Makefile` |
 | 테스트, TDD, 커버리지, hook, CI | `$testing` | `docs/TESTING.md`, `docs/guides/TEST_GUIDE.md` | `test/`, `tools/**/test_*.py`, `.pre-commit-config.yaml` |
 | 대형 리팩터링, 파일 분리, 중복 제거 | `$refactor` | `.agents/skills/refactor/SKILL.md` | 도메인 횡단 |
+| 현재 작업 커밋, detached worktree 회수/정리 | `$worktree-commit` | `.agents/skills/worktree-commit/SKILL.md` | git worktree, 현재 diff |
 | 푸시 전 검증, 한국어 PR 초안, 요청 시 commit/push | `$pre-push-pr` | `.agents/skills/pre-push-pr/SKILL.md` | 전체 저장소 |
 
 작업에 필요한 스킬과 참조 문서만 로드한다. 많은 파일을 읽는 탐색은 병렬로
@@ -147,6 +148,9 @@ python3 tools/lint/check_code_metrics.py
 ## Git과 안전
 
 - 사용자가 명시적으로 요청하지 않으면 commit/push 하지 않는다.
+- 사용자가 "커밋해줘", "현재 작업 커밋", "워크트리 커밋", "원래 브랜치에 반영",
+  "작업트리 정리"를 요청하면 `$worktree-commit` 스킬로 현재 위치가 일반 브랜치인지
+  detached/보조 worktree인지 먼저 판별한다.
 - 사용자 또는 다른 작업자의 관련 없는 변경을 보존한다.
 - `git reset --hard`, 광범위한 `rm -rf` 같은 파괴적 명령은 명시 승인 없이 쓰지 않는다.
 - 작업 전 dirty state를 확인한다.
