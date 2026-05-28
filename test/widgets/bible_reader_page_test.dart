@@ -12,6 +12,7 @@ import 'package:story_bible/models/paged_result.dart';
 import 'package:story_bible/models/saved_bible_verse.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/utils/bible_book_meta.dart';
 import 'package:story_bible/widgets/bible_reader_page.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
@@ -67,6 +68,27 @@ void main() {
         ],
       );
       when(
+        () => storyRepository.fetchBibleVersesByChapter(
+          translation: 'KRV',
+          bookNo: 1,
+          chapterNo: 2,
+        ),
+      ).thenAnswer(
+        (_) async => List.generate(
+          30,
+          (index) => _verse(
+            bookNo: 1,
+            bookName: '창세기',
+            chapterNo: 2,
+            verseNo: index + 1,
+            text:
+                '테스트 본문 ${index + 1} 긴 본문이 이어져 실제 성경 리더처럼 '
+                '여러 줄 높이를 가진 절입니다. 자동 포커스가 화면 밖의 절도 '
+                '찾아야 합니다.',
+          ),
+        ),
+      );
+      when(
         () => userRepository.fetchSavedVersesPage(
           userId: 'user-1',
           pageIndex: 0,
@@ -117,6 +139,162 @@ void main() {
 
       expect(find.text('창세기 45장'), findsOneWidget);
       expect(find.textContaining('요셉이 시종하는 자들 앞에서'), findsOneWidget);
+    });
+
+    testWidgets('본문 절을 눌러도 범위 저장 선택이 시작되지 않는다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+
+      expect(find.text('끝 절을 선택하세요'), findsNothing);
+    });
+
+    testWidgets('초기 절 번호가 있으면 해당 절을 본문 목록 상단으로 올린다', (tester) async {
+      tester.view.physicalSize = const Size(390, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(
+            home: BibleReaderPage(
+              initialBookNo: 1,
+              initialChapterNo: 2,
+              initialVerseNo: 16,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final listTop = tester.getTopLeft(find.byType(ListView)).dy;
+      final verseTop = tester.getTopLeft(find.textContaining('테스트 본문 16')).dy;
+
+      expect(find.text('창세기 2장'), findsOneWidget);
+      expect(verseTop, lessThanOrEqualTo(listTop + 40));
+    });
+
+    testWidgets('사건 읽기 모드는 지정된 본문 범위만 보여준다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: MaterialApp(
+            home: BibleReaderPage(
+              readingTargets: [parseBibleNavigationTarget('창 2:3-4')!],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('창세기 2:3-4'), findsOneWidget);
+      expect(find.textContaining('테스트 본문 3 긴 본문'), findsOneWidget);
+      expect(find.textContaining('테스트 본문 4 긴 본문'), findsOneWidget);
+      expect(find.textContaining('테스트 본문 2 긴 본문'), findsNothing);
+      expect(find.textContaining('테스트 본문 5 긴 본문'), findsNothing);
+      expect(find.text('읽기 완료'), findsOneWidget);
+      expect(find.text('다음 장'), findsNothing);
+    });
+
+    testWidgets('여러 사건 본문은 다음으로 넘긴 뒤 마지막에서 읽기 완료를 보여준다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: MaterialApp(
+            home: BibleReaderPage(
+              readingTargets: [
+                parseBibleNavigationTarget('창 2:3')!,
+                parseBibleNavigationTarget('창 45:1')!,
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('1/2 · 창세기 2:3'), findsOneWidget);
+      expect(find.text('다음'), findsOneWidget);
+      expect(find.text('읽기 완료'), findsNothing);
+
+      await tester.tap(find.text('다음'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('2/2 · 창세기 45:1'), findsOneWidget);
+      expect(find.textContaining('요셉이 시종하는 자들 앞에서'), findsOneWidget);
+      expect(find.text('읽기 완료'), findsOneWidget);
+    });
+
+    testWidgets('읽기 완료로 닫을 때만 완료 결과를 반환한다', (tester) async {
+      bool? completed;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return TextButton(
+                  onPressed: () async {
+                    completed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute<bool>(
+                        builder: (_) => BibleReaderPage(
+                          readingTargets: [
+                            parseBibleNavigationTarget('창 2:3')!,
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('열기'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('열기'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.chevron_left_rounded));
+      await tester.pumpAndSettle();
+
+      expect(completed, isNull);
+
+      await tester.tap(find.text('열기'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('읽기 완료'));
+      await tester.pumpAndSettle();
+
+      expect(completed, isTrue);
     });
   });
 }

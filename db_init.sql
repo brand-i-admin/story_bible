@@ -642,17 +642,34 @@ create table if not exists weekly_quiz_progress (
 create index if not exists idx_weekly_quiz_progress_user_week
   on weekly_quiz_progress (user_id, week_key);
 
--- 매일 퀴즈 — 1 row 가 한 문제. 4지선다 + 정답 + 해설.
+-- 매일 퀴즈 — 1 row 가 한 문제. 가변 선택지(2~6개) + 정답 + 해설.
 create table if not exists daily_quiz (
   id uuid primary key default gen_random_uuid(),
+  -- seed 재실행 안전성을 위한 안정 키. cron 이 발급하는 일일 복제 row 는 NULL.
+  slug text unique,
+  quiz_type text not null default 'general',
   question text not null,
-  choice_1 text not null,
-  choice_2 text not null,
-  choice_3 text not null,
-  choice_4 text not null,
-  answer_index smallint not null check (answer_index between 1 and 4),
+  choices jsonb not null,
+  answer_index smallint not null,
   explanation text not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  constraint chk_daily_quiz_type check (
+    quiz_type in (
+      'general',
+      'event_region_match',
+      'region_event_exclusion',
+      'character_region_exclusion',
+      'character_event_region_match',
+      'region_event_inclusion'
+    )
+  ),
+  constraint chk_daily_quiz_choices check (
+    jsonb_typeof(choices) = 'array'
+    and jsonb_array_length(choices) between 2 and 6
+  ),
+  constraint chk_daily_quiz_answer_index check (
+    answer_index between 1 and jsonb_array_length(choices)
+  )
 );
 
 -- 매일 퀴즈 사용자 시도 — 한 사용자가 한 daily_quiz 에 한 번 답을 고른 기록.
@@ -661,7 +678,7 @@ create table if not exists daily_quiz (
 create table if not exists user_daily_quiz_attempts (
   user_id uuid not null references auth.users(id) on delete cascade,
   daily_quiz_id uuid not null references daily_quiz(id) on delete cascade,
-  selected_index smallint not null check (selected_index between 1 and 4),
+  selected_index smallint not null check (selected_index between 1 and 6),
   is_correct boolean not null,
   created_at timestamptz not null default now(),
   primary key (user_id, daily_quiz_id)
@@ -3592,7 +3609,7 @@ begin
   -- 풀에서 random 1건 pick. cron 이 만든 옛 row 와 시드 row 가 섞여 있어도
   -- 모두 동일하게 풀로 취급 — 단순함 우선. 같은 quiz 가 자주 뽑히는 게
   -- 거슬리면 daily_quiz 에 시드 sample 을 추가하라.
-  select question, choice_1, choice_2, choice_3, choice_4, answer_index, explanation
+  select quiz_type, question, choices, answer_index, explanation
     into v_picked
     from daily_quiz
     order by random()
@@ -3606,12 +3623,13 @@ begin
   -- 같은 content 로 새 row INSERT (created_at 자동 = now()). 새 PK 발급으로
   -- 클라이언트의 fetchLatestDailyQuiz 가 이 새 row 를 가져오게 되고
   -- user_daily_quiz_attempts 매핑도 자동 분리된다.
-  insert into daily_quiz (
-    question, choice_1, choice_2, choice_3, choice_4, answer_index, explanation
-  )
+  insert into daily_quiz (quiz_type, question, choices, answer_index, explanation)
   values (
-    v_picked.question, v_picked.choice_1, v_picked.choice_2,
-    v_picked.choice_3, v_picked.choice_4, v_picked.answer_index, v_picked.explanation
+    v_picked.quiz_type,
+    v_picked.question,
+    v_picked.choices,
+    v_picked.answer_index,
+    v_picked.explanation
   )
   returning id into v_new_id;
 

@@ -178,12 +178,34 @@ class LoadQuizFileTests(unittest.TestCase):
         finally:
             path.unlink()
 
+    def test_rejects_quoted_story_title_question_prefix(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0][
+            "question"
+        ] = "'창조: 7일과 안식'에서 하나님은 무엇을 하셨습니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "story title"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
     def test_story_context_rejects_story_title_choice(self) -> None:
         payload = self._valid_payload()
         payload["questions"][2]["choices"][0] = "창조: 7일과 안식"
         path = self._write_as(payload, "era_primeval_n001.json")
         try:
             with self.assertRaisesRegex(mod.QuizValidationError, "story title"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_rejects_generic_filler_distractor(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0]["choices"][1] = "그 일을 숨기고 물러났다"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "generic filler"):
                 mod.load_quiz_file(path)
         finally:
             path.unlink()
@@ -220,6 +242,38 @@ class LoadQuizFileTests(unittest.TestCase):
         path = self._write_as(payload, "era_primeval_n001.json")
         try:
             with self.assertRaisesRegex(mod.QuizValidationError, "generic"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_rejects_contextless_generic_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0]["question"] = "왕은 어떻게 했습니까?"
+        payload["questions"][0]["choices"] = [
+            "조서를 내리고 잔치에 앉았다",
+            "백성을 다시 불러 모았다",
+            "성문 밖으로 나가 기다렸다",
+        ]
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "ambiguous"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_rejects_choice_that_cannot_answer_speech_question(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0][
+            "question"
+        ] = "모세 앞에서 아론은 무엇이라고 말했습니까?"
+        payload["questions"][0]["choices"] = [
+            "백성의 악함을 당신도 알고 있다고 답했다",
+            "여호수아",
+            "전쟁의 함성이라고 대답했다",
+        ]
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "grammatically"):
                 mod.load_quiz_file(path)
         finally:
             path.unlink()

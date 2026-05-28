@@ -218,15 +218,15 @@ $backend 스킬 호출 시:
 ```
 1. $backend 스킬 + Supabase 공식 플러그인 활성화
 2. db_init.sql 수정 (스키마 단일 진실 소스)
-3. 마이그레이션 SQL 파일 생성 (supabase/migrations/)
+3. 필요한 seed builder / seed SQL 갱신
 4. RLS 정책 설정 (Supabase 플러그인이 검증)
 5. Repository Dart 코드 추가
 6. Model 클래스 생성
 7. $frontend: UI 위젯 추가
 8. $testing: 테스트 작성
 9. "완료. 커밋할까요?"
-   ⚠️ "DB 마이그레이션은 직접 적용해야 합니다:
-      Supabase Dashboard > SQL Editor에서 실행"
+   ⚠️ "개발 DB 반영은 리셋 시퀀스로 합니다:
+      make seed-all && make db-init && make apply-seeds && make upload-character-avatars"
 ```
 
 **중요**: Codex는 기본적으로 SQL 파일만 만들고, 실제 DB 적용은 사용자가 직접한다.
@@ -610,7 +610,7 @@ DB를 건드리는 작업 시 반드시:
 
 ```
 □ db_init.sql 수정 (단일 진실 소스)
-□ supabase/migrations/ 마이그레이션 SQL 생성
+□ 필요한 seed builder / seed SQL 갱신
 □ RLS 정책 설정 (공개 읽기 vs 사용자 전용)
 □ lib/data/ Repository 메소드 추가/수정
 □ lib/models/ Model 클래스 추가/수정 (fromMap)
@@ -708,7 +708,7 @@ pre-commit  (가벼움, 매 커밋)     pre-push     (무거움, 푸시 전)
 | 커버리지 회귀 체크 | 없음 | `lcov` 기준 최소 커버리지 설정 (중기) |
 | 의존성 취약점 스캔 | 없음 | GitHub Dependabot 활성화 (즉시 가능) |
 | 커밋 메시지 규칙 | 없음 | 팀 크기 작으므로 선택 사항 |
-| Supabase 마이그레이션 순서 검증 | 없음 | 스크립트로 migrations/ 파일명 순서 + db_init.sql 대조 |
+| DB 리셋 시퀀스 검증 | 수동 | `make -n seed-all db-init apply-seeds upload-character-avatars` 드라이런 유지 |
 
 ---
 
@@ -866,7 +866,6 @@ gh pr create → 사용자가 "PR 만들어줘" 할 때만
 | `.github/workflows/flutter_ci.yml` | .github/ | 원격 CI (4 jobs) | push/PR |
 | `pubspec.yaml` | 루트 | 의존성 + 에셋 목록 | `flutter pub get` |
 | `db_init.sql` | 루트 | DB 스키마 단일 진실 소스 | 수동 (Supabase SQL Editor) |
-| `supabase/migrations/` | supabase/ | 마이그레이션 보조 | 수동 |
 | `Makefile` | 루트 | 에셋/시딩 파이프라인 | `make <target>` |
 
 ### 14.8 "요구사항 → 머지"까지 전체 흐름
@@ -1827,7 +1826,7 @@ local 정리를 별도 워크플로우로 하고 싶을 때).
 
 - DB / RPC: `db_init.sql` 의 `approve_delete_proposal`, `submit_delete_proposal`,
   `events.deleted_at`, `characters.is_active`
-- Migration: `supabase/migrations/20260427_delete_proposal_storage_cleanup.sql`
+- Schema 통합: 현재는 `db_init.sql` 에 포함
 - Client: `lib/data/proposal_repository.dart::approveDelete`,
   `lib/widgets/proposal/delete_event_proposal_sheet.dart`,
   `lib/screens/proposal_detail_screen.dart`
@@ -1970,7 +1969,7 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
   `notify_on_proposal_invalidated` 트리거,
   `event_proposals.position_invalidated_at`, `position_invalidation_reason`,
   `event_proposals_invalidated_idx` 부분 인덱스
-- Migration: `supabase/migrations/20260427_proposal_position_invalidation.sql`
+- Schema 통합: 현재는 `db_init.sql` 에 포함
 - Model: `lib/models/event_proposal.dart::positionInvalidatedAt`,
   `positionInvalidationReason`, `needsPositionRevision`
 - Repository: `lib/data/proposal_repository.dart::revisePosition`
@@ -2123,7 +2122,7 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
   `events.title UNIQUE` 제약,
   `event_proposals.position_invalidated_at`,
   `event_proposals.synced_to_local_at`
-- Migration (이번 라운드 통합): `supabase/migrations/20260427_proposal_lifecycle_overhaul.sql`
+- Schema 통합: 현재는 `db_init.sql` 에 포함
 - Sync 스크립트: `tools/supabase/sync_approved_proposal_assets.py`
   (Phase A 추가 / Phase B diff 정리 / Step C thumbnails / Step D pubspec)
 - Make 타겟: `make sync-approved-proposal-assets[-all|-dry|-clean]`,

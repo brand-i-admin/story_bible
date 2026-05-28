@@ -12,6 +12,7 @@ import '../../state/story_controller.dart';
 import '../../theme/tokens.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
+import '../parchment_dialog.dart';
 import 'profile_event_review_grid.dart';
 
 class ProfileLifeMap extends ConsumerStatefulWidget {
@@ -76,6 +77,7 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
               marks: widget.eventEmotionMarks,
               eventById: eventById,
               onOpenRegion: _showEmotionRegionSheet,
+              onOpenHelp: _showLifeMapHelpDialog,
             ),
             const SizedBox(height: 12),
             _RecentEmotionNotes(
@@ -139,7 +141,6 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
                         iconSize: 18,
                         backgroundColor: region.fillColor,
                         borderColor: region.strokeColor,
-                        iconColor: AppColors.ink700,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -213,6 +214,31 @@ class _ProfileLifeMapState extends ConsumerState<ProfileLifeMap> {
       },
     );
   }
+
+  void _showLifeMapHelpDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final maxHeight = MediaQuery.sizeOf(dialogContext).height * 0.58;
+        return ParchmentDialog(
+          title: '내 삶의 지도 안내',
+          subtitle: '성경 이야기 위에 남긴 나의 감정 기록을 한눈에 돌아보는 공간입니다.',
+          showCloseButton: true,
+          actions: [
+            ParchmentDialogActionButton(
+              label: '알겠어요',
+              style: ParchmentDialogActionStyle.secondary,
+              onTap: () => Navigator.of(dialogContext).pop(),
+            ),
+          ],
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: math.min(maxHeight, 460)),
+            child: const SingleChildScrollView(child: _LifeMapHelpContent()),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _LifeMapAtlas extends StatelessWidget {
@@ -220,6 +246,7 @@ class _LifeMapAtlas extends StatelessWidget {
     required this.marks,
     required this.eventById,
     required this.onOpenRegion,
+    required this.onOpenHelp,
   });
 
   final Map<String, EventEmotionMark> marks;
@@ -230,6 +257,7 @@ class _LifeMapAtlas extends StatelessWidget {
     required Map<String, StoryEvent> eventById,
   })
   onOpenRegion;
+  final VoidCallback onOpenHelp;
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +300,11 @@ class _LifeMapAtlas extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Positioned(left: 15, top: 13, child: _LifeMapTitle()),
+                Positioned(
+                  left: 15,
+                  top: 13,
+                  child: _LifeMapTitle(onOpenHelp: onOpenHelp),
+                ),
                 for (final region in _lifeRegions)
                   Positioned.fromRect(
                     rect: _scaleRect(region.labelRect, scaleX, scaleY),
@@ -304,7 +336,9 @@ class _LifeMapAtlas extends StatelessWidget {
 }
 
 class _LifeMapTitle extends StatelessWidget {
-  const _LifeMapTitle();
+  const _LifeMapTitle({required this.onOpenHelp});
+
+  final VoidCallback onOpenHelp;
 
   @override
   Widget build(BuildContext context) {
@@ -320,26 +354,175 @@ class _LifeMapTitle extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Container(
-          width: 18,
-          height: 18,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0xFFE8D4A8),
-            border: Border.all(color: const Color(0xFFB08A51), width: 0.8),
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            '?',
-            style: TextStyle(
-              color: AppColors.ink500,
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              height: 1,
+        Tooltip(
+          message: '내 삶의 지도 안내',
+          child: Semantics(
+            button: true,
+            label: '내 삶의 지도 안내 열기',
+            child: Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: onOpenHelp,
+                customBorder: const CircleBorder(),
+                child: Ink(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFE8D4A8),
+                    border: Border.all(
+                      color: const Color(0xFFB08A51),
+                      width: 0.8,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      '?',
+                      style: TextStyle(
+                        color: AppColors.ink500,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LifeMapHelpContent extends StatelessWidget {
+  const _LifeMapHelpContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _LifeMapHelpParagraph(
+          text:
+              '내 삶의 지도는 성경 이야기를 읽고 퀴즈를 푼 뒤, 지도 위에 새긴 나의 감정을 모아 보여주는 감정 지도입니다. 기쁨, 기대, 감사, 놀라움, 안타까움, 위로, 두려움, 기타 감정이 각각 하나의 지역처럼 표시됩니다.',
+        ),
+        SizedBox(height: 12),
+        _LifeMapHelpSection(
+          icon: Icons.touch_app_rounded,
+          title: '어떻게 쓰나요?',
+          body:
+              '감정 지역을 누르면 그 감정을 느꼈던 성경 이야기들이 다시 모입니다. 예를 들어 위로 지역을 누르면, 내가 위로를 새겼던 이야기들을 한 번에 복습할 수 있습니다.',
+        ),
+        SizedBox(height: 10),
+        _LifeMapHelpSection(
+          icon: Icons.insights_rounded,
+          title: '어떤 인사이트를 얻나요?',
+          body:
+              '어떤 감정이 자주 쌓이는지 보면 요즘 내가 말씀을 어떤 시선으로 만나고 있는지 볼 수 있습니다. 감사가 많다면 은혜를 발견하는 눈이 자라고 있는 것이고, 두려움이나 안타까움이 많다면 하나님 앞에 더 오래 머물러야 할 주제가 보일 수 있습니다.',
+        ),
+        SizedBox(height: 10),
+        _LifeMapHelpSection(
+          icon: Icons.auto_stories_rounded,
+          title: '더 잘 쓰는 방법',
+          body:
+              '이야기를 끝낼 때 감정만 고르지 말고 한 줄 메모를 짧게 남겨보세요. 시간이 지난 뒤 같은 감정 지역을 열어보면, 내가 어떤 말씀 앞에서 반복해서 멈춰 섰는지 더 선명하게 보입니다.',
+        ),
+        SizedBox(height: 10),
+        _LifeMapHelpSection(
+          icon: Icons.map_rounded,
+          title: '개수는 무엇을 말하나요?',
+          body:
+              '각 지역의 숫자는 그 감정으로 새긴 이야기 수입니다. 숫자의 크고 작음은 점수가 아니라, 지금까지 하나님 말씀과 만난 흔적의 분포입니다. 전체 지도가 넓어질수록 내 삶을 바라보는 시야도 함께 넓어집니다.',
+        ),
+      ],
+    );
+  }
+}
+
+class _LifeMapHelpParagraph extends StatelessWidget {
+  const _LifeMapHelpParagraph({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: AppColors.ink700,
+        fontSize: 13.2,
+        fontWeight: FontWeight.w700,
+        height: 1.55,
+      ),
+    );
+  }
+}
+
+class _LifeMapHelpSection extends StatelessWidget {
+  const _LifeMapHelpSection({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 11),
+      decoration: BoxDecoration(
+        color: const Color(0xEFFFF8E9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x99D6BF8D), width: 0.8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColors.goldLight.withValues(alpha: 0.34),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.goldDeep, width: 0.8),
+            ),
+            child: Icon(icon, color: AppColors.ink500, size: 17),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.ink800,
+                    fontSize: 13.6,
+                    fontWeight: FontWeight.w900,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  body,
+                  style: const TextStyle(
+                    color: AppColors.ink500,
+                    fontSize: 12.3,
+                    fontWeight: FontWeight.w700,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -10,14 +10,14 @@ class EventEmotionOption {
   final String emoji;
 
   static const options = <EventEmotionOption>[
-    EventEmotionOption(key: 'joy', label: '기쁨', emoji: '✨'),
-    EventEmotionOption(key: 'anticipation', label: '기대', emoji: '↗'),
-    EventEmotionOption(key: 'gratitude', label: '감사', emoji: '♥'),
-    EventEmotionOption(key: 'wonder', label: '놀라움', emoji: '?'),
+    EventEmotionOption(key: 'joy', label: '기쁨', emoji: '🌟'),
+    EventEmotionOption(key: 'anticipation', label: '기대', emoji: '🌅'),
+    EventEmotionOption(key: 'gratitude', label: '감사', emoji: '💛'),
+    EventEmotionOption(key: 'wonder', label: '놀라움', emoji: '😮'),
     EventEmotionOption(key: 'sadness', label: '안타까움', emoji: '💧'),
     EventEmotionOption(key: 'comfort', label: '위로', emoji: '🌿'),
     EventEmotionOption(key: 'fear', label: '두려움', emoji: '⚡'),
-    EventEmotionOption(key: 'other', label: '기타', emoji: '·'),
+    EventEmotionOption(key: 'other', label: '기타', emoji: '🎨'),
   ];
 
   static EventEmotionOption? byKey(String key) {

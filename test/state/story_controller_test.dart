@@ -28,7 +28,7 @@ const _fallbackEmotionMark = EventEmotionMark(
   eventId: 'fallback',
   emotionKey: 'joy',
   emotionLabel: '기쁨',
-  emotionEmoji: '✨',
+  emotionEmoji: '🌟',
   note: '',
   updatedAt: null,
 );

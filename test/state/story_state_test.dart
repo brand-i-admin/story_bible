@@ -113,12 +113,12 @@ void main() {
         eventId: 'ev1',
         emotionKey: 'joy',
         emotionLabel: '기쁨',
-        emotionEmoji: '✨',
+        emotionEmoji: '🌟',
         note: '기쁨이 남았다.',
         updatedAt: null,
       );
       final updated = original.copyWith(eventEmotionMarks: const {'ev1': mark});
-      expect(updated.eventEmotionMarks['ev1']?.emotionEmoji, '✨');
+      expect(updated.eventEmotionMarks['ev1']?.emotionEmoji, '🌟');
     });
 
     test('savedEventIds를 교체할 수 있다', () {

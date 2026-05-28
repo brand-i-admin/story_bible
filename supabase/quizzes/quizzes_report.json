@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T10:58:43+00:00",
+  "generated_at": "2026-05-28T09:52:47+00:00",
   "total_quiz_files": 168,
   "total_events": 168,
   "total_questions": 504,
@@ -16,7 +16,7 @@
       "filename": "era_exile_return_n001.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 40
+      "length": 21
     },
     {
       "filename": "era_exile_return_n001.json",
@@ -107,18 +107,6 @@
       "display_order": 1,
       "field": "explanation",
       "length": 123
-    },
-    {
-      "filename": "era_exile_return_n010.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 21
-    },
-    {
-      "filename": "era_exile_return_n010.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 24
     },
     {
       "filename": "era_exile_return_n011.json",
@@ -301,12 +289,6 @@
       "length": 132
     },
     {
-      "filename": "era_judges_n010.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 25
-    },
-    {
       "filename": "era_judges_n011.json",
       "display_order": 0,
       "field": "question",
@@ -387,18 +369,6 @@
     {
       "filename": "era_monarchy_n005.json",
       "display_order": 1,
-      "field": "choices[0]",
-      "length": 29
-    },
-    {
-      "filename": "era_monarchy_n005.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 21
-    },
-    {
-      "filename": "era_monarchy_n005.json",
-      "display_order": 1,
       "field": "explanation",
       "length": 76
     },
@@ -409,6 +379,24 @@
       "length": 65
     },
     {
+      "filename": "era_monarchy_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_monarchy_n006.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 26
+    },
+    {
+      "filename": "era_monarchy_n006.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
       "filename": "era_monarchy_n007.json",
       "display_order": 1,
       "field": "choices[0]",
@@ -417,14 +405,14 @@
     {
       "filename": "era_monarchy_n008.json",
       "display_order": 1,
-      "field": "explanation",
-      "length": 102
+      "field": "question",
+      "length": 41
     },
     {
-      "filename": "era_monarchy_n009.json",
+      "filename": "era_monarchy_n008.json",
       "display_order": 1,
-      "field": "choices[0]",
-      "length": 30
+      "field": "explanation",
+      "length": 102
     },
     {
       "filename": "era_monarchy_n009.json",
@@ -457,12 +445,6 @@
       "length": 74
     },
     {
-      "filename": "era_monarchy_n013.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 24
-    },
-    {
       "filename": "era_monarchy_n014.json",
       "display_order": 1,
       "field": "explanation",
@@ -491,12 +473,6 @@
       "display_order": 1,
       "field": "explanation",
       "length": 145
-    },
-    {
-      "filename": "era_monarchy_n017.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 32
     },
     {
       "filename": "era_monarchy_n017.json",
@@ -561,12 +537,6 @@
     {
       "filename": "era_monarchy_n023.json",
       "display_order": 1,
-      "field": "choices[0]",
-      "length": 41
-    },
-    {
-      "filename": "era_monarchy_n023.json",
-      "display_order": 1,
       "field": "explanation",
       "length": 61
     },
@@ -598,12 +568,6 @@
       "filename": "era_nt_apostolic_n004.json",
       "display_order": 0,
       "field": "choices[2]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n004.json",
-      "display_order": 1,
-      "field": "choices[0]",
       "length": 21
     },
     {
@@ -664,7 +628,7 @@
       "filename": "era_nt_apostolic_n013.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 34
+      "length": 31
     },
     {
       "filename": "era_nt_apostolic_n014.json",
@@ -867,12 +831,6 @@
     {
       "filename": "era_nt_apostolic_n026.json",
       "display_order": 1,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_apostolic_n026.json",
-      "display_order": 1,
       "field": "explanation",
       "length": 68
     },
@@ -922,12 +880,6 @@
       "filename": "era_nt_apostolic_n030.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 30
-    },
-    {
-      "filename": "era_nt_apostolic_n030.json",
-      "display_order": 1,
-      "field": "choices[2]",
       "length": 21
     },
     {
@@ -965,6 +917,12 @@
       "display_order": 0,
       "field": "choices[0]",
       "length": 21
+    },
+    {
+      "filename": "era_nt_consummation_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 30
     },
     {
       "filename": "era_nt_post_apostolic_n001.json",
@@ -1105,12 +1063,6 @@
       "length": 62
     },
     {
-      "filename": "era_patriarch_n002.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 31
-    },
-    {
       "filename": "era_patriarch_n003.json",
       "display_order": 1,
       "field": "question",
@@ -1120,7 +1072,19 @@
       "filename": "era_patriarch_n004.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 37
+      "length": 24
+    },
+    {
+      "filename": "era_patriarch_n004.json",
+      "display_order": 1,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_patriarch_n004.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
     },
     {
       "filename": "era_patriarch_n004.json",
@@ -1133,12 +1097,6 @@
       "display_order": 0,
       "field": "choices[0]",
       "length": 21
-    },
-    {
-      "filename": "era_patriarch_n007.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
     },
     {
       "filename": "era_patriarch_n009.json",
@@ -1253,6 +1211,12 @@
       "display_order": 0,
       "field": "explanation",
       "length": 61
+    },
+    {
+      "filename": "era_patriarch_n023.json",
+      "display_order": 1,
+      "field": "question",
+      "length": 46
     },
     {
       "filename": "era_patriarch_n023.json",

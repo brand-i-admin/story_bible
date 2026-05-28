@@ -111,6 +111,7 @@ TITLE_MATCH_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"「[^」]+」에서\s*실제로\s*일어난\s*일"),
     re.compile(r"이야기에서\s*실제로\s*일어난\s*일"),
 )
+STORY_TITLE_PREFIX_QUOTES: tuple[str, ...] = ("'", "「", "《", '"')
 SUMMARY_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"핵심\s*내용"),
     re.compile(r"중심\s*내용"),
@@ -130,11 +131,62 @@ VERSE_LIKE_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"(가로되|이르되|가라사대)"),
     re.compile(r"(하시니라|하니라|하였더라|하였더니|되니라|되었더라)"),
     re.compile(r"(하였으며|하였고|하매)"),
-    re.compile(r"고\s*말했다$"),
     re.compile(r"(더라|니라)$"),
 )
 VERSE_EVIDENCE_PATTERN = re.compile(r"^[가-힣0-9]+\s+\d+:\d+(?:-\d+)?\s+—\s+'[^']+'$")
 MAX_STORY_CONTEXT_CHOICE_CHARS = 72
+GENERIC_QUESTION_ENDINGS: tuple[str, ...] = (
+    "어떻게 했습니까?",
+    "어떻게 하였습니까?",
+    "무엇을 했습니까?",
+    "무엇이라고 말했습니까?",
+    "무엇이라고 했습니까?",
+    "무엇이라 말했습니까?",
+    "무엇이라고 하였습니까?",
+)
+QUESTION_CONTEXT_MARKERS: tuple[str, ...] = (
+    "때",
+    "후",
+    "뒤",
+    "앞에서",
+    "에게",
+    "대해",
+    "왜",
+    "무엇을",
+    "어디",
+    "누가",
+    "어느",
+    "어떤",
+    "어디서",
+    "기도 금지령",
+    "준비한",
+    "금지령",
+    "체포",
+    "입성",
+    "환상",
+    "을 ",
+    "를 ",
+)
+NOUNISH_CHOICE_PATTERN = re.compile(
+    r"^([가-힣A-Za-z0-9·\s()]+|[일이삼사오육칠팔구십백천만]+ 명|[일이삼사오육칠팔구십백천만]+ 일|[일이삼사오육칠팔구십백천만]+ 규빗)$"
+)
+ANSWER_SHAPE_VERB_PATTERN = re.compile(
+    r"(다|했다|하였다|하셨다|말했다|대답했다|명했다|요청했다|구했다|기도했다|"
+    r"살렸다|죽였다|돌아갔다|떠났다|섬겼다|보냈다|주었다|드렸다|불렀다|"
+    r"선포했다|믿었다|순종했다|거절했다|엎드렸다|울었다|찾았다|만났다|"
+    r"따랐다|숨겼다|건넜다|쳤다|보았다|하라|말라|되리라|주소서|하소서|"
+    r"가라|오라|두라|내라|하라|말라|살리라|오리라|되리라|준비하시리라|"
+    r"지어다|나이다|소이다|로소이다|가자|고)$"
+)
+GENERIC_DISTRACTOR_CHOICES: frozenset[str] = frozenset(
+    {
+        "그 일을 숨기고 물러났다",
+        "다른 사람에게 책임을 돌렸다",
+        "자신은 책임이 없다고 주장했다",
+        "지금은 아무 조치도 하지 않겠다고 답했다",
+        "그 일을 그냥 지나쳤다",
+    }
+)
 
 
 class QuizValidationError(ValueError):
@@ -149,6 +201,22 @@ def asks_for_source_location(question_text: str) -> bool:
 def asks_for_story_title(question_text: str) -> bool:
     """Return True if a question asks users to identify a story title."""
     return any(pattern.search(question_text) for pattern in TITLE_MATCH_PATTERNS)
+
+
+def starts_with_story_title_prefix(question_text: str, story_title: str) -> bool:
+    """Return True for awkward story-quiz prompts like "'제목'에서 ...".
+
+    Daily quiz copy may quote era/event names, but per-story quiz cards already
+    show the story title in the UI. The question itself should ask about the
+    scene, action, or reaction without repeating the title as a prefix.
+    """
+    if not story_title:
+        return False
+    stripped = question_text.strip()
+    return any(
+        stripped.startswith(f"{quote}{story_title}")
+        for quote in STORY_TITLE_PREFIX_QUOTES
+    )
 
 
 def asks_for_summary_choice(question_text: str) -> bool:
@@ -176,6 +244,32 @@ def choice_looks_like_verse_fragment(choice_text: str) -> bool:
 def has_verse_evidence(explanation: str) -> bool:
     """Return True when the explanation points to a concrete verse quote."""
     return VERSE_EVIDENCE_PATTERN.search(explanation.strip()) is not None
+
+
+def asks_contextless_generic_question(question_text: str) -> bool:
+    """Return True for vague prompts like '왕은 어떻게 했습니까?'."""
+    stripped = question_text.strip()
+    if not stripped.endswith(GENERIC_QUESTION_ENDINGS):
+        return False
+    if any(marker in stripped for marker in QUESTION_CONTEXT_MARKERS):
+        return False
+    # A short subject + generic predicate gives learners no clue which moment
+    # the question asks about.
+    return len(stripped) <= 24
+
+
+def choice_matches_action_or_speech_prompt(choice_text: str) -> bool:
+    """Return True if a choice can grammatically answer 'how/what did X say?'."""
+    stripped = choice_text.strip()
+    if ANSWER_SHAPE_VERB_PATTERN.search(stripped):
+        return True
+    if len(stripped) >= 15 and (
+        " " in stripped or "을" in stripped or "를" in stripped
+    ):
+        return True
+    if NOUNISH_CHOICE_PATTERN.fullmatch(stripped) and len(stripped) <= 14:
+        return False
+    return False
 
 
 @dataclass(frozen=True)
@@ -267,6 +361,11 @@ def load_quiz_file(path: Path) -> QuizFile:
                 raise QuizValidationError(
                     f"{path.name}: questions[{i}].choices[{j}] must be a non-empty string"
                 )
+            if c.strip() in GENERIC_DISTRACTOR_CHOICES:
+                raise QuizValidationError(
+                    f"{path.name}: questions[{i}].choices[{j}] is a generic "
+                    "filler distractor; use a plausible story-specific choice"
+                )
             if choice_looks_like_verse_fragment(c.strip()):
                 raise QuizValidationError(
                     f"{path.name}: questions[{i}].choices[{j}] looks like a "
@@ -282,6 +381,11 @@ def load_quiz_file(path: Path) -> QuizFile:
         if not isinstance(question_text, str) or not question_text.strip():
             raise QuizValidationError(
                 f"{path.name}: questions[{i}].question must be a non-empty string"
+            )
+        if starts_with_story_title_prefix(question_text, story_title):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question repeats the story title "
+                "as a quoted prefix; ask the concrete scene question directly"
             )
         if expected_type == "story_context" and asks_for_source_location(question_text):
             raise QuizValidationError(
@@ -310,6 +414,21 @@ def load_quiz_file(path: Path) -> QuizFile:
                 f"{path.name}: questions[{i}].question is too generic; ask "
                 "about a concrete fact from a specific verse"
             )
+        if asks_contextless_generic_question(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question is ambiguous; include "
+                "the concrete moment or object being asked about"
+            )
+        if any(
+            phrase in question_text
+            for phrase in ("어떻게", "무엇이라고", "뭐라", "무엇이라")
+        ):
+            for j, choice in enumerate(choices):
+                if not choice_matches_action_or_speech_prompt(choice.strip()):
+                    raise QuizValidationError(
+                        f"{path.name}: questions[{i}].choices[{j}] does not "
+                        "grammatically answer the question"
+                    )
         if (
             expected_type == "story_context"
             and story_title

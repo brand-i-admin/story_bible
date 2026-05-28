@@ -95,6 +95,27 @@ void main() {
     expect(find.textContaining('아직 지도에 새긴 한 줄이 없습니다'), findsOneWidget);
   });
 
+  testWidgets('내 삶의 지도 도움말 버튼은 안내 팝업을 연다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+
+    await tester.pumpWidget(
+      _wrap(repository: repository, marks: const <String, EventEmotionMark>{}),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('내 삶의 지도 안내'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('내 삶의 지도 안내'), findsOneWidget);
+    expect(find.text('어떻게 쓰나요?'), findsOneWidget);
+    expect(find.text('어떤 인사이트를 얻나요?'), findsOneWidget);
+    expect(find.text('더 잘 쓰는 방법'), findsOneWidget);
+    expect(find.text('개수는 무엇을 말하나요?'), findsOneWidget);
+  });
+
   testWidgets('ProfileLifeMap은 감정 지역을 누르면 해당 사건과 코멘트를 보여준다', (tester) async {
     final repository = _MockStoryRepository();
     final event = _event(id: 'event_1', title: '홍해를 건너다');
@@ -102,7 +123,7 @@ void main() {
       eventId: event.id,
       emotionKey: 'joy',
       emotionLabel: '기쁨',
-      emotionEmoji: '✨',
+      emotionEmoji: '🌟',
       note: '구원의 기쁨을 기억합니다.',
       updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
     );
@@ -136,7 +157,7 @@ void main() {
           eventId: event.id,
           emotionKey: 'joy',
           emotionLabel: '기쁨',
-          emotionEmoji: '✨',
+          emotionEmoji: '🌟',
           note: '기쁨을 기억합니다.',
           updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
         ),
@@ -175,7 +196,7 @@ void main() {
       eventId: event.id,
       emotionKey: 'joy',
       emotionLabel: '기쁨',
-      emotionEmoji: '✨',
+      emotionEmoji: '🌟',
       note: '구원의 기쁨을 기억합니다.',
       updatedAt: DateTime.parse('2026-05-26T09:00:00Z'),
     );

@@ -141,6 +141,9 @@ class _FontScaleChoiceButton extends StatelessWidget {
               ),
               Text(
                 scale.label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -148,7 +151,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
                 ),
               ),
               Text(
-                '${scale.ratio.toStringAsFixed(1)}×',
+                '${scale.ratio.toStringAsFixed(1)}x',
                 style: const TextStyle(fontSize: 12, color: Color(0xFF6A401E)),
               ),
             ],

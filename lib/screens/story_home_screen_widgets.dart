@@ -964,19 +964,28 @@ class _ReviewChoiceRow extends StatelessWidget {
 /// 인물 step 2 의 "N명 다음" 작은 핀 — 패널 핸들 좌측에 표시. 인물 1명 이상
 /// 선택 시 노출되며, 누르면 step 3 진입 + 사건 reveal 시작.
 class _CharacterNextPill extends StatelessWidget {
-  const _CharacterNextPill({required this.count, required this.onPressed});
+  const _CharacterNextPill({
+    required this.count,
+    required this.onPressed,
+    this.compact = false,
+  });
   final int count;
   final VoidCallback onPressed;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final label = compact ? '$count명' : '$count명 다음';
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(999),
         onTap: onPressed,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 8 : 9,
+            vertical: compact ? 4 : 5,
+          ),
           decoration: BoxDecoration(
             color: const Color(0xFF8C5A2E),
             borderRadius: BorderRadius.circular(999),
@@ -992,19 +1001,19 @@ class _CharacterNextPill extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '$count명 다음',
-                style: const TextStyle(
+                label,
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 11.5,
+                  fontSize: compact ? 10.5 : 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 0.2,
+                  letterSpacing: 0,
                 ),
               ),
-              const SizedBox(width: 3),
-              const Icon(
+              SizedBox(width: compact ? 2 : 3),
+              Icon(
                 Icons.arrow_forward_rounded,
                 color: Colors.white,
-                size: 13,
+                size: compact ? 12 : 13,
               ),
             ],
           ),
@@ -1014,7 +1023,74 @@ class _CharacterNextPill extends StatelessWidget {
   }
 }
 
-/// 선택 진행 단계 stepper — 우측 상단 1-2-3 동그라미 + 활성 단계 설명.
+class _PreviousStepPill extends StatelessWidget {
+  const _PreviousStepPill({
+    required this.label,
+    required this.onPressed,
+    this.compact = false,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final visibleLabel = compact ? '이전' : label;
+    return Tooltip(
+      message: label,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: onPressed,
+          child: Ink(
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? 8 : 9,
+              vertical: compact ? 4 : 5,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFF6A401E),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: const Color(0xFFE8A33D), width: 1),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x26000000),
+                  blurRadius: 5,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.arrow_back_rounded,
+                  color: Colors.white,
+                  size: 13,
+                ),
+                const SizedBox(width: 3),
+                Text(
+                  visibleLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: compact ? 10.5 : 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 선택 진행 단계 stepper — 헤더 우측 라벨형 단계 pill.
 /// - 활성(=현재 진행 중): 초록
 /// - 완료(=이전 단계, 클릭 시 그 단계로 돌아가며 reset): 노랑
 /// - 미진입(=미래 단계, 클릭 비활성): 갈색
@@ -1040,14 +1116,36 @@ class _SelectionStepper extends StatelessWidget {
     return _futureColor;
   }
 
+  String _labelFor(int step) {
+    return switch (step) {
+      1 => '시대/방법',
+      2 => switch (mode) {
+        _SelectionMode.region => '장소',
+        _SelectionMode.character => '인물',
+        null => '선택',
+      },
+      _ => '이야기',
+    };
+  }
+
+  IconData? _iconFor(int step) {
+    return switch (step) {
+      1 => Icons.home_rounded,
+      2 =>
+        mode == _SelectionMode.character
+            ? Icons.group_rounded
+            : Icons.place_rounded,
+      _ => Icons.auto_stories_rounded,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 세로 모드: 3 dots + ? 버튼만 노출. 상세 설명은 ? 버튼 탭으로 팝업에서 본다.
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       decoration: BoxDecoration(
         color: const Color(0xF2FFFBEF),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xFFB89A66), width: 0.9),
         boxShadow: const [
           BoxShadow(
@@ -1061,55 +1159,47 @@ class _SelectionStepper extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (var i = 1; i <= 3; i++) ...[
-            _StepDot(
+            _StepPill(
+              label: _labelFor(i),
+              icon: _iconFor(i),
               color: _colorFor(i),
               enabled: i <= currentStep,
               onTap: () => onStepTap(i),
-              tooltip: i == 1 ? '홈으로 (시대·보는 방법 다시 선택)' : '${i - 1}단계',
-              // step 1 = "홈" (intro 화면 복귀), step 2/3 = "1"/"2".
-              // 사용자가 시대 선택 후 첫 화면으로 다시 가는 방법을 직관적으로
-              // 인지할 수 있도록 라벨 변경 (이전엔 "1"이라 헷갈렸음).
-              child: i == 1
-                  ? const Icon(
-                      Icons.home_rounded,
-                      size: 12,
-                      color: Colors.white,
-                    )
-                  : Text(
-                      '${i - 1}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+              tooltip: switch (i) {
+                1 => '처음으로 돌아가 시대와 보는 방법을 다시 선택',
+                2 =>
+                  mode == _SelectionMode.region
+                      ? '장소 선택 단계로 돌아가기'
+                      : '인물 선택 단계로 돌아가기',
+                _ => '이야기 목록 단계',
+              },
             ),
             if (i < 3)
               Container(
-                width: 8,
+                width: 7,
                 height: 1.4,
                 margin: const EdgeInsets.symmetric(horizontal: 1),
                 color: i < currentStep ? _doneColor : _futureColor,
               ),
           ],
-          const SizedBox(width: 6),
-          _StepperHelpButton(onTap: () => _showStepperHelp(context)),
         ],
       ),
     );
   }
 }
 
-class _StepDot extends StatelessWidget {
-  const _StepDot({
-    required this.child,
+class _StepPill extends StatelessWidget {
+  const _StepPill({
+    required this.label,
+    required this.icon,
     required this.color,
     required this.enabled,
     required this.onTap,
     this.tooltip,
   });
 
-  final Widget child;
+  final String label;
+  final IconData? icon;
   final Color color;
   final bool enabled;
   final VoidCallback onTap;
@@ -1122,11 +1212,11 @@ class _StepDot extends StatelessWidget {
       child: GestureDetector(
         onTap: enabled ? onTap : null,
         child: Container(
-          width: 20,
-          height: 20,
+          height: 22,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
             color: color.withValues(alpha: enabled ? 1.0 : 0.55),
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(999),
             border: Border.all(color: Colors.white, width: 1.2),
             boxShadow: enabled
                 ? [
@@ -1139,333 +1229,29 @@ class _StepDot extends StatelessWidget {
                 : null,
           ),
           alignment: Alignment.center,
-          child: child,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 11, color: Colors.white),
+                const SizedBox(width: 2),
+              ],
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9.8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
     if (tooltip == null) return dot;
     return Tooltip(message: tooltip!, child: dot);
-  }
-}
-
-/// Stepper 옆 동그란 ? 버튼 — 클릭 시 단계별 도움말 팝업.
-class _StepperHelpButton extends StatelessWidget {
-  const _StepperHelpButton({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 20,
-          height: 20,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5E9C8),
-            shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF8C6743), width: 1.2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x33000000),
-                blurRadius: 3,
-                offset: Offset(0, 1),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            '?',
-            style: TextStyle(
-              color: Color(0xFF8C6743),
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 양피지 톤의 단계별 도움말 팝업. 사용자가 stepper 의 ? 를 누르면 등장.
-void _showStepperHelp(BuildContext context) {
-  showDialog<void>(
-    context: context,
-    barrierDismissible: true,
-    barrierColor: const Color(0x66000000),
-    builder: (dialogCtx) {
-      return Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(24),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 460),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFFBEF),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFB89A66), width: 1.4),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x55000000),
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE8A33D),
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        '?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Text(
-                        '여행 단계 안내',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF3D2A14),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        color: Color(0xFF8C6743),
-                        size: 22,
-                      ),
-                      onPressed: () => Navigator.of(dialogCtx).pop(),
-                      splashRadius: 18,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Container(
-                  height: 1,
-                  color: const Color(0xFFD9C9A2),
-                  margin: const EdgeInsets.only(bottom: 14),
-                ),
-                const _HelpStep(
-                  badge: Icon(
-                    Icons.home_rounded,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  title: '홈 — 시대 + 보는 방법 선택',
-                  body:
-                      '먼저 여행할 시대를 한 가지 고르세요. 그 다음 「장소에서 시작」 또는 '
-                      '「인물과 걷기」 두 보는 방법 중 하나를 선택합니다. 언제든지 「홈」 '
-                      '동그라미를 눌러 이 화면으로 돌아올 수 있습니다.',
-                ),
-                const SizedBox(height: 12),
-                const _HelpStep(
-                  badge: Text(
-                    '1',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                    ),
-                  ),
-                  title: '1단계 — 장소 또는 인물 선택',
-                  body:
-                      '「장소에서 시작」을 골랐다면 지도 위 폴리곤이나 핀을 눌러 한 지역을 '
-                      '고르세요. 「인물과 걷기」를 골랐다면 등장 인물을 한 명 이상 고른 뒤 '
-                      '「다음」 버튼을 누르면 다음 단계로 넘어갑니다.',
-                ),
-                const SizedBox(height: 12),
-                const _HelpStep(
-                  badge: Text(
-                    '2',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                    ),
-                  ),
-                  title: '2단계 — 사건 선택',
-                  body:
-                      '선택한 지역 또는 인물에 얽힌 사건들이 시간 순서대로 지도에 핀으로 '
-                      '박힙니다. 사건 카드를 누르면 자세한 이야기 페이지로 이동합니다.',
-                ),
-                const SizedBox(height: 18),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5E9C8),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: const Color(0xFFE8A33D),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '💡 단계 동그라미로 자유롭게 이동',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF6B4A2A),
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        '동그라미를 눌러 단계를 옮길 수 있어요. 색깔 의미는:',
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          color: Color(0xFF3D2A14),
-                          height: 1.5,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      _ColorLegendRow(
-                        color: Color(0xFF2E8B57),
-                        label: '초록 — 지금 진행 중인 단계',
-                      ),
-                      _ColorLegendRow(
-                        color: Color(0xFFE8A33D),
-                        label: '노랑 — 이미 끝낸 단계 (눌러서 돌아갈 수 있음)',
-                      ),
-                      _ColorLegendRow(
-                        color: Color(0xFF8C6743),
-                        label: '갈색 — 아직 진행하지 않은 단계 (잠금)',
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        '동그라미를 누르면 그 단계로 돌아가며 이후 선택은 모두 초기화됩니다.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                          color: Color(0xFF6B4A2A),
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
-
-class _HelpStep extends StatelessWidget {
-  const _HelpStep({
-    required this.badge,
-    required this.title,
-    required this.body,
-  });
-  final Widget badge;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 28,
-          height: 28,
-          decoration: const BoxDecoration(
-            color: Color(0xFF8C6743),
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: badge,
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF3D2A14),
-                  height: 1.25,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                body,
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  color: Color(0xFF5C4128),
-                  height: 1.55,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ColorLegendRow extends StatelessWidget {
-  const _ColorLegendRow({required this.color, required this.label});
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 1),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12.5,
-                color: Color(0xFF3D2A14),
-                height: 1.4,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

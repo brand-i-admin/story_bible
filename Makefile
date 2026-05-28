@@ -37,6 +37,7 @@ LANDMARKS_SQL := $(SUPABASE_DIR)/200_stories/landmarks_seed.sql
 ERA_BOUNDARIES_SQL := $(SUPABASE_DIR)/200_stories/era_boundaries_seed.sql
 QUIZZES_SQL := $(SUPABASE_DIR)/quizzes/quizzes_seed.sql
 QUIZZES_REPORT := $(SUPABASE_DIR)/quizzes/quizzes_report.json
+DAILY_QUIZ_SQL := $(SUPABASE_DIR)/seeds/daily_quiz.sql
 LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 # =============================================================================
@@ -45,14 +46,14 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 .PHONY: help all \
         seed-bible-verses build-character-meta renumber-story-indices \
-        seed-stories seed-characters seed-stories-characters seed-quizzes \
+        seed-stories seed-characters seed-stories-characters seed-quizzes seed-daily-quiz \
         seed-landmarks seed-era-boundaries \
         apply-seeds-landmarks-v2 \
         generate-avatars generate-story-images generate-basemap thumbnails \
         seed-all generate-all \
         export-stories-json \
-        db-init db-migrate apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
-        apply-seeds-landmarks apply-seeds-era-boundaries apply-seeds-quizzes \
+        db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
+        apply-seeds-landmarks apply-seeds-era-boundaries apply-seeds-quizzes apply-seeds-daily-quiz \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
@@ -74,13 +75,14 @@ help:
 	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
 	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
+	@echo "  seed-daily-quiz            매일 지도 퀴즈 SQL + docs 가이드 생성"
 	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
 	@echo "  generate-basemap        Vertex AI 양피지 일러스트 베이스맵 1장 생성 (assets/maps/)"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + daily quiz)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -88,11 +90,11 @@ help:
 	@echo "  export-stories-json       [ENV=dev]  DB events → assets/200_stories/*.json 역추출 (빌더 사전 조건)"
 	@echo ""
 	@echo "DB 적용 (psql + .env의 SUPABASE_DB_URL_$(ENV)):"
-	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!) → db-migrate 자동"
-	@echo "  db-migrate                [ENV=dev]  supabase/migrations/*.sql 알파벳 순 적용 (idempotent — prod 증분 적용용)"
+	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!)"
 	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
 	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds-quizzes                  [ENV=dev]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
+	@echo "  apply-seeds-daily-quiz               [ENV=dev]  daily_quiz 적용 (slug UPSERT — 재실행 안전)"
 	@echo "  apply-seeds               [ENV=dev]  전체 시드 적용 (최초 부트스트랩용)"
 	@echo ""
 	@echo "Supabase Storage (service_role 키 필요):"
@@ -214,7 +216,14 @@ seed-quizzes:
 		--report $(QUIZZES_REPORT) \
 		--events-from-json $(SUPABASE_DIR)/quizzes/db_events.json
 
-seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-landmarks seed-era-boundaries
+seed-daily-quiz:
+	@echo "[Makefile] 매일 지도 퀴즈 SQL + docs 생성..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_daily_quiz_seed_sql.py \
+		--output $(DAILY_QUIZ_SQL) \
+		--docs-output docs/DAILY_QUIZ_SEED_GUIDE.md \
+		--max-questions 100
+
+seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-daily-quiz seed-landmarks seed-era-boundaries
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================
@@ -353,21 +362,6 @@ db-init:
 	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(ENV) || \
 	  echo "[Makefile] (Storage purge 스킵 — service_role 키 없거나 실패, db-init 은 계속)"
 	$(call PSQL_APPLY,db_init.sql)
-	@echo "[Makefile] db-init 후속: supabase/migrations/ 자동 적용"
-	@$(MAKE) db-migrate ENV=$(ENV)
-
-# supabase/migrations/*.sql 알파벳 순 적용. 모든 파일은 idempotent 하게 작성
-# (create or replace, if exists, on conflict, cron.unschedule + cron.schedule 등)
-# 되어 있어 여러 번 실행해도 안전. db-init 직후엔 db_init.sql 이 같은 내용을
-# 이미 만들어 둔 상태라 no-op 에 가깝다 (cron 재등록 정도).
-#
-# 신규 환경 부트스트랩: db-init 이 자동으로 호출 — 별도 명령 불필요.
-# 기존 prod 증분 적용: make db-migrate ENV=prod
-#
-# 정책: ADR-023, docs/BACKEND.md §8.
-db-migrate:
-	@echo "[Makefile] supabase/migrations/*.sql 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(wildcard $(SUPABASE_DIR)/migrations/*.sql))
 
 # Bible verses 시드는 PK 충돌 시 에러 → 보통 1회만 실행 (db_init.sql 직후).
 apply-bible-verses-seeds:
@@ -392,10 +386,10 @@ apply-seeds-quizzes:
 	@echo "[Makefile] quiz_questions 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(QUIZZES_SQL))
 
-# 매일 퀴즈 — UPSERT 가 아닌 단순 INSERT (on conflict do nothing) 라 재실행 안전.
+# 매일 퀴즈 — slug 기준 UPSERT 라 재실행 안전.
 apply-seeds-daily-quiz:
 	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(SUPABASE_DIR)/seeds/daily_quiz.sql)
+	$(call PSQL_APPLY,$(DAILY_QUIZ_SQL))
 
 apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes apply-seeds-era-boundaries apply-seeds-daily-quiz
 	@echo "[Makefile] 전체 시드 적용 완료."

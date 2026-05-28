@@ -1,0 +1,4 @@
+interface:
+  display_name: "워크트리 커밋"
+  short_description: "현재 작업 커밋, detached worktree 회수"
+  default_prompt: "$worktree-commit 스킬로 현재 git 상태를 판별하고, 안전하게 커밋하거나 보조 worktree 변경을 대상 브랜치에 반영한다."

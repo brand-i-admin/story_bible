@@ -455,6 +455,8 @@
 
 ## ADR-023: supabase/migrations/ 부활 + db-migrate 타겟 (2026-05-12)
 
+> 현재 정책은 ADR-025 가 대체한다. 이 항목은 당시 운영 누락 사고와 결정 이력을 보존하기 위한 기록이다.
+
 - **배경**: ADR-022 가 `dispatch_daily_quiz_push` 함수 + pg_cron 4개 스케줄을 `db_init.sql` 에 추가했으나, 그 변경분을 prod DB 에 별도로 적용하지 않아 매일 KST 9시의 자동 새 quiz 발급이 누락됐다. 사용자는 "어제 답한 quiz/답안이 그대로" 라고 보고했고, 진단 결과 `cron.job` 테이블에 4개 cron 이 모두 미등록 상태였다 (수동 SQL 실행 후 복구). 같은 형태의 사고 — `db_init.sql` 에는 들어갔으나 prod 적용 누락 — 가 이 PR 이전에도 잠재적으로 있었을 가능성이 있고, 향후 DB 변경 시마다 반복될 위험.
 - **결정**: 옛 정책 ("`supabase/migrations/` 디렉토리 폐기, `db_init.sql` 만 단일 진실 소스") 을 뒤집어 **두 트랙을 동시에** 운영한다.
   1. **`db_init.sql`** — 여전히 단일 진실 소스. 신규 환경 부트스트랩 (DROP & CREATE) 용.
@@ -479,3 +481,43 @@
   - 마이그레이션 적용 이력 추적 테이블 (`_schema_migrations`) 도입해 같은 파일 중복 실행 방지 — 현재는 idempotent 패턴으로 안전하지만, 마이그레이션 수가 누적되면 매번 모두 실행은 비효율.
   - GitHub Actions 로 main 머지 시 dev `make db-migrate` 자동 실행 — prod 자동 적용은 위험하니 수동 trigger 유지.
   - Supabase CLI 의 정식 마이그레이션 (`supabase db push`) 으로 전환 — `supabase_migrations.schema_migrations` 자동 추적 + Studio 통합. 다만 본 프로젝트는 db_init.sql 을 신규 환경 부트스트랩 용도로 유지하고 싶어 두 트랙 병행 (CLI 는 마이그레이션만 추적).
+
+## ADR-024: 매일 퀴즈 가변 선택지 + 지도 기반 시드 풀 (2026-05-27)
+
+- **배경**: ADR-021 의 매일 퀴즈는 `choice_1..4` 고정 4지선다 샘플 1건만 전제했다. 그러나 지도 학습 목적의 문항은 앱의 실제 흐름인 "시대 선택 → 사건이 있는 region 선택 → 사건 확인"을 따라야 하며, 어떤 시대는 사건 보유 region 이 2~3개뿐이라 4지선다를 강제하면 존재하지 않는 지역이나 세부 landmark 를 보기로 넣게 된다.
+- **결정**:
+  1. `daily_quiz` 를 `choices jsonb` + `answer_index` 구조로 바꿔 2~6개 선택지를 허용한다.
+  2. `slug text unique` 를 추가해 seed 재실행 시 같은 문항을 UPSERT 한다. pg_cron 이 매일 발급하는 복제 row 는 `slug=NULL` 로 두어 새 PK 를 유지한다.
+  3. `quiz_type` 을 추가해 지도 문항 유형을 보존한다: `event_region_match`, `region_event_exclusion`, `character_region_exclusion`, `character_event_region_match`, `region_event_inclusion`.
+  4. `tools/seed/build_daily_quiz_seed_sql.py` 가 현재 `assets/200_stories`, `assets/landmarks/event_region_mapping.json`, `landmarks.json`, `character_meta.json`, `db_init.sql` 을 읽어 `supabase/seeds/daily_quiz.sql` 100문항과 `docs/DAILY_QUIZ_SEED_GUIDE.md` 를 생성한다.
+  5. Flutter `DailyQuiz` 모델과 `StoryRepository.fetchLatestDailyQuiz()` 는 `choices` 배열을 읽고, `DailyQuizSection` 은 배열 길이만큼 선택지를 렌더링한다.
+- **이유**:
+  1. `수산 궁(페르시아)` 같은 값은 사용자가 선택하는 region 이 아니라 `페르시아` region 안의 세부 landmark 이므로 보기로 쓰면 앱 UX 와 어긋난다.
+  2. 선택지를 실제 사건 보유 region 으로 제한하면 퀴즈를 풀면서 사용자가 지도를 눌러 검증할 수 있다.
+  3. `slug` UPSERT 가 없으면 seed 재실행 시 daily_quiz 풀이 중복으로 쌓인다.
+- **DB/파일 변경**:
+  - `db_init.sql`: `daily_quiz.slug`, `quiz_type`, `choices jsonb`, 가변 `answer_index` check, `user_daily_quiz_attempts.selected_index` 1~6 허용.
+  - `supabase/migrations/20260527_0001_daily_quiz_variable_choices.sql`: 기존 `choice_1..4` 데이터를 `choices` 로 이관하고 `dispatch_daily_quiz_push` 를 새 스키마로 교체.
+  - `supabase/seeds/daily_quiz.sql`: 지도 기반 100문항 seed.
+  - `docs/DAILY_QUIZ_SEED_GUIDE.md`: 생성 규칙과 문항 목록.
+- **결과**:
+  - 매일 퀴즈가 전역 장소 상식이 아니라 앱 지도 탐색을 직접 유도한다.
+  - 포로 및 포로 후기 시대처럼 실제 사건 region 이 3개뿐인 시대도 정확한 3지선다로 출제할 수 있다.
+
+## ADR-025: 개발 중 DB 리셋 기반 단일 적용 경로로 복귀 (2026-05-28)
+
+- **배경**: ADR-023 에서 prod 누락 방지를 위해 `supabase/migrations/` 증분 트랙을 부활시켰지만, 현재 프로젝트는 아직 개발 중이며 사용자는 Supabase DB 를 계속 밀고 다시 세우는 방식으로 검증한다. 실제 표준 명령은 `make seed-all && make db-init && make apply-seeds && make upload-character-avatars` 이며, 별도 migration 트랙이 남아 있으면 `db_init.sql` 과 어긋난 오래된 SQL 이 다시 적용되거나 작업자가 어느 쪽을 수정해야 하는지 헷갈릴 수 있다.
+- **결정**:
+  1. 현재 정책은 `db_init.sql` 을 DB 구조의 단일 진실 소스로 유지한다.
+  2. 기준 데이터는 seed builder 와 생성된 seed SQL 에 둔다.
+  3. `make db-init` 은 `db_init.sql` 만 적용하고 `supabase/migrations/` 를 자동 실행하지 않는다.
+  4. `db-migrate` 타겟과 기존 `supabase/migrations/*.sql` 파일은 제거한다.
+  5. DB 구조 변경 시 `db_init.sql` + 관련 문서를 갱신하고, seed 데이터 변경 시 `make seed-all` 로 출력 SQL 을 재생성한다.
+- **이유**:
+  1. 개발 단계에서는 전체 DB 리셋이 허용되므로 증분 migration 보다 단일 bootstrap 경로가 빠르고 오류가 적다.
+  2. `daily_quiz.choices` 같은 schema 변경이 migration 파일에만 있거나 migration 자동 적용에 의존하면, 사용자가 실제로 쓰는 리셋 명령과 진실 소스가 갈라진다.
+  3. 오래된 migration 파일이 남아 있으면 새 `db_init.sql` 직후 과거 함수/컬럼 전제를 다시 덮어쓸 수 있어 혼란이 커진다.
+- **결과**:
+  - 개발 DB 반영 명령은 다시 한 줄로 고정된다: `make seed-all && make db-init && make apply-seeds && make upload-character-avatars`.
+  - `daily_quiz` 의 `choices jsonb` 구조와 지도 기반 seed 풀은 `db_init.sql` + `supabase/seeds/daily_quiz.sql` 만으로 반영된다.
+  - prod 증분 배포가 필요해지는 시점에는 별도 ADR 로 migration/Supabase CLI 전략을 다시 결정한다.

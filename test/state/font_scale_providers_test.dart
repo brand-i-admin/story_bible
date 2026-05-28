@@ -10,28 +10,28 @@ class _MockFontScaleRepository extends Mock implements FontScaleRepository {}
 void main() {
   group('FontScale enum', () {
     test('각 단계의 ratio 값이 정확하다', () {
-      expect(FontScale.small.ratio, 0.9);
       expect(FontScale.normal.ratio, 1.0);
       expect(FontScale.large.ratio, 1.2);
+      expect(FontScale.veryLarge.ratio, 1.4);
     });
 
     test('라벨은 한국어로 표시된다', () {
-      expect(FontScale.small.label, '작게');
       expect(FontScale.normal.label, '보통');
       expect(FontScale.large.label, '크게');
+      expect(FontScale.veryLarge.label, '아주크게');
     });
 
     test('storageKey는 enum name과 동일하다', () {
-      expect(FontScale.small.storageKey, 'small');
       expect(FontScale.normal.storageKey, 'normal');
       expect(FontScale.large.storageKey, 'large');
+      expect(FontScale.veryLarge.storageKey, 'veryLarge');
     });
 
     group('fromStorage', () {
       test('알려진 값은 대응되는 enum으로 복원된다', () {
-        expect(FontScale.fromStorage('small'), FontScale.small);
         expect(FontScale.fromStorage('normal'), FontScale.normal);
         expect(FontScale.fromStorage('large'), FontScale.large);
+        expect(FontScale.fromStorage('veryLarge'), FontScale.veryLarge);
       });
 
       test('null은 normal로 복원된다', () {
@@ -39,6 +39,7 @@ void main() {
       });
 
       test('알 수 없는 값은 normal로 복원된다', () {
+        expect(FontScale.fromStorage('small'), FontScale.normal);
         expect(FontScale.fromStorage('xlarge'), FontScale.normal);
         expect(FontScale.fromStorage(''), FontScale.normal);
       });

@@ -228,9 +228,7 @@ class StoryRepository {
   Future<DailyQuiz?> fetchLatestDailyQuiz() async {
     final row = await _client
         .from('daily_quiz')
-        .select(
-          'id, question, choice_1, choice_2, choice_3, choice_4, answer_index, explanation, created_at',
-        )
+        .select('id, question, choices, answer_index, explanation, created_at')
         .order('created_at', ascending: false)
         .limit(1)
         .maybeSingle();

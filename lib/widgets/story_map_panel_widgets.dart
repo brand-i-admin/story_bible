@@ -72,7 +72,7 @@ class _MarkerWithSelection {
 }
 
 /// 사건 핀 — 동그라미 + 안에 큰 순서 번호. 핀 모양/장소 라벨 모두 제거.
-/// 감정 새김이 있으면 같은 지름 안에 완료 톤을 주고, 작은 감정 아이콘 배지를
+/// 감정 새김이 있으면 같은 지름 안에 완료 톤을 주고, 작은 컬러 감정 이모지 배지를
 /// 붙여 숫자 중심 정렬은 그대로 유지한다.
 class _NumberedEventPin extends StatelessWidget {
   const _NumberedEventPin({
