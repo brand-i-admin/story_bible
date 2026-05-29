@@ -383,38 +383,65 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                       }
                     });
                   },
-                  interactionOptions: const InteractionOptions(
-                    flags: InteractiveFlag.all,
+                  interactionOptions: InteractionOptions(
+                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                    pinchZoomThreshold: 0.18,
+                    pinchMoveThreshold: 56,
+                    cursorKeyboardRotationOptions:
+                        CursorKeyboardRotationOptions.disabled(),
                   ),
                 ),
                 children: [
-                  // 양피지/세피아 톤 + 강·바다 파랑 (Carto voyager_nolabels).
-                  // 이전에 G 채널만 약화하는 ColorFilter.matrix 를 시도했으나
-                  // 베이지(R~G~B 비슷한 영역) 에서 G 만 줄이면 R/B 가 dominant
-                  // 가 되어 land 전체가 핑크/보라로 변색되는 부작용. 매트릭스
-                  // 는 폐기하고 단순 sepia overlay 만 사용 — voyager 의
-                  // 산림 연두는 sepia 에 살짝 묻히면서 부드러운 베이지·올리브
-                  // 톤이 된다.
                   TileLayer(
-                    // Stamen Watercolor — Cooper Hewitt (Smithsonian Design
-                    // Museum) 영구 archive 호스팅. Stamen 공식 README 가
-                    // 안내한 archive 엔드포인트. CC BY 4.0, API key 불필요,
-                    // 무료, 무제한 사용 (fair use).
-                    //   https://github.com/CooperHewittCollection/watercolor_examples
-                    // attribution: Map tiles by Stamen Design (CC BY 4.0),
-                    //   data by OpenStreetMap (ODbL),
-                    //   archive hosted by Cooper Hewitt, Smithsonian.
                     urlTemplate:
-                        'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
+                        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
+                    subdomains: const ['a', 'b', 'c', 'd'],
                     userAgentPackageName: 'com.story.bible',
-                    // Cooper Hewitt 가 Cache-Control 헤더를 안 보내 freshness
-                    // age 가 fallback (168h) 로 매 tile 마다 warning. 30일
-                    // overrideFreshAge 명시로 console noise 제거 + 안정적 캐시.
+                    keepBuffer: 6,
+                    panBuffer: 3,
+                    tileDisplay: const TileDisplay.fadeIn(
+                      duration: Duration(milliseconds: 70),
+                      startOpacity: 0.22,
+                    ),
                     tileProvider: NetworkTileProvider(
                       cachingProvider:
                           BuiltInMapCachingProvider.getOrCreateInstance(
                             overrideFreshAge: const Duration(days: 30),
+                            maxCacheSize: 1_500_000_000,
                           ),
+                      abortObsoleteRequests: true,
+                    ),
+                  ),
+                  Opacity(
+                    opacity: 0.72,
+                    child: TileLayer(
+                      urlTemplate:
+                          'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
+                      userAgentPackageName: 'com.story.bible',
+                      minZoom: 3.0,
+                      maxZoom: 6.8,
+                      maxNativeZoom: 6,
+                      keepBuffer: 3,
+                      panBuffer: 1,
+                      tileDisplay: const TileDisplay.fadeIn(
+                        duration: Duration(milliseconds: 95),
+                        startOpacity: 0.0,
+                        reloadStartOpacity: 0.18,
+                      ),
+                      evictErrorTileStrategy: EvictErrorTileStrategy.notVisible,
+                      tileUpdateTransformer: TileUpdateTransformers.throttle(
+                        const Duration(milliseconds: 80),
+                      ),
+                      tileProvider: NetworkTileProvider(
+                        cachingProvider:
+                            BuiltInMapCachingProvider.getOrCreateInstance(
+                              overrideFreshAge: const Duration(days: 30),
+                              maxCacheSize: 1_500_000_000,
+                            ),
+                        abortObsoleteRequests: true,
+                        silenceExceptions: true,
+                        attemptDecodeOfHttpErrorResponses: false,
+                      ),
                     ),
                   ),
                   PolylineLayer(polylines: _countryBorderPolylines),

@@ -1016,9 +1016,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 지도 출처/라이선스 dialog — Stamen Watercolor (CC BY 4.0) + OpenStreetMap
-  /// (ODbL) + Cooper Hewitt(Smithsonian) archive + Natural Earth. CC BY 4.0
-  /// 과 ODbL 모두 attribution 의무이므로 사용자 view 에 노출되어야 한다.
+  /// 지도 출처/라이선스 dialog — CARTO basemap + Stamen Watercolor (CC BY 4.0)
+  /// + OpenStreetMap (ODbL) + Cooper Hewitt(Smithsonian) archive + Natural
+  /// Earth. attribution 의무가 있는 출처를 사용자 view 에 노출한다.
   void _showMapAttributionDialog() {
     showDialog<void>(
       context: context,
@@ -1032,7 +1032,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _AttributionLine(
-              source: 'Stamen Watercolor 타일',
+              source: '배경 타일: CARTO Voyager No Labels',
+              license: '© CARTO',
+            ),
+            SizedBox(height: 8),
+            _AttributionLine(
+              source: '워터컬러 타일: Stamen Design',
               license: 'CC BY 4.0',
             ),
             SizedBox(height: 8),
