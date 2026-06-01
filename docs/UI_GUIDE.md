@@ -132,16 +132,17 @@ tile 의 영문 지명은 타일 이미지에 이미 구워진 요소라 앱 코
 올라와 일부 핀을 가릴 수는 있지만, 선택 순간에는 지역 경계가 화면 안에 들어와야
 한다.
 3D 지도 위 점선 경로, region polygon, region/국가 라벨, 탭 hit-zone 은 MapLibre
-GL GeoJSON layer 로 렌더링하고, 사건 숫자/감정 핀은 같은 event GeoJSON point 를
-MapLibre DOM Marker 로 투영해 terrain symbol collision 과 무관하게 점선 좌표 위에
-남긴다. non-region 랜드마크는 2D/3D 모두 겹침 문제 정리 전까지 렌더링하지 않는다.
+GL GeoJSON layer 로 렌더링하고, 사건 숫자/감정 핀과 non-region 랜드마크는 각각의
+GeoJSON point 를 MapLibre DOM Marker 로 투영해 terrain symbol collision 과 무관하게
+지도 좌표 위에 고정한다. 랜드마크는 선택된 시대의 non-region 항목만 옅은 투명도로
+보이며, 이모지와 이름이 줌 배율에 맞춰 함께 커지거나 작아진다.
 region polygon 내부 탭은
 `queryRenderedFeatures` 로 fill layer 를 먼저 조회하고, WebView/terrain 상태에서
 hit 이 빠질 경우 터치 좌표를 위경도로 바꿔 point-in-polygon 으로 다시 판정한다.
 중앙 라벨이 아닌 폴리곤 안쪽을 눌러도 같은 지역 선택으로 처리한다. 사건 0개 region 은 2D와 동일하게
 3D에서도 polygon/label/hit layer 에 올리지 않는다. 한국어 국가 라벨은 rounded
-rectangle 없이 글자만 쓰고, region 라벨보다 더 옅은 농도로 둔다. 국가/region
-라벨은 확대 시 최대 크기에 가까워지고 줌아웃할수록
+rectangle 없이 글자만 쓰고, region 라벨보다 더 짙고 굵은 글자로 읽히게 한다. 국가/region
+라벨과 랜드마크 표기는 확대 시 최대 크기에 가까워지고 줌아웃할수록
 MapLibre zoom expression 으로 작아져 겹침을 줄인다. 지도 zoom 범위는
 성경권 bounds 안에서 더 넓게 조정할 수 있도록 `2.7~12.4` 를 기본 범위로 둔다.
 공유용 PNG 비교표는 `docs/MAP_TILE_STYLE_COMPARISON.md` 에 둔다.

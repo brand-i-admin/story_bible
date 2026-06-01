@@ -67,9 +67,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   bool get _isThreeDimensional =>
       StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional;
 
-  /// 3D 전환 중 랜드마크 좌표/라벨 충돌이 커져서 지도 위 랜드마크 마커는
-  /// 2D/3D 공통으로 잠시 숨긴다. 지역 선택은 polygon hit layer 가 담당한다.
-  bool get _showLandmarkMarkers => false;
+  /// 2D 고지도 fallback 의 랜드마크 마커 표시 여부. 3D 지도는 WebView 내부의
+  /// MapLibre DOM marker 로 같은 데이터를 그린다.
+  bool get _showLandmarkMarkers => !_isThreeDimensional;
 
   /// 거리 측정 모드. true 면 랜드마크 탭이 측정 시작/끝점 선택으로 바뀐다.
   // v3 — 거리 재기 기능 제거. 호환을 위해 final false 로 남겨둠 (기존 분기 dead).
@@ -1416,14 +1416,6 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final filtered = landmarks
         .where((l) => !l.isRegion)
         .toList(growable: false);
-    // 같은 좌표(2자리 lat/lng) 의 non-region 랜드마크들은 원형 분산해 PNG 가
-    // 서로 가리지 않도록 한다. region 은 폴리곤 중심에 단일 핀이라 분산 불필요.
-    final nonRegionPoints = <String, LatLng>{
-      for (final lm in filtered)
-        if (!lm.isRegion) lm.id: lm.latLng,
-    };
-    final adjusted = map_math.spreadColocatedPoints(nonRegionPoints);
-
     return filtered
         .map((obj) {
           final isMeasureSelected =
@@ -1435,16 +1427,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           final isRegion = obj.isRegion;
           final isSelectedRegion =
               isRegion && obj.id == widget.selectedLandmarkId;
-          final point = isRegion
-              ? obj.latLng
-              : (adjusted[obj.id] ?? obj.latLng);
+          final point = obj.latLng;
           // Marker 박스 크기는 시각적으로 필요한 만큼 (이모지 + 라벨 column).
           // 줄여 두면 _PointPin 의 Column 이 overflow 한다. regionPickerMode 의
           // 폴리곤 hit-through 는 GestureDetector 의 HitTestBehavior 로 처리.
           return Marker(
             point: point,
-            width: isRegion ? 88 : 64,
-            height: isRegion ? 78 : 50,
+            width: isRegion ? 88 : 56,
+            height: isRegion ? 78 : 42,
             alignment: Alignment.center,
             child: _ZoomScaledLandmark(
               landmark: obj,
@@ -2017,12 +2007,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   Marker _countryLabelMarker(String nameKo, LatLng point) {
     return Marker(
       point: point,
-      width: 76,
-      height: 20,
+      width: 86,
+      height: 24,
       child: IgnorePointer(
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
           decoration: BoxDecoration(
             // 35% 알파 — 다른 정보 안 가리는 옅은 캡슐.
             color: const Color(0x59EDE2CC),
@@ -2032,9 +2022,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           child: Text(
             nameKo,
             style: const TextStyle(
-              fontSize: 9.5,
-              color: Color(0xCC332518), // 60→80% 알파, 더 또렷하게
-              fontWeight: FontWeight.w800, // w600 → w800 굵게
+              fontSize: 10.6,
+              color: Color(0xE6332518),
+              fontWeight: FontWeight.w900,
               height: 1.1,
             ),
             maxLines: 1,

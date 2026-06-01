@@ -21,10 +21,10 @@ class _ZoomScaledLandmark extends StatelessWidget {
   /// 보장하기 위해 사용.
   final bool compactHit;
 
-  // 줌 3 (전 지역 보기) 에서는 핀이 거의 안 보이고, 줌 8+ 에서 풀 사이즈.
-  // 사용자: "확대했을때만 잘 보이면 되기 때문" — 줌아웃 시 더 적극적으로 축소.
-  static const double _minScale = 0.18;
-  static const double _maxScale = 1.3;
+  // 줌 3 (전 지역 보기) 에서는 거의 배경 정보처럼 작고 흐리게, 줌 8+ 에서도
+  // 과하게 커지지 않도록 제한한다.
+  static const double _minScale = 0.14;
+  static const double _maxScale = 1.05;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +33,9 @@ class _ZoomScaledLandmark extends StatelessWidget {
     // eventCount > 0 이 되면 자동으로 활성 상태로 전환.
     final disabled = landmark.isRegion && eventCount == 0;
     final disabledScale = disabled ? 0.55 : 1.0;
-    // zoom 3 → 0.18 (cap), zoom 5 → 0.50, zoom 7 → 0.96, zoom 8+ → 1.3 (cap).
-    // 줌아웃 시 가독 부담을 줄여 폴리곤·라벨에 시야 집중되게 한다.
-    final raw = 0.18 + (zoom - 3.0) * 0.225;
+    // zoom 3 → 0.14 (cap), zoom 7 → 0.85, zoom 8+ → 1.05 (cap).
+    // 줌아웃 시 랜드마크끼리 겹치는 부담을 줄인다.
+    final raw = 0.14 + (zoom - 3.0) * 0.175;
     final scale = raw.clamp(_minScale, _maxScale).toDouble() * disabledScale;
     final inner = landmark.isRegion
         ? _RegionPin(
@@ -395,13 +395,13 @@ class _PointPin extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 이모지만 — 원형/핀 배경 없음. 폴리곤·라벨이 주인공이라 살짝 투명.
+        // 이모지만 — 원형/핀 배경 없음. 폴리곤·라벨이 주인공이라 흐리게 둔다.
         Opacity(
-          opacity: 0.7,
+          opacity: 0.55,
           child: Text(
             emoji,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 11.5,
               height: 1.0,
               shadows: [
                 Shadow(
@@ -414,17 +414,17 @@ class _PointPin extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 1),
-        // plain text 라벨 — 살짝 짙은 갈색으로 가독성 보강.
+        // plain text 라벨 — 라벨 캡슐 없이 배경 정보처럼 옅게 표시.
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 64),
+          constraints: const BoxConstraints(maxWidth: 58),
           child: Opacity(
-            opacity: 0.85,
+            opacity: 0.62,
             child: Text(
               name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 7,
+                fontSize: 6.3,
                 fontWeight: FontWeight.w700,
                 color: AppColors.ink200,
                 height: 1.1,

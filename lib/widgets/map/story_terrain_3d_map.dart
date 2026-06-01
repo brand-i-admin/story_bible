@@ -276,7 +276,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           .toList(growable: false),
       'counts': widget.eventCountByLandmarkId,
       'activeLandmarks': widget.activeLandmarks
-          .map((landmark) => landmark.id)
+          .map(
+            (landmark) =>
+                '${landmark.id}:${landmark.name}:${landmark.emoji}:${landmark.lat}:${landmark.lng}',
+          )
           .toList(growable: false),
       'countryBorders': widget.countryBorderLines.length,
       'countryLabels': widget.countryLabels
@@ -555,6 +558,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       display: inline-block;
       line-height: 0;
     }
+    .story-landmark-marker-root {
+      display: inline-block;
+      line-height: 0;
+    }
     .story-event-marker.selected {
       width: 27px;
       height: 27px;
@@ -587,6 +594,50 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       font-weight: 900;
       line-height: 1;
       box-shadow: 0 1px 3px rgba(39, 32, 20, 0.26);
+    }
+    .story-landmark-marker {
+      width: 70px;
+      height: 48px;
+      padding: 0;
+      border: 0;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      appearance: none;
+      outline: none;
+      pointer-events: auto;
+      touch-action: manipulation;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0.64;
+    }
+    .story-landmark-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    .story-landmark-emoji {
+      font-size: 14px;
+      line-height: 1;
+      opacity: 0.72;
+      filter: drop-shadow(0 1px 2px rgba(41, 32, 20, 0.22));
+    }
+    .story-landmark-name {
+      max-width: 72px;
+      color: rgba(55, 40, 24, 0.68);
+      font-size: 7.5px;
+      font-weight: 750;
+      line-height: 1.05;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow:
+        0 0 2px rgba(252, 248, 236, 0.78),
+        0 0 3px rgba(252, 248, 236, 0.66);
     }
   </style>
 </head>
@@ -680,7 +731,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
     const overlay = $overlayPayload;
     const eventMarkers = new Map();
+    const landmarkMarkers = new Map();
     let lastDomEventTapAt = 0;
+    let lastDomLandmarkTapAt = 0;
 
     const setSourceData = (id, data) => {
       const source = map.getSource(id);
@@ -762,6 +815,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       setSourceData('story-bible-event-path', overlay.eventPath);
       setSourceData('story-bible-landmarks', overlay.landmarks);
       syncEventDomMarkers();
+      syncLandmarkDomMarkers();
     };
 
     const clearElement = (element) => {
@@ -774,6 +828,12 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       if (now - lastDomEventTapAt < 280) return;
       lastDomEventTapAt = now;
       post({ type: 'eventTap', id });
+    };
+    const postLandmarkMarkerTap = (id) => {
+      const now = performance.now();
+      if (now - lastDomLandmarkTapAt < 280) return;
+      lastDomLandmarkTapAt = now;
+      post({ type: 'landmarkTap', id });
     };
     const setEventMarkerElement = (element, properties) => {
       const selected = Boolean(properties.selected);
@@ -839,6 +899,88 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         if (nextIds.has(id)) continue;
         record.marker.remove();
         eventMarkers.delete(id);
+      }
+    }
+    const landmarkScaleForZoom = () => {
+      const raw = 0.24 + (map.getZoom() - config.minZoom) * 0.12;
+      return Math.max(0.24, Math.min(1.0, raw));
+    };
+    const syncLandmarkMarkerScale = (element) => {
+      const content = element.querySelector('.story-landmark-content');
+      if (!content) return;
+      content.style.transform = `scale(\${landmarkScaleForZoom().toFixed(3)})`;
+    };
+    const syncLandmarkMarkerScales = () => {
+      for (const record of landmarkMarkers.values()) {
+        syncLandmarkMarkerScale(record.element);
+      }
+    };
+    const setLandmarkMarkerElement = (element, properties) => {
+      const name = String(properties.name || '');
+      const emoji = String(properties.emoji || '📍');
+      element.setAttribute('aria-label', name || '랜드마크');
+      let content = element.querySelector('.story-landmark-content');
+      if (!content) {
+        clearElement(element);
+        content = document.createElement('span');
+        content.className = 'story-landmark-content';
+        const emojiNode = document.createElement('span');
+        emojiNode.className = 'story-landmark-emoji';
+        const nameNode = document.createElement('span');
+        nameNode.className = 'story-landmark-name';
+        content.appendChild(emojiNode);
+        content.appendChild(nameNode);
+        element.appendChild(content);
+      }
+      content.querySelector('.story-landmark-emoji').textContent = emoji;
+      content.querySelector('.story-landmark-name').textContent = name;
+      const priority = Number(properties.displayPriority || 0);
+      element.style.zIndex = String(500 + priority);
+      syncLandmarkMarkerScale(element);
+    };
+    function syncLandmarkDomMarkers() {
+      if (!overlay.landmarks || !Array.isArray(overlay.landmarks.features)) return;
+      const nextIds = new Set();
+      for (const feature of overlay.landmarks.features) {
+        if (!feature || !feature.properties || !feature.geometry) continue;
+        if (feature.geometry.type !== 'Point') continue;
+        const coordinates = feature.geometry.coordinates;
+        if (!Array.isArray(coordinates) || coordinates.length < 2) continue;
+        const id = String(feature.properties.id || '');
+        if (!id) continue;
+        nextIds.add(id);
+        let record = landmarkMarkers.get(id);
+        if (!record) {
+          const root = document.createElement('div');
+          root.className = 'story-landmark-marker-root';
+          const element = document.createElement('button');
+          element.type = 'button';
+          root.appendChild(element);
+          element.className = 'story-landmark-marker';
+          element.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            postLandmarkMarkerTap(id);
+          });
+          element.addEventListener('touchend', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            postLandmarkMarkerTap(id);
+          }, { passive: false });
+          const marker = new maplibregl.Marker({
+            element: root,
+            anchor: 'center'
+          }).setLngLat(coordinates).addTo(map);
+          record = { element, marker };
+          landmarkMarkers.set(id, record);
+        }
+        setLandmarkMarkerElement(record.element, feature.properties);
+        record.marker.setLngLat(coordinates);
+      }
+      for (const [id, record] of landmarkMarkers.entries()) {
+        if (nextIds.has(id)) continue;
+        record.marker.remove();
+        landmarkMarkers.delete(id);
       }
     }
 
@@ -925,18 +1067,18 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         minzoom: 3.0,
         layout: {
           'text-field': ['get', 'name'],
-          'text-font': ['Noto Sans Regular'],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 6.2, 5.5, 8.0, 8.0, 9.2, 11.0, 10.0],
+          'text-font': ['Noto Sans Bold'],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 7.2, 5.5, 9.0, 8.0, 10.4, 11.0, 11.2],
           'text-allow-overlap': false,
           'text-ignore-placement': false,
           'text-padding': 2
         },
         paint: {
-          'text-color': '#3E3B29',
-          'text-opacity': 0.78,
+          'text-color': '#302616',
+          'text-opacity': 0.92,
           'text-halo-color': '#F8F1DD',
-          'text-halo-width': 1.6,
-          'text-halo-blur': 0.45
+          'text-halo-width': 1.85,
+          'text-halo-blur': 0.28
         }
       });
 
@@ -1002,36 +1144,6 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       map.addSource('story-bible-landmarks', {
         type: 'geojson',
         data: overlay.landmarks
-      });
-      addLayerSafely({
-        id: 'story-bible-landmark-label',
-        type: 'symbol',
-        source: 'story-bible-landmarks',
-        minzoom: 6.0,
-        layout: {
-          'text-field': [
-            'step',
-            ['zoom'],
-            ['get', 'emoji'],
-            7.0,
-            ['concat', ['get', 'emoji'], '\\n', ['get', 'name']]
-          ],
-          'text-font': ['Noto Sans Regular'],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 6.0, 7.0, 8.5, 8.0, 12.0, 8.8],
-          'text-line-height': 1.0,
-          'text-anchor': 'center',
-          'text-allow-overlap': false,
-          'text-ignore-placement': false,
-          'text-optional': true,
-          'text-padding': 10
-        },
-        paint: {
-          'text-color': '#5B4D34',
-          'text-opacity': ['interpolate', ['linear'], ['zoom'], 6.0, 0.42, 7.0, 0.62, 9.0, 0.74],
-          'text-halo-color': '#FCF8EC',
-          'text-halo-width': 0.55,
-          'text-halo-blur': 0.35
-        }
       });
       addLayerSafely({
         id: 'story-bible-landmark-hit',
@@ -1215,6 +1327,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
       });
       syncEventDomMarkers();
+      syncLandmarkDomMarkers();
+      map.on('zoom', syncLandmarkMarkerScales);
 
       const pickSmallestRegionFeature = (features) => {
         let pick = null;
@@ -1626,10 +1740,31 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   Map<String, Object> _landmarkFeatureCollection() {
-    // 3D 지도에서는 랜드마크 라벨/아이콘을 일단 제거한다. 좁은 성경권 지도에서
-    // 지역 라벨과 사건 번호 핀이 우선이고, landmark 텍스트는 저배율에서 겹침을
-    // 크게 만든다.
-    return {'type': 'FeatureCollection', 'features': const []};
+    final landmarks =
+        widget.activeLandmarks
+            .where(
+              (landmark) =>
+                  !landmark.isRegion && _isInBibleBounds(landmark.latLng),
+            )
+            .toList(growable: true)
+          ..sort((a, b) => a.displayPriority.compareTo(b.displayPriority));
+    final features = <Map<String, Object>>[];
+    for (final landmark in landmarks) {
+      features.add({
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [landmark.lng, landmark.lat],
+        },
+        'properties': {
+          'id': landmark.id,
+          'name': landmark.name,
+          'emoji': landmark.emoji,
+          'displayPriority': landmark.displayPriority,
+        },
+      });
+    }
+    return {'type': 'FeatureCollection', 'features': features};
   }
 
   List<StoryEvent> _visibleCoordinateEvents() {

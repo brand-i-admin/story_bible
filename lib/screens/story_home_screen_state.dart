@@ -1067,12 +1067,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (eraCodes.isEmpty) {
       return const [];
     }
-    // 시대만 선택한 상태(mode 미정) 에서는 landmark 마커를 모두 숨기고 시대
-    // 폴리곤(region union)만 표시 — 사용자가 [장소에서 시작하기] 를 고르면
-    // landmark 가 등장.
-    if (_mode == null) {
-      return const [];
-    }
     final categories = state.selectedLandmarkCategories;
     // 카테고리 필터 — non-region 에 적용. region 은 항상 통과 (폴리곤 라벨용).
     bool passesCategory(Landmark l) {
@@ -1081,6 +1075,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           ? l.category!
           : l.kind;
       return categories.contains(cat);
+    }
+
+    // 시대만 선택한 상태(mode 미정) 에서도 해당 시대의 non-region landmark 는
+    // 지도 위에 옅게 표시한다. region 선택 자체는 계속 polygon layer 가 담당한다.
+    if (_mode == null) {
+      return state.landmarks
+          .where((l) {
+            if (l.isRegion) return false;
+            if (!l.eraCodes.any(eraCodes.contains)) return false;
+            return passesCategory(l);
+          })
+          .toList(growable: false);
     }
 
     // 지역 모드 + region 미선택: 그 시대 region 핀 + 그 region 들의 모든 자식
