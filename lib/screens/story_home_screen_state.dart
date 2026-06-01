@@ -2308,16 +2308,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       ),
                     ),
                     // 지도 위 모드별 안내 오버레이. 사용자가 무엇을 해야 할지
-                    // 모를 때 가운데 흐리게 떠 있다가, 지도 제스처/region 선택/
-                    // 인물 「다음」 등 한 번의 행동으로 dismiss. IgnorePointer 로
-                    // 감싸 hint 가 떠 있어도 폴리곤·핀 클릭은 그대로 가능.
+                    // 모를 때 가운데 흐리게 떠 있다가, 화면 탭/지도 제스처/
+                    // region 선택/인물 「다음」 등 한 번의 행동으로 dismiss.
                     if (mapHint != null)
                       Positioned(
                         top: topInset + 96,
                         left: 0,
                         right: 0,
                         bottom: bottomInset + sheetHeight + 16,
-                        child: IgnorePointer(
+                        child: Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (_) => _handleMapInteraction(),
                           child: MapHintOverlay(
                             message: mapHint.message,
                             icon: mapHint.icon,

@@ -181,6 +181,10 @@ void main() {
           'onPointerDown: (_) {\n                          _handleMapInteraction();',
         ),
       );
+      expect(
+        homeSource,
+        contains('onPointerDown: (_) => _handleMapInteraction()'),
+      );
       expect(homeSource, contains('const Duration(milliseconds: 1200)'));
       expect(homeSource, contains('onPointerUp: (_) =>'));
       expect(homeSource, contains('onPointerCancel: (_) =>'));
