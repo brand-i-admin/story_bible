@@ -407,7 +407,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     if (_mode == _SelectionMode.character && _selectionStep == 2) {
       return (
-        message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「다음」 버튼을 눌러주세요.',
+        message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「→」 버튼을 눌러주세요.',
         icon: Icons.people_alt_rounded,
       );
     }

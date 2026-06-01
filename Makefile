@@ -52,7 +52,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         generate-avatars generate-story-images generate-basemap thumbnails \
         seed-all generate-all \
         export-stories-json \
-        db-init db-migrate apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
+        db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         apply-seeds-landmarks apply-seeds-era-boundaries apply-seeds-quizzes apply-seeds-daily-quiz \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
@@ -92,8 +92,7 @@ help:
 	@echo "  export-stories-json       [ENV=dev]  DB events → assets/200_stories/*.json 역추출 (빌더 사전 조건)"
 	@echo ""
 	@echo "DB 적용 (psql + .env의 SUPABASE_DB_URL_$(ENV)):"
-	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!) → db-migrate 자동"
-	@echo "  db-migrate                [ENV=dev]  supabase/migrations/*.sql 알파벳 순 적용 (idempotent — prod 증분 적용용)"
+	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!)"
 	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
 	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds-quizzes                  [ENV=dev]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
@@ -380,21 +379,6 @@ db-init:
 	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(ENV) || \
 	  echo "[Makefile] (Storage purge 스킵 — service_role 키 없거나 실패, db-init 은 계속)"
 	$(call PSQL_APPLY,db_init.sql)
-	@echo "[Makefile] db-init 후속: supabase/migrations/ 자동 적용"
-	@$(MAKE) db-migrate ENV=$(ENV)
-
-# supabase/migrations/*.sql 알파벳 순 적용. 모든 파일은 idempotent 하게 작성
-# (create or replace, if exists, on conflict, cron.unschedule + cron.schedule 등)
-# 되어 있어 여러 번 실행해도 안전. db-init 직후엔 db_init.sql 이 같은 내용을
-# 이미 만들어 둔 상태라 no-op 에 가깝다 (cron 재등록 정도).
-#
-# 신규 환경 부트스트랩: db-init 이 자동으로 호출 — 별도 명령 불필요.
-# 기존 prod 증분 적용: make db-migrate ENV=prod
-#
-# 정책: ADR-023, docs/BACKEND.md §8.
-db-migrate:
-	@echo "[Makefile] supabase/migrations/*.sql 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(wildcard $(SUPABASE_DIR)/migrations/*.sql))
 
 # Bible verses 시드는 PK 충돌 시 에러 → 보통 1회만 실행 (db_init.sql 직후).
 apply-bible-verses-seeds:

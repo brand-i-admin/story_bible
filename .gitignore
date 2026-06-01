@@ -96,3 +96,4 @@ tools/seed/refined_polygons.json
 # Claude worktrees
 .claude/worktrees/
 .env.supabase.secrets
+.omx/

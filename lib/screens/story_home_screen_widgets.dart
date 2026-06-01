@@ -1270,24 +1270,26 @@ class _LandmarkScrollDialog extends StatefulWidget {
 class _LandmarkScrollDialogState extends State<_LandmarkScrollDialog>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
-  late final Animation<double> _unfurl;
   late final Animation<double> _fade;
+  late final Animation<double> _scale;
+  late final Animation<Offset> _slide;
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 620),
+      duration: const Duration(milliseconds: 360),
     );
-    _unfurl = CurvedAnimation(
-      parent: _ctrl,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-    );
-    _fade = CurvedAnimation(
-      parent: _ctrl,
-      curve: const Interval(0.45, 1.0, curve: Curves.easeIn),
-    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic);
+    _scale = Tween<double>(
+      begin: 0.94,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack));
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.035),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _ctrl.forward();
   }
 
@@ -1304,25 +1306,21 @@ class _LandmarkScrollDialogState extends State<_LandmarkScrollDialog>
       child: Material(
         color: Colors.transparent,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 460),
+          constraints: const BoxConstraints(maxWidth: 460, maxHeight: 520),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: AnimatedBuilder(
-              animation: _ctrl,
-              builder: (context, child) {
-                return ClipRect(
-                  child: Align(
-                    alignment: Alignment.center,
-                    widthFactor: _unfurl.value.clamp(0.001, 1.0),
-                    child: child,
+            child: FadeTransition(
+              opacity: _fade,
+              child: SlideTransition(
+                position: _slide,
+                child: ScaleTransition(
+                  scale: _scale,
+                  child: _ScrollBody(
+                    landmark: widget.landmark,
+                    desc: desc,
+                    onClose: widget.onClose,
                   ),
-                );
-              },
-              child: _ScrollBody(
-                landmark: widget.landmark,
-                desc: desc,
-                fade: _fade,
-                onClose: widget.onClose,
+                ),
               ),
             ),
           ),
@@ -1336,183 +1334,331 @@ class _ScrollBody extends StatelessWidget {
   const _ScrollBody({
     required this.landmark,
     required this.desc,
-    required this.fade,
     required this.onClose,
   });
   final Landmark landmark;
   final String desc;
-  final Animation<double> fade;
   final VoidCallback onClose;
 
-  // 양피지 PNG 의 원본 비율 (1536 × 1024).
-  static const double _aspect = 1536 / 1024;
-
-  // 본문 스타일 — TextPainter 측정 시 동일 스타일 사용해야 정확.
   static const TextStyle _bodyStyle = TextStyle(
-    fontSize: 13,
-    color: Color(0xFF3B2A17),
-    height: 1.55,
+    fontSize: AppFontSizes.body,
+    color: AppColors.ink450,
+    height: 1.62,
     fontWeight: FontWeight.w500,
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   );
 
-  /// 본문을 양피지 폭에 맞게 가공한다:
-  /// 1. 문장 끝 부호(`. `, `? `, `! `) 다음 → 줄바꿈 (한 줄에 한 문장).
-  /// 2. 괄호 안 공백을 NBSP 로 묶어 자연 줄바꿈이 괄호 내부에서 일어나지
-  ///    않게 한다 (예: `(창 31장)`이 `(창` / `31장)` 으로 분리되는 것 방지).
-  /// 3. 괄호 앞에 줄바꿈을 넣었을 때(시도) **전체 줄 수가 2 이하면** 적용,
-  ///    3 줄 이상이면 적용하지 않는다 — 사용자 요구.
+  static String _kindLabel(Landmark landmark) {
+    final category = landmark.category?.trim();
+    if (category != null && category.isNotEmpty) {
+      return category.replaceAll('_', ' ');
+    }
+    switch (landmark.kind) {
+      case 'region':
+        return '지역';
+      case 'city':
+        return '도시';
+      case 'river':
+        return '강';
+      case 'sea':
+        return '바다';
+      case 'mountain':
+        return '산';
+      case 'island':
+        return '섬';
+      case 'palace':
+        return '궁전';
+      case 'wilderness':
+        return '광야';
+      case 'holy_site':
+        return '성지';
+      case 'campsite':
+        return '진영';
+      case 'anchor':
+        return '거점';
+      case 'minor':
+        return '지점';
+      default:
+        return landmark.kind.replaceAll('_', ' ');
+    }
+  }
+
   static String _formatDescription(String raw, double maxWidth) {
     if (raw.isEmpty) return raw;
     final byPeriod = raw.replaceAllMapped(
       RegExp(r'([.?!])\s'),
       (m) => '${m[1]}\n',
     );
-    // 괄호 내부 공백을 NBSP 로 변환 — 괄호 콘텐츠는 한 토큰처럼 묶임.
     final nbsp = byPeriod.replaceAllMapped(RegExp(r'\(([^)]*)\)'), (m) {
       return '(${m[1]!.replaceAll(RegExp(r'\s'), ' ')})';
     });
-    // 괄호 앞 줄바꿈 후보.
     final withParenBreak = nbsp.replaceAll(RegExp(r'\s+\('), '\n(');
-    if (withParenBreak == nbsp) return nbsp; // 괄호가 없거나 처리 불가
-    // 측정: 괄호를 떼어놓은 결과가 2 줄 이하인지 확인.
+    if (withParenBreak == nbsp) return nbsp;
     final tp = TextPainter(
       text: TextSpan(text: withParenBreak, style: _bodyStyle),
       textDirection: TextDirection.ltr,
-      textAlign: TextAlign.center,
       maxLines: 10,
     )..layout(maxWidth: maxWidth);
-    final lineCount = tp.computeLineMetrics().length;
-    return lineCount <= 2 ? withParenBreak : nbsp;
+    return tp.computeLineMetrics().length <= 2 ? withParenBreak : nbsp;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onClose,
-      behavior: HitTestBehavior.opaque,
-      child: AspectRatio(
-        aspectRatio: _aspect,
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                'assets/elements/parchment_scroll_landmark.png',
+    return Container(
+      decoration: modalSurfaceDecoration(),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadii.x4l),
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFFFF9F0),
+                      Color(0xFFF8EEDB),
+                      Color(0xFFF0DFC2),
+                    ],
+                  ),
+                ),
               ),
-              fit: BoxFit.contain,
             ),
-          ),
-          child: FadeTransition(
-            opacity: fade,
-            child: LayoutBuilder(
-              builder: (context, c) {
-                final w = c.maxWidth;
-                final h = c.maxHeight;
-                final formattedDesc = _formatDescription(desc, w * (1 - 0.36));
-                // 양피지 PNG 의 안전 영역(시뮬레이터 실측 기반):
-                // - 좌우 두루마리 ≈ 13%, 그 안쪽 사각 테두리 ≈ 18%
-                //   → 텍스트는 18% 부터 (테두리 내부에 머무르도록).
-                // - 상단 십자가 장식 ≈ 12~28% → 제목은 32% 부터
-                // - 1번 다이아몬드 구분선 ≈ 46%
-                // - 2번 다이아몬드 구분선 ≈ 68%
-                // - 하단 왁스 씰 ≈ 78~95% → 본문은 2번 구분선 위에서 끝남
-                return Stack(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        w * 0.18,
-                        h * 0.32,
-                        w * 0.18,
-                        h * 0.32,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+            const Positioned(
+              top: -48,
+              right: -22,
+              child: _WatercolorWash(
+                size: 188,
+                colors: [Color(0x4F87A7C9), Color(0x0087A7C9)],
+              ),
+            ),
+            const Positioned(
+              top: 76,
+              left: -34,
+              child: _WatercolorWash(
+                size: 148,
+                colors: [Color(0x43E4B96A), Color(0x00E4B96A)],
+              ),
+            ),
+            const Positioned(
+              bottom: -36,
+              right: 24,
+              child: _WatercolorWash(
+                size: 166,
+                colors: [Color(0x39C98775), Color(0x00C98775)],
+              ),
+            ),
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.12),
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.03),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+              child: LayoutBuilder(
+                builder: (context, c) {
+                  final formattedDesc = _formatDescription(
+                    desc,
+                    c.maxWidth - 48,
+                  );
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 제목은 한 줄로 고정 — 길면 폭에 맞춰 축소.
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
+                          Container(
+                            width: 52,
+                            height: 52,
                             alignment: Alignment.center,
-                            child: Text(
-                              landmark.name,
-                              maxLines: 1,
-                              softWrap: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 19,
-                                color: Color(0xFF4B321B),
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.6,
-                                height: 1.15,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFFFFF3D5), Color(0xFFF0DDA9)],
                               ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xD5D9B97A),
+                                width: 1.2,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x18000000),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              landmark.emoji,
+                              style: const TextStyle(fontSize: 24, height: 1),
                             ),
                           ),
-                          // 1번 다이아몬드 구분선(이미지에 그려져 있음) 영역.
-                          SizedBox(height: h * 0.07),
+                          const SizedBox(width: 14),
                           Expanded(
-                            // 짧은 본문은 가운데 정렬, 긴 본문은 스크롤.
-                            // ConstrainedBox 의 minHeight = 사용 가능 높이로
-                            // 강제해서 짧을 때 Center 가 동작, 길어지면 자연
-                            // 스럽게 스크롤로 전환.
-                            child: LayoutBuilder(
-                              builder: (context, bodyC) =>
-                                  SingleChildScrollView(
-                                    physics: const BouncingScrollPhysics(),
-                                    child: ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        minHeight: bodyC.maxHeight,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          formattedDesc.isEmpty
-                                              ? '이 랜드마크에 대한 설명이\n아직 없습니다.'
-                                              : formattedDesc,
-                                          textAlign: TextAlign.center,
-                                          style: _bodyStyle,
-                                        ),
-                                      ),
-                                    ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  landmark.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    color: AppColors.ink500,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 0.2,
+                                    height: 1.12,
                                   ),
+                                ),
+                                const SizedBox(height: 10),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    _PopupMetaChip(
+                                      label: _kindLabel(landmark),
+                                      icon: landmark.isRegion
+                                          ? Icons.public_rounded
+                                          : Icons.place_rounded,
+                                    ),
+                                    if (landmark.relatedEventCodes.isNotEmpty)
+                                      _PopupMetaChip(
+                                        label:
+                                            '${landmark.relatedEventCodes.length}개 사건',
+                                        icon: Icons.auto_stories_rounded,
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          modalCloseButton(onTap: onClose),
                         ],
                       ),
-                    ),
-                    // 우상단 X 닫기 버튼 — 안쪽 사각 테두리 모서리에 위치.
-                    Positioned(
-                      top: h * 0.16,
-                      right: w * 0.18,
-                      child: GestureDetector(
-                        onTap: onClose,
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          width: 26,
-                          height: 26,
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0xFFEDE0BC,
-                            ).withValues(alpha: 0.55),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(
-                                0xFF7A5A3A,
-                              ).withValues(alpha: 0.45),
-                              width: 1,
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.close,
-                            size: 14,
-                            color: Color(0xFF4B321B),
+                      const SizedBox(height: 16),
+                      Container(
+                        height: 1,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.transparent,
+                              const Color(0xA6C69A58),
+                              Colors.white.withValues(alpha: 0.3),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
+                      const SizedBox(height: 14),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 240),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.46),
+                            borderRadius: BorderRadius.circular(AppRadii.xl),
+                            border: Border.all(
+                              color: const Color(0xBFD8B787),
+                              width: 1,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x14000000),
+                                blurRadius: 10,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Text(
+                              formattedDesc.isEmpty
+                                  ? '이 랜드마크에 대한 설명이 아직 없습니다.'
+                                  : formattedDesc,
+                              textAlign: TextAlign.left,
+                              style: _bodyStyle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WatercolorWash extends StatelessWidget {
+  const _WatercolorWash({required this.size, required this.colors});
+
+  final double size;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(colors: colors, stops: const [0.0, 1.0]),
+        ),
+      ),
+    );
+  }
+}
+
+class _PopupMetaChip extends StatelessWidget {
+  const _PopupMetaChip({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: const Color(0xF0FFF8EC),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: const Color(0xBFD9BE92), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: AppColors.ink300),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.ink400,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              height: 1,
             ),
           ),
-        ),
+        ],
       ),
     );
   }

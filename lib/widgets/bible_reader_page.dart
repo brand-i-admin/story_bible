@@ -15,7 +15,7 @@ import 'sub_page_scaffold.dart';
 /// 성경 리더 페이지 (2026-05-10 리디자인).
 ///
 /// 상단 타이틀(책 + 장) + 책/장 칩 드롭다운, 번호 원 + 타임라인 레일을 가진
-/// 구절 목록, 그리고 이전/읽기/듣기/다음 장 액션 바를 제공한다. 히어로 카드는
+/// 구절 목록, 그리고 이전/다음 장 액션 바를 제공한다. 히어로 카드는
 /// 의도적으로 비워두고, 추후 era/메타 정보가 들어오면 다시 추가할 예정이다.
 ///
 /// **저장 모델**: 우측 별 아이콘으로 단일 구절을 저장/해제한다. 구절 본문을
@@ -171,6 +171,12 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
 
   /// 우측 별 아이콘 탭 - 단일 절 저장/해제 토글.
   Future<void> _onTapStar(BibleVerse verse) async {
+    final verseKey = SavedBibleVerse.buildVerseKey(
+      translation: verse.translation,
+      bookNo: verse.bookNo,
+      chapterNo: verse.chapterNo,
+      verseNo: verse.verseNo,
+    );
     final user = ref.read(signedInUserProvider);
     if (user == null) {
       ScaffoldMessenger.of(
@@ -178,12 +184,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
       ).showSnackBar(const SnackBar(content: Text('로그인이 필요합니다.')));
       return;
     }
-    final key = SavedBibleVerse.buildVerseKey(
-      translation: verse.translation,
-      bookNo: verse.bookNo,
-      chapterNo: verse.chapterNo,
-      verseNo: verse.verseNo,
-    );
+
     try {
       final didSave = await ref
           .read(userRepositoryProvider)
@@ -191,15 +192,15 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
       if (!mounted) return;
       setState(() {
         if (didSave) {
-          _savedVerseKeys.add(key);
+          _savedVerseKeys.add(verseKey);
         } else {
-          _savedVerseKeys.remove(key);
+          _savedVerseKeys.remove(verseKey);
         }
       });
       final messenger = ScaffoldMessenger.of(context);
       messenger.hideCurrentSnackBar();
       messenger.showSnackBar(
-        SnackBar(content: Text(didSave ? '저장되었어요' : '저장이 해제되었어요')),
+        SnackBar(content: Text(didSave ? '저장되었어요' : '저장이 삭제되었어요')),
       );
     } catch (error) {
       if (!mounted) return;
@@ -388,13 +389,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               canNext: selectedChapterSafe < chapterCount,
               onPrev: () => _goToChapter(-1),
               onNext: () => _goToChapter(1),
-              onListen: () {
-                final messenger = ScaffoldMessenger.of(context);
-                messenger.hideCurrentSnackBar();
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('듣기 기능은 준비 중이에요')),
-                );
-              },
             ),
         ],
       ),
@@ -1052,7 +1046,7 @@ class _VerseRail extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// 하단 액션 바 (이전/읽기/듣기/다음).
+// 하단 액션 바 (이전/다음 장).
 // ─────────────────────────────────────────────────────────────────────────
 
 class _BibleBottomBar extends StatelessWidget {
@@ -1061,14 +1055,12 @@ class _BibleBottomBar extends StatelessWidget {
     required this.canNext,
     required this.onPrev,
     required this.onNext,
-    required this.onListen,
   });
 
   final bool canPrev;
   final bool canNext;
   final VoidCallback onPrev;
   final VoidCallback onNext;
-  final VoidCallback onListen;
 
   @override
   Widget build(BuildContext context) {
@@ -1094,25 +1086,6 @@ class _BibleBottomBar extends StatelessWidget {
             _Divider(),
             Expanded(
               child: _BarButton(
-                label: '읽기',
-                icon: Icons.play_arrow_rounded,
-                enabled: true,
-                emphasized: true,
-                onTap: () {},
-              ),
-            ),
-            _Divider(),
-            Expanded(
-              child: _BarButton(
-                label: '듣기',
-                icon: Icons.headphones_rounded,
-                enabled: true,
-                onTap: onListen,
-              ),
-            ),
-            _Divider(),
-            Expanded(
-              child: _BarButton(
                 label: '다음 장',
                 icon: Icons.chevron_right_rounded,
                 enabled: canNext,
@@ -1133,22 +1106,18 @@ class _BarButton extends StatelessWidget {
     required this.icon,
     required this.enabled,
     required this.onTap,
-    this.emphasized = false,
     this.trailingIcon = false,
   });
 
   final String label;
   final IconData icon;
   final bool enabled;
-  final bool emphasized;
   final bool trailingIcon;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final fg = enabled
-        ? (emphasized ? Colors.white : const Color(0xFF6A4F2A))
-        : const Color(0x77745D3F);
+    final fg = enabled ? const Color(0xFF6A4F2A) : const Color(0x77745D3F);
     final iconWidget = Icon(icon, size: 18, color: fg);
     final textWidget = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -1168,16 +1137,7 @@ class _BarButton extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.all(2),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-          decoration: BoxDecoration(
-            gradient: emphasized
-                ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
-                  )
-                : null,
-            borderRadius: BorderRadius.circular(22),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(22)),
           alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
