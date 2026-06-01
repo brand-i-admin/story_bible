@@ -2551,8 +2551,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   /// 없이 "선택 즉시 핀이 박혀 보이는" 상태를 유지한다.
   void _showAllPinsImmediately() {
     _revealTimer?.cancel();
+    _eventRevealTimer?.cancel();
     final count = widget.events.where((event) => event.hasCoordinate).length;
-    setState(() => _visibleCount = count);
+    setState(() {
+      _visibleCount = count;
+      if (_orderedEventsActive) {
+        _eventRevealCount = count;
+      }
+    });
   }
 
   /// 핀 badge 에 얼굴 띄울 인물 코드들 — 사건 출연자 ∩ 현재 선택된 인물.

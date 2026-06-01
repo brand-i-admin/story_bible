@@ -551,6 +551,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       cursor: pointer;
       will-change: transform;
     }
+    .story-event-marker-root {
+      display: inline-block;
+      line-height: 0;
+    }
     .story-event-marker.selected {
       width: 27px;
       height: 27px;
@@ -805,9 +809,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         nextIds.add(id);
         let record = eventMarkers.get(id);
         if (!record) {
+          const root = document.createElement('div');
+          root.className = 'story-event-marker-root';
           const element = document.createElement('button');
           element.type = 'button';
-          element.setAttribute('aria-label', feature.properties.title || '사건');
+          root.appendChild(element);
           element.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -819,12 +825,13 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
             postEventMarkerTap(id);
           }, { passive: false });
           const marker = new maplibregl.Marker({
-            element,
+            element: root,
             anchor: 'center'
           }).setLngLat(coordinates).addTo(map);
           record = { element, marker };
           eventMarkers.set(id, record);
         }
+        record.element.setAttribute('aria-label', feature.properties.title || '사건');
         setEventMarkerElement(record.element, feature.properties);
         record.marker.setLngLat(coordinates);
       }
