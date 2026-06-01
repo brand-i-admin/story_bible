@@ -38,7 +38,6 @@ QUIZZES_SQL := $(SUPABASE_DIR)/quizzes/quizzes_seed.sql
 QUIZZES_REPORT := $(SUPABASE_DIR)/quizzes/quizzes_report.json
 DAILY_QUIZ_SQL := $(SUPABASE_DIR)/seeds/daily_quiz.sql
 LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
-BIBLE_SEED_REQUIRED ?= 0
 
 # =============================================================================
 # .PHONY 선언
@@ -69,7 +68,7 @@ help:
 	@echo "Story Bible 데이터 파이프라인 Makefile"
 	@echo ""
 	@echo "개별 타겟:"
-	@echo "  seed-bible-verses       성경 구절 SQL 생성 (assets/bible 없으면 스킵)"
+	@echo "  seed-bible-verses       성경 구절 SQL 생성 (독립)"
 	@echo "  build-character-meta       character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트, 모든 인물 포함)"
 	@echo "  seed-stories            events SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
@@ -83,7 +82,7 @@ help:
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible은 assets/bible 있을 때 + stories + characters + quizzes + daily quiz + landmarks)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + daily quiz + landmarks)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -129,19 +128,12 @@ all: seed-all generate-all
 # =============================================================================
 
 seed-bible-verses:
-	@first_txt="$$(find "$(BIBLE_DIR)" -maxdepth 1 -name '*.txt' -print -quit 2>/dev/null)"; \
-	if [ -z "$$first_txt" ]; then \
-		echo "[Makefile] KRV 성경 입력 $(BIBLE_DIR)/*.txt 없음 — 성경 구절 SQL 생성을 스킵합니다."; \
-		echo "           assets/bible 은 gitignore 된 로컬 입력입니다. 본문 리더까지 검증하려면 66권 txt 를 넣거나 BIBLE_SEED_REQUIRED=1 로 실패 처리하세요."; \
-		if [ "$(BIBLE_SEED_REQUIRED)" = "1" ]; then exit 1; fi; \
-	else \
-		echo "[Makefile] KRV 성경 구절 SQL 생성 (10개 분할)..."; \
-		$(PYTHON) $(TOOLS_DIR)/seed/build_krv_seed_sql.py \
-			--input-dir $(BIBLE_DIR) \
-			--output $(KRV_SQL) \
-			--split-parts 10 \
-			--truncate-translation; \
-	fi
+	@echo "[Makefile] KRV 성경 구절 SQL 생성 (10개 분할)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/build_krv_seed_sql.py \
+		--input-dir $(BIBLE_DIR) \
+		--output $(KRV_SQL) \
+		--split-parts 10 \
+		--truncate-translation
 
 build-character-meta:
 	@echo "[Makefile] character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트)..."
