@@ -48,7 +48,7 @@ class EraPolygonEntry {
 ///
 ///   1. **Outer Glow** — `BlurStyle.outer` 로 폴리곤 바깥쪽으로 퍼지는 후광.
 ///   2. **Parchment Fill** — 폴리곤 안쪽 radial gradient (중앙 밝게, 가장
-///      자리 페이드) + soft edge blur. watercolor 베이스 텍스처 비쳐 보임.
+///      자리 페이드) + soft edge blur. 지도 질감이 은은히 비쳐 보임.
 ///   3. **Ancient Ink Border** — outer halo + inner fade gradient + 메인 ink
 ///      line 세 패스로 한 덩어리 강조.
 ///
@@ -147,7 +147,7 @@ class EraPolygonGlowLayer extends StatefulWidget {
   }
 
   /// White wash 레이어 alpha — 양피지 베이스 중성화 강도.
-  /// 0.45 ≈ 베이스가 거의 보이지 않지만 watercolor 결은 너머로 살짝 비치는 정도.
+  /// 0.45 ≈ 베이스가 거의 보이지 않지만 지도 질감은 너머로 살짝 비치는 정도.
   static const double parchmentWashAlpha = 0.45;
 
   /// Region 강조의 단일 진실 소스. glow / fill / border 가 모두 이 색을 변형해
@@ -412,7 +412,7 @@ class _AncientHighlightPainter extends CustomPainter {
   //   2a) White wash — cream-white 한 겹으로 양피지 베이지 베이스 중성화.
   //   2b) Color fill — radial gradient 로 candidate/selected 색을 입힘.
   // wash 가 베이스 톤을 중성화하므로 의도된 노랑/초록이 베이스+색 blend 로
-  // 갈색·짙은녹이 되지 않고 또렷이 살아남는다. watercolor 결은 wash 너머로
+  // 갈색·짙은녹이 되지 않고 또렷이 살아남는다. 지도 질감은 wash 너머로
   // 은은히 비쳐 ancient atlas 톤 유지.
 
   void _paintParchmentFill(

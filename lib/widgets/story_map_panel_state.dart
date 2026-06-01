@@ -64,11 +64,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       widget.selectedLandmarkId != null ||
       (widget.revealEventsKey != null && widget.revealEventsKey!.isNotEmpty);
 
-  bool get _isThreeDimensional =>
-      StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional;
+  bool get _isThreeDimensional => StoryMapTileStyles.sourceFor(
+    StoryMapTileStyles.defaultStyle,
+  ).isThreeDimensional;
 
-  /// 2D 고지도 fallback 의 랜드마크 마커 표시 여부. 3D 지도는 WebView 내부의
-  /// MapLibre DOM marker 로 같은 데이터를 그린다.
+  /// 운영 3D 지도는 WebView 내부의 MapLibre DOM marker 로 랜드마크를 그린다.
   bool get _showLandmarkMarkers => !_isThreeDimensional;
 
   /// 거리 측정 모드. true 면 랜드마크 탭이 측정 시작/끝점 선택으로 바뀐다.
@@ -313,7 +313,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     final zoom = widget.initialZoom ?? 6.0;
     final polylines = _buildPolylines(widget.events);
-    final tileSource = StoryMapTileStyles.sourceFor(widget.tileStyle);
+    final tileSource = StoryMapTileStyles.sourceFor(
+      StoryMapTileStyles.defaultStyle,
+    );
 
     return Container(
       decoration: widget.decorate
@@ -463,9 +465,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                   ),
                   children: [
                     TileLayer(
-                      // Base tile source is selected by the parent so we can A/B
-                      // the parchment map against terrain/topographic tiles
-                      // without replacing the flutter_map overlay stack.
+                      // Legacy 2D fallback path. Production uses the 3D
+                      // WebView map above, but this branch keeps older overlay
+                      // math isolated if a temporary local fallback is needed.
                       urlTemplate: tileSource.urlTemplate,
                       tileDimension: tileSource.tileDimension,
                       zoomOffset: tileSource.zoomOffset,
@@ -637,7 +639,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
             ),
           // 양피지 텍스처 overlay — 지도 위에 multiply 로 합성해 결을 살린다.
           // tileScale 0.5 → 텍스처를 절반 크기로 반복(stretch 시 흐릿한 얼룩 방지).
-          // 지형 타일은 산지/등고선 식별이 중요하므로 texture 를 더 약하게 둔다.
+          // 운영 3D 지형은 WebView 내부에서 렌더링하므로 여기서는 2D fallback
+          // 에만 양피지 텍스처를 입힌다.
           if (!tileSource.isThreeDimensional)
             Positioned.fill(
               child: IgnorePointer(
@@ -1914,7 +1917,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           }).toList();
           final ringWithClose = [...jittered, jittered.first];
           // 색연필 톤 — dusty rose (#9C5757). 갈색이 겹치면 너무 진해보여
-          // 분홍빛 색연필 결로. watercolor sage/blue 와 보색 vintage 톤.
+          // 분홍빛 색연필 결로. 무료 3D 지형 톤과 보색 vintage 톤.
           borderPolylines.add(
             Polyline(
               points: ringWithClose,
@@ -2390,7 +2393,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomIn() {
-    if (StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional) {
+    if (_isThreeDimensional) {
       _terrain3dController.zoomIn();
       return;
     }
@@ -2410,7 +2413,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomOut() {
-    if (StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional) {
+    if (_isThreeDimensional) {
       _terrain3dController.zoomOut();
       return;
     }

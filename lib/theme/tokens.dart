@@ -70,8 +70,8 @@ class AppColors {
   static const regionSelected = Color(0xFFA9C982); // terrain sage green
 
   /// region fill 칠하기 전 베이스를 중성화하는 cream-white wash.
-  /// watercolor 양피지 베이스가 따뜻한 베이지라 그 위에 candidate/selected
-  /// 색을 alpha 로 얹으면 베이스+색 blend 가 갈색/어두운 톤으로 보임.
+  /// 지도 베이스가 따뜻한 베이지라 그 위에 candidate/selected 색을 alpha 로
+  /// 얹으면 베이스+색 blend 가 갈색/어두운 톤으로 보임.
   /// 이 wash 를 한 겹 먼저 깔아 베이스를 중성화하면 의도된 노랑/초록이 살아남는다.
   static const regionParchmentWash = Color(0xFFF8F3E4);
 

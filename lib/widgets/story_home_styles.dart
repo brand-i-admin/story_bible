@@ -251,64 +251,6 @@ Widget mapControlButton({
   );
 }
 
-Widget mapStyleControlButton({
-  required String providerLabel,
-  required String styleLabel,
-  required String tooltip,
-  required VoidCallback onTap,
-}) {
-  return Tooltip(
-    message: tooltip,
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.xs),
-        child: Container(
-          width: 72,
-          height: 38,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.ink900.withValues(alpha: 0.80),
-            borderRadius: BorderRadius.circular(AppRadii.xs),
-            border: Border.all(color: AppColors.borderHairlineDark),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                providerLabel,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppColors.fgOnDark,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                  height: 1.0,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                styleLabel,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppColors.goldHi,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  height: 1.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
 Widget topUtilityButton({
   required String label,
   required VoidCallback onTap,

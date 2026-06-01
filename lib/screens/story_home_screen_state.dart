@@ -29,7 +29,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   int _mapCelebrationNonce = 0;
   Completer<void>? _mapCelebrationCompleter;
   bool _mapAnimationInputLocked = false;
-  StoryMapTileStyle _mapTileStyle = StoryMapTileStyles.initialStyle;
   late int _selectionStep = widget.initialStep.clamp(1, 3);
 
   /// 시대 선택 후 사용자가 고른 탐색 모드. null = intro 패널(시대+모드 카드).
@@ -992,26 +991,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  void _cycleMapTileStyle() {
-    final next = StoryMapTileStyles.nextStyle(_mapTileStyle);
-    final source = StoryMapTileStyles.sourceFor(next);
-    setState(() {
-      _mapTileStyle = next;
-    });
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('지도 배경: ${source.label}'),
-          duration: const Duration(milliseconds: 900),
-        ),
-      );
-  }
-
-  /// 지도 출처/라이선스 dialog — 현재 선택된 타일 스타일의 attribution 을 노출.
-  /// Base tile 은 style 토글로 바뀌므로 고정 문구가 아니라 source 설정에서 가져온다.
+  /// 지도 출처/라이선스 dialog — 운영 3D 무료 지도의 attribution 을 노출.
   void _showMapAttributionDialog() {
-    final source = StoryMapTileStyles.sourceFor(_mapTileStyle);
+    final source = StoryMapTileStyles.sourceFor(
+      StoryMapTileStyles.defaultStyle,
+    );
     showDialog<void>(
       context: context,
       builder: (dialogContext) => ParchmentDialog(
@@ -1984,7 +1968,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // 첫 화면 (시대 미선택) 은 줌 6 (저배율) 로 가나안~광야~메소포타미아 일대가
     // 한눈에 들어오도록 중심 잡음. 3D 는 하단 시트와 pitch 때문에 사우디아라비아가
     // 가려지기 쉬워 더 남쪽을 중심으로 두고 성경권 전체를 넓게 연다.
-    final mapTileSource = StoryMapTileStyles.sourceFor(_mapTileStyle);
+    final mapTileSource = StoryMapTileStyles.sourceFor(
+      StoryMapTileStyles.defaultStyle,
+    );
     final usesThreeDimensionalMap = mapTileSource.isThreeDimensional;
     final mapCenter = usesThreeDimensionalMap
         ? const LatLng(0.5, 39.8)
@@ -2156,7 +2142,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 // 인물 모드에서는 region 검정 캡슐 라벨(가나안·시내 광야·애굽 등)
                 // 이 인물 path 점선을 가리는 문제가 있어 라벨을 숨긴다.
                 suppressRegionLabels: _mode == _SelectionMode.character,
-                tileStyle: _mapTileStyle,
               ),
             ),
             // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
@@ -2312,13 +2297,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          mapStyleControlButton(
-                            providerLabel: mapTileSource.providerLabel,
-                            styleLabel: mapTileSource.shortLabel,
-                            tooltip: '지도 배경: ${mapTileSource.label}',
-                            onTap: _cycleMapTileStyle,
-                          ),
-                          const SizedBox(height: 6),
                           mapControlButton(
                             icon: Icons.add,
                             tooltip: '확대',
@@ -2331,8 +2309,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             onTap: _mapPanelController.zoomOut,
                           ),
                           const SizedBox(height: 6),
-                          // 지도 출처/라이선스 — CC BY 4.0(Stamen Watercolor) +
-                          // ODbL(OpenStreetMap) attribution 의무 충족.
+                          // 지도 출처/라이선스 — 운영 3D 지도 attribution 의무 충족.
                           mapControlButton(
                             icon: Icons.info_outline,
                             tooltip: '지도 출처',

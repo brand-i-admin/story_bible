@@ -1,32 +1,13 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/widgets/map/map_tile_style.dart';
 
 void main() {
   group('StoryMapTileStyles', () {
-    tearDown(() {
-      dotenv = DotEnv();
-    });
-
-    test('keeps only free production map styles available', () {
+    test('keeps only the free 3D production map style available', () {
       final styles = StoryMapTileStyles.availableStyles();
 
-      expect(styles, [
-        StoryMapTileStyle.openFreeMap3dLiberty,
-        StoryMapTileStyle.watercolor,
-      ]);
-    });
-
-    test('cycles through 3D first and fallback 2D style', () {
-      expect(
-        StoryMapTileStyles.nextStyle(StoryMapTileStyle.openFreeMap3dLiberty),
-        StoryMapTileStyle.watercolor,
-      );
-      expect(
-        StoryMapTileStyles.nextStyle(StoryMapTileStyle.watercolor),
-        StoryMapTileStyle.openFreeMap3dLiberty,
-      );
+      expect(styles, [StoryMapTileStyle.openFreeMap3dLiberty]);
     });
 
     test('OpenFreeMap 3D terrain is free and keyless', () {
@@ -35,7 +16,7 @@ void main() {
       );
 
       expect(source.style, StoryMapTileStyle.openFreeMap3dLiberty);
-      expect(source.providerLabel, 'OpenFreeMap');
+      expect(source.label, contains('OpenFreeMap'));
       expect(source.isThreeDimensional, isTrue);
       expect(source.urlTemplate, isEmpty);
       expect(
@@ -49,17 +30,11 @@ void main() {
       expect(source.initialPitch, greaterThan(0));
     });
 
-    test('defaults to OpenFreeMap 3D when no override is set', () {
+    test('defaults to OpenFreeMap 3D', () {
       expect(
         StoryMapTileStyles.initialStyle,
         StoryMapTileStyle.openFreeMap3dLiberty,
       );
-    });
-
-    test('initial style can be selected from dotenv aliases', () {
-      dotenv.testLoad(fileInput: 'STORY_MAP_TILE_STYLE=고지도');
-
-      expect(StoryMapTileStyles.initialStyle, StoryMapTileStyle.watercolor);
     });
   });
 }

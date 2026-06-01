@@ -9,8 +9,8 @@ class EraColors {
 
   /// era_code → 대표 색.
   ///
-  /// 색 선정 기준: Stamen Watercolor 베이스 지도(파스텔 sage·블루·크림 톤)
-  /// 위에서 또렷하게 인지되도록 채도 강하고/또는 명도 어두운 색을 채택.
+  /// 색 선정 기준: OpenFreeMap 3D 지형의 sage·블루·크림 톤 위에서 또렷하게
+  /// 인지되도록 채도 강하고/또는 명도 어두운 색을 채택.
   /// 기존 6개 색 (청록·황토·올리브·청색·카키 등) 이 베이스 톤에 묻혀
   /// 가시성이 떨어져 더 짙은 변형으로 교체.
   static const Map<String, Color> byCode = {
