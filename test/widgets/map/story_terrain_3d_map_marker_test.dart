@@ -57,6 +57,18 @@ void main() {
 
       expect(source, contains("id: 'story-bible-region-label-anchor'"));
       expect(source, contains("'text-field': ['get', 'label']"));
+      expect(
+        source,
+        contains(
+          "'text-color': ['case', ['get', 'selected'], '#2F6B45', '#8A5F16']",
+        ),
+      );
+      expect(
+        source,
+        contains(
+          "'circle-color': ['case', ['get', 'selected'], '#5E8C4A', '#B57A1C']",
+        ),
+      );
       expect(source, contains("'text-allow-overlap': false"));
       expect(
         source,

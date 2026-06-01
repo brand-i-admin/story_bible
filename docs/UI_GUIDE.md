@@ -212,10 +212,10 @@ GeoJSON fill/border layer 에서 직접 그린다. 이전 Flutter `CustomPainter
   hit 을 사건/랜드마크 hit 보다 먼저 처리해 영역 내부 어디를 눌러도 같은
   지역 선택으로 이어지게 한다.
 - **라벨**: 장소 선택 단계의 region 라벨은 폴리곤 내부 중심점 근처에
-  지도 지명처럼 절제된 단일 라벨로 표시한다. 큰 배지나 버튼형 장식 대신
-  작은 중심점과 은은한 경계/채움으로 영역 전체가 선택 가능하다는 affordance 를
-  준다. 한국어 국가/region 라벨은 기본 지도 symbol layer 와 분리해 MapLibre
-  expression 으로 줌에 맞춰 크기를 조정한다.
+  지도 지명보다 조금 큰 오커/골드 톤 단일 라벨로 표시해 국가명과 구분한다.
+  큰 배지나 버튼형 장식 대신 작은 선택 점과 은은한 경계/채움으로 영역 전체가
+  선택 가능하다는 affordance 를 준다. 한국어 국가/region 라벨은 기본 지도
+  symbol layer 와 분리해 MapLibre expression 으로 줌에 맞춰 크기를 조정한다.
 
 ## 5. 인터랙션 패턴
 

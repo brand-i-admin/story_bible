@@ -1176,12 +1176,12 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         type: 'circle',
         source: 'story-bible-region-labels',
         paint: {
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 2.7, 2.2, 5.5, 3.0, 8.0, 3.8, 11.0, 4.5],
-          'circle-color': ['case', ['get', 'selected'], '#648A4A', '#9D7E3C'],
-          'circle-opacity': ['case', ['get', 'selected'], 0.8, 0.58],
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 2.7, 3.4, 5.5, 4.4, 8.0, 5.2, 11.0, 6.0],
+          'circle-color': ['case', ['get', 'selected'], '#5E8C4A', '#B57A1C'],
+          'circle-opacity': ['case', ['get', 'selected'], 0.88, 0.78],
           'circle-stroke-color': '#F8F1DD',
-          'circle-stroke-opacity': 0.75,
-          'circle-stroke-width': 0.9
+          'circle-stroke-opacity': 0.86,
+          'circle-stroke-width': 1.15
         }
       });
       addLayerSafely({
@@ -1191,9 +1191,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         layout: {
           'text-field': ['get', 'label'],
           'text-font': ['Noto Sans Bold'],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 8.8, 5.5, 10.2, 8.0, 11.6, 11.0, 12.4],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 10.0, 5.5, 11.8, 8.0, 13.2, 11.0, 14.0],
           'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-          'text-radial-offset': 0.65,
+          'text-radial-offset': 0.72,
           'text-justify': 'auto',
           'text-allow-overlap': false,
           'text-ignore-placement': false,
@@ -1202,11 +1202,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           'symbol-sort-key': ['-', 1000, ['get', 'eventCount']]
         },
         paint: {
-          'text-color': ['case', ['get', 'selected'], '#304B22', '#433622'],
-          'text-opacity': ['case', ['get', 'selected'], 0.92, 0.82],
-          'text-halo-color': '#F8F1DD',
-          'text-halo-width': ['case', ['get', 'selected'], 1.35, 1.15],
-          'text-halo-blur': 0.18
+          'text-color': ['case', ['get', 'selected'], '#2F6B45', '#8A5F16'],
+          'text-opacity': ['case', ['get', 'selected'], 0.98, 0.94],
+          'text-halo-color': '#FFF7E2',
+          'text-halo-width': ['case', ['get', 'selected'], 1.65, 1.45],
+          'text-halo-blur': 0.12
         }
       });
 
