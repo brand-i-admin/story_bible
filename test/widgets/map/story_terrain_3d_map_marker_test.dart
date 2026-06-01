@@ -50,6 +50,25 @@ void main() {
       );
     });
 
+    test('region picker labels are centered and styled as tap targets', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains("id: 'story-bible-region-label-target'"));
+      expect(source, contains("'text-field': ['get', 'label']"));
+      expect(source, contains("'text-allow-overlap': true"));
+      expect(
+        source,
+        contains("'label': '\${landmark.name}\\n이야기 \$eventCount'"),
+      );
+      expect(
+        source,
+        contains('final labelPoint = _polygonLabelPoint(polygon);'),
+      );
+      expect(source, contains("'pickerMode': widget.regionPickerMode"));
+    });
+
     test('map taps are suppressed during gestures and panel touches', () {
       final mapSource = File(
         'lib/widgets/map/story_terrain_3d_map.dart',
@@ -78,6 +97,13 @@ void main() {
       expect(
         homeSource,
         contains('onPointerSignal: (_) => _suppressMapTaps()'),
+      );
+      expect(homeSource, contains('builder: (ctx) => Listener('));
+      expect(homeSource, contains('onPointerDown: (_) => _suppressMapTaps(),'));
+      expect(homeSource, contains('onPointerUp: (_) => _suppressMapTaps(),'));
+      expect(
+        homeSource,
+        contains('onClose: () {\n            _suppressMapTaps();'),
       );
     });
   });

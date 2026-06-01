@@ -964,9 +964,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     showDialog<void>(
       context: context,
       barrierColor: const Color(0x66000000),
-      builder: (ctx) => _LandmarkScrollDialog(
-        landmark: landmark,
-        onClose: () => Navigator.of(ctx).pop(),
+      builder: (ctx) => Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) => _suppressMapTaps(),
+        onPointerUp: (_) => _suppressMapTaps(),
+        onPointerCancel: (_) => _suppressMapTaps(),
+        child: _LandmarkScrollDialog(
+          landmark: landmark,
+          onClose: () {
+            _suppressMapTaps();
+            Navigator.of(ctx).pop();
+          },
+        ),
       ),
     );
   }

@@ -1154,8 +1154,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         source: 'story-bible-regions',
         paint: {
           'line-color': ['get', 'lineColor'],
-          'line-opacity': 0.78,
-          'line-width': ['case', ['get', 'selected'], 3.2, 2.0]
+          'line-opacity': ['get', 'lineOpacity'],
+          'line-width': ['case', ['get', 'selected'], 3.4, ['get', 'pickerMode'], 2.6, 2.0]
         }
       });
       addLayerSafely({
@@ -1172,25 +1172,40 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         data: overlay.regionLabels
       });
       addLayerSafely({
+        id: 'story-bible-region-label-target',
+        type: 'circle',
+        source: 'story-bible-region-labels',
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 2.7, 19, 5.5, 25, 8.0, 31, 11.0, 35],
+          'circle-color': ['case', ['get', 'selected'], '#DCEAC3', '#FFF4D1'],
+          'circle-opacity': ['case', ['get', 'selected'], 0.82, 0.72],
+          'circle-stroke-color': ['case', ['get', 'selected'], '#6F944E', '#B78A28'],
+          'circle-stroke-opacity': ['case', ['get', 'selected'], 0.86, 0.72],
+          'circle-stroke-width': ['case', ['get', 'selected'], 2.0, 1.35],
+          'circle-blur': 0.08
+        }
+      });
+      addLayerSafely({
         id: 'story-bible-region-label',
         type: 'symbol',
         source: 'story-bible-region-labels',
         layout: {
-          'text-field': ['concat', ['get', 'name'], ' ', ['to-string', ['get', 'eventCount']]],
+          'text-field': ['get', 'label'],
           'text-font': ['Noto Sans Bold'],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 6.8, 5.5, 8.2, 8.0, 9.4, 11.0, 10.2],
-          'text-allow-overlap': false,
-          'text-ignore-placement': false,
+          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 10.6, 5.5, 12.4, 8.0, 13.8, 11.0, 14.8],
+          'text-line-height': 1.08,
+          'text-allow-overlap': true,
+          'text-ignore-placement': true,
           'text-optional': true,
-          'text-padding': 6,
+          'text-padding': 3,
           'symbol-sort-key': ['-', 1000, ['get', 'eventCount']]
         },
         paint: {
-          'text-color': ['case', ['get', 'selected'], '#344C24', '#5B482D'],
-          'text-opacity': ['case', ['get', 'selected'], 0.95, 0.82],
+          'text-color': ['case', ['get', 'selected'], '#304B22', '#4D371A'],
+          'text-opacity': ['case', ['get', 'selected'], 0.98, 0.94],
           'text-halo-color': '#F8F1DD',
-          'text-halo-width': ['case', ['get', 'selected'], 1.0, 0.65],
-          'text-halo-blur': 0.35
+          'text-halo-width': ['case', ['get', 'selected'], 1.25, 0.95],
+          'text-halo-blur': 0.26
         }
       });
 
@@ -1633,9 +1648,15 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           'selected': selected,
           'eventCount': eventCount,
           'bboxArea': _polygonBboxArea(polygon),
+          'pickerMode': widget.regionPickerMode,
           'fillColor': selected ? '#A9C982' : '#D7B75A',
           'lineColor': selected ? '#7B9D53' : '#B89235',
-          'fillOpacity': selected ? 0.34 : 0.22,
+          'lineOpacity': widget.regionPickerMode || selected ? 0.88 : 0.78,
+          'fillOpacity': selected
+              ? 0.38
+              : widget.regionPickerMode
+              ? 0.3
+              : 0.22,
         },
       });
     }
@@ -1662,9 +1683,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       if (eventCount <= 0) {
         continue;
       }
-      final labelPoint = _isInBibleBounds(landmark.latLng)
-          ? landmark.latLng
-          : _polygonLabelPoint(polygon);
+      final labelPoint = _polygonLabelPoint(polygon);
       features.add({
         'type': 'Feature',
         'geometry': {
@@ -1674,6 +1693,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         'properties': {
           'id': landmark.id,
           'name': landmark.name,
+          'label': '${landmark.name}\n이야기 $eventCount',
           'eventCount': eventCount,
           'selected': selected,
         },

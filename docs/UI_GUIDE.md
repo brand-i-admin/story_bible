@@ -209,8 +209,10 @@ GeoJSON fill/border layer 에서 직접 그린다. 이전 Flutter `CustomPainter
 - **Hit-test**: `queryRenderedFeatures` 로 fill layer 를 먼저 조회하고, iOS
   WebView/terrain 조합에서 빠질 경우 화면 좌표를 위경도로 바꿔
   point-in-polygon 으로 다시 판정한다.
-- **라벨**: 한국어 국가/region 라벨은 기본 지도 symbol layer 와 분리해
-  MapLibre expression 으로 줌에 맞춰 크기를 조정한다.
+- **라벨**: 장소 선택 단계의 region 라벨은 폴리곤 내부 중심점에 두 줄
+  이름/이야기 수로 표시하고, 뒤에 작은 타깃 링을 깔아 라벨과 영역 전체가
+  선택 가능하다는 affordance 를 준다. 한국어 국가/region 라벨은 기본 지도
+  symbol layer 와 분리해 MapLibre expression 으로 줌에 맞춰 크기를 조정한다.
 
 ## 5. 인터랙션 패턴
 
