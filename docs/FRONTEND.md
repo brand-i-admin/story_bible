@@ -133,6 +133,8 @@ class StoryState {
 0으로 전환해 폴리곤 경계가 원근감으로 기울어 보이지 않게 한다.
 지역 선택 직후 카메라는 사건 좌표가 아니라 선택 region polygon bounds 에
 `fitBounds` 로 맞춘다. 이 기준은 하단 선택 시트가 접힌 상태의 가시 영역이다.
+사건/region fit 은 하단 시트 padding 이 커질수록 상단 padding 도 일부 늘려, 핀
+묶음이 화면 위쪽에 몰리지 않고 북쪽 지도 여백이 조금 더 보이게 한다.
 
 ### 3.3 StoryController 주요 메서드
 

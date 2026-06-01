@@ -50,6 +50,23 @@ void main() {
       );
     });
 
+    test('event DOM pins stay compact', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('width: 23px;'));
+      expect(source, contains('height: 23px;'));
+      expect(source, contains('font-size: 10.5px;'));
+      expect(source, contains('width: 25px;'));
+      expect(source, contains('height: 25px;'));
+      expect(source, contains('width: 28px;'));
+      expect(source, contains('height: 28px;'));
+      expect(source, contains('font-size: 15px;'));
+      expect(source, contains('width: 13px;'));
+      expect(source, contains('height: 13px;'));
+    });
+
     test('region picker labels stay subtle and centered', () {
       final source = File(
         'lib/widgets/map/story_terrain_3d_map.dart',

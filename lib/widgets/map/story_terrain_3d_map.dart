@@ -554,8 +554,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       pointer-events: none;
     }
     .story-event-marker {
-      width: 24px;
-      height: 24px;
+      width: 23px;
+      height: 23px;
       padding: 0;
       border-radius: 999px;
       display: grid;
@@ -569,7 +569,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       outline: none;
       box-shadow: 0 3px 8px rgba(39, 32, 20, 0.34), 0 0 0 4px rgba(250, 239, 216, 0.55);
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 900;
       line-height: 1;
       user-select: none;
@@ -587,34 +587,34 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       line-height: 0;
     }
     .story-event-marker.selected {
-      width: 27px;
-      height: 27px;
+      width: 25px;
+      height: 25px;
       background: #d6a23b;
       border-color: #fff1b8;
       box-shadow: 0 4px 10px rgba(39, 32, 20, 0.38), 0 0 0 5px rgba(250, 239, 216, 0.68);
     }
     .story-event-marker.emotion {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       background: #f8dfa3;
       border-color: #a06a2f;
       color: #402918;
-      font-size: 16px;
+      font-size: 15px;
       box-shadow: 0 4px 10px rgba(39, 32, 20, 0.32), 0 0 0 5px rgba(250, 239, 216, 0.62);
     }
     .story-event-marker .order-badge {
       position: absolute;
       right: -4px;
       bottom: -4px;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border-radius: 999px;
       display: grid;
       place-items: center;
       color: white;
       background: #2f9462;
       border: 1px solid #d8e9be;
-      font-size: 8px;
+      font-size: 7.5px;
       font-weight: 900;
       line-height: 1;
       box-shadow: 0 1px 3px rgba(39, 32, 20, 0.26);

@@ -59,6 +59,27 @@ void main() {
     });
   });
 
+  group('eventFitTopPadding', () {
+    test('상단 툴바 가림 영역과 기본 여백을 보존한다', () {
+      final padding = eventFitTopPadding(
+        topObscuredPixels: 96,
+        bottomPadding: 80,
+      );
+
+      expect(padding, 104);
+    });
+
+    test('하단 시트가 커지면 사건 묶음이 너무 위로 몰리지 않게 상단 여백을 늘린다', () {
+      final padding = eventFitTopPadding(
+        topObscuredPixels: 96,
+        bottomPadding: 420,
+      );
+
+      expect(padding, greaterThan(104));
+      expect(padding, lessThan(200));
+    });
+  });
+
   group('hasMultiPlacePin', () {
     test('한글 화살표 → 인식', () {
       expect(hasMultiPlacePin('예루살렘 → 다메섹'), true);

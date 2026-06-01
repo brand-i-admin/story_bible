@@ -371,7 +371,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       // 폴리곤이 화면을 가득 채우도록 padding 최소화. 단 시트/툴바 가림 영역만큼은
       // 보존해서 잘리지 않게.
       final bottomPadding = math.max(16.0, bottomGap + 8.0);
-      final topPadding = math.max(16.0, widget.topObscuredPixels + 8.0);
+      final topPadding = map_math.eventFitTopPadding(
+        topObscuredPixels: widget.topObscuredPixels,
+        bottomPadding: bottomPadding,
+      );
       final bounds = LatLngBounds(
         LatLng(minLat, minLng),
         LatLng(maxLat, maxLng),
@@ -723,7 +726,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     final bottomGap = (widget.bottomObscuredFraction * _lastMapSize.height)
         .clamp(0.0, 600.0);
     final bottomPadding = math.max(16.0, bottomGap + 8.0);
-    final topPadding = math.max(16.0, widget.topObscuredPixels + 8.0);
+    final topPadding = map_math.eventFitTopPadding(
+      topObscuredPixels: widget.topObscuredPixels,
+      bottomPadding: bottomPadding,
+    );
     _terrain3dController.fitBounds(
       bounds,
       padding: EdgeInsets.fromLTRB(18, topPadding, 18, bottomPadding),

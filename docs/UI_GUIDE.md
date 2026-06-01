@@ -122,7 +122,9 @@ Marker 로 띄워 기본 지도의 영어/현지어 label layer 와 분리한다
 지역을 탭한 직후에는 사건 좌표가 아니라 선택 region polygon 전체를 접힌 하단
 시트 기준의 가시 영역에 맞춘다. 사건 핀 reveal 이 끝난 뒤 하단 사건 카드가
 올라와 일부 핀을 가릴 수는 있지만, 선택 순간에는 지역 경계가 화면 안에 들어와야
-한다.
+한다. 사건/region 묶음을 맞출 때는 하단 시트 padding 의 일부를 상단 여백에도
+나눠 주어, 특히 사도의 시대처럼 북쪽에 긴 사건 흐름이 화면 상단에 바짝 붙지
+않게 한다.
 3D 지도 위 점선 경로, region polygon, region/국가 라벨, 탭 hit-zone 은 MapLibre
 GL GeoJSON layer 로 렌더링하고, 사건 숫자/감정 핀과 non-region 랜드마크는 각각의
 GeoJSON point 를 MapLibre DOM Marker 로 투영해 terrain symbol collision 과 무관하게
