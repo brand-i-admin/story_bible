@@ -43,8 +43,8 @@ double normalizedLongitudeDelta(double west, double east) {
 /// 사건/지역 fitBounds 에서 사용할 상단 padding.
 ///
 /// 하단 선택 시트가 높아질수록 MapLibre fitBounds 가 가시 영역을 위쪽으로 잡기
-/// 때문에 사건 묶음이 화면 상단에 몰릴 수 있다. 하단 padding 의 초과분 일부를
-/// 상단에도 나눠 주어 북쪽 지도 여백을 조금 더 보여 준다.
+/// 때문에 사건/지역 묶음이 화면 상단 필터 뒤로 몰릴 수 있다. 하단 padding 의
+/// 초과분을 상단에도 충분히 나눠 주어 북쪽 지도 여백과 탭 가능한 영역을 확보한다.
 double eventFitTopPadding({
   required double topObscuredPixels,
   required double bottomPadding,
@@ -53,7 +53,7 @@ double eventFitTopPadding({
 }) {
   final safeTopPadding = math.max(minPadding, topObscuredPixels + baseGap);
   final excessBottomPadding = math.max(0.0, bottomPadding - safeTopPadding);
-  return safeTopPadding + math.min(88.0, excessBottomPadding * 0.22);
+  return safeTopPadding + math.min(180.0, excessBottomPadding * 0.45);
 }
 
 /// "예루살렘 → 다메섹" 같은 다중 장소 표기인지 판정.

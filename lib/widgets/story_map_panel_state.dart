@@ -333,6 +333,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     _terrain3dController.suppressTapFor(duration);
   }
 
+  void _clearMapTapSuppression() {
+    _terrain3dController.clearTapSuppression();
+  }
+
   /// 랜드마크 탭 처리. onLandmarkTap 콜백 (popup) 호출.
   void _handleLandmarkTap(Landmark landmark) {
     widget.onLandmarkTap?.call(landmark);

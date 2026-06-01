@@ -2310,15 +2310,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     // 지도 위 모드별 안내 오버레이. 사용자가 무엇을 해야 할지
                     // 모를 때 가운데 흐리게 떠 있다가, 화면 탭/지도 제스처/
                     // region 선택/인물 「다음」 등 한 번의 행동으로 dismiss.
+                    // IgnorePointer 로 감싸 안내 위 탭도 아래 WebView 지도
+                    // hit-test 로 전달되게 한다.
                     if (mapHint != null)
                       Positioned(
                         top: topInset + 96,
                         left: 0,
                         right: 0,
                         bottom: bottomInset + sheetHeight + 16,
-                        child: Listener(
-                          behavior: HitTestBehavior.translucent,
-                          onPointerDown: (_) => _handleMapInteraction(),
+                        child: IgnorePointer(
                           child: MapHintOverlay(
                             message: mapHint.message,
                             icon: mapHint.icon,
@@ -2633,6 +2633,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     if (allPoints.length < 2) return;
     _mapPanelController.focusRegion(allPoints);
+    if (_mode == _SelectionMode.region && state.selectedLandmarkId == null) {
+      Future<void>.delayed(const Duration(milliseconds: 520), () {
+        if (!mounted) return;
+        final current = ref.read(storyControllerProvider);
+        if (_mode == _SelectionMode.region &&
+            current.selectedLandmarkId == null) {
+          _mapPanelController.clearMapTapSuppression();
+        }
+      });
+    }
   }
 
   Widget _buildRegionPanel(StoryState state, double bottomInset) {

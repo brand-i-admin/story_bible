@@ -181,10 +181,10 @@ void main() {
           'onPointerDown: (_) {\n                          _handleMapInteraction();',
         ),
       );
-      expect(
-        homeSource,
-        contains('onPointerDown: (_) => _handleMapInteraction()'),
-      );
+      expect(homeSource, contains('child: IgnorePointer('));
+      expect(mapSource, contains('window.storyBibleClearMapTapSuppression'));
+      expect(panelSource, contains('void _clearMapTapSuppression()'));
+      expect(homeSource, contains('clearMapTapSuppression();'));
       expect(homeSource, contains('const Duration(milliseconds: 1200)'));
       expect(homeSource, contains('onPointerUp: (_) =>'));
       expect(homeSource, contains('onPointerCancel: (_) =>'));

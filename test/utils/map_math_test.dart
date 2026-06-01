@@ -75,8 +75,17 @@ void main() {
         bottomPadding: 420,
       );
 
-      expect(padding, greaterThan(104));
-      expect(padding, lessThan(200));
+      expect(padding, greaterThan(220));
+      expect(padding, lessThan(260));
+    });
+
+    test('큰 하단 시트에서도 상단 보정은 상한을 둔다', () {
+      final padding = eventFitTopPadding(
+        topObscuredPixels: 140,
+        bottomPadding: 640,
+      );
+
+      expect(padding, closeTo(328, 0.001));
     });
   });
 

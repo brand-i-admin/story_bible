@@ -94,6 +94,8 @@ class StoryTerrain3dMapController {
     Duration duration = const Duration(milliseconds: 650),
   ]) => _state?._suppressTapFor(duration);
 
+  void clearTapSuppression() => _state?._clearTapSuppression();
+
   void moveTo(
     LatLng center,
     double zoom, {
@@ -357,6 +359,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     _controller.runJavaScript('''
       if (window.storyBibleSuppressMapTap) {
         window.storyBibleSuppressMapTap($millis);
+      }
+    ''');
+  }
+
+  void _clearTapSuppression() {
+    if (!_mapReady) {
+      return;
+    }
+    _controller.runJavaScript('''
+      if (window.storyBibleClearMapTapSuppression) {
+        window.storyBibleClearMapTapSuppression();
       }
     ''');
   }
@@ -764,6 +777,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return isMapTapSuppressed() && suppressMapTapReason !== 'mapGesture';
     };
     window.storyBibleSuppressMapTap = suppressMapTap;
+    window.storyBibleClearMapTapSuppression = () => {
+      suppressMapTapUntil = 0;
+      suppressMapTapReason = 'external';
+    };
     const eventUsesModifierKey = (event) => {
       const source = event && (event.originalEvent || event);
       return Boolean(source && (source.altKey || source.metaKey || source.ctrlKey || source.shiftKey));
