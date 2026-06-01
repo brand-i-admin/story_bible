@@ -50,23 +50,53 @@ void main() {
       );
     });
 
-    test('region picker labels are centered and styled as tap targets', () {
+    test('region picker labels stay subtle and centered', () {
       final source = File(
         'lib/widgets/map/story_terrain_3d_map.dart',
       ).readAsStringSync();
 
-      expect(source, contains("id: 'story-bible-region-label-target'"));
+      expect(source, contains("id: 'story-bible-region-label-anchor'"));
       expect(source, contains("'text-field': ['get', 'label']"));
-      expect(source, contains("'text-allow-overlap': true"));
+      expect(source, contains("'text-allow-overlap': false"));
       expect(
         source,
-        contains("'label': '\${landmark.name}\\n이야기 \$eventCount'"),
+        contains("'text-variable-anchor': ['top', 'bottom', 'left', 'right']"),
       );
+      expect(source, contains("'label': landmark.name"));
       expect(
         source,
         contains('final labelPoint = _polygonLabelPoint(polygon);'),
       );
       expect(source, contains("'pickerMode': widget.regionPickerMode"));
+    });
+
+    test('region picker taps prefer polygon hits over child markers', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('const isRegionPickerActive = () => {'));
+      expect(
+        source,
+        contains('const pickRegionAtPoint = (point, lngLat) => {'),
+      );
+      expect(
+        source,
+        contains(
+          'if (isRegionPickerActive() && postRegionFeature(pickRegionAtPoint(point, lngLat)))',
+        ),
+      );
+      expect(
+        source,
+        contains('const canvasPointFromPointerEvent = (event) => {'),
+      );
+      expect(source, contains('Math.sqrt(dx * dx + dy * dy) > 18'));
+      expect(
+        source,
+        contains(
+          'handleMapTapPoint(point, map.unproject(point), { ignoreSuppression: !pointerStartedSuppressed });',
+        ),
+      );
     });
 
     test('map taps are suppressed during gestures and panel touches', () {

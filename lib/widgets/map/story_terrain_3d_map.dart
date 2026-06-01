@@ -1155,7 +1155,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         paint: {
           'line-color': ['get', 'lineColor'],
           'line-opacity': ['get', 'lineOpacity'],
-          'line-width': ['case', ['get', 'selected'], 3.4, ['get', 'pickerMode'], 2.6, 2.0]
+          'line-width': ['case', ['get', 'selected'], 3.0, ['get', 'pickerMode'], 2.0, 1.7]
         }
       });
       addLayerSafely({
@@ -1172,17 +1172,16 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         data: overlay.regionLabels
       });
       addLayerSafely({
-        id: 'story-bible-region-label-target',
+        id: 'story-bible-region-label-anchor',
         type: 'circle',
         source: 'story-bible-region-labels',
         paint: {
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 2.7, 19, 5.5, 25, 8.0, 31, 11.0, 35],
-          'circle-color': ['case', ['get', 'selected'], '#DCEAC3', '#FFF4D1'],
-          'circle-opacity': ['case', ['get', 'selected'], 0.82, 0.72],
-          'circle-stroke-color': ['case', ['get', 'selected'], '#6F944E', '#B78A28'],
-          'circle-stroke-opacity': ['case', ['get', 'selected'], 0.86, 0.72],
-          'circle-stroke-width': ['case', ['get', 'selected'], 2.0, 1.35],
-          'circle-blur': 0.08
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 2.7, 2.2, 5.5, 3.0, 8.0, 3.8, 11.0, 4.5],
+          'circle-color': ['case', ['get', 'selected'], '#648A4A', '#9D7E3C'],
+          'circle-opacity': ['case', ['get', 'selected'], 0.8, 0.58],
+          'circle-stroke-color': '#F8F1DD',
+          'circle-stroke-opacity': 0.75,
+          'circle-stroke-width': 0.9
         }
       });
       addLayerSafely({
@@ -1192,20 +1191,22 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         layout: {
           'text-field': ['get', 'label'],
           'text-font': ['Noto Sans Bold'],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 10.6, 5.5, 12.4, 8.0, 13.8, 11.0, 14.8],
-          'text-line-height': 1.08,
-          'text-allow-overlap': true,
-          'text-ignore-placement': true,
+          'text-size': ['interpolate', ['linear'], ['zoom'], 2.7, 8.8, 5.5, 10.2, 8.0, 11.6, 11.0, 12.4],
+          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+          'text-radial-offset': 0.65,
+          'text-justify': 'auto',
+          'text-allow-overlap': false,
+          'text-ignore-placement': false,
           'text-optional': true,
-          'text-padding': 3,
+          'text-padding': 2,
           'symbol-sort-key': ['-', 1000, ['get', 'eventCount']]
         },
         paint: {
-          'text-color': ['case', ['get', 'selected'], '#304B22', '#4D371A'],
-          'text-opacity': ['case', ['get', 'selected'], 0.98, 0.94],
+          'text-color': ['case', ['get', 'selected'], '#304B22', '#433622'],
+          'text-opacity': ['case', ['get', 'selected'], 0.92, 0.82],
           'text-halo-color': '#F8F1DD',
-          'text-halo-width': ['case', ['get', 'selected'], 1.25, 0.95],
-          'text-halo-blur': 0.26
+          'text-halo-width': ['case', ['get', 'selected'], 1.35, 1.15],
+          'text-halo-blur': 0.18
         }
       });
 
@@ -1472,8 +1473,23 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
         return pick;
       };
-      const handleMapTapPoint = (point, lngLat) => {
-        if (isMapTapSuppressed()) return;
+      const isRegionPickerActive = () => {
+        return Boolean(overlay.regions && Array.isArray(overlay.regions.features) &&
+          overlay.regions.features.some((feature) => Boolean(feature && feature.properties && feature.properties.pickerMode)));
+      };
+      const pickRegionAtPoint = (point, lngLat) => {
+        const renderedRegion = pickSmallestRegionFeature(
+          map.queryRenderedFeatures(point, {
+            layers: ['story-bible-region-hit']
+          })
+        );
+        return renderedRegion || pickRegionByLngLat(lngLat || map.unproject(point));
+      };
+      const handleMapTapPoint = (point, lngLat, options = {}) => {
+        if (!options.ignoreSuppression && isMapTapSuppressed()) return;
+        if (isRegionPickerActive() && postRegionFeature(pickRegionAtPoint(point, lngLat))) {
+          return;
+        }
         const eventFeature = map.queryRenderedFeatures(point, {
           layers: ['story-bible-event-hit']
         })[0];
@@ -1482,13 +1498,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           layers: ['story-bible-landmark-hit']
         })[0];
         if (postLandmarkFeature(landmarkFeature)) return;
-        const regionFeature = pickSmallestRegionFeature(
-          map.queryRenderedFeatures(point, {
-            layers: ['story-bible-region-hit']
-          })
-        );
-        if (postRegionFeature(regionFeature)) return;
-        postRegionFeature(pickRegionByLngLat(lngLat || map.unproject(point)));
+        postRegionFeature(pickRegionAtPoint(point, lngLat));
+      };
+      const canvasPointFromPointerEvent = (event) => {
+        const rect = map.getCanvas().getBoundingClientRect();
+        return [event.clientX - rect.left, event.clientY - rect.top];
       };
       let lastPointerTapAt = 0;
       map.on('click', (event) => {
@@ -1507,13 +1521,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           suppressMapTap(950);
           return;
         }
-        pointerDownPoint = { x: event.clientX, y: event.clientY };
+        pointerDownPoint = {
+          x: event.clientX,
+          y: event.clientY,
+          suppressed: isMapTapSuppressed()
+        };
       }, { passive: true });
       map.getCanvas().addEventListener('pointermove', (event) => {
         if (!pointerDownPoint) return;
         const dx = event.clientX - pointerDownPoint.x;
         const dy = event.clientY - pointerDownPoint.y;
-        if (Math.sqrt(dx * dx + dy * dy) > 8) {
+        if (Math.sqrt(dx * dx + dy * dy) > 18) {
           suppressMapTap(650);
         }
       }, { passive: true });
@@ -1521,18 +1539,19 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         if (!pointerDownPoint) return;
         const dx = event.clientX - pointerDownPoint.x;
         const dy = event.clientY - pointerDownPoint.y;
+        const pointerStartedSuppressed = Boolean(pointerDownPoint.suppressed);
         pointerDownPoint = null;
-        if (eventUsesModifierKey(event) || isMapTapSuppressed()) {
+        if (eventUsesModifierKey(event) || (pointerStartedSuppressed && isMapTapSuppressed())) {
           suppressMapTap(950);
           return;
         }
-        if (Math.sqrt(dx * dx + dy * dy) > 8) {
+        if (Math.sqrt(dx * dx + dy * dy) > 18) {
           suppressMapTap(650);
           return;
         }
         lastPointerTapAt = performance.now();
-        const point = [event.offsetX, event.offsetY];
-        handleMapTapPoint(point, map.unproject(point));
+        const point = canvasPointFromPointerEvent(event);
+        handleMapTapPoint(point, map.unproject(point), { ignoreSuppression: !pointerStartedSuppressed });
       }, { passive: true });
       map.getCanvas().addEventListener('pointercancel', () => {
         pointerDownPoint = null;
@@ -1651,12 +1670,12 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           'pickerMode': widget.regionPickerMode,
           'fillColor': selected ? '#A9C982' : '#D7B75A',
           'lineColor': selected ? '#7B9D53' : '#B89235',
-          'lineOpacity': widget.regionPickerMode || selected ? 0.88 : 0.78,
+          'lineOpacity': widget.regionPickerMode || selected ? 0.76 : 0.68,
           'fillOpacity': selected
-              ? 0.38
+              ? 0.28
               : widget.regionPickerMode
-              ? 0.3
-              : 0.22,
+              ? 0.16
+              : 0.14,
         },
       });
     }
@@ -1693,7 +1712,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         'properties': {
           'id': landmark.id,
           'name': landmark.name,
-          'label': '${landmark.name}\n이야기 $eventCount',
+          'label': landmark.name,
           'eventCount': eventCount,
           'selected': selected,
         },
