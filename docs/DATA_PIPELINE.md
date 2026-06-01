@@ -4,7 +4,7 @@
 
 ## 0. 입력 데이터 (사람·AI 이전 단계에서 준비됨)
 
-- **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 입력.
+- **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력. 없으면 `make seed-bible-verses` 는 스킵하며, 본문 리더까지 검증하려면 66권 txt 를 로컬에 넣는다.
 - **`assets/200_stories/*.json`** — 215개 이야기 dict 리스트 (5개 파일). **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
 
 ### 가장 단순한 흐름: KRV 성경 시드
@@ -13,7 +13,8 @@
 assets/bible/{창세기,출애굽기, ... ,요한계시록}.txt   (66 파일, 31,904절)
     │
     ▼  make seed-bible-verses
-        (build_krv_seed_sql.py --input-dir assets/bible --split-parts 10)
+        (assets/bible 이 있으면 build_krv_seed_sql.py --input-dir assets/bible --split-parts 10,
+         없으면 지도/콘텐츠 seed 확인용으로 명확히 스킵)
     │
     ▼
 supabase/seeds/
@@ -250,7 +251,7 @@ Makefile                                # 파이프라인 오케스트레이션
 
 ```makefile
 # 개별 타겟
-make seed-bible-verses       # build_krv_seed_sql.py 실행
+make seed-bible-verses       # assets/bible 이 있으면 build_krv_seed_sql.py 실행, 없으면 스킵
 make build-character-meta       # build_character_meta_json.py (모든 인물 카탈로그 + 아바타 프롬프트)
 make seed-stories            # build_200_stories_seed_sql.py (→ person-meta 의존)
 make seed-characters            # build_characters_seed_sql.py (→ person-meta 의존)
@@ -270,7 +271,7 @@ make apply-seeds-daily-quiz  # daily_quiz.sql 적용 (slug UPSERT, 재실행 안
 
 # 묶음 타겟
 make seed-stories-characters    # seed-stories + seed-characters (권장, apply-seeds-stories-characters 와 대칭)
-make seed-all                # seed-bible-verses + seed-stories + seed-characters + seed-quizzes + seed-daily-quiz + seed-landmarks
+make seed-all                # seed-bible-verses(로컬 입력 없으면 스킵) + seed-stories + seed-characters + seed-quizzes + seed-daily-quiz + seed-landmarks
 make generate-all            # generate-avatars + generate-story-images + thumbnails
 make all                     # seed-all + generate-all
 ```
@@ -341,7 +342,7 @@ gcloud auth application-default login
 
 > psql 통해 적용 (`make db-init`, `make apply-bible-verses-seeds`, `make apply-seeds-stories-characters`).
 
-1. `make seed-bible-verses` → 분할 SQL `krv_bible_verses_part_*.sql` 생성
+1. `make seed-bible-verses` → `assets/bible/*.txt` 가 있으면 분할 SQL `krv_bible_verses_part_*.sql` 생성, 없으면 스킵
 2. `make seed-stories-characters` → `characters_seed.sql` + `200_stories_seed_part_*.sql` 생성
    (내부에서 `build-character-meta`가 한 번 실행되어 `character_meta.json`도 갱신)
 3. `make db-init` — 스키마, 함수, 트리거, RLS, eras 시드 (drop & recreate)

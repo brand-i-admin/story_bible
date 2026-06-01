@@ -964,7 +964,7 @@
             <span class="step">3</span>
             <h3>SQL 생성</h3>
             <p>
-              성경, 사건, 인물, 퀴즈, daily quiz, landmarks, era boundaries seed SQL을 생성한다.
+              성경(로컬 입력이 있을 때), 사건, 인물, 퀴즈, daily quiz, landmarks와 region polygon seed SQL을 생성한다.
             </p>
           </div>
           <div class="card flow-card">
@@ -1160,8 +1160,8 @@
                     <td>성경 참조 표시, jsonb 참조 배열, KRV 구절 row, 저장 구절 key/reference text.</td>
                   </tr>
                   <tr>
-                    <td><code>landmark_test.dart</code>, <code>era_boundary_test.dart</code></td>
-                    <td>landmark 좌표/emoji/era codes, polygon jsonb, 색상 문자열, 잘못된 polygon fallback.</td>
+                    <td><code>landmark_test.dart</code></td>
+                    <td>landmark 좌표/emoji/era codes, region polygon jsonb, 잘못된 polygon fallback.</td>
                   </tr>
                   <tr>
                     <td><code>profile_quiz_stats_test.dart</code></td>
@@ -1515,7 +1515,7 @@
                   </tr>
                   <tr>
                     <td><code>make seed-all</code></td>
-                    <td>성경, stories, characters, quizzes, daily quiz, landmarks, era boundaries</td>
+                    <td>성경(로컬 입력이 있을 때), stories, characters, quizzes, daily quiz, landmarks/region polygons</td>
                     <td>전체 seed SQL 생성. DB 적용은 별도 target.</td>
                   </tr>
                 </tbody>
@@ -1623,7 +1623,7 @@
                   </tr>
                   <tr>
                     <td><code>make apply-seeds</code></td>
-                    <td>bible, landmarks, stories/characters, quizzes, era boundaries, daily quiz 전체 적용.</td>
+                    <td>bible, landmarks/region polygons, stories/characters, quizzes, daily quiz 전체 적용.</td>
                     <td>초기 bootstrap용. bible seed는 중복 주의.</td>
                   </tr>
                   <tr>
