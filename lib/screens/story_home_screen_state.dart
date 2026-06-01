@@ -549,6 +549,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// - 현재 step: 그 단계 진행 내역 초기화.
   /// - 이전 step: 그 단계로 돌아가며 그 단계 이후 모든 선택 초기화.
   void _handleStepperTap(int step) {
+    _suppressMapTaps(const Duration(milliseconds: 1200));
     final ctl = ref.read(storyControllerProvider.notifier);
     final current = _currentStepperIndex();
     if (step > current) return; // 미래 단계 비활성
@@ -633,6 +634,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _handleHomeBackPressed() {
+    _suppressMapTaps(const Duration(milliseconds: 1200));
     final state = ref.read(storyControllerProvider);
     switch (_homeBackAction(state)) {
       case HomeBackAction.exitApp:
@@ -2105,10 +2107,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       bottom: 0,
                       child: Listener(
                         behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) => _suppressMapTaps(),
+                        onPointerDown: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
                         onPointerMove: (_) =>
                             _suppressMapTaps(const Duration(milliseconds: 350)),
-                        onPointerSignal: (_) => _suppressMapTaps(),
+                        onPointerUp: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        onPointerCancel: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        onPointerSignal: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
                         child: AnimatedContainer(
                           key: const ValueKey<String>('selection-sheet'),
                           duration: const Duration(milliseconds: 280),

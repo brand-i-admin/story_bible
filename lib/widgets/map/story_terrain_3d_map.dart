@@ -749,11 +749,20 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
     const sendInteraction = () => post({ type: 'mapInteraction' });
     let suppressMapTapUntil = 0;
-    const suppressMapTap = (durationMs = 650) => {
-      const duration = Number.isFinite(Number(durationMs)) ? Number(durationMs) : 650;
-      suppressMapTapUntil = Math.max(suppressMapTapUntil, performance.now() + duration);
-    };
+    let suppressMapTapReason = 'external';
     const isMapTapSuppressed = () => performance.now() < suppressMapTapUntil;
+    const suppressMapTap = (durationMs = 650, reason = 'external') => {
+      const duration = Number.isFinite(Number(durationMs)) ? Number(durationMs) : 650;
+      const nextUntil = performance.now() + duration;
+      const active = isMapTapSuppressed();
+      if (!active || nextUntil >= suppressMapTapUntil || reason !== 'mapGesture') {
+        suppressMapTapReason = reason;
+      }
+      suppressMapTapUntil = Math.max(suppressMapTapUntil, nextUntil);
+    };
+    const isMapTapExternallySuppressed = () => {
+      return isMapTapSuppressed() && suppressMapTapReason !== 'mapGesture';
+    };
     window.storyBibleSuppressMapTap = suppressMapTap;
     const eventUsesModifierKey = (event) => {
       const source = event && (event.originalEvent || event);
@@ -763,7 +772,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return Boolean(target && target.closest && target.closest('.maplibregl-ctrl'));
     };
     const sendGestureInteraction = (event) => {
-      suppressMapTap(eventUsesModifierKey(event) ? 950 : 650);
+      suppressMapTap(eventUsesModifierKey(event) ? 950 : 650, 'mapGesture');
       sendInteraction();
     };
     map.on('dragstart', sendGestureInteraction);
@@ -773,11 +782,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     map.on('boxzoomstart', sendGestureInteraction);
     map.getContainer().addEventListener('pointerdown', (event) => {
       if (eventUsesModifierKey(event) || isMapControlTarget(event.target)) {
-        suppressMapTap(950);
+        suppressMapTap(950, 'mapControl');
       }
     }, { capture: true, passive: true });
     map.getCanvas().addEventListener('wheel', (event) => {
-      suppressMapTap(eventUsesModifierKey(event) ? 950 : 650);
+      suppressMapTap(eventUsesModifierKey(event) ? 950 : 650, 'mapGesture');
     }, { passive: true });
 
     const overlay = $overlayPayload;
@@ -1507,7 +1516,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       let lastPointerTapAt = 0;
       map.on('click', (event) => {
         if (eventUsesModifierKey(event) || isMapControlTarget(event.originalEvent && event.originalEvent.target)) {
-          suppressMapTap(950);
+          suppressMapTap(950, 'mapControl');
           return;
         }
         if (isMapTapSuppressed()) return;
@@ -1518,7 +1527,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       map.getCanvas().addEventListener('pointerdown', (event) => {
         if (eventUsesModifierKey(event)) {
           pointerDownPoint = null;
-          suppressMapTap(950);
+          suppressMapTap(950, 'mapGesture');
           return;
         }
         pointerDownPoint = {
@@ -1532,7 +1541,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         const dx = event.clientX - pointerDownPoint.x;
         const dy = event.clientY - pointerDownPoint.y;
         if (Math.sqrt(dx * dx + dy * dy) > 18) {
-          suppressMapTap(650);
+          suppressMapTap(650, 'mapGesture');
         }
       }, { passive: true });
       map.getCanvas().addEventListener('pointerup', (event) => {
@@ -1541,12 +1550,14 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         const dy = event.clientY - pointerDownPoint.y;
         const pointerStartedSuppressed = Boolean(pointerDownPoint.suppressed);
         pointerDownPoint = null;
-        if (eventUsesModifierKey(event) || (pointerStartedSuppressed && isMapTapSuppressed())) {
-          suppressMapTap(950);
+        if (eventUsesModifierKey(event) ||
+            isMapTapExternallySuppressed() ||
+            (pointerStartedSuppressed && isMapTapSuppressed())) {
+          suppressMapTap(950, 'mapGesture');
           return;
         }
         if (Math.sqrt(dx * dx + dy * dy) > 18) {
-          suppressMapTap(650);
+          suppressMapTap(650, 'mapGesture');
           return;
         }
         lastPointerTapAt = performance.now();
@@ -1555,7 +1566,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       }, { passive: true });
       map.getCanvas().addEventListener('pointercancel', () => {
         pointerDownPoint = null;
-        suppressMapTap(650);
+        suppressMapTap(650, 'mapGesture');
       }, { passive: true });
       map.on('mouseenter', 'story-bible-region-hit', () => map.getCanvas().style.cursor = 'pointer');
       map.on('mouseleave', 'story-bible-region-hit', () => map.getCanvas().style.cursor = '');

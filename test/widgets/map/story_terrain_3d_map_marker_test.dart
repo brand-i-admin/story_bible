@@ -123,23 +123,30 @@ void main() {
       ).readAsStringSync();
 
       expect(mapSource, contains('window.storyBibleSuppressMapTap'));
+      expect(mapSource, contains("let suppressMapTapReason = 'external';"));
       expect(mapSource, contains('const isMapTapSuppressed'));
+      expect(mapSource, contains('const isMapTapExternallySuppressed'));
       expect(mapSource, contains('eventUsesModifierKey(event)'));
       expect(mapSource, contains("target.closest('.maplibregl-ctrl')"));
-      expect(panelSource, contains('onPointerDown: (_) => _suppressMapTaps()'));
       expect(
-        panelSource,
-        contains('onPointerSignal: (_) => _suppressMapTaps()'),
+        mapSource,
+        contains(
+          "suppressMapTap(eventUsesModifierKey(event) ? 950 : 650, 'mapGesture')",
+        ),
       );
+      expect(mapSource, contains('isMapTapExternallySuppressed()'));
+      expect(mapSource, contains("suppressMapTap(950, 'mapControl');"));
+      expect(panelSource, contains('const Duration(milliseconds: 1200)'));
+      expect(panelSource, contains('onPointerUp: (_) =>'));
+      expect(panelSource, contains('onPointerCancel: (_) =>'));
       expect(homeSource, contains('void _suppressMapTaps(['));
       expect(
         homeSource,
         contains("key: const ValueKey<String>('selection-sheet')"),
       );
-      expect(
-        homeSource,
-        contains('onPointerSignal: (_) => _suppressMapTaps()'),
-      );
+      expect(homeSource, contains('const Duration(milliseconds: 1200)'));
+      expect(homeSource, contains('onPointerUp: (_) =>'));
+      expect(homeSource, contains('onPointerCancel: (_) =>'));
       expect(homeSource, contains('builder: (ctx) => Listener('));
       expect(homeSource, contains('onPointerDown: (_) => _suppressMapTaps(),'));
       expect(homeSource, contains('onPointerUp: (_) => _suppressMapTaps(),'));

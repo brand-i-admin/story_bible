@@ -272,10 +272,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               alignment: Alignment.bottomCenter,
               child: Listener(
                 behavior: HitTestBehavior.translucent,
-                onPointerDown: (_) => _suppressMapTaps(),
+                onPointerDown: (_) =>
+                    _suppressMapTaps(const Duration(milliseconds: 1200)),
                 onPointerMove: (_) =>
                     _suppressMapTaps(const Duration(milliseconds: 350)),
-                onPointerSignal: (_) => _suppressMapTaps(),
+                onPointerUp: (_) =>
+                    _suppressMapTaps(const Duration(milliseconds: 1200)),
+                onPointerCancel: (_) =>
+                    _suppressMapTaps(const Duration(milliseconds: 1200)),
+                onPointerSignal: (_) =>
+                    _suppressMapTaps(const Duration(milliseconds: 1200)),
                 child: widget.bottomOverlay!,
               ),
             ),
