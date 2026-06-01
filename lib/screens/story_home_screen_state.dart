@@ -58,6 +58,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// (예: region 선택 완료, character step 3) 면 _currentMapHint() 가 null 을
   /// 반환해 이 플래그와 무관하게 hint 가 안 뜬다.
   bool _mapHintDismissed = false;
+  DateTime? _mapHintDismissIgnoredUntil;
 
   @override
   void initState() {
@@ -418,8 +419,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// _mapHintDismissed=true 로 다음 단계 진입 전까지 hint 가 다시 안 뜬다.
   void _handleMapInteraction() {
     if (_mapHintDismissed) return;
+    final ignoredUntil = _mapHintDismissIgnoredUntil;
+    if (ignoredUntil != null && DateTime.now().isBefore(ignoredUntil)) {
+      return;
+    }
     setState(() {
       _mapHintDismissed = true;
+      _mapHintDismissIgnoredUntil = null;
     });
   }
 
@@ -433,6 +439,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// dismiss flag 를 reset. setState 안에서 호출해야 build 에 반영된다.
   void _resetMapHint() {
     _mapHintDismissed = false;
+    _mapHintDismissIgnoredUntil = DateTime.now().add(
+      const Duration(milliseconds: 650),
+    );
   }
 
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
@@ -2065,15 +2074,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 top: topInset + 50,
                 left: 0,
                 right: 0,
-                child: _LandmarkCategoryChipsBar(
-                  state: state,
-                  onToggle: (cat) => ref
-                      .read(storyControllerProvider.notifier)
-                      .toggleLandmarkCategory(cat),
-                  onClear: () => ref
-                      .read(storyControllerProvider.notifier)
-                      .clearLandmarkCategories(),
-                  onLandmarkTap: _showLandmarkPopup,
+                child: Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerDown: (_) {
+                    _handleMapInteraction();
+                    _suppressMapTaps();
+                  },
+                  onPointerUp: (_) => _suppressMapTaps(),
+                  onPointerCancel: (_) => _suppressMapTaps(),
+                  onPointerSignal: (_) => _suppressMapTaps(),
+                  child: _LandmarkCategoryChipsBar(
+                    state: state,
+                    onToggle: (cat) => ref
+                        .read(storyControllerProvider.notifier)
+                        .toggleLandmarkCategory(cat),
+                    onClear: () => ref
+                        .read(storyControllerProvider.notifier)
+                        .clearLandmarkCategories(),
+                    onLandmarkTap: _showLandmarkPopup,
+                  ),
                 ),
               ),
             // v3 — 좌측 "랜드마크 25" 토글 + 사이드 패널 제거. 사용자가 카테고리
@@ -2266,43 +2285,53 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       left: 0,
                       right: 0,
                       top: sideTop,
-                      child: SizedBox(
-                        height: 38,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            children: [
-                              // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
-                              // 항상 일부 보이므로 별도 토글 불필요.
-                              // "Aa" (글자크기) 버튼 제거 — 프로필 설정 시트로 이전.
-                              topUtilityButton(
-                                label: '성경',
-                                onTap: _openBibleReaderPopup,
-                              ),
-                              const SizedBox(width: 4),
-                              topUtilityButton(
-                                label: '퀴즈',
-                                onTap: _openWeeklyTab,
-                              ),
-                              const SizedBox(width: 4),
-                              topUtilityButton(
-                                label: '프로필',
-                                onTap: _openProfileTab,
-                              ),
-                              const SizedBox(width: 4),
-                              NotificationBellButton(
-                                onNavigate: _handleNotificationTap,
-                                onOpenHistory: _openNotificationHistory,
-                              ),
-                              if (kIsWeb) ...[
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps();
+                        },
+                        onPointerUp: (_) => _suppressMapTaps(),
+                        onPointerCancel: (_) => _suppressMapTaps(),
+                        onPointerSignal: (_) => _suppressMapTaps(),
+                        child: SizedBox(
+                          height: 38,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Row(
+                              children: [
+                                // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
+                                // 항상 일부 보이므로 별도 토글 불필요.
+                                // "Aa" (글자크기) 버튼 제거 — 프로필 설정 시트로 이전.
+                                topUtilityButton(
+                                  label: '성경',
+                                  onTap: _openBibleReaderPopup,
+                                ),
                                 const SizedBox(width: 4),
                                 topUtilityButton(
-                                  label: '이야기 등록',
-                                  onTap: _openProposalBoardOrGate,
+                                  label: '퀴즈',
+                                  onTap: _openWeeklyTab,
                                 ),
+                                const SizedBox(width: 4),
+                                topUtilityButton(
+                                  label: '프로필',
+                                  onTap: _openProfileTab,
+                                ),
+                                const SizedBox(width: 4),
+                                NotificationBellButton(
+                                  onNavigate: _handleNotificationTap,
+                                  onOpenHistory: _openNotificationHistory,
+                                ),
+                                if (kIsWeb) ...[
+                                  const SizedBox(width: 4),
+                                  topUtilityButton(
+                                    label: '이야기 등록',
+                                    onTap: _openProposalBoardOrGate,
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),

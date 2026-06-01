@@ -120,10 +120,19 @@ void main() {
         contains('const canvasPointFromPointerEvent = (event) => {'),
       );
       expect(source, contains('Math.sqrt(dx * dx + dy * dy) > 18'));
+      expect(source, contains('if (widget.regionPickerMode) {'));
+      expect(
+        source,
+        contains("return {'type': 'FeatureCollection', 'features': const []};"),
+      );
+      expect(
+        source,
+        contains('const regionPickerPointerTap = isRegionPickerActive();'),
+      );
       expect(
         source,
         contains(
-          'handleMapTapPoint(point, map.unproject(point), { ignoreSuppression: !pointerStartedSuppressed });',
+          'ignoreSuppression: !pointerStartedSuppressed || regionPickerPointerTap',
         ),
       );
     });
@@ -140,6 +149,8 @@ void main() {
       ).readAsStringSync();
 
       expect(mapSource, contains('window.storyBibleSuppressMapTap'));
+      expect(mapSource, contains('const sendPointerInteraction = () => {'));
+      expect(mapSource, contains('sendPointerInteraction();'));
       expect(mapSource, contains("let suppressMapTapReason = 'external';"));
       expect(mapSource, contains('const isMapTapSuppressed'));
       expect(mapSource, contains('const isMapTapExternallySuppressed'));
@@ -159,11 +170,31 @@ void main() {
       );
       expect(
         mapSource,
-        contains('sendInteraction();\n        handleMapTapPoint(event.point'),
+        contains(
+          'const regionPickerClick = isRegionPickerActive();\n        if (isMapTapSuppressed()) return;',
+        ),
       );
       expect(
         mapSource,
-        contains('sendInteraction();\n        handleMapTapPoint(point'),
+        contains(
+          'if (performance.now() - lastPointerTapAt < 320) return;\n        sendInteraction();',
+        ),
+      );
+      expect(
+        mapSource,
+        contains(
+          'handleMapTapPoint(event.point, event.lngLat, { ignoreSuppression: regionPickerClick });',
+        ),
+      );
+      expect(
+        mapSource,
+        contains(
+          'sendInteraction();\n        const regionPickerPointerTap = isRegionPickerActive();',
+        ),
+      );
+      expect(
+        mapSource,
+        contains('handleMapTapPoint(point, map.unproject(point), {'),
       );
       expect(mapSource, contains('isMapTapExternallySuppressed()'));
       expect(mapSource, contains("suppressMapTap(950, 'mapControl');"));

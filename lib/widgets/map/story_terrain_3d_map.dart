@@ -761,6 +761,13 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     map.on('styledata', hideBaseLabelLayers);
 
     const sendInteraction = () => post({ type: 'mapInteraction' });
+    let lastPointerInteractionAt = 0;
+    const sendPointerInteraction = () => {
+      const now = performance.now();
+      if (now - lastPointerInteractionAt < 180) return;
+      lastPointerInteractionAt = now;
+      sendInteraction();
+    };
     let suppressMapTapUntil = 0;
     let suppressMapTapReason = 'external';
     const isMapTapSuppressed = () => performance.now() < suppressMapTapUntil;
@@ -800,6 +807,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     map.on('pitchstart', sendGestureInteraction);
     map.on('boxzoomstart', sendGestureInteraction);
     map.getContainer().addEventListener('pointerdown', (event) => {
+      if (!isMapTapExternallySuppressed()) {
+        sendPointerInteraction();
+      }
       if (eventUsesModifierKey(event) || isMapControlTarget(event.target)) {
         suppressMapTap(950, 'mapControl');
       }
@@ -903,6 +913,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       }
     };
     const postEventMarkerTap = (id) => {
+      sendInteraction();
       if (isMapTapSuppressed()) return;
       const now = performance.now();
       if (now - lastDomEventTapAt < 280) return;
@@ -910,6 +921,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       post({ type: 'eventTap', id });
     };
     const postLandmarkMarkerTap = (id) => {
+      sendInteraction();
       if (isMapTapSuppressed()) return;
       const now = performance.now();
       if (now - lastDomLandmarkTapAt < 280) return;
@@ -1538,10 +1550,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           suppressMapTap(950, 'mapControl');
           return;
         }
+        const regionPickerClick = isRegionPickerActive();
         if (isMapTapSuppressed()) return;
         if (performance.now() - lastPointerTapAt < 320) return;
         sendInteraction();
-        handleMapTapPoint(event.point, event.lngLat);
+        handleMapTapPoint(event.point, event.lngLat, { ignoreSuppression: regionPickerClick });
       });
       let pointerDownPoint = null;
       map.getCanvas().addEventListener('pointerdown', (event) => {
@@ -1570,9 +1583,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         const dy = event.clientY - pointerDownPoint.y;
         const pointerStartedSuppressed = Boolean(pointerDownPoint.suppressed);
         pointerDownPoint = null;
+        sendInteraction();
+        const regionPickerPointerTap = isRegionPickerActive();
         if (eventUsesModifierKey(event) ||
-            isMapTapExternallySuppressed() ||
-            (pointerStartedSuppressed && isMapTapSuppressed())) {
+            (isMapTapExternallySuppressed() && !regionPickerPointerTap) ||
+            (pointerStartedSuppressed && isMapTapSuppressed() && !regionPickerPointerTap)) {
           suppressMapTap(950, 'mapGesture');
           return;
         }
@@ -1582,8 +1597,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
         lastPointerTapAt = performance.now();
         const point = canvasPointFromPointerEvent(event);
-        sendInteraction();
-        handleMapTapPoint(point, map.unproject(point), { ignoreSuppression: !pointerStartedSuppressed });
+        handleMapTapPoint(point, map.unproject(point), {
+          ignoreSuppression: !pointerStartedSuppressed || regionPickerPointerTap
+        });
       }, { passive: true });
       map.getCanvas().addEventListener('pointercancel', () => {
         pointerDownPoint = null;
@@ -1943,6 +1959,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   Map<String, Object> _landmarkFeatureCollection() {
+    // 지역 선택 단계에서는 폴리곤 자체가 클릭 대상이다. 세부 랜드마크 DOM
+    // 마커는 보이는 크기보다 hit box 가 커서 폴리곤 탭을 가로챌 수 있다.
+    if (widget.regionPickerMode) {
+      return {'type': 'FeatureCollection', 'features': const []};
+    }
     final landmarks =
         widget.activeLandmarks
             .where(
