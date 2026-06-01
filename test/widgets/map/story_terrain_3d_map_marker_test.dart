@@ -134,6 +134,12 @@ void main() {
           "suppressMapTap(eventUsesModifierKey(event) ? 950 : 650, 'mapGesture')",
         ),
       );
+      expect(
+        mapSource,
+        contains(
+          'if (event && event.originalEvent) {\n        sendInteraction();',
+        ),
+      );
       expect(mapSource, contains('isMapTapExternallySuppressed()'));
       expect(mapSource, contains("suppressMapTap(950, 'mapControl');"));
       expect(panelSource, contains('const Duration(milliseconds: 1200)'));

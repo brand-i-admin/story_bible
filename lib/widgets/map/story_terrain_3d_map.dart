@@ -773,7 +773,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     };
     const sendGestureInteraction = (event) => {
       suppressMapTap(eventUsesModifierKey(event) ? 950 : 650, 'mapGesture');
-      sendInteraction();
+      if (event && event.originalEvent) {
+        sendInteraction();
+      }
     };
     map.on('dragstart', sendGestureInteraction);
     map.on('zoomstart', sendGestureInteraction);
