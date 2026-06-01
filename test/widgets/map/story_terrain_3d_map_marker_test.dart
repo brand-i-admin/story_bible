@@ -157,6 +157,14 @@ void main() {
           'if (event && event.originalEvent) {\n        sendInteraction();',
         ),
       );
+      expect(
+        mapSource,
+        contains('sendInteraction();\n        handleMapTapPoint(event.point'),
+      );
+      expect(
+        mapSource,
+        contains('sendInteraction();\n        handleMapTapPoint(point'),
+      );
       expect(mapSource, contains('isMapTapExternallySuppressed()'));
       expect(mapSource, contains("suppressMapTap(950, 'mapControl');"));
       expect(panelSource, contains('const Duration(milliseconds: 1200)'));
@@ -166,6 +174,12 @@ void main() {
       expect(
         homeSource,
         contains("key: const ValueKey<String>('selection-sheet')"),
+      );
+      expect(
+        homeSource,
+        contains(
+          'onPointerDown: (_) {\n                          _handleMapInteraction();',
+        ),
       );
       expect(homeSource, contains('const Duration(milliseconds: 1200)'));
       expect(homeSource, contains('onPointerUp: (_) =>'));

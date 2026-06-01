@@ -1523,6 +1523,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
         if (isMapTapSuppressed()) return;
         if (performance.now() - lastPointerTapAt < 320) return;
+        sendInteraction();
         handleMapTapPoint(event.point, event.lngLat);
       });
       let pointerDownPoint = null;
@@ -1564,6 +1565,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
         lastPointerTapAt = performance.now();
         const point = canvasPointFromPointerEvent(event);
+        sendInteraction();
         handleMapTapPoint(point, map.unproject(point), { ignoreSuppression: !pointerStartedSuppressed });
       }, { passive: true });
       map.getCanvas().addEventListener('pointercancel', () => {

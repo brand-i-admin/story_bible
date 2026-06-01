@@ -414,8 +414,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return null;
   }
 
-  /// 사용자가 지도를 만지면(드래그/줌/탭 등) hint dismiss. _mapHintDismissed=true
-  /// 로 다음 단계 진입 전까지 hint 가 다시 안 뜬다.
+  /// 안내가 떠 있는 상태에서 화면을 탭하거나 지도를 만지면 hint dismiss.
+  /// _mapHintDismissed=true 로 다음 단계 진입 전까지 hint 가 다시 안 뜬다.
   void _handleMapInteraction() {
     if (_mapHintDismissed) return;
     setState(() {
@@ -2107,9 +2107,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       bottom: 0,
                       child: Listener(
                         behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) => _suppressMapTaps(
-                          const Duration(milliseconds: 1200),
-                        ),
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps(const Duration(milliseconds: 1200));
+                        },
                         onPointerMove: (_) =>
                             _suppressMapTaps(const Duration(milliseconds: 350)),
                         onPointerUp: (_) => _suppressMapTaps(
@@ -2229,7 +2230,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       top: topInset + 90,
                       child: Listener(
                         behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) => _suppressMapTaps(),
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps();
+                        },
                         onPointerSignal: (_) => _suppressMapTaps(),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
