@@ -1,6 +1,6 @@
 # PRD — 이야기 성경 (Story Bible)
 
-> 최종 수정: 2026-04-16
+> 최종 수정: 2026-06-01
 
 ## 1. 제품 비전
 
@@ -20,7 +20,7 @@
 |------|------|
 | 프론트엔드 | Flutter (Dart 3.8+), Riverpod 2.6 |
 | 백엔드 | Supabase (PostgreSQL + Auth + Storage + RLS) |
-| 지도 | flutter_map + OpenStreetMap 타일 |
+| 지도 | MapLibre GL JS WebView + OpenFreeMap Liberty + Mapzen Terrarium DEM |
 | AI 에셋 생성 | Google Cloud Vertex AI Imagen |
 | 인증 | Apple / Google / Kakao 소셜 로그인 |
 | 성경 텍스트 | KRV 개역한글 (31,904절) |

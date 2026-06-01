@@ -199,8 +199,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.source.isThreeDimensional ||
-        widget.source.styleJsonUrl.isEmpty ||
+    if (widget.source.styleJsonUrl.isEmpty ||
         !_hasTerrainSource(widget.source)) {
       return const ColoredBox(color: Color(0xFFE5D2B5));
     }

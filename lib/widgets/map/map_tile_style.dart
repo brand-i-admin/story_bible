@@ -15,10 +15,7 @@ class StoryMapTileSource {
   const StoryMapTileSource({
     required this.style,
     required this.label,
-    required this.urlTemplate,
     required this.attributionLines,
-    required this.textureStrength,
-    this.isThreeDimensional = false,
     this.styleJsonUrl = '',
     this.terrainTileJsonUrl = '',
     this.terrainTiles = const [],
@@ -27,15 +24,11 @@ class StoryMapTileSource {
     this.terrainExaggeration = 1.0,
     this.initialPitch = 0.0,
     this.initialBearing = 0.0,
-    this.tileDimension = 256,
-    this.zoomOffset = 0,
   });
 
   final StoryMapTileStyle style;
   final String label;
-  final String urlTemplate;
   final List<MapAttributionLineData> attributionLines;
-  final bool isThreeDimensional;
   final String styleJsonUrl;
   final String terrainTileJsonUrl;
   final List<String> terrainTiles;
@@ -44,14 +37,6 @@ class StoryMapTileSource {
   final double terrainExaggeration;
   final double initialPitch;
   final double initialBearing;
-  final int tileDimension;
-  final double zoomOffset;
-
-  /// Parchment grain opacity over a legacy 2D fallback map.
-  ///
-  /// The production 3D terrain map keeps this at 0 so hillshade and contour
-  /// details remain legible.
-  final double textureStrength;
 }
 
 class StoryMapTileStyles {
@@ -77,8 +62,6 @@ class StoryMapTileStyles {
         return const StoryMapTileSource(
           style: StoryMapTileStyle.openFreeMap3dLiberty,
           label: '3D 무료 지형(OpenFreeMap)',
-          urlTemplate: '',
-          isThreeDimensional: true,
           styleJsonUrl: 'https://tiles.openfreemap.org/styles/liberty',
           terrainTiles: [
             'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
@@ -88,7 +71,6 @@ class StoryMapTileStyles {
           terrainExaggeration: 1.35,
           initialPitch: 20,
           initialBearing: 0,
-          textureStrength: 0.0,
           attributionLines: [
             MapAttributionLineData(source: 'OpenFreeMap Liberty style'),
             MapAttributionLineData(source: 'OpenStreetMap contributors'),

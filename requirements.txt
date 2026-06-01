@@ -5,8 +5,8 @@
 #   pip install -r requirements.txt
 google-auth>=2.49,<3
 requests>=2.33,<3
-# era_boundaries 폴리곤 생성 — Natural Earth GeoJSON 을 시대별 bounding box 로
-# 클립해 정밀한 해안선 폴리곤을 만든다 (tools/seed/build_era_boundaries_from_geojson.py).
+# landmarks region polygon 정제 — Natural Earth GeoJSON 을 region bounding box 로
+# 클립해 정밀한 해안선 폴리곤 후보를 만든다.
 shapely>=2.0,<3
 # Vertex Imagen 데코 PNG 후처리 — 평면 흰색 배경을 chroma-key 로 투명화
 # (tools/images/generate_decos_vertex.py).

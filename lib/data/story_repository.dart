@@ -6,7 +6,6 @@ import '../models/bible_verse.dart';
 import '../models/character.dart';
 import '../models/daily_quiz.dart';
 import '../models/era.dart';
-import '../models/era_boundary.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
@@ -68,16 +67,6 @@ class StoryRepository {
         .order('display_priority', ascending: true)
         .order('name', ascending: true);
     return rows.map<Landmark>(Landmark.fromMap).toList();
-  }
-
-  /// 시대별 거친 지리 영역 폴리곤. 시대 선택 시 지도에 반투명 영역으로 그려진다.
-  Future<List<EraBoundary>> fetchEraBoundaries() async {
-    final rows = await _client
-        .from('era_boundaries')
-        .select()
-        .order('display_order', ascending: true)
-        .order('polygon_index', ascending: true);
-    return rows.map<EraBoundary>(EraBoundary.fromMap).toList();
   }
 
   Future<List<StoryEvent>> fetchEventsForCharacter(String characterCode) async {

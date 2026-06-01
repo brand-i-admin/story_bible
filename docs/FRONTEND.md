@@ -52,7 +52,6 @@ lib/
 | BibleRef | `models/bible_ref.dart` | book, from, to (`displayText` getter) | `BibleRef.fromMap`, `BibleRef.fromList` |
 | BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
 | Landmark | `models/landmark.dart` | id, code, name, description, emoji, category, lat, lng, **kind** ('region'/'anchor'/'minor'/'point'), **polygon** (region 만, List<LatLng>), **parentLandmarkId**, **aliasGroupId**, displayPriority, eraCodes, relatedEventCodes (`isRegion/isAnchor/isMinor/latLng` getter) | `Landmark.fromMap()` |
-| EraBoundary | `models/era_boundary.dart` | id, eraId, polygonIndex, polygon (List&lt;LatLng&gt;), color (Color), fillOpacity, displayOrder | `EraBoundary.fromMap()` — `#RRGGBB`/`[[lat,lng], ...]` 자동 파싱 |
 | AppUserProfile | `models/app_user_profile.dart` (33줄) | userId, shareId, nickname, photoUrl, prayerRequest | `AppUserProfile.fromMap()` |
 | SavedBibleVerse | `models/saved_bible_verse.dart` (55줄) | id, userId, translation, bookNo, bookName, chapterNo, verseNo, verseText | `SavedBibleVerse.fromMap()` |
 | QuizQuestion | `models/quiz_question.dart` | id, question, choices, answerIndex, explanation, `confusedChoiceLabel` | 생성자 직접 |
@@ -123,8 +122,7 @@ class StoryState {
   final String selectedTestament;  // 'old' | 'new'
 
   // 지도 관련 (2026-04-29)
-  final List<Landmark> landmarks;               // 시대별 랜드마크 (전체 카탈로그)
-  final List<EraBoundary> eraBoundaries;        // 시대별 거친 영역 폴리곤 (전체)
+  final List<Landmark> landmarks;               // 시대별 랜드마크 + region polygon 카탈로그
 }
 ```
 
@@ -171,7 +169,7 @@ static const _palette = <Color>[
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 헤더는 명시적 이전 단계 버튼(`시대/방법 변경`, `장소 다시 선택`, `인물 다시 선택`)과 라벨형 stepper(`시대/방법 → 장소/인물 → 이야기`)를 toggle 양옆 같은 줄에 노출해 되돌아가기 경로를 알 수 있게 한다. 인물 선택 중에는 `이전`과 `N명 →` 액션을 작은 pill 로 함께 표시한다. 하단 시트는 화면 맨 아래(`bottom: 0`) 에 붙되 intro/region picker/event cards 별 예상 콘텐츠 높이를 기준으로 열려, 카드 아래에 큰 빈 양피지 영역을 만들지 않는다. 의미 있는 `bottomInset` 이 있을 때만 시트 높이에 더해 nav bar 영역을 피하고, gesture-only/내비바 없음 환경은 화면 끝까지 사용한다. Android 시스템 뒤로가기는 `PopScope` + `utils/home_back_navigation.dart` 로 홈 내부 흐름을 되감는다: region 사건 목록→region 선택→홈, character 사건 선택→인물 선택→홈, 시대만 고른 intro→시대 미선택 홈. 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드(`_SelectionMode.character`) 진입 시 `StoryMapPanel.suppressRegionLabels=true` 로 가나안·시내 광야·애굽 등 검정 캡슐 라벨을 숨겨 인물 path 점선이 가려지지 않게 한다. |
+| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 헤더는 명시적 이전 단계 버튼(`시대/방법 변경`, `장소 다시 선택`, `인물 다시 선택`)과 라벨형 stepper(`시대/방법 → 장소/인물 → 이야기`)를 toggle 양옆 같은 줄에 노출해 되돌아가기 경로를 알 수 있게 한다. 인물 선택 중에는 `이전`과 `N명 →` 액션을 작은 pill 로 함께 표시한다. 하단 시트는 화면 맨 아래(`bottom: 0`) 에 붙되 intro/region picker/event cards 별 예상 콘텐츠 높이를 기준으로 열려, 카드 아래에 큰 빈 양피지 영역을 만들지 않는다. 의미 있는 `bottomInset` 이 있을 때만 시트 높이에 더해 nav bar 영역을 피하고, gesture-only/내비바 없음 환경은 화면 끝까지 사용한다. Android 시스템 뒤로가기는 `PopScope` + `utils/home_back_navigation.dart` 로 홈 내부 흐름을 되감는다: region 사건 목록→region 선택→홈, character 사건 선택→인물 선택→홈, 시대만 고른 intro→시대 미선택 홈. 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드의 region 라벨과 path 표시 우선순위는 `StoryTerrain3dMap` 안의 MapLibre 레이어 z-order 와 GeoJSON 갱신으로 처리한다. |
 | ~~LoginScreen~~ | ~~`screens/login_screen.dart`~~ | 삭제됨 — InlineLoginPromptCard로 대체 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
@@ -190,9 +188,8 @@ static const _palette = <Color>[
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | 운영 기본은 `StoryTerrain3dMap` WebView + MapLibre GL JS 3D 지도다. OpenFreeMap Liberty style 과 공개 Terrarium DEM 에 pitch/bearing/exaggeration 을 적용하며, 별도 API key나 지도 배경 선택 환경변수를 받지 않는다. 선택 시대의 `activeLandmarks` 중 non-region 랜드마크는 WebView 내부 DOM marker 로 옅은 이모지+이름을 지도 좌표에 고정한다. `activeEraBoundaries` — 선택된 시대의 폴리곤 리스트를 받아 region polygon 시각은 `EraPolygonGlowLayer` 로, 3D hit-test 는 MapLibre GeoJSON layer 로 처리한다. **`onMapInteraction`** 콜백 — `_isUserGestureSource` 로 사용자 제스처(드래그·핀치·스크롤·탭) 만 식별해 부모의 hint overlay dismiss 트리거. **`suppressRegionLabels`** prop — 인물 모드에서 검정 캡슐 region 라벨이 path 점선을 가리지 않도록 부모가 토글. 인물 모드 step 3 의 번호 핀(`_NumberedEventPin`) 은 사건에 포함된 선택 인물 색을 모아 `_MultiColorCirclePainter` 로 위→아래 균등 N 등분 띠를 그려 인물별 식별. selected 핀은 character color 위에 노란 outer border 로 강조. 감정 새김이 있으면 다른 번호 핀과 같은 지름을 유지하고 번호는 중앙에 고정한 채 작은 컬러 감정 이모지 배지를 붙인다. 이야기 간 이동 glow 는 같은 위치 사건 분산까지 반영한 번호 핀 좌표 맵을 재사용해 실제 동그라미 중심에 맞춘다. reveal/전환/감정 새김의 중복 실행은 내부 guard 로 막고, 평상시 지도와 패널 터치는 통과시킨다. |
+| StoryMapPanel | `widgets/story_map_panel.dart` | 운영 지도는 `StoryTerrain3dMap` WebView + MapLibre GL JS 3D 단일 경로다. OpenFreeMap Liberty style 과 공개 Terrarium DEM 에 pitch/bearing/exaggeration 을 적용하며, 별도 API key나 지도 배경 선택 환경변수를 받지 않는다. 예전 flutter_map 2D tile/layer/pin 폴백은 제거됐다. `activeLandmarks` 와 `eraRegionLandmarks` 는 WebView 내부 GeoJSON source 로 전달되고, country boundary/region polygon/label/path/hit-zone 은 MapLibre layer 로, 사건 숫자·감정 핀과 non-region 랜드마크는 DOM marker 로 그린다. **`onMapInteraction`** 콜백은 MapLibre 쪽 사용자 제스처 이벤트로 부모의 hint overlay dismiss 를 트리거한다. 이야기 간 이동 glow 는 같은 위치 사건 분산 좌표를 재사용해 현재/목표 사건 핀 중심에 맞춘다. reveal/전환/감정 새김의 중복 실행은 내부 guard 로 막고, 평상시 지도와 패널 터치는 통과시킨다. |
 | StoryTerrain3dMap | `widgets/map/story_terrain_3d_map.dart` | 운영 3D 전용 WebView 지도. MapLibre GL JS 를 HTML string 으로 로드하고 OpenFreeMap Liberty style + Mapzen Terrarium DEM 을 연결한다. renderer 설정이 바뀔 때만 WebView 를 새로 로드하고, 카메라 변화는 JS `easeTo()`/`fitBounds()`, country boundary/region polygon/라벨/path/event hit-zone 은 GeoJSON `setData()` 로 갱신한다. 사건 숫자/감정 핀과 non-region 랜드마크는 각각의 GeoJSON point 를 MapLibre DOM Marker 로 투영해 지역별 collision/terrain symbol 배치와 무관하게 좌표 위에 고정한다. 랜드마크 이모지와 이름은 투명도를 둔 plain text 로 표시하고, 줌 인/아웃에 따라 같이 커지거나 작아진다. 지역 선택 단계에서는 투명한 region hit fill layer 를 `queryRenderedFeatures` 로 먼저 조회하고, iOS WebView/terrain 조합에서 hit 이 빠질 경우 화면 좌표를 위경도로 역변환해 polygon point-in-polygon 으로 다시 판정한다. 라벨뿐 아니라 폴리곤 내부 탭도 같은 지역 선택으로 처리하고, 겹친 region 은 작은 bbox 를 우선한다. 사건 0개 region 은 polygon/label/hit layer 에 올리지 않는다. 기본 지도 symbol label layer 는 숨겨 영어/현지어 지명 대신 앱의 한국어 라벨만 보이게 한다. JS channel 로 region/event tap 을 Flutter 로 전달한다. |
-| EraPolygonGlowLayer | `widgets/map/era_polygon_glow_layer.dart` | region polygon 시각 전용 layer. **Ancient atlas discovery 양식** — 4-layer (outer glow / parchment radial fill / ink border halo+main / discovery particles) + Catmull-Rom spline 곡선화. era 색 기반, 선택 시 펄스 강조 + edge 따라 빛 입자 twinkle. fantasy atlas / fog-of-war reveal 톤. 운영 3D 지도에서는 MapLibre GeoJSON layer 가 클릭 hit-test 를 담당하고, Flutter `CustomPainter` 레이어는 multi-pass wash 시각 효과에 집중한다. **`EraPolygonEntry.pickerHighlight`** — region picker 단계의 후보 폴리곤이면 outer glow / fill alpha 가 0.06~0.08 부스트되어 "여기를 누르세요" 인상을 강화 (선택 폴리곤이 항상 더 또렷하도록 isSelected 가 우선). |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 인물 선택 + 이벤트 목록 통합. **헤더(`headerOverride`) 는 sticky** — `Column [header, Expanded(CustomScrollView)]` 구조로 사건 카드 스크롤 시 헤더(toggle + stepper) 가 함께 위로 사라지지 않는다. 헤더는 이전 단계 버튼과 라벨형 stepper 를 유지해 스크롤 중에도 되돌아가기 경로가 사라지지 않는다. step 3 사건 카드(`EventTimelineRow`) 는 `committedSelectedCharacterCodes` + `colorForCommittedCharacter` 를 그대로 forwarding 해 카드 안 인물 pill 이 지도 path 색과 매칭된다. 최근 퀴즈 결과가 있으면 카드 배경색으로 상태를 표시한다(정답 0개=빨강, 일부 정답=주황, 모두 정답=초록). 감정 새김이 있으면 사건 카드 좌상단 배지를 컬러 감정 이모지로 바꾸고 우측 하단의 작은 초록 원에 이야기 순번을 함께 표시한다. 감정 새김 직후에는 상세 페이지를 잠시 닫고 0.5초 뒤 해당 사건 카드 위에 `CompletionCelebration` 감정 도장+별가루를 기존 속도로 재생하며, 도장 완료 후 1초 기다렸다가 같은 상세로 돌아온다. |
 | CharacterPanel | `widgets/character_panel.dart` | 인물 카드 (아바타, 설명) |
 | ~~StoryListPanel~~ | ~~`widgets/story_list_panel.dart`~~ | 삭제됨 — StorySelectionPanel이 통합 |
@@ -280,7 +277,7 @@ Firebase 설정 가이드: `docs/guides/PUSH_SETUP.md`. 인프라 전반 원리:
 | 부모 파일 | 분해 후 줄 수 | part 파일 |
 |----------|-------------|----------|
 | `widgets/story_selection_panel.dart` | 1648 → 561 (−66%) | `selection/panel_chrome.dart` (~280)<br>`selection/step_chip.dart` (~340)<br>`selection/selection_cards.dart` (~465) |
-| `widgets/story_map_panel.dart` | 1500 → 1244 (−17%) | `map/pin_marker.dart` (~170)<br>+ 순수 함수 9개 → `utils/map_math.dart` |
+| `widgets/story_map_panel.dart` | 3D 지도 orchestration + 상태 part 로 정리 | `story_map_panel_state.dart`<br>`story_map_panel_widgets.dart`<br>`map/story_terrain_3d_map.dart`<br>+ 순수 좌표 함수 → `utils/map_math.dart` |
 | `widgets/profile_tab_page.dart` | 2628 → 1755 (−33%) | `profile/profile_character_overview.dart` (~400)<br>`profile/profile_intercessory_prayer.dart` (~225)<br>`profile/profile_helpers.dart` (~260)<br>`profile/profile_left_panel.dart`<br>`profile/profile_right_panel.dart` (헬퍼만 잔존)<br>`profile/profile_progress_section.dart` (2026-05-08, "진행률 표시" 섹션)<br>`profile/profile_settings_sheet.dart` (2026-05-08, 설정 시트) |
 | `widgets/weekly_tab_page.dart` | 884 → 574 (−35%) | `weekly/weekly_avatar.dart` (~67)<br>`weekly/weekly_list_panel.dart` (~258)<br>+ 순수 함수 3개 → `utils/weekly_selection.dart` |
 
@@ -327,7 +324,7 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 |--------|------|------|
 | flutter_riverpod | ^2.6.1 | 상태 관리 |
 | supabase_flutter | ^2.9.1 | Supabase SDK |
-| flutter_map | ^8.2.1 | 인터랙티브 지도 |
+| flutter_map | ^8.2.1 | 프로필 미니맵/제안 위치 선택기 등 보조 2D 지도와 `LatLngBounds` 유틸 |
 | latlong2 | ^0.9.1 | 좌표 계산 |
 | flutter_dotenv | ^5.2.1 | .env 환경변수 |
 | shared_preferences | ^2.5.5 | 로컬 키-값 저장 (글자 크기 등 사용자 선호 설정) |

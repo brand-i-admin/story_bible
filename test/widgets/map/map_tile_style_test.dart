@@ -17,8 +17,6 @@ void main() {
 
       expect(source.style, StoryMapTileStyle.openFreeMap3dLiberty);
       expect(source.label, contains('OpenFreeMap'));
-      expect(source.isThreeDimensional, isTrue);
-      expect(source.urlTemplate, isEmpty);
       expect(
         source.styleJsonUrl,
         'https://tiles.openfreemap.org/styles/liberty',

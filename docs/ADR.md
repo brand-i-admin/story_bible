@@ -38,7 +38,7 @@
 
 ## ADR-004: flutter_map 선택
 
-- **상태**: 채택
+- **상태**: 대체됨 (ADR-026: 무료 3D 지도 단일 운영)
 - **맥락**: 인터랙티브 지도 위에 성경 사건 핀을 표시해야 함
 - **결정**: flutter_map 8.2 + OpenStreetMap 타일
 - **이유**:
@@ -46,6 +46,9 @@
   - 타일 서버 자유롭게 변경 가능 (고지도 스타일 등)
   - latlong2와 조합으로 좌표 계산 간편
   - 오픈소스로 커스터마이징 가능
+  - 보충(2026-06-01): 메인 StoryMapPanel 운영 지도는 MapLibre/OpenFreeMap 3D 로
+    대체됐다. flutter_map 은 프로필 미니맵과 제안 위치 선택기 등 보조 2D 지도에만
+    남긴다.
 
 ## ADR-005: Vertex AI Imagen으로 에셋 생성
 
@@ -521,3 +524,25 @@
   - 개발 DB 반영 명령은 다시 한 줄로 고정된다: `make seed-all && make db-init && make apply-seeds && make upload-character-avatars`.
   - `daily_quiz` 의 `choices jsonb` 구조와 지도 기반 seed 풀은 `db_init.sql` + `supabase/seeds/daily_quiz.sql` 만으로 반영된다.
   - prod 증분 배포가 필요해지는 시점에는 별도 ADR 로 migration/Supabase CLI 전략을 다시 결정한다.
+
+## ADR-026: 무료 3D 지도 단일 운영 (2026-06-01)
+
+- **상태**: 채택
+- **배경**: 지도 배경을 유료/무료 3D 서비스와 무료 2D 타일로 비교하던 단계가 끝났고,
+  운영 경로는 비용 없는 3D 지도로 고정됐다. 비교용 2D tile/polygon/pin 코드가 남으면
+  StoryMapPanel 의 책임이 분산되고, 문서도 실제 앱 동작과 어긋난다.
+- **결정**:
+  1. 메인 StoryMapPanel 은 `StoryTerrain3dMap` 단일 경로로 운영한다.
+  2. 3D 렌더러는 WebView 안의 MapLibre GL JS 를 사용하고, 배경은 OpenFreeMap
+     Liberty style + 공개 Mapzen Terrarium DEM 을 사용한다.
+  3. country boundary, region polygon, label, path, hit-zone 은 MapLibre GeoJSON
+     layer 로 처리하고, 사건 숫자/감정 핀과 non-region 랜드마크는 DOM marker 로
+     표시한다.
+  4. 이전 비교용 `flutter_map` StoryMapPanel fallback, `pin_marker.dart`,
+     `EraPolygonGlowLayer`, 양피지 베이스맵 생성 스크립트와 Make target 은 제거한다.
+  5. PNG 에셋은 기존 요청대로 보존한다.
+- **결과**:
+  - 메인 지도는 API key 없이 무료 3D 지형을 사용한다.
+  - StoryMapPanel 의 2D/3D 분기와 2D 전용 테스트가 사라져 지도 상태 관리가 단순해졌다.
+  - `flutter_map` 의존성은 프로필 미니맵과 제안 위치 선택기 같은 보조 2D 지도에서만
+    유지한다.

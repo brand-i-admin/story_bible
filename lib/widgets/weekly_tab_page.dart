@@ -418,17 +418,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         // padding 16 = 66 minimum. 하한을 넉넉히.
         final progressHeight = (h * 0.10).clamp(66.0, 78.0).toDouble();
 
-        String avatarAssetForCharacter(String characterCode) {
-          final character = state.characters
-              .where((p) => p.code == characterCode)
-              .firstOrNull;
-          if (character != null) return character.avatarAssetPath;
-          if (weekly.character?.code == characterCode) {
-            return weekly.character!.avatarAssetPath;
-          }
-          return '';
-        }
-
         final isRegionMode = weekly.mode == WeeklyMode.region;
         final mapPanel = ClipRRect(
           borderRadius: BorderRadius.circular(16),
@@ -437,7 +426,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             selectedEventId: _weeklySelectedEventId,
             onSelectEvent: onSelectEvent,
             colorForCharacter: controller.colorForCharacter,
-            avatarAssetForCharacter: avatarAssetForCharacter,
             // selectedCharacterCodes 는 path polyline 색 결정용. 인물 모드면
             // 그 인물 코드 1개 전달 → 갈색 점선 + ▶ 화살촉이 그 인물 색.
             selectedCharacterCodes: weekly.character == null
@@ -460,7 +448,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             centerSelectedOnReady: false,
             fitAllEventsOnReady: true,
             fitAllZoomAdjust: -0.18,
-            pinScale: 1.0,
             initialCenter: initialMapCenter,
             initialZoom: 5.4,
           ),

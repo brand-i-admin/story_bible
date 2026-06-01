@@ -950,32 +950,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     ref.read(storyControllerProvider.notifier).selectEvent(null);
   }
 
-  /// 거리 측정 결과를 한국 거리 비교와 함께 SnackBar 로 보여 준다.
-  void _showMeasureResult(MeasureResult result) {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    if (messenger == null) {
-      return;
-    }
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        backgroundColor: const Color(0xFF3D2A14),
-        duration: const Duration(seconds: 5),
-        content: Text(
-          '${result.fromName} → ${result.toName}\n'
-          '직선 거리 약 ${result.kilometers.toStringAsFixed(1)}km '
-          '(${result.koreanComparison})',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            height: 1.45,
-          ),
-        ),
-      ),
-    );
-  }
-
   /// 랜드마크 마커가 탭됐을 때 간단한 정보 다이얼로그를 띄운다.
   /// 이모지 + 이름 + 설명 + 카테고리/시대 칩.
   void _showLandmarkPopup(Landmark landmark) {
@@ -1957,36 +1931,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             .toList()
           ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
-    final selectedEra = state.eras
-        .where((era) => era.id == state.selectedEraId)
-        .firstOrNull;
-    final avatarByCharacterCode = <String, String>{
-      for (final character in state.characters)
-        character.code: character.avatarAssetPath,
-    };
-
     // 첫 화면 (시대 미선택) 은 줌 6 (저배율) 로 가나안~광야~메소포타미아 일대가
     // 한눈에 들어오도록 중심 잡음. 3D 는 하단 시트와 pitch 때문에 사우디아라비아가
     // 가려지기 쉬워 더 남쪽을 중심으로 두고 성경권 전체를 넓게 연다.
-    final mapTileSource = StoryMapTileStyles.sourceFor(
-      StoryMapTileStyles.defaultStyle,
-    );
-    final usesThreeDimensionalMap = mapTileSource.isThreeDimensional;
-    final mapCenter = usesThreeDimensionalMap
-        ? const LatLng(0.5, 39.8)
-        : (state.selectedEraIds.isEmpty
-              ? const LatLng(28.5, 35.20)
-              : (selectedEra?.mapCenterLat != null &&
-                        selectedEra?.mapCenterLng != null
-                    ? LatLng(
-                        selectedEra!.mapCenterLat!,
-                        selectedEra.mapCenterLng!,
-                      )
-                    : null));
-
-    final defaultMapZoom = usesThreeDimensionalMap
-        ? 3.25
-        : (state.selectedEraIds.isEmpty ? 6.0 : selectedEra?.mapZoom);
+    const mapCenter = LatLng(0.5, 39.8);
+    const defaultMapZoom = 3.25;
     final mapZoom = _initialMapZoomOverride(defaultMapZoom);
     final topInset = MediaQuery.of(context).padding.top;
     // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
@@ -2015,22 +1964,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 onCloseSelectedCallout: _closeSelectedEventPopup,
                 onOpenDetail: _openEventDetail,
                 colorForCharacter: controller.colorForCharacter,
-                avatarAssetForCharacter: (characterCode) {
-                  // 1) 현재 era 의 character 에 있으면 그 경로 사용 (정확한 경로
-                  //    포함 — 향후 storage path 확장 가능).
-                  final cached = avatarByCharacterCode[characterCode];
-                  if (cached != null && cached.isNotEmpty) {
-                    return cached;
-                  }
-                  // 2) state.characters 에 없는 인물 코드는 컨벤션 경로
-                  //    `assets/avatars_thumbs/{code}.png` 로 폴백 — 번들에 실제
-                  //    파일이 없으면 _AvatarImage 의 errorBuilder 가
-                  //    Icons.person 으로 처리.
-                  if (characterCode.isEmpty) {
-                    return '';
-                  }
-                  return 'assets/avatars_thumbs/$characterCode.png';
-                },
                 selectedCharacterCodes: state.selectedCharacterCodes,
                 eventEmotionMarks: state.eventEmotionMarks,
                 controller: _mapPanelController,
@@ -2050,17 +1983,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     (bottomInset / MediaQuery.sizeOf(context).height),
                 decorate: false,
                 activeLandmarks: _activeLandmarksForEra(state),
-                activeEraBoundaries: state.selectedEraIds.isEmpty
-                    ? const []
-                    : state.eraBoundaries
-                          .where((b) => state.selectedEraIds.contains(b.eraId))
-                          .toList(growable: false),
-                // 주: region 모드라도 activeEraBoundaries 는 그대로 넘긴다.
-                // StoryMapPanel 은 이 데이터를 era 폴리곤 그리기에 쓰지 않고
-                // (1) era 변경 카메라 fit 트리거, (2) `_eraColorForRegion` 의
-                // 시대 색 lookup 에만 사용한다. 비우면 여러 시대에 속하는
-                // region 의 색이 lm.eraCodes.first 로 폴백되어 사용자가 선택한
-                // 시대와 다른 색으로 보임.
                 selectedLandmarkId: state.selectedLandmarkId,
                 // reveal trigger: region 모드면 landmark id, character 모드 step3
                 // 면 인물 코드 정렬한 키. 키가 변경되면 사건 핀 0.3초 순차 reveal.
@@ -2089,13 +2011,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   // 단순 정보 팝업.
                   _showLandmarkPopup(lm);
                 },
-                onMeasureResult: _showMeasureResult,
-                eraCodeForId: (eraId) {
-                  for (final e in state.eras) {
-                    if (e.id == eraId) return e.code;
-                  }
-                  return null;
-                },
                 // region 마커에 표시할 사건 개수 — region 본인 + 자식 anchor/minor
                 // + alias_group 멤버들의 landmark_id 를 가진 events 수.
                 eventCountByLandmarkId: _regionEventCounts(state),
@@ -2104,26 +2019,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 regionPickerMode:
                     _mode == _SelectionMode.region &&
                     state.selectedLandmarkId == null,
-                // 그 시대의 모든 사건을 인물별 path 로 항상 보여 준다 (선택 인물
-                // 진하게, 미선택 흐리게). 사용자가 step 3 에서 사건을 골라도 인물
-                // 이동 경로 자체는 사라지면 안 되므로 displayedEventIds 와 무관하게
-                // 미리보기를 켜둔다. 선택된 사건은 그 path 위에 핀으로 표시된다
-                // (`_buildMarkers`).
-                eraPreviewEvents: state.events,
-                // 시대 폴리곤(hull) 입력은 path preview 와 분리. 인물 모드 +
-                // 인물 선택 시 그 인물 사건만 사용해 폴리곤이 인물 활동 영역에
-                // 정확히 맞도록. 그 외에는 빈 리스트 → preview 전체로 폴백.
-                hullEvents:
-                    _mode == _SelectionMode.character &&
-                        state.selectedCharacterCodes.isNotEmpty
-                    ? state.events
-                          .where(
-                            (e) => e.characterCodes.any(
-                              state.selectedCharacterCodes.contains,
-                            ),
-                          )
-                          .toList(growable: false)
-                    : const <StoryEvent>[],
                 // 시대 영역 폴리곤 = 그 시대 region 들의 polygon 합집합. 시대만
                 // 선택된 시점부터 region 모드 진입 직후까지 일관되게 표시된다.
                 // 인물 모드에서는 region 폴리곤 표시 정책에 따라 빈 리스트로.
@@ -2139,9 +2034,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 // dismiss. region/character 단계 진입 시 _resetMapHint() 가
                 // 다시 보여줌.
                 onMapInteraction: _handleMapInteraction,
-                // 인물 모드에서는 region 검정 캡슐 라벨(가나안·시내 광야·애굽 등)
-                // 이 인물 path 점선을 가리는 문제가 있어 라벨을 숨긴다.
-                suppressRegionLabels: _mode == _SelectionMode.character,
               ),
             ),
             // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
@@ -2186,9 +2078,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
                 return Stack(
                   children: [
-                    // 양피지 grain 은 StoryMapPanel 내부에서 ParchmentMultiplyLayer
-                    // (BlendMode.multiply CustomPainter) 로 처리. 단순 Opacity
-                    // overlay 는 화면을 뿌옇게 만들어서 폐기.
                     Positioned(
                       left: sheetHorizontalMargin,
                       right: sheetHorizontalMargin,
