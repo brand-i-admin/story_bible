@@ -99,20 +99,61 @@ MaterialApp(theme: AppTheme.light(), ...)
 
 ### 3.4 지도 배경 A/B
 
-홈 지도 우측 컨트롤의 지형 아이콘은 base tile 을 순환한다. 기본은 고지도
-양식(Stamen Watercolor)이고, 두 번째는 산지·등고선 확인용 Esri Topographic
-타일이다. `.env` 의 `MAPTILER_API_KEY` 또는
-`--dart-define=MAPTILER_API_KEY=...` 를 제공하면 MapTiler 후보가 추가된다:
-Aquarelle, Landscape, Outdoor, Ocean, Dataviz, Satellite Plain/Hybrid,
-Backdrop, Base. `STORY_MAP_TILE_STYLE` 값으로 `mapTilerLandscape` 같은 후보를
-지정하면 앱 시작 시 해당 배경으로 바로 띄울 수 있다. 같은 `flutter_map`
-overlay stack 을 유지해 region polygon, 사건 핀, 경로 렌더링은 바뀌지 않는다.
-MapTiler 지형/수채화 후보에서는 양피지 multiply texture 강도를 낮춰 산맥/계곡
-음영과 수계 표현이 묻히지 않게 한다. 단, raster tile 의 영문 지명/격자선은
-타일 이미지에 이미 구워진 요소라 앱 코드에서 개별 제거할 수 없고, 제거하려면
-MapTiler Cloud 의 custom style 에서 label/grid layer 를 끄거나 label-free
-style(Satellite Plain 등)을 선택해야 한다. 공유용 PNG 비교표는
-`docs/MAP_TILE_STYLE_COMPARISON.md` 에 둔다.
+홈 지도 우측 컨트롤의 지도명 버튼은 base tile 을 순환한다. 버튼은 아이콘 대신
+`OpenFreeMap / 3D Free`, `Stamen / 고지도`처럼 공급자와 현재 스타일명을 문자로
+보여 준다. 현재 운영 후보는 무료 구성을 기준으로 OpenFreeMap Liberty + Mapzen
+Terrarium DEM 기반 3D 무료 지형과 Stamen Watercolor 고지도 두 가지다.
+`STORY_MAP_TILE_STYLE` 값으로 `openFreeMap3dLiberty` 또는 `watercolor` 를 지정하면
+앱 시작 시 해당 배경으로 바로 띄울 수 있으며, 비워 두면 3D 무료 지형으로 시작한다.
+2D 후보는 같은
+`flutter_map` overlay stack 을 유지해 region polygon, 사건 핀, 경로 렌더링을
+그대로 쓴다. 3D 후보는 WebView 안의 MapLibre GL JS 렌더러로 전환해 DEM, pitch,
+bearing, terrain exaggeration 을 적용한다. 3D 모드의 country boundary, region
+polygon, 사건 경로, hit-zone, 한국어 국가/region 라벨은 GL GeoJSON layer 로
+렌더링하고 사건 숫자/감정 핀은 DOM Marker 로 띄워 기본 지도의 영어/현지어 label
+layer 와 분리한다. 상단/하단
+Flutter 오버레이는 유지한다. WebView 는 style configuration 이 바뀔 때만 새로 로드하고,
+카메라 이동과 시대/지역/사건 선택 변화는 JS `easeTo()` 및 GeoJSON `setData()` 로
+갱신해 반복 로딩 overlay 를 피한다.
+3D 후보는 기본 지도 style 의 symbol label layer 를 숨겨 영어/현지어 지명 대신
+앱이 직접 올리는 한국어 국가/region 라벨과 사건 핀만 보이게 한다. 2D raster
+tile 의 영문 지명은 타일 이미지에 이미 구워진 요소라 앱 코드에서 개별 제거할 수
+없다.
+3D 첫 화면은 하단 선택 시트에 사우디아라비아와 걸프 지역이 가려지지 않도록
+성경권 경계를 남쪽으로 넓혀 열며, 이집트·아라비아반도·메소포타미아·이란을 함께
+확인할 수 있는 저배율 카메라를 기본값으로 쓴다. 서쪽 이동 한계는 이탈리아가
+화면 왼쪽에 약간의 여백과 함께 걸리는 정도로 제한해 성경권 밖 서유럽/북아프리카로
+과하게 빠지지 않게 한다.
+시대 선택 직후 후보 region 경계를 고르는 화면은 카메라 pitch/bearing 을 0으로
+전환해 폴리곤이 원근감 때문에 삐뚤어 보이지 않게 한다. 사건·이야기 단계에서는
+다시 3D pitch 를 적용해 산맥과 계곡을 읽을 수 있게 한다.
+지역을 탭한 직후에는 사건 좌표가 아니라 선택 region polygon 전체를 접힌 하단
+시트 기준의 가시 영역에 맞춘다. 사건 핀 reveal 이 끝난 뒤 하단 사건 카드가
+올라와 일부 핀을 가릴 수는 있지만, 선택 순간에는 지역 경계가 화면 안에 들어와야
+한다.
+3D 지도 위 점선 경로, region polygon, region/국가 라벨, 탭 hit-zone 은 MapLibre
+GL GeoJSON layer 로 렌더링하고, 사건 숫자/감정 핀은 같은 event GeoJSON point 를
+MapLibre DOM Marker 로 투영해 terrain symbol collision 과 무관하게 점선 좌표 위에
+남긴다. non-region 랜드마크는 2D/3D 모두 겹침 문제 정리 전까지 렌더링하지 않는다.
+region polygon 내부 탭은
+`queryRenderedFeatures` 로 fill layer 를 먼저 조회하고, WebView/terrain 상태에서
+hit 이 빠질 경우 터치 좌표를 위경도로 바꿔 point-in-polygon 으로 다시 판정한다.
+중앙 라벨이 아닌 폴리곤 안쪽을 눌러도 같은 지역 선택으로 처리한다. 사건 0개 region 은 2D와 동일하게
+3D에서도 polygon/label/hit layer 에 올리지 않는다. 한국어 국가 라벨은 rounded
+rectangle 없이 글자만 쓰고, region 라벨보다 더 옅은 농도로 둔다. 국가/region
+라벨은 확대 시 최대 크기에 가까워지고 줌아웃할수록
+MapLibre zoom expression 으로 작아져 겹침을 줄인다. 지도 zoom 범위는
+성경권 bounds 안에서 더 넓게 조정할 수 있도록 `2.7~12.4` 를 기본 범위로 둔다.
+공유용 PNG 비교표는 `docs/MAP_TILE_STYLE_COMPARISON.md` 에 둔다.
+
+### 3.5 3D 지형 톤 색상
+
+전역 색 토큰은 3D 지형의 연한 석회 베이지, 세이지 그린, 올리브 브라운, 옅은 수계
+블루와 맞춘다. `AppColors.parchment*` 는 노란 양피지보다 덜 붉은 석회 베이지,
+`ink*` 는 검갈색 대신 올리브 잉크, 주요 CTA 는 강한 황토보다 세이지/올리브
+그라데이션을 우선한다. 팝업, 홈 선택 시트, 프로필, 퀴즈, 성경 리더 같은 공통
+화면은 `AppColors`, `AppSurfaces`, `SubPageScaffold`, `ParchmentPageScaffold`
+를 통해 같은 팔레트를 공유한다.
 
 ## 4. 주요 위젯 컴포넌트
 
@@ -245,7 +286,7 @@ MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 h
 6. `notify_quiz_completed` RPC 호출 → 본인 인앱 bell 에 완료 알림 + 전체 진도율 표시
 7. 퀴즈 버튼은 `정답 N · 오답 N · 헷갈림 N` 으로 표시하고 정답 0개=빨강, 일부 정답=주황, 모두 정답=초록으로 상태를 보여 준다
 8. 지도 번호 핀은 숫자 중심을 유지하고 작은 컬러 감정 이모지 배지를 붙인다. 하단 사건 카드는 감정 새김이 있으면 좌상단 배지를 컬러 감정 이모지로 바꾸고, 우측 하단 작은 초록 원에 이야기 순번을 표시한다
-9. 감정 저장 직후 상세 페이지를 잠시 닫아 지도 화면에서 핀/카드 변화를 먼저 보여 주고, 0.5초 뒤 사건 카드 위 감정 도장+별가루를 기존 속도로 재생한 다음 도장 완료 후 1초 뒤 같은 상세로 복귀한다. 지도 위 감정 도장 및 이전/다음 이야기 전환 애니메이션 중에는 투명 입력 차단막으로 다른 화면 조작을 막는다
+9. 감정 저장 직후 상세 페이지를 잠시 닫아 지도 화면에서 핀/카드 변화를 먼저 보여 주고, 0.5초 뒤 사건 카드 위 감정 도장+별가루를 기존 속도로 재생한 다음 도장 완료 후 1초 뒤 같은 상세로 복귀한다. 지도 위 감정 도장 및 이전/다음 이야기 전환 애니메이션은 내부 재진입 가드로 중복 실행을 막되, 평상시 지도·패널 터치는 차단하지 않는다
 10. 프로필 미니맵 지역 라벨은 완료 이야기 수와 퀴즈 정답/풀이 수를 `x/x`로 표시해 오답/헷갈림이 있는 지역을 드러낸다
 11. 프로필 미니맵에서 region 폴리곤이나 라벨을 누르면 지역별 사건 카드 팝업을 열고, 사건 카드 순서대로 순번·첫 장면 썸네일·정답/오답/헷갈림을 표시하며 각 카드 배경색으로 미풀이/빨강/주황/초록 복습 상태를 보여 준다
 12. 프로필 미니맵은 모든 이야기에 감정을 새긴 지역을 옅은 채움 + 경계선만 남겨 딱지를 모은 느낌으로 표시한다

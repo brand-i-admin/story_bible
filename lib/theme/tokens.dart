@@ -2,58 +2,59 @@ import 'package:flutter/material.dart';
 
 // Story Bible 디자인 시스템 토큰 — 단일 진실 소스(single source of truth).
 //
-// 출처: Claude Design 핸드오프 번들 `colors_and_type.css`.
+// 3D 지형 지도(OpenFreeMap Liberty + DEM)의 밝은 석회 베이지, 세이지 그린,
+// 올리브 브라운, 옅은 수계 블루와 맞도록 전역 톤을 맞춘다.
 // 위젯/화면에서 hex 코드를 직접 쓰지 말고 여기 토큰만 참조한다.
 
 class AppColors {
   AppColors._();
 
-  // BASE PALETTE — Parchment & Brown
-  static const parchmentBg = Color(0xFFEEE0C6);
-  static const parchmentLight = Color(0xFFF8F1E4);
-  static const parchmentMid = Color(0xFFF2E5CC);
-  static const parchmentWarm = Color(0xFFF1E2C6);
-  static const parchmentCream = Color(0xFFFDF8EE);
-  static const parchmentCard = Color(0xFFF7EBD8);
-  static const parchmentCardAlt = Color(0xFFEFE3CC);
-  static const parchmentDim = Color(0xFFF3E6D0);
+  // BASE PALETTE — terrain limestone & sage parchment
+  static const parchmentBg = Color(0xFFE8E6D8);
+  static const parchmentLight = Color(0xFFF8F4E7);
+  static const parchmentMid = Color(0xFFEDE7D6);
+  static const parchmentWarm = Color(0xFFE6D9BF);
+  static const parchmentCream = Color(0xFFFCF8EC);
+  static const parchmentCard = Color(0xFFF2EAD8);
+  static const parchmentCardAlt = Color(0xFFE4DEC8);
+  static const parchmentDim = Color(0xFFEAE4D3);
 
-  // BROWN SPINE — text / borders
-  static const ink900 = Color(0xFF2A2118);
-  static const ink800 = Color(0xFF3B2A17);
-  static const ink700 = Color(0xFF3E2723);
-  static const ink600 = Color(0xFF402B18);
-  static const ink500 = Color(0xFF4A331D);
-  static const ink450 = Color(0xFF4D381F);
-  static const ink400 = Color(0xFF5C4326);
-  static const ink350 = Color(0xFF5E4528);
-  static const ink300 = Color(0xFF6E512C);
-  static const ink200 = Color(0xFF8A6A46);
-  static const ink150 = Color(0xFF9B805D);
-  static const ink100 = Color(0xFF8E6F48);
+  // OLIVE INK — text / borders
+  static const ink900 = Color(0xFF22271D);
+  static const ink800 = Color(0xFF2D3022);
+  static const ink700 = Color(0xFF33331F);
+  static const ink600 = Color(0xFF3B3926);
+  static const ink500 = Color(0xFF47442D);
+  static const ink450 = Color(0xFF4F4D34);
+  static const ink400 = Color(0xFF5B563B);
+  static const ink350 = Color(0xFF665F43);
+  static const ink300 = Color(0xFF70684B);
+  static const ink200 = Color(0xFF82785A);
+  static const ink150 = Color(0xFF998F70);
+  static const ink100 = Color(0xFF8A7E5E);
 
   // BRAND ACCENTS
-  static const seed = Color(0xFF8B5A2B);
-  static const gold = Color(0xFFD4A439);
-  static const goldDeep = Color(0xFFB96B2D);
-  static const goldLight = Color(0xFFD89A47);
-  static const goldHi = Color(0xFFF2D8A6);
-  static const goldRim = Color(0xFFF0C36B);
-  static const brownWarm = Color(0xFFC8863B);
-  static const brownWarm2 = Color(0xFFA85B25);
-  static const brownRim = Color(0xFFF1D39C);
-  static const brownEdge = Color(0xFF9A7A4C);
-  static const brownEdge2 = Color(0xFF9E7A4C);
+  static const seed = Color(0xFF5F7040);
+  static const gold = Color(0xFFC69B3F);
+  static const goldDeep = Color(0xFFA2702C);
+  static const goldLight = Color(0xFFD2AD61);
+  static const goldHi = Color(0xFFE7D8A2);
+  static const goldRim = Color(0xFFE6D18B);
+  static const brownWarm = Color(0xFF7B9155);
+  static const brownWarm2 = Color(0xFF526F3F);
+  static const brownRim = Color(0xFFDDE8BD);
+  static const brownEdge = Color(0xFF7B7656);
+  static const brownEdge2 = Color(0xFF85805D);
 
   // Success
-  static const greenTop = Color(0xFF48A86B);
-  static const greenBot = Color(0xFF2D7B4D);
-  static const greenRim = Color(0xFFD9F0D0);
-  static const greenTint1 = Color(0xFFE3F3DE);
-  static const greenTint2 = Color(0xFFD2EBCB);
-  static const greenBorder = Color(0xFF7FB07B);
-  static const greenBtnTop = Color(0xFF58B573);
-  static const greenBtnBot = Color(0xFF2D8754);
+  static const greenTop = Color(0xFF6FA76D);
+  static const greenBot = Color(0xFF477D52);
+  static const greenRim = Color(0xFFDCECC7);
+  static const greenTint1 = Color(0xFFE7F0DB);
+  static const greenTint2 = Color(0xFFD9E8C7);
+  static const greenBorder = Color(0xFF8EAD72);
+  static const greenBtnTop = Color(0xFF77A963);
+  static const greenBtnBot = Color(0xFF4E7E50);
 
   // Danger
   static const dangerTop = Color(0xFFD97C60);
@@ -65,43 +66,43 @@ class AppColors {
   // 또렷이 살아남도록 stepper accent(panel_chrome._stageAccentColor) 의 어두운
   // 톤(D2873E/77A85A) 보다 더 밝고 채도 높은 값을 사용.
   // era 식별은 era_pick_rows 의 점·아이콘 색으로 별도 제공.
-  static const regionCandidate = Color(0xFFF2C04F); // bright warm yellow gold
-  static const regionSelected = Color(0xFF9CCB75); // bright fresh sage green
+  static const regionCandidate = Color(0xFFD7B75A); // muted topographic ochre
+  static const regionSelected = Color(0xFFA9C982); // terrain sage green
 
   /// region fill 칠하기 전 베이스를 중성화하는 cream-white wash.
   /// watercolor 양피지 베이스가 따뜻한 베이지라 그 위에 candidate/selected
   /// 색을 alpha 로 얹으면 베이스+색 blend 가 갈색/어두운 톤으로 보임.
   /// 이 wash 를 한 겹 먼저 깔아 베이스를 중성화하면 의도된 노랑/초록이 살아남는다.
-  static const regionParchmentWash = Color(0xFFFFF7E8);
+  static const regionParchmentWash = Color(0xFFF8F3E4);
 
   // Semantic
-  static const fgOnDark = Color(0xFFF8EED9);
+  static const fgOnDark = Color(0xFFF8F3E4);
   static const fgOnGold = parchmentCream;
-  static const borderHairlineDark = Color(0xFFD8BF99);
+  static const borderHairlineDark = Color(0xFFD7C8A6);
 
   // Alpha 적용 보더(브라운 계열) — surfaces 팩토리에서 사용
-  static const borderModalDialog = Color(0xC29E7A4C); // brownEdge2 @ 0.76
-  static const borderFloating = Color(0xB88E6F48); // ink100 @ 0.72
-  static const borderCard = Color(0xB58E6F48); // ink100 @ 0.71
+  static const borderModalDialog = Color(0xC285805D); // brownEdge2 @ 0.76
+  static const borderFloating = Color(0xB88A7E5E); // ink100 @ 0.72
+  static const borderCard = Color(0xB58A7E5E); // ink100 @ 0.71
 
   // 표면 기본/오버레이
-  static const floatingSurfaceDefault = Color(0xF5F7E9D1);
-  static const dialogTopHighlight = Color(0xFFFBF5EA);
+  static const floatingSurfaceDefault = Color(0xF5F3EBD9);
+  static const dialogTopHighlight = Color(0xFFFBF7EA);
   static const overlayWhiteSoft = Color(0x14FFFFFF); // 8% white, alpha-blend용
 
   // 인물 색상 fallback — selectedCharacterColors에 매핑이 없을 때
-  static const characterFallback = Color(0xFF8E7B61);
+  static const characterFallback = Color(0xFF7E7A63);
 
   // CHARACTER PALETTE — 8색 순환 (i % 8)
   static const characters = <Color>[
-    Color(0xFF3B6C94), // 0 blue
-    Color(0xFFB6673C), // 1 orange
-    Color(0xFF557C3E), // 2 green
-    Color(0xFF8A4E5D), // 3 rose
-    Color(0xFF616161), // 4 gray
-    Color(0xFF9E7C24), // 5 gold
-    Color(0xFF7B5D43), // 6 brown
-    Color(0xFF5C6B9F), // 7 indigo
+    Color(0xFF2F6F88), // 0 water blue
+    Color(0xFFA7633A), // 1 clay
+    Color(0xFF5F7D3B), // 2 olive
+    Color(0xFF965C62), // 3 rose
+    Color(0xFF5E665A), // 4 stone
+    Color(0xFFB28A2E), // 5 ochre
+    Color(0xFF776243), // 6 earth
+    Color(0xFF4F7F85), // 7 teal
   ];
 
   static Color characterAt(int index) =>

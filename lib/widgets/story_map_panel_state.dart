@@ -1,15 +1,26 @@
 part of 'story_map_panel.dart';
 
 class _StoryMapPanelState extends State<StoryMapPanel> {
+  static const _minMapZoom = 2.7;
+  static const _maxMapZoom = 12.4;
+  static final LatLngBounds _storyBibleMapBounds = LatLngBounds(
+    const LatLng(-8.0, 4.0),
+    const LatLng(50.5, 64.0),
+  );
+
   // 옛 _polygonGlowCtl + SingleTickerProviderStateMixin 제거됨 —
   // EraPolygonGlowLayer 의 pulse 가 정적 값으로 바뀌어 매 프레임 rebuild 가
   // 불필요. settle 애니메이션은 layer 내부 _settleCtl 이 자체 처리.
   final MapController _controller = MapController();
+  final StoryTerrain3dMapController _terrain3dController =
+      StoryTerrain3dMapController();
   Timer? _revealTimer;
   Timer? _cameraTimer;
   Timer? _eventTransitionTimer;
   List<Polyline> _countryBorderPolylines = const [];
   List<Marker> _countryLabelMarkers = const [];
+  List<List<LatLng>> _countryBorderLines3d = const [];
+  List<StoryTerrainCountryLabel> _countryLabels3d = const [];
   int _visibleCount = 0;
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
@@ -53,6 +64,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       widget.selectedLandmarkId != null ||
       (widget.revealEventsKey != null && widget.revealEventsKey!.isNotEmpty);
 
+  bool get _isThreeDimensional =>
+      StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional;
+
+  /// 3D 전환 중 랜드마크 좌표/라벨 충돌이 커져서 지도 위 랜드마크 마커는
+  /// 2D/3D 공통으로 잠시 숨긴다. 지역 선택은 polygon hit layer 가 담당한다.
+  bool get _showLandmarkMarkers => false;
+
   /// 거리 측정 모드. true 면 랜드마크 탭이 측정 시작/끝점 선택으로 바뀐다.
   // v3 — 거리 재기 기능 제거. 호환을 위해 final false 로 남겨둠 (기존 분기 dead).
   final bool _measureMode = false;
@@ -94,7 +112,13 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     super.initState();
     widget.controller?._bind(this);
     _loadCountryBoundaries();
-    _startRevealAnimation();
+    if (_isThreeDimensional && !_orderedEventsActive) {
+      _visibleCount = widget.events
+          .where((event) => event.hasCoordinate)
+          .length;
+    } else {
+      _startRevealAnimation();
+    }
     // numbered pin reveal 초기 설정. didUpdateWidget 은 같은 로직을 키 변경 시
     // 재트리거하지만, 첫 마운트에는 그게 안 불려서 _eventRevealCount=0 으로
     // 핀이 그려지지 않는다 (주간 퀴즈 첫 진입 시 발생).
@@ -103,12 +127,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   void _initEventReveal() {
     final newKey = widget.revealEventsKey ?? widget.selectedLandmarkId;
-    if (newKey == null || newKey.isEmpty) return;
+    _restartEventReveal(newKey, notifyImmediately: false);
+  }
+
+  void _restartEventReveal(String? newKey, {bool notifyImmediately = true}) {
     _lastRevealKey = newKey;
+    _eventRevealTimer?.cancel();
+    _eventRevealCount = 0;
+    if (newKey == null || newKey.isEmpty) return;
     final total = widget.events.where((e) => e.hasCoordinate).length;
     if (total <= 0) return;
     if (widget.revealInstantly) {
-      _eventRevealCount = total;
+      if (notifyImmediately && mounted) {
+        setState(() => _eventRevealCount = total);
+      } else {
+        _eventRevealCount = total;
+      }
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onRevealComplete?.call();
       });
@@ -141,6 +175,37 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     _eventRevealTimer?.cancel();
     widget.controller?._unbind(this);
     super.dispose();
+  }
+
+  void _handleTerrain3dReady() {
+    _mapReady = true;
+    if (_orderedEventsActive) {
+      _restartEventReveal(widget.revealEventsKey ?? widget.selectedLandmarkId);
+    } else {
+      _showAllPinsImmediately();
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (widget.fitAllEventsOnReady) {
+        _focusAllEvents(duration: const Duration(milliseconds: 360));
+        Future.delayed(const Duration(milliseconds: 180), () {
+          if (mounted) {
+            _focusAllEvents(duration: const Duration(milliseconds: 240));
+          }
+        });
+      } else if (widget.centerSelectedOnReady) {
+        _centerSelectedEvent();
+        Future.delayed(const Duration(milliseconds: 180), () {
+          if (mounted) {
+            _centerSelectedEvent();
+          }
+        });
+      } else {
+        _focusSelectedEventIfNeeded();
+      }
+    });
   }
 
   @override
@@ -205,41 +270,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     // 가 변경되면 reveal 재시작 (region 모드/character step 3 모두 대응).
     final newKey = widget.revealEventsKey ?? widget.selectedLandmarkId;
     if (newKey != _lastRevealKey) {
-      _lastRevealKey = newKey;
-      _eventRevealTimer?.cancel();
-      _eventRevealCount = 0;
-      if (newKey != null && newKey.isNotEmpty) {
-        final total = widget.events.where((e) => e.hasCoordinate).length;
-        if (total > 0) {
-          if (widget.revealInstantly) {
-            // 수동 expand 등으로 즉시 reveal 요청 — Timer 스킵, 한 번에 노출.
-            _eventRevealCount = total;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) widget.onRevealComplete?.call();
-            });
-          } else {
-            _eventRevealTimer = Timer.periodic(
-              const Duration(milliseconds: 300),
-              (timer) {
-                if (!mounted) {
-                  timer.cancel();
-                  return;
-                }
-                final next = _eventRevealCount + 1;
-                setState(() => _eventRevealCount = next);
-                // 마지막 핀이 박히는 순간 = 즉시 시트 expand 트리거
-                // (이전엔 다음 tick 까지 ~300ms 대기해서 visual delay).
-                if (next >= total) {
-                  timer.cancel();
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) widget.onRevealComplete?.call();
-                  });
-                }
-              },
-            );
-          }
-        }
-      }
+      _restartEventReveal(newKey);
     } else if (widget.revealInstantly && !oldWidget.revealInstantly) {
       // 같은 reveal 키 안에서 instant 토글 — 진행 중인 stagger 를 건너뛰고
       // 즉시 모든 핀 노출. 사용자 ^ 클릭 케이스.
@@ -295,257 +326,347 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       child: Stack(
         children: [
           const Positioned.fill(child: ColoredBox(color: Color(0xFFE5D2B5))),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final mapSize = constraints.biggest;
-              if (mapSize.width > 0 && mapSize.height > 0) {
-                _lastMapSize = mapSize;
-              }
+          if (tileSource.isThreeDimensional)
+            Positioned.fill(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final mapSize = constraints.biggest;
+                  if (mapSize.width > 0 && mapSize.height > 0) {
+                    _lastMapSize = mapSize;
+                  }
+                  return StoryTerrain3dMap(
+                    controller: _terrain3dController,
+                    source: tileSource,
+                    center: center,
+                    zoom: zoom,
+                    events: widget.events,
+                    selectedEventId: widget.selectedEventId,
+                    colorForCharacter: widget.colorForCharacter,
+                    selectedCharacterCodes: widget.selectedCharacterCodes,
+                    regionLandmarks: widget.eraRegionLandmarks,
+                    activeLandmarks: widget.activeLandmarks,
+                    selectedLandmarkId: widget.selectedLandmarkId,
+                    eventCountByLandmarkId: widget.eventCountByLandmarkId,
+                    visibleEventCount: _orderedEventsActive
+                        ? _eventRevealCount
+                        : _visibleCount,
+                    orderedEventsActive: _orderedEventsActive,
+                    eventEmotionMarks: widget.eventEmotionMarks,
+                    regionPickerMode: widget.regionPickerMode,
+                    countryBorderLines: _countryBorderLines3d,
+                    countryLabels: _countryLabels3d,
+                    onEventTap: _handle3dEventTap,
+                    onLandmarkTap: _handle3dLandmarkTap,
+                    onMapInteraction: widget.onMapInteraction,
+                    onMapReady: _handleTerrain3dReady,
+                  );
+                },
+              ),
+            )
+          else
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final mapSize = constraints.biggest;
+                if (mapSize.width > 0 && mapSize.height > 0) {
+                  _lastMapSize = mapSize;
+                }
 
-              return FlutterMap(
-                mapController: _controller,
-                options: MapOptions(
-                  initialCenter: center,
-                  initialZoom: zoom,
-                  minZoom: 3.0,
-                  maxZoom: 9.0,
-                  // 지도 빈 곳 또는 폴리곤 위 클릭 시 호출. 폴리곤 hit 가 있으면
-                  // 그 region 을 선택. 마커 클릭은 자체 GestureDetector 가 먼저
-                  // 처리하므로 onTap 은 빈 곳 + 폴리곤 위만 잡는다.
-                  onTap: (tapPos, latlng) {
-                    final hit = _polygonHitNotifier.value;
-                    if (hit != null && hit.hitValues.isNotEmpty) {
-                      // 여러 폴리곤이 동시에 hit 되면 가장 작은(specific) 폴리곤
-                      // 우선. 예: 메소포타미아 안의 밧단아람을 클릭하면 밧단아람
-                      // 이 선택돼야 함. polygon 면적 = lat-bbox * lng-bbox 근사.
-                      Landmark pick = hit.hitValues.first;
-                      double pickArea = _polygonBboxArea(pick);
-                      for (final lm in hit.hitValues.skip(1)) {
-                        final a = _polygonBboxArea(lm);
-                        if (a < pickArea) {
-                          pick = lm;
-                          pickArea = a;
+                return FlutterMap(
+                  mapController: _controller,
+                  options: MapOptions(
+                    initialCenter: center,
+                    initialZoom: zoom,
+                    minZoom: _minMapZoom,
+                    maxZoom: _maxMapZoom,
+                    cameraConstraint: CameraConstraint.containCenter(
+                      bounds: _storyBibleMapBounds,
+                    ),
+                    // 지도 빈 곳 또는 폴리곤 위 클릭 시 호출. 폴리곤 hit 가 있으면
+                    // 그 region 을 선택. 마커 클릭은 자체 GestureDetector 가 먼저
+                    // 처리하므로 onTap 은 빈 곳 + 폴리곤 위만 잡는다.
+                    onTap: (tapPos, latlng) {
+                      final hit = _polygonHitNotifier.value;
+                      if (hit != null && hit.hitValues.isNotEmpty) {
+                        // 여러 폴리곤이 동시에 hit 되면 가장 작은(specific) 폴리곤
+                        // 우선. 예: 메소포타미아 안의 밧단아람을 클릭하면 밧단아람
+                        // 이 선택돼야 함. polygon 면적 = lat-bbox * lng-bbox 근사.
+                        Landmark pick = hit.hitValues.first;
+                        double pickArea = _polygonBboxArea(pick);
+                        for (final lm in hit.hitValues.skip(1)) {
+                          final a = _polygonBboxArea(lm);
+                          if (a < pickArea) {
+                            pick = lm;
+                            pickArea = a;
+                          }
                         }
+                        // 사건 0 region 은 클릭 비활성 (회색 핀과 일관).
+                        final cnt =
+                            widget.eventCountByLandmarkId?[pick.id] ?? 0;
+                        if (cnt == 0) return;
+                        widget.onLandmarkTap?.call(pick);
                       }
-                      // 사건 0 region 은 클릭 비활성 (회색 핀과 일관).
-                      final cnt = widget.eventCountByLandmarkId?[pick.id] ?? 0;
-                      if (cnt == 0) return;
-                      widget.onLandmarkTap?.call(pick);
-                    }
-                  },
-                  // 디버그 — 줌 변경 시 콘솔에 로깅 (0.05 이상 변할 때만).
-                  // min/max 줌 튜닝용. release 시 제거.
-                  // 추가로, 사용자 제스처(드래그/멀티터치/스크롤휠/더블탭) 시
-                  // [onMapInteraction] 호출 — 부모의 hint overlay dismiss 트리거.
-                  // programmatic 이동(focusEvents 등 mapController source) 은 제외.
-                  onMapEvent: (event) {
-                    final z = event.camera.zoom;
-                    final last = _lastLoggedZoom;
-                    if (last == null || (z - last).abs() > 0.05) {
-                      _lastLoggedZoom = z;
-                      debugPrint('[Map] zoom: ${z.toStringAsFixed(2)}');
-                    }
-                    if (_isUserGestureSource(event.source)) {
-                      widget.onMapInteraction?.call();
-                    }
-                  },
-                  onMapReady: () {
-                    _mapReady = true;
-                    debugPrint(
-                      '[Map] onMapReady — initialZoom: ${widget.initialZoom}',
-                    );
-                    _startRevealAnimation();
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (!mounted) {
-                        return;
+                    },
+                    // 디버그 — 줌 변경 시 콘솔에 로깅 (0.05 이상 변할 때만).
+                    // min/max 줌 튜닝용. release 시 제거.
+                    // 추가로, 사용자 제스처(드래그/멀티터치/스크롤휠/더블탭) 시
+                    // [onMapInteraction] 호출 — 부모의 hint overlay dismiss 트리거.
+                    // programmatic 이동(focusEvents 등 mapController source) 은 제외.
+                    onMapEvent: (event) {
+                      final z = event.camera.zoom;
+                      final last = _lastLoggedZoom;
+                      if (last == null || (z - last).abs() > 0.05) {
+                        _lastLoggedZoom = z;
+                        debugPrint('[Map] zoom: ${z.toStringAsFixed(2)}');
                       }
-                      if (widget.fitAllEventsOnReady) {
-                        _focusAllEvents(
-                          duration: const Duration(milliseconds: 360),
-                        );
-                        Future.delayed(const Duration(milliseconds: 180), () {
-                          if (!mounted) {
-                            return;
-                          }
+                      if (_isUserGestureSource(event.source)) {
+                        widget.onMapInteraction?.call();
+                      }
+                    },
+                    onMapReady: () {
+                      _mapReady = true;
+                      debugPrint(
+                        '[Map] onMapReady — initialZoom: ${widget.initialZoom}',
+                      );
+                      _startRevealAnimation();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) {
+                          return;
+                        }
+                        if (widget.fitAllEventsOnReady) {
                           _focusAllEvents(
-                            duration: const Duration(milliseconds: 240),
+                            duration: const Duration(milliseconds: 360),
                           );
-                        });
-                      } else if (widget.centerSelectedOnReady) {
-                        _centerSelectedEvent();
-                        Future.delayed(const Duration(milliseconds: 180), () {
-                          if (!mounted) {
-                            return;
-                          }
+                          Future.delayed(const Duration(milliseconds: 180), () {
+                            if (!mounted) {
+                              return;
+                            }
+                            _focusAllEvents(
+                              duration: const Duration(milliseconds: 240),
+                            );
+                          });
+                        } else if (widget.centerSelectedOnReady) {
                           _centerSelectedEvent();
-                        });
-                      } else {
-                        _focusSelectedEventIfNeeded();
-                      }
-                    });
-                  },
-                  interactionOptions: const InteractionOptions(
-                    flags: InteractiveFlag.all,
+                          Future.delayed(const Duration(milliseconds: 180), () {
+                            if (!mounted) {
+                              return;
+                            }
+                            _centerSelectedEvent();
+                          });
+                        } else {
+                          _focusSelectedEventIfNeeded();
+                        }
+                      });
+                    },
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.all,
+                    ),
                   ),
-                ),
-                children: [
-                  TileLayer(
-                    // Base tile source is selected by the parent so we can A/B
-                    // the parchment map against terrain/topographic tiles
-                    // without replacing the flutter_map overlay stack.
-                    urlTemplate: tileSource.urlTemplate,
-                    userAgentPackageName: 'com.story.bible',
-                    // Some tile sources do not send a long Cache-Control
-                    // freshness. 30일 overrideFreshAge 로 console noise 를
-                    // 줄이고 스타일 전환 후에도 안정적으로 캐시한다.
-                    tileProvider: NetworkTileProvider(
-                      cachingProvider:
-                          BuiltInMapCachingProvider.getOrCreateInstance(
-                            overrideFreshAge: const Duration(days: 30),
+                  children: [
+                    TileLayer(
+                      // Base tile source is selected by the parent so we can A/B
+                      // the parchment map against terrain/topographic tiles
+                      // without replacing the flutter_map overlay stack.
+                      urlTemplate: tileSource.urlTemplate,
+                      tileDimension: tileSource.tileDimension,
+                      zoomOffset: tileSource.zoomOffset,
+                      userAgentPackageName: 'com.story.bible',
+                      // Some tile sources do not send a long Cache-Control
+                      // freshness. 30일 overrideFreshAge 로 console noise 를
+                      // 줄이고 스타일 전환 후에도 안정적으로 캐시한다.
+                      tileProvider: NetworkTileProvider(
+                        cachingProvider:
+                            BuiltInMapCachingProvider.getOrCreateInstance(
+                              overrideFreshAge: const Duration(days: 30),
+                            ),
+                      ),
+                    ),
+                    PolylineLayer(polylines: _countryBorderPolylines),
+                    // 시대 영역 폴리곤 — 그 시대의 region 들의 polygon 합집합을
+                    // 같은 시대 색으로 칠해 표시. hitNotifier 로 클릭 hit-test
+                    // 정보를 노출하고, MapOptions.onTap 에서 hit.hitValues 로 어느
+                    // region 이 눌렸는지 식별 → onLandmarkTap 호출.
+                    if (widget.eraRegionLandmarks.isNotEmpty)
+                      // 시각 layer — 정적 candidate/selected 색 (펄스 제거).
+                      // settle 애니메이션은 EraPolygonGlowLayer 내부 _settleCtl 이
+                      // 자체 처리하므로 외부 AnimatedBuilder 불필요.
+                      Stack(
+                        children: [
+                          EraPolygonGlowLayer(
+                            entries: _buildEraRegionGlowEntries(),
                           ),
-                    ),
-                  ),
-                  PolylineLayer(polylines: _countryBorderPolylines),
-                  // 시대 영역 폴리곤 — 그 시대의 region 들의 polygon 합집합을
-                  // 같은 시대 색으로 칠해 표시. hitNotifier 로 클릭 hit-test
-                  // 정보를 노출하고, MapOptions.onTap 에서 hit.hitValues 로 어느
-                  // region 이 눌렸는지 식별 → onLandmarkTap 호출.
-                  if (widget.eraRegionLandmarks.isNotEmpty)
-                    // 시각 layer — 정적 candidate/selected 색 (펄스 제거).
-                    // settle 애니메이션은 EraPolygonGlowLayer 내부 _settleCtl 이
-                    // 자체 처리하므로 외부 AnimatedBuilder 불필요.
-                    Stack(
-                      children: [
-                        EraPolygonGlowLayer(
-                          entries: _buildEraRegionGlowEntries(),
-                        ),
-                        // hit-test layer — 동일 좌표 투명 폴리곤.
-                        // 시각은 EraPolygonGlowLayer 가, 클릭은 PolygonLayer 의
-                        // hitNotifier 가 책임 분리.
-                        PolygonLayer<Landmark>(
-                          hitNotifier: _polygonHitNotifier,
-                          polygons: _buildEraRegionHitPolygons(),
-                        ),
-                      ],
-                    ),
-                  if (!widget.regionPickerMode)
-                    MarkerLayer(markers: _countryLabelMarkers),
-                  // 시대 미리보기 — 선택된 인물의 사건 path 만 색깔 실선으로 표시
-                  // (인물 미선택 시 + region picker mode 에서는 path 도 숨김).
-                  // step 3 (_orderedEventsActive) 진입 시에는 dashed path + 번호
-                  // 핀이 그 자리를 대체하므로 실선 preview 를 숨겨 화면을 정리.
-                  // 사건 dot 마커는 v3 에서 제거 — region 선택 후에만 사건 핀 노출.
-                  if (widget.eraPreviewEvents.isNotEmpty &&
-                      widget.selectedCharacterCodes.isNotEmpty &&
-                      !_orderedEventsActive &&
-                      !widget.regionPickerMode)
-                    PolylineLayer(polylines: _buildEraPreviewPolylines()),
-                  if (widget.eraPreviewEvents.isNotEmpty &&
-                      widget.selectedCharacterCodes.isNotEmpty &&
-                      !_orderedEventsActive &&
-                      !widget.regionPickerMode)
-                    MarkerLayer(markers: _buildEraPreviewArrowHeads()),
-                  // region(영역) 폴리곤 — 시대 영역 폴리곤(_buildEraRegionUnion
-                  // Polygons, hitNotifier 보유)이 이미 위쪽에서 모든 era region
-                  // 을 그리므로 여기서는 별도 layer 를 추가하지 않는다. 과거에는
-                  // hitValue/hitNotifier 없는 두 번째 PolygonLayer 가 hit 을
-                  // 가로채 폴리곤 클릭이 동작하지 않았다.
-                  // 시대별 랜드마크 — 클러스터링 없이 단순 표시. 시대 필터로
-                  // 이미 충분히 적어 (15~25개), 클러스터로 묶이는 게 정보를
-                  // 압축해 오히려 가린다.
-                  if (widget.activeLandmarks.isNotEmpty)
-                    MarkerLayer(
-                      markers: _buildLandmarkMarkers(
-                        _landmarksHidingEventLocations(),
+                          // hit-test layer — 동일 좌표 투명 폴리곤.
+                          // 시각은 EraPolygonGlowLayer 가, 클릭은 PolygonLayer 의
+                          // hitNotifier 가 책임 분리.
+                          PolygonLayer<Landmark>(
+                            hitNotifier: _polygonHitNotifier,
+                            polygons: _buildEraRegionHitPolygons(),
+                          ),
+                        ],
                       ),
-                    ),
-                  PolylineLayer(polylines: polylines),
-                  if (!widget.regionPickerMode && !widget.suppressRegionLabels)
-                    MarkerLayer(markers: _buildRegionLabels()),
-                  // 폴리곤 중앙에 region 이름 + 사건 개수 라벨.
-                  // step 2 (regionPickerMode): 모든 era region 라벨 표시 (갈색).
-                  // step 3 (region 선택됨): 선택된 region 만 노란 캡슐 라벨로 표시.
-                  if (widget.eraRegionLandmarks.isNotEmpty &&
-                      (widget.regionPickerMode ||
-                          widget.selectedLandmarkId != null))
-                    MarkerLayer(markers: _buildPolygonCenterLabels()),
-                  // 순서 점선 path + 번호 핀 — region 선택이든 character step3
-                  // 든 revealEventsKey 가 set 되었으면 활성. widget.events 가
-                  // 시간순으로 정렬된 사건들이라고 가정.
-                  if (_orderedEventsActive && widget.events.length >= 2)
-                    PolylineLayer(
-                      polylines: _buildOrderedEventPath(widget.events),
-                    ),
-                  if (_orderedEventsActive && widget.events.length >= 2)
-                    MarkerLayer(
-                      markers: _buildOrderedPathArrows(widget.events),
-                    ),
-                  if (_orderedEventsActive)
-                    MarkerLayer(
-                      markers: _buildNumberedEventMarkers(widget.events),
-                    )
-                  else
-                    MarkerLayer(markers: _buildMarkers(widget.events)),
-                  if (_eventTransitionOverlay != null)
-                    MarkerLayer(markers: _buildEventTransitionMarkers()),
-                  // 거리 측정 폴리라인 (두 점이 모두 선택됐을 때만).
-                  if (_measureMode)
-                    PolylineLayer(polylines: _buildMeasurePolylines()),
-                  // attribution 은 home screen 우측 상단 ⓘ 버튼으로 이동.
-                  // 이전 좌하단 inline 텍스트는 bottomOverlay (사건 패널·intro 등)
-                  // 에 가려져 의무 가시성을 충족하지 못해 제거.
-                  if (widget.bottomOverlay != null)
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: widget.bottomOverlay!,
-                    ),
-                  // 선택된 인물 색깔 범례 — 지도 좌상단(랜드마크 토글 버튼 아래)
-                  // 에 작은 카드. 선택 인물이 1명 이상일 때만 표시.
-                  if (widget.selectedCharacterCodes.isNotEmpty)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 60, left: 10),
-                        child: _CharacterColorLegend(
-                          codes: widget.selectedCharacterCodes,
-                          colorForCharacter: widget.colorForCharacter,
-                          nameForCharacter: widget.nameForCharacter,
+                    if (!widget.regionPickerMode)
+                      MarkerLayer(markers: _countryLabelMarkers),
+                    // 시대 미리보기 — 선택된 인물의 사건 path 만 색깔 실선으로 표시
+                    // (인물 미선택 시 + region picker mode 에서는 path 도 숨김).
+                    // step 3 (_orderedEventsActive) 진입 시에는 dashed path + 번호
+                    // 핀이 그 자리를 대체하므로 실선 preview 를 숨겨 화면을 정리.
+                    // 사건 dot 마커는 v3 에서 제거 — region 선택 후에만 사건 핀 노출.
+                    if (widget.eraPreviewEvents.isNotEmpty &&
+                        widget.selectedCharacterCodes.isNotEmpty &&
+                        !_orderedEventsActive &&
+                        !widget.regionPickerMode)
+                      PolylineLayer(polylines: _buildEraPreviewPolylines()),
+                    if (widget.eraPreviewEvents.isNotEmpty &&
+                        widget.selectedCharacterCodes.isNotEmpty &&
+                        !_orderedEventsActive &&
+                        !widget.regionPickerMode)
+                      MarkerLayer(markers: _buildEraPreviewArrowHeads()),
+                    // region(영역) 폴리곤 — 시대 영역 폴리곤(_buildEraRegionUnion
+                    // Polygons, hitNotifier 보유)이 이미 위쪽에서 모든 era region
+                    // 을 그리므로 여기서는 별도 layer 를 추가하지 않는다. 과거에는
+                    // hitValue/hitNotifier 없는 두 번째 PolygonLayer 가 hit 을
+                    // 가로채 폴리곤 클릭이 동작하지 않았다.
+                    // 랜드마크 마커는 3D 전환 중 좌표/라벨 충돌을 만들고 있어
+                    // 당분간 2D/3D 공통으로 숨긴다. 지역 선택은 폴리곤 hit layer 와
+                    // 중앙 지역 라벨이 담당하고, 지도 위에는 사건 원형 핀만 남긴다.
+                    if (_showLandmarkMarkers &&
+                        widget.activeLandmarks.isNotEmpty)
+                      MarkerLayer(
+                        markers: _buildLandmarkMarkers(
+                          _landmarksHidingEventLocations(),
                         ),
                       ),
-                    ),
-                  // 비지리적 region 카드 — 종말 환상(하늘 보좌·새 예루살렘 등)
-                  // 처럼 polygon 이 빈 region 을 지도 좌하단 카드로 표시.
-                  // era_nt_consummation 시대에서만 활성화.
-                  if (_nonGeographicRegions.isNotEmpty)
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, bottom: 30),
-                        child: _NonGeographicRegionCard(
-                          regions: _nonGeographicRegions,
+                    PolylineLayer(polylines: polylines),
+                    if (!widget.regionPickerMode &&
+                        !widget.suppressRegionLabels)
+                      MarkerLayer(markers: _buildRegionLabels()),
+                    // 폴리곤 중앙에 region 이름 + 사건 개수 라벨.
+                    // step 2 (regionPickerMode): 모든 era region 라벨 표시 (갈색).
+                    // step 3 (region 선택됨): 선택된 region 만 노란 캡슐 라벨로 표시.
+                    if (widget.eraRegionLandmarks.isNotEmpty &&
+                        (widget.regionPickerMode ||
+                            widget.selectedLandmarkId != null))
+                      MarkerLayer(markers: _buildPolygonCenterLabels()),
+                    // 순서 점선 path + 번호 핀 — region 선택이든 character step3
+                    // 든 revealEventsKey 가 set 되었으면 활성. widget.events 가
+                    // 시간순으로 정렬된 사건들이라고 가정.
+                    if (_orderedEventsActive && widget.events.length >= 2)
+                      PolylineLayer(
+                        polylines: _buildOrderedEventPath(widget.events),
+                      ),
+                    if (_orderedEventsActive && widget.events.length >= 2)
+                      MarkerLayer(
+                        markers: _buildOrderedPathArrows(widget.events),
+                      ),
+                    if (_orderedEventsActive)
+                      MarkerLayer(
+                        markers: _buildNumberedEventMarkers(widget.events),
+                      )
+                    else
+                      MarkerLayer(markers: _buildMarkers(widget.events)),
+                    if (_eventTransitionOverlay != null)
+                      MarkerLayer(markers: _buildEventTransitionMarkers()),
+                    // 거리 측정 폴리라인 (두 점이 모두 선택됐을 때만).
+                    if (_measureMode)
+                      PolylineLayer(polylines: _buildMeasurePolylines()),
+                    // attribution 은 home screen 우측 상단 ⓘ 버튼으로 이동.
+                    // 이전 좌하단 inline 텍스트는 bottomOverlay (사건 패널·intro 등)
+                    // 에 가려져 의무 가시성을 충족하지 못해 제거.
+                    if (widget.bottomOverlay != null)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: widget.bottomOverlay!,
+                      ),
+                    // 선택된 인물 색깔 범례 — 지도 좌상단(랜드마크 토글 버튼 아래)
+                    // 에 작은 카드. 선택 인물이 1명 이상일 때만 표시.
+                    if (widget.selectedCharacterCodes.isNotEmpty)
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 60, left: 10),
+                          child: _CharacterColorLegend(
+                            codes: widget.selectedCharacterCodes,
+                            colorForCharacter: widget.colorForCharacter,
+                            nameForCharacter: widget.nameForCharacter,
+                          ),
                         ),
                       ),
-                    ),
-                  // v3 — 우측 상단 검색/거리 측정 버튼 제거. 부모(StoryHomeScreen)
-                  // 가 같은 위치에 _SelectionStepper 를 둔다.
-                ],
-              );
-            },
-          ),
+                    // 비지리적 region 카드 — 종말 환상(하늘 보좌·새 예루살렘 등)
+                    // 처럼 polygon 이 빈 region 을 지도 좌하단 카드로 표시.
+                    // era_nt_consummation 시대에서만 활성화.
+                    if (_nonGeographicRegions.isNotEmpty)
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, bottom: 30),
+                          child: _NonGeographicRegionCard(
+                            regions: _nonGeographicRegions,
+                          ),
+                        ),
+                      ),
+                    // v3 — 우측 상단 검색/거리 측정 버튼 제거. 부모(StoryHomeScreen)
+                    // 가 같은 위치에 _SelectionStepper 를 둔다.
+                  ],
+                );
+              },
+            ),
+          if (tileSource.isThreeDimensional && widget.bottomOverlay != null)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: widget.bottomOverlay!,
+            ),
+          if (tileSource.isThreeDimensional &&
+              widget.selectedCharacterCodes.isNotEmpty)
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 60, left: 10),
+                child: _CharacterColorLegend(
+                  codes: widget.selectedCharacterCodes,
+                  colorForCharacter: widget.colorForCharacter,
+                  nameForCharacter: widget.nameForCharacter,
+                ),
+              ),
+            ),
+          if (tileSource.isThreeDimensional && _nonGeographicRegions.isNotEmpty)
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, bottom: 30),
+                child: _NonGeographicRegionCard(regions: _nonGeographicRegions),
+              ),
+            ),
           // 양피지 텍스처 overlay — 지도 위에 multiply 로 합성해 결을 살린다.
           // tileScale 0.5 → 텍스처를 절반 크기로 반복(stretch 시 흐릿한 얼룩 방지).
           // 지형 타일은 산지/등고선 식별이 중요하므로 texture 를 더 약하게 둔다.
-          Positioned.fill(
-            child: IgnorePointer(
-              child: ParchmentMultiplyLayer(
-                strength: tileSource.textureStrength,
-                tileScale: 0.5,
+          if (!tileSource.isThreeDimensional)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: ParchmentMultiplyLayer(
+                  strength: tileSource.textureStrength,
+                  tileScale: 0.5,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
+  }
+
+  void _handle3dLandmarkTap(String landmarkId) {
+    for (final landmark in [
+      ...widget.activeLandmarks,
+      ...widget.eraRegionLandmarks,
+    ]) {
+      if (landmark.id == landmarkId) {
+        _handleLandmarkTap(landmark);
+        return;
+      }
+    }
+  }
+
+  void _handle3dEventTap(String eventId) {
+    widget.onSelectEvent(eventId);
+    widget.onOpenDetail?.call(eventId);
   }
 
   /// 랜드마크 탭 처리. onLandmarkTap 콜백 (popup) 호출.
@@ -583,6 +704,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   /// 외부 호출용 카메라 이동 (랜드마크 목록에서 항목을 골랐을 때).
   void _focusLandmark(LatLng point) {
     if (!_mapReady) return;
+    if (_isThreeDimensional) {
+      _terrain3dController.moveTo(
+        point,
+        7.25,
+        duration: const Duration(milliseconds: 420),
+      );
+      return;
+    }
     try {
       final camera = _controller.camera;
       final currentZoom = (camera.zoom as num?)?.toDouble() ?? 6.0;
@@ -617,9 +746,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       // 보존해서 잘리지 않게.
       final bottomPadding = math.max(16.0, bottomGap + 8.0);
       final topPadding = math.max(16.0, widget.topObscuredPixels + 8.0);
+      final bounds = LatLngBounds(
+        LatLng(minLat, minLng),
+        LatLng(maxLat, maxLng),
+      );
+      if (_isThreeDimensional) {
+        _terrain3dController.fitBounds(
+          bounds,
+          padding: EdgeInsets.fromLTRB(18, topPadding, 18, bottomPadding),
+          maxZoom: 8.8,
+          duration: const Duration(milliseconds: 520),
+        );
+        return;
+      }
       _controller.fitCamera(
         CameraFit.bounds(
-          bounds: LatLngBounds(LatLng(minLat, minLng), LatLng(maxLat, maxLng)),
+          bounds: bounds,
           padding: EdgeInsets.fromLTRB(12, topPadding, 12, bottomPadding),
         ),
       );
@@ -1086,9 +1228,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   Map<String, LatLng> _numberedEventPointMap({required bool includeHidden}) {
+    final isThreeDimensional = _isThreeDimensional;
     return map_math.buildRankedEventPointMap(
       widget.events,
       visibleCount: includeHidden ? null : _eventRevealCount,
+      radiusDeg: isThreeDimensional ? 0.018 : 0.045,
+      thresholdDeg: isThreeDimensional ? 0.028 : 0.04,
     );
   }
 
@@ -1720,6 +1865,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
       final borderPolylines = <Polyline>[];
       final labelMarkers = <Marker>[];
+      final borderLines3d = <List<LatLng>>[];
+      final labelPoints3d = <StoryTerrainCountryLabel>[];
       final landRings = <List<LatLng>>[];
 
       for (final feature in features) {
@@ -1759,6 +1906,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           if (ring.length < 3) {
             continue;
           }
+          borderLines3d.add([...ring, ring.first]);
           // 색연필 같은 질감 — 3중 stroke + 미세 jitter 로 손그림 갈색 색연필
           // 결을 흉내. wide halo(매우 옅음) + medium halo + ink core 가 겹쳐
           // 단단한 vector 라인이 아닌 거친 결의 색연필 효과.
@@ -1809,6 +1957,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
         final labelPoint = _labelPoint(properties, rings.first);
         labelMarkers.add(_countryLabelMarker(nameKo, labelPoint));
+        labelPoints3d.add(
+          StoryTerrainCountryLabel(name: nameKo, point: labelPoint),
+        );
       }
 
       if (!mounted) {
@@ -1818,6 +1969,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       setState(() {
         _countryBorderPolylines = borderPolylines;
         _countryLabelMarkers = labelMarkers;
+        _countryBorderLines3d = borderLines3d;
+        _countryLabels3d = labelPoints3d;
       });
     } catch (_) {
       // Keep map usable even if GeoJSON parsing fails.
@@ -1919,7 +2072,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         .toList();
     final bounds = LatLngBounds.fromPoints(points);
     // Slightly wider framing: zoom out one step from current auto-focus.
-    final animationZoom = (_computeRevealZoom(points) - 1.0).clamp(3.0, 9.0);
+    final animationZoom = (_computeRevealZoom(points) - 1.0).clamp(
+      _minMapZoom,
+      _maxMapZoom,
+    );
     _focusToPoint(
       bounds.center,
       animationZoom,
@@ -1979,6 +2135,17 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
     final adjusted = map_math.buildAdjustedPoints(withCoordinate);
     final selectedPoint = adjusted[selectedEvent.id] ?? selectedEvent.latLng;
+    if (_isThreeDimensional) {
+      final targetZoom = (widget.selectedFocusZoom ?? widget.initialZoom ?? 6.8)
+          .clamp(4.0, 9.4)
+          .toDouble();
+      _terrain3dController.moveTo(
+        selectedPoint,
+        targetZoom,
+        duration: const Duration(milliseconds: 520),
+      );
+      return;
+    }
     final camera = _safeCamera();
     if (camera == null) {
       return;
@@ -2080,7 +2247,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
     final selectedPoint = selectedEvent.latLng;
     final targetZoom = (widget.selectedFocusZoom ?? widget.initialZoom ?? 7.0)
-        .clamp(3.0, 9.0);
+        .clamp(_minMapZoom, _maxMapZoom);
+    if (_isThreeDimensional) {
+      _terrain3dController.moveTo(
+        selectedPoint,
+        targetZoom.clamp(4.0, 9.6).toDouble(),
+        duration: const Duration(milliseconds: 280),
+      );
+      return;
+    }
     _focusToPoint(
       selectedPoint,
       targetZoom,
@@ -2111,7 +2286,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
 
     final rawPoints = visibleEvents.map((event) => event.latLng).toList();
-    final adjustedPointsById = map_math.buildAdjustedPoints(visibleEvents);
+    final adjustedPointsById = (_isThreeDimensional || _orderedEventsActive)
+        ? _numberedEventPointMap(includeHidden: true)
+        : map_math.buildAdjustedPoints(visibleEvents);
     final fittedPoints = visibleEvents
         .map((event) => adjustedPointsById[event.id] ?? event.latLng)
         .toList(growable: false);
@@ -2132,7 +2309,20 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (isTightlyClustered) {
       fittedZoom = math.min(fittedZoom, 7.15);
     }
-    fittedZoom = (fittedZoom + zoomBoost).clamp(3.0, 9.0);
+    fittedZoom = (fittedZoom + zoomBoost).clamp(_minMapZoom, _maxMapZoom);
+    if (_isThreeDimensional) {
+      final bottomGap = (widget.bottomObscuredFraction * _lastMapSize.height)
+          .clamp(0.0, 600.0);
+      final bottomPadding = math.max(16.0, bottomGap + 8.0);
+      final topPadding = math.max(16.0, widget.topObscuredPixels + 8.0);
+      _terrain3dController.fitBounds(
+        bounds,
+        padding: EdgeInsets.fromLTRB(18, topPadding, 18, bottomPadding),
+        maxZoom: fittedZoom.toDouble(),
+        duration: duration,
+      );
+      return;
+    }
     _focusToPoint(bounds.center, fittedZoom, duration: duration);
   }
 
@@ -2161,6 +2351,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     Duration duration = const Duration(milliseconds: 600),
   }) {
     if (!_mapReady) {
+      return;
+    }
+    if (_isThreeDimensional) {
+      _terrain3dController.moveTo(
+        point,
+        zoom.clamp(_minMapZoom, _maxMapZoom).toDouble(),
+        duration: duration,
+      );
       return;
     }
     final current = _safeCamera();
@@ -2202,6 +2400,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomIn() {
+    if (StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional) {
+      _terrain3dController.zoomIn();
+      return;
+    }
     if (!_mapReady) {
       return;
     }
@@ -2209,7 +2411,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (camera == null) {
       return;
     }
-    final targetZoom = (camera.zoom + 0.7).clamp(3.0, 9.0);
+    final targetZoom = (camera.zoom + 0.7).clamp(_minMapZoom, _maxMapZoom);
     _focusToPoint(
       camera.center,
       targetZoom,
@@ -2218,6 +2420,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   void zoomOut() {
+    if (StoryMapTileStyles.sourceFor(widget.tileStyle).isThreeDimensional) {
+      _terrain3dController.zoomOut();
+      return;
+    }
     if (!_mapReady) {
       return;
     }
@@ -2225,7 +2431,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (camera == null) {
       return;
     }
-    final targetZoom = (camera.zoom - 0.7).clamp(3.0, 9.0);
+    final targetZoom = (camera.zoom - 0.7).clamp(_minMapZoom, _maxMapZoom);
     _focusToPoint(
       camera.center,
       targetZoom,
@@ -2242,6 +2448,10 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   /// 외부 트리거로 reveal 을 처음부터 재생. 현재 events 가 그대로여도 애니메이션
   /// 을 다시 보여주고 싶을 때 (예: step 3 "다음" 버튼).
   void replayReveal() {
+    if (_orderedEventsActive) {
+      _restartEventReveal(widget.revealEventsKey ?? widget.selectedLandmarkId);
+      return;
+    }
     _startRevealAnimation();
   }
 
@@ -2262,8 +2472,6 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     if (_eventTransitionCompleter?.isCompleted == false) {
       _eventTransitionCompleter!.complete();
     }
-    final completer = Completer<void>();
-    _eventTransitionCompleter = completer;
 
     final visiblePoints = _numberedEventPointMap(includeHidden: false);
     final finalPoints = _numberedEventPointMap(includeHidden: true);
@@ -2276,9 +2484,23 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       8.8,
     );
 
+    if (_isThreeDimensional) {
+      _focusToPoint(
+        bounds.center,
+        targetZoom.toDouble(),
+        duration: const Duration(milliseconds: 360),
+      );
+      return _terrain3dController.playEventTransition(
+        fromPoint: fromPoint,
+        toPoint: toPoint,
+      );
+    }
+
+    final completer = Completer<void>();
+    _eventTransitionCompleter = completer;
     _focusToPoint(
       bounds.center,
-      targetZoom,
+      targetZoom.toDouble(),
       duration: const Duration(milliseconds: 360),
     );
     setState(() {
@@ -2367,14 +2589,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   }
 
   double _computeRevealZoom(List<LatLng> points) {
-    const minZoom = 3.0;
-    const maxZoom = 9.0;
+    const minZoom = _minMapZoom;
+    const maxZoom = _maxMapZoom;
     final baseZoom = widget.initialZoom ?? 6.0;
     if (points.isEmpty) {
       return baseZoom.clamp(minZoom, maxZoom);
     }
     if (points.length == 1) {
-      return math.max(baseZoom, 9.0).clamp(minZoom, maxZoom);
+      return math.max(baseZoom, 10.4).clamp(minZoom, maxZoom);
     }
 
     final bounds = LatLngBounds.fromPoints(points);

@@ -47,7 +47,7 @@ class ParchmentDialog extends StatelessWidget {
                   width: 52,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0x339A7A4C),
+                    color: AppColors.brownEdge.withValues(alpha: 0.26),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -63,7 +63,7 @@ class ParchmentDialog extends StatelessWidget {
                         Text(
                           title,
                           style: const TextStyle(
-                            color: Color(0xFF3F2A17),
+                            color: AppColors.ink700,
                             fontSize: 18.5,
                             fontWeight: FontWeight.w900,
                             height: 1.15,
@@ -133,12 +133,12 @@ class ParchmentDialogActionButton extends StatelessWidget {
         ? const [AppColors.goldLight, AppColors.goldDeep]
         : isDanger
         ? const [AppColors.dangerTop, AppColors.dangerBot]
-        : const [Color(0xFFF8F0E2), Color(0xFFEEDDC1)];
+        : const [AppColors.parchmentLight, AppColors.parchmentMid];
     final borderColor = isPrimary
         ? AppColors.goldHi
         : isDanger
         ? AppColors.dangerRim
-        : const Color(0xBC9A7A4C);
+        : AppColors.borderFloating;
     final foreground = isPrimary || isDanger
         ? AppColors.parchmentCream
         : AppColors.ink350;
@@ -243,22 +243,28 @@ class ParchmentDialogTextField extends StatelessWidget {
           fontWeight: FontWeight.w700,
         ),
         filled: true,
-        fillColor: const Color(0xFFF9F2E7),
+        fillColor: AppColors.parchmentCream,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 13,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: Color(0xB88E6F48), width: 1.1),
+          borderSide: const BorderSide(
+            color: AppColors.borderFloating,
+            width: 1.1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: Color(0xB88E6F48), width: 1.1),
+          borderSide: const BorderSide(
+            color: AppColors.borderFloating,
+            width: 1.1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: Color(0xFFB87731), width: 1.5),
+          borderSide: const BorderSide(color: AppColors.brownWarm2, width: 1.5),
         ),
       ),
       onChanged: onChanged,
@@ -285,7 +291,7 @@ class _ParchmentDialogCloseButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0x90FFFFFF),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+            border: Border.all(color: AppColors.borderFloating, width: 1),
           ),
           child: const Icon(
             Icons.close_rounded,
@@ -303,10 +309,10 @@ BoxDecoration _surfaceDecoration() {
     gradient: const LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFFFBF5EA), AppColors.parchmentMid],
+      colors: [AppColors.dialogTopHighlight, AppColors.parchmentMid],
     ),
     borderRadius: BorderRadius.circular(24),
-    border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),
+    border: Border.all(color: AppColors.borderModalDialog, width: 1.2),
     boxShadow: const [
       BoxShadow(
         color: Color(0x26000000),

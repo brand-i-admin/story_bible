@@ -41,10 +41,12 @@ repos:
         exclude: ^(\.dart_tool/|build/|coverage/|ios/|android/|web/|macos/|linux/|windows/)
 
       # Dart import 정렬 검증 (변경 시 차단).
-      # 정렬: dart run import_sorter:main --no-comments
+      # Flutter SDK 의존성(flutter_test from sdk)이 있으므로 `dart run`이 아니라
+      # `flutter pub run`으로 실행한다.
+      # 정렬: flutter pub run import_sorter:main --no-comments
       - id: dart-import-sort
         name: dart import sort
-        entry: zsh -lc 'dart run import_sorter:main --no-comments --exit-if-changed >/dev/null 2>&1 || (echo "Import 정렬이 필요합니다. 실행 -> dart run import_sorter:main --no-comments" && exit 1)'
+        entry: zsh -lc 'flutter pub run import_sorter:main --no-comments --exit-if-changed >/dev/null 2>&1 || (echo "Import 정렬이 필요합니다. 실행 -> flutter pub run import_sorter:main --no-comments" && exit 1)'
         language: system
         files: \.dart$
         pass_filenames: false

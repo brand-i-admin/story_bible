@@ -4,25 +4,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Story map base tile styles.
 ///
-/// The app keeps `flutter_map` as the rendering surface and swaps only the
-/// raster tile source. MapTiler is opt-in because it requires an API key:
+/// Keep the production picker intentionally small:
+/// - 3D 무료 지형: OpenFreeMap Liberty + public Terrarium DEM
+/// - 2D 고지도: Stamen Watercolor archive
 ///
-///   MAPTILER_API_KEY=... in .env
-///   flutter run --dart-define=MAPTILER_API_KEY=...
-///   flutter run --dart-define=STORY_MAP_TILE_STYLE=mapTilerLandscape
-enum StoryMapTileStyle {
-  watercolor,
-  esriTopo,
-  mapTilerAquarelle,
-  mapTilerLandscape,
-  mapTilerOutdoor,
-  mapTilerOcean,
-  mapTilerDataviz,
-  mapTilerSatellitePlain,
-  mapTilerSatelliteHybrid,
-  mapTilerBackdrop,
-  mapTilerBase,
-}
+/// `STORY_MAP_TILE_STYLE` can be set in `.env` or via `--dart-define`.
+enum StoryMapTileStyle { openFreeMap3dLiberty, watercolor }
 
 class MapAttributionLineData {
   const MapAttributionLineData({required this.source, this.license});
@@ -36,18 +23,42 @@ class StoryMapTileSource {
     required this.style,
     required this.label,
     required this.shortLabel,
+    required this.providerLabel,
     required this.icon,
     required this.urlTemplate,
     required this.attributionLines,
     required this.textureStrength,
+    this.isThreeDimensional = false,
+    this.styleJsonUrl = '',
+    this.terrainTileJsonUrl = '',
+    this.terrainTiles = const [],
+    this.terrainEncoding,
+    this.hideBaseLabels = false,
+    this.terrainExaggeration = 1.0,
+    this.initialPitch = 0.0,
+    this.initialBearing = 0.0,
+    this.tileDimension = 256,
+    this.zoomOffset = 0,
   });
 
   final StoryMapTileStyle style;
   final String label;
   final String shortLabel;
+  final String providerLabel;
   final IconData icon;
   final String urlTemplate;
   final List<MapAttributionLineData> attributionLines;
+  final bool isThreeDimensional;
+  final String styleJsonUrl;
+  final String terrainTileJsonUrl;
+  final List<String> terrainTiles;
+  final String? terrainEncoding;
+  final bool hideBaseLabels;
+  final double terrainExaggeration;
+  final double initialPitch;
+  final double initialBearing;
+  final int tileDimension;
+  final double zoomOffset;
 
   /// Parchment grain opacity over the base map.
   ///
@@ -59,31 +70,16 @@ class StoryMapTileSource {
 class StoryMapTileStyles {
   const StoryMapTileStyles._();
 
-  static const defaultStyle = StoryMapTileStyle.watercolor;
-  static const _mapTilerApiKeyFromDefine = String.fromEnvironment(
-    'MAPTILER_API_KEY',
-  );
+  static const defaultStyle = StoryMapTileStyle.openFreeMap3dLiberty;
   static const _initialStyleFromDefine = String.fromEnvironment(
     'STORY_MAP_TILE_STYLE',
   );
-
-  /// MapTiler public key.
-  ///
-  /// `--dart-define` wins for CI/release builds; `.env` keeps local
-  /// `flutter run` easy because `main.dart` already loads it before the map
-  /// screen is built.
-  static String get mapTilerApiKey {
-    if (_mapTilerApiKeyFromDefine.isNotEmpty) {
-      return _mapTilerApiKeyFromDefine;
-    }
-    return _dotenvValue('MAPTILER_API_KEY');
-  }
 
   static StoryMapTileStyle get initialStyle {
     final override = _initialStyleFromDefine.isNotEmpty
         ? _initialStyleFromDefine
         : _dotenvValue('STORY_MAP_TILE_STYLE');
-    return normalize(_styleFromKey(override) ?? defaultStyle);
+    return _styleFromKey(override) ?? defaultStyle;
   }
 
   static String _dotenvValue(String key) {
@@ -93,43 +89,22 @@ class StoryMapTileStyles {
     return dotenv.maybeGet(key, fallback: '')?.trim() ?? '';
   }
 
-  static bool get hasMapTilerKey => mapTilerApiKey.isNotEmpty;
-
   static List<StoryMapTileStyle> availableStyles() {
-    return <StoryMapTileStyle>[
+    return const <StoryMapTileStyle>[
+      StoryMapTileStyle.openFreeMap3dLiberty,
       StoryMapTileStyle.watercolor,
-      StoryMapTileStyle.esriTopo,
-      if (hasMapTilerKey) ...mapTilerCandidateStyles,
     ];
   }
 
-  static const mapTilerCandidateStyles = <StoryMapTileStyle>[
-    StoryMapTileStyle.mapTilerAquarelle,
-    StoryMapTileStyle.mapTilerLandscape,
-    StoryMapTileStyle.mapTilerOutdoor,
-    StoryMapTileStyle.mapTilerOcean,
-    StoryMapTileStyle.mapTilerDataviz,
-    StoryMapTileStyle.mapTilerSatellitePlain,
-    StoryMapTileStyle.mapTilerSatelliteHybrid,
-    StoryMapTileStyle.mapTilerBackdrop,
-    StoryMapTileStyle.mapTilerBase,
-  ];
+  static StoryMapTileStyle normalize(StoryMapTileStyle style) => style;
 
-  static bool isMapTilerStyle(StoryMapTileStyle style) {
-    return mapTilerCandidateStyles.contains(style);
-  }
-
-  static StoryMapTileStyle normalize(StoryMapTileStyle style) {
-    if (isMapTilerStyle(style) && !hasMapTilerKey) {
-      return defaultStyle;
-    }
-    return style;
+  static bool isOpenFreeMapStyle(StoryMapTileStyle style) {
+    return style == StoryMapTileStyle.openFreeMap3dLiberty;
   }
 
   static StoryMapTileStyle nextStyle(StoryMapTileStyle current) {
     final styles = availableStyles();
-    final normalized = normalize(current);
-    final index = styles.indexOf(normalized);
+    final index = styles.indexOf(normalize(current));
     if (index < 0 || index == styles.length - 1) {
       return styles.first;
     }
@@ -137,23 +112,39 @@ class StoryMapTileStyles {
   }
 
   static StoryMapTileStyle? _styleFromKey(String raw) {
-    final normalized = raw
-        .trim()
-        .replaceAll('_', '')
-        .replaceAll('-', '')
-        .toLowerCase();
+    final normalized = _normalizedStyleKey(raw);
     if (normalized.isEmpty) {
       return null;
     }
     for (final style in StoryMapTileStyle.values) {
-      final name = style.name.toLowerCase();
-      if (normalized == name ||
-          normalized == name.replaceFirst('maptiler', '') ||
-          normalized == _mapTilerMapId(style).replaceAll('-', '')) {
+      final aliases = _styleAliases(style).map(_normalizedStyleKey);
+      if (aliases.contains(normalized)) {
         return style;
       }
     }
     return null;
+  }
+
+  static String _normalizedStyleKey(String raw) {
+    return raw.trim().replaceAll('_', '').replaceAll('-', '').toLowerCase();
+  }
+
+  static Iterable<String> _styleAliases(StoryMapTileStyle style) sync* {
+    yield style.name;
+    switch (style) {
+      case StoryMapTileStyle.watercolor:
+        yield 'stamen';
+        yield '고지도';
+        break;
+      case StoryMapTileStyle.openFreeMap3dLiberty:
+        yield 'openfreemap';
+        yield 'openfree';
+        yield 'liberty';
+        yield 'liberty3d';
+        yield 'free3d';
+        yield '3d';
+        break;
+    }
   }
 
   static StoryMapTileSource sourceFor(StoryMapTileStyle style) {
@@ -163,6 +154,7 @@ class StoryMapTileStyles {
           style: StoryMapTileStyle.watercolor,
           label: '고지도',
           shortLabel: '고지도',
+          providerLabel: 'Stamen',
           icon: Icons.map_outlined,
           urlTemplate:
               'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
@@ -185,152 +177,36 @@ class StoryMapTileStyles {
             ),
           ],
         );
-      case StoryMapTileStyle.esriTopo:
+      case StoryMapTileStyle.openFreeMap3dLiberty:
         return const StoryMapTileSource(
-          style: StoryMapTileStyle.esriTopo,
-          label: '지형(Esri)',
-          shortLabel: '지형',
-          icon: Icons.terrain_rounded,
-          urlTemplate:
-              'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-          textureStrength: 0.14,
+          style: StoryMapTileStyle.openFreeMap3dLiberty,
+          label: '3D 무료 지형(OpenFreeMap)',
+          shortLabel: '3D Free',
+          providerLabel: 'OpenFreeMap',
+          icon: Icons.public_rounded,
+          urlTemplate: '',
+          isThreeDimensional: true,
+          styleJsonUrl: 'https://tiles.openfreemap.org/styles/liberty',
+          terrainTiles: [
+            'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+          ],
+          terrainEncoding: 'terrarium',
+          hideBaseLabels: true,
+          terrainExaggeration: 1.35,
+          initialPitch: 20,
+          initialBearing: 0,
+          textureStrength: 0.0,
           attributionLines: [
-            MapAttributionLineData(source: 'Esri World Topographic Map'),
-            MapAttributionLineData(
-              source: 'Esri, HERE, Garmin, FAO, NOAA, USGS',
-            ),
+            MapAttributionLineData(source: 'OpenFreeMap Liberty style'),
             MapAttributionLineData(source: 'OpenStreetMap contributors'),
+            MapAttributionLineData(source: 'Mapzen Terrain Tiles on AWS'),
+            MapAttributionLineData(source: 'MapLibre GL JS'),
             MapAttributionLineData(
               source: '국경/수계 보조: Natural Earth',
               license: 'Public Domain',
             ),
           ],
         );
-      case StoryMapTileStyle.mapTilerAquarelle:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerAquarelle,
-          label: '수채화(MapTiler)',
-          shortLabel: '수채화',
-          icon: Icons.brush_rounded,
-          textureStrength: 0.08,
-        );
-      case StoryMapTileStyle.mapTilerLandscape:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerLandscape,
-          label: '여정 지형(MapTiler)',
-          shortLabel: '여정',
-          icon: Icons.landscape_rounded,
-          textureStrength: 0.06,
-        );
-      case StoryMapTileStyle.mapTilerOutdoor:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerOutdoor,
-          label: '야외 지형(MapTiler)',
-          shortLabel: '야외',
-          icon: Icons.hiking_rounded,
-          textureStrength: 0.06,
-        );
-      case StoryMapTileStyle.mapTilerOcean:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerOcean,
-          label: '해안/바다(MapTiler)',
-          shortLabel: '해안',
-          icon: Icons.water_rounded,
-          textureStrength: 0.04,
-        );
-      case StoryMapTileStyle.mapTilerDataviz:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerDataviz,
-          label: '담백 수계(MapTiler)',
-          shortLabel: '수계',
-          icon: Icons.blur_on_rounded,
-          textureStrength: 0.05,
-        );
-      case StoryMapTileStyle.mapTilerSatellitePlain:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerSatellitePlain,
-          label: '위성 원본(MapTiler)',
-          shortLabel: '위성',
-          icon: Icons.satellite_alt_rounded,
-          textureStrength: 0.02,
-        );
-      case StoryMapTileStyle.mapTilerSatelliteHybrid:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerSatelliteHybrid,
-          label: '위성 라벨(MapTiler)',
-          shortLabel: '위성+',
-          icon: Icons.satellite_alt_rounded,
-          textureStrength: 0.02,
-        );
-      case StoryMapTileStyle.mapTilerBackdrop:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerBackdrop,
-          label: '담백 지형(MapTiler)',
-          shortLabel: '담백',
-          icon: Icons.filter_hdr_rounded,
-          textureStrength: 0.08,
-        );
-      case StoryMapTileStyle.mapTilerBase:
-        return _mapTilerSource(
-          style: StoryMapTileStyle.mapTilerBase,
-          label: '기본 지도(MapTiler)',
-          shortLabel: '기본',
-          icon: Icons.public_rounded,
-          textureStrength: 0.08,
-        );
-    }
-  }
-
-  static StoryMapTileSource _mapTilerSource({
-    required StoryMapTileStyle style,
-    required String label,
-    required String shortLabel,
-    required IconData icon,
-    required double textureStrength,
-  }) {
-    final mapId = _mapTilerMapId(style);
-    return StoryMapTileSource(
-      style: style,
-      label: label,
-      shortLabel: shortLabel,
-      icon: icon,
-      urlTemplate:
-          'https://api.maptiler.com/maps/$mapId/256/{z}/{x}/{y}.png?key=$mapTilerApiKey',
-      textureStrength: textureStrength,
-      attributionLines: [
-        MapAttributionLineData(source: 'MapTiler $shortLabel'),
-        const MapAttributionLineData(source: 'OpenStreetMap contributors'),
-        const MapAttributionLineData(
-          source: '국경/수계 보조: Natural Earth',
-          license: 'Public Domain',
-        ),
-      ],
-    );
-  }
-
-  static String _mapTilerMapId(StoryMapTileStyle style) {
-    switch (style) {
-      case StoryMapTileStyle.mapTilerAquarelle:
-        return 'aquarelle-v4';
-      case StoryMapTileStyle.mapTilerLandscape:
-        return 'landscape-v4';
-      case StoryMapTileStyle.mapTilerOutdoor:
-        return 'outdoor-v4';
-      case StoryMapTileStyle.mapTilerOcean:
-        return 'ocean-v4';
-      case StoryMapTileStyle.mapTilerDataviz:
-        return 'dataviz-v4';
-      case StoryMapTileStyle.mapTilerSatellitePlain:
-        return 'satellite';
-      case StoryMapTileStyle.mapTilerSatelliteHybrid:
-        return 'hybrid';
-      case StoryMapTileStyle.mapTilerBackdrop:
-        return 'backdrop-v4';
-      case StoryMapTileStyle.mapTilerBase:
-        return 'base-v4';
-      case StoryMapTileStyle.watercolor:
-      case StoryMapTileStyle.esriTopo:
-        return '';
     }
   }
 }

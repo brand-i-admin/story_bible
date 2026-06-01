@@ -96,9 +96,7 @@ class _NumberedEventPin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasColors = characterColors.isNotEmpty;
-    final fillColor = isSelected
-        ? const Color(0xFFE8A33D) // 노랑 (현재 이야기)
-        : const Color(0xFF6B4A2A); // 갈색 (일반 사건)
+    final fillColor = isSelected ? AppColors.goldLight : AppColors.brownWarm2;
     final hasEmotion = emotionKey != null && emotionKey!.isNotEmpty;
     final size = hasEmotion
         ? (isSelected ? 27.0 : 25.0)
@@ -273,12 +271,12 @@ class _RegionPin extends StatelessWidget {
   /// 가 onTap=null 처리). 새 이야기가 추가되어 사건이 1개 이상이면 자동 활성.
   final bool disabled;
 
-  static const Color _pinColorDefault = Color(0xFF3D2A14); // 갈색
-  static const Color _pinColorSelected = Color(0xFFE8A33D); // 금색
+  static const Color _pinColorDefault = AppColors.ink700;
+  static const Color _pinColorSelected = AppColors.goldLight;
   static const Color _pinColorDisabled = Color(0xFF9E9285); // 회색
-  static const Color _accentColor = Color(0xFF8C6743);
+  static const Color _accentColor = AppColors.brownEdge;
   static const Color _accentColorDisabled = Color(0xFFB8B0A4);
-  static const Color _rippleColor = Color(0xFF38B860); // 초록 — 더 두껍고 눈에 띔
+  static const Color _rippleColor = AppColors.greenTop;
 
   @override
   Widget build(BuildContext context) {
@@ -357,16 +355,16 @@ class _RegionPin extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFF3D2A14)
-                              : const Color(0xFFE8A33D),
+                              ? AppColors.ink700
+                              : AppColors.goldLight,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           '$eventCount',
                           style: TextStyle(
                             color: isSelected
-                                ? const Color(0xFFE8A33D)
-                                : const Color(0xFF3D2A14),
+                                ? AppColors.goldLight
+                                : AppColors.ink700,
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
@@ -428,7 +426,7 @@ class _PointPin extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 7,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF8C7355), // 살짝 짙은 갈색 (이전 톤의 중간)
+                color: AppColors.ink200,
                 height: 1.1,
                 shadows: [
                   Shadow(color: Color(0xCCFBF1DC), blurRadius: 2),

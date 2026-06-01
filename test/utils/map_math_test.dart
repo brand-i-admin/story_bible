@@ -210,6 +210,21 @@ void main() {
       expect(points.keys, containsAll(['2', '3']));
       expect(points.containsKey('1'), isFalse);
     });
+
+    test('custom radius로 같은 위치 번호 핀 분산 폭을 줄일 수 있다', () {
+      final events = [
+        _rankedEvent('1', 1, 31.7, 35.2),
+        _rankedEvent('2', 2, 31.7, 35.2),
+      ];
+
+      final compact = buildRankedEventPointMap(events, radiusDeg: 0.018);
+      final wide = buildRankedEventPointMap(events, radiusDeg: 0.045);
+
+      final compactDelta = (compact['1']!.longitude - 35.2).abs();
+      final wideDelta = (wide['1']!.longitude - 35.2).abs();
+
+      expect(compactDelta, lessThan(wideDelta));
+    });
   });
 
   group('rotateOffset', () {

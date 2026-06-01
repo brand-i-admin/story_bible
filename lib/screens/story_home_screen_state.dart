@@ -29,7 +29,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   int _mapCelebrationNonce = 0;
   Completer<void>? _mapCelebrationCompleter;
   bool _mapAnimationInputLocked = false;
-  OverlayEntry? _mapAnimationInputBlockerEntry;
   StoryMapTileStyle _mapTileStyle = StoryMapTileStyles.initialStyle;
   late int _selectionStep = widget.initialStep.clamp(1, 3);
 
@@ -93,7 +92,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   @override
   void dispose() {
     _completeMapCelebration();
-    _removeMapAnimationInputBlocker();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -116,41 +114,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _setMapAnimationInputLocked(bool locked) {
-    if (!mounted) {
-      return;
-    }
-    if (locked) {
-      _insertMapAnimationInputBlocker();
-    } else {
-      _removeMapAnimationInputBlocker();
-    }
-    if (_mapAnimationInputLocked != locked) {
-      setState(() {
-        _mapAnimationInputLocked = locked;
-      });
-    }
-  }
-
-  void _insertMapAnimationInputBlocker() {
-    if (_mapAnimationInputBlockerEntry != null) {
-      return;
-    }
-    final overlay = Overlay.maybeOf(context, rootOverlay: true);
-    if (overlay == null) {
-      return;
-    }
-    final entry = OverlayEntry(
-      builder: (_) => const Positioned.fill(
-        child: ModalBarrier(color: Colors.transparent, dismissible: false),
-      ),
-    );
-    _mapAnimationInputBlockerEntry = entry;
-    overlay.insert(entry);
-  }
-
-  void _removeMapAnimationInputBlocker() {
-    _mapAnimationInputBlockerEntry?.remove();
-    _mapAnimationInputBlockerEntry = null;
+    _mapAnimationInputLocked = locked;
   }
 
   Future<void> _handleAuthUserChanged(User? user) async {
@@ -496,6 +460,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionPanelStage = StorySelectionPanelStage.expanded;
       _selectionSheetExtent = expandExtent;
     });
+    _setMapAnimationInputLocked(false);
   }
 
   void _collapseSelectionPanel() {
@@ -552,6 +517,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       if (step != 3) {
         _awaitingRevealComplete = false;
         _revealInstantly = false;
+        _mapAnimationInputLocked = false;
         if (_selectionStep == 3 &&
             _selectionPanelStage == StorySelectionPanelStage.collapsed) {
           _selectionPanelStage = StorySelectionPanelStage.expanded;
@@ -581,6 +547,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final ctl = ref.read(storyControllerProvider.notifier);
     final current = _currentStepperIndex();
     if (step > current) return; // 미래 단계 비활성
+    if (step != 3) {
+      _setMapAnimationInputLocked(false);
+    }
 
     if (step == 1) {
       // 시대 + 모드 + 모든 하위 선택 초기화 → 인트로 화면 복귀.
@@ -677,6 +646,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _returnToCharacterPickerFromEvents(StoryState state) {
+    _setMapAnimationInputLocked(false);
     final selectedCharacters = state.selectedCharacterCodes.toSet();
     final ctl = ref.read(storyControllerProvider.notifier);
     ctl.selectEvent(null);
@@ -760,10 +730,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // region 선택 완료 — hint overlay 사라짐.
       _mapHintDismissed = true;
     });
-    // 사건들이 분포한 영역에 fit + 줌인. region 폴리곤 fit 보다 사건 자체에
-    // 포커스가 맞아 자세히 보임.
+    // 지역을 선택한 직후에는 사건 좌표가 아니라 선택한 region 전체를 화면에
+    // 맞춘다. 핀 reveal 이후 시트가 올라와 일부 사건을 가리는 것은 허용한다.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
+      if (!mounted) return;
+      if (lm.polygon.length >= 3) {
+        _mapPanelController.focusRegion(lm.polygon);
+      } else {
+        _mapPanelController.focusEvents(zoomBoost: 1.0);
+      }
     });
   }
 
@@ -1116,22 +1091,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           .where((l) => l.eraCodes.any(eraCodes.contains) && passesCategory(l))
           .toList(growable: false);
     }
-    // 특정 region 을 누른 뒤(step 3): 선택한 region + 그 region 의 자식 +
-    // 시대 전체의 다른 non-region 랜드마크도 함께 노출 (카테고리 필터 적용).
-    // 선택 region 이외의 region 마커는 가린다 (선택 region 만 강조).
+    // 특정 region 을 누른 뒤(step 3): 선택한 region + 그 region 의 자식만
+    // 노출한다. 선택 지역 밖의 non-region 랜드마크 라벨이 화면 가장자리에서
+    // 떠 보이면 현재 선택과 무관한 클릭 대상으로 오해되기 쉽다.
     if (_mode == _SelectionMode.region && state.selectedLandmarkId != null) {
       final id = state.selectedLandmarkId!;
       return state.landmarks
           .where((l) {
             if (!l.eraCodes.any(eraCodes.contains)) return false;
-            // 선택 region 본인 + 그 자식: 무조건 노출 (카테고리만 통과시키면 됨).
             if (l.id == id || l.parentLandmarkId == id) {
               return passesCategory(l);
             }
-            // 그 외 region 마커는 숨김 (선택 region 만 큰 핀으로 강조).
-            if (l.isRegion) return false;
-            // 시대 전체의 다른 non-region 랜드마크: 카테고리 필터 적용.
-            return passesCategory(l);
+            return false;
           })
           .toList(growable: false);
     }
@@ -2005,18 +1976,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     };
 
     // 첫 화면 (시대 미선택) 은 줌 6 (저배율) 로 가나안~광야~메소포타미아 일대가
-    // 한눈에 들어오도록 중심 잡음. 하단 시트 0.46 으로 visible 영역의 중앙이
-    // 가나안이 되도록 lat 을 약간 남쪽으로 offset.
-    final mapCenter = state.selectedEraIds.isEmpty
-        ? const LatLng(28.5, 35.20)
-        : (selectedEra?.mapCenterLat != null &&
-                  selectedEra?.mapCenterLng != null
-              ? LatLng(selectedEra!.mapCenterLat!, selectedEra.mapCenterLng!)
-              : null);
+    // 한눈에 들어오도록 중심 잡음. 3D 는 하단 시트와 pitch 때문에 사우디아라비아가
+    // 가려지기 쉬워 더 남쪽을 중심으로 두고 성경권 전체를 넓게 연다.
+    final mapTileSource = StoryMapTileStyles.sourceFor(_mapTileStyle);
+    final usesThreeDimensionalMap = mapTileSource.isThreeDimensional;
+    final mapCenter = usesThreeDimensionalMap
+        ? const LatLng(0.5, 39.8)
+        : (state.selectedEraIds.isEmpty
+              ? const LatLng(28.5, 35.20)
+              : (selectedEra?.mapCenterLat != null &&
+                        selectedEra?.mapCenterLng != null
+                    ? LatLng(
+                        selectedEra!.mapCenterLat!,
+                        selectedEra.mapCenterLng!,
+                      )
+                    : null));
 
-    final defaultMapZoom = state.selectedEraIds.isEmpty
-        ? 6.0
-        : selectedEra?.mapZoom;
+    final defaultMapZoom = usesThreeDimensionalMap
+        ? 3.25
+        : (state.selectedEraIds.isEmpty ? 6.0 : selectedEra?.mapZoom);
     final mapZoom = _initialMapZoomOverride(defaultMapZoom);
     final topInset = MediaQuery.of(context).padding.top;
     // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
@@ -2026,8 +2004,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     const outerMargin = 20.0;
     // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
     final mapCalloutTopObscuredPixels = topInset + 88;
-    final mapTileSource = StoryMapTileStyles.sourceFor(_mapTileStyle);
-
     return Scaffold(
       body: PopScope<Object?>(
         canPop: !_canHandleHomeBack(state),
@@ -2330,8 +2306,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          mapControlButton(
-                            icon: mapTileSource.icon,
+                          mapStyleControlButton(
+                            providerLabel: mapTileSource.providerLabel,
+                            styleLabel: mapTileSource.shortLabel,
                             tooltip: '지도 배경: ${mapTileSource.label}',
                             onTap: _cycleMapTileStyle,
                           ),
@@ -2448,13 +2425,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   ),
                 ),
               ),
-            if (_mapAnimationInputLocked)
-              const Positioned.fill(
-                child: ModalBarrier(
-                  color: Colors.transparent,
-                  dismissible: false,
-                ),
-              ),
             if (state.loading)
               const Positioned.fill(
                 child: ColoredBox(
@@ -2488,13 +2458,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFFFBF5E9), Color(0xFFF6EAD5), Color(0xFFEEDCBE)],
+        colors: [
+          AppColors.dialogTopHighlight,
+          AppColors.parchmentLight,
+          AppColors.parchmentMid,
+        ],
       ),
       borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
       border: Border(
-        top: BorderSide(color: Color(0xFF8C6743), width: 1.15),
-        left: BorderSide(color: Color(0xFF8C6743), width: 1.15),
-        right: BorderSide(color: Color(0xFF8C6743), width: 1.15),
+        top: BorderSide(color: AppColors.brownEdge, width: 1.15),
+        left: BorderSide(color: AppColors.brownEdge, width: 1.15),
+        right: BorderSide(color: AppColors.brownEdge, width: 1.15),
       ),
       boxShadow: [
         BoxShadow(

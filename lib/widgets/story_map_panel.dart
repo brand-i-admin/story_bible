@@ -19,6 +19,7 @@ import '../utils/map_math.dart' as map_math;
 import 'emotion_badge_icon.dart';
 import 'map/era_polygon_glow_layer.dart';
 import 'map/map_tile_style.dart';
+import 'map/story_terrain_3d_map.dart';
 import 'parchment_multiply_layer.dart';
 import 'shared/event_short_popup.dart';
 

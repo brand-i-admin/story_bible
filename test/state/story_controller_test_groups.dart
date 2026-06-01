@@ -209,13 +209,13 @@ void main() {
       expect(c1, isNot(equals(const Color(0x00000000))));
     });
 
-    test('빈 코드면 fallback 갈색 반환', () async {
+    test('빈 코드면 fallback 올리브 브라운 반환', () async {
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => []);
       final container = buildContainer();
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      expect(controller.colorForCharacter(''), const Color(0xFF8E7B61));
+      expect(controller.colorForCharacter(''), const Color(0xFF7E7A63));
     });
   });
 

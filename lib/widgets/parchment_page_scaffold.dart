@@ -33,9 +33,9 @@ class ParchmentPageScaffold extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFFF7EFDE),
-                    Color(0xFFF1DFC4),
-                    Color(0xFFE5CEAA),
+                    AppColors.parchmentLight,
+                    AppColors.parchmentMid,
+                    AppColors.parchmentWarm,
                   ],
                 ),
               ),
@@ -53,7 +53,7 @@ class ParchmentPageScaffold extends StatelessWidget {
                       colors: [
                         Colors.white,
                         Color(0x00FFFFFF),
-                        Color(0x33B7894F),
+                        Color(0x337B9155),
                       ],
                     ),
                   ),
@@ -105,10 +105,10 @@ class ParchmentPageScaffold extends StatelessWidget {
                                   horizontal: 14,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xEEF7E9D1),
+                                  color: AppColors.floatingSurfaceDefault,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: const Color(0xAA8C6743),
+                                    color: AppColors.borderFloating,
                                     width: 1.15,
                                   ),
                                   boxShadow: const [
@@ -153,7 +153,7 @@ class ParchmentCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
-    this.color = const Color(0xF5F7E9D1),
+    this.color = AppColors.floatingSurfaceDefault,
   });
 
   final Widget child;
@@ -167,7 +167,7 @@ class ParchmentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xAA8C6743), width: 1.15),
+        border: Border.all(color: AppColors.borderFloating, width: 1.15),
         boxShadow: const [
           BoxShadow(
             color: Color(0x18000000),
@@ -204,7 +204,7 @@ class _HeaderButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? const Color(0xD06A401E) : const Color(0xB02A2118),
+            color: selected ? AppColors.brownWarm2 : AppColors.ink800,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: selected ? AppColors.goldRim : const Color(0xBFD8BF99),
