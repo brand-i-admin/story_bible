@@ -13,6 +13,6 @@
         android:gravity="center">
         <bitmap
             android:gravity="fill"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/story_bible_splash_logo" />
     </item>
 </layer-list>

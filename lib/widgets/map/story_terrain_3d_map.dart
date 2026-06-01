@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -141,8 +142,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _boundsSouth = -8.0;
   static const _boundsEast = 64.0;
   static const _boundsNorth = 50.5;
+  static const _initialLoadTimeoutDuration = Duration(seconds: 20);
 
   late final WebViewController _controller;
+  Timer? _initialLoadTimeout;
   String? _lastRendererSignature;
   String? _lastCameraSignature;
   String? _lastOverlaySignature;
@@ -175,12 +178,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onWebResourceError: (error) {
-            debugPrint(
-              '[Map3D] resource error ${error.errorCode}: ${error.description}',
-            );
-            if (mounted) {
-              setState(() => _hasError = true);
-            }
+            _handleWebResourceError(error);
           },
         ),
       );
@@ -199,6 +197,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
   @override
   void dispose() {
+    _initialLoadTimeout?.cancel();
     widget.controller?._unbind(this);
     super.dispose();
   }
@@ -249,6 +248,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         case 'ready':
           debugPrint('[Map3D] ready: ${widget.source.label}');
           _mapReady = true;
+          _initialLoadTimeout?.cancel();
+          if (_hasError && mounted) {
+            setState(() => _hasError = false);
+          }
           widget.onMapReady?.call();
           _flushPendingCameraPayload();
           _flushPendingOverlayPayload();
@@ -331,6 +334,37 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       _buildHtml(),
       baseUrl: 'https://story-bible.local',
     );
+    _armInitialLoadTimeout();
+  }
+
+  void _handleWebResourceError(WebResourceError error) {
+    debugPrint(
+      '[Map3D] resource error ${error.errorCode}: ${error.description} '
+      '(type: ${error.errorType}, mainFrame: ${error.isForMainFrame}, '
+      'url: ${error.url ?? 'unknown'})',
+    );
+
+    if (_mapReady) {
+      return;
+    }
+
+    // Tile and stylesheet requests can fail or be cancelled while MapLibre is
+    // still recovering. Surface only a main-frame failure immediately; otherwise
+    // let the readiness timeout decide whether the map truly failed to start.
+    if (error.isForMainFrame == true && mounted) {
+      _initialLoadTimeout?.cancel();
+      setState(() => _hasError = true);
+    }
+  }
+
+  void _armInitialLoadTimeout() {
+    _initialLoadTimeout?.cancel();
+    _initialLoadTimeout = Timer(_initialLoadTimeoutDuration, () {
+      if (!mounted || _mapReady) {
+        return;
+      }
+      setState(() => _hasError = true);
+    });
   }
 
   static bool _hasTerrainSource(StoryMapTileSource source) {

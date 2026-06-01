@@ -227,5 +227,21 @@ void main() {
         contains('onClose: () {\n            _suppressMapTaps();'),
       );
     });
+
+    test('subresource errors do not show the 3D map failure overlay', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('void _handleWebResourceError'));
+      expect(source, contains('mainFrame: \${error.isForMainFrame}'));
+      expect(source, contains('url: \${error.url ?? '));
+      expect(source, contains('if (_mapReady) {'));
+      expect(source, contains('if (error.isForMainFrame == true && mounted)'));
+      expect(source, contains('void _armInitialLoadTimeout()'));
+      expect(source, contains('_initialLoadTimeoutDuration'));
+      expect(source, contains('if (!mounted || _mapReady)'));
+      expect(source, contains("setState(() => _hasError = false);"));
+    });
   });
 }

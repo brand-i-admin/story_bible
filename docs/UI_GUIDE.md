@@ -109,6 +109,9 @@ Marker 로 띄워 기본 지도의 영어/현지어 label layer 와 분리한다
 오버레이는 유지한다. WebView 는 renderer 설정이 바뀔 때만 새로 로드하고, 카메라
 이동과 시대/지역/사건 선택 변화는 JS `easeTo()` 및 GeoJSON `setData()` 로 갱신해
 반복 로딩 overlay 를 피한다.
+확대/이동 중 일부 타일이나 서브리소스 요청이 실패·취소되어도 지도 실패 팝업을
+띄우지 않고 debug 로그로만 남긴다. 초기 로딩에서 MapLibre `ready` 신호가 일정 시간
+오지 않거나 main frame 이 실패한 경우에만 지도 실패 안내를 표시한다.
 기본 지도 style 의 symbol label layer 를 숨겨 영어/현지어 지명 대신 앱이 직접
 올리는 한국어 국가/region 라벨과 사건 핀만 보이게 한다.
 3D 첫 화면은 하단 선택 시트에 사우디아라비아와 걸프 지역이 가려지지 않도록
@@ -284,3 +287,4 @@ GeoJSON fill/border layer 에서 직접 그린다. 이전 Flutter `CustomPainter
 | 장면 이미지 | `assets/story_images/` (4장/이벤트) | `assets/story_images_thumbs/` | PNG |
 | UI 장식 | `assets/elements/` | — | PNG |
 | 지도 | `assets/maps/` (GeoJSON) | — | GeoJSON |
+| Android 런치 로고 | `assets/app_icon/story_bible_icon_opaque.png` 원본 → `android/app/src/main/res/drawable-nodpi/story_bible_splash_logo.png` | — | PNG 1024px |
