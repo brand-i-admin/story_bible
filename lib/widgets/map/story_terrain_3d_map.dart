@@ -90,6 +90,10 @@ class StoryTerrain3dMapController {
 
   void zoomOut() => _state?._zoomBy(-0.7);
 
+  void suppressTapFor([
+    Duration duration = const Duration(milliseconds: 650),
+  ]) => _state?._suppressTapFor(duration);
+
   void moveTo(
     LatLng center,
     double zoom, {
@@ -288,6 +292,12 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'orderedEventsActive': widget.orderedEventsActive,
       'regionPickerMode': widget.regionPickerMode,
       'selectedCharacters': widget.selectedCharacterCodes.toList()..sort(),
+      'selectedCharacterColors':
+          (widget.selectedCharacterCodes.toList()..sort())
+              .map(
+                (code) => '$code:${_cssColor(widget.colorForCharacter(code))}',
+              )
+              .toList(growable: false),
       'emotions':
           widget.eventEmotionMarks.entries
               .map(
@@ -330,8 +340,23 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     final encodedDelta = jsonEncode(delta);
     _controller.runJavaScript('''
       if (window.storyBibleMap) {
+        if (window.storyBibleSuppressMapTap) {
+          window.storyBibleSuppressMapTap(650);
+        }
         const nextZoom = Math.max($_minZoom, Math.min($_maxZoom, window.storyBibleMap.getZoom() + $encodedDelta));
         window.storyBibleMap.easeTo({ zoom: nextZoom, duration: 420 });
+      }
+    ''');
+  }
+
+  void _suppressTapFor(Duration duration) {
+    if (!_mapReady) {
+      return;
+    }
+    final millis = duration.inMilliseconds;
+    _controller.runJavaScript('''
+      if (window.storyBibleSuppressMapTap) {
+        window.storyBibleSuppressMapTap($millis);
       }
     ''');
   }
@@ -723,10 +748,37 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     map.on('styledata', hideBaseLabelLayers);
 
     const sendInteraction = () => post({ type: 'mapInteraction' });
-    map.on('dragstart', sendInteraction);
-    map.on('zoomstart', sendInteraction);
-    map.on('rotatestart', sendInteraction);
-    map.on('pitchstart', sendInteraction);
+    let suppressMapTapUntil = 0;
+    const suppressMapTap = (durationMs = 650) => {
+      const duration = Number.isFinite(Number(durationMs)) ? Number(durationMs) : 650;
+      suppressMapTapUntil = Math.max(suppressMapTapUntil, performance.now() + duration);
+    };
+    const isMapTapSuppressed = () => performance.now() < suppressMapTapUntil;
+    window.storyBibleSuppressMapTap = suppressMapTap;
+    const eventUsesModifierKey = (event) => {
+      const source = event && (event.originalEvent || event);
+      return Boolean(source && (source.altKey || source.metaKey || source.ctrlKey || source.shiftKey));
+    };
+    const isMapControlTarget = (target) => {
+      return Boolean(target && target.closest && target.closest('.maplibregl-ctrl'));
+    };
+    const sendGestureInteraction = (event) => {
+      suppressMapTap(eventUsesModifierKey(event) ? 950 : 650);
+      sendInteraction();
+    };
+    map.on('dragstart', sendGestureInteraction);
+    map.on('zoomstart', sendGestureInteraction);
+    map.on('rotatestart', sendGestureInteraction);
+    map.on('pitchstart', sendGestureInteraction);
+    map.on('boxzoomstart', sendGestureInteraction);
+    map.getContainer().addEventListener('pointerdown', (event) => {
+      if (eventUsesModifierKey(event) || isMapControlTarget(event.target)) {
+        suppressMapTap(950);
+      }
+    }, { capture: true, passive: true });
+    map.getCanvas().addEventListener('wheel', (event) => {
+      suppressMapTap(eventUsesModifierKey(event) ? 950 : 650);
+    }, { passive: true });
 
     const overlay = $overlayPayload;
     const eventMarkers = new Map();
@@ -823,12 +875,14 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       }
     };
     const postEventMarkerTap = (id) => {
+      if (isMapTapSuppressed()) return;
       const now = performance.now();
       if (now - lastDomEventTapAt < 280) return;
       lastDomEventTapAt = now;
       post({ type: 'eventTap', id });
     };
     const postLandmarkMarkerTap = (id) => {
+      if (isMapTapSuppressed()) return;
       const now = performance.now();
       if (now - lastDomLandmarkTapAt < 280) return;
       lastDomLandmarkTapAt = now;
@@ -1176,9 +1230,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           'line-join': 'round'
         },
         paint: {
-          'line-color': '#776243',
-          'line-opacity': 0.82,
+          'line-color': ['case', ['has', 'color'], ['get', 'color'], '#776243'],
+          'line-opacity': ['case', ['has', 'opacity'], ['get', 'opacity'], 0.82],
           'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2.2, 8, 3.0, 12, 3.8],
+          'line-offset': ['case', ['has', 'offset'], ['get', 'offset'], 0],
           'line-dasharray': [1.2, 0.95]
         }
       });
@@ -1403,6 +1458,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         return pick;
       };
       const handleMapTapPoint = (point, lngLat) => {
+        if (isMapTapSuppressed()) return;
         const eventFeature = map.queryRenderedFeatures(point, {
           layers: ['story-bible-event-hit']
         })[0];
@@ -1421,22 +1477,51 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       };
       let lastPointerTapAt = 0;
       map.on('click', (event) => {
+        if (eventUsesModifierKey(event) || isMapControlTarget(event.originalEvent && event.originalEvent.target)) {
+          suppressMapTap(950);
+          return;
+        }
+        if (isMapTapSuppressed()) return;
         if (performance.now() - lastPointerTapAt < 320) return;
         handleMapTapPoint(event.point, event.lngLat);
       });
       let pointerDownPoint = null;
       map.getCanvas().addEventListener('pointerdown', (event) => {
+        if (eventUsesModifierKey(event)) {
+          pointerDownPoint = null;
+          suppressMapTap(950);
+          return;
+        }
         pointerDownPoint = { x: event.clientX, y: event.clientY };
+      }, { passive: true });
+      map.getCanvas().addEventListener('pointermove', (event) => {
+        if (!pointerDownPoint) return;
+        const dx = event.clientX - pointerDownPoint.x;
+        const dy = event.clientY - pointerDownPoint.y;
+        if (Math.sqrt(dx * dx + dy * dy) > 8) {
+          suppressMapTap(650);
+        }
       }, { passive: true });
       map.getCanvas().addEventListener('pointerup', (event) => {
         if (!pointerDownPoint) return;
         const dx = event.clientX - pointerDownPoint.x;
         const dy = event.clientY - pointerDownPoint.y;
         pointerDownPoint = null;
-        if (Math.sqrt(dx * dx + dy * dy) > 8) return;
+        if (eventUsesModifierKey(event) || isMapTapSuppressed()) {
+          suppressMapTap(950);
+          return;
+        }
+        if (Math.sqrt(dx * dx + dy * dy) > 8) {
+          suppressMapTap(650);
+          return;
+        }
         lastPointerTapAt = performance.now();
         const point = [event.offsetX, event.offsetY];
         handleMapTapPoint(point, map.unproject(point));
+      }, { passive: true });
+      map.getCanvas().addEventListener('pointercancel', () => {
+        pointerDownPoint = null;
+        suppressMapTap(650);
       }, { passive: true });
       map.on('mouseenter', 'story-bible-region-hit', () => map.getCanvas().style.cursor = 'pointer');
       map.on('mouseleave', 'story-bible-region-hit', () => map.getCanvas().style.cursor = '');
@@ -1720,22 +1805,70 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return {'type': 'FeatureCollection', 'features': const []};
     }
     final points = _eventPointMap(includeHidden: false);
-    final coordinates = visibleEvents
+    List<List<double>> coordinatesFor(List<StoryEvent> events) => events
         .map((event) {
           final point = points[event.id] ?? event.latLng;
           return [point.longitude, point.latitude];
         })
         .toList(growable: false);
-    return {
-      'type': 'FeatureCollection',
-      'features': [
-        {
-          'type': 'Feature',
-          'geometry': {'type': 'LineString', 'coordinates': coordinates},
-          'properties': const {},
+
+    Map<String, Object> featureFor({
+      required List<StoryEvent> events,
+      required Map<String, Object> properties,
+    }) {
+      return {
+        'type': 'Feature',
+        'geometry': {
+          'type': 'LineString',
+          'coordinates': coordinatesFor(events),
         },
-      ],
-    };
+        'properties': properties,
+      };
+    }
+
+    final selectedCodes = widget.selectedCharacterCodes.toList()..sort();
+    final features = <Map<String, Object>>[];
+    if (selectedCodes.isNotEmpty) {
+      final characterEventPaths = <MapEntry<String, List<StoryEvent>>>[];
+      for (final code in selectedCodes) {
+        final characterEvents = visibleEvents
+            .where((event) => event.characterCodes.contains(code))
+            .toList(growable: false);
+        if (characterEvents.length < 2) {
+          continue;
+        }
+        characterEventPaths.add(MapEntry(code, characterEvents));
+      }
+      final midpoint = (characterEventPaths.length - 1) / 2;
+      for (var i = 0; i < characterEventPaths.length; i += 1) {
+        final path = characterEventPaths[i];
+        features.add(
+          featureFor(
+            events: path.value,
+            properties: {
+              'characterCode': path.key,
+              'color': _cssColor(widget.colorForCharacter(path.key)),
+              'opacity': 0.84,
+              'offset': (i - midpoint) * 2.8,
+            },
+          ),
+        );
+      }
+    }
+    if (features.isEmpty) {
+      features.add(
+        featureFor(
+          events: visibleEvents,
+          properties: const {
+            'characterCode': '',
+            'color': '#776243',
+            'opacity': 0.82,
+            'offset': 0.0,
+          },
+        ),
+      );
+    }
+    return {'type': 'FeatureCollection', 'features': features};
   }
 
   Map<String, Object> _landmarkFeatureCollection() {

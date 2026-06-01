@@ -35,5 +35,50 @@ void main() {
         expect(methodBody, contains('_eventRevealCount = count;'));
       },
     );
+
+    test('event path uses selected character colors', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains("'line-color': ['case', ['has', 'color']"));
+      expect(source, contains("'line-offset': ['case', ['has', 'offset']"));
+      expect(source, contains("'characterCode': path.key"));
+      expect(
+        source,
+        contains("'color': _cssColor(widget.colorForCharacter(path.key))"),
+      );
+    });
+
+    test('map taps are suppressed during gestures and panel touches', () {
+      final mapSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+      final panelSource = File(
+        'lib/widgets/story_map_panel_state.dart',
+      ).readAsStringSync();
+      final homeSource = File(
+        'lib/screens/story_home_screen_state.dart',
+      ).readAsStringSync();
+
+      expect(mapSource, contains('window.storyBibleSuppressMapTap'));
+      expect(mapSource, contains('const isMapTapSuppressed'));
+      expect(mapSource, contains('eventUsesModifierKey(event)'));
+      expect(mapSource, contains("target.closest('.maplibregl-ctrl')"));
+      expect(panelSource, contains('onPointerDown: (_) => _suppressMapTaps()'));
+      expect(
+        panelSource,
+        contains('onPointerSignal: (_) => _suppressMapTaps()'),
+      );
+      expect(homeSource, contains('void _suppressMapTaps(['));
+      expect(
+        homeSource,
+        contains("key: const ValueKey<String>('selection-sheet')"),
+      );
+      expect(
+        homeSource,
+        contains('onPointerSignal: (_) => _suppressMapTaps()'),
+      );
+    });
   });
 }

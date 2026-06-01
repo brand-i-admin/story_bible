@@ -270,7 +270,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
           if (widget.bottomOverlay != null)
             Align(
               alignment: Alignment.bottomCenter,
-              child: widget.bottomOverlay!,
+              child: Listener(
+                behavior: HitTestBehavior.translucent,
+                onPointerDown: (_) => _suppressMapTaps(),
+                onPointerMove: (_) =>
+                    _suppressMapTaps(const Duration(milliseconds: 350)),
+                onPointerSignal: (_) => _suppressMapTaps(),
+                child: widget.bottomOverlay!,
+              ),
             ),
           if (widget.selectedCharacterCodes.isNotEmpty)
             Align(
@@ -312,6 +319,12 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   void _handle3dEventTap(String eventId) {
     widget.onSelectEvent(eventId);
     widget.onOpenDetail?.call(eventId);
+  }
+
+  void _suppressMapTaps([
+    Duration duration = const Duration(milliseconds: 650),
+  ]) {
+    _terrain3dController.suppressTapFor(duration);
   }
 
   /// 랜드마크 탭 처리. onLandmarkTap 콜백 (popup) 호출.

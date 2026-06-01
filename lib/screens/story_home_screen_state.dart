@@ -423,6 +423,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
+  void _suppressMapTaps([
+    Duration duration = const Duration(milliseconds: 650),
+  ]) {
+    _mapPanelController.suppressMapTaps(duration);
+  }
+
   /// 새 단계로 들어갔거나 mode 가 바뀌었을 때 hint 를 다시 보여 줄 수 있도록
   /// dismiss flag 를 reset. setState 안에서 호출해야 build 에 반영된다.
   void _resetMapHint() {
@@ -2088,94 +2094,111 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       // spacer 를 두어 컨텐츠를 nav bar 위로 띄운다.
                       // (gesture-only 단말은 bottomInset=0 이라 기존과 동일한 동작.)
                       bottom: 0,
-                      child: AnimatedContainer(
-                        key: const ValueKey<String>('selection-sheet'),
-                        duration: const Duration(milliseconds: 280),
-                        curve: Curves.easeOutCubic,
-                        height: sheetHeight + bottomInset,
-                        child: _mode == _SelectionMode.region
-                            ? _buildRegionPanel(state, bottomInset)
-                            : (_mode == null && _selectionStep == 1)
-                            ? _buildHomeIntroPanel(state, bottomInset)
-                            : StorySelectionPanel(
-                                scrollController:
-                                    _selectionPanelScrollController,
-                                step: _selectionStep,
-                                panelStage: _selectionPanelStage,
-                                // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
-                                headerOverride: _panelStageHandle(),
-                                // step 2 인물 카드의 "사건 N개" 카운트 source.
-                                eraEvents: state.events,
-                                onStepUp: _stepSelectionPanelUp,
-                                onStepDown: _stepSelectionPanelDown,
-                                canOpenStep: (step) =>
-                                    _canOpenSelectionStep(step, state),
-                                onSelectStep: (step) =>
-                                    _goToSelectionStep(step),
-                                eras: testamentEras,
-                                selectedEraId: state.selectedEraId,
-                                selectedTestament: state.selectedTestament,
-                                onSelectEra: (eraId) {
-                                  _handleStepEraSelect(eraId);
-                                },
-                                onSelectTestament: (testament) {
-                                  _handleStepTestamentSelect(testament);
-                                },
-                                characters: state.characters,
-                                characterSortMode: _characterSortMode,
-                                onCharacterSortModeChanged: (mode) {
-                                  setState(() {
-                                    _characterSortMode = mode;
-                                  });
-                                },
-                                draftSelectedCharacterCodes:
-                                    _sanitizeDraftSelectedCharacterCodes(state),
-                                onToggleDraftCharacter: _toggleDraftCharacter,
-                                committedSelectedCharacterCodes:
-                                    state.selectedCharacterCodes,
-                                hasPendingCharacterChanges:
-                                    _hasPendingCharacterSelectionChanges(state),
-                                colorForDraftCharacter: (characterId) =>
-                                    _colorForDraftCharacter(characterId, state),
-                                colorForCommittedCharacter:
-                                    controller.colorForCharacter,
-                                events: characterTimeline,
-                                completedEventIds: state.completedEventIds,
-                                eventEmotionMarks: state.eventEmotionMarks,
-                                quizAttemptSummaries:
-                                    state.quizAttemptSummaries,
-                                celebrationEventId: _mapCelebrationEventId,
-                                celebrationStampLabel:
-                                    _mapCelebrationStampLabel,
-                                celebrationNonce: _mapCelebrationNonce,
-                                onCelebrationComplete:
-                                    _mapCelebrationCompleteCallback(),
-                                quizReviewEventIds: quizReviewEventIds,
-                                quizConfusedEventIds: quizConfusedEventIds,
-                                draftDisplayedEventIds: sanitizedDraftDisplayed,
-                                committedDisplayedEventIds:
-                                    state.displayedEventIds,
-                                onToggleDisplayedEvent:
-                                    _toggleDraftDisplayedEvent,
-                                onSelectAllDisplayedEvents: () =>
-                                    _selectAllDraftDisplayedEvents(
-                                      characterTimeline,
-                                    ),
-                                onDeselectAllDisplayedEvents:
-                                    _deselectAllDraftDisplayedEvents,
-                                onCommitDisplayedEvents: _proceedFromStoryStep,
-                                onNextFromEra: _proceedFromEraStep,
-                                onNextFromCharacters: _proceedFromCharacterStep,
-                                onOpenEventDetail: (event) {
-                                  ref
-                                      .read(storyControllerProvider.notifier)
-                                      .selectEvent(event.id);
-                                  _openEventDetailPage(event);
-                                },
-                                // 지도 핀 클릭 등으로 controller 가 가진 현재
-                                // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
-                                currentSelectedEventId: state.selectedEventId,
-                              ),
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) => _suppressMapTaps(),
+                        onPointerMove: (_) =>
+                            _suppressMapTaps(const Duration(milliseconds: 350)),
+                        onPointerSignal: (_) => _suppressMapTaps(),
+                        child: AnimatedContainer(
+                          key: const ValueKey<String>('selection-sheet'),
+                          duration: const Duration(milliseconds: 280),
+                          curve: Curves.easeOutCubic,
+                          height: sheetHeight + bottomInset,
+                          child: _mode == _SelectionMode.region
+                              ? _buildRegionPanel(state, bottomInset)
+                              : (_mode == null && _selectionStep == 1)
+                              ? _buildHomeIntroPanel(state, bottomInset)
+                              : StorySelectionPanel(
+                                  scrollController:
+                                      _selectionPanelScrollController,
+                                  step: _selectionStep,
+                                  panelStage: _selectionPanelStage,
+                                  // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
+                                  headerOverride: _panelStageHandle(),
+                                  // step 2 인물 카드의 "사건 N개" 카운트 source.
+                                  eraEvents: state.events,
+                                  onStepUp: _stepSelectionPanelUp,
+                                  onStepDown: _stepSelectionPanelDown,
+                                  canOpenStep: (step) =>
+                                      _canOpenSelectionStep(step, state),
+                                  onSelectStep: (step) =>
+                                      _goToSelectionStep(step),
+                                  eras: testamentEras,
+                                  selectedEraId: state.selectedEraId,
+                                  selectedTestament: state.selectedTestament,
+                                  onSelectEra: (eraId) {
+                                    _handleStepEraSelect(eraId);
+                                  },
+                                  onSelectTestament: (testament) {
+                                    _handleStepTestamentSelect(testament);
+                                  },
+                                  characters: state.characters,
+                                  characterSortMode: _characterSortMode,
+                                  onCharacterSortModeChanged: (mode) {
+                                    setState(() {
+                                      _characterSortMode = mode;
+                                    });
+                                  },
+                                  draftSelectedCharacterCodes:
+                                      _sanitizeDraftSelectedCharacterCodes(
+                                        state,
+                                      ),
+                                  onToggleDraftCharacter: _toggleDraftCharacter,
+                                  committedSelectedCharacterCodes:
+                                      state.selectedCharacterCodes,
+                                  hasPendingCharacterChanges:
+                                      _hasPendingCharacterSelectionChanges(
+                                        state,
+                                      ),
+                                  colorForDraftCharacter: (characterId) =>
+                                      _colorForDraftCharacter(
+                                        characterId,
+                                        state,
+                                      ),
+                                  colorForCommittedCharacter:
+                                      controller.colorForCharacter,
+                                  events: characterTimeline,
+                                  completedEventIds: state.completedEventIds,
+                                  eventEmotionMarks: state.eventEmotionMarks,
+                                  quizAttemptSummaries:
+                                      state.quizAttemptSummaries,
+                                  celebrationEventId: _mapCelebrationEventId,
+                                  celebrationStampLabel:
+                                      _mapCelebrationStampLabel,
+                                  celebrationNonce: _mapCelebrationNonce,
+                                  onCelebrationComplete:
+                                      _mapCelebrationCompleteCallback(),
+                                  quizReviewEventIds: quizReviewEventIds,
+                                  quizConfusedEventIds: quizConfusedEventIds,
+                                  draftDisplayedEventIds:
+                                      sanitizedDraftDisplayed,
+                                  committedDisplayedEventIds:
+                                      state.displayedEventIds,
+                                  onToggleDisplayedEvent:
+                                      _toggleDraftDisplayedEvent,
+                                  onSelectAllDisplayedEvents: () =>
+                                      _selectAllDraftDisplayedEvents(
+                                        characterTimeline,
+                                      ),
+                                  onDeselectAllDisplayedEvents:
+                                      _deselectAllDraftDisplayedEvents,
+                                  onCommitDisplayedEvents:
+                                      _proceedFromStoryStep,
+                                  onNextFromEra: _proceedFromEraStep,
+                                  onNextFromCharacters:
+                                      _proceedFromCharacterStep,
+                                  onOpenEventDetail: (event) {
+                                    ref
+                                        .read(storyControllerProvider.notifier)
+                                        .selectEvent(event.id);
+                                    _openEventDetailPage(event);
+                                  },
+                                  // 지도 핀 클릭 등으로 controller 가 가진 현재
+                                  // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
+                                  currentSelectedEventId: state.selectedEventId,
+                                ),
+                        ),
                       ),
                     ),
                     // 우측 사이드: 줌 +/- 만 (stepper 는 시트 헤더로 이동).
@@ -2183,28 +2206,33 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     Positioned(
                       right: outerMargin,
                       top: topInset + 90,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          mapControlButton(
-                            icon: Icons.add,
-                            tooltip: '확대',
-                            onTap: _mapPanelController.zoomIn,
-                          ),
-                          const SizedBox(height: 6),
-                          mapControlButton(
-                            icon: Icons.remove,
-                            tooltip: '축소',
-                            onTap: _mapPanelController.zoomOut,
-                          ),
-                          const SizedBox(height: 6),
-                          // 지도 출처/라이선스 — 운영 3D 지도 attribution 의무 충족.
-                          mapControlButton(
-                            icon: Icons.info_outline,
-                            tooltip: '지도 출처',
-                            onTap: _showMapAttributionDialog,
-                          ),
-                        ],
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) => _suppressMapTaps(),
+                        onPointerSignal: (_) => _suppressMapTaps(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            mapControlButton(
+                              icon: Icons.add,
+                              tooltip: '확대',
+                              onTap: _mapPanelController.zoomIn,
+                            ),
+                            const SizedBox(height: 6),
+                            mapControlButton(
+                              icon: Icons.remove,
+                              tooltip: '축소',
+                              onTap: _mapPanelController.zoomOut,
+                            ),
+                            const SizedBox(height: 6),
+                            // 지도 출처/라이선스 — 운영 3D 지도 attribution 의무 충족.
+                            mapControlButton(
+                              icon: Icons.info_outline,
+                              tooltip: '지도 출처',
+                              onTap: _showMapAttributionDialog,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     // 세로 모드: 4개 핵심 버튼 + 알림/Aa/이야기등록을
