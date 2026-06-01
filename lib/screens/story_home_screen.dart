@@ -29,6 +29,7 @@ import '../widgets/bible_reader_page.dart';
 import '../widgets/character_panel.dart';
 import '../widgets/completion_celebration.dart';
 import '../widgets/event_detail_page.dart';
+import '../widgets/map/map_tile_style.dart';
 import '../widgets/notification/notification_bell_button.dart';
 import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';

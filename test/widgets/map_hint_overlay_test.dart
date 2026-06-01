@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -21,5 +23,21 @@ void main() {
     expect(find.text('노란 지역을 눌러 그곳의 사건을 보세요.'), findsOneWidget);
     expect(find.byIcon(Icons.hourglass_top_rounded), findsOneWidget);
     expect(find.byIcon(Icons.touch_app_outlined), findsNothing);
+  });
+
+  test('mode entry keeps the hint visible through the triggering tap', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('DateTime? _mapHintDismissIgnoredUntil;'));
+    expect(
+      source,
+      contains(
+        'if (ignoredUntil != null && DateTime.now().isBefore(ignoredUntil))',
+      ),
+    );
+    expect(source, contains('const Duration(milliseconds: 650)'));
+    expect(source, contains('_resetMapHint();'));
   });
 }

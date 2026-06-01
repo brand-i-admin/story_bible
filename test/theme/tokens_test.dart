@@ -8,21 +8,21 @@ import 'package:story_bible/theme/tokens.dart';
 
 void main() {
   group('AppColors', () {
-    test('parchment 베이스가 colors_and_type.css와 일치한다', () {
-      expect(AppColors.parchmentBg, const Color(0xFFEEE0C6));
-      expect(AppColors.parchmentLight, const Color(0xFFF8F1E4));
-      expect(AppColors.parchmentCard, const Color(0xFFF7EBD8));
+    test('parchment 베이스가 3D 지형 톤과 일치한다', () {
+      expect(AppColors.parchmentBg, const Color(0xFFE8E6D8));
+      expect(AppColors.parchmentLight, const Color(0xFFF8F4E7));
+      expect(AppColors.parchmentCard, const Color(0xFFF2EAD8));
     });
 
-    test('브라운 잉크 스파인이 어두운 → 밝은 순서로 배치된다', () {
-      expect(AppColors.ink900, const Color(0xFF2A2118));
-      expect(AppColors.ink700, const Color(0xFF3E2723));
-      expect(AppColors.ink100, const Color(0xFF8E6F48));
+    test('올리브 잉크 스파인이 어두운 → 밝은 순서로 배치된다', () {
+      expect(AppColors.ink900, const Color(0xFF22271D));
+      expect(AppColors.ink700, const Color(0xFF33331F));
+      expect(AppColors.ink100, const Color(0xFF8A7E5E));
     });
 
     test('브랜드 액센트 시드/골드가 일치한다', () {
-      expect(AppColors.seed, const Color(0xFF8B5A2B));
-      expect(AppColors.gold, const Color(0xFFD4A439));
+      expect(AppColors.seed, const Color(0xFF5F7040));
+      expect(AppColors.gold, const Color(0xFFC69B3F));
     });
 
     test('인물 팔레트는 8색이고 i % 8로 순환한다', () {
@@ -36,31 +36,31 @@ void main() {
       expect(AppColors.characterAt(-9), AppColors.characters[1]);
     });
 
-    test('인물 팔레트 8색이 출처 CSS와 정확히 일치한다', () {
+    test('인물 팔레트 8색이 3D 지형 톤과 정확히 일치한다', () {
       expect(AppColors.characters, const <Color>[
-        Color(0xFF3B6C94),
-        Color(0xFFB6673C),
-        Color(0xFF557C3E),
-        Color(0xFF8A4E5D),
-        Color(0xFF616161),
-        Color(0xFF9E7C24),
-        Color(0xFF7B5D43),
-        Color(0xFF5C6B9F),
+        Color(0xFF2F6F88),
+        Color(0xFFA7633A),
+        Color(0xFF5F7D3B),
+        Color(0xFF965C62),
+        Color(0xFF5E665A),
+        Color(0xFFB28A2E),
+        Color(0xFF776243),
+        Color(0xFF4F7F85),
       ]);
     });
 
-    test('상태색(완료/위험)이 출처 CSS와 일치한다', () {
-      expect(AppColors.greenTop, const Color(0xFF48A86B));
-      expect(AppColors.greenBot, const Color(0xFF2D7B4D));
+    test('상태색(완료/위험)이 현재 톤과 일치한다', () {
+      expect(AppColors.greenTop, const Color(0xFF6FA76D));
+      expect(AppColors.greenBot, const Color(0xFF477D52));
       expect(AppColors.dangerTop, const Color(0xFFD97C60));
       expect(AppColors.dangerBot, const Color(0xFFB4583B));
     });
 
     test('characterFallback과 표면 보더 토큰이 정의된다', () {
-      expect(AppColors.characterFallback, const Color(0xFF8E7B61));
-      expect(AppColors.borderModalDialog, const Color(0xC29E7A4C));
-      expect(AppColors.borderFloating, const Color(0xB88E6F48));
-      expect(AppColors.borderCard, const Color(0xB58E6F48));
+      expect(AppColors.characterFallback, const Color(0xFF7E7A63));
+      expect(AppColors.borderModalDialog, const Color(0xC285805D));
+      expect(AppColors.borderFloating, const Color(0xB88A7E5E));
+      expect(AppColors.borderCard, const Color(0xB58A7E5E));
     });
   });
 

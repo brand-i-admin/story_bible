@@ -2,8 +2,7 @@
 <resources>
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowSplashScreenBackground">#181838</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <item name="android:postSplashScreenTheme">@style/NormalTheme</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/story_bible_splash_logo</item>
     </style>
 
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">

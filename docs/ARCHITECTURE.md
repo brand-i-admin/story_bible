@@ -178,8 +178,7 @@ story_home_screen.dart (메인 화면 — 모든 것의 허브)
   │     ├── selection/panel_chrome.dart     (part)
   │     ├── selection/step_chip.dart        (part)
   │     └── selection/selection_cards.dart  (part)
-  ├── StoryMapPanel         → flutter_map 지도 + 핀/마커
-  │     └── map/pin_marker.dart            (part)
+  ├── StoryMapPanel         → StoryTerrain3dMap(MapLibre/OpenFreeMap 3D) + Flutter overlay
   ├── WeeklyTabPage         → 주간 인물 학습
   │     ├── weekly/weekly_avatar.dart      (part)
   │     └── weekly/weekly_list_panel.dart  (part)

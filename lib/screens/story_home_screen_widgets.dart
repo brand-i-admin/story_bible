@@ -1255,7 +1255,9 @@ class _StepPill extends StatelessWidget {
   }
 }
 
-/// 앱 전반의 수채화 톤에 맞춘 landmark 정보 팝업.
+/// 양피지 두루마리(scroll) 형식 landmark 팝업.
+/// 가로로 펼치는 unfurl 애니메이션 → 콘텐츠 fade-in.
+/// 좌·우 끝 어두운 갈색 cylindrical curl + 가운데 양피지 cream panel.
 class _LandmarkScrollDialog extends StatefulWidget {
   const _LandmarkScrollDialog({required this.landmark, required this.onClose});
   final Landmark landmark;

@@ -15,7 +15,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w900,
     height: AppLineHeights.snug,
     color: AppColors.ink700,
-    letterSpacing: -0.28,
+    letterSpacing: 0,
   );
 
   static const TextStyle h2 = TextStyle(

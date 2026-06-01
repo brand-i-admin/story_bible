@@ -333,25 +333,6 @@ begin
 end $$;
 create index if not exists idx_events_landmark on events (landmark_id);
 
--- ----------------------------------------------------------------------------
--- era_boundaries: 시대별 거친 지리 영역 (지도 위 반투명 폴리곤)
--- ----------------------------------------------------------------------------
--- 사용자가 시대를 선택했을 때 그 시대 이야기가 펼쳐진 영역을 색깔 폴리곤으로
--- 보여 준다. 한 시대가 분리된 지역(예: 메소포타미아 + 가나안)을 포함하면
--- 여러 행으로 표현. polygon 은 jsonb 배열 [[lat, lng], [lat, lng], ...].
-create table if not exists era_boundaries (
-  id uuid primary key default gen_random_uuid(),
-  era_id uuid not null references eras(id) on delete cascade,
-  polygon_index int not null default 0,
-  polygon jsonb not null,
-  color text not null default '#FF8800',
-  fill_opacity numeric(3,2) not null default 0.18,
-  display_order int not null default 0,
-  created_at timestamptz not null default now(),
-  unique (era_id, polygon_index)
-);
-create index if not exists idx_era_boundaries_era on era_boundaries (era_id);
-
 -- Era 내 story_index 정렬 결과를 1..N rank 로 노출.
 -- 어드민/외부 기여로 새 이야기가 끼어들어도 view 가 자동으로 재계산된다.
 -- deleted_at IS NULL 필터를 걸어 soft-deleted 이야기는 앱 전체에서 제외된다.
@@ -901,7 +882,6 @@ grant select on table eras to anon, authenticated;
 grant select on table characters to anon, authenticated;
 grant select on table events to anon, authenticated;
 grant select on table landmarks to anon, authenticated;
-grant select on table era_boundaries to anon, authenticated;
 grant select on table bible_verses to anon, authenticated;
 grant select on table quiz_questions to anon, authenticated;
 grant select on table daily_quiz to anon, authenticated;
@@ -923,7 +903,6 @@ alter table eras enable row level security;
 alter table characters enable row level security;
 alter table events enable row level security;
 alter table landmarks enable row level security;
-alter table era_boundaries enable row level security;
 alter table bible_verses enable row level security;
 alter table quiz_questions enable row level security;
 alter table daily_quiz enable row level security;
@@ -949,9 +928,6 @@ create policy events_read_published on events for select using (status = 'publis
 
 drop policy if exists landmarks_read_active on landmarks;
 create policy landmarks_read_active on landmarks for select using (is_active = true);
-
-drop policy if exists era_boundaries_read_all on era_boundaries;
-create policy era_boundaries_read_all on era_boundaries for select using (true);
 
 drop policy if exists bible_verses_read_all on bible_verses;
 create policy bible_verses_read_all on bible_verses for select using (true);

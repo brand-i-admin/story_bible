@@ -4,7 +4,7 @@
 목적:
   손으로 작성한 사각형스러운 region polygon 들을 Natural Earth (1:50m,
   ~1km 해상도) 해안선/국경 정점에 스냅해 자연스러운 곡선 폴리곤으로 교체.
-  era_boundaries 와 같은 GeoJSON 클립 방식이지만 region 단위.
+  Natural Earth GeoJSON 을 region bbox 로 클립해 region polygon 을 정제한다.
 
 흐름:
   1. assets/landmarks/landmarks.json 의 각 region polygon 을 읽음
@@ -27,6 +27,7 @@
   python3 tools/seed/refine_landmark_polygons_from_geojson.py --in-place
   python3 tools/seed/refine_landmark_polygons_from_geojson.py --regions rgn_judea,rgn_galilee
 """
+
 from __future__ import annotations
 
 import argparse
@@ -35,8 +36,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from shapely.geometry import box, mapping, shape
-from shapely.ops import unary_union
+try:
+    from shapely.geometry import box, mapping, shape
+    from shapely.ops import unary_union
+except ModuleNotFoundError as exc:
+    raise SystemExit(
+        "shapely dependency is required. Run `python3 -m venv .venv`, "
+        "`source .venv/bin/activate`, then `pip install -r requirements.txt`."
+    ) from exc
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LANDMARKS = ROOT / "assets" / "landmarks" / "landmarks.json"

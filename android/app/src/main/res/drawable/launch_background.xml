@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Modify this file to customize your launch splash screen -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="#181838" />
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#181838" />
+        </shape>
+    </item>
 
     <item
         android:width="220dp"
@@ -9,6 +13,6 @@
         android:gravity="center">
         <bitmap
             android:gravity="fill"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/story_bible_splash_logo" />
     </item>
 </layer-list>

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/app_notification.dart';
 import '../state/notification_providers.dart';
+import '../theme/tokens.dart';
 import '../widgets/notification/notification_list_tile.dart';
 
 /// "전체 보기" 버튼으로 진입하는 알림 히스토리 화면.
@@ -18,10 +19,10 @@ class NotificationHistoryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(notificationHistoryProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFFF4EAD2),
+      backgroundColor: AppColors.parchmentBg,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFE6D2A6),
-        foregroundColor: const Color(0xFF4D381F),
+        backgroundColor: AppColors.parchmentMid,
+        foregroundColor: AppColors.ink500,
         title: const Text('알림', style: TextStyle(fontWeight: FontWeight.w900)),
         actions: [
           TextButton(
@@ -31,9 +32,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
               ref.invalidate(notificationHistoryProvider);
               ref.invalidate(unreadNotificationsProvider);
             },
-            style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF6B4A22),
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.ink450),
             child: const Text(
               '모두 읽음',
               style: TextStyle(fontWeight: FontWeight.w700),

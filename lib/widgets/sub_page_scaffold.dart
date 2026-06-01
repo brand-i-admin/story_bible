@@ -42,9 +42,9 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFFF6EEDC),
-                    Color(0xFFF0DFC3),
-                    Color(0xFFE7D1AF),
+                    AppColors.parchmentLight,
+                    AppColors.parchmentMid,
+                    AppColors.parchmentWarm,
                   ],
                 ),
               ),
@@ -53,8 +53,8 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
           const Positioned.fill(
             child: IgnorePointer(
               child: ParchmentTextureLayer(
-                opacity: 0.11,
-                tint: Color(0xFFB88955),
+                opacity: 0.08,
+                tint: AppColors.brownWarm2,
               ),
             ),
           ),
@@ -126,7 +126,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                                   horizontal: 14,
                                 ),
                                 decoration: floatingPanelDecoration(
-                                  color: const Color(0xEEF7E9D1),
+                                  color: AppColors.floatingSurfaceDefault,
                                   shadowOpacity: 0.08,
                                 ),
                                 child: Text(

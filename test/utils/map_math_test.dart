@@ -59,6 +59,36 @@ void main() {
     });
   });
 
+  group('eventFitTopPadding', () {
+    test('상단 툴바 가림 영역과 기본 여백을 보존한다', () {
+      final padding = eventFitTopPadding(
+        topObscuredPixels: 96,
+        bottomPadding: 80,
+      );
+
+      expect(padding, 104);
+    });
+
+    test('하단 시트가 커지면 사건 묶음이 너무 위로 몰리지 않게 상단 여백을 늘린다', () {
+      final padding = eventFitTopPadding(
+        topObscuredPixels: 96,
+        bottomPadding: 420,
+      );
+
+      expect(padding, greaterThan(220));
+      expect(padding, lessThan(260));
+    });
+
+    test('큰 하단 시트에서도 상단 보정은 상한을 둔다', () {
+      final padding = eventFitTopPadding(
+        topObscuredPixels: 140,
+        bottomPadding: 640,
+      );
+
+      expect(padding, closeTo(328, 0.001));
+    });
+  });
+
   group('hasMultiPlacePin', () {
     test('한글 화살표 → 인식', () {
       expect(hasMultiPlacePin('예루살렘 → 다메섹'), true);
@@ -209,6 +239,21 @@ void main() {
 
       expect(points.keys, containsAll(['2', '3']));
       expect(points.containsKey('1'), isFalse);
+    });
+
+    test('custom radius로 같은 위치 번호 핀 분산 폭을 줄일 수 있다', () {
+      final events = [
+        _rankedEvent('1', 1, 31.7, 35.2),
+        _rankedEvent('2', 2, 31.7, 35.2),
+      ];
+
+      final compact = buildRankedEventPointMap(events, radiusDeg: 0.018);
+      final wide = buildRankedEventPointMap(events, radiusDeg: 0.045);
+
+      final compactDelta = (compact['1']!.longitude - 35.2).abs();
+      final wideDelta = (wide['1']!.longitude - 35.2).abs();
+
+      expect(compactDelta, lessThan(wideDelta));
     });
   });
 

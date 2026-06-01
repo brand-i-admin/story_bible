@@ -91,6 +91,7 @@ app.*.map.json
 # Generated/large media — kept out of git
 assets/story_images/
 assets/avatars/
+tools/seed/refined_polygons.json
 
 # Claude worktrees
 .claude/worktrees/

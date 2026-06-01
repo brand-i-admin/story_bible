@@ -744,7 +744,7 @@
                 <td><code>lib/models/*.dart</code></td>
                 <td>
                   Supabase row 기반 모델은 <code>fromMap()</code>을 갖는다.
-                  <code>StoryEvent</code>, <code>Landmark</code>, <code>EraBoundary</code>,
+                  <code>StoryEvent</code>, <code>Landmark</code>,
                   <code>EventProposal</code>, <code>AppNotification</code>처럼
                   DB 계약과 직접 맞물린다. 비즈니스 흐름은 모델에 넣지 않는다.
                 </td>
@@ -847,9 +847,8 @@
             <span class="tag green">Map</span>
             <h3>위치 모델</h3>
             <p>
-              <code>landmarks</code>는 region/anchor/minor/point를 통합한다.
-              <code>era_boundaries</code>는 시대별 큰 폴리곤이다.
-              앱은 부팅 시 둘을 전체 로드하고 선택된 era code로 클라이언트 필터링한다.
+              <code>landmarks</code>는 region/anchor/minor/point를 통합하고, region polygon도 함께 가진다.
+              앱은 부팅 시 landmarks를 전체 로드하고 선택된 era code로 클라이언트 필터링한다.
             </p>
           </div>
           <div class="card plain-card">
@@ -965,7 +964,7 @@
             <span class="step">3</span>
             <h3>SQL 생성</h3>
             <p>
-              성경, 사건, 인물, 퀴즈, daily quiz, landmarks, era boundaries seed SQL을 생성한다.
+              성경, 사건, 인물, 퀴즈, daily quiz, landmarks와 region polygon seed SQL을 생성한다.
             </p>
           </div>
           <div class="card flow-card">
@@ -995,7 +994,6 @@
               <li><code>supabase/200_stories/200_stories_seed*.sql</code>: events.</li>
               <li><code>supabase/200_stories/characters_seed.sql</code>: characters.</li>
               <li><code>supabase/200_stories/landmarks_seed.sql</code>: landmarks.</li>
-              <li><code>supabase/200_stories/era_boundaries_seed.sql</code>: era polygons.</li>
               <li><code>supabase/quizzes/quizzes_seed.sql</code>: story quiz questions.</li>
               <li><code>supabase/seeds/daily_quiz.sql</code>: daily map quiz.</li>
             </ul>
@@ -1065,7 +1063,7 @@
                   DB row가 Dart 객체로 정확히 바뀌는지, null/default 처리,
                   jsonb/list 변환, getter, <code>toMap()</code> 왕복을 본다.
                   예: <code>StoryEvent.fromMap</code>, <code>EventProposal.fromMap</code>,
-                  <code>DailyQuiz.fromMap</code>, <code>EraBoundary.fromMap</code>.
+                  <code>DailyQuiz.fromMap</code>, <code>Landmark.fromMap</code>.
                 </td>
               </tr>
               <tr>
@@ -1162,8 +1160,8 @@
                     <td>성경 참조 표시, jsonb 참조 배열, KRV 구절 row, 저장 구절 key/reference text.</td>
                   </tr>
                   <tr>
-                    <td><code>landmark_test.dart</code>, <code>era_boundary_test.dart</code></td>
-                    <td>landmark 좌표/emoji/era codes, polygon jsonb, 색상 문자열, 잘못된 polygon fallback.</td>
+                    <td><code>landmark_test.dart</code></td>
+                    <td>landmark 좌표/emoji/era codes, region polygon jsonb, 잘못된 polygon fallback.</td>
                   </tr>
                   <tr>
                     <td><code>profile_quiz_stats_test.dart</code></td>
@@ -1180,10 +1178,6 @@
                   <tr>
                     <td><code>font_scale_bottom_sheet_test.dart</code></td>
                     <td>보통/크게/아주 크게 3단계, 선택 체크 아이콘, notifier 호출, 동일 값 no-op, 큰 글씨 overflow 방지.</td>
-                  </tr>
-                  <tr>
-                    <td><code>era_polygon_glow_layer_test.dart</code></td>
-                    <td>지도 region polygon의 outer glow, parchment fill, ink border, settle animation helper, FlutterMap build safety.</td>
                   </tr>
                   <tr>
                     <td><code>map_math_test.dart</code></td>
@@ -1510,16 +1504,6 @@
                     <td><code>landmarks_seed.sql</code> 생성.</td>
                   </tr>
                   <tr>
-                    <td><code>make seed-era-boundaries</code></td>
-                    <td><code>build_era_boundaries_seed_sql.py --input assets/landmarks/era_boundaries.json</code></td>
-                    <td><code>era_boundaries_seed.sql</code> 생성.</td>
-                  </tr>
-                  <tr>
-                    <td><code>make regen-era-boundaries</code></td>
-                    <td><code>build_era_boundaries_from_geojson.py</code> 후 <code>make seed-era-boundaries</code></td>
-                    <td>Natural Earth GeoJSON 기반으로 <code>era_boundaries.json</code>을 덮어쓴다. 수동 편집이 있으면 주의.</td>
-                  </tr>
-                  <tr>
                     <td><code>make seed-quizzes</code></td>
                     <td><code>build_quizzes_seed_sql.py --events-from-json supabase/quizzes/db_events.json</code></td>
                     <td><code>quiz_questions</code> SQL과 report 생성. 제목/문항 품질 검증 포함.</td>
@@ -1531,7 +1515,7 @@
                   </tr>
                   <tr>
                     <td><code>make seed-all</code></td>
-                    <td>성경, stories, characters, quizzes, daily quiz, landmarks, era boundaries</td>
+                    <td>성경, stories, characters, quizzes, daily quiz, landmarks/region polygons</td>
                     <td>전체 seed SQL 생성. DB 적용은 별도 target.</td>
                   </tr>
                 </tbody>
@@ -1562,11 +1546,6 @@
                     <td><code>make generate-story-images</code></td>
                     <td><code>generate_event_story_images_vertex.py</code>: story scenes 기반 장면 이미지 생성.</td>
                     <td>최대 215개 이야기 × 4장. 비용과 시간 주의.</td>
-                  </tr>
-                  <tr>
-                    <td><code>make generate-basemap</code></td>
-                    <td><code>.venv</code> 활성화 후 <code>generate_illustrated_basemap.py</code> 실행.</td>
-                    <td>Vertex AI 베이스맵 생성.</td>
                   </tr>
                   <tr>
                     <td><code>make thumbnails</code></td>
@@ -1633,11 +1612,6 @@
                     <td>UPSERT. JSON에서 빠진 landmark는 stale 정리될 수 있다.</td>
                   </tr>
                   <tr>
-                    <td><code>make apply-seeds-era-boundaries</code></td>
-                    <td><code>era_boundaries_seed.sql</code> 적용.</td>
-                    <td>UPSERT + stale 정리.</td>
-                  </tr>
-                  <tr>
                     <td><code>make apply-seeds-quizzes</code></td>
                     <td><code>quizzes_seed.sql</code> 적용.</td>
                     <td>이벤트별 기존 quiz 삭제 후 insert. 재실행 안전.</td>
@@ -1649,7 +1623,7 @@
                   </tr>
                   <tr>
                     <td><code>make apply-seeds</code></td>
-                    <td>bible, landmarks, stories/characters, quizzes, era boundaries, daily quiz 전체 적용.</td>
+                    <td>bible, landmarks/region polygons, stories/characters, quizzes, daily quiz 전체 적용.</td>
                     <td>초기 bootstrap용. bible seed는 중복 주의.</td>
                   </tr>
                   <tr>

@@ -225,26 +225,8 @@ is_active boolean DEFAULT true
 - 인덱스: `idx_landmarks_active` (활성 partial), `idx_landmarks_era_codes_gin` (era 필터 GIN).
 - 스키마: `db_init.sql` 에 통합. 별도 마이그레이션 없음.
 - Repository: `StoryRepository.fetchLandmarks()` (display_priority 오름차순, name asc 정렬). 클라이언트가 selectedEraId 의 era code 로 필터.
-- 클라이언트: `StoryState.landmarks` 에 부팅 시 한 번 전체 로드. `StoryHomeScreen._activeLandmarksForEra(state)` 가 selectedEraId 로 필터해 `StoryMapPanel.activeLandmarks` props 로 전달 → 별도 MarkerLayer 로 렌더.
+- 클라이언트: `StoryState.landmarks` 에 부팅 시 한 번 전체 로드. `StoryHomeScreen` 이 selectedEraId 로 필터한 non-region landmark 는 `StoryMapPanel.activeLandmarks`, region polygon 은 `StoryMapPanel.eraRegionLandmarks` 로 전달한다. 운영 지도는 이를 `StoryTerrain3dMap` WebView 내부 MapLibre GeoJSON layer/DOM marker 로 렌더링한다.
 - PoC 단계는 emoji 컬럼만 사용. 향후 실제 일러스트가 필요하면 `icon_storage_path` 같은 새 컬럼 추가로 확장.
-
-#### `era_boundaries` — 시대별 거친 지리 영역 폴리곤
-```sql
-id uuid PK, era_id uuid FK→eras (ON DELETE CASCADE),
-polygon_index int DEFAULT 0,
-polygon jsonb,                        -- [[lat, lng], [lat, lng], ...]
-color text DEFAULT '#FF8800',         -- 외곽선 + 채움 색
-fill_opacity numeric(3,2) DEFAULT 0.18,
-display_order int DEFAULT 0,
-UNIQUE(era_id, polygon_index)
-```
-- 사용자가 시대를 선택하면 그 시대의 이야기가 펼쳐진 거친 영역을 지도에 반투명 폴리곤으로 보여 준다. "이 시대의 무대는 대략 여기" 라는 지리적 감각을 잡아 주고, 그 위에 인물·사건 핀이 어디에 있는지 시각적으로 비교 가능.
-- 한 시대가 분리된 지역(예: 메소포타미아 + 가나안)을 포함하면 같은 era_id 로 polygon_index 가 다른 행 여러 개가 들어온다.
-- 시드: `assets/landmarks/era_boundaries.json` → `tools/seed/build_era_boundaries_seed_sql.py` → `supabase/200_stories/era_boundaries_seed.sql`. 빌더는 `era_code` (eras.code) 를 보고 INSERT 시점에 `era_id` 를 SELECT 한다.
-- RLS: `era_boundaries_read_all` (모두 공개). `anon, authenticated` 에 SELECT grant.
-- 스키마: `db_init.sql` 에 통합. 별도 마이그레이션 없음 (db-init 시 함께 생성).
-- Repository: `StoryRepository.fetchEraBoundaries()` (display_order, polygon_index 오름차순).
-- 클라이언트: `StoryState.eraBoundaries` 에 부팅 시 한 번 전체 로드. `StoryHomeScreen` 이 `selectedEraId` 로 필터해 `StoryMapPanel.activeEraBoundaries` 로 전달 → `PolygonLayer` 로 렌더.
 
 ### 2.2c Notifications & Push (2026-04-22 도입)
 

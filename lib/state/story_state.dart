@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../models/character.dart';
 import '../models/era.dart';
-import '../models/era_boundary.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
@@ -44,7 +43,6 @@ class StoryState {
     this.isSearching = false,
     this.selectedTestament = 'old',
     this.landmarks = const [],
-    this.eraBoundaries = const [],
     this.selectedLandmarkCategories = const {},
   });
 
@@ -114,7 +112,6 @@ class StoryState {
   final bool isSearching;
   final String selectedTestament;
   final List<Landmark> landmarks;
-  final List<EraBoundary> eraBoundaries;
   final Set<String> selectedLandmarkCategories;
 
   StoryState copyWith({
@@ -152,7 +149,6 @@ class StoryState {
     bool? isSearching,
     String? selectedTestament,
     List<Landmark>? landmarks,
-    List<EraBoundary>? eraBoundaries,
     Set<String>? selectedLandmarkCategories,
   }) {
     return StoryState(
@@ -199,7 +195,6 @@ class StoryState {
       isSearching: isSearching ?? this.isSearching,
       selectedTestament: selectedTestament ?? this.selectedTestament,
       landmarks: landmarks ?? this.landmarks,
-      eraBoundaries: eraBoundaries ?? this.eraBoundaries,
       selectedLandmarkCategories:
           selectedLandmarkCategories ?? this.selectedLandmarkCategories,
     );

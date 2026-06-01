@@ -71,7 +71,7 @@ class ProfileEventReviewGrid extends StatelessWidget {
         slivers: [
           for (final entry in eventsByEra.entries) ...[
             SliverToBoxAdapter(
-              child: _ProfileEventEraBoundary(
+              child: _ProfileEventEraDivider(
                 label: eraById[entry.key]?.name ?? '시대 미상',
               ),
             ),
@@ -132,8 +132,8 @@ class ProfileEventReviewGrid extends StatelessWidget {
   }
 }
 
-class _ProfileEventEraBoundary extends StatelessWidget {
-  const _ProfileEventEraBoundary({required this.label});
+class _ProfileEventEraDivider extends StatelessWidget {
+  const _ProfileEventEraDivider({required this.label});
 
   final String label;
 

@@ -61,7 +61,7 @@ MaterialApp(theme: AppTheme.light(), ...)
 ┌─────────────────────────────────────────────────────────────┐
 │ [사건선택] [금주 인물] [성경] [프로필] [🔔] [이야기 등록*]  🔍 │
 │                                                              + │
-│                      (flutter_map 전체화면)                  - │
+│                  (MapLibre 3D WebView 전체화면)              - │
 │                                                              ▶ │
 │   [핀]        [핀]         [핀]                                │
 │          [핀]      [핀]                                        │
@@ -97,13 +97,82 @@ MaterialApp(theme: AppTheme.light(), ...)
 단계 표시도 `시대/방법 → 장소/인물 → 이야기` 라벨형 pill 로 표시하고,
 접기/펼치기 버튼과 같은 줄에 배치한다.
 
+### 3.4 3D 무료 지도
+
+홈 지도는 OpenFreeMap Liberty style + 공개 Mapzen Terrarium DEM 기반의 무료 3D
+지형을 단일 운영 배경으로 사용한다. 별도 API key나 지도 배경 시작값을
+받지 않으며, 우측 컨트롤에는 확대/축소와 지도 출처 버튼만 남긴다.
+3D 지도는 WebView 안의 MapLibre GL JS 렌더러로 DEM, pitch, bearing, terrain
+exaggeration 을 적용한다. country boundary, region polygon, 사건 경로, hit-zone,
+한국어 국가/region 라벨은 GL GeoJSON layer 로 렌더링하고 사건 숫자/감정 핀은 DOM
+Marker 로 띄워 기본 지도의 영어/현지어 label layer 와 분리한다. 상단/하단 Flutter
+오버레이는 유지한다. WebView 는 renderer 설정이 바뀔 때만 새로 로드하고, 카메라
+이동과 시대/지역/사건 선택 변화는 JS `easeTo()` 및 GeoJSON `setData()` 로 갱신해
+반복 로딩 overlay 를 피한다.
+확대/이동 중 일부 타일이나 서브리소스 요청이 실패·취소되어도 지도 실패 팝업을
+띄우지 않고 debug 로그로만 남긴다. 초기 로딩에서 MapLibre `ready` 신호가 일정 시간
+오지 않거나 main frame 이 실패한 경우에만 지도 실패 안내를 표시한다.
+기본 지도 style 의 symbol label layer 를 숨겨 영어/현지어 지명 대신 앱이 직접
+올리는 한국어 국가/region 라벨과 사건 핀만 보이게 한다.
+3D 첫 화면은 하단 선택 시트에 사우디아라비아와 걸프 지역이 가려지지 않도록
+성경권 경계를 남쪽으로 넓혀 열며, 이집트·아라비아반도·메소포타미아·이란을 함께
+확인할 수 있는 저배율 카메라를 기본값으로 쓴다. 서쪽 이동 한계는 이탈리아가
+화면 왼쪽에 약간의 여백과 함께 걸리는 정도로 제한해 성경권 밖 서유럽/북아프리카로
+과하게 빠지지 않게 한다.
+시대 선택 직후 후보 region 경계를 고르는 화면은 카메라 pitch/bearing 을 0으로
+전환해 폴리곤이 원근감 때문에 삐뚤어 보이지 않게 한다. 사건·이야기 단계에서는
+다시 3D pitch 를 적용해 산맥과 계곡을 읽을 수 있게 한다.
+지역을 탭한 직후에는 사건 좌표가 아니라 선택 region polygon 전체를 접힌 하단
+시트 기준의 가시 영역에 맞춘다. 사건 핀 reveal 이 끝난 뒤 하단 사건 카드가
+올라와 일부 핀을 가릴 수는 있지만, 선택 순간에는 지역 경계가 화면 안에 들어와야
+한다. 사건/region 묶음을 맞출 때는 하단 시트 padding 의 큰 일부를 상단
+여백에도 나눠 주어, 특히 사도의 시대처럼 북쪽에 긴 사건 흐름과 후보 지역이
+상단 필터 뒤에 붙지 않고 실제로 눌 수 있는 위치에 내려오게 한다.
+3D 지도 위 점선 경로, region polygon, region/국가 라벨, 탭 hit-zone 은 MapLibre
+GL GeoJSON layer 로 렌더링하고, 사건 숫자/감정 핀과 non-region 랜드마크는 각각의
+GeoJSON point 를 MapLibre DOM Marker 로 투영해 terrain symbol collision 과 무관하게
+지도 좌표 위에 고정한다. 인물 선택 이야기 경로는 선택 인물별 GeoJSON line feature 로
+분리해 `colorForCharacter` 팔레트 색을 점선에 적용하고, 여러 인물이 같은 구간을
+지날 때도 살짝 나란히 보이도록 offset 을 둔다. 랜드마크는 선택된 시대의 non-region
+항목만 옅은 투명도로 보이며, 이모지와 이름이 줌 배율에 맞춰 함께 커지거나 작아진다.
+region polygon 내부 탭은
+`queryRenderedFeatures` 로 fill layer 를 먼저 조회하고, WebView/terrain 상태에서
+hit 이 빠질 경우 터치 좌표를 위경도로 바꿔 point-in-polygon 으로 다시 판정한다.
+중앙 라벨이 아닌 폴리곤 안쪽을 눌러도 같은 지역 선택으로 처리한다. 사건 0개 region 은
+polygon/label/hit layer 에 올리지 않는다. 한국어 국가 라벨은 rounded
+rectangle 없이 글자만 쓰고, region 라벨보다 더 짙고 굵은 글자로 읽히게 한다. 국가/region
+라벨과 랜드마크 표기는 확대 시 최대 크기에 가까워지고 줌아웃할수록
+MapLibre zoom expression 으로 작아져 겹침을 줄인다. 지도 zoom 범위는
+성경권 bounds 안에서 더 넓게 조정할 수 있도록 `2.7~12.4` 를 기본 범위로 둔다.
+지도 드래그/줌/option-key 조작/MapLibre 컨트롤 조작과 하단 선택 패널 pointer 입력은
+tap suppression 을 걸어, 조작 직후 커서 아래 region·랜드마크가 선택되거나
+팝업이 뜨지 않게 한다. 특히 하단 시트의 뒤로가기/단계 변경 버튼은 시트가 접히며
+같은 터치가 WebView 지도 탭으로 이어질 수 있으므로 pointer up/cancel 이후까지
+외부 UI 입력으로 취급해 지역 선택 hit-test 와 분리한다.
+지도 안내 오버레이의 `화면 아무데나 누르면 사라집니다` 문구는 실제 동작과
+일치해야 하므로, 안내가 떠 있는 동안 지도·안내문·하단 시트 어디든 pointer down 이
+들어오면 안내를 즉시 dismiss 한다. 오버레이가 덮은 지도 영역은 입력을 막지 않고
+아래 MapLibre hit-test 로 전달해 첫 탭도 지역 선택이나 일반 지도 탭으로 동작하게
+한다. 하단 시트의 버튼/스크롤은 힌트 dismiss 와 기존 동작을 함께 처리한다. 장소
+선택 모드로 전환된 직후에는 같은 터치 누수를 막기 위한 짧은 suppression 만 남기고
+후속 지역 탭은 빠르게 받을 수 있도록 suppression 을 정리한다.
+
+### 3.5 3D 지형 톤 색상
+
+전역 색 토큰은 3D 지형의 연한 석회 베이지, 세이지 그린, 올리브 브라운, 옅은 수계
+블루와 맞춘다. `AppColors.parchment*` 는 노란 양피지보다 덜 붉은 석회 베이지,
+`ink*` 는 검갈색 대신 올리브 잉크, 주요 CTA 는 강한 황토보다 세이지/올리브
+그라데이션을 우선한다. 팝업, 홈 선택 시트, 프로필, 퀴즈, 성경 리더 같은 공통
+화면은 `AppColors`, `AppSurfaces`, `SubPageScaffold`, `ParchmentPageScaffold`
+를 통해 같은 팔레트를 공유한다.
+
 ## 4. 주요 위젯 컴포넌트
 
 ### 4.1 위젯 목록
 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
-| StoryMapPanel | `widgets/story_map_panel.dart` | 인터랙티브 지도, 핀/마커 렌더링, 감정 새김이 있으면 큰 컬러 감정 이모지를 중심에 두고 우측 아래 작은 초록 원에 순서 번호를 표시, 이야기 간 이동 시 실제 번호 핀 분산 좌표에 맞춘 현재/목표 사건 핀 동시 glow 애니메이션 |
+| StoryMapPanel | `widgets/story_map_panel.dart` | MapLibre 3D 지도 orchestration. OpenFreeMap/Mapzen terrain 을 WebView 로 띄우고, region polygon/path/라벨/hit-zone 은 GeoJSON layer 로, 사건 번호·감정 핀과 non-region 랜드마크는 DOM marker 로 렌더링 |
 | StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널. 상단 sticky 헤더는 명시적 이전 단계 버튼과 `시대/방법 → 장소/인물 → 이야기` 라벨형 단계 pill 을 접기/펼치기 버튼과 같은 줄에 보여 준다. 사건 카드 배지도 감정 새김이 있으면 큰 컬러 감정 이모지 + 우측 아래 작은 초록 순서 번호로 표시하고, 퀴즈 결과가 있으면 카드 배경색으로 정답 0개=빨강 / 일부 정답=주황 / 모두 정답=초록 상태를 보여 준다. 감정 새김 직후 0.5초 뒤 해당 카드 위에 감정 도장+별가루를 기존 속도로 재생하고, 도장 완료 후 1초 뒤 상세로 복귀한다 |
 | CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
@@ -141,67 +210,26 @@ MaterialApp(theme: AppTheme.light(), ...)
 - 모달·다이얼로그·카드 등 표면은 `AppSurfaces` 팩토리부터 검토.
 - 새 값이 정말 필요하면 토큰에 추가한 뒤 참조한다.
 
-### 4.4 Polygon — 장소로 보기 region 표현 (Ancient Atlas Discovery 양식)
+### 4.4 Region Polygon — 장소로 보기 3D 지도 표현
 
-"지도에서 영역을 선택했다" 가 아니라 **"고대 성경 세계의 한 지역을 발견했다"**
-느낌. GIS 식 striped/sharp polygon overlay 금지 — fantasy atlas / ancient
-parchment / fog-of-war reveal 톤. **색 톤은 후보/선택 두 상태만 표현**:
+장소 선택은 무료 3D 지도 위에서 "성경 세계의 지역을 고르는" 느낌을 유지한다.
+후보 region 은 따뜻한 골드 계열, 선택 region 은 세이지 그린 계열로 MapLibre
+GeoJSON fill/border layer 에서 직접 그린다. 이전 Flutter `CustomPainter` 기반
+2D polygon overlay 는 제거됐고, polygon 시각·라벨·탭 hit-zone 은 모두
+`StoryTerrain3dMap` 의 WebView 내부 layer 로 처리한다.
 
-- **후보** (`AppColors.regionCandidate` = 0xFFF2C04F) — 밝은 따뜻한 옐로우 골드.
-  시대를 켰을 때 그 시대의 모든 region 이 노란색으로 떠오른다.
-- **선택** (`AppColors.regionSelected` = 0xFF9CCB75) — 밝은 fresh sage green.
-  특정 region 을 탭하면 초록으로 전환되어 후보들과 명확히 분리된다.
-
-ancient atlas 양피지 위에서 또렷이 살아남도록 stepper accent 의 어두운 톤
-(D2873E/77A85A) 보다 더 밝고 채도 높은 값을 사용. era 식별은 era_pick_rows 의
-점·아이콘 색(`EraColors.forCode`)이 별도로 표시한다.
-
-**4-layer 양식** (모두 정적 — pulse 애니메이션 제거):
-
-| Layer | 값 | 의도 |
-|-------|------|------|
-| 1. Outer Glow | candidate/selected 색 alpha 비선택 0.12 / 선택 0.18, `MaskFilter.blur(outer, 9~12)` | 폴리곤 바깥 후광 — 절제. 옛 sin 펄스로 인한 "어두운 깜빡거림" 인상 제거 |
-| **2a. White Wash** | `AppColors.regionParchmentWash` (#FFF7E8) alpha **0.45**, `MaskFilter.blur(solid, 2.5)` | **베이지 양피지 베이스 중성화** — 색 fill 위로 베이스가 비쳐 갈색·짙은녹으로 흐려지는 문제 차단. watercolor 결은 wash 너머로 은은히 비침 |
-| 2b. Color Fill | candidate/selected 색 radial gradient (비선택 중앙 0.50 / 가장자리 0.36, 선택 중앙 0.62 / 가장자리 0.48), `MaskFilter.blur(solid, 2.5)` | wash 위로 의도된 톤이 또렷이 살아남. ancient atlas / fantasy map 의 정통 parchment+ink wash 2-pass 기법 |
-| 3. Ink Border | 후보/선택 모두 fill 과 동일한 candidate/selected 색 그대로 (lerp 제거 — 갈색 섞임 없음). halo (strokeWidth 4~6 alpha 0.12~0.20 + blur 4) + inner fade gradient (clipPath + blurred stroke 8~12px) + 메인 (strokeWidth 2.0~2.6 alpha 0.70~0.85 + blur 0.8) 세 패스 | 한 덩어리 인지 + 잉크 번진 결. 외곽선 색이 fill 과 같아 시각적으로 한 영역으로 묶임 |
-
-**Pulse 애니메이션 제거** — 옛 1.6초 주기 sin 펄스(alpha/sigma/width 변동)는
-양피지 톤과 어울리지 않는 "어두운 색의 깜빡거림" 으로 인식돼 제거. `EraPolygonEntry.pulseT`
-필드와 `story_map_panel._polygonGlowCtl` 도 함께 사라져 매 프레임 rebuild 비용 절감.
-**Selection settle 애니메이션**(scale overshoot + glow boost, 500ms 1회)은 유지 —
-선택 진입 시 한 번만 강조되고 끝나므로 거슬리지 않음.
-
-**Selection settle 애니메이션 (production-grade, 500ms)** — region 이 새로
-선택되면 2-phase 곡선으로 elevated state 에 settle:
-
-- **Scale (500ms)**: 1.0 → +6% overshoot peak (~100ms, easeOutCubic) →
-  +3% elevated (~400ms, easeOutQuad). **1.0 으로 안 돌아가고 +3% 에서 머무름**
-  — 선택된 region 은 영구히 살짝 부풀어 시각적으로 "선택됨" 강조.
-- **Glow boost (500ms)**: factor 1.0 (peak alpha +0.35 / sigma +12px / halo
-  alpha +0.25) → ~150ms peak hold → factor 0.35 elevated 유지 (peak alpha
-  +0.12 / sigma +4.2px / halo alpha +0.09). Scale 보다 늦게 settle 시작해
-  layered depth 감.
-- **발동 트리거**: `EraPolygonGlowLayer` (`StatefulWidget`) 가
-  `didUpdateWidget` 에서 selection key 변화를 감지해
-  `AnimationController.forward(from: 0)`. AnimationController 가 1.0 에서
-  멈춘 뒤에도 painter 는 계속 elevated 값을 적용.
-
-> 이전 sin hump (1.0 → 1.10 → 1.0) 디자인은 만화적 "boing" 효과로 production
-> 미달이라 폐기. Apple/Linear 같은 production app 의 selection 패턴을 따라
-> "도착 후 elevated 유지" 로 재설계.
-
-추가: 정점은 **Catmull-Rom spline** 으로 곡선화 (tension 0.5) — 사람이 손으로
-찍은 jagged polygon 도 부드러운 양피지 곡선으로 재현. closed loop wrap-around.
-
-구현은 `lib/widgets/map/era_polygon_glow_layer.dart` 의 `EraPolygonGlowLayer`.
-`flutter_map` 의 `PolygonLayer` 가 단색 fill 만 지원해 multi-layer + shader +
-MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 hit-test 는
-동일 좌표의 투명 `PolygonLayer<Landmark>` 가 담당.
-
-구현은 `lib/widgets/map/era_polygon_glow_layer.dart` 의 `EraPolygonGlowLayer`.
-`flutter_map` 의 `PolygonLayer` 가 단색 fill 만 지원해 multi-pass wash 효과를
-적용할 수 없어 별도 `CustomPainter` 레이어로 분리. 클릭 hit-test 는 동일
-좌표의 투명 `PolygonLayer<Landmark>` 가 담당해 책임 분리.
+- **후보**: 시대를 켰을 때 사건이 있는 region 만 은은하게 떠오른다.
+- **선택**: 특정 region 을 탭하면 선택 색과 라벨 강조로 후보들과 분리된다.
+- **Hit-test**: `queryRenderedFeatures` 로 fill layer 를 먼저 조회하고, iOS
+  WebView/terrain 조합에서 빠질 경우 화면 좌표를 위경도로 바꿔
+  point-in-polygon 으로 다시 판정한다. 장소 선택 단계에서는 region 폴리곤
+  hit 을 사건/랜드마크 hit 보다 먼저 처리해 영역 내부 어디를 눌러도 같은
+  지역 선택으로 이어지게 한다.
+- **라벨**: 장소 선택 단계의 region 라벨은 폴리곤 내부 중심점 근처에
+  지도 지명보다 조금 큰 오커/골드 톤 단일 라벨로 표시해 국가명과 구분한다.
+  큰 배지나 버튼형 장식 대신 작은 선택 점과 은은한 경계/채움으로 영역 전체가
+  선택 가능하다는 affordance 를 준다. 한국어 국가/region 라벨은 기본 지도
+  symbol layer 와 분리해 MapLibre expression 으로 줌에 맞춰 크기를 조정한다.
 
 ## 5. 인터랙션 패턴
 
@@ -228,7 +256,7 @@ MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 h
 6. `notify_quiz_completed` RPC 호출 → 본인 인앱 bell 에 완료 알림 + 전체 진도율 표시
 7. 퀴즈 버튼은 `정답 N · 오답 N · 헷갈림 N` 으로 표시하고 정답 0개=빨강, 일부 정답=주황, 모두 정답=초록으로 상태를 보여 준다
 8. 지도 번호 핀은 숫자 중심을 유지하고 작은 컬러 감정 이모지 배지를 붙인다. 하단 사건 카드는 감정 새김이 있으면 좌상단 배지를 컬러 감정 이모지로 바꾸고, 우측 하단 작은 초록 원에 이야기 순번을 표시한다
-9. 감정 저장 직후 상세 페이지를 잠시 닫아 지도 화면에서 핀/카드 변화를 먼저 보여 주고, 0.5초 뒤 사건 카드 위 감정 도장+별가루를 기존 속도로 재생한 다음 도장 완료 후 1초 뒤 같은 상세로 복귀한다. 지도 위 감정 도장 및 이전/다음 이야기 전환 애니메이션 중에는 투명 입력 차단막으로 다른 화면 조작을 막는다
+9. 감정 저장 직후 상세 페이지를 잠시 닫아 지도 화면에서 핀/카드 변화를 먼저 보여 주고, 0.5초 뒤 사건 카드 위 감정 도장+별가루를 기존 속도로 재생한 다음 도장 완료 후 1초 뒤 같은 상세로 복귀한다. 지도 위 감정 도장 및 이전/다음 이야기 전환 애니메이션은 내부 재진입 가드로 중복 실행을 막되, 평상시 지도·패널 터치는 차단하지 않는다
 10. 프로필 미니맵 지역 라벨은 완료 이야기 수와 퀴즈 정답/풀이 수를 `x/x`로 표시해 오답/헷갈림이 있는 지역을 드러낸다
 11. 프로필 미니맵에서 region 폴리곤이나 라벨을 누르면 지역별 사건 카드 팝업을 열고, 사건 카드 순서대로 순번·첫 장면 썸네일·정답/오답/헷갈림을 표시하며 각 카드 배경색으로 미풀이/빨강/주황/초록 복습 상태를 보여 준다
 12. 프로필 미니맵은 모든 이야기에 감정을 새긴 지역을 옅은 채움 + 경계선만 남겨 딱지를 모은 느낌으로 표시한다
@@ -259,3 +287,4 @@ MaskFilter 조합을 위해 별도 `CustomPainter` 레이어로 분리. 클릭 h
 | 장면 이미지 | `assets/story_images/` (4장/이벤트) | `assets/story_images_thumbs/` | PNG |
 | UI 장식 | `assets/elements/` | — | PNG |
 | 지도 | `assets/maps/` (GeoJSON) | — | GeoJSON |
+| Android 런치 로고 | `assets/app_icon/story_bible_icon_opaque.png` 원본 → `android/app/src/main/res/drawable-nodpi/story_bible_splash_logo.png` | — | PNG 1024px |

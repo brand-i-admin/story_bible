@@ -34,7 +34,6 @@ KRV_SQL := $(SUPABASE_DIR)/seeds/krv_bible_verses.sql
 STORIES_SQL := $(SUPABASE_DIR)/200_stories/200_stories_seed.sql
 CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
 LANDMARKS_SQL := $(SUPABASE_DIR)/200_stories/landmarks_seed.sql
-ERA_BOUNDARIES_SQL := $(SUPABASE_DIR)/200_stories/era_boundaries_seed.sql
 QUIZZES_SQL := $(SUPABASE_DIR)/quizzes/quizzes_seed.sql
 QUIZZES_REPORT := $(SUPABASE_DIR)/quizzes/quizzes_report.json
 DAILY_QUIZ_SQL := $(SUPABASE_DIR)/seeds/daily_quiz.sql
@@ -47,13 +46,13 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 .PHONY: help all \
         seed-bible-verses build-character-meta renumber-story-indices \
         seed-stories seed-characters seed-stories-characters seed-quizzes seed-daily-quiz \
-        seed-landmarks seed-era-boundaries \
+        seed-landmarks audit-landmark-polygons refine-landmark-polygons \
         apply-seeds-landmarks-v2 \
-        generate-avatars generate-story-images generate-basemap thumbnails \
+        generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         export-stories-json \
         db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
-        apply-seeds-landmarks apply-seeds-era-boundaries apply-seeds-quizzes apply-seeds-daily-quiz \
+        apply-seeds-landmarks apply-seeds-quizzes apply-seeds-daily-quiz \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
@@ -76,13 +75,14 @@ help:
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
 	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
 	@echo "  seed-daily-quiz            매일 지도 퀴즈 SQL + docs 가이드 생성"
+	@echo "  audit-landmark-polygons    박스형/저정점 region polygon 감사"
+	@echo "  refine-landmark-polygons   Natural Earth 기반 region polygon 정제 후보 생성"
 	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
-	@echo "  generate-basemap        Vertex AI 양피지 일러스트 베이스맵 1장 생성 (assets/maps/)"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + daily quiz)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + daily quiz + landmarks)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -186,22 +186,20 @@ seed-landmarks:
 	@echo "[Makefile] landmarks SQL 생성 (assets/landmarks/landmarks.json)..."
 	$(PYTHON) $(TOOLS_DIR)/seed/build_landmarks_seed_sql.py
 
-seed-era-boundaries:
-	@echo "[Makefile] era_boundaries SQL 생성 (assets/landmarks/era_boundaries.json)..."
-	$(PYTHON) $(TOOLS_DIR)/seed/build_era_boundaries_seed_sql.py \
-		--input $(LANDMARKS_DIR)/era_boundaries.json \
-		--output $(ERA_BOUNDARIES_SQL)
+audit-landmark-polygons:
+	@echo "[Makefile] region polygon 감사 (박스형/저정점 후보)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/audit_landmark_polygons.py \
+		--landmarks $(LANDMARKS_DIR)/landmarks.json
 
-# 시대 폴리곤 재생성 — Natural Earth GeoJSON 을 시대별 bbox 로 클립해 정밀한
-# 해안선 폴리곤으로 era_boundaries.json 을 덮어쓴다. 시대 정의 변경 시 (CLIP_REGIONS
-# in tools/seed/build_era_boundaries_from_geojson.py) 실행.
-# ⚠️ 수동 편집한 era_boundaries.json 이 있다면 덮어쓰니 주의.
-regen-era-boundaries:
-	@echo "[Makefile] era_boundaries.json 재생성 (Natural Earth GeoJSON 클립)..."
-	$(PYTHON) $(TOOLS_DIR)/seed/build_era_boundaries_from_geojson.py \
+# region 폴리곤 정제 후보 생성 — 기본은 검토용 JSON 만 출력한다.
+# landmarks.json 에 바로 반영하려면 스크립트를 직접 `--in-place` 로 실행하고
+# `python3 tools/seed/verify_polygons_contain_events.py` 로 사건 포함 여부 확인.
+refine-landmark-polygons:
+	@echo "[Makefile] region polygon 정제 후보 생성 (Natural Earth GeoJSON 클립)..."
+	$(PYTHON) $(TOOLS_DIR)/seed/refine_landmark_polygons_from_geojson.py \
+		--landmarks $(LANDMARKS_DIR)/landmarks.json \
 		--geojson $(ASSETS_DIR)/maps/ne_50m_admin_0_countries.geojson \
-		--output $(LANDMARKS_DIR)/era_boundaries.json
-	@$(MAKE) seed-era-boundaries
+		--out $(TOOLS_DIR)/seed/refined_polygons.json
 
 seed-quizzes:
 	@echo "[Makefile] 퀴즈 SQL 생성..."
@@ -223,7 +221,7 @@ seed-daily-quiz:
 		--docs-output docs/DAILY_QUIZ_SEED_GUIDE.md \
 		--max-questions 100
 
-seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-daily-quiz seed-landmarks seed-era-boundaries
+seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-daily-quiz seed-landmarks
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================
@@ -241,9 +239,6 @@ generate-story-images:
 	@echo "[Makefile] Vertex AI 장면 이미지 생성..."
 	@echo "  → .env의 GOOGLE_CLOUD_PROJECT 확인 필요"
 	$(PYTHON) $(TOOLS_DIR)/images/generate_event_story_images_vertex.py
-
-generate-basemap:
-	@. .venv/bin/activate && python $(TOOLS_DIR)/images/generate_illustrated_basemap.py
 
 thumbnails:
 	@echo "[Makefile] 썸네일 생성..."
@@ -373,14 +368,10 @@ apply-seeds-stories-characters:
 	@echo "[Makefile] characters + 200_stories 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/characters_seed.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
 
-# landmarks / era_boundaries 모두 UPSERT 패턴 — 재실행 안전.
+# landmarks 는 UPSERT 패턴 — 재실행 안전.
 apply-seeds-landmarks:
 	@echo "[Makefile] landmarks 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/landmarks_seed.sql)
-
-apply-seeds-era-boundaries:
-	@echo "[Makefile] era_boundaries 시드 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(ERA_BOUNDARIES_SQL))
 
 apply-seeds-quizzes:
 	@echo "[Makefile] quiz_questions 시드 적용 (ENV=$(ENV))"
@@ -391,7 +382,7 @@ apply-seeds-daily-quiz:
 	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV))"
 	$(call PSQL_APPLY,$(DAILY_QUIZ_SQL))
 
-apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes apply-seeds-era-boundaries apply-seeds-daily-quiz
+apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes apply-seeds-daily-quiz
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================
@@ -412,6 +403,6 @@ lint:
 
 clean-generated:
 	@echo "[Makefile] 생성된 SQL 삭제..."
-	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL) $(LANDMARKS_SQL) $(ERA_BOUNDARIES_SQL) $(QUIZZES_SQL) $(QUIZZES_REPORT)
+	rm -f $(KRV_SQL) $(STORIES_SQL) $(CHARACTERS_SQL) $(LANDMARKS_SQL) $(QUIZZES_SQL) $(QUIZZES_REPORT)
 	rm -f $(SUPABASE_DIR)/seeds/krv_bible_verses_part_*.sql
 	@echo "  → tools/seed/character_meta.json은 유지됨 (수동 삭제)"

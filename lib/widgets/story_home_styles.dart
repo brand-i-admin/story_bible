@@ -79,17 +79,17 @@ BoxDecoration interactiveCardDecoration({
     );
   }
   return BoxDecoration(
-    color: const Color(0xEEF7EBD8),
+    color: AppColors.floatingSurfaceDefault,
     borderRadius: BorderRadius.circular(AppRadii.xl),
-    border: Border.all(color: const Color(0xB58E6F48), width: 1.0),
+    border: Border.all(color: AppColors.borderCard, width: 1.0),
   );
 }
 
 BoxDecoration headerChipDecoration() {
   return BoxDecoration(
-    color: const Color(0xEEF2E1C6),
+    color: AppColors.parchmentMid.withValues(alpha: 0.94),
     borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xBC9A7A4C), width: 1),
+    border: Border.all(color: AppColors.borderFloating, width: 1),
   );
 }
 
@@ -104,11 +104,11 @@ BoxDecoration softButtonDecoration({required bool selected}) {
         : const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFF8F0E2), Color(0xFFEEDDC1)],
+            colors: [AppColors.parchmentLight, AppColors.parchmentMid],
           ),
     borderRadius: BorderRadius.circular(AppRadii.lg),
     border: Border.all(
-      color: selected ? AppColors.brownRim : const Color(0xBC9A7A4C),
+      color: selected ? AppColors.brownRim : AppColors.borderFloating,
       width: 1.0,
     ),
     boxShadow: selected
@@ -166,7 +166,7 @@ Widget filledActionButton({
           border: Border.all(
             color:
                 borderColor ??
-                (completed ? const Color(0xFFD7EFCE) : AppColors.goldHi),
+                (completed ? AppColors.greenRim : AppColors.goldHi),
             width: 1.1,
           ),
           boxShadow: [
@@ -210,7 +210,7 @@ Widget modalCloseButton({required VoidCallback onTap, double size = 34}) {
         decoration: BoxDecoration(
           color: const Color(0xECF7EBD7),
           borderRadius: BorderRadius.circular(size * 0.38),
-          border: Border.all(color: const Color(0xBC9A7A4C), width: 1.0),
+          border: Border.all(color: AppColors.borderFloating, width: 1.0),
           boxShadow: const [
             BoxShadow(
               color: Color(0x22000000),
@@ -238,7 +238,7 @@ Widget mapControlButton({
     width: 30,
     height: 30,
     decoration: BoxDecoration(
-      color: const Color(0xCC2A2118),
+      color: AppColors.ink900.withValues(alpha: 0.80),
       borderRadius: BorderRadius.circular(AppRadii.xs),
       border: Border.all(color: AppColors.borderHairlineDark),
     ),
@@ -263,9 +263,12 @@ Widget topUtilityButton({
 }) {
   final resolvedBackgroundColor =
       backgroundColor ??
-      (selected ? const Color(0xD06A401E) : const Color(0xB02A2118));
+      (selected
+          ? AppColors.brownWarm2.withValues(alpha: 0.92)
+          : AppColors.ink900.withValues(alpha: 0.76));
   final resolvedBorderColor =
-      borderColor ?? (selected ? AppColors.goldRim : const Color(0xBFD8BF99));
+      borderColor ??
+      (selected ? AppColors.brownRim : AppColors.borderHairlineDark);
   final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
   final resolvedBoxShadow =
       boxShadow ?? (selected ? AppShadows.goldGlow : null);
@@ -318,9 +321,9 @@ Widget storySection({
     width: double.infinity,
     child: Container(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
+        border: Border.all(color: AppColors.borderCard, width: 1.2),
         borderRadius: BorderRadius.circular(AppRadii.md),
-        color: const Color(0xF4EFE3CC),
+        color: AppColors.parchmentCard.withValues(alpha: 0.96),
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -449,9 +452,9 @@ class _StorySceneRowState extends State<StorySceneRow> {
     const tileGap = 8.0;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xBF9A7A4A), width: 1.2),
+        border: Border.all(color: AppColors.borderCard, width: 1.2),
         borderRadius: BorderRadius.circular(AppRadii.md),
-        color: const Color(0xF4EFE3CC),
+        color: AppColors.parchmentCard.withValues(alpha: 0.96),
       ),
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
       child: LayoutBuilder(
@@ -477,7 +480,7 @@ class _StorySceneRowState extends State<StorySceneRow> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: const Color(0x9C7C5C39),
+                        color: AppColors.borderFloating,
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(AppRadii.md),

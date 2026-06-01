@@ -29,7 +29,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   int _mapCelebrationNonce = 0;
   Completer<void>? _mapCelebrationCompleter;
   bool _mapAnimationInputLocked = false;
-  OverlayEntry? _mapAnimationInputBlockerEntry;
   late int _selectionStep = widget.initialStep.clamp(1, 3);
 
   /// 시대 선택 후 사용자가 고른 탐색 모드. null = intro 패널(시대+모드 카드).
@@ -59,6 +58,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// (예: region 선택 완료, character step 3) 면 _currentMapHint() 가 null 을
   /// 반환해 이 플래그와 무관하게 hint 가 안 뜬다.
   bool _mapHintDismissed = false;
+  DateTime? _mapHintDismissIgnoredUntil;
 
   @override
   void initState() {
@@ -92,7 +92,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   @override
   void dispose() {
     _completeMapCelebration();
-    _removeMapAnimationInputBlocker();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -115,41 +114,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _setMapAnimationInputLocked(bool locked) {
-    if (!mounted) {
-      return;
-    }
-    if (locked) {
-      _insertMapAnimationInputBlocker();
-    } else {
-      _removeMapAnimationInputBlocker();
-    }
-    if (_mapAnimationInputLocked != locked) {
-      setState(() {
-        _mapAnimationInputLocked = locked;
-      });
-    }
-  }
-
-  void _insertMapAnimationInputBlocker() {
-    if (_mapAnimationInputBlockerEntry != null) {
-      return;
-    }
-    final overlay = Overlay.maybeOf(context, rootOverlay: true);
-    if (overlay == null) {
-      return;
-    }
-    final entry = OverlayEntry(
-      builder: (_) => const Positioned.fill(
-        child: ModalBarrier(color: Colors.transparent, dismissible: false),
-      ),
-    );
-    _mapAnimationInputBlockerEntry = entry;
-    overlay.insert(entry);
-  }
-
-  void _removeMapAnimationInputBlocker() {
-    _mapAnimationInputBlockerEntry?.remove();
-    _mapAnimationInputBlockerEntry = null;
+    _mapAnimationInputLocked = locked;
   }
 
   Future<void> _handleAuthUserChanged(User? user) async {
@@ -450,19 +415,33 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return null;
   }
 
-  /// 사용자가 지도를 만지면(드래그/줌/탭 등) hint dismiss. _mapHintDismissed=true
-  /// 로 다음 단계 진입 전까지 hint 가 다시 안 뜬다.
+  /// 안내가 떠 있는 상태에서 화면을 탭하거나 지도를 만지면 hint dismiss.
+  /// _mapHintDismissed=true 로 다음 단계 진입 전까지 hint 가 다시 안 뜬다.
   void _handleMapInteraction() {
     if (_mapHintDismissed) return;
+    final ignoredUntil = _mapHintDismissIgnoredUntil;
+    if (ignoredUntil != null && DateTime.now().isBefore(ignoredUntil)) {
+      return;
+    }
     setState(() {
       _mapHintDismissed = true;
+      _mapHintDismissIgnoredUntil = null;
     });
+  }
+
+  void _suppressMapTaps([
+    Duration duration = const Duration(milliseconds: 650),
+  ]) {
+    _mapPanelController.suppressMapTaps(duration);
   }
 
   /// 새 단계로 들어갔거나 mode 가 바뀌었을 때 hint 를 다시 보여 줄 수 있도록
   /// dismiss flag 를 reset. setState 안에서 호출해야 build 에 반영된다.
   void _resetMapHint() {
     _mapHintDismissed = false;
+    _mapHintDismissIgnoredUntil = DateTime.now().add(
+      const Duration(milliseconds: 650),
+    );
   }
 
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
@@ -495,6 +474,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _selectionPanelStage = StorySelectionPanelStage.expanded;
       _selectionSheetExtent = expandExtent;
     });
+    _setMapAnimationInputLocked(false);
   }
 
   void _collapseSelectionPanel() {
@@ -551,6 +531,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       if (step != 3) {
         _awaitingRevealComplete = false;
         _revealInstantly = false;
+        _mapAnimationInputLocked = false;
         if (_selectionStep == 3 &&
             _selectionPanelStage == StorySelectionPanelStage.collapsed) {
           _selectionPanelStage = StorySelectionPanelStage.expanded;
@@ -577,9 +558,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// - 현재 step: 그 단계 진행 내역 초기화.
   /// - 이전 step: 그 단계로 돌아가며 그 단계 이후 모든 선택 초기화.
   void _handleStepperTap(int step) {
+    _suppressMapTaps(const Duration(milliseconds: 1200));
     final ctl = ref.read(storyControllerProvider.notifier);
     final current = _currentStepperIndex();
     if (step > current) return; // 미래 단계 비활성
+    if (step != 3) {
+      _setMapAnimationInputLocked(false);
+    }
 
     if (step == 1) {
       // 시대 + 모드 + 모든 하위 선택 초기화 → 인트로 화면 복귀.
@@ -658,6 +643,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _handleHomeBackPressed() {
+    _suppressMapTaps(const Duration(milliseconds: 1200));
     final state = ref.read(storyControllerProvider);
     switch (_homeBackAction(state)) {
       case HomeBackAction.exitApp:
@@ -676,6 +662,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _returnToCharacterPickerFromEvents(StoryState state) {
+    _setMapAnimationInputLocked(false);
     final selectedCharacters = state.selectedCharacterCodes.toSet();
     final ctl = ref.read(storyControllerProvider.notifier);
     ctl.selectEvent(null);
@@ -759,10 +746,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // region 선택 완료 — hint overlay 사라짐.
       _mapHintDismissed = true;
     });
-    // 사건들이 분포한 영역에 fit + 줌인. region 폴리곤 fit 보다 사건 자체에
-    // 포커스가 맞아 자세히 보임.
+    // 지역을 선택한 직후에는 사건 좌표가 아니라 선택한 region 전체를 화면에
+    // 맞춘다. 핀 reveal 이후 시트가 올라와 일부 사건을 가리는 것은 허용한다.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
+      if (!mounted) return;
+      if (lm.polygon.length >= 3) {
+        _mapPanelController.focusRegion(lm.polygon);
+      } else {
+        _mapPanelController.focusEvents(zoomBoost: 1.0);
+      }
     });
   }
 
@@ -975,32 +967,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     ref.read(storyControllerProvider.notifier).selectEvent(null);
   }
 
-  /// 거리 측정 결과를 한국 거리 비교와 함께 SnackBar 로 보여 준다.
-  void _showMeasureResult(MeasureResult result) {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    if (messenger == null) {
-      return;
-    }
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        backgroundColor: const Color(0xFF3D2A14),
-        duration: const Duration(seconds: 5),
-        content: Text(
-          '${result.fromName} → ${result.toName}\n'
-          '직선 거리 약 ${result.kilometers.toStringAsFixed(1)}km '
-          '(${result.koreanComparison})',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            height: 1.45,
-          ),
-        ),
-      ),
-    );
-  }
-
   /// 랜드마크 마커가 탭됐을 때 간단한 정보 다이얼로그를 띄운다.
   /// 이모지 + 이름 + 설명 + 카테고리/시대 칩.
   void _showLandmarkPopup(Landmark landmark) {
@@ -1009,48 +975,45 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     showDialog<void>(
       context: context,
       barrierColor: const Color(0x66000000),
-      builder: (ctx) => _LandmarkScrollDialog(
-        landmark: landmark,
-        onClose: () => Navigator.of(ctx).pop(),
+      builder: (ctx) => Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) => _suppressMapTaps(),
+        onPointerUp: (_) => _suppressMapTaps(),
+        onPointerCancel: (_) => _suppressMapTaps(),
+        child: _LandmarkScrollDialog(
+          landmark: landmark,
+          onClose: () {
+            _suppressMapTaps();
+            Navigator.of(ctx).pop();
+          },
+        ),
       ),
     );
   }
 
-  /// 지도 출처/라이선스 dialog — CARTO basemap + Stamen Watercolor (CC BY 4.0)
-  /// + OpenStreetMap (ODbL) + Cooper Hewitt(Smithsonian) archive + Natural
-  /// Earth. attribution 의무가 있는 출처를 사용자 view 에 노출한다.
+  /// 지도 출처/라이선스 dialog — 운영 3D 무료 지도의 attribution 을 노출.
   void _showMapAttributionDialog() {
+    final source = StoryMapTileStyles.sourceFor(
+      StoryMapTileStyles.defaultStyle,
+    );
     showDialog<void>(
       context: context,
       builder: (dialogContext) => ParchmentDialog(
         title: '지도 출처',
-        subtitle: '본 지도는 다음 오픈 데이터/타일을 사용합니다.',
+        subtitle: '현재 배경: ${source.label}',
         showCloseButton: true,
         onClose: () => Navigator.of(dialogContext).pop(),
-        child: const Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _AttributionLine(
-              source: '배경 타일: CARTO Voyager No Labels',
-              license: '© CARTO',
-            ),
-            SizedBox(height: 8),
-            _AttributionLine(
-              source: '워터컬러 타일: Stamen Design',
-              license: 'CC BY 4.0',
-            ),
-            SizedBox(height: 8),
-            _AttributionLine(source: 'OpenStreetMap 데이터', license: 'ODbL'),
-            SizedBox(height: 8),
-            _AttributionLine(
-              source: '아카이브 호스팅: Cooper Hewitt, Smithsonian Design Museum',
-            ),
-            SizedBox(height: 8),
-            _AttributionLine(
-              source: '국경/수계 보조: Natural Earth',
-              license: 'Public Domain',
-            ),
+            for (var i = 0; i < source.attributionLines.length; i++) ...[
+              if (i > 0) const SizedBox(height: 8),
+              _AttributionLine(
+                source: source.attributionLines[i].source,
+                license: source.attributionLines[i].license,
+              ),
+            ],
           ],
         ),
       ),
@@ -1088,12 +1051,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (eraCodes.isEmpty) {
       return const [];
     }
-    // 시대만 선택한 상태(mode 미정) 에서는 landmark 마커를 모두 숨기고 시대
-    // 폴리곤(region union)만 표시 — 사용자가 [장소에서 시작하기] 를 고르면
-    // landmark 가 등장.
-    if (_mode == null) {
-      return const [];
-    }
     final categories = state.selectedLandmarkCategories;
     // 카테고리 필터 — non-region 에 적용. region 은 항상 통과 (폴리곤 라벨용).
     bool passesCategory(Landmark l) {
@@ -1104,6 +1061,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return categories.contains(cat);
     }
 
+    // 시대만 선택한 상태(mode 미정) 에서도 해당 시대의 non-region landmark 는
+    // 지도 위에 옅게 표시한다. region 선택 자체는 계속 polygon layer 가 담당한다.
+    if (_mode == null) {
+      return state.landmarks
+          .where((l) {
+            if (l.isRegion) return false;
+            if (!l.eraCodes.any(eraCodes.contains)) return false;
+            return passesCategory(l);
+          })
+          .toList(growable: false);
+    }
+
     // 지역 모드 + region 미선택: 그 시대 region 핀 + 그 region 들의 모든 자식
     // landmark 까지 한꺼번에 표시. 사용자가 폴리곤을 누르면 그 region 으로
     // zoom 되며 다른 region 마커들은 가려진다.
@@ -1112,22 +1081,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           .where((l) => l.eraCodes.any(eraCodes.contains) && passesCategory(l))
           .toList(growable: false);
     }
-    // 특정 region 을 누른 뒤(step 3): 선택한 region + 그 region 의 자식 +
-    // 시대 전체의 다른 non-region 랜드마크도 함께 노출 (카테고리 필터 적용).
-    // 선택 region 이외의 region 마커는 가린다 (선택 region 만 강조).
+    // 특정 region 을 누른 뒤(step 3): 선택한 region + 그 region 의 자식만
+    // 노출한다. 선택 지역 밖의 non-region 랜드마크 라벨이 화면 가장자리에서
+    // 떠 보이면 현재 선택과 무관한 클릭 대상으로 오해되기 쉽다.
     if (_mode == _SelectionMode.region && state.selectedLandmarkId != null) {
       final id = state.selectedLandmarkId!;
       return state.landmarks
           .where((l) {
             if (!l.eraCodes.any(eraCodes.contains)) return false;
-            // 선택 region 본인 + 그 자식: 무조건 노출 (카테고리만 통과시키면 됨).
             if (l.id == id || l.parentLandmarkId == id) {
               return passesCategory(l);
             }
-            // 그 외 region 마커는 숨김 (선택 region 만 큰 핀으로 강조).
-            if (l.isRegion) return false;
-            // 시대 전체의 다른 non-region 랜드마크: 카테고리 필터 적용.
-            return passesCategory(l);
+            return false;
           })
           .toList(growable: false);
     }
@@ -1992,25 +1957,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             .toList()
           ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
-    final selectedEra = state.eras
-        .where((era) => era.id == state.selectedEraId)
-        .firstOrNull;
-    final avatarByCharacterCode = <String, String>{
-      for (final character in state.characters)
-        character.code: character.avatarAssetPath,
-    };
-
     // 첫 화면 (시대 미선택) 은 줌 6 (저배율) 로 가나안~광야~메소포타미아 일대가
-    // 한눈에 들어오도록 중심 잡음. 하단 시트 0.46 으로 visible 영역의 중앙이
-    // 가나안이 되도록 lat 을 약간 남쪽으로 offset.
-    final mapCenter = state.selectedEraIds.isEmpty
-        ? const LatLng(28.5, 35.20)
-        : (selectedEra?.mapCenterLat != null &&
-                  selectedEra?.mapCenterLng != null
-              ? LatLng(selectedEra!.mapCenterLat!, selectedEra.mapCenterLng!)
-              : null);
-
-    final mapZoom = state.selectedEraIds.isEmpty ? 6.0 : selectedEra?.mapZoom;
+    // 한눈에 들어오도록 중심 잡음. 3D 는 하단 시트와 pitch 때문에 사우디아라비아가
+    // 가려지기 쉬워 더 남쪽을 중심으로 두고 성경권 전체를 넓게 연다.
+    const mapCenter = LatLng(0.5, 39.8);
+    const defaultMapZoom = 3.25;
+    final mapZoom = _initialMapZoomOverride(defaultMapZoom);
     final topInset = MediaQuery.of(context).padding.top;
     // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
     // 차지하는 픽셀. gesture-only / 풀스크린 모드면 0. 이 값만큼 시트를 위로
@@ -2019,7 +1971,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     const outerMargin = 20.0;
     // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
     final mapCalloutTopObscuredPixels = topInset + 88;
-
     return Scaffold(
       body: PopScope<Object?>(
         canPop: !_canHandleHomeBack(state),
@@ -2039,22 +1990,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 onCloseSelectedCallout: _closeSelectedEventPopup,
                 onOpenDetail: _openEventDetail,
                 colorForCharacter: controller.colorForCharacter,
-                avatarAssetForCharacter: (characterCode) {
-                  // 1) 현재 era 의 character 에 있으면 그 경로 사용 (정확한 경로
-                  //    포함 — 향후 storage path 확장 가능).
-                  final cached = avatarByCharacterCode[characterCode];
-                  if (cached != null && cached.isNotEmpty) {
-                    return cached;
-                  }
-                  // 2) state.characters 에 없는 인물 코드는 컨벤션 경로
-                  //    `assets/avatars_thumbs/{code}.png` 로 폴백 — 번들에 실제
-                  //    파일이 없으면 _AvatarImage 의 errorBuilder 가
-                  //    Icons.person 으로 처리.
-                  if (characterCode.isEmpty) {
-                    return '';
-                  }
-                  return 'assets/avatars_thumbs/$characterCode.png';
-                },
                 selectedCharacterCodes: state.selectedCharacterCodes,
                 eventEmotionMarks: state.eventEmotionMarks,
                 controller: _mapPanelController,
@@ -2074,17 +2009,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     (bottomInset / MediaQuery.sizeOf(context).height),
                 decorate: false,
                 activeLandmarks: _activeLandmarksForEra(state),
-                activeEraBoundaries: state.selectedEraIds.isEmpty
-                    ? const []
-                    : state.eraBoundaries
-                          .where((b) => state.selectedEraIds.contains(b.eraId))
-                          .toList(growable: false),
-                // 주: region 모드라도 activeEraBoundaries 는 그대로 넘긴다.
-                // StoryMapPanel 은 이 데이터를 era 폴리곤 그리기에 쓰지 않고
-                // (1) era 변경 카메라 fit 트리거, (2) `_eraColorForRegion` 의
-                // 시대 색 lookup 에만 사용한다. 비우면 여러 시대에 속하는
-                // region 의 색이 lm.eraCodes.first 로 폴백되어 사용자가 선택한
-                // 시대와 다른 색으로 보임.
                 selectedLandmarkId: state.selectedLandmarkId,
                 // reveal trigger: region 모드면 landmark id, character 모드 step3
                 // 면 인물 코드 정렬한 키. 키가 변경되면 사건 핀 0.3초 순차 reveal.
@@ -2113,13 +2037,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   // 단순 정보 팝업.
                   _showLandmarkPopup(lm);
                 },
-                onMeasureResult: _showMeasureResult,
-                eraCodeForId: (eraId) {
-                  for (final e in state.eras) {
-                    if (e.id == eraId) return e.code;
-                  }
-                  return null;
-                },
                 // region 마커에 표시할 사건 개수 — region 본인 + 자식 anchor/minor
                 // + alias_group 멤버들의 landmark_id 를 가진 events 수.
                 eventCountByLandmarkId: _regionEventCounts(state),
@@ -2128,26 +2045,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 regionPickerMode:
                     _mode == _SelectionMode.region &&
                     state.selectedLandmarkId == null,
-                // 그 시대의 모든 사건을 인물별 path 로 항상 보여 준다 (선택 인물
-                // 진하게, 미선택 흐리게). 사용자가 step 3 에서 사건을 골라도 인물
-                // 이동 경로 자체는 사라지면 안 되므로 displayedEventIds 와 무관하게
-                // 미리보기를 켜둔다. 선택된 사건은 그 path 위에 핀으로 표시된다
-                // (`_buildMarkers`).
-                eraPreviewEvents: state.events,
-                // 시대 폴리곤(hull) 입력은 path preview 와 분리. 인물 모드 +
-                // 인물 선택 시 그 인물 사건만 사용해 폴리곤이 인물 활동 영역에
-                // 정확히 맞도록. 그 외에는 빈 리스트 → preview 전체로 폴백.
-                hullEvents:
-                    _mode == _SelectionMode.character &&
-                        state.selectedCharacterCodes.isNotEmpty
-                    ? state.events
-                          .where(
-                            (e) => e.characterCodes.any(
-                              state.selectedCharacterCodes.contains,
-                            ),
-                          )
-                          .toList(growable: false)
-                    : const <StoryEvent>[],
                 // 시대 영역 폴리곤 = 그 시대 region 들의 polygon 합집합. 시대만
                 // 선택된 시점부터 region 모드 진입 직후까지 일관되게 표시된다.
                 // 인물 모드에서는 region 폴리곤 표시 정책에 따라 빈 리스트로.
@@ -2163,9 +2060,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 // dismiss. region/character 단계 진입 시 _resetMapHint() 가
                 // 다시 보여줌.
                 onMapInteraction: _handleMapInteraction,
-                // 인물 모드에서는 region 검정 캡슐 라벨(가나안·시내 광야·애굽 등)
-                // 이 인물 path 점선을 가리는 문제가 있어 라벨을 숨긴다.
-                suppressRegionLabels: _mode == _SelectionMode.character,
               ),
             ),
             // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
@@ -2180,15 +2074,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 top: topInset + 50,
                 left: 0,
                 right: 0,
-                child: _LandmarkCategoryChipsBar(
-                  state: state,
-                  onToggle: (cat) => ref
-                      .read(storyControllerProvider.notifier)
-                      .toggleLandmarkCategory(cat),
-                  onClear: () => ref
-                      .read(storyControllerProvider.notifier)
-                      .clearLandmarkCategories(),
-                  onLandmarkTap: _showLandmarkPopup,
+                child: Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerDown: (_) {
+                    _handleMapInteraction();
+                    _suppressMapTaps();
+                  },
+                  onPointerUp: (_) => _suppressMapTaps(),
+                  onPointerCancel: (_) => _suppressMapTaps(),
+                  onPointerSignal: (_) => _suppressMapTaps(),
+                  child: _LandmarkCategoryChipsBar(
+                    state: state,
+                    onToggle: (cat) => ref
+                        .read(storyControllerProvider.notifier)
+                        .toggleLandmarkCategory(cat),
+                    onClear: () => ref
+                        .read(storyControllerProvider.notifier)
+                        .clearLandmarkCategories(),
+                    onLandmarkTap: _showLandmarkPopup,
+                  ),
                 ),
               ),
             // v3 — 좌측 "랜드마크 25" 토글 + 사이드 패널 제거. 사용자가 카테고리
@@ -2210,9 +2114,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
                 return Stack(
                   children: [
-                    // 양피지 grain 은 StoryMapPanel 내부에서 ParchmentMultiplyLayer
-                    // (BlendMode.multiply CustomPainter) 로 처리. 단순 Opacity
-                    // overlay 는 화면을 뿌옇게 만들어서 폐기.
                     Positioned(
                       left: sheetHorizontalMargin,
                       right: sheetHorizontalMargin,
@@ -2223,94 +2124,122 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       // spacer 를 두어 컨텐츠를 nav bar 위로 띄운다.
                       // (gesture-only 단말은 bottomInset=0 이라 기존과 동일한 동작.)
                       bottom: 0,
-                      child: AnimatedContainer(
-                        key: const ValueKey<String>('selection-sheet'),
-                        duration: const Duration(milliseconds: 280),
-                        curve: Curves.easeOutCubic,
-                        height: sheetHeight + bottomInset,
-                        child: _mode == _SelectionMode.region
-                            ? _buildRegionPanel(state, bottomInset)
-                            : (_mode == null && _selectionStep == 1)
-                            ? _buildHomeIntroPanel(state, bottomInset)
-                            : StorySelectionPanel(
-                                scrollController:
-                                    _selectionPanelScrollController,
-                                step: _selectionStep,
-                                panelStage: _selectionPanelStage,
-                                // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
-                                headerOverride: _panelStageHandle(),
-                                // step 2 인물 카드의 "사건 N개" 카운트 source.
-                                eraEvents: state.events,
-                                onStepUp: _stepSelectionPanelUp,
-                                onStepDown: _stepSelectionPanelDown,
-                                canOpenStep: (step) =>
-                                    _canOpenSelectionStep(step, state),
-                                onSelectStep: (step) =>
-                                    _goToSelectionStep(step),
-                                eras: testamentEras,
-                                selectedEraId: state.selectedEraId,
-                                selectedTestament: state.selectedTestament,
-                                onSelectEra: (eraId) {
-                                  _handleStepEraSelect(eraId);
-                                },
-                                onSelectTestament: (testament) {
-                                  _handleStepTestamentSelect(testament);
-                                },
-                                characters: state.characters,
-                                characterSortMode: _characterSortMode,
-                                onCharacterSortModeChanged: (mode) {
-                                  setState(() {
-                                    _characterSortMode = mode;
-                                  });
-                                },
-                                draftSelectedCharacterCodes:
-                                    _sanitizeDraftSelectedCharacterCodes(state),
-                                onToggleDraftCharacter: _toggleDraftCharacter,
-                                committedSelectedCharacterCodes:
-                                    state.selectedCharacterCodes,
-                                hasPendingCharacterChanges:
-                                    _hasPendingCharacterSelectionChanges(state),
-                                colorForDraftCharacter: (characterId) =>
-                                    _colorForDraftCharacter(characterId, state),
-                                colorForCommittedCharacter:
-                                    controller.colorForCharacter,
-                                events: characterTimeline,
-                                completedEventIds: state.completedEventIds,
-                                eventEmotionMarks: state.eventEmotionMarks,
-                                quizAttemptSummaries:
-                                    state.quizAttemptSummaries,
-                                celebrationEventId: _mapCelebrationEventId,
-                                celebrationStampLabel:
-                                    _mapCelebrationStampLabel,
-                                celebrationNonce: _mapCelebrationNonce,
-                                onCelebrationComplete:
-                                    _mapCelebrationCompleteCallback(),
-                                quizReviewEventIds: quizReviewEventIds,
-                                quizConfusedEventIds: quizConfusedEventIds,
-                                draftDisplayedEventIds: sanitizedDraftDisplayed,
-                                committedDisplayedEventIds:
-                                    state.displayedEventIds,
-                                onToggleDisplayedEvent:
-                                    _toggleDraftDisplayedEvent,
-                                onSelectAllDisplayedEvents: () =>
-                                    _selectAllDraftDisplayedEvents(
-                                      characterTimeline,
-                                    ),
-                                onDeselectAllDisplayedEvents:
-                                    _deselectAllDraftDisplayedEvents,
-                                onCommitDisplayedEvents: _proceedFromStoryStep,
-                                onNextFromEra: _proceedFromEraStep,
-                                onNextFromCharacters: _proceedFromCharacterStep,
-                                onOpenEventDetail: (event) {
-                                  ref
-                                      .read(storyControllerProvider.notifier)
-                                      .selectEvent(event.id);
-                                  _openEventDetailPage(event);
-                                },
-                                // 지도 핀 클릭 등으로 controller 가 가진 현재
-                                // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
-                                currentSelectedEventId: state.selectedEventId,
-                              ),
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps(const Duration(milliseconds: 1200));
+                        },
+                        onPointerMove: (_) =>
+                            _suppressMapTaps(const Duration(milliseconds: 350)),
+                        onPointerUp: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        onPointerCancel: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        onPointerSignal: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        child: AnimatedContainer(
+                          key: const ValueKey<String>('selection-sheet'),
+                          duration: const Duration(milliseconds: 280),
+                          curve: Curves.easeOutCubic,
+                          height: sheetHeight + bottomInset,
+                          child: _mode == _SelectionMode.region
+                              ? _buildRegionPanel(state, bottomInset)
+                              : (_mode == null && _selectionStep == 1)
+                              ? _buildHomeIntroPanel(state, bottomInset)
+                              : StorySelectionPanel(
+                                  scrollController:
+                                      _selectionPanelScrollController,
+                                  step: _selectionStep,
+                                  panelStage: _selectionPanelStage,
+                                  // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
+                                  headerOverride: _panelStageHandle(),
+                                  // step 2 인물 카드의 "사건 N개" 카운트 source.
+                                  eraEvents: state.events,
+                                  onStepUp: _stepSelectionPanelUp,
+                                  onStepDown: _stepSelectionPanelDown,
+                                  canOpenStep: (step) =>
+                                      _canOpenSelectionStep(step, state),
+                                  onSelectStep: (step) =>
+                                      _goToSelectionStep(step),
+                                  eras: testamentEras,
+                                  selectedEraId: state.selectedEraId,
+                                  selectedTestament: state.selectedTestament,
+                                  onSelectEra: (eraId) {
+                                    _handleStepEraSelect(eraId);
+                                  },
+                                  onSelectTestament: (testament) {
+                                    _handleStepTestamentSelect(testament);
+                                  },
+                                  characters: state.characters,
+                                  characterSortMode: _characterSortMode,
+                                  onCharacterSortModeChanged: (mode) {
+                                    setState(() {
+                                      _characterSortMode = mode;
+                                    });
+                                  },
+                                  draftSelectedCharacterCodes:
+                                      _sanitizeDraftSelectedCharacterCodes(
+                                        state,
+                                      ),
+                                  onToggleDraftCharacter: _toggleDraftCharacter,
+                                  committedSelectedCharacterCodes:
+                                      state.selectedCharacterCodes,
+                                  hasPendingCharacterChanges:
+                                      _hasPendingCharacterSelectionChanges(
+                                        state,
+                                      ),
+                                  colorForDraftCharacter: (characterId) =>
+                                      _colorForDraftCharacter(
+                                        characterId,
+                                        state,
+                                      ),
+                                  colorForCommittedCharacter:
+                                      controller.colorForCharacter,
+                                  events: characterTimeline,
+                                  completedEventIds: state.completedEventIds,
+                                  eventEmotionMarks: state.eventEmotionMarks,
+                                  quizAttemptSummaries:
+                                      state.quizAttemptSummaries,
+                                  celebrationEventId: _mapCelebrationEventId,
+                                  celebrationStampLabel:
+                                      _mapCelebrationStampLabel,
+                                  celebrationNonce: _mapCelebrationNonce,
+                                  onCelebrationComplete:
+                                      _mapCelebrationCompleteCallback(),
+                                  quizReviewEventIds: quizReviewEventIds,
+                                  quizConfusedEventIds: quizConfusedEventIds,
+                                  draftDisplayedEventIds:
+                                      sanitizedDraftDisplayed,
+                                  committedDisplayedEventIds:
+                                      state.displayedEventIds,
+                                  onToggleDisplayedEvent:
+                                      _toggleDraftDisplayedEvent,
+                                  onSelectAllDisplayedEvents: () =>
+                                      _selectAllDraftDisplayedEvents(
+                                        characterTimeline,
+                                      ),
+                                  onDeselectAllDisplayedEvents:
+                                      _deselectAllDraftDisplayedEvents,
+                                  onCommitDisplayedEvents:
+                                      _proceedFromStoryStep,
+                                  onNextFromEra: _proceedFromEraStep,
+                                  onNextFromCharacters:
+                                      _proceedFromCharacterStep,
+                                  onOpenEventDetail: (event) {
+                                    ref
+                                        .read(storyControllerProvider.notifier)
+                                        .selectEvent(event.id);
+                                    _openEventDetailPage(event);
+                                  },
+                                  // 지도 핀 클릭 등으로 controller 가 가진 현재
+                                  // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
+                                  currentSelectedEventId: state.selectedEventId,
+                                ),
+                        ),
                       ),
                     ),
                     // 우측 사이드: 줌 +/- 만 (stepper 는 시트 헤더로 이동).
@@ -2318,29 +2247,36 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     Positioned(
                       right: outerMargin,
                       top: topInset + 90,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          mapControlButton(
-                            icon: Icons.add,
-                            tooltip: '확대',
-                            onTap: _mapPanelController.zoomIn,
-                          ),
-                          const SizedBox(height: 6),
-                          mapControlButton(
-                            icon: Icons.remove,
-                            tooltip: '축소',
-                            onTap: _mapPanelController.zoomOut,
-                          ),
-                          const SizedBox(height: 6),
-                          // 지도 출처/라이선스 — CC BY 4.0(Stamen Watercolor) +
-                          // ODbL(OpenStreetMap) attribution 의무 충족.
-                          mapControlButton(
-                            icon: Icons.info_outline,
-                            tooltip: '지도 출처',
-                            onTap: _showMapAttributionDialog,
-                          ),
-                        ],
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps();
+                        },
+                        onPointerSignal: (_) => _suppressMapTaps(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            mapControlButton(
+                              icon: Icons.add,
+                              tooltip: '확대',
+                              onTap: _mapPanelController.zoomIn,
+                            ),
+                            const SizedBox(height: 6),
+                            mapControlButton(
+                              icon: Icons.remove,
+                              tooltip: '축소',
+                              onTap: _mapPanelController.zoomOut,
+                            ),
+                            const SizedBox(height: 6),
+                            // 지도 출처/라이선스 — 운영 3D 지도 attribution 의무 충족.
+                            mapControlButton(
+                              icon: Icons.info_outline,
+                              tooltip: '지도 출처',
+                              onTap: _showMapAttributionDialog,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     // 세로 모드: 4개 핵심 버튼 + 알림/Aa/이야기등록을
@@ -2349,51 +2285,62 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       left: 0,
                       right: 0,
                       top: sideTop,
-                      child: SizedBox(
-                        height: 38,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            children: [
-                              // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
-                              // 항상 일부 보이므로 별도 토글 불필요.
-                              // "Aa" (글자크기) 버튼 제거 — 프로필 설정 시트로 이전.
-                              topUtilityButton(
-                                label: '성경',
-                                onTap: _openBibleReaderPopup,
-                              ),
-                              const SizedBox(width: 4),
-                              topUtilityButton(
-                                label: '퀴즈',
-                                onTap: _openWeeklyTab,
-                              ),
-                              const SizedBox(width: 4),
-                              topUtilityButton(
-                                label: '프로필',
-                                onTap: _openProfileTab,
-                              ),
-                              const SizedBox(width: 4),
-                              NotificationBellButton(
-                                onNavigate: _handleNotificationTap,
-                                onOpenHistory: _openNotificationHistory,
-                              ),
-                              if (kIsWeb) ...[
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps();
+                        },
+                        onPointerUp: (_) => _suppressMapTaps(),
+                        onPointerCancel: (_) => _suppressMapTaps(),
+                        onPointerSignal: (_) => _suppressMapTaps(),
+                        child: SizedBox(
+                          height: 38,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Row(
+                              children: [
+                                // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
+                                // 항상 일부 보이므로 별도 토글 불필요.
+                                // "Aa" (글자크기) 버튼 제거 — 프로필 설정 시트로 이전.
+                                topUtilityButton(
+                                  label: '성경',
+                                  onTap: _openBibleReaderPopup,
+                                ),
                                 const SizedBox(width: 4),
                                 topUtilityButton(
-                                  label: '이야기 등록',
-                                  onTap: _openProposalBoardOrGate,
+                                  label: '퀴즈',
+                                  onTap: _openWeeklyTab,
                                 ),
+                                const SizedBox(width: 4),
+                                topUtilityButton(
+                                  label: '프로필',
+                                  onTap: _openProfileTab,
+                                ),
+                                const SizedBox(width: 4),
+                                NotificationBellButton(
+                                  onNavigate: _handleNotificationTap,
+                                  onOpenHistory: _openNotificationHistory,
+                                ),
+                                if (kIsWeb) ...[
+                                  const SizedBox(width: 4),
+                                  topUtilityButton(
+                                    label: '이야기 등록',
+                                    onTap: _openProposalBoardOrGate,
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                     // 지도 위 모드별 안내 오버레이. 사용자가 무엇을 해야 할지
-                    // 모를 때 가운데 흐리게 떠 있다가, 지도 제스처/region 선택/
-                    // 인물 「다음」 등 한 번의 행동으로 dismiss. IgnorePointer 로
-                    // 감싸 hint 가 떠 있어도 폴리곤·핀 클릭은 그대로 가능.
+                    // 모를 때 가운데 흐리게 떠 있다가, 화면 탭/지도 제스처/
+                    // region 선택/인물 「다음」 등 한 번의 행동으로 dismiss.
+                    // IgnorePointer 로 감싸 안내 위 탭도 아래 WebView 지도
+                    // hit-test 로 전달되게 한다.
                     if (mapHint != null)
                       Positioned(
                         top: topInset + 96,
@@ -2433,13 +2380,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   ),
                 ),
               ),
-            if (_mapAnimationInputLocked)
-              const Positioned.fill(
-                child: ModalBarrier(
-                  color: Colors.transparent,
-                  dismissible: false,
-                ),
-              ),
             if (state.loading)
               const Positioned.fill(
                 child: ColoredBox(
@@ -2451,6 +2391,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         ),
       ),
     );
+  }
+
+  double? _initialMapZoomOverride(double? fallback) {
+    const raw = String.fromEnvironment('STORY_MAP_INITIAL_ZOOM');
+    if (raw.isEmpty) {
+      return fallback;
+    }
+    return double.tryParse(raw) ?? fallback;
   }
 
   // ===========================================================================
@@ -2465,13 +2413,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFFFBF5E9), Color(0xFFF6EAD5), Color(0xFFEEDCBE)],
+        colors: [
+          AppColors.dialogTopHighlight,
+          AppColors.parchmentLight,
+          AppColors.parchmentMid,
+        ],
       ),
       borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
       border: Border(
-        top: BorderSide(color: Color(0xFF8C6743), width: 1.15),
-        left: BorderSide(color: Color(0xFF8C6743), width: 1.15),
-        right: BorderSide(color: Color(0xFF8C6743), width: 1.15),
+        top: BorderSide(color: AppColors.brownEdge, width: 1.15),
+        left: BorderSide(color: AppColors.brownEdge, width: 1.15),
+        right: BorderSide(color: AppColors.brownEdge, width: 1.15),
       ),
       boxShadow: [
         BoxShadow(
@@ -2710,6 +2662,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     if (allPoints.length < 2) return;
     _mapPanelController.focusRegion(allPoints);
+    if (_mode == _SelectionMode.region && state.selectedLandmarkId == null) {
+      Future<void>.delayed(const Duration(milliseconds: 520), () {
+        if (!mounted) return;
+        final current = ref.read(storyControllerProvider);
+        if (_mode == _SelectionMode.region &&
+            current.selectedLandmarkId == null) {
+          _mapPanelController.clearMapTapSuppression();
+        }
+      });
+    }
   }
 
   Widget _buildRegionPanel(StoryState state, double bottomInset) {

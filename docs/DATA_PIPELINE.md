@@ -4,7 +4,7 @@
 
 ## 0. 입력 데이터 (사람·AI 이전 단계에서 준비됨)
 
-- **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 입력.
+- **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력.
 - **`assets/200_stories/*.json`** — 215개 이야기 dict 리스트 (5개 파일). **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
 
 ### 가장 단순한 흐름: KRV 성경 시드
@@ -168,16 +168,6 @@ Makefile                                # 파이프라인 오케스트레이션
 - **목적**: 사용자가 시대를 선택하면 그 시대 era_code 가 포함된 랜드마크만 지도에 떠올라 시대별 무대 감각을 잡아 준다. 한 랜드마크가 여러 시대에 의미가 있으면(예: 예루살렘 성전 = 왕정 + 포로/귀환 + 예수 사역) 다중 코드.
 - **PoC 단계**: emoji 컬럼만 사용 (이미지 자산 불필요). 향후 실제 일러스트가 필요하면 `icon_storage_path` 같은 새 컬럼을 추가하는 식으로 확장.
 
-#### `build_era_boundaries_seed_sql.py` — 시대 영역 폴리곤 SQL (독립)
-- **입력**: `assets/landmarks/era_boundaries.json` (시대 코드 + 폴리곤 정점 + 색)
-- **출력**: `supabase/200_stories/era_boundaries_seed.sql` — `era_boundaries` UPSERT
-- **스키마**: `era_id` (eras.code 매칭으로 INSERT 시 SELECT), `polygon_index`, `polygon` (jsonb [[lat,lng], ...]), `color`, `fill_opacity`, `display_order`
-- **on conflict 키**: `(era_id, polygon_index)` — 한 시대의 같은 인덱스 폴리곤은 갱신
-- **의존**: 없음. `db_init.sql` 또는 `make db-init` 으로 `era_boundaries` 테이블이 먼저 생성되어 있어야 한다. JSON 에 적힌 era_code 가 `eras.code` 로 존재해야 INSERT 가 매칭됨.
-- **stale 정리**: 현재 JSON 에 없는 (era_code, polygon_index) 조합은 DB 에서 삭제.
-- **목적**: 사용자가 시대를 선택했을 때 그 시대의 무대를 지도 위에 반투명 폴리곤으로 보여 주어 "이 시대 = 대략 이 영역" 이라는 지리적 감각을 잡아 준다. 인물·사건 핀이 그 영역 안 어디에 있는지 시각적으로 비교 가능.
-- **데이터 작성 가이드**: 각 폴리곤은 정점 3개 이상이어야 한다. 한 시대가 분리된 지역(예: 메소포타미아 + 가나안)을 가지면 `polygons` 배열에 폴리곤 여러 개를 넣는다 (인덱스가 자동 부여됨). 색은 `#RRGGBB` 또는 `#AARRGGBB`, fill_opacity 는 0.0 ~ 1.0.
-
 #### `renumber_story_indices.py` — story_index 재정렬
 - **언제**: stories JSON 을 추가/삭제/수정해서 era 안의 `story_index` 가 듬성듬성 비거나 `None` 이 생겼을 때.
 - **동작**: 같은 era 안에서 현재 `story_index` (정수) 순으로 정렬, `None` 항목은 같은 파일의 JSON 배열 위치 기준으로 이웃 사이에 보간(interpolate). 그 결과 1..N 으로 빈틈없이 재할당.
@@ -237,16 +227,24 @@ Makefile                                # 파이프라인 오케스트레이션
 - **옵션**: `--landmarks <path>`, `--stories <path>` (디렉토리이면 *.json 글롭). 기본값은 프로젝트 표준 경로.
 - **자동 실행**: `.pre-commit-config.yaml` 의 pre-push 훅 — `landmarks.json` 또는 `assets/200_stories/*.json` 변경 시 push 전에 검증.
 
+#### `audit_landmark_polygons.py`
+- **입력**: `assets/landmarks/landmarks.json`
+- **출력**: 박스형/저정점 region 후보 목록 (`--json` 지정 시 JSON)
+- **목적**: `shapely` 없이도 axis-aligned edge 비율과 정점 수로 사각형에 가까운 region 을 빠르게 찾는다. 정제 우선순위 선정용이며 CI 차단용으로 쓰려면 `--fail-on-findings` 를 명시한다.
+- **옵션**: `--max-vertices`, `--min-axis-ratio`, `--json`, `--fail-on-findings`
+- **Make target**: `make audit-landmark-polygons`
+
 #### `refine_landmark_polygons_from_geojson.py`
 - **입력**: `assets/landmarks/landmarks.json` + `assets/maps/ne_50m_admin_0_countries.geojson` (Natural Earth 1:50m 국경)
 - **출력**: 기본 `tools/seed/refined_polygons.json` (검토용), `--in-place` 옵션 시 `landmarks.json` 의 polygon 직접 교체
-- **목적**: 사람이 사각형으로 그린 region polygon 을 Natural Earth 해안선/국경 정점에 스냅해 자연 곡선으로 정밀화. era_boundaries 와 같은 GeoJSON 클립 방식이지만 region 단위.
+- **목적**: 사람이 사각형으로 그린 region polygon 을 Natural Earth 해안선/국경 정점에 스냅해 자연 곡선으로 정밀화한다.
 - **동작**: 각 region 의 polygon bbox 를 `BBOX_PADDING_DEG` 만큼 패딩 → 그 영역과 교차하는 country feature 들을 union/intersect → 결과 polygon 에서 가장 큰 ring 채택 + simplify
 - **자동 필터**: 결과 정점 수가 `MIN_REFINEMENT_VERTICES` (10) 미만이면 skip — country bbox 슬라이스(사각형)에 그치는 sub-country region (유대/사마리아 등) 은 원본 hand-drawn 이 더 나음
 - **명시 skip**: `SKIP_CODES` (홍해 같은 수역, 비지리적 region)
 - **옵션**: `--regions rgn_xxx,rgn_yyy` 일부만, `--simplify <deg>`, `--in-place`
 - **재실행**: idempotent — 같은 입력이면 같은 결과
 - **의존**: `pip install shapely` (`requirements.txt` 에 이미 포함)
+- **Make target**: `make refine-landmark-polygons` 는 검토용 `tools/seed/refined_polygons.json` 만 생성한다. 실제 반영은 수동 `--in-place` 후 `verify_polygons_contain_events.py` 를 반드시 실행한다.
 
 ## 4. Makefile 타겟
 
@@ -259,7 +257,8 @@ make seed-characters            # build_characters_seed_sql.py (→ person-meta 
 make seed-quizzes            # build_quizzes_seed_sql.py (→ assets/quizzes + db_events)
 make seed-daily-quiz         # build_daily_quiz_seed_sql.py (→ events + region mapping)
 make seed-landmarks          # build_landmarks_seed_sql.py (시대별 랜드마크, 독립)
-make seed-era-boundaries     # build_era_boundaries_seed_sql.py (시대 영역 폴리곤, 독립)
+make audit-landmark-polygons # 박스형/저정점 region polygon 감사
+make refine-landmark-polygons # Natural Earth 기반 region polygon 정제 후보 생성
 make generate-avatars        # generate_avatars_vertex.py (→ person-meta 의존, 기존 png 보존)
 make generate-story-images   # generate_event_story_images_vertex.py
 make thumbnails              # generate_runtime_thumbnails.py (→ avatars, story-images)
@@ -271,7 +270,7 @@ make apply-seeds-daily-quiz  # daily_quiz.sql 적용 (slug UPSERT, 재실행 안
 
 # 묶음 타겟
 make seed-stories-characters    # seed-stories + seed-characters (권장, apply-seeds-stories-characters 와 대칭)
-make seed-all                # seed-bible-verses + seed-stories + seed-characters + seed-quizzes + seed-daily-quiz + seed-landmarks + seed-era-boundaries
+make seed-all                # seed-bible-verses + seed-stories + seed-characters + seed-quizzes + seed-daily-quiz + seed-landmarks
 make generate-all            # generate-avatars + generate-story-images + thumbnails
 make all                     # seed-all + generate-all
 ```
@@ -297,8 +296,7 @@ assets/
 ├── bible/                    # KRV 성경 텍스트 (66 .txt)
 ├── maps/                     # GeoJSON 세계 지도
 ├── landmarks/                # 지도용 정적 데이터
-│   ├── landmarks.json        #   - 시대별 랜드마크 (예루살렘 성전, 시내산 등 — era_codes 포함)
-│   └── era_boundaries.json   #   - 시대별 거친 영역 폴리곤
+│   └── landmarks.json        #   - 랜드마크 + region polygon (era_codes 포함)
 └── app_icon/                 # 앱 런처 아이콘
 ```
 

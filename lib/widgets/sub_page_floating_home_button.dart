@@ -22,9 +22,9 @@ class SubPageFloatingHomeButton extends StatelessWidget {
           height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color(0xD06A401E),
+            color: AppColors.brownWarm2.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.goldRim, width: 1.4),
+            border: Border.all(color: AppColors.brownRim, width: 1.4),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),

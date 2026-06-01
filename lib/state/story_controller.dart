@@ -9,7 +9,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/story_repository.dart';
 import '../models/character.dart';
 import '../models/era.dart';
-import '../models/era_boundary.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
@@ -62,10 +61,9 @@ class StoryController extends Notifier<StoryState> {
         return;
       }
 
-      // 시대별 랜드마크 + 시대 영역 폴리곤은 시대/인물 선택과 무관하게 부팅 시
-      // 한 번만 전체 로드. 실패해도 나머지 화면은 살려야 하므로 swallow.
+      // 시대별 랜드마크는 시대/인물 선택과 무관하게 부팅 시 한 번만 전체 로드.
+      // 실패해도 나머지 화면은 살려야 하므로 swallow.
       List<Landmark> landmarks = const [];
-      List<EraBoundary> eraBoundaries = const [];
       try {
         landmarks = await _repo.fetchLandmarks();
       } catch (e) {
@@ -74,15 +72,6 @@ class StoryController extends Notifier<StoryState> {
           'apply-seeds-landmarks 가 적용됐는지 확인하세요.',
         );
         landmarks = const [];
-      }
-      try {
-        eraBoundaries = await _repo.fetchEraBoundaries();
-      } catch (e) {
-        debugPrint(
-          '[StoryController] fetchEraBoundaries failed: $e — '
-          'apply-seeds-era-boundaries 가 적용됐는지 확인하세요.',
-        );
-        eraBoundaries = const [];
       }
 
       final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
@@ -107,7 +96,6 @@ class StoryController extends Notifier<StoryState> {
         isSearching: false,
         clearSelectedEvent: true,
         landmarks: landmarks,
-        eraBoundaries: eraBoundaries,
       );
     } catch (e) {
       state = state.copyWith(
