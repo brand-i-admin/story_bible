@@ -249,7 +249,7 @@
     "time_precision": "approx",
     "story_index": 6,
     "story_scenes": [
-      "혼란과 폭력이 번지는 앞쪽에 서 있고, 거리의 소란한 모습",
+      "혼란과 폭력이 번지는 거리의 소란한 모습",
       "하나님의 빛이 임하고, 노아가 나무를 자르며 방주 만들기를 시작한다",
       "노아 가족이 방주로 들어가고 짐승들이 따라 들어온다",
       "폭우와 물기둥, 방주가 크게 흔들리며 떠오른다"
@@ -502,7 +502,7 @@
     "story_scenes": [
       "하갈은 잉태하고, 사라를 업신여긴다",
       "아브라함과 사라는 하갈을 내쫓아내고, 하갈을 슬픈 얼굴로 그들을 떠나는 모습",
-      "광야 길, 하갈이 눈물로 주저앉고 그에게 천사가 나타난다"
+      "광야 길, 하갈이 눈물로 주저앉고 그에게 천사가 나타난다",
       "하갈은 다시 아브라함과 사라에게 돌아와 이스마엘을 낳는다"
     ],
     "scene_characters": [
@@ -555,7 +555,7 @@
     "time_precision": "approx",
     "story_index": 5,
     "story_scenes": [
-      "하나님의 빛이 아브라함에게 임한다 하나님은 아브라함에게 할례를 받으라고 말씀하시고 아브라함은 엎드린다",
+      "하나님의 빛이 늙은 아브라함에게 임한다 하나님은 아브라함에게 할례를 받으라고 말씀하시고 아브라함은 엎드려서 이를 듣는다",
       "90세의 사래가 사라로 불리며 약속이 구체화된다",
       "온 마을 사람들이 할례를 받는다"
     ],
@@ -565,6 +565,8 @@
         "abraham"
       ],
       [
+        "god",
+        "abraham",
         "sarah"
       ],
       [
@@ -595,9 +597,9 @@
     "time_precision": "approx",
     "story_index": 6,
     "story_scenes": [
-      "아브라함이 큰 나무들 사이에 오신 세 손님(하나님)을 보고 장막 밖으로 뛰어나가 바닥에 엎드려 절하는 모습",
-      "사라가 장막 안에서 급히 음식을 준비하고 장막앞에 서서 웃음을 참지 못한다"습
-      "하나님의 빛이 아브라함 앞에서 머물고, 장막 뒤에서 그 말을 듣던 사라의 얼굴이 굳는다"
+      "아브라함이 큰 나무들 사이에 오신 세 손님(하나님)을 보고 장막 밖으로 뛰어나가는 모습",
+      "하나님의 빛이 엎드린 아브라함 앞에서 머물고, 둘의 대화를 옅듯던 사라가 장막 문 뒤에 서서 웃음을 참지 못하는 모습 (사라가 크게 보임)",
+      "하나님의 빛이 엎드린 아브라함 앞에서 머물고, 장의 문 뒤에서  듣던 사라의 얼굴이 굳는다 (사라가 작게 보임)"
     ],
     "scene_characters": [
       [
@@ -605,6 +607,8 @@
         "god"
       ],
       [
+        "abraham",
+        "god",
         "sarah"
       ],
       [
@@ -639,8 +643,7 @@
     "story_scenes": [
       "멀리 소돔 방향을 바라보는 아브라함의 실루엣",
       "아브라함이 하나님의 빛 앞에서 간절히 중보를 시작한다",
-      "아브라함이 땅에 엎드려 하나님께 간절히 기도한다",
-      "기도를 마친 아브라함이 발걸음을 옮겨 자기 장막 쪽으로 돌아간다"
+      "아브라함이 땅에 엎드려 하나님께 간절히 기도한다"
     ],
     "scene_characters": [
       [
@@ -653,9 +656,6 @@
       [
         "abraham",
         "god"
-      ],
-      [
-        "abraham"
       ]
     ]
   },
@@ -673,7 +673,7 @@
       {
         "book": "창",
         "from": "19:1",
-        "to": "19:29"
+        "to": "19:38"
       }
     ],
     "start_year": -2086,
@@ -682,10 +682,14 @@
     "story_index": 8,
     "story_scenes": [
       "밤의 소돔에서 롯이 두 천사를 자기 집 안으로 급히 들여 숨겨 준다",
-      "아직 불타지 않은 도시를 뒤로 두고 롯이 아내와 두 딸을 재촉하며 허둥지둥 달린다",
-      "롯의 아내는 소금기둥이 되고, 롯과 두 딸(성인)은 불타는 성을 뒤로한 채 달아난다"
+      "천사들이 재촉하지만 롯은 꾸물거리고 천사들은 그와 가족을손으로 잡아 이끌어 성 밖에 두는 모습",
+      "도망 중 뒤를 돌아본 롯의 아내는 소금기둥이 되고, 롯과 두 딸(성인)은 불타는 성을 뒤로한 채 달아난다",
+      "롯과 딸은 동굴에 숨었는데 딸들은 롯을 술취하게 한 뒤, 동침하여 자손을 보존하는 모습"
     ],
     "scene_characters": [
+      [
+        "lot"
+      ],
       [
         "lot"
       ],
@@ -702,8 +706,7 @@
     "era": "era_patriarch",
     "characters": [
       "abraham",
-      "sarah",
-      "abimelech"
+      "sarah"
     ],
     "place_name": "그랄(전승)",
     "lat": 31.37,
@@ -721,23 +724,15 @@
     "time_precision": "approx",
     "story_index": 9,
     "story_scenes": [
-      "그랄 입성, 아브라함과 사라가 결연한 표정으로 선다",
-      "아비멜렉의 궁정, 사라가 끌려가는 긴장",
-      "밤의 꿈, 경고를 받은 아비멜렉이 놀라 깬다",
-      "사라가 돌아오고, 아브라함은 변명 대신 침묵한다"
+      "아비멜렉 왕의 궁정, 사라가 끌려가왕 긴장한 모습",
+      "밤의 꿈, 왕고를 받은 아비멜렉 왕이 놀라 깬다",
+      "궁정 안에서 아비멜렉 왕이 양과 소와 종들을 아브라함과 사라에게 건네고, 다른 손으로 성문 밖 방향을 가리킨다"
     ],
     "scene_characters": [
       [
-        "abraham",
         "sarah"
       ],
-      [
-        "sarah",
-        "abimelech"
-      ],
-      [
-        "abimelech"
-      ],
+      [],
       [
         "abraham",
         "sarah"
@@ -771,7 +766,6 @@
     "story_scenes": [
       "사라가 아기 이삭을 안고 환하게 웃는다",
       "사라의 차가운 눈빛이 앞쪽에 크게 보이고, 뒤편에서는 열 살쯤 된 이스마엘이 어린 이삭을 놀린다",
-      "하갈이 물가죽을 들고 열 살쯤 된 이스마엘과 함께 집을 떠난다",
       "하갈이 우물 앞에서 열 살쯤 된 이스마엘을 안아 일으켜 세운다"
     ],
     "scene_characters": [
@@ -787,17 +781,7 @@
       [
         "hagar",
         "ishmael"
-      ],
-      [
-        "hagar",
-        "ishmael"
       ]
-    ],
-    "scene_prompt_notes": [
-      "Sarah should look like an older matriarch in warm cream/sand clothing. Do not use Hagar's teal, copper, or indigo clothing colors.",
-      "Sarah remains the older matriarch in warm cream/sand clothing. Ishmael is a child around ten years old.",
-      "Hagar must appear as a clearly adult but younger Egyptian servant woman in a desert teal dress, copper sash, and deep indigo head scarf, distinct from Sarah.",
-      "Hagar must remain a young adult Egyptian servant woman with teal/copper/indigo clothing, tender and protective toward Ishmael."
     ]
   },
   {
@@ -1047,14 +1031,20 @@
     "story_index": 16,
     "story_scenes": [
       "야곱이 돌을 베고 누운다, 밤바람 소리만 들린다",
-      "하나님의 빛이 임한다",
-      "야곱이 돌기둥을 세우고 기름을 붓는다, 여기가 하나님의 집이다"
+      "야곱이 하늘까지 닿아있는 사닥리에 천사들이 오르락 내리락하는 모습을 보고 놀라는 모습",
+      "하나님의 빛이 야곱위로 임하여 자손이 동서남북으로 퍼지게 될 것이라는 약속을 하시고, 야곱은 놀라는 모습",
+      "야곱이 돌기둥을 세우고 기름을 붓는다, 여기가 하나님의 집이라고 말하며 돌을 세우는 모습"
     ],
     "scene_characters": [
+      [
+        "joseph",
+        "jacob"
+      ],
       [
         "jacob"
       ],
       [
+        "jacob",
         "god"
       ],
       [
@@ -1136,10 +1126,10 @@
     "time_precision": "approx",
     "story_index": 18,
     "story_scenes": [
-      "레아가 결연한 표정으로 선다",
-      "라헬이 앞쪽에 서서 표정과 몸짓이 또렷하게 보인다",
-      "아이들이 늘어나고 장막 사이 경쟁이 깊어진다",
-      "마지막에 라헬이 요셉을 낳고 안도의 숨을 쉰다"
+      "레아가 남자 아이 6명과 딸 1명을 낳은 모습",
+      "라헬은 질투하여 시녀 빌하를 야곱과 동침하게 하여 아들을 2명 낳은 모습",
+      "레아는 시녀 실바를 야곱과 동침하게 아들을 2명 더 낳은 모습",
+      "하나님이 라헬의 태를 열어주사, 라헬이 요셉을 낳았고, 요셉을 안고 안도의 숨을 쉬는 모습"
     ],
     "scene_characters": [
       [
@@ -1148,7 +1138,9 @@
       [
         "rachel"
       ],
-      [],
+      [
+        "leah"
+      ],
       [
         "rachel"
       ]
@@ -1204,7 +1196,9 @@
     "era": "era_patriarch",
     "characters": [
       "jacob",
-      "laban"
+      "laban",
+      "leah",
+      "rachel"
     ],
     "place_name": "길르앗(전승)",
     "lat": 32.0,
@@ -1225,7 +1219,7 @@
       "야곱이 밤에 장막을 접고 몰래 길을 나선다",
       "라반이 분노한 얼굴로 야곱을 추격해 따라잡는다",
       "야곱과 라반이 격한 말다툼 끝에 돌무더기를 쌓아 경계 표를 만든다",
-      "야곱과 라반이 서로 맹세하고 각자의 길로 갈라진다"
+      "라반이 딸들(라헬과 레아)과 손주들에게 입맞추고 축복하고 야곱을 떠나는 장면"
     ],
     "scene_characters": [
       [
@@ -1241,7 +1235,9 @@
       ],
       [
         "jacob",
-        "laban"
+        "laban",
+        "leah",
+        "rachel"
       ]
     ]
   },
@@ -1312,14 +1308,9 @@
     "story_scenes": [
       "야곱이 가족을 줄 세우고 멀리서 다가오는 에서와 무리를 보며 긴장한다",
       "에서와 무리가 다가오고 야곱이 땅에 엎드린다",
-      "에서가 야곱을 껴안고 울고 야곱도 울음을 삼킨다",
-      "야곱이 준비한 선물을 에서에게 직접 건네며 화해를 확인한다"
+      "에서가 야곱을 껴안고 울고 야곱도 울음을 삼킨다"
     ],
     "scene_characters": [
-      [
-        "jacob",
-        "esau"
-      ],
       [
         "jacob",
         "esau"
@@ -1358,13 +1349,14 @@
     "time_precision": "approx",
     "story_index": 23,
     "story_scenes": [
-      "야곱이 결연한 표정으로 귀환 길을 재촉한다",
+      "하나님의 음성이 야곱에게 벧엘로 가라 명하셨고, 야곱은 길을 떠났고, 주변 아무도 그들을 쫓아오지 못하게 하나님이 막으시는 모습",
       "길 위에서 라헬이 진통하고 그 곁에 선 야곱이 초조하게 지켜본다",
       "라헬의 숨이 가늘어지고 갓난 베냐민 옆에서 야곱이 비통한 얼굴로 서 있다",
       "야곱이 무덤 기둥을 세우고 오래 서 있다"
     ],
     "scene_characters": [
       [
+        "god",
         "jacob"
       ],
       [
@@ -1407,7 +1399,7 @@
     "story_scenes": [
       "17세 안팎의 어린 요셉이 채색옷을 입고 형들 사이를 지나가자 미묘한 거리감이 흐른다",
       "17세 안팎의 어린 요셉이 채색옷을 입고 꿈을 이야기하자 형들의 표정이 굳는다. 꿈 이야기에는 곡식단 하나가 가운데 있고 주변에 다른 곡식단들이 중앙 곡식단에게 절하고 있는 모습이 나온다",
-      "야곱이 17세 안팎의 어린 요셉을 꾸짖지만 마음속에는 그 말을 담아둔다"
+      "늙어서 머리가 하얀 야곱이 17세 안팎의 어린 요셉을 꾸짖지만 마음속에는 그 말을 담아둔다"
     ],
     "scene_characters": [
       [
@@ -1420,11 +1412,6 @@
         "jacob",
         "joseph"
       ]
-    ],
-    "scene_prompt_notes": [
-      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
-      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
-      "Joseph should look about 17 years old beside Jacob: youthful face, slim build, and little or no beard."
     ]
   },
   {
@@ -1469,12 +1456,6 @@
       [
         "joseph"
       ]
-    ],
-    "scene_prompt_notes": [
-      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard.",
-      "Joseph should look about 17 years old even in distress: youthful face, slim build, and little or no beard.",
-      "Joseph should look about 17 years old even in distress: youthful face, slim build, and little or no beard.",
-      "Joseph should look about 17 years old: youthful face, slim build, and little or no beard."
     ]
   },
   {
@@ -1501,9 +1482,9 @@
     "story_index": 26,
     "story_scenes": [
       "종으로 팔려 온 요셉이 보디발의 집 살림을 정리하며 보디발에게 신뢰를 얻고 열쇠를 넘겨받는다",
-      "한 여자가 침대에 앉아 다리를 꼰 채 요셉에게 말을 걸고, 요셉은 앞쪽에 서서 굳은 표정으로 대답한다",
-      "옷을 남기고 달아나는 요셉 뒤로 여자의 고함이 터진다",
-      "감옥에 갇힌 요셉이 죄수들의 일을 맡아 분주히 정리한다"
+      "이집트 저택의 방 안, 화려한 침상 가장자리에 앉은 여인이 종 요셉을 향해 손짓하고, 요셉은 문가 앞에 서서 몸을 뒤로 물리며 두 손을 가슴 앞에 들어 단호히 거절하는 표정",
+      "여자가 요셉의 옷을 붙잡아 찢어지고, 옷을 남기고 달아나는 종 요셉의 모습",
+      "감옥에 갇힌 종 요셉이 죄수들의 일을 맡아 분주히 정리한다"
     ],
     "scene_characters": [
       [
@@ -1545,25 +1526,20 @@
     "story_index": 27,
     "story_scenes": [
       "바로가 꿈에서 깨어 불안해하고 신하들이 술렁인다",
-      "요셉이 일곱 해 풍년과 일곱 해 흉년을 설명하며 계획을 제시한다",
-      "바로가 옆에서 지켜보는 가운데, 요셉은 파라오가 아닌 애굽의 총리로서 절제된 흰 관복과 금청 장식, 얇은 머리띠를 하고 사람들 앞에 선다"
+      "종 요셉이 바로 앞에서 일곱 해 풍년과 일곱 해 흉년을 설명하며 계획을 제시한다",
+      "요셉은 애굽의 총리로서 절제된 흰 세마포 옷과 금 장식을 하고 수 많은 애굽 사람들 앞에 선다"
     ],
     "scene_characters": [
       [
         "pharaoh"
       ],
       [
+        "pharaoh",
         "joseph"
       ],
       [
-        "pharaoh",
         "joseph"
       ]
-    ],
-    "scene_prompt_notes": [
-      "",
-      "Joseph is still in audience with Pharaoh, not yet in travel clothes.",
-      "Joseph should look like an Egyptian prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no bare-chested pharaoh styling. Keep Joseph's recognizable Semitic face and dignified but restrained Egyptian court-official clothing."
     ]
   },
   {
@@ -1603,11 +1579,6 @@
         "joseph",
         "benjamin"
       ]
-    ],
-    "scene_prompt_notes": [
-      "Joseph should appear as Egypt's prime minister, not Pharaoh. No pharaonic crown, no nemes headdress, no royal false beard, and no overly king-like regalia.",
-      "Joseph is revealing his identity after laying aside some outer official symbols, but he still must not resemble Pharaoh.",
-      "Joseph remains recognizable as Egypt's prime minister, not Pharaoh. The embrace with Benjamin is the focus."
     ]
   },
   {
@@ -1634,10 +1605,9 @@
     "time_precision": "approx",
     "story_index": 29,
     "story_scenes": [
-      "애굽 총리 요셉이 전차를 타고 신하들과 고센으로 달려간다",
-      "애굽 총리 요셉과 야곱이 마주 보고 끌어안고 운다",
-      "애굽 총리 요셉이 가족을 바로 앞에 세우며 예의를 지킨다",
-      "바로와 야곱이 서로 이야기하고 그 사이에 애굽 총리 요셉이 서 있다"
+      "고센 들판 길 위, 애굽 총리 요셉이 흰 세마포 겉옷과 얇은 금 목걸이를 단정히 하고 작은 전차를 타고 야곱의 가족을 맞으러 달려간다",
+      "고센 들판 입구, 흰 세마포 옷과 얇은 금 목걸이를 한 애굽 총리 요셉이 낡은 여행복의 야곱을 두 팔로 끌어안고 눈물을 흘린다",
+      "애굽 궁정 안, 왕관을 쓴 바로와 흰 수염의 야곱이 서로 마주 서 있고, 흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉은 두 사람 사이 옆쪽에서 조용히 안내한다"
     ],
     "scene_characters": [
       [
@@ -1648,20 +1618,10 @@
         "joseph"
       ],
       [
-        "joseph",
-        "pharaoh"
-      ],
-      [
         "pharaoh",
         "jacob",
         "joseph"
       ]
-    ],
-    "scene_prompt_notes": [
-      "Joseph is wearing Egyptian prime minister clothing.",
-      "Joseph is wearing Egyptian prime minister clothing.",
-      "Joseph is wearing Egyptian prime minister clothing.",
-      "Joseph is wearing Egyptian prime minister clothing and stands between Pharaoh and Jacob."
     ]
   },
   {
@@ -1684,7 +1644,7 @@
       {
         "book": "창",
         "from": "49:1",
-        "to": "49:28"
+        "to": "49:33"
       }
     ],
     "start_year": -1860,
@@ -1692,31 +1652,23 @@
     "time_precision": "approx",
     "story_index": 30,
     "story_scenes": [
-      "늙은 야곱이 침상에서 힘들게 몸을 일으킨다",
-      "애굽 총리의 옷을 입은 요셉이 두 아들을 데려오고 야곱의 손이 교차한다",
-      "늙은 야곱이 아들들을 바라보며 무거운 축복의 말을 남긴다",
-      "턱수염과 머리가 하얗게 센 늙은 야곱이 마지막 숨을 고르며 눈을 감는다"
+      "침상 앞, 늙은 야곱이 팔을 어긋맞겨 오른손을 어린 에브라임의 머리에 얹고 왼손을 므낫세의 머리에 얹으며, 흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉은 놀란 얼굴로 야곱의 손을 조심히 바로잡으려 하지만 야곱은 맞다고 하는 장면",
+      "넓은 애굽 집 안, 눈이 어둡고 늙은 야곱 앞에 열두 아들(흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉을 포함한 중년의 남자들)이 반원으로 둘러섰고 야곱이 한사람씩 축복하는 모습",
+      "늙은 야곱이 침대에 발을 올려놓고 숨을 거두고, 열두 아들(흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉을 중년의 남자들)이 흐느낀다"
     ],
     "scene_characters": [
       [
+        "joseph",
         "jacob"
       ],
       [
-        "jacob",
-        "joseph"
-      ],
-      [
+        "joseph",
         "jacob"
       ],
       [
+        "joseph",
         "jacob"
       ]
-    ],
-    "scene_prompt_notes": [
-      "",
-      "Joseph is wearing Egyptian prime minister clothing.",
-      "",
-      "Jacob should look very old with white hair and a white beard."
     ]
   }
 ]
