@@ -43,7 +43,8 @@ class ProfileMiniMap extends ConsumerStatefulWidget {
   final Set<String> completedEventIds;
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
-  final ValueChanged<StoryEvent> onOpenEventDetail;
+  final void Function(StoryEvent event, {String? regionLandmarkId})
+  onOpenEventDetail;
   final double height;
 
   @override
@@ -426,7 +427,10 @@ class _ProfileMiniMapState extends ConsumerState<ProfileMiniMap> {
                           loader: _sceneAssetLoader,
                           onTap: () {
                             Navigator.of(dialogContext).pop();
-                            widget.onOpenEventDetail(event);
+                            widget.onOpenEventDetail(
+                              event,
+                              regionLandmarkId: region.id,
+                            );
                           },
                         );
                       },

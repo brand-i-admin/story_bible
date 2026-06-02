@@ -3,6 +3,9 @@ part of 'story_map_panel.dart';
 class _StoryMapPanelState extends State<StoryMapPanel> {
   static const _minMapZoom = 2.7;
   static const _maxMapZoom = 12.4;
+  static const _eventTransitionZoomOut = 0.72;
+  static const _eventTransitionMaxZoom = 8.2;
+  static const _eventTransitionHorizontalPadding = 24.0;
 
   final StoryTerrain3dMapController _terrain3dController =
       StoryTerrain3dMapController();
@@ -408,8 +411,8 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     return map_math.buildRankedEventPointMap(
       widget.events,
       visibleCount: includeHidden ? null : _eventRevealCount,
-      radiusDeg: 0.018,
-      thresholdDeg: 0.028,
+      radiusDeg: 0.065,
+      thresholdDeg: 0.08,
     );
   }
 
@@ -798,19 +801,61 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         visiblePoints[from.id] ?? finalPoints[from.id] ?? from.latLng;
     final toPoint = visiblePoints[to.id] ?? finalPoints[to.id] ?? to.latLng;
     final bounds = LatLngBounds.fromPoints([fromPoint, toPoint]);
-    final targetZoom = (_computeRevealZoom([fromPoint, toPoint]) - 0.28).clamp(
-      3.0,
-      8.8,
+    final targetZoom =
+        (_computeRevealZoom([fromPoint, toPoint]) - _eventTransitionZoomOut)
+            .clamp(3.0, _eventTransitionMaxZoom);
+    final bottomGap = (widget.bottomObscuredFraction * _lastMapSize.height)
+        .clamp(0.0, 600.0);
+    final bottomPadding = math.max(44.0, bottomGap + 28.0);
+    final topPadding = map_math.eventFitTopPadding(
+      topObscuredPixels: widget.topObscuredPixels,
+      bottomPadding: bottomPadding,
+      minPadding: 24.0,
+      baseGap: 10.0,
     );
 
-    _focusToPoint(
-      bounds.center,
-      targetZoom.toDouble(),
+    _terrain3dController.fitBounds(
+      bounds,
+      padding: EdgeInsets.fromLTRB(
+        _eventTransitionHorizontalPadding,
+        topPadding,
+        _eventTransitionHorizontalPadding,
+        bottomPadding,
+      ),
+      maxZoom: targetZoom.toDouble(),
       duration: const Duration(milliseconds: 360),
     );
     return _terrain3dController.playEventTransition(
+      fromEventId: from.id,
       fromPoint: fromPoint,
+      toEventId: to.id,
       toPoint: toPoint,
+    );
+  }
+
+  Future<void> _playEmotionStamp({
+    required StoryEvent event,
+    required String stampLabel,
+  }) async {
+    if (!_mapReady || !event.hasCoordinate) {
+      return;
+    }
+    final visiblePoints = _numberedEventPointMap(includeHidden: false);
+    final finalPoints = _numberedEventPointMap(includeHidden: true);
+    final point =
+        visiblePoints[event.id] ?? finalPoints[event.id] ?? event.latLng;
+    _focusToPoint(
+      point,
+      (widget.selectedFocusZoom ?? widget.initialZoom ?? 7.2)
+          .clamp(4.2, 9.4)
+          .toDouble(),
+      duration: const Duration(milliseconds: 360),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 180));
+    return _terrain3dController.playEmotionStamp(
+      eventId: event.id,
+      point: point,
+      stampLabel: stampLabel,
     );
   }
 

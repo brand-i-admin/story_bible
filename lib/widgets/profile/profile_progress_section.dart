@@ -235,7 +235,13 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
             completedEventIds: completedEventIds,
             eventEmotionMarks: state.eventEmotionMarks,
             quizAttemptSummaries: state.quizAttemptSummaries,
-            onOpenEventDetail: widget.onOpenEventDetail,
+            onOpenEventDetail: (event, {regionLandmarkId}) {
+              widget.onOpenEventDetail(
+                event,
+                source: ProfileEventOpenSource.place,
+                sourceId: regionLandmarkId,
+              );
+            },
           ),
       ],
     );

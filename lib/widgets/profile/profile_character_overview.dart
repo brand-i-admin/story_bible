@@ -238,7 +238,12 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                         loader: loader,
                                         onTap: () {
                                           Navigator.of(dialogContext).pop();
-                                          widget.onOpenEventDetail(event);
+                                          widget.onOpenEventDetail(
+                                            event,
+                                            source: ProfileEventOpenSource
+                                                .character,
+                                            sourceId: character.code,
+                                          );
                                         },
                                       );
                                     },

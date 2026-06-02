@@ -36,6 +36,25 @@ void main() {
       },
     );
 
+    test('event detail transitions frame pins above the bottom sheet', () {
+      final source = File(
+        'lib/widgets/story_map_panel_state.dart',
+      ).readAsStringSync();
+      final methodStart = source.indexOf('Future<void> _playEventTransition');
+      final methodEnd = source.indexOf('Future<void> _playEmotionStamp');
+
+      expect(methodStart, isNonNegative);
+      expect(methodEnd, greaterThan(methodStart));
+      final methodBody = source.substring(methodStart, methodEnd);
+      expect(source, contains('_eventTransitionZoomOut = 0.72'));
+      expect(source, contains('_eventTransitionMaxZoom = 8.2'));
+      expect(methodBody, contains('widget.bottomObscuredFraction'));
+      expect(methodBody, contains('bottomGap + 28.0'));
+      expect(methodBody, contains('map_math.eventFitTopPadding'));
+      expect(methodBody, contains('_terrain3dController.fitBounds'));
+      expect(methodBody, contains('maxZoom: targetZoom.toDouble()'));
+    });
+
     test('event path uses selected character colors', () {
       final source = File(
         'lib/widgets/map/story_terrain_3d_map.dart',

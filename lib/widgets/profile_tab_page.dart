@@ -49,6 +49,15 @@ part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
 part 'profile/profile_settings_sheet.dart';
 
+enum ProfileEventOpenSource { general, place, character }
+
+typedef ProfileEventDetailCallback =
+    void Function(
+      StoryEvent event, {
+      ProfileEventOpenSource? source,
+      String? sourceId,
+    });
+
 /// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 기록/기도/저장/말씀).
 ///
 /// 외부 콜백:
@@ -64,7 +73,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
   });
 
   final void Function(String eventId) onStartQuiz;
-  final void Function(StoryEvent event) onOpenEventDetail;
+  final ProfileEventDetailCallback onOpenEventDetail;
   final Future<void> Function({
     int? initialBookNo,
     int? initialChapterNo,

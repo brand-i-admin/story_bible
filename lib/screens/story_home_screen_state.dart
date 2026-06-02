@@ -900,7 +900,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         builder: (_) => ProfileTabPage(
           key: _profileTabKey,
           onStartQuiz: _startQuiz,
-          onOpenEventDetail: _openEventDetailPage,
+          onOpenEventDetail: (event, {source, sourceId}) {
+            unawaited(
+              _openProfileEventDetailPage(
+                event,
+                source: source ?? ProfileEventOpenSource.general,
+                sourceId: sourceId,
+              ),
+            );
+          },
           onOpenBibleReader:
               ({
                 int? initialBookNo,
@@ -916,6 +924,148 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _openProfileEventDetailPage(
+    StoryEvent event, {
+    ProfileEventOpenSource source = ProfileEventOpenSource.general,
+    String? sourceId,
+  }) async {
+    await _prepareHomeMapForProfileEvent(
+      event,
+      source: source,
+      sourceId: sourceId,
+    );
+    if (!mounted) {
+      return;
+    }
+    await _openEventDetailPage(event, revealHomeBeforeMapAnimation: true);
+  }
+
+  Future<void> _prepareHomeMapForProfileEvent(
+    StoryEvent event, {
+    required ProfileEventOpenSource source,
+    String? sourceId,
+  }) async {
+    final notifier = ref.read(storyControllerProvider.notifier);
+    var state = ref.read(storyControllerProvider);
+    if (state.selectedEraId != event.eraId ||
+        !state.events.any((entry) => entry.id == event.id)) {
+      await notifier.selectEra(event.eraId);
+    }
+    if (!mounted) {
+      return;
+    }
+
+    state = ref.read(storyControllerProvider);
+    final homeEvent =
+        state.events.where((entry) => entry.id == event.id).firstOrNull ??
+        event;
+    final viewportSize = MediaQuery.sizeOf(context);
+    final collapsedExtent = _sheetSizeForStage(
+      viewportSize,
+      StorySelectionPanelStage.collapsed,
+    );
+
+    if (source == ProfileEventOpenSource.character) {
+      final characterCode =
+          sourceId != null && homeEvent.characterCodes.contains(sourceId)
+          ? sourceId
+          : homeEvent.characterCodes.firstOrNull;
+      if (characterCode != null) {
+        final selectedCodes = {characterCode};
+        notifier.setSelectionMode(SelectionMode.character);
+        notifier.setSelectedCharacters(selectedCodes);
+        state = ref.read(storyControllerProvider);
+        final timeline = _timelineForSelectedCharacters(state, selectedCodes);
+        final displayed = timeline.isEmpty
+            ? {homeEvent.id}
+            : timeline.map((entry) => entry.id).toSet();
+        notifier.setDisplayedEvents(displayed);
+        notifier.selectEvent(homeEvent.id);
+        setState(() {
+          _mode = _SelectionMode.character;
+          _selectionStep = 3;
+          _draftSelectedCharacterCodes = selectedCodes;
+          _draftDisplayedEventIds = displayed;
+          _selectionPanelStage = StorySelectionPanelStage.collapsed;
+          _selectionSheetExtent = collapsedExtent;
+          _awaitingRevealComplete = false;
+          _revealInstantly = true;
+          _mapHintDismissed = true;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _mapPanelController.focusSelectedEvent(force: true);
+        });
+        return;
+      }
+    }
+
+    final regionId = source == ProfileEventOpenSource.place
+        ? sourceId ?? _regionLandmarkIdForEvent(state, homeEvent)
+        : _regionLandmarkIdForEvent(state, homeEvent);
+    final region = regionId == null ? null : state.landmarkById(regionId);
+    if (region != null && region.isRegion) {
+      notifier.setSelectionMode(SelectionMode.region);
+      notifier.selectLandmark(region.id);
+      state = ref.read(storyControllerProvider);
+      final regionEvents = _eventsAtLandmark(state, region)
+        ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
+      final displayed = regionEvents.isEmpty
+          ? {homeEvent.id}
+          : regionEvents.map((entry) => entry.id).toSet();
+      notifier.setDisplayedEvents(displayed);
+      notifier.selectEvent(homeEvent.id);
+      setState(() {
+        _mode = _SelectionMode.region;
+        _selectionStep = 3;
+        _draftSelectedCharacterCodes = const <String>{};
+        _draftDisplayedEventIds = displayed;
+        _selectionPanelStage = StorySelectionPanelStage.collapsed;
+        _selectionSheetExtent = collapsedExtent;
+        _awaitingRevealComplete = false;
+        _revealInstantly = true;
+        _mapHintDismissed = true;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (region.polygon.length >= 3) {
+          _mapPanelController.focusRegion(region.polygon);
+        } else {
+          _mapPanelController.focusSelectedEvent(force: true);
+        }
+      });
+      return;
+    }
+
+    notifier.clearSelectionMode();
+    notifier.setDisplayedEvents({homeEvent.id});
+    notifier.selectEvent(homeEvent.id);
+    setState(() {
+      _mode = null;
+      _selectionStep = 3;
+      _draftSelectedCharacterCodes = const <String>{};
+      _draftDisplayedEventIds = {homeEvent.id};
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = collapsedExtent;
+      _awaitingRevealComplete = false;
+      _revealInstantly = true;
+      _mapHintDismissed = true;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _mapPanelController.focusSelectedEvent(force: true);
+    });
+  }
+
+  String? _regionLandmarkIdForEvent(StoryState state, StoryEvent event) {
+    final direct = state.landmarkById(event.landmarkId);
+    if (direct == null) {
+      return event.landmarkParentId;
+    }
+    if (direct.isRegion) {
+      return direct.id;
+    }
+    return direct.parentLandmarkId ?? event.landmarkParentId;
   }
 
   void _handleEventSelect(String eventId) {
@@ -1114,6 +1264,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _openEventDetailPage(
     StoryEvent event, {
     String? quizWeekKey,
+    bool revealHomeBeforeMapAnimation = false,
   }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
     // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
@@ -1178,6 +1329,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             event: event,
             option: option,
             quizWeekKey: quizWeekKey,
+            revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
           ),
           prevEvent: prev,
           nextEvent: next,
@@ -1187,6 +1339,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 from: event,
                 target: target,
                 quizWeekKey: quizWeekKey,
+                revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
               ),
             );
           },
@@ -1208,12 +1361,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         return list;
       }
     }
-    if (_mode == _SelectionMode.character &&
-        state.selectedCharacterCodes.isNotEmpty) {
-      return _timelineForSelectedCharacters(
-        state,
-        state.selectedCharacterCodes,
-      );
+    final characterCodes = state.selectedCharacterCodes.isNotEmpty
+        ? state.selectedCharacterCodes
+        : _draftSelectedCharacterCodes;
+    if (_mode == _SelectionMode.character && characterCodes.isNotEmpty) {
+      return _timelineForSelectedCharacters(state, characterCodes);
     }
     final all = [...state.events]
       ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
@@ -1222,7 +1374,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   /// pushReplacement 시 동일 detail page 빌드 — 새 prev/next 도 다시 계산.
   /// quizWeekKey 가 있으면 prev/next 이동 후에도 퀴즈 모드 유지.
-  Widget _buildDetailPageForEvent(StoryEvent event, {String? quizWeekKey}) {
+  Widget _buildDetailPageForEvent(
+    StoryEvent event, {
+    String? quizWeekKey,
+    bool revealHomeBeforeMapAnimation = false,
+  }) {
     final client = ref.read(supabaseClientProvider);
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
@@ -1273,6 +1429,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         event: event,
         option: option,
         quizWeekKey: quizWeekKey,
+        revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
       ),
       prevEvent: prev,
       nextEvent: next,
@@ -1282,6 +1439,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             from: event,
             target: target,
             quizWeekKey: quizWeekKey,
+            revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
           ),
         );
       },
@@ -1292,6 +1450,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required StoryEvent event,
     required EventEmotionOption option,
     String? quizWeekKey,
+    bool revealHomeBeforeMapAnimation = false,
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
     _setMapAnimationInputLocked(true);
@@ -1301,6 +1460,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       if (navigator.canPop()) {
         navigator.pop();
         await Future<void>.delayed(const Duration(milliseconds: 280));
+      }
+      if (revealHomeBeforeMapAnimation && mounted) {
+        navigator.popUntil((route) => route.isFirst);
+        await Future<void>.delayed(const Duration(milliseconds: 220));
       }
       if (!mounted) return;
 
@@ -1314,8 +1477,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       setState(() {
         _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
         _selectionStep = 3;
-        _selectionPanelStage = StorySelectionPanelStage.expanded;
-        _selectionSheetExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
+        _selectionPanelStage = revealHomeBeforeMapAnimation
+            ? StorySelectionPanelStage.collapsed
+            : StorySelectionPanelStage.expanded;
+        _selectionSheetExtent = revealHomeBeforeMapAnimation
+            ? _sheetSizeForStage(
+                MediaQuery.sizeOf(context),
+                StorySelectionPanelStage.collapsed,
+              )
+            : _sheetMaxSizeFor(MediaQuery.sizeOf(context));
         _mapHintDismissed = true;
         _mapCelebrationEventId = null;
         _mapCelebrationStampLabel = null;
@@ -1324,6 +1494,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await WidgetsBinding.instance.endOfFrame;
       await Future<void>.delayed(_emotionMapPreStampDelay);
       if (!mounted) return;
+
+      unawaited(
+        _mapPanelController.playEmotionStamp(
+          event: event,
+          stampLabel: option.emoji,
+        ),
+      );
 
       final celebrationCompleter = Completer<void>();
       _mapCelebrationCompleter = celebrationCompleter;
@@ -1351,8 +1528,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _setMapAnimationInputLocked(false);
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              _buildDetailPageForEvent(event, quizWeekKey: quizWeekKey),
+          builder: (_) => _buildDetailPageForEvent(
+            event,
+            quizWeekKey: quizWeekKey,
+            revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+          ),
         ),
       );
     } finally {
@@ -1364,6 +1544,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required StoryEvent from,
     required StoryEvent target,
     String? quizWeekKey,
+    bool revealHomeBeforeMapAnimation = false,
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
     _setMapAnimationInputLocked(true);
@@ -1372,6 +1553,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       if (navigator.canPop()) {
         navigator.pop();
         await Future<void>.delayed(const Duration(milliseconds: 300));
+      }
+      if (revealHomeBeforeMapAnimation && mounted) {
+        navigator.popUntil((route) => route.isFirst);
+        await Future<void>.delayed(const Duration(milliseconds: 220));
       }
       if (!mounted) return;
 
@@ -1409,8 +1594,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _setMapAnimationInputLocked(false);
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              _buildDetailPageForEvent(target, quizWeekKey: quizWeekKey),
+          builder: (_) => _buildDetailPageForEvent(
+            target,
+            quizWeekKey: quizWeekKey,
+            revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+          ),
         ),
       );
     } finally {

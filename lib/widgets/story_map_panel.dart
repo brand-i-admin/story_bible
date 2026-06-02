@@ -182,4 +182,13 @@ class StoryMapPanelController {
   }) {
     return _state?._playEventTransition(from: from, to: to) ?? Future.value();
   }
+
+  /// 감정 새김 직후 지도 위 해당 사건 핀에 감정 도장을 1회 재생한다.
+  Future<void> playEmotionStamp({
+    required StoryEvent event,
+    required String stampLabel,
+  }) {
+    return _state?._playEmotionStamp(event: event, stampLabel: stampLabel) ??
+        Future.value();
+  }
 }

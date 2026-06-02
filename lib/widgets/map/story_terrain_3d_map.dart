@@ -120,13 +120,32 @@ class StoryTerrain3dMapController {
   }
 
   Future<void> playEventTransition({
+    required String fromEventId,
     required LatLng fromPoint,
+    required String toEventId,
     required LatLng toPoint,
     Duration duration = const Duration(seconds: 2),
   }) {
     return _state?._playEventTransition(
+          fromEventId: fromEventId,
           fromPoint: fromPoint,
+          toEventId: toEventId,
           toPoint: toPoint,
+          duration: duration,
+        ) ??
+        Future.value();
+  }
+
+  Future<void> playEmotionStamp({
+    required String eventId,
+    required LatLng point,
+    required String stampLabel,
+    Duration duration = const Duration(milliseconds: 2200),
+  }) {
+    return _state?._playEmotionStamp(
+          eventId: eventId,
+          point: point,
+          stampLabel: stampLabel,
           duration: duration,
         ) ??
         Future.value();
@@ -136,13 +155,14 @@ class StoryTerrain3dMapController {
 class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _minZoom = 2.7;
   static const _maxZoom = 12.4;
-  static const double _eventSpreadRadiusDeg = 0.018;
-  static const double _eventSpreadThresholdDeg = 0.028;
+  static const double _eventSpreadRadiusDeg = 0.065;
+  static const double _eventSpreadThresholdDeg = 0.08;
   static const _boundsWest = 4.0;
   static const _boundsSouth = -8.0;
   static const _boundsEast = 64.0;
   static const _boundsNorth = 50.5;
   static const _initialLoadTimeoutDuration = Duration(seconds: 20);
+  static const _htmlRevision = 'event-pin-z-index-2026-06-02';
 
   late final WebViewController _controller;
   Timer? _initialLoadTimeout;
@@ -264,6 +284,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
   void _loadHtmlIfNeeded({bool force = false}) {
     final rendererSignature = jsonEncode({
+      'htmlRevision': _htmlRevision,
       'style': widget.source.style.name,
       'styleJsonUrl': widget.source.styleJsonUrl,
       'terrainTileJsonUrl': widget.source.terrainTileJsonUrl,
@@ -456,7 +477,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   Future<void> _playEventTransition({
+    required String fromEventId,
     required LatLng fromPoint,
+    required String toEventId,
     required LatLng toPoint,
     required Duration duration,
   }) async {
@@ -464,13 +487,38 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return;
     }
     final payload = jsonEncode({
+      'fromId': fromEventId,
       'from': [fromPoint.longitude, fromPoint.latitude],
+      'toId': toEventId,
       'to': [toPoint.longitude, toPoint.latitude],
       'duration': duration.inMilliseconds,
     });
     await _controller.runJavaScript('''
       if (window.storyBiblePlayTransition) {
         window.storyBiblePlayTransition($payload);
+      }
+    ''');
+    await Future<void>.delayed(duration);
+  }
+
+  Future<void> _playEmotionStamp({
+    required String eventId,
+    required LatLng point,
+    required String stampLabel,
+    required Duration duration,
+  }) async {
+    if (!_mapReady) {
+      return;
+    }
+    final payload = jsonEncode({
+      'id': eventId,
+      'point': [point.longitude, point.latitude],
+      'label': stampLabel,
+      'duration': duration.inMilliseconds,
+    });
+    await _controller.runJavaScript('''
+      if (window.storyBiblePlayEmotionStamp) {
+        window.storyBiblePlayEmotionStamp($payload);
       }
     ''');
     await Future<void>.delayed(duration);
@@ -578,6 +626,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       background: #e5d2b5;
       touch-action: none;
     }
+    #map {
+      position: relative;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
     }
@@ -624,10 +675,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       touch-action: manipulation;
       cursor: pointer;
       will-change: transform;
+      overflow: visible;
+      isolation: isolate;
     }
     .story-event-marker-root {
       display: inline-block;
       line-height: 0;
+      pointer-events: auto;
+      z-index: 900;
+    }
+    .story-event-marker-root.high-priority {
+      z-index: 7200;
     }
     .story-landmark-marker-root {
       display: inline-block;
@@ -649,6 +707,31 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       font-size: 15px;
       box-shadow: 0 4px 10px rgba(39, 32, 20, 0.32), 0 0 0 5px rgba(250, 239, 216, 0.62);
     }
+    .story-event-marker.emotion::before,
+    .story-event-marker.emotion::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border-radius: 999px;
+      z-index: -1;
+    }
+    .story-event-marker.emotion::before {
+      inset: -15px;
+      background:
+        radial-gradient(circle, rgba(255, 231, 116, 0.64) 0%, rgba(255, 213, 74, 0.30) 44%, rgba(255, 213, 74, 0.0) 72%);
+      filter: blur(1px);
+      animation: storyEmotionAurora 2.8s ease-in-out infinite;
+    }
+    .story-event-marker.emotion::after {
+      inset: -8px;
+      border: 1.5px solid rgba(255, 225, 93, 0.72);
+      box-shadow: 0 0 14px rgba(255, 218, 83, 0.58);
+      animation: storyEmotionRing 2.8s ease-in-out infinite;
+    }
+    .story-event-marker > span {
+      position: relative;
+      z-index: 1;
+    }
     .story-event-marker .order-badge {
       position: absolute;
       right: -4px;
@@ -665,6 +748,64 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       font-weight: 900;
       line-height: 1;
       box-shadow: 0 1px 3px rgba(39, 32, 20, 0.26);
+    }
+    .story-map-stamp {
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      z-index: 8600;
+      transform: translate(-50%, -50%) scale(0.54) rotate(-9deg);
+      opacity: 0;
+      animation: storyMapStamp 1.18s cubic-bezier(0.18, 0.92, 0.24, 1.12) forwards;
+      will-change: transform, opacity;
+    }
+    .story-map-stamp-label {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #3b2915;
+      background: radial-gradient(circle at 35% 30%, #fff5c4, #e0a93e 72%, #9a6328);
+      border: 2px solid rgba(255, 248, 205, 0.94);
+      box-shadow:
+        0 9px 20px rgba(42, 32, 16, 0.34),
+        0 0 0 9px rgba(255, 221, 84, 0.30),
+        0 0 28px rgba(255, 223, 87, 0.72);
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .story-map-stamp-burst {
+      position: absolute;
+      inset: 5px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 235, 127, 0.82);
+      box-shadow: 0 0 24px rgba(255, 218, 85, 0.70);
+      animation: storyMapStampBurst 1.18s ease-out forwards;
+    }
+    @keyframes storyEmotionAurora {
+      0%, 100% { transform: scale(0.90); opacity: 0.54; }
+      50% { transform: scale(1.10); opacity: 0.84; }
+    }
+    @keyframes storyEmotionRing {
+      0%, 100% { transform: scale(0.88); opacity: 0.42; }
+      50% { transform: scale(1.14); opacity: 0.80; }
+    }
+    @keyframes storyMapStamp {
+      0% { transform: translate(-50%, -50%) scale(0.40) rotate(-16deg); opacity: 0; }
+      18% { transform: translate(-50%, -50%) scale(1.18) rotate(5deg); opacity: 1; }
+      31% { transform: translate(-50%, -50%) scale(0.96) rotate(-3deg); opacity: 1; }
+      78% { transform: translate(-50%, -50%) scale(1.00) rotate(-3deg); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.08) rotate(-3deg); opacity: 0; }
+    }
+    @keyframes storyMapStampBurst {
+      0% { transform: scale(0.55); opacity: 0.92; }
+      72% { transform: scale(1.55); opacity: 0.18; }
+      100% { transform: scale(1.9); opacity: 0; }
     }
     .story-landmark-marker {
       width: 70px;
@@ -855,6 +996,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     const overlay = $overlayPayload;
     const eventMarkers = new Map();
     const landmarkMarkers = new Map();
+    const highPriorityEventIds = new Set();
     let lastDomEventTapAt = 0;
     let lastDomLandmarkTapAt = 0;
 
@@ -962,9 +1104,22 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       lastDomLandmarkTapAt = now;
       post({ type: 'landmarkTap', id });
     };
-    const setEventMarkerElement = (element, properties) => {
+    const eventMarkerZIndex = (id, properties) => {
+      const label = Number(properties.label || 0);
+      let z = 900 + (Number.isFinite(label) ? label : 0);
+      if (properties.hasEmotion) z += 1300;
+      if (properties.selected) z += 2200;
+      if (highPriorityEventIds.has(id)) z += 5200;
+      return z;
+    };
+    const setEventMarkerElement = (root, element, properties) => {
+      const id = String(properties.id || '');
       const selected = Boolean(properties.selected);
       const hasEmotion = Boolean(properties.hasEmotion);
+      const highPriority = highPriorityEventIds.has(id);
+      root.classList.add('story-event-marker-root');
+      root.classList.toggle('high-priority', highPriority);
+      root.style.zIndex = String(eventMarkerZIndex(id, properties));
       element.className = [
         'story-event-marker',
         selected ? 'selected' : '',
@@ -1015,11 +1170,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
             element: root,
             anchor: 'center'
           }).setLngLat(coordinates).addTo(map);
-          record = { element, marker };
+          record = { root, element, marker };
           eventMarkers.set(id, record);
         }
         record.element.setAttribute('aria-label', feature.properties.title || '사건');
-        setEventMarkerElement(record.element, feature.properties);
+        setEventMarkerElement(record.root, record.element, feature.properties);
         record.marker.setLngLat(coordinates);
       }
       for (const [id, record] of eventMarkers.entries()) {
@@ -1114,11 +1269,16 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     window.storyBiblePlayTransition = (transition) => {
       const source = map.getSource('story-bible-transition');
       if (!source) return;
+      const fromId = String(transition.fromId || '');
+      const toId = String(transition.toId || '');
       const from = transition.from;
       const to = transition.to;
       if (!Array.isArray(from) || !Array.isArray(to)) return;
       const duration = Math.max(240, Number(transition.duration || 2000));
       const startAt = performance.now();
+      if (fromId) highPriorityEventIds.add(fromId);
+      if (toId) highPriorityEventIds.add(toId);
+      syncEventDomMarkers();
       const animate = (now) => {
         const progress = Math.min(1, (now - startAt) / duration);
         const pulse = Math.sin(progress * Math.PI);
@@ -1140,10 +1300,53 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
-          setTimeout(() => source.setData(emptyFeatureCollection()), 60);
+          setTimeout(() => {
+            source.setData(emptyFeatureCollection());
+            if (fromId) highPriorityEventIds.delete(fromId);
+            if (toId) highPriorityEventIds.delete(toId);
+            syncEventDomMarkers();
+          }, 60);
         }
       };
       requestAnimationFrame(animate);
+    };
+
+    window.storyBiblePlayEmotionStamp = (request) => {
+      const id = String(request.id || '');
+      const point = request.point;
+      if (!Array.isArray(point) || point.length < 2) return;
+      const label = String(request.label || '');
+      const duration = Math.max(720, Number(request.duration || 2200));
+      if (id) {
+        highPriorityEventIds.add(id);
+        syncEventDomMarkers();
+      }
+      const container = map.getContainer();
+      const stamp = document.createElement('div');
+      stamp.className = 'story-map-stamp';
+      const burst = document.createElement('span');
+      burst.className = 'story-map-stamp-burst';
+      const labelNode = document.createElement('span');
+      labelNode.className = 'story-map-stamp-label';
+      labelNode.textContent = label;
+      stamp.appendChild(burst);
+      stamp.appendChild(labelNode);
+      container.appendChild(stamp);
+      const syncStampPosition = () => {
+        const projected = map.project(point);
+        stamp.style.left = `\${projected.x}px`;
+        stamp.style.top = `\${projected.y}px`;
+      };
+      syncStampPosition();
+      map.on('move', syncStampPosition);
+      setTimeout(() => {
+        map.off('move', syncStampPosition);
+        stamp.remove();
+        if (id) {
+          highPriorityEventIds.delete(id);
+          syncEventDomMarkers();
+        }
+      }, duration);
     };
 
     map.on('load', () => {
