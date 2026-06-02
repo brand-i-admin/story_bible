@@ -250,7 +250,7 @@ Edge Function (Deno TypeScript):
   1. GCP_SERVICE_ACCOUNT_JSON 파싱 → private_key (RSA) 확보
   2. getGcpAccessToken(sa) → oauth2.googleapis.com/token 호출 (§7.3)
   3. Storage 에서 characters/<code>.png 를 base64 로 읽어 prompt 의 inlineData 로 첨부
-  4. POST us-central1-aiplatform.googleapis.com/v1/projects/.../models/gemini-3-pro-image-preview:generateContent
+  4. POST aiplatform.googleapis.com/v1/projects/.../locations/global/publishers/google/models/gemini-3-pro-image:generateContent
      Authorization: Bearer <access_token>
   5. 응답의 inline_data (PNG base64) 를 Storage proposal-scenes/<uid>/<draft>/scene_<idx>.png 로 업로드
   6. 클라이언트에 storage_path 반환

@@ -188,7 +188,7 @@ Makefile                                # 파이프라인 오케스트레이션
 #### `generate_event_story_images_vertex.py` — 장면 이미지 생성
 - **입력**: `assets/200_stories/*.json` (story_scenes 필드)
 - **출력**: `assets/story_images/{title}/scene_{1-4}.png`
-- **API**: Google Cloud Vertex AI Imagen
+- **API**: Google Cloud Vertex AI Gemini (`gemini-3-pro-image`, fallback `gemini-2.5-flash-image`)
 - **결과**: 215 이벤트 × 4장면 = 최대 860장
 - **옵션**: `--no-prune-orphans`
 - **stale 정리**: 시작 시 현재 stories JSON 의 title 로 만들어진 디렉토리 외에는 모두 삭제 (NFC 정규화 비교).

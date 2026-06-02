@@ -47,8 +47,8 @@ const COMMON_SCENE_STYLE =
   "scene. No speech bubbles, no captions, no written letters, no symbols, " +
   "no watermark, no modern objects.";
 
-// Model fallback order: prefer the preview model, fall back to flash.
-const MODEL_CANDIDATES = ["gemini-3-pro-image-preview", "gemini-2.5-flash-image"];
+// Model fallback order: prefer the Gemini 3 Pro Image model, fall back to flash.
+const MODEL_CANDIDATES = ["gemini-3-pro-image", "gemini-2.5-flash-image"];
 
 const AVATAR_BUCKET = "characters";
 const SCENE_BUCKET = "proposal-scenes";
@@ -172,7 +172,7 @@ async function callVertex(
 
   let lastErr: unknown = null;
   for (const model of MODEL_CANDIDATES) {
-    // Some Gemini image preview models require `global` region.
+    // Some Gemini 3 image models require `global` region.
     const loc = model.startsWith("gemini-3-") ? "global" : location;
     const host =
       loc === "global"

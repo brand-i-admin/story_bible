@@ -44,7 +44,7 @@ SENTENCE_FALLBACK_REGEX = re.compile(r"[^.!?。！？]+[.!?。！？]?")
 TITLE_PREFIX_NUMBER_REGEX = re.compile(r"^\s*(\d{1,4})\b")
 SCENE_PREFIX_REGEX = re.compile(r"^\s*장면\s*\d+\s*[:：]\s*")
 
-LATEST_IMAGE_MODEL = "gemini-3-pro-image-preview"
+LATEST_IMAGE_MODEL = "gemini-3-pro-image"
 LATEST_STABLE_IMAGE_MODEL = "gemini-2.5-flash-image"
 COMMON_SCENE_STYLE = (
     "Create one non-photoreal 2D Bible story illustration in the same visual world as the avatar cast. "
