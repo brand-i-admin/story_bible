@@ -177,7 +177,7 @@ tap suppression 을 걸어, 조작 직후 커서 아래 region·랜드마크가 
 | CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 퀴즈) |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 문항별 해설 퀴즈) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
 | ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 아바타·이름과 기도 탭의 내 기도 텍스트는 프로필 수정 진입점, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (우측 별 아이콘 구절 저장 + 이야기 본문 읽기 모드). 일반 성경 진입은 책/장 탐색을 유지하고, 사건 상세에서 진입하면 해당 `bible_refs` 범위의 절만 표시한다. 여러 본문은 **다음**으로 순차 이동하고 마지막 본문에서 **읽기 완료**를 눌러야 읽음 처리된다. 구절 본문 탭은 선택/저장 동작을 만들지 않는다 |
@@ -249,7 +249,7 @@ GeoJSON fill/border layer 에서 직접 그린다. 이전 Flutter `CustomPainter
 ### 5.3 학습 완료
 
 1. 이야기 상세 → 본문 읽기 + 퀴즈 시작 (4번 보기는 항상 "헷갈렸어요"). 본문 읽기는 사건에 연결된 절만 성경 리더에서 보여 주며, 여러 본문이면 **다음**으로 이동하고 마지막 **읽기 완료** 버튼을 눌러야 완료된다. 뒤로가기(`<`)로 나가면 읽음 처리하지 않는다
-2. 정답 제출 → 정답/오답/헷갈림을 `user_quiz_attempts`에 저장
+2. 각 문항에서 정답 확인 → 즉시 정답/오답/헷갈림 + 해설 표시 → 다음 문항 이동. 마지막 전체 리뷰를 확인하면 정답/오답/헷갈림을 `user_quiz_attempts`에 저장
 3. 본문 읽기와 퀴즈가 모두 완료되면 **지도 위에 새기기** 버튼 활성화
 4. 감정 8개 중 하나를 고르고 100자 메모를 남기면 `user_event_emotion_marks` 저장
 5. 읽기+퀴즈+감정 새김이 모두 끝났을 때 `user_event_progress.is_completed=true` 저장, 도장 문구는 "완료" 대신 선택 감정 심볼. 감정 새김 버튼은 `감정 - 메모`로 표시하고 "완료 취소" 시 감정 row를 삭제해 지도/카드 이모지를 제거한다
