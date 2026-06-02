@@ -273,7 +273,7 @@ Widget topUtilityButton({
   final resolvedBoxShadow =
       boxShadow ?? (selected ? AppShadows.goldGlow : null);
 
-  // 랜드마크 필터 칩과 시각적 균형을 맞추기 위해 padding/radius/font 동일하게.
+  // 홈 상단 유틸리티 버튼들이 같은 높이와 촉감을 유지하도록 통일한다.
   return Opacity(
     opacity: enabled ? 1 : 0.42,
     child: Material(

@@ -1040,7 +1040,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   List<Landmark> _activeLandmarksForEra(StoryState state) {
-    // 멀티 시대 지원 — selectedEraIds 의 모든 시대에 매칭되는 landmark 합집합.
+    // 선택된 시대에 매칭되는 landmark 집합. selectedEraIds 는 단일 시대를 Set 으로
+    // 내보내는 호환 getter 이므로 기존 region picker 호출부와 함께 유지한다.
     if (state.selectedEraIds.isEmpty) {
       return const [];
     }
@@ -1051,24 +1052,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (eraCodes.isEmpty) {
       return const [];
     }
-    final categories = state.selectedLandmarkCategories;
-    // 카테고리 필터 — non-region 에 적용. region 은 항상 통과 (폴리곤 라벨용).
-    bool passesCategory(Landmark l) {
-      if (categories.isEmpty || l.isRegion) return true;
-      final cat = (l.category != null && l.category!.isNotEmpty)
-          ? l.category!
-          : l.kind;
-      return categories.contains(cat);
-    }
-
     // 시대만 선택한 상태(mode 미정) 에서도 해당 시대의 non-region landmark 는
     // 지도 위에 옅게 표시한다. region 선택 자체는 계속 polygon layer 가 담당한다.
     if (_mode == null) {
       return state.landmarks
           .where((l) {
             if (l.isRegion) return false;
-            if (!l.eraCodes.any(eraCodes.contains)) return false;
-            return passesCategory(l);
+            return l.eraCodes.any(eraCodes.contains);
           })
           .toList(growable: false);
     }
@@ -1078,7 +1068,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // zoom 되며 다른 region 마커들은 가려진다.
     if (_mode == _SelectionMode.region && state.selectedLandmarkId == null) {
       return state.landmarks
-          .where((l) => l.eraCodes.any(eraCodes.contains) && passesCategory(l))
+          .where((l) => l.eraCodes.any(eraCodes.contains))
           .toList(growable: false);
     }
     // 특정 region 을 누른 뒤(step 3): 선택한 region + 그 region 의 자식만
@@ -1089,10 +1079,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return state.landmarks
           .where((l) {
             if (!l.eraCodes.any(eraCodes.contains)) return false;
-            if (l.id == id || l.parentLandmarkId == id) {
-              return passesCategory(l);
-            }
-            return false;
+            return l.id == id || l.parentLandmarkId == id;
           })
           .toList(growable: false);
     }
@@ -1100,13 +1087,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return state.landmarks
         .where((l) {
           if (l.isRegion) return false;
-          if (!l.eraCodes.any(eraCodes.contains)) return false;
-          if (categories.isEmpty) return true;
-          // v3 — category 컬럼은 옛 v1 잔존. 새 데이터는 kind 가 카테고리.
-          final cat = (l.category != null && l.category!.isNotEmpty)
-              ? l.category!
-              : l.kind;
-          return categories.contains(cat);
+          return l.eraCodes.any(eraCodes.contains);
         })
         .toList(growable: false);
   }
@@ -2062,41 +2043,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 onMapInteraction: _handleMapInteraction,
               ),
             ),
-            // 카테고리 필터 칩 — 시대가 선택돼야 의미가 있으므로 그때만 표시.
-            // 칩 클릭 시 inline dropdown 으로 그 카테고리의 실제 랜드마크 리스트가
-            // 칩 바로 아래에 펼쳐진다 (Dropbox 스타일). 닫기 버튼 또는 다시 칩
-            // 클릭으로 닫음. 비활성화 토글 (이미 active 였던 칩 클릭) 시에는
-            // dropdown 안 열고 필터만 끔.
-            if (state.selectedEraId != null)
-              Positioned(
-                // 세로 모드: toolbar 바로 아래. 좌우 끝까지 가득 채우고
-                // 추가 칩은 horizontal scroll 로 노출.
-                top: topInset + 50,
-                left: 0,
-                right: 0,
-                child: Listener(
-                  behavior: HitTestBehavior.translucent,
-                  onPointerDown: (_) {
-                    _handleMapInteraction();
-                    _suppressMapTaps();
-                  },
-                  onPointerUp: (_) => _suppressMapTaps(),
-                  onPointerCancel: (_) => _suppressMapTaps(),
-                  onPointerSignal: (_) => _suppressMapTaps(),
-                  child: _LandmarkCategoryChipsBar(
-                    state: state,
-                    onToggle: (cat) => ref
-                        .read(storyControllerProvider.notifier)
-                        .toggleLandmarkCategory(cat),
-                    onClear: () => ref
-                        .read(storyControllerProvider.notifier)
-                        .clearLandmarkCategories(),
-                    onLandmarkTap: _showLandmarkPopup,
-                  ),
-                ),
-              ),
-            // v3 — 좌측 "랜드마크 25" 토글 + 사이드 패널 제거. 사용자가 카테고리
-            // 칩 바로 멀티 필터를 사용한다.
             LayoutBuilder(
               builder: (context, constraints) {
                 final sideTop = topInset + 8;

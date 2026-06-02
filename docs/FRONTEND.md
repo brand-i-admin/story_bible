@@ -103,10 +103,9 @@ class StoryState {
   final bool loading;
   final String? error;
   final List<Era> eras;
-  final List<Character> persons;
+  final List<Character> characters;
   final List<StoryEvent> events;
-  final String? selectedEraId;             // 단수 (호환). v2 에서는 selectedEraIds.last 와 sync
-  final Set<String> selectedEraIds;        // v2 — 시대 멀티 선택
+  final String? selectedEraId;             // 단일 시대 선택
   final SelectionMode? selectionMode;      // v2 — 'region' | 'character' (시대 선택 후 분기)
   final String? selectedLandmarkId;        // v2 — region 모드에서 선택된 landmark id
   final Set<String> selectedCharacterCodes;        // character.code 기반
@@ -134,7 +133,7 @@ class StoryState {
 지역 선택 직후 카메라는 사건 좌표가 아니라 선택 region polygon bounds 에
 `fitBounds` 로 맞춘다. 이 기준은 하단 선택 시트가 접힌 상태의 가시 영역이다.
 사건/region fit 은 하단 시트 padding 이 커질수록 상단 padding 도 크게 늘려, 핀
-묶음과 후보 region 이 화면 위쪽 필터 뒤에 몰리지 않고 북쪽 지도 여백과 탭 가능한
+묶음과 후보 region 이 화면 위쪽 오버레이 뒤에 몰리지 않고 북쪽 지도 여백과 탭 가능한
 영역을 확보하게 한다.
 
 ### 3.3 StoryController 주요 메서드

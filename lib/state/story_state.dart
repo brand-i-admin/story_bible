@@ -43,7 +43,6 @@ class StoryState {
     this.isSearching = false,
     this.selectedTestament = 'old',
     this.landmarks = const [],
-    this.selectedLandmarkCategories = const {},
   });
 
   final bool loading;
@@ -112,7 +111,6 @@ class StoryState {
   final bool isSearching;
   final String selectedTestament;
   final List<Landmark> landmarks;
-  final Set<String> selectedLandmarkCategories;
 
   StoryState copyWith({
     bool? loading,
@@ -149,7 +147,6 @@ class StoryState {
     bool? isSearching,
     String? selectedTestament,
     List<Landmark>? landmarks,
-    Set<String>? selectedLandmarkCategories,
   }) {
     return StoryState(
       loading: loading ?? this.loading,
@@ -195,8 +192,6 @@ class StoryState {
       isSearching: isSearching ?? this.isSearching,
       selectedTestament: selectedTestament ?? this.selectedTestament,
       landmarks: landmarks ?? this.landmarks,
-      selectedLandmarkCategories:
-          selectedLandmarkCategories ?? this.selectedLandmarkCategories,
     );
   }
 

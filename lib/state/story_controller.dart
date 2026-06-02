@@ -105,25 +105,6 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
-  /// 랜드마크 카테고리 필터 토글. 비어 있는 상태(=전체 통과)에서 한 카테고리를
-  /// 누르면 그 카테고리만 노출, 다시 같은 걸 누르면 다시 전체.
-  void toggleLandmarkCategory(String category) {
-    final next = {...state.selectedLandmarkCategories};
-    if (next.contains(category)) {
-      next.remove(category);
-    } else {
-      next.add(category);
-    }
-    state = state.copyWith(selectedLandmarkCategories: next);
-  }
-
-  void clearLandmarkCategories() {
-    if (state.selectedLandmarkCategories.isEmpty) {
-      return;
-    }
-    state = state.copyWith(selectedLandmarkCategories: const <String>{});
-  }
-
   Future<void> selectTestament(String testament) async {
     final normalized = testament == 'new' ? 'new' : 'old';
     final selectedEra = state.eras
