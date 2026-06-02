@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:story_bible/data/story_repository.dart';
+import 'package:story_bible/data/user_repository.dart';
+import 'package:story_bible/models/app_user_profile.dart';
+import 'package:story_bible/models/character.dart';
+import 'package:story_bible/models/character_study_progress.dart';
+import 'package:story_bible/models/era.dart';
+import 'package:story_bible/models/intercessory_prayer_item.dart';
+import 'package:story_bible/models/paged_result.dart';
+import 'package:story_bible/models/saved_bible_verse.dart';
+import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/state/auth_providers.dart';
+import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/widgets/profile_editor_dialog.dart';
+import 'package:story_bible/widgets/profile_tab_page.dart';
+
+class _MockStoryRepository extends Mock implements StoryRepository {}
+
+class _MockUserRepository extends Mock implements UserRepository {}
+
+class _MockSupabaseClient extends Mock implements SupabaseClient {}
+
+class _MockGoTrueClient extends Mock implements GoTrueClient {}
+
+void main() {
+  late _MockStoryRepository storyRepository;
+  late _MockUserRepository userRepository;
+  late _MockSupabaseClient supabaseClient;
+  late _MockGoTrueClient auth;
+
+  const user = User(
+    id: 'user-1',
+    appMetadata: {},
+    userMetadata: {},
+    aud: 'authenticated',
+    createdAt: '2026-05-26T00:00:00Z',
+  );
+
+  final now = DateTime.parse('2026-05-26T00:00:00Z');
+  late AppUserProfile profile;
+
+  setUpAll(() {
+    registerFallbackValue(<String>{});
+  });
+
+  setUp(() {
+    storyRepository = _MockStoryRepository();
+    userRepository = _MockUserRepository();
+    supabaseClient = _MockSupabaseClient();
+    auth = _MockGoTrueClient();
+    profile = AppUserProfile(
+      userId: user.id,
+      shareId: 'ABC1234',
+      nickname: '기도친구',
+      photoUrl: null,
+      prayerRequest: '오늘 함께 기도해주세요.',
+      createdAt: now,
+      updatedAt: now,
+    );
+
+    when(() => supabaseClient.auth).thenReturn(auth);
+    when(() => auth.currentUser).thenReturn(null);
+    when(() => storyRepository.fetchEras()).thenAnswer(
+      (_) async => [
+        const Era(
+          id: 'era-1',
+          code: 'era_test',
+          testament: 'old',
+          name: '테스트 시대',
+          displayOrder: 1,
+          startYear: null,
+          endYear: null,
+          mapCenterLat: null,
+          mapCenterLng: null,
+          mapZoom: null,
+        ),
+      ],
+    );
+    when(() => storyRepository.fetchLandmarks()).thenAnswer((_) async => []);
+    when(() => storyRepository.fetchCharactersByEra('era-1')).thenAnswer(
+      (_) async => [
+        const Character(
+          id: 'person-1',
+          code: 'moses',
+          name: '모세',
+          tagline: null,
+          description: null,
+          avatarUrl: null,
+          displayOrder: 1,
+        ),
+      ],
+    );
+    when(
+      () => storyRepository.fetchCharacterTimelineOrder(),
+    ).thenAnswer((_) async => const <String, int>{});
+    when(
+      () => storyRepository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+
+    when(
+      () => userRepository.ensureSignedInUser(user),
+    ).thenAnswer((_) async => profile);
+    when(
+      () => userRepository.fetchCharacterStudyProgress(
+        userId: user.id,
+        people: any(named: 'people'),
+      ),
+    ).thenAnswer((_) async => const <CharacterStudyProgress>[]);
+    when(
+      () => userRepository.fetchIntercessoryPrayerPage(
+        pageIndex: 0,
+        pageSize: 12,
+      ),
+    ).thenAnswer(
+      (_) async => const PagedResult<IntercessoryPrayerItem>(
+        items: [],
+        pageIndex: 0,
+        pageSize: 12,
+        hasNextPage: false,
+      ),
+    );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 5,
+      ),
+    ).thenAnswer(
+      (_) async => const PagedResult<SavedBibleVerse>(
+        items: [],
+        pageIndex: 0,
+        pageSize: 5,
+        hasNextPage: false,
+      ),
+    );
+  });
+
+  testWidgets('프로필 헤더의 이름을 누르면 수정 다이얼로그를 연다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    final nickname = find.text('기도친구');
+    expect(nickname, findsOneWidget);
+    expect(tester.getTopLeft(nickname).dx, greaterThan(100));
+
+    await tester.tap(nickname);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProfileEditorDialog), findsOneWidget);
+    expect(find.text('프로필 수정'), findsOneWidget);
+  });
+
+  testWidgets('기도 탭의 내 기도 텍스트를 누르면 수정 다이얼로그를 연다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(find.text('기도'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('오늘 함께 기도해주세요.'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProfileEditorDialog), findsOneWidget);
+    expect(find.text('프로필 수정'), findsOneWidget);
+  });
+}
+
+Future<void> _pumpProfileTab(
+  WidgetTester tester, {
+  required User user,
+  required StoryRepository storyRepository,
+  required UserRepository userRepository,
+  required SupabaseClient supabaseClient,
+}) async {
+  tester.view.physicalSize = const Size(900, 700);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        signedInUserProvider.overrideWithValue(user),
+        storyRepositoryProvider.overrideWithValue(storyRepository),
+        userRepositoryProvider.overrideWithValue(userRepository),
+        supabaseClientProvider.overrideWithValue(supabaseClient),
+      ],
+      child: MaterialApp(
+        home: ProfileTabPage(
+          onStartQuiz: (_) {},
+          onOpenEventDetail: (_, {source, sourceId}) {},
+          onOpenBibleReader:
+              ({initialBookNo, initialChapterNo, initialVerseNo}) {
+                return Future<void>.value();
+              },
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}

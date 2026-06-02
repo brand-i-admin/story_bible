@@ -179,7 +179,7 @@ tap suppression 을 걸어, 조작 직후 커서 아래 region·랜드마크가 
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |
 | EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 퀴즈) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
-| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 아바타·이름과 기도 탭의 내 기도 텍스트는 프로필 수정 진입점, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (우측 별 아이콘 구절 저장 + 이야기 본문 읽기 모드). 일반 성경 진입은 책/장 탐색을 유지하고, 사건 상세에서 진입하면 해당 `bible_refs` 범위의 절만 표시한다. 여러 본문은 **다음**으로 순차 이동하고 마지막 본문에서 **읽기 완료**를 눌러야 읽음 처리된다. 구절 본문 탭은 선택/저장 동작을 만들지 않는다 |
 | SearchBottomSheet | `widgets/search_bottom_sheet.dart` | 검색 입력 + 결과 (bottom sheet) |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |

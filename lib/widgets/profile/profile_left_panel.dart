@@ -41,21 +41,43 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Widget _buildProfileHeader({required AppUserProfile profile}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.only(left: 56, right: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildCurrentUserAvatar(profile: profile, size: 40),
-          const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              profile.nickname,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.ink500,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
+            child: Tooltip(
+              message: '프로필 수정',
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _openProfileEditor,
+                  borderRadius: BorderRadius.circular(14),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 3,
+                    ),
+                    child: Row(
+                      children: [
+                        _buildCurrentUserAvatar(profile: profile, size: 40),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            profile.nickname,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.ink500,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -361,7 +383,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => _openProfilePrayerPreview(prayerText),
+            onTap: _openProfileEditor,
             borderRadius: BorderRadius.circular(10),
             child: Padding(
               padding: const EdgeInsets.only(right: 2, bottom: 2),
