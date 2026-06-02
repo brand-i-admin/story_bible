@@ -40,6 +40,7 @@ class EventDetailPage extends ConsumerStatefulWidget {
     this.nextEvent,
     this.onNavigateToEvent,
     this.onEmotionEngraved,
+    this.onLoginRequired,
     this.quizWeekKey,
   });
 
@@ -67,6 +68,7 @@ class EventDetailPage extends ConsumerStatefulWidget {
   /// 축하 효과를 재생한 뒤 같은 상세 페이지로 되돌아갈 수 있다.
   final Future<void> Function(StoryEvent event, EventEmotionOption option)?
   onEmotionEngraved;
+  final void Function(String message)? onLoginRequired;
 
   /// 비-null 이면 "퀴즈 모드" — 본문 읽기/퀴즈 완료 진행도가 프로필 진행도와
   /// 독립된 `weekly_quiz_progress` 테이블에 저장된다. 같은 인물이 다음 주에
@@ -118,6 +120,19 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     return state.bibleReadEventIds.contains(eventId) &&
         state.quizCompletedEventIds.contains(eventId) &&
         engraved;
+  }
+
+  void _requestLogin(String message) {
+    final onLoginRequired = widget.onLoginRequired;
+    if (onLoginRequired != null) {
+      onLoginRequired(message);
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
+    );
   }
 
   @override
@@ -352,9 +367,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   Future<void> _openEmotionEngraving(StoryEvent event) async {
     final user = ref.read(signedInUserProvider);
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('로그인 후 지도 위에 감정을 새길 수 있어요.')),
-      );
+      _requestLogin('지도 위에 감정을 새기려면 로그인이 필요해요.');
       return;
     }
 
@@ -402,9 +415,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   Future<void> _toggleSavedEvent(StoryEvent event) async {
     final user = ref.read(signedInUserProvider);
     if (user == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('로그인 후 이야기를 저장할 수 있어요.')));
+      _requestLogin('이야기를 저장하려면 로그인이 필요해요.');
       return;
     }
     try {

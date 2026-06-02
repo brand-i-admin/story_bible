@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/story_event.dart';
+import '../../state/auth_providers.dart';
 import '../../theme/tokens.dart';
 import '../sub_page_scaffold.dart';
 import '../weekly_tab_page.dart';
@@ -18,11 +19,13 @@ class QuizTabPage extends ConsumerStatefulWidget {
     super.key,
     required this.onStartQuiz,
     required this.onOpenEventDetail,
+    this.onLoginRequired,
   });
 
   final void Function(String eventId) onStartQuiz;
   final void Function(StoryEvent event, {String? quizWeekKey})
   onOpenEventDetail;
+  final void Function(String message)? onLoginRequired;
 
   @override
   ConsumerState<QuizTabPage> createState() => _QuizTabPageState();
@@ -45,6 +48,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
             child: _selectedTab == 0
                 ? _DailyTabBody(
                     scrollPadding: _bodyPadding(),
+                    onLoginRequired: widget.onLoginRequired,
                     onCompletedChanged: (done) {
                       if (_dailyCompleted != done) {
                         setState(() => _dailyCompleted = done);
@@ -92,7 +96,12 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
                 label: '주간 퀴즈',
                 selected: _selectedTab == 1,
                 completed: false,
-                onTap: () => setState(() => _selectedTab = 1),
+                onTap: () {
+                  if (ref.read(signedInUserProvider) == null) {
+                    widget.onLoginRequired?.call('주간 퀴즈를 진행하려면 로그인이 필요해요.');
+                  }
+                  setState(() => _selectedTab = 1);
+                },
               ),
             ),
           ],
@@ -172,16 +181,21 @@ class _DailyTabBody extends StatelessWidget {
   const _DailyTabBody({
     required this.scrollPadding,
     required this.onCompletedChanged,
+    required this.onLoginRequired,
   });
 
   final EdgeInsets scrollPadding;
   final ValueChanged<bool> onCompletedChanged;
+  final void Function(String message)? onLoginRequired;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: scrollPadding.copyWith(bottom: 24),
-      child: DailyQuizSection(onCompletedChanged: onCompletedChanged),
+      child: DailyQuizSection(
+        onCompletedChanged: onCompletedChanged,
+        onLoginRequired: onLoginRequired,
+      ),
     );
   }
 }

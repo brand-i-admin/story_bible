@@ -860,6 +860,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         builder: (_) => QuizTabPage(
           onStartQuiz: _startQuiz,
           onOpenEventDetail: _openEventDetailPage,
+          onLoginRequired: _showLoginRequiredSnackBar,
+        ),
+      ),
+    );
+  }
+
+  void _showLoginRequiredSnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: '이동',
+          onPressed: () {
+            unawaited(_openProfileTab());
+          },
         ),
       ),
     );
@@ -1298,6 +1319,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           event: event,
           quizWeekKey: quizWeekKey,
           sceneAssetsFuture: sceneAssetsFuture,
+          onLoginRequired: _showLoginRequiredSnackBar,
           onOpenBibleReader: (targets) async {
             if (!mounted) {
               return false;
@@ -1311,6 +1333,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             // 리더의 "읽기 완료"로 닫힌 경우에만 완료 처리. 퀴즈 모드면 별도
             // weekly_quiz_progress 에 저장 (프로필 진행도 영향 X).
             if (!mounted) return false;
+            if (ref.read(signedInUserProvider) == null) {
+              _showLoginRequiredSnackBar('읽기 완료 처리를 하려면 로그인이 필요해요.');
+              return false;
+            }
             final notifier = ref.read(storyControllerProvider.notifier);
             if (quizWeekKey != null) {
               await notifier.setWeeklyQuizBibleRead(
@@ -1401,6 +1427,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       event: event,
       quizWeekKey: quizWeekKey,
       sceneAssetsFuture: sceneAssetsFuture,
+      onLoginRequired: _showLoginRequiredSnackBar,
       onOpenBibleReader: (targets) async {
         if (!mounted) return false;
         final completedReading = await _openBibleReaderPopup(
@@ -1411,6 +1438,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         }
         if (!mounted) return false;
         // 본문 읽기 완료 처리 — quiz 모드면 weekly 진행도, 아니면 일반.
+        if (ref.read(signedInUserProvider) == null) {
+          _showLoginRequiredSnackBar('읽기 완료 처리를 하려면 로그인이 필요해요.');
+          return false;
+        }
         final notifier = ref.read(storyControllerProvider.notifier);
         if (quizWeekKey != null) {
           await notifier.setWeeklyQuizBibleRead(
@@ -1625,6 +1656,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           initialVerseNo: initialVerseNo,
           highlightTarget: highlightTarget,
           readingTargets: readingTargets,
+          onLoginRequired: _showLoginRequiredSnackBar,
         ),
       ),
     );
@@ -1702,9 +1734,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     String? quizWeekKey,
     StoryEvent? event,
   }) async {
+    if (ref.read(signedInUserProvider) == null) {
+      _showLoginRequiredSnackBar('퀴즈를 풀려면 로그인이 필요해요.');
+      return;
+    }
     final state = ref.read(storyControllerProvider);
     final repo = ref.read(storyRepositoryProvider);
-    final isAuthenticated = ref.read(signedInUserProvider) != null;
     // 호출자가 event 를 직접 넘겼으면 그걸 사용 (주간 퀴즈처럼 state.events
     // 에 없는 이벤트도 처리). 아니면 state.events 에서 lookup.
     final resolvedEvent =
@@ -1807,16 +1842,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selectedAnswers = quizResult.selectedAnswers;
     final score = quizResult.score;
     final confusedCount = quizResult.confusedCount;
-
-    if (!isAuthenticated) {
-      if (!mounted) {
-        return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('비로그인 상태라 퀴즈 진행 상황은 저장되지 않아요.')),
-      );
-      return;
-    }
 
     // 퀴즈 완료 + 점수 저장. quizWeekKey 가 있으면 주간 퀴즈 진행도(별도
     // 테이블)에, 없으면 일반 진행도에 저장. 일반은 controller 가 자동으로

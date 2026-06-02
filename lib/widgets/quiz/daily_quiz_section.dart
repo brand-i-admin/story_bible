@@ -15,11 +15,16 @@ import '../completion_celebration.dart';
 /// 가 active 인 동안엔 같은 row 유지(재제출 불가). daily_quiz 가 새로 등록되면
 /// (다른 PK) 자동으로 새 시도 가능 → "초기화" 가 자연스럽게 일어남.
 class DailyQuizSection extends ConsumerStatefulWidget {
-  const DailyQuizSection({super.key, this.onCompletedChanged});
+  const DailyQuizSection({
+    super.key,
+    this.onCompletedChanged,
+    this.onLoginRequired,
+  });
 
   /// 사용자가 오늘의 매일 퀴즈를 완료한 상태(또는 사전 완료된 상태로 진입)
   /// 인지가 바뀔 때 호출. 부모(QuizTabPage)가 탭 버튼 색을 초록으로 전환할 때 사용.
   final ValueChanged<bool>? onCompletedChanged;
+  final void Function(String message)? onLoginRequired;
 
   @override
   ConsumerState<DailyQuizSection> createState() => _DailyQuizSectionState();
@@ -81,27 +86,42 @@ class _DailyQuizSectionState extends ConsumerState<DailyQuizSection> {
     }
   }
 
+  void _requestLogin(String message) {
+    final onLoginRequired = widget.onLoginRequired;
+    if (onLoginRequired != null) {
+      onLoginRequired(message);
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
+    );
+  }
+
   Future<void> _submit(DailyQuiz quiz) async {
     if (_selectedIndex0 == null || _submitted) return;
     final selectedIdx0 = _selectedIndex0!;
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      _requestLogin('매일 퀴즈를 풀려면 로그인이 필요해요.');
+      return;
+    }
     setState(() => _submitted = true);
     _celebrationKey.currentState?.play();
 
-    // DB 저장 (로그인 시에만). insert ignore 라 동시성 충돌도 안전.
-    final user = ref.read(signedInUserProvider);
-    if (user != null) {
-      try {
-        await ref
-            .read(storyRepositoryProvider)
-            .insertDailyQuizAttempt(
-              userId: user.id,
-              quizId: quiz.id,
-              selectedIndex: selectedIdx0 + 1,
-              isCorrect: quiz.isCorrect(selectedIdx0),
-            );
-      } catch (_) {
-        // 저장 실패는 조용히 무시 — UI 는 이미 제출 상태.
-      }
+    // insert ignore 라 동시성 충돌도 안전.
+    try {
+      await ref
+          .read(storyRepositoryProvider)
+          .insertDailyQuizAttempt(
+            userId: user.id,
+            quizId: quiz.id,
+            selectedIndex: selectedIdx0 + 1,
+            isCorrect: quiz.isCorrect(selectedIdx0),
+          );
+    } catch (_) {
+      // 저장 실패는 조용히 무시 — UI 는 이미 제출 상태.
     }
     widget.onCompletedChanged?.call(true);
   }
@@ -229,7 +249,13 @@ class _DailyQuizSectionState extends ConsumerState<DailyQuizSection> {
       child: InkWell(
         onTap: _submitted
             ? null
-            : () => setState(() => _selectedIndex0 = index0),
+            : () {
+                if (ref.read(signedInUserProvider) == null) {
+                  _requestLogin('매일 퀴즈를 풀려면 로그인이 필요해요.');
+                  return;
+                }
+                setState(() => _selectedIndex0 = index0);
+              },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

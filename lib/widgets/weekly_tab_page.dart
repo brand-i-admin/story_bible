@@ -537,7 +537,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
           SizedBox(width: 8),
           Expanded(
             child: Text(
-              '비로그인 상태예요. 금주 인물과 퀴즈는 사용할 수 있지만 진행 상황은 저장되지 않아요.',
+              '비로그인 상태예요. 금주 이야기는 볼 수 있지만 퀴즈 진행과 읽기 완료 처리는 로그인 후 사용할 수 있어요.',
               style: TextStyle(
                 color: Color(0xFF6A4A23),
                 fontSize: 12.2,

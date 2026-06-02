@@ -34,6 +34,7 @@ class BibleReaderPage extends ConsumerStatefulWidget {
     this.initialVerseNo,
     this.highlightTarget,
     this.readingTargets = const <BibleNavigationTarget>[],
+    this.onLoginRequired,
   });
 
   final int? initialBookNo;
@@ -41,6 +42,7 @@ class BibleReaderPage extends ConsumerStatefulWidget {
   final int? initialVerseNo;
   final BibleNavigationTarget? highlightTarget;
   final List<BibleNavigationTarget> readingTargets;
+  final void Function(String message)? onLoginRequired;
 
   @override
   ConsumerState<BibleReaderPage> createState() => _BibleReaderPageState();
@@ -169,6 +171,19 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     return verses;
   }
 
+  void _requestLogin(String message) {
+    final onLoginRequired = widget.onLoginRequired;
+    if (onLoginRequired != null) {
+      onLoginRequired(message);
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
+    );
+  }
+
   /// 우측 별 아이콘 탭 - 단일 절 저장/해제 토글.
   Future<void> _onTapStar(BibleVerse verse) async {
     final verseKey = SavedBibleVerse.buildVerseKey(
@@ -179,9 +194,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     );
     final user = ref.read(signedInUserProvider);
     if (user == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('로그인이 필요합니다.')));
+      _requestLogin('말씀을 저장하려면 로그인이 필요해요.');
       return;
     }
 
@@ -259,6 +272,10 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
 
   Future<void> _openSavedVerses() async {
     if (!mounted) return;
+    if (ref.read(signedInUserProvider) == null) {
+      _requestLogin('저장한 말씀을 보려면 로그인이 필요해요.');
+      return;
+    }
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => SavedVersesScreen(

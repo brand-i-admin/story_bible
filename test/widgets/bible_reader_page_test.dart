@@ -160,6 +160,37 @@ void main() {
       expect(find.text('끝 절을 선택하세요'), findsNothing);
     });
 
+    testWidgets('비로그인 상태에서는 별표와 저장 목록 버튼이 로그인 유도를 요청한다', (tester) async {
+      var loginPromptCount = 0;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(null),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: MaterialApp(
+            home: BibleReaderPage(
+              onLoginRequired: (_) {
+                loginPromptCount += 1;
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.star_border_rounded));
+      await tester.pump();
+      expect(loginPromptCount, 1);
+
+      await tester.tap(find.byIcon(Icons.menu_book_rounded));
+      await tester.pump();
+      expect(loginPromptCount, 2);
+      expect(find.text('저장한 말씀'), findsNothing);
+    });
+
     testWidgets('초기 절 번호가 있으면 해당 절을 본문 목록 상단으로 올린다', (tester) async {
       tester.view.physicalSize = const Size(390, 640);
       tester.view.devicePixelRatio = 1.0;
