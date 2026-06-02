@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Generate avatar PNG files from Vertex AI Imagen using a prompt JSON file.
+"""Generate avatar PNG files from Vertex AI Gemini using a prompt JSON file.
 
 Usage example:
   export GOOGLE_CLOUD_PROJECT="your-project-id"
-  export GOOGLE_CLOUD_LOCATION="us-central1"
+  export GOOGLE_CLOUD_LOCATION="global"
   python tools/images/generate_avatars_vertex.py
 """
 
@@ -23,6 +23,8 @@ from google.auth.transport.requests import Request
 import requests
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
+LATEST_IMAGE_MODEL = "gemini-3-pro-image"
+LATEST_STABLE_IMAGE_MODEL = "gemini-2.5-flash-image"
 ADULT_GUARDRAIL = (
     "all characters are clearly adults age 25+, adult body proportions, "
     "fully clothed, no children, no minors, non-photoreal 2D cartoon "
@@ -32,7 +34,7 @@ ADULT_GUARDRAIL = (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate character avatars with Vertex AI Imagen."
+        description="Generate character avatars with Vertex AI Gemini image models."
     )
     parser.add_argument(
         "--character-meta-json",
@@ -46,13 +48,19 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--location",
-        default=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
-        help="Vertex AI region. Defaults to GOOGLE_CLOUD_LOCATION or us-central1.",
+        default=os.getenv("GOOGLE_CLOUD_LOCATION", "global"),
+        help="Vertex AI region. Defaults to GOOGLE_CLOUD_LOCATION or global.",
     )
     parser.add_argument(
         "--model",
-        default="imagen-4.0-generate-001",
-        help="Imagen model id.",
+        default=os.getenv(
+            "VERTEX_AVATAR_IMAGE_MODEL",
+            os.getenv("VERTEX_IMAGE_MODEL", "latest"),
+        ),
+        help=(
+            "Vertex image model id. Aliases: latest -> "
+            f"{LATEST_IMAGE_MODEL}, stable -> {LATEST_STABLE_IMAGE_MODEL}."
+        ),
     )
     parser.add_argument(
         "--character-generation",
@@ -78,6 +86,11 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=0,
         help="Generate only first N characters (0 = all).",
+    )
+    parser.add_argument(
+        "--only-codes",
+        default="",
+        help="Comma-separated character codes to generate, e.g. hagar,sarah.",
     )
     parser.add_argument(
         "--sleep-sec",
@@ -178,6 +191,53 @@ def get_access_token() -> str:
     if not creds.valid:
         creds.refresh(Request())
     return creds.token
+
+
+def dedupe_preserve_order(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for item in items:
+        if item in seen:
+            continue
+        seen.add(item)
+        result.append(item)
+    return result
+
+
+def resolve_model_alias(model: str) -> str:
+    normalized = str(model).strip()
+    if not normalized or normalized == "latest":
+        return LATEST_IMAGE_MODEL
+    if normalized == "stable":
+        return LATEST_STABLE_IMAGE_MODEL
+    return normalized
+
+
+def resolve_location_for_model(location: str, model: str) -> str:
+    requested = str(location).strip() or "global"
+    if model.startswith("gemini-3-") and requested != "global":
+        return "global"
+    return requested
+
+
+def request_model_candidates(primary_model: str) -> list[str]:
+    models = [primary_model]
+    if primary_model == LATEST_IMAGE_MODEL:
+        models.append(LATEST_STABLE_IMAGE_MODEL)
+    return dedupe_preserve_order(models)
+
+
+def build_vertex_endpoint(*, project: str, location: str, model: str) -> str:
+    host = (
+        "aiplatform.googleapis.com"
+        if location == "global"
+        else f"{location}-aiplatform.googleapis.com"
+    )
+    method = "generateContent" if model.lower().startswith("gemini") else "predict"
+    return (
+        f"https://{host}/v1/projects/{project}/locations/{location}/"
+        f"publishers/google/models/{model}:{method}"
+    )
 
 
 def extract_filter_reason(node: Any) -> str | None:
@@ -301,7 +361,7 @@ def decode_image_bytes(prediction: dict[str, Any]) -> bytes:
     raise ValueError(f"No image base64 field found in prediction. keys={keys}")
 
 
-def build_request_body(
+def build_imagen_request_body(
     prompt: str,
     negative_prompt: str,
     defaults: dict[str, Any],
@@ -325,8 +385,29 @@ def build_request_body(
     return body
 
 
+def build_gemini_request_body(
+    prompt: str,
+    negative_prompt: str,
+    defaults: dict[str, Any],
+) -> dict[str, Any]:
+    sample_count = int(defaults.get("sampleCount", 1))
+    text = prompt
+    if negative_prompt:
+        text = f"{text}\n\nNegative prompt: avoid {negative_prompt}."
+    return {
+        "contents": [{"role": "user", "parts": [{"text": text}]}],
+        "generationConfig": {
+            "responseModalities": ["IMAGE"],
+            "candidateCount": max(1, sample_count),
+        },
+    }
+
+
 def main() -> int:
     args = parse_args()
+    resolved_model = resolve_model_alias(args.model)
+    resolved_location = resolve_location_for_model(args.location, resolved_model)
+    request_models = request_model_candidates(resolved_model)
 
     meta_path = Path(args.character_meta_json)
     if not meta_path.exists():
@@ -337,34 +418,32 @@ def main() -> int:
     common_style = config.get("common_style", "").strip()
     negative_prompt = config.get("negative_prompt", "").strip()
     defaults = config.get("generation_defaults", {})
-    characters = sorted(
+    all_characters = sorted(
         config["characters"],
         key=lambda c: int(c.get("index", 0)),
     )
+    characters = list(all_characters)
+    only_codes = {
+        code.strip() for code in str(args.only_codes).split(",") if code.strip()
+    }
+    if only_codes:
+        characters = [
+            character
+            for character in characters
+            if str(character.get("code", "")).strip() in only_codes
+        ]
+        missing_codes = sorted(
+            only_codes
+            - {str(character.get("code", "")).strip() for character in characters}
+        )
+        if missing_codes:
+            print(
+                f"ERROR: unknown character codes: {', '.join(missing_codes)}",
+                file=sys.stderr,
+            )
+            return 2
     if args.limit > 0:
         characters = characters[: args.limit]
-
-    out_dir = Path(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    # Prune 은 GCP project 없이도 안전하게 동작 → project 검증 전에 실행.
-    if not args.no_prune_orphans:
-        active_codes = {str(c.get("code", "")).strip() for c in characters}
-        active_codes.discard("")
-        prune_orphan_avatars(out_dir, active_codes)
-
-    if not args.project:
-        print(
-            "ERROR: project id is required. Set --project or GOOGLE_CLOUD_PROJECT.",
-            file=sys.stderr,
-        )
-        return 2
-
-    endpoint = (
-        f"https://{args.location}-aiplatform.googleapis.com/v1/projects/"
-        f"{args.project}/locations/{args.location}/publishers/google/models/"
-        f"{args.model}:predict"
-    )
 
     if args.dry_run:
         for item in characters:
@@ -378,8 +457,27 @@ def main() -> int:
                 use_common_style=use_common_style,
             )
             print(f"[DRY] {item['index']:02d} {item['code']}: {prompt}")
-        print(f"DRY-RUN complete: {len(characters)} prompts")
+        print(
+            f"DRY-RUN complete: {len(characters)} prompts "
+            f"model={resolved_model} location={resolved_location}"
+        )
         return 0
+
+    out_dir = Path(args.output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Prune 은 GCP project 없이도 안전하게 동작 → project 검증 전에 실행.
+    if not args.no_prune_orphans:
+        active_codes = {str(c.get("code", "")).strip() for c in all_characters}
+        active_codes.discard("")
+        prune_orphan_avatars(out_dir, active_codes)
+
+    if not args.project:
+        print(
+            "ERROR: project id is required. Set --project or GOOGLE_CLOUD_PROJECT.",
+            file=sys.stderr,
+        )
+        return 2
 
     token = get_access_token()
     session = requests.Session()
@@ -417,41 +515,76 @@ def main() -> int:
             print(f"[SKIP] {index:02d} {code} -> {out_file} (exists)")
             continue
 
-        body = build_request_body(
-            prompt,
-            final_negative_prompt,
-            defaults,
-            person_generation_override=(
-                args.character_generation or per_item_person_generation
-            ),
-        )
         try:
-            response = session.post(endpoint, json=body, timeout=180)
+            response: requests.Response | None = None
+            used_model = request_models[0]
+            used_location = resolved_location
+            for model_index, candidate_model in enumerate(request_models):
+                used_model = candidate_model
+                used_location = resolve_location_for_model(
+                    resolved_location,
+                    candidate_model,
+                )
+                endpoint = build_vertex_endpoint(
+                    project=args.project,
+                    location=used_location,
+                    model=candidate_model,
+                )
+                if candidate_model.lower().startswith("gemini"):
+                    body = build_gemini_request_body(
+                        prompt,
+                        final_negative_prompt,
+                        defaults,
+                    )
+                else:
+                    body = build_imagen_request_body(
+                        prompt,
+                        final_negative_prompt,
+                        defaults,
+                        person_generation_override=(
+                            args.character_generation or per_item_person_generation
+                        ),
+                    )
+
+                response = session.post(endpoint, json=body, timeout=180)
+                if response.status_code != 404:
+                    break
+                if model_index + 1 < len(request_models):
+                    print(
+                        f"[FALLBACK] {index:02d} {code} model={candidate_model} "
+                        f"returned 404, retrying with {request_models[model_index + 1]}"
+                    )
+
+            assert response is not None
             if response.status_code >= 400:
                 failure += 1
                 print(
                     f"[FAIL] {index:02d} {code} status={response.status_code} "
-                    f"body={response.text[:300]}"
+                    f"model={used_model} body={response.text[:300]}"
                 )
                 continue
 
             payload = response.json()
-            predictions = payload.get("predictions", [])
-            if not predictions:
+            response_items = (
+                payload.get("candidates", [])
+                if used_model.lower().startswith("gemini")
+                else payload.get("predictions", [])
+            )
+            if not response_items:
                 failure += 1
                 reason = extract_filter_reason(payload)
                 if reason:
                     hint = get_filter_hint(reason)
-                    print(f"[FAIL] {index:02d} {code} no predictions ({reason}){hint}")
+                    print(f"[FAIL] {index:02d} {code} no image items ({reason}){hint}")
                 else:
-                    print(f"[FAIL] {index:02d} {code} no predictions")
+                    print(f"[FAIL] {index:02d} {code} no image items")
                 continue
 
             img_bytes = None
             last_error = ""
-            for prediction in predictions:
+            for item_payload in response_items:
                 try:
-                    img_bytes = decode_image_bytes(prediction)
+                    img_bytes = decode_image_bytes(item_payload)
                     break
                 except ValueError as exc:
                     last_error = str(exc)
@@ -466,7 +599,10 @@ def main() -> int:
 
             out_file.write_bytes(img_bytes)
             success += 1
-            print(f"[OK]   {index:02d} {code} -> {out_file}")
+            print(
+                f"[OK]   {index:02d} {code} -> {out_file} "
+                f"(model={used_model}, location={used_location})"
+            )
         except Exception as exc:  # noqa: BLE001
             failure += 1
             print(f"[FAIL] {index:02d} {code} error={exc}")

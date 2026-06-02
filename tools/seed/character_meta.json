@@ -624,10 +624,11 @@
       "name_ko": "하갈",
       "name_en": "Hagar",
       "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Hagar, adult biblical woman (age 25+), protective caregiver silhouette, open-handed compassionate posture, tall narrow build, diamond-shaped face with a sharp chin, braided geometric hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt": "COMMON_STYLE, palette: desert teal + copper + deep indigo accents, Hagar, adult biblical woman (age 25+), single young adult Egyptian servant woman silhouette, one woman only, plain desert teal ankle-length dress with a simple copper cloth sash, deep indigo head scarf, no jewelry and no ornate headband, small water-skin held at her side, standing alone, humble desert servant presence, not a noble mistress, full body single centered woman, no surrounding characters, calm resilient standing posture with both arms relaxed at sides, slender resilient young adult feminine build, youthful adult oval face with gentle Egyptian features, dark hair fully tucked under a plain deep indigo headscarf, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
-      "is_active_default": true
+      "is_active_default": true,
+      "negative_prompt_extra": "elderly woman, old woman, aged matriarch, wealthy noble mistress, jeweled matriarch, cream robe, soft rose robe, beige matriarch clothing, ornate headband, gold earrings, male, man, tall man, bearded man, masculine face, broad male jaw, male headcloth, masculine headdress, beard, mustache, facial hair, child, teenager, girl, baby, son, family scene, large central male figure, extra woman, duplicate woman, row of people, lineup, second character, companion, group, duo, trio, multiple people"
     },
     {
       "index": 55,

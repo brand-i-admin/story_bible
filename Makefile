@@ -28,6 +28,9 @@ AVATARS_DIR := $(ASSETS_DIR)/avatars
 AVATARS_THUMBS_DIR := $(ASSETS_DIR)/avatars_thumbs
 STORY_IMAGES_DIR := $(ASSETS_DIR)/story_images
 STORY_IMAGES_THUMBS_DIR := $(ASSETS_DIR)/story_images_thumbs
+AVATAR_CODES ?=
+AVATAR_OVERWRITE ?=
+AVATAR_EXTRA_ARGS := $(if $(strip $(AVATAR_CODES)),--only-codes $(AVATAR_CODES),) $(if $(filter 1 true yes,$(AVATAR_OVERWRITE)),--overwrite,)
 
 # 출력 SQL
 KRV_SQL := $(SUPABASE_DIR)/seeds/krv_bible_verses.sql
@@ -77,7 +80,7 @@ help:
 	@echo "  seed-daily-quiz            매일 지도 퀴즈 SQL + docs 가이드 생성"
 	@echo "  audit-landmark-polygons    박스형/저정점 region polygon 감사"
 	@echo "  refine-landmark-polygons   Natural Earth 기반 region polygon 정제 후보 생성"
-	@echo "  generate-avatars        Vertex AI 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
+	@echo "  generate-avatars        Vertex AI Gemini 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
@@ -229,11 +232,12 @@ seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-daily
 # =============================================================================
 
 generate-avatars: build-character-meta
-	@echo "[Makefile] Vertex AI 아바타 생성..."
+	@echo "[Makefile] Vertex AI Gemini 아바타 생성..."
 	@echo "  → .env의 GOOGLE_CLOUD_PROJECT 확인 필요"
 	$(PYTHON) $(TOOLS_DIR)/images/generate_avatars_vertex.py \
 		--character-meta-json $(CHARACTER_META) \
-		--output-dir $(AVATARS_DIR)
+		--output-dir $(AVATARS_DIR) \
+		$(AVATAR_EXTRA_ARGS)
 
 generate-story-images:
 	@echo "[Makefile] Vertex AI 장면 이미지 생성..."

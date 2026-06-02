@@ -402,6 +402,19 @@ NAOMI_NEGATIVE_PROMPT_EXTRA = (
     "second character, multiple people, scene with ruth"
 )
 
+# hagar 는 족장 시대 여성 팔레트로 묶이면 sarah 와 너무 비슷해진다.
+# 단, prompt 에 다른 인물 이름/비교를 넣으면 Imagen 이 그 사람들을 같이 그릴 수
+# 있으므로 "한 명의 젊은 성인 여성" 정보만 남긴다.
+HAGAR_NEGATIVE_PROMPT_EXTRA = (
+    "elderly woman, old woman, aged matriarch, wealthy noble mistress, jeweled matriarch, "
+    "cream robe, soft rose robe, beige matriarch clothing, ornate headband, gold earrings, "
+    "male, man, tall man, bearded man, masculine face, broad male jaw, "
+    "male headcloth, masculine headdress, beard, mustache, facial hair, "
+    "child, teenager, girl, baby, son, family scene, "
+    "large central male figure, extra woman, duplicate woman, row of people, lineup, "
+    "second character, companion, group, duo, trio, multiple people"
+)
+
 GOLIATH_NEGATIVE_PROMPT_EXTRA = (
     "kind smile, friendly expression, gentle posture, peaceful aura, warm welcoming gesture, "
     "slim build, delicate features, child, teenager, slim shoulders, small stature, "
@@ -554,6 +567,11 @@ CHARACTER_VISUAL_OVERRIDES = {
         "soft elderly face with kind weathered features and gentle wrinkles",
         "gray streaked hair tucked under a layered widow's veil",
     ],
+    "hagar": [
+        "slender resilient young adult feminine build",
+        "youthful adult oval face with gentle Egyptian features",
+        "dark hair fully tucked under a plain deep indigo headscarf",
+    ],
 }
 
 CHARACTER_MOOD_OVERRIDES = {
@@ -593,6 +611,9 @@ CHARACTER_MOOD_OVERRIDES = {
     "naomi": [
         "weathered patient posture, gentle wise expression of an older mother figure",
     ],
+    "hagar": [
+        "calm resilient standing posture with both arms relaxed at sides",
+    ],
 }
 
 BEARD_VARIANTS = [
@@ -613,6 +634,10 @@ ERA_ROLE_FALLBACKS = {
     "post_exile_return": "rebuilder-era silhouette",
     "gospels": "traveling teacher silhouette",
     "early_church": "mission-era silhouette",
+}
+
+CODE_PALETTE_OVERRIDES = {
+    "hagar": "desert teal + copper + deep indigo accents",
 }
 
 CODE_SIGNATURE_HINTS = {
@@ -670,6 +695,14 @@ CODE_SIGNATURE_HINTS = {
         "humble courageous mother silhouette",
         "calm grounded presence",
         "layered travel veil",
+    ],
+    "hagar": [
+        "single young adult Egyptian servant woman silhouette, one woman only",
+        "plain desert teal ankle-length dress with a simple copper cloth sash",
+        "deep indigo head scarf, no jewelry and no ornate headband",
+        "small water-skin held at her side, standing alone",
+        "humble desert servant presence, not a noble mistress",
+        "full body single centered woman, no surrounding characters",
     ],
     "haman": [
         "scheming court-official silhouette",
@@ -1346,7 +1379,10 @@ def build_person_meta(
         else:
             name_ko = name_en
 
-        palette_text = str(palettes.get(era_style, palettes[default_style]))
+        palette_text = CODE_PALETTE_OVERRIDES.get(
+            code,
+            str(palettes.get(era_style, palettes[default_style])),
+        )
         template_prompt_source = str(template.get("prompt_source", "")).strip().lower()
         prompt = ""
         if template_prompt_source == "manual":
@@ -1427,6 +1463,8 @@ def build_person_meta(
             character["negative_prompt_extra"] = MARY_MAGDALENE_NEGATIVE_PROMPT_EXTRA
         if code == "naomi":
             character["negative_prompt_extra"] = NAOMI_NEGATIVE_PROMPT_EXTRA
+        if code == "hagar":
+            character["negative_prompt_extra"] = HAGAR_NEGATIVE_PROMPT_EXTRA
         if code in FEMALE_FORCE_CODES:
             character["negative_prompt_extra"] = FEMALE_FORCE_NEGATIVE_PROMPT_EXTRA
         if code in SOLO_FORCED_CODES:

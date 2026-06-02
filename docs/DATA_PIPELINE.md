@@ -179,11 +179,12 @@ Makefile                                # 파이프라인 오케스트레이션
 #### `generate_avatars_vertex.py` — 인물 아바타 생성
 - **의존**: `tools/seed/character_meta.json`
 - **출력**: `assets/avatars/{code}.png`
-- **API**: Google Cloud Vertex AI Imagen
-- **옵션**: `--output-dir`, `--overwrite`, `--limit`, `--no-prune-orphans`
+- **API**: Google Cloud Vertex AI Gemini (`gemini-3-pro-image`, fallback `gemini-2.5-flash-image`)
+- **옵션**: `--output-dir`, `--overwrite`, `--limit`, `--only-codes`, `--no-prune-orphans`
 - **환경**: `GOOGLE_CLOUD_PROJECT` 환경변수 필요
 - **stale 정리**: 시작 시 `character_meta.json` 의 code 집합과 `assets/avatars/` 의 PNG stem 을 비교, 불일치 PNG 를 삭제. 끄려면 `--no-prune-orphans`.
 - **재생성**: 기존 PNG 가 있으면 skip, 없으면 새로 생성 → 사용자가 마음에 안 드는 PNG 를 지워두면 다음 실행에서 자동 재생성.
+- **단일 인물 재생성**: `make generate-avatars AVATAR_CODES=hagar AVATAR_OVERWRITE=1` 처럼 전체 아바타를 다시 뽑지 않고 특정 코드만 덮어쓸 수 있다.
 
 #### `generate_event_story_images_vertex.py` — 장면 이미지 생성
 - **입력**: `assets/200_stories/*.json` (story_scenes 필드)

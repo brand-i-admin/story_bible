@@ -23,26 +23,27 @@ Era _era() => const Era(
   mapZoom: null,
 );
 
-StoryEvent _event(int i) => StoryEvent(
-  id: 'e$i',
-  landmarkId: 'lm_test',
-  eraId: 'era_primeval',
-  title: '사건 $i',
-  summary: '요약 $i',
-  storyScenes: const [],
-  sceneCharacters: const [],
-  startYear: -4000 + i,
-  endYear: -4000 + i,
-  timePrecision: 'approx',
-  storyIndex: i,
-  rankInEra: i,
-  globalRank: i,
-  placeName: null,
-  lat: null,
-  lng: null,
-  characterCodes: const [],
-  bibleRefs: const [],
-);
+StoryEvent _event(int i, {List<String> characterCodes = const <String>[]}) =>
+    StoryEvent(
+      id: 'e$i',
+      landmarkId: 'lm_test',
+      eraId: 'era_primeval',
+      title: '사건 $i',
+      summary: '요약 $i',
+      storyScenes: const [],
+      sceneCharacters: const [],
+      startYear: -4000 + i,
+      endYear: -4000 + i,
+      timePrecision: 'approx',
+      storyIndex: i,
+      rankInEra: i,
+      globalRank: i,
+      placeName: null,
+      lat: null,
+      lng: null,
+      characterCodes: characterCodes,
+      bibleRefs: const [],
+    );
 
 Widget _harness(Widget child, {double width = 360, double height = 280}) {
   return MaterialApp(
@@ -193,6 +194,34 @@ void main() {
   });
 
   group('StoryEventThumbCard emotion badge', () {
+    testWidgets('lookup에 없는 인물 코드도 로컬 아바타를 먼저 시도한다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(0, characterCodes: const ['cain']),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName ==
+                  'assets/avatars_thumbs/cain.png',
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('감정 배지 우측 하단에 이야기 순번을 함께 표시한다', (tester) async {
       await tester.pumpWidget(
         _harness(

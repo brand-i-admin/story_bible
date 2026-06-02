@@ -309,6 +309,7 @@ class StoryEventThumbCard extends StatelessWidget {
             final code = ordered[i];
             final isHighlighted = highlightedCharacterCodes.contains(code);
             return _CharPillAvatar(
+              code: code,
               character: charactersByCode[code],
               name: charactersByCode[code]?.name ?? code,
               accentColor: isHighlighted
@@ -644,10 +645,12 @@ class _CardThumbnail extends StatelessWidget {
 
 class _CharPillAvatar extends StatelessWidget {
   const _CharPillAvatar({
+    required this.code,
     required this.character,
     required this.name,
     this.accentColor,
   });
+  final String code;
   final Character? character;
   final String name;
 
@@ -664,6 +667,8 @@ class _CharPillAvatar extends StatelessWidget {
     final textColor = accentColor != null
         ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)
         : defaultText;
+    final avatarCharacter =
+        character ?? _localAvatarFallbackCharacter(code, name);
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 2, 6, 2),
       decoration: BoxDecoration(
@@ -681,7 +686,15 @@ class _CharPillAvatar extends StatelessWidget {
               child: SizedBox(
                 width: 14,
                 height: 14,
-                child: CharacterAvatar(character: character!, size: 14),
+                child: CharacterAvatar(character: avatarCharacter, size: 14),
+              ),
+            )
+          else if (avatarCharacter.hasLocalAvatar)
+            ClipOval(
+              child: SizedBox(
+                width: 14,
+                height: 14,
+                child: CharacterAvatar(character: avatarCharacter, size: 14),
               ),
             )
           else
@@ -701,6 +714,21 @@ class _CharPillAvatar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Character _localAvatarFallbackCharacter(String code, String name) {
+    final normalizedCode = code.trim();
+    return Character(
+      id: normalizedCode,
+      code: normalizedCode,
+      name: name,
+      tagline: null,
+      description: null,
+      avatarUrl: normalizedCode.isEmpty
+          ? null
+          : 'assets/avatars/$normalizedCode.png',
+      displayOrder: 0,
     );
   }
 }
