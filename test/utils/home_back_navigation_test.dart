@@ -76,5 +76,17 @@ void main() {
         HomeBackAction.returnToHome,
       );
     });
+
+    test('returns from timeline mode to home', () {
+      expect(
+        resolveHomeBackAction(
+          selectedEraId: 'era-exodus',
+          selectionMode: SelectionMode.timeline,
+          selectionStep: 3,
+          selectedLandmarkId: null,
+        ),
+        HomeBackAction.returnToHome,
+      );
+    });
   });
 }

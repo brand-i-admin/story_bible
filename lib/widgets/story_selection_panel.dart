@@ -372,7 +372,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
 
   List<Widget> _buildStoryBodySlivers() {
     if (widget.events.isEmpty) {
-      return <Widget>[_buildEmptyBodySliver('선택된 인물의 사건이 없습니다.')];
+      return <Widget>[_buildEmptyBodySliver('표시할 사건이 없습니다.')];
     }
     // v3 — 카드 클릭 즉시 EventDetailPage 이동. selectedEventId 로 '현재 이야기'
     // 강조 + 자동 스크롤. EventTimelineRow 가 region 모드와 동일하게 동작.

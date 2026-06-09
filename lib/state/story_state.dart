@@ -7,11 +7,12 @@ import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 
-/// 시대 선택 후 사용자가 선택할 수 있는 두 가지 탐색 모드.
+/// 시대 선택 후 사용자가 선택할 수 있는 탐색 모드.
 /// - region: 지도 위 region(영역) 들이 라벨 + 사건 있는 인물 아바타와 함께 표시되고,
 ///   region 을 누르면 그 region 안의 사건들이 카드 슬라이딩으로 펼쳐진다.
 /// - character: 인물 멀티 선택 → 사건 카드 5열 그리드 + 점선 연결 + 좌우 화살표.
-enum SelectionMode { region, character }
+/// - timeline: 선택한 시대의 모든 사건을 곧바로 시간순으로 펼친다.
+enum SelectionMode { region, character, timeline }
 
 class StoryState {
   const StoryState({

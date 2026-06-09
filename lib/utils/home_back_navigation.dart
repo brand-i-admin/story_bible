@@ -33,5 +33,7 @@ HomeBackAction resolveHomeBackAction({
         return HomeBackAction.returnToCharacterPicker;
       }
       return HomeBackAction.returnToHome;
+    case SelectionMode.timeline:
+      return HomeBackAction.returnToHome;
   }
 }

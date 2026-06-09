@@ -67,7 +67,7 @@ MaterialApp(theme: AppTheme.light(), ...)
 │          [핀]      [핀]                                        │
 │                                                                │
 │   ┌─────────────────────────────────────────┐                 │
-│   │   [이전 단계]  [시대/방법] > [장소/인물] > [이야기] │       │
+│   │   [이전 단계]  [시대/방법] > [선택] > [이야기]       │       │
 │   │   (3단계 선택 Panel, 드래그로 접기 가능)   │                 │
 │   └─────────────────────────────────────────┘                 │
 └─────────────────────────────────────────────────────────────┘
@@ -94,7 +94,7 @@ MaterialApp(theme: AppTheme.light(), ...)
 하단 선택 시트 상단에는 시스템 뒤로가기와 같은 의미의 명시 버튼을 함께 노출한다.
 선택 상태에 따라 `시대/방법 변경`, `장소 다시 선택`, `인물 다시 선택`으로 라벨을
 바꿔 사용자가 숫자-only 단계를 몰라도 이전 선택으로 돌아갈 수 있게 한다.
-단계 표시도 `시대/방법 → 장소/인물 → 이야기` 라벨형 pill 로 표시하고,
+단계 표시도 `시대/방법 → 장소/인물/시간 순 → 이야기` 라벨형 pill 로 표시하고,
 접기/펼치기 버튼과 같은 줄에 배치한다.
 
 ### 3.4 3D 무료 지도
@@ -173,7 +173,7 @@ tap suppression 을 걸어, 조작 직후 커서 아래 region·랜드마크가 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
 | StoryMapPanel | `widgets/story_map_panel.dart` | MapLibre 3D 지도 orchestration. OpenFreeMap/Mapzen terrain 을 WebView 로 띄우고, region polygon/path/라벨/hit-zone 은 GeoJSON layer 로, 사건 번호·감정 핀과 non-region 랜드마크는 DOM marker 로 렌더링 |
-| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널. 상단 sticky 헤더는 명시적 이전 단계 버튼과 `시대/방법 → 장소/인물 → 이야기` 라벨형 단계 pill 을 접기/펼치기 버튼과 같은 줄에 보여 준다. 사건 카드 배지도 감정 새김이 있으면 큰 컬러 감정 이모지 + 우측 아래 작은 초록 순서 번호로 표시하고, 퀴즈 결과가 있으면 카드 배경색으로 정답 0개=빨강 / 일부 정답=주황 / 모두 정답=초록 상태를 보여 준다. 감정 새김 직후 0.5초 뒤 해당 카드 위에 감정 도장+별가루를 기존 속도로 재생하고, 도장 완료 후 1초 뒤 상세로 복귀한다 |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널. 상단 sticky 헤더는 명시적 이전 단계 버튼과 `시대/방법 → 장소/인물/시간 순 → 이야기` 라벨형 단계 pill 을 접기/펼치기 버튼과 같은 줄에 보여 준다. 사건 카드 배지도 감정 새김이 있으면 큰 컬러 감정 이모지 + 우측 아래 작은 초록 순서 번호로 표시하고, 퀴즈 결과가 있으면 카드 배경색으로 정답 0개=빨강 / 일부 정답=주황 / 모두 정답=초록 상태를 보여 준다. 감정 새김 직후 0.5초 뒤 해당 카드 위에 감정 도장+별가루를 기존 속도로 재생하고, 도장 완료 후 1초 뒤 상세로 복귀한다 |
 | CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |

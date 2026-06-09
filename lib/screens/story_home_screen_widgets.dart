@@ -1,6 +1,6 @@
 part of 'story_home_screen.dart';
 
-enum _SelectionMode { character, region }
+enum _SelectionMode { character, region, timeline }
 
 extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
@@ -165,6 +165,7 @@ class _SelectionStepper extends StatelessWidget {
       2 => switch (mode) {
         _SelectionMode.region => '장소',
         _SelectionMode.character => '인물',
+        _SelectionMode.timeline => '시간 순',
         null => '선택',
       },
       _ => '이야기',
@@ -174,10 +175,11 @@ class _SelectionStepper extends StatelessWidget {
   IconData? _iconFor(int step) {
     return switch (step) {
       1 => Icons.home_rounded,
-      2 =>
-        mode == _SelectionMode.character
-            ? Icons.group_rounded
-            : Icons.place_rounded,
+      2 => switch (mode) {
+        _SelectionMode.character => Icons.group_rounded,
+        _SelectionMode.timeline => Icons.timeline_rounded,
+        _ => Icons.place_rounded,
+      },
       _ => Icons.auto_stories_rounded,
     };
   }
@@ -210,10 +212,11 @@ class _SelectionStepper extends StatelessWidget {
               onTap: () => onStepTap(i),
               tooltip: switch (i) {
                 1 => '처음으로 돌아가 시대와 보는 방법을 다시 선택',
-                2 =>
-                  mode == _SelectionMode.region
-                      ? '장소 선택 단계로 돌아가기'
-                      : '인물 선택 단계로 돌아가기',
+                2 => switch (mode) {
+                  _SelectionMode.region => '장소 선택 단계로 돌아가기',
+                  _SelectionMode.timeline => '시간 순으로 다시 보기',
+                  _ => '인물 선택 단계로 돌아가기',
+                },
                 _ => '이야기 목록 단계',
               },
             ),

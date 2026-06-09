@@ -166,15 +166,14 @@ class StoryController extends Notifier<StoryState> {
     await selectEra(eraId);
   }
 
-  /// v2 — 사용자가 시대 선택 후 모달에서 [SelectionMode.region] 또는
-  /// [SelectionMode.character] 를 골랐을 때 호출.
+  /// v2 — 사용자가 시대 선택 후 탐색 모드([SelectionMode]) 를 골랐을 때 호출.
   void setSelectionMode(SelectionMode mode) {
     state = state.copyWith(
       selectionMode: mode,
       clearSelectedLandmark: true,
       clearSelectedEvent: true,
-      // 모드 전환 시 인물 선택은 character 모드에서 다시 정하고, region 모드는
-      // 인물 선택을 무시(지역 단위로 사건 표시).
+      // 모드 전환 시 인물 선택은 character 모드에서 다시 정하고, 나머지
+      // 모드는 인물 선택을 무시(지역/전체 시간순 단위로 사건 표시).
       selectedCharacterCodes: mode == SelectionMode.character
           ? state.selectedCharacterCodes
           : const {},

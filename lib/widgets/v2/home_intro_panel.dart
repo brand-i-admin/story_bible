@@ -13,7 +13,8 @@ import 'era_pick_rows.dart';
 ///   1. 여행할 시대를 골라보세요 — 구약/신약 두 줄로 분리된 시대 칩. **단일 선택**.
 ///      비선택 시 시대 고유 색 ([EraColors.forCode]) 을 점·아이콘으로 미리 보여주고,
 ///      선택 시 갈색 그라데이션으로 활성 표시한다. 같은 시대 색은 지도 폴리곤에도 사용된다.
-///   2. 어떻게 볼까요? — 시대가 선택된 경우에만 활성. [장소에서 시작하기 / 인물과 걷기].
+///   2. 어떻게 볼까요? — 시대가 선택된 경우에만 활성.
+///      [시간 순 / 인물과 걷기 / 장소로 시작].
 class HomeIntroPanel extends StatelessWidget {
   const HomeIntroPanel({
     super.key,
@@ -35,7 +36,7 @@ class HomeIntroPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final canPickMode = selectedEraId != null;
     // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
-    // 칩 자체는 클릭 가능 — 사용자가 시대를 다른 것으로 바꿀 수 있게 IgnorePointer X.
+    // 다시 고르려면 상단의 "시대 다시 선택" 또는 stepper 의 "시대/방법"을 사용한다.
     final eraStepOpacity = canPickMode ? 0.55 : 1.0;
 
     return SingleChildScrollView(
@@ -61,23 +62,26 @@ class HomeIntroPanel extends StatelessWidget {
             opacity: eraStepOpacity,
             duration: const Duration(milliseconds: 240),
             curve: Curves.easeOut,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _StepHeader(
-                  number: 1,
-                  title: '여행할 시대를 골라보세요',
-                  enabled: true,
-                  done: canPickMode,
-                  iconData: Icons.schedule_outlined,
-                ),
-                const SizedBox(height: 8),
-                EraPickRows(
-                  eras: eras,
-                  selectedEraId: selectedEraId,
-                  onSelectEra: onSelectEra,
-                ),
-              ],
+            child: AbsorbPointer(
+              absorbing: canPickMode,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _StepHeader(
+                    number: 1,
+                    title: '여행할 시대를 골라보세요',
+                    enabled: true,
+                    done: canPickMode,
+                    iconData: Icons.schedule_outlined,
+                  ),
+                  const SizedBox(height: 8),
+                  EraPickRows(
+                    eras: eras,
+                    selectedEraId: selectedEraId,
+                    onSelectEra: onSelectEra,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 18),
@@ -99,12 +103,12 @@ class HomeIntroPanel extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _ModeCard(
-                      key: const ValueKey('home-mode-region'),
-                      icon: Icons.location_on,
-                      title: '장소에서 시작하기',
-                      subtitle: '한 장소의 이야기를\n시간순으로 봅니다.',
-                      accent: theme.colorScheme.primary,
-                      onTap: () => onPickMode(SelectionMode.region),
+                      key: const ValueKey('home-mode-timeline'),
+                      icon: Icons.access_time_rounded,
+                      title: '시간 순',
+                      subtitle: '선택한 시대의 사건을 시간 순으로 봅니다',
+                      accent: const Color(0xFF8C5A2E),
+                      onTap: () => onPickMode(SelectionMode.timeline),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -113,9 +117,20 @@ class HomeIntroPanel extends StatelessWidget {
                       key: const ValueKey('home-mode-character'),
                       icon: Icons.people,
                       title: '인물과 걷기',
-                      subtitle: '선택한 인물들의\n사건을 비교합니다.',
+                      subtitle: '선택한 인물들의 사건을 비교합니다',
                       accent: theme.colorScheme.tertiary,
                       onTap: () => onPickMode(SelectionMode.character),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _ModeCard(
+                      key: const ValueKey('home-mode-region'),
+                      icon: Icons.location_on,
+                      title: '장소로 시작',
+                      subtitle: '한 장소에서 이야기를 시간 순으로 봅니다',
+                      accent: theme.colorScheme.primary,
+                      onTap: () => onPickMode(SelectionMode.region),
                     ),
                   ),
                 ],
@@ -218,49 +233,44 @@ class _ModeCard extends StatelessWidget {
         splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
         highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
         child: Container(
-          padding: const EdgeInsets.all(8),
+          constraints: const BoxConstraints(minHeight: 88),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
           decoration: softButtonDecoration(selected: false),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: accent,
-                    ),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      icon,
-                      color: AppColors.parchmentCream,
-                      size: 15,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ModeIcon(icon: icon, accent: accent, size: 23),
+                    const SizedBox(width: 4),
+                    Text(
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 11.2,
+                        height: 1.12,
                         fontWeight: FontWeight.w800,
                         color: AppColors.ink800,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 7),
               Text(
                 subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 10.5,
-                  height: 1.25,
+                  fontSize: 9.4,
+                  height: 1.18,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.ink600,
                 ),
               ),
@@ -268,6 +278,28 @@ class _ModeCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ModeIcon extends StatelessWidget {
+  const _ModeIcon({
+    required this.icon,
+    required this.accent,
+    required this.size,
+  });
+  final IconData icon;
+  final Color accent;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: accent),
+      alignment: Alignment.center,
+      child: Icon(icon, color: AppColors.parchmentCream, size: size * 0.58),
     );
   }
 }

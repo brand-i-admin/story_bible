@@ -218,6 +218,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return filtered;
   }
 
+  /// 선택된 시대 전체 사건 타임라인 — "시간 순으로 보기" 모드에서 사용.
+  List<StoryEvent> _timelineForEra(StoryState state) {
+    final timeline = [...state.events];
+    timeline.sort((a, b) {
+      final cmp = a.globalRank.compareTo(b.globalRank);
+      if (cmp != 0) {
+        return cmp;
+      }
+      return a.id.compareTo(b.id);
+    });
+    return timeline;
+  }
+
   /// 지도에 넘길 타임라인: 커밋된 `state.displayedEventIds` 에 속한 사건만.
   /// 비어 있으면 빈 리스트 → 지도 핀/화살표가 완전히 사라진다.
   List<StoryEvent> _timelineForMap(
@@ -229,9 +242,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     // v3 — region 모드에서는 인물 timeline 이 비어 있을 수 있어 base 를
     // state.events 전체로 둔다. character 모드는 timeline 이 채워져 있어 동일.
-    return state.events
+    final timeline = state.events
         .where((e) => state.displayedEventIds.contains(e.id))
         .toList(growable: false);
+    timeline.sort((a, b) {
+      final cmp = a.globalRank.compareTo(b.globalRank);
+      if (cmp != 0) {
+        return cmp;
+      }
+      return a.id.compareTo(b.id);
+    });
+    return timeline;
   }
 
   /// draft 집합에서 현재 사용 가능한 이벤트만 남긴다. 인물이 바뀌어 더 이상
@@ -249,6 +270,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     if (step == 2) {
       return state.selectedEraId != null;
+    }
+    if (_mode == _SelectionMode.timeline) {
+      return state.selectedEraId != null && state.displayedEventIds.isNotEmpty;
     }
     return state.selectedCharacterCodes.isNotEmpty &&
         !_hasPendingCharacterSelectionChanges(state);
@@ -583,6 +607,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
+    if (step == 2 && _mode == _SelectionMode.timeline) {
+      unawaited(_enterTimelineMode(ref.read(storyControllerProvider)));
+      return;
+    }
+
     if (step == 2) {
       // 장소/인물 선택 + 사건 선택 초기화. 시대 + 모드는 유지.
       ctl.selectLandmark(null);
@@ -625,6 +654,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return switch (_mode) {
       _SelectionMode.region => SelectionMode.region,
       _SelectionMode.character => SelectionMode.character,
+      _SelectionMode.timeline => SelectionMode.timeline,
       null => null,
     };
   }
@@ -703,6 +733,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   int _currentStepperIndex() {
     final state = ref.read(storyControllerProvider);
     if (state.selectedEraId == null || _mode == null) return 1;
+    if (_mode == _SelectionMode.timeline) {
+      return 3;
+    }
     if (_mode == _SelectionMode.region) {
       return state.selectedLandmarkId == null ? 2 : 3;
     }
@@ -717,6 +750,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return true;
     }
     if (_mode == _SelectionMode.character &&
+        _selectionStep == 3 &&
+        state.displayedEventIds.isNotEmpty) {
+      return true;
+    }
+    if (_mode == _SelectionMode.timeline &&
         _selectionStep == 3 &&
         state.displayedEventIds.isNotEmpty) {
       return true;
@@ -755,6 +793,55 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       } else {
         _mapPanelController.focusEvents(zoomBoost: 1.0);
       }
+    });
+  }
+
+  Future<void> _enterTimelineMode(StoryState snapshot) async {
+    final eraId = snapshot.selectedEraId;
+    if (eraId == null) {
+      return;
+    }
+    final ctl = ref.read(storyControllerProvider.notifier);
+    ctl.setSelectionMode(SelectionMode.timeline);
+    if (!snapshot.events.any((event) => event.eraId == eraId)) {
+      await ctl.selectEra(eraId);
+    }
+    if (!mounted) {
+      return;
+    }
+
+    final state = ref.read(storyControllerProvider);
+    final timeline = _timelineForEra(state);
+    if (timeline.isEmpty) {
+      setState(() {
+        _mode = _SelectionMode.timeline;
+        _selectionStep = 3;
+        _draftSelectedCharacterCodes = const <String>{};
+        _draftDisplayedEventIds = const <String>{};
+        _selectionPanelStage = StorySelectionPanelStage.expanded;
+        _selectionSheetExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
+        _awaitingRevealComplete = false;
+        _revealInstantly = false;
+        _mapHintDismissed = true;
+      });
+      return;
+    }
+
+    final displayed = timeline.map((event) => event.id).toSet();
+    ctl.setDisplayedEvents(displayed);
+    setState(() {
+      _mode = _SelectionMode.timeline;
+      _selectionStep = 3;
+      _draftSelectedCharacterCodes = const <String>{};
+      _draftDisplayedEventIds = displayed;
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _awaitingRevealComplete = true;
+      _revealInstantly = false;
+      _mapHintDismissed = true;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
     });
   }
 
@@ -1888,11 +1975,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       state,
       state.selectedCharacterCodes,
     );
+    final eraTimeline = _timelineForEra(state);
+    final storyPanelTimeline = _mode == _SelectionMode.timeline
+        ? eraTimeline
+        : characterTimeline;
     // 지도에 실제로 렌더할 사건: 커밋된 displayedEventIds 로 필터.
-    final mapTimeline = _timelineForMap(state, characterTimeline);
+    final mapTimeline = _timelineForMap(state, storyPanelTimeline);
     // 현재 draft 가 후보 밖을 가리키면 자동 정리된 뷰.
     final sanitizedDraftDisplayed = _sanitizeDraftDisplayedEventIds(
-      characterTimeline,
+      storyPanelTimeline,
     );
     final quizReviewEventIds = state.quizAttemptSummaries.values
         .where((attempt) => attempt.needsReview)
@@ -1968,6 +2059,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         _selectionStep >= 3 &&
                         state.selectedCharacterCodes.isNotEmpty
                     ? 'characters:${(state.selectedCharacterCodes.toList()..sort()).join('+')}'
+                    : (_mode == _SelectionMode.timeline &&
+                          _selectionStep >= 3 &&
+                          state.displayedEventIds.isNotEmpty)
+                    ? 'timeline:${state.selectedEraId}:${state.displayedEventIds.length}'
                     : (state.selectedLandmarkId != null
                           ? 'region:${state.selectedLandmarkId}'
                           : null),
@@ -2115,7 +2210,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                       ),
                                   colorForCommittedCharacter:
                                       controller.colorForCharacter,
-                                  events: characterTimeline,
+                                  events: storyPanelTimeline,
                                   completedEventIds: state.completedEventIds,
                                   eventEmotionMarks: state.eventEmotionMarks,
                                   quizAttemptSummaries:
@@ -2136,7 +2231,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                       _toggleDraftDisplayedEvent,
                                   onSelectAllDisplayedEvents: () =>
                                       _selectAllDraftDisplayedEvents(
-                                        characterTimeline,
+                                        storyPanelTimeline,
                                       ),
                                   onDeselectAllDisplayedEvents:
                                       _deselectAllDraftDisplayedEvents,
@@ -2352,7 +2447,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   /// 시트 헤더 — 좌측 이전/다음 액션 + 가운데 핸들(인디케이터 + 단일
-  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물·이야기).
+  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물/시간 순·이야기).
   ///
   /// 옛 ▲▼ 두 IconButton 은 stepper 와 시각적으로 충돌해 사용자가 ▲ 를
   /// 인지하지 못하는 문제가 있었다 (panel half stage 도 실질적으로 expanded 와
@@ -2518,6 +2613,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Future<void> _handlePickMode(SelectionMode mode, StoryState state) async {
     final ctl = ref.read(storyControllerProvider.notifier);
+    if (mode == SelectionMode.timeline) {
+      await _enterTimelineMode(state);
+      return;
+    }
     if (mode == SelectionMode.region) {
       ctl.setSelectionMode(SelectionMode.region);
       setState(() {
