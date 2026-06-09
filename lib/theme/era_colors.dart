@@ -19,6 +19,7 @@ class EraColors {
     'era_exodus': Color(0xFFC8723E), // 적갈 (출애굽) — 유지
     'era_judges': Color(0xFF4F7028), // 짙은 올리브 (사사) — 산림
     'era_monarchy': Color(0xFFD0A23B), // 황금 (왕정) — 유지
+    'era_divided_kingdom': Color(0xFF0F766E), // 청록 (분열왕국) — 남북 분기
     'era_exile_return': Color(0xFF7A6BB1), // 자주 (포로/포로후기) — 유지
     'era_nt_public_ministry': Color(0xFFC85B5B), // 코랄 (예수 공생애) — 유지
     'era_nt_apostolic': Color(0xFF1F4E78), // 짙은 네이비 (사도) — 항해/지중해

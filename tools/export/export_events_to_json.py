@@ -21,7 +21,6 @@ import argparse
 import json
 import os
 import sys
-from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -75,36 +74,31 @@ def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
     return {key: out[key] for key in _KEY_ORDER if key in out}
 
 
-def bucket_for_story_index(idx: int) -> str:
-    """story_index 를 50 단위 버킷 파일명으로 매핑.
+def filename_for_era(era_code: str | None) -> str:
+    """Return the era-scoped story source filename.
 
-    1..50  → "1_50.json"
-    51..100 → "51_100.json"
-    101..150 → "101_150.json"
-    ...
+    Story JSON is intentionally grouped by era so `story_index` can stay
+    era-scoped and source diffs line up with the app's era navigation.
     """
-    if idx < 1:
-        idx = 1
-    bucket = (idx - 1) // 50  # 0, 1, 2, ...
-    start = bucket * 50 + 1
-    end = start + 49
-    if start == 1:
-        return "1_50.json"
-    return f"{start}_{end}.json"
+    normalized = (era_code or "").strip()
+    if not normalized:
+        normalized = "unknown_era"
+    return f"{normalized}.json"
 
 
-def group_events_by_bucket(
+def group_events_by_era_file(
     rows: list[dict[str, Any]],
 ) -> dict[str, list[dict[str, Any]]]:
-    """rows 를 bucket 파일명으로 그룹화 + bucket 안에서 story_index 오름차순 정렬."""
-    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    """rows 를 era 파일명으로 그룹화 + 파일 안에서 story_index 오름차순 정렬."""
+    grouped: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
         idx = int(row.get("story_index") or 0)
         if idx <= 0:
             continue
-        grouped[bucket_for_story_index(idx)].append(event_row_to_json(row))
-    for bucket_rows in grouped.values():
-        bucket_rows.sort(key=lambda r: r.get("story_index", 0))
+        filename = filename_for_era(row.get("era_code"))
+        grouped.setdefault(filename, []).append(event_row_to_json(row))
+    for era_rows in grouped.values():
+        era_rows.sort(key=lambda r: r.get("story_index", 0))
     return dict(grouped)
 
 
@@ -113,7 +107,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         default="assets/200_stories",
-        help="bucket JSON 파일을 쓸 디렉토리.",
+        help="era JSON 파일을 쓸 디렉토리.",
     )
     parser.add_argument(
         "--dry-run",
@@ -205,7 +199,7 @@ def main() -> int:
     env_suffix = args.env.upper()
 
     rows = _fetch_published_events(env_suffix)
-    grouped = group_events_by_bucket(rows)
+    grouped = group_events_by_era_file(rows)
 
     if args.dry_run:
         json.dump(
@@ -216,22 +210,22 @@ def main() -> int:
         )
         sys.stdout.write("\n")
         print(
-            f"\n# fetched: {len(rows)} events, " f"buckets: {sorted(grouped.keys())}",
+            f"\n# fetched: {len(rows)} events, " f"era files: {sorted(grouped.keys())}",
             file=sys.stderr,
         )
         return 0
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    for bucket, bucket_rows in grouped.items():
-        path = out_dir / bucket
+    for filename, era_rows in grouped.items():
+        path = out_dir / filename
         path.write_text(
-            json.dumps(bucket_rows, ensure_ascii=False, indent=2) + "\n",
+            json.dumps(era_rows, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
-        print(f"wrote {path} ({len(bucket_rows)} stories)")
+        print(f"wrote {path} ({len(era_rows)} stories)")
 
-    print(f"done: total {len(rows)} events → {len(grouped)} buckets in {out_dir}")
+    print(f"done: total {len(rows)} events → {len(grouped)} era files in {out_dir}")
     return 0
 
 

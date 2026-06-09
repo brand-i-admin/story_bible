@@ -1,0 +1,45 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 27,
+  "story_title": "솔로몬: 이방의 경탄부터 타락까지",
+  "source_version": "2026-06-05",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "스바 여왕은 무엇을 가지고 예루살렘에 왔습니까?",
+      "choices": [
+        "향품과 많은 금과 보석",
+        "전쟁 병거와 창",
+        "빈 항아리와 횃불"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 10:2 — '심히 많은 향품과 금과 보석을 약대에 실리고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "솔로몬의 마음이 여호와에게서 떠나게 된 원인은 무엇입니까?",
+      "choices": [
+        "이방 아내들이 그의 마음을 돌이켰다",
+        "전쟁의 패배에 낙심하였다",
+        "선지자들이 그를 떠나갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "솔로몬이 언약과 법도를 지키지 않자 여호와는 무엇을 말씀하셨습니까?",
+      "choices": [
+        "나라를 빼앗아 신복에게 주겠다고 하셨다",
+        "성전을 더 크게 지어 주겠다고 하셨다",
+        "왕위를 그대로 두겠다고 하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 11:11 — '내가 결단코 이 나라를 네게서 빼앗아 네 신복에게 주리라'"
+    }
+  ],
+  "story_id": "era_monarchy_n027"
+}

@@ -12,6 +12,12 @@ import '../character_avatar.dart';
 import '../emotion_badge_icon.dart';
 import '../event_timeline_row.dart';
 
+const Map<String, String> _displayOnlyCharacterNameByCode = {'god': '하나님'};
+
+String _fallbackCharacterName(String code) {
+  return _displayOnlyCharacterNameByCode[code] ?? code;
+}
+
 /// 지역 모드 — 선택된 region 의 사건들을 시간순 가로 스크롤 (EventTimelineRow)
 /// 으로 보여 준다. 인물 모드 step 3 와 동일한 widget 을 공유 → 두 모드의 UI
 /// 동일성 보장. 카드 사이 점선 + ▶ 화살촉 connector.
@@ -307,11 +313,12 @@ class StoryEventThumbCard extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(width: 3),
           itemBuilder: (_, i) {
             final code = ordered[i];
+            final character = charactersByCode[code];
             final isHighlighted = highlightedCharacterCodes.contains(code);
             return _CharPillAvatar(
               code: code,
-              character: charactersByCode[code],
-              name: charactersByCode[code]?.name ?? code,
+              character: character,
+              name: character?.name ?? _fallbackCharacterName(code),
               accentColor: isHighlighted
                   ? colorForHighlightedCharacter?.call(code)
                   : null,

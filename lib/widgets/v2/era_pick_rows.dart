@@ -205,6 +205,8 @@ IconData eraIconFor(String code) {
       return Icons.shield;
     case 'era_monarchy':
       return Icons.workspace_premium;
+    case 'era_divided_kingdom':
+      return Icons.call_split;
     case 'era_exile_return':
       return Icons.location_city;
     case 'era_nt_public_ministry':

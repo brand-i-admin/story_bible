@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 28,
+  "story_title": "아간: 감춘 것이 드러나다",
+  "source_version": "2026-05-25",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아간은 어느 지파 사람이었습니까?",
+      "choices": [
+        "유다 지파",
+        "베냐민 지파",
+        "에브라임 지파"
+      ],
+      "answer_index": 0,
+      "explanation": "수 7:1 — '유다 지파 세라의 증손 삽디의 손자 갈미의 아들 아간이 바친 물건을 취하였음이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아간은 여호수아 앞에서 어떻게 하였습니까?",
+      "choices": [
+        "자신의 죄를 고백하였다",
+        "아무것도 모른다고 부인하였다",
+        "도망치려 하였다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 7:20 — '아간이 여호수아에게 대답하여 가로되 참으로 나는 ... 범죄하여 여차여차히 행하였나이다'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "아간의 죄가 드러난 뒤 이스라엘은 아간과 그 물건들을 어떻게 했습니까?",
+      "choices": [
+        "돌로 치고 불살랐다",
+        "몰래 성 안에 숨겼다",
+        "아간을 제사장으로 세웠다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 7:25 — '여호수아가 가로되 네가 어찌하여 우리를 괴롭게 하였느뇨 여호와께서 오늘날 너를 괴롭게 하시리 라하니 온 이스라엘이 그를 돌로 치고 그것들도 돌로 치고 불사르고'"
+    }
+  ]
+}

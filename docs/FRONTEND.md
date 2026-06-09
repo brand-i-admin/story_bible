@@ -135,6 +135,10 @@ class StoryState {
 사건/region fit 은 하단 시트 padding 이 커질수록 상단 padding 도 크게 늘려, 핀
 묶음과 후보 region 이 화면 위쪽 오버레이 뒤에 몰리지 않고 북쪽 지도 여백과 탭 가능한
 영역을 확보하게 한다.
+분열왕국 시대(`era_divided_kingdom`)는 지역 모드에서 `북이스라엘`과 `남유다`를
+큰 축으로 고르게 한다. 엘리야의 호렙 산처럼 왕국 영토 밖에서 진행되는 사건은 별도
+region으로 남길 수 있지만, 남북 왕국 이야기는 세부 지파/성읍으로 쪼개지 않고 두
+큰 region 아래 landmark로 묶는다.
 
 ### 3.3 StoryController 주요 메서드
 

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 24,
+  "story_title": "모세의 마지막: 느보산과 축복",
+  "source_version": "2026-06-03",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "하나님은 모세에게 어느 산에서 약속의 땅을 보게 하셨습니까?",
+      "choices": [
+        "느보산",
+        "시내산",
+        "갈멜산"
+      ],
+      "answer_index": 0,
+      "explanation": "신 32:49 — '너는 아바림 산에 올라가 느보산에 이르러 ... 가나안 땅을 바라보라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "모세는 죽기 전에 이스라엘 지파들에게 무엇을 했습니까?",
+      "choices": [
+        "각 지파를 축복했다",
+        "각 지파를 애굽으로 보냈다",
+        "각 지파의 장막을 불태웠다"
+      ],
+      "answer_index": 0,
+      "explanation": "신 33:1 — '하나님의 사람 모세가 죽기 전에 이스라엘 자손을 위하여 축복함이 이러하니라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "모세가 죽을 때 그의 몸 상태는 어떠했다고 기록되어 있습니까?",
+      "choices": [
+        "눈이 흐리지 않고 기력이 쇠하지 않았다",
+        "전쟁에서 크게 다쳤다",
+        "광야 길을 걷지 못했다"
+      ],
+      "answer_index": 0,
+      "explanation": "신 34:7 — '그 눈이 흐리지 아니하였고 기력이 쇠하지 아니하였더라'"
+    }
+  ]
+}

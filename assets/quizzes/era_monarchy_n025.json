@@ -1,0 +1,45 @@
+{
+  "era_code": "era_monarchy",
+  "story_index": 25,
+  "story_title": "솔로몬의 지혜: 참 어머니를 가리다",
+  "source_version": "2026-06-05",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "솔로몬은 꿈에서 하나님께 무엇을 구했습니까?",
+      "choices": [
+        "백성을 재판할 지혜로운 마음",
+        "긴 수명과 많은 재물",
+        "원수들의 목숨"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 3:9 — '지혜로운 마음을 종에게 주사 주의 백성을 재판하여 선악을 분별하게 하옵소서'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "솔로몬이 지혜를 구하자 하나님은 어떻게 여기셨습니까?",
+      "choices": [
+        "그 말씀이 주의 마음에 맞았다",
+        "크게 책망하셨다",
+        "아무 응답도 하지 않으셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 3:10 — '솔로몬이 이것을 구하매 그 말씀이 주의 마음에 맞은지라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "솔로몬은 아기를 살려 달라고 한 여자를 어떻게 판단했습니까?",
+      "choices": [
+        "그 여자가 참 어머니라고 판결했다",
+        "두 여자 모두 거짓이라고 했다",
+        "아기를 궁전에 남겨 두라고 했다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 3:27 — '산 아들을 저 계집에게 주고 결코 죽이지말라 저가 그 어미니라'"
+    }
+  ],
+  "story_id": "era_monarchy_n025"
+}

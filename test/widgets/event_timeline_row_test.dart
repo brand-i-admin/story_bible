@@ -222,6 +222,36 @@ void main() {
       );
     });
 
+    testWidgets('비활성 특수 코드 god은 카드 pill에서 하나님으로 표시한다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(0, characterCodes: const ['god']),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.text('하나님'), findsOneWidget);
+      expect(find.text('god'), findsNothing);
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName ==
+                  'assets/avatars_thumbs/god.png',
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('감정 배지 우측 하단에 이야기 순번을 함께 표시한다', (tester) async {
       await tester.pumpWidget(
         _harness(

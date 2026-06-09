@@ -288,6 +288,7 @@ create table if not exists landmarks (
       'region',
       'mountain', 'city', 'sea', 'river', 'island',
       'palace', 'wilderness', 'holy_site', 'campsite',
+      'valley', 'battlefield',
       'anchor', 'minor', 'point'
     )),
   -- region 일 때만 채워짐. [[lat,lng], [lat,lng], ...] (시계/반시계 무관).
@@ -358,32 +359,44 @@ create view events_ordered as
   where e.status = 'published'
     and e.deleted_at is null;
 
--- 인물별 첫 등장 era + 첫 등장 story_index 기준으로 era 안의 인물 순서를 동적 계산.
+-- 인물별 첫 등장 era + 첫 등장 story_index + 그 사건 안의 characters 배열 순서
+-- 기준으로 era 안의 인물 순서를 동적 계산.
 -- is_active = false 인 인물은 노출 대상에서 제외된다.
 -- Soft-deleted 이벤트(deleted_at IS NOT NULL)는 인물 첫 등장 계산에서도 제외.
 create view character_eras as
-  with character_first as (
+  with character_occurrences as (
     select
       p.id as character_id,
       p.code as character_code,
       e.era_id,
-      min(e.story_index) as first_story_index
-    from characters p
-    join events e on e.character_codes @> array[p.code]
-                  and e.status = 'published'
-                  and e.deleted_at is null
+      e.story_index as first_story_index,
+      cc.ord::int as first_character_position
+    from events e
     join eras er on er.id = e.era_id
+    cross join lateral unnest(e.character_codes) with ordinality as cc(code, ord)
+    join characters p on p.code = cc.code
     where p.is_active = true
+      and e.status = 'published'
+      and e.deleted_at is null
       -- p.era_codes 가 비어있으면 후방 호환 통과, 값이 있으면 era code 매칭만 노출
       and (p.era_codes = '{}'::text[] or p.era_codes && array[er.code])
-    group by p.id, p.code, e.era_id
+  ),
+  character_first as (
+    select distinct on (character_id, era_id)
+      character_id,
+      character_code,
+      era_id,
+      first_story_index,
+      first_character_position
+    from character_occurrences
+    order by character_id, era_id, first_story_index, first_character_position
   )
   select
     character_id,
     era_id,
     row_number() over (
       partition by era_id
-      order by first_story_index, character_code
+      order by first_story_index, first_character_position, character_code
     ) as display_order
   from character_first;
 
@@ -409,23 +422,32 @@ as $$
   with target_era as (
     select code from eras where id = p_era_id
   ),
-  character_first as (
+  character_occurrences as (
     select
       p.id as character_id,
       p.code as character_code,
-      min(e.story_index) as first_story_index
-    from characters p
+      e.story_index as first_story_index,
+      cc.ord::int as first_character_position
+    from events e
     cross join target_era te
-    join events e
-      on e.character_codes @> array[p.code]
-     and e.status = 'published'
-     and e.deleted_at is null
-     and e.era_id = p_era_id
+    cross join lateral unnest(e.character_codes) with ordinality as cc(code, ord)
+    join characters p on p.code = cc.code
     where p.is_active = true
+      and e.status = 'published'
+      and e.deleted_at is null
+      and e.era_id = p_era_id
       -- 인물 마스터의 era_codes 가 비어있지 않으면 era 소속 필터를 적용한다.
       -- 비어있으면 (legacy/시드 미반영) 후방 호환을 위해 통과시킨다.
       and (p.era_codes = '{}'::text[] or p.era_codes && array[te.code])
-    group by p.id, p.code
+  ),
+  character_first as (
+    select distinct on (character_id)
+      character_id,
+      character_code,
+      first_story_index,
+      first_character_position
+    from character_occurrences
+    order by character_id, first_story_index, first_character_position
   )
   select
     p.id,
@@ -435,7 +457,9 @@ as $$
     p.description,
     p.avatar_url,
     p.avatar_storage_path,
-    (row_number() over (order by pf.first_story_index, pf.character_code))::int
+    (row_number() over (
+      order by pf.first_story_index, pf.first_character_position, pf.character_code
+    ))::int
       as display_order
   from character_first pf
   join characters p on p.id = pf.character_id
@@ -1506,8 +1530,9 @@ values
   ('era_patriarch', '족장 시대', 2, -2166, -1805, 31.50, 35.20, 5.40),
   ('era_exodus', '출애굽 시대', 3, -1446, -1406, 29.50, 34.50, 5.20),
   ('era_judges', '사사 시대', 4, -1406, -1050, 31.80, 35.10, 5.40),
-  ('era_monarchy', '왕정 시대', 5, -1050, -586, 31.90, 35.20, 5.30),
-  ('era_exile_return', '포로 및 포로 후기 시대', 6, -586, -430, 32.20, 38.30, 4.70)
+  ('era_monarchy', '왕정 시대', 5, -1050, -930, 31.90, 35.20, 5.30),
+  ('era_divided_kingdom', '분열왕국 시대', 6, -930, -586, 32.20, 35.25, 5.70),
+  ('era_exile_return', '포로 및 포로 후기 시대', 7, -586, -430, 32.20, 38.30, 4.70)
 ;
 
 -- -----------------------------------------------------------------------------

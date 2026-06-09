@@ -682,7 +682,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 const _IntroBullet(
                   number: '1',
                   title: '시대를 고릅니다',
-                  body: '구약 6시대 · 신약 4시대 중 이 이야기가 속한 시대를 선택합니다.',
+                  body: '구약 7시대 · 신약 4시대 중 이 이야기가 속한 시대를 선택합니다.',
                 ),
                 const _IntroBullet(
                   number: '2',

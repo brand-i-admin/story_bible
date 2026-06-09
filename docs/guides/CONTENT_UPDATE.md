@@ -137,7 +137,7 @@ make export-stories-json            # ENV=dev (기본)
 make export-stories-json ENV=prod   # 운영 DB 기준으로 복원
 ```
 
-- DB의 `status='published'` events를 era별 bucket JSON(`1_50.json`, `51_100.json`, ...)으로 역추출해 `assets/200_stories/` 에 쓴다.
+- DB의 `status='published'` events를 시대별 JSON(`era_monarchy.json`, `era_divided_kingdom.json`, ...)으로 역추출해 `assets/200_stories/` 에 쓴다.
 - anon key로 read-only 접근이므로 DB에 영향 없음.
 - 어드민 웹이 JSON 없이 DB만 갱신하는 현재 운영 기준, **이 방법이 가장 안전하고 항상 최신**이다.
 
@@ -147,7 +147,7 @@ make export-stories-json ENV=prod   # 운영 DB 기준으로 복원
 
 **[A] JSON에 신규 이야기 항목 추가**
 - `assets/200_stories/{해당_era_파일}.json` 배열 끝에 새 객체 추가
-- `title`은 `"NNN 제목"` (3자리 prefix) 형태, `story_index`는 era 내 unique 정수
+- `title`은 화면에 보일 순수 제목으로 쓰고, `story_index`는 era 내 unique 정수로 채운다
 - `persons[]` 에 기존 코드를 쓸 수도, 신규 코드를 새로 등장시킬 수도 있다
 - 신규 인물이면 새 코드명을 적어두기만 하면 됨 (다음 단계에서 meta에 자동 편입)
 

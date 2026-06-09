@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 30,
+  "story_title": "기브온 전투: 해와 달이 머물다",
+  "source_version": "2026-06-04",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아도니세덱과 여러 왕들은 무엇을 하려고 함께 모였습니까?",
+      "choices": [
+        "기브온을 치려고 모였다",
+        "여호수아에게 땅을 나누어 주려고 모였다",
+        "요단강을 다시 건너려고 모였다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 10:4 — '내게로 올라와 나를 도우라 우리가 기브온을 치자'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "전투 중 하나님은 도망하는 군사들에게 무엇을 내리셨습니까?",
+      "choices": [
+        "하늘에서 큰 우박을 내리셨다",
+        "성문을 스스로 열게 하셨다",
+        "강물이 갑자기 마르게 하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 10:11 — '여호와께서 하늘에서 큰 덩이 우박을 내리우시매'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "여호수아가 말한 뒤 태양과 달은 어떻게 되었습니까?",
+      "choices": [
+        "태양과 달이 머물렀다",
+        "하늘이 완전히 어두워졌다",
+        "달만 땅 가까이 내려왔다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 10:13 — '태양이 머물고 달이 그치기를 백성이 그 대적에게 원수를 갚도록 하였느니라'"
+    }
+  ]
+}

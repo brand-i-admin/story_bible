@@ -8,9 +8,12 @@ Rules:
   Visibility in the app is controlled at runtime by ``characters.is_active``.
 - Each character carries an ``is_active_default`` hint for the characters-seed
   builder: people with mention_count >= ACTIVE_DEFAULT_THRESHOLD start
-  active, single-mention newcomers start inactive (admin opts them in later).
+  active; Judges-era story characters also start active even with one
+  appearance because their era is built around short one-off judges.
 - Reuse existing prompt metadata only when prompt_source=manual.
 - If no manual style exists, use built-in default style/palette config.
+- Include curated avatar-only roster entries for planned story characters whose
+  events are not written yet, so their avatars can be generated first.
 """
 
 from __future__ import annotations
@@ -69,7 +72,7 @@ DEFAULT_STYLE_SOURCE: dict[str, Any] = {
         "simple small eyes and nose, mature friendly expression, "
         "minimal clean outline, exactly one character only, solo single subject, "
         "full body visible from head to toe, both feet visible, whole figure fits inside frame, "
-        "centered, plain white background, "
+        "centered inside a square 1:1 avatar canvas, plain white background, "
         "high resolution, consistent design system across the full cast, "
         "distinct silhouette and face geometry for each character, "
         "distinct hairstyle and story-inspired accessory for each character, "
@@ -92,6 +95,7 @@ DEFAULT_STYLE_SOURCE: dict[str, Any] = {
         "exodus_wilderness": "teal + desert tan + bronze accents",
         "judges": "olive green + clay brown + muted gold accents",
         "monarchy": "royal purple + navy + muted gold accents",
+        "divided_kingdom": "royal purple + navy + muted gold accents",
         "prophets_exile": "muted indigo + gray + parchment cream accents",
         "post_exile_return": "stone gray + sage green + parchment cream accents",
         "gospels": "cream + sky blue + soft rose accents",
@@ -168,6 +172,7 @@ ERA_CODE_TO_STYLE = {
     "era_exodus": "exodus_wilderness",
     "era_judges": "judges",
     "era_monarchy": "monarchy",
+    "era_divided_kingdom": "divided_kingdom",
     "era_exile_return": "post_exile_return",
     "era_nt_public_ministry": "gospels",
     "era_nt_apostolic": "early_church",
@@ -205,6 +210,7 @@ KO_NAME_OVERRIDES = {
     "solomon": "솔로몬",
     "adam": "아담",
     "daniel": "다니엘",
+    "deborah": "드보라",
     "eve": "하와",
     "james": "야고보",
     "lot": "롯",
@@ -212,6 +218,7 @@ KO_NAME_OVERRIDES = {
     "rachel": "라헬",
     "ruth": "룻",
     "abimelech": "아비멜렉",
+    "ahaz": "아하스",
     "ahab": "아합",
     "boaz": "보아스",
     "elisha": "엘리사",
@@ -236,7 +243,9 @@ KO_NAME_OVERRIDES = {
     "gad": "갓",
     "gabriel": "가브리엘",
     "god": "하나님",
+    "haggai": "학개",
     "hezekiah": "히스기야",
+    "hoshea_king": "호세아 왕",
     "ishmael": "이스마엘",
     "issachar": "잇사갈",
     "james_alphaeus": "야고보(알패오의 아들)",
@@ -255,7 +264,9 @@ KO_NAME_OVERRIDES = {
     "thaddaeus": "다대오(유다)",
     "timothy": "디모데",
     "zebulun": "스불론",
+    "jonah": "요나",
     "jonathan": "요나단",
+    "absalom": "압살롬",
     "abel": "아벨",
     "abihu": "아비후",
     "achan": "아간",
@@ -270,14 +281,17 @@ KO_NAME_OVERRIDES = {
     "eglon": "에글론",
     "ehud": "에훗",
     "eli": "엘리",
+    "elon": "엘론",
     "festus": "베스도",
     "goliath": "골리앗",
     "hannah": "한나",
     "herod": "헤롯",
     "jairus": "야이로",
     "jehoiachin": "여호야긴",
+    "jehoiakim": "여호야김",
     "jehu": "예후",
     "jephthah": "입다",
+    "jeroboam": "여로보암",
     "jesse": "이새",
     "john_mark": "마가 요한",
     "john_the_baptist": "세례 요한",
@@ -295,16 +309,901 @@ KO_NAME_OVERRIDES = {
     "phinehas": "비느하스",
     "pilate": "빌라도",
     "potiphar": "보디발",
+    "rehoboam": "르호보암",
     "samson": "삼손",
     "sapphira": "삽비라",
     "seth": "셋",
     "stephen": "스데반",
     "zechariah": "사가랴",
+    "zechariah_prophet": "스가랴(선지자)",
     "zedekiah": "시드기야",
+    "zerubbabel": "스룹바벨",
+    "abdon": "압돈",
+    "ibzan": "입산",
+    "jair": "야일",
+    "othniel": "옷니엘",
+    "shamgar": "삼갈",
+    "tola": "돌라",
+}
+
+EN_NAME_OVERRIDES = {
+    "hoshea_king": "Hoshea, Last King of Northern Israel",
 }
 
 AUTO_PROMPT_SOURCE = "auto_story_v2"
 ACTIVE_DEFAULT_THRESHOLD = 2
+FORCE_ACTIVE_DEFAULT_CODES = {
+    "absalom",
+    "ahaz",
+    "haggai",
+    "hoshea_king",
+    "jeroboam",
+    "jehoiakim",
+    "jonah",
+    "jonathan",
+    "josiah",
+    "naaman",
+    "rehoboam",
+    "zechariah_prophet",
+    "zedekiah",
+    "zerubbabel",
+}
+FORCE_INACTIVE_DEFAULT_CODES = {"god"}
+
+# Characters can be prepared for avatar generation before their story events are
+# added. They remain inactive in DB seed output until story appearances, admin
+# activation, or an explicit FORCE_ACTIVE_DEFAULT_CODES override makes them visible.
+CURATED_AVATAR_ROSTER: dict[str, dict[str, Any]] = {
+    "ahaz": {
+        "name_ko": "아하스",
+        "name_en": "Ahaz",
+        "era": "monarchy",
+        "style_reference_codes": ["rehoboam", "hezekiah", "josiah"],
+    },
+    "absalom": {
+        "name_ko": "압살롬",
+        "name_en": "Absalom",
+        "era": "monarchy",
+        "style_reference_codes": ["david", "solomon", "saul"],
+    },
+    "jeroboam": {
+        "name_ko": "여로보암",
+        "name_en": "Jeroboam",
+        "era": "monarchy",
+        "style_reference_codes": ["solomon", "saul", "david"],
+    },
+    "rehoboam": {
+        "name_ko": "르호보암",
+        "name_en": "Rehoboam",
+        "era": "monarchy",
+        "style_reference_codes": ["solomon", "david", "saul"],
+    },
+    "jonah": {
+        "name_ko": "요나",
+        "name_en": "Jonah",
+        "era": "divided_kingdom",
+        "style_reference_codes": ["elijah", "elisha", "isaiah"],
+    },
+    "jeremiah": {
+        "name_ko": "예레미야",
+        "name_en": "Jeremiah",
+        "era": "monarchy",
+        "style_reference_codes": ["isaiah", "ezekiel", "ezra"],
+    },
+    "jehoiakim": {
+        "name_ko": "여호야김",
+        "name_en": "Jehoiakim",
+        "era": "monarchy",
+        "style_reference_codes": ["josiah", "ahaz", "zedekiah"],
+    },
+    "othniel": {
+        "name_ko": "옷니엘",
+        "name_en": "Othniel",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "ehud": {
+        "name_ko": "에훗",
+        "name_en": "Ehud",
+        "era": "judges",
+        "style_reference_codes": ["gideon"],
+    },
+    "shamgar": {
+        "name_ko": "삼갈",
+        "name_en": "Shamgar",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "deborah": {
+        "name_ko": "드보라",
+        "name_en": "Deborah",
+        "era": "judges",
+        "style_reference_codes": ["ruth", "esther", "mary"],
+    },
+    "tola": {
+        "name_ko": "돌라",
+        "name_en": "Tola",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "jair": {
+        "name_ko": "야일",
+        "name_en": "Jair",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "jephthah": {
+        "name_ko": "입다",
+        "name_en": "Jephthah",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "ibzan": {
+        "name_ko": "입산",
+        "name_en": "Ibzan",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "elon": {
+        "name_ko": "엘론",
+        "name_en": "Elon",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "abdon": {
+        "name_ko": "압돈",
+        "name_en": "Abdon",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua", "samson"],
+    },
+    "samson": {
+        "name_ko": "삼손",
+        "name_en": "Samson",
+        "era": "judges",
+        "style_reference_codes": ["gideon", "joshua"],
+    },
+}
+
+# Divided-kingdom monarchs that need avatar-ready identities before their
+# individual story events are written. Codes intentionally disambiguate
+# same-name kings between Northern Israel and Southern Judah.
+DIVIDED_KINGDOM_KING_ROSTER: dict[str, dict[str, Any]] = {
+    # Northern Israel
+    "nadab": {
+        "name_ko": "나답",
+        "name_en": "Nadab, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["jeroboam", "ahab", "hoshea_king"],
+        "palette": "dark pine green + dull bronze + pale linen accents, low saturation",
+        "signature": [
+            "short-lived northern Israel king, son of Jeroboam, exactly one man only",
+            "dark pine royal robe with dull bronze collar and a slightly crooked narrow crown band",
+            "small cracked calf-shaped dynasty seal pinned high on the chest as a restrained sign of Jeroboam's fragile house",
+            "fearful proud expression with tightened mouth, not smiling, not a prophet and not a battle scene",
+        ],
+        "mood": [
+            "tense young kingly posture, one hand guarding the cracked chest seal near the collar",
+        ],
+        "visual": [
+            "slim young northern king build with raised narrow shoulders",
+            "narrow triangular face with high cheekbones, worried ambitious eyes, and uneven arched brows",
+            "short dark hair under a crooked bronze Samaria royal headband",
+            "thin mustache and small pointed dark beard, clearly different from the fuller-bearded kings",
+        ],
+        "negative": "Jeroboam, prophet, priest, battlefield, Baasha attacking, blood, gore",
+    },
+    "baasha": {
+        "name_ko": "바아사",
+        "name_en": "Baasha, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "hoshea_king"],
+        "palette": "dark olive + weathered bronze + clay red accents, low saturation",
+        "signature": [
+            "northern Israel usurper king silhouette, exactly one man only",
+            "weathered olive royal cloak over a clay-red tunic with a heavy bronze shoulder clasp",
+            "seized royal seal set into the shoulder clasp and a short dagger hilt barely visible near the upper sash as restrained signs of a violent rise",
+            "cold ruthless expression with tight lips, not smiling, no active violence",
+        ],
+        "mood": [
+            "stern usurper-king posture with squared shoulders, chin pushed forward, and guarded eyes",
+        ],
+        "visual": [
+            "stocky middle-aged northern king build with broad compact shoulders and thick neck",
+            "hard rectangular face with broad nose, watchful deep-set eyes, and a severe heavy brow",
+            "close-cropped dark hair beneath a rough bronze crown band",
+            "dense square dark beard trimmed close to the jaw, very different from Nadab's pointed beard",
+        ],
+        "negative": "Nadab, assassination scene, blood, gore, corpse, battlefield crowd",
+    },
+    "elah_king": {
+        "name_ko": "엘라",
+        "name_en": "Elah, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "hoshea_king"],
+        "palette": "muted wine red + dull bronze + dark olive accents, low saturation",
+        "signature": [
+            "weak northern Israel palace king silhouette, exactly one man only",
+            "wine-red royal robe with dull bronze sash and a small Samaria crown band",
+            "small empty cup held low as a restrained sign of careless palace feasting",
+            "uneasy distracted expression, not a banquet scene",
+        ],
+        "mood": [
+            "slack but royal posture, one hand lowered with an empty cup and worried eyes",
+        ],
+        "visual": [
+            "soft middle-aged king build with slightly rounded shoulders",
+            "oval face with tired distracted eyes and a weak brow",
+            "dark hair under a narrow bronze royal headband",
+            "short soft beard with muted faceted planes",
+        ],
+        "negative": "drunken party, feast crowd, Zimri attacking, blood, gore, corpse",
+    },
+    "zimri": {
+        "name_ko": "시므리",
+        "name_en": "Zimri, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "hoshea_king"],
+        "palette": "smoke gray + dark crimson + muted bronze accents, low saturation",
+        "signature": [
+            "seven-day northern Israel usurper king silhouette, exactly one man only",
+            "smoke-gray mantle over dark crimson tunic with a narrow bronze commander collar",
+            "broken palace key hanging high at the chest as a restrained sign of his brief seizure of power",
+            "cornered sly expression with a tight uneven smirk, no fire scene",
+        ],
+        "mood": [
+            "cornered defiant posture, shoulders pulled inward, fingers touching the broken key at the chest",
+        ],
+        "visual": [
+            "wiry compact military-usurper build with tense narrow shoulders",
+            "gaunt angular face with darting narrow eyes, asymmetrical brow, and sharp cheekbones",
+            "short swept dark hair under a dark bronze commander headband",
+            "thin mustache with a narrow pointed beard, sharper and smaller than Baasha's beard",
+        ],
+        "negative": "palace burning, flames, suicide scene, corpse, blood, gore, crowd",
+    },
+    "omri": {
+        "name_ko": "오므리",
+        "name_en": "Omri, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "rehoboam"],
+        "palette": "stone blue gray + muted bronze + deep olive accents, low saturation",
+        "signature": [
+            "founder of the Omride dynasty and Samaria-building king, exactly one man only",
+            "stone-blue royal cloak with bronze belt, broad shoulder panels, and restrained northern crown band",
+            "small stone citadel brooch near one shoulder plus a rolled city-plan strap across the chest as signs of building Samaria",
+            "strategic calculating expression with controlled confidence, unsmiling, not a construction scene",
+        ],
+        "mood": [
+            "controlled founder-king posture, standing steady with one hand resting near the city-plan strap",
+        ],
+        "visual": [
+            "solid older middle-aged dynasty-founder build with broad stable shoulders and thick chest",
+            "large square face with calculating eyes, heavy brow, and graying temples",
+            "dark wavy hair with gray at the sides beneath a muted bronze royal headband",
+            "full squared dark beard with gray streaks and clean blocky facets",
+        ],
+        "negative": "Ahab, Jezebel, construction crew, city crowd, battle scene",
+    },
+    "ahab": {
+        "name_ko": "아합",
+        "name_en": "Ahab, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["jeroboam", "ahab", "hoshea_king"],
+        "palette": "royal purple + navy + muted gold accents, low saturation",
+        "signature": [
+            "northern kingdom king of Samaria silhouette, exactly one man only",
+            "proud hardened ruler associated with Baal worship",
+            "royal purple robe with navy mantle and muted gold headband",
+            "small dark idol-shaped palace ornament kept secondary as a sign of apostasy",
+            "no sling, no stone pouch, no shepherd accessory",
+        ],
+        "mood": [
+            "proud hardened kingly posture, chin lifted with stubborn defiance",
+        ],
+        "visual": [
+            "middle-aged northern king build with squared royal shoulders",
+            "hard angular face with proud narrowed eyes and a stubborn brow",
+            "dark hair under an ornate but restrained northern royal headband",
+            "short dark beard with sharply faceted planes",
+        ],
+        "negative": "David, shepherd, sling, prophet Elijah, Mount Carmel scene, Jezebel, crowd",
+    },
+    "ahaziah_israel": {
+        "name_ko": "아하시야(북이스라엘)",
+        "name_en": "Ahaziah, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "hoshea_king", "jeroboam"],
+        "palette": "sickly teal + dark navy + muted bronze accents, low saturation",
+        "signature": [
+            "Ahab's son and northern Israel king silhouette, exactly one man only",
+            "dark navy royal mantle over sickly teal robe with muted bronze crown band",
+            "small lattice-window token as a restrained sign of his fall and inquiry",
+            "pale anxious expression, not Judah's Ahaziah",
+        ],
+        "mood": [
+            "frail anxious royal posture, one hand holding a small lattice-window token",
+        ],
+        "visual": [
+            "slender young northern king build with tense shoulders",
+            "pale angular face with uneasy eyes and pinched brow",
+            "short dark hair under a narrow bronze royal headband",
+            "short dark beard with delicate faceted planes",
+        ],
+        "negative": "Ahaziah of Judah, Ahaz, child, sickbed scene, injury close-up, gore",
+    },
+    "joram_israel": {
+        "name_ko": "요람(북이스라엘)",
+        "name_en": "Joram, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "hoshea_king"],
+        "palette": "deep blue green + iron gray + muted bronze accents, low saturation",
+        "signature": [
+            "Joram of Northern Israel, son of Ahab, exactly one man only",
+            "blue-green royal robe with iron-gray mantle, bronze crown band, and one broken Baal-pillar clasp near the shoulder",
+            "sealed war report scroll tucked diagonally across the upper chest as a restrained sign of troubled campaigns",
+            "wary diplomatic expression with tired suspicious eyes, not smiling, not Judah's Jehoram",
+        ],
+        "mood": [
+            "guarded northern king posture, one shoulder slightly turned, hand near the sealed upper-chest scroll",
+        ],
+        "visual": [
+            "tall lean middle-aged northern king build with narrow tense royal shoulders",
+            "long face with prominent nose, hollow cheeks, suspicious heavy-lidded eyes, and a guarded brow",
+            "straight dark hair under a bronze Samaria crown band",
+            "short forked dark beard with sharp facets, clearly unlike Jehu's clipped commander beard",
+        ],
+        "negative": "Jehoram of Judah, Jehu killing scene, chariot battle, blood, gore",
+    },
+    "jehu": {
+        "name_ko": "예후",
+        "name_en": "Jehu, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "hoshea_king"],
+        "palette": "dark military green + blackened bronze + crimson accents, low saturation",
+        "signature": [
+            "fierce commander who became king of Northern Israel, exactly one man only",
+            "military-green royal cloak over dark tunic with blackened bronze shoulder armor plates, no helmet",
+            "small chariot-wheel medallion centered high on the chest and a short commander baton held upright near the shoulder as restrained signs of his zeal",
+            "intense decisive expression with fierce focused eyes, no friendly smile, no battle scene",
+        ],
+        "mood": [
+            "decisive commander-king posture, chest forward, baton close to the shoulder, eyes fierce but controlled",
+        ],
+        "visual": [
+            "athletic middle-aged commander-king build with squared military shoulders and upright neck",
+            "hawk-like face with prominent nose, sharp jaw, intense eyes, and a hard decisive brow",
+            "short swept-back dark hair under a dark bronze commander crown band",
+            "clipped black beard tight along the jaw, not long or forked",
+        ],
+        "negative": "Jezebel death scene, chariot crash, blood, gore, army crowd, battle",
+    },
+    "jehoahaz_israel": {
+        "name_ko": "여호아하스(북이스라엘)",
+        "name_en": "Jehoahaz, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "hoshea_king", "jeroboam"],
+        "palette": "dusty blue + worn bronze + parchment tan accents, low saturation",
+        "signature": [
+            "oppressed northern Israel king under Aram's pressure, exactly one man only",
+            "dusty blue royal robe with worn bronze crown band and plain sash",
+            "small cracked shield token held low as a restrained sign of weakness under oppression",
+            "humbled troubled expression, not Judah's Jehoahaz",
+        ],
+        "mood": [
+            "humbled pleading royal posture, cracked shield token held low",
+        ],
+        "visual": [
+            "lean middle-aged northern king build with bowed but royal shoulders",
+            "weathered face with worried eyes and softened brow",
+            "dark hair under a simple worn bronze headband",
+            "short gray-streaked beard with modest facets",
+        ],
+        "negative": "Jehoahaz of Judah, Pharaoh Necho, prison, chains, battle scene",
+    },
+    "jehoash_israel": {
+        "name_ko": "요아스(북이스라엘)",
+        "name_en": "Jehoash, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "jeroboam", "elisha"],
+        "palette": "royal blue + muted bronze + olive accents, low saturation",
+        "signature": [
+            "Jehoash of Northern Israel, exactly one man only",
+            "royal blue robe with muted bronze crown band, olive sash, and three small arrows strapped diagonally near the upper chest",
+            "small bow kept lowered at the side while the upper-chest arrows remain visible as a restrained sign of Elisha's victory prophecy",
+            "conflicted but strengthened expression with respectful worried eyes, not smiling, not Judah's Joash",
+        ],
+        "mood": [
+            "uncertain but strengthened king posture, one hand touching the arrow strap near the collar",
+        ],
+        "visual": [
+            "mature northern king build with balanced shoulders and a slightly bowed respectful stance",
+            "rounded rectangular face with heavy-lidded alert eyes, cautious brow, and softer cheeks",
+            "short dark hair with subtle gray at the temples under bronze Samaria crown band",
+            "medium rounded dark beard with a few gray facets, clearly not the young Judah Joash",
+        ],
+        "negative": "Joash of Judah, child king, temple repair, shooting action, battle scene",
+    },
+    "jeroboam_ii": {
+        "name_ko": "여로보암 2세",
+        "name_en": "Jeroboam II, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["jeroboam", "ahab", "hoshea_king"],
+        "palette": "deep emerald + warm bronze + ivory accents, low saturation",
+        "signature": [
+            "prosperous northern Israel king Jeroboam the Second, exactly one man only",
+            "deep emerald royal cloak with warm bronze collar, ivory under-robe, and broader northern crown band",
+            "small border-map medallion high on the chest plus a rolled map edge near the shoulder as restrained signs of restored territory",
+            "self-satisfied prosperous expression with a restrained proud smirk, not benevolent, clearly distinct from Jeroboam son of Nebat",
+        ],
+        "mood": [
+            "confident expansion-era king posture, relaxed shoulders, chin lifted with restrained pride",
+        ],
+        "visual": [
+            "large broad mature northern king build with confident shoulders and thick upper chest",
+            "broad round-square face with self-assured eyes, full cheeks, and steady brow",
+            "thick wavy dark hair beneath a warm bronze crown band",
+            "full well-groomed rounded beard with polished faceted planes, more luxurious than Omri's graying beard",
+        ],
+        "negative": "Jeroboam son of Nebat, torn cloak, golden calf scene, prophet Amos",
+    },
+    "zechariah_king": {
+        "name_ko": "스가랴 왕",
+        "name_en": "Zechariah, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["jeroboam", "hoshea_king", "ahab"],
+        "palette": "faded emerald + dull gold + ash gray accents, low saturation",
+        "signature": [
+            "last king of Jehu's dynasty in Northern Israel, exactly one man only",
+            "faded emerald royal robe with dull gold crown band and ash-gray mantle",
+            "small broken dynasty ring as a restrained sign of a line ending",
+            "young worried royal expression, not Zechariah the prophet or priest",
+        ],
+        "mood": [
+            "worried last-dynasty posture, broken ring held near the heart",
+        ],
+        "visual": [
+            "young northern king build with narrow shoulders",
+            "angular face with anxious eyes and uncertain brow",
+            "short dark hair under a fading gold crown band",
+            "short neat beard with soft facets",
+        ],
+        "negative": "Zechariah prophet, Zechariah father of John, priest robe, temple incense",
+    },
+    "shallum": {
+        "name_ko": "살룸",
+        "name_en": "Shallum, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "hoshea_king", "jeroboam"],
+        "palette": "dark clay red + smoke gray + muted bronze accents, low saturation",
+        "signature": [
+            "one-month northern Israel usurper king, exactly one man only",
+            "dark clay-red mantle with smoke-gray sash and muted bronze crown band",
+            "small short-lived seal tablet as a restrained sign of a brief reign",
+            "uneasy calculating expression, no assassination scene",
+        ],
+        "mood": [
+            "uneasy usurper posture, short-lived seal tablet gripped tightly",
+        ],
+        "visual": [
+            "compact anxious usurper build with tight shoulders",
+            "thin angular face with restless eyes and sharp brow",
+            "short dark hair under a narrow bronze headband",
+            "short pointed beard with severe facets",
+        ],
+        "negative": "Zechariah murder scene, Menahem attacking, blood, gore, crowd",
+    },
+    "menahem": {
+        "name_ko": "므나헴",
+        "name_en": "Menahem, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahab", "hoshea_king", "jeroboam"],
+        "palette": "iron gray + muted gold + dark olive accents, low saturation",
+        "signature": [
+            "harsh tribute-paying northern Israel king, exactly one man only",
+            "iron-gray royal mantle with muted gold belt and northern crown band",
+            "small Assyrian tribute tablet without readable text as a restrained sign",
+            "hard calculating expression, no cruelty scene",
+        ],
+        "mood": [
+            "hard tribute-king posture, blank tribute tablet held with guarded pride",
+        ],
+        "visual": [
+            "stocky middle-aged northern king build with heavy shoulders",
+            "broad stern face with calculating eyes and heavy brow",
+            "dark hair under a muted gold royal headband",
+            "full dark beard with blocky facets",
+        ],
+        "negative": "Assyrian king, Tiglath-pileser, cruelty scene, pregnant women, gore",
+    },
+    "pekahiah": {
+        "name_ko": "브가히야",
+        "name_en": "Pekahiah, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["hoshea_king", "ahab", "jeroboam"],
+        "palette": "muted gold + storm blue + ash brown accents, low saturation",
+        "signature": [
+            "Pekahiah son of Menahem, northern Israel king, exactly one man only",
+            "storm-blue robe with muted gold mantle edge and modest crown band",
+            "small inherited royal seal as a restrained sign of a fragile throne",
+            "uncertain heir expression, no palace coup scene",
+        ],
+        "mood": [
+            "uncertain inherited-king posture, royal seal held carefully",
+        ],
+        "visual": [
+            "young-to-middle-aged northern king build with hesitant shoulders",
+            "soft angular face with uncertain eyes and mild brow",
+            "short dark hair under a muted gold headband",
+            "short trimmed beard with gentle facets",
+        ],
+        "negative": "Pekah attacking, coup scene, bodyguard, blood, gore, crowd",
+    },
+    "pekah": {
+        "name_ko": "베가",
+        "name_en": "Pekah, King of Israel",
+        "kingdom": "north",
+        "style_reference_codes": ["ahaz", "ahab", "hoshea_king"],
+        "palette": "dark teal + bronze + muted crimson accents, low saturation",
+        "signature": [
+            "military ruler Pekah of Northern Israel, exactly one man only",
+            "dark teal military-royal cloak with diagonal bronze war sash across the upper chest and crown band",
+            "small sealed Aram alliance clasp pinned at the shoulder as a restrained sign of the Syro-Ephraimite crisis",
+            "aggressive strategic expression with narrowed eyes, not smiling, not a battlefield",
+        ],
+        "mood": [
+            "military king posture, shoulders angled forward, hand near the shoulder alliance clasp",
+        ],
+        "visual": [
+            "lean soldier-king build with hard angular shoulders and long neck",
+            "long hawkish face with fierce eyes, sharp brow, and narrow mouth",
+            "short dark hair brushed back beneath a bronze military crown band",
+            "straight narrow dark beard trimmed to a vertical point, distinct from Jehu's clipped jaw beard",
+        ],
+        "negative": "Ahaz, Rezin, Aram king, battlefield, siege scene, blood, gore",
+    },
+    # Southern Judah
+    "abijah_judah": {
+        "name_ko": "아비야(남유다)",
+        "name_en": "Abijah, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["rehoboam", "josiah", "hezekiah"],
+        "palette": "wine purple + temple gold + parchment ivory accents, low saturation",
+        "signature": [
+            "Abijah of Judah, Davidic royal heir, exactly one man only",
+            "wine-purple robe with temple-gold Judah crown diadem and parchment ivory sash",
+            "small temple trumpet clasp pinned near the shoulder as a restrained sign of trusting temple order",
+            "bold but imperfect royal expression with confident eyes and a slight proud set to the mouth, not a priest",
+        ],
+        "mood": [
+            "bold Davidic king posture, one shoulder lifted, hand near the temple trumpet shoulder clasp",
+        ],
+        "visual": [
+            "young robust Judah king build with polished royal shoulders and strong neck",
+            "square princely face with arched brows, confident eyes, and firm chin",
+            "dark wavy hair under a small angular gold Judah crown diadem",
+            "short tidy boxed beard with regal facets, darker and sharper than Jehoshaphat's beard",
+        ],
+        "negative": "Abijah prophet, priest robe, battle panorama, Jeroboam appearing, crowd",
+    },
+    "asa": {
+        "name_ko": "아사",
+        "name_en": "Asa, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["josiah", "hezekiah", "rehoboam"],
+        "palette": "deep olive + royal blue + warm gold accents, low saturation",
+        "signature": [
+            "reforming king Asa of Judah, exactly one man only",
+            "deep olive royal cloak over blue robe with warm gold Judah diadem",
+            "small broken idol fragment kept low as a restrained sign of reform",
+            "earnest firm expression, no idol-breaking scene",
+        ],
+        "mood": [
+            "firm reforming king posture, broken idol fragment held away from the heart",
+        ],
+        "visual": [
+            "mature Judah king build with upright disciplined shoulders",
+            "long angular face with resolute eyes and calm brow",
+            "dark hair under a small gold Judah crown diadem",
+            "trimmed beard with clean faceted planes",
+        ],
+        "negative": "idol-breaking action, mother Maacah, battle scene, diseased feet close-up",
+    },
+    "jehoshaphat": {
+        "name_ko": "여호사밧",
+        "name_en": "Jehoshaphat, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["josiah", "hezekiah", "rehoboam"],
+        "palette": "royal blue + parchment cream + muted gold accents, low saturation",
+        "signature": [
+            "Jehoshaphat of Judah, teaching-and-justice king, exactly one man only",
+            "royal blue robe with parchment cream upper sash and muted gold Judah diadem",
+            "small open law scroll held high at the chest and a slim judge staff rising beside one shoulder as restrained signs of teaching and justice",
+            "benevolent wise expression with gentle smiling eyes, no battle scene",
+        ],
+        "mood": [
+            "wise judicial king posture, warm calm shoulders, law scroll close to the heart",
+        ],
+        "visual": [
+            "mature Judah king build with broad calm shoulders and open chest posture",
+            "kind rectangular face with thoughtful soft eyes, fair brow, and subtle smile lines",
+            "dark hair with clear gray at the temples beneath a gold Judah diadem",
+            "full gray-streaked rounded beard with gentle faceted planes",
+        ],
+        "negative": "Ahab beside him, alliance scene, battlefield, choir army, crowd",
+    },
+    "jehoram_judah": {
+        "name_ko": "여호람(남유다)",
+        "name_en": "Jehoram, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["rehoboam", "ahab", "ahaz"],
+        "palette": "dark purple + ash gray + tarnished gold accents, low saturation",
+        "signature": [
+            "Jehoram of Judah, exactly one man only",
+            "dark purple Judah royal robe with ash-gray mantle and tarnished gold diadem",
+            "small northern alliance seal as a restrained sign of Ahab's house influence",
+            "cold uneasy expression, not Joram of Israel",
+        ],
+        "mood": [
+            "cold uneasy Judah king posture, alliance seal held stiffly",
+        ],
+        "visual": [
+            "middle-aged Judah king build with stiff shoulders",
+            "narrow face with suspicious eyes and tight brow",
+            "dark hair under a tarnished gold Judah diadem",
+            "trimmed beard with hard facets",
+        ],
+        "negative": "Joram of Israel, brothers being killed, disease scene, gore, crowd",
+    },
+    "ahaziah_judah": {
+        "name_ko": "아하시야(남유다)",
+        "name_en": "Ahaziah, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["ahab", "ahaz", "rehoboam"],
+        "palette": "royal violet + dark teal + muted gold accents, low saturation",
+        "signature": [
+            "Ahaziah of Judah, young king influenced by Ahab's house, exactly one man only",
+            "royal violet Judah robe with dark teal mantle and muted gold diadem",
+            "small northern alliance clasp as a restrained sign of divided loyalties",
+            "uncertain proud expression, not Ahaziah of Israel",
+        ],
+        "mood": [
+            "young conflicted king posture, northern alliance clasp held near the sash",
+        ],
+        "visual": [
+            "young Judah king build with narrow polished shoulders",
+            "smooth angular face with uncertain proud eyes",
+            "short dark hair under a small gold Judah diadem",
+            "short neat beard with soft facets",
+        ],
+        "negative": "Ahaziah of Israel, sickbed, window lattice, Jehu killing scene, gore",
+    },
+    "athaliah": {
+        "name_ko": "아달랴",
+        "name_en": "Athaliah, Queen of Judah",
+        "kingdom": "south",
+        "gender": "female",
+        "style_reference_codes": ["esther", "rehoboam", "ahaz"],
+        "palette": "deep royal violet + blackened gold + dark crimson accents, low saturation",
+        "signature": [
+            "Athaliah queen-ruler of Judah, distinctly female, exactly one woman only",
+            "deep royal violet gown with blackened-gold Judah crown diadem and dark crimson mantle",
+            "small usurped throne seal held tightly as a restrained sign of seizing power",
+            "severe commanding expression, no child-harm scene",
+        ],
+        "mood": [
+            "severe queen-ruler posture, chin lifted, usurped throne seal gripped tightly",
+        ],
+        "visual": [
+            "mature royal woman build with upright commanding shoulders",
+            "sharp angular oval face with cold determined eyes",
+            "dark hair fully arranged beneath a blackened-gold royal diadem",
+        ],
+        "negative": "male, man, beard, child Joash, child-harm scene, massacre, blood, gore, crowd",
+    },
+    "joash_judah": {
+        "name_ko": "요아스(남유다)",
+        "name_en": "Joash, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["josiah", "hezekiah", "rehoboam"],
+        "palette": "bright royal blue + warm gold + temple cream accents, low saturation",
+        "signature": [
+            "Joash of Judah, temple-repair king, exactly one man only",
+            "bright royal blue robe with warm gold Judah diadem and temple-cream upper sash",
+            "small temple repair tablet held high at the chest and a tiny offering-chest pendant near the collar as restrained signs of temple repair",
+            "young adult stylized king with a hopeful gentle smile, not a child portrait and not Northern Israel's Jehoash",
+        ],
+        "mood": [
+            "earnest temple-repair king posture, upright and hopeful, repair tablet close to the chest",
+        ],
+        "visual": [
+            "young adult Judah king build with slim upright shoulders and lighter frame than Abijah",
+            "youthful oval face with earnest bright eyes, gentle brow, and soft smile",
+            "short dark curled hair under a small gold Judah diadem",
+            "very short neat beard and mustache, adult-stylized not childlike",
+        ],
+        "negative": "child, boy, infant, Jehoash of Israel, Elisha arrows, assassination scene",
+    },
+    "amaziah_judah": {
+        "name_ko": "아마샤",
+        "name_en": "Amaziah, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["josiah", "hezekiah", "rehoboam"],
+        "palette": "clay red + royal blue + muted gold accents, low saturation",
+        "signature": [
+            "Amaziah of Judah, half-faithful king, exactly one man only",
+            "clay-red royal mantle over blue robe with muted gold Judah diadem",
+            "small Edom shield token held low as a restrained sign of victory and pride",
+            "confident but flawed expression, no battle scene",
+        ],
+        "mood": [
+            "confident but flawed king posture, Edom shield token held low",
+        ],
+        "visual": [
+            "mature Judah king build with proud shoulders",
+            "long face with confident eyes and slightly lifted brow",
+            "dark hair under a muted gold diadem",
+            "trimmed beard with clean facets",
+        ],
+        "negative": "battle with Edom, Israel king Joash, captured Jerusalem scene, crowd",
+    },
+    "uzziah": {
+        "name_ko": "웃시야",
+        "name_en": "Uzziah, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["hezekiah", "josiah", "rehoboam"],
+        "palette": "stone gray + royal indigo + warm gold accents, low saturation",
+        "signature": [
+            "Uzziah also called Azariah, strong builder king of Judah, exactly one man only",
+            "stone-gray royal mantle over indigo robe with warm gold Judah diadem",
+            "small tower plan and builder's cord as restrained signs of fortified strength",
+            "capable proud expression, no incense intrusion scene",
+        ],
+        "mood": [
+            "strong builder-king posture, tower plan held with controlled pride",
+        ],
+        "visual": [
+            "strong mature Judah king build with broad shoulders",
+            "square face with capable eyes and proud brow",
+            "dark hair with gray hints under a gold Judah diadem",
+            "full trimmed beard with geometric facets",
+        ],
+        "negative": "leprosy horror, priest confrontation, incense altar scene, gore",
+    },
+    "jotham": {
+        "name_ko": "요담",
+        "name_en": "Jotham, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["hezekiah", "josiah", "rehoboam"],
+        "palette": "sage green + royal blue + muted gold accents, low saturation",
+        "signature": [
+            "Jotham of Judah, steady builder king, exactly one man only",
+            "sage-green royal mantle over blue robe with muted gold Judah diadem",
+            "small upper-gate model as a restrained sign of building work",
+            "quiet faithful expression, not Gideon's son Jotham",
+        ],
+        "mood": [
+            "quiet steady king posture, upper-gate model held carefully",
+        ],
+        "visual": [
+            "mature Judah king build with calm narrow shoulders",
+            "rectangular face with thoughtful eyes and balanced brow",
+            "dark hair beneath a small gold Judah diadem",
+            "trimmed beard with modest facets",
+        ],
+        "negative": "Jotham son of Gideon, parable trees, crowd, construction crew",
+    },
+    "manasseh": {
+        "name_ko": "므낫세",
+        "name_en": "Manasseh, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["ahaz", "hezekiah", "josiah"],
+        "palette": "dark violet + ash black + tarnished gold accents, low saturation",
+        "signature": [
+            "Manasseh of Judah, long-reigning apostate king later humbled, exactly one man only",
+            "dark violet royal robe with ash-black mantle and tarnished gold diadem",
+            "small dark idol charm lowered in one hand as a restrained sign of apostasy",
+            "troubled hardened expression, no sacrifice scene",
+        ],
+        "mood": [
+            "troubled hardened king posture, idol charm held low and away from the heart",
+        ],
+        "visual": [
+            "older Judah king build with heavy tense shoulders",
+            "weathered angular face with haunted eyes and severe brow",
+            "gray-streaked dark hair under a tarnished gold diadem",
+            "full gray-streaked beard with blocky facets",
+        ],
+        "negative": "child sacrifice, blood, gore, Assyrian chains, prison scene, crowd",
+    },
+    "amon_judah": {
+        "name_ko": "아몬(남유다)",
+        "name_en": "Amon, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["ahaz", "jehoiakim", "zedekiah"],
+        "palette": "dark crimson + ash gray + tarnished gold accents, low saturation",
+        "signature": [
+            "Amon of Judah, wicked short-reigning king, exactly one man only",
+            "dark crimson royal robe with ash-gray mantle and tarnished gold diadem",
+            "small palace idol token held close as a restrained sign of continuing evil",
+            "hard suspicious expression, not the Egyptian god Amun",
+        ],
+        "mood": [
+            "hard suspicious king posture, palace idol token gripped near the belt",
+        ],
+        "visual": [
+            "young-to-middle-aged Judah king build with tense shoulders",
+            "sharp face with suspicious eyes and furrowed brow",
+            "dark hair under a tarnished gold Judah diadem",
+            "short dark beard with severe facets",
+        ],
+        "negative": "Egyptian god Amun, animal head, deity, assassination scene, blood, gore",
+    },
+    "jehoahaz_judah": {
+        "name_ko": "여호아하스(남유다)",
+        "name_en": "Jehoahaz, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["josiah", "jehoiakim", "zedekiah"],
+        "palette": "royal blue + dust gray + muted gold accents, low saturation",
+        "signature": [
+            "Jehoahaz of Judah, short-reigning son of Josiah, exactly one man only",
+            "royal blue robe with dust-gray mantle and muted gold Judah diadem",
+            "small Egyptian tribute token as a restrained sign of being removed by Pharaoh",
+            "anxious displaced expression, not Northern Israel's Jehoahaz",
+        ],
+        "mood": [
+            "anxious displaced king posture, tribute token held uncertainly",
+        ],
+        "visual": [
+            "young Judah king build with slim tense shoulders",
+            "youthful angular face with worried eyes and tight brow",
+            "short dark hair under a muted gold Judah diadem",
+            "short neat beard with soft facets",
+        ],
+        "negative": "Jehoahaz of Israel, prison chains, Pharaoh Necho scene, Egypt crowd",
+    },
+    "jehoiachin": {
+        "name_ko": "여호야긴",
+        "name_en": "Jehoiachin, King of Judah",
+        "kingdom": "south",
+        "style_reference_codes": ["jehoiakim", "zedekiah", "josiah"],
+        "palette": "royal indigo + exile gray + muted gold accents, low saturation",
+        "signature": [
+            "Jehoiachin king of Judah taken into Babylonian exile, exactly one man only",
+            "royal indigo robe with exile-gray mantle and muted gold Judah diadem",
+            "small blank exile tablet as a restrained sign of captivity",
+            "young sorrowful royal expression, not Jehoiakim and not Zedekiah",
+        ],
+        "mood": [
+            "sorrowful exiled-king posture, blank exile tablet held close to the chest",
+        ],
+        "visual": [
+            "young Judah king build with lowered but royal shoulders",
+            "smooth angular face with sorrowful eyes and subdued brow",
+            "short dark hair under a muted gold Judah diadem",
+            "short neat beard with gentle facets",
+        ],
+        "negative": "Jehoiakim, Zedekiah, blindfold, chains, prison bars, execution scene",
+    },
+}
+
+KO_NAME_OVERRIDES.update(
+    {code: data["name_ko"] for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()}
+)
+EN_NAME_OVERRIDES.update(
+    {code: data["name_en"] for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()}
+)
+FORCE_ACTIVE_DEFAULT_CODES.update(DIVIDED_KINGDOM_KING_ROSTER)
+CURATED_AVATAR_ROSTER.update(
+    {
+        code: {
+            "name_ko": data["name_ko"],
+            "name_en": data["name_en"],
+            "era": "divided_kingdom",
+            "style_reference_codes": data.get("style_reference_codes", []),
+        }
+        for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
+    }
+)
 GOD_NEGATIVE_PROMPT_EXTRA = (
     "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, "
     "religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, "
@@ -326,6 +1225,69 @@ HAMAN_NEGATIVE_PROMPT_EXTRA = (
 )
 DANIEL_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra character, background character"
 DAN_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra character, background character"
+CALEB_NEGATIVE_PROMPT_EXTRA = (
+    "turnaround sheet, character model sheet, reference sheet, concept sheet, "
+    "front and back view, front view and rear view, back view, rear view, "
+    "side-by-side poses, multiple poses, duplicate pose, second view, "
+    "split screen, vertical center seam, mirrored figure, back-facing figure, "
+    "rear-facing figure, extra full body view, shoulder pole, long pole across shoulders, "
+    "thick black outline, heavy dark outline, comic ink lines, sticker outline, "
+    "bold stroke, dark contour stroke, cel-shaded game art, toy mascot, "
+    "chunky game character, stubby legs, oversized head, short body, squat proportions, "
+    "large cartoon shoes, black line art around clothing, high contrast outline, "
+    "timid expression, sad expression, blank passive face, weak posture, "
+    "drooping shoulders, limp arms, hesitant pose, gardener, farmer holding produce, "
+    "cute soft mascot, childlike innocence, angry warrior, aggressive fighter, armor"
+)
+ABSALOM_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra character, "
+    "background character, army, battle scene, rebellion scene, throne room scene, "
+    "David appearing, king beside him, soldiers, horse, mule, tree, oak tree, "
+    "hanging hair, hair caught in branches, death scene, corpse, blood, gore, "
+    "crown, crowned king, modern clothing, fantasy armor, helmet, readable label, readable text"
+)
+JUDGES_AVATAR_NEGATIVE_PROMPT_EXTRA = (
+    "turnaround sheet, character model sheet, reference sheet, concept sheet, "
+    "front and back view, back view, side-by-side poses, multiple poses, "
+    "duplicate pose, second view, split screen, mirrored figure, extra full body view, "
+    "thick black outline, heavy dark outline, comic ink lines, sticker outline, "
+    "bold stroke, dark contour stroke, cel-shaded game art, toy mascot, "
+    "chunky game character, stubby legs, oversized head, short body, squat proportions, "
+    "large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, "
+    "readable label, readable text"
+)
+JUDGE_SPECIFIC_NEGATIVE_PROMPTS = {
+    "othniel": "king, crown, royal throne, extra army, battle scene, blood, gore",
+    "ehud": (
+        "stabbing scene, king on throne, Eglon, blood, gore, violent wound, "
+        "right-handed sword pose, two daggers, extra king, palace scene, "
+        "reference character appearing, Gideon appearing, Joshua appearing, "
+        "Samson appearing, copied reference avatar, duplicate Ehud, cloned figure, "
+        "companion, attendant, guard, servant, messenger partner, second man, "
+        "third person, crowd, group, two people, three people, multiple people"
+    ),
+    "shamgar": "battle scene, dead bodies, ox, cattle herd, blood, gore",
+    "deborah": (
+        "male, man, masculine face, broad male jaw, square male shoulders, beard, "
+        "mustache, facial hair, armor, soldier, sword, second woman, Barak, palm tree scene"
+    ),
+    "tola": "worm, insect, bug, beetle, red worm, crawling creature, childlike mascot",
+    "jair": "thirty sons, many sons, crowd, group, donkey herd, many donkeys, city labels",
+    "jephthah": (
+        "daughter, child, young girl, sacrifice scene, fire altar, tragic family scene, "
+        "blood, gore, crowd, extra soldiers"
+    ),
+    "ibzan": "many children, sons and daughters, wedding crowd, banquet scene, bride, groom",
+    "elon": (
+        "modern businessman, suit, tie, technology, rocket, billionaire, celebrity portrait, "
+        "modern hair style, modern city background"
+    ),
+    "abdon": "many sons, many grandsons, crowd, group, donkey herd, many donkeys, city labels",
+    "samson": (
+        "Delilah, lion, temple scene, pillars falling, tied prisoner, blindfold, "
+        "blood, gore, multiple people, battle scene"
+    ),
+}
 
 # Codes that the model tends to draw as multiple/symbolic figures.
 # Force them to render as exactly one solo character.
@@ -334,7 +1296,17 @@ SOLO_NEGATIVE_PROMPT_EXTRA = (
     "background character, twin, mirrored figure, second character, secondary figure, "
     "scene with brother, scene with father, scene with attendants"
 )
-SOLO_FORCED_CODES = {"cyrus"}
+SOLO_FORCED_CODES = {
+    "ahaz",
+    "cyrus",
+    "haggai",
+    "hoshea_king",
+    "jeroboam",
+    "jonah",
+    "rehoboam",
+    "zechariah_prophet",
+    "zerubbabel",
+}
 
 # potiphar 는 solo 강제 + 헤브루 족장처럼 묘사되지 않도록 추가 차단.
 POTIPHAR_NEGATIVE_PROMPT_EXTRA = (
@@ -419,6 +1391,102 @@ GOLIATH_NEGATIVE_PROMPT_EXTRA = (
     "kind smile, friendly expression, gentle posture, peaceful aura, warm welcoming gesture, "
     "slim build, delicate features, child, teenager, slim shoulders, small stature, "
     "unarmed, empty hands"
+)
+
+NAAMAN_NEGATIVE_PROMPT_EXTRA = (
+    "prophet robe, priest robe, hooded prophet, layered prophet head covering, "
+    "Samuel, elderly prophet, listening prophet silhouette, shepherd, sling, stone pouch, "
+    "scroll, staff, plain Hebrew robe, soft spiritual teacher pose, "
+    "severe disease horror, open sores, bleeding, gore, disfigured face, rotting skin, "
+    "medical close-up, suffering crowd, second character, multiple people"
+)
+
+HOSHEA_KING_NEGATIVE_PROMPT_EXTRA = (
+    "Hosea the prophet, prophet Hosea, minor prophet, biblical prophet, prophet robe, "
+    "prophecy scroll, large scroll, preaching pose, Gomer, prophet family scene, "
+    "scribe, priest, Samuel, Isaiah, Jeremiah, elderly prophet silhouette, "
+    "Assyrian king, Assyrian commander, captor, prison scene, jail bars, chains, "
+    "battle scene, siege scene, crowd, multiple people, readable label, readable text"
+)
+
+AHAZ_NEGATIVE_PROMPT_EXTRA = (
+    "Ahab, northern king of Samaria, Hoshea king, Hezekiah, Josiah, faithful reform king, "
+    "prophet Isaiah, court prophet, priest, Assyrian commander, Aram king, Pekah, Rezin, "
+    "battle scene, siege army, baby Immanuel scene, woman and child, "
+    "multiple people, crowd, readable label, readable text, "
+    "wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, "
+    "extra-wide side margins, tiny distant character, off-center character"
+)
+
+JONAH_NEGATIVE_PROMPT_EXTRA = (
+    "Jonathan, Saul's son, prince Jonathan, David's friend, royal prince, king's son, "
+    "handsome warrior prince, bow and arrows, palace scene, friendship covenant scene, "
+    "multiple people, sailors, ship crew, Nineveh crowd, city crowd, "
+    "giant fish swallowing scene, inside fish belly, ocean storm scene, ship deck scene, "
+    "elderly prophet, Samuel, Isaiah, copied prophet avatar, readable label, readable text"
+)
+
+JEREMIAH_NEGATIVE_PROMPT_EXTRA = (
+    "Isaiah copied avatar, Samuel, child Samuel, Ezekiel, Ezra, Haggai, Zechariah, "
+    "king, crown, royal robe, priestly breastplate, temple incense scene, heavenly throne vision, "
+    "seraphim, valley of dry bones, Baruch writing beside him, scribe desk, prison pit, mud pit, "
+    "scroll burning scene, smashed jar scene, battle scene, siege army, "
+    "multiple people, crowd, duo, readable label, readable text, "
+    "portrait crop, bust shot, half body, close-up face, cropped feet, missing sandals"
+)
+
+JEHOIAKIM_NEGATIVE_PROMPT_EXTRA = (
+    "Jehoiachin, Jehoahaz, Zedekiah, Josiah, righteous reform king, humble faithful king, "
+    "Jeremiah, Baruch, prophet robe, scribe desk, scroll burning scene, open flame, "
+    "Babylonian king, Nebuchadnezzar, Pharaoh Necho, Egyptian crown, captive prisoner, chains, "
+    "battle scene, siege army, multiple people, crowd, readable label, readable text, "
+    "wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, "
+    "portrait crop, bust shot, half body, cropped feet, missing sandals"
+)
+
+DIVIDED_KINGDOM_KING_NEGATIVE_PROMPT_EXTRA = (
+    "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, "
+    "modern monarch, European crown, medieval king, fantasy armor, helmet, "
+    "battle panorama, active fighting, killing scene, assassination scene, execution scene, "
+    "blood, gore, corpse, dead body, injury close-up, prison bars, chains, "
+    "multiple people, crowd, group, attendants, army, readable label, readable text, "
+    "same face as another divided-kingdom king, cloned facial features, identical beard, "
+    "identical crown band, identical expression, "
+    "wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, "
+    "portrait crop, bust shot, half body, cropped feet, missing sandals"
+)
+
+ZERUBBABEL_NEGATIVE_PROMPT_EXTRA = (
+    "Persian king, Cyrus, Darius, crowned monarch, golden crown, royal throne, "
+    "Solomon, David, Jesus genealogy scene, newborn, family tree, "
+    "completed palace scene, modern architect, hard hat, blueprint, "
+    "multiple people, crowd, construction crew surrounding him, readable label, readable text"
+)
+
+HAGGAI_NEGATIVE_PROMPT_EXTRA = (
+    "Zechariah, Zechariah prophet, Zechariah father of John, priest Zechariah, "
+    "Elizabeth, baby John, temple incense scene, mute priest, priestly breastplate, "
+    "young royal governor, Zerubbabel, construction crowd, "
+    "multiple people, crowd, duo, readable label, readable text"
+)
+
+ZECHARIAH_PROPHET_NEGATIVE_PROMPT_EXTRA = (
+    "Zechariah father of John the Baptist, priest Zechariah, elderly priest, "
+    "Elizabeth, baby John, temple incense, angel Gabriel announcing birth, mute priest scene, "
+    "Haggai, Zerubbabel, construction scene, crown, king, "
+    "multiple people, crowd, duo, readable label, readable text"
+)
+
+ISAIAH_NEGATIVE_PROMPT_EXTRA = (
+    "Samuel, child Samuel, young Samuel, listening prophet silhouette, "
+    "tabernacle lamp, priestly child robe, hooded prophet, layered hood-like head covering, "
+    "wrapped geometric headcloth, soft angular oval face, mustache with a short beard, "
+    "purple-navy Samuel robe, gentle listening pose, ordinary hooded elderly prophet, "
+    "duplicate Samuel, copied Samuel avatar, Ezra, scribe-only scholar, king, crown, "
+    "seraphim, angel, heavenly host, extra character, multiple people, "
+    "portrait crop, bust shot, half body, waist-up crop, close-up face, cropped robe, "
+    "cropped feet, missing feet, cropped sandals, giant scroll covering the body, "
+    "tongs touching lips, burning mouth, injury, gore, readable text"
 )
 
 FEMALE_CODES = {
@@ -537,9 +1605,11 @@ CHARACTER_VISUAL_OVERRIDES = {
         "short trimmed beard",
     ],
     "naaman": [
-        "tall straight-backed commander build with broad shoulders",
-        "sharp angular face with strong straight nose and trimmed jawline",
-        "short well-groomed dark hair and trimmed beard befitting an officer",
+        "tall broad-shouldered Aramean military commander build",
+        "sharp angular officer face with strong straight nose and stern focused eyes",
+        "short well-groomed dark hair under a bronze Aramean commander headband",
+        "trimmed dark beard befitting a high-ranking officer",
+        "subtle pale leprosy patches on one cheek and one visible hand, clean and non-gory",
     ],
     "achan": [
         "lean ordinary build, no commanding presence",
@@ -572,6 +1642,156 @@ CHARACTER_VISUAL_OVERRIDES = {
         "youthful adult oval face with gentle Egyptian features",
         "dark hair fully tucked under a plain deep indigo headscarf",
     ],
+    "zerubbabel": [
+        "mature post-exile Judah governor build with sturdy civic-leader shoulders",
+        "rectangular determined face with tired but faithful eyes and a practical brow",
+        "short dark hair under a simple Persian-period Judean official headband",
+        "trimmed dark beard with clean angular planes",
+    ],
+    "haggai": [
+        "elderly restoration prophet build with compact upright shoulders",
+        "weathered oval face with piercing urgent eyes and deep forehead lines",
+        "short gray hair under a plain prophet's headcloth, not priestly",
+        "full gray beard with blocky faceted strands",
+    ],
+    "zechariah_prophet": [
+        "young adult visionary restoration prophet build, lean and alert",
+        "long narrow face with bright watchful eyes and contemplative brow",
+        "medium dark hair under a simple muted indigo head wrap, not priestly",
+        "short neat dark beard with angular faceted planes",
+    ],
+    "absalom": [
+        "tall graceful royal prince build with confident upright posture",
+        "striking handsome angular face with proud eyes and refined royal features",
+        "very long thick dark hair flowing in layered geometric locks as his main identifying feature",
+        "short neat princely beard, carefully groomed",
+    ],
+    "caleb": [
+        "mature broad-shouldered traveler build matching the existing Joshua avatar proportions",
+        "long wedge-shaped face with firm brow, clear unwavering eyes, and simple small features",
+        "medium wavy dark hair in angular chunks with a narrow muted headband",
+        "short angular beard with soft faceted planes",
+    ],
+    "jeroboam": [
+        "strong ambitious royal official build with squared shoulders",
+        "sharp angular face with watchful eyes and a determined brow",
+        "short dark hair under a narrow northern official headband",
+        "trimmed angular beard with crisp faceted planes",
+    ],
+    "rehoboam": [
+        "young royal heir build with polished but slightly uncertain bearing",
+        "smooth square princely face with cautious eyes",
+        "neatly arranged dark hair under a simple royal headband",
+        "short tidy beard, less severe than Jeroboam",
+    ],
+    "ahab": [
+        "middle-aged northern king build with squared royal shoulders",
+        "hard angular face with proud narrowed eyes and a stubborn brow",
+        "dark hair under an ornate but restrained northern royal headband",
+        "short dark beard with sharply faceted planes",
+    ],
+    "ahaz": [
+        "young-to-middle-aged Judah king build with broad royal shoulders and upright palace bearing",
+        "anxious but kingly angular face with wary eyes, strong brow, and controlled royal dignity",
+        "short dark hair beneath a small angular gold Judah crown diadem, clearly a king not an official",
+        "trimmed dark beard with crisp regal faceted planes",
+    ],
+    "hoshea_king": [
+        "middle-aged final northern Israel king build with tense royal shoulders",
+        "long narrow weary face with worried eyes and a guarded anxious brow",
+        "short dark hair under a simple bronze Samaria royal headband",
+        "trimmed dark beard with slightly uneven faceted planes",
+    ],
+    "jonah": [
+        "weathered northern prophet build with compact traveler proportions",
+        "rectangular anxious face with wary eyes, furrowed brow, and a reluctant expression",
+        "short dark hair partly visible under a simple sea-teal travel headwrap",
+        "short uneven dark beard with angular faceted planes",
+    ],
+    "jeremiah": [
+        "lean sorrowful Judah prophet build with narrow shoulders but steady upright resolve",
+        "long angular face with tearful compassionate eyes, strong nose, and deeply furrowed brow",
+        "dark wavy hair with gray streaks tied back by a plain clay-brown headband, not hooded",
+        "medium dark beard with gray streaks and weathered faceted strands",
+    ],
+    "jehoiakim": [
+        "middle-aged Judah king build with broad royal shoulders and heavy palace bearing",
+        "hard angular royal face with narrowed proud eyes, sharp nose, and stubborn brow",
+        "short dark hair beneath an angular gold Judah crown diadem with a small red jewel",
+        "trimmed dark beard with crisp severe faceted planes",
+    ],
+    "isaiah": [
+        "tall narrow Jerusalem court-prophet build with solemn upright shoulders",
+        "long rectangular face with high cheekbones, deep-set visionary eyes, and a grave brow",
+        "uncovered gray-streaked wavy hair swept back, no hood and no wrapped head covering",
+        "long split gray beard with angular faceted planes",
+        "full robe length visible down to both sandals, lower body and feet clearly visible",
+    ],
+    "othniel": [
+        "steady mature tribal commander build with broad but compact shoulders",
+        "square Judahite face with firm brow and calm courageous eyes",
+        "short blocky dark curls held by a simple muted cloth band",
+        "trimmed angular beard",
+    ],
+    "ehud": [
+        "compact agile Benjaminite judge build with a solitary balanced stance",
+        "diamond-shaped face with alert narrow eyes and controlled expression",
+        "closely cropped faceted dark hair under a small travel headcloth",
+        "short neat beard",
+    ],
+    "shamgar": [
+        "rugged farmer-judge build with strong work-worn forearms",
+        "hexagonal weathered face with practical steady eyes",
+        "rough medium-length dark hair in angular chunks",
+        "full blocky beard",
+    ],
+    "deborah": [
+        "dignified mature feminine judge build with upright composed shoulders",
+        "wise angular oval face with clear discerning eyes and gentle strength",
+        "dark hair fully covered by a layered olive head veil",
+    ],
+    "tola": [
+        "quiet sturdy elder-judge build with modest compact proportions",
+        "soft rectangular face with thoughtful settled eyes",
+        "wrapped geometric headcloth framing the face",
+        "short gray-streaked angular beard",
+    ],
+    "jair": [
+        "prosperous but humble Gilead elder build with broad stable posture",
+        "rounded hexagonal face with kind authoritative eyes",
+        "short dark hair under a simple clay-brown head wrap",
+        "full neatly shaped beard",
+    ],
+    "jephthah": [
+        "weathered outcast-warrior build with lean powerful shoulders",
+        "long wedge-shaped face with sorrowful stern eyes and scarred-looking facets",
+        "untidy shoulder-length dark hair in rough polygon strands",
+        "short rugged beard",
+    ],
+    "ibzan": [
+        "peaceful Bethlehem elder build with soft broad shoulders",
+        "soft angular oval face with warm clan-leader expression",
+        "neatly wrapped muted headcloth with a small woven tassel",
+        "trimmed gray-streaked beard",
+    ],
+    "elon": [
+        "calm Zebulun elder-judge build with tall narrow proportions",
+        "rectangular face with quiet thoughtful eyes",
+        "straight shoulder-length hair under a blue-green tribal headband",
+        "trimmed faceted beard",
+    ],
+    "abdon": [
+        "well-established Pirathon elder build with dignified stable shoulders",
+        "broad square face with generous but serious eyes",
+        "medium wavy gray-streaked hair under a simple gold-clay head wrap",
+        "full blocky gray-streaked beard",
+    ],
+    "samson": [
+        "powerful Nazirite judge build, muscular but still matching the cast's compact proportions",
+        "strong angular face with heavy brow and intense prayerful eyes",
+        "long uncut dark hair falling in heavy geometric locks",
+        "full blocky beard",
+    ],
 }
 
 CHARACTER_MOOD_OVERRIDES = {
@@ -591,10 +1811,28 @@ CHARACTER_MOOD_OVERRIDES = {
         "brooding upright posture with downcast resentful gaze",
     ],
     "naaman": [
-        "proud upright commander's posture, chin held with disciplined dignity",
+        "disciplined but burdened commander's posture, proud yet visibly troubled by illness",
     ],
     "achan": [
         "shrinking nervous posture with shoulders hunched, guilty downcast expression",
+    ],
+    "ahab": [
+        "proud hardened kingly posture, chin lifted with stubborn defiance",
+    ],
+    "ahaz": [
+        "front-facing solitary royal king posture, one hand holding a short gold scepter close to the body and the other resting on a heavy royal mantle, visibly anxious but unmistakably a king",
+    ],
+    "hoshea_king": [
+        "somber final-king posture, shoulders tense, one hand holding a small blank broken tribute tablet close to the chest",
+    ],
+    "jonah": [
+        "reluctant but called prophet posture, shoulders slightly turned as if resisting the journey, one hand holding a small blank message scroll close to the chest and the other near a tiny fish-shaped travel token",
+    ],
+    "jeremiah": [
+        "front-facing solitary weeping-prophet posture, one hand holding a narrow blank warning scroll near the heart and the other holding a small cracked clay jar shard, sorrowful but unshaken",
+    ],
+    "jehoiakim": [
+        "front-facing solitary defiant king posture, chin lifted, one hand holding a short gold scepter and the other gripping a sealed royal decree scroll, proud and resistant to prophetic warning",
     ],
     "delilah": [
         "alluring graceful posture with subtle sly smile, charming and confident",
@@ -614,6 +1852,60 @@ CHARACTER_MOOD_OVERRIDES = {
     "hagar": [
         "calm resilient standing posture with both arms relaxed at sides",
     ],
+    "zerubbabel": [
+        "steady rebuilding-leader posture, one hand holding a small foundation stone and the other a blank work order scroll, resolved but humble",
+    ],
+    "haggai": [
+        "urgent prophetic posture, one hand raised in exhortation and the other holding a small blank oracle scroll close to the chest",
+    ],
+    "zechariah_prophet": [
+        "visionary prophetic posture, one hand holding a small measuring cord and the other a blank vision scroll, eyes lifted with hope",
+    ],
+    "isaiah": [
+        "small full-body standing avatar pose with generous white margin, one hand holding a narrow open blank prophecy scroll close to the torso, the other near a small ember-coal clasp at the chest, both sandals visible, eyes lifted with holy awe",
+    ],
+    "caleb": [
+        "single front-facing standing pose, shoulders squared and chest lifted, steady faithful expression, one hand held near the heart in conviction, the other hand holding a small grape cluster close to the body",
+    ],
+    "jeroboam": [
+        "front-facing solitary official posture, ambitious and alert, one hand holding a small torn cloak piece as a restrained symbol",
+    ],
+    "rehoboam": [
+        "front-facing solitary young king posture, one hand near a folded royal mantle, cautious and dignified",
+    ],
+    "othniel": [
+        "calm courageous judge posture, one hand resting near a sheathed short sword, not fighting",
+    ],
+    "ehud": [
+        "absolute solo avatar pose, front-facing and centered, left hand clearly emphasized near a small sheathed dagger at the waist, right arm relaxed, no one standing beside him",
+    ],
+    "shamgar": [
+        "steady farmer-defender posture holding a long wooden oxgoad vertically like a staff",
+    ],
+    "deborah": [
+        "wise prophetic judge posture, one hand lifted gently as if giving counsel and the other holding a small scroll",
+    ],
+    "tola": [
+        "modest settled judge posture holding a simple staff close to the body",
+    ],
+    "jair": [
+        "dignified Gilead elder posture holding a small rolled map with simple dot marks",
+    ],
+    "jephthah": [
+        "resolute but sorrow-aware posture, weathered cloak draped over one shoulder, hands kept peaceful",
+    ],
+    "ibzan": [
+        "warm elder judge posture with a small ceremonial staff and woven tassels",
+    ],
+    "elon": [
+        "quiet faithful judge posture holding a simple tribal staff, calm and grounded",
+    ],
+    "abdon": [
+        "honorable elder judge posture holding a carved walking staff with a small donkey medallion",
+    ],
+    "samson": [
+        "strong but prayerful standing posture, hands near the chest in restrained strength, not attacking",
+    ],
 }
 
 BEARD_VARIANTS = [
@@ -630,6 +1922,7 @@ ERA_ROLE_FALLBACKS = {
     "exodus_wilderness": "weathered desert-traveler silhouette",
     "judges": "rugged tribal-era silhouette",
     "monarchy": "structured royal-era silhouette",
+    "divided_kingdom": "structured royal-era silhouette",
     "prophets_exile": "solemn exile-era silhouette",
     "post_exile_return": "rebuilder-era silhouette",
     "gospels": "traveling teacher silhouette",
@@ -637,12 +1930,184 @@ ERA_ROLE_FALLBACKS = {
 }
 
 CODE_PALETTE_OVERRIDES = {
+    "absalom": "deep royal blue + muted crimson + warm gold accents, low saturation",
+    "ahaz": "deep royal indigo + muted purple + warm gold trim + ash gray accent, low saturation",
+    "caleb": "muted teal + parchment cream + warm clay brown accents, low saturation",
+    "deborah": "olive green + warm parchment + muted clay rose accents",
+    "ehud": "deep olive + desert tan + muted bronze accents",
     "hagar": "desert teal + copper + deep indigo accents",
+    "haggai": "weathered clay + parchment cream + muted crimson accents, low saturation",
+    "hoshea_king": "storm blue + iron gray + muted bronze accents, low saturation",
+    "isaiah": "deep indigo + ash gray + ember gold accents, low saturation",
+    "jehoiakim": "deep crimson + royal indigo + dark gold trim + ash gray accents, low saturation",
+    "jeremiah": "weathered olive + clay brown + muted crimson + parchment cream accents, low saturation",
+    "jeroboam": "deep forest green + muted bronze + parchment tan accents, low saturation",
+    "jonah": "sea teal + storm gray + parchment cream accents, low saturation",
+    "rehoboam": "royal indigo + warm gold + muted ivory accents, low saturation",
+    "samson": "deep olive + clay brown + muted gold accents",
+    "zechariah_prophet": "muted indigo + sage green + parchment cream accents, low saturation",
+    "zerubbabel": "deep olive + stone gray + muted gold accents, low saturation",
 }
 
 CODE_SIGNATURE_HINTS = {
     "abraham": ["nomadic patriarch silhouette", "travel-worn layered robe"],
     "aaron": ["ceremonial leader silhouette", "priestly layered sash"],
+    "absalom": [
+        "royal prince of David's house silhouette, exactly one man only",
+        "beautiful but restless king's son presence with proud confidence",
+        "long heavy hair as the unmistakable identifying feature",
+        "deep royal blue cloak over a muted crimson tunic with restrained gold trim",
+        "small princely sash and signet-like belt ornament, no crown",
+    ],
+    "caleb": [
+        "faithful wilderness scout silhouette in the same soft flat vector style as Moses and Joshua",
+        "wholehearted courageous witness who trusts God when others are afraid",
+        "muted robe and sash with gentle paper-cut facets, no visible ink outline",
+        "small compact purple grape cluster kept secondary as a promised-land sign",
+    ],
+    "jeroboam": [
+        "ambitious servant of Solomon who will become northern kingdom ruler",
+        "deep green official cloak with bronze sash, no crown",
+        "small torn cloak piece in one hand as a restrained sign of Ahijah's prophecy",
+        "serious alert expression, not a battle scene",
+    ],
+    "rehoboam": [
+        "Solomon's royal son and heir silhouette",
+        "royal indigo robe with warm gold sash, no oversized crown",
+        "young princely presence with cautious confidence",
+        "folded mantle detail, not a coronation scene",
+    ],
+    "ahab": [
+        "northern kingdom king of Samaria silhouette, exactly one man only",
+        "proud hardened ruler associated with Baal worship",
+        "royal purple robe with navy mantle and muted gold headband",
+        "small dark idol-shaped palace ornament kept secondary as a sign of apostasy",
+        "no sling, no stone pouch, no shepherd accessory",
+    ],
+    "ahaz": [
+        "Ahaz king of Judah, exactly one man only",
+        "unmistakable Judah king silhouette, royal first and fearful second",
+        "deep indigo royal robe with thick gold collar, gold belt, and heavy purple mantle",
+        "small angular gold crown diadem and short gold scepter as clear royal identifiers",
+        "hesitant worried expression during the Aram and Ephraim threat, not faithful Hezekiah and not northern king Ahab",
+        "centered full-body figure inside a square 1:1 avatar canvas with balanced white margins",
+    ],
+    "hoshea_king": [
+        "last king of Northern Israel in Samaria, exactly one man only",
+        "somber fallen-king presence, distinct from Hosea the prophet",
+        "storm-blue royal robe with iron-gray mantle and muted bronze headband",
+        "small blank broken tribute tablet as a sign of failed Assyrian tribute, not a prophecy scroll",
+        "anxious guarded expression, not a preacher and not an Assyrian captor",
+    ],
+    "zerubbabel": [
+        "post-exile governor of Judah and temple-rebuilding leader, exactly one man only",
+        "Davidic-line civic leader without crown or throne",
+        "deep olive governor cloak over stone-gray tunic with muted gold sash",
+        "small foundation stone and blank rebuilding order scroll as restrained signs",
+        "humble determined expression, not a Persian king and not a modern builder",
+    ],
+    "haggai": [
+        "post-exile prophet urging the people to rebuild the temple, exactly one man only",
+        "weathered clay prophet mantle over parchment robe with muted crimson sash",
+        "small blank oracle scroll and simple walking staff as restrained signs",
+        "urgent exhorting expression, distinct from Zechariah and not a priestly incense scene",
+    ],
+    "zechariah_prophet": [
+        "post-exile visionary prophet son of Berechiah, exactly one man only",
+        "clearly distinct from Zechariah father of John the Baptist",
+        "muted indigo mantle over sage-green robe with parchment sash",
+        "small measuring cord and blank vision scroll as restrained signs of restoration visions",
+        "hopeful watchful expression, not a temple incense scene and not a birth-announcement scene",
+    ],
+    "jonah": [
+        "reluctant prophet son of Amittai sent toward Nineveh, exactly one man only",
+        "clearly distinct from Jonathan the royal prince and from elderly court prophets",
+        "sea-teal travel cloak over storm-gray tunic with parchment sash",
+        "small blank message scroll and tiny fish-shaped travel token as restrained signs",
+        "uneasy called-by-God expression, not a ship scene and not inside a fish",
+    ],
+    "jeremiah": [
+        "weeping prophet of Judah silhouette, exactly one man only",
+        "sorrowful faithful prophet who warns Jerusalem with grief and courage",
+        "weathered olive mantle over clay-brown robe with muted crimson sash",
+        "small blank warning scroll and cracked clay jar shard as restrained prophetic signs",
+        "tearful eyes and firm mouth, not Isaiah's court-prophet look and not Samuel",
+    ],
+    "jehoiakim": [
+        "Jehoiakim king of Judah, exactly one man only",
+        "unmistakable proud Judah king silhouette, royal and defiant",
+        "deep crimson royal robe under royal indigo mantle with thick dark gold collar and belt",
+        "small angular gold crown diadem with red jewel and short gold scepter as clear royal identifiers",
+        "sealed royal decree scroll in one hand as a restrained sign of rejecting prophetic warning, not an active burning scene",
+        "hard proud expression, not faithful Josiah, not captive Jehoiachin, and not blind Zedekiah",
+    ],
+    "othniel": [
+        "first judge of Israel silhouette from Judah",
+        "faithful deliverer and steady tribal leader presence",
+        "plain olive judge cloak over a clay-brown tunic",
+        "short bronze sword kept sheathed as a symbol of deliverance, not battle",
+    ],
+    "ehud": [
+        "left-handed Benjaminite judge silhouette, exactly one man only",
+        "compact agile presence with quiet courage, not a story scene",
+        "muted travel cloak and one small sealed message pouch at the belt",
+        "left hand visibly emphasized near a small sheathed dagger",
+        "plain white background with no palace, no king, no guards, no companions",
+    ],
+    "shamgar": [
+        "rugged farmer-judge silhouette from the era of judges",
+        "work-worn defender presence without royal clothing",
+        "plain short tunic with leather work belt",
+        "long wooden oxgoad held upright as his distinctive accessory",
+    ],
+    "deborah": [
+        "prophetess and judge of Israel silhouette, distinctly female",
+        "wise counselor presence with calm spiritual authority",
+        "layered olive veil and modest long robe with parchment accents",
+        "small scroll and subtle palm-frond brooch as Deborah's palm sign",
+    ],
+    "tola": [
+        "quiet judge of Israel from Issachar silhouette",
+        "modest faithful elder presence rather than warrior champion",
+        "simple olive-brown robe with an understated tribal sash",
+        "plain staff and small folded judgment cloth, no insect imagery",
+    ],
+    "jair": [
+        "Gilead elder judge silhouette with settled clan authority",
+        "prosperous but humble presence, not royal",
+        "earth-toned robe with a muted gold sash",
+        "rolled map with simple dot marks symbolizing his towns",
+    ],
+    "jephthah": [
+        "mighty warrior judge of Gilead silhouette",
+        "weathered outcast leader presence with a serious faithful burden",
+        "rough travel cloak over plain judge-era tunic",
+        "empty peaceful hands, strength shown through posture not weapons",
+    ],
+    "ibzan": [
+        "Bethlehem elder judge silhouette",
+        "peaceful clan-leader presence with generous hospitality",
+        "soft clay and olive layered robe with woven tassel details",
+        "small ceremonial staff suggesting household leadership",
+    ],
+    "elon": [
+        "biblical judge of Zebulun silhouette, ancient Israelite elder",
+        "quiet steady presence, not modern and not royal",
+        "blue-green Zebulun-toned cloak over simple earth robe",
+        "plain tribal staff as a restrained judge symbol",
+    ],
+    "abdon": [
+        "Pirathon elder judge silhouette with established household dignity",
+        "honorable settled leader presence, wealthy but humble",
+        "olive robe with muted gold-clay sash and simple sandals",
+        "carved walking staff with a small donkey medallion symbol",
+    ],
+    "samson": [
+        "Nazirite judge silhouette from the era of judges",
+        "long uncut hair as the main identifying feature",
+        "powerful restrained strength, not a fantasy warrior",
+        "simple rugged tunic with bare forearms and muted judge-era sash",
+    ],
     "daniel": [
         "court-wise exile silhouette",
         "calm dignified bearing",
@@ -708,6 +2173,13 @@ CODE_SIGNATURE_HINTS = {
         "scheming court-official silhouette",
         "sealed decree scroll and signet ring",
         "single arrogant court-villain presence",
+    ],
+    "isaiah": [
+        "Jerusalem royal-court prophet silhouette, not a listening child-prophet",
+        "deep indigo mantle over an ash-gray robe with parchment cream sash",
+        "full-body standing figure with visible robe hem, legs, and sandals",
+        "small narrow open blank prophecy scroll held upright and a small ember-coal clasp as Isaiah's calling sign",
+        "stern visionary presence, uncovered hair, no hooded head covering",
     ],
     "moses": [
         "liberator silhouette shaped by wilderness",
@@ -830,11 +2302,13 @@ CODE_SIGNATURE_HINTS = {
         "brooding exiled wanderer presence",
     ],
     "naaman": [
-        "Aramean (Syrian) army commander silhouette from the divided-kingdom era",
-        "polished bronze scale armor cuirass over a tunic, decorative shoulder plates",
-        "richly trimmed military cloak fastened at one shoulder",
-        "short bronze sword at the belt and a small commander's baton in one hand",
-        "proud authoritative officer presence, distinctly a general not a priest",
+        "Aramean Syrian army commander serving the king of Aram, exactly one man only",
+        "polished bronze scale armor cuirass over a deep red military tunic, decorative shoulder plates",
+        "richly trimmed dark crimson commander cloak fastened at one shoulder",
+        "bronze helmet or commander headband, short bronze sword at the belt",
+        "small command baton in one hand and clean linen wrap on the other forearm",
+        "visible but subtle leprosy sign: pale skin patches on hand and cheek, not grotesque",
+        "authoritative battlefield officer presence, distinctly a foreign general not an Israelite prophet",
     ],
     "achan": [
         "guilty Israelite soldier silhouette caught in shame",
@@ -874,6 +2348,40 @@ CODE_SIGNATURE_HINTS = {
         "patient wise matriarch presence, distinctly elderly not young",
     ],
 }
+
+FEMALE_CODES.update(
+    code
+    for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
+    if data.get("gender") == "female"
+)
+CHARACTER_VISUAL_OVERRIDES.update(
+    {
+        code: data["visual"]
+        for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
+        if data.get("visual")
+    }
+)
+CHARACTER_MOOD_OVERRIDES.update(
+    {
+        code: data["mood"]
+        for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
+        if data.get("mood")
+    }
+)
+CODE_PALETTE_OVERRIDES.update(
+    {
+        code: data["palette"]
+        for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
+        if data.get("palette")
+    }
+)
+CODE_SIGNATURE_HINTS.update(
+    {
+        code: data["signature"]
+        for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
+        if data.get("signature")
+    }
+)
 
 STORY_ROLE_RULES = [
     {
@@ -1021,7 +2529,7 @@ def parse_args() -> argparse.Namespace:
         default=ACTIVE_DEFAULT_THRESHOLD,
         help=(
             "Mention count at or above which is_active_default=true. "
-            "Below this threshold, is_active_default=false (admin opts in)."
+            "Judges-era story characters are also active with one mention."
         ),
     )
     return parser.parse_args()
@@ -1072,6 +2580,19 @@ def dedupe_preserve_order(items: list[str]) -> list[str]:
     return result
 
 
+def append_negative_prompt_extra(
+    character: dict[str, Any],
+    extra: str,
+) -> None:
+    extra = extra.strip()
+    if not extra:
+        return
+    current = str(character.get("negative_prompt_extra", "")).strip()
+    character["negative_prompt_extra"] = ", ".join(
+        part for part in [current, extra] if part
+    )
+
+
 def expand_person_codes(number: int, characters: list[str]) -> list[str]:
     expanded: list[str] = []
     persons_set = {code for code in characters}
@@ -1113,6 +2634,7 @@ def normalize_style_era(era: str) -> str:
         "exodus_wilderness",
         "judges",
         "monarchy",
+        "divided_kingdom",
         "prophets_exile",
         "post_exile_return",
         "gospels",
@@ -1350,6 +2872,11 @@ def build_person_meta(
         [code for code, count in mention_counts.items() if count >= min_mentions],
         key=lambda code: (-mention_counts[code], code),
     )
+    selected_code_set = set(selected_codes)
+    for code in CURATED_AVATAR_ROSTER:
+        if code not in selected_code_set:
+            selected_codes.append(code)
+            selected_code_set.add(code)
 
     palettes = style_source["palettes"]
     default_style = "patriarch"
@@ -1357,21 +2884,39 @@ def build_person_meta(
     characters: list[dict[str, Any]] = []
     for idx, code in enumerate(selected_codes, start=1):
         template = template_map.get(code, {})
+        curated = CURATED_AVATAR_ROSTER.get(code, {})
+        template_prompt_source = str(template.get("prompt_source", "")).strip().lower()
 
         voted_style = default_style
         if era_votes.get(code):
             voted_style = sorted(
                 era_votes[code].items(), key=lambda item: (-item[1], item[0])
             )[0][0]
+        elif curated.get("era"):
+            voted_style = normalize_style_era(str(curated["era"]))
 
-        era_style = normalize_style_era(str(template.get("era", voted_style)))
+        if template_prompt_source == "manual" and template.get("era"):
+            era_style = normalize_style_era(str(template["era"]))
+        elif era_votes.get(code):
+            era_style = voted_style
+        elif curated.get("era"):
+            era_style = normalize_style_era(str(curated["era"]))
+        else:
+            era_style = default_style
         if era_style not in palettes:
             era_style = voted_style if voted_style in palettes else default_style
 
-        name_en = str(template.get("name_en", "")).strip() or prettify_name_en(code)
+        name_en = (
+            str(template.get("name_en", "")).strip()
+            or str(curated.get("name_en", "")).strip()
+            or EN_NAME_OVERRIDES.get(code, "")
+            or prettify_name_en(code)
+        )
         template_name_ko = str(template.get("name_ko", "")).strip()
         if has_hangul(template_name_ko):
             name_ko = template_name_ko
+        elif has_hangul(str(curated.get("name_ko", "")).strip()):
+            name_ko = str(curated["name_ko"]).strip()
         elif code in KO_NAME_OVERRIDES:
             name_ko = KO_NAME_OVERRIDES[code]
         elif template_name_ko:
@@ -1383,7 +2928,6 @@ def build_person_meta(
             code,
             str(palettes.get(era_style, palettes[default_style])),
         )
-        template_prompt_source = str(template.get("prompt_source", "")).strip().lower()
         prompt = ""
         if template_prompt_source == "manual":
             prompt = str(template.get("prompt", "")).strip()
@@ -1420,6 +2964,15 @@ def build_person_meta(
                 story_rows=story_rows,
             )
 
+        appears_in_judges_story = bool(story_profiles.get(code, {}).get("judges"))
+        is_active_default = mention_counts[code] >= active_threshold or (
+            appears_in_judges_story and mention_counts[code] >= 1
+        )
+        if code in FORCE_ACTIVE_DEFAULT_CODES:
+            is_active_default = True
+        if code in FORCE_INACTIVE_DEFAULT_CODES:
+            is_active_default = False
+
         character = {
             "index": idx,
             "code": code,
@@ -1429,7 +2982,7 @@ def build_person_meta(
             "prompt": prompt,
             "prompt_source": prompt_source,
             "mention_count": mention_counts[code],
-            "is_active_default": mention_counts[code] >= active_threshold,
+            "is_active_default": is_active_default,
         }
         if not use_common_style:
             character["use_common_style"] = False
@@ -1445,10 +2998,52 @@ def build_person_meta(
             character["negative_prompt_extra"] = HAMAN_NEGATIVE_PROMPT_EXTRA
         if code == "daniel":
             character["negative_prompt_extra"] = DANIEL_NEGATIVE_PROMPT_EXTRA
+        if code == "caleb":
+            character["negative_prompt_extra"] = CALEB_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["moses", "joshua"]
+        if code == "absalom":
+            character["negative_prompt_extra"] = ABSALOM_NEGATIVE_PROMPT_EXTRA
         if code == "ruth":
             character["negative_prompt_extra"] = RUTH_NEGATIVE_PROMPT_EXTRA
         if code == "goliath":
             character["negative_prompt_extra"] = GOLIATH_NEGATIVE_PROMPT_EXTRA
+        if code == "naaman":
+            character["negative_prompt_extra"] = NAAMAN_NEGATIVE_PROMPT_EXTRA
+        if code == "hoshea_king":
+            character["negative_prompt_extra"] = HOSHEA_KING_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["ahab", "jeroboam", "rehoboam"]
+        if code == "ahaz":
+            character["negative_prompt_extra"] = AHAZ_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["rehoboam", "hezekiah", "josiah"]
+        if code == "zerubbabel":
+            character["negative_prompt_extra"] = ZERUBBABEL_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["ezra", "nehemiah", "isaiah"]
+        if code == "haggai":
+            character["negative_prompt_extra"] = HAGGAI_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["isaiah", "ezra", "nehemiah"]
+        if code == "zechariah_prophet":
+            character["negative_prompt_extra"] = ZECHARIAH_PROPHET_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["isaiah", "ezra", "nehemiah"]
+        if code == "jonah":
+            character["negative_prompt_extra"] = JONAH_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["elijah", "elisha", "isaiah"]
+        if code == "jeremiah":
+            character["negative_prompt_extra"] = JEREMIAH_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["isaiah", "ezekiel", "ezra"]
+        if code == "jehoiakim":
+            character["negative_prompt_extra"] = JEHOIAKIM_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["josiah", "ahaz", "zedekiah"]
+        if code in DIVIDED_KINGDOM_KING_ROSTER:
+            append_negative_prompt_extra(
+                character,
+                DIVIDED_KINGDOM_KING_NEGATIVE_PROMPT_EXTRA,
+            )
+            append_negative_prompt_extra(
+                character,
+                str(DIVIDED_KINGDOM_KING_ROSTER[code].get("negative", "")),
+            )
+        if code == "isaiah":
+            character["negative_prompt_extra"] = ISAIAH_NEGATIVE_PROMPT_EXTRA
         if code == "potiphar":
             character["negative_prompt_extra"] = POTIPHAR_NEGATIVE_PROMPT_EXTRA
         if code == "cain":
@@ -1468,8 +3063,34 @@ def build_person_meta(
         if code in FEMALE_FORCE_CODES:
             character["negative_prompt_extra"] = FEMALE_FORCE_NEGATIVE_PROMPT_EXTRA
         if code in SOLO_FORCED_CODES:
-            character["negative_prompt_extra"] = SOLO_NEGATIVE_PROMPT_EXTRA
+            append_negative_prompt_extra(character, SOLO_NEGATIVE_PROMPT_EXTRA)
+        if code in CURATED_AVATAR_ROSTER:
+            style_reference_codes = [
+                str(reference_code).strip()
+                for reference_code in curated.get("style_reference_codes", [])
+                if str(reference_code).strip()
+            ]
+            if style_reference_codes:
+                character["style_reference_codes"] = style_reference_codes
+            append_negative_prompt_extra(
+                character,
+                JUDGES_AVATAR_NEGATIVE_PROMPT_EXTRA,
+            )
+            append_negative_prompt_extra(
+                character,
+                JUDGE_SPECIFIC_NEGATIVE_PROMPTS.get(code, ""),
+            )
         characters.append(character)
+
+    forced_active_note = ", ".join(
+        f"{code}=true" for code in sorted(FORCE_ACTIVE_DEFAULT_CODES)
+    )
+    forced_inactive_note = ", ".join(
+        f"{code}=false" for code in sorted(FORCE_INACTIVE_DEFAULT_CODES)
+    )
+    visibility_override_note = ", ".join(
+        part for part in [forced_active_note, forced_inactive_note] if part
+    )
 
     output = {
         "meta": {
@@ -1478,12 +3099,18 @@ def build_person_meta(
             "count": len(characters),
             "style_source": AUTO_PROMPT_SOURCE,
             "active_threshold": active_threshold,
+            "curated_avatar_roster_codes": list(CURATED_AVATAR_ROSTER.keys()),
             "note": (
                 "Generated from assets/200_stories with "
                 "disciples/apostles/brothers expanded to individuals. "
                 f"All characters with mention_count >= {min_mentions} are emitted; "
-                f"is_active_default=true when mention_count >= {active_threshold}. "
-                "Runtime visibility is controlled by characters.is_active in DB."
+                f"is_active_default=true when mention_count >= {active_threshold}, "
+                "or when a character appears in an era_judges story at least once. "
+                "Some codes have explicit visibility overrides, including "
+                f"{visibility_override_note}. "
+                "Curated avatar roster entries may have mention_count=0 so avatars "
+                "can be prepared before their story events are written. Runtime "
+                "visibility is controlled by characters.is_active in DB."
             ),
         },
         "common_style": style_source["common_style"],

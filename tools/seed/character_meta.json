@@ -2,12 +2,63 @@
   "meta": {
     "title": "Bible avatar prompts (all individuals from 200 stories)",
     "version": "3.0",
-    "count": 103,
+    "count": 156,
     "style_source": "auto_story_v2",
     "active_threshold": 2,
-    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2. Runtime visibility is controlled by characters.is_active in DB."
+    "curated_avatar_roster_codes": [
+      "ahaz",
+      "absalom",
+      "jeroboam",
+      "rehoboam",
+      "jonah",
+      "jeremiah",
+      "jehoiakim",
+      "othniel",
+      "ehud",
+      "shamgar",
+      "deborah",
+      "tola",
+      "jair",
+      "jephthah",
+      "ibzan",
+      "elon",
+      "abdon",
+      "samson",
+      "nadab",
+      "baasha",
+      "elah_king",
+      "zimri",
+      "omri",
+      "ahab",
+      "ahaziah_israel",
+      "joram_israel",
+      "jehu",
+      "jehoahaz_israel",
+      "jehoash_israel",
+      "jeroboam_ii",
+      "zechariah_king",
+      "shallum",
+      "menahem",
+      "pekahiah",
+      "pekah",
+      "abijah_judah",
+      "asa",
+      "jehoshaphat",
+      "jehoram_judah",
+      "ahaziah_judah",
+      "athaliah",
+      "joash_judah",
+      "amaziah_judah",
+      "uzziah",
+      "jotham",
+      "manasseh",
+      "amon_judah",
+      "jehoahaz_judah",
+      "jehoiachin"
+    ],
+    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2, or when a character appears in an era_judges story at least once. Some codes have explicit visibility overrides, including abijah_judah=true, absalom=true, ahab=true, ahaz=true, ahaziah_israel=true, ahaziah_judah=true, amaziah_judah=true, amon_judah=true, asa=true, athaliah=true, baasha=true, elah_king=true, haggai=true, hoshea_king=true, jehoahaz_israel=true, jehoahaz_judah=true, jehoash_israel=true, jehoiachin=true, jehoiakim=true, jehoram_judah=true, jehoshaphat=true, jehu=true, jeroboam=true, jeroboam_ii=true, joash_judah=true, jonah=true, jonathan=true, joram_israel=true, josiah=true, jotham=true, manasseh=true, menahem=true, naaman=true, nadab=true, omri=true, pekah=true, pekahiah=true, rehoboam=true, shallum=true, uzziah=true, zechariah_king=true, zechariah_prophet=true, zedekiah=true, zerubbabel=true, zimri=true, god=false. Curated avatar roster entries may have mention_count=0 so avatars can be prepared before their story events are written. Runtime visibility is controlled by characters.is_active in DB."
   },
-  "common_style": "stylized geometric biblical character illustration, blocky low-poly faceted planes, angular polygon face and hair, flat matte vector shading with subtle cut-paper facets, strict canonical body proportions, head:torso:legs = 1:1:1 exactly, head section one-third of total height, torso section one-third, legs section one-third, same body ratio template across all human characters, compact adult proportions, not chibi, simple small eyes and nose, mature friendly expression, minimal clean outline, exactly one character only, solo single subject, full body visible from head to toe, both feet visible, whole figure fits inside frame, centered, plain white background, high resolution, consistent design system across the full cast, distinct silhouette and face geometry for each character, distinct hairstyle and story-inspired accessory for each character, no text, no watermark",
+  "common_style": "stylized geometric biblical character illustration, blocky low-poly faceted planes, angular polygon face and hair, flat matte vector shading with subtle cut-paper facets, strict canonical body proportions, head:torso:legs = 1:1:1 exactly, head section one-third of total height, torso section one-third, legs section one-third, same body ratio template across all human characters, compact adult proportions, not chibi, simple small eyes and nose, mature friendly expression, minimal clean outline, exactly one character only, solo single subject, full body visible from head to toe, both feet visible, whole figure fits inside frame, centered inside a square 1:1 avatar canvas, plain white background, high resolution, consistent design system across the full cast, distinct silhouette and face geometry for each character, distinct hairstyle and story-inspired accessory for each character, no text, no watermark",
   "negative_prompt": "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, chibi, super-deformed, giant head, baby proportions, oversized eyes, long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, same-face clones, duplicate character, multiple people, crowd, group shot, companions, side characters, extra faces, extra bodies, twin, mirrored figure, close-up, portrait crop, bust shot, half body, cropped head, cropped feet, marshmallow body, gritty, dark, horror, complex background, text, logo, watermark",
   "palettes": {
     "primeval": "soft beige + olive + sky blue accents",
@@ -15,6 +66,7 @@
     "exodus_wilderness": "teal + desert tan + bronze accents",
     "judges": "olive green + clay brown + muted gold accents",
     "monarchy": "royal purple + navy + muted gold accents",
+    "divided_kingdom": "royal purple + navy + muted gold accents",
     "prophets_exile": "muted indigo + gray + parchment cream accents",
     "post_exile_return": "stone gray + sage green + parchment cream accents",
     "gospels": "cream + sky blue + soft rose accents",
@@ -30,6 +82,32 @@
   "characters": [
     {
       "index": 1,
+      "code": "god",
+      "name_ko": "하나님",
+      "name_en": "God",
+      "era": "exodus_wilderness",
+      "prompt": "palette: teal + desert tan + bronze accents, simple faceted form of light in the same blocky low-poly biblical illustration style as the cast, just a soft glowing light shape, not a symbol, not an emblem, not an icon, one centered light form only, simple vertical tapered silhouette made of a few large geometric planes, flat matte vector shading with subtle faceted edges, gentle warm glow, a few short attached glow rays only, large clean empty white space around it, plain white background, minimal clean composition, no character, no human figure, no face, no eyes, no mouth, no hands, no body, no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, sacred non-anthropomorphic presence",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 55,
+      "is_active_default": false,
+      "use_common_style": false,
+      "disable_adult_guardrail": true,
+      "person_generation": "dont_allow",
+      "negative_prompt_extra": "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, compass rose, trident-like symbol, monogram, glyph, letters, runes, secondary emblem, extra emblem, extra icon, detached symbol, lower symbol, bottom mark, floating mark below, small logo below, framed icon, geometric badge"
+    },
+    {
+      "index": 2,
+      "code": "moses",
+      "name_ko": "모세",
+      "name_en": "Moses",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Moses, adult biblical man (age 25+), liberator silhouette shaped by wilderness, steady leader's presence, wooden staff, brave forward-leaning stance, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 24,
+      "is_active_default": true
+    },
+    {
+      "index": 3,
       "code": "jesus",
       "name_ko": "예수님",
       "name_en": "Jesus",
@@ -40,7 +118,7 @@
       "is_active_default": true
     },
     {
-      "index": 2,
+      "index": 4,
       "code": "paul",
       "name_ko": "바울",
       "name_en": "Paul",
@@ -51,7 +129,18 @@
       "is_active_default": true
     },
     {
-      "index": 3,
+      "index": 5,
+      "code": "david",
+      "name_ko": "다윗",
+      "name_en": "David",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, David, adult biblical man (age 25+), shepherd-king silhouette, bold agile bearing, sling and small stone pouch, resolute steady posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 19,
+      "is_active_default": true
+    },
+    {
+      "index": 6,
       "code": "john",
       "name_ko": "요한",
       "name_en": "John",
@@ -62,22 +151,7 @@
       "is_active_default": true
     },
     {
-      "index": 4,
-      "code": "god",
-      "name_ko": "하나님",
-      "name_en": "God",
-      "era": "primeval",
-      "prompt": "palette: soft beige + olive + sky blue accents, simple faceted form of light in the same blocky low-poly biblical illustration style as the cast, just a soft glowing light shape, not a symbol, not an emblem, not an icon, one centered light form only, simple vertical tapered silhouette made of a few large geometric planes, flat matte vector shading with subtle faceted edges, gentle warm glow, a few short attached glow rays only, large clean empty white space around it, plain white background, minimal clean composition, no character, no human figure, no face, no eyes, no mouth, no hands, no body, no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, sacred non-anthropomorphic presence",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 18,
-      "is_active_default": true,
-      "use_common_style": false,
-      "disable_adult_guardrail": true,
-      "person_generation": "dont_allow",
-      "negative_prompt_extra": "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, compass rose, trident-like symbol, monogram, glyph, letters, runes, secondary emblem, extra emblem, extra icon, detached symbol, lower symbol, bottom mark, floating mark below, small logo below, framed icon, geometric badge"
-    },
-    {
-      "index": 5,
+      "index": 7,
       "code": "peter",
       "name_ko": "베드로",
       "name_en": "Peter",
@@ -88,18 +162,7 @@
       "is_active_default": true
     },
     {
-      "index": 6,
-      "code": "moses",
-      "name_ko": "모세",
-      "name_en": "Moses",
-      "era": "exodus_wilderness",
-      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Moses, adult biblical man (age 25+), liberator silhouette shaped by wilderness, steady leader's presence, wooden staff, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 16,
-      "is_active_default": true
-    },
-    {
-      "index": 7,
+      "index": 8,
       "code": "jacob",
       "name_ko": "야곱",
       "name_en": "Jacob",
@@ -110,7 +173,7 @@
       "is_active_default": true
     },
     {
-      "index": 8,
+      "index": 9,
       "code": "philip",
       "name_ko": "빌립",
       "name_en": "Philip",
@@ -121,7 +184,7 @@
       "is_active_default": true
     },
     {
-      "index": 9,
+      "index": 10,
       "code": "andrew",
       "name_ko": "안드레",
       "name_en": "Andrew",
@@ -132,7 +195,29 @@
       "is_active_default": true
     },
     {
-      "index": 10,
+      "index": 11,
+      "code": "joshua",
+      "name_ko": "여호수아",
+      "name_en": "Joshua",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Joshua, adult biblical man (age 25+), ceremonial temple-robe silhouette, builder's belt with wooden tools, brave forward-leaning stance, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 11,
+      "is_active_default": true
+    },
+    {
+      "index": 12,
+      "code": "saul",
+      "name_ko": "사울",
+      "name_en": "Saul",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: deep navy blue + muted gold + ivory accents, Saul, adult biblical man (age 25+), first king silhouette, dark navy royal robe with gold trim, simple geometric crown band, tall commanding presence, resolute steady posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
+      "mention_count": 11,
+      "is_active_default": true
+    },
+    {
+      "index": 13,
       "code": "abraham",
       "name_ko": "아브라함",
       "name_en": "Abraham",
@@ -143,7 +228,7 @@
       "is_active_default": true
     },
     {
-      "index": 11,
+      "index": 14,
       "code": "bartholomew",
       "name_ko": "바돌로매",
       "name_en": "Bartholomew",
@@ -154,7 +239,7 @@
       "is_active_default": true
     },
     {
-      "index": 12,
+      "index": 15,
       "code": "james_alphaeus",
       "name_ko": "야고보(알패오의 아들)",
       "name_en": "James Alphaeus",
@@ -165,7 +250,7 @@
       "is_active_default": true
     },
     {
-      "index": 13,
+      "index": 16,
       "code": "james_zebedee",
       "name_ko": "야고보(세베대의 아들)",
       "name_en": "James Zebedee",
@@ -176,7 +261,7 @@
       "is_active_default": true
     },
     {
-      "index": 14,
+      "index": 17,
       "code": "matthew",
       "name_ko": "마태",
       "name_en": "Matthew",
@@ -187,7 +272,7 @@
       "is_active_default": true
     },
     {
-      "index": 15,
+      "index": 18,
       "code": "simon_zealot",
       "name_ko": "시몬(셀롯)",
       "name_en": "Simon Zealot",
@@ -198,7 +283,7 @@
       "is_active_default": true
     },
     {
-      "index": 16,
+      "index": 19,
       "code": "thaddaeus",
       "name_ko": "다대오(유다)",
       "name_en": "Thaddaeus",
@@ -209,7 +294,7 @@
       "is_active_default": true
     },
     {
-      "index": 17,
+      "index": 20,
       "code": "thomas",
       "name_ko": "도마",
       "name_en": "Thomas",
@@ -220,18 +305,29 @@
       "is_active_default": true
     },
     {
-      "index": 18,
-      "code": "david",
-      "name_ko": "다윗",
-      "name_en": "David",
+      "index": 21,
+      "code": "samuel",
+      "name_ko": "사무엘",
+      "name_en": "Samuel",
       "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, David, adult biblical man (age 25+), shepherd-king silhouette, bold agile bearing, sling and small stone pouch, light celebratory posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Samuel, adult biblical man (age 25+), listening prophet silhouette, quiet spiritual alertness, resolute steady posture, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 9,
       "is_active_default": true
     },
     {
-      "index": 19,
+      "index": 22,
+      "code": "aaron",
+      "name_ko": "아론",
+      "name_en": "Aaron",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Aaron, adult biblical man (age 25+), ceremonial leader silhouette, priestly layered sash, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 8,
+      "is_active_default": true
+    },
+    {
+      "index": 23,
       "code": "judas",
       "name_ko": "유다",
       "name_en": "Judas",
@@ -242,7 +338,7 @@
       "is_active_default": true
     },
     {
-      "index": 20,
+      "index": 24,
       "code": "joseph",
       "name_ko": "요셉",
       "name_en": "Joseph",
@@ -253,40 +349,18 @@
       "is_active_default": true
     },
     {
-      "index": 21,
+      "index": 25,
       "code": "pharaoh",
       "name_ko": "바로",
       "name_en": "Pharaoh",
       "era": "exodus_wilderness",
-      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Pharaoh, adult biblical man (age 25+), weathered desert-leader silhouette, wooden staff, resolute steady posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Pharaoh, adult biblical man (age 25+), weathered desert-leader silhouette, wooden staff, open-handed compassionate posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 7,
       "is_active_default": true
     },
     {
-      "index": 22,
-      "code": "samuel",
-      "name_ko": "사무엘",
-      "name_en": "Samuel",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Samuel, adult biblical man (age 25+), listening prophet silhouette, quiet spiritual alertness, resolute steady posture, broad stable build, soft angular oval face, layered hood-like head covering, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 7,
-      "is_active_default": true
-    },
-    {
-      "index": 23,
-      "code": "saul",
-      "name_ko": "사울",
-      "name_en": "Saul",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: deep navy blue + muted gold + ivory accents, Saul, adult biblical man (age 25+), first king silhouette, dark navy royal robe with gold trim, simple geometric crown band, tall commanding presence, resolute steady posture, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "manual",
-      "mention_count": 7,
-      "is_active_default": true
-    },
-    {
-      "index": 24,
+      "index": 26,
       "code": "barnabas",
       "name_ko": "바나바",
       "name_en": "Barnabas",
@@ -297,7 +371,7 @@
       "is_active_default": true
     },
     {
-      "index": 25,
+      "index": 27,
       "code": "sarah",
       "name_ko": "사라",
       "name_en": "Sarah",
@@ -308,7 +382,40 @@
       "is_active_default": true
     },
     {
-      "index": 26,
+      "index": 28,
+      "code": "solomon",
+      "name_ko": "솔로몬",
+      "name_en": "Solomon",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: sky blue + cream + rich gold accents, Solomon, adult biblical man (age 25+), wise royal silhouette, luxurious sky-blue king robe with rich gold trim, geometric crown band, measured judicial calm, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
+      "mention_count": 6,
+      "is_active_default": true
+    },
+    {
+      "index": 29,
+      "code": "elijah",
+      "name_ko": "엘리야",
+      "name_en": "Elijah",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: burnt orange + warm sand + muted brown accents, Elijah, adult biblical man (age 25+), storm-like prophet silhouette, rough orange mantle and weathered prophet robe, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "manual",
+      "mention_count": 5,
+      "is_active_default": true
+    },
+    {
+      "index": 30,
+      "code": "elisha",
+      "name_ko": "엘리사",
+      "name_en": "Elisha",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Elisha, adult biblical man (age 25+), bold warrior silhouette, oil-flask accent, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 5,
+      "is_active_default": true
+    },
+    {
+      "index": 31,
       "code": "mary",
       "name_ko": "마리아",
       "name_en": "Mary",
@@ -319,7 +426,24 @@
       "is_active_default": true
     },
     {
-      "index": 27,
+      "index": 32,
+      "code": "absalom",
+      "name_ko": "압살롬",
+      "name_en": "Absalom",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: deep royal blue + muted crimson + warm gold accents, low saturation, Absalom, adult biblical man (age 25+), royal prince of David's house silhouette, exactly one man only, beautiful but restless king's son presence with proud confidence, long heavy hair as the unmistakable identifying feature, deep royal blue cloak over a muted crimson tunic with restrained gold trim, small princely sash and signet-like belt ornament, no crown, resolute steady posture, tall graceful royal prince build with confident upright posture, striking handsome angular face with proud eyes and refined royal features, very long thick dark hair flowing in layered geometric locks as his main identifying feature, short neat princely beard, carefully groomed, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 4,
+      "is_active_default": true,
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, army, battle scene, rebellion scene, throne room scene, David appearing, king beside him, soldiers, horse, mule, tree, oak tree, hanging hair, hair caught in branches, death scene, corpse, blood, gore, crown, crowned king, modern clothing, fantasy armor, helmet, readable label, readable text, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "david",
+        "solomon",
+        "saul"
+      ]
+    },
+    {
+      "index": 33,
       "code": "daniel",
       "name_ko": "다니엘",
       "name_en": "Daniel",
@@ -331,18 +455,7 @@
       "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character"
     },
     {
-      "index": 28,
-      "code": "elijah",
-      "name_ko": "엘리야",
-      "name_en": "Elijah",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: burnt orange + warm sand + muted brown accents, Elijah, adult biblical man (age 25+), storm-like prophet silhouette, rough orange mantle and weathered prophet robe, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "manual",
-      "mention_count": 4,
-      "is_active_default": true
-    },
-    {
-      "index": 29,
+      "index": 34,
       "code": "esther",
       "name_ko": "에스더",
       "name_en": "Esther",
@@ -353,7 +466,7 @@
       "is_active_default": true
     },
     {
-      "index": 30,
+      "index": 35,
       "code": "isaac",
       "name_ko": "이삭",
       "name_en": "Isaac",
@@ -364,18 +477,36 @@
       "is_active_default": true
     },
     {
-      "index": 31,
-      "code": "joshua",
-      "name_ko": "여호수아",
-      "name_en": "Joshua",
-      "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Joshua, adult biblical man (age 25+), ceremonial temple-robe silhouette, builder's belt with wooden tools, resolute steady posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "index": 36,
+      "code": "isaiah",
+      "name_ko": "이사야",
+      "name_en": "Isaiah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep indigo + ash gray + ember gold accents, low saturation, Isaiah, adult biblical man (age 25+), Jerusalem royal-court prophet silhouette, not a listening child-prophet, deep indigo mantle over an ash-gray robe with parchment cream sash, full-body standing figure with visible robe hem, legs, and sandals, small narrow open blank prophecy scroll held upright and a small ember-coal clasp as Isaiah's calling sign, stern visionary presence, uncovered hair, no hooded head covering, small full-body standing avatar pose with generous white margin, one hand holding a narrow open blank prophecy scroll close to the torso, the other near a small ember-coal clasp at the chest, both sandals visible, eyes lifted with holy awe, tall narrow Jerusalem court-prophet build with solemn upright shoulders, long rectangular face with high cheekbones, deep-set visionary eyes, and a grave brow, uncovered gray-streaked wavy hair swept back, no hood and no wrapped head covering, long split gray beard with angular faceted planes, full robe length visible down to both sandals, lower body and feet clearly visible, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 4,
-      "is_active_default": true
+      "is_active_default": true,
+      "negative_prompt_extra": "Samuel, child Samuel, young Samuel, listening prophet silhouette, tabernacle lamp, priestly child robe, hooded prophet, layered hood-like head covering, wrapped geometric headcloth, soft angular oval face, mustache with a short beard, purple-navy Samuel robe, gentle listening pose, ordinary hooded elderly prophet, duplicate Samuel, copied Samuel avatar, Ezra, scribe-only scholar, king, crown, seraphim, angel, heavenly host, extra character, multiple people, portrait crop, bust shot, half body, waist-up crop, close-up face, cropped robe, cropped feet, missing feet, cropped sandals, giant scroll covering the body, tongs touching lips, burning mouth, injury, gore, readable text"
     },
     {
-      "index": 32,
+      "index": 37,
+      "code": "jeremiah",
+      "name_ko": "예레미야",
+      "name_en": "Jeremiah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: weathered olive + clay brown + muted crimson + parchment cream accents, low saturation, Jeremiah, adult biblical man (age 25+), weeping prophet of Judah silhouette, exactly one man only, sorrowful faithful prophet who warns Jerusalem with grief and courage, weathered olive mantle over clay-brown robe with muted crimson sash, small blank warning scroll and cracked clay jar shard as restrained prophetic signs, tearful eyes and firm mouth, not Isaiah's court-prophet look and not Samuel, front-facing solitary weeping-prophet posture, one hand holding a narrow blank warning scroll near the heart and the other holding a small cracked clay jar shard, sorrowful but unshaken, lean sorrowful Judah prophet build with narrow shoulders but steady upright resolve, long angular face with tearful compassionate eyes, strong nose, and deeply furrowed brow, dark wavy hair with gray streaks tied back by a plain clay-brown headband, not hooded, medium dark beard with gray streaks and weathered faceted strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 4,
+      "is_active_default": true,
+      "negative_prompt_extra": "Isaiah copied avatar, Samuel, child Samuel, Ezekiel, Ezra, Haggai, Zechariah, king, crown, royal robe, priestly breastplate, temple incense scene, heavenly throne vision, seraphim, valley of dry bones, Baruch writing beside him, scribe desk, prison pit, mud pit, scroll burning scene, smashed jar scene, battle scene, siege army, multiple people, crowd, duo, readable label, readable text, portrait crop, bust shot, half body, close-up face, cropped feet, missing sandals, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "isaiah",
+        "ezekiel",
+        "ezra"
+      ]
+    },
+    {
+      "index": 38,
       "code": "mordecai",
       "name_ko": "모르드개",
       "name_en": "Mordecai",
@@ -386,7 +517,7 @@
       "is_active_default": true
     },
     {
-      "index": 33,
+      "index": 39,
       "code": "rachel",
       "name_ko": "라헬",
       "name_en": "Rachel",
@@ -397,7 +528,7 @@
       "is_active_default": true
     },
     {
-      "index": 34,
+      "index": 40,
       "code": "silas",
       "name_ko": "실라",
       "name_en": "Silas",
@@ -408,7 +539,7 @@
       "is_active_default": true
     },
     {
-      "index": 35,
+      "index": 41,
       "code": "timothy",
       "name_ko": "디모데",
       "name_en": "Timothy",
@@ -419,18 +550,7 @@
       "is_active_default": true
     },
     {
-      "index": 36,
-      "code": "aaron",
-      "name_ko": "아론",
-      "name_en": "Aaron",
-      "era": "exodus_wilderness",
-      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Aaron, adult biblical man (age 25+), ceremonial leader silhouette, priestly layered sash, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 3,
-      "is_active_default": true
-    },
-    {
-      "index": 37,
+      "index": 42,
       "code": "adam",
       "name_ko": "아담",
       "name_en": "Adam",
@@ -441,7 +561,7 @@
       "is_active_default": true
     },
     {
-      "index": 38,
+      "index": 43,
       "code": "esau",
       "name_ko": "에서",
       "name_en": "Esau",
@@ -452,7 +572,7 @@
       "is_active_default": true
     },
     {
-      "index": 39,
+      "index": 44,
       "code": "eve",
       "name_ko": "하와",
       "name_en": "Eve",
@@ -463,7 +583,18 @@
       "is_active_default": true
     },
     {
-      "index": 40,
+      "index": 45,
+      "code": "ezra",
+      "name_ko": "에스라",
+      "name_en": "Ezra",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezra, adult biblical man (age 25+), scribe-teacher silhouette, measured studious bearing, rolled scroll accent, light celebratory posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 3,
+      "is_active_default": true
+    },
+    {
+      "index": 46,
       "code": "james",
       "name_ko": "야고보",
       "name_en": "James",
@@ -474,7 +605,35 @@
       "is_active_default": true
     },
     {
-      "index": 41,
+      "index": 47,
+      "code": "jeroboam",
+      "name_ko": "여로보암",
+      "name_en": "Jeroboam",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep forest green + muted bronze + parchment tan accents, low saturation, Jeroboam, adult biblical man (age 25+), ambitious servant of Solomon who will become northern kingdom ruler, deep green official cloak with bronze sash, no crown, small torn cloak piece in one hand as a restrained sign of Ahijah's prophecy, serious alert expression, not a battle scene, front-facing solitary official posture, ambitious and alert, one hand holding a small torn cloak piece as a restrained symbol, strong ambitious royal official build with squared shoulders, sharp angular face with watchful eyes and a determined brow, short dark hair under a narrow northern official headband, trimmed angular beard with crisp faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 3,
+      "is_active_default": true,
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "solomon",
+        "saul",
+        "david"
+      ]
+    },
+    {
+      "index": 48,
+      "code": "jonathan",
+      "name_ko": "요나단",
+      "name_en": "Jonathan",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Jonathan, adult biblical man (age 25+), shepherd-inspired outdoor silhouette, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 3,
+      "is_active_default": true
+    },
+    {
+      "index": 49,
       "code": "joseph_nazareth",
       "name_ko": "요셉(예수의 양아버지)",
       "name_en": "Joseph Nazareth",
@@ -485,7 +644,7 @@
       "is_active_default": true
     },
     {
-      "index": 42,
+      "index": 50,
       "code": "laban",
       "name_ko": "라반",
       "name_en": "Laban",
@@ -496,7 +655,7 @@
       "is_active_default": true
     },
     {
-      "index": 43,
+      "index": 51,
       "code": "leah",
       "name_ko": "레아",
       "name_en": "Leah",
@@ -507,7 +666,7 @@
       "is_active_default": true
     },
     {
-      "index": 44,
+      "index": 52,
       "code": "nehemiah",
       "name_ko": "느헤미야",
       "name_en": "Nehemiah",
@@ -518,7 +677,24 @@
       "is_active_default": true
     },
     {
-      "index": 45,
+      "index": 53,
+      "code": "rehoboam",
+      "name_ko": "르호보암",
+      "name_en": "Rehoboam",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal indigo + warm gold + muted ivory accents, low saturation, Rehoboam, adult biblical man (age 25+), Solomon's royal son and heir silhouette, royal indigo robe with warm gold sash, no oversized crown, young princely presence with cautious confidence, folded mantle detail, not a coronation scene, front-facing solitary young king posture, one hand near a folded royal mantle, cautious and dignified, young royal heir build with polished but slightly uncertain bearing, smooth square princely face with cautious eyes, neatly arranged dark hair under a simple royal headband, short tidy beard, less severe than Jeroboam, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 3,
+      "is_active_default": true,
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "solomon",
+        "david",
+        "saul"
+      ]
+    },
+    {
+      "index": 54,
       "code": "ruth",
       "name_ko": "룻",
       "name_en": "Ruth",
@@ -530,18 +706,24 @@
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, beard, mustache, warrior, armor"
     },
     {
-      "index": 46,
-      "code": "solomon",
-      "name_ko": "솔로몬",
-      "name_en": "Solomon",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: sky blue + cream + rich gold accents, Solomon, adult biblical man (age 25+), wise royal silhouette, luxurious sky-blue king robe with rich gold trim, geometric crown band, measured judicial calm, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "manual",
+      "index": 55,
+      "code": "zerubbabel",
+      "name_ko": "스룹바벨",
+      "name_en": "Zerubbabel",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: deep olive + stone gray + muted gold accents, low saturation, Zerubbabel, adult biblical man (age 25+), post-exile governor of Judah and temple-rebuilding leader, exactly one man only, Davidic-line civic leader without crown or throne, deep olive governor cloak over stone-gray tunic with muted gold sash, small foundation stone and blank rebuilding order scroll as restrained signs, humble determined expression, not a Persian king and not a modern builder, steady rebuilding-leader posture, one hand holding a small foundation stone and the other a blank work order scroll, resolved but humble, mature post-exile Judah governor build with sturdy civic-leader shoulders, rectangular determined face with tired but faithful eyes and a practical brow, short dark hair under a simple Persian-period Judean official headband, trimmed dark beard with clean angular planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
       "mention_count": 3,
-      "is_active_default": true
+      "is_active_default": true,
+      "negative_prompt_extra": "Persian king, Cyrus, Darius, crowned monarch, golden crown, royal throne, Solomon, David, Jesus genealogy scene, newborn, family tree, completed palace scene, modern architect, hard hat, blueprint, multiple people, crowd, construction crew surrounding him, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants",
+      "style_reference_codes": [
+        "ezra",
+        "nehemiah",
+        "isaiah"
+      ]
     },
     {
-      "index": 47,
+      "index": 56,
       "code": "ananias",
       "name_ko": "아나니아",
       "name_en": "Ananias",
@@ -552,7 +734,7 @@
       "is_active_default": true
     },
     {
-      "index": 48,
+      "index": 57,
       "code": "benjamin",
       "name_ko": "베냐민",
       "name_en": "Benjamin",
@@ -563,7 +745,7 @@
       "is_active_default": true
     },
     {
-      "index": 49,
+      "index": 58,
       "code": "boaz",
       "name_ko": "보아스",
       "name_en": "Boaz",
@@ -574,18 +756,7 @@
       "is_active_default": true
     },
     {
-      "index": 50,
-      "code": "elisha",
-      "name_ko": "엘리사",
-      "name_en": "Elisha",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Elisha, adult biblical man (age 25+), ceremonial temple-robe silhouette, open-handed compassionate posture, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 2,
-      "is_active_default": true
-    },
-    {
-      "index": 51,
+      "index": 59,
       "code": "elizabeth",
       "name_ko": "엘리사벳",
       "name_en": "Elizabeth",
@@ -596,18 +767,7 @@
       "is_active_default": true
     },
     {
-      "index": 52,
-      "code": "ezra",
-      "name_ko": "에스라",
-      "name_en": "Ezra",
-      "era": "post_exile_return",
-      "prompt": "COMMON_STYLE, palette: stone gray + sage green + parchment cream accents, Ezra, adult biblical man (age 25+), scribe-teacher silhouette, measured studious bearing, rolled scroll accent, light celebratory posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, mustache with a short beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 2,
-      "is_active_default": true
-    },
-    {
-      "index": 53,
+      "index": 60,
       "code": "gabriel",
       "name_ko": "가브리엘",
       "name_en": "Gabriel",
@@ -619,18 +779,18 @@
       "negative_prompt_extra": "ordinary human priest, ordinary human man, elderly man, beard, warrior, armor, multiple people, crowd, group, duo, pair, two people, extra character, background character, second angel, angel choir, heavenly host, attendants"
     },
     {
-      "index": 54,
+      "index": 61,
       "code": "gideon",
       "name_ko": "기드온",
       "name_en": "Gideon",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Gideon, adult biblical man (age 25+), bold warrior silhouette, oil-flask accent, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Gideon, adult biblical man (age 25+), ceremonial temple-robe silhouette, oil-flask accent, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true
     },
     {
-      "index": 55,
+      "index": 62,
       "code": "hagar",
       "name_ko": "하갈",
       "name_en": "Hagar",
@@ -642,7 +802,24 @@
       "negative_prompt_extra": "elderly woman, old woman, aged matriarch, wealthy noble mistress, jeweled matriarch, cream robe, soft rose robe, beige matriarch clothing, ornate headband, gold earrings, male, man, tall man, bearded man, masculine face, broad male jaw, male headcloth, masculine headdress, beard, mustache, facial hair, child, teenager, girl, baby, son, family scene, large central male figure, extra woman, duplicate woman, row of people, lineup, second character, companion, group, duo, trio, multiple people"
     },
     {
-      "index": 56,
+      "index": 63,
+      "code": "haggai",
+      "name_ko": "학개",
+      "name_en": "Haggai",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: weathered clay + parchment cream + muted crimson accents, low saturation, Haggai, adult biblical man (age 25+), post-exile prophet urging the people to rebuild the temple, exactly one man only, weathered clay prophet mantle over parchment robe with muted crimson sash, small blank oracle scroll and simple walking staff as restrained signs, urgent exhorting expression, distinct from Zechariah and not a priestly incense scene, urgent prophetic posture, one hand raised in exhortation and the other holding a small blank oracle scroll close to the chest, elderly restoration prophet build with compact upright shoulders, weathered oval face with piercing urgent eyes and deep forehead lines, short gray hair under a plain prophet's headcloth, not priestly, full gray beard with blocky faceted strands, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 2,
+      "is_active_default": true,
+      "negative_prompt_extra": "Zechariah, Zechariah prophet, Zechariah father of John, priest Zechariah, Elizabeth, baby John, temple incense scene, mute priest, priestly breastplate, young royal governor, Zerubbabel, construction crowd, multiple people, crowd, duo, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants",
+      "style_reference_codes": [
+        "isaiah",
+        "ezra",
+        "nehemiah"
+      ]
+    },
+    {
+      "index": 64,
       "code": "haman",
       "name_ko": "하만",
       "name_en": "Haman",
@@ -654,7 +831,7 @@
       "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, king, queen, banquet crowd, attendants, throne scene"
     },
     {
-      "index": 57,
+      "index": 65,
       "code": "hezekiah",
       "name_ko": "히스기야",
       "name_en": "Hezekiah",
@@ -665,18 +842,7 @@
       "is_active_default": true
     },
     {
-      "index": 58,
-      "code": "isaiah",
-      "name_ko": "이사야",
-      "name_en": "Isaiah",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Isaiah, adult biblical man (age 25+), ceremonial temple-robe silhouette, rolled scroll or letter satchel, thoughtful calm expression, broad stable build, soft angular oval face, layered hood-like head covering, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 2,
-      "is_active_default": true
-    },
-    {
-      "index": 59,
+      "index": 66,
       "code": "judah",
       "name_ko": "유다",
       "name_en": "Judah",
@@ -687,7 +853,7 @@
       "is_active_default": true
     },
     {
-      "index": 60,
+      "index": 67,
       "code": "lot",
       "name_ko": "롯",
       "name_en": "Lot",
@@ -698,7 +864,7 @@
       "is_active_default": true
     },
     {
-      "index": 61,
+      "index": 68,
       "code": "matthias",
       "name_ko": "맛디아",
       "name_en": "Matthias",
@@ -709,7 +875,7 @@
       "is_active_default": true
     },
     {
-      "index": 62,
+      "index": 69,
       "code": "naomi",
       "name_ko": "나오미",
       "name_en": "Naomi",
@@ -721,7 +887,18 @@
       "negative_prompt_extra": "young woman, youthful face, smooth skin, child, teenager, glamorous beauty, model-like proportions, dark hair without gray, male, man, masculine face, broad male jaw, beard, mustache, second character, multiple people, scene with ruth"
     },
     {
-      "index": 63,
+      "index": 70,
+      "code": "nathan",
+      "name_ko": "나단",
+      "name_en": "Nathan",
+      "era": "monarchy",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Nathan, adult biblical man (age 25+), ceremonial temple-robe silhouette, simple geometric crown band or royal sash, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 2,
+      "is_active_default": true
+    },
+    {
+      "index": 71,
       "code": "noah",
       "name_ko": "노아",
       "name_en": "Noah",
@@ -732,7 +909,7 @@
       "is_active_default": true
     },
     {
-      "index": 64,
+      "index": 72,
       "code": "rebekah",
       "name_ko": "리브가",
       "name_en": "Rebekah",
@@ -743,7 +920,52 @@
       "is_active_default": true
     },
     {
-      "index": 65,
+      "index": 73,
+      "code": "zechariah_prophet",
+      "name_ko": "스가랴(선지자)",
+      "name_en": "Zechariah Prophet",
+      "era": "post_exile_return",
+      "prompt": "COMMON_STYLE, palette: muted indigo + sage green + parchment cream accents, low saturation, Zechariah Prophet, adult biblical man (age 25+), post-exile visionary prophet son of Berechiah, exactly one man only, clearly distinct from Zechariah father of John the Baptist, muted indigo mantle over sage-green robe with parchment sash, small measuring cord and blank vision scroll as restrained signs of restoration visions, hopeful watchful expression, not a temple incense scene and not a birth-announcement scene, visionary prophetic posture, one hand holding a small measuring cord and the other a blank vision scroll, eyes lifted with hope, young adult visionary restoration prophet build, lean and alert, long narrow face with bright watchful eyes and contemplative brow, medium dark hair under a simple muted indigo head wrap, not priestly, short neat dark beard with angular faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 2,
+      "is_active_default": true,
+      "negative_prompt_extra": "Zechariah father of John the Baptist, priest Zechariah, elderly priest, Elizabeth, baby John, temple incense, angel Gabriel announcing birth, mute priest scene, Haggai, Zerubbabel, construction scene, crown, king, multiple people, crowd, duo, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants",
+      "style_reference_codes": [
+        "isaiah",
+        "ezra",
+        "nehemiah"
+      ]
+    },
+    {
+      "index": 74,
+      "code": "zedekiah",
+      "name_ko": "시드기야",
+      "name_en": "Zedekiah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Zedekiah, adult biblical man (age 25+), bold warrior silhouette, builder's belt with wooden tools, brave forward-leaning stance, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 2,
+      "is_active_default": true
+    },
+    {
+      "index": 75,
+      "code": "abdon",
+      "name_ko": "압돈",
+      "name_en": "Abdon",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Abdon, adult biblical man (age 25+), Pirathon elder judge silhouette with established household dignity, honorable settled leader presence, wealthy but humble, olive robe with muted gold-clay sash and simple sandals, carved walking staff with a small donkey medallion symbol, honorable elder judge posture holding a carved walking staff with a small donkey medallion, well-established Pirathon elder build with dignified stable shoulders, broad square face with generous but serious eyes, medium wavy gray-streaked hair under a simple gold-clay head wrap, full blocky gray-streaked beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, many sons, many grandsons, crowd, group, donkey herd, many donkeys, city labels"
+    },
+    {
+      "index": 76,
       "code": "abel",
       "name_ko": "아벨",
       "name_en": "Abel",
@@ -754,19 +976,19 @@
       "is_active_default": false
     },
     {
-      "index": 66,
+      "index": 77,
       "code": "achan",
       "name_ko": "아간",
       "name_en": "Achan",
-      "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Achan, adult biblical man (age 25+), guilty Israelite soldier silhouette caught in shame, plain dusty Israelite tunic and simple leather belt, no special armor, one hand clutching a hidden cloth bundle (stolen spoils) close to the chest, furtive uneasy stance with downcast nervous eyes, ordinary plain look, not heroic, shrinking nervous posture with shoulders hunched, guilty downcast expression, lean ordinary build, no commanding presence, narrow uneasy face with sunken anxious eyes, tangled medium-length dark hair with plain look, short scruffy uneven beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Achan, adult biblical man (age 25+), guilty Israelite soldier silhouette caught in shame, plain dusty Israelite tunic and simple leather belt, no special armor, one hand clutching a hidden cloth bundle (stolen spoils) close to the chest, furtive uneasy stance with downcast nervous eyes, ordinary plain look, not heroic, shrinking nervous posture with shoulders hunched, guilty downcast expression, lean ordinary build, no commanding presence, narrow uneasy face with sunken anxious eyes, tangled medium-length dark hair with plain look, short scruffy uneven beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": false,
       "negative_prompt_extra": "heroic posture, proud stance, noble bearing, kingly presence, regal aura, shining bright armor, polished cuirass, golden crown, royal robe, royal sash, elegant features, glamorous beautiful face, model-like proportions, idealized hero, warrior champion silhouette, victorious pose, raised sword pose, commander baton"
     },
     {
-      "index": 67,
+      "index": 78,
       "code": "agrippa",
       "name_ko": "아그립바",
       "name_en": "Agrippa",
@@ -777,7 +999,41 @@
       "is_active_default": false
     },
     {
-      "index": 68,
+      "index": 79,
+      "code": "ahab",
+      "name_ko": "아합",
+      "name_en": "Ahab",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, low saturation, Ahab, adult biblical man (age 25+), northern kingdom king of Samaria silhouette, exactly one man only, proud hardened ruler associated with Baal worship, royal purple robe with navy mantle and muted gold headband, small dark idol-shaped palace ornament kept secondary as a sign of apostasy, no sling, no stone pouch, no shepherd accessory, proud hardened kingly posture, chin lifted with stubborn defiance, middle-aged northern king build with squared royal shoulders, hard angular face with proud narrowed eyes and a stubborn brow, dark hair under an ornate but restrained northern royal headband, short dark beard with sharply faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, David, shepherd, sling, prophet Elijah, Mount Carmel scene, Jezebel, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "jeroboam",
+        "ahab",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 80,
+      "code": "ahaz",
+      "name_ko": "아하스",
+      "name_en": "Ahaz",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep royal indigo + muted purple + warm gold trim + ash gray accent, low saturation, Ahaz, adult biblical man (age 25+), Ahaz king of Judah, exactly one man only, unmistakable Judah king silhouette, royal first and fearful second, deep indigo royal robe with thick gold collar, gold belt, and heavy purple mantle, small angular gold crown diadem and short gold scepter as clear royal identifiers, hesitant worried expression during the Aram and Ephraim threat, not faithful Hezekiah and not northern king Ahab, centered full-body figure inside a square 1:1 avatar canvas with balanced white margins, front-facing solitary royal king posture, one hand holding a short gold scepter close to the body and the other resting on a heavy royal mantle, visibly anxious but unmistakably a king, young-to-middle-aged Judah king build with broad royal shoulders and upright palace bearing, anxious but kingly angular face with wary eyes, strong brow, and controlled royal dignity, short dark hair beneath a small angular gold Judah crown diadem, clearly a king not an official, trimmed dark beard with crisp regal faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "negative_prompt_extra": "Ahab, northern king of Samaria, Hoshea king, Hezekiah, Josiah, faithful reform king, prophet Isaiah, court prophet, priest, Assyrian commander, Aram king, Pekah, Rezin, battle scene, siege army, baby Immanuel scene, woman and child, multiple people, crowd, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, extra-wide side margins, tiny distant character, off-center character, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "rehoboam",
+        "hezekiah",
+        "josiah"
+      ]
+    },
+    {
+      "index": 81,
       "code": "aquila",
       "name_ko": "아굴라",
       "name_en": "Aquila",
@@ -788,7 +1044,7 @@
       "is_active_default": false
     },
     {
-      "index": 69,
+      "index": 82,
       "code": "asher",
       "name_ko": "아셀",
       "name_en": "Asher",
@@ -799,7 +1055,7 @@
       "is_active_default": false
     },
     {
-      "index": 70,
+      "index": 83,
       "code": "cain",
       "name_ko": "가인",
       "name_en": "Cain",
@@ -811,7 +1067,23 @@
       "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, three people, extra character, background character, twin, mirrored figure, second character, scene with brother, scene with sibling, brother nearby, abel, scene with parents, family scene, mother, father, child, shepherd staff, sheep, lamb, flock"
     },
     {
-      "index": 71,
+      "index": 84,
+      "code": "caleb",
+      "name_ko": "갈렙",
+      "name_en": "Caleb",
+      "era": "exodus_wilderness",
+      "prompt": "COMMON_STYLE, palette: muted teal + parchment cream + warm clay brown accents, low saturation, Caleb, adult biblical man (age 25+), faithful wilderness scout silhouette in the same soft flat vector style as Moses and Joshua, wholehearted courageous witness who trusts God when others are afraid, muted robe and sash with gentle paper-cut facets, no visible ink outline, small compact purple grape cluster kept secondary as a promised-land sign, single front-facing standing pose, shoulders squared and chest lifted, steady faithful expression, one hand held near the heart in conviction, the other hand holding a small grape cluster close to the body, mature broad-shouldered traveler build matching the existing Joshua avatar proportions, long wedge-shaped face with firm brow, clear unwavering eyes, and simple small features, medium wavy dark hair in angular chunks with a narrow muted headband, short angular beard with soft faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": false,
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, front view and rear view, back view, rear view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, vertical center seam, mirrored figure, back-facing figure, rear-facing figure, extra full body view, shoulder pole, long pole across shoulders, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, black line art around clothing, high contrast outline, timid expression, sad expression, blank passive face, weak posture, drooping shoulders, limp arms, hesitant pose, gardener, farmer holding produce, cute soft mascot, childlike innocence, angry warrior, aggressive fighter, armor",
+      "style_reference_codes": [
+        "moses",
+        "joshua"
+      ]
+    },
+    {
+      "index": 85,
       "code": "cornelius",
       "name_ko": "고넬료",
       "name_en": "Cornelius",
@@ -822,7 +1094,24 @@
       "is_active_default": false
     },
     {
-      "index": 72,
+      "index": 86,
+      "code": "deborah",
+      "name_ko": "드보라",
+      "name_en": "Deborah",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + warm parchment + muted clay rose accents, Deborah, adult biblical woman (age 25+), prophetess and judge of Israel silhouette, distinctly female, wise counselor presence with calm spiritual authority, layered olive veil and modest long robe with parchment accents, small scroll and subtle palm-frond brooch as Deborah's palm sign, wise prophetic judge posture, one hand lifted gently as if giving counsel and the other holding a small scroll, dignified mature feminine judge build with upright composed shoulders, wise angular oval face with clear discerning eyes and gentle strength, dark hair fully covered by a layered olive head veil, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "ruth",
+        "esther",
+        "mary"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, armor, soldier, sword, second woman, Barak, palm tree scene"
+    },
+    {
+      "index": 87,
       "code": "delilah",
       "name_ko": "들릴라",
       "name_en": "Delilah",
@@ -830,11 +1119,43 @@
       "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Delilah, adult biblical woman (age 25+), Philistine seductress silhouette from the era of judges, distinctly female, richly draped long dress with decorative jeweled neckline and waist sash, subtle gold ornaments and bangles, distinctly Philistine cultural look, alluring captivating presence, distinctly feminine, alluring graceful posture with subtle sly smile, charming and confident, slender feminine build with soft graceful proportions, soft elegant oval face with refined alluring feminine features, long flowing wavy dark hair partly draped over one shoulder, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, samson, second character, multiple people, scene with samson"
     },
     {
-      "index": 73,
+      "index": 88,
+      "code": "ehud",
+      "name_ko": "에훗",
+      "name_en": "Ehud",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: deep olive + desert tan + muted bronze accents, Ehud, adult biblical man (age 25+), left-handed Benjaminite judge silhouette, exactly one man only, compact agile presence with quiet courage, not a story scene, muted travel cloak and one small sealed message pouch at the belt, left hand visibly emphasized near a small sheathed dagger, plain white background with no palace, no king, no guards, no companions, absolute solo avatar pose, front-facing and centered, left hand clearly emphasized near a small sheathed dagger at the waist, right arm relaxed, no one standing beside him, compact agile Benjaminite judge build with a solitary balanced stance, diamond-shaped face with alert narrow eyes and controlled expression, closely cropped faceted dark hair under a small travel headcloth, short neat beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, stabbing scene, king on throne, Eglon, blood, gore, violent wound, right-handed sword pose, two daggers, extra king, palace scene, reference character appearing, Gideon appearing, Joshua appearing, Samson appearing, copied reference avatar, duplicate Ehud, cloned figure, companion, attendant, guard, servant, messenger partner, second man, third person, crowd, group, two people, three people, multiple people"
+    },
+    {
+      "index": 89,
+      "code": "elon",
+      "name_ko": "엘론",
+      "name_en": "Elon",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Elon, adult biblical man (age 25+), biblical judge of Zebulun silhouette, ancient Israelite elder, quiet steady presence, not modern and not royal, blue-green Zebulun-toned cloak over simple earth robe, plain tribal staff as a restrained judge symbol, quiet faithful judge posture holding a simple tribal staff, calm and grounded, calm Zebulun elder-judge build with tall narrow proportions, rectangular face with quiet thoughtful eyes, straight shoulder-length hair under a blue-green tribal headband, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, modern businessman, suit, tie, technology, rocket, billionaire, celebrity portrait, modern hair style, modern city background"
+    },
+    {
+      "index": 90,
       "code": "ezekiel",
       "name_ko": "에스겔",
       "name_en": "Ezekiel",
@@ -845,7 +1166,7 @@
       "is_active_default": false
     },
     {
-      "index": 74,
+      "index": 91,
       "code": "festus",
       "name_ko": "베스도",
       "name_en": "Festus",
@@ -856,7 +1177,7 @@
       "is_active_default": false
     },
     {
-      "index": 75,
+      "index": 92,
       "code": "gad",
       "name_ko": "갓",
       "name_en": "Gad",
@@ -867,7 +1188,7 @@
       "is_active_default": false
     },
     {
-      "index": 76,
+      "index": 93,
       "code": "goliath",
       "name_ko": "골리앗",
       "name_en": "Goliath",
@@ -879,7 +1200,7 @@
       "negative_prompt_extra": "kind smile, friendly expression, gentle posture, peaceful aura, warm welcoming gesture, slim build, delicate features, child, teenager, slim shoulders, small stature, unarmed, empty hands"
     },
     {
-      "index": 77,
+      "index": 94,
       "code": "herod",
       "name_ko": "헤롯",
       "name_en": "Herod",
@@ -890,7 +1211,41 @@
       "is_active_default": false
     },
     {
-      "index": 78,
+      "index": 95,
+      "code": "hoshea_king",
+      "name_ko": "호세아 왕",
+      "name_en": "Hoshea King",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: storm blue + iron gray + muted bronze accents, low saturation, Hoshea King, adult biblical man (age 25+), last king of Northern Israel in Samaria, exactly one man only, somber fallen-king presence, distinct from Hosea the prophet, storm-blue royal robe with iron-gray mantle and muted bronze headband, small blank broken tribute tablet as a sign of failed Assyrian tribute, not a prophecy scroll, anxious guarded expression, not a preacher and not an Assyrian captor, somber final-king posture, shoulders tense, one hand holding a small blank broken tribute tablet close to the chest, middle-aged final northern Israel king build with tense royal shoulders, long narrow weary face with worried eyes and a guarded anxious brow, short dark hair under a simple bronze Samaria royal headband, trimmed dark beard with slightly uneven faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "negative_prompt_extra": "Hosea the prophet, prophet Hosea, minor prophet, biblical prophet, prophet robe, prophecy scroll, large scroll, preaching pose, Gomer, prophet family scene, scribe, priest, Samuel, Isaiah, Jeremiah, elderly prophet silhouette, Assyrian king, Assyrian commander, captor, prison scene, jail bars, chains, battle scene, siege scene, crowd, multiple people, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 96,
+      "code": "ibzan",
+      "name_ko": "입산",
+      "name_en": "Ibzan",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Ibzan, adult biblical man (age 25+), Bethlehem elder judge silhouette, peaceful clan-leader presence with generous hospitality, soft clay and olive layered robe with woven tassel details, small ceremonial staff suggesting household leadership, warm elder judge posture with a small ceremonial staff and woven tassels, peaceful Bethlehem elder build with soft broad shoulders, soft angular oval face with warm clan-leader expression, neatly wrapped muted headcloth with a small woven tassel, trimmed gray-streaked beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, many children, sons and daughters, wedding crowd, banquet scene, bride, groom"
+    },
+    {
+      "index": 97,
       "code": "ishmael",
       "name_ko": "이스마엘",
       "name_en": "Ishmael",
@@ -901,7 +1256,7 @@
       "is_active_default": false
     },
     {
-      "index": 79,
+      "index": 98,
       "code": "issachar",
       "name_ko": "잇사갈",
       "name_en": "Issachar",
@@ -912,7 +1267,24 @@
       "is_active_default": false
     },
     {
-      "index": 80,
+      "index": 99,
+      "code": "jair",
+      "name_ko": "야일",
+      "name_en": "Jair",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Jair, adult biblical man (age 25+), Gilead elder judge silhouette with settled clan authority, prosperous but humble presence, not royal, earth-toned robe with a muted gold sash, rolled map with simple dot marks symbolizing his towns, dignified Gilead elder posture holding a small rolled map with simple dot marks, prosperous but humble Gilead elder build with broad stable posture, rounded hexagonal face with kind authoritative eyes, short dark hair under a simple clay-brown head wrap, full neatly shaped beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, thirty sons, many sons, crowd, group, donkey herd, many donkeys, city labels"
+    },
+    {
+      "index": 100,
       "code": "jairus",
       "name_ko": "야이로",
       "name_en": "Jairus",
@@ -923,7 +1295,41 @@
       "is_active_default": false
     },
     {
-      "index": 81,
+      "index": 101,
+      "code": "jehoiakim",
+      "name_ko": "여호야김",
+      "name_en": "Jehoiakim",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep crimson + royal indigo + dark gold trim + ash gray accents, low saturation, Jehoiakim, adult biblical man (age 25+), Jehoiakim king of Judah, exactly one man only, unmistakable proud Judah king silhouette, royal and defiant, deep crimson royal robe under royal indigo mantle with thick dark gold collar and belt, small angular gold crown diadem with red jewel and short gold scepter as clear royal identifiers, sealed royal decree scroll in one hand as a restrained sign of rejecting prophetic warning, not an active burning scene, hard proud expression, not faithful Josiah, not captive Jehoiachin, and not blind Zedekiah, front-facing solitary defiant king posture, chin lifted, one hand holding a short gold scepter and the other gripping a sealed royal decree scroll, proud and resistant to prophetic warning, middle-aged Judah king build with broad royal shoulders and heavy palace bearing, hard angular royal face with narrowed proud eyes, sharp nose, and stubborn brow, short dark hair beneath an angular gold Judah crown diadem with a small red jewel, trimmed dark beard with crisp severe faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "negative_prompt_extra": "Jehoiachin, Jehoahaz, Zedekiah, Josiah, righteous reform king, humble faithful king, Jeremiah, Baruch, prophet robe, scribe desk, scroll burning scene, open flame, Babylonian king, Nebuchadnezzar, Pharaoh Necho, Egyptian crown, captive prisoner, chains, battle scene, siege army, multiple people, crowd, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "josiah",
+        "ahaz",
+        "zedekiah"
+      ]
+    },
+    {
+      "index": 102,
+      "code": "jephthah",
+      "name_ko": "입다",
+      "name_en": "Jephthah",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Jephthah, adult biblical man (age 25+), mighty warrior judge of Gilead silhouette, weathered outcast leader presence with a serious faithful burden, rough travel cloak over plain judge-era tunic, empty peaceful hands, strength shown through posture not weapons, resolute but sorrow-aware posture, weathered cloak draped over one shoulder, hands kept peaceful, weathered outcast-warrior build with lean powerful shoulders, long wedge-shaped face with sorrowful stern eyes and scarred-looking facets, untidy shoulder-length dark hair in rough polygon strands, short rugged beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, daughter, child, young girl, sacrifice scene, fire altar, tragic family scene, blood, gore, crowd, extra soldiers"
+    },
+    {
+      "index": 103,
       "code": "jesse",
       "name_ko": "이새",
       "name_en": "Jesse",
@@ -934,7 +1340,7 @@
       "is_active_default": false
     },
     {
-      "index": 82,
+      "index": 104,
       "code": "john_mark",
       "name_ko": "마가 요한",
       "name_en": "John Mark",
@@ -945,7 +1351,7 @@
       "is_active_default": false
     },
     {
-      "index": 83,
+      "index": 105,
       "code": "john_the_baptist",
       "name_ko": "세례 요한",
       "name_en": "John The Baptist",
@@ -956,29 +1362,18 @@
       "is_active_default": false
     },
     {
-      "index": 84,
-      "code": "jonathan",
-      "name_ko": "요나단",
-      "name_en": "Jonathan",
-      "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Jonathan, adult biblical man (age 25+), rugged tribal-era silhouette, resolute steady posture, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 1,
-      "is_active_default": false
-    },
-    {
-      "index": 85,
+      "index": 106,
       "code": "josiah",
       "name_ko": "요시야",
       "name_en": "Josiah",
-      "era": "monarchy",
+      "era": "divided_kingdom",
       "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Josiah, adult biblical man (age 25+), young righteous king of Judah silhouette, devout reformer, geometric royal crown band on the head and embroidered royal robe with sash, rolled scroll of the Law held close to the chest with one hand, earnest reverent royal presence, earnest determined royal posture, scroll held to the heart, devout reformer's bearing, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
-      "index": 86,
+      "index": 107,
       "code": "lazarus",
       "name_ko": "나사로",
       "name_en": "Lazarus",
@@ -989,7 +1384,7 @@
       "is_active_default": false
     },
     {
-      "index": 87,
+      "index": 108,
       "code": "levi",
       "name_ko": "레위",
       "name_en": "Levi",
@@ -1000,7 +1395,7 @@
       "is_active_default": false
     },
     {
-      "index": 88,
+      "index": 109,
       "code": "lydia",
       "name_ko": "루디아",
       "name_en": "Lydia",
@@ -1012,7 +1407,7 @@
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, slave, prisoner, jailer, second character, multiple people"
     },
     {
-      "index": 89,
+      "index": 110,
       "code": "martha",
       "name_ko": "마르다",
       "name_en": "Martha",
@@ -1023,7 +1418,7 @@
       "is_active_default": false
     },
     {
-      "index": 90,
+      "index": 111,
       "code": "mary_magdalene",
       "name_ko": "막달라 마리아",
       "name_en": "Mary Magdalene",
@@ -1035,18 +1430,19 @@
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, disciple man, peter, paul, second character, multiple people, extra hands, three hands, multiple hands, extra arms, third arm, deformed hands, fused fingers, extra fingers, too many fingers, oil flask, alabaster jar, perfume bottle, ointment container, anointing vessel"
     },
     {
-      "index": 91,
+      "index": 112,
       "code": "naaman",
       "name_ko": "나아만",
       "name_en": "Naaman",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Naaman, adult biblical man (age 25+), Aramean (Syrian) army commander silhouette from the divided-kingdom era, polished bronze scale armor cuirass over a tunic, decorative shoulder plates, richly trimmed military cloak fastened at one shoulder, short bronze sword at the belt and a small commander's baton in one hand, proud authoritative officer presence, distinctly a general not a priest, proud upright commander's posture, chin held with disciplined dignity, tall straight-backed commander build with broad shoulders, sharp angular face with strong straight nose and trimmed jawline, short well-groomed dark hair and trimmed beard befitting an officer, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Naaman, adult biblical man (age 25+), Aramean Syrian army commander serving the king of Aram, exactly one man only, polished bronze scale armor cuirass over a deep red military tunic, decorative shoulder plates, richly trimmed dark crimson commander cloak fastened at one shoulder, bronze helmet or commander headband, short bronze sword at the belt, small command baton in one hand and clean linen wrap on the other forearm, visible but subtle leprosy sign: pale skin patches on hand and cheek, not grotesque, authoritative battlefield officer presence, distinctly a foreign general not an Israelite prophet, disciplined but burdened commander's posture, proud yet visibly troubled by illness, tall broad-shouldered Aramean military commander build, sharp angular officer face with strong straight nose and stern focused eyes, short well-groomed dark hair under a bronze Aramean commander headband, trimmed dark beard befitting a high-ranking officer, subtle pale leprosy patches on one cheek and one visible hand, clean and non-gory, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, hooded prophet, layered prophet head covering, Samuel, elderly prophet, listening prophet silhouette, shepherd, sling, stone pouch, scroll, staff, plain Hebrew robe, soft spiritual teacher pose, severe disease horror, open sores, bleeding, gore, disfigured face, rotting skin, medical close-up, suffering crowd, second character, multiple people"
     },
     {
-      "index": 92,
+      "index": 113,
       "code": "naphtali",
       "name_ko": "납달리",
       "name_en": "Naphtali",
@@ -1057,18 +1453,24 @@
       "is_active_default": false
     },
     {
-      "index": 93,
-      "code": "nathan",
-      "name_ko": "나단",
-      "name_en": "Nathan",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Nathan, adult biblical man (age 25+), regal angular silhouette, simple geometric crown band or royal sash, thoughtful calm expression, square-shouldered build, rectangular face with flat cheek planes, wrapped geometric headcloth framing the face, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "index": 114,
+      "code": "othniel",
+      "name_ko": "옷니엘",
+      "name_en": "Othniel",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Othniel, adult biblical man (age 25+), first judge of Israel silhouette from Judah, faithful deliverer and steady tribal leader presence, plain olive judge cloak over a clay-brown tunic, short bronze sword kept sheathed as a symbol of deliverance, not battle, calm courageous judge posture, one hand resting near a sheathed short sword, not fighting, steady mature tribal commander build with broad but compact shoulders, square Judahite face with firm brow and calm courageous eyes, short blocky dark curls held by a simple muted cloth band, trimmed angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, king, crown, royal throne, extra army, battle scene, blood, gore"
     },
     {
-      "index": 94,
+      "index": 115,
       "code": "pilate",
       "name_ko": "빌라도",
       "name_en": "Pilate",
@@ -1079,7 +1481,7 @@
       "is_active_default": false
     },
     {
-      "index": 95,
+      "index": 116,
       "code": "potiphar",
       "name_ko": "보디발",
       "name_en": "Potiphar",
@@ -1091,7 +1493,7 @@
       "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, Hebrew patriarch, Hebrew nomad, desert traveler robe, full-length flowing robe, long beard, wrapped turban, long staff, sandals only outfit, biblical patriarch costume"
     },
     {
-      "index": 96,
+      "index": 117,
       "code": "reuben",
       "name_ko": "르우벤",
       "name_en": "Reuben",
@@ -1102,18 +1504,23 @@
       "is_active_default": false
     },
     {
-      "index": 97,
+      "index": 118,
       "code": "samson",
       "name_ko": "삼손",
       "name_en": "Samson",
       "era": "judges",
-      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Samson, adult biblical man (age 25+), rugged tribal-era silhouette, thoughtful calm expression, lean traveler build, long wedge-shaped face, medium wavy hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt": "COMMON_STYLE, palette: deep olive + clay brown + muted gold accents, Samson, adult biblical man (age 25+), Nazirite judge silhouette from the era of judges, long uncut hair as the main identifying feature, powerful restrained strength, not a fantasy warrior, simple rugged tunic with bare forearms and muted judge-era sash, strong but prayerful standing posture, hands near the chest in restrained strength, not attacking, powerful Nazirite judge build, muscular but still matching the cast's compact proportions, strong angular face with heavy brow and intense prayerful eyes, long uncut dark hair falling in heavy geometric locks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, Delilah, lion, temple scene, pillars falling, tied prisoner, blindfold, blood, gore, multiple people, battle scene"
     },
     {
-      "index": 98,
+      "index": 119,
       "code": "sapphira",
       "name_ko": "삽비라",
       "name_en": "Sapphira",
@@ -1125,7 +1532,24 @@
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, soldier"
     },
     {
-      "index": 99,
+      "index": 120,
+      "code": "shamgar",
+      "name_ko": "삼갈",
+      "name_en": "Shamgar",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Shamgar, adult biblical man (age 25+), rugged farmer-judge silhouette from the era of judges, work-worn defender presence without royal clothing, plain short tunic with leather work belt, long wooden oxgoad held upright as his distinctive accessory, steady farmer-defender posture holding a long wooden oxgoad vertically like a staff, rugged farmer-judge build with strong work-worn forearms, hexagonal weathered face with practical steady eyes, rough medium-length dark hair in angular chunks, full blocky beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, battle scene, dead bodies, ox, cattle herd, blood, gore"
+    },
+    {
+      "index": 121,
       "code": "simeon",
       "name_ko": "시므온",
       "name_en": "Simeon",
@@ -1136,7 +1560,7 @@
       "is_active_default": false
     },
     {
-      "index": 100,
+      "index": 122,
       "code": "stephen",
       "name_ko": "스데반",
       "name_en": "Stephen",
@@ -1147,7 +1571,24 @@
       "is_active_default": false
     },
     {
-      "index": 101,
+      "index": 123,
+      "code": "tola",
+      "name_ko": "돌라",
+      "name_en": "Tola",
+      "era": "judges",
+      "prompt": "COMMON_STYLE, palette: olive green + clay brown + muted gold accents, Tola, adult biblical man (age 25+), quiet judge of Israel from Issachar silhouette, modest faithful elder presence rather than warrior champion, simple olive-brown robe with an understated tribal sash, plain staff and small folded judgment cloth, no insect imagery, modest settled judge posture holding a simple staff close to the body, quiet sturdy elder-judge build with modest compact proportions, soft rectangular face with thoughtful settled eyes, wrapped geometric headcloth framing the face, short gray-streaked angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 1,
+      "is_active_default": true,
+      "style_reference_codes": [
+        "gideon",
+        "joshua",
+        "samson"
+      ],
+      "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text, worm, insect, bug, beetle, red worm, crawling creature, childlike mascot"
+    },
+    {
+      "index": 124,
       "code": "zebulun",
       "name_ko": "스불론",
       "name_en": "Zebulun",
@@ -1158,7 +1599,7 @@
       "is_active_default": false
     },
     {
-      "index": 102,
+      "index": 125,
       "code": "zechariah",
       "name_ko": "사가랴",
       "name_en": "Zechariah",
@@ -1169,15 +1610,531 @@
       "is_active_default": false
     },
     {
-      "index": 103,
-      "code": "zedekiah",
-      "name_ko": "시드기야",
-      "name_en": "Zedekiah",
-      "era": "monarchy",
-      "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Zedekiah, adult biblical man (age 25+), road-worn traveler silhouette, builder's belt with wooden tools, resolute steady posture, compact sturdy build, hexagonal face with strong cheek angles, straight shoulder-length hair with polygon strands, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "index": 126,
+      "code": "jonah",
+      "name_ko": "요나",
+      "name_en": "Jonah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: sea teal + storm gray + parchment cream accents, low saturation, Jonah, adult biblical man (age 25+), reluctant prophet son of Amittai sent toward Nineveh, exactly one man only, clearly distinct from Jonathan the royal prince and from elderly court prophets, sea-teal travel cloak over storm-gray tunic with parchment sash, small blank message scroll and tiny fish-shaped travel token as restrained signs, uneasy called-by-God expression, not a ship scene and not inside a fish, reluctant but called prophet posture, shoulders slightly turned as if resisting the journey, one hand holding a small blank message scroll close to the chest and the other near a tiny fish-shaped travel token, weathered northern prophet build with compact traveler proportions, rectangular anxious face with wary eyes, furrowed brow, and a reluctant expression, short dark hair partly visible under a simple sea-teal travel headwrap, short uneven dark beard with angular faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
-      "mention_count": 1,
-      "is_active_default": false
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "Jonathan, Saul's son, prince Jonathan, David's friend, royal prince, king's son, handsome warrior prince, bow and arrows, palace scene, friendship covenant scene, multiple people, sailors, ship crew, Nineveh crowd, city crowd, giant fish swallowing scene, inside fish belly, ocean storm scene, ship deck scene, elderly prophet, Samuel, Isaiah, copied prophet avatar, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "elijah",
+        "elisha",
+        "isaiah"
+      ]
+    },
+    {
+      "index": 127,
+      "code": "nadab",
+      "name_ko": "나답",
+      "name_en": "Nadab, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark pine green + dull bronze + pale linen accents, low saturation, Nadab, King of Israel, adult biblical man (age 25+), short-lived northern Israel king, son of Jeroboam, exactly one man only, dark pine royal robe with dull bronze collar and a slightly crooked narrow crown band, small cracked calf-shaped dynasty seal pinned high on the chest as a restrained sign of Jeroboam's fragile house, fearful proud expression with tightened mouth, not smiling, not a prophet and not a battle scene, tense young kingly posture, one hand guarding the cracked chest seal near the collar, slim young northern king build with raised narrow shoulders, narrow triangular face with high cheekbones, worried ambitious eyes, and uneven arched brows, short dark hair under a crooked bronze Samaria royal headband, thin mustache and small pointed dark beard, clearly different from the fuller-bearded kings, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jeroboam, prophet, priest, battlefield, Baasha attacking, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "jeroboam",
+        "ahab",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 128,
+      "code": "baasha",
+      "name_ko": "바아사",
+      "name_en": "Baasha, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark olive + weathered bronze + clay red accents, low saturation, Baasha, King of Israel, adult biblical man (age 25+), northern Israel usurper king silhouette, exactly one man only, weathered olive royal cloak over a clay-red tunic with a heavy bronze shoulder clasp, seized royal seal set into the shoulder clasp and a short dagger hilt barely visible near the upper sash as restrained signs of a violent rise, cold ruthless expression with tight lips, not smiling, no active violence, stern usurper-king posture with squared shoulders, chin pushed forward, and guarded eyes, stocky middle-aged northern king build with broad compact shoulders and thick neck, hard rectangular face with broad nose, watchful deep-set eyes, and a severe heavy brow, close-cropped dark hair beneath a rough bronze crown band, dense square dark beard trimmed close to the jaw, very different from Nadab's pointed beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Nadab, assassination scene, blood, gore, corpse, battlefield crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 129,
+      "code": "elah_king",
+      "name_ko": "엘라",
+      "name_en": "Elah, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: muted wine red + dull bronze + dark olive accents, low saturation, Elah, King of Israel, adult biblical man (age 25+), weak northern Israel palace king silhouette, exactly one man only, wine-red royal robe with dull bronze sash and a small Samaria crown band, small empty cup held low as a restrained sign of careless palace feasting, uneasy distracted expression, not a banquet scene, slack but royal posture, one hand lowered with an empty cup and worried eyes, soft middle-aged king build with slightly rounded shoulders, oval face with tired distracted eyes and a weak brow, dark hair under a narrow bronze royal headband, short soft beard with muted faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, drunken party, feast crowd, Zimri attacking, blood, gore, corpse, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 130,
+      "code": "zimri",
+      "name_ko": "시므리",
+      "name_en": "Zimri, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: smoke gray + dark crimson + muted bronze accents, low saturation, Zimri, King of Israel, adult biblical man (age 25+), seven-day northern Israel usurper king silhouette, exactly one man only, smoke-gray mantle over dark crimson tunic with a narrow bronze commander collar, broken palace key hanging high at the chest as a restrained sign of his brief seizure of power, cornered sly expression with a tight uneven smirk, no fire scene, cornered defiant posture, shoulders pulled inward, fingers touching the broken key at the chest, wiry compact military-usurper build with tense narrow shoulders, gaunt angular face with darting narrow eyes, asymmetrical brow, and sharp cheekbones, short swept dark hair under a dark bronze commander headband, thin mustache with a narrow pointed beard, sharper and smaller than Baasha's beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, palace burning, flames, suicide scene, corpse, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 131,
+      "code": "omri",
+      "name_ko": "오므리",
+      "name_en": "Omri, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: stone blue gray + muted bronze + deep olive accents, low saturation, Omri, King of Israel, adult biblical man (age 25+), founder of the Omride dynasty and Samaria-building king, exactly one man only, stone-blue royal cloak with bronze belt, broad shoulder panels, and restrained northern crown band, small stone citadel brooch near one shoulder plus a rolled city-plan strap across the chest as signs of building Samaria, strategic calculating expression with controlled confidence, unsmiling, not a construction scene, controlled founder-king posture, standing steady with one hand resting near the city-plan strap, solid older middle-aged dynasty-founder build with broad stable shoulders and thick chest, large square face with calculating eyes, heavy brow, and graying temples, dark wavy hair with gray at the sides beneath a muted bronze royal headband, full squared dark beard with gray streaks and clean blocky facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahab, Jezebel, construction crew, city crowd, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 132,
+      "code": "ahaziah_israel",
+      "name_ko": "아하시야(북이스라엘)",
+      "name_en": "Ahaziah, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: sickly teal + dark navy + muted bronze accents, low saturation, Ahaziah, King of Israel, adult biblical man (age 25+), Ahab's son and northern Israel king silhouette, exactly one man only, dark navy royal mantle over sickly teal robe with muted bronze crown band, small lattice-window token as a restrained sign of his fall and inquiry, pale anxious expression, not Judah's Ahaziah, frail anxious royal posture, one hand holding a small lattice-window token, slender young northern king build with tense shoulders, pale angular face with uneasy eyes and pinched brow, short dark hair under a narrow bronze royal headband, short dark beard with delicate faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaziah of Judah, Ahaz, child, sickbed scene, injury close-up, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "hoshea_king",
+        "jeroboam"
+      ]
+    },
+    {
+      "index": 133,
+      "code": "joram_israel",
+      "name_ko": "요람(북이스라엘)",
+      "name_en": "Joram, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep blue green + iron gray + muted bronze accents, low saturation, Joram, King of Israel, adult biblical man (age 25+), Joram of Northern Israel, son of Ahab, exactly one man only, blue-green royal robe with iron-gray mantle, bronze crown band, and one broken Baal-pillar clasp near the shoulder, sealed war report scroll tucked diagonally across the upper chest as a restrained sign of troubled campaigns, wary diplomatic expression with tired suspicious eyes, not smiling, not Judah's Jehoram, guarded northern king posture, one shoulder slightly turned, hand near the sealed upper-chest scroll, tall lean middle-aged northern king build with narrow tense royal shoulders, long face with prominent nose, hollow cheeks, suspicious heavy-lidded eyes, and a guarded brow, straight dark hair under a bronze Samaria crown band, short forked dark beard with sharp facets, clearly unlike Jehu's clipped commander beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoram of Judah, Jehu killing scene, chariot battle, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 134,
+      "code": "jehu",
+      "name_ko": "예후",
+      "name_en": "Jehu, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark military green + blackened bronze + crimson accents, low saturation, Jehu, King of Israel, adult biblical man (age 25+), fierce commander who became king of Northern Israel, exactly one man only, military-green royal cloak over dark tunic with blackened bronze shoulder armor plates, no helmet, small chariot-wheel medallion centered high on the chest and a short commander baton held upright near the shoulder as restrained signs of his zeal, intense decisive expression with fierce focused eyes, no friendly smile, no battle scene, decisive commander-king posture, chest forward, baton close to the shoulder, eyes fierce but controlled, athletic middle-aged commander-king build with squared military shoulders and upright neck, hawk-like face with prominent nose, sharp jaw, intense eyes, and a hard decisive brow, short swept-back dark hair under a dark bronze commander crown band, clipped black beard tight along the jaw, not long or forked, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jezebel death scene, chariot crash, blood, gore, army crowd, battle, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 135,
+      "code": "jehoahaz_israel",
+      "name_ko": "여호아하스(북이스라엘)",
+      "name_en": "Jehoahaz, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dusty blue + worn bronze + parchment tan accents, low saturation, Jehoahaz, King of Israel, adult biblical man (age 25+), oppressed northern Israel king under Aram's pressure, exactly one man only, dusty blue royal robe with worn bronze crown band and plain sash, small cracked shield token held low as a restrained sign of weakness under oppression, humbled troubled expression, not Judah's Jehoahaz, humbled pleading royal posture, cracked shield token held low, lean middle-aged northern king build with bowed but royal shoulders, weathered face with worried eyes and softened brow, dark hair under a simple worn bronze headband, short gray-streaked beard with modest facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoahaz of Judah, Pharaoh Necho, prison, chains, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "hoshea_king",
+        "jeroboam"
+      ]
+    },
+    {
+      "index": 136,
+      "code": "jehoash_israel",
+      "name_ko": "요아스(북이스라엘)",
+      "name_en": "Jehoash, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal blue + muted bronze + olive accents, low saturation, Jehoash, King of Israel, adult biblical man (age 25+), Jehoash of Northern Israel, exactly one man only, royal blue robe with muted bronze crown band, olive sash, and three small arrows strapped diagonally near the upper chest, small bow kept lowered at the side while the upper-chest arrows remain visible as a restrained sign of Elisha's victory prophecy, conflicted but strengthened expression with respectful worried eyes, not smiling, not Judah's Joash, uncertain but strengthened king posture, one hand touching the arrow strap near the collar, mature northern king build with balanced shoulders and a slightly bowed respectful stance, rounded rectangular face with heavy-lidded alert eyes, cautious brow, and softer cheeks, short dark hair with subtle gray at the temples under bronze Samaria crown band, medium rounded dark beard with a few gray facets, clearly not the young Judah Joash, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Joash of Judah, child king, temple repair, shooting action, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "jeroboam",
+        "elisha"
+      ]
+    },
+    {
+      "index": 137,
+      "code": "jeroboam_ii",
+      "name_ko": "여로보암 2세",
+      "name_en": "Jeroboam II, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep emerald + warm bronze + ivory accents, low saturation, Jeroboam II, King of Israel, adult biblical man (age 25+), prosperous northern Israel king Jeroboam the Second, exactly one man only, deep emerald royal cloak with warm bronze collar, ivory under-robe, and broader northern crown band, small border-map medallion high on the chest plus a rolled map edge near the shoulder as restrained signs of restored territory, self-satisfied prosperous expression with a restrained proud smirk, not benevolent, clearly distinct from Jeroboam son of Nebat, confident expansion-era king posture, relaxed shoulders, chin lifted with restrained pride, large broad mature northern king build with confident shoulders and thick upper chest, broad round-square face with self-assured eyes, full cheeks, and steady brow, thick wavy dark hair beneath a warm bronze crown band, full well-groomed rounded beard with polished faceted planes, more luxurious than Omri's graying beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jeroboam son of Nebat, torn cloak, golden calf scene, prophet Amos, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "jeroboam",
+        "ahab",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 138,
+      "code": "zechariah_king",
+      "name_ko": "스가랴 왕",
+      "name_en": "Zechariah, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: faded emerald + dull gold + ash gray accents, low saturation, Zechariah, King of Israel, adult biblical man (age 25+), last king of Jehu's dynasty in Northern Israel, exactly one man only, faded emerald royal robe with dull gold crown band and ash-gray mantle, small broken dynasty ring as a restrained sign of a line ending, young worried royal expression, not Zechariah the prophet or priest, worried last-dynasty posture, broken ring held near the heart, young northern king build with narrow shoulders, angular face with anxious eyes and uncertain brow, short dark hair under a fading gold crown band, short neat beard with soft facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Zechariah prophet, Zechariah father of John, priest robe, temple incense, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "jeroboam",
+        "hoshea_king",
+        "ahab"
+      ]
+    },
+    {
+      "index": 139,
+      "code": "shallum",
+      "name_ko": "살룸",
+      "name_en": "Shallum, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark clay red + smoke gray + muted bronze accents, low saturation, Shallum, King of Israel, adult biblical man (age 25+), one-month northern Israel usurper king, exactly one man only, dark clay-red mantle with smoke-gray sash and muted bronze crown band, small short-lived seal tablet as a restrained sign of a brief reign, uneasy calculating expression, no assassination scene, uneasy usurper posture, short-lived seal tablet gripped tightly, compact anxious usurper build with tight shoulders, thin angular face with restless eyes and sharp brow, short dark hair under a narrow bronze headband, short pointed beard with severe facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Zechariah murder scene, Menahem attacking, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "hoshea_king",
+        "jeroboam"
+      ]
+    },
+    {
+      "index": 140,
+      "code": "menahem",
+      "name_ko": "므나헴",
+      "name_en": "Menahem, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: iron gray + muted gold + dark olive accents, low saturation, Menahem, King of Israel, adult biblical man (age 25+), harsh tribute-paying northern Israel king, exactly one man only, iron-gray royal mantle with muted gold belt and northern crown band, small Assyrian tribute tablet without readable text as a restrained sign, hard calculating expression, no cruelty scene, hard tribute-king posture, blank tribute tablet held with guarded pride, stocky middle-aged northern king build with heavy shoulders, broad stern face with calculating eyes and heavy brow, dark hair under a muted gold royal headband, full dark beard with blocky facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Assyrian king, Tiglath-pileser, cruelty scene, pregnant women, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "hoshea_king",
+        "jeroboam"
+      ]
+    },
+    {
+      "index": 141,
+      "code": "pekahiah",
+      "name_ko": "브가히야",
+      "name_en": "Pekahiah, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: muted gold + storm blue + ash brown accents, low saturation, Pekahiah, King of Israel, adult biblical man (age 25+), Pekahiah son of Menahem, northern Israel king, exactly one man only, storm-blue robe with muted gold mantle edge and modest crown band, small inherited royal seal as a restrained sign of a fragile throne, uncertain heir expression, no palace coup scene, uncertain inherited-king posture, royal seal held carefully, young-to-middle-aged northern king build with hesitant shoulders, soft angular face with uncertain eyes and mild brow, short dark hair under a muted gold headband, short trimmed beard with gentle facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Pekah attacking, coup scene, bodyguard, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "hoshea_king",
+        "ahab",
+        "jeroboam"
+      ]
+    },
+    {
+      "index": 142,
+      "code": "pekah",
+      "name_ko": "베가",
+      "name_en": "Pekah, King of Israel",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark teal + bronze + muted crimson accents, low saturation, Pekah, King of Israel, adult biblical man (age 25+), military ruler Pekah of Northern Israel, exactly one man only, dark teal military-royal cloak with diagonal bronze war sash across the upper chest and crown band, small sealed Aram alliance clasp pinned at the shoulder as a restrained sign of the Syro-Ephraimite crisis, aggressive strategic expression with narrowed eyes, not smiling, not a battlefield, military king posture, shoulders angled forward, hand near the shoulder alliance clasp, lean soldier-king build with hard angular shoulders and long neck, long hawkish face with fierce eyes, sharp brow, and narrow mouth, short dark hair brushed back beneath a bronze military crown band, straight narrow dark beard trimmed to a vertical point, distinct from Jehu's clipped jaw beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaz, Rezin, Aram king, battlefield, siege scene, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahaz",
+        "ahab",
+        "hoshea_king"
+      ]
+    },
+    {
+      "index": 143,
+      "code": "abijah_judah",
+      "name_ko": "아비야(남유다)",
+      "name_en": "Abijah, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: wine purple + temple gold + parchment ivory accents, low saturation, Abijah, King of Judah, adult biblical man (age 25+), Abijah of Judah, Davidic royal heir, exactly one man only, wine-purple robe with temple-gold Judah crown diadem and parchment ivory sash, small temple trumpet clasp pinned near the shoulder as a restrained sign of trusting temple order, bold but imperfect royal expression with confident eyes and a slight proud set to the mouth, not a priest, bold Davidic king posture, one shoulder lifted, hand near the temple trumpet shoulder clasp, young robust Judah king build with polished royal shoulders and strong neck, square princely face with arched brows, confident eyes, and firm chin, dark wavy hair under a small angular gold Judah crown diadem, short tidy boxed beard with regal facets, darker and sharper than Jehoshaphat's beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Abijah prophet, priest robe, battle panorama, Jeroboam appearing, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "rehoboam",
+        "josiah",
+        "hezekiah"
+      ]
+    },
+    {
+      "index": 144,
+      "code": "asa",
+      "name_ko": "아사",
+      "name_en": "Asa, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep olive + royal blue + warm gold accents, low saturation, Asa, King of Judah, adult biblical man (age 25+), reforming king Asa of Judah, exactly one man only, deep olive royal cloak over blue robe with warm gold Judah diadem, small broken idol fragment kept low as a restrained sign of reform, earnest firm expression, no idol-breaking scene, firm reforming king posture, broken idol fragment held away from the heart, mature Judah king build with upright disciplined shoulders, long angular face with resolute eyes and calm brow, dark hair under a small gold Judah crown diadem, trimmed beard with clean faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, idol-breaking action, mother Maacah, battle scene, diseased feet close-up, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "josiah",
+        "hezekiah",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 145,
+      "code": "jehoshaphat",
+      "name_ko": "여호사밧",
+      "name_en": "Jehoshaphat, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal blue + parchment cream + muted gold accents, low saturation, Jehoshaphat, King of Judah, adult biblical man (age 25+), Jehoshaphat of Judah, teaching-and-justice king, exactly one man only, royal blue robe with parchment cream upper sash and muted gold Judah diadem, small open law scroll held high at the chest and a slim judge staff rising beside one shoulder as restrained signs of teaching and justice, benevolent wise expression with gentle smiling eyes, no battle scene, wise judicial king posture, warm calm shoulders, law scroll close to the heart, mature Judah king build with broad calm shoulders and open chest posture, kind rectangular face with thoughtful soft eyes, fair brow, and subtle smile lines, dark hair with clear gray at the temples beneath a gold Judah diadem, full gray-streaked rounded beard with gentle faceted planes, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahab beside him, alliance scene, battlefield, choir army, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "josiah",
+        "hezekiah",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 146,
+      "code": "jehoram_judah",
+      "name_ko": "여호람(남유다)",
+      "name_en": "Jehoram, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark purple + ash gray + tarnished gold accents, low saturation, Jehoram, King of Judah, adult biblical man (age 25+), Jehoram of Judah, exactly one man only, dark purple Judah royal robe with ash-gray mantle and tarnished gold diadem, small northern alliance seal as a restrained sign of Ahab's house influence, cold uneasy expression, not Joram of Israel, cold uneasy Judah king posture, alliance seal held stiffly, middle-aged Judah king build with stiff shoulders, narrow face with suspicious eyes and tight brow, dark hair under a tarnished gold Judah diadem, trimmed beard with hard facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Joram of Israel, brothers being killed, disease scene, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "rehoboam",
+        "ahab",
+        "ahaz"
+      ]
+    },
+    {
+      "index": 147,
+      "code": "ahaziah_judah",
+      "name_ko": "아하시야(남유다)",
+      "name_en": "Ahaziah, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal violet + dark teal + muted gold accents, low saturation, Ahaziah, King of Judah, adult biblical man (age 25+), Ahaziah of Judah, young king influenced by Ahab's house, exactly one man only, royal violet Judah robe with dark teal mantle and muted gold diadem, small northern alliance clasp as a restrained sign of divided loyalties, uncertain proud expression, not Ahaziah of Israel, young conflicted king posture, northern alliance clasp held near the sash, young Judah king build with narrow polished shoulders, smooth angular face with uncertain proud eyes, short dark hair under a small gold Judah diadem, short neat beard with soft facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaziah of Israel, sickbed, window lattice, Jehu killing scene, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahab",
+        "ahaz",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 148,
+      "code": "athaliah",
+      "name_ko": "아달랴",
+      "name_en": "Athaliah, Queen of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: deep royal violet + blackened gold + dark crimson accents, low saturation, Athaliah, Queen of Judah, adult biblical woman (age 25+), Athaliah queen-ruler of Judah, distinctly female, exactly one woman only, deep royal violet gown with blackened-gold Judah crown diadem and dark crimson mantle, small usurped throne seal held tightly as a restrained sign of seizing power, severe commanding expression, no child-harm scene, severe queen-ruler posture, chin lifted, usurped throne seal gripped tightly, mature royal woman build with upright commanding shoulders, sharp angular oval face with cold determined eyes, dark hair fully arranged beneath a blackened-gold royal diadem, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, male, man, beard, child Joash, child-harm scene, massacre, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "esther",
+        "rehoboam",
+        "ahaz"
+      ]
+    },
+    {
+      "index": 149,
+      "code": "joash_judah",
+      "name_ko": "요아스(남유다)",
+      "name_en": "Joash, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: bright royal blue + warm gold + temple cream accents, low saturation, Joash, King of Judah, adult biblical man (age 25+), Joash of Judah, temple-repair king, exactly one man only, bright royal blue robe with warm gold Judah diadem and temple-cream upper sash, small temple repair tablet held high at the chest and a tiny offering-chest pendant near the collar as restrained signs of temple repair, young adult stylized king with a hopeful gentle smile, not a child portrait and not Northern Israel's Jehoash, earnest temple-repair king posture, upright and hopeful, repair tablet close to the chest, young adult Judah king build with slim upright shoulders and lighter frame than Abijah, youthful oval face with earnest bright eyes, gentle brow, and soft smile, short dark curled hair under a small gold Judah diadem, very short neat beard and mustache, adult-stylized not childlike, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, child, boy, infant, Jehoash of Israel, Elisha arrows, assassination scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "josiah",
+        "hezekiah",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 150,
+      "code": "amaziah_judah",
+      "name_ko": "아마샤",
+      "name_en": "Amaziah, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: clay red + royal blue + muted gold accents, low saturation, Amaziah, King of Judah, adult biblical man (age 25+), Amaziah of Judah, half-faithful king, exactly one man only, clay-red royal mantle over blue robe with muted gold Judah diadem, small Edom shield token held low as a restrained sign of victory and pride, confident but flawed expression, no battle scene, confident but flawed king posture, Edom shield token held low, mature Judah king build with proud shoulders, long face with confident eyes and slightly lifted brow, dark hair under a muted gold diadem, trimmed beard with clean facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, battle with Edom, Israel king Joash, captured Jerusalem scene, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "josiah",
+        "hezekiah",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 151,
+      "code": "uzziah",
+      "name_ko": "웃시야",
+      "name_en": "Uzziah, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: stone gray + royal indigo + warm gold accents, low saturation, Uzziah, King of Judah, adult biblical man (age 25+), Uzziah also called Azariah, strong builder king of Judah, exactly one man only, stone-gray royal mantle over indigo robe with warm gold Judah diadem, small tower plan and builder's cord as restrained signs of fortified strength, capable proud expression, no incense intrusion scene, strong builder-king posture, tower plan held with controlled pride, strong mature Judah king build with broad shoulders, square face with capable eyes and proud brow, dark hair with gray hints under a gold Judah diadem, full trimmed beard with geometric facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, leprosy horror, priest confrontation, incense altar scene, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "hezekiah",
+        "josiah",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 152,
+      "code": "jotham",
+      "name_ko": "요담",
+      "name_en": "Jotham, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: sage green + royal blue + muted gold accents, low saturation, Jotham, King of Judah, adult biblical man (age 25+), Jotham of Judah, steady builder king, exactly one man only, sage-green royal mantle over blue robe with muted gold Judah diadem, small upper-gate model as a restrained sign of building work, quiet faithful expression, not Gideon's son Jotham, quiet steady king posture, upper-gate model held carefully, mature Judah king build with calm narrow shoulders, rectangular face with thoughtful eyes and balanced brow, dark hair beneath a small gold Judah diadem, trimmed beard with modest facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jotham son of Gideon, parable trees, crowd, construction crew, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "hezekiah",
+        "josiah",
+        "rehoboam"
+      ]
+    },
+    {
+      "index": 153,
+      "code": "manasseh",
+      "name_ko": "므낫세",
+      "name_en": "Manasseh, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark violet + ash black + tarnished gold accents, low saturation, Manasseh, King of Judah, adult biblical man (age 25+), Manasseh of Judah, long-reigning apostate king later humbled, exactly one man only, dark violet royal robe with ash-black mantle and tarnished gold diadem, small dark idol charm lowered in one hand as a restrained sign of apostasy, troubled hardened expression, no sacrifice scene, troubled hardened king posture, idol charm held low and away from the heart, older Judah king build with heavy tense shoulders, weathered angular face with haunted eyes and severe brow, gray-streaked dark hair under a tarnished gold diadem, full gray-streaked beard with blocky facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, child sacrifice, blood, gore, Assyrian chains, prison scene, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahaz",
+        "hezekiah",
+        "josiah"
+      ]
+    },
+    {
+      "index": 154,
+      "code": "amon_judah",
+      "name_ko": "아몬(남유다)",
+      "name_en": "Amon, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: dark crimson + ash gray + tarnished gold accents, low saturation, Amon, King of Judah, adult biblical man (age 25+), Amon of Judah, wicked short-reigning king, exactly one man only, dark crimson royal robe with ash-gray mantle and tarnished gold diadem, small palace idol token held close as a restrained sign of continuing evil, hard suspicious expression, not the Egyptian god Amun, hard suspicious king posture, palace idol token gripped near the belt, young-to-middle-aged Judah king build with tense shoulders, sharp face with suspicious eyes and furrowed brow, dark hair under a tarnished gold Judah diadem, short dark beard with severe facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Egyptian god Amun, animal head, deity, assassination scene, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "ahaz",
+        "jehoiakim",
+        "zedekiah"
+      ]
+    },
+    {
+      "index": 155,
+      "code": "jehoahaz_judah",
+      "name_ko": "여호아하스(남유다)",
+      "name_en": "Jehoahaz, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal blue + dust gray + muted gold accents, low saturation, Jehoahaz, King of Judah, adult biblical man (age 25+), Jehoahaz of Judah, short-reigning son of Josiah, exactly one man only, royal blue robe with dust-gray mantle and muted gold Judah diadem, small Egyptian tribute token as a restrained sign of being removed by Pharaoh, anxious displaced expression, not Northern Israel's Jehoahaz, anxious displaced king posture, tribute token held uncertainly, young Judah king build with slim tense shoulders, youthful angular face with worried eyes and tight brow, short dark hair under a muted gold Judah diadem, short neat beard with soft facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoahaz of Israel, prison chains, Pharaoh Necho scene, Egypt crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "josiah",
+        "jehoiakim",
+        "zedekiah"
+      ]
+    },
+    {
+      "index": 156,
+      "code": "jehoiachin",
+      "name_ko": "여호야긴",
+      "name_en": "Jehoiachin, King of Judah",
+      "era": "divided_kingdom",
+      "prompt": "COMMON_STYLE, palette: royal indigo + exile gray + muted gold accents, low saturation, Jehoiachin, King of Judah, adult biblical man (age 25+), Jehoiachin king of Judah taken into Babylonian exile, exactly one man only, royal indigo robe with exile-gray mantle and muted gold Judah diadem, small blank exile tablet as a restrained sign of captivity, young sorrowful royal expression, not Jehoiakim and not Zedekiah, sorrowful exiled-king posture, blank exile tablet held close to the chest, young Judah king build with lowered but royal shoulders, smooth angular face with sorrowful eyes and subdued brow, short dark hair under a muted gold Judah diadem, short neat beard with gentle facets, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 0,
+      "is_active_default": true,
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoiakim, Zedekiah, blindfold, chains, prison bars, execution scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
+      "style_reference_codes": [
+        "jehoiakim",
+        "zedekiah",
+        "josiah"
+      ]
     }
   ]
 }

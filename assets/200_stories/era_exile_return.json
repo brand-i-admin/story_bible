@@ -1,0 +1,750 @@
+[
+  {
+    "title": "마른 뼈: 숨이 들어오다",
+    "era": "era_exile_return",
+    "characters": [
+      "ezekiel"
+    ],
+    "place_name": "그발 강가(추정)",
+    "lat": 32.65,
+    "lng": 44.6,
+    "summary": "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다.",
+    "bible_ref": [
+      {
+        "book": "겔",
+        "from": "37:1",
+        "to": "37:14"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_index": 1,
+    "story_scenes": [
+      "뼈들로 가득한 골짜기, 바람도 없는 정적",
+      "에스겔이 대언하라는 명령",
+      "에스겔이 서 있는 가운데 마른 뼈 위에 힘줄과 살이 덮이기 시작한다",
+      "숨이 돌아온 사람들이 일어서고 그 한가운데 에스겔이 서 있다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "ezekiel"
+      ],
+      [
+        "ezekiel"
+      ],
+      [
+        "ezekiel"
+      ]
+    ]
+  },
+  {
+    "title": "다니엘: 뜻을 정하다",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel"
+    ],
+    "place_name": "바벨론",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "다니엘은 낯선 제국 한복판에서 믿음의 기준을 세운다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "1:8",
+        "to": "1:20"
+      }
+    ],
+    "start_year": -605,
+    "end_year": -605,
+    "time_precision": "approx",
+    "story_index": 2,
+    "story_scenes": [
+      "궁정의 화려한 식탁, 다니엘이 멈춘다",
+      "다니엘이 앞쪽에 서 있고, 관리가 난처해한다",
+      "다니엘이 왕에게 단정한 제안을 하는 장면",
+      "다니엘이 이전보다 더 건강한 모습으로 왕 앞에 서고 왕이 놀라는 장면"
+    ],
+    "scene_characters": [
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ]
+    ]
+  },
+  {
+    "title": "풀무불: 다니엘과 세 친구",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel"
+    ],
+    "place_name": "바벨론(전승)",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "우상 숭배 강요 앞에서 믿음은 굴복 대신 신실함을 택한다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "3:1",
+        "to": "3:30"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_index": 3,
+    "story_scenes": [
+      "다니엘과 세 친구가 거대한 금 신상 앞에서 서 있고, 다른 사람들은 모두 엎드린다",
+      "다니엘과 세 친구가 왕 앞에서 믿음을 굽히지 않는 장면",
+      "풀무불 속에서 다니엘과 세 친구가 함께 서 있는 장면",
+      "왕이 다니엘과 세 친구를 칭찬하는 모습"
+    ],
+    "scene_characters": [
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ]
+    ]
+  },
+  {
+    "title": "벨사살의 잔치: 벽에 쓴 글",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel"
+    ],
+    "place_name": "바벨론",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "교만한 잔치에 ‘손 글씨’가 나타나고, 심판이 선포된다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "5:1",
+        "to": "5:31"
+      }
+    ],
+    "start_year": -539,
+    "end_year": -539,
+    "time_precision": "approx",
+    "story_index": 4,
+    "story_scenes": [
+      "화려한 잔치, 웃음과 술잔 소리로 가득하다",
+      "벽에 나타난 손 글씨, 모두가 얼어붙는다",
+      "다니엘이 해석한다, 너는 저울에 달려 부족함이 보였다",
+      "왕이 다니엘에게 자주색 옷을 입히게 하며 금 사슬을 그의 목에 걸어 주는 장면"
+    ],
+    "scene_characters": [
+      [],
+      [],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ]
+    ]
+  },
+  {
+    "title": "사자굴: 멈추지 않는 기도",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel"
+    ],
+    "place_name": "바벨론/메대-바사(전승)",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "6:1",
+        "to": "6:28"
+      }
+    ],
+    "start_year": -537,
+    "end_year": -537,
+    "time_precision": "approx",
+    "story_index": 5,
+    "story_scenes": [
+      "관원들이 계략을 꾸민다, 그의 하나님을 걸어야 한다",
+      "다니엘이 창을 열고 기도한다, 소문이 퍼진다",
+      "신하들이 왕에게 말하고, 왕이 괴로워하는 장면",
+      "새벽, 다니엘의 목소리가 들린다, 하나님이 사자들의 입을 막으셨습니다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "daniel"
+      ],
+      [],
+      [
+        "daniel"
+      ]
+    ]
+  },
+  {
+    "title": "귀환과 성전 기초: 시작과 중단",
+    "era": "era_exile_return",
+    "characters": [
+      "zerubbabel"
+    ],
+    "place_name": "예루살렘과 유다 귀환지(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "고레스의 명령으로 귀환한 백성은 유다 땅에 정착하고 성전 재건을 시작하지만, 방해 속에서 공사가 멈춘다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "1:1",
+        "to": "4:24"
+      }
+    ],
+    "start_year": -538,
+    "end_year": -520,
+    "time_precision": "approx",
+    "story_index": 6,
+    "story_scenes": [
+      "고레스의 명령으로 이스라엘 자손들이 바벨론과 페르시아 여러 지역에서 돌아와 유다 땅 각 성읍에 정착해 살고, 옆에는 바벨론에서 예루살렘과 유다 성읍들로 이어지는 간단한 지도 그림이 함께 보인다. 지도에는 글자나 읽을 수 있는 표시는 없다",
+      "스룹바벨과 예수아와 동료들이 예루살렘 성전 터에서 돌과 목재를 놓고 성전 재건을 시작하며, 제사장들과 레위 사람들과 백성들이 조심스러운 기쁨으로 함께 일하는 장면",
+      "사마리아 사람들이 성전 건축 현장으로 찾아와 우리도 함께 짓겠다고 제안하지만, 스룹바벨과 지도자들이 단호하면서도 절제된 표정으로 거절하는 장면. 사마리아 사람들은 이름 없는 방문자 무리로 보인다",
+      "방해와 고발 때문에 예루살렘 성전 건축이 중단되어 돌더미와 목재가 멈춰 있고, 스룹바벨과 동료들이 허탈한 표정으로 빈 성전 터를 바라보는 장면"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "zerubbabel"
+      ],
+      [
+        "zerubbabel"
+      ],
+      [
+        "zerubbabel"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show a simple pictorial map route without readable labels or letters. No text in the map.",
+      "Show Zerubbabel as the same post-exile Judah governor throughout this story. Jeshua has no reference avatar and should appear only as an unnamed priestly coworker if needed. No readable labels.",
+      "Show the Samaritan visitors as an unnamed group with no text labels. Keep Zerubbabel visually consistent with scene 2.",
+      "No violence. Emphasize stopped construction and discouragement, with Zerubbabel visually consistent."
+    ]
+  },
+  {
+    "title": "학개의 말씀: 스룹바벨을 택하다",
+    "era": "era_exile_return",
+    "characters": [
+      "haggai",
+      "zerubbabel",
+      "zechariah_prophet"
+    ],
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "학개는 스룹바벨에게 하나님이 세상을 흔드시고 나라의 권세를 뒤엎으시며 그를 택하셨다고 전한다.",
+    "bible_ref": [
+      {
+        "book": "학",
+        "from": "2:20",
+        "to": "2:23"
+      }
+    ],
+    "start_year": -520,
+    "end_year": -520,
+    "time_precision": "approx",
+    "story_index": 7,
+    "story_scenes": [
+      "학개가 성전 터 가까이에서 스룹바벨에게 강하게 하나님의 말씀을 전하고, 큰 글자 없는 말풍선 안에는 하나님이 하늘과 땅을 뒤흔드는 상징 그림이 담겨 있다",
+      "학개가 스룹바벨에게 다시 엄중히 말하고, 큰 글자 없는 말풍선 안에는 하나님을 믿지 않는 나라들의 왕좌와 전차들이 뒤집히는 상징 그림이 담겨 있다. 폭력과 시신은 보이지 않는다",
+      "학개가 스룹바벨을 향해 손을 들고 선포하며, 큰 글자 없는 말풍선 안에는 하나님이 스룹바벨을 택하셨음을 보이는 인장 반지와 밝은 선택의 빛이 담겨 있다"
+    ],
+    "scene_characters": [
+      [
+        "haggai",
+        "zerubbabel"
+      ],
+      [
+        "haggai",
+        "zerubbabel"
+      ],
+      [
+        "haggai",
+        "zerubbabel"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Zechariah the prophet is included in this story characters for restoration-prophet continuity but does not appear in the scenes. No readable speech text.",
+      "Show symbolic overturned thrones and chariots only; no gore, no bodies, no readable labels.",
+      "Show the signet ring as a symbolic image inside the speech bubble, not readable text. Keep Haggai and Zerubbabel consistent."
+    ]
+  },
+  {
+    "title": "성전 완공과 유월절: 다시 드리는 예배",
+    "era": "era_exile_return",
+    "characters": [
+      "zerubbabel",
+      "haggai",
+      "zechariah_prophet"
+    ],
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "멈췄던 성전 재건은 다시 힘을 얻어 완성되고, 백성은 봉헌식과 유월절을 기쁨으로 지킨다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "6:13",
+        "to": "6:22"
+      }
+    ],
+    "start_year": -515,
+    "end_year": -515,
+    "time_precision": "approx",
+    "story_index": 8,
+    "story_scenes": [
+      "스룹바벨과 동료들이 멈췄던 예루살렘 성전 재건을 다시 시작하고, 장로들과 일꾼들이 돌과 목재를 옮기며 새 힘을 얻는 장면",
+      "성전이 완성되고 백성들이 기쁨으로 봉헌식을 거행하며, 제단 가까이에는 황소와 숫양과 어린양이 많이 준비되어 있지만 피나 도살 장면은 보이지 않는다",
+      "이스라엘 백성들이 유월절과 무교절을 기쁨으로 지키며 가족과 이웃이 함께 음식을 나누고 찬양하는 장면. 성전과 예루살렘의 회복된 분위기가 따뜻하게 보인다"
+    ],
+    "scene_characters": [
+      [
+        "zerubbabel"
+      ],
+      [
+        "zerubbabel"
+      ],
+      []
+    ],
+    "scene_prompt_notes": [
+      "Show Zerubbabel as the same post-exile governor from previous stories. Haggai and Zechariah may be implied by the restored work but do not need to appear.",
+      "Animal offerings are present as prepared sacrificial animals only. No blood, no slaughter, no gore.",
+      "Show joyful Passover and Feast of Unleavened Bread with families and priests, no readable text."
+    ]
+  },
+  {
+    "title": "에스더: 왕후가 되다",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더는 예상치 못한 자리에서 왕후가 되어 때를 기다린다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "2:5",
+        "to": "2:18"
+      }
+    ],
+    "start_year": -480,
+    "end_year": -480,
+    "time_precision": "approx",
+    "story_index": 9,
+    "story_scenes": [
+      "에스더가 왕후가 되기 전, 다른 후보들과 함께 궁정에 모인 모습",
+      "왕관이 없는 후보의 모습인 에스더가 왕 앞에 선다, 방 안이 숨을 죽인다",
+      "왕이 왕관을 씌운다, 에스더의 얼굴이 굳어지며 책임을 느낀다",
+      "모르드개가 멀리서 지켜본다, 때가 올 것 같은 눈빛"
+    ],
+    "scene_characters": [
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "mordecai"
+      ]
+    ]
+  },
+  {
+    "title": "하만의 음모: 유다인을 없애라",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "haman",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "모르드개의 거절은 하만의 분노를 불러 대규모 학살 음모로 번진다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "3:1",
+        "to": "3:15"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_index": 10,
+    "story_scenes": [
+      "하만이 지나가고 모두가 절하지만, 모르드개만 서 있다",
+      "하만의 얼굴이 붉어진다, 한 사람만이 아니라, 민족을",
+      "하만이 제비를 던져 날짜를 정하는 장면",
+      "조서가 퍼지고 수산 성이 어지러워진다, 에스더의 손이 떨린다"
+    ],
+    "scene_characters": [
+      [
+        "haman",
+        "mordecai"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "esther"
+      ]
+    ]
+  },
+  {
+    "title": "에스더의 결단: 죽으면 죽으리라",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더는 금식 후 왕 앞에 나아가기로 결단한다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "4:10",
+        "to": "4:17"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_index": 11,
+    "story_scenes": [
+      "에스더가 망설인다, 부름 없이 나아가면",
+      "모르드개가 앞쪽에 서 있다",
+      "에스더가 결연한 표정으로 선다",
+      "에스더가 문을 향해 걸어간다, 죽으면 죽으리라"
+    ],
+    "scene_characters": [
+      [
+        "esther"
+      ],
+      [
+        "mordecai"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ]
+    ]
+  },
+  {
+    "title": "잔치의 반전: 하만의 몰락",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "haman",
+      "mordecai"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "5:1",
+        "to": "7:10"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_index": 12,
+    "story_scenes": [
+      "왕과 에스더가 이야기하는 장면",
+      "하만이 궁궐 안에 나무를 세우는 장면",
+      "잔치 자리에서 왕과 에스더와 대신들이 앉아 있고, 하만은 머리를 싸고 번뇌하며, 모르드개가 말을 타고 잔치로 들어오는 모습",
+      "하만이 자기가 세운 나무에 달리는 장면"
+    ],
+    "scene_characters": [
+      [
+        "esther"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "esther",
+        "haman",
+        "mordecai"
+      ],
+      [
+        "haman"
+      ]
+    ]
+  },
+  {
+    "title": "에스라의 귀환: 말씀으로 정리하다",
+    "era": "era_exile_return",
+    "characters": [
+      "ezra"
+    ],
+    "place_name": "바벨론 → 예루살렘(전승)",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "에스라는 말씀의 사람으로 돌아와 공동체를 재정비한다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "7:1",
+        "to": "7:10"
+      }
+    ],
+    "start_year": -458,
+    "end_year": -458,
+    "time_precision": "approx",
+    "story_index": 13,
+    "story_scenes": [
+      "에스라가 두루마리를 펼쳐 읽는다, 눈빛이 단단하다",
+      "귀환 행렬이 길을 나선다, 먼지 나는 길 위의 결단",
+      "예루살렘에 도착한 에스라가 현실을 보고 고개를 숙인다",
+      "에스라가 율법을 연구하고 행하며 가르치기로 뜻을 정했다가 울린다"
+    ],
+    "scene_characters": [
+      [
+        "ezra"
+      ],
+      [],
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ]
+    ]
+  },
+  {
+    "title": "에스라의 회개와 정리: 거룩함을 회복하다",
+    "era": "era_exile_return",
+    "characters": [
+      "ezra"
+    ],
+    "place_name": "예루살렘(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "에스라는 왕의 허락으로 예루살렘에 돌아오고, 백성의 죄 앞에서 회개하며 공동체를 말씀으로 정리한다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "7:11",
+        "to": "7:22"
+      },
+      {
+        "book": "스",
+        "from": "9:1",
+        "to": "10:17"
+      }
+    ],
+    "start_year": -458,
+    "end_year": -458,
+    "time_precision": "approx",
+    "story_index": 14,
+    "story_scenes": [
+      "에스라가 아닥사스다 왕의 칙서를 받고 기뻐하는 장면. 큰 글자 없는 말풍선 안에는 예루살렘으로 올라가려는 백성, 성전 기물, 금과 은, 밀, 포도주, 올리브 기름, 소금이 그림으로 담겨 있어 왕이 성전 회복을 허락한 내용이 분명히 보인다",
+      "예루살렘 성전 안쪽 제단 앞에서 에스라가 사람들을 등지고 하나님을 향해 애통해하며 기도한다. 에스라는 찢어진 옷을 입고 무릎 꿇어 두 손을 하늘의 밝은 하나님의 빛을 향해 들고 있으며, 누구에게 빌거나 사과하는 모습이 아니다. 성전 바깥 먼 배경에는 이스라엘 남자들이 이방 여인들과 결혼해 우상 조각상과 작은 우상 제단을 곁에 두고 악한 생활을 하는 장면이 보인다. 그들은 화목한 가족처럼 보이지 않고, 이방 여인들은 작은 우상을 들고 차갑고 완강한 표정이며, 이스라엘 남자들은 죄를 깨닫지 못한 듯 고개를 돌리거나 머뭇거린다",
+      "예루살렘 성전 앞 광장에서 에스라가 백성에게 죄를 자복하고 이방 여인들과 끊으라고 엄중히 명하는 장면. 이방 여인과 결혼했던 사람들이 슬픈 표정으로 가족들을 평화롭게 떠나보내며, 폭력이나 끌려가는 모습은 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Artaxerxes has no reference avatar. Show him as an unnamed Persian king or official only if needed. The decree and speech bubble must be pictorial with no readable text.",
+      "No sexual depiction, no hateful caricature. Ezra must be inside or at the temple altar, physically separated from the sinful families, facing upward toward God's bright light with raised hands. Do not show Ezra kneeling toward the women, couples, or officials; no one points at Ezra and Ezra does not plead to people. Put the intermarried Israelite men, foreign wives, small idol figurines, and a small idol altar in the distant outside background as the reason for Ezra's grief. The couples must not look warm, happy, or romantic.",
+      "Show a solemn covenant reform scene without violence, dragging, abuse, or gore. Make the separation feel sorrowful and orderly, with no readable labels."
+    ]
+  },
+  {
+    "title": "느헤미야의 파송: 무너진 성벽 소식",
+    "era": "era_exile_return",
+    "characters": [
+      "nehemiah"
+    ],
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "느헤미야는 예루살렘 소식을 듣고 눈물로 기도한 뒤 파송을 받는다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "1:1",
+        "to": "1:11"
+      },
+      {
+        "book": "느",
+        "from": "2:1",
+        "to": "2:8"
+      }
+    ],
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "story_index": 15,
+    "story_scenes": [
+      "느헤미야가 소식을 듣고 무너진 얼굴로 앉아 운다",
+      "느헤미야가 밤의 기도, 주의 이름을 경외하는 종들을 기억하소서",
+      "상대를 바라보며 기다린다, 느헤미야가 숨을 고른다",
+      "왕의 허락과 편지가 주어진다, 느헤미야가 고개 숙여 감사한다"
+    ],
+    "scene_characters": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ]
+  },
+  {
+    "title": "성벽 재건: 밤의 조사와 한 손엔 무기",
+    "era": "era_exile_return",
+    "characters": [
+      "nehemiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "느헤미야는 밤에 성벽을 살핀 뒤 재건을 이끌었고, 백성은 한 손에 돌 한 손에 무기를 들고 성을 세웠다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "2:11",
+        "to": "2:20"
+      },
+      {
+        "book": "느",
+        "from": "4:10",
+        "to": "4:20"
+      }
+    ],
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "story_index": 16,
+    "story_scenes": [
+      "밤, 느헤미야가 소수와 함께 성벽을 따라 조사한다",
+      "성벽을 재건하는 건축 현장",
+      "건축 현장에서 한 손엔 돌, 한 손엔 무기를 들고 성벽을 세우는 모습",
+      "나팔 소리에 사람들이 모이고, 하나님이 싸우신다는 외침에 모두가 고개를 드는 장면"
+    ],
+    "scene_characters": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ]
+  },
+  {
+    "title": "율법 낭독: 울음에서 기쁨으로",
+    "era": "era_exile_return",
+    "characters": [
+      "ezra",
+      "nehemiah"
+    ],
+    "place_name": "예루살렘 수문 앞 광장(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "8:1",
+        "to": "8:12"
+      }
+    ],
+    "start_year": -444,
+    "end_year": -444,
+    "time_precision": "approx",
+    "story_index": 17,
+    "story_scenes": [
+      "에스라가 군중들에게 두루마리를 선포하는 장면",
+      "느헤미야가 울지 말라고 백성들을 다독이는 장면",
+      "에스라와 느헤미야와 백성들이 음식을 나누며 기뻐하는 장면"
+    ],
+    "scene_characters": [
+      [
+        "ezra"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "ezra",
+        "nehemiah"
+      ]
+    ]
+  }
+]

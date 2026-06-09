@@ -1,0 +1,1064 @@
+[
+  {
+    "title": "왕국의 균열: 찢어진 옷",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "solomon",
+      "jeroboam",
+      "rehoboam"
+    ],
+    "place_name": "예루살렘/실로 길(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "솔로몬의 불순종 이후 대적들이 일어나고, 여로보암에게 찢어진 나라의 예고가 주어진다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "11:14",
+        "to": "11:43"
+      }
+    ],
+    "start_year": -931,
+    "end_year": -931,
+    "time_precision": "approx",
+    "story_index": 1,
+    "story_scenes": [
+      "솔로몬 말년, 에돔과 다메섹 등 주변 나라의 대적들이 이스라엘 국경을 계속 공격하고, 늙은 솔로몬은 궁정 지도 앞에서 근심스럽게 바라보는 장면. 피와 시신은 보이지 않는다",
+      "실로 출신 선지자 아히야가 들판 길에서 새 겉옷을 찢어 열두 조각으로 나누고, 여로보암에게 열 조각을 건네며 나라가 갈라질 것을 보여주는 장면",
+      "늙은 솔로몬이 여로보암을 죽이려고 군사들을 보내지만, 여로보암이 광야 길을 달려 애굽으로 도망가고 멀리 애굽 성문이 보이는 장면. 폭력은 직접 보이지 않는다",
+      "늙은 솔로몬이 침상에서 죽고, 왕궁 안에서 백성들이 슬퍼하며 울고, 아들 르호보암은 침상 곁에 침통하게 서 있는 장면. 시신의 세부 묘사는 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "solomon"
+      ],
+      [
+        "jeroboam"
+      ],
+      [
+        "solomon",
+        "jeroboam"
+      ],
+      [
+        "solomon",
+        "rehoboam"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show Hadad of Edom and Rezon of Damascus only as unnamed foreign adversary forces at the border, with no readable labels. Show old Solomon worried in the palace map room. No gore.",
+      "Ahijah has no reference avatar. Show him as an unnamed elderly prophet in a plain mantle. Show Jeroboam matching his avatar, receiving ten torn cloth pieces from a clearly divided twelve-piece cloak. No readable labels.",
+      "Show Jeroboam matching his avatar, fleeing toward Egypt while Solomon sends soldiers behind him. No injury, no blood, no readable labels.",
+      "Show Solomon very old on a deathbed, with Rehoboam matching his avatar standing nearby as the grieving heir. No corpse detail, no gore, no readable labels."
+    ]
+  },
+  {
+    "title": "왕국 분열: 무거운 멍에와 금송아지",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "rehoboam",
+      "jeroboam",
+      "god"
+    ],
+    "place_name": "세겜/벧엘과 단(전승)",
+    "lat": 32.213,
+    "lng": 35.281,
+    "summary": "르호보암의 완고한 대답으로 왕국이 둘로 갈라지고, 여로보암은 금송아지로 백성을 잘못 이끈다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "12:1",
+        "to": "12:33"
+      }
+    ],
+    "start_year": -931,
+    "end_year": -931,
+    "time_precision": "approx",
+    "story_index": 2,
+    "story_scenes": [
+      "세겜에서 이스라엘 회중이 르호보암에게 멍에를 가볍게 해 달라고 간청하지만, 르호보암은 악한 얼굴로 더 무거운 멍에를 메라고 다그치는 장면",
+      "이스라엘 10 지파들이 여로보암을 왕으로 세우며 환호하지만, 르호보암과 유다 지파는 따르지 않는 장면",
+      "왕국이 둘로 갈라진 상징적 장면: 북쪽에는 여로보암이 북이스라엘 백성 앞에 서 있고, 남쪽에는 르호보암이 남유다 백성 앞에 서 있다. 그 사이에 선 선지자 스마야에게 하나님의 거룩한 빛과 말씀이 임하며, 스마야는 두 왕과 군대에게 서로 싸우지 말라고 손을 들어 막는다",
+      "여로보암이 벧엘과 단에 금송아지 두 개를 세우고, 백성들이 그 앞에 모여들며 여로보암의 표정이 점점 악해지는 장면"
+    ],
+    "scene_characters": [
+      [
+        "rehoboam"
+      ],
+      [
+        "jeroboam",
+        "rehoboam"
+      ],
+      [
+        "god",
+        "jeroboam",
+        "rehoboam"
+      ],
+      [
+        "jeroboam"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show Rehoboam matching his avatar with a harsh, arrogant expression. The crowd should look burdened and pleading. No readable labels or speech text.",
+      "Show Jeroboam matching his avatar being accepted by the northern tribes, while Rehoboam and Judah stand separate and refuse to join. No readable labels.",
+      "Shemaiah has no reference avatar. Show him as an unnamed prophet between the two divided kingdoms; God is represented only by holy light from above. Make the north/south split clear without readable map labels.",
+      "Show two golden calf idols at Bethel and Dan as two shrine areas in one scene; Jeroboam looks hardened and corrupt. No readable labels."
+    ]
+  },
+  {
+    "title": "여로보암의 집: 아히야의 경고",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "jeroboam",
+      "god"
+    ],
+    "place_name": "실로 → 디르사(전승)",
+    "lat": 32.056,
+    "lng": 35.29,
+    "summary": "여로보암이 금송아지로 백성을 죄에 빠뜨리자, 아히야는 그의 집에 임할 심판을 전한다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "14:1",
+        "to": "14:20"
+      }
+    ],
+    "start_year": -910,
+    "end_year": -910,
+    "time_precision": "approx",
+    "story_index": 3,
+    "story_scenes": [
+      "여로보암의 아내가 변장하고 실로의 늙은 선지자 아히야를 찾아가자, 앞을 보지 못하는 아히야가 하나님의 말씀을 전한다. 큰 글자 없는 말풍선 안에는 아이가 죽게 되는 슬픈 상징과, 여로보암이 금송아지를 섬겨 죄를 지었다는 그림이 담겨 있다",
+      "여로보암의 아내가 디르사의 집으로 돌아오자 아이가 죽었고, 여로보암은 침상 곁에서 무너진 표정으로 슬퍼하며 울고 있다. 시신의 세부 묘사는 보이지 않고 가족들은 조용히 애도한다",
+      "세월이 지나 늙은 여로보암이 침대에서 죽음을 맞고, 가족과 신하들이 침상 주변에서 깊이 애도하는 장면. 폭력이나 시신의 세부 묘사는 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "god"
+      ],
+      [
+        "jeroboam"
+      ],
+      [
+        "jeroboam"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Ahijah has no reference avatar. Show him as the same elderly blind prophet in Shiloh, with cloudy eyes and a simple brown prophet robe. Show Jeroboam's wife as the same unnamed woman throughout this story, disguised in a deep blue cloak and cream veil. God is represented only by holy light and the pictorial speech bubble. No readable labels.",
+      "Show Jeroboam matching his avatar but older and grief-stricken. Show the wife as the same deep-blue-cloaked woman from scene 1. The child is only implied under a blanket; no graphic death details, no readable labels.",
+      "Show Jeroboam much older than earlier scenes, on a bed with family and servants mourning. Peaceful deathbed tone only; no gore, no readable labels."
+    ]
+  },
+  {
+    "title": "르호보암의 남유다: 우상과 약탈",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "rehoboam"
+    ],
+    "place_name": "예루살렘/남유다(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "남유다도 우상 숭배로 무너지고, 애굽 왕 시삭에게 성전과 왕궁의 보물을 빼앗긴다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "14:21",
+        "to": "14:31"
+      }
+    ],
+    "start_year": -931,
+    "end_year": -913,
+    "time_precision": "approx",
+    "story_index": 4,
+    "story_scenes": [
+      "르호보암이 예루살렘에서 남유다를 통치하지만, 높은 언덕과 푸른 나무 아래에는 우상 제단과 아세라 목상이 세워져 있고, 우상 신전 곁에는 타락한 남성 제의 종사자들이 서 있는 장면. 노골적인 성적 행위나 노출은 보이지 않는다",
+      "애굽 왕 시삭의 군대가 예루살렘 성전과 왕궁에서 솔로몬의 금방패와 보물과 귀한 물건들을 약탈해 가고, 르호보암은 왕궁 계단에서 좌절한 표정으로 바라보는 장면. 피와 시신은 보이지 않는다",
+      "늙은 르호보암이 침상에서 죽음을 맞고, 가족과 신하들이 침상 주변에서 깊이 애도하는 장면. 폭력이나 시신의 세부 묘사는 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "rehoboam"
+      ],
+      [
+        "rehoboam"
+      ],
+      [
+        "rehoboam"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show Rehoboam matching his avatar as king of Judah in Jerusalem. For the male cult prostitutes of 1 Kings 14:24, show only corrupted male cult attendants standing near an idol shrine; no nudity, no sexual act, no readable labels.",
+      "Shishak and the Egyptian soldiers have no reference avatars. Show them as an Egyptian army carrying away golden shields and treasures. Keep Rehoboam visibly defeated and humiliated. No gore, no readable labels.",
+      "Show Rehoboam much older than earlier scenes, on a deathbed with family and servants mourning. Peaceful deathbed tone only; no gore, no readable labels."
+    ]
+  },
+  {
+    "title": "아합과 엘리야: 가뭄의 시작",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "ahab",
+      "elijah"
+    ],
+    "place_name": "사마리아 → 그릿 시냇가 → 사르밧(전승)",
+    "lat": 32.279,
+    "lng": 35.19,
+    "summary": "아합의 바알 숭배 속에서 엘리야는 가뭄을 선포하고, 하나님은 광야와 과부의 집에서 생명을 돌보신다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "16:29",
+        "to": "17:24"
+      }
+    ],
+    "start_year": -874,
+    "end_year": -870,
+    "time_precision": "approx",
+    "story_index": 5,
+    "story_scenes": [
+      "아합이 북이스라엘의 왕이 되어 사마리아 궁전을 다스리는데, 궁전 안팎에는 바알 제단과 우상들이 가득하고 아합은 교만하고 어두운 표정으로 서 있는 장면",
+      "엘리야가 사마리아 궁전에서 아합 앞에 당당히 서서 호통치고, 큰 글자 없는 말풍선 안에는 몇 해 동안 이슬도 비도 내리지 않아 마른 땅이 갈라지는 상징 그림이 담겨 있는 장면",
+      "요단강 앞 그릿 시냇가에 숨어 있는 엘리야에게 까마귀들이 아침과 저녁으로 빵을 가져다주고, 엘리야는 조용히 하나님을 의지하며 앉아 있는 장면",
+      "사르밧 과부의 집에서 엘리야가 죽은 아이를 위해 간절히 기도하자 아이가 다시 살아나고, 과부가 놀라며 감사하는 장면. 죽음의 세부 묘사나 폭력은 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "ahab"
+      ],
+      [
+        "elijah",
+        "ahab"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Ahab has no reference avatar yet. Show him as the same Northern Israel king throughout this story: middle-aged, dark beard, ornate royal robe, gold headband, proud hardened face. Baal idols should be visible but no readable labels.",
+      "Show Elijah matching his avatar with rough orange mantle and prophet robe. Show Ahab as the same king from scene 1. The speech bubble must be pictorial only, with dry cracked land and no rain, no readable text.",
+      "Show Elijah matching his avatar beside the brook Cherith, east of the Jordan tradition. Ravens bring bread in their beaks or claws; keep the scene peaceful and non-threatening.",
+      "The widow has no reference avatar. Show her as the same unnamed poor Phoenician widow in this scene: modest dark teal veil, simple brown dress, anxious then amazed expression. The child is shown alive again, sitting up; no corpse details, no readable labels."
+    ]
+  },
+  {
+    "title": "엘리야와 갈멜: 불의 응답",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "elijah"
+    ],
+    "place_name": "갈멜 산",
+    "lat": 32.7333,
+    "lng": 35.05,
+    "summary": "엘리야는 하나님이 참 하나님이심을 불의 응답으로 드러낸다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "18:20",
+        "to": "18:39"
+      }
+    ],
+    "start_year": -860,
+    "end_year": -860,
+    "time_precision": "approx",
+    "story_index": 6,
+    "story_scenes": [
+      "바알 선지자들의 소란, 사람들의 얼굴이 흔들린다",
+      "엘리야가 제단에 물을 붓고 조용히 기도한다",
+      "불이 임하고 백성이 엎드린다, 여호와 그가 하나님이시로다!"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ]
+    ]
+  },
+  {
+    "title": "호렙의 엘리야: 조용한 음성",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "elijah"
+    ],
+    "place_name": "호렙 산(전승)",
+    "lat": 28.5392,
+    "lng": 33.9756,
+    "summary": "엘리야는 절망 속에서 ‘세미한 음성’으로 다시 부르심을 받는다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "19:1",
+        "to": "19:18"
+      }
+    ],
+    "start_year": -860,
+    "end_year": -860,
+    "time_precision": "approx",
+    "story_index": 7,
+    "story_scenes": [
+      "호렙 산 주변의 메마른 광야와 바위 동굴 근처에서 지친 엘리야가 쓰러져 차라리 죽여 달라고 탄식하는 장면. 엘리야는 먼 길에 지친 얼굴과 축 처진 자세로 보인다",
+      "같은 호렙 산 동굴 앞에서 지친 엘리야 앞을 큰 바람과 지진과 불이 차례로 지나가고, 그 뒤에는 깊은 고요가 찾아오는 장면. 엘리야는 두려움과 피로 속에서도 귀를 기울인다",
+      "같은 호렙 산 동굴 입구에 지친 엘리야가 서 있고, 작은 하나님의 음성이 들려온다. 큰 글자 없는 음성 속의 그림 안에는 하사엘을 아람 왕으로, 예후를 이스라엘 왕으로, 엘리사를 다음 예언자로 세우라는 상징 그림이 담겨 있다",
+      "같은 호렙 산 동굴 입구에서 지친 엘리야에게 하나님이 바알에게 저항하는 칠천 명을 남겨 두셨음을 말씀하시는 장면. 큰 글자 없는 말풍선 안에는 우상에게 무기를 들고 싸우는 많은 신실한 사람들이 상징적으로 보인다"
+    ],
+    "scene_characters": [
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Keep the same Horeb mountain wilderness and rocky cave area across all four scenes. Show Elijah matching his avatar, visibly exhausted, isolated, and emotionally worn down. No readable text.",
+      "Keep the same Horeb cave background from scene 1. Show wind, earthquake cracks, and fire as passing forces, followed by stillness. Elijah remains tired and small before the scene. No readable text.",
+      "Keep the same Horeb cave entrance. The divine voice is pictorial only: Hazael of Aram, Jehu of Israel, and Elisha as successor prophet shown as three symbolic appointments. No readable labels or written names.",
+      "Keep the same Horeb cave entrance. The seven thousand are symbolic faithful people in a speech-bubble image, fighting against a Baal idol; avoid literal readable numbers or labels."
+    ]
+  },
+  {
+    "title": "엘리야 승천: 겉옷의 계승",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "elijah",
+      "elisha"
+    ],
+    "place_name": "요단강 근처(전승)",
+    "lat": 32.311,
+    "lng": 35.5688,
+    "summary": "엘리야는 떠나고, 엘리사는 겉옷과 사명을 이어받는다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "2:1",
+        "to": "2:14"
+      }
+    ],
+    "start_year": -850,
+    "end_year": -850,
+    "time_precision": "approx",
+    "story_index": 8,
+    "story_scenes": [
+      "늙은 흰머리 노인 엘리야가 엘리사에게 여기있으라 하지만 엘리사가 끝까지 함께하겠다고 말하는 장면",
+      "늙은 노인 엘리야가 겉옷으로 요단강 물을 치자 길이 열리는 장면",
+      "늙은 노인 엘리야가 불수레와 함께 하늘로 들려 올라가고, 엘리사가 울부짖는 장면",
+      "엘리사가 겉옷을 들고 요단을 치자 물이 갈라지는 장면"
+    ],
+    "scene_characters": [
+      [
+        "elijah",
+        "elisha"
+      ],
+      [
+        "elijah"
+      ],
+      [
+        "elijah",
+        "elisha"
+      ],
+      [
+        "elisha"
+      ]
+    ]
+  },
+  {
+    "title": "엘리사의 첫 표징: 물과 경고",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "elisha"
+    ],
+    "place_name": "여리고 → 벧엘 길(전승)",
+    "lat": 31.8744,
+    "lng": 35.4441,
+    "summary": "엘리사는 엘리야의 계승자로 인정받고, 물을 고치며 하나님의 권위를 가볍게 여긴 조롱에 경고를 드러낸다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "2:15",
+        "to": "2:25"
+      }
+    ],
+    "start_year": -850,
+    "end_year": -850,
+    "time_precision": "approx",
+    "story_index": 9,
+    "story_scenes": [
+      "여리고의 선지자 제자들이 엘리사에게 엘리야를 찾아보자고 간청하지만, 엘리사는 엘리야의 겉옷을 붙든 채 단호히 거절하는 장면",
+      "여리고 사람들이 물을 고쳐 달라고 하자 엘리사가 새 그릇의 소금을 물 근원에 조금 뿌리고, 탁했던 물이 맑고 깨끗하게 변하는 장면",
+      "벧엘로 올라가는 길에서 아이들이 엘리사를 놀려대자 엘리사가 엄중히 꾸짖고, 숲에서 곰 두 마리가 뛰어나와 아이들이 공포에 흩어지는 장면. 피나 상처나 시신은 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "elisha"
+      ],
+      [
+        "elisha"
+      ],
+      [
+        "elisha"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show Elisha matching his avatar and clearly holding Elijah's mantle as a sign of succession. The sons of the prophets have no reference avatars; show them as unnamed prophet disciples with no readable labels.",
+      "Show Elisha matching his avatar at Jericho's water source. The water visibly changes from troubled to clear; no readable labels or text.",
+      "Show the mocking youths as an unnamed group on the road to Bethel. The two bears rush from the trees and the youths scatter in fear; no gore, no wounds, no bodies, no graphic violence, no readable labels."
+    ]
+  },
+  {
+    "title": "엘리사의 기적들: 기름과 생명과 양식",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "elisha"
+    ],
+    "place_name": "길갈/수넴/바알살리사(전승)",
+    "lat": 31.85,
+    "lng": 35.5,
+    "summary": "엘리사는 가난한 집의 기름, 죽은 아이의 회복, 독이 사라진 국, 적은 떡으로 먹인 무리를 통해 하나님의 돌보심을 보여 준다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "4:1",
+        "to": "4:44"
+      }
+    ],
+    "start_year": -845,
+    "end_year": -845,
+    "time_precision": "approx",
+    "story_index": 10,
+    "story_scenes": [
+      "엘리사가 가난한 선지자의 아내에게 빈 그릇을 많이 모아 기름을 부으라 하자, 여인이 집 안에서 여러 그릇에 기름을 가득 채우는 장면",
+      "수넴 여인의 집에서 침대에 누워 있던 아이를 위해 엘리사가 간절히 기도하자 아이가 다시 살아나 앉고, 어머니가 놀라며 기뻐하는 장면. 죽음의 세부 묘사는 보이지 않는다",
+      "길갈에서 사람들이 큰 솥의 독이 든 국을 두려워하자, 엘리사가 밀가루를 넣고 국이 안전해져 사람들이 안심하고 먹을 수 있게 되는 장면",
+      "엘리사가 보리빵 스무 개와 햇곡식 조금으로 백 명을 먹이고, 사람들이 배불리 먹은 뒤에도 음식이 남아 있는 장면"
+    ],
+    "scene_characters": [
+      [
+        "elisha"
+      ],
+      [
+        "elisha"
+      ],
+      [
+        "elisha"
+      ],
+      [
+        "elisha"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "The poor widow has no reference avatar. Show her as an unnamed humble Israelite widow in a plain brown veil and simple robe; keep Elisha matching his avatar. No readable labels.",
+      "The Shunammite woman and child have no reference avatars. Show the child alive again, sitting up; no corpse details, no gore, no medical horror, no readable labels.",
+      "Show a communal meal pot at Gilgal. The danger is symbolized by worried faces and bitter wild gourds near the pot, then flour making the stew safe; no sickness details, no readable labels.",
+      "Show barley loaves and fresh grain feeding a large seated group. The crowd can be a stylized background group; no readable numbers or labels."
+    ]
+  },
+  {
+    "title": "나아만: 요단의 일곱 번",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "naaman",
+      "elisha"
+    ],
+    "place_name": "사마리아/요단강(전승)",
+    "lat": 32.279,
+    "lng": 35.19,
+    "summary": "자존심을 내려놓을 때 치유가 찾아온다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "5:1",
+        "to": "5:14"
+      }
+    ],
+    "start_year": -845,
+    "end_year": -845,
+    "time_precision": "approx",
+    "story_index": 11,
+    "story_scenes": [
+      "문둥병에 걸린 젊은 장수 나아만이 이스라엘로 향하는 장면",
+      "작은 종이 젊은 장수 나아만에게 말하고, 나아만은 화를 내는 장면",
+      "젊은 장수 나아만이 분한 얼굴로 요단강 물에 몸을 담그는 장면",
+      "젊은 장수 나아만의 문둥병이 깨끗이 나은 장면"
+    ],
+    "scene_characters": [
+      [
+        "naaman"
+      ],
+      [
+        "naaman"
+      ],
+      [
+        "naaman"
+      ],
+      [
+        "naaman"
+      ]
+    ]
+  },
+  {
+    "title": "도단의 불 말과 불 전차: 눈이 열리다",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "elisha",
+      "god"
+    ],
+    "place_name": "도단(전승)",
+    "lat": 32.41,
+    "lng": 35.24,
+    "summary": "아람 군대가 도단을 에워싸지만, 하나님은 엘리사 곁의 불 말과 불 전차를 보이시고 원수에게 자비를 베풀게 하신다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "6:8",
+        "to": "6:23"
+      }
+    ],
+    "start_year": -845,
+    "end_year": -845,
+    "time_precision": "approx",
+    "story_index": 12,
+    "story_scenes": [
+      "밤의 도단 성 밖, 아람 왕이 보낸 많은 말과 병거와 군대가 엘리사를 붙잡아 해치려는 명령을 받고 성을 조용히 에워싸며, 성 안은 아직 어둠 속에 잠겨 있는 장면",
+      "새벽 도단 성에서 엘리사가 두려워하는 청년을 위해 기도하자, 청년의 눈이 열려 엘리사 주변 산마다 불 말과 불 전차가 가득한 것을 보는 장면",
+      "엘리사가 성 밖 아람 군대를 향해 기도하자 군사들이 눈앞을 더듬으며 길을 잃고 혼란스러워하는 장면. 눈이 멀어진 상태를 상징적으로 보이되 상처나 공포 묘사는 절제한다",
+      "사마리아 진영에서 엘리사가 아람 군대에게 먹을 것과 마실 것을 베풀게 한 뒤, 그들이 평화롭게 자기 나라 진영으로 돌아가도록 길을 열어 주는 장면"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "elisha",
+        "god"
+      ],
+      [
+        "elisha"
+      ],
+      [
+        "elisha"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Aram soldiers have no reference avatars. Show them as an unnamed night army surrounding Dothan; no readable labels, no combat impact.",
+      "The young servant has no reference avatar. Show him as the same frightened young man beside Elisha. God is represented by holy fire-light, fiery horses, and fiery chariots only; no human figure, no readable text.",
+      "Show blindness as symbolic confusion with covered or clouded eyes and outstretched hands. No injury, no medical gore, no readable labels.",
+      "Show mercy and release: food, water, and a peaceful departure for the Aramean soldiers. No violence, no prisoners in chains, no readable labels."
+    ]
+  },
+  {
+    "title": "이사야의 소명: 거룩한 보좌의 환상",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "isaiah",
+      "god"
+    ],
+    "place_name": "예루살렘 성전(환상)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "이사야는 거룩하신 하나님의 보좌 환상 앞에서 자신의 죄를 깨닫고, 정결하게 된 뒤 보내심에 응답한다.",
+    "bible_ref": [
+      {
+        "book": "사",
+        "from": "6:1",
+        "to": "6:13"
+      }
+    ],
+    "start_year": -740,
+    "end_year": -740,
+    "time_precision": "approx",
+    "story_index": 13,
+    "story_scenes": [
+      "이사야의 큰 글자 없는 생각 풍선 안에 보이는 환상: 밝은 하나님의 보좌와 여섯 날개 스랍들 앞에서 두려워 떠는 이사야에게 한 스랍이 제단에서 가져온 핀 숯을 들고 날아와 이사야의 입술에 조심스럽게 대며 죄가 사해졌음을 상징한다. 숯은 작은 빛으로만 보이고 화상이나 상처는 보이지 않는다",
+      "이사야의 큰 글자 없는 생각 풍선 안에 보이는 환상: 밝은 하나님의 보좌와 여섯 날개 스랍들 가운데서 하나님이 누구를 보낼지 부르시는 듯 빛이 퍼지고, 이사야는 두려움이 사라진 얼굴로 손을 들며 제가 여기 있으니 저를 보내 달라고 응답한다. 말풍선에는 글자가 없고, 손을 든 이사야와 보내심의 빛이 분명히 보인다",
+      "이사야의 큰 글자 없는 생각 풍선 안에 보이는 환상: 하나님이 이사야에게 가서 전하라고 명하시며 밝은 빛이 이사야를 향해 뻗는다. 같은 생각 풍선 안쪽 먼 배경에는 사람들이 귀를 막고 눈을 감아 말씀을 듣지 않는 모습과, 성읍과 집들이 황폐해지는 장면이 상징적으로 보인다. 폭력이나 시신은 보이지 않고, 끝에는 잘린 나무 그루터기에서 작은 새싹이 남아 있는 모습이 희망의 표징처럼 보인다"
+    ],
+    "scene_characters": [
+      [
+        "isaiah",
+        "god"
+      ],
+      [
+        "isaiah",
+        "god"
+      ],
+      [
+        "isaiah",
+        "god"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Vision inside a text-free thought bubble. The coal touches Isaiah’s lips symbolically and gently; no burn, no injury, no gore. God is radiant throne-light, not a human figure. Seraphim have six wings as specified.",
+      "Vision inside a text-free thought bubble. Show Isaiah volunteering with a raised hand. Use pictorial light/gesture only; no readable speech text. God is radiant throne-light, not a human figure. Seraphim have six wings.",
+      "Vision inside a text-free thought bubble. Show the message visually: people refusing to listen, a desolate land, and a remaining stump with a small shoot. No corpses, no gore, no readable labels. God is radiant throne-light, not a human figure."
+    ]
+  },
+  {
+    "title": "아하스와 임마누엘: 믿음의 징조",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "isaiah",
+      "ahaz",
+      "god"
+    ],
+    "place_name": "예루살렘 윗못 수도 끝(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "아하스는 두 왕의 위협 앞에서 흔들리지만, 하나님은 이사야를 통해 굳게 믿으라는 말씀과 임마누엘의 징조를 주신다.",
+    "bible_ref": [
+      {
+        "book": "사",
+        "from": "7:1",
+        "to": "7:25"
+      }
+    ],
+    "start_year": -735,
+    "end_year": -735,
+    "time_precision": "approx",
+    "story_index": 14,
+    "story_scenes": [
+      "아람 왕 르신의 군대와 북이스라엘 베가의 군대가 함께 예루살렘을 위협한다는 소식이 아하스 왕에게 전해지고, 아하스 왕과 백성의 마음이 숲이 바람에 흔들리듯 왕궁 안에서 두려워 떨고 있다",
+      "아하스가 이사야 앞에서 망설이며 뒤로 물러나고, 손은 왕복을 붙잡고 눈치를 보며 하나님께 징조를 구하지 않겠다는 태도를 보인다. 뒤편에는 사람의 정치 계산과 군사 동맹을 상징하는 작은 지도와 병사 그림이 있고, 하늘의 빛은 외면당한다",
+      "하나님의 빛이 이사야를 통해 아하스에게 임마누엘의 징조를 전한다. 큰 글자 없는 말풍선 안에는 젊은 여인이 아기를 안고 있고, 아기 곁에는 뻐터와 꿀, 악을 버리고 선을 택하는 두 길의 상징, 멀리 두 왕의 땅이 비어 가는 그림이 함께 보인다"
+    ],
+    "scene_characters": [
+      [
+        "ahaz"
+      ],
+      [
+        "isaiah",
+        "ahaz"
+      ],
+      [
+        "god",
+        "isaiah",
+        "ahaz"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Rezin and Pekah do not have reference avatars. Show them only as distant unnamed threatening forces; Ahaz is fearful, not heroic. No readable labels.",
+      "Ahaz refuses trust with hesitant eyes and political calculation, not bold faith. No readable text.",
+      "Use a pictorial speech bubble only; do not write Immanuel as readable text. Keep it a prophetic sign scene, not a Nativity scene; no Mary/Jesus depiction, no readable labels."
+    ]
+  },
+  {
+    "title": "호세아의 몰락: 사마리아가 함락되다",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "hoshea_king"
+    ],
+    "place_name": "사마리아",
+    "lat": 32.279,
+    "lng": 35.19,
+    "summary": "북이스라엘의 마지막 왕 호세아는 앗수르에 반역하다 붙잡히고, 사마리아는 함락되어 백성이 포로로 끌려간다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "17:1",
+        "to": "17:6"
+      }
+    ],
+    "start_year": -724,
+    "end_year": -722,
+    "time_precision": "approx",
+    "story_index": 15,
+    "story_scenes": [
+      "사마리아 성 밖, 앗수르 왕 살만에셀이 많은 군대와 병거를 이끌고 호세아 왕을 잡으러 올라오고, 성벽 위의 호세아 왕은 두려움과 긴장 속에 바라보는 장면",
+      "앗수르 왕이 호세아 왕의 배반을 알고 그를 붙잡아 어두운 감옥에 가둔 모습. 호세아는 왕복이 흐트러진 채 침울하게 앉아 있고, 피와 폭력은 보이지 않는다",
+      "사마리아 성이 함락되고, 이스라엘 사람들이 가족과 짐을 들고 앗수르 병사들에게 이끌려 먼 앗수르 땅으로 끌려가는 장면. 북이스라엘 왕국이 끝났다는 침통한 분위기이며, 피와 시신은 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "hoshea_king"
+      ],
+      [
+        "hoshea_king"
+      ],
+      []
+    ],
+    "scene_prompt_notes": [
+      "Hoshea is the last king of Northern Israel, not Hosea the prophet. Show him as a somber northern king in a blue-gray royal robe and bronze headband; no prophecy scroll, no prophet robe, no readable labels.",
+      "Assyrian king and guards have no reference avatars. Show Hoshea imprisoned and gloomy, but no gore, no visible wounds, no readable labels.",
+      "Show the fall and exile of Samaria with families being led away; no graphic violence, no bodies, no readable labels."
+    ]
+  },
+  {
+    "title": "히스기야와 산헤립: 두려움의 편지",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "hezekiah",
+      "isaiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "포위 속에서 히스기야는 편지를 성전에 펼치고 하나님께 매달린다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "18:13",
+        "to": "19:19"
+      },
+      {
+        "book": "사",
+        "from": "37:1",
+        "to": "37:38"
+      }
+    ],
+    "start_year": -701,
+    "end_year": -701,
+    "time_precision": "approx",
+    "story_index": 16,
+    "story_scenes": [
+      "성벽 아래 조롱",
+      "엘리아김과 셉나와 요아가 히스기야에게 앗수르 군대와 랍사게의 조롱 이야기를 전하자, 히스기야가 울며 옷을 찢고 깊은 두려움과 슬픔에 빠지는 장면",
+      "히스기야가 성전에서 주님께 울며 간절히 기도하고, 예루살렘을 둘러싼 두려운 상황을 하나님 앞에 맡기는 장면",
+      "이사야가 히스기야에게 하나님의 말씀을 선포하고, 큰 글자 없는 말풍선 안에는 하나님이 악한 앗수르 왕과 그가 자랑하던 여러 왕들과 우상 성전들을 모두 물리치시며 예루살렘을 보호하시는 상징 그림이 담겨 있다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah",
+        "isaiah"
+      ]
+    ]
+  },
+  {
+    "title": "히스기야의 병과 바벨론 사신",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "hezekiah",
+      "isaiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "회복 이후의 자랑은 또 다른 위기를 예고한다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "20:1",
+        "to": "20:19"
+      },
+      {
+        "book": "사",
+        "from": "38:1",
+        "to": "39:8"
+      }
+    ],
+    "start_year": -700,
+    "end_year": -700,
+    "time_precision": "approx",
+    "story_index": 17,
+    "story_scenes": [
+      "히스기야가 병상에서 울며 기도하는 장면",
+      "이사야가 히스기야에게 와서 나을 것이라고 말하는 장면",
+      "히스기야가 다 나은 뒤 바벨론 사신들에게 보물을 자랑하는 장면",
+      "이사야가 히스기야에게 보물을 가리키며 호통치는 장면"
+    ],
+    "scene_characters": [
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah",
+        "isaiah"
+      ],
+      [
+        "hezekiah"
+      ],
+      [
+        "hezekiah",
+        "isaiah"
+      ]
+    ]
+  },
+  {
+    "title": "요시야의 개혁: 율법책을 찾다",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "josiah"
+    ],
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "어린 나이에 왕이 된 요시야는 여호와의 길을 따르고, 발견된 율법책 앞에서 회개하며 유다의 우상 숭배를 정리한다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "22:1",
+        "to": "22:13"
+      },
+      {
+        "book": "왕하",
+        "from": "23:1",
+        "to": "23:21"
+      }
+    ],
+    "start_year": -622,
+    "end_year": -622,
+    "time_precision": "approx",
+    "story_index": 18,
+    "story_scenes": [
+      "8살의 어린 요시야가 예루살렘에서 왕으로 세워지고, 다윗의 길을 따라 여호와 보시기에 정직히 행하자 하나님이 기뻐하시는 따뜻한 영광의 빛이 어린 왕과 왕궁 위에 임하는 장면",
+      "왕위 18년, 약 26세의 요시야 왕이 미장공과 목수와 건축자들에게 성전 보수를 맡긴 가운데, 대제사장 힐기야가 성전 안에서 오래 잊힌 율법책 두루마리를 발견하고 놀라는 장면",
+      "서기관 사반이 율법책을 약 26세의 요시야 왕 앞에서 읽어 주자, 요시야가 눈물로 옷을 찢으며 하나님께 부르짖고, 신하들은 충격을 받아 조용히 서 있는 장면",
+      "약 26세의 요시야 왕이 백성들 앞에서 율법책을 낭독하고 언약을 세우며, 주변에서는 군사들과 제사장들이 바알 신상과 아세라 목상을 부수어 성전 밖으로 치우는 장면. 피와 폭력은 보이지 않고, 글자는 읽히지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "josiah"
+      ],
+      [
+        "josiah"
+      ],
+      [
+        "josiah"
+      ],
+      [
+        "josiah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show Josiah as an 8-year-old child king in this scene only, with a small royal robe and no adult beard. God is represented by warm holy glory-light only; no human figure, no readable labels.",
+      "Show Josiah as about 26 years old, matching his adult avatar style. Hilkiah has no reference avatar; show him as an unnamed elderly high priest discovering a blank scroll. Workers are background figures. No readable text.",
+      "Show Shaphan as an unnamed scribe reading a blank scroll to Josiah. Make Josiah visibly grieving and tearing his robe, but no injury or gore and no readable text.",
+      "Show reform clearly: Josiah reads a blank scroll before the people while Baal and Asherah objects are removed and broken outside the temple. No readable text, no gore, no combat."
+    ]
+  },
+  {
+    "title": "예레미야의 경고: 칠십 년의 포로",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "jeremiah"
+    ],
+    "place_name": "예루살렘/유다(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예레미야는 유다가 말씀을 듣지 않았기에 바벨론을 섬기게 되지만, 정한 때가 차면 바벨론도 심판받을 것이라고 선포한다.",
+    "bible_ref": [
+      {
+        "book": "렘",
+        "from": "25:1",
+        "to": "25:14"
+      }
+    ],
+    "start_year": -605,
+    "end_year": -605,
+    "time_precision": "approx",
+    "story_index": 19,
+    "story_scenes": [
+      "예레미야 선지자가 유다 백성 앞에서 엄중히 말하고, 큰 말풍선 안에는 예루살렘이 폐허가 되고 백성들이 바벨론 왕을 섬기는 장면이 보인다. 말풍선 안에는 큰 숫자 70만 또렷하게 보이고 다른 글자는 없다",
+      "예레미야 선지자가 백성들에게 계속 선포하고, 큰 글자 없는 말풍선 안에는 칠십 년 뒤 바벨론 왕과 그 나라가 하나님의 처벌을 받아 왕좌와 성읍이 무너지는 상징 그림이 보인다. 피와 시신은 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Only the number 70 may appear as readable text. Do not include other letters or labels. Show Jeremiah as the same weeping prophet avatar.",
+      "No readable text. Show Babylon judged symbolically after seventy years; no gore, no bodies, no explicit violence."
+    ]
+  },
+  {
+    "title": "새 언약의 약속: 마음에 새기다",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "jeremiah"
+    ],
+    "place_name": "예루살렘/유다(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예레미야는 무너진 백성에게 회복과 새 언약을 전하며, 하나님이 말씀을 마음에 새기실 날을 바라보게 한다.",
+    "bible_ref": [
+      {
+        "book": "렘",
+        "from": "31:1",
+        "to": "31:40"
+      }
+    ],
+    "start_year": -587,
+    "end_year": -587,
+    "time_precision": "approx",
+    "story_index": 20,
+    "story_scenes": [
+      "예레미야가 백성들에게 회복의 약속을 말하고, 큰 글자 없는 말풍선 안에는 이스라엘 백성들이 소고를 들고 춤추며, 포도나무 열매를 먹고, 모두가 기뻐하는 모습이 보인다",
+      "예레미야가 백성들에게 말하고, 큰 글자 없는 말풍선 안에는 하나님이 보내신 선한 목자가 양 떼를 모아 안전하게 지키는 모습이 보인다",
+      "예레미야가 백성들에게 강하게 말하고, 큰 글자 없는 말풍선 안에는 하나님이 타락한 예루살렘 백성들에게 돌아오라고 부르시며 회개를 촉구하는 상징 그림이 보인다. 백성들은 우상에서 돌아서려는 모습이다",
+      "예레미야가 백성들에게 새 언약을 말하고, 큰 글자 없는 말풍선 안에는 하나님의 빛이 백성들의 마음 가운데 율법을 새기고 서 있는 모습이 보인다"
+    ],
+    "scene_characters": [
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "No readable text. Keep all restoration scenes inside Jeremiah's speech bubble.",
+      "No readable text. The shepherd is a symbolic figure in the speech bubble, not a new reference avatar.",
+      "No readable text. Show repentance clearly: people turning away from small idol shapes toward God's light.",
+      "No readable text. Show law written on hearts pictorially with light and book symbols, not letters."
+    ]
+  },
+  {
+    "title": "불태워진 두루마리: 말씀을 거부하다",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "jeremiah",
+      "jehoiakim"
+    ],
+    "place_name": "예루살렘 성전/왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예레미야의 말씀이 바룩의 두루마리에 기록되어 낭독되지만, 여호야김은 말씀을 잘라 불태우며 거부한다.",
+    "bible_ref": [
+      {
+        "book": "렘",
+        "from": "36:1",
+        "to": "36:26"
+      }
+    ],
+    "start_year": -605,
+    "end_year": -604,
+    "time_precision": "approx",
+    "story_index": 21,
+    "story_scenes": [
+      "실내에서 예레미야 선지자가 바룩에게 하나님의 말씀을 전하고, 바룩은 낮은 책상 앞에서 예레미야가 말하는 내용을 긴 두루마리에 정성껏 적는 장면",
+      "성전 뜰 앞에서 바룩이 두루마리를 펼쳐 백성들에게 선포하고, 사람들은 긴장한 표정으로 귀 기울인다. 두루마리에는 읽을 수 있는 글자가 보이지 않는다",
+      "여호야김의 관료들이 바룩에게 다가와 두루마리를 달라고 요구하고, 바룩은 놀라지만 두루마리를 조심스럽게 내미는 장면",
+      "겨울 왕궁 안, 여후디가 여호야김 왕 앞에서 두루마리를 읽고, 여호야김은 사악하고 완고한 얼굴로 작은 칼로 두루마리를 잘라 화롯불에 넣는다. 불은 두루마리만 태우고 사람에게 번지지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "jeremiah"
+      ],
+      [],
+      [],
+      [
+        "jehoiakim"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Baruch has no reference avatar. Show him as the same unnamed young-to-middle-aged scribe in scenes 1-3: short dark beard, simple parchment robe, blue-gray sash. No readable text.",
+      "Show Baruch as the same scribe from scene 1. No readable text on the scroll.",
+      "Show Baruch as the same scribe from scenes 1-2. Officials have no reference avatars and no labels.",
+      "Jehudi has no reference avatar. Show him as an unnamed court reader. Jehoiakim should look like a proud Judah king. No gore, no readable labels."
+    ]
+  },
+  {
+    "title": "토굴의 예레미야: 왕에게 전하다",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "jeremiah",
+      "zedekiah"
+    ],
+    "place_name": "예루살렘 베냐민 문/왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "시드기야 때 예레미야는 거짓 고발로 갇히지만, 왕 앞에서도 바벨론에게 넘겨질 말씀을 굽히지 않는다.",
+    "bible_ref": [
+      {
+        "book": "렘",
+        "from": "37:1",
+        "to": "37:21"
+      }
+    ],
+    "start_year": -588,
+    "end_year": -588,
+    "time_precision": "approx",
+    "story_index": 22,
+    "story_scenes": [
+      "예레미야가 시드기야 왕에게 말하고, 큰 글자 없는 말풍선 안에는 바벨론 군대가 다시 예루살렘으로 돌아와 싸우는 그림이 보인다. 시드기야는 불안한 표정으로 듣는다",
+      "베냐민 성문에서 문지기 우두머리가 예레미야를 향해 배반자라고 소리치고, 예레미야 선지자는 억울하고 단호한 얼굴로 거짓말이라고 맞서 말하는 장면",
+      "예레미야가 어둡고 좁은 토굴 속 감옥에 갇혀 앉아 있지만, 무너지지 않는 믿음으로 조용히 버티는 장면. 피와 폭력은 보이지 않는다",
+      "시드기야 왕이 예레미야를 다시 불러 은밀히 묻고, 예레미야가 시드기야 왕에게 바벨론 왕의 손에 넘겨질 것이라고 전한다. 큰 글자 없는 말풍선 안에는 시드기야가 바벨론 왕 앞에 넘겨지는 상징 그림이 보인다"
+    ],
+    "scene_characters": [
+      [
+        "jeremiah",
+        "zedekiah"
+      ],
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah"
+      ],
+      [
+        "jeremiah",
+        "zedekiah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "No readable text. Show Babylon as distant army silhouettes in Jeremiah's speech bubble, no gore.",
+      "The gate captain has no reference avatar. Show him as an unnamed angry guard leader with no label.",
+      "No gore, no injury, no torture. Show a dark cistern-like prison chamber but keep Jeremiah dignified.",
+      "No readable text. Show Zedekiah as the existing Judah king avatar and Jeremiah as the same prophet."
+    ]
+  },
+  {
+    "title": "예루살렘 포위: 왕의 몰락",
+    "era": "era_divided_kingdom",
+    "characters": [
+      "zedekiah"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "포위는 길어지고, 마지막 순간 왕과 도시는 무너진다.",
+    "bible_ref": [
+      {
+        "book": "왕하",
+        "from": "24:18",
+        "to": "25:7"
+      }
+    ],
+    "start_year": -588,
+    "end_year": -586,
+    "time_precision": "approx",
+    "story_index": 23,
+    "story_scenes": [
+      "예루살렘 왕궁 안에서 시드기야가 여호와를 배반하고 작은 우상들을 궁전에 들여놓으며, 백성들이 그 우상들 앞에 엎드려 섬기는 모습",
+      "바벨론 군대가 시드기야가 있는 예루살렘 성을 사방에서 둘러싸고 토성을 쌓아 공격하며, 성벽 위 사람들은 두려워하고 시드기야는 성 안에서 절망하는 장면",
+      "시드기야가 바벨론 군사들에게 붙잡혀 눈에 어두운 안대를 하고 사슬에 묶인 채 바벨론으로 끌려가는 장면. 피와 상처는 직접 보이지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "zedekiah"
+      ],
+      [],
+      [
+        "zedekiah"
+      ]
+    ],
+    "scene_prompt_notes": [
+      "Show idolatry as small palace idols and people bowing; no readable labels or text.",
+      "Show siege pressure, walls, earthworks, and surrounding Babylonian army; no gore, no bodies.",
+      "Show Zedekiah with a dark eye bandage or protective blindfold, not graphic injury. No blood, no visible wound, no close-up violence."
+    ]
+  }
+]

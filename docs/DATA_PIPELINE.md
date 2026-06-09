@@ -5,7 +5,7 @@
 ## 0. 입력 데이터 (사람·AI 이전 단계에서 준비됨)
 
 - **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력.
-- **`assets/200_stories/*.json`** — 215개 이야기 dict 리스트 (5개 파일). **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
+- **`assets/200_stories/*.json`** — 216개 이야기 dict 리스트 (시대별 파일). **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
 
 ### 가장 단순한 흐름: KRV 성경 시드
 
@@ -54,14 +54,14 @@ Makefile                                # 파이프라인 오케스트레이션
 ```
                     ┌─────────────────────────────────────────────┐
                     │         assets/200_stories/*.json           │
-                    │         (215개 이야기 소스)                  │
+                    │         (216개 이야기 소스)                  │
                     └──┬──────────────────────────┬───────────────┘
                        │                          │
                        ▼                          ▼
         build_character_meta_json.py       generate_event_story_images_vertex.py
                │                                  │
                ▼                                  ▼
-      character_meta.json                     assets/story_images/ (860장)
+      character_meta.json                     assets/story_images/ (생성 완료 시 778장면)
          │        │       │                       │
          ▼        ▼       ▼                       │
   generate_   build_    build_200_                │
@@ -104,10 +104,20 @@ Makefile                                # 파이프라인 오케스트레이션
 - **역할**: 한 파일이 **characters 테이블 모집단**(code/name/is_active_default), **events FK 화이트리스트**(code 목록), **아바타 이미지 생성 프롬프트**(prompt/negative_prompt_extra)를 모두 담는 단일 진실 소스
 - **옵션**:
   - `--min-mentions 1` (기본) — 모든 개인 인물 포함. 노출 여부는 DB의 `characters.is_active`로 제어
-  - `--active-threshold 2` (기본) — 이 횟수 이상이면 `is_active_default=true` 표시 → seed에서 활성으로 INSERT
+  - `--active-threshold 2` (기본) — 이 횟수 이상이면 `is_active_default=true` 표시 → seed에서 활성으로 INSERT. 단, `era_judges` 사건에 실제 등장한 인물은 사사시대 특성상 1회 등장이어도 활성으로 표시한다.
 - **규칙**:
   - `disciples`, `apostles`, `brothers` → 개별 인물로 확장
   - `NON_INDIVIDUAL_CODES`(`crowd`, `angels` 등) 제외
+  - 아직 story JSON 에 등장하지 않았지만 아바타를 먼저 준비해야 하는 인물은
+    빌더의 `CURATED_AVATAR_ROSTER`에 보관한다. 현재 사사시대 예비 아바타
+    roster에는 `othniel`, `ehud`, `shamgar`, `deborah`, `tola`, `jair`,
+    `jephthah`, `ibzan`, `elon`, `abdon`, `samson`이 들어 있다. 분열왕국
+    왕들은 `DIVIDED_KINGDOM_KING_ROSTER`에서 북이스라엘/남유다 동명이인을
+    코드로 분리해 관리하고, 향후 사건 추가 전에 앱에서 보일 수 있도록
+    `is_active_default=true`로 생성한다. 그 외 story 미등장 일반 curated
+    인물은 `mention_count=0`, `is_active_default=false`로 생성된다.
+  - `era_judges` 이야기에서 한 번이라도 실제 등장한 인물은 앱에서 바로 보이도록 `is_active_default=true`로 생성된다.
+  - 개별 노출 예외도 있다. 예: `jonathan`은 1회 등장이어도 활성, `god`은 사건 장면 참조에는 쓰지만 인물 카드에는 노출하지 않도록 비활성.
   - 결과: 100+ 인물 코드 + 프롬프트 + `is_active_default` 힌트
 - ⚠️ **부분 스캔 주의**: 이 빌더는 로컬 디렉토리에 있는 JSON만 스캔한다. 로컬이 DB와 동기화되지 않은 상태(예: 새 이야기 파일 1개만 있는 상태)에서 생성된 meta로 `build_characters_seed_sql`을 돌리면 그 안에 포함된 **기존 DB 인물의 description이 부분 정보로 덮어써질 수 있다** (UPSERT는 `coalesce(excluded.description, persons.description)` — excluded가 항상 non-null이라 덮어씀). 안전 절차: [guides/CONTENT_UPDATE.md §2.1b \[0\]](guides/CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
 
@@ -128,7 +138,8 @@ Makefile                                # 파이프라인 오케스트레이션
 #### `build_characters_seed_sql.py` — characters SQL
 - **의존**: `tools/seed/character_meta.json` (선행 필수)
 - **입력**: `tools/seed/character_meta.json` + `assets/200_stories/*.json` (대표 스토리 선택용)
-- **출력**: `supabase/200_stories/characters_seed.sql` — `characters` UPSERT (`is_active`는 보존)
+- **출력**: `supabase/200_stories/characters_seed.sql` — `characters` UPSERT. `is_active_default=true`인 행은 seed 적용 시 기존 DB 행도 `is_active=true`로 승격하고, 일반 `false` 기본값은 기존 런타임 설정을 끄지 않는다. 단, `god`처럼 명시 비활성 예외인 코드는 seed 적용 시 `false`로 강제한다.
+- **era_codes**: `assets/200_stories` 의 실제 등장 사건을 기준으로 계산한다. 인물이 여러 시대에 등장하면 여러 `era_code` 를 가진다. 등장 사건이 없는 메타 항목만 아바타 스타일용 era 를 fallback 으로 사용한다.
 - **stale 정리**: meta 에 없는 `characters` 행을 삭제. `weekly_character_selection` 의 FK 위반을 막기 위해 그 테이블도 동시 청소.
 - **참고**: `person_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)
 
@@ -183,6 +194,9 @@ Makefile                                # 파이프라인 오케스트레이션
 - **옵션**: `--output-dir`, `--overwrite`, `--limit`, `--only-codes`, `--no-prune-orphans`
 - **환경**: `GOOGLE_CLOUD_PROJECT` 환경변수 필요
 - **stale 정리**: 시작 시 `character_meta.json` 의 code 집합과 `assets/avatars/` 의 PNG stem 을 비교, 불일치 PNG 를 삭제. 끄려면 `--no-prune-orphans`.
+- **스타일 레퍼런스**: 개별 meta 항목의 `style_reference_codes`가 있으면 해당 `assets/avatars/{code}.png`를 Gemini 요청에 함께 넣어 기존 아바타 그림체를 맞춘다.
+- **저장 보정**: 모델이 가로/세로로 치우친 PNG를 반환해도 흰 배경 여백을 잘라낸 뒤 1:1 정사각형 캔버스로 패딩해 저장한다.
+- **쿼터/일시 오류 재시도**: Vertex가 `429`, `503`, `504`를 반환하면 기본 10초 대기 후 2회 재시도한다. `VERTEX_IMAGE_RETRY_ATTEMPTS`, `VERTEX_IMAGE_RETRY_WAIT_SEC` 또는 `--retry-attempts`, `--retry-wait-sec`로 조절할 수 있다.
 - **재생성**: 기존 PNG 가 있으면 skip, 없으면 새로 생성 → 사용자가 마음에 안 드는 PNG 를 지워두면 다음 실행에서 자동 재생성.
 - **단일 인물 재생성**: `make generate-avatars AVATAR_CODES=hagar AVATAR_OVERWRITE=1` 처럼 전체 아바타를 다시 뽑지 않고 특정 코드만 덮어쓸 수 있다.
 
@@ -190,7 +204,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - **입력**: `assets/200_stories/*.json` (story_scenes 필드)
 - **출력**: `assets/story_images/{title}/scene_{1-4}.png`
 - **API**: Google Cloud Vertex AI Gemini (`gemini-3-pro-image`, fallback `gemini-2.5-flash-image`)
-- **결과**: 215 이벤트 × 4장면 = 최대 860장
+- **결과**: 현재 시대별 stories JSON의 모든 `story_scenes` 기준으로 장면 이미지 생성
 - **옵션**: `--no-prune-orphans`
 - **stale 정리**: 시작 시 현재 stories JSON 의 title 로 만들어진 디렉토리 외에는 모두 삭제 (NFC 정규화 비교).
 - **재생성**: 기존 scene PNG 가 있으면 skip, 없으면 새로 생성 → 마음에 안 드는 scene 을 지워두면 다음 실행에서 자동 재생성.
@@ -210,7 +224,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - scene 텍스트 파싱/정규화 공통 유틸리티. `generate_event_story_images_vertex.py`가 import 해서 prompt 빌드 시 사용.
 - 단독 실행은 안 한다.
 
-> 이전에 있던 `rewrite_story_scenes_for_image_generation.py` (story_scenes 자연어 → 시각 묘사 정제)는 215개 이야기가 이미 정제된 상태라 폐기됨.
+> 이전에 있던 `rewrite_story_scenes_for_image_generation.py` (story_scenes 자연어 → 시각 묘사 정제)는 이야기들이 이미 정제된 상태라 폐기됨.
 
 #### `export_event_short_story_examples.py`
 - DB에서 short_story 예시를 추출하여 JSON으로 출력 (검수용)
@@ -283,15 +297,18 @@ make all                     # seed-all + generate-all
 
 ```
 assets/
-├── 200_stories/              # 소스 JSON (5파일: 1_50, 51_100, ...)
-│   ├── 1_50.json
-│   ├── 51_100.json
-│   ├── 101_150.json
-│   ├── 151_184.json
-│   └── 185_215.json
+├── 200_stories/              # 소스 JSON (시대별 파일, story_index는 era 내 1..N)
+│   ├── era_primeval.json
+│   ├── era_patriarch.json
+│   ├── era_exodus.json
+│   ├── era_judges.json
+│   ├── era_monarchy.json
+│   ├── era_divided_kingdom.json
+│   ├── era_exile_return.json
+│   └── era_nt_*.json
 ├── avatars/                  # 원본 아바타 PNG (50+)
 ├── avatars_thumbs/           # 썸네일 아바타 (앱 번들)
-├── story_images/             # 원본 장면 이미지 (215폴더 × 4장)
+├── story_images/             # 원본 장면 이미지 (제목 폴더 기준, stories JSON의 story_scenes와 동기화)
 ├── story_images_thumbs/      # 썸네일 장면 이미지 (앱 번들)
 ├── elements/                 # UI 장식 요소
 ├── bible/                    # KRV 성경 텍스트 (66 .txt)

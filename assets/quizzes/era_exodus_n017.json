@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 17,
+  "story_title": "가나안 정탐: 믿음과 두려움의 갈림길",
+  "source_version": "2026-06-03",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "모세가 정탐꾼들에게 살피라고 한 것은 무엇입니까?",
+      "choices": [
+        "땅과 그곳 백성이 강한지 약한지",
+        "애굽으로 돌아갈 지름길",
+        "시내산으로 다시 오를 길"
+      ],
+      "answer_index": 0,
+      "explanation": "민 13:18 — '그 땅의 어떠함을 탐지하라 곧 그 땅 거민의 강약과 다소와'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "갈렙은 두려워하는 백성 앞에서 어떤 태도를 보였습니까?",
+      "choices": [
+        "곧 올라가서 그 땅을 취하자고 말했다",
+        "애굽으로 즉시 돌아가자고 말했다",
+        "정탐한 일을 숨기자고 말했다"
+      ],
+      "answer_index": 0,
+      "explanation": "민 13:30 — '우리가 곧 올라가서 그 땅을 취하자 능히 이기리라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "여호수아와 갈렙은 백성에게 왜 두려워하지 말라고 했습니까?",
+      "choices": [
+        "여호와께서 함께하시기 때문",
+        "성읍들이 이미 비어 있었기 때문",
+        "정탐꾼들이 모두 같은 보고를 했기 때문"
+      ],
+      "answer_index": 0,
+      "explanation": "민 14:9 — '오직 여호와를 거역하지 말라 또 그 땅 백성을 두려워하지 말라 ... 여호와는 우리와 함께 하시느니라'"
+    }
+  ]
+}

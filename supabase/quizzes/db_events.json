@@ -1,5 +1,120 @@
 [
   {
+    "era_code": "era_divided_kingdom",
+    "story_index": 1,
+    "title": "왕국의 균열: 찢어진 옷"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 2,
+    "title": "왕국 분열: 무거운 멍에와 금송아지"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 3,
+    "title": "여로보암의 집: 아히야의 경고"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 4,
+    "title": "르호보암의 남유다: 우상과 약탈"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 5,
+    "title": "아합과 엘리야: 가뭄의 시작"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 6,
+    "title": "엘리야와 갈멜: 불의 응답"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 7,
+    "title": "호렙의 엘리야: 조용한 음성"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 8,
+    "title": "엘리야 승천: 겉옷의 계승"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 9,
+    "title": "엘리사의 첫 표징: 물과 경고"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 10,
+    "title": "엘리사의 기적들: 기름과 생명과 양식"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 11,
+    "title": "나아만: 요단의 일곱 번"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 12,
+    "title": "도단의 불 말과 불 전차: 눈이 열리다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 13,
+    "title": "이사야의 소명: 거룩한 보좌의 환상"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 14,
+    "title": "아하스와 임마누엘: 믿음의 징조"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 15,
+    "title": "호세아의 몰락: 사마리아가 함락되다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 16,
+    "title": "히스기야와 산헤립: 두려움의 편지"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 17,
+    "title": "히스기야의 병과 바벨론 사신"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 18,
+    "title": "요시야의 개혁: 율법책을 찾다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 19,
+    "title": "예레미야의 경고: 칠십 년의 포로"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 20,
+    "title": "새 언약의 약속: 마음에 새기다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 21,
+    "title": "불태워진 두루마리: 말씀을 거부하다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 22,
+    "title": "토굴의 예레미야: 왕에게 전하다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 23,
+    "title": "예루살렘 포위: 왕의 몰락"
+  },
+  {
     "era_code": "era_exile_return",
     "story_index": 1,
     "title": "마른 뼈: 숨이 들어오다"
@@ -27,41 +142,61 @@
   {
     "era_code": "era_exile_return",
     "story_index": 6,
-    "title": "에스더: 왕후가 되다"
+    "title": "귀환과 성전 기초: 시작과 중단"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 7,
-    "title": "하만의 음모: 유다인을 없애라"
+    "title": "학개의 말씀: 스룹바벨을 택하다"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 8,
-    "title": "에스더의 결단: 죽으면 죽으리라"
+    "title": "성전 완공과 유월절: 다시 드리는 예배"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 9,
-    "title": "잔치의 반전: 하만의 몰락"
+    "title": "에스더: 왕후가 되다"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 10,
-    "title": "에스라의 귀환: 말씀으로 정리하다"
+    "title": "하만의 음모: 유다인을 없애라"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 11,
-    "title": "느헤미야의 파송: 무너진 성벽 소식"
+    "title": "에스더의 결단: 죽으면 죽으리라"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 12,
-    "title": "성벽 재건: 밤의 조사와 한 손엔 무기"
+    "title": "잔치의 반전: 하만의 몰락"
   },
   {
     "era_code": "era_exile_return",
     "story_index": 13,
+    "title": "에스라의 귀환: 말씀으로 정리하다"
+  },
+  {
+    "era_code": "era_exile_return",
+    "story_index": 14,
+    "title": "에스라의 회개와 정리: 거룩함을 회복하다"
+  },
+  {
+    "era_code": "era_exile_return",
+    "story_index": 15,
+    "title": "느헤미야의 파송: 무너진 성벽 소식"
+  },
+  {
+    "era_code": "era_exile_return",
+    "story_index": 16,
+    "title": "성벽 재건: 밤의 조사와 한 손엔 무기"
+  },
+  {
+    "era_code": "era_exile_return",
+    "story_index": 17,
     "title": "율법 낭독: 울음에서 기쁨으로"
   },
   {
@@ -142,61 +277,146 @@
   {
     "era_code": "era_exodus",
     "story_index": 16,
+    "title": "미리암과 아론: 모세를 비방하다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 17,
+    "title": "가나안 정탐: 믿음과 두려움의 갈림길"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 18,
+    "title": "고라의 반역: 권위에 맞서다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 19,
+    "title": "므리바 물: 바위를 치다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 20,
     "title": "놋뱀: 바라보라"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 21,
+    "title": "바알브올: 언약을 더럽히다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 22,
+    "title": "모압 언약: 마음을 돌이키라"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 23,
+    "title": "여호수아 위임: 강하고 담대하라"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 24,
+    "title": "모세의 마지막: 느보산과 축복"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 25,
+    "title": "라합과 두 정탐꾼: 붉은 줄"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 26,
+    "title": "요단강 도하: 물이 멈추다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 27,
+    "title": "여리고: 침묵의 행진"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 28,
+    "title": "아간: 감춘 것이 드러나다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 29,
+    "title": "아이 성 정복: 다시 일어서다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 30,
+    "title": "기브온 전투: 해와 달이 머물다"
+  },
+  {
+    "era_code": "era_exodus",
+    "story_index": 31,
+    "title": "여호수아의 마지막 권면: 언약을 붙들라"
   },
   {
     "era_code": "era_judges",
     "story_index": 1,
-    "title": "요단강 도하: 물이 멈추다"
+    "title": "첫 사사들: 구원의 노래"
   },
   {
     "era_code": "era_judges",
     "story_index": 2,
-    "title": "여리고: 침묵의 행진"
+    "title": "기드온의 소명: 밤에 무너진 우상"
   },
   {
     "era_code": "era_judges",
     "story_index": 3,
-    "title": "아간: 감춘 것이 드러나다"
+    "title": "기드온 300: 양털과 횃불"
   },
   {
     "era_code": "era_judges",
     "story_index": 4,
-    "title": "기드온의 소명: 두려움 속의 표징"
+    "title": "돌라와 야일: 짧게 기록된 평화"
   },
   {
     "era_code": "era_judges",
     "story_index": 5,
-    "title": "기드온 300: 횃불과 나팔"
+    "title": "입다의 서원: 승리와 눈물"
   },
   {
     "era_code": "era_judges",
     "story_index": 6,
-    "title": "삼손: 힘의 비밀과 마지막 기도"
+    "title": "입산과 엘론과 압돈: 이어지는 사사들"
   },
   {
     "era_code": "era_judges",
     "story_index": 7,
-    "title": "룻의 귀향: 따라가겠습니다"
+    "title": "삼손: 긴 머리와 마지막 부르짖음"
   },
   {
     "era_code": "era_judges",
     "story_index": 8,
-    "title": "보아스의 은혜: 이삭 줍는 자리"
+    "title": "룻의 귀향: 따라가겠습니다"
   },
   {
     "era_code": "era_judges",
     "story_index": 9,
-    "title": "기업 무를 자: 문 앞의 결정"
+    "title": "보아스의 은혜: 이삭 줍는 자리"
   },
   {
     "era_code": "era_judges",
     "story_index": 10,
-    "title": "사무엘의 탄생: 한나의 눈물"
+    "title": "기업 무를 자: 문 앞의 결정"
   },
   {
     "era_code": "era_judges",
     "story_index": 11,
+    "title": "사무엘의 탄생: 한나의 눈물"
+  },
+  {
+    "era_code": "era_judges",
+    "story_index": 12,
+    "title": "어린 사무엘의 부르심: 말씀을 듣다"
+  },
+  {
+    "era_code": "era_judges",
+    "story_index": 13,
     "title": "언약궤 사건: 회개와 승리"
   },
   {
@@ -232,87 +452,107 @@
   {
     "era_code": "era_monarchy",
     "story_index": 7,
-    "title": "다윗이 사울을 살려주다: 동굴의 순간"
+    "title": "요나단과 미갈: 다윗을 살리다"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 8,
-    "title": "사울의 최후: 엔돌과 길보아"
+    "title": "요나단의 신호: 다윗을 떠나보내다"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 9,
-    "title": "다윗 즉위: 한 왕국으로"
+    "title": "다윗이 사울을 살려주다: 동굴의 순간"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 10,
-    "title": "언약궤 입성: 춤과 기쁨"
+    "title": "십 광야: 창과 물통"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 11,
-    "title": "다윗 언약: 집을 세우리라"
+    "title": "엔돌의 밤: 사무엘의 경고"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 12,
-    "title": "인구조사와 제단: 다윗의 선택"
+    "title": "길보아의 패배: 사울의 최후"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 13,
-    "title": "솔로몬 즉위: 지혜의 선택"
+    "title": "다윗 즉위: 한 왕국으로"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 14,
-    "title": "성전 건축: 손으로 짓는 집"
+    "title": "언약궤 입성: 춤과 기쁨"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 15,
-    "title": "솔로몬: 이방의 경탄부터 타락까지"
+    "title": "다윗 언약: 집을 세우리라"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 16,
-    "title": "엘리야와 갈멜: 불의 응답"
+    "title": "다윗과 밧세바: 무너진 마음"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 17,
-    "title": "호렙의 엘리야: 조용한 음성"
+    "title": "나단의 책망: 그 사람이라"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 18,
-    "title": "엘리야 승천: 겉옷의 계승"
+    "title": "암논과 다말: 압살롬의 분노"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 19,
-    "title": "나아만: 요단의 일곱 번"
+    "title": "압살롬의 귀환: 멀어진 아버지"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 20,
-    "title": "히스기야와 산헤립: 두려움의 편지"
+    "title": "압살롬의 반역: 감람산의 눈물"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 21,
-    "title": "히스기야의 병과 바벨론 사신"
+    "title": "압살롬의 최후: 다윗의 통곡"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 22,
-    "title": "요시야의 개혁: 율법책을 찾다"
+    "title": "인구조사와 제단: 다윗의 선택"
   },
   {
     "era_code": "era_monarchy",
     "story_index": 23,
-    "title": "예루살렘 포위: 왕의 몰락"
+    "title": "솔로몬 즉위: 왕의 노새"
+  },
+  {
+    "era_code": "era_monarchy",
+    "story_index": 24,
+    "title": "다윗의 마지막 명령: 나라를 굳게 하다"
+  },
+  {
+    "era_code": "era_monarchy",
+    "story_index": 25,
+    "title": "솔로몬의 지혜: 참 어머니를 가리다"
+  },
+  {
+    "era_code": "era_monarchy",
+    "story_index": 26,
+    "title": "성전 건축: 손으로 짓는 집"
+  },
+  {
+    "era_code": "era_monarchy",
+    "story_index": 27,
+    "title": "솔로몬: 이방의 경탄부터 타락까지"
   },
   {
     "era_code": "era_nt_apostolic",

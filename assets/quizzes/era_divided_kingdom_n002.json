@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 2,
+  "story_title": "왕국 분열: 무거운 멍에와 금송아지",
+  "source_version": "2026-06-05",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "르호보암은 백성에게 어떤 대답을 했습니까?",
+      "choices": [
+        "더 무거운 멍에를 메라 했다",
+        "세금을 줄이겠다고 했다",
+        "곧장 물러나겠다고 했다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 12:14 — '내 부친은 너희의 멍에를 무겁게 하였으나 나는 너희의 멍에를 더욱 무겁게 할찌라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "여로보암은 백성이 예루살렘에 올라갈까 두려워 무엇을 만들었습니까?",
+      "choices": [
+        "금송아지 둘을 만들었다",
+        "성전 문을 고쳤다",
+        "언약궤를 옮겼다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 12:28 — '이에 계획하고 두 금송아지를 만들고'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "하나님의 말씀이 스마야에게 임했을 때 유다와 베냐민은 어떻게 했습니까?",
+      "choices": [
+        "여호와의 말씀을 듣고 돌아갔다",
+        "곧장 북쪽을 공격했다",
+        "여로보암을 왕으로 세웠다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 12:24 — '무리가 여호와의 말씀을 듣고 ... 돌아갔더라'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n002"
+}

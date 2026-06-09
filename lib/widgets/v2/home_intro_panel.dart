@@ -99,6 +99,7 @@ class HomeIntroPanel extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _ModeCard(
+                      key: const ValueKey('home-mode-region'),
                       icon: Icons.location_on,
                       title: '장소에서 시작하기',
                       subtitle: '한 장소의 이야기를\n시간순으로 봅니다.',
@@ -109,6 +110,7 @@ class HomeIntroPanel extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _ModeCard(
+                      key: const ValueKey('home-mode-character'),
                       icon: Icons.people,
                       title: '인물과 걷기',
                       subtitle: '선택한 인물들의\n사건을 비교합니다.',
@@ -193,6 +195,7 @@ class _StepHeader extends StatelessWidget {
 
 class _ModeCard extends StatelessWidget {
   const _ModeCard({
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,

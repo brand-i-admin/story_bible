@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+from io import BytesIO
 import json
 import os
 from pathlib import Path
@@ -20,6 +21,7 @@ from typing import Any
 
 import google.auth
 from google.auth.transport.requests import Request
+from PIL import Image, ImageChops
 import requests
 
 CLOUD_PLATFORM_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
@@ -30,6 +32,7 @@ ADULT_GUARDRAIL = (
     "fully clothed, no children, no minors, non-photoreal 2D cartoon "
     "illustration, stylized geometric character, not a real character photo"
 )
+RETRYABLE_STATUS_CODES = {429, 503, 504}
 
 
 def parse_args() -> argparse.Namespace:
@@ -99,6 +102,24 @@ def parse_args() -> argparse.Namespace:
         help="Sleep seconds between requests.",
     )
     parser.add_argument(
+        "--retry-attempts",
+        type=int,
+        default=int(os.getenv("VERTEX_IMAGE_RETRY_ATTEMPTS", "2")),
+        help=(
+            "Retry count for transient Vertex errors such as 429/503/504. "
+            "Defaults to VERTEX_IMAGE_RETRY_ATTEMPTS or 2."
+        ),
+    )
+    parser.add_argument(
+        "--retry-wait-sec",
+        type=float,
+        default=float(os.getenv("VERTEX_IMAGE_RETRY_WAIT_SEC", "10")),
+        help=(
+            "Seconds to wait before retrying transient Vertex errors. "
+            "Defaults to VERTEX_IMAGE_RETRY_WAIT_SEC or 10."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print prompts without calling API.",
@@ -156,6 +177,54 @@ def combine_negative_prompt(
         if part and part.strip()
     ]
     return ", ".join(parts)
+
+
+def normalize_code_list(value: Any) -> list[str]:
+    if isinstance(value, list):
+        raw_items = value
+    else:
+        raw_items = str(value or "").split(",")
+    codes: list[str] = []
+    seen: set[str] = set()
+    for raw_item in raw_items:
+        code = str(raw_item).strip()
+        if not code or code in seen:
+            continue
+        seen.add(code)
+        codes.append(code)
+    return codes
+
+
+def style_reference_paths(item: dict[str, Any], out_dir: Path) -> list[Path]:
+    code = str(item.get("code", "")).strip()
+    paths: list[Path] = []
+    for reference_code in normalize_code_list(item.get("style_reference_codes", [])):
+        if reference_code == code:
+            continue
+        path = out_dir / f"{reference_code}.png"
+        if path.exists():
+            paths.append(path)
+        else:
+            print(
+                f"[WARN] style reference missing for {code}: {path}",
+                file=sys.stderr,
+            )
+    return paths
+
+
+def build_style_reference_parts(reference_paths: list[Path]) -> list[dict[str, Any]]:
+    parts: list[dict[str, Any]] = []
+    for path in reference_paths:
+        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+        parts.append(
+            {
+                "inlineData": {
+                    "mimeType": "image/png",
+                    "data": encoded,
+                }
+            }
+        )
+    return parts
 
 
 def build_final_prompt(
@@ -361,6 +430,37 @@ def decode_image_bytes(prediction: dict[str, Any]) -> bytes:
     raise ValueError(f"No image base64 field found in prediction. keys={keys}")
 
 
+def normalize_square_avatar_png(image_bytes: bytes) -> bytes:
+    """Crop excess white space, then pad to a square white avatar canvas."""
+    with Image.open(BytesIO(image_bytes)) as source:
+        image = source.convert("RGBA")
+
+    white = Image.new("RGBA", image.size, (255, 255, 255, 255))
+    diff = ImageChops.difference(image, white).convert("L")
+    mask = diff.point(lambda value: 255 if value > 12 else 0)
+    bbox = mask.getbbox()
+    if bbox:
+        width, height = image.size
+        left, top, right, bottom = bbox
+        margin = max(24, int(max(right - left, bottom - top) * 0.08))
+        left = max(0, left - margin)
+        top = max(0, top - margin)
+        right = min(width, right + margin)
+        bottom = min(height, bottom + margin)
+        image = image.crop((left, top, right, bottom))
+
+    width, height = image.size
+    square_size = max(width, height)
+    canvas = Image.new("RGBA", (square_size, square_size), (255, 255, 255, 255))
+    canvas.alpha_composite(
+        image,
+        ((square_size - width) // 2, (square_size - height) // 2),
+    )
+    output = BytesIO()
+    canvas.save(output, format="PNG")
+    return output.getvalue()
+
+
 def build_imagen_request_body(
     prompt: str,
     negative_prompt: str,
@@ -389,13 +489,26 @@ def build_gemini_request_body(
     prompt: str,
     negative_prompt: str,
     defaults: dict[str, Any],
+    *,
+    reference_paths: list[Path] | None = None,
 ) -> dict[str, Any]:
     sample_count = int(defaults.get("sampleCount", 1))
     text = prompt
+    if reference_paths:
+        text = (
+            "Use the attached existing avatar images only as visual style references. "
+            "Match their flat paper-cut vector style, adult body proportions, simple "
+            "faceted face, soft shading, white background, and minimal/no dark outline. "
+            "Do not copy their identity, pose, clothing, accessories, or face; create "
+            f"the requested character instead.\n\n{text}"
+        )
     if negative_prompt:
         text = f"{text}\n\nNegative prompt: avoid {negative_prompt}."
+    parts = [{"text": text}]
+    if reference_paths:
+        parts.extend(build_style_reference_parts(reference_paths))
     return {
-        "contents": [{"role": "user", "parts": [{"text": text}]}],
+        "contents": [{"role": "user", "parts": parts}],
         "generationConfig": {
             "responseModalities": ["IMAGE"],
             "candidateCount": max(1, sample_count),
@@ -445,10 +558,13 @@ def main() -> int:
     if args.limit > 0:
         characters = characters[: args.limit]
 
+    out_dir = Path(args.output_dir)
+
     if args.dry_run:
         for item in characters:
             use_common_style = bool(item.get("use_common_style", True))
             disable_adult_guardrail = bool(item.get("disable_adult_guardrail", False))
+            reference_paths = style_reference_paths(item, out_dir)
             prompt = build_final_prompt(
                 item["prompt"],
                 common_style,
@@ -457,13 +573,15 @@ def main() -> int:
                 use_common_style=use_common_style,
             )
             print(f"[DRY] {item['index']:02d} {item['code']}: {prompt}")
+            if reference_paths:
+                refs = ", ".join(path.name for path in reference_paths)
+                print(f"      style references: {refs}")
         print(
             f"DRY-RUN complete: {len(characters)} prompts "
             f"model={resolved_model} location={resolved_location}"
         )
         return 0
 
-    out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Prune 은 GCP project 없이도 안전하게 동작 → project 검증 전에 실행.
@@ -510,6 +628,7 @@ def main() -> int:
             per_item_negative_prompt,
         )
         out_file = out_dir / f"{code}.png"
+        reference_paths = style_reference_paths(item, out_dir)
 
         if out_file.exists() and not args.overwrite:
             print(f"[SKIP] {index:02d} {code} -> {out_file} (exists)")
@@ -535,6 +654,7 @@ def main() -> int:
                         prompt,
                         final_negative_prompt,
                         defaults,
+                        reference_paths=reference_paths,
                     )
                 else:
                     body = build_imagen_request_body(
@@ -546,7 +666,23 @@ def main() -> int:
                         ),
                     )
 
-                response = session.post(endpoint, json=body, timeout=180)
+                response = None
+                attempts = max(0, int(args.retry_attempts)) + 1
+                for attempt_index in range(attempts):
+                    response = session.post(endpoint, json=body, timeout=180)
+                    if response.status_code not in RETRYABLE_STATUS_CODES:
+                        break
+                    if attempt_index + 1 >= attempts:
+                        break
+                    wait_sec = max(0.0, float(args.retry_wait_sec))
+                    print(
+                        f"[RETRY] {index:02d} {code} "
+                        f"status={response.status_code} model={candidate_model} "
+                        f"wait={wait_sec:g}s attempt={attempt_index + 1}/{attempts - 1}"
+                    )
+                    if wait_sec > 0:
+                        time.sleep(wait_sec)
+                assert response is not None
                 if response.status_code != 404:
                     break
                 if model_index + 1 < len(request_models):
@@ -597,7 +733,7 @@ def main() -> int:
                 print(f"[FAIL] {index:02d} {code} {detail}{hint}")
                 continue
 
-            out_file.write_bytes(img_bytes)
+            out_file.write_bytes(normalize_square_avatar_png(img_bytes))
             success += 1
             print(
                 f"[OK]   {index:02d} {code} -> {out_file} "

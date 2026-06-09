@@ -2537,6 +2537,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     // 인물 모드 — 선택된 시대 중 첫 시대로 selectEra 를 명시 호출해 characters
     // 가 확실히 채워지게 하고, step 2 (인물) 부터 시작.
+    ctl.setSelectionMode(SelectionMode.character);
     final orderedEras = [...state.eras]
       ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
     final firstSelected = orderedEras

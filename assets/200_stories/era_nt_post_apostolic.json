@@ -1,0 +1,133 @@
+[
+  {
+    "title": "성전 파괴: 예루살렘의 큰 전환",
+    "era": "era_nt_post_apostolic",
+    "characters": [
+      "jerusalem_people"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "AD 70 예루살렘 성전이 파괴되며 시대의 큰 전환이 일어난다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "24:1",
+        "to": "24:2"
+      },
+      {
+        "book": "눅",
+        "from": "21:5",
+        "to": "21:6"
+      }
+    ],
+    "start_year": 70,
+    "end_year": 70,
+    "time_precision": "exact",
+    "story_index": 1,
+    "story_scenes": [
+      "예루살렘에는 전쟁의 긴장이 가득해진다",
+      "성전과 도시는 무너지는 소식으로 뒤덮인다",
+      "사람들은 연기와 폐허 앞에서 말을 잃는다",
+      "예루살렘의 파괴는 시대의 큰 전환으로 남는다"
+    ],
+    "scene_characters": [
+      [
+        "jerusalem_people"
+      ],
+      [
+        "jerusalem_people"
+      ],
+      [
+        "jerusalem_people"
+      ],
+      [
+        "jerusalem_people"
+      ]
+    ]
+  },
+  {
+    "title": "밧모섬의 요한: 계시의 시작",
+    "era": "era_nt_post_apostolic",
+    "characters": [
+      "john"
+    ],
+    "place_name": "밧모섬",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "요한은 밧모섬에서 환상 가운데 계시를 받는다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "1:9",
+        "to": "1:20"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 2,
+    "story_scenes": [
+      "밧모섬에서 요한은 홀로 기도한다",
+      "큰 음성이 들리고 요한은 뒤를 돌아본다",
+      "눈부신 환상 앞에 요한은 두려움에 사로잡힌다",
+      "요한은 본 것을 기록하라는 명령을 받는다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ]
+    ]
+  },
+  {
+    "title": "일곱 교회 편지: 촛대 사이의 말씀",
+    "era": "era_nt_post_apostolic",
+    "characters": [
+      "john"
+    ],
+    "place_name": "소아시아(일곱 교회 중심: 에베소)",
+    "lat": 37.949,
+    "lng": 27.366,
+    "summary": "일곱 교회에 칭찬과 책망, 약속이 전달된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "2:1",
+        "to": "3:22"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 3,
+    "story_scenes": [
+      "요한은 일곱 교회를 향한 말씀을 기록한다",
+      "각 교회에는 칭찬과 책망이 함께 전해진다",
+      "회개를 부르는 경고와 약속이 이어진다",
+      "편지는 교회들을 향해 보내진다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ]
+    ]
+  }
+]

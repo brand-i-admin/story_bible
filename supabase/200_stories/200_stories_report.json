@@ -1,16 +1,17 @@
 {
-  "generated_at_utc": "2026-06-02T13:54:00.272808+00:00",
-  "event_count": 168,
+  "generated_at_utc": "2026-06-09T08:57:45.096861+00:00",
+  "event_count": 216,
   "events_by_era": {
-    "era_exile_return": 13,
-    "era_monarchy": 23,
+    "era_exile_return": 17,
+    "era_monarchy": 27,
     "era_nt_post_apostolic": 3,
     "era_nt_public_ministry": 27,
     "era_patriarch": 30,
     "era_nt_apostolic": 30,
-    "era_judges": 11,
-    "era_exodus": 16,
+    "era_divided_kingdom": 23,
+    "era_exodus": 31,
     "era_primeval": 8,
+    "era_judges": 13,
     "era_nt_consummation": 7
   },
   "notes": [

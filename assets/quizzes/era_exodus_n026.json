@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 26,
+  "story_title": "요단강 도하: 물이 멈추다",
+  "source_version": "2026-05-25",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "요단강 도하를 위해 먼저 강으로 들어간 것은 무엇이었습니까?",
+      "choices": [
+        "언약궤",
+        "모세의 지팡이",
+        "제사장 열둘"
+      ],
+      "answer_index": 0,
+      "explanation": "수 3:11 — '온 땅의 주의 언약궤가 너희 앞서 요단으로 들어가나니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "요단강 도하 이후 이스라엘 백성은 여호수아를 어떻게 대하였습니까?",
+      "choices": [
+        "모세를 두려워하던 것같이 두려워하였다",
+        "여호수아를 왕으로 추대하였다",
+        "함께 노래와 춤을 추었다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 4:14 — '백성이 두려워하기를 모세를 두려워하던 것같이 하였더라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "요단강을 건넌 뒤 하나님은 여호수아에게 어떻게 하셨습니까?",
+      "choices": [
+        "여호수아에게 말씀하셨다",
+        "언약궤를 숨기라고 하셨다",
+        "백성을 다시 강가로 돌려보내셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "수 4:15 — '여호와께서 여호수아에게 일러 가라사대'"
+    }
+  ]
+}

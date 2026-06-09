@@ -33,7 +33,7 @@ id uuid PK, code text UNIQUE, name text, testament text,
 display_order int, start_year int, end_year int,
 map_center_lat float8, map_center_lng float8, map_zoom numeric(4,2)
 ```
-- 구약 6시대 + 신약 4시대 = 총 10시대
+- 구약 7시대 + 신약 4시대 = 총 11시대. `era_monarchy`는 통일왕국, `era_divided_kingdom`은 왕상 11장 이후 남북 분열부터 예루살렘 포위 전후까지의 분열왕국 이야기를 담는다.
 - `testament`: 'old' 또는 'new' (era 코드로도 판별: `era_nt_` 접두사)
 
 #### `persons` — 성경 인물 (table)
@@ -199,15 +199,21 @@ verse_no int, verse_text text,
 UNIQUE(translation, book_no, chapter_no, verse_no)
 ```
 
-#### `landmarks` — 위치 모델 v2 (region/anchor/minor 통합)
+#### `landmarks` — 위치 모델 v3 (region polygon + 시각 마크 통합)
 ```sql
 id uuid PK, code text UNIQUE, name text,
 description text, emoji text DEFAULT '📍', category text,
 lat double precision, lng double precision,
-kind text DEFAULT 'point'
-  CHECK (kind in ('region','anchor','minor','point')),
-polygon jsonb,                          -- kind='region' 만 채움
-parent_landmark_id uuid → landmarks(id),  -- anchor/minor 의 region
+kind text DEFAULT 'city'
+  CHECK (kind in (
+    'region',
+    'mountain','city','sea','river','island',
+    'palace','wilderness','holy_site','campsite',
+    'valley','battlefield',
+    'anchor','minor','point'
+  )),
+polygon jsonb,                            -- kind='region' 만 채움
+parent_landmark_id uuid → landmarks(id),  -- non-region 마크의 parent region
 alias_group_id uuid → landmark_alias_groups(id),  -- 같은 점 다른 시대 이름
 display_priority int DEFAULT 0,
 era_codes text[] DEFAULT '{}',

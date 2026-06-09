@@ -1,0 +1,1438 @@
+[
+  {
+    "title": "오순절: 성령강림",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "peter",
+      "apostles",
+      "believers"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "성령이 임하며 교회의 시대가 힘 있게 시작된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "2:1",
+        "to": "2:13"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 1,
+    "story_scenes": [
+      "사람들이 한곳에 모여 기도하며 기다린다",
+      "갑자기 큰 바람 같은 소리가 집 안에 가득하다",
+      "불의 혀 같은 것이 각 사람 위에 머물고 여러 말로 말하기 시작한다",
+      "밖에 모인 사람들은 이 일을 보고 크게 놀란다"
+    ],
+    "scene_characters": [
+      [
+        "apostles",
+        "believers"
+      ],
+      [
+        "apostles",
+        "believers"
+      ],
+      [
+        "apostles",
+        "believers"
+      ],
+      [
+        "believers"
+      ]
+    ]
+  },
+  {
+    "title": "베드로 설교: 하루에 삼천",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "peter",
+      "crowd"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "베드로의 설교로 많은 사람이 회개하고 공동체가 태어난다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "2:14",
+        "to": "2:47"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 2,
+    "story_scenes": [
+      "베드로가 군중 앞에 서서 담대하게 말하기 시작한다",
+      "베드로는 예수가 주와 그리스도이심을 선포한다",
+      "사람들은 마음에 찔려 어떻게 해야 하는지 묻는다",
+      "많은 이가 세례를 받고 새 공동체가 시작된다"
+    ],
+    "scene_characters": [
+      [
+        "peter",
+        "crowd"
+      ],
+      [
+        "peter",
+        "crowd"
+      ],
+      [
+        "crowd"
+      ],
+      [
+        "peter",
+        "crowd"
+      ]
+    ]
+  },
+  {
+    "title": "성전 미문 치유와 첫 박해",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "peter",
+      "john",
+      "lame_man"
+    ],
+    "place_name": "예루살렘 성전 미문",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "치유로 군중이 모이고, 지도자들은 사도들을 막기 시작한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "3:1",
+        "to": "3:26"
+      },
+      {
+        "book": "행",
+        "from": "4:1",
+        "to": "4:22"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 3,
+    "story_scenes": [
+      "성전 미문에 앉은 사람이 베드로와 요한에게 도움을 구한다",
+      "베드로가 예수의 이름으로 일어나 걸으라 하자 그가 일어선다",
+      "사람들이 몰려오고 베드로는 예수를 전한다",
+      "지도자들은 사도들을 붙잡아 심문한다"
+    ],
+    "scene_characters": [
+      [
+        "peter",
+        "john",
+        "lame_man"
+      ],
+      [
+        "peter",
+        "john",
+        "lame_man"
+      ],
+      [
+        "peter",
+        "john",
+        "lame_man"
+      ],
+      [
+        "peter",
+        "john"
+      ]
+    ]
+  },
+  {
+    "title": "아나니아와 삽비라",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "ananias",
+      "sapphira",
+      "peter"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "거짓은 공동체를 흔들고, 사건은 거룩함의 경고가 된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "5:1",
+        "to": "5:11"
+      }
+    ],
+    "start_year": 34,
+    "end_year": 34,
+    "time_precision": "approx",
+    "story_index": 4,
+    "story_scenes": [
+      "아나니아가 헌금을 가져오지만 일부를 감춘 채 내놓는다",
+      "베드로는 아나니아에게 사실대로 묻는다",
+      "아나니아가 쓰러져 죽자 공동체 안에 큰 두려움이 퍼진다",
+      "삽비라도 같은 거짓을 말한 뒤 죽고, 모두가 더욱 두려워한다"
+    ],
+    "scene_characters": [
+      [
+        "ananias",
+        "peter"
+      ],
+      [
+        "peter",
+        "ananias"
+      ],
+      [
+        "peter"
+      ],
+      [
+        "sapphira",
+        "peter"
+      ]
+    ]
+  },
+  {
+    "title": "일곱 집사와 스데반 순교",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "stephen",
+      "apostles",
+      "paul"
+    ],
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "섬김의 구조가 세워지고, 스데반의 죽음은 흩어짐의 불씨가 된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "6:1",
+        "to": "6:7"
+      },
+      {
+        "book": "행",
+        "from": "7:54",
+        "to": "8:1"
+      }
+    ],
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "story_index": 5,
+    "story_scenes": [
+      "구제 문제로 갈등이 생기자 사도들이 일곱 사람을 세운다",
+      "스데반은 담대하게 복음을 전한다",
+      "격한 반발 속에서도 스데반은 끝까지 하늘을 바라본다",
+      "스데반은 마지막까지 주님께 자신을 맡기며 기도한다"
+    ],
+    "scene_characters": [
+      [
+        "apostles",
+        "stephen"
+      ],
+      [
+        "stephen"
+      ],
+      [
+        "stephen"
+      ],
+      [
+        "stephen"
+      ]
+    ]
+  },
+  {
+    "title": "사마리아 복음: 빌립의 전도",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "philip",
+      "samaritans"
+    ],
+    "place_name": "사마리아",
+    "lat": 32.279,
+    "lng": 35.19,
+    "summary": "박해로 흩어진 자리에서 복음은 사마리아까지 확장된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "8:4",
+        "to": "8:25"
+      }
+    ],
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "story_index": 6,
+    "story_scenes": [
+      "박해로 흩어진 사람들 사이로 복음도 퍼져 나간다",
+      "빌립이 사마리아에서 복음을 전하자 사람들이 모여든다",
+      "사마리아에 기쁨이 퍼지고 많은 이가 말씀을 받는다",
+      "복음은 경계를 넘어 더 넓게 퍼져 간다"
+    ],
+    "scene_characters": [
+      [
+        "philip"
+      ],
+      [
+        "philip",
+        "samaritans"
+      ],
+      [
+        "philip",
+        "samaritans"
+      ],
+      [
+        "philip",
+        "samaritans"
+      ]
+    ]
+  },
+  {
+    "title": "에티오피아 내시: 길 위의 만남",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "philip",
+      "ethiopian_eunuch"
+    ],
+    "place_name": "예루살렘-가사 길(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "한 사람의 질문이 길 위에서 답을 만나고, 복음은 더 먼 곳으로 간다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "8:26",
+        "to": "8:40"
+      }
+    ],
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "story_index": 7,
+    "story_scenes": [
+      "에티오피아 내시는 수레에서 말씀을 읽으며 길을 간다",
+      "빌립이 다가가 그가 읽는 말씀을 함께 풀어 준다",
+      "길가의 물가에서 내시는 세례를 받는다",
+      "내시는 기쁘게 길을 가고 빌립은 다른 곳으로 인도된다"
+    ],
+    "scene_characters": [
+      [
+        "ethiopian_eunuch"
+      ],
+      [
+        "philip",
+        "ethiopian_eunuch"
+      ],
+      [
+        "philip",
+        "ethiopian_eunuch"
+      ],
+      [
+        "philip",
+        "ethiopian_eunuch"
+      ]
+    ]
+  },
+  {
+    "title": "사울 회심: 다메섹의 빛",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "ananias"
+    ],
+    "place_name": "다메섹",
+    "lat": 33.5138,
+    "lng": 36.2765,
+    "summary": "박해자 사울은 부르심을 만나고 방향이 완전히 바뀐다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "9:1",
+        "to": "9:19"
+      }
+    ],
+    "start_year": 35,
+    "end_year": 35,
+    "time_precision": "approx",
+    "story_index": 8,
+    "story_scenes": [
+      "사울은 공문을 들고 다메섹으로 향한다",
+      "길에서 큰 빛이 비치고 사울은 땅에 엎드린다",
+      "눈먼 사울은 사람들의 손에 이끌려 성안으로 들어간다",
+      "아나니아가 안수하자 사울은 다시 보고 새 길을 걷기 시작한다"
+    ],
+    "scene_characters": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul",
+        "ananias"
+      ]
+    ]
+  },
+  {
+    "title": "고넬료: 이방인에게도",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "peter",
+      "cornelius"
+    ],
+    "place_name": "가이사랴",
+    "lat": 32.5,
+    "lng": 34.89,
+    "summary": "베드로는 편견을 넘어 이방인에게도 성령이 임함을 목격한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "10:1",
+        "to": "10:48"
+      },
+      {
+        "book": "행",
+        "from": "11:1",
+        "to": "11:18"
+      }
+    ],
+    "start_year": 38,
+    "end_year": 38,
+    "time_precision": "approx",
+    "story_index": 9,
+    "story_scenes": [
+      "고넬료는 기도 중에 환상을 보고 베드로를 청한다",
+      "베드로도 환상 가운데 하나님이 깨끗하게 하신 것을 보게 된다",
+      "베드로는 고넬료의 집에 가서 복음을 전한다",
+      "이방인들에게도 성령이 임하자 모두가 놀란다"
+    ],
+    "scene_characters": [
+      [
+        "cornelius"
+      ],
+      [
+        "peter"
+      ],
+      [
+        "peter",
+        "cornelius"
+      ],
+      [
+        "peter",
+        "cornelius"
+      ]
+    ]
+  },
+  {
+    "title": "안디옥 교회: 선교의 출발",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "barnabas",
+      "paul",
+      "church_of_antioch"
+    ],
+    "place_name": "안디옥(시리아)",
+    "lat": 36.2055,
+    "lng": 36.1611,
+    "summary": "안디옥 교회는 금식과 기도 가운데 바울과 바나바를 파송한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "13:1",
+        "to": "13:3"
+      }
+    ],
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "story_index": 10,
+    "story_scenes": [
+      "안디옥 교회는 금식하며 함께 기도한다",
+      "성령께서 바울과 바나바를 따로 세우라고 하신다",
+      "공동체는 두 사람에게 안수하며 파송한다",
+      "바울과 바나바는 길을 나서며 선교를 시작한다"
+    ],
+    "scene_characters": [
+      [
+        "church_of_antioch"
+      ],
+      [
+        "church_of_antioch",
+        "paul",
+        "barnabas"
+      ],
+      [
+        "church_of_antioch",
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ]
+    ]
+  },
+  {
+    "title": "1차 선교(1): 구브로 살라미–바보",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "barnabas",
+      "john_mark"
+    ],
+    "place_name": "구브로(살라미 → 바보)",
+    "lat": 35.181,
+    "lng": 33.904,
+    "summary": "바울과 바나바는 구브로에서 복음을 전하며 첫 여정을 시작한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "13:4",
+        "to": "13:12"
+      }
+    ],
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "story_index": 11,
+    "story_scenes": [
+      "바울과 바나바는 구브로에 도착해 회당에서 말씀을 전한다",
+      "섬을 지나며 여러 곳에 복음을 전한다",
+      "총독 앞에서 복음이 선포되고 분위기가 바뀐다",
+      "일행은 다음 선교지를 향해 다시 길을 나선다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "barnabas",
+        "john_mark"
+      ],
+      [
+        "paul",
+        "barnabas",
+        "john_mark"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas",
+        "john_mark"
+      ]
+    ]
+  },
+  {
+    "title": "1차 선교(2): 비시디아 안디옥",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "barnabas"
+    ],
+    "place_name": "비시디아 안디옥(소아시아)",
+    "lat": 38.31,
+    "lng": 31.19,
+    "summary": "바울은 회당에서 설교하고, 복음은 이방인에게 크게 확장된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "13:13",
+        "to": "13:52"
+      }
+    ],
+    "start_year": 46,
+    "end_year": 46,
+    "time_precision": "approx",
+    "story_index": 12,
+    "story_scenes": [
+      "회당에 모인 사람들이 바울의 말을 듣는다",
+      "바울은 예수를 통한 구원을 길게 전한다",
+      "이방인들은 기뻐하지만 반대도 함께 커진다",
+      "바울과 바나바는 다음 도시로 떠난다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ]
+    ]
+  },
+  {
+    "title": "1차 선교(3): 이고니온",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "barnabas"
+    ],
+    "place_name": "이고니온(코니아)",
+    "lat": 37.874,
+    "lng": 32.493,
+    "summary": "표적과 논쟁이 함께 일어나고, 박해의 조짐이 짙어진다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "14:1",
+        "to": "14:7"
+      }
+    ],
+    "start_year": 47,
+    "end_year": 47,
+    "time_precision": "approx",
+    "story_index": 13,
+    "story_scenes": [
+      "바울과 바나바는 이고니온 회당에서 복음을 전한다",
+      "많은 사람이 믿지만 반대도 빠르게 커진다",
+      "도시는 둘로 갈리고 긴장이 높아진다",
+      "두 사람은 박해를 피해 다른 곳으로 옮긴다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ]
+    ]
+  },
+  {
+    "title": "1차 선교(4): 루스드라–더베",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "barnabas"
+    ],
+    "place_name": "루스드라 → 더베(갈라디아)",
+    "lat": 37.578,
+    "lng": 32.448,
+    "summary": "루스드라와 더베에서 전도가 이어지지만, 폭력적 박해도 뒤따른다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "14:8",
+        "to": "14:20"
+      }
+    ],
+    "start_year": 47,
+    "end_year": 47,
+    "time_precision": "approx",
+    "story_index": 14,
+    "story_scenes": [
+      "루스드라에서 걷지 못하던 사람이 바울의 말을 듣고 일어나자 무리가 크게 술렁인다",
+      "사람들은 바울과 바나바를 신들로 여기며 제사를 드리려 하고, 두 사람은 급히 이를 말린다",
+      "바울은 심한 박해를 겪고도 다시 일어선다",
+      "일행은 더베로 가서 복음을 이어 전한다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul",
+        "barnabas"
+      ]
+    ]
+  },
+  {
+    "title": "1차 선교(5): 안디옥(시리아)로 귀환 보고",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "barnabas",
+      "church_of_antioch"
+    ],
+    "place_name": "안디옥(시리아)",
+    "lat": 36.2055,
+    "lng": 36.1611,
+    "summary": "1차 여행을 마치고 돌아와 하나님이 하신 일을 교회에 보고한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "14:21",
+        "to": "14:28"
+      }
+    ],
+    "start_year": 48,
+    "end_year": 48,
+    "time_precision": "approx",
+    "story_index": 15,
+    "story_scenes": [
+      "바울과 바나바는 안디옥 교회로 돌아온다",
+      "교회가 모이고 두 사람은 선교 이야기를 전한다",
+      "이방인에게 믿음의 문이 열렸다는 소식이 퍼진다",
+      "공동체는 하나님이 하신 일을 함께 기뻐한다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "barnabas"
+      ],
+      [
+        "paul",
+        "barnabas",
+        "church_of_antioch"
+      ],
+      [
+        "paul",
+        "barnabas",
+        "church_of_antioch"
+      ],
+      [
+        "church_of_antioch"
+      ]
+    ]
+  },
+  {
+    "title": "2차 선교(1): 드로아에서 마게도냐로",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "place_name": "드로아",
+    "lat": 39.76,
+    "lng": 26.16,
+    "summary": "드로아에서 ‘마게도냐로 건너오라’는 인도를 받고 방향이 바뀐다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "16:6",
+        "to": "16:10"
+      }
+    ],
+    "start_year": 49,
+    "end_year": 49,
+    "time_precision": "approx",
+    "story_index": 16,
+    "story_scenes": [
+      "바울 일행은 드로아에서 다음 길을 기다린다",
+      "밤에 바울은 마게도냐로 오라는 환상을 본다",
+      "일행은 그 인도를 따라 방향을 정한다",
+      "배는 바다를 건너 새로운 땅으로 향한다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ]
+    ]
+  },
+  {
+    "title": "2차 선교(2): 빌립보—루디아와 감옥의 찬양",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "silas",
+      "timothy",
+      "lydia"
+    ],
+    "place_name": "빌립보",
+    "lat": 41.014,
+    "lng": 24.286,
+    "summary": "빌립보에서 복음은 가정과 감옥 한복판까지 스며든다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "16:11",
+        "to": "16:34"
+      }
+    ],
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "story_index": 17,
+    "story_scenes": [
+      "강가에서 루디아가 복음을 듣고 마음을 연다",
+      "바울과 실라는 감옥에 갇히지만 밤중에도 찬양한다",
+      "큰 흔들림 속에 옥문이 열리고 간수는 두려워한다",
+      "간수의 집은 말씀을 듣고 하나님을 믿게 되며 기쁨으로 가득해진다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "silas",
+        "timothy",
+        "lydia"
+      ],
+      [
+        "paul",
+        "silas"
+      ],
+      [
+        "paul",
+        "silas",
+        "jailer"
+      ],
+      [
+        "paul",
+        "silas",
+        "lydia",
+        "jailer"
+      ]
+    ]
+  },
+  {
+    "title": "2차 선교(3): 데살로니가—소동과 도피",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "place_name": "데살로니가",
+    "lat": 40.64,
+    "lng": 22.944,
+    "summary": "데살로니가에서 복음이 퍼지자 반대가 폭동으로 번진다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "17:1",
+        "to": "17:9"
+      }
+    ],
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "story_index": 18,
+    "story_scenes": [
+      "바울 일행은 회당에서 복음을 전한다",
+      "몇 사람은 믿지만 반대의 목소리도 커진다",
+      "도시에는 소동이 일어나고 긴장이 번진다",
+      "형제들은 밤에 바울 일행을 급히 피신시킨다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ]
+    ]
+  },
+  {
+    "title": "2차 선교(4): 베뢰아—말씀을 상고하다",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "silas",
+      "timothy"
+    ],
+    "place_name": "베뢰아",
+    "lat": 40.525,
+    "lng": 22.201,
+    "summary": "베뢰아 사람들은 말씀을 상고하며 복음을 받아들인다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "17:10",
+        "to": "17:15"
+      }
+    ],
+    "start_year": 50,
+    "end_year": 50,
+    "time_precision": "approx",
+    "story_index": 19,
+    "story_scenes": [
+      "베뢰아 사람들은 열린 마음으로 말씀을 듣는다",
+      "그들은 두루마리를 펴고 날마다 확인한다",
+      "많은 이가 믿지만 방해도 다시 따라온다",
+      "바울은 떠나고 실라와 디모데는 남아 돕는다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ],
+      [
+        "paul",
+        "silas",
+        "timothy"
+      ]
+    ]
+  },
+  {
+    "title": "2차 선교(5): 아덴—아레오바고 설교",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul"
+    ],
+    "place_name": "아덴(아레오바고)",
+    "lat": 37.975,
+    "lng": 23.735,
+    "summary": "바울은 ‘알지 못하는 신’ 제단을 출발점으로 창조주와 부활을 선포한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "17:16",
+        "to": "17:34"
+      }
+    ],
+    "start_year": 51,
+    "end_year": 51,
+    "time_precision": "approx",
+    "story_index": 20,
+    "story_scenes": [
+      "아덴의 거리는 우상으로 가득하고 바울은 깊이 생각한다",
+      "바울은 사람들과 토론하며 아레오바고에 선다",
+      "그는 알지 못하는 신을 말하며 창조주를 전한다",
+      "부활의 말을 들은 사람들은 서로 다른 반응을 보인다"
+    ],
+    "scene_characters": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "2차 선교(6): 고린도—정착과 견딤",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "aquila"
+    ],
+    "place_name": "고린도",
+    "lat": 37.939,
+    "lng": 22.918,
+    "summary": "고린도에서 바울은 오래 머물며 공동체를 세우고 박해를 견딘다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "18:1",
+        "to": "18:18"
+      }
+    ],
+    "start_year": 51,
+    "end_year": 52,
+    "time_precision": "approx",
+    "story_index": 21,
+    "story_scenes": [
+      "바울은 아굴라와 브리스길라를 만나 함께 지낸다",
+      "그는 일하며 꾸준히 복음을 전한다",
+      "반대와 재판 속에서도 바울은 물러서지 않는다",
+      "바울은 고린도를 떠나 다음 여정을 향해 길을 나선다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "aquila",
+        "priscilla"
+      ],
+      [
+        "paul",
+        "aquila",
+        "priscilla"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul",
+        "aquila",
+        "priscilla"
+      ]
+    ]
+  },
+  {
+    "title": "3차 선교(1): 에베소—확장과 충돌",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul"
+    ],
+    "place_name": "에베소",
+    "lat": 37.949,
+    "lng": 27.366,
+    "summary": "에베소에서 복음이 크게 확장되며 도시의 질서와도 충돌한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "19:1",
+        "to": "19:41"
+      }
+    ],
+    "start_year": 53,
+    "end_year": 55,
+    "time_precision": "approx",
+    "story_index": 22,
+    "story_scenes": [
+      "에베소에서 바울의 가르침이 널리 퍼져 간다",
+      "많은 사람이 말씀을 듣고 삶을 돌이킨다",
+      "복음의 영향이 커지자 도시에도 긴장이 생긴다",
+      "소동이 일어나지만 말씀의 흐름은 멈추지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "3차 선교(2): 마게도냐—교회를 굳게 하다",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul"
+    ],
+    "place_name": "마게도냐(빌립보/데살로니가 권역)",
+    "lat": 41.014,
+    "lng": 24.286,
+    "summary": "바울은 마게도냐를 돌며 성도들을 격려하고 공동체를 세운다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "20:1",
+        "to": "20:2"
+      }
+    ],
+    "start_year": 56,
+    "end_year": 56,
+    "time_precision": "approx",
+    "story_index": 23,
+    "story_scenes": [
+      "바울은 여러 도시를 다시 찾아간다",
+      "그는 성도들을 만나 말씀으로 격려한다",
+      "공동체들은 다시 힘을 얻고 굳게 선다",
+      "바울은 다음 여정을 향해 계속 나아간다"
+    ],
+    "scene_characters": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "3차 선교(3): 헬라(고린도)—머무름과 결심",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul"
+    ],
+    "place_name": "고린도(헬라)",
+    "lat": 37.939,
+    "lng": 22.918,
+    "summary": "바울은 헬라에서 머물며 다음 행선과 위험을 준비한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "20:2",
+        "to": "20:3"
+      }
+    ],
+    "start_year": 56,
+    "end_year": 57,
+    "time_precision": "approx",
+    "story_index": 24,
+    "story_scenes": [
+      "바울은 헬라에 머물며 사역을 이어 간다",
+      "그는 시간을 보내며 다음 길을 준비한다",
+      "위험의 기척 속에서도 바울의 결심은 더 분명해진다",
+      "바울은 다음 여정을 향해 길을 다시 정한다"
+    ],
+    "scene_characters": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "3차 선교(4): 밀레도—에베소 장로들과 작별",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "ephesus_elders"
+    ],
+    "place_name": "밀레도",
+    "lat": 37.53,
+    "lng": 27.278,
+    "summary": "바울은 장로들을 불러 눈물로 권면하고 다시는 못 볼지도 모른다고 말한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "20:17",
+        "to": "20:38"
+      }
+    ],
+    "start_year": 57,
+    "end_year": 57,
+    "time_precision": "approx",
+    "story_index": 25,
+    "story_scenes": [
+      "밀레도에 모인 장로들 앞에 바울이 선다",
+      "바울은 지난 사역을 돌아보며 마지막 권면을 전한다",
+      "그는 다시는 서로 얼굴을 보지 못할 수 있다고 말한다",
+      "모두가 울며 작별하고 바울은 배에 오른다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "ephesus_elders"
+      ],
+      [
+        "paul",
+        "ephesus_elders"
+      ],
+      [
+        "paul",
+        "ephesus_elders"
+      ],
+      [
+        "paul",
+        "ephesus_elders"
+      ]
+    ]
+  },
+  {
+    "title": "로마행(1): 예루살렘 체포",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "jerusalem_crowd"
+    ],
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "성전 소동으로 바울이 붙잡히며 ‘로마까지’의 여정이 시작된다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "21:27",
+        "to": "21:36"
+      }
+    ],
+    "start_year": 57,
+    "end_year": 57,
+    "time_precision": "approx",
+    "story_index": 26,
+    "story_scenes": [
+      "예루살렘 성전에서 바울을 둘러싼 소동이 일어난다",
+      "군중은 바울을 붙잡고 거세게 몰아붙인다",
+      "병사들이 바울을 계단 위로 데려가며 상황을 수습한다",
+      "묶인 바울 앞에 로마로 이어질 긴 여정이 시작된다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "jerusalem_crowd"
+      ],
+      [
+        "paul",
+        "jerusalem_crowd"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  },
+  {
+    "title": "로마행(2): 가이사랴 재판과 상소",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "festus",
+      "agrippa"
+    ],
+    "place_name": "가이사랴",
+    "lat": 32.5,
+    "lng": 34.89,
+    "summary": "바울은 재판 자리에서 증언하고 ‘가이사에게 상소’한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "24:10",
+        "to": "24:27"
+      },
+      {
+        "book": "행",
+        "from": "25:7",
+        "to": "25:12"
+      },
+      {
+        "book": "행",
+        "from": "26:1",
+        "to": "26:32"
+      }
+    ],
+    "start_year": 59,
+    "end_year": 59,
+    "time_precision": "approx",
+    "story_index": 27,
+    "story_scenes": [
+      "가이사랴 재판정에 바울이 다시 선다",
+      "총독들과 왕 앞에서 바울은 자신의 믿음을 증언한다",
+      "논의가 이어지지만 바울은 흔들리지 않는다",
+      "바울은 끝내 가이사에게 상소한다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "festus",
+        "agrippa"
+      ],
+      [
+        "paul",
+        "festus",
+        "agrippa"
+      ],
+      [
+        "paul",
+        "festus",
+        "agrippa"
+      ],
+      [
+        "paul",
+        "festus"
+      ]
+    ]
+  },
+  {
+    "title": "로마행(3): 폭풍의 항해",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "ship_crew"
+    ],
+    "place_name": "지중해 항로(그레데 근처, 전승)",
+    "lat": 35.2,
+    "lng": 25.1,
+    "summary": "폭풍 속에서 바울은 ‘두려워 말라’는 약속으로 사람들을 붙든다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "27:13",
+        "to": "27:26"
+      }
+    ],
+    "start_year": 59,
+    "end_year": 59,
+    "time_precision": "approx",
+    "story_index": 28,
+    "story_scenes": [
+      "거센 바람이 배를 뒤흔들고 사람들은 두려움에 빠진다",
+      "오랜 폭풍 속에 모두가 지쳐 간다",
+      "바울은 하나님이 살려 주실 것이라며 사람들을 붙든다",
+      "배는 계속 흔들리지만 사람들은 다시 버틸 힘을 얻는다"
+    ],
+    "scene_characters": [
+      [
+        "ship_crew"
+      ],
+      [
+        "ship_crew"
+      ],
+      [
+        "paul",
+        "ship_crew"
+      ],
+      [
+        "paul",
+        "ship_crew"
+      ]
+    ]
+  },
+  {
+    "title": "로마행(4): 멜리데(몰타) 표류",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul",
+      "islanders"
+    ],
+    "place_name": "몰타(멜리데)",
+    "lat": 35.937,
+    "lng": 14.375,
+    "summary": "난파 후 섬에 도착하고, 바울을 통한 표징으로 사람들이 마음을 연다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "27:39",
+        "to": "27:44"
+      },
+      {
+        "book": "행",
+        "from": "28:1",
+        "to": "28:10"
+      }
+    ],
+    "start_year": 60,
+    "end_year": 60,
+    "time_precision": "approx",
+    "story_index": 29,
+    "story_scenes": [
+      "난파한 사람들이 멜리데 섬 해안에 간신히 오른다",
+      "섬사람들은 비와 추위 속에서 불을 피워 맞아 준다",
+      "바울이 독사에 물리고도 해를 입지 않자 섬사람들은 크게 놀란다",
+      "바울이 병든 이들을 고치자 섬사람들은 일행을 존중하며 필요한 것을 채워 준다"
+    ],
+    "scene_characters": [
+      [
+        "paul",
+        "islanders"
+      ],
+      [
+        "islanders"
+      ],
+      [
+        "paul",
+        "islanders"
+      ],
+      [
+        "paul",
+        "islanders"
+      ]
+    ]
+  },
+  {
+    "title": "로마행(5): 로마 도착",
+    "era": "era_nt_apostolic",
+    "characters": [
+      "paul"
+    ],
+    "place_name": "로마",
+    "lat": 41.8967,
+    "lng": 12.4823,
+    "summary": "바울은 로마에 도착해 묶인 상태로도 복음을 전한다.",
+    "bible_ref": [
+      {
+        "book": "행",
+        "from": "28:14",
+        "to": "28:31"
+      }
+    ],
+    "start_year": 60,
+    "end_year": 62,
+    "time_precision": "approx",
+    "story_index": 30,
+    "story_scenes": [
+      "바울은 마침내 로마에 들어선다",
+      "그는 묶인 몸이지만 머물 곳을 얻게 된다",
+      "찾아오는 사람들에게 하나님 나라를 전한다",
+      "복음은 로마 한가운데서도 막히지 않는다"
+    ],
+    "scene_characters": [
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ],
+      [
+        "paul"
+      ]
+    ]
+  }
+]

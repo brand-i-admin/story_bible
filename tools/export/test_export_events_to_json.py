@@ -14,9 +14,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from export_events_to_json import (  # noqa: E402
-    bucket_for_story_index,
     event_row_to_json,
-    group_events_by_bucket,
+    filename_for_era,
+    group_events_by_era_file,
 )
 
 
@@ -101,16 +101,15 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertIsNone(result["lat"])
         self.assertEqual(result["summary"], "")
 
-    def test_bucket_for_story_index_uses_50_step_buckets(self) -> None:
-        self.assertEqual(bucket_for_story_index(1), "1_50.json")
-        self.assertEqual(bucket_for_story_index(50), "1_50.json")
-        self.assertEqual(bucket_for_story_index(51), "51_100.json")
-        self.assertEqual(bucket_for_story_index(100), "51_100.json")
-        self.assertEqual(bucket_for_story_index(101), "101_150.json")
-        self.assertEqual(bucket_for_story_index(184), "151_200.json")
-        self.assertEqual(bucket_for_story_index(215), "201_250.json")
+    def test_filename_for_era_uses_era_scoped_files(self) -> None:
+        self.assertEqual(filename_for_era("era_primeval"), "era_primeval.json")
+        self.assertEqual(
+            filename_for_era("era_divided_kingdom"),
+            "era_divided_kingdom.json",
+        )
+        self.assertEqual(filename_for_era(""), "unknown_era.json")
 
-    def test_group_events_by_bucket_groups_and_sorts_within_each_file(self) -> None:
+    def test_group_events_by_era_file_groups_and_sorts_within_each_file(self) -> None:
         rows = [
             {"title": "002 a", "era_code": "era_primeval", "story_index": 2},
             {"title": "001 b", "era_code": "era_primeval", "story_index": 1},
@@ -134,14 +133,14 @@ class ExportEventsToJsonTests(unittest.TestCase):
             for row in rows
         ]
 
-        grouped = group_events_by_bucket(rows_full)
+        grouped = group_events_by_era_file(rows_full)
 
-        self.assertEqual(set(grouped.keys()), {"1_50.json", "51_100.json"})
+        self.assertEqual(set(grouped.keys()), {"era_primeval.json", "era_exodus.json"})
         self.assertEqual(
-            [item["title"] for item in grouped["1_50.json"]],
+            [item["title"] for item in grouped["era_primeval.json"]],
             ["001 b", "002 a"],
         )
-        self.assertEqual(grouped["51_100.json"][0]["title"], "060 c")
+        self.assertEqual(grouped["era_exodus.json"][0]["title"], "060 c")
 
     def test_round_trip_json_serializable(self) -> None:
         row = {

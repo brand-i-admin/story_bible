@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 18,
+  "story_title": "고라의 반역: 권위에 맞서다",
+  "source_version": "2026-06-03",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "고라와 함께 모인 무리는 누구에게 맞섰습니까?",
+      "choices": [
+        "모세와 아론",
+        "여호수아와 갈렙",
+        "미리암과 훌"
+      ],
+      "answer_index": 0,
+      "explanation": "민 16:3 — '그들이 모여서 모세와 아론을 거스려 그들에게 이르되'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "반역의 말을 들은 모세는 어떤 반응을 보였습니까?",
+      "choices": [
+        "엎드렸다",
+        "군사를 모았다",
+        "애굽으로 돌아갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "민 16:4 — '모세가 듣고 엎드렸다가'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "염병이 시작되었을 때 아론은 백성 사이에서 무엇을 했습니까?",
+      "choices": [
+        "향을 피워 백성을 위하여 속죄하였다",
+        "가나안 정탐꾼들을 다시 보냈다",
+        "성막의 휘장을 새로 만들었다"
+      ],
+      "answer_index": 0,
+      "explanation": "민 16:47 — '아론이 ... 백성 중에 달려간즉 염병이 백성 중에 시작되었는지라 이에 백성을 위하여 속죄하고'"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_exodus",
+  "story_index": 23,
+  "story_title": "여호수아 위임: 강하고 담대하라",
+  "source_version": "2026-06-03",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "모세는 백성 앞에서 누구를 다음 지도자로 세웠습니까?",
+      "choices": [
+        "여호수아",
+        "갈렙",
+        "비느하스"
+      ],
+      "answer_index": 0,
+      "explanation": "신 31:7 — '모세가 여호수아를 불러 온 이스라엘의 목전에서 그에게 이르되 너는 강하고 담대하라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "모세는 여호수아에게 어떤 마음으로 서라고 말했습니까?",
+      "choices": [
+        "강하고 담대하라고 말했다",
+        "숨어서 기다리라고 말했다",
+        "백성을 두려워하라고 말했다"
+      ],
+      "answer_index": 0,
+      "explanation": "신 31:7 — '너는 강하고 담대하라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "하나님은 회막에서 모세에게 이스라엘에 대해 무엇을 말씀하셨습니까?",
+      "choices": [
+        "그들이 훗날 하나님을 떠날 것이라고 하셨다",
+        "그들이 다시 애굽 왕이 될 것이라고 하셨다",
+        "그들이 광야에서 모두 사라질 것이라고 하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "신 31:16 — '이 백성은 ... 일어나서 이방 신들을 음란히 좇아 나를 버리며'"
+    }
+  ]
+}

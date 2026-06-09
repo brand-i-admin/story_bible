@@ -3,7 +3,8 @@
 
 - characters rows are created from tools/seed/character_meta.json (every individual).
 - ``is_active`` is taken from each character's ``is_active_default`` so that
-  single-mention newcomers stay hidden until an admin enables them.
+  most single-mention newcomers stay hidden until an admin enables them, while
+  pipeline-approved active rows can be promoted to visible on seed apply.
 - person_eras is no longer materialized here: it is a view derived from
   ``events.character_codes`` (see db_init.sql).
 """
@@ -50,6 +51,7 @@ BROTHERS_ALL = [
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
 ROSTER_EXCLUDED_CODES = {"dan", "lot_wife"}
+FORCE_INACTIVE_CODES = {"god"}
 
 STYLE_TO_ERA_CODE = {
     "primeval": "era_primeval",
@@ -57,6 +59,7 @@ STYLE_TO_ERA_CODE = {
     "exodus_wilderness": "era_exodus",
     "judges": "era_judges",
     "monarchy": "era_monarchy",
+    "divided_kingdom": "era_divided_kingdom",
     "prophets_exile": "era_exile_return",
     "post_exile_return": "era_exile_return",
     "gospels": "era_nt_public_ministry",
@@ -69,6 +72,7 @@ ERA_ORDER = [
     "era_exodus",
     "era_judges",
     "era_monarchy",
+    "era_divided_kingdom",
     "era_exile_return",
     "era_nt_public_ministry",
     "era_nt_apostolic",
@@ -366,6 +370,18 @@ def dedupe_preserve_order(items: list[str]) -> list[str]:
     return ordered
 
 
+def story_era_codes_for_character(appearances: list[dict[str, Any]]) -> list[str]:
+    """Return era codes where the character actually appears in story data."""
+    seen = {
+        str(row.get("era", "")).strip()
+        for row in appearances
+        if str(row.get("era", "")).strip()
+    }
+    ordered = [era for era in ERA_ORDER if era in seen]
+    ordered.extend(sorted(seen - set(ordered)))
+    return ordered
+
+
 def expand_person_codes(number: int, characters: list[str]) -> list[str]:
     expanded: list[str] = []
     persons_set = {code for code in characters}
@@ -588,9 +604,18 @@ def build_sql(character_rows: list[dict[str, Any]]) -> str:
         )
         # era_codes 는 파이프라인에서 결정한다 (인물 카드 노출 era).
         # admin override 가 필요하면 별도 마이그레이션으로 처리.
-        lines.append("  era_codes = excluded.era_codes")
-        # is_active intentionally NOT overwritten on conflict: the admin's
-        # runtime toggle wins over the pipeline default.
+        lines.append("  era_codes = excluded.era_codes,")
+        # Pipeline defaults may promote a character to visible, but false
+        # defaults do not hide rows that were already enabled at runtime.
+        lines.append("  is_active = case")
+        if FORCE_INACTIVE_CODES:
+            forced_inactive = ", ".join(
+                sql_value(code) for code in sorted(FORCE_INACTIVE_CODES)
+            )
+            lines.append(f"    when excluded.code in ({forced_inactive}) then false")
+        lines.append("    when excluded.is_active then true")
+        lines.append("    else characters.is_active")
+        lines.append("  end")
         lines.append(";")
         lines.append("")
 
@@ -661,9 +686,13 @@ def main() -> int:
             ch,
             story_appearances_by_code,
         )
-        era_short = str(ch.get("era", "")).strip()
-        era_code = STYLE_TO_ERA_CODE.get(era_short, "")
-        era_codes = [era_code] if era_code else []
+        era_codes = story_era_codes_for_character(
+            story_appearances_by_code.get(code, [])
+        )
+        if not era_codes:
+            era_short = str(ch.get("era", "")).strip()
+            era_code = STYLE_TO_ERA_CODE.get(era_short, "")
+            era_codes = [era_code] if era_code else []
         character_rows.append(
             {
                 "code": code,

@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 6,
+  "story_title": "엘리야와 갈멜: 불의 응답",
+  "source_version": "2026-05-25",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "엘리야는 여호와의 단을 어떻게 하였습니까?",
+      "choices": [
+        "무너진 여호와의 단을 수축하였다",
+        "새 제단을 따로 쌓았다",
+        "바알 제단 위에 올렸다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 18:30 — '저가 무너진 여호와의 단을 수축하되'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "엘리야는 갈멜산에서 하나님께 무엇을 알게 해 달라고 기도했습니까?",
+      "choices": [
+        "여호와가 하나님이시고 자신이 주의 종임을 알게 해 달라고 했다",
+        "바알이 이스라엘의 하나님임을 알게 해 달라고 했다",
+        "비가 오지 않을 이유를 숨겨 달라고 했다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 18:36 — '저녁 소제 드릴 때에 이르러 선지자 엘리야가 나아가서 말하되 아브라함과 이삭과 이스라엘의 하 나님 여호와여 주께서 이스라엘 중에서 하나님이 되심과 내가 주의 종이 됨과 내가 주의 말씀대로 이 모 든 일을 행하는 것을 오늘날 알게 하옵소서'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "갈멜 산 대결에서 백성이 마지막에 엎드려 외친 말은 무엇입니까?",
+      "choices": [
+        "여호와 그는 하나님이시로다",
+        "바알이 참 신이로다",
+        "엘리야가 이겼도다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕상 18:39 — '여호와 그는 하나님이시로다 여호와 그는 하나님이시로다 하니'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n006"
+}

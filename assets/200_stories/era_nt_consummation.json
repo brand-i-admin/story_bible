@@ -1,0 +1,327 @@
+[
+  {
+    "title": "하늘 보좌: 문이 열리다",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "요한은 하늘 보좌의 환상을 보고 경배의 중심을 목격한다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "4:1",
+        "to": "4:11"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 1,
+    "story_scenes": [
+      "하늘에 열린 문이 요한 앞에 나타난다",
+      "보좌와 빛과 음성이 하늘을 가득 채운다",
+      "하늘의 존재들은 보좌 앞에서 끊임없이 경배한다",
+      "요한은 경배의 중심이 보좌에 있음을 본다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "heavenly_beings"
+      ],
+      [
+        "heavenly_beings"
+      ],
+      [
+        "john",
+        "heavenly_beings"
+      ]
+    ]
+  },
+  {
+    "title": "어린양: 두루마리를 받다",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "lamb",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "어린양이 두루마리를 받아 역사의 열쇠를 여는 존재로 드러난다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "5:1",
+        "to": "5:14"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 2,
+    "story_scenes": [
+      "봉인된 두루마리 앞에 하늘은 긴장에 잠긴다",
+      "요한은 열 수 있는 이가 없는 듯해 슬퍼한다",
+      "어린양이 보좌 앞으로 나아가 두루마리를 받는다",
+      "하늘은 어린양을 향한 찬양으로 가득 찬다"
+    ],
+    "scene_characters": [
+      [
+        "john",
+        "heavenly_beings"
+      ],
+      [
+        "john"
+      ],
+      [
+        "lamb",
+        "heavenly_beings"
+      ],
+      [
+        "lamb",
+        "heavenly_beings"
+      ]
+    ]
+  },
+  {
+    "title": "일곱 인: 역사의 문이 열리다",
+    "era": "era_nt_consummation",
+    "characters": [
+      "lamb",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "봉인이 하나씩 열리며 심판과 경고의 흐름이 전개된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "6:1",
+        "to": "7:17"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 3,
+    "story_scenes": [
+      "어린양이 첫 봉인을 떼며 역사의 흐름이 열린다",
+      "봉인이 이어 열리며 세상은 흔들리기 시작한다",
+      "두려움과 질문이 사람들 사이에 커져 간다",
+      "그 가운데서도 끝까지 보호받는 이들이 드러난다"
+    ],
+    "scene_characters": [
+      [
+        "lamb"
+      ],
+      [
+        "lamb",
+        "heavenly_beings"
+      ],
+      [
+        "heavenly_beings"
+      ],
+      [
+        "heavenly_beings"
+      ]
+    ]
+  },
+  {
+    "title": "일곱 나팔: 경고의 울림",
+    "era": "era_nt_consummation",
+    "characters": [
+      "angels"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "나팔이 울리며 경고가 반복되고 회개의 촉구가 이어진다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "8:1",
+        "to": "11:19"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 4,
+    "story_scenes": [
+      "하늘의 침묵 뒤에 첫 나팔이 울린다",
+      "나팔이 이어질수록 경고의 장면이 넓게 퍼진다",
+      "고난 속에서도 하나님의 증언은 멈추지 않는다",
+      "마지막 나팔과 함께 하나님의 통치가 선포된다"
+    ],
+    "scene_characters": [
+      [
+        "angels"
+      ],
+      [
+        "angels"
+      ],
+      [
+        "angels"
+      ],
+      [
+        "angels"
+      ]
+    ]
+  },
+  {
+    "title": "용과 두 짐승: 대립의 정점",
+    "era": "era_nt_consummation",
+    "characters": [
+      "dragon",
+      "beasts",
+      "saints"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "거대한 대립이 드러나고, 믿는 자들의 인내가 강조된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "12:1",
+        "to": "13:18"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 5,
+    "story_scenes": [
+      "용과 짐승의 세력이 드러나며 대립이 깊어진다",
+      "땅의 사람들은 두려움과 유혹 사이에 흔들린다",
+      "성도들은 압박 속에서도 인내를 붙든다",
+      "마지막까지 누구를 따를 것인가가 분명해진다"
+    ],
+    "scene_characters": [
+      [
+        "dragon",
+        "beasts"
+      ],
+      [
+        "beasts"
+      ],
+      [
+        "saints"
+      ],
+      [
+        "dragon",
+        "beasts",
+        "saints"
+      ]
+    ]
+  },
+  {
+    "title": "바벨론의 멸망: 무너지는 화려함",
+    "era": "era_nt_consummation",
+    "characters": [
+      "heavenly_voice"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "교만한 체계가 무너지고, 애통과 해방의 대비가 나타난다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "17:1",
+        "to": "17:18"
+      },
+      {
+        "book": "계",
+        "from": "18:1",
+        "to": "18:24"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 6,
+    "story_scenes": [
+      "화려하던 바벨론의 모습이 먼저 드러난다",
+      "심판이 임하며 그 번영은 무너지기 시작한다",
+      "땅의 세력은 무너짐을 바라보며 애통한다",
+      "하늘에서는 해방과 기쁨의 노래가 울린다"
+    ],
+    "scene_characters": [
+      [
+        "heavenly_voice"
+      ],
+      [
+        "heavenly_voice"
+      ],
+      [
+        "heavenly_voice"
+      ],
+      [
+        "heavenly_voice"
+      ]
+    ]
+  },
+  {
+    "title": "최후 심판과 새 하늘 새 땅",
+    "era": "era_nt_consummation",
+    "characters": [
+      "judge",
+      "john",
+      "heavenly_beings"
+    ],
+    "place_name": "밧모섬(추정)",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "심판이 지나고 새 예루살렘과 영원한 회복이 선포된다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "20:11",
+        "to": "20:15"
+      },
+      {
+        "book": "계",
+        "from": "21:1",
+        "to": "22:5"
+      }
+    ],
+    "start_year": null,
+    "end_year": null,
+    "time_precision": "approx",
+    "story_index": 7,
+    "story_scenes": [
+      "큰 보좌 앞에 모두가 서고 책들이 펼쳐진다",
+      "심판이 이루어지고 옛 세상은 지나간다",
+      "새 하늘과 새 땅, 새 예루살렘이 모습을 드러낸다",
+      "하나님은 눈물을 닦으시고 새 창조를 완성하신다"
+    ],
+    "scene_characters": [
+      [
+        "judge",
+        "john"
+      ],
+      [
+        "judge",
+        "john"
+      ],
+      [
+        "john",
+        "heavenly_beings"
+      ],
+      [
+        "judge",
+        "john",
+        "heavenly_beings"
+      ]
+    ]
+  }
+]
