@@ -12,6 +12,7 @@ import '../models/app_user_profile.dart';
 import '../models/character.dart';
 import '../models/character_study_progress.dart';
 import '../models/era.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
@@ -24,11 +25,13 @@ import '../theme/tokens.dart';
 import '../utils/scene_asset_loader.dart';
 import 'avatar_progress_ring.dart';
 import 'character_avatar.dart';
+import 'emotion_badge_icon.dart';
 import 'font_scale_bottom_sheet.dart';
 import 'inline_login_prompt_card.dart';
 import 'parchment_dialog.dart';
+import 'profile/profile_emotion_diary.dart';
+import 'profile/profile_emotion_stats.dart';
 import 'profile/profile_event_review_grid.dart';
-import 'profile/profile_life_map.dart';
 import 'profile/profile_mini_map.dart';
 import 'profile/profile_quiz_stats.dart';
 import 'profile_editor_dialog.dart';
@@ -89,7 +92,7 @@ enum _ProfileContentTab { records, prayer, saved, verses }
 
 enum _ProfileQuizReviewFilter { wrong, confused }
 
-/// "진행률 표시" 섹션의 탭. `life` = 내 삶의 지도 (감정 새김 atlas),
+/// "진행률 표시" 섹션의 탭. `life` = 나의 다이어리,
 /// `place` = 장소로 시작 (지도+region), `walk` = 인물과 걷기.
 enum _ProfileProgressTab { life, place, walk }
 
@@ -120,7 +123,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   String? _intercessoryPrayerError;
   int _intercessoryPrayerPageIndex = 0;
   String _profileSelectedTestament = 'old';
-  // 진행률 섹션 — 기본 탭은 내 삶의 지도 (감정 새김 기반 첫인상 강조).
+  // 진행률 섹션 — 기본 탭은 나의 다이어리 (감정 새김 기반 첫인상 강조).
   _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.life;
   // "장소로 시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
   String? _profileProgressSelectedEraId;
@@ -596,9 +599,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         final isNarrow = constraints.maxWidth < 720;
         if (isNarrow) {
           final totalHeight = constraints.maxHeight;
-          // 프로필(좌측) 패널 = 화면 30% 정도. 진행률(우측) 섹션이 더 큰 비중.
-          // 중보 리스트는 Expanded 라 패널 높이에 맞춰 자동 신축.
-          final leftPanelHeight = _profileLeftPanelHeight(totalHeight);
+          // 프로필(좌측) 패널은 선택 탭과 콘텐츠 양에 맞춰 필요한 만큼만
+          // 차지한다. 내부 리스트는 남은 높이에 맞춰 스크롤된다.
+          final leftPanelHeight = _profileLeftPanelHeight(
+            totalHeight,
+            isAuthenticated: isAuthenticated,
+          );
           final rightPanelHeight = (totalHeight * 0.65).clamp(420.0, 720.0);
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -637,6 +643,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 width: leftWidth,
@@ -665,27 +672,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     );
   }
 
-  double _profileLeftPanelHeight(double totalHeight) {
-    final needsPreviewHeight =
-        _profileContentTab == _ProfileContentTab.saved ||
-        _profileContentTab == _ProfileContentTab.verses;
-    final isRecords = _profileContentTab == _ProfileContentTab.records;
-    final preferredRatio = needsPreviewHeight
-        ? 0.42
-        : isRecords
-        ? 0.27
-        : 0.30;
-    final minHeight = needsPreviewHeight
-        ? 360.0
-        : isRecords
-        ? 252.0
-        : 280.0;
-    final maxHeight = needsPreviewHeight
-        ? 460.0
-        : isRecords
-        ? 340.0
-        : 400.0;
-    return (totalHeight * preferredRatio).clamp(minHeight, maxHeight);
+  double _profileLeftPanelHeight(
+    double totalHeight, {
+    required bool isAuthenticated,
+  }) {
+    final desiredHeight = _profileLeftPanelDesiredHeight(
+      isAuthenticated: isAuthenticated,
+    );
+    final maxHeight = math.max(260.0, totalHeight * 0.62);
+    return math.min(desiredHeight, maxHeight);
   }
 
   Future<void> _openProfileEditor() async {

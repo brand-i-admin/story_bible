@@ -8,35 +8,110 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required AppUserProfile profile,
     required bool isAuthenticated,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildProfileHeader(profile: profile),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: floatingPanelDecoration(),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildProfileContentTabs(),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: _buildProfileContentPanel(
-                      profile: profile,
-                      isAuthenticated: isAuthenticated,
-                    ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desiredCardHeight = _profileLeftCardHeight(
+          isAuthenticated: isAuthenticated,
+        );
+        final cardHeight = constraints.hasBoundedHeight
+            ? math.min(
+                desiredCardHeight,
+                math.max(180.0, constraints.maxHeight - _profileHeaderBlock),
+              )
+            : desiredCardHeight;
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildProfileHeader(profile: profile),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: cardHeight,
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: floatingPanelDecoration(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildProfileContentTabs(),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: _buildProfileContentPanel(
+                          profile: profile,
+                          isAuthenticated: isAuthenticated,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
+  }
+
+  static const double _profileHeaderBlock = 56;
+  static const double _profileLeftCardChromeHeight = 74;
+
+  double _profileLeftPanelDesiredHeight({required bool isAuthenticated}) {
+    return _profileHeaderBlock +
+        _profileLeftCardHeight(isAuthenticated: isAuthenticated);
+  }
+
+  double _profileLeftCardHeight({required bool isAuthenticated}) {
+    return _profileLeftCardChromeHeight +
+        switch (_profileContentTab) {
+          _ProfileContentTab.records => _profileRecordsContentHeight(),
+          _ProfileContentTab.prayer => _profilePrayerContentHeight(
+            isAuthenticated: isAuthenticated,
+          ),
+          _ProfileContentTab.saved => _profileSavedStoriesContentHeight(),
+          _ProfileContentTab.verses => _profileSavedVersesContentHeight(),
+        };
+  }
+
+  double _profileRecordsContentHeight() {
+    final state = ref.read(storyControllerProvider);
+    final stats = buildProfileQuizStats(state.quizAttemptSummaries);
+    return stats.total == 0 ? 168 : 146;
+  }
+
+  double _profilePrayerContentHeight({required bool isAuthenticated}) {
+    if (_intercessoryPrayerLoading && _intercessoryPrayerItems.isEmpty) {
+      return 244;
+    }
+    if (_intercessoryPrayerError != null && _intercessoryPrayerItems.isEmpty) {
+      return 258;
+    }
+    if (_intercessoryPrayerItems.isEmpty) {
+      return isAuthenticated ? 258 : 236;
+    }
+    final visibleItems = math.min(_intercessoryPrayerItems.length, 3);
+    return (184 + visibleItems * 74).clamp(292.0, 408.0).toDouble();
+  }
+
+  double _profileSavedStoriesContentHeight() {
+    if (_profileSavedEventsLoading ||
+        _profileSavedEventsError != null ||
+        _profileSavedEventsPreview.isEmpty) {
+      return 104;
+    }
+    return 198;
+  }
+
+  double _profileSavedVersesContentHeight() {
+    if (_profileSavedVersesLoading ||
+        _profileSavedVersesError != null ||
+        _profileSavedVersesPreview.isEmpty) {
+      return 104;
+    }
+    final visibleVerses = math.min(_profileSavedVersesPreview.length, 3);
+    return (86 + visibleVerses * 52).clamp(154.0, 236.0).toDouble();
   }
 
   Widget _buildProfileHeader({required AppUserProfile profile}) {
@@ -240,35 +315,47 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileRecordsTabBody() {
     final state = ref.watch(storyControllerProvider);
     final stats = buildProfileQuizStats(state.quizAttemptSummaries);
+    final emotionStats = buildProfileEmotionStats(state.eventEmotionMarks);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _ProfileQuizStatsStrip(
-          stats: stats,
-          selected: null,
-          onTapWrong: () {
-            _openProfileQuizReviewDialog(
-              filter: _ProfileQuizReviewFilter.wrong,
-              eventIds: stats.wrongEventIds,
-            );
-          },
-          onTapConfused: () {
-            _openProfileQuizReviewDialog(
-              filter: _ProfileQuizReviewFilter.confused,
-              eventIds: stats.confusedEventIds,
-            );
-          },
-        ),
-        const SizedBox(height: 4),
-        _buildProfileTabMessage(
-          stats.total == 0
-              ? '퀴즈를 풀면 기록이 쌓여요.'
-              : '오답이나 헷갈려요를 누르면 복습할 이야기를 볼 수 있어요.',
-          fontSize: stats.total == 0 ? 10.8 : 10.6,
-          scaleDownSingleLine: true,
-        ),
-      ],
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _ProfileRecordsStatsPanel(
+            emotionStats: emotionStats,
+            quizStats: stats,
+            selectedQuizFilter: null,
+            onTapEmotion: (option) {
+              _openProfileReviewDialog(
+                title: '${option.label} 이야기',
+                eventIds: emotionStats.eventIdsFor(option.key),
+                emptyText: '${option.label}으로 새긴 이야기가 없습니다.',
+              );
+            },
+            onTapWrong: () {
+              _openProfileQuizReviewDialog(
+                filter: _ProfileQuizReviewFilter.wrong,
+                eventIds: stats.wrongEventIds,
+              );
+            },
+            onTapConfused: () {
+              _openProfileQuizReviewDialog(
+                filter: _ProfileQuizReviewFilter.confused,
+                eventIds: stats.confusedEventIds,
+              );
+            },
+          ),
+          if (stats.total == 0) ...[
+            const SizedBox(height: 6),
+            _buildProfileTabMessage(
+              '퀴즈를 풀면 기록이 쌓여요.',
+              fontSize: 10.8,
+              scaleDownSingleLine: true,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -423,8 +510,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         const SizedBox(height: 6),
         Container(height: 1, color: const Color(0x448E6F48)),
         const SizedBox(height: 7),
-        // 중보 기도 리스트 — 부모 leftPanel 의 남은 높이를 채움. 넘치면 내부
-        // 스크롤. leftPanel 자체가 30% 비율로 제한되므로 자연스럽게 짧음.
+        // 중보 기도 리스트 — 탭 카드의 남은 높이를 채움. 항목이 많으면
+        // 내부에서만 스크롤해 다른 프로필 섹션 높이를 밀어내지 않는다.
         Expanded(
           child: _intercessoryPrayerLoading && !hasItems
               ? const Center(child: CircularProgressIndicator())
@@ -657,6 +744,18 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       _ProfileQuizReviewFilter.wrong => '틀린 이야기가 없습니다.',
       _ProfileQuizReviewFilter.confused => '헷갈렸던 이야기가 없습니다.',
     };
+    await _openProfileReviewDialog(
+      title: title,
+      eventIds: eventIds,
+      emptyText: emptyText,
+    );
+  }
+
+  Future<void> _openProfileReviewDialog({
+    required String title,
+    required Set<String> eventIds,
+    required String emptyText,
+  }) async {
     await showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -983,6 +1082,187 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 }
 
+class _ProfileRecordsStatsPanel extends StatelessWidget {
+  const _ProfileRecordsStatsPanel({
+    required this.emotionStats,
+    required this.quizStats,
+    required this.selectedQuizFilter,
+    required this.onTapEmotion,
+    required this.onTapWrong,
+    required this.onTapConfused,
+  });
+
+  final ProfileEmotionStats emotionStats;
+  final ProfileQuizStats quizStats;
+  final _ProfileQuizReviewFilter? selectedQuizFilter;
+  final ValueChanged<EventEmotionOption> onTapEmotion;
+  final VoidCallback onTapWrong;
+  final VoidCallback onTapConfused;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 7, 8, 7),
+      decoration: BoxDecoration(
+        color: const Color(0xEFFFF8E9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x55A8834D), width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _ProfileEmotionStatsRows(
+            stats: emotionStats,
+            onTapEmotion: onTapEmotion,
+          ),
+          const Divider(height: 13, color: Color(0x338E6F48)),
+          _ProfileQuizStatsStrip(
+            stats: quizStats,
+            selected: selectedQuizFilter,
+            onTapWrong: onTapWrong,
+            onTapConfused: onTapConfused,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileEmotionStatsRows extends StatelessWidget {
+  const _ProfileEmotionStatsRows({
+    required this.stats,
+    required this.onTapEmotion,
+  });
+
+  final ProfileEmotionStats stats;
+  final ValueChanged<EventEmotionOption> onTapEmotion;
+
+  @override
+  Widget build(BuildContext context) {
+    final sortedOptions = [...EventEmotionOption.options]
+      ..sort((a, b) {
+        final countCompare = stats
+            .countFor(b.key)
+            .compareTo(stats.countFor(a.key));
+        if (countCompare != 0) {
+          return countCompare;
+        }
+        return EventEmotionOption.options
+            .indexOf(a)
+            .compareTo(EventEmotionOption.options.indexOf(b));
+      });
+    final firstRow = sortedOptions.take(4).toList();
+    final secondRow = sortedOptions.skip(4).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            for (var i = 0; i < firstRow.length; i++) ...[
+              Expanded(
+                child: _ProfileEmotionStatChip(
+                  option: firstRow[i],
+                  count: stats.countFor(firstRow[i].key),
+                  onTap: () => onTapEmotion(firstRow[i]),
+                ),
+              ),
+              if (i != firstRow.length - 1) const SizedBox(width: 4),
+            ],
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            for (var i = 0; i < secondRow.length; i++) ...[
+              Expanded(
+                child: _ProfileEmotionStatChip(
+                  option: secondRow[i],
+                  count: stats.countFor(secondRow[i].key),
+                  onTap: () => onTapEmotion(secondRow[i]),
+                ),
+              ),
+              if (i != secondRow.length - 1) const SizedBox(width: 4),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileEmotionStatChip extends StatelessWidget {
+  const _ProfileEmotionStatChip({
+    required this.option,
+    required this.count,
+    required this.onTap,
+  });
+
+  final EventEmotionOption option;
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Container(
+          height: 24,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: count > 0
+                ? AppColors.parchmentCream
+                : AppColors.parchmentCard,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: count > 0 ? AppColors.goldDeep : const Color(0x66A8834D),
+              width: 0.8,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              EmotionBadgeIcon(
+                emotionKey: option.key,
+                size: 15,
+                iconSize: 9,
+                elevation: false,
+              ),
+              const SizedBox(width: 3),
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '${option.label} $count',
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: count > 0 ? AppColors.ink700 : AppColors.ink200,
+                      fontSize: 9.8,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ProfileQuizStatsStrip extends StatelessWidget {
   const _ProfileQuizStatsStrip({
     required this.stats,
@@ -998,59 +1278,44 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-      decoration: BoxDecoration(
-        color: const Color(0xEFFFF8E9),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0x55A8834D), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x16000000),
-            blurRadius: 8,
-            offset: Offset(0, 3),
+    return Row(
+      children: [
+        Expanded(
+          child: _ProfileQuizStatItem(
+            icon: Icons.check_rounded,
+            label: '정답',
+            count: stats.correct,
+            eventCount: stats.correctEventCount,
+            color: const Color(0xFF4BA36A),
+            selected: false,
+            onTap: null,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ProfileQuizStatItem(
-              icon: Icons.check_rounded,
-              label: '정답',
-              count: stats.correct,
-              eventCount: stats.correctEventCount,
-              color: const Color(0xFF4BA36A),
-              selected: false,
-              onTap: null,
-            ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: _ProfileQuizStatItem(
+            icon: Icons.close_rounded,
+            label: '오답',
+            count: stats.wrong,
+            eventCount: stats.wrongEventCount,
+            color: const Color(0xFFC75245),
+            selected: selected == _ProfileQuizReviewFilter.wrong,
+            onTap: onTapWrong,
           ),
-          const _ProfileStatsDivider(),
-          Expanded(
-            child: _ProfileQuizStatItem(
-              icon: Icons.close_rounded,
-              label: '오답',
-              count: stats.wrong,
-              eventCount: stats.wrongEventCount,
-              color: const Color(0xFFC75245),
-              selected: selected == _ProfileQuizReviewFilter.wrong,
-              onTap: onTapWrong,
-            ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: _ProfileQuizStatItem(
+            icon: Icons.question_mark_rounded,
+            label: '헷갈려요',
+            count: stats.confused,
+            eventCount: stats.confusedEventCount,
+            color: const Color(0xFFC7923D),
+            selected: selected == _ProfileQuizReviewFilter.confused,
+            onTap: onTapConfused,
           ),
-          const _ProfileStatsDivider(),
-          Expanded(
-            child: _ProfileQuizStatItem(
-              icon: Icons.question_mark_rounded,
-              label: '헷갈려요',
-              count: stats.confused,
-              eventCount: stats.confusedEventCount,
-              color: const Color(0xFFC7923D),
-              selected: selected == _ProfileQuizReviewFilter.confused,
-              onTap: onTapConfused,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -1078,52 +1343,65 @@ class _ProfileQuizStatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 160),
-      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+      constraints: const BoxConstraints(minHeight: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
       decoration: BoxDecoration(
-        color: selected ? color.withValues(alpha: 0.12) : Colors.transparent,
+        color: selected
+            ? color.withValues(alpha: 0.14)
+            : AppColors.parchmentCream,
         borderRadius: BorderRadius.circular(12),
-        border: selected
-            ? Border.all(color: color.withValues(alpha: 0.45), width: 1)
-            : null,
+        border: Border.all(
+          color: selected
+              ? color.withValues(alpha: 0.58)
+              : const Color(0x66A8834D),
+          width: selected ? 1.1 : 0.8,
+        ),
+        boxShadow: onTap == null
+            ? null
+            : const [
+                BoxShadow(
+                  color: Color(0x12000000),
+                  blurRadius: 5,
+                  offset: Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.16),
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Icon(icon, size: 19, color: color),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF5A4326),
-              fontSize: 10.8,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 1),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                profileQuizCountLabel(quizCount: count, storyCount: eventCount),
-                maxLines: 1,
-                style: const TextStyle(
-                  color: Color(0xFF2E2114),
-                  fontSize: 14.4,
-                  fontWeight: FontWeight.w900,
-                  height: 1.0,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 15, color: color),
+                const SizedBox(width: 4),
+                Text(
+                  label,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color(0xFF5A4326),
+                    fontSize: 12.6,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
+                  ),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.center,
+            child: Text(
+              profileQuizCountLabel(quizCount: count, storyCount: eventCount),
+              maxLines: 1,
+              style: const TextStyle(
+                color: Color(0xFF2E2114),
+                fontSize: 11.2,
+                fontWeight: FontWeight.w900,
+                height: 1.0,
               ),
             ),
           ),
@@ -1141,20 +1419,6 @@ class _ProfileQuizStatItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: content,
       ),
-    );
-  }
-}
-
-class _ProfileStatsDivider extends StatelessWidget {
-  const _ProfileStatsDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 66,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      color: const Color(0x338E6F48),
     );
   }
 }
