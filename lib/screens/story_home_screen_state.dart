@@ -1039,6 +1039,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     ProfileEventOpenSource source = ProfileEventOpenSource.general,
     String? sourceId,
   }) async {
+    if (source == ProfileEventOpenSource.detailOnly) {
+      await _openEventDetailPage(event);
+      return;
+    }
     await _prepareHomeMapForProfileEvent(
       event,
       source: source,

@@ -52,7 +52,7 @@ part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
 part 'profile/profile_settings_sheet.dart';
 
-enum ProfileEventOpenSource { general, place, character }
+enum ProfileEventOpenSource { general, place, character, detailOnly }
 
 typedef ProfileEventDetailCallback =
     void Function(

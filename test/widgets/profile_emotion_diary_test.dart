@@ -288,7 +288,7 @@ void main() {
     expect(find.text('+2'), findsOneWidget);
   });
 
-  testWidgets('감정 row를 누르면 이동 로딩 오버레이로 입력을 막는다', (tester) async {
+  testWidgets('감정 row를 누르면 상세 이동 콜백을 즉시 호출하고 로딩을 짧게 닫는다', (tester) async {
     final repository = _MockStoryRepository();
     final event = _event(id: 'event_1', title: '홍해를 건너다');
     final mark = _mark(
@@ -323,7 +323,9 @@ void main() {
     await tester.pump();
     expect(find.text('6월 10일 오늘'), findsOneWidget);
 
-    await tester.pump(const Duration(seconds: 4));
+    await tester.pump(const Duration(milliseconds: 700));
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('날짜를 선택하면 해당일의 감정 기록으로 아래 섹션이 바뀐다', (tester) async {

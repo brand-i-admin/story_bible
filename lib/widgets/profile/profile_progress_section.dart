@@ -141,7 +141,12 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     final state = ref.watch(storyControllerProvider);
     return ProfileEmotionDiary(
       eventEmotionMarks: state.eventEmotionMarks,
-      onOpenEventDetail: widget.onOpenEventDetail,
+      onOpenEventDetail: (event) {
+        widget.onOpenEventDetail(
+          event,
+          source: ProfileEventOpenSource.detailOnly,
+        );
+      },
     );
   }
 

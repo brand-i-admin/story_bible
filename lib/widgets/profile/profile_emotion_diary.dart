@@ -165,7 +165,7 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
         return;
       }
       widget.onOpenEventDetail(event);
-      _openingResetTimer = Timer(const Duration(seconds: 4), () {
+      _openingResetTimer = Timer(const Duration(milliseconds: 650), () {
         if (mounted) {
           setState(() => _openingEventId = null);
         }
