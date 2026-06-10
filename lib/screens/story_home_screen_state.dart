@@ -2120,7 +2120,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   constraints.maxHeight,
                 );
                 final isPhone = _isPhoneSheetLayoutForSize(viewportSize);
-                final sheetHorizontalMargin = isPhone ? 10.0 : 18.0;
+                final sheetHorizontalMargin = isPhone ? 0.0 : 18.0;
                 final sheetHeight =
                     constraints.maxHeight *
                     _sheetSizeForStage(viewportSize, _selectionPanelStage);

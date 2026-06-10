@@ -34,7 +34,7 @@ const _eras = [
 ];
 
 void main() {
-  testWidgets('시간 순 버튼은 timeline 모드를 선택한다', (tester) async {
+  testWidgets('시간 순으로 보기 버튼은 timeline 모드를 선택한다', (tester) async {
     SelectionMode? pickedMode;
 
     await tester.pumpWidget(
@@ -54,14 +54,14 @@ void main() {
       ),
     );
 
-    expect(find.text('시간 순'), findsOneWidget);
-    expect(find.text('선택한 시대의 사건을 시간 순으로 봅니다'), findsOneWidget);
+    expect(find.text('시간 순으로 보기'), findsOneWidget);
+    expect(find.text('선택한 시대의 사건을\n시간 순으로 봅니다'), findsOneWidget);
     expect(find.text('인물과 걷기'), findsOneWidget);
-    expect(find.text('선택한 인물들의 사건을 비교합니다'), findsOneWidget);
+    expect(find.text('선택한 인물들의 사건을\n시간 순으로 봅니다'), findsOneWidget);
     expect(find.text('장소로 시작'), findsOneWidget);
-    expect(find.text('한 장소에서 이야기를 시간 순으로 봅니다'), findsOneWidget);
+    expect(find.text('한 장소에서 이야기를\n시간 순으로 봅니다'), findsOneWidget);
     expect(
-      tester.getCenter(find.text('시간 순')).dx,
+      tester.getCenter(find.text('시간 순으로 보기')).dx,
       lessThan(tester.getCenter(find.text('인물과 걷기')).dx),
     );
     expect(
@@ -69,7 +69,7 @@ void main() {
       lessThan(tester.getCenter(find.text('장소로 시작')).dx),
     );
 
-    await tester.tap(find.text('시간 순'));
+    await tester.tap(find.text('시간 순으로 보기'));
     expect(pickedMode, SelectionMode.timeline);
   });
 

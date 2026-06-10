@@ -14,7 +14,7 @@ import 'era_pick_rows.dart';
 ///      비선택 시 시대 고유 색 ([EraColors.forCode]) 을 점·아이콘으로 미리 보여주고,
 ///      선택 시 갈색 그라데이션으로 활성 표시한다. 같은 시대 색은 지도 폴리곤에도 사용된다.
 ///   2. 어떻게 볼까요? — 시대가 선택된 경우에만 활성.
-///      [시간 순 / 인물과 걷기 / 장소로 시작].
+///      [시간 순으로 보기 / 인물과 걷기 / 장소로 시작].
 class HomeIntroPanel extends StatelessWidget {
   const HomeIntroPanel({
     super.key,
@@ -105,8 +105,8 @@ class HomeIntroPanel extends StatelessWidget {
                     child: _ModeCard(
                       key: const ValueKey('home-mode-timeline'),
                       icon: Icons.access_time_rounded,
-                      title: '시간 순',
-                      subtitle: '선택한 시대의 사건을 시간 순으로 봅니다',
+                      title: '시간 순으로 보기',
+                      subtitle: '선택한 시대의 사건을\n시간 순으로 봅니다',
                       accent: const Color(0xFF8C5A2E),
                       onTap: () => onPickMode(SelectionMode.timeline),
                     ),
@@ -117,7 +117,7 @@ class HomeIntroPanel extends StatelessWidget {
                       key: const ValueKey('home-mode-character'),
                       icon: Icons.people,
                       title: '인물과 걷기',
-                      subtitle: '선택한 인물들의 사건을 비교합니다',
+                      subtitle: '선택한 인물들의 사건을\n시간 순으로 봅니다',
                       accent: theme.colorScheme.tertiary,
                       onTap: () => onPickMode(SelectionMode.character),
                     ),
@@ -128,7 +128,7 @@ class HomeIntroPanel extends StatelessWidget {
                       key: const ValueKey('home-mode-region'),
                       icon: Icons.location_on,
                       title: '장소로 시작',
-                      subtitle: '한 장소에서 이야기를 시간 순으로 봅니다',
+                      subtitle: '한 장소에서 이야기를\n시간 순으로 봅니다',
                       accent: theme.colorScheme.primary,
                       onTap: () => onPickMode(SelectionMode.region),
                     ),
