@@ -9,6 +9,7 @@ import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
+import 'saved_verse_actions.dart';
 import 'story_home_styles.dart';
 import 'sub_page_scaffold.dart';
 
@@ -18,8 +19,8 @@ import 'sub_page_scaffold.dart';
 /// 구절 목록, 그리고 이전/다음 장 액션 바를 제공한다. 히어로 카드는
 /// 의도적으로 비워두고, 추후 era/메타 정보가 들어오면 다시 추가할 예정이다.
 ///
-/// **저장 모델**: 우측 별 아이콘으로 단일 구절을 저장/해제한다. 구절 본문을
-/// 탭해도 선택 상태는 만들지 않는다.
+/// **저장 모델**: 우측 별 아이콘으로 단일 구절을 저장/해제한다. 새 저장은
+/// optional 묵상 코멘트를 함께 받고, 구절 본문을 탭해도 선택 상태는 만들지 않는다.
 ///
 /// [initialBookNo]/[initialChapterNo]/[initialVerseNo]가 주어지면 해당 구절로
 /// 자동 스크롤한다. [highlightTarget]이 있으면 해당 이야기의 읽을 본문 범위를
@@ -57,7 +58,8 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   int? _pendingFocusVerse;
   final ScrollController _verseScrollController = ScrollController();
   final Map<String, Future<List<BibleVerse>>> _chapterCache = {};
-  Set<String> _savedVerseKeys = <String>{};
+  Map<String, SavedBibleVerse> _savedVersesByKey =
+      const <String, SavedBibleVerse>{};
 
   @override
   void initState() {
@@ -85,7 +87,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     _pendingFocusVerse = _readingTargets.isEmpty && (initialVerse ?? 0) > 0
         ? initialVerse
         : null;
-    _loadSavedVerseKeys();
+    _loadSavedVerses();
   }
 
   @override
@@ -94,20 +96,20 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     super.dispose();
   }
 
-  Future<void> _loadSavedVerseKeys() async {
+  Future<void> _loadSavedVerses() async {
     final user = ref.read(signedInUserProvider);
     if (user == null) {
       return;
     }
     try {
-      final keys = await ref
+      final versesByKey = await ref
           .read(userRepositoryProvider)
-          .fetchSavedVerseKeys(user.id);
+          .fetchSavedVerseMap(user.id);
       if (!mounted) {
         return;
       }
       setState(() {
-        _savedVerseKeys = keys;
+        _savedVersesByKey = versesByKey;
       });
     } catch (_) {
       // 저장 구절을 못 가져와도 리더는 계속 사용 가능
@@ -199,22 +201,48 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     }
 
     try {
-      final didSave = await ref
+      final savedVerse = _savedVersesByKey[verseKey];
+      if (savedVerse != null) {
+        final decision = await confirmSavedVerseDelete(
+          context: context,
+          verse: savedVerse,
+        );
+        if (!mounted || !decision.shouldDelete) return;
+        await ref.read(userRepositoryProvider).deleteSavedVerse(savedVerse.id);
+        if (!mounted) return;
+        setState(() {
+          _savedVersesByKey = {
+            for (final entry in _savedVersesByKey.entries)
+              if (entry.key != verseKey) entry.key: entry.value,
+          };
+        });
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.hideCurrentSnackBar();
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              savedVerseDeleteSuccessMessage(hadComment: decision.hadComment),
+            ),
+          ),
+        );
+        return;
+      }
+
+      final comment = await showSavedVerseCommentDialog(context);
+      if (!mounted) return;
+      final nextSavedVerse = await ref
           .read(userRepositoryProvider)
-          .toggleSavedVerse(userId: user.id, verse: verse);
+          .saveBibleVerse(userId: user.id, verse: verse, comment: comment);
       if (!mounted) return;
       setState(() {
-        if (didSave) {
-          _savedVerseKeys.add(verseKey);
-        } else {
-          _savedVerseKeys.remove(verseKey);
-        }
+        _savedVersesByKey = {
+          ..._savedVersesByKey,
+          nextSavedVerse.key: nextSavedVerse,
+        };
       });
       final messenger = ScaffoldMessenger.of(context);
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(
-        SnackBar(content: Text(didSave ? '저장되었어요' : '저장이 삭제되었어요')),
-      );
+      messenger.showSnackBar(const SnackBar(content: Text('저장되었어요.')));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -287,8 +315,8 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
         ),
       ),
     );
-    // 저장 페이지에서 변경 가능 — 돌아오면 키 셋 새로 고침.
-    await _loadSavedVerseKeys();
+    // 저장 페이지에서 변경 가능 — 돌아오면 저장 map 새로 고침.
+    await _loadSavedVerses();
   }
 
   @override
@@ -389,7 +417,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                   _pendingFocusVerse = null;
                 });
               },
-              savedVerseKeys: _savedVerseKeys,
+              savedVerseKeys: _savedVersesByKey.keys.toSet(),
               onTapStar: _onTapStar,
               showStars: !isGuidedReading,
             ),

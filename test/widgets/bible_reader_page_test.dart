@@ -32,13 +32,44 @@ void main() {
       createdAt: '2026-05-26T00:00:00Z',
     );
 
+    setUpAll(() {
+      registerFallbackValue(
+        _verse(bookNo: 1, bookName: '창세기', chapterNo: 1, verseNo: 1),
+      );
+    });
+
     setUp(() {
       storyRepository = _MockStoryRepository();
       userRepository = _MockUserRepository();
 
       when(
-        () => userRepository.fetchSavedVerseKeys('user-1'),
-      ).thenAnswer((_) async => const <String>{});
+        () => userRepository.fetchSavedVerseMap('user-1'),
+      ).thenAnswer((_) async => const <String, SavedBibleVerse>{});
+      when(
+        () => userRepository.saveBibleVerse(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+          comment: any(named: 'comment'),
+        ),
+      ).thenAnswer((invocation) async {
+        final verse = invocation.namedArguments[#verse] as BibleVerse;
+        final comment = invocation.namedArguments[#comment] as String;
+        return SavedBibleVerse(
+          id: 'saved-${verse.verseNo}',
+          userId: 'user-1',
+          translation: verse.translation,
+          bookNo: verse.bookNo,
+          bookName: verse.bookName,
+          chapterNo: verse.chapterNo,
+          verseNo: verse.verseNo,
+          verseText: verse.verseText,
+          comment: comment,
+          createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+        );
+      });
+      when(
+        () => userRepository.deleteSavedVerse(any()),
+      ).thenAnswer((_) async {});
       when(
         () => storyRepository.fetchBibleVersesByChapter(
           translation: 'KRV',
@@ -106,6 +137,7 @@ void main() {
               chapterNo: 45,
               verseNo: 1,
               verseText: '요셉이 시종하는 자들 앞에서 그 정을 억제하지 못하여',
+              comment: '',
               createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
             ),
           ],
@@ -189,6 +221,118 @@ void main() {
       await tester.pump();
       expect(loginPromptCount, 2);
       expect(find.text('저장한 말씀'), findsNothing);
+    });
+
+    testWidgets('별표로 저장할 때 묵상 코멘트를 입력해 함께 저장한다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.star_border_rounded));
+      await tester.pumpAndSettle();
+
+      expect(find.text('말씀을 저장할까요?'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '오늘 붙잡고 싶은 약속입니다.');
+      await tester.tap(find.text('저장'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => userRepository.saveBibleVerse(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+          comment: '오늘 붙잡고 싶은 약속입니다.',
+        ),
+      ).called(1);
+      expect(find.byIcon(Icons.star_rounded), findsOneWidget);
+      expect(find.text('저장되었어요.'), findsOneWidget);
+    });
+
+    testWidgets('저장 코멘트가 없으면 확인 팝업 없이 바로 저장 취소한다', (tester) async {
+      final saved = SavedBibleVerse(
+        id: 'saved-1',
+        userId: 'user-1',
+        translation: 'KRV',
+        bookNo: 1,
+        bookName: '창세기',
+        chapterNo: 1,
+        verseNo: 1,
+        verseText: '테스트 본문 1',
+        createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+      );
+      when(
+        () => userRepository.fetchSavedVerseMap('user-1'),
+      ).thenAnswer((_) async => {saved.key: saved});
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.star_rounded));
+      await tester.pumpAndSettle();
+
+      verify(() => userRepository.deleteSavedVerse('saved-1')).called(1);
+      expect(find.text('말씀 저장을 취소할까요?'), findsNothing);
+      expect(find.byIcon(Icons.star_border_rounded), findsOneWidget);
+      expect(find.text('저장된 코멘트가 없어서 바로 구절 저장을 취소했어요.'), findsOneWidget);
+    });
+
+    testWidgets('저장 코멘트가 있으면 저장 취소 전 확인 팝업을 띄운다', (tester) async {
+      final saved = SavedBibleVerse(
+        id: 'saved-1',
+        userId: 'user-1',
+        translation: 'KRV',
+        bookNo: 1,
+        bookName: '창세기',
+        chapterNo: 1,
+        verseNo: 1,
+        verseText: '테스트 본문 1',
+        comment: '힘들 때 다시 읽고 싶어서',
+        createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+      );
+      when(
+        () => userRepository.fetchSavedVerseMap('user-1'),
+      ).thenAnswer((_) async => {saved.key: saved});
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.star_rounded));
+      await tester.pumpAndSettle();
+
+      expect(find.text('말씀 저장을 취소할까요?'), findsOneWidget);
+      expect(find.textContaining("'힘들 때 다시 읽고 싶어서' 코멘트가 있는데"), findsOneWidget);
+
+      await tester.tap(find.text('저장 취소'));
+      await tester.pumpAndSettle();
+
+      verify(() => userRepository.deleteSavedVerse('saved-1')).called(1);
+      expect(find.byIcon(Icons.star_border_rounded), findsOneWidget);
     });
 
     testWidgets('초기 절 번호가 있으면 해당 절을 본문 목록 상단으로 올린다', (tester) async {

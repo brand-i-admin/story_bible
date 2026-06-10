@@ -14,6 +14,9 @@ class UserRepository {
   const UserRepository(this._client);
 
   static const profileImageBucket = 'profile-images';
+  static const _savedVerseColumns =
+      'id, user_id, translation, book_no, book_name, chapter_no, verse_no, verse_text, comment, created_at';
+  static const _savedVerseCommentMaxLength = 200;
 
   final SupabaseClient _client;
 
@@ -114,9 +117,7 @@ class UserRepository {
     final to = from + pageSize;
     final rows = await _client
         .from('user_saved_verses')
-        .select(
-          'id, user_id, translation, book_no, book_name, chapter_no, verse_no, verse_text, created_at',
-        )
+        .select(_savedVerseColumns)
         .eq('user_id', userId)
         .order('created_at', ascending: false)
         .range(from, to);
@@ -133,60 +134,51 @@ class UserRepository {
     );
   }
 
-  Future<Set<String>> fetchSavedVerseKeys(String userId) async {
+  Future<Map<String, SavedBibleVerse>> fetchSavedVerseMap(String userId) async {
     final rows = await _client
         .from('user_saved_verses')
-        .select('translation, book_no, chapter_no, verse_no')
+        .select(_savedVerseColumns)
         .eq('user_id', userId);
 
-    return rows
-        .map(
-          (row) => SavedBibleVerse.buildVerseKey(
-            translation: row['translation'] as String,
-            bookNo: row['book_no'] as int,
-            chapterNo: row['chapter_no'] as int,
-            verseNo: row['verse_no'] as int,
-          ),
-        )
-        .toSet();
+    return {
+      for (final row in rows.map<SavedBibleVerse>(SavedBibleVerse.fromMap))
+        row.key: row,
+    };
   }
 
-  Future<bool> toggleSavedVerse({
+  Future<SavedBibleVerse> saveBibleVerse({
     required String userId,
     required BibleVerse verse,
+    String comment = '',
   }) async {
-    final existing = await _client
+    final normalizedComment = _normalizeSavedVerseComment(comment);
+    final row = await _client
         .from('user_saved_verses')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('translation', verse.translation)
-        .eq('book_no', verse.bookNo)
-        .eq('chapter_no', verse.chapterNo)
-        .eq('verse_no', verse.verseNo)
-        .maybeSingle();
-
-    if (existing != null) {
-      await _client
-          .from('user_saved_verses')
-          .delete()
-          .eq('id', existing['id'] as String);
-      return false;
-    }
-
-    await _client.from('user_saved_verses').insert({
-      'user_id': userId,
-      'translation': verse.translation,
-      'book_no': verse.bookNo,
-      'book_name': verse.bookName,
-      'chapter_no': verse.chapterNo,
-      'verse_no': verse.verseNo,
-      'verse_text': verse.verseText,
-    });
-    return true;
+        .insert({
+          'user_id': userId,
+          'translation': verse.translation,
+          'book_no': verse.bookNo,
+          'book_name': verse.bookName,
+          'chapter_no': verse.chapterNo,
+          'verse_no': verse.verseNo,
+          'verse_text': verse.verseText,
+          'comment': normalizedComment,
+        })
+        .select(_savedVerseColumns)
+        .single();
+    return SavedBibleVerse.fromMap(row);
   }
 
   Future<void> deleteSavedVerse(String verseId) {
     return _client.from('user_saved_verses').delete().eq('id', verseId);
+  }
+
+  String _normalizeSavedVerseComment(String comment) {
+    final trimmed = comment.trim();
+    if (trimmed.length <= _savedVerseCommentMaxLength) {
+      return trimmed;
+    }
+    return trimmed.substring(0, _savedVerseCommentMaxLength);
   }
 
   Future<PagedResult<IntercessoryPrayerItem>> fetchIntercessoryPrayerPage({

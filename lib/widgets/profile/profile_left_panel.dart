@@ -550,38 +550,40 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Widget _buildProfileSavedVersesPreview() {
     final preview = _profileSavedVersesPreview.take(3).toList();
+    final hasMore = _profileSavedVersesPreview.length > preview.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: ClipRect(
-              child: SizedBox(
-                height: 150,
-                child: OverflowBox(
-                  alignment: Alignment.topCenter,
-                  minHeight: 0,
-                  maxHeight: double.infinity,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (var index = 0; index < preview.length; index++) ...[
-                        if (index > 0) const SizedBox(height: 8),
-                        SavedVerseRow(
-                          verse: preview[index],
-                          compact: true,
-                          onTap: () => widget.onOpenBibleReader(
-                            initialBookNo: preview[index].bookNo,
-                            initialChapterNo: preview[index].chapterNo,
-                            initialVerseNo: preview[index].verseNo,
-                          ),
-                        ),
-                      ],
-                    ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var index = 0; index < preview.length; index++) ...[
+                  if (index > 0) const SizedBox(height: 8),
+                  SavedVerseRow(
+                    verse: preview[index],
+                    compact: true,
+                    onTap: () => widget.onOpenBibleReader(
+                      initialBookNo: preview[index].bookNo,
+                      initialChapterNo: preview[index].chapterNo,
+                      initialVerseNo: preview[index].verseNo,
+                    ),
                   ),
-                ),
-              ),
+                ],
+                if (hasMore) ...[
+                  const SizedBox(height: 6),
+                  const Text(
+                    '...',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.ink200,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),

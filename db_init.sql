@@ -619,6 +619,7 @@ create table if not exists user_saved_verses (
   chapter_no smallint not null check (chapter_no > 0),
   verse_no smallint not null check (verse_no > 0),
   verse_text text not null,
+  comment text not null default '' check (char_length(comment) <= 200),
   created_at timestamptz not null default now(),
   unique (user_id, translation, book_no, chapter_no, verse_no)
 );

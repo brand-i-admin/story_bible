@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/saved_bible_verse.dart';
 import '../state/auth_providers.dart';
 import '../theme/tokens.dart';
-import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_page_scaffold.dart';
+import '../widgets/saved_verse_actions.dart';
 import '../widgets/saved_verse_row.dart';
 
 class SavedVersesScreen extends ConsumerStatefulWidget {
@@ -76,28 +76,11 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
   }
 
   Future<void> _deleteVerse(SavedBibleVerse verse) async {
-    final confirmed = await showDialog<bool>(
+    final decision = await confirmSavedVerseDelete(
       context: context,
-      builder: (dialogContext) => ParchmentDialog(
-        title: '말씀 저장을 삭제할까요?',
-        subtitle: '정말 지우시겠습니까?',
-        actions: [
-          ParchmentDialogActionButton(
-            label: '취소',
-            style: ParchmentDialogActionStyle.secondary,
-            onTap: () => Navigator.of(dialogContext).pop(false),
-          ),
-          ParchmentDialogActionButton(
-            label: '삭제',
-            style: ParchmentDialogActionStyle.danger,
-            onTap: () => Navigator.of(dialogContext).pop(true),
-          ),
-        ],
-        child: const SizedBox.shrink(),
-      ),
+      verse: verse,
     );
-
-    if (confirmed != true) {
+    if (!decision.shouldDelete) {
       return;
     }
 
@@ -115,9 +98,13 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('저장이 삭제되었어요.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            savedVerseDeleteSuccessMessage(hadComment: decision.hadComment),
+          ),
+        ),
+      );
     } catch (error) {
       if (!mounted) {
         return;

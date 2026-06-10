@@ -13,6 +13,7 @@ void main() {
       'chapter_no': 1,
       'verse_no': 1,
       'verse_text': '태초에 하나님이 천지를 창조하시니라',
+      'comment': '창조의 시작을 기억하고 싶어서',
       'created_at': '2024-03-10T09:00:00Z',
     };
 
@@ -26,7 +27,14 @@ void main() {
       expect(verse.chapterNo, 1);
       expect(verse.verseNo, 1);
       expect(verse.verseText, '태초에 하나님이 천지를 창조하시니라');
+      expect(verse.comment, '창조의 시작을 기억하고 싶어서');
       expect(verse.createdAt, DateTime.parse('2024-03-10T09:00:00Z'));
+    });
+
+    test('comment가 없으면 빈 문자열로 파싱한다', () {
+      final verse = SavedBibleVerse.fromMap({...validMap, 'comment': null});
+
+      expect(verse.comment, '');
     });
   });
 

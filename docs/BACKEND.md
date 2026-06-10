@@ -348,8 +348,11 @@ title text, content text, created_at, updated_at
 ```sql
 id uuid PK, user_id uuid FK→auth.users,
 translation text, book_no int, book_name text,
-chapter_no int, verse_no int, verse_text text
+chapter_no int, verse_no int, verse_text text,
+comment text DEFAULT '' CHECK char_length(comment) <= 200,
+created_at timestamptz
 ```
+- 성경 리더 별표 저장 시 optional 묵상 코멘트를 함께 저장한다. 빈 코멘트도 저장 가능한 정상 상태다.
 
 #### `user_saved_events` (2026-05-26)
 ```sql
@@ -499,7 +502,9 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `upsertWeeklyQuizProgress(...)` | weekly_quiz_progress UPSERT (사용자/주차/사건) | void |
 | `fetchLatestDailyQuiz()` | daily_quiz ORDER BY created_at desc LIMIT 1 | `DailyQuiz?` |
 | `fetchSavedVersesPage(...)` | user_saved_verses SELECT + 페이지네이션 | `PagedResult<SavedBibleVerse>` |
-| `toggleSavedVerse(...)` | user_saved_verses INSERT/DELETE | `bool` |
+| `fetchSavedVerseMap(userId)` | user_saved_verses SELECT 본인 전체 | `Map<verseKey, SavedBibleVerse>` |
+| `saveBibleVerse(...)` | user_saved_verses INSERT (comment 포함) | `SavedBibleVerse` |
+| `deleteSavedVerse(verseId)` | user_saved_verses DELETE | void |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |
 | `fetchCharacterStudyProgress(...)` | user_event_progress + events_ordered.character_codes (배열 매치) | `List<CharacterStudyProgress>` |

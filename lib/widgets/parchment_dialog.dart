@@ -201,6 +201,10 @@ class ParchmentDialogTextField extends StatelessWidget {
     this.maxLength,
     this.autofocus = true,
     this.textCapitalization = TextCapitalization.none,
+    this.minLines,
+    this.maxLines = 1,
+    this.keyboardType,
+    this.textInputAction,
     this.onSubmitted,
     this.onChanged,
     this.inputFormatters,
@@ -212,6 +216,10 @@ class ParchmentDialogTextField extends StatelessWidget {
   final int? maxLength;
   final bool autofocus;
   final TextCapitalization textCapitalization;
+  final int? minLines;
+  final int? maxLines;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
   final ValueChanged<String>? onChanged;
   final List<TextInputFormatter>? inputFormatters;
@@ -223,6 +231,10 @@ class ParchmentDialogTextField extends StatelessWidget {
       focusNode: focusNode,
       autofocus: autofocus,
       maxLength: maxLength,
+      minLines: minLines,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
       style: const TextStyle(

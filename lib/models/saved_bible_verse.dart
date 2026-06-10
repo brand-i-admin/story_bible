@@ -9,6 +9,7 @@ class SavedBibleVerse {
     required this.verseNo,
     required this.verseText,
     required this.createdAt,
+    this.comment = '',
   });
 
   final String id;
@@ -20,6 +21,7 @@ class SavedBibleVerse {
   final int verseNo;
   final String verseText;
   final DateTime createdAt;
+  final String comment;
 
   String get referenceText => '$bookName $chapterNo:$verseNo';
 
@@ -40,6 +42,7 @@ class SavedBibleVerse {
       chapterNo: map['chapter_no'] as int,
       verseNo: map['verse_no'] as int,
       verseText: map['verse_text'] as String,
+      comment: (map['comment'] as String?) ?? '',
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
