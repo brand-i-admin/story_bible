@@ -1,6 +1,6 @@
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
-// "진행률 표시" 섹션 — 좌측 상단 제목 + 세 탭 (나의 다이어리 / 장소로 시작 / 인물과 걷기) +
+// "진행률 표시" 섹션 — 좌측 상단 제목 + 세 탭 (나의 다이어리 / 인물과 걷기 / 장소로 시작) +
 // 그 아래 스크롤 가능한 컨텐츠. 탭 바는 섹션 최상단에 고정(pinned), 컨텐츠만
 // 스크롤되도록 Column[Header, Expanded(SingleChildScrollView)] 구조.
 part of '../profile_tab_page.dart';
@@ -47,7 +47,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     );
   }
 
-  /// 세 탭 토글 — "나의 다이어리" / "장소로 시작" / "인물과 걷기".
+  /// 세 탭 토글 — "나의 다이어리" / "인물과 걷기" / "장소로 시작".
   Widget _profileProgressTabBar() {
     return Container(
       height: 42,
@@ -72,22 +72,22 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           const SizedBox(width: 4),
           Expanded(
             child: _progressTabButton(
-              label: '장소로 시작',
-              selected: _profileProgressTab == _ProfileProgressTab.place,
+              label: '인물과 걷기',
+              selected: _profileProgressTab == _ProfileProgressTab.walk,
               onTap: () {
                 // ignore: invalid_use_of_protected_member
-                setState(() => _profileProgressTab = _ProfileProgressTab.place);
+                setState(() => _profileProgressTab = _ProfileProgressTab.walk);
               },
             ),
           ),
           const SizedBox(width: 4),
           Expanded(
             child: _progressTabButton(
-              label: '인물과 걷기',
-              selected: _profileProgressTab == _ProfileProgressTab.walk,
+              label: '장소로 시작',
+              selected: _profileProgressTab == _ProfileProgressTab.place,
               onTap: () {
                 // ignore: invalid_use_of_protected_member
-                setState(() => _profileProgressTab = _ProfileProgressTab.walk);
+                setState(() => _profileProgressTab = _ProfileProgressTab.place);
               },
             ),
           ),

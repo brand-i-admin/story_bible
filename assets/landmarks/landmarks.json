@@ -1940,6 +1940,14 @@
           35.9
         ],
         [
+          33.1,
+          36.1
+        ],
+        [
+          32.6,
+          36.1
+        ],
+        [
           32.9,
           35.92
         ],
@@ -7344,6 +7352,146 @@
       "description": "북이스라엘의 수도권. 아합 시대와 호세아 시대의 몰락 이야기가 모인다."
     },
     {
+      "code": "lm_div_samaria_ahaziah",
+      "name": "사마리아 다락/산 위(전승)",
+      "kind": "palace",
+      "emoji": "🛏️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 70,
+      "description": "북이스라엘 아하시야가 다락 난간에서 떨어진 뒤 바알세붑에게 묻고, 엘리야가 산 위에서 하나님의 말씀을 전하는 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoram",
+      "name": "예루살렘/에돔과 립나(전승)",
+      "kind": "city",
+      "emoji": "⚔️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 69,
+      "description": "남유다 여호람의 악한 통치와 에돔·립나의 반역을 함께 묶어 보여 주는 전승 위치."
+    },
+    {
+      "code": "lm_div_ramoth_jezreel",
+      "name": "길르앗 라못 → 이스르엘(전승)",
+      "kind": "battlefield",
+      "emoji": "🩹",
+      "lat": 32.55,
+      "lng": 36.0,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 68,
+      "description": "유다 아하시야와 북이스라엘 요람이 길르앗 라못에서 아람과 싸우고, 요람이 이스르엘에서 상처를 치료하는 전승 위치."
+    },
+    {
+      "code": "lm_div_jezreel_jehu",
+      "name": "이스르엘/예후의 심판(전승)",
+      "kind": "battlefield",
+      "emoji": "🏹",
+      "lat": 32.56,
+      "lng": 35.32,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 67,
+      "description": "예후가 기름부음을 받은 뒤 요람과 아하시야, 이세벨에게 임한 아합 집의 심판이 이어지는 이스르엘 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_baal_temple",
+      "name": "사마리아 바알 신전(전승)",
+      "kind": "holy_site",
+      "emoji": "🔥",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 66,
+      "description": "예후가 바알 숭배자들을 모으고 바알 신전을 무너뜨리지만 금송아지 죄에서 떠나지 못하는 사마리아 전승 위치."
+    },
+    {
+      "code": "lm_div_tirzah_gibbethon",
+      "name": "깁브돈/디르사(전승)",
+      "kind": "battlefield",
+      "emoji": "⚔️",
+      "lat": 32.29,
+      "lng": 35.29,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 75,
+      "description": "나답이 깁브돈을 둘러싼 때 바아사가 반역하고, 북이스라엘 왕권이 디르사로 이어지는 전승 위치."
+    },
+    {
+      "code": "lm_div_tirzah_samaria",
+      "name": "디르사 → 사마리아(전승)",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 74,
+      "description": "엘라, 시므리, 오므리를 거쳐 사마리아 왕조와 아합의 악이 깊어지는 북이스라엘 왕궁권 전승 위치."
+    },
+    {
+      "code": "lm_div_jezreel_vineyard",
+      "name": "이스르엘 포도원(전승)",
+      "kind": "valley",
+      "emoji": "🍇",
+      "lat": 32.56,
+      "lng": 35.32,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 73,
+      "description": "아합과 이세벨이 나봇의 포도원을 빼앗고 엘리야의 책망을 듣는 이스르엘 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_gate",
+      "name": "사마리아 성문 광장(전승)",
+      "kind": "city",
+      "emoji": "📜",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 72,
+      "description": "미가야가 아합과 여호사밧 앞에서 거짓 예언에 맞서 하나님의 말씀을 전하는 전승 위치."
+    },
+    {
+      "code": "lm_div_ramoth_gilead",
+      "name": "길르앗 라못/사마리아(전승)",
+      "kind": "battlefield",
+      "emoji": "🏹",
+      "lat": 32.55,
+      "lng": 36.0,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 71,
+      "description": "아합이 변장하고 여호사밧과 함께 아람과 싸우다 마지막을 맞는 길르앗 라못 전승 위치."
+    },
+    {
       "code": "lm_div_mt_carmel",
       "name": "갈멜 산",
       "kind": "mountain",
@@ -7456,6 +7604,20 @@
       "description": "남유다의 수도이자 성전이 있는 곳. 이사야, 히스기야, 요시야, 예레미야와 예루살렘 포위 이야기가 모인다."
     },
     {
+      "code": "lm_div_jerusalem_ezion_geber",
+      "name": "예루살렘/에시온게벨(전승)",
+      "kind": "city",
+      "emoji": "⛵",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 79,
+      "description": "여호사밧의 남유다 통치와 에시온게벨 무역선 파선을 함께 묶어 보여 주는 전승 위치."
+    },
+    {
       "code": "lm_div_mt_horeb",
       "name": "호렙 산(엘리야, 전승)",
       "kind": "mountain",
@@ -7468,6 +7630,118 @@
       ],
       "display_priority": 60,
       "description": "엘리야가 지친 몸으로 도망쳐 세미한 음성과 새 사명을 들은 산."
+    },
+    {
+      "code": "lm_div_jerusalem_athaliah_joash",
+      "name": "예루살렘 성전/왕궁(아달랴와 요아스, 전승)",
+      "kind": "palace",
+      "emoji": "👑",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 78,
+      "description": "아달랴가 왕권을 장악하는 동안 요아스가 성전에 숨겨지고 여호야다가 그를 왕으로 세우는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_joash_temple",
+      "name": "예루살렘 성전 보수(요아스, 전승)",
+      "kind": "holy_site",
+      "emoji": "🛠️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 77,
+      "description": "요아스가 여호야다와 함께 성전 보수를 추진하지만, 말년에 우상과 스가랴 죽음으로 무너지는 예루살렘 성전 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_jehoahaz_jehoash",
+      "name": "사마리아/아벡(여호아하스와 요아스, 전승)",
+      "kind": "palace",
+      "emoji": "🏹",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 65,
+      "description": "여호아하스와 북이스라엘 요아스가 사마리아에서 다스리고, 엘리사의 마지막 화살 표징 뒤 아람에게 빼앗긴 성읍을 회복하는 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_joash_last",
+      "name": "예루살렘/가드 길(요아스 최후, 전승)",
+      "kind": "palace",
+      "emoji": "💰",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 76,
+      "description": "아람 왕 하사엘의 압박과 성전 보물 헌납, 요아스의 말년 반역이 이어지는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_salt_valley_beth_shemesh",
+      "name": "소금 골짜기/벧세메스(아마샤, 전승)",
+      "kind": "battlefield",
+      "emoji": "⚔️",
+      "lat": 31.0,
+      "lng": 35.35,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 75,
+      "description": "아마샤가 소금 골짜기에서 에돔을 이긴 뒤 북이스라엘 요아스에게 도전하고 예루살렘 성벽을 잃는 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_jeroboam_ii",
+      "name": "사마리아/여로보암 2세(전승)",
+      "kind": "palace",
+      "emoji": "🗺️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 64,
+      "description": "여로보암 2세가 북이스라엘 왕위에 올라 국경을 회복하지만 여로보암의 죄에서 떠나지 못하는 사마리아 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_uzziah",
+      "name": "예루살렘/웃시야의 성전 문(전승)",
+      "kind": "holy_site",
+      "emoji": "🏛️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 74,
+      "description": "웃시야가 강성해진 뒤 성전에서 직접 분향하려다가 제사장들에게 막히고 나병으로 낮아지는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_late_kings",
+      "name": "사마리아 말기 왕궁(전승)",
+      "kind": "palace",
+      "emoji": "⚔️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 63,
+      "description": "스가랴, 살룸, 므나헴, 브가히야, 베가, 호세아로 이어지는 북이스라엘 말기 반역과 앗수르 압박의 사마리아 전승 위치."
     },
     {
       "code": "lm_exi_jerusalem",
@@ -8234,6 +8508,104 @@
       "era_codes": [],
       "display_priority": 50,
       "description": "엘리야가 도망쳐 세미한 음성을 들은 산 (왕상 19장)."
+    },
+    {
+      "code": "lm_div_jerusalem_jotham_gate",
+      "name": "예루살렘 성전 윗문(요담, 전승)",
+      "kind": "holy_site",
+      "emoji": "🚪",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 73,
+      "description": "요담이 성전 윗문을 건축하며 하나님 앞에서 바른 길을 걸은 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_ahaz_altars",
+      "name": "예루살렘 성전/다메섹 제단(아하스, 전승)",
+      "kind": "holy_site",
+      "emoji": "🛐",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 72,
+      "description": "아하스가 우상을 섬기고 다메섹 제단을 성전에 들인 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_manasseh",
+      "name": "예루살렘/바벨론 길(므낫세, 전승)",
+      "kind": "palace",
+      "emoji": "⛓️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 71,
+      "description": "므낫세가 우상으로 성전을 더럽히고 포로로 낮아진 뒤 회개하여 돌아온 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_amon",
+      "name": "예루살렘 왕궁(아몬, 전승)",
+      "kind": "palace",
+      "emoji": "⚔️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 70,
+      "description": "아몬이 짧게 악을 행하고 신하들의 반역으로 무너진 예루살렘 왕궁 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoahaz_judah",
+      "name": "예루살렘/립나 길(여호아하스, 전승)",
+      "kind": "palace",
+      "emoji": "🇪🇬",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 69,
+      "description": "여호아하스가 석 달 동안 다스린 뒤 바로 느고에게 붙잡혀 애굽으로 끌려간 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoiakim_first_exile",
+      "name": "예루살렘/첫 바벨론 포로(여호야김, 전승)",
+      "kind": "city",
+      "emoji": "📦",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 68,
+      "description": "여호야김 시대 바벨론 압박과 성전 기물, 다니엘을 포함한 첫 포로가 이어지는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoiachin_exile",
+      "name": "예루살렘/여호야긴 포로(전승)",
+      "kind": "city",
+      "emoji": "🏺",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 67,
+      "description": "여호야긴과 에스겔을 포함한 백성이 바벨론으로 끌려가고 성전 금 기구가 빼앗긴 예루살렘 전승 위치."
     }
   ]
 }

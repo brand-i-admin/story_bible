@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 35,
+  "story_title": "아하스의 우상과 다메섹 제단",
+  "source_version": "2026-06-10",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아하스는 어떤 악한 일을 따라 행했습니까?",
+      "choices": [
+        "자기 아들을 불 가운데 지나가게 했다",
+        "성전 윗문을 건축했다",
+        "바알 제단을 무너뜨렸다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 16:3 — '자기 아들을 불 가운데로 지나가게 하며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "르신과 베가가 예루살렘을 에워쌌을 때 결과는 어떠했습니까?",
+      "choices": [
+        "아하스를 이기지 못했다",
+        "예루살렘을 완전히 불태웠다",
+        "아하스를 바벨론으로 끌고 갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 16:5 — '능히 이기지 못하니라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "아하스는 다메섹에서 본 것을 성전에 어떻게 들여왔습니까?",
+      "choices": [
+        "그 모양대로 새 제단을 만들었다",
+        "율법책을 다시 읽게 했다",
+        "성전 문 곁에 궤를 두었다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 16:10 — '단의 모든 구조와 제도의 식양을 그려'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n035"
+}

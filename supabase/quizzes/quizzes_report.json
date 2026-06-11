@@ -1,125 +1,17 @@
 {
-  "generated_at": "2026-06-09T08:57:45+00:00",
-  "total_quiz_files": 216,
-  "total_events": 216,
-  "total_questions": 648,
+  "generated_at": "2026-06-11T00:26:48+00:00",
+  "total_quiz_files": 243,
+  "total_events": 243,
+  "total_questions": 729,
   "answer_index_distribution": {
-    "0": 230,
-    "1": 192,
-    "2": 226
+    "0": 258,
+    "1": 212,
+    "2": 259
   },
   "orphan_quizzes": [],
   "title_mismatches": [],
   "events_without_quiz": [],
   "length_warnings": [
-    {
-      "filename": "era_divided_kingdom_n006.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 34
-    },
-    {
-      "filename": "era_divided_kingdom_n006.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 27
-    },
-    {
-      "filename": "era_divided_kingdom_n006.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 22
-    },
-    {
-      "filename": "era_divided_kingdom_n006.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 145
-    },
-    {
-      "filename": "era_divided_kingdom_n008.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 99
-    },
-    {
-      "filename": "era_divided_kingdom_n011.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 24
-    },
-    {
-      "filename": "era_divided_kingdom_n011.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 21
-    },
-    {
-      "filename": "era_divided_kingdom_n011.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 107
-    },
-    {
-      "filename": "era_divided_kingdom_n012.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 24
-    },
-    {
-      "filename": "era_divided_kingdom_n013.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 27
-    },
-    {
-      "filename": "era_divided_kingdom_n013.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 21
-    },
-    {
-      "filename": "era_divided_kingdom_n014.json",
-      "display_order": 1,
-      "field": "question",
-      "length": 44
-    },
-    {
-      "filename": "era_divided_kingdom_n015.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 28
-    },
-    {
-      "filename": "era_divided_kingdom_n015.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 64
-    },
-    {
-      "filename": "era_divided_kingdom_n016.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_divided_kingdom_n016.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_divided_kingdom_n016.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 22
-    },
-    {
-      "filename": "era_divided_kingdom_n016.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 23
-    },
     {
       "filename": "era_exile_return_n001.json",
       "display_order": 1,

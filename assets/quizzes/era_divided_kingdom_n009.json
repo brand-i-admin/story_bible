@@ -1,44 +1,44 @@
 {
   "era_code": "era_divided_kingdom",
   "story_index": 9,
-  "story_title": "엘리사의 첫 표징: 물과 경고",
-  "source_version": "2026-06-05",
+  "story_title": "엘리야와 갈멜: 불의 응답",
+  "source_version": "2026-05-25",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "사람들은 엘리야를 찾으러 몇 명을 보냈습니까?",
+      "question": "엘리야는 여호와의 단을 어떻게 하였습니까?",
       "choices": [
-        "오십 명",
-        "열두 명",
-        "백 명"
+        "무너진 여호와의 단을 수축하였다",
+        "새 제단을 따로 쌓았다",
+        "바알 제단 위에 올렸다"
       ],
       "answer_index": 0,
-      "explanation": "왕하 2:17 — '오십 인을 보내매 사흘을 찾되 발견하지 못하고'"
+      "explanation": "왕상 18:30 — '저가 무너진 여호와의 단을 수축하되'"
     },
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "엘리사는 여리고 물 근원에 무엇을 던졌습니까?",
+      "question": "엘리야는 갈멜산에서 하나님께 무엇을 알게 해 달라고 기도했습니까?",
       "choices": [
-        "소금",
-        "기름",
-        "금방패"
+        "여호와가 하나님이심을 알게 해 달라",
+        "바알이 하나님임을 알게 해 달라",
+        "가뭄의 이유를 숨겨 달라"
       ],
       "answer_index": 0,
-      "explanation": "왕하 2:21 — '소금을 그 가운데 던지며' 여호와께서 물을 고치신다고 말했다"
+      "explanation": "왕상 18:36 — '주께서 이스라엘 중에서 하나님이 되심과 내가 주의 종이 됨과'"
     },
     {
       "type": "story_context",
       "display_order": 2,
-      "question": "벧엘 길에서 엘리사를 조롱한 무리에게 무엇이 나왔습니까?",
+      "question": "갈멜 산 대결에서 백성이 마지막에 엎드려 외친 말은 무엇입니까?",
       "choices": [
-        "곰 두 마리",
-        "까마귀들",
-        "애굽 군대"
+        "여호와 그는 하나님이시로다",
+        "바알이 참 신이로다",
+        "엘리야가 이겼도다"
       ],
       "answer_index": 0,
-      "explanation": "왕하 2:24 — '암콤 둘이 수풀 가운데서 나와서'"
+      "explanation": "왕상 18:39 — '여호와 그는 하나님이시로다 여호와 그는 하나님이시로다 하니'"
     }
   ],
   "story_id": "era_divided_kingdom_n009"

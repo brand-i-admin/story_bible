@@ -51,7 +51,7 @@ BROTHERS_ALL = [
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
 ROSTER_EXCLUDED_CODES = {"dan", "lot_wife"}
-FORCE_INACTIVE_CODES = {"god"}
+FORCE_INACTIVE_CODES = {"elizabeth", "gabriel", "god"}
 
 STYLE_TO_ERA_CODE = {
     "primeval": "era_primeval",
@@ -101,6 +101,10 @@ PERSON_DESCRIPTION_OVERRIDES = {
     "nathan": "나단은 다윗 시대의 예언자로, 다윗의 죄를 책망하고 하나님의 약속을 전한 인물이다.",
     "elijah": "엘리야는 북이스라엘에서 활동한 예언자다. 갈멜산 대결과 하나님의 불 응답 이야기로 잘 알려져 있다.",
     "elisha": "엘리사는 엘리야의 뒤를 이어 활동한 예언자다. 여러 기적 이야기로 잘 알려져 있다.",
+    "ahijah": "아히야는 실로 출신 선지자로, 여로보암에게 찢어진 옷의 표징을 보이고 그의 집에 임할 하나님의 경고를 전했다.",
+    "micaiah": "미가야는 이믈라의 아들 선지자로, 아합과 여호사밧 앞에서 거짓 예언에 맞서 하나님의 말씀을 곧게 전했다.",
+    "jezebel": "이세벨은 시돈 왕가 출신으로 아합과 함께 북이스라엘에 바알 숭배를 깊이 들여온 왕비다. 나봇의 포도원 사건에서도 악한 계략을 꾸민다.",
+    "jehoiada": "여호야다는 예루살렘 성전의 제사장으로, 아달랴 시대에 어린 요아스를 보호하고 언약을 새롭게 세워 다윗 왕조를 이어 가게 한 인물이다.",
     "isaiah": "이사야는 유다에서 활동한 예언자로, 심판과 회복 그리고 메시아에 대한 소망을 선포했다.",
     "jeremiah": "예레미야는 예루살렘 멸망 전후에 활동한 예언자다. 눈물의 예언자로 불릴 만큼 아픈 시대에 말씀을 전했다.",
     "ezekiel": "에스겔은 바벨론 포로 시기에 활동한 예언자다. 상징 행동과 환상을 통해 하나님의 말씀을 전했다.",
@@ -164,6 +168,183 @@ PERSON_DESCRIPTION_OVERRIDES = {
     "naomi": "나오미는 룻의 시어머니로, 깊은 상실 속에서도 하나님의 돌보심을 다시 경험한다.",
     "boaz": "보아스는 룻을 선대하고 보호한 친족 기업 무를 자이다. 룻과 결혼해 다윗 가문의 조상이 된다.",
     "elizabeth": "엘리사벳은 세례 요한의 어머니이며, 제사장 사가랴의 아내이다. 늙은 나이에 아들을 낳는 은혜를 받았다.",
+}
+
+PERSON_TAGLINE_OVERRIDES = {
+    # Core primeval / patriarch stories
+    "adam": "첫 사람",
+    "eve": "첫 여자",
+    "cain": "아담의 아들",
+    "abel": "아담의 아들",
+    "noah": "방주로 구원받은 의인",
+    "abraham": "믿음의 조상",
+    "sarah": "약속의 어머니",
+    "lot": "소돔에서 건짐받은 조카",
+    "hagar": "이스마엘의 어머니",
+    "ishmael": "아브라함의 아들",
+    "isaac": "약속의 아들",
+    "rebekah": "이삭의 아내",
+    "esau": "야곱의 형",
+    "jacob": "이스라엘의 조상",
+    "laban": "야곱의 외삼촌",
+    "leah": "야곱의 아내",
+    "rachel": "야곱의 아내",
+    "joseph": "꿈으로 이집트를 살린 총리",
+    "reuben": "야곱의 맏아들",
+    "simeon": "야곱의 아들",
+    "levi": "레위 지파의 조상",
+    "judah": "유다 지파의 조상",
+    "gad": "이스라엘 지파의 조상",
+    "asher": "이스라엘 지파의 조상",
+    "issachar": "이스라엘 지파의 조상",
+    "zebulun": "이스라엘 지파의 조상",
+    "naphtali": "이스라엘 지파의 조상",
+    "benjamin": "야곱의 막내아들",
+    "dinah": "야곱의 딸",
+    # Exodus / conquest
+    "pharaoh": "출애굽을 막은 이집트 왕",
+    "moses": "출애굽의 지도자",
+    "aaron": "이스라엘의 첫 대제사장",
+    "miriam": "출애굽의 여선지자",
+    "caleb": "믿음의 정탐꾼",
+    "joshua": "가나안 정복 지도자",
+    "achan": "아이 성 패배의 죄인",
+    # Judges
+    "othniel": "갈렙 집안 첫 승리 사사",
+    "ehud": "에글론을 쓰러뜨린 왼손 사사",
+    "shamgar": "블레셋을 막은 막대기 사사",
+    "deborah": "바락과 승리한 여사사",
+    "gideon": "300명으로 미디안 이긴 사사",
+    "abimelech": "세겜에서 스스로 왕 된 자",
+    "tola": "아비멜렉 뒤 평화 사사",
+    "jair": "길르앗을 다스린 사사",
+    "jephthah": "암몬과 싸운 서원 사사",
+    "ibzan": "베들레헴의 가문 사사",
+    "elon": "스불론의 평화 사사",
+    "abdon": "비라돈의 많은 자손 사사",
+    "samson": "들릴라에게 무너진 힘의 사사",
+    "delilah": "삼손을 속인 여인",
+    "ruth": "모압 출신 믿음의 여인",
+    "naomi": "룻의 시어머니",
+    "boaz": "룻을 보호한 기업 무를 자",
+    "eli": "실로의 제사장",
+    "hannah": "사무엘의 어머니",
+    "samuel": "사울과 다윗을 세운 선지자",
+    # United monarchy
+    "saul": "불순종한 초대 왕",
+    "jonathan": "사울의 아들",
+    "jesse": "다윗의 아버지",
+    "david": "언약을 받은 왕",
+    "goliath": "블레셋 장수",
+    "nathan": "다윗을 책망한 선지자",
+    "bathsheba": "솔로몬의 어머니",
+    "absalom": "다윗의 반역한 아들",
+    "solomon": "성전을 세운 지혜 왕",
+    # Divided kingdom kings: Northern Israel
+    "jeroboam": "북이스라엘 1대 왕 금송아지 죄",
+    "nadab": "북이스라엘 2대 왕 짧은 통치",
+    "baasha": "북이스라엘 3대 왕 나답을 친 왕",
+    "elah_king": "북이스라엘 4대 왕 술자리 몰락",
+    "zimri": "북이스라엘 5대 왕 7일 왕",
+    "omri": "북이스라엘 6대 왕 사마리아 건설",
+    "ahab": "북이스라엘 7대 왕 바알 숭배",
+    "jezebel": "아합을 부추긴 시돈 왕비",
+    "ahaziah_israel": "북이스라엘 8대 왕 우상 의지",
+    "joram_israel": "북이스라엘 9대 왕 예후에게 몰락",
+    "jehu": "북이스라엘 10대 왕 아합 집 심판",
+    "jehoahaz_israel": "북이스라엘 11대 왕 아람 압박",
+    "jehoash_israel": "북이스라엘 12대 왕 엘리사 문병",
+    "jeroboam_ii": "북이스라엘 13대 왕 영토 회복",
+    "zechariah_king": "북이스라엘 14대 왕 예후 왕조 끝",
+    "shallum": "북이스라엘 15대 왕 한 달 왕",
+    "menahem": "북이스라엘 16대 왕 앗수르 조공",
+    "pekahiah": "북이스라엘 17대 왕 반역에 몰락",
+    "pekah": "북이스라엘 18대 왕 아람 동맹",
+    "hoshea_king": "북이스라엘 19대 마지막 왕",
+    # Divided kingdom kings: Judah
+    "rehoboam": "남유다 1대 왕 왕국 분열",
+    "abijah_judah": "남유다 2대 왕 북왕국 전쟁",
+    "asa": "남유다 3대 왕 우상 개혁",
+    "jehoshaphat": "남유다 4대 왕 말씀 개혁",
+    "jehoram_judah": "남유다 5대 왕 악한 길",
+    "ahaziah_judah": "남유다 6대 왕 아합 집 동맹",
+    "athaliah": "남유다 7대 여왕 왕손 학살",
+    "joash_judah": "남유다 8대 왕 성전 보수",
+    "amaziah_judah": "남유다 9대 왕 에돔 승리",
+    "uzziah": "남유다 10대 왕 강한 나라",
+    "jotham": "남유다 11대 왕 성문 건축",
+    "ahaz": "남유다 12대 왕 앗수르 의지",
+    "hezekiah": "남유다 13대 왕 기도와 개혁",
+    "manasseh": "남유다 14대 왕 깊은 타락",
+    "amon_judah": "남유다 15대 왕 우상 숭배",
+    "josiah": "남유다 16대 왕 율법 개혁",
+    "jehoahaz_judah": "남유다 17대 왕 석 달 왕",
+    "jehoiakim": "남유다 18대 왕 두루마리 불태움",
+    "jehoiachin": "남유다 19대 왕 포로 왕",
+    "zedekiah": "남유다 20대 마지막 왕",
+    # Prophets / exile / return
+    "elijah": "아합과 맞선 불 선지자",
+    "elisha": "엘리야를 이은 기적 선지자",
+    "ahijah": "여로보암에게 경고한 실로 선지자",
+    "jonah": "니느웨에 보낸 회개 선지자",
+    "micaiah": "아합 앞 진실 선지자",
+    "jehoiada": "요아스를 보호한 성전 제사장",
+    "isaiah": "히스기야를 도운 예루살렘 선지자",
+    "jeremiah": "시드기야에게 경고한 눈물 선지자",
+    "ezekiel": "포로 백성에게 환상 보인 선지자",
+    "daniel": "포로기 궁정 인물",
+    "haggai": "스룹바벨을 격려한 성전 선지자",
+    "zechariah_prophet": "스룹바벨 시대 환상 선지자",
+    "zerubbabel": "성전 재건 총독",
+    "cyrus": "귀환을 허락한 페르시아 왕",
+    "ezra": "율법을 가르친 학자",
+    "nehemiah": "예루살렘 성벽 재건자",
+    "esther": "페르시아 왕후",
+    "mordecai": "에스더의 조언자",
+    "haman": "유다인을 대적한 고관",
+    # Gospels
+    "jesus": "하나님의 아들",
+    "mary": "예수님의 어머니",
+    "joseph_nazareth": "예수님의 양아버지",
+    "john_the_baptist": "광야의 세례자",
+    "elizabeth": "세례 요한의 어머니",
+    "zechariah": "세례 요한의 아버지",
+    "gabriel": "하나님의 소식을 전한 천사",
+    "peter": "예수님의 열두 제자",
+    "andrew": "예수님의 열두 제자",
+    "james_zebedee": "예수님의 열두 제자",
+    "john": "예수님의 열두 제자",
+    "philip": "예수님의 열두 제자",
+    "bartholomew": "예수님의 열두 제자",
+    "matthew": "예수님의 열두 제자",
+    "thomas": "예수님의 열두 제자",
+    "james_alphaeus": "예수님의 열두 제자",
+    "thaddaeus": "예수님의 열두 제자",
+    "simon_zealot": "예수님의 열두 제자",
+    "judas": "예수님을 배신한 제자",
+    "mary_magdalene": "예수님을 따른 여인",
+    "martha": "베다니의 마르다",
+    "lazarus": "예수님이 살리신 친구",
+    "jairus": "회당장 야이로",
+    "herod": "유대 지역 왕",
+    "pilate": "로마 총독",
+    # Early church
+    "stephen": "초대교회 첫 순교자",
+    "paul": "이방인을 위한 사도",
+    "barnabas": "초대교회 선교 동역자",
+    "silas": "바울의 선교 동역자",
+    "timothy": "바울의 젊은 동역자",
+    "john_mark": "초대교회 동역자",
+    "matthias": "새로 세워진 사도",
+    "ananias": "초대교회 경고의 인물",
+    "sapphira": "초대교회 경고의 인물",
+    "cornelius": "복음을 들은 로마 백부장",
+    "lydia": "빌립보의 신자",
+    "aquila": "바울의 동역자",
+    "priscilla": "바울의 동역자",
+    "agrippa": "바울을 심문한 왕",
+    "festus": "로마 총독",
+    "naaman": "아람 군대 장관",
 }
 
 ROLE_PHRASE_TO_KO = {
@@ -543,6 +724,44 @@ def build_person_description(
     return f"{name}{topic} 성경에 등장하는 인물이다."
 
 
+def build_person_tagline(
+    code: str,
+    name: str,
+    character: dict[str, Any],
+) -> str:
+    override = PERSON_TAGLINE_OVERRIDES.get(code)
+    if override:
+        return override
+
+    name_en = str(character.get("name_en", "")).strip().lower()
+    if "king of northern israel" in name_en or "king of israel" in name_en:
+        return "북이스라엘 왕"
+    if "queen of judah" in name_en:
+        return "남유다 여왕"
+    if "king of judah" in name_en:
+        return "남유다 왕"
+    if "king" in name_en:
+        return "왕"
+    if "prophet" in name_en:
+        return "선지자"
+    if code in DISCIPLES_WITH_JUDAS:
+        return "예수님의 열두 제자"
+
+    era_short = str(character.get("era", "")).strip()
+    return {
+        "primeval": "원역사 인물",
+        "patriarch": "족장 시대 인물",
+        "exodus_wilderness": "출애굽 시대 인물",
+        "judges": "사사 시대 인물",
+        "monarchy": "왕정 시대 인물",
+        "divided_kingdom": "분열왕국 시대 인물",
+        "prophets_exile": "예언자와 포로기 인물",
+        "post_exile_return": "포로 귀환 시대 인물",
+        "gospels": "복음서 인물",
+        "early_church": "초대교회 인물",
+    }.get(era_short, f"{name} 관련 인물")
+
+
 def build_sql(character_rows: list[dict[str, Any]]) -> str:
     lines: list[str] = []
     lines.append("-- Generated by tools/seed/build_characters_seed_sql.py")
@@ -697,7 +916,8 @@ def main() -> int:
             {
                 "code": code,
                 "name": name,
-                "tagline": None,
+                "tagline": str(ch.get("tagline", "")).strip()
+                or build_person_tagline(code=code, name=name, character=ch),
                 "avatar_url": f"assets/avatars/{code}.png",
                 "description": build_person_description(
                     code=code,

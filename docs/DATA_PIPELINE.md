@@ -138,7 +138,7 @@ Makefile                                # 파이프라인 오케스트레이션
 #### `build_characters_seed_sql.py` — characters SQL
 - **의존**: `tools/seed/character_meta.json` (선행 필수)
 - **입력**: `tools/seed/character_meta.json` + `assets/200_stories/*.json` (대표 스토리 선택용)
-- **출력**: `supabase/200_stories/characters_seed.sql` — `characters` UPSERT. `is_active_default=true`인 행은 seed 적용 시 기존 DB 행도 `is_active=true`로 승격하고, 일반 `false` 기본값은 기존 런타임 설정을 끄지 않는다. 단, `god`처럼 명시 비활성 예외인 코드는 seed 적용 시 `false`로 강제한다.
+- **출력**: `supabase/200_stories/characters_seed.sql` — `characters` UPSERT. `tagline`은 인물 선택 카드에 쓰는 짧은 정체성 문구로, 왕은 나라/순서/대표 행적을, 사사와 선지자는 함께 활동한 인물이나 대표 사역을 최대한 담는다(예: `북이스라엘 7대 왕 바알 숭배`, `바락과 승리한 여사사`, `히스기야를 도운 예루살렘 선지자`). `is_active_default=true`인 행은 seed 적용 시 기존 DB 행도 `is_active=true`로 승격하고, 일반 `false` 기본값은 기존 런타임 설정을 끄지 않는다. 단, `god`, `gabriel`, `elizabeth`처럼 명시 비활성 예외인 코드는 seed 적용 시 `false`로 강제한다.
 - **era_codes**: `assets/200_stories` 의 실제 등장 사건을 기준으로 계산한다. 인물이 여러 시대에 등장하면 여러 `era_code` 를 가진다. 등장 사건이 없는 메타 항목만 아바타 스타일용 era 를 fallback 으로 사용한다.
 - **stale 정리**: meta 에 없는 `characters` 행을 삭제. `weekly_character_selection` 의 FK 위반을 막기 위해 그 테이블도 동시 청소.
 - **참고**: `person_eras`는 view라 INSERT 대상 아님 (db_init.sql 정의)

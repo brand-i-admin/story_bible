@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/bible_ref.dart';
+import '../models/character.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
@@ -13,6 +14,7 @@ import '../state/story_state.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';
+import 'character_avatar.dart';
 import 'emotion_badge_icon.dart';
 import 'parchment_dialog.dart';
 import 'proposal/delete_event_proposal_sheet.dart';
@@ -85,6 +87,8 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   /// - 페이지 안에서 둘 다 완료해서 축하 애니메이션이 끝났을 때도 true.
   /// - 완료 취소되면 다시 false.
   bool _glowNext = false;
+  String? _eventCharactersEraId;
+  Future<List<Character>>? _eventCharactersFuture;
 
   @override
   void initState() {
@@ -182,6 +186,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       storyText: storyText,
       refs: refs,
       readTargets: readTargets,
+      currentCharacters: currentState.characters,
       isQuizMode: isQuizMode,
       isBibleRead: isBibleRead,
       isQuizCompleted: isQuizCompleted,
@@ -197,6 +202,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required String storyText,
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
+    required List<Character> currentCharacters,
     required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
@@ -225,6 +231,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                       storyText: storyText,
                       refs: refs,
                       readTargets: readTargets,
+                      currentCharacters: currentCharacters,
                       isQuizMode: isQuizMode,
                       isBibleRead: isBibleRead,
                       isQuizCompleted: isQuizCompleted,
@@ -258,6 +265,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required String storyText,
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
+    required List<Character> currentCharacters,
     required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
@@ -284,6 +292,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
               storySection(
                 title: '요약 이야기',
                 content: storyText.isNotEmpty ? storyText : '요약 정보가 없습니다.',
+                action: _buildCharacterAvatarAction(event, currentCharacters),
               ),
               _buildSceneRow(),
               const SizedBox(height: 12),
@@ -304,6 +313,74 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
         ),
       ),
     );
+  }
+
+  Future<List<Character>> _loadEventCharacters(String eraId) {
+    if (_eventCharactersFuture == null || _eventCharactersEraId != eraId) {
+      _eventCharactersEraId = eraId;
+      _eventCharactersFuture = ref
+          .read(storyRepositoryProvider)
+          .fetchCharactersByEra(eraId);
+    }
+    return _eventCharactersFuture!;
+  }
+
+  Widget? _buildCharacterAvatarAction(
+    StoryEvent event,
+    List<Character> currentCharacters,
+  ) {
+    if (event.characterCodes.isEmpty) {
+      return null;
+    }
+
+    final knownCharacters = _orderedCharactersForEvent(
+      event,
+      currentCharacters,
+    );
+    if (knownCharacters.length == event.characterCodes.length) {
+      return _EventCharacterAvatarStack(characters: knownCharacters);
+    }
+
+    return FutureBuilder<List<Character>>(
+      future: _loadEventCharacters(event.eraId),
+      builder: (context, snapshot) {
+        final source = snapshot.hasData ? snapshot.data! : currentCharacters;
+        final characters = _orderedCharactersForEvent(event, source);
+        if (characters.isNotEmpty) {
+          return _EventCharacterAvatarStack(characters: characters);
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            width: 30,
+            height: 30,
+            child: Center(
+              child: SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(strokeWidth: 1.6),
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  List<Character> _orderedCharactersForEvent(
+    StoryEvent event,
+    List<Character> characters,
+  ) {
+    if (event.characterCodes.isEmpty || characters.isEmpty) {
+      return const [];
+    }
+    final byCode = <String, Character>{
+      for (final character in characters) character.code: character,
+    };
+    return [
+      for (final code in event.characterCodes)
+        if (byCode[code] != null) byCode[code]!,
+    ];
   }
 
   Widget _buildSceneRow() {
@@ -490,24 +567,44 @@ class _StoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final metaLabel = _eventDetailMetaLabel(event);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: FittedBox(
-            alignment: Alignment.centerLeft,
-            fit: BoxFit.scaleDown,
-            child: Text(
-              event.title,
-              maxLines: 1,
-              softWrap: false,
-              style: const TextStyle(
-                fontSize: 20,
-                height: 1.22,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF3A2B15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FittedBox(
+                alignment: Alignment.centerLeft,
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  event.title,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    height: 1.22,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF3A2B15),
+                  ),
+                ),
               ),
-            ),
+              if (metaLabel.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  metaLabel,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    height: 1.2,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink450,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
         const SizedBox(width: 8),
@@ -532,6 +629,133 @@ class _StoryHeader extends StatelessWidget {
       ],
     );
   }
+}
+
+class _EventCharacterAvatarStack extends StatelessWidget {
+  const _EventCharacterAvatarStack({required this.characters});
+
+  static const double _size = 28;
+  static const double _overlap = 10;
+
+  final List<Character> characters;
+
+  @override
+  Widget build(BuildContext context) {
+    if (characters.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final visibleCharacters = characters.take(4).toList(growable: false);
+    final hiddenCount = characters.length - visibleCharacters.length;
+    final itemCount = visibleCharacters.length + (hiddenCount > 0 ? 1 : 0);
+    final width = _size + (itemCount - 1) * (_size - _overlap);
+    final names = characters.map((character) => character.name).join(', ');
+
+    return Tooltip(
+      message: names.isEmpty ? '등장인물' : '등장인물: $names',
+      child: SizedBox(
+        width: width,
+        height: _size,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            for (var index = 0; index < visibleCharacters.length; index++)
+              Positioned(
+                left: index * (_size - _overlap),
+                child: CharacterAvatar(
+                  character: visibleCharacters[index],
+                  size: _size,
+                ),
+              ),
+            if (hiddenCount > 0)
+              Positioned(
+                left: visibleCharacters.length * (_size - _overlap),
+                child: _HiddenCharacterCountBadge(
+                  count: hiddenCount,
+                  size: _size,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HiddenCharacterCountBadge extends StatelessWidget {
+  const _HiddenCharacterCountBadge({required this.count, required this.size});
+
+  final int count;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFF8C6337),
+        border: Border.all(color: const Color(0xFFF3E7CC), width: 1.2),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 2),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '+$count',
+        style: const TextStyle(
+          color: Color(0xFFFDF4DE),
+          fontSize: 10,
+          height: 1,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+String _eventDetailMetaLabel(StoryEvent event) {
+  final parts = <String>[];
+  final yearLabel = _eventYearLabel(
+    event.startYear,
+    event.endYear,
+    event.timePrecision,
+  );
+  if (yearLabel.isNotEmpty) {
+    parts.add(yearLabel);
+  }
+  final placeName = event.placeName?.trim();
+  if (placeName != null && placeName.isNotEmpty) {
+    parts.add(placeName);
+  }
+  return parts.join(' · ');
+}
+
+String _eventYearLabel(int? startYear, int? endYear, String precision) {
+  final suffix = precision == 'exact' ? '' : '경';
+  if (startYear == null && endYear == null) {
+    return '';
+  }
+  if (startYear == null) {
+    return '${_formatHistoricalYear(endYear!)}$suffix';
+  }
+  if (endYear == null || endYear == startYear) {
+    return '${_formatHistoricalYear(startYear)}$suffix';
+  }
+  final sameEra =
+      (startYear < 0 && endYear < 0) || (startYear > 0 && endYear > 0);
+  if (sameEra) {
+    final prefix = startYear < 0 ? 'B.C. ' : 'A.D. ';
+    return '$prefix${startYear.abs()}-${endYear.abs()}년$suffix';
+  }
+  return '${_formatHistoricalYear(startYear)}-${_formatHistoricalYear(endYear)}$suffix';
+}
+
+String _formatHistoricalYear(int year) {
+  if (year < 0) {
+    return 'B.C. ${year.abs()}년';
+  }
+  return 'A.D. $year년';
 }
 
 /// 이전/다음 이야기 가로 네비 카드. 작은 원형 썸네일 + 라벨 + 사건 제목 + 화살표.

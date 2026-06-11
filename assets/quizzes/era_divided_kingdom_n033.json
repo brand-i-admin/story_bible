@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 33,
+  "story_title": "요담: 윗문을 세운 정직한 왕",
+  "source_version": "2026-06-10",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "요담이 예루살렘 성전에 세운 것은 무엇입니까?",
+      "choices": [
+        "여호와의 전 윗문",
+        "다메섹 제단",
+        "바알 신전"
+      ],
+      "answer_index": 0,
+      "explanation": "대하 27:3 — '여호와의 전 윗문을 건축하고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "요담 때 백성은 어떤 상태로 남아 있었습니까?",
+      "choices": [
+        "여전히 부패하였다",
+        "모두 우상을 버렸다",
+        "바벨론으로 끌려갔다"
+      ],
+      "answer_index": 0,
+      "explanation": "대하 27:2 — '오히려 백성은 사악을 행하였더라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "요담이 점점 강하여진 이유는 무엇입니까?",
+      "choices": [
+        "여호와 앞에 길을 바로 하였다",
+        "앗수르와 조약을 맺었다",
+        "성전 제단을 바꾸었다"
+      ],
+      "answer_index": 0,
+      "explanation": "대하 27:6 — '그 하나님 여호와 앞에 정도를 행하였으므로'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n033"
+}

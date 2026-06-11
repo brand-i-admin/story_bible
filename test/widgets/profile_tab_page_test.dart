@@ -179,6 +179,78 @@ void main() {
     expect(find.byType(ProfileEditorDialog), findsOneWidget);
     expect(find.text('프로필 수정'), findsOneWidget);
   });
+
+  testWidgets('프로필 진행 탭은 다이어리 다음에 인물과 걷기를 먼저 보여준다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    final diaryX = tester.getCenter(find.text('나의 다이어리')).dx;
+    final walkX = tester.getCenter(find.text('인물과 걷기')).dx;
+    final placeX = tester.getCenter(find.text('장소로 시작')).dx;
+
+    expect(diaryX, lessThan(walkX));
+    expect(walkX, lessThan(placeX));
+  });
+
+  testWidgets('인물과 걷기 탭은 각 인물의 첫 이야기 순으로 나열한다', (tester) async {
+    when(() => storyRepository.fetchCharactersByEra('era-1')).thenAnswer(
+      (_) async => const [
+        Character(
+          id: 'person-saul',
+          code: 'saul',
+          name: '사울',
+          tagline: null,
+          description: null,
+          avatarUrl: null,
+          displayOrder: 1,
+        ),
+        Character(
+          id: 'person-abraham',
+          code: 'abraham',
+          name: '아브라함',
+          tagline: null,
+          description: null,
+          avatarUrl: null,
+          displayOrder: 2,
+        ),
+        Character(
+          id: 'person-adam',
+          code: 'adam',
+          name: '아담',
+          tagline: null,
+          description: null,
+          avatarUrl: null,
+          displayOrder: 3,
+        ),
+      ],
+    );
+    when(
+      () => storyRepository.fetchCharacterTimelineOrder(),
+    ).thenAnswer((_) async => const {'adam': 1, 'abraham': 20, 'saul': 60});
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(find.text('인물과 걷기'));
+    await tester.pumpAndSettle();
+
+    final adamX = tester.getCenter(find.text('아담')).dx;
+    final abrahamX = tester.getCenter(find.text('아브라함')).dx;
+    final saulX = tester.getCenter(find.text('사울')).dx;
+
+    expect(adamX, lessThan(abrahamX));
+    expect(abrahamX, lessThan(saulX));
+  });
 }
 
 Future<void> _pumpProfileTab(

@@ -22,96 +22,231 @@
   {
     "era_code": "era_divided_kingdom",
     "story_index": 5,
-    "title": "아합과 엘리야: 가뭄의 시작"
+    "title": "아비얌과 아사: 등불과 개혁"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 6,
-    "title": "엘리야와 갈멜: 불의 응답"
+    "title": "나답과 바아사: 끊어진 왕조"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 7,
-    "title": "호렙의 엘리야: 조용한 음성"
+    "title": "엘라와 시므리와 오므리: 악이 깊어지다"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 8,
-    "title": "엘리야 승천: 겉옷의 계승"
+    "title": "아합과 엘리야: 가뭄의 시작"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 9,
-    "title": "엘리사의 첫 표징: 물과 경고"
+    "title": "엘리야와 갈멜: 불의 응답"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 10,
-    "title": "엘리사의 기적들: 기름과 생명과 양식"
+    "title": "호렙의 엘리야: 조용한 음성"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 11,
-    "title": "나아만: 요단의 일곱 번"
+    "title": "나봇의 포도원: 빼앗긴 유업"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 12,
-    "title": "도단의 불 말과 불 전차: 눈이 열리다"
+    "title": "미가야: 거짓 예언 앞의 진실"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 13,
-    "title": "이사야의 소명: 거룩한 보좌의 환상"
+    "title": "아합의 최후: 변장한 왕의 화살"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 14,
-    "title": "아하스와 임마누엘: 믿음의 징조"
+    "title": "여호사밧: 정직함과 남은 산당"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 15,
-    "title": "호세아의 몰락: 사마리아가 함락되다"
+    "title": "아하시야의 병: 바알세붑에게 묻다"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 16,
-    "title": "히스기야와 산헤립: 두려움의 편지"
+    "title": "엘리야 승천: 겉옷의 계승"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 17,
-    "title": "히스기야의 병과 바벨론 사신"
+    "title": "엘리사의 첫 표징: 물과 경고"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 18,
-    "title": "요시야의 개혁: 율법책을 찾다"
+    "title": "엘리사의 기적들: 기름과 생명과 양식"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 19,
-    "title": "예레미야의 경고: 칠십 년의 포로"
+    "title": "나아만: 요단의 일곱 번"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 20,
-    "title": "새 언약의 약속: 마음에 새기다"
+    "title": "도단의 불 말과 불 전차: 눈이 열리다"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 21,
-    "title": "불태워진 두루마리: 말씀을 거부하다"
+    "title": "여호람의 남유다: 아합 집의 길"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 22,
-    "title": "토굴의 예레미야: 왕에게 전하다"
+    "title": "유다 아하시야: 길르앗 라못의 상처"
   },
   {
     "era_code": "era_divided_kingdom",
     "story_index": 23,
+    "title": "예후의 기름부음: 아합 집의 심판"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 24,
+    "title": "예후의 열심과 한계: 바알 신전과 금송아지"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 25,
+    "title": "아달랴와 요아스: 숨겨진 왕"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 26,
+    "title": "요아스의 성전 보수와 배교"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 27,
+    "title": "여호아하스와 요아스: 엘리사의 마지막 화살"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 28,
+    "title": "요아스의 최후: 하사엘과 반역"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 29,
+    "title": "아마샤와 북이스라엘 요아스: 교만한 도전"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 30,
+    "title": "여로보암 2세와 왕위 전환: 회복과 그림자"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 31,
+    "title": "웃시야의 강성함과 교만: 성전 문 앞의 나병"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 32,
+    "title": "북이스라엘 말기 왕들: 반역의 연쇄"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 33,
+    "title": "요담: 윗문을 세운 정직한 왕"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 34,
+    "title": "이사야의 소명: 거룩한 보좌의 환상"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 35,
+    "title": "아하스의 우상과 다메섹 제단"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 36,
+    "title": "아하스와 임마누엘: 믿음의 징조"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 37,
+    "title": "호세아의 몰락: 사마리아가 함락되다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 38,
+    "title": "히스기야와 산헤립: 두려움의 편지"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 39,
+    "title": "히스기야의 병과 바벨론 사신"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 40,
+    "title": "므낫세의 낮아짐: 포로에서 회개로"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 41,
+    "title": "아몬: 짧은 악의 통치"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 42,
+    "title": "요시야의 개혁: 율법책을 찾다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 43,
+    "title": "여호아하스: 애굽으로 끌려간 왕"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 44,
+    "title": "여호야김과 첫 포로: 다니엘이 끌려가다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 45,
+    "title": "예레미야의 경고: 칠십 년의 포로"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 46,
+    "title": "새 언약의 약속: 마음에 새기다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 47,
+    "title": "불태워진 두루마리: 말씀을 거부하다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 48,
+    "title": "여호야긴의 포로: 성전 금 기구가 깨어지다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 49,
+    "title": "토굴의 예레미야: 왕에게 전하다"
+  },
+  {
+    "era_code": "era_divided_kingdom",
+    "story_index": 50,
     "title": "예루살렘 포위: 왕의 몰락"
   },
   {

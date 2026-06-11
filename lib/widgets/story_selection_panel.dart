@@ -341,7 +341,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
             crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            mainAxisExtent: 108,
+            mainAxisExtent: 132,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final character = sortedCharacters[index];

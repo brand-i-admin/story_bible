@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 44,
+  "story_title": "여호야김과 첫 포로: 다니엘이 끌려가다",
+  "source_version": "2026-06-10",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "여호야김은 몇 살에 왕이 되었습니까?",
+      "choices": [
+        "스물다섯 살",
+        "스물세 살",
+        "열여덟 살"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 23:36 — '여호야김이 위에 나아갈 때에 나이 이십 오세라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "느부갓네살이 올라온 뒤 여호야김은 처음에 어떻게 되었습니까?",
+      "choices": [
+        "삼 년 동안 그의 종이 되었다",
+        "곧바로 애굽으로 끌려갔다",
+        "성전 윗문을 세웠다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 24:1 — '여호야김이 삼 년을 섬기다가'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "바벨론으로 옮겨진 성전 기구들은 어디에 두어졌습니까?",
+      "choices": [
+        "바벨론 신의 보고",
+        "예루살렘 윗문",
+        "아하스의 제단 아래"
+      ],
+      "answer_index": 0,
+      "explanation": "단 1:2 — '그 신의 보고에 두었더라'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n044"
+}

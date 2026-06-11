@@ -342,11 +342,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return _sheetFractionForHeight(size, px, min: 0.26, max: 0.46);
     }
     // 인물 모드 step 2 — 인물 카드 줄 수에 맞춰 sheet 높이 동적 계산.
-    // 카드 mainAxisExtent 108 + spacing 8 = 행당 ~116px. 1행/2행/2.2행.
+    // 카드 mainAxisExtent 132 + spacing 8 = 행당 ~140px. 1행/2행/2.2행.
     if (_mode == _SelectionMode.character && _selectionStep == 2) {
       final charCount = state.characters.length;
       final rowCount = (charCount / 4).ceil(); // 4 cols
-      const rowPx = 116.0; // 카드 108 + spacing 8
+      const rowPx = 140.0; // 카드 132 + spacing 8
       const chromePx = 110.0; // 핸들 + 헤더 + grid padding 등
       final visibleRows = rowCount <= 1
           ? 1.0

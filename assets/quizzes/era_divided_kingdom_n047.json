@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 47,
+  "story_title": "불태워진 두루마리: 말씀을 거부하다",
+  "source_version": "2026-06-09",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "하나님은 예레미야에게 무엇에 말씀을 기록하라고 하셨습니까?",
+      "choices": [
+        "두루마리 책에 기록하라고 하셨다",
+        "왕의 금방패에 새기라고 하셨다",
+        "성벽 돌마다 숨기라고 하셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 36:2 — '너는 두루마리 책을 취하여 ... 기록하라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바룩은 예레미야의 말을 적은 두루마리를 어디에서 낭독했습니까?",
+      "choices": [
+        "성전에서 백성에게 낭독했다",
+        "애굽 왕궁에서만 낭독했다",
+        "광야 동굴 안에서 혼자 읽었다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 36:10 — '바룩이 여호와의 집 ... 모든 백성에게 그 책에 있는 예레미야의 말을 낭독하니라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "여호야김 왕은 두루마리 말씀을 듣고 어떻게 했습니까?",
+      "choices": [
+        "칼로 베어 화롯불에 던졌다",
+        "눈물로 회개하며 성전에 올렸다",
+        "바룩에게 금을 주며 보관하게 했다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 36:23 — '소도로 그것을 연하여 베어 화롯불에 던져서'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n047"
+}

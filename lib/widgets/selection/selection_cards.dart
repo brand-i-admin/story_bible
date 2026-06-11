@@ -135,6 +135,7 @@ class _CharacterCompactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final identityLabel = _identityLabelFor(character);
     return _CardShell(
       selected: selected,
       onTap: onTap,
@@ -162,10 +163,15 @@ class _CharacterCompactCard extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                right: -9,
+                top: 2,
+                child: _EventCountBadge(count: eventCount, selected: selected),
+              ),
               if (selected)
                 const Positioned(
-                  right: -2,
-                  top: -2,
+                  right: -4,
+                  bottom: -2,
                   child: Icon(
                     Icons.check_circle_rounded,
                     color: Color(0xFFF7D881),
@@ -190,11 +196,13 @@ class _CharacterCompactCard extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            '사건 $eventCount개',
-            maxLines: 1,
+            identityLabel,
+            maxLines: 4,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 9.1,
+              height: 1.08,
               fontWeight: FontWeight.w700,
               color: selected
                   ? const Color(0xFFF4E6CD)
@@ -202,6 +210,88 @@ class _CharacterCompactCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  String _identityLabelFor(Character character) {
+    final tagline = character.tagline?.trim() ?? '';
+    if (tagline.isNotEmpty) {
+      return _wrapIdentityLabel(tagline);
+    }
+    final description = character.description?.trim() ?? '';
+    if (description.isEmpty) {
+      return '성경 인물';
+    }
+    return _wrapIdentityLabel(description.split(RegExp(r'[.。]')).first.trim());
+  }
+
+  String _wrapIdentityLabel(String label) {
+    const maxUnitsPerLine = 6;
+    final words = label
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim()
+        .split(' ')
+        .where((word) => word.isNotEmpty);
+    final lines = <String>[];
+    var currentLine = '';
+    for (final word in words) {
+      final nextLine = currentLine.isEmpty ? word : '$currentLine $word';
+      if (currentLine.isNotEmpty && _labelUnits(nextLine) > maxUnitsPerLine) {
+        lines.add(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = nextLine;
+      }
+    }
+    if (currentLine.isNotEmpty) {
+      lines.add(currentLine);
+    }
+    return lines.join('\n');
+  }
+
+  int _labelUnits(String value) {
+    return value.runes
+        .where((rune) => String.fromCharCode(rune).trim().isNotEmpty)
+        .length;
+  }
+}
+
+class _EventCountBadge extends StatelessWidget {
+  const _EventCountBadge({required this.count, required this.selected});
+
+  final int count;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minWidth: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: selected ? const Color(0xFFF7D881) : const Color(0xFF7A5F35),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: selected ? const Color(0xFF5A3519) : const Color(0xFFF6E8CB),
+          width: 1,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Text(
+        '+$count',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 9.4,
+          height: 1,
+          fontWeight: FontWeight.w900,
+          color: selected ? const Color(0xFF5A3519) : AppColors.parchmentCream,
+        ),
       ),
     );
   }

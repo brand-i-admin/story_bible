@@ -173,13 +173,13 @@ tap suppression 을 걸어, 조작 직후 커서 아래 region·랜드마크가 
 | 위젯 | 파일 | 역할 |
 |------|------|------|
 | StoryMapPanel | `widgets/story_map_panel.dart` | MapLibre 3D 지도 orchestration. OpenFreeMap/Mapzen terrain 을 WebView 로 띄우고, region polygon/path/라벨/hit-zone 은 GeoJSON layer 로, 사건 번호·감정 핀과 non-region 랜드마크는 DOM marker 로 렌더링 |
-| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널. 상단 sticky 헤더는 명시적 이전 단계 버튼과 `시대/방법 → 장소/인물/시간 순 → 이야기` 라벨형 단계 pill 을 접기/펼치기 버튼과 같은 줄에 보여 준다. 사건 카드 배지도 감정 새김이 있으면 큰 컬러 감정 이모지 + 우측 아래 작은 초록 순서 번호로 표시하고, 퀴즈 결과가 있으면 카드 배경색으로 정답 0개=빨강 / 일부 정답=주황 / 모두 정답=초록 상태를 보여 준다. 감정 새김 직후 0.5초 뒤 해당 카드 위에 감정 도장+별가루를 기존 속도로 재생하고, 도장 완료 후 1초 뒤 상세로 복귀한다 |
+| StorySelectionPanel | `widgets/story_selection_panel.dart` | 시대·인물·사건 3단계 선택 통합 패널. 상단 sticky 헤더는 명시적 이전 단계 버튼과 `시대/방법 → 장소/인물/시간 순 → 이야기` 라벨형 단계 pill 을 접기/펼치기 버튼과 같은 줄에 보여 준다. 인물 카드에는 아바타 오른쪽 위 `+N` 사건 수 배지와 이름 아래 대표 행적이 드러나는 정체성 문구를 표시하며, 좁은 폭에서도 단어 중간이 끊기지 않도록 단어 단위로 줄바꿈한다. 사건 카드 배지도 감정 새김이 있으면 큰 컬러 감정 이모지 + 우측 아래 작은 초록 순서 번호로 표시하고, 퀴즈 결과가 있으면 카드 배경색으로 정답 0개=빨강 / 일부 정답=주황 / 모두 정답=초록 상태를 보여 준다. 감정 새김 직후 0.5초 뒤 해당 카드 위에 감정 도장+별가루를 기존 속도로 재생하고, 도장 완료 후 1초 뒤 상세로 복귀한다 |
 | CharacterPanel | `widgets/character_panel.dart` | 개별 인물 카드 (아바타, 이름, 설명) |
 | ParchmentDialog | `widgets/parchment_dialog.dart` | 양피지 스타일 이야기 상세 모달 |
 | ParchmentPageScaffold | `widgets/parchment_page_scaffold.dart` | 양피지 배경 페이지 템플릿 |
-| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (한 줄 제목 + 요약 이야기 + 장면 이미지 + 문항별 해설 퀴즈) |
+| EventDetailPage | `widgets/event_detail_page.dart` | 사건 상세 페이지 (제목 아래 연대/장소 메타 + 등장인물 아바타가 있는 요약 이야기 + 장면 이미지 + 문항별 해설 퀴즈) |
 | WeeklyTabPage | `widgets/weekly_tab_page.dart` | 금주의 인물 탭 |
-| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 아바타·이름과 기도 탭의 내 기도 텍스트는 프로필 수정 진입점, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도) |
+| ProfileTabPage | `widgets/profile_tab_page.dart` | 프로필 탭 (아바타/이름/수정·설정 헤더는 첫 컨테이너 위에 분리, 아바타·이름과 기도 탭의 내 기도 텍스트는 프로필 수정 진입점, 기록, 기도, 저장한 이야기, 저장한 말씀, 진행도). 진행도 탭은 `나의 다이어리 → 인물과 걷기 → 장소로 시작` 순서이며 인물은 첫 등장 이야기 순서로 나열 |
 | BibleReaderPage | `widgets/bible_reader_page.dart` | 성경 리더 페이지 (우측 별 아이콘 구절 저장 + 이야기 본문 읽기 모드). 별 저장 시 200자 묵상 코멘트 팝업을 띄우고, 닫으면 빈 코멘트로 저장한다. 저장 취소는 코멘트 유무에 따라 확인 팝업 또는 즉시 취소 스낵바를 사용한다. 일반 성경 진입은 책/장 탐색을 유지하고, 사건 상세에서 진입하면 해당 `bible_refs` 범위의 절만 표시한다. 여러 본문은 **다음**으로 순차 이동하고 마지막 본문에서 **읽기 완료**를 눌러야 읽음 처리된다. 구절 본문 탭은 선택/저장 동작을 만들지 않는다 |
 | SearchBottomSheet | `widgets/search_bottom_sheet.dart` | 검색 입력 + 결과 (bottom sheet) |
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |

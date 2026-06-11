@@ -472,6 +472,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   }
 
   List<Character> _profilePeople(StoryState state) {
+    final timelineOrderByCode = _effectiveProfileTimelineOrder(state);
     final people =
         [
             ...(_profileAllPeople.isNotEmpty
@@ -487,10 +488,34 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             (a, b) => _compareProfilePeople(
               a,
               b,
-              timelineOrderByCode: _profileCharacterTimelineOrderByCode,
+              timelineOrderByCode: timelineOrderByCode,
             ),
           );
     return people;
+  }
+
+  Map<String, int> _effectiveProfileTimelineOrder(StoryState state) {
+    final orderByCode = _timelineOrderFromEvents(state.events);
+    orderByCode.addAll(_profileCharacterTimelineOrderByCode);
+    return orderByCode;
+  }
+
+  Map<String, int> _timelineOrderFromEvents(Iterable<StoryEvent> events) {
+    final sortedEvents = [...events]
+      ..sort((a, b) {
+        final rank = a.globalRank.compareTo(b.globalRank);
+        if (rank != 0) {
+          return rank;
+        }
+        return a.id.compareTo(b.id);
+      });
+    final orderByCode = <String, int>{};
+    for (final event in sortedEvents) {
+      for (final code in event.characterCodes) {
+        orderByCode.putIfAbsent(code, () => event.globalRank);
+      }
+    }
+    return orderByCode;
   }
 
   List<StoryEvent> _sortEventsByEraThenIndex(

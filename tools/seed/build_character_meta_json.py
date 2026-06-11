@@ -269,6 +269,7 @@ KO_NAME_OVERRIDES = {
     "absalom": "압살롬",
     "abel": "아벨",
     "abihu": "아비후",
+    "ahijah": "아히야",
     "achan": "아간",
     "agrippa": "아그립바",
     "aquila": "아굴라",
@@ -287,6 +288,7 @@ KO_NAME_OVERRIDES = {
     "hannah": "한나",
     "herod": "헤롯",
     "jairus": "야이로",
+    "jezebel": "이세벨",
     "jehoiachin": "여호야긴",
     "jehoiakim": "여호야김",
     "jehu": "예후",
@@ -303,6 +305,7 @@ KO_NAME_OVERRIDES = {
     "mary_magdalene": "막달라 마리아",
     "melchizedek": "멜기세덱",
     "micah": "미가",
+    "micaiah": "미가야",
     "miriam": "미리암",
     "naaman": "나아만",
     "nadab": "나답",
@@ -327,7 +330,9 @@ KO_NAME_OVERRIDES = {
 }
 
 EN_NAME_OVERRIDES = {
+    "ahijah": "Ahijah the Shilonite",
     "hoshea_king": "Hoshea, Last King of Northern Israel",
+    "jezebel": "Jezebel, Queen of Northern Israel",
 }
 
 AUTO_PROMPT_SOURCE = "auto_story_v2"
@@ -342,13 +347,14 @@ FORCE_ACTIVE_DEFAULT_CODES = {
     "jonah",
     "jonathan",
     "josiah",
+    "micaiah",
     "naaman",
     "rehoboam",
     "zechariah_prophet",
     "zedekiah",
     "zerubbabel",
 }
-FORCE_INACTIVE_DEFAULT_CODES = {"god"}
+FORCE_INACTIVE_DEFAULT_CODES = {"elizabeth", "gabriel", "god"}
 
 # Characters can be prepared for avatar generation before their story events are
 # added. They remain inactive in DB seed output until story appearances, admin
@@ -384,11 +390,23 @@ CURATED_AVATAR_ROSTER: dict[str, dict[str, Any]] = {
         "era": "divided_kingdom",
         "style_reference_codes": ["elijah", "elisha", "isaiah"],
     },
+    "micaiah": {
+        "name_ko": "미가야",
+        "name_en": "Micaiah son of Imlah",
+        "era": "divided_kingdom",
+        "style_reference_codes": ["elijah", "elisha", "isaiah"],
+    },
     "jeremiah": {
         "name_ko": "예레미야",
         "name_en": "Jeremiah",
         "era": "monarchy",
         "style_reference_codes": ["isaiah", "ezekiel", "ezra"],
+    },
+    "jezebel": {
+        "name_ko": "이세벨",
+        "name_en": "Jezebel, Queen of Northern Israel",
+        "era": "divided_kingdom",
+        "style_reference_codes": ["esther", "athaliah", "ahab"],
     },
     "jehoiakim": {
         "name_ko": "여호야김",
@@ -1204,6 +1222,12 @@ CURATED_AVATAR_ROSTER.update(
         for code, data in DIVIDED_KINGDOM_KING_ROSTER.items()
     }
 )
+CURATED_AVATAR_ROSTER["jehoiada"] = {
+    "name_ko": "여호야다",
+    "name_en": "Jehoiada the Priest",
+    "era": "divided_kingdom",
+    "style_reference_codes": ["aaron", "samuel", "josiah"],
+}
 GOD_NEGATIVE_PROMPT_EXTRA = (
     "symbol, emblem, icon, badge, seal, sigil, logo, crest, heraldic mark, "
     "religious symbol, abstract symbol, decorative motif, ornamental geometry, mandala, "
@@ -1301,8 +1325,11 @@ SOLO_FORCED_CODES = {
     "cyrus",
     "haggai",
     "hoshea_king",
+    "jezebel",
+    "jehoiada",
     "jeroboam",
     "jonah",
+    "micaiah",
     "rehoboam",
     "zechariah_prophet",
     "zerubbabel",
@@ -1353,7 +1380,9 @@ FEMALE_FORCE_CODES = {"dinah", "hannah", "sapphira"}
 LYDIA_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, square male shoulders, "
     "beard, mustache, facial hair, "
-    "warrior, armor, soldier, slave, prisoner, jailer, second character, multiple people"
+    "warrior, armor, soldier, slave, prisoner, jailer, "
+    "Samson, Delilah scene, judge-era man, Nazirite hair, muscular male, "
+    "second character, multiple people"
 )
 
 # mary_magdalene 도 자꾸 수염 있는 남성으로 그려져서 강한 여성 강제 필요.
@@ -1426,6 +1455,16 @@ JONAH_NEGATIVE_PROMPT_EXTRA = (
     "elderly prophet, Samuel, Isaiah, copied prophet avatar, readable label, readable text"
 )
 
+MICAIAH_NEGATIVE_PROMPT_EXTRA = (
+    "Micah the minor prophet, prophet Micah of Moresheth, book of Micah, "
+    "Ahab king, Jehoshaphat king, Zedekiah son of Chenaanah, false prophets, "
+    "crowded throne room scene, many prophets, horn props, battle scene, prison scene, "
+    "king, crown, royal robe, court official, soldier, armor, helmet, "
+    "Samuel, Isaiah copied avatar, Elijah copied avatar, Elisha copied avatar, "
+    "multiple people, crowd, duo, readable label, readable text, "
+    "portrait crop, bust shot, half body, cropped feet, missing sandals"
+)
+
 JEREMIAH_NEGATIVE_PROMPT_EXTRA = (
     "Isaiah copied avatar, Samuel, child Samuel, Ezekiel, Ezra, Haggai, Zechariah, "
     "king, crown, royal robe, priestly breastplate, temple incense scene, heavenly throne vision, "
@@ -1440,6 +1479,26 @@ JEHOIAKIM_NEGATIVE_PROMPT_EXTRA = (
     "Jeremiah, Baruch, prophet robe, scribe desk, scroll burning scene, open flame, "
     "Babylonian king, Nebuchadnezzar, Pharaoh Necho, Egyptian crown, captive prisoner, chains, "
     "battle scene, siege army, multiple people, crowd, readable label, readable text, "
+    "wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, "
+    "portrait crop, bust shot, half body, cropped feet, missing sandals"
+)
+
+JEHOIADA_NEGATIVE_PROMPT_EXTRA = (
+    "king, crown, throne, royal diadem, young prince, child Joash, Athaliah, palace coup scene, "
+    "coronation crowd, soldiers, guards, battle scene, execution scene, assassination scene, "
+    "prophet mantle, Isaiah, Samuel copied avatar, warrior armor, helmet, sword, spear, "
+    "multiple people, crowd, group, attendants, readable label, readable text, "
+    "wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, "
+    "portrait crop, bust shot, half body, cropped feet, missing sandals"
+)
+
+JEZEBEL_NEGATIVE_PROMPT_EXTRA = (
+    "Esther, Persian queen, gentle heroine, salvation heroine, Athaliah, queen of Judah, "
+    "Judah crown, Davidic line, motherly expression, faithful worshipper, prophetess, priestess, "
+    "male, man, masculine face, broad male jaw, beard, mustache, facial hair, warrior armor, "
+    "Ahab standing beside her, Jehu scene, window fall scene, Naboth stoning scene, dogs, "
+    "blood, gore, corpse, injury, body falling, execution scene, "
+    "multiple people, crowd, group, attendants, readable label, readable text, "
     "wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, "
     "portrait crop, bust shot, half body, cropped feet, missing sandals"
 )
@@ -1708,6 +1767,12 @@ CHARACTER_VISUAL_OVERRIDES = {
         "short dark hair partly visible under a simple sea-teal travel headwrap",
         "short uneven dark beard with angular faceted planes",
     ],
+    "micaiah": [
+        "solitary northern court-prophet build with lean upright shoulders",
+        "long angular face with steady fearless eyes, strong nose, and uncompromising brow",
+        "medium dark hair under a plain charcoal prophet headcloth, not royal",
+        "short dark beard with sharp faceted planes and a few gray streaks",
+    ],
     "jeremiah": [
         "lean sorrowful Judah prophet build with narrow shoulders but steady upright resolve",
         "long angular face with tearful compassionate eyes, strong nose, and deeply furrowed brow",
@@ -1828,6 +1893,9 @@ CHARACTER_MOOD_OVERRIDES = {
     "jonah": [
         "reluctant but called prophet posture, shoulders slightly turned as if resisting the journey, one hand holding a small blank message scroll close to the chest and the other near a tiny fish-shaped travel token",
     ],
+    "micaiah": [
+        "front-facing solitary truth-telling prophet posture, one hand holding a small blank court-warning scroll near the chest and the other raised calmly as if refusing false prophecy",
+    ],
     "jeremiah": [
         "front-facing solitary weeping-prophet posture, one hand holding a narrow blank warning scroll near the heart and the other holding a small cracked clay jar shard, sorrowful but unshaken",
     ],
@@ -1943,6 +2011,7 @@ CODE_PALETTE_OVERRIDES = {
     "jeremiah": "weathered olive + clay brown + muted crimson + parchment cream accents, low saturation",
     "jeroboam": "deep forest green + muted bronze + parchment tan accents, low saturation",
     "jonah": "sea teal + storm gray + parchment cream accents, low saturation",
+    "micaiah": "deep olive + muted charcoal + pale parchment + small gold accents, low saturation",
     "rehoboam": "royal indigo + warm gold + muted ivory accents, low saturation",
     "samson": "deep olive + clay brown + muted gold accents",
     "zechariah_prophet": "muted indigo + sage green + parchment cream accents, low saturation",
@@ -1970,6 +2039,12 @@ CODE_SIGNATURE_HINTS = {
         "deep green official cloak with bronze sash, no crown",
         "small torn cloak piece in one hand as a restrained sign of Ahijah's prophecy",
         "serious alert expression, not a battle scene",
+    ],
+    "ahijah": [
+        "elderly prophet from Shiloh, wise and solemn, clearly distinct from Samuel and Isaiah",
+        "clouded blind-looking eyes for the later warning scene, calm but severe expression",
+        "plain warm brown prophet mantle with a muted cream inner robe",
+        "one hand holding torn cloak pieces as the unmistakable sign of the divided kingdom",
     ],
     "rehoboam": [
         "Solomon's royal son and heir silhouette",
@@ -2025,6 +2100,13 @@ CODE_SIGNATURE_HINTS = {
         "sea-teal travel cloak over storm-gray tunic with parchment sash",
         "small blank message scroll and tiny fish-shaped travel token as restrained signs",
         "uneasy called-by-God expression, not a ship scene and not inside a fish",
+    ],
+    "micaiah": [
+        "Micaiah son of Imlah, northern Israel prophet who spoke truth before Ahab, exactly one man only",
+        "clearly distinct from Micah of Moresheth the minor prophet and from Samuel or Isaiah",
+        "deep olive prophet mantle over muted charcoal robe with pale parchment sash",
+        "small blank court-warning scroll held near the chest, no crown and no royal clothing",
+        "fearless uncompromising expression, not a throne-room scene and not one of many prophets",
     ],
     "jeremiah": [
         "weeping prophet of Judah silhouette, exactly one man only",
@@ -2382,6 +2464,44 @@ CODE_SIGNATURE_HINTS.update(
         if data.get("signature")
     }
 )
+CHARACTER_VISUAL_OVERRIDES["jehoiada"] = [
+    "elderly Jerusalem high-priest build with dignified upright shoulders and calm strength",
+    "long wise face with steady protective eyes, heavy gray brows, and a firm compassionate mouth",
+    "white and gray hair mostly covered by a layered cream priestly turban with a narrow gold band",
+    "full white-gray beard in neat angular facets, clearly priestly and not a royal king beard",
+]
+CHARACTER_MOOD_OVERRIDES["jehoiada"] = [
+    "protective covenant-priest posture, one hand holding a small sealed covenant scroll high near the chest and the other resting calmly over a gold priestly sash",
+]
+CODE_PALETTE_OVERRIDES["jehoiada"] = (
+    "temple linen white + warm parchment cream + muted gold + deep olive accents, low saturation"
+)
+CODE_SIGNATURE_HINTS["jehoiada"] = [
+    "Jehoiada the Jerusalem temple priest who protected Joash, exactly one man only",
+    "elderly faithful priestly leader, not a prophet and not a king",
+    "white linen priest robe with cream outer layer, muted gold sash, and small square priestly breast panel high on the chest",
+    "small sealed covenant scroll held near the upper chest as a sign of restoring the covenant and protecting the Davidic line",
+    "calm resolute expression with holy courage, no crown and no throne",
+]
+CHARACTER_VISUAL_OVERRIDES["jezebel"] = [
+    "Sidonian royal queen build with tall elegant posture and sharply controlled shoulders",
+    "angular refined face with cold calculating eyes, arched brows, and a firm unsmiling mouth",
+    "dark braided hair arranged beneath a jeweled Phoenician-style veil and narrow gold headpiece",
+    "slender hands held near the upper chest, one hand holding a small sealed royal letter with a wax seal",
+]
+CHARACTER_MOOD_OVERRIDES["jezebel"] = [
+    "cold commanding queen posture, sealed royal letter held high near the chest as a sign of schemes and royal influence",
+]
+CODE_PALETTE_OVERRIDES["jezebel"] = (
+    "deep crimson + Phoenician gold + dark teal + black-violet accents, low saturation"
+)
+CODE_SIGNATURE_HINTS["jezebel"] = [
+    "Jezebel the Sidonian queen of Northern Israel, exactly one woman only",
+    "adult Phoenician royal woman, not Esther and not Athaliah",
+    "deep crimson and dark teal royal dress with Phoenician gold trim, jeweled veil, and narrow gold headpiece",
+    "small sealed royal letter held near the upper chest as a sign of Naboth's false accusation plot",
+    "cold calculating expression, glamorous but spiritually dangerous presence, no violence scene",
+]
 
 STORY_ROLE_RULES = [
     {
@@ -3027,12 +3147,21 @@ def build_person_meta(
         if code == "jonah":
             character["negative_prompt_extra"] = JONAH_NEGATIVE_PROMPT_EXTRA
             character["style_reference_codes"] = ["elijah", "elisha", "isaiah"]
+        if code == "micaiah":
+            character["negative_prompt_extra"] = MICAIAH_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["elijah", "elisha", "isaiah"]
         if code == "jeremiah":
             character["negative_prompt_extra"] = JEREMIAH_NEGATIVE_PROMPT_EXTRA
             character["style_reference_codes"] = ["isaiah", "ezekiel", "ezra"]
         if code == "jehoiakim":
             character["negative_prompt_extra"] = JEHOIAKIM_NEGATIVE_PROMPT_EXTRA
             character["style_reference_codes"] = ["josiah", "ahaz", "zedekiah"]
+        if code == "jehoiada":
+            character["negative_prompt_extra"] = JEHOIADA_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["aaron", "samuel", "josiah"]
+        if code == "jezebel":
+            character["negative_prompt_extra"] = JEZEBEL_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["esther", "athaliah", "ahab"]
         if code in DIVIDED_KINGDOM_KING_ROSTER:
             append_negative_prompt_extra(
                 character,

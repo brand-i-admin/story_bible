@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 27,
+  "story_title": "여호아하스와 요아스: 엘리사의 마지막 화살",
+  "source_version": "2026-06-10",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "여호아하스 때 사마리아에 남아 있던 우상은 무엇입니까?",
+      "choices": [
+        "아세라 목상",
+        "율법책",
+        "다윗의 방패"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 13:6 — '사마리아에 아세라 목상을 그저 두었더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "엘리사는 요아스에게 동쪽 창문을 열고 무엇을 하라고 했습니까?",
+      "choices": [
+        "화살을 쏘라고 했다",
+        "금을 세어 보라고 했다",
+        "성벽을 허물라고 했다"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 13:17 — '동편 창을 여소서... 쏘소서'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "요아스는 벤하닷을 몇 번 쳐서 이스라엘 성읍들을 회복했습니까?",
+      "choices": [
+        "세 번",
+        "한 번",
+        "일곱 번"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 13:25 — '벤하닷을 세번 쳐서 파하고'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n027"
+}

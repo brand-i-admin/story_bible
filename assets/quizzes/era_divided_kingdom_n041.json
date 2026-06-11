@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 41,
+  "story_title": "아몬: 짧은 악의 통치",
+  "source_version": "2026-06-10",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아몬은 몇 살에 왕이 되었습니까?",
+      "choices": [
+        "스물두 살",
+        "일곱 살",
+        "열여덟 살"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 21:19 — '아몬이 위에 나아갈 때에 나이 이십 이세라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아몬은 아버지 므낫세와 달리 무엇을 하지 않았습니까?",
+      "choices": [
+        "여호와 앞에 스스로 겸비하지 않았다",
+        "우상들을 섬기지 않았다",
+        "예루살렘에서 왕이 되지 않았다"
+      ],
+      "answer_index": 0,
+      "explanation": "대하 33:23 — '여호와 앞에 스스로 겸비치 아니하고'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "아몬은 누구의 반역으로 죽임을 당했습니까?",
+      "choices": [
+        "자기 신복들",
+        "바벨론 군대",
+        "바로 느고"
+      ],
+      "answer_index": 0,
+      "explanation": "왕하 21:23 — '그 신복들이 반역하여 왕을 궁중에서 죽이매'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n041"
+}

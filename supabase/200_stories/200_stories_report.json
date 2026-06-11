@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-06-09T08:57:45.096861+00:00",
-  "event_count": 216,
+  "generated_at_utc": "2026-06-11T02:13:09.771433+00:00",
+  "event_count": 243,
   "events_by_era": {
     "era_exile_return": 17,
     "era_monarchy": 27,
@@ -8,7 +8,7 @@
     "era_nt_public_ministry": 27,
     "era_patriarch": 30,
     "era_nt_apostolic": 30,
-    "era_divided_kingdom": 23,
+    "era_divided_kingdom": 50,
     "era_exodus": 31,
     "era_primeval": 8,
     "era_judges": 13,

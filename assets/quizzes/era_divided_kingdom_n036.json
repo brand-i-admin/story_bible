@@ -1,0 +1,45 @@
+{
+  "story_id": "era_divided_kingdom_n036",
+  "story_title": "아하스와 임마누엘: 믿음의 징조",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "아람 왕 르신과 이스라엘 왕 베가는 아하스 때에 무엇을 하려 했습니까?",
+      "choices": [
+        "예루살렘을 치러 올라왔다",
+        "유다와 화해하려고 예물을 보냈다",
+        "성전을 함께 보수하려고 왔다"
+      ],
+      "answer_index": 0,
+      "explanation": "사 7:1 — '르신과 베가가 올라와서 예루살렘을 쳤으나'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "아람과 에브라임 동맹 소식에 왕과 백성의 마음은 어땠습니까?",
+      "choices": [
+        "숲이 바람에 흔들리듯 흔들렸다",
+        "기뻐하며 성대한 잔치를 열었다",
+        "아무 걱정 없이 잠잠히 기다렸다"
+      ],
+      "answer_index": 0,
+      "explanation": "사 7:2 — '그 마음이 삼림이 바람에 흔들림 같이 흔들렸더라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "하나님은 이사야를 통해 아하스에게 어떤 징조를 주시겠다고 하셨습니까?",
+      "choices": [
+        "한 여인이 아들을 낳고 임마누엘이라 부르는 징조",
+        "예루살렘 성벽이 즉시 더 높아지는 징조",
+        "아하스가 스스로 강한 군대를 세우는 징조"
+      ],
+      "answer_index": 0,
+      "explanation": "사 7:14 — '처녀가 잉태하여 아들을 낳을 것이요 그 이름을 임마누엘이라 하리라'"
+    }
+  ],
+  "era_code": "era_divided_kingdom",
+  "story_index": 36,
+  "source_version": "2026-06-09"
+}

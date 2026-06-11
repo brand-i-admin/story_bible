@@ -1,0 +1,45 @@
+{
+  "era_code": "era_divided_kingdom",
+  "story_index": 49,
+  "story_title": "토굴의 예레미야: 왕에게 전하다",
+  "source_version": "2026-06-09",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "예레미야는 갈대아 군대가 예루살렘에 대해 어떻게 한다고 전했습니까?",
+      "choices": [
+        "돌아와 성을 불사를 것이라 전했다",
+        "다시는 오지 않는다고 전했다",
+        "성전을 지어 준다고 전했다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 37:8 — '갈대아인이 다시 와서 이 성을 쳐서 취하여 불사르리라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "베냐민 문에서 문지기 우두머리는 예레미야를 어떻게 몰아세웠습니까?",
+      "choices": [
+        "갈대아인에게 항복한다고 몰았다",
+        "성전을 수리하지 않는다고 칭찬했다",
+        "왕의 보물을 숨겼다고 축복했다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 37:13 — '네가 갈대아인에게 항복하려 하는도다'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "감옥에서 나온 예레미야는 시드기야 왕에게 어떤 말씀을 전했습니까?",
+      "choices": [
+        "왕이 바벨론 왕의 손에 넘겨진다고 전했다",
+        "왕이 곧 애굽의 왕이 된다고 전했다",
+        "왕이 예레미야를 제사장으로 삼는다고 전했다"
+      ],
+      "answer_index": 0,
+      "explanation": "렘 37:17 — '왕이 바벨론 왕의 손에 붙임을 입으리이다'"
+    }
+  ],
+  "story_id": "era_divided_kingdom_n049"
+}
