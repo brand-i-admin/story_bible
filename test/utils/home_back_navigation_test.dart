@@ -77,7 +77,19 @@ void main() {
       );
     });
 
-    test('returns from timeline mode to home', () {
+    test('returns from timeline unit picker to home', () {
+      expect(
+        resolveHomeBackAction(
+          selectedEraId: 'era-exodus',
+          selectionMode: SelectionMode.timeline,
+          selectionStep: 2,
+          selectedLandmarkId: null,
+        ),
+        HomeBackAction.returnToHome,
+      );
+    });
+
+    test('returns from timeline events to timeline unit picker', () {
       expect(
         resolveHomeBackAction(
           selectedEraId: 'era-exodus',
@@ -85,7 +97,7 @@ void main() {
           selectionStep: 3,
           selectedLandmarkId: null,
         ),
-        HomeBackAction.returnToHome,
+        HomeBackAction.returnToTimelineUnitPicker,
       );
     });
   });

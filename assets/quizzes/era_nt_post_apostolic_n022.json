@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 22,
+  "story_title": "그리스도의 충만과 거짓 가르침 경계",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "그리스도에 대해 바울이 사용한 표현은 무엇입니까?",
+      "choices": [
+        "형상",
+        "그림자",
+        "문지기"
+      ],
+      "answer_index": 0,
+      "explanation": "골 1:15 — '보이지 아니하시는 하나님의 형상이요'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울은 그리스도 안에 무엇이 충만히 거한다고 말합니까?",
+      "choices": [
+        "신성의 모든 충만",
+        "세상의 모든 철학",
+        "로마의 모든 권세"
+      ],
+      "answer_index": 0,
+      "explanation": "골 2:9 — '신성의 모든 충만이 육체로 거하시고'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "바울이 경계한 가르침은 무엇을 따른 것이었습니까?",
+      "choices": [
+        "사람의 유전과 세상의 초등학문",
+        "그리스도의 복음",
+        "감사의 기도"
+      ],
+      "answer_index": 0,
+      "explanation": "골 2:8 — '사람의 유전과 세상의 초등학문을 좇음이요'"
+    }
+  ]
+}

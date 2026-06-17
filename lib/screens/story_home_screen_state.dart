@@ -231,6 +231,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return timeline;
   }
 
+  List<StoryEvent> _timelineForSelectedTimelineUnits(StoryState state) {
+    if (state.selectedTimelineUnitCodes.isEmpty) {
+      return const <StoryEvent>[];
+    }
+    final timeline = state.events
+        .where((e) => state.selectedTimelineUnitCodes.contains(e.unitCode))
+        .toList(growable: false);
+    timeline.sort((a, b) {
+      final cmp = a.globalRank.compareTo(b.globalRank);
+      if (cmp != 0) {
+        return cmp;
+      }
+      return a.id.compareTo(b.id);
+    });
+    return timeline;
+  }
+
+  Set<String> _allTimelineUnitCodes(StoryState state) =>
+      state.events.map((event) => event.unitCode).toSet();
+
   /// 지도에 넘길 타임라인: 커밋된 `state.displayedEventIds` 에 속한 사건만.
   /// 비어 있으면 빈 리스트 → 지도 핀/화살표가 완전히 사라진다.
   List<StoryEvent> _timelineForMap(
@@ -272,7 +292,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return state.selectedEraId != null;
     }
     if (_mode == _SelectionMode.timeline) {
-      return state.selectedEraId != null && state.displayedEventIds.isNotEmpty;
+      return state.selectedEraId != null &&
+          state.selectedTimelineUnitCodes.isNotEmpty &&
+          state.displayedEventIds.isNotEmpty;
     }
     return state.selectedCharacterCodes.isNotEmpty &&
         !_hasPendingCharacterSelectionChanges(state);
@@ -357,6 +379,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // viewport 높이 대비 비율 — 안전한 범위로 clamp.
       return _sheetFractionForHeight(size, px, min: 0.28, max: 0.48);
     }
+    if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
+      final unitCount = _allTimelineUnitCodes(state).length;
+      final rowCount = (unitCount / 2).ceil();
+      const rowPx = 120.0;
+      const chromePx = 122.0;
+      final visibleRows = rowCount <= 1
+          ? 1.0
+          : rowCount == 2
+          ? 2.0
+          : 2.35;
+      final px = chromePx + visibleRows * rowPx;
+      return _sheetFractionForHeight(size, px, min: 0.28, max: 0.50);
+    }
     return _sheetFractionForHeight(
       size,
       _selectionSheetCardOnlyHeight,
@@ -434,6 +469,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return (
         message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「→」 버튼을 눌러주세요.',
         icon: Icons.people_alt_rounded,
+      );
+    }
+    if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
+      return (
+        message: '아래 패널에서 보고 싶은 단위를 고른 뒤\n「다음」 버튼을 눌러주세요.',
+        icon: Icons.view_agenda_rounded,
       );
     }
     return null;
@@ -595,6 +636,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       ctl.setSelectedEra(null);
       ctl.clearSelectionMode();
       ctl.selectLandmark(null);
+      ctl.setSelectedTimelineUnits(const <String>{});
       ctl.setDisplayedEvents(const <String>{});
       setState(() {
         _mode = null;
@@ -608,7 +650,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
 
     if (step == 2 && _mode == _SelectionMode.timeline) {
-      unawaited(_enterTimelineMode(ref.read(storyControllerProvider)));
+      ctl.setDisplayedEvents(const <String>{});
+      setState(() {
+        _selectionStep = 2;
+        _draftDisplayedEventIds = const <String>{};
+        _awaitingRevealComplete = false;
+        _revealInstantly = false;
+        _resetMapHint();
+      });
+      _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
       return;
     }
 
@@ -616,6 +666,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 장소/인물 선택 + 사건 선택 초기화. 시대 + 모드는 유지.
       ctl.selectLandmark(null);
       ctl.setSelectedCharacters(const <String>{});
+      ctl.setSelectedTimelineUnits(const <String>{});
       ctl.setDisplayedEvents(const <String>{});
       setState(() {
         _selectionStep = 2;
@@ -688,6 +739,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       case HomeBackAction.returnToCharacterPicker:
         _returnToCharacterPickerFromEvents(state);
         return;
+      case HomeBackAction.returnToTimelineUnitPicker:
+        _returnToTimelineUnitPickerFromEvents();
+        return;
     }
   }
 
@@ -709,6 +763,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
+  void _returnToTimelineUnitPickerFromEvents() {
+    _setMapAnimationInputLocked(false);
+    final ctl = ref.read(storyControllerProvider.notifier);
+    ctl.selectEvent(null);
+    ctl.setDisplayedEvents(const <String>{});
+    setState(() {
+      _selectionStep = 2;
+      _draftDisplayedEventIds = const <String>{};
+      _awaitingRevealComplete = false;
+      _revealInstantly = false;
+      _selectionPanelStage = StorySelectionPanelStage.expanded;
+      _selectionSheetExtent = _selectionSheetExpandedSize;
+      _resetMapHint();
+    });
+  }
+
   String? _previousStepButtonLabel(StoryState state) {
     switch (_homeBackAction(state)) {
       case HomeBackAction.exitApp:
@@ -721,6 +791,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         return '장소 다시 선택';
       case HomeBackAction.returnToCharacterPicker:
         return '인물 다시 선택';
+      case HomeBackAction.returnToTimelineUnitPicker:
+        return '단위 다시 선택';
     }
   }
 
@@ -734,7 +806,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final state = ref.read(storyControllerProvider);
     if (state.selectedEraId == null || _mode == null) return 1;
     if (_mode == _SelectionMode.timeline) {
-      return 3;
+      return _selectionStep >= 3 && state.displayedEventIds.isNotEmpty ? 3 : 2;
     }
     if (_mode == _SelectionMode.region) {
       return state.selectedLandmarkId == null ? 2 : 3;
@@ -796,6 +868,34 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
+  Future<void> _startTimelineUnitSelection(StoryState snapshot) async {
+    final eraId = snapshot.selectedEraId;
+    if (eraId == null) {
+      return;
+    }
+    final ctl = ref.read(storyControllerProvider.notifier);
+    ctl.setSelectionMode(SelectionMode.timeline);
+    ctl.setSelectedTimelineUnits(const <String>{});
+    ctl.setDisplayedEvents(const <String>{});
+    if (!snapshot.events.any((event) => event.eraId == eraId)) {
+      await ctl.selectEra(eraId);
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _mode = _SelectionMode.timeline;
+      _selectionStep = 2;
+      _draftSelectedCharacterCodes = const <String>{};
+      _draftDisplayedEventIds = const <String>{};
+      _selectionPanelStage = StorySelectionPanelStage.expanded;
+      _selectionSheetExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
+      _awaitingRevealComplete = false;
+      _revealInstantly = false;
+      _resetMapHint();
+    });
+  }
+
   Future<void> _enterTimelineMode(StoryState snapshot) async {
     final eraId = snapshot.selectedEraId;
     if (eraId == null) {
@@ -809,20 +909,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (!mounted) {
       return;
     }
-
     final state = ref.read(storyControllerProvider);
-    final timeline = _timelineForEra(state);
+    final timeline = _timelineForSelectedTimelineUnits(state);
     if (timeline.isEmpty) {
       setState(() {
         _mode = _SelectionMode.timeline;
-        _selectionStep = 3;
+        _selectionStep = 2;
         _draftSelectedCharacterCodes = const <String>{};
         _draftDisplayedEventIds = const <String>{};
         _selectionPanelStage = StorySelectionPanelStage.expanded;
         _selectionSheetExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
         _awaitingRevealComplete = false;
         _revealInstantly = false;
-        _mapHintDismissed = true;
+        _resetMapHint();
       });
       return;
     }
@@ -873,6 +972,31 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _mapPanelController.focusEvents(zoomBoost: 1.0);
     });
+  }
+
+  void _toggleTimelineUnit(String unitCode) {
+    ref.read(storyControllerProvider.notifier).toggleTimelineUnit(unitCode);
+  }
+
+  void _selectAllTimelineUnits() {
+    final state = ref.read(storyControllerProvider);
+    ref
+        .read(storyControllerProvider.notifier)
+        .setSelectedTimelineUnits(_allTimelineUnitCodes(state));
+  }
+
+  void _clearTimelineUnits() {
+    ref
+        .read(storyControllerProvider.notifier)
+        .setSelectedTimelineUnits(const <String>{});
+  }
+
+  Future<void> _proceedFromTimelineUnitStep() async {
+    final state = ref.read(storyControllerProvider);
+    if (state.selectedTimelineUnitCodes.isEmpty) {
+      return;
+    }
+    await _enterTimelineMode(state);
   }
 
   void _toggleDraftDisplayedEvent(String eventId) {
@@ -1484,6 +1608,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (_mode == _SelectionMode.character && characterCodes.isNotEmpty) {
       return _timelineForSelectedCharacters(state, characterCodes);
     }
+    if (_mode == _SelectionMode.timeline &&
+        state.selectedTimelineUnitCodes.isNotEmpty) {
+      return _timelineForSelectedTimelineUnits(state);
+    }
     final all = [...state.events]
       ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
     return all;
@@ -1979,9 +2107,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       state,
       state.selectedCharacterCodes,
     );
-    final eraTimeline = _timelineForEra(state);
+    final selectedUnitTimeline = _timelineForSelectedTimelineUnits(state);
     final storyPanelTimeline = _mode == _SelectionMode.timeline
-        ? eraTimeline
+        ? selectedUnitTimeline
         : characterTimeline;
     // 지도에 실제로 렌더할 사건: 커밋된 displayedEventIds 로 필터.
     final mapTimeline = _timelineForMap(state, storyPanelTimeline);
@@ -2066,7 +2194,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     : (_mode == _SelectionMode.timeline &&
                           _selectionStep >= 3 &&
                           state.displayedEventIds.isNotEmpty)
-                    ? 'timeline:${state.selectedEraId}:${state.displayedEventIds.length}'
+                    ? 'timeline:${state.selectedEraId}:${(state.selectedTimelineUnitCodes.toList()..sort()).join('+')}:${state.displayedEventIds.length}'
                     : (state.selectedLandmarkId != null
                           ? 'region:${state.selectedLandmarkId}'
                           : null),
@@ -2163,6 +2291,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           height: sheetHeight + bottomInset,
                           child: _mode == _SelectionMode.region
                               ? _buildRegionPanel(state, bottomInset)
+                              : (_mode == _SelectionMode.timeline &&
+                                    _selectionStep == 2)
+                              ? _buildTimelineUnitPanel(state, bottomInset)
                               : (_mode == null && _selectionStep == 1)
                               ? _buildHomeIntroPanel(state, bottomInset)
                               : StorySelectionPanel(
@@ -2466,6 +2597,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _mode == _SelectionMode.character &&
         _selectionStep == 2 &&
         draftCharacters.isNotEmpty;
+    final selectedTimelineUnits = state.selectedTimelineUnitCodes;
+    final showTimelineNext =
+        _mode == _SelectionMode.timeline &&
+        _selectionStep == 2 &&
+        selectedTimelineUnits.isNotEmpty;
     final isExpanded = stage == StorySelectionPanelStage.expanded;
     final previousLabel = _previousStepButtonLabel(state);
     return LayoutBuilder(
@@ -2476,7 +2612,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           constraints.maxWidth - horizontalPadding,
         );
         final hasPreviousAction = previousLabel != null;
-        final actionSlotWidth = showCharacterNext && hasPreviousAction
+        final showNextAction = showCharacterNext || showTimelineNext;
+        final actionSlotWidth = showNextAction && hasPreviousAction
             ? math.min(136.0, math.max(118.0, innerWidth * 0.35))
             : math.min(118.0, math.max(92.0, innerWidth * 0.30));
         final leftAction = Row(
@@ -2485,16 +2622,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             if (previousLabel != null) ...[
               _PreviousStepPill(
                 label: previousLabel,
-                compact: showCharacterNext,
+                compact: showNextAction,
                 onPressed: _handleHomeBackPressed,
               ),
-              if (showCharacterNext) const SizedBox(width: 4),
+              if (showNextAction) const SizedBox(width: 4),
             ],
             if (showCharacterNext)
               _CharacterNextPill(
                 count: draftCharacters.length,
                 compact: previousLabel != null,
                 onPressed: _proceedFromCharacterStep,
+              ),
+            if (showTimelineNext)
+              _TimelineUnitNextPill(
+                count: selectedTimelineUnits.length,
+                compact: previousLabel != null,
+                onPressed: () => unawaited(_proceedFromTimelineUnitStep()),
               ),
           ],
         );
@@ -2543,7 +2686,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             children: [
               SizedBox(
                 width: actionSlotWidth,
-                child: !hasPreviousAction && !showCharacterNext
+                child:
+                    !hasPreviousAction &&
+                        !showCharacterNext &&
+                        !showTimelineNext
                     ? const SizedBox.shrink()
                     : Align(
                         alignment: Alignment.centerLeft,
@@ -2591,6 +2737,29 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  Widget _buildTimelineUnitPanel(StoryState state, double bottomInset) {
+    return Container(
+      decoration: _parchmentPanelDecoration(),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          _panelStageHandle(),
+          Expanded(
+            child: TimelineUnitPickPanel(
+              events: _timelineForEra(state),
+              selectedUnitCodes: state.selectedTimelineUnitCodes,
+              onToggleUnit: _toggleTimelineUnit,
+              onSelectAll: _selectAllTimelineUnits,
+              onClear: _clearTimelineUnits,
+              onNext: () => unawaited(_proceedFromTimelineUnitStep()),
+              bottomInset: bottomInset,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHomeIntroBody(StoryState state) {
     return Container(
       color: Colors.transparent,
@@ -2618,7 +2787,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _handlePickMode(SelectionMode mode, StoryState state) async {
     final ctl = ref.read(storyControllerProvider.notifier);
     if (mode == SelectionMode.timeline) {
-      await _enterTimelineMode(state);
+      await _startTimelineUnitSelection(state);
       return;
     }
     if (mode == SelectionMode.region) {

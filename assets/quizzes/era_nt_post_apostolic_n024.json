@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 24,
+  "story_title": "말세의 어려움과 바울의 마지막 부탁",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울은 모든 성경이 어디에서 난 것이라고 말합니까?",
+      "choices": [
+        "하나님의 감동",
+        "로마 법령",
+        "사람의 상상"
+      ],
+      "answer_index": 0,
+      "explanation": "딤후 3:16 — '모든 성경은 하나님의 감동으로 된 것으로'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울이 디모데에게 때를 얻든지 못 얻든지 하라고 한 일은 무엇입니까?",
+      "choices": [
+        "말씀을 전파하는 일",
+        "감옥을 피하는 일",
+        "서신을 숨기는 일"
+      ],
+      "answer_index": 0,
+      "explanation": "딤후 4:2 — '너는 말씀을 전파하라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "바울은 자신의 마지막 사명을 어떤 말로 표현합니까?",
+      "choices": [
+        "선한 싸움을 싸우고 달려갈 길을 마쳤다",
+        "아직 아무 일도 시작하지 않았다",
+        "모든 고난을 피하고 편히 쉬었다"
+      ],
+      "answer_index": 0,
+      "explanation": "딤후 4:7 — '내가 선한 싸움을 싸우고'"
+    }
+  ]
+}

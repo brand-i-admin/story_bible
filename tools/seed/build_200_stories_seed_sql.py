@@ -274,6 +274,9 @@ class NormalizedEvent:
     end_year: int | None
     time_precision: str
     story_index: int
+    unit_code: str
+    unit_title: str
+    unit_order: int
     landmark_code: str  # v2 위치 모델 — events.landmark_id 의 source
     characters: list[str]
     refs: list[BibleRef]
@@ -616,6 +619,12 @@ def normalize_events(
 
         era_code = str(row["era"]).strip()
         story_index_int = int(story_index)
+        unit_code = normalize_space(str(row.get("unit_code", "default"))) or "default"
+        unit_title = (
+            normalize_space(str(row.get("unit_title", "전체 흐름"))) or "전체 흐름"
+        )
+        raw_unit_order = row.get("unit_order", 1)
+        unit_order = int(raw_unit_order) if isinstance(raw_unit_order, int) else 1
         landmark_code = landmark_mapping.get((era_code, story_index_int))
         if not landmark_code:
             raise ValueError(
@@ -637,6 +646,9 @@ def normalize_events(
                 end_year=end_year_int,
                 time_precision=time_precision,
                 story_index=story_index_int,
+                unit_code=unit_code,
+                unit_title=unit_title,
+                unit_order=unit_order,
                 landmark_code=landmark_code,
                 characters=characters,
                 refs=refs,
@@ -675,7 +687,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
     columns = (
         "era_code, title, summary, story_scenes, scene_characters, character_codes, "
         "bible_refs, start_year, end_year, time_precision, story_index, "
-        "landmark_code, status"
+        "unit_code, unit_title, unit_order, landmark_code, status"
     )
     for chunk in chunked(events, chunk_size):
         lines.append(f"with seed_events ({columns}) as (")
@@ -695,6 +707,9 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
                 f"{sql_value(event.end_year)}, "
                 f"{sql_value(event.time_precision)}, "
                 f"{sql_value(event.story_index)}, "
+                f"{sql_value(event.unit_code)}, "
+                f"{sql_value(event.unit_title)}, "
+                f"{sql_value(event.unit_order)}, "
                 f"{sql_value(event.landmark_code)}, "
                 f"{sql_value('published')}"
                 ")"
@@ -705,7 +720,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
             "insert into events ("
             "era_id, title, summary, story_scenes, scene_characters, character_codes, "
             "bible_refs, start_year, end_year, time_precision, story_index, "
-            "landmark_id, status"
+            "unit_code, unit_title, unit_order, landmark_id, status"
             ")"
         )
         lines.append("select")
@@ -720,6 +735,9 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  s.end_year,")
         lines.append("  s.time_precision,")
         lines.append("  s.story_index,")
+        lines.append("  s.unit_code,")
+        lines.append("  s.unit_title,")
+        lines.append("  s.unit_order,")
         lines.append("  lm.id,")
         lines.append("  s.status")
         lines.append("from seed_events s")
@@ -735,6 +753,9 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  start_year = excluded.start_year,")
         lines.append("  end_year = excluded.end_year,")
         lines.append("  time_precision = excluded.time_precision,")
+        lines.append("  unit_code = excluded.unit_code,")
+        lines.append("  unit_title = excluded.unit_title,")
+        lines.append("  unit_order = excluded.unit_order,")
         lines.append("  landmark_id = excluded.landmark_id,")
         lines.append("  status = excluded.status")
         lines.append(";")
@@ -837,6 +858,7 @@ def write_report(report_path: Path, events: list[NormalizedEvent]) -> None:
             "character codes expanded for disciples/apostles/brothers, then filtered by avatar prompt whitelist",
             "bible_refs/story_scenes/scene_characters are stored as jsonb on events",
             "character_codes is text[] on events; event_persons table is gone",
+            "unit_code/unit_title/unit_order group events before timeline reveal",
             "events_ordered (rank_in_era, global_rank) is a view; sorted at read time",
         ],
     }
@@ -858,6 +880,9 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
                 "start_year": event.start_year,
                 "end_year": event.end_year,
                 "time_precision": event.time_precision,
+                "unit_code": event.unit_code,
+                "unit_title": event.unit_title,
+                "unit_order": event.unit_order,
                 "landmark_code": event.landmark_code,
                 "character_codes": event.characters,
                 "bible_refs": serialize_bible_refs(event.refs),

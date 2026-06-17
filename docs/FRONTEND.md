@@ -42,13 +42,19 @@ lib/
 
 자세한 패턴/절차는 `.agents/skills/refactor/SKILL.md` 참조.
 
+### 장면 이미지 로딩
+
+- `SceneAssetLoader`는 먼저 `assets/story_images_thumbs/index.json`을 읽어 `event.title`을 앱 번들용 짧은 썸네일 디렉토리(`nt_apostolic_034` 등)로 변환한다.
+- 긴 한글 제목 디렉토리는 Android asset bundle 단계에서 URL-encoded 파일명이 길어질 수 있으므로, 앱 번들에는 `index.json`과 짧은 디렉토리를 등록한다.
+- 오래된 개발 빌드나 제안 자산을 위해 제목 기반 디렉토리 fallback과 Supabase Storage URL fallback은 유지한다.
+
 ## 2. 모델 클래스
 
 | 모델 | 파일 | 핵심 필드 | 팩토리 |
 |------|------|----------|--------|
 | Era | `models/era.dart` (40줄) | id, code, testament, name, displayOrder, mapCenter*, mapZoom | `Era.fromMap()` |
-| Character | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접 |
-| StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), sceneCharacters (List<List<String>>), **landmarkId** (v2 위치 모델 진실 소스), placeName/lat/lng (events_ordered view derive), storyIndex, rankInEra, globalRank, characterCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
+| Character | `models/person.dart` (30줄) | id, code, name, tagline, description, avatarUrl, displayOrder | 생성자 직접. DB 이름이 비어 있거나 code/영어로 내려오면 `data/character_name_fallbacks.dart`의 한글 표시명으로 보정 |
+| StoryEvent | `models/story_event.dart` | id, eraId, title, summary, storyScenes (List<String>), sceneCharacters (List<List<String>>), **unitCode/unitTitle/unitOrder** (시간 순 보기 단위), **landmarkId** (v2 위치 모델 진실 소스), placeName/lat/lng (events_ordered view derive), storyIndex, rankInEra, globalRank, characterCodes, bibleRefs (List<BibleRef>) | `StoryEvent.fromMap()` |
 | BibleRef | `models/bible_ref.dart` | book, from, to (`displayText` getter) | `BibleRef.fromMap`, `BibleRef.fromList` |
 | BibleVerse | `models/bible_verse.dart` (28줄) | translation, bookNo, bookName, chapterNo, verseNo, verseText | `BibleVerse.fromMap()` |
 | Landmark | `models/landmark.dart` | id, code, name, description, emoji, category, lat, lng, **kind** ('region'/'anchor'/'minor'/'point'), **polygon** (region 만, List<LatLng>), **parentLandmarkId**, **aliasGroupId**, displayPriority, eraCodes, relatedEventCodes (`isRegion/isAnchor/isMinor/latLng` getter) | `Landmark.fromMap()` |
@@ -110,6 +116,7 @@ class StoryState {
   final String? selectedLandmarkId;        // v2 — region 모드에서 선택된 landmark id
   final Set<String> selectedCharacterCodes;        // character.code 기반
   final Map<String, Color> selectedCharacterColors; // key = character.code
+  final Set<String> selectedTimelineUnitCodes;      // timeline 모드 단위 복수 선택
   final String? selectedEventId;
   final Set<String> completedEventIds;
   final Set<String> bibleReadEventIds;
@@ -175,7 +182,7 @@ static const _palette = <Color>[
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 헤더는 명시적 이전 단계 버튼(`시대/방법 변경`, `장소 다시 선택`, `인물 다시 선택`)과 라벨형 stepper(`시대/방법 → 장소/인물/시간 순 → 이야기`)를 toggle 양옆 같은 줄에 노출해 되돌아가기 경로를 알 수 있게 한다. 인물 선택 중에는 `이전`과 `N명 →` 액션을 작은 pill 로 함께 표시한다. 하단 시트는 화면 맨 아래(`bottom: 0`) 에 붙되 intro/region picker/event cards 별 예상 콘텐츠 높이를 기준으로 열려, 카드 아래에 큰 빈 양피지 영역을 만들지 않는다. 모바일에서는 좌우 margin 없이 화면 폭을 모두 쓰고, tablet/desktop 에서는 지도 위 floating panel 감각을 위해 좌우 여백을 둔다. 의미 있는 `bottomInset` 이 있을 때만 시트 높이에 더해 nav bar 영역을 피하고, gesture-only/내비바 없음 환경은 화면 끝까지 사용한다. Android 시스템 뒤로가기는 `PopScope` + `utils/home_back_navigation.dart` 로 홈 내부 흐름을 되감는다: region 사건 목록→region 선택→홈, character 사건 선택→인물 선택→홈, timeline 사건 목록→홈, 시대만 고른 intro→시대 미선택 홈. 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드의 region 라벨과 path 표시 우선순위는 `StoryTerrain3dMap` 안의 MapLibre 레이어 z-order 와 GeoJSON 갱신으로 처리한다. |
+| StoryHomeScreen | `screens/story_home_screen.dart` | 메인 화면 (인물+지도+타임라인+프로필). 시트 헤더는 **단일 toggle 동그라미** — 연한 초록 pill (`_activeColor.withAlpha(0.16)` + 0.45 border) 안에 ▲/▼ 한 개. 옛 indicator bar 는 제거 (드래그로 오해되던 문제). 헤더는 명시적 이전 단계 버튼(`시대/방법 변경`, `장소 다시 선택`, `인물 다시 선택`, `단위 다시 선택`)과 라벨형 stepper(`시대/방법 → 장소/인물/단위 → 이야기`)를 toggle 양옆 같은 줄에 노출해 되돌아가기 경로를 알 수 있게 한다. 인물 선택 중에는 `이전`과 `N명 →`, 시간 순 단위 선택 중에는 `N단위 →` 액션을 작은 pill 로 함께 표시한다. 하단 시트는 화면 맨 아래(`bottom: 0`) 에 붙되 intro/region picker/timeline unit picker/event cards 별 예상 콘텐츠 높이를 기준으로 열린다. 모바일에서는 좌우 margin 없이 화면 폭을 모두 쓰고, tablet/desktop 에서는 지도 위 floating panel 감각을 위해 좌우 여백을 둔다. 의미 있는 `bottomInset` 이 있을 때만 시트 높이에 더해 nav bar 영역을 피하고, gesture-only/내비바 없음 환경은 화면 끝까지 사용한다. Android 시스템 뒤로가기는 `PopScope` + `utils/home_back_navigation.dart` 로 홈 내부 흐름을 되감는다: region 사건 목록→region 선택→홈, character 사건 선택→인물 선택→홈, timeline 사건 목록→단위 선택→홈, 시대만 고른 intro→시대 미선택 홈. 모드별 hint 는 `MapHintOverlay` 가 표시, dismiss state 는 `_mapHintDismissed`. 인물 모드의 region 라벨과 path 표시 우선순위는 `StoryTerrain3dMap` 안의 MapLibre 레이어 z-order 와 GeoJSON 갱신으로 처리한다. |
 | ~~LoginScreen~~ | ~~`screens/login_screen.dart`~~ | 삭제됨 — InlineLoginPromptCard로 대체 |
 | SavedVersesScreen | `screens/saved_verses_screen.dart` | 저장 구절 |
 | LegalDocumentsScreen | `screens/legal_documents_screen.dart` | 법률 문서 |
@@ -227,7 +234,8 @@ static const _palette = <Color>[
 | PulseHighlight | `widgets/pulse_highlight.dart` | `active` 인 동안 자식 외곽에 1.4s 사이클로 0→1→0 박동하는 골드 glow 를 그리는 래퍼. EventDetailPage 의 "다음 이야기" 카드에 부착해 다음 이동 동선을 시각적으로 유도. |
 | AvatarProgressRing | `widgets/avatar_progress_ring.dart` | 아바타 둘레에 초록 원형 progress 호를 그리는 래퍼 (12시 방향 시계방향, 항상 초록). 옵션 `name` 을 주면 아바타 내부 하단에 솔리드 다크 pill 라벨을 오버레이해 외부 텍스트 라인을 제거. ProfileTabPage 인물 진행도 행에서 LinearProgressIndicator 대체로 사용. |
 | EraPickRows | `widgets/v2/era_pick_rows.dart` | 시대 선택 칩 — 구약/신약 두 줄. HomeIntroPanel + ProfileTabPage 의 "장소로 시작" 탭 공유. `eraIconFor(code)` 도 export. |
-| HomeIntroPanel | `widgets/v2/home_intro_panel.dart` | 첫 화면 "오늘은 성경 어디를 여행해볼까요?" 패널. 두 단계: ① **여행할 시대** (구약/신약 칩, 단일 선택) ② **어떻게 볼까요?** (`시간 순으로 보기` / `인물과 걷기` / `장소로 시작` 3개 컴팩트 버튼 한 줄). 각 버튼은 아이콘+제목을 같은 줄에 두고 아래에 2줄 설명형 문구를 붙이며, `시간 순으로 보기`는 시계 아이콘과 "선택한 시대의 사건을 / 시간 순으로 봅니다" 문구를 쓴다. 시대를 고른 뒤에는 ① 영역(헤더+칩) 이 `AnimatedOpacity` 0.55 로 흐려지고 입력이 잠겨, 다시 고를 때는 헤더의 "시대 다시 선택" 또는 stepper 의 "시대/방법" 경로를 사용한다. ② 헤더는 `ink800` + 굵은 글씨로 차별화되어 다음 행동을 유도. 제목/하단 안내 문구는 `FittedBox.scaleDown` + `maxLines:1` 로 좁은 폰에서도 1줄 보장. |
+| HomeIntroPanel | `widgets/v2/home_intro_panel.dart` | 첫 화면 "오늘은 성경 어디를 여행해볼까요?" 패널. 두 단계: ① **여행할 시대** (구약/신약 칩, 단일 선택) ② **어떻게 볼까요?** (`시간 순으로 보기` / `인물과 걷기` / `장소로 시작` 3개 컴팩트 버튼 한 줄). 각 버튼은 아이콘+제목을 같은 줄에 두고 아래에 2줄 설명형 문구를 붙이며, `시간 순으로 보기`를 누르면 바로 사건을 펼치지 않고 `TimelineUnitPickPanel`에서 시대 내부 단위를 복수 선택한 뒤 `다음`으로 사건 목록을 연다. 시대를 고른 뒤에는 ① 영역(헤더+칩) 이 `AnimatedOpacity` 0.55 로 흐려지고 입력이 잠겨, 다시 고를 때는 헤더의 "시대 다시 선택" 또는 stepper 의 "시대/방법" 경로를 사용한다. ② 헤더는 `ink800` + 굵은 글씨로 차별화되어 다음 행동을 유도. 제목/하단 안내 문구는 `FittedBox.scaleDown` + `maxLines:1` 로 좁은 폰에서도 1줄 보장. |
+| TimelineUnitPickPanel | `widgets/v2/timeline_unit_pick_panel.dart` | 시간 순 보기 step 2. `StoryEvent.unitCode/unitTitle/unitOrder`로 이벤트를 묶어 2열 카드로 표시하고, 사용자가 하나 이상 단위를 선택하면 `N단위 다음`으로 해당 단위의 사건만 시간순 reveal 한다. 한 시대에 단위가 하나뿐인 구약 시대도 같은 UI를 사용한다. |
 | MapHintOverlay | `widgets/v2/map_hint_overlay.dart` | 지도 위 흐릿한 검정 패널 안내 문구. 상단 배지에 "화면 아무데나 누르면 사라집니다"를 통일 노출해 고정 안내가 아니라 임시 안내임을 드러낸다. 모드별로 다른 메시지: region picker 단계 = "노란 지역을 눌러…", character step 2 = "인물을 골라 「→」 버튼…". 안내가 떠 있는 동안 지도·안내문·하단 시트 어디든 pointer down 이 들어오면 dismiss 한다. 지도 오버레이 영역은 `IgnorePointer` 로 입력을 막지 않아 첫 탭도 아래 MapLibre hit-test 로 전달되고, 하단 시트 입력은 힌트 dismiss 와 기존 버튼/스크롤 동작을 함께 처리한다. MapLibre 일반 탭도 `onMapInteraction` 으로 부모에 전달된다. 장소 선택 모드 전환 직후에는 버튼 터치 누수 방지 suppression 을 짧게 정리해 후속 region 탭을 빠르게 받는다. dismiss flag 는 `StoryHomeScreen._mapHintDismissed`. |
 | ProfileMiniMap | `widgets/profile/profile_mini_map.dart` | 프로필 "장소로 시작" 탭의 미니 맵. 선택된 시대의 region 폴리곤을 진행률로 알파 채움(검정→시대컬러), 라벨에 완료 이야기 수와 지역 퀴즈 정답/풀이 수를 `x/x`로 함께 표시한다. region 폴리곤이나 라벨을 누르면 그 지역 사건 카드 팝업이 열리고, 사건 카드 순서대로 `순번 → 첫 장면 썸네일 → 제목/정답·오답·헷갈림`을 표시하며 빨강/주황/초록 복습 상태를 카드 배경색으로 보여 준다. 모든 사건에 감정이 새겨진 region 은 지도 색과 이질감이 적은 옅은 채움 + 골드 경계선만 남겨 딱지를 모은 느낌을 준다. point-in-polygon 으로 사건↔region 매핑. |
 | ProfileEmotionDiary | `widgets/profile/profile_emotion_diary.dart` | 프로필 "나의 다이어리" 탭. `user_event_emotion_marks.updated_at`을 KST 날짜로 묶어 접힘 상태에서는 지난주+이번주 2주(일~토)를 보여 주고, 펼치면 해당 월 달력과 이전/다음 월 이동을 제공한다. 이전달 날짜가 지난주 줄에 걸리면 월간 보기와 같이 흐린 색으로 표시한다. 패널 헤더는 연도/월, 펼치기/접기 버튼, 펼친 상태의 이전/다음 달 버튼을 같은 줄에 배치한다. 날짜 셀은 카드/버튼 테두리 없이 표시하되 날짜 사이에 옅은 그리드 선을 두고, 오늘 날짜 숫자만 원형으로 강조한다. 감정이 없는 주는 날짜 숫자만 보이도록 낮은 row로, 감정이 있는 주는 해당 주에서 가장 많이 새긴 날짜 기준으로 1~2개=1줄, 3개 이상=2줄 높이를 확보한다. 하루 4개 이상은 달력 셀에 감정 3개와 `+x`를 보여 주고, 전체 목록은 구분선 아래 "오늘의 내 감정" 섹션에 표시한다. 감정 row를 누르면 홈 지도/지역 복원 준비를 기다리지 않고 사건 상세 페이지로 바로 진입하며, 짧은 전환 로딩만 패널 입력을 막는다. 같은 이야기에 감정을 다시 새기면 기존 row의 `updated_at`이 갱신되어 최신 날짜에만 나타난다. |

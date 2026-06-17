@@ -11,6 +11,7 @@ import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
+import 'character_name_fallbacks.dart';
 
 class StoryRepository {
   StoryRepository(this._client);
@@ -39,7 +40,10 @@ class StoryRepository {
       return Character(
         id: map['id'] as String,
         code: map['code'] as String,
-        name: map['name'] as String,
+        name: localizedCharacterName(
+          code: map['code'] as String,
+          name: map['name'] as String?,
+        ),
         tagline: map['tagline'] as String?,
         description: map['description'] as String?,
         avatarUrl: map['avatar_url'] as String?,
@@ -204,7 +208,7 @@ class StoryRepository {
       final code = row['code'] as String?;
       final name = row['name'] as String?;
       if (code != null && name != null) {
-        result[code] = name;
+        result[code] = localizedCharacterName(code: code, name: name);
       }
     }
     return result;

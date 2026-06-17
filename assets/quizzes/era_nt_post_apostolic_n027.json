@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 27,
+  "story_title": "생명의 말씀과 빛 가운데 행함",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "요한이 전한 생명의 말씀은 어떤 방식으로 증언됩니까?",
+      "choices": [
+        "보고 듣고 손으로 만진 증언",
+        "멀리서 들은 소문",
+        "로마 관리의 보고서"
+      ],
+      "answer_index": 0,
+      "explanation": "요일 1:1 — '눈으로 본 바요... 손으로 만진 바라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "빛 가운데 행하는 사람에게 일어나는 일은 무엇입니까?",
+      "choices": [
+        "서로 사귐이 있다",
+        "형제를 미워하게 된다",
+        "죄가 전혀 문제 되지 않는다"
+      ],
+      "answer_index": 0,
+      "explanation": "요일 1:7 — '빛 가운데 행하면 우리가 서로 사귐이 있고'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "죄를 자백할 때 하나님은 어떤 분으로 나타나십니까?",
+      "choices": [
+        "미쁘시고 의로우셔서 깨끗하게 하신다",
+        "듣지 않고 지나가신다",
+        "죄를 더 크게 만드신다"
+      ],
+      "answer_index": 0,
+      "explanation": "요일 1:9 — '미쁘시고 의로우사... 깨끗하게 하실 것이요'"
+    }
+  ]
+}

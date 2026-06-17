@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PUBSPEC = REPO_ROOT / "pubspec.yaml"
@@ -68,12 +69,20 @@ def parse_assets() -> list[str]:
 
 # CI 환경에서 존재하지 않는 파일 (.gitignore 대상이지만 pubspec.yaml에 필요)
 _CI_SKIP_ASSETS = {".env"}
+_MAX_URL_ENCODED_COMPONENT = 240
 
 
 def verify(asset: str) -> tuple[bool, str]:
     """Returns (ok, reason)."""
     if asset in _CI_SKIP_ASSETS:
         return (True, "skipped (CI)")
+    for part in Path(asset).parts:
+        encoded_length = len(quote(part, safe=""))
+        if encoded_length > _MAX_URL_ENCODED_COMPONENT:
+            return (
+                False,
+                f"URL 인코딩 후 파일명 너무 김 ({encoded_length}자)",
+            )
     p = REPO_ROOT / asset
     if asset.endswith("/"):
         if not p.exists():

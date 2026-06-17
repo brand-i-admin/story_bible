@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_consummation",
+  "story_index": 9,
+  "story_title": "마지막 초청: 내가 속히 오리라",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "천사는 요한에게 이 말씀들이 어떠하다고 말합니까?",
+      "choices": [
+        "신실하고 참되다",
+        "숨겨야 할 비밀이다",
+        "사람이 만든 이야기다"
+      ],
+      "answer_index": 0,
+      "explanation": "계 22:6 — '이 말은 신실하고 참된지라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "성령과 신부가 함께 하는 초청은 무엇입니까?",
+      "choices": [
+        "오라",
+        "떠나라",
+        "잠잠하라"
+      ],
+      "answer_index": 0,
+      "explanation": "계 22:17 — '성령과 신부가 말씀하시기를 오라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "요한계시록의 마지막 응답은 무엇을 기다리는 고백입니까?",
+      "choices": [
+        "주 예수여 오시옵소서",
+        "예루살렘으로 돌아가겠습니다",
+        "책을 다시 봉하겠습니다"
+      ],
+      "answer_index": 0,
+      "explanation": "계 22:20 — '아멘 주 예수여 오시옵소서'"
+    }
+  ]
+}

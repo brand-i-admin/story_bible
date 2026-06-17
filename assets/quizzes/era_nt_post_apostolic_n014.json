@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 14,
+  "story_title": "새 언약과 질그릇의 보배",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울이 고린도 성도들에게 붙인 표현은 무엇입니까?",
+      "choices": [
+        "그리스도의 편지",
+        "로마의 칙령",
+        "상인의 장부"
+      ],
+      "answer_index": 0,
+      "explanation": "고후 3:3 — '너희는 그리스도의 편지니'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "질그릇 안에 담긴 보배는 무엇을 드러냅니까?",
+      "choices": [
+        "능력이 하나님께 있음을 드러낸다",
+        "사도의 말재주를 드러낸다",
+        "고린도의 부유함을 드러낸다"
+      ],
+      "answer_index": 0,
+      "explanation": "고후 4:7 — '능력의 심히 큰 것이 하나님께 있고'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "바울은 보이는 것과 보이지 않는 것 중 무엇을 바라보라고 합니까?",
+      "choices": [
+        "보이지 않는 영원한 것",
+        "보이는 잠깐의 것",
+        "사람들의 칭찬"
+      ],
+      "answer_index": 0,
+      "explanation": "고후 4:18 — '보이지 않는 것은 영원함이니라'"
+    }
+  ]
+}

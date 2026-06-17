@@ -4,7 +4,8 @@
     "era": "era_monarchy",
     "characters": [
       "saul",
-      "samuel"
+      "samuel",
+      "god"
     ],
     "place_name": "라마(전승)",
     "lat": 31.92,
@@ -21,11 +22,14 @@
     "end_year": -1050,
     "time_precision": "approx",
     "story_index": 1,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "젊은 청년 사울이 길에서 나귀를 찾으며 헤맨다",
-      "젊은 사울이 사무엘을 만나 대화하며 놀라는 장면",
-      "사무엘이 젊은 사울에게 기름을 붓는 장면",
-      "사무엘이 미스바에 모인 백성 앞에서 사울을 왕으로 세웠음을 선포하고, 백성들은 기뻐하며 사울 왕 만세를 외치는 장면. 화면 한쪽에는 젊은 사울이 짐 보따리들 사이에 몸을 낮추고 숨어 있어 겸손하고 두려운 마음이 드러난다. 글자는 보이지 않는다"
+      "키크고 용모가 빼어난 사울이 아버지의 잃어버린 나귀들을 찾으며 종들과 함께 산지를 다니는 모습",
+      "성문 근처에서 젊은 사울이 산당으로 올라가려는 늙은 사무엘을 만나고, 사무엘에게 하나님이 저 사람에게 기름을 부으라고 말씀하시는 말풍선",
+      "사무엘이 사울의 머리에 기름을 붓고 사울은 두려움과 경외가 섞인 얼굴이다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 왕관과 보좌 앞에서 하나님의 뜻을 따라야 하는 왕이 보이는 장면이 작은 그림처럼 보인다",
+      "사무엘이 미스바에 모인 백성 앞에서 사울을 왕으로 세웠음을 선포하고, 화면 한쪽에는 키 큰 사울이 짐 보따리들 사이에 몸을 낮추고 숨어 있다. 글자는 보이지 않는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 왕관과 보좌 앞에서 하나님의 뜻을 따라야 하는 왕이 보이는 장면이 작은 그림처럼 보인다"
     ],
     "scene_characters": [
       [
@@ -33,15 +37,16 @@
       ],
       [
         "saul",
-        "samuel"
+        "samuel",
+        "god"
       ],
       [
-        "saul",
-        "samuel"
+        "samuel",
+        "saul"
       ],
       [
-        "saul",
-        "samuel"
+        "samuel",
+        "saul"
       ]
     ]
   },
@@ -68,26 +73,29 @@
     "end_year": -1049,
     "time_precision": "approx",
     "story_index": 2,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "위협 소식이 전해진다, 사울에게 하나님의 영이 임하고, 사울이 한쌍의 황소를 토막 내어 이스라엘 전역에 선포한다.",
-      "사울이 전령을 보내 이스라엘 병력을 소집하는 장면",
-      "전투에서 사울이 승리, 얍베스가 구원받고 환호가 터진다",
-      "길갈에서 사울의 왕권이 확인된다, 사무엘이 축복하고 백성들은 기뻐한다"
+      "암몬 사람 나하스가 얍베스 길르앗을 위협했다는 소식이 전해지고, 밭에서 돌아온 사울(아직은 일반인 복장)에게 하나님의 영을 상징하는 밝은 빛이 임하고 사울의 얼굴이 분노와 책임감으로 바뀐다",
+      "사울(전투를 위해 군복을 입은 복장)이 엄중한 얼굴로 이스라엘 전역에 경고를 전하려 황소 조각이 담긴 가죽 꾸러미를 전령들에게 맡기고, 전령들은 이스라엘 여러 지파로 달려갈 준비를 한다",
+      "새벽에 사울이 이끈 군사들이 얍베스 길르앗을 구원하고, 성 안 사람들은 성문에서 눈물과 기쁨으로 맞이한다. 전투의 폭력과 시신은 보이지 않는다",
+      "길갈에서 사무엘이 사울의 왕권을 다시 확인하며 백성은 기뻐하고, 사울은 어두운 왕복이 아니라 초기의 단정한 왕복 차림으로 겸손히 서 있다"
     ],
     "scene_characters": [
       [
-        "god",
-        "saul"
-      ],
-      [
-        "saul"
-      ],
-      [
-        "saul"
-      ],
-      [
         "saul",
-        "samuel"
+        "god"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "samuel",
+        "saul"
       ]
     ]
   },
@@ -118,27 +126,30 @@
     "end_year": -1045,
     "time_precision": "approx",
     "story_index": 3,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "전투 전, 사울이 조급해하며 제사를 대신 드린다",
-      "사무엘이 사울을 엄하게 꾸짖는다",
-      "사울이 전쟁에서 승리하고 살진 송아지와 어린 양들을 남겨두고 보잘것 없는 것만 없애버렸다. 사무엘은 이를 보고 하나님의 명령에 순종하지 않았다며 사울을 꾸짖는 장면",
-      "사무엘이 뒤돌아서 떠나자 사울이 옷자락을 붙잡고, 옷자락이 찢어진다"
+      "길갈에서 블레셋 전투를 앞두고 백성이 흩어지자 사울이 조급한 얼굴로 제단 앞에 서서 사무엘을 기다리지 못하고 제사를 드린다",
+      "늙은 사무엘이 도착해 사울을 엄하게 꾸짖고 사울은 변명하려다 굳어진다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 잘못된 길에서 돌이키라는 경고와 멈춰 선 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "아말렉 전쟁 뒤 사울이 살진 양과 소를 몰래 남겨 두었고, 사무엘은 그 울음소리를 들으며 당황한 사울을 꾸짖는다",
+      "사무엘이 뒤돌아서 떠나자 사울이 절박하게 옷자락을 붙잡고, 옷자락이 찢어지며 사울의 얼굴에는 두려움과 후회가 번진다"
     ],
     "scene_characters": [
       [
         "saul"
       ],
       [
-        "saul",
-        "samuel"
+        "samuel",
+        "saul"
       ],
       [
-        "saul",
-        "samuel"
+        "samuel",
+        "saul"
       ],
       [
-        "saul",
-        "samuel"
+        "samuel",
+        "saul"
       ]
     ]
   },
@@ -165,25 +176,27 @@
     "end_year": -1030,
     "time_precision": "approx",
     "story_index": 4,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "사무엘이 어떤 집에 들어가는 장면",
-      "사무엘이 여러 청년들 앞에서 고개를 젓는 모습",
-      "젊은 다윗이 들판에서 양을 치다가 집으로 불려온다",
-      "사무엘이 젊은 다윗에게 기름을 붓는 장면"
+      "사무엘이 이새의 키 크고 훌륭해 보이는 아들들 앞에서 고개를 젓고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 왕관과 보좌 앞에서 하나님의 뜻을 따라야 하는 왕이 보이는 장면이 작은 그림처럼 보인다",
+      "막내 다윗이 들판에서 양을 치다가 집으로 불려오고, 따뜻한색 목동 겉옷과 물매 주머니를 입고 있다",
+      "사무엘이 젊은 다윗의 머리에 기름을 붓고, 다윗은 놀라움과 경외로 고개를 숙이며 이새와 형들도 뒤에서 놀란 모습으로 바라본다"
     ],
     "scene_characters": [
       [
-        "samuel"
+        "samuel",
+        "jesse"
       ],
       [
-        "samuel"
-      ],
-      [
+        "samuel",
         "david"
       ],
       [
+        "samuel",
         "david",
-        "samuel"
+        "jesse"
       ]
     ]
   },
@@ -210,15 +223,19 @@
     "end_year": -1025,
     "time_precision": "approx",
     "story_index": 5,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "골리앗의 조롱이 울리고 이스라엘 진영이 움츠러든다",
-      "18세쯤의 젊은 다윗이 사울 앞에 결연한 표정으로 서 있다",
-      "18세쯤의 젊은 다윗이 시냇가에서 돌을 집어 들고 물매를 고른다",
-      "돌이 날아가고 골리앗이 쓰러지며 사울이 승리하는 장면"
+      "엘라 골짜기에서 거대한 골리앗이 청동 갑옷과 긴 창을 들고 이스라엘 군대를 조롱하고 이스라엘 군대는 두려움에 떨고 있다",
+      "18세쯤의 젊은 다윗이 어두운 왕복의 사울 앞에 서서 사자와 곰에게서 양을 지킨 일을 말하듯 손짓하고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 목자가 잃은 양을 품고 안전한 우리로 데려오는 장면이 작은 그림처럼 보인다",
+      "18세쯤의 젊은 다윗이 시냇가에서 매끄러운 돌 다섯 개를 고르고 물매를 점검하며, 사울의 갑옷은 벗어 둔 채 목동 옷차림으로 결연하게 선다",
+      "다윗의 물매 돌이 골리앗을 쓰러뜨리고, 소년 다윗은 놀란 이스라엘 군대 앞에서 하나님이 구원하셨음을 보여 주듯 당당히 서 있다. 피나 참수 장면은 보이지 않는다"
     ],
     "scene_characters": [
       [
-        "goliath"
+        "goliath",
+        "david"
       ],
       [
         "david",
@@ -256,11 +273,14 @@
     "end_year": -1024,
     "time_precision": "approx",
     "story_index": 6,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "백성들이 다윗을 환호하고, 사울의 표정은 굳어지고, 20대 초반의 젊은 다윗은 기쁜 얼굴로 서 있다",
-      "사울이 창을 던지고, 20대 초반의 젊은 다윗이 몸을 피한다",
-      "20대 초반의 젊은 다윗이 블레셋 사람들과의 전투에서 얻은 포피 100개의 증표를 직접 보이지 않는 닫힌 꾸러미로 가져와 사울에게 바치는 장면. 사울은 놀라고 불편한 표정으로 앉아 있으며, 피와 신체 일부와 잔혹한 세부 묘사는 보이지 않는다",
-      "20대 초반의 젊은 다윗이 사울의 딸 미갈과 결혼하며 행복해하고, 사울은 뒤쪽에서 마땅치 않은 표정으로 바라보는 장면. 미갈은 이 이야기 안에서만 일관된 젊은 이스라엘 여인으로 보이며, 글자는 보이지 않는다"
+      "승리 후 백성들이 노래와 소고로 다윗을 환호하자, 20대 초반의 젊은 다윗은 겸손히 서 있고 사울은 뒤쪽에서 악한 질투와 두려움으로 눈빛이 어두워지며 표정이 굳어진다. 글자와 숫자는 보이지 않는다",
+      "궁전 안에서 악한 질투와 두려움으로 눈빛이 사나워진 사울이 창을 던지고, 20대 초반의 젊은 다윗은 하프를 내려놓고 기둥 뒤로 급히 몸을 피한다. 피와 상처는 보이지 않는다",
+      "20대 초반의 젊은 다윗이 블레셋 사람들과의 전투에서 얻은 증표를 직접 보이지 않는 닫힌 꾸러미로 가져와 사울에게 바치는 장면. 사울은 속셈이 드러난 듯 놀라고 차갑게 불편한 표정으로 앉아 있다",
+      "20대 초반의 젊은 다윗이 사울의 딸 미갈과 결혼하며 행복해하고, 사울은 뒤쪽에서 질투와 계산이 섞인 차가운 표정으로 바라보는 장면."
     ],
     "scene_characters": [
       [
@@ -310,10 +330,13 @@
     "end_year": -1023,
     "time_precision": "approx",
     "story_index": 7,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "궁전 안에서 사울이 분노로 얼굴을 굳히고 화를 내고 있으며, 가까운 한쪽에는 요나단과 20대 초반의 젊은 다윗이 몸을 낮추고 몰래 조용히 이야기하는 장면. 글자는 보이지 않는다",
-      "20대 초반의 젊은 다윗이 전쟁에서 승리하고 돌아와 사람들의 환영을 받지만, 사울은 뒤쪽에서 마땅치 않은 표정으로 바라보는 장면. 피와 시신은 보이지 않는다",
-      "궁전 안에서 악한 영에 사로잡힌 듯 어두운 표정의 사울이 다윗에게 창을 던지고, 20대 초반의 젊은 다윗은 하프를 놓고 급히 도망가는 모습. 폭력은 절제되고 피와 상처는 보이지 않는다",
+      "궁전 안에서 사울이 악한 살의와 분노로 눈빛이 사나워진 얼굴로 화를 내고 있으며, 가까운 한쪽에는 요나단과 20대 초반의 젊은 다윗이 몸을 낮추고 몰래 조용히 이야기하는 장면. 글자는 보이지 않는다",
+      "20대 초반의 젊은 다윗이 전쟁에서 승리하고 돌아와 사람들의 환영을 받지만, 사울은 뒤쪽에서 질투와 두려움이 섞인 악한 표정으로 바라보는 장면. 피와 시신은 보이지 않는다",
+      "궁전 안에서 악한 영에 사로잡힌 듯 눈빛이 사납게 흐려진 사울이 다윗에게 창을 던지고, 20대 초반의 젊은 다윗은 하프를 놓고 급히 도망가는 모습. 폭력은 절제되고 피와 상처는 보이지 않는다",
       "사울이 보낸 군사들이 미갈의 집으로 들이닥쳤는데, 미갈이 침대 위에 염소털을 씌운 우상 모양의 물건을 놓아 다윗이 누워 있는 것처럼 꾸민 장면. 미갈은 침착하게 서 있고, 다윗은 보이지 않는다. 글자는 보이지 않는다"
     ],
     "scene_characters": [
@@ -336,7 +359,7 @@
       "Show Jonathan as Sauls young adult son, matching his avatar. Keep the secret conversation clear without text labels.",
       "David is a young victorious commander returning from battle; no gore, no bodies, no readable labels.",
       "Show the harmful spirit symbolically with dark mood around Saul; no demonic creature, no gore, no injury.",
-      "Michal has no reference avatar. Show her as the same unnamed young Israelite woman from the previous story. The household idol is an object, not a living character."
+      "Michal has no reference avatar. Show her as the same unnamed young rich Israelite woman from the previous story. The household idol is an object, not a living character."
     ]
   },
   {
@@ -363,11 +386,14 @@
     "end_year": -1022,
     "time_precision": "approx",
     "story_index": 8,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "20대 후반의 젊은 다윗과 사무엘이 사울을 피해 라마 나욧으로 급히 도망가는 장면. 뒤쪽에는 추격의 긴장감이 있지만 직접적인 폭력은 보이지 않는다",
-      "들판에서 20대 후반의 젊은 다윗과 요나단이 서로 가까이 앉아 진지하게 이야기하며 다윗의 안전을 의논하는 장면. 두 사람의 우정과 긴장감이 함께 보인다",
-      "궁전 식탁 자리에서 20대 후반 요나단이 사울이 던진 창을 아슬아슬하게 피해 물러나는 장면. 사울은 격노해 있고 요나단은 충격을 받은 표정이며, 피와 상처는 보이지 않는다",
-      "들판 바위 근처에서 요나단이 활을 쏘아 신호를 보내고, 20대 후반의 젊은 다윗은 바위 뒤에서 그 신호를 듣고 조용히 도망갈 준비를 하는 장면. 글자와 말풍선은 보이지 않는다"
+      "다윗과 사무엘이 사울의 집요한 추격을 피해 라마 나욧으로 급히 도망가는 장면. 뒤쪽에는 악한 질투에서 비롯된 추격의 긴장감이 있지만 직접적인 폭력은 보이지 않는다",
+      "들판에서 다윗과 요나단이 서로 가까이 앉아 진지하게 이야기하며 다윗의 안전을 의논하는 장면. 두 사람의 우정과 긴장감이 함께 보인다",
+      "궁전 식탁 자리에서 요나단이 사울이 던진 창을 아슬아슬하게 피해 물러나는 장면. 사울은 악한 살의가 섞인 격노로 얼굴이 일그러져 있고 요나단은 충격을 받은 표정이며, 피와 상처는 보이지 않는다",
+      "들판 바위 근처에서 요나단이 활을 쏘아 신호를 보내고, 다윗은 바위 뒤에서 그 신호를 듣고 조용히 도망갈 준비를 하는 장면. 읽을 수 있는 글자는 보이지 않는다"
     ],
     "scene_characters": [
       [
@@ -416,14 +442,18 @@
     "end_year": -1012,
     "time_precision": "approx",
     "story_index": 9,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "다윗 일행이 동굴 안에 몸을 숨기고 긴장한 채 웅크리고 있다",
-      "다윗이 동굴 안에서 사울의 옷자락만 조용히 자른다",
-      "동굴 안에서 사울이 울며 고개를 숙이고, 다윗은 괜찮다고 손짓하는 장면"
+      "다윗 일행이 동굴 깊은 곳에 몸을 숨기고 긴장한 채 웅크리고 있고, 동굴 입구에는 집요한 질투로 얼굴이 굳은 사울이 어두운 왕복을 입고 아무것도 모른 채 들어온다",
+      "다윗이 칼을 들었지만 사울을 해치지 않고 겉옷 자락만 조용히 자르며, 다윗의 얼굴에는 경외와 망설임이 함께 보인다. 피와 폭력은 보이지 않는다",
+      "동굴 밖에서 다윗이 잘라낸 사울의 겉옷 자락을 들고 멀리 있는 사울에게 자신이 해치지 않았음을 보이며, 사울은 충격과 부끄러움으로 눈물을 글썽인다"
     ],
     "scene_characters": [
       [
-        "david"
+        "david",
+        "saul"
       ],
       [
         "david",
@@ -457,11 +487,14 @@
     "end_year": -1011,
     "time_precision": "approx",
     "story_index": 10,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "사울이 3000명의 군사를 거느리고 십 광야 언덕과 골짜기 사이에서 다윗을 찾는 장면. 많은 군사는 먼 배경의 질서 있는 행렬로 보이고, 사울은 앞쪽에서 굳은 표정으로 지휘한다",
+      "사울이 3000명의 군사를 거느리고 십 광야 언덕과 골짜기 사이에서 다윗을 찾는 장면. 많은 군사는 먼 배경의 질서 있는 행렬로 보이고, 사울은 앞쪽에서 집요한 질투와 악한 두려움이 섞인 굳은 표정으로 지휘한다",
       "어두운 밤, 다윗이 사울이 잠든 장막 안으로 조용히 들어가 머리맡에 놓인 창과 물통만 들고 빠져나오는 장면. 사울과 군사들은 깊이 잠들어 있고, 폭력이나 피는 보이지 않는다",
       "다윗이 멀리 산꼭대기에 서서 사울의 물통과 창을 들어 보이며 아브넬에게 호통치는 장면. 아래쪽 진영에는 아브넬과 군사들이 놀라 올려다보고, 글자는 보이지 않는다",
-      "사울이 다윗을 보고 미안한 마음으로 울며 고개를 숙이고, 멀리 산꼭대기의 다윗은 물통과 창을 들고 그 모습을 바라보는 장면. 두 사람 사이의 거리가 분명히 느껴지고, 피와 폭력은 보이지 않는다"
+      "사울이 다윗을 보고 미안한 마음으로 울며 고개를 숙이고, 멀리 산꼭대기의 다윗은 물통과 창을 들고 그 모습을 바라보는 장면. 두 사람 사이의 거리가 분명히 느껴지고, 사울의 뒤에는 군대가 있다"
     ],
     "scene_characters": [
       [
@@ -508,6 +541,9 @@
     "end_year": -1010,
     "time_precision": "approx",
     "story_index": 11,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "블레셋 군대가 수넴 들판에 진을 치고, 사울이 그 군대를 바라보며 두려워 떨고 있는 장면. 사울은 왕복을 입었지만 얼굴에는 공포와 불안이 분명하고, 전투나 폭력은 직접 보이지 않는다",
       "어두운 밤, 사울이 평범한 겉옷으로 변장한 채 엔돌의 신접한 여인에게 찾아가 사무엘의 영을 불러 달라고 부탁하는 장면. 신접한 여인은 40대 후반의 여인, 짙은 남색 머리덮개와 갈색 겉옷, 좁은 등불 곁에 선 같은 모습으로 표현한다. 주술적 상징은 과장하지 않고, 글자는 보이지 않는다",
@@ -557,6 +593,9 @@
     "end_year": -1010,
     "time_precision": "approx",
     "story_index": 12,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "길보아 산 능선에서 블레셋 군대가 활과 방패를 들고 거세게 밀려오고, 이스라엘 군사들은 흩어져 도망한다. 사울은 왕의 갑옷을 입고 언덕 위에서 전세가 무너지는 것을 바라보며 두려움에 굳어 있다. 피와 시신은 직접 보이지 않는다",
       "블레셋 궁수들의 화살이 사울의 방패와 갑옷에 박히고, 사울은 크게 다친 듯 무릎을 꿇은 채 자기 병기 든 자에게 자신을 끝내 달라고 절박하게 손짓한다. 병기 든 자는 두려워하며 뒤로 물러나고, 피와 상처의 세부 묘사는 보이지 않는다",
@@ -604,11 +643,14 @@
     "end_year": -1000,
     "time_precision": "approx",
     "story_index": 13,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "헤브론에서 이스라엘 장로들이 다윗 앞에 모여 언약을 맺고, 장로들이 다윗의 머리에 기름을 부어 온 이스라엘의 왕으로 세우는 장면. 사무엘은 보이지 않고, 글자도 보이지 않는다",
       "하나님의 밝은 임재의 빛이 다윗과 함께하는 가운데, 다윗이 군사들을 이끌고 예루살렘 성을 점령해 성문 안으로 들어가는 장면. 다윗은 담대하게 앞장서고, 성벽과 성문이 분명히 보이며, 피와 시신은 보이지 않는다",
       "두로 왕 히람이 보낸 사절들이 백향목 목재와 목수와 석수를 예루살렘에 가져오고, 일꾼들이 다윗을 위해 왕궁을 짓는 장면. 다윗은 새 왕궁 공사를 바라보며 하나님이 나라를 세우심을 깨닫는 표정이다",
-      "완성된 예루살렘 왕궁 안에서 다윗이 왕실 가족과 함께 서 있고, 여러 아내와 첩들은 단정한 고대 왕실 의복을 입은 어른들로, 아들딸들은 곁에서 밝게 지낸다. 성적 묘사는 전혀 없고, 왕가가 번성하는 평화로운 가족 장면으로 보인다"
+      "완성된 예루살렘 왕궁 안에서 다윗이 왕실 가족과 함께 서 있고, 여러 아내와 첩들은 단정한 고대 왕실 의복을 입은 어른들로, 아들딸들은 곁에서 밝게 지낸다. 하나님의 보호하심에 다윗은 감사한 얼굴"
     ],
     "scene_characters": [
       [
@@ -622,6 +664,7 @@
         "david"
       ],
       [
+        "god",
         "david"
       ]
     ],
@@ -629,7 +672,7 @@
       "The elders have no reference avatars. Show them as unnamed Israelite elders anointing David at Hebron. Do not show Samuel. No readable labels.",
       "Show God only as holy light or radiant presence with David, not as a human figure. Show conquest without gore, bodies, or visible wounds.",
       "Hiram has no reference avatar. Show foreign messengers and builders as unnamed figures with cedar timber, carpenters, and stoneworkers. No readable labels.",
-      "Show wives and concubines modestly as adult royal household members, with sons and daughters nearby. No erotic pose, no sensual framing, no readable labels."
+      "Show wives and concubines modestly as adult royal household members, with sons and daughters nearby."
     ]
   },
   {
@@ -654,10 +697,13 @@
     "end_year": -1000,
     "time_precision": "approx",
     "story_index": 14,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "언약궤를 실은 새 수레를 끄는 소들이 갑자기 뛰어 언약궤가 흔들리고, 웃사가 두 손을 뻗어 언약궤가 떨어지지 않게 붙잡으려는 장면. 웃사는 30대 이스라엘 남자, 베이지색 튜닉과 짙은 청록색 겉옷을 입은 같은 모습으로 보이며, 글자는 보이지 않는다",
       "웃사가 언약궤와 소들 곁에 쓰러져 움직이지 않고, 위에서는 하나님의 거룩한 진노를 상징하는 엄중한 금빛과 붉은 빛이 내려온다. 주변 사람들은 놀라 물러나고, 피와 상처와 시신의 세부 묘사는 보이지 않는다",
-      "언약궤 앞에서 다윗이 멈추어 고개 숙인다",
+      "다윗이 두려움으로 언약궤 앞에서 멈추어 고개를 숙이고, 손을 들어 수레가 더 나아가지 못하게 하며 주변 사람들은 숨죽여 바라본다",
       "언약궤가 예루살렘 성안으로 들어오자 다윗이 기뻐 힘을 다해 춤추며 겉옷이 벗겨지듯 흘러내리고 세마포 에봇 차림이 드러나는 장면. 노출이나 성적 묘사는 없고, 미갈은 궁 창가 멀리서 못마땅한 표정으로 다윗을 지켜본다"
     ],
     "scene_characters": [
@@ -702,10 +748,13 @@
     "end_year": -995,
     "time_precision": "approx",
     "story_index": 15,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "으리으리한 백향목 궁전 안에서 다윗이 나단을 불러, 자신은 백향목 궁에 살지만 하나님의 언약궤는 장막 안에 있으니 하나님을 위한 집을 짓고 싶다고 제안하는 장면. 나단은 곁에서 진지하게 듣고, 궁전의 기둥과 백향목 장식이 분명히 보인다",
-      "두 구역으로 나눈 장면: 한쪽에는 밤에 나단이 하나님의 음성을 듣고 경외하는 모습, 다른 한쪽에는 다음 날 나단이 다윗에게 와서 하나님이 다윗의 마음을 아시고 기뻐하시며, 성전은 후손이 짓고 하나님이 다윗의 집과 왕위를 세우시겠다는 약속을 전하는 모습. 하나님의 음성은 밝은 빛으로만 표현되고 글자는 보이지 않는다",
-      "다윗이 성막 안으로 들어가 언약궤 가까이에 앉아 하나님께 감사 기도를 드리고, 주변에는 하나님의 부드러운 빛이 가득한 장면. 다윗은 겸손하게 고개를 숙이고, 왕관과 화려한 권위보다 감사와 경외가 강조된다"
+      "두 구역으로 나눈 장면: 한쪽에는 밤에 나단이 하나님의 음성을 듣고 경외하는 모습, 다른 한쪽에는 다음 날 나단이 다윗에게 와서 하나님이 다윗의 마음을 아시고 기뻐하시며, 성전은 후손이 짓고 하나님이 다윗의 집과 왕위를 세우시겠다는 약속을 전하는 모습. 하나님의 음성은 밝은 빛으로만 표현되고 글자는 보이지 않는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다",
+      "다윗이 성막 안으로 들어가 언약궤 가까이에 앉아 하나님께 감사 기도를 드리고, 주변에는 하나님의 부드러운 빛이 가득한 장면. 다윗은 겸손하게 고개를 숙이고, 왕관과 화려한 권위보다 감사와 경외가 강조된다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다"
     ],
     "scene_characters": [
       [
@@ -733,7 +782,8 @@
     "era": "era_monarchy",
     "characters": [
       "david",
-      "god"
+      "god",
+      "bathsheba"
     ],
     "place_name": "예루살렘 왕궁(전승)",
     "lat": 31.778,
@@ -750,29 +800,37 @@
     "end_year": -990,
     "time_precision": "approx",
     "story_index": 16,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "저녁 무렵 예루살렘 왕궁 옥상에서 다윗이 아래 뜰을 바라보다가, 낮은 가림막 뒤에서 물동이와 목욕 천으로 몸을 씻는 밧세바의 아름다운 모습을 보고 마음이 흔들리는 장면. 노출이나 선정적 묘사는 보이지 않는다",
-      "왕궁 안, 다윗이 사자를 통해 밧세바를 불러들이고, 장면을 두 구역으로 나누어 한쪽에는 엄숙한 궁전 복도에서 밧세바가 다윗 앞에 서는 모습, 다른 쪽에는 시간이 지나 밧세바가 조심스럽게 배를 감싸며 임신 소식을 전하는 상징 장면. 침실이나 성적 장면은 보이지 않는다",
-      "다윗이 요압에게 편지를 보내 우리아를 가장 위험한 전투 앞으로 세우게 하고, 멀리 성벽 아래 전쟁터에서는 우리아가 방패를 떨어뜨리며 쓰러진 사실이 전해지는 장면. 요압은 이름 없는 군대 지휘관으로 보이고, 피와 시신의 세부 묘사는 보이지 않는다",
-      "전령이 우리아의 죽음 소식을 전하고 다윗은 무거운 얼굴로 서 있으며, 밧세바는 검소한 상복 차림으로 조용히 울고, 위쪽에는 하나님이 다윗의 악함을 보시는 듯한 엄중한 금빛과 붉은 빛이 왕궁을 비추는 장면. 하나님은 사람 형상으로 보이지 않고, 피와 시신은 보이지 않는다"
+      "저녁 무렵 예루살렘 왕궁 옥상에서 왕복을 느슨히 걸친 다윗이 아래 뜰을 내려다보고, 낮은 가림막 뒤에서는 밧세바가 물동이와 목욕 천으로 목욕하는 모습이 멀리 보인다. 노출이나 선정적 묘사는 없다",
+      "왕궁 안에서 다윗이 사자를 보내 밧세바를 부르게 하고, 장면 한쪽에는 밧세바가 엄숙한 궁전 복도에서 다윗 앞에 서며, 다른 한쪽에는 시간이 지나 밧세바가 조심스럽게 배를 감싸 임신 소식을 전하는 상징 장면이 보인다. 침실이나 성적 장면은 없다",
+      "다윗이 헷 사람 우리아를 전쟁터에서 앞장 서서 싸우게 하고,우리아는 요압 군대에 쓰러진다",
+      "우리아의 죽음 소식에 궁전 안에서 다윗은 무거운 얼굴로 밧세바를 위로하고 밧세바는 검소한 상복 차림으로 조용히 울고, 위쪽에는 하나님이 다윗의 악함을 보시는 듯한 엄중한 금빛과 붉은 빛이 왕궁을 비춘다."
     ],
     "scene_characters": [
       [
-        "david"
+        "david",
+        "bathsheba"
       ],
-      [
-        "david"
-      ],
-      [],
       [
         "david",
+        "bathsheba"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david",
+        "bathsheba",
         "god"
       ]
     ],
     "scene_prompt_notes": [
-      "Bathsheba has no reference avatar. Show her consistently in this story as the same dignified Jerusalem woman with dark braided hair, a deep blue outer shawl, and a bronze water jar. No nudity, no sexualized framing, no readable labels.",
+      "Show Bathsheba as a dignified Jerusalem woman with dark braided hair, a deep blue outer shawl, and a bronze water jar. No nudity, no sexualized framing, no readable labels.",
       "Use a split composition for summons and pregnancy news. Keep Bathsheba visually consistent with scene 1. No bedroom scene, no sexual act, no readable text.",
-      "Uriah and Joab have no reference avatars. Show Uriah as an unnamed loyal soldier in simple armor and Joab as an unnamed commander. No gore, no close-up injury, no readable labels.",
+      "",
       "Show God only as holy judgment light, never as a human figure. Keep Bathsheba visually consistent and grieving. No gore, no body, no readable labels."
     ]
   },
@@ -799,11 +857,14 @@
     "end_year": -990,
     "time_precision": "approx",
     "story_index": 17,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "예루살렘 왕궁에서 나단 선지자가 다윗 앞에 서서 비유를 들려주고, 큰 글자 없는 말풍선 안에는 많은 양을 가진 부자가 가난한 사람의 작은 어린 양을 빼앗아 가는 그림이 담겨 있다",
       "다윗이 왕좌에서 일어나 의로운 분노로 나단에게 그 부자는 잘못했고 네 배로 갚아야 한다고 말하며, 큰 글자 없는 말풍선 안에는 부자가 가난한 사람에게 어린 양 네 마리를 돌려주는 그림이 담겨 있다",
       "나단이 다윗을 향해 단호하게 손가락질하며 책망하고, 다윗은 충격으로 굳어 있다. 큰 글자 없는 말풍선 안에는 병든 아기를 상징하는 어두운 빈 요람과 꺼져 가는 작은 등불이 보인다. 죽음이나 시신은 직접 보이지 않는다",
-      "다윗이 왕궁 바닥에 엎드려 금식하며 하나님께 아이를 살려 달라고 밤새 기도하고, 신하들은 멀리서 걱정스럽게 지켜본다. 위쪽에는 사람 형상 없는 하나님의 조용한 빛이 드리운다"
+      "다윗이 왕궁 바닥에 엎드려 금식하며 하나님께 아이를 살려 달라고 밤새 기도하고, 신하들은 멀리서 걱정스럽게 지켜본다. 위쪽에는 사람 형상 없는 하나님의 조용한 빛이 드리운다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 잘못된 길에서 돌이키라는 경고와 멈춰 선 사람들이 보이는 장면이 작은 그림처럼 보인다"
     ],
     "scene_characters": [
       [
@@ -852,11 +913,14 @@
     "end_year": -985,
     "time_precision": "approx",
     "story_index": 18,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "예루살렘 왕궁 뜰, 다윗의 아들 암논이 20대 왕자 모습으로 다말을 집요하게 바라보며 따라가고, 20대 공주 다말은 화려한 채색 긴 옷을 입고 불편한 표정으로 거리를 두는 장면. 성적 묘사는 전혀 보이지 않는다",
       "암논이 병든 척 침대에 누워 있고, 다말이 구운 빵과 과자를 들고 방 안으로 들어오자 암논이 손목을 붙잡아 침상 쪽으로 끌어당기려 하며 다말은 놀라 뒤로 물러나는 장면. 침실 장면은 위협의 순간만 보이고 성폭력 행위나 노출은 직접 보이지 않는다",
       "머리에 재를 얹고 찢어진 채색 옷을 붙든 다말이 압살롬의 집으로 와서 울고, 20대 후반의 압살롬은 긴 머리와 왕자 복장으로 다말을 보호하듯 감싸며 분노를 억누르는 장면",
-      "세로 3등분 구도: 위에는 바알하솔 잔치에서 압살롬의 부하들이 암논에게 포도주를 권하고 암논이 취해 앉아 있는 모습, 가운데에는 부하들이 암논에게 달려들어 심판이 벌어지는 순간을 멀리서 보여주되 피와 상처는 보이지 않는 모습, 아래에는 60대 초반 다윗이 궁전에서 소식을 듣고 옷을 찢으며 통곡하고, 긴 머리의 압살롬은 먼 길로 도망하는 모습"
+      "세로 3등분 구도: 위에는 바알하솔 잔치에서 압살롬의 부하들이 암논에게 포도주를 권하고 암논이 취해 앉아 있는 모습, 가운데에는 부하들이 암논에게 달려들어 심판이 벌어지는 순간을 멀리서 보여주되 피와 상처는 보이지 않는 모습, 아래에는 60대 초반 다윗이 궁전에서 소식을 듣고 옷을 찢으며 통곡하고, 긴 머리의 압살롬은 먼 길로 도망하는 모습, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너지는 성벽을 뒤로하고 죄에서 돌이켜 피하는 사람들이 보이는 장면이 작은 그림처럼 보인다"
     ],
     "scene_characters": [
       [],
@@ -898,6 +962,9 @@
     "end_year": -982,
     "time_precision": "approx",
     "story_index": 19,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "상복을 입은 드고아의 젊은 지혜로운 여인이 60대 초반 다윗 왕 앞에 엎드려 슬픈 얼굴로 자기 사정을 말하고, 큰 글자 없는 말풍선 안에는 들판에서 한 아들이 다른 아들을 쓰러뜨린 뒤 도망가는 그림이 담겨 있다. 폭력의 세부 묘사는 보이지 않는다",
       "60대 초반의 다윗이 왕좌에서 드고아 여인에게 손을 들어 보호를 약속하고, 큰 글자 없는 말풍선 안에는 도망간 아들이 안전하게 집으로 돌아오며 왕의 보호 빛 아래 서 있는 그림이 담겨 있다",
@@ -954,6 +1021,9 @@
     "end_year": -979,
     "time_precision": "approx",
     "story_index": 20,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "헤브론 성문 근처, 30대의 긴 머리 압살롬이 병거와 말과 따르는 사람들을 세우고 몰래 반역을 도모하며, 주변 사람들의 손을 잡아 주지만 얼굴에는 사악하고 계산적인 미소가 드러나는 장면. 왕이 되었다는 글자나 깃발 문구는 보이지 않는다",
       "예루살렘을 떠나는 60대 초반 다윗이 가족과 충성스러운 신하들과 함께 슬픈 표정으로 도망가고, 사독과 아비아달 제사장도 침통한 얼굴로 언약궤를 메고 서 있으며, 다윗이 제사장들에게 성쪽을 가리키며 언약궤를 다시 성으로 돌아가게 하라고 손짓하는 장면",
@@ -1003,8 +1073,11 @@
     "end_year": -978,
     "time_precision": "approx",
     "story_index": 21,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "마하나임 성문 앞, 60대 초반 다윗이 전쟁터로 나갈 군대를 정비해 요압과 지휘관들에게 나누어 보내며, 압살롬을 죽이지 말고 반드시 생포해 데려오라고 단호하게 명령하는 장면. 다윗은 울지 않고 왕답게 곧게 서서 지휘한다",
+      "마하나임 성문 앞, 60대 초반 다윗이 전쟁터로 나갈 군대를 정비해 요압과 지휘관들에게 나누어 보내며, 압살롬을 죽이지 말고 반드시 생포해 데려오라고 단호하게 명령하는 장면.",
       "에브라임 수풀의 큰 상수리나무 아래, 30대 압살롬의 긴 머리털이 굵은 가지에 걸려 공중에 매달리고 노새는 아래로 달아나며, 멀리 다윗의 군사들이 조심스럽게 다가오는 장면. 피와 상처는 보이지 않는다",
       "절제된 세로 2분할 장면: 한쪽에는 요압이 상수리나무 아래 압살롬에게 창을 겨누며 다가가는 모습이 멀리서 보이고, 다른 한쪽에는 군사들이 수풀 가운데 큰 구덩이 위에 돌무더기를 쌓는 모습. 피, 상처, 시신의 세부 묘사는 보이지 않는다",
       "성문 위 방으로 올라간 60대 초반 다윗에게 전령이 압살롬의 죽음 소식을 전하고, 다윗은 얼굴을 가리며 무너져 통곡하는 장면. 주변 신하들은 침묵하며 슬퍼한다"
@@ -1052,11 +1125,14 @@
     "end_year": -970,
     "time_precision": "approx",
     "story_index": 22,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "늙은 왕 다윗이 군사들에게 인구 조사를 명하는 장면",
-      "선견자 갓이 하얀 머리와 수염의 늙은 다윗에게 와서 하나님의 책망과 세 가지 재앙의 선택을 전하고, 다윗은 바닥에 엎드려 울며 괴로워하는 장면. 갓은 이름 없는 예언자 모습으로 보이고 글자는 보이지 않는다",
+      "늙은 왕 다윗이 예루살렘 왕궁에서 요압과 군사 지휘관들에게 이스라엘과 유다의 수를 세라고 명령하고, 요압은 걱정스러운 얼굴로 왕을 바라본다",
+      "선견자 갓이 하얀 머리와 수염의 늙은 다윗에게 와서 하나님의 책망과 세 가지 재앙의 선택을 전하고, 다윗은 바닥에 엎드려 울며 괴로워하는 장면.",
       "단에서부터 브엘세바까지 이스라엘 전역에 온역의 어두운 기운이 퍼지고 수많은 집과 마을이 비통해하는 장면. 위쪽에는 사람 형상 없는 하나님의 엄중한 심판 빛이 드리우며, 칠만 명의 죽음을 상징하되 시신과 피는 직접 보이지 않는다",
-      "늙은 왕 다윗이 불이 타오르는 제단 앞에서 기도하며 재앙이 그치는 장면"
+      "늙은 왕 다윗이 아라우나의 타작마당 제단 앞에서 손을 들고 기도하며, 하늘에서 불이 제물을 사르고 재앙이 멈추는 빛이 예루살렘 위에 퍼진다"
     ],
     "scene_characters": [
       [
@@ -1075,7 +1151,7 @@
     ],
     "scene_prompt_notes": [
       "Show David as an elderly king with white hair and white beard. No readable labels.",
-      "Gad the prophet has no reference avatar and should not use the existing Gad tribal avatar. Show him as an unnamed elderly prophet. Show David elderly with white hair and beard, kneeling or prostrate in grief. No readable speech text.",
+      "",
       "Show God only as solemn divine judgment light, never as a human figure. Symbolize the plague across the land without gore, corpses, wounds, or readable numbers.",
       "Show the altar at Araunah's threshing floor and the plague stopping through lifted darkness and gentle light. No readable labels, no human depiction of God."
     ]
@@ -1085,7 +1161,8 @@
     "era": "era_monarchy",
     "characters": [
       "solomon",
-      "david"
+      "david",
+      "bathsheba"
     ],
     "place_name": "예루살렘",
     "lat": 31.778,
@@ -1102,14 +1179,18 @@
     "end_year": -970,
     "time_precision": "approx",
     "story_index": 23,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "늙은 밧세바가 아주 늙어 침상에 누운 다윗 왕에게 다가와 말하고, 큰 글자 없는 말풍선 안에는 아도니야가 스스로 왕위에 오르려 잔치를 벌이고 솔로몬이 위험해지는 그림이 담겨 있다. 다윗은 약해 보이지만 정신을 차려 듣는다",
+      "나이 든 왕모 밧세바가 깊은 청색 너울과 단정한 왕궁 옷차림으로 매우 늙고 쇠약한 다윗 왕의 침상 곁에 다가와, 아도니야가 스스로 왕위에 오르려 잔치를 벌이는 위험을 손짓으로 알린다. 다윗은 약해 보이지만 정신을 차려 듣는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 나누어진 떡과 한 식탁에서 서로를 돌보는 사람들이 보이는 장면이 작은 그림처럼 보인다",
       "기혼 샘 근처, 젊은 솔로몬이 다윗 왕의 노새를 타고 왕으로 세워지며 사독과 나단이 기름을 붓고, 백성들이 양각 나팔 소리와 함께 크게 환호하는 장면",
       "아도니야가 두려워 제단 뿔을 붙잡고 떨고 있고, 젊은 솔로몬은 왕좌 앞에서 아도니야를 해치지 않겠다고 단호하지만 절제 있게 말하는 장면. 폭력이나 피는 보이지 않는다"
     ],
     "scene_characters": [
       [
-        "david"
+        "david",
+        "bathsheba"
       ],
       [
         "solomon"
@@ -1119,9 +1200,9 @@
       ]
     ],
     "scene_prompt_notes": [
-      "Bathsheba has no reference avatar. Show her as an elderly queen mother with gray-streaked dark hair under a deep blue veil, dignified but urgent. Show David as very old, white-haired, weak on a bed. Use a text-free pictorial speech bubble only; no readable labels.",
-      "Zadok and Nathan are secondary figures; Nathan may use the existing avatar if visible, Zadok has no reference avatar. Show Solomon young and newly anointed on David's mule. No readable text on banners or labels.",
-      "Adonijah has no reference avatar. Show him as a frightened handsome older prince near altar horns. Solomon should look firm and merciful, not violent. No gore, no readable labels."
+      "Show Bathsheba as a dignified older queen mother with gray-streaked dark hair under a deep blue veil, urgent but composed. Show David as very old, white-haired, weak on a bed. No readable labels or speech bubbles.",
+      "Show Solomon on the royal mule at Gihon with Zadok and Nathan nearby if visible; no readable labels.",
+      "Show Solomon newly seated as king, young but solemn. No readable labels."
     ]
   },
   {
@@ -1129,7 +1210,8 @@
     "era": "era_monarchy",
     "characters": [
       "david",
-      "solomon"
+      "solomon",
+      "bathsheba"
     ],
     "place_name": "예루살렘 왕궁(전승)",
     "lat": 31.778,
@@ -1146,11 +1228,13 @@
     "end_year": -970,
     "time_precision": "approx",
     "story_index": 24,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "늙은 다윗 왕이 침상에 누워 젊은 솔로몬에게 마지막으로 당부하고, 큰 글자 없는 말풍선 안에는 솔로몬이 하나님만 따르고 율법의 길을 지키면 왕국이 견고해지는 상징 그림이 담겨 있다. 솔로몬은 무겁게 고개를 끄덕인다",
-      "늙은 밧세바가 솔로몬 왕에게 와서 아도니야에게 수넴 여자 아비삭을 아내로 주라고 부탁하고, 큰 글자 없는 말풍선 안에는 아도니야와 아비삭이 함께 서 있는 그림이 담겨 있다. 솔로몬은 왕좌에서 화가 난 표정으로 단호하게 거절한다",
-      "솔로몬이 군사 지휘관에게 명령을 내리고, 먼 배경에서는 아도니야가 심판받는 장면이 처리된다. 직접적인 칼질, 피, 상처, 시신은 보이지 않고, 솔로몬의 단호한 왕권 확립이 강조된다",
-      "솔로몬이 브나야와 사독 같은 올바른 신하들을 세워 나라를 단단히 정비하고, 궁정 관리들이 질서 있게 서며 이스라엘 왕국이 안정되는 장면"
+      "나이 든 왕모 밧세바가 솔로몬 왕에게 아도니야의 요청을 전하러 오고, 장면 뒤쪽의 작은 그림 구역에는 아도니야와 아비삭이 함께 서 있는 상징 모습만 보인다. 솔로몬은 왕좌에서 화가 난 표정으로 단호하게 거절한다",
+      "솔로몬이 군사 지휘관에게 명령을 내리고, 먼 배경에서는 아도니야가 칼의 심판받는 장면이 처리된다. 직접적인 칼질, 피, 상처, 시신은 보이지 않고, 솔로몬의 단호한 왕권 확립이 강조된다"
     ],
     "scene_characters": [
       [
@@ -1158,20 +1242,18 @@
         "solomon"
       ],
       [
-        "solomon"
-      ],
-      [
-        "solomon"
+        "solomon",
+        "bathsheba"
       ],
       [
         "solomon"
       ]
     ],
     "scene_prompt_notes": [
-      "Show David as very old, white-haired and weak on a bed, giving a solemn final charge. Show Solomon as a young king listening seriously. Use a text-free pictorial speech bubble only; no readable labels.",
-      "Bathsheba has no reference avatar. Show her consistently as an elderly queen mother with dignified posture, gray-streaked dark hair under a deep blue veil, modest royal robe. Adonijah and Abishag have no reference avatars and should appear only inside the text-free speech bubble. No readable text.",
-      "Adonijah has no reference avatar. Keep the judgment restrained and distant; no gore, no visible wound, no corpse, no execution close-up, no readable labels.",
-      "Benaiah and Zadok have no reference avatars. Show them as unnamed loyal commander and priest, standing with Solomon as he establishes order. No readable labels."
+      "Show David as very old on his deathbed and Solomon as a young king receiving final counsel. No readable labels.",
+      "Show Bathsheba consistently as an older queen mother with dignified posture, gray-streaked dark hair under a deep blue veil, modest royal robe. Adonijah and Abishag have no reference avatars and should appear only in a small text-free inset image. No readable text.",
+      "Show Solomon carrying out difficult royal justice with grave restraint, not cruelty. No gore, no readable labels.",
+      "Show Solomon established on the throne with elders nearby, solemn and responsible. No readable labels."
     ]
   },
   {
@@ -1196,6 +1278,9 @@
     "end_year": -967,
     "time_precision": "approx",
     "story_index": 25,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "밤의 꿈속, 솔로몬이 하나님 앞에 겸손히 무릎 꿇고 백성을 재판할 지혜를 구하며, 사람 형상 없는 하나님의 밝은 빛은 솔로몬의 구함을 기뻐하는 듯 따뜻하게 비추는 장면",
       "예루살렘 왕궁 재판 자리, 서로 다른 옷차림의 두 여자가 같은 아기를 두고 서로 자기 아이라고 주장하며 솔로몬 앞에 서 있고, 솔로몬은 집중해서 듣는 장면. 아기는 포대기에 싸여 안전하게 보인다",
@@ -1245,18 +1330,19 @@
     "end_year": -959,
     "time_precision": "approx",
     "story_index": 26,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
-      "솔로몬이 두로 왕 히람에게 성전 건축에 쓸 백향목과 잣나무 재목을 제공해 달라고 요청하고, 히람이 기뻐하며 재목을 보내 주기로 하는 장면",
-      "예루살렘 성전 터에서 솔로몬의 건축자들과 히람의 건축자들이 함께 돌과 목재로 성전을 열심히 건축하고, 솔로몬이 현장을 바라보며 기뻐하는 장면",
+      "솔로몬이 두로 왕 히람에게 성전 건축에 쓸 백향목과 잣나무 재목을 제공해 달라고 요청하고, 히람이 기뻐하며 재목을 보내 주기로 하는 장면, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 거대한 왕궁이 백향목과 잣나무로 지어질 것을 보여줌",
+      "예루살렘 성전 터에서 솔로몬의 건축자들과 히람의 건축자들이 함께 돌과 목재로 성전을 열심히 건축하는 장면",
       "으리으리한 성전이 완성되어 금빛 장식과 높은 기둥이 빛나고, 솔로몬이 성전 앞에서 기뻐하며 하나님께 감사하는 장면"
     ],
     "scene_characters": [
       [
         "solomon"
       ],
-      [
-        "solomon"
-      ],
+      [],
       [
         "solomon"
       ]
@@ -1289,6 +1375,9 @@
     "end_year": -950,
     "time_precision": "approx",
     "story_index": 27,
+    "unit_code": "united_monarchy",
+    "unit_title": "통일왕국의 세움과 흔들림",
+    "unit_order": 1,
     "story_scenes": [
       "스바 여왕이 낙타 행렬과 많은 향품, 보석, 금을 가지고 예루살렘에 도착하고, 솔로몬이 궁정 앞에서 맞이하는 장면",
       "솔로몬의 성과 궁전 안에 금은보화와 귀한 그릇들이 가득 쌓여 있고, 솔로몬은 화려한 보좌 곁에서 부유한 왕국을 바라보는 장면",

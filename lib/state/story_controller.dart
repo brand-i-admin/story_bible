@@ -177,6 +177,9 @@ class StoryController extends Notifier<StoryState> {
       selectedCharacterCodes: mode == SelectionMode.character
           ? state.selectedCharacterCodes
           : const {},
+      selectedTimelineUnitCodes: mode == SelectionMode.timeline
+          ? state.selectedTimelineUnitCodes
+          : const {},
       displayedEventIds: const {},
     );
   }
@@ -185,6 +188,7 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(
       clearSelectionMode: true,
       clearSelectedLandmark: true,
+      selectedTimelineUnitCodes: const {},
     );
   }
 
@@ -205,6 +209,7 @@ class StoryController extends Notifier<StoryState> {
       events: const [],
       selectedCharacterCodes: const {},
       selectedCharacterColors: const {},
+      selectedTimelineUnitCodes: const {},
       displayedEventIds: const {},
       completedEventIds: const {},
       searchQuery: '',
@@ -258,6 +263,7 @@ class StoryController extends Notifier<StoryState> {
         savedEventIds: savedEventIds,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
+        selectedTimelineUnitCodes: const {},
         // 시대 전환 시 지도 표시는 항상 초기화 (사용자가 다시 고르도록)
         displayedEventIds: const {},
         searchQuery: '',
@@ -309,6 +315,30 @@ class StoryController extends Notifier<StoryState> {
       displayedEventIds: charactersChanged ? const <String>{} : null,
       clearSelectedEvent: true,
     );
+  }
+
+  void setSelectedTimelineUnits(Set<String> unitCodes) {
+    final validCodes = state.events.map((event) => event.unitCode).toSet();
+    final next = unitCodes.intersection(validCodes);
+    state = state.copyWith(
+      selectedTimelineUnitCodes: next,
+      displayedEventIds: const {},
+      clearSelectedEvent: true,
+    );
+  }
+
+  void toggleTimelineUnit(String unitCode) {
+    final validCodes = state.events.map((event) => event.unitCode).toSet();
+    if (!validCodes.contains(unitCode)) {
+      return;
+    }
+    final next = {...state.selectedTimelineUnitCodes};
+    if (next.contains(unitCode)) {
+      next.remove(unitCode);
+    } else {
+      next.add(unitCode);
+    }
+    setSelectedTimelineUnits(next);
   }
 
   bool _characterSetsEqual(Set<String> a, Set<String> b) {

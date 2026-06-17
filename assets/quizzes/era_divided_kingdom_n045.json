@@ -1,44 +1,44 @@
 {
   "era_code": "era_divided_kingdom",
   "story_index": 45,
-  "story_title": "예레미야의 경고: 칠십 년의 포로",
-  "source_version": "2026-06-09",
+  "story_title": "여호아하스: 애굽으로 끌려간 왕",
+  "source_version": "2026-06-10",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "예레미야는 유다가 바벨론 왕을 얼마 동안 섬긴다고 전했습니까?",
+      "question": "여호아하스는 몇 달 동안 예루살렘에서 다스렸습니까?",
       "choices": [
-        "칠십 년 동안 섬긴다",
-        "칠 일 동안 섬긴다",
-        "삼 년 동안 섬긴다"
+        "석 달",
+        "열두 달",
+        "삼 년"
       ],
       "answer_index": 0,
-      "explanation": "렘 25:11 — '칠십년 동안 바벨론 왕을 섬기리라'"
+      "explanation": "왕하 23:31 — '예루살렘에서 치리한지 석 달이라'"
     },
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "하나님이 예언자들을 보내셨지만 백성은 어떻게 반응했습니까?",
+      "question": "바로 느고는 여호아하스를 어디에 가두었습니까?",
       "choices": [
-        "듣지 않고 귀를 기울이지 않았다",
-        "곧바로 우상을 모두 버렸다",
-        "예레미야에게 왕관을 씌웠다"
+        "하맛 땅 립나",
+        "사마리아 왕궁",
+        "예루살렘 성전"
       ],
       "answer_index": 0,
-      "explanation": "렘 25:4 — '너희가 듣지 아니하였으며 귀를 기울여 듣지도 아니하였도다'"
+      "explanation": "왕하 23:33 — '하맛 땅 립나에 가두어'"
     },
     {
       "type": "story_context",
       "display_order": 2,
-      "question": "칠십 년이 차면 하나님은 바벨론 왕과 그 나라에 어떻게 하신다고 하셨습니까?",
+      "question": "바로 느고는 엘리야김의 이름을 무엇으로 바꾸었습니까?",
       "choices": [
-        "죄악을 벌하고 황폐하게 하신다",
-        "영원히 왕위를 굳게 세우신다",
-        "예루살렘 성전을 맡기신다"
+        "여호야김",
+        "시드기야",
+        "여호야긴"
       ],
       "answer_index": 0,
-      "explanation": "렘 25:12 — '바벨론 왕과 그 나라와 갈대아인의 땅을 그 죄악으로 인하여 벌하여'"
+      "explanation": "왕하 23:34 — '그 이름을 고쳐 여호야김이라 하고'"
     }
   ],
   "story_id": "era_divided_kingdom_n045"

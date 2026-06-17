@@ -1,44 +1,44 @@
 {
   "era_code": "era_nt_post_apostolic",
   "story_index": 2,
-  "story_title": "밧모섬의 요한: 계시의 시작",
-  "source_version": "2026-05-25",
+  "story_title": "말과 지혜, 세상과의 충돌",
+  "source_version": "2026-06-12",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "요한이 계시를 받은 섬의 이름은 무엇입니까?",
+      "question": "야고보가 혀를 설명할 때 사용한 작은 물건은 무엇입니까?",
       "choices": [
-        "밧모",
-        "구브로",
-        "멜리데"
+        "말의 입에 넣는 재갈",
+        "성전의 은잔",
+        "어부의 큰 그물"
       ],
       "answer_index": 0,
-      "explanation": "계 1:9 — '하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니'"
+      "explanation": "약 3:3 — '말들의 입에 재갈 물리는 것은'"
     },
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "요한은 주의 날에 무엇을 들었습니까?",
+      "question": "위로부터 난 지혜의 첫 모습은 무엇입니까?",
       "choices": [
-        "나팔 소리 같은 큰 음성을 들었다",
-        "구브로",
-        "멜리데"
+        "성결하고 화평한 지혜",
+        "자랑하고 다투는 지혜",
+        "재물을 빠르게 모으는 지혜"
       ],
       "answer_index": 0,
-      "explanation": "계 1:10 — '주의 날에 내가 성령에 감동하여 내 뒤에서 나는 나팔 소리 같은 큰 음성을 들으니'"
+      "explanation": "약 3:17 — '첫째 성결하고 다음에 화평하고'"
     },
     {
       "type": "story_context",
       "display_order": 2,
-      "question": "요한은 음성을 들었을 때 어떻게 하였습니까?",
+      "question": "야고보가 다툼의 뿌리로 지적한 것은 무엇입니까?",
       "choices": [
-        "몸을 돌이켜 음성을 알아보려 하였다",
-        "머리를 숙이고 기다렸다",
-        "눈을 감고 더 들으려 하였다"
+        "마음속에서 싸우는 정욕",
+        "성전에서 멀리 사는 거리",
+        "로마 군인의 감시"
       ],
       "answer_index": 0,
-      "explanation": "계 1:12 — '나더러 말한 음성을 알아 보려고 하여 돌이킬 때에'"
+      "explanation": "약 4:1 — '너희 지체 중에서 싸우는 정욕'"
     }
   ]
 }

@@ -58,12 +58,17 @@ bible_refs jsonb DEFAULT '[]',       -- [{book, from, to}, ...]
 start_year int, end_year int,
 time_precision text DEFAULT 'approx',
 story_index int NOT NULL,            -- era 내 정수 (UNIQUE: era_id+story_index)
+unit_code text DEFAULT 'default',     -- 시간 순 보기 전 복수 선택 단위 코드
+unit_title text DEFAULT '전체 흐름',  -- 앱에 표시되는 단위명
+unit_order int DEFAULT 1,             -- 시대 안 단위 정렬
 landmark_id uuid NOT NULL → landmarks(id),    -- v2 위치 모델
 video_url text,
 status text DEFAULT 'published'      -- draft / published (어드민 전용)
   CHECK (status in ('draft','published'))
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
+- `unit_code`/`unit_title`/`unit_order`는 시간 순 보기의 중간 선택 단계에 사용한다.
+  구약처럼 단일 흐름인 시대도 기본 1개 단위를 가진다.
 - `story`/`short_story` 컬럼 폐기 — UI는 `summary` + `story_scenes`로 충분.
 - `bible_refs`/`character_codes`가 events row에 직접 임베드 → `event_characters`/`event_bible_refs` 테이블 폐기.
 - 외부 기여자 제출 기능 폐기: `submitted_by`/`thumb_url`/`pending_review` 상태 제거됨.
@@ -77,6 +82,8 @@ FROM events e JOIN eras ON eras.id = e.era_id
 WHERE e.status = 'published';
 ```
 - Repository는 `events` 대신 이 view에서 select.
+- view는 `unit_code`/`unit_title`/`unit_order`도 그대로 노출해 Flutter
+  `StoryEvent.fromMap()`이 단위 선택 UI를 구성한다.
 - 새 이야기가 끼어들면 view가 자동 재계산되므로 사전 정렬값 갱신이 불필요.
 
 #### `character_eras` — 인물-시대 매핑 view

@@ -11,7 +11,7 @@ import '../models/story_event.dart';
 /// - region: 지도 위 region(영역) 들이 라벨 + 사건 있는 인물 아바타와 함께 표시되고,
 ///   region 을 누르면 그 region 안의 사건들이 카드 슬라이딩으로 펼쳐진다.
 /// - character: 인물 멀티 선택 → 사건 카드 5열 그리드 + 점선 연결 + 좌우 화살표.
-/// - timeline: 선택한 시대의 모든 사건을 곧바로 시간순으로 펼친다.
+/// - timeline: 선택한 시대의 주제 단위를 고른 뒤 사건을 시간순으로 펼친다.
 enum SelectionMode { region, character, timeline }
 
 class StoryState {
@@ -26,6 +26,7 @@ class StoryState {
     this.selectedLandmarkId,
     this.selectedCharacterCodes = const {},
     this.selectedCharacterColors = const {},
+    this.selectedTimelineUnitCodes = const {},
     this.selectedEventId,
     this.displayedEventIds = const {},
     this.completedEventIds = const {},
@@ -70,6 +71,11 @@ class StoryState {
 
   final Set<String> selectedCharacterCodes;
   final Map<String, Color> selectedCharacterColors;
+
+  /// timeline 모드에서 사용자가 선택한 시대 내부 단위 코드들.
+  /// 비어 있으면 아직 단위 선택 전으로 본다.
+  final Set<String> selectedTimelineUnitCodes;
+
   final String? selectedEventId;
   final Set<String> displayedEventIds;
   final Set<String> completedEventIds;
@@ -128,6 +134,7 @@ class StoryState {
     bool clearSelectedLandmark = false,
     Set<String>? selectedCharacterCodes,
     Map<String, Color>? selectedCharacterColors,
+    Set<String>? selectedTimelineUnitCodes,
     String? selectedEventId,
     Set<String>? displayedEventIds,
     Set<String>? completedEventIds,
@@ -168,6 +175,8 @@ class StoryState {
           selectedCharacterCodes ?? this.selectedCharacterCodes,
       selectedCharacterColors:
           selectedCharacterColors ?? this.selectedCharacterColors,
+      selectedTimelineUnitCodes:
+          selectedTimelineUnitCodes ?? this.selectedTimelineUnitCodes,
       selectedEventId: clearSelectedEvent
           ? null
           : selectedEventId ?? this.selectedEventId,

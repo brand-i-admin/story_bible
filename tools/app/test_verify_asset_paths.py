@@ -67,6 +67,14 @@ flutter:
         self.assertFalse(ok)
         self.assertEqual(reason, "디렉토리가 비어있음")
 
+    def test_verify_rejects_url_encoded_component_that_is_too_long(self) -> None:
+        long_korean_name = "3차 전도 여행: 밀레도에서 에베소 장로들과 작별" * 4
+
+        ok, reason = mod.verify(f"assets/story_images_thumbs/{long_korean_name}/")
+
+        self.assertFalse(ok)
+        self.assertIn("URL 인코딩 후 파일명 너무 김", reason)
+
 
 if __name__ == "__main__":
     unittest.main()

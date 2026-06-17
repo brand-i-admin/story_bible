@@ -24,6 +24,14 @@ with seed_events (era_code, title, summary, story_scenes, scene_characters, char
 )
 """
 
+_EVENTS_SEED_WITH_UNIT_SAMPLE = """\
+with seed_events (era_code, title, summary, story_scenes, scene_characters, character_codes, bible_refs, start_year, end_year, time_precision, story_index, unit_code, unit_title, unit_order, landmark_code, status) as (
+  values
+    ('era_nt_consummation', '미혹과 환난 속에서도 끝까지 견딤', '...', '[]'::jsonb, '[]'::jsonb, ARRAY['jesus']::text[], '[]'::jsonb, 33, 33, 'approx', 1, 'jesus_last_days_watchfulness', '예수님이 가르치신 마지막 때의 자세', 1, 'lm_nt_con_mount_olives', 'published'),
+    ('era_nt_post_apostolic', '믿음으로 의롭다 하심', '...', '[]'::jsonb, '[]'::jsonb, ARRAY['paul']::text[], '[]'::jsonb, 57, 57, 'approx', 17, 'pauline_churches', '바울이 세운 교회들의 문제와 소망', 2, 'lm_nt_post_rome', 'published')
+)
+"""
+
 
 class ExtractEventsFromSeedSqlTests(unittest.TestCase):
     def test_parses_three_event_rows(self) -> None:
@@ -34,6 +42,15 @@ class ExtractEventsFromSeedSqlTests(unittest.TestCase):
         self.assertEqual(events[0].story_index, 1)
         self.assertEqual(events[2].era_code, "era_exodus")
         self.assertEqual(events[2].story_index, 14)
+
+    def test_parses_unit_event_rows(self) -> None:
+        events = mod.extract_events_from_seed_sql(_EVENTS_SEED_WITH_UNIT_SAMPLE)
+        self.assertEqual(len(events), 2)
+        self.assertEqual(events[0].era_code, "era_nt_consummation")
+        self.assertEqual(events[0].title, "미혹과 환난 속에서도 끝까지 견딤")
+        self.assertEqual(events[0].story_index, 1)
+        self.assertEqual(events[1].era_code, "era_nt_post_apostolic")
+        self.assertEqual(events[1].story_index, 17)
 
 
 class LoadQuizFileTests(unittest.TestCase):

@@ -46,12 +46,45 @@ _EVENT_ROW_PATTERN = re.compile(
     re.DOTALL | re.VERBOSE,
 )
 
+_EVENT_ROW_WITH_UNIT_PATTERN = re.compile(
+    r"""
+    \(\s*'(?P<era>era_[a-z_]+)',\s*
+    '(?P<title>(?:''|[^'])*)',\s*
+    .+?,\s*
+    '(?:exact|approx)',\s*
+    (?P<sidx>\d+),\s*
+    '[^']*',\s*
+    '(?:''|[^']*)',\s*
+    \d+,\s*
+    '[^']*',\s*
+    '(?:published|draft)'\s*\)
+    """,
+    re.DOTALL | re.VERBOSE,
+)
+
+
+def _unescape_sql_string(text: str) -> str:
+    """Unescape the SQL string styles emitted by our seed builders."""
+    return text.replace("''", "'").replace("\\'", "'")
+
 
 def extract_events_from_seed_sql(sql_text: str) -> list[EventKey]:
     """Return events parsed from the events seed SQL."""
     out: list[EventKey] = []
     for m in _EVENT_ROW_PATTERN.finditer(sql_text):
-        title = m.group("title").replace("\\'", "'")
+        title = _unescape_sql_string(m.group("title"))
+        out.append(
+            EventKey(
+                era_code=m.group("era"),
+                title=title,
+                story_index=int(m.group("sidx")),
+            )
+        )
+    if out:
+        return out
+
+    for m in _EVENT_ROW_WITH_UNIT_PATTERN.finditer(sql_text):
+        title = _unescape_sql_string(m.group("title"))
         out.append(
             EventKey(
                 era_code=m.group("era"),

@@ -2029,8 +2029,8 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
 | **7. 삭제 승인** (`approve_delete_proposal`) | UPDATE status='approved' | **DELETE row** | (자동 갱신) | DELETE (이 이벤트만 쓰던 캐릭터) | (자동 갱신) | DELETE cascade | (그대로 — 클라이언트가 정리 호출) | DELETE (방금 삭제된 캐릭터의 PNG) | — | — |
 | **8. Sync Phase A** (추가) | UPDATE synced_to_local_at | — | — | UPDATE avatar_storage_path = `<code>.png` | — | — | (그대로) | MOVE → `characters/<code>.png` 버킷 | DOWNLOAD `assets/avatars/<code>.png`, `assets/story_images/<title>/scene_N.png` | — |
 | **9. Sync Phase B** (diff 정리) | — | — | — | — | — | — | — | — | DELETE 로컬 dir/PNG (DB 와 차이) | — |
-| **10. Sync Step C** (`make thumbnails`) | — | — | — | — | — | — | — | — | GENERATE `assets/avatars_thumbs/`, `assets/story_images_thumbs/<title>/scene_N.jpg` | — |
-| **11. Sync Step D** (`make update-pubspec-assets`) | — | — | — | — | — | — | — | — | — | UPDATE `flutter.assets:` 의 story_images_thumbs/<title>/ 엔트리 |
+| **10. Sync Step C** (`make thumbnails`) | — | — | — | — | — | — | — | — | GENERATE `assets/avatars_thumbs/`, `assets/story_images_thumbs/<short_dir>/scene_N.jpg`, `assets/story_images_thumbs/index.json` | — |
+| **11. Sync Step D** (`make update-pubspec-assets`) | — | — | — | — | — | — | — | — | — | UPDATE `flutter.assets:` 의 story_images_thumbs/index.json + short dir 엔트리 |
 | **12. 앱 배포** (`flutter build` + release) | — | — | — | — | — | — | — | — | (번들에 포함) | (번들에 포함) |
 
 > 📌 **메모**:

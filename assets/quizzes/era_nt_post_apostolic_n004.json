@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 4,
+  "story_title": "약속과 율법, 종이 아닌 아들",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울이 아브라함의 의로움을 설명할 때 붙든 근거는 무엇입니까?",
+      "choices": [
+        "아브라함이 하나님을 믿은 것",
+        "아브라함이 도시를 세운 것",
+        "아브라함이 왕이 된 것"
+      ],
+      "answer_index": 0,
+      "explanation": "갈 3:6 — '아브라함이 하나님을 믿으매'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "율법은 그리스도께 인도하기 전 어떤 역할을 했습니까?",
+      "choices": [
+        "초등교사처럼 인도했다",
+        "왕궁 문지기처럼 막았다",
+        "시장 상인처럼 값을 정했다"
+      ],
+      "answer_index": 0,
+      "explanation": "갈 3:24 — '율법이 우리를 그리스도께로 인도하는 초등교사가 되어'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "그리스도 안에 있는 사람의 신분을 바울은 무엇으로 설명합니까?",
+      "choices": [
+        "종이 아니라 아들이다",
+        "손님이 아니라 상인이다",
+        "군인이 아니라 서기관이다"
+      ],
+      "answer_index": 0,
+      "explanation": "갈 4:7 — '네가 이 후로는 종이 아니요 아들이니'"
+    }
+  ]
+}

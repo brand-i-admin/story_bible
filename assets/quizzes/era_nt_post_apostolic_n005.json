@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 5,
+  "story_title": "자유와 성령의 열매",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울은 그리스도인의 자유를 어떤 기회로 삼지 말라고 합니까?",
+      "choices": [
+        "육체의 기회",
+        "기도의 기회",
+        "복음 전도의 기회"
+      ],
+      "answer_index": 0,
+      "explanation": "갈 5:13 — '자유로 육체의 기회를 삼지 말고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "성령의 열매 목록에 들어가는 것은 무엇입니까?",
+      "choices": [
+        "사랑과 희락과 화평",
+        "시기와 분냄과 분쟁",
+        "자랑과 탐욕과 술취함"
+      ],
+      "answer_index": 0,
+      "explanation": "갈 5:22 — '성령의 열매는 사랑과 희락과 화평'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "짐을 지는 문제에서 바울이 권한 공동체 모습은 무엇입니까?",
+      "choices": [
+        "서로의 짐을 함께 지는 모습",
+        "각자의 짐을 숨기는 모습",
+        "약한 사람의 짐을 비웃는 모습"
+      ],
+      "answer_index": 0,
+      "explanation": "갈 6:2 — '너희가 짐을 서로 지라'"
+    }
+  ]
+}

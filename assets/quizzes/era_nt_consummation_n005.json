@@ -1,44 +1,44 @@
 {
   "era_code": "era_nt_consummation",
   "story_index": 5,
-  "story_title": "용과 두 짐승: 대립의 정점",
-  "source_version": "2026-05-25",
+  "story_title": "하늘의 찬양과 어린양의 혼인잔치",
+  "source_version": "2026-06-12",
   "questions": [
     {
       "type": "fact",
       "display_order": 0,
-      "question": "요한계시록에서 큰 용은 누구라고 설명됩니까?",
+      "question": "하늘의 큰 무리가 외치는 찬양의 말은 무엇입니까?",
       "choices": [
-        "옛 뱀 곧 마귀, 사단",
-        "로마 황제",
-        "거짓 선지자"
+        "할렐루야",
+        "가이사 만세",
+        "문을 닫으라"
       ],
       "answer_index": 0,
-      "explanation": "계 12:9 — '큰 용이 내어쫓기니 옛 뱀 곧 마귀라고도 하고 사단이라고도 하는 자라'"
+      "explanation": "계 19:1 — '할렐루야 구원과 영광과 능력이'"
     },
     {
       "type": "attitude",
       "display_order": 1,
-      "question": "짐승의 박해 앞에서 성도들에게 강조된 것은 무엇입니까?",
+      "question": "혼인잔치가 준비된 이는 누구입니까?",
       "choices": [
-        "인내와 믿음",
-        "지혜로운 도피",
-        "비밀스러운 모임"
+        "어린양",
+        "용",
+        "짐승"
       ],
       "answer_index": 0,
-      "explanation": "계 13:10 — '성도들의 인내와 믿음이 여기 있느니라'"
+      "explanation": "계 19:7 — '어린 양의 혼인 기약이 이르렀고'"
     },
     {
       "type": "story_context",
       "display_order": 2,
-      "question": "짐승의 수에 대해 어떤 설명이 나옵니까?",
+      "question": "천사는 요한이 엎드려 경배하려 하자 누구께 경배하라고 합니까?",
       "choices": [
-        "그 수는 사람의 수인 666이라고 했다",
-        "그 수는 아무도 셀 수 없다고 했다",
-        "그 수는 열두 지파의 수라고 했다"
+        "하나님",
+        "천사 자신",
+        "일곱 교회"
       ],
       "answer_index": 0,
-      "explanation": "계 13:18 — '지혜가 여기 있으니 총명 있는 자는 그 짐승의 수를 세어 보라 그 수는 사람의 수니 육백 육십육 이니라'"
+      "explanation": "계 19:10 — '오직 하나님께 경배하라'"
     }
   ]
 }

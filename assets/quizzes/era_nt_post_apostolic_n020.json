@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 20,
+  "story_title": "그리스도 안의 새 공동체",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울은 구원을 무엇으로 받은 것이라고 말합니까?",
+      "choices": [
+        "은혜로 믿음을 통해 받은 것",
+        "성전 세금으로 산 것",
+        "가문 이름으로 얻은 것"
+      ],
+      "answer_index": 0,
+      "explanation": "엡 2:8 — '너희가 그 은혜를 인하여 믿음으로 말미암아'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "그리스도께서 유대인과 이방인 사이에 하신 일은 무엇입니까?",
+      "choices": [
+        "막힌 담을 허무셨다",
+        "더 높은 담을 세우셨다",
+        "두 성전을 따로 지으셨다"
+      ],
+      "answer_index": 0,
+      "explanation": "엡 2:14 — '중간에 막힌 담을 허시고'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "성도들은 사도들과 선지자들의 터 위에 무엇으로 세워집니까?",
+      "choices": [
+        "하나님의 성전",
+        "로마의 성벽",
+        "상인의 창고"
+      ],
+      "answer_index": 0,
+      "explanation": "엡 2:21 — '주 안에서 성전이 되어가고'"
+    }
+  ]
+}

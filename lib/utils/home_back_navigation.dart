@@ -6,6 +6,7 @@ enum HomeBackAction {
   returnToHome,
   returnToRegionPicker,
   returnToCharacterPicker,
+  returnToTimelineUnitPicker,
 }
 
 HomeBackAction resolveHomeBackAction({
@@ -34,6 +35,9 @@ HomeBackAction resolveHomeBackAction({
       }
       return HomeBackAction.returnToHome;
     case SelectionMode.timeline:
+      if (selectionStep >= 3) {
+        return HomeBackAction.returnToTimelineUnitPicker;
+      }
       return HomeBackAction.returnToHome;
   }
 }

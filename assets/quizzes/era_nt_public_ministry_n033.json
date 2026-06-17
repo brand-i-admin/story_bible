@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_public_ministry",
+  "story_index": 33,
+  "story_title": "삭개오",
+  "source_version": "2026-06-11",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "본문에서 먼저 두드러지는 장면은 무엇입니까?",
+      "choices": [
+        "여리고 길가에 큰 무리가 모이고 키 작은 삭개오가 돌무화과나무 위로 올라간다",
+        "사람들이 아무 변화 없이 각자 흩어졌다",
+        "로마 군인들이 먼저 성전 제사를 인도했다"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 19:1 — '예수께서 여리고로 들어 지나가시더라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "이어지는 장면에서 중심 인물은 어떻게 행동합니까?",
+      "choices": [
+        "예수님이 나무 아래에서 멈추어 삭개오를 이름으로 부르신다",
+        "두려워하며 사명을 포기했다",
+        "사람들 앞에서 아무 일도 없다고 말했다"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 19:1 — '예수께서 여리고로 들어 지나가시더라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "이 사건의 끝부분에서 이어진 일은 무엇입니까?",
+      "choices": [
+        "삭개오가 회복과 나눔을 약속하고 예수님은 구원이 이 집에 이르렀다고 말씀하신다",
+        "사람들이 서로 책임을 미루며 떠났다",
+        "중심 인물이 아무 설명 없이 숨었다"
+      ],
+      "answer_index": 0,
+      "explanation": "눅 19:10 — '인자의 온 것은 잃어버린 자를 찾아 구원하려 함이니라'"
+    }
+  ]
+}

@@ -27,12 +27,16 @@ from google.auth.transport.requests import Request
 import requests
 
 from story_scene_utils import (
+    build_prompt_file_header,
+    build_prompt_file_line,
     dedupe_preserve_order,
     detect_scene_person_codes,
     expand_person_codes,
+    format_bible_refs_for_prompt,
     normalize_scene_persons_list,
     parse_event_person_codes,
     parse_person_name_map_from_seed_sql,
+    requests_speech_bubble,
     sanitize_scene_text_for_visual,
 )
 
@@ -50,8 +54,16 @@ COMMON_SCENE_STYLE = (
     "Create one non-photoreal 2D Bible story illustration in the same visual world as the avatar cast. "
     "Use stylized geometric biblical illustration, blocky low-poly faceted planes, angular but friendly forms, "
     "flat matte vector shading with subtle cut-paper facets, warm parchment-friendly colors, "
-    "clean composition, and consistent character design across every scene. "
-    "No speech bubbles, no captions, no written letters, no symbols, no watermark, no modern objects."
+    "clean composition, and consistent character design across every scene."
+)
+DEFAULT_TEXT_POLICY = "No speech bubbles, no captions, no written letters, no symbols, no watermark, no modern objects."
+SPEECH_BUBBLE_TEXT_POLICY = (
+    "This scene explicitly requests a speech bubble: include at most one simple speech bubble. "
+    "If the scene describes a text-free pictorial speech bubble, fill the bubble with the concrete "
+    "visual symbols or miniature scene described, and do not add readable letters inside it. "
+    "Only use short Korean text if the scene explicitly asks for readable Korean text. "
+    "Do not add any other captions, written letters, scripture text, logos, watermark, symbols, "
+    "or modern objects."
 )
 
 
@@ -136,14 +148,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--sleep-sec",
         type=float,
-        default=0.2,
-        help="Sleep between API calls.",
+        default=2.0,
+        help="Sleep seconds after a successful API call before the next request.",
     )
     parser.add_argument(
         "--sleep-on-429-sec",
         type=float,
-        default=2.0,
+        default=31.0,
         help="Sleep seconds before each retry when status 429 is returned.",
+    )
+    parser.add_argument(
+        "--sleep-on-failure-sec",
+        type=float,
+        default=31.0,
+        help="Sleep seconds after a failed API call before the next request.",
     )
     parser.add_argument(
         "--retry-429-attempts",
@@ -620,6 +638,92 @@ def decode_image_bytes(candidate: dict[str, Any]) -> bytes:
     return image_bytes
 
 
+def normalize_prompt_line(text: str) -> str:
+    return WHITESPACE_REGEX.sub(" ", text).strip()
+
+
+def build_scene_instruction(
+    *,
+    event_title: str,
+    sentence: str,
+    reference_avatars: list[tuple[str, Path]],
+    code_to_name: dict[str, str],
+    place_name: str = "",
+    scene_prompt_note: str = "",
+) -> str:
+    reference_labels = [
+        f"{code_to_name.get(code, code)} ({code})" for code, _ in reference_avatars
+    ]
+    char_text = ", ".join(reference_labels) if reference_labels else "none"
+    place_clause = f" Place: {place_name}." if place_name else ""
+    note_clause = (
+        f" Additional art direction: {scene_prompt_note}." if scene_prompt_note else ""
+    )
+    text_policy = (
+        SPEECH_BUBBLE_TEXT_POLICY
+        if requests_speech_bubble(sentence)
+        else DEFAULT_TEXT_POLICY
+    )
+    instruction = (
+        f"{COMMON_SCENE_STYLE} "
+        f"Event title: {event_title}. "
+        f"Scene description: {sentence}.{place_clause}{note_clause} "
+        "Keep the composition suitable for mobile storytelling. "
+        "Show only visible action, facial expression, body pose, props, weather, light, and environment. "
+        "Make each gesture respond to the concrete event, not generic posing. "
+        "Make clothing and physical condition match the biblical situation: travel dust, fishermen nets, priestly linen, Roman armor, court garments, prison chains, wet garments, wounds, mourning clothes, feast clothes, synagogue or temple setting when implied. "
+        f"{text_policy} "
+        "If reference avatar images are attached, each attached character is canonical and must stay recognizable. "
+        "Preserve the attached character's face identity, hair, and recognizable core design. "
+        "If the scene description explicitly requests a different age, costume, role, or physical state, keep the same identity but follow that requested change. "
+        "Do not redesign, replace, or turn the attached character into a different character. "
+        f"Scene reference characters: {char_text}."
+    )
+    return normalize_prompt_line(instruction)
+
+
+def build_reference_instruction(*, name: str, code: str) -> str:
+    return normalize_prompt_line(
+        f"Attached canonical character reference: {name} ({code}). "
+        "Keep this character visually consistent in the generated scene."
+    )
+
+
+def build_request_prompt_text(
+    *,
+    event_title: str,
+    sentence: str,
+    reference_avatars: list[tuple[str, Path]],
+    code_to_name: dict[str, str],
+    place_name: str = "",
+    scene_prompt_note: str = "",
+) -> str:
+    text_parts = [
+        build_scene_instruction(
+            event_title=event_title,
+            sentence=sentence,
+            reference_avatars=reference_avatars,
+            code_to_name=code_to_name,
+            place_name=place_name,
+            scene_prompt_note=scene_prompt_note,
+        )
+    ]
+    for code, _ in reference_avatars:
+        text_parts.append(
+            build_reference_instruction(name=code_to_name.get(code, code), code=code)
+        )
+    return normalize_prompt_line(" ".join(text_parts))
+
+
+def ensure_prompt_file(prompt_path: Path, prompt_lines: list[str]) -> None:
+    desired = "\n".join(prompt_lines) + "\n"
+    if prompt_path.exists():
+        existing = prompt_path.read_text(encoding="utf-8")
+        if existing == desired:
+            return
+    prompt_path.write_text(desired, encoding="utf-8")
+
+
 def build_parts(
     *,
     event_title: str,
@@ -629,40 +733,20 @@ def build_parts(
     place_name: str = "",
     scene_prompt_note: str = "",
 ) -> list[dict[str, Any]]:
-    reference_labels = [
-        f"{code_to_name.get(code, code)} ({code})" for code, _ in reference_avatars
-    ]
-    char_text = ", ".join(reference_labels) if reference_labels else "none"
-    place_clause = f" Place: {place_name}." if place_name else ""
-    note_clause = (
-        f" Additional art direction: {scene_prompt_note}." if scene_prompt_note else ""
-    )
-    instruction = (
-        f"{COMMON_SCENE_STYLE} "
-        f"Event title: {event_title}. "
-        f"Scene description: {sentence}.{place_clause}{note_clause} "
-        "Keep the composition suitable for mobile storytelling. "
-        "Show only visible action, facial expression, body pose, props, weather, light, and environment. "
-        "Do not add spoken words, dialogue balloons, captions, written letters, scripture text, or logos. "
-        "If reference avatar images are attached, each attached character is canonical and must stay recognizable. "
-        "Preserve the attached character's face identity, hair, and recognizable core design. "
-        "If the scene description explicitly requests a different age, costume, role, or physical state, keep the same identity but follow that requested change. "
-        "Do not redesign, replace, or turn the attached character into a different character. "
-        f"Scene reference characters: {char_text}."
+    instruction = build_scene_instruction(
+        event_title=event_title,
+        sentence=sentence,
+        reference_avatars=reference_avatars,
+        code_to_name=code_to_name,
+        place_name=place_name,
+        scene_prompt_note=scene_prompt_note,
     )
 
     parts: list[dict[str, Any]] = [{"text": instruction}]
     for code, avatar_path in reference_avatars:
         name = code_to_name.get(code, code)
         encoded = base64.b64encode(avatar_path.read_bytes()).decode("ascii")
-        parts.append(
-            {
-                "text": (
-                    f"Attached canonical character reference: {name} ({code}). "
-                    "Keep this character visually consistent in the generated scene."
-                )
-            }
-        )
+        parts.append({"text": build_reference_instruction(name=name, code=code)})
         parts.append({"inlineData": {"mimeType": "image/png", "data": encoded}})
     return parts
 
@@ -686,6 +770,218 @@ def scene_prompt_note_for(event: dict[str, Any], *, scene_index: int) -> str:
         if isinstance(value, str):
             return value.strip()
     return ""
+
+
+def event_story_index(event: dict[str, Any]) -> int | None:
+    value = event.get("story_index")
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    return None
+
+
+def mentions_scene_person(
+    *,
+    code: str,
+    scene_person_codes: list[str],
+    scene_text: str,
+    event_title: str,
+    aliases: tuple[str, ...],
+) -> bool:
+    # scene_person_codes is already produced from explicit scene_characters or
+    # from text/name alias detection. Do not re-check title/text here, or a
+    # title like "Solomon's enthronement" can apply royal clothing to scenes
+    # where Solomon is not visible.
+    return code in scene_person_codes
+
+
+def scene_age_art_direction_for(
+    event: dict[str, Any],
+    *,
+    scene_text: str,
+    scene_person_codes: list[str],
+) -> str:
+    era = str(event.get("era") or "")
+    story_index = event_story_index(event)
+    event_title = str(event.get("title") or "")
+    notes: list[str] = []
+
+    has_abraham = mentions_scene_person(
+        code="abraham",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("아브라함", "아브람", "Abraham", "Abram"),
+    )
+    has_sarah = mentions_scene_person(
+        code="sarah",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("사라", "사래", "Sarah", "Sarai"),
+    )
+    has_isaac = mentions_scene_person(
+        code="isaac",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("이삭", "Isaac"),
+    )
+    has_moses = mentions_scene_person(
+        code="moses",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("모세", "Moses"),
+    )
+    has_aaron = mentions_scene_person(
+        code="aaron",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("아론", "Aaron"),
+    )
+    has_david = mentions_scene_person(
+        code="david",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("다윗", "David"),
+    )
+    has_solomon = mentions_scene_person(
+        code="solomon",
+        scene_person_codes=scene_person_codes,
+        scene_text=scene_text,
+        event_title=event_title,
+        aliases=("솔로몬", "Solomon"),
+    )
+
+    if era == "era_patriarch":
+        if has_abraham and story_index is not None:
+            if story_index <= 4:
+                notes.append(
+                    "Abraham is a strong covenant elder in his mid-seventies to eighties, gray-bearded but upright and vigorous."
+                )
+            elif story_index <= 10:
+                notes.append(
+                    "Abraham is about ninety-nine to one hundred years old, visibly aged with white-gray hair and beard, still dignified and strong."
+                )
+            else:
+                notes.append(
+                    "Abraham is a very old patriarch, white-gray haired and dignified, not weak unless the scene says so."
+                )
+        if has_sarah and story_index is not None:
+            if story_index <= 4:
+                notes.append(
+                    "Sarah/Sarai is a mature covenant matriarch in later adulthood, graceful and beautiful, not a young maiden and not frail."
+                )
+            elif story_index <= 10:
+                notes.append(
+                    "Sarah is around ninety years old in the promise-and-birth scenes, elderly but dignified and beautiful."
+                )
+            else:
+                notes.append(
+                    "Sarah is very old if visible in this scene; show age with dignity and keep her recognizable."
+                )
+        if has_isaac and story_index is not None:
+            if story_index == 10:
+                notes.append(
+                    "Isaac is a newborn or small child in the birth scene; make him clearly a baby when shown."
+                )
+            elif story_index == 11:
+                notes.append(
+                    "Isaac is an adult son, roughly late thirties to about forty, strong enough to carry wood; do not draw him as a child."
+                )
+            elif story_index == 13:
+                notes.append(
+                    "Isaac is an adult man around forty in the marriage scenes, not a boy."
+                )
+            elif story_index >= 15:
+                notes.append(
+                    "Isaac is an old father in the later patriarch scenes, with aged features and weaker sight when the scene implies it."
+                )
+
+    if era == "era_exodus":
+        if has_moses and story_index is not None:
+            if story_index <= 2:
+                notes.append(
+                    "Moses follows the scene life stage exactly: baby in the basket scenes, child only when the scene asks."
+                )
+            elif story_index == 3:
+                notes.append(
+                    "Moses is about forty, an adult Hebrew man raised in Egypt, dark-haired and strong, not elderly."
+                )
+            elif story_index >= 22:
+                notes.append(
+                    "Moses is about one hundred twenty in the final wilderness scenes, aged but vigorous and dignified."
+                )
+            else:
+                notes.append(
+                    "Moses is an older mature leader around eighty, confident and vigorous in God's work, not frail or timid."
+                )
+        if has_aaron and story_index is not None:
+            if story_index == 16:
+                notes.append(
+                    "Aaron wears high-priestly linen garments and breastpiece in this Numbers 12 scene; keep him visually distinct from Moses."
+                )
+            elif story_index >= 19:
+                notes.append(
+                    "From the Meribah water scene onward, Aaron is Moses' older brother in extreme old age: show him older than Moses, with a white beard, high-priestly linen garments, breastpiece, and priestly turban in every scene where he appears."
+                )
+            elif story_index == 18:
+                notes.append(
+                    "Aaron wears priestly garments in this Korah rebellion scene because the conflict centers on priestly authority; keep him visually distinct from Moses."
+                )
+            else:
+                notes.append(
+                    "Aaron is Moses' mature Levite brother and spokesman in ordinary desert clothing, not yet in high-priest breastplate or ornate turban."
+                )
+
+    if era == "era_monarchy":
+        if has_david and story_index is not None:
+            if story_index >= 13:
+                notes.append(
+                    "From David's enthronement as king over Israel onward, David must read visually as King David: royal blue kingly garments, dignified royal mantle or robe, and mature royal bearing. If the scene explicitly requires linen ephod, mourning clothes, exile flight clothing, fasting on the floor, or deathbed weakness, keep that scene clothing but still make him unmistakably the king, not a shepherd youth or fugitive."
+                )
+            else:
+                notes.append(
+                    "Before David's enthronement, keep David in the scene's non-royal life stage: shepherd clothes, young warrior travel clothes, harp player court clothing, or fugitive wilderness clothing as the passage requires; do not dress him as king yet."
+                )
+        if has_solomon and story_index is not None:
+            if story_index >= 23:
+                notes.append(
+                    "From Solomon's enthronement at Gihon onward, Solomon must read visually as King Solomon: royal sky-blue kingly garments, dignified royal mantle or robe, a wise young king's bearing, and alert intelligent eyes. If the scene explicitly requires dream posture, worship posture, temple-building worksite clothing, or late-life decline around idols, keep that scene situation but still make him unmistakably the reigning king, not merely David's young son."
+                )
+            else:
+                notes.append(
+                    "Before Solomon's enthronement, keep Solomon as David's royal son or prince, not yet dressed as the reigning king."
+                )
+
+    if not notes:
+        return ""
+    notes.append(
+        "Attached avatars show base identity only; biblical scene age, clothing, and physical condition override the avatar when needed."
+    )
+    return " ".join(notes)
+
+
+def combined_scene_prompt_note_for(
+    event: dict[str, Any],
+    *,
+    scene_index: int,
+    scene_text: str,
+    scene_person_codes: list[str],
+) -> str:
+    parts = [
+        scene_prompt_note_for(event, scene_index=scene_index),
+        scene_age_art_direction_for(
+            event,
+            scene_text=scene_text,
+            scene_person_codes=scene_person_codes,
+        ),
+    ]
+    return " ".join(part for part in parts if part).strip()
 
 
 def main() -> int:
@@ -780,7 +1076,13 @@ def main() -> int:
             print(f"[SKIP] {idx:03d} {title} -> no usable story_scenes")
             continue
 
-        manifest_entries: list[dict[str, Any]] = []
+        place_name = str(event.get("place_name") or "").strip()
+        bible_ref_text = format_bible_refs_for_prompt(event)
+        scene_jobs: list[dict[str, Any]] = []
+        prompt_lines: list[str] = []
+        prompt_file_header = build_prompt_file_header(bible_ref_text=bible_ref_text)
+        if prompt_file_header:
+            prompt_lines.append(prompt_file_header)
         for scene_index, scene_text in enumerate(scenes, start=1):
             out_file = event_dir / f"scene_{scene_index:02d}.png"
             scene_person_codes = scene_person_codes_for(
@@ -801,9 +1103,11 @@ def main() -> int:
                 scene_person_codes=scene_person_codes,
                 code_to_name=code_to_name,
             )
-            scene_prompt_note = scene_prompt_note_for(
+            scene_prompt_note = combined_scene_prompt_note_for(
                 event,
                 scene_index=scene_index - 1,
+                scene_text=scene_text,
+                scene_person_codes=scene_person_codes,
             )
             reference_avatars = choose_reference_avatars(
                 reference_person_codes,
@@ -815,11 +1119,54 @@ def main() -> int:
                 reference_person_codes,
                 avatar_index,
             )
+            request_prompt = build_request_prompt_text(
+                event_title=title,
+                sentence=visual_scene_text,
+                reference_avatars=reference_avatars,
+                code_to_name=code_to_name,
+                place_name=place_name,
+                scene_prompt_note=scene_prompt_note,
+            )
+            prompt_lines.append(
+                build_prompt_file_line(
+                    file_name=out_file.name,
+                    scene_prompt=visual_scene_text,
+                )
+            )
+            scene_jobs.append(
+                {
+                    "scene_index": scene_index,
+                    "out_file": out_file,
+                    "visual_scene_text": visual_scene_text,
+                    "scene_prompt_note": scene_prompt_note,
+                    "request_prompt": request_prompt,
+                    "scene_person_codes": scene_person_codes,
+                    "reference_person_codes": reference_person_codes,
+                    "reference_avatars": reference_avatars,
+                    "reference_codes": reference_codes,
+                    "missing_reference_codes": missing_reference_codes,
+                }
+            )
 
+        ensure_prompt_file(event_dir / "prompt.txt", prompt_lines)
+
+        manifest_entries: list[dict[str, Any]] = []
+        for scene_job in scene_jobs:
+            scene_index = int(scene_job["scene_index"])
+            out_file = scene_job["out_file"]
+            visual_scene_text = str(scene_job["visual_scene_text"])
+            scene_prompt_note = str(scene_job["scene_prompt_note"])
+            request_prompt = str(scene_job["request_prompt"])
+            scene_person_codes = scene_job["scene_person_codes"]
+            reference_person_codes = scene_job["reference_person_codes"]
+            reference_avatars = scene_job["reference_avatars"]
+            reference_codes = scene_job["reference_codes"]
+            missing_reference_codes = scene_job["missing_reference_codes"]
             manifest_entry = {
                 "scene_index": scene_index,
                 "scene_prompt": visual_scene_text,
                 "scene_prompt_note": scene_prompt_note,
+                "request_prompt": request_prompt,
                 "scene_person_codes": scene_person_codes,
                 "scene_reference_person_codes": reference_person_codes,
                 "reference_avatar_codes": reference_codes,
@@ -854,11 +1201,12 @@ def main() -> int:
                 sentence=visual_scene_text,
                 reference_avatars=reference_avatars,
                 code_to_name=code_to_name,
-                place_name=str(event.get("place_name") or "").strip(),
+                place_name=place_name,
                 scene_prompt_note=scene_prompt_note,
             )
             body = build_request_body(parts, sample_count=args.sample_count)
 
+            post_request_sleep_sec: float | None = None
             try:
                 label = f"{idx:03d}.{scene_index:02d} {title}"
                 max_429_attempts = max(1, int(args.retry_429_attempts))
@@ -927,6 +1275,7 @@ def main() -> int:
                     manifest_entry["status"] = "failed_http_429"
                     manifest_entry["error"] = response.text[:400]
                     manifest_entries.append(manifest_entry)
+                    post_request_sleep_sec = args.sleep_on_failure_sec
                     print(
                         f"[FAIL] {label} status=429 "
                         f"after {attempts_used} attempts, moving to next"
@@ -938,6 +1287,7 @@ def main() -> int:
                     manifest_entry["status"] = "failed_http"
                     manifest_entry["error"] = response.text[:400]
                     manifest_entries.append(manifest_entry)
+                    post_request_sleep_sec = args.sleep_on_failure_sec
                     print(
                         f"[FAIL] {idx:03d}.{scene_index:02d} {title} "
                         f"status={response.status_code} model={used_model}"
@@ -951,6 +1301,7 @@ def main() -> int:
                     manifest_entry["status"] = "failed_no_candidates"
                     manifest_entry["error"] = "No candidates returned."
                     manifest_entries.append(manifest_entry)
+                    post_request_sleep_sec = args.sleep_on_failure_sec
                     print(f"[FAIL] {idx:03d}.{scene_index:02d} {title} no candidates")
                     continue
 
@@ -968,6 +1319,7 @@ def main() -> int:
                     manifest_entry["status"] = "failed_no_image"
                     manifest_entry["error"] = last_error or "No decodable image bytes."
                     manifest_entries.append(manifest_entry)
+                    post_request_sleep_sec = args.sleep_on_failure_sec
                     print(
                         f"[FAIL] {idx:03d}.{scene_index:02d} {title} "
                         "no decodable image"
@@ -978,16 +1330,18 @@ def main() -> int:
                 success += 1
                 manifest_entry["status"] = "ok"
                 manifest_entries.append(manifest_entry)
+                post_request_sleep_sec = args.sleep_sec
                 print(f"[OK]   {idx:03d}.{scene_index:02d} {title} -> {out_file.name}")
             except Exception as exc:  # noqa: BLE001
                 failure += 1
                 manifest_entry["status"] = "failed_exception"
                 manifest_entry["error"] = str(exc)
                 manifest_entries.append(manifest_entry)
+                post_request_sleep_sec = args.sleep_on_failure_sec
                 print(f"[FAIL] {idx:03d}.{scene_index:02d} {title} error={exc}")
-
-            if args.sleep_sec > 0:
-                time.sleep(args.sleep_sec)
+            finally:
+                if post_request_sleep_sec is not None and post_request_sleep_sec > 0:
+                    time.sleep(post_request_sleep_sec)
 
         manifest = {
             "event_id": str(event.get("id") or "").strip(),

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 11,
+  "story_title": "사랑과 예배 질서",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울이 모든 은사보다 더 크다고 말한 길은 무엇입니까?",
+      "choices": [
+        "사랑",
+        "논쟁",
+        "명예"
+      ],
+      "answer_index": 0,
+      "explanation": "고전 13:13 — '그 중에 제일은 사랑이라'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "예언의 은사가 교회에 주는 유익은 무엇입니까?",
+      "choices": [
+        "덕을 세우고 권면하고 위로한다",
+        "사람을 서로 갈라놓는다",
+        "자기 이름을 높인다"
+      ],
+      "answer_index": 0,
+      "explanation": "고전 14:3 — '덕을 세우며 권면하며 안위하는 것이요'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "예배 질서에 대해 바울이 마지막으로 권한 원칙은 무엇입니까?",
+      "choices": [
+        "모든 일을 품위 있고 질서 있게 하라",
+        "각자 동시에 크게 말하라",
+        "알아듣지 못해도 길게 말하라"
+      ],
+      "answer_index": 0,
+      "explanation": "고전 14:40 — '모든 것을 적당하게 하고 질서대로 하라'"
+    }
+  ]
+}

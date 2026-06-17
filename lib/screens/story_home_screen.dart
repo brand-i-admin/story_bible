@@ -44,6 +44,7 @@ import '../widgets/v2/home_intro_panel.dart';
 import '../widgets/v2/map_hint_overlay.dart';
 import '../widgets/v2/region_event_list.dart';
 import '../widgets/v2/region_pick_panel.dart';
+import '../widgets/v2/timeline_unit_pick_panel.dart';
 import 'notification_history_screen.dart';
 import 'proposal_board_screen.dart';
 import 'proposal_detail_screen.dart';

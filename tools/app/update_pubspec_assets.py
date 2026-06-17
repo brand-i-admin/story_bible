@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""assets/story_images_thumbs 하위 디렉토리를 pubspec.yaml에 자동 등록한다.
+"""assets/story_images_thumbs 하위 index.json과 디렉토리를 pubspec.yaml에 등록한다.
 
 Flutter는 assets 목록에서 디렉토리를 하나 지정하면 그 디렉토리의 직접 자식
-파일만 포함하고, 하위 디렉토리는 포함하지 않는다. 그래서 215개 이야기
-이미지 폴더마다 개별 라인이 필요하다.
+파일만 포함하고, 하위 디렉토리는 포함하지 않는다. 그래서 이야기 이미지
+썸네일 폴더마다 개별 라인이 필요하다.
+
+스토리 썸네일 폴더는 Android/iOS 빌드 산출물의 파일명 길이를 줄이기 위해
+긴 한글 제목 대신 `nt_apostolic_034` 같은 짧은 안정 ID를 쓴다. 앱은
+`assets/story_images_thumbs/index.json`으로 제목과 짧은 폴더를 매핑한다.
 
 사용법:
     python3 tools/app/update_pubspec_assets.py \
@@ -13,7 +17,7 @@ Flutter는 assets 목록에서 디렉토리를 하나 지정하면 그 디렉토
 동작:
     1. assets/story_images_thumbs/ 하위의 모든 직접 자식 디렉토리 목록을 스캔
     2. pubspec.yaml의 `assets:` 블록에서 story_images_thumbs/ 관련 라인 제거
-    3. 스캔한 디렉토리 경로들을 정렬된 순서로 재삽입
+    3. index.json과 스캔한 디렉토리 경로들을 정렬된 순서로 재삽입
     4. 변경 사항을 파일에 저장 (--check는 diff만 보고 종료)
 """
 
@@ -25,6 +29,7 @@ from pathlib import Path
 
 PREFIX = "assets/story_images_thumbs/"
 LINE_PREFIX = f"    - {PREFIX}"
+INDEX_ASSET = f"{PREFIX}index.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -84,7 +89,8 @@ def rewrite_pubspec(
         )
         sys.exit(3)
 
-    new_entries = [f"{LINE_PREFIX}{name}/\n" for name in subdirs]
+    new_entries = [f"    - {INDEX_ASSET}\n"]
+    new_entries.extend(f"{LINE_PREFIX}{name}/\n" for name in subdirs)
     new_lines = kept[:insert_idx] + new_entries + kept[insert_idx:]
     new_content = "".join(new_lines)
 
@@ -96,7 +102,7 @@ def rewrite_pubspec(
         return True
 
     pubspec_path.write_text(new_content, encoding="utf-8")
-    print(f"[ok] pubspec.yaml 업데이트: {len(subdirs)} 디렉토리 반영")
+    print(f"[ok] pubspec.yaml 업데이트: index.json + {len(subdirs)} 디렉토리 반영")
     return True
 
 

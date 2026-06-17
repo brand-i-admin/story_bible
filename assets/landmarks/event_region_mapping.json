@@ -243,6 +243,22 @@
     },
     {
       "story_index": 31,
+      "title": "요나: 도망과 바다의 표징",
+      "era": "era_divided_kingdom",
+      "place_name": "욥바 항구와 큰 바다(전승)",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "lm_div_joppa_jonah"
+    },
+    {
+      "story_index": 32,
+      "title": "요나: 니느웨 회개와 하나님의 긍휼",
+      "era": "era_divided_kingdom",
+      "place_name": "니느웨",
+      "region_code": "rgn_assyria",
+      "landmark_code": "lm_mon_nineveh"
+    },
+    {
+      "story_index": 33,
       "title": "웃시야의 강성함과 교만: 성전 문 앞의 나병",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘/블레셋 성읍들(전승)",
@@ -250,7 +266,7 @@
       "landmark_code": "lm_div_jerusalem_uzziah"
     },
     {
-      "story_index": 32,
+      "story_index": 34,
       "title": "북이스라엘 말기 왕들: 반역의 연쇄",
       "era": "era_divided_kingdom",
       "place_name": "사마리아/디르사/북이스라엘(전승)",
@@ -258,7 +274,7 @@
       "landmark_code": "lm_div_samaria_late_kings"
     },
     {
-      "story_index": 33,
+      "story_index": 35,
       "title": "요담: 윗문을 세운 정직한 왕",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 성전 윗문(전승)",
@@ -266,7 +282,7 @@
       "landmark_code": "lm_div_jerusalem_jotham_gate"
     },
     {
-      "story_index": 34,
+      "story_index": 36,
       "title": "이사야의 소명: 거룩한 보좌의 환상",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 성전(환상)",
@@ -274,7 +290,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 35,
+      "story_index": 37,
       "title": "아하스의 우상과 다메섹 제단",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 성전/윗못 수도 끝(전승)",
@@ -282,7 +298,7 @@
       "landmark_code": "lm_div_jerusalem_ahaz_altars"
     },
     {
-      "story_index": 36,
+      "story_index": 38,
       "title": "아하스와 임마누엘: 믿음의 징조",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 윗못 수도 끝(전승)",
@@ -290,7 +306,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 37,
+      "story_index": 39,
       "title": "호세아의 몰락: 사마리아가 함락되다",
       "era": "era_divided_kingdom",
       "place_name": "사마리아",
@@ -298,7 +314,7 @@
       "landmark_code": "lm_div_samaria"
     },
     {
-      "story_index": 38,
+      "story_index": 40,
       "title": "히스기야와 산헤립: 두려움의 편지",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘",
@@ -306,7 +322,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 39,
+      "story_index": 41,
       "title": "히스기야의 병과 바벨론 사신",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘",
@@ -314,7 +330,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 40,
+      "story_index": 42,
       "title": "므낫세의 낮아짐: 포로에서 회개로",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 → 바벨론 → 예루살렘(전승)",
@@ -322,7 +338,7 @@
       "landmark_code": "lm_div_jerusalem_manasseh"
     },
     {
-      "story_index": 41,
+      "story_index": 43,
       "title": "아몬: 짧은 악의 통치",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 왕궁/성전(전승)",
@@ -330,7 +346,7 @@
       "landmark_code": "lm_div_jerusalem_amon"
     },
     {
-      "story_index": 42,
+      "story_index": 44,
       "title": "요시야의 개혁: 율법책을 찾다",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 성전",
@@ -338,7 +354,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 43,
+      "story_index": 45,
       "title": "여호아하스: 애굽으로 끌려간 왕",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 → 립나/애굽(전승)",
@@ -346,7 +362,7 @@
       "landmark_code": "lm_div_jerusalem_jehoahaz_judah"
     },
     {
-      "story_index": 44,
+      "story_index": 46,
       "title": "여호야김과 첫 포로: 다니엘이 끌려가다",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 → 바벨론(전승)",
@@ -354,7 +370,7 @@
       "landmark_code": "lm_div_jerusalem_jehoiakim_first_exile"
     },
     {
-      "story_index": 45,
+      "story_index": 47,
       "title": "예레미야의 경고: 칠십 년의 포로",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘/유다(전승)",
@@ -362,7 +378,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 46,
+      "story_index": 48,
       "title": "새 언약의 약속: 마음에 새기다",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘/유다(전승)",
@@ -370,7 +386,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 47,
+      "story_index": 49,
       "title": "불태워진 두루마리: 말씀을 거부하다",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 성전/왕궁(전승)",
@@ -378,7 +394,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 48,
+      "story_index": 50,
       "title": "여호야긴의 포로: 성전 금 기구가 깨어지다",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 → 바벨론(전승)",
@@ -386,7 +402,7 @@
       "landmark_code": "lm_div_jerusalem_jehoiachin_exile"
     },
     {
-      "story_index": 49,
+      "story_index": 51,
       "title": "토굴의 예레미야: 왕에게 전하다",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘 베냐민 문/왕궁(전승)",
@@ -394,7 +410,7 @@
       "landmark_code": "lm_div_jerusalem"
     },
     {
-      "story_index": 50,
+      "story_index": 52,
       "title": "예루살렘 포위: 왕의 몰락",
       "era": "era_divided_kingdom",
       "place_name": "예루살렘",
@@ -499,14 +515,6 @@
     },
     {
       "story_index": 13,
-      "title": "에스라의 귀환: 말씀으로 정리하다",
-      "era": "era_exile_return",
-      "place_name": "바벨론 → 예루살렘(전승)",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_exi_jerusalem"
-    },
-    {
-      "story_index": 14,
       "title": "에스라의 회개와 정리: 거룩함을 회복하다",
       "era": "era_exile_return",
       "place_name": "예루살렘(전승)",
@@ -514,7 +522,7 @@
       "landmark_code": "lm_exi_jerusalem"
     },
     {
-      "story_index": 15,
+      "story_index": 14,
       "title": "느헤미야의 파송: 무너진 성벽 소식",
       "era": "era_exile_return",
       "place_name": "수산 궁(페르시아)",
@@ -522,7 +530,7 @@
       "landmark_code": "lm_exi_susa"
     },
     {
-      "story_index": 16,
+      "story_index": 15,
       "title": "성벽 재건: 밤의 조사와 한 손엔 무기",
       "era": "era_exile_return",
       "place_name": "예루살렘",
@@ -530,7 +538,7 @@
       "landmark_code": "lm_exi_jerusalem"
     },
     {
-      "story_index": 17,
+      "story_index": 16,
       "title": "율법 낭독: 울음에서 기쁨으로",
       "era": "era_exile_return",
       "place_name": "예루살렘 수문 앞 광장(전승)",
@@ -579,7 +587,7 @@
     },
     {
       "story_index": 6,
-      "title": "재앙의 시작: 물이 변하다",
+      "title": "열 가지 재앙: 완고한 바로",
       "era": "era_exodus",
       "place_name": "나일강(전승)",
       "region_code": "rgn_egypt",
@@ -1107,15 +1115,15 @@
     },
     {
       "story_index": 1,
-      "title": "오순절: 성령강림",
+      "title": "승천과 성령 약속",
       "era": "era_nt_apostolic",
-      "place_name": "예루살렘",
+      "place_name": "감람산과 예루살렘",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_ap_jerusalem"
     },
     {
       "story_index": 2,
-      "title": "베드로 설교: 하루에 삼천",
+      "title": "오순절 성령 강림과 베드로의 설교",
       "era": "era_nt_apostolic",
       "place_name": "예루살렘",
       "region_code": "rgn_judea",
@@ -1123,7 +1131,7 @@
     },
     {
       "story_index": 3,
-      "title": "성전 미문 치유와 첫 박해",
+      "title": "성전 미문의 치유와 베드로의 성전 설교",
       "era": "era_nt_apostolic",
       "place_name": "예루살렘 성전 미문",
       "region_code": "rgn_judea",
@@ -1131,350 +1139,662 @@
     },
     {
       "story_index": 4,
-      "title": "아나니아와 삽비라",
+      "title": "베드로와 요한이 공회 앞에 섬",
       "era": "era_nt_apostolic",
-      "place_name": "예루살렘",
+      "place_name": "예루살렘 공회",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_ap_jerusalem"
     },
     {
       "story_index": 5,
-      "title": "일곱 집사와 스데반 순교",
+      "title": "사도들의 표적과 박해",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘 성전과 감옥",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
+    },
+    {
+      "story_index": 6,
+      "title": "스데반의 사역과 순교",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘 공회 밖",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
+    },
+    {
+      "story_index": 7,
+      "title": "예루살렘 교회 박해와 사마리아 전도",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘에서 사마리아로",
+      "region_code": "rgn_samaria",
+      "landmark_code": "lm_nt_ap_samaria_city"
+    },
+    {
+      "story_index": 8,
+      "title": "에디오피아 내시와 광야 길의 세례",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘-가사 길",
+      "region_code": "rgn_philistia",
+      "landmark_code": "lm_nt_ap_jerusalem_gaza_road"
+    },
+    {
+      "story_index": 9,
+      "title": "사울의 회심",
+      "era": "era_nt_apostolic",
+      "place_name": "다메섹 길",
+      "region_code": "rgn_aram_damascus",
+      "landmark_code": "lm_nt_ap_damascus"
+    },
+    {
+      "story_index": 10,
+      "title": "사울의 다메섹 전도와 피신",
+      "era": "era_nt_apostolic",
+      "place_name": "다메섹과 예루살렘",
+      "region_code": "rgn_aram_damascus",
+      "landmark_code": "lm_nt_ap_damascus"
+    },
+    {
+      "story_index": 11,
+      "title": "베드로의 룻다와 욥바 치유",
+      "era": "era_nt_apostolic",
+      "place_name": "룻다와 욥바(해안평야, 전승)",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "rgn_coastal_plain"
+    },
+    {
+      "story_index": 12,
+      "title": "고넬료와 베드로",
+      "era": "era_nt_apostolic",
+      "place_name": "가이사랴와 욥바",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "lm_nt_ap_caesarea_maritima"
+    },
+    {
+      "story_index": 13,
+      "title": "베드로가 예루살렘 교회에 설명함",
       "era": "era_nt_apostolic",
       "place_name": "예루살렘",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_ap_jerusalem"
     },
     {
-      "story_index": 6,
-      "title": "사마리아 복음: 빌립의 전도",
-      "era": "era_nt_apostolic",
-      "place_name": "사마리아",
-      "region_code": "rgn_samaria",
-      "landmark_code": "lm_nt_ap_samaria_city"
-    },
-    {
-      "story_index": 7,
-      "title": "에티오피아 내시: 길 위의 만남",
-      "era": "era_nt_apostolic",
-      "place_name": "예루살렘-가사 길(전승)",
-      "region_code": "rgn_philistia",
-      "landmark_code": "lm_nt_ap_jerusalem_gaza_road"
-    },
-    {
-      "story_index": 8,
-      "title": "사울 회심: 다메섹의 빛",
-      "era": "era_nt_apostolic",
-      "place_name": "다메섹",
-      "region_code": "rgn_aram_damascus",
-      "landmark_code": "lm_nt_ap_damascus"
-    },
-    {
-      "story_index": 9,
-      "title": "고넬료: 이방인에게도",
-      "era": "era_nt_apostolic",
-      "place_name": "가이사랴",
-      "region_code": "rgn_coastal_plain",
-      "landmark_code": "lm_nt_ap_caesarea_maritima"
-    },
-    {
-      "story_index": 10,
-      "title": "안디옥 교회: 선교의 출발",
+      "story_index": 14,
+      "title": "안디옥 교회 창립과 부흥",
       "era": "era_nt_apostolic",
       "place_name": "안디옥(시리아)",
       "region_code": "rgn_syria_north",
       "landmark_code": "lm_nt_ap_antioch_syria"
     },
     {
-      "story_index": 11,
-      "title": "1차 선교(1): 구브로 살라미–바보",
+      "story_index": 15,
+      "title": "야고보의 순교와 베드로의 투옥",
       "era": "era_nt_apostolic",
-      "place_name": "구브로(살라미 → 바보)",
+      "place_name": "예루살렘 감옥",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
+    },
+    {
+      "story_index": 16,
+      "title": "1차 전도 여행: 안디옥에서 파송",
+      "era": "era_nt_apostolic",
+      "place_name": "안디옥(시리아)",
+      "region_code": "rgn_syria_north",
+      "landmark_code": "lm_nt_ap_antioch_syria"
+    },
+    {
+      "story_index": 17,
+      "title": "1차 전도 여행: 구브로 살라미와 바보",
+      "era": "era_nt_apostolic",
+      "place_name": "구브로섬 살라미와 바보",
       "region_code": "rgn_cyprus",
       "landmark_code": "lm_nt_ap_cyprus_salamis_paphos"
     },
     {
-      "story_index": 12,
-      "title": "1차 선교(2): 비시디아 안디옥",
+      "story_index": 18,
+      "title": "1차 전도 여행: 비시디아 안디옥 설교",
       "era": "era_nt_apostolic",
-      "place_name": "비시디아 안디옥(소아시아)",
+      "place_name": "비시디아 안디옥",
       "region_code": "rgn_galatia",
       "landmark_code": "lm_nt_ap_pisidian_antioch"
     },
     {
-      "story_index": 13,
-      "title": "1차 선교(3): 이고니온",
+      "story_index": 19,
+      "title": "1차 전도 여행: 이고니온과 루스드라와 더베",
       "era": "era_nt_apostolic",
-      "place_name": "이고니온(코니아)",
-      "region_code": "rgn_galatia",
-      "landmark_code": "lm_nt_ap_iconium"
-    },
-    {
-      "story_index": 14,
-      "title": "1차 선교(4): 루스드라–더베",
-      "era": "era_nt_apostolic",
-      "place_name": "루스드라 → 더베(갈라디아)",
+      "place_name": "이고니온, 루스드라, 더베",
       "region_code": "rgn_galatia",
       "landmark_code": "lm_nt_ap_lystra_derbe"
     },
     {
-      "story_index": 15,
-      "title": "1차 선교(5): 안디옥(시리아)로 귀환 보고",
+      "story_index": 20,
+      "title": "예루살렘 회의와 두 번째 여정의 갈림길",
       "era": "era_nt_apostolic",
-      "place_name": "안디옥(시리아)",
-      "region_code": "rgn_syria_north",
-      "landmark_code": "lm_nt_ap_antioch_syria"
+      "place_name": "예루살렘과 안디옥",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
     },
     {
-      "story_index": 16,
-      "title": "2차 선교(1): 드로아에서 마게도냐로",
+      "story_index": 21,
+      "title": "2차 전도 여행: 디모데 합류와 교회들을 굳게 함",
       "era": "era_nt_apostolic",
-      "place_name": "드로아",
+      "place_name": "더베와 루스드라",
+      "region_code": "rgn_galatia",
+      "landmark_code": "lm_nt_ap_lystra_derbe"
+    },
+    {
+      "story_index": 22,
+      "title": "2차 전도 여행: 마게도냐 환상",
+      "era": "era_nt_apostolic",
+      "place_name": "무시아와 드로아",
       "region_code": "rgn_asia_province",
       "landmark_code": "lm_nt_ap_troas"
     },
     {
-      "story_index": 17,
-      "title": "2차 선교(2): 빌립보—루디아와 감옥의 찬양",
+      "story_index": 23,
+      "title": "2차 전도 여행: 빌립보 사역",
       "era": "era_nt_apostolic",
       "place_name": "빌립보",
       "region_code": "rgn_macedonia",
       "landmark_code": "lm_nt_ap_philippi"
     },
     {
-      "story_index": 18,
-      "title": "2차 선교(3): 데살로니가—소동과 도피",
+      "story_index": 24,
+      "title": "2차 전도 여행: 데살로니가 사역",
       "era": "era_nt_apostolic",
       "place_name": "데살로니가",
       "region_code": "rgn_macedonia",
       "landmark_code": "lm_nt_ap_thessalonica"
     },
     {
-      "story_index": 19,
-      "title": "2차 선교(4): 베뢰아—말씀을 상고하다",
+      "story_index": 25,
+      "title": "2차 전도 여행: 베뢰아 사람들",
       "era": "era_nt_apostolic",
       "place_name": "베뢰아",
       "region_code": "rgn_macedonia",
       "landmark_code": "lm_nt_ap_berea"
     },
     {
-      "story_index": 20,
-      "title": "2차 선교(5): 아덴—아레오바고 설교",
+      "story_index": 26,
+      "title": "2차 전도 여행: 아덴 아레오바고 설교",
       "era": "era_nt_apostolic",
-      "place_name": "아덴(아레오바고)",
+      "place_name": "아덴",
       "region_code": "rgn_achaia",
       "landmark_code": "lm_nt_ap_athens"
     },
     {
-      "story_index": 21,
-      "title": "2차 선교(6): 고린도—정착과 견딤",
+      "story_index": 27,
+      "title": "2차 전도 여행: 고린도 사역과 아굴라와 브리스길라",
       "era": "era_nt_apostolic",
       "place_name": "고린도",
       "region_code": "rgn_achaia",
       "landmark_code": "lm_nt_ap_corinth"
     },
     {
-      "story_index": 22,
-      "title": "3차 선교(1): 에베소—확장과 충돌",
+      "story_index": 28,
+      "title": "2차 전도 여행: 겐그레아와 에베소 경유, 안디옥 귀환",
       "era": "era_nt_apostolic",
       "place_name": "에베소",
       "region_code": "rgn_asia_province",
       "landmark_code": "lm_nt_ap_ephesus"
     },
     {
-      "story_index": 23,
-      "title": "3차 선교(2): 마게도냐—교회를 굳게 하다",
+      "story_index": 29,
+      "title": "3차 전도 여행: 아볼로와 브리스길라와 아굴라",
       "era": "era_nt_apostolic",
-      "place_name": "마게도냐(빌립보/데살로니가 권역)",
+      "place_name": "안디옥에서 에베소로",
+      "region_code": "rgn_syria_north",
+      "landmark_code": "lm_nt_ap_antioch_syria"
+    },
+    {
+      "story_index": 30,
+      "title": "3차 전도 여행: 에베소에서 전함",
+      "era": "era_nt_apostolic",
+      "place_name": "에베소",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_ap_ephesus"
+    },
+    {
+      "story_index": 31,
+      "title": "3차 전도 여행: 에베소 아데미 소동",
+      "era": "era_nt_apostolic",
+      "place_name": "에베소",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_ap_ephesus"
+    },
+    {
+      "story_index": 32,
+      "title": "3차 전도 여행: 마게도냐와 헬라 방문",
+      "era": "era_nt_apostolic",
+      "place_name": "마게도냐와 헬라",
       "region_code": "rgn_macedonia",
       "landmark_code": "lm_nt_ap_philippi"
     },
     {
-      "story_index": 24,
-      "title": "3차 선교(3): 헬라(고린도)—머무름과 결심",
+      "story_index": 33,
+      "title": "3차 전도 여행: 드로아의 유두고 사건",
       "era": "era_nt_apostolic",
-      "place_name": "고린도(헬라)",
-      "region_code": "rgn_achaia",
-      "landmark_code": "lm_nt_ap_corinth"
+      "place_name": "드로아",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_ap_troas"
     },
     {
-      "story_index": 25,
-      "title": "3차 선교(4): 밀레도—에베소 장로들과 작별",
+      "story_index": 34,
+      "title": "3차 전도 여행: 밀레도에서 에베소 장로들과 작별",
       "era": "era_nt_apostolic",
       "place_name": "밀레도",
       "region_code": "rgn_asia_province",
       "landmark_code": "lm_nt_ap_miletus"
     },
     {
-      "story_index": 26,
-      "title": "로마행(1): 예루살렘 체포",
-      "era": "era_nt_apostolic",
-      "place_name": "예루살렘 성전",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_ap_jerusalem"
-    },
-    {
-      "story_index": 27,
-      "title": "로마행(2): 가이사랴 재판과 상소",
+      "story_index": 35,
+      "title": "3차 전도 여행: 두로와 가이사랴를 거쳐 예루살렘으로",
       "era": "era_nt_apostolic",
       "place_name": "가이사랴",
       "region_code": "rgn_coastal_plain",
       "landmark_code": "lm_nt_ap_caesarea_maritima"
     },
     {
-      "story_index": 28,
-      "title": "로마행(3): 폭풍의 항해",
+      "story_index": 36,
+      "title": "예루살렘 도착과 야고보 방문",
       "era": "era_nt_apostolic",
-      "place_name": "지중해 항로(그레데 근처, 전승)",
+      "place_name": "예루살렘",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
+    },
+    {
+      "story_index": 37,
+      "title": "바울의 성전 체포와 증언",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘 성전",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
+    },
+    {
+      "story_index": 38,
+      "title": "로마 시민권과 산헤드린 변론",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘 영문과 공회",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_ap_jerusalem"
+    },
+    {
+      "story_index": 39,
+      "title": "바울 암살 음모와 가이사랴 이송",
+      "era": "era_nt_apostolic",
+      "place_name": "예루살렘에서 가이사랴로",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "lm_nt_ap_caesarea_maritima"
+    },
+    {
+      "story_index": 40,
+      "title": "벨릭스 앞 재판",
+      "era": "era_nt_apostolic",
+      "place_name": "가이사랴",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "lm_nt_ap_caesarea_maritima"
+    },
+    {
+      "story_index": 41,
+      "title": "베스도 앞 재판과 가이사 상소",
+      "era": "era_nt_apostolic",
+      "place_name": "가이사랴",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "lm_nt_ap_caesarea_maritima"
+    },
+    {
+      "story_index": 42,
+      "title": "아그립바 왕 앞 변론",
+      "era": "era_nt_apostolic",
+      "place_name": "가이사랴",
+      "region_code": "rgn_coastal_plain",
+      "landmark_code": "lm_nt_ap_caesarea_maritima"
+    },
+    {
+      "story_index": 43,
+      "title": "로마행 항해와 폭풍",
+      "era": "era_nt_apostolic",
+      "place_name": "지중해 항로와 그레데 근처",
       "region_code": "rgn_crete",
       "landmark_code": "lm_nt_ap_crete"
     },
     {
-      "story_index": 29,
-      "title": "로마행(4): 멜리데(몰타) 표류",
+      "story_index": 44,
+      "title": "몰타 난파와 로마 사역",
       "era": "era_nt_apostolic",
-      "place_name": "몰타(멜리데)",
-      "region_code": "rgn_malta",
-      "landmark_code": "lm_nt_ap_malta"
-    },
-    {
-      "story_index": 30,
-      "title": "로마행(5): 로마 도착",
-      "era": "era_nt_apostolic",
-      "place_name": "로마",
+      "place_name": "몰타와 로마",
       "region_code": "rgn_italy",
       "landmark_code": "lm_nt_ap_rome"
     },
     {
       "story_index": 1,
-      "title": "하늘 보좌: 문이 열리다",
+      "title": "계시의 시작: 영광의 그리스도",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
+      "place_name": "밧모섬",
+      "region_code": "rgn_patmos",
       "landmark_code": "lm_nt_con_patmos"
     },
     {
       "story_index": 2,
-      "title": "어린양: 두루마리를 받다",
+      "title": "하늘 보좌와 예배",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_con_patmos"
+      "place_name": "하늘 보좌",
+      "region_code": "rgn_heavenly_throne",
+      "landmark_code": "rgn_heavenly_throne"
     },
     {
       "story_index": 3,
-      "title": "일곱 인: 역사의 문이 열리다",
+      "title": "어린양과 봉인된 두루마리",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_con_patmos"
+      "place_name": "하늘 보좌",
+      "region_code": "rgn_heavenly_throne",
+      "landmark_code": "rgn_heavenly_throne"
     },
     {
       "story_index": 4,
-      "title": "일곱 나팔: 경고의 울림",
+      "title": "하나님의 백성과 큰 무리",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_con_patmos"
+      "place_name": "땅, 하나님의 보좌 앞",
+      "region_code": "rgn_heavenly_throne",
+      "landmark_code": "rgn_heavenly_throne"
     },
     {
       "story_index": 5,
-      "title": "용과 두 짐승: 대립의 정점",
+      "title": "하늘의 찬양과 어린양의 혼인잔치",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_con_patmos"
+      "place_name": "하늘",
+      "region_code": "rgn_heavenly_throne",
+      "landmark_code": "rgn_heavenly_throne"
     },
     {
       "story_index": 6,
-      "title": "바벨론의 멸망: 무너지는 화려함",
+      "title": "백마 탄 왕의 승리",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_con_patmos"
+      "place_name": "하늘, 땅",
+      "region_code": "rgn_armageddon",
+      "landmark_code": "rgn_armageddon"
     },
     {
       "story_index": 7,
-      "title": "최후 심판과 새 하늘 새 땅",
+      "title": "흰 보좌 심판과 새 창조 선언",
       "era": "era_nt_consummation",
-      "place_name": "밧모섬(추정)",
-      "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_con_patmos"
+      "place_name": "흰 보좌, 새 창조",
+      "region_code": "rgn_new_jerusalem",
+      "landmark_code": "rgn_new_jerusalem"
+    },
+    {
+      "story_index": 8,
+      "title": "새 예루살렘의 영광",
+      "era": "era_nt_consummation",
+      "place_name": "새 예루살렘",
+      "region_code": "rgn_new_jerusalem",
+      "landmark_code": "rgn_new_jerusalem"
+    },
+    {
+      "story_index": 9,
+      "title": "마지막 초청: 내가 속히 오리라",
+      "era": "era_nt_consummation",
+      "place_name": "새 예루살렘, 교회들",
+      "region_code": "rgn_new_jerusalem",
+      "landmark_code": "rgn_new_jerusalem"
     },
     {
       "story_index": 1,
-      "title": "성전 파괴: 예루살렘의 큰 전환",
+      "title": "시험 속에서 말씀을 행하는 믿음",
       "era": "era_nt_post_apostolic",
-      "place_name": "예루살렘",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_post_jerusalem"
+      "place_name": "디아스포라",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_diaspora"
     },
     {
       "story_index": 2,
-      "title": "밧모섬의 요한: 계시의 시작",
+      "title": "말과 지혜, 세상과의 충돌",
       "era": "era_nt_post_apostolic",
-      "place_name": "밧모섬",
+      "place_name": "디아스포라",
       "region_code": "rgn_asia_province",
-      "landmark_code": "lm_nt_post_patmos"
+      "landmark_code": "lm_nt_post_diaspora"
     },
     {
       "story_index": 3,
-      "title": "일곱 교회 편지: 촛대 사이의 말씀",
+      "title": "다른 복음과 바울의 부르심",
       "era": "era_nt_post_apostolic",
-      "place_name": "소아시아(일곱 교회 중심: 에베소)",
+      "place_name": "갈라디아, 예루살렘, 안디옥",
+      "region_code": "rgn_galatia",
+      "landmark_code": "lm_nt_post_galatia"
+    },
+    {
+      "story_index": 4,
+      "title": "약속과 율법, 종이 아닌 아들",
+      "era": "era_nt_post_apostolic",
+      "place_name": "갈라디아",
+      "region_code": "rgn_galatia",
+      "landmark_code": "lm_nt_post_galatia"
+    },
+    {
+      "story_index": 5,
+      "title": "자유와 성령의 열매",
+      "era": "era_nt_post_apostolic",
+      "place_name": "갈라디아",
+      "region_code": "rgn_galatia",
+      "landmark_code": "lm_nt_post_galatia"
+    },
+    {
+      "story_index": 6,
+      "title": "데살로니가의 믿음과 바울의 수고",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도 추정 → 데살로니가",
+      "region_code": "rgn_macedonia",
+      "landmark_code": "lm_nt_post_thessalonica"
+    },
+    {
+      "story_index": 7,
+      "title": "거룩한 삶과 부활 소망",
+      "era": "era_nt_post_apostolic",
+      "place_name": "데살로니가",
+      "region_code": "rgn_macedonia",
+      "landmark_code": "lm_nt_post_thessalonica"
+    },
+    {
+      "story_index": 8,
+      "title": "분열과 십자가의 지혜",
+      "era": "era_nt_post_apostolic",
+      "place_name": "에베소 추정 → 고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 9,
+      "title": "몸의 거룩과 교회 안의 판단",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 10,
+      "title": "성찬과 그리스도의 몸",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 11,
+      "title": "사랑과 예배 질서",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 12,
+      "title": "부활 복음과 마지막 승리",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 13,
+      "title": "고난 중 위로와 용서",
+      "era": "era_nt_post_apostolic",
+      "place_name": "마게도냐 추정 → 고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 14,
+      "title": "새 언약과 질그릇의 보배",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 15,
+      "title": "약함을 자랑하는 사도",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도",
+      "region_code": "rgn_achaia",
+      "landmark_code": "lm_nt_post_corinth"
+    },
+    {
+      "story_index": 16,
+      "title": "인간의 죄와 하나님의 심판",
+      "era": "era_nt_post_apostolic",
+      "place_name": "고린도 추정 → 로마",
+      "region_code": "rgn_italy",
+      "landmark_code": "lm_nt_post_rome"
+    },
+    {
+      "story_index": 17,
+      "title": "믿음으로 의롭다 하심",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마",
+      "region_code": "rgn_italy",
+      "landmark_code": "lm_nt_post_rome"
+    },
+    {
+      "story_index": 18,
+      "title": "성령 안에서 끊을 수 없는 사랑",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마",
+      "region_code": "rgn_italy",
+      "landmark_code": "lm_nt_post_rome"
+    },
+    {
+      "story_index": 19,
+      "title": "복음에 합당한 공동체와 시민의 삶",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마",
+      "region_code": "rgn_italy",
+      "landmark_code": "lm_nt_post_rome"
+    },
+    {
+      "story_index": 20,
+      "title": "그리스도 안의 새 공동체",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마 감옥 추정 → 에베소",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_ephesus"
+    },
+    {
+      "story_index": 21,
+      "title": "감옥 속 기쁨과 그리스도의 마음",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마 감옥 추정 → 빌립보",
+      "region_code": "rgn_macedonia",
+      "landmark_code": "lm_nt_post_philippi"
+    },
+    {
+      "story_index": 22,
+      "title": "그리스도의 충만과 거짓 가르침 경계",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마 감옥 추정 → 골로새",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_colossae"
+    },
+    {
+      "story_index": 23,
+      "title": "교회 리더십과 거짓 가르침 경계",
+      "era": "era_nt_post_apostolic",
+      "place_name": "에베소",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_ephesus"
+    },
+    {
+      "story_index": 24,
+      "title": "말세의 어려움과 바울의 마지막 부탁",
+      "era": "era_nt_post_apostolic",
+      "place_name": "로마 감옥 추정 → 에베소",
+      "region_code": "rgn_italy",
+      "landmark_code": "lm_nt_post_rome"
+    },
+    {
+      "story_index": 25,
+      "title": "산 소망과 거룩한 나그네",
+      "era": "era_nt_post_apostolic",
+      "place_name": "본도, 갈라디아, 갑바도기아, 아시아, 비두니아",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_asia_minor_network"
+    },
+    {
+      "story_index": 26,
+      "title": "거짓 선생과 주의 날",
+      "era": "era_nt_post_apostolic",
+      "place_name": "교회 네트워크, 소아시아 추정",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_asia_minor_network"
+    },
+    {
+      "story_index": 27,
+      "title": "생명의 말씀과 빛 가운데 행함",
+      "era": "era_nt_post_apostolic",
+      "place_name": "소아시아, 에베소 전통",
+      "region_code": "rgn_asia_province",
+      "landmark_code": "lm_nt_post_ephesus"
+    },
+    {
+      "story_index": 28,
+      "title": "밧모섬에서 본 영광의 그리스도",
+      "era": "era_nt_post_apostolic",
+      "place_name": "밧모섬",
+      "region_code": "rgn_patmos",
+      "landmark_code": "lm_nt_post_patmos"
+    },
+    {
+      "story_index": 29,
+      "title": "일곱 교회에 보내는 말씀",
+      "era": "era_nt_post_apostolic",
+      "place_name": "소아시아 일곱 교회",
       "region_code": "rgn_asia_province",
       "landmark_code": "lm_nt_post_ephesus"
     },
     {
       "story_index": 1,
-      "title": "세례 요한의 탄생 예고",
+      "title": "탄생 예고와 예수님의 탄생",
       "era": "era_nt_public_ministry",
-      "place_name": "예루살렘 성전",
+      "place_name": "예루살렘 성전 → 나사렛 → 베들레헴",
       "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_jerusalem"
+      "landmark_code": "lm_nt_pm_bethlehem"
     },
     {
       "story_index": 2,
-      "title": "마리아 수태고지와 찬양",
-      "era": "era_nt_public_ministry",
-      "place_name": "나사렛 → 유대 산지(전승)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_nazareth"
-    },
-    {
-      "story_index": 3,
-      "title": "예수 탄생과 목자들",
-      "era": "era_nt_public_ministry",
-      "place_name": "베들레헴",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_bethlehem"
-    },
-    {
-      "story_index": 4,
-      "title": "동방박사와 피신",
-      "era": "era_nt_public_ministry",
-      "place_name": "예루살렘 → 베들레헴 → 애굽(전승)",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_bethlehem"
-    },
-    {
-      "story_index": 5,
-      "title": "어린 예수의 성전 사건",
+      "title": "정결예식과 열두 살 예수님의 성전 방문",
       "era": "era_nt_public_ministry",
       "place_name": "예루살렘 성전",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_jerusalem"
     },
     {
-      "story_index": 6,
-      "title": "예수의 세례",
+      "story_index": 3,
+      "title": "예수님의 세례",
       "era": "era_nt_public_ministry",
       "place_name": "요단강(여리고 근처, 전승)",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_jericho"
     },
     {
-      "story_index": 7,
+      "story_index": 4,
       "title": "광야 시험",
       "era": "era_nt_public_ministry",
       "place_name": "유대 광야(전승)",
@@ -1482,164 +1802,380 @@
       "landmark_code": "lm_nt_pm_unknown"
     },
     {
-      "story_index": 8,
-      "title": "제자 부르심: 그물을 버리다",
+      "story_index": 5,
+      "title": "첫 제자들이 예수님을 따름",
       "era": "era_nt_public_ministry",
-      "place_name": "갈릴리 호수(가버나움 근처)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 9,
-      "title": "산상수훈: 복 있는 사람",
-      "era": "era_nt_public_ministry",
-      "place_name": "갈릴리 산지(전승)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 10,
-      "title": "산상수훈(2): 더 깊은 의",
-      "era": "era_nt_public_ministry",
-      "place_name": "갈릴리 산지(전승)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 11,
-      "title": "산상수훈(3): 먼저 하나님 나라를 구하라",
-      "era": "era_nt_public_ministry",
-      "place_name": "갈릴리 산지(전승)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 12,
-      "title": "폭풍을 잠잠케 하심",
-      "era": "era_nt_public_ministry",
-      "place_name": "갈릴리 호수",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 13,
-      "title": "야이로의 딸과 혈루증 여인",
-      "era": "era_nt_public_ministry",
-      "place_name": "가버나움(전승)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 14,
-      "title": "오병이어",
-      "era": "era_nt_public_ministry",
-      "place_name": "갈릴리 호숫가 들판(전승)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_capernaum"
-    },
-    {
-      "story_index": 15,
-      "title": "변화산",
-      "era": "era_nt_public_ministry",
-      "place_name": "변화산(전승, 다볼/헤르몬 견해)",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_mt_transfiguration"
-    },
-    {
-      "story_index": 16,
-      "title": "베드로의 고백과 수난 예고",
-      "era": "era_nt_public_ministry",
-      "place_name": "가이사랴 빌립보",
-      "region_code": "rgn_galilee",
-      "landmark_code": "lm_nt_pm_caesarea_philippi"
-    },
-    {
-      "story_index": 17,
-      "title": "비유: 선한 사마리아인",
-      "era": "era_nt_public_ministry",
-      "place_name": "예루살렘-여리고 길(전승)",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_jericho"
-    },
-    {
-      "story_index": 18,
-      "title": "비유: 탕자의 귀환",
-      "era": "era_nt_public_ministry",
-      "place_name": "베레아(요단 동편, 추정)",
+      "place_name": "요단강 건너편 → 갈릴리",
       "region_code": "rgn_perea",
       "landmark_code": "lm_nt_pm_perea"
     },
     {
-      "story_index": 19,
-      "title": "나사로의 부활",
+      "story_index": 6,
+      "title": "가나 혼인잔치",
       "era": "era_nt_public_ministry",
-      "place_name": "베다니",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_bethany"
+      "place_name": "가나(갈릴리, 전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "rgn_galilee"
     },
     {
-      "story_index": 20,
-      "title": "예루살렘 입성",
-      "era": "era_nt_public_ministry",
-      "place_name": "예루살렘",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_jerusalem"
-    },
-    {
-      "story_index": 21,
-      "title": "성전 정화",
+      "story_index": 7,
+      "title": "첫 번째 성전 정화",
       "era": "era_nt_public_ministry",
       "place_name": "예루살렘 성전",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_jerusalem"
     },
     {
+      "story_index": 8,
+      "title": "세례 요한의 마지막 증언",
+      "era": "era_nt_public_ministry",
+      "place_name": "유대 지방과 애논(전승)",
+      "region_code": "rgn_perea",
+      "landmark_code": "lm_nt_pm_perea"
+    },
+    {
+      "story_index": 9,
+      "title": "사마리아 여인",
+      "era": "era_nt_public_ministry",
+      "place_name": "수가 성 야곱의 우물(전승)",
+      "region_code": "rgn_samaria",
+      "landmark_code": "rgn_samaria"
+    },
+    {
+      "story_index": 10,
+      "title": "네 어부 제자를 부르심",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 호수(가버나움 근처)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_capernaum"
+    },
+    {
+      "story_index": 11,
+      "title": "가버나움 회당의 권위",
+      "era": "era_nt_public_ministry",
+      "place_name": "가버나움 회당",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_capernaum"
+    },
+    {
+      "story_index": 12,
+      "title": "중풍병자 치유",
+      "era": "era_nt_public_ministry",
+      "place_name": "가버나움의 한 집(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_capernaum"
+    },
+    {
+      "story_index": 13,
+      "title": "마태와 레위를 부르심",
+      "era": "era_nt_public_ministry",
+      "place_name": "가버나움 세관과 마태의 집(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_capernaum"
+    },
+    {
+      "story_index": 14,
+      "title": "베데스다 못의 병자 치유",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘 베데스다 못(전승)",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 15,
+      "title": "열두 제자를 세우심",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 산지(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_mt_beatitudes"
+    },
+    {
+      "story_index": 16,
+      "title": "산상수훈과 평지설교",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 산지와 평지(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_mt_beatitudes"
+    },
+    {
+      "story_index": 17,
+      "title": "백부장의 종과 나인성 과부의 아들",
+      "era": "era_nt_public_ministry",
+      "place_name": "가버나움 → 나인성(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "rgn_galilee"
+    },
+    {
+      "story_index": 18,
+      "title": "갈릴리 호수의 기적들",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 호수와 주변 지역",
+      "region_code": "rgn_galilee",
+      "landmark_code": "rgn_galilee"
+    },
+    {
+      "story_index": 19,
+      "title": "열두 제자 파송",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 여러 마을",
+      "region_code": "rgn_galilee",
+      "landmark_code": "rgn_galilee"
+    },
+    {
+      "story_index": 20,
+      "title": "오병이어와 물 위를 걸으심",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 호숫가 들판과 호수",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_bethsaida"
+    },
+    {
+      "story_index": 21,
+      "title": "생명의 떡 말씀",
+      "era": "era_nt_public_ministry",
+      "place_name": "가버나움 회당",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_capernaum"
+    },
+    {
       "story_index": 22,
-      "title": "최후의 만찬",
+      "title": "장로들의 전통과 정결 논쟁",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "rgn_galilee"
+    },
+    {
+      "story_index": 23,
+      "title": "이방 땅에서 베푸신 치유",
+      "era": "era_nt_public_ministry",
+      "place_name": "두로와 시돈, 데가볼리(전승)",
+      "region_code": "rgn_phoenicia",
+      "landmark_code": "lm_nt_pm_tyre"
+    },
+    {
+      "story_index": 24,
+      "title": "표적 요구와 누룩 경고",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 호수 주변과 벳새다(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_bethsaida"
+    },
+    {
+      "story_index": 25,
+      "title": "베드로의 신앙고백과 첫 수난 예고",
+      "era": "era_nt_public_ministry",
+      "place_name": "가이사랴 빌립보",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_caesarea_philippi"
+    },
+    {
+      "story_index": 26,
+      "title": "변화산 사건",
+      "era": "era_nt_public_ministry",
+      "place_name": "변화산(전승, 다볼/헤르몬 견해)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_mt_transfiguration"
+    },
+    {
+      "story_index": 27,
+      "title": "귀신 들린 아이 치유",
+      "era": "era_nt_public_ministry",
+      "place_name": "변화산 아래 마을(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_mt_transfiguration"
+    },
+    {
+      "story_index": 28,
+      "title": "두 번째 수난 예고와 제자들의 논쟁",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리와 가버나움(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_capernaum"
+    },
+    {
+      "story_index": 29,
+      "title": "주기도문과 기도 가르침",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 산지와 길 위의 한 곳(전승)",
+      "region_code": "rgn_galilee",
+      "landmark_code": "lm_nt_pm_mt_beatitudes"
+    },
+    {
+      "story_index": 30,
+      "title": "은혜와 탐심을 비유로 말씀하심",
+      "era": "era_nt_public_ministry",
+      "place_name": "베레아와 길 위의 마을들(전승)",
+      "region_code": "rgn_perea",
+      "landmark_code": "lm_nt_pm_perea"
+    },
+    {
+      "story_index": 31,
+      "title": "부자 청년",
+      "era": "era_nt_public_ministry",
+      "place_name": "요단 동편 길(전승)",
+      "region_code": "rgn_perea",
+      "landmark_code": "lm_nt_pm_perea"
+    },
+    {
+      "story_index": 32,
+      "title": "세 번째 수난 예고",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘으로 올라가는 길",
+      "region_code": "rgn_perea",
+      "landmark_code": "lm_nt_pm_perea"
+    },
+    {
+      "story_index": 33,
+      "title": "삭개오",
+      "era": "era_nt_public_ministry",
+      "place_name": "여리고",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jericho"
+    },
+    {
+      "story_index": 34,
+      "title": "나사로를 살리심",
+      "era": "era_nt_public_ministry",
+      "place_name": "베다니",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_bethany"
+    },
+    {
+      "story_index": 35,
+      "title": "베다니에서 향유 부음",
+      "era": "era_nt_public_ministry",
+      "place_name": "베다니",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_bethany"
+    },
+    {
+      "story_index": 36,
+      "title": "예루살렘 입성과 성전 정화",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘과 성전",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 37,
+      "title": "무화과나무와 예수님의 권위 논쟁",
+      "era": "era_nt_public_ministry",
+      "place_name": "베다니 길과 예루살렘 성전",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 38,
+      "title": "두 아들, 악한 농부, 혼인잔치 비유",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘 성전",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 39,
+      "title": "세금과 부활과 가장 큰 계명 논쟁",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘 성전",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 40,
+      "title": "서기관과 바리새인 책망",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘 성전",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 41,
+      "title": "감람산 종말 담화",
+      "era": "era_nt_public_ministry",
+      "place_name": "감람산",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_gethsemane"
+    },
+    {
+      "story_index": 42,
+      "title": "유다의 배신과 마지막 만찬",
       "era": "era_nt_public_ministry",
       "place_name": "예루살렘 다락방(전승)",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_jerusalem"
     },
     {
-      "story_index": 23,
-      "title": "겟세마네: 뜻이 이루어지다",
+      "story_index": 43,
+      "title": "겟세마네 기도와 체포",
       "era": "era_nt_public_ministry",
       "place_name": "겟세마네(감람산)",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_gethsemane"
     },
     {
-      "story_index": 24,
-      "title": "체포: 배신의 입맞춤",
+      "story_index": 44,
+      "title": "베드로의 부인",
       "era": "era_nt_public_ministry",
-      "place_name": "겟세마네(감람산)",
-      "region_code": "rgn_judea",
-      "landmark_code": "lm_nt_pm_gethsemane"
-    },
-    {
-      "story_index": 25,
-      "title": "재판: 빌라도 앞",
-      "era": "era_nt_public_ministry",
-      "place_name": "예루살렘(총독 관저, 전승)",
+      "place_name": "대제사장의 뜰(예루살렘, 전승)",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_jerusalem"
     },
     {
-      "story_index": 26,
-      "title": "십자가: 끝까지 사랑",
+      "story_index": 45,
+      "title": "유대 지도자들 앞 재판",
+      "era": "era_nt_public_ministry",
+      "place_name": "대제사장의 집과 공회(예루살렘, 전승)",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 46,
+      "title": "빌라도 앞 재판",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘 총독 관저(전승)",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 47,
+      "title": "십자가",
       "era": "era_nt_public_ministry",
       "place_name": "골고다(예루살렘)",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_golgotha"
     },
     {
-      "story_index": 27,
-      "title": "부활과 승천: 새 시작",
+      "story_index": 48,
+      "title": "빈 무덤과 여인들",
       "era": "era_nt_public_ministry",
-      "place_name": "예루살렘(무덤) → 감람산(전승)",
+      "place_name": "예루살렘 무덤(전승)",
       "region_code": "rgn_judea",
       "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 49,
+      "title": "엠마오로 가는 두 제자",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘에서 엠마오로 가는 길(전승)",
+      "region_code": "rgn_judea",
+      "landmark_code": "rgn_judea"
+    },
+    {
+      "story_index": 50,
+      "title": "제자들에게 나타나심",
+      "era": "era_nt_public_ministry",
+      "place_name": "예루살렘과 갈릴리 호수",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_jerusalem"
+    },
+    {
+      "story_index": 51,
+      "title": "대위임령과 승천",
+      "era": "era_nt_public_ministry",
+      "place_name": "갈릴리 산과 감람산(전승)",
+      "region_code": "rgn_judea",
+      "landmark_code": "lm_nt_pm_gethsemane"
     },
     {
       "story_index": 1,

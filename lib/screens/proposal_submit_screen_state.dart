@@ -175,7 +175,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
             .map<CharacterOption>(
               (row) => CharacterOption(
                 code: row['code'] as String,
-                name: row['name'] as String,
+                name: localizedCharacterName(
+                  code: row['code'] as String,
+                  name: row['name'] as String?,
+                ),
               ),
             )
             .toList();

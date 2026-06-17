@@ -20,22 +20,29 @@
     "end_year": -585,
     "time_precision": "approx",
     "story_index": 1,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "뼈들로 가득한 골짜기, 바람도 없는 정적",
-      "에스겔이 대언하라는 명령",
-      "에스겔이 서 있는 가운데 마른 뼈 위에 힘줄과 살이 덮이기 시작한다",
-      "숨이 돌아온 사람들이 일어서고 그 한가운데 에스겔이 서 있다"
+      "바벨론 포로 땅의 넓은 골짜기에 마른 뼈들이 흩어져 있고, 에스겔은 제사장 겉옷을 입은 채 두려움과 슬픔으로 그 사이를 걸어간다",
+      "하나님의 빛에서 나오는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다, 에스겔은 떨리는 손을 들어 마른 뼈들을 향해 선포한다",
+      "에스겔이 서 있는 가운데 마른 뼈들이 서로 맞춰지고 힘줄과 살이 덮이기 시작한다. 잔혹한 해부 장면이 아니라 회복의 상징으로 보인다",
+      "하나님의 바람이 불어와 숨이 돌아온 큰 군대가 일어서고, 에스겔은 놀라움과 소망이 섞인 얼굴로 그 가운데 서 있다"
     ],
     "scene_characters": [
-      [],
       [
+        "ezekiel"
+      ],
+      [
+        "god",
         "ezekiel"
       ],
       [
         "ezekiel"
       ],
       [
-        "ezekiel"
+        "ezekiel",
+        "god"
       ]
     ]
   },
@@ -43,7 +50,10 @@
     "title": "다니엘: 뜻을 정하다",
     "era": "era_exile_return",
     "characters": [
-      "daniel"
+      "daniel",
+      "shadrach",
+      "meshach",
+      "abednego"
     ],
     "place_name": "바벨론",
     "lat": 32.5421,
@@ -60,37 +70,51 @@
     "end_year": -605,
     "time_precision": "approx",
     "story_index": 2,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "궁정의 화려한 식탁, 다니엘이 멈춘다",
-      "다니엘이 앞쪽에 서 있고, 관리가 난처해한다",
-      "다니엘이 왕에게 단정한 제안을 하는 장면",
-      "다니엘이 이전보다 더 건강한 모습으로 왕 앞에 서고 왕이 놀라는 장면"
+      "십대 후반의 다니엘과 세 친구가 예루살렘에서 바벨론으로 끌려와 낯선 궁정 훈련복을 받으며, 두려움 속에서도 서로를 격려한다",
+      "바벨론 왕궁 훈련장에서 다니엘이 왕의 진미와 포도주가 놓인 식탁 앞에서 정중하지만 단호하게 거절하고, 환관장은 걱정스러운 얼굴로 바라본다",
+      "다니엘과 세 친구가 채소와 물을 먹으며 열흘 동안 지내고, 다른 청년들과 비교해 건강하고 맑은 얼굴을 보인다",
+      "젊은 다니엘과 세 친구가 바벨론 왕 앞에 서서 지혜롭게 대답하고, 왕과 관리들은 놀라운 표정으로 그들을 바라본다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 법정 앞에서도 흔들리지 않는 증언과 밝은 길이 보이는 장면이 작은 그림처럼 보인다"
     ],
     "scene_characters": [
       [
-        "daniel"
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
       ],
       [
         "daniel"
       ],
       [
-        "daniel"
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
       ],
       [
-        "daniel"
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
       ]
     ]
   },
   {
-    "title": "풀무불: 다니엘과 세 친구",
+    "title": "풀무불: 세 친구의 믿음",
     "era": "era_exile_return",
     "characters": [
-      "daniel"
+      "shadrach",
+      "meshach",
+      "abednego"
     ],
     "place_name": "바벨론(전승)",
     "lat": 32.5421,
     "lng": 44.4209,
-    "summary": "우상 숭배 강요 앞에서 믿음은 굴복 대신 신실함을 택한다.",
+    "summary": "사드락과 메삭과 아벳느고는 금 신상에 절하지 않고 풀무불에 던져지지만, 하나님이 그들을 보호하신다.",
     "bible_ref": [
       {
         "book": "단",
@@ -102,33 +126,32 @@
     "end_year": -585,
     "time_precision": "approx",
     "story_index": 3,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "다니엘과 세 친구가 거대한 금 신상 앞에서 서 있고, 다른 사람들은 모두 엎드린다",
-      "다니엘과 세 친구가 왕 앞에서 믿음을 굽히지 않는 장면",
-      "풀무불 속에서 다니엘과 세 친구가 함께 서 있는 장면",
-      "왕이 다니엘과 세 친구를 칭찬하는 모습"
+      "두라 평지의 거대한 금 신상 앞에서 관리들과 백성이 엎드리지만, 사드락과 메삭과 아벳느고 세 친구는 바벨론 관리복을 입은 채 굳게 서 있다. 글자나 상징 문양은 보이지 않는다",
+      "분노한 느부갓네살 왕이 세 친구를 불러 다시 절하라고 위협하고, 세 친구는 두려움이 있어도 하나님을 신뢰하는 단호한 얼굴로 대답하는 자세를 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 빈 손으로 빛을 받는 사람과 활짝 열린 문이 보이는 장면이 작은 그림처럼 보인다",
+      "세 친구가 결박된 채 뜨거운 풀무불 속에 던져졌지만 불길 가운데 해를 입지 않고 서 있으며, 그들 곁에는 하나님의 보호를 상징하는 밝은 거룩한 인물이 보인다. 사람 타는 장면이나 시신은 없다",
+      "느부갓네살 왕이 놀라 세 친구를 불러내고, 불에 그슬리지 않은 옷차림의 세 친구는 왕과 관리들 앞에서 겸손히 서 있다"
     ],
     "scene_characters": [
       [
-        "daniel",
         "shadrach",
         "meshach",
         "abednego"
       ],
       [
-        "daniel",
         "shadrach",
         "meshach",
         "abednego"
       ],
       [
-        "daniel",
         "shadrach",
         "meshach",
         "abednego"
       ],
       [
-        "daniel",
         "shadrach",
         "meshach",
         "abednego"
@@ -156,14 +179,15 @@
     "end_year": -539,
     "time_precision": "approx",
     "story_index": 4,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "화려한 잔치, 웃음과 술잔 소리로 가득하다",
-      "벽에 나타난 손 글씨, 모두가 얼어붙는다",
-      "다니엘이 해석한다, 너는 저울에 달려 부족함이 보였다",
-      "왕이 다니엘에게 자주색 옷을 입히게 하며 금 사슬을 그의 목에 걸어 주는 장면"
+      "벽 가까이에 신비로운 손이 나타나 읽을 수 없는 빛의 흔적을 남기자, 벨사살은 얼굴이 창백해지고 무릎이 떨리는 모습으로 왕좌에서 일어난다. 글자는 알아볼 수 없게 표현한다",
+      "나이 많은 다니엘이 흰 수염과 단정한 포로 출신 현자의 옷차림으로 왕 앞에 들어오고, 바벨론 현자들은 해결하지 못한 채 당황해 서 있다",
+      "나이 많은 다니엘이 흰 수염과 단정한 포로 출신 현자의 옷차림 벨사살에게 교만과 심판을 엄중히 알리고, 왕은 자주색 옷과 금 사슬을 다니엘에게 걸어 주지만 얼굴에는 두려움이 남아 있다. 글자나 두루마리 문자는 없다"
     ],
     "scene_characters": [
-      [],
       [],
       [
         "daniel"
@@ -194,18 +218,25 @@
     "end_year": -537,
     "time_precision": "approx",
     "story_index": 5,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "관원들이 계략을 꾸민다, 그의 하나님을 걸어야 한다",
-      "다니엘이 창을 열고 기도한다, 소문이 퍼진다",
-      "신하들이 왕에게 말하고, 왕이 괴로워하는 장면",
-      "새벽, 다니엘의 목소리가 들린다, 하나님이 사자들의 입을 막으셨습니다"
+      "80 세 정도 나이 많은 다니엘이 예루살렘을 향한 열린 창가에서 하루 세 번 무릎 꿇어 기도하고, 적대적인 관리들이 문밖에서 몰래 지켜본다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 하늘을 향한 빈 손과 보호받는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "관리들이 다리오 왕 앞에서 나이 많은 다니엘을 고발하자 왕은 자신이 내린 법 때문에 괴로워하며 얼굴을 감싸고, 다니엘은 차분하게 서 있다",
+      "80 세 정도 나이 많은 다니엘이 사자굴에 내려가고 다리오 왕은 밤새 잠 못 이루며 걱정한다. 굴 안의 사자들은 하나님의 보호 아래 입을 다문 채 다니엘 주변에 조용히 앉아 있다",
+      "새벽에 다리오 왕이 사자굴 입구로 달려와 80 세 정도 다니엘이 살아 있음을 보고 놀라며, 늙은 다니엘은 평안한 얼굴로 굴 안에서 손을 들어 응답한다"
     ],
     "scene_characters": [
-      [],
       [
         "daniel"
       ],
-      [],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
       [
         "daniel"
       ]
@@ -232,8 +263,11 @@
     "end_year": -520,
     "time_precision": "approx",
     "story_index": 6,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "고레스의 명령으로 이스라엘 자손들이 바벨론과 페르시아 여러 지역에서 돌아와 유다 땅 각 성읍에 정착해 살고, 옆에는 바벨론에서 예루살렘과 유다 성읍들로 이어지는 간단한 지도 그림이 함께 보인다. 지도에는 글자나 읽을 수 있는 표시는 없다",
+      "고레스의 명령으로 이스라엘 자손들이 바벨론과 페르시아 여러 지역에서 돌아와 유다 땅 각 성읍에 정착해 살고, 옆에는 바벨론에서 예루살렘과 유다 성읍들로 이어지는 간단한 지도 그림이 함께 보인다. 지도에는 글자나 읽을 수 있는 표시는 없다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 포로들이 짐을 들고 예루살렘 길로 돌아가는 장면이 작은 그림처럼 보인다",
       "스룹바벨과 예수아와 동료들이 예루살렘 성전 터에서 돌과 목재를 놓고 성전 재건을 시작하며, 제사장들과 레위 사람들과 백성들이 조심스러운 기쁨으로 함께 일하는 장면",
       "사마리아 사람들이 성전 건축 현장으로 찾아와 우리도 함께 짓겠다고 제안하지만, 스룹바벨과 지도자들이 단호하면서도 절제된 표정으로 거절하는 장면. 사마리아 사람들은 이름 없는 방문자 무리로 보인다",
       "방해와 고발 때문에 예루살렘 성전 건축이 중단되어 돌더미와 목재가 멈춰 있고, 스룹바벨과 동료들이 허탈한 표정으로 빈 성전 터를 바라보는 장면"
@@ -272,7 +306,7 @@
     "bible_ref": [
       {
         "book": "학",
-        "from": "2:20",
+        "from": "1:1",
         "to": "2:23"
       }
     ],
@@ -280,8 +314,11 @@
     "end_year": -520,
     "time_precision": "approx",
     "story_index": 7,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "학개가 성전 터 가까이에서 스룹바벨에게 강하게 하나님의 말씀을 전하고, 큰 글자 없는 말풍선 안에는 하나님이 하늘과 땅을 뒤흔드는 상징 그림이 담겨 있다",
+      "학개가 성전 터 가까이에서 스룹바벨에게 강하게 하나님의 말씀을 전하고, 큰 글자 없는 말풍선 안에는 하나님의 성전은 짓다가 중단되었는데 본인들 집만 꾸미는 이스라엘 백성들을 꾸짖는 장면",
       "학개가 스룹바벨에게 다시 엄중히 말하고, 큰 글자 없는 말풍선 안에는 하나님을 믿지 않는 나라들의 왕좌와 전차들이 뒤집히는 상징 그림이 담겨 있다. 폭력과 시신은 보이지 않는다",
       "학개가 스룹바벨을 향해 손을 들고 선포하며, 큰 글자 없는 말풍선 안에는 하나님이 스룹바벨을 택하셨음을 보이는 인장 반지와 밝은 선택의 빛이 담겨 있다"
     ],
@@ -328,6 +365,9 @@
     "end_year": -515,
     "time_precision": "approx",
     "story_index": 8,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
       "스룹바벨과 동료들이 멈췄던 예루살렘 성전 재건을 다시 시작하고, 장로들과 일꾼들이 돌과 목재를 옮기며 새 힘을 얻는 장면",
       "성전이 완성되고 백성들이 기쁨으로 봉헌식을 거행하며, 제단 가까이에는 황소와 숫양과 어린양이 많이 준비되어 있지만 피나 도살 장면은 보이지 않는다",
@@ -370,15 +410,19 @@
     "end_year": -480,
     "time_precision": "approx",
     "story_index": 9,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "에스더가 왕후가 되기 전, 다른 후보들과 함께 궁정에 모인 모습",
-      "왕관이 없는 후보의 모습인 에스더가 왕 앞에 선다, 방 안이 숨을 죽인다",
-      "왕이 왕관을 씌운다, 에스더의 얼굴이 굳어지며 책임을 느낀다",
-      "모르드개가 멀리서 지켜본다, 때가 올 것 같은 눈빛"
+      "어린 시절 부모를 잃은 젊은 유다 여인 에스더가 수산 궁에서 모르드개의 돌봄을 받으며, 모르드개는 나이 든 보호자의 신중한 얼굴로 그녀를 격려한다",
+      "에스더가 페르시아 궁정의 후보들 사이에서 단정한 왕궁 훈련복을 입고 겸손히 준비하며, 다른 여인들과 달리 차분하고 지혜로운 태도를 보인다",
+      "아하수에로 왕이 에스더에게 왕관을 씌워 왕후로 세우고, 에스더는 화려하지만 절제된 페르시아 왕후복 차림으로 놀람과 책임감을 동시에 느낀다",
+      "모르드개가 궁문 근처에서 음모를 듣고 에스더에게 알리며, 에스더는 왕에게 조심스럽게 전하려 결심한다. 글자나 문서는 보이지 않는다"
     ],
     "scene_characters": [
       [
-        "esther"
+        "esther",
+        "mordecai"
       ],
       [
         "esther"
@@ -387,6 +431,7 @@
         "esther"
       ],
       [
+        "esther",
         "mordecai"
       ]
     ]
@@ -407,18 +452,21 @@
       {
         "book": "에",
         "from": "3:1",
-        "to": "3:15"
+        "to": "4:9"
       }
     ],
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
     "story_index": 10,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "하만이 지나가고 모두가 절하지만, 모르드개만 서 있다",
-      "하만의 얼굴이 붉어진다, 한 사람만이 아니라, 민족을",
-      "하만이 제비를 던져 날짜를 정하는 장면",
-      "조서가 퍼지고 수산 성이 어지러워진다, 에스더의 손이 떨린다"
+      "하만이 높은 관리복과 교만한 자세로 궁문을 지나가지만 모르드개는 유다인의 옷차림으로 조용히 서서 절하지 않는다",
+      "하만이 분노하여 왕 앞에서 유다인을 없애자는 계략을 말하고, 왕의 인장 반지가 건네지는 장면이 보인다. 글자나 조서 문자는 없다",
+      "수산 성에 조서가 퍼지자 유다인들이 굵은 베옷을 입고 울며 금식하고, 모르드개는 재를 쓴 모습으로 궁문 앞에 앉아 있다. 에스더가 보낸 내시에게 하만이 유대인을 학살할 것임을 말하는 말풍선",
+      "에스더가 내시에게 소식을 전해듣고 주저하는 모습"
     ],
     "scene_characters": [
       [
@@ -429,7 +477,7 @@
         "haman"
       ],
       [
-        "haman"
+        "mordecai"
       ],
       [
         "esther"
@@ -458,18 +506,17 @@
     "end_year": -474,
     "time_precision": "approx",
     "story_index": 11,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "에스더가 망설인다, 부름 없이 나아가면",
-      "모르드개가 앞쪽에 서 있다",
-      "에스더가 결연한 표정으로 선다",
-      "에스더가 문을 향해 걸어간다, 죽으면 죽으리라"
+      "에스더가 수산의 유다인들에게 사흘 금식을 부탁하고, 왕궁 안에서도 에스더와 시녀들이 함께 금식하며 기도한다",
+      "에스더가 왕후복을 갖추어 입고 왕의 안뜰 문 앞에 서며, 얼굴에는 죽음을 각오한 두려움과 담대함이 함께 보인다",
+      "아하수에로 왕이 금 홀을 내밀어 에스더를 받아들이고, 에스더는 안도의 숨을 쉬며 첫 잔치에 왕과 하만을 초대하는 손짓을 한다. 읽을 수 있는 글자는 보이지 않는다"
     ],
     "scene_characters": [
       [
         "esther"
-      ],
-      [
-        "mordecai"
       ],
       [
         "esther"
@@ -502,66 +549,26 @@
     "end_year": -474,
     "time_precision": "approx",
     "story_index": 12,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "왕과 에스더가 이야기하는 장면",
-      "하만이 궁궐 안에 나무를 세우는 장면",
-      "잔치 자리에서 왕과 에스더와 대신들이 앉아 있고, 하만은 머리를 싸고 번뇌하며, 모르드개가 말을 타고 잔치로 들어오는 모습",
-      "하만이 자기가 세운 나무에 달리는 장면"
+      "하만과 아내 세레스가 50규빗 나무를 만들고 악한 미소를 짓는다",
+      "밤에 아하수에로 왕이 궁중 기록을 읽게 하고, 기록을 읽는 신하는 모르드개가 왕을 구한 일을 두루마리로 보여 주자 왕은 놀라 앉아 있다. 두루마리 안에는 모르드게가 왕을 구하는 장면이 있음",
+      "하만이 왕의 명령으로 모르드개에게 직접 왕복을 입히고 왕의 말을 태워 수산 거리를 지나가며, 하만은 굴욕스러운 얼굴이고 모르드개는 겸손히 앉아 있다",
+      "하만의 음모가 드러난 뒤 왕의 근위병들이 하만을 끌고 나가고, 에스더와 모르드개는 두려움 속에서도 백성이 살아날 희망을 바라본다. 처형 장면은 보이지 않는다"
     ],
     "scene_characters": [
-      [
-        "esther"
-      ],
       [
         "haman"
       ],
       [
-        "esther",
         "haman",
         "mordecai"
       ],
       [
-        "haman"
-      ]
-    ]
-  },
-  {
-    "title": "에스라의 귀환: 말씀으로 정리하다",
-    "era": "era_exile_return",
-    "characters": [
-      "ezra"
-    ],
-    "place_name": "바벨론 → 예루살렘(전승)",
-    "lat": 32.5421,
-    "lng": 44.4209,
-    "summary": "에스라는 말씀의 사람으로 돌아와 공동체를 재정비한다.",
-    "bible_ref": [
-      {
-        "book": "스",
-        "from": "7:1",
-        "to": "7:10"
-      }
-    ],
-    "start_year": -458,
-    "end_year": -458,
-    "time_precision": "approx",
-    "story_index": 13,
-    "story_scenes": [
-      "에스라가 두루마리를 펼쳐 읽는다, 눈빛이 단단하다",
-      "귀환 행렬이 길을 나선다, 먼지 나는 길 위의 결단",
-      "예루살렘에 도착한 에스라가 현실을 보고 고개를 숙인다",
-      "에스라가 율법을 연구하고 행하며 가르치기로 뜻을 정했다가 울린다"
-    ],
-    "scene_characters": [
-      [
-        "ezra"
-      ],
-      [],
-      [
-        "ezra"
-      ],
-      [
-        "ezra"
+        "esther",
+        "mordecai"
       ]
     ]
   },
@@ -590,13 +597,20 @@
     "start_year": -458,
     "end_year": -458,
     "time_precision": "approx",
-    "story_index": 14,
+    "story_index": 13,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "에스라가 아닥사스다 왕의 칙서를 받고 기뻐하는 장면. 큰 글자 없는 말풍선 안에는 예루살렘으로 올라가려는 백성, 성전 기물, 금과 은, 밀, 포도주, 올리브 기름, 소금이 그림으로 담겨 있어 왕이 성전 회복을 허락한 내용이 분명히 보인다",
-      "예루살렘 성전 안쪽 제단 앞에서 에스라가 사람들을 등지고 하나님을 향해 애통해하며 기도한다. 에스라는 찢어진 옷을 입고 무릎 꿇어 두 손을 하늘의 밝은 하나님의 빛을 향해 들고 있으며, 누구에게 빌거나 사과하는 모습이 아니다. 성전 바깥 먼 배경에는 이스라엘 남자들이 이방 여인들과 결혼해 우상 조각상과 작은 우상 제단을 곁에 두고 악한 생활을 하는 장면이 보인다. 그들은 화목한 가족처럼 보이지 않고, 이방 여인들은 작은 우상을 들고 차갑고 완강한 표정이며, 이스라엘 남자들은 죄를 깨닫지 못한 듯 고개를 돌리거나 머뭇거린다",
-      "예루살렘 성전 앞 광장에서 에스라가 백성에게 죄를 자복하고 이방 여인들과 끊으라고 엄중히 명하는 장면. 이방 여인과 결혼했던 사람들이 슬픈 표정으로 가족들을 평화롭게 떠나보내며, 폭력이나 끌려가는 모습은 보이지 않는다"
+      "아닥사스다 왕의 명령을 받은 에스라가 예루살렘으로 향하는 귀환 행렬을 이끈다. 나귀와 낙타에는 성전 그릇, 은, 밀 자루, 포도주 항아리, 올리브 기름 항아리, 소금 포대가 많이 실려 있고, 에스라는 율법 두루마리를 품은 채 감사하면서도 책임감을 느끼는 얼굴로 앞장선다",
+      "예루살렘에 도착한 에스라가 이스라엘 백성 가운데 여전히 남아 있는 우상숭배와 이방 신 섬김을 보고 겉옷과 속옷을 찢으며 통탄한다. 성전 뜰 한쪽에서 에스라는 흐느끼며 무릎 꿇고 두 손을 하나님의 밝은 빛을 향해 들고 기도하고, 먼 배경에는 작은 우상 조각상과 우상 제단을 곁에 둔 사람들이 죄를 깨닫지 못한 표정으로 서 있다",
+      "예루살렘 성전 앞 광장에 남자와 여자와 아이들이 비를 맞으며 모이고, 에스라가 찢어진 옷을 입은 채 단호하고 슬픈 표정으로 백성 앞에 서서 다른 신을 섬기지 말고 언약 백성답게 정리하자고 말한다. 글자 없는 말풍선 안에는 부서지는 작은 우상들, 성전으로 돌아오는 백성, 정돈된 공동체의 장면이 그림으로 보인다",
+      "에스라 앞에서 백성들이 슬프지만 질서 있게 이방 여인들과 그 자녀들을 공동체 밖으로 떠나보낸다. 백성들은 눈물을 흘리며 고개를 숙이고, 떠나는 사람들은 짐 꾸러미를 들고 천천히 걸어가며, 에스라는 가슴 아픈 표정으로 두 손을 모아 서 있다. 폭력, 끌려감, 조롱, 혐오 표현은 보이지 않는다"
     ],
     "scene_characters": [
+      [
+        "ezra"
+      ],
       [
         "ezra"
       ],
@@ -608,9 +622,10 @@
       ]
     ],
     "scene_prompt_notes": [
-      "Artaxerxes has no reference avatar. Show him as an unnamed Persian king or official only if needed. The decree and speech bubble must be pictorial with no readable text.",
-      "No sexual depiction, no hateful caricature. Ezra must be inside or at the temple altar, physically separated from the sinful families, facing upward toward God's bright light with raised hands. Do not show Ezra kneeling toward the women, couples, or officials; no one points at Ezra and Ezra does not plead to people. Put the intermarried Israelite men, foreign wives, small idol figurines, and a small idol altar in the distant outside background as the reason for Ezra's grief. The couples must not look warm, happy, or romantic.",
-      "Show a solemn covenant reform scene without violence, dragging, abuse, or gore. Make the separation feel sorrowful and orderly, with no readable labels."
+      "Do not show Artaxerxes unless absolutely necessary; the focus is Ezra leading the caravan with temple supplies. No readable text on scrolls, sacks, jars, or decree objects.",
+      "No sexual depiction, no hateful caricature. Ezra must face upward toward God's bright light, not toward the people as if begging them. Show idols as small non-readable figurines and an altar in the background only to explain Ezra's grief.",
+      "Use a pictorial speech bubble only, with no letters or symbols. The bubble should summarize Ezra's covenant reform visually through broken idol figurines, people turning toward the temple, and an orderly gathered community.",
+      "Show a solemn covenant reform scene without violence, dragging, abuse, gore, mockery, or hateful caricature. Make the separation sorrowful, orderly, and historically framed, with no readable labels."
     ]
   },
   {
@@ -638,17 +653,16 @@
     "start_year": -445,
     "end_year": -445,
     "time_precision": "approx",
-    "story_index": 15,
+    "story_index": 14,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "느헤미야가 소식을 듣고 무너진 얼굴로 앉아 운다",
-      "느헤미야가 밤의 기도, 주의 이름을 경외하는 종들을 기억하소서",
-      "상대를 바라보며 기다린다, 느헤미야가 숨을 고른다",
-      "왕의 허락과 편지가 주어진다, 느헤미야가 고개 숙여 감사한다"
+      "느헤미야가 여러 날 금식하며 하나님께 기도하고, 창밖에는 수산 궁전이 보이지만 그의 얼굴은 예루살렘을 향한 슬픔으로 가득하다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너진 예루살렘 성벽을 바라보며 기도하는 느헤미야가 보이는 장면이 작은 그림처럼 보인다",
+      "느헤미야가 아닥사스다 왕에게 술잔을 올리다 슬픈 얼굴을 들키고, 왕과 왕후는 놀라 바라보며 느헤미야는 짧게 마음속으로 기도하는 자세를 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너진 예루살렘 성벽을 바라보며 기도하는 느헤미야가 보이는 장면이 작은 그림처럼 보인다",
+      "왕이 느헤미야에게 예루살렘으로 가도록 허락하고 목재와 호위 조치를 내리자, 느헤미야는 두려움에서 결심으로 표정이 바뀐다. 글자나 문서는 보이지 않는다"
     ],
     "scene_characters": [
-      [
-        "nehemiah"
-      ],
       [
         "nehemiah"
       ],
@@ -685,17 +699,16 @@
     "start_year": -445,
     "end_year": -445,
     "time_precision": "approx",
-    "story_index": 16,
+    "story_index": 15,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "밤, 느헤미야가 소수와 함께 성벽을 따라 조사한다",
-      "성벽을 재건하는 건축 현장",
-      "건축 현장에서 한 손엔 돌, 한 손엔 무기를 들고 성벽을 세우는 모습",
-      "나팔 소리에 사람들이 모이고, 하나님이 싸우신다는 외침에 모두가 고개를 드는 장면"
+      "밤에 느헤미야가 몇 사람과 짐승 한 마리만 데리고 무너진 예루살렘 성벽과 불탄 성문을 조용히 조사하며, 손에는 작은 등불이 있다",
+      "해가 뜬 뒤 느헤미야가 백성 지도자들에게 무너진 성벽을 가리키며 재건을 호소하고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너진 성벽과 성전 돌들이 다시 세워지는 장면이 작은 그림처럼 보인다",
+      "나팔 소리에 사람들이 성벽 한쪽으로 모이고, 느헤미야가 손을 들어 하나님이 싸우신다고 격려하자 모두가 두려움에서 결심으로 고개를 든다"
     ],
     "scene_characters": [
-      [
-        "nehemiah"
-      ],
       [
         "nehemiah"
       ],
@@ -722,24 +735,28 @@
       {
         "book": "느",
         "from": "8:1",
-        "to": "8:12"
+        "to": "8:18"
       }
     ],
     "start_year": -444,
     "end_year": -444,
     "time_precision": "approx",
-    "story_index": 17,
+    "story_index": 16,
+    "unit_code": "exile_return_restoration",
+    "unit_title": "포로와 귀환, 회복의 시작",
+    "unit_order": 1,
     "story_scenes": [
-      "에스라가 군중들에게 두루마리를 선포하는 장면",
-      "느헤미야가 울지 말라고 백성들을 다독이는 장면",
-      "에스라와 느헤미야와 백성들이 음식을 나누며 기뻐하는 장면"
+      "예루살렘 수문 앞 광장에서 에스라가 높은 나무 강단 위에 서서 율법 두루마리를 펼치고, 백성은 새벽부터 귀를 기울인다. 두루마리 글자는 읽히지 않는다",
+      "율법을 들은 백성이 울기 시작하자 느헤미야와 레위 사람들이 손을 내밀어 그들을 다독이는 모습",
+      "에스라와 느헤미야와 백성들이 음식을 나누어 먹고 몫이 없는 사람에게도 보내며, 울음이 기쁨으로 바뀐 얼굴들이 분명히 보인다"
     ],
     "scene_characters": [
       [
         "ezra"
       ],
       [
-        "nehemiah"
+        "nehemiah",
+        "ezra"
       ],
       [
         "ezra",

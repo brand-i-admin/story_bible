@@ -114,6 +114,10 @@ drop function if exists public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
   int, int, text, uuid, text[]
 ) cascade;
+drop function if exists public.insert_event_at_position(
+  text, int, text, text, jsonb, jsonb, text[], jsonb,
+  int, int, text, uuid, text[], text, text, int
+) cascade;
 drop function if exists public.is_pastor() cascade;
 drop function if exists public.list_persons_by_era(uuid) cascade;       -- 옛 이름 (legacy)
 drop function if exists public.list_characters_by_era(uuid) cascade;    -- 새 이름
@@ -231,6 +235,10 @@ create table if not exists events (
   end_year int,
   time_precision text not null default 'approx',
   story_index int not null,
+  -- 시대 안에서 시간 순 보기 전에 사용자가 고르는 주제/여정 단위.
+  unit_code text not null default 'default',
+  unit_title text not null default '전체 흐름',
+  unit_order int not null default 1,
 
   -- v2 위치 모델 — landmarks.id (region/anchor/minor) FK. NOT NULL.
   -- FK 제약은 forward reference 를 피하기 위해 landmarks 테이블 정의 뒤
@@ -259,6 +267,11 @@ create table if not exists events (
 
 -- 활성 이벤트(not deleted) 만 빠르게 조회하기 위한 partial index.
 create index if not exists idx_events_active on events (id) where deleted_at is null;
+
+alter table events
+  add column if not exists unit_code text not null default 'default',
+  add column if not exists unit_title text not null default '전체 흐름',
+  add column if not exists unit_order int not null default 1;
 
 -- ----------------------------------------------------------------------------
 -- landmarks: 시대별로 지도 위에 표시되는 성경 랜드마크 (정적 카탈로그)
@@ -342,7 +355,8 @@ create view events_ordered as
     e.id, e.era_id, e.title, e.summary,
     e.story_scenes, e.scene_characters, e.character_codes,
     e.bible_refs, e.start_year, e.end_year, e.time_precision,
-    e.story_index, e.scene_image_paths, e.status, e.deleted_at,
+    e.story_index, e.unit_code, e.unit_title, e.unit_order,
+    e.scene_image_paths, e.status, e.deleted_at,
     e.created_at, e.landmark_id,
     -- v2 — 좌표/이름은 landmarks JOIN derived.
     lm.lat as lat,
@@ -702,6 +716,9 @@ create table if not exists search_embeddings (
 );
 
 create index if not exists idx_events_era_story_index on events (era_id, story_index);
+create index if not exists idx_events_era_unit_story_index
+  on events (era_id, unit_order, story_index);
+create index if not exists idx_events_era_unit_code on events (era_id, unit_code);
 create index if not exists idx_events_status on events (status);
 create index if not exists idx_events_character_codes_gin on events using gin (character_codes);
 create index if not exists idx_characters_era_codes_gin on characters using gin (era_codes);
@@ -1426,7 +1443,10 @@ create or replace function public.insert_event_at_position(
   p_end_year int,
   p_time_precision text,
   p_landmark_id uuid,
-  p_scene_image_paths text[] default '{}'
+  p_scene_image_paths text[] default '{}',
+  p_unit_code text default 'default',
+  p_unit_title text default '전체 흐름',
+  p_unit_order int default 1
 )
 returns uuid
 language plpgsql
@@ -1478,6 +1498,7 @@ begin
     era_id, title, summary,
     story_scenes, scene_characters, character_codes, bible_refs,
     start_year, end_year, time_precision, story_index,
+    unit_code, unit_title, unit_order,
     landmark_id, scene_image_paths, status
   )
   values (
@@ -1489,6 +1510,9 @@ begin
     p_start_year, p_end_year,
     coalesce(p_time_precision, 'approx'),
     v_target_index,
+    coalesce(nullif(trim(p_unit_code), ''), 'default'),
+    coalesce(nullif(trim(p_unit_title), ''), '전체 흐름'),
+    coalesce(p_unit_order, 1),
     p_landmark_id,
     coalesce(p_scene_image_paths, '{}'::text[]),
     'published'
@@ -1510,7 +1534,7 @@ $$;
 
 grant execute on function public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
-  int, int, text, uuid, text[]
+  int, int, text, uuid, text[], text, text, int
 ) to authenticated;
 
 -- -----------------------------------------------------------------------------
@@ -1566,7 +1590,7 @@ insert into eras (
 values
   ('era_nt_public_ministry', 'new', '예수님의 공생애', 1, 27, 33, 31.78, 35.22, 6.10),
   ('era_nt_apostolic', 'new', '사도의 시대', 2, 33, 70, 37.40, 26.90, 4.90),
-  ('era_nt_post_apostolic', 'new', '후기 사도의 시대', 3, 70, 100, 37.45, 27.20, 5.20),
+  ('era_nt_post_apostolic', 'new', '후기 사도의 시대', 3, 45, 100, 37.45, 27.20, 5.20),
   ('era_nt_consummation', 'new', '역사의 종결', 4, null, null, 31.78, 35.22, 4.40)
 on conflict (code) do update
 set

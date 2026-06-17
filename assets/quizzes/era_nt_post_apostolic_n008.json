@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 8,
+  "story_title": "분열과 십자가의 지혜",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "고린도 교회의 분열에서 사람들이 내세운 이름은 무엇입니까?",
+      "choices": [
+        "바울과 아볼로와 게바",
+        "모세와 아론과 여호수아",
+        "다윗과 솔로몬과 히스기야"
+      ],
+      "answer_index": 0,
+      "explanation": "고전 1:12 — '나는 바울에게, 나는 아볼로에게'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울이 고린도에서 중심으로 전한 분은 누구입니까?",
+      "choices": [
+        "십자가에 못 박히신 그리스도",
+        "로마 총독의 평화",
+        "헬라 철학자의 명성"
+      ],
+      "answer_index": 0,
+      "explanation": "고전 2:2 — '예수 그리스도와 그의 십자가에 못 박히신 것'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "바울은 하나님의 지혜가 사람에게 무엇으로 알려진다고 말합니까?",
+      "choices": [
+        "성령으로 보이신다",
+        "시장 소문으로 퍼진다",
+        "가문 기록으로 증명된다"
+      ],
+      "answer_index": 0,
+      "explanation": "고전 2:10 — '성령으로 이것을 우리에게 보이셨으니'"
+    }
+  ]
+}

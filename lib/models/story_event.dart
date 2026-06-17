@@ -17,6 +17,9 @@ class StoryEvent {
     required this.endYear,
     required this.timePrecision,
     required this.storyIndex,
+    this.unitCode = 'default',
+    this.unitTitle = '전체 흐름',
+    this.unitOrder = 1,
     required this.rankInEra,
     required this.globalRank,
     required this.landmarkId,
@@ -42,6 +45,13 @@ class StoryEvent {
       endYear: row['end_year'] as int?,
       timePrecision: (row['time_precision'] as String?) ?? 'approx',
       storyIndex: (row['story_index'] as num?)?.toInt() ?? 0,
+      unitCode: (row['unit_code'] as String?)?.trim().isNotEmpty == true
+          ? (row['unit_code'] as String).trim()
+          : 'default',
+      unitTitle: (row['unit_title'] as String?)?.trim().isNotEmpty == true
+          ? (row['unit_title'] as String).trim()
+          : '전체 흐름',
+      unitOrder: (row['unit_order'] as num?)?.toInt() ?? 1,
       rankInEra: (row['rank_in_era'] as num?)?.toInt() ?? 0,
       globalRank: (row['global_rank'] as num?)?.toInt() ?? 0,
       landmarkId: row['landmark_id'] as String,
@@ -66,6 +76,9 @@ class StoryEvent {
   final int? endYear;
   final String timePrecision;
   final int storyIndex;
+  final String unitCode;
+  final String unitTitle;
+  final int unitOrder;
   final int rankInEra;
   final int globalRank;
 

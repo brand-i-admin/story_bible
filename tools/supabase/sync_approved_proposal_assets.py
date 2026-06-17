@@ -385,9 +385,10 @@ def sync_deletions(
     """**Diff-based** 정리. hard delete 모델이라 "삭제된 row" 자체가 사라져
     있으므로:
 
-      - events 테이블의 title 집합을 가져와, 로컬 `assets/story_images/` 와
-        `assets/story_images_thumbs/` 의 디렉토리 중 **그 집합에 없는** 디렉토리
-        를 삭제.
+      - events 테이블의 title 집합을 가져와, 로컬 `assets/story_images/`
+        디렉토리 중 **그 집합에 없는** 디렉토리를 삭제.
+        `assets/story_images_thumbs/`는 짧은 asset 디렉토리 + index.json 구조라
+        `make thumbnails` 단계의 source diff/prune 에 맡긴다.
       - characters 테이블의 code 집합을 가져와, 로컬 `assets/avatars/` 와
         `assets/avatars_thumbs/` 의 PNG 중 **그 집합에 없는** 파일을 삭제.
 
@@ -401,17 +402,13 @@ def sync_deletions(
     db_safe_titles = {safe_dirname(ev.get("title") or "") for ev in events}
     print(f"DB events: {len(events)} (unique safe-titles {len(db_safe_titles)})")
 
-    for parent in (STORIES_IMG_DIR, STORIES_IMG_THUMBS_DIR):
-        if not parent.exists():
-            continue
-        for child in sorted(parent.iterdir()):
+    if STORIES_IMG_DIR.exists():
+        for child in sorted(STORIES_IMG_DIR.iterdir()):
             if not child.is_dir():
                 continue
             if child.name in db_safe_titles:
                 continue
-            print(
-                f"\n-- {parent.name}/{child.name}  (DB 에 없음 → 삭제)"
-            )
+            print(f"\n-- {STORIES_IMG_DIR.name}/{child.name}  (DB 에 없음 → 삭제)")
             if remove_local_path(child, dry_run=dry_run):
                 totals["event_dirs"] += 1
 
@@ -465,7 +462,7 @@ def run_thumbnails(*, dry_run: bool) -> bool:
 
 
 def run_pubspec_update(*, dry_run: bool) -> bool:
-    """`make update-pubspec-assets` 호출 — story_images_thumbs/<title>/ 의 dir
+    """`make update-pubspec-assets` 호출 — story_images_thumbs index/short dirs
     목록을 pubspec.yaml flutter.assets 섹션에 동기화."""
     import subprocess
 

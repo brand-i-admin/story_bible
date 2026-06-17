@@ -66,6 +66,67 @@ class _CharacterNextPill extends StatelessWidget {
   }
 }
 
+class _TimelineUnitNextPill extends StatelessWidget {
+  const _TimelineUnitNextPill({
+    required this.count,
+    required this.onPressed,
+    this.compact = false,
+  });
+
+  final int count;
+  final VoidCallback onPressed;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = compact ? '$count단위' : '$count단위 다음';
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onPressed,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 8 : 9,
+            vertical: compact ? 4 : 5,
+          ),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2E6F8B),
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 4,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: compact ? 10.5 : 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0,
+                ),
+              ),
+              SizedBox(width: compact ? 2 : 3),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white,
+                size: compact ? 12 : 13,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PreviousStepPill extends StatelessWidget {
   const _PreviousStepPill({
     required this.label,
@@ -165,7 +226,7 @@ class _SelectionStepper extends StatelessWidget {
       2 => switch (mode) {
         _SelectionMode.region => '장소',
         _SelectionMode.character => '인물',
-        _SelectionMode.timeline => '시간 순',
+        _SelectionMode.timeline => '단위',
         null => '선택',
       },
       _ => '이야기',
@@ -177,7 +238,7 @@ class _SelectionStepper extends StatelessWidget {
       1 => Icons.home_rounded,
       2 => switch (mode) {
         _SelectionMode.character => Icons.group_rounded,
-        _SelectionMode.timeline => Icons.timeline_rounded,
+        _SelectionMode.timeline => Icons.view_agenda_rounded,
         _ => Icons.place_rounded,
       },
       _ => Icons.auto_stories_rounded,
@@ -214,7 +275,7 @@ class _SelectionStepper extends StatelessWidget {
                 1 => '처음으로 돌아가 시대와 보는 방법을 다시 선택',
                 2 => switch (mode) {
                   _SelectionMode.region => '장소 선택 단계로 돌아가기',
-                  _SelectionMode.timeline => '시간 순으로 다시 보기',
+                  _SelectionMode.timeline => '단위 선택 단계로 돌아가기',
                   _ => '인물 선택 단계로 돌아가기',
                 },
                 _ => '이야기 목록 단계',

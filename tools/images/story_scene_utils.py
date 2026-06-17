@@ -60,6 +60,7 @@ PERSON_EXTRA_ALIASES: dict[str, list[str]] = {
     "god": ["여호와"],
     "gabriel": ["천사 가브리엘", "가브리엘 천사"],
     "john_the_baptist": ["세례 요한", "세례요한", "요한"],
+    "paul": ["사울"],
 }
 
 SCENE_PREFIX_REGEX = re.compile(r"^\s*장면\s*\d+\s*[:：]\s*")
@@ -71,6 +72,10 @@ MULTI_PUNCT_REGEX = re.compile(r"\s*([,.;:])(?:\s*[,.;:])+\s*")
 PUNCT_SPACE_REGEX = re.compile(r"\s*([,.;:])\s*")
 NAME_PAREN_REGEX = re.compile(r"\s*\(([^)]*)\)")
 SQL_PERSON_TUPLE_REGEX = re.compile(r"\(\s*'((?:[^']|'')*)'\s*,\s*'((?:[^']|'')*)'")
+SEED_PERSONS_VALUES_BLOCK_REGEX = re.compile(
+    r"with\s+seed_persons\s*\([^)]*\)\s+as\s*\(\s*values(?P<values>.*?)\)\s*insert\s+into\s+characters",
+    re.IGNORECASE | re.DOTALL,
+)
 VOICE_ONLY_REGEX = re.compile(r"^[가-힣A-Za-z0-9_·(),\s/:：-]+$")
 NON_NAME_CHARS_REGEX = re.compile(r"[,:：./·()\-\s]+")
 ELLIPSIS_REGEX = re.compile(r"[.…]+")
@@ -78,7 +83,18 @@ DIALOGUE_LABEL_REGEX = re.compile(
     r"(?P<speaker>[가-힣A-Za-z0-9_·()\s]{1,30})\s*[:：]\s*(?P<speech>[^.?!…]+(?:[.?!…]|$))"
 )
 SPEECH_CONTENT_HINT_REGEX = re.compile(
-    r"(내가|내|우리|너|너희|당신|주여|아버지|무엇을|누구라|주소서|하라|말라|느냐|노라|겠나이다|도다|하리라|그리스도시요|아들이요|멸하지 않겠다|전쟁입니다|가라|오라|가자|하자|보라)"
+    r"(내가|우리|너|너희|당신|주여|아버지|무엇을|누구라|주소서|하라|말라|느냐|노라|겠나이다|도다|하리라|그리스도시요|아들이요|멸하지 않겠다|전쟁입니다|가라|오라|가자|보라)"
+)
+SPEECH_BUBBLE_NEGATIVE_REGEX = re.compile(
+    r"(말풍선(?:은|이)?\s*(?:보이지\s*않|없|없이)|"
+    r"speech bubbles?\s*(?:are\s+)?(?:not|without|hidden|absent)|"
+    r"no\s+speech\s+bubbles?)",
+    re.IGNORECASE,
+)
+SPEECH_BUBBLE_POSITIVE_REGEX = re.compile(
+    r"(말풍선\s*(?:안|속|에는|에|으로|처럼)|"
+    r"speech bubble\s*(?:with|containing|inside|shows|as))",
+    re.IGNORECASE,
 )
 TRAILING_SPEECH_REGEX = re.compile(
     r"(?P<head>.*?\b(?:말한다|외친다|명령한다|대답한다|고백한다|전한다|선언한다|묻는다|부른다|부르짖는다|짧게 명령한다|변명한다|비유를 말한다))\.\s*(?P<trail>.+)$"
@@ -98,10 +114,73 @@ SPEECH_VERB_REGEX = re.compile(
 GENERIC_SCENE_CENTER_REGEX = re.compile(
     r"^(?P<subject>.+?)\s+장면\s*(?:앞쪽|중심)?(?:에\s*있고|이\s*드러난다|에\s*서 있는 모습)?\s*,?\s*(?P<rest>.*)$"
 )
+GENERIC_EXPRESSION_TAIL_REGEX = re.compile(
+    r"\s*,?\s*인물들의 얼굴에는 [^.?!,]+? 분명히 드러난다"
+)
+CONTEXTUAL_SPEECH_HINT_REGEX = re.compile(
+    r"(말씀|복음|성경|율법|예수|부활|회개|성령|하나님|창조주|이방인|천국|믿음|주의 가르침|증인|증언|설교|가르침|회당|성전|공회|법정|총독|왕|무리|사람들|제자들|장로들|바리새인|사두개인|두루마리|성경책|서신|편지|아레오바고|솔로몬 행각)"
+)
 
 
 def sql_unescape(value: str) -> str:
     return value.replace("''", "'")
+
+
+def normalize_prompt_line(text: str) -> str:
+    return MULTI_SPACE_REGEX.sub(" ", str(text)).strip()
+
+
+def _format_bible_ref_range(raw: dict[str, Any]) -> str:
+    book = str(raw.get("book") or "").strip()
+    start = str(raw.get("from") or "").strip()
+    end = str(raw.get("to") or "").strip()
+    if not book or not start:
+        return ""
+    if not end or end == start:
+        return f"{book} {start}"
+    return f"{book} {start}-{end}"
+
+
+def format_bible_refs_for_prompt(event: dict[str, Any]) -> str:
+    """Return all Bible refs for a prompt.txt line, preserving JSON order."""
+    refs = event.get("bible_ref")
+    if refs is None:
+        refs = event.get("bible_refs")
+    if not isinstance(refs, list):
+        return ""
+
+    formatted: list[str] = []
+    for item in refs:
+        if not isinstance(item, dict):
+            continue
+        ref_text = _format_bible_ref_range(item)
+        if ref_text:
+            formatted.append(ref_text)
+    return ", ".join(formatted)
+
+
+def build_prompt_file_header(*, bible_ref_text: str) -> str:
+    """Build the optional top line for prompt.txt."""
+    ref_text = normalize_prompt_line(bible_ref_text)
+    if not ref_text:
+        return ""
+    return normalize_prompt_line(f"성경: {ref_text}")
+
+
+def build_prompt_file_line(*, file_name: str, scene_prompt: str) -> str:
+    """Build the human-readable prompt.txt line for one generated scene."""
+    prompt = normalize_prompt_line(scene_prompt)
+    return normalize_prompt_line(f"{file_name}: {prompt}")
+
+
+def requests_speech_bubble(text: str) -> bool:
+    """Return true only when the scene positively asks for a speech bubble."""
+    cleaned = normalize_prompt_line(text).lower()
+    if not cleaned:
+        return False
+    if SPEECH_BUBBLE_NEGATIVE_REGEX.search(cleaned):
+        return False
+    return bool(SPEECH_BUBBLE_POSITIVE_REGEX.search(cleaned))
 
 
 def parse_person_name_map_from_seed_sql(path: Path) -> dict[str, str]:
@@ -109,20 +188,22 @@ def parse_person_name_map_from_seed_sql(path: Path) -> dict[str, str]:
         raise FileNotFoundError(f"characters seed SQL not found: {path}")
 
     text = path.read_text(encoding="utf-8")
-    start = text.find("with seed_persons")
-    if start == -1:
+    if "with seed_persons" not in text:
         raise ValueError(
             "Could not find 'with seed_persons' block in characters seed SQL."
         )
-    end = text.find("insert into characters", start)
-    block = text[start:end] if end != -1 else text[start:]
 
     mapping: dict[str, str] = {}
-    for code, name in SQL_PERSON_TUPLE_REGEX.findall(block):
-        code_key = sql_unescape(code).strip().lower()
-        name_value = sql_unescape(name).strip()
-        if code_key and name_value:
-            mapping[code_key] = name_value
+    for block_match in SEED_PERSONS_VALUES_BLOCK_REGEX.finditer(text):
+        values_block = block_match.group("values")
+        for code, name in SQL_PERSON_TUPLE_REGEX.findall(values_block):
+            code_key = sql_unescape(code).strip().lower()
+            name_value = sql_unescape(name).strip()
+            if code_key and name_value:
+                mapping[code_key] = name_value
+
+    if not mapping:
+        raise ValueError(f"Could not parse character names from seed SQL: {path}")
 
     mapping.update(GROUP_KO_NAMES)
     return mapping
@@ -266,8 +347,10 @@ def join_names_for_subject(codes: list[str], code_to_name: dict[str, str]) -> st
         first = names[0]
         second = names[1]
         return f"{first}{choose_josa(first, '과', '와')} {second}{choose_josa(second, '이', '가')}"
-    shown = ", ".join(names[:3])
-    return f"{shown}가"
+    shown = names[0]
+    for name in names[1:3]:
+        shown = f"{shown}{choose_josa(shown, '과', '와')} {name}"
+    return f"{shown}{choose_josa(names[2], '이', '가')}"
 
 
 def build_fallback_scene_text(codes: list[str], code_to_name: dict[str, str]) -> str:
@@ -302,7 +385,10 @@ def _remove_quoted_content(text: str) -> str:
 def _cleanup_scene_text(text: str) -> str:
     cleaned = normalize_scene_text(text)
     cleaned = NARRATION_REGEX.sub("", cleaned)
-    cleaned = _remove_quoted_content(cleaned)
+    if requests_speech_bubble(cleaned):
+        cleaned = LEFTOVER_QUOTE_REGEX.sub("", cleaned)
+    else:
+        cleaned = _remove_quoted_content(cleaned)
     cleaned = PAREN_CONTENT_REGEX.sub(
         lambda match: f", {match.group(1).strip()}" if match.group(1).strip() else "",
         cleaned,
@@ -320,6 +406,7 @@ def _cleanup_scene_text(text: str) -> str:
 
 def _strip_meta_words(text: str) -> str:
     cleaned = META_SCENE_REGEX.sub("", text)
+    cleaned = GENERIC_EXPRESSION_TAIL_REGEX.sub("", cleaned)
     cleaned = cleaned.replace("장면으로 끝난다", "마무리된다")
     cleaned = cleaned.replace("예고가 이어진다", "놀람이 번진다")
     cleaned = cleaned.replace(
@@ -395,6 +482,9 @@ def _rewrite_center_scene_phrase(
     codes: list[str],
     code_to_name: dict[str, str],
 ) -> str:
+    if "그 장면" in text or "이 장면" in text:
+        return text
+
     match = GENERIC_SCENE_CENTER_REGEX.match(text.strip())
     if not match:
         return text
@@ -444,8 +534,19 @@ def _visual_fragment_for_speech(
         if SPEECH_CONTENT_HINT_REGEX.search(stripped) and not (
             HUMAN_ACTION_HINT_REGEX.search(stripped)
             or ENVIRONMENT_ONLY_HINT_REGEX.search(stripped)
+            or CONTEXTUAL_SPEECH_HINT_REGEX.search(stripped)
         ):
             return ""
+        return stripped
+
+    if CONTEXTUAL_SPEECH_HINT_REGEX.search(stripped) and not (
+        SPEECH_CONTENT_HINT_REGEX.search(stripped)
+        and not (
+            HUMAN_ACTION_HINT_REGEX.search(stripped)
+            or ENVIRONMENT_ONLY_HINT_REGEX.search(stripped)
+            or CONTEXTUAL_SPEECH_HINT_REGEX.search(stripped)
+        )
+    ):
         return stripped
 
     speaker_codes = detect_scene_person_codes(stripped, codes, code_to_name) or codes

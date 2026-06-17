@@ -5,7 +5,7 @@
 ## 0. 입력 데이터 (사람·AI 이전 단계에서 준비됨)
 
 - **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력.
-- **`assets/200_stories/*.json`** — 216개 이야기 dict 리스트 (시대별 파일). **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
+- **`assets/200_stories/*.json`** — 시대별 이야기 dict 리스트. **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
 
 ### 가장 단순한 흐름: KRV 성경 시드
 
@@ -107,6 +107,7 @@ Makefile                                # 파이프라인 오케스트레이션
   - `--active-threshold 2` (기본) — 이 횟수 이상이면 `is_active_default=true` 표시 → seed에서 활성으로 INSERT. 단, `era_judges` 사건에 실제 등장한 인물은 사사시대 특성상 1회 등장이어도 활성으로 표시한다.
 - **규칙**:
   - `disciples`, `apostles`, `brothers` → 개별 인물로 확장
+  - top-level `characters`뿐 아니라 `scene_characters`에만 등장하는 개인 인물도 카탈로그와 한글 표시명 fallback에 포함
   - `NON_INDIVIDUAL_CODES`(`crowd`, `angels` 등) 제외
   - 아직 story JSON 에 등장하지 않았지만 아바타를 먼저 준비해야 하는 인물은
     빌더의 `CURATED_AVATAR_ROSTER`에 보관한다. 현재 사사시대 예비 아바타
@@ -127,9 +128,10 @@ Makefile                                # 파이프라인 오케스트레이션
 - **출력**:
   - `supabase/200_stories/200_stories_seed.sql` — `events` 한 테이블 INSERT (배열 + JSONB 컬럼 포함)
   - `supabase/200_stories/200_stories_seed_part_*.sql` — SQL Editor 분할 파일
+  - `supabase/200_stories/events_unit_schema_patch.sql` — 기존 DB에 `unit_*` 컬럼과 `events_ordered` view 확장을 비파괴로 적용하는 패치
   - `supabase/200_stories/200_stories_report.json` — 리포트
   - `supabase/200_stories/200_stories_normalized.json` — 검수용 정규화 JSON
-- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `place_name`/`lat`/`lng`, `status='published'`
+- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `unit_code`/`unit_title`/`unit_order`(시간 순 보기 단위), `landmark_id`(landmarks 조인), `status='published'`
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
 - **stale 정리**: 시드 SQL 머리에 `delete from events where (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 이벤트는 DB 에서도 사라진다. quiz_questions 등 의존 테이블은 cascade.
 - **split 파일 주의**: `200_stories_seed_part_01.sql` 만 stale-delete 를 포함, part_02 는 INSERT 만.
@@ -195,26 +197,38 @@ Makefile                                # 파이프라인 오케스트레이션
 - **환경**: `GOOGLE_CLOUD_PROJECT` 환경변수 필요
 - **stale 정리**: 시작 시 `character_meta.json` 의 code 집합과 `assets/avatars/` 의 PNG stem 을 비교, 불일치 PNG 를 삭제. 끄려면 `--no-prune-orphans`.
 - **스타일 레퍼런스**: 개별 meta 항목의 `style_reference_codes`가 있으면 해당 `assets/avatars/{code}.png`를 Gemini 요청에 함께 넣어 기존 아바타 그림체를 맞춘다.
+- **아바타 스타일 제약**: 전역 프롬프트는 윤곽선, 잉크선, 굵은 stroke를 금지하고 색 면 경계로만 형태를 구분하게 한다. 또한 지나치게 연한 색을 피하고 중간 이상 채도의 진한 색 면, 자연스러운 전신 비율(머리가 과하게 크지 않은 비율)을 요구한다. 특정 인물(예: 바울)은 정면 전신 포즈를 명시해 side/three-quarter view를 피한다.
 - **저장 보정**: 모델이 가로/세로로 치우친 PNG를 반환해도 흰 배경 여백을 잘라낸 뒤 1:1 정사각형 캔버스로 패딩해 저장한다.
-- **쿼터/일시 오류 재시도**: Vertex가 `429`, `503`, `504`를 반환하면 기본 10초 대기 후 2회 재시도한다. `VERTEX_IMAGE_RETRY_ATTEMPTS`, `VERTEX_IMAGE_RETRY_WAIT_SEC` 또는 `--retry-attempts`, `--retry-wait-sec`로 조절할 수 있다.
+- **쿼터/일시 오류 재시도**: Vertex가 `429`, `503`, `504`를 반환하면 기본 30초 대기 후 2회 재시도한다. `VERTEX_IMAGE_RETRY_ATTEMPTS`, `VERTEX_IMAGE_RETRY_WAIT_SEC` 또는 `--retry-attempts`, `--retry-wait-sec`로 조절할 수 있다.
 - **재생성**: 기존 PNG 가 있으면 skip, 없으면 새로 생성 → 사용자가 마음에 안 드는 PNG 를 지워두면 다음 실행에서 자동 재생성.
 - **단일 인물 재생성**: `make generate-avatars AVATAR_CODES=hagar AVATAR_OVERWRITE=1` 처럼 전체 아바타를 다시 뽑지 않고 특정 코드만 덮어쓸 수 있다.
 
 #### `generate_event_story_images_vertex.py` — 장면 이미지 생성
 - **입력**: `assets/200_stories/*.json` (story_scenes 필드)
-- **출력**: `assets/story_images/{title}/scene_{1-4}.png`
+- **출력**: `assets/story_images/{title}/scene_{1-4}.png`, `manifest.json`, `prompt.txt`
 - **API**: Google Cloud Vertex AI Gemini (`gemini-3-pro-image`, fallback `gemini-2.5-flash-image`)
 - **결과**: 현재 시대별 stories JSON의 모든 `story_scenes` 기준으로 장면 이미지 생성
 - **옵션**: `--no-prune-orphans`
+- **요청 간 대기/쿼터 재시도**: 성공한 장면 요청 뒤에는 기본 2초 대기하고, Vertex가 `429`를 반환하면 기본 31초 대기 후 같은 요청을 재시도한다. 최종 실패 후 다음 장면으로 넘어갈 때도 기본 31초 대기한다. `--sleep-sec`, `--sleep-on-429-sec`, `--sleep-on-failure-sec`, `--retry-429-attempts`로 조절할 수 있다.
+- **프롬프트 기록**: 이미지 생성 전에 각 이벤트 이미지 디렉토리의 `prompt.txt` 첫 줄에 `성경: 마 24:3-24:14`를 쓰고, 그 아래에 `scene_01.png: 한글 장면 프롬프트` 형식의 장면 줄을 순서대로 보장한다. 사건에 `bible_ref`/`bible_refs`가 여러 개 있으면 모든 `book from-to` 범위를 쉼표로 연결한다. 기존 내용이 같으면 다시 쓰지 않아 실패 장면만 재시도해도 멱등성을 유지한다.
+- **장면 구체화**: 생성 프롬프트는 원문 장면의 장소·행동·표정 정보를 보존하고, 반복적인 추상 표정 꼬리말은 제거한다. Vertex 요청에는 사건에 맞는 옷차림·행색(어부 그물, 제사장 옷, 로마 갑옷, 법정/감옥/항해 상황 등)을 반영하라는 지시를 함께 넣는다. 족장/출애굽/왕정 핵심 인물은 기준 아바타와 별도로 장면의 성경 시점에 맞는 나이와 복장(예: 사라 노년, 이삭 성인, 모세 40/80/120세, 아론 제사장 이전 복장, 므리바 물 이후 아론의 흰수염 노년 대제사장 복장, 다윗 즉위 이후 왕복, 솔로몬 즉위 이후 왕복)을 자동 보강한다.
+- **그림 말풍선**: `story_scenes`가 말풍선을 명시하면 기본 금지 정책 대신 말풍선 1개를 허용한다. 장면이 `글자 없는 말풍선`을 요청하면 읽을 수 있는 글자 대신 약속·명령·경고·복음 등 말의 내용을 작은 그림으로 표현한다.
+- **인물 이름 매핑**: `characters_seed.sql`의 모든 `seed_persons` chunk를 읽어 `code → 한글 이름`을 복원하므로, `john_mark`처럼 뒤쪽 chunk에 있는 인물도 Vertex 프롬프트에서 `마가 요한 (john_mark)`으로 표시된다.
 - **stale 정리**: 시작 시 현재 stories JSON 의 title 로 만들어진 디렉토리 외에는 모두 삭제 (NFC 정규화 비교).
 - **재생성**: 기존 scene PNG 가 있으면 skip, 없으면 새로 생성 → 마음에 안 드는 scene 을 지워두면 다음 실행에서 자동 재생성.
 
+#### `delete_selected_story_scenes.py` — 선택 장면 이미지 삭제
+- **목적**: 프롬프트나 특정 아바타가 바뀐 장면만 PNG/JPG를 지워 다음 `make generate-story-images`/`make thumbnails`에서 재생성되게 한다.
+- **모드**: `god-strict`는 `scene_characters`에 `god`가 있는 장면, `god-visual`은 하나님/성령/하늘 음성처럼 시각적으로 God이 등장하는 장면까지 포함, `nt-pictorial-bubbles`는 신약에서 `글자 없는 말풍선` 프롬프트가 들어간 장면을 대상으로 한다.
+- **안전장치**: 기본은 dry-run이며 `--delete`를 붙여야 실제 파일을 삭제한다. 삭제 대상은 `assets/story_images/{title}/scene_XX.png`와 `assets/story_images_thumbs/{short_dir}/scene_XX.jpg`뿐이다. 옛 제목 기반 썸네일 경로도 있으면 함께 정리한다.
+
 #### `generate_runtime_thumbnails.py` — 썸네일 생성
-- **입력**: `assets/avatars/`, `assets/story_images/`
+- **입력**: `assets/avatars/`, `assets/story_images/`, `assets/200_stories/*.json`
 - **출력**: `assets/avatars_thumbs/`, `assets/story_images_thumbs/`
 - **방식**: 로컬 이미지 리사이즈 (Vertex AI 불필요)
 - **옵션**: `--no-prune-orphans`
-- **stale 정리**: source 에 없는 thumbnail 자동 삭제 (빈 부모 디렉토리도 정리).
+- **story thumb 경로**: 원본 `assets/story_images/{한글 제목}/`은 그대로 두지만, 앱 번들용 썸네일은 Android/iOS 파일명 길이 제한을 피하기 위해 `assets/story_images_thumbs/{era_slug}_{story_index}/` 같은 짧은 디렉토리에 저장한다. `assets/story_images_thumbs/index.json`이 이야기 제목/원본 디렉토리와 짧은 디렉토리를 매핑한다.
+- **stale 정리**: source 에 없는 thumbnail 자동 삭제 (빈 부모 디렉토리도 정리). 제목 기반 옛 썸네일 디렉토리는 새 짧은 디렉토리로 재생성된 뒤 orphan 으로 정리된다.
 
 > 이전에 있던 `generate_assets_vertex.py` (UI 장식 요소 일괄 생성), `generate_app_icons.py` (런처 아이콘 일괄 생성)는 사용 빈도가 낮아 폐기됨. 결과물(`assets/elements/`, iOS/Android 런처 아이콘)은 이미 생성된 상태로 유지.
 
@@ -230,10 +244,10 @@ Makefile                                # 파이프라인 오케스트레이션
 - DB에서 short_story 예시를 추출하여 JSON으로 출력 (검수용)
 
 #### `update_pubspec_assets.py`
-- **입력**: `assets/story_images_thumbs/` 하위 디렉토리 스캔
-- **출력**: `pubspec.yaml`의 assets 블록을 갱신 (211+개 폴더 자동 반영)
+- **입력**: `assets/story_images_thumbs/index.json` + 하위 짧은 디렉토리 스캔
+- **출력**: `pubspec.yaml`의 assets 블록을 갱신 (index.json + 이야기별 짧은 폴더 자동 반영)
 - **옵션**: `--check` (변경 없이 diff만 확인, CI용)
-- **배경**: Flutter는 assets 디렉토리 등록 시 직접 자식 파일만 포함하므로, 각 이야기 폴더를 개별 등록해야 한다.
+- **배경**: Flutter는 assets 디렉토리 등록 시 직접 자식 파일만 포함하므로, 각 이야기 폴더를 개별 등록해야 한다. 긴 한글 제목 디렉토리를 그대로 등록하면 Android asset bundle 단계에서 URL-encoded 파일명이 OS 제한을 넘을 수 있어 짧은 폴더와 index.json 매핑을 쓴다.
 
 #### `verify_polygons_contain_events.py`
 - **입력**: `assets/landmarks/landmarks.json` + `assets/200_stories/*.json`
@@ -309,7 +323,7 @@ assets/
 ├── avatars/                  # 원본 아바타 PNG (50+)
 ├── avatars_thumbs/           # 썸네일 아바타 (앱 번들)
 ├── story_images/             # 원본 장면 이미지 (제목 폴더 기준, stories JSON의 story_scenes와 동기화)
-├── story_images_thumbs/      # 썸네일 장면 이미지 (앱 번들)
+├── story_images_thumbs/      # 썸네일 장면 이미지 (앱 번들: 짧은 dir + index.json 매핑)
 ├── elements/                 # UI 장식 요소
 ├── bible/                    # KRV 성경 텍스트 (66 .txt)
 ├── maps/                     # GeoJSON 세계 지도
@@ -368,7 +382,7 @@ gcloud auth application-default login
 6. `make generate-avatars` (Vertex 비용; 기존 `assets/avatars/{code}.png`는 자동 보존, 신규만 생성)
 7. `make generate-story-images` (장면 이미지 필요 시)
 8. `make thumbnails` (앱 번들용 썸네일 생성)
-9. `make update-pubspec-assets` (pubspec.yaml의 story_images_thumbs 디렉토리 자동 갱신)
+9. `make update-pubspec-assets` (pubspec.yaml의 story_images_thumbs index.json + 짧은 디렉토리 자동 갱신)
 10. `flutter run` (또는 `--dart-define=ENV=prod`)
 
 ### 신규 이야기 1건 추가된 경우

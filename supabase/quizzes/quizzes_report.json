@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-06-11T00:26:48+00:00",
-  "total_quiz_files": 243,
-  "total_events": 243,
-  "total_questions": 729,
+  "generated_at": "2026-06-17T06:03:59+00:00",
+  "total_quiz_files": 310,
+  "total_events": 310,
+  "total_questions": 930,
   "answer_index_distribution": {
-    "0": 258,
-    "1": 212,
-    "2": 259
+    "0": 323,
+    "1": 286,
+    "2": 321
   },
   "orphan_quizzes": [],
   "title_mismatches": [],
@@ -139,49 +139,49 @@
       "length": 123
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return_n013.json",
       "display_order": 0,
       "field": "question",
       "length": 48
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return_n013.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return_n013.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 32
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return_n013.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 22
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return_n013.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 22
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return_n013.json",
       "display_order": 1,
       "field": "explanation",
       "length": 67
     },
     {
-      "filename": "era_exile_return_n015.json",
+      "filename": "era_exile_return_n014.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 24
     },
     {
-      "filename": "era_exile_return_n017.json",
+      "filename": "era_exile_return_n016.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
@@ -673,526 +673,3058 @@
       "length": 61
     },
     {
-      "filename": "era_nt_apostolic_n002.json",
+      "filename": "era_nt_apostolic_n001.json",
       "display_order": 0,
       "field": "choices[0]",
-      "length": 27
+      "length": 50
     },
     {
-      "filename": "era_nt_apostolic_n002.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_apostolic_n002.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 80
-    },
-    {
-      "filename": "era_nt_apostolic_n004.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 27
-    },
-    {
-      "filename": "era_nt_apostolic_n004.json",
-      "display_order": 0,
-      "field": "choices[2]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n005.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n005.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 61
-    },
-    {
-      "filename": "era_nt_apostolic_n006.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n007.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n009.json",
-      "display_order": 1,
-      "field": "question",
-      "length": 41
-    },
-    {
-      "filename": "era_nt_apostolic_n012.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_apostolic_n012.json",
+      "filename": "era_nt_apostolic_n001.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_nt_apostolic_n013.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 31
-    },
-    {
-      "filename": "era_nt_apostolic_n013.json",
-      "display_order": 0,
-      "field": "choices[2]",
-      "length": 27
-    },
-    {
-      "filename": "era_nt_apostolic_n013.json",
+      "filename": "era_nt_apostolic_n001.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 31
+      "length": 53
     },
     {
-      "filename": "era_nt_apostolic_n014.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n014.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_nt_apostolic_n015.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_apostolic_n015.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 64
-    },
-    {
-      "filename": "era_nt_apostolic_n016.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_nt_apostolic_n016.json",
-      "display_order": 0,
-      "field": "explanation",
-      "length": 62
-    },
-    {
-      "filename": "era_nt_apostolic_n016.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 24
-    },
-    {
-      "filename": "era_nt_apostolic_n016.json",
+      "filename": "era_nt_apostolic_n001.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_nt_apostolic_n017.json",
-      "display_order": 0,
-      "field": "question",
-      "length": 41
-    },
-    {
-      "filename": "era_nt_apostolic_n017.json",
+      "filename": "era_nt_apostolic_n002.json",
       "display_order": 0,
       "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n017.json",
-      "display_order": 1,
-      "field": "question",
-      "length": 41
-    },
-    {
-      "filename": "era_nt_apostolic_n017.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n018.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n019.json",
-      "display_order": 0,
-      "field": "choices[1]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n019.json",
-      "display_order": 1,
-      "field": "question",
-      "length": 44
-    },
-    {
-      "filename": "era_nt_apostolic_n019.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n019.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n020.json",
-      "display_order": 0,
-      "field": "explanation",
-      "length": 73
-    },
-    {
-      "filename": "era_nt_apostolic_n020.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 74
-    },
-    {
-      "filename": "era_nt_apostolic_n021.json",
-      "display_order": 0,
-      "field": "explanation",
-      "length": 66
-    },
-    {
-      "filename": "era_nt_apostolic_n021.json",
-      "display_order": 1,
-      "field": "question",
       "length": 42
     },
     {
-      "filename": "era_nt_apostolic_n021.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 31
-    },
-    {
-      "filename": "era_nt_apostolic_n021.json",
-      "display_order": 1,
-      "field": "choices[1]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n021.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n022.json",
-      "display_order": 0,
-      "field": "question",
-      "length": 41
-    },
-    {
-      "filename": "era_nt_apostolic_n022.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 33
-    },
-    {
-      "filename": "era_nt_apostolic_n022.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_nt_apostolic_n022.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 64
-    },
-    {
-      "filename": "era_nt_apostolic_n025.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 24
-    },
-    {
-      "filename": "era_nt_apostolic_n025.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 91
-    },
-    {
-      "filename": "era_nt_apostolic_n026.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_apostolic_n026.json",
+      "filename": "era_nt_apostolic_n002.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_nt_apostolic_n026.json",
-      "display_order": 0,
-      "field": "choices[2]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_apostolic_n026.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 68
-    },
-    {
-      "filename": "era_nt_apostolic_n027.json",
+      "filename": "era_nt_apostolic_n002.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 24
+      "length": 55
     },
     {
-      "filename": "era_nt_apostolic_n027.json",
+      "filename": "era_nt_apostolic_n002.json",
       "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n003.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_apostolic_n003.json",
+      "display_order": 0,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_nt_apostolic_n028.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 24
-    },
-    {
-      "filename": "era_nt_apostolic_n028.json",
-      "display_order": 0,
-      "field": "choices[2]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n029.json",
+      "filename": "era_nt_apostolic_n003.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 22
+      "length": 39
     },
     {
-      "filename": "era_nt_apostolic_n029.json",
+      "filename": "era_nt_apostolic_n003.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_nt_apostolic_n030.json",
+      "filename": "era_nt_apostolic_n004.json",
       "display_order": 0,
       "field": "choices[0]",
-      "length": 23
+      "length": 55
     },
     {
-      "filename": "era_nt_apostolic_n030.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_apostolic_n030.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 80
-    },
-    {
-      "filename": "era_nt_consummation_n001.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_nt_consummation_n002.json",
+      "filename": "era_nt_apostolic_n004.json",
       "display_order": 0,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_nt_consummation_n003.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_consummation_n004.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_consummation_n007.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_consummation_n007.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 30
-    },
-    {
-      "filename": "era_nt_post_apostolic_n001.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 30
-    },
-    {
-      "filename": "era_nt_post_apostolic_n003.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 25
-    },
-    {
-      "filename": "era_nt_public_ministry_n002.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_public_ministry_n003.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_public_ministry_n003.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 83
-    },
-    {
-      "filename": "era_nt_public_ministry_n006.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_public_ministry_n006.json",
-      "display_order": 1,
-      "field": "choices[2]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_public_ministry_n010.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 24
-    },
-    {
-      "filename": "era_nt_public_ministry_n011.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 23
-    },
-    {
-      "filename": "era_nt_public_ministry_n011.json",
-      "display_order": 1,
       "field": "choices[1]",
-      "length": 22
+      "length": 23
     },
     {
-      "filename": "era_nt_public_ministry_n011.json",
-      "display_order": 1,
-      "field": "explanation",
-      "length": 79
-    },
-    {
-      "filename": "era_nt_public_ministry_n013.json",
+      "filename": "era_nt_apostolic_n004.json",
       "display_order": 1,
       "field": "choices[0]",
-      "length": 27
+      "length": 42
     },
     {
-      "filename": "era_nt_public_ministry_n017.json",
+      "filename": "era_nt_apostolic_n004.json",
       "display_order": 1,
-      "field": "choices[0]",
-      "length": 25
-    },
-    {
-      "filename": "era_nt_public_ministry_n018.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 21
-    },
-    {
-      "filename": "era_nt_public_ministry_n020.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 24
-    },
-    {
-      "filename": "era_nt_public_ministry_n021.json",
-      "display_order": 0,
-      "field": "choices[0]",
-      "length": 26
-    },
-    {
-      "filename": "era_nt_public_ministry_n023.json",
-      "display_order": 1,
-      "field": "choices[0]",
-      "length": 22
-    },
-    {
-      "filename": "era_nt_public_ministry_n024.json",
-      "display_order": 0,
-      "field": "explanation",
-      "length": 66
-    },
-    {
-      "filename": "era_nt_public_ministry_n026.json",
-      "display_order": 0,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_nt_public_ministry_n026.json",
+      "filename": "era_nt_apostolic_n005.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 51
+    },
+    {
+      "filename": "era_nt_apostolic_n005.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n005.json",
       "display_order": 0,
       "field": "explanation",
       "length": 67
     },
     {
-      "filename": "era_nt_public_ministry_n026.json",
+      "filename": "era_nt_apostolic_n005.json",
       "display_order": 1,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_apostolic_n005.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n005.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_apostolic_n006.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_apostolic_n006.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_apostolic_n006.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 68
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n007.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 68
+    },
+    {
+      "filename": "era_nt_apostolic_n008.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 50
+    },
+    {
+      "filename": "era_nt_apostolic_n008.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n008.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_apostolic_n008.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 51
+    },
+    {
+      "filename": "era_nt_apostolic_n008.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n008.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_apostolic_n009.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n009.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n009.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n009.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n010.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n010.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n010.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 50
+    },
+    {
+      "filename": "era_nt_apostolic_n010.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n011.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 51
+    },
+    {
+      "filename": "era_nt_apostolic_n011.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n011.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_apostolic_n011.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n012.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_apostolic_n012.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n012.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n012.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n013.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n013.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n013.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n013.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 55
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n014.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n015.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_apostolic_n015.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n015.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n015.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 50
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 54
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n016.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 50
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 51
+    },
+    {
+      "filename": "era_nt_apostolic_n017.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n018.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 54
+    },
+    {
+      "filename": "era_nt_apostolic_n018.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n018.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 54
+    },
+    {
+      "filename": "era_nt_apostolic_n018.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 53
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n019.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n020.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 52
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n021.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 50
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n022.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n023.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 54
+    },
+    {
+      "filename": "era_nt_apostolic_n023.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n023.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n023.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n024.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n024.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n024.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n024.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 53
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n025.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 61
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_apostolic_n026.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n027.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 52
+    },
+    {
+      "filename": "era_nt_apostolic_n027.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n027.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 52
+    },
+    {
+      "filename": "era_nt_apostolic_n027.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 55
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n028.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n029.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 56
+    },
+    {
+      "filename": "era_nt_apostolic_n029.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n029.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_apostolic_n029.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_apostolic_n030.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n031.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 51
+    },
+    {
+      "filename": "era_nt_apostolic_n031.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n031.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n031.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n031.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n031.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n032.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 50
+    },
+    {
+      "filename": "era_nt_apostolic_n032.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n032.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n032.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n033.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 52
+    },
+    {
+      "filename": "era_nt_apostolic_n033.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n033.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n033.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n033.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n033.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n034.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_apostolic_n034.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n034.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n034.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n034.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n034.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_apostolic_n035.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n035.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n035.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "filename": "era_nt_apostolic_n035.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n035.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n035.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "filename": "era_nt_apostolic_n036.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n036.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n036.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 53
+    },
+    {
+      "filename": "era_nt_apostolic_n036.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n037.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_apostolic_n037.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n037.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n037.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n037.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n037.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n038.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_apostolic_n038.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n038.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n038.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_apostolic_n038.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n038.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n039.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_apostolic_n039.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n039.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n039.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_apostolic_n039.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n039.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n040.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 49
+    },
+    {
+      "filename": "era_nt_apostolic_n040.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n040.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n040.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n040.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n040.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_apostolic_n041.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 53
+    },
+    {
+      "filename": "era_nt_apostolic_n041.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n041.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 52
+    },
+    {
+      "filename": "era_nt_apostolic_n041.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n042.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 55
+    },
+    {
+      "filename": "era_nt_apostolic_n042.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n042.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_apostolic_n042.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_apostolic_n042.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n042.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_apostolic_n043.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 53
+    },
+    {
+      "filename": "era_nt_apostolic_n043.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n043.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_apostolic_n043.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 48
+    },
+    {
+      "filename": "era_nt_apostolic_n043.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_apostolic_n043.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_apostolic_n044.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 52
+    },
+    {
+      "filename": "era_nt_apostolic_n044.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 23
+    },
+    {
+      "filename": "era_nt_apostolic_n044.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 55
+    },
+    {
+      "filename": "era_nt_apostolic_n044.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 34
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n001.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n002.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "filename": "era_nt_public_ministry_n002.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n002.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n002.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n002.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n003.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_public_ministry_n003.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n003.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n003.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n003.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n004.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 29
+    },
+    {
+      "filename": "era_nt_public_ministry_n004.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n004.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n004.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 34
+    },
+    {
+      "filename": "era_nt_public_ministry_n004.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n005.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "filename": "era_nt_public_ministry_n005.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n005.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n005.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_public_ministry_n005.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n005.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 34
+    },
+    {
+      "filename": "era_nt_public_ministry_n006.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n007.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 34
+    },
+    {
+      "filename": "era_nt_public_ministry_n007.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n007.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n007.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "filename": "era_nt_public_ministry_n007.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n008.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_public_ministry_n008.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n008.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n008.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n008.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n009.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n010.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 66
+    },
+    {
+      "filename": "era_nt_public_ministry_n011.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n011.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n011.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n011.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 53
+    },
+    {
+      "filename": "era_nt_public_ministry_n011.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n012.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_public_ministry_n012.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n012.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n012.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "filename": "era_nt_public_ministry_n012.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 25
+    },
+    {
+      "filename": "era_nt_public_ministry_n013.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n014.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_public_ministry_n014.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n014.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n014.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 30
+    },
+    {
+      "filename": "era_nt_public_ministry_n014.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n015.json",
+      "display_order": 0,
       "field": "choices[0]",
       "length": 22
     },
     {
+      "filename": "era_nt_public_ministry_n015.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n015.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n015.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n015.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 57
+    },
+    {
+      "filename": "era_nt_public_ministry_n015.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n016.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n016.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n016.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n016.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_public_ministry_n016.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n016.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_public_ministry_n017.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n017.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n017.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n017.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n017.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 47
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n018.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n019.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_public_ministry_n019.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n019.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n019.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n019.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n019.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n020.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n021.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n022.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_public_ministry_n022.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n022.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n022.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n022.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n023.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n024.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "filename": "era_nt_public_ministry_n024.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n024.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n024.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "filename": "era_nt_public_ministry_n024.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 65
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n025.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n026.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n026.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n026.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n026.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 62
+    },
+    {
       "filename": "era_nt_public_ministry_n026.json",
       "display_order": 1,
-      "field": "choices[1]",
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "filename": "era_nt_public_ministry_n026.json",
+      "display_order": 1,
+      "field": "choices[2]",
       "length": 21
     },
     {
       "filename": "era_nt_public_ministry_n026.json",
       "display_order": 1,
       "field": "explanation",
+      "length": 68
+    },
+    {
+      "filename": "era_nt_public_ministry_n027.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_public_ministry_n027.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n027.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n027.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n027.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n028.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_public_ministry_n028.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n028.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n028.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "filename": "era_nt_public_ministry_n028.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n029.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_public_ministry_n029.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n029.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n029.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "filename": "era_nt_public_ministry_n029.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n029.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n030.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_public_ministry_n030.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n030.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n030.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_public_ministry_n030.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n031.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_public_ministry_n031.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n031.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n031.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n031.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n031.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n032.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 35
+    },
+    {
+      "filename": "era_nt_public_ministry_n032.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n032.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n032.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n032.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n032.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n033.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_public_ministry_n033.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n033.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n033.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_public_ministry_n033.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n034.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n034.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n034.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n034.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_public_ministry_n034.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n035.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 54
+    },
+    {
+      "filename": "era_nt_public_ministry_n035.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n035.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n035.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n035.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n035.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n036.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 44
+    },
+    {
+      "filename": "era_nt_public_ministry_n036.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n036.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n036.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n036.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n036.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 67
+    },
+    {
+      "filename": "era_nt_public_ministry_n037.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_public_ministry_n037.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n037.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n037.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n037.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n038.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n039.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n039.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n039.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n039.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_public_ministry_n039.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n040.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 46
+    },
+    {
+      "filename": "era_nt_public_ministry_n040.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n040.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n040.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "filename": "era_nt_public_ministry_n040.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n041.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_public_ministry_n041.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n041.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n041.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 41
+    },
+    {
+      "filename": "era_nt_public_ministry_n041.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n041.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 69
+    },
+    {
+      "filename": "era_nt_public_ministry_n042.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 31
+    },
+    {
+      "filename": "era_nt_public_ministry_n042.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n042.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n042.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n042.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 45
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n043.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n044.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n044.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n044.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n044.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n044.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n044.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n045.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n045.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n045.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n045.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n045.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 34
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 36
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n046.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 32
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 63
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 38
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n047.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 71
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 33
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 0,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 39
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n048.json",
+      "display_order": 1,
+      "field": "explanation",
+      "length": 70
+    },
+    {
+      "filename": "era_nt_public_ministry_n049.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n049.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n049.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n049.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_public_ministry_n049.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n050.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 40
+    },
+    {
+      "filename": "era_nt_public_ministry_n050.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n050.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n050.json",
+      "display_order": 0,
+      "field": "explanation",
       "length": 62
+    },
+    {
+      "filename": "era_nt_public_ministry_n050.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 42
+    },
+    {
+      "filename": "era_nt_public_ministry_n050.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n051.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 43
+    },
+    {
+      "filename": "era_nt_public_ministry_n051.json",
+      "display_order": 0,
+      "field": "choices[1]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_public_ministry_n051.json",
+      "display_order": 0,
+      "field": "choices[2]",
+      "length": 22
+    },
+    {
+      "filename": "era_nt_public_ministry_n051.json",
+      "display_order": 1,
+      "field": "choices[0]",
+      "length": 37
+    },
+    {
+      "filename": "era_nt_public_ministry_n051.json",
+      "display_order": 1,
+      "field": "choices[2]",
+      "length": 21
     },
     {
       "filename": "era_patriarch_n003.json",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../data/character_name_fallbacks.dart';
 import '../../models/event_proposal.dart';
 
 /// 새 이야기 제안 승인 전 띄우는 확인 다이얼로그.
@@ -83,7 +84,7 @@ class _ApproveProposalDialogState extends State<ApproveProposalDialog> {
       result.add(
         _CharRow(
           code: c.code,
-          name: c.name.isNotEmpty ? c.name : c.code,
+          name: localizedCharacterName(code: c.code, name: c.name),
           isNew: ex == null,
           isActive: ex == null ? true : (ex['is_active'] as bool?) ?? true,
         ),
@@ -96,7 +97,10 @@ class _ApproveProposalDialogState extends State<ApproveProposalDialog> {
       result.add(
         _CharRow(
           code: code,
-          name: (ex?['name'] as String?) ?? code,
+          name: localizedCharacterName(
+            code: code,
+            name: ex?['name'] as String?,
+          ),
           isNew: false,
           isActive: (ex?['is_active'] as bool?) ?? true,
         ),

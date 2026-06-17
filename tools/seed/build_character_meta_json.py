@@ -66,12 +66,17 @@ DEFAULT_STYLE_SOURCE: dict[str, Any] = {
         "stylized geometric biblical character illustration, "
         "blocky low-poly faceted planes, angular polygon face and hair, "
         "flat matte vector shading with subtle cut-paper facets, "
-        "strict canonical body proportions, head:torso:legs = 1:1:1 exactly, "
-        "head section one-third of total height, torso section one-third, legs section one-third, "
-        "same body ratio template across all human characters, compact adult proportions, not chibi, "
+        "rich deep color blocks, medium-to-strong saturation, clear value contrast, "
+        "not pale, not faded, not washed out, "
+        "natural stylized full-body adult proportions, head about one-fifth to one-sixth of total height, "
+        "head clearly smaller than torso, torso and legs longer than head, "
+        "same natural body ratio template across all human characters, compact adult proportions, not chibi, "
         "simple small eyes and nose, mature friendly expression, "
-        "minimal clean outline, exactly one character only, solo single subject, "
-        "full body visible from head to toe, both feet visible, whole figure fits inside frame, "
+        "no visible outline, no ink contour, no dark stroke, edges defined only by adjacent flat color planes, "
+        "exactly one character only, solo single subject, "
+        "small full-body avatar with generous white margin around the entire figure, "
+        "entire body visible from top of head to soles of sandals, both full feet and sandals clearly visible, "
+        "whole figure fits inside frame with no cropping at the head, hands, robe hem, legs, feet, or staff, "
         "centered inside a square 1:1 avatar canvas, plain white background, "
         "high resolution, consistent design system across the full cast, "
         "distinct silhouette and face geometry for each character, "
@@ -80,13 +85,19 @@ DEFAULT_STYLE_SOURCE: dict[str, Any] = {
     ),
     "negative_prompt": (
         "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, "
-        "chibi, super-deformed, giant head, baby proportions, oversized eyes, "
+        "chibi, super-deformed, giant head, large head, huge face, bobblehead, baby proportions, oversized eyes, "
         "long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, "
-        "uneven body ratio, inconsistent body proportions, head larger than torso, legs longer than torso, "
+        "uneven body ratio, inconsistent body proportions, head larger than torso, head one-third of body height, "
+        "face fills frame, legs longer than torso, "
+        "pale colors, washed-out colors, faded pastel look, overexposed, low contrast, weak color, transparent-looking color, "
         "same-face clones, duplicate character, multiple people, crowd, group shot, "
         "companions, side characters, extra faces, extra bodies, twin, mirrored figure, "
         "close-up, portrait crop, bust shot, half body, cropped head, cropped feet, "
-        "marshmallow body, gritty, dark, horror, "
+        "waist-up, upper body only, torso crop, knees cropped, robe hem cropped, bottom cropped, "
+        "missing legs, missing feet, missing sandals, cut off toes, zoomed-in character, fills entire frame, "
+        "marshmallow body, gritty, dark, horror, black outline, dark outline, "
+        "heavy outline, thick outline, ink line, line art, comic ink, contour line, "
+        "stroke, bold stroke, sticker outline, cel-shaded contour lines, "
         "complex background, text, logo, watermark"
     ),
     "palettes": {
@@ -191,6 +202,7 @@ KO_NAME_OVERRIDES = {
     "jacob": "야곱",
     "abraham": "아브라함",
     "philip": "빌립",
+    "philip_evangelist": "전도자 빌립",
     "andrew": "안드레",
     "david": "다윗",
     "matthew": "마태",
@@ -200,6 +212,7 @@ KO_NAME_OVERRIDES = {
     "judas": "유다",
     "sarah": "사라",
     "aaron": "아론",
+    "bathsheba": "밧세바",
     "samuel": "사무엘",
     "elijah": "엘리야",
     "esther": "에스더",
@@ -217,6 +230,7 @@ KO_NAME_OVERRIDES = {
     "noah": "노아",
     "rachel": "라헬",
     "ruth": "룻",
+    "rahab": "라합",
     "abimelech": "아비멜렉",
     "ahaz": "아하스",
     "ahab": "아합",
@@ -312,10 +326,14 @@ KO_NAME_OVERRIDES = {
     "phinehas": "비느하스",
     "pilate": "빌라도",
     "potiphar": "보디발",
+    "priscilla": "브리스길라",
     "rehoboam": "르호보암",
     "samson": "삼손",
     "sapphira": "삽비라",
     "seth": "셋",
+    "shadrach": "사드락",
+    "meshach": "메삭",
+    "abednego": "아벳느고",
     "stephen": "스데반",
     "zechariah": "사가랴",
     "zechariah_prophet": "스가랴(선지자)",
@@ -355,6 +373,7 @@ FORCE_ACTIVE_DEFAULT_CODES = {
     "zerubbabel",
 }
 FORCE_INACTIVE_DEFAULT_CODES = {"elizabeth", "gabriel", "god"}
+FORCE_AUTO_PROMPT_CODES = {"elijah", "hezekiah", "saul", "solomon"}
 
 # Characters can be prepared for avatar generation before their story events are
 # added. They remain inactive in DB seed output until story appearances, admin
@@ -1245,10 +1264,172 @@ RUTH_NEGATIVE_PROMPT_EXTRA = (
 )
 HAMAN_NEGATIVE_PROMPT_EXTRA = (
     "multiple people, crowd, group, duo, pair, two people, extra character, background character, "
-    "king, queen, banquet crowd, attendants, throne scene"
+    "king, queen, banquet crowd, attendants, throne scene, heroic nobleman, brave hero, gentle smile, "
+    "kind face, friendly expression, soft innocent eyes, cute mascot, timid clerk, humble servant, "
+    "monster, demon, horns, fantasy villain armor, soldier armor, sword, spear, crown, "
+    "pale washed-out robe, plain beige clothing, oversized head, huge face, close-up portrait, "
+    "cropped feet, missing sandals, waist-up crop"
 )
-DANIEL_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra character, background character"
+DANIEL_NEGATIVE_PROMPT_EXTRA = (
+    "multiple people, crowd, group, duo, pair, two people, extra character, background character, "
+    "dull eyes, blank dot eyes, blue royal robe, dark blue robe, warrior armor, crown, weapon"
+)
 DAN_NEGATIVE_PROMPT_EXTRA = "multiple people, crowd, group, duo, pair, two people, extra character, background character"
+ADAM_NEGATIVE_PROMPT_EXTRA = (
+    "fisherman, apostle, disciple, fishing net, cast net, net weights, rope net, fish, boat, "
+    "staff, shepherd staff, scroll, royal robe, modern clothing, exposed nudity, leaf underwear, "
+    "very dark skin tone, overly dark brown face, reddish dark face, shadowed face, "
+    "green skin, olive-green skin, yellow-green face, sallow green cast, sickly yellow skin, "
+    "multiple people, Eve, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+EVE_NEGATIVE_PROMPT_EXTRA = (
+    "royal queen, veil crown, jewelry-heavy outfit, modern dress, exposed nudity, leaf bikini, "
+    "fisherwoman, fishing net, tools, weapon, scroll, multiple people, Adam, "
+    "very dark skin tone, overly dark brown face, reddish dark face, shadowed face, "
+    "green skin, olive-green skin, yellow-green face, sallow green cast, sickly yellow skin, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+JUDAH_NEGATIVE_PROMPT_EXTRA = (
+    "oversized head, giant head, huge face, bobblehead, face too large, close-up portrait, "
+    "head one-third of body height, tiny body under oversized head, stubby body, short legs, "
+    "cropped feet, missing sandals, waist-up crop, zoomed-in face"
+)
+LABAN_NEGATIVE_PROMPT_EXTRA = (
+    "pale washed out colors, faded robe, cream-only robe, low contrast, ghostly pale face, "
+    "plain beige clothing, weak silhouette, timid expression, Abraham, Jacob, generic shepherd, "
+    "oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+ABRAHAM_NEGATIVE_PROMPT_EXTRA = (
+    "generic old man, weak grandfather, frail body, stooped shoulders, timid expression, "
+    "sad tired face, blank passive face, tiny body under oversized head, huge face, "
+    "plain beige robe only, dull clothing, no covenant-patriarch dignity, "
+    "very dark skin tone, overly dark brown face, reddish dark face, shadowed face, "
+    "green skin, olive-green skin, yellow-green face, sallow green cast, sickly yellow skin, "
+    "side view, three-quarter view, looking away, profile view, turned head, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+AARON_NEGATIVE_PROMPT_EXTRA = (
+    "elderly high priest, old priest, gray beard, white beard, gray hair, priestly breastplate, "
+    "twelve-stone breastpiece, ornate high-priest robe, priestly turban, gold forehead plate, "
+    "ceremonial temple outfit, frail body, stooped shoulders, generic priest, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+MOSES_NEGATIVE_PROMPT_EXTRA = (
+    "feeble elderly caricature, frail grandfather, fully white hair, fully white beard, "
+    "fully gray hair, fully gray beard, sagging body, stooped shoulders, weary face, sad eyes, "
+    "burdened expression, defeated expression, anxious expression, timid posture, apologetic posture, "
+    "young prince of Egypt, royal Egyptian clothing, priestly breastplate, crown, king robe, "
+    "very dark skin tone, overly dark brown face, shadowed face, side view, three-quarter view, "
+    "green skin, olive-green skin, yellow-green face, sallow green cast, sickly yellow skin, "
+    "looking away, profile view, turned head, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+JOSEPH_NEGATIVE_PROMPT_EXTRA = (
+    "very dark skin tone, overly dark brown face, shadowed face, reddish dark face, "
+    "green skin, olive-green skin, yellow-green face, sallow green cast, sickly yellow skin, "
+    "dull eyes, blank dot eyes, sleepy eyes, unfocused gaze, vacant expression, gloomy face, low contrast face, "
+    "tiny unreadable eyes, eyes hidden by shadow, pale washed-out clothing, "
+    "Pharaoh crown, royal nemes headcloth, full Egyptian king outfit, old man, gray beard, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+DAVID_NEGATIVE_PROMPT_EXTRA = (
+    "ordinary bard, generic harp player, plain background singer, timid expression, blank dot eyes, "
+    "weak posture, servant-only clothing, dull robe, oversized harp hiding the body, "
+    "Saul, Solomon, generic king, heavy crown, old king, gray beard, elderly David, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+ELIJAH_NEGATIVE_PROMPT_EXTRA = (
+    "scary horror face, ghost eyes, glowing white eyes, blank white eyes, empty eyes, possessed eyes, "
+    "pale dead eyes, demonic glare, terrifying expression, sinister villain, monster, zombie, corpse-like face, "
+    "angry rage face, violent attack pose, threatening clenched fist, blood, gore, corpse, weapon, "
+    "purple royal robe, violet cloth, torn purple banner, gold-trimmed royal sash, court robe, priestly linen, "
+    "king, crown, armor, fantasy wizard, magic staff, storm monster, "
+    "overly dark face, harsh black shadows, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+NOAH_NEGATIVE_PROMPT_EXTRA = (
+    "empty hands, open empty hands, blessing pose only, no tools, no ark, no boat, no wooden model, "
+    "fisherman, fishing net, shepherd staff, royal robe, priestly robe, weapon, "
+    "modern saw, modern hammer, metal power tool, ship captain uniform, "
+    "frail old man, timid expression, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+KORAH_NEGATIVE_PROMPT_EXTRA = (
+    "ordinary shepherd, faithful priest, humble servant, gentle smile, brave hero, calm teacher, Moses, Aaron, "
+    "kind face, soft innocent eyes, priestly high-priest breastplate, ornate priest turban, royal crown, king robe, "
+    "earthquake scene, falling body, person swallowed, corpse, death scene, blood, gore, multiple people, crowd, "
+    "plain teal robe only, empty hands, no censer, no rebel sign, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+PHINEHAS_NEGATIVE_PROMPT_EXTRA = (
+    "generic temple servant, ordinary ceremonial robe only, high priest breastplate, jeweled breastpiece, ornate turban, "
+    "king, warrior armor, battle scene, active stabbing, killing scene, blood, gore, corpse, wound, multiple people, crowd, "
+    "empty hands, no spear, no censer, timid expression, soft gentle smile, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+MATTHIAS_NEGATIVE_PROMPT_EXTRA = (
+    "generic missionary, Paul, Barnabas, Judas Iscariot, Roman official, fisherman net, warrior, armor, weapon, "
+    "side view, three-quarter view, looking away, turned head, leaning pose, running pose, "
+    "empty hands, no lots, no scroll, no witness sign, dark villain expression, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+ASHER_NEGATIVE_PROMPT_EXTRA = (
+    "Joseph, dreamer, Egyptian governor, generic traveler, faded pale colors, washed-out robe, gray face, green skin, olive-green skin, "
+    "very dark face, shadowed face, no olive branch, no bread, no grain, no tribe blessing sign, "
+    "side view, looking away, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+AHIJAH_NEGATIVE_PROMPT_EXTRA = (
+    "blind eyes, clouded eyes, no eyes, missing eyes, empty eye sockets, white ghost eyes, glowing eyes, horror face, scary prophet, "
+    "terrifying expression, zombie, corpse-like face, no torn cloak pieces, plain generic prophet, Samuel, Isaiah, "
+    "royal king robe, crown, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+LEVI_ISSACHAR_NEGATIVE_PROMPT_EXTRA = (
+    "faded pale skin, washed-out face, gray face, green skin, olive-green skin, yellow-green face, sallow green cast, sickly yellow skin, "
+    "very dark face, shadowed face, low contrast face, ghostly pale clothing, generic dreamer, Joseph, Egyptian robe, "
+    "side view, looking away, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+ZEBULUN_NEGATIVE_PROMPT_EXTRA = (
+    "generic dreamer, Joseph, Egyptian governor, ordinary desert traveler, shepherd-only silhouette, farmer-only silhouette, "
+    "fishing net as main prop, fisherman apostle, Peter, Andrew, modern sailor, modern ship captain, modern anchor, "
+    "no ship sign, no harbor sign, no rope, empty hands, faded pale colors, washed-out robe, gray face, green skin, "
+    "side view, looking away, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+AHAB_NEGATIVE_PROMPT_EXTRA = (
+    "gentle king, humble faithful king, kind smile, repentant face, no idol, tiny unclear idol, empty hands, prophet robe, priest robe, "
+    "David, Saul, Solomon, Elijah, shepherd, sling, no Baal sign, heroic posture, soft innocent eyes, "
+    "battle gore, corpse, blood, multiple people, crowd, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+RAHAB_NEGATIVE_PROMPT_EXTRA = (
+    "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, soldier, "
+    "older woman, middle-aged matron, elderly face, deep wrinkles, gray hair, hunched posture, "
+    "side view, three-quarter view, walking pose, running pose, leaning forward, looking away, face turned aside, "
+    "seductive pose, exposed body, royal queen, soldier, warrior, weapon, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+NEHEMIAH_NEGATIVE_PROMPT_EXTRA = (
+    "shepherd, shepherd staff, walking staff as main prop, cupbearer only, large cup as main prop, "
+    "generic traveler, soldier armor, priestly robe, prophet robe, royal crown, throne, weapon, "
+    "no trowel, no stone block, no measuring cord, no rebuilding plan, empty hands, "
+    "modern construction helmet, modern tools, modern hammer, power tool, "
+    "timid expression, weak posture, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+SARAH_NEGATIVE_PROMPT_EXTRA = (
+    "frail old woman, fully white hair, fully silver hair, severe wrinkles, hunched back, "
+    "generic grandmother, weak body, timid expression, teenage girl, young maiden, royal court queen, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+RACHEL_NEGATIVE_PROMPT_EXTRA = (
+    "plain severe face, harsh angular ugly face, old woman, gray hair, tired expression, "
+    "seductive pose, exposed body, royal queen, Sarah, Leah, generic servant, dull robe, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+SAMUEL_NEGATIVE_PROMPT_EXTRA = (
+    "sub-Saharan African features, very dark skin tone, foreign priest, Egyptian priest, "
+    "generic gray scholar, frail weak old man, stooped tired grandfather, child Samuel, young Samuel, "
+    "boy priest, smooth youthful face, black hair only, king, crown, spear, weapon, royal mantle, "
+    "overly dark brown face, green skin, olive-green skin, yellow-green face, sallow green cast, "
+    "blank dot eyes, timid expression, cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
+SAUL_NEGATIVE_PROMPT_EXTRA = (
+    "evil villain, cruel tyrant caricature, demonic face, wicked sneer, murderous expression, "
+    "monster king, fully corrupt posture, rage face, raised weapon attack pose, "
+    "perfect saint, overly gentle smiling saint, David, Solomon, generic noble king, "
+    "cropped feet, missing sandals, waist-up crop, close-up portrait"
+)
 CALEB_NEGATIVE_PROMPT_EXTRA = (
     "turnaround sheet, character model sheet, reference sheet, concept sheet, "
     "front and back view, front view and rear view, back view, rear view, "
@@ -1261,7 +1442,8 @@ CALEB_NEGATIVE_PROMPT_EXTRA = (
     "large cartoon shoes, black line art around clothing, high contrast outline, "
     "timid expression, sad expression, blank passive face, weak posture, "
     "drooping shoulders, limp arms, hesitant pose, gardener, farmer holding produce, "
-    "cute soft mascot, childlike innocence, angry warrior, aggressive fighter, armor"
+    "cute soft mascot, childlike innocence, handsome slim court noble, delicate fashion model, "
+    "skinny body, narrow shoulders, angry warrior, aggressive fighter, armor"
 )
 ABSALOM_NEGATIVE_PROMPT_EXTRA = (
     "multiple people, crowd, group, duo, pair, two people, extra character, "
@@ -1374,7 +1556,13 @@ FEMALE_FORCE_NEGATIVE_PROMPT_EXTRA = (
     "male, man, masculine face, broad male jaw, square male shoulders, "
     "beard, mustache, facial hair, stubble, warrior, armor, soldier"
 )
-FEMALE_FORCE_CODES = {"dinah", "hannah", "sapphira"}
+FEMALE_FORCE_CODES = {"bathsheba", "dinah", "hannah", "priscilla", "rahab", "sapphira"}
+
+HANNAH_NEGATIVE_PROMPT_EXTRA = (
+    "elderly woman, old woman, grandmother, gray hair, white hair, wrinkled face, "
+    "frail old body, aged prophetess, aged widow, Naomi, Sarah, Elizabeth, "
+    "priestly robe, high priest garment, warrior, armor, crown, royal robe"
+)
 
 # lydia 도 같은 이유로 여성형 강제. 빌립보 자색 옷감 장수.
 LYDIA_NEGATIVE_PROMPT_EXTRA = (
@@ -1474,6 +1662,15 @@ JEREMIAH_NEGATIVE_PROMPT_EXTRA = (
     "portrait crop, bust shot, half body, close-up face, cropped feet, missing sandals"
 )
 
+EZEKIEL_NEGATIVE_PROMPT_EXTRA = (
+    "generic prophet, generic priest, Ezra scribe-priest, Isaiah court prophet, Jeremiah weeping prophet, "
+    "Samuel, Elijah, Elisha, Daniel court sage, king, crown, royal sash, royal robe, throne, "
+    "scribe desk, writing table, temple incense scene, priestly breastplate, high-priest outfit, "
+    "heavenly throne vision, living creatures, wheels full of eyes, valley scene, dry bones crowd, "
+    "multiple people, crowd, readable label, readable text, portrait crop, bust shot, half body, "
+    "close-up face, cropped feet, missing sandals"
+)
+
 JEHOIAKIM_NEGATIVE_PROMPT_EXTRA = (
     "Jehoiachin, Jehoahaz, Zedekiah, Josiah, righteous reform king, humble faithful king, "
     "Jeremiah, Baruch, prophet robe, scribe desk, scroll burning scene, open flame, "
@@ -1569,6 +1766,7 @@ FEMALE_CODES = {
     "naomi",
     "priscilla",
     "rachel",
+    "rahab",
     "rebekah",
     "ruth",
     "sapphira",
@@ -1616,6 +1814,12 @@ FEMALE_HAIR_VARIANTS = [
 ]
 
 CHARACTER_VISUAL_OVERRIDES = {
+    "adam": [
+        "first human build with simple dignified strength, not a fisherman and not an apostle",
+        "natural warm peach-beige ancient human face with alert innocent eyes, dark natural hair, and short natural beard",
+        "modest rough animal-skin leather tunic with simple leather belt, bare forearms and sandals",
+        "empty hands or one open hand only, no tools, no fishing net, no staff, no weapon",
+    ],
     "esther": [
         "slender graceful build",
         "soft elegant oval face with refined feminine beauty",
@@ -1623,13 +1827,26 @@ CHARACTER_VISUAL_OVERRIDES = {
     ],
     "eve": [
         "slender graceful build",
-        "soft delicate face with gentle feminine features",
+        "soft delicate natural warm peach-beige face with gentle feminine features",
         "long flowing hair with soft faceted strands",
+        "modest rough animal-skin leather dress with simple leather wrap and sandals, not royal and not exposed",
+    ],
+    "eli": [
+        "elderly Shiloh priest build with dignified but heavy shoulders, not a generic tribal elder",
+        "weathered warm Hebrew face with gray-white hair, full white-gray beard, heavy brows, and gentle watchful priestly eyes",
+        "white linen priest robe, cream ephod, muted blue-gold sash, and simple priestly head wrap, clearly priestly",
+        "small tabernacle lamp or incense censer held low as his identifying priestly object",
     ],
     "gabriel": [
         "tall luminous figure with graceful proportions",
         "smooth serene face with gentle heavenly features",
         "soft radiant hair framed by simple glowing planes",
+    ],
+    "hannah": [
+        "young adult Israelite woman, around late twenties to early thirties, not elderly",
+        "soft warm peach-beige face with sorrowful but gentle eyes, no wrinkles, no gray hair",
+        "modest Shiloh pilgrim clothing with a simple warm clay veil and muted olive dress, not priestly and not royal",
+        "small empty hands lifted in prayer, no baby in the base avatar, no staff, no scroll",
     ],
     "rachel": [
         "slender graceful build",
@@ -1860,8 +2077,16 @@ CHARACTER_VISUAL_OVERRIDES = {
 }
 
 CHARACTER_MOOD_OVERRIDES = {
+    "adam": [
+        "front-facing first-human posture, one hand open in wonder and the other relaxed, no fishing or labor prop",
+    ],
     "esther": ["gentle confident smile and poised posture"],
-    "eve": ["gentle relaxed posture"],
+    "eve": [
+        "front-facing first-woman posture with gentle alert eyes, hands relaxed near the leather garment",
+    ],
+    "hannah": [
+        "front-facing prayerful posture, sorrowful hope in the eyes, a young adult woman longing for a child",
+    ],
     "gabriel": ["gentle descending messenger posture"],
     "rachel": ["warm radiant smile and elegant tender posture"],
     "leah": ["quiet modest smile and gentle reserved posture"],
@@ -1998,29 +2223,58 @@ ERA_ROLE_FALLBACKS = {
 }
 
 CODE_PALETTE_OVERRIDES = {
+    "abraham": "natural warm peach-beige skin + deep warm brown garment + muted clay red + warm cream accents, low saturation",
+    "adam": "natural warm peach-beige skin + leather brown garment + earth umber + warm sand accents, low saturation",
     "absalom": "deep royal blue + muted crimson + warm gold accents, low saturation",
     "ahaz": "deep royal indigo + muted purple + warm gold trim + ash gray accent, low saturation",
+    "bathsheba": "deep blue + muted bronze + warm cream accents, low saturation",
     "caleb": "muted teal + parchment cream + warm clay brown accents, low saturation",
     "deborah": "olive green + warm parchment + muted clay rose accents",
+    "daniel": "deep emerald green + olive green + parchment cream + muted gold accents, low saturation",
     "ehud": "deep olive + desert tan + muted bronze accents",
+    "eve": "natural warm peach-beige skin + leather brown garment + soft umber + warm sand accents, low saturation",
     "hagar": "desert teal + copper + deep indigo accents",
+    "haman": "dark Persian violet + charcoal black + cold muted gold + blood-red accent, low saturation",
     "haggai": "weathered clay + parchment cream + muted crimson accents, low saturation",
     "hoshea_king": "storm blue + iron gray + muted bronze accents, low saturation",
     "isaiah": "deep indigo + ash gray + ember gold accents, low saturation",
+    "isaac": "warm cream + muted olive + weathered tan accents, low saturation",
     "jehoiakim": "deep crimson + royal indigo + dark gold trim + ash gray accents, low saturation",
     "jeremiah": "weathered olive + clay brown + muted crimson + parchment cream accents, low saturation",
     "jeroboam": "deep forest green + muted bronze + parchment tan accents, low saturation",
+    "judah": "deep wine red + warm tan + dark umber + muted gold accents, low saturation",
+    "korah": "deep teal + desert tan + bronze censer + clay red accent, low saturation",
+    "laban": "deep Aramean indigo + rich clay brown + dark teal + bronze accents, low saturation",
     "jonah": "sea teal + storm gray + parchment cream accents, low saturation",
     "micaiah": "deep olive + muted charcoal + pale parchment + small gold accents, low saturation",
     "rehoboam": "royal indigo + warm gold + muted ivory accents, low saturation",
+    "rahab": "teal + sand headscarf + clay brown accents, low saturation",
+    "noah": "weathered wood brown + olive work robe + warm cream + muted sky blue accent, low saturation",
+    "rachel": "soft rose + warm cream + muted teal accents, low saturation",
+    "sarah": "soft rose-brown + warm cream + muted blue accents, low saturation",
     "samson": "deep olive + clay brown + muted gold accents",
     "zechariah_prophet": "muted indigo + sage green + parchment cream accents, low saturation",
     "zerubbabel": "deep olive + stone gray + muted gold accents, low saturation",
 }
 
 CODE_SIGNATURE_HINTS = {
-    "abraham": ["nomadic patriarch silhouette", "travel-worn layered robe"],
-    "aaron": ["ceremonial leader silhouette", "priestly layered sash"],
+    "adam": [
+        "Adam the first human man, exactly one man only",
+        "modest rough animal-skin leather tunic after Eden, simple leather belt, bare forearms and sandals",
+        "open empty hands with first-human wonder, no fishing net, no staff, no tools, no scroll",
+        "natural warm peach-beige ancient human skin tone, clear lighter face, alert innocent eyes, not a fisherman and not an apostle",
+    ],
+    "abraham": [
+        "central covenant patriarch silhouette, protagonist-level presence, age seventy-five or older but strong",
+        "front-facing majestic weathered face with natural warm peach-beige skin, gray-white beard, calm confident faithful eyes looking directly forward, and noble warmth",
+        "rich warm-brown travel-worn layered robe, muted clay-red mantle or sash, tall walking staff, and founder-of-the-family presence",
+        "not frail, not timid, not a generic old man, not a royal court figure",
+    ],
+    "aaron": [
+        "mature Levite spokesman silhouette beside Moses, not high priest in the base avatar",
+        "simple desert robe and staff, dark hair and full dark beard with no gray",
+        "steady brotherly confidence for standing before Pharaoh",
+    ],
     "absalom": [
         "royal prince of David's house silhouette, exactly one man only",
         "beautiful but restless king's son presence with proud confidence",
@@ -2033,6 +2287,12 @@ CODE_SIGNATURE_HINTS = {
         "wholehearted courageous witness who trusts God when others are afraid",
         "muted robe and sash with gentle paper-cut facets, no visible ink outline",
         "small compact purple grape cluster kept secondary as a promised-land sign",
+    ],
+    "hannah": [
+        "Hannah mother of Samuel before old age, young adult married Israelite woman, not elderly",
+        "modest Shiloh worshiper clothing, warm clay veil over dark hair, muted olive dress, simple sandals",
+        "tearful prayerful hope, gentle maternal warmth, no gray hair, no wrinkles, no grandmother look",
+        "empty hands raised in quiet prayer, no priestly robe, no baby in the base avatar",
     ],
     "jeroboam": [
         "ambitious servant of Solomon who will become northern kingdom ruler",
@@ -2192,15 +2452,18 @@ CODE_SIGNATURE_HINTS = {
     ],
     "daniel": [
         "court-wise exile silhouette",
-        "calm dignified bearing",
+        "calm dignified bearing with bright intelligent eyes",
         "rolled scroll accent",
     ],
     "david": [
-        "shepherd-king silhouette",
-        "bold agile bearing",
-        "sling and small stone pouch",
+        "central hero shepherd-king silhouette, protagonist-level presence",
+        "confident faithful kingly bearing with bright intelligent eyes and warm courage",
+        "small lyre held at the side, sling pouch at the belt, and restrained gold royal mantle trim",
     ],
-    "elijah": ["storm-like prophet silhouette", "rough mantle energy"],
+    "elijah": [
+        "rugged wilderness prophet silhouette, strong but not frightening",
+        "normal warm dark eyes with visible pupils, serious human face, rough brown mantle energy",
+    ],
     "esther": [
         "beautiful queenly silhouette",
         "elegant regal beauty",
@@ -2214,14 +2477,22 @@ CODE_SIGNATURE_HINTS = {
         "heavenly messenger presence with clean flowing robes",
     ],
     "eve": [
-        "graceful first-woman silhouette",
-        "warm gentle expression",
-        "soft feminine presence",
+        "Eve the first woman, exactly one woman only",
+        "modest rough animal-skin leather dress after Eden, simple leather wrap and sandals",
+        "natural warm peach-beige ancient human skin tone, clear lighter face, gentle expression with alert first-human wonder, no royal jewelry and no exposed body",
+        "soft feminine presence, visually paired with Adam's leather garment style",
     ],
     "ezra": [
         "scribe-teacher silhouette",
         "measured studious bearing",
         "rolled scroll accent",
+    ],
+    "ezekiel": [
+        "unmistakable Ezekiel exile priest-prophet silhouette by the Chebar canal, exactly one man only",
+        "Babylonian exile-priest robe: deep indigo-gray mantle over parchment linen, ash-blue shoulder bands, small priestly cord, no crown and no royal sash",
+        "one hand lifted in prophetic command and the other holding a small blank clay tablet or sealed blank vision scroll as a sign of symbolic actions",
+        "visionary grief-and-hope presence: intense watchful eyes, furrowed brow, short dark beard with gray streaks, weathered exile face",
+        "not Ezra's calm scribe desk look, not Isaiah's royal-court prophet look, not Jeremiah's weeping mud-prison look",
     ],
     "jesus": [
         "calm teacher-and-healer silhouette",
@@ -2235,7 +2506,7 @@ CODE_SIGNATURE_HINTS = {
     ],
     "joseph": [
         "dream-marked survivor silhouette",
-        "protected-yet-resilient bearing",
+        "protected-yet-resilient bearing with bright intelligent eyes and a small catchlight",
         "patterned robe accent",
     ],
     "mary": [
@@ -2251,10 +2522,18 @@ CODE_SIGNATURE_HINTS = {
         "humble desert servant presence, not a noble mistress",
         "full body single centered woman, no surrounding characters",
     ],
+    "bathsheba": [
+        "dignified Jerusalem woman who later becomes queen mother, exactly one woman only",
+        "modest deep blue veil over dark braided hair, bronze water jar kept secondary",
+        "poised but sorrow-aware face, never seductive or bathing-focused",
+        "royal mother dignity for later scenes, no exposed body, no sexualized framing",
+    ],
     "haman": [
-        "scheming court-official silhouette",
-        "sealed decree scroll and signet ring",
-        "single arrogant court-villain presence",
+        "Haman the arrogant Persian court villain from Esther, exactly one man only",
+        "dark Persian violet court robe with charcoal-black mantle, cold muted-gold trim, and a small blood-red sash accent",
+        "narrow suspicious eyes, sharp angular nose, thin curled mustache, tight cruel smirk, and proud lifted chin",
+        "sealed decree scroll gripped in one hand and a signet ring held forward as signs of dangerous royal power",
+        "threatening self-important posture, not heroic, not gentle, not a king and not a soldier",
     ],
     "isaiah": [
         "Jerusalem royal-court prophet silhouette, not a listening child-prophet",
@@ -2263,10 +2542,15 @@ CODE_SIGNATURE_HINTS = {
         "small narrow open blank prophecy scroll held upright and a small ember-coal clasp as Isaiah's calling sign",
         "stern visionary presence, uncovered hair, no hooded head covering",
     ],
+    "isaac": [
+        "adult covenant son silhouette, calm and thoughtful, not a small child",
+        "short trimmed beard and steady obedient posture for the Moriah scene",
+        "plain patriarchal robe with a small bundled firewood motif kept secondary",
+    ],
     "moses": [
-        "liberator silhouette shaped by wilderness",
-        "steady leader's presence",
-        "wooden staff",
+        "confident mature wilderness liberator silhouette, adult but not elderly in the base avatar",
+        "dark hair with no gray and a strong full dark beard",
+        "wooden staff held upright like a leader entrusted with God's work",
     ],
     "nehemiah": [
         "wall-rebuilder silhouette",
@@ -2274,9 +2558,9 @@ CODE_SIGNATURE_HINTS = {
         "builder's belt with wooden tools",
     ],
     "noah": [
-        "ark-builder silhouette",
-        "weathered survivor presence",
-        "builder's belt with wooden tools",
+        "ark-builder silhouette with clear woodworking identity",
+        "weathered survivor presence, calm obedient builder",
+        "builder's belt with wooden tools, one small wooden ark or boat model kept in hand",
     ],
     "paul": [
         "road-worn missionary silhouette",
@@ -2284,8 +2568,9 @@ CODE_SIGNATURE_HINTS = {
         "rolled scroll or letter satchel",
     ],
     "rachel": [
-        "radiant beautiful beloved matriarch silhouette",
-        "elegant luminous presence",
+        "strikingly beautiful young shepherdess and beloved matriarch silhouette",
+        "large gentle eyes, graceful oval face, and warm radiant smile",
+        "modest elegance, not royal and not seductive",
     ],
     "leah": [
         "plain modest matriarch silhouette",
@@ -2294,7 +2579,7 @@ CODE_SIGNATURE_HINTS = {
     "saul": [
         "first king silhouette",
         "simple geometric crown band or royal sash",
-        "tall commanding presence",
+        "very tall presence with early humble dignity and a slight troubled shadow",
     ],
     "peter": [
         "sturdy fisherman-apostle silhouette",
@@ -2359,7 +2644,7 @@ CODE_SIGNATURE_HINTS = {
     "samuel": ["listening prophet silhouette", "quiet spiritual alertness"],
     "solomon": [
         "wise royal silhouette",
-        "measured judicial calm",
+        "measured judicial calm with bright intelligent discerning eyes",
         "simple geometric crown band or royal sash",
     ],
     "goliath": [
@@ -2410,6 +2695,25 @@ CODE_SIGNATURE_HINTS = {
         "rich purple dyed long dress with neat sash, modest gold ornaments at neckline",
         "small bolt of purple cloth tucked under one arm (purple-cloth dealer)",
         "dignified faithful host presence",
+    ],
+    "priscilla": [
+        "Greco-Roman era tentmaker and scripture-teaching woman silhouette, distinctly female",
+        "modest travel-ready long robe with teal and warm brown accents, neat head covering",
+        "small folded tent cloth and blank teaching scroll kept secondary as signs of ministry with Aquila",
+        "wise attentive teacher presence, calm but confident",
+    ],
+    "rahab": [
+        "young adult courageous Jericho woman silhouette, distinctly female and modest",
+        "front-facing youthful warm face with alert protective eyes, dark hair under a sand-colored headscarf",
+        "teal outer robe, brown shoulder shawl, slim young adult build, not elderly and not side-facing",
+        "small scarlet cord kept secondary as her story sign, not a decorative ribbon",
+        "alert protective posture of someone hiding the scouts, no sensual framing and no walking pose",
+    ],
+    "sarah": [
+        "mature beautiful covenant matriarch silhouette, graceful and strong, not frail in the base avatar",
+        "warm dignified face with wise gentle eyes, subtle age lines, and covenant-mother presence",
+        "mostly dark hair under a modest layered veil, only faint silver at the temples if visible",
+        "soft rose-brown mantle over warm cream robe with muted blue accents, not a royal court woman",
     ],
     "josiah": [
         "young righteous king of Judah silhouette, devout reformer",
@@ -2502,6 +2806,1233 @@ CODE_SIGNATURE_HINTS["jezebel"] = [
     "small sealed royal letter held near the upper chest as a sign of Naboth's false accusation plot",
     "cold calculating expression, glamorous but spiritually dangerous presence, no violence scene",
 ]
+
+# 구약 주요 인물은 같은 직분끼리 옷과 얼굴이 쉽게 닮아 보인다. 특히 같은
+# 이야기 안에서 함께 서는 인물들은 색, 소품, 체형, 표정이 바로 구분되도록
+# 마지막에 한 번 더 덮어쓴다.
+CHARACTER_VISUAL_OVERRIDES.update(
+    {
+        "ahab": [
+            "middle-aged northern Israel king build with hard squared royal shoulders and dangerous pride",
+            "hard angular face with narrowed malicious eyes, stubborn brow, and a cold idolatrous smirk",
+            "dark hair under an ornate northern royal headband, short sharply faceted dark beard",
+            "deep royal purple robe with navy mantle and muted gold trim, one hand gripping a small dark Baal idol figure held clearly near the chest",
+        ],
+        "ahijah": [
+            "elderly Shiloh prophet build with lean upright shoulders, wise but not frightening",
+            "ancient Hebrew face with normal warm dark eyes, visible pupils, solemn gaze, and no blindness in the base avatar",
+            "gray hair under a simple warm-brown prophet headcloth, short gray beard with angular facets",
+            "plain warm-brown prophet mantle over cream robe, torn cloak pieces held clearly as the divided-kingdom sign",
+        ],
+        "abraham": [
+            "majestic elderly covenant-patriarch build with upright steady shoulders, strong despite age",
+            "front-facing natural warm peach-beige weathered long face with deep smile lines, calm confident faithful eyes looking directly forward, and strong noble nose",
+            "white-gray hair under a sand-colored headcloth, never youthful dark hair",
+            "full white-gray beard with broad angular facets, deep warm-brown cloak with muted clay-red mantle or sash and restrained warm-gold trim",
+        ],
+        "asher": [
+            "Asher son of Jacob build with sturdy peaceful tribal-son proportions, not a Joseph-like dreamer",
+            "natural warm peach-beige face with healthy color, gentle alert eyes, and a short neat beard",
+            "warm olive and cream robe with rich honey-tan sash, not faded or gray",
+            "small olive branch, round bread loaf, and grain sheaf kept close as signs of rich food and blessing",
+        ],
+        "sarah": [
+            "mature beautiful covenant-matriarch build with dignified upright posture and slender shoulders, not frail in the base avatar",
+            "warm graceful face with subtle age lines, wise gentle eyes, and restrained covenant-mother dignity",
+            "mostly dark hair tucked under a soft rose-brown veil with warm cream layers, only faint silver at the temples if visible",
+        ],
+        "isaac": [
+            "adult covenant-son build, calm and strong enough to carry firewood, not a child",
+            "thoughtful oval face with obedient eyes and a short trimmed beard",
+            "muted olive headcloth with a small bundled-firewood strap as a restrained sign",
+        ],
+        "judah": [
+            "Judah son of Jacob and ancestor of the tribe of Judah, exactly one man only",
+            "balanced full-body proportions with a normal-sized head and face, head clearly smaller than torso",
+            "deep wine-red mantle over warm tan tunic with dark umber sash and small signet cord kept secondary",
+            "serious responsible brotherly expression, not a generic dreamer and not a king",
+        ],
+        "laban": [
+            "Laban the Aramean household head from Haran, father of Rachel and Leah, exactly one man only",
+            "rich deep indigo outer robe over clay-brown tunic with dark teal sash and bronze clasp, not pale or faded",
+            "wary calculating elder face with stronger color contrast, not Abraham and not Jacob",
+            "small household staff and folded contract cloth kept secondary, no royal crown",
+        ],
+        "jacob": [
+            "young adult tent-dwelling patriarch build, lean and quick-footed rather than elderly",
+            "narrow angular face with wary intelligent eyes and a calculating brow",
+            "dark hair and medium dark beard without gray in the base avatar",
+            "striped muted-clay cloak and traveler staff, clearly different from Abraham's sand robe",
+        ],
+        "judah": [
+            "balanced mature patriarch-son build with natural full-body proportions and sturdy shoulders",
+            "normal-sized head and balanced face, head clearly smaller than torso, serious dark eyes, and short neat beard",
+            "deep wine-red mantle over warm tan tunic with dark umber sash, small signet cord kept secondary",
+            "full body visible with long torso and legs, not a close-up and not a childlike mascot",
+        ],
+        "laban": [
+            "established Aramean household-head build with sturdy shoulders and strong adult proportions",
+            "weathered face with wary calculating eyes, medium dark beard, and richer warm skin tone",
+            "deep indigo outer robe over rich clay-brown tunic with dark teal sash and bronze clasp, never pale cream-only",
+            "small household staff and folded contract cloth kept secondary, clearly distinct from Jacob and Abraham",
+        ],
+        "levi": [
+            "Levi son of Jacob build with sturdy tribal-brother proportions and restrained intensity, not a priestly high priest yet",
+            "natural warm peach-beige face with healthy skin color, dark attentive eyes, and a firm brow",
+            "warm cream tunic under muted rust-brown mantle with deep teal sash, rich color blocks not faded",
+            "small plain tribal staff held close, no jeweled breastplate, no ornate priestly turban",
+        ],
+        "issachar": [
+            "Issachar son of Jacob build with solid grounded worker-scholar proportions and steady shoulders",
+            "natural warm peach-beige face with healthy skin color, calm thoughtful eyes, and short dark beard",
+            "warm wheat-brown robe with cream underlayer and muted teal sash, clear rich color not washed out",
+            "small folded grain bundle and simple burden strap as signs of strength and labor, not a Joseph-like dreamer",
+        ],
+        "rachel": [
+            "strikingly beautiful young shepherdess build with graceful slender shoulders",
+            "soft luminous oval face with refined balanced features, large gentle dark eyes, delicate brows, and a warm radiant smile",
+            "long dark glossy hair mostly under a graceful rose-cream layered veil, not gray and not severe",
+            "deep rose mantle over warm cream robe with muted teal sash and tiny soft-gold clasp, modest and non-seductive, clearly distinct from Leah",
+        ],
+        "esau": [
+            "rugged hunter build with broad shoulders and sunburnt presence",
+            "red-brown hairy forearms, thick brows, and a rough impulsive expression",
+            "rust-red hunter cloak, leather belt, and small bow or quiver kept secondary",
+        ],
+        "joseph": [
+            "slender but resilient Hebrew-to-Egyptian governor build",
+            "clear warm peach-beige young angular face with bright intelligent dark eyes, small crisp catchlights, alert wise focus, and restrained resilience, later framed by neat Egyptian grooming",
+            "cream linen tunic with teal Egyptian collar and a small signet cord, not Pharaoh's crown",
+            "short neat beard or clean-shaven Egyptian-influenced jaw depending on scene age",
+        ],
+        "pharaoh": [
+            "ancient Egyptian royal build with rigid ceremonial posture",
+            "smooth commanding face with kohl-lined eyes and a severe straight nose",
+            "striped nemes headcloth, white linen robe, and gold-blue collar, never Hebrew clothing",
+            "clean-shaven jaw or tiny ceremonial false-beard shape kept subtle",
+        ],
+        "moses": [
+            "vigorous elder wilderness patriarch build, strong upright shoulders and steady full-body stance, not frail and not stooped",
+            "strict front-facing natural warm peach-beige rectangular face with steady courageous eyes looking directly forward, lifted brow, and dignified calm authority",
+            "deep ash-ochre desert mantle over plain robe, wooden staff as main silhouette",
+            "mature dark hair and full dark beard with only subtle gray at the temples, not priestly breastplate and not royal",
+            "quiet signs of Exodus leadership: desert-worn mantle, lawgiver dignity, and shepherding authority without a crown",
+        ],
+        "phinehas": [
+            "Phinehas son of Eleazar build with young priestly zeal and compact upright strength",
+            "natural warm face with intense covenant-protective eyes, strong brow, and short dark beard",
+            "simple cream Levite-priest robe with muted blue sash and bronze clasp, not the ornate high-priest breastplate",
+            "bronze spear held lowered and vertical beside the body plus small incense censer at the belt, no violent action scene",
+        ],
+        "aaron": [
+            "mature Levite spokesman build, upright and steady, similar age world as Moses but clearly distinct",
+            "kind strong face with dark brows, attentive eyes, and a neatly shaped full dark beard",
+            "warm cream desert robe with muted blue sash and clay-brown mantle, no priestly breastplate",
+            "simple headcloth and wooden staff, not a high-priest turban and not royal",
+        ],
+        "miriam": [
+            "elderly prophetess build with firm shoulders and a musical worship presence",
+            "lined feminine face with alert eyes and silver hair under a muted blue veil",
+            "small hand drum kept close to the body as her distinctive sign",
+        ],
+        "joshua": [
+            "young-to-mature military aide and commander build with compact alert shoulders",
+            "square determined face with steady eyes, short dark beard, and practical brow",
+            "muted blue commander cloak with bronze belt and small sheathed short sword",
+            "no crown, no priestly linen, not Moses' staff-centered silhouette",
+        ],
+        "gideon": [
+            "hesitant farmer-judge build becoming steadier, not a polished king",
+            "plain gray-green cloak over clay work tunic with a fleece fold at the belt",
+            "small clay jar and torch motif kept secondary as his 300-men sign",
+            "worried eyes that become obedient and resolved",
+        ],
+        "samuel": [
+            "vigorous elderly prophet-priest build with strong upright shoulders and steady spiritual authority, not frail",
+            "ancient Hebrew Israelite elder with natural warm peach-beige skin tone, full white hair, white beard, thick white brows, listening eyes, and a firm compassionate mouth",
+            "cream linen ephod under a deep blue-gray prophet mantle, completely unlike Saul's royal clothing",
+            "small oil horn and blank scroll held close, no crown and no weapon",
+        ],
+        "saul": [
+            "very tall first-king build with strong shoulders and restrained humble royal bearing, chosen from among the people",
+            "long serious face with earnest modest eyes, dark brows, and a slight troubled shadow, not wicked in the base avatar",
+            "deep indigo royal mantle over warm cream tunic, muted bronze crown band, and long spear lowered upright as a royal sign, not an attack pose",
+            "short dark beard with sharp edges, clearly not David or Samuel, noble but still humble before later decline",
+        ],
+        "david": [
+            "central hero shepherd-king build with graceful athletic shoulders and royal dignity",
+            "handsome youthful-to-mature oval face with bright intelligent faithful eyes, alert spark, courageous smile, and reddish-brown hair tones",
+            "deep royal-blue cloak over cream tunic with muted sky-blue sash and restrained soft-gold trim",
+            "small lyre held to one side, sling pouch visible at the belt, short neat beard in adult king scenes",
+        ],
+        "jonathan": [
+            "young royal warrior-prince build with loyal open posture",
+            "handsome angular face with earnest eyes, calmer and softer than Saul",
+            "muted blue prince cloak with bronze clasp and bow signal accessory",
+            "short neat beard, no heavy crown and no spear-centered silhouette",
+        ],
+        "solomon": [
+            "young wise king build with composed palace posture",
+            "smooth thoughtful face with bright intelligent discerning eyes, calm alert focus, and restrained confidence",
+            "clear sky-blue royal mantle over ivory robe with refined gold sash, not Saul's dark mantle and not David's deeper blue cloak",
+            "small blank wisdom scroll or signet ring, no battlefield weapon",
+        ],
+        "elijah": [
+            "rugged wilderness prophet build with sharp wind-worn shoulders, strong but approachable",
+            "weathered human face with normal warm dark eyes, visible pupils, calm stern brow, and no glowing or white eyes",
+            "rough dark-brown mantle with leather belt and warm tan robe, prophetic seriousness without horror",
+            "full rugged beard and wind-worn brown hair, no court robe and no priestly linen",
+        ],
+        "korah": [
+            "Korah the rebellious Levite leader build with proud squared shoulders and tense challenging posture",
+            "ordinary Levite face with narrowed argumentative eyes, lifted chin, and self-important expression, not gentle and not heroic",
+            "deep teal Levite robe with desert tan underlayer and clay-red sash, clearly distinct from Aaron's cream spokesman robe",
+            "bronze censer held forward as his unmistakable sign, no priestly breastplate, no royal crown, no earthquake scene in the avatar",
+        ],
+        "noah": [
+            "Noah the ark-builder patriarch build with sturdy working shoulders and calm obedient confidence",
+            "weathered but warm face with focused builder's eyes, gray-brown hair and beard, not frail",
+            "weathered wood-brown work mantle over olive robe with blue work-cuff accent and leather tool belt",
+            "small wooden ark or boat model in one hand and simple wooden carpentry tool in the other hand, no fishing net",
+        ],
+        "elisha": [
+            "gentler successor-prophet build with broad compassionate shoulders",
+            "rounder face with watchful merciful eyes and a serious healer's calm",
+            "gray-blue prophet mantle over pale robe, clearly smoother than Elijah's rough hair mantle",
+            "receding hair or bald crown with short beard, matching the biblical mockery episode carefully",
+        ],
+        "daniel": [
+            "exile court-sage build that can age from youth to elderly scenes",
+            "long calm face with bright intelligent eyes, disciplined focus, and quiet courage",
+            "deep emerald-green Babylonian-Persian court robe with olive mantle, parchment sash, and blank scroll",
+            "neat beard in adult scenes and white beard in late-life scenes when requested",
+        ],
+        "ezekiel": [
+            "exile priest-prophet build with squared shoulders and solemn visionary command, not a generic robed elder",
+            "narrow angular face with intense watchful eyes, furrowed brow, grief-lined cheeks, and a small spark of hope",
+            "deep indigo-gray exile mantle over parchment linen robe, ash-blue shoulder bands, small priestly cord, and dusty travel hem",
+            "short dark beard with gray streaks, wind-worn dark hair, distinct from Ezra's calm scribe-priest look and Isaiah's court-prophet look",
+            "small blank clay tablet or sealed blank vision scroll held close as his symbolic-action accessory",
+        ],
+        "ezra": [
+            "scribe-priest build with careful teacher posture",
+            "slim elderly face with focused reading eyes and neatly trimmed gray beard",
+            "parchment cream priest-scribe robe with brown writing satchel and blank Torah scroll",
+            "not a wall builder and not a Persian courtier",
+        ],
+        "nehemiah": [
+            "Persian cupbearer turned wall-rebuilder build with civic resolve",
+            "practical face with tired determined eyes and a short dark beard",
+            "stone-gray Persian tunic under sage work cloak with builder belt, sleeves ready for rebuilding work",
+            "small stone block, wooden trowel, measuring cord, and blank rebuilding plan scroll kept visible; cup motif is tiny and secondary",
+            "clearly Jerusalem wall-and-city rebuilding leader, not a shepherd, not a priest, and not a generic traveler",
+        ],
+        "rahab": [
+            "young adult Jericho woman build with front-facing graceful posture and courageous calm",
+            "warm youthful face looking directly forward, dark attentive eyes, smooth skin, and modest hopeful expression",
+            "deep teal dress with sand headscarf and clay-brown wrap, simple city-house clothing and not royal",
+            "scarlet cord held visibly but modestly near the chest as the unmistakable Jericho sign, no weapon and no walking pose",
+        ],
+        "esther": [
+            "Persian queen build with graceful but brave posture",
+            "soft elegant face with tense courageous eyes, not a generic court lady",
+            "turquoise and crimson Persian royal dress with delicate gold veil and small crown band",
+            "hands held near the heart as if choosing courage",
+        ],
+        "mordecai": [
+            "older Jewish court guardian build with protective shoulders",
+            "wise square face with gray beard and watchful eyes",
+            "blue-gray Persian gate official robe with modest Jewish sash",
+            "small sealed court token, no crown and no priestly clothing",
+        ],
+        "haman": [
+            "Persian high official build with rigid pride and a sharp courtly silhouette",
+            "long narrow face with suspicious narrowed eyes, sharp nose, thin curled mustache, and a cold cruel smirk",
+            "dark violet court robe under charcoal-black mantle with cold gold trim and a small blood-red sash accent",
+            "sealed decree scroll and signet ring kept prominent, showing dangerous authority but no crown",
+        ],
+    }
+)
+CHARACTER_MOOD_OVERRIDES.update(
+    {
+        "abraham": [
+            "strict front-facing protagonist covenant-patriarch posture, eyes looking directly at viewer, tall staff planted firmly, chest lifted, one hand open in faithful blessing",
+        ],
+        "sarah": [
+            "mature covenant-matriarch posture with a restrained hopeful smile and hands gathered near the chest",
+        ],
+        "isaac": [
+            "calm adult son posture, one hand near a small bundled-firewood strap, obedient but thoughtful",
+        ],
+        "jacob": [
+            "alert traveler posture with staff held close and cautious eyes turned forward",
+        ],
+        "judah": [
+            "front-facing full-body posture with normal head-to-body ratio, one hand near a small signet cord, serious responsible expression",
+        ],
+        "laban": [
+            "front-facing sturdy household-head posture, deep robe colors visible, one hand on a small staff and wary calculating eyes",
+        ],
+        "haman": [
+            "front-facing arrogant villain posture, chin lifted, one hand clutching a sealed decree scroll and the other showing a signet ring, narrowed eyes looking down with contempt",
+        ],
+        "esau": [
+            "hungry impatient hunter posture with rugged shoulders and one hand near a bow strap",
+        ],
+        "joseph": [
+            "composed survivor-governor posture, bright intelligent eyes forward with a small catchlight, clear warm face, one hand near a small signet cord and the other holding a blank plan scroll",
+        ],
+        "pharaoh": [
+            "rigid front-facing Egyptian ruler posture with one hand lowered in command and unsmiling eyes",
+        ],
+        "moses": [
+            "strict front-facing wilderness patriarch posture, eyes looking directly at viewer, wooden staff planted firmly like a leader guiding the camp, shoulders lifted, dignified faithful expression",
+        ],
+        "aaron": [
+            "front-facing spokesman posture with one hand open as if speaking for Moses and the other near a simple staff",
+        ],
+        "miriam": [
+            "elderly worship-leader posture holding a small hand drum close, watchful and strong",
+        ],
+        "joshua": [
+            "front-facing successor-commander posture with squared shoulders and one hand near a sheathed sword",
+        ],
+        "gideon": [
+            "cautious farmer-judge posture, clay jar and torch motif held low, courage still forming",
+        ],
+        "samuel": [
+            "front-facing vigorous elderly Hebrew prophet-priest posture, white hair and beard visible, oil horn held near the chest, stern listening expression with quiet holy authority",
+        ],
+        "eli": [
+            "front-facing elderly Shiloh priest posture, white linen robe and ephod clearly visible, small tabernacle lamp or incense censer held low, gentle watchful priestly expression",
+        ],
+        "rachel": [
+            "front-facing graceful beloved shepherdess posture with one hand near a small water jar, warm radiant smile and modest confidence",
+        ],
+        "saul": [
+            "front-facing tall first-king posture with long spear lowered upright, shoulders controlled, humble but troubled expression",
+        ],
+        "david": [
+            "front-facing protagonist shepherd-king posture, chest lifted, bright intelligent faithful eyes, small lyre and sling pouch visible, warm courageous royal confidence",
+        ],
+        "jonathan": [
+            "loyal prince posture with bow held low and open-hearted expression",
+        ],
+        "solomon": [
+            "calm seated-or-standing wisdom posture, blank scroll held near the chest, bright intelligent discerning eyes",
+        ],
+        "elijah": [
+            "rugged prophet posture with rough mantle gathered calmly to one side, firm but non-scary expression, normal warm dark eyes looking forward",
+        ],
+        "korah": [
+            "front-facing rebellious Levite posture, bronze censer held forward, chin lifted, argumentative eyes challenging Moses' authority without any earthquake or death scene",
+        ],
+        "noah": [
+            "front-facing ark-builder posture, small wooden ark or boat model held close and a simple carpentry tool visible, calm obedient builder expression",
+        ],
+        "elisha": [
+            "compassionate prophet posture with gray-blue mantle gathered in one hand, merciful but firm",
+        ],
+        "daniel": [
+            "court-sage posture with hands folded over a blank scroll, calm under pressure",
+        ],
+        "ezekiel": [
+            "front-facing visionary exile-priest posture, one hand raised as if prophesying to dry bones, the other holding a small blank clay tablet or sealed blank vision scroll, intense grief-and-hope eyes looking forward",
+        ],
+        "ezra": [
+            "scribe-priest posture reading from a blank scroll, focused and reverent",
+        ],
+        "nehemiah": [
+            "front-facing rebuilder posture with trowel, measuring cord, small stone block, and blank rebuilding plan held close, determined civic courage",
+        ],
+        "rahab": [
+            "strict front-facing young Jericho woman posture, scarlet cord held near the chest, courageous hopeful eyes looking directly forward, full body visible",
+        ],
+        "esther": [
+            "brave queen posture with one hand near the heart and the other slightly extended toward mercy",
+        ],
+        "mordecai": [
+            "protective elder posture with sealed court token held low and watchful eyes",
+        ],
+    }
+)
+CODE_PALETTE_OVERRIDES.update(
+    {
+        "aaron": "warm desert cream + muted blue + clay brown + dark umber accents, low saturation",
+        "daniel": "deep emerald green + olive green + parchment cream + muted gold accents, low saturation",
+        "abraham": "natural warm peach-beige skin + deep warm brown garment + muted clay red + warm cream accents, low saturation",
+        "david": "deep royal blue + muted sky blue + cream + soft gold accents, low saturation",
+        "eli": "priestly linen white + warm cream + muted blue-gold sash + soft gray accents, low saturation",
+        "elijah": "rough dark brown + warm tan + muted ember gold accents, low saturation",
+        "elisha": "gray blue + pale cream + muted olive accents, low saturation",
+        "esau": "rust red + leather brown + desert tan accents, low saturation",
+        "esther": "Persian turquoise + deep crimson + refined gold accents, low saturation",
+        "ezekiel": "muted indigo gray + parchment cream + ash blue accents, low saturation",
+        "ezra": "parchment cream + warm brown + priestly blue accents, low saturation",
+        "gideon": "gray green + clay brown + torch amber accents, low saturation",
+        "jacob": "striped muted clay + dusty blue + warm tan accents, low saturation",
+        "jonathan": "loyal muted blue + bronze + warm cream accents, low saturation",
+        "joseph": "natural warm peach-beige skin + Egyptian cream linen + teal collar + soft gold accents, low saturation",
+        "joshua": "commander blue + desert tan + muted bronze accents, low saturation",
+        "korah": "deep teal + desert tan + clay red sash + bronze censer accents, low saturation",
+        "miriam": "aged blue + warm cream + muted copper drum accents, low saturation",
+        "mordecai": "blue gray + Persian cream + muted bronze accents, low saturation",
+        "moses": "natural warm peach-beige skin + deep ash ochre garment + desert tan + dark umber accents, low saturation",
+        "nehemiah": "stone gray + sage green + warm limestone + muted bronze tool accents, low saturation",
+        "noah": "weathered wood brown + olive work robe + warm cream + muted sky blue tool accents, low saturation",
+        "pharaoh": "Egyptian white linen + lapis blue + gold accents, low saturation",
+        "rachel": "deep rose + warm cream + muted teal + soft gold accents, low saturation",
+        "rahab": "deep teal + sand headscarf + clay brown wrap + scarlet cord accent, low saturation",
+        "samuel": "natural warm peach-beige skin + white hair + cream linen + deep blue gray + oil-horn amber accents, low saturation",
+        "saul": "dark indigo + black violet + muted bronze accents, low saturation",
+        "sarah": "soft rose-brown + warm cream + muted blue accents, low saturation",
+        "solomon": "clear sky blue + pale ivory + refined gold + soft teal accents, low saturation",
+    }
+)
+CODE_SIGNATURE_HINTS.update(
+    {
+        "aaron": [
+            "Aaron the mature Levite brother and spokesman of Moses, exactly one man only",
+            "warm cream desert robe with muted blue sash, clay-brown mantle, simple headcloth, and wooden staff",
+            "dark hair and full dark beard with no gray, clearly not the later high-priest outfit",
+            "gentle but confident spokesman face, no crown, no priestly breastplate, no ornate turban",
+        ],
+        "daniel": [
+            "Daniel the faithful Jewish exile and court-wise prophet, exactly one man only",
+            "deep emerald-green Babylonian-Persian court robe with olive mantle, parchment sash, and blank scroll",
+            "bright intelligent eyes, disciplined courage, and calm dignified bearing",
+            "no blue royal robe, no crown, no weapon, clearly not a warrior or king",
+        ],
+        "david": [
+            "David the central shepherd-king of Israel, exactly one man only",
+            "deep royal-blue cloak over cream tunic with muted sky-blue sash and restrained soft-gold trim",
+            "small lyre held to one side and sling pouch at the belt as unmistakable David signs",
+            "handsome courageous faithful expression with bright intelligent eyes and protagonist-level royal dignity, clearly distinct from Saul and Solomon",
+        ],
+        "elijah": [
+            "Elijah the rugged wilderness prophet, exactly one man only",
+            "rough dark-brown hair mantle and leather belt as the main silhouette",
+            "normal warm dark eyes with visible pupils, firm non-scary expression, and wind-worn hair",
+            "strong prophetic seriousness but approachable human face, not Elisha, not Samuel, not a royal court prophet",
+        ],
+        "korah": [
+            "Korah the rebellious Levite leader who challenged Moses and Aaron, exactly one man only",
+            "deep teal Levite robe with desert tan underlayer, clay-red sash, and bronze censer held forward",
+            "proud argumentative expression with narrowed eyes and lifted chin, not humble and not heroic",
+            "avatar shows his identity before judgment, no earthquake, no falling body, no death scene, no crowd",
+        ],
+        "noah": [
+            "Noah the ark-builder patriarch before the flood, exactly one man only",
+            "weathered wood-brown work mantle over olive robe, leather tool belt, and simple ancient carpentry tools",
+            "small wooden ark or boat model held visibly in one hand, simple wooden mallet or adze held in the other hand",
+            "calm obedient builder expression, not a fisherman, no fishing net, no modern tools",
+        ],
+        "elisha": [
+            "Elisha the successor prophet, exactly one man only",
+            "gray-blue prophet mantle with compassionate healer presence",
+            "receding hair or bald crown, short beard, gentler than Elijah",
+            "not Elijah's rough hair mantle and not a priestly robe",
+        ],
+        "joshua": [
+            "Joshua the young-to-mature military aide and successor commander after Moses, exactly one man only",
+            "muted blue commander cloak with bronze belt and small sheathed short sword",
+            "alert faithful military leader with short dark beard, no crown and no priestly garments",
+            "distinct from Moses' staff silhouette and never gray-haired in the base avatar",
+        ],
+        "jacob": [
+            "Jacob the young tent-dwelling patriarch and traveler, exactly one man only",
+            "striped muted-clay cloak, dusty blue sash, travel staff, and cautious intelligent eyes",
+            "dark hair and medium dark beard, not elderly unless a story scene explicitly requests it",
+            "no crown, no royal sash, clearly distinct from Abraham and Esau",
+        ],
+        "moses": [
+            "Moses the vigorous elder wilderness patriarch, Exodus liberator, Sinai lawgiver, and shepherd-leader of Israel, exactly one man only",
+            "natural warm peach-beige skin on face and hands, deep ash-ochre desert mantle, wooden staff planted firmly, mature dark hair with only subtle gray at the temples, and full dark beard",
+            "strict front-facing dignified faithful expression, eyes looking directly forward with calm courage, a leader who spoke with God and guided Israel through the wilderness",
+            "no stone tablets in the base avatar; keep the wooden staff as the only main prop, not Aaron's priestly linen and not a king",
+        ],
+        "nehemiah": [
+            "Nehemiah the Jerusalem wall-rebuilding leader, exactly one man only",
+            "stone-gray Persian tunic under sage work cloak with builder belt and sleeves ready for work",
+            "small stone block, wooden trowel, measuring cord, and blank rebuilding plan scroll must be visible together",
+            "determined civic courage, cup motif only tiny and secondary, not a shepherd, not a priest, not a generic traveler",
+        ],
+        "rachel": [
+            "Rachel the beautiful beloved shepherdess and wife of Jacob, exactly one woman only",
+            "deep rose mantle over warm cream robe with muted teal sash, tiny soft-gold clasp, and graceful veil",
+            "large gentle dark eyes, refined balanced features, glossy dark hair, and warm radiant smile",
+            "modest non-seductive beauty, clearly distinct from Leah and Sarah",
+        ],
+        "rahab": [
+            "Rahab the young courageous woman of Jericho, exactly one woman only",
+            "strict front-facing youthful face, dark attentive eyes looking directly forward, smooth warm skin, and modest hopeful expression",
+            "deep teal city dress with sand headscarf and clay-brown wrap, scarlet cord held clearly near the chest",
+            "not old, not walking, not side view, not seductive, not a queen, and not a soldier",
+        ],
+        "samuel": [
+            "Samuel the elderly prophet-priest who hears God, anoints Saul and David, and continues speaking with authority, exactly one man only",
+            "ancient Hebrew Israelite elder with natural warm peach-beige skin tone, full white hair, white beard, cream linen ephod under deep blue-gray prophet mantle, and small oil horn",
+            "strong upright old prophet presence, stern listening eyes, calm holy authority, no crown and no weapon",
+            "visually distinct from Saul's dark royal mantle and David's deep blue shepherd-king cloak",
+        ],
+        "saul": [
+            "Saul the first king of Israel, exactly one man only",
+            "very tall body, dark indigo royal mantle, bronze crown band, and long spear",
+            "earnest humble early-king expression with a slight troubled shadow, not David and not Samuel",
+            "royal but conflicted presence, not an evil caricature, no shepherd harp or priestly oil horn",
+        ],
+        "solomon": [
+            "Solomon the young wise king of Israel, exactly one man only",
+            "clear sky-blue royal mantle over pale ivory robe, refined gold sash, and blank wisdom scroll",
+            "composed discerning expression with bright intelligent eyes, not Saul's dark spear-bearing silhouette and not David's deeper blue cloak",
+        ],
+    }
+)
+
+# 사용자 생성 결과를 보며 다시 조정한 구약 인물들. 같은 직분끼리 닮아 보이는
+# 문제를 줄이기 위해 소품, 체형, 얼굴 인상, 옷 색을 더 직접적으로 고정한다.
+CHARACTER_VISUAL_OVERRIDES.update(
+    {
+        "ahab": [
+            "middle-aged wicked northern Israel king build with hard squared royal shoulders and dangerous pride",
+            "hard angular face with narrowed malicious eyes, stubborn brow, and a cold idolatrous smirk",
+            "dark hair under an ornate northern royal headband, short sharply faceted dark beard",
+            "dark royal purple robe with navy mantle and muted gold trim, one hand gripping a clearly visible small dark Baal idol held high near the chest",
+        ],
+        "ahijah": [
+            "elderly Shiloh prophet build with lean upright shoulders, wise and solemn but not frightening",
+            "ancient Hebrew face with normal warm dark eyes, visible pupils, firm prophetic gaze, and no blindness in the base avatar",
+            "gray hair under a simple warm-brown prophet headcloth, short gray beard with angular facets",
+            "plain warm-brown prophet mantle over cream robe, torn cloak pieces held clearly as the divided-kingdom sign",
+        ],
+        "asher": [
+            "Asher son of Jacob build with sturdy peaceful tribal-son proportions, not a Joseph-like dreamer",
+            "natural warm peach-beige face with healthy skin color, gentle alert eyes, and a short neat beard",
+            "warm olive and cream robe with rich honey-tan sash, never faded or gray",
+            "small olive branch, round bread loaf, and grain sheaf kept close as signs of rich food and blessing",
+        ],
+        "levi": [
+            "Levi son of Jacob build with sturdy tribal-brother proportions and restrained intensity, not a priestly high priest yet",
+            "natural warm peach-beige face with healthy skin color, dark attentive eyes, and a firm brow",
+            "warm cream tunic under muted rust-brown mantle with deep teal sash, rich color blocks not faded",
+            "small plain tribal staff held close, no jeweled breastplate, no ornate priestly turban",
+        ],
+        "issachar": [
+            "Issachar son of Jacob build with solid grounded worker-scholar proportions and steady shoulders",
+            "natural warm peach-beige face with healthy skin color, calm thoughtful eyes, and short dark beard",
+            "warm wheat-brown robe with cream underlayer and muted teal sash, clear rich color not washed out",
+            "small folded grain bundle and simple burden strap as signs of strength and labor, not a Joseph-like dreamer",
+        ],
+        "zebulun": [
+            "Zebulun son of Jacob build with sturdy coastal-tribe merchant-sailor proportions, not a fisherman apostle",
+            "natural warm peach-beige face with alert practical eyes, broad brow, and short angular beard",
+            "deep sea-blue outer mantle over warm cream tunic with muted bronze clasp and rope-brown sash, rich color blocks not faded",
+            "small ancient ship-prow token and coiled harbor rope held close as signs of dwelling by the sea and ships",
+        ],
+        "phinehas": [
+            "Phinehas son of Eleazar build with young priestly zeal and compact upright strength",
+            "natural warm face with intense covenant-protective eyes, strong brow, and short dark beard",
+            "simple cream Levite-priest robe with muted blue sash and bronze clasp, not the ornate high-priest breastplate",
+            "bronze spear held lowered and vertical beside the body plus small incense censer at the belt, no violent action scene",
+        ],
+        "caleb": [
+            "Caleb son of Jephunneh build with rugged broad-shouldered faithful commander proportions, stockier and tougher than a slim court noble",
+            "weathered warm face with clear unwavering eyes, strong brow, square jaw, and sun-worn veteran confidence",
+            "short dark hair under a simple scout headband, thick practical beard with angular facets",
+            "muted teal commander cloak over desert-tan travel robe, bronze belt, small spy staff and grape-cluster token kept secondary",
+        ],
+        "korah": [
+            "Korah the rebellious Levite leader build with proud squared shoulders and tense challenging posture",
+            "ordinary Levite face with narrowed argumentative eyes, lifted chin, and self-important expression, not gentle and not heroic",
+            "deep teal Levite robe with desert tan underlayer and clay-red sash, clearly distinct from Aaron's cream spokesman robe",
+            "bronze censer thrust forward as his unmistakable sign, one free hand partly clenched as if challenging Moses and Aaron, no earthquake scene in the avatar",
+        ],
+        "saul": [
+            "very tall first-king build with strong shoulders and restrained humble royal bearing, chosen from among the people",
+            "long serious face with earnest modest eyes, dark brows, and a slight troubled shadow, not wicked in the base avatar",
+            "dark indigo and black-violet luxury royal mantle over warm cream tunic, layered gold-bronze trim, muted bronze crown band, and long spear lowered upright as a royal sign, not an attack pose",
+            "short dark beard with sharp edges, clearly not David or Samuel, noble but still humble before later decline",
+        ],
+    }
+)
+CHARACTER_MOOD_OVERRIDES.update(
+    {
+        "ahab": [
+            "front-facing wicked king posture, Baal idol held clearly near the chest, narrowed malicious eyes, proud but dangerous stance",
+        ],
+        "ahijah": [
+            "front-facing Shiloh prophet posture, normal visible eyes looking forward, torn cloak pieces held in both hands with solemn authority",
+        ],
+        "asher": [
+            "front-facing tribal-son posture with olive branch, bread loaf, and grain sheaf held close, peaceful blessed expression",
+        ],
+        "levi": [
+            "front-facing tribal-brother posture with plain staff held low, steady intense expression and warm healthy face",
+        ],
+        "issachar": [
+            "front-facing grounded worker-scholar posture with grain bundle and burden strap, calm thoughtful expression",
+        ],
+        "zebulun": [
+            "front-facing coastal-tribe posture with small ship-prow token and coiled harbor rope visible, alert practical expression",
+        ],
+        "phinehas": [
+            "strict front-facing zealous priest posture, spear lowered vertical, small censer visible, intense protective expression without violence",
+        ],
+        "caleb": [
+            "front-facing rugged faithful commander posture, chest square, weathered confident eyes, one hand near a spy staff or grape-cluster token",
+        ],
+        "korah": [
+            "strict front-facing rebellious Levite posture, bronze censer held forward, chin lifted, argumentative eyes challenging Moses' authority",
+        ],
+        "saul": [
+            "front-facing tall first-king posture with long spear lowered upright, dark luxury royal cloak displayed, shoulders controlled, humble chosen-king expression with only a slight troubled shadow",
+        ],
+    }
+)
+CODE_PALETTE_OVERRIDES.update(
+    {
+        "ahab": "dark royal purple + navy mantle + muted gold trim + black idol accent, low saturation",
+        "ahijah": "warm brown prophet mantle + cream robe + torn-cloak tan accents, low saturation",
+        "asher": "natural warm peach-beige skin + warm olive + cream + honey tan + grain gold accents, low saturation",
+        "levi": "natural warm peach-beige skin + muted rust brown + warm cream + deep teal accents, low saturation",
+        "issachar": "natural warm peach-beige skin + wheat brown + cream + muted teal accents, low saturation",
+        "zebulun": "natural warm peach-beige skin + deep sea blue + warm cream + rope brown + muted bronze accents, low saturation",
+        "phinehas": "priestly cream + muted blue + bronze spear and censer + clay accent, low saturation",
+        "caleb": "rugged desert tan + muted teal commander cloak + warm clay brown + bronze accents, low saturation",
+        "korah": "deep teal + desert tan + clay red sash + bronze censer accents, low saturation",
+        "saul": "dark indigo + black violet luxury royal mantle + warm cream tunic + muted gold bronze trim, low saturation",
+    }
+)
+CODE_SIGNATURE_HINTS.update(
+    {
+        "ahab": [
+            "Ahab the wicked northern Israel king associated with Baal worship, exactly one man only",
+            "dark royal purple robe with navy mantle and muted gold trim, clearly not David, Saul, or Solomon",
+            "small dark Baal idol held clearly near the chest as the main identity sign",
+            "narrow malicious eyes and cold idolatrous smirk, proud dangerous king presence, no prophet robe",
+        ],
+        "ahijah": [
+            "Ahijah the Shilonite prophet who signaled the divided kingdom, exactly one man only",
+            "normal warm dark eyes with visible pupils, wise solemn expression, not blind and not frightening",
+            "warm-brown prophet mantle over cream robe, torn cloak pieces held in both hands as the main sign",
+            "elderly Hebrew prophet, no crown, no royal robe, no horror eyes",
+        ],
+        "asher": [
+            "Asher son of Jacob, exactly one man only",
+            "warm healthy peach-beige face, warm olive and cream robe with honey-tan sash",
+            "olive branch, round bread loaf, and grain sheaf visible as signs of abundant food and blessing",
+            "front-facing peaceful sturdy tribal-son presence, not Joseph and not an Egyptian official",
+        ],
+        "levi": [
+            "Levi son of Jacob, exactly one man only",
+            "warm peach-beige face, rust-brown mantle, cream tunic, deep teal sash, plain tribal staff",
+            "tribal brother before later priesthood, no ornate high-priest clothing and no jeweled breastplate",
+            "front-facing sturdy intense presence, clearly distinct from Aaron and Moses",
+        ],
+        "issachar": [
+            "Issachar son of Jacob, exactly one man only",
+            "warm peach-beige face, wheat-brown robe, cream underlayer, muted teal sash",
+            "grain bundle and burden strap visible as signs of steady labor and strength",
+            "front-facing grounded thoughtful presence, not Joseph and not an Egyptian official",
+        ],
+        "zebulun": [
+            "Zebulun son of Jacob, coastal tribe associated with the seashore and ships, exactly one man only",
+            "deep sea-blue outer mantle over warm cream tunic, rope-brown sash, and muted bronze clasp",
+            "small ancient ship-prow token and coiled harbor rope visible as the main identity signs",
+            "front-facing sturdy practical coastal-tribe presence, not a fisherman apostle, not Joseph, and not a modern sailor",
+        ],
+        "phinehas": [
+            "Phinehas son of Eleazar the zealous priest, exactly one man only",
+            "simple cream Levite-priest robe with muted blue sash, bronze spear lowered vertically, and small censer at the belt",
+            "intense covenant-protective eyes, not an ornate high priest and not a battle warrior",
+            "avatar shows identity without violence: no stabbing, no blood, no crowd",
+        ],
+        "caleb": [
+            "Caleb son of Jephunneh, faithful spy and rugged commander, exactly one man only",
+            "stocky broad-shouldered veteran build, weathered face, strong brow, clear unwavering eyes",
+            "muted teal commander cloak over desert-tan travel robe, bronze belt, small spy staff and grape-cluster token",
+            "faith-filled battle-tested confidence, not a handsome slim court noble and not Joshua",
+        ],
+        "eli": [
+            "Eli the elderly priest of Shiloh who served at the tabernacle when Samuel was young, exactly one man only",
+            "elderly Hebrew priest with gray-white hair, full white-gray beard, heavy brows, and watchful but gentle priestly eyes",
+            "white linen priest robe with cream ephod, muted blue-gold sash, and simple priestly head wrap, clearly priestly and not ordinary tribal clothing",
+            "small tabernacle lamp or incense censer held low as his unmistakable priest sign, no crown and no prophet mantle",
+        ],
+        "korah": [
+            "Korah the rebellious Levite leader who challenged Moses and Aaron, exactly one man only",
+            "deep teal Levite robe with desert tan underlayer, clay-red sash, and bronze censer held forward",
+            "front-facing proud argumentative expression with narrowed eyes and lifted chin, not humble and not heroic",
+            "avatar shows his identity before judgment, no earthquake, no falling body, no death scene, no crowd",
+        ],
+        "saul": [
+            "Saul the first king of Israel, exactly one man only",
+            "very tall body, dark indigo and black-violet luxury royal mantle over warm cream tunic, layered muted gold-bronze trim, bronze crown band, and long spear lowered upright",
+            "earnest humble early-king expression with a slight troubled shadow, not David and not Samuel",
+            "royal but conflicted presence, not an evil caricature in the base avatar, no shepherd harp or priestly oil horn",
+        ],
+    }
+)
+CHARACTER_VISUAL_OVERRIDES["hezekiah"] = [
+    "middle-aged Judah king build with dignified but humbled shoulders",
+    "rectangular face with prayerful worried eyes, softened brow, and a short full beard",
+    "deep indigo royal mantle over ivory robe with a narrow gold Judah crown band",
+    "small unsealed threat letter held near the chest, not a prophecy scroll and not a weapon",
+]
+CHARACTER_MOOD_OVERRIDES["hezekiah"] = [
+    "front-facing prayerful king posture, threat letter held open near the heart, anxious but trusting expression",
+]
+CODE_PALETTE_OVERRIDES["hezekiah"] = (
+    "deep indigo + ivory cream + restrained Judah gold accents, low saturation"
+)
+CODE_SIGNATURE_HINTS["hezekiah"] = [
+    "Hezekiah the praying king of Judah, exactly one man only",
+    "deep indigo royal mantle over ivory robe with restrained gold crown band",
+    "small unsealed threat letter held near the chest as a sign of the Assyrian crisis",
+    "humble anxious faith, not proud Saul, not youthful Solomon, and not a prophet",
+]
+
+NT_CHARACTER_VISUAL_OVERRIDES = {
+    "jesus": [
+        "calm Galilean teacher build with balanced upright shoulders",
+        "kind oval face with steady compassionate eyes and a short dark beard",
+        "shoulder-length dark wavy hair in soft faceted planes",
+        "cream tunic under a deep muted red outer robe with a simple travel sash",
+    ],
+    "mary": [
+        "modest young Judean mother build with gentle protective posture",
+        "soft feminine oval face with quiet faithful eyes",
+        "dark hair fully covered by a layered blue mantle and cream under-veil",
+        "simple rose-brown dress beneath the blue mantle, no ornaments",
+    ],
+    "joseph_nazareth": [
+        "sturdy carpenter father build with squared practical shoulders",
+        "warm rectangular face with careful protective eyes and a trimmed beard",
+        "short dark hair under a plain work headcloth",
+        "ochre work tunic with a carpenter belt, small wooden mallet kept close to the body",
+    ],
+    "zechariah": [
+        "elderly Jerusalem priest build with dignified narrow shoulders",
+        "long weathered face with astonished priestly eyes and heavy gray brows",
+        "gray hair under a cream priestly head wrap",
+        "white linen priest robe with a muted gold sash and small incense censer held low",
+    ],
+    "elizabeth": [
+        "elderly Judean woman build with gentle stooped shoulders",
+        "kind weathered feminine face with joyful patient eyes and soft wrinkles",
+        "gray-streaked hair hidden beneath a muted plum veil",
+        "cream robe with muted plum shawl, hands held near the chest in grateful wonder",
+    ],
+    "gabriel": [
+        "tall luminous messenger figure with graceful adult proportions",
+        "smooth serene face with bright gentle eyes",
+        "soft radiant hair framed by simple faceted light planes",
+        "white and pale gold robe with restrained angular wing shapes, no weapon",
+    ],
+    "john_the_baptist": [
+        "rugged wilderness prophet build with lean wiry shoulders",
+        "weathered angular face with intense eyes, strong brow, and wild beard",
+        "rough dark hair in untidy faceted chunks",
+        "camel-hair cloak, leather belt, and reed staff as clear wilderness prophet signs",
+    ],
+    "herod": [
+        "Herodian ruler build with polished but tense royal shoulders",
+        "sharp suspicious face with narrowed eyes and a trimmed dark beard",
+        "short dark hair under a small angular royal headband",
+        "dark crimson robe with black-violet mantle and restrained gold trim",
+    ],
+    "andrew": [
+        "slender fisherman-disciple build with quick attentive posture",
+        "long narrow friendly face with searching eyes and short beard",
+        "short blocky curls under a plain sea-worn headcloth",
+        "sand-colored tunic with blue-green sash and a small hand net at the side",
+    ],
+    "peter": [
+        "broad sturdy fisherman-apostle build with strong hands and squared stance",
+        "rounder weathered face with bold earnest eyes and a thick short beard",
+        "short dark curls in chunky faceted planes",
+        "deep blue outer cloak over a tan work tunic, heavy fishing net over one shoulder",
+    ],
+    "philip": [
+        "lean road-worn disciple build with guide-like alert posture",
+        "angular thoughtful face with open curious eyes and a neat short beard",
+        "medium dark hair under a light travel head wrap",
+        "sage travel cloak with a small route scroll tube and simple sandals",
+    ],
+    "philip_evangelist": [
+        "mature early-church evangelist build, lean from long roads but steadier than the apostle Philip",
+        "kind decisive face with focused eyes and a short graying beard",
+        "close dark hair with a simple travel head wrap, slightly weathered by desert roads",
+        "plain deacon-evangelist robe with dusty travel cloak and a small blank Isaiah scroll tube, no fisherman gear",
+    ],
+    "james_zebedee": [
+        "energetic fisherman brother build with compact strong shoulders",
+        "square sun-browned face with intense loyal eyes and full blocky beard",
+        "thick dark hair under a rope-tied headband",
+        "rust-brown work tunic with an oar handle and coiled rope as fishing signs",
+    ],
+    "john": [
+        "younger beloved-disciple build with gentle narrow shoulders",
+        "smooth youthful adult face with reflective eyes and a small neat beard",
+        "straight shoulder-length dark hair in clean polygon sheets",
+        "soft green-blue cloak with a small blank scroll satchel, quieter than Peter and James",
+    ],
+    "matthew": [
+        "former tax collector turned disciple build with neat composed posture",
+        "oval observant face with careful eyes and a trimmed beard",
+        "closely arranged dark hair beneath a tidy headcloth",
+        "warm brown robe with a wax tablet, stylus, and small coin pouch kept secondary",
+    ],
+    "jairus": [
+        "synagogue ruler build with formal steady bearing",
+        "serious fatherly face with worried compassionate eyes and trimmed gray-streaked beard",
+        "neatly wrapped headcloth framing the face",
+        "dignified dark teal robe with a small blank synagogue scroll case",
+    ],
+    "lazarus": [
+        "Bethany man restored to life build with slim recovering posture",
+        "gentle pale face with amazed grateful eyes and short beard",
+        "dark hair partly covered by a loose linen wrap",
+        "olive robe with clean loose linen bands at the shoulders and wrists, not frightening",
+    ],
+    "martha": [
+        "Bethany host woman build with practical capable shoulders",
+        "warm oval feminine face with focused caring eyes",
+        "dark hair covered by a clay-brown household veil",
+        "earth-toned robe with a folded serving cloth and small bread basket held low",
+    ],
+    "judas": [
+        "lean treasurer-disciple build with guarded inward posture",
+        "narrow angular face with uneasy calculating eyes and a trimmed pointed beard",
+        "dark hair under a muted olive hood-like head covering",
+        "dark olive robe with a small coin pouch held close, no heroic stance",
+    ],
+    "pilate": [
+        "Roman governor build with formal upright authority",
+        "clean angular Roman face with weary skeptical eyes and short trimmed beard",
+        "short cropped dark hair with no Hebrew headcloth",
+        "ivory tunic, red-edged toga cloak, and small blank legal tablet held at the side",
+    ],
+    "mary_magdalene": [
+        "devout female disciple build with graceful but grounded proportions",
+        "soft oval face with hopeful resurrection-witness eyes",
+        "long dark hair partly covered by a dawn-colored rose veil",
+        "cream robe with soft rose shawl, hands clasped empty at the chest",
+    ],
+    "thomas": [
+        "thoughtful disciple build with careful craftsman posture",
+        "long rectangular face with questioning eyes and a neat dark beard",
+        "medium wavy hair under a muted gray-blue head wrap",
+        "gray-blue robe with a small measuring cord at the belt, reflective not fearful",
+    ],
+    "stephen": [
+        "Hellenistic deacon build with humble service posture",
+        "bright calm face with courageous eyes and short neat beard",
+        "short dark curls with a simple cream headcloth",
+        "plain linen tunic with a folded serving cloth and small bread basket held close",
+    ],
+    "paul": [
+        "compact road-worn missionary build in a strict front-facing upright standing avatar pose",
+        "front-facing sharp oval face looking directly at the viewer, both eyes equally visible, strong nose, and short dark beard",
+        "receding dark hair in close faceted planes, symmetrical from the front",
+        "dark teal travel cloak over a dusty tan tunic, scroll satchel centered across the chest, staff held vertical beside the body",
+    ],
+    "barnabas": [
+        "broad warm encourager build with open steady shoulders",
+        "rounded square face with generous eyes and a full neatly shaped beard",
+        "medium dark curls under a soft olive head wrap",
+        "olive-green travel cloak with a small folded gift purse and blank scroll tube",
+    ],
+    "cornelius": [
+        "Roman centurion build with disciplined military posture",
+        "square Roman face with respectful prayerful eyes and short trimmed beard",
+        "closely cropped dark hair beneath a bronze centurion headband",
+        "bronze armor over a deep red tunic, red cloak, and short baton held calmly",
+    ],
+    "john_mark": [
+        "young adult assistant scribe build with light traveler proportions",
+        "smooth youthful face with attentive eyes and only a very short beard",
+        "short dark curls under a small travel headcloth",
+        "warm ochre travel tunic with a shoulder satchel and small blank parchment roll",
+    ],
+    "james": [
+        "Jerusalem church elder build with composed prayerful authority",
+        "long wise face with steady discerning eyes and a gray-streaked beard",
+        "dark gray-streaked hair under a plain cream prayer shawl",
+        "simple linen robe with a folded elder's shawl and small blank council scroll",
+    ],
+    "silas": [
+        "sturdy prophet-companion build with resilient travel posture",
+        "square faithful face with strong hopeful eyes and trimmed beard",
+        "short blocky curls beneath a dark indigo travel hood",
+        "indigo cloak over a dusty robe, small hymn scroll tucked near the belt",
+    ],
+    "timothy": [
+        "young adult disciple build with modest slender shoulders",
+        "gentle youthful face with earnest eyes and a very short neat beard",
+        "soft dark hair under a simple blue-gray head wrap",
+        "blue-gray robe with a folded letter packet held close to the chest",
+    ],
+    "lydia": [
+        "poised merchant woman build with graceful confident posture",
+        "soft elegant face with warm intelligent eyes",
+        "long dark hair partly covered by a refined purple shawl",
+        "rich but modest purple-dyed robe with a folded bolt of purple cloth under one arm",
+    ],
+    "aquila": [
+        "Jewish tentmaker craftsman build with practical work-ready shoulders",
+        "warm angular face with focused eyes and a short workman's beard",
+        "short dark hair under a plain leather-edged head wrap",
+        "tan work tunic with a leather apron, awl, and folded tent cloth roll",
+    ],
+    "priscilla": [
+        "Greco-Roman Jewish tentmaker and scripture-teaching woman build, matching the same compact full-body avatar proportions as the existing cast",
+        "soft intelligent feminine face with attentive eyes, clearly stylized not realistic",
+        "dark hair fully covered by a simple teal headscarf with flat low-poly facets",
+        "modest teal outer robe over a warm brown work dress, small folded tent cloth and blank teaching scroll kept close to the body",
+    ],
+    "festus": [
+        "Roman governor build with formal legal posture",
+        "stern Roman face with wary administrative eyes and short trimmed beard",
+        "short cropped hair with a narrow civic headband",
+        "cream toga with muted red trim and a blank legal scroll held stiffly",
+    ],
+    "agrippa": [
+        "client king build with polished courtly posture",
+        "refined angular face with curious evaluating eyes and a neatly groomed beard",
+        "dark hair beneath a small gold diadem, not a full crown",
+        "purple-gold court robe with restrained royal trim and a small signet ring",
+    ],
+}
+
+NT_CHARACTER_MOOD_OVERRIDES = {
+    "jesus": [
+        "serene compassionate teacher posture, one hand open in blessing and the other relaxed"
+    ],
+    "mary": ["quiet faithful posture with hands gently gathered, protective but calm"],
+    "joseph_nazareth": [
+        "protective carpenter-father posture, one hand near the tool belt and one hand open"
+    ],
+    "zechariah": [
+        "astonished priestly posture, censer held low as if surprised in the temple"
+    ],
+    "elizabeth": ["grateful elder-mother posture with joyful patient expression"],
+    "gabriel": [
+        "gentle messenger posture, one hand extended in announcement and the other lowered"
+    ],
+    "john_the_baptist": [
+        "urgent wilderness-prophet posture, reed staff upright and eyes intense"
+    ],
+    "herod": [
+        "tense ruler posture with suspicious narrowed eyes, no kindness in the stance"
+    ],
+    "andrew": [
+        "inviting disciple posture with small net lowered, ready to bring another person to Jesus"
+    ],
+    "peter": [
+        "bold but teachable posture with net over one shoulder and one hand over the heart"
+    ],
+    "philip": ["road-guide disciple posture with route scroll held near the chest"],
+    "philip_evangelist": [
+        "early-church evangelist posture, one hand open toward the road and a blank scroll tube held close"
+    ],
+    "james_zebedee": ["energetic loyal disciple posture with coiled rope held close"],
+    "john": ["quiet attentive disciple posture with scroll satchel held gently"],
+    "matthew": [
+        "humble converted-tax-collector posture, wax tablet lowered instead of used"
+    ],
+    "jairus": [
+        "anxious father and synagogue leader posture, hands pleading but dignified"
+    ],
+    "lazarus": ["newly restored grateful posture, linen bands loose and hands open"],
+    "martha": [
+        "capable hospitable posture with serving cloth held low, attentive not distracted"
+    ],
+    "judas": [
+        "guarded treasurer posture, coin pouch close to the body and eyes turned aside"
+    ],
+    "pilate": [
+        "weary judging posture with legal tablet lowered, conflicted but authoritative"
+    ],
+    "mary_magdalene": [
+        "reverent resurrection-witness posture with hopeful upward gaze"
+    ],
+    "thomas": ["thoughtful searching posture with one hand near the measuring cord"],
+    "stephen": ["courageous servant posture with peaceful face lifted slightly"],
+    "paul": [
+        "strict front-facing missionary posture, torso square to the viewer, both feet planted, scroll satchel centered, eyes looking directly forward"
+    ],
+    "barnabas": ["encouraging open-handed posture, warm and steady rather than severe"],
+    "cornelius": [
+        "disciplined prayerful posture, military body held respectfully still"
+    ],
+    "john_mark": ["alert assistant posture with parchment roll held ready for travel"],
+    "james": ["Jerusalem elder posture with hands calm over a folded council scroll"],
+    "silas": [
+        "resilient companion posture, hymn scroll near the chest and shoulders squared"
+    ],
+    "timothy": [
+        "earnest young-worker posture, letter packet held close with humble confidence"
+    ],
+    "lydia": ["welcoming faithful host posture with purple cloth folded neatly"],
+    "aquila": [
+        "steady craftsman posture with awl and tent cloth held safely, not working mid-action"
+    ],
+    "priscilla": [
+        "calm scripture-teacher posture in the exact same flat vector avatar style, scroll and tent cloth kept secondary"
+    ],
+    "festus": ["formal Roman legal posture with severe administrative expression"],
+    "agrippa": ["curious royal hearing posture with one hand near a small signet ring"],
+}
+
+NT_CODE_PALETTE_OVERRIDES = {
+    "jesus": "deep muted red + warm cream + desert tan accents, low saturation",
+    "mary": "soft blue mantle + cream + muted rose-brown accents, low saturation",
+    "joseph_nazareth": "ochre brown + warm cream + muted cedar accents, low saturation",
+    "zechariah": "temple linen white + muted gold + warm gray accents, low saturation",
+    "elizabeth": "muted plum + parchment cream + soft clay accents, low saturation",
+    "gabriel": "warm white + pale gold + soft sky accents, low saturation",
+    "john_the_baptist": "camel brown + leather umber + reed green accents, low saturation",
+    "herod": "dark crimson + black-violet + muted gold accents, low saturation",
+    "andrew": "sea green + sand tan + rope brown accents, low saturation",
+    "peter": "deep blue + weathered tan + rope brown accents, low saturation",
+    "philip": "sage green + light clay + parchment accents, low saturation",
+    "philip_evangelist": "dusty olive + parchment cream + road tan accents, low saturation",
+    "james_zebedee": "rust brown + deep sea blue + rope tan accents, low saturation",
+    "john": "soft green-blue + parchment cream + muted olive accents, low saturation",
+    "matthew": "warm brown + muted teal + wax tan accents, low saturation",
+    "jairus": "dark teal + temple cream + muted bronze accents, low saturation",
+    "lazarus": "olive green + clean linen white + pale clay accents, low saturation",
+    "martha": "clay brown + warm cream + olive accents, low saturation",
+    "judas": "dark olive + shadow brown + dull brass accents, low saturation",
+    "pilate": "Roman ivory + muted crimson + stone gray accents, low saturation",
+    "mary_magdalene": "soft rose + cream + dawn gold accents, low saturation",
+    "thomas": "gray-blue + warm taupe + muted copper accents, low saturation",
+    "stephen": "plain linen cream + warm ochre + pale blue accents, low saturation",
+    "paul": "dark teal + dusty tan + parchment accents, low saturation",
+    "barnabas": "olive green + warm tan + muted gold accents, low saturation",
+    "cornelius": "bronze + deep red + iron gray accents, low saturation",
+    "john_mark": "warm ochre + light blue-gray + parchment accents, low saturation",
+    "james": "cream linen + deep olive + gray accents, low saturation",
+    "silas": "indigo + dusty tan + parchment accents, low saturation",
+    "timothy": "blue-gray + soft cream + muted green accents, low saturation",
+    "lydia": "rich purple + cream + muted gold accents, low saturation",
+    "aquila": "tan leather + muted teal + tent-cloth cream accents, low saturation",
+    "priscilla": "teal + warm brown + parchment cream accents, low saturation",
+    "festus": "Roman cream + muted red + stone gray accents, low saturation",
+    "agrippa": "royal purple + muted gold + deep blue accents, low saturation",
+}
+
+NT_CODE_SIGNATURE_HINTS = {
+    "jesus": [
+        "Jesus of Nazareth, exactly one adult male figure only",
+        "Galilean teacher and healer, not a king on a throne and not a Roman official",
+        "deep muted red outer robe over a cream tunic, simple sandals, no halo and no written symbol",
+        "gentle compassionate expression that can anchor gospel story scenes",
+    ],
+    "mary": [
+        "Mary the mother of Jesus, exactly one adult woman only",
+        "Nazareth mother presence, modest blue mantle and cream veil, no royal jewelry",
+        "gentle faithful expression, protective but quiet",
+    ],
+    "joseph_nazareth": [
+        "Joseph of Nazareth, carpenter and earthly father figure of Jesus, exactly one man only",
+        "ochre work tunic, carpenter belt, small wooden mallet, protective steady presence",
+        "distinct from Joseph son of Jacob by older fatherly carpenter look",
+    ],
+    "zechariah": [
+        "Zechariah the temple priest and father of John the Baptist, exactly one elderly man only",
+        "white linen priest robe, muted gold sash, small incense censer, astonished temple-priest expression",
+        "distinct from Zechariah the prophet by priestly clothing and elderly father role",
+    ],
+    "elizabeth": [
+        "Elizabeth the elderly mother of John the Baptist, exactly one elderly woman only",
+        "muted plum veil, cream robe, grateful expectant expression, clearly older than Mary",
+    ],
+    "gabriel": [
+        "Gabriel the heavenly messenger, exactly one angelic figure only",
+        "simple white and pale gold faceted robe, restrained wing shapes, no weapon, no human crowd",
+    ],
+    "john_the_baptist": [
+        "John the Baptist, wilderness prophet who prepares the way, exactly one man only",
+        "camel-hair cloak, leather belt, reed staff, rugged hair and beard",
+        "wilderness-prophet look, not John the apostle and not a temple priest",
+    ],
+    "herod": [
+        "Herod the anxious Judean ruler, exactly one man only",
+        "dark crimson royal robe, small angular headband, suspicious eyes, not a Roman governor",
+    ],
+    "andrew": [
+        "Andrew the fisherman disciple, exactly one man only",
+        "slender sea-worn fisherman with small hand net, inviting rather than commanding",
+        "distinct from Peter by lighter build and smaller net",
+    ],
+    "peter": [
+        "Peter the fisherman apostle, exactly one man only",
+        "broad sturdy build, heavy fishing net over shoulder, bold earnest eyes",
+        "distinct from Andrew, James, and John by larger build and deep blue cloak",
+    ],
+    "philip": [
+        "Philip the disciple, exactly one man only",
+        "road-worn guide-like disciple with route scroll tube and sage travel cloak",
+        "curious helper presence, not a fisherman net carrier",
+    ],
+    "philip_evangelist": [
+        "Philip the evangelist from Acts, one of the seven servants, exactly one man only",
+        "mature early-church messenger with dusty travel cloak and blank Isaiah scroll tube",
+        "distinct from Philip the apostle; no fisherman gear, no youthful disciple styling",
+    ],
+    "james_zebedee": [
+        "James son of Zebedee, fisherman apostle and brother of John, exactly one man only",
+        "coiled rope and oar handle, rust-brown work tunic, energetic loyal presence",
+        "distinct from James the Jerusalem elder",
+    ],
+    "john": [
+        "John the apostle, younger beloved disciple, exactly one man only",
+        "soft green-blue cloak, scroll satchel, reflective gentle expression",
+        "distinct from John the Baptist by clean disciple robe and no camel-hair cloak",
+    ],
+    "matthew": [
+        "Matthew the former tax collector disciple, exactly one man only",
+        "wax tablet, stylus, small coin pouch lowered after leaving the tax booth",
+        "humble converted presence, not a merchant and not a Roman official",
+    ],
+    "jairus": [
+        "Jairus the synagogue ruler and desperate father, exactly one man only",
+        "formal synagogue robe, small blank scroll case, anxious fatherly expression",
+    ],
+    "lazarus": [
+        "Lazarus of Bethany restored from the tomb, exactly one man only",
+        "clean loose linen bands over an olive robe, grateful recovering expression, not horror imagery",
+    ],
+    "martha": [
+        "Martha of Bethany, hospitable sister of Lazarus, exactly one woman only",
+        "household serving cloth and small bread basket, capable attentive expression",
+    ],
+    "judas": [
+        "Judas Iscariot the treasurer disciple, exactly one man only",
+        "dark olive robe, coin pouch close to body, guarded expression, no villain caricature",
+    ],
+    "pilate": [
+        "Pontius Pilate the Roman governor, exactly one man only",
+        "ivory tunic, red-edged toga cloak, legal tablet, Roman cropped hair, not Herod",
+    ],
+    "mary_magdalene": [
+        "Mary Magdalene the resurrection witness, exactly one adult woman only",
+        "soft rose shawl and cream robe, hopeful dawn-witness expression, hands empty",
+    ],
+    "thomas": [
+        "Thomas the disciple, exactly one man only",
+        "gray-blue robe, measuring cord, thoughtful searching expression, not fearful",
+    ],
+    "stephen": [
+        "Stephen the Hellenistic deacon and martyr, exactly one man only",
+        "plain linen service tunic, folded serving cloth, courageous peaceful face",
+    ],
+    "paul": [
+        "Paul the road-worn missionary apostle, exactly one man only",
+        "strict front-facing full-body avatar, face and torso square to the viewer, both eyes visible",
+        "compact intense build, receding dark hair, dark teal travel cloak, centered scroll satchel, vertical staff",
+        "distinct from Barnabas by sharper face and more focused expression",
+        "no side profile, no three-quarter view, no leaning pose, no turned head",
+    ],
+    "barnabas": [
+        "Barnabas the encourager and missionary companion, exactly one man only",
+        "broad warm build, olive-green travel cloak, open hands, small gift purse",
+        "distinct from Paul by rounder face and warmer posture",
+    ],
+    "cornelius": [
+        "Cornelius the Roman centurion who receives Peter, exactly one man only",
+        "bronze armor, deep red tunic, disciplined prayerful posture, not a Judean elder",
+    ],
+    "john_mark": [
+        "John Mark the young adult missionary assistant and scribe, exactly one man only",
+        "warm ochre travel tunic, shoulder satchel, small blank parchment roll",
+        "youthful assistant look, distinct from John the apostle and John the Baptist",
+    ],
+    "james": [
+        "James the Jerusalem church elder, exactly one man only",
+        "plain cream prayer shawl, council scroll, wise elder expression",
+        "distinct from James son of Zebedee by elder robe and no fishing gear",
+    ],
+    "silas": [
+        "Silas the prophet companion of Paul, exactly one man only",
+        "indigo travel hood, hymn scroll, resilient companion posture",
+    ],
+    "timothy": [
+        "Timothy the young adult coworker of Paul, exactly one man only",
+        "blue-gray robe, folded letter packet, earnest humble confidence",
+    ],
+    "lydia": [
+        "Lydia the purple-cloth merchant and faithful host, exactly one woman only",
+        "purple cloth bolt, modest merchant robe, welcoming dignified expression",
+    ],
+    "aquila": [
+        "Aquila the Jewish tentmaker and teacher, exactly one man only",
+        "leather apron, awl, tent cloth roll, practical craftsman posture",
+    ],
+    "priscilla": [
+        "Priscilla the Jewish tentmaker and scripture teacher, exactly one woman only",
+        "same compact low-poly flat vector avatar world as Mary, Lydia, and other existing women",
+        "teal headscarf, modest teal robe, warm brown work dress, folded tent cloth and blank teaching scroll",
+        "calm teacher expression, not realistic, not glamorous, not a different art style",
+    ],
+    "festus": [
+        "Festus the Roman governor hearing Paul's case, exactly one man only",
+        "formal cream toga with muted red trim, legal scroll, severe administrative face",
+    ],
+    "agrippa": [
+        "King Agrippa hearing Paul's defense, exactly one man only",
+        "purple-gold court robe, small diadem, curious royal expression, not a Roman governor",
+    ],
+}
+
+NT_STYLE_REFERENCE_CODES = {
+    "joseph_nazareth": ["jesus", "mary"],
+    "elizabeth": ["mary", "ruth", "naomi"],
+    "john_the_baptist": ["elijah", "isaiah"],
+    "andrew": ["peter", "john"],
+    "peter": ["andrew", "john"],
+    "philip": ["peter", "john"],
+    "philip_evangelist": ["stephen", "peter"],
+    "james_zebedee": ["peter", "john"],
+    "john": ["peter", "andrew"],
+    "matthew": ["peter", "john"],
+    "mary_magdalene": ["mary", "lydia"],
+    "paul": ["barnabas", "peter"],
+    "barnabas": ["paul", "peter"],
+    "john_mark": ["barnabas", "paul"],
+    "james": ["peter", "john"],
+    "silas": ["paul", "barnabas"],
+    "timothy": ["paul", "silas"],
+    "aquila": ["paul", "barnabas"],
+    "priscilla": ["ruth", "esther", "deborah"],
+}
+
+CHARACTER_VISUAL_OVERRIDES.update(NT_CHARACTER_VISUAL_OVERRIDES)
+CHARACTER_MOOD_OVERRIDES.update(NT_CHARACTER_MOOD_OVERRIDES)
+CODE_PALETTE_OVERRIDES.update(NT_CODE_PALETTE_OVERRIDES)
+CODE_SIGNATURE_HINTS.update(NT_CODE_SIGNATURE_HINTS)
+
+CHARACTER_VISUAL_OVERRIDES["matthias"] = [
+    "Matthias the apostle chosen after Judas build with humble adult witness posture",
+    "warm Judean face with steady sincere eyes, short dark beard, and calm prayerful brow",
+    "short dark hair under a simple travel headcloth, not a fisherman and not Paul",
+    "warm cream apostle robe with muted olive cloak, small pouch of blank lot stones and a blank witness scroll held close",
+]
+CHARACTER_MOOD_OVERRIDES["matthias"] = [
+    "strict front-facing newly chosen apostle posture, lot-stone pouch and blank scroll visible, humble steady witness expression",
+]
+CODE_PALETTE_OVERRIDES["matthias"] = (
+    "warm cream + muted olive cloak + parchment scroll + small stone accents, low saturation"
+)
+CODE_SIGNATURE_HINTS["matthias"] = [
+    "Matthias the apostle chosen by lot to replace Judas, exactly one man only",
+    "strict front-facing full-body avatar, face and torso square to the viewer, both eyes visible",
+    "warm cream robe with muted olive cloak, small pouch of blank lot stones and a blank witness scroll as the main identity signs",
+    "humble sincere witness expression, not Paul, not Barnabas, not Judas, no fisherman net and no weapon",
+]
+NT_STYLE_REFERENCE_CODES["matthias"] = ["peter", "john", "james"]
 
 STORY_ROLE_RULES = [
     {
@@ -2780,6 +4311,14 @@ def stable_pick(code: str, salt: str, options: list[str]) -> str:
     return options[score % len(options)]
 
 
+def normalize_palette_text(palette_text: str) -> str:
+    text = " ".join(str(palette_text).split())
+    return text.replace(
+        "low saturation",
+        "medium saturation with rich deep color blocks and clear contrast",
+    )
+
+
 def build_story_text(rows: list[dict[str, Any]]) -> str:
     parts: list[str] = []
     for row in rows:
@@ -2980,6 +4519,13 @@ def build_person_meta(
         raw_persons = [
             str(code).strip() for code in row.get("characters", []) if str(code).strip()
         ]
+        for scene_characters in row.get("scene_characters", []) or []:
+            if not isinstance(scene_characters, list):
+                continue
+            raw_persons.extend(
+                str(code).strip() for code in scene_characters if str(code).strip()
+            )
+        raw_persons = dedupe_preserve_order(raw_persons)
         characters = expand_person_codes(number, raw_persons)
         for code in characters:
             if not is_individual_code(code):
@@ -3006,6 +4552,8 @@ def build_person_meta(
         template = template_map.get(code, {})
         curated = CURATED_AVATAR_ROSTER.get(code, {})
         template_prompt_source = str(template.get("prompt_source", "")).strip().lower()
+        if code in FORCE_AUTO_PROMPT_CODES:
+            template_prompt_source = ""
 
         voted_style = default_style
         if era_votes.get(code):
@@ -3048,6 +4596,7 @@ def build_person_meta(
             code,
             str(palettes.get(era_style, palettes[default_style])),
         )
+        palette_text = normalize_palette_text(palette_text)
         prompt = ""
         if template_prompt_source == "manual":
             prompt = str(template.get("prompt", "")).strip()
@@ -3116,8 +4665,54 @@ def build_person_meta(
             character["negative_prompt_extra"] = GABRIEL_NEGATIVE_PROMPT_EXTRA
         if code == "haman":
             character["negative_prompt_extra"] = HAMAN_NEGATIVE_PROMPT_EXTRA
+        if code == "adam":
+            character["negative_prompt_extra"] = ADAM_NEGATIVE_PROMPT_EXTRA
+        if code == "eve":
+            character["negative_prompt_extra"] = EVE_NEGATIVE_PROMPT_EXTRA
+        if code == "abraham":
+            character["negative_prompt_extra"] = ABRAHAM_NEGATIVE_PROMPT_EXTRA
+        if code == "aaron":
+            character["negative_prompt_extra"] = AARON_NEGATIVE_PROMPT_EXTRA
+        if code == "moses":
+            character["negative_prompt_extra"] = MOSES_NEGATIVE_PROMPT_EXTRA
+        if code == "joseph":
+            character["negative_prompt_extra"] = JOSEPH_NEGATIVE_PROMPT_EXTRA
+        if code == "david":
+            character["negative_prompt_extra"] = DAVID_NEGATIVE_PROMPT_EXTRA
+        if code == "elijah":
+            character["negative_prompt_extra"] = ELIJAH_NEGATIVE_PROMPT_EXTRA
+        if code == "korah":
+            character["negative_prompt_extra"] = KORAH_NEGATIVE_PROMPT_EXTRA
+        if code == "phinehas":
+            character["negative_prompt_extra"] = PHINEHAS_NEGATIVE_PROMPT_EXTRA
+        if code == "matthias":
+            character["negative_prompt_extra"] = MATTHIAS_NEGATIVE_PROMPT_EXTRA
+        if code == "asher":
+            character["negative_prompt_extra"] = ASHER_NEGATIVE_PROMPT_EXTRA
+        if code == "ahijah":
+            character["negative_prompt_extra"] = AHIJAH_NEGATIVE_PROMPT_EXTRA
+        if code in {"levi", "issachar"}:
+            character["negative_prompt_extra"] = LEVI_ISSACHAR_NEGATIVE_PROMPT_EXTRA
+        if code == "zebulun":
+            character["negative_prompt_extra"] = ZEBULUN_NEGATIVE_PROMPT_EXTRA
+        if code == "noah":
+            character["negative_prompt_extra"] = NOAH_NEGATIVE_PROMPT_EXTRA
+        if code == "nehemiah":
+            character["negative_prompt_extra"] = NEHEMIAH_NEGATIVE_PROMPT_EXTRA
+        if code == "sarah":
+            character["negative_prompt_extra"] = SARAH_NEGATIVE_PROMPT_EXTRA
+        if code == "rachel":
+            character["negative_prompt_extra"] = RACHEL_NEGATIVE_PROMPT_EXTRA
+        if code == "samuel":
+            character["negative_prompt_extra"] = SAMUEL_NEGATIVE_PROMPT_EXTRA
+        if code == "saul":
+            character["negative_prompt_extra"] = SAUL_NEGATIVE_PROMPT_EXTRA
         if code == "daniel":
             character["negative_prompt_extra"] = DANIEL_NEGATIVE_PROMPT_EXTRA
+        if code == "judah":
+            character["negative_prompt_extra"] = JUDAH_NEGATIVE_PROMPT_EXTRA
+        if code == "laban":
+            character["negative_prompt_extra"] = LABAN_NEGATIVE_PROMPT_EXTRA
         if code == "caleb":
             character["negative_prompt_extra"] = CALEB_NEGATIVE_PROMPT_EXTRA
             character["style_reference_codes"] = ["moses", "joshua"]
@@ -3153,6 +4748,9 @@ def build_person_meta(
         if code == "jeremiah":
             character["negative_prompt_extra"] = JEREMIAH_NEGATIVE_PROMPT_EXTRA
             character["style_reference_codes"] = ["isaiah", "ezekiel", "ezra"]
+        if code == "ezekiel":
+            character["negative_prompt_extra"] = EZEKIEL_NEGATIVE_PROMPT_EXTRA
+            character["style_reference_codes"] = ["isaiah", "jeremiah", "ezra"]
         if code == "jehoiakim":
             character["negative_prompt_extra"] = JEHOIAKIM_NEGATIVE_PROMPT_EXTRA
             character["style_reference_codes"] = ["josiah", "ahaz", "zedekiah"]
@@ -3171,6 +4769,8 @@ def build_person_meta(
                 character,
                 str(DIVIDED_KINGDOM_KING_ROSTER[code].get("negative", "")),
             )
+        if code == "ahab":
+            append_negative_prompt_extra(character, AHAB_NEGATIVE_PROMPT_EXTRA)
         if code == "isaiah":
             character["negative_prompt_extra"] = ISAIAH_NEGATIVE_PROMPT_EXTRA
         if code == "potiphar":
@@ -3191,6 +4791,10 @@ def build_person_meta(
             character["negative_prompt_extra"] = HAGAR_NEGATIVE_PROMPT_EXTRA
         if code in FEMALE_FORCE_CODES:
             character["negative_prompt_extra"] = FEMALE_FORCE_NEGATIVE_PROMPT_EXTRA
+        if code == "hannah":
+            append_negative_prompt_extra(character, HANNAH_NEGATIVE_PROMPT_EXTRA)
+        if code == "rahab":
+            append_negative_prompt_extra(character, RAHAB_NEGATIVE_PROMPT_EXTRA)
         if code in SOLO_FORCED_CODES:
             append_negative_prompt_extra(character, SOLO_NEGATIVE_PROMPT_EXTRA)
         if code in CURATED_AVATAR_ROSTER:
@@ -3209,6 +4813,14 @@ def build_person_meta(
                 character,
                 JUDGE_SPECIFIC_NEGATIVE_PROMPTS.get(code, ""),
             )
+        if code in NT_STYLE_REFERENCE_CODES:
+            style_reference_codes = [
+                reference_code
+                for reference_code in NT_STYLE_REFERENCE_CODES[code]
+                if reference_code != code
+            ]
+            if style_reference_codes:
+                character["style_reference_codes"] = style_reference_codes
         characters.append(character)
 
     forced_active_note = ", ".join(

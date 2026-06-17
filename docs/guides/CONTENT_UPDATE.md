@@ -19,7 +19,7 @@
 |----------|-----|--------|----------------------|
 | **이야기/인물 메타** (제목, 요약, 좌표, 성경 본문, is_active) | `apply-seeds-stories-characters` 또는 어드민 직접 INSERT | — | **즉시** (status=published 시) |
 | **인물 아바타 이미지** | persons.avatar_url 갱신 | `assets/avatars_thumbs/{code}.png` 추가 | **앱 재빌드 + Store 재심사 필요** |
-| **이야기 4장면 이미지** | (로컬 번들에 포함) | `assets/story_images_thumbs/{title}/scene_*.png` 추가 | **앱 재빌드 + Store 재심사 필요** |
+| **이야기 4장면 이미지** | (로컬 번들에 포함) | `assets/story_images/{title}/scene_*.png` 추가 후 `make thumbnails`로 `assets/story_images_thumbs/{short_dir}/scene_*.jpg` + `index.json` 생성 | **앱 재빌드 + Store 재심사 필요** |
 
 핵심 한계: 이미지가 앱 번들에 포함되는 구조([ADR-006](../ADR.md))이라, 새 이미지가 사용자에게 보이려면 **앱 빌드 + 스토어 배포가 반드시 필요**하다. 이미지를 Supabase Storage로 옮기면 즉시 반영 가능하지만 현재는 그렇게 운영하지 않는다.
 

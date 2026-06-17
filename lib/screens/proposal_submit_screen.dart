@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../data/character_name_fallbacks.dart';
 import '../models/era.dart';
 import '../models/event_proposal.dart';
 import '../models/landmark.dart';

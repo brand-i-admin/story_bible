@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 23,
+  "story_title": "교회 리더십과 거짓 가르침 경계",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "감독에게 요구되는 기본 성품은 무엇입니까?",
+      "choices": [
+        "책망할 것이 없는 삶",
+        "다투기를 좋아하는 성격",
+        "술에 빠진 습관"
+      ],
+      "answer_index": 0,
+      "explanation": "딤전 3:2 — '감독은 책망할 것이 없으며'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울은 디모데에게 무엇에 이르도록 자신을 연단하라고 합니까?",
+      "choices": [
+        "경건",
+        "부자 되는 기술",
+        "논쟁에서 이기는 말"
+      ],
+      "answer_index": 0,
+      "explanation": "딤전 4:7 — '경건에 이르도록 네 자신을 연단하라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "젊은 디모데가 믿는 자에게 보여야 할 모습은 무엇입니까?",
+      "choices": [
+        "말과 행실과 사랑의 본",
+        "권위를 세우는 거친 말",
+        "나이를 숨기는 태도"
+      ],
+      "answer_index": 0,
+      "explanation": "딤전 4:12 — '말과 행실과 사랑과 믿음과 정절에 대하여 본이 되어'"
+    }
+  ]
+}

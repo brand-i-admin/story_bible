@@ -7,9 +7,10 @@ import '../models/story_event.dart';
 
 /// `assets/story_images_thumbs/` 하위의 4장면 이미지를 이벤트 단위로 조회한다.
 ///
-/// 이벤트 제목/코드를 기반으로 디렉토리를 찾고, 장면 파일(`scene_1.png` ~
-/// `scene_4.png`)을 번호순으로 정렬해 반환. 매니페스트와 개별 결과를 모두
-/// 인메모리에 캐싱해서 반복 호출을 빠르게 처리한다.
+/// 기본은 `index.json`의 제목 → 짧은 asset 디렉토리 매핑을 사용한다. 오래된
+/// 개발 빌드와 로컬 제안 자산을 위해 제목 기반 디렉토리 fallback도 유지한다.
+/// 장면 파일(`scene_1.png` ~ `scene_4.png`)은 번호순으로 정렬해 반환한다.
+/// 매니페스트와 개별 결과를 모두 인메모리에 캐싱해서 반복 호출을 빠르게 처리한다.
 class SceneAssetLoader {
   SceneAssetLoader();
 
@@ -25,6 +26,8 @@ class SceneAssetLoader {
   );
 
   List<String>? _assetManifestCache;
+  Map<String, String>? _sceneDirIndexByTitleCache;
+  Map<String, String>? _sceneDirIndexBySourceCache;
   final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
 
   Future<List<String>> loadAssetManifest() async {
@@ -61,6 +64,39 @@ class SceneAssetLoader {
     }
     // 실패 시: 캐시 없이 빈 배열 반환. 다음 호출 때 다시 시도.
     return const <String>[];
+  }
+
+  Future<void> _loadSceneDirIndex() async {
+    if (_sceneDirIndexByTitleCache != null &&
+        _sceneDirIndexBySourceCache != null) {
+      return;
+    }
+
+    try {
+      final rawIndex = await rootBundle.loadString(
+        'assets/story_images_thumbs/index.json',
+      );
+      final decoded = json.decode(rawIndex);
+      if (decoded is Map<String, dynamic>) {
+        _sceneDirIndexByTitleCache = _stringMapFromJson(decoded['by_title']);
+        _sceneDirIndexBySourceCache = _stringMapFromJson(
+          decoded['by_source_dir'],
+        );
+        return;
+      }
+    } catch (_) {
+      // Older builds may not have the index; title-based fallback below handles it.
+    }
+
+    _sceneDirIndexByTitleCache = const <String, String>{};
+    _sceneDirIndexBySourceCache = const <String, String>{};
+  }
+
+  Map<String, String> _stringMapFromJson(Object? value) {
+    if (value is! Map) {
+      return const <String, String>{};
+    }
+    return value.map((key, item) => MapEntry('$key', '$item'));
   }
 
   @visibleForTesting
@@ -128,11 +164,12 @@ class SceneAssetLoader {
 
   Future<List<String>> loadForTitle({required String title}) async {
     final dirName = sceneDirectoryNameForTitle(title);
-    final cached = _sceneAssetsCache[dirName];
+    final cached = _sceneAssetsCache[title];
     if (cached != null) {
       return cached;
     }
 
+    await _loadSceneDirIndex();
     final manifest = await loadAssetManifest();
     const sceneRoot = 'assets/story_images_thumbs/';
     final allScenePaths = manifest
@@ -153,7 +190,10 @@ class SceneAssetLoader {
       knownDirs.add(relative.substring(0, slashIndex));
     }
 
-    var chosenDir = dirName;
+    var chosenDir =
+        _sceneDirIndexByTitleCache?[title] ??
+        _sceneDirIndexBySourceCache?[dirName] ??
+        dirName;
     final directPrefix = '$sceneRoot$chosenDir/';
     final hasDirect = allScenePaths.any(
       (path) => path.startsWith(directPrefix),
@@ -230,7 +270,7 @@ class SceneAssetLoader {
             return aIndex.compareTo(bIndex);
           });
 
-    _sceneAssetsCache[dirName] = sceneAssets;
+    _sceneAssetsCache[title] = sceneAssets;
     return sceneAssets;
   }
 }

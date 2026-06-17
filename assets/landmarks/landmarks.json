@@ -462,7 +462,8 @@
         "era_exile_return",
         "era_nt_public_ministry",
         "era_nt_apostolic",
-        "era_nt_post_apostolic"
+        "era_nt_post_apostolic",
+        "era_nt_consummation"
       ],
       "polygon": [
         [
@@ -1709,7 +1710,8 @@
       "name": "앗수르",
       "description": "티그리스 상류 지역. 니느웨를 수도로 한 신앗수르 제국 본토. 요나·이사야 시대 침공자.",
       "era_codes": [
-        "era_monarchy"
+        "era_monarchy",
+        "era_divided_kingdom"
       ],
       "polygon": [
         [
@@ -1768,7 +1770,8 @@
       "era_codes": [
         "era_monarchy",
         "era_nt_public_ministry",
-        "era_nt_apostolic"
+        "era_nt_apostolic",
+        "era_divided_kingdom"
       ],
       "polygon": [
         [
@@ -1776,36 +1779,20 @@
           34.7
         ],
         [
-          31.95,
-          34.78
-        ],
-        [
-          32.05,
-          34.82
-        ],
-        [
-          32.15,
-          34.85
+          32.08,
+          34.7
         ],
         [
           32.25,
-          34.85
-        ],
-        [
-          32.35,
-          34.83
+          34.73
         ],
         [
           32.45,
-          34.84
-        ],
-        [
-          32.55,
-          34.87
+          34.78
         ],
         [
           32.65,
-          34.92
+          34.88
         ],
         [
           32.65,
@@ -3138,7 +3125,8 @@
       "description": "아나톨리아 서부 + 남쪽 해안 루기아 일부 (현 터키 서부). 에베소·드로아·밀레도·골로새·라오디게아·서머나·버가모·두아디라·사데·빌라델비아·무라·바다라. 바울 2·3차 전도여행 + 계시록 일곱 교회.",
       "era_codes": [
         "era_nt_apostolic",
-        "era_nt_post_apostolic"
+        "era_nt_post_apostolic",
+        "era_nt_consummation"
       ],
       "polygon": [
         [
@@ -3735,7 +3723,9 @@
       "name": "아가야 (헬라)",
       "description": "그리스 본토 남부 + 펠로폰네소스. 아덴·고린도·겐그레아. 바울 2·3차 전도여행.",
       "era_codes": [
-        "era_nt_apostolic"
+        "era_nt_apostolic",
+        "era_nt_post_apostolic",
+        "era_nt_consummation"
       ],
       "polygon": [
         [
@@ -4372,7 +4362,8 @@
       "name": "갈라디아",
       "description": "아나톨리아 중남부 (현 터키 중부). 비시디아안디옥·이고니온·루스드라·더베. 바울 1·2·3차 전도여행 통과.",
       "era_codes": [
-        "era_nt_apostolic"
+        "era_nt_apostolic",
+        "era_nt_post_apostolic"
       ],
       "polygon": [
         [
@@ -5363,7 +5354,9 @@
       "name": "마게도냐",
       "description": "그리스 북부 + 발칸 서북(일루리곤 흡수). 빌립보·데살로니가·베뢰아·암비볼리. 바울 2·3차 전도여행.",
       "era_codes": [
-        "era_nt_apostolic"
+        "era_nt_apostolic",
+        "era_nt_post_apostolic",
+        "era_nt_consummation"
       ],
       "polygon": [
         [
@@ -6236,7 +6229,8 @@
       "name": "밧모",
       "description": "에게해 동부 작은 섬. 사도 요한 유배지·요한계시록 환상의 무대.",
       "era_codes": [
-        "era_nt_post_apostolic"
+        "era_nt_post_apostolic",
+        "era_nt_consummation"
       ],
       "polygon": [
         [
@@ -6342,74 +6336,60 @@
   ],
   "landmarks": [
     {
-      "code": "lm_prim_mt_ararat",
-      "name": "아라랏 산",
-      "kind": "mountain",
-      "emoji": "🏔️",
-      "lat": 39.7,
-      "lng": 44.28,
-      "parent_region_code": "rgn_ararat",
-      "era_codes": [
-        "era_primeval"
-      ],
-      "display_priority": 80,
-      "description": "노아의 방주가 머문 곳 (창 8:4)."
-    },
-    {
-      "code": "lm_prim_babel",
-      "name": "시날 평지(바벨론, 전승)",
-      "kind": "holy_site",
-      "emoji": "🏗️",
-      "lat": 32.54,
-      "lng": 44.42,
-      "parent_region_code": "rgn_mesopotamia",
-      "era_codes": [
-        "era_primeval"
-      ],
-      "display_priority": 50,
-      "description": "노아 후손이 바벨탑을 쌓다 언어가 흩어진 시날 평지 (창 11장)."
-    },
-    {
-      "code": "lm_prim_eden",
-      "name": "에덴 지역(추정)",
-      "kind": "holy_site",
-      "emoji": "🌳",
-      "lat": 33.0,
-      "lng": 44.5,
-      "parent_region_code": "rgn_mesopotamia",
-      "era_codes": [
-        "era_primeval"
-      ],
-      "display_priority": 50,
-      "description": "인류 최초 거주지 (창 2-3장). 티그리스·유프라테스 강 사이로 추정."
-    },
-    {
-      "code": "lm_prim_eden_east",
-      "name": "에덴 동쪽(추정)",
-      "kind": "holy_site",
-      "emoji": "🌳",
-      "lat": 33.0,
-      "lng": 44.5,
-      "parent_region_code": "rgn_mesopotamia",
-      "era_codes": [
-        "era_primeval"
-      ],
-      "display_priority": 50,
-      "description": "에덴 추방 후 가인이 이주한 놋 땅 (창 4:16)."
-    },
-    {
-      "code": "lm_prim_unknown",
-      "name": "메소포타미아(추정)",
+      "code": "lm_nt_post_corinth",
+      "name": "고린도 교회",
       "kind": "city",
-      "emoji": "❓",
-      "lat": 33.0,
-      "lng": 44.5,
-      "parent_region_code": "rgn_mesopotamia",
+      "emoji": "✉️",
+      "lat": 37.939,
+      "lng": 22.918,
+      "parent_region_code": "rgn_achaia",
       "era_codes": [
-        "era_primeval"
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 45,
+      "description": "고린도전후서와 로마서 집필 추정 배경."
+    },
+    {
+      "code": "lm_nt_ap_athens",
+      "name": "아덴(아레오바고)",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 37.975,
+      "lng": 23.735,
+      "parent_region_code": "rgn_achaia",
+      "era_codes": [
+        "era_nt_apostolic"
       ],
       "display_priority": 50,
-      "description": "원역사 사건의 추정 위치. 메소포타미아 일대."
+      "description": "바울이 아레오바고에서 알지 못하는 신을 전한 곳 (행 17장)."
+    },
+    {
+      "code": "lm_nt_ap_corinth",
+      "name": "고린도",
+      "kind": "city",
+      "emoji": "📨",
+      "lat": 37.939,
+      "lng": 22.918,
+      "parent_region_code": "rgn_achaia",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "바울이 1년 6개월 머문 도시 (행 18장). 고린도전·후서의 수신지."
+    },
+    {
+      "code": "lm_nt_ap_damascus",
+      "name": "다메섹",
+      "kind": "city",
+      "emoji": "💡",
+      "lat": 33.5138,
+      "lng": 36.2765,
+      "parent_region_code": "rgn_aram_damascus",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "사울이 부활한 예수를 만나 회심한 길 (행 9장)."
     },
     {
       "code": "lm_pat_haran",
@@ -6426,270 +6406,732 @@
       "description": "아브라함이 우르를 떠나 머문 도시 (창 11:31). 야곱이 라반에게 도피한 곳."
     },
     {
-      "code": "lm_pat_giza_pyramid",
-      "name": "기자 피라미드",
-      "kind": "city",
-      "emoji": "🔺",
-      "lat": 29.98,
-      "lng": 31.13,
-      "parent_region_code": "rgn_egypt",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 70,
-      "description": "이집트 고대 피라미드. 야곱·요셉 시대에도 이미 천 년 된 거대 무덤."
-    },
-    {
-      "code": "lm_pat_egypt_court",
-      "name": "애굽(요셉의 집, 전승)",
-      "kind": "palace",
-      "emoji": "👑",
-      "lat": 30.05,
-      "lng": 31.25,
-      "parent_region_code": "rgn_egypt",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "요셉이 총리로 일한 바로의 궁정 (창 41장)."
-    },
-    {
-      "code": "lm_pat_goshen",
-      "name": "고센 땅(나일 델타, 전승)",
-      "kind": "city",
-      "emoji": "🌾",
-      "lat": 30.78,
-      "lng": 31.36,
-      "parent_region_code": "rgn_egypt",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "요셉이 가족을 정착시킨 나일 델타 비옥지 (창 47장)."
-    },
-    {
-      "code": "lm_pat_unknown",
-      "name": "애굽(전승)",
-      "kind": "city",
-      "emoji": "❓",
-      "lat": 30.0,
-      "lng": 31.5,
-      "parent_region_code": "rgn_egypt",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "족장 시대 미지정 사건 추정. 애굽 일대."
-    },
-    {
-      "code": "lm_pat_gilead",
-      "name": "길르앗(전승)",
-      "kind": "wilderness",
-      "emoji": "🌳",
-      "lat": 32.2,
-      "lng": 35.85,
-      "parent_region_code": "rgn_gilead",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "야곱이 라반에게서 도망친 후 화해한 곳 (창 31장). 향유로 유명."
-    },
-    {
-      "code": "lm_pat_jabbok",
-      "name": "얍복 강가(전승)",
-      "kind": "river",
-      "emoji": "💧",
-      "lat": 32.15,
-      "lng": 35.62,
-      "parent_region_code": "rgn_gilead",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "야곱이 천사와 씨름하고 이스라엘로 개명된 강가 (창 32장)."
-    },
-    {
-      "code": "lm_pat_bethlehem",
-      "name": "베들레헴 길(전승)",
-      "kind": "city",
-      "emoji": "⭐",
-      "lat": 31.7054,
-      "lng": 35.2024,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "라헬이 베냐민을 낳고 죽어 묻힌 길가 (창 35:19). 후일 다윗·예수 탄생지."
-    },
-    {
-      "code": "lm_pat_hebron",
-      "name": "마므레(헤브론, 전승)",
-      "kind": "city",
-      "emoji": "🌲",
-      "lat": 31.5326,
-      "lng": 35.0998,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "아브라함의 마므레 상수리 거주지. 사라의 매장지 (창 23장)."
-    },
-    {
-      "code": "lm_pat_jordan_river",
-      "name": "요단 들(전승)",
-      "kind": "river",
-      "emoji": "💦",
-      "lat": 31.85,
-      "lng": 35.5,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "롯과 아브라함이 갈라설 때 롯이 택한 비옥한 들 (창 13장)."
-    },
-    {
-      "code": "lm_pat_machpelah",
-      "name": "헤브론(막벨라, 전승)",
-      "kind": "city",
-      "emoji": "⚰️",
-      "lat": 31.5246,
-      "lng": 35.111,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "아브라함이 산 가족 무덤 굴 (창 23장). 사라·아브라함·이삭·리브가·야곱·레아 매장."
-    },
-    {
-      "code": "lm_pat_mamre",
-      "name": "가나안(전승)",
-      "kind": "holy_site",
-      "emoji": "🌳",
-      "lat": 31.55,
-      "lng": 35.1,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "아브라함이 머문 가나안 땅. 세 천사 방문 (창 18장)."
-    },
-    {
-      "code": "lm_pat_moriah",
-      "name": "모리아(예루살렘, 전승)",
+      "code": "lm_prim_mt_ararat",
+      "name": "아라랏 산",
       "kind": "mountain",
       "emoji": "🏔️",
-      "lat": 31.78,
-      "lng": 35.24,
-      "parent_region_code": "rgn_judea",
+      "lat": 39.7,
+      "lng": 44.28,
+      "parent_region_code": "rgn_ararat",
       "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "이삭을 번제로 바치라 명령받은 산 (창 22장). 후일 솔로몬 성전 자리."
-    },
-    {
-      "code": "lm_pat_sodom",
-      "name": "소돔 일대(사해 남부, 전승)",
-      "kind": "city",
-      "emoji": "💥",
-      "lat": 31.0667,
-      "lng": 35.45,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_patriarch"
-      ],
-      "display_priority": 50,
-      "description": "롯이 거주, 의인 부족으로 멸망한 도시 (창 19장). 사해 남부 추정."
-    },
-    {
-      "code": "lm_pat_ur",
-      "name": "우르",
-      "kind": "city",
-      "emoji": "🏺",
-      "lat": 30.96,
-      "lng": 46.1,
-      "parent_region_code": "rgn_mesopotamia",
-      "era_codes": [
-        "era_patriarch"
+        "era_primeval"
       ],
       "display_priority": 80,
-      "description": "아브라함의 고향. 갈대아 우르 (창 11:31)."
+      "description": "노아의 방주가 머문 곳 (창 8:4)."
     },
     {
-      "code": "lm_pat_beersheba",
-      "name": "브엘세바 주변(전승)",
+      "code": "lm_nt_post_diaspora",
+      "name": "디아스포라 교회들(추정)",
       "kind": "city",
-      "emoji": "💧",
-      "lat": 31.15,
-      "lng": 34.79,
-      "parent_region_code": "rgn_negev",
+      "emoji": "🧭",
+      "lat": 38.0,
+      "lng": 30.0,
+      "parent_region_code": "rgn_asia_province",
       "era_codes": [
-        "era_patriarch"
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 42,
+      "description": "야고보서와 히브리서처럼 흩어진 성도들을 향한 권면을 대표하는 추정 지점."
+    },
+    {
+      "code": "lm_nt_post_asia_minor_network",
+      "name": "소아시아 교회 네트워크",
+      "kind": "city",
+      "emoji": "⛪",
+      "lat": 38.5,
+      "lng": 30.0,
+      "parent_region_code": "rgn_asia_province",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 43,
+      "description": "베드로서와 요한서가 전해진 소아시아 교회 네트워크를 대표하는 지점."
+    },
+    {
+      "code": "lm_nt_post_colossae",
+      "name": "골로새 교회",
+      "kind": "city",
+      "emoji": "✉️",
+      "lat": 37.787,
+      "lng": 29.26,
+      "parent_region_code": "rgn_asia_province",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 44,
+      "description": "골로새서 수신 교회."
+    },
+    {
+      "code": "lm_nt_ap_ephesus",
+      "name": "에베소",
+      "kind": "city",
+      "emoji": "⛪",
+      "lat": 37.949,
+      "lng": 27.366,
+      "parent_region_code": "rgn_asia_province",
+      "era_codes": [
+        "era_nt_apostolic"
       ],
       "display_priority": 50,
-      "description": "아브라함·이삭이 머문 우물 도시 (창 21:31, 26:33). 가나안 남쪽 경계."
+      "description": "바울 3차 선교 거점 (행 19장). 두란노·아데미 소동."
     },
     {
-      "code": "lm_pat_gerar",
-      "name": "그랄(전승)",
+      "code": "lm_nt_ap_miletus",
+      "name": "밀레도",
       "kind": "city",
-      "emoji": "🚰",
-      "lat": 31.18,
-      "lng": 34.55,
-      "parent_region_code": "rgn_negev",
+      "emoji": "🚢",
+      "lat": 37.53,
+      "lng": 27.278,
+      "parent_region_code": "rgn_asia_province",
       "era_codes": [
-        "era_patriarch"
+        "era_nt_apostolic"
       ],
       "display_priority": 50,
-      "description": "아브라함·이삭이 기근 때 거주한 블레셋 땅 (창 20, 26장)."
+      "description": "바울이 에베소 장로들과 작별한 항구 (행 20장)."
     },
     {
-      "code": "lm_pat_bethel",
-      "name": "벧엘(전승)",
-      "kind": "holy_site",
-      "emoji": "🪜",
-      "lat": 31.96,
-      "lng": 35.22,
-      "parent_region_code": "rgn_samaria",
+      "code": "lm_nt_ap_troas",
+      "name": "드로아",
+      "kind": "city",
+      "emoji": "🚢",
+      "lat": 39.76,
+      "lng": 26.16,
+      "parent_region_code": "rgn_asia_province",
       "era_codes": [
-        "era_patriarch"
+        "era_nt_apostolic"
       ],
       "display_priority": 50,
-      "description": "야곱이 사다리 환상을 본 곳 (창 28장). 후일 북왕국 신앙 중심."
+      "description": "바울이 마게도냐 환상을 본 항구 (행 16장). 유럽 선교 시작."
     },
     {
-      "code": "lm_pat_dothan",
-      "name": "도단(전승)",
+      "code": "lm_nt_post_ephesus",
+      "name": "소아시아(일곱 교회 중심: 에베소)",
       "kind": "city",
-      "emoji": "🛒",
-      "lat": 32.41,
-      "lng": 35.24,
-      "parent_region_code": "rgn_samaria",
+      "emoji": "⛪",
+      "lat": 37.949,
+      "lng": 27.366,
+      "parent_region_code": "rgn_asia_province",
       "era_codes": [
-        "era_patriarch"
+        "era_nt_post_apostolic"
       ],
       "display_priority": 50,
-      "description": "요셉이 형들에게 팔린 들판 (창 37장). 후일 엘리사가 시리아군 본 곳 (왕하 6장)."
+      "description": "요한복음·서신 저작 추정지. 일곱 교회 중심."
     },
     {
-      "code": "lm_exo_giza_pyramid",
-      "name": "기자 피라미드",
+      "code": "lm_nt_post_laodicea",
+      "name": "라오디게아",
       "kind": "city",
-      "emoji": "🔺",
-      "lat": 29.98,
-      "lng": 31.13,
-      "parent_region_code": "rgn_egypt",
+      "emoji": "✉️",
+      "lat": 37.836,
+      "lng": 29.108,
+      "parent_region_code": "rgn_asia_province",
       "era_codes": [
-        "era_exodus"
+        "era_nt_post_apostolic"
       ],
       "display_priority": 70,
-      "description": "이집트 고대 피라미드. 출애굽 시대 이미 천 년 이상 된 거대 무덤."
+      "description": "계시록 일곱 교회의 마지막 — '차지도 더웁지도 않다' (계 3:14-22)."
+    },
+    {
+      "code": "lm_nt_post_pergamum",
+      "name": "버가모",
+      "kind": "city",
+      "emoji": "✉️",
+      "lat": 39.1326,
+      "lng": 27.1846,
+      "parent_region_code": "rgn_asia_province",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 70,
+      "description": "계시록 일곱 교회 — '사단의 위가 있는 곳' (계 2:12-17)."
+    },
+    {
+      "code": "lm_nt_post_smyrna",
+      "name": "서머나",
+      "kind": "city",
+      "emoji": "✉️",
+      "lat": 38.4189,
+      "lng": 27.1287,
+      "parent_region_code": "rgn_asia_province",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 70,
+      "description": "계시록 일곱 교회 — 환난 중에도 칭찬받은 교회 (계 2:8-11)."
+    },
+    {
+      "code": "lm_mon_nineveh",
+      "name": "니느웨",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 36.359,
+      "lng": 43.158,
+      "parent_region_code": "rgn_assyria",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 90,
+      "description": "앗수르 제국 수도. 요나의 회개 사역, 후에 멸망 (욘서, 나훔)."
+    },
+    {
+      "code": "lm_nt_ap_caesarea_maritima",
+      "name": "가이사랴",
+      "kind": "city",
+      "emoji": "⛓️",
+      "lat": 32.498,
+      "lng": 34.893,
+      "parent_region_code": "rgn_coastal_plain",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "베드로가 고넬료를 전도한 항구 (행 10장). 바울의 재판 (행 23-26장)."
+    },
+    {
+      "code": "lm_div_joppa_jonah",
+      "name": "욥바 항구(요나 전승)",
+      "kind": "city",
+      "emoji": "⚓",
+      "lat": 32.055,
+      "lng": 34.752,
+      "parent_region_code": "rgn_coastal_plain",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 77,
+      "description": "요나가 여호와의 명령을 피해 다시스로 가는 배를 타려 했던 해안 항구 전승 위치."
+    },
+    {
+      "code": "lm_nt_ap_crete",
+      "name": "지중해 항로(그레데 근처, 전승)",
+      "kind": "sea",
+      "emoji": "🏝️",
+      "lat": 35.24,
+      "lng": 24.81,
+      "parent_region_code": "rgn_crete",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "바울 로마 압송 도중 풍랑 만난 섬 (행 27장)."
+    },
+    {
+      "code": "lm_nt_ap_cyprus_salamis_paphos",
+      "name": "구브로(살라미 → 바보)",
+      "kind": "island",
+      "emoji": "🏝️",
+      "lat": 35.05,
+      "lng": 33.45,
+      "parent_region_code": "rgn_cyprus",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "바울 1차 선교 첫 기착지 (행 13장)."
+    },
+    {
+      "code": "lm_div_gilgal",
+      "name": "길갈/엘리사 사역(전승)",
+      "kind": "holy_site",
+      "emoji": "🪨",
+      "lat": 31.85,
+      "lng": 35.5,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 62,
+      "description": "엘리사의 기름, 생명, 양식 기적들이 묶이는 길갈 일대 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_late_kings",
+      "name": "사마리아 말기 왕궁(전승)",
+      "kind": "palace",
+      "emoji": "⚔️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 63,
+      "description": "스가랴, 살룸, 므나헴, 브가히야, 베가, 호세아로 이어지는 북이스라엘 말기 반역과 앗수르 압박의 사마리아 전승 위치."
+    },
+    {
+      "code": "lm_div_jericho",
+      "name": "여리고/벧엘 길(엘리사, 전승)",
+      "kind": "city",
+      "emoji": "💧",
+      "lat": 31.8744,
+      "lng": 35.4441,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 64,
+      "description": "엘리사가 물을 고치고 벧엘 길에서 조롱을 받은 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_jeroboam_ii",
+      "name": "사마리아/여로보암 2세(전승)",
+      "kind": "palace",
+      "emoji": "🗺️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 64,
+      "description": "여로보암 2세가 북이스라엘 왕위에 올라 국경을 회복하지만 여로보암의 죄에서 떠나지 못하는 사마리아 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_jehoahaz_jehoash",
+      "name": "사마리아/아벡(여호아하스와 요아스, 전승)",
+      "kind": "palace",
+      "emoji": "🏹",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 65,
+      "description": "여호아하스와 북이스라엘 요아스가 사마리아에서 다스리고, 엘리사의 마지막 화살 표징 뒤 아람에게 빼앗긴 성읍을 회복하는 전승 위치."
+    },
+    {
+      "code": "lm_div_jordan_river",
+      "name": "요단강 근처(엘리야와 엘리사, 전승)",
+      "kind": "river",
+      "emoji": "💦",
+      "lat": 32.311,
+      "lng": 35.5688,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 66,
+      "description": "엘리야 승천과 엘리사의 사역 전환을 떠올리게 하는 요단강 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria_baal_temple",
+      "name": "사마리아 바알 신전(전승)",
+      "kind": "holy_site",
+      "emoji": "🔥",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 66,
+      "description": "예후가 바알 숭배자들을 모으고 바알 신전을 무너뜨리지만 금송아지 죄에서 떠나지 못하는 사마리아 전승 위치."
+    },
+    {
+      "code": "lm_div_jezreel_jehu",
+      "name": "이스르엘/예후의 심판(전승)",
+      "kind": "battlefield",
+      "emoji": "🏹",
+      "lat": 32.56,
+      "lng": 35.32,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 67,
+      "description": "예후가 기름부음을 받은 뒤 요람과 아하시야, 이세벨에게 임한 아합 집의 심판이 이어지는 이스르엘 전승 위치."
+    },
+    {
+      "code": "lm_div_dothan",
+      "name": "도단(엘리사의 불 전차, 전승)",
+      "kind": "city",
+      "emoji": "🔥",
+      "lat": 32.41,
+      "lng": 35.24,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 68,
+      "description": "엘리사의 사환이 불 말과 불 전차를 보게 된 도단 전승 위치."
+    },
+    {
+      "code": "lm_div_ramoth_jezreel",
+      "name": "길르앗 라못 → 이스르엘(전승)",
+      "kind": "battlefield",
+      "emoji": "🩹",
+      "lat": 32.55,
+      "lng": 36.0,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 68,
+      "description": "유다 아하시야와 북이스라엘 요람이 길르앗 라못에서 아람과 싸우고, 요람이 이스르엘에서 상처를 치료하는 전승 위치."
+    },
+    {
+      "code": "lm_div_dan",
+      "name": "단(금송아지 제단, 전승)",
+      "kind": "city",
+      "emoji": "🛐",
+      "lat": 33.2487,
+      "lng": 35.6517,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 70,
+      "description": "여로보암이 북쪽 끝에 금송아지를 세운 곳으로 전해지는 단."
+    },
+    {
+      "code": "lm_div_samaria_ahaziah",
+      "name": "사마리아 다락/산 위(전승)",
+      "kind": "palace",
+      "emoji": "🛏️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 70,
+      "description": "북이스라엘 아하시야가 다락 난간에서 떨어진 뒤 바알세붑에게 묻고, 엘리야가 산 위에서 하나님의 말씀을 전하는 전승 위치."
+    },
+    {
+      "code": "lm_div_ramoth_gilead",
+      "name": "길르앗 라못/사마리아(전승)",
+      "kind": "battlefield",
+      "emoji": "🏹",
+      "lat": 32.55,
+      "lng": 36.0,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 71,
+      "description": "아합이 변장하고 여호사밧과 함께 아람과 싸우다 마지막을 맞는 길르앗 라못 전승 위치."
+    },
+    {
+      "code": "lm_div_mt_carmel",
+      "name": "갈멜 산",
+      "kind": "mountain",
+      "emoji": "🔥",
+      "lat": 32.7333,
+      "lng": 35.05,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 72,
+      "description": "엘리야가 바알 선지자들과 대결하고 하나님의 불의 응답을 본 산."
+    },
+    {
+      "code": "lm_div_samaria_gate",
+      "name": "사마리아 성문 광장(전승)",
+      "kind": "city",
+      "emoji": "📜",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 72,
+      "description": "미가야가 아합과 여호사밧 앞에서 거짓 예언에 맞서 하나님의 말씀을 전하는 전승 위치."
+    },
+    {
+      "code": "lm_div_shiloh",
+      "name": "실로(아히야의 경고, 전승)",
+      "kind": "holy_site",
+      "emoji": "📜",
+      "lat": 32.056,
+      "lng": 35.29,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 72,
+      "description": "여로보암의 집에 대한 아히야의 경고가 전해지는 실로 전승 위치."
+    },
+    {
+      "code": "lm_div_jezreel_vineyard",
+      "name": "이스르엘 포도원(전승)",
+      "kind": "valley",
+      "emoji": "🍇",
+      "lat": 32.56,
+      "lng": 35.32,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 73,
+      "description": "아합과 이세벨이 나봇의 포도원을 빼앗고 엘리야의 책망을 듣는 이스르엘 전승 위치."
+    },
+    {
+      "code": "lm_div_tirzah_samaria",
+      "name": "디르사 → 사마리아(전승)",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 74,
+      "description": "엘라, 시므리, 오므리를 거쳐 사마리아 왕조와 아합의 악이 깊어지는 북이스라엘 왕궁권 전승 위치."
+    },
+    {
+      "code": "lm_div_tirzah_gibbethon",
+      "name": "깁브돈/디르사(전승)",
+      "kind": "battlefield",
+      "emoji": "⚔️",
+      "lat": 32.29,
+      "lng": 35.29,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 75,
+      "description": "나답이 깁브돈을 둘러싼 때 바아사가 반역하고, 북이스라엘 왕권이 디르사로 이어지는 전승 위치."
+    },
+    {
+      "code": "lm_div_samaria",
+      "name": "사마리아 왕궁(북이스라엘, 전승)",
+      "kind": "palace",
+      "emoji": "🏛️",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 76,
+      "description": "북이스라엘의 수도권. 아합 시대와 호세아 시대의 몰락 이야기가 모인다."
+    },
+    {
+      "code": "lm_div_shechem",
+      "name": "세겜/왕국 분열(전승)",
+      "kind": "city",
+      "emoji": "👑",
+      "lat": 32.213,
+      "lng": 35.281,
+      "parent_region_code": "rgn_div_north_israel",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 78,
+      "description": "북쪽 지파들이 르호보암에게 멍에를 가볍게 해 달라고 요청하고, 왕국 분열이 드러난 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoiachin_exile",
+      "name": "예루살렘/여호야긴 포로(전승)",
+      "kind": "city",
+      "emoji": "🏺",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 67,
+      "description": "여호야긴과 에스겔을 포함한 백성이 바벨론으로 끌려가고 성전 금 기구가 빼앗긴 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoiakim_first_exile",
+      "name": "예루살렘/첫 바벨론 포로(여호야김, 전승)",
+      "kind": "city",
+      "emoji": "📦",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 68,
+      "description": "여호야김 시대 바벨론 압박과 성전 기물, 다니엘을 포함한 첫 포로가 이어지는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoahaz_judah",
+      "name": "예루살렘/립나 길(여호아하스, 전승)",
+      "kind": "palace",
+      "emoji": "🇪🇬",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 69,
+      "description": "여호아하스가 석 달 동안 다스린 뒤 바로 느고에게 붙잡혀 애굽으로 끌려간 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jehoram",
+      "name": "예루살렘/에돔과 립나(전승)",
+      "kind": "city",
+      "emoji": "⚔️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 69,
+      "description": "남유다 여호람의 악한 통치와 에돔·립나의 반역을 함께 묶어 보여 주는 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_amon",
+      "name": "예루살렘 왕궁(아몬, 전승)",
+      "kind": "palace",
+      "emoji": "⚔️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 70,
+      "description": "아몬이 짧게 악을 행하고 신하들의 반역으로 무너진 예루살렘 왕궁 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_manasseh",
+      "name": "예루살렘/바벨론 길(므낫세, 전승)",
+      "kind": "palace",
+      "emoji": "⛓️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 71,
+      "description": "므낫세가 우상으로 성전을 더럽히고 포로로 낮아진 뒤 회개하여 돌아온 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_ahaz_altars",
+      "name": "예루살렘 성전/다메섹 제단(아하스, 전승)",
+      "kind": "holy_site",
+      "emoji": "🛐",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 72,
+      "description": "아하스가 우상을 섬기고 다메섹 제단을 성전에 들인 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_jotham_gate",
+      "name": "예루살렘 성전 윗문(요담, 전승)",
+      "kind": "holy_site",
+      "emoji": "🚪",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 73,
+      "description": "요담이 성전 윗문을 건축하며 하나님 앞에서 바른 길을 걸은 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_uzziah",
+      "name": "예루살렘/웃시야의 성전 문(전승)",
+      "kind": "holy_site",
+      "emoji": "🏛️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 74,
+      "description": "웃시야가 강성해진 뒤 성전에서 직접 분향하려다가 제사장들에게 막히고 나병으로 낮아지는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_salt_valley_beth_shemesh",
+      "name": "소금 골짜기/벧세메스(아마샤, 전승)",
+      "kind": "battlefield",
+      "emoji": "⚔️",
+      "lat": 31.0,
+      "lng": 35.35,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 75,
+      "description": "아마샤가 소금 골짜기에서 에돔을 이긴 뒤 북이스라엘 요아스에게 도전하고 예루살렘 성벽을 잃는 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_joash_last",
+      "name": "예루살렘/가드 길(요아스 최후, 전승)",
+      "kind": "palace",
+      "emoji": "💰",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 76,
+      "description": "아람 왕 하사엘의 압박과 성전 보물 헌납, 요아스의 말년 반역이 이어지는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_joash_temple",
+      "name": "예루살렘 성전 보수(요아스, 전승)",
+      "kind": "holy_site",
+      "emoji": "🛠️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 77,
+      "description": "요아스가 여호야다와 함께 성전 보수를 추진하지만, 말년에 우상과 스가랴 죽음으로 무너지는 예루살렘 성전 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_athaliah_joash",
+      "name": "예루살렘 성전/왕궁(아달랴와 요아스, 전승)",
+      "kind": "palace",
+      "emoji": "👑",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 78,
+      "description": "아달랴가 왕권을 장악하는 동안 요아스가 성전에 숨겨지고 여호야다가 그를 왕으로 세우는 예루살렘 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem_ezion_geber",
+      "name": "예루살렘/에시온게벨(전승)",
+      "kind": "city",
+      "emoji": "⛵",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 79,
+      "description": "여호사밧의 남유다 통치와 에시온게벨 무역선 파선을 함께 묶어 보여 주는 전승 위치."
+    },
+    {
+      "code": "lm_div_jerusalem",
+      "name": "예루살렘/남유다(전승)",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_div_south_judah",
+      "era_codes": [
+        "era_divided_kingdom"
+      ],
+      "display_priority": 80,
+      "description": "남유다의 수도이자 성전이 있는 곳. 이사야, 히스기야, 요시야, 예레미야와 예루살렘 포위 이야기가 모인다."
     },
     {
       "code": "lm_exo_egypt_court",
@@ -6748,300 +7190,130 @@
       "description": "출애굽 광야 여정 미지정 위치."
     },
     {
-      "code": "lm_exo_eshcol_valley",
-      "name": "에스골 골짜기(헤브론 부근, 전승)",
-      "kind": "valley",
-      "emoji": "🍇",
-      "lat": 31.5326,
-      "lng": 35.0998,
-      "parent_region_code": "rgn_judea",
+      "code": "lm_pat_egypt_court",
+      "name": "애굽(요셉의 집, 전승)",
+      "kind": "palace",
+      "emoji": "👑",
+      "lat": 30.05,
+      "lng": 31.25,
+      "parent_region_code": "rgn_egypt",
       "era_codes": [
-        "era_exodus"
+        "era_patriarch"
       ],
-      "display_priority": 75,
-      "description": "정탐꾼들이 큰 포도송이를 가져온 가나안 산지의 골짜기 전승 위치 (민 13장)."
+      "display_priority": 50,
+      "description": "요셉이 총리로 일한 바로의 궁정 (창 41장)."
     },
     {
-      "code": "lm_exo_gibeon_battle",
-      "name": "기브온/아얄론 골짜기(전승)",
-      "kind": "valley",
-      "emoji": "☀️",
-      "lat": 31.8469,
-      "lng": 35.1847,
-      "parent_region_code": "rgn_judea",
+      "code": "lm_pat_goshen",
+      "name": "고센 땅(나일 델타, 전승)",
+      "kind": "city",
+      "emoji": "🌾",
+      "lat": 30.78,
+      "lng": 31.36,
+      "parent_region_code": "rgn_egypt",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "요셉이 가족을 정착시킨 나일 델타 비옥지 (창 47장)."
+    },
+    {
+      "code": "lm_pat_unknown",
+      "name": "애굽(전승)",
+      "kind": "city",
+      "emoji": "❓",
+      "lat": 30.0,
+      "lng": 31.5,
+      "parent_region_code": "rgn_egypt",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "족장 시대 미지정 사건 추정. 애굽 일대."
+    },
+    {
+      "code": "lm_exo_giza_pyramid",
+      "name": "기자 피라미드",
+      "kind": "city",
+      "emoji": "🔺",
+      "lat": 29.98,
+      "lng": 31.13,
+      "parent_region_code": "rgn_egypt",
       "era_codes": [
         "era_exodus"
       ],
       "display_priority": 70,
-      "description": "여호수아가 기브온을 돕고 해와 달이 머문 전투의 전승 위치 (수 10장)."
+      "description": "이집트 고대 피라미드. 출애굽 시대 이미 천 년 이상 된 거대 무덤."
     },
     {
-      "code": "lm_jud_jericho",
-      "name": "요단강(여리고 맞은편, 전승)",
+      "code": "lm_pat_giza_pyramid",
+      "name": "기자 피라미드",
       "kind": "city",
-      "emoji": "🏰",
-      "lat": 31.8744,
-      "lng": 35.4441,
-      "parent_region_code": "rgn_judea",
+      "emoji": "🔺",
+      "lat": 29.98,
+      "lng": 31.13,
+      "parent_region_code": "rgn_egypt",
       "era_codes": [
-        "era_exodus",
-        "era_judges"
-      ],
-      "display_priority": 50,
-      "description": "이스라엘이 요단강을 건너 첫 정복한 성 (수 6장). 라합의 도움."
-    },
-    {
-      "code": "lm_exo_mt_nebo",
-      "name": "느보산",
-      "kind": "mountain",
-      "emoji": "🏔️",
-      "lat": 31.7681,
-      "lng": 35.7253,
-      "parent_region_code": "rgn_moab",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 90,
-      "description": "모세가 약속의 땅을 바라본 산. 모세가 죽어 묻힌 곳 (신 34장)."
-    },
-    {
-      "code": "lm_exo_plains_moab",
-      "name": "모압 평지(요단 동편, 전승)",
-      "kind": "campsite",
-      "emoji": "🏕️",
-      "lat": 31.84,
-      "lng": 35.64,
-      "parent_region_code": "rgn_moab",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 80,
-      "description": "모세가 가나안 입성 직전 새 세대에게 언약과 당부를 전한 요단 동편 평지 (신 29-31장)."
-    },
-    {
-      "code": "lm_exo_baal_peor",
-      "name": "싯딤/바알브올(모압 평지, 전승)",
-      "kind": "campsite",
-      "emoji": "⛺",
-      "lat": 31.82,
-      "lng": 35.7,
-      "parent_region_code": "rgn_moab",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 75,
-      "description": "이스라엘이 모압 평지에서 바알브올 사건을 겪은 전승 위치 (민 25장)."
-    },
-    {
-      "code": "lm_exo_beth_peor_valley",
-      "name": "벧브올 맞은편 골짜기(전승)",
-      "kind": "valley",
-      "emoji": "🪨",
-      "lat": 31.76,
-      "lng": 35.72,
-      "parent_region_code": "rgn_moab",
-      "era_codes": [
-        "era_exodus"
+        "era_patriarch"
       ],
       "display_priority": 70,
-      "description": "모세가 모압 땅 벧브올 맞은편 골짜기에 묻혔다고 전하는 위치 (신 34장)."
+      "description": "이집트 고대 피라미드. 야곱·요셉 시대에도 이미 천 년 된 거대 무덤."
     },
     {
-      "code": "lm_exo_kadesh_barnea",
-      "name": "가데스 바네아",
-      "kind": "campsite",
-      "emoji": "⛺",
-      "lat": 30.6786,
-      "lng": 34.4325,
-      "parent_region_code": "rgn_negev",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 80,
-      "description": "광야 38년 본거지. 정탐꾼을 보낸 곳 (민 13장)."
-    },
-    {
-      "code": "lm_exo_edom_road",
-      "name": "광야(에돔 길, 전승)",
-      "kind": "wilderness",
-      "emoji": "🏜️",
-      "lat": 30.3,
-      "lng": 35.3,
-      "parent_region_code": "rgn_negev",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "에돔 왕에게 통행을 거절당해 이스라엘이 우회한 길 (민 20장)."
-    },
-    {
-      "code": "lm_exo_red_sea_crossing",
-      "name": "홍해/갈대바다(전승)",
-      "kind": "sea",
-      "emoji": "🌊",
-      "lat": 28.0,
-      "lng": 33.5,
-      "parent_region_code": "rgn_red_sea",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "이스라엘이 마른 땅으로 건너고 바로 군대가 수장된 바다 (출 14장)."
-    },
-    {
-      "code": "lm_exo_shechem_oak",
-      "name": "세겜 상수리나무(전승)",
-      "kind": "holy_site",
-      "emoji": "🌳",
-      "lat": 32.213,
-      "lng": 35.281,
-      "parent_region_code": "rgn_samaria",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 70,
-      "description": "여호수아가 마지막 권면 뒤 큰 돌을 세운 성소 근처 상수리나무 전승 위치 (수 24장)."
-    },
-    {
-      "code": "lm_jud_ai",
-      "name": "아이 성 근처(전승)",
+      "code": "lm_nt_post_galatia",
+      "name": "갈라디아 교회들",
       "kind": "city",
-      "emoji": "⚔️",
-      "lat": 31.97,
-      "lng": 35.28,
-      "parent_region_code": "rgn_samaria",
+      "emoji": "✉️",
+      "lat": 38.31,
+      "lng": 31.19,
+      "parent_region_code": "rgn_galatia",
       "era_codes": [
-        "era_exodus",
-        "era_judges"
+        "era_nt_post_apostolic"
       ],
-      "display_priority": 50,
-      "description": "여리고 다음 정복한 성 (수 7-8장). 아간 사건으로 패전 후 재진격."
+      "display_priority": 45,
+      "description": "갈라디아서 수신 교회들을 대표하는 갈라디아 중심 지점."
     },
     {
-      "code": "lm_exo_hazeroth",
-      "name": "하세롯(전승)",
-      "kind": "campsite",
-      "emoji": "⛺",
-      "lat": 28.93,
-      "lng": 34.62,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 60,
-      "description": "미리암과 아론이 모세를 비방한 뒤 이스라엘이 머물렀던 광야 진영 (민 12장)."
-    },
-    {
-      "code": "lm_exo_marah",
-      "name": "마라(전승)",
-      "kind": "campsite",
-      "emoji": "💧",
-      "lat": 29.85,
-      "lng": 32.95,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "쓴 물이 단 물로 변한 광야 첫 정착지 (출 15:22-25)."
-    },
-    {
-      "code": "lm_exo_midian_desert",
-      "name": "애굽 → 미디안(전승)",
-      "kind": "wilderness",
-      "emoji": "🏜️",
-      "lat": 28.4,
-      "lng": 35.7,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "모세가 살인 후 도망친 광야 (출 2:15). 양치다 떨기나무 부르심을 받음."
-    },
-    {
-      "code": "lm_exo_mt_horeb",
-      "name": "호렙 산(전승)",
-      "kind": "mountain",
-      "emoji": "⛰️",
-      "lat": 28.54,
-      "lng": 33.97,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "모세가 떨기나무 부르심을 받은 산 (출 3장). 시내산과 동일시."
-    },
-    {
-      "code": "lm_exo_mt_sinai",
-      "name": "시내산(전승)",
-      "kind": "mountain",
-      "emoji": "⛰️",
-      "lat": 28.5392,
-      "lng": 33.9756,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "십계명을 받은 산 (출 19-20장). 율법 언약의 무대."
-    },
-    {
-      "code": "lm_exo_rephidim",
-      "name": "르비딤(전승)",
+      "code": "lm_nt_ap_iconium",
+      "name": "이고니온(코니아)",
       "kind": "city",
-      "emoji": "⚔️",
-      "lat": 28.7,
-      "lng": 33.6,
-      "parent_region_code": "rgn_sinai_peninsula",
+      "emoji": "🏛️",
+      "lat": 37.87,
+      "lng": 32.49,
+      "parent_region_code": "rgn_galatia",
       "era_codes": [
-        "era_exodus"
+        "era_nt_apostolic"
       ],
       "display_priority": 50,
-      "description": "여호수아가 아말렉과 싸운 곳 (출 17장). 모세가 손을 들고 기도."
+      "description": "바울 1차 선교 박해 (행 14장)."
     },
     {
-      "code": "lm_exo_wilderness_of_sin",
-      "name": "신 광야(전승)",
-      "kind": "wilderness",
-      "emoji": "🏜️",
-      "lat": 29.1,
-      "lng": 33.3,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_exodus"
-      ],
-      "display_priority": 50,
-      "description": "만나가 처음 내린 광야 (출 16장). 시내산 가는 도중."
-    },
-    {
-      "code": "lm_jud_megiddo",
-      "name": "므깃도",
+      "code": "lm_nt_ap_lystra_derbe",
+      "name": "루스드라 → 더베(갈라디아)",
       "kind": "city",
-      "emoji": "⚔️",
-      "lat": 32.5847,
-      "lng": 35.1844,
-      "parent_region_code": "rgn_galilee",
+      "emoji": "🦮",
+      "lat": 37.578,
+      "lng": 32.448,
+      "parent_region_code": "rgn_galatia",
       "era_codes": [
-        "era_judges"
+        "era_nt_apostolic"
       ],
-      "display_priority": 80,
-      "description": "이스르엘 평원의 요충지. 드보라·바락 전투 (삿 5장). 후일 아마겟돈."
+      "display_priority": 50,
+      "description": "바울이 돌에 맞은 곳 (행 14장). 디모데의 고향."
     },
     {
-      "code": "lm_jud_harod_spring",
-      "name": "하롯 샘/모레산 앞 골짜기(전승)",
-      "kind": "battlefield",
-      "emoji": "🔥",
-      "lat": 32.55,
-      "lng": 35.35,
-      "parent_region_code": "rgn_galilee",
+      "code": "lm_nt_ap_pisidian_antioch",
+      "name": "비시디아 안디옥(소아시아)",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 38.31,
+      "lng": 31.19,
+      "parent_region_code": "rgn_galatia",
       "era_codes": [
-        "era_judges"
+        "era_nt_apostolic"
       ],
-      "display_priority": 55,
-      "description": "기드온의 삼백 명이 미디안과 맞선 하롯 샘과 모레산 앞 골짜기 전승 위치 (삿 7장)."
+      "display_priority": 50,
+      "description": "바울 1차 선교, 이방인 회심 시작 (행 13장)."
     },
     {
       "code": "lm_jud_ophrah",
@@ -7072,90 +7344,6 @@
       "description": "사사 시대 미지정 진영. 미디안 진."
     },
     {
-      "code": "lm_jud_gilead_mizpah",
-      "name": "길르앗 미스바(전승)",
-      "kind": "city",
-      "emoji": "🛡️",
-      "lat": 32.2,
-      "lng": 35.7,
-      "parent_region_code": "rgn_gilead",
-      "era_codes": [
-        "era_judges"
-      ],
-      "display_priority": 55,
-      "description": "입다가 장로들과 만나고 암몬과의 전쟁을 준비한 길르앗 미스바 전승 위치 (삿 10-11장)."
-    },
-    {
-      "code": "lm_jud_bethlehem",
-      "name": "모압 → 베들레헴",
-      "kind": "city",
-      "emoji": "⭐",
-      "lat": 31.7054,
-      "lng": 35.2024,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_judges"
-      ],
-      "display_priority": 50,
-      "description": "나오미와 룻이 모압에서 돌아온 고향 (룻 1장)."
-    },
-    {
-      "code": "lm_jud_mizpah",
-      "name": "미스바",
-      "kind": "holy_site",
-      "emoji": "🙏",
-      "lat": 31.831,
-      "lng": 35.18,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_judges"
-      ],
-      "display_priority": 50,
-      "description": "이스라엘 회집 장소 (삿 20장, 삼상 7장). 사무엘 시대 신앙 중심."
-    },
-    {
-      "code": "lm_jud_philistia_gaza",
-      "name": "블레셋 지역(가사/소렉, 전승)",
-      "kind": "city",
-      "emoji": "🛡️",
-      "lat": 31.5,
-      "lng": 34.46,
-      "parent_region_code": "rgn_philistia",
-      "era_codes": [
-        "era_judges"
-      ],
-      "display_priority": 50,
-      "description": "삼손이 활동한 블레셋 성읍 (삿 13-16장)."
-    },
-    {
-      "code": "lm_jud_shiloh",
-      "name": "실로",
-      "kind": "holy_site",
-      "emoji": "⛪",
-      "lat": 32.056,
-      "lng": 35.29,
-      "parent_region_code": "rgn_samaria",
-      "era_codes": [
-        "era_judges"
-      ],
-      "display_priority": 50,
-      "description": "법궤 안치소·성막 자리 (수 18장). 한나가 사무엘을 위해 기도."
-    },
-    {
-      "code": "lm_jud_shamir",
-      "name": "사밀(에브라임 산지, 전승)",
-      "kind": "city",
-      "emoji": "🕊️",
-      "lat": 32.12,
-      "lng": 35.25,
-      "parent_region_code": "rgn_samaria",
-      "era_codes": [
-        "era_judges"
-      ],
-      "display_priority": 45,
-      "description": "돌라가 거하며 이스라엘을 다스린 에브라임 산지 사밀 전승 위치 (삿 10:1-2)."
-    },
-    {
       "code": "lm_mon_endor",
       "name": "엔돌(전승)",
       "kind": "city",
@@ -7168,6 +7356,18 @@
       ],
       "display_priority": 50,
       "description": "사울이 신접한 여인을 찾아간 엔돌 전승 위치 (삼상 28장)."
+    },
+    {
+      "code": "lm_mon_mt_carmel",
+      "name": "갈멜 산",
+      "kind": "mountain",
+      "emoji": "🔥",
+      "lat": 32.7333,
+      "lng": 35.05,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [],
+      "display_priority": 50,
+      "description": "엘리야가 바알 선지자와 대결한 산 (왕상 18장)."
     },
     {
       "code": "lm_mon_mt_gilboa",
@@ -7184,18 +7384,128 @@
       "description": "사울과 요나단이 블레셋과 싸우다 전사한 산 (삼상 31장)."
     },
     {
-      "code": "lm_mon_jabesh_gilead",
-      "name": "얍베스 길르앗(전승)",
+      "code": "lm_nt_pm_caesarea_philippi",
+      "name": "가이사랴 빌립보",
       "kind": "city",
-      "emoji": "🏘️",
-      "lat": 32.2,
-      "lng": 35.78,
-      "parent_region_code": "rgn_gilead",
+      "emoji": "🗝️",
+      "lat": 33.248,
+      "lng": 35.695,
+      "parent_region_code": "rgn_galilee",
       "era_codes": [
-        "era_monarchy"
+        "era_nt_public_ministry"
       ],
       "display_priority": 50,
-      "description": "사울이 첫 군사적 승리를 거둔 성 (삼상 11장). 사울 시신 안장지."
+      "description": "베드로가 '주는 그리스도'고 고백한 곳 (마 16장)."
+    },
+    {
+      "code": "lm_nt_pm_capernaum",
+      "name": "가버나움(전승)",
+      "kind": "city",
+      "emoji": "🏘️",
+      "lat": 32.881,
+      "lng": 35.575,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "display_priority": 50,
+      "description": "예수의 갈릴리 사역 거점 (마 4:13). 베드로의 집."
+    },
+    {
+      "code": "lm_nt_pm_mt_transfiguration",
+      "name": "변화산(전승, 다볼/헤르몬 견해)",
+      "kind": "mountain",
+      "emoji": "⛰️",
+      "lat": 32.69,
+      "lng": 35.39,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "display_priority": 50,
+      "description": "예수가 모세·엘리야와 변모한 산 (마 17장). 다볼/헤르몬 견해."
+    },
+    {
+      "code": "lm_nt_pm_nazareth",
+      "name": "나사렛 → 유대 산지(전승)",
+      "kind": "city",
+      "emoji": "🏘️",
+      "lat": 32.6996,
+      "lng": 35.3035,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "display_priority": 50,
+      "description": "예수가 자라신 동네 (눅 2:39, 4:16)."
+    },
+    {
+      "code": "lm_jud_harod_spring",
+      "name": "하롯 샘/모레산 앞 골짜기(전승)",
+      "kind": "battlefield",
+      "emoji": "🔥",
+      "lat": 32.55,
+      "lng": 35.35,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 55,
+      "description": "기드온의 삼백 명이 미디안과 맞선 하롯 샘과 모레산 앞 골짜기 전승 위치 (삿 7장)."
+    },
+    {
+      "code": "lm_mon_dan",
+      "name": "단",
+      "kind": "city",
+      "emoji": "🛐",
+      "lat": 33.2487,
+      "lng": 35.6517,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [],
+      "display_priority": 70,
+      "description": "북왕국 북단. 여로보암이 금송아지를 세운 두 곳 중 하나 (왕상 12:29)."
+    },
+    {
+      "code": "lm_nt_pm_bethsaida",
+      "name": "벳새다",
+      "kind": "city",
+      "emoji": "🎣",
+      "lat": 32.9101,
+      "lng": 35.6306,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "display_priority": 70,
+      "description": "베드로·안드레·빌립의 고향. 오병이어와 맹인 치유 (요 1:44, 막 8:22)."
+    },
+    {
+      "code": "lm_jud_megiddo",
+      "name": "므깃도",
+      "kind": "city",
+      "emoji": "⚔️",
+      "lat": 32.5847,
+      "lng": 35.1844,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 80,
+      "description": "이스르엘 평원의 요충지. 드보라·바락 전투 (삿 5장). 후일 아마겟돈."
+    },
+    {
+      "code": "lm_nt_pm_mt_beatitudes",
+      "name": "팔복산",
+      "kind": "mountain",
+      "emoji": "⛰️",
+      "lat": 32.8804,
+      "lng": 35.5552,
+      "parent_region_code": "rgn_galilee",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "display_priority": 80,
+      "description": "예수의 산상수훈 장소 (마 5-7장)."
     },
     {
       "code": "lm_mon_ephraim_forest",
@@ -7212,18 +7522,145 @@
       "description": "압살롬의 반역이 끝난 에브라임 수풀과 마하나임 근처 전승 위치 (삼하 18장)."
     },
     {
-      "code": "lm_mon_mt_zion",
-      "name": "시온 산",
-      "kind": "mountain",
-      "emoji": "🏛️",
-      "lat": 31.7714,
-      "lng": 35.2353,
-      "parent_region_code": "rgn_judea",
+      "code": "lm_mon_jabesh_gilead",
+      "name": "얍베스 길르앗(전승)",
+      "kind": "city",
+      "emoji": "🏘️",
+      "lat": 32.2,
+      "lng": 35.78,
+      "parent_region_code": "rgn_gilead",
       "era_codes": [
         "era_monarchy"
       ],
-      "display_priority": 80,
-      "description": "다윗 성. 예루살렘 남서쪽 언덕 — 시편의 시온."
+      "display_priority": 50,
+      "description": "사울이 첫 군사적 승리를 거둔 성 (삼상 11장). 사울 시신 안장지."
+    },
+    {
+      "code": "lm_pat_gilead",
+      "name": "길르앗(전승)",
+      "kind": "wilderness",
+      "emoji": "🌳",
+      "lat": 32.2,
+      "lng": 35.85,
+      "parent_region_code": "rgn_gilead",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "야곱이 라반에게서 도망친 후 화해한 곳 (창 31장). 향유로 유명."
+    },
+    {
+      "code": "lm_pat_jabbok",
+      "name": "얍복 강가(전승)",
+      "kind": "river",
+      "emoji": "💧",
+      "lat": 32.15,
+      "lng": 35.62,
+      "parent_region_code": "rgn_gilead",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "야곱이 천사와 씨름하고 이스라엘로 개명된 강가 (창 32장)."
+    },
+    {
+      "code": "lm_jud_gilead_mizpah",
+      "name": "길르앗 미스바(전승)",
+      "kind": "city",
+      "emoji": "🛡️",
+      "lat": 32.2,
+      "lng": 35.7,
+      "parent_region_code": "rgn_gilead",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 55,
+      "description": "입다가 장로들과 만나고 암몬과의 전쟁을 준비한 길르앗 미스바 전승 위치 (삿 10-11장)."
+    },
+    {
+      "code": "lm_nt_post_rome",
+      "name": "로마",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 41.8967,
+      "lng": 12.4823,
+      "parent_region_code": "rgn_italy",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 48,
+      "description": "로마서 수신지와 바울의 로마 감옥 서신 배경."
+    },
+    {
+      "code": "lm_nt_ap_rome",
+      "name": "로마",
+      "kind": "city",
+      "emoji": "🦅",
+      "lat": 41.8967,
+      "lng": 12.4823,
+      "parent_region_code": "rgn_italy",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "바울 가택 연금에서 복음 전한 곳 (행 28장). 로마서·옥중서신 배경."
+    },
+    {
+      "code": "lm_exi_jerusalem",
+      "name": "바벨론 → 예루살렘(전승)",
+      "kind": "city",
+      "emoji": "🏛️",
+      "lat": 31.778,
+      "lng": 35.2354,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_exile_return"
+      ],
+      "display_priority": 50,
+      "description": "포로 귀환 후 재건된 성 (스 1장, 느 1-6장). 성전·성벽 복원."
+    },
+    {
+      "code": "lm_jud_bethlehem",
+      "name": "모압 → 베들레헴",
+      "kind": "city",
+      "emoji": "⭐",
+      "lat": 31.7054,
+      "lng": 35.2024,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 50,
+      "description": "나오미와 룻이 모압에서 돌아온 고향 (룻 1장)."
+    },
+    {
+      "code": "lm_jud_jericho",
+      "name": "요단강(여리고 맞은편, 전승)",
+      "kind": "city",
+      "emoji": "🏰",
+      "lat": 31.8744,
+      "lng": 35.4441,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_exodus",
+        "era_judges"
+      ],
+      "display_priority": 50,
+      "description": "이스라엘이 요단강을 건너 첫 정복한 성 (수 6장). 라합의 도움."
+    },
+    {
+      "code": "lm_jud_mizpah",
+      "name": "미스바",
+      "kind": "holy_site",
+      "emoji": "🙏",
+      "lat": 31.831,
+      "lng": 35.18,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 50,
+      "description": "이스라엘 회집 장소 (삿 20장, 삼상 7장). 사무엘 시대 신앙 중심."
     },
     {
       "code": "lm_mon_bethlehem",
@@ -7310,6 +7747,18 @@
       "description": "다윗이 헤브론에서 옮겨 왕국의 수도로 삼은 성 (삼하 5장)."
     },
     {
+      "code": "lm_mon_jordan_river",
+      "name": "요단강 근처(전승)",
+      "kind": "river",
+      "emoji": "💦",
+      "lat": 31.85,
+      "lng": 35.5,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [],
+      "display_priority": 50,
+      "description": "다윗·솔로몬 시대 군사·교역의 동쪽 경계."
+    },
+    {
       "code": "lm_mon_ramah",
       "name": "라마(전승)",
       "kind": "city",
@@ -7324,564 +7773,18 @@
       "description": "사무엘의 고향·집무처 (삼상 7:17, 25:1)."
     },
     {
-      "code": "lm_div_shechem",
-      "name": "세겜/왕국 분열(전승)",
-      "kind": "city",
-      "emoji": "👑",
-      "lat": 32.213,
-      "lng": 35.281,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 78,
-      "description": "북쪽 지파들이 르호보암에게 멍에를 가볍게 해 달라고 요청하고, 왕국 분열이 드러난 전승 위치."
-    },
-    {
-      "code": "lm_div_samaria",
-      "name": "사마리아 왕궁(북이스라엘, 전승)",
-      "kind": "palace",
-      "emoji": "🏛️",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 76,
-      "description": "북이스라엘의 수도권. 아합 시대와 호세아 시대의 몰락 이야기가 모인다."
-    },
-    {
-      "code": "lm_div_samaria_ahaziah",
-      "name": "사마리아 다락/산 위(전승)",
-      "kind": "palace",
-      "emoji": "🛏️",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 70,
-      "description": "북이스라엘 아하시야가 다락 난간에서 떨어진 뒤 바알세붑에게 묻고, 엘리야가 산 위에서 하나님의 말씀을 전하는 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_jehoram",
-      "name": "예루살렘/에돔과 립나(전승)",
-      "kind": "city",
-      "emoji": "⚔️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 69,
-      "description": "남유다 여호람의 악한 통치와 에돔·립나의 반역을 함께 묶어 보여 주는 전승 위치."
-    },
-    {
-      "code": "lm_div_ramoth_jezreel",
-      "name": "길르앗 라못 → 이스르엘(전승)",
-      "kind": "battlefield",
-      "emoji": "🩹",
-      "lat": 32.55,
-      "lng": 36.0,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 68,
-      "description": "유다 아하시야와 북이스라엘 요람이 길르앗 라못에서 아람과 싸우고, 요람이 이스르엘에서 상처를 치료하는 전승 위치."
-    },
-    {
-      "code": "lm_div_jezreel_jehu",
-      "name": "이스르엘/예후의 심판(전승)",
-      "kind": "battlefield",
-      "emoji": "🏹",
-      "lat": 32.56,
-      "lng": 35.32,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 67,
-      "description": "예후가 기름부음을 받은 뒤 요람과 아하시야, 이세벨에게 임한 아합 집의 심판이 이어지는 이스르엘 전승 위치."
-    },
-    {
-      "code": "lm_div_samaria_baal_temple",
-      "name": "사마리아 바알 신전(전승)",
-      "kind": "holy_site",
-      "emoji": "🔥",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 66,
-      "description": "예후가 바알 숭배자들을 모으고 바알 신전을 무너뜨리지만 금송아지 죄에서 떠나지 못하는 사마리아 전승 위치."
-    },
-    {
-      "code": "lm_div_tirzah_gibbethon",
-      "name": "깁브돈/디르사(전승)",
-      "kind": "battlefield",
-      "emoji": "⚔️",
-      "lat": 32.29,
-      "lng": 35.29,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 75,
-      "description": "나답이 깁브돈을 둘러싼 때 바아사가 반역하고, 북이스라엘 왕권이 디르사로 이어지는 전승 위치."
-    },
-    {
-      "code": "lm_div_tirzah_samaria",
-      "name": "디르사 → 사마리아(전승)",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 74,
-      "description": "엘라, 시므리, 오므리를 거쳐 사마리아 왕조와 아합의 악이 깊어지는 북이스라엘 왕궁권 전승 위치."
-    },
-    {
-      "code": "lm_div_jezreel_vineyard",
-      "name": "이스르엘 포도원(전승)",
-      "kind": "valley",
-      "emoji": "🍇",
-      "lat": 32.56,
-      "lng": 35.32,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 73,
-      "description": "아합과 이세벨이 나봇의 포도원을 빼앗고 엘리야의 책망을 듣는 이스르엘 전승 위치."
-    },
-    {
-      "code": "lm_div_samaria_gate",
-      "name": "사마리아 성문 광장(전승)",
-      "kind": "city",
-      "emoji": "📜",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 72,
-      "description": "미가야가 아합과 여호사밧 앞에서 거짓 예언에 맞서 하나님의 말씀을 전하는 전승 위치."
-    },
-    {
-      "code": "lm_div_ramoth_gilead",
-      "name": "길르앗 라못/사마리아(전승)",
-      "kind": "battlefield",
-      "emoji": "🏹",
-      "lat": 32.55,
-      "lng": 36.0,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 71,
-      "description": "아합이 변장하고 여호사밧과 함께 아람과 싸우다 마지막을 맞는 길르앗 라못 전승 위치."
-    },
-    {
-      "code": "lm_div_mt_carmel",
-      "name": "갈멜 산",
-      "kind": "mountain",
-      "emoji": "🔥",
-      "lat": 32.7333,
-      "lng": 35.05,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 72,
-      "description": "엘리야가 바알 선지자들과 대결하고 하나님의 불의 응답을 본 산."
-    },
-    {
-      "code": "lm_div_shiloh",
-      "name": "실로(아히야의 경고, 전승)",
-      "kind": "holy_site",
-      "emoji": "📜",
-      "lat": 32.056,
-      "lng": 35.29,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 72,
-      "description": "여로보암의 집에 대한 아히야의 경고가 전해지는 실로 전승 위치."
-    },
-    {
-      "code": "lm_div_dan",
-      "name": "단(금송아지 제단, 전승)",
-      "kind": "city",
-      "emoji": "🛐",
-      "lat": 33.2487,
-      "lng": 35.6517,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 70,
-      "description": "여로보암이 북쪽 끝에 금송아지를 세운 곳으로 전해지는 단."
-    },
-    {
-      "code": "lm_div_dothan",
-      "name": "도단(엘리사의 불 전차, 전승)",
-      "kind": "city",
-      "emoji": "🔥",
-      "lat": 32.41,
-      "lng": 35.24,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 68,
-      "description": "엘리사의 사환이 불 말과 불 전차를 보게 된 도단 전승 위치."
-    },
-    {
-      "code": "lm_div_jordan_river",
-      "name": "요단강 근처(엘리야와 엘리사, 전승)",
-      "kind": "river",
-      "emoji": "💦",
-      "lat": 32.311,
-      "lng": 35.5688,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 66,
-      "description": "엘리야 승천과 엘리사의 사역 전환을 떠올리게 하는 요단강 전승 위치."
-    },
-    {
-      "code": "lm_div_jericho",
-      "name": "여리고/벧엘 길(엘리사, 전승)",
-      "kind": "city",
-      "emoji": "💧",
-      "lat": 31.8744,
-      "lng": 35.4441,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 64,
-      "description": "엘리사가 물을 고치고 벧엘 길에서 조롱을 받은 전승 위치."
-    },
-    {
-      "code": "lm_div_gilgal",
-      "name": "길갈/엘리사 사역(전승)",
-      "kind": "holy_site",
-      "emoji": "🪨",
-      "lat": 31.85,
-      "lng": 35.5,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 62,
-      "description": "엘리사의 기름, 생명, 양식 기적들이 묶이는 길갈 일대 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem",
-      "name": "예루살렘/남유다(전승)",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 80,
-      "description": "남유다의 수도이자 성전이 있는 곳. 이사야, 히스기야, 요시야, 예레미야와 예루살렘 포위 이야기가 모인다."
-    },
-    {
-      "code": "lm_div_jerusalem_ezion_geber",
-      "name": "예루살렘/에시온게벨(전승)",
-      "kind": "city",
-      "emoji": "⛵",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 79,
-      "description": "여호사밧의 남유다 통치와 에시온게벨 무역선 파선을 함께 묶어 보여 주는 전승 위치."
-    },
-    {
-      "code": "lm_div_mt_horeb",
-      "name": "호렙 산(엘리야, 전승)",
-      "kind": "mountain",
-      "emoji": "⛰️",
-      "lat": 28.54,
-      "lng": 33.97,
-      "parent_region_code": "rgn_sinai_peninsula",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 60,
-      "description": "엘리야가 지친 몸으로 도망쳐 세미한 음성과 새 사명을 들은 산."
-    },
-    {
-      "code": "lm_div_jerusalem_athaliah_joash",
-      "name": "예루살렘 성전/왕궁(아달랴와 요아스, 전승)",
-      "kind": "palace",
-      "emoji": "👑",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 78,
-      "description": "아달랴가 왕권을 장악하는 동안 요아스가 성전에 숨겨지고 여호야다가 그를 왕으로 세우는 예루살렘 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_joash_temple",
-      "name": "예루살렘 성전 보수(요아스, 전승)",
-      "kind": "holy_site",
-      "emoji": "🛠️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 77,
-      "description": "요아스가 여호야다와 함께 성전 보수를 추진하지만, 말년에 우상과 스가랴 죽음으로 무너지는 예루살렘 성전 전승 위치."
-    },
-    {
-      "code": "lm_div_samaria_jehoahaz_jehoash",
-      "name": "사마리아/아벡(여호아하스와 요아스, 전승)",
-      "kind": "palace",
-      "emoji": "🏹",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 65,
-      "description": "여호아하스와 북이스라엘 요아스가 사마리아에서 다스리고, 엘리사의 마지막 화살 표징 뒤 아람에게 빼앗긴 성읍을 회복하는 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_joash_last",
-      "name": "예루살렘/가드 길(요아스 최후, 전승)",
-      "kind": "palace",
-      "emoji": "💰",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 76,
-      "description": "아람 왕 하사엘의 압박과 성전 보물 헌납, 요아스의 말년 반역이 이어지는 예루살렘 전승 위치."
-    },
-    {
-      "code": "lm_div_salt_valley_beth_shemesh",
-      "name": "소금 골짜기/벧세메스(아마샤, 전승)",
-      "kind": "battlefield",
-      "emoji": "⚔️",
-      "lat": 31.0,
-      "lng": 35.35,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 75,
-      "description": "아마샤가 소금 골짜기에서 에돔을 이긴 뒤 북이스라엘 요아스에게 도전하고 예루살렘 성벽을 잃는 전승 위치."
-    },
-    {
-      "code": "lm_div_samaria_jeroboam_ii",
-      "name": "사마리아/여로보암 2세(전승)",
-      "kind": "palace",
-      "emoji": "🗺️",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 64,
-      "description": "여로보암 2세가 북이스라엘 왕위에 올라 국경을 회복하지만 여로보암의 죄에서 떠나지 못하는 사마리아 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_uzziah",
-      "name": "예루살렘/웃시야의 성전 문(전승)",
-      "kind": "holy_site",
-      "emoji": "🏛️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 74,
-      "description": "웃시야가 강성해진 뒤 성전에서 직접 분향하려다가 제사장들에게 막히고 나병으로 낮아지는 예루살렘 전승 위치."
-    },
-    {
-      "code": "lm_div_samaria_late_kings",
-      "name": "사마리아 말기 왕궁(전승)",
-      "kind": "palace",
-      "emoji": "⚔️",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_div_north_israel",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 63,
-      "description": "스가랴, 살룸, 므나헴, 브가히야, 베가, 호세아로 이어지는 북이스라엘 말기 반역과 앗수르 압박의 사마리아 전승 위치."
-    },
-    {
-      "code": "lm_exi_jerusalem",
-      "name": "바벨론 → 예루살렘(전승)",
+      "code": "lm_nt_ap_jerusalem",
+      "name": "예루살렘",
       "kind": "city",
       "emoji": "🏛️",
       "lat": 31.778,
       "lng": 35.2354,
       "parent_region_code": "rgn_judea",
       "era_codes": [
-        "era_exile_return"
+        "era_nt_apostolic"
       ],
       "display_priority": 50,
-      "description": "포로 귀환 후 재건된 성 (스 1장, 느 1-6장). 성전·성벽 복원."
-    },
-    {
-      "code": "lm_exi_babylon",
-      "name": "바벨론",
-      "kind": "city",
-      "emoji": "🗼",
-      "lat": 32.5421,
-      "lng": 44.4209,
-      "parent_region_code": "rgn_mesopotamia",
-      "era_codes": [
-        "era_exile_return"
-      ],
-      "display_priority": 50,
-      "description": "유다 왕국 멸망 후 포로로 끌려간 제국 수도 (왕하 25장). 다니엘 활동 무대."
-    },
-    {
-      "code": "lm_exi_chebar",
-      "name": "그발 강가(추정)",
-      "kind": "river",
-      "emoji": "👁️",
-      "lat": 32.65,
-      "lng": 44.6,
-      "parent_region_code": "rgn_mesopotamia",
-      "era_codes": [
-        "era_exile_return"
-      ],
-      "display_priority": 50,
-      "description": "에스겔이 환상을 본 강가 (겔 1장). 바벨론 포로 정착지."
-    },
-    {
-      "code": "lm_exi_susa",
-      "name": "수산 궁(페르시아)",
-      "kind": "city",
-      "emoji": "👑",
-      "lat": 32.1881,
-      "lng": 48.2581,
-      "parent_region_code": "rgn_persia",
-      "era_codes": [
-        "era_exile_return"
-      ],
-      "display_priority": 50,
-      "description": "페르시아 제국 도시. 에스더 사건의 무대 (에 1장), 다니엘 환상 (단 8장)."
-    },
-    {
-      "code": "lm_nt_pm_mt_beatitudes",
-      "name": "팔복산",
-      "kind": "mountain",
-      "emoji": "⛰️",
-      "lat": 32.8804,
-      "lng": 35.5552,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 80,
-      "description": "예수의 산상수훈 장소 (마 5-7장)."
-    },
-    {
-      "code": "lm_nt_pm_bethsaida",
-      "name": "벳새다",
-      "kind": "city",
-      "emoji": "🎣",
-      "lat": 32.9101,
-      "lng": 35.6306,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 70,
-      "description": "베드로·안드레·빌립의 고향. 오병이어와 맹인 치유 (요 1:44, 막 8:22)."
-    },
-    {
-      "code": "lm_nt_pm_caesarea_philippi",
-      "name": "가이사랴 빌립보",
-      "kind": "city",
-      "emoji": "🗝️",
-      "lat": 33.248,
-      "lng": 35.695,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 50,
-      "description": "베드로가 '주는 그리스도'고 고백한 곳 (마 16장)."
-    },
-    {
-      "code": "lm_nt_pm_capernaum",
-      "name": "가버나움(전승)",
-      "kind": "city",
-      "emoji": "🏘️",
-      "lat": 32.881,
-      "lng": 35.575,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 50,
-      "description": "예수의 갈릴리 사역 거점 (마 4:13). 베드로의 집."
-    },
-    {
-      "code": "lm_nt_pm_mt_transfiguration",
-      "name": "변화산(전승, 다볼/헤르몬 견해)",
-      "kind": "mountain",
-      "emoji": "⛰️",
-      "lat": 32.69,
-      "lng": 35.39,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 50,
-      "description": "예수가 모세·엘리야와 변모한 산 (마 17장). 다볼/헤르몬 견해."
-    },
-    {
-      "code": "lm_nt_pm_nazareth",
-      "name": "나사렛 → 유대 산지(전승)",
-      "kind": "city",
-      "emoji": "🏘️",
-      "lat": 32.6996,
-      "lng": 35.3035,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 50,
-      "description": "예수가 자라신 동네 (눅 2:39, 4:16)."
+      "description": "오순절 성령 강림·초대 교회 시작 (행 2장)."
     },
     {
       "code": "lm_nt_pm_bethany",
@@ -7982,217 +7885,7 @@
       "description": "예수가 40일 금식하며 시험 받은 광야 (마 4장)."
     },
     {
-      "code": "lm_nt_pm_perea",
-      "name": "베레아(요단 동편, 추정)",
-      "kind": "wilderness",
-      "emoji": "🌳",
-      "lat": 31.85,
-      "lng": 35.65,
-      "parent_region_code": "rgn_perea",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 50,
-      "description": "요한이 세례를 베푼 곳 (요 1:28). 예수의 후기 사역지."
-    },
-    {
-      "code": "lm_nt_pm_tyre",
-      "name": "두로",
-      "kind": "city",
-      "emoji": "🌊",
-      "lat": 33.2704,
-      "lng": 35.2038,
-      "parent_region_code": "rgn_phoenicia",
-      "era_codes": [
-        "era_nt_public_ministry"
-      ],
-      "display_priority": 70,
-      "description": "예수의 가나안 여인 사역 (마 15:21-28)."
-    },
-    {
-      "code": "lm_nt_ap_athens",
-      "name": "아덴(아레오바고)",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 37.975,
-      "lng": 23.735,
-      "parent_region_code": "rgn_achaia",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울이 아레오바고에서 알지 못하는 신을 전한 곳 (행 17장)."
-    },
-    {
-      "code": "lm_nt_ap_corinth",
-      "name": "고린도",
-      "kind": "city",
-      "emoji": "📨",
-      "lat": 37.939,
-      "lng": 22.918,
-      "parent_region_code": "rgn_achaia",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울이 1년 6개월 머문 도시 (행 18장). 고린도전·후서의 수신지."
-    },
-    {
-      "code": "lm_nt_ap_damascus",
-      "name": "다메섹",
-      "kind": "city",
-      "emoji": "💡",
-      "lat": 33.5138,
-      "lng": 36.2765,
-      "parent_region_code": "rgn_aram_damascus",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "사울이 부활한 예수를 만나 회심한 길 (행 9장)."
-    },
-    {
-      "code": "lm_nt_ap_ephesus",
-      "name": "에베소",
-      "kind": "city",
-      "emoji": "⛪",
-      "lat": 37.949,
-      "lng": 27.366,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울 3차 선교 거점 (행 19장). 두란노·아데미 소동."
-    },
-    {
-      "code": "lm_nt_ap_miletus",
-      "name": "밀레도",
-      "kind": "city",
-      "emoji": "🚢",
-      "lat": 37.53,
-      "lng": 27.278,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울이 에베소 장로들과 작별한 항구 (행 20장)."
-    },
-    {
-      "code": "lm_nt_ap_troas",
-      "name": "드로아",
-      "kind": "city",
-      "emoji": "🚢",
-      "lat": 39.76,
-      "lng": 26.16,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울이 마게도냐 환상을 본 항구 (행 16장). 유럽 선교 시작."
-    },
-    {
-      "code": "lm_nt_ap_caesarea_maritima",
-      "name": "가이사랴",
-      "kind": "city",
-      "emoji": "⛓️",
-      "lat": 32.498,
-      "lng": 34.893,
-      "parent_region_code": "rgn_coastal_plain",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "베드로가 고넬료를 전도한 항구 (행 10장). 바울의 재판 (행 23-26장)."
-    },
-    {
-      "code": "lm_nt_ap_crete",
-      "name": "지중해 항로(그레데 근처, 전승)",
-      "kind": "sea",
-      "emoji": "🏝️",
-      "lat": 35.24,
-      "lng": 24.81,
-      "parent_region_code": "rgn_crete",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울 로마 압송 도중 풍랑 만난 섬 (행 27장)."
-    },
-    {
-      "code": "lm_nt_ap_cyprus_salamis_paphos",
-      "name": "구브로(살라미 → 바보)",
-      "kind": "island",
-      "emoji": "🏝️",
-      "lat": 35.05,
-      "lng": 33.45,
-      "parent_region_code": "rgn_cyprus",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울 1차 선교 첫 기착지 (행 13장)."
-    },
-    {
-      "code": "lm_nt_ap_iconium",
-      "name": "이고니온(코니아)",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 37.87,
-      "lng": 32.49,
-      "parent_region_code": "rgn_galatia",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울 1차 선교 박해 (행 14장)."
-    },
-    {
-      "code": "lm_nt_ap_lystra_derbe",
-      "name": "루스드라 → 더베(갈라디아)",
-      "kind": "city",
-      "emoji": "🦮",
-      "lat": 37.578,
-      "lng": 32.448,
-      "parent_region_code": "rgn_galatia",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울이 돌에 맞은 곳 (행 14장). 디모데의 고향."
-    },
-    {
-      "code": "lm_nt_ap_pisidian_antioch",
-      "name": "비시디아 안디옥(소아시아)",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 38.31,
-      "lng": 31.19,
-      "parent_region_code": "rgn_galatia",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울 1차 선교, 이방인 회심 시작 (행 13장)."
-    },
-    {
-      "code": "lm_nt_ap_rome",
-      "name": "로마",
-      "kind": "city",
-      "emoji": "🦅",
-      "lat": 41.8967,
-      "lng": 12.4823,
-      "parent_region_code": "rgn_italy",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "바울 가택 연금에서 복음 전한 곳 (행 28장). 로마서·옥중서신 배경."
-    },
-    {
-      "code": "lm_nt_ap_jerusalem",
+      "code": "lm_nt_post_jerusalem",
       "name": "예루살렘",
       "kind": "city",
       "emoji": "🏛️",
@@ -8200,10 +7893,190 @@
       "lng": 35.2354,
       "parent_region_code": "rgn_judea",
       "era_codes": [
-        "era_nt_apostolic"
+        "era_nt_post_apostolic"
       ],
       "display_priority": 50,
-      "description": "오순절 성령 강림·초대 교회 시작 (행 2장)."
+      "description": "주후 70년 로마군에 의해 멸망한 성 (마 24장 예언 성취)."
+    },
+    {
+      "code": "lm_pat_bethlehem",
+      "name": "베들레헴 길(전승)",
+      "kind": "city",
+      "emoji": "⭐",
+      "lat": 31.7054,
+      "lng": 35.2024,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "라헬이 베냐민을 낳고 죽어 묻힌 길가 (창 35:19). 후일 다윗·예수 탄생지."
+    },
+    {
+      "code": "lm_pat_hebron",
+      "name": "마므레(헤브론, 전승)",
+      "kind": "city",
+      "emoji": "🌲",
+      "lat": 31.5326,
+      "lng": 35.0998,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "아브라함의 마므레 상수리 거주지. 사라의 매장지 (창 23장)."
+    },
+    {
+      "code": "lm_pat_jordan_river",
+      "name": "요단 들(전승)",
+      "kind": "river",
+      "emoji": "💦",
+      "lat": 31.85,
+      "lng": 35.5,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "롯과 아브라함이 갈라설 때 롯이 택한 비옥한 들 (창 13장)."
+    },
+    {
+      "code": "lm_pat_machpelah",
+      "name": "헤브론(막벨라, 전승)",
+      "kind": "city",
+      "emoji": "⚰️",
+      "lat": 31.5246,
+      "lng": 35.111,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "아브라함이 산 가족 무덤 굴 (창 23장). 사라·아브라함·이삭·리브가·야곱·레아 매장."
+    },
+    {
+      "code": "lm_pat_mamre",
+      "name": "가나안(전승)",
+      "kind": "holy_site",
+      "emoji": "🌳",
+      "lat": 31.55,
+      "lng": 35.1,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "아브라함이 머문 가나안 땅. 세 천사 방문 (창 18장)."
+    },
+    {
+      "code": "lm_pat_moriah",
+      "name": "모리아(예루살렘, 전승)",
+      "kind": "mountain",
+      "emoji": "🏔️",
+      "lat": 31.78,
+      "lng": 35.24,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "이삭을 번제로 바치라 명령받은 산 (창 22장). 후일 솔로몬 성전 자리."
+    },
+    {
+      "code": "lm_pat_sodom",
+      "name": "소돔 일대(사해 남부, 전승)",
+      "kind": "city",
+      "emoji": "💥",
+      "lat": 31.0667,
+      "lng": 35.45,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "롯이 거주, 의인 부족으로 멸망한 도시 (창 19장). 사해 남부 추정."
+    },
+    {
+      "code": "lm_mon_jericho",
+      "name": "여리고 물 근원(엘리사, 전승)",
+      "kind": "city",
+      "emoji": "💧",
+      "lat": 31.8744,
+      "lng": 35.4441,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [],
+      "display_priority": 55,
+      "description": "엘리사가 소금으로 여리고 물 근원을 고친 전승 위치 (왕하 2장)."
+    },
+    {
+      "code": "lm_exo_gibeon_battle",
+      "name": "기브온/아얄론 골짜기(전승)",
+      "kind": "valley",
+      "emoji": "☀️",
+      "lat": 31.8469,
+      "lng": 35.1847,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 70,
+      "description": "여호수아가 기브온을 돕고 해와 달이 머문 전투의 전승 위치 (수 10장)."
+    },
+    {
+      "code": "lm_exo_eshcol_valley",
+      "name": "에스골 골짜기(헤브론 부근, 전승)",
+      "kind": "valley",
+      "emoji": "🍇",
+      "lat": 31.5326,
+      "lng": 35.0998,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 75,
+      "description": "정탐꾼들이 큰 포도송이를 가져온 가나안 산지의 골짜기 전승 위치 (민 13장)."
+    },
+    {
+      "code": "lm_mon_mt_zion",
+      "name": "시온 산",
+      "kind": "mountain",
+      "emoji": "🏛️",
+      "lat": 31.7714,
+      "lng": 35.2353,
+      "parent_region_code": "rgn_judea",
+      "era_codes": [
+        "era_monarchy"
+      ],
+      "display_priority": 80,
+      "description": "다윗 성. 예루살렘 남서쪽 언덕 — 시편의 시온."
+    },
+    {
+      "code": "lm_nt_post_philippi",
+      "name": "빌립보 교회",
+      "kind": "city",
+      "emoji": "✉️",
+      "lat": 41.014,
+      "lng": 24.286,
+      "parent_region_code": "rgn_macedonia",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 44,
+      "description": "빌립보서 수신 교회."
+    },
+    {
+      "code": "lm_nt_post_thessalonica",
+      "name": "데살로니가 교회",
+      "kind": "city",
+      "emoji": "✉️",
+      "lat": 40.64,
+      "lng": 22.944,
+      "parent_region_code": "rgn_macedonia",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
+      "display_priority": 45,
+      "description": "데살로니가전서 수신 교회."
     },
     {
       "code": "lm_nt_ap_berea",
@@ -8262,130 +8135,214 @@
       "description": "난파 후 머문 섬. 바울이 독사 사건 (행 28장)."
     },
     {
-      "code": "lm_nt_ap_jerusalem_gaza_road",
-      "name": "예루살렘-가사 길(전승)",
+      "code": "lm_exi_babylon",
+      "name": "바벨론",
       "kind": "city",
-      "emoji": "🛣️",
-      "lat": 31.6,
-      "lng": 34.9,
-      "parent_region_code": "rgn_philistia",
+      "emoji": "🗼",
+      "lat": 32.5421,
+      "lng": 44.4209,
+      "parent_region_code": "rgn_mesopotamia",
       "era_codes": [
-        "era_nt_apostolic"
+        "era_exile_return"
       ],
       "display_priority": 50,
-      "description": "빌립이 에디오피아 내시에게 세례를 베푼 길 (행 8장)."
+      "description": "유다 왕국 멸망 후 포로로 끌려간 제국 수도 (왕하 25장). 다니엘 활동 무대."
     },
     {
-      "code": "lm_nt_ap_samaria_city",
-      "name": "사마리아",
-      "kind": "city",
-      "emoji": "👑",
-      "lat": 32.279,
-      "lng": 35.19,
-      "parent_region_code": "rgn_samaria",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "빌립의 사역, 사도들이 성령 안수 (행 8장)."
-    },
-    {
-      "code": "lm_nt_ap_antioch_syria",
-      "name": "안디옥(시리아)",
-      "kind": "city",
-      "emoji": "⛪",
-      "lat": 36.2055,
-      "lng": 36.1611,
-      "parent_region_code": "rgn_syria_north",
-      "era_codes": [
-        "era_nt_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "이방인 교회 첫 본거지 (행 11장). 바울 선교 출발지."
-    },
-    {
-      "code": "lm_nt_post_laodicea",
-      "name": "라오디게아",
-      "kind": "city",
-      "emoji": "✉️",
-      "lat": 37.836,
-      "lng": 29.108,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_post_apostolic"
-      ],
-      "display_priority": 70,
-      "description": "계시록 일곱 교회의 마지막 — '차지도 더웁지도 않다' (계 3:14-22)."
-    },
-    {
-      "code": "lm_nt_post_pergamum",
-      "name": "버가모",
-      "kind": "city",
-      "emoji": "✉️",
-      "lat": 39.1326,
-      "lng": 27.1846,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_post_apostolic"
-      ],
-      "display_priority": 70,
-      "description": "계시록 일곱 교회 — '사단의 위가 있는 곳' (계 2:12-17)."
-    },
-    {
-      "code": "lm_nt_post_smyrna",
-      "name": "서머나",
-      "kind": "city",
-      "emoji": "✉️",
-      "lat": 38.4189,
-      "lng": 27.1287,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_post_apostolic"
-      ],
-      "display_priority": 70,
-      "description": "계시록 일곱 교회 — 환난 중에도 칭찬받은 교회 (계 2:8-11)."
-    },
-    {
-      "code": "lm_nt_post_ephesus",
-      "name": "소아시아(일곱 교회 중심: 에베소)",
-      "kind": "city",
-      "emoji": "⛪",
-      "lat": 37.949,
-      "lng": 27.366,
-      "parent_region_code": "rgn_asia_province",
-      "era_codes": [
-        "era_nt_post_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "요한복음·서신 저작 추정지. 일곱 교회 중심."
-    },
-    {
-      "code": "lm_nt_post_jerusalem",
-      "name": "예루살렘",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [
-        "era_nt_post_apostolic"
-      ],
-      "display_priority": 50,
-      "description": "주후 70년 로마군에 의해 멸망한 성 (마 24장 예언 성취)."
-    },
-    {
-      "code": "lm_nt_post_patmos",
-      "name": "밧모섬",
-      "kind": "island",
+      "code": "lm_exi_chebar",
+      "name": "그발 강가(추정)",
+      "kind": "river",
       "emoji": "👁️",
-      "lat": 37.32,
-      "lng": 26.55,
-      "parent_region_code": "rgn_patmos",
+      "lat": 32.65,
+      "lng": 44.6,
+      "parent_region_code": "rgn_mesopotamia",
       "era_codes": [
-        "era_nt_post_apostolic"
+        "era_exile_return"
       ],
       "display_priority": 50,
-      "description": "요한이 유배 중 계시를 받은 섬 (계 1:9)."
+      "description": "에스겔이 환상을 본 강가 (겔 1장). 바벨론 포로 정착지."
+    },
+    {
+      "code": "lm_prim_babel",
+      "name": "시날 평지(바벨론, 전승)",
+      "kind": "holy_site",
+      "emoji": "🏗️",
+      "lat": 32.54,
+      "lng": 44.42,
+      "parent_region_code": "rgn_mesopotamia",
+      "era_codes": [
+        "era_primeval"
+      ],
+      "display_priority": 50,
+      "description": "노아 후손이 바벨탑을 쌓다 언어가 흩어진 시날 평지 (창 11장)."
+    },
+    {
+      "code": "lm_prim_eden",
+      "name": "에덴 지역(추정)",
+      "kind": "holy_site",
+      "emoji": "🌳",
+      "lat": 33.0,
+      "lng": 44.5,
+      "parent_region_code": "rgn_mesopotamia",
+      "era_codes": [
+        "era_primeval"
+      ],
+      "display_priority": 50,
+      "description": "인류 최초 거주지 (창 2-3장). 티그리스·유프라테스 강 사이로 추정."
+    },
+    {
+      "code": "lm_prim_eden_east",
+      "name": "에덴 동쪽(추정)",
+      "kind": "holy_site",
+      "emoji": "🌳",
+      "lat": 33.0,
+      "lng": 44.5,
+      "parent_region_code": "rgn_mesopotamia",
+      "era_codes": [
+        "era_primeval"
+      ],
+      "display_priority": 50,
+      "description": "에덴 추방 후 가인이 이주한 놋 땅 (창 4:16)."
+    },
+    {
+      "code": "lm_prim_unknown",
+      "name": "메소포타미아(추정)",
+      "kind": "city",
+      "emoji": "❓",
+      "lat": 33.0,
+      "lng": 44.5,
+      "parent_region_code": "rgn_mesopotamia",
+      "era_codes": [
+        "era_primeval"
+      ],
+      "display_priority": 50,
+      "description": "원역사 사건의 추정 위치. 메소포타미아 일대."
+    },
+    {
+      "code": "lm_pat_ur",
+      "name": "우르",
+      "kind": "city",
+      "emoji": "🏺",
+      "lat": 30.96,
+      "lng": 46.1,
+      "parent_region_code": "rgn_mesopotamia",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 80,
+      "description": "아브라함의 고향. 갈대아 우르 (창 11:31)."
+    },
+    {
+      "code": "lm_exo_beth_peor_valley",
+      "name": "벧브올 맞은편 골짜기(전승)",
+      "kind": "valley",
+      "emoji": "🪨",
+      "lat": 31.76,
+      "lng": 35.72,
+      "parent_region_code": "rgn_moab",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 70,
+      "description": "모세가 모압 땅 벧브올 맞은편 골짜기에 묻혔다고 전하는 위치 (신 34장)."
+    },
+    {
+      "code": "lm_exo_baal_peor",
+      "name": "싯딤/바알브올(모압 평지, 전승)",
+      "kind": "campsite",
+      "emoji": "⛺",
+      "lat": 31.82,
+      "lng": 35.7,
+      "parent_region_code": "rgn_moab",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 75,
+      "description": "이스라엘이 모압 평지에서 바알브올 사건을 겪은 전승 위치 (민 25장)."
+    },
+    {
+      "code": "lm_exo_plains_moab",
+      "name": "모압 평지(요단 동편, 전승)",
+      "kind": "campsite",
+      "emoji": "🏕️",
+      "lat": 31.84,
+      "lng": 35.64,
+      "parent_region_code": "rgn_moab",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 80,
+      "description": "모세가 가나안 입성 직전 새 세대에게 언약과 당부를 전한 요단 동편 평지 (신 29-31장)."
+    },
+    {
+      "code": "lm_exo_mt_nebo",
+      "name": "느보산",
+      "kind": "mountain",
+      "emoji": "🏔️",
+      "lat": 31.7681,
+      "lng": 35.7253,
+      "parent_region_code": "rgn_moab",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 90,
+      "description": "모세가 약속의 땅을 바라본 산. 모세가 죽어 묻힌 곳 (신 34장)."
+    },
+    {
+      "code": "lm_exo_edom_road",
+      "name": "광야(에돔 길, 전승)",
+      "kind": "wilderness",
+      "emoji": "🏜️",
+      "lat": 30.3,
+      "lng": 35.3,
+      "parent_region_code": "rgn_negev",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "에돔 왕에게 통행을 거절당해 이스라엘이 우회한 길 (민 20장)."
+    },
+    {
+      "code": "lm_pat_beersheba",
+      "name": "브엘세바 주변(전승)",
+      "kind": "city",
+      "emoji": "💧",
+      "lat": 31.15,
+      "lng": 34.79,
+      "parent_region_code": "rgn_negev",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "아브라함·이삭이 머문 우물 도시 (창 21:31, 26:33). 가나안 남쪽 경계."
+    },
+    {
+      "code": "lm_pat_gerar",
+      "name": "그랄(전승)",
+      "kind": "city",
+      "emoji": "🚰",
+      "lat": 31.18,
+      "lng": 34.55,
+      "parent_region_code": "rgn_negev",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "아브라함·이삭이 기근 때 거주한 블레셋 땅 (창 20, 26장)."
+    },
+    {
+      "code": "lm_exo_kadesh_barnea",
+      "name": "가데스 바네아",
+      "kind": "campsite",
+      "emoji": "⛺",
+      "lat": 30.6786,
+      "lng": 34.4325,
+      "parent_region_code": "rgn_negev",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 80,
+      "description": "광야 38년 본거지. 정탐꾼을 보낸 곳 (민 13장)."
     },
     {
       "code": "lm_nt_con_patmos",
@@ -8402,64 +8359,213 @@
       "description": "요한이 환상을 본 에게해 섬 (계 1:9)."
     },
     {
-      "code": "lm_mon_nineveh",
-      "name": "니느웨",
-      "kind": "city",
-      "emoji": "🏛️",
-      "lat": 36.359,
-      "lng": 43.158,
-      "parent_region_code": "rgn_assyria",
-      "era_codes": [],
-      "display_priority": 90,
-      "description": "앗수르 제국 수도. 요나의 회개 사역, 후에 멸망 (욘서, 나훔)."
-    },
-    {
-      "code": "lm_mon_dan",
-      "name": "단",
-      "kind": "city",
-      "emoji": "🛐",
-      "lat": 33.2487,
-      "lng": 35.6517,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [],
-      "display_priority": 70,
-      "description": "북왕국 북단. 여로보암이 금송아지를 세운 두 곳 중 하나 (왕상 12:29)."
-    },
-    {
-      "code": "lm_mon_mt_carmel",
-      "name": "갈멜 산",
-      "kind": "mountain",
-      "emoji": "🔥",
-      "lat": 32.7333,
-      "lng": 35.05,
-      "parent_region_code": "rgn_galilee",
-      "era_codes": [],
+      "code": "lm_nt_post_patmos",
+      "name": "밧모섬",
+      "kind": "island",
+      "emoji": "👁️",
+      "lat": 37.32,
+      "lng": 26.55,
+      "parent_region_code": "rgn_patmos",
+      "era_codes": [
+        "era_nt_post_apostolic"
+      ],
       "display_priority": 50,
-      "description": "엘리야가 바알 선지자와 대결한 산 (왕상 18장)."
+      "description": "요한이 유배 중 계시를 받은 섬 (계 1:9)."
     },
     {
-      "code": "lm_mon_jericho",
-      "name": "여리고 물 근원(엘리사, 전승)",
-      "kind": "city",
-      "emoji": "💧",
-      "lat": 31.8744,
-      "lng": 35.4441,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [],
-      "display_priority": 55,
-      "description": "엘리사가 소금으로 여리고 물 근원을 고친 전승 위치 (왕하 2장)."
-    },
-    {
-      "code": "lm_mon_jordan_river",
-      "name": "요단강 근처(전승)",
-      "kind": "river",
-      "emoji": "💦",
+      "code": "lm_nt_pm_perea",
+      "name": "베레아(요단 동편, 추정)",
+      "kind": "wilderness",
+      "emoji": "🌳",
       "lat": 31.85,
-      "lng": 35.5,
-      "parent_region_code": "rgn_judea",
-      "era_codes": [],
+      "lng": 35.65,
+      "parent_region_code": "rgn_perea",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
       "display_priority": 50,
-      "description": "다윗·솔로몬 시대 군사·교역의 동쪽 경계."
+      "description": "요한이 세례를 베푼 곳 (요 1:28). 예수의 후기 사역지."
+    },
+    {
+      "code": "lm_exi_susa",
+      "name": "수산 궁(페르시아)",
+      "kind": "city",
+      "emoji": "👑",
+      "lat": 32.1881,
+      "lng": 48.2581,
+      "parent_region_code": "rgn_persia",
+      "era_codes": [
+        "era_exile_return"
+      ],
+      "display_priority": 50,
+      "description": "페르시아 제국 도시. 에스더 사건의 무대 (에 1장), 다니엘 환상 (단 8장)."
+    },
+    {
+      "code": "lm_jud_philistia_gaza",
+      "name": "블레셋 지역(가사/소렉, 전승)",
+      "kind": "city",
+      "emoji": "🛡️",
+      "lat": 31.5,
+      "lng": 34.46,
+      "parent_region_code": "rgn_philistia",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 50,
+      "description": "삼손이 활동한 블레셋 성읍 (삿 13-16장)."
+    },
+    {
+      "code": "lm_nt_ap_jerusalem_gaza_road",
+      "name": "예루살렘-가사 길(전승)",
+      "kind": "city",
+      "emoji": "🛣️",
+      "lat": 31.6,
+      "lng": 34.9,
+      "parent_region_code": "rgn_philistia",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "빌립이 에디오피아 내시에게 세례를 베푼 길 (행 8장)."
+    },
+    {
+      "code": "lm_nt_pm_tyre",
+      "name": "두로",
+      "kind": "city",
+      "emoji": "🌊",
+      "lat": 33.2704,
+      "lng": 35.2038,
+      "parent_region_code": "rgn_phoenicia",
+      "era_codes": [
+        "era_nt_public_ministry"
+      ],
+      "display_priority": 70,
+      "description": "예수의 가나안 여인 사역 (마 15:21-28)."
+    },
+    {
+      "code": "lm_exo_red_sea_crossing",
+      "name": "홍해/갈대바다(전승)",
+      "kind": "sea",
+      "emoji": "🌊",
+      "lat": 28.0,
+      "lng": 33.5,
+      "parent_region_code": "rgn_red_sea",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "이스라엘이 마른 땅으로 건너고 바로 군대가 수장된 바다 (출 14장)."
+    },
+    {
+      "code": "lm_jud_shamir",
+      "name": "사밀(에브라임 산지, 전승)",
+      "kind": "city",
+      "emoji": "🕊️",
+      "lat": 32.12,
+      "lng": 35.25,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 45,
+      "description": "돌라가 거하며 이스라엘을 다스린 에브라임 산지 사밀 전승 위치 (삿 10:1-2)."
+    },
+    {
+      "code": "lm_jud_ai",
+      "name": "아이 성 근처(전승)",
+      "kind": "city",
+      "emoji": "⚔️",
+      "lat": 31.97,
+      "lng": 35.28,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_exodus",
+        "era_judges"
+      ],
+      "display_priority": 50,
+      "description": "여리고 다음 정복한 성 (수 7-8장). 아간 사건으로 패전 후 재진격."
+    },
+    {
+      "code": "lm_jud_shiloh",
+      "name": "실로",
+      "kind": "holy_site",
+      "emoji": "⛪",
+      "lat": 32.056,
+      "lng": 35.29,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_judges"
+      ],
+      "display_priority": 50,
+      "description": "법궤 안치소·성막 자리 (수 18장). 한나가 사무엘을 위해 기도."
+    },
+    {
+      "code": "lm_nt_ap_samaria_city",
+      "name": "사마리아",
+      "kind": "city",
+      "emoji": "👑",
+      "lat": 32.279,
+      "lng": 35.19,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_nt_apostolic"
+      ],
+      "display_priority": 50,
+      "description": "빌립의 사역, 사도들이 성령 안수 (행 8장)."
+    },
+    {
+      "code": "lm_pat_bethel",
+      "name": "벧엘(전승)",
+      "kind": "holy_site",
+      "emoji": "🪜",
+      "lat": 31.96,
+      "lng": 35.22,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "야곱이 사다리 환상을 본 곳 (창 28장). 후일 북왕국 신앙 중심."
+    },
+    {
+      "code": "lm_pat_dothan",
+      "name": "도단(전승)",
+      "kind": "city",
+      "emoji": "🛒",
+      "lat": 32.41,
+      "lng": 35.24,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_patriarch"
+      ],
+      "display_priority": 50,
+      "description": "요셉이 형들에게 팔린 들판 (창 37장). 후일 엘리사가 시리아군 본 곳 (왕하 6장)."
+    },
+    {
+      "code": "lm_mon_shiloh",
+      "name": "실로(아히야의 경고, 전승)",
+      "kind": "holy_site",
+      "emoji": "📜",
+      "lat": 32.056,
+      "lng": 35.29,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [],
+      "display_priority": 65,
+      "description": "여로보암의 아내가 아히야 선지자를 찾아가 하나님의 심판 말씀을 들은 실로 전승 위치 (왕상 14장)."
+    },
+    {
+      "code": "lm_exo_shechem_oak",
+      "name": "세겜 상수리나무(전승)",
+      "kind": "holy_site",
+      "emoji": "🌳",
+      "lat": 32.213,
+      "lng": 35.281,
+      "parent_region_code": "rgn_samaria",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 70,
+      "description": "여호수아가 마지막 권면 뒤 큰 돌을 세운 성소 근처 상수리나무 전승 위치 (수 24장)."
     },
     {
       "code": "lm_mon_samaria",
@@ -8486,16 +8592,88 @@
       "description": "르호보암에게 북쪽 지파들이 멍에를 가볍게 해 달라고 요청했고, 왕국 분열이 드러난 세겜 전승 위치 (왕상 12장)."
     },
     {
-      "code": "lm_mon_shiloh",
-      "name": "실로(아히야의 경고, 전승)",
-      "kind": "holy_site",
-      "emoji": "📜",
-      "lat": 32.056,
-      "lng": 35.29,
-      "parent_region_code": "rgn_samaria",
-      "era_codes": [],
-      "display_priority": 65,
-      "description": "여로보암의 아내가 아히야 선지자를 찾아가 하나님의 심판 말씀을 들은 실로 전승 위치 (왕상 14장)."
+      "code": "lm_exo_marah",
+      "name": "마라(전승)",
+      "kind": "campsite",
+      "emoji": "💧",
+      "lat": 29.85,
+      "lng": 32.95,
+      "parent_region_code": "rgn_sinai_peninsula",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "쓴 물이 단 물로 변한 광야 첫 정착지 (출 15:22-25)."
+    },
+    {
+      "code": "lm_exo_midian_desert",
+      "name": "애굽 → 미디안(전승)",
+      "kind": "wilderness",
+      "emoji": "🏜️",
+      "lat": 28.4,
+      "lng": 35.7,
+      "parent_region_code": "rgn_sinai_peninsula",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "모세가 살인 후 도망친 광야 (출 2:15). 양치다 떨기나무 부르심을 받음."
+    },
+    {
+      "code": "lm_exo_mt_horeb",
+      "name": "호렙 산(전승)",
+      "kind": "mountain",
+      "emoji": "⛰️",
+      "lat": 28.54,
+      "lng": 33.97,
+      "parent_region_code": "rgn_sinai_peninsula",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "모세가 떨기나무 부르심을 받은 산 (출 3장). 시내산과 동일시."
+    },
+    {
+      "code": "lm_exo_mt_sinai",
+      "name": "시내산(전승)",
+      "kind": "mountain",
+      "emoji": "⛰️",
+      "lat": 28.5392,
+      "lng": 33.9756,
+      "parent_region_code": "rgn_sinai_peninsula",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "십계명을 받은 산 (출 19-20장). 율법 언약의 무대."
+    },
+    {
+      "code": "lm_exo_rephidim",
+      "name": "르비딤(전승)",
+      "kind": "city",
+      "emoji": "⚔️",
+      "lat": 28.7,
+      "lng": 33.6,
+      "parent_region_code": "rgn_sinai_peninsula",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "여호수아가 아말렉과 싸운 곳 (출 17장). 모세가 손을 들고 기도."
+    },
+    {
+      "code": "lm_exo_wilderness_of_sin",
+      "name": "신 광야(전승)",
+      "kind": "wilderness",
+      "emoji": "🏜️",
+      "lat": 29.1,
+      "lng": 33.3,
+      "parent_region_code": "rgn_sinai_peninsula",
+      "era_codes": [
+        "era_exodus"
+      ],
+      "display_priority": 50,
+      "description": "만나가 처음 내린 광야 (출 16장). 시내산 가는 도중."
     },
     {
       "code": "lm_mon_mt_horeb",
@@ -8510,102 +8688,46 @@
       "description": "엘리야가 도망쳐 세미한 음성을 들은 산 (왕상 19장)."
     },
     {
-      "code": "lm_div_jerusalem_jotham_gate",
-      "name": "예루살렘 성전 윗문(요담, 전승)",
-      "kind": "holy_site",
-      "emoji": "🚪",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
+      "code": "lm_div_mt_horeb",
+      "name": "호렙 산(엘리야, 전승)",
+      "kind": "mountain",
+      "emoji": "⛰️",
+      "lat": 28.54,
+      "lng": 33.97,
+      "parent_region_code": "rgn_sinai_peninsula",
       "era_codes": [
         "era_divided_kingdom"
       ],
-      "display_priority": 73,
-      "description": "요담이 성전 윗문을 건축하며 하나님 앞에서 바른 길을 걸은 예루살렘 전승 위치."
+      "display_priority": 60,
+      "description": "엘리야가 지친 몸으로 도망쳐 세미한 음성과 새 사명을 들은 산."
     },
     {
-      "code": "lm_div_jerusalem_ahaz_altars",
-      "name": "예루살렘 성전/다메섹 제단(아하스, 전승)",
-      "kind": "holy_site",
-      "emoji": "🛐",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
+      "code": "lm_exo_hazeroth",
+      "name": "하세롯(전승)",
+      "kind": "campsite",
+      "emoji": "⛺",
+      "lat": 28.93,
+      "lng": 34.62,
+      "parent_region_code": "rgn_sinai_peninsula",
       "era_codes": [
-        "era_divided_kingdom"
+        "era_exodus"
       ],
-      "display_priority": 72,
-      "description": "아하스가 우상을 섬기고 다메섹 제단을 성전에 들인 예루살렘 전승 위치."
+      "display_priority": 60,
+      "description": "미리암과 아론이 모세를 비방한 뒤 이스라엘이 머물렀던 광야 진영 (민 12장)."
     },
     {
-      "code": "lm_div_jerusalem_manasseh",
-      "name": "예루살렘/바벨론 길(므낫세, 전승)",
-      "kind": "palace",
-      "emoji": "⛓️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 71,
-      "description": "므낫세가 우상으로 성전을 더럽히고 포로로 낮아진 뒤 회개하여 돌아온 예루살렘 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_amon",
-      "name": "예루살렘 왕궁(아몬, 전승)",
-      "kind": "palace",
-      "emoji": "⚔️",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 70,
-      "description": "아몬이 짧게 악을 행하고 신하들의 반역으로 무너진 예루살렘 왕궁 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_jehoahaz_judah",
-      "name": "예루살렘/립나 길(여호아하스, 전승)",
-      "kind": "palace",
-      "emoji": "🇪🇬",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 69,
-      "description": "여호아하스가 석 달 동안 다스린 뒤 바로 느고에게 붙잡혀 애굽으로 끌려간 예루살렘 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_jehoiakim_first_exile",
-      "name": "예루살렘/첫 바벨론 포로(여호야김, 전승)",
+      "code": "lm_nt_ap_antioch_syria",
+      "name": "안디옥(시리아)",
       "kind": "city",
-      "emoji": "📦",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
+      "emoji": "⛪",
+      "lat": 36.2055,
+      "lng": 36.1611,
+      "parent_region_code": "rgn_syria_north",
       "era_codes": [
-        "era_divided_kingdom"
+        "era_nt_apostolic"
       ],
-      "display_priority": 68,
-      "description": "여호야김 시대 바벨론 압박과 성전 기물, 다니엘을 포함한 첫 포로가 이어지는 예루살렘 전승 위치."
-    },
-    {
-      "code": "lm_div_jerusalem_jehoiachin_exile",
-      "name": "예루살렘/여호야긴 포로(전승)",
-      "kind": "city",
-      "emoji": "🏺",
-      "lat": 31.778,
-      "lng": 35.2354,
-      "parent_region_code": "rgn_div_south_judah",
-      "era_codes": [
-        "era_divided_kingdom"
-      ],
-      "display_priority": 67,
-      "description": "여호야긴과 에스겔을 포함한 백성이 바벨론으로 끌려가고 성전 금 기구가 빼앗긴 예루살렘 전승 위치."
+      "display_priority": 50,
+      "description": "이방인 교회 첫 본거지 (행 11장). 바울 선교 출발지."
     }
   ]
 }

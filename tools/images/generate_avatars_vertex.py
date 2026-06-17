@@ -113,10 +113,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--retry-wait-sec",
         type=float,
-        default=float(os.getenv("VERTEX_IMAGE_RETRY_WAIT_SEC", "10")),
+        default=float(os.getenv("VERTEX_IMAGE_RETRY_WAIT_SEC", "30")),
         help=(
             "Seconds to wait before retrying transient Vertex errors. "
-            "Defaults to VERTEX_IMAGE_RETRY_WAIT_SEC or 10."
+            "Defaults to VERTEX_IMAGE_RETRY_WAIT_SEC or 30."
         ),
     )
     parser.add_argument(
@@ -498,7 +498,8 @@ def build_gemini_request_body(
         text = (
             "Use the attached existing avatar images only as visual style references. "
             "Match their flat paper-cut vector style, adult body proportions, simple "
-            "faceted face, soft shading, white background, and minimal/no dark outline. "
+            "faceted face, soft shading, white background, no visible outline, no ink "
+            "contour, no dark stroke, and edges separated only by flat color planes. "
             "Do not copy their identity, pose, clothing, accessories, or face; create "
             f"the requested character instead.\n\n{text}"
         )

@@ -1,0 +1,44 @@
+{
+  "era_code": "era_nt_post_apostolic",
+  "story_index": 15,
+  "story_title": "약함을 자랑하는 사도",
+  "source_version": "2026-06-12",
+  "questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "바울이 자신의 사도직을 말하며 많이 언급한 경험은 무엇입니까?",
+      "choices": [
+        "수고와 매 맞음과 위험",
+        "궁전 잔치와 금관",
+        "평안한 은퇴와 휴식"
+      ],
+      "answer_index": 0,
+      "explanation": "고후 11:23 — '수고를 넘치도록 하고 옥에 갇히기도 더 많이 하고'"
+    },
+    {
+      "type": "attitude",
+      "display_order": 1,
+      "question": "바울이 자신의 약함에 대해 고백한 내용은 무엇입니까?",
+      "choices": [
+        "그리스도의 능력이 머물 자리로 여긴다",
+        "복음을 포기할 이유로 삼는다",
+        "사람을 지배할 핑계로 삼는다"
+      ],
+      "answer_index": 0,
+      "explanation": "고후 12:9 — '내 능력이 약한 데서 온전하여짐이라'"
+    },
+    {
+      "type": "story_context",
+      "display_order": 2,
+      "question": "바울이 받은 육체의 가시에 대해 세 번 구한 것은 무엇입니까?",
+      "choices": [
+        "그것이 떠나가게 해 달라고 구했다",
+        "더 많은 가시를 달라고 구했다",
+        "사람들이 보지 못하게 해 달라고 구했다"
+      ],
+      "answer_index": 0,
+      "explanation": "고후 12:8 — '이것이 내게서 떠나기 위하여... 세 번 주께 간구하였더니'"
+    }
+  ]
+}

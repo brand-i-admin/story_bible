@@ -88,6 +88,9 @@ void main() {
           'end_year': -4000,
           'time_precision': 'approx',
           'story_index': 1,
+          'unit_code': 'birth_early_ministry',
+          'unit_title': '탄생과 초기 사역',
+          'unit_order': 2,
           'rank_in_era': 1,
           'global_rank': 1,
           'place_name': '메소포타미아',
@@ -106,8 +109,32 @@ void main() {
         ]);
         expect(event.bibleRefs, hasLength(1));
         expect(event.bibleRefs.single.displayText, '창 1:1-2:3');
+        expect(event.unitCode, 'birth_early_ministry');
+        expect(event.unitTitle, '탄생과 초기 사역');
+        expect(event.unitOrder, 2);
         expect(event.rankInEra, 1);
         expect(event.globalRank, 1);
+      });
+
+      test('unit 컬럼이 없으면 전체 흐름 기본값을 사용한다', () {
+        final event = StoryEvent.fromMap(<String, dynamic>{
+          'id': 'e1',
+          'era_id': 'era_primeval',
+          'title': '001 창조',
+          'summary': '하나님이 세상을 창조하신다.',
+          'story_scenes': <dynamic>[],
+          'scene_characters': <dynamic>[],
+          'character_codes': <dynamic>[],
+          'bible_refs': <dynamic>[],
+          'story_index': 1,
+          'rank_in_era': 1,
+          'global_rank': 1,
+          'landmark_id': 'lm_test',
+        });
+
+        expect(event.unitCode, 'default');
+        expect(event.unitTitle, '전체 흐름');
+        expect(event.unitOrder, 1);
       });
 
       test('character_codes가 null이면 빈 리스트', () {
