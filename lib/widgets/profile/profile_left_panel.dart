@@ -78,7 +78,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   double _profileRecordsContentHeight() {
     final state = ref.read(storyControllerProvider);
     final stats = buildProfileQuizStats(state.quizAttemptSummaries);
-    return stats.total == 0 ? 168 : 146;
+    return stats.total == 0 ? 116 : 96;
   }
 
   double _profilePrayerContentHeight({required bool isAuthenticated}) {
@@ -315,7 +315,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileRecordsTabBody() {
     final state = ref.watch(storyControllerProvider);
     final stats = buildProfileQuizStats(state.quizAttemptSummaries);
-    final emotionStats = buildProfileEmotionStats(state.eventEmotionMarks);
 
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
@@ -323,16 +322,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _ProfileRecordsStatsPanel(
-            emotionStats: emotionStats,
             quizStats: stats,
             selectedQuizFilter: null,
-            onTapEmotion: (option) {
-              _openProfileReviewDialog(
-                title: '${option.label} 이야기',
-                eventIds: emotionStats.eventIdsFor(option.key),
-                emptyText: '${option.label}으로 새긴 이야기가 없습니다.',
-              );
-            },
             onTapWrong: () {
               _openProfileQuizReviewDialog(
                 filter: _ProfileQuizReviewFilter.wrong,
@@ -1084,25 +1075,21 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
 class _ProfileRecordsStatsPanel extends StatelessWidget {
   const _ProfileRecordsStatsPanel({
-    required this.emotionStats,
     required this.quizStats,
     required this.selectedQuizFilter,
-    required this.onTapEmotion,
     required this.onTapWrong,
     required this.onTapConfused,
   });
 
-  final ProfileEmotionStats emotionStats;
   final ProfileQuizStats quizStats;
   final _ProfileQuizReviewFilter? selectedQuizFilter;
-  final ValueChanged<EventEmotionOption> onTapEmotion;
   final VoidCallback onTapWrong;
   final VoidCallback onTapConfused;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(8, 7, 8, 7),
+      padding: const EdgeInsets.fromLTRB(12, 11, 12, 11),
       decoration: BoxDecoration(
         color: const Color(0xEFFFF8E9),
         borderRadius: BorderRadius.circular(14),
@@ -1118,11 +1105,6 @@ class _ProfileRecordsStatsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _ProfileEmotionStatsRows(
-            stats: emotionStats,
-            onTapEmotion: onTapEmotion,
-          ),
-          const Divider(height: 13, color: Color(0x338E6F48)),
           _ProfileQuizStatsStrip(
             stats: quizStats,
             selected: selectedQuizFilter,
@@ -1130,134 +1112,6 @@ class _ProfileRecordsStatsPanel extends StatelessWidget {
             onTapConfused: onTapConfused,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _ProfileEmotionStatsRows extends StatelessWidget {
-  const _ProfileEmotionStatsRows({
-    required this.stats,
-    required this.onTapEmotion,
-  });
-
-  final ProfileEmotionStats stats;
-  final ValueChanged<EventEmotionOption> onTapEmotion;
-
-  @override
-  Widget build(BuildContext context) {
-    final sortedOptions = [...EventEmotionOption.options]
-      ..sort((a, b) {
-        final countCompare = stats
-            .countFor(b.key)
-            .compareTo(stats.countFor(a.key));
-        if (countCompare != 0) {
-          return countCompare;
-        }
-        return EventEmotionOption.options
-            .indexOf(a)
-            .compareTo(EventEmotionOption.options.indexOf(b));
-      });
-    final firstRow = sortedOptions.take(4).toList();
-    final secondRow = sortedOptions.skip(4).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            for (var i = 0; i < firstRow.length; i++) ...[
-              Expanded(
-                child: _ProfileEmotionStatChip(
-                  option: firstRow[i],
-                  count: stats.countFor(firstRow[i].key),
-                  onTap: () => onTapEmotion(firstRow[i]),
-                ),
-              ),
-              if (i != firstRow.length - 1) const SizedBox(width: 4),
-            ],
-          ],
-        ),
-        const SizedBox(height: 5),
-        Row(
-          children: [
-            for (var i = 0; i < secondRow.length; i++) ...[
-              Expanded(
-                child: _ProfileEmotionStatChip(
-                  option: secondRow[i],
-                  count: stats.countFor(secondRow[i].key),
-                  onTap: () => onTapEmotion(secondRow[i]),
-                ),
-              ),
-              if (i != secondRow.length - 1) const SizedBox(width: 4),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _ProfileEmotionStatChip extends StatelessWidget {
-  const _ProfileEmotionStatChip({
-    required this.option,
-    required this.count,
-    required this.onTap,
-  });
-
-  final EventEmotionOption option;
-  final int count;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
-        child: Container(
-          height: 24,
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            color: count > 0
-                ? AppColors.parchmentCream
-                : AppColors.parchmentCard,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: count > 0 ? AppColors.goldDeep : const Color(0x66A8834D),
-              width: 0.8,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              EmotionBadgeIcon(
-                emotionKey: option.key,
-                size: 15,
-                iconSize: 9,
-                elevation: false,
-              ),
-              const SizedBox(width: 3),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    '${option.label} $count',
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: count > 0 ? AppColors.ink700 : AppColors.ink200,
-                      fontSize: 9.8,
-                      fontWeight: FontWeight.w900,
-                      height: 1,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -1291,7 +1145,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
             onTap: null,
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 9),
         Expanded(
           child: _ProfileQuizStatItem(
             icon: Icons.close_rounded,
@@ -1303,7 +1157,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
             onTap: onTapWrong,
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 9),
         Expanded(
           child: _ProfileQuizStatItem(
             icon: Icons.question_mark_rounded,
@@ -1343,8 +1197,9 @@ class _ProfileQuizStatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 160),
-      constraints: const BoxConstraints(minHeight: 48),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+      alignment: Alignment.center,
+      constraints: const BoxConstraints(minHeight: 62),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
         color: selected
             ? color.withValues(alpha: 0.14)
@@ -1368,6 +1223,8 @@ class _ProfileQuizStatItem extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,

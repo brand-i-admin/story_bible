@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T06:03:59+00:00",
+  "generated_at": "2026-06-17T08:17:51+00:00",
   "total_quiz_files": 310,
   "total_events": 310,
   "total_questions": 930,
@@ -10,6 +10,7 @@
   },
   "orphan_quizzes": [],
   "title_mismatches": [],
+  "verse_scope_violations": [],
   "events_without_quiz": [],
   "length_warnings": [
     {
@@ -1966,6 +1967,18 @@
       "filename": "era_nt_apostolic_n044.json",
       "display_order": 1,
       "field": "choices[2]",
+      "length": 21
+    },
+    {
+      "filename": "era_nt_post_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[0]",
+      "length": 27
+    },
+    {
+      "filename": "era_nt_post_apostolic_n026.json",
+      "display_order": 0,
+      "field": "choices[1]",
       "length": 21
     },
     {

@@ -1,21 +1,9 @@
--- Non-destructive patch for timeline unit selection.
--- Apply before 200_stories_seed_part_*.sql so events_ordered exposes unit fields.
+-- Non-destructive patch for per-scene captions.
+-- Apply before 200_stories_seed_part_*.sql so events_ordered exposes
+-- scene_captions to Flutter clients.
 
 alter table events
-  add column if not exists unit_code text not null default 'default',
-  add column if not exists unit_title text not null default '전체 흐름',
-  add column if not exists unit_order int not null default 1,
   add column if not exists scene_captions jsonb not null default '[]'::jsonb;
-
-create index if not exists idx_events_era_unit_story_index
-  on events (era_id, unit_order, story_index);
-create index if not exists idx_events_era_unit_code
-  on events (era_id, unit_code);
-
-update eras
-   set start_year = 45
- where code = 'era_nt_post_apostolic'
-   and (start_year is distinct from 45);
 
 drop view if exists events_ordered cascade;
 

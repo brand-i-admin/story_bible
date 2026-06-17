@@ -12,6 +12,7 @@ class StoryEvent {
     required this.title,
     required this.summary,
     required this.storyScenes,
+    this.sceneCaptions = const [],
     required this.sceneCharacters,
     required this.startYear,
     required this.endYear,
@@ -40,6 +41,7 @@ class StoryEvent {
       title: row['title'] as String,
       summary: row['summary'] as String?,
       storyScenes: _stringList(row['story_scenes']),
+      sceneCaptions: _stringList(row['scene_captions']),
       sceneCharacters: _stringListList(row['scene_characters']),
       startYear: row['start_year'] as int?,
       endYear: row['end_year'] as int?,
@@ -71,6 +73,7 @@ class StoryEvent {
   final String title;
   final String? summary;
   final List<String> storyScenes;
+  final List<String> sceneCaptions;
   final List<List<String>> sceneCharacters;
   final int? startYear;
   final int? endYear;

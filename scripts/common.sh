@@ -123,6 +123,44 @@ read_env_value() {
   printf '%s' "$value"
 }
 
+strip_android_integration_test_registrant() {
+  local registrant="$ROOT_DIR/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java"
+  [[ -f "$registrant" ]] || return 0
+
+  python3 - "$registrant" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+block = """    try {
+      flutterEngine.getPlugins().add(new dev.flutter.plugins.integration_test.IntegrationTestPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin integration_test, dev.flutter.plugins.integration_test.IntegrationTestPlugin", e);
+    }
+"""
+updated = text.replace(block, "")
+if updated != text:
+    path.write_text(updated, encoding="utf-8")
+    print(f"Removed dev-only integration_test registrant from {path}")
+PY
+}
+
+prepare_flutter_workspace() {
+  require_command flutter
+  require_command python3
+
+  cd "$ROOT_DIR"
+  echo "Cleaning Flutter build outputs..."
+  flutter clean
+  echo "Refreshing Flutter package metadata..."
+  flutter pub get
+
+  # Flutter can regenerate the dev-only integration_test Android registrant
+  # after pub get, but release Android builds do not package that Java class.
+  strip_android_integration_test_registrant
+}
+
 run_flutter() {
   local runtime_env="$1"
   shift
@@ -130,6 +168,7 @@ run_flutter() {
   require_command flutter
   validate_supabase_env "$runtime_env"
   print_target "$runtime_env"
+  prepare_flutter_workspace
 
   # .env 의 FCM_VAPID_KEY 를 --dart-define 으로 주입 (Flutter Web 전용 키).
   # 값이 비어 있으면 네이티브와 마찬가지로 웹 푸시가 비활성화되며,
@@ -138,13 +177,13 @@ run_flutter() {
   local fcm_vapid_key
   fcm_vapid_key="$(read_env_value FCM_VAPID_KEY)"
 
-  cd "$ROOT_DIR"
+  local flutter_args=("$@" --no-pub)
   if [[ -n "$fcm_vapid_key" ]]; then
-    exec flutter "$@" \
+    exec flutter "${flutter_args[@]}" \
       --dart-define=ENV="$runtime_env" \
       --dart-define=FCM_VAPID_KEY="$fcm_vapid_key"
   else
-    exec flutter "$@" --dart-define=ENV="$runtime_env"
+    exec flutter "${flutter_args[@]}" --dart-define=ENV="$runtime_env"
   fi
 }
 

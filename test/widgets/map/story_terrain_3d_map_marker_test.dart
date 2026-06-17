@@ -36,6 +36,93 @@ void main() {
       },
     );
 
+    test('skip animation completes ordered event reveal', () {
+      final source = File(
+        'lib/widgets/story_map_panel_state.dart',
+      ).readAsStringSync();
+      final match = RegExp(
+        r'void skipAnimation\(\) \{([\s\S]*?)\n  \}',
+      ).firstMatch(source);
+
+      expect(match, isNotNull);
+      final methodBody = match!.group(1)!;
+      expect(methodBody, contains('_eventRevealTimer?.cancel();'));
+      expect(methodBody, contains('_eventRevealCount = count;'));
+      expect(methodBody, contains('widget.onRevealComplete?.call();'));
+    });
+
+    test('home shows a map reveal skip button while waiting for pins', () {
+      final homeSource = File(
+        'lib/screens/story_home_screen_state.dart',
+      ).readAsStringSync();
+      final widgetSource = File(
+        'lib/screens/story_home_screen_widgets.dart',
+      ).readAsStringSync();
+
+      expect(homeSource, contains('void _skipMapReveal()'));
+      expect(homeSource, contains('_mapPanelController.skipAnimation();'));
+      expect(homeSource, contains('final showRevealSkip ='));
+      expect(homeSource, contains('_awaitingRevealComplete &&'));
+      expect(homeSource, contains('_MapRevealSkipButton('));
+      expect(
+        widgetSource,
+        contains("ValueKey<String>('map-reveal-skip-button')"),
+      );
+      expect(
+        widgetSource,
+        contains('Icons.keyboard_double_arrow_right_rounded'),
+      );
+      final skipButtonStart = widgetSource.indexOf(
+        'class _MapRevealSkipButton',
+      );
+      final skipButtonEnd = widgetSource.indexOf(
+        'class _PreviousStepPill',
+        skipButtonStart,
+      );
+      final skipButtonSource = widgetSource.substring(
+        skipButtonStart,
+        skipButtonEnd,
+      );
+      expect(skipButtonSource, contains('ClipOval('));
+      expect(skipButtonSource, contains('ColoredBox('));
+      expect(skipButtonSource, isNot(contains('InkWell(')));
+      expect(skipButtonSource, isNot(contains('Ink(')));
+    });
+
+    test('home intro plays a short zoom and pitch affordance animation', () {
+      final homeSource = File(
+        'lib/screens/story_home_screen_state.dart',
+      ).readAsStringSync();
+      final panelSource = File(
+        'lib/widgets/story_map_panel.dart',
+      ).readAsStringSync();
+      final panelStateSource = File(
+        'lib/widgets/story_map_panel_state.dart',
+      ).readAsStringSync();
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(homeSource, contains('void _scheduleHomeIntroMapAffordance()'));
+      expect(
+        homeSource,
+        contains('_mapPanelController.playHomeIntroCameraHint();'),
+      );
+      expect(panelSource, contains('void playHomeIntroCameraHint()'));
+      expect(panelStateSource, contains('_pendingHomeIntroCameraHint = true;'));
+      expect(
+        panelStateSource,
+        contains('duration: const Duration(milliseconds: 1000)'),
+      );
+      expect(terrainSource, contains('void playHomeIntroCameraHint({'));
+      expect(terrainSource, contains('_homeIntroZoomOutDelta = 0.72'));
+      expect(terrainSource, contains('zoom + _homeIntroZoomOutDelta'));
+      expect(terrainSource, contains('targetPitch\': 0.0'));
+      expect(terrainSource, contains('window.storyBibleMap.jumpTo({'));
+      expect(terrainSource, contains('window.storyBibleMap.easeTo({'));
+      expect(terrainSource, contains('duration + 180'));
+    });
+
     test('event detail transitions frame pins above the bottom sheet', () {
       final source = File(
         'lib/widgets/story_map_panel_state.dart',
@@ -245,6 +332,17 @@ void main() {
         homeSource,
         contains('onClose: () {\n            _suppressMapTaps();'),
       );
+    });
+
+    test('home map no longer renders floating zoom or info controls', () {
+      final homeSource = File(
+        'lib/screens/story_home_screen_state.dart',
+      ).readAsStringSync();
+
+      expect(homeSource, isNot(contains("tooltip: '확대'")));
+      expect(homeSource, isNot(contains("tooltip: '축소'")));
+      expect(homeSource, isNot(contains("tooltip: '지도 출처'")));
+      expect(homeSource, isNot(contains('_showMapAttributionDialog')));
     });
 
     test('subresource errors do not show the 3D map failure overlay', () {

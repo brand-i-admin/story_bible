@@ -132,9 +132,14 @@ class StoryMapPanel extends StatefulWidget {
 
 class StoryMapPanelController {
   _StoryMapPanelState? _state;
+  bool _pendingHomeIntroCameraHint = false;
 
   void _bind(_StoryMapPanelState state) {
     _state = state;
+    if (_pendingHomeIntroCameraHint) {
+      _pendingHomeIntroCameraHint = false;
+      state._playHomeIntroCameraHint();
+    }
   }
 
   void _unbind(_StoryMapPanelState state) {
@@ -146,6 +151,15 @@ class StoryMapPanelController {
   void zoomIn() => _state?.zoomIn();
 
   void zoomOut() => _state?.zoomOut();
+
+  void playHomeIntroCameraHint() {
+    final state = _state;
+    if (state == null) {
+      _pendingHomeIntroCameraHint = true;
+      return;
+    }
+    state._playHomeIntroCameraHint();
+  }
 
   void suppressMapTaps([
     Duration duration = const Duration(milliseconds: 650),

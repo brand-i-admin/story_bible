@@ -52,6 +52,7 @@ is_active boolean DEFAULT false   -- 어드민이 노출 여부 결정
 ```sql
 id uuid PK, era_id uuid FK→eras, title text, summary text,
 story_scenes jsonb DEFAULT '[]',     -- ["장면1", ...]
+scene_captions jsonb DEFAULT '[]',   -- ["사용자용 이미지 설명1", ...]
 scene_characters jsonb DEFAULT '[]',    -- [["god"], [], ...]
 character_codes text[] DEFAULT '{}',    -- 평탄화된 인물 코드
 bible_refs jsonb DEFAULT '[]',       -- [{book, from, to}, ...]
@@ -68,8 +69,12 @@ status text DEFAULT 'published'      -- draft / published (어드민 전용)
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
 - `unit_code`/`unit_title`/`unit_order`는 시간 순 보기의 중간 선택 단계에 사용한다.
-  구약처럼 단일 흐름인 시대도 기본 1개 단위를 가진다.
-- `story`/`short_story` 컬럼 폐기 — UI는 `summary` + `story_scenes`로 충분.
+  구약도 시대별 curated 단위(원역사 3개, 족장 5개, 출애굽 5개, 사사 3개,
+  왕정 4개, 분열왕국 6개, 포로/귀환 4개)로 나눠 카드 선택에 사용한다.
+- `scene_captions`는 `story_scenes`와 같은 순서의 사용자용 이미지 설명이다. 원본
+  이미지 프롬프트는 `story_scenes`에 유지하고, 상세 페이지는 이 캡션만 overlay로
+  노출한다.
+- `story`/`short_story` 컬럼 폐기 — UI는 `summary` + `story_scenes` + `scene_captions`로 충분.
 - `bible_refs`/`character_codes`가 events row에 직접 임베드 → `event_characters`/`event_bible_refs` 테이블 폐기.
 - 외부 기여자 제출 기능 폐기: `submitted_by`/`thumb_url`/`pending_review` 상태 제거됨.
 

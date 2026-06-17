@@ -862,6 +862,8 @@ def main() -> int:
     for ch in characters:
         if not isinstance(ch, dict):
             continue
+        if bool(ch.get("asset_only", False)):
+            continue
         code = str(ch.get("code", "")).strip()
         if not code:
             continue

@@ -78,5 +78,36 @@ void main() {
         expect(scrollable.position.pixels, 0);
       }
     });
+
+    testWidgets('장면 캡션은 앞면 한 줄, 탭 후 뒷면 전체 설명으로 표시한다', (tester) async {
+      const caption = '하나님의 빛이 어둠 위에 비치며 창조의 첫 질서가 드러납니다';
+      await tester.pumpWidget(
+        _harness(
+          const StorySceneRow(
+            sceneAssets: ['assets/scene_solo.png'],
+            sceneCaptions: [caption],
+          ),
+          width: 600,
+        ),
+      );
+
+      final front = find.byKey(const ValueKey('story-scene-caption-front-0'));
+      expect(front, findsOneWidget);
+      final frontText = tester.widget<Text>(
+        find.descendant(of: front, matching: find.text(caption)),
+      );
+      expect(frontText.maxLines, 1);
+
+      await tester.tap(find.byKey(const ValueKey('story-scene-tile-0')));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      final back = find.byKey(const ValueKey('story-scene-caption-back-0'));
+      expect(back, findsOneWidget);
+      final backText = tester.widget<Text>(
+        find.descendant(of: back, matching: find.text(caption)),
+      );
+      expect(backText.maxLines, isNull);
+    });
   });
 }

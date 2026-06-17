@@ -91,6 +91,18 @@ class StoryTerrain3dMapController {
 
   void zoomOut() => _state?._zoomBy(-0.7);
 
+  void playHomeIntroCameraHint({
+    required LatLng center,
+    required double zoom,
+    Duration duration = const Duration(milliseconds: 1000),
+  }) {
+    _state?._playHomeIntroCameraHint(
+      center: center,
+      zoom: zoom,
+      duration: duration,
+    );
+  }
+
   void suppressTapFor([
     Duration duration = const Duration(milliseconds: 650),
   ]) => _state?._suppressTapFor(duration);
@@ -163,6 +175,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _boundsNorth = 50.5;
   static const _initialLoadTimeoutDuration = Duration(seconds: 20);
   static const _htmlRevision = 'event-pin-z-index-2026-06-02';
+  static const _homeIntroZoomOutDelta = 0.72;
 
   late final WebViewController _controller;
   Timer? _initialLoadTimeout;
@@ -402,6 +415,54 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
         const nextZoom = Math.max($_minZoom, Math.min($_maxZoom, window.storyBibleMap.getZoom() + $encodedDelta));
         window.storyBibleMap.easeTo({ zoom: nextZoom, duration: 420 });
+      }
+    ''');
+  }
+
+  void _playHomeIntroCameraHint({
+    required LatLng center,
+    required double zoom,
+    Duration duration = const Duration(milliseconds: 1000),
+  }) {
+    if (!_mapReady) {
+      return;
+    }
+    final startZoom = (zoom + _homeIntroZoomOutDelta)
+        .clamp(_minZoom, _maxZoom)
+        .toDouble();
+    final targetZoom = zoom.clamp(_minZoom, _maxZoom).toDouble();
+    final payload = jsonEncode({
+      'center': [center.longitude, center.latitude],
+      'startZoom': startZoom,
+      'targetZoom': targetZoom,
+      'startPitch': _effectivePitch,
+      'targetPitch': 0.0,
+      'bearing': _effectiveBearing,
+      'duration': duration.inMilliseconds,
+    });
+    _controller.runJavaScript('''
+      if (window.storyBibleMap) {
+        const request = $payload;
+        const center = Array.isArray(request.center) ? request.center : window.storyBibleMap.getCenter();
+        const duration = Number(request.duration || 1000);
+        if (window.storyBibleSuppressMapTap) {
+          window.storyBibleSuppressMapTap(duration + 180);
+        }
+        window.storyBibleMap.stop();
+        window.storyBibleMap.jumpTo({
+          center,
+          zoom: Number(request.startZoom),
+          pitch: Number(request.startPitch),
+          bearing: Number(request.bearing)
+        });
+        window.storyBibleMap.easeTo({
+          center,
+          zoom: Number(request.targetZoom),
+          pitch: Number(request.targetPitch),
+          bearing: Number(request.bearing),
+          duration,
+          easing: (t) => 1 - Math.pow(1 - t, 3)
+        });
       }
     ''');
   }

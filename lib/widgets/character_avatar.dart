@@ -31,7 +31,7 @@ class CharacterAvatar extends ConsumerWidget {
     // 1차 경로 — placeholder PNG 가 errorBuilder 를 못 트리거하던 버그 방지.
     final hasLocal = character.hasLocalAvatar;
     final assetPath = hasLocal ? character.avatarAssetPath.trim() : '';
-    final storagePath = character.avatarStoragePath?.trim();
+    final storagePath = _storagePathFor(character, hasLocal);
     final fallbackText = character.name.trim().isEmpty
         ? '?'
         : character.name.trim().substring(0, 1);
@@ -60,6 +60,18 @@ class CharacterAvatar extends ConsumerWidget {
     );
   }
 
+  String? _storagePathFor(Character character, bool hasLocal) {
+    final explicitPath = character.avatarStoragePath?.trim();
+    if (explicitPath != null && explicitPath.isNotEmpty) {
+      return explicitPath;
+    }
+    final code = character.code.trim();
+    if (hasLocal && code.isNotEmpty) {
+      return '$code.png';
+    }
+    return null;
+  }
+
   /// 로컬 → 원격 → 이니셜 순서 렌더.
   ///
   /// Flutter `Image.asset` 의 `errorBuilder` 는 asset 이 번들에 없을 때
@@ -80,10 +92,11 @@ class CharacterAvatar extends ConsumerWidget {
       return fallback;
     }
 
-    // Storage URL (필요할 때만 구성)
-    String? storageUrl;
-    if (storagePath != null && storagePath.isNotEmpty) {
-      storageUrl = _storageUrlFor(ref, storagePath);
+    String? storageUrl() {
+      if (storagePath == null || storagePath.isEmpty) {
+        return null;
+      }
+      return _storageUrlFor(ref, storagePath);
     }
 
     // Case 2: 로컬 경로가 있으면 그걸 1차로 시도, 실패 시 네트워크 → 실패 시 이니셜.
@@ -97,8 +110,9 @@ class CharacterAvatar extends ConsumerWidget {
           fit: BoxFit.cover,
           alignment: Alignment.topCenter,
           errorBuilder: (_, _, _) {
-            if (storageUrl == null) return fallback;
-            return _zoomedNetworkAvatar(storageUrl, fallback);
+            final fallbackUrl = storageUrl();
+            if (fallbackUrl == null) return fallback;
+            return _zoomedNetworkAvatar(fallbackUrl, fallback);
           },
         ),
       );
@@ -110,8 +124,9 @@ class CharacterAvatar extends ConsumerWidget {
     // 그대로 cover 만 쓰면 머리부터 발끝까지 전부 보여 canonical thumb(상체
     // 위주) 과 시각 비율이 맞지 않는다. → topCenter 기준 1.5× 확대해 상반신
     // 위주로 자른다. 부모 ClipOval 이 자연스럽게 외곽을 클립한다.
-    if (storageUrl != null) {
-      return _zoomedNetworkAvatar(storageUrl, fallback);
+    final fallbackUrl = storageUrl();
+    if (fallbackUrl != null) {
+      return _zoomedNetworkAvatar(fallbackUrl, fallback);
     }
 
     return fallback;

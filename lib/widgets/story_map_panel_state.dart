@@ -16,6 +16,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   Size _lastMapSize = const Size(900, 600);
   int _revealRunId = 0;
   bool _mapReady = false;
+  bool _pendingHomeIntroCameraHint = false;
 
   /// 사건 핀 0.3초 순차 reveal 카운터. revealEventsKey 또는 selectedLandmarkId
   /// 가 변경되면 0 으로 리셋 후 매 300ms +1.
@@ -122,6 +123,14 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
         });
       } else {
         _focusSelectedEventIfNeeded();
+      }
+      if (_pendingHomeIntroCameraHint) {
+        _pendingHomeIntroCameraHint = false;
+        Future.delayed(const Duration(milliseconds: 80), () {
+          if (mounted && _mapReady) {
+            _playHomeIntroCameraHint();
+          }
+        });
       }
     });
   }
@@ -768,10 +777,43 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     _terrain3dController.zoomOut();
   }
 
+  void _playHomeIntroCameraHint() {
+    if (!_mapReady) {
+      _pendingHomeIntroCameraHint = true;
+      return;
+    }
+    final coordinateEvents = widget.events
+        .where((event) => event.hasCoordinate)
+        .toList(growable: false);
+    final center =
+        widget.initialCenter ??
+        (coordinateEvents.isNotEmpty
+            ? coordinateEvents.first.latLng
+            : const LatLng(31.8, 35.2));
+    final zoom = widget.initialZoom ?? 6.0;
+    _terrain3dController.playHomeIntroCameraHint(
+      center: center,
+      zoom: zoom,
+      duration: const Duration(milliseconds: 1000),
+    );
+  }
+
   void skipAnimation() {
     final all = widget.events.where((event) => event.hasCoordinate).toList();
     _revealTimer?.cancel();
-    setState(() => _visibleCount = all.isEmpty ? 0 : all.length);
+    _eventRevealTimer?.cancel();
+    final count = all.length;
+    setState(() {
+      _visibleCount = count;
+      if (_orderedEventsActive) {
+        _eventRevealCount = count;
+      }
+    });
+    if (_orderedEventsActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onRevealComplete?.call();
+      });
+    }
   }
 
   /// 외부 트리거로 reveal 을 처음부터 재생. 현재 events 가 그대로여도 애니메이션

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -55,6 +57,7 @@ void main() {
     );
 
     expect(find.text('시간 순으로 보기'), findsOneWidget);
+    expect(find.textContaining('오늘은 성경'), findsNothing);
     expect(find.text('선택한 시대의 사건을\n시간 순으로 봅니다'), findsOneWidget);
     expect(find.text('인물과 걷기'), findsOneWidget);
     expect(find.text('선택한 인물들의 사건을\n시간 순으로 봅니다'), findsOneWidget);
@@ -71,6 +74,36 @@ void main() {
 
     await tester.tap(find.text('시간 순으로 보기'));
     expect(pickedMode, SelectionMode.timeline);
+  });
+
+  testWidgets('홈 인트로 패널은 하단 빈 공간을 줄인 패딩을 사용한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 420,
+            height: 720,
+            child: HomeIntroPanel(
+              eras: _eras,
+              selectedEraId: 'era_divided_kingdom',
+              onSelectEra: (_) {},
+              onPickMode: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final scrollViews = tester.widgetList<SingleChildScrollView>(
+      find.byType(SingleChildScrollView),
+    );
+    expect(
+      scrollViews.any(
+        (scrollView) =>
+            scrollView.padding == const EdgeInsets.fromLTRB(16, 12, 16, 10),
+      ),
+      isTrue,
+    );
   });
 
   testWidgets('선택된 시대 단계는 흐려진 뒤 다시 눌러도 시대를 바꾸지 않는다', (tester) async {
@@ -101,5 +134,14 @@ void main() {
 
     await tester.tap(find.text('장소로 시작'));
     expect(pickedMode, SelectionMode.region);
+  });
+
+  test('홈 인트로 시트는 콘텐츠에 맞는 낮은 높이로 열린다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_selectionSheetIntroHeight = 430'));
+    expect(source, contains('max: 0.38'));
   });
 }

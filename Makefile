@@ -95,7 +95,7 @@ help:
 	@echo "DB 적용 (psql + .env의 SUPABASE_DB_URL_$(ENV)):"
 	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!)"
 	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
-	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories 적용 (UPSERT — 재실행 안전)"
+	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories + scene_captions 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds-quizzes                  [ENV=dev]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
 	@echo "  apply-seeds-daily-quiz               [ENV=dev]  daily_quiz 적용 (slug UPSERT — 재실행 안전)"
 	@echo "  apply-seeds               [ENV=dev]  전체 시드 적용 (최초 부트스트랩용)"
@@ -370,7 +370,7 @@ apply-bible-verses-seeds:
 # characters / events 는 UPSERT 패턴이라 재실행 안전.
 apply-seeds-stories-characters:
 	@echo "[Makefile] characters + 200_stories 시드 적용 (ENV=$(ENV))"
-	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/characters_seed.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
+	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/characters_seed.sql $(SUPABASE_DIR)/200_stories/events_scene_captions_schema_patch.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
 
 # landmarks 는 UPSERT 패턴 — 재실행 안전.
 apply-seeds-landmarks:

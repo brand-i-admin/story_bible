@@ -8,6 +8,7 @@ StoryEvent _buildEvent({
   double? lat,
   double? lng,
   List<String> storyScenes = const ['장면1'],
+  List<String> sceneCaptions = const ['빛이 어둠을 가릅니다'],
   List<List<String>> sceneCharacters = const [
     ['god'],
   ],
@@ -25,6 +26,7 @@ StoryEvent _buildEvent({
     title: '001 창조: 7일과 안식',
     summary: summary,
     storyScenes: storyScenes,
+    sceneCaptions: sceneCaptions,
     sceneCharacters: sceneCharacters,
     startYear: -4000,
     endYear: -4000,
@@ -76,6 +78,7 @@ void main() {
           'title': '001 창조',
           'summary': '하나님이 세상을 창조하신다.',
           'story_scenes': <dynamic>['장면1', '장면2'],
+          'scene_captions': <dynamic>['빛이 어둠을 가릅니다', '창조가 안식으로 완성됩니다'],
           'scene_characters': <dynamic>[
             <dynamic>['god'],
             <dynamic>[],
@@ -103,6 +106,7 @@ void main() {
         expect(event.title, '001 창조');
         expect(event.characterCodes, ['god', 'adam']);
         expect(event.storyScenes, ['장면1', '장면2']);
+        expect(event.sceneCaptions, ['빛이 어둠을 가릅니다', '창조가 안식으로 완성됩니다']);
         expect(event.sceneCharacters, [
           ['god'],
           <String>[],
@@ -144,6 +148,7 @@ void main() {
           'title': 't',
           'summary': null,
           'story_scenes': null,
+          'scene_captions': null,
           'scene_characters': null,
           'character_codes': null,
           'bible_refs': null,
@@ -161,6 +166,7 @@ void main() {
         expect(event.characterCodes, isEmpty);
         expect(event.bibleRefs, isEmpty);
         expect(event.storyScenes, isEmpty);
+        expect(event.sceneCaptions, isEmpty);
         expect(event.sceneCharacters, isEmpty);
         expect(event.timePrecision, 'approx');
       });
@@ -172,6 +178,7 @@ void main() {
           'title': 't',
           'summary': null,
           'story_scenes': null,
+          'scene_captions': null,
           'scene_characters': null,
           'character_codes': null,
           'bible_refs': null,

@@ -197,8 +197,8 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                   }
                                   // 홈 화면 하단 패널과 같은 StoryEventThumbCard
                                   // 를 재사용 — 완료 시 초록 카드. 3열 그리드.
-                                  // childAspectRatio 는 카드의 자연 높이(아바타+
-                                  // 제목+메타+요약+인물 pill 행) 에 맞춰 0.78.
+                                  // 좁은 모바일 3열에서도 제목+메타+요약+인물 pill
+                                  // 행이 넘치지 않도록 카드 높이를 고정한다.
                                   return GridView.builder(
                                     padding: const EdgeInsets.only(top: 4),
                                     gridDelegate:
@@ -206,7 +206,7 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                           crossAxisCount: 3,
                                           mainAxisSpacing: 14,
                                           crossAxisSpacing: 12,
-                                          childAspectRatio: 0.78,
+                                          mainAxisExtent: 226,
                                         ),
                                     itemCount: events.length,
                                     itemBuilder: (context, index) {

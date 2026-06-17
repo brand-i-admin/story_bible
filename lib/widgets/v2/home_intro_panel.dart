@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import '../../models/era.dart';
 import '../../state/story_state.dart';
 import '../../theme/tokens.dart';
-import '../../theme/typography.dart';
 import '../story_home_styles.dart';
 import 'era_pick_rows.dart';
 
-/// 첫 화면 — "오늘은 성경 어디를 여행해볼까요?" 패널.
+/// 첫 화면 — 시대와 보기 방식을 고르는 패널.
 ///
 /// 두 단계로 구성:
 ///   1. 여행할 시대를 골라보세요 — 구약/신약 두 줄로 분리된 시대 칩. **단일 선택**.
@@ -40,24 +39,10 @@ class HomeIntroPanel extends StatelessWidget {
     final eraStepOpacity = canPickMode ? 0.55 : 1.0;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '🌿  오늘은 성경 어디를 여행해볼까요?  🌿',
-                maxLines: 1,
-                style: AppTextStyles.h3.copyWith(
-                  color: AppColors.ink800,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
           AnimatedOpacity(
             opacity: eraStepOpacity,
             duration: const Duration(milliseconds: 240),
@@ -138,13 +123,17 @@ class HomeIntroPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          Center(
+          const Center(
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
                 '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
                 maxLines: 1,
-                style: AppTextStyles.hint.copyWith(color: AppColors.ink450),
+                style: TextStyle(
+                  color: AppColors.ink450,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -190,9 +179,11 @@ class _StepHeader extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           '$number. $title',
-          style: AppTextStyles.sectionTitle.copyWith(
+          style: TextStyle(
+            fontSize: 13.2,
+            height: 1.1,
             color: color,
-            fontWeight: highlighted ? FontWeight.w800 : null,
+            fontWeight: highlighted ? FontWeight.w800 : FontWeight.w700,
           ),
         ),
         if (done) ...[

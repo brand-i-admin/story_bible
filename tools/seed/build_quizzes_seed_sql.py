@@ -32,6 +32,46 @@ class EventKey:
     story_index: int
 
 
+@dataclass(frozen=True)
+class VerseEvidence:
+    book: str
+    chapter: int
+    verse: int
+    end_verse: int
+
+    @property
+    def label(self) -> str:
+        if self.end_verse == self.verse:
+            return f"{self.book} {self.chapter}:{self.verse}"
+        return f"{self.book} {self.chapter}:{self.verse}-{self.end_verse}"
+
+
+@dataclass(frozen=True)
+class BibleRefRange:
+    book: str
+    start: tuple[int, int]
+    end: tuple[int, int]
+
+    @property
+    def label(self) -> str:
+        start = f"{self.start[0]}:{self.start[1]}"
+        end = f"{self.end[0]}:{self.end[1]}"
+        return f"{self.book} {start}-{end}"
+
+    def contains(self, evidence: VerseEvidence) -> bool:
+        if self.book != evidence.book:
+            return False
+        start = (evidence.chapter, evidence.verse)
+        end = (evidence.chapter, evidence.end_verse)
+        return self.start <= start <= self.end and self.start <= end <= self.end
+
+
+@dataclass(frozen=True)
+class StoryVerseScope:
+    title: str
+    refs: tuple[BibleRefRange, ...]
+
+
 _EVENT_ROW_PATTERN = re.compile(
     r"""
     \(\s*'(?P<era>era_[a-z_]+)',\s*
@@ -167,6 +207,12 @@ VERSE_LIKE_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"(더라|니라)$"),
 )
 VERSE_EVIDENCE_PATTERN = re.compile(r"^[가-힣0-9]+\s+\d+:\d+(?:-\d+)?\s+—\s+'[^']+'$")
+VERSE_REFERENCE_PATTERN = re.compile(
+    r"^\s*(?P<book>[가-힣0-9]+)\s+"
+    r"(?P<chapter>\d+):(?P<verse>\d+)"
+    r"(?:-(?P<end_verse>\d+))?"
+)
+STORY_REF_POINT_PATTERN = re.compile(r"^(?P<chapter>\d+):(?P<verse>\d+)$")
 MAX_STORY_CONTEXT_CHOICE_CHARS = 72
 GENERIC_QUESTION_ENDINGS: tuple[str, ...] = (
     "어떻게 했습니까?",
@@ -277,6 +323,84 @@ def choice_looks_like_verse_fragment(choice_text: str) -> bool:
 def has_verse_evidence(explanation: str) -> bool:
     """Return True when the explanation points to a concrete verse quote."""
     return VERSE_EVIDENCE_PATTERN.search(explanation.strip()) is not None
+
+
+def parse_verse_evidence(explanation: str) -> VerseEvidence | None:
+    """Parse the leading verse reference from a quiz explanation."""
+    m = VERSE_REFERENCE_PATTERN.match(explanation.strip())
+    if m is None:
+        return None
+    verse = int(m.group("verse"))
+    end_verse = int(m.group("end_verse") or verse)
+    return VerseEvidence(
+        book=m.group("book"),
+        chapter=int(m.group("chapter")),
+        verse=verse,
+        end_verse=end_verse,
+    )
+
+
+def parse_story_ref_point(
+    value: str, *, path: Path, story_title: str
+) -> tuple[int, int]:
+    m = STORY_REF_POINT_PATTERN.match(value)
+    if m is None:
+        raise QuizValidationError(
+            f"{path.name}: story {story_title!r} has invalid bible_ref point {value!r}"
+        )
+    return int(m.group("chapter")), int(m.group("verse"))
+
+
+def load_story_ref_scopes(stories_dir: Path) -> dict[tuple[str, int], StoryVerseScope]:
+    """Load `(era_code, story_index)` -> Bible reference ranges from stories JSON."""
+    scopes: dict[tuple[str, int], StoryVerseScope] = {}
+    for path in sorted(stories_dir.glob("*.json")):
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(raw, list):
+            raise QuizValidationError(f"{path.name}: root must be a list")
+        for story in raw:
+            if not isinstance(story, dict):
+                raise QuizValidationError(f"{path.name}: story entry must be an object")
+            era_code = story.get("era")
+            story_index = story.get("story_index")
+            title = str(story.get("title", "")).strip()
+            if not isinstance(era_code, str) or not isinstance(story_index, int):
+                raise QuizValidationError(
+                    f"{path.name}: story {title!r} must have era and story_index"
+                )
+            ranges: list[BibleRefRange] = []
+            for ref in story.get("bible_ref", []):
+                if not isinstance(ref, dict):
+                    raise QuizValidationError(
+                        f"{path.name}: story {title!r} has non-object bible_ref"
+                    )
+                book = ref.get("book")
+                start = ref.get("from")
+                end = ref.get("to")
+                if (
+                    not isinstance(book, str)
+                    or not isinstance(start, str)
+                    or not isinstance(end, str)
+                ):
+                    raise QuizValidationError(
+                        f"{path.name}: story {title!r} has incomplete bible_ref"
+                    )
+                ranges.append(
+                    BibleRefRange(
+                        book=book,
+                        start=parse_story_ref_point(
+                            start, path=path, story_title=title
+                        ),
+                        end=parse_story_ref_point(end, path=path, story_title=title),
+                    )
+                )
+            key = (era_code, story_index)
+            if key in scopes:
+                raise QuizValidationError(
+                    f"{path.name}: duplicate story key {key!r} for quiz verse scope"
+                )
+            scopes[key] = StoryVerseScope(title=title, refs=tuple(ranges))
+    return scopes
 
 
 def asks_contextless_generic_question(question_text: str) -> bool:
@@ -592,7 +716,12 @@ def _length_limits_for(question: QuizQuestionDraft) -> dict[str, int]:
     return _LENGTH_LIMITS
 
 
-def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
+def build_report(
+    *,
+    quiz_files: list[QuizFile],
+    events: list[EventKey],
+    story_scopes: dict[tuple[str, int], StoryVerseScope] | None = None,
+) -> dict:
     event_by_key: dict[tuple[str, int], EventKey] = {
         (e.era_code, e.story_index): e for e in events
     }
@@ -601,12 +730,14 @@ def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
     length_warnings: list[dict] = []
     title_mismatches: list[dict] = []
     orphan_quizzes: list[dict] = []
+    verse_scope_violations: list[dict] = []
     quiz_keys: set[tuple[str, int]] = set()
 
     for quiz in quiz_files:
         key = (quiz.era_code, quiz.story_index)
         quiz_keys.add(key)
         ek = event_by_key.get(key)
+        story_scope = story_scopes.get(key) if story_scopes is not None else None
         if ek is None:
             orphan_quizzes.append(
                 {
@@ -661,6 +792,49 @@ def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
                     }
                 )
 
+            if story_scopes is None:
+                continue
+            evidence = parse_verse_evidence(q.explanation)
+            if story_scope is None:
+                verse_scope_violations.append(
+                    {
+                        "filename": quiz.path.name,
+                        "display_order": q.display_order,
+                        "question_type": q.type,
+                        "reason": "missing_story_scope",
+                        "story_title": quiz.story_title,
+                        "explanation": q.explanation,
+                        "story_refs": [],
+                    }
+                )
+                continue
+            if evidence is None:
+                verse_scope_violations.append(
+                    {
+                        "filename": quiz.path.name,
+                        "display_order": q.display_order,
+                        "question_type": q.type,
+                        "reason": "missing_verse_reference",
+                        "story_title": story_scope.title,
+                        "explanation": q.explanation,
+                        "story_refs": [ref.label for ref in story_scope.refs],
+                    }
+                )
+                continue
+            if not any(ref.contains(evidence) for ref in story_scope.refs):
+                verse_scope_violations.append(
+                    {
+                        "filename": quiz.path.name,
+                        "display_order": q.display_order,
+                        "question_type": q.type,
+                        "reason": "outside_story_bible_ref",
+                        "story_title": story_scope.title,
+                        "evidence_ref": evidence.label,
+                        "explanation": q.explanation,
+                        "story_refs": [ref.label for ref in story_scope.refs],
+                    }
+                )
+
     events_without_quiz = sorted(
         [
             {"era_code": e.era_code, "story_index": e.story_index, "title": e.title}
@@ -682,6 +856,7 @@ def build_report(*, quiz_files: list[QuizFile], events: list[EventKey]) -> dict:
         },
         "orphan_quizzes": orphan_quizzes,
         "title_mismatches": title_mismatches,
+        "verse_scope_violations": verse_scope_violations,
         "events_without_quiz": events_without_quiz,
         "length_warnings": length_warnings,
     }
@@ -728,6 +903,15 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
             "Useful for aligning to a live DB snapshot."
         ),
     )
+    parser.add_argument(
+        "--stories-dir",
+        type=Path,
+        default=Path("assets/200_stories"),
+        help=(
+            "Directory containing story JSON files. Used to ensure quiz "
+            "explanation verse refs stay inside each story bible_ref."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -764,6 +948,17 @@ def main(argv: list[str] | None = None) -> int:
         print("ERROR: no events parsed", file=sys.stderr)
         return 1
 
+    if not args.stories_dir.exists():
+        print(
+            f"ERROR: stories directory not found: {args.stories_dir}", file=sys.stderr
+        )
+        return 1
+    try:
+        story_scopes = load_story_ref_scopes(args.stories_dir)
+    except QuizValidationError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
     json_paths = sorted(args.input_dir.glob("*.json"))
     quiz_files: list[QuizFile] = []
     for p in json_paths:
@@ -784,12 +979,28 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         seen_keys.add(key)
 
-    report = build_report(quiz_files=quiz_files, events=events)
+    report = build_report(
+        quiz_files=quiz_files,
+        events=events,
+        story_scopes=story_scopes,
+    )
 
     if report["orphan_quizzes"]:
         print(
             f"ERROR: {len(report['orphan_quizzes'])} orphan quizzes "
             f"(no matching event in seed). See report for details.",
+            file=sys.stderr,
+        )
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        return 1
+
+    if report["verse_scope_violations"]:
+        print(
+            f"ERROR: {len(report['verse_scope_violations'])} quiz verse refs "
+            f"outside story bible_ref. See report for details.",
             file=sys.stderr,
         )
         args.report.parent.mkdir(parents=True, exist_ok=True)

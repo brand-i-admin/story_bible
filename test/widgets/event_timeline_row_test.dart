@@ -23,27 +23,33 @@ Era _era() => const Era(
   mapZoom: null,
 );
 
-StoryEvent _event(int i, {List<String> characterCodes = const <String>[]}) =>
-    StoryEvent(
-      id: 'e$i',
-      landmarkId: 'lm_test',
-      eraId: 'era_primeval',
-      title: '사건 $i',
-      summary: '요약 $i',
-      storyScenes: const [],
-      sceneCharacters: const [],
-      startYear: -4000 + i,
-      endYear: -4000 + i,
-      timePrecision: 'approx',
-      storyIndex: i,
-      rankInEra: i,
-      globalRank: i,
-      placeName: null,
-      lat: null,
-      lng: null,
-      characterCodes: characterCodes,
-      bibleRefs: const [],
-    );
+StoryEvent _event(
+  int i, {
+  String? title,
+  String? summary,
+  String? placeName,
+  int? startYear,
+  List<String> characterCodes = const <String>[],
+}) => StoryEvent(
+  id: 'e$i',
+  landmarkId: 'lm_test',
+  eraId: 'era_primeval',
+  title: title ?? '사건 $i',
+  summary: summary ?? '요약 $i',
+  storyScenes: const [],
+  sceneCharacters: const [],
+  startYear: startYear ?? -4000 + i,
+  endYear: startYear ?? -4000 + i,
+  timePrecision: 'approx',
+  storyIndex: i,
+  rankInEra: i,
+  globalRank: i,
+  placeName: placeName,
+  lat: null,
+  lng: null,
+  characterCodes: characterCodes,
+  bibleRefs: const [],
+);
 
 Widget _harness(Widget child, {double width = 360, double height = 280}) {
   return MaterialApp(
@@ -194,11 +200,40 @@ void main() {
   });
 
   group('StoryEventThumbCard emotion badge', () {
-    testWidgets('lookup에 없는 인물 코드도 로컬 아바타를 먼저 시도한다', (tester) async {
+    testWidgets('좁은 3열 프로필 카드 높이에서도 내용이 overflow 되지 않는다', (tester) async {
       await tester.pumpWidget(
         _harness(
           StoryEventThumbCard(
-            event: _event(0, characterCodes: const ['cain']),
+            event: _event(
+              0,
+              title: '에덴: 사람의 창조와 사명',
+              summary: '사람은 에덴에서 돌보고 지키는 사명을 받습니다.',
+              placeName: '에덴동산',
+              startYear: -4000,
+              characterCodes: const ['god', 'adam', 'eve'],
+            ),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            orderNumber: 1,
+          ),
+          width: 104,
+          height: 226,
+        ),
+      );
+
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('lookup에 없는 인물 코드도 한글 이름과 로컬 아바타를 먼저 시도한다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(0, characterCodes: const ['cain', 'abel']),
             era: _era(),
             charactersByCode: const {},
             selected: false,
@@ -210,6 +245,10 @@ void main() {
 
       await tester.pump();
 
+      expect(find.text('가인'), findsOneWidget);
+      expect(find.text('아벨'), findsOneWidget);
+      expect(find.text('cain'), findsNothing);
+      expect(find.text('abel'), findsNothing);
       expect(
         find.byWidgetPredicate(
           (widget) =>
@@ -217,6 +256,16 @@ void main() {
               widget.image is AssetImage &&
               (widget.image as AssetImage).assetName ==
                   'assets/avatars_thumbs/cain.png',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName ==
+                  'assets/avatars_thumbs/abel.png',
         ),
         findsOneWidget,
       );

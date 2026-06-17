@@ -436,6 +436,12 @@ class BuildSqlStatementsTests(unittest.TestCase):
 class BuildReportTests(unittest.TestCase):
     def setUp(self) -> None:
         self.events = mod.extract_events_from_seed_sql(_EVENTS_SEED_SAMPLE)
+        self.story_scopes = {
+            ("era_primeval", 1): mod.StoryVerseScope(
+                title="창조: 7일과 안식",
+                refs=(mod.BibleRefRange(book="창", start=(1, 1), end=(2, 3)),),
+            )
+        }
 
     def test_total_counts(self) -> None:
         q = BuildSqlStatementsTests()._sample_quiz_file()
@@ -493,6 +499,50 @@ class BuildReportTests(unittest.TestCase):
         )
         report = mod.build_report(quiz_files=[q], events=self.events)
         self.assertEqual(report["length_warnings"], [])
+
+    def test_verse_scope_accepts_evidence_inside_story_ref(self) -> None:
+        q = BuildSqlStatementsTests()._sample_quiz_file()
+        report = mod.build_report(
+            quiz_files=[q],
+            events=self.events,
+            story_scopes=self.story_scopes,
+        )
+        self.assertEqual(report["verse_scope_violations"], [])
+
+    def test_verse_scope_detects_evidence_outside_story_ref(self) -> None:
+        q = BuildSqlStatementsTests()._sample_quiz_file()
+        bad = mod.QuizFile(
+            path=q.path,
+            era_code=q.era_code,
+            story_index=q.story_index,
+            story_title=q.story_title,
+            source_version=q.source_version,
+            questions=[
+                mod.QuizQuestionDraft(
+                    "fact",
+                    0,
+                    "첫째 날에 만든 것은?",
+                    ["빛", "궁창", "식물"],
+                    0,
+                    "출 21:6 — '그가 영영히 그 상전을 섬기리라'",
+                ),
+                *q.questions[1:],
+            ],
+        )
+        report = mod.build_report(
+            quiz_files=[bad],
+            events=self.events,
+            story_scopes=self.story_scopes,
+        )
+        self.assertEqual(len(report["verse_scope_violations"]), 1)
+        self.assertEqual(
+            report["verse_scope_violations"][0]["reason"],
+            "outside_story_bible_ref",
+        )
+        self.assertEqual(
+            report["verse_scope_violations"][0]["evidence_ref"],
+            "출 21:6",
+        )
 
 
 class DeterministicShuffleTests(unittest.TestCase):

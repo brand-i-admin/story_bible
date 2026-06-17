@@ -2,7 +2,7 @@
   "meta": {
     "title": "Bible avatar prompts (all individuals from 200 stories)",
     "version": "3.0",
-    "count": 170,
+    "count": 171,
     "style_source": "auto_story_v2",
     "active_threshold": 2,
     "curated_avatar_roster_codes": [
@@ -59,7 +59,10 @@
       "jehoiachin",
       "jehoiada"
     ],
-    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2, or when a character appears in an era_judges story at least once. Some codes have explicit visibility overrides, including abijah_judah=true, absalom=true, ahab=true, ahaz=true, ahaziah_israel=true, ahaziah_judah=true, amaziah_judah=true, amon_judah=true, asa=true, athaliah=true, baasha=true, elah_king=true, haggai=true, hoshea_king=true, jehoahaz_israel=true, jehoahaz_judah=true, jehoash_israel=true, jehoiachin=true, jehoiakim=true, jehoram_judah=true, jehoshaphat=true, jehu=true, jeroboam=true, jeroboam_ii=true, joash_judah=true, jonah=true, jonathan=true, joram_israel=true, josiah=true, jotham=true, manasseh=true, menahem=true, micaiah=true, naaman=true, nadab=true, omri=true, pekah=true, pekahiah=true, rehoboam=true, shallum=true, uzziah=true, zechariah_king=true, zechariah_prophet=true, zedekiah=true, zerubbabel=true, zimri=true, elizabeth=false, gabriel=false, god=false. Curated avatar roster entries may have mention_count=0 so avatars can be prepared before their story events are written. Runtime visibility is controlled by characters.is_active in DB."
+    "ui_only_avatar_codes": [
+      "guide"
+    ],
+    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2, or when a character appears in an era_judges story at least once. Some codes have explicit visibility overrides, including abijah_judah=true, absalom=true, ahab=true, ahaz=true, ahaziah_israel=true, ahaziah_judah=true, amaziah_judah=true, amon_judah=true, asa=true, athaliah=true, baasha=true, elah_king=true, haggai=true, hoshea_king=true, jehoahaz_israel=true, jehoahaz_judah=true, jehoash_israel=true, jehoiachin=true, jehoiakim=true, jehoram_judah=true, jehoshaphat=true, jehu=true, jeroboam=true, jeroboam_ii=true, joash_judah=true, jonah=true, jonathan=true, joram_israel=true, josiah=true, jotham=true, manasseh=true, menahem=true, micaiah=true, naaman=true, nadab=true, omri=true, pekah=true, pekahiah=true, rehoboam=true, shallum=true, uzziah=true, zechariah_king=true, zechariah_prophet=true, zedekiah=true, zerubbabel=true, zimri=true, elizabeth=false, gabriel=false, god=false. Curated avatar roster entries may have mention_count=0 so avatars can be prepared before their story events are written. Runtime visibility is controlled by characters.is_active in DB. UI-only avatar entries are marked asset_only=true and are generated as PNG assets but skipped by DB seed builders."
   },
   "common_style": "stylized geometric biblical character illustration, blocky low-poly faceted planes, angular polygon face and hair, flat matte vector shading with subtle cut-paper facets, rich deep color blocks, medium-to-strong saturation, clear value contrast, not pale, not faded, not washed out, natural stylized full-body adult proportions, head about one-fifth to one-sixth of total height, head clearly smaller than torso, torso and legs longer than head, same natural body ratio template across all human characters, compact adult proportions, not chibi, simple small eyes and nose, mature friendly expression, no visible outline, no ink contour, no dark stroke, edges defined only by adjacent flat color planes, exactly one character only, solo single subject, small full-body avatar with generous white margin around the entire figure, entire body visible from top of head to soles of sandals, both full feet and sandals clearly visible, whole figure fits inside frame with no cropping at the head, hands, robe hem, legs, feet, or staff, centered inside a square 1:1 avatar canvas, plain white background, high resolution, consistent design system across the full cast, distinct silhouette and face geometry for each character, distinct hairstyle and story-inspired accessory for each character, no text, no watermark",
   "negative_prompt": "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, chibi, super-deformed, giant head, large head, huge face, bobblehead, baby proportions, oversized eyes, long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, uneven body ratio, inconsistent body proportions, head larger than torso, head one-third of body height, face fills frame, legs longer than torso, pale colors, washed-out colors, faded pastel look, overexposed, low contrast, weak color, transparent-looking color, same-face clones, duplicate character, multiple people, crowd, group shot, companions, side characters, extra faces, extra bodies, twin, mirrored figure, close-up, portrait crop, bust shot, half body, cropped head, cropped feet, waist-up, upper body only, torso crop, knees cropped, robe hem cropped, bottom cropped, missing legs, missing feet, missing sandals, cut off toes, zoomed-in character, fills entire frame, marshmallow body, gritty, dark, horror, black outline, dark outline, heavy outline, thick outline, ink line, line art, comic ink, contour line, stroke, bold stroke, sticker outline, cel-shaded contour lines, complex background, text, logo, watermark",
@@ -487,12 +490,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 6,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, David, shepherd, sling, prophet Elijah, Mount Carmel scene, Jezebel, crowd, gentle king, humble faithful king, kind smile, repentant face, no idol, tiny unclear idol, empty hands, prophet robe, priest robe, David, Saul, Solomon, Elijah, shepherd, sling, no Baal sign, heroic posture, soft innocent eyes, battle gore, corpse, blood, multiple people, crowd, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "jeroboam",
         "ahab",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, David, shepherd, sling, prophet Elijah, Mount Carmel scene, Jezebel, crowd, gentle king, humble faithful king, kind smile, repentant face, no idol, tiny unclear idol, empty hands, prophet robe, priest robe, David, Saul, Solomon, Elijah, shepherd, sling, no Baal sign, heroic posture, soft innocent eyes, battle gore, corpse, blood, multiple people, crowd, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 33,
@@ -550,12 +553,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 4,
       "is_active_default": true,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, army, battle scene, rebellion scene, throne room scene, David appearing, king beside him, soldiers, horse, mule, tree, oak tree, hanging hair, hair caught in branches, death scene, corpse, blood, gore, crown, crowned king, modern clothing, fantasy armor, helmet, readable label, readable text, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "david",
         "solomon",
         "saul"
-      ]
+      ],
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, army, battle scene, rebellion scene, throne room scene, David appearing, king beside him, soldiers, horse, mule, tree, oak tree, hanging hair, hair caught in branches, death scene, corpse, blood, gore, crown, crowned king, modern clothing, fantasy armor, helmet, readable label, readable text, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 38,
@@ -616,12 +619,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 4,
       "is_active_default": true,
-      "negative_prompt_extra": "Isaiah copied avatar, Samuel, child Samuel, Ezekiel, Ezra, Haggai, Zechariah, king, crown, royal robe, priestly breastplate, temple incense scene, heavenly throne vision, seraphim, valley of dry bones, Baruch writing beside him, scribe desk, prison pit, mud pit, scroll burning scene, smashed jar scene, battle scene, siege army, multiple people, crowd, duo, readable label, readable text, portrait crop, bust shot, half body, close-up face, cropped feet, missing sandals, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "isaiah",
         "ezekiel",
         "ezra"
-      ]
+      ],
+      "negative_prompt_extra": "Isaiah copied avatar, Samuel, child Samuel, Ezekiel, Ezra, Haggai, Zechariah, king, crown, royal robe, priestly breastplate, temple incense scene, heavenly throne vision, seraphim, valley of dry bones, Baruch writing beside him, scribe desk, prison pit, mud pit, scroll burning scene, smashed jar scene, battle scene, siege army, multiple people, crowd, duo, readable label, readable text, portrait crop, bust shot, half body, close-up face, cropped feet, missing sandals, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 43,
@@ -682,12 +685,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 3,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaziah of Judah, Ahaz, child, sickbed scene, injury close-up, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "hoshea_king",
         "jeroboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaziah of Judah, Ahaz, child, sickbed scene, injury close-up, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 48,
@@ -760,12 +763,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 3,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahab beside him, alliance scene, battlefield, choir army, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "josiah",
         "hezekiah",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahab beside him, alliance scene, battlefield, choir army, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 54,
@@ -777,12 +780,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 3,
       "is_active_default": true,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "solomon",
         "saul",
         "david"
-      ]
+      ],
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 55,
@@ -794,12 +797,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 3,
       "is_active_default": true,
-      "negative_prompt_extra": "Esther, Persian queen, gentle heroine, salvation heroine, Athaliah, queen of Judah, Judah crown, Davidic line, motherly expression, faithful worshipper, prophetess, priestess, male, man, masculine face, broad male jaw, beard, mustache, facial hair, warrior armor, Ahab standing beside her, Jehu scene, window fall scene, Naboth stoning scene, dogs, blood, gore, corpse, injury, body falling, execution scene, multiple people, crowd, group, attendants, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "esther",
         "athaliah",
         "ahab"
-      ]
+      ],
+      "negative_prompt_extra": "Esther, Persian queen, gentle heroine, salvation heroine, Athaliah, queen of Judah, Judah crown, Davidic line, motherly expression, faithful worshipper, prophetess, priestess, male, man, masculine face, broad male jaw, beard, mustache, facial hair, warrior armor, Ahab standing beside her, Jehu scene, window fall scene, Naboth stoning scene, dogs, blood, gore, corpse, injury, body falling, execution scene, multiple people, crowd, group, attendants, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 56,
@@ -811,12 +814,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 3,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, child, boy, infant, Jehoash of Israel, Elisha arrows, assassination scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "josiah",
         "hezekiah",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, child, boy, infant, Jehoash of Israel, Elisha arrows, assassination scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 57,
@@ -946,12 +949,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 3,
       "is_active_default": true,
-      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "solomon",
         "david",
         "saul"
-      ]
+      ],
+      "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 67,
@@ -1036,12 +1039,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "Ahab, northern king of Samaria, Hoshea king, Hezekiah, Josiah, faithful reform king, prophet Isaiah, court prophet, priest, Assyrian commander, Aram king, Pekah, Rezin, battle scene, siege army, baby Immanuel scene, woman and child, multiple people, crowd, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, extra-wide side margins, tiny distant character, off-center character, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "rehoboam",
         "hezekiah",
         "josiah"
-      ]
+      ],
+      "negative_prompt_extra": "Ahab, northern king of Samaria, Hoshea king, Hezekiah, Josiah, faithful reform king, prophet Isaiah, court prophet, priest, Assyrian commander, Aram king, Pekah, Rezin, battle scene, siege army, baby Immanuel scene, woman and child, multiple people, crowd, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, extra-wide side margins, tiny distant character, off-center character, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 74,
@@ -1053,12 +1056,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaziah of Israel, sickbed, window lattice, Jehu killing scene, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "ahaz",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaziah of Israel, sickbed, window lattice, Jehu killing scene, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 75,
@@ -1066,11 +1069,11 @@
       "name_ko": "아히야",
       "name_en": "Ahijah the Shilonite",
       "era": "divided_kingdom",
-      "prompt": "COMMON_STYLE, palette: warm brown prophet mantle + cream robe + torn-cloak tan accents, medium saturation with rich deep color blocks and clear contrast, Ahijah the Shilonite, adult biblical man (age 25+), Ahijah the Shilonite prophet who signaled the divided kingdom, exactly one man only, normal warm dark eyes with visible pupils, wise solemn expression, not blind and not frightening, warm-brown prophet mantle over cream robe, torn cloak pieces held in both hands as the main sign, elderly Hebrew prophet, no crown, no royal robe, no horror eyes, front-facing Shiloh prophet posture, normal visible eyes looking forward, torn cloak pieces held in both hands with solemn authority, elderly Shiloh prophet build with lean upright shoulders, wise and solemn but not frightening, ancient Hebrew face with normal warm dark eyes, visible pupils, firm prophetic gaze, and no blindness in the base avatar, gray hair under a simple warm-brown prophet headcloth, short gray beard with angular facets, plain warm-brown prophet mantle over cream robe, torn cloak pieces held clearly as the divided-kingdom sign, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt": "COMMON_STYLE, palette: warm brown prophet mantle + cream robe + torn-cloak tan accents, medium saturation with rich deep color blocks and clear contrast, Ahijah the Shilonite, adult biblical man (age 25+), Ahijah the Shilonite prophet who signaled the divided kingdom, exactly one man only, soft pale cataract-like blind eyes with almost no dark pupils, unfocused gaze past the viewer, wise solemn listening expression, not frightening and no visible injury, warm-brown prophet mantle over cream robe, torn cloak pieces held in both hands as the main sign, elderly Hebrew prophet, no crown, no royal robe, no horror eyes, front-facing blind Shiloh prophet posture, unfocused eyes not making eye contact, head slightly lifted as if listening, torn cloak pieces held in both hands with solemn authority, elderly Shiloh prophet build with lean upright shoulders, wise and solemn but not frightening, ancient Hebrew face with soft pale cataract-like blind eyes, almost no dark pupils, unfocused gaze past the viewer, and no visible injury, gray hair under a simple warm-brown prophet headcloth, short gray beard with angular facets, plain warm-brown prophet mantle over cream robe, torn cloak pieces held clearly as the divided-kingdom sign, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "blind eyes, clouded eyes, no eyes, missing eyes, empty eye sockets, white ghost eyes, glowing eyes, horror face, scary prophet, terrifying expression, zombie, corpse-like face, no torn cloak pieces, plain generic prophet, Samuel, Isaiah, royal king robe, crown, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
+      "negative_prompt_extra": "medical eye bandage, wrapped cloth covering eyes, black blindfold, pirate eyepatch, normal focused eyes, clear dark pupils, direct eye contact, sharp youthful eyes, glowing eyes, empty eye sockets, missing eyes, blood, gore, wound, horror face, scary prophet, terrifying expression, zombie, corpse-like face, no torn cloak pieces, plain generic prophet, Samuel, Isaiah, royal king robe, crown, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
     },
     {
       "index": 76,
@@ -1082,12 +1085,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, battle with Edom, Israel king Joash, captured Jerusalem scene, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "josiah",
         "hezekiah",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, battle with Edom, Israel king Joash, captured Jerusalem scene, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 77,
@@ -1262,12 +1265,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoahaz of Judah, Pharaoh Necho, prison, chains, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "hoshea_king",
         "jeroboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoahaz of Judah, Pharaoh Necho, prison, chains, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 91,
@@ -1279,12 +1282,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Joash of Judah, child king, temple repair, shooting action, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "elisha"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Joash of Judah, child king, temple repair, shooting action, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 92,
@@ -1296,12 +1299,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "king, crown, throne, royal diadem, young prince, child Joash, Athaliah, palace coup scene, coronation crowd, soldiers, guards, battle scene, execution scene, assassination scene, prophet mantle, Isaiah, Samuel copied avatar, warrior armor, helmet, sword, spear, multiple people, crowd, group, attendants, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "aaron",
         "samuel",
         "josiah"
-      ]
+      ],
+      "negative_prompt_extra": "king, crown, throne, royal diadem, young prince, child Joash, Athaliah, palace coup scene, coronation crowd, soldiers, guards, battle scene, execution scene, assassination scene, prophet mantle, Isaiah, Samuel copied avatar, warrior armor, helmet, sword, spear, multiple people, crowd, group, attendants, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 93,
@@ -1313,12 +1316,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "Jehoiachin, Jehoahaz, Zedekiah, Josiah, righteous reform king, humble faithful king, Jeremiah, Baruch, prophet robe, scribe desk, scroll burning scene, open flame, Babylonian king, Nebuchadnezzar, Pharaoh Necho, Egyptian crown, captive prisoner, chains, battle scene, siege army, multiple people, crowd, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "josiah",
         "ahaz",
         "zedekiah"
-      ]
+      ],
+      "negative_prompt_extra": "Jehoiachin, Jehoahaz, Zedekiah, Josiah, righteous reform king, humble faithful king, Jeremiah, Baruch, prophet robe, scribe desk, scroll burning scene, open flame, Babylonian king, Nebuchadnezzar, Pharaoh Necho, Egyptian crown, captive prisoner, chains, battle scene, siege army, multiple people, crowd, readable label, readable text, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 94,
@@ -1330,12 +1333,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jezebel death scene, chariot crash, blood, gore, army crowd, battle, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jezebel death scene, chariot crash, blood, gore, army crowd, battle, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 95,
@@ -1362,12 +1365,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "Jonathan, Saul's son, prince Jonathan, David's friend, royal prince, king's son, handsome warrior prince, bow and arrows, palace scene, friendship covenant scene, multiple people, sailors, ship crew, Nineveh crowd, city crowd, giant fish swallowing scene, inside fish belly, ocean storm scene, ship deck scene, elderly prophet, Samuel, Isaiah, copied prophet avatar, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "elijah",
         "elisha",
         "isaiah"
-      ]
+      ],
+      "negative_prompt_extra": "Jonathan, Saul's son, prince Jonathan, David's friend, royal prince, king's son, handsome warrior prince, bow and arrows, palace scene, friendship covenant scene, multiple people, sailors, ship crew, Nineveh crowd, city crowd, giant fish swallowing scene, inside fish belly, ocean storm scene, ship deck scene, elderly prophet, Samuel, Isaiah, copied prophet avatar, readable label, readable text, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 97,
@@ -1379,12 +1382,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoram of Judah, Jehu killing scene, chariot battle, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoram of Judah, Jehu killing scene, chariot battle, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 98,
@@ -1478,12 +1481,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaz, Rezin, Aram king, battlefield, siege scene, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahaz",
         "ahab",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahaz, Rezin, Aram king, battlefield, siege scene, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 106,
@@ -1517,12 +1520,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 2,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, leprosy horror, priest confrontation, incense altar scene, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "hezekiah",
         "josiah",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, leprosy horror, priest confrontation, incense altar scene, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 109,
@@ -1579,12 +1582,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Abijah prophet, priest robe, battle panorama, Jeroboam appearing, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "rehoboam",
         "josiah",
         "hezekiah"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Abijah prophet, priest robe, battle panorama, Jeroboam appearing, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 113,
@@ -1608,12 +1611,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Egyptian god Amun, animal head, deity, assassination scene, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahaz",
         "jehoiakim",
         "zedekiah"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Egyptian god Amun, animal head, deity, assassination scene, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 115,
@@ -1625,12 +1628,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, idol-breaking action, mother Maacah, battle scene, diseased feet close-up, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "josiah",
         "hezekiah",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, idol-breaking action, mother Maacah, battle scene, diseased feet close-up, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 116,
@@ -1654,12 +1657,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, male, man, beard, child Joash, child-harm scene, massacre, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "esther",
         "rehoboam",
         "ahaz"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, male, man, beard, child Joash, child-harm scene, massacre, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 118,
@@ -1671,12 +1674,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Nadab, assassination scene, blood, gore, corpse, battlefield crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Nadab, assassination scene, blood, gore, corpse, battlefield crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 119,
@@ -1771,12 +1774,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, drunken party, feast crowd, Zimri attacking, blood, gore, corpse, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, drunken party, feast crowd, Zimri attacking, blood, gore, corpse, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 126,
@@ -1925,12 +1928,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoahaz of Israel, prison chains, Pharaoh Necho scene, Egypt crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "josiah",
         "jehoiakim",
         "zedekiah"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoahaz of Israel, prison chains, Pharaoh Necho scene, Egypt crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 137,
@@ -1942,12 +1945,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoiakim, Zedekiah, blindfold, chains, prison bars, execution scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "jehoiakim",
         "zedekiah",
         "josiah"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jehoiakim, Zedekiah, blindfold, chains, prison bars, execution scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 138,
@@ -1959,12 +1962,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Joram of Israel, brothers being killed, disease scene, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "rehoboam",
         "ahab",
         "ahaz"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Joram of Israel, brothers being killed, disease scene, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 139,
@@ -1993,12 +1996,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jeroboam son of Nebat, torn cloak, golden calf scene, prophet Amos, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "jeroboam",
         "ahab",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jeroboam son of Nebat, torn cloak, golden calf scene, prophet Amos, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 141,
@@ -2032,12 +2035,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jotham son of Gideon, parable trees, crowd, construction crew, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "hezekiah",
         "josiah",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jotham son of Gideon, parable trees, crowd, construction crew, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 144,
@@ -2085,12 +2088,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, child sacrifice, blood, gore, Assyrian chains, prison scene, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahaz",
         "hezekiah",
         "josiah"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, child sacrifice, blood, gore, Assyrian chains, prison scene, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 148,
@@ -2119,12 +2122,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Assyrian king, Tiglath-pileser, cruelty scene, pregnant women, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "hoshea_king",
         "jeroboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Assyrian king, Tiglath-pileser, cruelty scene, pregnant women, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 150,
@@ -2136,12 +2139,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "Micah the minor prophet, prophet Micah of Moresheth, book of Micah, Ahab king, Jehoshaphat king, Zedekiah son of Chenaanah, false prophets, crowded throne room scene, many prophets, horn props, battle scene, prison scene, king, crown, royal robe, court official, soldier, armor, helmet, Samuel, Isaiah copied avatar, Elijah copied avatar, Elisha copied avatar, multiple people, crowd, duo, readable label, readable text, portrait crop, bust shot, half body, cropped feet, missing sandals, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "elijah",
         "elisha",
         "isaiah"
-      ]
+      ],
+      "negative_prompt_extra": "Micah the minor prophet, prophet Micah of Moresheth, book of Micah, Ahab king, Jehoshaphat king, Zedekiah son of Chenaanah, false prophets, crowded throne room scene, many prophets, horn props, battle scene, prison scene, king, crown, royal robe, court official, soldier, armor, helmet, Samuel, Isaiah copied avatar, Elijah copied avatar, Elisha copied avatar, multiple people, crowd, duo, readable label, readable text, portrait crop, bust shot, half body, cropped feet, missing sandals, multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, secondary figure, scene with brother, scene with father, scene with attendants, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 151,
@@ -2165,12 +2168,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jeroboam, prophet, priest, battlefield, Baasha attacking, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "jeroboam",
         "ahab",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Jeroboam, prophet, priest, battlefield, Baasha attacking, blood, gore, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 153,
@@ -2193,12 +2196,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahab, Jezebel, construction crew, city crowd, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "rehoboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Ahab, Jezebel, construction crew, city crowd, battle scene, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 155,
@@ -2227,12 +2230,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Pekah attacking, coup scene, bodyguard, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "hoshea_king",
         "ahab",
         "jeroboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Pekah attacking, coup scene, bodyguard, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 157,
@@ -2307,12 +2310,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Zechariah murder scene, Menahem attacking, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "hoshea_king",
         "jeroboam"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Zechariah murder scene, Menahem attacking, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 163,
@@ -2403,12 +2406,12 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Zechariah prophet, Zechariah father of John, priest robe, temple incense, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "jeroboam",
         "hoshea_king",
         "ahab"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, Zechariah prophet, Zechariah father of John, priest robe, temple incense, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
       "index": 170,
@@ -2420,12 +2423,31 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
       "is_active_default": true,
-      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, palace burning, flames, suicide scene, corpse, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text",
       "style_reference_codes": [
         "ahab",
         "jeroboam",
         "hoshea_king"
-      ]
+      ],
+      "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, palace burning, flames, suicide scene, corpse, blood, gore, crowd, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
+    },
+    {
+      "index": 171,
+      "code": "guide",
+      "name_ko": "안내자",
+      "name_en": "Guide",
+      "era": "gospels",
+      "prompt": "same flat paper-cut vector avatar world as the existing biblical cast, warm cream + muted olive + teal-blue shawl + small parchment-gold accents, no visible outline, no ink contour, edges separated only by soft flat color planes, plain white background, Guide, joyful young adult biblical male guide character for app explanation popups, UI helper avatar not a Bible story person, face-dominant head-and-shoulders circular app icon composition, head and upper chest fill most of the square canvas, facial expression must be clearly readable in a 48px circular thumbnail, clearly beardless clean-shaven face, no moustache, no facial hair, large bright happy eyes with small catchlights, wide open cheerful smile, lifted friendly eyebrows, excited delighted expression like he is happily explaining something useful, front-facing face and shoulders, both eyes looking directly at the viewer, one open hand raised beside the cheek in a lively teaching gesture, other hand holding a small blank rolled parchment partly visible near the chest, cream tunic collar, muted olive robe shoulders, teal-blue short shawl visible around the neck and shoulders, centered in the canvas with enough white margin so the circular crop does not cut off hair, chin, shoulders, or raised hand, clean iconic silhouette, single character only, no other people, no text, no letters, no speech bubble",
+      "prompt_source": "manual",
+      "mention_count": 0,
+      "is_active_default": false,
+      "asset_only": true,
+      "style_reference_codes": [
+        "david",
+        "john",
+        "matthew",
+        "timothy"
+      ],
+      "negative_prompt_extra": "beard, moustache, facial hair, stubble, old man, elderly, gray hair, stern expression, sad expression, angry expression, serious frown, closed mouth, hidden face, tiny unreadable face, small distant face, full body figure, head-to-toe figure, tiny standing body, face turned away, profile view, side view, speech bubble, readable text, label"
     }
   ]
 }

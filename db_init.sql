@@ -228,6 +228,7 @@ create table if not exists events (
   title text not null unique,
   summary text,
   story_scenes jsonb not null default '[]'::jsonb,
+  scene_captions jsonb not null default '[]'::jsonb,
   scene_characters jsonb not null default '[]'::jsonb,
   character_codes text[] not null default '{}',
   bible_refs jsonb not null default '[]'::jsonb,
@@ -353,7 +354,7 @@ create index if not exists idx_events_landmark on events (landmark_id);
 create view events_ordered as
   select
     e.id, e.era_id, e.title, e.summary,
-    e.story_scenes, e.scene_characters, e.character_codes,
+    e.story_scenes, e.scene_captions, e.scene_characters, e.character_codes,
     e.bible_refs, e.start_year, e.end_year, e.time_precision,
     e.story_index, e.unit_code, e.unit_title, e.unit_order,
     e.scene_image_paths, e.status, e.deleted_at,

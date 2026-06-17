@@ -1,6 +1,6 @@
 # Scripts
 
-`scripts/`에는 실행 대상 Supabase 환경을 고정해서 `flutter run`과 배포 빌드를 호출하는 스크립트가 들어 있습니다.
+`scripts/`에는 실행 대상 Supabase 환경을 고정해서 `flutter run`과 배포 빌드를 호출하는 스크립트가 들어 있습니다. 모든 스크립트는 실행 직전에 `flutter clean`과 `flutter pub get`을 먼저 실행해 stale asset/build cache가 앱 크기에 섞이지 않게 합니다.
 
 ## Environments
 
@@ -43,8 +43,9 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 
 ## Notes
 
-- `run_*` 스크립트는 `flutter run --dart-define=ENV=...`를 호출합니다.
-- `build_ios_*` 스크립트는 `flutter build ipa --release --dart-define=ENV=...`를 호출합니다.
-- `build_android_*` 스크립트는 `flutter build appbundle --release --dart-define=ENV=...`를 호출합니다.
+- 모든 스크립트는 Flutter 호출 전에 `flutter clean`과 `flutter pub get`을 실행한 뒤, 본 호출은 `--no-pub`으로 진행합니다.
+- `run_*` 스크립트는 `flutter run --no-pub --dart-define=ENV=...`를 호출합니다.
+- `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub --dart-define=ENV=...`를 호출합니다.
+- `build_android_*` 스크립트는 `flutter build appbundle --release --no-pub --dart-define=ENV=...`를 호출합니다.
 - `.env`에 `FCM_VAPID_KEY`가 있으면 `--dart-define=FCM_VAPID_KEY=...`도 자동 주입합니다 (Flutter Web 푸시용). 비어 있거나 없으면 주입 생략.
 - 로컬에 `flutter`와 `python3`가 설치되어 있어야 합니다.

@@ -18,7 +18,7 @@ class _CharacterNextPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = compact ? '$count명' : '$count명 다음';
+    final label = '$count명 다음';
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -30,15 +30,13 @@ class _CharacterNextPill extends StatelessWidget {
             vertical: compact ? 4 : 5,
           ),
           decoration: BoxDecoration(
-            color: const Color(0xFF8C5A2E),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
+            ),
             borderRadius: BorderRadius.circular(999),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x33000000),
-                blurRadius: 4,
-                offset: Offset(0, 1),
-              ),
-            ],
+            boxShadow: AppShadows.green,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -79,7 +77,7 @@ class _TimelineUnitNextPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = compact ? '$count단위' : '$count단위 다음';
+    final label = '$count개 다음';
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -91,15 +89,13 @@ class _TimelineUnitNextPill extends StatelessWidget {
             vertical: compact ? 4 : 5,
           ),
           decoration: BoxDecoration(
-            color: const Color(0xFF2E6F8B),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
+            ),
             borderRadius: BorderRadius.circular(999),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x33000000),
-                blurRadius: 4,
-                offset: Offset(0, 1),
-              ),
-            ],
+            boxShadow: AppShadows.green,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -120,6 +116,45 @@ class _TimelineUnitNextPill extends StatelessWidget {
                 size: compact ? 12 : 13,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MapRevealSkipButton extends StatelessWidget {
+  const _MapRevealSkipButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: '핀 애니메이션 건너뛰기',
+      child: Semantics(
+        button: true,
+        label: '핀 애니메이션 건너뛰기',
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            key: const ValueKey<String>('map-reveal-skip-button'),
+            onTap: onPressed,
+            behavior: HitTestBehavior.opaque,
+            child: SizedBox.square(
+              dimension: 76,
+              child: ClipOval(
+                child: ColoredBox(
+                  color: Colors.black.withValues(alpha: 0.42),
+                  child: Icon(
+                    Icons.keyboard_double_arrow_right_rounded,
+                    size: 50,
+                    color: Colors.white.withValues(alpha: 0.88),
+                    semanticLabel: '핀 애니메이션 건너뛰기',
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -765,48 +800,6 @@ class _PopupMetaChip extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// 지도 출처 dialog 의 한 줄 — "출처명 · 라이선스" 형태.
-class _AttributionLine extends StatelessWidget {
-  const _AttributionLine({required this.source, this.license});
-
-  final String source;
-  final String? license;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 6, right: 8),
-          child: Icon(Icons.circle, size: 5, color: Color(0xFF9A7A4C)),
-        ),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: const TextStyle(
-                fontSize: 13,
-                height: 1.5,
-                color: Color(0xFF3A2A1A),
-              ),
-              children: [
-                TextSpan(text: source),
-                if (license != null) ...[
-                  const TextSpan(text: ' · '),
-                  TextSpan(
-                    text: license!,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

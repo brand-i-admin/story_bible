@@ -7,11 +7,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 인트로 패널(시대/모드 선택 단계) 의 기본 콘텐츠 높이.
   /// 실제 시트 높이는 화면 높이 대비 비율로 변환하되, 컨텐츠가 짧은 화면에서는
   /// 내부 스크롤이 맡는다.
-  static const double _selectionSheetIntroHeight = 560;
+  static const double _selectionSheetIntroHeight = 430;
 
   /// 사건 핀 reveal 모드(region 선택 후 또는 character step 3) 의 panel 크기.
   /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding.
   static const double _selectionSheetCardOnlyHeight = 390;
+
+  /// 시간순 단위 선택은 한 줄 가로 카드 레일이므로, 단위 개수와 무관하게
+  /// 카드 설명 전체가 보이는 1줄 높이에 맞춘다.
+  static const double _selectionSheetTimelineUnitHeight = 300;
   static const Duration _emotionMapPreStampDelay = Duration(milliseconds: 500);
   static const Duration _emotionMapPostStampDelay = Duration(seconds: 1);
   static const Duration _emotionMapStampFallbackSlack = Duration(
@@ -87,6 +91,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _handleAuthUserChanged(initialUser);
       }
     });
+    _scheduleHomeIntroMapAffordance();
   }
 
   @override
@@ -249,7 +254,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Set<String> _allTimelineUnitCodes(StoryState state) =>
-      state.events.map((event) => event.unitCode).toSet();
+      _timelineForEra(state).map((event) => event.unitCode).toSet();
 
   /// 지도에 넘길 타임라인: 커밋된 `state.displayedEventIds` 에 속한 사건만.
   /// 비어 있으면 빈 리스트 → 지도 핀/화살표가 완전히 사라진다.
@@ -332,7 +337,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         size,
         _selectionSheetIntroHeight,
         min: 0.30,
-        max: 0.44,
+        max: 0.38,
       );
     }
     if (_mode == _SelectionMode.region) {
@@ -380,17 +385,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return _sheetFractionForHeight(size, px, min: 0.28, max: 0.48);
     }
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
-      final unitCount = _allTimelineUnitCodes(state).length;
-      final rowCount = (unitCount / 2).ceil();
-      const rowPx = 120.0;
-      const chromePx = 122.0;
-      final visibleRows = rowCount <= 1
-          ? 1.0
-          : rowCount == 2
-          ? 2.0
-          : 2.35;
-      final px = chromePx + visibleRows * rowPx;
-      return _sheetFractionForHeight(size, px, min: 0.28, max: 0.50);
+      return _sheetFractionForHeight(
+        size,
+        _selectionSheetTimelineUnitHeight,
+        min: 0.22,
+        max: 0.42,
+      );
     }
     return _sheetFractionForHeight(
       size,
@@ -453,28 +453,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   /// 현재 단계/모드에 어울리는 지도 안내 문구. null 이면 hint 미표시.
   /// 사용자가 dismiss (지도 제스처/region 선택 등) 했으면 null.
-  ({String message, IconData icon})? _currentMapHint() {
+  ({String message, double? avatarSize})? _currentMapHint() {
     if (_mapHintDismissed) return null;
+    if (_mode == null && _selectionStep == 1) {
+      return (
+        message:
+            '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물과 걷기·장소로 시작 중 하나를 선택해 주세요.',
+        avatarSize: 70,
+      );
+    }
     if (_mode == _SelectionMode.region) {
       final state = ref.read(storyControllerProvider);
       if (state.selectedLandmarkId == null) {
         return (
           message: '노란 지역을 눌러 그곳의 사건을 보세요.\n지도를 확대·축소해도 괜찮아요.',
-          icon: Icons.touch_app_rounded,
+          avatarSize: null,
         );
       }
       return null;
     }
     if (_mode == _SelectionMode.character && _selectionStep == 2) {
       return (
-        message: '아래 패널에서 인물을 한 명 이상 고른 뒤\n좌측 상단의 「→」 버튼을 눌러주세요.',
-        icon: Icons.people_alt_rounded,
+        message: '아래 패널에서 인물을 한 명 이상 골라주세요.\n좌측 상단의 초록 「다음」 버튼을 눌러주세요.',
+        avatarSize: null,
       );
     }
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
       return (
-        message: '아래 패널에서 보고 싶은 단위를 고른 뒤\n「다음」 버튼을 눌러주세요.',
-        icon: Icons.view_agenda_rounded,
+        message: '아래 패널에서 단위 카드를 골라주세요.\n좌측 상단의 초록 「다음」 버튼을 눌러주세요.',
+        avatarSize: null,
       );
     }
     return null;
@@ -509,6 +516,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  void _scheduleHomeIntroMapAffordance() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final state = ref.read(storyControllerProvider);
+      if (_mode != null || _selectionStep != 1 || state.selectedEraId != null) {
+        return;
+      }
+      _mapPanelController.playHomeIntroCameraHint();
+    });
+  }
+
   void _animateSelectionPanelToStage(StorySelectionPanelStage stage) {
     final viewportSize = MediaQuery.sizeOf(context);
     final maxExtent = _sheetMaxSizeFor(viewportSize);
@@ -536,6 +556,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final expandExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
     setState(() {
       _awaitingRevealComplete = false;
+      _selectionPanelStage = StorySelectionPanelStage.expanded;
+      _selectionSheetExtent = expandExtent;
+    });
+    _setMapAnimationInputLocked(false);
+  }
+
+  void _skipMapReveal() {
+    if (!_awaitingRevealComplete) {
+      return;
+    }
+    _mapPanelController.skipAnimation();
+    final expandExtent = _sheetMaxSizeFor(MediaQuery.sizeOf(context));
+    setState(() {
+      _awaitingRevealComplete = false;
+      _revealInstantly = true;
       _selectionPanelStage = StorySelectionPanelStage.expanded;
       _selectionSheetExtent = expandExtent;
     });
@@ -642,10 +677,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _mode = null;
         _selectionStep = 1;
         _draftSelectedCharacterCodes = const <String>{};
-        // intro 화면은 자체 안내가 충분하므로 hint overlay 는 dismiss.
-        _mapHintDismissed = true;
+        // 첫 화면으로 돌아온 것이므로 캐릭터 가이드도 다시 보여 준다.
+        _resetMapHint();
       });
       _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
+      _scheduleHomeIntroMapAffordance();
       return;
     }
 
@@ -1372,35 +1408,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             _suppressMapTaps();
             Navigator.of(ctx).pop();
           },
-        ),
-      ),
-    );
-  }
-
-  /// 지도 출처/라이선스 dialog — 운영 3D 무료 지도의 attribution 을 노출.
-  void _showMapAttributionDialog() {
-    final source = StoryMapTileStyles.sourceFor(
-      StoryMapTileStyles.defaultStyle,
-    );
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => ParchmentDialog(
-        title: '지도 출처',
-        subtitle: '현재 배경: ${source.label}',
-        showCloseButton: true,
-        onClose: () => Navigator.of(dialogContext).pop(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (var i = 0; i < source.attributionLines.length; i++) ...[
-              if (i > 0) const SizedBox(height: 8),
-              _AttributionLine(
-                source: source.attributionLines[i].source,
-                license: source.attributionLines[i].license,
-              ),
-            ],
-          ],
         ),
       ),
     );
@@ -2142,7 +2149,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // 차지하는 픽셀. gesture-only / 풀스크린 모드면 0. 이 값만큼 시트를 위로
     // 띄워야 패널 하단이 nav bar 에 가려지지 않는다 (사용자 보고).
     final bottomInset = MediaQuery.of(context).padding.bottom;
-    const outerMargin = 20.0;
     // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
     final mapCalloutTopObscuredPixels = topInset + 88;
     return Scaffold(
@@ -2254,6 +2260,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     _sheetSizeForStage(viewportSize, _selectionPanelStage);
                 // 모드별 지도 안내 문구. null 이면 hint overlay 미표시.
                 final mapHint = _currentMapHint();
+                final showRevealSkip =
+                    _awaitingRevealComplete &&
+                    !_revealInstantly &&
+                    mapTimeline.where((event) => event.hasCoordinate).length >
+                        1;
 
                 return Stack(
                   children: [
@@ -2388,43 +2399,32 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         ),
                       ),
                     ),
-                    // 우측 사이드: 줌 +/- 만 (stepper 는 시트 헤더로 이동).
-                    // toolbar(38) + 8 + chip bar(28) + 8 ≈ topInset + 90 부터 노출.
-                    Positioned(
-                      right: outerMargin,
-                      top: topInset + 90,
-                      child: Listener(
-                        behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) {
-                          _handleMapInteraction();
-                          _suppressMapTaps();
-                        },
-                        onPointerSignal: (_) => _suppressMapTaps(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            mapControlButton(
-                              icon: Icons.add,
-                              tooltip: '확대',
-                              onTap: _mapPanelController.zoomIn,
+                    if (showRevealSkip)
+                      Positioned(
+                        top: topInset + 96,
+                        right: isPhone ? 18 : 30,
+                        bottom: bottomInset + sheetHeight + 24,
+                        child: Center(
+                          child: Listener(
+                            behavior: HitTestBehavior.opaque,
+                            onPointerDown: (_) {
+                              _handleMapInteraction();
+                              _suppressMapTaps(
+                                const Duration(milliseconds: 1200),
+                              );
+                            },
+                            onPointerUp: (_) => _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
                             ),
-                            const SizedBox(height: 6),
-                            mapControlButton(
-                              icon: Icons.remove,
-                              tooltip: '축소',
-                              onTap: _mapPanelController.zoomOut,
+                            onPointerCancel: (_) => _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
                             ),
-                            const SizedBox(height: 6),
-                            // 지도 출처/라이선스 — 운영 3D 지도 attribution 의무 충족.
-                            mapControlButton(
-                              icon: Icons.info_outline,
-                              tooltip: '지도 출처',
-                              onTap: _showMapAttributionDialog,
+                            child: _MapRevealSkipButton(
+                              onPressed: _skipMapReveal,
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
                     // 세로 모드: 4개 핵심 버튼 + 알림/Aa/이야기등록을
                     // 좌우 끝까지 가득 펼치고 horizontal scroll 로 추가 노출.
                     Positioned(
@@ -2482,7 +2482,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         ),
                       ),
                     ),
-                    // 지도 위 모드별 안내 오버레이. 사용자가 무엇을 해야 할지
+                    // 지도 위 캐릭터 가이드 오버레이. 사용자가 무엇을 해야 할지
                     // 모를 때 가운데 흐리게 떠 있다가, 화면 탭/지도 제스처/
                     // region 선택/인물 「다음」 등 한 번의 행동으로 dismiss.
                     // IgnorePointer 로 감싸 안내 위 탭도 아래 WebView 지도
@@ -2496,7 +2496,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         child: IgnorePointer(
                           child: MapHintOverlay(
                             message: mapHint.message,
-                            icon: mapHint.icon,
+                            avatarSize: mapHint.avatarSize ?? 48,
                           ),
                         ),
                       ),
@@ -2614,7 +2614,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         final hasPreviousAction = previousLabel != null;
         final showNextAction = showCharacterNext || showTimelineNext;
         final actionSlotWidth = showNextAction && hasPreviousAction
-            ? math.min(136.0, math.max(118.0, innerWidth * 0.35))
+            ? math.min(154.0, math.max(132.0, innerWidth * 0.40))
             : math.min(118.0, math.max(92.0, innerWidth * 0.30));
         final leftAction = Row(
           mainAxisSize: MainAxisSize.min,
@@ -2750,8 +2750,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               selectedUnitCodes: state.selectedTimelineUnitCodes,
               onToggleUnit: _toggleTimelineUnit,
               onSelectAll: _selectAllTimelineUnits,
-              onClear: _clearTimelineUnits,
-              onNext: () => unawaited(_proceedFromTimelineUnitStep()),
+              onClearAll: _clearTimelineUnits,
               bottomInset: bottomInset,
             ),
           ),

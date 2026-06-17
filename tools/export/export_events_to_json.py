@@ -39,6 +39,7 @@ _KEY_ORDER = [
     "time_precision",
     "story_index",
     "story_scenes",
+    "scene_captions",
     "scene_characters",
 ]
 
@@ -66,6 +67,7 @@ def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
         "time_precision": row.get("time_precision") or "approx",
         "story_index": int(row.get("story_index") or 0),
         "story_scenes": list(row.get("story_scenes") or []),
+        "scene_captions": list(row.get("scene_captions") or []),
         "scene_characters": [
             list(s or []) for s in (row.get("scene_characters") or [])
         ],
@@ -162,7 +164,7 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
     rest = url.rstrip("/") + "/rest/v1/events"
     params = {
         "select": (
-            "title,summary,character_codes,bible_refs,story_scenes,scene_characters,"
+            "title,summary,character_codes,bible_refs,story_scenes,scene_captions,scene_characters,"
             "place_name,lat,lng,start_year,end_year,time_precision,story_index,"
             "era:era_id(code)"
         ),

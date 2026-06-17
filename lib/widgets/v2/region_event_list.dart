@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../data/character_name_fallbacks.dart';
 import '../../models/character.dart';
 import '../../models/era.dart';
 import '../../models/event_emotion_mark.dart';
@@ -11,12 +12,6 @@ import '../../utils/scene_asset_loader.dart';
 import '../character_avatar.dart';
 import '../emotion_badge_icon.dart';
 import '../event_timeline_row.dart';
-
-const Map<String, String> _displayOnlyCharacterNameByCode = {'god': '하나님'};
-
-String _fallbackCharacterName(String code) {
-  return _displayOnlyCharacterNameByCode[code] ?? code;
-}
 
 /// 지역 모드 — 선택된 region 의 사건들을 시간순 가로 스크롤 (EventTimelineRow)
 /// 으로 보여 준다. 인물 모드 step 3 와 동일한 widget 을 공유 → 두 모드의 UI
@@ -318,7 +313,7 @@ class StoryEventThumbCard extends StatelessWidget {
             return _CharPillAvatar(
               code: code,
               character: character,
-              name: character?.name ?? _fallbackCharacterName(code),
+              name: localizedCharacterName(code: code, name: character?.name),
               accentColor: isHighlighted
                   ? colorForHighlightedCharacter?.call(code)
                   : null,

@@ -139,8 +139,17 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
   // ──────────────────────── 나의 다이어리 탭 본문 ────────────────────────
   Widget _profileProgressLifeBody() {
     final state = ref.watch(storyControllerProvider);
+    final emotionStats = buildProfileEmotionStats(state.eventEmotionMarks);
     return ProfileEmotionDiary(
       eventEmotionMarks: state.eventEmotionMarks,
+      emotionStats: emotionStats,
+      onTapEmotion: (option) {
+        _openProfileReviewDialog(
+          title: '${option.label} 이야기',
+          eventIds: emotionStats.eventIdsFor(option.key),
+          emptyText: '${option.label}으로 새긴 이야기가 없습니다.',
+        );
+      },
       onOpenEventDetail: (event) {
         widget.onOpenEventDetail(
           event,

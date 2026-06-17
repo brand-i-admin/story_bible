@@ -364,17 +364,25 @@ Widget storySection({
 /// 장면 이미지 row. [sceneAssets] 의 각 원소는 로컬 asset 경로
 /// (`assets/...`) 또는 Supabase Storage public URL (`http...`) 이다.
 /// `SceneAssetLoader` 가 하이브리드 로딩에서 둘 중 적절한 것을 채워 넘긴다.
-Widget storySceneRow(List<String> sceneAssets) {
-  return StorySceneRow(sceneAssets: sceneAssets);
+Widget storySceneRow(
+  List<String> sceneAssets, {
+  List<String> sceneCaptions = const [],
+}) {
+  return StorySceneRow(sceneAssets: sceneAssets, sceneCaptions: sceneCaptions);
 }
 
 /// 장면 이미지 가로 스크롤 row. 한 화면에 ~2.3 타일 노출이라 3장 이상이면
 /// 우측에 잘려 있다. 등장 시 한 번 살짝 들썩이고(nudge), 평소엔 우측 페이드로
 /// "더 있음" affordance.
 class StorySceneRow extends StatefulWidget {
-  const StorySceneRow({super.key, required this.sceneAssets});
+  const StorySceneRow({
+    super.key,
+    required this.sceneAssets,
+    this.sceneCaptions = const [],
+  });
 
   final List<String> sceneAssets;
+  final List<String> sceneCaptions;
 
   @override
   State<StorySceneRow> createState() => _StorySceneRowState();
@@ -395,7 +403,8 @@ class _StorySceneRowState extends State<StorySceneRow> {
   @override
   void didUpdateWidget(covariant StorySceneRow old) {
     super.didUpdateWidget(old);
-    if (!_assetsIdentical(old.sceneAssets, widget.sceneAssets)) {
+    if (!_assetsIdentical(old.sceneAssets, widget.sceneAssets) ||
+        !_assetsIdentical(old.sceneCaptions, widget.sceneCaptions)) {
       _didInitialNudge = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _maybeRunInitialNudge();
@@ -473,24 +482,18 @@ class _StorySceneRowState extends State<StorySceneRow> {
             separatorBuilder: (_, __) => const SizedBox(width: tileGap),
             itemBuilder: (context, index) {
               final path = displayedAssets[index];
+              final caption = index < widget.sceneCaptions.length
+                  ? widget.sceneCaptions[index].trim()
+                  : '';
               return SizedBox(
                 width: tileWidth,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadii.md),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.borderFloating,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                    child: _hybridSceneImage(
-                      path: path,
-                      width: tileWidth,
-                      height: tileHeight,
-                    ),
-                  ),
+                child: _FlippableSceneTile(
+                  key: ValueKey('story-scene-tile-$index'),
+                  index: index,
+                  path: path,
+                  caption: caption,
+                  width: tileWidth,
+                  height: tileHeight,
                 ),
               );
             },
@@ -528,6 +531,211 @@ class _StorySceneRowState extends State<StorySceneRow> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _FlippableSceneTile extends StatefulWidget {
+  const _FlippableSceneTile({
+    super.key,
+    required this.index,
+    required this.path,
+    required this.caption,
+    required this.width,
+    required this.height,
+  });
+
+  final int index;
+  final String path;
+  final String caption;
+  final double width;
+  final double height;
+
+  @override
+  State<_FlippableSceneTile> createState() => _FlippableSceneTileState();
+}
+
+class _FlippableSceneTileState extends State<_FlippableSceneTile> {
+  bool _showBack = false;
+
+  void _toggle() {
+    if (widget.caption.isEmpty) {
+      return;
+    }
+    setState(() {
+      _showBack = !_showBack;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasCaption = widget.caption.isNotEmpty;
+    Widget tile = TweenAnimationBuilder<double>(
+      tween: Tween<double>(end: _showBack ? math.pi : 0),
+      duration: const Duration(milliseconds: 440),
+      curve: Curves.easeInOutCubic,
+      builder: (context, value, child) {
+        final showingBackFace = value > math.pi / 2;
+        final displayRotation = showingBackFace ? value - math.pi : value;
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.0012)
+            ..rotateY(displayRotation),
+          child: showingBackFace
+              ? _SceneCaptionBack(
+                  key: ValueKey('story-scene-caption-back-${widget.index}'),
+                  caption: widget.caption,
+                )
+              : _SceneTileFront(
+                  index: widget.index,
+                  path: widget.path,
+                  caption: widget.caption,
+                  width: widget.width,
+                  height: widget.height,
+                ),
+        );
+      },
+    );
+
+    tile = ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.borderFloating, width: 1.0),
+          borderRadius: BorderRadius.circular(AppRadii.md),
+        ),
+        child: tile,
+      ),
+    );
+
+    if (!hasCaption) {
+      return tile;
+    }
+    return Semantics(
+      button: true,
+      label: widget.caption,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _toggle,
+          child: tile,
+        ),
+      ),
+    );
+  }
+}
+
+class _SceneTileFront extends StatelessWidget {
+  const _SceneTileFront({
+    required this.index,
+    required this.path,
+    required this.caption,
+    required this.width,
+    required this.height,
+  });
+
+  final int index;
+  final String path;
+  final String caption;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        _hybridSceneImage(path: path, width: width, height: height),
+        if (caption.isNotEmpty)
+          Positioned(
+            left: 8,
+            right: 8,
+            bottom: 8,
+            child: _SceneCaptionOverlay(
+              key: ValueKey('story-scene-caption-front-$index'),
+              caption: caption,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _SceneCaptionOverlay extends StatelessWidget {
+  const _SceneCaptionOverlay({super.key, required this.caption});
+
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.58),
+          borderRadius: BorderRadius.circular(AppRadii.sm),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.18),
+            width: 0.8,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          child: Text(
+            caption,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              height: 1.18,
+              letterSpacing: 0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SceneCaptionBack extends StatelessWidget {
+  const _SceneCaptionBack({super.key, required this.caption});
+
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.ink900.withValues(alpha: 0.94),
+            const Color(0xFF4A3823).withValues(alpha: 0.96),
+          ],
+        ),
+      ),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Text(
+          caption,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            height: 1.38,
+            letterSpacing: 0,
+          ),
+        ),
       ),
     );
   }

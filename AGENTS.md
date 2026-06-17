@@ -17,6 +17,8 @@ flutter test
 
 Supabase 환경은 `--dart-define=ENV=dev|prod`로 선택한다. Python 도구는
 Python 3.10+와 로컬 가상환경을 기준으로 사용한다.
+`scripts/run_*.sh`와 `scripts/build_*.sh`는 실행 전에 `flutter clean`과
+`flutter pub get`을 자동으로 수행한다.
 
 ```bash
 python3 -m venv .venv

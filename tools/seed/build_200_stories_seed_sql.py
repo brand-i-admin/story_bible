@@ -6,6 +6,7 @@ per chunk into the ``events`` table. Per the new schema:
   - ``character_codes`` (text[]) embeds the expanded character list — no event_persons
   - ``bible_refs`` (jsonb)    embeds [{book, from, to}, ...] — no event_bible_refs
   - ``story_scenes`` (jsonb)  embeds the scene array as-is
+  - ``scene_captions`` (jsonb) embeds short captions aligned with story_scenes
   - ``scene_characters`` (jsonb) embeds the per-scene character lists
   - ``story_index`` is taken straight from the JSON; uniqueness is enforced
     by (era_id, story_index) so the upsert key is the same pair
@@ -269,6 +270,7 @@ class NormalizedEvent:
     title: str
     summary: str
     story_scenes: list[str]
+    scene_captions: list[str]
     scene_characters: list[list[str]]
     start_year: int | None
     end_year: int | None
@@ -418,6 +420,8 @@ def load_person_meta_codes(meta_json_path: Path) -> set[str]:
     codes: set[str] = set()
     for item in characters:
         if not isinstance(item, dict):
+            continue
+        if bool(item.get("asset_only", False)):
             continue
         code = str(item.get("code", "")).strip()
         if code and code not in ROSTER_EXCLUDED_CODES:
@@ -574,6 +578,17 @@ def normalize_events(
         ]
         story_scenes = [scene for scene in story_scenes if scene]
 
+        raw_captions = row.get("scene_captions") or []
+        scene_captions = [
+            normalize_space(str(item)) for item in raw_captions if str(item).strip()
+        ]
+        if story_scenes and len(scene_captions) < len(story_scenes):
+            scene_captions.extend(
+                "" for _ in range(len(story_scenes) - len(scene_captions))
+            )
+        if story_scenes and len(scene_captions) > len(story_scenes):
+            scene_captions = scene_captions[: len(story_scenes)]
+
         raw_scene_persons = row.get("scene_characters") or []
         scene_characters: list[list[str]] = []
         for entry in raw_scene_persons:
@@ -641,6 +656,7 @@ def normalize_events(
                 title=str(row["title"]).strip(),
                 summary=summary,
                 story_scenes=story_scenes,
+                scene_captions=scene_captions,
                 scene_characters=scene_characters,
                 start_year=start_year_int,
                 end_year=end_year_int,
@@ -685,7 +701,8 @@ def serialize_bible_refs(refs: list[BibleRef]) -> list[dict[str, str]]:
 def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[str]:
     lines: list[str] = []
     columns = (
-        "era_code, title, summary, story_scenes, scene_characters, character_codes, "
+        "era_code, title, summary, story_scenes, scene_captions, "
+        "scene_characters, character_codes, "
         "bible_refs, start_year, end_year, time_precision, story_index, "
         "unit_code, unit_title, unit_order, landmark_code, status"
     )
@@ -700,6 +717,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
                 f"{sql_value(event.title)}, "
                 f"{sql_value(event.summary)}, "
                 f"{jsonb_literal(event.story_scenes)}, "
+                f"{jsonb_literal(event.scene_captions)}, "
                 f"{jsonb_literal(event.scene_characters)}, "
                 f"{text_array_literal(event.characters)}, "
                 f"{jsonb_literal(serialize_bible_refs(event.refs))}, "
@@ -718,7 +736,8 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append(")")
         lines.append(
             "insert into events ("
-            "era_id, title, summary, story_scenes, scene_characters, character_codes, "
+            "era_id, title, summary, story_scenes, scene_captions, "
+            "scene_characters, character_codes, "
             "bible_refs, start_year, end_year, time_precision, story_index, "
             "unit_code, unit_title, unit_order, landmark_id, status"
             ")"
@@ -728,6 +747,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  s.title,")
         lines.append("  s.summary,")
         lines.append("  s.story_scenes,")
+        lines.append("  s.scene_captions,")
         lines.append("  s.scene_characters,")
         lines.append("  s.character_codes,")
         lines.append("  s.bible_refs,")
@@ -747,6 +767,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
         lines.append("  title = excluded.title,")
         lines.append("  summary = excluded.summary,")
         lines.append("  story_scenes = excluded.story_scenes,")
+        lines.append("  scene_captions = excluded.scene_captions,")
         lines.append("  scene_characters = excluded.scene_characters,")
         lines.append("  character_codes = excluded.character_codes,")
         lines.append("  bible_refs = excluded.bible_refs,")
@@ -818,7 +839,7 @@ def build_seed_sql(
     lines.append(f"-- Generated at UTC: {generated_at}")
     lines.append("-- Target table: events")
     lines.append(
-        "-- (character_codes / bible_refs / story_scenes / scene_characters live"
+        "-- (character_codes / bible_refs / story_scenes / scene_captions / scene_characters live"
     )
     lines.append(
         "--  on the events row itself; person_eras and events_ordered are views.)"
@@ -857,6 +878,7 @@ def write_report(report_path: Path, events: list[NormalizedEvent]) -> None:
             "story_index is taken straight from JSON (admin UI / manual edit owns it)",
             "character codes expanded for disciples/apostles/brothers, then filtered by avatar prompt whitelist",
             "bible_refs/story_scenes/scene_characters are stored as jsonb on events",
+            "scene_captions are short user-facing captions aligned with story_scenes",
             "character_codes is text[] on events; event_persons table is gone",
             "unit_code/unit_title/unit_order group events before timeline reveal",
             "events_ordered (rank_in_era, global_rank) is a view; sorted at read time",
@@ -887,6 +909,7 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
                 "character_codes": event.characters,
                 "bible_refs": serialize_bible_refs(event.refs),
                 "story_scenes": event.story_scenes,
+                "scene_captions": event.scene_captions,
                 "scene_characters": event.scene_characters,
             }
         )

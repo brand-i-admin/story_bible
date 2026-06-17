@@ -180,6 +180,27 @@ void main() {
     expect(find.text('프로필 수정'), findsOneWidget);
   });
 
+  testWidgets('설정 시트에서 지도 설명을 열 수 있다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(find.byTooltip('설정'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('지도 설명'), findsOneWidget);
+
+    await tester.tap(find.text('지도 설명'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('지도 출처'), findsOneWidget);
+    expect(find.textContaining('현재 배경:'), findsOneWidget);
+  });
+
   testWidgets('프로필 진행 탭은 다이어리 다음에 인물과 걷기를 먼저 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/character_name_fallbacks.dart';
 import '../models/bible_ref.dart';
 import '../models/character.dart';
 import '../models/event_emotion_mark.dart';
@@ -345,7 +346,11 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       future: _loadEventCharacters(event.eraId),
       builder: (context, snapshot) {
         final source = snapshot.hasData ? snapshot.data! : currentCharacters;
-        final characters = _orderedCharactersForEvent(event, source);
+        final characters = _orderedCharactersForEvent(
+          event,
+          source,
+          includeFallbacks: true,
+        );
         if (characters.isNotEmpty) {
           return _EventCharacterAvatarStack(characters: characters);
         }
@@ -369,18 +374,84 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
 
   List<Character> _orderedCharactersForEvent(
     StoryEvent event,
-    List<Character> characters,
-  ) {
-    if (event.characterCodes.isEmpty || characters.isEmpty) {
+    List<Character> characters, {
+    bool includeFallbacks = false,
+  }) {
+    if (event.characterCodes.isEmpty) {
       return const [];
     }
     final byCode = <String, Character>{
       for (final character in characters) character.code: character,
     };
-    return [
-      for (final code in event.characterCodes)
-        if (byCode[code] != null) byCode[code]!,
+    final orderedCharacters = [
+      for (final code in event.characterCodes) ...[
+        if (byCode[code] != null)
+          _localizedCharacter(byCode[code]!)
+        else if (includeFallbacks)
+          _fallbackCharacterForCode(code),
+      ],
     ];
+    return orderedCharacters..sort(_compareEventCharacters);
+  }
+
+  int _compareEventCharacters(Character a, Character b) {
+    final aIsGod = _isGodCharacter(a);
+    final bIsGod = _isGodCharacter(b);
+    if (aIsGod != bIsGod) {
+      return aIsGod ? -1 : 1;
+    }
+
+    final nameCompare = a.name.compareTo(b.name);
+    if (nameCompare != 0) {
+      return nameCompare;
+    }
+
+    final displayOrderCompare = a.displayOrder.compareTo(b.displayOrder);
+    if (displayOrderCompare != 0) {
+      return displayOrderCompare;
+    }
+    return a.code.compareTo(b.code);
+  }
+
+  bool _isGodCharacter(Character character) {
+    final code = character.code.trim().toLowerCase();
+    final name = character.name.trim();
+    return code == 'god' || name == '하나님';
+  }
+
+  Character _localizedCharacter(Character character) {
+    final name = localizedCharacterName(
+      code: character.code,
+      name: character.name,
+    );
+    if (name == character.name) {
+      return character;
+    }
+    return Character(
+      id: character.id,
+      code: character.code,
+      name: name,
+      tagline: character.tagline,
+      description: character.description,
+      avatarUrl: character.avatarUrl,
+      avatarStoragePath: character.avatarStoragePath,
+      displayOrder: character.displayOrder,
+    );
+  }
+
+  Character _fallbackCharacterForCode(String code) {
+    final normalizedCode = code.trim();
+    return Character(
+      id: normalizedCode,
+      code: normalizedCode,
+      name: localizedCharacterName(code: normalizedCode),
+      tagline: null,
+      description: null,
+      avatarUrl: normalizedCode.isEmpty
+          ? null
+          : 'assets/avatars/$normalizedCode.png',
+      displayOrder: 0,
+    );
   }
 
   Widget _buildSceneRow() {
@@ -393,7 +464,10 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
         }
         return Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: storySceneRow(sceneAssets),
+          child: storySceneRow(
+            sceneAssets,
+            sceneCaptions: widget.event.sceneCaptions,
+          ),
         );
       },
     );
@@ -634,8 +708,8 @@ class _StoryHeader extends StatelessWidget {
 class _EventCharacterAvatarStack extends StatelessWidget {
   const _EventCharacterAvatarStack({required this.characters});
 
-  static const double _size = 28;
-  static const double _overlap = 10;
+  static const double _size = 31;
+  static const double _gap = 5;
 
   final List<Character> characters;
 
@@ -646,35 +720,102 @@ class _EventCharacterAvatarStack extends StatelessWidget {
     }
     final visibleCharacters = characters.take(4).toList(growable: false);
     final hiddenCount = characters.length - visibleCharacters.length;
-    final itemCount = visibleCharacters.length + (hiddenCount > 0 ? 1 : 0);
-    final width = _size + (itemCount - 1) * (_size - _overlap);
     final names = characters.map((character) => character.name).join(', ');
 
     return Tooltip(
       message: names.isEmpty ? '등장인물' : '등장인물: $names',
-      child: SizedBox(
-        width: width,
-        height: _size,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            for (var index = 0; index < visibleCharacters.length; index++)
-              Positioned(
-                left: index * (_size - _overlap),
-                child: CharacterAvatar(
-                  character: visibleCharacters[index],
-                  size: _size,
-                ),
-              ),
-            if (hiddenCount > 0)
-              Positioned(
-                left: visibleCharacters.length * (_size - _overlap),
-                child: _HiddenCharacterCountBadge(
-                  count: hiddenCount,
-                  size: _size,
-                ),
-              ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var index = 0; index < visibleCharacters.length; index++) ...[
+            if (index > 0) const SizedBox(width: _gap),
+            _EventCharacterAvatarWithName(
+              character: visibleCharacters[index],
+              size: _size,
+            ),
           ],
+          if (hiddenCount > 0) ...[
+            if (visibleCharacters.isNotEmpty) const SizedBox(width: _gap),
+            _HiddenCharacterCountBadge(count: hiddenCount, size: _size),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _EventCharacterAvatarWithName extends StatelessWidget {
+  const _EventCharacterAvatarWithName({
+    required this.character,
+    required this.size,
+  });
+
+  final Character character;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final name = character.name.trim();
+    return SizedBox.square(
+      dimension: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          CharacterAvatar(character: character, size: size),
+          if (name.isNotEmpty)
+            Positioned(
+              bottom: 1,
+              child: _EventCharacterNamePill(name: name, maxWidth: size * 1.06),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EventCharacterNamePill extends StatelessWidget {
+  const _EventCharacterNamePill({required this.name, required this.maxWidth});
+
+  final String name;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: const Color(0xDD201309),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.42),
+            width: 0.45,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.32),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 1.5),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              name,
+              maxLines: 1,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 7.8,
+                fontWeight: FontWeight.w900,
+                height: 1,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
         ),
       ),
     );

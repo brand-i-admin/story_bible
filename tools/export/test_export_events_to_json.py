@@ -36,6 +36,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "time_precision": "approx",
             "story_index": 1,
             "story_scenes": ["장면 1", "장면 2"],
+            "scene_captions": ["캡션 1", "캡션 2"],
             "scene_characters": [["god"], []],
         }
 
@@ -52,6 +53,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
         )
         self.assertEqual(result["story_index"], 1)
         self.assertEqual(result["story_scenes"], ["장면 1", "장면 2"])
+        self.assertEqual(result["scene_captions"], ["캡션 1", "캡션 2"])
         self.assertEqual(result["scene_characters"], [["god"], []])
         self.assertEqual(
             list(result.keys()),
@@ -69,6 +71,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "time_precision",
                 "story_index",
                 "story_scenes",
+                "scene_captions",
                 "scene_characters",
             ],
         )
@@ -88,6 +91,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "time_precision": None,
             "story_index": 5,
             "story_scenes": None,
+            "scene_captions": None,
             "scene_characters": None,
         }
 
@@ -96,6 +100,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertEqual(result["characters"], [])
         self.assertEqual(result["bible_ref"], [])
         self.assertEqual(result["story_scenes"], [])
+        self.assertEqual(result["scene_captions"], [])
         self.assertEqual(result["scene_characters"], [])
         self.assertEqual(result["time_precision"], "approx")
         self.assertIsNone(result["lat"])
@@ -128,6 +133,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "end_year": None,
                 "time_precision": "approx",
                 "story_scenes": [],
+                "scene_captions": [],
                 "scene_characters": [],
             }
             for row in rows
@@ -157,6 +163,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "time_precision": "approx",
             "story_index": 1,
             "story_scenes": ["scene"],
+            "scene_captions": ["caption"],
             "scene_characters": [["god"]],
         }
 

@@ -54,6 +54,15 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
                   ),
                   const SizedBox(height: 8),
                   _settingsRow(
+                    icon: Icons.info_outline_rounded,
+                    label: '지도 설명',
+                    onTap: () {
+                      Navigator.of(sheetCtx).pop();
+                      unawaited(showMapAttributionDialog(context));
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  _settingsRow(
                     icon: Icons.logout_rounded,
                     label: '로그아웃',
                     danger: true,

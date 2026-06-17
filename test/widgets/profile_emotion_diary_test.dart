@@ -9,6 +9,7 @@ import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
+import 'package:story_bible/widgets/profile/profile_emotion_stats.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
 
@@ -62,6 +63,8 @@ Widget _wrap({
   required StoryRepository repository,
   required Map<String, EventEmotionMark> marks,
   DateTime? now,
+  ProfileEmotionStats? emotionStats,
+  ValueChanged<EventEmotionOption>? onTapEmotion,
   ValueChanged<StoryEvent>? onOpenEventDetail,
 }) {
   return ProviderScope(
@@ -73,6 +76,8 @@ Widget _wrap({
             width: 430,
             child: ProfileEmotionDiary(
               eventEmotionMarks: marks,
+              emotionStats: emotionStats,
+              onTapEmotion: onTapEmotion,
               now: now,
               onOpenEventDetail: onOpenEventDetail ?? (_) {},
             ),
@@ -114,6 +119,45 @@ void main() {
     }
     expect(find.text('오늘의 내 감정'), findsOneWidget);
     expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsOneWidget);
+  });
+
+  testWidgets('감정 카테고리 버튼은 달력 아래와 오늘의 내 감정 사이에서 동작한다', (tester) async {
+    final repository = _MockStoryRepository();
+    final event = _event(id: 'event_1', title: '홍해를 건너다');
+    final mark = _mark(
+      event: event,
+      emotionKey: 'joy',
+      emotionLabel: '기쁨',
+      note: '구원의 기쁨을 기억합니다.',
+      updatedAt: DateTime.utc(2026, 6, 9, 16),
+    );
+    final marks = {event.id: mark};
+    EventEmotionOption? tappedOption;
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => [event]);
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: marks,
+        emotionStats: buildProfileEmotionStats(marks),
+        onTapEmotion: (option) => tappedOption = option,
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('기쁨 1'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('기쁨 1')).dy,
+      lessThan(tester.getTopLeft(find.text('오늘의 내 감정')).dy),
+    );
+
+    await tester.tap(find.text('기쁨 1'));
+    await tester.pump();
+
+    expect(tappedOption?.key, 'joy');
   });
 
   testWidgets('펼치기 후 이전 달로 이동할 수 있다', (tester) async {

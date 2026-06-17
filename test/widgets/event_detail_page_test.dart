@@ -67,12 +67,66 @@ void main() {
     expect(find.text('B.C. 1446년경 · 시내산(전승)'), findsOneWidget);
     expect(find.text('요약 이야기'), findsOneWidget);
     expect(find.byType(CharacterAvatar), findsNWidgets(2));
+    expect(find.text('모세'), findsOneWidget);
+    expect(find.text('아론'), findsOneWidget);
+    expect(tester.getSize(find.byType(CharacterAvatar).first).width, 31);
+    expect(_avatarNames(tester), ['모세', '아론']);
+    _expectAvatarsDoNotOverlap(tester);
     verify(() => storyRepository.fetchCharactersByEra('era-exodus')).called(1);
+  });
+
+  testWidgets('DB 목록에 없는 등장인물 코드도 한글 fallback으로 모두 표시한다', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          storyRepositoryProvider.overrideWithValue(storyRepository),
+          signedInUserProvider.overrideWithValue(null),
+        ],
+        child: MaterialApp(
+          home: EventDetailPage(
+            event: _event(characterCodes: const ['god', 'moses', 'cain']),
+            sceneAssetsFuture: Future.value(const []),
+            onOpenBibleReader: (_) async => false,
+            onStartQuiz: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CharacterAvatar), findsNWidgets(3));
+    expect(find.text('하나님'), findsOneWidget);
+    expect(find.text('모세'), findsOneWidget);
+    expect(find.text('가인'), findsOneWidget);
+    expect(find.text('god'), findsNothing);
+    expect(find.text('cain'), findsNothing);
+    expect(_avatarNames(tester), ['하나님', '가인', '모세']);
+    _expectAvatarsDoNotOverlap(tester);
   });
 }
 
-StoryEvent _event() {
-  return const StoryEvent(
+List<String> _avatarNames(WidgetTester tester) {
+  return tester
+      .widgetList<CharacterAvatar>(find.byType(CharacterAvatar))
+      .map((avatar) => avatar.character.name)
+      .toList(growable: false);
+}
+
+void _expectAvatarsDoNotOverlap(WidgetTester tester) {
+  final rects = find
+      .byType(CharacterAvatar)
+      .evaluate()
+      .map((element) => tester.getRect(find.byWidget(element.widget)))
+      .toList(growable: false);
+
+  for (var index = 1; index < rects.length; index++) {
+    expect(rects[index].left, greaterThanOrEqualTo(rects[index - 1].right));
+  }
+}
+
+StoryEvent _event({List<String> characterCodes = const ['aaron', 'moses']}) {
+  return StoryEvent(
     id: 'event-1',
     eraId: 'era-exodus',
     title: '시내산 도착',
@@ -89,7 +143,7 @@ StoryEvent _event() {
     placeName: '시내산(전승)',
     lat: 28.5392,
     lng: 33.9756,
-    characterCodes: ['moses', 'aaron'],
-    bibleRefs: [],
+    characterCodes: characterCodes,
+    bibleRefs: const [],
   );
 }

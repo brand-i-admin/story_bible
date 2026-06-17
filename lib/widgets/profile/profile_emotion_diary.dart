@@ -11,17 +11,22 @@ import '../../state/story_controller.dart';
 import '../../theme/tokens.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
+import 'profile_emotion_stats.dart';
 
 class ProfileEmotionDiary extends ConsumerStatefulWidget {
   const ProfileEmotionDiary({
     super.key,
     required this.eventEmotionMarks,
     required this.onOpenEventDetail,
+    this.emotionStats,
+    this.onTapEmotion,
     this.now,
   });
 
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final ValueChanged<StoryEvent> onOpenEventDetail;
+  final ProfileEmotionStats? emotionStats;
+  final ValueChanged<EventEmotionOption>? onTapEmotion;
   final DateTime? now;
 
   @override
@@ -109,12 +114,14 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
               expanded: _expanded,
               marksByDate: marksByDate,
               selectedMarks: selectedMarks,
+              emotionStats: widget.emotionStats,
               eventById: eventById,
               onToggleExpanded: () {
                 setState(() => _expanded = !_expanded);
               },
               onMoveMonth: _moveMonth,
               onSelectDate: _selectDate,
+              onTapEmotion: widget.onTapEmotion,
               onOpenEventDetail: _openEventDetailWithLoading,
               loading: snapshot.connectionState == ConnectionState.waiting,
               hasError: snapshot.hasError,
@@ -209,10 +216,12 @@ class _EmotionDiaryPanel extends StatelessWidget {
     required this.expanded,
     required this.marksByDate,
     required this.selectedMarks,
+    required this.emotionStats,
     required this.eventById,
     required this.onToggleExpanded,
     required this.onMoveMonth,
     required this.onSelectDate,
+    required this.onTapEmotion,
     required this.onOpenEventDetail,
     required this.loading,
     required this.hasError,
@@ -224,10 +233,12 @@ class _EmotionDiaryPanel extends StatelessWidget {
   final bool expanded;
   final Map<DateTime, List<EventEmotionMark>> marksByDate;
   final List<EventEmotionMark> selectedMarks;
+  final ProfileEmotionStats? emotionStats;
   final Map<String, StoryEvent> eventById;
   final VoidCallback onToggleExpanded;
   final ValueChanged<int> onMoveMonth;
   final ValueChanged<DateTime> onSelectDate;
+  final ValueChanged<EventEmotionOption>? onTapEmotion;
   final ValueChanged<StoryEvent> onOpenEventDetail;
   final bool loading;
   final bool hasError;
@@ -333,6 +344,13 @@ class _EmotionDiaryPanel extends StatelessWidget {
                   ),
                 );
               },
+            ),
+          ],
+          if (emotionStats != null && onTapEmotion != null) ...[
+            const Divider(height: 22, color: Color(0x338E6F48)),
+            ProfileEmotionStatsRows(
+              stats: emotionStats!,
+              onTapEmotion: onTapEmotion!,
             ),
           ],
           const Divider(height: 22, color: Color(0x338E6F48)),
