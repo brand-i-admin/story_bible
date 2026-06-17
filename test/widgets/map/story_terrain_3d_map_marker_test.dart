@@ -283,7 +283,7 @@ void main() {
       expect(
         mapSource,
         contains(
-          'if (performance.now() - lastPointerTapAt < 320) return;\n        sendInteraction();',
+          'if (performance.now() - lastPointerTapAt < 700) return;\n        sendInteraction();',
         ),
       );
       expect(
@@ -343,6 +343,71 @@ void main() {
       expect(homeSource, isNot(contains("tooltip: '축소'")));
       expect(homeSource, isNot(contains("tooltip: '지도 출처'")));
       expect(homeSource, isNot(contains('_showMapAttributionDialog')));
+    });
+
+    test(
+      'Android WebView map owns touch gestures and uses lighter renderer',
+      () {
+        final source = File(
+          'lib/widgets/map/story_terrain_3d_map.dart',
+        ).readAsStringSync();
+
+        expect(source, contains("import 'package:flutter/gestures.dart';"));
+        expect(source, contains('EagerGestureRecognizer'));
+        expect(source, contains('gestureRecognizers: _mapGestureRecognizers'));
+        expect(
+          source,
+          contains('defaultTargetPlatform == TargetPlatform.android'),
+        );
+        expect(source, contains("'enableTerrain': _enableTerrain"));
+        expect(source, contains("'antialias': !_useReducedAndroidRenderer"));
+        expect(
+          source,
+          contains("'refreshExpiredTiles': !_useReducedAndroidRenderer"),
+        );
+        expect(
+          source,
+          contains("'workerCount': _useReducedAndroidRenderer ? 1"),
+        );
+        expect(
+          source,
+          contains('maplibregl.workerCount = requestedWorkerCount'),
+        );
+        expect(source, contains('map.touchZoomRotate.enable();'));
+        expect(source, contains('map.dragPan.enable();'));
+        expect(source, contains('if (config.enableTerrain) {'));
+      },
+    );
+
+    test('map JavaScript calls do not return MapLibre objects to WebView', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('Future<void> _runMapJavaScript(String script)'));
+      expect(source, contains('return null;'));
+      expect(
+        source,
+        isNot(contains("_controller.runJavaScript('''\n      if")),
+      );
+      expect(
+        source,
+        isNot(contains("_controller.runJavaScript('''\n      window")),
+      );
+    });
+
+    test('Android activity handles WebView renderer exits', () {
+      final source = File(
+        'android/app/src/main/kotlin/com/storybible/app/MainActivity.kt',
+      ).readAsStringSync();
+
+      expect(source, contains('installWebViewRenderGuards'));
+      expect(source, contains('RenderGuardWebViewClient'));
+      expect(source, contains('override fun onRenderProcessGone'));
+      expect(source, contains('delegate.onRenderProcessGone(view, detail)'));
+      expect(source, contains('(view.parent as? ViewGroup)?.removeView(view)'));
+      expect(source, contains('view.destroy()'));
+      expect(source, contains('return true'));
     });
 
     test('subresource errors do not show the 3D map failure overlay', () {

@@ -100,10 +100,40 @@ void main() {
     expect(
       scrollViews.any(
         (scrollView) =>
-            scrollView.padding == const EdgeInsets.fromLTRB(16, 12, 16, 10),
+            scrollView.padding == const EdgeInsets.fromLTRB(16, 12, 0, 10),
       ),
       isTrue,
     );
+  });
+
+  testWidgets('시대 칩 가로 레일은 오른쪽 패널 끝까지 쓰고 마지막 여백을 둔다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 390,
+            height: 720,
+            child: HomeIntroPanel(
+              eras: _eras,
+              selectedEraId: null,
+              onSelectEra: (_) {},
+              onPickMode: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final horizontalScrollViews = tester
+        .widgetList<SingleChildScrollView>(find.byType(SingleChildScrollView))
+        .where((scrollView) => scrollView.scrollDirection == Axis.horizontal)
+        .toList();
+
+    expect(horizontalScrollViews, hasLength(2));
+    for (final scrollView in horizontalScrollViews) {
+      expect(scrollView.padding, const EdgeInsetsDirectional.only(end: 16));
+    }
+    expect(find.byType(UnconstrainedBox), findsNothing);
   });
 
   testWidgets('선택된 시대 단계는 흐려진 뒤 다시 눌러도 시대를 바꾸지 않는다', (tester) async {
@@ -143,5 +173,17 @@ void main() {
 
     expect(source, contains('_selectionSheetIntroHeight = 430'));
     expect(source, contains('max: 0.38'));
+  });
+
+  test('Android 폰은 시스템 inset 이 0이어도 하단 시트 여백을 보정한다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_androidPhoneNavigationFallbackInset'));
+    expect(source, contains('double _bottomSheetSafeInsetFor('));
+    expect(source, contains('defaultTargetPlatform == TargetPlatform.android'));
+    expect(source, contains('rawBottomInset > 0'));
+    expect(source, contains('_bottomSheetSafeInsetFor('));
   });
 }

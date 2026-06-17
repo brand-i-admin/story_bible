@@ -3,6 +3,7 @@ part of 'story_home_screen.dart';
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
+  static const double _androidPhoneNavigationFallbackInset = 44;
 
   /// 인트로 패널(시대/모드 선택 단계) 의 기본 콘텐츠 높이.
   /// 실제 시트 높이는 화면 높이 대비 비율로 변환하되, 컨텐츠가 짧은 화면에서는
@@ -307,6 +308,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
 
+  double _bottomSheetSafeInsetFor({
+    required Size viewportSize,
+    required double rawBottomInset,
+  }) {
+    if (rawBottomInset > 0) {
+      return rawBottomInset;
+    }
+    if (!kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.android &&
+        _isPhoneSheetLayoutForSize(viewportSize)) {
+      return _androidPhoneNavigationFallbackInset;
+    }
+    return 0;
+  }
+
   double _sheetFractionForHeight(
     Size size,
     double height, {
@@ -457,8 +473,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (_mapHintDismissed) return null;
     if (_mode == null && _selectionStep == 1) {
       return (
-        message:
-            '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물과 걷기·장소로 시작 중 하나를 선택해 주세요.',
+        message: '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
         avatarSize: 70,
       );
     }
@@ -2144,11 +2159,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     const mapCenter = LatLng(0.5, 39.8);
     const defaultMapZoom = 3.25;
     final mapZoom = _initialMapZoomOverride(defaultMapZoom);
-    final topInset = MediaQuery.of(context).padding.top;
+    final media = MediaQuery.of(context);
+    final viewportSize = MediaQuery.sizeOf(context);
+    final topInset = media.padding.top;
     // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
-    // 차지하는 픽셀. gesture-only / 풀스크린 모드면 0. 이 값만큼 시트를 위로
-    // 띄워야 패널 하단이 nav bar 에 가려지지 않는다 (사용자 보고).
-    final bottomInset = MediaQuery.of(context).padding.bottom;
+    // 차지하는 픽셀. Android 폰에서 0으로 보고되는 경우에도 작은 fallback 을
+    // 주어 패널 하단이 nav bar 에 가려지지 않게 한다.
+    final bottomInset = _bottomSheetSafeInsetFor(
+      viewportSize: viewportSize,
+      rawBottomInset: media.padding.bottom,
+    );
     // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
     final mapCalloutTopObscuredPixels = topInset + 88;
     return Scaffold(

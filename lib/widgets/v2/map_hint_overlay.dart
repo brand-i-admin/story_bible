@@ -119,9 +119,7 @@ TextStyle _guideSpeechTextStyle() {
     fontSize: 12.4,
     fontWeight: FontWeight.w700,
     height: 1.38,
-    shadows: [
-      Shadow(color: Colors.black.withValues(alpha: 0.48), blurRadius: 4),
-    ],
+    shadows: const [],
   );
 }
 
@@ -186,9 +184,9 @@ class _GuideSpeechMessage extends StatelessWidget {
                 )
               : Padding(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    line,
-                    textAlign: TextAlign.left,
+                  child: _GuideScaledTextLine(
+                    key: ValueKey('map-hint-scaled-line-$line'),
+                    text: line,
                     style: textStyle,
                   ),
                 ),
@@ -241,9 +239,50 @@ class _GuideStepLine extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Text(text, textAlign: TextAlign.left, style: textStyle),
+          child: _GuideScaledTextLine(
+            key: ValueKey('map-hint-scaled-line-$text'),
+            text: text,
+            style: textStyle,
+          ),
         ),
       ],
+    );
+  }
+}
+
+class _GuideScaledTextLine extends StatelessWidget {
+  const _GuideScaledTextLine({
+    super.key,
+    required this.text,
+    required this.style,
+  });
+
+  final String text;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final child = Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.visible,
+          textAlign: TextAlign.left,
+          style: style,
+        );
+        if (!constraints.maxWidth.isFinite) {
+          return child;
+        }
+        return SizedBox(
+          width: constraints.maxWidth,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

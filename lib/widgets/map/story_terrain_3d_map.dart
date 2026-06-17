@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart' show LatLngBounds;
@@ -176,6 +178,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _initialLoadTimeoutDuration = Duration(seconds: 20);
   static const _htmlRevision = 'event-pin-z-index-2026-06-02';
   static const _homeIntroZoomOutDelta = 0.72;
+  static final Set<Factory<OneSequenceGestureRecognizer>>
+  _mapGestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
+    Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+  };
 
   late final WebViewController _controller;
   Timer? _initialLoadTimeout;
@@ -191,8 +197,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       widget.regionLandmarks.isNotEmpty &&
       (widget.regionPickerMode || widget.selectedLandmarkId != null);
 
-  double get _effectivePitch =>
-      _useTopDownRegionCamera ? 0.0 : widget.source.initialPitch;
+  bool get _useReducedAndroidRenderer =>
+      defaultTargetPlatform == TargetPlatform.android;
+
+  bool get _enableTerrain => !_useReducedAndroidRenderer;
+
+  double get _effectivePitch {
+    final pitch = _useTopDownRegionCamera ? 0.0 : widget.source.initialPitch;
+    return _useReducedAndroidRenderer
+        ? pitch.clamp(0.0, 18.0).toDouble()
+        : pitch;
+  }
 
   double get _effectiveBearing =>
       _useTopDownRegionCamera ? 0.0 : widget.source.initialBearing;
@@ -245,7 +260,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        WebViewWidget(controller: _controller),
+        WebViewWidget(
+          controller: _controller,
+          gestureRecognizers: _mapGestureRecognizers,
+        ),
         if (_hasError)
           const _Map3dStatusOverlay(
             title: '3D 지도를 불러오지 못했어요',
@@ -304,7 +322,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'terrainTiles': widget.source.terrainTiles,
       'terrainEncoding': widget.source.terrainEncoding,
       'hideBaseLabels': widget.source.hideBaseLabels,
-      'terrainExaggeration': widget.source.terrainExaggeration,
+      'enableTerrain': _enableTerrain,
+      'terrainExaggeration': _enableTerrain
+          ? widget.source.terrainExaggeration
+          : 0.0,
+      'antialias': !_useReducedAndroidRenderer,
+      'refreshExpiredTiles': !_useReducedAndroidRenderer,
+      'workerCount': _useReducedAndroidRenderer ? 1 : null,
+      'maxTileCacheSize': _useReducedAndroidRenderer ? 32 : null,
+      'maxTileCacheZoomLevels': _useReducedAndroidRenderer ? 2 : null,
+      'maxPitch': _useReducedAndroidRenderer ? 18 : 85,
+      'lockPitch': _useReducedAndroidRenderer,
     });
     final cameraPayload = _cameraPayload();
     final cameraSignature = jsonEncode(cameraPayload);
@@ -408,7 +436,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
   void _zoomBy(double delta) {
     final encodedDelta = jsonEncode(delta);
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleMap) {
         if (window.storyBibleSuppressMapTap) {
           window.storyBibleSuppressMapTap(650);
@@ -440,7 +468,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'bearing': _effectiveBearing,
       'duration': duration.inMilliseconds,
     });
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleMap) {
         const request = $payload;
         const center = Array.isArray(request.center) ? request.center : window.storyBibleMap.getCenter();
@@ -472,7 +500,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return;
     }
     final millis = duration.inMilliseconds;
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleSuppressMapTap) {
         window.storyBibleSuppressMapTap($millis);
       }
@@ -483,7 +511,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     if (!_mapReady) {
       return;
     }
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleClearMapTapSuppression) {
         window.storyBibleClearMapTapSuppression();
       }
@@ -530,7 +558,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'bearing': _effectiveBearing,
       'duration': duration.inMilliseconds,
     });
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleFitBounds) {
         window.storyBibleFitBounds($payload);
       }
@@ -554,7 +582,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'to': [toPoint.longitude, toPoint.latitude],
       'duration': duration.inMilliseconds,
     });
-    await _controller.runJavaScript('''
+    await _runMapJavaScript('''
       if (window.storyBiblePlayTransition) {
         window.storyBiblePlayTransition($payload);
       }
@@ -577,7 +605,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'label': stampLabel,
       'duration': duration.inMilliseconds,
     });
-    await _controller.runJavaScript('''
+    await _runMapJavaScript('''
       if (window.storyBiblePlayEmotionStamp) {
         window.storyBiblePlayEmotionStamp($payload);
       }
@@ -601,7 +629,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       _pendingCameraPayload = encoded;
       return;
     }
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleSetCamera) {
         window.storyBibleSetCamera($encoded);
       }
@@ -614,7 +642,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       _pendingOverlayPayload = encoded;
       return;
     }
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleSetOverlayData) {
         window.storyBibleSetOverlayData($encoded);
       }
@@ -627,7 +655,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return;
     }
     _pendingOverlayPayload = null;
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleSetOverlayData) {
         window.storyBibleSetOverlayData($payload);
       }
@@ -640,10 +668,19 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return;
     }
     _pendingCameraPayload = null;
-    _controller.runJavaScript('''
+    _runMapJavaScript('''
       if (window.storyBibleSetCamera) {
         window.storyBibleSetCamera($payload);
       }
+    ''');
+  }
+
+  Future<void> _runMapJavaScript(String script) {
+    return _controller.runJavaScript('''
+      (() => {
+        $script
+        return null;
+      })();
     ''');
   }
 
@@ -655,7 +692,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'terrainTiles': widget.source.terrainTiles,
       'terrainEncoding': widget.source.terrainEncoding,
       'hideBaseLabels': widget.source.hideBaseLabels,
-      'terrainExaggeration': widget.source.terrainExaggeration,
+      'enableTerrain': _enableTerrain,
+      'terrainExaggeration': _enableTerrain
+          ? widget.source.terrainExaggeration
+          : 0.0,
+      'antialias': !_useReducedAndroidRenderer,
+      'refreshExpiredTiles': !_useReducedAndroidRenderer,
+      'workerCount': _useReducedAndroidRenderer ? 1 : null,
+      'maxTileCacheSize': _useReducedAndroidRenderer ? 32 : null,
+      'maxTileCacheZoomLevels': _useReducedAndroidRenderer ? 2 : null,
+      'maxPitch': _useReducedAndroidRenderer ? 18 : 85,
+      'lockPitch': _useReducedAndroidRenderer,
       'pitch': _effectivePitch,
       'bearing': _effectiveBearing,
       'zoom': widget.zoom.clamp(_minZoom, _maxZoom).toDouble(),
@@ -924,22 +971,53 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         window.StoryBibleMap.postMessage(JSON.stringify(message));
       } catch (_) {}
     };
-
-    const map = new maplibregl.Map({
+    const numberOrNull = (value) => {
+      const next = Number(value);
+      return Number.isFinite(next) ? next : null;
+    };
+    const requestedWorkerCount = numberOrNull(config.workerCount);
+    if (requestedWorkerCount !== null && requestedWorkerCount > 0) {
+      maplibregl.workerCount = requestedWorkerCount;
+    }
+    const mapOptions = {
       container: 'map',
       style: config.styleJsonUrl,
       center: config.center,
       zoom: config.zoom,
       pitch: config.pitch,
       bearing: config.bearing,
-      antialias: true,
+      antialias: Boolean(config.antialias),
       attributionControl: false,
+      refreshExpiredTiles: Boolean(config.refreshExpiredTiles),
       renderWorldCopies: false,
-      maxPitch: 85,
+      maxPitch: Number(config.maxPitch || 85),
       minZoom: config.minZoom,
       maxZoom: config.maxZoom,
       maxBounds: config.maxBounds
-    });
+    };
+    const maxTileCacheSize = numberOrNull(config.maxTileCacheSize);
+    if (maxTileCacheSize !== null) {
+      mapOptions.maxTileCacheSize = maxTileCacheSize;
+    }
+    const maxTileCacheZoomLevels = numberOrNull(config.maxTileCacheZoomLevels);
+    if (maxTileCacheZoomLevels !== null) {
+      mapOptions.maxTileCacheZoomLevels = maxTileCacheZoomLevels;
+    }
+    const map = new maplibregl.Map(mapOptions);
+    if (map.dragPan && map.dragPan.enable) {
+      map.dragPan.enable();
+    }
+    if (map.touchZoomRotate && map.touchZoomRotate.enable) {
+      map.touchZoomRotate.enable();
+    }
+    if (config.lockPitch) {
+      if (map.dragRotate && map.dragRotate.disable) {
+        map.dragRotate.disable();
+      }
+      if (map.touchPitch && map.touchPitch.disable) {
+        map.touchPitch.disable();
+      }
+    }
     window.storyBibleMap = map;
 
     window.storyBibleSetCamera = (nextCamera) => {
@@ -1413,24 +1491,26 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     map.on('load', () => {
       hideBaseLabelLayers();
       ensureEventPinImages();
-      const terrainSource = {
-        type: 'raster-dem',
-        tileSize: 256,
-        maxzoom: 14
-      };
-      if (config.terrainTileJsonUrl && config.terrainTileJsonUrl.length > 0) {
-        terrainSource.url = config.terrainTileJsonUrl;
-      } else {
-        terrainSource.tiles = config.terrainTiles;
+      if (config.enableTerrain) {
+        const terrainSource = {
+          type: 'raster-dem',
+          tileSize: 256,
+          maxzoom: 14
+        };
+        if (config.terrainTileJsonUrl && config.terrainTileJsonUrl.length > 0) {
+          terrainSource.url = config.terrainTileJsonUrl;
+        } else {
+          terrainSource.tiles = config.terrainTiles;
+        }
+        if (config.terrainEncoding && config.terrainEncoding.length > 0) {
+          terrainSource.encoding = config.terrainEncoding;
+        }
+        map.addSource('story-bible-terrain', terrainSource);
+        map.setTerrain({
+          source: 'story-bible-terrain',
+          exaggeration: config.terrainExaggeration
+        });
       }
-      if (config.terrainEncoding && config.terrainEncoding.length > 0) {
-        terrainSource.encoding = config.terrainEncoding;
-      }
-      map.addSource('story-bible-terrain', terrainSource);
-      map.setTerrain({
-        source: 'story-bible-terrain',
-        exaggeration: config.terrainExaggeration
-      });
 
       map.addSource('story-bible-country-borders', {
         type: 'geojson',
@@ -1850,7 +1930,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         }
         const regionPickerClick = isRegionPickerActive();
         if (isMapTapSuppressed()) return;
-        if (performance.now() - lastPointerTapAt < 320) return;
+        if (performance.now() - lastPointerTapAt < 700) return;
         sendInteraction();
         handleMapTapPoint(event.point, event.lngLat, { ignoreSuppression: regionPickerClick });
       });

@@ -6,6 +6,8 @@ import '../../theme/tokens.dart';
 import '../story_home_styles.dart';
 import 'era_pick_rows.dart';
 
+const double _homeIntroHorizontalPadding = 16;
+
 /// 첫 화면 — 시대와 보기 방식을 고르는 패널.
 ///
 /// 두 단계로 구성:
@@ -39,7 +41,12 @@ class HomeIntroPanel extends StatelessWidget {
     final eraStepOpacity = canPickMode ? 0.55 : 1.0;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+      padding: const EdgeInsets.fromLTRB(
+        _homeIntroHorizontalPadding,
+        12,
+        0,
+        10,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -64,6 +71,7 @@ class HomeIntroPanel extends StatelessWidget {
                     eras: eras,
                     selectedEraId: selectedEraId,
                     onSelectEra: onSelectEra,
+                    trailingScrollPadding: _homeIntroHorizontalPadding,
                   ),
                 ],
               ),
@@ -84,55 +92,63 @@ class HomeIntroPanel extends StatelessWidget {
             curve: Curves.easeOut,
             child: IgnorePointer(
               ignoring: !canPickMode,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _ModeCard(
-                      key: const ValueKey('home-mode-timeline'),
-                      icon: Icons.access_time_rounded,
-                      title: '시간 순으로 보기',
-                      subtitle: '선택한 시대의 사건을\n시간 순으로 봅니다',
-                      accent: const Color(0xFF8C5A2E),
-                      onTap: () => onPickMode(SelectionMode.timeline),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  right: _homeIntroHorizontalPadding,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _ModeCard(
+                        key: const ValueKey('home-mode-timeline'),
+                        icon: Icons.access_time_rounded,
+                        title: '시간 순으로 보기',
+                        subtitle: '선택한 시대의 사건을\n시간 순으로 봅니다',
+                        accent: const Color(0xFF8C5A2E),
+                        onTap: () => onPickMode(SelectionMode.timeline),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _ModeCard(
-                      key: const ValueKey('home-mode-character'),
-                      icon: Icons.people,
-                      title: '인물과 걷기',
-                      subtitle: '선택한 인물들의 사건을\n시간 순으로 봅니다',
-                      accent: theme.colorScheme.tertiary,
-                      onTap: () => onPickMode(SelectionMode.character),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ModeCard(
+                        key: const ValueKey('home-mode-character'),
+                        icon: Icons.people,
+                        title: '인물과 걷기',
+                        subtitle: '선택한 인물들의 사건을\n시간 순으로 봅니다',
+                        accent: theme.colorScheme.tertiary,
+                        onTap: () => onPickMode(SelectionMode.character),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _ModeCard(
-                      key: const ValueKey('home-mode-region'),
-                      icon: Icons.location_on,
-                      title: '장소로 시작',
-                      subtitle: '한 장소에서 이야기를\n시간 순으로 봅니다',
-                      accent: theme.colorScheme.primary,
-                      onTap: () => onPickMode(SelectionMode.region),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ModeCard(
+                        key: const ValueKey('home-mode-region'),
+                        icon: Icons.location_on,
+                        title: '장소로 시작',
+                        subtitle: '한 장소에서 이야기를\n시간 순으로 봅니다',
+                        accent: theme.colorScheme.primary,
+                        onTap: () => onPickMode(SelectionMode.region),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
           const SizedBox(height: 14),
-          const Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
-                maxLines: 1,
-                style: TextStyle(
-                  color: AppColors.ink450,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
+          const Padding(
+            padding: EdgeInsets.only(right: _homeIntroHorizontalPadding),
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: AppColors.ink450,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),

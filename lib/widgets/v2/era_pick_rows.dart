@@ -18,6 +18,7 @@ class EraPickRows extends StatelessWidget {
     required this.selectedEraId,
     required this.onSelectEra,
     this.gap = 8,
+    this.trailingScrollPadding = 0,
   });
 
   final List<Era> eras;
@@ -26,6 +27,9 @@ class EraPickRows extends StatelessWidget {
 
   /// 두 row 사이 세로 간격.
   final double gap;
+
+  /// 스크롤 끝에서 마지막 칩이 패널 둥근 모서리에 붙지 않도록 남기는 여백.
+  final double trailingScrollPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +43,7 @@ class EraPickRows extends StatelessWidget {
           eras: old,
           selectedEraId: selectedEraId,
           onSelectEra: onSelectEra,
+          trailingScrollPadding: trailingScrollPadding,
         ),
         SizedBox(height: gap),
         EraPickRow(
@@ -46,6 +51,7 @@ class EraPickRows extends StatelessWidget {
           eras: newT,
           selectedEraId: selectedEraId,
           onSelectEra: onSelectEra,
+          trailingScrollPadding: trailingScrollPadding,
         ),
       ],
     );
@@ -71,12 +77,14 @@ class EraPickRow extends StatelessWidget {
     required this.eras,
     required this.selectedEraId,
     required this.onSelectEra,
+    this.trailingScrollPadding = 0,
   });
 
   final String label;
   final List<Era> eras;
   final String? selectedEraId;
   final ValueChanged<String> onSelectEra;
+  final double trailingScrollPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +108,9 @@ class EraPickRow extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            padding: trailingScrollPadding > 0
+                ? EdgeInsetsDirectional.only(end: trailingScrollPadding)
+                : null,
             child: Row(
               children: [
                 for (var i = 0; i < eras.length; i++) ...[

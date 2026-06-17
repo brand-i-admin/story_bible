@@ -68,7 +68,7 @@ void main() {
         home: Scaffold(
           body: MapHintOverlay(
             message:
-                '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물과 걷기·장소로 시작 중 하나를 선택해 주세요.',
+                '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
           ),
         ),
       ),
@@ -76,9 +76,38 @@ void main() {
 
     expect(find.text('오늘은 성경 어디를 여행해볼까요?'), findsOneWidget);
     expect(find.text('먼저 시대를 고르고'), findsOneWidget);
-    expect(find.text('시간 순·인물과 걷기·장소로 시작 중 하나를 선택해 주세요.'), findsOneWidget);
+    expect(find.text('시간 순·인물·장소 중 선택해 주세요.'), findsOneWidget);
     expect(find.byKey(const ValueKey('map-hint-step-badge-1')), findsOneWidget);
     expect(find.byKey(const ValueKey('map-hint-step-badge-2')), findsOneWidget);
+  });
+
+  testWidgets('첫 안내 문구는 좁은 폰에서도 한 줄 축소되고 검은 고스트 그림자가 없다', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 360,
+            child: MapHintOverlay(
+              avatarSize: 70,
+              message:
+                  '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final title = tester.widget<Text>(find.text('오늘은 성경 어디를 여행해볼까요?'));
+    expect(title.maxLines, 1);
+    expect(title.style?.shadows, isEmpty);
+
+    final step = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
+    expect(step.maxLines, 1);
+    expect(step.style?.shadows, isEmpty);
+    expect(
+      find.byKey(const ValueKey('map-hint-scaled-line-오늘은 성경 어디를 여행해볼까요?')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('MapHintOverlay는 기본 크기와 홈 전용 큰 크기를 구분한다', (tester) async {
@@ -106,7 +135,7 @@ void main() {
       null,
     );
     final introSize = await pumpAndAvatarSize(
-      '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물과 걷기·장소로 시작 중 하나를 선택해 주세요.',
+      '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
       70,
     );
 
@@ -133,7 +162,7 @@ void main() {
     expect(source, contains('avatarSize: 70'));
     expect(source, contains('avatarSize: mapHint.avatarSize ?? 48'));
     expect(source, contains('① 먼저 시대를 고르고'));
-    expect(source, contains('② 시간 순·인물과 걷기·장소로 시작'));
+    expect(source, contains('② 시간 순·인물·장소 중 선택'));
     expect(source, contains('노란 지역을 눌러'));
     expect(source, contains('아래 패널에서 인물을'));
     expect(source, contains('아래 패널에서 단위 카드를'));

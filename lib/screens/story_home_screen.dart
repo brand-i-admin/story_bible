@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -47,6 +46,9 @@ import '../widgets/v2/timeline_unit_pick_panel.dart';
 import 'notification_history_screen.dart';
 import 'proposal_board_screen.dart';
 import 'proposal_detail_screen.dart';
+
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
 part 'story_home_screen_state.dart';
 part 'story_home_screen_widgets.dart';
