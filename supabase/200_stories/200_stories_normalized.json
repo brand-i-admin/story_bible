@@ -55,8 +55,8 @@
     "start_year": -585,
     "end_year": -585,
     "time_precision": "approx",
-    "unit_code": "exile_return_exile_daniel_hope",
-    "unit_title": "포로지의 소망과 다니엘",
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
     "unit_order": 1,
     "landmark_code": "lm_exi_chebar",
     "character_codes": [
@@ -107,8 +107,8 @@
     "start_year": -1050,
     "end_year": -1050,
     "time_precision": "approx",
-    "unit_code": "monarchy_saul_beginning_fracture",
-    "unit_title": "사울 왕국의 시작과 균열",
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
     "unit_order": 1,
     "landmark_code": "lm_mon_ramah",
     "character_codes": [
@@ -271,8 +271,8 @@
     "start_year": -2100,
     "end_year": -2100,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_call_promise",
-    "unit_title": "아브라함의 부르심과 약속",
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
     "unit_order": 1,
     "landmark_code": "lm_pat_haran",
     "character_codes": [
@@ -328,8 +328,8 @@
     "start_year": -931,
     "end_year": -931,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_shechem",
     "character_codes": [
@@ -384,8 +384,8 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_moses_call_preparation",
-    "unit_title": "모세의 준비와 부르심",
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
     "unit_order": 1,
     "landmark_code": "lm_exo_goshen",
     "character_codes": [
@@ -430,8 +430,8 @@
     "start_year": -4000,
     "end_year": -4000,
     "time_precision": "approx",
-    "unit_code": "primeval_creation_eden",
-    "unit_title": "창조와 에덴",
+    "unit_code": "primeval_creation_mission",
+    "unit_title": "창조와 사람의 사명",
     "unit_order": 1,
     "landmark_code": "lm_prim_unknown",
     "character_codes": [
@@ -569,9 +569,9 @@
       "동방박사들이 먼 길의 여행복과 예물 상자를 들고 어린 예수님 앞에 엎드리고, 마리아는 아기를 품에 안은 채 조용히 바라본다"
     ],
     "scene_captions": [
-      "세례 요한과 예수님의 탄생이 예고되고, 예수님은 베들레헴에서 태어나 목자들과 동방박사에게 경배를 받으신다",
-      "세례 요한과 예수님의 탄생이 예고되고, 예수님은 베들레헴에서 태어나 목자들과 동방박사에게 경배를 받으신다",
-      "세례 요한과 예수님의 탄생이 예고되고, 예수님은 베들레헴에서 태어나 목자들과 동방박사에게 경배를 받으신다",
+      "성전 안에서 노년의 제사장 사가랴가 분향하다가 천사 가브리엘이 전해주는 아들 탄생 예고를 듣고 놀란다",
+      "나사렛의 마리아가 가브리엘에게 소식을, 듣고 목수 요셉은 꿈에서 본다",
+      "베들레헴 밤 목자들이 마구간의 포대기에 싸인 아기 예수님을 찾아간다",
       "동방박사들이 먼 길의 여행복과 예물 상자를 들고 어린 예수님 앞에 엎드린다"
     ],
     "scene_characters": [
@@ -656,8 +656,8 @@
     "start_year": -605,
     "end_year": -605,
     "time_precision": "approx",
-    "unit_code": "exile_return_exile_daniel_hope",
-    "unit_title": "포로지의 소망과 다니엘",
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
     "unit_order": 1,
     "landmark_code": "lm_exi_babylon",
     "character_codes": [
@@ -718,8 +718,8 @@
     "start_year": -2098,
     "end_year": -2098,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_call_promise",
-    "unit_title": "아브라함의 부르심과 약속",
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
     "unit_order": 1,
     "landmark_code": "lm_pat_jordan_river",
     "character_codes": [
@@ -819,8 +819,8 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_moses_call_preparation",
-    "unit_title": "모세의 준비와 부르심",
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
     "unit_order": 1,
     "landmark_code": "lm_exo_nile",
     "character_codes": [
@@ -872,8 +872,8 @@
     "start_year": -1049,
     "end_year": -1049,
     "time_precision": "approx",
-    "unit_code": "monarchy_saul_beginning_fracture",
-    "unit_title": "사울 왕국의 시작과 균열",
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
     "unit_order": 1,
     "landmark_code": "lm_mon_jabesh_gilead",
     "character_codes": [
@@ -926,8 +926,8 @@
     "start_year": -4000,
     "end_year": -4000,
     "time_precision": "approx",
-    "unit_code": "primeval_creation_eden",
-    "unit_title": "창조와 에덴",
+    "unit_code": "primeval_creation_mission",
+    "unit_title": "창조와 사람의 사명",
     "unit_order": 1,
     "landmark_code": "lm_prim_eden",
     "character_codes": [
@@ -1036,8 +1036,8 @@
     "start_year": -931,
     "end_year": -931,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_shechem",
     "character_codes": [
@@ -1116,8 +1116,8 @@
     "scene_captions": [
       "마리아와 요셉이 아기 예수님을 안고 성전으로 올라가 정결예식을 드린다",
       "성전에서 노년의 시므온이 아기 예수님을 품에 안고 감사한다",
-      "창백해진 얼굴로 다시 예루살렘 길을 되돌아간다",
-      "열두 살 예수님이 성전 선생들 사이에 앉아 질문하고 대답한다"
+      "유월절 후 집에가던 마리아와 요셉이 어린 예수를 찾으로 다시 예루살렘 길을 되돌아간다",
+      "열두 살 예수가 성전 선생들 사이에 앉아 질문하고 대답한다"
     ],
     "scene_characters": [
       [
@@ -1294,8 +1294,8 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_moses_call_preparation",
-    "unit_title": "모세의 준비와 부르심",
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
     "unit_order": 1,
     "landmark_code": "lm_exo_midian_desert",
     "character_codes": [
@@ -1339,8 +1339,8 @@
     "start_year": -2096,
     "end_year": -2096,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_call_promise",
-    "unit_title": "아브라함의 부르심과 약속",
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
     "unit_order": 1,
     "landmark_code": "lm_pat_mamre",
     "character_codes": [
@@ -1386,8 +1386,8 @@
     "start_year": -1045,
     "end_year": -1045,
     "time_precision": "approx",
-    "unit_code": "monarchy_saul_beginning_fracture",
-    "unit_title": "사울 왕국의 시작과 균열",
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
     "unit_order": 1,
     "landmark_code": "lm_mon_gilgal",
     "character_codes": [
@@ -1540,8 +1540,8 @@
     "start_year": -910,
     "end_year": -910,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_shiloh",
     "character_codes": [
@@ -1624,7 +1624,7 @@
       "세례 뒤 물가에 서신 예수님 위로 하늘빛이 열리고 비둘기 같은 성령이 내려오며, 세례 요한은 경외에 찬 얼굴로 하나님의 어린양을 증언한다"
     ],
     "scene_captions": [
-      "예수님이 요단강에서 세례를 받으실 때 성령이 임하고 하늘의 음성이 그분을 하나님의 아들로 증언한다",
+      "예수님이 요단강에서 요한의 세례 장소에 걸어오신다",
       "젖은 옷자락의 예수님 앞에서 세례 요한이 두 손을 내밀며 망설이다",
       "세례 뒤 물가에 서신 예수님 위로 하늘빛이 열리고 비둘기 같은 성령이 내려온다"
     ],
@@ -1652,8 +1652,8 @@
     "start_year": -3995,
     "end_year": -3995,
     "time_precision": "approx",
-    "unit_code": "primeval_fall_exile",
-    "unit_title": "타락과 동산 밖 세상",
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
     "unit_order": 2,
     "landmark_code": "lm_prim_eden",
     "character_codes": [
@@ -1708,8 +1708,8 @@
     "start_year": -585,
     "end_year": -585,
     "time_precision": "approx",
-    "unit_code": "exile_return_exile_daniel_hope",
-    "unit_title": "포로지의 소망과 다니엘",
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
     "unit_order": 1,
     "landmark_code": "lm_exi_babylon",
     "character_codes": [
@@ -1799,9 +1799,9 @@
       "시험을 이기신 예수님이 단호한 눈빛으로 서 있고 천사들이 곁에서 수종든다"
     ],
     "scene_captions": [
-      "사십 일을 금식하신 예수님이 먼지 묻은 소박한 옷차림으로 광야 바위 사이에 지쳐 앉아 있다",
-      "예수님은 광야에서 사십 일을 금식하신 뒤 세 가지 시험을 말씀으로 물리치신다",
-      "성전 꼭대기와 높은 산을 나눈 화면처럼 보여 준다",
+      "사십 일을 금식하신 예수님에게 시험하는 자가 다가온다",
+      "예수님이 돌을 떡으로 만들라는 유혹 앞에 단호한 눈빛으로 말씀을 붙드신다",
+      "예수님은 뛰어내림과 세상 영광의 유혹을 모두 거절하며 하나님만 섬기라고 하신다",
       "시험을 이기신 예수님이 단호한 눈빛으로 서 있고 천사들이 곁에서 수종든다"
     ],
     "scene_characters": [
@@ -1828,9 +1828,9 @@
     "start_year": -1030,
     "end_year": -1030,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_bethlehem",
     "character_codes": [
       "david",
@@ -1920,8 +1920,8 @@
     "start_year": -931,
     "end_year": -913,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
@@ -2014,8 +2014,8 @@
     "start_year": -539,
     "end_year": -539,
     "time_precision": "approx",
-    "unit_code": "exile_return_exile_daniel_hope",
-    "unit_title": "포로지의 소망과 다니엘",
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
     "unit_order": 1,
     "landmark_code": "lm_exi_babylon",
     "character_codes": [
@@ -2057,8 +2057,8 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_moses_call_preparation",
-    "unit_title": "모세의 준비와 부르심",
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
     "unit_order": 1,
     "landmark_code": "lm_exo_mt_horeb",
     "character_codes": [
@@ -2150,8 +2150,8 @@
     "start_year": -3995,
     "end_year": -3995,
     "time_precision": "approx",
-    "unit_code": "primeval_fall_exile",
-    "unit_title": "타락과 동산 밖 세상",
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
     "unit_order": 2,
     "landmark_code": "lm_prim_eden_east",
     "character_codes": [
@@ -2208,8 +2208,8 @@
     "start_year": -2090,
     "end_year": -2090,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_call_promise",
-    "unit_title": "아브라함의 부르심과 약속",
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
     "unit_order": 1,
     "landmark_code": "lm_pat_mamre",
     "character_codes": [
@@ -2307,8 +2307,8 @@
     "start_year": -3950,
     "end_year": -3950,
     "time_precision": "approx",
-    "unit_code": "primeval_fall_exile",
-    "unit_title": "타락과 동산 밖 세상",
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
     "unit_order": 2,
     "landmark_code": "lm_prim_eden",
     "character_codes": [
@@ -2364,9 +2364,9 @@
     "start_year": -1025,
     "end_year": -1025,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_elah_valley",
     "character_codes": [
       "david",
@@ -2419,9 +2419,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_plagues_departure_red_sea",
-    "unit_title": "재앙과 출애굽",
-    "unit_order": 2,
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
+    "unit_order": 1,
     "landmark_code": "lm_exo_egypt_court",
     "character_codes": [
       "moses",
@@ -2530,8 +2530,8 @@
     "start_year": -537,
     "end_year": -537,
     "time_precision": "approx",
-    "unit_code": "exile_return_exile_daniel_hope",
-    "unit_title": "포로지의 소망과 다니엘",
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
     "unit_order": 1,
     "landmark_code": "lm_exi_babylon",
     "character_codes": [
@@ -2580,8 +2580,8 @@
     "start_year": -913,
     "end_year": -910,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
@@ -2746,8 +2746,8 @@
       "예수님이 나다나엘을 만나 그의 마음을 아시고 더 큰 일을 보리라 말씀하신다"
     ],
     "scene_captions": [
-      "두 제자가 조용히 따라간다",
-      "갈릴리 마을길에서 안드레가 형제 시몬을 예수님께 데려온다",
+      "세례 요한의 두 제자가 예수님을 조용히 따라간다",
+      "갈릴리 마을길에서 안드레와 형제 시몬이 예수님을 만난다",
       "예수님이 빌립을 부르시고 빌립은 나다나엘에게 예수님을 전한다",
       "예수님이 나다나엘을 만나 그의 마음을 아시고 더 큰 일을 보리라 말씀하신다"
     ],
@@ -2827,8 +2827,8 @@
     "start_year": -2088,
     "end_year": -2088,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_call_promise",
-    "unit_title": "아브라함의 부르심과 약속",
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
     "unit_order": 1,
     "landmark_code": "lm_pat_mamre",
     "character_codes": [
@@ -2895,14 +2895,14 @@
       }
     ],
     "story_scenes": [
-      "가나의 혼인잔치에서 포도주가 떨어지자 마리아가 예수님께 조용히 알린다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 나누어진 떡과 한 식탁에서 서로를 돌보는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "가나의 혼인잔치에서 포도주가 떨어지자 마리아가 예수님께 조용히 알린다",
       "예수님이 항아리에 물을 채우게 하시고 하인들이 순종해 움직인다",
       "혼인잔치의 빈 항아리 옆에서 제자들이 포도주가 된 물을 보고 놀라며 예수님의 영광을 깨닫는다"
     ],
     "scene_captions": [
-      "마리아가 예수님께 조용히 알린다",
+      "마리아가 예수님께 포도주가 떨어짐을 알린다",
       "예수님이 항아리에 물을 채우게 하시고 하인들이 순종해 움직인다",
-      "혼인잔치의 빈 항아리 옆에서 제자들이 포도주가 된 물을 보고 놀라며 예수님의 영광을 깨닫는다"
+      "혼인잔치의 항아리에 제자들이 포도주가 된 물을 보고 놀라며 예수님의 영광을 깨닫는다"
     ],
     "scene_characters": [
       [
@@ -2930,9 +2930,9 @@
     "start_year": -538,
     "end_year": -520,
     "time_precision": "approx",
-    "unit_code": "exile_return_temple_worship_restored",
-    "unit_title": "성전 귀환과 예배 회복",
-    "unit_order": 2,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
     "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "zerubbabel"
@@ -2978,8 +2978,8 @@
     "start_year": -910,
     "end_year": -886,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_tirzah_gibbethon",
     "character_codes": [
@@ -3121,9 +3121,9 @@
     "start_year": -1024,
     "end_year": -1024,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_gibeah",
     "character_codes": [
       "david",
@@ -3177,8 +3177,8 @@
     "start_year": -2087,
     "end_year": -2087,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_call_promise",
-    "unit_title": "아브라함의 부르심과 약속",
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
     "unit_order": 1,
     "landmark_code": "lm_pat_hebron",
     "character_codes": [
@@ -3283,9 +3283,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_plagues_departure_red_sea",
-    "unit_title": "재앙과 출애굽",
-    "unit_order": 2,
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
+    "unit_order": 1,
     "landmark_code": "lm_exo_nile",
     "character_codes": [
       "moses",
@@ -3388,9 +3388,9 @@
     "start_year": -2500,
     "end_year": -2500,
     "time_precision": "approx",
-    "unit_code": "primeval_flood_babel",
-    "unit_title": "홍수 언약과 흩어짐",
-    "unit_order": 3,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
     "landmark_code": "lm_prim_unknown",
     "character_codes": [
       "god",
@@ -3485,9 +3485,9 @@
     "start_year": -2500,
     "end_year": -2499,
     "time_precision": "approx",
-    "unit_code": "primeval_flood_babel",
-    "unit_title": "홍수 언약과 흩어짐",
-    "unit_order": 3,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
     "landmark_code": "lm_prim_unknown",
     "character_codes": [
       "noah",
@@ -3579,9 +3579,9 @@
     "start_year": -2087,
     "end_year": -2087,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_mamre",
     "character_codes": [
       "abraham",
@@ -3627,8 +3627,8 @@
     "start_year": -885,
     "end_year": -874,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_split_early_kings",
-    "unit_title": "왕국 분열과 초기 왕들",
+    "unit_code": "divided_split_early_evil",
+    "unit_title": "왕국 분열과 초기 왕조의 악",
     "unit_order": 1,
     "landmark_code": "lm_div_tirzah_samaria",
     "character_codes": [
@@ -3739,9 +3739,9 @@
     "start_year": -1023,
     "end_year": -1023,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_gibeah",
     "character_codes": [
       "david",
@@ -3793,9 +3793,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_plagues_departure_red_sea",
-    "unit_title": "재앙과 출애굽",
-    "unit_order": 2,
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
+    "unit_order": 1,
     "landmark_code": "lm_exo_goshen",
     "character_codes": [
       "god",
@@ -3879,9 +3879,9 @@
     "start_year": -520,
     "end_year": -520,
     "time_precision": "approx",
-    "unit_code": "exile_return_temple_worship_restored",
-    "unit_title": "성전 귀환과 예배 회복",
-    "unit_order": 2,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
     "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "haggai",
@@ -3975,7 +3975,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
-    "unit_code": "judges_ruth_redeemer",
+    "unit_code": "judges_ruth_boaz",
     "unit_title": "룻과 보아스의 기업 무름",
     "unit_order": 2,
     "landmark_code": "lm_jud_bethlehem",
@@ -4024,9 +4024,9 @@
     "start_year": -2200,
     "end_year": -2200,
     "time_precision": "approx",
-    "unit_code": "primeval_flood_babel",
-    "unit_title": "홍수 언약과 흩어짐",
-    "unit_order": 3,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
     "landmark_code": "lm_prim_babel",
     "character_codes": [
       "god"
@@ -4153,9 +4153,9 @@
     "start_year": -515,
     "end_year": -515,
     "time_precision": "approx",
-    "unit_code": "exile_return_temple_worship_restored",
-    "unit_title": "성전 귀환과 예배 회복",
-    "unit_order": 2,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
     "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "zerubbabel",
@@ -4214,25 +4214,21 @@
       }
     ],
     "story_scenes": [
-      "요한의 제자들이 사람들이 예수님께 가는 일을 요한에게 알린다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다",
-      "세례 요한이 신랑의 친구처럼 기뻐하며 제자들에게 예수님은 흥해야 한다고 증언한다. 예수님은 따르는 많은 사람들과 함께 멀리 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다",
-      "요한이 하늘로부터 오신 예수님께 생명이 있음을 엄숙히 전한다"
+      "요한의 제자들이 사람들이 예수님께 가는 일을 요한에게 알린다. 제자들의 말풍선에는 사람들이 예수님을 많이 따르는 장면",
+      "세례 요한이 신랑의 친구처럼 기뻐하며 제자들에게 예수님은 흥해야 한다고 증언한다. 예수님은 따르는 많은 사람들과 함께 멀리 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다"
     ],
     "scene_captions": [
       "요한의 제자들이 사람들이 예수님께 가는 일을 요한에게 알린다",
-      "세례 요한이 신랑의 친구처럼 기뻐하며 제자들에게 예수님은 흥해야 한다고 증언한다",
-      "요한이 하늘로부터 오신 예수님께 생명이 있음을 엄숙히 전한다"
+      "세례 요한이 신랑의 친구처럼 기뻐하며 제자들에게 예수님은 흥해야 한다고 증언한다"
     ],
     "scene_characters": [
-      [
-        "john_the_baptist"
-      ],
       [
         "john_the_baptist",
         "jesus"
       ],
       [
-        "john_the_baptist"
+        "john_the_baptist",
+        "jesus"
       ]
     ]
   },
@@ -4245,9 +4241,9 @@
     "start_year": -2086,
     "end_year": -2086,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_sodom",
     "character_codes": [
       "lot"
@@ -4295,8 +4291,8 @@
     "start_year": -874,
     "end_year": -870,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_samaria",
     "character_codes": [
@@ -4397,9 +4393,9 @@
     "start_year": -1022,
     "end_year": -1022,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_ramah",
     "character_codes": [
       "david",
@@ -4454,9 +4450,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_plagues_departure_red_sea",
-    "unit_title": "재앙과 출애굽",
-    "unit_order": 2,
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
+    "unit_order": 1,
     "landmark_code": "lm_exo_unknown",
     "character_codes": [
       "god",
@@ -4509,9 +4505,9 @@
     "start_year": -1012,
     "end_year": -1012,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_engedi",
     "character_codes": [
       "david",
@@ -4649,7 +4645,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
-    "unit_code": "judges_ruth_redeemer",
+    "unit_code": "judges_ruth_boaz",
     "unit_title": "룻과 보아스의 기업 무름",
     "unit_order": 2,
     "landmark_code": "lm_jud_bethlehem",
@@ -4731,10 +4727,10 @@
       "수가 성의 많은 사람들이 우물가로 나아와 예수님 둘레에 모이고, 예수님은 따뜻한 얼굴로 말씀하시며 사람들은 놀라움과 믿음이 섞인 표정으로 귀 기울인다"
     ],
     "scene_captions": [
-      "옷차림으로 앉아 계시다",
-      "예수님은 사마리아 여인에게 생수를 말씀하시고, 그 여인의 증언으로 많은 사마리아 사람들이 예수님을 믿는다",
-      "베드로와 안드레와 요한과 빌립이 먹을 것을 들고 돌아와 예수님께 드시라고 권한다",
-      "수가 성의 많은 사람들이 우물가로 나아와 예수님 둘레에 모인다"
+      "우물가에서 예수님이 지친 여행자 옷차림으로 앉아 계시고, 물동이를 든 수가 성 사마리아 여인이 나타난다",
+      "사마리아 여인이 동네 사람들에게 예수님에 대해 전한다",
+      "제자들이 돌아와 예수님께 드시라고 권하지만 예수님은 하나님의 사명의 양식을 말씀하신다",
+      "수가 성의 많은 사람들이 우물가로 나아와 예수님 주변에 모인다"
     ],
     "scene_characters": [
       [
@@ -4812,9 +4808,9 @@
     "start_year": -2085,
     "end_year": -2085,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_gerar",
     "character_codes": [
       "abraham",
@@ -4858,9 +4854,9 @@
     "start_year": -480,
     "end_year": -480,
     "time_precision": "approx",
-    "unit_code": "exile_return_esther_reversal",
+    "unit_code": "exile_esther_reversal",
     "unit_title": "에스더와 뒤집힌 위기",
-    "unit_order": 3,
+    "unit_order": 2,
     "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
@@ -4911,8 +4907,8 @@
     "start_year": -860,
     "end_year": -860,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_mt_carmel",
     "character_codes": [
@@ -4963,9 +4959,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_plagues_departure_red_sea",
-    "unit_title": "재앙과 출애굽",
-    "unit_order": 2,
+    "unit_code": "exodus_egypt_red_sea",
+    "unit_title": "애굽의 압제와 홍해 구원",
+    "unit_order": 1,
     "landmark_code": "lm_exo_red_sea_crossing",
     "character_codes": [
       "moses",
@@ -5011,7 +5007,7 @@
     "start_year": -1100,
     "end_year": -1100,
     "time_precision": "approx",
-    "unit_code": "judges_ruth_redeemer",
+    "unit_code": "judges_ruth_boaz",
     "unit_title": "룻과 보아스의 기업 무름",
     "unit_order": 2,
     "landmark_code": "lm_jud_bethlehem",
@@ -5132,9 +5128,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_supply_sinai",
-    "unit_title": "광야 공급과 시내산 언약",
-    "unit_order": 3,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_marah",
     "character_codes": [
       "god",
@@ -5276,9 +5272,9 @@
     "start_year": -1011,
     "end_year": -1011,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_engedi",
     "character_codes": [
       "david",
@@ -5329,9 +5325,9 @@
     "start_year": -2066,
     "end_year": -2066,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_beersheba",
     "character_codes": [
       "sarah",
@@ -5391,9 +5387,9 @@
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
-    "unit_code": "exile_return_esther_reversal",
+    "unit_code": "exile_esther_reversal",
     "unit_title": "에스더와 뒤집힌 위기",
-    "unit_order": 3,
+    "unit_order": 2,
     "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
@@ -5444,8 +5440,8 @@
     "start_year": -860,
     "end_year": -860,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_mt_horeb",
     "character_codes": [
@@ -5517,13 +5513,13 @@
       "가버나움 회당 안에서 사람들이 예수님의 가르침을 듣고 놀란다",
       "가버나움 회당 안에서 더러운 귀신 들린 사람이 몸을 움츠리며 소리치고, 예수님이 귀신을 꾸짖으시자 몸을 웅크렸던 사람이 평온을 되찾고, 검은 영이 도망감. 주변 사람들은 놀란다",
       "예수님이 시몬의 집으로 가서 열병에 시달리는 장모의 열병을 꾸짖으시자 열병이 낫고, 수 많은 사람들이 몰려오는 모습",
-      "예수님이여러 회당에서 말씀을 전하시는 모습"
+      "예수님이 여러 회당에서 말씀을 전하시는 모습"
     ],
     "scene_captions": [
       "가버나움 회당 안에서 사람들이 예수님의 가르침을 듣고 놀란다",
-      "가버나움 회당 안에서 더러운 귀신 들린 사람이 몸을 움츠리며 소리치다",
-      "예수님이 시몬의 집으로 가서 열병에 시달리는 장모의 열병을 꾸짖으시자 열병이 낫다",
-      "예수님이여러 회당에서 말씀을 전하시는 모습이다"
+      "가버나움 회당 안에서 더러운 귀신 들린 사람에게서 귀신을 내쫓으신다",
+      "예수님이 시몬의 집으로 가서 열병에 시달리는 장모의 열병을 꾸짖으시자 열병이 낫는다",
+      "예수님이 여러 회당에서 말씀을 전하신다"
     ],
     "scene_characters": [
       [
@@ -5549,8 +5545,8 @@
     "start_year": -856,
     "end_year": -856,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_jezreel_vineyard",
     "character_codes": [
@@ -5601,9 +5597,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_supply_sinai",
-    "unit_title": "광야 공급과 시내산 언약",
-    "unit_order": 3,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_wilderness_of_sin",
     "character_codes": [
       "god",
@@ -5738,8 +5734,8 @@
     "start_year": -1105,
     "end_year": -1105,
     "time_precision": "approx",
-    "unit_code": "judges_samuel_ark_covenant",
-    "unit_title": "사무엘의 부르심과 언약궤",
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
     "unit_order": 3,
     "landmark_code": "lm_jud_shiloh",
     "character_codes": [
@@ -5795,9 +5791,9 @@
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
-    "unit_code": "exile_return_esther_reversal",
+    "unit_code": "exile_esther_reversal",
     "unit_title": "에스더와 뒤집힌 위기",
-    "unit_order": 3,
+    "unit_order": 2,
     "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
@@ -5841,9 +5837,9 @@
     "start_year": -1010,
     "end_year": -1010,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_endor",
     "character_codes": [
       "saul",
@@ -5893,9 +5889,9 @@
     "start_year": -2055,
     "end_year": -2055,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_moriah",
     "character_codes": [
       "abraham",
@@ -5996,9 +5992,9 @@
     "start_year": -1010,
     "end_year": -1010,
     "time_precision": "approx",
-    "unit_code": "monarchy_david_call_fugitive",
-    "unit_title": "다윗의 부르심과 도망길",
-    "unit_order": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
     "landmark_code": "lm_mon_mt_gilboa",
     "character_codes": [
       "saul"
@@ -6044,8 +6040,8 @@
     "start_year": -853,
     "end_year": -853,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_samaria_gate",
     "character_codes": [
@@ -6146,9 +6142,9 @@
     "start_year": -2030,
     "end_year": -2030,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_machpelah",
     "character_codes": [
       "abraham",
@@ -6199,9 +6195,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_supply_sinai",
-    "unit_title": "광야 공급과 시내산 언약",
-    "unit_order": 3,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_rephidim",
     "character_codes": [
       "moses",
@@ -6255,8 +6251,8 @@
     "start_year": -1090,
     "end_year": -1090,
     "time_precision": "approx",
-    "unit_code": "judges_samuel_ark_covenant",
-    "unit_title": "사무엘의 부르심과 언약궤",
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
     "unit_order": 3,
     "landmark_code": "lm_jud_shiloh",
     "character_codes": [
@@ -6312,9 +6308,9 @@
     "start_year": -474,
     "end_year": -474,
     "time_precision": "approx",
-    "unit_code": "exile_return_esther_reversal",
+    "unit_code": "exile_esther_reversal",
     "unit_title": "에스더와 뒤집힌 위기",
-    "unit_order": 3,
+    "unit_order": 2,
     "landmark_code": "lm_exi_susa",
     "character_codes": [
       "esther",
@@ -6394,8 +6390,8 @@
       "고침 받은 사람이 자리를 들고 걸어 나가고 무리는 하나님께 영광을 돌린다"
     ],
     "scene_captions": [
-      "예수님은 죄 사함과 치유의 권세를 보이신다",
-      "예수님은 인자의 권세를 드러내신다",
+      "사람들로 가득 찬 집 지붕 위에서 친구들이 중풍병자를 예수님께 내린다",
+      "의심하는 서기관들에게 예수님은 인자의 권세를 드러내신다",
       "고침 받은 사람이 자리를 들고 걸어 나가고 무리는 하나님께 영광을 돌린다"
     ],
     "scene_characters": [
@@ -6465,8 +6461,8 @@
     "end_year": -1000,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -6517,9 +6513,9 @@
     "start_year": -2026,
     "end_year": -2026,
     "time_precision": "approx",
-    "unit_code": "patriarch_abraham_isaac_covenant_family",
-    "unit_title": "아브라함과 이삭의 언약 가정",
-    "unit_order": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
     "landmark_code": "lm_pat_haran",
     "character_codes": [
       "isaac",
@@ -6597,7 +6593,7 @@
     "scene_captions": [
       "세관 자리에서 마태가 동전과 장부를 남겨 둔 채 일어나 예수님을 따르다",
       "마태의 집 잔치에 세리와 죄인들이 함께 앉아 예수님과 식사한다",
-      "예수님이 바리새파 사람들과 율법학자들의 의도적인 질문에 건강한 자가 아니라 병든 자에게 의원이 필요하다다"
+      "예수님이 바리새파 사람들과 율법학자들의 의도적인 질문에 의원이 필요한 자에대해 말씀하신다"
     ],
     "scene_characters": [
       [
@@ -6672,9 +6668,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_supply_sinai",
-    "unit_title": "광야 공급과 시내산 언약",
-    "unit_order": 3,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_mt_sinai",
     "character_codes": [
       "moses",
@@ -6720,8 +6716,8 @@
     "start_year": -853,
     "end_year": -853,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_ramoth_gilead",
     "character_codes": [
@@ -6778,8 +6774,8 @@
     "start_year": -1075,
     "end_year": -1075,
     "time_precision": "approx",
-    "unit_code": "judges_samuel_ark_covenant",
-    "unit_title": "사무엘의 부르심과 언약궤",
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
     "unit_order": 3,
     "landmark_code": "lm_jud_mizpah",
     "character_codes": [
@@ -6836,9 +6832,9 @@
     "start_year": -458,
     "end_year": -458,
     "time_precision": "approx",
-    "unit_code": "exile_return_ezra_nehemiah_community",
+    "unit_code": "exile_ezra_nehemiah_community",
     "unit_title": "에스라와 느헤미야의 공동체 회복",
-    "unit_order": 4,
+    "unit_order": 3,
     "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "ezra"
@@ -6891,9 +6887,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_supply_sinai",
-    "unit_title": "광야 공급과 시내산 언약",
-    "unit_order": 3,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_mt_sinai",
     "character_codes": [
       "moses",
@@ -6945,9 +6941,9 @@
     "start_year": -445,
     "end_year": -445,
     "time_precision": "approx",
-    "unit_code": "exile_return_ezra_nehemiah_community",
+    "unit_code": "exile_ezra_nehemiah_community",
     "unit_title": "에스라와 느헤미야의 공동체 회복",
-    "unit_order": 4,
+    "unit_order": 3,
     "landmark_code": "lm_exi_susa",
     "character_codes": [
       "nehemiah"
@@ -7017,8 +7013,8 @@
     ],
     "scene_captions": [
       "베데스다 못가 행각에 많은 병자들이 누워 있고 한 사람이 오래 기다리고 있다",
-      "곁에 몸을 낮추다",
-      "주변 사람들이 놀라 바라본다",
+      "예수님이 오래 누운 병자 곁에 몸을 낮추고, 병자는 도와달라며 예수님을 바라본다",
+      "그 사람이 자리를 들고 걸어가자 주변 사람들이 놀라 바라본다",
       "유대 지도자들이 안식일 문제를 제기하고 예수님은 아버지께서 일하신다고 말씀하신다"
     ],
     "scene_characters": [
@@ -7132,8 +7128,8 @@
     "end_year": -1000,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -7180,8 +7176,8 @@
     "start_year": -853,
     "end_year": -848,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_jerusalem_ezion_geber",
     "character_codes": [
@@ -7232,9 +7228,9 @@
     "start_year": -2006,
     "end_year": -2006,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_blessing_family",
-    "unit_title": "야곱의 축복과 가족의 시작",
-    "unit_order": 3,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_beersheba",
     "character_codes": [
       "esau",
@@ -7281,8 +7277,8 @@
     "end_year": -995,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -7331,9 +7327,9 @@
     "start_year": -1446,
     "end_year": -1446,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_supply_sinai",
-    "unit_title": "광야 공급과 시내산 언약",
-    "unit_order": 3,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_mt_sinai",
     "character_codes": [
       "moses",
@@ -7386,9 +7382,9 @@
     "start_year": -445,
     "end_year": -445,
     "time_precision": "approx",
-    "unit_code": "exile_return_ezra_nehemiah_community",
+    "unit_code": "exile_ezra_nehemiah_community",
     "unit_title": "에스라와 느헤미야의 공동체 회복",
-    "unit_order": 4,
+    "unit_order": 3,
     "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "nehemiah"
@@ -7436,8 +7432,8 @@
     "start_year": -852,
     "end_year": -852,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_samaria_ahaziah",
     "character_codes": [
@@ -7655,9 +7651,9 @@
     "start_year": -1985,
     "end_year": -1985,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_blessing_family",
-    "unit_title": "야곱의 축복과 가족의 시작",
-    "unit_order": 3,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_beersheba",
     "character_codes": [
       "jacob",
@@ -7756,8 +7752,8 @@
     "end_year": -990,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -7811,9 +7807,9 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_hazeroth",
     "character_codes": [
       "moses",
@@ -7872,9 +7868,9 @@
     "start_year": -1985,
     "end_year": -1985,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_blessing_family",
-    "unit_title": "야곱의 축복과 가족의 시작",
-    "unit_order": 3,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_bethel",
     "character_codes": [
       "jacob",
@@ -7963,9 +7959,9 @@
     ],
     "scene_captions": [
       "산비탈과 평지에 제자들과 무리가 모여 앉고 예수님이 가르치기 시작하신다",
-      "예수님이 가난하고 애통한 사람들이 예수님의 복 선언을 들으며 위로받는 장면이다",
-      "예수님이 배부르고 부요하고 악인에게 칭찬 받는 사람은 상급이 없다는 말씀을 하시는 장면이다",
-      "예수님이 이웃을 사랑하고 이웃에게 소유를 내어주고 이웃을 잘 대접하라는 말씀을 하시는 장면이다"
+      "예수님이 가난하고 애통한 사람들의 복에 대해 말씀하신다",
+      "예수님이 배부르고 부요하고 악인에게 칭찬 받는 사람은 상급이 없다는 말씀을 하신다",
+      "예수님이 이웃을 사랑하고 이웃에게 소유를 내어주고 이웃을 잘 대접하라는 말씀을 하신다"
     ],
     "scene_characters": [
       [
@@ -8003,8 +7999,8 @@
     "start_year": -850,
     "end_year": -850,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elijah_ahab",
-    "unit_title": "엘리야와 아합 시대",
+    "unit_code": "divided_elijah_ahab_word",
+    "unit_title": "엘리야 시대: 아합 집과 참 말씀",
     "unit_order": 2,
     "landmark_code": "lm_div_jordan_river",
     "character_codes": [
@@ -8057,9 +8053,9 @@
     "start_year": -444,
     "end_year": -444,
     "time_precision": "approx",
-    "unit_code": "exile_return_ezra_nehemiah_community",
+    "unit_code": "exile_ezra_nehemiah_community",
     "unit_title": "에스라와 느헤미야의 공동체 회복",
-    "unit_order": 4,
+    "unit_order": 3,
     "landmark_code": "lm_exi_jerusalem",
     "character_codes": [
       "ezra",
@@ -8207,9 +8203,9 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_eshcol_valley",
     "character_codes": [
       "moses",
@@ -8267,8 +8263,8 @@
     "end_year": -990,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -8322,9 +8318,9 @@
     "start_year": -1984,
     "end_year": -1977,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_blessing_family",
-    "unit_title": "야곱의 축복과 가족의 시작",
-    "unit_order": 3,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_haran",
     "character_codes": [
       "jacob",
@@ -8456,7 +8452,7 @@
       "가버나움에서 장로들이 예수님께 병든 종을 고쳐 달라고 정중히 간청한다",
       "백부장의 친구들이 예수님께 나아와서 말씀만 하시라고 간청한다",
       "멀리 있는 집에서 종이 살아나고 백부장이 즐거워 한다",
-      "죽었던 청년이 몸을 일으키다"
+      "예수님이 관에 손을 대시자 죽었던 청년이 몸을 일으킨다"
     ],
     "scene_characters": [
       [
@@ -8482,8 +8478,8 @@
     "start_year": -850,
     "end_year": -850,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_jericho",
     "character_codes": [
@@ -8630,9 +8626,9 @@
       "야이로의 집에서 예수님이 죽은 딸의 손을 잡아 일으키시고, 회당장 야이로와 가족들 그리고 베드로와 야고보와 요한은 침상 곁에서 숨을 죽인 채 놀라 다가온다"
     ],
     "scene_captions": [
-      "갈릴리 호수의 거센 풍랑 속에서 젖은 어부 옷의 제자들이 배 밧줄과 노를 붙잡고 두려워한다",
-      "거라사 들판에서 헝클어진 머리와 찢어진 옷의 사람이 예수님 앞에 쓰러진다",
-      "무리 속에서 오래 앓아 지친 혈루증 여인이 떨리는 손으로 예수님의 옷자락을 만진다",
+      "갈릴리 호수의 거센 풍랑 속에서 젖은 제자들이 배 밧줄과 노를 붙잡고 두려워한다",
+      "거라사 들판에서 사람에게서 귀신을 내쫓아 군대가 돼지에게 들어간다",
+      "무리 속에서 혈루증 여인이 떨리는 손으로 예수님의 옷자락을 만져 치유 받는다",
       "야이로의 집에서 예수님이 죽은 딸의 손을 잡아 일으키시다"
     ],
     "scene_characters": [
@@ -8675,9 +8671,9 @@
     "start_year": -1445,
     "end_year": -1445,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_kadesh_barnea",
     "character_codes": [
       "moses",
@@ -8768,8 +8764,8 @@
     "end_year": -985,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -8815,8 +8811,8 @@
     "start_year": -845,
     "end_year": -845,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_gilgal",
     "character_codes": [
@@ -8865,9 +8861,9 @@
     "start_year": -1977,
     "end_year": -1965,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_blessing_family",
-    "unit_title": "야곱의 축복과 가족의 시작",
-    "unit_order": 3,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_haran",
     "character_codes": [
       "jacob",
@@ -8975,8 +8971,8 @@
     "start_year": -845,
     "end_year": -845,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_samaria",
     "character_codes": [
@@ -9028,9 +9024,9 @@
     "start_year": -1408,
     "end_year": -1408,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_kadesh_barnea",
     "character_codes": [
       "moses",
@@ -9132,8 +9128,8 @@
     "end_year": -982,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -9184,9 +9180,9 @@
     "start_year": -1965,
     "end_year": -1961,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_return_israel",
-    "unit_title": "야곱의 귀환과 이스라엘",
-    "unit_order": 4,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_haran",
     "character_codes": [
       "jacob",
@@ -9287,9 +9283,9 @@
     ],
     "scene_captions": [
       "예수님은 열두 제자에게 권능과 지침을 주시고 하나님 나라를 전하며 병을 고치도록 보내신다",
-      "예수님은 열두 제자에게 권능과 지침을 주시고 하나님 나라를 전하며 병을 고치도록 보내신다",
-      "제자들이 마을집 앞에서 복음을 전한다, 병든 사람을 고치며 가족들은 간절한 표정으로 지켜본다",
-      "예수님은 열두 제자에게 권능과 지침을 주시고 하나님 나라를 전하며 병을 고치도록 보내신다"
+      "제자들이 여벌 옷과 돈주머니 없이 지팡이와 샌들만 갖춘 간소한 차림으로 갈릴리 마을길을 떠난다",
+      "제자들이 마을집 앞에서 복음을 전한다, 병든 사람을 고친다",
+      "헤롯 왕이 화를 내고 그 앞에 신하들이 이야기를 전한다"
     ],
     "scene_characters": [
       [
@@ -9392,9 +9388,9 @@
     "start_year": -1408,
     "end_year": -1408,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_edom_road",
     "character_codes": [
       "moses"
@@ -9439,8 +9435,8 @@
     "start_year": -845,
     "end_year": -845,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_dothan",
     "character_codes": [
@@ -9489,9 +9485,9 @@
     "start_year": -1961,
     "end_year": -1961,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_return_israel",
-    "unit_title": "야곱의 귀환과 이스라엘",
-    "unit_order": 4,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_gilead",
     "character_codes": [
       "jacob",
@@ -9550,8 +9546,8 @@
     "end_year": -979,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -9715,7 +9711,7 @@
     ],
     "scene_captions": [
       "빈 들판에 큰 무리가 앉아 있고 예수님이 떡 다섯 개와 물고기 두 마리를 받으신다",
-      "모두가 배부르게 먹는다",
+      "예수님이 축사하시고 떡과 물고기로 모두가 배부르게 먹는다",
       "밤바다에서 제자들의 배가 바람에 흔들리고 예수님이 물 위로 걸어오신다"
     ],
     "scene_characters": [
@@ -9859,9 +9855,9 @@
     "start_year": -1408,
     "end_year": -1408,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_baal_peor",
     "character_codes": [
       "moses",
@@ -9940,8 +9936,8 @@
       "예수님은 제자들에게 물어보시고 베드로가 영생의 말씀이 주께 있다고 고백하며 예수님 곁에 선다. 베드로의 말풍선에는 예수님이 말씀을 들고 뒤에서 밝은 빛이 나오는 모습"
     ],
     "scene_captions": [
-      "가버나움 회당에서 사람들이 예수님을 둘러선다, 예수님은 말씀을 전하신다",
-      "사람들이 서로 수군거린다",
+      "가버나움 회당에서 사람들이 예수님을 둘러선다, 예수님은 참 떡을 내려주심을 말씀하신다",
+      "예수님이 자신을 생명의 떡으로 밝히시자 사람들이 서로 수군거린다",
       "예수님은 제자들에게 물어보시고 베드로가 영생의 말씀이 주께 있다고 고백하며 예수님 곁에 선다"
     ],
     "scene_characters": [
@@ -9977,8 +9973,8 @@
     "end_year": -978,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_ephraim_forest",
     "character_codes": [
       "david",
@@ -10027,9 +10023,9 @@
     "start_year": -1960,
     "end_year": -1960,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_return_israel",
-    "unit_title": "야곱의 귀환과 이스라엘",
-    "unit_order": 4,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_jabbok",
     "character_codes": [
       "jacob"
@@ -10077,8 +10073,8 @@
     "start_year": -848,
     "end_year": -841,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_jerusalem_jehoram",
     "character_codes": [
@@ -10230,9 +10226,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_plains_moab",
     "character_codes": [
       "moses",
@@ -10278,9 +10274,9 @@
     "start_year": -1960,
     "end_year": -1960,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_return_israel",
-    "unit_title": "야곱의 귀환과 이스라엘",
-    "unit_order": 4,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_jabbok",
     "character_codes": [
       "jacob",
@@ -10327,8 +10323,8 @@
     "start_year": -841,
     "end_year": -841,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_ramoth_jezreel",
     "character_codes": [
@@ -10376,8 +10372,8 @@
     "end_year": -970,
     "time_precision": "approx",
     "unit_code": "monarchy_david_covenant_fracture",
-    "unit_title": "다윗 왕국의 언약과 흔들림",
-    "unit_order": 3,
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -10600,9 +10596,9 @@
     "start_year": -1955,
     "end_year": -1955,
     "time_precision": "approx",
-    "unit_code": "patriarch_jacob_return_israel",
-    "unit_title": "야곱의 귀환과 이스라엘",
-    "unit_order": 4,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
     "landmark_code": "lm_pat_bethlehem",
     "character_codes": [
       "jacob",
@@ -10651,9 +10647,9 @@
     "start_year": -970,
     "end_year": -970,
     "time_precision": "approx",
-    "unit_code": "monarchy_solomon_temple_crossroads",
-    "unit_title": "솔로몬과 성전, 왕국의 기로",
-    "unit_order": 4,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon",
@@ -10699,9 +10695,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_plains_moab",
     "character_codes": [
       "moses",
@@ -10750,8 +10746,8 @@
     "start_year": -841,
     "end_year": -841,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_jezreel_jehu",
     "character_codes": [
@@ -10903,9 +10899,9 @@
     "start_year": -970,
     "end_year": -970,
     "time_precision": "approx",
-    "unit_code": "monarchy_solomon_temple_crossroads",
-    "unit_title": "솔로몬과 성전, 왕국의 기로",
-    "unit_order": 4,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "david",
@@ -11000,9 +10996,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_wilderness_training_moses_farewell",
-    "unit_title": "광야 훈련과 모세의 마지막",
-    "unit_order": 4,
+    "unit_code": "exodus_wilderness_covenant",
+    "unit_title": "광야의 삶과 언약 훈련",
+    "unit_order": 2,
     "landmark_code": "lm_exo_mt_nebo",
     "character_codes": [
       "moses",
@@ -11049,8 +11045,8 @@
     "start_year": -841,
     "end_year": -814,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_elisha_jehu",
-    "unit_title": "엘리사의 기적과 예후의 심판",
+    "unit_code": "divided_elisha_jehu_judgment",
+    "unit_title": "엘리사와 예후: 표징과 심판",
     "unit_order": 3,
     "landmark_code": "lm_div_samaria_baal_temple",
     "character_codes": [
@@ -11101,9 +11097,9 @@
     "start_year": -1915,
     "end_year": -1915,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_hebron",
     "character_codes": [
       "joseph",
@@ -11294,9 +11290,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_jud_jericho",
     "character_codes": [
       "god",
@@ -11506,9 +11502,9 @@
     "start_year": -967,
     "end_year": -967,
     "time_precision": "approx",
-    "unit_code": "monarchy_solomon_temple_crossroads",
-    "unit_title": "솔로몬과 성전, 왕국의 기로",
-    "unit_order": 4,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon",
@@ -11558,8 +11554,8 @@
     "start_year": -841,
     "end_year": -835,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_jerusalem_athaliah_joash",
     "character_codes": [
@@ -11612,9 +11608,9 @@
     "start_year": -1915,
     "end_year": -1915,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_dothan",
     "character_codes": [
       "joseph",
@@ -11825,9 +11821,9 @@
     "start_year": -1910,
     "end_year": -1909,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_unknown",
     "character_codes": [
       "joseph",
@@ -11877,9 +11873,9 @@
     "start_year": -966,
     "end_year": -959,
     "time_precision": "approx",
-    "unit_code": "monarchy_solomon_temple_crossroads",
-    "unit_title": "솔로몬과 성전, 왕국의 기로",
-    "unit_order": 4,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon"
@@ -11920,9 +11916,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_jud_jericho",
     "character_codes": [
       "joshua"
@@ -11966,8 +11962,8 @@
     "start_year": -835,
     "end_year": -800,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_jerusalem_joash_temple",
     "character_codes": [
@@ -12169,9 +12165,9 @@
     "start_year": -1900,
     "end_year": -1900,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_unknown",
     "character_codes": [
       "joseph",
@@ -12262,9 +12258,9 @@
     "start_year": -950,
     "end_year": -950,
     "time_precision": "approx",
-    "unit_code": "monarchy_solomon_temple_crossroads",
-    "unit_title": "솔로몬과 성전, 왕국의 기로",
-    "unit_order": 4,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
     "landmark_code": "lm_mon_jerusalem",
     "character_codes": [
       "solomon",
@@ -12314,9 +12310,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_jud_jericho",
     "character_codes": [
       "god",
@@ -12366,8 +12362,8 @@
     "start_year": -814,
     "end_year": -782,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_samaria_jehoahaz_jehoash",
     "character_codes": [
@@ -12620,9 +12616,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_jud_ai",
     "character_codes": [
       "god",
@@ -12669,9 +12665,9 @@
     "start_year": -1885,
     "end_year": -1885,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_egypt_court",
     "character_codes": [
       "joseph",
@@ -12718,8 +12714,8 @@
     "start_year": -796,
     "end_year": -796,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_jerusalem_joash_last",
     "character_codes": [
@@ -12817,9 +12813,9 @@
     "start_year": -1880,
     "end_year": -1879,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_goshen",
     "character_codes": [
       "jacob",
@@ -12867,8 +12863,8 @@
     "start_year": -796,
     "end_year": -790,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_salt_valley_beth_shemesh",
     "character_codes": [
@@ -12921,9 +12917,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_jud_ai",
     "character_codes": [
       "god",
@@ -13141,9 +13137,9 @@
     "start_year": -1406,
     "end_year": -1406,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_exo_gibeon_battle",
     "character_codes": [
       "god",
@@ -13181,9 +13177,9 @@
     "start_year": -1860,
     "end_year": -1860,
     "time_precision": "approx",
-    "unit_code": "patriarch_joseph_egypt_path",
-    "unit_title": "요셉과 애굽으로 이어지는 길",
-    "unit_order": 5,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
     "landmark_code": "lm_pat_unknown",
     "character_codes": [
       "jacob",
@@ -13235,8 +13231,8 @@
     "start_year": -793,
     "end_year": -753,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_samaria_jeroboam_ii",
     "character_codes": [
@@ -13476,9 +13472,9 @@
     "start_year": -1390,
     "end_year": -1390,
     "time_precision": "approx",
-    "unit_code": "exodus_joshua_promised_land",
+    "unit_code": "exodus_canaan_joshua",
     "unit_title": "가나안 입성과 여호수아",
-    "unit_order": 5,
+    "unit_order": 3,
     "landmark_code": "lm_exo_shechem_oak",
     "character_codes": [
       "god",
@@ -13528,8 +13524,8 @@
     "start_year": -760,
     "end_year": -760,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_div_joppa_jonah",
     "character_codes": [
@@ -13718,8 +13714,8 @@
     "start_year": -760,
     "end_year": -760,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_two_kingdoms_warning",
-    "unit_title": "두 왕국의 흔들림과 요나의 경고",
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
     "unit_order": 4,
     "landmark_code": "lm_mon_nineveh",
     "character_codes": [
@@ -13869,9 +13865,9 @@
     "start_year": -792,
     "end_year": -740,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_jerusalem_uzziah",
     "character_codes": [
       "uzziah",
@@ -14023,9 +14019,9 @@
     "start_year": -753,
     "end_year": -732,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_samaria_late_kings",
     "character_codes": [
       "zechariah_king",
@@ -14202,9 +14198,9 @@
     "start_year": -750,
     "end_year": -735,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_jerusalem_jotham_gate",
     "character_codes": [
       "jotham",
@@ -14357,9 +14353,9 @@
     "start_year": -740,
     "end_year": -740,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "isaiah",
@@ -14530,9 +14526,9 @@
     "start_year": -735,
     "end_year": -732,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_jerusalem_ahaz_altars",
     "character_codes": [
       "ahaz",
@@ -14698,9 +14694,9 @@
     "start_year": -735,
     "end_year": -735,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "isaiah",
@@ -14858,9 +14854,9 @@
     "start_year": -724,
     "end_year": -722,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_isaiah_north_fall",
-    "unit_title": "이사야와 북이스라엘의 몰락",
-    "unit_order": 5,
+    "unit_code": "divided_two_kingdoms_north_fall",
+    "unit_title": "두 왕국의 흔들림과 북이스라엘의 몰락",
+    "unit_order": 4,
     "landmark_code": "lm_div_samaria",
     "character_codes": [
       "hoshea_king"
@@ -15030,9 +15026,9 @@
     "start_year": -701,
     "end_year": -701,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "hezekiah",
@@ -15206,9 +15202,9 @@
     "start_year": -700,
     "end_year": -700,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "hezekiah",
@@ -15265,9 +15261,9 @@
     "start_year": -697,
     "end_year": -642,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem_manasseh",
     "character_codes": [
       "manasseh",
@@ -15613,9 +15609,9 @@
     "start_year": -642,
     "end_year": -640,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem_amon",
     "character_codes": [
       "amon_judah"
@@ -15775,9 +15771,9 @@
     "start_year": -622,
     "end_year": -622,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "josiah"
@@ -15830,9 +15826,9 @@
     "start_year": -609,
     "end_year": -609,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem_jehoahaz_judah",
     "character_codes": [
       "jehoahaz_judah"
@@ -16011,9 +16007,9 @@
     "start_year": -609,
     "end_year": -605,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem_jehoiakim_first_exile",
     "character_codes": [
       "jehoiakim",
@@ -16141,9 +16137,9 @@
     "start_year": -605,
     "end_year": -605,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "jeremiah"
@@ -16251,9 +16247,9 @@
     "start_year": -587,
     "end_year": -587,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "jeremiah"
@@ -16301,9 +16297,9 @@
     "start_year": -605,
     "end_year": -604,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "jeremiah",
@@ -16393,9 +16389,9 @@
     "start_year": -597,
     "end_year": -597,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem_jehoiachin_exile",
     "character_codes": [
       "jehoiachin",
@@ -16619,9 +16615,9 @@
     "start_year": -588,
     "end_year": -588,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "jeremiah",
@@ -16672,9 +16668,9 @@
     "start_year": -588,
     "end_year": -586,
     "time_precision": "approx",
-    "unit_code": "divided_kingdom_judah_last_days",
-    "unit_title": "남유다의 마지막과 예루살렘 멸망",
-    "unit_order": 6,
+    "unit_code": "divided_judah_final_fall",
+    "unit_title": "남유다의 마지막 회복과 멸망",
+    "unit_order": 5,
     "landmark_code": "lm_div_jerusalem",
     "character_codes": [
       "zedekiah"

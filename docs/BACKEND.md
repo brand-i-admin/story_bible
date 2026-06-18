@@ -69,8 +69,8 @@ status text DEFAULT 'published'      -- draft / published (어드민 전용)
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
 - `unit_code`/`unit_title`/`unit_order`는 시간 순 보기의 중간 선택 단계에 사용한다.
-  구약도 시대별 curated 단위(원역사 3개, 족장 5개, 출애굽 5개, 사사 3개,
-  왕정 4개, 분열왕국 6개, 포로/귀환 4개)로 나눠 카드 선택에 사용한다.
+  구약도 시대별 curated 단위(원역사 2개, 족장 3개, 출애굽 3개, 사사 3개,
+  왕정 3개, 분열왕국 5개, 포로/귀환 3개)로 나눠 카드 선택에 사용한다.
 - `scene_captions`는 `story_scenes`와 같은 순서의 사용자용 이미지 설명이다. 원본
   이미지 프롬프트는 `story_scenes`에 유지하고, 상세 페이지는 이 캡션만 overlay로
   노출한다.

@@ -157,44 +157,47 @@ class _TimelineUnit {
   final int order;
   final List<StoryEvent> events;
 
-  static const int _maxSubtitleCharacters = 89;
+  static const int _maxSubtitleCharacters = 35;
+  static const Map<String, String> _curatedUnitDescriptions = {
+    'primeval_creation_mission': '세상을 창조하시고 사람에게 처음 사명을 맡기십니다',
+    'primeval_outside_eden': '에덴 밖 죄와 심판 속에서도 은혜가 이어집니다',
+    'patriarch_abraham_isaac_promise': '아브라함과 이삭의 믿음 안에 약속이 이어집니다',
+    'patriarch_jacob_israel': '언약의 길에서 야곱이 새 이름으로 빚어집니다',
+    'patriarch_joseph_egypt': '요셉의 고난을 통해 애굽 구원의 길이 열립니다',
+    'exodus_egypt_red_sea': '애굽의 압제에서 홍해 구원까지 함께 따라갑니다',
+    'exodus_wilderness_covenant': '광야에서 언약 백성으로 살아가도록 훈련됩니다',
+    'exodus_canaan_joshua': '가나안에 들어가 여호수아와 언약을 선택합니다',
+    'judges_deliverers_cycles': '사사들을 통해 반복되는 위기와 구원을 봅니다',
+    'judges_ruth_boaz': '룻과 보아스의 기업 무름 속 은혜를 따라갑니다',
+    'judges_samuel_transition': '사무엘을 통해 왕정으로 향하는 문이 열립니다',
+    'monarchy_saul_rise_fall': '이스라엘의 사울 왕국 시작과 몰락을 따라봅니다',
+    'monarchy_david_covenant_fracture': '다윗 왕국의 언약과 집안의 균열을 함께 봅니다',
+    'monarchy_solomon_temple_fall': '솔로몬의 지혜와 성전, 타락의 흐름을 봅니다',
+    'divided_split_early_evil': '왕국 분열 뒤 초기 왕조의 악이 뿌리내립니다',
+    'divided_elijah_ahab_word': '엘리야가 아합 집 앞에서 참 말씀을 전합니다',
+    'divided_elisha_jehu_judgment': '엘리사의 표징과 예후의 심판을 함께 따라봅니다',
+    'divided_two_kingdoms_north_fall': '두 왕국이 흔들리다 북이스라엘이 끝내 무너집니다',
+    'divided_judah_final_fall': '남유다가 마지막 경고와 회복 뒤 결국 멸망합니다',
+    'exile_hope_temple_restored': '포로지의 소망에서 성전 회복까지 함께 이어집니다',
+    'exile_esther_reversal': '에스더를 통해 백성의 죽음 위기가 뒤집힙니다',
+    'exile_ezra_nehemiah_community': '말씀과 성벽을 따라 공동체가 다시 세워집니다',
+  };
 
   String get subtitle {
     if (events.isEmpty) {
       return '사건 없음';
     }
-    final first = _eventPhrase(events.first);
+    final curated = _curatedUnitDescriptions[code];
+    if (curated != null) {
+      return _fitSubtitle(curated);
+    }
     if (events.length == 1) {
-      return _fitSubtitle(first);
+      return _fitSubtitle('$title 이야기를 봅니다');
     }
-    final last = _eventPhrase(events.last);
-    if (events.length == 2) {
-      return _composeSubtitle(first, last, middle: ' 이어 ');
-    }
-    return _composeSubtitle(first, last, middle: ' 여러 이야기를 지나 마지막에는 ');
+    return _fitSubtitle('$title 흐름을 이어 봅니다');
   }
 
   String get numberedTitle => '$order. $title';
-
-  static String _eventPhrase(StoryEvent event) {
-    final summary = event.summary?.trim();
-    if (summary != null && summary.isNotEmpty) {
-      return _firstSentence(summary);
-    }
-    return _firstSentence(_titleDescription(event.title));
-  }
-
-  static String _titleDescription(String title) {
-    final parts = title.split(':');
-    if (parts.length >= 2) {
-      final subject = parts.first.trim();
-      final detail = parts.sublist(1).join(':').trim();
-      if (subject.isNotEmpty && detail.isNotEmpty) {
-        return '$subject에서 $detail을 봅니다';
-      }
-    }
-    return '$title 이야기를 봅니다';
-  }
 
   static String _asSentence(String value) {
     final trimmed = value.trim();
@@ -207,37 +210,12 @@ class _TimelineUnit {
     return '$trimmed.';
   }
 
-  static String _firstSentence(String value) {
-    final trimmed = value.trim();
-    final match = RegExp(r'^(.+?[.!?。！？])').firstMatch(trimmed);
-    if (match != null) {
-      return match.group(1)!.trim();
-    }
-    return _asSentence(trimmed);
-  }
-
-  static String _composeSubtitle(
-    String first,
-    String last, {
-    required String middle,
-  }) {
-    const prefix = '먼저 ';
-    final text = _asSentence('$prefix$first$middle$last');
-    if (_charLength(text) <= _maxSubtitleCharacters) {
-      return text;
-    }
-    final budget =
-        ((_maxSubtitleCharacters - _charLength(prefix) - _charLength(middle)) /
-                2)
-            .floor()
-            .clamp(24, 36);
-    return _fitSubtitle(
-      '$prefix${_shortenPhrase(first, budget)}$middle${_shortenPhrase(last, budget)}',
-    );
-  }
-
   static String _fitSubtitle(String value) {
-    return _asSentence(_shortenPhrase(value, _maxSubtitleCharacters));
+    final hasTerminalPunctuation = RegExp(r'[.!?。！？]$').hasMatch(value.trim());
+    final maxCharacters = hasTerminalPunctuation
+        ? _maxSubtitleCharacters
+        : _maxSubtitleCharacters - 1;
+    return _asSentence(_shortenPhrase(value, maxCharacters));
   }
 
   static String _shortenPhrase(String value, int maxCharacters) {
@@ -353,7 +331,7 @@ class _TimelineUnitCard extends StatelessWidget {
                 const SizedBox(height: AppSpacing.x1),
                 Text(
                   unit.subtitle,
-                  maxLines: 8,
+                  maxLines: 4,
                   overflow: TextOverflow.clip,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: bodyColor,

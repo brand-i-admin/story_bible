@@ -137,7 +137,7 @@ Makefile                                # 파이프라인 오케스트레이션
   - `supabase/200_stories/200_stories_normalized.json` — 검수용 정규화 JSON
 - **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_captions`(jsonb, 장면별 사용자용 이미지 설명), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `unit_code`/`unit_title`/`unit_order`(시간 순 보기 단위), `landmark_id`(landmarks 조인), `status='published'`
 - **장면 캡션**: `scene_captions`는 `assets/200_stories/*.json`에서 직접 수정 가능하다. `tools/seed/generate_scene_captions.py`는 기존 `story_scenes`/`summary`/`bible_ref` 맥락에서 프롬프트 지시문을 제거한 초안을 다시 만들 때만 사용한다.
-- **시간 순 단위**: `unit_code`/`unit_title`/`unit_order`는 `assets/200_stories/*.json`이 원본이다. 구약 시대도 원역사 3개, 족장 5개, 출애굽 5개, 사사 3개, 왕정 4개, 분열왕국 6개, 포로/귀환 4개 단위로 나눠 `TimelineUnitPickPanel`의 가로 카드 선택에 사용한다.
+- **시간 순 단위**: `unit_code`/`unit_title`/`unit_order`는 `assets/200_stories/*.json`이 원본이다. 구약 시대는 원역사 2개, 족장 3개, 출애굽 3개, 사사 3개, 왕정 3개, 분열왕국 5개, 포로/귀환 3개 단위로 나눠 `TimelineUnitPickPanel`의 가로 카드 선택에 사용한다.
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
 - **stale 정리**: 시드 SQL 머리에 `delete from events where (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 이벤트는 DB 에서도 사라진다. quiz_questions 등 의존 테이블은 cascade.
 - **split 파일 주의**: `200_stories_seed_part_01.sql` 만 stale-delete 를 포함, part_02 는 INSERT 만.

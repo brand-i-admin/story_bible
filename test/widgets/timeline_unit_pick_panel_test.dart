@@ -21,12 +21,18 @@ void main() {
             height: 240,
             child: TimelineUnitPickPanel(
               events: [
-                _event('u1', '창조와 타락', 1, title: '창조와 타락 첫 이야기', globalRank: 1),
                 _event(
-                  'u1',
-                  '창조와 타락',
+                  'primeval_creation_mission',
+                  '창조와 사람의 사명',
                   1,
-                  title: '창조와 타락 마지막 이야기',
+                  title: '창조와 사람의 사명 첫 이야기',
+                  globalRank: 1,
+                ),
+                _event(
+                  'primeval_creation_mission',
+                  '창조와 사람의 사명',
+                  1,
+                  title: '창조와 사람의 사명 마지막 이야기',
                   summary: '사람에게 에덴의 사명이 주어진다',
                   globalRank: 2,
                 ),
@@ -35,7 +41,7 @@ void main() {
                 _event('u4', '광야 훈련', 4, globalRank: 5),
                 _event('u5', '약속의 땅', 5, globalRank: 6),
               ],
-              selectedUnitCodes: const {'u1'},
+              selectedUnitCodes: const {'primeval_creation_mission'},
               onToggleUnit: (code) => toggledUnitCode = code,
               onSelectAll: () => selectedAll = true,
               onClearAll: () => clearedAll = true,
@@ -57,33 +63,35 @@ void main() {
     expect(listView.scrollDirection, Axis.horizontal);
     expect(listView.padding, const EdgeInsets.fromLTRB(16, 8, 16, 12));
 
-    final firstCard = find.byKey(const ValueKey('timeline-unit-card-u1'));
+    final firstCard = find.byKey(
+      const ValueKey('timeline-unit-card-primeval_creation_mission'),
+    );
     expect(tester.getSize(firstCard).width, inInclusiveRange(96, 98));
 
-    final titleRect = tester.getRect(find.text('1. 창조와 타락'));
+    final titleRect = tester.getRect(find.text('1. 창조와 사람의 사명'));
     final countRect = tester.getRect(find.text('2개 이야기'));
     expect(countRect.top - titleRect.bottom, lessThanOrEqualTo(5));
 
-    final subtitle = find.text('먼저 하나님이 세상을 창조하신다. 이어 사람에게 에덴의 사명이 주어진다.');
+    final subtitle = find.text('세상을 창조하시고 사람에게 처음 사명을 맡기십니다.');
     final subtitleRect = tester.getRect(subtitle);
     final cardRect = tester.getRect(firstCard);
     expect(subtitleRect.bottom, lessThanOrEqualTo(cardRect.bottom));
     final subtitleWidget = tester.widget<Text>(subtitle);
-    expect(subtitleWidget.maxLines, 8);
+    expect(subtitleWidget.maxLines, 4);
     expect(subtitleWidget.overflow, TextOverflow.clip);
     expect(find.textContaining('→'), findsNothing);
 
-    await tester.tap(find.text('1. 창조와 타락'));
+    await tester.tap(find.text('1. 창조와 사람의 사명'));
 
-    expect(toggledUnitCode, 'u1');
+    expect(toggledUnitCode, 'primeval_creation_mission');
     await tester.tap(find.text('전체 선택'));
     expect(selectedAll, isTrue);
     expect(clearedAll, isFalse);
   });
 
-  testWidgets('시간순 단위 카드 설명은 길어도 ellipsis 없이 전체 문장을 렌더링한다', (tester) async {
+  testWidgets('시간순 단위 카드 설명은 35자 안팎의 짧은 문장으로 렌더링한다', (tester) async {
     const firstSummary = '긴 여정의 시작에서 하나님이 사람에게 맡기신 사명과 선택의 무게를 차분히 보여준다';
-    const lastSummary = '마지막에는 무너진 관계 속에서도 하나님이 다시 길을 여시는 장면까지 이어진다';
+    const lastSummary = '무너진 관계 속에서도 하나님이 다시 길을 여시는 장면까지 이어진다';
 
     await tester.pumpWidget(
       MaterialApp(
@@ -119,12 +127,13 @@ void main() {
       ),
     );
 
-    final subtitle = find.textContaining('먼저 긴 여정의 시작에서');
+    final subtitle = find.textContaining('흐름을 이어 봅니다.');
     expect(subtitle, findsOneWidget);
     final subtitleWidget = tester.widget<Text>(subtitle);
-    expect(subtitleWidget.data!.runes.length, lessThanOrEqualTo(89));
-    expect(subtitleWidget.maxLines, 8);
+    expect(subtitleWidget.data!.runes.length, lessThanOrEqualTo(35));
+    expect(subtitleWidget.maxLines, 4);
     expect(subtitleWidget.overflow, TextOverflow.clip);
+    expect(find.textContaining('먼저'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

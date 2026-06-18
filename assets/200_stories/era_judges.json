@@ -412,7 +412,7 @@
     "end_year": -1100,
     "time_precision": "approx",
     "story_index": 8,
-    "unit_code": "judges_ruth_redeemer",
+    "unit_code": "judges_ruth_boaz",
     "unit_title": "룻과 보아스의 기업 무름",
     "unit_order": 2,
     "story_scenes": [
@@ -463,7 +463,7 @@
     "end_year": -1100,
     "time_precision": "approx",
     "story_index": 9,
-    "unit_code": "judges_ruth_redeemer",
+    "unit_code": "judges_ruth_boaz",
     "unit_title": "룻과 보아스의 기업 무름",
     "unit_order": 2,
     "story_scenes": [
@@ -521,7 +521,7 @@
     "end_year": -1100,
     "time_precision": "approx",
     "story_index": 10,
-    "unit_code": "judges_ruth_redeemer",
+    "unit_code": "judges_ruth_boaz",
     "unit_title": "룻과 보아스의 기업 무름",
     "unit_order": 2,
     "story_scenes": [
@@ -577,8 +577,8 @@
     "end_year": -1105,
     "time_precision": "approx",
     "story_index": 11,
-    "unit_code": "judges_samuel_ark_covenant",
-    "unit_title": "사무엘의 부르심과 언약궤",
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
     "unit_order": 3,
     "story_scenes": [
       "실로 성막 앞에서 젊은 성인 여성 한나가 아이를 얻지 못한 슬픔으로 눈물 흘리며 기도하고, 늙은 제사장 엘리는 의자에 앉아 그녀를 유심히 바라본다. 한나는 할머니처럼 보이면 안 되며, 제사장 엘리의 생각 풍선에는 한나가 술취했다고 오해하는 장면이 그림으로 담겨 있다",
@@ -641,8 +641,8 @@
     "end_year": -1090,
     "time_precision": "approx",
     "story_index": 12,
-    "unit_code": "judges_samuel_ark_covenant",
-    "unit_title": "사무엘의 부르심과 언약궤",
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
     "unit_order": 3,
     "story_scenes": [
       "어린 사무엘이 실로 성막에서 엘리 밑에서 등불과 성전 기물을 정리하며 조용히 섬기는 모습. 엘리는 나이 든 제사장으로 배경에 앉아 있고, 글자는 보이지 않는다",
@@ -714,8 +714,8 @@
     "end_year": -1075,
     "time_precision": "approx",
     "story_index": 13,
-    "unit_code": "judges_samuel_ark_covenant",
-    "unit_title": "사무엘의 부르심과 언약궤",
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
     "unit_order": 3,
     "story_scenes": [
       "전투에서 이스라엘이 언약궤를 들고 나갔지만 블레셋에게 패배하고 군사들이 흩어지는 장면. 언약궤가 빼앗기는 위기가 보이되, 피와 시신은 보이지 않는다",
