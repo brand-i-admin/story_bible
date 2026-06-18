@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T08:17:51+00:00",
+  "generated_at": "2026-06-18T08:48:41+00:00",
   "total_quiz_files": 310,
   "total_events": 310,
   "total_questions": 930,
@@ -414,18 +414,6 @@
       "display_order": 0,
       "field": "choices[2]",
       "length": 21
-    },
-    {
-      "filename": "era_judges_n007.json",
-      "display_order": 0,
-      "field": "question",
-      "length": 43
-    },
-    {
-      "filename": "era_judges_n007.json",
-      "display_order": 0,
-      "field": "explanation",
-      "length": 61
     },
     {
       "filename": "era_judges_n007.json",

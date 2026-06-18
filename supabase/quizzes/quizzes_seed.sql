@@ -855,7 +855,7 @@ select e.id, $q$에스더는 왕에게 나아갈 때 어떻게 하였습니까?$
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$에스더는 왕후 후보로 선택된 뒤 어디로 나아갔습니까?$q$, $q$모르드개의 집에 숨어 있었다$q$, $q$수산 성 밖으로 피신했다$q$, $q$왕궁에 이끌려 들어가 왕 앞에 나아갔다$q$, $q$헷갈렸어요$q$, 2, $q$에 2:16 — '아하수에로 왕의 칠 년 시월 곧 데벳 월에 에스더가 이끌려 왕궁에 들어가서 왕의 앞에 나아가니'$q$, 2
+select e.id, $q$모르드개는 왕을 해치려는 음모를 알게 된 뒤 누구에게 알렸습니까?$q$, $q$하만에게$q$, $q$수산 성 밖의 군대에게$q$, $q$왕후 에스더에게$q$, $q$헷갈렸어요$q$, 2, $q$에 2:22 — '모르드개가 알고 왕후 에스더에게 고하니 에스더가 모르드개의 이름으로 왕에게 고한지라'$q$, 2
 from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
@@ -1477,7 +1477,7 @@ from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
   where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 7;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
-select e.id, $q$삼손의 어머니에게 임한 말씀에서 삼손의 머리에는 무엇을 대지 말라고 했습니까?$q$, $q$삭도$q$, $q$왕관$q$, $q$제사장 관$q$, $q$헷갈렸어요$q$, 0, $q$삿 13:5 — '그 머리에 삭도를 대지 말라 이 아이는 태에서 나옴으로부터 하나님께 바치운 나실인이 됨이라'$q$, 0
+select e.id, $q$삼손은 힘의 비밀을 결국 누구에게 털어놓았습니까?$q$, $q$들릴라$q$, $q$블레셋 방백들$q$, $q$다곤 제사장$q$, $q$헷갈렸어요$q$, 0, $q$삿 16:17 — '삼손이 진심을 토하여 그에게 이르되'$q$, 0
 from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)

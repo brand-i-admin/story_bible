@@ -94,7 +94,7 @@
       "era": "exodus_wilderness",
       "prompt": "palette: teal + desert tan + bronze accents, simple faceted form of light in the same blocky low-poly biblical illustration style as the cast, just a soft glowing light shape, not a symbol, not an emblem, not an icon, one centered light form only, simple vertical tapered silhouette made of a few large geometric planes, flat matte vector shading with subtle faceted edges, gentle warm glow, a few short attached glow rays only, large clean empty white space around it, plain white background, minimal clean composition, no character, no human figure, no face, no eyes, no mouth, no hands, no body, no wings, no sun disk, no text, no letters, no ornament, no decorative symmetry, sacred non-anthropomorphic presence",
       "prompt_source": "auto_story_v2",
-      "mention_count": 74,
+      "mention_count": 75,
       "is_active_default": false,
       "use_common_style": false,
       "disable_adult_guardrail": true,
@@ -455,18 +455,6 @@
     },
     {
       "index": 30,
-      "code": "sarah",
-      "name_ko": "사라",
-      "name_en": "Sarah",
-      "era": "patriarch",
-      "prompt": "COMMON_STYLE, palette: soft rose-brown + warm cream + muted blue accents, medium saturation with rich deep color blocks and clear contrast, Sarah, adult biblical woman (age 25+), mature beautiful covenant matriarch silhouette, graceful and strong, not frail in the base avatar, warm dignified face with wise gentle eyes, subtle age lines, and covenant-mother presence, mostly dark hair under a modest layered veil, only faint silver at the temples if visible, soft rose-brown mantle over warm cream robe with muted blue accents, not a royal court woman, mature covenant-matriarch posture with a restrained hopeful smile and hands gathered near the chest, mature beautiful covenant-matriarch build with dignified upright posture and slender shoulders, not frail in the base avatar, warm graceful face with subtle age lines, wise gentle eyes, and restrained covenant-mother dignity, mostly dark hair tucked under a soft rose-brown veil with warm cream layers, only faint silver at the temples if visible, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
-      "prompt_source": "auto_story_v2",
-      "mention_count": 7,
-      "is_active_default": true,
-      "negative_prompt_extra": "frail old woman, fully white hair, fully silver hair, severe wrinkles, hunched back, generic grandmother, weak body, timid expression, teenage girl, young maiden, royal court queen, cropped feet, missing sandals, waist-up crop, close-up portrait"
-    },
-    {
-      "index": 31,
       "code": "silas",
       "name_ko": "실라",
       "name_en": "Silas",
@@ -481,7 +469,7 @@
       ]
     },
     {
-      "index": 32,
+      "index": 31,
       "code": "ahab",
       "name_ko": "아합",
       "name_en": "Ahab",
@@ -498,7 +486,7 @@
       "negative_prompt_extra": "prophet robe, priest robe, temple prophet, scribe robe, ordinary shepherd, modern monarch, European crown, medieval king, fantasy armor, helmet, battle panorama, active fighting, killing scene, assassination scene, execution scene, blood, gore, corpse, dead body, injury close-up, prison bars, chains, multiple people, crowd, group, attendants, army, readable label, readable text, same face as another divided-kingdom king, cloned facial features, identical beard, identical crown band, identical expression, wide horizontal canvas, landscape aspect ratio, panoramic composition, 16:9 frame, portrait crop, bust shot, half body, cropped feet, missing sandals, David, shepherd, sling, prophet Elijah, Mount Carmel scene, Jezebel, crowd, gentle king, humble faithful king, kind smile, repentant face, no idol, tiny unclear idol, empty hands, prophet robe, priest robe, David, Saul, Solomon, Elijah, shepherd, sling, no Baal sign, heroic posture, soft innocent eyes, battle gore, corpse, blood, multiple people, crowd, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait, turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, back view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, mirrored figure, extra full body view, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, modern clothing, modern armor, helmeted fantasy warrior, readable label, readable text"
     },
     {
-      "index": 33,
+      "index": 32,
       "code": "mary",
       "name_ko": "마리아",
       "name_en": "Mary",
@@ -507,6 +495,18 @@
       "prompt_source": "auto_story_v2",
       "mention_count": 6,
       "is_active_default": true
+    },
+    {
+      "index": 33,
+      "code": "sarah",
+      "name_ko": "사라",
+      "name_en": "Sarah",
+      "era": "patriarch",
+      "prompt": "COMMON_STYLE, palette: soft rose-brown + warm cream + muted blue accents, medium saturation with rich deep color blocks and clear contrast, Sarah, adult biblical woman (age 25+), mature beautiful covenant matriarch silhouette, graceful and strong, not frail in the base avatar, warm dignified face with wise gentle eyes, subtle age lines, and covenant-mother presence, mostly dark hair under a modest layered veil, only faint silver at the temples if visible, soft rose-brown mantle over warm cream robe with muted blue accents, not a royal court woman, mature covenant-matriarch posture with a restrained hopeful smile and hands gathered near the chest, mature beautiful covenant-matriarch build with dignified upright posture and slender shoulders, not frail in the base avatar, warm graceful face with subtle age lines, wise gentle eyes, and restrained covenant-mother dignity, mostly dark hair tucked under a soft rose-brown veil with warm cream layers, only faint silver at the temples if visible, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
+      "prompt_source": "auto_story_v2",
+      "mention_count": 6,
+      "is_active_default": true,
+      "negative_prompt_extra": "frail old woman, fully white hair, fully silver hair, severe wrinkles, hunched back, generic grandmother, weak body, timid expression, teenage girl, young maiden, royal court queen, cropped feet, missing sandals, waist-up crop, close-up portrait"
     },
     {
       "index": 34,
