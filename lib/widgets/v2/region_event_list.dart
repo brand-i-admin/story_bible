@@ -377,44 +377,47 @@ class _ThumbMetaRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasPlace = placeName != null && placeName!.isNotEmpty;
     if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (hasPlace) ...[
-          const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
-          const SizedBox(width: 1),
-          Flexible(
-            child: Text(
-              placeName!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (hasPlace) ...[
+            const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
+            const SizedBox(width: 1),
+            Flexible(
+              child: Text(
+                placeName!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF8C6743),
+                ),
+              ),
+            ),
+          ],
+          if (hasPlace && yearLabel != null)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3),
+              child: Text(
+                '·',
+                style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
+              ),
+            ),
+          if (yearLabel != null)
+            Text(
+              yearLabel!,
               style: const TextStyle(
                 fontSize: 10,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: Color(0xFF8C6743),
               ),
             ),
-          ),
         ],
-        if (hasPlace && yearLabel != null)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            child: Text(
-              '·',
-              style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
-            ),
-          ),
-        if (yearLabel != null)
-          Text(
-            yearLabel!,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF8C6743),
-            ),
-          ),
-      ],
+      ),
     );
   }
 }

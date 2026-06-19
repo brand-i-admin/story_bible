@@ -47,7 +47,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 # =============================================================================
 
 .PHONY: help all \
-        seed-bible-verses build-character-meta renumber-story-indices \
+        seed-bible-verses build-character-meta renumber-story-indices generate-story-contexts \
         seed-stories seed-characters seed-stories-characters seed-quizzes seed-daily-quiz \
         seed-landmarks audit-landmark-polygons refine-landmark-polygons \
         apply-seeds-landmarks-v2 \
@@ -73,6 +73,7 @@ help:
 	@echo "개별 타겟:"
 	@echo "  seed-bible-verses       성경 구절 SQL 생성 (독립)"
 	@echo "  build-character-meta       character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트, 모든 인물 포함)"
+	@echo "  generate-story-contexts    curated summary 정규화 + background_context 생성"
 	@echo "  seed-stories            events SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
@@ -148,6 +149,12 @@ renumber-story-indices:
 	@echo "[Makefile] story_index 를 era 별 1..N 으로 재정렬..."
 	$(PYTHON) $(TOOLS_DIR)/seed/renumber_story_indices.py \
 		--stories-dir $(STORIES_DIR)
+
+generate-story-contexts:
+	@echo "[Makefile] summary/background_context 생성..."
+	$(PYTHON) $(TOOLS_DIR)/seed/generate_story_background_contexts.py \
+		--stories-dir $(STORIES_DIR) \
+		--bible-dir $(BIBLE_DIR)
 
 # 이벤트 lat/lng 를 매칭되는 landmark 의 정확한 좌표로 정렬.
 # 같은 장소(예: "헤브론") 인 이벤트들이 핀 분산 알고리즘에 의해 떨어져 보이는

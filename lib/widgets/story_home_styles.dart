@@ -316,6 +316,7 @@ Widget storySection({
   required String content,
   Widget? action,
   Widget? footer,
+  bool inlineTitle = false,
 }) {
   return SizedBox(
     width: double.infinity,
@@ -329,31 +330,53 @@ Widget storySection({
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.body,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.ink450,
+          if (inlineTitle)
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  fontSize: AppFontSizes.body,
+                  height: AppLineHeights.body,
+                  color: AppColors.ink800,
+                ),
+                children: [
+                  TextSpan(
+                    text: title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.ink450,
+                    ),
+                  ),
+                  TextSpan(text: content),
+                ],
+              ),
+            )
+          else ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.body,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.ink450,
+                    ),
                   ),
                 ),
-              ),
-              if (action != null) ...[const SizedBox(width: 8), action],
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            content,
-            style: const TextStyle(
-              fontSize: AppFontSizes.body,
-              height: AppLineHeights.body,
-              color: AppColors.ink800,
+                if (action != null) ...[const SizedBox(width: 8), action],
+              ],
             ),
-          ),
+            const SizedBox(height: 6),
+            Text(
+              content,
+              style: const TextStyle(
+                fontSize: AppFontSizes.body,
+                height: AppLineHeights.body,
+                color: AppColors.ink800,
+              ),
+            ),
+          ],
           if (footer != null) footer,
         ],
       ),

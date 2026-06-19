@@ -30,7 +30,7 @@ class TimelineUnitPickPanel extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
           child: Text(
-            '선택한 시대에 표시할 단위가 없습니다.',
+            '선택한 시대에 표시할 구간이 없습니다.',
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -68,7 +68,7 @@ class TimelineUnitPickPanel extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    '단위 선택',
+                    '구간 선택',
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: AppColors.ink700,
                       fontSize: 13,
@@ -181,6 +181,22 @@ class _TimelineUnit {
     'exile_hope_temple_restored': '포로지의 소망에서 성전 회복까지 함께 이어집니다',
     'exile_esther_reversal': '에스더를 통해 백성의 죽음 위기가 뒤집힙니다',
     'exile_ezra_nehemiah_community': '말씀과 성벽을 따라 공동체가 다시 세워집니다',
+    'birth_early_ministry': '탄생과 세례를 지나 예수님의 사역 길이 열립니다',
+    'galilee_ministry': '갈릴리에서 치유와 가르침의 사역이 펼쳐집니다',
+    'journey_teaching_to_jerusalem': '예루살렘을 향한 길에서 제자들이 깊이 배웁니다',
+    'passion_week': '고난주간에 십자가의 길과 새 언약이 드러납니다',
+    'resurrection_ascension': '부활하신 예수님이 제자들에게 사명을 맡기십니다',
+    'jerusalem_church_expansion': '성령 안에서 교회가 태어나 복음이 멀리 퍼집니다',
+    'paul_first_journey': '바울과 바나바가 첫 전도 여행의 길을 열어갑니다',
+    'paul_second_journey': '마게도냐와 헬라로 복음의 길이 더 넓어집니다',
+    'paul_third_journey': '교회들을 굳게 세우며 말씀 사역이 깊어집니다',
+    'paul_arrest_rome_witness': '체포와 재판 속에서도 로마까지 복음이 갑니다',
+    'scattered_faith_foundations': '흩어진 성도들이 믿음의 기초를 굳게 붙듭니다',
+    'paul_churches_problems_hope': '바울이 교회의 문제와 소망을 편지로 다룹니다',
+    'roman_prison_churches': '감옥에서도 복음은 교회를 세우며 계속 전해집니다',
+    'next_generation_suffering_church': '다음 세대와 고난 속 교회를 끝까지 세웁니다',
+    'patmos_seven_churches': '밧모섬 환상으로 일곱 교회를 다시 깨우십니다',
+    'revelation_safe_vision_flow': '계시록의 큰 환상이 새 창조 소망으로 이어집니다',
   };
 
   String get subtitle {
@@ -281,6 +297,8 @@ class _TimelineUnitCard extends StatelessWidget {
   final double width;
   final VoidCallback onTap;
 
+  static const double _cardHeight = 136;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -291,10 +309,10 @@ class _TimelineUnitCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.lg),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 116),
+        child: SizedBox(
+          width: width,
+          height: _cardHeight,
           child: Ink(
-            width: width,
             padding: const EdgeInsets.all(AppSpacing.x4),
             decoration: BoxDecoration(
               color: selected ? AppColors.greenTint2 : AppColors.parchmentCard,
@@ -310,7 +328,8 @@ class _TimelineUnitCard extends StatelessWidget {
               children: [
                 Text(
                   unit.numberedTitle,
-                  maxLines: null,
+                  maxLines: 3,
+                  overflow: TextOverflow.clip,
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: AppColors.ink800,
                     fontSize: 11.2,

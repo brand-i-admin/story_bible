@@ -33,7 +33,7 @@ id uuid PK, code text UNIQUE, name text, testament text,
 display_order int, start_year int, end_year int,
 map_center_lat float8, map_center_lng float8, map_zoom numeric(4,2)
 ```
-- 구약 7시대 + 신약 4시대 = 총 11시대. `era_monarchy`는 통일왕국, `era_divided_kingdom`은 왕상 11장 이후 남북 분열부터 예루살렘 포위 전후까지의 분열왕국 이야기를 담는다.
+- 구약 7시대 + 신약 4시대 = 총 11시대. `era_monarchy`는 통일왕국, `era_divided_kingdom`은 왕상 11장 이후 남북 분열부터 예루살렘 포위 전후까지의 분열왕국 이야기를 담는다. 앱은 검수 전인 `era_nt_consummation`을 `hiddenEraCodes`로 숨긴다.
 - `testament`: 'old' 또는 'new' (era 코드로도 판별: `era_nt_` 접두사)
 
 #### `persons` — 성경 인물 (table)
@@ -51,6 +51,7 @@ is_active boolean DEFAULT false   -- 어드민이 노출 여부 결정
 #### `events` — 성경 사건 (table)
 ```sql
 id uuid PK, era_id uuid FK→eras, title text, summary text,
+background_context text,          -- 상세 첫 카드의 배경 지식 문구
 story_scenes jsonb DEFAULT '[]',     -- ["장면1", ...]
 scene_captions jsonb DEFAULT '[]',   -- ["사용자용 이미지 설명1", ...]
 scene_characters jsonb DEFAULT '[]',    -- [["god"], [], ...]
@@ -59,9 +60,9 @@ bible_refs jsonb DEFAULT '[]',       -- [{book, from, to}, ...]
 start_year int, end_year int,
 time_precision text DEFAULT 'approx',
 story_index int NOT NULL,            -- era 내 정수 (UNIQUE: era_id+story_index)
-unit_code text DEFAULT 'default',     -- 시간 순 보기 전 복수 선택 단위 코드
-unit_title text DEFAULT '전체 흐름',  -- 앱에 표시되는 단위명
-unit_order int DEFAULT 1,             -- 시대 안 단위 정렬
+unit_code text DEFAULT 'default',     -- 시간 순 보기 전 복수 선택 구간 코드
+unit_title text DEFAULT '전체 흐름',  -- 앱에 표시되는 구간명
+unit_order int DEFAULT 1,             -- 시대 안 구간 정렬
 landmark_id uuid NOT NULL → landmarks(id),    -- v2 위치 모델
 video_url text,
 status text DEFAULT 'published'      -- draft / published (어드민 전용)
@@ -69,12 +70,13 @@ status text DEFAULT 'published'      -- draft / published (어드민 전용)
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
 - `unit_code`/`unit_title`/`unit_order`는 시간 순 보기의 중간 선택 단계에 사용한다.
-  구약도 시대별 curated 단위(원역사 2개, 족장 3개, 출애굽 3개, 사사 3개,
+  구약도 시대별 curated 구간(원역사 2개, 족장 3개, 출애굽 3개, 사사 3개,
   왕정 3개, 분열왕국 5개, 포로/귀환 3개)로 나눠 카드 선택에 사용한다.
 - `scene_captions`는 `story_scenes`와 같은 순서의 사용자용 이미지 설명이다. 원본
   이미지 프롬프트는 `story_scenes`에 유지하고, 상세 페이지는 이 캡션만 overlay로
   노출한다.
-- `story`/`short_story` 컬럼 폐기 — UI는 `summary` + `story_scenes` + `scene_captions`로 충분.
+- `background_context`는 이야기 상세 첫 섹션의 1~2문장 사실형 배경 지식이다.
+- `story`/`short_story` 컬럼 폐기 — UI는 `background_context` + `summary` + `story_scenes` + `scene_captions`를 사용한다.
 - `bible_refs`/`character_codes`가 events row에 직접 임베드 → `event_characters`/`event_bible_refs` 테이블 폐기.
 - 외부 기여자 제출 기능 폐기: `submitted_by`/`thumb_url`/`pending_review` 상태 제거됨.
 
@@ -88,7 +90,8 @@ WHERE e.status = 'published';
 ```
 - Repository는 `events` 대신 이 view에서 select.
 - view는 `unit_code`/`unit_title`/`unit_order`도 그대로 노출해 Flutter
-  `StoryEvent.fromMap()`이 단위 선택 UI를 구성한다.
+  `StoryEvent.fromMap()`이 구간 선택 UI를 구성한다. `background_context`도 그대로
+  노출해 상세 페이지 배경 지식 카드에 사용한다.
 - 새 이야기가 끼어들면 view가 자동 재계산되므로 사전 정렬값 갱신이 불필요.
 
 #### `character_eras` — 인물-시대 매핑 view
@@ -480,13 +483,13 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 
 | 메서드 | 쿼리 | 반환 |
 |--------|------|------|
-| `fetchEras()` | `eras` ORDER BY display_order | `List<Era>` |
+| `fetchEras()` | `eras` ORDER BY display_order → `hiddenEraCodes` 제외 | `List<Era>` |
 | `fetchCharactersByEra(eraId)` | `character_eras` view JOIN `persons` WHERE era_id ORDER BY display_order | `List<Character>` |
-| `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era | `List<StoryEvent>` |
-| `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank | `List<StoryEvent>` |
-| `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank | `List<StoryEvent>` |
-| `fetchCharacterTimelineOrder()` | `events_ordered` → personCode별 첫 등장 global_rank | `Map<String, int>` |
-| `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
+| `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era → 숨김 era 제외 | `List<StoryEvent>` |
+| `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
+| `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
+| `fetchCharacterTimelineOrder()` | `events_ordered` → 숨김 era 제외 → personCode별 첫 등장 global_rank | `Map<String, int>` |
+| `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 숨김 era 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
 | `fetchCompletedEventIds(userId)` | `user_event_progress` WHERE is_completed | `Set<String>` |
@@ -500,7 +503,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchSavedEventIds(userId)` | `user_saved_events` WHERE user_id ORDER BY created_at DESC | `Set<String>` |
 | `toggleSavedEvent(...)` | `user_saved_events` INSERT/DELETE | `bool` |
 
-검색 가중치 (`scoreEventMatch`): title +130, summary +120, story_scenes +100, person names +80, place +30. 토큰별 매치 추가점.
+검색 가중치 (`scoreEventMatch`): title +130, summary +120, story_scenes +100, person names +80, background_context +70, place +30. 토큰별 매치 추가점.
 
 ### 5.2 UserRepository (`lib/data/user_repository.dart`, 485줄)
 

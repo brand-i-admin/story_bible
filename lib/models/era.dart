@@ -38,3 +38,7 @@ class Era {
     );
   }
 }
+
+const hiddenEraCodes = <String>{'era_nt_consummation'};
+
+bool isHiddenEraCode(String code) => hiddenEraCodes.contains(code);

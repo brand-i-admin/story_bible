@@ -229,6 +229,36 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('저장한 이야기 미리보기 카드 높이에서도 내용이 overflow 되지 않는다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(
+              12,
+              title: '예수님은 겟세마네에서 아버지의 뜻에 자신을 맡기신다',
+              summary: '예수님은 십자가 앞에서 기도하며 아버지의 뜻을 따르십니다.',
+              placeName: '예루살렘 성전 뜰과 감람산 근처',
+              startYear: 33,
+              characterCodes: const ['jesus', 'peter', 'john', 'james'],
+            ),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            orderNumber: 12,
+            showSummary: false,
+          ),
+          width: 128,
+          height: 180,
+        ),
+      );
+
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('lookup에 없는 인물 코드도 한글 이름과 로컬 아바타를 먼저 시도한다', (tester) async {
       await tester.pumpWidget(
         _harness(

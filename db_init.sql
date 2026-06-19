@@ -227,6 +227,7 @@ create table if not exists events (
   era_id uuid not null references eras(id),
   title text not null unique,
   summary text,
+  background_context text,
   story_scenes jsonb not null default '[]'::jsonb,
   scene_captions jsonb not null default '[]'::jsonb,
   scene_characters jsonb not null default '[]'::jsonb,
@@ -270,6 +271,7 @@ create table if not exists events (
 create index if not exists idx_events_active on events (id) where deleted_at is null;
 
 alter table events
+  add column if not exists background_context text,
   add column if not exists unit_code text not null default 'default',
   add column if not exists unit_title text not null default '전체 흐름',
   add column if not exists unit_order int not null default 1;
@@ -353,7 +355,7 @@ create index if not exists idx_events_landmark on events (landmark_id);
 -- deleted_at IS NULL 필터를 걸어 soft-deleted 이야기는 앱 전체에서 제외된다.
 create view events_ordered as
   select
-    e.id, e.era_id, e.title, e.summary,
+    e.id, e.era_id, e.title, e.summary, e.background_context,
     e.story_scenes, e.scene_captions, e.scene_characters, e.character_codes,
     e.bible_refs, e.start_year, e.end_year, e.time_precision,
     e.story_index, e.unit_code, e.unit_title, e.unit_order,
@@ -1553,12 +1555,12 @@ insert into eras (
 )
 values
   ('era_primeval', '원역사', 1, -4000, -2000, 33.00, 44.00, 4.80),
-  ('era_patriarch', '족장 시대', 2, -2166, -1805, 31.50, 35.20, 5.40),
-  ('era_exodus', '출애굽 시대', 3, -1446, -1406, 29.50, 34.50, 5.20),
-  ('era_judges', '사사 시대', 4, -1406, -1050, 31.80, 35.10, 5.40),
-  ('era_monarchy', '왕정 시대', 5, -1050, -930, 31.90, 35.20, 5.30),
-  ('era_divided_kingdom', '분열왕국 시대', 6, -930, -586, 32.20, 35.25, 5.70),
-  ('era_exile_return', '포로 및 포로 후기 시대', 7, -586, -430, 32.20, 38.30, 4.70)
+  ('era_patriarch', '족장', 2, -2166, -1805, 31.50, 35.20, 5.40),
+  ('era_exodus', '출애굽', 3, -1446, -1406, 29.50, 34.50, 5.20),
+  ('era_judges', '사사', 4, -1406, -1050, 31.80, 35.10, 5.40),
+  ('era_monarchy', '통일 왕국', 5, -1050, -930, 31.90, 35.20, 5.30),
+  ('era_divided_kingdom', '분열왕국', 6, -930, -586, 32.20, 35.25, 5.70),
+  ('era_exile_return', '포로 및 포로 후기', 7, -586, -430, 32.20, 38.30, 4.70)
 ;
 
 -- -----------------------------------------------------------------------------
@@ -1590,8 +1592,8 @@ insert into eras (
 )
 values
   ('era_nt_public_ministry', 'new', '예수님의 공생애', 1, 27, 33, 31.78, 35.22, 6.10),
-  ('era_nt_apostolic', 'new', '사도의 시대', 2, 33, 70, 37.40, 26.90, 4.90),
-  ('era_nt_post_apostolic', 'new', '후기 사도의 시대', 3, 45, 100, 37.45, 27.20, 5.20),
+  ('era_nt_apostolic', 'new', '사도', 2, 33, 70, 37.40, 26.90, 4.90),
+  ('era_nt_post_apostolic', 'new', '후기 사도', 3, 45, 100, 37.45, 27.20, 5.20),
   ('era_nt_consummation', 'new', '역사의 종결', 4, null, null, 31.78, 35.22, 4.40)
 on conflict (code) do update
 set

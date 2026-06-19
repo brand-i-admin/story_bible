@@ -11,6 +11,7 @@ class StoryEvent {
     required this.eraId,
     required this.title,
     required this.summary,
+    this.backgroundContext,
     required this.storyScenes,
     this.sceneCaptions = const [],
     required this.sceneCharacters,
@@ -40,6 +41,7 @@ class StoryEvent {
       eraId: row['era_id'] as String,
       title: row['title'] as String,
       summary: row['summary'] as String?,
+      backgroundContext: row['background_context'] as String?,
       storyScenes: _stringList(row['story_scenes']),
       sceneCaptions: _stringList(row['scene_captions']),
       sceneCharacters: _stringListList(row['scene_characters']),
@@ -72,6 +74,7 @@ class StoryEvent {
   final String eraId;
   final String title;
   final String? summary;
+  final String? backgroundContext;
   final List<String> storyScenes;
   final List<String> sceneCaptions;
   final List<List<String>> sceneCharacters;
@@ -113,6 +116,14 @@ class StoryEvent {
   }
 
   String get detailText => shortSummary;
+
+  String get backgroundText {
+    final trimmed = backgroundContext?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) {
+      return trimmed;
+    }
+    return '이 이야기를 읽기 전, 앞뒤 흐름과 인물 관계를 떠올리면 본문을 더 쉽게 따라갈 수 있어요.';
+  }
 
   bool get hasCoordinate => lat != null && lng != null;
 

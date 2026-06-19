@@ -26,8 +26,8 @@ import 'sub_page_scaffold.dart';
 /// 사건 상세 페이지.
 ///
 /// 1. 제목
-/// 2. 요약 이야기
-/// 3. 4개 장면 이미지 (있으면)
+/// 2. 배경 지식
+/// 3. 요약 + 4개 장면 이미지 (있으면)
 /// 4. 관련 성경 본문 + 이동 버튼
 /// 5. 퀴즈 시작 버튼
 ///
@@ -144,6 +144,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   Widget build(BuildContext context) {
     final event = widget.event;
     final storyText = (event.summary ?? '').trim();
+    final backgroundText = event.backgroundText;
     final refs = event.bibleRefs;
     final readTargets = event.bibleRefs
         .map((ref) => parseBibleNavigationTarget(ref.displayText))
@@ -185,6 +186,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     return _buildPage(
       event: event,
       storyText: storyText,
+      backgroundText: backgroundText,
       refs: refs,
       readTargets: readTargets,
       currentCharacters: currentState.characters,
@@ -201,6 +203,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   Widget _buildPage({
     required StoryEvent event,
     required String storyText,
+    required String backgroundText,
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
     required List<Character> currentCharacters,
@@ -230,6 +233,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                     _buildStoryCard(
                       event: event,
                       storyText: storyText,
+                      backgroundText: backgroundText,
                       refs: refs,
                       readTargets: readTargets,
                       currentCharacters: currentCharacters,
@@ -264,6 +268,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   Widget _buildStoryCard({
     required StoryEvent event,
     required String storyText,
+    required String backgroundText,
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
     required List<Character> currentCharacters,
@@ -291,11 +296,17 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
               ),
               const SizedBox(height: 14),
               storySection(
-                title: '요약 이야기',
-                content: storyText.isNotEmpty ? storyText : '요약 정보가 없습니다.',
+                title: '배경 지식',
+                content: backgroundText,
                 action: _buildCharacterAvatarAction(event, currentCharacters),
               ),
-              _buildSceneRow(),
+              const SizedBox(height: 12),
+              storySection(
+                title: '요약: ',
+                content: storyText.isNotEmpty ? storyText : '요약 정보가 없습니다.',
+                footer: _buildSceneRow(),
+                inlineTitle: true,
+              ),
               const SizedBox(height: 12),
               _buildReadAndQuizProgress(
                 event: event,

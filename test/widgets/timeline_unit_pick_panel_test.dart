@@ -8,7 +8,7 @@ import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/widgets/v2/timeline_unit_pick_panel.dart';
 
 void main() {
-  testWidgets('시간순 단위 선택은 가로 카드 레일만 보여준다', (tester) async {
+  testWidgets('시간순 구간 선택은 가로 카드 레일만 보여준다', (tester) async {
     String? toggledUnitCode;
     var selectedAll = false;
     var clearedAll = false;
@@ -51,11 +51,11 @@ void main() {
       ),
     );
 
-    expect(find.text('보고 싶은 단위'), findsNothing);
-    expect(find.text('단위 선택'), findsOneWidget);
+    expect(find.text('보고 싶은 구간'), findsNothing);
+    expect(find.text('구간 선택'), findsOneWidget);
     expect(find.text('전체 선택'), findsOneWidget);
     expect(find.text('전체 해제'), findsNothing);
-    expect(find.text('1개 단위 다음'), findsNothing);
+    expect(find.text('1개 구간 다음'), findsNothing);
     expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
     expect(find.byIcon(Icons.radio_button_unchecked_rounded), findsNothing);
 
@@ -67,6 +67,7 @@ void main() {
       const ValueKey('timeline-unit-card-primeval_creation_mission'),
     );
     expect(tester.getSize(firstCard).width, inInclusiveRange(96, 98));
+    expect(tester.getSize(firstCard).height, 136);
 
     final titleRect = tester.getRect(find.text('1. 창조와 사람의 사명'));
     final countRect = tester.getRect(find.text('2개 이야기'));
@@ -89,7 +90,7 @@ void main() {
     expect(clearedAll, isFalse);
   });
 
-  testWidgets('시간순 단위 카드 설명은 35자 안팎의 짧은 문장으로 렌더링한다', (tester) async {
+  testWidgets('시간순 구간 카드 설명은 35자 안팎의 짧은 문장으로 렌더링한다', (tester) async {
     const firstSummary = '긴 여정의 시작에서 하나님이 사람에게 맡기신 사명과 선택의 무게를 차분히 보여준다';
     const lastSummary = '무너진 관계 속에서도 하나님이 다시 길을 여시는 장면까지 이어진다';
 
@@ -137,7 +138,38 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('시간순 단위 전체 선택 버튼은 모두 선택되면 전체 해제로 바뀐다', (tester) async {
+  testWidgets('시간순 신약 구간 카드도 짧은 curated 설명을 렌더링한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 390,
+            height: 240,
+            child: TimelineUnitPickPanel(
+              events: [
+                _event('birth_early_ministry', '탄생과 초기 사역', 1, globalRank: 1),
+                _event('birth_early_ministry', '탄생과 초기 사역', 1, globalRank: 2),
+              ],
+              selectedUnitCodes: const {'birth_early_ministry'},
+              onToggleUnit: (_) {},
+              onSelectAll: () {},
+              onClearAll: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    const description = '탄생과 세례를 지나 예수님의 사역 길이 열립니다.';
+    final subtitle = find.text(description);
+    expect(subtitle, findsOneWidget);
+    final subtitleWidget = tester.widget<Text>(subtitle);
+    expect(subtitleWidget.data!.runes.length, inInclusiveRange(25, 35));
+    expect(subtitleWidget.maxLines, 4);
+    expect(subtitleWidget.overflow, TextOverflow.clip);
+  });
+
+  testWidgets('시간순 구간 전체 선택 버튼은 모두 선택되면 전체 해제로 바뀐다', (tester) async {
     var clearedAll = false;
 
     await tester.pumpWidget(
@@ -170,7 +202,7 @@ void main() {
     expect(clearedAll, isTrue);
   });
 
-  test('시간순 단위 선택 시트는 가로 1줄 높이만 사용한다', () {
+  test('시간순 구간 선택 시트는 가로 1줄 높이만 사용한다', () {
     final source = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
@@ -189,7 +221,7 @@ void main() {
     expect(source, contains('_selectionSheetTimelineUnitHeight'));
     expect(
       source,
-      contains('static const double _selectionSheetTimelineUnitHeight = 300'),
+      contains('static const double _selectionSheetTimelineUnitHeight = 230'),
     );
     expect(timelineBranch, contains('_selectionSheetTimelineUnitHeight'));
     expect(timelineBranch, contains('max: 0.42'));

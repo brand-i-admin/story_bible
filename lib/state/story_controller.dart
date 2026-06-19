@@ -173,7 +173,7 @@ class StoryController extends Notifier<StoryState> {
       clearSelectedLandmark: true,
       clearSelectedEvent: true,
       // 모드 전환 시 인물 선택은 character 모드에서 다시 정하고, 나머지
-      // 모드는 인물 선택을 무시(지역/전체 시간순 단위로 사건 표시).
+      // 모드는 인물 선택을 무시(지역/전체 시간순 구간으로 사건 표시).
       selectedCharacterCodes: mode == SelectionMode.character
           ? state.selectedCharacterCodes
           : const {},

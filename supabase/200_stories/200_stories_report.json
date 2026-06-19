@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T09:36:31.046371+00:00",
+  "generated_at_utc": "2026-06-19T02:27:38.941832+00:00",
   "event_count": 310,
   "events_by_era": {
     "era_nt_consummation": 9,
@@ -18,6 +18,7 @@
     "story_index is taken straight from JSON (admin UI / manual edit owns it)",
     "character codes expanded for disciples/apostles/brothers, then filtered by avatar prompt whitelist",
     "bible_refs/story_scenes/scene_characters are stored as jsonb on events",
+    "background_context is a short user-facing background knowledge blurb",
     "scene_captions are short user-facing captions aligned with story_scenes",
     "character_codes is text[] on events; event_persons table is gone",
     "unit_code/unit_title/unit_order group events before timeline reveal",

@@ -79,9 +79,12 @@ void main() {
     expect(find.text('시간 순·인물·장소 중 선택해 주세요.'), findsOneWidget);
     expect(find.byKey(const ValueKey('map-hint-step-badge-1')), findsOneWidget);
     expect(find.byKey(const ValueKey('map-hint-step-badge-2')), findsOneWidget);
+    final firstStep = tester.widget<Text>(find.text('먼저 시대를 고르고'));
+    final secondStep = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
+    expect(firstStep.style?.fontSize, secondStep.style?.fontSize);
   });
 
-  testWidgets('첫 안내 문구는 좁은 폰에서도 한 줄 축소되고 검은 고스트 그림자가 없다', (tester) async {
+  testWidgets('첫 안내 문구는 좁은 폰에서도 단계 줄 글자 크기를 맞춘다', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
@@ -101,9 +104,13 @@ void main() {
     expect(title.maxLines, 1);
     expect(title.style?.shadows, isEmpty);
 
-    final step = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
-    expect(step.maxLines, 1);
-    expect(step.style?.shadows, isEmpty);
+    final firstStep = tester.widget<Text>(find.text('먼저 시대를 고르고'));
+    final secondStep = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
+    expect(firstStep.maxLines, 2);
+    expect(secondStep.maxLines, 2);
+    expect(firstStep.style?.fontSize, secondStep.style?.fontSize);
+    expect(firstStep.style?.shadows, isEmpty);
+    expect(secondStep.style?.shadows, isEmpty);
     expect(
       find.byKey(const ValueKey('map-hint-scaled-line-오늘은 성경 어디를 여행해볼까요?')),
       findsOneWidget,
@@ -163,9 +170,12 @@ void main() {
     expect(source, contains('avatarSize: mapHint.avatarSize ?? 48'));
     expect(source, contains('① 먼저 시대를 고르고'));
     expect(source, contains('② 시간 순·인물·장소 중 선택'));
+    expect(source, contains('선택한 시대: \$label'));
+    expect(source, contains('창조부터 바벨까지'));
+    expect(source, contains('② 아래에서 시간 순·인물·장소 중 선택'));
     expect(source, contains('노란 지역을 눌러'));
     expect(source, contains('아래 패널에서 인물을'));
-    expect(source, contains('아래 패널에서 단위 카드를'));
+    expect(source, contains('아래 패널에서 구간 카드를'));
     expect(source, isNot(contains('👋 오늘은 성경')));
     expect(source, isNot(contains('🧭 먼저 시대를')));
     expect(source, isNot(contains('👥 아래 패널')));

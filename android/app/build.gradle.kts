@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.compile.JavaCompile
 import java.util.Properties
 
 plugins {
@@ -8,6 +9,23 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+fun stripIntegrationTestPluginRegistrant() {
+    val registrant = file("src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java")
+    if (!registrant.exists()) {
+        return
+    }
+
+    val text = registrant.readText()
+    val integrationTestBlock = Regex(
+        """(?s)\n?    try \{\R      flutterEngine\.getPlugins\(\)\.add\(new dev\.flutter\.plugins\.integration_test\.IntegrationTestPlugin\(\)\);\R    \} catch \(Exception e\) \{\R      Log\.e\(TAG, "Error registering plugin integration_test, dev\.flutter\.plugins\.integration_test\.IntegrationTestPlugin", e\);\R    \}\R?"""
+    )
+    val updated = text.replace(integrationTestBlock, "\n")
+    if (updated != text) {
+        registrant.writeText(updated)
+        logger.lifecycle("Removed dev-only integration_test registrant from ${registrant.path}")
+    }
 }
 
 val keystorePropertiesFile = rootProject.file("key.properties")
@@ -76,4 +94,12 @@ flutter {
 dependencies {
     // Java 8+ API 백포팅 (flutter_local_notifications 의존성).
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    if (name == "compileReleaseJavaWithJavac") {
+        doFirst {
+            stripIntegrationTestPluginRegistrant()
+        }
+    }
 }

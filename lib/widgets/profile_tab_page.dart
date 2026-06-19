@@ -169,6 +169,27 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     await _loadProfilePeople(forceRefresh: true);
   }
 
+  /// 프로필 탭에 진입하거나 저장/말씀 탭을 다시 열 때 최신 저장 목록을 읽는다.
+  Future<void> refreshSavedContentPreviews({bool showLoading = true}) async {
+    if (!mounted) {
+      return;
+    }
+    await _refreshProfileTabPreviews(showLoading: showLoading);
+  }
+
+  void _selectProfileContentTab(_ProfileContentTab tab) {
+    setState(() => _profileContentTab = tab);
+    switch (tab) {
+      case _ProfileContentTab.saved:
+        unawaited(_loadProfileSavedEventsPreview(showLoading: true));
+      case _ProfileContentTab.verses:
+        unawaited(_loadProfileSavedVersesPreview(showLoading: true));
+      case _ProfileContentTab.records:
+      case _ProfileContentTab.prayer:
+        break;
+    }
+  }
+
   void _handleIntercessoryPrayerScroll() {
     if (!_intercessoryPrayerScrollController.hasClients) {
       return;

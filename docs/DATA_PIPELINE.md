@@ -133,11 +133,13 @@ Makefile                                # 파이프라인 오케스트레이션
   - `supabase/200_stories/200_stories_seed.sql` — `events` 한 테이블 INSERT (배열 + JSONB 컬럼 포함)
   - `supabase/200_stories/200_stories_seed_part_*.sql` — SQL Editor 분할 파일
   - `supabase/200_stories/events_scene_captions_schema_patch.sql` — 기존 DB에 `scene_captions` 컬럼과 `events_ordered` view 확장을 비파괴로 적용하는 패치
+  - `supabase/200_stories/events_background_context_schema_patch.sql` — 기존 DB에 `background_context` 컬럼과 `events_ordered` view 확장을 비파괴로 적용하는 패치
   - `supabase/200_stories/200_stories_report.json` — 리포트
   - `supabase/200_stories/200_stories_normalized.json` — 검수용 정규화 JSON
-- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `story_scenes`(jsonb), `scene_captions`(jsonb, 장면별 사용자용 이미지 설명), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `unit_code`/`unit_title`/`unit_order`(시간 순 보기 단위), `landmark_id`(landmarks 조인), `status='published'`
+- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `background_context`, `story_scenes`(jsonb), `scene_captions`(jsonb, 장면별 사용자용 이미지 설명), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `unit_code`/`unit_title`/`unit_order`(시간 순 보기 구간), `landmark_id`(landmarks 조인), `status='published'`
+- **요약/배경 지식**: `summary`는 `bible_ref` 본문을 읽고 작성한 curated 문구를 원본으로 보존한다. `tools/seed/generate_story_background_contexts.py`는 summary를 `scene_captions`로 재작성하지 않고 길이/문장 수만 정규화하며, `background_context`는 시대 배경과 해당 사건이 무엇을 다루는지만 1~2문장으로 생성한다. 서신서는 발신자, 수신자, 상황, 작성 의도를 구체적으로 담는다. 결과는 JSON에 직접 남겨 사람이 검수한다.
 - **장면 캡션**: `scene_captions`는 `assets/200_stories/*.json`에서 직접 수정 가능하다. `tools/seed/generate_scene_captions.py`는 기존 `story_scenes`/`summary`/`bible_ref` 맥락에서 프롬프트 지시문을 제거한 초안을 다시 만들 때만 사용한다.
-- **시간 순 단위**: `unit_code`/`unit_title`/`unit_order`는 `assets/200_stories/*.json`이 원본이다. 구약 시대는 원역사 2개, 족장 3개, 출애굽 3개, 사사 3개, 왕정 3개, 분열왕국 5개, 포로/귀환 3개 단위로 나눠 `TimelineUnitPickPanel`의 가로 카드 선택에 사용한다.
+- **시간 순 구간**: `unit_code`/`unit_title`/`unit_order`는 `assets/200_stories/*.json`이 원본이다. 구약 시대는 원역사 2개, 족장 3개, 출애굽 3개, 사사 3개, 왕정 3개, 분열왕국 5개, 포로/귀환 3개 구간으로 나눠 `TimelineUnitPickPanel`의 가로 카드 선택에 사용한다.
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
 - **stale 정리**: 시드 SQL 머리에 `delete from events where (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 이벤트는 DB 에서도 사라진다. quiz_questions 등 의존 테이블은 cascade.
 - **split 파일 주의**: `200_stories_seed_part_01.sql` 만 stale-delete 를 포함, part_02 는 INSERT 만.
@@ -156,9 +158,9 @@ Makefile                                # 파이프라인 오케스트레이션
 - **출력**:
   - `supabase/quizzes/quizzes_seed.sql` — 이벤트별 `quiz_questions` delete 후 3문항 insert
   - `supabase/quizzes/quizzes_report.json` — orphan/title mismatch/길이 경고 리포트
-- **문항 슬롯**: `fact`, `attitude`, `story_context` 순서. `story_context`는 성경 책/장/절/구절 위치 암기, 제목 맞추기, "핵심 내용/요약" 고르기, 본문 표현 찾기, 빈칸 채우기가 아니라, 1번/2번처럼 특정 구절에서 확인되는 실제 사건·행동·반응·상태를 묻는 짧은 사실 이해 문제로 JSON에 직접 작성한다. 이야기 퀴즈 화면은 이미 상단에 제목을 보여 주므로 `「이야기 제목」에서 ...`, `'이야기 제목'에서 ...` 같은 제목 prefix 질문은 금지한다. 제목/시대/사건명을 따옴표로 감싸는 문구는 `daily_quiz`처럼 단일 일일 퀴즈 seed에서만 사용한다.
+- **문항 슬롯**: `fact`, `attitude`, `story_context` 순서. 세 문항 모두 `bible_ref` 본문에서 이야기 이해에 중요한 사건·행동·말·반응·상태를 묻는다. `scene_captions`는 중요한 장면을 찾는 참고 자료로만 쓰고, 실제 질문과 해설은 성경 본문을 읽어 작성한다. `story_context`는 성경 책/장/절/구절 위치 암기, 제목 맞추기, "핵심 내용/요약" 고르기, 본문 표현 찾기, 빈칸 채우기가 아니라, 1번/2번처럼 특정 구절에서 확인되는 실제 사건·행동·반응·상태를 묻는 짧은 사실 이해 문제로 JSON에 직접 작성한다. 이야기 퀴즈 화면은 이미 상단에 제목을 보여 주므로 `「이야기 제목」에서 ...`, `'이야기 제목'에서 ...` 같은 제목 prefix 질문은 금지한다. 제목/시대/사건명을 따옴표로 감싸는 문구는 `daily_quiz`처럼 단일 일일 퀴즈 seed에서만 사용한다.
 - **보기 구성**: JSON 원본은 선택지 3개와 `answer_index` 0~2만 가진다. SQL 생성 시 `choice_d='헷갈렸어요'`를 자동 추가해 앱에서는 항상 4번 보기로 노출한다. 보기는 본문 표현을 그대로 찾게 하지 말고, 사용자가 사실을 이해했는지 고를 수 있는 일상적인 한국어 문장으로 쓴다.
-- **검증**: `story_context` 질문에 "성경 책", "몇 장", "어느 장", "어느 구절" 등 출처 위치를 묻는 패턴, 이야기 제목/전체 요약을 묻는 패턴, "핵심 내용/요약" 선택형 패턴, "본문에서 확인되는 표현" 같은 표현 찾기 패턴, `빈칸`/`____` 패턴이 들어오면 실패한다. 또한 `왕은 어떻게 했습니까?`, `무리는 무엇이라고 말했습니까?`처럼 구체적 장면/대상이 없는 질문과 이야기 제목을 따옴표 prefix로 반복하는 질문은 실패한다. "어떻게/무엇이라고" 질문의 보기는 모두 문법적으로 그 질문에 답할 수 있는 문장형이어야 하며, `그 일을 숨기고 물러났다`, `다른 사람에게 책임을 돌렸다` 같은 범용 filler 오답은 금지한다. 선택지가 `하시니라`, `하였더라`, `가로되` 같은 본문투 조각이면 실패하고, 해설은 `창 1:3 — '...'`처럼 구체적인 절 근거와 본문 인용을 포함해야 한다. 모든 문항의 해설 첫머리 구절은 해당 이야기의 `bible_ref` 범위 안에 있어야 하며, 범위를 넘으면 `verse_scope_violations` 리포트와 함께 빌드가 실패한다.
+- **검증**: 모든 질문에 `본문에서 먼저 두드러지는 장면`, `이어지는 장면에서 중심 인물`, `이 사건의 끝부분에서 이어진 일` 같은 storyboard placeholder 문구가 들어오면 실패한다. `story_context` 질문에 "성경 책", "몇 장", "어느 장", "어느 구절" 등 출처 위치를 묻는 패턴, 이야기 제목/전체 요약을 묻는 패턴, "핵심 내용/요약" 선택형 패턴, "본문에서 확인되는 표현" 같은 표현 찾기 패턴, `빈칸`/`____` 패턴이 들어오면 실패한다. 또한 `왕은 어떻게 했습니까?`, `무리는 무엇이라고 말했습니까?`처럼 구체적 장면/대상이 없는 질문과 이야기 제목을 따옴표 prefix로 반복하는 질문은 실패한다. "어떻게/무엇이라고" 질문의 보기는 모두 문법적으로 그 질문에 답할 수 있는 문장형이어야 하며, `그 일을 숨기고 물러났다`, `다른 사람에게 책임을 돌렸다` 같은 범용 filler 오답은 금지한다. 선택지가 `하시니라`, `하였더라`, `가로되` 같은 본문투 조각이면 실패하고, 해설은 `창 1:3 — '...'`처럼 구체적인 절 근거와 본문 인용을 포함해야 한다. 모든 문항의 해설 첫머리 구절은 해당 이야기의 `bible_ref` 범위 안에 있어야 하며, 범위를 넘으면 `verse_scope_violations` 리포트와 함께 빌드가 실패한다.
 - **적용**: `make apply-seeds`에 `apply-seeds-quizzes`가 포함되어 `events` 적용 뒤 `quiz_questions`도 함께 반영된다.
 
 #### `build_daily_quiz_seed_sql.py` — daily_quiz SQL + 가이드 문서
@@ -166,7 +168,7 @@ Makefile                                # 파이프라인 오케스트레이션
   - `assets/200_stories/*.json` — 사건별 등장인물
   - `assets/landmarks/event_region_mapping.json` — 사건 → region/landmark 매핑
   - `assets/landmarks/landmarks.json` — region 표시명
-  - `db_init.sql` — 시대 표시명(`eras.name`)
+  - `db_init.sql` — 시대 표시명(`eras.name`). 홈 선택 칩의 짧은 라벨과 별개로 daily quiz 질문에는 빌더의 전용 표시명을 사용한다.
   - `tools/seed/character_meta.json` — 인물 표시명
 - **출력**:
   - `supabase/seeds/daily_quiz.sql` — `daily_quiz` 100문항 이하 UPSERT
@@ -175,6 +177,8 @@ Makefile                                # 파이프라인 오케스트레이션
 - **보기 구성**: `daily_quiz.choices` 는 jsonb 배열이며 2~6개 선택지를 허용한다. 특정 시대의 사건 보유 region 이 2~3개뿐이면 4지선다를 강제하지 않는다.
 - **문항 유형**: 사건-지역 매칭형, 시대-지역 사건 제외형, 인물-지역 대비형, 인물 사건-지역 매칭형, 지역 사건 포함형.
 - **질문 표기**: 시대명, 사건명, 인물명, 지역/장소명은 작은따옴표로 감싸 핵심 단서를 분명히 보여 준다. 이야기 퀴즈에는 이 따옴표 prefix 규칙을 적용하지 않는다.
+- **시대명 표기**: 홈 시대 선택 칩은 짧은 라벨을 쓰지만 daily quiz 질문은 전용 표시명(`족장 시대`, `사도의 시대`, `후기 사도의 시대` 등)을 사용한다. 검수 전 숨겨 둔 `era_nt_consummation`은 생성 대상에서 제외한다.
+- **시대별 배치**: 같은 문항 유형 안에서 특정 시대에 앞쪽 문항이 몰리지 않도록 시대별 round-robin 으로 배치한다.
 - **검증 규칙**: 보기의 region 은 해당 시대에서 실제 사건이 있는 region 만 사용한다. `수산 궁(페르시아)` 같은 세부 장소/landmark 는 보기로 쓰지 않고 해설에만 쓴다. `story_index` 재정렬에 취약한 "다음/바로 다음/몇 번째" 문항은 생성하지 않는다.
 - **적용**: `make seed-daily-quiz` 로 SQL/문서를 재생성하고, `make apply-seeds-daily-quiz` 또는 `make apply-seeds` 로 DB에 반영한다.
 
@@ -291,6 +295,7 @@ Makefile                                # 파이프라인 오케스트레이션
 # 개별 타겟
 make seed-bible-verses       # build_krv_seed_sql.py 실행
 make build-character-meta       # build_character_meta_json.py (모든 인물 카탈로그 + 아바타 프롬프트)
+make generate-story-contexts # curated summary 정규화 + background_context 생성
 make seed-stories            # build_200_stories_seed_sql.py (→ person-meta 의존)
 make seed-characters            # build_characters_seed_sql.py (→ person-meta 의존)
 make seed-quizzes            # build_quizzes_seed_sql.py (→ assets/quizzes + db_events)
@@ -353,6 +358,7 @@ assets/
   "lat": 31.018,
   "lng": 47.423,
   "summary": "하나님이 말씀으로 세상을 창조하시고 안식으로 완성하신다.",
+  "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「창조」를 다룹니다.",
   "bible_ref": [{"book": "창", "from": "1:1", "to": "2:3"}],
   "start_year": -4000,
   "end_year": -4000,
@@ -365,8 +371,10 @@ assets/
 ```
 
 - `story_index`: era 내부의 정수 순서. 어드민 웹 또는 수동 편집으로 채운다.
+- `background_context`: 상세 페이지 첫 카드에 표시되는 짧은 배경 지식 문구. 해설이나 읽기 가이드, 절 주소, 이전/다음 링크, 시간순 구간명이 아니라 시대 배경과 해당 사건이 무엇을 다루는지, 서신서 작성 배경을 1~2문장으로 담는다.
 - `scene_captions`: `story_scenes`와 같은 길이의 사용자용 이미지 설명. 이미지 생성
-  프롬프트가 아니라 상세 페이지 overlay에 그대로 표시되는 문구다.
+  프롬프트가 아니라 상세 페이지 overlay에 그대로 표시되는 문구이며, summary 검수 때
+  빠진 장면이 없는지 참고하는 보조 자료다.
 - `story`/`short_story` 필드는 더 이상 빌더가 사용하지 않는다 (스키마에서 제거됨).
 
 ## 7. 환경 설정

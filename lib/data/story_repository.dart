@@ -17,6 +17,7 @@ class StoryRepository {
   StoryRepository(this._client);
 
   final SupabaseClient _client;
+  Set<String>? _hiddenEraIds;
 
   Future<List<Era>> fetchEras() async {
     final rows = await _client
@@ -24,7 +25,12 @@ class StoryRepository {
         .select()
         .order('display_order', ascending: true);
 
-    return rows.map<Era>((row) => Era.fromMap(row)).toList();
+    final allEras = rows.map<Era>((row) => Era.fromMap(row)).toList();
+    _hiddenEraIds = allEras
+        .where((era) => isHiddenEraCode(era.code))
+        .map((era) => era.id)
+        .toSet();
+    return allEras.where((era) => !isHiddenEraCode(era.code)).toList();
   }
 
   Future<List<Character>> fetchCharactersByEra(String eraId) async {
@@ -54,12 +60,17 @@ class StoryRepository {
   }
 
   Future<List<StoryEvent>> fetchEventsByEra(String eraId) async {
+    final hiddenEraIds = await _fetchHiddenEraIds();
+    if (hiddenEraIds.contains(eraId)) {
+      return const [];
+    }
+
     final rows = await _client
         .from('events_ordered')
         .select()
         .eq('era_id', eraId)
         .order('rank_in_era', ascending: true);
-    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
+    return _visibleEventsFromRows(rows);
   }
 
   /// 시대별로 지도에 표시되는 랜드마크 카탈로그. 클라이언트가 selectedEraId 의
@@ -79,7 +90,7 @@ class StoryRepository {
         .select()
         .contains('character_codes', <String>[characterCode])
         .order('global_rank', ascending: true);
-    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
+    return _visibleEventsFromRows(rows);
   }
 
   Future<List<StoryEvent>> fetchEventsByIds(Set<String> eventIds) async {
@@ -91,7 +102,7 @@ class StoryRepository {
         .select()
         .inFilter('id', eventIds.toList())
         .order('global_rank', ascending: true);
-    return rows.map<StoryEvent>(StoryEvent.fromMap).toList();
+    return _visibleEventsFromRows(rows);
   }
 
   Future<Set<String>> fetchSavedEventIds(String userId) async {
@@ -136,11 +147,15 @@ class StoryRepository {
   Future<Map<String, int>> fetchCharacterTimelineOrder() async {
     final rows = await _client
         .from('events_ordered')
-        .select('global_rank, character_codes')
+        .select('era_id, global_rank, character_codes')
         .order('global_rank', ascending: true);
 
+    final hiddenEraIds = await _fetchHiddenEraIds();
     final firstAppearanceByCode = <String, int>{};
     for (final row in rows) {
+      if (hiddenEraIds.contains(row['era_id'] as String?)) {
+        continue;
+      }
       final globalRank = (row['global_rank'] as num?)?.toInt() ?? 0;
       final codes = row['character_codes'];
       if (codes is! List) {
@@ -172,8 +187,8 @@ class StoryRepository {
         .toList();
 
     final scored = <_ScoredEvent>[];
-    for (final row in rows) {
-      final event = StoryEvent.fromMap(row);
+    final events = await _visibleEventsFromRows(rows);
+    for (final event in events) {
       final characterNames = event.characterCodes
           .map((code) => characterNameByCode[code])
           .whereType<String>()
@@ -199,6 +214,37 @@ class StoryRepository {
     });
 
     return scored.take(20).map((entry) => entry.event).toList();
+  }
+
+  Future<Set<String>> _fetchHiddenEraIds() async {
+    final cached = _hiddenEraIds;
+    if (cached != null) {
+      return cached;
+    }
+    if (hiddenEraCodes.isEmpty) {
+      _hiddenEraIds = const <String>{};
+      return _hiddenEraIds!;
+    }
+
+    final rows = await _client
+        .from('eras')
+        .select('id, code')
+        .inFilter('code', hiddenEraCodes.toList());
+    _hiddenEraIds = rows
+        .map((row) => row['id'] as String?)
+        .whereType<String>()
+        .toSet();
+    return _hiddenEraIds!;
+  }
+
+  Future<List<StoryEvent>> _visibleEventsFromRows(List<dynamic> rows) async {
+    final hiddenEraIds = await _fetchHiddenEraIds();
+    return rows
+        .map<StoryEvent>(
+          (row) => StoryEvent.fromMap(row as Map<String, dynamic>),
+        )
+        .where((event) => !hiddenEraIds.contains(event.eraId))
+        .toList();
   }
 
   Future<Map<String, String>> _fetchActiveCharacterNamesByCode() async {
@@ -513,6 +559,7 @@ int scoreEventMatch(
 }) {
   final title = event.title.toLowerCase();
   final summary = (event.summary ?? '').toLowerCase();
+  final backgroundContext = (event.backgroundContext ?? '').toLowerCase();
   final scenesText = event.storyScenes.join(' ').toLowerCase();
   final placeName = (event.placeName ?? '').toLowerCase();
   final characterText = characterNames.join(' ').toLowerCase();
@@ -524,6 +571,9 @@ int scoreEventMatch(
   }
   if (summary.contains(query)) {
     score += 120;
+  }
+  if (backgroundContext.contains(query)) {
+    score += 70;
   }
   if (scenesText.contains(query)) {
     score += 100;
@@ -541,6 +591,9 @@ int scoreEventMatch(
     }
     if (summary.contains(token)) {
       score += 18;
+    }
+    if (backgroundContext.contains(token)) {
+      score += 10;
     }
     if (scenesText.contains(token)) {
       score += 15;

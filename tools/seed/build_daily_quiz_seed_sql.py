@@ -53,6 +53,35 @@ CHARACTER_NAME_FALLBACKS: dict[str, str] = {
     "church_of_antioch": "안디옥 교회",
 }
 
+DAILY_QUIZ_ERA_NAME_OVERRIDES: dict[str, str] = {
+    "era_patriarch": "족장 시대",
+    "era_exodus": "출애굽 시대",
+    "era_judges": "사사 시대",
+    "era_monarchy": "통일 왕국 시대",
+    "era_divided_kingdom": "분열왕국 시대",
+    "era_exile_return": "포로 및 포로 후기 시대",
+    "era_nt_apostolic": "사도의 시대",
+    "era_nt_post_apostolic": "후기 사도의 시대",
+}
+
+DAILY_QUIZ_ERA_ORDER: tuple[str, ...] = (
+    "era_primeval",
+    "era_patriarch",
+    "era_exodus",
+    "era_judges",
+    "era_monarchy",
+    "era_divided_kingdom",
+    "era_exile_return",
+    "era_nt_public_ministry",
+    "era_nt_apostolic",
+    "era_nt_post_apostolic",
+    "era_nt_consummation",
+)
+
+EXCLUDED_DAILY_QUIZ_ERAS: set[str] = {
+    "era_nt_consummation",
+}
+
 
 @dataclass(frozen=True)
 class EventSeed:
@@ -88,6 +117,21 @@ class DailyQuizDraft:
 
 def _quote_label(value: str) -> str:
     return f"'{value}'"
+
+
+def _daily_quiz_era_name(code: str, fallback: str) -> str:
+    return DAILY_QUIZ_ERA_NAME_OVERRIDES.get(code, fallback)
+
+
+def _daily_quiz_era_sort_key(code: str) -> tuple[int, str]:
+    try:
+        return DAILY_QUIZ_ERA_ORDER.index(code), code
+    except ValueError:
+        return len(DAILY_QUIZ_ERA_ORDER), code
+
+
+def _source_era(source: str) -> str:
+    return source.split(":", 1)[0]
 
 
 def _stable_shuffle(seed_key: str, values: Iterable) -> list:
@@ -130,7 +174,10 @@ def _load_character_names(meta_path: Path) -> dict[str, str]:
 def _load_event_seeds(
     root: Path,
 ) -> tuple[list[EventSeed], dict[str, str], dict[str, str], dict[str, str]]:
-    era_names = _parse_era_names(root / "db_init.sql")
+    era_names = {
+        code: _daily_quiz_era_name(code, name)
+        for code, name in _parse_era_names(root / "db_init.sql").items()
+    }
 
     landmarks = json.loads(
         (root / "assets" / "landmarks" / "landmarks.json").read_text(encoding="utf-8")
@@ -148,6 +195,8 @@ def _load_event_seeds(
 
     events: list[EventSeed] = []
     for row in mapping:
+        if row["era"] in EXCLUDED_DAILY_QUIZ_ERAS:
+            continue
         events.append(
             EventSeed(
                 era=row["era"],
@@ -174,7 +223,9 @@ class DailyQuizBuilder:
         character_names: dict[str, str],
     ) -> None:
         self.events = events
-        self.era_names = era_names
+        self.era_names = {
+            code: _daily_quiz_era_name(code, name) for code, name in era_names.items()
+        }
         self.region_names = region_names
         self.character_names = character_names
         self.by_era: dict[str, list[EventSeed]] = collections.defaultdict(list)
@@ -185,6 +236,8 @@ class DailyQuizBuilder:
             collections.defaultdict(lambda: collections.defaultdict(list))
         )
         for event in events:
+            if event.era in EXCLUDED_DAILY_QUIZ_ERAS:
+                continue
             self.by_era[event.era].append(event)
             self.by_era_region[event.era][event.region_code].append(event)
             for character in event.characters:
@@ -192,11 +245,11 @@ class DailyQuizBuilder:
 
     def build(self, max_questions: int) -> list[DailyQuizDraft]:
         candidates: list[DailyQuizDraft] = []
-        candidates.extend(self._event_region_match())
-        candidates.extend(self._region_event_exclusion())
-        candidates.extend(self._character_region_exclusion())
-        candidates.extend(self._character_event_region_match())
-        candidates.extend(self._region_event_inclusion())
+        candidates.extend(self._balanced_by_era(self._event_region_match()))
+        candidates.extend(self._balanced_by_era(self._region_event_exclusion()))
+        candidates.extend(self._balanced_by_era(self._character_region_exclusion()))
+        candidates.extend(self._balanced_by_era(self._character_event_region_match()))
+        candidates.extend(self._balanced_by_era(self._region_event_inclusion()))
 
         selected: list[DailyQuizDraft] = []
         counts: collections.Counter[str] = collections.Counter()
@@ -212,6 +265,23 @@ class DailyQuizBuilder:
             if len(selected) >= max_questions:
                 break
         return selected
+
+    def _balanced_by_era(
+        self, drafts: Iterable[DailyQuizDraft]
+    ) -> list[DailyQuizDraft]:
+        by_era: dict[str, collections.deque[DailyQuizDraft]] = collections.defaultdict(
+            collections.deque
+        )
+        for draft in drafts:
+            by_era[_source_era(draft.source)].append(draft)
+        ordered_eras = sorted(by_era, key=_daily_quiz_era_sort_key)
+
+        out: list[DailyQuizDraft] = []
+        while any(by_era[era] for era in ordered_eras):
+            for era in ordered_eras:
+                if by_era[era]:
+                    out.append(by_era[era].popleft())
+        return out
 
     def _region_choices(
         self,
@@ -565,8 +635,10 @@ def build_docs(questions: list[DailyQuizDraft]) -> str:
         "## 핵심 원칙",
         "",
         "- 모든 문항은 앱의 탐색 흐름인 `시대 선택 -> 사건이 있는 지역 선택 -> 사건 확인`을 따른다.",
-        "- 질문의 시대명은 `eras.name` 값을 사용한다.",
+        "- 질문의 시대명은 앱 선택 칩의 짧은 라벨과 분리한 daily quiz 전용 표시명을 사용한다.",
         "- 보기의 지역명은 사건이 실제로 매핑된 region만 사용한다. 사건이 없는 region은 선택지에 넣지 않는다.",
+        "- 검수 전 숨겨 둔 시대는 daily quiz 생성에서도 제외한다.",
+        "- 한 문항 유형 안에서 특정 시대에만 앞쪽 문항이 몰리지 않도록 시대별로 번갈아 배치한다.",
         "- `place_name`이나 landmark 이름은 해설에서만 사용한다. 예: `수산 궁(페르시아)`는 region이 아니라 `페르시아` region 안의 세부 장소다.",
         "- 보기 수는 2~6개다. 어떤 시대는 사건 보유 region이 2~3개뿐이므로 4지선다를 강제하지 않는다.",
         "- 같은 질문 문장을 중복 생성하지 않는다.",
@@ -580,7 +652,7 @@ def build_docs(questions: list[DailyQuizDraft]) -> str:
         "| 시대-지역 사건 제외형 | 특정 시대/region에서 보이는 사건과 아닌 사건을 구분한다 | 정답은 같은 시대의 다른 region 사건, 오답은 해당 region 사건 | `'포로 및 포로 후기 시대'에서 '페르시아' 지역을 선택했을 때 볼 수 없는 사건은 무엇입니까?` |",
         "| 인물-지역 대비형 | 인물의 행적이 걸친 region을 비교한다 | 정답은 같은 시대이지만 해당 인물 사건이 없는 region | `'족장 시대'에서 '아브라함' 이야기들과 직접 연결되지 않은 지역은 어디입니까?` |",
         "| 인물 사건-지역 매칭형 | 인물+사건을 같이 보고 region을 찾게 한다 | 사건의 region을 정답으로 두고 같은 시대 region을 오답으로 둔다 | `'사도의 시대'에서 '바울' 관련 '빌립보: 감옥의 찬송' 사건은 어느 지역에서 확인할 수 있습니까?` |",
-        "| 지역 사건 포함형 | 특정 region을 선택했을 때 볼 수 있는 사건을 찾게 한다 | 정답은 해당 region 사건, 오답은 같은 시대의 다른 region 사건 | `'왕정 시대'에서 '유대' 지역을 선택했을 때 볼 수 있는 사건은 무엇입니까?` |",
+        "| 지역 사건 포함형 | 특정 region을 선택했을 때 볼 수 있는 사건을 찾게 한다 | 정답은 해당 region 사건, 오답은 같은 시대의 다른 region 사건 | `'통일 왕국 시대'에서 '유대' 지역을 선택했을 때 볼 수 있는 사건은 무엇입니까?` |",
         "",
         "## 생성 결과 요약",
         "",

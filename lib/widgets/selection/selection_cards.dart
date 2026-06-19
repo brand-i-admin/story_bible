@@ -148,7 +148,7 @@ class _CharacterCompactCard extends StatelessWidget {
               _PortraitAvatar(
                 character: character,
                 selected: selected,
-                size: 48,
+                size: 46,
               ),
               Positioned(
                 left: -2,
@@ -181,7 +181,7 @@ class _CharacterCompactCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             character.name,
             maxLines: 1,
@@ -194,10 +194,10 @@ class _CharacterCompactCard extends StatelessWidget {
                   : const Color(0xFF5C3A20),
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             identityLabel,
-            maxLines: 4,
+            maxLines: 3,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: TextStyle(

@@ -263,6 +263,18 @@ class LoadQuizFileTests(unittest.TestCase):
         finally:
             path.unlink()
 
+    def test_rejects_placeholder_scene_question_for_any_type(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"][0][
+            "question"
+        ] = "본문에서 먼저 두드러지는 장면은 무엇입니까?"
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaisesRegex(mod.QuizValidationError, "placeholder"):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
     def test_rejects_contextless_generic_question(self) -> None:
         payload = self._valid_payload()
         payload["questions"][0]["question"] = "왕은 어떻게 했습니까?"

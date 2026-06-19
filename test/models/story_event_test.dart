@@ -5,6 +5,7 @@ import 'package:story_bible/models/story_event.dart';
 
 StoryEvent _buildEvent({
   String? summary,
+  String? backgroundContext,
   double? lat,
   double? lng,
   List<String> storyScenes = const ['장면1'],
@@ -25,6 +26,7 @@ StoryEvent _buildEvent({
     eraId: 'era_primeval',
     title: '001 창조: 7일과 안식',
     summary: summary,
+    backgroundContext: backgroundContext,
     storyScenes: storyScenes,
     sceneCaptions: sceneCaptions,
     sceneCharacters: sceneCharacters,
@@ -56,6 +58,18 @@ void main() {
       });
     });
 
+    group('backgroundText', () {
+      test('backgroundContext가 있으면 그대로 반환', () {
+        final event = _buildEvent(backgroundContext: '창조 배경을 먼저 읽습니다.');
+        expect(event.backgroundText, '창조 배경을 먼저 읽습니다.');
+      });
+
+      test('backgroundContext가 비어 있으면 기본 안내를 반환', () {
+        final event = _buildEvent(backgroundContext: '  ');
+        expect(event.backgroundText, contains('앞뒤 흐름'));
+      });
+    });
+
     group('hasCoordinate / latLng', () {
       test('lat/lng이 모두 있으면 hasCoordinate는 true', () {
         final event = _buildEvent(lat: 31.0, lng: 47.0);
@@ -77,6 +91,7 @@ void main() {
           'era_id': 'era_primeval',
           'title': '001 창조',
           'summary': '하나님이 세상을 창조하신다.',
+          'background_context': '창세기 원역사의 큰 틀입니다.',
           'story_scenes': <dynamic>['장면1', '장면2'],
           'scene_captions': <dynamic>['빛이 어둠을 가릅니다', '창조가 안식으로 완성됩니다'],
           'scene_characters': <dynamic>[
@@ -104,6 +119,7 @@ void main() {
 
         expect(event.id, 'e1');
         expect(event.title, '001 창조');
+        expect(event.backgroundContext, '창세기 원역사의 큰 틀입니다.');
         expect(event.characterCodes, ['god', 'adam']);
         expect(event.storyScenes, ['장면1', '장면2']);
         expect(event.sceneCaptions, ['빛이 어둠을 가릅니다', '창조가 안식으로 완성됩니다']);

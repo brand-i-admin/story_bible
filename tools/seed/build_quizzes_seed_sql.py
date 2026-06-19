@@ -200,6 +200,11 @@ GENERIC_STORY_CONTEXT_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"다음\s*중\s*이\s*이야기\s*본문에서\s*확인되는\s*표현"),
     re.compile(r"본문에서\s*확인되는\s*표현"),
 )
+PLACEHOLDER_SCENE_QUESTION_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"본문에서\s*먼저\s*두드러지는\s*장면"),
+    re.compile(r"이어지는\s*장면에서\s*중심\s*인물"),
+    re.compile(r"이\s*사건의\s*끝부분에서\s*이어진\s*일"),
+)
 VERSE_LIKE_CHOICE_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"(가로되|이르되|가라사대)"),
     re.compile(r"(하시니라|하니라|하였더라|하였더니|되니라|되었더라)"),
@@ -312,6 +317,13 @@ def asks_generic_story_context(question_text: str) -> bool:
     """Return True if a story-context question is a generic passage prompt."""
     return any(
         pattern.search(question_text) for pattern in GENERIC_STORY_CONTEXT_PATTERNS
+    )
+
+
+def asks_placeholder_scene_question(question_text: str) -> bool:
+    """Return True for draft scene-order prompts that are not real quizzes."""
+    return any(
+        pattern.search(question_text) for pattern in PLACEHOLDER_SCENE_QUESTION_PATTERNS
     )
 
 
@@ -543,6 +555,11 @@ def load_quiz_file(path: Path) -> QuizFile:
             raise QuizValidationError(
                 f"{path.name}: questions[{i}].question repeats the story title "
                 "as a quoted prefix; ask the concrete scene question directly"
+            )
+        if asks_placeholder_scene_question(question_text):
+            raise QuizValidationError(
+                f"{path.name}: questions[{i}].question is a placeholder scene "
+                "prompt; ask about an important passage fact instead"
             )
         if expected_type == "story_context" and asks_for_source_location(question_text):
             raise QuizValidationError(

@@ -72,6 +72,15 @@ void main() {
     expect(find.text('남유다 20대\n마지막 왕'), findsOneWidget);
     expect(find.text('+3'), findsOneWidget);
     expect(find.text('사건 3개'), findsNothing);
+
+    final grid = tester.widget<SliverGrid>(find.byType(SliverGrid));
+    final delegate =
+        grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+    expect(delegate.mainAxisExtent, kStorySelectionCharacterCardExtent);
+    expect(delegate.mainAxisExtent, lessThan(120));
+
+    final identityText = tester.widget<Text>(find.text('남유다 20대\n마지막 왕'));
+    expect(identityText.maxLines, 3);
   });
 }
 

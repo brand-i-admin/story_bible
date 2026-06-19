@@ -3,13 +3,14 @@
 -- scene_captions to Flutter clients.
 
 alter table events
+  add column if not exists background_context text,
   add column if not exists scene_captions jsonb not null default '[]'::jsonb;
 
 drop view if exists events_ordered cascade;
 
 create view events_ordered as
   select
-    e.id, e.era_id, e.title, e.summary,
+    e.id, e.era_id, e.title, e.summary, e.background_context,
     e.story_scenes, e.scene_captions, e.scene_characters, e.character_codes,
     e.bible_refs, e.start_year, e.end_year, e.time_precision,
     e.story_index, e.unit_code, e.unit_title, e.unit_order,

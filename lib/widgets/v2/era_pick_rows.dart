@@ -63,8 +63,9 @@ class EraPickRows extends StatelessWidget {
       return t == 'new' || t == 'nt' || t == 'new_testament';
     }
 
-    final filtered = all.where((e) => isNt(e) == isNew).toList()
-      ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+    final filtered =
+        all.where((e) => isNt(e) == isNew && !isHiddenEraCode(e.code)).toList()
+          ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
     return filtered;
   }
 }
@@ -181,7 +182,7 @@ class _EraChip extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                era.name,
+                _shortEraLabel(era),
                 style: AppTextStyles.chipLabel.copyWith(
                   fontSize: 11.5,
                   color: selected ? AppColors.parchmentCream : AppColors.ink800,
@@ -201,6 +202,31 @@ class _EraChip extends StatelessWidget {
       ),
     );
   }
+}
+
+String _shortEraLabel(Era era) {
+  switch (era.code) {
+    case 'era_patriarch':
+      return '족장';
+    case 'era_exodus':
+      return '출애굽';
+    case 'era_judges':
+      return '사사';
+    case 'era_monarchy':
+      return '통일 왕국';
+    case 'era_divided_kingdom':
+      return '분열왕국';
+    case 'era_exile_return':
+      return '포로 및 포로 후기';
+    case 'era_nt_apostolic':
+      return '사도';
+    case 'era_nt_post_apostolic':
+      return '후기 사도';
+  }
+
+  return era.name
+      .replaceFirst(RegExp(r'의 시대$'), '')
+      .replaceFirst(RegExp(r' 시대$'), '');
 }
 
 /// 시대 코드 → Material 아이콘 매핑. 향후 일러스트 PNG 로 교체할 때 한 곳만 수정.

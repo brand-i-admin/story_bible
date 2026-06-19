@@ -21,6 +21,9 @@ part 'selection/step_chip.dart';
 
 enum StorySelectionPanelStage { collapsed, half, expanded }
 
+const double kStorySelectionCharacterCardExtent = 116;
+const double kStorySelectionCharacterGridSpacing = 8;
+
 class StorySelectionPanel extends StatefulWidget {
   const StorySelectionPanel({
     super.key,
@@ -340,8 +343,8 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
             crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            mainAxisExtent: 132,
+            mainAxisSpacing: kStorySelectionCharacterGridSpacing,
+            mainAxisExtent: kStorySelectionCharacterCardExtent,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final character = sortedCharacters[index];

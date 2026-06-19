@@ -10,6 +10,18 @@ import 'package:story_bible/widgets/v2/home_intro_panel.dart';
 
 const _eras = [
   Era(
+    id: 'era_patriarch',
+    code: 'era_patriarch',
+    testament: 'old',
+    name: '족장 시대',
+    displayOrder: 2,
+    startYear: -2166,
+    endYear: -1805,
+    mapCenterLat: 31.5,
+    mapCenterLng: 35.2,
+    mapZoom: 5.4,
+  ),
+  Era(
     id: 'era_exodus',
     code: 'era_exodus',
     testament: 'old',
@@ -22,6 +34,30 @@ const _eras = [
     mapZoom: 5.0,
   ),
   Era(
+    id: 'era_judges',
+    code: 'era_judges',
+    testament: 'old',
+    name: '사사 시대',
+    displayOrder: 4,
+    startYear: -1406,
+    endYear: -1050,
+    mapCenterLat: 31.8,
+    mapCenterLng: 35.1,
+    mapZoom: 5.4,
+  ),
+  Era(
+    id: 'era_monarchy',
+    code: 'era_monarchy',
+    testament: 'old',
+    name: '왕정 시대',
+    displayOrder: 5,
+    startYear: -1050,
+    endYear: -930,
+    mapCenterLat: 31.9,
+    mapCenterLng: 35.2,
+    mapZoom: 5.3,
+  ),
+  Era(
     id: 'era_divided_kingdom',
     code: 'era_divided_kingdom',
     testament: 'old',
@@ -32,6 +68,54 @@ const _eras = [
     mapCenterLat: 32.2,
     mapCenterLng: 35.25,
     mapZoom: 5.7,
+  ),
+  Era(
+    id: 'era_exile_return',
+    code: 'era_exile_return',
+    testament: 'old',
+    name: '포로 및 포로 후기 시대',
+    displayOrder: 7,
+    startYear: -586,
+    endYear: -430,
+    mapCenterLat: 32.2,
+    mapCenterLng: 38.3,
+    mapZoom: 4.7,
+  ),
+  Era(
+    id: 'era_nt_apostolic',
+    code: 'era_nt_apostolic',
+    testament: 'new',
+    name: '사도의 시대',
+    displayOrder: 2,
+    startYear: 33,
+    endYear: 70,
+    mapCenterLat: 37.4,
+    mapCenterLng: 26.9,
+    mapZoom: 4.9,
+  ),
+  Era(
+    id: 'era_nt_post_apostolic',
+    code: 'era_nt_post_apostolic',
+    testament: 'new',
+    name: '후기 사도의 시대',
+    displayOrder: 3,
+    startYear: 45,
+    endYear: 100,
+    mapCenterLat: 37.45,
+    mapCenterLng: 27.2,
+    mapZoom: 5.2,
+  ),
+  Era(
+    id: 'era_nt_consummation',
+    code: 'era_nt_consummation',
+    testament: 'new',
+    name: '역사의 종결',
+    displayOrder: 4,
+    startYear: null,
+    endYear: null,
+    mapCenterLat: 31.78,
+    mapCenterLng: 35.22,
+    mapZoom: 4.4,
   ),
 ];
 
@@ -56,15 +140,15 @@ void main() {
       ),
     );
 
-    expect(find.text('시간 순으로 보기'), findsOneWidget);
+    expect(find.text('시간 순'), findsOneWidget);
     expect(find.textContaining('오늘은 성경'), findsNothing);
     expect(find.text('선택한 시대의 사건을\n시간 순으로 봅니다'), findsOneWidget);
     expect(find.text('인물과 걷기'), findsOneWidget);
-    expect(find.text('선택한 인물들의 사건을\n시간 순으로 봅니다'), findsOneWidget);
+    expect(find.text('선택한 인물의 사건을\n시간 순으로 봅니다'), findsOneWidget);
     expect(find.text('장소로 시작'), findsOneWidget);
     expect(find.text('한 장소에서 이야기를\n시간 순으로 봅니다'), findsOneWidget);
     expect(
-      tester.getCenter(find.text('시간 순으로 보기')).dx,
+      tester.getCenter(find.text('시간 순')).dx,
       lessThan(tester.getCenter(find.text('인물과 걷기')).dx),
     );
     expect(
@@ -72,7 +156,7 @@ void main() {
       lessThan(tester.getCenter(find.text('장소로 시작')).dx),
     );
 
-    await tester.tap(find.text('시간 순으로 보기'));
+    await tester.tap(find.text('시간 순'));
     expect(pickedMode, SelectionMode.timeline);
   });
 
@@ -157,13 +241,59 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('출애굽 시대'), warnIfMissed: false);
-    await tester.tap(find.text('분열왕국 시대'), warnIfMissed: false);
+    await tester.tap(find.text('출애굽'), warnIfMissed: false);
+    await tester.tap(find.text('분열왕국'), warnIfMissed: false);
 
     expect(selectCount, 0);
 
     await tester.tap(find.text('장소로 시작'));
     expect(pickedMode, SelectionMode.region);
+  });
+
+  testWidgets('시대 선택 칩은 짧은 라벨을 쓰고 검수 전 시대를 숨긴다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 760,
+            height: 720,
+            child: HomeIntroPanel(
+              eras: _eras,
+              selectedEraId: null,
+              onSelectEra: (_) {},
+              onPickMode: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    for (final label in [
+      '족장',
+      '출애굽',
+      '사사',
+      '통일 왕국',
+      '분열왕국',
+      '포로 및 포로 후기',
+      '사도',
+      '후기 사도',
+    ]) {
+      expect(find.text(label), findsOneWidget);
+    }
+
+    for (final label in [
+      '족장 시대',
+      '출애굽 시대',
+      '사사 시대',
+      '왕정 시대',
+      '분열왕국 시대',
+      '포로 및 포로 후기 시대',
+      '사도의 시대',
+      '후기 사도의 시대',
+      '역사의 종결',
+    ]) {
+      expect(find.text(label), findsNothing);
+    }
   });
 
   test('홈 인트로 시트는 콘텐츠에 맞는 낮은 높이로 열린다', () {

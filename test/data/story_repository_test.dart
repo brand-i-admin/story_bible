@@ -8,6 +8,7 @@ StoryEvent _event({
   String id = 'e1',
   String title = '',
   String? summary,
+  String? backgroundContext,
   String? placeName,
   List<String> storyScenes = const [],
   List<String> characterCodes = const [],
@@ -18,6 +19,7 @@ StoryEvent _event({
     eraId: 'era1',
     title: title,
     summary: summary,
+    backgroundContext: backgroundContext,
     storyScenes: storyScenes,
     sceneCharacters: const [],
     startYear: null,
@@ -52,6 +54,12 @@ void main() {
       final event = _event(title: '', storyScenes: const ['빛이 임하며 어둠이 갈라진다']);
       final score = scoreEventMatch(event, '어둠', ['어둠']);
       expect(score, 115);
+    });
+
+    test('backgroundContext 매치는 70 + 토큰 10 = 80', () {
+      final event = _event(title: '', backgroundContext: '분열왕국 배경 지식');
+      final score = scoreEventMatch(event, '분열왕국', ['분열왕국']);
+      expect(score, 80);
     });
 
     test('인물명 매치는 80 + 토큰 18 = 98', () {

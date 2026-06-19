@@ -101,7 +101,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         _profileSavedEventsPreview.isEmpty) {
       return 104;
     }
-    return 198;
+    return 228;
   }
 
   double _profileSavedVersesContentHeight() {
@@ -268,8 +268,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          // ignore: invalid_use_of_protected_member
-          setState(() => _profileContentTab = tab);
+          _selectProfileContentTab(tab);
         },
         borderRadius: BorderRadius.circular(8),
         child: Center(
@@ -834,7 +833,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       blendMode: BlendMode.dstIn,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(2, 12, 20, 10),
+        padding: const EdgeInsets.fromLTRB(2, 8, 20, 8),
         itemCount: events.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {

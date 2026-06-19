@@ -239,9 +239,12 @@ class _GuideStepLine extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: _GuideScaledTextLine(
-            key: ValueKey('map-hint-scaled-line-$text'),
-            text: text,
+          child: Text(
+            text,
+            key: ValueKey('map-hint-step-line-$text'),
+            maxLines: 2,
+            overflow: TextOverflow.visible,
+            textAlign: TextAlign.left,
             style: textStyle,
           ),
         ),

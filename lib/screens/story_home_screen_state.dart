@@ -14,9 +14,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding.
   static const double _selectionSheetCardOnlyHeight = 390;
 
-  /// 시간순 단위 선택은 한 줄 가로 카드 레일이므로, 단위 개수와 무관하게
-  /// 카드 설명 전체가 보이는 1줄 높이에 맞춘다.
-  static const double _selectionSheetTimelineUnitHeight = 300;
+  /// 시간순 구간 선택은 한 줄 가로 카드 레일이므로, 구간 개수와 무관하게
+  /// 짧은 카드 설명이 보이는 1줄 높이에 맞춘다.
+  static const double _selectionSheetTimelineUnitHeight = 230;
   static const Duration _emotionMapPreStampDelay = Duration(milliseconds: 500);
   static const Duration _emotionMapPostStampDelay = Duration(seconds: 1);
   static const Duration _emotionMapStampFallbackSlack = Duration(
@@ -384,13 +384,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       final px = 132.0 + visibleRows * 122.0;
       return _sheetFractionForHeight(size, px, min: 0.26, max: 0.46);
     }
-    // 인물 모드 step 2 — 인물 카드 줄 수에 맞춰 sheet 높이 동적 계산.
-    // 카드 mainAxisExtent 132 + spacing 8 = 행당 ~140px. 1행/2행/2.2행.
+    // 인물 모드 step 2 — 낮은 인물 카드 줄 수에 맞춰 sheet 높이 동적 계산.
     if (_mode == _SelectionMode.character && _selectionStep == 2) {
       final charCount = state.characters.length;
       final rowCount = (charCount / 4).ceil(); // 4 cols
-      const rowPx = 140.0; // 카드 132 + spacing 8
-      const chromePx = 110.0; // 핸들 + 헤더 + grid padding 등
+      const rowPx =
+          kStorySelectionCharacterCardExtent +
+          kStorySelectionCharacterGridSpacing;
+      const chromePx = 98.0; // 핸들 + 헤더 + grid padding 등
       final visibleRows = rowCount <= 1
           ? 1.0
           : rowCount == 2
@@ -398,7 +399,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           : 2.2;
       final px = chromePx + visibleRows * rowPx;
       // viewport 높이 대비 비율 — 안전한 범위로 clamp.
-      return _sheetFractionForHeight(size, px, min: 0.28, max: 0.48);
+      return _sheetFractionForHeight(size, px, min: 0.26, max: 0.44);
     }
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
       return _sheetFractionForHeight(
@@ -472,6 +473,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   ({String message, double? avatarSize})? _currentMapHint() {
     if (_mapHintDismissed) return null;
     if (_mode == null && _selectionStep == 1) {
+      final state = ref.read(storyControllerProvider);
+      final selectedEra = state.eras
+          .where((era) => era.id == state.selectedEraId)
+          .firstOrNull;
+      if (selectedEra != null) {
+        return (
+          message: _selectedEraIntroHintMessage(selectedEra),
+          avatarSize: 70,
+        );
+      }
       return (
         message: '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
         avatarSize: 70,
@@ -495,11 +506,76 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
       return (
-        message: '아래 패널에서 단위 카드를 골라주세요.\n좌측 상단의 초록 「다음」 버튼을 눌러주세요.',
+        message: '아래 패널에서 구간 카드를 골라주세요.\n좌측 상단의 초록 「다음」 버튼을 눌러주세요.',
         avatarSize: null,
       );
     }
     return null;
+  }
+
+  String _selectedEraIntroHintMessage(Era era) {
+    final label = _eraHintLabel(era);
+    final description = _eraHintDescription(era.code);
+    return '선택한 시대: $label\n$description\n② 아래에서 시간 순·인물·장소 중 선택해 주세요.';
+  }
+
+  String _eraHintLabel(Era era) {
+    switch (era.code) {
+      case 'era_primeval':
+        return '원역사';
+      case 'era_patriarch':
+        return '족장';
+      case 'era_exodus':
+        return '출애굽';
+      case 'era_judges':
+        return '사사';
+      case 'era_monarchy':
+        return '통일 왕국';
+      case 'era_divided_kingdom':
+        return '분열왕국';
+      case 'era_exile_return':
+        return '포로 및 포로 후기';
+      case 'era_nt_public_ministry':
+        return '예수님 사역';
+      case 'era_nt_apostolic':
+        return '사도';
+      case 'era_nt_post_apostolic':
+        return '후기 사도';
+      case 'era_nt_consummation':
+        return '역사의 종결';
+    }
+
+    return era.name
+        .replaceFirst(RegExp(r'의 시대$'), '')
+        .replaceFirst(RegExp(r' 시대$'), '');
+  }
+
+  String _eraHintDescription(String eraCode) {
+    switch (eraCode) {
+      case 'era_primeval':
+        return '창조부터 바벨까지, 죄와 은혜의 시작을 따라갑니다.';
+      case 'era_patriarch':
+        return '아브라함부터 요셉까지, 약속이 한 가족을 따라 이어집니다.';
+      case 'era_exodus':
+        return '출애굽과 광야 여정 속에서 하나님이 백성을 세우십니다.';
+      case 'era_judges':
+        return '가나안 정착 뒤 반복되는 위기와 구원을 따라갑니다.';
+      case 'era_monarchy':
+        return '사울, 다윗, 솔로몬을 중심으로 왕국이 세워집니다.';
+      case 'era_divided_kingdom':
+        return '남유다와 북이스라엘의 왕들, 선지자들의 경고를 봅니다.';
+      case 'era_exile_return':
+        return '포로와 귀환 속에서 성전과 공동체가 다시 세워집니다.';
+      case 'era_nt_public_ministry':
+        return '예수님의 탄생, 사역, 십자가와 부활을 따라갑니다.';
+      case 'era_nt_apostolic':
+        return '성령 강림 뒤 복음이 예루살렘에서 땅끝으로 퍼집니다.';
+      case 'era_nt_post_apostolic':
+        return '교회들이 편지를 통해 믿음과 삶을 배워 갑니다.';
+      case 'era_nt_consummation':
+        return '예수님이 가르치신 마지막 때와 새 창조 소망을 봅니다.';
+    }
+    return '이 시대의 사건들을 성경 흐름 안에서 따라갑니다.';
   }
 
   /// 안내가 떠 있는 상태에서 화면을 탭하거나 지도를 만지면 hint dismiss.
@@ -843,7 +919,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       case HomeBackAction.returnToCharacterPicker:
         return '인물 다시 선택';
       case HomeBackAction.returnToTimelineUnitPicker:
-        return '단위 다시 선택';
+        return '구간 다시 선택';
     }
   }
 
@@ -2602,7 +2678,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   /// 시트 헤더 — 좌측 이전/다음 액션 + 가운데 핸들(인디케이터 + 단일
-  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물/시간 순·이야기).
+  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물/구간·이야기).
   ///
   /// 옛 ▲▼ 두 IconButton 은 stepper 와 시각적으로 충돌해 사용자가 ▲ 를
   /// 인지하지 못하는 문제가 있었다 (panel half stage 도 실질적으로 expanded 와
@@ -2789,10 +2865,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           // 같은 시대 다시 누르면 해제, 아니면 새 시대로 교체 (단일 선택).
           final next = state.selectedEraId == eraId ? null : eraId;
           await ref.read(storyControllerProvider.notifier).setSelectedEra(next);
+          if (!mounted) return;
+          setState(() {
+            _resetMapHint();
+          });
           // 새 시대 선택 시 그 시대 region 폴리곤이 모두 화면에 들어오도록
           // 카메라 fit. 다음 frame 에 _eraRegionLandmarks 가 build 되어야 하므로
           // post-frame.
-          if (!mounted || next == null) return;
+          if (next == null) return;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
             _focusOnEraRegions(ref.read(storyControllerProvider));

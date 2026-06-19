@@ -272,6 +272,70 @@ void main() {
     expect(adamX, lessThan(abrahamX));
     expect(abrahamX, lessThan(saulX));
   });
+
+  testWidgets('저장 탭을 누르면 저장한 이야기 미리보기를 다시 불러온다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+    clearInteractions(storyRepository);
+
+    await tester.tap(find.text('저장'));
+    await tester.pumpAndSettle();
+
+    verify(() => storyRepository.fetchEventsByIds(any())).called(1);
+  });
+
+  testWidgets('말씀 탭을 누르면 저장한 말씀 미리보기를 최신으로 다시 불러온다', (tester) async {
+    var fetchCount = 0;
+    final savedVerse = SavedBibleVerse(
+      id: 'saved-1',
+      userId: user.id,
+      translation: '개역개정',
+      bookNo: 1,
+      bookName: '창세기',
+      chapterNo: 1,
+      verseNo: 1,
+      verseText: '태초에 하나님이 천지를 창조하시니라',
+      comment: '처음 저장한 말씀',
+      createdAt: now,
+    );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 5,
+      ),
+    ).thenAnswer((_) async {
+      fetchCount += 1;
+      return PagedResult<SavedBibleVerse>(
+        items: fetchCount == 1 ? const [] : [savedVerse],
+        pageIndex: 0,
+        pageSize: 5,
+        hasNextPage: false,
+      );
+    });
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    expect(find.text('태초에 하나님이 천지를 창조하시니라'), findsNothing);
+
+    await tester.tap(find.text('말씀'));
+    await tester.pumpAndSettle();
+
+    expect(fetchCount, greaterThanOrEqualTo(2));
+    expect(find.text('태초에 하나님이 천지를 창조하시니라'), findsOneWidget);
+    expect(find.text('처음 저장한 말씀'), findsOneWidget);
+  });
 }
 
 Future<void> _pumpProfileTab(

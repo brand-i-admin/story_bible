@@ -14,4 +14,13 @@ void main() {
     expect(source, contains('mainAxisAlignment: MainAxisAlignment.center'));
     expect(source, contains('crossAxisAlignment: CrossAxisAlignment.center'));
   });
+
+  test('저장한 이야기 미리보기는 썸네일 카드 높이를 확보한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('return 228;'));
+    expect(source, contains('EdgeInsets.fromLTRB(2, 8, 20, 8)'));
+  });
 }
