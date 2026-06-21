@@ -24,7 +24,6 @@ import '../theme/tokens.dart';
 import '../utils/scene_asset_loader.dart';
 import 'avatar_progress_ring.dart';
 import 'character_avatar.dart';
-import 'font_scale_bottom_sheet.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'parchment_dialog.dart';

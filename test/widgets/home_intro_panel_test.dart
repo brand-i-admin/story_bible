@@ -120,6 +120,32 @@ const _eras = [
 ];
 
 void main() {
+  Widget homeIntroHarness({
+    required double width,
+    required double height,
+    required String? selectedEraId,
+    required void Function(SelectionMode) onPickMode,
+    double textScale = 1,
+  }) {
+    return MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+        child: Scaffold(
+          body: SizedBox(
+            width: width,
+            height: height,
+            child: HomeIntroPanel(
+              eras: _eras,
+              selectedEraId: selectedEraId,
+              onSelectEra: (_) {},
+              onPickMode: onPickMode,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   testWidgets('시간 순으로 보기 버튼은 timeline 모드를 선택한다', (tester) async {
     SelectionMode? pickedMode;
 
@@ -158,6 +184,64 @@ void main() {
 
     await tester.tap(find.text('시간 순'));
     expect(pickedMode, SelectionMode.timeline);
+  });
+
+  testWidgets('아주크게 글자 크기에서도 보기 방식 3개 카드를 한 줄로 유지한다', (tester) async {
+    await tester.pumpWidget(
+      homeIntroHarness(
+        width: 390,
+        height: 720,
+        selectedEraId: 'era_divided_kingdom',
+        textScale: 1.4,
+        onPickMode: (_) {},
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final timelineCard = find.byKey(const ValueKey('home-mode-timeline'));
+    final characterCard = find.byKey(const ValueKey('home-mode-character'));
+    final regionCard = find.byKey(const ValueKey('home-mode-region'));
+    expect(timelineCard, findsOneWidget);
+    expect(characterCard, findsOneWidget);
+    expect(regionCard, findsOneWidget);
+
+    expect(
+      tester.getTopLeft(timelineCard).dy,
+      tester.getTopLeft(characterCard).dy,
+    );
+    expect(
+      tester.getTopLeft(characterCard).dy,
+      tester.getTopLeft(regionCard).dy,
+    );
+    expect(
+      tester.getCenter(timelineCard).dx,
+      lessThan(tester.getCenter(characterCard).dx),
+    );
+    expect(
+      tester.getCenter(characterCard).dx,
+      lessThan(tester.getCenter(regionCard).dx),
+    );
+
+    final timelineSubtitle = find.text('선택한 시대의 사건을\n시간 순으로 봅니다');
+    final characterSubtitle = find.text('선택한 인물의 사건을\n시간 순으로 봅니다');
+    final regionSubtitle = find.text('한 장소에서 이야기를\n시간 순으로 봅니다');
+    expect(timelineSubtitle, findsOneWidget);
+    expect(characterSubtitle, findsOneWidget);
+    expect(regionSubtitle, findsOneWidget);
+
+    expect(
+      tester.getRect(timelineSubtitle).bottom,
+      lessThanOrEqualTo(tester.getRect(timelineCard).bottom),
+    );
+    expect(
+      tester.getRect(characterSubtitle).bottom,
+      lessThanOrEqualTo(tester.getRect(characterCard).bottom),
+    );
+    expect(
+      tester.getRect(regionSubtitle).bottom,
+      lessThanOrEqualTo(tester.getRect(regionCard).bottom),
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('홈 인트로 패널은 하단 빈 공간을 줄인 패딩을 사용한다', (tester) async {

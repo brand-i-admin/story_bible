@@ -2,7 +2,7 @@
 //
 // 프로필 헤더의 톱니바퀴 버튼이 여는 설정 모달 시트.
 // - 개인정보 보호 (legal docs)
-// - 글자 크기 변경 (font scale)
+// - 지도 설명
 // - 로그아웃
 // - 하단: 관리자 문의 이메일 (admin@brand-i.net)
 part of '../profile_tab_page.dart';
@@ -41,15 +41,6 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
                     onTap: () {
                       Navigator.of(sheetCtx).pop();
                       _openLegalDocumentsPage();
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  _settingsRow(
-                    icon: Icons.text_fields_rounded,
-                    label: '글자 크기 변경',
-                    onTap: () async {
-                      Navigator.of(sheetCtx).pop();
-                      await showFontScaleSheet(context);
                     },
                   ),
                   const SizedBox(height: 8),

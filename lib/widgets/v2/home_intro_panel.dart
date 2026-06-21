@@ -96,10 +96,10 @@ class HomeIntroPanel extends StatelessWidget {
                 padding: const EdgeInsets.only(
                   right: _homeIntroHorizontalPadding,
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _ModeCard(
+                child: LayoutBuilder(
+                  builder: (context, _) {
+                    final cards = [
+                      _ModeCard(
                         key: const ValueKey('home-mode-timeline'),
                         icon: Icons.access_time_rounded,
                         title: '시간 순',
@@ -107,10 +107,7 @@ class HomeIntroPanel extends StatelessWidget {
                         accent: const Color(0xFF8C5A2E),
                         onTap: () => onPickMode(SelectionMode.timeline),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _ModeCard(
+                      _ModeCard(
                         key: const ValueKey('home-mode-character'),
                         icon: Icons.people,
                         title: '인물과 걷기',
@@ -118,10 +115,7 @@ class HomeIntroPanel extends StatelessWidget {
                         accent: theme.colorScheme.tertiary,
                         onTap: () => onPickMode(SelectionMode.character),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _ModeCard(
+                      _ModeCard(
                         key: const ValueKey('home-mode-region'),
                         icon: Icons.location_on,
                         title: '장소로 시작',
@@ -129,8 +123,16 @@ class HomeIntroPanel extends StatelessWidget {
                         accent: theme.colorScheme.primary,
                         onTap: () => onPickMode(SelectionMode.region),
                       ),
-                    ),
-                  ],
+                    ];
+                    return Row(
+                      children: [
+                        for (var i = 0; i < cards.length; i++) ...[
+                          Expanded(child: cards[i]),
+                          if (i != cards.length - 1) const SizedBox(width: 8),
+                        ],
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -232,6 +234,8 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final minHeight = 88.0 + ((textScale - 1) * 70).clamp(0.0, 34.0);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -240,7 +244,7 @@ class _ModeCard extends StatelessWidget {
         splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
         highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 88),
+          constraints: BoxConstraints(minHeight: minHeight),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
           decoration: softButtonDecoration(selected: false),
           child: Column(
@@ -269,16 +273,23 @@ class _ModeCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 7),
-              Text(
-                subtitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 9.4,
-                  height: 1.18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.ink600,
+              SizedBox(
+                width: double.infinity,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    subtitle,
+                    maxLines: 2,
+                    softWrap: false,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 9.4,
+                      height: 1.18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ink600,
+                    ),
+                  ),
                 ),
               ),
             ],

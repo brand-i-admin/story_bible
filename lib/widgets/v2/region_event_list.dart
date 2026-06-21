@@ -75,6 +75,7 @@ class RegionEventList extends StatelessWidget {
     final charsByCode = <String, Character>{
       for (final c in allCharacters) c.code: c,
     };
+    final rowHeight = eventTimelineRowHeightFor(context, base: 280);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -106,7 +107,7 @@ class RegionEventList extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 physics: const NeverScrollableScrollPhysics(),
                 child: SizedBox(
-                  height: 280,
+                  height: rowHeight,
                   child: EventTimelineRow(
                     events: sorted,
                     allEras: allEras,
@@ -122,7 +123,7 @@ class RegionEventList extends StatelessWidget {
                     quizReviewEventIds: quizReviewEventIds,
                     quizConfusedEventIds: quizConfusedEventIds,
                     onTapEvent: onSelectEvent,
-                    rowHeight: 280,
+                    rowHeight: rowHeight,
                   ),
                 ),
               ),
@@ -220,7 +221,7 @@ class StoryEventThumbCard extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        _buildCardSurface(theme),
+        _buildCardSurface(context, theme),
         if (orderNumber != null ||
             (emotionKey != null && emotionKey!.isNotEmpty))
           _OrderBadge(orderNumber: orderNumber, emotionKey: emotionKey),
@@ -229,7 +230,7 @@ class StoryEventThumbCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCardSurface(ThemeData theme) {
+  Widget _buildCardSurface(BuildContext context, ThemeData theme) {
     final quizTone = _QuizCardTone.fromAttempt(attemptSummary);
     final surfaceColor =
         quizTone?.background ??
@@ -255,29 +256,39 @@ class StoryEventThumbCard extends StatelessWidget {
             border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
           ),
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
-          child: _buildCardBody(theme),
+          child: _buildCardBody(context, theme),
         ),
       ),
     );
   }
 
-  Widget _buildCardBody(ThemeData theme) {
+  Widget _buildCardBody(BuildContext context, ThemeData theme) {
     final summary = (event.summary ?? '').trim();
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final compactLargeText = textScale >= 1.3;
+    final thumbnailSize = compactLargeText ? 52.0 : 64.0;
+    final characterPillsHeight = compactLargeText ? 22.0 : 18.0;
+    final summaryMaxLines = compactLargeText ? 1 : 2;
+    final gapAfterThumbnail = compactLargeText ? 5.0 : 6.0;
+    final gapAfterTitle = compactLargeText ? 3.0 : 4.0;
+    final gapBeforeSummary = compactLargeText ? 4.0 : 6.0;
+    final gapBeforePills = compactLargeText ? 5.0 : 6.0;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _CardThumbnailFrame(event: event, loader: loader),
-        const SizedBox(height: 6),
+        _CardThumbnailFrame(event: event, loader: loader, size: thumbnailSize),
+        SizedBox(height: gapAfterThumbnail),
         _ThumbTitle(event: event, theme: theme),
-        const SizedBox(height: 4),
+        SizedBox(height: gapAfterTitle),
         _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
         if (showSummary && summary.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          _ThumbSummary(summary: summary),
+          SizedBox(height: gapBeforeSummary),
+          _ThumbSummary(summary: summary, maxLines: summaryMaxLines),
         ],
-        const SizedBox(height: 6),
-        if (event.characterCodes.isNotEmpty) _buildCharacterPills(),
+        SizedBox(height: gapBeforePills),
+        if (event.characterCodes.isNotEmpty)
+          _buildCharacterPills(height: characterPillsHeight),
       ],
     );
   }
@@ -288,10 +299,10 @@ class StoryEventThumbCard extends StatelessWidget {
     return startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear';
   }
 
-  Widget _buildCharacterPills() {
+  Widget _buildCharacterPills({required double height}) {
     final ordered = _orderedCharacterCodes();
     return SizedBox(
-      height: 18,
+      height: height,
       child: ShaderMask(
         shaderCallback: (bounds) => const LinearGradient(
           begin: Alignment.centerLeft,
@@ -326,17 +337,22 @@ class StoryEventThumbCard extends StatelessWidget {
 }
 
 class _CardThumbnailFrame extends StatelessWidget {
-  const _CardThumbnailFrame({required this.event, required this.loader});
+  const _CardThumbnailFrame({
+    required this.event,
+    required this.loader,
+    required this.size,
+  });
 
   final StoryEvent event;
   final SceneAssetLoader loader;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return ClipOval(
       child: SizedBox(
-        width: 64,
-        height: 64,
+        width: size,
+        height: size,
         child: ColoredBox(
           color: const Color(0xFFF1E4C8),
           child: _CardThumbnail(event: event, loader: loader),
@@ -362,6 +378,7 @@ class _ThumbTitle extends StatelessWidget {
       style: theme.textTheme.titleSmall?.copyWith(
         fontWeight: FontWeight.w700,
         fontSize: 12,
+        height: 1.08,
       ),
     );
   }
@@ -379,15 +396,16 @@ class _ThumbMetaRow extends StatelessWidget {
     if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
     return SizedBox(
       width: double.infinity,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (hasPlace) ...[
-            const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
-            const SizedBox(width: 1),
-            Flexible(
-              child: Text(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (hasPlace) ...[
+              const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
+              const SizedBox(width: 1),
+              Text(
                 placeName!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -395,43 +413,46 @@ class _ThumbMetaRow extends StatelessWidget {
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF8C6743),
+                  height: 1.1,
                 ),
               ),
-            ),
+            ],
+            if (hasPlace && yearLabel != null)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3),
+                child: Text(
+                  '·',
+                  style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
+                ),
+              ),
+            if (yearLabel != null)
+              Text(
+                yearLabel!,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF8C6743),
+                  height: 1.1,
+                ),
+              ),
           ],
-          if (hasPlace && yearLabel != null)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3),
-              child: Text(
-                '·',
-                style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
-              ),
-            ),
-          if (yearLabel != null)
-            Text(
-              yearLabel!,
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF8C6743),
-              ),
-            ),
-        ],
+        ),
       ),
     );
   }
 }
 
 class _ThumbSummary extends StatelessWidget {
-  const _ThumbSummary({required this.summary});
+  const _ThumbSummary({required this.summary, required this.maxLines});
 
   final String summary;
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       summary,
-      maxLines: 2,
+      maxLines: maxLines,
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.center,
       style: const TextStyle(
@@ -602,13 +623,16 @@ class _CurrentStoryBadge extends StatelessWidget {
               ),
             ],
           ),
-          child: const Text(
-            '현재 이야기',
-            style: TextStyle(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w900,
-              color: Color(0xFF3D2A14),
-              height: 1.0,
+          child: const FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '현재 이야기',
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF3D2A14),
+                height: 1.0,
+              ),
             ),
           ),
         ),

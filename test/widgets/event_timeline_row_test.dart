@@ -51,11 +51,19 @@ StoryEvent _event(
   bibleRefs: const [],
 );
 
-Widget _harness(Widget child, {double width = 360, double height = 280}) {
+Widget _harness(
+  Widget child, {
+  double width = 360,
+  double height = 280,
+  double textScale = 1,
+}) {
   return MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: SizedBox(width: width, height: height, child: child),
+    home: MediaQuery(
+      data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+      child: Scaffold(
+        body: Center(
+          child: SizedBox(width: width, height: height, child: child),
+        ),
       ),
     ),
   );
@@ -251,6 +259,102 @@ void main() {
           ),
           width: 128,
           height: 180,
+        ),
+      );
+
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('아주크게 글자 크기에서도 좁은 프로필 카드가 overflow 되지 않는다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(
+              0,
+              title: '에덴: 사람의 창조와 사명',
+              summary: '사람은 에덴에서 돌보고 지키는 사명을 받습니다.',
+              placeName: '에덴동산',
+              startYear: -4000,
+              characterCodes: const ['god', 'adam', 'eve'],
+            ),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            orderNumber: 1,
+          ),
+          width: 104,
+          height: 226,
+          textScale: 1.4,
+        ),
+      );
+
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('아주크게 글자 크기에서도 저장한 이야기 미리보기 카드가 overflow 되지 않는다', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(
+              12,
+              title: '예수님은 겟세마네에서 아버지의 뜻에 자신을 맡기신다',
+              summary: '예수님은 십자가 앞에서 기도하며 아버지의 뜻을 따르십니다.',
+              placeName: '예루살렘 성전 뜰과 감람산 근처',
+              startYear: 33,
+              characterCodes: const ['jesus', 'peter', 'john', 'james'],
+            ),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            orderNumber: 12,
+            showSummary: false,
+          ),
+          width: 128,
+          height: 180,
+          textScale: 1.4,
+        ),
+      );
+
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('아주크게 글자 크기에서도 사건 카드 내용이 카드 밖으로 넘치지 않는다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          Builder(
+            builder: (context) => EventTimelineRow(
+              events: [
+                _event(
+                  24,
+                  title: '예수님은 겟세마네에서 아버지의 뜻에 자신을 맡기신다',
+                  summary: '예수님은 십자가 앞에서 기도하며 아버지의 뜻을 따르십니다.',
+                  placeName: '예루살렘 성전 뜰과 감람산 근처',
+                  startYear: 33,
+                  characterCodes: const ['jesus', 'peter', 'john', 'james'],
+                ),
+              ],
+              allEras: [_era()],
+              charactersByCode: const {},
+              selectedEventId: null,
+              onTapEvent: (_) {},
+              rowHeight: eventTimelineRowHeightFor(context, base: 248),
+            ),
+          ),
+          width: 180,
+          height: 310,
+          textScale: 1.4,
         ),
       );
 

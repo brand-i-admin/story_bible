@@ -169,6 +169,51 @@ void main() {
     expect(subtitleWidget.overflow, TextOverflow.clip);
   });
 
+  testWidgets('아주크게 글자 크기에서도 시간순 구간 카드가 overflow 되지 않는다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.4)),
+          child: Scaffold(
+            body: SizedBox(
+              width: 390,
+              height: 270,
+              child: TimelineUnitPickPanel(
+                events: [
+                  _event(
+                    'primeval_creation_mission',
+                    '창조와 사람의 사명',
+                    1,
+                    title: '창조와 사람의 사명 첫 이야기',
+                    globalRank: 1,
+                  ),
+                  _event(
+                    'primeval_creation_mission',
+                    '창조와 사람의 사명',
+                    1,
+                    title: '창조와 사람의 사명 마지막 이야기',
+                    globalRank: 2,
+                  ),
+                ],
+                selectedUnitCodes: const {'primeval_creation_mission'},
+                onToggleUnit: (_) {},
+                onSelectAll: () {},
+                onClearAll: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final firstCard = find.byKey(
+      const ValueKey('timeline-unit-card-primeval_creation_mission'),
+    );
+    expect(firstCard, findsOneWidget);
+    expect(tester.getSize(firstCard).height, greaterThan(136));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('시간순 구간 전체 선택 버튼은 모두 선택되면 전체 해제로 바뀐다', (tester) async {
     var clearedAll = false;
 

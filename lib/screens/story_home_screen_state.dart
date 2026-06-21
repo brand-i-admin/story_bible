@@ -388,8 +388,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (_mode == _SelectionMode.character && _selectionStep == 2) {
       final charCount = state.characters.length;
       final rowCount = (charCount / 4).ceil(); // 4 cols
-      const rowPx =
-          kStorySelectionCharacterCardExtent +
+      final rowPx =
+          storySelectionCharacterCardExtentFor(context) +
           kStorySelectionCharacterGridSpacing;
       const chromePx = 98.0; // 핸들 + 헤더 + grid padding 등
       final visibleRows = rowCount <= 1
@@ -399,7 +399,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           : 2.2;
       final px = chromePx + visibleRows * rowPx;
       // viewport 높이 대비 비율 — 안전한 범위로 clamp.
-      return _sheetFractionForHeight(size, px, min: 0.26, max: 0.44);
+      return _sheetFractionForHeight(size, px, min: 0.26, max: 0.48);
     }
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
       return _sheetFractionForHeight(
@@ -2521,7 +2521,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           ),
                         ),
                       ),
-                    // 세로 모드: 4개 핵심 버튼 + 알림/Aa/이야기등록을
+                    // 세로 모드: 핵심 버튼 + 글자 크기/알림/이야기등록을
                     // 좌우 끝까지 가득 펼치고 horizontal scroll 로 추가 노출.
                     Positioned(
                       left: 0,
@@ -2545,7 +2545,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               children: [
                                 // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
                                 // 항상 일부 보이므로 별도 토글 불필요.
-                                // "Aa" (글자크기) 버튼 제거 — 프로필 설정 시트로 이전.
                                 topUtilityButton(
                                   label: '성경',
                                   onTap: _openBibleReaderPopup,
@@ -2559,6 +2558,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                 topUtilityButton(
                                   label: '프로필',
                                   onTap: _openProfileTab,
+                                ),
+                                const SizedBox(width: 4),
+                                topFontScaleButton(
+                                  onTap: () => showFontScaleSheet(context),
                                 ),
                                 const SizedBox(width: 4),
                                 NotificationBellButton(

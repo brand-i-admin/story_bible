@@ -24,6 +24,12 @@ enum StorySelectionPanelStage { collapsed, half, expanded }
 const double kStorySelectionCharacterCardExtent = 116;
 const double kStorySelectionCharacterGridSpacing = 8;
 
+double storySelectionCharacterCardExtentFor(BuildContext context) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1);
+  final extra = ((textScale - 1) * 50).clamp(0.0, 22.0).toDouble();
+  return kStorySelectionCharacterCardExtent + extra;
+}
+
 class StorySelectionPanel extends StatefulWidget {
   const StorySelectionPanel({
     super.key,
@@ -312,6 +318,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
   }
 
   List<Widget> _buildCharacterBodySlivers() {
+    final characterCardExtent = storySelectionCharacterCardExtentFor(context);
     final sortedCharacters = [...widget.characters]
       ..sort((a, b) {
         if (widget.characterSortMode == CharacterSortMode.eraOrder) {
@@ -340,11 +347,11 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
         sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: kStorySelectionCharacterGridSpacing,
-            mainAxisExtent: kStorySelectionCharacterCardExtent,
+            mainAxisExtent: characterCardExtent,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final character = sortedCharacters[index];
@@ -407,7 +414,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           quizConfusedEventIds: widget.quizConfusedEventIds,
           onTapEvent: (event) => widget.onOpenEventDetail?.call(event),
           // SliverToBoxAdapter 안 — fixed height 필요.
-          rowHeight: 248,
+          rowHeight: eventTimelineRowHeightFor(context, base: 248),
           // 카드 안 인물 pill: 사용자가 인물 모드에서 고른 인물을 가장 앞쪽에
           // 배치하고 지도 path 색과 동일한 톤으로 강조 — 모든 등장 인물이
           // 똑같이 보여서 헷갈리던 문제 해결.

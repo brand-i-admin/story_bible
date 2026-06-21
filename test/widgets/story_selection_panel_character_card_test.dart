@@ -10,24 +10,18 @@ import 'package:story_bible/widgets/character_panel.dart';
 import 'package:story_bible/widgets/story_selection_panel.dart';
 
 void main() {
-  testWidgets('인물 카드에 정체성 설명과 +사건수 배지를 표시한다', (tester) async {
-    const character = Character(
-      id: 'c-zedekiah',
-      code: 'zedekiah',
-      name: '시드기야',
-      tagline: '남유다 20대 마지막 왕',
-      description: '시드기야는 남유다의 마지막 왕이다.',
-      avatarUrl: null,
-      displayOrder: 1,
-    );
-
-    await tester.pumpWidget(
-      ProviderScope(
-        child: MaterialApp(
-          home: Scaffold(
+  Widget characterPanelHarness({
+    required Character character,
+    double textScale = 1,
+  }) {
+    return ProviderScope(
+      child: MaterialApp(
+        home: MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+          child: Scaffold(
             body: SizedBox(
               width: 420,
-              height: 360,
+              height: 420,
               child: StorySelectionPanel(
                 scrollController: ScrollController(),
                 step: 2,
@@ -41,7 +35,7 @@ void main() {
                 selectedTestament: 'old',
                 onSelectEra: (_) {},
                 onSelectTestament: (_) {},
-                characters: const [character],
+                characters: [character],
                 characterSortMode: CharacterSortMode.eraOrder,
                 onCharacterSortModeChanged: (_) {},
                 draftSelectedCharacterCodes: const {},
@@ -67,6 +61,20 @@ void main() {
         ),
       ),
     );
+  }
+
+  testWidgets('인물 카드에 정체성 설명과 +사건수 배지를 표시한다', (tester) async {
+    const character = Character(
+      id: 'c-zedekiah',
+      code: 'zedekiah',
+      name: '시드기야',
+      tagline: '남유다 20대 마지막 왕',
+      description: '시드기야는 남유다의 마지막 왕이다.',
+      avatarUrl: null,
+      displayOrder: 1,
+    );
+
+    await tester.pumpWidget(characterPanelHarness(character: character));
 
     expect(find.text('시드기야'), findsOneWidget);
     expect(find.text('남유다 20대\n마지막 왕'), findsOneWidget);
@@ -81,6 +89,33 @@ void main() {
 
     final identityText = tester.widget<Text>(find.text('남유다 20대\n마지막 왕'));
     expect(identityText.maxLines, 3);
+  });
+
+  testWidgets('아주크게 글자 크기에서도 인물 카드 텍스트가 카드 밖으로 넘치지 않는다', (tester) async {
+    const character = Character(
+      id: 'c-zedekiah',
+      code: 'zedekiah',
+      name: '시드기야',
+      tagline: '남유다 20대 마지막 왕',
+      description: '시드기야는 남유다의 마지막 왕이다.',
+      avatarUrl: null,
+      displayOrder: 1,
+    );
+
+    await tester.pumpWidget(
+      characterPanelHarness(character: character, textScale: 1.4),
+    );
+    await tester.pump();
+
+    final grid = tester.widget<SliverGrid>(find.byType(SliverGrid));
+    final delegate =
+        grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+    expect(
+      delegate.mainAxisExtent,
+      greaterThan(kStorySelectionCharacterCardExtent),
+    );
+    expect(find.text('남유다 20대\n마지막 왕'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
 

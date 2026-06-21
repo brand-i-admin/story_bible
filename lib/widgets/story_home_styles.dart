@@ -821,11 +821,41 @@ Widget bibleDropdownFrame<T>({
   );
 }
 
-/// 상단 row에 "Aa" 라벨로 표시되는 글자 크기 토글 버튼.
-///
-/// `topUtilityButton`과 동일한 스타일을 공유하지만 고정 라벨과 고정 폭을 사용한다.
+/// 상단 row에서 글자 크기 설정 바텀시트를 여는 토글 버튼.
 Widget topFontScaleButton({required VoidCallback onTap}) {
-  return topUtilityButton(label: 'Aa', onTap: onTap);
+  return Semantics(
+    button: true,
+    label: '글자 크기 변경',
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('top-font-scale-button'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 42, minHeight: 28),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.ink900.withValues(alpha: 0.76),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.borderHairlineDark, width: 0.9),
+          ),
+          alignment: Alignment.center,
+          child: const Text(
+            '글자',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: AppColors.fgOnDark,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// 로컬 asset vs Supabase Storage URL 구분 후 적절한 Image 위젯 반환.

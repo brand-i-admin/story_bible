@@ -11,6 +11,12 @@ import '../utils/scene_asset_loader.dart';
 import 'completion_celebration.dart';
 import 'v2/region_event_list.dart' show StoryEventThumbCard;
 
+double eventTimelineRowHeightFor(BuildContext context, {required double base}) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1);
+  final extra = ((textScale - 1) * 90).clamp(0.0, 40.0).toDouble();
+  return base + extra;
+}
+
 /// 가로 스크롤 사건 타임라인 — 인물 모드 step 3 와 장소 모드(region 선택 후)
 /// 가 공유한다. 카드 사이마다 점선 + ▶ 화살촉 connector 로 시간 흐름 시각화.
 ///

@@ -484,8 +484,8 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                   // 카드 탭 → 사건 상세, 핀 탭은 onSelectEvent 로 카드 포커스.
                   Container(
                     // 카드 자연 높이(~210) + 패딩 + ‘현재 이야기' 라벨 overflow
-                    // 여유를 위해 250 — overflow 5px 방지.
-                    height: 250,
+                    // 여유를 위해 250 이상 — 아주큰 글자에서는 조금 더 확보.
+                    height: eventTimelineRowHeightFor(context, base: 250),
                     decoration: floatingPanelDecoration(),
                     child: EventTimelineRow(
                       events: weekly.events,

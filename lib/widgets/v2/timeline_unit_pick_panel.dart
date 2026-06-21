@@ -297,11 +297,16 @@ class _TimelineUnitCard extends StatelessWidget {
   final double width;
   final VoidCallback onTap;
 
-  static const double _cardHeight = 136;
+  static double _cardHeightFor(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final extra = ((textScale - 1) * 50).clamp(0.0, 24.0).toDouble();
+    return 136 + extra;
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cardHeight = _cardHeightFor(context);
     const selectedColor = AppColors.greenBot;
     final bodyColor = selected ? AppColors.ink600 : AppColors.ink350;
     return Material(
@@ -311,7 +316,7 @@ class _TimelineUnitCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadii.lg),
         child: SizedBox(
           width: width,
-          height: _cardHeight,
+          height: cardHeight,
           child: Ink(
             padding: const EdgeInsets.all(AppSpacing.x4),
             decoration: BoxDecoration(
