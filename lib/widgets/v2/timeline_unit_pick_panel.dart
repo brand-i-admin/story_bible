@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import '../../models/story_event.dart';
 import '../../theme/tokens.dart';
 
+double timelineUnitPickPanelSheetHeightFor(BuildContext context) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1);
+  final extra = ((textScale - 1) * 125).clamp(0.0, 56.0).toDouble();
+  return 230 + extra;
+}
+
 class TimelineUnitPickPanel extends StatelessWidget {
   const TimelineUnitPickPanel({
     super.key,
@@ -299,7 +305,7 @@ class _TimelineUnitCard extends StatelessWidget {
 
   static double _cardHeightFor(BuildContext context) {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final extra = ((textScale - 1) * 50).clamp(0.0, 24.0).toDouble();
+    final extra = ((textScale - 1) * 130).clamp(0.0, 56.0).toDouble();
     return 136 + extra;
   }
 
@@ -331,15 +337,18 @@ class _TimelineUnitCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  unit.numberedTitle,
-                  maxLines: 3,
-                  overflow: TextOverflow.clip,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: AppColors.ink800,
-                    fontSize: 11.2,
-                    fontWeight: FontWeight.w800,
-                    height: 1.12,
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(
+                    unit.numberedTitle,
+                    maxLines: 3,
+                    overflow: TextOverflow.clip,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: AppColors.ink800,
+                      fontSize: 11.2,
+                      fontWeight: FontWeight.w800,
+                      height: 1.12,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -353,14 +362,16 @@ class _TimelineUnitCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.x1),
-                Text(
-                  unit.subtitle,
-                  maxLines: 4,
-                  overflow: TextOverflow.clip,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: bodyColor,
-                    fontSize: 9.4,
-                    height: 1.16,
+                Expanded(
+                  child: Text(
+                    unit.subtitle,
+                    maxLines: 4,
+                    overflow: TextOverflow.clip,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: bodyColor,
+                      fontSize: 9.4,
+                      height: 1.16,
+                    ),
                   ),
                 ),
               ],

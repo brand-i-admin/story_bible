@@ -14,9 +14,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 카드 280px (썸네일+제목+위치+요약+인물) + 핸들 + padding.
   static const double _selectionSheetCardOnlyHeight = 390;
 
-  /// 시간순 구간 선택은 한 줄 가로 카드 레일이므로, 구간 개수와 무관하게
-  /// 짧은 카드 설명이 보이는 1줄 높이에 맞춘다.
-  static const double _selectionSheetTimelineUnitHeight = 230;
   static const Duration _emotionMapPreStampDelay = Duration(milliseconds: 500);
   static const Duration _emotionMapPostStampDelay = Duration(seconds: 1);
   static const Duration _emotionMapStampFallbackSlack = Duration(
@@ -404,7 +401,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
       return _sheetFractionForHeight(
         size,
-        _selectionSheetTimelineUnitHeight,
+        timelineUnitPickPanelSheetHeightFor(context),
         min: 0.22,
         max: 0.42,
       );

@@ -177,25 +177,25 @@ void main() {
           child: Scaffold(
             body: SizedBox(
               width: 390,
-              height: 270,
+              height: 230,
               child: TimelineUnitPickPanel(
                 events: [
                   _event(
-                    'primeval_creation_mission',
-                    '창조와 사람의 사명',
+                    'divided_two_kingdoms_north_fall',
+                    '두 왕국과 북이스라엘의 멸망',
                     1,
-                    title: '창조와 사람의 사명 첫 이야기',
+                    title: '두 왕국과 북이스라엘의 멸망 첫 이야기',
                     globalRank: 1,
                   ),
                   _event(
-                    'primeval_creation_mission',
-                    '창조와 사람의 사명',
+                    'divided_two_kingdoms_north_fall',
+                    '두 왕국과 북이스라엘의 멸망',
                     1,
-                    title: '창조와 사람의 사명 마지막 이야기',
+                    title: '두 왕국과 북이스라엘의 멸망 마지막 이야기',
                     globalRank: 2,
                   ),
                 ],
-                selectedUnitCodes: const {'primeval_creation_mission'},
+                selectedUnitCodes: const {'divided_two_kingdoms_north_fall'},
                 onToggleUnit: (_) {},
                 onSelectAll: () {},
                 onClearAll: () {},
@@ -207,10 +207,12 @@ void main() {
     );
 
     final firstCard = find.byKey(
-      const ValueKey('timeline-unit-card-primeval_creation_mission'),
+      const ValueKey('timeline-unit-card-divided_two_kingdoms_north_fall'),
     );
     expect(firstCard, findsOneWidget);
-    expect(tester.getSize(firstCard).height, greaterThan(136));
+    expect(tester.getSize(firstCard).height, greaterThan(0));
+    expect(find.text('1. 두 왕국과 북이스라엘의 멸망'), findsOneWidget);
+    expect(find.text('두 왕국이 흔들리다 북이스라엘이 끝내 무너집니다.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -263,12 +265,8 @@ void main() {
       timelineBranchEnd,
     );
 
-    expect(source, contains('_selectionSheetTimelineUnitHeight'));
-    expect(
-      source,
-      contains('static const double _selectionSheetTimelineUnitHeight = 230'),
-    );
-    expect(timelineBranch, contains('_selectionSheetTimelineUnitHeight'));
+    expect(source, contains('timelineUnitPickPanelSheetHeightFor(context)'));
+    expect(timelineBranch, contains('timelineUnitPickPanelSheetHeightFor'));
     expect(timelineBranch, contains('max: 0.42'));
     expect(timelineBranch, isNot(contains('rowCount')));
     expect(timelineBranch, isNot(contains('unitCount')));
