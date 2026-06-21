@@ -482,7 +482,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       return (
         message:
-            '오늘은 성경 어디를 여행해볼까요?\n⓪ (성경 구절 검색은 상단 🔍 클릭)\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
+            '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 상단 🔍 클릭)',
         avatarSize: 70,
       );
     }

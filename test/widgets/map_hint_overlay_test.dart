@@ -68,7 +68,7 @@ void main() {
         home: Scaffold(
           body: MapHintOverlay(
             message:
-                '오늘은 성경 어디를 여행해볼까요?\n⓪ (성경 구절 검색은 상단 🔍 클릭)\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
+                '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 상단 🔍 클릭)',
           ),
         ),
       ),
@@ -78,13 +78,17 @@ void main() {
     expect(find.text('(성경 구절 검색은 상단 🔍 클릭)'), findsOneWidget);
     expect(find.text('먼저 시대를 고르고'), findsOneWidget);
     expect(find.text('시간 순·인물·장소 중 선택해 주세요.'), findsOneWidget);
-    expect(find.byKey(const ValueKey('map-hint-step-badge-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('map-hint-step-badge-0')), findsNothing);
     expect(find.byKey(const ValueKey('map-hint-step-badge-1')), findsOneWidget);
     expect(find.byKey(const ValueKey('map-hint-step-badge-2')), findsOneWidget);
-    final zerothStep = tester.widget<Text>(find.text('(성경 구절 검색은 상단 🔍 클릭)'));
+    expect(
+      find.byKey(const ValueKey('map-hint-aside-line-(성경 구절 검색은 상단 🔍 클릭)')),
+      findsOneWidget,
+    );
+    final aside = tester.widget<Text>(find.text('(성경 구절 검색은 상단 🔍 클릭)'));
     final firstStep = tester.widget<Text>(find.text('먼저 시대를 고르고'));
     final secondStep = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
-    expect(zerothStep.style?.fontSize, firstStep.style?.fontSize);
+    expect(aside.style?.fontSize, lessThan(firstStep.style?.fontSize ?? 0));
     expect(firstStep.style?.fontSize, secondStep.style?.fontSize);
   });
 
@@ -97,7 +101,7 @@ void main() {
             child: MapHintOverlay(
               avatarSize: 70,
               message:
-                  '오늘은 성경 어디를 여행해볼까요?\n⓪ (성경 구절 검색은 상단 🔍 클릭)\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
+                  '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 상단 🔍 클릭)',
             ),
           ),
         ),
@@ -108,15 +112,15 @@ void main() {
     expect(title.maxLines, 1);
     expect(title.style?.shadows, isEmpty);
 
-    final zerothStep = tester.widget<Text>(find.text('(성경 구절 검색은 상단 🔍 클릭)'));
+    final aside = tester.widget<Text>(find.text('(성경 구절 검색은 상단 🔍 클릭)'));
     final firstStep = tester.widget<Text>(find.text('먼저 시대를 고르고'));
     final secondStep = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
-    expect(zerothStep.maxLines, 2);
+    expect(aside.maxLines, 1);
     expect(firstStep.maxLines, 2);
     expect(secondStep.maxLines, 2);
-    expect(zerothStep.style?.fontSize, firstStep.style?.fontSize);
+    expect(aside.style?.fontSize, lessThan(firstStep.style?.fontSize ?? 0));
     expect(firstStep.style?.fontSize, secondStep.style?.fontSize);
-    expect(zerothStep.style?.shadows, isEmpty);
+    expect(aside.style?.shadows, isEmpty);
     expect(firstStep.style?.shadows, isEmpty);
     expect(secondStep.style?.shadows, isEmpty);
     expect(
@@ -150,7 +154,7 @@ void main() {
       null,
     );
     final introSize = await pumpAndAvatarSize(
-      '오늘은 성경 어디를 여행해볼까요?\n⓪ (성경 구절 검색은 상단 🔍 클릭)\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
+      '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 상단 🔍 클릭)',
       70,
     );
 
@@ -176,9 +180,10 @@ void main() {
     expect(source, contains('오늘은 성경 어디를 여행해볼까요?'));
     expect(source, contains('avatarSize: 70'));
     expect(source, contains('avatarSize: mapHint.avatarSize ?? 48'));
-    expect(source, contains('⓪ (성경 구절 검색은 상단 🔍 클릭)'));
     expect(source, contains('① 먼저 시대를 고르고'));
     expect(source, contains('② 시간 순·인물·장소 중 선택'));
+    expect(source, contains('(성경 구절 검색은 상단 🔍 클릭)'));
+    expect(source, isNot(contains('⓪')));
     expect(source, contains('선택한 시대: \$label'));
     expect(source, contains('창조부터 바벨까지'));
     expect(source, contains('② 아래에서 시간 순·인물·장소 중 선택'));

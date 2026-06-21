@@ -129,6 +129,11 @@ bool _isGuideStepLine(String line) {
       _GuideSpeechMessage.circledDigits.containsKey(trimmed[0]);
 }
 
+bool _isGuideAsideLine(String line) {
+  final trimmed = line.trim();
+  return trimmed.startsWith('(') && trimmed.endsWith(')');
+}
+
 class _GuideSpeechBubble extends StatelessWidget {
   const _GuideSpeechBubble({required this.message});
 
@@ -157,12 +162,7 @@ class _GuideSpeechMessage extends StatelessWidget {
 
   final String message;
 
-  static const circledDigits = <String, String>{
-    '⓪': '0',
-    '①': '1',
-    '②': '2',
-    '③': '3',
-  };
+  static const circledDigits = <String, String>{'①': '1', '②': '2', '③': '3'};
 
   @override
   Widget build(BuildContext context) {
@@ -187,6 +187,19 @@ class _GuideSpeechMessage extends StatelessWidget {
                     textStyle: textStyle,
                   ),
                 )
+              : _isAsideLine(line)
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 25),
+                  child: _GuideScaledTextLine(
+                    key: ValueKey('map-hint-aside-line-${line.trim()}'),
+                    text: line.trim(),
+                    style: textStyle.copyWith(
+                      color: Colors.white.withValues(alpha: 0.84),
+                      fontSize: 11.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                )
               : Padding(
                   padding: const EdgeInsets.only(bottom: 4),
                   child: _GuideScaledTextLine(
@@ -201,6 +214,10 @@ class _GuideSpeechMessage extends StatelessWidget {
 
   bool _isStepLine(String line) {
     return _isGuideStepLine(line);
+  }
+
+  bool _isAsideLine(String line) {
+    return _isGuideAsideLine(line);
   }
 }
 
