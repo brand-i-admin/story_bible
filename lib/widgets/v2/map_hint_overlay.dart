@@ -157,7 +157,12 @@ class _GuideSpeechMessage extends StatelessWidget {
 
   final String message;
 
-  static const circledDigits = <String, String>{'①': '1', '②': '2', '③': '3'};
+  static const circledDigits = <String, String>{
+    '⓪': '0',
+    '①': '1',
+    '②': '2',
+    '③': '3',
+  };
 
   @override
   Widget build(BuildContext context) {

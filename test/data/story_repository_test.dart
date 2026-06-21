@@ -12,6 +12,7 @@ StoryEvent _event({
   String? placeName,
   List<String> storyScenes = const [],
   List<String> characterCodes = const [],
+  List<BibleRef> bibleRefs = const <BibleRef>[],
 }) {
   return StoryEvent(
     id: id,
@@ -32,7 +33,7 @@ StoryEvent _event({
     lat: null,
     lng: null,
     characterCodes: characterCodes,
-    bibleRefs: const <BibleRef>[],
+    bibleRefs: bibleRefs,
   );
 }
 
@@ -89,6 +90,83 @@ void main() {
       final event = _event(title: 'Exodus');
       final score = scoreEventMatch(event, 'exodus', const ['exodus']);
       expect(score, greaterThan(0));
+    });
+  });
+
+  group('eventContainsBibleVerse', () {
+    test('단일 절 참조가 선택 절과 일치하면 true', () {
+      final event = _event(
+        title: '니고데모를 만나다',
+        bibleRefs: const [BibleRef(book: '요', from: '3:16', to: '3:16')],
+      );
+
+      expect(
+        eventContainsBibleVerse(event, bookNo: 43, chapterNo: 3, verseNo: 16),
+        isTrue,
+      );
+    });
+
+    test('같은 장 범위 안의 절을 포함한다', () {
+      final event = _event(
+        title: '요셉이 유혹을 이기다',
+        bibleRefs: const [BibleRef(book: '창', from: '39:1', to: '39:23')],
+      );
+
+      expect(
+        eventContainsBibleVerse(event, bookNo: 1, chapterNo: 39, verseNo: 12),
+        isTrue,
+      );
+      expect(
+        eventContainsBibleVerse(event, bookNo: 1, chapterNo: 39, verseNo: 24),
+        isFalse,
+      );
+    });
+
+    test('여러 장에 걸친 범위 안의 절을 포함한다', () {
+      final event = _event(
+        title: '천지 창조',
+        bibleRefs: const [BibleRef(book: '창', from: '1:31', to: '2:3')],
+      );
+
+      expect(
+        eventContainsBibleVerse(event, bookNo: 1, chapterNo: 2, verseNo: 1),
+        isTrue,
+      );
+      expect(
+        eventContainsBibleVerse(event, bookNo: 1, chapterNo: 2, verseNo: 4),
+        isFalse,
+      );
+    });
+
+    test('여러 성경 본문 중 하나라도 선택 절을 포함하면 true', () {
+      final event = _event(
+        title: '두 본문 사건',
+        bibleRefs: const [
+          BibleRef(book: '마', from: '1:1', to: '1:17'),
+          BibleRef(book: '눅', from: '2:1', to: '2:20'),
+        ],
+      );
+
+      expect(
+        eventContainsBibleVerse(event, bookNo: 42, chapterNo: 2, verseNo: 7),
+        isTrue,
+      );
+    });
+
+    test('다른 책이거나 잘못된 입력이면 false', () {
+      final event = _event(
+        title: '산상수훈',
+        bibleRefs: const [BibleRef(book: '마', from: '5:1', to: '5:12')],
+      );
+
+      expect(
+        eventContainsBibleVerse(event, bookNo: 41, chapterNo: 5, verseNo: 3),
+        isFalse,
+      );
+      expect(
+        eventContainsBibleVerse(event, bookNo: 40, chapterNo: 0, verseNo: 3),
+        isFalse,
+      );
     });
   });
 }

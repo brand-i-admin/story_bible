@@ -481,7 +481,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         );
       }
       return (
-        message: '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
+        message:
+            '오늘은 성경 어디를 여행해볼까요?\n⓪ (성경 구절 검색은 상단 🔍 클릭)\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.',
         avatarSize: 70,
       );
     }
@@ -1196,6 +1197,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onStartQuiz: _startQuiz,
           onOpenEventDetail: _openEventDetailPage,
           onLoginRequired: _showLoginRequiredSnackBar,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openBibleVerseSearch() async {
+    if (!mounted) {
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BibleVerseSearchScreen(
+          onOpenEventDetail: (event) => _openEventDetailPage(event),
         ),
       ),
     );
@@ -2542,6 +2556,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               children: [
                                 // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
                                 // 항상 일부 보이므로 별도 토글 불필요.
+                                topUtilityIconButton(
+                                  icon: Icons.search_rounded,
+                                  tooltip: '성경 구절로 이야기 찾기',
+                                  onTap: _openBibleVerseSearch,
+                                ),
+                                const SizedBox(width: 4),
                                 topUtilityButton(
                                   label: '성경',
                                   onTap: _openBibleReaderPopup,

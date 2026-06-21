@@ -23,6 +23,7 @@ class ProfileEventReviewGrid extends StatelessWidget {
     this.padding = const EdgeInsets.fromLTRB(2, 0, 2, 12),
     this.crossAxisCount = 3,
     this.mainAxisExtent = 226,
+    this.scrollable = true,
   });
 
   final List<StoryEvent> events;
@@ -36,6 +37,7 @@ class ProfileEventReviewGrid extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final int crossAxisCount;
   final double mainAxisExtent;
+  final bool scrollable;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,51 @@ class ProfileEventReviewGrid extends StatelessWidget {
     final eventsByEra = <String, List<StoryEvent>>{};
     for (final event in sortedEvents) {
       eventsByEra.putIfAbsent(event.eraId, () => <StoryEvent>[]).add(event);
+    }
+
+    if (!scrollable) {
+      return Padding(
+        padding: padding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final entry in eventsByEra.entries) ...[
+              _ProfileEventEraDivider(
+                label: eraById[entry.key]?.name ?? '시대 미상',
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2, 8, 2, 14),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    mainAxisExtent: mainAxisExtent,
+                  ),
+                  itemCount: entry.value.length,
+                  itemBuilder: (context, index) {
+                    final event = entry.value[index];
+                    return StoryEventThumbCard(
+                      event: event,
+                      era: eraById[event.eraId],
+                      charactersByCode: charactersByCode,
+                      selected: false,
+                      completed: completedEventIds.contains(event.id),
+                      emotionKey: eventEmotionMarks[event.id]?.emotionKey,
+                      attemptSummary: quizAttemptSummaries[event.id],
+                      orderNumber: event.storyIndex,
+                      loader: loader,
+                      onTap: () => onOpenEventDetail(event),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
     }
 
     return Padding(

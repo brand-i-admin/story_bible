@@ -11,6 +11,7 @@ import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
+import '../utils/bible_book_meta.dart';
 import 'character_name_fallbacks.dart';
 
 class StoryRepository {
@@ -103,6 +104,28 @@ class StoryRepository {
         .inFilter('id', eventIds.toList())
         .order('global_rank', ascending: true);
     return _visibleEventsFromRows(rows);
+  }
+
+  Future<List<StoryEvent>> fetchEventsContainingBibleVerse({
+    required int bookNo,
+    required int chapterNo,
+    required int verseNo,
+  }) async {
+    final rows = await _client
+        .from('events_ordered')
+        .select()
+        .order('global_rank', ascending: true);
+    final events = await _visibleEventsFromRows(rows);
+    return events
+        .where(
+          (event) => eventContainsBibleVerse(
+            event,
+            bookNo: bookNo,
+            chapterNo: chapterNo,
+            verseNo: verseNo,
+          ),
+        )
+        .toList(growable: false);
   }
 
   Future<Set<String>> fetchSavedEventIds(String userId) async {
@@ -611,6 +634,33 @@ int scoreEventMatch(
   }
 
   return score;
+}
+
+@visibleForTesting
+bool eventContainsBibleVerse(
+  StoryEvent event, {
+  required int bookNo,
+  required int chapterNo,
+  required int verseNo,
+}) {
+  if (bookNo <= 0 || chapterNo <= 0 || verseNo <= 0) {
+    return false;
+  }
+
+  for (final ref in event.bibleRefs) {
+    final target = parseBibleNavigationTarget(ref.displayText);
+    if (target == null) {
+      continue;
+    }
+    if (target.containsVerse(
+      bookNo: bookNo,
+      chapterNo: chapterNo,
+      verseNo: verseNo,
+    )) {
+      return true;
+    }
+  }
+  return false;
 }
 
 class _ScoredEvent {

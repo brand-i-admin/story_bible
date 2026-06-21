@@ -251,6 +251,9 @@ Widget mapControlButton({
   );
 }
 
+const double _topUtilityIconButtonHeight = 36;
+const double _topUtilityIconButtonWidth = 38;
+
 Widget topUtilityButton({
   required String label,
   required VoidCallback onTap,
@@ -273,7 +276,6 @@ Widget topUtilityButton({
   final resolvedBoxShadow =
       boxShadow ?? (selected ? AppShadows.goldGlow : null);
 
-  // 홈 상단 유틸리티 버튼들이 같은 높이와 촉감을 유지하도록 통일한다.
   return Opacity(
     opacity: enabled ? 1 : 0.42,
     child: Material(
@@ -304,6 +306,59 @@ Widget topUtilityButton({
               fontWeight: FontWeight.w800,
               height: AppLineHeights.tight,
             ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget topUtilityIconButton({
+  required IconData icon,
+  required String tooltip,
+  required VoidCallback onTap,
+  bool selected = false,
+  bool enabled = true,
+  Color? backgroundColor,
+  Color? borderColor,
+  Color? foregroundColor,
+  List<BoxShadow>? boxShadow,
+}) {
+  final resolvedBackgroundColor =
+      backgroundColor ??
+      (selected
+          ? AppColors.brownWarm2.withValues(alpha: 0.92)
+          : AppColors.ink900.withValues(alpha: 0.76));
+  final resolvedBorderColor =
+      borderColor ??
+      (selected ? AppColors.brownRim : AppColors.borderHairlineDark);
+  final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
+  final resolvedBoxShadow =
+      boxShadow ?? (selected ? AppShadows.goldGlow : null);
+
+  return Opacity(
+    opacity: enabled ? 1 : 0.42,
+    child: Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            width: _topUtilityIconButtonWidth,
+            height: _topUtilityIconButtonHeight,
+            decoration: BoxDecoration(
+              color: resolvedBackgroundColor,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: resolvedBorderColor,
+                width: selected ? 1.2 : 0.9,
+              ),
+              boxShadow: resolvedBoxShadow,
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon, color: resolvedForegroundColor, size: 18),
           ),
         ),
       ),
