@@ -422,6 +422,10 @@ def read_text_with_fallback(path: Path, encodings: list[str]) -> str:
     ) from last_error
 
 
+def has_trailing_inline_space(text: str) -> bool:
+    return bool(text) and text[-1].isspace()
+
+
 def parse_book_text_file(
     path: Path,
     *,
@@ -435,10 +439,12 @@ def parse_book_text_file(
 
     current: dict[str, str] | None = None
     current_line_no = 1
+    current_line_ended_with_space = False
     canonical_book_name = BOOK_NO_TO_NAME[book_no]
 
     for line_no, raw in enumerate(lines, start=1):
-        line = raw.replace("\ufeff", "").strip()
+        raw_without_bom = raw.replace("\ufeff", "")
+        line = raw_without_bom.strip()
         if not line:
             continue
 
@@ -464,15 +470,18 @@ def parse_book_text_file(
                 "translation": default_translation,
             }
             current_line_no = line_no
+            current_line_ended_with_space = has_trailing_inline_space(raw_without_bom)
             continue
 
         # Wrapped line: append to previous verse.
         if current is None:
             continue
         if current["verse_text"]:
-            current["verse_text"] = f"{current['verse_text']} {line}"
+            separator = " " if current_line_ended_with_space else ""
+            current["verse_text"] = f"{current['verse_text']}{separator}{line}"
         else:
             current["verse_text"] = line
+        current_line_ended_with_space = has_trailing_inline_space(raw_without_bom)
 
     if current is not None:
         rows.append(

@@ -267,11 +267,14 @@ generate-all: generate-avatars generate-story-images thumbnails
 # 전제: .env 에 SUPABASE_URL_<ENV>, .env.ops 에 SUPABASE_SERVICE_ROLE_KEY_<ENV> 설정
 # db_init.sql 실행 후 한 번 돌리면 characters/ 버킷에 124개 PNG 업로드
 # + characters.avatar_storage_path 가 채워진다.
-# 재실행 안전: --overwrite 로 덮어쓰기 가능.
+# 기본 업로드는 characters 버킷을 먼저 비운 뒤 새로 업로드한다.
+# 그래도 기존 객체가 감지되면 중단한다.
+# 강제 덮어쓰기는 upload-character-avatars-force 를 사용한다.
 
 upload-character-avatars:
 	@echo "[Makefile] Supabase Storage 에 캐릭터 아바타 업로드 (ENV=$(ENV) → ops=$(OPS_ENV))"
-	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(OPS_ENV)
+	$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(OPS_ENV) --bucket characters --strict
+	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(OPS_ENV) --fail-on-existing
 
 upload-character-avatars-force:
 	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV) → ops=$(OPS_ENV))"
@@ -355,7 +358,7 @@ export-stories-json:
 
 # .env + .env.ops 파일을 한 셸 안에서만 source 한 뒤 psql 호출.
 # ON_ERROR_STOP=1 → 첫 에러에서 즉시 중단.
-# --single-transaction → 시드 한 파일을 트랜잭션으로 감싸 부분 적용 방지.
+# --single-transaction → 자체 begin/commit 이 없는 SQL 파일만 감싸 부분 적용 방지.
 define PSQL_APPLY
 	@if [ ! -f .env ]; then echo "ERROR: .env not found"; exit 1; fi; \
 	if [ "$(OPS_ENV)" = "invalid" ]; then \
@@ -372,7 +375,11 @@ define PSQL_APPLY
 	for f in $(1); do \
 		[ -f "$$f" ] || { echo "skip (missing): $$f"; continue; }; \
 		echo "[apply] $$f"; \
-		psql "$$url" -v ON_ERROR_STOP=1 --single-transaction -f "$$f" || exit 1; \
+		if grep -Eiq '^[[:space:]]*(begin|start transaction)[[:space:];]*($$|--)' "$$f"; then \
+			psql "$$url" -v ON_ERROR_STOP=1 -f "$$f" || exit 1; \
+		else \
+			psql "$$url" -v ON_ERROR_STOP=1 --single-transaction -f "$$f" || exit 1; \
+		fi; \
 	done
 endef
 
@@ -385,8 +392,7 @@ db-init:
 	fi
 	@echo "[Makefile] db_init.sql 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR)) — DROP & RECREATE 주의"
 	@echo "[Makefile] 선행: Storage buckets 비우기 (SQL 에선 트리거 차단됨 → REST API)"
-	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(OPS_ENV) || \
-	  echo "[Makefile] (Storage purge 스킵 — service_role 키 없거나 실패, db-init 은 계속)"
+	$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(OPS_ENV) --strict
 	$(call PSQL_APPLY,db_init.sql)
 
 apply-patch:

@@ -8,6 +8,7 @@ import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_stats.dart';
 
@@ -403,5 +404,33 @@ void main() {
     expect(find.text('6월 8일 월요일'), findsOneWidget);
     expect(find.text('만나를 먹다'), findsOneWidget);
     expect(find.text('오늘 필요한 만큼 채워주심을 봅니다.'), findsOneWidget);
+  });
+
+  testWidgets('선택한 날짜는 검정 날짜와 초록 칸 배경으로 표시된다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('8'));
+    await tester.pumpAndSettle();
+
+    final selectedCell = tester.widget<AnimatedContainer>(
+      find.byKey(const ValueKey('emotion-calendar-day-2026-6-8')),
+    );
+    final decoration = selectedCell.decoration as BoxDecoration?;
+    expect(decoration?.color, AppColors.greenTint2);
+
+    final dayText = tester.widget<Text>(find.text('8'));
+    expect(dayText.style?.color, AppColors.ink900);
   });
 }

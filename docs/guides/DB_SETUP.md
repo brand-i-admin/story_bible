@@ -498,17 +498,18 @@ make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 `db-init`은 파괴적이다. 기존 DB 를 DROP/CREATE 한다. real 에서는 기본 차단되며,
 정말 신규/복구 bootstrap 이면 `CONFIRM_REAL_DB_INIT=1`을 붙인다.
 
-### 8.4 첫 실행에서 bucket warning 이 나오는 이유
+### 8.4 첫 실행에서 bucket not found 로그가 나오는 이유
 
-처음 `CONFIRM_REAL_DB_INIT=1 make db-init ENV=real`을 실행하면 이런 경고가 나올 수 있다.
+처음 `CONFIRM_REAL_DB_INIT=1 make db-init ENV=real`을 실행하면 이런 로그가 나올 수 있다.
 
 ```text
 Bucket not found
 ```
 
 `db-init`은 SQL 실행 전에 기존 Storage bucket 을 비우려 한다. 아직 bucket 이 없는
-새 프로젝트라면 비울 대상이 없으므로 warning 이 정상이다. 이후 `db_init.sql`이
-bucket 을 만든다.
+새 프로젝트라면 비울 대상이 없으므로 정상이다. 이후 `db_init.sql`이 bucket 을
+만든다. 단, service_role 키가 없거나 기존 bucket 비우기에 실패하면 기존 파일이
+남지 않도록 `db-init`은 SQL 실행 전에 중단한다.
 
 ### 8.5 Makefile 환경 매핑
 

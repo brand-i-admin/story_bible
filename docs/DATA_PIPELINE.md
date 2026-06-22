@@ -91,6 +91,9 @@ Makefile                                # 파이프라인 오케스트레이션
 #### `build_krv_seed_sql.py` — 성경 구절 SQL (독립)
 - **입력**: `assets/bible/*.txt` (66권 텍스트) 또는 CSV/TSV/JSONL
 - **출력**: `supabase/seeds/krv_bible_verses.sql` (또는 분할 파일)
+- **본문 줄바꿈 처리**: TXT 원문은 고정 폭 표시용 줄바꿈이 단어 중간에도 들어올 수 있다.
+  빌더는 이어진 줄을 붙일 때 원문 줄 끝에 실제 공백이 있으면 한 칸만 보존하고,
+  공백 없이 끊긴 줄은 바로 이어 붙여 `보\n이시며` → `보이시며`처럼 복원한다.
 - **옵션**:
   - `--input-dir assets/bible` — 입력 디렉토리
   - `--output supabase/seeds/krv_bible_verses.sql`
@@ -245,6 +248,13 @@ Makefile                                # 파이프라인 오케스트레이션
 - **stale 정리**: source 에 없는 thumbnail 자동 삭제 (빈 부모 디렉토리도 정리). 제목 기반 옛 썸네일 디렉토리는 새 짧은 디렉토리로 재생성된 뒤 orphan 으로 정리된다.
 
 > 이전에 있던 `generate_assets_vertex.py` (UI 장식 요소 일괄 생성), `generate_app_icons.py` (런처 아이콘 일괄 생성)는 사용 빈도가 낮아 폐기됨. 결과물(`assets/elements/`, iOS/Android 런처 아이콘)은 이미 생성된 상태로 유지.
+
+#### `tools/supabase/upload_character_avatars.py` — 캐릭터 아바타 Storage 업로드
+- **입력**: `assets/avatars/*.png`
+- **출력**: Supabase Storage `characters/{code}.png` + `characters.avatar_storage_path`
+- **Make target**: `make upload-character-avatars [ENV=dev|real]`, 강제 덮어쓰기는 `make upload-character-avatars-force`
+- **재실행 동작**: Make target 은 업로드 전에 `characters` 버킷을 먼저 비운다. 비운 뒤에도 기존 객체가 감지되면 중단한다. 스크립트를 직접 실행할 때만 기존 객체 skip 모드를 쓸 수 있다.
+- **네트워크 재시도**: timeout, 429, 5xx 계열 응답은 기본 3회 재시도한다. timeout 직후 재시도에서 duplicate 응답이 오면 직전 요청이 서버에 반영된 것으로 보고 정상 skip 처리한다.
 
 ### 3.3 유틸리티 스크립트
 
@@ -402,7 +412,7 @@ gcloud auth application-default login
 1. `make seed-bible-verses` → 분할 SQL `krv_bible_verses_part_*.sql` 생성
 2. `make seed-stories-characters` → `characters_seed.sql` + `200_stories_seed_part_*.sql` 생성
    (내부에서 `build-character-meta`가 한 번 실행되어 `character_meta.json`도 갱신)
-3. `make db-init` — 스키마, 함수, 트리거, RLS, eras 시드 (drop & recreate)
+3. `make db-init` — 앱 소유 Storage 버킷(`characters`, `proposal-scenes`, `proposal-characters`)을 먼저 비우고 남은 객체까지 확인/삭제한 뒤 스키마, 함수, 트리거, RLS, eras 시드 재생성 (drop & recreate). Storage purge 실패나 service_role 키 누락 시 SQL 실행 전 중단한다.
 4. `make apply-bible-verses-seeds` — KRV 31,904절 적용 (1회만)
 5. `make apply-seeds-stories-characters` — persons + events 적용 (UPSERT)
 6. `make generate-avatars` (Vertex 비용; 기존 `assets/avatars/{code}.png`는 자동 보존, 신규만 생성)

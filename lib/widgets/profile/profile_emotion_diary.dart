@@ -543,7 +543,7 @@ class _EmotionCalendarDayCell extends StatelessWidget {
         ? marks.length - _calendarVisibleEmotionMarksBeforeMore
         : 0;
     final textColor = selected
-        ? AppColors.greenBot
+        ? AppColors.ink900
         : inFocusedMonth
         ? AppColors.ink700
         : AppColors.ink150;
@@ -556,8 +556,21 @@ class _EmotionCalendarDayCell extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: AnimatedContainer(
+          key: ValueKey(
+            'emotion-calendar-day-${date.year}-${date.month}-${date.day}',
+          ),
           duration: const Duration(milliseconds: 150),
           padding: EdgeInsets.fromLTRB(4, compact ? 4 : 5, 4, 5),
+          decoration: selected
+              ? BoxDecoration(
+                  color: AppColors.greenTint2,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.greenBot.withAlpha(0x66),
+                    width: 1,
+                  ),
+                )
+              : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -657,7 +670,7 @@ class _DayNumber extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: selected ? AppColors.goldHi : AppColors.parchmentCream,
+        color: selected ? Colors.transparent : AppColors.parchmentCream,
         border: Border.all(color: AppColors.goldDeep, width: 1.1),
       ),
       child: child,

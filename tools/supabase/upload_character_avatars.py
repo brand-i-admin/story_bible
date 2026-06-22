@@ -8,6 +8,7 @@
 
 Usage:
     python3 tools/supabase/upload_character_avatars.py --env dev
+    python3 tools/supabase/upload_character_avatars.py --env prod --fail-on-existing
     python3 tools/supabase/upload_character_avatars.py --env prod --dry-run
 
 Environment variables consulted (in order):
@@ -22,6 +23,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import time
 from pathlib import Path
 
 import requests
@@ -38,6 +40,7 @@ except ImportError:
 
 AVATARS_DIR = Path(__file__).resolve().parents[2] / "assets" / "avatars"
 BUCKET = "characters"
+RETRYABLE_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 
 
 def env_var(name: str, env_suffix: str) -> str | None:
@@ -57,7 +60,10 @@ def upload_one(
     storage_path: str,
     png_bytes: bytes,
     overwrite: bool,
-) -> None:
+    timeout_sec: int,
+    retry_attempts: int,
+    retry_wait_sec: float,
+) -> str:
     url = f"{base_url}/storage/v1/object/{bucket}/{storage_path}"
     headers = {
         "Content-Type": "image/png",
@@ -65,23 +71,70 @@ def upload_one(
         "x-upsert": "true" if overwrite else "false",
         "cache-control": "3600",
     }
-    response = session.post(url, data=png_bytes, headers=headers, timeout=60)
+    response = request_with_retries(
+        session,
+        "POST",
+        url,
+        timeout_sec=timeout_sec,
+        retry_attempts=retry_attempts,
+        retry_wait_sec=retry_wait_sec,
+        data=png_bytes,
+        headers=headers,
+    )
     # Supabase Storage quirk: duplicate objects return HTTP 400 with a JSON
     # body `{"statusCode": "409", "error": "Duplicate", ...}`. The top-level
     # status is 400, so we have to peek at the body to detect the dupe case.
     if response.status_code == 409 or _is_duplicate_body(response):
         if not overwrite:
-            print(
-                f"  [skip] {storage_path} already exists "
-                "(use --overwrite to replace)"
-            )
-            return
+            return "skipped_existing"
         # overwrite=True 였는데도 409 가 나온다면 진짜 예외 상황이니 raise
     if not response.ok:
         raise RuntimeError(
             f"upload failed for {storage_path}: "
             f"{response.status_code} {response.text}"
         )
+    return "uploaded"
+
+
+def request_with_retries(
+    session: requests.Session,
+    method: str,
+    url: str,
+    *,
+    timeout_sec: int,
+    retry_attempts: int,
+    retry_wait_sec: float,
+    **kwargs: object,
+) -> requests.Response:
+    attempts = max(1, retry_attempts)
+    for attempt in range(1, attempts + 1):
+        try:
+            response = session.request(method, url, timeout=timeout_sec, **kwargs)
+        except requests.exceptions.RequestException as exc:
+            if attempt >= attempts:
+                raise
+            print(
+                f"  [retry] {method} {url} failed on attempt "
+                f"{attempt}/{attempts}: {exc}",
+                file=sys.stderr,
+            )
+            time.sleep(retry_wait_sec)
+            continue
+
+        if (
+            response.status_code in RETRYABLE_STATUS_CODES
+            and attempt < attempts
+        ):
+            print(
+                f"  [retry] {method} {url} returned {response.status_code} "
+                f"on attempt {attempt}/{attempts}",
+                file=sys.stderr,
+            )
+            time.sleep(retry_wait_sec)
+            continue
+        return response
+
+    raise AssertionError("unreachable retry state")
 
 
 def _is_duplicate_body(response: requests.Response) -> bool:
@@ -101,15 +154,26 @@ def _is_duplicate_body(response: requests.Response) -> bool:
 
 
 def update_avatar_path_rpc(
-    *, session: requests.Session, base_url: str, code: str, path: str
+    *,
+    session: requests.Session,
+    base_url: str,
+    code: str,
+    path: str,
+    timeout_sec: int,
+    retry_attempts: int,
+    retry_wait_sec: float,
 ) -> None:
     """Update the row's avatar_storage_path via PostgREST PATCH."""
     url = f"{base_url}/rest/v1/characters"
-    response = session.patch(
+    response = request_with_retries(
+        session,
+        "PATCH",
         url,
+        timeout_sec=timeout_sec,
+        retry_attempts=retry_attempts,
+        retry_wait_sec=retry_wait_sec,
         params={"code": f"eq.{code}"},
         json={"avatar_storage_path": path},
-        timeout=30,
     )
     if not response.ok:
         raise RuntimeError(
@@ -135,11 +199,46 @@ def main() -> int:
         help="Replace existing objects (x-upsert: true)",
     )
     parser.add_argument(
+        "--fail-on-existing",
+        action="store_true",
+        help=(
+            "Fail immediately if any object already exists. Use this for "
+            "db-init bootstrap uploads where the bucket must be empty."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Only print what would be uploaded",
     )
+    parser.add_argument(
+        "--timeout-sec",
+        type=int,
+        default=60,
+        help="HTTP request timeout in seconds (default: 60)",
+    )
+    parser.add_argument(
+        "--retry-attempts",
+        type=int,
+        default=3,
+        help="HTTP retry attempts for timeouts and transient 5xx/429 responses",
+    )
+    parser.add_argument(
+        "--retry-wait-sec",
+        type=float,
+        default=3.0,
+        help="Seconds to wait between retry attempts (default: 3)",
+    )
     args = parser.parse_args()
+    if args.timeout_sec <= 0:
+        print("ERROR: --timeout-sec must be greater than 0", file=sys.stderr)
+        return 2
+    if args.retry_attempts <= 0:
+        print("ERROR: --retry-attempts must be greater than 0", file=sys.stderr)
+        return 2
+    if args.retry_wait_sec < 0:
+        print("ERROR: --retry-wait-sec must be 0 or greater", file=sys.stderr)
+        return 2
 
     base_url = env_var("SUPABASE_URL", args.env)
     service_key = env_var("SUPABASE_SERVICE_ROLE_KEY", args.env)
@@ -188,18 +287,44 @@ def main() -> int:
             continue
 
         data = path.read_bytes()
-        upload_one(
+        upload_status = upload_one(
             session=session,
             base_url=base_url,
             bucket=BUCKET,
             storage_path=storage_path,
             png_bytes=data,
             overwrite=args.overwrite,
+            timeout_sec=args.timeout_sec,
+            retry_attempts=args.retry_attempts,
+            retry_wait_sec=args.retry_wait_sec,
         )
+        if upload_status == "skipped_existing" and args.fail_on_existing:
+            print(
+                f"ERROR: {BUCKET}/{storage_path} already exists. "
+                "`make upload-character-avatars` purges the characters bucket "
+                "before uploading, so this means the purge did not actually "
+                "empty the bucket. Check the purge log, or use "
+                "`make upload-character-avatars-force` only if you intentionally "
+                "want to overwrite existing Storage objects.",
+                file=sys.stderr,
+            )
+            return 1
         update_avatar_path_rpc(
-            session=session, base_url=base_url, code=code, path=storage_path
+            session=session,
+            base_url=base_url,
+            code=code,
+            path=storage_path,
+            timeout_sec=args.timeout_sec,
+            retry_attempts=args.retry_attempts,
+            retry_wait_sec=args.retry_wait_sec,
         )
-        print(f"  [ok] {path.name} -> {BUCKET}/{storage_path}")
+        if upload_status == "skipped_existing":
+            print(
+                f"  [skip] {path.name} already exists; "
+                "avatar_storage_path patched"
+            )
+        else:
+            print(f"  [ok] {path.name} -> {BUCKET}/{storage_path}")
         uploaded += 1
 
     print(f"Done: {uploaded}/{len(avatar_paths)} avatars processed")

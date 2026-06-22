@@ -565,6 +565,9 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 - **읽기 권한**: public — 프론트 `ProposalCharacterRow` 아바타 노출 +
   Edge Function 이 base64 로 재포장해 Vertex 에 전달.
 - **DB 연동**: `characters.avatar_storage_path` 가 `{code}.png` 값을 보관.
+- **운영 도구**: `make upload-character-avatars` 는 업로드 전에 `characters`
+  버킷을 먼저 비운다. 비운 뒤에도 기존 객체가 감지되면 중단하고,
+  timeout/429/5xx 응답은 재시도한다.
 
 ### `proposal-scenes` (신규, 2026-04)
 - 제안 작성 폼에서 생성된 장면 AI 이미지.
@@ -693,6 +696,11 @@ make upload-character-avatars ENV=dev
 # 5. real 운영 DB 에 적용할 patch dry-run/검토 후 적용
 make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 ```
+
+`make db-init`은 SQL 실행 전에 앱 소유 Storage 버킷(`characters`,
+`proposal-scenes`, `proposal-characters`)을 REST API로 먼저 비운다.
+service_role 키가 없거나 purge가 실패하면 기존 파일이 남지 않도록 DB 초기화도
+중단한다. 사용자 업로드 버킷인 `profile-images`는 건드리지 않는다.
 
 ### 8.4 이력 보존
 
