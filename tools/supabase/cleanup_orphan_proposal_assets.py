@@ -41,6 +41,7 @@ try:
     from dotenv import load_dotenv
 
     load_dotenv()
+    load_dotenv(".env.ops")
 except ImportError:
     pass
 

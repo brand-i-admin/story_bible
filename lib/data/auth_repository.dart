@@ -40,6 +40,12 @@ class AuthRepository {
   User? get currentUser => _client.auth.currentUser;
 
   Future<String?> signInWithApple() async {
+    if (kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.iOS &&
+            defaultTargetPlatform != TargetPlatform.macOS)) {
+      throw const AuthException('애플 로그인은 Apple 기기 앱에서만 사용할 수 있습니다.');
+    }
+
     final rawNonce = _client.auth.generateRawNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 

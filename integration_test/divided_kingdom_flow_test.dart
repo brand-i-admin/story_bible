@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -90,23 +89,29 @@ void main() {
 }
 
 const _runtimeEnv = String.fromEnvironment('ENV', defaultValue: 'dev');
+const _supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+const _supabaseAnonKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: '',
+);
 bool _supabaseInitialized = false;
 
 Future<void> _startTestApp() async {
-  await dotenv.load(fileName: '.env');
-
-  final suffix = switch (_runtimeEnv.toLowerCase()) {
-    'dev' => 'DEV',
-    'prod' || 'real' => 'PROD',
-    _ => throw StateError('Unsupported ENV="$_runtimeEnv".'),
-  };
-  final url = dotenv.env['SUPABASE_URL_$suffix'];
-  final anonKey = dotenv.env['SUPABASE_ANON_KEY_$suffix'];
-  if (url == null || url.isEmpty) {
-    throw StateError('Missing SUPABASE_URL_$suffix in .env');
+  switch (_runtimeEnv.toLowerCase()) {
+    case 'dev':
+    case 'prod':
+    case 'real':
+      break;
+    default:
+      throw StateError('Unsupported ENV="$_runtimeEnv".');
   }
-  if (anonKey == null || anonKey.isEmpty) {
-    throw StateError('Missing SUPABASE_ANON_KEY_$suffix in .env');
+  final url = _supabaseUrl.trim();
+  final anonKey = _supabaseAnonKey.trim();
+  if (url.isEmpty) {
+    throw StateError('Missing --dart-define=SUPABASE_URL.');
+  }
+  if (anonKey.isEmpty) {
+    throw StateError('Missing --dart-define=SUPABASE_ANON_KEY.');
   }
 
   if (!_supabaseInitialized) {

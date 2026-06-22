@@ -43,9 +43,10 @@ Usage:
                       ⚠️ 앱 배포 전엔 하이브리드 fallback 이 깨질 수 있음
   --skip-deletions  : Phase B 를 건너뜀 (Phase A 만 실행)
 
-Env vars required (.env):
+Env vars required (.env + .env.ops):
     SUPABASE_URL_{ENV}
     SUPABASE_SERVICE_ROLE_KEY_{ENV}
+Values are loaded from .env and .env.ops when python-dotenv is installed.
 """
 
 from __future__ import annotations
@@ -62,6 +63,7 @@ try:
     from dotenv import load_dotenv
 
     load_dotenv()
+    load_dotenv(".env.ops")
 except ImportError:
     pass
 

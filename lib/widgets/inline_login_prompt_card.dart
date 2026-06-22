@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +32,11 @@ class InlineLoginPromptCard extends ConsumerStatefulWidget {
 class _InlineLoginPromptCardState extends ConsumerState<InlineLoginPromptCard> {
   bool _submitting = false;
   String? _error;
+
+  bool get _showAppleSignIn =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
 
   Future<void> _handleAppleSignIn() async {
     if (_submitting) {
@@ -196,25 +204,27 @@ class _InlineLoginPromptCardState extends ConsumerState<InlineLoginPromptCard> {
                   child: const Text('Google로 로그인'),
                 ),
               ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 40,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF161616),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              if (_showAppleSignIn) ...[
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 40,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF161616),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 13.8,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
-                    textStyle: const TextStyle(
-                      fontSize: 13.8,
-                      fontWeight: FontWeight.w900,
-                    ),
+                    onPressed: _handleAppleSignIn,
+                    child: const Text('Apple로 로그인'),
                   ),
-                  onPressed: _handleAppleSignIn,
-                  child: const Text('Apple로 로그인'),
                 ),
-              ),
+              ],
               if (_error != null) ...[
                 const SizedBox(height: 10),
                 Text(

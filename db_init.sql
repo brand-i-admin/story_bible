@@ -2871,6 +2871,7 @@ create table if not exists notifications (
     'new_proposal_admin',
     'proposal_approved',
     'proposal_rejected',
+    'proposal_position_invalidated',
     'quiz_completed'
   )),
   title text not null,

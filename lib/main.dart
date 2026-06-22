@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,11 +11,14 @@ import 'services/push_service.dart';
 import 'state/font_scale_providers.dart';
 
 const _runtimeEnv = String.fromEnvironment('ENV', defaultValue: 'dev');
+const _supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+const _supabaseAnonKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: '',
+);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await dotenv.load(fileName: '.env');
 
   final supabaseConfig = _resolveSupabaseConfig();
 
@@ -49,22 +51,31 @@ Future<void> main() async {
 
 SupabaseConfig _resolveSupabaseConfig() {
   final normalizedEnv = _runtimeEnv.toLowerCase();
-  final suffix = switch (normalizedEnv) {
-    'dev' => 'DEV',
-    'prod' || 'real' => 'PROD',
-    _ => throw StateError(
-      'Unsupported ENV="$_runtimeEnv". Use ENV=dev, ENV=real, or ENV=prod.',
-    ),
-  };
-
-  final url = dotenv.env['SUPABASE_URL_$suffix'];
-  final anonKey = dotenv.env['SUPABASE_ANON_KEY_$suffix'];
-
-  if (url == null || url.isEmpty) {
-    throw StateError('Missing SUPABASE_URL_$suffix in .env');
+  switch (normalizedEnv) {
+    case 'dev':
+    case 'prod':
+    case 'real':
+      break;
+    default:
+      throw StateError(
+        'Unsupported ENV="$_runtimeEnv". Use ENV=dev, ENV=real, or ENV=prod.',
+      );
   }
-  if (anonKey == null || anonKey.isEmpty) {
-    throw StateError('Missing SUPABASE_ANON_KEY_$suffix in .env');
+
+  final url = _supabaseUrl.trim();
+  final anonKey = _supabaseAnonKey.trim();
+
+  if (url.isEmpty) {
+    throw StateError(
+      'Missing --dart-define=SUPABASE_URL for ENV=$_runtimeEnv. '
+      'Use scripts/run_dev.sh or scripts/run_real.sh.',
+    );
+  }
+  if (anonKey.isEmpty) {
+    throw StateError(
+      'Missing --dart-define=SUPABASE_ANON_KEY for ENV=$_runtimeEnv. '
+      'Use scripts/run_dev.sh or scripts/run_real.sh.',
+    );
   }
 
   return SupabaseConfig(url: url, anonKey: anonKey);

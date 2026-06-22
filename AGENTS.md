@@ -9,14 +9,16 @@ Flutter + Supabase 기반의 인터랙티브 성경 지도 학습 앱이다. 앱
 ```bash
 flutter pub get
 flutter run
-flutter run --dart-define=ENV=prod
+scripts/run_real.sh
 dart format --output=none --set-exit-if-changed .
 flutter analyze
 flutter test
 ```
 
-Supabase 환경은 `--dart-define=ENV=dev|prod`로 선택한다. Python 도구는
-Python 3.10+와 로컬 가상환경을 기준으로 사용한다.
+앱 실행 Supabase 환경은 `scripts/run_dev.sh` / `scripts/run_real.sh`로
+선택한다. Makefile 운영 타겟은 기본 `ENV=dev`이며, real DB/Storage에
+적용할 때만 명시적으로 `ENV=real`을 붙인다 (`prod`도 real alias로 허용).
+Python 도구는 Python 3.10+와 로컬 가상환경을 기준으로 사용한다.
 `scripts/run_*.sh`와 `scripts/build_*.sh`는 실행 전에 `flutter clean`과
 `flutter pub get`을 자동으로 수행한다.
 

@@ -21,7 +21,7 @@ part 'selection/step_chip.dart';
 
 enum StorySelectionPanelStage { collapsed, half, expanded }
 
-const double kStorySelectionCharacterCardExtent = 116;
+const double kStorySelectionCharacterCardExtent = 124;
 const double kStorySelectionCharacterGridSpacing = 8;
 
 double storySelectionCharacterCardExtentFor(BuildContext context) {

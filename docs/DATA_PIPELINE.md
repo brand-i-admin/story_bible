@@ -5,7 +5,7 @@
 ## 0. 입력 데이터 (사람·AI 이전 단계에서 준비됨)
 
 - **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력.
-- **`assets/200_stories/*.json`** — 시대별 이야기 dict 리스트. **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용하고, AI 생성 단계는 파이프라인 밖에서 1회 수행되었다. 이후 새 이야기는 어드민 웹/수동 편집으로 같은 포맷에 맞춰 추가한다.
+- **`assets/200_stories/*.json`** — 시대별 이야기 dict 리스트. **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 입력으로만 사용한다. 현재 운영 기준에서 새 이야기는 웹 제안 화면이 아니라 로컬에서 JSON/이미지/seed를 직접 추가한다.
 
 ### 가장 단순한 흐름: KRV 성경 시드
 
@@ -320,7 +320,7 @@ make all                     # seed-all + generate-all
 ```
 
 > **`story_index`**: `assets/200_stories/*.json` 의 각 이야기에 직접 박힌 정수 (era 내 1..N).
-> 어드민 웹이 등록 시 자동 부여하며, 수동으로 JSON 편집할 때는 era 내 unique한 값을 사용자가 직접 채운다.
+> 현재 로컬 직접 편집 운영에서는 사용자가 era 내 unique한 값을 직접 채운다.
 
 ## 5. 에셋 디렉토리 구조
 
@@ -351,9 +351,9 @@ assets/
 
 ```json
 {
-  "title": "001 창조: 7일과 안식",
+  "title": "창조: 7일과 안식",
   "era": "era_primeval",
-  "persons": ["god"],
+  "characters": ["god"],
   "place_name": "메소포타미아(추정)",
   "lat": 31.018,
   "lng": 47.423,
@@ -370,7 +370,7 @@ assets/
 }
 ```
 
-- `story_index`: era 내부의 정수 순서. 어드민 웹 또는 수동 편집으로 채운다.
+- `story_index`: era 내부의 정수 순서. 현재 운영에서는 로컬 JSON 수동 편집으로 채운다.
 - `background_context`: 상세 페이지 첫 카드에 표시되는 짧은 배경 지식 문구. 해설이나 읽기 가이드, 절 주소, 이전/다음 링크, 시간순 구간명이 아니라 시대 배경과 해당 사건이 무엇을 다루는지, 서신서 작성 배경을 1~2문장으로 담는다.
 - `scene_captions`: `story_scenes`와 같은 길이의 사용자용 이미지 설명. 이미지 생성
   프롬프트가 아니라 상세 페이지 overlay에 그대로 표시되는 문구이며, summary 검수 때
@@ -386,6 +386,9 @@ source .venv/bin/activate
 # 필수 환경변수 (.env에서 로드)
 export GOOGLE_CLOUD_PROJECT="your-project-id"
 
+# DB/Storage 운영 비밀은 앱 번들에 들어가지 않는 .env.ops 에 둔다.
+# 예: SUPABASE_DB_URL_DEV/PROD, SUPABASE_SERVICE_ROLE_KEY_DEV/PROD
+
 # GCP 인증 (Vertex AI 사용 시)
 gcloud auth application-default login
 ```
@@ -393,6 +396,8 @@ gcloud auth application-default login
 ## 8. 실행 순서 (전체 초기 세팅 — drop & recreate)
 
 > psql 통해 적용 (`make db-init`, `make apply-bible-verses-seeds`, `make apply-seeds-stories-characters`).
+> Makefile 운영 타겟 기본값은 `ENV=dev`다. 새 real Supabase를 초기화할 때는
+> 각 적용/업로드 명령에 `ENV=real`을 명시한다 (`ENV=prod`도 real alias).
 
 1. `make seed-bible-verses` → 분할 SQL `krv_bible_verses_part_*.sql` 생성
 2. `make seed-stories-characters` → `characters_seed.sql` + `200_stories_seed_part_*.sql` 생성
@@ -404,12 +409,22 @@ gcloud auth application-default login
 7. `make generate-story-images` (장면 이미지 필요 시)
 8. `make thumbnails` (앱 번들용 썸네일 생성)
 9. `make update-pubspec-assets` (pubspec.yaml의 story_images_thumbs index.json + 짧은 디렉토리 자동 갱신)
-10. `flutter run` (또는 `--dart-define=ENV=prod`)
+10. `scripts/run_dev.sh` 또는 `scripts/run_real.sh`
+
+real 초기 세팅 예:
+
+```bash
+make seed-all && make thumbnails && make update-pubspec-assets
+make db-init ENV=real
+make apply-seeds ENV=real
+make upload-character-avatars ENV=real
+```
 
 ### 신규 이야기 1건 추가된 경우
-⚠️ **반드시 먼저**: 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json` (또는 `ENV=prod` 버전) 으로 DB의 published events를 JSON으로 역추출해 복원한다. 이 사전 조건을 빼먹고 부분 상태에서 빌드하면 기존 인물 description이 손상된다.
+⚠️ **반드시 먼저**: 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json` (운영 기준은 `ENV=real` 또는 `ENV=prod`) 으로 DB의 published events를 JSON으로 역추출해 복원한다. 이 사전 조건을 빼먹고 부분 상태에서 빌드하면 기존 인물 description이 손상된다.
 
 사전 조건 충족 후:
 `make seed-stories-characters && make apply-seeds-stories-characters && make generate-avatars && make thumbnails && make update-pubspec-assets`.
 
 단계별 동작과 안전성 근거(UPSERT PK, description 덮어쓰기 주의, SKIP 조건)는 [guides/CONTENT_UPDATE.md §2.1b](guides/CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로) 참조.
+개발/배포 시 어떤 target 을 dev 와 real 에 적용할지는 [guides/develop-flow.md](guides/develop-flow.md)를 따른다.

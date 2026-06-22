@@ -17,6 +17,10 @@ void main() {
         AppNotificationType.fromWire('quiz_completed'),
         AppNotificationType.quizCompleted,
       );
+      expect(
+        AppNotificationType.fromWire('proposal_position_invalidated'),
+        AppNotificationType.proposalPositionInvalidated,
+      );
     });
 
     test('알 수 없는 값은 unknown 으로 떨어진다', () {
@@ -29,7 +33,7 @@ void main() {
   });
 
   group('AppNotificationType.isProposalRelated', () {
-    test('제안 관련 5종은 true — 모바일/태블릿 다이얼로그 분기용', () {
+    test('제안 관련 타입은 true — 모바일/태블릿 다이얼로그 분기용', () {
       expect(AppNotificationType.proposalComment.isProposalRelated, isTrue);
       expect(
         AppNotificationType.proposalCommentAdmin.isProposalRelated,
@@ -38,6 +42,10 @@ void main() {
       expect(AppNotificationType.newProposalAdmin.isProposalRelated, isTrue);
       expect(AppNotificationType.proposalApproved.isProposalRelated, isTrue);
       expect(AppNotificationType.proposalRejected.isProposalRelated, isTrue);
+      expect(
+        AppNotificationType.proposalPositionInvalidated.isProposalRelated,
+        isTrue,
+      );
     });
 
     test('제안 무관 타입은 false', () {

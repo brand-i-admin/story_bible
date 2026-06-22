@@ -993,7 +993,7 @@ class StoryController extends Notifier<StoryState> {
 
     final message = error.toString();
     if (message.contains('Failed host lookup')) {
-      return '$prefix Supabase 주소를 찾지 못했습니다. .env의 SUPABASE_URL_DEV 또는 SUPABASE_URL_PROD 설정을 확인하세요.';
+      return '$prefix Supabase 주소를 찾지 못했습니다. 실행 스크립트의 SUPABASE_URL 설정을 확인하세요.';
     }
 
     return '$prefix $message';

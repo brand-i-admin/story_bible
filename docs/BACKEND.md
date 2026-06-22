@@ -258,7 +258,8 @@ is_active boolean DEFAULT true
 id uuid PK, user_id uuid FK→auth.users,
 type text CHECK IN (
   'proposal_comment','proposal_comment_admin','new_proposal_admin',
-  'proposal_approved','proposal_rejected','quiz_completed'
+  'proposal_approved','proposal_rejected','proposal_position_invalidated',
+  'quiz_completed'
 ),
 title text, body text, deep_link text, payload jsonb,
 read_at timestamptz, created_at timestamptz
@@ -642,8 +643,14 @@ tools/supabase/check_edge_functions.sh
 
 | 트랙 | 역할 | 적용 환경 | 적용 명령 |
 |------|------|----------|----------|
-| `db_init.sql` | 스키마 **단일 진실 소스** (전체 DROP & CREATE 한 파일에 응축) | 개발 DB 리셋 | `make db-init ENV=<env>` (파괴적!) |
-| `supabase/seeds/*.sql`, `supabase/200_stories/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | 개발 DB 리셋 직후 | `make apply-seeds ENV=<env>` |
+| `db_init.sql` | 스키마 **단일 진실 소스** (전체 DROP & CREATE 한 파일에 응축) | DB 리셋 | `make db-init ENV=dev\|real` (파괴적!) |
+| `supabase/seeds/*.sql`, `supabase/200_stories/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | DB 리셋 직후 | `make apply-seeds ENV=dev\|real` |
+
+Makefile 운영 타겟의 기본값은 `ENV=dev`다. real DB/Storage에 적용할 때만
+명시적으로 `ENV=real`을 붙인다 (`ENV=prod`도 real alias로 동작한다).
+신규 Supabase 환경 구축 순서와 Auth/Push/secret/Vault 체크리스트는
+[DB_SETUP.md](guides/DB_SETUP.md)를 따르고, 일상 개발/배포 순서는
+[develop-flow.md](guides/develop-flow.md)를 따른다.
 
 개발 DB 를 기준 상태로 다시 세우는 표준 시퀀스:
 

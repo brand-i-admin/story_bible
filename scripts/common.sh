@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 ENV_FILE="$ROOT_DIR/.env"
-DEV_REF="emkoqhnzeiwcwgcaasuh"
-REAL_REF="cvnutbizsgeycdjcbled"
+DEV_REF="cvnutbizsgeycdjcbled"
+REAL_REF="zmcffwcfmyhdykdhxhgy"
 
 require_command() {
   local command_name="$1"
@@ -26,15 +26,24 @@ print_target() {
   echo "Using Supabase target: $runtime_env ($project_ref)"
 }
 
+env_suffix_for_runtime() {
+  local runtime_env="$1"
+  if [[ "$runtime_env" == "dev" ]]; then
+    printf '%s' "DEV"
+  else
+    printf '%s' "PROD"
+  fi
+}
+
 validate_supabase_env() {
   local runtime_env="$1"
-  local url_key="SUPABASE_URL_DEV"
-  local anon_key_name="SUPABASE_ANON_KEY_DEV"
+  local env_suffix
+  env_suffix="$(env_suffix_for_runtime "$runtime_env")"
+  local url_key="SUPABASE_URL_${env_suffix}"
+  local anon_key_name="SUPABASE_ANON_KEY_${env_suffix}"
   local expected_ref="$DEV_REF"
 
   if [[ "$runtime_env" != "dev" ]]; then
-    url_key="SUPABASE_URL_PROD"
-    anon_key_name="SUPABASE_ANON_KEY_PROD"
     expected_ref="$REAL_REF"
   fi
 
@@ -176,14 +185,24 @@ run_flutter() {
   # 문자열을 반환해 앱은 정상 동작한다.
   local fcm_vapid_key
   fcm_vapid_key="$(read_env_value FCM_VAPID_KEY)"
+  local supabase_env_suffix
+  supabase_env_suffix="$(env_suffix_for_runtime "$runtime_env")"
+  local supabase_url
+  local supabase_anon_key
+  supabase_url="$(read_env_value "SUPABASE_URL_${supabase_env_suffix}")"
+  supabase_anon_key="$(read_env_value "SUPABASE_ANON_KEY_${supabase_env_suffix}")"
 
-  local flutter_args=("$@" --no-pub)
+  local flutter_args=(
+    "$@"
+    --no-pub
+    --dart-define=ENV="$runtime_env"
+    --dart-define=SUPABASE_URL="$supabase_url"
+    --dart-define=SUPABASE_ANON_KEY="$supabase_anon_key"
+  )
   if [[ -n "$fcm_vapid_key" ]]; then
-    exec flutter "${flutter_args[@]}" \
-      --dart-define=ENV="$runtime_env" \
-      --dart-define=FCM_VAPID_KEY="$fcm_vapid_key"
+    exec flutter "${flutter_args[@]}" --dart-define=FCM_VAPID_KEY="$fcm_vapid_key"
   else
-    exec flutter "${flutter_args[@]}" --dart-define=ENV="$runtime_env"
+    exec flutter "${flutter_args[@]}"
   fi
 }
 

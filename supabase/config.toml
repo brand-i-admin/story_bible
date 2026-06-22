@@ -6,6 +6,7 @@
 # Link once:  supabase link --project-ref <your-ref>
 # Deploy:     supabase functions deploy generate-proposal-scene
 #             supabase functions deploy generate-proposal-character
+#             supabase functions deploy send-push
 
 project_id = "story_bible"
 

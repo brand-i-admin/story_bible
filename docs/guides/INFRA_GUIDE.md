@@ -61,8 +61,8 @@
 
 | 구분 | 값 |
 |------|-----|
-| prod 프로젝트 ref | `cvnutbizsgeycdjcbled` |
-| 엔드포인트 | `https://cvnutbizsgeycdjcbled.supabase.co` |
+| prod 프로젝트 ref | `zmcffwcfmyhdykdhxhgy` |
+| 엔드포인트 | `https://zmcffwcfmyhdykdhxhgy.supabase.co` |
 | 지역 | ap-northeast-1 (도쿄) |
 
 ### 1.3 주요 모듈과 실제 쓰임
@@ -116,13 +116,16 @@ cron.schedule('weekly-character-monday', '0 0 * * 1',
 ```
 월요일 00:00 UTC 에 `pick_weekly_character()` 함수 자동 실행.
 
-### 1.4 연결 시크릿 (`.env`)
+### 1.4 연결 설정 (`.env` / `.env.ops`)
 
 ```
-SUPABASE_URL_PROD=https://cvnutbizsgeycdjcbled.supabase.co
+# .env — 앱 실행용 공개값
+SUPABASE_URL_PROD=https://zmcffwcfmyhdykdhxhgy.supabase.co
 SUPABASE_ANON_KEY_PROD=eyJhbGciOiJIUzI1NiIs... # 클라이언트용 공개 키 (role=anon 포함)
+
+# .env.ops — 로컬 운영도구용 비밀값 (앱 번들 제외)
 SUPABASE_SERVICE_ROLE_KEY_PROD=eyJhbGciOiJIUzI1NiIs... # 서버 전용 RLS 우회 키
-SUPABASE_DB_URL_PROD=postgresql://postgres.cvnut...:<pw>@aws-1-...supabase.com:5432/postgres
+SUPABASE_DB_URL_PROD=postgresql://postgres.zmcff...:<pw>@aws-1-...supabase.com:5432/postgres
 ```
 
 **`ANON_KEY` vs `SERVICE_ROLE_KEY` 차이**:
@@ -327,7 +330,7 @@ iOS 디바이스는 "Apple 이 발행한 서명"이 없으면 **아무것도 못
 1. https://console.cloud.google.com → APIs & Services → **Credentials**
 2. Web OAuth Client
    - "+ CREATE CREDENTIALS" → "OAuth client ID" → 유형: **웹 애플리케이션**
-   - **승인된 리디렉션 URI**: `https://cvnutbizsgeycdjcbled.supabase.co/auth/v1/callback`
+   - **승인된 리디렉션 URI**: `https://zmcffwcfmyhdykdhxhgy.supabase.co/auth/v1/callback`
    - 생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기
    - 이 Web Client ID 는 Android native 로그인에서 `serverClientId` 로도 사용한다.
 3. Android OAuth Client
@@ -428,8 +431,8 @@ Kakao Developers → 내 애플리케이션 → 카카오 로그인 활성화. R
 
 | 시크릿 종류 | 파일/위치 | 누가 읽는가 | 유출 시 피해 |
 |------------|----------|------------|-------------|
-| `SUPABASE_ANON_KEY` | `.env`, 앱 번들 | 클라이언트 | 낮음 (RLS로 보호) |
-| `SUPABASE_SERVICE_ROLE_KEY` | `.env` (dev만), Supabase secrets | 관리 스크립트, Edge Function | **치명적** (RLS 우회) |
+| `SUPABASE_ANON_KEY` | `.env` → scripts가 `--dart-define`으로 주입 | 클라이언트 | 낮음 (RLS로 보호) |
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.ops`, Supabase secrets | 관리 스크립트, Edge Function | **치명적** (RLS 우회) |
 | `GCP_SERVICE_ACCOUNT_JSON` | Supabase secrets 전용 | Edge Function (Vertex AI) | Vertex AI 비용 폭탄 |
 | `FIREBASE_SERVICE_ACCOUNT` | Supabase secrets 전용 | Edge Function (send-push) | 무단 푸시 발송 |
 | APNs p8 키 | Firebase Console 업로드 | Firebase 서버 내부 | Firebase 에서 앱에 무단 푸시 |
@@ -437,11 +440,13 @@ Kakao Developers → 내 애플리케이션 → 카카오 로그인 활성화. R
 | Google OAuth Client Secret | Supabase Dashboard 업로드 | Supabase 서버 내부 | Google 로그인 위조 |
 | Firebase SDK 공개 config (apiKey, appId) | `firebase_options.dart` → **git 커밋됨** | 클라이언트 | 낮음 (§6.3) |
 
-### 6.2 `.env` 파일 규칙
+### 6.2 `.env` / `.env.ops` 파일 규칙
 
-- `.gitignore` 에 들어있어 **절대 커밋 안 됨**
-- 신규 환경 세팅: `cp .env.example .env` 후 실제 값 채우기
-- 스크립트(`scripts/common.sh`)가 실행 전 `.env` 를 파싱해 `--dart-define` 으로 주입
+- 둘 다 `.gitignore` 에 들어있어 **절대 커밋 안 됨**
+- 신규 환경 세팅: `cp .env.example .env`, `cp .env.ops.example .env.ops` 후 실제 값 채우기
+- `.env`: 앱 실행에 필요한 공개 URL/anon key, FCM VAPID 공개키
+- `.env.ops`: service role key, DB URL 처럼 앱에 들어가면 안 되는 운영 비밀
+- 스크립트(`scripts/common.sh`)가 실행 전 `.env` 를 파싱해 앱에 필요한 값만 `--dart-define` 으로 주입
 
 ### 6.3 왜 Firebase `apiKey` 는 커밋해도 되는가
 

@@ -48,7 +48,7 @@
 
 ```
 lib/
-├── main.dart              # 엔트리포인트: .env 로드, Supabase 초기화, ProviderScope
+├── main.dart              # 엔트리포인트: dart-define 기반 Supabase 초기화, ProviderScope
 ├── app.dart               # MaterialApp: 테마(Material3, 양피지 배경), 라우팅
 ├── models/                # 순수 데이터 클래스 (Supabase 행 → Dart 객체)
 ├── data/                  # Repository 패턴 (Supabase 쿼리 캡슐화)
@@ -275,9 +275,10 @@ stories JSON (소스 — 각 항목에 story_index 직접 박힘)
 
 | 환경변수 | 용도 |
 |----------|------|
-| `SUPABASE_URL_DEV` | 개발 Supabase URL |
-| `SUPABASE_ANON_KEY_DEV` | 개발 익명 키 |
-| `SUPABASE_URL_PROD` | 운영 Supabase URL |
-| `SUPABASE_ANON_KEY_PROD` | 운영 익명 키 |
+| `ENV` | 앱 런타임 환경 (`dev` / `real` / `prod`) — scripts가 `--dart-define`으로 주입 |
+| `SUPABASE_URL` | 앱이 사용할 Supabase URL — scripts가 `.env`의 선택 환경 값에서 주입 |
+| `SUPABASE_ANON_KEY` | 앱이 사용할 Supabase anon key — scripts가 `.env`의 선택 환경 값에서 주입 |
+| `SUPABASE_URL_DEV` / `SUPABASE_ANON_KEY_DEV` | scripts가 읽는 개발 Supabase 공개값 (`.env`) |
+| `SUPABASE_URL_PROD` / `SUPABASE_ANON_KEY_PROD` | scripts가 읽는 운영 Supabase 공개값 (`.env`) |
+| `SUPABASE_SERVICE_ROLE_KEY_*` / `SUPABASE_DB_URL_*` | 로컬 운영도구 전용 비밀값 (`.env.ops`, 앱 번들 제외) |
 | `GOOGLE_CLOUD_PROJECT` | Vertex AI 프로젝트 ID |
-| `ENV` | 런타임 환경 (`dev` / `prod`) — `--dart-define=ENV=prod` |

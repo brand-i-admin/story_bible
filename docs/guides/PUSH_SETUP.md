@@ -2,7 +2,7 @@
 
 Story Bible 앱은 Firebase Cloud Messaging(FCM) HTTP v1 API 로 푸시 알림을 보낸다. 이 문서는 **신규 환경 세팅 시 1회만** 수행하는 Firebase Console 작업과 Flutter/Supabase 연동 절차를 단계별로 안내한다.
 
-현재 코드 상태: `firebase_core`/`firebase_messaging` 의존성은 이미 설치되어 있지만, `lib/firebase_options.dart` 가 placeholder 라 런타임에 Firebase 초기화가 실패한다 (앱은 try-catch 로 계속 동작). 본 가이드를 마치면 푸시가 활성화된다.
+현재 코드 상태: `firebase_core`/`firebase_messaging` 의존성과 `lib/firebase_options.dart` 는 이미 들어 있다. Firebase 프로젝트를 새로 나누거나 재설정하면 `flutterfire configure` 를 다시 실행하고, `web/firebase-messaging-sw.js` 의 Firebase config 도 함께 동기화한다.
 
 ## 1. Firebase 프로젝트 생성
 
@@ -128,6 +128,8 @@ supabase secrets set FIREBASE_SERVICE_ACCOUNT="$(cat firebase-admin-sdk.json)"
 # 2) send-push 함수 배포
 supabase functions deploy send-push
 ```
+
+`supabase secrets set` 으로 저장한 값은 앱이나 git 에 들어가지 않고 해당 Supabase 프로젝트의 Edge Function 런타임 환경변수로 저장된다. 즉 `FIREBASE_SERVICE_ACCOUNT` 는 `send-push` 함수 안에서만 읽을 수 있는 서버용 비밀이다.
 
 ## 8. DB → send-push 자동 디스패치 (2026-05-11 도입)
 

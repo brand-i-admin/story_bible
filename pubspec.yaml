@@ -36,7 +36,6 @@ dependencies:
   flutter_map: ^8.2.1
   flutter_map_marker_cluster: ^8.2.2
   latlong2: ^0.9.1
-  flutter_dotenv: ^5.2.1
   google_sign_in: ^6.3.0
   sign_in_with_apple: ^6.1.4
   image_picker: ^1.1.2
@@ -93,7 +92,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env
     - assets/maps/ne_50m_admin_0_countries.geojson
     - assets/avatars_thumbs/
     - assets/story_images_thumbs/index.json

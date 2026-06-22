@@ -129,6 +129,8 @@ class NotificationListTile extends StatelessWidget {
         return Icons.check_circle_outline;
       case AppNotificationType.proposalRejected:
         return Icons.cancel_outlined;
+      case AppNotificationType.proposalPositionInvalidated:
+        return Icons.edit_location_alt_outlined;
       case AppNotificationType.quizCompleted:
         return Icons.emoji_events_outlined;
       case AppNotificationType.newEvent:

@@ -41,6 +41,7 @@ try:
     from dotenv import load_dotenv
 
     load_dotenv()
+    load_dotenv(".env.ops")
 except ImportError:
     pass
 
@@ -70,9 +71,25 @@ def empty_bucket(
         return False, f"request error: {exc}"
     if r.ok:
         return True, f"emptied"
-    if r.status_code == 404:
+    if r.status_code == 404 or _is_bucket_not_found_body(r):
         return True, "bucket not found (first init?) — skip"
     return False, f"HTTP {r.status_code}: {r.text[:200]}"
+
+
+def _is_bucket_not_found_body(response: requests.Response) -> bool:
+    """Supabase Storage sometimes returns HTTP 400 with a 404 JSON body."""
+    try:
+        body = response.json()
+    except ValueError:
+        return False
+    if not isinstance(body, dict):
+        return False
+    status_code = str(body.get("statusCode", ""))
+    message = str(body.get("message", "")).lower()
+    error = str(body.get("error", "")).lower()
+    return status_code == "404" and (
+        "bucket not found" in message or "bucket not found" in error
+    )
 
 
 def main() -> int:

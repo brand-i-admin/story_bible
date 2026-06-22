@@ -85,10 +85,29 @@ void main() {
     final delegate =
         grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
     expect(delegate.mainAxisExtent, kStorySelectionCharacterCardExtent);
-    expect(delegate.mainAxisExtent, lessThan(120));
+    expect(delegate.mainAxisExtent, lessThan(128));
 
     final identityText = tester.widget<Text>(find.text('남유다 20대\n마지막 왕'));
     expect(identityText.maxLines, 3);
+  });
+
+  testWidgets('real 데이터처럼 3줄로 접히는 인물 설명도 overflow 없이 표시한다', (tester) async {
+    const character = Character(
+      id: 'c-baasha',
+      code: 'baasha',
+      name: '바아사',
+      tagline: '북이스라엘 3대 왕 나답을 몰아냄',
+      description: '바아사는 북이스라엘의 왕이다.',
+      avatarUrl: null,
+      displayOrder: 1,
+    );
+
+    await tester.pumpWidget(characterPanelHarness(character: character));
+    await tester.pump();
+
+    expect(find.text('바아사'), findsOneWidget);
+    expect(find.text('북이스라엘\n3대 왕 나답을\n몰아냄'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('아주크게 글자 크기에서도 인물 카드 텍스트가 카드 밖으로 넘치지 않는다', (tester) async {

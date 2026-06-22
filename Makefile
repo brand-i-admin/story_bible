@@ -7,7 +7,8 @@
 #
 # 선행 조건:
 #   - source .venv/bin/activate (Python 가상환경)
-#   - .env 설정 (GOOGLE_CLOUD_PROJECT 등)
+#   - .env 설정 (앱 실행용 공개 Supabase URL/anon key 등)
+#   - .env.ops 설정 (DB URL, service_role 등 운영 비밀 — 앱 번들 제외)
 #
 # 상세: docs/DATA_PIPELINE.md
 
@@ -93,29 +94,29 @@ help:
 	@echo "DB → 로컬 동기화:"
 	@echo "  export-stories-json       [ENV=dev]  DB events → assets/200_stories/*.json 역추출 (빌더 사전 조건)"
 	@echo ""
-	@echo "DB 적용 (psql + .env의 SUPABASE_DB_URL_$(ENV)):"
-	@echo "  db-init                   [ENV=dev]  db_init.sql 실행 (drop & recreate, 파괴적!)"
-	@echo "  apply-bible-verses-seeds  [ENV=dev]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
-	@echo "  apply-seeds-stories-characters       [ENV=dev]  characters + 200_stories + scene_captions 적용 (UPSERT — 재실행 안전)"
-	@echo "  apply-seeds-quizzes                  [ENV=dev]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
-	@echo "  apply-seeds-daily-quiz               [ENV=dev]  daily_quiz 적용 (slug UPSERT — 재실행 안전)"
-	@echo "  apply-seeds               [ENV=dev]  전체 시드 적용 (최초 부트스트랩용)"
+	@echo "DB 적용 (psql + .env.ops의 SUPABASE_DB_URL_DEV/PROD; ENV=real은 PROD 사용):"
+	@echo "  db-init                   [ENV=dev|real]  db_init.sql 실행 (drop & recreate, 파괴적!)"
+	@echo "  apply-bible-verses-seeds  [ENV=dev|real]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
+	@echo "  apply-seeds-stories-characters       [ENV=dev|real]  characters + 200_stories + scene_captions 적용 (UPSERT — 재실행 안전)"
+	@echo "  apply-seeds-quizzes                  [ENV=dev|real]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
+	@echo "  apply-seeds-daily-quiz               [ENV=dev|real]  daily_quiz 적용 (slug UPSERT — 재실행 안전)"
+	@echo "  apply-seeds               [ENV=dev|real]  전체 시드 적용 (최초 부트스트랩용)"
 	@echo ""
 	@echo "Supabase Storage (service_role 키 필요):"
-	@echo "  upload-character-avatars        [ENV=dev]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
-	@echo "  upload-character-avatars-force  [ENV=dev]  전부 덮어쓰기 업로드 (--overwrite)"
+	@echo "  upload-character-avatars        [ENV=dev|real]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
+	@echo "  upload-character-avatars-force  [ENV=dev|real]  전부 덮어쓰기 업로드 (--overwrite)"
 	@echo ""
 	@echo "승인된 제안 → 로컬 assets 동기화 (service_role 키 필요, idempotent):"
 	@echo "  - Phase A: 승인된 신규 제안의 PNG 다운로드(synced_to_local_at NULL 만)"
 	@echo "  - Phase B: 삭제 승인된 events / 비활성화된 characters 의 로컬+storage 잔존 정리"
-	@echo "  sync-approved-proposal-assets         [ENV=dev]  Phase A + B 자동 실행"
-	@echo "  sync-approved-proposal-assets-all     [ENV=dev]  Phase A 마커 무시하고 재동기화 + B"
-	@echo "  sync-approved-proposal-assets-dry     [ENV=dev]  dry-run — 대상 목록만 출력"
-	@echo "  sync-approved-proposal-assets-clean   [ENV=dev]  Phase A 동기화 후 proposal-* 원본 삭제 (앱 배포 후에만!)"
+	@echo "  sync-approved-proposal-assets         [ENV=dev|real]  Phase A + B 자동 실행"
+	@echo "  sync-approved-proposal-assets-all     [ENV=dev|real]  Phase A 마커 무시하고 재동기화 + B"
+	@echo "  sync-approved-proposal-assets-dry     [ENV=dev|real]  dry-run — 대상 목록만 출력"
+	@echo "  sync-approved-proposal-assets-clean   [ENV=dev|real]  Phase A 동기화 후 proposal-* 원본 삭제 (앱 배포 후에만!)"
 	@echo ""
 	@echo "미제출 제안 고아 자산 정리 (주기적 운영 — 24h grace window):"
-	@echo "  cleanup-orphan-proposal-assets-dry    [ENV=dev]  dry-run — 삭제 후보만 나열"
-	@echo "  cleanup-orphan-proposal-assets        [ENV=dev]  실제 삭제"
+	@echo "  cleanup-orphan-proposal-assets-dry    [ENV=dev|real]  dry-run — 삭제 후보만 나열"
+	@echo "  cleanup-orphan-proposal-assets        [ENV=dev|real]  실제 삭제"
 	@echo ""
 	@echo "기타:"
 	@echo "  update-pubspec-assets   story_images_thumbs 경로를 pubspec.yaml에 반영"
@@ -261,18 +262,18 @@ generate-all: generate-avatars generate-story-images thumbnails
 # =============================================================================
 # Supabase Storage 업로드 (아바타)
 # =============================================================================
-# 전제: .env 에 SUPABASE_URL_<ENV>, SUPABASE_SERVICE_ROLE_KEY_<ENV> 설정
+# 전제: .env 에 SUPABASE_URL_<ENV>, .env.ops 에 SUPABASE_SERVICE_ROLE_KEY_<ENV> 설정
 # db_init.sql 실행 후 한 번 돌리면 characters/ 버킷에 124개 PNG 업로드
 # + characters.avatar_storage_path 가 채워진다.
 # 재실행 안전: --overwrite 로 덮어쓰기 가능.
 
 upload-character-avatars:
-	@echo "[Makefile] Supabase Storage 에 캐릭터 아바타 업로드 (ENV=$(ENV))"
-	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(ENV)
+	@echo "[Makefile] Supabase Storage 에 캐릭터 아바타 업로드 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(OPS_ENV)
 
 upload-character-avatars-force:
-	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV))"
-	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(ENV) --overwrite
+	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(OPS_ENV) --overwrite
 
 # -----------------------------------------------------------------------------
 # 승인된 제안 → 로컬 assets 동기화
@@ -284,21 +285,21 @@ upload-character-avatars-force:
 # apply-seeds-stories-characters 를 실행해 최종 반영.
 
 sync-approved-proposal-assets:
-	@echo "[Makefile] 승인된 제안 자산 동기화 (ENV=$(ENV)) — synced_to_local_at NULL 인 것만"
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV)
+	@echo "[Makefile] 승인된 제안 자산 동기화 (ENV=$(ENV) → ops=$(OPS_ENV)) — synced_to_local_at NULL 인 것만"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(OPS_ENV)
 
 sync-approved-proposal-assets-all:
-	@echo "[Makefile] 승인된 제안 자산 전체 재동기화 (ENV=$(ENV)) — synced marker 무시"
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --all
+	@echo "[Makefile] 승인된 제안 자산 전체 재동기화 (ENV=$(ENV) → ops=$(OPS_ENV)) — synced marker 무시"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(OPS_ENV) --all
 
 sync-approved-proposal-assets-dry:
-	@echo "[Makefile] 승인된 제안 자산 동기화 dry-run (ENV=$(ENV))"
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --dry-run
+	@echo "[Makefile] 승인된 제안 자산 동기화 dry-run (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(OPS_ENV) --dry-run
 
 sync-approved-proposal-assets-clean:
-	@echo "[Makefile] 승인된 제안 자산 동기화 + 원본 버킷 정리 (ENV=$(ENV))"
+	@echo "[Makefile] 승인된 제안 자산 동기화 + 원본 버킷 정리 (ENV=$(ENV) → ops=$(OPS_ENV))"
 	@echo "  ⚠️  앱 배포 전이면 하이브리드 fallback 깨짐 — 배포 완료 후 사용 권장"
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(ENV) --delete-source
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(OPS_ENV) --delete-source
 
 # -----------------------------------------------------------------------------
 # 미제출 / 버려진 제안 자산 청소
@@ -309,30 +310,35 @@ sync-approved-proposal-assets-clean:
 # 루틴에 끼워 넣으면 깔끔.
 
 cleanup-orphan-proposal-assets-dry:
-	@echo "[Makefile] 고아 제안 자산 dry-run — 실제 삭제 없이 나열만 (ENV=$(ENV))"
-	$(PYTHON) $(TOOLS_DIR)/supabase/cleanup_orphan_proposal_assets.py --env $(ENV) --dry-run
+	@echo "[Makefile] 고아 제안 자산 dry-run — 실제 삭제 없이 나열만 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/cleanup_orphan_proposal_assets.py --env $(OPS_ENV) --dry-run
 
 cleanup-orphan-proposal-assets:
-	@echo "[Makefile] 고아 제안 자산 정리 — 24시간 이상 지난 미참조 파일 삭제 (ENV=$(ENV))"
-	$(PYTHON) $(TOOLS_DIR)/supabase/cleanup_orphan_proposal_assets.py --env $(ENV)
+	@echo "[Makefile] 고아 제안 자산 정리 — 24시간 이상 지난 미참조 파일 삭제 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/supabase/cleanup_orphan_proposal_assets.py --env $(OPS_ENV)
 
 # =============================================================================
 # Supabase DB 적용 (psql 사용)
 # =============================================================================
 # 사용법:
 #   make apply-seeds              # ENV=dev (기본) — SUPABASE_DB_URL_DEV 사용
-#   make apply-seeds ENV=prod     # SUPABASE_DB_URL_PROD 사용
+#   make apply-seeds ENV=real     # SUPABASE_DB_URL_PROD 사용
+#   make apply-seeds ENV=prod     # real alias — SUPABASE_DB_URL_PROD 사용
 #
-# .env 에 다음을 추가해야 한다:
+# .env.ops 에 다음을 추가해야 한다:
 #   SUPABASE_DB_URL_DEV="postgresql://postgres.[ref]:[pw]@aws-0-...:5432/postgres"
 #   SUPABASE_DB_URL_PROD="postgresql://..."  # 운영용
 #
 # Connection string 위치: Supabase 대시보드
 #   Project Settings → Database → Connection string → URI
-# 큰 INSERT 가 끊기지 않도록 direct 5432 포트 사용 권장 (pooler 6543 비권장).
+# 큰 INSERT 가 끊기지 않도록 direct 5432 또는 session pooler 5432 사용 권장.
+# transaction pooler 6543은 seed 대량 적용에 비권장.
 
 ENV ?= dev
-DB_URL_VAR := SUPABASE_DB_URL_$(shell echo $(ENV) | tr a-z A-Z)
+OPS_ENV_FILE ?= .env.ops
+OPS_ENV := $(shell if [ "$(ENV)" = "dev" ]; then printf "dev"; elif [ "$(ENV)" = "real" ] || [ "$(ENV)" = "prod" ]; then printf "prod"; else printf "invalid"; fi)
+OPS_ENV_SUFFIX := $(shell if [ "$(OPS_ENV)" = "dev" ]; then printf "DEV"; elif [ "$(OPS_ENV)" = "prod" ]; then printf "PROD"; else printf "INVALID"; fi)
+DB_URL_VAR := SUPABASE_DB_URL_$(OPS_ENV_SUFFIX)
 
 # DB의 published events 를 assets/200_stories/*.json 으로 역추출.
 # 빌더(build-character-meta 등)가 로컬 JSON만 스캔하므로, 로컬이 비었거나
@@ -340,20 +346,26 @@ DB_URL_VAR := SUPABASE_DB_URL_$(shell echo $(ENV) | tr a-z A-Z)
 # 새 이야기 추가 전에 항상 이 타겟으로 로컬을 DB 와 동기화한 뒤 작업한다.
 # 상세: docs/CONTENT_UPDATE.md §2.1b [0]
 export-stories-json:
-	@echo "[Makefile] DB events → $(STORIES_DIR)/*.json 역추출 (ENV=$(ENV))"
+	@echo "[Makefile] DB events → $(STORIES_DIR)/*.json 역추출 (ENV=$(ENV) → ops=$(OPS_ENV))"
 	$(PYTHON) $(TOOLS_DIR)/export/export_events_to_json.py \
 		--output-dir $(STORIES_DIR) \
-		--env $(ENV)
+		--env $(OPS_ENV)
 
-# .env 파일을 한 셸 안에서만 source 한 뒤 psql 호출.
+# .env + .env.ops 파일을 한 셸 안에서만 source 한 뒤 psql 호출.
 # ON_ERROR_STOP=1 → 첫 에러에서 즉시 중단.
 # --single-transaction → 시드 한 파일을 트랜잭션으로 감싸 부분 적용 방지.
 define PSQL_APPLY
 	@if [ ! -f .env ]; then echo "ERROR: .env not found"; exit 1; fi; \
-	set -a; . ./.env; set +a; \
+	if [ "$(OPS_ENV)" = "invalid" ]; then \
+		echo "ERROR: ENV must be dev, real, or prod (got: $(ENV))"; exit 1; \
+	fi; \
+	ops_env_file="$(OPS_ENV_FILE)"; \
+	set -a; . ./.env; \
+	if [ -f "$$ops_env_file" ]; then . "$$ops_env_file"; fi; \
+	set +a; \
 	url="$${$(DB_URL_VAR)}"; \
 	if [ -z "$$url" ]; then \
-		echo "ERROR: $(DB_URL_VAR) is empty in .env"; exit 1; \
+		echo "ERROR: $(DB_URL_VAR) is empty in $(OPS_ENV_FILE)"; exit 1; \
 	fi; \
 	for f in $(1); do \
 		[ -f "$$f" ] || { echo "skip (missing): $$f"; continue; }; \
@@ -363,34 +375,34 @@ define PSQL_APPLY
 endef
 
 db-init:
-	@echo "[Makefile] db_init.sql 적용 (ENV=$(ENV)) — DROP & RECREATE 주의"
+	@echo "[Makefile] db_init.sql 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR)) — DROP & RECREATE 주의"
 	@echo "[Makefile] 선행: Storage buckets 비우기 (SQL 에선 트리거 차단됨 → REST API)"
-	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(ENV) || \
+	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(OPS_ENV) || \
 	  echo "[Makefile] (Storage purge 스킵 — service_role 키 없거나 실패, db-init 은 계속)"
 	$(call PSQL_APPLY,db_init.sql)
 
 # Bible verses 시드는 PK 충돌 시 에러 → 보통 1회만 실행 (db_init.sql 직후).
 apply-bible-verses-seeds:
-	@echo "[Makefile] KRV 성경 구절 시드 적용 (ENV=$(ENV))"
+	@echo "[Makefile] KRV 성경 구절 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/seeds/krv_bible_verses_part_*.sql)
 
 # characters / events 는 UPSERT 패턴이라 재실행 안전.
 apply-seeds-stories-characters:
-	@echo "[Makefile] characters + 200_stories 시드 적용 (ENV=$(ENV))"
+	@echo "[Makefile] characters + 200_stories 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/characters_seed.sql $(SUPABASE_DIR)/200_stories/events_scene_captions_schema_patch.sql $(SUPABASE_DIR)/200_stories/200_stories_seed_part_*.sql)
 
 # landmarks 는 UPSERT 패턴 — 재실행 안전.
 apply-seeds-landmarks:
-	@echo "[Makefile] landmarks 시드 적용 (ENV=$(ENV))"
+	@echo "[Makefile] landmarks 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
 	$(call PSQL_APPLY,$(SUPABASE_DIR)/200_stories/landmarks_seed.sql)
 
 apply-seeds-quizzes:
-	@echo "[Makefile] quiz_questions 시드 적용 (ENV=$(ENV))"
+	@echo "[Makefile] quiz_questions 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
 	$(call PSQL_APPLY,$(QUIZZES_SQL))
 
 # 매일 퀴즈 — slug 기준 UPSERT 라 재실행 안전.
 apply-seeds-daily-quiz:
-	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV))"
+	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
 	$(call PSQL_APPLY,$(DAILY_QUIZ_SQL))
 
 apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes apply-seeds-daily-quiz

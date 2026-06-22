@@ -19,6 +19,7 @@ enum AppNotificationType {
   newProposalAdmin('new_proposal_admin'),
   proposalApproved('proposal_approved'),
   proposalRejected('proposal_rejected'),
+  proposalPositionInvalidated('proposal_position_invalidated'),
   quizCompleted('quiz_completed'),
   newEvent('new_event'),
   weeklyCharacter('weekly_character'),
@@ -46,7 +47,8 @@ enum AppNotificationType {
       this == AppNotificationType.proposalCommentAdmin ||
       this == AppNotificationType.newProposalAdmin ||
       this == AppNotificationType.proposalApproved ||
-      this == AppNotificationType.proposalRejected;
+      this == AppNotificationType.proposalRejected ||
+      this == AppNotificationType.proposalPositionInvalidated;
 }
 
 class AppNotification {

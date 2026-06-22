@@ -648,7 +648,7 @@ def normalize_events(
             raise ValueError(
                 f"매핑 누락: era={era_code} story_index={story_index_int} "
                 f"title={row.get('title')!r} — "
-                "assets/landmarks/event_landmark_mapping_draft.json 에서 "
+                "assets/landmarks/event_region_mapping.json 에서 "
                 "이 (era, story_index) 키에 대응하는 region/anchor/minor code 를 추가하세요."
             )
 

@@ -14,7 +14,7 @@ Environment variables consulted (in order):
     SUPABASE_URL_{ENV}
     SUPABASE_SERVICE_ROLE_KEY_{ENV}
 
-ENV defaults to 'dev'. Loaded from .env via python-dotenv if available.
+ENV defaults to 'dev'. Loaded from .env and .env.ops via python-dotenv if available.
 """
 
 from __future__ import annotations
@@ -31,6 +31,7 @@ try:
     from dotenv import load_dotenv
 
     load_dotenv()
+    load_dotenv(".env.ops")
 except ImportError:
     pass
 
