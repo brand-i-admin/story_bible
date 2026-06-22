@@ -573,7 +573,7 @@ const _termsDocument = _LegalDocument(
     _LegalSection(
       title: '3. 계정과 이용자 책임',
       paragraphs: [
-        '로그인 이용자는 Apple 또는 Kakao 계정을 통해 본인 인증을 수행하며, 자신의 계정 정보를 안전하게 관리해야 합니다.',
+        '로그인 이용자는 Apple, Google 또는 Kakao 계정을 통해 본인 인증을 수행하며, 자신의 계정 정보를 안전하게 관리해야 합니다.',
         '타인의 계정이나 공유 ID를 무단으로 사용하거나, 서비스 운영을 방해하는 방식으로 반복 요청을 보내서는 안 됩니다.',
       ],
     ),
@@ -620,7 +620,7 @@ const _privacyDocument = _LegalDocument(
     _LegalSection(
       title: '1. 수집하는 정보',
       paragraphs: [
-        '소셜 로그인 시 Apple 또는 Kakao로부터 이용자가 동의한 범위의 계정 식별 정보, 이메일, 공개 프로필 정보가 제공될 수 있습니다.',
+        '소셜 로그인 시 Apple, Google 또는 Kakao로부터 이용자가 동의한 범위의 계정 식별 정보, 이메일, 공개 프로필 정보가 제공될 수 있습니다.',
         '앱에서는 닉네임, 프로필 사진, 기도제목, 저장한 이야기와 말씀, 퀴즈 진행 기록, 공유받은 기도제목 목록을 저장할 수 있습니다.',
       ],
     ),
@@ -641,7 +641,7 @@ const _privacyDocument = _LegalDocument(
       title: '4. 제3자 제공 및 위탁',
       paragraphs: [
         '운영자는 원칙적으로 개인정보를 제3자에게 판매하거나 임의 제공하지 않습니다.',
-        '서비스 운영을 위해 Supabase를 데이터베이스 및 저장소 인프라로 사용하며, Apple/Kakao 로그인 시 해당 인증 사업자를 이용합니다.',
+        '서비스 운영을 위해 Supabase를 데이터베이스 및 저장소 인프라로 사용하며, Apple/Google/Kakao 로그인 시 해당 인증 사업자를 이용합니다.',
       ],
     ),
     _LegalSection(

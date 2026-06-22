@@ -541,7 +541,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | 메서드 | 역할 |
 |--------|------|
 | `signInWithApple()` | Apple ID 로그인 (SHA256 nonce) |
-| `signInWithGoogle()` | Google 로그인 |
+| `signInWithGoogle()` | Google 로그인. Android는 `google_sign_in` 네이티브 토큰 → `signInWithIdToken`, Web/iOS는 Supabase OAuth redirect |
 | `signInWithKakao()` | Kakao 로그인 |
 | `signOut()` | 로그아웃 |
 

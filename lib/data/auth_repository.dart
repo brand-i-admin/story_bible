@@ -1,13 +1,18 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
-
 import 'package:crypto/crypto.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
+
 class AuthRepository {
   const AuthRepository(this._client);
+
+  static const String _googleWebClientId =
+      '196457947669-f2hcqoqmc9v4bdtchuvee5l9fiqt26ka.apps.googleusercontent.com';
 
   /// 모바일 앱의 deep link URL.
   /// iOS Info.plist / Android intent-filter 에 등록되어 있어야 Supabase 가
@@ -67,6 +72,34 @@ class AuthRepository {
   }
 
   Future<void> signInWithGoogle() async {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      final googleSignIn = GoogleSignIn(
+        serverClientId: _googleWebClientId,
+        scopes: const ['email', 'profile', 'openid'],
+      );
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        throw const AuthException('구글 로그인이 취소되었습니다.');
+      }
+
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      final accessToken = googleAuth.accessToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw const AuthException('구글 ID 토큰을 가져오지 못했습니다.');
+      }
+      if (accessToken == null || accessToken.isEmpty) {
+        throw const AuthException('구글 액세스 토큰을 가져오지 못했습니다.');
+      }
+
+      await _client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+      return;
+    }
+
     final launched = await _client.auth.signInWithOAuth(
       OAuthProvider.google,
       redirectTo: _oauthRedirectForPlatform,

@@ -352,6 +352,7 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 | flutter_map | ^8.2.1 | 프로필 미니맵/제안 위치 선택기 등 보조 2D 지도와 `LatLngBounds` 유틸 |
 | latlong2 | ^0.9.1 | 좌표 계산 |
 | flutter_dotenv | ^5.2.1 | .env 환경변수 |
+| google_sign_in | ^6.3.0 | Android Google 네이티브 로그인 |
 | shared_preferences | ^2.5.5 | 로컬 키-값 저장 (글자 크기 등 사용자 선호 설정) |
 | sign_in_with_apple | ^6.1.4 | Apple 로그인 |
 | image_picker | ^1.1.2 | 프로필 이미지 |

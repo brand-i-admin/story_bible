@@ -320,16 +320,44 @@ iOS 디바이스는 "Apple 이 발행한 서명"이 없으면 **아무것도 못
 
 앱은 **Supabase JWT 만** 알면 된다. Provider 별 특성은 Supabase가 흡수.
 
-### 5.2 Google 로그인 — OAuth 2.0 Authorization Code Flow
+### 5.2 Google 로그인 — Android native + OAuth fallback
 
 #### 구성 (GCP Console)
 
 1. https://console.cloud.google.com → APIs & Services → **Credentials**
-2. "+ CREATE CREDENTIALS" → "OAuth client ID" → 유형: **웹 애플리케이션**
-3. **승인된 리디렉션 URI**: `https://cvnutbizsgeycdjcbled.supabase.co/auth/v1/callback`
-4. 생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기
+2. Web OAuth Client
+   - "+ CREATE CREDENTIALS" → "OAuth client ID" → 유형: **웹 애플리케이션**
+   - **승인된 리디렉션 URI**: `https://cvnutbizsgeycdjcbled.supabase.co/auth/v1/callback`
+   - 생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기
+   - 이 Web Client ID 는 Android native 로그인에서 `serverClientId` 로도 사용한다.
+3. Android OAuth Client
+   - 유형: **Android**
+   - Package name: `com.storybible.app`
+   - SHA-1/SHA-256: Play Console → App integrity → App signing key certificate 값을 등록한다.
+   - 내부 테스트/직접 설치 빌드도 필요하면 upload key/debug key SHA 를 별도 Android Client 로 추가한다.
+4. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 `com.storybible.app://login-callback` 추가
 
 #### 동작
+
+Android 앱은 Google의 embedded user-agent 차단(`403 disallowed_useragent`)을 피하기 위해
+브라우저 OAuth 대신 `google_sign_in` 으로 네이티브 계정 선택 UI를 열고,
+Google `idToken/accessToken` 을 Supabase `signInWithIdToken` 으로 전달한다.
+
+```
+사용자 "Google로 로그인" 클릭
+  ↓
+GoogleSignIn(serverClientId=<WEB_CLIENT_ID>).signIn()
+  ↓
+Google Play services 계정 선택/동의
+  ↓
+앱이 idToken + accessToken 수신
+  ↓
+supabase.auth.signInWithIdToken(OAuthProvider.google, idToken, accessToken)
+  ↓
+Supabase 가 Google 토큰 검증 후 Supabase JWT 발급
+```
+
+Web/iOS fallback 은 Supabase OAuth Authorization Code Flow 를 사용한다.
 
 ```
 사용자 "Google로 로그인" 클릭
