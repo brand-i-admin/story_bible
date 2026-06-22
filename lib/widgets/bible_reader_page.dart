@@ -589,6 +589,8 @@ class _CircleIconButton extends StatelessWidget {
 // 칩 드롭다운 3개 (구약/책/장).
 // ─────────────────────────────────────────────────────────────────────────
 
+const double _bibleBookDropdownWidth = 124;
+
 class _BibleChipsRow extends StatelessWidget {
   const _BibleChipsRow({
     required this.testament,
@@ -631,7 +633,7 @@ class _BibleChipsRow extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             SizedBox(
-              width: 156,
+              width: _bibleBookDropdownWidth,
               child: bibleDropdownFrame<int>(
                 value: bookNo,
                 items: books

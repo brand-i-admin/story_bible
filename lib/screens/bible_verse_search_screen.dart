@@ -17,6 +17,7 @@ const int _oldTestamentLastBookNo = 39;
 const int _newTestamentFirstBookNo = 40;
 const int _newTestamentLastBookNo = 66;
 const Color _verseGridLineColor = Color(0x228E6F48);
+const double _bibleBookDropdownWidth = 124;
 
 class BibleVerseSearchScreen extends ConsumerStatefulWidget {
   const BibleVerseSearchScreen({super.key, required this.onOpenEventDetail});
@@ -407,7 +408,7 @@ class _VersePickerPanel extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             SizedBox(
-              width: 156,
+              width: _bibleBookDropdownWidth,
               child: bibleDropdownFrame<int>(
                 value: safeBookNo,
                 items: [
