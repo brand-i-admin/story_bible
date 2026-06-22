@@ -633,21 +633,24 @@ tools/supabase/check_edge_functions.sh
 이 스크립트는 `generate-proposal-character`, `generate-proposal-scene`,
 `send-push` 의 `index.ts` 를 모두 `deno check` 한다.
 
-## 8. DB 리셋 기반 개발 워크플로우 (ADR-025, 2026-05-28 개정)
+## 8. DB 개발/운영 적용 워크플로우
 
-> ⚠️ **정책 변경**: 현재 프로젝트는 개발 중이며 Supabase DB 를 계속 밀고 다시
-> 세우는 방식으로 운용한다. `supabase/migrations/` 증분 트랙은 사용하지 않고,
-> `db_init.sql` + seed SQL 이 적용 가능한 단일 경로가 되도록 유지한다.
+> 현재 정책: dev 는 `db_init.sql` 기반 reset 으로 최종 상태를 검증한다.
+> real 은 운영 DB 로 취급하며 reset 하지 않는다. schema/RLS/RPC/cron 변경은
+> `supabase/patches/*.sql`의 idempotent patch 로 적용한다.
 
-### 8.1 단일 적용 경로
+### 8.1 적용 경로
 
 | 트랙 | 역할 | 적용 환경 | 적용 명령 |
 |------|------|----------|----------|
-| `db_init.sql` | 스키마 **단일 진실 소스** (전체 DROP & CREATE 한 파일에 응축) | DB 리셋 | `make db-init ENV=dev\|real` (파괴적!) |
-| `supabase/seeds/*.sql`, `supabase/200_stories/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | DB 리셋 직후 | `make apply-seeds ENV=dev\|real` |
+| `db_init.sql` | 스키마 **단일 진실 소스** (최종 desired schema) | dev reset / 신규 bootstrap | `make db-init ENV=dev` |
+| `supabase/patches/*.sql` | 운영 DB 를 보존하며 schema/RLS/RPC/cron 변경 | dev/real patch | `make apply-patch ENV=<env> PATCH=<file>` |
+| `supabase/seeds/*.sql`, `supabase/200_stories/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | dev/real seed 적용 | `make apply-seeds ENV=<env>` |
 
 Makefile 운영 타겟의 기본값은 `ENV=dev`다. real DB/Storage에 적용할 때만
 명시적으로 `ENV=real`을 붙인다 (`ENV=prod`도 real alias로 동작한다).
+`make db-init ENV=real`은 기본 차단되어 있으며, 신규/복구 bootstrap 에서만
+`CONFIRM_REAL_DB_INIT=1`을 붙여 실행한다.
 신규 Supabase 환경 구축 순서와 Auth/Push/secret/Vault 체크리스트는
 [DB_SETUP.md](guides/DB_SETUP.md)를 따르고, 일상 개발/배포 순서는
 [develop-flow.md](guides/develop-flow.md)를 따른다.
@@ -668,9 +671,9 @@ seed 로 들어가는 기준 데이터는 생성 스크립트와 출력 SQL 을 
 3. **Seed SQL** — `make seed-all` 또는 필요한 개별 `make seed-*` 로 재생성.
 4. **문서** — schema 는 이 문서, 파이프라인은 `docs/DATA_PIPELINE.md` 갱신.
 
-`make db-init` 은 더 이상 `supabase/migrations/` 를 자동 실행하지 않는다. 그래서 위
-표준 시퀀스만 실행해도 최신 `daily_quiz.choices` 같은 schema 변경과 seed 가 함께
-반영된다.
+real 운영 DB 에는 같은 변경을 patch SQL 로 적용한다. patch 는 `alter table if exists`,
+`add column if not exists`, `create or replace function`, `drop policy if exists`처럼
+여러 번 실행해도 안전하게 작성한다.
 
 ### 8.3 적용 절차
 
@@ -686,12 +689,16 @@ make apply-seeds ENV=dev
 
 # 4. Storage 기준 아바타 업로드
 make upload-character-avatars ENV=dev
+
+# 5. real 운영 DB 에 적용할 patch dry-run/검토 후 적용
+make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 ```
 
 ### 8.4 이력 보존
 
 - ADR-023 은 이전 증분 마이그레이션 정책의 역사로 보존한다.
-- ADR-025 가 현재 정책이다.
+- ADR-025 는 dev reset 정책의 역사로 보존한다.
+- real 운영 DB 는 reset 이 아니라 patch 방식으로 수정한다.
 
 ### 8.5 자주 빠트리는 것
 

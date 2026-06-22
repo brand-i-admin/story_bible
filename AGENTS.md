@@ -183,6 +183,8 @@ Vertex AI와 Supabase Storage 관련 target은 비용이 들거나 원격 상태
 ## Supabase 규칙
 
 - `db_init.sql`이 스키마 단일 진실 소스다.
+- real 운영 DB 는 `db-init`으로 초기화하지 않고 `supabase/patches/*.sql` +
+  `make apply-patch ENV=real PATCH=<file>`로 수정한다.
 - Schema/RLS/RPC 변경은 `docs/BACKEND.md`와 함께 갱신한다.
 - 새 테이블에는 RLS 정책과 grant가 필요하다.
 - 생성된 seed SQL은 운영 적용 전에 검토한다.

@@ -55,7 +55,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         export-stories-json \
-        db-init apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
+        db-init apply-patch apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         apply-seeds-landmarks apply-seeds-quizzes apply-seeds-daily-quiz \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
@@ -95,7 +95,9 @@ help:
 	@echo "  export-stories-json       [ENV=dev]  DB events → assets/200_stories/*.json 역추출 (빌더 사전 조건)"
 	@echo ""
 	@echo "DB 적용 (psql + .env.ops의 SUPABASE_DB_URL_DEV/PROD; ENV=real은 PROD 사용):"
-	@echo "  db-init                   [ENV=dev|real]  db_init.sql 실행 (drop & recreate, 파괴적!)"
+	@echo "  db-init                   [ENV=dev]       db_init.sql 실행 (drop & recreate, 파괴적!)"
+	@echo "                            [ENV=real CONFIRM_REAL_DB_INIT=1] 신규/복구 real 부트스트랩 전용"
+	@echo "  apply-patch               [ENV=dev|real PATCH=path.sql] idempotent schema/RLS/RPC patch 적용"
 	@echo "  apply-bible-verses-seeds  [ENV=dev|real]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
 	@echo "  apply-seeds-stories-characters       [ENV=dev|real]  characters + 200_stories + scene_captions 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds-quizzes                  [ENV=dev|real]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
@@ -375,11 +377,29 @@ define PSQL_APPLY
 endef
 
 db-init:
+	@if [ "$(OPS_ENV)" = "prod" ] && [ "$(CONFIRM_REAL_DB_INIT)" != "1" ]; then \
+		echo "ERROR: real/prod db-init is blocked because it drops and recreates the database."; \
+		echo "Use idempotent patch SQL: make apply-patch ENV=real PATCH=supabase/patches/<file>.sql"; \
+		echo "Only for brand-new/recovery bootstrap, rerun with CONFIRM_REAL_DB_INIT=1."; \
+		exit 1; \
+	fi
 	@echo "[Makefile] db_init.sql 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR)) — DROP & RECREATE 주의"
 	@echo "[Makefile] 선행: Storage buckets 비우기 (SQL 에선 트리거 차단됨 → REST API)"
 	@$(PYTHON) $(TOOLS_DIR)/supabase/purge_owned_buckets.py --env $(OPS_ENV) || \
 	  echo "[Makefile] (Storage purge 스킵 — service_role 키 없거나 실패, db-init 은 계속)"
 	$(call PSQL_APPLY,db_init.sql)
+
+apply-patch:
+	@if [ -z "$(PATCH)" ]; then \
+		echo "ERROR: PATCH is required. Example: make apply-patch ENV=real PATCH=supabase/patches/20260622_add_column.sql"; \
+		exit 1; \
+	fi
+	@if [ ! -f "$(PATCH)" ]; then \
+		echo "ERROR: patch file not found: $(PATCH)"; \
+		exit 1; \
+	fi
+	@echo "[Makefile] patch 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR)): $(PATCH)"
+	$(call PSQL_APPLY,$(PATCH))
 
 # Bible verses 시드는 PK 충돌 시 에러 → 보통 1회만 실행 (db_init.sql 직후).
 apply-bible-verses-seeds:

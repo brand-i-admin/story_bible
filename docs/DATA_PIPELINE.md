@@ -396,8 +396,8 @@ gcloud auth application-default login
 ## 8. 실행 순서 (전체 초기 세팅 — drop & recreate)
 
 > psql 통해 적용 (`make db-init`, `make apply-bible-verses-seeds`, `make apply-seeds-stories-characters`).
-> Makefile 운영 타겟 기본값은 `ENV=dev`다. 새 real Supabase를 초기화할 때는
-> 각 적용/업로드 명령에 `ENV=real`을 명시한다 (`ENV=prod`도 real alias).
+> Makefile 운영 타겟 기본값은 `ENV=dev`다. real 운영 DB는 초기화하지 않고,
+> schema/RLS/RPC/cron 변경은 `make apply-patch ENV=real PATCH=...`로 적용한다.
 
 1. `make seed-bible-verses` → 분할 SQL `krv_bible_verses_part_*.sql` 생성
 2. `make seed-stories-characters` → `characters_seed.sql` + `200_stories_seed_part_*.sql` 생성
@@ -411,14 +411,18 @@ gcloud auth application-default login
 9. `make update-pubspec-assets` (pubspec.yaml의 story_images_thumbs index.json + 짧은 디렉토리 자동 갱신)
 10. `scripts/run_dev.sh` 또는 `scripts/run_real.sh`
 
-real 초기 세팅 예:
+real 신규 프로젝트 최초 bootstrap 예:
 
 ```bash
 make seed-all && make thumbnails && make update-pubspec-assets
-make db-init ENV=real
+CONFIRM_REAL_DB_INIT=1 make db-init ENV=real
 make apply-seeds ENV=real
 make upload-character-avatars ENV=real
 ```
+
+위 bootstrap 명령은 새 Supabase 프로젝트를 처음 만들거나 복구할 때만 쓴다.
+real 배포 이후 DB 구조 변경은 [guides/develop-flow.md](guides/develop-flow.md)의
+patch 흐름을 따른다.
 
 ### 신규 이야기 1건 추가된 경우
 ⚠️ **반드시 먼저**: 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json` (운영 기준은 `ENV=real` 또는 `ENV=prod`) 으로 DB의 published events를 JSON으로 역추출해 복원한다. 이 사전 조건을 빼먹고 부분 상태에서 빌드하면 기존 인물 description이 손상된다.

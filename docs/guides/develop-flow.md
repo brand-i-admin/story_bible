@@ -23,13 +23,15 @@ scripts/build_ios_real.sh
 DB / Storage 운영은 Makefile 을 쓴다.
 
 ```bash
-# 기본값은 dev
+# dev reset / seed / storage
 make db-init
 make apply-seeds
 make upload-character-avatars
 
-# real 에 적용할 때만 명시
-make db-init ENV=real
+# real schema/RLS/RPC 변경은 reset 이 아니라 patch 로 적용
+make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
+
+# real 기준 콘텐츠/Storage 변경만 명시적으로 적용
 make apply-seeds ENV=real
 make upload-character-avatars ENV=real
 ```
@@ -38,10 +40,10 @@ make upload-character-avatars ENV=real
 
 - 평소 개발은 dev 에서 한다.
 - real 에는 검증된 변경만 적용한다.
-- `make db-init ENV=real`은 real DB 를 밀고 다시 세우는 파괴적 명령이다.
-- real 에 실제 사용자 데이터가 쌓인 뒤에는 `db-init ENV=real`을 운영 배포에 쓰지 않는다.
-- 현재 프로젝트 정책은 아직 `supabase/migrations/`를 기본으로 쓰지 않는다. 다만
-  real 데이터를 보존해야 하는 순간부터는 migration/patch 정책을 다시 도입해야 한다.
+- real 은 이제 보존해야 하는 운영 DB 로 취급한다.
+- `make db-init ENV=real`은 기본 차단되어 있으며 운영 배포에 쓰지 않는다.
+- DB 구조 변경은 `db_init.sql`에 최종 상태를 반영하고,
+  `supabase/patches/*.sql`의 idempotent patch 로 real 에 적용한다.
 
 ## 1. 환경 분리 구조
 
@@ -402,8 +404,8 @@ where title in ('새 이야기 제목');
 현재 개발 정책:
 
 - `db_init.sql`이 schema 단일 진실 소스다.
-- active migration track 은 쓰지 않는다.
-- dev 는 reset 방식으로 검증한다.
+- dev 는 reset 방식으로 최종 상태를 검증한다.
+- real 은 reset 하지 않고 `supabase/patches/*.sql`로 기존 DB를 수정한다.
 
 dev 검증 순서:
 
@@ -424,53 +426,23 @@ scripts/run_dev.sh
 - 중요한 운영 결정: `docs/ADR.md`
 - 신규 환경 구축/운영 순서: `docs/guides/DB_SETUP.md` 또는 이 문서
 
-real 적용은 상태에 따라 달라진다.
-
-#### real 이 아직 disposable 인 경우
-
-실제 사용자 데이터가 없고, 새 real Supabase를 계속 초기화해도 되는 단계라면:
-
-```bash
-make seed-all
-make thumbnails
-make update-pubspec-assets
-make db-init ENV=real
-make apply-seeds ENV=real
-make upload-character-avatars ENV=real
-scripts/run_real.sh
-```
-
-이건 지금까지 한 방식이다.
-
-#### real 에 보존할 데이터가 있는 경우
-
-이때부터는 `make db-init ENV=real`을 배포 명령으로 쓰면 안 된다.
-
-해야 할 일:
+real 적용은 patch 방식으로 진행한다.
 
 1. `db_init.sql`에는 최종 desired schema 를 계속 반영한다.
-2. real 기존 DB 에 적용할 **idempotent migration/patch SQL**을 별도로 만든다.
+2. real 기존 DB 에 적용할 **idempotent patch SQL**을 `supabase/patches/`에 만든다.
 3. patch 는 가능한 `alter table if exists`, `add column if not exists`,
    `create or replace function`, `drop policy if exists` 패턴으로 작성한다.
-4. dev 에서 reset 검증 + 가능하면 patch 검증을 한다.
+4. dev 에서 reset 검증 + patch 검증을 한다.
 5. real 적용 전 백업을 만든다.
-6. real 에 patch 를 한 번만 적용한다.
+6. real 에 patch 를 적용한다.
 
-즉, 질문의 "앞으로 migrations 를 수정해야 하나?"에 대한 답은 다음과 같다.
-
-- 지금 단계: 기본 개발 경로는 migration 이 아니라 `db_init.sql` 수정 + dev reset 검증이다.
-- real 을 계속 초기화해도 되는 동안: real 도 bootstrap 방식으로 맞춰도 된다.
-- real 에 사용자 데이터가 의미 있게 쌓인 뒤: migration/patch track 을 도입해야 한다.
-
-그 시점에는 별도 ADR 로 정책을 정하고, 예를 들어 이런 구조를 다시 만든다.
-
-```text
-supabase/migrations/
-  20260622_1530_add_xxx_column.sql
-  20260623_0910_update_push_rpc.sql
+```bash
+make apply-patch ENV=dev PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
+make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 ```
 
-운영 patch 는 반드시 "여러 번 실행해도 안전한 SQL"이어야 한다.
+운영 patch 는 반드시 "여러 번 실행해도 안전한 SQL"이어야 한다. 신규 Supabase
+프로젝트를 다시 만드는 복구 상황이 아니라면 `make db-init ENV=real`을 쓰지 않는다.
 
 ## 4. real 배포 Flow
 
@@ -556,7 +528,7 @@ scripts/run_real.sh
 
 ### 4.3 schema 변경 배포
 
-현재 초기 운영 전:
+schema 변경 배포:
 
 ```bash
 make seed-all
@@ -568,29 +540,17 @@ make apply-seeds ENV=dev
 make upload-character-avatars ENV=dev
 scripts/run_dev.sh
 
-make db-init ENV=real
+# real
+# 1. 백업
+# 2. idempotent patch SQL 적용
+# 3. 필요한 seed 만 적용
+# 4. 앱 smoke test
+# 5. real build
+make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 make apply-seeds ENV=real
 make upload-character-avatars ENV=real
 scripts/run_real.sh
 ```
-
-사용자 데이터 보존 단계:
-
-```bash
-# dev
-make db-init ENV=dev
-make apply-seeds ENV=dev
-make upload-character-avatars ENV=dev
-
-# real
-# 1. 백업
-# 2. idempotent migration/patch SQL 적용
-# 3. 필요한 seed 만 적용
-# 4. 앱 smoke test
-# 5. real build
-```
-
-이 단계로 넘어가면 `develop-flow.md`와 ADR 을 함께 업데이트한다.
 
 ## 5. 푸시 / Firebase 운영 Flow
 
@@ -661,13 +621,14 @@ make upload-character-avatars ENV=dev
 
 ### real 전체 bootstrap
 
-real 을 아직 밀어도 되는 단계에서만:
+신규 Supabase 프로젝트를 처음 만들거나 복구하면서 real DB 를 정말 초기화해야 할
+때만 쓴다. 일반 운영 배포에서는 쓰지 않는다.
 
 ```bash
 make seed-all
 make thumbnails
 make update-pubspec-assets
-make db-init ENV=real
+CONFIRM_REAL_DB_INIT=1 make db-init ENV=real
 make apply-seeds ENV=real
 make upload-character-avatars ENV=real
 ```
@@ -676,7 +637,7 @@ make upload-character-avatars ENV=real
 
 ```bash
 make -n db-init
-make -n db-init ENV=real
+make -n apply-patch ENV=real PATCH=supabase/patches/example.sql
 make -n upload-character-avatars
 make -n upload-character-avatars ENV=real
 ```
@@ -684,7 +645,7 @@ make -n upload-character-avatars ENV=real
 기대 결과:
 
 - dev: `ops=dev`, `SUPABASE_DB_URL_DEV`, `--env dev`
-- real: `ops=prod`, `SUPABASE_DB_URL_PROD`, `--env prod`
+- real patch/storage: `ops=prod`, `SUPABASE_DB_URL_PROD`, `--env prod`
 
 ### 코드 검증
 
@@ -703,8 +664,8 @@ real build 전 확인:
 - `scripts/run_dev.sh`로 dev 정상 동작.
 - `scripts/run_real.sh`로 real 정상 동작.
 - Google/Kakao/Apple 로그인 확인.
-- `make -n db-init ENV=real`이 `SUPABASE_DB_URL_PROD`를 가리키는지 확인.
-- real 에 `db-init`을 실행할 필요가 정말 있는지 확인.
+- schema 변경이면 `supabase/patches/*.sql`이 있고 dev에서 먼저 적용/검증했는지 확인.
+- real 에 `db-init`을 실행하지 않는지 확인.
 - seed 만 바뀐 변경이면 개별 `apply-seeds-* ENV=real`로 충분한지 확인.
 - `flutter analyze`, 관련 `flutter test` 통과.
 - secret 이 git diff 에 포함되지 않았는지 확인.
@@ -723,8 +684,9 @@ real build 전 확인:
 - Python Storage 운영 도구는 `--env dev|prod`를 받고 Makefile 이 올바르게 넘긴다.
 - 앱은 `ENV`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` dart-define 이 없으면 실패한다.
 - real 을 기본값으로 쓰지 않는다.
+- real `db-init`은 기본 차단되며, 운영 DB 변경은 `apply-patch`로 한다.
 
-남은 운영상 결정은 하나다.
+핵심 운영 결정:
 
-> real 에 보존해야 할 사용자 데이터가 생기는 시점부터는 reset 방식 배포를 멈추고
-> migration/patch track 을 도입한다.
+> real 은 reset 방식 배포를 멈추고 `supabase/patches/*.sql` 기반의
+> idempotent patch 방식으로 수정한다.
