@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/character_name_fallbacks.dart';
 import '../../models/event_proposal.dart';
+import '../../models/story_event.dart';
+import '../../state/story_controller.dart';
 
 /// 새 이야기 제안 승인 전 띄우는 확인 다이얼로그.
 ///
@@ -13,17 +16,27 @@ import '../../models/event_proposal.dart';
 /// 3) 취소면 null 반환.
 ///
 /// 다이얼로그 안에서 직접 Supabase 를 한 번만 query 한다 (작은 N개라 OK).
-class ApproveProposalDialog extends StatefulWidget {
+class ApproveProposalReviewResult {
+  const ApproveProposalReviewResult({
+    required this.characterActiveOverrides,
+    required this.afterStoryIndexOverride,
+  });
+
+  final Map<String, bool> characterActiveOverrides;
+  final int afterStoryIndexOverride;
+}
+
+class ApproveProposalDialog extends ConsumerStatefulWidget {
   const ApproveProposalDialog({super.key, required this.proposal});
 
   final EventProposal proposal;
 
-  /// 결과: code → is_active 매핑. 취소 시 null.
-  static Future<Map<String, bool>?> show(
+  /// 결과: 등장인물 노출 override + 관리자 삽입 위치 override. 취소 시 null.
+  static Future<ApproveProposalReviewResult?> show(
     BuildContext context,
     EventProposal proposal,
   ) {
-    return showDialog<Map<String, bool>>(
+    return showDialog<ApproveProposalReviewResult>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ApproveProposalDialog(proposal: proposal),
@@ -31,7 +44,8 @@ class ApproveProposalDialog extends StatefulWidget {
   }
 
   @override
-  State<ApproveProposalDialog> createState() => _ApproveProposalDialogState();
+  ConsumerState<ApproveProposalDialog> createState() =>
+      _ApproveProposalDialogState();
 }
 
 class _CharRow {
@@ -47,13 +61,23 @@ class _CharRow {
   bool isActive;
 }
 
-class _ApproveProposalDialogState extends State<ApproveProposalDialog> {
+class _ApproveProposalDialogState extends ConsumerState<ApproveProposalDialog> {
   late Future<List<_CharRow>> _rowsFuture;
+  late Future<List<StoryEvent>> _eventsFuture;
+  late int _selectedAfterStoryIndex;
 
   @override
   void initState() {
     super.initState();
+    _selectedAfterStoryIndex = widget.proposal.afterStoryIndex ?? 0;
     _rowsFuture = _loadRows();
+    _eventsFuture = _loadEvents();
+  }
+
+  Future<List<StoryEvent>> _loadEvents() async {
+    final eraId = widget.proposal.eraId;
+    if (eraId == null) return const [];
+    return ref.read(storyRepositoryProvider).fetchEventsByEra(eraId);
   }
 
   Future<List<_CharRow>> _loadRows() async {
@@ -117,65 +141,113 @@ class _ApproveProposalDialogState extends State<ApproveProposalDialog> {
         children: [
           Icon(Icons.check_circle_outline, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
-          const Expanded(child: Text('제안 승인 — 등장 인물 검토')),
+          const Expanded(child: Text('제안 승인 — 위치와 인물 검토')),
         ],
       ),
       content: SizedBox(
-        width: 460,
-        child: FutureBuilder<List<_CharRow>>(
-          future: _rowsFuture,
-          builder: (ctx, snap) {
-            if (snap.connectionState != ConnectionState.done) {
-              return const SizedBox(
-                height: 100,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            if (snap.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  '인물 정보를 불러오지 못했어요\n${snap.error}',
-                  style: theme.textTheme.bodySmall,
-                ),
-              );
-            }
-            final rows = snap.data ?? const [];
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '승인하면 이 이야기가 사용자 지도에 즉시 표시됩니다.\n'
-                  '아래 인물 각각이 앱에 노출될지(=is_active) 먼저 결정해 주세요.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+        width: 560,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 640),
+          child: FutureBuilder<List<_CharRow>>(
+            future: _rowsFuture,
+            builder: (ctx, snap) {
+              if (snap.connectionState != ConnectionState.done) {
+                return const SizedBox(
+                  height: 100,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (snap.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    '인물 정보를 불러오지 못했어요\n${snap.error}',
+                    style: theme.textTheme.bodySmall,
                   ),
-                ),
-                const SizedBox(height: 12),
-                if (rows.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text(
-                      '등장 인물이 없습니다.',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  )
-                else
-                  Flexible(
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: rows.length,
-                      separatorBuilder: (_, _) => const Divider(height: 1),
-                      itemBuilder: (_, i) => _CharSwitchRow(
-                        row: rows[i],
-                        onToggle: (v) => setState(() => rows[i].isActive = v),
+                );
+              }
+              final rows = snap.data ?? const [];
+              return FutureBuilder<List<StoryEvent>>(
+                future: _eventsFuture,
+                builder: (context, eventsSnap) {
+                  if (eventsSnap.connectionState != ConnectionState.done) {
+                    return const SizedBox(
+                      height: 160,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  if (eventsSnap.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        '위치 정보를 불러오지 못했어요\n${eventsSnap.error}',
+                        style: theme.textTheme.bodySmall,
                       ),
+                    );
+                  }
+                  final events = eventsSnap.data ?? const <StoryEvent>[];
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '승인하면 이 이야기가 사용자 지도에 즉시 표시됩니다.\n'
+                          '들어갈 위치와 인물 노출 여부를 마지막으로 확인해 주세요.',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        if (widget.proposal.needsPositionRevision) ...[
+                          const SizedBox(height: 10),
+                          _PositionWarning(
+                            message: widget.proposal.positionInvalidationReason,
+                          ),
+                        ],
+                        const SizedBox(height: 14),
+                        _PositionReviewSection(
+                          events: events,
+                          selectedAfterStoryIndex: _selectedAfterStoryIndex,
+                          onSelect: (value) =>
+                              setState(() => _selectedAfterStoryIndex = value),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '등장 인물 노출',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        if (rows.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Text(
+                              '등장 인물이 없습니다.',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          )
+                        else
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (var i = 0; i < rows.length; i++) ...[
+                                if (i > 0) const Divider(height: 1),
+                                _CharSwitchRow(
+                                  row: rows[i],
+                                  onToggle: (v) =>
+                                      setState(() => rows[i].isActive = v),
+                                ),
+                              ],
+                            ],
+                          ),
+                      ],
                     ),
-                  ),
-              ],
-            );
-          },
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
       actions: [
@@ -185,25 +257,176 @@ class _ApproveProposalDialogState extends State<ApproveProposalDialog> {
         ),
         FutureBuilder<List<_CharRow>>(
           future: _rowsFuture,
-          builder: (ctx, snap) {
-            final rows = snap.data;
-            final ready = snap.connectionState == ConnectionState.done;
-            return FilledButton.icon(
-              onPressed: !ready
-                  ? null
-                  : () {
-                      final overrides = <String, bool>{
-                        for (final r in (rows ?? const <_CharRow>[]))
-                          r.code: r.isActive,
-                      };
-                      Navigator.of(context).pop(overrides);
-                    },
-              icon: const Icon(Icons.check),
-              label: const Text('최종 승인'),
+          builder: (ctx, rowSnap) {
+            return FutureBuilder<List<StoryEvent>>(
+              future: _eventsFuture,
+              builder: (ctx, eventSnap) {
+                final ready =
+                    rowSnap.connectionState == ConnectionState.done &&
+                    eventSnap.connectionState == ConnectionState.done &&
+                    !rowSnap.hasError &&
+                    !eventSnap.hasError;
+                final rows = rowSnap.data;
+                return FilledButton.icon(
+                  onPressed: !ready
+                      ? null
+                      : () {
+                          final overrides = <String, bool>{
+                            for (final r in (rows ?? const <_CharRow>[]))
+                              r.code: r.isActive,
+                          };
+                          Navigator.of(context).pop(
+                            ApproveProposalReviewResult(
+                              characterActiveOverrides: overrides,
+                              afterStoryIndexOverride: _selectedAfterStoryIndex,
+                            ),
+                          );
+                        },
+                  icon: const Icon(Icons.check),
+                  label: const Text('최종 승인'),
+                );
+              },
             );
           },
         ),
       ],
+    );
+  }
+}
+
+class _PositionWarning extends StatelessWidget {
+  const _PositionWarning({required this.message});
+
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.report_problem_outlined,
+            size: 18,
+            color: theme.colorScheme.onErrorContainer,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message?.trim().isNotEmpty == true
+                  ? message!.trim()
+                  : '같은 위치에 다른 이야기가 먼저 승인되었습니다. 아래에서 새 위치를 고른 뒤 승인하세요.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PositionReviewSection extends StatelessWidget {
+  const _PositionReviewSection({
+    required this.events,
+    required this.selectedAfterStoryIndex,
+    required this.onSelect,
+  });
+
+  final List<StoryEvent> events;
+  final int selectedAfterStoryIndex;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '삽입 위치',
+          style: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '여기서 고른 위치가 승인 RPC의 after_story_index override로 전달됩니다.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _PositionChoiceTile(
+          label: '맨 앞에 삽입',
+          selected: selectedAfterStoryIndex == 0,
+          onTap: () => onSelect(0),
+        ),
+        ...events.map(
+          (event) => _PositionChoiceTile(
+            label:
+                '${event.title} 다음 (#${event.storyIndex}, ${_formatYear(event.startYear)}-${_formatYear(event.endYear)})',
+            selected: selectedAfterStoryIndex == event.storyIndex,
+            onTap: () => onSelect(event.storyIndex),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static String _formatYear(int? year) => year?.toString() ?? '?';
+}
+
+class _PositionChoiceTile extends StatelessWidget {
+  const _PositionChoiceTile({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              size: 18,
+              color: selected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -119,6 +119,10 @@ drop function if exists public.insert_event_at_position(
   text, int, text, text, jsonb, jsonb, text[], jsonb,
   int, int, text, uuid, text[], text, text, int
 ) cascade;
+drop function if exists public.insert_event_at_position(
+  text, int, text, text, text, jsonb, jsonb, jsonb, text[], jsonb,
+  int, int, text, uuid, text[], text, text, int
+) cascade;
 drop function if exists public.is_pastor() cascade;
 drop function if exists public.list_persons_by_era(uuid) cascade;       -- 옛 이름 (legacy)
 drop function if exists public.list_characters_by_era(uuid) cascade;    -- 새 이름
@@ -147,6 +151,12 @@ drop function if exists public.submit_event_proposal(
   uuid, text, text, text[], uuid,
   int, int, text,
   jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
+) cascade;
+drop function if exists public.submit_event_proposal(
+  uuid, text, text, text, text[], uuid,
+  int, int, text,
+  jsonb, jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb,
+  int, text, text, int
 ) cascade;
 drop function if exists public.revise_proposal_position(uuid, int, int, int, uuid) cascade;
 drop function if exists public.submit_delete_proposal(uuid, text) cascade;
@@ -1390,7 +1400,9 @@ create or replace function public.insert_event_at_position(
   p_after_story_index int,
   p_title text,
   p_summary text,
+  p_background_context text,
   p_story_scenes jsonb,
+  p_scene_captions jsonb,
   p_scene_characters jsonb,
   p_character_codes text[],
   p_bible_refs jsonb,
@@ -1450,15 +1462,16 @@ begin
      and story_index < 0;
 
   insert into public.events (
-    era_id, title, summary,
-    story_scenes, scene_characters, character_codes, bible_refs,
+    era_id, title, summary, background_context,
+    story_scenes, scene_captions, scene_characters, character_codes, bible_refs,
     start_year, end_year, time_precision, story_index,
     unit_code, unit_title, unit_order,
     landmark_id, scene_image_paths, status
   )
   values (
-    v_era_id, p_title, p_summary,
+    v_era_id, p_title, p_summary, p_background_context,
     coalesce(p_story_scenes, '[]'::jsonb),
+    coalesce(p_scene_captions, '[]'::jsonb),
     coalesce(p_scene_characters, '[]'::jsonb),
     coalesce(p_character_codes, '{}'::text[]),
     coalesce(p_bible_refs, '[]'::jsonb),
@@ -1488,7 +1501,7 @@ end;
 $$;
 
 grant execute on function public.insert_event_at_position(
-  text, int, text, text, jsonb, jsonb, text[], jsonb,
+  text, int, text, text, text, jsonb, jsonb, jsonb, text[], jsonb,
   int, int, text, uuid, text[], text, text, int
 ) to authenticated;
 
@@ -1601,6 +1614,7 @@ create table if not exists event_proposals (
   era_id uuid references eras(id),
   title text not null,
   summary text,
+  background_context text,
   character_codes text[] not null default '{}',
   -- v2 위치 모델 — 'general' 타입에서는 NULL.
   landmark_id uuid references landmarks(id) on delete restrict,
@@ -1609,7 +1623,11 @@ create table if not exists event_proposals (
   time_precision text not null default 'approx',
   bible_refs jsonb not null default '[]'::jsonb,
   story_scenes jsonb not null default '[]'::jsonb,
+  scene_captions jsonb not null default '[]'::jsonb,
   scene_characters jsonb not null default '[]'::jsonb,
+  unit_code text not null default 'default',
+  unit_title text not null default '전체 흐름',
+  unit_order int not null default 1,
 
   -- 장면 이미지 — Storage 경로 배열. 장면 1..N 과 동일한 길이.
   -- 각 원소는 'proposal-scenes/{user_id}/{draft_id}/scene_{idx}.png' 형태의 Storage path.
@@ -1700,6 +1718,25 @@ create table if not exists event_proposals (
   -- era_id 필수 여부: 'general' 만 NULL 허용
   constraint chk_era_id_required_unless_general check (
     proposal_type = 'general' or era_id is not null
+  ),
+
+  -- scene_captions 는 story_scenes 와 같은 순서의 사용자용 장면 설명.
+  constraint chk_scene_captions_count_for_new check (
+    proposal_type <> 'new'
+    or jsonb_array_length(scene_captions) = jsonb_array_length(story_scenes)
+  ),
+
+  -- 로컬 draft 스크립트가 service-role direct insert 를 쓰더라도 새 이야기 payload
+  -- 의 최소 완성도를 DB 가 한 번 더 보장한다.
+  constraint chk_new_story_required_payload check (
+    proposal_type <> 'new'
+    or (
+      landmark_id is not null
+      and coalesce(trim(background_context), '') <> ''
+      and jsonb_array_length(story_scenes) > 0
+      and coalesce(array_length(scene_image_paths, 1), 0) = jsonb_array_length(story_scenes)
+      and coalesce(array_length(scene_image_prompts, 1), 0) = jsonb_array_length(story_scenes)
+    )
   ),
 
   -- 'general' 의 image_paths 는 최대 5장
@@ -1850,6 +1887,7 @@ create or replace function public.submit_event_proposal(
   p_era_id uuid,
   p_title text,
   p_summary text,
+  p_background_context text,
   p_character_codes text[],
   p_landmark_id uuid,
   p_start_year int,
@@ -1857,12 +1895,16 @@ create or replace function public.submit_event_proposal(
   p_time_precision text,
   p_bible_refs jsonb,
   p_story_scenes jsonb,
+  p_scene_captions jsonb,
   p_scene_characters jsonb,
   p_scene_image_paths text[],
   p_scene_image_prompts text[],
   p_proposed_characters jsonb,
   p_quiz_questions jsonb,
-  p_after_story_index int
+  p_after_story_index int,
+  p_unit_code text default 'default',
+  p_unit_title text default '전체 흐름',
+  p_unit_order int default 1
 )
 returns uuid
 language plpgsql
@@ -1885,6 +1927,9 @@ begin
   end if;
   if coalesce(trim(p_title), '') = '' then
     raise exception 'title is required';
+  end if;
+  if coalesce(trim(p_background_context), '') = '' then
+    raise exception 'background_context is required';
   end if;
 
   -- 제목 충돌 사전 검증. events.title 은 UNIQUE 제약이라 승인 시에도 막히지만
@@ -1911,6 +1956,10 @@ begin
   v_scene_count := coalesce(jsonb_array_length(p_story_scenes), 0);
   if v_scene_count = 0 then
     raise exception 'at least one scene is required';
+  end if;
+  if coalesce(jsonb_array_length(coalesce(p_scene_captions, '[]'::jsonb)), 0) is distinct from v_scene_count then
+    raise exception 'scene_captions length (%) must match story_scenes length (%)',
+      coalesce(jsonb_array_length(coalesce(p_scene_captions, '[]'::jsonb)), 0), v_scene_count;
   end if;
   if array_length(coalesce(p_scene_image_paths, '{}'), 1) is distinct from v_scene_count then
     raise exception 'scene_image_paths length (%) must match story_scenes length (%)',
@@ -1957,9 +2006,10 @@ begin
 
   insert into event_proposals (
     proposal_type,
-    proposer_user_id, era_id, title, summary, character_codes,
+    proposer_user_id, era_id, title, summary, background_context, character_codes,
     landmark_id, start_year, end_year,
-    time_precision, bible_refs, story_scenes, scene_characters,
+    time_precision, bible_refs, story_scenes, scene_captions, scene_characters,
+    unit_code, unit_title, unit_order,
     scene_image_paths, scene_image_prompts,
     proposed_characters,
     quiz_questions,
@@ -1967,12 +2017,16 @@ begin
   )
   values (
     'new',
-    auth.uid(), p_era_id, p_title, p_summary, coalesce(p_character_codes, '{}'),
+    auth.uid(), p_era_id, p_title, p_summary, p_background_context, coalesce(p_character_codes, '{}'),
     p_landmark_id, p_start_year, p_end_year,
     coalesce(nullif(trim(p_time_precision), ''), 'approx'),
     coalesce(p_bible_refs, '[]'::jsonb),
     coalesce(p_story_scenes, '[]'::jsonb),
+    coalesce(p_scene_captions, '[]'::jsonb),
     coalesce(p_scene_characters, '[]'::jsonb),
+    coalesce(nullif(trim(p_unit_code), ''), 'default'),
+    coalesce(nullif(trim(p_unit_title), ''), '전체 흐름'),
+    coalesce(p_unit_order, 1),
     coalesce(p_scene_image_paths, '{}'),
     coalesce(p_scene_image_prompts, '{}'),
     coalesce(p_proposed_characters, '[]'::jsonb),
@@ -1985,9 +2039,10 @@ begin
 end;
 $$;
 grant execute on function public.submit_event_proposal(
-  uuid, text, text, text[], uuid,
+  uuid, text, text, text, text[], uuid,
   int, int, text,
-  jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb, int
+  jsonb, jsonb, jsonb, jsonb, text[], text[], jsonb, jsonb,
+  int, text, text, int
 ) to authenticated;
 
 -- 6b) RPC: submit_delete_proposal (pastor 만) — 기존 이야기 삭제 제안 진입점.
@@ -2098,12 +2153,16 @@ begin
     raise exception 'approve_event_proposal is only for proposal_type=new (got %). use approve_delete_proposal for deletions',
       v_proposal.proposal_type;
   end if;
-  -- 위치가 무효화된(다른 제안이 같은 자리에 먼저 들어가서) 제안은 제안자가
-  -- 새 위치를 정하기 전엔 승인할 수 없다. UI 에서도 버튼이 잠기지만 RPC 단에서
-  -- 한 번 더 방어.
-  if v_proposal.position_invalidated_at is not null then
+  v_after := coalesce(p_after_story_index_override, v_proposal.after_story_index, 0);
+
+  -- 위치가 무효화된(다른 제안이 같은 자리에 먼저 들어가서) 제안은 기본 승인으로는
+  -- 막는다. 단, 관리자가 승인 다이얼로그에서 새 위치를 명시적으로 override 하면
+  -- 그 위치로 바로 승인할 수 있다. 로컬 draft와 목회자 제안이 같은 after 를
+  -- 겨냥한 운영 상황에서 관리자 UI 만으로 순서를 재배치하기 위한 경로다.
+  if v_proposal.position_invalidated_at is not null
+     and p_after_story_index_override is null then
     raise exception
-      'proposal % needs position revision first (invalidated at %)',
+      'proposal % needs position revision first or explicit admin override (invalidated at %)',
       p_proposal_id, v_proposal.position_invalidated_at;
   end if;
 
@@ -2111,8 +2170,6 @@ begin
   if v_era_code is null then
     raise exception 'era not found for proposal: %', v_proposal.era_id;
   end if;
-
-  v_after := coalesce(p_after_story_index_override, v_proposal.after_story_index, 0);
 
   -- 1) "이 제안에서 새로 만든 캐릭터" 를 characters 에 upsert.
   --    p_character_active_overrides 는 { code: bool } 매핑. 관리자가 승인 다이얼로그
@@ -2190,7 +2247,9 @@ begin
     v_after,
     v_proposal.title,
     v_proposal.summary,
+    v_proposal.background_context,
     v_proposal.story_scenes,
+    v_proposal.scene_captions,
     v_proposal.scene_characters,
     v_proposal.character_codes,
     v_proposal.bible_refs,
@@ -2198,7 +2257,10 @@ begin
     v_proposal.end_year,
     v_proposal.time_precision,
     v_proposal.landmark_id,
-    v_proposal.scene_image_paths
+    v_proposal.scene_image_paths,
+    v_proposal.unit_code,
+    v_proposal.unit_title,
+    v_proposal.unit_order
   );
 
   -- 3) 퀴즈 insert — proposal 에 담긴 1~3개를 quiz_questions 로 풀어 넣는다.
@@ -2306,7 +2368,7 @@ begin
         and status = 'pending'
         and id <> p_proposal_id
         and position_invalidated_at is null
-        and after_story_index is not distinct from v_proposal.after_story_index
+        and coalesce(after_story_index, 0) = v_after
     loop
       update event_proposals
       set

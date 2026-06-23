@@ -135,9 +135,29 @@ class LoadQuizFileTests(unittest.TestCase):
         finally:
             path.unlink()
 
-    def test_wrong_question_count_raises(self) -> None:
+    def test_one_to_three_questions_are_allowed(self) -> None:
         payload = self._valid_payload()
         payload["questions"] = payload["questions"][:2]
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            quiz = mod.load_quiz_file(path)
+            self.assertEqual(len(quiz.questions), 2)
+        finally:
+            path.unlink()
+
+    def test_zero_questions_raise(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"] = []
+        path = self._write_as(payload, "era_primeval_n001.json")
+        try:
+            with self.assertRaises(mod.QuizValidationError):
+                mod.load_quiz_file(path)
+        finally:
+            path.unlink()
+
+    def test_more_than_three_questions_raise(self) -> None:
+        payload = self._valid_payload()
+        payload["questions"] = payload["questions"] + [payload["questions"][0]]
         path = self._write_as(payload, "era_primeval_n001.json")
         try:
             with self.assertRaises(mod.QuizValidationError):

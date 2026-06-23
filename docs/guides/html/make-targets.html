@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 445 Dart tests</div>
+      <div class="subtle">310 events · 447 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -31,7 +31,7 @@
 <div class="step"><span>db</span><strong>DB 적용</strong><p>apply-seeds-* ENV=real</p></div>
 <div class="step"><span>storage</span><strong>Storage</strong><p>avatars만 자동 업로드</p></div>
 <div class="step"><span>insert</span><strong>중간 삽입</strong><p>event_id 보존 후 seed</p></div></div>
-          <div class="toc"><strong>On this page</strong><a class="level-1" href="#make-target-운영-지도">Make target 운영 지도</a><a class="level-2" href="#0-먼저-알아야-할-원칙">0. 먼저 알아야 할 원칙</a><a class="level-2" href="#1-신규-이야기-중간-삽입에서-가장-위험한-부분">1. 신규 이야기 중간 삽입에서 가장 위험한 부분</a><a class="level-2" href="#2-이야기-인물-seed-생성-target">2. 이야기/인물 seed 생성 target</a><a class="level-3" href="#make-export-stories-json">`make export-stories-json`</a><a class="level-3" href="#make-renumber-story-indices">`make renumber-story-indices`</a><a class="level-3" href="#make-seed-stories-characters">`make seed-stories-characters`</a><a class="level-3" href="#make-seed-quizzes">`make seed-quizzes`</a><a class="level-3" href="#make-seed-landmarks">`make seed-landmarks`</a><a class="level-2" href="#3-이미지와-앱-번들-asset-target">3. 이미지와 앱 번들 asset target</a><a class="level-3" href="#make-generate-story-images">`make generate-story-images`</a><a class="level-3" href="#make-thumbnails">`make thumbnails`</a><a class="level-3" href="#make-update-pubspec-assets">`make update-pubspec-assets`</a><a class="level-2" href="#4-db-적용-target">4. DB 적용 target</a><a class="level-3" href="#make-apply-seeds-stories-characters-env=dev|real">`make apply-seeds-stories-characters ENV=dev|real`</a><a class="level-3" href="#make-apply-seeds-quizzes-env=dev|real">`make apply-seeds-quizzes ENV=dev|real`</a><a class="level-3" href="#make-apply-seeds-landmarks-env=dev|real">`make apply-seeds-landmarks ENV=dev|real`</a><a class="level-2" href="#5-storage-target">5. Storage target</a><a class="level-3" href="#make-upload-character-avatars-env=dev|real">`make upload-character-avatars ENV=dev|real`</a><a class="level-3" href="#make-sync-approved-proposal-assets-env=dev|real">`make sync-approved-proposal-assets ENV=dev|real`</a><a class="level-3" href="#없는-target-이야기-썸네일-storage-업로드">없는 target: 이야기 썸네일 Storage 업로드</a><a class="level-2" href="#6-검증-target과-명령">6. 검증 target과 명령</a><a class="level-2" href="#7-새-이야기-작업-추천-순서">7. 새 이야기 작업 추천 순서</a></div>
+          <div class="toc"><strong>On this page</strong><a class="level-1" href="#make-target-운영-지도">Make target 운영 지도</a><a class="level-2" href="#0-먼저-알아야-할-원칙">0. 먼저 알아야 할 원칙</a><a class="level-2" href="#1-신규-이야기-중간-삽입에서-가장-위험한-부분">1. 신규 이야기 중간 삽입에서 가장 위험한 부분</a><a class="level-2" href="#2-이야기-인물-seed-생성-target">2. 이야기/인물 seed 생성 target</a><a class="level-3" href="#make-export-stories-json">`make export-stories-json`</a><a class="level-3" href="#make-export-quizzes-json">`make export-quizzes-json`</a><a class="level-3" href="#make-export-event-region-mapping">`make export-event-region-mapping`</a><a class="level-3" href="#make-renumber-story-indices">`make renumber-story-indices`</a><a class="level-3" href="#make-seed-stories-characters">`make seed-stories-characters`</a><a class="level-3" href="#make-seed-quizzes">`make seed-quizzes`</a><a class="level-3" href="#make-seed-landmarks">`make seed-landmarks`</a><a class="level-2" href="#3-이미지와-앱-번들-asset-target">3. 이미지와 앱 번들 asset target</a><a class="level-3" href="#make-generate-story-images">`make generate-story-images`</a><a class="level-3" href="#make-generate-draft-story-images-story=">`make generate-draft-story-images STORY=...`</a><a class="level-3" href="#make-thumbnails">`make thumbnails`</a><a class="level-3" href="#make-update-pubspec-assets">`make update-pubspec-assets`</a><a class="level-2" href="#3-1-draft-proposal-운영-target">3.1 Draft / proposal 운영 target</a><a class="level-3" href="#make-apply-draft-env=real-story=">`make apply-draft ENV=real STORY=...`</a><a class="level-3" href="#make-apply-drafts-env=real-drafts=-a-b">`make apply-drafts ENV=real DRAFTS=&quot;a b&quot;`</a><a class="level-3" href="#make-release-sync-stories-env=real">`make release-sync-stories ENV=real`</a><a class="level-2" href="#4-db-적용-target">4. DB 적용 target</a><a class="level-3" href="#make-apply-seeds-stories-characters-env=dev|real">`make apply-seeds-stories-characters ENV=dev|real`</a><a class="level-3" href="#make-apply-seeds-quizzes-env=dev|real">`make apply-seeds-quizzes ENV=dev|real`</a><a class="level-3" href="#make-apply-seeds-landmarks-env=dev|real">`make apply-seeds-landmarks ENV=dev|real`</a><a class="level-2" href="#5-storage-target">5. Storage target</a><a class="level-3" href="#make-upload-character-avatars-env=dev|real">`make upload-character-avatars ENV=dev|real`</a><a class="level-3" href="#make-sync-approved-proposal-assets-env=dev|real">`make sync-approved-proposal-assets ENV=dev|real`</a><a class="level-3" href="#직접-seed-경로에-없는-target-이야기-썸네일-storage-업로드">직접 seed 경로에 없는 target: 이야기 썸네일 Storage 업로드</a><a class="level-2" href="#6-검증-target과-명령">6. 검증 target과 명령</a><a class="level-2" href="#7-새-이야기-작업-추천-순서">7. 새 이야기 작업 추천 순서</a></div>
         </section>
         <article class="doc-body">
           <h1 id="make-target-운영-지도">Make target 운영 지도</h1>
@@ -93,8 +93,13 @@ make -n upload-character-avatars ENV=real</code></pre>
 <td>기존 <code>story_index</code>가 안 밀려 seed apply가 단순하다.</td>
 </tr>
 <tr>
+<td>proposal 승인 경로</td>
+<td>중간 삽입 + 배포 전 이미지 fallback이 필요할 때</td>
+<td>draft를 proposal로 올리고 관리자 승인 RPC가 <code>insert_event_at_position(...)</code>을 호출한다.</td>
+</tr>
+<tr>
 <td>DB 위치 삽입 patch/RPC 먼저</td>
-<td>중간 삽입이 꼭 필요할 때</td>
+<td>관리자가 직접 SQL로 처리해야 할 때</td>
 <td><code>insert_event_at_position(...)</code> 또는 별도 idempotent patch로 DB row를 먼저 shift+insert한다.</td>
 </tr>
 <tr>
@@ -103,11 +108,17 @@ make -n upload-character-avatars ENV=real</code></pre>
 <td>앱 번들에 새 썸네일이 포함된 뒤 real 공개한다.</td>
 </tr>
 </tbody></table></div>
-<p>중간 삽입 후 canonical JSON도 결국 새 순서와 같아야 하므로, DB에서 안전하게 shift+insert한 뒤에는 <code>make export-stories-json ENV=real</code> 또는 수동 JSON 정리로 로컬 기준을 맞춘다.</p>
+<p>중간 삽입 후 canonical JSON도 결국 새 순서와 같아야 하므로, DB에서 안전하게 shift+insert한 뒤에는 release sync로 DB 상태를 <code>assets/200_stories</code>, quiz, landmark mapping, 원본 이미지, thumbnails, <code>pubspec.yaml</code>에 반영한다.</p>
 <h2 id="2-이야기-인물-seed-생성-target">2. 이야기/인물 seed 생성 target</h2>
 <h3 id="make-export-stories-json"><code>make export-stories-json</code></h3>
 <p>DB의 <code>events</code>를 <code>assets/200_stories/*.json</code>으로 역추출한다.</p>
 <ul><li>입력: 원격 DB의 published events</li><li>출력: <code>assets/200_stories/*.json</code></li><li>원격 변경: 없음, 읽기만 함</li><li>주의: 로컬 JSON을 덮어쓸 수 있으므로 <code>git status --short assets/200_stories</code>를 먼저 본다.</li></ul>
+<h3 id="make-export-quizzes-json"><code>make export-quizzes-json</code></h3>
+<p>DB의 <code>quiz_questions</code>를 <code>assets/quizzes/*.json</code>으로 역추출하고, <code>supabase/quizzes/db_events.json</code>도 현재 published events 기준으로 갱신한다.</p>
+<ul><li>입력: 원격 DB의 published events, quiz_questions</li><li>출력: <code>assets/quizzes/&lt;era_code&gt;_nNNN.json</code>, <code>supabase/quizzes/db_events.json</code></li><li>원격 변경: 없음, 읽기만 함</li><li>주의: 제안/RPC와 동일하게 퀴즈 1~3개를 canonical JSON으로 허용한다.</li></ul>
+<h3 id="make-export-event-region-mapping"><code>make export-event-region-mapping</code></h3>
+<p>DB의 <code>events.landmark_id</code>를 기준으로 <code>assets/landmarks/event_region_mapping.json</code>을 역추출한다. landmark가 region이 아니면 <code>parent_landmark_id</code>를 region으로 기록한다.</p>
+<ul><li>입력: 원격 DB의 published events, landmarks</li><li>출력: <code>assets/landmarks/event_region_mapping.json</code></li><li>원격 변경: 없음, 읽기만 함</li></ul>
 <h3 id="make-renumber-story-indices"><code>make renumber-story-indices</code></h3>
 <p>로컬 JSON의 <code>story_index</code>를 시대별 1..N으로 재정렬한다.</p>
 <ul><li>입력: <code>assets/200_stories/*.json</code></li><li>출력: 같은 JSON 파일 수정</li><li>원격 변경: 없음</li><li>주의: real에 이미 공개된 중간 삽입에는 이것만 믿고 seed apply하지 않는다. §1의 row id 보존 문제가 있다.</li></ul>
@@ -147,6 +158,11 @@ make -n upload-character-avatars ENV=real</code></pre>
 <h3 id="make-generate-story-images"><code>make generate-story-images</code></h3>
 <p>로컬 이야기 JSON의 <code>story_scenes</code>를 기준으로 Vertex AI 장면 이미지를 만든다.</p>
 <ul><li>입력: <code>assets/200_stories/*.json</code>, <code>.env</code>의 <code>GOOGLE_CLOUD_PROJECT</code></li><li>출력: <code>assets/story_images/&lt;title&gt;/scene_N.png</code></li><li>원격 변경: 없음</li><li>비용: Vertex AI 호출 비용 발생 가능</li><li>주의: 기존 PNG가 있으면 skip한다. 마음에 안 드는 장면은 해당 PNG를 지운 뒤 다시 실행한다.</li></ul>
+<h3 id="make-generate-draft-story-images-story="><code>make generate-draft-story-images STORY=...</code></h3>
+<p>신규 이야기 draft JSON 하나만 기준으로 Vertex AI 장면 이미지를 만든다.</p>
+<ul><li>입력: <code>assets/story_drafts/YYYYMMDD_slug.json</code>, <code>.env</code>의 <code>GOOGLE_CLOUD_PROJECT</code></li><li>출력: <code>assets/story_drafts/YYYYMMDD_slug/scene_N.png</code></li><li>원격 변경: 없음</li><li>비용: Vertex AI 호출 비용 발생 가능</li><li>주의: canonical <code>assets/200_stories</code>나 <code>assets/story_images</code>를 prune하지 않는다.</li></ul>
+<p><code>DRAFT=YYYYMMDD_slug</code>를 쓰면 <code>assets/story_drafts/YYYYMMDD_slug.json</code>으로 해석한다.</p>
+<p>이 target은 새 이야기 표준 흐름에서 <code>make generate-story-images</code>를 대체한다. <code>generate-story-images</code>는 전체 canonical 이야기 세트를 대상으로 하므로 draft 한 건을 운영하기에는 범위가 넓다.</p>
 <h3 id="make-thumbnails"><code>make thumbnails</code></h3>
 <p>앱 런타임용 썸네일을 만든다.</p>
 <ul><li>입력: <code>assets/story_images/</code>, <code>assets/avatars/</code>, <code>assets/200_stories/*.json</code></li><li>출력: <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/scene_N.jpg</code>, <code>assets/story_images_thumbs/index.json</code>, <code>assets/avatars_thumbs/*.png</code></li><li>원격 변경: 없음</li></ul>
@@ -155,6 +171,34 @@ make -n upload-character-avatars ENV=real</code></pre>
 <p>Flutter가 새 썸네일 폴더를 번들에 포함하도록 <code>pubspec.yaml</code>의 assets 블록을 갱신한다.</p>
 <ul><li>입력: <code>assets/story_images_thumbs/index.json</code>, 하위 폴더 목록</li><li>출력: <code>pubspec.yaml</code></li><li>원격 변경: 없음</li></ul>
 <p>이 target을 빼먹으면 로컬에는 JPG가 있어도 새 앱 번들에 포함되지 않는다.</p>
+<h2 id="3-1-draft-proposal-운영-target">3.1 Draft / proposal 운영 target</h2>
+<h3 id="make-apply-draft-env=real-story="><code>make apply-draft ENV=real STORY=...</code></h3>
+<p>운영자가 만든 draft를 proposal 대기열로 올린다.</p>
+<ul><li>입력: <code>assets/story_drafts/YYYYMMDD_slug.json</code>,</li></ul>
+<p><code>assets/story_drafts/YYYYMMDD_slug/scene_N.png</code></p>
+<ul><li>원격 DB 변경: <code>event_proposals(status=&#x27;pending&#x27;)</code> insert</li><li>원격 Storage 변경: <code>proposal-scenes/&lt;uid-or-system&gt;/&lt;draft&gt;/scene_N.png</code> 업로드</li><li>필요 환경값: <code>.env.ops</code>의 <code>SUPABASE_SERVICE_ROLE_KEY_DEV/PROD</code>,</li></ul>
+<p><code>STORY_DRAFT_PROPOSER_USER_ID_DEV/PROD</code></p>
+<ul><li>dry-run: <code>make apply-draft ENV=real STORY=... DRY_RUN=1</code></li><li>검증: <code>background_context</code>, 장면/캡션 수, 장면 이미지 수, 퀴즈 1~3개,</li></ul>
+<p>퀴즈 선택지/정답/해설, 기존 event/pending proposal 제목 중복을 확인한 뒤 업로드한다.</p>
+<ul><li>주의: 아직 <code>events</code>를 만들지 않으므로 일반 사용자에게는 보이지 않는다. 관리자 UI에서</li></ul>
+<p>승인해야 <code>approve_event_proposal</code>이 <code>events</code>와 <code>quiz_questions</code>를 만든다.</p>
+<h3 id="make-apply-drafts-env=real-drafts=-a-b"><code>make apply-drafts ENV=real DRAFTS=&quot;a b&quot;</code></h3>
+<p>여러 draft JSON을 순차적으로 proposal 대기열에 올린다.</p>
+<pre><code class="language-bash">make apply-drafts ENV=real DRAFTS=&quot;20260623_elijah_ravens 20260624_amos_call&quot;
+make apply-drafts ENV=real STORIES=&quot;assets/story_drafts/a.json assets/story_drafts/b.json&quot;
+make apply-drafts ENV=real STORIES_GLOB=&quot;assets/story_drafts/202606*.json&quot;</code></pre>
+<ul><li>입력: 각 draft JSON과 같은 이름의 이미지 폴더</li><li>원격 DB/Storage 변경: <code>apply-draft</code>를 각 파일에 순차 적용</li><li>dry-run: <code>DRY_RUN=1</code></li><li>주의: 여러 proposal이 같은 era + 같은 after 위치를 겨냥할 수 있다. 승인 시 관리자</li></ul>
+<p>UI에서 위치 override를 고르면 그 자리로 바로 재배치 승인되고, 같은 effective 위치의 다른 pending 제안은 위치 재선택 상태로 잠긴다.</p>
+<h3 id="make-release-sync-stories-env=real"><code>make release-sync-stories ENV=real</code></h3>
+<p>관리자 승인 후 real DB 상태를 다음 앱 배포용 로컬 canonical 파일로 되돌린다.</p>
+<ul><li>실행 순서: <code>export-stories-json</code> → <code>export-quizzes-json</code> →</li></ul>
+<p><code>export-event-region-mapping</code> → <code>sync-approved-proposal-assets</code> → <code>thumbnails</code> → <code>update-pubspec-assets</code></p>
+<ul><li>입력: DB의 published events, quiz_questions, landmarks, 승인 proposal assets</li><li>출력: <code>assets/200_stories/*.json</code>, <code>assets/story_images/&lt;title&gt;/scene_N.png</code>,</li></ul>
+<p><code>assets/quizzes/*.json</code>, <code>supabase/quizzes/db_events.json</code>, <code>assets/landmarks/event_region_mapping.json</code>, <code>assets/story_images_thumbs/</code>, <code>pubspec.yaml</code></p>
+<ul><li>원격 변경: <code>sync-approved-proposal-assets</code> 단계에서 신규 캐릭터 이미지를</li></ul>
+<p><code>characters</code> 버킷으로 복사하고 <code>characters.avatar_storage_path</code>를 갱신할 수 있다.</p>
+<ul><li>여러 approved proposal이 한 번에 쌓여 있어도 DB의 현재 published 상태 전체를</li></ul>
+<p>release canonical 파일로 되돌린다.</p>
 <h2 id="4-db-적용-target">4. DB 적용 target</h2>
 <h3 id="make-apply-seeds-stories-characters-env=dev|real"><code>make apply-seeds-stories-characters ENV=dev|real</code></h3>
 <p>생성된 characters/events SQL을 DB에 적용한다.</p>
@@ -173,11 +217,11 @@ make -n upload-character-avatars ENV=real</code></pre>
 <ul><li>입력: <code>assets/avatars/*.png</code>, <code>.env</code>, <code>.env.ops</code>의 service role key</li><li>원격 변경: Supabase Storage <code>characters/</code>, DB <code>characters.avatar_storage_path</code></li><li>주의: 기본 target은 <code>characters</code> 버킷을 먼저 비우고 새로 업로드한다.</li></ul>
 <p>이 target은 이야기 장면 이미지나 썸네일을 업로드하지 않는다.</p>
 <h3 id="make-sync-approved-proposal-assets-env=dev|real"><code>make sync-approved-proposal-assets ENV=dev|real</code></h3>
-<p>과거 웹 제안/승인 흐름에서 승인된 proposal 이미지를 로컬 canonical assets로 동기화한다.</p>
+<p>승인된 proposal 이미지를 로컬 canonical assets로 동기화한다.</p>
 <ul><li>입력: <code>event_proposals</code>, <code>proposal-scenes</code>, <code>proposal-characters</code></li><li>출력: <code>assets/story_images/</code>, <code>assets/avatars/</code></li><li>원격 변경: 신규 캐릭터 이미지를 <code>characters</code> 버킷으로 복사하고 <code>characters.avatar_storage_path</code> 갱신 가능</li></ul>
-<p>현재 운영 기준은 웹 제안 화면을 배포하지 않고 로컬 JSON/이미지를 직접 관리한다. 따라서 이 target은 수동 신규 이야기 추가의 표준 경로가 아니다.</p>
-<h3 id="없는-target-이야기-썸네일-storage-업로드">없는 target: 이야기 썸네일 Storage 업로드</h3>
-<p>현재 repo에는 다음 일을 자동으로 하는 Make target이 없다.</p>
+<p>이 target은 proposal asset sync의 기반이다. 신규 이야기 표준 흐름에서는 <code>release-sync-stories</code>가 이 target을 포함해 DB → canonical JSON export, thumbnails, pubspec 갱신까지 이어서 실행한다.</p>
+<h3 id="직접-seed-경로에-없는-target-이야기-썸네일-storage-업로드">직접 seed 경로에 없는 target: 이야기 썸네일 Storage 업로드</h3>
+<p>직접 <code>assets/200_stories</code> seed를 real에 적용하는 경로에는 다음 일을 자동으로 하는 Make target이 없다.</p>
 <ol><li><code>assets/story_images/&lt;title&gt;/scene_N.png</code> 또는 <code>assets/story_images_thumbs/.../scene_N.jpg</code>를 public Storage에 업로드</li><li>업로드 path를 <code>events.scene_image_paths</code>에 patch</li><li>구버전 앱이 새 앱 배포 전에도 Storage fallback으로 장면 이미지를 보게 함</li></ol>
 <p>구버전 앱까지 이미지 빈 상태 없이 보장해야 한다면 이 운영 도구를 먼저 만들어야 한다. 그 전에는 real 공개를 새 앱 출시 이후로 늦추는 것이 가장 단순하다.</p>
 <p>Storage path만 채운다고 모든 썸네일 위치가 자동으로 해결되는 것도 아니다. 현재 fallback은 <code>SceneAssetLoader.loadForEvent(..., publicUrlFor: ...)</code>를 호출하는 화면에서 동작한다. 상세 화면의 큰 장면 row는 이 경로를 쓰지만, 지역 카드/이전·다음 카드 같은 작은 썸네일까지 완전 보장하려면 앱 호출부도 같이 점검한다.</p>

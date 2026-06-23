@@ -105,13 +105,14 @@ MaterialApp(theme: AppTheme.light(), ...)
 지형을 단일 운영 배경으로 사용한다. 별도 API key나 지도 배경 시작값을
 받지 않는다. 홈 지도 위에는 별도 확대/축소/출처 컨트롤을 띄우지 않고,
 지도 출처와 설명은 프로필 설정 시트의 `지도 설명` 항목에서 확인한다.
-3D 지도는 WebView 안의 MapLibre GL JS 렌더러로 DEM, pitch, bearing, terrain
-exaggeration 을 적용한다. country boundary, region polygon, 사건 경로, hit-zone,
-한국어 국가/region 라벨은 GL GeoJSON layer 로 렌더링하고 사건 숫자/감정 핀은 DOM
-Marker 로 띄워 기본 지도의 영어/현지어 label layer 와 분리한다. 상단/하단 Flutter
-오버레이는 유지한다. WebView 는 renderer 설정이 바뀔 때만 새로 로드하고, 카메라
-이동과 시대/지역/사건 선택 변화는 JS `easeTo()` 및 GeoJSON `setData()` 로 갱신해
-반복 로딩 overlay 를 피한다.
+3D 지도는 MapLibre GL JS 렌더러로 DEM, pitch, bearing, terrain exaggeration 을
+적용한다. Android/iOS 는 네이티브 WebView 로, Flutter Web 은 `HtmlElementView`
+iframe 브릿지로 같은 HTML 렌더러를 띄운다. country boundary, region polygon,
+사건 경로, hit-zone, 한국어 국가/region 라벨은 GL GeoJSON layer 로 렌더링하고
+사건 숫자/감정 핀은 DOM Marker 로 띄워 기본 지도의 영어/현지어 label layer 와
+분리한다. 상단/하단 Flutter 오버레이는 유지한다. 지도 HTML 은 renderer 설정이
+바뀔 때만 새로 로드하고, 카메라 이동과 시대/지역/사건 선택 변화는 JS `easeTo()`
+및 GeoJSON `setData()` 로 갱신해 반복 로딩 overlay 를 피한다.
 Android WebView 는 Flutter gesture arena 에서 지도 드래그/핀치를 놓치지 않도록
 eager gesture recognizer 를 사용한다. Android 에서는 WebView renderer OOM 을 줄이기
 위해 worker/cache/antialias/pitch 를 보수적으로 제한하고 DEM terrain 은 비활성화한다.

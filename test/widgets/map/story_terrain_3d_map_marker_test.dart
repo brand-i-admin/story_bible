@@ -312,12 +312,9 @@ void main() {
         homeSource,
         contains("key: const ValueKey<String>('selection-sheet')"),
       );
-      expect(
-        homeSource,
-        contains(
-          'onPointerDown: (_) {\n                          _handleMapInteraction();',
-        ),
-      );
+      expect(homeSource, contains('WebPointerInterceptor('));
+      expect(homeSource, contains('_handleMapInteraction();'));
+      expect(homeSource, contains('_suppressMapTaps();'));
       expect(homeSource, contains('child: IgnorePointer('));
       expect(mapSource, contains('window.storyBibleClearMapTapSuppression'));
       expect(panelSource, contains('void _clearMapTapSuppression()'));
@@ -325,7 +322,8 @@ void main() {
       expect(homeSource, contains('const Duration(milliseconds: 1200)'));
       expect(homeSource, contains('onPointerUp: (_) =>'));
       expect(homeSource, contains('onPointerCancel: (_) =>'));
-      expect(homeSource, contains('builder: (ctx) => Listener('));
+      expect(homeSource, contains('builder: (ctx) =>'));
+      expect(homeSource, contains('Listener('));
       expect(homeSource, contains('onPointerDown: (_) => _suppressMapTaps(),'));
       expect(homeSource, contains('onPointerUp: (_) => _suppressMapTaps(),'));
       expect(
@@ -376,6 +374,113 @@ void main() {
         expect(source, contains('map.touchZoomRotate.enable();'));
         expect(source, contains('map.dragPan.enable();'));
         expect(source, contains('if (config.enableTerrain) {'));
+      },
+    );
+
+    test('Flutter Web uses an iframe bridge instead of WebViewController', () {
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+      final webSource = File(
+        'lib/widgets/map/story_terrain_web_view_web.dart',
+      ).readAsStringSync();
+
+      expect(
+        terrainSource,
+        contains(
+          "import 'story_terrain_web_view_stub.dart'\n"
+          "    if (dart.library.html) 'story_terrain_web_view_web.dart';",
+        ),
+      );
+      expect(
+        terrainSource,
+        contains(
+          'if (kIsWeb) {\n'
+          '      _loadHtmlIfNeeded(force: true);\n'
+          '      return;\n'
+          '    }\n'
+          '    _controller = WebViewController()',
+        ),
+      );
+      expect(terrainSource, contains('return Stack('));
+      expect(terrainSource, contains('StoryTerrainWebView('));
+      expect(terrainSource, contains('return _webController.runJavaScript'));
+      expect(
+        terrainSource,
+        contains("window.parent.postMessage(encoded, '*')"),
+      );
+      expect(terrainSource, contains("data.type !== 'storyBibleEval'"));
+
+      expect(webSource, contains('html.IFrameElement()'));
+      expect(webSource, contains('html.Blob([htmlText], \'text/html\')'));
+      expect(webSource, contains('_iframe.src = nextUrl'));
+      expect(webSource, contains('html.Url.revokeObjectUrl(objectUrl)'));
+      expect(webSource, contains('ui_web.platformViewRegistry'));
+      expect(webSource, contains('html.window.onMessage.listen'));
+      expect(webSource, contains('decoded[\'bridgeId\'] != widget.bridgeId'));
+      expect(webSource, contains('HtmlElementView(viewType: _viewType)'));
+    });
+
+    test(
+      'Flutter overlays above web map are pointer-intercepted on web only',
+      () {
+        final interceptorExport = File(
+          'lib/widgets/web_pointer_interceptor.dart',
+        ).readAsStringSync();
+        final interceptorStub = File(
+          'lib/widgets/web_pointer_interceptor_stub.dart',
+        ).readAsStringSync();
+        final interceptorWeb = File(
+          'lib/widgets/web_pointer_interceptor_web.dart',
+        ).readAsStringSync();
+        final homeSource = File(
+          'lib/screens/story_home_screen_state.dart',
+        ).readAsStringSync();
+        final panelSource = File(
+          'lib/widgets/story_map_panel_state.dart',
+        ).readAsStringSync();
+        final notificationSource = File(
+          'lib/widgets/notification/notification_bell_button.dart',
+        ).readAsStringSync();
+        final fontScaleSource = File(
+          'lib/widgets/font_scale_bottom_sheet.dart',
+        ).readAsStringSync();
+        final pastorGateSource = File(
+          'lib/widgets/proposal/pastor_gate_dialog.dart',
+        ).readAsStringSync();
+
+        expect(
+          interceptorExport,
+          contains(
+            "export 'web_pointer_interceptor_stub.dart'\n"
+            "    if (dart.library.html) 'web_pointer_interceptor_web.dart';",
+          ),
+        );
+        expect(
+          interceptorStub,
+          contains('Widget build(BuildContext context) => child;'),
+        );
+        expect(interceptorWeb, contains('html.DivElement()'));
+        expect(interceptorWeb, contains('style.pointerEvents'));
+        expect(
+          interceptorWeb,
+          contains('HtmlElementView(viewType: _viewType)'),
+        );
+        expect(interceptorWeb, contains('isVisible: false'));
+        expect(homeSource, contains('WebPointerInterceptor('));
+        expect(homeSource, contains("ValueKey<String>('selection-sheet')"));
+        expect(
+          panelSource,
+          contains('WebPointerInterceptor(child: widget.bottomOverlay!)'),
+        );
+        expect(notificationSource, contains('WebPointerInterceptor('));
+        expect(
+          fontScaleSource,
+          contains(
+            'builder: (_) => const WebPointerInterceptor(child: FontScaleBottomSheet())',
+          ),
+        );
+        expect(pastorGateSource, contains('return WebPointerInterceptor('));
       },
     );
 

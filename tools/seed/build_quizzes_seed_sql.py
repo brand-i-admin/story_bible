@@ -503,8 +503,8 @@ def load_quiz_file(path: Path) -> QuizFile:
 
     story_title = str(raw.get("story_title", "")).strip()
     questions_raw = raw.get("questions")
-    if not isinstance(questions_raw, list) or len(questions_raw) != 3:
-        raise QuizValidationError(f"{path.name}: questions length must be exactly 3")
+    if not isinstance(questions_raw, list) or not (1 <= len(questions_raw) <= 3):
+        raise QuizValidationError(f"{path.name}: questions length must be 1 to 3")
 
     questions: list[QuizQuestionDraft] = []
     for i, q in enumerate(questions_raw):

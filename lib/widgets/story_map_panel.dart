@@ -14,6 +14,7 @@ import '../models/story_event.dart';
 import '../utils/map_math.dart' as map_math;
 import 'map/map_tile_style.dart';
 import 'map/story_terrain_3d_map.dart';
+import 'web_pointer_interceptor.dart';
 
 part 'story_map_panel_state.dart';
 part 'story_map_panel_widgets.dart';

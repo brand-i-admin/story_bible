@@ -50,11 +50,13 @@ real에서 중간 삽입을 안전하게 하려면 먼저 DB에서 기존 row의
 | 선택 | 언제 사용 | 설명 |
 |------|-----------|------|
 | 맨 뒤 추가 | 순서상 뒤에 붙여도 될 때 | 기존 `story_index`가 안 밀려 seed apply가 단순하다. |
-| DB 위치 삽입 patch/RPC 먼저 | 중간 삽입이 꼭 필요할 때 | `insert_event_at_position(...)` 또는 별도 idempotent patch로 DB row를 먼저 shift+insert한다. |
+| proposal 승인 경로 | 중간 삽입 + 배포 전 이미지 fallback이 필요할 때 | draft를 proposal로 올리고 관리자 승인 RPC가 `insert_event_at_position(...)`을 호출한다. |
+| DB 위치 삽입 patch/RPC 먼저 | 관리자가 직접 SQL로 처리해야 할 때 | `insert_event_at_position(...)` 또는 별도 idempotent patch로 DB row를 먼저 shift+insert한다. |
 | 새 앱 출시 이후 공개 지연 | 이미지/순서 리스크를 줄이고 싶을 때 | 앱 번들에 새 썸네일이 포함된 뒤 real 공개한다. |
 
 중간 삽입 후 canonical JSON도 결국 새 순서와 같아야 하므로, DB에서 안전하게 shift+insert한
-뒤에는 `make export-stories-json ENV=real` 또는 수동 JSON 정리로 로컬 기준을 맞춘다.
+뒤에는 release sync로 DB 상태를 `assets/200_stories`, quiz, landmark mapping,
+원본 이미지, thumbnails, `pubspec.yaml`에 반영한다.
 
 ## 2. 이야기/인물 seed 생성 target
 
@@ -66,6 +68,25 @@ DB의 `events`를 `assets/200_stories/*.json`으로 역추출한다.
 - 출력: `assets/200_stories/*.json`
 - 원격 변경: 없음, 읽기만 함
 - 주의: 로컬 JSON을 덮어쓸 수 있으므로 `git status --short assets/200_stories`를 먼저 본다.
+
+### `make export-quizzes-json`
+
+DB의 `quiz_questions`를 `assets/quizzes/*.json`으로 역추출하고,
+`supabase/quizzes/db_events.json`도 현재 published events 기준으로 갱신한다.
+
+- 입력: 원격 DB의 published events, quiz_questions
+- 출력: `assets/quizzes/<era_code>_nNNN.json`, `supabase/quizzes/db_events.json`
+- 원격 변경: 없음, 읽기만 함
+- 주의: 제안/RPC와 동일하게 퀴즈 1~3개를 canonical JSON으로 허용한다.
+
+### `make export-event-region-mapping`
+
+DB의 `events.landmark_id`를 기준으로 `assets/landmarks/event_region_mapping.json`을
+역추출한다. landmark가 region이 아니면 `parent_landmark_id`를 region으로 기록한다.
+
+- 입력: 원격 DB의 published events, landmarks
+- 출력: `assets/landmarks/event_region_mapping.json`
+- 원격 변경: 없음, 읽기만 함
 
 ### `make renumber-story-indices`
 
@@ -132,6 +153,21 @@ DB의 `events`를 `assets/200_stories/*.json`으로 역추출한다.
 - 비용: Vertex AI 호출 비용 발생 가능
 - 주의: 기존 PNG가 있으면 skip한다. 마음에 안 드는 장면은 해당 PNG를 지운 뒤 다시 실행한다.
 
+### `make generate-draft-story-images STORY=...`
+
+신규 이야기 draft JSON 하나만 기준으로 Vertex AI 장면 이미지를 만든다.
+
+- 입력: `assets/story_drafts/YYYYMMDD_slug.json`, `.env`의 `GOOGLE_CLOUD_PROJECT`
+- 출력: `assets/story_drafts/YYYYMMDD_slug/scene_N.png`
+- 원격 변경: 없음
+- 비용: Vertex AI 호출 비용 발생 가능
+- 주의: canonical `assets/200_stories`나 `assets/story_images`를 prune하지 않는다.
+  `DRAFT=YYYYMMDD_slug`를 쓰면 `assets/story_drafts/YYYYMMDD_slug.json`으로 해석한다.
+
+이 target은 새 이야기 표준 흐름에서 `make generate-story-images`를 대체한다.
+`generate-story-images`는 전체 canonical 이야기 세트를 대상으로 하므로 draft 한 건을
+운영하기에는 범위가 넓다.
+
 ### `make thumbnails`
 
 앱 런타임용 썸네일을 만든다.
@@ -152,6 +188,58 @@ Flutter가 새 썸네일 폴더를 번들에 포함하도록 `pubspec.yaml`의 a
 - 원격 변경: 없음
 
 이 target을 빼먹으면 로컬에는 JPG가 있어도 새 앱 번들에 포함되지 않는다.
+
+## 3.1 Draft / proposal 운영 target
+
+### `make apply-draft ENV=real STORY=...`
+
+운영자가 만든 draft를 proposal 대기열로 올린다.
+
+- 입력: `assets/story_drafts/YYYYMMDD_slug.json`,
+  `assets/story_drafts/YYYYMMDD_slug/scene_N.png`
+- 원격 DB 변경: `event_proposals(status='pending')` insert
+- 원격 Storage 변경: `proposal-scenes/<uid-or-system>/<draft>/scene_N.png` 업로드
+- 필요 환경값: `.env.ops`의 `SUPABASE_SERVICE_ROLE_KEY_DEV/PROD`,
+  `STORY_DRAFT_PROPOSER_USER_ID_DEV/PROD`
+- dry-run: `make apply-draft ENV=real STORY=... DRY_RUN=1`
+- 검증: `background_context`, 장면/캡션 수, 장면 이미지 수, 퀴즈 1~3개,
+  퀴즈 선택지/정답/해설, 기존 event/pending proposal 제목 중복을 확인한 뒤 업로드한다.
+- 주의: 아직 `events`를 만들지 않으므로 일반 사용자에게는 보이지 않는다. 관리자 UI에서
+  승인해야 `approve_event_proposal`이 `events`와 `quiz_questions`를 만든다.
+
+### `make apply-drafts ENV=real DRAFTS="a b"`
+
+여러 draft JSON을 순차적으로 proposal 대기열에 올린다.
+
+```bash
+make apply-drafts ENV=real DRAFTS="20260623_elijah_ravens 20260624_amos_call"
+make apply-drafts ENV=real STORIES="assets/story_drafts/a.json assets/story_drafts/b.json"
+make apply-drafts ENV=real STORIES_GLOB="assets/story_drafts/202606*.json"
+```
+
+- 입력: 각 draft JSON과 같은 이름의 이미지 폴더
+- 원격 DB/Storage 변경: `apply-draft`를 각 파일에 순차 적용
+- dry-run: `DRY_RUN=1`
+- 주의: 여러 proposal이 같은 era + 같은 after 위치를 겨냥할 수 있다. 승인 시 관리자
+  UI에서 위치 override를 고르면 그 자리로 바로 재배치 승인되고, 같은 effective 위치의
+  다른 pending 제안은 위치 재선택 상태로 잠긴다.
+
+### `make release-sync-stories ENV=real`
+
+관리자 승인 후 real DB 상태를 다음 앱 배포용 로컬 canonical 파일로 되돌린다.
+
+- 실행 순서: `export-stories-json` → `export-quizzes-json` →
+  `export-event-region-mapping` → `sync-approved-proposal-assets` → `thumbnails` →
+  `update-pubspec-assets`
+- 입력: DB의 published events, quiz_questions, landmarks, 승인 proposal assets
+- 출력: `assets/200_stories/*.json`, `assets/story_images/<title>/scene_N.png`,
+  `assets/quizzes/*.json`, `supabase/quizzes/db_events.json`,
+  `assets/landmarks/event_region_mapping.json`, `assets/story_images_thumbs/`,
+  `pubspec.yaml`
+- 원격 변경: `sync-approved-proposal-assets` 단계에서 신규 캐릭터 이미지를
+  `characters` 버킷으로 복사하고 `characters.avatar_storage_path`를 갱신할 수 있다.
+- 여러 approved proposal이 한 번에 쌓여 있어도 DB의 현재 published 상태 전체를
+  release canonical 파일로 되돌린다.
 
 ## 4. DB 적용 target
 
@@ -199,18 +287,20 @@ Flutter가 새 썸네일 폴더를 번들에 포함하도록 `pubspec.yaml`의 a
 
 ### `make sync-approved-proposal-assets ENV=dev|real`
 
-과거 웹 제안/승인 흐름에서 승인된 proposal 이미지를 로컬 canonical assets로 동기화한다.
+승인된 proposal 이미지를 로컬 canonical assets로 동기화한다.
 
 - 입력: `event_proposals`, `proposal-scenes`, `proposal-characters`
 - 출력: `assets/story_images/`, `assets/avatars/`
 - 원격 변경: 신규 캐릭터 이미지를 `characters` 버킷으로 복사하고 `characters.avatar_storage_path` 갱신 가능
 
-현재 운영 기준은 웹 제안 화면을 배포하지 않고 로컬 JSON/이미지를 직접 관리한다.
-따라서 이 target은 수동 신규 이야기 추가의 표준 경로가 아니다.
+이 target은 proposal asset sync의 기반이다. 신규 이야기 표준 흐름에서는
+`release-sync-stories`가 이 target을 포함해 DB → canonical JSON export, thumbnails,
+pubspec 갱신까지 이어서 실행한다.
 
-### 없는 target: 이야기 썸네일 Storage 업로드
+### 직접 seed 경로에 없는 target: 이야기 썸네일 Storage 업로드
 
-현재 repo에는 다음 일을 자동으로 하는 Make target이 없다.
+직접 `assets/200_stories` seed를 real에 적용하는 경로에는 다음 일을 자동으로 하는
+Make target이 없다.
 
 1. `assets/story_images/<title>/scene_N.png` 또는 `assets/story_images_thumbs/.../scene_N.jpg`를 public Storage에 업로드
 2. 업로드 path를 `events.scene_image_paths`에 patch

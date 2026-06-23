@@ -294,7 +294,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                     _suppressMapTaps(const Duration(milliseconds: 1200)),
                 onPointerSignal: (_) =>
                     _suppressMapTaps(const Duration(milliseconds: 1200)),
-                child: widget.bottomOverlay!,
+                child: WebPointerInterceptor(child: widget.bottomOverlay!),
               ),
             ),
           if (widget.showCharacterLegend &&

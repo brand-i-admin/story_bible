@@ -110,6 +110,14 @@ def parse_args() -> argparse.Namespace:
         help="Root directory where per-title folders are created.",
     )
     parser.add_argument(
+        "--single-output-dir",
+        default="",
+        help=(
+            "Process exactly one event and write scene_XX.png directly into this "
+            "directory instead of creating an event title subdirectory."
+        ),
+    )
+    parser.add_argument(
         "--overwrite",
         action="store_true",
         help="Overwrite existing scene files.",
@@ -1012,11 +1020,20 @@ def main() -> int:
     if not events:
         print("ERROR: no events to process.", file=sys.stderr)
         return 2
+    single_output_dir = Path(args.single_output_dir) if args.single_output_dir else None
+    if single_output_dir is not None and len(events) != 1:
+        print(
+            "ERROR: --single-output-dir requires exactly one loaded event.",
+            file=sys.stderr,
+        )
+        return 2
 
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    if not args.no_prune_orphans:
+    if single_output_dir is not None:
+        single_output_dir.mkdir(parents=True, exist_ok=True)
+    elif not args.no_prune_orphans:
         # 본 처리에서 unique_dirname 이 충돌 시 접미사를 붙여 늘릴 수 있으므로
         # 먼저 같은 로직으로 active dirname 집합을 만들어 그 외만 정리한다.
         preview_used: set[str] = set()
@@ -1066,8 +1083,12 @@ def main() -> int:
     for idx, event in enumerate(events, start=1):
         title = str(event.get("title") or "").strip() or f"event_{idx:03d}"
         event_code = event_code_for(event, idx)
-        dirname = unique_dirname(sanitize_dirname(title), event_code, used_dirnames)
-        event_dir = output_root / dirname
+        if single_output_dir is not None:
+            dirname = single_output_dir.name
+            event_dir = single_output_dir
+        else:
+            dirname = unique_dirname(sanitize_dirname(title), event_code, used_dirnames)
+            event_dir = output_root / dirname
         event_dir.mkdir(parents=True, exist_ok=True)
 
         characters = normalize_persons(event, code_to_name=code_to_name)

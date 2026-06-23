@@ -6,11 +6,11 @@
 >
 > 최종 수정: 2026-06-23
 
-> 현재 콘텐츠 운영 주의: 이 문서의 17~20장에 있는 사역자 웹 제안/승인 흐름은
-> 구현 이력과 구조 참고용이다. 현재 운영에서는 웹을 배포하지 않고, 신규 이야기
-> 요청이 들어오면 운영자가 로컬에서 JSON/이미지/seed/앱 번들을 직접 갱신한다.
-> 실제 신규 이야기 추가 절차는 [CONTENT_UPDATE.md](CONTENT_UPDATE.md)와
-> [develop-flow.md](develop-flow.md)를 우선한다.
+> 현재 콘텐츠 운영 주의: 신규 이야기 추가의 기준 흐름은
+> [develop-flow.md §3.2](develop-flow.md#32-공개-콘텐츠--이야기-데이터-flow)를
+> 우선한다. 이 문서의 17~20장은 proposal 라이프사이클의 상세 참고 자료이며,
+> 최신 `background_context`, `scene_captions`, unit 필드는 `db_init.sql`,
+> Flutter 제안 UI, 관리자 승인 UI에 반영되어 있다.
 
 ---
 
@@ -1218,7 +1218,7 @@ Referenced paths in event_proposals: 12
         └─► ApproveProposalDialog (등장 인물 is_active 결정)
                 │
                 └─► supabase.rpc('approve_event_proposal',
-                                  proposal_id, after_idx, char_active_overrides)
+                                  proposal_id, after_idx_override, char_active_overrides)
                        │
                        │ 한 트랜잭션 안에서:
                        │
@@ -1236,7 +1236,8 @@ Referenced paths in event_proposals: 12
                        │     → events 테이블에 row 1개 추가
                        │     · scene_image_paths = proposal 의 것 그대로 복사
                        │       (즉 'proposal-scenes/<uid>/<draft>/scene_N.png')
-                       │     · 같은 era 내 뒷 story_index 시프트
+                       │     · 관리자가 승인 다이얼로그에서 고른 after_idx_override 기준
+                       │       같은 era 내 뒷 story_index 시프트
                        │     · status='published', deleted_at=null
                        │
                        ├─ 4. quiz_questions 테이블에 1~3개 row 풀어넣기
@@ -1245,6 +1246,8 @@ Referenced paths in event_proposals: 12
                              · status='approved'
                              · approved_event_id = <events.id>
                              · synced_to_local_at IS NULL  ← 아직 로컬 미반영
+                             · 같은 effective after 위치의 다른 pending 제안은
+                               position_invalidated_at set
 ```
 
 #### 데이터 위치 (시점 B)

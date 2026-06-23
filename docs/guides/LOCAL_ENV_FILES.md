@@ -65,6 +65,8 @@ cp .env.ops.example .env.ops
 |------|-----------|------|
 | `SUPABASE_SERVICE_ROLE_KEY_DEV` | dev Storage 업로드/정리 | RLS 우회 service role key |
 | `SUPABASE_SERVICE_ROLE_KEY_PROD` | real Storage 업로드/정리 | 운영 service role key |
+| `STORY_DRAFT_PROPOSER_USER_ID_DEV` | dev `make apply-draft` | pending 제안 row의 작성자 auth UUID |
+| `STORY_DRAFT_PROPOSER_USER_ID_PROD` | real `make apply-draft` | 운영 pending 제안 row의 작성자 auth UUID |
 | `SUPABASE_DB_URL_DEV` | dev `psql` 적용 | `make db-init`, `make apply-seeds`, `make apply-patch` |
 | `SUPABASE_DB_URL_PROD` | real `psql` 적용 | 운영 patch/seed 적용 |
 

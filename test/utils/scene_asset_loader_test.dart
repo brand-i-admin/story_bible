@@ -100,4 +100,16 @@ void main() {
       expect(loader.scenePrefixForTitle('  005 trim test  '), '005');
     });
   });
+
+  group('publicUrlForStoragePath', () {
+    test('이미 public URL이면 그대로 반환한다', () {
+      const url =
+          'https://example.supabase.co/storage/v1/object/public/a/b.png';
+      expect(loader.publicUrlForStoragePath(url), url);
+    });
+
+    test('bucket/path 형식이 아니면 원본 경로를 반환한다', () {
+      expect(loader.publicUrlForStoragePath('scene_01.png'), 'scene_01.png');
+    });
+  });
 }

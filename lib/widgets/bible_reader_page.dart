@@ -781,6 +781,10 @@ class _BibleVersesArea extends StatelessWidget {
               if (ctx == null || !ctx.mounted) {
                 return false;
               }
+              final renderObject = ctx.findRenderObject();
+              if (renderObject is! RenderBox || !renderObject.hasSize) {
+                return false;
+              }
               Scrollable.ensureVisible(
                 ctx,
                 duration: duration,

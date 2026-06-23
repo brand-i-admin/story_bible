@@ -33,11 +33,15 @@ _KEY_ORDER = [
     "lat",
     "lng",
     "summary",
+    "background_context",
     "bible_ref",
     "start_year",
     "end_year",
     "time_precision",
     "story_index",
+    "unit_code",
+    "unit_title",
+    "unit_order",
     "story_scenes",
     "scene_captions",
     "scene_characters",
@@ -61,11 +65,15 @@ def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
         "lat": row.get("lat"),
         "lng": row.get("lng"),
         "summary": row.get("summary") or "",
+        "background_context": row.get("background_context") or "",
         "bible_ref": list(row.get("bible_refs") or []),
         "start_year": row.get("start_year"),
         "end_year": row.get("end_year"),
         "time_precision": row.get("time_precision") or "approx",
         "story_index": int(row.get("story_index") or 0),
+        "unit_code": row.get("unit_code") or "default",
+        "unit_title": row.get("unit_title") or "전체 흐름",
+        "unit_order": int(row.get("unit_order") or 1),
         "story_scenes": list(row.get("story_scenes") or []),
         "scene_captions": list(row.get("scene_captions") or []),
         "scene_characters": [
@@ -164,9 +172,10 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
     rest = url.rstrip("/") + "/rest/v1/events"
     params = {
         "select": (
-            "title,summary,character_codes,bible_refs,story_scenes,scene_captions,scene_characters,"
-            "place_name,lat,lng,start_year,end_year,time_precision,story_index,"
-            "era:era_id(code)"
+            "title,summary,background_context,character_codes,bible_refs,"
+            "story_scenes,scene_captions,scene_characters,start_year,end_year,"
+            "time_precision,story_index,unit_code,unit_title,unit_order,"
+            "era:era_id(code),landmark:landmark_id(name,lat,lng)"
         ),
         "status": "eq.published",
         "order": "story_index.asc",
@@ -188,6 +197,11 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
             era = r.pop("era", None)
             if isinstance(era, dict):
                 r["era_code"] = era.get("code")
+            landmark = r.pop("landmark", None)
+            if isinstance(landmark, dict):
+                r["place_name"] = landmark.get("name")
+                r["lat"] = landmark.get("lat")
+                r["lng"] = landmark.get("lng")
             rows.append(r)
         if len(chunk) < page:
             break

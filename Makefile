@@ -29,6 +29,7 @@ AVATARS_DIR := $(ASSETS_DIR)/avatars
 AVATARS_THUMBS_DIR := $(ASSETS_DIR)/avatars_thumbs
 STORY_IMAGES_DIR := $(ASSETS_DIR)/story_images
 STORY_IMAGES_THUMBS_DIR := $(ASSETS_DIR)/story_images_thumbs
+STORY_DRAFTS_DIR := $(ASSETS_DIR)/story_drafts
 AVATAR_CODES ?=
 AVATAR_OVERWRITE ?=
 AVATAR_EXTRA_ARGS := $(if $(strip $(AVATAR_CODES)),--only-codes $(AVATAR_CODES),) $(if $(filter 1 true yes,$(AVATAR_OVERWRITE)),--overwrite,)
@@ -51,12 +52,13 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         seed-stories seed-characters seed-stories-characters seed-quizzes \
         seed-landmarks audit-landmark-polygons refine-landmark-polygons \
         apply-seeds-landmarks-v2 \
-        generate-avatars generate-story-images thumbnails \
+        generate-avatars generate-story-images generate-draft-story-images thumbnails \
         seed-all generate-all \
-        export-stories-json \
+        export-stories-json export-quizzes-json export-event-region-mapping release-sync-stories \
         db-init apply-patch apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         apply-seeds-landmarks apply-seeds-quizzes \
         upload-character-avatars upload-character-avatars-force \
+        apply-draft apply-drafts \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
         cleanup-orphan-proposal-assets cleanup-orphan-proposal-assets-dry \
@@ -83,6 +85,7 @@ help:
 	@echo "  refine-landmark-polygons   Natural Earth 기반 region polygon 정제 후보 생성"
 	@echo "  generate-avatars        Vertex AI Gemini 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
 	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
+	@echo "  generate-draft-story-images [STORY=assets/story_drafts/foo.json|DRAFT=foo] draft 장면 이미지 생성"
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
@@ -92,6 +95,9 @@ help:
 	@echo ""
 	@echo "DB → 로컬 동기화:"
 	@echo "  export-stories-json       [ENV=dev]  DB events → assets/200_stories/*.json 역추출 (빌더 사전 조건)"
+	@echo "  export-quizzes-json       [ENV=dev]  DB quiz_questions → assets/quizzes/*.json + db_events.json"
+	@echo "  export-event-region-mapping [ENV=dev] DB events.landmark_id → assets/landmarks/event_region_mapping.json"
+	@echo "  release-sync-stories      [ENV=dev|real] approved proposal 자산 + DB events/quiz/mapping → 로컬 번들 준비"
 	@echo ""
 	@echo "DB 적용 (psql + .env.ops의 SUPABASE_DB_URL_DEV/PROD; ENV=real은 PROD 사용):"
 	@echo "  db-init                   [ENV=dev]       db_init.sql 실행 (drop & recreate, 파괴적!)"
@@ -105,6 +111,8 @@ help:
 	@echo "Supabase Storage (service_role 키 필요):"
 	@echo "  upload-character-avatars        [ENV=dev|real]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
 	@echo "  upload-character-avatars-force  [ENV=dev|real]  전부 덮어쓰기 업로드 (--overwrite)"
+	@echo "  apply-draft                     [ENV=dev|real STORY=assets/story_drafts/foo.json|DRAFT=foo] draft → proposal-scenes + pending event_proposals"
+	@echo "  apply-drafts                    [ENV=dev|real DRAFTS=\"foo bar\"|STORIES_GLOB=\"assets/story_drafts/202606*.json\"] 여러 draft 순차 업로드"
 	@echo ""
 	@echo "승인된 제안 → 로컬 assets 동기화 (service_role 키 필요, idempotent):"
 	@echo "  - Phase A: 승인된 신규 제안의 PNG 다운로드(synced_to_local_at NULL 만)"
@@ -246,6 +254,22 @@ generate-story-images:
 	@echo "  → .env의 GOOGLE_CLOUD_PROJECT 확인 필요"
 	$(PYTHON) $(TOOLS_DIR)/images/generate_event_story_images_vertex.py
 
+generate-draft-story-images:
+	@story_json="$(STORY)"; \
+	if [ -z "$$story_json" ] && [ -n "$(DRAFT)" ]; then story_json="$(STORY_DRAFTS_DIR)/$(DRAFT).json"; fi; \
+	if [ -z "$$story_json" ]; then \
+		echo "ERROR: STORY=assets/story_drafts/foo.json or DRAFT=foo is required"; \
+		exit 1; \
+	fi; \
+	out_dir="$${story_json%.json}"; \
+	echo "[Makefile] draft 장면 이미지 생성: $$story_json → $$out_dir"; \
+	$(PYTHON) $(TOOLS_DIR)/images/generate_event_story_images_vertex.py \
+		--stories-dir "$$(dirname "$$story_json")" \
+		--stories-glob "$$(basename "$$story_json")" \
+		--output-root "$$out_dir" \
+		--single-output-dir "$$out_dir" \
+		--no-prune-orphans
+
 thumbnails:
 	@echo "[Makefile] 썸네일 생성..."
 	$(PYTHON) $(TOOLS_DIR)/images/generate_runtime_thumbnails.py
@@ -271,6 +295,38 @@ upload-character-avatars:
 upload-character-avatars-force:
 	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV) → ops=$(OPS_ENV))"
 	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(OPS_ENV) --overwrite
+
+apply-draft:
+	@story_json="$(STORY)"; \
+	if [ -z "$$story_json" ] && [ -n "$(DRAFT)" ]; then story_json="$(STORY_DRAFTS_DIR)/$(DRAFT).json"; fi; \
+	if [ -z "$$story_json" ]; then \
+		echo "ERROR: STORY=assets/story_drafts/foo.json or DRAFT=foo is required"; \
+		exit 1; \
+	fi; \
+	echo "[Makefile] draft → pending proposal (ENV=$(ENV) → ops=$(OPS_ENV)): $$story_json"; \
+	$(PYTHON) $(TOOLS_DIR)/supabase/apply_story_draft.py \
+		--env $(OPS_ENV) \
+		--story "$$story_json" \
+		$(if $(strip $(PROPOSER_USER_ID)),--proposer-user-id $(PROPOSER_USER_ID),) \
+		$(if $(filter 1 true yes,$(DRY_RUN)),--dry-run,)
+
+apply-drafts:
+	@story_args=""; \
+	for draft in $(DRAFTS); do story_args="$$story_args --story $(STORY_DRAFTS_DIR)/$$draft.json"; done; \
+	for story in $(STORIES); do story_args="$$story_args --story $$story"; done; \
+	glob_arg=""; \
+	if [ -n "$(STORIES_GLOB)" ]; then glob_arg="--stories-glob $(STORIES_GLOB)"; fi; \
+	if [ -z "$$story_args" ] && [ -z "$$glob_arg" ]; then \
+		echo "ERROR: DRAFTS=\"foo bar\", STORIES=\"path/a.json path/b.json\", or STORIES_GLOB=\"assets/story_drafts/*.json\" is required"; \
+		exit 1; \
+	fi; \
+	echo "[Makefile] 여러 draft → pending proposals (ENV=$(ENV) → ops=$(OPS_ENV))"; \
+	$(PYTHON) $(TOOLS_DIR)/supabase/apply_story_draft.py \
+		--env $(OPS_ENV) \
+		$$story_args \
+		$$glob_arg \
+		$(if $(strip $(PROPOSER_USER_ID)),--proposer-user-id $(PROPOSER_USER_ID),) \
+		$(if $(filter 1 true yes,$(DRY_RUN)),--dry-run,)
 
 # -----------------------------------------------------------------------------
 # 승인된 제안 → 로컬 assets 동기화
@@ -347,6 +403,28 @@ export-stories-json:
 	$(PYTHON) $(TOOLS_DIR)/export/export_events_to_json.py \
 		--output-dir $(STORIES_DIR) \
 		--env $(OPS_ENV)
+
+export-quizzes-json:
+	@echo "[Makefile] DB quiz_questions → $(ASSETS_DIR)/quizzes/*.json 역추출 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/export/export_quizzes_to_json.py \
+		--output-dir $(ASSETS_DIR)/quizzes \
+		--events-output $(SUPABASE_DIR)/quizzes/db_events.json \
+		--env $(OPS_ENV)
+
+export-event-region-mapping:
+	@echo "[Makefile] DB events.landmark_id → $(LANDMARKS_DIR)/event_region_mapping.json 역추출 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	$(PYTHON) $(TOOLS_DIR)/export/export_event_region_mapping.py \
+		--output $(LANDMARKS_DIR)/event_region_mapping.json \
+		--env $(OPS_ENV)
+
+release-sync-stories:
+	$(MAKE) export-stories-json ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
+	$(MAKE) export-quizzes-json ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
+	$(MAKE) export-event-region-mapping ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
+	$(MAKE) sync-approved-proposal-assets ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
+	$(MAKE) thumbnails
+	$(MAKE) update-pubspec-assets
+	@echo "[Makefile] release sync 완료 — stories, quizzes, landmark mapping, 승인 자산, 썸네일, pubspec 확인 필요."
 
 # .env + .env.ops 파일을 한 셸 안에서만 source 한 뒤 psql 호출.
 # ON_ERROR_STOP=1 → 첫 에러에서 즉시 중단.

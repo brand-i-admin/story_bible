@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../models/story_event.dart';
 
 /// `assets/story_images_thumbs/` 하위의 4장면 이미지를 이벤트 단위로 조회한다.
@@ -156,10 +158,26 @@ class SceneAssetLoader {
     final storagePaths = event.sceneImagePaths
         .where((p) => p.isNotEmpty)
         .toList();
-    if (storagePaths.isEmpty || publicUrlFor == null) {
+    if (storagePaths.isEmpty) {
       return const [];
     }
-    return storagePaths.map(publicUrlFor).toList(growable: false);
+    final urlFor = publicUrlFor ?? publicUrlForStoragePath;
+    return storagePaths.map(urlFor).toList(growable: false);
+  }
+
+  @visibleForTesting
+  String publicUrlForStoragePath(String storagePath) {
+    final trimmed = storagePath.trim();
+    if (trimmed.isEmpty || trimmed.startsWith('http')) return trimmed;
+    final slash = trimmed.indexOf('/');
+    if (slash <= 0 || slash == trimmed.length - 1) return trimmed;
+    final bucket = trimmed.substring(0, slash);
+    final path = trimmed.substring(slash + 1);
+    try {
+      return Supabase.instance.client.storage.from(bucket).getPublicUrl(path);
+    } catch (_) {
+      return trimmed;
+    }
   }
 
   Future<List<String>> loadForTitle({required String title}) async {

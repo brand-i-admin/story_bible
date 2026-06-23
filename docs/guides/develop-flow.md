@@ -189,25 +189,31 @@ scripts/build_ios_real.sh
 
 이 경우 DB reset 이 필요 없다.
 
-### 3.2 공개 콘텐츠나 seed 를 바꾸는 경우
+### 3.2 공개 콘텐츠 / 이야기 데이터 Flow
 
-예:
+공개 콘텐츠는 앱 번들, Supabase DB, Supabase Storage가 동시에 얽힌다. 특히 새
+이야기는 `story_index`와 이미지 fallback 때문에 일반 seed 수정처럼 처리하지 않는다.
 
-- `assets/200_stories/*.json` 수정
-- 인물 설명, 사건, landmark, quiz 수정
-- 썸네일 대상 이미지 추가
-- seed builder 수정
+#### 3.2.0 초기 데이터 세팅
 
-순서:
+초기 데이터는 저장소의 canonical 파일을 기준으로 한 번에 세팅한다. 현재
+`assets/200_stories/*.json`에는 310개 이야기가 있고, 향후 더 늘어날 수
+있다. 이 파일들이 초기 앱 번들/DB의 기준이다.
 
-1. 로컬 JSON 이 DB 와 맞는지 확인한다.
-2. 필요한 JSON/assets 를 수정한다.
-3. seed SQL 을 재생성한다.
-4. dev DB 에 적용한다.
-5. dev 앱에서 확인한다.
-6. 문제가 없으면 real 에 같은 seed 를 적용한다.
+초기 세팅에 들어가는 주요 로컬 파일:
 
-기본 명령:
+| 영역 | 기준 파일 | 생성/적용 |
+|------|-----------|-----------|
+| 이야기 본문 | `assets/200_stories/*.json` | `make seed-stories-characters` |
+| 배경 지식 | 각 story JSON의 `background_context` | `events.background_context` |
+| 장면 캡션 | 각 story JSON의 `scene_captions` | `events.scene_captions` |
+| 지도 위치 | `assets/landmarks/*.json`, `event_region_mapping.json` | `make seed-landmarks`, `make seed-stories-characters` |
+| 퀴즈 | `assets/quizzes/*.json` | `make seed-quizzes` |
+| 원본 장면 이미지 | `assets/story_images/<title>/scene_N.png` | 로컬 원본 |
+| 앱용 썸네일 | `assets/story_images_thumbs/<era>_<index>/scene_N.jpg` | `make thumbnails` |
+| 앱 asset 등록 | `pubspec.yaml` | `make update-pubspec-assets` |
+
+초기 세팅 명령:
 
 ```bash
 make seed-all
@@ -218,7 +224,7 @@ make upload-character-avatars ENV=dev
 scripts/run_dev.sh
 ```
 
-real 적용:
+real 신규 구축이나 복구 상황에서만 같은 산출물을 real에 적용한다.
 
 ```bash
 make apply-seeds ENV=real
@@ -226,15 +232,254 @@ make upload-character-avatars ENV=real
 scripts/run_real.sh
 ```
 
-주의:
+원리:
 
-- seed 만 바꾼 경우 보통 `db-init`까지 할 필요는 없다.
-- `apply-seeds-stories-characters`, `apply-seeds-landmarks`, `apply-seeds-quizzes`처럼
-  필요한 타겟만 적용하는 것이 더 안전할 때가 많다.
-- KRV 성경 구절 seed 는 중복 INSERT 시 에러가 날 수 있으므로 최초 bootstrap 뒤에는
-  매번 다시 넣는 대상으로 보지 않는다.
+1. 초기 앱 배포에는 모든 초기 이야기 썸네일이 앱 번들에 포함된다.
+2. 초기 이야기의 `events.scene_image_paths`는 비어 있어도 된다.
+3. 앱은 초기/번들된 이야기를 로컬 `assets/story_images_thumbs/index.json` 매핑으로 찾는다.
+4. 중간에 새 이야기가 추가되어 기존 이야기들의 `story_index`가 밀려도, 기존 이야기 제목은 그대로라 구버전 앱의 옛 `index.json`이 기존 이미지들을 계속 찾을 수 있다.
+5. 새 이야기는 구버전 앱의 `index.json`에 없으므로 로컬 매핑으로는 이미지를 찾지 못한다. 이때 `events.scene_image_paths` fallback이 연결된 화면에서만 `proposal-scenes/...` Storage 이미지를 보여줄 수 있다.
+6. Storage fallback은 초기 데이터가 아니라, 앱 배포 뒤 추가되는 새 이야기의 임시 노출을 위한 장치다.
 
-필요한 타겟만 적용하는 예:
+#### 3.2.1 새 이야기 추가 Flow
+
+표준 후보 흐름은 `draft JSON → draft 이미지 생성 → proposal row 생성 + Storage 업로드
+→ 관리자 승인 → release sync → 앱 배포`다. 이 흐름은 구버전 앱 사용자도 승인 직후
+Storage fallback으로 새 이야기 이미지를 볼 수 있게 하려는 운영 방식이다.
+
+현재 구현 상태:
+
+- `db_init.sql` 기준으로 `event_proposals`, `submit_event_proposal`,
+  `approve_event_proposal`, `insert_event_at_position`이 `background_context`,
+  `scene_captions`, `unit_code/unit_title/unit_order`를 함께 다룬다.
+- Flutter `EventProposal` 모델, Repository, 목사님 제안 작성 UI, 관리자 상세 UI가
+  최신 story schema를 입력/검수/승인 payload로 전달한다.
+- 관리자 승인 다이얼로그는 같은 era의 현재 이야기 목록을 보여 주고
+  `after_story_index` override를 전달한다. 같은 위치를 겨냥한 draft/목사님 제안이
+  겹쳐도 관리자가 UI에서 새 위치를 골라 바로 승인할 수 있다.
+- `make generate-draft-story-images`가 draft JSON 한 건에서
+  `assets/story_drafts/<slug>/scene_N.png`를 만든다.
+- `make apply-draft`가 draft 원본 이미지를 `proposal-scenes`에 업로드하고
+  pending proposal row를 만든다. 여러 건은 `make apply-drafts`로 순차 등록한다.
+- `SceneAssetLoader.loadForEvent(event)`는 로컬 번들 썸네일이 없고
+  `events.scene_image_paths`가 있으면 기본 Supabase client로 Storage public URL을
+  만들어 fallback한다. 따라서 `StoryEventThumbCard`, 상세 이전/다음 카드,
+  프로필 미니맵처럼 별도 `publicUrlFor`를 넘기지 않는 진입점도 새 이야기 이미지를
+  표시할 수 있다.
+- `make release-sync-stories`는 DB events export, DB quiz export,
+  DB landmark mapping export, 승인 자산 다운로드, thumbnails, `pubspec.yaml`
+  갱신을 묶는다. 여러 approved proposal이 한 번에 쌓여 있어도 현재 DB published
+  상태 전체를 다음 앱 배포용 로컬 canonical 파일로 되돌린다.
+
+운영자가 새 이야기를 추가할 때의 행동:
+
+```bash
+# 1. draft JSON 작성
+assets/story_drafts/20260623_elijah_ravens.json
+
+# 2. draft 원본 이미지 생성
+make generate-draft-story-images STORY=assets/story_drafts/20260623_elijah_ravens.json
+
+# 3. draft를 proposal로 올림
+make apply-draft ENV=real STORY=assets/story_drafts/20260623_elijah_ravens.json
+# 여러 draft를 한 번에 pending proposal로 올릴 때
+make apply-drafts ENV=real DRAFTS="20260623_elijah_ravens 20260624_amos_call"
+
+# 4. 앱/웹의 관리자 UI에서 proposal 승인
+#    같은 위치에 다른 pending 제안이 있으면 승인 다이얼로그에서 삽입 위치를 조정
+# 5. release sync
+make release-sync-stories ENV=real
+
+# 6. 검증 후 새 앱 빌드/배포
+python3 tools/app/verify_asset_paths.py
+python3 tools/seed/verify_polygons_contain_events.py
+scripts/build_android_real.sh
+scripts/build_ios_real.sh
+```
+
+`release-sync-stories`는 `export-stories-json`, `export-quizzes-json`,
+`export-event-region-mapping`, `sync-approved-proposal-assets`, `thumbnails`,
+`update-pubspec-assets`를 순서대로 실행한다. 즉 앱 번들용 이야기 JSON, 퀴즈 JSON,
+landmark mapping, 원본 이미지, 썸네일, pubspec 준비까지 담당한다.
+
+권장 draft 구조:
+
+```text
+assets/story_drafts/
+  20260623_elijah_ravens.json
+  20260623_elijah_ravens/
+    scene_01.png
+    scene_02.png
+    scene_03.png
+    scene_04.png
+```
+
+draft JSON은 앱의 현재 story schema를 따라야 한다. `background_context`와
+`scene_captions`를 빼면 승인 후 상세 화면의 배경 지식/장면 설명이 비거나 낡은
+fallback에 의존하게 된다.
+
+```json
+{
+  "title": "까마귀가 먹인 엘리야",
+  "era": "era_divided_kingdom",
+  "characters": ["elijah", "ahab"],
+  "summary": "엘리야가 가뭄을 전하고 그릿 시냇가에서 하나님의 공급을 받는다.",
+  "background_context": "북이스라엘이 바알 숭배로 흔들리던 때, 엘리야는 하나님이 비와 생명의 주인이심을 선포한다.",
+  "bible_ref": [{"book": "왕상", "from": "17:1", "to": "17:7"}],
+  "start_year": -870,
+  "end_year": -870,
+  "time_precision": "approx",
+  "after_story_index": 12,
+  "unit_code": "div_elijah",
+  "unit_title": "엘리야와 엘리사",
+  "unit_order": 2,
+  "landmark_code": "lm_div_kerith_brook",
+  "story_scenes": [
+    "장면 1 이미지 생성용 설명",
+    "장면 2 이미지 생성용 설명"
+  ],
+  "scene_captions": [
+    "사용자에게 보일 장면 1 설명",
+    "사용자에게 보일 장면 2 설명"
+  ],
+  "scene_characters": [
+    ["elijah", "ahab"],
+    ["elijah"]
+  ],
+  "quiz_questions": [
+    {
+      "question": "엘리야가 아합에게 전한 말의 핵심은 무엇인가요?",
+      "choices": ["하나님 말씀 없이는 비가 오지 않는다", "궁전을 새로 지어야 한다", "전쟁을 준비해야 한다"],
+      "answer_index": 0,
+      "explanation": "왕상 17:1에서 엘리야는 하나님 말씀 없이는 비도 이슬도 없을 것이라고 전합니다."
+    }
+  ]
+}
+```
+
+`after_story_index`는 "몇 번 뒤에 넣을지"를 뜻한다. 관리자 승인 시
+`insert_event_at_position(...)`가 같은 시대의 뒤쪽 `story_index`를 +1 밀고 새 row를
+삽입한다. 이렇게 해야 기존 `events.id`가 보존되고, 사용자의 저장/진행도/퀴즈 기록이
+다른 이야기로 붙는 일을 막는다.
+
+단계별 인프라와 앱 상태:
+
+| 단계 | 운영자 행동 | DB 상태 | Storage 상태 | 앱 사용자에게 보이는 상태 |
+|------|-------------|---------|---------------|----------------------------|
+| 1. draft JSON 작성 | `assets/story_drafts/*.json` 작성 | 변화 없음 | 변화 없음 | 변화 없음 |
+| 2. draft 이미지 생성 | `make generate-draft-story-images STORY=...` | 변화 없음 | 변화 없음 | 변화 없음 |
+| 3. draft 적용 | `make apply-draft ENV=real STORY=...` | `event_proposals(status='pending')` 생성 | `proposal-scenes/<uid>/<draft>/scene_N.png` 업로드 | 일반 사용자에게는 아직 안 보임. 관리자/제안자는 proposal 상세에서 이미지 확인 |
+| 4. 관리자 승인 | 관리자 UI에서 위치/인물 노출 확정 후 승인 | `events`에 published row 삽입, 뒤 index shift, `scene_image_paths` 복사, 퀴즈 row 생성 | proposal scene 원본 유지 | 새 이야기가 즉시 보임. 새 앱 전에는 Storage 이미지 fallback |
+| 5. release sync | DB → 로컬 stories/quiz/mapping export, 원본 복사/다운로드, thumbnails/pubspec 생성 | DB는 이미 공개 상태 | Storage는 fallback 보호용으로 유지 | 구버전은 Storage, 신버전 빌드는 로컬 썸네일 준비 완료 |
+| 6. 앱 배포 | real 빌드 후 Store 배포 | 변화 없음 | cleanup 전까지 유지 | 업데이트한 사용자는 로컬 썸네일 우선. 미업데이트 사용자는 Storage fallback |
+
+`make generate-draft-story-images` 원리:
+
+- 입력은 draft JSON 하나다.
+- 출력은 `assets/story_drafts/<draft_slug>/scene_N.png` 원본 PNG다.
+- 기존 `make generate-story-images`처럼 `assets/200_stories` 전체나
+  `assets/story_images` canonical 디렉토리를 prune하지 않는다.
+- prompt 생성은 `story_scenes`, `scene_characters`, `characters`, `bible_ref`,
+  인물 아바타 레퍼런스를 사용한다.
+
+`make apply-draft` 원리:
+
+- draft JSON schema를 검증한다. 필수 항목은 `title`, `summary`,
+  `background_context`, 1개 이상 `story_scenes`, 장면 수와 같은
+  `scene_captions`, 1~3개 `quiz_questions`다. 각 퀴즈는 질문, 3개 작성 선택지,
+  `answer_index` 0~2, 해설이 필요하다.
+- 같은 제목의 published event 또는 pending new proposal이 이미 있으면 중단한다.
+- `assets/story_drafts/<draft_slug>/scene_N.png`가 `story_scenes` 길이만큼 있는지 확인한다.
+- 원본 PNG를 `proposal-scenes/<proposer_user_id>/<draft_slug>/scene_N.png`로 업로드한다.
+- `event_proposals`에 pending row를 만든다. 이때 `scene_image_paths`에는 업로드된
+  Storage path가 들어간다.
+- 이 단계는 아직 `events`를 바꾸지 않으므로 일반 사용자에게 노출되지 않는다.
+- `db_init.sql`의 `event_proposals` CHECK 제약도 같은 최소 조건을 한 번 더 막는다.
+  즉 service-role direct insert 도 incomplete new proposal을 만들 수 없다.
+
+`make apply-drafts` 원리:
+
+- `DRAFTS="slug1 slug2"`는 각각 `assets/story_drafts/<slug>.json`으로 해석한다.
+- `STORIES="path/a.json path/b.json"` 또는 `STORIES_GLOB="assets/story_drafts/202606*.json"`도 사용할 수 있다.
+- 내부적으로 같은 `apply_story_draft.py`가 각 JSON을 순차 처리한다. 하나가 실패하면 그 지점에서 중단되므로, real 전에는 `DRY_RUN=1`로 전체 후보를 먼저 확인한다.
+
+관리자 승인 원리:
+
+- 승인 RPC는 `insert_event_at_position(...)`을 통해 `events`에 published row를 만든다.
+- 승인 다이얼로그에서 고른 위치는 `p_after_story_index_override`로 전달된다. 무효화된
+  pending 제안도 관리자가 새 위치를 명시하면 바로 승인 가능하다.
+- 같은 시대에서 `after_story_index + 1` 이후의 기존 row는 `story_index`가 +1 밀린다.
+- 승인된 effective 위치와 같은 위치를 겨냥한 다른 pending 제안은
+  `position_invalidated_at`이 set되어 위치 재선택 상태가 된다. 제안자가 직접 고쳐도 되고,
+  관리자가 그 제안 승인 시 새 위치를 골라도 된다.
+- proposal의 `scene_image_paths`가 `events.scene_image_paths`로 복사된다.
+- 앱은 `events_ordered` view를 읽으므로 승인 직후부터 새 이야기를 볼 수 있다.
+- 앱 번들에 아직 로컬 썸네일이 없으면 `scene_image_paths`를 public URL로 바꿔
+  네트워크 이미지를 보여준다.
+
+`make release-sync-stories` 원리:
+
+1. real DB의 published `events`를 era별로
+   `assets/200_stories/*.json`에 export한다. export는 `background_context`,
+   `scene_captions`, `unit_code/unit_title/unit_order`를 보존한다.
+2. DB의 `quiz_questions`를 `assets/quizzes/*.json`으로 export하고,
+   `supabase/quizzes/db_events.json`을 현재 events snapshot으로 갱신한다.
+3. DB의 `events.landmark_id`를 `assets/landmarks/event_region_mapping.json`으로
+   export한다.
+4. 새 이야기 원본 이미지를 `assets/story_images/<title>/scene_N.png`로 둔다.
+   로컬 draft 원본이 있으면 복사하고, 웹/앱에서 생성한 proposal이면
+   `proposal-scenes`에서 다운로드한다.
+5. `make thumbnails`로 새 `story_index` 기준 짧은 썸네일 디렉토리와
+   `assets/story_images_thumbs/index.json`을 재생성한다.
+6. `make update-pubspec-assets`로 새 썸네일 디렉토리를 앱 asset 목록에 등록한다.
+7. 검증 후 커밋하고 새 앱을 빌드/배포한다.
+
+Storage cleanup은 앱 배포 직후 하지 않는다. 사용자가 앱을 업데이트하기 전까지는
+구버전 앱이 `events.scene_image_paths`의 `proposal-scenes/...`를 읽을 수 있기 때문이다.
+충분한 업데이트 기간이 지난 뒤에만 `sync-approved-proposal-assets-clean ENV=real` 같은
+정리 명령을 검토한다.
+
+#### 3.2.2 목사님 이야기 제안 Flow
+
+목사님이 앱/웹 UI에서 직접 이야기를 제안하는 흐름도 같은 인프라를 쓴다. 차이는
+draft JSON을 운영자가 만드는 대신, UI wizard가 같은 필드를 수집한다는 점이다.
+
+UI가 반드시 수집해야 하는 현재 story 필드:
+
+- `title`
+- `summary`
+- `background_context`
+- `bible_refs`
+- `characters`
+- `landmark_id` 또는 `landmark_code`
+- `start_year`, `end_year`, `time_precision`
+- `after_story_index`
+- `unit_code`, `unit_title`, `unit_order`
+- `story_scenes`
+- `scene_captions`
+- `scene_characters`
+- `scene_image_paths`, `scene_image_prompts`
+- `quiz_questions`
+
+목사님 제안 단계별 상태:
+
+| 단계 | UI/사용자 행동 | DB | Storage | 앱 상태 |
+|------|----------------|----|---------|---------|
+| 작성 | wizard에서 본문/배경/장면/캡션/퀴즈 작성 | 변화 없음 또는 로컬 draft state | 이미지 생성 시 `proposal-scenes`에 upsert | 일반 사용자에게 안 보임 |
+| 제출 | "제안 등록" | `event_proposals(status='pending')` insert | 생성된 scene path가 row에 연결 | 관리자/제안자는 proposal 상세에서 확인 |
+| 검토 | 관리자 상세 화면 | 변화 없음 | 변화 없음 | 일반 사용자에게 안 보임 |
+| 승인 | 관리자 승인 | `events` insert + index shift + quiz insert | proposal asset 유지 | 일반 사용자에게 즉시 노출. 앱 번들 전에는 Storage fallback |
+| sync/배포 | 운영자 release sync | canonical 파일 갱신 | fallback 보호용 유지 | 새 앱 배포 후 로컬 썸네일 우선 |
+
+현재 코드 기준으로는 목사님 제안 UI/RPC/model이 `background_context`,
+`scene_captions`, unit 필드를 다룬다. 관리자는 상세 화면에서 배경 지식, 장면 원고,
+장면 캡션, 시간순 구간을 함께 검수한 뒤 승인한다.
+
+#### 3.2.3 기존 콘텐츠나 seed 만 수정하는 경우
+
+이미 공개된 이야기의 제목, 요약, 좌표, 퀴즈, landmark, 인물 노출 같은 수정은 새
+이야기 추가보다 단순하다. `events.id`를 새로 만들지 않고 기존 row를 갱신하는 변경이면
+필요한 seed만 재생성하고 적용한다.
 
 ```bash
 # 사건/인물만 바뀐 경우
@@ -247,195 +492,24 @@ make seed-quizzes
 make apply-seeds-quizzes ENV=dev
 make apply-seeds-quizzes ENV=real
 
-# schema/RPC 만 바뀐 경우
-make apply-patch ENV=dev PATCH=supabase/patches/<file>.sql
-make apply-patch ENV=real PATCH=supabase/patches/<file>.sql
+# landmark만 바뀐 경우
+make seed-landmarks
+make apply-seeds-landmarks ENV=dev
+make apply-seeds-landmarks ENV=real
 ```
 
-### 3.2.1 신규 이야기 추가 Flow
-
-새 이야기는 일반 seed 변경보다 조심해서 배포한다. 특히 **중간 삽입**은
-`story_index`가 뒤쪽 이야기 전체에 영향을 주므로 seed-only 적용을 피한다.
-
-현재 코드 기준 결론:
-
-| 질문 | 답 |
-|------|----|
-| 새 이야기 DB seed apply가 장면 이미지를 Storage에 자동 업로드하는가? | 아니다. `apply-seeds-stories-characters`는 DB만 바꾸고 Storage는 건드리지 않는다. |
-| 로컬 썸네일이 앱 번들에 들어가는가? | `make thumbnails` + `make update-pubspec-assets` 후 새 앱을 빌드해야 들어간다. |
-| 새 앱 배포 전 real DB에 먼저 공개하면 구버전 앱도 이미지가 보장되는가? | 기본 흐름에서는 보장되지 않는다. `events.scene_image_paths` fallback이 비어 있기 때문이다. |
-| 현재 로컬 canonical 이미지를 Storage에 올리고 `scene_image_paths`를 채우는 Make target이 있는가? | 없다. 필요하면 별도 운영 도구/patch를 먼저 만들어야 한다. |
-
-이미지 로딩 원리:
-
-1. 새 앱 번들 안의 `assets/story_images_thumbs/<short_dir>/scene_N.jpg`
-2. 번들에 없으면 DB의 `events.scene_image_paths`를 Supabase Storage public URL로 변환
-3. 둘 다 없으면 이미지 row를 숨김
-
-이 fallback은 `SceneAssetLoader.loadForEvent(..., publicUrlFor: ...)`를 호출하는
-화면에서만 동작한다. 현재 상세 화면의 큰 장면 row는 이 경로를 쓰지만, 모든 작은
-카드 썸네일까지 완전 보장하려면 호출부 패치가 더 필요할 수 있다. 그러므로 새 앱
-배포 전 구버전 사용자에게 이미지까지 확실히 보이게 하려면 Storage 업로드 도구와
-앱 fallback 범위를 함께 점검한다.
-
-`assets/200_stories/*.json`으로 만든 canonical seed는 기본적으로
-`scene_image_paths`를 채우지 않는다. real에 바로 `apply-seeds-stories-characters
-ENV=real`을 하면 새 이야기는 DB에 `published`로 보이지만, 아직 새 앱을 받지 못한
-사용자는 새 썸네일 번들이 없고 DB fallback도 없어서 장면 이미지가 비어 보일 수 있다.
-
-중간 삽입의 DB 적용 원리:
-
-- `events`에는 `(era_id, story_index)` unique 제약이 있다.
-- generated seed는 같은 `(era_id, story_index)`를 만나면 그 row를 update한다.
-- 따라서 기존 5번 자리에 새 이야기를 넣고 뒤쪽 index를 전부 재번호 매긴 뒤,
-  seed만 바로 real에 apply하면 기존 5번 row의 `events.id`가 새 이야기 내용으로
-  바뀔 수 있다.
-- `saved_events`, `user_event_progress`, `quiz_questions`, 감정 표시 등은
-  `event_id`를 참조하므로, 운영 DB에서는 기존 이야기 row id를 보존해야 한다.
-- 안전한 중간 삽입은 DB에서 먼저 뒤쪽 row의 `story_index`를 +1 shift하고 새 row를
-  insert한 뒤, 로컬 JSON/seed를 그 상태에 맞추는 방식이다. 이 로직은
-  `insert_event_at_position(...)` RPC에 있지만, 현재 Make target으로 포장되어 있지는 않다.
-
-Make target별 내부 동작은 [MAKE_TARGETS.md](MAKE_TARGETS.md)를 먼저 확인한다.
-
-#### dev에서 만드는 순서
+장면 원본 이미지가 바뀌면 앱 번들도 다시 만들어야 한다.
 
 ```bash
-# 0. 로컬 stories JSON 이 DB와 맞는지 먼저 확인
-#    DB에서 복원해야 할 때만 실행한다. 작업 중인 로컬 JSON이 있으면 먼저 diff 확인.
-# make export-stories-json ENV=dev
-
-# 1. assets/200_stories/*.json 에 신규 이야기 추가
-# 2. assets/landmarks/event_region_mapping.json 에 (era, story_index) 매핑 추가
-# 3. 필요한 경우 퀴즈/landmark/인물 메타도 같이 수정
-
-# 4. seed 생성
-make seed-stories-characters
-make seed-quizzes          # 신규 이야기 퀴즈가 있으면
-make seed-landmarks        # landmark가 바뀌었으면
-
-# 5. 이미지 생성과 앱 번들 갱신
-make generate-avatars      # 신규 인물이 있으면
-make generate-story-images # 신규 이야기 장면 이미지
+make generate-story-images
 make thumbnails
 make update-pubspec-assets
-
-# 6. dev DB에 먼저 적용하고 앱에서 확인
-make apply-seeds-stories-characters ENV=dev
-make apply-seeds-quizzes ENV=dev       # 퀴즈가 있으면
-scripts/run_dev.sh
-```
-
-dev에서 확인할 것:
-
-- 지도/지역/인물 탭에서 새 이야기가 의도한 위치에 보이는지
-- 상세 화면에서 장면 4장이 보이는지
-- 큰 글자/작은 화면에서 텍스트가 깨지지 않는지
-- 신규 인물 카드와 아바타가 보이는지
-- 퀴즈를 추가했다면 퀴즈 진입과 정답 처리
-
-추가 주의:
-
-- `assets/landmarks/event_region_mapping.json`에 새 `(era, story_index)` 매핑이 없으면
-  `make seed-stories-characters`가 실패한다.
-- `title`에는 `001` 같은 번호 prefix를 붙이지 않는다. 순서는 `story_index`가 결정한다.
-- 인물 필드는 `characters`를 쓴다. 예전 문서의 `persons`는 현재 포맷이 아니다.
-- 퀴즈를 추가하면 현재 Makefile 기준으로 `supabase/quizzes/db_events.json`에도
-  `{era_code, story_index, title}` 항목을 추가해야 `make seed-quizzes`의
-  orphan 검사를 통과한다.
-
-#### real 배포 원칙
-
-새 이야기를 real에 공개하는 타이밍은 앱 배포와 묶어서 본다.
-
-안전한 기본 원칙:
-
-- real DB에 새 이야기를 공개하기 전에 real 앱 빌드를 먼저 준비한다.
-- 새 앱이 Store 심사를 통과하고 출시될 준비가 되기 전까지는 real에
-  canonical seed를 적용하지 않는다.
-- real에 먼저 적용해야 한다면 `scene_image_paths` fallback을 채워야 한다.
-- 중간 삽입이면 seed apply 전에 DB row shift+insert 절차로 기존 `events.id`를
-  보존한다. seed-only 재번호 적용은 금지한다.
-
-#### 권장 A: Store 출시 후 real 공개
-
-이미지 fallback 없이 가장 단순한 방법이다.
-
-```bash
-# dev에서 검증 완료 후
-scripts/run_real.sh
 scripts/build_android_real.sh
 scripts/build_ios_real.sh
 ```
 
-이 빌드를 Play Console / App Store Connect에 올리고 심사를 통과시킨다. 출시 후
-새 앱이 사용자에게 배포되기 시작하면 real DB에 seed를 적용한다.
-
-```bash
-make apply-seeds-stories-characters ENV=real
-make apply-seeds-quizzes ENV=real       # 퀴즈가 있으면
-scripts/run_real.sh
-```
-
-주의:
-
-- 이 방식은 간단하지만, 사용자가 아직 구버전 앱을 쓰고 있으면 새 이야기는 보이되
-  장면 이미지는 비어 보일 수 있다.
-- 이미지 빈 상태를 절대 피해야 하면 권장 B를 쓴다.
-
-#### 선택 B: Storage fallback을 직접 마련한 뒤 real 공개
-
-구버전 앱 사용자까지 이미지가 보여야 하면 이 방식이 제일 안전하다.
-
-원리:
-
-- 구버전 앱: 로컬 번들에 새 썸네일이 없으므로 `events.scene_image_paths`의
-  Supabase Storage URL을 사용한다.
-- 신버전 앱: 로컬 번들에 새 썸네일이 있으므로 Storage를 호출하지 않는다.
-- 앱 출시 후 1~2주 정도 지나 대부분 업데이트된 뒤에 Storage 원본 정리를 고려한다.
-
-과거에는 사역자 웹 제안/승인 흐름이 이 역할을 했다. 하지만 현재 운영 정책은
-웹을 배포하지 않고 로컬에서 직접 이야기와 이미지를 추가하는 방식이다. 따라서
-제안/승인 문서를 표준 경로로 보지 않는다.
-
-현재 repo에는 로컬에서 생성한 canonical 장면 이미지를 Storage에 업로드하고
-`events.scene_image_paths`를 채우는 전용 Make target이 없다. 그래서 구버전 앱까지
-이미지를 보장해야 하는 배포를 자주 할 계획이면 먼저 별도 운영 도구를 추가해야 한다.
-
-주의: `make upload-character-avatars`는 캐릭터 아바타 전용이다. 이야기 장면 이미지나
-`assets/story_images_thumbs`를 업로드하지 않는다.
-
-필요한 도구의 역할:
-
-1. `assets/story_images/<title>/scene_N.png` 또는 썸네일을 public Storage에 업로드한다.
-2. 업로드 결과를 `bucket/path/scene_N.png` 형식으로 모은다.
-3. real DB의 해당 이벤트에 `scene_image_paths = ARRAY[...]`를 patch 한다.
-4. 앱 출시 후 충분히 시간이 지난 뒤에만 Storage 원본 정리를 검토한다.
-
-이 도구가 없는 현재 상태에서 이미지 빈 상태를 피하는 가장 단순한 운영은
-real 공개 자체를 새 앱 출시 이후로 늦추는 것이다.
-
-#### 실수로 real에 먼저 공개했을 때
-
-`apply-seeds-stories-characters ENV=real`을 먼저 실행해서 이미지 없는 새 이야기가
-보이기 시작했다면, 바로 draft로 숨긴다.
-
-```sql
-update public.events
-set status = 'draft'
-where title in ('새 이야기 제목');
-```
-
-앱은 `events_ordered` view를 읽고 이 view는 `status='published'`만 노출하므로,
-draft 상태의 이야기는 일반 사용자에게 보이지 않는다.
-
-fallback을 채웠거나 새 앱 출시 타이밍이 됐을 때 다시 공개한다.
-
-```sql
-update public.events
-set status = 'published'
-where title in ('새 이야기 제목');
-```
+KRV 성경 구절 seed는 최초 bootstrap 대상이다. 중복 INSERT 시 에러가 날 수 있으므로
+평소 콘텐츠 수정 때 매번 다시 넣지 않는다.
 
 ### 3.3 DB schema / RLS / RPC / cron 을 바꾸는 경우
 
@@ -542,36 +616,36 @@ scripts/build_ios_real.sh
 
 신규 이야기를 추가하는 변경:
 
-- dev에는 먼저 적용해 충분히 확인한다.
-- real에는 앱 Store 심사/출시 타이밍을 고려해 적용한다.
-- 새 이야기 장면 이미지가 로컬 번들에만 있고 `events.scene_image_paths`가 비어 있으면
-  구버전 앱 사용자는 이미지 없는 새 이야기를 볼 수 있다.
-- 이를 피하려면 `3.2.1 신규 이야기 추가 Flow`의 권장 B처럼 Storage fallback을
-  채운 뒤 공개한다.
+- `3.2.1 새 이야기 추가 Flow`를 우선한다.
+- draft를 proposal로 올리고 관리자 승인으로 real DB에 삽입하면
+  `events.scene_image_paths`가 채워져 새 앱 배포 전에도 Storage fallback이 동작한다.
+- release sync로 canonical JSON/quiz/mapping/original/thumb/pubspec을 만든 뒤 새 앱을
+  배포한다.
+- 직접 seed apply로 새 이야기를 공개하는 방식은 구버전 앱 이미지 공백과
+  중간 삽입 row id 위험이 있으므로 예외 경로로 본다.
 
-보수적인 배포 순서:
+표준 배포 순서:
 
 ```bash
-# dev 검증
-make seed-stories-characters
-make generate-story-images
-make thumbnails
-make update-pubspec-assets
-make apply-seeds-stories-characters ENV=dev
-scripts/run_dev.sh
+# 1. draft 작성 + 이미지 생성
+make generate-draft-story-images STORY=assets/story_drafts/YYYYMMDD_slug.json
 
-# real 빌드 먼저 준비
-scripts/run_real.sh
+# 2. proposal row 생성 + proposal-scenes 업로드
+make apply-draft ENV=real STORY=assets/story_drafts/YYYYMMDD_slug.json
+
+# 3. 관리자 UI 승인 후 release sync
+make release-sync-stories ENV=real
+
+# 4. 검증 + real 앱 빌드
+python3 tools/app/verify_asset_paths.py
+python3 tools/seed/verify_polygons_contain_events.py
 scripts/build_android_real.sh
 scripts/build_ios_real.sh
-
-# Store 심사 통과/출시 준비 후 real DB 공개
-make apply-seeds-stories-characters ENV=real
-scripts/run_real.sh
 ```
 
-이미지 빈 상태를 피해야 하면 real 공개 전에 `events.scene_image_paths` fallback이
-있는지 확인한다.
+`generate-draft-story-images`, `apply-draft`, `apply-drafts`, `release-sync-stories`는
+현재 Make target으로 제공된다. `release-sync-stories`는 stories, quizzes,
+event-region mapping, approved proposal assets, thumbnails, pubspec을 함께 갱신한다.
 
 ### 4.3 schema 변경 배포
 

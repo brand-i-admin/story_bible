@@ -31,10 +31,14 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "lat": 31.018,
             "lng": 47.423,
             "bible_refs": [{"book": "창", "from": "1:1", "to": "2:3"}],
+            "background_context": "창조 이야기의 배경 지식.",
             "start_year": -4000,
             "end_year": -4000,
             "time_precision": "approx",
             "story_index": 1,
+            "unit_code": "primeval_creation",
+            "unit_title": "창조와 타락",
+            "unit_order": 1,
             "story_scenes": ["장면 1", "장면 2"],
             "scene_captions": ["캡션 1", "캡션 2"],
             "scene_characters": [["god"], []],
@@ -52,6 +56,10 @@ class ExportEventsToJsonTests(unittest.TestCase):
             [{"book": "창", "from": "1:1", "to": "2:3"}],
         )
         self.assertEqual(result["story_index"], 1)
+        self.assertEqual(result["background_context"], "창조 이야기의 배경 지식.")
+        self.assertEqual(result["unit_code"], "primeval_creation")
+        self.assertEqual(result["unit_title"], "창조와 타락")
+        self.assertEqual(result["unit_order"], 1)
         self.assertEqual(result["story_scenes"], ["장면 1", "장면 2"])
         self.assertEqual(result["scene_captions"], ["캡션 1", "캡션 2"])
         self.assertEqual(result["scene_characters"], [["god"], []])
@@ -65,11 +73,15 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "lat",
                 "lng",
                 "summary",
+                "background_context",
                 "bible_ref",
                 "start_year",
                 "end_year",
                 "time_precision",
                 "story_index",
+                "unit_code",
+                "unit_title",
+                "unit_order",
                 "story_scenes",
                 "scene_captions",
                 "scene_characters",
@@ -86,10 +98,14 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "lat": None,
             "lng": None,
             "bible_refs": None,
+            "background_context": None,
             "start_year": None,
             "end_year": None,
             "time_precision": None,
             "story_index": 5,
+            "unit_code": None,
+            "unit_title": None,
+            "unit_order": None,
             "story_scenes": None,
             "scene_captions": None,
             "scene_characters": None,
@@ -103,6 +119,10 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertEqual(result["scene_captions"], [])
         self.assertEqual(result["scene_characters"], [])
         self.assertEqual(result["time_precision"], "approx")
+        self.assertEqual(result["background_context"], "")
+        self.assertEqual(result["unit_code"], "default")
+        self.assertEqual(result["unit_title"], "전체 흐름")
+        self.assertEqual(result["unit_order"], 1)
         self.assertIsNone(result["lat"])
         self.assertEqual(result["summary"], "")
 
@@ -129,9 +149,13 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "lat": None,
                 "lng": None,
                 "bible_refs": [],
+                "background_context": "",
                 "start_year": None,
                 "end_year": None,
                 "time_precision": "approx",
+                "unit_code": "default",
+                "unit_title": "전체 흐름",
+                "unit_order": 1,
                 "story_scenes": [],
                 "scene_captions": [],
                 "scene_characters": [],
@@ -158,10 +182,14 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "lat": 1.0,
             "lng": 2.0,
             "bible_refs": [{"book": "창", "from": "1:1", "to": "1:1"}],
+            "background_context": "bg",
             "start_year": -4000,
             "end_year": -4000,
             "time_precision": "approx",
             "story_index": 1,
+            "unit_code": "default",
+            "unit_title": "전체 흐름",
+            "unit_order": 1,
             "story_scenes": ["scene"],
             "scene_captions": ["caption"],
             "scene_characters": [["god"]],
