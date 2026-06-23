@@ -1,5 +1,10 @@
 begin;
 
+drop table if exists public.user_daily_quiz_attempts cascade;
+drop table if exists public.daily_quiz cascade;
+drop table if exists public.weekly_quiz_progress cascade;
+drop function if exists public.dispatch_daily_quiz_push() cascade;
+
 create or replace function public._seed_from_week_key(p_key text)
 returns bigint language plpgsql immutable as $$
 declare v_acc bigint := 0; v_i int;
@@ -41,76 +46,66 @@ begin
   values (v_week_key, v_character_code);
 
   perform public._fire_push_broadcast(
-    '이번 주 퀴즈가 열렸어요',
+    '이번 주 탐험이 열렸어요',
     '이번 주는 "' || coalesce(v_character_name, v_character_code) ||
-      '" 이야기와 함께 걸어요. 주간 퀴즈를 시작해 보세요.',
+      '" 이야기와 함께 걸어요. 주간 탐험을 시작해 보세요.',
     '/weekly',
-    'weekly_quiz'
+    'weekly_exploration'
   );
 end;
 $$;
 grant execute on function public.pick_weekly_character() to authenticated;
 
-create or replace function public.notify_weekly_diary_reflection()
-returns void language plpgsql security definer set search_path = public as $$
-begin
-  perform public._fire_push_broadcast(
-    '이번 주 다이어리 묵상 시간',
-    '이번 주 나의 다이어리를 다시 묵상하면서 신앙을 정리해보는 건 어떨까요?',
-    '/profile',
-    'weekly_diary_reflection'
-  );
-end;
-$$;
-grant execute on function public.notify_weekly_diary_reflection() to authenticated;
-
-create or replace function public.dispatch_daily_quiz_push()
+create or replace function public.dispatch_daily_exploration_push()
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_picked record;
-  v_new_id uuid;
-  v_body text;
+  v_now_kst timestamp;
+  v_day_key text;
+  v_count int;
+  v_seed bigint;
+  v_offset int;
+  v_event_title text;
 begin
-  select quiz_type, question, choices, answer_index, explanation
-    into v_picked
-    from daily_quiz
-    order by random()
-    limit 1;
+  v_now_kst := now() at time zone 'Asia/Seoul';
+  v_day_key :=
+    extract(year from v_now_kst)::int || '-' ||
+    extract(month from v_now_kst)::int || '-' ||
+    extract(day from v_now_kst)::int;
 
-  if v_picked.question is null then
-    raise warning '[dispatch_daily_quiz_push] daily_quiz pool is empty — skipped';
-    return;
-  end if;
+  select count(*)
+    into v_count
+    from events_ordered e
+    join eras er on er.id = e.era_id
+    where er.code <> 'era_nt_consummation';
 
-  insert into daily_quiz (quiz_type, question, choices, answer_index, explanation)
-  values (
-    v_picked.quiz_type,
-    v_picked.question,
-    v_picked.choices,
-    v_picked.answer_index,
-    v_picked.explanation
-  )
-  returning id into v_new_id;
+  if coalesce(v_count, 0) > 0 then
+    v_seed := public._seed_from_week_key('daily-exploration:' || v_day_key);
+    v_offset := (v_seed % v_count)::int;
 
-  if length(v_picked.question) > 110 then
-    v_body := substr(v_picked.question, 1, 107) || '...';
-  else
-    v_body := v_picked.question;
+    select e.title
+      into v_event_title
+      from events_ordered e
+      join eras er on er.id = e.era_id
+      where er.code <> 'era_nt_consummation'
+      order by e.global_rank, e.id
+      offset v_offset
+      limit 1;
   end if;
 
   perform public._fire_push_broadcast(
-    '오늘의 퀴즈가 도착했어요',
-    v_body,
-    '/daily-quiz',
-    'daily_quiz'
+    '오늘의 탐험이 열렸어요',
+    '「' || coalesce(v_event_title, '오늘 도착한 성경 사건') ||
+      '」 사건을 함께 탐험해봐요.',
+    '/daily-exploration',
+    'daily_exploration'
   );
 end;
 $$;
-grant execute on function public.dispatch_daily_quiz_push() to authenticated;
+grant execute on function public.dispatch_daily_exploration_push() to authenticated;
 
 do $$
 begin
@@ -119,7 +114,9 @@ begin
     from cron.job
     where jobname in (
       'daily-quiz-9am-kst',
+      'daily-exploration-wednesday-9am-kst',
       'weekly-character-monday',
+      'weekly-exploration-monday-9am-kst',
       'weekly-progress-wed',
       'weekly-progress-fri',
       'weekly-quiz-monday-9am-kst',
@@ -128,14 +125,14 @@ begin
     );
 
     perform cron.schedule(
-      'weekly-quiz-monday-9am-kst',
+      'weekly-exploration-monday-9am-kst',
       '0 0 * * 1',
       $cmd$ select public.pick_weekly_character(); $cmd$
     );
     perform cron.schedule(
-      'daily-quiz-wednesday-9am-kst',
+      'daily-exploration-wednesday-9am-kst',
       '0 0 * * 3',
-      $cmd$ select public.dispatch_daily_quiz_push(); $cmd$
+      $cmd$ select public.dispatch_daily_exploration_push(); $cmd$
     );
     perform cron.schedule(
       'diary-reflection-friday-9am-kst',
@@ -144,7 +141,5 @@ begin
     );
   end if;
 end $$;
-
-drop function if exists public.notify_weekly_progress() cascade;
 
 commit;

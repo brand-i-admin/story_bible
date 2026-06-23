@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/bible_verse.dart';
 import '../models/character.dart';
-import '../models/daily_quiz.dart';
 import '../models/era.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
@@ -283,62 +282,6 @@ class StoryRepository {
     return result;
   }
 
-  /// 매일 퀴즈 — 가장 최근 문제 1건. 데이터 없으면 null.
-  ///
-  /// 향후 "오늘의 퀴즈" 로 확장 시 created_at 기반 일자 매칭으로 갈 수 있도록
-  /// 메서드 시그니처는 단일 결과 fetch 유지.
-  Future<DailyQuiz?> fetchLatestDailyQuiz() async {
-    final row = await _client
-        .from('daily_quiz')
-        .select('id, question, choices, answer_index, explanation, created_at')
-        .order('created_at', ascending: false)
-        .limit(1)
-        .maybeSingle();
-    if (row == null) return null;
-    return DailyQuiz.fromMap(row);
-  }
-
-  /// 사용자가 특정 daily_quiz 에 답한 기록 (단일). 없으면 null.
-  /// 같은 quizId 에 대해 사용자당 1 row 만 존재 (PK).
-  Future<({int selectedIndex, bool isCorrect})?> fetchDailyQuizAttempt({
-    required String userId,
-    required String quizId,
-  }) async {
-    final row = await _client
-        .from('user_daily_quiz_attempts')
-        .select('selected_index, is_correct')
-        .eq('user_id', userId)
-        .eq('daily_quiz_id', quizId)
-        .maybeSingle();
-    if (row == null) return null;
-    return (
-      selectedIndex: (row['selected_index'] as num).toInt(),
-      isCorrect: (row['is_correct'] as bool?) ?? false,
-    );
-  }
-
-  /// 매일 퀴즈 답안 저장. 같은 (user, quiz) 에 두 번째 시도는 무시 (재제출 차단)
-  /// 하기 위해 upsert 가 아닌 insert ignore (on conflict do nothing) 패턴.
-  Future<void> insertDailyQuizAttempt({
-    required String userId,
-    required String quizId,
-    required int selectedIndex,
-    required bool isCorrect,
-  }) async {
-    await _client
-        .from('user_daily_quiz_attempts')
-        .upsert(
-          {
-            'user_id': userId,
-            'daily_quiz_id': quizId,
-            'selected_index': selectedIndex,
-            'is_correct': isCorrect,
-          },
-          onConflict: 'user_id,daily_quiz_id',
-          ignoreDuplicates: true,
-        );
-  }
-
   Future<List<QuizQuestion>> fetchQuizQuestions(String eventId) async {
     final rows = await _client
         .from('quiz_questions')
@@ -510,61 +453,6 @@ class StoryRepository {
     await _client
         .from('user_event_progress')
         .upsert(payload, onConflict: 'user_id,event_id');
-  }
-
-  /// 주간 퀴즈 진행도 — 특정 user_id + week_key 의 모든 row.
-  /// 반환은 `eventId → (bibleRead, quizCompleted)` 맵.
-  Future<Map<String, ({bool bibleRead, bool quizCompleted})>>
-  fetchWeeklyQuizProgress({
-    required String userId,
-    required String weekKey,
-  }) async {
-    final rows = await _client
-        .from('weekly_quiz_progress')
-        .select('event_id, is_bible_read, is_quiz_completed')
-        .eq('user_id', userId)
-        .eq('week_key', weekKey);
-    return {
-      for (final row in rows)
-        row['event_id'] as String: (
-          bibleRead: (row['is_bible_read'] as bool?) ?? false,
-          quizCompleted: (row['is_quiz_completed'] as bool?) ?? false,
-        ),
-    };
-  }
-
-  /// 주간 퀴즈 진행도 upsert. `bibleRead`/`quizCompleted` 중 변경된 컬럼만
-  /// 명시적으로 update — 다른 플래그는 보존.
-  Future<void> upsertWeeklyQuizProgress({
-    required String userId,
-    required String weekKey,
-    required String eventId,
-    bool? isBibleRead,
-    bool? isQuizCompleted,
-    int? lastScoreCorrect,
-    int? lastScoreTotal,
-  }) async {
-    final payload = <String, dynamic>{
-      'user_id': userId,
-      'week_key': weekKey,
-      'event_id': eventId,
-      'updated_at': DateTime.now().toIso8601String(),
-    };
-    if (isBibleRead != null) {
-      payload['is_bible_read'] = isBibleRead;
-    }
-    if (isQuizCompleted != null) {
-      payload['is_quiz_completed'] = isQuizCompleted;
-    }
-    if (lastScoreCorrect != null) {
-      payload['last_score_correct'] = lastScoreCorrect;
-    }
-    if (lastScoreTotal != null) {
-      payload['last_score_total'] = lastScoreTotal;
-    }
-    await _client
-        .from('weekly_quiz_progress')
-        .upsert(payload, onConflict: 'user_id,week_key,event_id');
   }
 }
 

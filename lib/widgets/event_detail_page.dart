@@ -44,7 +44,6 @@ class EventDetailPage extends ConsumerStatefulWidget {
     this.onNavigateToEvent,
     this.onEmotionEngraved,
     this.onLoginRequired,
-    this.quizWeekKey,
   });
 
   final StoryEvent event;
@@ -73,11 +72,6 @@ class EventDetailPage extends ConsumerStatefulWidget {
   onEmotionEngraved;
   final void Function(String message)? onLoginRequired;
 
-  /// 비-null 이면 "퀴즈 모드" — 본문 읽기/퀴즈 완료 진행도가 프로필 진행도와
-  /// 독립된 `weekly_quiz_progress` 테이블에 저장된다. 같은 인물이 다음 주에
-  /// 또 뽑혀도 week_key 가 달라 자동 reset.
-  final String? quizWeekKey;
-
   @override
   ConsumerState<EventDetailPage> createState() => _EventDetailPageState();
 }
@@ -94,16 +88,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   @override
   void initState() {
     super.initState();
-    final weekKey = widget.quizWeekKey;
-    if (weekKey != null) {
-      // 주간 퀴즈 모드 — 진행도를 미리 로드 (캐시 hit 시 noop).
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ref
-            .read(storyControllerProvider.notifier)
-            .ensureWeeklyQuizProgressLoaded(weekKey);
-      });
-    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final state = ref.read(storyControllerProvider);
@@ -117,11 +101,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
 
   bool _isCompletedFor(StoryState state, String eventId) {
     final engraved = state.eventEmotionMarks.containsKey(eventId);
-    if (widget.quizWeekKey != null) {
-      return state.weeklyQuizBibleReadEventIds.contains(eventId) &&
-          state.weeklyQuizCompletedEventIds.contains(eventId) &&
-          engraved;
-    }
     return state.bibleReadEventIds.contains(eventId) &&
         state.quizCompletedEventIds.contains(eventId) &&
         engraved;
@@ -153,7 +132,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
 
     // 완료 전이(false → true) 감지. 페이지 진입 시 이미 완료라면 발화하지 않음.
     // 반대 전이(true → false, 완료 취소)에는 다음 이야기 glow 도 끔.
-    // quiz 모드는 weekly* 필드, 일반 모드는 그대로 bible/quiz* 필드 사용.
     ref.listen<StoryState>(storyControllerProvider, (previous, next) {
       if (previous == null) return;
       final wasCompleted = _isCompletedFor(previous, event.id);
@@ -169,16 +147,11 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     });
 
     final currentState = ref.watch(storyControllerProvider);
-    final isQuizMode = widget.quizWeekKey != null;
-    final isBibleRead = isQuizMode
-        ? currentState.weeklyQuizBibleReadEventIds.contains(event.id)
-        : currentState.bibleReadEventIds.contains(event.id);
-    final isQuizCompleted = isQuizMode
-        ? currentState.weeklyQuizCompletedEventIds.contains(event.id)
-        : currentState.quizCompletedEventIds.contains(event.id);
-    final lastScore = isQuizMode
-        ? currentState.weeklyQuizLastScores[event.id]
-        : currentState.lastQuizScores[event.id];
+    final isBibleRead = currentState.bibleReadEventIds.contains(event.id);
+    final isQuizCompleted = currentState.quizCompletedEventIds.contains(
+      event.id,
+    );
+    final lastScore = currentState.lastQuizScores[event.id];
     final attemptSummary = currentState.quizAttemptSummaries[event.id];
     final emotionMark = currentState.eventEmotionMarks[event.id];
     final isSaved = currentState.savedEventIds.contains(event.id);
@@ -190,7 +163,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       refs: refs,
       readTargets: readTargets,
       currentCharacters: currentState.characters,
-      isQuizMode: isQuizMode,
       isBibleRead: isBibleRead,
       isQuizCompleted: isQuizCompleted,
       lastScore: lastScore,
@@ -207,7 +179,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
     required List<Character> currentCharacters,
-    required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
     required ({int correct, int total})? lastScore,
@@ -237,7 +208,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                       refs: refs,
                       readTargets: readTargets,
                       currentCharacters: currentCharacters,
-                      isQuizMode: isQuizMode,
                       isBibleRead: isBibleRead,
                       isQuizCompleted: isQuizCompleted,
                       lastScore: lastScore,
@@ -272,7 +242,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
     required List<Character> currentCharacters,
-    required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
     required ({int correct, int total})? lastScore,
@@ -312,7 +281,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                 event: event,
                 refs: refs,
                 readTargets: readTargets,
-                isQuizMode: isQuizMode,
                 isBibleRead: isBibleRead,
                 isQuizCompleted: isQuizCompleted,
                 lastScore: lastScore,
@@ -488,7 +456,6 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required StoryEvent event,
     required List<BibleRef> refs,
     required List<BibleNavigationTarget> readTargets,
-    required bool isQuizMode,
     required bool isBibleRead,
     required bool isQuizCompleted,
     required ({int correct, int total})? lastScore,
@@ -507,23 +474,15 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       onOpenBibleReader: widget.onOpenBibleReader,
       onStartQuiz: () => widget.onStartQuiz(event.id),
       onEngraveEmotion: () => _openEmotionEngraving(event),
-      onUndoBibleRead: () => _undoBibleRead(event.id, isQuizMode),
-      onUndoQuiz: () => _undoQuiz(event.id, isQuizMode),
+      onUndoBibleRead: () => _undoBibleRead(event.id),
+      onUndoQuiz: () => _undoQuiz(event.id),
       onUndoEmotionMark: () => _undoEmotionMark(event.id),
     );
   }
 
-  void _undoBibleRead(String eventId, bool isQuizMode) {
+  void _undoBibleRead(String eventId) {
     final notifier = ref.read(storyControllerProvider.notifier);
-    if (isQuizMode) {
-      notifier.setWeeklyQuizBibleRead(
-        weekKey: widget.quizWeekKey!,
-        eventId: eventId,
-        isRead: false,
-      );
-    } else {
-      notifier.setBibleRead(eventId: eventId, isRead: false);
-    }
+    notifier.setBibleRead(eventId: eventId, isRead: false);
   }
 
   Future<void> _openEmotionEngraving(StoryEvent event) async {
@@ -555,17 +514,9 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     await widget.onEmotionEngraved?.call(event, saved);
   }
 
-  void _undoQuiz(String eventId, bool isQuizMode) {
+  void _undoQuiz(String eventId) {
     final notifier = ref.read(storyControllerProvider.notifier);
-    if (isQuizMode) {
-      notifier.setWeeklyQuizCompleted(
-        weekKey: widget.quizWeekKey!,
-        eventId: eventId,
-        isCompleted: false,
-      );
-    } else {
-      notifier.setQuizCompleted(eventId: eventId, isCompleted: false);
-    }
+    notifier.setQuizCompleted(eventId: eventId, isCompleted: false);
   }
 
   void _undoEmotionMark(String eventId) {

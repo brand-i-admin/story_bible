@@ -72,11 +72,11 @@ Supabase 서버 secret 에만 둔다.
 | Edge Function secrets | Deno Edge Function | `FIREBASE_SERVICE_ACCOUNT`, `GCP_SERVICE_ACCOUNT_JSON` | `send-push` / 이미지 생성 함수가 외부 API 호출 |
 | Supabase Vault | Postgres SQL 함수 | `service_role_key`, `supabase_url` | DB 함수가 `pg_net`으로 Edge Function 호출 |
 
-예를 들어 수요일 매일 퀴즈 푸시는 이런 경로로 움직인다.
+예를 들어 수요일 매일 탐험 푸시는 이런 경로로 움직인다.
 
 ```text
 pg_cron
-  -> public.dispatch_daily_quiz_push()
+  -> public.dispatch_daily_exploration_push()
   -> public._fire_push_broadcast()
   -> vault.decrypted_secrets 에서 service_role_key / supabase_url 읽기
   -> pg_net.http_post('/functions/v1/send-push')
@@ -423,7 +423,7 @@ Integrations -> Vault -> Secrets
 
 왜 필요한가:
 
-- `dispatch_daily_quiz_push()`는 Postgres 함수다.
+- `dispatch_daily_exploration_push()`는 Postgres 함수다.
 - Postgres 함수 안에서는 Edge Function 환경변수를 직접 읽을 수 없다.
 - 그래서 DB 쪽에서는 Vault 에 있는 `service_role_key`, `supabase_url`로
   `/functions/v1/send-push`를 HTTP 호출한다.
@@ -569,7 +569,7 @@ Flutter 앱
   -> public.user_push_tokens 저장
 
 pg_cron 또는 trigger
-  -> public.dispatch_daily_quiz_push()
+  -> public.dispatch_daily_exploration_push()
   -> public._fire_push_broadcast()
   -> pg_net.http_post('/functions/v1/send-push')
   -> Edge Function send-push
@@ -582,11 +582,11 @@ pg_cron 또는 trigger
 오전 9시 cron 을 기다리지 않고 바로 테스트하려면 SQL Editor 에서 실행한다.
 
 ```sql
-select public.dispatch_daily_quiz_push();
+select public.dispatch_daily_exploration_push();
 ```
 
-이 함수는 실제 daily quiz row 를 하나 새로 만들고 전체 push token 대상에게
-"오늘의 퀴즈가 도착했어요" 알림을 보낸다.
+이 함수는 KST 날짜 시드로 오늘의 사건 제목을 고르고 전체 push token 대상에게
+"오늘의 탐험이 열렸어요" 알림을 보낸다.
 
 테스트 전 확인:
 
@@ -716,7 +716,7 @@ scripts/run_<env>.sh
 ### 11.9 푸시 검증
 
 1. `user_push_tokens`에 token row 가 있는지 확인.
-2. `select public.dispatch_daily_quiz_push();` 실행.
+2. `select public.dispatch_daily_exploration_push();` 실행.
 3. 실기기에 알림이 오는지 확인.
 4. `net._http_response` 또는 Function logs 에서 `sent`, `failed` 확인.
 
@@ -737,7 +737,7 @@ scripts/run_<env>.sh
 - `pg_net`, `pg_cron`, `supabase_vault`가 켜져 있다.
 - `cron.job`에 월/수/금 정기 push job 3개가 있다.
 - `user_push_tokens`에 실기기 token 이 들어간다.
-- `dispatch_daily_quiz_push()`를 수동 실행하면 실기기에 알림이 온다.
+- `dispatch_daily_exploration_push()`를 수동 실행하면 실기기에 알림이 온다.
 
 ## 13. 자주 헷갈리는 것
 

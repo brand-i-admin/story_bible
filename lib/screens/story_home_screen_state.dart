@@ -117,7 +117,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   void _setMapAnimationInputLocked(bool locked) {
-    _mapAnimationInputLocked = locked;
+    if (_mapAnimationInputLocked == locked) {
+      return;
+    }
+    if (!mounted) {
+      _mapAnimationInputLocked = locked;
+      return;
+    }
+    setState(() {
+      _mapAnimationInputLocked = locked;
+    });
   }
 
   Future<void> _handleAuthUserChanged(User? user) async {
@@ -921,6 +930,53 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
   }
 
+  Widget _buildFloatingPanelActions(StoryState state) {
+    final previousLabel = _previousStepButtonLabel(state);
+    final previousAction = previousLabel == null
+        ? null
+        : _PanelFloatingActionData(
+            label: previousLabel,
+            tooltip: previousLabel,
+            icon: Icons.arrow_back_rounded,
+            onPressed: _handleHomeBackPressed,
+            tone: _PanelFloatingActionTone.previous,
+          );
+
+    final draftCharacters = _sanitizeDraftSelectedCharacterCodes(state);
+    final showCharacterNext =
+        _mode == _SelectionMode.character &&
+        _selectionStep == 2 &&
+        draftCharacters.isNotEmpty;
+    final selectedTimelineUnits = state.selectedTimelineUnitCodes;
+    final showTimelineNext =
+        _mode == _SelectionMode.timeline &&
+        _selectionStep == 2 &&
+        selectedTimelineUnits.isNotEmpty;
+
+    final _PanelFloatingActionData? nextAction = showCharacterNext
+        ? _PanelFloatingActionData(
+            label: '${draftCharacters.length}명 다음',
+            tooltip: '선택한 인물로 이야기 보기',
+            icon: Icons.arrow_forward_rounded,
+            onPressed: _proceedFromCharacterStep,
+            tone: _PanelFloatingActionTone.next,
+          )
+        : showTimelineNext
+        ? _PanelFloatingActionData(
+            label: '${selectedTimelineUnits.length}개 다음',
+            tooltip: '선택한 구간으로 이야기 보기',
+            icon: Icons.arrow_forward_rounded,
+            onPressed: () => unawaited(_proceedFromTimelineUnitStep()),
+            tone: _PanelFloatingActionTone.next,
+          )
+        : null;
+
+    return _PanelFloatingActions(
+      previousAction: previousAction,
+      nextAction: nextAction,
+    );
+  }
+
   /// stepper 의 현재 step 결정.
   /// - 시대 미선택/모드 미선택 → 1
   /// - region 모드 + region 미선택 → 2
@@ -1197,12 +1253,28 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       MaterialPageRoute<void>(
         builder: (_) => QuizTabPage(
           initialTab: initialTab,
-          onStartQuiz: _startQuiz,
-          onOpenEventDetail: _openEventDetailPage,
+          onOpenEventDetail: _openExplorationEventDetailPage,
           onLoginRequired: _showLoginRequiredSnackBar,
         ),
       ),
     );
+  }
+
+  Future<void> _openExplorationEventDetailPage(StoryEvent event) async {
+    await _prepareHomeMapForProfileEvent(
+      event,
+      source: ProfileEventOpenSource.general,
+    );
+    if (!mounted) {
+      return;
+    }
+    final navigator = Navigator.of(context);
+    navigator.popUntil((route) => route.isFirst);
+    await Future<void>.delayed(const Duration(milliseconds: 220));
+    if (!mounted) {
+      return;
+    }
+    await _openEventDetailPage(event, revealHomeBeforeMapAnimation: true);
   }
 
   Future<void> _openBibleVerseSearch() async {
@@ -1611,7 +1683,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Future<void> _openEventDetailPage(
     StoryEvent event, {
-    String? quizWeekKey,
     bool revealHomeBeforeMapAnimation = false,
   }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
@@ -1644,7 +1715,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       MaterialPageRoute<void>(
         builder: (_) => EventDetailPage(
           event: event,
-          quizWeekKey: quizWeekKey,
           sceneAssetsFuture: sceneAssetsFuture,
           onLoginRequired: _showLoginRequiredSnackBar,
           onOpenBibleReader: (targets) async {
@@ -1657,31 +1727,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             if (!completedReading) {
               return false;
             }
-            // 리더의 "읽기 완료"로 닫힌 경우에만 완료 처리. 퀴즈 모드면 별도
-            // weekly_quiz_progress 에 저장 (프로필 진행도 영향 X).
+            // 리더의 "읽기 완료"로 닫힌 경우에만 일반 사건 진행도에 저장.
             if (!mounted) return false;
             if (ref.read(signedInUserProvider) == null) {
               _showLoginRequiredSnackBar('읽기 완료 처리를 하려면 로그인이 필요해요.');
               return false;
             }
             final notifier = ref.read(storyControllerProvider.notifier);
-            if (quizWeekKey != null) {
-              await notifier.setWeeklyQuizBibleRead(
-                weekKey: quizWeekKey,
-                eventId: event.id,
-                isRead: true,
-              );
-            } else {
-              await notifier.setBibleRead(eventId: event.id, isRead: true);
-            }
+            await notifier.setBibleRead(eventId: event.id, isRead: true);
             return true;
           },
-          onStartQuiz: (eventId) =>
-              _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
+          onStartQuiz: (eventId) => _startQuiz(eventId, event: event),
           onEmotionEngraved: (event, option) => _showEmotionCelebrationOnMap(
             event: event,
             option: option,
-            quizWeekKey: quizWeekKey,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
           ),
           prevEvent: prev,
@@ -1691,7 +1750,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
               _navigateDetailThroughMap(
                 from: event,
                 target: target,
-                quizWeekKey: quizWeekKey,
                 revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
               ),
             );
@@ -1730,10 +1788,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   /// pushReplacement 시 동일 detail page 빌드 — 새 prev/next 도 다시 계산.
-  /// quizWeekKey 가 있으면 prev/next 이동 후에도 퀴즈 모드 유지.
   Widget _buildDetailPageForEvent(
     StoryEvent event, {
-    String? quizWeekKey,
     bool revealHomeBeforeMapAnimation = false,
   }) {
     final client = ref.read(supabaseClientProvider);
@@ -1756,7 +1812,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         : null;
     return EventDetailPage(
       event: event,
-      quizWeekKey: quizWeekKey,
       sceneAssetsFuture: sceneAssetsFuture,
       onLoginRequired: _showLoginRequiredSnackBar,
       onOpenBibleReader: (targets) async {
@@ -1768,29 +1823,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           return false;
         }
         if (!mounted) return false;
-        // 본문 읽기 완료 처리 — quiz 모드면 weekly 진행도, 아니면 일반.
+        // 본문 읽기 완료 처리 — 일반 사건 진행도에 저장.
         if (ref.read(signedInUserProvider) == null) {
           _showLoginRequiredSnackBar('읽기 완료 처리를 하려면 로그인이 필요해요.');
           return false;
         }
         final notifier = ref.read(storyControllerProvider.notifier);
-        if (quizWeekKey != null) {
-          await notifier.setWeeklyQuizBibleRead(
-            weekKey: quizWeekKey,
-            eventId: event.id,
-            isRead: true,
-          );
-        } else {
-          await notifier.setBibleRead(eventId: event.id, isRead: true);
-        }
+        await notifier.setBibleRead(eventId: event.id, isRead: true);
         return true;
       },
-      onStartQuiz: (eventId) =>
-          _startQuiz(eventId, quizWeekKey: quizWeekKey, event: event),
+      onStartQuiz: (eventId) => _startQuiz(eventId, event: event),
       onEmotionEngraved: (event, option) => _showEmotionCelebrationOnMap(
         event: event,
         option: option,
-        quizWeekKey: quizWeekKey,
         revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
       ),
       prevEvent: prev,
@@ -1800,7 +1845,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           _navigateDetailThroughMap(
             from: event,
             target: target,
-            quizWeekKey: quizWeekKey,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
           ),
         );
@@ -1811,7 +1855,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _showEmotionCelebrationOnMap({
     required StoryEvent event,
     required EventEmotionOption option,
-    String? quizWeekKey,
     bool revealHomeBeforeMapAnimation = false,
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
@@ -1823,10 +1866,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         navigator.pop();
         await Future<void>.delayed(const Duration(milliseconds: 280));
       }
-      if (revealHomeBeforeMapAnimation && mounted) {
+      if (mounted && navigator.canPop()) {
         navigator.popUntil((route) => route.isFirst);
         await Future<void>.delayed(const Duration(milliseconds: 220));
       }
+      if (!mounted) return;
+
+      await _prepareHomeMapForProfileEvent(
+        event,
+        source: ProfileEventOpenSource.general,
+      );
       if (!mounted) return;
 
       final notifier = ref.read(storyControllerProvider.notifier);
@@ -1839,15 +1888,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       setState(() {
         _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
         _selectionStep = 3;
-        _selectionPanelStage = revealHomeBeforeMapAnimation
-            ? StorySelectionPanelStage.collapsed
-            : StorySelectionPanelStage.expanded;
-        _selectionSheetExtent = revealHomeBeforeMapAnimation
-            ? _sheetSizeForStage(
-                MediaQuery.sizeOf(context),
-                StorySelectionPanelStage.collapsed,
-              )
-            : _sheetMaxSizeFor(MediaQuery.sizeOf(context));
+        _selectionPanelStage = StorySelectionPanelStage.collapsed;
+        _selectionSheetExtent = _sheetSizeForStage(
+          MediaQuery.sizeOf(context),
+          StorySelectionPanelStage.collapsed,
+        );
         _mapHintDismissed = true;
         _mapCelebrationEventId = null;
         _mapCelebrationStampLabel = null;
@@ -1892,7 +1937,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         MaterialPageRoute<void>(
           builder: (_) => _buildDetailPageForEvent(
             event,
-            quizWeekKey: quizWeekKey,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
           ),
         ),
@@ -1905,7 +1949,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _navigateDetailThroughMap({
     required StoryEvent from,
     required StoryEvent target,
-    String? quizWeekKey,
     bool revealHomeBeforeMapAnimation = false,
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
@@ -1958,7 +2001,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         MaterialPageRoute<void>(
           builder: (_) => _buildDetailPageForEvent(
             target,
-            quizWeekKey: quizWeekKey,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
           ),
         ),
@@ -2031,7 +2073,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           _openEventDetail(link.id!);
         }
         break;
-      case NotificationTarget.dailyQuiz:
+      case NotificationTarget.dailyExploration:
         await _openQuizTab();
         break;
       case NotificationTarget.weekly:
@@ -2066,19 +2108,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return 'old';
   }
 
-  Future<void> _startQuiz(
-    String eventId, {
-    String? quizWeekKey,
-    StoryEvent? event,
-  }) async {
+  Future<void> _startQuiz(String eventId, {StoryEvent? event}) async {
     if (ref.read(signedInUserProvider) == null) {
       _showLoginRequiredSnackBar('퀴즈를 풀려면 로그인이 필요해요.');
       return;
     }
     final state = ref.read(storyControllerProvider);
     final repo = ref.read(storyRepositoryProvider);
-    // 호출자가 event 를 직접 넘겼으면 그걸 사용 (주간 퀴즈처럼 state.events
-    // 에 없는 이벤트도 처리). 아니면 state.events 에서 lookup.
+    // 호출자가 event 를 직접 넘겼으면 그걸 사용 (탐험처럼 state.events 에 없는
+    // 이벤트도 처리). 아니면 state.events 에서 lookup.
     final resolvedEvent =
         event ?? state.events.where((e) => e.id == eventId).firstOrNull;
     if (resolvedEvent == null) {
@@ -2141,24 +2179,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 점수는 0/0 로 기록 (실제 풀어야 할 문제가 없으므로).
       if (mounted) {
         final notifier = ref.read(storyControllerProvider.notifier);
-        if (quizWeekKey != null) {
-          await notifier.setWeeklyQuizCompleted(
-            weekKey: quizWeekKey,
-            eventId: eventId,
-            isCompleted: true,
-            correct: 0,
-            total: 0,
-          );
-        } else {
-          await notifier.setQuizCompleted(
-            eventId: eventId,
-            isCompleted: true,
-            correct: 0,
-            total: 0,
-          );
-          await _profileTabKey.currentState
-              ?.refreshProgressAfterQuizCompletion();
-        }
+        await notifier.setQuizCompleted(
+          eventId: eventId,
+          isCompleted: true,
+          correct: 0,
+          total: 0,
+        );
+        await _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
       }
       return;
     }
@@ -2180,30 +2207,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final score = quizResult.score;
     final confusedCount = quizResult.confusedCount;
 
-    // 퀴즈 완료 + 점수 저장. quizWeekKey 가 있으면 주간 퀴즈 진행도(별도
-    // 테이블)에, 없으면 일반 진행도에 저장. 일반은 controller 가 자동으로
-    // markEventCompleted 까지 동기화 (_syncOverallCompletion).
+    // 퀴즈 완료 + 점수 저장. 탐험/홈/프로필 어디에서 들어와도 일반 진행도에
+    // 저장하고 controller 가 markEventCompleted 까지 동기화한다.
     final notifier = ref.read(storyControllerProvider.notifier);
-    if (quizWeekKey != null) {
-      await notifier.setWeeklyQuizCompleted(
-        weekKey: quizWeekKey,
-        eventId: eventId,
-        isCompleted: true,
-        correct: score,
-        total: questions.length,
-        confusedCount: confusedCount,
-        selectedAnswers: selectedAnswers,
-      );
-    } else {
-      await notifier.setQuizCompleted(
-        eventId: eventId,
-        isCompleted: true,
-        correct: score,
-        total: questions.length,
-        confusedCount: confusedCount,
-        selectedAnswers: selectedAnswers,
-      );
-    }
+    await notifier.setQuizCompleted(
+      eventId: eventId,
+      isCompleted: true,
+      correct: score,
+      total: questions.length,
+      confusedCount: confusedCount,
+      selectedAnswers: selectedAnswers,
+    );
     // 인앱 알림 row 삽입 — 실패해도 퀴즈 완료 UX 를 막지 않도록 try-catch.
     try {
       await ref
@@ -2269,9 +2283,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final mapCalloutTopObscuredPixels = topInset + 88;
     return Scaffold(
       body: PopScope<Object?>(
-        canPop: !_canHandleHomeBack(state),
+        canPop: !_mapAnimationInputLocked && !_canHandleHomeBack(state),
         onPopInvokedWithResult: (didPop, _) {
           if (didPop) {
+            return;
+          }
+          if (_mapAnimationInputLocked) {
             return;
           }
           _handleHomeBackPressed();
@@ -2577,7 +2594,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 topUtilityButton(
-                                  label: '퀴즈',
+                                  label: '탐험',
                                   onTap: _openQuizTab,
                                 ),
                                 const SizedBox(width: 4),
@@ -2625,6 +2642,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           ),
                         ),
                       ),
+                    Positioned(
+                      left: isPhone ? 12 : sheetHorizontalMargin + 14,
+                      right: isPhone ? 12 : sheetHorizontalMargin + 14,
+                      bottom: bottomInset + sheetHeight + (isPhone ? 8 : 12),
+                      child: Listener(
+                        behavior: HitTestBehavior.translucent,
+                        onPointerDown: (_) {
+                          _handleMapInteraction();
+                          _suppressMapTaps(const Duration(milliseconds: 1200));
+                        },
+                        onPointerUp: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        onPointerCancel: (_) => _suppressMapTaps(
+                          const Duration(milliseconds: 1200),
+                        ),
+                        child: _buildFloatingPanelActions(state),
+                      ),
+                    ),
                   ],
                 );
               },
@@ -2656,6 +2692,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 child: ColoredBox(
                   color: Color(0x66000000),
                   child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            if (_mapAnimationInputLocked)
+              const Positioned.fill(
+                child: AbsorbPointer(
+                  absorbing: true,
+                  child: ColoredBox(color: Color(0x00000000)),
                 ),
               ),
           ],
@@ -2706,8 +2749,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 시트 헤더 — 좌측 이전/다음 액션 + 가운데 핸들(인디케이터 + 단일
-  /// toggle 화살표) + 우측 stepper(시대/방법·장소/인물/구간·이야기).
+  /// 시트 헤더 — 가운데 핸들(인디케이터 + 단일 toggle 화살표) + 우측
+  /// stepper(시대/방법·장소/인물/구간·이야기).
   ///
   /// 옛 ▲▼ 두 IconButton 은 stepper 와 시각적으로 충돌해 사용자가 ▲ 를
   /// 인지하지 못하는 문제가 있었다 (panel half stage 도 실질적으로 expanded 와
@@ -2715,20 +2758,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// 탭하면 collapsed ↔ expanded 토글.
   Widget _panelStageHandle() {
     final stage = _selectionPanelStage;
-    final state = ref.read(storyControllerProvider);
-    // 인물 모드 step 2 + 1명 이상 선택 → 좌측에 "N명 다음" 핀.
-    final draftCharacters = _sanitizeDraftSelectedCharacterCodes(state);
-    final showCharacterNext =
-        _mode == _SelectionMode.character &&
-        _selectionStep == 2 &&
-        draftCharacters.isNotEmpty;
-    final selectedTimelineUnits = state.selectedTimelineUnitCodes;
-    final showTimelineNext =
-        _mode == _SelectionMode.timeline &&
-        _selectionStep == 2 &&
-        selectedTimelineUnits.isNotEmpty;
     final isExpanded = stage == StorySelectionPanelStage.expanded;
-    final previousLabel = _previousStepButtonLabel(state);
     return LayoutBuilder(
       builder: (context, constraints) {
         const horizontalPadding = 16.0;
@@ -2736,35 +2766,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           0.0,
           constraints.maxWidth - horizontalPadding,
         );
-        final hasPreviousAction = previousLabel != null;
-        final showNextAction = showCharacterNext || showTimelineNext;
-        final actionSlotWidth = showNextAction && hasPreviousAction
-            ? math.min(154.0, math.max(132.0, innerWidth * 0.40))
-            : math.min(118.0, math.max(92.0, innerWidth * 0.30));
-        final leftAction = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (previousLabel != null) ...[
-              _PreviousStepPill(
-                label: previousLabel,
-                compact: showNextAction,
-                onPressed: _handleHomeBackPressed,
-              ),
-              if (showNextAction) const SizedBox(width: 4),
-            ],
-            if (showCharacterNext)
-              _CharacterNextPill(
-                count: draftCharacters.length,
-                compact: previousLabel != null,
-                onPressed: _proceedFromCharacterStep,
-              ),
-            if (showTimelineNext)
-              _TimelineUnitNextPill(
-                count: selectedTimelineUnits.length,
-                compact: previousLabel != null,
-                onPressed: () => unawaited(_proceedFromTimelineUnitStep()),
-              ),
-          ],
+        final leadingSlotWidth = math.min(
+          118.0,
+          math.max(92.0, innerWidth * 0.30),
         );
 
         final handleButton = Material(
@@ -2809,27 +2813,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: actionSlotWidth,
-                child:
-                    !hasPreviousAction &&
-                        !showCharacterNext &&
-                        !showTimelineNext
-                    ? const SizedBox.shrink()
-                    : Align(
-                        alignment: Alignment.centerLeft,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: leftAction,
-                        ),
-                      ),
-              ),
+              SizedBox(width: leadingSlotWidth),
               const SizedBox(width: 8),
               handleButton,
               const SizedBox(width: 8),
               SizedBox(
-                width: math.max(0.0, innerWidth - actionSlotWidth - 64),
+                width: math.max(0.0, innerWidth - leadingSlotWidth - 64),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerRight,

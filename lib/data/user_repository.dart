@@ -232,11 +232,10 @@ class UserRepository {
     required String userId,
     required List<Character> people,
   }) async {
-    final completedEventIds = await _client
+    final progressRows = await _client
         .from('user_event_progress')
         .select('event_id, is_bible_read, is_quiz_completed, is_completed')
-        .eq('user_id', userId)
-        .eq('is_completed', true);
+        .eq('user_id', userId);
     final emotionRows = await _client
         .from('user_event_emotion_marks')
         .select('event_id')
@@ -244,15 +243,15 @@ class UserRepository {
     final emotionIdSet = emotionRows
         .map((row) => row['event_id'] as String)
         .toSet();
-    final completedIdSet = completedEventIds
+    final completedIdSet = progressRows
         .where(
           (row) =>
-              ((row['is_bible_read'] as bool?) ?? false) &&
+              ((row['is_completed'] as bool?) ?? false) ||
               ((row['is_quiz_completed'] as bool?) ?? false),
         )
         .map((row) => row['event_id'] as String)
-        .where(emotionIdSet.contains)
         .toSet();
+    completedIdSet.addAll(emotionIdSet);
 
     final rows = await _client
         .from('events_ordered')

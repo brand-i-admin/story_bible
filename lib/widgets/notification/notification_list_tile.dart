@@ -137,10 +137,10 @@ class NotificationListTile extends StatelessWidget {
         return Icons.menu_book_outlined;
       case AppNotificationType.weeklyCharacter:
         return Icons.person_outline;
-      case AppNotificationType.weeklyQuiz:
+      case AppNotificationType.weeklyExploration:
         return Icons.calendar_month_outlined;
-      case AppNotificationType.dailyQuiz:
-        return Icons.quiz_outlined;
+      case AppNotificationType.dailyExploration:
+        return Icons.explore_outlined;
       case AppNotificationType.weeklyProgressCheck:
         return Icons.track_changes;
       case AppNotificationType.weeklyDiaryReflection:
@@ -159,8 +159,8 @@ class NotificationListTile extends StatelessWidget {
         return const Color(0xFFB00020);
       case AppNotificationType.newEvent:
       case AppNotificationType.weeklyCharacter:
-      case AppNotificationType.weeklyQuiz:
-      case AppNotificationType.dailyQuiz:
+      case AppNotificationType.weeklyExploration:
+      case AppNotificationType.dailyExploration:
       case AppNotificationType.weeklyProgressCheck:
       case AppNotificationType.weeklyDiaryReflection:
         return const Color(0xFF7A4B21);

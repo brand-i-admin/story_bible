@@ -23,8 +23,8 @@ enum AppNotificationType {
   quizCompleted('quiz_completed'),
   newEvent('new_event'),
   weeklyCharacter('weekly_character'),
-  weeklyQuiz('weekly_quiz'),
-  dailyQuiz('daily_quiz'),
+  weeklyExploration('weekly_exploration'),
+  dailyExploration('daily_exploration'),
   weeklyProgressCheck('weekly_progress_check'),
   weeklyDiaryReflection('weekly_diary_reflection'),
   unknown('unknown');
@@ -36,6 +36,8 @@ enum AppNotificationType {
 
   static AppNotificationType fromWire(String? raw) {
     if (raw == null) return AppNotificationType.unknown;
+    if (raw == 'weekly_quiz') return AppNotificationType.weeklyExploration;
+    if (raw == 'daily_quiz') return AppNotificationType.dailyExploration;
     for (final t in AppNotificationType.values) {
       if (t.wire == raw) return t;
     }
@@ -78,8 +80,8 @@ class AppNotification {
   /// 클릭 시 이동할 앱 내 경로. 현재 스키마:
   /// - `/proposal/<uuid>` — 제안 상세
   /// - `/event/<uuid>`    — 이야기 상세
-  /// - `/daily-quiz`      — 매일 퀴즈
-  /// - `/weekly`          — 주간 퀴즈
+  /// - `/daily-exploration` 또는 `/daily-quiz` — 매일 탐험
+  /// - `/weekly`          — 주간 탐험
   /// - `/profile`         — 프로필
   /// null 이면 클릭해도 이동하지 않고 읽음 처리만.
   final String? deepLink;

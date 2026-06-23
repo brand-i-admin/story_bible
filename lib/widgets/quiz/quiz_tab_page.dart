@@ -7,27 +7,24 @@ import '../../state/auth_providers.dart';
 import '../../theme/tokens.dart';
 import '../sub_page_scaffold.dart';
 import '../weekly_tab_page.dart';
-import 'daily_quiz_section.dart';
+import 'daily_exploration_section.dart';
 
 enum QuizTabInitialTab { daily, weekly }
 
-/// 홈 상단 "퀴즈" 버튼이 여는 페이지.
+/// 홈 상단 "탐험" 버튼이 여는 페이지.
 ///
 /// 두 탭으로 구성:
-///  - 매일 퀴즈: `daily_quiz` 테이블의 최신 1문제 + 가변 선택지 + 제출 → 도장+별가루.
-///  - 주간 퀴즈: 기존 [WeeklyTabPage] 본문 (embedded 모드, scaffold 생략).
+///  - 매일 탐험: KST 날짜 시드로 고른 사건 1개를 지도 + 사건 카드로 표시.
+///  - 주간 탐험: 기존 [WeeklyTabPage] 본문 (embedded 모드, scaffold 생략).
 class QuizTabPage extends ConsumerStatefulWidget {
   const QuizTabPage({
     super.key,
-    required this.onStartQuiz,
     required this.onOpenEventDetail,
     this.initialTab = QuizTabInitialTab.daily,
     this.onLoginRequired,
   });
 
-  final void Function(String eventId) onStartQuiz;
-  final void Function(StoryEvent event, {String? quizWeekKey})
-  onOpenEventDetail;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
   final QuizTabInitialTab initialTab;
   final void Function(String message)? onLoginRequired;
 
@@ -48,7 +45,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
   @override
   Widget build(BuildContext context) {
     return SubPageScaffold(
-      title: '퀴즈',
+      title: '탐험',
       compactBackOnly: true,
       child: Column(
         children: [
@@ -58,7 +55,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
             child: _selectedTab == 0
                 ? _DailyTabBody(
                     scrollPadding: _bodyPadding(),
-                    onLoginRequired: widget.onLoginRequired,
+                    onOpenEventDetail: widget.onOpenEventDetail,
                     onCompletedChanged: (done) {
                       if (_dailyCompleted != done) {
                         setState(() => _dailyCompleted = done);
@@ -67,7 +64,6 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
                   )
                 : WeeklyTabPage(
                     embedded: true,
-                    onStartQuiz: widget.onStartQuiz,
                     onOpenEventDetail: widget.onOpenEventDetail,
                   ),
           ),
@@ -94,7 +90,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
           children: [
             Expanded(
               child: _tabButton(
-                label: '매일 퀴즈',
+                label: '매일 탐험',
                 selected: _selectedTab == 0,
                 completed: _dailyCompleted,
                 onTap: () => setState(() => _selectedTab = 0),
@@ -103,12 +99,12 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
             const SizedBox(width: 4),
             Expanded(
               child: _tabButton(
-                label: '주간 퀴즈',
+                label: '주간 탐험',
                 selected: _selectedTab == 1,
                 completed: false,
                 onTap: () {
                   if (ref.read(signedInUserProvider) == null) {
-                    widget.onLoginRequired?.call('주간 퀴즈를 진행하려면 로그인이 필요해요.');
+                    widget.onLoginRequired?.call('주간 탐험 기록을 저장하려면 로그인이 필요해요.');
                   }
                   setState(() => _selectedTab = 1);
                 },
@@ -126,7 +122,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
     required bool completed,
     required VoidCallback onTap,
   }) {
-    // 우선순위: completed > selected > 기본. 완료된 매일 퀴즈는 항상 초록 표시.
+    // 우선순위: completed > selected > 기본. 완료된 매일 탐험은 항상 초록 표시.
     final Color bg;
     final Color textColor;
     if (completed) {
@@ -191,20 +187,20 @@ class _DailyTabBody extends StatelessWidget {
   const _DailyTabBody({
     required this.scrollPadding,
     required this.onCompletedChanged,
-    required this.onLoginRequired,
+    required this.onOpenEventDetail,
   });
 
   final EdgeInsets scrollPadding;
   final ValueChanged<bool> onCompletedChanged;
-  final void Function(String message)? onLoginRequired;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: scrollPadding.copyWith(bottom: 24),
-      child: DailyQuizSection(
+    return Padding(
+      padding: scrollPadding.copyWith(bottom: 12),
+      child: DailyExplorationSection(
+        onOpenEventDetail: onOpenEventDetail,
         onCompletedChanged: onCompletedChanged,
-        onLoginRequired: onLoginRequired,
       ),
     );
   }

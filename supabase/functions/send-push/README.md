@@ -4,7 +4,7 @@
 
 호출 경로(2026-05-11 이후):
 - **`broadcast_notifications` AFTER INSERT 트리거** → `_fire_push_broadcast` → 이 함수 (자동, 새 이야기/인물 등록 시)
-- **pg_cron 스케줄** → `_fire_push_broadcast` 직접 호출 (매일 퀴즈/주간 인물/주간 진도)
+- **pg_cron 스케줄** → `_fire_push_broadcast` 직접 호출 (매일 탐험/주간 탐험/주간 다이어리)
 - 수동: `supabase.functions.invoke('send-push', ...)`
 
 ## 배포

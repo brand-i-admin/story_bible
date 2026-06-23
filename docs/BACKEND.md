@@ -14,8 +14,7 @@ supabase/
 │   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
 │   └── 200_stories_report.json
 └── seeds/
-    ├── krv_bible_verses*.sql          # KRV 성경 구절 시드
-    └── daily_quiz.sql                 # 매일 지도 퀴즈 시드
+    └── krv_bible_verses*.sql          # KRV 성경 구절 시드
 
 lib/data/
 ├── auth_repository.dart               # 인증
@@ -292,7 +291,7 @@ token text UNIQUE, device_label text
 ```sql
 week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at timestamptz
 ```
-- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 주간 퀴즈 시작 FCM 을 직접 발송.
+- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 주간 탐험 시작 FCM 을 직접 발송.
 - Dart 쪽 `weekly_selection.dart` 의 `seedFromKey` 를 plpgsql `_seed_from_week_key` 로 포팅해 동일 결과 보장.
 
 #### 트리거
@@ -317,8 +316,8 @@ week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at ti
 | `notify_quiz_completed(event_id)` | 퀴즈 완료 시 클라이언트가 호출 |
 | `register_push_token(token, platform, label)` | FCM 토큰 upsert |
 | `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
-| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 주간 퀴즈 시작 push-only 발송 |
-| `dispatch_daily_quiz_push()` | pg_cron 수요일 KST 9시 — daily_quiz 풀에서 random 1건 pick → 같은 `quiz_type/question/choices/answer_index/explanation` 로 **새 row INSERT** → 그 question을 push 본문에 담아 push-only. 새 PK 가 생성되므로 user_daily_quiz_attempts 가 수요일 새 row 와 분리됨. |
+| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 주간 탐험 시작 push-only 발송 |
+| `dispatch_daily_exploration_push()` | pg_cron 수요일 KST 9시 — KST 날짜 시드로 오늘의 사건 제목을 고른 뒤 “「사건명」 사건을 함께 탐험해봐요.” push-only 발송 |
 | `notify_weekly_diary_reflection()` | pg_cron 금요일 KST 9시 — 나의 다이어리 묵상/신앙 정리 push-only 발송 |
 
 #### 30일 보관
@@ -387,36 +386,11 @@ target_user_id uuid FK→auth.users
 _(2026-05-08: `user_daily_activity` 테이블 — "연속 출석일 / 연속 인물 공부"
 스트릭 기능 — 제거됨. db_init.sql 의 `drop table if exists` 만 정리용으로 유지.)_
 
-#### `daily_quiz` (2026-05-27)
-```sql
-id uuid PK, slug text UNIQUE NULL, quiz_type text,
-question text, choices jsonb, answer_index smallint,
-explanation text, created_at
-```
-- 매일 퀴즈 1문제. 선택지는 `choices` jsonb 배열(2~6개)이고
-  `answer_index` 는 1-based 이며 배열 길이 안에 있어야 한다. 공개 read.
-- `slug` 는 seed 재실행용 안정 키다. pg_cron 이 수요일 정기 푸시 때 발급하는 복제 row 는
-  `slug=NULL` 로 두어 새 `daily_quiz_id` 가 생기게 한다.
-- `quiz_type`: `event_region_match`, `region_event_exclusion`,
-  `character_region_exclusion`, `character_event_region_match`,
-  `region_event_inclusion`, `general`.
-- 시드: `supabase/seeds/daily_quiz.sql` (지도 기반 100문항, slug UPSERT).
-- 빌더/가이드: `tools/seed/build_daily_quiz_seed_sql.py`,
-  `docs/DAILY_QUIZ_SEED_GUIDE.md`.
-- 질문/해설 문구에서는 시대명, 사건명, 인물명, 지역/장소명을 작은따옴표로
-  감싸 사용자가 핵심 단서를 구분하기 쉽게 한다.
-
-#### `weekly_quiz_progress` (2026-05-15)
-```sql
-user_id uuid FK→auth.users, week_key text, event_id uuid FK→events,
-is_bible_read boolean, is_quiz_completed boolean,
-last_score_correct, last_score_total, updated_at,
-PRIMARY KEY (user_id, week_key, event_id)
-```
-- 퀴즈 탭의 주간 퀴즈 진행도 — `user_event_progress` (프로필 진행도) 와 독립.
-- `week_key` 는 ISO week 형식 (예: "2026-21"). 다음 주가 되면 자동으로 비
-  cache 되므로 같은 인물이 또 뽑혀도 새로 풀어야 한다.
-- RLS: 본인만 read/write.
+#### 매일/주간 탐험 진행도 (2026-06-23)
+- `daily_quiz`, `user_daily_quiz_attempts`, `weekly_quiz_progress` 는 제거했다.
+- 매일 탐험과 주간 탐험은 별도 문제/진행도 테이블을 만들지 않고, 앱의 일반 사건 상세 플로우를 여는 진입점으로만 동작한다.
+- 읽기/퀴즈/감정 새김 결과는 모두 `user_event_progress`, `user_quiz_attempts`, `user_event_emotion_marks` 에 저장되어 홈 지도, 프로필, 나의 다이어리와 동일하게 연결된다.
+- 이미 완료한 사건이 매일/주간 탐험에 다시 선정될 수 있다. 이 경우에도 동일 사건 상세를 연다. 매일 탐험은 해당 사건의 감정 기록이 이전 날짜면 재탐험 문구를, 오늘 KST 기록이면 축복 문구를 사건 카드 패널에 표시한다. 주간 탐험은 별도 재탐험 문구를 표시하지 않는다.
 
 #### `user_quiz_attempts` (2026-05-25)
 ```sql
@@ -426,7 +400,7 @@ selected_answers jsonb, updated_at,
 UNIQUE (user_id, event_id)
 ```
 - 이야기별 최근 퀴즈 풀이 결과. "헷갈렸어요" 선택과 오답을 프로필/사건 카드의 복습 신호로 보여 주기 위한 본인 전용 기록.
-- 주간 퀴즈에서 푼 결과도 같은 사건 학습 기록으로 저장된다.
+- 매일/주간 탐험에서 푼 결과도 같은 사건 학습 기록으로 저장된다.
 - RLS: 본인만 read/write.
 
 ### 2.3 검색/ML (향후)
@@ -514,9 +488,6 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchUserProfile(userId)` | user_profiles SELECT | `AppUserProfile` |
 | `updateUserProfile(...)` | user_profiles UPDATE | `AppUserProfile` |
 | `uploadProfileImage(...)` | Storage uploadBinary | `String` (public URL) |
-| `fetchWeeklyQuizProgress(userId, weekKey)` | weekly_quiz_progress SELECT 본인+week | `Map<eventId, (bibleRead, quizCompleted)>` |
-| `upsertWeeklyQuizProgress(...)` | weekly_quiz_progress UPSERT (사용자/주차/사건) | void |
-| `fetchLatestDailyQuiz()` | daily_quiz ORDER BY created_at desc LIMIT 1 | `DailyQuiz?` |
 | `fetchSavedVersesPage(...)` | user_saved_verses SELECT + 페이지네이션 | `PagedResult<SavedBibleVerse>` |
 | `fetchSavedVerseMap(userId)` | user_saved_verses SELECT 본인 전체 | `Map<verseKey, SavedBibleVerse>` |
 | `saveBibleVerse(...)` | user_saved_verses INSERT (comment 포함) | `SavedBibleVerse` |

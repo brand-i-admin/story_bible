@@ -14,12 +14,20 @@ void main() {
         AppNotificationType.weeklyCharacter,
       );
       expect(
+        AppNotificationType.fromWire('weekly_exploration'),
+        AppNotificationType.weeklyExploration,
+      );
+      expect(
+        AppNotificationType.fromWire('daily_exploration'),
+        AppNotificationType.dailyExploration,
+      );
+      expect(
         AppNotificationType.fromWire('weekly_quiz'),
-        AppNotificationType.weeklyQuiz,
+        AppNotificationType.weeklyExploration,
       );
       expect(
         AppNotificationType.fromWire('daily_quiz'),
-        AppNotificationType.dailyQuiz,
+        AppNotificationType.dailyExploration,
       );
       expect(
         AppNotificationType.fromWire('weekly_diary_reflection'),
@@ -64,8 +72,8 @@ void main() {
       expect(AppNotificationType.quizCompleted.isProposalRelated, isFalse);
       expect(AppNotificationType.newEvent.isProposalRelated, isFalse);
       expect(AppNotificationType.weeklyCharacter.isProposalRelated, isFalse);
-      expect(AppNotificationType.weeklyQuiz.isProposalRelated, isFalse);
-      expect(AppNotificationType.dailyQuiz.isProposalRelated, isFalse);
+      expect(AppNotificationType.weeklyExploration.isProposalRelated, isFalse);
+      expect(AppNotificationType.dailyExploration.isProposalRelated, isFalse);
       expect(
         AppNotificationType.weeklyDiaryReflection.isProposalRelated,
         isFalse,

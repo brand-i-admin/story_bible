@@ -14,7 +14,6 @@ import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../theme/tokens.dart';
-import 'auth_providers.dart';
 import 'story_state.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -583,119 +582,6 @@ class StoryController extends Notifier<StoryState> {
     final isCurrentlyCompleted = state.completedEventIds.contains(eventId);
     if (shouldComplete == isCurrentlyCompleted) return;
     await markEventCompleted(eventId: eventId, isCompleted: shouldComplete);
-  }
-
-  /// 주간 퀴즈 모드 — 특정 week_key 의 진행도를 DB 에서 로드하고 state 캐시.
-  /// 같은 weekKey 가 이미 캐시돼 있으면 noop.
-  Future<void> ensureWeeklyQuizProgressLoaded(String weekKey) async {
-    if (state.weeklyQuizWeekKey == weekKey) return;
-    final user = ref.read(signedInUserProvider);
-    if (user == null) {
-      state = state.copyWith(
-        weeklyQuizBibleReadEventIds: const {},
-        weeklyQuizCompletedEventIds: const {},
-        weeklyQuizLastScores: const {},
-        weeklyQuizWeekKey: weekKey,
-      );
-      return;
-    }
-    final rows = await _repo.fetchWeeklyQuizProgress(
-      userId: user.id,
-      weekKey: weekKey,
-    );
-    final read = <String>{};
-    final quiz = <String>{};
-    for (final entry in rows.entries) {
-      if (entry.value.bibleRead) read.add(entry.key);
-      if (entry.value.quizCompleted) quiz.add(entry.key);
-    }
-    state = state.copyWith(
-      weeklyQuizBibleReadEventIds: read,
-      weeklyQuizCompletedEventIds: quiz,
-      weeklyQuizLastScores: const {},
-      weeklyQuizWeekKey: weekKey,
-    );
-  }
-
-  /// 주간 퀴즈 — 본문 읽기 토글. 프로필 진행도(setBibleRead)와 독립.
-  Future<void> setWeeklyQuizBibleRead({
-    required String weekKey,
-    required String eventId,
-    required bool isRead,
-  }) async {
-    final next = {...state.weeklyQuizBibleReadEventIds};
-    if (isRead) {
-      next.add(eventId);
-    } else {
-      next.remove(eventId);
-    }
-    state = state.copyWith(
-      weeklyQuizBibleReadEventIds: next,
-      weeklyQuizWeekKey: weekKey,
-    );
-    final user = ref.read(signedInUserProvider);
-    if (user == null) return;
-    await _repo.upsertWeeklyQuizProgress(
-      userId: user.id,
-      weekKey: weekKey,
-      eventId: eventId,
-      isBibleRead: isRead,
-    );
-  }
-
-  /// 주간 퀴즈 — 퀴즈 완료 토글. 점수도 함께 저장.
-  Future<void> setWeeklyQuizCompleted({
-    required String weekKey,
-    required String eventId,
-    required bool isCompleted,
-    int? correct,
-    int? total,
-    int? confusedCount,
-    List<int?> selectedAnswers = const [],
-  }) async {
-    final next = {...state.weeklyQuizCompletedEventIds};
-    if (isCompleted) {
-      next.add(eventId);
-    } else {
-      next.remove(eventId);
-    }
-    final nextScores = {...state.weeklyQuizLastScores};
-    if (isCompleted && correct != null && total != null) {
-      nextScores[eventId] = (correct: correct, total: total);
-    } else if (!isCompleted) {
-      nextScores.remove(eventId);
-    }
-    final nextAttempts = {...state.quizAttemptSummaries};
-    QuizAttemptSummary? attemptSummary;
-    if (isCompleted && correct != null && total != null) {
-      attemptSummary = _buildQuizAttemptSummary(
-        eventId: eventId,
-        correct: correct,
-        total: total,
-        confusedCount: confusedCount ?? 0,
-        selectedAnswers: selectedAnswers,
-      );
-      nextAttempts[eventId] = attemptSummary;
-    }
-    state = state.copyWith(
-      weeklyQuizCompletedEventIds: next,
-      weeklyQuizLastScores: nextScores,
-      weeklyQuizWeekKey: weekKey,
-      quizAttemptSummaries: nextAttempts,
-    );
-    final user = ref.read(signedInUserProvider);
-    if (user == null) return;
-    if (attemptSummary != null) {
-      await _repo.upsertQuizAttempt(userId: user.id, summary: attemptSummary);
-    }
-    await _repo.upsertWeeklyQuizProgress(
-      userId: user.id,
-      weekKey: weekKey,
-      eventId: eventId,
-      isQuizCompleted: isCompleted,
-      lastScoreCorrect: correct,
-      lastScoreTotal: total,
-    );
   }
 
   void setSearchQuery(String query) {

@@ -10,7 +10,6 @@ import '../models/era.dart';
 import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../models/weekly_study_data.dart';
-import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/tokens.dart';
@@ -24,30 +23,23 @@ import 'sub_page_scaffold.dart';
 // 주간 화면 빌더 메소드를 도메인별 part 파일로 분리.
 part 'weekly/weekly_avatar.dart';
 
-/// 금주 인물 학습 탭 페이지.
+/// 주간 탐험 탭 페이지.
 ///
 /// 1. 랜덤 또는 지정된 인물의 그 주 이야기 목록 표시
 /// 2. 지도에 관련 사건 핀 표시
-/// 3. 각 사건 카드에 체크박스 + 퀴즈 버튼
+/// 3. 사건 카드 탭 시 기존 사건 상세의 읽기/퀴즈/감정 새김 흐름으로 진행
 /// 4. 사건 선택 시 상세 팝업
 ///
 /// 외부 콜백:
-/// - [onStartQuiz]: 퀴즈 시작 (eventId)
 /// - [onOpenEventDetail]: 사건 상세 페이지 열기
 class WeeklyTabPage extends ConsumerStatefulWidget {
   const WeeklyTabPage({
     super.key,
-    required this.onStartQuiz,
     required this.onOpenEventDetail,
     this.embedded = false,
   });
 
-  final void Function(String eventId) onStartQuiz;
-
-  /// 사건 상세 페이지 열기. 주간 퀴즈 모드는 `quizWeekKey` 를 함께 넘겨 진행도가
-  /// `weekly_quiz_progress` 에 독립 저장되도록 한다.
-  final void Function(StoryEvent event, {String? quizWeekKey})
-  onOpenEventDetail;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
 
   /// `true` 면 SubPageScaffold 를 생략하고 본문만 반환 — QuizTabPage 같은 부모
   /// scaffold 안에 그대로 넣을 수 있게 한다.
@@ -72,18 +64,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
   void initState() {
     super.initState();
     _loadWeeklyData();
-    // 주간 퀴즈 진행도 로드 (현재 week_key) — 캐시 hit 시 noop.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final weekKey = weeklyKeyFor(weekStartMonday(DateTime.now()));
-      ref
-          .read(storyControllerProvider.notifier)
-          .ensureWeeklyQuizProgressLoaded(weekKey);
-    });
   }
-
-  /// 이번 주의 weekly_quiz_progress 키. 다음 주가 되면 자동 변경 → 진행도 reset.
-  String get _currentWeekKey => weeklyKeyFor(weekStartMonday(DateTime.now()));
 
   /// region 모드 시드 기반 후보 선택. 사건 보유 region 이 있는 era 풀에서
   /// 시드 모듈로 era 1개 → 그 era 의 사건 보유 region 1개를 결정적으로 선택.
@@ -307,7 +288,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
-    final isAuthenticated = ref.watch(signedInUserProvider) != null;
 
     // 핀 탭 = 카드 포커스 (popup 없음, 직접 상세는 카드 탭으로).
     void onSelectEvent(String eventId) {
@@ -319,7 +299,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       child: _buildWeeklyBody(
         state: state,
         controller: controller,
-        isAuthenticated: isAuthenticated,
         onSelectEvent: onSelectEvent,
       ),
     );
@@ -327,13 +306,12 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     if (widget.embedded) {
       return body;
     }
-    return SubPageScaffold(title: '금주 인물', compactBackOnly: true, child: body);
+    return SubPageScaffold(title: '주간 탐험', compactBackOnly: true, child: body);
   }
 
   Widget _buildWeeklyBody({
     required StoryState state,
     required StoryController controller,
-    required bool isAuthenticated,
     required ValueChanged<String> onSelectEvent,
   }) {
     final weekly = _weeklyStudyData;
@@ -360,15 +338,14 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       return const SizedBox.shrink();
     }
 
-    // 주간 퀴즈 모드 — 본문 + 퀴즈 둘 다 완료된 이벤트만 "완료" 로 본다.
-    // 프로필 진행도(state.completedEventIds)와는 독립.
-    final completedEventIds = <String>{
-      for (final id in state.weeklyQuizBibleReadEventIds)
-        if (state.weeklyQuizCompletedEventIds.contains(id)) id,
+    final exploredEventIds = {
+      ...state.completedEventIds,
+      ...state.quizCompletedEventIds,
+      ...state.eventEmotionMarks.keys,
     };
     final totalStories = weekly.events.length;
     final completedStories = weekly.events
-        .where((event) => completedEventIds.contains(event.id))
+        .where((event) => exploredEventIds.contains(event.id))
         .length;
     final weeklyProgress = totalStories == 0
         ? 0.0
@@ -431,6 +408,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             selectedCharacterCodes: weekly.character == null
                 ? const <String>{}
                 : {weekly.character!.code},
+            showCharacterLegend: false,
             eventEmotionMarks: state.eventEmotionMarks,
             // region 모드면 그 region 폴리곤 한 개를 강조.
             eraRegionLandmarks: isRegionMode && weekly.region != null
@@ -465,11 +443,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                 progress: weeklyProgress,
               ),
             ),
-            if (!isAuthenticated) ...[
-              SizedBox(height: contentGap * 0.72),
-              _weeklyGuestNoticeBanner(),
-            ],
-            SizedBox(height: contentGap),
             // 헤더 — 모드별 타이틀.
             _weeklyHeaderBadge(weekly),
             SizedBox(height: contentGap),
@@ -494,7 +467,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                         for (final c in state.characters) c.code: c,
                       },
                       selectedEventId: _weeklySelectedEventId,
-                      completedEventIds: completedEventIds,
+                      completedEventIds: exploredEventIds,
                       eventEmotionMarks: state.eventEmotionMarks,
                       quizAttemptSummaries: state.quizAttemptSummaries,
                       quizReviewEventIds: state.quizAttemptSummaries.values
@@ -506,11 +479,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                           .map((attempt) => attempt.eventId)
                           .toSet(),
                       onTapEvent: (event) {
-                        // 주간 퀴즈 진행도가 별도 테이블에 저장되도록 weekKey 전달.
-                        widget.onOpenEventDetail(
-                          event,
-                          quizWeekKey: _currentWeekKey,
-                        );
+                        widget.onOpenEventDetail(event);
                       },
                     ),
                   ),
@@ -520,34 +489,6 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
           ],
         );
       },
-    );
-  }
-
-  Widget _weeklyGuestNoticeBanner() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4E5BE),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xD7D3A051), width: 1),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF8B632E)),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              '비로그인 상태예요. 금주 이야기는 볼 수 있지만 퀴즈 진행과 읽기 완료 처리는 로그인 후 사용할 수 있어요.',
-              style: TextStyle(
-                color: Color(0xFF6A4A23),
-                fontSize: 12.2,
-                fontWeight: FontWeight.w700,
-                height: 1.32,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

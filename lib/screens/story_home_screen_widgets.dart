@@ -6,123 +6,6 @@ extension _IterableX<E> on Iterable<E> {
   E? get firstOrNull => isEmpty ? null : first;
 }
 
-class _CharacterNextPill extends StatelessWidget {
-  const _CharacterNextPill({
-    required this.count,
-    required this.onPressed,
-    this.compact = false,
-  });
-  final int count;
-  final VoidCallback onPressed;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = '$count명 다음';
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: onPressed,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: compact ? 8 : 9,
-            vertical: compact ? 4 : 5,
-          ),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
-            ),
-            borderRadius: BorderRadius.circular(999),
-            boxShadow: AppShadows.green,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: compact ? 10.5 : 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0,
-                ),
-              ),
-              SizedBox(width: compact ? 2 : 3),
-              Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.white,
-                size: compact ? 12 : 13,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TimelineUnitNextPill extends StatelessWidget {
-  const _TimelineUnitNextPill({
-    required this.count,
-    required this.onPressed,
-    this.compact = false,
-  });
-
-  final int count;
-  final VoidCallback onPressed;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = '$count개 다음';
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: onPressed,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: compact ? 8 : 9,
-            vertical: compact ? 4 : 5,
-          ),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
-            ),
-            borderRadius: BorderRadius.circular(999),
-            boxShadow: AppShadows.green,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: compact ? 10.5 : 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0,
-                ),
-              ),
-              SizedBox(width: compact ? 2 : 3),
-              Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.white,
-                size: compact ? 12 : 13,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _MapRevealSkipButton extends StatelessWidget {
   const _MapRevealSkipButton({required this.onPressed});
 
@@ -162,65 +45,166 @@ class _MapRevealSkipButton extends StatelessWidget {
   }
 }
 
-class _PreviousStepPill extends StatelessWidget {
-  const _PreviousStepPill({
+enum _PanelFloatingActionTone { previous, next }
+
+class _PanelFloatingActionData {
+  const _PanelFloatingActionData({
     required this.label,
+    required this.tooltip,
+    required this.icon,
     required this.onPressed,
-    this.compact = false,
+    required this.tone,
   });
 
   final String label;
+  final String tooltip;
+  final IconData icon;
   final VoidCallback onPressed;
-  final bool compact;
+  final _PanelFloatingActionTone tone;
+}
+
+class _PanelFloatingActions extends StatelessWidget {
+  const _PanelFloatingActions({
+    required this.previousAction,
+    required this.nextAction,
+  });
+
+  final _PanelFloatingActionData? previousAction;
+  final _PanelFloatingActionData? nextAction;
 
   @override
   Widget build(BuildContext context) {
-    final visibleLabel = compact ? '이전' : label;
+    if (previousAction == null && nextAction == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: previousAction == null
+                  ? const SizedBox.shrink()
+                  : _PanelFloatingActionButton(
+                      key: ValueKey<String>(
+                        'floating-panel-previous-${previousAction!.label}',
+                      ),
+                      action: previousAction!,
+                    ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: nextAction == null
+                  ? const SizedBox.shrink()
+                  : _PanelFloatingActionButton(
+                      key: ValueKey<String>(
+                        'floating-panel-next-${nextAction!.label}',
+                      ),
+                      action: nextAction!,
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PanelFloatingActionButton extends StatelessWidget {
+  const _PanelFloatingActionButton({super.key, required this.action});
+
+  final _PanelFloatingActionData action;
+
+  @override
+  Widget build(BuildContext context) {
+    final isNext = action.tone == _PanelFloatingActionTone.next;
+    final gradient = isNext
+        ? const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
+          )
+        : const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF7A4B23), Color(0xFF5C3518)],
+          );
+    final borderColor = isNext
+        ? const Color(0xFFE6F4CA)
+        : const Color(0xFFE8A33D);
     return Tooltip(
-      message: label,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(999),
-          onTap: onPressed,
-          child: Ink(
-            padding: EdgeInsets.symmetric(
-              horizontal: compact ? 8 : 9,
-              vertical: compact ? 4 : 5,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF6A401E),
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: const Color(0xFFE8A33D), width: 1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x26000000),
-                  blurRadius: 5,
-                  offset: Offset(0, 1),
+      message: action.tooltip,
+      child: Semantics(
+        button: true,
+        label: action.tooltip,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AppRadii.pill),
+              onTap: action.onPressed,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minWidth: 116,
+                  maxWidth: 178,
+                  minHeight: 48,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
-                  size: 13,
-                ),
-                const SizedBox(width: 3),
-                Text(
-                  visibleLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: compact ? 10.5 : 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(8, 7, 12, 7),
+                  decoration: BoxDecoration(
+                    gradient: gradient,
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    border: Border.all(color: borderColor, width: 1.2),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.36),
+                            width: 0.8,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(action.icon, color: Colors.white, size: 18),
+                      ),
+                      const SizedBox(width: 7),
+                      Flexible(
+                        child: Text(
+                          action.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),

@@ -546,3 +546,43 @@
   - StoryMapPanel 의 2D/3D 분기와 2D 전용 테스트가 사라져 지도 상태 관리가 단순해졌다.
   - `flutter_map` 의존성은 프로필 미니맵과 제안 위치 선택기 같은 보조 2D 지도에서만
     유지한다.
+
+## ADR-027: 매일/주간 퀴즈를 탐험 진입점으로 통합 (2026-06-23)
+
+- **상태**: 채택
+- **배경**: 기존 매일 퀴즈는 별도 `daily_quiz` 문제 풀과 attempt 테이블을 사용했고,
+  주간 퀴즈는 `weekly_quiz_progress` 로 프로필 진행도와 분리했다. 이 구조는 사용자가
+  실제 지도 사건을 다시 만나고 프로필/나의 다이어리에 자연스럽게 쌓이는 제품 정체성과
+  어긋났고, 프로필의 인물/장소 진행률 표시도 일부 불일치했다.
+- **결정**:
+  1. 홈 상단 버튼과 탭 명칭을 `퀴즈`에서 `탐험`으로 바꾸고, `매일 탐험`과 `주간 탐험`
+     모두 사건 카드 → 홈 지도/사건 상세 흐름을 여는 진입점으로 둔다.
+  2. `daily_quiz`, `user_daily_quiz_attempts`, `weekly_quiz_progress` 및 관련 seed
+     빌더/가이드를 제거한다. `db_init.sql` 은 해당 객체를 생성하지 않고 legacy cleanup
+     drop 만 유지한다.
+  3. 매일 탐험은 KST 날짜 키와 전역 사건 순서를 기반으로 오늘의 사건 1개를 결정적으로
+     고른다. 주간 탐험은 기존 주간 인물/지역 추천 로직을 유지하되, 지도 위 영어 인물
+     legend 는 숨긴다.
+  4. 매일/주간 탐험에서 완료한 읽기, 퀴즈, 감정 새김은 모두 일반 사건 진행도 테이블
+     `user_event_progress`, `user_quiz_attempts`, `user_event_emotion_marks` 에 저장한다.
+  5. 이미 완료한 사건이 다시 선정될 수 있으며, 이 경우에도 재탐험 안내 문구를 보여 주고
+     같은 사건 상세로 진입한다.
+  6. 정기 푸시는 `weekly_exploration`, `daily_exploration` 타입과
+     `/weekly`, `/daily-exploration` deep link 를 사용한다. `daily_quiz`/`weekly_quiz`
+     타입과 `/daily-quiz` deep link 는 클라이언트에서 legacy 호환만 유지한다.
+- **이유**:
+  1. DAU 목적의 반복 방문 요소가 앱의 핵심 정체성인 "성경 사건을 지도 위에서 다시
+     걷기"와 직접 연결된다.
+  2. 별도 진행도 저장소를 없애면 홈 지도, 프로필, 인물과 걷기, 장소로 시작, 나의
+     다이어리가 같은 완료 상태를 바라본다.
+  3. 이미 푼 사건 재등장은 실패가 아니라 묵상/감정 재방문 기회로 해석할 수 있다.
+- **DB/파일 변경**:
+  - `db_init.sql`: legacy quiz 테이블 drop 유지, daily/weekly exploration push 함수와
+    pg_cron job 등록.
+  - `supabase/patches/20260623_1430_daily_weekly_exploration.sql`: 운영 DB용 증분 패치.
+  - Flutter: `DailyExplorationSection`, `daily_exploration_selection.dart` 추가,
+    `DailyQuiz` 모델/위젯/테스트 제거, weekly special progress 분기 제거.
+- **결과**:
+  - 매일/주간 탐험은 로그인 여부와 무관하게 사건을 보여 주되, 저장은 기존 사건 상세의
+    로그인/진행도 정책을 따른다.
+  - 매일/주간 탐험에서 푼 사건은 프로필과 지도 완료 상태에 즉시 반영된다.

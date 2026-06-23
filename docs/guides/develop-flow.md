@@ -217,8 +217,8 @@ scripts/run_real.sh
 주의:
 
 - seed 만 바꾼 경우 보통 `db-init`까지 할 필요는 없다.
-- `apply-seeds-stories-characters`, `apply-seeds-landmarks`, `apply-seeds-quizzes`,
-  `apply-seeds-daily-quiz`처럼 필요한 타겟만 적용하는 것이 더 안전할 때가 많다.
+- `apply-seeds-stories-characters`, `apply-seeds-landmarks`, `apply-seeds-quizzes`처럼
+  필요한 타겟만 적용하는 것이 더 안전할 때가 많다.
 - KRV 성경 구절 seed 는 중복 INSERT 시 에러가 날 수 있으므로 최초 bootstrap 뒤에는
   매번 다시 넣는 대상으로 보지 않는다.
 
@@ -235,10 +235,9 @@ make seed-quizzes
 make apply-seeds-quizzes ENV=dev
 make apply-seeds-quizzes ENV=real
 
-# daily quiz 만 바뀐 경우
-make seed-daily-quiz
-make apply-seeds-daily-quiz ENV=dev
-make apply-seeds-daily-quiz ENV=real
+# schema/RPC 만 바뀐 경우
+make apply-patch ENV=dev PATCH=supabase/patches/<file>.sql
+make apply-patch ENV=real PATCH=supabase/patches/<file>.sql
 ```
 
 ### 3.2.1 신규 이야기 추가 Flow
@@ -565,7 +564,7 @@ scripts/run_real.sh
 푸시 테스트:
 
 ```sql
-select public.dispatch_daily_quiz_push();
+select public.dispatch_daily_exploration_push();
 ```
 
 확인 SQL:
@@ -669,7 +668,7 @@ real build 전 확인:
 - seed 만 바뀐 변경이면 개별 `apply-seeds-* ENV=real`로 충분한지 확인.
 - `flutter analyze`, 관련 `flutter test` 통과.
 - secret 이 git diff 에 포함되지 않았는지 확인.
-- real push 테스트가 필요하면 `dispatch_daily_quiz_push()`를 한 번만 실행.
+- real push 테스트가 필요하면 `dispatch_daily_exploration_push()`를 한 번만 실행.
 - build number 증가.
 
 ## 8. 현재 상태 판정

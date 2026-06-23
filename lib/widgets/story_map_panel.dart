@@ -49,6 +49,7 @@ class StoryMapPanel extends StatefulWidget {
     this.revealInstantly = false,
     this.onRevealComplete,
     this.nameForCharacter,
+    this.showCharacterLegend = true,
     this.eventCountByLandmarkId,
     this.eventEmotionMarks = const {},
     this.regionPickerMode = false,
@@ -117,6 +118,10 @@ class StoryMapPanel extends StatefulWidget {
   /// 인물 코드 → 표시 이름 반환. legend 에서 사용. null 이면 코드를 이름으로
   /// 사용 (fallback).
   final String Function(String characterCode)? nameForCharacter;
+
+  /// 인물 경로 색상 legend 표시 여부. 주간/매일 탐험처럼 상단 카드에서 이미
+  /// 인물을 설명하는 화면은 지도 위 코드 라벨을 숨긴다.
+  final bool showCharacterLegend;
 
   /// region 라벨에 표시할 사건 개수 — landmark.id → count.
   /// 부모가 region(+ 자식 anchor/minor + alias_group) 사건 합산해 넘겨 준다.

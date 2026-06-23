@@ -40,7 +40,6 @@ CHARACTERS_SQL := $(SUPABASE_DIR)/200_stories/characters_seed.sql
 LANDMARKS_SQL := $(SUPABASE_DIR)/200_stories/landmarks_seed.sql
 QUIZZES_SQL := $(SUPABASE_DIR)/quizzes/quizzes_seed.sql
 QUIZZES_REPORT := $(SUPABASE_DIR)/quizzes/quizzes_report.json
-DAILY_QUIZ_SQL := $(SUPABASE_DIR)/seeds/daily_quiz.sql
 LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 # =============================================================================
@@ -49,14 +48,14 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
 
 .PHONY: help all \
         seed-bible-verses build-character-meta renumber-story-indices generate-story-contexts \
-        seed-stories seed-characters seed-stories-characters seed-quizzes seed-daily-quiz \
+        seed-stories seed-characters seed-stories-characters seed-quizzes \
         seed-landmarks audit-landmark-polygons refine-landmark-polygons \
         apply-seeds-landmarks-v2 \
         generate-avatars generate-story-images thumbnails \
         seed-all generate-all \
         export-stories-json \
         db-init apply-patch apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
-        apply-seeds-landmarks apply-seeds-quizzes apply-seeds-daily-quiz \
+        apply-seeds-landmarks apply-seeds-quizzes \
         upload-character-avatars upload-character-avatars-force \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
@@ -79,7 +78,6 @@ help:
 	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
 	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
-	@echo "  seed-daily-quiz            매일 지도 퀴즈 SQL + docs 가이드 생성"
 	@echo "  audit-landmark-polygons    박스형/저정점 region polygon 감사"
 	@echo "  refine-landmark-polygons   Natural Earth 기반 region polygon 정제 후보 생성"
 	@echo "  generate-avatars        Vertex AI Gemini 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
@@ -87,7 +85,7 @@ help:
 	@echo "  thumbnails              썸네일 생성 (→ avatars, story-images 의존)"
 	@echo ""
 	@echo "묶음 타겟:"
-	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + daily quiz + landmarks)"
+	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + landmarks)"
 	@echo "  generate-all            전체 이미지 생성 (avatars + story-images + thumbnails)"
 	@echo "  all                     전체 파이프라인 (seed-all + generate-all)"
 	@echo ""
@@ -101,7 +99,6 @@ help:
 	@echo "  apply-bible-verses-seeds  [ENV=dev|real]  krv 성경 구절만 적용 (1회성, 중복 INSERT 시 에러)"
 	@echo "  apply-seeds-stories-characters       [ENV=dev|real]  characters + 200_stories + scene_captions 적용 (UPSERT — 재실행 안전)"
 	@echo "  apply-seeds-quizzes                  [ENV=dev|real]  quiz_questions 적용 (delete 후 insert — 재실행 안전)"
-	@echo "  apply-seeds-daily-quiz               [ENV=dev|real]  daily_quiz 적용 (slug UPSERT — 재실행 안전)"
 	@echo "  apply-seeds               [ENV=dev|real]  전체 시드 적용 (최초 부트스트랩용)"
 	@echo ""
 	@echo "Supabase Storage (service_role 키 필요):"
@@ -227,14 +224,7 @@ seed-quizzes:
 		--report $(QUIZZES_REPORT) \
 		--events-from-json $(SUPABASE_DIR)/quizzes/db_events.json
 
-seed-daily-quiz:
-	@echo "[Makefile] 매일 지도 퀴즈 SQL + docs 생성..."
-	$(PYTHON) $(TOOLS_DIR)/seed/build_daily_quiz_seed_sql.py \
-		--output $(DAILY_QUIZ_SQL) \
-		--docs-output docs/DAILY_QUIZ_SEED_GUIDE.md \
-		--max-questions 100
-
-seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-daily-quiz seed-landmarks
+seed-all: seed-bible-verses seed-stories seed-characters seed-quizzes seed-landmarks
 	@echo "[Makefile] 전체 SQL 생성 완료. Supabase SQL Editor에서 실행하세요."
 
 # =============================================================================
@@ -426,12 +416,7 @@ apply-seeds-quizzes:
 	@echo "[Makefile] quiz_questions 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
 	$(call PSQL_APPLY,$(QUIZZES_SQL))
 
-# 매일 퀴즈 — slug 기준 UPSERT 라 재실행 안전.
-apply-seeds-daily-quiz:
-	@echo "[Makefile] daily_quiz 시드 적용 (ENV=$(ENV) → ops=$(OPS_ENV), $(DB_URL_VAR))"
-	$(call PSQL_APPLY,$(DAILY_QUIZ_SQL))
-
-apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes apply-seeds-daily-quiz
+apply-seeds: apply-bible-verses-seeds apply-seeds-landmarks apply-seeds-stories-characters apply-seeds-quizzes
 	@echo "[Makefile] 전체 시드 적용 완료."
 
 # =============================================================================

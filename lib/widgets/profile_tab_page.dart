@@ -129,6 +129,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   String? _profileError;
   bool _signingOut = false;
 
+  Set<String> _profileExploredEventIds(StoryState state) => {
+    ...state.completedEventIds,
+    ...state.quizCompletedEventIds,
+    ...state.eventEmotionMarks.keys,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -666,7 +672,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                   height: rightPanelHeight.toDouble(),
                   child: _buildProfileProgressSection(
                     people: people,
-                    completedEventIds: state.completedEventIds,
+                    completedEventIds: _profileExploredEventIds(state),
                     selectedTestament: _profileSelectedTestament,
                     onSelectTestament: (testament) {
                       setState(() {
@@ -700,7 +706,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
               Expanded(
                 child: _buildProfileProgressSection(
                   people: people,
-                  completedEventIds: state.completedEventIds,
+                  completedEventIds: _profileExploredEventIds(state),
                   selectedTestament: _profileSelectedTestament,
                   onSelectTestament: (testament) {
                     setState(() {

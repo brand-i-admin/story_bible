@@ -76,7 +76,7 @@ void main() {
         'class _MapRevealSkipButton',
       );
       final skipButtonEnd = widgetSource.indexOf(
-        'class _PreviousStepPill',
+        'enum _PanelFloatingActionTone',
         skipButtonStart,
       );
       final skipButtonSource = widgetSource.substring(

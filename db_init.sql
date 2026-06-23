@@ -174,6 +174,7 @@ drop function if exists public.pick_weekly_character() cascade;
 drop function if exists public.notify_weekly_progress() cascade;
 drop function if exists public.notify_weekly_diary_reflection() cascade;
 drop function if exists public.dispatch_daily_quiz_push() cascade;
+drop function if exists public.dispatch_daily_exploration_push() cascade;
 drop function if exists public._fire_push_broadcast(text, text, text, text) cascade;
 drop function if exists public._push_after_broadcast() cascade;
 drop function if exists public._notify_admins(text, text, text, text, jsonb, uuid) cascade;
@@ -649,67 +650,6 @@ create table if not exists user_saved_events (
   primary key (user_id, event_id)
 );
 
--- 주간 퀴즈 진행도 — 사용자/주차/사건 키. 퀴즈 탭의 진행도는 프로필의
--- user_event_progress 와 독립적. 다음 주에 같은 인물이 또 뽑히면 week_key 가
--- 달라져 처음부터 다시 풀어야 한다 (자동 reset).
-create table if not exists weekly_quiz_progress (
-  user_id uuid not null references auth.users(id) on delete cascade,
-  week_key text not null,
-  event_id uuid not null references events(id) on delete cascade,
-  is_bible_read boolean not null default false,
-  is_quiz_completed boolean not null default false,
-  last_score_correct smallint,
-  last_score_total smallint,
-  updated_at timestamptz not null default now(),
-  primary key (user_id, week_key, event_id)
-);
-create index if not exists idx_weekly_quiz_progress_user_week
-  on weekly_quiz_progress (user_id, week_key);
-
--- 매일 퀴즈 — 1 row 가 한 문제. 가변 선택지(2~6개) + 정답 + 해설.
-create table if not exists daily_quiz (
-  id uuid primary key default gen_random_uuid(),
-  -- seed 재실행 안전성을 위한 안정 키. cron 이 발급하는 일일 복제 row 는 NULL.
-  slug text unique,
-  quiz_type text not null default 'general',
-  question text not null,
-  choices jsonb not null,
-  answer_index smallint not null,
-  explanation text not null,
-  created_at timestamptz not null default now(),
-  constraint chk_daily_quiz_type check (
-    quiz_type in (
-      'general',
-      'event_region_match',
-      'region_event_exclusion',
-      'character_region_exclusion',
-      'character_event_region_match',
-      'region_event_inclusion'
-    )
-  ),
-  constraint chk_daily_quiz_choices check (
-    jsonb_typeof(choices) = 'array'
-    and jsonb_array_length(choices) between 2 and 6
-  ),
-  constraint chk_daily_quiz_answer_index check (
-    answer_index between 1 and jsonb_array_length(choices)
-  )
-);
-
--- 매일 퀴즈 사용자 시도 — 한 사용자가 한 daily_quiz 에 한 번 답을 고른 기록.
--- 같은 daily_quiz 가 active 인 동안엔 같은 row 유지 (수정 불가). daily_quiz 가
--- 새로 등록되면 새 row 가 자연스럽게 생기므로 "초기화" 가 자동.
-create table if not exists user_daily_quiz_attempts (
-  user_id uuid not null references auth.users(id) on delete cascade,
-  daily_quiz_id uuid not null references daily_quiz(id) on delete cascade,
-  selected_index smallint not null check (selected_index between 1 and 6),
-  is_correct boolean not null,
-  created_at timestamptz not null default now(),
-  primary key (user_id, daily_quiz_id)
-);
-create index if not exists idx_user_daily_quiz_attempts_user
-  on user_daily_quiz_attempts (user_id);
-
 create table if not exists search_embeddings (
   id uuid primary key default gen_random_uuid(),
   entity_type text not null check (entity_type in ('event', 'character')),
@@ -930,7 +870,6 @@ grant select on table events to anon, authenticated;
 grant select on table landmarks to anon, authenticated;
 grant select on table bible_verses to anon, authenticated;
 grant select on table quiz_questions to anon, authenticated;
-grant select on table daily_quiz to anon, authenticated;
 grant select on events_ordered to anon, authenticated;
 grant select on character_eras to anon, authenticated;
 
@@ -942,8 +881,6 @@ grant select, insert, delete on table user_intercessory_prayers to authenticated
 grant select, insert, update, delete on table user_notes to authenticated;
 grant select, insert, delete on table user_saved_verses to authenticated;
 grant select, insert, delete on table user_saved_events to authenticated;
-grant select, insert, update, delete on table weekly_quiz_progress to authenticated;
-grant select, insert, update on table user_daily_quiz_attempts to authenticated;
 
 alter table eras enable row level security;
 alter table characters enable row level security;
@@ -951,7 +888,6 @@ alter table events enable row level security;
 alter table landmarks enable row level security;
 alter table bible_verses enable row level security;
 alter table quiz_questions enable row level security;
-alter table daily_quiz enable row level security;
 alter table user_event_progress enable row level security;
 alter table user_quiz_attempts enable row level security;
 alter table user_event_emotion_marks enable row level security;
@@ -960,8 +896,6 @@ alter table user_intercessory_prayers enable row level security;
 alter table user_notes enable row level security;
 alter table user_saved_verses enable row level security;
 alter table user_saved_events enable row level security;
-alter table weekly_quiz_progress enable row level security;
-alter table user_daily_quiz_attempts enable row level security;
 
 drop policy if exists eras_read_all on eras;
 create policy eras_read_all on eras for select using (true);
@@ -977,29 +911,6 @@ create policy landmarks_read_active on landmarks for select using (is_active = t
 
 drop policy if exists bible_verses_read_all on bible_verses;
 create policy bible_verses_read_all on bible_verses for select using (true);
-
-drop policy if exists daily_quiz_read_all on daily_quiz;
-create policy daily_quiz_read_all on daily_quiz for select using (true);
-
-drop policy if exists weekly_quiz_progress_read_own on weekly_quiz_progress;
-create policy weekly_quiz_progress_read_own on weekly_quiz_progress
-for select using (auth.uid() = user_id);
-
-drop policy if exists weekly_quiz_progress_write_own on weekly_quiz_progress;
-create policy weekly_quiz_progress_write_own on weekly_quiz_progress
-for all to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
-
-drop policy if exists user_daily_quiz_attempts_read_own on user_daily_quiz_attempts;
-create policy user_daily_quiz_attempts_read_own on user_daily_quiz_attempts
-for select using (auth.uid() = user_id);
-
-drop policy if exists user_daily_quiz_attempts_write_own on user_daily_quiz_attempts;
-create policy user_daily_quiz_attempts_write_own on user_daily_quiz_attempts
-for all to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
 
 drop policy if exists quiz_questions_read_all on quiz_questions;
 create policy quiz_questions_read_all on quiz_questions for select using (true);
@@ -3440,7 +3351,7 @@ returns void language sql security definer set search_path = public as $$
 $$;
 grant execute on function public.unregister_push_token(text) to authenticated;
 
--- 금주 인물 — seed 포팅 + pick + 월요일 주간 퀴즈 알림
+-- 금주 인물 — seed 포팅 + pick + 월요일 주간 탐험 알림
 create or replace function public._seed_from_week_key(p_key text)
 returns bigint language plpgsql immutable as $$
 declare v_acc bigint := 0; v_i int;
@@ -3483,11 +3394,11 @@ begin
 
   -- bell drop 에 쌓이지 않게 broadcast 를 거치지 않고 send-push 로 직접 발송.
   perform public._fire_push_broadcast(
-    '이번 주 퀴즈가 열렸어요',
+    '이번 주 탐험이 열렸어요',
     '이번 주는 "' || coalesce(v_character_name, v_character_code) ||
-      '" 이야기와 함께 걸어요. 주간 퀴즈를 시작해 보세요.',
+      '" 이야기와 함께 걸어요. 주간 탐험을 시작해 보세요.',
     '/weekly',
-    'weekly_quiz'
+    'weekly_exploration'
   );
 end;
 $$;
@@ -3589,69 +3500,58 @@ create trigger trg_push_after_broadcast
 after insert on broadcast_notifications
 for each row execute function public._push_after_broadcast();
 
--- 매일 퀴즈 푸시 — 수요일 KST 9시 (= UTC 0시) 에 daily_quiz 1건의 question 을
--- 본문에 담아 전체 사용자에게 push-only 발송. broadcast_notifications 안 거침.
--- 수요일 KST 9시 cron 이 호출. daily_quiz 풀에서 random 1건을 뽑아 같은 내용으로
--- **새 row INSERT** → 새 daily_quiz_id 가 발급되므로 user_daily_quiz_attempts
--- (PK: user_id, daily_quiz_id) 가 자연스럽게 새 row 가 되어 사용자 입장에선
--- "이번 주 수요일 퀴즈를 새로 풀 수 있는" 초기화가 자동으로 일어남.
--- 풀이 1건뿐이면 같은 문제가 또 보이지만, 그래도 PK 가 다르니 다시 풀 수 있다.
--- 다양화를 원하면 daily_quiz 시드에 sample 을 더 추가하면 됨.
-create or replace function public.dispatch_daily_quiz_push()
+-- 매일 탐험 푸시 — 수요일 KST 9시 (= UTC 0시)에 전체 사용자에게 push-only
+-- 발송. KST 날짜 시드로 오늘의 사건 제목을 함께 담아 보낸다.
+create or replace function public.dispatch_daily_exploration_push()
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_picked record;
-  v_new_id uuid;
-  v_body text;
+  v_now_kst timestamp;
+  v_day_key text;
+  v_count int;
+  v_seed bigint;
+  v_offset int;
+  v_event_title text;
 begin
-  -- 풀에서 random 1건 pick. cron 이 만든 옛 row 와 시드 row 가 섞여 있어도
-  -- 모두 동일하게 풀로 취급 — 단순함 우선. 같은 quiz 가 자주 뽑히는 게
-  -- 거슬리면 daily_quiz 에 시드 sample 을 추가하라.
-  select quiz_type, question, choices, answer_index, explanation
-    into v_picked
-    from daily_quiz
-    order by random()
-    limit 1;
+  v_now_kst := now() at time zone 'Asia/Seoul';
+  v_day_key :=
+    extract(year from v_now_kst)::int || '-' ||
+    extract(month from v_now_kst)::int || '-' ||
+    extract(day from v_now_kst)::int;
 
-  if v_picked.question is null then
-    raise warning '[dispatch_daily_quiz_push] daily_quiz pool is empty — skipped';
-    return;
+  select count(*)
+    into v_count
+    from events_ordered e
+    join eras er on er.id = e.era_id
+    where er.code <> 'era_nt_consummation';
+
+  if coalesce(v_count, 0) > 0 then
+    v_seed := public._seed_from_week_key('daily-exploration:' || v_day_key);
+    v_offset := (v_seed % v_count)::int;
+
+    select e.title
+      into v_event_title
+      from events_ordered e
+      join eras er on er.id = e.era_id
+      where er.code <> 'era_nt_consummation'
+      order by e.global_rank, e.id
+      offset v_offset
+      limit 1;
   end if;
 
-  -- 같은 content 로 새 row INSERT (created_at 자동 = now()). 새 PK 발급으로
-  -- 클라이언트의 fetchLatestDailyQuiz 가 이 새 row 를 가져오게 되고
-  -- user_daily_quiz_attempts 매핑도 자동 분리된다.
-  insert into daily_quiz (quiz_type, question, choices, answer_index, explanation)
-  values (
-    v_picked.quiz_type,
-    v_picked.question,
-    v_picked.choices,
-    v_picked.answer_index,
-    v_picked.explanation
-  )
-  returning id into v_new_id;
-
-  -- 푸시 본문 길이 제한(iOS ~178자) 고려해 길면 자른다.
-  if length(v_picked.question) > 110 then
-    v_body := substr(v_picked.question, 1, 107) || '...';
-  else
-    v_body := v_picked.question;
-  end if;
-
-  -- deep_link='/daily-quiz' — QuizTabPage 의 매일 퀴즈 탭으로 연다.
   perform public._fire_push_broadcast(
-    '오늘의 퀴즈가 도착했어요',
-    v_body,
-    '/daily-quiz',
-    'daily_quiz'
+    '오늘의 탐험이 열렸어요',
+    '「' || coalesce(v_event_title, '오늘 도착한 성경 사건') ||
+      '」 사건을 함께 탐험해봐요.',
+    '/daily-exploration',
+    'daily_exploration'
   );
 end;
 $$;
-grant execute on function public.dispatch_daily_quiz_push() to authenticated;
+grant execute on function public.dispatch_daily_exploration_push() to authenticated;
 
 -- pg_cron 스케줄 — 확장 활성화되어 있으면 등록.
 -- 모든 시간은 KST 9시 = UTC 0시 기준. 정기 푸시는 월/수/금만 발송한다.
@@ -3662,7 +3562,9 @@ begin
     from cron.job
     where jobname in (
       'daily-quiz-9am-kst',
+      'daily-exploration-wednesday-9am-kst',
       'weekly-character-monday',
+      'weekly-exploration-monday-9am-kst',
       'weekly-progress-wed',
       'weekly-progress-fri',
       'weekly-quiz-monday-9am-kst',
@@ -3671,14 +3573,14 @@ begin
     );
 
     perform cron.schedule(
-      'weekly-quiz-monday-9am-kst',
+      'weekly-exploration-monday-9am-kst',
       '0 0 * * 1',
       $cmd$ select public.pick_weekly_character(); $cmd$
     );
     perform cron.schedule(
-      'daily-quiz-wednesday-9am-kst',
+      'daily-exploration-wednesday-9am-kst',
       '0 0 * * 3',
-      $cmd$ select public.dispatch_daily_quiz_push(); $cmd$
+      $cmd$ select public.dispatch_daily_exploration_push(); $cmd$
     );
     perform cron.schedule(
       'diary-reflection-friday-9am-kst',

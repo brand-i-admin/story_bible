@@ -8,11 +8,18 @@ import '../../models/app_notification.dart';
 /// 현재 스키마가 지원하는 target:
 ///  - `proposal/{id}`  : 제안 상세 — 편집은 웹 전용이라 모바일이면 경고 다이얼로그
 ///  - `event/{id}`     : 이야기 상세
-///  - `daily-quiz`     : 매일 퀴즈
-///  - `weekly`         : 주간 퀴즈
+///  - `daily-exploration` / `daily-quiz` : 매일 탐험
+///  - `weekly`                         : 주간 탐험
 ///  - `profile`        : 프로필
 ///  - `unknown`        : 처리 불가 (읽음만 남기고 끝)
-enum NotificationTarget { proposal, event, dailyQuiz, weekly, profile, unknown }
+enum NotificationTarget {
+  proposal,
+  event,
+  dailyExploration,
+  weekly,
+  profile,
+  unknown,
+}
 
 class NotificationDeepLink {
   const NotificationDeepLink(this.target, this.id);
@@ -39,8 +46,12 @@ class NotificationDeepLink {
           NotificationTarget.event,
           parts.length > 1 ? parts[1] : null,
         );
+      case 'daily-exploration':
       case 'daily-quiz':
-        return const NotificationDeepLink(NotificationTarget.dailyQuiz, null);
+        return const NotificationDeepLink(
+          NotificationTarget.dailyExploration,
+          null,
+        );
       case 'weekly':
         return const NotificationDeepLink(NotificationTarget.weekly, null);
       case 'profile':

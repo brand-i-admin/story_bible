@@ -37,7 +37,7 @@ class HomeIntroPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final canPickMode = selectedEraId != null;
     // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
-    // 다시 고르려면 상단의 "시대 다시 선택" 또는 stepper 의 "시대/방법"을 사용한다.
+    // 다시 고르려면 패널 위 "시대 다시 선택" 또는 stepper 의 "시대/방법"을 사용한다.
     final eraStepOpacity = canPickMode ? 0.55 : 1.0;
 
     return SingleChildScrollView(
