@@ -14,6 +14,7 @@ import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/utils/bible_book_meta.dart';
 import 'package:story_bible/widgets/bible_reader_page.dart';
+import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
 
@@ -165,6 +166,12 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.menu_book_rounded));
       await tester.pumpAndSettle();
+
+      expect(find.text('저장한 성경 구절'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.byType(ParchmentCard).last).dx,
+        lessThan(24),
+      );
 
       await tester.tap(find.textContaining('요셉이 시종하는'));
       await tester.pumpAndSettle();

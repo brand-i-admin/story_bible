@@ -7,10 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/event_emotion_mark.dart';
 import '../../models/story_event.dart';
+import '../../models/user_companion_diary_entry.dart';
 import '../../state/story_controller.dart';
 import '../../theme/tokens.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
+import 'companion_diary_entry_card.dart';
+import 'profile_companion_diary.dart';
 import 'profile_emotion_stats.dart';
 
 class ProfileEmotionDiary extends ConsumerStatefulWidget {
@@ -18,6 +21,11 @@ class ProfileEmotionDiary extends ConsumerStatefulWidget {
     super.key,
     required this.eventEmotionMarks,
     required this.onOpenEventDetail,
+    this.companionDiaryEntries = const <UserCompanionDiaryEntry>[],
+    this.companionDiaryLoading = false,
+    this.companionDiaryError,
+    this.onSaveCompanionDiary,
+    this.onDeleteCompanionDiary,
     this.emotionStats,
     this.onTapEmotion,
     this.now,
@@ -25,6 +33,11 @@ class ProfileEmotionDiary extends ConsumerStatefulWidget {
 
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final ValueChanged<StoryEvent> onOpenEventDetail;
+  final List<UserCompanionDiaryEntry> companionDiaryEntries;
+  final bool companionDiaryLoading;
+  final String? companionDiaryError;
+  final CompanionDiarySaveCallback? onSaveCompanionDiary;
+  final CompanionDiaryDeleteCallback? onDeleteCompanionDiary;
   final ProfileEmotionStats? emotionStats;
   final ValueChanged<EventEmotionOption>? onTapEmotion;
   final DateTime? now;
@@ -39,6 +52,7 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
   String _eventIdFingerprint = '';
   late DateTime _focusedMonth;
   late DateTime _selectedDate;
+  _DiaryContentTab _selectedContentTab = _DiaryContentTab.companion;
   bool _expanded = false;
   String? _openingEventId;
   Timer? _openingResetTimer;
@@ -97,6 +111,9 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
       widget.eventEmotionMarks.values,
       nowUtc: nowUtc,
     );
+    final companionDiaryByDate = _groupCompanionDiaryEntriesByDate(
+      widget.companionDiaryEntries,
+    );
 
     return FutureBuilder<List<StoryEvent>>(
       future: _eventsFuture,
@@ -105,6 +122,8 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
         final eventById = {for (final event in events) event.id: event};
         final selectedMarks =
             marksByDate[_selectedDate] ?? const <EventEmotionMark>[];
+        final selectedCompanionDiary =
+            companionDiaryByDate[_dateOnly(_selectedDate)];
         return Stack(
           children: [
             _EmotionDiaryPanel(
@@ -113,6 +132,11 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
               today: today,
               expanded: _expanded,
               marksByDate: marksByDate,
+              companionDiaryByDate: companionDiaryByDate,
+              companionDiaryEntries: widget.companionDiaryEntries,
+              selectedCompanionDiary: selectedCompanionDiary,
+              companionDiaryLoading: widget.companionDiaryLoading,
+              companionDiaryError: widget.companionDiaryError,
               selectedMarks: selectedMarks,
               emotionStats: widget.emotionStats,
               eventById: eventById,
@@ -121,6 +145,12 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
               },
               onMoveMonth: _moveMonth,
               onSelectDate: _selectDate,
+              selectedContentTab: _selectedContentTab,
+              onSelectContentTab: (tab) {
+                setState(() => _selectedContentTab = tab);
+              },
+              onSaveCompanionDiary: widget.onSaveCompanionDiary,
+              onDeleteCompanionDiary: widget.onDeleteCompanionDiary,
               onTapEmotion: widget.onTapEmotion,
               onOpenEventDetail: _openEventDetailWithLoading,
               loading: snapshot.connectionState == ConnectionState.waiting,
@@ -208,6 +238,8 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
   }
 }
 
+enum _DiaryContentTab { companion, emotion }
+
 class _EmotionDiaryPanel extends StatelessWidget {
   const _EmotionDiaryPanel({
     required this.focusedMonth,
@@ -215,12 +247,21 @@ class _EmotionDiaryPanel extends StatelessWidget {
     required this.today,
     required this.expanded,
     required this.marksByDate,
+    required this.companionDiaryByDate,
+    required this.companionDiaryEntries,
+    required this.selectedCompanionDiary,
+    required this.companionDiaryLoading,
+    required this.companionDiaryError,
     required this.selectedMarks,
     required this.emotionStats,
     required this.eventById,
     required this.onToggleExpanded,
     required this.onMoveMonth,
     required this.onSelectDate,
+    required this.selectedContentTab,
+    required this.onSelectContentTab,
+    required this.onSaveCompanionDiary,
+    required this.onDeleteCompanionDiary,
     required this.onTapEmotion,
     required this.onOpenEventDetail,
     required this.loading,
@@ -232,12 +273,21 @@ class _EmotionDiaryPanel extends StatelessWidget {
   final DateTime today;
   final bool expanded;
   final Map<DateTime, List<EventEmotionMark>> marksByDate;
+  final Map<DateTime, UserCompanionDiaryEntry> companionDiaryByDate;
+  final List<UserCompanionDiaryEntry> companionDiaryEntries;
+  final UserCompanionDiaryEntry? selectedCompanionDiary;
+  final bool companionDiaryLoading;
+  final String? companionDiaryError;
   final List<EventEmotionMark> selectedMarks;
   final ProfileEmotionStats? emotionStats;
   final Map<String, StoryEvent> eventById;
   final VoidCallback onToggleExpanded;
   final ValueChanged<int> onMoveMonth;
   final ValueChanged<DateTime> onSelectDate;
+  final _DiaryContentTab selectedContentTab;
+  final ValueChanged<_DiaryContentTab> onSelectContentTab;
+  final CompanionDiarySaveCallback? onSaveCompanionDiary;
+  final CompanionDiaryDeleteCallback? onDeleteCompanionDiary;
   final ValueChanged<EventEmotionOption>? onTapEmotion;
   final ValueChanged<StoryEvent> onOpenEventDetail;
   final bool loading;
@@ -268,6 +318,13 @@ class _EmotionDiaryPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (emotionStats != null && onTapEmotion != null) ...[
+            ProfileEmotionStatsRows(
+              stats: emotionStats!,
+              onTapEmotion: onTapEmotion!,
+            ),
+            const Divider(height: 22, color: Color(0x338E6F48)),
+          ],
           Row(
             children: [
               Expanded(
@@ -333,6 +390,9 @@ class _EmotionDiaryPanel extends StatelessWidget {
                             marks:
                                 marksByDate[_dateOnly(date)] ??
                                 const <EventEmotionMark>[],
+                            hasCompanionDiary: companionDiaryByDate.containsKey(
+                              _dateOnly(date),
+                            ),
                             compact: weekEmotionLineCount == 0,
                             onTap: () => onSelectDate(date),
                           ),
@@ -346,24 +406,114 @@ class _EmotionDiaryPanel extends StatelessWidget {
               },
             ),
           ],
-          if (emotionStats != null && onTapEmotion != null) ...[
-            const Divider(height: 22, color: Color(0x338E6F48)),
-            ProfileEmotionStatsRows(
-              stats: emotionStats!,
-              onTapEmotion: onTapEmotion!,
-            ),
-          ],
           const Divider(height: 22, color: Color(0x338E6F48)),
-          _SelectedDayEmotionList(
-            date: selectedDate,
-            today: today,
-            marks: selectedMarks,
-            eventById: eventById,
-            onOpenEventDetail: onOpenEventDetail,
-            loading: loading,
-            hasError: hasError,
+          _DiaryContentTabBar(
+            selected: selectedContentTab,
+            onSelect: onSelectContentTab,
+          ),
+          const SizedBox(height: 11),
+          if (selectedContentTab == _DiaryContentTab.companion)
+            CompanionDiaryTodaySection(
+              entryDate: selectedDate,
+              entry: selectedCompanionDiary,
+              entries: companionDiaryEntries,
+              loading: companionDiaryLoading,
+              error: companionDiaryError,
+              onSave: onSaveCompanionDiary,
+              onDelete: onDeleteCompanionDiary,
+            )
+          else
+            _SelectedDayEmotionList(
+              date: selectedDate,
+              today: today,
+              marks: selectedMarks,
+              eventById: eventById,
+              onOpenEventDetail: onOpenEventDetail,
+              loading: loading,
+              hasError: hasError,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DiaryContentTabBar extends StatelessWidget {
+  const _DiaryContentTabBar({required this.selected, required this.onSelect});
+
+  final _DiaryContentTab selected;
+  final ValueChanged<_DiaryContentTab> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 38,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.parchmentCard,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xAA8E6F48), width: 0.8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _DiaryContentTabButton(
+              label: '오늘의 동행 일지',
+              selected: selected == _DiaryContentTab.companion,
+              onTap: () => onSelect(_DiaryContentTab.companion),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: _DiaryContentTabButton(
+              label: '오늘의 내 감정',
+              selected: selected == _DiaryContentTab.emotion,
+              onTap: () => onSelect(_DiaryContentTab.emotion),
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DiaryContentTabButton extends StatelessWidget {
+  const _DiaryContentTabButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(9),
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? AppColors.brownWarm : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
+            boxShadow: selected ? AppShadows.sm : null,
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: selected ? Colors.white : AppColors.ink350,
+              fontSize: 11.8,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -521,6 +671,7 @@ class _EmotionCalendarDayCell extends StatelessWidget {
     required this.selected,
     required this.today,
     required this.marks,
+    required this.hasCompanionDiary,
     required this.compact,
     required this.onTap,
   });
@@ -530,6 +681,7 @@ class _EmotionCalendarDayCell extends StatelessWidget {
   final bool selected;
   final bool today;
   final List<EventEmotionMark> marks;
+  final bool hasCompanionDiary;
   final bool compact;
   final VoidCallback onTap;
 
@@ -579,6 +731,10 @@ class _EmotionCalendarDayCell extends StatelessWidget {
                 today: today,
                 selected: selected,
                 color: textColor,
+                hasCompanionDiary: hasCompanionDiary,
+                markerKey: ValueKey(
+                  'companion-diary-marker-${date.year}-${date.month}-${date.day}',
+                ),
               ),
               if (!compact) ...[
                 const SizedBox(height: 5),
@@ -642,6 +798,74 @@ class _DayNumber extends StatelessWidget {
     required this.today,
     required this.selected,
     required this.color,
+    required this.hasCompanionDiary,
+    required this.markerKey,
+  });
+
+  final int day;
+  final bool today;
+  final bool selected;
+  final Color color;
+  final bool hasCompanionDiary;
+  final Key markerKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final child = _DayNumberText(
+      day: day,
+      today: today,
+      selected: selected,
+      color: color,
+    );
+    final content = SizedBox(
+      width: hasCompanionDiary ? 30 : 21,
+      height: 21,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          child,
+          if (hasCompanionDiary)
+            Positioned(
+              top: -2,
+              right: 0,
+              child: _CalendarCompanionDiaryMarker(key: markerKey),
+            ),
+        ],
+      ),
+    );
+    return SizedBox(height: 21, child: Center(child: content));
+  }
+}
+
+class _CalendarCompanionDiaryMarker extends StatelessWidget {
+  const _CalendarCompanionDiaryMarker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 13,
+      height: 13,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.greenTint1,
+        border: Border.all(color: AppColors.greenBot.withAlpha(0x55)),
+      ),
+      child: const FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text('📝', style: TextStyle(fontSize: 8.5, height: 1)),
+      ),
+    );
+  }
+}
+
+class _DayNumberText extends StatelessWidget {
+  const _DayNumberText({
+    required this.day,
+    required this.today,
+    required this.selected,
+    required this.color,
   });
 
   final int day;
@@ -651,7 +875,7 @@ class _DayNumber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = Text(
+    final text = Text(
       '$day',
       textAlign: TextAlign.center,
       style: TextStyle(
@@ -662,7 +886,7 @@ class _DayNumber extends StatelessWidget {
       ),
     );
     if (!today) {
-      return SizedBox(height: 21, child: Center(child: child));
+      return text;
     }
     return Container(
       width: 21,
@@ -673,7 +897,7 @@ class _DayNumber extends StatelessWidget {
         color: selected ? Colors.transparent : AppColors.parchmentCream,
         border: Border.all(color: AppColors.goldDeep, width: 1.1),
       ),
-      child: child,
+      child: text,
     );
   }
 }
@@ -757,34 +981,6 @@ class _SelectedDayEmotionList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            const Expanded(
-              child: Text(
-                '오늘의 내 감정',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.ink800,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              _selectedDateLabel(date, today),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.ink300,
-                fontSize: 11.5,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
         if (loading && sorted.isNotEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
@@ -954,6 +1150,20 @@ Map<DateTime, List<EventEmotionMark>> _groupMarksByKstDate(
   return grouped;
 }
 
+Map<DateTime, UserCompanionDiaryEntry> _groupCompanionDiaryEntriesByDate(
+  Iterable<UserCompanionDiaryEntry> entries,
+) {
+  final grouped = <DateTime, UserCompanionDiaryEntry>{};
+  for (final entry in entries) {
+    final date = _dateOnly(entry.entryDate);
+    final existing = grouped[date];
+    if (existing == null || entry.updatedAt.isAfter(existing.updatedAt)) {
+      grouped[date] = entry;
+    }
+  }
+  return grouped;
+}
+
 DateTime _markKstDate(EventEmotionMark mark, {required DateTime nowUtc}) {
   final updatedAt = mark.updatedAt;
   if (updatedAt == null) {
@@ -1039,19 +1249,4 @@ int _calendarWeekEmotionLineCount(
     maxVisibleSlots = math.max(maxVisibleSlots, visibleSlots);
   }
   return (maxVisibleSlots / _calendarEmotionSlotsPerRow).ceil().clamp(0, 2);
-}
-
-String _selectedDateLabel(DateTime date, DateTime today) {
-  final weekday = switch (date.weekday) {
-    DateTime.monday => '월',
-    DateTime.tuesday => '화',
-    DateTime.wednesday => '수',
-    DateTime.thursday => '목',
-    DateTime.friday => '금',
-    DateTime.saturday => '토',
-    DateTime.sunday => '일',
-    _ => '',
-  };
-  final suffix = _isSameDate(date, today) ? '오늘' : '$weekday요일';
-  return '${date.month}월 ${date.day}일 $suffix';
 }

@@ -9,6 +9,7 @@ import '../models/character_study_progress.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/paged_result.dart';
 import '../models/saved_bible_verse.dart';
+import '../models/user_companion_diary_entry.dart';
 
 class UserRepository {
   const UserRepository(this._client);
@@ -17,6 +18,10 @@ class UserRepository {
   static const _savedVerseColumns =
       'id, user_id, translation, book_no, book_name, chapter_no, verse_no, verse_text, comment, created_at';
   static const _savedVerseCommentMaxLength = 200;
+  static const _companionDiaryColumns =
+      'id, user_id, entry_date, title, body, created_at, updated_at';
+  static const companionDiaryTitleMaxLength = 80;
+  static const companionDiaryBodyMaxLength = 1000;
 
   final SupabaseClient _client;
 
@@ -171,6 +176,58 @@ class UserRepository {
 
   Future<void> deleteSavedVerse(String verseId) {
     return _client.from('user_saved_verses').delete().eq('id', verseId);
+  }
+
+  Future<List<UserCompanionDiaryEntry>> fetchCompanionDiaryEntries({
+    required String userId,
+  }) async {
+    final rows = await _client
+        .from('user_companion_diary_entries')
+        .select(_companionDiaryColumns)
+        .eq('user_id', userId)
+        .order('entry_date', ascending: false)
+        .order('updated_at', ascending: false);
+
+    return rows
+        .map<UserCompanionDiaryEntry>(UserCompanionDiaryEntry.fromMap)
+        .toList(growable: false);
+  }
+
+  Future<UserCompanionDiaryEntry> upsertCompanionDiaryEntry({
+    required String userId,
+    required DateTime entryDate,
+    required String title,
+    required String body,
+  }) async {
+    final normalizedTitle = normalizeCompanionDiaryTitle(title);
+    final normalizedBody = normalizeCompanionDiaryBody(body);
+    if (normalizedTitle.isEmpty || normalizedBody.isEmpty) {
+      throw ArgumentError('제목과 본문을 입력해 주세요.');
+    }
+
+    final row = await _client
+        .from('user_companion_diary_entries')
+        .upsert({
+          'user_id': userId,
+          'entry_date': companionDiaryDateKey(entryDate),
+          'title': normalizedTitle,
+          'body': normalizedBody,
+          'updated_at': DateTime.now().toIso8601String(),
+        }, onConflict: 'user_id,entry_date')
+        .select(_companionDiaryColumns)
+        .single();
+    return UserCompanionDiaryEntry.fromMap(row);
+  }
+
+  Future<void> deleteCompanionDiaryEntry({
+    required String userId,
+    required DateTime entryDate,
+  }) {
+    return _client
+        .from('user_companion_diary_entries')
+        .delete()
+        .eq('user_id', userId)
+        .eq('entry_date', companionDiaryDateKey(entryDate));
   }
 
   String _normalizeSavedVerseComment(String comment) {
@@ -365,4 +422,30 @@ String contentTypeForImageExtension(String extension) {
     default:
       return 'image/png';
   }
+}
+
+@visibleForTesting
+String normalizeCompanionDiaryTitle(String title) {
+  final trimmed = title.trim();
+  if (trimmed.length <= UserRepository.companionDiaryTitleMaxLength) {
+    return trimmed;
+  }
+  return trimmed.substring(0, UserRepository.companionDiaryTitleMaxLength);
+}
+
+@visibleForTesting
+String normalizeCompanionDiaryBody(String body) {
+  final trimmed = body.trim();
+  if (trimmed.length <= UserRepository.companionDiaryBodyMaxLength) {
+    return trimmed;
+  }
+  return trimmed.substring(0, UserRepository.companionDiaryBodyMaxLength);
+}
+
+@visibleForTesting
+String companionDiaryDateKey(DateTime date) {
+  final normalized = DateTime(date.year, date.month, date.day);
+  final month = normalized.month.toString().padLeft(2, '0');
+  final day = normalized.day.toString().padLeft(2, '0');
+  return '${normalized.year}-$month-$day';
 }

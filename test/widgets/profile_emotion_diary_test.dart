@@ -7,8 +7,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/theme/tokens.dart';
+import 'package:story_bible/widgets/parchment_page_scaffold.dart';
+import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_stats.dart';
 
@@ -60,10 +63,31 @@ EventEmotionMark _mark({
   );
 }
 
+UserCompanionDiaryEntry _diaryEntry({
+  required DateTime entryDate,
+  String id = 'diary_1',
+  String title = '오늘의 걸음',
+  String body = '예수님과 함께 하루를 돌아보았습니다.',
+}) {
+  return UserCompanionDiaryEntry(
+    id: id,
+    userId: 'user_1',
+    entryDate: entryDate,
+    title: title,
+    body: body,
+    createdAt: DateTime.utc(2026, 6, 10),
+    updatedAt: DateTime.utc(2026, 6, 10, 1),
+  );
+}
+
 Widget _wrap({
   required StoryRepository repository,
   required Map<String, EventEmotionMark> marks,
   DateTime? now,
+  double width = 430,
+  List<UserCompanionDiaryEntry> companionDiaryEntries = const [],
+  CompanionDiarySaveCallback? onSaveCompanionDiary,
+  CompanionDiaryDeleteCallback? onDeleteCompanionDiary,
   ProfileEmotionStats? emotionStats,
   ValueChanged<EventEmotionOption>? onTapEmotion,
   ValueChanged<StoryEvent>? onOpenEventDetail,
@@ -74,9 +98,19 @@ Widget _wrap({
       home: Scaffold(
         body: SingleChildScrollView(
           child: SizedBox(
-            width: 430,
+            width: width,
             child: ProfileEmotionDiary(
               eventEmotionMarks: marks,
+              companionDiaryEntries: companionDiaryEntries,
+              onSaveCompanionDiary:
+                  onSaveCompanionDiary ??
+                  ({required entryDate, required title, required body}) async =>
+                      _diaryEntry(
+                        entryDate: entryDate,
+                        title: title,
+                        body: body,
+                      ),
+              onDeleteCompanionDiary: onDeleteCompanionDiary ?? (_) async {},
               emotionStats: emotionStats,
               onTapEmotion: onTapEmotion,
               now: now,
@@ -89,12 +123,8 @@ Widget _wrap({
   );
 }
 
-void main() {
-  setUpAll(() {
-    registerFallbackValue(<String>{});
-  });
-
-  testWidgets('감정 새김이 없으면 지난주와 이번 주 달력, 빈 오늘 감정 상태를 보여준다', (tester) async {
+void _companionDiaryWidgetTests() {
+  testWidgets('감정 새김이 없으면 동행 일지 탭을 기본으로 보여주고 감정 탭을 전환할 수 있다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -119,10 +149,256 @@ void main() {
       expect(find.text(day), findsOneWidget);
     }
     expect(find.text('오늘의 내 감정'), findsOneWidget);
+    expect(find.text('오늘의 동행 일지'), findsOneWidget);
+    expect(find.text('오늘 하루 예수님과 동행한 일지를 남겨보세요'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('companion-diary-add-button')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsNothing);
+
+    await tester.tap(find.text('오늘의 내 감정'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('오늘 하루 예수님과 동행한 일지를 남겨보세요'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('companion-diary-add-button')),
+      findsNothing,
+    );
     expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsOneWidget);
   });
 
-  testWidgets('감정 카테고리 버튼은 달력 아래와 오늘의 내 감정 사이에서 동작한다', (tester) async {
+  testWidgets('날짜를 선택하면 해당일의 동행 일지를 보여준다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    final todayEntry = _diaryEntry(
+      entryDate: DateTime(2026, 6, 10),
+      title: '오늘의 걸음',
+      body: '오늘 본문입니다.',
+    );
+    final selectedDateEntry = _diaryEntry(
+      id: 'diary_2',
+      entryDate: DateTime(2026, 6, 8),
+      title: '만나의 하루',
+      body: '그날의 동행을 기록했습니다.',
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        companionDiaryEntries: [todayEntry, selectedDateEntry],
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('오늘의 걸음'), findsOneWidget);
+    expect(find.text('만나의 하루'), findsNothing);
+
+    await tester.tap(find.text('8'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('오늘의 걸음'), findsNothing);
+    expect(find.text('만나의 하루'), findsOneWidget);
+    expect(find.text('그날의 동행을 기록했습니다.'), findsOneWidget);
+  });
+
+  testWidgets('선택한 날짜에서 동행 일지를 작성하면 그 날짜로 저장한다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    DateTime? savedEntryDate;
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        now: DateTime.utc(2026, 6, 10),
+        onSaveCompanionDiary:
+            ({required entryDate, required title, required body}) async {
+              savedEntryDate = entryDate;
+              return _diaryEntry(
+                entryDate: entryDate,
+                title: title,
+                body: body,
+              );
+            },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('8'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('companion-diary-add-button')));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).at(0), '선택한 날');
+    await tester.enterText(find.byType(TextField).at(1), '그날의 본문');
+    await tester.pump();
+    await tester.tap(find.text('저장'));
+    await tester.pumpAndSettle();
+
+    expect(savedEntryDate, DateTime(2026, 6, 8));
+  });
+
+  testWidgets('오늘의 동행 일지는 본문을 왼쪽부터 쓰고 상세 팝업에서 수정/삭제한다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    final entry = _diaryEntry(
+      entryDate: DateTime(2026, 6, 10),
+      title: '갈릴리의 하루',
+      body: '말씀을 묵상하며 차분히 걸었습니다.',
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        companionDiaryEntries: [entry],
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('companion-diary-add-button')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-edit-button')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-delete-button')),
+      findsNothing,
+    );
+    expect(find.text('갈릴리의 하루'), findsOneWidget);
+    expect(find.text('말씀을 묵상하며 차분히 걸었습니다.'), findsOneWidget);
+    expect(find.text('✍️'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('companion-diary-marker-2026-6-10')),
+      findsOneWidget,
+    );
+    final emojiCenter = tester.getCenter(
+      find.byKey(const ValueKey('companion-diary-entry-emoji-badge')),
+    );
+    final titleCenter = tester.getCenter(find.text('갈릴리의 하루'));
+    final bodyLeft = tester.getTopLeft(
+      find.byKey(const ValueKey('companion-diary-preview-body-diary_1')),
+    );
+
+    expect(emojiCenter.dx, lessThan(titleCenter.dx));
+    expect(bodyLeft.dx, lessThan(titleCenter.dx));
+
+    await tester.tap(find.text('갈릴리의 하루'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('동행 일지 상세'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-body-diary_1')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-edit-button')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-delete-button')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('동행 일지 마커는 좁은 달력 셀에서도 overflow 없이 렌더링된다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    final entry = _diaryEntry(entryDate: DateTime(2026, 6, 23));
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        companionDiaryEntries: [entry],
+        now: DateTime.utc(2026, 6, 23),
+        width: 320,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('companion-diary-marker-2026-6-23')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('전체보기는 같은 동행 일지 카드와 상세 팝업을 사용한다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    final entry = _diaryEntry(
+      entryDate: DateTime(2026, 6, 9),
+      title: '광야의 감사',
+      body: '작은 공급을 놓치지 않기로 했습니다.',
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        companionDiaryEntries: [entry],
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('9'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('전체보기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('동행 일지 리스트'), findsOneWidget);
+    expect(tester.getTopLeft(find.byType(ParchmentCard).last).dx, lessThan(24));
+    expect(find.text('6월 9일'), findsOneWidget);
+    expect(find.text('광야의 감사'), findsOneWidget);
+    expect(find.text('작은 공급을 놓치지 않기로 했습니다.'), findsOneWidget);
+    expect(find.byType(CompanionDiaryEntryPreviewCard), findsOneWidget);
+
+    await tester.tap(find.text('광야의 감사'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('동행 일지 상세'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-body-diary_1')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-edit-button')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-delete-button')),
+      findsOneWidget,
+    );
+  });
+}
+
+void main() {
+  setUpAll(() {
+    registerFallbackValue(<String>{});
+  });
+
+  _companionDiaryWidgetTests();
+
+  testWidgets('감정 카테고리 버튼은 달력 연월보다 위에서 동작한다', (tester) async {
     final repository = _MockStoryRepository();
     final event = _event(id: 'event_1', title: '홍해를 건너다');
     final mark = _mark(
@@ -152,7 +428,11 @@ void main() {
     expect(find.text('기쁨 1'), findsOneWidget);
     expect(
       tester.getTopLeft(find.text('기쁨 1')).dy,
-      lessThan(tester.getTopLeft(find.text('오늘의 내 감정')).dy),
+      lessThan(tester.getTopLeft(find.text('2026년 6월')).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('2026년 6월')).dy,
+      lessThan(tester.getTopLeft(find.text('31')).dy),
     );
 
     await tester.tap(find.text('기쁨 1'));
@@ -208,7 +488,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('6월 10일 오늘'), findsOneWidget);
+    await tester.tap(find.text('오늘의 내 감정'));
+    await tester.pumpAndSettle();
+
     expect(find.text('홍해를 건너다'), findsOneWidget);
     expect(find.text('구원의 기쁨을 기억합니다.'), findsOneWidget);
   });
@@ -238,7 +520,7 @@ void main() {
 
     final previousWeekTop = tester.getTopLeft(find.text('31')).dy;
     final currentWeekTop = tester.getTopLeft(find.text('7')).dy;
-    final diaryTitleTop = tester.getTopLeft(find.text('오늘의 내 감정')).dy;
+    final diaryTitleTop = tester.getTopLeft(find.text('오늘의 동행 일지')).dy;
     final previousWeekHeight = currentWeekTop - previousWeekTop;
     final currentWeekHeight = diaryTitleTop - currentWeekTop;
 
@@ -289,7 +571,7 @@ void main() {
 
     final previousWeekTop = tester.getTopLeft(find.text('31')).dy;
     final currentWeekTop = tester.getTopLeft(find.text('7')).dy;
-    final diaryTitleTop = tester.getTopLeft(find.text('오늘의 내 감정')).dy;
+    final diaryTitleTop = tester.getTopLeft(find.text('오늘의 동행 일지')).dy;
     final previousWeekHeight = currentWeekTop - previousWeekTop;
     final currentWeekHeight = diaryTitleTop - currentWeekTop;
 
@@ -358,6 +640,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('오늘의 내 감정'));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('홍해를 건너다'));
     await tester.pump();
 
@@ -366,7 +651,7 @@ void main() {
 
     await tester.tap(find.text('9'), warnIfMissed: false);
     await tester.pump();
-    expect(find.text('6월 10일 오늘'), findsOneWidget);
+    expect(find.text('오늘의 내 감정'), findsOneWidget);
 
     await tester.pump(const Duration(milliseconds: 700));
 
@@ -400,8 +685,9 @@ void main() {
 
     await tester.tap(find.text('8'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('오늘의 내 감정'));
+    await tester.pumpAndSettle();
 
-    expect(find.text('6월 8일 월요일'), findsOneWidget);
     expect(find.text('만나를 먹다'), findsOneWidget);
     expect(find.text('오늘 필요한 만큼 채워주심을 봅니다.'), findsOneWidget);
   });

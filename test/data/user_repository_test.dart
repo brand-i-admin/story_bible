@@ -64,4 +64,19 @@ void main() {
       expect(contentTypeForImageExtension('unknown'), 'image/png');
     });
   });
+
+  group('companion diary helpers', () {
+    test('동행 일지 제목과 본문은 trim 후 최대 길이로 제한', () {
+      expect(normalizeCompanionDiaryTitle('  오늘의 동행  '), '오늘의 동행');
+      expect(normalizeCompanionDiaryTitle('가' * 81).length, 80);
+
+      expect(normalizeCompanionDiaryBody('  본문  '), '본문');
+      expect(normalizeCompanionDiaryBody('나' * 1001).length, 1000);
+    });
+
+    test('동행 일지 날짜 키는 날짜만 yyyy-mm-dd로 변환', () {
+      expect(companionDiaryDateKey(DateTime(2026, 6, 3, 22)), '2026-06-03');
+      expect(companionDiaryDateKey(DateTime(2026, 12, 25)), '2026-12-25');
+    });
+  });
 }

@@ -142,6 +142,11 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     final emotionStats = buildProfileEmotionStats(state.eventEmotionMarks);
     return ProfileEmotionDiary(
       eventEmotionMarks: state.eventEmotionMarks,
+      companionDiaryEntries: _profileCompanionDiaryEntries,
+      companionDiaryLoading: _profileCompanionDiaryLoading,
+      companionDiaryError: _profileCompanionDiaryError,
+      onSaveCompanionDiary: _saveCompanionDiaryEntry,
+      onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
       emotionStats: emotionStats,
       onTapEmotion: (option) {
         _openProfileReviewDialog(

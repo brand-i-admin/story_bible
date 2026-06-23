@@ -62,6 +62,7 @@ drop table if exists user_intercessory_prayers cascade;
 drop table if exists user_saved_events cascade;
 drop table if exists user_saved_verses cascade;
 drop table if exists user_notes cascade;
+drop table if exists user_companion_diary_entries cascade;
 drop table if exists user_profiles cascade;
 drop table if exists user_event_emotion_marks cascade;
 drop table if exists user_quiz_attempts cascade;
@@ -565,6 +566,21 @@ create table if not exists user_event_emotion_marks (
   unique (user_id, event_id)
 );
 
+create table if not exists user_companion_diary_entries (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  entry_date date not null,
+  title text not null check (
+    char_length(btrim(title)) > 0 and char_length(title) <= 80
+  ),
+  body text not null check (
+    char_length(btrim(body)) > 0 and char_length(body) <= 1000
+  ),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, entry_date)
+);
+
 create table if not exists user_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   share_id text unique,
@@ -671,6 +687,8 @@ create index if not exists idx_progress_user_updated on user_event_progress (use
 create index if not exists idx_user_quiz_attempts_user_updated on user_quiz_attempts (user_id, updated_at desc);
 create index if not exists idx_user_event_emotion_marks_user_updated
   on user_event_emotion_marks (user_id, updated_at desc);
+create index if not exists idx_user_companion_diary_entries_user_date
+  on user_companion_diary_entries (user_id, entry_date desc);
 create unique index if not exists uidx_quiz_event_order on quiz_questions (event_id, display_order);
 create index if not exists idx_embed_ivfflat on search_embeddings using ivfflat (embedding vector_cosine_ops);
 create index if not exists idx_bible_verses_lookup on bible_verses (translation, book_no, chapter_no, verse_no);
@@ -714,6 +732,12 @@ drop trigger if exists set_user_event_emotion_marks_updated_at
   on user_event_emotion_marks;
 create trigger set_user_event_emotion_marks_updated_at
 before update on user_event_emotion_marks
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_user_companion_diary_entries_updated_at
+  on user_companion_diary_entries;
+create trigger set_user_companion_diary_entries_updated_at
+before update on user_companion_diary_entries
 for each row execute function public.touch_updated_at();
 
 create or replace function public.handle_new_user_profile()
@@ -876,6 +900,7 @@ grant select on character_eras to anon, authenticated;
 grant select, insert, update on table user_event_progress to authenticated;
 grant select, insert, update on table user_quiz_attempts to authenticated;
 grant select, insert, update, delete on table user_event_emotion_marks to authenticated;
+grant select, insert, update, delete on table user_companion_diary_entries to authenticated;
 grant select, insert, update on table user_profiles to authenticated;
 grant select, insert, delete on table user_intercessory_prayers to authenticated;
 grant select, insert, update, delete on table user_notes to authenticated;
@@ -891,6 +916,7 @@ alter table quiz_questions enable row level security;
 alter table user_event_progress enable row level security;
 alter table user_quiz_attempts enable row level security;
 alter table user_event_emotion_marks enable row level security;
+alter table user_companion_diary_entries enable row level security;
 alter table user_profiles enable row level security;
 alter table user_intercessory_prayers enable row level security;
 alter table user_notes enable row level security;
@@ -943,6 +969,20 @@ for select using (auth.uid() = user_id);
 drop policy if exists user_event_emotion_marks_write_own
   on user_event_emotion_marks;
 create policy user_event_emotion_marks_write_own on user_event_emotion_marks
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+drop policy if exists user_companion_diary_entries_read_own
+  on user_companion_diary_entries;
+create policy user_companion_diary_entries_read_own
+  on user_companion_diary_entries
+for select using (auth.uid() = user_id);
+
+drop policy if exists user_companion_diary_entries_write_own
+  on user_companion_diary_entries;
+create policy user_companion_diary_entries_write_own
+  on user_companion_diary_entries
 for all to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);

@@ -15,6 +15,7 @@ import '../models/era.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
+import '../models/user_companion_diary_entry.dart';
 import '../screens/legal_documents_screen.dart';
 import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
@@ -110,10 +111,13 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   _ProfileContentTab _profileContentTab = _ProfileContentTab.records;
   List<StoryEvent> _profileSavedEventsPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
+  List<UserCompanionDiaryEntry> _profileCompanionDiaryEntries = const [];
   bool _profileSavedEventsLoading = false;
   bool _profileSavedVersesLoading = false;
+  bool _profileCompanionDiaryLoading = false;
   String? _profileSavedEventsError;
   String? _profileSavedVersesError;
+  String? _profileCompanionDiaryError;
   List<IntercessoryPrayerItem> _intercessoryPrayerItems = const [];
   bool _intercessoryPrayerLoading = false;
   bool _intercessoryPrayerLoadingMore = false;
@@ -386,10 +390,108 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     }
   }
 
+  Future<void> _loadProfileCompanionDiaryEntries({
+    bool showLoading = true,
+  }) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileCompanionDiaryEntries = const [];
+        _profileCompanionDiaryLoading = false;
+        _profileCompanionDiaryError = null;
+      });
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        if (showLoading) {
+          _profileCompanionDiaryLoading = true;
+        }
+        _profileCompanionDiaryError = null;
+      });
+    }
+
+    try {
+      final entries = await ref
+          .read(userRepositoryProvider)
+          .fetchCompanionDiaryEntries(userId: user.id);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileCompanionDiaryEntries = entries;
+        _profileCompanionDiaryLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _profileCompanionDiaryLoading = false;
+        _profileCompanionDiaryError = '동행 일지를 불러오지 못했습니다.\n$error';
+      });
+    }
+  }
+
+  Future<UserCompanionDiaryEntry> _saveCompanionDiaryEntry({
+    required DateTime entryDate,
+    required String title,
+    required String body,
+  }) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      throw StateError('로그인 정보를 찾을 수 없습니다.');
+    }
+
+    final saved = await ref
+        .read(userRepositoryProvider)
+        .upsertCompanionDiaryEntry(
+          userId: user.id,
+          entryDate: entryDate,
+          title: title,
+          body: body,
+        );
+    if (mounted) {
+      setState(() {
+        _profileCompanionDiaryEntries = _replaceCompanionDiaryEntry(
+          _profileCompanionDiaryEntries,
+          saved,
+        );
+        _profileCompanionDiaryError = null;
+      });
+    }
+    return saved;
+  }
+
+  Future<void> _deleteCompanionDiaryEntry(UserCompanionDiaryEntry entry) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      throw StateError('로그인 정보를 찾을 수 없습니다.');
+    }
+
+    await ref
+        .read(userRepositoryProvider)
+        .deleteCompanionDiaryEntry(userId: user.id, entryDate: entry.entryDate);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _profileCompanionDiaryEntries = _profileCompanionDiaryEntries
+          .where((item) => item.id != entry.id)
+          .toList(growable: false);
+      _profileCompanionDiaryError = null;
+    });
+  }
+
   Future<void> _refreshProfileTabPreviews({bool showLoading = true}) async {
     await Future.wait([
       _loadProfileSavedEventsPreview(showLoading: showLoading),
       _loadProfileSavedVersesPreview(showLoading: showLoading),
+      _loadProfileCompanionDiaryEntries(showLoading: showLoading),
     ]);
   }
 
@@ -475,6 +577,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           _intercessoryPrayerHasNextPage = false;
           _intercessoryPrayerPageIndex = 0;
           _intercessoryPrayerError = null;
+          _profileCompanionDiaryEntries = const [];
+          _profileCompanionDiaryLoading = false;
+          _profileCompanionDiaryError = null;
         }
         _profileLoading = false;
         _profileError = allPeople.isEmpty ? '인물 데이터가 없습니다.' : null;
@@ -600,6 +705,39 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       }
     }
     return true;
+  }
+
+  List<UserCompanionDiaryEntry> _replaceCompanionDiaryEntry(
+    List<UserCompanionDiaryEntry> entries,
+    UserCompanionDiaryEntry next,
+  ) {
+    final replaced = <UserCompanionDiaryEntry>[];
+    var didReplace = false;
+    for (final entry in entries) {
+      if (_isSameCompanionDiaryDate(entry.entryDate, next.entryDate)) {
+        if (!didReplace) {
+          replaced.add(next);
+          didReplace = true;
+        }
+      } else {
+        replaced.add(entry);
+      }
+    }
+    if (!didReplace) {
+      replaced.add(next);
+    }
+    replaced.sort((a, b) {
+      final dateOrder = b.entryDate.compareTo(a.entryDate);
+      if (dateOrder != 0) {
+        return dateOrder;
+      }
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
+    return replaced;
+  }
+
+  bool _isSameCompanionDiaryDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   AppUserProfile _guestPreviewProfile() {

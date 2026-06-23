@@ -352,6 +352,17 @@ UNIQUE(user_id, event_id)
 - 이 row가 있어야 사건 완료 도장이 찍히고 지도/프로필에 감정 새김이 반영된다.
 - 사용자가 "완료 취소"를 누르면 본인 row를 delete 하고, `user_event_progress.is_completed`도 다시 false로 동기화한다.
 
+#### `user_companion_diary_entries` (2026-06-23)
+```sql
+id uuid PK, user_id uuid FK→auth.users,
+entry_date date, title text CHECK <= 80, body text CHECK <= 1000,
+created_at, updated_at,
+UNIQUE(user_id, entry_date)
+```
+- 프로필 "나의 다이어리" 탭의 "오늘의 동행 일지" 저장소.
+- `entry_date`는 앱이 계산한 KST 날짜를 저장하며, `(user_id, entry_date)` unique 제약으로 하루 1개만 허용한다.
+- 본인만 read/write/delete 가능한 RLS를 사용한다.
+
 #### `user_notes`
 ```sql
 id uuid PK, user_id uuid FK→auth.users,
@@ -431,6 +442,7 @@ explanation text, display_order int
 | user_event_progress | 본인만 | 본인만 |
 | user_quiz_attempts | 본인만 | 본인만 |
 | user_event_emotion_marks | 본인만 | 본인만 |
+| user_companion_diary_entries | 본인만 | 본인만 |
 | user_notes | 본인만 | 본인만 (레거시, 현재 앱 미사용) |
 | user_saved_verses | 본인만 | 본인만 |
 | user_saved_events | 본인만 | 본인만 |
@@ -492,6 +504,9 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchSavedVerseMap(userId)` | user_saved_verses SELECT 본인 전체 | `Map<verseKey, SavedBibleVerse>` |
 | `saveBibleVerse(...)` | user_saved_verses INSERT (comment 포함) | `SavedBibleVerse` |
 | `deleteSavedVerse(verseId)` | user_saved_verses DELETE | void |
+| `fetchCompanionDiaryEntries(userId)` | user_companion_diary_entries WHERE user_id ORDER BY entry_date DESC | `List<UserCompanionDiaryEntry>` |
+| `upsertCompanionDiaryEntry(...)` | UPSERT `user_companion_diary_entries` ON (user_id, entry_date) | `UserCompanionDiaryEntry` |
+| `deleteCompanionDiaryEntry(...)` | DELETE `user_companion_diary_entries` WHERE user_id AND entry_date | void |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |
 | `fetchCharacterStudyProgress(...)` | user_event_progress + events_ordered.character_codes (배열 매치) | `List<CharacterStudyProgress>` |

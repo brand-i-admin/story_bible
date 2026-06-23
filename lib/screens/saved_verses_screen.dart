@@ -134,27 +134,17 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ParchmentPageScaffold(
-      title: '저장한 말씀',
-      compactBackOnly: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(2, 0, 2, 2),
+    return ParchmentListPageScaffold(
+      title: '저장한 성경 구절',
+      child: ParchmentCard(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
         child: Column(
           children: [
-            Expanded(
-              child: ParchmentCard(
-                padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
-                child: Column(
-                  children: [
-                    Expanded(child: _buildBody()),
-                    if (!_loading && _error == null && _verses.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      _buildPagination(),
-                    ],
-                  ],
-                ),
-              ),
-            ),
+            Expanded(child: _buildBody()),
+            if (!_loading && _error == null && _verses.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              _buildPagination(),
+            ],
           ],
         ),
       ),

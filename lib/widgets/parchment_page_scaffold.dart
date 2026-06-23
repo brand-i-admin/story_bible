@@ -181,6 +181,156 @@ class ParchmentCard extends StatelessWidget {
   }
 }
 
+class ParchmentListPageScaffold extends StatelessWidget {
+  const ParchmentListPageScaffold({
+    super.key,
+    required this.title,
+    required this.child,
+    this.onBack,
+    this.bodyPadding = const EdgeInsets.fromLTRB(14, 58, 14, 14),
+    this.headerPadding = const EdgeInsets.fromLTRB(14, 8, 14, 0),
+  });
+
+  final String title;
+  final Widget child;
+  final VoidCallback? onBack;
+  final EdgeInsetsGeometry bodyPadding;
+  final EdgeInsetsGeometry headerPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.parchmentLight,
+                    AppColors.parchmentMid,
+                    AppColors.parchmentWarm,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Positioned.fill(
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.08,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white,
+                        Color(0x00FFFFFF),
+                        Color(0x337B9155),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: SafeArea(
+              child: Padding(padding: bodyPadding, child: child),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: headerPadding,
+                child: ParchmentListPageHeader(title: title, onBack: onBack),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ParchmentListPageHeader extends StatelessWidget {
+  const ParchmentListPageHeader({super.key, required this.title, this.onBack});
+
+  final String title;
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ParchmentIconBackButton(
+          onTap: onBack ?? () => Navigator.of(context).pop(),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: AppColors.ink800,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              height: 1.15,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ParchmentIconBackButton extends StatelessWidget {
+  const ParchmentIconBackButton({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: 42,
+          height: 42,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xD06A401E),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.goldRim, width: 1.4),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x24000000),
+                blurRadius: 10,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 17,
+            color: AppColors.fgOnDark,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _HeaderButton extends StatelessWidget {
   const _HeaderButton({
     required this.label,
