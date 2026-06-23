@@ -498,10 +498,17 @@ class _BibleReaderHeader extends StatelessWidget {
             ),
           ),
           if (showSavedVerses)
-            _CircleIconButton(
-              icon: Icons.menu_book_rounded,
-              tooltip: '저장한 구절',
-              onTap: onTapSavedVerses,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const _BibleTranslationLabel(label: 'KRV'),
+                const SizedBox(width: 8),
+                _CircleIconButton(
+                  icon: Icons.menu_book_rounded,
+                  tooltip: '저장한 구절',
+                  onTap: onTapSavedVerses,
+                ),
+              ],
             )
           else
             const SizedBox(width: 38, height: 38),
@@ -545,6 +552,39 @@ class _ReadingProgressRow extends StatelessWidget {
             ),
           );
         }),
+      ),
+    );
+  }
+}
+
+class _BibleTranslationLabel extends StatelessWidget {
+  const _BibleTranslationLabel({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('bible-reader-translation-label'),
+      height: 26,
+      constraints: const BoxConstraints(minWidth: 42),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 9),
+      decoration: BoxDecoration(
+        color: AppColors.greenTop.withAlpha(30),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.greenTop.withAlpha(120)),
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: AppColors.ink500,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0,
+        ),
       ),
     );
   }

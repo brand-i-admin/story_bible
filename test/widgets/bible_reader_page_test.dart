@@ -163,6 +163,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('창세기 1장'), findsOneWidget);
+      expect(find.text('KRV'), findsOneWidget);
 
       await tester.tap(find.byIcon(Icons.menu_book_rounded));
       await tester.pumpAndSettle();
