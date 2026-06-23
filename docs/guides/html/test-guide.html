@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>테스트 가이드 — Story Bible · Story Bible Guides</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Story Bible Guides</div>
+      <div class="subtle">310 events · 445 Dart tests</div>
+      <nav class="nav">
+        <a class="" href="index.html">가이드 인덱스</a>
+        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
+<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
+<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
+<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
+<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
+<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
+<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
+<a class="active" href="test-guide.html">테스트 가이드 — Story Bible</a>
+<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
+<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <div class="page-shell">
+        <section class="hero">
+          <div class="eyebrow">Developer documentation</div>
+          <h1>테스트 가이드 — Story Bible</h1>
+          <p>테스트 지도: 현재 테스트 파일과 검증 책임 카탈로그</p>
+          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:2%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:23%"></i></div><b>33</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:63%"></i></div><b>89</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:17%"></i></div><b>25</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:9%"></i></div><b>14</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:76%"></i></div><b>108</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>141</b></div></div>
+          <div class="toc"><strong>On this page</strong><a class="level-1" href="#테스트-가이드-—-story-bible">테스트 가이드 — Story Bible</a><a class="level-2" href="#0-한-장-요약">0. 한 장 요약</a><a class="level-2" href="#1-기본-실행-명령">1. 기본 실행 명령</a><a class="level-2" href="#2-모델-테스트">2. 모델 테스트</a><a class="level-2" href="#3-repository-state-테스트">3. Repository / State 테스트</a><a class="level-2" href="#4-utils-테스트">4. Utils 테스트</a><a class="level-2" href="#5-widget-테스트">5. Widget 테스트</a><a class="level-2" href="#6-python-도구-테스트">6. Python 도구 테스트</a><a class="level-2" href="#7-변경-유형별-최소-검증">7. 변경 유형별 최소 검증</a><a class="level-2" href="#8-남은-테스트-공백">8. 남은 테스트 공백</a></div>
+        </section>
+        <article class="doc-body">
+          <h1 id="테스트-가이드-—-story-bible">테스트 가이드 — Story Bible</h1>
+<blockquote><p>현재 <code>test/</code>와 <code>tools/**/test_*.py</code> 기준으로 정리한 테스트 지도다.</p>
+<p>코드나 데이터 파이프라인을 바꿀 때 어느 테스트가 변경 책임을 갖는지 빠르게 찾기</p>
+<p>위해 사용한다.</p></blockquote>
+<h2 id="0-한-장-요약">0. 한 장 요약</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>영역</th>
+<th>파일 수</th>
+<th>정적 테스트 수</th>
+<th>주요 책임</th>
+</tr></thead><tbody>
+<tr>
+<td><code>test/</code> 루트</td>
+<td>2</td>
+<td>4</td>
+<td>앱 smoke, 기본 widget scaffold</td>
+</tr>
+<tr>
+<td><code>test/models/</code></td>
+<td>15</td>
+<td>89</td>
+<td>불변 모델, <code>fromMap()</code>, enum/값 객체 변환</td>
+</tr>
+<tr>
+<td><code>test/data/</code></td>
+<td>4</td>
+<td>33</td>
+<td>Repository, Supabase row 변환, fallback</td>
+</tr>
+<tr>
+<td><code>test/state/</code></td>
+<td>3</td>
+<td>25</td>
+<td>Riverpod provider/controller 상태 전환</td>
+</tr>
+<tr>
+<td><code>test/theme/</code></td>
+<td>1</td>
+<td>14</td>
+<td>디자인 토큰 회귀 방지</td>
+</tr>
+<tr>
+<td><code>test/utils/</code></td>
+<td>9</td>
+<td>108</td>
+<td>날짜, 지도 수학, asset loader, 선택 로직</td>
+</tr>
+<tr>
+<td><code>test/widgets/</code></td>
+<td>27</td>
+<td>141</td>
+<td>주요 화면 조각, 다이얼로그, 프로필/지도 UI</td>
+</tr>
+<tr>
+<td><code>tools/**/test_*.py</code></td>
+<td>13</td>
+<td>93</td>
+<td>seed, lint, asset, docs, Supabase 도구</td>
+</tr>
+</tbody></table></div>
+<p>Dart 쪽 정적 카운트는 <code>test/**/*.dart</code>의 <code>test()</code>/<code>testWidgets()</code> 호출 기준 445개다. <code>test/state/story_controller_test_groups.dart</code>처럼 helper 파일 안에서 공유되는 테스트 그룹도 포함되므로 디렉토리별 단순 합보다 크다.</p>
+<h2 id="1-기본-실행-명령">1. 기본 실행 명령</h2>
+<pre><code class="language-bash">dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+python3 tools/run_unit_tests.py
+python3 tools/app/verify_asset_paths.py
+python3 tools/seed/verify_polygons_contain_events.py
+python3 tools/lint/check_forbidden_patterns.py
+python3 tools/lint/check_code_metrics.py</code></pre>
+<p>커밋/푸시 전에는 로컬 hook도 같은 책임을 나눠 가진다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>단계</th>
+<th>대표 검사</th>
+</tr></thead><tbody>
+<tr>
+<td>pre-commit</td>
+<td>forbidden pattern, import sort, black, large file, YAML, whitespace</td>
+</tr>
+<tr>
+<td>pre-push</td>
+<td><code>flutter analyze</code>, <code>flutter test</code>, asset path, polygon mapping, Python tool tests, code metrics</td>
+</tr>
+<tr>
+<td>CI</td>
+<td>dummy <code>.env</code> 생성 후 pre-commit/pre-push 성격의 검사를 원격에서 재확인</td>
+</tr>
+</tbody></table></div>
+<h2 id="2-모델-테스트">2. 모델 테스트</h2>
+<p><code>test/models/</code>는 Supabase row와 앱 모델 사이의 계약을 지킨다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>파일</th>
+<th>확인하는 것</th>
+</tr></thead><tbody>
+<tr>
+<td><code>app_notification_test.dart</code></td>
+<td>알림 row 파싱, deep link/metadata</td>
+</tr>
+<tr>
+<td><code>app_user_profile_test.dart</code></td>
+<td>프로필 모델 기본값과 role</td>
+</tr>
+<tr>
+<td><code>bible_ref_test.dart</code>, <code>bible_verse_test.dart</code>, <code>saved_bible_verse_test.dart</code></td>
+<td>성경 본문/저장 구절 값 변환</td>
+</tr>
+<tr>
+<td><code>character_test.dart</code>, <code>character_study_progress_test.dart</code></td>
+<td>인물, 아바타, 학습 진행 모델</td>
+</tr>
+<tr>
+<td><code>era_test.dart</code>, <code>story_event_test.dart</code>, <code>landmark_test.dart</code></td>
+<td>시대/사건/랜드마크 row 변환</td>
+</tr>
+<tr>
+<td><code>event_emotion_mark_test.dart</code>, <code>intercessory_prayer_item_test.dart</code></td>
+<td>감정/기도 모델</td>
+</tr>
+<tr>
+<td><code>event_proposal_test.dart</code></td>
+<td>제안 상태, 제안 payload, 관리자 workflow 데이터</td>
+</tr>
+<tr>
+<td><code>quiz_attempt_summary_test.dart</code></td>
+<td>퀴즈 결과 요약</td>
+</tr>
+<tr>
+<td><code>user_companion_diary_entry_test.dart</code></td>
+<td>오늘의 동행 일지 row 변환</td>
+</tr>
+</tbody></table></div>
+<p>새 Supabase row 기반 모델은 <code>fromMap()</code> 테스트를 먼저 추가한다. nullable 컬럼, enum 문자열, JSON list/map 변환은 정상값과 빈값을 같이 넣는다.</p>
+<h2 id="3-repository-state-테스트">3. Repository / State 테스트</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>영역</th>
+<th>파일</th>
+<th>변경 시 확인</th>
+</tr></thead><tbody>
+<tr>
+<td>Repository</td>
+<td><code>test/data/story_repository_test.dart</code></td>
+<td>story, era, landmark, event query와 row mapping</td>
+</tr>
+<tr>
+<td>Repository</td>
+<td><code>test/data/user_repository_test.dart</code></td>
+<td>유저 프로필, 알림, 진행도, 일지</td>
+</tr>
+<tr>
+<td>Repository</td>
+<td><code>test/data/font_scale_repository_test.dart</code></td>
+<td>접근성 글자 크기 저장/복원</td>
+</tr>
+<tr>
+<td>Repository</td>
+<td><code>test/data/character_name_fallbacks_test.dart</code></td>
+<td>인물 이름 fallback</td>
+</tr>
+<tr>
+<td>State</td>
+<td><code>test/state/story_state_test.dart</code></td>
+<td><code>StoryState.copyWith</code>, 로딩/에러 상태</td>
+</tr>
+<tr>
+<td>State</td>
+<td><code>test/state/story_controller_test.dart</code></td>
+<td>controller orchestration</td>
+</tr>
+<tr>
+<td>State</td>
+<td><code>test/state/story_controller_test_groups.dart</code></td>
+<td>controller 공유 테스트 그룹</td>
+</tr>
+<tr>
+<td>State</td>
+<td><code>test/state/font_scale_providers_test.dart</code></td>
+<td>글자 크기 provider 동작</td>
+</tr>
+</tbody></table></div>
+<p>Controller는 <code>try/catch</code>와 <code>state.copyWith(error: ...)</code> 패턴을 우선한다. 새 실패 경로를 넣으면 성공 테스트만 추가하지 말고 에러 상태 테스트도 함께 둔다.</p>
+<h2 id="4-utils-테스트">4. Utils 테스트</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>파일</th>
+<th>책임</th>
+</tr></thead><tbody>
+<tr>
+<td><code>bible_book_meta_test.dart</code></td>
+<td>성경 책 메타와 정렬</td>
+</tr>
+<tr>
+<td><code>daily_exploration_prompt_test.dart</code></td>
+<td>오늘의 묵상 prompt 조합</td>
+</tr>
+<tr>
+<td><code>daily_exploration_selection_test.dart</code></td>
+<td>날짜별 탐색 선택 안정성</td>
+</tr>
+<tr>
+<td><code>home_back_navigation_test.dart</code></td>
+<td>홈 back navigation 정책</td>
+</tr>
+<tr>
+<td><code>kst_date_test.dart</code></td>
+<td>KST 기준 날짜 계산</td>
+</tr>
+<tr>
+<td><code>map_math_test.dart</code></td>
+<td>지도 좌표/거리 계산</td>
+</tr>
+<tr>
+<td><code>scene_asset_loader_test.dart</code></td>
+<td>장면 썸네일 로컬 우선, Storage fallback</td>
+</tr>
+<tr>
+<td><code>system_insets_test.dart</code></td>
+<td>안전영역 inset 계산</td>
+</tr>
+<tr>
+<td><code>weekly_selection_test.dart</code></td>
+<td>주간 선택 로직</td>
+</tr>
+</tbody></table></div>
+<p>콘텐츠/지도/날짜 로직은 UI보다 utils에서 먼저 고정한다. pure function으로 뺄 수 있으면 widget test보다 빠르고 회귀 지점도 더 선명하다.</p>
+<h2 id="5-widget-테스트">5. Widget 테스트</h2>
+<p><code>test/widgets/</code>는 사용자에게 보이는 한국어 문구, 버튼 노출, 비어 있는 상태, 레이아웃 제약을 확인한다.</p>
+<p>대표 그룹:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>그룹</th>
+<th>파일 예</th>
+</tr></thead><tbody>
+<tr>
+<td>성경/이야기</td>
+<td><code>bible_reader_page_test.dart</code>, <code>event_detail_page_test.dart</code>, <code>event_timeline_row_test.dart</code>, <code>story_scene_row_test.dart</code></td>
+</tr>
+<tr>
+<td>지도</td>
+<td><code>map/map_tile_style_test.dart</code>, <code>map/story_terrain_3d_map_marker_test.dart</code>, <code>map_hint_overlay_test.dart</code>, <code>region_pick_panel_test.dart</code>, <code>timeline_unit_pick_panel_test.dart</code></td>
+</tr>
+<tr>
+<td>퀴즈/제안</td>
+<td><code>event_quiz_dialog_test.dart</code>, <code>proposal_quiz_editor_test.dart</code></td>
+</tr>
+<tr>
+<td>프로필</td>
+<td><code>profile_*_test.dart</code>, <code>saved_verse_row_test.dart</code></td>
+</tr>
+<tr>
+<td>접근성/공통 UI</td>
+<td><code>font_scale_bottom_sheet_test.dart</code>, <code>pulse_highlight_test.dart</code>, <code>story_home_styles_test.dart</code>, <code>emotion_badge_icon_test.dart</code></td>
+</tr>
+<tr>
+<td>알림</td>
+<td><code>notification_deep_link_test.dart</code></td>
+</tr>
+</tbody></table></div>
+<p>새 위젯은 raw 색/spacing보다 <code>lib/theme/</code> 토큰을 먼저 쓰고, 테스트에서는 깨지기 쉬운 픽셀값보다 실제 동작과 노출 상태를 검증한다.</p>
+<h2 id="6-python-도구-테스트">6. Python 도구 테스트</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>디렉토리</th>
+<th>파일 수</th>
+<th>테스트 수</th>
+<th>책임</th>
+</tr></thead><tbody>
+<tr>
+<td><code>tools/app</code></td>
+<td>1</td>
+<td>5</td>
+<td><code>pubspec.yaml</code> asset 경로 검증</td>
+</tr>
+<tr>
+<td><code>tools/docs</code></td>
+<td>1</td>
+<td>3</td>
+<td><code>story_guide.md</code>와 HTML guide 생성</td>
+</tr>
+<tr>
+<td><code>tools/export</code></td>
+<td>1</td>
+<td>5</td>
+<td>DB events → JSON 역추출</td>
+</tr>
+<tr>
+<td><code>tools/images</code></td>
+<td>2</td>
+<td>17</td>
+<td>runtime thumbnail, scene utility</td>
+</tr>
+<tr>
+<td><code>tools/lint</code></td>
+<td>1</td>
+<td>5</td>
+<td>secret/forbidden pattern scan</td>
+</tr>
+<tr>
+<td><code>tools/seed</code></td>
+<td>5</td>
+<td>49</td>
+<td>KRV seed, quiz seed, captions, timeline, polygons</td>
+</tr>
+<tr>
+<td><code>tools/supabase</code></td>
+<td>2</td>
+<td>9</td>
+<td>bucket purge, avatar upload</td>
+</tr>
+</tbody></table></div>
+<p>도구를 추가하면 <code>tools/&lt;area&gt;/test_*.py</code>를 같이 추가하고, <code>python3 tools/run_unit_tests.py</code>에 잡히는지 확인한다. Python 코드는 <code>black</code> 포맷 대상이며, 현재 pre-commit hook은 <code>tools/seed|images|app|lint|export|docs</code> 경로를 포맷한다.</p>
+<h2 id="7-변경-유형별-최소-검증">7. 변경 유형별 최소 검증</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>변경</th>
+<th>최소 검증</th>
+</tr></thead><tbody>
+<tr>
+<td>Dart 모델/Repository</td>
+<td>관련 <code>test/models</code>, <code>test/data</code> + <code>flutter test</code></td>
+</tr>
+<tr>
+<td>Riverpod 상태</td>
+<td>관련 <code>test/state</code> + 영향을 받는 widget test</td>
+</tr>
+<tr>
+<td>UI/위젯</td>
+<td>해당 <code>test/widgets</code> + <code>flutter analyze</code></td>
+</tr>
+<tr>
+<td>콘텐츠 JSON/seed</td>
+<td><code>make seed-*</code>, <code>python3 tools/seed/verify_polygons_contain_events.py</code>, 관련 Python tests</td>
+</tr>
+<tr>
+<td>이미지/asset</td>
+<td><code>make thumbnails</code>, <code>make update-pubspec-assets</code>, <code>python3 tools/app/verify_asset_paths.py</code></td>
+</tr>
+<tr>
+<td>Supabase schema/RLS/RPC</td>
+<td>patch SQL 검토, 관련 Repository/RPC 테스트, <code>docs/BACKEND.md</code> 동기화</td>
+</tr>
+<tr>
+<td>docs/guides</td>
+<td><code>make build-guides</code>, <code>python3 tools/docs/test_build_guides.py</code>, 링크 검증</td>
+</tr>
+</tbody></table></div>
+<h2 id="8-남은-테스트-공백">8. 남은 테스트 공백</h2>
+<ul><li>Supabase RPC와 RLS는 로컬 unit test보다 SQL 리뷰/patch 검증 의존도가 높다.</li><li>Edge Function은 README와 수동 smoke 중심이며, 자동 통합 테스트는 아직 얕다.</li><li>제안 승인/수정/삭제 workflow의 end-to-end 테스트는 분산되어 있다.</li><li>시각 회귀용 golden test는 기본 파이프라인에 강제되어 있지 않다.</li><li>실기기 푸시 수신은 Firebase/APNs/브라우저 권한이 얽혀 있어 수동 smoke가 필요하다.</li></ul>
+<p>이 공백은 위험도가 큰 변경부터 작은 통합 테스트나 smoke checklist로 보강한다.</p>
+          <a class="top-link" href="#top">맨 위로</a>
+        </article>
+      </div>
+    </main>
+  </div>
+  <script src="assets/guide.js"></script>
+</body>
+</html>

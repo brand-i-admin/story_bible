@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DB / Supabase 환경 구축 가이드 · Story Bible Guides</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Story Bible Guides</div>
+      <div class="subtle">310 events · 445 Dart tests</div>
+      <nav class="nav">
+        <a class="" href="index.html">가이드 인덱스</a>
+        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
+<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
+<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
+<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
+<a class="active" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
+<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
+<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
+<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
+<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
+<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <div class="page-shell">
+        <section class="hero">
+          <div class="eyebrow">Developer documentation</div>
+          <h1>DB / Supabase 환경 구축 가이드</h1>
+          <p>환경 구축: Supabase 신규/복구 환경의 Auth, secret, seed 세팅</p>
+          <div class="flow"><div class="step"><span>env</span><strong>.env</strong><p>공개 URL / anon / VAPID</p></div>
+<div class="step"><span>ops</span><strong>.env.ops</strong><p>service role / DB URL</p></div>
+<div class="step"><span>vault</span><strong>Vault</strong><p>DB 함수가 send-push 호출</p></div>
+<div class="step"><span>edge</span><strong>Secrets</strong><p>Edge Function 외부 API 키</p></div></div>
+          <div class="toc"><strong>On this page</strong><a class="level-1" href="#db-supabase-환경-구축-가이드">DB / Supabase 환경 구축 가이드</a><a class="level-2" href="#0-현재-환경-지도">0. 현재 환경 지도</a><a class="level-2" href="#1-큰-원칙">1. 큰 원칙</a><a class="level-3" href="#1-1-앱에는-공개값만-들어간다">1.1 앱에는 공개값만 들어간다</a><a class="level-3" href="#1-2-env-와-env-ops-를-나눈-이유">1.2 `.env`와 `.env.ops`를 나눈 이유</a><a class="level-3" href="#1-3-supabase-secrets-와-vault-는-다르다">1.3 `supabase secrets`와 Vault 는 다르다</a><a class="level-2" href="#2-로컬-파일-세팅">2. 로컬 파일 세팅</a><a class="level-3" href="#2-1-env">2.1 `.env`</a><a class="level-3" href="#2-2-env-ops">2.2 `.env.ops`</a><a class="level-2" href="#3-앱-실행-스크립트-원리">3. 앱 실행 스크립트 원리</a><a class="level-2" href="#4-supabase-프로젝트-생성-후-dashboard-설정">4. Supabase 프로젝트 생성 후 Dashboard 설정</a><a class="level-3" href="#4-1-api-keys">4.1 API Keys</a><a class="level-3" href="#4-2-auth-url-configuration">4.2 Auth URL Configuration</a><a class="level-3" href="#4-3-google-kakao-provider">4.3 Google / Kakao provider</a><a class="level-3" href="#4-4-apple-provider">4.4 Apple provider</a><a class="level-2" href="#5-edge-function-secret-설정">5. Edge Function secret 설정</a><a class="level-2" href="#6-edge-function-배포">6. Edge Function 배포</a><a class="level-2" href="#7-db-내부-secret-extension-설정">7. DB 내부 secret / extension 설정</a><a class="level-3" href="#7-1-extension">7.1 extension</a><a class="level-3" href="#7-2-vault-secrets">7.2 Vault secrets</a><a class="level-2" href="#8-db-초기화-patch-seed-적용">8. DB 초기화, patch, seed 적용</a><a class="level-3" href="#8-1-신규-프로젝트-최초-bootstrap">8.1 신규 프로젝트 최초 bootstrap</a><a class="level-3" href="#8-2-운영-real-db-수정">8.2 운영 real DB 수정</a><a class="level-3" href="#8-3-각-단계가-하는-일">8.3 각 단계가 하는 일</a><a class="level-3" href="#8-4-첫-실행에서-bucket-not-found-로그가-나오는-이유">8.4 첫 실행에서 bucket not found 로그가 나오는 이유</a><a class="level-3" href="#8-5-makefile-환경-매핑">8.5 Makefile 환경 매핑</a><a class="level-2" href="#9-firebase-push-정책">9. Firebase / Push 정책</a><a class="level-3" href="#9-1-현재-결정-dev-와-real-이-같은-firebase-를-쓴다">9.1 현재 결정: dev 와 real 이 같은 Firebase 를 쓴다</a><a class="level-3" href="#9-2-푸시가-도는-전체-경로">9.2 푸시가 도는 전체 경로</a><a class="level-3" href="#9-3-푸시-즉시-테스트">9.3 푸시 즉시 테스트</a><a class="level-2" href="#10-auth-동작-확인">10. Auth 동작 확인</a><a class="level-2" href="#11-신규-환경-구축-순서-체크리스트">11. 신규 환경 구축 순서 체크리스트</a><a class="level-3" href="#11-1-supabase-프로젝트-생성">11.1 Supabase 프로젝트 생성</a><a class="level-3" href="#11-2-로컬-env-반영">11.2 로컬 env 반영</a><a class="level-3" href="#11-3-auth-설정">11.3 Auth 설정</a><a class="level-3" href="#11-4-edge-function-secret-등록">11.4 Edge Function secret 등록</a><a class="level-3" href="#11-5-edge-function-배포">11.5 Edge Function 배포</a><a class="level-3" href="#11-6-db-extension-vault-설정">11.6 DB extension / Vault 설정</a><a class="level-3" href="#11-7-db-storage-부트스트랩">11.7 DB / Storage 부트스트랩</a><a class="level-3" href="#11-8-앱-검증">11.8 앱 검증</a><a class="level-3" href="#11-9-푸시-검증">11.9 푸시 검증</a><a class="level-2" href="#12-세팅-끝-판단-기준">12. &quot;세팅 끝&quot; 판단 기준</a><a class="level-2" href="#13-자주-헷갈리는-것">13. 자주 헷갈리는 것</a><a class="level-3" href="#dev-와-real-의-site-url-포트가-달라도-되나">dev 와 real 의 Site URL 포트가 달라도 되나?</a><a class="level-3" href="#supabase-cli-가-어느-프로젝트에-연결되어-있는지-어떻게-보나">Supabase CLI 가 어느 프로젝트에 연결되어 있는지 어떻게 보나?</a><a class="level-3" href="#real-을-기본값으로-바꿔도-되나">real 을 기본값으로 바꿔도 되나?</a><a class="level-3" href="#supabase-service-role-key-를-env-에-넣으면-안-되나">`SUPABASE_SERVICE_ROLE_KEY_*`를 `.env`에 넣으면 안 되나?</a><a class="level-3" href="#같은-firebase-를-써도-되나">같은 Firebase 를 써도 되나?</a><a class="level-3" href="#db-host-dns-가-안-잡히면-supabase-가-망가진-건가">DB host DNS 가 안 잡히면 Supabase 가 망가진 건가?</a></div>
+        </section>
+        <article class="doc-body">
+          <h1 id="db-supabase-환경-구축-가이드">DB / Supabase 환경 구축 가이드</h1>
+<blockquote><p>Story Bible 의 dev / real Supabase 환경을 새로 만들거나 복구할 때 따라가는</p>
+<p>운영 순서다. 이 문서는 &quot;무엇을 눌러야 하는가&quot;보다 <strong>왜 그 설정이 필요한가</strong>를</p>
+<p>함께 설명한다. 일상 개발/배포 순서는 <a href="develop-flow.html">develop-flow.md</a>를 본다.</p>
+<p>로컬 <code>.env*</code> 파일을 다른 컴퓨터나 팀원과 어떻게 공유할지는</p>
+<p><a href="local-env-files.html">LOCAL_ENV_FILES.md</a>를 본다.</p></blockquote>
+<h2 id="0-현재-환경-지도">0. 현재 환경 지도</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>구분</th>
+<th>Supabase ref</th>
+<th>앱 ENV</th>
+<th>로컬 운영 ENV</th>
+<th>용도</th>
+</tr></thead><tbody>
+<tr>
+<td>dev</td>
+<td><code>cvnutbizsgeycdjcbled</code></td>
+<td><code>dev</code></td>
+<td><code>dev</code></td>
+<td>개발/테스트 기본값</td>
+</tr>
+<tr>
+<td>real</td>
+<td><code>zmcffwcfmyhdykdhxhgy</code></td>
+<td><code>real</code> 또는 <code>prod</code></td>
+<td><code>prod</code></td>
+<td>실제 운영 후보</td>
+</tr>
+</tbody></table></div>
+<p>주의할 점:</p>
+<ul><li>Makefile 기본값은 항상 <code>ENV=dev</code>다.</li><li>real 에 적용할 때만 <code>ENV=real</code>을 명시한다.</li><li>앱 런타임에서는 <code>real</code>과 <code>prod</code>를 둘 다 운영 환경 alias 로 허용한다.</li><li>로컬 운영 스크립트는 <code>ENV=real</code> 또는 <code>ENV=prod</code>를 <code>.env.ops</code>의</li></ul>
+<p><code>*_PROD</code> 값으로 매핑한다.</p>
+<ul><li>Supabase Dashboard 상단의 <code>main / PRODUCTION</code> 표시는 Supabase branch 라벨이다.</li></ul>
+<p>우리가 말하는 dev/real 구분은 <strong>프로젝트 ref가 다르다</strong>는 뜻이다.</p>
+<h2 id="1-큰-원칙">1. 큰 원칙</h2>
+<h3 id="1-1-앱에는-공개값만-들어간다">1.1 앱에는 공개값만 들어간다</h3>
+<p>Flutter 앱이 알아야 하는 값은 다음 두 가지뿐이다.</p>
+<pre><code class="language-text">SUPABASE_URL
+SUPABASE_ANON_KEY</code></pre>
+<p><code>anon</code> key 는 이름 때문에 비밀처럼 보이지만 클라이언트용 공개 키다. 대신 DB 에 RLS(Row Level Security)가 걸려 있어야 한다. 사용자가 이 키를 알더라도 자기 권한 밖의 데이터를 읽거나 쓰지 못하게 만드는 것이 Supabase 의 기본 보안 모델이다.</p>
+<p>반대로 아래 값은 절대 앱에 들어가면 안 된다.</p>
+<pre><code class="language-text">SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_DB_URL
+Firebase / GCP service account JSON
+Apple private key .p8</code></pre>
+<p><code>service_role</code> key 는 RLS 를 우회한다. DB URL 은 비밀번호를 포함한다. service account JSON 은 서버 권한으로 외부 API 를 호출한다. 이 값들은 로컬 운영 파일이나 Supabase 서버 secret 에만 둔다.</p>
+<h3 id="1-2-env-와-env-ops-를-나눈-이유">1.2 <code>.env</code>와 <code>.env.ops</code>를 나눈 이유</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>파일</th>
+<th>포함 값</th>
+<th>앱 번들 포함 여부</th>
+<th>목적</th>
+</tr></thead><tbody>
+<tr>
+<td><code>.env</code></td>
+<td>Supabase URL, anon key, FCM VAPID key</td>
+<td>포함하지 않음. scripts가 dart-define 으로 주입</td>
+<td>앱 실행용 공개값</td>
+</tr>
+<tr>
+<td><code>.env.ops</code></td>
+<td>service role, DB URL</td>
+<td>절대 포함하지 않음</td>
+<td>로컬 운영/DB/Storage 도구용 비밀</td>
+</tr>
+</tbody></table></div>
+<p>예전처럼 <code>.env</code>를 <code>pubspec.yaml</code> asset 에 넣으면 앱 바이너리나 웹 번들 안에 파일이 들어갈 수 있다. 지금 구조는 <code>.env</code> 파일 자체를 앱 asset 으로 넣지 않고, <code>scripts/run_*.sh</code>가 필요한 공개값만 <code>--dart-define</code>으로 넘긴다.</p>
+<p><code>--dart-define</code>도 완전한 비밀 저장소는 아니다. 그래서 여기에 넣는 값도 공개 가능한 값만 둔다.</p>
+<h3 id="1-3-supabase-secrets-와-vault-는-다르다">1.3 <code>supabase secrets</code>와 Vault 는 다르다</h3>
+<p>둘 다 &quot;Supabase 쪽 secret&quot;이라 헷갈리지만 쓰는 위치가 다르다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>저장 위치</th>
+<th>읽는 주체</th>
+<th>예시</th>
+<th>왜 필요한가</th>
+</tr></thead><tbody>
+<tr>
+<td>Edge Function secrets</td>
+<td>Deno Edge Function</td>
+<td><code>FIREBASE_SERVICE_ACCOUNT</code>, <code>GCP_SERVICE_ACCOUNT_JSON</code></td>
+<td><code>send-push</code> / 이미지 생성 함수가 외부 API 호출</td>
+</tr>
+<tr>
+<td>Supabase Vault</td>
+<td>Postgres SQL 함수</td>
+<td><code>service_role_key</code>, <code>supabase_url</code></td>
+<td>DB 함수가 <code>pg_net</code>으로 Edge Function 호출</td>
+</tr>
+</tbody></table></div>
+<p>예를 들어 수요일 매일 탐험 푸시는 이런 경로로 움직인다.</p>
+<pre><code class="language-text">pg_cron
+  -&gt; public.dispatch_daily_exploration_push()
+  -&gt; public._fire_push_broadcast()
+  -&gt; vault.decrypted_secrets 에서 service_role_key / supabase_url 읽기
+  -&gt; pg_net.http_post(&#x27;/functions/v1/send-push&#x27;)
+  -&gt; send-push Edge Function
+  -&gt; Deno.env.get(&#x27;FIREBASE_SERVICE_ACCOUNT&#x27;)
+  -&gt; Firebase FCM HTTP v1 API
+  -&gt; 디바이스 푸시</code></pre>
+<p>따라서 푸시는 두 종류의 secret 이 모두 있어야 끝까지 동작한다.</p>
+<h2 id="2-로컬-파일-세팅">2. 로컬 파일 세팅</h2>
+<h3 id="2-1-env">2.1 <code>.env</code></h3>
+<p><code>.env.example</code>을 복사해 <code>.env</code>를 만든다.</p>
+<pre><code class="language-bash">cp .env.example .env</code></pre>
+<p>필수 값:</p>
+<pre><code class="language-bash">SUPABASE_URL_DEV=https://cvnutbizsgeycdjcbled.supabase.co
+SUPABASE_ANON_KEY_DEV=&lt;dev anon key&gt;
+
+SUPABASE_URL_PROD=https://zmcffwcfmyhdykdhxhgy.supabase.co
+SUPABASE_ANON_KEY_PROD=&lt;real anon key&gt;
+
+FCM_VAPID_KEY=&lt;Firebase Web Push VAPID public key&gt;</code></pre>
+<p><code>FCM_VAPID_KEY</code>는 Flutter Web 푸시 토큰 발급에만 필요하다. iOS/Android 앱 실행에는 없어도 된다.</p>
+<h3 id="2-2-env-ops">2.2 <code>.env.ops</code></h3>
+<p><code>.env.ops.example</code>을 복사해 <code>.env.ops</code>를 만든다.</p>
+<pre><code class="language-bash">cp .env.ops.example .env.ops</code></pre>
+<p>필수 값:</p>
+<pre><code class="language-bash">SUPABASE_SERVICE_ROLE_KEY_DEV=&lt;dev service_role key&gt;
+SUPABASE_SERVICE_ROLE_KEY_PROD=&lt;real service_role key&gt;
+
+SUPABASE_DB_URL_DEV=&lt;dev psql URI&gt;
+SUPABASE_DB_URL_PROD=&lt;real psql URI&gt;</code></pre>
+<p><code>SUPABASE_DB_URL_*</code>은 <code>make db-init</code>, <code>make apply-seeds</code> 같은 psql 기반 작업에 쓴다. Supabase 의 direct host 형태는 DNS 환경에 따라 로컬에서 안 잡힐 수 있다.</p>
+<p>direct host 가 실패하면 session pooler 5432 URI 를 쓴다.</p>
+<pre><code class="language-text">postgresql://postgres.&lt;ref&gt;:&lt;password&gt;@aws-...pooler.supabase.com:5432/postgres</code></pre>
+<p>현재 확인된 pooler 방향:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>환경</th>
+<th>region</th>
+<th>session pooler 후보</th>
+</tr></thead><tbody>
+<tr>
+<td>dev</td>
+<td><code>ap-northeast-1</code></td>
+<td><code>aws-1-ap-northeast-1.pooler.supabase.com</code></td>
+</tr>
+<tr>
+<td>real</td>
+<td><code>ap-northeast-2</code></td>
+<td><code>aws-1-ap-northeast-2.pooler.supabase.com</code></td>
+</tr>
+</tbody></table></div>
+<p>Dashboard 의 Database connection string 이 우선이다. 위 host 는 현재 프로젝트에서 접속 확인한 값이며, Supabase 내부 변경이 있으면 Dashboard 값을 다시 확인한다.</p>
+<p>대량 seed 적용에는 transaction pooler 6543보다 session pooler 5432가 안전하다.</p>
+<h2 id="3-앱-실행-스크립트-원리">3. 앱 실행 스크립트 원리</h2>
+<p>관련 파일:</p>
+<ul><li><code>scripts/common.sh</code></li><li><code>scripts/run_dev.sh</code></li><li><code>scripts/run_real.sh</code></li><li><code>scripts/build_ios_dev.sh</code></li><li><code>scripts/build_ios_real.sh</code></li><li><code>scripts/build_android_dev.sh</code></li><li><code>scripts/build_android_real.sh</code></li></ul>
+<p>실행 예:</p>
+<pre><code class="language-bash">scripts/run_dev.sh
+scripts/run_real.sh
+scripts/run_dev.sh -d chrome
+scripts/run_real.sh -d ios</code></pre>
+<p>스크립트가 하는 일:</p>
+<ol><li><code>.env</code>에서 선택 환경의 <code>SUPABASE_URL_*</code>, <code>SUPABASE_ANON_KEY_*</code>를 읽는다.</li><li>URL 의 프로젝트 ref 와 anon key JWT 안의 <code>ref</code>가 기대값과 맞는지 검사한다.</li><li><code>flutter clean</code>을 실행한다.</li><li><code>flutter pub get</code>을 실행한다.</li><li>Flutter 를 다음 값으로 실행한다.</li></ol>
+<pre><code class="language-bash">--dart-define=ENV=dev
+--dart-define=SUPABASE_URL=&lt;dev url&gt;
+--dart-define=SUPABASE_ANON_KEY=&lt;dev anon&gt;</code></pre>
+<p>real 실행 시에는 <code>ENV=real</code>, real URL, real anon key 를 넣는다.</p>
+<p>앱 코드의 진입점은 <code>lib/main.dart</code>다. 여기서는 <code>.env</code> 파일을 직접 읽지 않는다. <code>String.fromEnvironment()</code>로 <code>ENV</code>, <code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>만 읽는다.</p>
+<h2 id="4-supabase-프로젝트-생성-후-dashboard-설정">4. Supabase 프로젝트 생성 후 Dashboard 설정</h2>
+<h3 id="4-1-api-keys">4.1 API Keys</h3>
+<p>Supabase Dashboard 에서 확인한다.</p>
+<pre><code class="language-text">Project Settings -&gt; API</code></pre>
+<p>필요한 값:</p>
+<ul><li>Project URL</li><li>anon key</li><li>service_role key</li></ul>
+<p>사용 위치:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>값</th>
+<th>저장 위치</th>
+</tr></thead><tbody>
+<tr>
+<td>Project URL</td>
+<td><code>.env</code>의 <code>SUPABASE_URL_DEV/PROD</code>, Vault <code>supabase_url</code></td>
+</tr>
+<tr>
+<td>anon key</td>
+<td><code>.env</code>의 <code>SUPABASE_ANON_KEY_DEV/PROD</code></td>
+</tr>
+<tr>
+<td>service_role key</td>
+<td><code>.env.ops</code>의 <code>SUPABASE_SERVICE_ROLE_KEY_DEV/PROD</code>, Vault <code>service_role_key</code></td>
+</tr>
+</tbody></table></div>
+<p>service role 은 앱에 넣지 않는다.</p>
+<h3 id="4-2-auth-url-configuration">4.2 Auth URL Configuration</h3>
+<p>위치:</p>
+<pre><code class="language-text">Authentication -&gt; URL Configuration</code></pre>
+<p>현재 필요한 Redirect URLs:</p>
+<pre><code class="language-text">com.storybible.app://login-callback
+http://localhost:*/**</code></pre>
+<p>의미:</p>
+<ul><li><code>com.storybible.app://login-callback</code>: iOS/Android 앱으로 OAuth 결과를 되돌려보내는</li></ul>
+<p>deep link.</p>
+<ul><li><code>http://localhost:*/**</code>: Flutter Web 개발 서버 포트가 바뀌어도 로그인 callback 을</li></ul>
+<p>허용하기 위한 개발용 wildcard.</p>
+<p><code>Site URL</code>은 redirect URL 이 명시되지 않았거나 이메일 템플릿에서 기본 URL 이 필요할 때 쓰는 fallback 에 가깝다. dev 와 real 의 localhost 포트가 달라도 Redirect URLs 에 <code>http://localhost:*/**</code>가 있으면 개발 로그인은 정상 동작한다.</p>
+<p>배포 전 real 에서는 <code>Site URL</code>을 실제 웹 도메인으로 바꾼다.</p>
+<pre><code class="language-text">https://&lt;real-domain&gt;</code></pre>
+<p>그리고 Redirect URLs 에도 실제 웹 도메인을 추가한다.</p>
+<h3 id="4-3-google-kakao-provider">4.3 Google / Kakao provider</h3>
+<p>위치:</p>
+<pre><code class="language-text">Authentication -&gt; Sign In / Providers</code></pre>
+<p>Supabase 쪽에서 Google, Kakao provider 를 켠다.</p>
+<p>각 provider 콘솔에는 Supabase callback URL 을 등록한다.</p>
+<pre><code class="language-text">https://&lt;project-ref&gt;.supabase.co/auth/v1/callback</code></pre>
+<p>dev 와 real 은 프로젝트 ref 가 다르므로 callback URL 도 각각 다르다.</p>
+<pre><code class="language-text">dev  : https://cvnutbizsgeycdjcbled.supabase.co/auth/v1/callback
+real : https://zmcffwcfmyhdykdhxhgy.supabase.co/auth/v1/callback</code></pre>
+<p>원리:</p>
+<ol><li>앱이 Supabase OAuth 시작 URL 을 연다.</li><li>사용자가 Google/Kakao 에서 로그인한다.</li><li>Google/Kakao 가 Supabase callback 으로 인증 결과를 보낸다.</li><li>Supabase 가 자기 JWT 세션으로 변환한다.</li><li>Supabase 가 앱의 <code>redirectTo</code>로 되돌려보낸다.</li></ol>
+<p>provider callback 과 앱 redirect 는 서로 다르다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종류</th>
+<th>예시</th>
+<th>역할</th>
+</tr></thead><tbody>
+<tr>
+<td>provider callback</td>
+<td><code>https://&lt;ref&gt;.supabase.co/auth/v1/callback</code></td>
+<td>Google/Kakao/Apple 이 Supabase 로 돌아오는 주소</td>
+</tr>
+<tr>
+<td>app redirect</td>
+<td><code>com.storybible.app://login-callback</code> 또는 localhost</td>
+<td>Supabase 가 앱으로 돌아가는 주소</td>
+</tr>
+</tbody></table></div>
+<h3 id="4-4-apple-provider">4.4 Apple provider</h3>
+<p>현재 앱은 <strong>Apple native-only</strong> 방식이다.</p>
+<p>관련 코드:</p>
+<ul><li><code>lib/data/auth_repository.dart</code></li><li><code>lib/widgets/inline_login_prompt_card.dart</code></li></ul>
+<p>현재 정책:</p>
+<ul><li>iOS/macOS 앱에서만 Apple 버튼을 보여준다.</li><li>Android/Web 에서는 Apple 버튼을 열지 않는다.</li><li>Android/Web Apple OAuth 를 위해 Services ID, web callback, 6개월 client secret</li></ul>
+<p>rotation 을 운영하지 않는다.</p>
+<p>원리:</p>
+<ol><li>iOS/macOS 가 Apple 네이티브 로그인 sheet 를 연다.</li><li>앱이 Apple <code>identityToken</code>을 받는다.</li><li>앱이 Supabase <code>signInWithIdToken(provider: apple)</code>로 토큰을 넘긴다.</li><li>Supabase 가 Apple 토큰을 검증하고 Supabase 세션을 만든다.</li></ol>
+<p>나중에 Android/Web 에서도 Apple 로그인을 열고 싶다면 별도 작업이 필요하다.</p>
+<ul><li>Apple Developer 에서 Services ID 생성</li><li>Return URL / domain 검증</li><li><code>.p8</code>, Team ID, Key ID 로 Apple client secret 생성</li><li>Supabase Apple provider 에 client secret 등록</li><li>client secret 만료 전에 재생성</li><li>Flutter 코드에 web authentication option 추가</li><li>Android/Web Apple 버튼 노출</li></ul>
+<p>지금은 native-only 가 더 단순하고 운영 부담이 작다.</p>
+<h2 id="5-edge-function-secret-설정">5. Edge Function secret 설정</h2>
+<p>Edge Function 은 Supabase 서버에서 실행되는 Deno 함수다. 앱이 직접 들고 있으면 안 되는 Firebase/GCP 키를 여기서 읽는다.</p>
+<p>확인:</p>
+<pre><code class="language-bash">supabase secrets list --project-ref cvnutbizsgeycdjcbled
+supabase secrets list --project-ref zmcffwcfmyhdykdhxhgy</code></pre>
+<p>필요한 secret:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>secret</th>
+<th>쓰는 함수</th>
+<th>용도</th>
+</tr></thead><tbody>
+<tr>
+<td><code>FIREBASE_SERVICE_ACCOUNT</code></td>
+<td><code>send-push</code></td>
+<td>FCM HTTP v1 호출</td>
+</tr>
+<tr>
+<td><code>GCP_SERVICE_ACCOUNT_JSON</code></td>
+<td><code>generate-proposal-scene</code>, <code>generate-proposal-character</code></td>
+<td>Vertex AI 호출</td>
+</tr>
+<tr>
+<td><code>GOOGLE_CLOUD_PROJECT</code></td>
+<td>이미지 생성 함수</td>
+<td>GCP project id</td>
+</tr>
+<tr>
+<td><code>GOOGLE_CLOUD_LOCATION</code></td>
+<td>이미지 생성 함수</td>
+<td>Vertex AI location</td>
+</tr>
+</tbody></table></div>
+<p>등록 예:</p>
+<pre><code class="language-bash">supabase secrets set --project-ref &lt;ref&gt; \
+  FIREBASE_SERVICE_ACCOUNT=&quot;$(cat firebase-admin-sdk.json)&quot;</code></pre>
+<p>여러 값을 한 번에 넣을 때는 로컬 ignored 파일을 쓴다.</p>
+<pre><code class="language-bash">supabase secrets set --project-ref &lt;ref&gt; --env-file .env.supabase.secrets</code></pre>
+<p><code>.env.supabase.secrets</code>는 git 에 커밋하지 않는다.</p>
+<h2 id="6-edge-function-배포">6. Edge Function 배포</h2>
+<p>항상 <code>--project-ref</code>를 명시한다. Supabase CLI 가 어떤 프로젝트에 link 되어 있는지에 의존하면 실수로 dev/real 을 바꿔 배포할 수 있다.</p>
+<pre><code class="language-bash">supabase functions deploy send-push \
+  --project-ref cvnutbizsgeycdjcbled
+
+supabase functions deploy send-push \
+  --project-ref zmcffwcfmyhdykdhxhgy</code></pre>
+<p>이미지 생성 함수도 같은 방식이다.</p>
+<pre><code class="language-bash">supabase functions deploy generate-proposal-scene --project-ref &lt;ref&gt;
+supabase functions deploy generate-proposal-character --project-ref &lt;ref&gt;</code></pre>
+<p>배포 상태 확인:</p>
+<pre><code class="language-bash">supabase functions list --project-ref cvnutbizsgeycdjcbled
+supabase functions list --project-ref zmcffwcfmyhdykdhxhgy</code></pre>
+<p><code>send-push</code>, <code>generate-proposal-scene</code>, <code>generate-proposal-character</code>가 <code>ACTIVE</code>이면 된다.</p>
+<h2 id="7-db-내부-secret-extension-설정">7. DB 내부 secret / extension 설정</h2>
+<h3 id="7-1-extension">7.1 extension</h3>
+<p>Supabase Dashboard:</p>
+<pre><code class="language-text">Database -&gt; Extensions</code></pre>
+<p>필요:</p>
+<ul><li><code>pg_net</code>: Postgres 에서 HTTP 요청을 보내기 위해 필요.</li><li><code>pg_cron</code>: 매일/매주 자동 작업을 DB 안에서 예약하기 위해 필요.</li><li><code>supabase_vault</code>: DB 함수가 secret 을 읽기 위해 필요.</li></ul>
+<h3 id="7-2-vault-secrets">7.2 Vault secrets</h3>
+<p>Supabase Dashboard:</p>
+<pre><code class="language-text">Integrations -&gt; Vault -&gt; Secrets</code></pre>
+<p>프로젝트마다 아래 두 secret 을 넣는다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>name</th>
+<th>value</th>
+</tr></thead><tbody>
+<tr>
+<td><code>service_role_key</code></td>
+<td>해당 프로젝트 service_role key</td>
+</tr>
+<tr>
+<td><code>supabase_url</code></td>
+<td>해당 프로젝트 URL</td>
+</tr>
+</tbody></table></div>
+<p>왜 필요한가:</p>
+<ul><li><code>dispatch_daily_exploration_push()</code>는 Postgres 함수다.</li><li>Postgres 함수 안에서는 Edge Function 환경변수를 직접 읽을 수 없다.</li><li>그래서 DB 쪽에서는 Vault 에 있는 <code>service_role_key</code>, <code>supabase_url</code>로</li></ul>
+<p><code>/functions/v1/send-push</code>를 HTTP 호출한다.</p>
+<p>검증 SQL:</p>
+<pre><code class="language-sql">select name, length(decrypted_secret) as len
+from vault.decrypted_secrets
+where name in (&#x27;service_role_key&#x27;, &#x27;supabase_url&#x27;);</code></pre>
+<p>2줄이 나오면 된다. 값 자체는 출력하지 않는다.</p>
+<h2 id="8-db-초기화-patch-seed-적용">8. DB 초기화, patch, seed 적용</h2>
+<h3 id="8-1-신규-프로젝트-최초-bootstrap">8.1 신규 프로젝트 최초 bootstrap</h3>
+<p>처음 환경을 만들거나 복구 상황에서 DB 를 정말 갈아엎을 때만 쓴다. real 운영 DB 에서는 일반 배포 명령으로 사용하지 않는다.</p>
+<pre><code class="language-bash">make seed-all
+CONFIRM_REAL_DB_INIT=1 make db-init ENV=real
+make apply-seeds ENV=real
+make upload-character-avatars ENV=real</code></pre>
+<p>dev 는 <code>ENV</code> 생략 가능하다.</p>
+<pre><code class="language-bash">make seed-all
+make db-init
+make apply-seeds
+make upload-character-avatars</code></pre>
+<p>한 줄로 묶을 수도 있다.</p>
+<pre><code class="language-bash">make seed-all &amp;&amp; CONFIRM_REAL_DB_INIT=1 make db-init ENV=real &amp;&amp; make apply-seeds ENV=real &amp;&amp; make upload-character-avatars ENV=real</code></pre>
+<h3 id="8-2-운영-real-db-수정">8.2 운영 real DB 수정</h3>
+<p>real 을 배포한 뒤에는 <code>db-init ENV=real</code>로 초기화하지 않는다. 스키마/RLS/RPC/cron 같은 DB 구조 변경은 <code>supabase/patches/*.sql</code>에 여러 번 실행해도 안전한 patch 로 작성한 뒤 적용한다.</p>
+<pre><code class="language-bash">make apply-patch ENV=dev PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
+make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql</code></pre>
+<p>원칙:</p>
+<ul><li><code>db_init.sql</code>에는 최종 desired schema 를 계속 반영한다.</li><li>dev 에서는 <code>make db-init ENV=dev</code>로 reset 검증한다.</li><li>real 에는 patch SQL 만 적용한다.</li><li>real patch 전에는 백업과 dev 검증을 먼저 한다.</li></ul>
+<h3 id="8-3-각-단계가-하는-일">8.3 각 단계가 하는 일</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>단계</th>
+<th>하는 일</th>
+<th>원리</th>
+</tr></thead><tbody>
+<tr>
+<td><code>make seed-all</code></td>
+<td>로컬 JSON/assets 에서 SQL 파일 재생성</td>
+<td>DB 에 넣을 기준 콘텐츠를 코드와 같이 관리</td>
+</tr>
+<tr>
+<td><code>make db-init ENV=...</code></td>
+<td><code>db_init.sql</code> 실행</td>
+<td>schema, RLS, RPC, Storage bucket, trigger, cron 을 한 번에 생성</td>
+</tr>
+<tr>
+<td><code>make apply-patch ENV=... PATCH=...</code></td>
+<td>idempotent patch SQL 적용</td>
+<td>운영 DB 를 보존하면서 schema/RLS/RPC/cron 을 수정</td>
+</tr>
+<tr>
+<td><code>make apply-seeds ENV=...</code></td>
+<td>성경/랜드마크/인물/사건/퀴즈 seed 적용</td>
+<td>공개 기준 데이터 삽입</td>
+</tr>
+<tr>
+<td><code>make upload-character-avatars ENV=...</code></td>
+<td>로컬 아바타 PNG 를 Supabase Storage 로 업로드</td>
+<td>앱/Edge Function 이 인물 이미지를 공개 URL 로 읽게 함</td>
+</tr>
+</tbody></table></div>
+<p><code>db-init</code>은 파괴적이다. 기존 DB 를 DROP/CREATE 한다. real 에서는 기본 차단되며, 정말 신규/복구 bootstrap 이면 <code>CONFIRM_REAL_DB_INIT=1</code>을 붙인다.</p>
+<h3 id="8-4-첫-실행에서-bucket-not-found-로그가-나오는-이유">8.4 첫 실행에서 bucket not found 로그가 나오는 이유</h3>
+<p>처음 <code>CONFIRM_REAL_DB_INIT=1 make db-init ENV=real</code>을 실행하면 이런 로그가 나올 수 있다.</p>
+<pre><code class="language-text">Bucket not found</code></pre>
+<p><code>db-init</code>은 SQL 실행 전에 기존 Storage bucket 을 비우려 한다. 아직 bucket 이 없는 새 프로젝트라면 비울 대상이 없으므로 정상이다. 이후 <code>db_init.sql</code>이 bucket 을 만든다. 단, service_role 키가 없거나 기존 bucket 비우기에 실패하면 기존 파일이 남지 않도록 <code>db-init</code>은 SQL 실행 전에 중단한다.</p>
+<h3 id="8-5-makefile-환경-매핑">8.5 Makefile 환경 매핑</h3>
+<p>Makefile 은 이렇게 매핑한다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>입력</th>
+<th>내부 ops env</th>
+<th>DB URL</th>
+</tr></thead><tbody>
+<tr>
+<td>생략 또는 <code>ENV=dev</code></td>
+<td><code>dev</code></td>
+<td><code>SUPABASE_DB_URL_DEV</code></td>
+</tr>
+<tr>
+<td><code>ENV=real</code></td>
+<td><code>prod</code></td>
+<td><code>SUPABASE_DB_URL_PROD</code></td>
+</tr>
+<tr>
+<td><code>ENV=prod</code></td>
+<td><code>prod</code></td>
+<td><code>SUPABASE_DB_URL_PROD</code></td>
+</tr>
+</tbody></table></div>
+<p>기본값이 dev 인 이유는 실수로 real 을 밀지 않기 위해서다.</p>
+<p>dry-run 으로 실제 어떤 명령이 나갈지 먼저 볼 수 있다.</p>
+<pre><code class="language-bash">make -n db-init
+make -n apply-patch ENV=real PATCH=supabase/patches/example.sql</code></pre>
+<h2 id="9-firebase-push-정책">9. Firebase / Push 정책</h2>
+<h3 id="9-1-현재-결정-dev-와-real-이-같은-firebase-를-쓴다">9.1 현재 결정: dev 와 real 이 같은 Firebase 를 쓴다</h3>
+<p>현재 푸시 종류가 많지 않고, 운영 복잡도를 줄이기 위해 dev 와 real 이 같은 Firebase 프로젝트를 써도 된다.</p>
+<p>장점:</p>
+<ul><li>APNs / VAPID / Firebase service account 를 하나만 관리한다.</li><li>iOS/Android/Web Firebase 설정 파일을 환경별로 갈라 관리하지 않아도 된다.</li><li><code>send-push</code> Edge Function secret 도 같은 Firebase service account 를 양쪽 Supabase</li></ul>
+<p>프로젝트에 넣으면 된다.</p>
+<p>주의점:</p>
+<ul><li>같은 앱 bundle id / package name 이면 dev 와 real 에 등록되는 FCM token 이 같은</li></ul>
+<p>물리 앱으로 갈 수 있다.</p>
+<ul><li>dev DB 에도 내 기기 token 이 등록되어 있으면 dev push 도 내 휴대폰에 온다.</li><li>푸시 문구만 보면 dev/real 구분이 안 될 수 있다.</li></ul>
+<p>운영 전까지는 괜찮다. 실제 사용자에게 배포한 뒤 dev 푸시가 섞이는 것이 걱정되면 다음 중 하나를 선택한다.</p>
+<ol><li>dev cron 을 끄고 수동 테스트 때만 푸시를 보낸다.</li><li>dev push 제목/body 에 <code>[DEV]</code> prefix 를 붙이는 별도 로직을 둔다.</li><li>dev/real 앱 bundle id 와 Firebase 프로젝트를 분리한다.</li></ol>
+<p>지금은 1번 또는 현재 유지가 가장 단순하다.</p>
+<h3 id="9-2-푸시가-도는-전체-경로">9.2 푸시가 도는 전체 경로</h3>
+<pre><code class="language-text">Flutter 앱
+  -&gt; FirebaseMessaging.getToken()
+  -&gt; Supabase RPC register_push_token()
+  -&gt; public.user_push_tokens 저장
+
+pg_cron 또는 trigger
+  -&gt; public.dispatch_daily_exploration_push()
+  -&gt; public._fire_push_broadcast()
+  -&gt; pg_net.http_post(&#x27;/functions/v1/send-push&#x27;)
+  -&gt; Edge Function send-push
+  -&gt; Firebase FCM
+  -&gt; iOS/Android/Web 디바이스</code></pre>
+<h3 id="9-3-푸시-즉시-테스트">9.3 푸시 즉시 테스트</h3>
+<p>오전 9시 cron 을 기다리지 않고 바로 테스트하려면 SQL Editor 에서 실행한다.</p>
+<pre><code class="language-sql">select public.dispatch_daily_exploration_push();</code></pre>
+<p>이 함수는 KST 날짜 시드로 오늘의 사건 제목을 고르고 전체 push token 대상에게 &quot;오늘의 탐험이 열렸어요&quot; 알림을 보낸다.</p>
+<p>테스트 전 확인:</p>
+<pre><code class="language-sql">select platform, count(*)
+from public.user_push_tokens
+group by platform
+order by platform;</code></pre>
+<p>토큰이 0개이면 보낼 대상이 없다. 앱을 실기기에서 한 번 실행하고 로그인/푸시 권한 허용 후 token 등록이 되는지 먼저 확인한다.</p>
+<p>DB 에서 Edge Function 을 호출한 응답은 <code>net._http_response</code>에서 볼 수 있다.</p>
+<pre><code class="language-sql">select id, status_code, timed_out, error_msg, left(content, 500) as content
+from net._http_response
+order by id desc
+limit 10;</code></pre>
+<p>정상 응답 예:</p>
+<pre><code class="language-json">{&quot;sent&quot;:1,&quot;failed&quot;:0,&quot;cleaned_tokens&quot;:0}</code></pre>
+<h2 id="10-auth-동작-확인">10. Auth 동작 확인</h2>
+<p>각 환경에서 최소 한 번씩 확인한다.</p>
+<pre><code class="language-bash">scripts/run_dev.sh
+scripts/run_real.sh</code></pre>
+<p>확인 항목:</p>
+<ul><li>Google 로그인 성공</li><li>Kakao 로그인 성공</li><li>Apple 로그인 성공</li><li>앱 재실행 후 세션 복원</li><li>로그아웃 후 다시 로그인</li></ul>
+<p>Apple 은 iOS/macOS 앱에서만 노출된다. Web/Android 에서 Apple 버튼이 안 보이는 것은 현재 정책상 정상이다.</p>
+<h2 id="11-신규-환경-구축-순서-체크리스트">11. 신규 환경 구축 순서 체크리스트</h2>
+<p>새 Supabase 환경을 하나 더 만들 때 순서대로 진행한다.</p>
+<h3 id="11-1-supabase-프로젝트-생성">11.1 Supabase 프로젝트 생성</h3>
+<ol><li>Supabase Dashboard 에서 새 프로젝트 생성.</li><li>Project URL, anon key, service_role key 확보.</li><li>Database connection string 확보.</li><li>direct host 가 로컬에서 안 잡히면 session pooler 5432 URI 확보.</li></ol>
+<h3 id="11-2-로컬-env-반영">11.2 로컬 env 반영</h3>
+<ol><li><code>.env</code>에 <code>SUPABASE_URL_&lt;ENV&gt;</code>, <code>SUPABASE_ANON_KEY_&lt;ENV&gt;</code> 추가.</li><li><code>.env.ops</code>에 <code>SUPABASE_SERVICE_ROLE_KEY_&lt;ENV&gt;</code>, <code>SUPABASE_DB_URL_&lt;ENV&gt;</code> 추가.</li><li><code>scripts/common.sh</code>에 프로젝트 ref 와 ENV suffix 매핑 추가.</li><li>필요한 <code>scripts/run_*.sh</code>, <code>scripts/build_*_*.sh</code> 추가.</li><li>운영 DB 변경은 <code>make -n apply-patch ENV=&lt;env&gt; PATCH=&lt;file&gt;</code>로 잘못된 DB URL 을 잡지 않는지 확인.</li></ol>
+<h3 id="11-3-auth-설정">11.3 Auth 설정</h3>
+<ol><li>Supabase URL Configuration 에 앱 deep link 추가.</li><li>개발용 <code>http://localhost:*/**</code> 추가.</li><li>배포 도메인이 있으면 Site URL 과 Redirect URLs 에 추가.</li><li>Google/Kakao provider 를 켠다.</li><li>각 provider console 에 <code>https://&lt;ref&gt;.supabase.co/auth/v1/callback</code> 등록.</li><li>Apple 은 native-only 정책이면 iOS/macOS 네이티브 로그인 기준으로만 설정한다.</li></ol>
+<h3 id="11-4-edge-function-secret-등록">11.4 Edge Function secret 등록</h3>
+<ol><li>Firebase service account JSON 준비.</li><li>GCP/Vertex service account JSON 준비.</li><li><code>supabase secrets set --project-ref &lt;ref&gt; ...</code>로 등록.</li><li><code>supabase secrets list --project-ref &lt;ref&gt;</code>로 이름 확인.</li></ol>
+<h3 id="11-5-edge-function-배포">11.5 Edge Function 배포</h3>
+<pre><code class="language-bash">supabase functions deploy send-push --project-ref &lt;ref&gt;
+supabase functions deploy generate-proposal-scene --project-ref &lt;ref&gt;
+supabase functions deploy generate-proposal-character --project-ref &lt;ref&gt;</code></pre>
+<p>확인:</p>
+<pre><code class="language-bash">supabase functions list --project-ref &lt;ref&gt;</code></pre>
+<h3 id="11-6-db-extension-vault-설정">11.6 DB extension / Vault 설정</h3>
+<ol><li><code>pg_net</code>, <code>pg_cron</code>, <code>supabase_vault</code> 활성화.</li><li>Vault 에 <code>service_role_key</code>, <code>supabase_url</code> 등록.</li><li>SQL 로 secret 길이 확인.</li></ol>
+<h3 id="11-7-db-storage-부트스트랩">11.7 DB / Storage 부트스트랩</h3>
+<pre><code class="language-bash">make seed-all
+make db-init ENV=&lt;env&gt;
+make apply-seeds ENV=&lt;env&gt;
+make upload-character-avatars ENV=&lt;env&gt;</code></pre>
+<h3 id="11-8-앱-검증">11.8 앱 검증</h3>
+<pre><code class="language-bash">scripts/run_&lt;env&gt;.sh</code></pre>
+<p>확인:</p>
+<ul><li>홈 데이터 로드</li><li>지도/인물/퀴즈 화면 진입</li><li>Google/Kakao/Apple 로그인</li><li>프로필 생성/복원</li><li>푸시 토큰 row 생성</li></ul>
+<h3 id="11-9-푸시-검증">11.9 푸시 검증</h3>
+<ol><li><code>user_push_tokens</code>에 token row 가 있는지 확인.</li><li><code>select public.dispatch_daily_exploration_push();</code> 실행.</li><li>실기기에 알림이 오는지 확인.</li><li><code>net._http_response</code> 또는 Function logs 에서 <code>sent</code>, <code>failed</code> 확인.</li></ol>
+<h2 id="12-세팅-끝-판단-기준">12. &quot;세팅 끝&quot; 판단 기준</h2>
+<p>아래가 모두 true 이면 환경 구축은 끝난 것으로 본다.</p>
+<ul><li><code>scripts/run_dev.sh</code>가 dev Supabase 로 실행된다.</li><li><code>scripts/run_real.sh</code>가 real Supabase 로 실행된다.</li><li>dev/real 모두 Google/Kakao/Apple 로그인이 된다.</li><li><code>make -n db-init</code> 기본값이 dev 를 가리킨다.</li><li><code>make -n apply-patch ENV=real PATCH=&lt;file&gt;</code>이 real/prod DB URL 을 가리킨다.</li><li>real DB 에 필요한 patch 와 seed 가 적용되어 홈 데이터가 로드된다.</li><li>Storage <code>characters</code> bucket 에 아바타가 업로드되어 있다.</li><li>Supabase Functions 에 <code>send-push</code>가 ACTIVE 다.</li><li>Edge Function secret 에 <code>FIREBASE_SERVICE_ACCOUNT</code>가 있다.</li><li>Vault 에 <code>service_role_key</code>, <code>supabase_url</code>이 있다.</li><li><code>pg_net</code>, <code>pg_cron</code>, <code>supabase_vault</code>가 켜져 있다.</li><li><code>cron.job</code>에 월/수/금 정기 push job 3개가 있다.</li><li><code>user_push_tokens</code>에 실기기 token 이 들어간다.</li><li><code>dispatch_daily_exploration_push()</code>를 수동 실행하면 실기기에 알림이 온다.</li></ul>
+<h2 id="13-자주-헷갈리는-것">13. 자주 헷갈리는 것</h2>
+<h3 id="dev-와-real-의-site-url-포트가-달라도-되나">dev 와 real 의 Site URL 포트가 달라도 되나?</h3>
+<p>개발 중에는 괜찮다. 실제 허용 여부는 Redirect URLs 가 결정한다. <code>http://localhost:*/**</code>가 있으면 <code>localhost:3000</code>, <code>localhost:5050</code> 모두 허용된다.</p>
+<p>배포 전 real 의 Site URL 은 실제 운영 도메인으로 바꾼다.</p>
+<h3 id="supabase-cli-가-어느-프로젝트에-연결되어-있는지-어떻게-보나">Supabase CLI 가 어느 프로젝트에 연결되어 있는지 어떻게 보나?</h3>
+<pre><code class="language-bash">supabase projects list</code></pre>
+<p>배포/secret 설정은 가능하면 항상 <code>--project-ref</code>를 붙인다.</p>
+<pre><code class="language-bash">supabase secrets list --project-ref zmcffwcfmyhdykdhxhgy
+supabase functions list --project-ref zmcffwcfmyhdykdhxhgy</code></pre>
+<h3 id="real-을-기본값으로-바꿔도-되나">real 을 기본값으로 바꿔도 되나?</h3>
+<p>바꾸지 않는다. Makefile 기본값은 dev 로 유지한다. real DB 초기화는 파괴적이므로 기본 차단되어 있고, 운영 변경은 <code>apply-patch ENV=real PATCH=...</code>로 적용한다.</p>
+<h3 id="supabase-service-role-key-를-env-에-넣으면-안-되나"><code>SUPABASE_SERVICE_ROLE_KEY_*</code>를 <code>.env</code>에 넣으면 안 되나?</h3>
+<p>넣지 않는다. <code>.env</code>는 앱 실행 스크립트가 읽는 파일이고, 과거처럼 asset 에 섞일 위험을 만들 수 있다. service role 과 DB URL 은 <code>.env.ops</code>에만 둔다.</p>
+<h3 id="같은-firebase-를-써도-되나">같은 Firebase 를 써도 되나?</h3>
+<p>지금 규모와 푸시 종류에서는 가능하다. 다만 dev 푸시가 같은 물리 기기로 올 수 있다는 점을 알고 있어야 한다. 운영 사용자가 늘어나면 dev cron 비활성화 또는 Firebase 분리를 다시 검토한다.</p>
+<h3 id="db-host-dns-가-안-잡히면-supabase-가-망가진-건가">DB host DNS 가 안 잡히면 Supabase 가 망가진 건가?</h3>
+<p>아니다. 앱은 <code>https://&lt;ref&gt;.supabase.co</code> API 를 쓰기 때문에 정상일 수 있다. psql 만 direct DB host DNS 문제를 만날 수 있다. 이때 session pooler URI 를 사용한다.</p>
+          <a class="top-link" href="#top">맨 위로</a>
+        </article>
+      </div>
+    </main>
+  </div>
+  <script src="assets/guide.js"></script>
+</body>
+</html>

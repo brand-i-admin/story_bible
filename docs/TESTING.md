@@ -1,6 +1,7 @@
 # 테스트 도메인 레퍼런스
 
 > 이 문서는 `.agents/skills/testing` 스킬이 참조하는 테스트 전략 가이드이다.
+> 현재 테스트 파일/정적 테스트 수 카탈로그는 [docs/guides/TEST_GUIDE.md](guides/TEST_GUIDE.md)를 우선한다.
 
 ## 1. 파일 범위
 
@@ -10,6 +11,8 @@ test/
 ├── models/                    # 모델 단위 테스트
 ├── state/                     # Controller/Provider 테스트
 ├── data/                      # Repository 테스트 (mock)
+├── theme/                     # 디자인 토큰 테스트
+├── utils/                     # 순수 로직/asset loader 테스트
 └── widgets/                   # 위젯 테스트
 
 .pre-commit-config.yaml        # pre-commit/pre-push 훅
@@ -155,7 +158,7 @@ void main() {
 - `check-yaml` — YAML 문법 검사
 - `end-of-file-fixer` — 파일 끝 개행
 - `trailing-whitespace` — 후행 공백 제거
-- `black` — Python 포맷 (`tools/*.py`)
+- `black` — Python 포맷 (`tools/seed|images|app|lint|export|docs`)
 - `dart-format` — Dart 포맷 (`.dart` 파일)
 
 #### pre-push 단계 (푸시 시)

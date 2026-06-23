@@ -3,6 +3,8 @@
 > Story Bible 의 dev / real Supabase 환경을 새로 만들거나 복구할 때 따라가는
 > 운영 순서다. 이 문서는 "무엇을 눌러야 하는가"보다 **왜 그 설정이 필요한가**를
 > 함께 설명한다. 일상 개발/배포 순서는 [develop-flow.md](develop-flow.md)를 본다.
+> 로컬 `.env*` 파일을 다른 컴퓨터나 팀원과 어떻게 공유할지는
+> [LOCAL_ENV_FILES.md](LOCAL_ENV_FILES.md)를 본다.
 
 ## 0. 현재 환경 지도
 

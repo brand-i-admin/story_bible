@@ -10,6 +10,21 @@
 스크립트는 실행 전에 [../.env](../.env)의 `SUPABASE_URL_DEV`, `SUPABASE_ANON_KEY_DEV`, `SUPABASE_URL_PROD`, `SUPABASE_ANON_KEY_PROD` 값을 읽고, URL과 anon key 안의 project ref가 기대값과 일치하는지 검사합니다.
 검증에 통과하면 선택된 환경의 `SUPABASE_URL` / `SUPABASE_ANON_KEY` 를 `--dart-define` 으로 Flutter 에 자동 주입합니다. 앱 번들에는 `.env` 파일을 포함하지 않습니다.
 
+## Local environment files
+
+| 파일 | git 상태 | 용도 |
+|------|----------|------|
+| [../.env.example](../.env.example) | 커밋됨 | 앱 실행/빌드용 공개 변수 템플릿 |
+| `../.env` | `.gitignore` 대상 | `scripts/run_*`, `scripts/build_*`가 읽는 실제 dev/real URL과 anon key |
+| [../.env.ops.example](../.env.ops.example) | 커밋됨 | DB/Storage 운영 변수 템플릿 |
+| `../.env.ops` | `.gitignore` 대상 | `make apply-*`, `make upload-*`, sync/cleanup 도구가 읽는 service role/DB URL |
+| [../.env.supabase.secrets.example](../.env.supabase.secrets.example) | 커밋됨 | Supabase Edge Function secret 템플릿 |
+| `../.env.supabase.secrets` | `.gitignore` 대상 | `supabase secrets set --env-file ...`에 쓰는 실제 서비스 계정 JSON |
+
+다른 컴퓨터로 옮길 때는 `*.example` 파일은 저장소에서 받고, 실제 값이 들어간
+`.env`, `.env.ops`, `.env.supabase.secrets`는 비밀번호 관리자나 별도 안전 채널로
+전달합니다. 자세한 기준은 [../docs/guides/LOCAL_ENV_FILES.md](../docs/guides/LOCAL_ENV_FILES.md)를 봅니다.
+
 ## Files
 
 - [common.sh](./common.sh): 공통 환경 검증과 `flutter` 호출 로직

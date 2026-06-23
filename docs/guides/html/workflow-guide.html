@@ -1,0 +1,2350 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>워크플로 가이드 — Story Bible 코드 작업 + 유지보수 · Story Bible Guides</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Story Bible Guides</div>
+      <div class="subtle">310 events · 445 Dart tests</div>
+      <nav class="nav">
+        <a class="" href="index.html">가이드 인덱스</a>
+        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
+<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
+<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
+<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
+<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
+<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
+<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
+<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
+<a class="active" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
+<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <div class="page-shell">
+        <section class="hero">
+          <div class="eyebrow">Developer documentation</div>
+          <h1>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</h1>
+          <p>작업 규칙: Codex 작업 루프와 웹 제안 기능의 구조 참고</p>
+          <div class="flow"><div class="step"><span>plan</span><strong>Plan</strong><p>영향 범위와 테스트 찾기</p></div>
+<div class="step"><span>do</span><strong>Do</strong><p>작게 수정하고 문서 동기화</p></div>
+<div class="step"><span>check</span><strong>Check</strong><p>diff / test / secret 점검</p></div>
+<div class="step"><span>act</span><strong>Act</strong><p>실패 반영과 최종 보고</p></div></div>
+          <div class="toc"><strong>On this page</strong><a class="level-1" href="#워크플로-가이드-—-story-bible-코드-작업-+-유지보수">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a><a class="level-2" href="#1-전체-흐름-한눈에">1. 전체 흐름 한눈에</a><a class="level-3" href="#1-1-pdca-루프">1.1 PDCA 루프</a><a class="level-2" href="#2-스킬-skill-이란">2. 스킬(Skill)이란?</a><a class="level-3" href="#프로젝트-주요-스킬">프로젝트 주요 스킬</a><a class="level-3" href="#스킬-호출-방식">스킬 호출 방식</a><a class="level-2" href="#3-agent-서브에이전트-란">3. Agent(서브에이전트)란?</a><a class="level-3" href="#agent-사용-규칙">Agent 사용 규칙</a><a class="level-2" href="#4-플러그인이란">4. 플러그인이란?</a><a class="level-2" href="#5-작업-유형별-흐름">5. 작업 유형별 흐름</a><a class="level-3" href="#5-1-기존-기능-수정">5.1 기존 기능 수정</a><a class="level-3" href="#5-2-새-기능-추가">5.2 새 기능 추가</a><a class="level-3" href="#5-2-1-버그-수정">5.2.1 버그 수정</a><a class="level-3" href="#5-3-기능-삭제">5.3 기능 삭제</a><a class="level-3" href="#5-4-db-변경이-필요한-요청">5.4 DB 변경이 필요한 요청</a><a class="level-2" href="#5-5-지도-콘텐츠-—-랜드마크-시대-영역-워크플로">5.5 지도 콘텐츠 — 랜드마크 / 시대 영역 워크플로</a><a class="level-3" href="#5-5-1-콘텐츠-워크플로-다이어그램">5.5.1 콘텐츠 워크플로 다이어그램</a><a class="level-3" href="#5-5-2-데이터-레이어-관계도-지도-위에서-합쳐지는-구조">5.5.2 데이터 레이어 관계도 (지도 위에서 합쳐지는 구조)</a><a class="level-3" href="#5-5-3-사용자-인터랙션-시퀀스">5.5.3 사용자 인터랙션 시퀀스</a><a class="level-3" href="#5-5-4-콘텐츠-수정-흐름-사용자-작업-절차">5.5.4 콘텐츠 수정 흐름 (사용자 작업 절차)</a><a class="level-3" href="#5-5-5-명령어-의사결정-—-언제-어떤-make-타겟을-쓰나">5.5.5 명령어 의사결정 — 언제 어떤 make 타겟을 쓰나</a><a class="level-3" href="#5-5-6-풀-리셋-시퀀스-신규-환경-모든-것-처음부터">5.5.6 풀 리셋 시퀀스 (신규 환경 / 모든 것 처음부터)</a><a class="level-3" href="#5-5-7-자주-묻는-질문">5.5.7 자주 묻는 질문</a><a class="level-2" href="#6-유지보수-시스템-—-자동-검증-파이프라인">6. 유지보수 시스템 — 자동 검증 파이프라인</a><a class="level-3" href="#6-1-에디터-실시간">6.1 에디터 (실시간)</a><a class="level-3" href="#6-2-pre-commit-git-commit-시-자동">6.2 Pre-commit (git commit 시 자동)</a><a class="level-3" href="#6-3-pre-push-git-push-시-자동">6.3 Pre-push (git push 시 자동)</a><a class="level-3" href="#6-4-github-actions-ci-pr-시-자동">6.4 GitHub Actions CI (PR 시 자동)</a><a class="level-2" href="#7-테스트-변경-정책">7. 테스트 변경 정책</a><a class="level-2" href="#8-커밋-푸시-정책">8. 커밋/푸시 정책</a><a class="level-2" href="#9-문서-동기화-규칙">9. 문서 동기화 규칙</a><a class="level-2" href="#10-코드-메트릭-기준">10. 코드 메트릭 기준</a><a class="level-2" href="#11-db-변경-시-체크리스트">11. DB 변경 시 체크리스트</a><a class="level-2" href="#12-문서-인덱스">12. 문서 인덱스</a><a class="level-2" href="#13-린트-훅은-어떻게-선정되었는가-중요">13. 린트/훅은 어떻게 선정되었는가 (중요)</a><a class="level-3" href="#13-1-이상-vs-실제">13.1 이상 vs 실제</a><a class="level-3" href="#13-2-analysis-options-yaml-규칙-선정-근거">13.2 `analysis_options.yaml` 규칙 선정 근거</a><a class="level-3" href="#13-3-앞으로-추가-검토할-규칙">13.3 앞으로 추가 검토할 규칙</a><a class="level-3" href="#13-4-pre-commit-pre-push-선정-근거">13.4 pre-commit / pre-push 선정 근거</a><a class="level-3" href="#13-5-현재-훅의-한계-—-앞으로-보강할-것">13.5 현재 훅의 한계 — 앞으로 보강할 것</a><a class="level-2" href="#14-프로젝트-구성-전체-요약-—-무엇이-어디에-어떻게-놓였는가">14. 프로젝트 구성 전체 요약 — 무엇이 어디에 어떻게 놓였는가</a><a class="level-3" href="#14-1-flutter-패턴-—-어떤-아키텍처를-따르는가">14.1 Flutter 패턴 — 어떤 아키텍처를 따르는가</a><a class="level-3" href="#14-2-문서-구조-—-무엇이-어디에-적혀-있는가">14.2 문서 구조 — 무엇이 어디에 적혀 있는가</a><a class="level-3" href="#14-3-agents-md-세팅-—-에이전트에게-강제한-규칙">14.3 `AGENTS.md` 세팅 — 에이전트에게 강제한 규칙</a><a class="level-3" href="#14-4-스킬-에이전트-플러그인-구성">14.4 스킬 / 에이전트 / 플러그인 구성</a><a class="level-3" href="#14-5-유지보수-파이프라인-—-3단-방어선">14.5 유지보수 파이프라인 — 3단 방어선</a><a class="level-3" href="#14-6-커밋-푸시-세팅-—-경로별-방어">14.6 커밋/푸시 세팅 — 경로별 방어</a><a class="level-3" href="#14-7-유지보수-세팅-—-도구별-매핑">14.7 유지보수 세팅 — 도구별 매핑</a><a class="level-3" href="#14-8-요구사항-→-머지-까지-전체-흐름">14.8 &quot;요구사항 → 머지&quot;까지 전체 흐름</a><a class="level-2" href="#15-알려진-이슈-gotchas">15. 알려진 이슈 / Gotchas</a><a class="level-3" href="#15-1-git-worktree에서-pre-push-훅이-flutter-sdk-캐시를-오염시키는-문제">15.1 git worktree에서 pre-push 훅이 Flutter SDK 캐시를 오염시키는 문제</a><a class="level-2" href="#16-이-문서의-유지보수-규칙">16. 이 문서의 유지보수 규칙</a><a class="level-2" href="#17-운영-셋업-—-권한-버킷-secrets-정리-작업">17. 운영 셋업 — 권한 / 버킷 / Secrets / 정리 작업</a><a class="level-3" href="#17-1-권한-요약">17.1 권한 요약</a><a class="level-3" href="#17-2-storage-버킷">17.2 Storage 버킷</a><a class="level-3" href="#17-3-edge-function-secrets-셋업-최초-1회">17.3 Edge Function Secrets 셋업 (최초 1회)</a><a class="level-3" href="#17-4-고아-이미지-정리-cleanup-orphan-proposal-assets">17.4 고아 이미지 정리 (`cleanup-orphan-proposal-assets`)</a><a class="level-3" href="#17-5-진행도-트래킹-—-새-이벤트-캐릭터-추가-시-자동-반영">17.5 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영</a><a class="level-3" href="#17-6-관련-파일">17.6 관련 파일</a><a class="level-2" href="#18-자산-db-라이프사이클-—-제안-→-승인-→-재배포-단계별-어디에-어떻게-저장되나">18. 자산/DB 라이프사이클 — 제안 → 승인 → 재배포 단계별 어디에 어떻게 저장되나</a><a class="level-3" href="#18-0-시점별-한-장-요약">18.0 시점별 한 장 요약</a><a class="level-3" href="#18-1-시점-a-—-제안-작성-중-status=-pending">18.1 시점 A — 제안 작성 중 (status=&#x27;pending&#x27;)</a><a class="level-3" href="#18-2-시점-b-—-승인됨-앱-재배포-전-status=-approved-and-synced-to-local-at-is-null">18.2 시점 B — 승인됨, 앱 재배포 전 (status=&#x27;approved&#x27; AND synced_to_local_at IS NULL)</a><a class="level-3" href="#18-3-시점-c-—-운영자가-sync-실행-+-앱-재배포-완료">18.3 시점 C — 운영자가 sync 실행 + 앱 재배포 완료</a><a class="level-3" href="#18-4-사용자가-시점-c-도달-전에-앱-업데이트를-안-받았다면">18.4 사용자가 시점 C 도달 전에 앱 업데이트를 안 받았다면?</a><a class="level-3" href="#18-5-한-줄로-요약하는-판별-규칙">18.5 한 줄로 요약하는 판별 규칙</a><a class="level-3" href="#18-6-관련-파일">18.6 관련 파일</a><a class="level-2" href="#19-삭제-라이프사이클-—-제안-→-승인-→-sync-→-재배포">19. 삭제 라이프사이클 — 제안 → 승인 → sync → 재배포</a><a class="level-3" href="#19-1-한-장-요약">19.1 한 장 요약</a><a class="level-3" href="#19-2-시점별-상세">19.2 시점별 상세</a><a class="level-3" href="#19-3-비활성화된-캐릭터의-흔적">19.3 비활성화된 캐릭터의 흔적</a><a class="level-3" href="#19-4-사용자가-시점-c-도달-전에-앱-업데이트를-안-받았다면">19.4 사용자가 시점 C 도달 전에 앱 업데이트를 안 받았다면?</a><a class="level-3" href="#19-5-관련-파일">19.5 관련 파일</a><a class="level-2" href="#20-위치-충돌-→-재제출-라이프사이클-new-제안-동시-승인-시나리오">20. 위치 충돌 → 재제출 라이프사이클 (NEW 제안 동시 승인 시나리오)</a><a class="level-3" href="#20-1-시나리오">20.1 시나리오</a><a class="level-3" href="#20-2-충돌-감지-+-잠금">20.2 충돌 감지 + 잠금</a><a class="level-3" href="#20-3-제안자-재제출-revise-proposal-position-rpc">20.3 제안자 재제출 (`revise_proposal_position` RPC)</a><a class="level-3" href="#20-4-한-장-요약">20.4 한 장 요약</a><a class="level-3" href="#20-5-엣지-케이스">20.5 엣지 케이스</a><a class="level-3" href="#20-6-관련-파일">20.6 관련 파일</a></div>
+        </section>
+        <article class="doc-body">
+          <h1 id="워크플로-가이드-—-story-bible-코드-작업-+-유지보수">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</h1>
+<blockquote><p>이 문서는 Codex를 사용해 코드를 수정/추가/삭제할 때의 전체 흐름,</p>
+<p>프로젝트 스킬/에이전트가 어떻게 동작하는지, 그리고 유지보수 규칙을 정리한 가이드이다.</p>
+<p>실제 진입 규칙은 <code>AGENTS.md</code>를 우선한다.</p>
+<p>최종 수정: 2026-06-23</p></blockquote>
+<blockquote><p>현재 콘텐츠 운영 주의: 이 문서의 17~20장에 있는 사역자 웹 제안/승인 흐름은</p>
+<p>구현 이력과 구조 참고용이다. 현재 운영에서는 웹을 배포하지 않고, 신규 이야기</p>
+<p>요청이 들어오면 운영자가 로컬에서 JSON/이미지/seed/앱 번들을 직접 갱신한다.</p>
+<p>실제 신규 이야기 추가 절차는 <a href="content-update.html">CONTENT_UPDATE.md</a>와</p>
+<p><a href="develop-flow.html">develop-flow.md</a>를 우선한다.</p></blockquote>
+<hr>
+<h2 id="1-전체-흐름-한눈에">1. 전체 흐름 한눈에</h2>
+<pre><code class="language-">[코드 작성 요청]
+    │
+    ├─ Plan: 작업 분류 + 스킬 호출 + 영향 범위/검증 계획
+    ├─ Do: 테스트/구현/문서 수정
+    ├─ Check: diff/format/analyze/test/도구 검증 + 리스크 확인
+    ├─ Act: 실패 반영, 후속 수정, 결과 보고
+    ├─ Codex: &quot;변경 완료. 커밋할까요?&quot; ← 여기서 멈춤
+    │
+    ├─ 사용자: &quot;커밋해줘&quot; → 로컬 커밋 (pre-commit hooks 자동)
+    ├─ 사용자: &quot;푸시해줘&quot; → GitHub push (pre-push hooks 자동)
+    └─ 사용자: &quot;PR 만들어줘&quot; → PR 생성 (GitHub Actions CI 자동)</code></pre>
+<p><strong>핵심 원칙</strong>:</p>
+<ul><li>코드 변경은 Codex가 하지만, <strong>커밋/푸시/PR은 항상 사용자가 지시</strong>.</li><li>자동으로 커밋하거나 push하지 않는다. (<code>AGENTS.md</code> &quot;Git And Safety&quot; 참조)</li><li>기존 테스트 수정/삭제 시 이유를 명확히 하고 범위를 작게 유지한다.</li></ul>
+<h3 id="1-1-pdca-루프">1.1 PDCA 루프</h3>
+<p>이 저장소의 Codex 작업은 PDCA(Plan-Do-Check-Act)를 기본 루프로 사용한다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>단계</th>
+<th>의미</th>
+<th>확인할 것</th>
+</tr></thead><tbody>
+<tr>
+<td>Plan</td>
+<td>계획</td>
+<td>도메인 스킬, 관련 문서, 기존 테스트, 영향 파일, 위험도</td>
+</tr>
+<tr>
+<td>Do</td>
+<td>실행</td>
+<td>TDD, 기존 패턴, 작은 단위 수정, 문서 동기화</td>
+</tr>
+<tr>
+<td>Check</td>
+<td>확인</td>
+<td><code>git diff</code>, format/analyze/test, 의도 밖 변경, secret, 문서 누락, 메트릭 변화</td>
+</tr>
+<tr>
+<td>Act</td>
+<td>조치</td>
+<td>실패 반영, 후속 수정, 통과/실패 결과, 남은 리스크, 다음 단계</td>
+</tr>
+</tbody></table></div>
+<p>TDD는 PDCA 중 Do 단계에 포함된다. 즉 &quot;테스트 먼저&quot; 규칙은 유지하되, 작업 전후로 Plan/Check/Act가 추가되어 변경 안정성을 높인다.</p>
+<hr>
+<h2 id="2-스킬-skill-이란">2. 스킬(Skill)이란?</h2>
+<p><strong>한 줄 요약</strong>: &quot;이 도메인 작업할 때 이 참고 문서를 읽어라&quot;라는 지시서.</p>
+<p>Codex는 평소 <code>AGENTS.md</code>를 우선 진입점으로 삼는다. 전체 문서를 항상 읽으면 토큰 낭비이므로, 필요한 도메인의 문서만 <strong>그때그때 로드</strong>한다.</p>
+<pre><code class="language-">평소:
+  AGENTS.md ← 빌드/실행/컨벤션/스킬 목록
+
+$frontend 스킬 호출 시:
+  AGENTS.md
+  + .agents/skills/frontend/SKILL.md (지시서)
+    → ../FRONTEND.md (파일 표, 위젯 목록, 패턴)
+    → ../UI_GUIDE.md (디자인 가이드)
+  = 프론트엔드 컨텍스트 로드됨
+
+$backend 스킬 호출 시:
+  AGENTS.md
+  + .agents/skills/backend/SKILL.md
+    → ../BACKEND.md (DB 스키마, RLS, Repository)
+  + 필요한 경우 Supabase 공식 문서/도구 확인
+  = 백엔드 컨텍스트 로드됨</code></pre>
+<h3 id="프로젝트-주요-스킬">프로젝트 주요 스킬</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>스킬</th>
+<th>언제 호출</th>
+<th>로드하는 문서</th>
+<th>파일 범위</th>
+</tr></thead><tbody>
+<tr>
+<td><code>$frontend</code></td>
+<td>UI/위젯/화면/상태 변경</td>
+<td><code>../FRONTEND.md</code>, <code>../UI_GUIDE.md</code></td>
+<td><code>lib/screens/</code>, <code>lib/widgets/</code>, <code>lib/state/</code>, <code>lib/models/</code></td>
+</tr>
+<tr>
+<td><code>$backend</code></td>
+<td>DB/쿼리/인증/RLS 변경</td>
+<td><code>../BACKEND.md</code> + 필요 시 Supabase 공식 문서/도구</td>
+<td><code>db_init.sql</code>, <code>supabase/</code>, <code>lib/data/</code></td>
+</tr>
+<tr>
+<td><code>$data-pipeline</code></td>
+<td>에셋/시딩/Python 스크립트</td>
+<td><code>../DATA_PIPELINE.md</code></td>
+<td><code>tools/*.py</code>, <code>assets/</code>, <code>Makefile</code></td>
+</tr>
+<tr>
+<td><code>$testing</code></td>
+<td>테스트 작성/실행</td>
+<td><code>../TESTING.md</code>, <code>docs/guides/TEST_GUIDE.md</code></td>
+<td><code>test/</code>, <code>tools/**/test_*.py</code></td>
+</tr>
+<tr>
+<td><code>$refactor</code></td>
+<td>대규모 분해/중복 제거</td>
+<td>자체 절차 가이드</td>
+<td>전체 (도메인 횡단)</td>
+</tr>
+<tr>
+<td><code>$worktree-commit</code></td>
+<td>현재 작업 커밋/보조 worktree 정리</td>
+<td>자체 절차 가이드</td>
+<td>git worktree, 현재 diff</td>
+</tr>
+<tr>
+<td><code>$pre-push-pr</code></td>
+<td>푸시 전 점검/커밋/푸시/PR 초안</td>
+<td>자체 절차 가이드</td>
+<td>전체 저장소</td>
+</tr>
+</tbody></table></div>
+<h3 id="스킬-호출-방식">스킬 호출 방식</h3>
+<ul><li><strong>자동</strong>: Codex가 작업 내용을 보고 &quot;이건 프론트엔드다&quot;라고 판단하면 알아서 호출</li><li><strong>수동</strong>: 사용자가 <code>$frontend</code> 또는 <code>$backend</code>라고 입력하면 강제 호출</li></ul>
+<hr>
+<h2 id="3-agent-서브에이전트-란">3. Agent(서브에이전트)란?</h2>
+<p><strong>한 줄 요약</strong>: 별도 에이전트를 띄워서 병렬로 작업시키는 것.</p>
+<p>스킬과 차이: 스킬은 메인 Codex가 문서를 추가 로드, Agent는 <strong>별도 에이전트가 독립 작업</strong>.</p>
+<pre><code class="language-">메인 Codex (사용자와 대화 중)
+  │
+  ├── Agent A: &quot;story_map_panel.dart 구조 분석해줘&quot;
+  ├── Agent B: &quot;profile_tab_page.dart 구조 분석해줘&quot;
+  └── Agent C: &quot;weekly_tab_page.dart 구조 분석해줘&quot;
+
+  (3개 동시 분석 → 각각 요약 반환)
+
+메인 Codex: 결과 종합 → 리팩토링 계획 수립</code></pre>
+<h3 id="agent-사용-규칙">Agent 사용 규칙</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>상황</th>
+<th>방법</th>
+<th>이유</th>
+</tr></thead><tbody>
+<tr>
+<td>여러 큰 파일 분석</td>
+<td>Agent 병렬</td>
+<td>메인 컨텍스트 절약 + 속도</td>
+</tr>
+<tr>
+<td>영향 범위 조사</td>
+<td>Agent</td>
+<td>grep으로 안 잡히는 로직 흐름 추적</td>
+</tr>
+<tr>
+<td>실제 코드 수정</td>
+<td><strong>메인이 직접</strong></td>
+<td>여러 Agent가 동시에 같은 파일 수정하면 충돌</td>
+</tr>
+<tr>
+<td>단일 파일 수정</td>
+<td>Agent 안 씀</td>
+<td>오버헤드만 큼</td>
+</tr>
+</tbody></table></div>
+<p><strong>원칙: 탐색은 병렬, 수정은 직렬.</strong></p>
+<hr>
+<h2 id="4-플러그인이란">4. 플러그인이란?</h2>
+<p><strong>한 줄 요약</strong>: 외부 전문가 도구와 프로젝트 스킬을 Codex 작업 흐름에 연결.</p>
+<p>현재 저장소 기준 핵심 진입점:</p>
+<ul><li><code>AGENTS.md</code> — Codex가 가장 먼저 읽는 프로젝트 운영 규칙</li><li><code>.agents/skills/backend</code> — Supabase, Repository, 마이그레이션 작업 규칙</li><li><code>.agents/skills/frontend</code> — Flutter UI 작업 규칙</li><li><code>.agents/skills/testing</code> — 테스트/검증 작업 규칙</li></ul>
+<p>외부 Supabase/PostgreSQL 참고 도구가 있더라도, 이 저장소에서는 <code>AGENTS.md</code>와 프로젝트 스킬의 규칙을 우선 적용한다.</p>
+<hr>
+<h2 id="5-작업-유형별-흐름">5. 작업 유형별 흐름</h2>
+<blockquote><p><strong>모든 코드 변경은 TDD 순서를 따른다.</strong> &quot;TDD는 새 기능에만 쓰는 것&quot;이 아니라</p>
+<p><strong>요구사항 해석 → 테스트 정렬 → 구현 변경</strong>이라는 <strong>작업 순서 원칙</strong>이다.</p>
+<p>요청이 들어오면 코드를 고치기 전에 <strong>반드시</strong>:</p>
+<p>1. 관련 테스트가 이미 있는지 확인 (<code>test/</code> grep)</p>
+<p>2. 요구사항과 기존 테스트를 <strong>비교</strong> — 기존 테스트가 요구사항과 충돌하면 이 테스트를</p>
+<p>수정/삭제해야 하는데, 그건 사용자 확인 대상(§7)임</p>
+<p>3. 테스트부터 먼저 갱신/추가 → <code>flutter test</code> 실패(Red) 확인</p>
+<p>4. 구현 변경 → <code>flutter test</code> 통과(Green) 확인</p>
+<p>5. 리팩토링 (테스트는 그대로 두고 구현만 정리)</p>
+<p>이 순서를 지키면 &quot;요구사항이 뭐였는지&quot;가 항상 테스트 코드에 기록으로 남는다.</p></blockquote>
+<h3 id="5-1-기존-기능-수정">5.1 기존 기능 수정</h3>
+<blockquote><p>예: &quot;글자 크기 설정의 저장 범위를 바꿔줘&quot;</p></blockquote>
+<pre><code class="language-">1. Grep: font scale 사용처 + 기존 테스트 위치 파악
+   → lib/state/font_scale_providers.dart,
+     lib/data/font_scale_repository.dart,
+     test/state/font_scale_providers_test.dart 발견
+2. 요구사항 ↔ 기존 테스트 비교
+   → 기존 테스트가 현재 저장 범위/기본값을 검증 중 → 테스트 수정 필요 →
+     ⚠️ 사용자 확인 (§7 &quot;기존 테스트 수정은 승인 필요&quot;)
+3. 사용자 승인 후: 테스트 먼저 수정 → flutter test 실패 (Red)
+4. 코드 수정 → flutter test 통과 (Green)
+5. 리팩토링 (필요 시)
+6. 문서 동기화 체크 (시그니처 변경 시만)
+7. &quot;완료. 커밋할까요?&quot; → 사용자 결정 대기</code></pre>
+<h3 id="5-2-새-기능-추가">5.2 새 기능 추가</h3>
+<blockquote><p>예: &quot;오늘의 동행 일지에 감정 태그를 추가해줘&quot;</p></blockquote>
+<pre><code class="language-">1. 작업 분류: $backend + $frontend + $testing 필요
+2. $testing: 요구사항을 테스트로 먼저 표현 (Red)
+   - 모델/fromMap 테스트
+   - Repository 메소드 시그니처 테스트
+   - Controller 상태 전환 테스트
+   - 위젯 렌더링 테스트
+   → 모두 실패 확인
+3. $backend: Repository 메소드 추가 → 해당 테스트 Green
+4. $frontend: 위젯 파일 신설 + 화면 연결 → 위젯 테스트 Green
+5. 전체 flutter test 통과 확인
+6. 코드 메트릭 체크 (신규 파일 크기 적정한지)
+7. 문서 동기화: FRONTEND.md, BACKEND.md, TESTING.md 갱신
+8. &quot;완료. 커밋할까요?&quot; → 사용자 결정 대기</code></pre>
+<h3 id="5-2-1-버그-수정">5.2.1 버그 수정</h3>
+<blockquote><p>예: &quot;지도 핀이 겹칠 때 앞 핀이 뒤 핀을 가린다&quot;</p></blockquote>
+<pre><code class="language-">1. Grep: 관련 렌더링 코드 + 기존 테스트 위치
+2. 버그를 재현하는 실패 테스트 먼저 작성 (Red)
+   → 현재 코드에서 테스트가 실패해야 &quot;버그가 실제로 있음&quot;이 증명됨
+3. 코드 수정 → 테스트 통과 (Green)
+4. 회귀 방지용으로 테스트는 영구 보존
+5. &quot;완료. 커밋할까요?&quot;</code></pre>
+<h3 id="5-3-기능-삭제">5.3 기능 삭제</h3>
+<blockquote><p>예: &quot;사용하지 않는 홈 안내 패널을 제거해줘&quot;</p></blockquote>
+<pre><code class="language-">1. Agent 파견: 영향 범위 전수 조사 (삭제는 가장 위험)
+2. 삭제 계획 + &quot;유지할 것&quot; 제시 → 사용자 승인 필수
+3. UI부터 제거 (의존하는 쪽부터) → Repository → 테스트
+4. 검증: flutter analyze + test → 죽은 코드 없는지 확인
+5. 문서 동기화
+6. &quot;완료. 커밋할까요?&quot; → 사용자 결정 대기</code></pre>
+<h3 id="5-4-db-변경이-필요한-요청">5.4 DB 변경이 필요한 요청</h3>
+<blockquote><p>예: &quot;사용자끼리 친구 추가 기능 만들어줘&quot;</p></blockquote>
+<pre><code class="language-">1. $backend 스킬 + Supabase 공식 플러그인 활성화
+2. db_init.sql 수정 (스키마 단일 진실 소스)
+3. 필요한 seed builder / seed SQL 갱신
+4. RLS 정책 설정 (Supabase 플러그인이 검증)
+5. Repository Dart 코드 추가
+6. Model 클래스 생성
+7. $frontend: UI 위젯 추가
+8. $testing: 테스트 작성
+9. &quot;완료. 커밋할까요?&quot;
+   ⚠️ &quot;개발 DB 반영은 리셋 시퀀스로 합니다:
+      make seed-all &amp;&amp; make db-init &amp;&amp; make apply-seeds &amp;&amp; make upload-character-avatars&quot;</code></pre>
+<p><strong>중요</strong>: Codex는 기본적으로 SQL 파일만 만들고, 실제 DB 적용은 사용자가 직접한다. 명시 요청 없이 운영 Supabase에 직접 접속하지 않는다 (보안).</p>
+<hr>
+<h2 id="5-5-지도-콘텐츠-—-랜드마크-시대-영역-워크플로">5.5 지도 콘텐츠 — 랜드마크 / 시대 영역 워크플로</h2>
+<p>지도에 항상 표시되는 랜드마크(예루살렘 성전·시내산 등)와 시대별 거친 지리 영역 region polygon 은 <code>landmarks.json</code> 안의 정적 카탈로그다. JSON 편집 → SQL 생성 → DB 적용 의 단순한 3단계 파이프라인이며, 운영 지도는 이를 MapLibre 3D layer 로 렌더링한다.</p>
+<h3 id="5-5-1-콘텐츠-워크플로-다이어그램">5.5.1 콘텐츠 워크플로 다이어그램</h3>
+<pre><code class="language-mermaid">flowchart LR
+    subgraph SRC[&quot;📝 1. 사용자가 편집&quot;]
+        L[assets/landmarks/&lt;br/&gt;landmarks.json&lt;br/&gt;랜드마크 + region polygon&lt;br/&gt;+ era_codes]
+    end
+
+    subgraph BUILD[&quot;🔨 2. SQL 생성 (make)&quot;]
+        BO[build_landmarks_&lt;br/&gt;seed_sql.py]
+        OS[supabase/200_stories/&lt;br/&gt;landmarks_seed.sql]
+    end
+
+    subgraph DB[(&quot;🗄️ 3. Supabase DB&quot;)]
+        T1[(landmarks)]
+    end
+
+    subgraph APP[&quot;📱 4. 앱&quot;]
+        APP1[시대 선택 시 그 시대&lt;br/&gt;랜드마크 + region polygon 노출]
+    end
+
+    L --&gt;|make seed-landmarks| BO --&gt; OS
+    OS --&gt;|make apply-seeds-landmarks| T1
+    T1 --&gt;|fetchLandmarks| APP1
+
+    style SRC fill:#FFF8E1,stroke:#E6B800
+    style BUILD fill:#E3F2FD,stroke:#1E88E5
+    style DB fill:#E8F5E9,stroke:#2E7D32
+    style APP fill:#FCE4EC,stroke:#C2185B</code></pre>
+<p><strong>한 번에 끝내기</strong>: <code>make db-init ENV=dev</code> (스키마 생성, 파괴적!) → <code>make apply-seeds ENV=dev</code> (인물·사건·랜드마크 모두 적용).</p>
+<h3 id="5-5-2-데이터-레이어-관계도-지도-위에서-합쳐지는-구조">5.5.2 데이터 레이어 관계도 (지도 위에서 합쳐지는 구조)</h3>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph DBL[&quot;DB 테이블&quot;]
+        ER[(eras&lt;br/&gt;11개 시대)]
+        EV[(events&lt;br/&gt;310개 사건)]
+        LM[(landmarks&lt;br/&gt;랜드마크 + region polygon&lt;br/&gt;+ era_codes)]
+        CH[(characters&lt;br/&gt;인물)]
+    end
+
+    subgraph STATE[&quot;StoryState (Riverpod, 부팅 시 한 번 로드)&quot;]
+        S1[landmarks 전체]
+        S3[characters of era]
+        S4[events of era]
+        S5[selectedEraId]
+        S6[selectedCharacterCodes]
+        S7[displayedEventIds]
+    end
+
+    subgraph MAP[&quot;StoryMapPanel 레이어 스택 (아래 → 위)&quot;]
+        L0[1. MapLibre 3D background + 국경]
+        L1[2. region polygon/label/hit-zone&lt;br/&gt;GeoJSON layer]
+        L2[3. non-region landmarks&lt;br/&gt;DOM marker]
+        L3[4. events/path&lt;br/&gt;GeoJSON + DOM marker]
+        L4[5. Flutter overlay&lt;br/&gt;시트/legend/card]
+    end
+
+    LM --&gt; S1
+    S1 -.filter by era_codes.-&gt; L1
+    S1 -.filter by era_codes.-&gt; L2
+    ER --&gt; S5
+    EV --&gt; S4 -.filter by displayedEventIds.-&gt; L3
+    CH --&gt; S3 --&gt; S6
+
+    style DBL fill:#E8F5E9,stroke:#2E7D32
+    style STATE fill:#FFF3E0,stroke:#F57C00
+    style MAP fill:#E1F5FE,stroke:#0277BD</code></pre>
+<p><strong>핵심 설계 원칙</strong>: <code>landmarks</code> 는 부팅 시 한 번만 전체 로드되어 메모리에 캐시된다. selectedEraId 가 바뀌면 네트워크 호출 없이 <code>era_codes</code> 배열로 클라이언트에서 필터링한다.</p>
+<h3 id="5-5-3-사용자-인터랙션-시퀀스">5.5.3 사용자 인터랙션 시퀀스</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    actor U as 사용자
+    participant App as Flutter 앱
+    participant State as StoryState
+    participant Map as StoryMapPanel
+    participant DB as Supabase
+
+    Note over App: 앱 부팅
+    App-&gt;&gt;DB: fetchEras / fetchLandmarks
+    DB--&gt;&gt;State: era + landmark/region polygon catalog
+    Note over Map: 시대 미선택 → 지도는 비어 있음
+
+    Note over U,Map: 시대 선택 (Step 1, &quot;다음&quot; 누르기 전)
+    U-&gt;&gt;App: &quot;족장시대&quot; 탭
+    App-&gt;&gt;State: selectEra(era_patriarch_id)
+    State--&gt;&gt;Map: eraRegionLandmarks + activeLandmarks (era_codes 매칭 항목)
+    Map--&gt;&gt;U: MapLibre 3D region polygon&lt;br/&gt;+ 🏺 우르, 🏕️ 하란, 🪜 벧엘 등 시대 랜드마크
+
+    Note over U,Map: 인물 선택
+    U-&gt;&gt;App: 아브라함 체크
+    App-&gt;&gt;State: toggleCharacter(&quot;abraham&quot;)
+    Note over State: 영역 폴리곤 + 랜드마크는 그대로 유지
+
+    U-&gt;&gt;App: Step3 &quot;다음&quot; — 사건 5개 선택
+    App-&gt;&gt;State: setDisplayedEvents({...5개 id})
+    State--&gt;&gt;Map: events (filtered)
+    Map--&gt;&gt;U: 폴리곤 + 랜드마크 위에 핀 + 화살표 path&lt;br/&gt;&quot;아브라함이 영역 어디를 다녔는지&quot; 한눈에</code></pre>
+<p><strong>핵심 가치 제안</strong>: 사용자가 &quot;족장시대 = 메소포타미아에서 가나안·이집트로 이어지는 영역&quot; 이라는 거시적 지리 감각을 폴리곤으로 잡고, 그 위에 아브라함 같은 개별 인물의 행적이 그 영역 내 어디를 다녔는지 핀으로 비교할 수 있다. 한국 사용자가 성경 지리에 머릿속 좌표계를 만들기 위한 학습 도구.</p>
+<h3 id="5-5-4-콘텐츠-수정-흐름-사용자-작업-절차">5.5.4 콘텐츠 수정 흐름 (사용자 작업 절차)</h3>
+<pre><code class="language-">랜드마크 추가/수정:
+  ① assets/landmarks/landmarks.json 편집
+     · code 는 unique, lat/lng/emoji 필수
+     · era_codes 배열에 노출되고 싶은 시대 코드 추가 (eras.code 기준)
+       ex) 예루살렘 성전 → [&quot;era_monarchy&quot;, &quot;era_exile_return&quot;, &quot;era_nt_public_ministry&quot;]
+  ② make seed-landmarks                  → SQL 재생성
+  ③ make apply-seeds-landmarks ENV=dev   → DB UPSERT (재실행 안전)
+  ④ 앱 재실행 → 그 시대 선택 시 즉시 노출
+
+이벤트 좌표 ↔ 랜드마크 정렬 (모리아·헤브론·막벨라 등 어긋남 보정):
+  ① make align-events-to-landmarks-dry   → 변경 후보만 출력 (검증)
+  ② make align-events-to-landmarks       → assets/200_stories/*.json 의 lat/lng 를
+                                          매칭되는 landmark 좌표로 일괄 갱신
+  ③ make seed-stories                    → events SQL 재생성
+  ④ make apply-seeds-stories-characters ENV=dev
+  ⚠️ 매핑 키워드는 tools/seed/align_events_to_landmarks.py 의 KEYWORD_TO_LANDMARK
+     리스트로 제어. 새 landmark 추가 시 키워드도 함께 등록 권장.</code></pre>
+<p>⚠️ <strong>stale 정리</strong>: 빌더는 JSON 에 없는 항목을 DB 에서 자동 삭제한다. JSON 에서 항목을 빼면 DB 에서도 사라진다.</p>
+<h3 id="5-5-5-명령어-의사결정-—-언제-어떤-make-타겟을-쓰나">5.5.5 명령어 의사결정 — 언제 어떤 make 타겟을 쓰나</h3>
+<blockquote><p>&quot;지금 무엇을 바꿨는지&quot; 만 보고 어디까지 실행할지 결정. 가장 자주 헷갈리는 부분.</p></blockquote>
+<pre><code class="language-mermaid">flowchart TD
+    Q{무엇을 바꿨나?}
+
+    Q --&gt; S1[성경 본문 텍스트&lt;br/&gt;assets/bible/*.txt]
+    S1 --&gt; C1[make seed-bible-verses&lt;br/&gt;+ apply-bible-verses-seeds]
+
+    Q --&gt; S2[이야기/인물&lt;br/&gt;assets/200_stories/*.json]
+    S2 --&gt; C2[make seed-stories-characters&lt;br/&gt;+ apply-seeds-stories-characters]
+
+    Q --&gt; S3[랜드마크 추가/수정&lt;br/&gt;assets/landmarks/landmarks.json]
+    S3 --&gt; C3[make seed-landmarks&lt;br/&gt;+ apply-seeds-landmarks]
+
+    Q --&gt; S5[이벤트 좌표가 landmark 와&lt;br/&gt;어긋나 보임]
+    S5 --&gt; C5[make align-events-to-landmarks&lt;br/&gt;+ make seed-stories&lt;br/&gt;+ apply-seeds-stories-characters]
+
+    Q --&gt; S6[새 인물 아바타 추가&lt;br/&gt;assets/avatars/*.png]
+    S6 --&gt; C6[make thumbnails&lt;br/&gt;+ upload-character-avatars]
+
+    Q --&gt; S7[DB 스키마 자체 변경&lt;br/&gt;db_init.sql 수정]
+    S7 --&gt; C7[⚠️ make db-init&lt;br/&gt;모든 데이터 사라짐 — 풀 리셋 시퀀스 사용]
+
+    Q --&gt; S8{풀 리셋&lt;br/&gt;전부 처음부터}
+    S8 --&gt; C8[make seed-all&lt;br/&gt;&amp;&amp; make db-init&lt;br/&gt;&amp;&amp; make apply-seeds&lt;br/&gt;&amp;&amp; make upload-character-avatars]
+
+    style C1 fill:#E8F5E9,stroke:#2E7D32
+    style C2 fill:#E8F5E9,stroke:#2E7D32
+    style C3 fill:#E8F5E9,stroke:#2E7D32
+    style C5 fill:#E3F2FD,stroke:#1E88E5
+    style C6 fill:#FCE4EC,stroke:#C2185B
+    style C7 fill:#FFEBEE,stroke:#C62828
+    style C8 fill:#FFF9C4,stroke:#F57F17</code></pre>
+<p><strong>색상 의미:</strong> 🟢 안전(idempotent) / 🔵 데이터 정렬 / 🟣 자산 업로드 / 🔴 파괴적 / 🟡 풀 리셋</p>
+<h3 id="5-5-6-풀-리셋-시퀀스-신규-환경-모든-것-처음부터">5.5.6 풀 리셋 시퀀스 (신규 환경 / 모든 것 처음부터)</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    actor U as 운영자
+    participant Local as 로컬 디스크&lt;br/&gt;(assets/, tools/)
+    participant SQL as supabase/&lt;br/&gt;(생성된 SQL)
+    participant DB as Supabase DB
+    participant Storage as Supabase Storage
+
+    Note over U: ① SQL 생성 (전체)
+    U-&gt;&gt;Local: make seed-all
+    Local-&gt;&gt;SQL: krv_bible_verses_part_*.sql
+    Local-&gt;&gt;SQL: 200_stories_seed_part_*.sql
+    Local-&gt;&gt;SQL: characters_seed.sql
+    Local-&gt;&gt;SQL: landmarks_seed.sql
+
+    Note over U: ② 스키마 초기화 (파괴적!)
+    U-&gt;&gt;DB: make db-init ENV=dev
+    Note over DB: drop &amp; recreate&lt;br/&gt;landmarks 테이블 포함
+
+    Note over U: ③ 데이터 시드 (4-체인 자동)
+    U-&gt;&gt;DB: make apply-seeds ENV=dev
+    SQL-&gt;&gt;DB: bible_verses (31,904절)
+    SQL-&gt;&gt;DB: characters + events
+    SQL-&gt;&gt;DB: landmarks
+
+    Note over U: ④ 인물 아바타 Storage 업로드 (1회)
+    U-&gt;&gt;Storage: make upload-character-avatars ENV=dev
+    Local-&gt;&gt;Storage: assets/avatars/*.png → characters/&lt;code&gt;.png
+
+    Note over U: 완료 — 앱 실행 시 모든 콘텐츠 정상</code></pre>
+<p><strong>한 줄 명령</strong>:</p>
+<pre><code class="language-bash">make seed-all &amp;&amp; make db-init ENV=dev &amp;&amp; make apply-seeds ENV=dev &amp;&amp; make upload-character-avatars ENV=dev</code></pre>
+<h3 id="5-5-7-자주-묻는-질문">5.5.7 자주 묻는 질문</h3>
+<p><strong>Q. <code>make db-init &amp;&amp; make apply-seeds &amp;&amp; make upload-character-avatars</code> 만 하면 랜드마크/region 폴리곤도 다 들어가나요?</strong> → <strong>이미 SQL 이 디스크에 있다면 yes</strong> (<code>landmarks_seed.sql</code> 에 랜드마크와 region polygon 이 함께 들어간다). 신규 환경이면 앞에 <code>make seed-all</code> 을 붙여 SQL 부터 생성해야 안전.</p>
+<p><strong>Q. landmark 좌표를 바꿨더니 이벤트 핀이 따로 떠 있어요.</strong> → 같은 장소를 가리키는 이벤트의 lat/lng 가 landmark 와 미세 차이 + 핀 분산 알고리즘이 떨어뜨린 것. <code>make align-events-to-landmarks</code> → <code>make seed-stories</code> → <code>make apply-seeds-stories-characters</code> 순으로 정렬.</p>
+<p><strong>Q. region 폴리곤이 박스 같아요. 더 정밀하게 만들고 싶어요.</strong> → <code>make refine-landmark-polygons</code> 로 Natural Earth 기반 후보를 만들고, 검토 후 <code>landmarks.json</code> 에 반영한다.</p>
+<p><strong>Q. JSON 에서 랜드마크 하나를 지웠는데 DB 에 그대로 남아 있어요.</strong> → stale 정리는 <code>make apply-seeds-landmarks</code> 가 실행돼야 발동. seed 만 만들고 apply 안 했을 가능성. 빌더는 &quot;현재 JSON 에 없는 code 를 DELETE&quot; 절을 SQL 머리에 넣어 둠.</p>
+<hr>
+<h2 id="6-유지보수-시스템-—-자동-검증-파이프라인">6. 유지보수 시스템 — 자동 검증 파이프라인</h2>
+<h3 id="6-1-에디터-실시간">6.1 에디터 (실시간)</h3>
+<p><code>analysis_options.yaml</code>의 11개 lint 규칙이 에디터에서 코드 치는 순간 경고를 표시. 빨간/노란 밑줄 → Quick Fix로 자동 수정 가능. (선정 근거 + 카테고리는 §13.2 참조)</p>
+<h3 id="6-2-pre-commit-git-commit-시-자동">6.2 Pre-commit (git commit 시 자동)</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Hook</th>
+<th>역할</th>
+</tr></thead><tbody>
+<tr>
+<td><code>dart-format</code></td>
+<td>Dart 코드 포맷 검증</td>
+</tr>
+<tr>
+<td><code>forbidden-patterns</code></td>
+<td><code>print()</code>, JWT 시크릿, Google API key 차단</td>
+</tr>
+<tr>
+<td><code>dart-import-sort</code></td>
+<td>import 순서 검증 (<code>import_sorter</code>)</td>
+</tr>
+<tr>
+<td><code>black</code></td>
+<td>Python 코드 포맷 (tools/)</td>
+</tr>
+<tr>
+<td><code>check-added-large-files</code></td>
+<td>2MB 이상 파일 차단</td>
+</tr>
+<tr>
+<td><code>check-merge-conflict</code></td>
+<td>머지 충돌 마커 차단</td>
+</tr>
+<tr>
+<td><code>check-yaml</code></td>
+<td>YAML 문법 검증</td>
+</tr>
+<tr>
+<td><code>end-of-file-fixer</code></td>
+<td>파일 끝 개행 보장</td>
+</tr>
+<tr>
+<td><code>trailing-whitespace</code></td>
+<td>행 끝 공백 제거</td>
+</tr>
+</tbody></table></div>
+<h3 id="6-3-pre-push-git-push-시-자동">6.3 Pre-push (git push 시 자동)</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Hook</th>
+<th>역할</th>
+</tr></thead><tbody>
+<tr>
+<td><code>flutter-analyze</code></td>
+<td>0 issues 강제</td>
+</tr>
+<tr>
+<td><code>flutter-test</code></td>
+<td>전체 테스트 통과 강제</td>
+</tr>
+<tr>
+<td><code>verify-asset-paths</code></td>
+<td>pubspec.yaml ↔ 실제 asset 파일 일치 검증</td>
+</tr>
+<tr>
+<td><code>verify-polygons-contain-events</code></td>
+<td>landmark polygon과 event 위치 매핑 검증</td>
+</tr>
+<tr>
+<td><code>python-tools-test</code></td>
+<td><code>tools/**/test_*.py</code> 도구 테스트</td>
+</tr>
+<tr>
+<td><code>code-metrics</code></td>
+<td>파일/메소드 크기 제한 보고</td>
+</tr>
+</tbody></table></div>
+<h3 id="6-4-github-actions-ci-pr-시-자동">6.4 GitHub Actions CI (PR 시 자동)</h3>
+<p>pre-commit + pre-push의 모든 검사를 원격에서 한 번 더 실행. <code>--no-verify</code>로 로컬 hook을 우회해도 PR 머지 전에 잡힘.</p>
+<hr>
+<h2 id="7-테스트-변경-정책">7. 테스트 변경 정책</h2>
+<p>테스트 코드 = &quot;이 기능이 이렇게 동작해야 한다&quot;는 명세(spec).</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>작업</th>
+<th>정책</th>
+</tr></thead><tbody>
+<tr>
+<td>새 테스트 <strong>추가</strong></td>
+<td>자유 (기존 동작 안 바뀜)</td>
+</tr>
+<tr>
+<td>기존 테스트 <strong>수정</strong></td>
+<td>사용자에게 먼저 확인. &quot;이 테스트를 이렇게 바꿔도 될까요?&quot;</td>
+</tr>
+<tr>
+<td>기존 테스트 <strong>삭제</strong></td>
+<td>사용자에게 먼저 확인. 삭제 이유 + 영향 설명.</td>
+</tr>
+<tr>
+<td><code>dart fix</code>에 의한 문법 변경</td>
+<td>동작 안 바뀌므로 확인 불필요</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="8-커밋-푸시-정책">8. 커밋/푸시 정책</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>행동</th>
+<th>정책</th>
+</tr></thead><tbody>
+<tr>
+<td>코드 변경</td>
+<td>Codex가 스킬/문서 규칙을 읽고 진행</td>
+</tr>
+<tr>
+<td><code>git commit</code></td>
+<td><strong>사용자가 &quot;커밋해줘&quot;라고 지시할 때만</strong></td>
+</tr>
+<tr>
+<td><code>git push</code></td>
+<td><strong>사용자가 &quot;푸시해줘&quot;라고 지시할 때만</strong></td>
+</tr>
+<tr>
+<td><code>gh pr create</code></td>
+<td><strong>사용자가 &quot;PR 만들어줘&quot;라고 지시할 때만</strong></td>
+</tr>
+<tr>
+<td>자동 push</td>
+<td><strong>절대 하지 않는다</strong></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="9-문서-동기화-규칙">9. 문서 동기화 규칙</h2>
+<p>코드 변경 후 Codex가 스스로 체크: &quot;이 변경으로 어떤 문서가 오래됐는가?&quot;</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>변경 유형</th>
+<th>갱신 대상</th>
+</tr></thead><tbody>
+<tr>
+<td>새 위젯/화면/모델 추가·이동·삭제</td>
+<td><code>../FRONTEND.md</code></td>
+</tr>
+<tr>
+<td>DB 스키마/RLS/Repository 변경</td>
+<td><code>../BACKEND.md</code>, <code>db_init.sql</code></td>
+</tr>
+<tr>
+<td>새 Python 스크립트/Makefile 타겟</td>
+<td><code>../DATA_PIPELINE.md</code></td>
+</tr>
+<tr>
+<td>테스트 전략/커버리지 변화</td>
+<td><code>../TESTING.md</code></td>
+</tr>
+<tr>
+<td>중요한 아키텍처 결정</td>
+<td><code>../ADR.md</code></td>
+</tr>
+<tr>
+<td>스킬/훅/플러그인 변경</td>
+<td><code>AGENTS.md</code>, <code>.agents/skills/*</code></td>
+</tr>
+<tr>
+<td>빌드/실행 명령 변경</td>
+<td><code>AGENTS.md</code></td>
+</tr>
+<tr>
+<td>의존성 추가/제거</td>
+<td><code>pubspec.yaml</code> + <code>../FRONTEND.md</code> §6</td>
+</tr>
+<tr>
+<td>PRD 수준의 기능 추가/삭제</td>
+<td><code>../PRD.md</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="10-코드-메트릭-기준">10. 코드 메트릭 기준</h2>
+<p>거대 파일 재발 방지용 자동 검사 (<code>tools/lint/check_code_metrics.py</code>):</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>항목</th>
+<th>경고</th>
+<th>차단</th>
+</tr></thead><tbody>
+<tr>
+<td>파일 줄 수</td>
+<td>500줄</td>
+<td>1,500줄</td>
+</tr>
+<tr>
+<td>메소드/함수 수</td>
+<td>20개</td>
+<td>40개</td>
+</tr>
+<tr>
+<td>단일 메소드 줄 수</td>
+<td>80줄</td>
+<td>200줄</td>
+</tr>
+</tbody></table></div>
+<p>test/ 파일은 기준 2배 완화. part 파일은 부모에 귀속되어 제외.</p>
+<hr>
+<h2 id="11-db-변경-시-체크리스트">11. DB 변경 시 체크리스트</h2>
+<p>DB를 건드리는 작업 시 반드시:</p>
+<pre><code class="language-">□ db_init.sql 수정 (단일 진실 소스)
+□ 필요한 seed builder / seed SQL 갱신
+□ RLS 정책 설정 (공개 읽기 vs 사용자 전용)
+□ lib/data/ Repository 메소드 추가/수정
+□ lib/models/ Model 클래스 추가/수정 (fromMap)
+□ test/ 새 Model의 fromMap 테스트 추가
+□ ../BACKEND.md 테이블·Repository 표 갱신
+□ ⚠️ 사용자가 직접 Supabase Dashboard에서 마이그레이션 실행</code></pre>
+<p>현재 Supabase 접근 권한:</p>
+<ul><li>앱: <code>SUPABASE_ANON_KEY</code> (읽기/쓰기 — RLS 범위 내)</li><li>Codex: 명시 요청 없는 DB 직접 접근 <strong>없음</strong> (SQL 파일만 생성)</li><li>SERVICE_ROLE_KEY: 코드에 없음 (의도적 보안 설계)</li></ul>
+<hr>
+<h2 id="12-문서-인덱스">12. 문서 인덱스</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>문서</th>
+<th>역할</th>
+</tr></thead><tbody>
+<tr>
+<td><code>AGENTS.md</code></td>
+<td>메인 컨텍스트 — 빌드/실행/스킬/컨벤션/규칙</td>
+</tr>
+<tr>
+<td><code>../PRD.md</code></td>
+<td>제품 요구사항 — 뭘 만드는지</td>
+</tr>
+<tr>
+<td><code>../ARCHITECTURE.md</code></td>
+<td>기술 아키텍처 — 어떻게 만드는지 + 파일 연결 관계</td>
+</tr>
+<tr>
+<td><code>../ADR.md</code></td>
+<td>아키텍처 결정 기록 — 왜 이렇게 만드는지</td>
+</tr>
+<tr>
+<td><code>../UI_GUIDE.md</code></td>
+<td>UI/UX 가이드 — 어떻게 보여야 하는지</td>
+</tr>
+<tr>
+<td><code>../FRONTEND.md</code></td>
+<td>프론트엔드 도메인 상세</td>
+</tr>
+<tr>
+<td><code>../BACKEND.md</code></td>
+<td>백엔드 도메인 상세</td>
+</tr>
+<tr>
+<td><code>../DATA_PIPELINE.md</code></td>
+<td>데이터 파이프라인 상세</td>
+</tr>
+<tr>
+<td><code>../TESTING.md</code></td>
+<td>테스트 전략 상세</td>
+</tr>
+<tr>
+<td><strong><code>../WORKFLOW_GUIDE.md</code></strong></td>
+<td><strong>이 문서 — 작업 흐름 + 유지보수 규칙</strong></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="13-린트-훅은-어떻게-선정되었는가-중요">13. 린트/훅은 어떻게 선정되었는가 (중요)</h2>
+<blockquote><p>이 프로젝트는 <strong>코드가 먼저, 규칙이 나중에</strong> 쌓인 구조다. 이상적 흐름과 실제 흐름이</p>
+<p>다르다는 걸 인지하고 앞으로 어떻게 확장할지 이해해야 한다.</p></blockquote>
+<h3 id="13-1-이상-vs-실제">13.1 이상 vs 실제</h3>
+<pre><code class="language-">이상:  프로젝트 시작 → 팀 코딩 스타일 합의 → 린트 규칙 확정 → 코드 작성
+실제:  코드 먼저 쌓임 → 리팩토링 중 문제 발견 → 재발 방지용 린트/훅을 역으로 추가</code></pre>
+<p>현재의 <code>analysis_options.yaml</code> 11개 규칙은 <code>story_home_screen.dart</code>가 7,172줄까지 비대해진 걸 복구하면서 <strong>역으로</strong> 골라낸 것이다. <code>pre-commit</code>/<code>pre-push</code> hook도 같은 경로로 쌓였다. 앞으로의 신규 코드는 <strong>규칙 → 코드</strong> 방향(정방향)으로 작동한다.</p>
+<h3 id="13-2-analysis-options-yaml-규칙-선정-근거">13.2 <code>analysis_options.yaml</code> 규칙 선정 근거</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>카테고리</th>
+<th>규칙</th>
+<th>근거</th>
+</tr></thead><tbody>
+<tr>
+<td>안전성</td>
+<td><code>cancel_subscriptions</code>, <code>close_sinks</code>, <code>unawaited_futures</code></td>
+<td>StreamSubscription/Sink 누수, Future 누락이 실제로 디버깅 난이도 높음</td>
+</tr>
+<tr>
+<td>성능</td>
+<td><code>prefer_const_*</code> 3종</td>
+<td>Flutter rebuild 폭발 방지 — 거대 화면에서 특히 중요</td>
+</tr>
+<tr>
+<td>위젯 품질</td>
+<td><code>sized_box_for_whitespace</code>, <code>use_key_in_widget_constructors</code>, <code>use_build_context_synchronously</code></td>
+<td>Flutter 공식 권장 + 비동기 이후 context 사용 버그 방지</td>
+</tr>
+<tr>
+<td>코드 품질</td>
+<td><code>prefer_final_locals</code>, <code>prefer_final_fields</code></td>
+<td>불변성 기본값 → 상태 추적 용이</td>
+</tr>
+</tbody></table></div>
+<p>선정 원칙:</p>
+<ol><li><code>dart fix --apply</code>로 자동 수정 가능한 것 우선 (기존 코드 일괄 수정 용이)</li><li>큰 diff를 만드는 규칙(<code>require_trailing_commas</code>, <code>prefer_single_quotes</code>)은 보류</li><li>프로젝트 위험도가 실제로 높았던 것 (<code>use_build_context_synchronously</code>)을 포함</li></ol>
+<h3 id="13-3-앞으로-추가-검토할-규칙">13.3 앞으로 추가 검토할 규칙</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>규칙</th>
+<th>효과</th>
+<th>적용 시점</th>
+</tr></thead><tbody>
+<tr>
+<td><code>require_trailing_commas</code></td>
+<td>포맷 diff 최소화</td>
+<td><code>dart fix</code>로 일괄 적용 — 가까운 시일</td>
+</tr>
+<tr>
+<td><code>prefer_single_quotes</code></td>
+<td>따옴표 통일</td>
+<td><code>dart fix</code>로 일괄 — 가까운 시일</td>
+</tr>
+<tr>
+<td><code>always_declare_return_types</code></td>
+<td>함수 시그니처 명시</td>
+<td>수동 수정 필요 — 중기</td>
+</tr>
+<tr>
+<td><code>avoid_dynamic_calls</code></td>
+<td>타입 안전성</td>
+<td>수동 수정 — 중기</td>
+</tr>
+</tbody></table></div>
+<h3 id="13-4-pre-commit-pre-push-선정-근거">13.4 pre-commit / pre-push 선정 근거</h3>
+<pre><code class="language-">pre-commit  (가벼움, 매 커밋)     pre-push     (무거움, 푸시 전)
+├ dart format                    ├ flutter analyze (0 issues 강제)
+├ black (Python tools/)          ├ flutter test
+├ import 정렬 (import_sorter)    ├ verify-asset-paths
+├ forbidden patterns             └ code-metrics (현재 보고만)
+├ check-large-files (2MB)
+├ check-merge-conflict
+├ check-yaml
+├ end-of-file-fixer
+└ trailing-whitespace</code></pre>
+<p><strong>분리 원칙</strong>: 커밋은 자주 일어나므로 빠른 것만, 푸시는 원격 공유 전 마지막 게이트이므로 무거운 analyze/test도 감당한다.</p>
+<h3 id="13-5-현재-훅의-한계-—-앞으로-보강할-것">13.5 현재 훅의 한계 — 앞으로 보강할 것</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>항목</th>
+<th>현상</th>
+<th>권장</th>
+</tr></thead><tbody>
+<tr>
+<td><code>code-metrics</code> 차단 모드</td>
+<td><code>--ci</code> 없이 보고만 — 새 거대 파일 생성 못 막음</td>
+<td>기존 FAIL 해소 후 <code>--ci</code> 추가</td>
+</tr>
+<tr>
+<td>커버리지 회귀 체크</td>
+<td>없음</td>
+<td><code>lcov</code> 기준 최소 커버리지 설정 (중기)</td>
+</tr>
+<tr>
+<td>의존성 취약점 스캔</td>
+<td>없음</td>
+<td>GitHub Dependabot 활성화 (즉시 가능)</td>
+</tr>
+<tr>
+<td>커밋 메시지 규칙</td>
+<td>없음</td>
+<td>팀 크기 작으므로 선택 사항</td>
+</tr>
+<tr>
+<td>DB 리셋 시퀀스 검증</td>
+<td>수동</td>
+<td><code>make -n seed-all db-init apply-seeds upload-character-avatars</code> 드라이런 유지</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="14-프로젝트-구성-전체-요약-—-무엇이-어디에-어떻게-놓였는가">14. 프로젝트 구성 전체 요약 — 무엇이 어디에 어떻게 놓였는가</h2>
+<blockquote><p>&quot;지금 이 프로젝트에 어떤 규칙/문서/스킬/훅이 구성되어 있고, 유지보수 시 어떻게</p>
+<p>협력하는가&quot;를 한눈에 볼 수 있도록 정리한 종합 지도이다.</p></blockquote>
+<h3 id="14-1-flutter-패턴-—-어떤-아키텍처를-따르는가">14.1 Flutter 패턴 — 어떤 아키텍처를 따르는가</h3>
+<p>이 프로젝트는 Flutter 커뮤니티에서 흔한 <strong>Repository + Riverpod Notifier</strong> 계층형 아키텍처를 따른다.</p>
+<pre><code class="language-">┌─────────────────────────────────────────┐
+│ UI 계층 (screens/, widgets/)            │  ← ConsumerWidget
+│   ref.watch(storyControllerProvider)    │
+├─────────────────────────────────────────┤
+│ 상태 계층 (state/)                       │  ← Riverpod Notifier
+│   StoryController → StoryState          │
+│   (비즈니스 로직 + 불변 상태 copyWith)  │
+├─────────────────────────────────────────┤
+│ 데이터 계층 (data/)                      │  ← Repository
+│   StoryRepository, UserRepository       │
+│   (Supabase 쿼리 캡슐화)                 │
+├─────────────────────────────────────────┤
+│ 모델 계층 (models/)                      │  ← 순수 데이터 클래스
+│   fromMap() 팩토리, 비즈니스 로직 없음  │
+└─────────────────────────────────────────┘
+             ↓
+      supabase_flutter SDK → Supabase</code></pre>
+<p><strong>이 패턴의 특징과 파생 규칙</strong>:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>특징</th>
+<th>그래서 어떤 하네스가 필요한가</th>
+</tr></thead><tbody>
+<tr>
+<td>Riverpod <code>Notifier</code> + 불변 <code>State</code> 패턴</td>
+<td><code>prefer_final_fields</code>, <code>prefer_final_locals</code> 린트로 불변성 강제</td>
+</tr>
+<tr>
+<td><code>ConsumerWidget</code> 다수 리빌드</td>
+<td><code>prefer_const_*</code> 3종으로 rebuild 최소화</td>
+</tr>
+<tr>
+<td>비동기 많음 (Supabase I/O)</td>
+<td><code>unawaited_futures</code>, <code>use_build_context_synchronously</code> 린트</td>
+</tr>
+<tr>
+<td>3단계 Provider 그래프 (Client→Repository→Controller)</td>
+<td><code>ProviderContainer + overrides</code>로 테스트 격리 (<code>test/state/</code>)</td>
+</tr>
+<tr>
+<td><code>fromMap()</code> 팩토리 패턴</td>
+<td><code>test/models/</code>에서 JSON 경계 조건 테스트</td>
+</tr>
+<tr>
+<td>Repository가 Supabase SDK 직접 호출</td>
+<td><code>mocktail</code>로 <code>SupabaseClient</code> mock (<code>test/data/</code>)</td>
+</tr>
+<tr>
+<td><code>part</code>/<code>part of</code> + <code>extension on State</code> (ADR-009)</td>
+<td><code>code-metrics</code>로 파일/메소드 크기 감시, part 파일은 부모에 귀속</td>
+</tr>
+</tbody></table></div>
+<h3 id="14-2-문서-구조-—-무엇이-어디에-적혀-있는가">14.2 문서 구조 — 무엇이 어디에 적혀 있는가</h3>
+<pre><code class="language-">AGENTS.md                      ← 메인 컨텍스트
+├── 빌드/실행 명령
+├── 도메인 스킬 인덱스
+├── 문서 동기화 규칙
+├── 코딩 컨벤션 / TDD / 테스트 변경 정책
+└── 커밋/푸시 정책
+
+docs/
+├── PRD.md                     ← 제품 요구사항 (뭘 만드는지)
+├── ARCHITECTURE.md            ← 기술 아키텍처 (어떻게 만드는지)
+│   └── §3 데이터 흐름 + 파일 간 연결 관계
+├── ADR.md                     ← 아키텍처 결정 기록 (왜 이렇게)
+├── UI_GUIDE.md                ← UI/UX 가이드 (어떻게 보여야 하는지)
+├── FRONTEND.md                ← 프론트엔드 도메인 상세 ($frontend 스킬이 로드)
+├── BACKEND.md                 ← 백엔드 도메인 상세 ($backend 스킬이 로드)
+├── DATA_PIPELINE.md           ← 에셋/시딩 파이프라인 ($data-pipeline 스킬이 로드)
+├── TESTING.md                 ← 테스트 전략 ($testing 스킬이 로드)
+└── WORKFLOW_GUIDE.md          ← 본 문서 — 모든 것의 흐름 설명</code></pre>
+<p><strong>역할 분담 원칙</strong>:</p>
+<ul><li><code>AGENTS.md</code>: <strong>인덱스 역할</strong> — 뭐가 어디 있는지만 가리키고 상세는 docs/에 맡김</li><li><code>docs/*.md</code>: <strong>도메인 레퍼런스</strong> — 스킬이 그때그때 로드해서 컨텍스트로 사용</li><li>이 분리 덕분에 메인 Codex는 가벼운 <code>AGENTS.md</code>를 보고 필요할 때만 도메인 문서 로드</li></ul>
+<h3 id="14-3-agents-md-세팅-—-에이전트에게-강제한-규칙">14.3 <code>AGENTS.md</code> 세팅 — 에이전트에게 강제한 규칙</h3>
+<p>현재 <code>AGENTS.md</code>에 명시된 에이전트 동작 규칙:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>항목</th>
+<th>규칙</th>
+</tr></thead><tbody>
+<tr>
+<td>스킬 인덱스</td>
+<td>5개 도메인 스킬 + 참조 문서 + 파일 범위 표</td>
+</tr>
+<tr>
+<td>병렬 탐색</td>
+<td>큰 파일 분석은 Agent 병렬, 수정은 메인 직렬</td>
+</tr>
+<tr>
+<td>문서 동기화</td>
+<td>9가지 변경 유형별로 갱신해야 할 문서 지정</td>
+</tr>
+<tr>
+<td>TDD</td>
+<td>새 기능·버그 수정 시 테스트 먼저</td>
+</tr>
+<tr>
+<td><strong>테스트 변경 정책</strong></td>
+<td>기존 테스트 수정/삭제는 사유를 명확히 하고 범위 최소화</td>
+</tr>
+<tr>
+<td><strong>커밋 정책</strong></td>
+<td>사용자가 &quot;커밋해줘&quot;라고 지시할 때만</td>
+</tr>
+<tr>
+<td><strong>푸시 정책</strong></td>
+<td>사용자가 &quot;푸시해줘&quot;라고 지시할 때만, 자동 push 절대 금지</td>
+</tr>
+<tr>
+<td><code>print()</code> 금지</td>
+<td><code>debugPrint</code> 사용</td>
+</tr>
+<tr>
+<td>시크릿 금지</td>
+<td>forbidden-patterns hook으로 자동 차단</td>
+</tr>
+</tbody></table></div>
+<h3 id="14-4-스킬-에이전트-플러그인-구성">14.4 스킬 / 에이전트 / 플러그인 구성</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>구분</th>
+<th>항목</th>
+<th>역할</th>
+<th>트리거</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>도메인 스킬</strong></td>
+<td><code>$frontend</code></td>
+<td>UI/위젯/상태 변경</td>
+<td>자동 감지 or <code>$frontend</code> 명시</td>
+</tr>
+<tr>
+<td></td>
+<td><code>$backend</code></td>
+<td>DB/Repository/RLS</td>
+<td>자동 감지 or <code>$backend</code> 명시</td>
+</tr>
+<tr>
+<td></td>
+<td><code>$data-pipeline</code></td>
+<td>에셋/시딩</td>
+<td>자동 감지 or 명시</td>
+</tr>
+<tr>
+<td></td>
+<td><code>$testing</code></td>
+<td>테스트 작성</td>
+<td>자동 감지 or 명시</td>
+</tr>
+<tr>
+<td></td>
+<td><code>$refactor</code></td>
+<td>대규모 분해/중복 제거</td>
+<td>명시</td>
+</tr>
+<tr>
+<td><strong>Supabase 공식</strong></td>
+<td>공식 문서/도구</td>
+<td>Auth, Storage, Edge Functions, RLS 가이드</td>
+<td><code>$backend</code> 작업 중 필요 시</td>
+</tr>
+<tr>
+<td></td>
+<td>Postgres best practices</td>
+<td>쿼리 최적화, 인덱스</td>
+<td><code>$backend</code> 작업 중 필요 시</td>
+</tr>
+<tr>
+<td><strong>Agent (서브에이전트)</strong></td>
+<td><code>general-purpose</code></td>
+<td>큰 파일 병렬 분석</td>
+<td>메인이 호출</td>
+</tr>
+<tr>
+<td></td>
+<td><code>Explore</code> / <code>Plan</code> / <code>code-reviewer</code></td>
+<td>탐색/계획/리뷰</td>
+<td>메인이 호출</td>
+</tr>
+</tbody></table></div>
+<h3 id="14-5-유지보수-파이프라인-—-3단-방어선">14.5 유지보수 파이프라인 — 3단 방어선</h3>
+<pre><code class="language-">┌─ 1단: 에디터 (실시간) ─────────────────────┐
+│ analysis_options.yaml 11개 규칙             │
+│ IDE 빨간/노란 밑줄 → Quick Fix              │
+└───────────────────────────────────────────┘
+              ↓ 커밋 시도
+┌─ 2단: 로컬 git hook ──────────────────────┐
+│ pre-commit: 포맷, import, 패턴, YAML       │
+│ pre-push:   analyze + test + 에셋 + 메트릭 │
+└───────────────────────────────────────────┘
+              ↓ 원격 push
+┌─ 3단: GitHub Actions CI ──────────────────┐
+│ .github/workflows/flutter_ci.yml           │
+│ 4 jobs: analyze+test / forbidden /         │
+│         asset-paths / code-metrics         │
+│ --no-verify로 로컬 우회해도 여기서 잡힘    │
+└───────────────────────────────────────────┘
+              ↓ PR 머지
+            main 브랜치</code></pre>
+<h3 id="14-6-커밋-푸시-세팅-—-경로별-방어">14.6 커밋/푸시 세팅 — 경로별 방어</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>경로</th>
+<th>검증 지점</th>
+<th>내용</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>IDE 저장</strong></td>
+<td>analyzer (실시간)</td>
+<td>11개 린트 규칙 즉시 경고</td>
+</tr>
+<tr>
+<td><strong><code>git commit</code></strong></td>
+<td>pre-commit hooks</td>
+<td>dart format, black, import sort, forbidden patterns, large files, merge conflicts, YAML 검증</td>
+</tr>
+<tr>
+<td><strong><code>git push</code></strong></td>
+<td>pre-push hooks</td>
+<td><code>flutter analyze</code> (0 issues), <code>flutter test</code>, 에셋 경로 검증, code metrics 보고</td>
+</tr>
+<tr>
+<td><strong>PR 생성</strong></td>
+<td>GitHub Actions</td>
+<td>로컬 검증 전체 재실행 (로컬 우회 방지) + 별도 job으로 forbidden/asset/metrics</td>
+</tr>
+<tr>
+<td><strong>Codex 자동 행동</strong></td>
+<td><code>AGENTS.md</code> 규칙</td>
+<td>사용자 지시 없으면 커밋/푸시 <strong>절대 안 함</strong></td>
+</tr>
+</tbody></table></div>
+<p><strong>Codex 규칙 (<code>AGENTS.md</code> + <code>WORKFLOW_GUIDE.md</code> 중복 명시)</strong>:</p>
+<pre><code class="language-">코드 변경  → 스킬이 자동 수행
+git add   → 스킬이 자동 수행 가능
+git commit → 사용자가 &quot;커밋해줘&quot; 할 때만
+git push  → 사용자가 &quot;푸시해줘&quot; 할 때만
+gh pr create → 사용자가 &quot;PR 만들어줘&quot; 할 때만</code></pre>
+<h3 id="14-7-유지보수-세팅-—-도구별-매핑">14.7 유지보수 세팅 — 도구별 매핑</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>도구</th>
+<th>위치</th>
+<th>역할</th>
+<th>언제 동작</th>
+</tr></thead><tbody>
+<tr>
+<td><code>analysis_options.yaml</code></td>
+<td>루트</td>
+<td>11개 린트 규칙</td>
+<td>IDE + <code>flutter analyze</code></td>
+</tr>
+<tr>
+<td><code>.pre-commit-config.yaml</code></td>
+<td>루트</td>
+<td>git hook 정의</td>
+<td>커밋/푸시 시</td>
+</tr>
+<tr>
+<td><code>tools/lint/check_forbidden_patterns.py</code></td>
+<td>tools/</td>
+<td>print/시크릿 차단</td>
+<td>pre-commit</td>
+</tr>
+<tr>
+<td><code>tools/lint/check_code_metrics.py</code></td>
+<td>tools/</td>
+<td>파일/메소드 크기 감시 (500/1500줄, 80/200줄)</td>
+<td>pre-push (보고) + CI</td>
+</tr>
+<tr>
+<td><code>tools/app/verify_asset_paths.py</code></td>
+<td>tools/</td>
+<td>pubspec ↔ 실제 파일 정합성</td>
+<td>pre-push + CI</td>
+</tr>
+<tr>
+<td><code>.github/workflows/flutter_ci.yml</code></td>
+<td>.github/</td>
+<td>원격 CI (4 jobs)</td>
+<td>push/PR</td>
+</tr>
+<tr>
+<td><code>pubspec.yaml</code></td>
+<td>루트</td>
+<td>의존성 + 에셋 목록</td>
+<td><code>flutter pub get</code></td>
+</tr>
+<tr>
+<td><code>db_init.sql</code></td>
+<td>루트</td>
+<td>DB 스키마 단일 진실 소스</td>
+<td>수동 (Supabase SQL Editor)</td>
+</tr>
+<tr>
+<td><code>Makefile</code></td>
+<td>루트</td>
+<td>에셋/시딩 파이프라인</td>
+<td><code>make &lt;target&gt;</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="14-8-요구사항-→-머지-까지-전체-흐름">14.8 &quot;요구사항 → 머지&quot;까지 전체 흐름</h3>
+<pre><code class="language-">[사용자 요청]
+   │
+   ├─ 1. 메인 Codex가 작업 분류 + 도메인 스킬 호출
+   │      → 해당 docs/*.md 로드 (컨텍스트 확장)
+   │
+   ├─ 2. TDD 순서로 작업
+   │      a. 기존 테스트 탐색 (grep)
+   │      b. 요구사항 ↔ 기존 테스트 비교
+   │      c. 테스트 수정/추가 (사용자 확인 필요 시 대기)
+   │      d. Red 확인 → 구현 변경 → Green 확인
+   │
+   ├─ 3. 에디터 실시간 린트 (11개 규칙)
+   │
+   ├─ 4. &quot;완료. 커밋할까요?&quot; ← Codex 멈춤
+   │
+   ├─ 5. 사용자: &quot;커밋해줘&quot;
+   │      → pre-commit hooks 통과해야 커밋 생성
+   │
+   ├─ 6. 사용자: &quot;푸시해줘&quot;
+   │      → pre-push hooks 통과해야 원격 전송
+   │
+   ├─ 7. 사용자: &quot;PR 만들어줘&quot;
+   │      → GitHub Actions CI 4 jobs 자동 실행
+   │
+   └─ 8. PR 머지 → main 브랜치 업데이트</code></pre>
+<p><strong>이 흐름의 설계 목표</strong>:</p>
+<ol><li><strong>에이전트 자율성 제한</strong>: 커밋/푸시는 사용자 결정으로 고정</li><li><strong>3단 방어</strong>: 에디터/로컬/원격 어느 하나를 뚫어도 다음 단에서 잡힘</li><li><strong>컨텍스트 효율</strong>: 도메인 스킬로 필요한 문서만 로드</li><li><strong>문서 일관성</strong>: 코드 변경과 같은 커밋에서 관련 docs/*.md 동시 갱신</li><li><strong>테스트 = 명세</strong>: 기존 테스트 변경은 사용자 승인 게이트로 보호</li></ol>
+<hr>
+<h2 id="15-알려진-이슈-gotchas">15. 알려진 이슈 / Gotchas</h2>
+<h3 id="15-1-git-worktree에서-pre-push-훅이-flutter-sdk-캐시를-오염시키는-문제">15.1 git worktree에서 pre-push 훅이 Flutter SDK 캐시를 오염시키는 문제</h3>
+<p><strong>증상</strong>: <code>git push</code> 시 pre-push 훅의 <code>flutter analyze</code>/<code>flutter test</code>가 <code>The current Flutter SDK version is 0.0.0-unknown</code> 로 실패. <code>sign_in_with_apple</code> 등 SDK 버전 요구 패키지의 version solving이 깨진다.</p>
+<p><strong>근본 원인</strong>: pre-commit framework가 훅 실행 시 <code>GIT_DIR</code>/<code>GIT_WORK_TREE</code> 환경변수를 주입한다. Flutter tool이 자기 SDK 캐시를 갱신할 때 내부적으로 <code>git</code> 명령을 실행하는데, 이 환경변수 때문에 Flutter SDK가 아닌 <strong>story_bible 프로젝트의 git에 대고 명령을 실행</strong> → <code>flutter.version.json</code>이 story_bible의 repository URL/commit hash로 덮어씌워진다.</p>
+<p><strong>대응</strong>: <code>.pre-commit-config.yaml</code>의 <code>flutter-analyze</code>/<code>flutter-test</code> 엔트리에서 <code>GIT_DIR</code>/<code>GIT_WORK_TREE</code>/<code>GIT_INDEX_FILE</code>를 <code>unset</code> 한 뒤 <code>FLUTTER_ROOT</code> 명시, 오염된 캐시를 선제거하고 SDK 디렉토리에서 <code>flutter --version</code>을 먼저 실행해 정상 캐시를 확보한 다음 프로젝트 명령을 수행한다 (이미 적용됨). 캐시가 이미 오염된 경우 수동 복구:</p>
+<pre><code class="language-bash">rm $FLUTTER_ROOT/bin/cache/flutter.version.json
+rm $FLUTTER_ROOT/bin/cache/flutter_tools.stamp
+flutter --version  # 재생성</code></pre>
+<hr>
+<h2 id="16-이-문서의-유지보수-규칙">16. 이 문서의 유지보수 규칙</h2>
+<ul><li>새 스킬/훅/CI job 추가 시 → §2, §13, §14 갱신</li><li>새 도메인 문서 추가 시 → §14.2 갱신</li><li>TDD/테스트 정책 변경 시 → §5, §7 갱신</li><li>커밋/푸시 정책 변경 시 → §8, §14.6 갱신</li><li>알려진 이슈 발견 시 → §15에 증상/원인/대응 추가</li><li>의문점/오해를 사용자가 지적할 때마다 → 해당 섹션에 Q&amp;A 형태로 추가 고려</li></ul>
+<hr>
+<h2 id="17-운영-셋업-—-권한-버킷-secrets-정리-작업">17. 운영 셋업 — 권한 / 버킷 / Secrets / 정리 작업</h2>
+<blockquote><p>§18~§21 이 제안 라이프사이클(추가/삭제/위치 충돌/종합)을 시점별로 풀어 쓴</p>
+<p>본체라면, 이 섹션은 그 흐름이 동작하기 위한 <strong>상수 셋업</strong> 과 **주변 정리</p>
+<p>작업** 만 모은다. 단계별 데이터/스토리지 변화 자체는 §18~§21 을 참고.</p></blockquote>
+<h3 id="17-1-권한-요약">17.1 권한 요약</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>역할</th>
+<th>검증 방법</th>
+<th>허용 동작</th>
+</tr></thead><tbody>
+<tr>
+<td>일반 사용자</td>
+<td>auth.users 존재만</td>
+<td>앱 사용, 제안 게시판 진입 시 pastor gate 팝업</td>
+</tr>
+<tr>
+<td>사역자 (pastor)</td>
+<td><code>user_profiles.is_pastor = true</code></td>
+<td>제안 작성/수정(본인 pending), 댓글, AI 이미지 생성</td>
+</tr>
+<tr>
+<td>관리자 (admin)</td>
+<td><code>auth.users.raw_app_meta_data-&gt;&gt;&#x27;role&#x27; = &#x27;admin&#x27;</code></td>
+<td>위 모든 권한 + 제안 승인/거절, characters 테이블 쓰기, Storage <code>characters</code> 버킷 쓰기</td>
+</tr>
+</tbody></table></div>
+<ul><li>pastor 부여: 운영자가 수동으로</li></ul>
+<p><code>update user_profiles set is_pastor=true where user_id=...</code> — 사역자가 <code>admin@brand-i.net</code> 으로 성함/사역 단체/직책을 보내면 처리.</p>
+<ul><li>admin 부여: Supabase Dashboard SQL Editor 에서</li></ul>
+<p><code>update auth.users set raw_app_meta_data = coalesce(raw_app_meta_data,&#x27;{}&#x27;::jsonb) || &#x27;{&quot;role&quot;:&quot;admin&quot;}&#x27;::jsonb where id=&#x27;&lt;uuid&gt;&#x27;;</code> — 해당 사용자 <strong>재로그인 필요</strong> (JWT 갱신).</p>
+<h3 id="17-2-storage-버킷">17.2 Storage 버킷</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>버킷</th>
+<th>public read</th>
+<th>쓰기 권한</th>
+<th>경로</th>
+</tr></thead><tbody>
+<tr>
+<td><code>profile-images</code></td>
+<td>✅</td>
+<td>본인 폴더</td>
+<td><code>{uid}/profile_{ts}.{ext}</code></td>
+</tr>
+<tr>
+<td><code>characters</code></td>
+<td>✅</td>
+<td>admin 만</td>
+<td><code>{code}.png</code> (정규 아바타)</td>
+</tr>
+<tr>
+<td><code>proposal-scenes</code></td>
+<td>✅</td>
+<td>본인 폴더</td>
+<td><code>{uid}/{draft}/scene_{n}.png</code></td>
+</tr>
+<tr>
+<td><code>proposal-characters</code></td>
+<td>✅</td>
+<td>본인 폴더</td>
+<td><code>{uid}/{draft}/{code}.png</code></td>
+</tr>
+</tbody></table></div>
+<p>실제 업로드는 Edge Function 이 service role 키로 수행. RLS 는 방어선 역할.</p>
+<h3 id="17-3-edge-function-secrets-셋업-최초-1회">17.3 Edge Function Secrets 셋업 (최초 1회)</h3>
+<p>Edge Function 이 Vertex AI 를 호출하려면 3개 secret 이 필요.</p>
+<h4 id="a-gcp-service-account-키-발급">A. GCP service account 키 발급</h4>
+<ol><li><a href="https://console.cloud.google.com">GCP Console</a> → 프로젝트 선택</li><li><strong>APIs &amp; Services → Library</strong> → &quot;Vertex AI API&quot; 검색 → Enable</li><li><strong>IAM &amp; Admin → Service Accounts → + CREATE SERVICE ACCOUNT</strong></li></ol>
+<ul><li>Name: <code>story-bible-vertex</code></li><li>Role: <code>Vertex AI User</code> (<code>roles/aiplatform.user</code>)</li></ul>
+<ol><li>생성된 SA 클릭 → <strong>Keys</strong> → <strong>ADD KEY → JSON → CREATE</strong> → JSON 파일 자동 다운로드</li></ol>
+<h4 id="b-json-을-한-줄-문자열로-변환">B. JSON 을 한 줄 문자열로 변환</h4>
+<pre><code class="language-bash"># 다운받은 JSON 경로로 바꿔서 실행
+python3 -c &quot;import json, sys; print(json.dumps(json.load(open(sys.argv[1]))))&quot; \
+  ~/Downloads/story-bible-vertex-abc123.json &gt; /tmp/sa.oneline.json</code></pre>
+<h4 id="c-supabase-secrets-등록">C. Supabase secrets 등록</h4>
+<p><strong>CLI 경로</strong> (추천):</p>
+<pre><code class="language-bash"># .env.supabase.secrets (repo 루트, .gitignore 됨)
+cat &gt; .env.supabase.secrets &lt;&lt;EOF
+GOOGLE_CLOUD_PROJECT=&lt;your GCP project id&gt;
+GOOGLE_CLOUD_LOCATION=us-central1
+GCP_SERVICE_ACCOUNT_JSON=$(cat /tmp/sa.oneline.json)
+EOF
+
+supabase login                           # 최초 1회
+supabase link --project-ref &lt;ref&gt;        # Dashboard URL 의 /project/&lt;ref&gt;
+supabase secrets set --env-file .env.supabase.secrets
+supabase secrets list                    # 3개 다 들어갔는지 확인</code></pre>
+<p><strong>Dashboard 경로</strong> (GUI):</p>
+<ol><li>Supabase Dashboard → 프로젝트 선택</li><li>좌측 <strong>Edge Functions</strong> → 우상단 <strong>Manage secrets</strong></li><li><strong>Add new secret</strong> 로 3개 항목 각각 등록</li></ol>
+<ul><li>Name: <code>GOOGLE_CLOUD_PROJECT</code>, Value: <code>&lt;your GCP project id&gt;</code></li><li>Name: <code>GOOGLE_CLOUD_LOCATION</code>, Value: <code>us-central1</code></li><li>Name: <code>GCP_SERVICE_ACCOUNT_JSON</code>, Value: <code>&lt;한 줄 JSON 전체&gt;</code></li></ul>
+<ol><li>저장 후 CLI 로 함수 배포:</li></ol>
+<pre><code class="language-bash">   supabase functions deploy generate-proposal-scene
+   supabase functions deploy generate-proposal-character</code></pre>
+<h4 id="d-동작-스모크-테스트">D. 동작 스모크 테스트</h4>
+<pre><code class="language-bash">curl -i -X POST \
+  &quot;https://&lt;ref&gt;.supabase.co/functions/v1/generate-proposal-character&quot; \
+  -H &quot;Authorization: Bearer &lt;사용자 JWT&gt;&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;prompt&quot;:&quot;test&quot;,&quot;characterCode&quot;:&quot;_smoketest&quot;,&quot;characterName&quot;:&quot;테스트&quot;,&quot;draftId&quot;:&quot;smoke1&quot;}&#x27;</code></pre>
+<p>기대 응답 스펙:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>HTTP</th>
+<th>의미</th>
+</tr></thead><tbody>
+<tr>
+<td>200 <code>{&quot;storage_path&quot;:...}</code></td>
+<td>정상</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Authorization 헤더 누락/만료</td>
+</tr>
+<tr>
+<td>409</td>
+<td>이미 active 인 canonical character code — 다른 code 사용</td>
+</tr>
+<tr>
+<td>500 <code>secret not set</code></td>
+<td>CLI/Dashboard 에서 secrets 등록 안 됨</td>
+</tr>
+<tr>
+<td>502 <code>Imagen ...</code></td>
+<td>SA 권한 부족 or Vertex API 미활성</td>
+</tr>
+</tbody></table></div>
+<h3 id="17-4-고아-이미지-정리-cleanup-orphan-proposal-assets">17.4 고아 이미지 정리 (<code>cleanup-orphan-proposal-assets</code>)</h3>
+<p><strong>문제</strong>: 사역자가 폼에서 <strong>[이미지 생성]</strong> 버튼을 누르는 순간 이미지는 즉시 <code>proposal-scenes</code> / <code>proposal-characters</code> 버킷에 업로드된다. 하지만 <code>event_proposals</code> 행은 <strong>[제안 등록]</strong> 을 눌러야 INSERT 된다. 그 사이에 창을 닫거나 재생성을 많이 하면 <strong>DB에 참조 없는 고아 파일</strong> 이 Storage 에 남는다. GCP 생성 비용은 이미 지출됐지만 Storage 용량은 계속 과금 대상.</p>
+<p><strong>해결</strong>: <code>make cleanup-orphan-proposal-assets</code> 주기 실행 (주 1회 권장).</p>
+<p>동작 규칙:</p>
+<ol><li>두 버킷(<code>proposal-scenes</code>, <code>proposal-characters</code>) 의 <strong>모든 파일</strong>을 재귀 열거.</li><li><strong>세 테이블 전부</strong> 에서 참조 경로를 union 해 &quot;참조 중&quot; 집합 생성:</li></ol>
+<ul><li><code>event_proposals.scene_image_paths</code> + <code>proposed_characters[*].storage_path</code></li><li><code>events.scene_image_paths</code> (승인된 이벤트의 하이브리드 fallback 보호)</li><li><code>characters.avatar_storage_path</code> (proposal-characters 경로도 포함 가능)</li></ul>
+<p><code>events</code> 를 같이 봐야 하는 이유: admin 이 승인 후 원본 proposal row 를 삭제해도 <code>events.scene_image_paths</code> 는 여전히 <code>proposal-scenes/...</code> 를 가리킨다. 그 파일을 지우면 아직 앱 업데이트 안 받은 사용자의 하이브리드 fallback 이 깨짐.</p>
+<ol><li>파일 중 (a) 24h 이상 지났고 (b) 참조되지 않은 것만 삭제. 신규 업로드</li></ol>
+<p>(= &quot;진행 중인 드래프트&quot;) 는 24h grace window 로 보호.</p>
+<pre><code class="language-bash"># 먼저 dry-run 으로 삭제 후보 확인 (삭제 안 함)
+make cleanup-orphan-proposal-assets-dry
+
+# 실제 삭제 실행
+make cleanup-orphan-proposal-assets</code></pre>
+<p>출력 예:</p>
+<pre><code class="language-">Cutoff: files older than 24h (created_at &lt; 2026-04-21T00:00+00:00) considered
+Referenced paths in event_proposals: 12
+
+== proposal-scenes
+  total files: 18
+  [orphan] proposal-scenes/&lt;uid&gt;/draft_abcde/scene_0.png  age=2 days, 4:13:22  (deleting)
+  ...
+
+== proposal-characters
+  total files: 5
+  [orphan] proposal-characters/&lt;uid&gt;/draft_abcde/caleb.png  age=2 days, 4:10:01  (deleting)
+
+=== Summary ===
+  deleted:         6
+  kept_referenced: 11
+  kept_too_young:  5
+  skipped:         1
+  dry_run:         False</code></pre>
+<p><strong>주의</strong>:</p>
+<ul><li>거절된 제안(status=&#x27;rejected&#x27;) 의 이미지는 참조가 남아있으니 <strong>자동 정리 대상 아님</strong>.</li></ul>
+<p>원한다면 그 제안을 DB 에서 삭제하거나 스크립트를 확장할 수 있음 (현재 미구현).</p>
+<ul><li><code>.env</code> 에 <code>SUPABASE_SERVICE_ROLE_KEY_&lt;ENV&gt;</code> 필요 (service_role 로 실행).</li><li>cron 등록 예:</li></ul>
+<pre><code class="language-">  # 매주 일요일 03:00 KST 에 dev 환경 정리
+  0 3 * * 0 cd /path/to/story_bible &amp;&amp; make cleanup-orphan-proposal-assets ENV=dev</code></pre>
+<h3 id="17-5-진행도-트래킹-—-새-이벤트-캐릭터-추가-시-자동-반영">17.5 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영</h3>
+<ul><li><code>user_event_progress(user_id, event_id)</code> 는 UUID 기반이라, 승인으로 새 event</li></ul>
+<p>가 생기면 <strong>누구의 user_event_progress 에도 그 UUID 가 없음</strong> → 자동으로 &quot;아직 완료 안 함&quot; 상태</p>
+<ul><li><code>CharacterStudyProgress.fetchCharacterStudyProgress</code> 는 <code>events_ordered</code> view</li></ul>
+<p>를 매번 쿼리 → 새 event 가 포함되면 totalCount 자동 증가</p>
+<ul><li><code>insert_event_at_position</code> 은 story_index 만 시프트 — UUID 건드리지 않음 →</li></ul>
+<p>기존 user_event_progress 행 그대로 유효</p>
+<ul><li>주의: 홈 화면이 열려있는 상태에서 다른 기기/관리자가 승인하면 — 시대</li></ul>
+<p>바꾸거나 앱 재시작 전까진 새 이벤트가 안 보임 (pull-to-refresh 추가 여부는 향후 과제)</p>
+<h3 id="17-6-관련-파일">17.6 관련 파일</h3>
+<ul><li><strong>Edge Functions</strong> (장면 + 캐릭터 AI 생성):</li><li><code>supabase/functions/generate-proposal-scene/</code> (Gemini multimodal)</li><li><code>supabase/functions/generate-proposal-character/</code> (Imagen 4.0 text-to-image)</li><li><code>supabase/functions/_shared/{gcp_auth,character_style,cors}.ts</code></li><li><strong>DB</strong>: <code>db_init.sql</code> (테이블 / 버킷 / RPC / RLS)</li><li><strong>고아 정리 스크립트</strong>: <code>tools/supabase/cleanup_orphan_proposal_assets.py</code> (§17.4)</li><li><strong>Makefile 타겟</strong>:</li><li><code>make upload-character-avatars</code> (초기 아바타 일괄 업로드, 1회)</li><li><code>make cleanup-orphan-proposal-assets[-dry]</code> (§17.4)</li><li><code>make sync-approved-proposal-assets[-dry|-all|-clean]</code> — 라이프사이클은 §18~§19 참조</li></ul>
+<blockquote><p>라이프사이클 (제안 → 승인 → sync → 재배포) 본체와 관련 UI/Repository 파일은</p>
+<p>§18.6, §19.5, §20.6, §21.5 의 &quot;관련 파일&quot; 섹션에 정리되어 있다.</p></blockquote>
+<hr>
+<h2 id="18-자산-db-라이프사이클-—-제안-→-승인-→-재배포-단계별-어디에-어떻게-저장되나">18. 자산/DB 라이프사이클 — 제안 → 승인 → 재배포 단계별 어디에 어떻게 저장되나</h2>
+<blockquote><p>&quot;이야기가 제안되었을 때 / 승인되었지만 앱 재배포 안 됐을 때 / 앱 재배포가</p>
+<p>끝났을 때&quot; 세 시점에 각각 어떤 DB row 와 Storage 버킷이 쓰이는지, 그리고</p>
+<p>앱 화면이 어느 경로로 이미지를 가져오는지를 한 자리에 정리한 섹션이다.</p>
+<p>여기서 다루는 하이브리드 로딩 정책 (로컬 1순위 → Storage fallback) 의 동작</p>
+<p>원리는 §18.2 &quot;사용자가 이미지를 어떻게 보나&quot; / §18.3 &quot;사용자가 이미지를</p>
+<p>어떻게 보나 (시점 C)&quot; 절에서 함께 풀어 쓴다. 권한·버킷·Secrets 셋업은 §17 참조.</p></blockquote>
+<h3 id="18-0-시점별-한-장-요약">18.0 시점별 한 장 요약</h3>
+<pre><code class="language-">┌─────────────────┬────────────────────┬────────────────────┬─────────────────────┐
+│      시점        │    DB (Postgres)    │     Storage         │     앱 (사용자)      │
+├─────────────────┼────────────────────┼────────────────────┼─────────────────────┤
+│ A. 제안 작성     │ event_proposals    │ proposal-scenes/    │ 사용자 안 보임       │
+│    (status=     │ (대기열)            │   &lt;uid&gt;/&lt;draft&gt;/    │ — 작성자/관리자만   │
+│    &#x27;pending&#x27;)   │                    │   scene_N.png       │   제안 게시판에서   │
+│                 │ (proposed_chars   │ proposal-characters/│   본다              │
+│                 │  if 있음 — JSON   │   &lt;uid&gt;/&lt;draft&gt;/    │                     │
+│                 │  안에)            │   &lt;code&gt;.png        │                     │
+├─────────────────┼────────────────────┼────────────────────┼─────────────────────┤
+│ B. 승인됨,      │ events 행 추가     │ proposal-* 그대로   │ 모든 사용자 즉시 봄 │
+│    재배포 전    │ characters         │ (아직 canonical로   │ — 이미지는          │
+│    (즉시 노출)   │ upsert (신규 인물) │  복사 안 됨)        │   Storage fallback  │
+│                 │ event_proposals.   │                    │   으로 매번 받음    │
+│                 │   status=&#x27;approved&#x27;│                    │   (트래픽 발생)     │
+├─────────────────┼────────────────────┼────────────────────┼─────────────────────┤
+│ C. sync 후      │ characters.        │ characters/        │ 로컬 1순위로 표시    │
+│    재배포 완료   │   avatar_url=     │   &lt;code&gt;.png       │ — Storage 호출 0    │
+│                 │   assets/avatars/. │ (canonical 복사)   │                     │
+│                 │ event_proposals.   │ assets/ 번들에      │                     │
+│                 │  synced_to_local_at│   동일 PNG          │                     │
+└─────────────────┴────────────────────┴────────────────────┴─────────────────────┘</code></pre>
+<h3 id="18-1-시점-a-—-제안-작성-중-status=-pending">18.1 시점 A — 제안 작성 중 (status=&#x27;pending&#x27;)</h3>
+<h4 id="데이터-흐름">데이터 흐름</h4>
+<pre><code class="language-">사역자가 폼 작성 (proposal_submit_screen.dart)
+   │
+   ├─ Step 4: [이미지 생성] 버튼
+   │    │
+   │    └─► supabase.functions.invoke(&#x27;generate-proposal-scene&#x27;)
+   │           │
+   │           ├─ Vertex Gemini 가 PNG 생성
+   │           └─ Storage &#x27;proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_N.png&#x27; 에 upsert
+   │                  │
+   │                  └─► 클라이언트가 path 받음 → _sceneImages[N] 에 보관
+   │
+   ├─ Step 2/3: [새 인물 만들기] 다이얼로그 (있을 때만)
+   │    │
+   │    └─► supabase.functions.invoke(&#x27;generate-proposal-character&#x27;)
+   │           │
+   │           ├─ Vertex Imagen 이 PNG 생성
+   │           └─ Storage &#x27;proposal-characters/&lt;uid&gt;/&lt;draft&gt;/&lt;code&gt;.png&#x27; 에 upsert
+   │                  │
+   │                  └─► 클라이언트가 ProposedCharacter 객체로 보관
+   │                        (_newCharactersByCode)
+   │
+   └─ [제안 등록] 버튼
+        │
+        └─► RPC submit_event_proposal(...)
+               │
+               └─ event_proposals 테이블에 row INSERT
+                  · status = &#x27;pending&#x27;
+                  · scene_image_paths = [&#x27;proposal-scenes/...&#x27;, ...]
+                  · proposed_characters = [{code, name, prompt, storage_path}, ...]
+                  · quiz_questions = [...]  (이 시점에 인물은 characters
+                    테이블에 아직 없음 — 승인 시점까지 보류)</code></pre>
+<h4 id="캐릭터-유무에-따른-차이">캐릭터 유무에 따른 차이</h4>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>DB</th>
+<th>Storage</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>기존 캐릭터만 사용</strong> (예: 아담, 노아)</td>
+<td><code>event_proposals.character_codes = [&#x27;adam&#x27;,&#x27;noah&#x27;]</code> 만 채움. <code>proposed_characters = []</code></td>
+<td><code>proposal-scenes/...</code> 만 새로 업로드. 인물 아바타는 이미 <code>characters/&lt;code&gt;.png</code> 로 존재</td>
+</tr>
+<tr>
+<td><strong>새 캐릭터 1명 이상</strong> (예: 테스터)</td>
+<td><code>character_codes = [&#x27;adam&#x27;,&#x27;tester&#x27;]</code>, <code>proposed_characters = [{code:&#x27;tester&#x27;, name:&#x27;테스터&#x27;, prompt:&#x27;...&#x27;, storage_path:&#x27;proposal-characters/...&#x27;}]</code></td>
+<td><code>proposal-characters/&lt;uid&gt;/&lt;draft&gt;/tester.png</code> 추가 업로드. <strong><code>characters</code> 테이블에는 아직 row 없음</strong> — 승인 전까지 placeholder 도 없음</td>
+</tr>
+</tbody></table></div>
+<h4 id="이-시점에-누가-무엇을-보나">이 시점에 누가 무엇을 보나</h4>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>누구</th>
+<th>화면</th>
+<th>어디서 이미지 로드</th>
+</tr></thead><tbody>
+<tr>
+<td>일반 사용자</td>
+<td>영향 없음 — 기존 events/characters 만 보임</td>
+<td>로컬 번들</td>
+</tr>
+<tr>
+<td>작성자 본인 (사역자)</td>
+<td>제안 게시판 → 내 제안 → 상세</td>
+<td><code>proposal-scenes/...</code>, <code>proposal-characters/...</code> (Image.network)</td>
+</tr>
+<tr>
+<td>관리자</td>
+<td>제안 게시판 → 대기중 탭 → 상세</td>
+<td>같음</td>
+</tr>
+</tbody></table></div>
+<p>이 단계의 자산은 <strong>사용자 지도에 영향 없음</strong> — <code>events</code> 테이블에 INSERT 되지 않았으므로.</p>
+<h3 id="18-2-시점-b-—-승인됨-앱-재배포-전-status=-approved-and-synced-to-local-at-is-null">18.2 시점 B — 승인됨, 앱 재배포 전 (status=&#x27;approved&#x27; AND synced_to_local_at IS NULL)</h3>
+<h4 id="승인-트랜잭션-approve-event-proposal-rpc">승인 트랜잭션 (<code>approve_event_proposal</code> RPC)</h4>
+<pre><code class="language-">[관리자 — 제안 상세 → &quot;승인&quot; 버튼]
+        │
+        └─► ApproveProposalDialog (등장 인물 is_active 결정)
+                │
+                └─► supabase.rpc(&#x27;approve_event_proposal&#x27;,
+                                  proposal_id, after_idx, char_active_overrides)
+                       │
+                       │ 한 트랜잭션 안에서:
+                       │
+                       ├─ 1. proposed_characters 순회 → characters UPSERT
+                       │     · code, name(한글), description, avatar_storage_path
+                       │       = &#x27;proposal-characters/&lt;uid&gt;/&lt;draft&gt;/&lt;code&gt;.png&#x27;
+                       │     · is_active = override 결과 (기본 true)
+                       │     ⚠️ avatar_url 은 비워둠 — 아직 로컬 sync 전이라
+                       │        canonical &#x27;assets/avatars/...&#x27; 경로 부여 못함
+                       │
+                       ├─ 2. character_codes 중 characters 에 없는 코드는
+                       │     placeholder row INSERT (is_active=false)
+                       │
+                       ├─ 3. insert_event_at_position(...) 호출
+                       │     → events 테이블에 row 1개 추가
+                       │     · scene_image_paths = proposal 의 것 그대로 복사
+                       │       (즉 &#x27;proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_N.png&#x27;)
+                       │     · 같은 era 내 뒷 story_index 시프트
+                       │     · status=&#x27;published&#x27;, deleted_at=null
+                       │
+                       ├─ 4. quiz_questions 테이블에 1~3개 row 풀어넣기
+                       │
+                       └─ 5. event_proposals UPDATE
+                             · status=&#x27;approved&#x27;
+                             · approved_event_id = &lt;events.id&gt;
+                             · synced_to_local_at IS NULL  ← 아직 로컬 미반영</code></pre>
+<h4 id="데이터-위치-시점-b">데이터 위치 (시점 B)</h4>
+<pre><code class="language-">DB (Postgres)
+├── events                            ← NEW row
+│   · id = uuid
+│   · scene_image_paths = [
+│       &#x27;proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_1.png&#x27;,  ← 아직 proposal-* 가리킴
+│       &#x27;proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_2.png&#x27;,
+│       ...
+│     ]
+├── characters                        ← 신규 인물 추가됨 (있을 때)
+│   · code = &#x27;tester&#x27;
+│   · name = &#x27;테스터&#x27;
+│   · is_active = true  (관리자가 다이얼로그에서 결정)
+│   · avatar_url = &#x27;&#x27;                  ← 비어있음 (로컬 번들 경로 미부여)
+│   · avatar_storage_path = &#x27;proposal-characters/&lt;uid&gt;/&lt;draft&gt;/tester.png&#x27;
+├── quiz_questions                    ← row 1~3개
+└── event_proposals
+    · status = &#x27;approved&#x27;
+    · synced_to_local_at = NULL       ← 시점 B 마커
+
+Storage
+├── proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_N.png   (그대로 — 사용 중)
+└── proposal-characters/&lt;uid&gt;/&lt;draft&gt;/&lt;code&gt;.png (그대로 — 사용 중)</code></pre>
+<h4 id="모든-사용자가-이미지를-어떻게-보나-하이브리드-로딩-1차-2차-3차">모든 사용자가 이미지를 어떻게 보나 (하이브리드 로딩 1차/2차/3차)</h4>
+<h5 id="1-캐릭터-아바타-—-characteravatar-위젯">(1) 캐릭터 아바타 — <code>CharacterAvatar</code> 위젯</h5>
+<pre><code class="language-">character.avatarUrl (&#x27;&#x27;) + character.avatarStoragePath (&#x27;proposal-characters/...&#x27;)
+   │
+   ├─ hasLocalAvatar?
+   │   = avatar_url 이 &#x27;assets/avatars/...&#x27; 로 시작하는가?
+   │   → false  (비어있음)
+   │
+   └─ Case 3 진입 — Storage 1차 사용
+        │
+        └─ Image.network(
+             storage.from(&#x27;proposal-characters&#x27;)
+                    .getPublicUrl(&#x27;&lt;uid&gt;/&lt;draft&gt;/&lt;code&gt;.png&#x27;)
+           )
+           실패 시 → 이름 첫 글자 fallback</code></pre>
+<h5 id="2-장면-이미지-—-sceneassetloader-loadforevent">(2) 장면 이미지 — <code>SceneAssetLoader.loadForEvent</code></h5>
+<pre><code class="language-">1순위: AssetManifest 에서 `assets/story_images_thumbs/index.json` 매핑을 읽고
+       `assets/story_images_thumbs/&lt;short_dir&gt;/scene_N.jpg` 검색
+       → 번들에 없음 (이 이야기는 새로 추가됐으므로)
+
+2순위: event.sceneImagePaths 가 비어있지 않음 → 각 path 를 publicUrl 로 변환
+       → &#x27;https://&lt;ref&gt;.supabase.co/storage/v1/object/public/proposal-scenes/...&#x27;
+       → Image.network 가 받아 표시</code></pre>
+<h4 id="이-시점의-트래픽-특성">이 시점의 트래픽 특성</h4>
+<ul><li>신규 이야기를 보는 <strong>모든 사용자</strong>가 이미지 4장 + 신규 캐릭터 1+장씩 Storage 에서 다운로드</li><li>Supabase Storage 는 public 버킷이라 CDN 캐시 발동 (같은 사용자가 두 번째 보면 로컬 브라우저/CDN 캐시 hit)</li><li>비용: 사용자 수 × 이미지 수 × 첫 view 1회 분량. 1000명 × 5장 × ~200KB ≈ <strong>1GB/대유행 한 이야기당</strong> 정도 — 운영자가 시점 C 까지 빨리 완료하면 부담 적음</li></ul>
+<h3 id="18-3-시점-c-—-운영자가-sync-실행-+-앱-재배포-완료">18.3 시점 C — 운영자가 sync 실행 + 앱 재배포 완료</h3>
+<h4 id="재배포는-어떻게-이루어지는가-운영자-표준-레시피">재배포는 어떻게 이루어지는가 (운영자 표준 레시피)</h4>
+<blockquote><p>핵심은 단 하나의 명령 — <code>make sync-approved-proposal-assets</code> 가 Phase A</p>
+<p>(다운로드) + Phase B (DB↔로컬 diff 정리) + Step C (썸네일) + Step D (pubspec</p>
+<p>갱신) <strong>네 단계를 자동으로 실행</strong>한다. 운영자가 따로 <code>make thumbnails</code>,</p>
+<p><code>make update-pubspec-assets</code> 를 부를 필요 없음. 다만 신규 인물이 추가된 경우</p>
+<p>seed 갱신만 별도로 한 번 더 돌려야 한다 (아래 5번).</p></blockquote>
+<h5 id="사전-준비-한-번만">사전 준비 (한 번만)</h5>
+<pre><code class="language-bash"># Python 가상환경 활성 — sync 스크립트가 requests 등 의존
+source .venv/bin/activate
+
+# .env / .env.ops 에 필요한 값이 있는지 확인 (없으면 sync 가 즉시 ERROR 종료)
+grep -E &quot;SUPABASE_URL_DEV&quot; .env
+grep -E &quot;SUPABASE_SERVICE_ROLE_KEY_DEV&quot; .env.ops
+#   → service_role 키는 Storage 쓰기/PATCH 권한 필요.
+#   → ENV=prod 로 운영 환경에 적용할 거면 SUPABASE_URL_PROD 와
+#      SUPABASE_SERVICE_ROLE_KEY_PROD 도 필요.</code></pre>
+<h5 id="1-어떤-제안이-sync-대상인지-먼저-확인-dry-run">1) 어떤 제안이 sync 대상인지 먼저 확인 (dry-run)</h5>
+<pre><code class="language-bash">make sync-approved-proposal-assets-dry</code></pre>
+<p>내부 동작:</p>
+<ul><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ul>
+<p>인 행을 모두 읽어 list 출력 (실제 다운로드/DB 변경 없음).</p>
+<ul><li>각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.</li></ul>
+<p>기대 출력:</p>
+<pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
+== [uuid1] 엘리야와 까마귀
+   scene[0] proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_1.png
+     → assets/story_images/엘리야와_까마귀/scene_1.png
+   scene[1] proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_2.png
+     → assets/story_images/엘리야와_까마귀/scene_2.png
+   character[새] proposal-characters/&lt;uid&gt;/&lt;draft&gt;/elijah.png
+     → assets/avatars/elijah.png + characters 버킷 업로드
+...
+Phase B (예상): event_dirs=2 (deleted_at), avatars=1 (is_active=false)</code></pre>
+<p>→ 결과를 보고 의도와 일치하는지 확인. 어긋나면 DB 상태 점검 후 재실행.</p>
+<h5 id="2-실제-sync-실행-—-4-phase-자동">2) 실제 sync 실행 — 4-phase 자동</h5>
+<pre><code class="language-bash">make sync-approved-proposal-assets</code></pre>
+<p><code>tools/supabase/sync_approved_proposal_assets.py --env dev</code> 가 다음 순서로 실행된다. 각 단계는 멱등 (재실행 안전).</p>
+<p><strong>Phase A — 신규 승인 제안 다운로드</strong></p>
+<ol><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ol>
+<p>조회.</p>
+<ol><li>각 제안마다:</li></ol>
+<ul><li><code>scene_image_paths</code> 의 PNG 다운로드 (<code>proposal-scenes/...</code> public URL)</li></ul>
+<p>→ <code>assets/story_images/&lt;safe_title&gt;/scene_N.png</code> 저장.</p>
+<ul><li><code>proposed_characters[]</code> 의 PNG 다운로드</li></ul>
+<p>→ <code>assets/avatars/&lt;code&gt;.png</code> 저장.</p>
+<ul><li>같은 PNG 바이트를 <code>characters</code> 버킷의 canonical <code>{code}.png</code> 로</li></ul>
+<p><strong>service_role 키로 업로드</strong>. 이걸로 <code>proposal-characters/...</code> → <code>characters/...</code> 로 자산 이동 완료.</p>
+<ul><li>DB PATCH: <code>characters</code> 의 <code>avatar_url=&#x27;assets/avatars/&lt;code&gt;.png&#x27;</code>,</li></ul>
+<p><code>avatar_storage_path=&#x27;&lt;code&gt;.png&#x27;</code> 로 갱신 (canonical 두 경로 동시 부여).</p>
+<ol><li>모든 파일이 성공한 제안에만 <code>event_proposals.synced_to_local_at=now()</code></li></ol>
+<p>PATCH. <strong>한 파일이라도 실패하면 마커 미세팅 → 다음 run 에서 자동 재시도</strong>.</p>
+<p><strong>Phase B — DB↔로컬 diff 정리</strong> (소프트 삭제 / 비활성 캐릭터 흔적 제거)</p>
+<ol><li><code>events</code> 중 <code>deleted_at IS NOT NULL</code> 행 조회.</li><li>각 행마다:</li></ol>
+<ul><li><code>assets/story_images/&lt;safe_title&gt;/</code>, 연결된 <code>assets/story_images_thumbs/&lt;short_dir&gt;/</code></li></ul>
+<p>디렉토리 제거 (이미 없으면 skip).</p>
+<ul><li><code>events.scene_image_paths</code> 의 storage 파일 best-effort 삭제 (404 무시).</li></ul>
+<ol><li><code>characters</code> 중 <code>is_active=false</code> 행 조회.</li><li>각 행마다:</li></ol>
+<ul><li><code>assets/avatars/&lt;code&gt;.png</code>, <code>assets/avatars_thumbs/&lt;code&gt;.png</code> 제거.</li><li><code>characters.avatar_storage_path</code> 의 storage 파일 best-effort 삭제.</li></ul>
+<p>→ Phase B 만 끄고 싶으면 <code>--skip-deletions</code> (별도 워크플로우에서 정리할 때).</p>
+<p><strong>Step C — 썸네일 자동 재생성</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
+<ul><li>내부적으로 <code>python tools/images/generate_runtime_thumbnails.py</code> 호출.</li><li><code>assets/avatars/</code> → <code>assets/avatars_thumbs/</code> (모든 PNG 압축 사본)</li><li><code>assets/story_images/&lt;title&gt;/</code> → <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/</code></li><li><code>assets/story_images_thumbs/index.json</code>에 title/original dir ↔ short dir 매핑 기록</li><li>이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.</li></ul>
+<p><strong>Step D — pubspec.yaml 자동 갱신</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
+<ul><li>내부적으로 <code>python tools/app/update_pubspec_assets.py</code> 호출.</li><li><code>pubspec.yaml</code> 의 <code>flutter.assets:</code> 아래 <code>story_images_thumbs/index.json</code>과</li></ul>
+<p><code>story_images_thumbs/&lt;short_dir&gt;/</code> 엔트리를 실제 디렉토리 목록에 맞춰 추가/제거.</p>
+<ul><li><code>avatars_thumbs/</code> 는 이미 글롭 패턴 (<code>assets/avatars_thumbs/</code>) 으로</li></ul>
+<p>등록돼 있어 손대지 않음.</p>
+<p>→ Step C, D 둘 다 끄고 싶으면 <code>--skip-post-processing</code>.</p>
+<p>기대 출력 (요약):</p>
+<pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
+== [uuid1] 엘리야와 까마귀  (downloading 4 scene + 1 character)
+   ✓ assets/story_images/엘리야와_까마귀/scene_1.png
+   ✓ assets/avatars/elijah.png + characters bucket upload
+   ✓ PATCH characters.avatar_url, avatar_storage_path
+   ✓ PATCH event_proposals.synced_to_local_at
+...
+=== Phase B ===
+   ✗ events deleted_at: 2 events → 2 dirs removed
+   ✗ characters inactive: 1 → 1 avatar+thumb removed
+
+[thumbnails] generated: 8, skipped: 310
+[pubspec] added: 2 entries, removed: 1
+
+=== Summary ===
+  Phase A — synced (마커 갱신): 3
+  Phase A — failed: 0
+  Phase B — local 정리: event_dirs=2, avatars=1, thumbs=3
+
+Next steps: 앱 재빌드 + 배포.</code></pre>
+<h5 id="3-빌드-사전-검증">3) 빌드 사전 검증</h5>
+<pre><code class="language-bash"># (a) pubspec.yaml 이 실제 파일과 일치하는지 한 번 더 확인 (Step D 가 이미 처리했지만 안전 검증)
+make check-pubspec-assets
+
+# (b) Flutter 정적 분석 — 새 자산 경로 / SafeTitle 충돌 없는지
+flutter analyze
+
+# (c) 테스트 — 하이브리드 로딩 분기 깨지지 않았는지
+flutter test</code></pre>
+<p>세 단계 다 0 issues / 0 failure 여야 다음으로 넘어감. 실패 시 sync 결과 (asset 경로, pubspec 엔트리) 를 점검하고 필요 시 <code>make sync-approved-proposal-assets-all</code> 로 재동기화.</p>
+<h5 id="4-신규-캐릭터가-있을-때만-—-character-meta-json-재생성">4) 신규 캐릭터가 있을 때만 — character_meta.json 재생성</h5>
+<p>신규 인물이 한 명도 없으면 이 단계는 <strong>건너뛴다</strong>.</p>
+<pre><code class="language-bash">make build-character-meta</code></pre>
+<p>내부 동작:</p>
+<ul><li><code>assets/200_stories/*.json</code> 전체를 스캔 → 등장하는 모든 character code 수집.</li><li><code>tools/seed/character_meta.json</code> 갱신 (이름/설명/아바타 프롬프트 카탈로그).</li><li>이 파일은 다음 빌더 (<code>seed-characters</code>, <code>generate-avatars</code>) 의 입력.</li></ul>
+<h5 id="5-선택-db-seed-파일을-현재-상태로-재생성">5) (선택) DB seed 파일을 현재 상태로 재생성</h5>
+<p><code>approve_event_proposal</code> RPC 가 이미 <code>events</code> / <code>characters</code> 행을 INSERT 했 으므로 <strong>운영 DB 자체에는 sync 가 필요 없다</strong>. 다만 <code>db_init.sql + seed</code> 로 클린 부트스트랩하는 시나리오를 지원하려면 seed SQL 도 최신 상태로 유지 하는 게 좋다.</p>
+<pre><code class="language-bash"># (a) DB 현재 events 를 로컬 JSON 으로 역추출 (description 등 보존)
+make export-stories-json ENV=dev
+
+# (b) 그 JSON 을 입력으로 events + characters seed SQL 재생성
+make seed-stories-characters
+
+# (c) 생성된 SQL 을 운영 DB 에 UPSERT 로 재적용 (멱등 — 안전)
+make apply-seeds-stories-characters ENV=dev</code></pre>
+<p>→ <strong>신규 콘텐츠를 추가한 라운드면 5(c) 까지 모두 실행하는 게 안전</strong>. 순수 삭제만 처리한 라운드면 5 단계 전체 생략 가능 (DB 가 이미 정답).</p>
+<h5 id="6-커밋-+-푸시">6) 커밋 + 푸시</h5>
+<pre><code class="language-bash"># 무엇이 변경됐는지 먼저 확인 — 의도하지 않은 파일이 들어가지 않는지 체크
+git status
+git diff --stat
+
+# 변경 대상은 보통 다음 4가지뿐
+git add \
+  assets/avatars/ \
+  assets/avatars_thumbs/ \
+  assets/story_images/ \
+  assets/story_images_thumbs/ \
+  pubspec.yaml \
+  tools/seed/character_meta.json \
+  supabase/200_stories/  # 5번까지 돌렸을 때만
+
+git commit -m &quot;content: 승인된 제안 반영 — &lt;사건 제목&gt;&quot;
+git push origin &lt;branch&gt;   # 사용자 지시 후 실행</code></pre>
+<blockquote><p>⚠️ <strong>secrets 확인</strong>: <code>.env</code>, <code>.env.supabase.secrets</code>, <code>*.json</code> 키 파일이</p>
+<p>우연히 staging 에 들어가지 않았는지 <code>git status</code> 로 한 번 더 본다. forbidden</p>
+<p>patterns hook 이 자동 차단하지만 수동 확인이 안전.</p></blockquote>
+<h5 id="7-pr-+-머지-+-앱-빌드">7) PR + 머지 + 앱 빌드</h5>
+<pre><code class="language-bash">gh pr create   # 사용자 지시 후 실행
+
+# 머지된 main 브랜치에서:
+git checkout main &amp;&amp; git pull
+
+# Android (Play Console internal track 권장)
+flutter build appbundle --release --dart-define=ENV=prod
+
+# iOS (TestFlight)
+flutter build ipa --release --dart-define=ENV=prod</code></pre>
+<p>이 빌드를 Play Console / App Store Connect 에 업로드 → 심사 통과 → 사용자 디바이스가 새 번들을 받으면 시점 C 진입 (로컬 1순위 로딩 → Storage 호출 0).</p>
+<h5 id="8-배포-확정-후-—-proposal--버킷-원본-정리">8) 배포 확정 후 — proposal-* 버킷 원본 정리</h5>
+<pre><code class="language-bash">make sync-approved-proposal-assets-clean</code></pre>
+<p>내부 동작 (Phase A 와 동일하지만 <code>--delete-source</code> 플래그):</p>
+<ul><li>이번 라운드에서 sync 한 제안의 <code>proposal-scenes/...</code>, <code>proposal-characters/...</code></li></ul>
+<p>원본을 <strong>service_role 키로 삭제</strong>.</p>
+<ul><li>DB 의 <code>events.scene_image_paths</code> 는 그대로 (path 값은 더 이상 읽히지</li></ul>
+<p>않으므로 무해).</p>
+<blockquote><p>⚠️ *<em>이걸 8번 </em>전에<em> 돌리면 안 된다.</em>* 구버전 앱을 쓰는 사용자는 아직</p>
+<p>시점 B 동작 — <code>events.scene_image_paths</code> 의 <code>proposal-scenes/...</code> 를</p>
+<p>Storage 에서 가져온다. 그 파일이 사라지면 broken_image 로 보임.</p>
+<p>권장 대기 기간: 강제 업데이트 안 걸리는 한 <strong>앱 빌드 출시 후 1~2주</strong>.</p></blockquote>
+<h5 id="트러블슈팅-특수-상황">트러블슈팅 / 특수 상황</h5>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>상황</th>
+<th>대응</th>
+</tr></thead><tbody>
+<tr>
+<td>로컬 <code>assets/</code> 를 통째로 날렸다 / 다른 머신에서 작업하다 돌아옴</td>
+<td><code>make sync-approved-proposal-assets-all</code> — <code>synced_to_local_at</code> 마커 무시하고 처음부터 재동기화. Phase B 의 정리도 같이 다시 돌림</td>
+</tr>
+<tr>
+<td>Phase A 에서 한 파일이 실패해 마커 미세팅</td>
+<td>다음 <code>make sync-approved-proposal-assets</code> 에 자동 재시도. 영구 실패면 로그의 <code>[ERROR]</code> 메시지로 원인 파악 (네트워크 / Storage 권한 / DB 경합)</td>
+</tr>
+<tr>
+<td>승인 후 운영자가 캐릭터 <code>is_active</code> 만 끄고 싶을 때</td>
+<td><code>update characters set is_active=false where code=&#x27;&lt;code&gt;&#x27;;</code> → 다음 sync 의 Phase B 가 로컬 PNG + storage 파일 정리</td>
+</tr>
+<tr>
+<td>사용자가 시점 C 도달 전 앱 업데이트를 안 받음</td>
+<td>구버전 앱은 시점 B 동작 — <code>events.scene_image_paths</code> 의 Supabase URL 로 fallback. 8번을 미루면 양쪽 다 정상 동작 (§18.4 참고)</td>
+</tr>
+<tr>
+<td>빌드 파이프라인이 <code>flutter test</code> 에서 위젯 골든 차이 fail</td>
+<td>새 PNG 추가가 골든을 깰 가능성 → 의도한 변경이면 골든 갱신 후 별도 PR. sync 와 분리해 처리</td>
+</tr>
+</tbody></table></div>
+<h4 id="데이터-위치-시점-c-완료-후">데이터 위치 (시점 C 완료 후)</h4>
+<pre><code class="language-">앱 번들 (사용자 디바이스)
+├── assets/avatars/&lt;code&gt;.png           ← canonical 위치
+├── assets/avatars_thumbs/&lt;code&gt;.png    ← 런타임 썸네일
+├── assets/story_images/&lt;title&gt;/scene_N.png
+├── assets/story_images_thumbs/index.json           ← title/original dir ↔ short dir 매핑
+├── assets/story_images_thumbs/&lt;short_dir&gt;/scene_N.jpg  ← 런타임 썸네일
+└── pubspec.yaml 에 위 디렉토리들 등록
+
+DB (Postgres)
+├── events.scene_image_paths = [
+│     &#x27;proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_1.png&#x27;,  ← 그대로
+│     ...
+│   ]
+│   ⚠️ DB 의 path 는 변경되지 않음 — 로컬 번들이 1순위라 안 읽힘
+├── characters
+│   · avatar_url = &#x27;assets/avatars/&lt;code&gt;.png&#x27;      ← 이제 로컬 경로 부여됨
+│   · avatar_storage_path = &#x27;characters/&lt;code&gt;.png&#x27; ← canonical 위치
+└── event_proposals.synced_to_local_at = &lt;timestamp&gt;
+
+Storage
+├── characters/&lt;code&gt;.png                ← canonical (sync 가 service_role 로 복사)
+├── proposal-scenes/...                  ← 아직 남아있음 (정리 전)
+└── proposal-characters/...              ← 아직 남아있음 (정리 전)</code></pre>
+<h4 id="사용자가-이미지를-어떻게-보나-시점-c">사용자가 이미지를 어떻게 보나 (시점 C)</h4>
+<h5 id="1-캐릭터-아바타">(1) 캐릭터 아바타</h5>
+<pre><code class="language-">character.avatarUrl = &#x27;assets/avatars/&lt;code&gt;.png&#x27;  ← 이제 로컬 경로
+   │
+   ├─ hasLocalAvatar = true
+   │
+   └─ Case 2 진입 — 로컬 1차
+        │
+        ├─ Image.asset(&#x27;assets/avatars_thumbs/&lt;code&gt;.png&#x27;)  (avatarAssetPath getter
+        │   가 thumbs 로 매핑) → 즉시 표시
+        └─ 만약 번들에 없으면 errorBuilder → storage URL fallback (≈ 일어날 일 없음)</code></pre>
+<h5 id="2-장면-이미지">(2) 장면 이미지</h5>
+<pre><code class="language-">SceneAssetLoader.loadForEvent
+   │
+   ├─ 1순위: assets/story_images_thumbs/&lt;short_dir&gt;/scene_N.jpg
+   │         AssetManifest 에 등록되어 있음 → 즉시 표시
+   │
+   └─ 2순위로 갈 일 없음 — Storage 호출 0</code></pre>
+<h4 id="비용-수렴-모델">비용 수렴 모델</h4>
+<pre><code class="language-">Storage 트래픽
+   │
+   ▲
+   │ ┌─ 시점 B 시작 (승인 즉시)
+   │ │
+   │ │ ▒▒▒▒▒▒▒▒▒▒▒▒▒  사용자가 신규 이야기를 처음 볼 때마다 다운로드
+   │ │ ▒▒▒▒▒▒▒▒▒▒▒▒▒
+   │ │
+   │ └─ 시점 C 시작 (재배포 + 사용자 업데이트 받음)
+   │
+   │   ▁▁▁▁▁▁  로컬 번들로 흡수 — Storage 호출 0 수렴
+   │
+   └────────────────────► 시간</code></pre>
+<p>운영자가 시점 B 를 짧게 유지(승인 후 며칠 안에 sync + 재배포)하는 게 비용 관리의 핵심.</p>
+<h3 id="18-4-사용자가-시점-c-도달-전에-앱-업데이트를-안-받았다면">18.4 사용자가 시점 C 도달 전에 앱 업데이트를 안 받았다면?</h3>
+<pre><code class="language-">사용자 A 디바이스 (구버전 앱 — 시점 B 동작)
+  → 새 이야기 보기 시도
+  → assets/ 번들에 없음 → events.scene_image_paths 의 proposal-scenes/...
+  → Storage public URL 호출 → 정상 표시 ✅
+
+사용자 B 디바이스 (신버전 앱 — 시점 C 동작)
+  → 새 이야기 보기
+  → assets/ 번들에 있음 (재배포 받음) → 즉시 로컬 표시 ✅</code></pre>
+<p>같은 DB 에서 두 종류 클라이언트가 공존해도 둘 다 정상 동작.</p>
+<p>운영자가 <code>make sync-approved-proposal-assets-clean</code> 으로 proposal-* 정리 하기 전까지 <strong>양쪽 fallback 모두 살아있음</strong>. 정리는 모든 사용자가 새 앱 업데이트를 받았다고 확신할 때만 (보통 배포 후 1~2주).</p>
+<h3 id="18-5-한-줄로-요약하는-판별-규칙">18.5 한 줄로 요약하는 판별 규칙</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>어떤 이미지를 보고 있는지 알고 싶으면</th>
+<th>확인 방법</th>
+</tr></thead><tbody>
+<tr>
+<td>이 캐릭터의 아바타가 로컬에서 왔나, Storage 에서 왔나?</td>
+<td><code>character.avatar_url</code> 이 <code>assets/...</code> 면 로컬, 비어있으면 Storage</td>
+</tr>
+<tr>
+<td>이 장면 이미지가 로컬에서 왔나?</td>
+<td><code>assets/story_images_thumbs/index.json</code> 매핑의 <code>&lt;short_dir&gt;/scene_N.jpg</code> 가 AssetManifest 에 있으면 로컬, 없으면 <code>events.scene_image_paths</code> 의 Storage URL</td>
+</tr>
+<tr>
+<td>이 제안이 sync 됐나?</td>
+<td><code>event_proposals.synced_to_local_at IS NOT NULL</code></td>
+</tr>
+<tr>
+<td>다음 sync 가 필요한가?</td>
+<td><code>select count(*) from event_proposals where status=&#x27;approved&#x27; and synced_to_local_at is null</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="18-6-관련-파일">18.6 관련 파일</h3>
+<ul><li>DB / RPC: <code>db_init.sql</code> 의 <code>approve_event_proposal</code>, <code>insert_event_at_position</code>,</li></ul>
+<p><code>event_proposals.synced_to_local_at</code> 컬럼</p>
+<ul><li>하이브리드 로딩:</li><li><code>lib/widgets/character_avatar.dart</code> (3-tier: 로컬 → Storage → 이니셜)</li><li><code>lib/utils/scene_asset_loader.dart</code> (3-tier: 로컬 → Storage → 빈 배열)</li><li><code>lib/models/character.dart</code> (<code>hasLocalAvatar</code> getter)</li><li>Sync 스크립트: <code>tools/supabase/sync_approved_proposal_assets.py</code></li><li>정리 스크립트: <code>tools/supabase/cleanup_orphan_proposal_assets.py</code></li><li>Makefile 타겟: <code>sync-approved-proposal-assets[-dry|-all|-clean]</code>,</li></ul>
+<p><code>cleanup-orphan-proposal-assets[-dry]</code>, <code>apply-seeds-stories-characters</code>, <code>thumbnails</code></p>
+<hr>
+<h2 id="19-삭제-라이프사이클-—-제안-→-승인-→-sync-→-재배포">19. 삭제 라이프사이클 — 제안 → 승인 → sync → 재배포</h2>
+<p>§18 이 &quot;추가&quot; 라이프사이클이라면, 이 섹션은 <strong>삭제</strong> 라이프사이클이다. 사역자가 이야기를 삭제 제안하고 관리자가 승인하면 이야기 + 그에 종속된 자산이 어디에서 어떻게 사라지는지 시점별로 정리한다.</p>
+<h3 id="19-1-한-장-요약">19.1 한 장 요약</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>시점</th>
+<th>events.deleted_at</th>
+<th>characters.is_active</th>
+<th>local PNG</th>
+<th>Storage PNG</th>
+<th>사용자에게 보임?</th>
+</tr></thead><tbody>
+<tr>
+<td>제안 제출 직후 (<code>status=&#x27;pending&#x27;</code>)</td>
+<td>NULL</td>
+<td>true</td>
+<td>그대로</td>
+<td>그대로</td>
+<td><strong>보임</strong> (아직 결정 전)</td>
+</tr>
+<tr>
+<td>관리자 승인 직후 (RPC 완료)</td>
+<td>now()</td>
+<td>마지막 출연이면 false, 아니면 true</td>
+<td>그대로</td>
+<td>1차 정리됨</td>
+<td>안 보임</td>
+</tr>
+<tr>
+<td>운영자 <code>make sync-approved-proposal-assets</code> 실행 후</td>
+<td>now()</td>
+<td>동일</td>
+<td>정리됨</td>
+<td>2차 정리됨 (잔존만)</td>
+<td>안 보임</td>
+</tr>
+<tr>
+<td>앱 재배포 후</td>
+<td>now()</td>
+<td>동일</td>
+<td>정리됨</td>
+<td>정리됨</td>
+<td>안 보임 (로컬 번들 자체에 없음)</td>
+</tr>
+</tbody></table></div>
+<p><strong>핵심 invariant</strong>: <code>events.deleted_at IS NOT NULL</code> 이 set 된 그 순간부터 사용자 는 이미 그 이야기를 못 본다. <code>events_ordered</code> view 가 <code>deleted_at IS NULL</code> 필터 를 걸기 때문. 후속 sync/재배포는 디스크/스토리지 비용 정리 + 캐릭터 일관성 보강 일 뿐 사용자 경험에 영향 없다.</p>
+<h3 id="19-2-시점별-상세">19.2 시점별 상세</h3>
+<h4 id="19-2-1-시점-a-—-사역자-삭제-제안-submit-delete-proposal-rpc">19.2.1 시점 A — 사역자 삭제 제안 (<code>submit_delete_proposal</code> RPC)</h4>
+<p><code>event_proposals</code> 에 <code>proposal_type=&#x27;delete&#x27;</code>, <code>target_event_id</code> set, <code>status=&#x27;pending&#x27;</code> 인 row 가 만들어진다. 이 단계에서는:</p>
+<ul><li><code>events.deleted_at</code> 은 그대로 NULL → 일반 사용자에게 그대로 보임 (관리자</li></ul>
+<p>검토 중).</p>
+<ul><li>같은 target 에 또 다른 pending 삭제 제안이 들어오면 partial unique index</li></ul>
+<p>(<code>event_proposals_unique_pending_delete</code>) 가 거부 — 중복 제안 방지.</p>
+<ul><li>사유 텍스트(<code>summary</code>) 는 관리자 검토 화면에 표시.</li></ul>
+<h4 id="19-2-2-시점-b-—-관리자-승인-approve-delete-proposal-rpc">19.2.2 시점 B — 관리자 승인 (<code>approve_delete_proposal</code> RPC)</h4>
+<p>이 RPC 한 번이 다음 4가지를 atomically 수행:</p>
+<ol><li><code>events.deleted_at = now()</code> (idempotent: 이미 set 이면 no-op).</li></ol>
+<p>→ <code>events_ordered</code> 가 즉시 숨김 → 모든 사용자 화면에서 사라짐.</p>
+<ol><li>이벤트의 <code>character_codes</code> 각 코드에 대해 다른 활성 이벤트(deleted_at IS NULL</li></ol>
+<p>AND status=&#x27;published&#x27;) 가 그 코드를 참조하는지 카운트:</p>
+<ul><li><strong>0건</strong> → 이 이벤트가 그 캐릭터의 마지막 출연 → <code>characters.is_active = false</code></li></ul>
+<p>로 비활성화. <code>characters_read_active</code> RLS 가 anon 에 대해 <code>is_active=true</code> 만 노출하므로 <strong>로컬 번들에 PNG 가 남아있어도 캐릭터 목록 fetch 결과에 안 들어옴</strong>.</p>
+<ul><li><strong>1건 이상</strong> → 그 캐릭터는 다른 이야기에서 살아있음 → 건드리지 않음.</li></ul>
+<ol><li><code>event_proposals</code> 를 <code>status=&#x27;approved&#x27;</code>, <code>reviewed_by_user_id=auth.uid()</code>,</li></ol>
+<p><code>reviewed_at=now()</code>, <code>approved_event_id=target_event_id</code> 로 업데이트.</p>
+<ol><li>클라이언트가 정리할 storage 경로 묶음을 jsonb 로 반환:</li></ol>
+<ul><li><code>scene_image_paths</code>: 이 이벤트의 장면 이미지 경로 (예: <code>proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_1.png</code>)</li><li><code>inactive_character_avatar_paths</code>: 방금 비활성화된 캐릭터 아바타 경로</li></ul>
+<p>클라이언트 <code>lib/data/proposal_repository.dart::approveDelete</code> 가 이 두 묶음을 받아 <strong>best-effort</strong> 로 Supabase Storage 에서 제거 (<code>storage.from(bucket).remove([path])</code>). 이미 다른 경로에서 정리됐거나 권한 문제로 실패해도 무시 — 앱 동작에 영향 없음.</p>
+<p><strong>왜 best-effort 인가</strong>: storage 파일은 아래 시나리오들에서 이미 사라졌을 수 있다:</p>
+<ul><li><code>make sync-approved-proposal-assets-clean</code> (<code>--delete-source</code>) 가 돌아 proposal-* 원본 제거</li><li>같은 캐릭터의 다른 이야기 삭제 시 한 번 비활성화됐다가 재활성화 후 다시 비활성화</li><li>외부 운영자가 수동으로 정리</li></ul>
+<p>각 경우 remove() 가 404 에 가깝게 실패해도 클라이언트는 정상으로 간주한다.</p>
+<h4 id="19-2-3-시점-c-—-운영자-sync-실행-make-sync-approved-proposal-assets">19.2.3 시점 C — 운영자 sync 실행 (<code>make sync-approved-proposal-assets</code>)</h4>
+<p>이 Makefile 타겟은 두 phase 를 실행한다:</p>
+<p><strong>Phase A — 추가</strong> (§18 에서 이미 다룬 내용): 새로 승인된 제안의 PNG 를 로컬로 다운로드 + characters/ 버킷으로 이동 + <code>synced_to_local_at</code> 마커 세팅.</p>
+<p><strong>Phase B — 삭제</strong> (NEW):</p>
+<ol><li><code>events</code> 중 <code>deleted_at IS NOT NULL</code> 인 모든 row 조회 (service-role 키로 직접</li></ol>
+<p>events 쿼리; <code>events_ordered</code> view 는 이걸 안 보여줌).</p>
+<ol><li>각 이벤트마다:</li></ol>
+<ul><li>로컬 <code>assets/story_images/&lt;safe_title&gt;/</code> 디렉토리 제거 (이미 없으면 skip)</li><li><code>assets/story_images_thumbs/index.json</code> 매핑에서 연결된 <code>&lt;short_dir&gt;</code> 썸네일 디렉토리 제거</li><li><code>scene_image_paths</code> 의 storage 파일 best-effort 삭제 (404 무시)</li></ul>
+<ol><li><code>characters</code> 중 <code>is_active = false</code> 인 모든 row 조회.</li><li>각 캐릭터마다:</li></ol>
+<ul><li>로컬 <code>assets/avatars/&lt;code&gt;.png</code> 제거</li><li>로컬 <code>assets/avatars_thumbs/&lt;code&gt;.png</code> 제거</li><li><code>avatar_storage_path</code> 의 storage 파일 best-effort 삭제</li></ul>
+<p><strong>멱등성</strong>: 별도 sync marker 없이 <strong>파일 존재 여부</strong>로만 판단. 이미 정리된 파일은 자연스럽게 skip → 같은 sync 를 N번 돌려도 안전.</p>
+<p><strong>스킵 옵션</strong>: Phase B 가 불필요하면 <code>--skip-deletions</code> 플래그 (예: 운영자가 local 정리를 별도 워크플로우로 하고 싶을 때).</p>
+<h4 id="19-2-4-시점-d-—-앱-재배포">19.2.4 시점 D — 앱 재배포</h4>
+<p>운영자가 sync 후 <code>flutter build</code> + 앱 스토어 배포를 돌리면:</p>
+<ul><li>로컬 번들에서 삭제된 캐릭터/장면 PNG 가 빠진 새 빌드가 나간다.</li><li>이미 <code>events.deleted_at</code> / <code>is_active=false</code> 로 사용자에게는 안 보이고 있던 상태</li></ul>
+<p>였으니, 이 단계는 <strong>번들 크기 절감</strong> + 신규 사용자가 받는 빌드의 정합성 확보 목적.</p>
+<h3 id="19-3-비활성화된-캐릭터의-흔적">19.3 비활성화된 캐릭터의 흔적</h3>
+<ul><li><code>events.character_codes</code> 에는 inactive 코드가 그대로 남는다 (배열 컬럼이라</li></ul>
+<p>무결성 검증 없음). <code>character_eras</code> view 가 <code>p.is_active = true</code> 로 join 하기 때문에 그 캐릭터는 era 목록에서 자동 제외 → 시각적으로 영향 없음.</p>
+<ul><li>같은 코드로 다시 캐릭터가 등록되면 (예: 새 제안 승인) <code>approve_event_proposal</code></li></ul>
+<p>의 ON CONFLICT (code) 분기가 그 row 를 재활용해 <code>is_active = true</code> (또는 관리자 override) 로 되살린다. 이 경우 <strong>이전에 사용자에게 노출되던 동일 코드의 인물</strong> 로 자연스럽게 복구.</p>
+<h3 id="19-4-사용자가-시점-c-도달-전에-앱-업데이트를-안-받았다면">19.4 사용자가 시점 C 도달 전에 앱 업데이트를 안 받았다면?</h3>
+<ul><li><code>events.deleted_at</code> 은 서버에 즉시 반영 → <code>events_ordered</code> 가 자동 필터.</li><li>사용자 앱이 events 목록을 다시 fetch 하는 순간 이야기가 사라짐 (홈 화면</li></ul>
+<p>pull-to-refresh 또는 앱 재실행).</p>
+<ul><li>사용자가 그 이야기 상세 화면을 <strong>이미 열어둔 상태</strong> 라면? 그 화면은 캐시된</li></ul>
+<p>StoryEvent 객체를 들고 있어 그대로 보일 수 있다. 다음 새로고침 시점에 자연 소거. 이 경우의 사용자 진도(<code>user_event_progress</code>) 는 보존 — soft delete 의 핵심 가치.</p>
+<h3 id="19-5-관련-파일">19.5 관련 파일</h3>
+<ul><li>DB / RPC: <code>db_init.sql</code> 의 <code>approve_delete_proposal</code>, <code>submit_delete_proposal</code>,</li></ul>
+<p><code>events.deleted_at</code>, <code>characters.is_active</code></p>
+<ul><li>Schema 통합: 현재는 <code>db_init.sql</code> 에 포함</li><li>Client: <code>lib/data/proposal_repository.dart::approveDelete</code>,</li></ul>
+<p><code>lib/widgets/proposal/delete_event_proposal_sheet.dart</code>, <code>lib/screens/proposal_detail_screen.dart</code></p>
+<ul><li>Sync 스크립트: <code>tools/supabase/sync_approved_proposal_assets.py</code> Phase B</li></ul>
+<p>(<code>fetch_soft_deleted_events</code>, <code>fetch_inactive_characters</code>, <code>sync_deletions</code>, <code>cleanup_storage_paths</code>)</p>
+<ul><li>Makefile 타겟: <code>sync-approved-proposal-assets</code> (Phase A + B 자동),</li></ul>
+<p><code>--skip-deletions</code> 으로 Phase B 스킵 가능</p>
+<hr>
+<h2 id="20-위치-충돌-→-재제출-라이프사이클-new-제안-동시-승인-시나리오">20. 위치 충돌 → 재제출 라이프사이클 (NEW 제안 동시 승인 시나리오)</h2>
+<p>§18~§19 가 &quot;한 제안의 라이프사이클&quot; 이라면, 이 섹션은 <strong>여러 NEW 제안이 같은 위치를 노릴 때</strong> 의 충돌 해소 메커니즘을 설명한다.</p>
+<h3 id="20-1-시나리오">20.1 시나리오</h3>
+<p>사역자 A 와 B 가 같은 era 에서 동일한 <code>after_story_index = 5</code> 로 새 이야기를 제안:</p>
+<ul><li>A: 제목 &quot;노아의 비둘기&quot;, 연도 [1500, 1510]</li><li>B: 제목 &quot;노아의 까마귀&quot;, 연도 [1505, 1515]</li></ul>
+<p>둘 다 <code>pending</code> 상태. 관리자가 A 를 먼저 승인한다고 가정.</p>
+<p><code>insert_event_at_position</code> 이 동작하면:</p>
+<ul><li>A 는 <code>story_index = 6</code> 으로 INSERT (era 내 6번 자리)</li><li>기존 6, 7, 8 ... 은 7, 8, 9 ... 로 +1 시프트</li><li>A 의 연도 [1500, 1510] 가 새 6번 자리에 자리 잡음</li></ul>
+<p>이제 B 의 제안을 보자:</p>
+<ul><li>B 의 <code>after_story_index = 5</code> 는 그대로지만, 실제 의미는 모호해짐. &quot;5번 다음&quot;</li></ul>
+<p>을 골랐을 때는 6번이 비어있었는데, 이제 6번에 A 가 있다.</p>
+<ul><li>B 가 그대로 승인되면 새 6번에 들어가 A 가 7번으로 밀린다 — 하지만 그게 B 가</li></ul>
+<p>원래 의도한 위치인지 확실치 않다. 게다가 A 의 연도(1500-1510)와 B 의 연도 (1505-1515)가 겹쳐 시간 흐름이 부자연스러워질 수 있다.</p>
+<p>→ 결론: <strong>B 는 자동 통과시키지 않고 제안자에게 다시 결정하게</strong> 해야 한다.</p>
+<h3 id="20-2-충돌-감지-+-잠금">20.2 충돌 감지 + 잠금</h3>
+<p><code>approve_event_proposal</code> RPC 가 A 의 events INSERT 를 마친 직후, 같은 era 에서 같은 <code>after_story_index</code> 를 노린 다른 pending NEW 제안들을 찾아 잠근다:</p>
+<pre><code class="language-sql">update event_proposals
+set
+  position_invalidated_at = now(),
+  position_invalidation_reason = &#x27;같은 위치(...)에 다른 이야기 &quot;...&quot; 이(가) 먼저 승인되었어요. ...&#x27;
+where era_id = :era
+  and proposal_type = &#x27;new&#x27;
+  and status = &#x27;pending&#x27;
+  and id &lt;&gt; :approved_proposal_id
+  and position_invalidated_at is null
+  and after_story_index is not distinct from :approved_after_story_index;</code></pre>
+<p><code>position_invalidated_at</code> 이 set 된 동안:</p>
+<ul><li><code>approve_event_proposal</code> / <code>reject_event_proposal</code> RPC 가 raise 로 거부.</li></ul>
+<p>관리자 UI 도 <strong>&quot;승인&quot; / &quot;거절&quot; 버튼이 비활성화</strong> 되고 툴팁으로 안내.</p>
+<ul><li>제안 리스트/상세에 <strong>빨간색 &quot;수정 필요&quot; 라벨</strong> + 사유 배너가 노출 (제안자</li></ul>
+<p>본인뿐 아니라 다른 사용자에게도 보임 — 투명성).</p>
+<ul><li>트리거 <code>notify_on_proposal_invalidated</code> 가 제안자에게 인앱 + 푸시 알림 발송.</li></ul>
+<p>딥링크 = <code>/proposal/{id}</code> → 제안 상세로 진입하면 &quot;위치 재선택&quot; 버튼이 보임.</p>
+<h3 id="20-3-제안자-재제출-revise-proposal-position-rpc">20.3 제안자 재제출 (<code>revise_proposal_position</code> RPC)</h3>
+<p>제안자 본인이 상세 화면의 빨간 <strong>&quot;위치 재선택&quot;</strong> 버튼을 누르면 다이얼로그가 뜬다:</p>
+<ol><li>같은 era 의 <strong>현재 활성 events 목록</strong> 을 시간순으로 표시 (이미 A 가 들어있어</li></ol>
+<p>사용자 시점에서 정확함).</p>
+<ol><li>&quot;맨 앞 / 1번 다음 / 2번 다음 / ...&quot; 라디오 선택.</li><li>선택 즉시 <strong>prev/next 이벤트의 연도 범위</strong> 를 미리 보여준다 (예: &quot;허용 연도</li></ol>
+<p>범위: 1485 ≤ 시작 ≤ 끝 ≤ 1500&quot;).</p>
+<ol><li>시작 연도 / 끝 연도 입력 — 클라이언트가 사전 검증 (`prev.endYear ≤ start ≤</li></ol>
+<p>end ≤ next.startYear`), RPC 가 동일 규칙으로 한 번 더 검증.</p>
+<ol><li><strong>&quot;재제출&quot;</strong> 클릭 → `revise_proposal_position(p_proposal_id,</li></ol>
+<p>p_after_story_index, p_start_year, p_end_year)` 호출.</p>
+<p>RPC 처리:</p>
+<ul><li><code>auth.uid() = proposer_user_id</code> 검증 (제안자 본인만 가능)</li><li>`proposal_type = &#x27;new&#x27; AND status = &#x27;pending&#x27; AND position_invalidated_at IS</li></ul>
+<p>NOT NULL` 검증</p>
+<ul><li><code>p_after_story_index</code> 가 era 안의 활성 이벤트 개수를 초과하지 않는지 검증</li><li>연도 검증 (위 4 와 동일 규칙)</li><li>통과 시:</li><li><code>after_story_index</code>, <code>start_year</code>, <code>end_year</code> 갱신</li><li><code>position_invalidated_at = NULL</code>, <code>position_invalidation_reason = NULL</code></li><li><code>updated_at = now()</code></li></ul>
+<p>→ 잠금 해제. 관리자가 다시 approve/reject 가능.</p>
+<h3 id="20-4-한-장-요약">20.4 한 장 요약</h3>
+<pre><code class="language-">A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
+       │                        │                          │
+       ▼                        ▼                          ▼
+   pending                  pending              ┌─ A → events INSERT
+                                                 ├─ 충돌 감지: B 같은 era+after
+                                                 │
+                                                 ▼
+                                          B.position_invalidated_at = now()
+                                          + 알림 발송 (in-app + push)
+                                                 │
+                                B 의 상세 화면:    │
+                                ┌── 빨간 &quot;수정 필요&quot; 라벨/배너  ◄────┘
+                                ├── admin 의 &quot;승인&quot;/&quot;거절&quot; 버튼 잠김 (RPC 도 거부)
+                                └── B 본인의 &quot;위치 재선택&quot; 버튼 활성
+                                                 │
+                                 B 가 다이얼로그 열고 새 위치/연도 선택
+                                 → revise_proposal_position RPC
+                                                 │
+                                                 ▼
+                                position_invalidated_at = NULL
+                                                 │
+                                                 ▼
+                                관리자가 다시 approve/reject 가능</code></pre>
+<h3 id="20-5-엣지-케이스">20.5 엣지 케이스</h3>
+<ul><li><strong>B 가 위치 재선택을 안 하고 방치</strong>: 영구히 <code>pending + invalidated</code> 상태로</li></ul>
+<p>남는다. 관리자는 어떤 액션도 못 하지만, RLS <code>event_proposals_delete_own_unapproved</code> 정책상 <strong>B 본인 또는 admin 이 제안 row 자체를 삭제</strong> 할 수 있어 청소 가능.</p>
+<ul><li><strong>세 명 이상 같은 위치</strong>: 첫 번째 승인 시점에 나머지 모두가 한꺼번에 invalidate</li></ul>
+<p>됨. 각자 따로 revise → 그 사이에 또 다른 승인이 일어나면 다시 invalidate 가능 (멱등 — 이미 invalidate 된 row 는 트리거가 알림 중복 발송 안 함, <code>old.position_invalidated_at IS NULL → new IS NOT NULL</code> 전이일 때만 알림).</p>
+<ul><li><strong>관리자 override 위치 사용</strong>: <code>approve_event_proposal</code> 의</li></ul>
+<p><code>p_after_story_index_override</code> 로 admin 이 제안자가 고른 위치와 다른 자리에 넣을 수도 있다. 이 경우 충돌 감지는 여전히 <strong>제안의 원래 <code>after_story_index</code></strong> 기준 (즉 admin override 가 같은 자리이면 다른 제안도 invalidate 되지만, override 가 다른 자리면 같은 제안끼리는 충돌 안 함).</p>
+<ul><li><strong>연도 검증 회피 시도</strong>: revise RPC 가 prev/next 검증을 강제 — 사용자가 클라이</li></ul>
+<p>언트 검증을 우회해도 RPC 단에서 raise.</p>
+<h3 id="20-6-관련-파일">20.6 관련 파일</h3>
+<ul><li>DB / RPC: <code>db_init.sql</code> 의 <code>approve_event_proposal</code> (충돌 감지 블록),</li></ul>
+<p><code>reject_event_proposal</code> (잠금 검사), <code>revise_proposal_position</code> (신규), <code>notify_on_proposal_invalidated</code> 트리거, <code>event_proposals.position_invalidated_at</code>, <code>position_invalidation_reason</code>, <code>event_proposals_invalidated_idx</code> 부분 인덱스</p>
+<ul><li>Schema 통합: 현재는 <code>db_init.sql</code> 에 포함</li><li>Model: <code>lib/models/event_proposal.dart::positionInvalidatedAt</code>,</li></ul>
+<p><code>positionInvalidationReason</code>, <code>needsPositionRevision</code></p>
+<ul><li>Repository: <code>lib/data/proposal_repository.dart::revisePosition</code></li><li>UI:</li><li><code>lib/screens/proposal_board_screen.dart</code> — 빨간 &quot;수정 필요&quot; 라벨</li><li><code>lib/screens/proposal_detail_screen.dart</code> — 빨간 배너 + admin 버튼 잠금 +</li></ul>
+<p>제안자 &quot;위치 재선택&quot; 버튼</p>
+<ul><li><code>lib/widgets/proposal/revise_position_dialog.dart</code> — 위치/연도 다이얼로그</li></ul>
+<hr>
+<h2 id="21-제안-라이프사이클-종합-—-단계별-데이터-스토리지-변화-표">21. 제안 라이프사이클 종합 — 단계별 데이터/스토리지 변화 표</h2>
+<p>§18~§20 까지의 모든 단계를 한 자리에 모은 <strong>종합 표 + 다이어그램</strong>. 각 단계가 어떤 DB 테이블/뷰/스토리지를 어떻게 바꾸는지 한눈에 파악할 수 있다.</p>
+<h3 id="21-1-종합-흐름도">21.1 종합 흐름도</h3>
+<pre><code class="language-">                                        [STORAGE]                              [DB]
+사역자 제안 작성  ┌─ [Edge Function] ──► proposal-characters/&lt;uid&gt;/&lt;draft&gt;/&lt;code&gt;.png
+   (이미지 생성)  └─                  ─► proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_N.png
+                                        (upsert: 같은 경로면 덮어쓰기)
+
+사역자 &quot;제안 등록&quot;   ────────────────────────────────────────► event_proposals INSERT
+                                                              (status=&#x27;pending&#x27;)
+
+                ┌────────────── 두 갈래 ──────────────┐
+                ▼                                       ▼
+    관리자 &quot;거절&quot;                              관리자 &quot;승인&quot;
+        │                                          │
+        ├─ proposal-scenes/* 삭제                  ├─ events INSERT (UNIQUE title)
+        ├─ proposal-characters/* 삭제              │   character_codes,
+        │   (단, code 가 다른 row 에서             │   scene_image_paths=&#x27;proposal-scenes/...&#x27;
+        │    재사용 중이면 보존)                   │   (story_index 시프트)
+        ├─ event_proposals row 유지 →             ├─ characters UPSERT (신규 인물)
+        │   status=&#x27;rejected&#x27;                      │   avatar_storage_path=&#x27;proposal-characters/...&#x27;
+        ├─ 알림: notify_on_proposal_reviewed       │   is_active=관리자 결정
+        └─ (UI: 본인이 row 자체 삭제 가능)         ├─ quiz_questions INSERT (choices 셔플)
+                                                   ├─ event_proposals UPDATE
+                                                   │   status=&#x27;approved&#x27;, approved_event_id
+                                                   ├─ 같은 era+after_idx 다른 pending →
+                                                   │   position_invalidated_at = now()
+                                                   └─ 알림: 승인 + 충돌자에게 &quot;수정 필요&quot;
+                                                          │
+                                                          ▼
+                                              운영자: make sync-approved-proposal-assets
+                                              ┌──────────── Phase A ─────────────┐
+                                              │ proposal-* → 로컬 assets/        │
+                                              │ proposal-characters → characters │
+                                              │ characters.avatar_storage_path    │
+                                              │   = &#x27;&lt;code&gt;.png&#x27; (PATCH)         │
+                                              │ synced_to_local_at = now()       │
+                                              ├──────────── Phase B (diff) ──────┤
+                                              │ DB events vs 로컬 dir → 차이 정리 │
+                                              │ DB characters vs 로컬 PNG → 차이  │
+                                              ├──────────── Step C ──────────────┤
+                                              │ make thumbnails                  │
+                                              ├──────────── Step D ──────────────┤
+                                              │ make update-pubspec-assets       │
+                                              └───────────────────────────────────┘
+                                                          │
+                                                          ▼
+                                              운영자: flutter build + 앱 배포
+
+
+[삭제 제안 분기]
+사역자 &quot;이 이야기 삭제 제안&quot; → event_proposals INSERT (proposal_type=&#x27;delete&#x27;)
+
+                ┌────────────── 관리자 ──────────────┐
+                ▼                                       ▼
+    &quot;거절&quot;                                       &quot;승인&quot;
+        └─ status=&#x27;rejected&#x27;                     ├─ DELETE FROM events
+                                                 │   (cascade quiz_questions,
+                                                 │    user_event_progress)
+                                                 ├─ 다른 events 에 안 쓰이면
+                                                 │   DELETE FROM characters
+                                                 ├─ proposal-scenes/ 정리
+                                                 ├─ proposal-characters/ 정리
+                                                 │   (방금 삭제된 캐릭터만)
+                                                 └─ event_proposals UPDATE
+                                                     status=&#x27;approved&#x27;</code></pre>
+<h3 id="21-2-단계별-변경-항목-표">21.2 단계별 변경 항목 표</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>단계</th>
+<th>event_proposals</th>
+<th>events</th>
+<th>events_ordered (view)</th>
+<th>characters</th>
+<th>character_eras (view)</th>
+<th>quiz_questions</th>
+<th>proposal-scenes/</th>
+<th>proposal-characters/</th>
+<th>로컬 <code>assets/</code></th>
+<th>pubspec.yaml</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>1. 제안 작성</strong> (이미지 생성)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>INSERT <code>&lt;uid&gt;/&lt;draft&gt;/scene_N.png</code></td>
+<td>INSERT <code>&lt;uid&gt;/&lt;draft&gt;/&lt;code&gt;.png</code> (신규 인물만)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>2. 제안 등록</strong> (<code>submit_event_proposal</code>)</td>
+<td>INSERT row (status=&#x27;pending&#x27;)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>(변동 없음)</td>
+<td>(변동 없음)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>3. 제안 수정</strong> (재제출)</td>
+<td>UPDATE row</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>OVERWRITE (같은 경로)</td>
+<td>OVERWRITE (같은 경로)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>4. 거절</strong> (<code>reject_event_proposal</code>)</td>
+<td>UPDATE status=&#x27;rejected&#x27;</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>DELETE 전체</td>
+<td>DELETE (이 제안에서만 쓰는 신규 캐릭터만)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>5. 승인</strong> (<code>approve_event_proposal</code>)</td>
+<td>UPDATE status=&#x27;approved&#x27;, approved_event_id</td>
+<td>INSERT (UNIQUE title 검증)</td>
+<td>(자동 갱신)</td>
+<td>UPSERT 신규 + is_active 결정</td>
+<td>(자동 갱신)</td>
+<td>INSERT (choices <strong>셔플</strong> + answer_index 재계산)</td>
+<td>(그대로)</td>
+<td>(그대로)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>5a. 충돌 감지</strong> (같은 era + 같은 after_idx 의 다른 pending)</td>
+<td>UPDATE position_invalidated_at = now()</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>5b. 위치 재선택</strong> (<code>revise_proposal_position</code>)</td>
+<td>UPDATE after_story_index, start/end_year, position_invalidated_at = NULL</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>6. 삭제 제안 등록</strong> (<code>submit_delete_proposal</code>)</td>
+<td>INSERT (proposal_type=&#x27;delete&#x27;)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>7. 삭제 승인</strong> (<code>approve_delete_proposal</code>)</td>
+<td>UPDATE status=&#x27;approved&#x27;</td>
+<td><strong>DELETE row</strong></td>
+<td>(자동 갱신)</td>
+<td>DELETE (이 이벤트만 쓰던 캐릭터)</td>
+<td>(자동 갱신)</td>
+<td>DELETE cascade</td>
+<td>(그대로 — 클라이언트가 정리 호출)</td>
+<td>DELETE (방금 삭제된 캐릭터의 PNG)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>8. Sync Phase A</strong> (추가)</td>
+<td>UPDATE synced_to_local_at</td>
+<td>—</td>
+<td>—</td>
+<td>UPDATE avatar_storage_path = <code>&lt;code&gt;.png</code></td>
+<td>—</td>
+<td>—</td>
+<td>(그대로)</td>
+<td>MOVE → <code>characters/&lt;code&gt;.png</code> 버킷</td>
+<td>DOWNLOAD <code>assets/avatars/&lt;code&gt;.png</code>, <code>assets/story_images/&lt;title&gt;/scene_N.png</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>9. Sync Phase B</strong> (diff 정리)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>DELETE 로컬 dir/PNG (DB 와 차이)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>10. Sync Step C</strong> (<code>make thumbnails</code>)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>GENERATE <code>assets/avatars_thumbs/</code>, <code>assets/story_images_thumbs/&lt;short_dir&gt;/scene_N.jpg</code>, <code>assets/story_images_thumbs/index.json</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>11. Sync Step D</strong> (<code>make update-pubspec-assets</code>)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>UPDATE <code>flutter.assets:</code> 의 story_images_thumbs/index.json + short dir 엔트리</td>
+</tr>
+<tr>
+<td><strong>12. 앱 배포</strong> (<code>flutter build</code> + release)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>(번들에 포함)</td>
+<td>(번들에 포함)</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>📌 <strong>메모</strong>:</p>
+<p>- <strong>events_ordered, character_eras 는 VIEW</strong> — events/characters 변경 시 자동</p>
+<p>재계산. 별도 인덱스 재구성/INSERT/DELETE 필요 없음.</p>
+<p>- <strong>quiz_questions</strong> 는 events FK <code>ON DELETE CASCADE</code> — 이벤트 hard delete 시</p>
+<p>퀴즈도 자동 삭제.</p>
+<p>- <strong>user_event_progress</strong> 도 events FK <code>ON DELETE CASCADE</code> — hard delete 시</p>
+<p>사용자 학습 진도가 함께 cascade 삭제됨 (수용한 트레이드오프).</p>
+<p>- <strong>events.deleted_at / characters.is_active</strong> 컬럼은 backward-compat 위해</p>
+<p>유지하되 신규 흐름에서는 set 되지 않음 (vestigial).</p>
+<p>- <strong>avatars_thumbs/</strong> 는 pubspec.yaml 에 글롭 패턴 (<code>assets/avatars_thumbs/</code>) 으로</p>
+<p>등록되어 있어 PNG 추가/삭제 시 pubspec 변경 불필요. 반면</p>
+<p><strong>story_images_thumbs/</strong> 는 디렉토리별로 따로 등록되어 있어 추가/삭제 시</p>
+<p>pubspec 동기화 필요 (<code>make update-pubspec-assets</code> 가 처리).</p></blockquote>
+<h3 id="21-3-title-unique-제약-—-왜-필요한가">21.3 Title UNIQUE 제약 — 왜 필요한가</h3>
+<p><code>events.title</code> 은 GLOBAL UNIQUE 다. 두 가지 이유:</p>
+<ol><li><strong>로컬 번들 디렉토리명 충돌</strong>: 빌드 시 <code>assets/story_images_thumbs/&lt;short_dir&gt;/</code></li></ol>
+<p>가 만들어진다. 같은 title 의 이야기 두 개가 있으면 디렉토리가 합쳐져 어느 장면이 어느 이벤트의 것인지 모호해짐.</p>
+<ol><li><strong>사용자 식별성</strong>: 같은 제목의 이야기 두 개가 있으면 검색/공유 링크/딥링크가</li></ol>
+<p>불명확.</p>
+<p>검증 지점은 두 곳:</p>
+<ul><li><strong><code>submit_event_proposal</code> RPC</strong> — 제안 제출 단계에서 다음 둘 중 하나라도</li></ul>
+<p>걸리면 raise:</p>
+<ul><li>활성 events 에 같은 제목 존재</li><li>다른 사역자의 pending NEW 제안에 같은 제목 존재 (대소문자/공백 정규화 후 비교)</li><li><strong><code>events.title UNIQUE</code> 제약</strong> — 승인 RPC 의 INSERT 단계에서 마지막 방어선.</li></ul>
+<h3 id="21-4-quiz-answer-index-셔플-—-왜-필요한가">21.4 Quiz answer_index 셔플 — 왜 필요한가</h3>
+<p><code>approve_event_proposal</code> 가 <code>quiz_questions</code> 에 INSERT 할 때 <code>choices</code> 배열을 <strong>0..3 의 무작위 순열로 재배치</strong> 하고 <code>answer_index</code> 를 새 위치로 재계산한다.</p>
+<p>목적: 사역자가 무의식 중에 항상 1번째 자리에 정답을 두는 습관이 있어도 사용자 에게는 정답 위치가 분산되어 보임. 패턴 학습으로 인한 추측 정확도 저하.</p>
+<p>구현은 SQL <code>random()</code> + <code>row_number() over (order by random())</code> 으로 4개 인덱스의 무작위 순열을 만든 뒤, 원래 <code>choices[answer_index]</code> 가 새 인덱스 어디로 갔는지를 추적해 <code>answer_index</code> 갱신.</p>
+<h3 id="21-5-관련-파일">21.5 관련 파일</h3>
+<ul><li>DB / RPC: <code>db_init.sql</code> (모든 RPC 본문),</li></ul>
+<p><code>events.title UNIQUE</code> 제약, <code>event_proposals.position_invalidated_at</code>, <code>event_proposals.synced_to_local_at</code></p>
+<ul><li>Schema 통합: 현재는 <code>db_init.sql</code> 에 포함</li><li>Sync 스크립트: <code>tools/supabase/sync_approved_proposal_assets.py</code></li></ul>
+<p>(Phase A 추가 / Phase B diff 정리 / Step C thumbnails / Step D pubspec)</p>
+<ul><li>Make 타겟: <code>make sync-approved-proposal-assets[-all|-dry|-clean]</code>,</li></ul>
+<p><code>make thumbnails</code>, <code>make update-pubspec-assets</code></p>
+          <a class="top-link" href="#top">맨 위로</a>
+        </article>
+      </div>
+    </main>
+  </div>
+  <script src="assets/guide.js"></script>
+</body>
+</html>

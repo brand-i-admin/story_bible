@@ -59,11 +59,15 @@
 
 ### 1.2 프로젝트 구성
 
-| 구분 | 값 |
-|------|-----|
-| prod 프로젝트 ref | `zmcffwcfmyhdykdhxhgy` |
-| 엔드포인트 | `https://zmcffwcfmyhdykdhxhgy.supabase.co` |
-| 지역 | ap-northeast-1 (도쿄) |
+| 구분 | dev | real |
+|------|-----|------|
+| 프로젝트 ref | `cvnutbizsgeycdjcbled` | `zmcffwcfmyhdykdhxhgy` |
+| 엔드포인트 | `https://cvnutbizsgeycdjcbled.supabase.co` | `https://zmcffwcfmyhdykdhxhgy.supabase.co` |
+| 앱 실행 ENV | `dev` | `real` 또는 `prod` |
+| 운영 env suffix | `DEV` | `PROD` |
+
+지역/풀러 host는 Supabase Dashboard의 Database connection string을 기준으로 확인한다.
+현재 real 연결 예시는 [DB_SETUP.md](DB_SETUP.md)의 pooler 표를 우선한다.
 
 ### 1.3 주요 모듈과 실제 쓰임
 
@@ -83,11 +87,12 @@
 
 #### Storage
 
-4개 버킷 (상세는 `../BACKEND.md` §6):
+5개 버킷 (상세는 `../BACKEND.md` §6):
 - `profile-images` — 유저 프로필 사진 (본인만 쓰기)
 - `characters` — 인물 아바타 (admin 쓰기, 공개 읽기)
 - `proposal-scenes` — 제안 장면 이미지 (Edge Function이 쓰기)
 - `proposal-characters` — 제안 캐릭터 아바타
+- `proposal-general-images` — 제안/운영 보조 이미지
 
 각 버킷도 RLS policy 로 접근 제어.
 
@@ -111,10 +116,10 @@ Postgres WAL(Write-Ahead Log) 변경사항을 WebSocket 스트림. 이 프로젝
 
 DB 안에서 돌아가는 cron 스케줄러. pg_cron 확장을 활성화하면:
 ```sql
-cron.schedule('weekly-quiz-monday-9am-kst', '0 0 * * 1',
+cron.schedule('weekly-character-monday-9am-kst', '0 0 * * 1',
   $$ select public.pick_weekly_character(); $$);
 ```
-월요일 00:00 UTC (= KST 9시)에 `pick_weekly_character()` 함수 자동 실행.
+월요일 00:00 UTC (= KST 9시)에 주간 인물/탐색 선택을 갱신한다.
 
 ### 1.4 연결 설정 (`.env` / `.env.ops`)
 
@@ -190,8 +195,9 @@ Postgres user_push_tokens 테이블 upsert
 
 ```
 [DB 트리거가 notifications INSERT]
-  ↓ (향후 pg_net 연결 시)
-supabase.functions.invoke('send-push', { user_id, title, body, ... })
+  ↓
+_fire_push_broadcast / pg_net.http_post
+  → send-push Edge Function 호출
   ↓
 Edge Function send-push:
   1. user_push_tokens 조회 → FCM 토큰 목록
@@ -447,6 +453,8 @@ Kakao Developers → 내 애플리케이션 → 카카오 로그인 활성화. R
 - `.env`: 앱 실행에 필요한 공개 URL/anon key, FCM VAPID 공개키
 - `.env.ops`: service role key, DB URL 처럼 앱에 들어가면 안 되는 운영 비밀
 - 스크립트(`scripts/common.sh`)가 실행 전 `.env` 를 파싱해 앱에 필요한 값만 `--dart-define` 으로 주입
+- Supabase Edge Function secret은 `.env.ops`가 아니라 `.env.supabase.secrets` 템플릿으로 관리하고 `supabase secrets set --env-file .env.supabase.secrets`로 반영
+- 다른 컴퓨터/팀원 공유 기준은 [LOCAL_ENV_FILES.md](LOCAL_ENV_FILES.md)를 우선한다.
 
 ### 6.3 왜 Firebase `apiKey` 는 커밋해도 되는가
 
@@ -770,8 +778,8 @@ Supabase Edge Function `_shared/cors.ts` 가 `*` 로 설정되어 있는 이유:
      - proposer B, admin C/D 에게 notifications INSERT
      - 총 3개 row 생성
 
-  4. (향후 pg_net 연결 시) AFTER INSERT on notifications 트리거
-     - net.http_post → send-push Edge Function 호출
+  4. AFTER INSERT on notifications 계열 트리거
+     - `pg_net.http_post` → send-push Edge Function 호출
 
 [Supabase Edge Function — send-push]
   5. 입력: { user_id: B, title, body, deep_link }

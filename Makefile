@@ -60,6 +60,7 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
         cleanup-orphan-proposal-assets cleanup-orphan-proposal-assets-dry \
+        build-guides \
         update-pubspec-assets check-pubspec-assets \
         clean-generated lint
 
@@ -120,6 +121,7 @@ help:
 	@echo "기타:"
 	@echo "  update-pubspec-assets   story_images_thumbs 경로를 pubspec.yaml에 반영"
 	@echo "  check-pubspec-assets    pubspec.yaml이 최신인지 확인 (CI용)"
+	@echo "  build-guides            story_guide.md + docs/guides/html/*.html 생성"
 	@echo "  lint                    Python 포맷 검사 (black)"
 	@echo "  clean-generated         생성된 SQL 파일 삭제"
 	@echo ""
@@ -431,9 +433,13 @@ check-pubspec-assets:
 	@echo "[Makefile] pubspec.yaml이 story_images_thumbs 디렉토리와 동기화되어 있는지 확인..."
 	$(PYTHON) $(TOOLS_DIR)/app/update_pubspec_assets.py --check
 
+build-guides:
+	@echo "[Makefile] docs/guides story guide + HTML 문서 생성..."
+	$(PYTHON) $(TOOLS_DIR)/docs/build_guides.py
+
 lint:
 	@echo "[Makefile] Python 포맷 검사 (black)..."
-	black --check $(TOOLS_DIR)/seed $(TOOLS_DIR)/images $(TOOLS_DIR)/app $(TOOLS_DIR)/lint $(TOOLS_DIR)/export
+	black --check $(TOOLS_DIR)/seed $(TOOLS_DIR)/images $(TOOLS_DIR)/app $(TOOLS_DIR)/lint $(TOOLS_DIR)/export $(TOOLS_DIR)/docs
 
 clean-generated:
 	@echo "[Makefile] 생성된 SQL 삭제..."

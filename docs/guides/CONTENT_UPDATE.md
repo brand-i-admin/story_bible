@@ -191,6 +191,8 @@ make apply-seeds-stories-characters ENV=dev
 make apply-seeds-landmarks ENV=dev       # landmark가 바뀌었으면
 make apply-seeds-quizzes ENV=dev         # 퀴즈가 있으면
 make upload-character-avatars ENV=dev    # 신규 인물 아바타가 있으면
+python3 tools/app/verify_asset_paths.py
+python3 tools/seed/verify_polygons_contain_events.py
 scripts/run_dev.sh
 ```
 
@@ -326,6 +328,7 @@ where code = 'goliath';
 - [ ] 퀴즈가 있으면 `supabase/quizzes/db_events.json` snapshot도 갱신했고 `make seed-quizzes` 성공.
 - [ ] `make thumbnails`와 `make update-pubspec-assets` 실행.
 - [ ] `make check-pubspec-assets` 통과.
+- [ ] `python3 tools/seed/verify_polygons_contain_events.py` 통과.
 - [ ] `scripts/run_dev.sh`에서 새 이야기/이미지/퀴즈 확인.
 - [ ] real DB 공개 타이밍을 앱 Store 배포 타이밍과 맞췄다.
 

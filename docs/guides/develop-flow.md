@@ -20,6 +20,11 @@ scripts/build_ios_real.sh
 이 스크립트들은 실행 전에 `.env`의 선택 환경 값을 검증하고, Flutter 에
 `--dart-define`으로 주입한다. 앱은 `.env` 파일을 직접 읽지 않는다.
 
+새 컴퓨터나 팀원 온보딩 시 필요한 로컬 파일 기준은
+[LOCAL_ENV_FILES.md](LOCAL_ENV_FILES.md)를 먼저 본다. 앱 실행/빌드에는 `.env`,
+DB/Storage 운영 명령에는 `.env.ops`, Edge Function secret 갱신에는
+`.env.supabase.secrets`가 필요하지만, 세 실파일은 모두 git에 올리지 않는다.
+
 DB / Storage 운영은 Makefile 을 쓴다.
 
 ```bash
@@ -146,6 +151,7 @@ dart format --output=none --set-exit-if-changed .
 flutter analyze
 flutter test
 python3 tools/app/verify_asset_paths.py
+python3 tools/seed/verify_polygons_contain_events.py
 ```
 
 ## 3. 평소 개발 Flow

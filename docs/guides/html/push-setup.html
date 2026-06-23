@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>푸시 알림 설정 가이드 · Story Bible Guides</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Story Bible Guides</div>
+      <div class="subtle">310 events · 445 Dart tests</div>
+      <nav class="nav">
+        <a class="" href="index.html">가이드 인덱스</a>
+        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
+<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
+<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
+<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
+<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
+<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
+<a class="active" href="push-setup.html">푸시 알림 설정 가이드</a>
+<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
+<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
+<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <div class="page-shell">
+        <section class="hero">
+          <div class="eyebrow">Developer documentation</div>
+          <h1>푸시 알림 설정 가이드</h1>
+          <p>푸시 설정: Firebase와 send-push를 처음 연결하는 체크리스트</p>
+          <div class="flow"><div class="step"><span>firebase</span><strong>Firebase</strong><p>앱 등록 + VAPID + APNs</p></div>
+<div class="step"><span>edge</span><strong>send-push</strong><p>FIREBASE_SERVICE_ACCOUNT</p></div>
+<div class="step"><span>db</span><strong>pg_net</strong><p>Vault secret으로 함수 호출</p></div>
+<div class="step"><span>phone</span><strong>Device</strong><p>register_push_token 후 수신</p></div></div>
+          <div class="toc"><strong>On this page</strong><a class="level-1" href="#푸시-알림-설정-가이드">푸시 알림 설정 가이드</a><a class="level-2" href="#1-firebase-프로젝트-생성">1. Firebase 프로젝트 생성</a><a class="level-2" href="#2-앱-등록-web-ios-android">2. 앱 등록 (Web / iOS / Android)</a><a class="level-3" href="#web">Web</a><a class="level-3" href="#ios">iOS</a><a class="level-3" href="#android">Android</a><a class="level-2" href="#3-서비스-계정-키-발급-edge-function-용">3. 서비스 계정 키 발급 (Edge Function 용)</a><a class="level-2" href="#4-웹-푸시용-vapid-키">4. 웹 푸시용 VAPID 키</a><a class="level-2" href="#5-flutterfire-자동-설정">5. flutterfire 자동 설정</a><a class="level-2" href="#6-플랫폼별-설정-—-flutterfire-자동-vs-수동">6. 플랫폼별 설정 — flutterfire 자동 vs 수동</a><a class="level-3" href="#android-—-✅-전부-자동">Android — ✅ 전부 자동</a><a class="level-3" href="#ios-—-⚠️-2가지-수동-필요-이-프로젝트-저장소에-이미-적용-완료">iOS — ⚠️ 2가지 수동 필요 (이 프로젝트 저장소에 이미 적용 완료)</a><a class="level-3" href="#web-—-⚠️-service-worker-수동-생성-이-프로젝트-저장소에-이미-작성됨">Web — ⚠️ Service Worker 수동 생성 (이 프로젝트 저장소에 이미 작성됨)</a><a class="level-2" href="#7-supabase-edge-function-배포">7. Supabase Edge Function 배포</a><a class="level-2" href="#8-db-→-send-push-자동-디스패치-2026-05-11-도입">8. DB → send-push 자동 디스패치 (2026-05-11 도입)</a><a class="level-2" href="#9-동작-확인">9. 동작 확인</a><a class="level-2" href="#장애-시-확인-순서">장애 시 확인 순서</a></div>
+        </section>
+        <article class="doc-body">
+          <h1 id="푸시-알림-설정-가이드">푸시 알림 설정 가이드</h1>
+<p>Story Bible 앱은 Firebase Cloud Messaging(FCM) HTTP v1 API 로 푸시 알림을 보낸다. 이 문서는 <strong>신규 환경 세팅 시 1회만</strong> 수행하는 Firebase Console 작업과 Flutter/Supabase 연동 절차를 단계별로 안내한다.</p>
+<p>현재 코드 상태: <code>firebase_core</code>/<code>firebase_messaging</code> 의존성과 <code>lib/firebase_options.dart</code> 는 이미 들어 있다. Firebase 프로젝트를 새로 나누거나 재설정하면 <code>flutterfire configure</code> 를 다시 실행하고, <code>web/firebase-messaging-sw.js</code> 의 Firebase config 도 함께 동기화한다.</p>
+<h2 id="1-firebase-프로젝트-생성">1. Firebase 프로젝트 생성</h2>
+<ol><li>https://console.firebase.google.com/ 접속.</li><li>&quot;프로젝트 추가&quot; → 이름 <code>story-bible</code> (자유).</li><li>기존 <code>GOOGLE_CLOUD_PROJECT</code> 아바타 생성용 GCP 프로젝트가 있다면, 같은 프로젝트에 Firebase 를 연결할 수 있다 (드롭다운에서 기존 프로젝트 선택).</li></ol>
+<h2 id="2-앱-등록-web-ios-android">2. 앱 등록 (Web / iOS / Android)</h2>
+<h3 id="web">Web</h3>
+<ul><li>프로젝트 설정 → &quot;앱 추가&quot; → <code>&lt;/&gt;</code> 아이콘 → 닉네임 <code>story-bible-web</code>.</li><li><strong>&quot;Firebase Hosting 설정&quot;은 체크 해제</strong>.</li><li>발급된 SDK config 는 <code>flutterfire configure</code> 로 자동 주입되므로 그대로 닫아도 됨.</li></ul>
+<h3 id="ios">iOS</h3>
+<ul><li>&quot;앱 추가&quot; → iOS 아이콘.</li><li>Bundle ID: Xcode 에서 <code>ios/Runner.xcodeproj</code> General 탭 &quot;Bundle Identifier&quot; 확인 (기본값 예: <code>com.example.storyBible</code>).</li><li>나머지 단계 건너뛰고 &quot;콘솔로 계속&quot;.</li></ul>
+<h3 id="android">Android</h3>
+<ul><li>&quot;앱 추가&quot; → Android 아이콘.</li><li>Package name: <code>android/app/build.gradle.kts</code> 의 <code>applicationId</code>.</li></ul>
+<h2 id="3-서비스-계정-키-발급-edge-function-용">3. 서비스 계정 키 발급 (Edge Function 용)</h2>
+<ol><li>프로젝트 설정 → <strong>&quot;서비스 계정&quot;</strong> 탭.</li><li><strong>&quot;새 비공개 키 생성&quot;</strong> 클릭 → JSON 파일 다운로드.</li><li>파일명 예: <code>firebase-admin-sdk.json</code>.</li><li><strong>절대 git 에 커밋 금지</strong> — 저장소 루트의 <code>firebase-admin-sdk*.json</code>은 <code>.gitignore</code> 대상이다.</li><li>Supabase에 반영할 때는 <code>.env.supabase.secrets.example</code>을 복사해</li></ol>
+<p><code>.env.supabase.secrets</code>를 만들고 <code>FIREBASE_SERVICE_ACCOUNT</code>에 JSON 전체를 한 줄로 넣는다.</p>
+<h2 id="4-웹-푸시용-vapid-키">4. 웹 푸시용 VAPID 키</h2>
+<ol><li>프로젝트 설정 → <strong>&quot;Cloud Messaging&quot;</strong> 탭.</li><li>하단 &quot;Web configuration&quot; 섹션 → &quot;Key pair 생성&quot; → 키 복사.</li><li><code>.env</code> 에 <code>FCM_VAPID_KEY=&lt;복사한 키&gt;</code> 로 저장.</li></ol>
+<ul><li><code>scripts/common.sh</code> 가 <code>.env</code> 를 읽어 <code>run_*.sh</code> / <code>build_*.sh</code> 실행 시</li></ul>
+<p><code>--dart-define=FCM_VAPID_KEY=...</code> 로 자동 주입한다.</p>
+<ul><li><code>lib/services/push_service.dart</code> 의 <code>String.fromEnvironment(&#x27;FCM_VAPID_KEY&#x27;)</code></li></ul>
+<p>가 이 값을 받아 Flutter Web 토큰 발급에 사용.</p>
+<ul><li>값이 비어 있어도 앱은 정상 동작 (웹 푸시만 비활성화, 인앱 알림은 OK).</li></ul>
+<h2 id="5-flutterfire-자동-설정">5. flutterfire 자동 설정</h2>
+<pre><code class="language-bash"># 1) Firebase CLI 로그인
+npm install -g firebase-tools
+firebase login
+
+# 2) FlutterFire CLI 설치
+dart pub global activate flutterfire_cli
+
+# 3) 자동 설정 (대화형) — Step 2 에서 만든 앱들을 선택
+flutterfire configure</code></pre>
+<p>이 명령이 다음을 자동 수행한다:</p>
+<ul><li><code>lib/firebase_options.dart</code> <strong>덮어씀</strong> (현재 placeholder 대체)</li><li><code>android/app/google-services.json</code> 배치</li><li><code>ios/Runner/GoogleService-Info.plist</code> 배치</li><li><code>web/index.html</code> 에 Firebase SDK 스크립트 주입</li></ul>
+<h2 id="6-플랫폼별-설정-—-flutterfire-자동-vs-수동">6. 플랫폼별 설정 — flutterfire 자동 vs 수동</h2>
+<p><code>flutterfire configure</code> 가 처리하는 범위와 남은 수동 작업을 구분해 정리.</p>
+<h3 id="android-—-✅-전부-자동">Android — ✅ 전부 자동</h3>
+<p><code>flutterfire configure</code> 가 다음을 모두 처리:</p>
+<ul><li><code>android/app/google-services.json</code> 자동 배치</li><li><code>android/settings.gradle.kts</code> 에 <code>com.google.gms.google-services</code> 플러그인 선언 (<code>apply false</code>)</li><li><code>android/app/build.gradle.kts</code> 의 <code>plugins {}</code> 블록에 플러그인 적용</li></ul>
+<p>Android 13+ 런타임 <code>POST_NOTIFICATIONS</code> 권한은 <code>firebase_messaging</code> 이 필요 시 자동 요청. <strong>추가 수동 작업 없음.</strong></p>
+<h3 id="ios-—-⚠️-2가지-수동-필요-이-프로젝트-저장소에-이미-적용-완료">iOS — ⚠️ 2가지 수동 필요 (이 프로젝트 저장소에 이미 적용 완료)</h3>
+<p><code>flutterfire configure</code> 는 <code>GoogleService-Info.plist</code> 만 배치한다. 아래 두 가지는 별도 편집 필요:</p>
+<ol><li><strong><code>ios/Runner/Info.plist</code></strong> — 백그라운드 푸시 수신 허용</li></ol>
+<pre><code class="language-xml">   &lt;key&gt;UIBackgroundModes&lt;/key&gt;
+   &lt;array&gt;
+     &lt;string&gt;fetch&lt;/string&gt;
+     &lt;string&gt;remote-notification&lt;/string&gt;
+   &lt;/array&gt;</code></pre>
+<ol><li><strong><code>ios/Runner/Runner.entitlements</code></strong> — APNs 환경 등록</li></ol>
+<pre><code class="language-xml">   &lt;key&gt;aps-environment&lt;/key&gt;
+   &lt;string&gt;development&lt;/string&gt;</code></pre>
+<p>Release 빌드 시 <code>production</code> 으로 바꾸거나, Xcode &quot;Signing &amp; Capabilities&quot; 로 &quot;Push Notifications&quot; capability 를 추가해 Xcode 가 자동 관리하게 둔다.</p>
+<p>App Store 배포 시에는 Apple Developer Console 에서 App Identifier 의 Push Notifications 기능이 체크되어 있어야 한다 (개발 단계에서는 불필요).</p>
+<h3 id="web-—-⚠️-service-worker-수동-생성-이-프로젝트-저장소에-이미-작성됨">Web — ⚠️ Service Worker 수동 생성 (이 프로젝트 저장소에 이미 작성됨)</h3>
+<p><code>flutterfire configure</code> 는 <code>firebase-messaging-sw.js</code> 를 생성하지 않는다. 이미 <code>web/firebase-messaging-sw.js</code> 를 작성해 두었으며, 내용은 <code>lib/firebase_options.dart</code> 의 <code>web</code> 섹션과 동일한 config 를 가진다. <strong>Firebase config 값이 바뀌면 (flutterfire 재실행 시) 이 파일도 동기화 필요.</strong></p>
+<p>SW 역할:</p>
+<ul><li>백그라운드 메시지 수신 시 브라우저 알림 표시</li><li>알림 클릭 시 이미 열린 앱 탭으로 포커스 + <code>postMessage</code> 로 deep_link 전달</li></ul>
+<p><code>web/index.html</code> 수정은 불필요 — <code>firebase_messaging</code> Flutter 플러그인이 JS SDK 로드를 자체 처리한다.</p>
+<h2 id="7-supabase-edge-function-배포">7. Supabase Edge Function 배포</h2>
+<pre><code class="language-bash"># 1) Firebase 서비스 계정 JSON 을 시크릿으로 등록
+supabase secrets set FIREBASE_SERVICE_ACCOUNT=&quot;$(cat firebase-admin-sdk.json)&quot;
+
+# 2) send-push 함수 배포
+supabase functions deploy send-push</code></pre>
+<p><code>supabase secrets set</code> 으로 저장한 값은 앱이나 git 에 들어가지 않고 해당 Supabase 프로젝트의 Edge Function 런타임 환경변수로 저장된다. 즉 <code>FIREBASE_SERVICE_ACCOUNT</code> 는 <code>send-push</code> 함수 안에서만 읽을 수 있는 서버용 비밀이다.</p>
+<h2 id="8-db-→-send-push-자동-디스패치-2026-05-11-도입">8. DB → send-push 자동 디스패치 (2026-05-11 도입)</h2>
+<p>DB 트리거/pg_cron 이 <code>send-push</code> 를 직접 호출하는 인프라가 <code>db_init.sql</code> 에 통합돼 있다. 다음 3가지를 만족하면 자동 동작한다:</p>
+<ol><li><strong>pg_net 확장 활성화</strong> — Dashboard → Database → Extensions → <code>pg_net</code> ON</li><li><strong>Supabase Vault 에 두 secret 등록</strong> — Dashboard → Integrations → Vault → Secrets → New secret</li></ol>
+<ul><li><code>service_role_key</code> — ⚙ Project Settings → API Keys → <code>service_role</code> 값</li><li><code>supabase_url</code> — ⚙ Project Settings → API → &quot;Project URL&quot; (예: <code>https://&lt;ref&gt;.supabase.co</code>)</li></ul>
+<ol><li><strong>db_init.sql 적용</strong> — <code>make db-init ENV=&lt;env&gt;</code> 또는 Dashboard → SQL Editor 에 <code>db_init.sql</code> 전체 붙여넣고 Run. 새 헬퍼/트리거/<code>dispatch_daily_exploration_push</code>/pg_cron 모두 자동 등록된다.</li></ol>
+<p>자동 발송 경로:</p>
+<ul><li>새 이야기/인물 승인 (admin → <code>approve_event_proposal</code>) → broadcast row INSERT → 트리거 → push</li><li>매주 월요일 KST 9시 → <code>pick_weekly_character()</code> (주간 탐험 시작 push-only)</li><li>매주 수요일 KST 9시 → <code>dispatch_daily_exploration_push()</code> (매일 탐험 push-only)</li><li>매주 금요일 KST 9시 → <code>notify_weekly_diary_reflection()</code> (나의 다이어리 묵상 push-only)</li></ul>
+<p>설정 검증 SQL:</p>
+<pre><code class="language-sql">-- Vault secret 2건
+select name, length(decrypted_secret) as len
+  from vault.decrypted_secrets where name in (&#x27;service_role_key&#x27;,&#x27;supabase_url&#x27;);
+-- broadcast 트리거
+select tgname from pg_trigger where tgname = &#x27;trg_push_after_broadcast&#x27;;
+-- pg_cron 3건
+select jobname, schedule, active from cron.job order by jobname;</code></pre>
+<h2 id="9-동작-확인">9. 동작 확인</h2>
+<ol><li>앱 재빌드 후 콘솔에 <code>[push] token: &lt;긴 문자열&gt;</code> 출력 확인.</li><li>Supabase Dashboard → Table Editor → <code>user_push_tokens</code> 에서 해당 토큰 row 확인.</li><li>Supabase SQL Editor 에서 즉시 푸쉬 테스트:</li></ol>
+<pre><code class="language-sql">   -- 수요일 매일 탐험 푸쉬 발송 (전체 유저 + 본인 디바이스)
+   select public.dispatch_daily_exploration_push();</code></pre>
+<p>→ 본인 휴대폰에 &quot;오늘의 탐험이 열렸어요&quot; 알림이 오면 통과.</p>
+<ol><li>send-push 함수 로그 (Supabase Dashboard → Functions → send-push → Logs):</li></ol>
+<ul><li>정상: <code>[send-push] sent: N, failed: 0</code></li><li>실패 시: <code>FIREBASE_SERVICE_ACCOUNT</code> 누락이 가장 흔한 원인</li></ul>
+<ol><li>broadcast 흐름 테스트 — 관리자 계정으로 임의 제안을 승인하면 본인+다른 사용자 디바이스에 &quot;새 이야기가 등록되었어요&quot; 푸쉬 + bell drop 둘 다 옴.</li></ol>
+<h2 id="장애-시-확인-순서">장애 시 확인 순서</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>현상</th>
+<th>원인</th>
+<th>해결</th>
+</tr></thead><tbody>
+<tr>
+<td><code>DefaultFirebaseOptions</code> 예외</td>
+<td>placeholder 상태</td>
+<td><code>flutterfire configure</code> 실행</td>
+</tr>
+<tr>
+<td>토큰 발급 null</td>
+<td>브라우저 권한 거부 / iOS simulator</td>
+<td>실기기/브라우저 권한 허용</td>
+</tr>
+<tr>
+<td><code>register_push_token</code> 실패</td>
+<td>로그아웃 상태</td>
+<td>로그인 후 재시도</td>
+</tr>
+<tr>
+<td>FCM 404 UNREGISTERED</td>
+<td>토큰 만료</td>
+<td>Edge Function 이 자동 정리</td>
+</tr>
+</tbody></table></div>
+          <a class="top-link" href="#top">맨 위로</a>
+        </article>
+      </div>
+    </main>
+  </div>
+  <script src="assets/guide.js"></script>
+</body>
+</html>

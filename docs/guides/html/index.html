@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Story Bible Guides</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Story Bible Guides</div>
+      <div class="subtle">HTML companion docs</div>
+      <nav class="nav">
+        <a class="active" href="index.html">가이드 인덱스</a>
+        <a href="readme.html">Story Bible 개발 가이드 허브</a><a href="develop-flow.html">개발 / 배포 Flow</a><a href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a><a href="local-env-files.html">로컬 환경 파일 공유 가이드</a><a href="db-setup.html">DB / Supabase 환경 구축 가이드</a><a href="infra-guide.html">Story Bible 인프라 가이드</a><a href="push-setup.html">푸시 알림 설정 가이드</a><a href="test-guide.html">테스트 가이드 — Story Bible</a><a href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a><a href="story-guide.html">이야기 가이드 (Story Guide)</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <div class="page-shell">
+        <section class="hero">
+          <div class="eyebrow">Developer map</div>
+          <h1>Story Bible 개발 문서 지도</h1>
+          <p>Markdown 가이드를 시각화된 HTML로 변환한 보조 문서다. 실제 소스는 같은 폴더의 md 파일이며, 이 HTML은 빠른 탐색과 온보딩용으로 쓴다.</p>
+
+<div class="grid cards">
+  <div class="card"><span class="subtle">Guide files</span><div class="metric">10</div><strong>역할별 문서</strong></div>
+  <div class="card"><span class="subtle">Story events</span><div class="metric">310</div><strong>현재 JSON 사건</strong></div>
+  <div class="card"><span class="subtle">Dart tests</span><div class="metric">445</div><strong>61개 테스트 파일 + helper</strong></div>
+  <div class="card"><span class="subtle">Python tool tests</span><div class="metric">93</div><strong>13개 파일</strong></div>
+</div>
+
+
+<div class="flow">
+  <div class="step"><span>Daily work</span><strong>develop-flow</strong><p>코드, seed, patch, real 배포 판단</p></div>
+  <div class="step"><span>Content</span><strong>CONTENT_UPDATE</strong><p>새 이야기와 이미지 번들 운영</p></div>
+  <div class="step"><span>Platform</span><strong>DB / Infra / Push</strong><p>신규 환경과 푸시 배관</p></div>
+  <div class="step"><span>Quality</span><strong>TEST_GUIDE</strong><p>테스트 영향 범위 탐색</p></div>
+</div>
+
+        </section>
+        <section class="doc-body">
+          <h2>문서 역할</h2>
+          <div class="grid cards"><a class="card" href="readme.html"><span class="subtle">문서 허브</span><strong>Story Bible 개발 가이드 허브</strong><p>중복된 운영 문서의 역할과 읽는 순서를 묶은 진입점</p></a>
+<a class="card" href="develop-flow.html"><span class="subtle">개발/배포</span><strong>개발 / 배포 Flow</strong><p>dev/real 실행, seed, patch, real 배포 판단</p></a>
+<a class="card" href="content-update.html"><span class="subtle">콘텐츠 운영</span><strong>콘텐츠 추가/수정 → 앱 반영 워크플로우</strong><p>새 이야기, 퀴즈, 이미지, pubspec 반영 절차</p></a>
+<a class="card" href="local-env-files.html"><span class="subtle">로컬 환경 파일</span><strong>로컬 환경 파일 공유 가이드</strong><p>git에 올리는 예제 파일과 별도 공유가 필요한 secret 구분</p></a>
+<a class="card" href="db-setup.html"><span class="subtle">환경 구축</span><strong>DB / Supabase 환경 구축 가이드</strong><p>Supabase 신규/복구 환경의 Auth, secret, seed 세팅</p></a>
+<a class="card" href="infra-guide.html"><span class="subtle">인프라 원리</span><strong>Story Bible 인프라 가이드</strong><p>Supabase, FCM, GCP, Apple, OAuth 동작 원리</p></a>
+<a class="card" href="push-setup.html"><span class="subtle">푸시 설정</span><strong>푸시 알림 설정 가이드</strong><p>Firebase와 send-push를 처음 연결하는 체크리스트</p></a>
+<a class="card" href="test-guide.html"><span class="subtle">테스트 지도</span><strong>테스트 가이드 — Story Bible</strong><p>현재 테스트 파일과 검증 책임 카탈로그</p></a>
+<a class="card" href="workflow-guide.html"><span class="subtle">작업 규칙</span><strong>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</strong><p>Codex 작업 루프와 웹 제안 기능의 구조 참고</p></a>
+<a class="card" href="story-guide.html"><span class="subtle">이야기 카탈로그</span><strong>이야기 가이드 (Story Guide)</strong><p>현재 JSON 기준 전체 사건, 인물, 장소, 본문</p></a></div>
+          <h2>중복 정리 기준</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>질문</th><th>먼저 볼 문서</th><th>보조 문서</th></tr></thead>
+            <tbody>
+              <tr><td>평소 개발/배포 순서</td><td>develop-flow.md</td><td>WORKFLOW_GUIDE.md</td></tr>
+              <tr><td>새 이야기/퀴즈/이미지 추가</td><td>CONTENT_UPDATE.md</td><td>story_guide.md, DATA_PIPELINE.md</td></tr>
+              <tr><td>새 Supabase 환경 구축</td><td>DB_SETUP.md</td><td>INFRA_GUIDE.md, PUSH_SETUP.md</td></tr>
+              <tr><td>푸시가 안 올 때</td><td>PUSH_SETUP.md</td><td>INFRA_GUIDE.md</td></tr>
+              <tr><td>테스트 영향 범위</td><td>TEST_GUIDE.md</td><td>docs/TESTING.md</td></tr>
+            </tbody>
+          </table></div>
+          <h2>현재 콘텐츠 분포</h2>
+          <div class="card"><strong>시대별 사건 수</strong><div class="bar-row"><span>원역사</span><div class="bar"><i style="width:15%"></i></div><b>8</b></div><div class="bar-row"><span>족장</span><div class="bar"><i style="width:57%"></i></div><b>30</b></div><div class="bar-row"><span>출애굽</span><div class="bar"><i style="width:59%"></i></div><b>31</b></div><div class="bar-row"><span>사사</span><div class="bar"><i style="width:25%"></i></div><b>13</b></div><div class="bar-row"><span>통일 왕국</span><div class="bar"><i style="width:51%"></i></div><b>27</b></div><div class="bar-row"><span>분열왕국</span><div class="bar"><i style="width:100%"></i></div><b>52</b></div><div class="bar-row"><span>포로 및 포로 후기</span><div class="bar"><i style="width:30%"></i></div><b>16</b></div><div class="bar-row"><span>예수님의 공생애</span><div class="bar"><i style="width:98%"></i></div><b>51</b></div><div class="bar-row"><span>사도</span><div class="bar"><i style="width:84%"></i></div><b>44</b></div><div class="bar-row"><span>후기 사도</span><div class="bar"><i style="width:55%"></i></div><b>29</b></div><div class="bar-row"><span>역사의 종결</span><div class="bar"><i style="width:17%"></i></div><b>9</b></div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="assets/guide.js"></script>
+</body>
+</html>

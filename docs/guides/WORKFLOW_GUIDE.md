@@ -4,7 +4,7 @@
 > 프로젝트 스킬/에이전트가 어떻게 동작하는지, 그리고 유지보수 규칙을 정리한 가이드이다.
 > 실제 진입 규칙은 `AGENTS.md`를 우선한다.
 >
-> 최종 수정: 2026-05-25
+> 최종 수정: 2026-06-23
 
 > 현재 콘텐츠 운영 주의: 이 문서의 17~20장에 있는 사역자 웹 제안/승인 흐름은
 > 구현 이력과 구조 참고용이다. 현재 운영에서는 웹을 배포하지 않고, 신규 이야기
@@ -77,15 +77,17 @@ $backend 스킬 호출 시:
   = 백엔드 컨텍스트 로드됨
 ```
 
-### 현재 등록된 5개 스킬
+### 프로젝트 주요 스킬
 
 | 스킬 | 언제 호출 | 로드하는 문서 | 파일 범위 |
 |---|---|---|---|
 | `$frontend` | UI/위젯/화면/상태 변경 | `../FRONTEND.md`, `../UI_GUIDE.md` | `lib/screens/`, `lib/widgets/`, `lib/state/`, `lib/models/` |
 | `$backend` | DB/쿼리/인증/RLS 변경 | `../BACKEND.md` + 필요 시 Supabase 공식 문서/도구 | `db_init.sql`, `supabase/`, `lib/data/` |
 | `$data-pipeline` | 에셋/시딩/Python 스크립트 | `../DATA_PIPELINE.md` | `tools/*.py`, `assets/`, `Makefile` |
-| `$testing` | 테스트 작성/실행 | `../TESTING.md` | `test/` |
+| `$testing` | 테스트 작성/실행 | `../TESTING.md`, `docs/guides/TEST_GUIDE.md` | `test/`, `tools/**/test_*.py` |
 | `$refactor` | 대규모 분해/중복 제거 | 자체 절차 가이드 | 전체 (도메인 횡단) |
+| `$worktree-commit` | 현재 작업 커밋/보조 worktree 정리 | 자체 절차 가이드 | git worktree, 현재 diff |
+| `$pre-push-pr` | 푸시 전 점검/커밋/푸시/PR 초안 | 자체 절차 가이드 | 전체 저장소 |
 
 ### 스킬 호출 방식
 
@@ -157,13 +159,15 @@ $backend 스킬 호출 시:
 
 ### 5.1 기존 기능 수정
 
-> 예: "연속 출석일 계산 로직을 주말 제외로 바꿔줘"
+> 예: "글자 크기 설정의 저장 범위를 바꿔줘"
 
 ```
-1. Grep: computeDailyStreak 사용처 + 기존 테스트 위치 파악
-   → lib/state/story_controller.dart 2곳 + test/state/streak_test.dart 발견
+1. Grep: font scale 사용처 + 기존 테스트 위치 파악
+   → lib/state/font_scale_providers.dart,
+     lib/data/font_scale_repository.dart,
+     test/state/font_scale_providers_test.dart 발견
 2. 요구사항 ↔ 기존 테스트 비교
-   → 기존 테스트는 "주말 포함"으로 검증 중 → 테스트 수정 필요 →
+   → 기존 테스트가 현재 저장 범위/기본값을 검증 중 → 테스트 수정 필요 →
      ⚠️ 사용자 확인 (§7 "기존 테스트 수정은 승인 필요")
 3. 사용자 승인 후: 테스트 먼저 수정 → flutter test 실패 (Red)
 4. 코드 수정 → flutter test 통과 (Green)
@@ -174,12 +178,13 @@ $backend 스킬 호출 시:
 
 ### 5.2 새 기능 추가
 
-> 예: "연속 출석일 누르면 캘린더 팝업 띄워줘"
+> 예: "오늘의 동행 일지에 감정 태그를 추가해줘"
 
 ```
 1. 작업 분류: $backend + $frontend + $testing 필요
 2. $testing: 요구사항을 테스트로 먼저 표현 (Red)
-   - Repository 메소드 시그니처 테스트 (mocktail)
+   - 모델/fromMap 테스트
+   - Repository 메소드 시그니처 테스트
    - Controller 상태 전환 테스트
    - 위젯 렌더링 테스트
    → 모두 실패 확인
@@ -206,7 +211,7 @@ $backend 스킬 호출 시:
 
 ### 5.3 기능 삭제
 
-> 예: "연속 출석일 기능 빼줘"
+> 예: "사용하지 않는 홈 안내 패널을 제거해줘"
 
 ```
 1. Agent 파견: 영향 범위 전수 조사 (삭제는 가장 위험)
@@ -285,8 +290,8 @@ flowchart LR
 ```mermaid
 flowchart TB
     subgraph DBL["DB 테이블"]
-        ER[(eras<br/>10개 시대)]
-        EV[(events<br/>215개 사건)]
+        ER[(eras<br/>11개 시대)]
+        EV[(events<br/>310개 사건)]
         LM[(landmarks<br/>랜드마크 + region polygon<br/>+ era_codes)]
         CH[(characters<br/>인물)]
     end
@@ -502,7 +507,9 @@ make seed-all && make db-init ENV=dev && make apply-seeds ENV=dev && make upload
 |---|---|
 | `flutter-analyze` | 0 issues 강제 |
 | `flutter-test` | 전체 테스트 통과 강제 |
-| `verify-asset-paths` | pubspec.yaml ↔ 실제 파일 일치 검증 (215개) |
+| `verify-asset-paths` | pubspec.yaml ↔ 실제 asset 파일 일치 검증 |
+| `verify-polygons-contain-events` | landmark polygon과 event 위치 매핑 검증 |
+| `python-tools-test` | `tools/**/test_*.py` 도구 테스트 |
 | `code-metrics` | 파일/메소드 크기 제한 보고 |
 
 ### 6.4 GitHub Actions CI (PR 시 자동)
@@ -1290,7 +1297,8 @@ character.avatarUrl ('') + character.avatarStoragePath ('proposal-characters/...
 ##### (2) 장면 이미지 — `SceneAssetLoader.loadForEvent`
 
 ```
-1순위: AssetManifest 에서 'assets/story_images_thumbs/<safe_title>/scene_N.png' 검색
+1순위: AssetManifest 에서 `assets/story_images_thumbs/index.json` 매핑을 읽고
+       `assets/story_images_thumbs/<short_dir>/scene_N.jpg` 검색
        → 번들에 없음 (이 이야기는 새로 추가됐으므로)
 
 2순위: event.sceneImagePaths 가 비어있지 않음 → 각 path 를 publicUrl 로 변환
@@ -1320,10 +1328,12 @@ character.avatarUrl ('') + character.avatarStoragePath ('proposal-characters/...
 # Python 가상환경 활성 — sync 스크립트가 requests 등 의존
 source .venv/bin/activate
 
-# .env 에 두 키가 있는지 확인 (없으면 sync 가 즉시 ERROR 종료)
-grep -E "SUPABASE_URL_DEV|SUPABASE_SERVICE_ROLE_KEY_DEV" .env
-#   → 둘 다 값이 있어야 함. service_role 키는 Storage 쓰기/PATCH 권한 필요.
-#   → ENV=prod 로 운영 환경에 적용할 거면 SUPABASE_*_PROD 도 필요.
+# .env / .env.ops 에 필요한 값이 있는지 확인 (없으면 sync 가 즉시 ERROR 종료)
+grep -E "SUPABASE_URL_DEV" .env
+grep -E "SUPABASE_SERVICE_ROLE_KEY_DEV" .env.ops
+#   → service_role 키는 Storage 쓰기/PATCH 권한 필요.
+#   → ENV=prod 로 운영 환경에 적용할 거면 SUPABASE_URL_PROD 와
+#      SUPABASE_SERVICE_ROLE_KEY_PROD 도 필요.
 ```
 
 ##### 1) 어떤 제안이 sync 대상인지 먼저 확인 (dry-run)
@@ -1381,7 +1391,7 @@ make sync-approved-proposal-assets
 **Phase B — DB↔로컬 diff 정리** (소프트 삭제 / 비활성 캐릭터 흔적 제거)
 1. `events` 중 `deleted_at IS NOT NULL` 행 조회.
 2. 각 행마다:
-   - `assets/story_images/<safe_title>/`, `assets/story_images_thumbs/<safe_title>/`
+   - `assets/story_images/<safe_title>/`, 연결된 `assets/story_images_thumbs/<short_dir>/`
      디렉토리 제거 (이미 없으면 skip).
    - `events.scene_image_paths` 의 storage 파일 best-effort 삭제 (404 무시).
 3. `characters` 중 `is_active=false` 행 조회.
@@ -1394,12 +1404,14 @@ make sync-approved-proposal-assets
 **Step C — 썸네일 자동 재생성** (Phase A 또는 B 에서 변경이 있을 때만)
 - 내부적으로 `python tools/images/generate_runtime_thumbnails.py` 호출.
 - `assets/avatars/` → `assets/avatars_thumbs/` (모든 PNG 압축 사본)
-- `assets/story_images/<title>/` → `assets/story_images_thumbs/<title>/`
+- `assets/story_images/<title>/` → `assets/story_images_thumbs/<era_slug>_<story_index>/`
+- `assets/story_images_thumbs/index.json`에 title/original dir ↔ short dir 매핑 기록
 - 이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.
 
 **Step D — pubspec.yaml 자동 갱신** (Phase A 또는 B 에서 변경이 있을 때만)
 - 내부적으로 `python tools/app/update_pubspec_assets.py` 호출.
-- `pubspec.yaml` 의 `flutter.assets:` 아래 `story_images_thumbs/<title>/`
+- `pubspec.yaml` 의 `flutter.assets:` 아래 `story_images_thumbs/index.json`과
+  `story_images_thumbs/<short_dir>/`
   엔트리를 실제 디렉토리 목록에 맞춰 추가/제거.
 - `avatars_thumbs/` 는 이미 글롭 패턴 (`assets/avatars_thumbs/`) 으로
   등록돼 있어 손대지 않음.
@@ -1419,7 +1431,7 @@ approved & unsynced: 3 proposal(s)
    ✗ events deleted_at: 2 events → 2 dirs removed
    ✗ characters inactive: 1 → 1 avatar+thumb removed
 
-[thumbnails] generated: 8, skipped: 215
+[thumbnails] generated: 8, skipped: 310
 [pubspec] added: 2 entries, removed: 1
 
 === Summary ===
@@ -1558,7 +1570,8 @@ make sync-approved-proposal-assets-clean
 ├── assets/avatars/<code>.png           ← canonical 위치
 ├── assets/avatars_thumbs/<code>.png    ← 런타임 썸네일
 ├── assets/story_images/<title>/scene_N.png
-├── assets/story_images_thumbs/<title>/scene_N.png  ← 런타임 썸네일
+├── assets/story_images_thumbs/index.json           ← title/original dir ↔ short dir 매핑
+├── assets/story_images_thumbs/<short_dir>/scene_N.jpg  ← 런타임 썸네일
 └── pubspec.yaml 에 위 디렉토리들 등록
 
 DB (Postgres)
@@ -1599,7 +1612,7 @@ character.avatarUrl = 'assets/avatars/<code>.png'  ← 이제 로컬 경로
 ```
 SceneAssetLoader.loadForEvent
    │
-   ├─ 1순위: assets/story_images_thumbs/<safe_title>/scene_N.png
+   ├─ 1순위: assets/story_images_thumbs/<short_dir>/scene_N.jpg
    │         AssetManifest 에 등록되어 있음 → 즉시 표시
    │
    └─ 2순위로 갈 일 없음 — Storage 호출 0
@@ -1650,7 +1663,7 @@ Storage 트래픽
 | 어떤 이미지를 보고 있는지 알고 싶으면 | 확인 방법 |
 |--------------------------------------|----------|
 | 이 캐릭터의 아바타가 로컬에서 왔나, Storage 에서 왔나? | `character.avatar_url` 이 `assets/...` 면 로컬, 비어있으면 Storage |
-| 이 장면 이미지가 로컬에서 왔나? | `assets/story_images_thumbs/<safe_title>/scene_N.png` 가 AssetManifest 에 있으면 로컬, 없으면 `events.scene_image_paths` 의 Storage URL |
+| 이 장면 이미지가 로컬에서 왔나? | `assets/story_images_thumbs/index.json` 매핑의 `<short_dir>/scene_N.jpg` 가 AssetManifest 에 있으면 로컬, 없으면 `events.scene_image_paths` 의 Storage URL |
 | 이 제안이 sync 됐나? | `event_proposals.synced_to_local_at IS NOT NULL` |
 | 다음 sync 가 필요한가? | `select count(*) from event_proposals where status='approved' and synced_to_local_at is null` |
 
@@ -1745,7 +1758,7 @@ Storage 트래픽
    events 쿼리; `events_ordered` view 는 이걸 안 보여줌).
 2. 각 이벤트마다:
    - 로컬 `assets/story_images/<safe_title>/` 디렉토리 제거 (이미 없으면 skip)
-   - 로컬 `assets/story_images_thumbs/<safe_title>/` 디렉토리 제거
+   - `assets/story_images_thumbs/index.json` 매핑에서 연결된 `<short_dir>` 썸네일 디렉토리 제거
    - `scene_image_paths` 의 storage 파일 best-effort 삭제 (404 무시)
 3. `characters` 중 `is_active = false` 인 모든 row 조회.
 4. 각 캐릭터마다:
@@ -2057,7 +2070,7 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
 
 `events.title` 은 GLOBAL UNIQUE 다. 두 가지 이유:
 
-1. **로컬 번들 디렉토리명 충돌**: 빌드 시 `assets/story_images_thumbs/<title>/`
+1. **로컬 번들 디렉토리명 충돌**: 빌드 시 `assets/story_images_thumbs/<short_dir>/`
    가 만들어진다. 같은 title 의 이야기 두 개가 있으면 디렉토리가 합쳐져 어느
    장면이 어느 이벤트의 것인지 모호해짐.
 2. **사용자 식별성**: 같은 제목의 이야기 두 개가 있으면 검색/공유 링크/딥링크가

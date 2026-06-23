@@ -97,4 +97,10 @@ tools/seed/refined_polygons.json
 .claude/worktrees/
 .env.supabase.secrets
 .env.ops
+
+# Local service account keys — use platform secrets or a password manager.
+/firebase-admin-sdk*.json
+/gcp-service-account*.json
+/google-service-account*.json
+/*service-account*.json
 .omx/
