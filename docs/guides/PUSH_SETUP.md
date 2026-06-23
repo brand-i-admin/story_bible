@@ -143,9 +143,9 @@ DB 트리거/pg_cron 이 `send-push` 를 직접 호출하는 인프라가 `db_in
 
 자동 발송 경로:
 - 새 이야기/인물 승인 (admin → `approve_event_proposal`) → broadcast row INSERT → 트리거 → push
-- 매일 KST 9시 → `dispatch_daily_quiz_push()` (push-only, bell drop 안 쌓임)
-- 매주 월요일 KST 9시 → `pick_weekly_character()` (push-only)
-- 매주 수/금 KST 9시 → `notify_weekly_progress()` (push-only)
+- 매주 월요일 KST 9시 → `pick_weekly_character()` (주간 퀴즈 시작 push-only)
+- 매주 수요일 KST 9시 → `dispatch_daily_quiz_push()` (매일 퀴즈 push-only)
+- 매주 금요일 KST 9시 → `notify_weekly_diary_reflection()` (나의 다이어리 묵상 push-only)
 
 설정 검증 SQL:
 ```sql
@@ -154,7 +154,7 @@ select name, length(decrypted_secret) as len
   from vault.decrypted_secrets where name in ('service_role_key','supabase_url');
 -- broadcast 트리거
 select tgname from pg_trigger where tgname = 'trg_push_after_broadcast';
--- pg_cron 4건
+-- pg_cron 3건
 select jobname, schedule, active from cron.job order by jobname;
 ```
 
@@ -165,7 +165,7 @@ select jobname, schedule, active from cron.job order by jobname;
 3. Supabase SQL Editor 에서 즉시 푸쉬 테스트:
 
    ```sql
-   -- 매일 퀴즈 푸쉬 발송 (전체 유저 + 본인 디바이스)
+   -- 수요일 매일 퀴즈 푸쉬 발송 (전체 유저 + 본인 디바이스)
    select public.dispatch_daily_quiz_push();
    ```
 

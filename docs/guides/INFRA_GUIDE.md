@@ -111,10 +111,10 @@ Postgres WAL(Write-Ahead Log) 변경사항을 WebSocket 스트림. 이 프로젝
 
 DB 안에서 돌아가는 cron 스케줄러. pg_cron 확장을 활성화하면:
 ```sql
-cron.schedule('weekly-character-monday', '0 0 * * 1',
+cron.schedule('weekly-quiz-monday-9am-kst', '0 0 * * 1',
   $$ select public.pick_weekly_character(); $$);
 ```
-월요일 00:00 UTC 에 `pick_weekly_character()` 함수 자동 실행.
+월요일 00:00 UTC (= KST 9시)에 `pick_weekly_character()` 함수 자동 실행.
 
 ### 1.4 연결 설정 (`.env` / `.env.ops`)
 

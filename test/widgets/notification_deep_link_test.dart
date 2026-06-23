@@ -16,9 +16,21 @@ void main() {
       expect(link.id, 'xyz');
     });
 
+    test('/daily-quiz 는 dailyQuiz target, id 없음', () {
+      final link = NotificationDeepLink.parse('/daily-quiz');
+      expect(link.target, NotificationTarget.dailyQuiz);
+      expect(link.id, isNull);
+    });
+
     test('/weekly 는 weekly target, id 없음', () {
       final link = NotificationDeepLink.parse('/weekly');
       expect(link.target, NotificationTarget.weekly);
+      expect(link.id, isNull);
+    });
+
+    test('/profile 는 profile target, id 없음', () {
+      final link = NotificationDeepLink.parse('/profile');
+      expect(link.target, NotificationTarget.profile);
       expect(link.id, isNull);
     });
 

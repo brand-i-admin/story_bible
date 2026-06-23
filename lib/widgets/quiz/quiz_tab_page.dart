@@ -9,6 +9,8 @@ import '../sub_page_scaffold.dart';
 import '../weekly_tab_page.dart';
 import 'daily_quiz_section.dart';
 
+enum QuizTabInitialTab { daily, weekly }
+
 /// 홈 상단 "퀴즈" 버튼이 여는 페이지.
 ///
 /// 두 탭으로 구성:
@@ -19,12 +21,14 @@ class QuizTabPage extends ConsumerStatefulWidget {
     super.key,
     required this.onStartQuiz,
     required this.onOpenEventDetail,
+    this.initialTab = QuizTabInitialTab.daily,
     this.onLoginRequired,
   });
 
   final void Function(String eventId) onStartQuiz;
   final void Function(StoryEvent event, {String? quizWeekKey})
   onOpenEventDetail;
+  final QuizTabInitialTab initialTab;
   final void Function(String message)? onLoginRequired;
 
   @override
@@ -32,8 +36,14 @@ class QuizTabPage extends ConsumerStatefulWidget {
 }
 
 class _QuizTabPageState extends ConsumerState<QuizTabPage> {
-  int _selectedTab = 0;
+  late int _selectedTab;
   bool _dailyCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTab = widget.initialTab == QuizTabInitialTab.weekly ? 1 : 0;
+  }
 
   @override
   Widget build(BuildContext context) {

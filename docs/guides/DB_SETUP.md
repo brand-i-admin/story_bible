@@ -72,7 +72,7 @@ Supabase 서버 secret 에만 둔다.
 | Edge Function secrets | Deno Edge Function | `FIREBASE_SERVICE_ACCOUNT`, `GCP_SERVICE_ACCOUNT_JSON` | `send-push` / 이미지 생성 함수가 외부 API 호출 |
 | Supabase Vault | Postgres SQL 함수 | `service_role_key`, `supabase_url` | DB 함수가 `pg_net`으로 Edge Function 호출 |
 
-예를 들어 매일 퀴즈 푸시는 이런 경로로 움직인다.
+예를 들어 수요일 매일 퀴즈 푸시는 이런 경로로 움직인다.
 
 ```text
 pg_cron
@@ -735,7 +735,7 @@ scripts/run_<env>.sh
 - Edge Function secret 에 `FIREBASE_SERVICE_ACCOUNT`가 있다.
 - Vault 에 `service_role_key`, `supabase_url`이 있다.
 - `pg_net`, `pg_cron`, `supabase_vault`가 켜져 있다.
-- `cron.job`에 daily/weekly job 4개가 있다.
+- `cron.job`에 월/수/금 정기 push job 3개가 있다.
 - `user_push_tokens`에 실기기 token 이 들어간다.
 - `dispatch_daily_quiz_push()`를 수동 실행하면 실기기에 알림이 온다.
 

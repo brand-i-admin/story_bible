@@ -14,6 +14,18 @@ void main() {
         AppNotificationType.weeklyCharacter,
       );
       expect(
+        AppNotificationType.fromWire('weekly_quiz'),
+        AppNotificationType.weeklyQuiz,
+      );
+      expect(
+        AppNotificationType.fromWire('daily_quiz'),
+        AppNotificationType.dailyQuiz,
+      );
+      expect(
+        AppNotificationType.fromWire('weekly_diary_reflection'),
+        AppNotificationType.weeklyDiaryReflection,
+      );
+      expect(
         AppNotificationType.fromWire('quiz_completed'),
         AppNotificationType.quizCompleted,
       );
@@ -52,6 +64,12 @@ void main() {
       expect(AppNotificationType.quizCompleted.isProposalRelated, isFalse);
       expect(AppNotificationType.newEvent.isProposalRelated, isFalse);
       expect(AppNotificationType.weeklyCharacter.isProposalRelated, isFalse);
+      expect(AppNotificationType.weeklyQuiz.isProposalRelated, isFalse);
+      expect(AppNotificationType.dailyQuiz.isProposalRelated, isFalse);
+      expect(
+        AppNotificationType.weeklyDiaryReflection.isProposalRelated,
+        isFalse,
+      );
     });
   });
 

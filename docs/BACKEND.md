@@ -274,7 +274,7 @@ target_audience text CHECK IN ('all','pastor_or_admin'),
 title text, body text, deep_link text, payload jsonb, created_at timestamptz
 ```
 - `new_event` 만 broadcast 테이블을 사용한다 (bell + 푸시 둘 다 필요).
-- 주간 인물/진도, 매일 퀴즈는 **push-only** — broadcast 테이블에 row 안 만들고 `send-push` 만 호출 (bell drop 에 안 쌓임).
+- 월/수/금 정기 푸시는 **push-only** — broadcast 테이블에 row 안 만들고 `send-push` 만 호출 (bell drop 에 안 쌓임).
 
 #### `broadcast_notification_reads` — 읽음 교차표
 ```sql
@@ -292,7 +292,7 @@ token text UNIQUE, device_label text
 ```sql
 week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at timestamptz
 ```
-- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 `_fire_push_broadcast` 로 FCM 직접 발송.
+- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 주간 퀴즈 시작 FCM 을 직접 발송.
 - Dart 쪽 `weekly_selection.dart` 의 `seedFromKey` 를 plpgsql `_seed_from_week_key` 로 포팅해 동일 결과 보장.
 
 #### 트리거
@@ -317,9 +317,9 @@ week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at ti
 | `notify_quiz_completed(event_id)` | 퀴즈 완료 시 클라이언트가 호출 |
 | `register_push_token(token, platform, label)` | FCM 토큰 upsert |
 | `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
-| `pick_weekly_character()` | pg_cron 월요일 KST 9시 (push-only) |
-| `notify_weekly_progress()` | pg_cron 수/금 KST 9시 (push-only) |
-| `dispatch_daily_quiz_push()` | pg_cron 매일 KST 9시 — daily_quiz 풀에서 random 1건 pick → 같은 `quiz_type/question/choices/answer_index/explanation` 로 **새 row INSERT** → 그 question을 push 본문에 담아 push-only. 새 PK 가 생성되므로 user_daily_quiz_attempts 가 자동으로 다음 날 row 와 분리됨. |
+| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 주간 퀴즈 시작 push-only 발송 |
+| `dispatch_daily_quiz_push()` | pg_cron 수요일 KST 9시 — daily_quiz 풀에서 random 1건 pick → 같은 `quiz_type/question/choices/answer_index/explanation` 로 **새 row INSERT** → 그 question을 push 본문에 담아 push-only. 새 PK 가 생성되므로 user_daily_quiz_attempts 가 수요일 새 row 와 분리됨. |
+| `notify_weekly_diary_reflection()` | pg_cron 금요일 KST 9시 — 나의 다이어리 묵상/신앙 정리 push-only 발송 |
 
 #### 30일 보관
 - hard delete 하지 않음. `list_my_notifications` / `unread_notification_count` 가 `WHERE created_at > now() - interval '30 days'` 로 필터.
@@ -395,7 +395,7 @@ explanation text, created_at
 ```
 - 매일 퀴즈 1문제. 선택지는 `choices` jsonb 배열(2~6개)이고
   `answer_index` 는 1-based 이며 배열 길이 안에 있어야 한다. 공개 read.
-- `slug` 는 seed 재실행용 안정 키다. pg_cron 이 매일 발급하는 복제 row 는
+- `slug` 는 seed 재실행용 안정 키다. pg_cron 이 수요일 정기 푸시 때 발급하는 복제 row 는
   `slug=NULL` 로 두어 새 `daily_quiz_id` 가 생기게 한다.
 - `quiz_type`: `event_region_match`, `region_event_exclusion`,
   `character_region_exclusion`, `character_event_region_match`,

@@ -1187,13 +1187,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
 
-  Future<void> _openWeeklyTab() async {
+  Future<void> _openQuizTab({
+    QuizTabInitialTab initialTab = QuizTabInitialTab.daily,
+  }) async {
     if (!mounted) {
       return;
     }
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => QuizTabPage(
+          initialTab: initialTab,
           onStartQuiz: _startQuiz,
           onOpenEventDetail: _openEventDetailPage,
           onLoginRequired: _showLoginRequiredSnackBar,
@@ -2028,8 +2031,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           _openEventDetail(link.id!);
         }
         break;
+      case NotificationTarget.dailyQuiz:
+        await _openQuizTab();
+        break;
       case NotificationTarget.weekly:
-        await _openWeeklyTab();
+        await _openQuizTab(initialTab: QuizTabInitialTab.weekly);
+        break;
+      case NotificationTarget.profile:
+        await _openProfileTab();
         break;
       case NotificationTarget.unknown:
         break;
@@ -2569,7 +2578,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                 const SizedBox(width: 4),
                                 topUtilityButton(
                                   label: '퀴즈',
-                                  onTap: _openWeeklyTab,
+                                  onTap: _openQuizTab,
                                 ),
                                 const SizedBox(width: 4),
                                 topUtilityButton(

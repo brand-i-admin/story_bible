@@ -172,6 +172,7 @@ drop function if exists public.register_push_token(text, text, text) cascade;
 drop function if exists public.unregister_push_token(text) cascade;
 drop function if exists public.pick_weekly_character() cascade;
 drop function if exists public.notify_weekly_progress() cascade;
+drop function if exists public.notify_weekly_diary_reflection() cascade;
 drop function if exists public.dispatch_daily_quiz_push() cascade;
 drop function if exists public._fire_push_broadcast(text, text, text, text) cascade;
 drop function if exists public._push_after_broadcast() cascade;
@@ -2890,8 +2891,8 @@ create index if not exists idx_notifications_created_at
   on notifications(created_at desc);
 
 -- 2) broadcast_notifications — 공지 (Fan-out on Read)
--- 주간 인물/진도와 매일 퀴즈는 broadcast 를 거치지 않고 send-push 로 직접
--- 발송한다 (bell drop 에 안 쌓임). broadcast 는 인앱 알림함 + 푸시 둘 다 필요한
+-- 월/수/금 정기 푸시는 broadcast 를 거치지 않고 send-push 로 직접 발송한다
+-- (bell drop 에 안 쌓임). broadcast 는 인앱 알림함 + 푸시 둘 다 필요한
 -- 케이스(새 이야기/인물 등록 등) 에만 사용.
 create table if not exists broadcast_notifications (
   id uuid primary key default gen_random_uuid(),
@@ -3439,7 +3440,7 @@ returns void language sql security definer set search_path = public as $$
 $$;
 grant execute on function public.unregister_push_token(text) to authenticated;
 
--- 금주 인물 — seed 포팅 + pick + 주중 진도 체크
+-- 금주 인물 — seed 포팅 + pick + 월요일 주간 퀴즈 알림
 create or replace function public._seed_from_week_key(p_key text)
 returns bigint language plpgsql immutable as $$
 declare v_acc bigint := 0; v_i int;
@@ -3482,58 +3483,29 @@ begin
 
   -- bell drop 에 쌓이지 않게 broadcast 를 거치지 않고 send-push 로 직접 발송.
   perform public._fire_push_broadcast(
-    '이번주 금주의 인물',
-    '이번주 인물은 "' || coalesce(v_character_name, v_character_code) ||
-      '" 입니다. 함께 공부해봐요!',
+    '이번 주 퀴즈가 열렸어요',
+    '이번 주는 "' || coalesce(v_character_name, v_character_code) ||
+      '" 이야기와 함께 걸어요. 주간 퀴즈를 시작해 보세요.',
     '/weekly',
-    'weekly_character'
+    'weekly_quiz'
   );
 end;
 $$;
 grant execute on function public.pick_weekly_character() to authenticated;
 
-create or replace function public.notify_weekly_progress()
+create or replace function public.notify_weekly_diary_reflection()
 returns void language plpgsql security definer set search_path = public as $$
-declare
-  v_week_key text; v_character_code text; v_character_name text;
-  v_total_events int; v_avg_completed numeric; v_percent int;
 begin
-  v_week_key := date_trunc('week', now() at time zone 'utc')::date::text;
-
-  select w.character_code, c.name into v_character_code, v_character_name
-  from weekly_character_selection w
-  join characters c on c.code = w.character_code
-  where w.week_key = v_week_key;
-
-  if v_character_code is null then return; end if;
-
-  select count(*) into v_total_events
-  from events
-  where status = 'published' and character_codes @> array[v_character_code];
-  if v_total_events = 0 then return; end if;
-
-  select coalesce(avg(completed_per_user), 0) into v_avg_completed
-  from (
-    select count(*)::numeric / v_total_events * 100 as completed_per_user
-    from user_event_progress p
-    join events e on e.id = p.event_id
-    where p.is_completed = true
-      and e.character_codes @> array[v_character_code]
-    group by p.user_id
-  ) t;
-
-  v_percent := round(v_avg_completed)::int;
-
   -- push-only — broadcast_notifications 에 row 안 만듦 (bell 안 쌓임).
   perform public._fire_push_broadcast(
-    coalesce(v_character_name, v_character_code) || ' 공부 진도 ' || v_percent || '%',
-    '금주 인물을 함께 공부해봐요. 남은 이야기를 마저 만나봐요!',
-    '/weekly',
-    'weekly_progress_check'
+    '이번 주 다이어리 묵상 시간',
+    '이번 주 나의 다이어리를 다시 묵상하면서 신앙을 정리해보는 건 어떨까요?',
+    '/profile',
+    'weekly_diary_reflection'
   );
 end;
 $$;
-grant execute on function public.notify_weekly_progress() to authenticated;
+grant execute on function public.notify_weekly_diary_reflection() to authenticated;
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- Push 디스패치 인프라
@@ -3617,12 +3589,12 @@ create trigger trg_push_after_broadcast
 after insert on broadcast_notifications
 for each row execute function public._push_after_broadcast();
 
--- 매일 퀴즈 푸시 — KST 9시 (= UTC 0시) 에 가장 최신 daily_quiz 1건의 question 을
+-- 매일 퀴즈 푸시 — 수요일 KST 9시 (= UTC 0시) 에 daily_quiz 1건의 question 을
 -- 본문에 담아 전체 사용자에게 push-only 발송. broadcast_notifications 안 거침.
--- 매일 KST 9시 cron 이 호출. daily_quiz 풀에서 random 1건을 뽑아 같은 내용으로
+-- 수요일 KST 9시 cron 이 호출. daily_quiz 풀에서 random 1건을 뽑아 같은 내용으로
 -- **새 row INSERT** → 새 daily_quiz_id 가 발급되므로 user_daily_quiz_attempts
 -- (PK: user_id, daily_quiz_id) 가 자연스럽게 새 row 가 되어 사용자 입장에선
--- "어제 푼 결과가 사라지고 오늘 다시 풀 수 있는" 초기화가 자동으로 일어남.
+-- "이번 주 수요일 퀴즈를 새로 풀 수 있는" 초기화가 자동으로 일어남.
 -- 풀이 1건뿐이면 같은 문제가 또 보이지만, 그래도 PK 가 다르니 다시 풀 수 있다.
 -- 다양화를 원하면 daily_quiz 시드에 sample 을 더 추가하면 됨.
 create or replace function public.dispatch_daily_quiz_push()
@@ -3670,12 +3642,11 @@ begin
     v_body := v_picked.question;
   end if;
 
-  -- deep_link='/weekly' — 매일 퀴즈는 QuizTabPage 안의 한 섹션이라 weekly 화면을
-  -- 그대로 연다. 클라이언트의 NotificationDeepLink.parse 는 weekly 만 인식.
+  -- deep_link='/daily-quiz' — QuizTabPage 의 매일 퀴즈 탭으로 연다.
   perform public._fire_push_broadcast(
     '오늘의 퀴즈가 도착했어요',
     v_body,
-    '/weekly',
+    '/daily-quiz',
     'daily_quiz'
   );
 end;
@@ -3683,7 +3654,7 @@ $$;
 grant execute on function public.dispatch_daily_quiz_push() to authenticated;
 
 -- pg_cron 스케줄 — 확장 활성화되어 있으면 등록.
--- 모든 시간은 KST 9시 = UTC 0시 기준.
+-- 모든 시간은 KST 9시 = UTC 0시 기준. 정기 푸시는 월/수/금만 발송한다.
 do $$
 begin
   if exists (select 1 from pg_extension where extname = 'pg_cron') then
@@ -3693,28 +3664,26 @@ begin
       'daily-quiz-9am-kst',
       'weekly-character-monday',
       'weekly-progress-wed',
-      'weekly-progress-fri'
+      'weekly-progress-fri',
+      'weekly-quiz-monday-9am-kst',
+      'daily-quiz-wednesday-9am-kst',
+      'diary-reflection-friday-9am-kst'
     );
 
     perform cron.schedule(
-      'daily-quiz-9am-kst',
-      '0 0 * * *',
-      $cmd$ select public.dispatch_daily_quiz_push(); $cmd$
-    );
-    perform cron.schedule(
-      'weekly-character-monday',
+      'weekly-quiz-monday-9am-kst',
       '0 0 * * 1',
       $cmd$ select public.pick_weekly_character(); $cmd$
     );
     perform cron.schedule(
-      'weekly-progress-wed',
+      'daily-quiz-wednesday-9am-kst',
       '0 0 * * 3',
-      $cmd$ select public.notify_weekly_progress(); $cmd$
+      $cmd$ select public.dispatch_daily_quiz_push(); $cmd$
     );
     perform cron.schedule(
-      'weekly-progress-fri',
+      'diary-reflection-friday-9am-kst',
       '0 0 * * 5',
-      $cmd$ select public.notify_weekly_progress(); $cmd$
+      $cmd$ select public.notify_weekly_diary_reflection(); $cmd$
     );
   end if;
 end $$;
