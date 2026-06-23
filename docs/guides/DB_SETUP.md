@@ -6,6 +6,10 @@
 > 로컬 `.env*` 파일을 다른 컴퓨터나 팀원과 어떻게 공유할지는
 > [LOCAL_ENV_FILES.md](LOCAL_ENV_FILES.md)를 본다.
 
+문서 계층: 이 문서는 [INFRA_GUIDE.md](INFRA_GUIDE.md)를 보조하는 구축 하위
+문서다. 현재 인프라 구조와 원리는 INFRA_GUIDE에서 먼저 잡고, 여기서는 새 환경을
+실제로 세팅하는 순서를 따른다.
+
 ## 0. 현재 환경 지도
 
 | 구분 | Supabase ref | 앱 ENV | 로컬 운영 ENV | 용도 |

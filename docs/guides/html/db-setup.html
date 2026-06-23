@@ -13,16 +13,12 @@
       <div class="subtle">310 events · 445 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
-        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
-<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
-<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
-<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
-<a class="active" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
-<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
-<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
-<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
-<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
-<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+        <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
+<div class="nav-group"><div class="nav-heading">개발/배포 Flow</div><a class="nav-main" href="develop-flow.html"><span>개발 / 배포 Flow</span></a><a class="nav-sub" href="content-update.html"><span>콘텐츠 추가/수정 → 앱 반영 워크플로우</span></a><a class="nav-sub" href="make-targets.html"><span>Make target 운영 지도</span></a></div>
+<div class="nav-group"><div class="nav-heading">인프라 세팅/구축</div><a class="nav-main" href="infra-guide.html"><span>Story Bible 인프라 가이드</span></a><a class="active nav-sub" href="db-setup.html"><span>DB / Supabase 환경 구축 가이드</span></a><a class="nav-sub" href="local-env-files.html"><span>로컬 환경 파일 공유 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">기능 가이드</div><a class="nav-main" href="push-setup.html"><span>푸시 알림 설정 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">테스트 가이드</div><a class="nav-main" href="test-guide.html"><span>테스트 가이드 — Story Bible</span></a></div>
+<div class="nav-group"><div class="nav-heading">부록/참고</div><a class="nav-appendix" href="workflow-guide.html"><span>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</span></a><a class="nav-appendix" href="story-guide.html"><span>이야기 가이드 (Story Guide)</span></a></div>
       </nav>
     </aside>
     <main class="content">
@@ -30,7 +26,7 @@
         <section class="hero">
           <div class="eyebrow">Developer documentation</div>
           <h1>DB / Supabase 환경 구축 가이드</h1>
-          <p>환경 구축: Supabase 신규/복구 환경의 Auth, secret, seed 세팅</p>
+          <p>구축 절차: Supabase 신규/복구 환경의 Auth, secret, seed 세팅</p>
           <div class="flow"><div class="step"><span>env</span><strong>.env</strong><p>공개 URL / anon / VAPID</p></div>
 <div class="step"><span>ops</span><strong>.env.ops</strong><p>service role / DB URL</p></div>
 <div class="step"><span>vault</span><strong>Vault</strong><p>DB 함수가 send-push 호출</p></div>
@@ -44,6 +40,7 @@
 <p>함께 설명한다. 일상 개발/배포 순서는 <a href="develop-flow.html">develop-flow.md</a>를 본다.</p>
 <p>로컬 <code>.env*</code> 파일을 다른 컴퓨터나 팀원과 어떻게 공유할지는</p>
 <p><a href="local-env-files.html">LOCAL_ENV_FILES.md</a>를 본다.</p></blockquote>
+<p>문서 계층: 이 문서는 <a href="infra-guide.html">INFRA_GUIDE.md</a>를 보조하는 구축 하위 문서다. 현재 인프라 구조와 원리는 INFRA_GUIDE에서 먼저 잡고, 여기서는 새 환경을 실제로 세팅하는 순서를 따른다.</p>
 <h2 id="0-현재-환경-지도">0. 현재 환경 지도</h2>
 <div class="table-wrap"><table>
 <thead><tr>

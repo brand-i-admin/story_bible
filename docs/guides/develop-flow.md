@@ -4,6 +4,10 @@
 > 정리한 운영 문서다. Supabase 신규 환경 구축 자체는
 > [DB_SETUP.md](DB_SETUP.md)를 먼저 본다.
 
+문서 계층: 이 문서가 개발/배포의 메인 문서다. 새 이야기/퀴즈/이미지 세부 절차는
+[CONTENT_UPDATE.md](CONTENT_UPDATE.md), Make target 내부 동작과 원격 영향은
+[MAKE_TARGETS.md](MAKE_TARGETS.md)를 본다.
+
 ## 0. 결론부터
 
 앞으로 앱 실행과 빌드는 아래 스크립트만 쓰면 된다.
@@ -26,6 +30,8 @@ DB/Storage 운영 명령에는 `.env.ops`, Edge Function secret 갱신에는
 `.env.supabase.secrets`가 필요하지만, 세 실파일은 모두 git에 올리지 않는다.
 
 DB / Storage 운영은 Makefile 을 쓴다.
+각 target이 로컬 파일만 바꾸는지, 원격 DB/Storage를 바꾸는지는
+[MAKE_TARGETS.md](MAKE_TARGETS.md)에 따로 정리했다.
 
 ```bash
 # dev reset / seed / storage
@@ -248,18 +254,49 @@ make apply-patch ENV=real PATCH=supabase/patches/<file>.sql
 
 ### 3.2.1 신규 이야기 추가 Flow
 
-새 이야기는 일반 seed 변경보다 조심해서 배포한다. 현재 앱은 장면 이미지를
-다음 순서로 읽는다.
+새 이야기는 일반 seed 변경보다 조심해서 배포한다. 특히 **중간 삽입**은
+`story_index`가 뒤쪽 이야기 전체에 영향을 주므로 seed-only 적용을 피한다.
+
+현재 코드 기준 결론:
+
+| 질문 | 답 |
+|------|----|
+| 새 이야기 DB seed apply가 장면 이미지를 Storage에 자동 업로드하는가? | 아니다. `apply-seeds-stories-characters`는 DB만 바꾸고 Storage는 건드리지 않는다. |
+| 로컬 썸네일이 앱 번들에 들어가는가? | `make thumbnails` + `make update-pubspec-assets` 후 새 앱을 빌드해야 들어간다. |
+| 새 앱 배포 전 real DB에 먼저 공개하면 구버전 앱도 이미지가 보장되는가? | 기본 흐름에서는 보장되지 않는다. `events.scene_image_paths` fallback이 비어 있기 때문이다. |
+| 현재 로컬 canonical 이미지를 Storage에 올리고 `scene_image_paths`를 채우는 Make target이 있는가? | 없다. 필요하면 별도 운영 도구/patch를 먼저 만들어야 한다. |
+
+이미지 로딩 원리:
 
 1. 새 앱 번들 안의 `assets/story_images_thumbs/<short_dir>/scene_N.jpg`
 2. 번들에 없으면 DB의 `events.scene_image_paths`를 Supabase Storage public URL로 변환
 3. 둘 다 없으면 이미지 row를 숨김
 
-즉, `assets/200_stories/*.json`으로 만든 canonical seed는 기본적으로
+이 fallback은 `SceneAssetLoader.loadForEvent(..., publicUrlFor: ...)`를 호출하는
+화면에서만 동작한다. 현재 상세 화면의 큰 장면 row는 이 경로를 쓰지만, 모든 작은
+카드 썸네일까지 완전 보장하려면 호출부 패치가 더 필요할 수 있다. 그러므로 새 앱
+배포 전 구버전 사용자에게 이미지까지 확실히 보이게 하려면 Storage 업로드 도구와
+앱 fallback 범위를 함께 점검한다.
+
+`assets/200_stories/*.json`으로 만든 canonical seed는 기본적으로
 `scene_image_paths`를 채우지 않는다. real에 바로 `apply-seeds-stories-characters
-ENV=real`을 하면 새 이야기는 DB에 `published`로 보이지만, 아직 앱스토어 심사를
-통과한 새 앱을 받지 못한 사용자는 새 썸네일 번들이 없고 DB fallback도 없어서
-장면 이미지가 비어 보일 수 있다.
+ENV=real`을 하면 새 이야기는 DB에 `published`로 보이지만, 아직 새 앱을 받지 못한
+사용자는 새 썸네일 번들이 없고 DB fallback도 없어서 장면 이미지가 비어 보일 수 있다.
+
+중간 삽입의 DB 적용 원리:
+
+- `events`에는 `(era_id, story_index)` unique 제약이 있다.
+- generated seed는 같은 `(era_id, story_index)`를 만나면 그 row를 update한다.
+- 따라서 기존 5번 자리에 새 이야기를 넣고 뒤쪽 index를 전부 재번호 매긴 뒤,
+  seed만 바로 real에 apply하면 기존 5번 row의 `events.id`가 새 이야기 내용으로
+  바뀔 수 있다.
+- `saved_events`, `user_event_progress`, `quiz_questions`, 감정 표시 등은
+  `event_id`를 참조하므로, 운영 DB에서는 기존 이야기 row id를 보존해야 한다.
+- 안전한 중간 삽입은 DB에서 먼저 뒤쪽 row의 `story_index`를 +1 shift하고 새 row를
+  insert한 뒤, 로컬 JSON/seed를 그 상태에 맞추는 방식이다. 이 로직은
+  `insert_event_at_position(...)` RPC에 있지만, 현재 Make target으로 포장되어 있지는 않다.
+
+Make target별 내부 동작은 [MAKE_TARGETS.md](MAKE_TARGETS.md)를 먼저 확인한다.
 
 #### dev에서 만드는 순서
 
@@ -317,6 +354,8 @@ dev에서 확인할 것:
 - 새 앱이 Store 심사를 통과하고 출시될 준비가 되기 전까지는 real에
   canonical seed를 적용하지 않는다.
 - real에 먼저 적용해야 한다면 `scene_image_paths` fallback을 채워야 한다.
+- 중간 삽입이면 seed apply 전에 DB row shift+insert 절차로 기존 `events.id`를
+  보존한다. seed-only 재번호 적용은 금지한다.
 
 #### 권장 A: Store 출시 후 real 공개
 
@@ -362,6 +401,9 @@ scripts/run_real.sh
 현재 repo에는 로컬에서 생성한 canonical 장면 이미지를 Storage에 업로드하고
 `events.scene_image_paths`를 채우는 전용 Make target이 없다. 그래서 구버전 앱까지
 이미지를 보장해야 하는 배포를 자주 할 계획이면 먼저 별도 운영 도구를 추가해야 한다.
+
+주의: `make upload-character-avatars`는 캐릭터 아바타 전용이다. 이야기 장면 이미지나
+`assets/story_images_thumbs`를 업로드하지 않는다.
 
 필요한 도구의 역할:
 

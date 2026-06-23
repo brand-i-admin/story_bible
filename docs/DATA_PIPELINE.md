@@ -144,6 +144,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
 - **stale 정리**: 시드 SQL 머리에 `delete from events where (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 이벤트는 DB 에서도 사라진다. quiz_questions 등 의존 테이블은 cascade.
 - **split 파일 주의**: `200_stories_seed_part_01.sql` 만 stale-delete 를 포함, part_02 는 INSERT 만.
+- ⚠️ **real 중간 삽입 주의**: 이미 공개된 era 중간에 이야기를 끼워 넣고 뒤쪽 `story_index`를 재번호 매긴 SQL을 seed-only로 real에 적용하면 기존 `(era_id, story_index)` row가 다른 이야기 내용으로 업데이트될 수 있다. `saved_events`, `user_event_progress`, `quiz_questions` 등은 `event_id`를 참조하므로, 운영 DB에서는 먼저 `insert_event_at_position(...)` 또는 별도 patch로 기존 row id를 보존한 채 index shift+insert를 수행한 뒤 seed와 로컬 JSON을 맞춘다.
 - **참고**: `code`/`story`/`short_story`/`time_sort_key`/`event_characters`/`event_bible_refs` 산출 로직은 폐기됨 (스키마 v3 변경)
 
 #### `build_characters_seed_sql.py` — characters SQL
@@ -178,6 +179,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - **동작**: 같은 era 안에서 현재 `story_index` (정수) 순으로 정렬, `None` 항목은 같은 파일의 JSON 배열 위치 기준으로 이웃 사이에 보간(interpolate). 그 결과 1..N 으로 빈틈없이 재할당.
 - **사용**: `python tools/seed/renumber_story_indices.py [--dry-run]`
 - **재실행**: idempotent — 이미 1..N 인 era 는 그대로 둔다.
+- **운영 주의**: 이 스크립트는 로컬 JSON만 바꾼다. real DB에 이미 공개된 시대의 중간 삽입을 이것만으로 처리하고 seed를 바로 apply하면 기존 event row id와 사용자 진행도 연결이 꼬일 수 있다.
 
 ### 3.2 이미지 생성 스크립트
 
@@ -279,6 +281,9 @@ Makefile                                # 파이프라인 오케스트레이션
 - **Make target**: `make refine-landmark-polygons` 는 검토용 `tools/seed/refined_polygons.json` 만 생성한다. 실제 반영은 수동 `--in-place` 후 `verify_polygons_contain_events.py` 를 반드시 실행한다.
 
 ## 4. Makefile 타겟
+
+Make target별 입력/출력/원격 영향과 신규 이야기 중간 삽입 주의점은
+[guides/MAKE_TARGETS.md](guides/MAKE_TARGETS.md)를 canonical 운영 지도처럼 본다.
 
 ```makefile
 # 개별 타겟

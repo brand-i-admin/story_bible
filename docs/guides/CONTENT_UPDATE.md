@@ -4,6 +4,10 @@
 > 운영자가 로컬에서 `assets/200_stories/*.json`, 이미지, seed SQL, 앱 번들을 직접
 > 갱신한다.
 
+문서 계층: 이 문서는 [develop-flow.md](develop-flow.md)를 보조하는 콘텐츠 운영
+하위 문서다. real 공개 타이밍과 배포 판단은 develop-flow에서 결정하고, 여기서는
+JSON/이미지/seed 작업 순서를 다룬다.
+
 ## 0. 현재 코드 기준 한 줄 요약
 
 | 변경 종류 | 기준 소스 | 적용 타이밍 |
@@ -13,6 +17,7 @@
 | 인물 메타 | `tools/seed/character_meta.json` 생성물 | `make build-character-meta` / `make seed-characters` |
 | 장면 원본 이미지 | `assets/story_images/<title>/scene_N.png` | 앱 번들 전 |
 | 런타임 썸네일 | `assets/story_images_thumbs/<short_dir>/scene_N.jpg` + `index.json` | `make thumbnails` |
+| 장면 Storage fallback | `events.scene_image_paths` | 현재 수동 JSON seed 흐름에서는 자동 생성/업로드 없음 |
 | 앱 asset 목록 | `pubspec.yaml` | `make update-pubspec-assets` |
 | 퀴즈 | `assets/quizzes/*.json` → `supabase/quizzes/quizzes_seed.sql` | `apply-seeds-quizzes` |
 
@@ -22,8 +27,12 @@
 - 이야기 순서는 `story_index`가 결정한다.
 - 인물 필드는 `characters`를 쓴다. 예전 문서의 `persons`는 현재 JSON 포맷이 아니다.
 - canonical seed는 `events.scene_image_paths`를 채우지 않는다.
-- 앱은 장면 이미지를 로컬 번들에서 먼저 찾고, 없을 때만 `scene_image_paths` Storage
-  fallback을 쓴다.
+- `SceneAssetLoader`는 장면 이미지를 로컬 번들에서 먼저 찾고, 호출부가
+  `publicUrlFor`를 넘긴 경우에만 `scene_image_paths` Storage fallback을 쓴다.
+- `make apply-seeds-stories-characters`는 Storage에 장면 이미지나 썸네일을 업로드하지
+  않는다. `make upload-character-avatars`도 캐릭터 아바타 전용이다.
+- 중간 삽입으로 기존 이야기들의 `story_index`가 밀리면 real DB에는 seed-only로
+  적용하지 않는다. 기존 `events.id`를 보존하는 DB shift+insert가 먼저 필요하다.
 
 ## 1. 신규 이야기 1건 추가
 
@@ -97,6 +106,9 @@ make export-stories-json ENV=real
 - `story_index`는 같은 era 안에서 중복되면 안 된다.
 - 중간에 끼워 넣으면 뒤 이야기들의 `story_index`와
   `assets/landmarks/event_region_mapping.json`도 같이 조정해야 한다.
+- 단, real에 이미 공개된 시대의 중간 삽입은 로컬 JSON 재번호 + seed apply만으로
+  처리하지 않는다. generated seed는 `(era_id, story_index)`를 UPSERT 키로 쓰므로,
+  기존 row id가 다른 이야기 내용으로 덮일 수 있다.
 - `story_scenes`, `scene_captions`, `scene_characters` 길이는 맞춘다.
 - `characters`와 `scene_characters`에는 인물 code를 쓴다.
 - 새 인물 code는 JSON에 먼저 넣어도 된다. 이후 `build-character-meta`가 meta에 반영한다.
@@ -215,6 +227,13 @@ scripts/run_dev.sh
 현재 canonical seed는 `events.scene_image_paths`를 비워 둔다. 따라서 real DB를 먼저
 공개하면 구버전 앱 사용자는 새 이야기를 보되 장면 이미지는 비어 보일 수 있다.
 
+중간 삽입이면 이미지보다 먼저 `event_id` 보존을 확인한다. `events` seed는
+`(era_id, story_index)` 기준으로 UPSERT하므로, 기존 5번 자리에 새 이야기를 넣고
+뒤쪽 index를 모두 바꾼 SQL을 그대로 real에 적용하면 기존 5번 row의 id가 새 이야기
+내용을 갖게 될 수 있다. 사용자 저장/읽기/퀴즈 기록은 `event_id`를 참조하므로,
+운영 DB에서는 `insert_event_at_position(...)` RPC나 별도 patch로 기존 row를 먼저
+shift+insert한 다음 seed와 로컬 JSON을 맞춘다.
+
 ### 2.2 기본 배포 순서
 
 이미지 없는 노출을 줄이는 보수적 순서:
@@ -253,6 +272,14 @@ scripts/run_real.sh
 
 현재 repo에는 이 작업을 자동화하는 로컬 Make target이 없다. 과거 웹 제안/승인
 흐름은 이 역할을 했지만, 지금 웹을 배포하지 않는 운영에서는 표준 경로가 아니다.
+
+`make upload-character-avatars ENV=real`은 `characters` 버킷만 다룬다. 이야기 장면
+PNG/JPG 또는 `assets/story_images_thumbs`를 Storage에 올리고 `events.scene_image_paths`
+를 채우는 target은 아직 없다.
+
+또한 Storage fallback은 `SceneAssetLoader.loadForEvent(..., publicUrlFor: ...)`를
+넘기는 화면에서만 동작한다. 상세 화면의 큰 장면 row는 이 경로를 쓰지만, 모든 작은
+카드 썸네일까지 보장하려면 앱 호출부 패치를 함께 확인한다.
 
 따라서 선택지는 둘이다.
 
@@ -335,6 +362,7 @@ where code = 'goliath';
 ## 5. 관련 문서
 
 - [develop-flow.md](develop-flow.md) — dev/real 운영 흐름
+- [MAKE_TARGETS.md](MAKE_TARGETS.md) — Make target별 입력/출력/원격 영향
 - [DATA_PIPELINE.md](../DATA_PIPELINE.md) — seed/image 도구 상세
 - [BACKEND.md](../BACKEND.md) — events/characters/storage schema
 - [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md) — 웹 제안/승인 기능의 역사적 설계 참고

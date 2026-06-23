@@ -41,6 +41,19 @@ class EraMeta:
     hidden_in_app: bool = False
 
 
+@dataclass(frozen=True)
+class GuideEntry:
+    filename: str
+    level: str
+
+
+@dataclass(frozen=True)
+class GuideGroup:
+    label: str
+    summary: str
+    entries: tuple[GuideEntry, ...]
+
+
 ERA_ORDER: tuple[EraMeta, ...] = (
     EraMeta("era_primeval", "원역사", "구약", 1, -4000, -2000),
     EraMeta("era_patriarch", "족장", "구약", 2, -2166, -1805),
@@ -55,33 +68,70 @@ ERA_ORDER: tuple[EraMeta, ...] = (
     EraMeta("era_nt_consummation", "역사의 종결", "신약", 11, None, None, True),
 )
 
-GUIDE_ORDER = (
-    "README.md",
-    "develop-flow.md",
-    "CONTENT_UPDATE.md",
-    "LOCAL_ENV_FILES.md",
-    "DB_SETUP.md",
-    "INFRA_GUIDE.md",
-    "PUSH_SETUP.md",
-    "TEST_GUIDE.md",
-    "WORKFLOW_GUIDE.md",
-    "story_guide.md",
+GUIDE_GROUPS: tuple[GuideGroup, ...] = (
+    GuideGroup(
+        "문서 지도",
+        "전체 문서의 역할과 읽는 순서를 먼저 잡는 진입점",
+        (GuideEntry("README.md", "main"),),
+    ),
+    GuideGroup(
+        "개발/배포 Flow",
+        "일상 개발, real 배포, 콘텐츠 반영, Make target 원리",
+        (
+            GuideEntry("develop-flow.md", "main"),
+            GuideEntry("CONTENT_UPDATE.md", "sub"),
+            GuideEntry("MAKE_TARGETS.md", "sub"),
+        ),
+    ),
+    GuideGroup(
+        "인프라 세팅/구축",
+        "현재 Supabase/Firebase/GCP 구조와 새 환경 구축 절차",
+        (
+            GuideEntry("INFRA_GUIDE.md", "main"),
+            GuideEntry("DB_SETUP.md", "sub"),
+            GuideEntry("LOCAL_ENV_FILES.md", "sub"),
+        ),
+    ),
+    GuideGroup(
+        "기능 가이드",
+        "앱 기능별 운영/설정 문서",
+        (GuideEntry("PUSH_SETUP.md", "main"),),
+    ),
+    GuideGroup(
+        "테스트 가이드",
+        "변경 유형별 검증 범위와 현재 테스트 지도",
+        (GuideEntry("TEST_GUIDE.md", "main"),),
+    ),
+    GuideGroup(
+        "부록/참고",
+        "메인 문서를 보조하는 긴 레퍼런스와 생성 카탈로그",
+        (
+            GuideEntry("WORKFLOW_GUIDE.md", "appendix"),
+            GuideEntry("story_guide.md", "appendix"),
+        ),
+    ),
 )
+
+GUIDE_ORDER = tuple(entry.filename for group in GUIDE_GROUPS for entry in group.entries)
 
 GUIDE_DESCRIPTIONS = {
     "README.md": ("문서 허브", "중복된 운영 문서의 역할과 읽는 순서를 묶은 진입점"),
-    "develop-flow.md": ("개발/배포", "dev/real 실행, seed, patch, real 배포 판단"),
+    "develop-flow.md": ("개발/배포", "dev/real 실행, 검증, patch, real 배포 판단"),
     "CONTENT_UPDATE.md": ("콘텐츠 운영", "새 이야기, 퀴즈, 이미지, pubspec 반영 절차"),
+    "MAKE_TARGETS.md": (
+        "Make target",
+        "각 make 명령의 입력, 출력, 원격 영향, 중간 삽입 주의점",
+    ),
     "LOCAL_ENV_FILES.md": (
-        "로컬 환경 파일",
+        "환경 파일",
         "git에 올리는 예제 파일과 별도 공유가 필요한 secret 구분",
     ),
-    "DB_SETUP.md": ("환경 구축", "Supabase 신규/복구 환경의 Auth, secret, seed 세팅"),
-    "INFRA_GUIDE.md": ("인프라 원리", "Supabase, FCM, GCP, Apple, OAuth 동작 원리"),
-    "PUSH_SETUP.md": ("푸시 설정", "Firebase와 send-push를 처음 연결하는 체크리스트"),
-    "TEST_GUIDE.md": ("테스트 지도", "현재 테스트 파일과 검증 책임 카탈로그"),
-    "WORKFLOW_GUIDE.md": ("작업 규칙", "Codex 작업 루프와 웹 제안 기능의 구조 참고"),
-    "story_guide.md": ("이야기 카탈로그", "현재 JSON 기준 전체 사건, 인물, 장소, 본문"),
+    "DB_SETUP.md": ("구축 절차", "Supabase 신규/복구 환경의 Auth, secret, seed 세팅"),
+    "INFRA_GUIDE.md": ("인프라", "Supabase, Firebase, GCP, Apple, OAuth 현재 구조"),
+    "PUSH_SETUP.md": ("푸시 알림", "Firebase와 send-push를 처음 연결하는 체크리스트"),
+    "TEST_GUIDE.md": ("테스트", "현재 테스트 파일과 검증 책임 카탈로그"),
+    "WORKFLOW_GUIDE.md": ("레퍼런스", "Codex 작업 루프와 웹 제안 기능의 구조 참고"),
+    "story_guide.md": ("카탈로그", "현재 JSON 기준 전체 사건, 인물, 장소, 본문"),
 }
 
 
@@ -357,6 +407,20 @@ def guide_files() -> list[Path]:
     ordered = [files[name] for name in GUIDE_ORDER if name in files]
     remaining = sorted(path for name, path in files.items() if name not in GUIDE_ORDER)
     return ordered + remaining
+
+
+def guide_groups() -> list[tuple[GuideGroup, list[tuple[GuideEntry, Path]]]]:
+    files = {path.name: path for path in GUIDES_DIR.glob("*.md")}
+    groups: list[tuple[GuideGroup, list[tuple[GuideEntry, Path]]]] = []
+    for group in GUIDE_GROUPS:
+        existing_entries: list[tuple[GuideEntry, Path]] = []
+        for entry in group.entries:
+            path = files.get(entry.filename)
+            if path is not None:
+                existing_entries.append((entry, path))
+        if existing_entries:
+            groups.append((group, existing_entries))
+    return groups
 
 
 def read_title(path: Path) -> str:
@@ -663,14 +727,28 @@ a { color: #246a58; text-decoration-thickness: .08em; text-underline-offset: .18
 }
 .brand { font-weight: 800; font-size: 18px; margin-bottom: 4px; }
 .subtle { color: var(--muted); font-size: 13px; }
-.nav { display: grid; gap: 6px; margin-top: 20px; }
+.nav { display: grid; gap: 14px; margin-top: 22px; }
+.nav-group { display: grid; gap: 4px; }
+.nav-heading {
+  padding: 2px 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
 .nav a {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 8px 10px;
   border-radius: 8px;
   color: var(--ink);
   text-decoration: none;
 }
+.nav a.nav-sub { margin-left: 14px; padding-left: 14px; border-left: 2px solid #d8e4d7; font-size: 14px; }
+.nav a.nav-appendix { margin-left: 14px; padding-left: 14px; border-left: 2px dashed #d8d0c1; font-size: 14px; color: #52645c; }
 .nav a.active, .nav a:hover { background: #e7efe9; color: #174d40; }
 .content { min-width: 0; padding: 32px clamp(18px, 4vw, 56px) 80px; }
 .page-shell { max-width: 1180px; margin: 0 auto; }
@@ -696,6 +774,39 @@ h4 { margin-top: 24px; }
   padding: 16px;
 }
 .card strong { display: block; font-size: 18px; }
+.guide-family {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.62);
+  padding: 18px;
+  margin: 18px 0;
+}
+.family-head {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid #e3d8c5;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+.family-head h3 { margin: 0; color: var(--ink); }
+.family-head p { margin: 0; color: var(--muted); }
+.family-docs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.guide-doc {
+  display: block;
+  border: 1px solid #ded3bf;
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(250,247,239,.76);
+  color: var(--ink);
+  text-decoration: none;
+}
+.guide-doc.main { background: #edf7f1; border-color: #bfd7c9; }
+.guide-doc.appendix { background: #f7f2e8; border-style: dashed; }
+.guide-doc .doc-type { display: inline-block; margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 800; }
+.guide-doc strong { display: block; font-size: 16px; }
+.guide-doc p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
 .metric { font-size: 34px; font-weight: 800; color: #275b4d; }
 .flow {
   display: grid;
@@ -766,7 +877,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0; }
 @media (max-width: 860px) {
   .layout { display: block; }
   .sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-  .nav { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .nav { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  .nav a.nav-sub, .nav a.nav-appendix { margin-left: 0; }
   .bar-row { grid-template-columns: 110px 1fr 42px; }
 }
 """.strip()
@@ -835,6 +947,12 @@ def flow_panel(stem: str, stats: dict) -> str:
             ("4", "Bundle", "update-pubspec-assets + real build"),
             ("5", "Publish", "real seed 적용 시점 조절"),
         ],
+        "MAKE_TARGETS": [
+            ("local", "로컬 생성", "seed / thumbnails / pubspec"),
+            ("db", "DB 적용", "apply-seeds-* ENV=real"),
+            ("storage", "Storage", "avatars만 자동 업로드"),
+            ("insert", "중간 삽입", "event_id 보존 후 seed"),
+        ],
         "develop-flow": [
             ("dev", "개발", "scripts/run_dev.sh"),
             ("check", "검증", "format / analyze / test / asset checks"),
@@ -881,6 +999,52 @@ def flow_panel(stem: str, stats: dict) -> str:
     return f'<div class="flow">{steps}</div>'
 
 
+def navigation_html(active: str) -> str:
+    groups_html: list[str] = []
+    for group, entries in guide_groups():
+        links: list[str] = []
+        for entry, path in entries:
+            target = html_name_for_md(path)
+            classes = ["active"] if target == active else []
+            classes.append(f"nav-{entry.level}")
+            links.append(
+                f'<a class="{" ".join(classes)}" href="{target}">'
+                f"<span>{html.escape(read_title(path))}</span>"
+                "</a>"
+            )
+        groups_html.append(
+            '<div class="nav-group">'
+            f'<div class="nav-heading">{html.escape(group.label)}</div>'
+            + "".join(links)
+            + "</div>"
+        )
+    return "\n".join(groups_html)
+
+
+def grouped_guide_cards() -> str:
+    groups: list[str] = []
+    for group, entries in guide_groups():
+        docs: list[str] = []
+        for entry, path in entries:
+            role, desc = GUIDE_DESCRIPTIONS.get(path.name, ("문서", ""))
+            docs.append(
+                f'<a class="guide-doc {html.escape(entry.level)}" href="{html_name_for_md(path)}">'
+                f'<span class="doc-type">{html.escape(role)}</span>'
+                f"<strong>{html.escape(read_title(path))}</strong>"
+                f"<p>{html.escape(desc)}</p>"
+                "</a>"
+            )
+        groups.append(
+            '<section class="guide-family">'
+            '<div class="family-head">'
+            f"<div><h3>{html.escape(group.label)}</h3><p>{html.escape(group.summary)}</p></div>"
+            "</div>"
+            f'<div class="family-docs">{"".join(docs)}</div>'
+            "</section>"
+        )
+    return "\n".join(groups)
+
+
 def page_shell(
     *,
     title: str,
@@ -891,11 +1055,7 @@ def page_shell(
     visual: str,
     stats: dict,
 ) -> str:
-    guides = guide_files()
-    nav = "\n".join(
-        f'<a class="{"active" if html_name_for_md(path) == active else ""}" href="{html_name_for_md(path)}">{html.escape(read_title(path))}</a>'
-        for path in guides
-    )
+    nav = navigation_html(active)
     toc_html = ""
     if toc:
         toc_html = (
@@ -947,18 +1107,12 @@ def page_shell(
 
 
 def index_html(stats: dict) -> str:
-    cards = []
-    for path in guide_files():
-        role, desc = GUIDE_DESCRIPTIONS.get(path.name, ("문서", ""))
-        cards.append(
-            f'<a class="card" href="{html_name_for_md(path)}"><span class="subtle">{html.escape(role)}</span>'
-            f"<strong>{html.escape(read_title(path))}</strong><p>{html.escape(desc)}</p></a>"
-        )
-    guide_cards = '<div class="grid cards">' + "\n".join(cards) + "</div>"
+    guide_cards = grouped_guide_cards()
     visual = """
 <div class="flow">
   <div class="step"><span>Daily work</span><strong>develop-flow</strong><p>코드, seed, patch, real 배포 판단</p></div>
   <div class="step"><span>Content</span><strong>CONTENT_UPDATE</strong><p>새 이야기와 이미지 번들 운영</p></div>
+  <div class="step"><span>Make</span><strong>MAKE_TARGETS</strong><p>target별 입력, 출력, 원격 영향</p></div>
   <div class="step"><span>Platform</span><strong>DB / Infra / Push</strong><p>신규 환경과 푸시 배관</p></div>
   <div class="step"><span>Quality</span><strong>TEST_GUIDE</strong><p>테스트 영향 범위 탐색</p></div>
 </div>
@@ -978,7 +1132,7 @@ def index_html(stats: dict) -> str:
       <div class="subtle">HTML companion docs</div>
       <nav class="nav">
         <a class="active" href="index.html">가이드 인덱스</a>
-        {''.join(f'<a href="{html_name_for_md(path)}">{html.escape(read_title(path))}</a>' for path in guide_files())}
+        {navigation_html("index.html")}
       </nav>
     </aside>
     <main class="content">
@@ -993,15 +1147,15 @@ def index_html(stats: dict) -> str:
         <section class="doc-body">
           <h2>문서 역할</h2>
           {guide_cards}
-          <h2>중복 정리 기준</h2>
+          <h2>읽는 순서</h2>
           <div class="table-wrap"><table>
-            <thead><tr><th>질문</th><th>먼저 볼 문서</th><th>보조 문서</th></tr></thead>
+            <thead><tr><th>상황</th><th>먼저 볼 문서</th><th>함께 볼 문서</th></tr></thead>
             <tbody>
-              <tr><td>평소 개발/배포 순서</td><td>develop-flow.md</td><td>WORKFLOW_GUIDE.md</td></tr>
-              <tr><td>새 이야기/퀴즈/이미지 추가</td><td>CONTENT_UPDATE.md</td><td>story_guide.md, DATA_PIPELINE.md</td></tr>
-              <tr><td>새 Supabase 환경 구축</td><td>DB_SETUP.md</td><td>INFRA_GUIDE.md, PUSH_SETUP.md</td></tr>
-              <tr><td>푸시가 안 올 때</td><td>PUSH_SETUP.md</td><td>INFRA_GUIDE.md</td></tr>
+              <tr><td>개발/배포 판단</td><td>develop-flow.md</td><td>CONTENT_UPDATE.md, MAKE_TARGETS.md</td></tr>
+              <tr><td>인프라 현재 구조 파악</td><td>INFRA_GUIDE.md</td><td>DB_SETUP.md, LOCAL_ENV_FILES.md</td></tr>
+              <tr><td>기능별 운영</td><td>PUSH_SETUP.md</td><td>INFRA_GUIDE.md의 FCM/secret 원리</td></tr>
               <tr><td>테스트 영향 범위</td><td>TEST_GUIDE.md</td><td>docs/TESTING.md</td></tr>
+              <tr><td>긴 레퍼런스 확인</td><td>각 메인 문서</td><td>WORKFLOW_GUIDE.md, story_guide.md</td></tr>
             </tbody>
           </table></div>
           <h2>현재 콘텐츠 분포</h2>
@@ -1046,6 +1200,7 @@ def build_html_pages() -> dict[Path, str]:
 def write_or_check(outputs: dict[Path, str], *, check: bool) -> int:
     changed: list[Path] = []
     for path, content in outputs.items():
+        content = "\n".join(line.rstrip() for line in content.splitlines()) + "\n"
         if path.exists():
             current = path.read_text(encoding="utf-8")
             if current == content:

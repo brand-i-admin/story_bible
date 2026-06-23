@@ -4,6 +4,10 @@
 > 배포를 재현할 때 어떤 파일을 git으로 공유하고 어떤 값은 별도 보안 채널로 전달해야
 > 하는지 정리한다.
 
+문서 계층: 이 문서는 [INFRA_GUIDE.md](INFRA_GUIDE.md)를 보조하는 로컬 환경 파일
+하위 문서다. 인프라 전체 원리는 INFRA_GUIDE, 실제 Supabase 구축 순서는
+[DB_SETUP.md](DB_SETUP.md)를 본다.
+
 ## 0. 결론
 
 | 파일 | git 상태 | 공유 방식 | 필요한 작업 |

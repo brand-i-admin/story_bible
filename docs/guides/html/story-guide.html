@@ -13,16 +13,12 @@
       <div class="subtle">310 events · 445 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
-        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
-<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
-<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
-<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
-<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
-<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
-<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
-<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
-<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
-<a class="active" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+        <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
+<div class="nav-group"><div class="nav-heading">개발/배포 Flow</div><a class="nav-main" href="develop-flow.html"><span>개발 / 배포 Flow</span></a><a class="nav-sub" href="content-update.html"><span>콘텐츠 추가/수정 → 앱 반영 워크플로우</span></a><a class="nav-sub" href="make-targets.html"><span>Make target 운영 지도</span></a></div>
+<div class="nav-group"><div class="nav-heading">인프라 세팅/구축</div><a class="nav-main" href="infra-guide.html"><span>Story Bible 인프라 가이드</span></a><a class="nav-sub" href="db-setup.html"><span>DB / Supabase 환경 구축 가이드</span></a><a class="nav-sub" href="local-env-files.html"><span>로컬 환경 파일 공유 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">기능 가이드</div><a class="nav-main" href="push-setup.html"><span>푸시 알림 설정 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">테스트 가이드</div><a class="nav-main" href="test-guide.html"><span>테스트 가이드 — Story Bible</span></a></div>
+<div class="nav-group"><div class="nav-heading">부록/참고</div><a class="nav-appendix" href="workflow-guide.html"><span>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</span></a><a class="active nav-appendix" href="story-guide.html"><span>이야기 가이드 (Story Guide)</span></a></div>
       </nav>
     </aside>
     <main class="content">
@@ -30,7 +26,7 @@
         <section class="hero">
           <div class="eyebrow">Developer documentation</div>
           <h1>이야기 가이드 (Story Guide)</h1>
-          <p>이야기 카탈로그: 현재 JSON 기준 전체 사건, 인물, 장소, 본문</p>
+          <p>카탈로그: 현재 JSON 기준 전체 사건, 인물, 장소, 본문</p>
           <div class="card"><strong>시대별 사건 수</strong><div class="bar-row"><span>원역사</span><div class="bar"><i style="width:15%"></i></div><b>8</b></div><div class="bar-row"><span>족장</span><div class="bar"><i style="width:57%"></i></div><b>30</b></div><div class="bar-row"><span>출애굽</span><div class="bar"><i style="width:59%"></i></div><b>31</b></div><div class="bar-row"><span>사사</span><div class="bar"><i style="width:25%"></i></div><b>13</b></div><div class="bar-row"><span>통일 왕국</span><div class="bar"><i style="width:51%"></i></div><b>27</b></div><div class="bar-row"><span>분열왕국</span><div class="bar"><i style="width:100%"></i></div><b>52</b></div><div class="bar-row"><span>포로 및 포로 후기</span><div class="bar"><i style="width:30%"></i></div><b>16</b></div><div class="bar-row"><span>예수님의 공생애</span><div class="bar"><i style="width:98%"></i></div><b>51</b></div><div class="bar-row"><span>사도</span><div class="bar"><i style="width:84%"></i></div><b>44</b></div><div class="bar-row"><span>후기 사도</span><div class="bar"><i style="width:55%"></i></div><b>29</b></div><div class="bar-row"><span>역사의 종결</span><div class="bar"><i style="width:17%"></i></div><b>9</b></div></div>
           <div class="toc"><strong>On this page</strong><a class="level-1" href="#이야기-가이드-story-guide">이야기 가이드 (Story Guide)</a><a class="level-2" href="#목차">목차</a><a class="level-2" href="#원역사">원역사</a><a class="level-3" href="#사건별-상세">사건별 상세</a><a class="level-2" href="#족장">족장</a><a class="level-3" href="#사건별-상세-2">사건별 상세</a><a class="level-2" href="#출애굽">출애굽</a><a class="level-3" href="#사건별-상세-3">사건별 상세</a><a class="level-2" href="#사사">사사</a><a class="level-3" href="#사건별-상세-4">사건별 상세</a><a class="level-2" href="#통일-왕국">통일 왕국</a><a class="level-3" href="#사건별-상세-5">사건별 상세</a><a class="level-2" href="#분열왕국">분열왕국</a><a class="level-3" href="#사건별-상세-6">사건별 상세</a><a class="level-2" href="#포로-및-포로-후기">포로 및 포로 후기</a><a class="level-3" href="#사건별-상세-7">사건별 상세</a><a class="level-2" href="#예수님의-공생애">예수님의 공생애</a><a class="level-3" href="#사건별-상세-8">사건별 상세</a><a class="level-2" href="#사도">사도</a><a class="level-3" href="#사건별-상세-9">사건별 상세</a><a class="level-2" href="#후기-사도">후기 사도</a><a class="level-3" href="#사건별-상세-10">사건별 상세</a><a class="level-2" href="#역사의-종결">역사의 종결</a><a class="level-3" href="#사건별-상세-11">사건별 상세</a></div>
         </section>

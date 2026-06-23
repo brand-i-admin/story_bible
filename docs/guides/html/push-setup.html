@@ -13,16 +13,12 @@
       <div class="subtle">310 events · 445 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
-        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
-<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
-<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
-<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
-<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
-<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
-<a class="active" href="push-setup.html">푸시 알림 설정 가이드</a>
-<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
-<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
-<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+        <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
+<div class="nav-group"><div class="nav-heading">개발/배포 Flow</div><a class="nav-main" href="develop-flow.html"><span>개발 / 배포 Flow</span></a><a class="nav-sub" href="content-update.html"><span>콘텐츠 추가/수정 → 앱 반영 워크플로우</span></a><a class="nav-sub" href="make-targets.html"><span>Make target 운영 지도</span></a></div>
+<div class="nav-group"><div class="nav-heading">인프라 세팅/구축</div><a class="nav-main" href="infra-guide.html"><span>Story Bible 인프라 가이드</span></a><a class="nav-sub" href="db-setup.html"><span>DB / Supabase 환경 구축 가이드</span></a><a class="nav-sub" href="local-env-files.html"><span>로컬 환경 파일 공유 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">기능 가이드</div><a class="active nav-main" href="push-setup.html"><span>푸시 알림 설정 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">테스트 가이드</div><a class="nav-main" href="test-guide.html"><span>테스트 가이드 — Story Bible</span></a></div>
+<div class="nav-group"><div class="nav-heading">부록/참고</div><a class="nav-appendix" href="workflow-guide.html"><span>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</span></a><a class="nav-appendix" href="story-guide.html"><span>이야기 가이드 (Story Guide)</span></a></div>
       </nav>
     </aside>
     <main class="content">
@@ -30,7 +26,7 @@
         <section class="hero">
           <div class="eyebrow">Developer documentation</div>
           <h1>푸시 알림 설정 가이드</h1>
-          <p>푸시 설정: Firebase와 send-push를 처음 연결하는 체크리스트</p>
+          <p>푸시 알림: Firebase와 send-push를 처음 연결하는 체크리스트</p>
           <div class="flow"><div class="step"><span>firebase</span><strong>Firebase</strong><p>앱 등록 + VAPID + APNs</p></div>
 <div class="step"><span>edge</span><strong>send-push</strong><p>FIREBASE_SERVICE_ACCOUNT</p></div>
 <div class="step"><span>db</span><strong>pg_net</strong><p>Vault secret으로 함수 호출</p></div>
@@ -41,6 +37,7 @@
           <h1 id="푸시-알림-설정-가이드">푸시 알림 설정 가이드</h1>
 <p>Story Bible 앱은 Firebase Cloud Messaging(FCM) HTTP v1 API 로 푸시 알림을 보낸다. 이 문서는 <strong>신규 환경 세팅 시 1회만</strong> 수행하는 Firebase Console 작업과 Flutter/Supabase 연동 절차를 단계별로 안내한다.</p>
 <p>현재 코드 상태: <code>firebase_core</code>/<code>firebase_messaging</code> 의존성과 <code>lib/firebase_options.dart</code> 는 이미 들어 있다. Firebase 프로젝트를 새로 나누거나 재설정하면 <code>flutterfire configure</code> 를 다시 실행하고, <code>web/firebase-messaging-sw.js</code> 의 Firebase config 도 함께 동기화한다.</p>
+<p>문서 계층: 이 문서가 푸시 알림 기능의 메인 문서다. FCM, APNs, Supabase Edge Function, secret 계층의 원리는 <a href="infra-guide.html">INFRA_GUIDE.md</a>를 보고, 새 Supabase 환경 전체 구축 순서는 <a href="db-setup.html">DB_SETUP.md</a>를 본다.</p>
 <h2 id="1-firebase-프로젝트-생성">1. Firebase 프로젝트 생성</h2>
 <ol><li>https://console.firebase.google.com/ 접속.</li><li>&quot;프로젝트 추가&quot; → 이름 <code>story-bible</code> (자유).</li><li>기존 <code>GOOGLE_CLOUD_PROJECT</code> 아바타 생성용 GCP 프로젝트가 있다면, 같은 프로젝트에 Firebase 를 연결할 수 있다 (드롭다운에서 기존 프로젝트 선택).</li></ol>
 <h2 id="2-앱-등록-web-ios-android">2. 앱 등록 (Web / iOS / Android)</h2>

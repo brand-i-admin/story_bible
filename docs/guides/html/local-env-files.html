@@ -13,16 +13,12 @@
       <div class="subtle">310 events · 445 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
-        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
-<a class="" href="develop-flow.html">개발 / 배포 Flow</a>
-<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
-<a class="active" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
-<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
-<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
-<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
-<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
-<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
-<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+        <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
+<div class="nav-group"><div class="nav-heading">개발/배포 Flow</div><a class="nav-main" href="develop-flow.html"><span>개발 / 배포 Flow</span></a><a class="nav-sub" href="content-update.html"><span>콘텐츠 추가/수정 → 앱 반영 워크플로우</span></a><a class="nav-sub" href="make-targets.html"><span>Make target 운영 지도</span></a></div>
+<div class="nav-group"><div class="nav-heading">인프라 세팅/구축</div><a class="nav-main" href="infra-guide.html"><span>Story Bible 인프라 가이드</span></a><a class="nav-sub" href="db-setup.html"><span>DB / Supabase 환경 구축 가이드</span></a><a class="active nav-sub" href="local-env-files.html"><span>로컬 환경 파일 공유 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">기능 가이드</div><a class="nav-main" href="push-setup.html"><span>푸시 알림 설정 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">테스트 가이드</div><a class="nav-main" href="test-guide.html"><span>테스트 가이드 — Story Bible</span></a></div>
+<div class="nav-group"><div class="nav-heading">부록/참고</div><a class="nav-appendix" href="workflow-guide.html"><span>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</span></a><a class="nav-appendix" href="story-guide.html"><span>이야기 가이드 (Story Guide)</span></a></div>
       </nav>
     </aside>
     <main class="content">
@@ -30,7 +26,7 @@
         <section class="hero">
           <div class="eyebrow">Developer documentation</div>
           <h1>로컬 환경 파일 공유 가이드</h1>
-          <p>로컬 환경 파일: git에 올리는 예제 파일과 별도 공유가 필요한 secret 구분</p>
+          <p>환경 파일: git에 올리는 예제 파일과 별도 공유가 필요한 secret 구분</p>
 
           <div class="toc"><strong>On this page</strong><a class="level-1" href="#로컬-환경-파일-공유-가이드">로컬 환경 파일 공유 가이드</a><a class="level-2" href="#0-결론">0. 결론</a><a class="level-2" href="#1-앱-실행-빌드에-필요한-env">1. 앱 실행/빌드에 필요한 `.env`</a><a class="level-2" href="#2-db-storage-운영에-필요한-env-ops">2. DB/Storage 운영에 필요한 `.env.ops`</a><a class="level-2" href="#3-edge-function-secret에-필요한-env-supabase-secrets">3. Edge Function secret에 필요한 `.env.supabase.secrets`</a><a class="level-2" href="#4-firebase-client-config는-왜-커밋하는가">4. Firebase client config는 왜 커밋하는가</a><a class="level-2" href="#5-새-컴퓨터-세팅-체크리스트">5. 새 컴퓨터 세팅 체크리스트</a><a class="level-2" href="#6-커밋-전-확인">6. 커밋 전 확인</a></div>
         </section>
@@ -39,6 +35,7 @@
 <blockquote><p>다른 개발자나 내 다른 컴퓨터에서 앱 실행, DB seed, Storage 운영, Edge Function</p>
 <p>배포를 재현할 때 어떤 파일을 git으로 공유하고 어떤 값은 별도 보안 채널로 전달해야</p>
 <p>하는지 정리한다.</p></blockquote>
+<p>문서 계층: 이 문서는 <a href="infra-guide.html">INFRA_GUIDE.md</a>를 보조하는 로컬 환경 파일 하위 문서다. 인프라 전체 원리는 INFRA_GUIDE, 실제 Supabase 구축 순서는 <a href="db-setup.html">DB_SETUP.md</a>를 본다.</p>
 <h2 id="0-결론">0. 결론</h2>
 <div class="table-wrap"><table>
 <thead><tr>

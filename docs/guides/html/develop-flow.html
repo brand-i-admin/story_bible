@@ -13,16 +13,12 @@
       <div class="subtle">310 events · 445 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
-        <a class="" href="readme.html">Story Bible 개발 가이드 허브</a>
-<a class="active" href="develop-flow.html">개발 / 배포 Flow</a>
-<a class="" href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a>
-<a class="" href="local-env-files.html">로컬 환경 파일 공유 가이드</a>
-<a class="" href="db-setup.html">DB / Supabase 환경 구축 가이드</a>
-<a class="" href="infra-guide.html">Story Bible 인프라 가이드</a>
-<a class="" href="push-setup.html">푸시 알림 설정 가이드</a>
-<a class="" href="test-guide.html">테스트 가이드 — Story Bible</a>
-<a class="" href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a>
-<a class="" href="story-guide.html">이야기 가이드 (Story Guide)</a>
+        <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
+<div class="nav-group"><div class="nav-heading">개발/배포 Flow</div><a class="active nav-main" href="develop-flow.html"><span>개발 / 배포 Flow</span></a><a class="nav-sub" href="content-update.html"><span>콘텐츠 추가/수정 → 앱 반영 워크플로우</span></a><a class="nav-sub" href="make-targets.html"><span>Make target 운영 지도</span></a></div>
+<div class="nav-group"><div class="nav-heading">인프라 세팅/구축</div><a class="nav-main" href="infra-guide.html"><span>Story Bible 인프라 가이드</span></a><a class="nav-sub" href="db-setup.html"><span>DB / Supabase 환경 구축 가이드</span></a><a class="nav-sub" href="local-env-files.html"><span>로컬 환경 파일 공유 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">기능 가이드</div><a class="nav-main" href="push-setup.html"><span>푸시 알림 설정 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">테스트 가이드</div><a class="nav-main" href="test-guide.html"><span>테스트 가이드 — Story Bible</span></a></div>
+<div class="nav-group"><div class="nav-heading">부록/참고</div><a class="nav-appendix" href="workflow-guide.html"><span>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</span></a><a class="nav-appendix" href="story-guide.html"><span>이야기 가이드 (Story Guide)</span></a></div>
       </nav>
     </aside>
     <main class="content">
@@ -30,7 +26,7 @@
         <section class="hero">
           <div class="eyebrow">Developer documentation</div>
           <h1>개발 / 배포 Flow</h1>
-          <p>개발/배포: dev/real 실행, seed, patch, real 배포 판단</p>
+          <p>개발/배포: dev/real 실행, 검증, patch, real 배포 판단</p>
           <div class="flow"><div class="step"><span>dev</span><strong>개발</strong><p>scripts/run_dev.sh</p></div>
 <div class="step"><span>check</span><strong>검증</strong><p>format / analyze / test / asset checks</p></div>
 <div class="step"><span>patch</span><strong>DB 변경</strong><p>db_init + idempotent patch</p></div>
@@ -42,6 +38,7 @@
 <blockquote><p>dev 에서 안전하게 개발하고, real 에 배포할 때 무엇을 어디까지 적용해야 하는지</p>
 <p>정리한 운영 문서다. Supabase 신규 환경 구축 자체는</p>
 <p><a href="db-setup.html">DB_SETUP.md</a>를 먼저 본다.</p></blockquote>
+<p>문서 계층: 이 문서가 개발/배포의 메인 문서다. 새 이야기/퀴즈/이미지 세부 절차는 <a href="content-update.html">CONTENT_UPDATE.md</a>, Make target 내부 동작과 원격 영향은 <a href="make-targets.html">MAKE_TARGETS.md</a>를 본다.</p>
 <h2 id="0-결론부터">0. 결론부터</h2>
 <p>앞으로 앱 실행과 빌드는 아래 스크립트만 쓰면 된다.</p>
 <pre><code class="language-bash">scripts/run_dev.sh
@@ -52,7 +49,7 @@ scripts/build_ios_dev.sh
 scripts/build_ios_real.sh</code></pre>
 <p>이 스크립트들은 실행 전에 <code>.env</code>의 선택 환경 값을 검증하고, Flutter 에 <code>--dart-define</code>으로 주입한다. 앱은 <code>.env</code> 파일을 직접 읽지 않는다.</p>
 <p>새 컴퓨터나 팀원 온보딩 시 필요한 로컬 파일 기준은 <a href="local-env-files.html">LOCAL_ENV_FILES.md</a>를 먼저 본다. 앱 실행/빌드에는 <code>.env</code>, DB/Storage 운영 명령에는 <code>.env.ops</code>, Edge Function secret 갱신에는 <code>.env.supabase.secrets</code>가 필요하지만, 세 실파일은 모두 git에 올리지 않는다.</p>
-<p>DB / Storage 운영은 Makefile 을 쓴다.</p>
+<p>DB / Storage 운영은 Makefile 을 쓴다. 각 target이 로컬 파일만 바꾸는지, 원격 DB/Storage를 바꾸는지는 <a href="make-targets.html">MAKE_TARGETS.md</a>에 따로 정리했다.</p>
 <pre><code class="language-bash"># dev reset / seed / storage
 make db-init
 make apply-seeds
@@ -193,9 +190,42 @@ make apply-seeds-quizzes ENV=real
 make apply-patch ENV=dev PATCH=supabase/patches/&lt;file&gt;.sql
 make apply-patch ENV=real PATCH=supabase/patches/&lt;file&gt;.sql</code></pre>
 <h3 id="3-2-1-신규-이야기-추가-flow">3.2.1 신규 이야기 추가 Flow</h3>
-<p>새 이야기는 일반 seed 변경보다 조심해서 배포한다. 현재 앱은 장면 이미지를 다음 순서로 읽는다.</p>
+<p>새 이야기는 일반 seed 변경보다 조심해서 배포한다. 특히 <strong>중간 삽입</strong>은 <code>story_index</code>가 뒤쪽 이야기 전체에 영향을 주므로 seed-only 적용을 피한다.</p>
+<p>현재 코드 기준 결론:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>질문</th>
+<th>답</th>
+</tr></thead><tbody>
+<tr>
+<td>새 이야기 DB seed apply가 장면 이미지를 Storage에 자동 업로드하는가?</td>
+<td>아니다. <code>apply-seeds-stories-characters</code>는 DB만 바꾸고 Storage는 건드리지 않는다.</td>
+</tr>
+<tr>
+<td>로컬 썸네일이 앱 번들에 들어가는가?</td>
+<td><code>make thumbnails</code> + <code>make update-pubspec-assets</code> 후 새 앱을 빌드해야 들어간다.</td>
+</tr>
+<tr>
+<td>새 앱 배포 전 real DB에 먼저 공개하면 구버전 앱도 이미지가 보장되는가?</td>
+<td>기본 흐름에서는 보장되지 않는다. <code>events.scene_image_paths</code> fallback이 비어 있기 때문이다.</td>
+</tr>
+<tr>
+<td>현재 로컬 canonical 이미지를 Storage에 올리고 <code>scene_image_paths</code>를 채우는 Make target이 있는가?</td>
+<td>없다. 필요하면 별도 운영 도구/patch를 먼저 만들어야 한다.</td>
+</tr>
+</tbody></table></div>
+<p>이미지 로딩 원리:</p>
 <ol><li>새 앱 번들 안의 <code>assets/story_images_thumbs/&lt;short_dir&gt;/scene_N.jpg</code></li><li>번들에 없으면 DB의 <code>events.scene_image_paths</code>를 Supabase Storage public URL로 변환</li><li>둘 다 없으면 이미지 row를 숨김</li></ol>
-<p>즉, <code>assets/200_stories/*.json</code>으로 만든 canonical seed는 기본적으로 <code>scene_image_paths</code>를 채우지 않는다. real에 바로 <code>apply-seeds-stories-characters ENV=real</code>을 하면 새 이야기는 DB에 <code>published</code>로 보이지만, 아직 앱스토어 심사를 통과한 새 앱을 받지 못한 사용자는 새 썸네일 번들이 없고 DB fallback도 없어서 장면 이미지가 비어 보일 수 있다.</p>
+<p>이 fallback은 <code>SceneAssetLoader.loadForEvent(..., publicUrlFor: ...)</code>를 호출하는 화면에서만 동작한다. 현재 상세 화면의 큰 장면 row는 이 경로를 쓰지만, 모든 작은 카드 썸네일까지 완전 보장하려면 호출부 패치가 더 필요할 수 있다. 그러므로 새 앱 배포 전 구버전 사용자에게 이미지까지 확실히 보이게 하려면 Storage 업로드 도구와 앱 fallback 범위를 함께 점검한다.</p>
+<p><code>assets/200_stories/*.json</code>으로 만든 canonical seed는 기본적으로 <code>scene_image_paths</code>를 채우지 않는다. real에 바로 <code>apply-seeds-stories-characters ENV=real</code>을 하면 새 이야기는 DB에 <code>published</code>로 보이지만, 아직 새 앱을 받지 못한 사용자는 새 썸네일 번들이 없고 DB fallback도 없어서 장면 이미지가 비어 보일 수 있다.</p>
+<p>중간 삽입의 DB 적용 원리:</p>
+<ul><li><code>events</code>에는 <code>(era_id, story_index)</code> unique 제약이 있다.</li><li>generated seed는 같은 <code>(era_id, story_index)</code>를 만나면 그 row를 update한다.</li><li>따라서 기존 5번 자리에 새 이야기를 넣고 뒤쪽 index를 전부 재번호 매긴 뒤,</li></ul>
+<p>seed만 바로 real에 apply하면 기존 5번 row의 <code>events.id</code>가 새 이야기 내용으로 바뀔 수 있다.</p>
+<ul><li><code>saved_events</code>, <code>user_event_progress</code>, <code>quiz_questions</code>, 감정 표시 등은</li></ul>
+<p><code>event_id</code>를 참조하므로, 운영 DB에서는 기존 이야기 row id를 보존해야 한다.</p>
+<ul><li>안전한 중간 삽입은 DB에서 먼저 뒤쪽 row의 <code>story_index</code>를 +1 shift하고 새 row를</li></ul>
+<p>insert한 뒤, 로컬 JSON/seed를 그 상태에 맞추는 방식이다. 이 로직은 <code>insert_event_at_position(...)</code> RPC에 있지만, 현재 Make target으로 포장되어 있지는 않다.</p>
+<p>Make target별 내부 동작은 <a href="make-targets.html">MAKE_TARGETS.md</a>를 먼저 확인한다.</p>
 <h4 id="dev에서-만드는-순서">dev에서 만드는 순서</h4>
 <pre><code class="language-bash"># 0. 로컬 stories JSON 이 DB와 맞는지 먼저 확인
 #    DB에서 복원해야 할 때만 실행한다. 작업 중인 로컬 JSON이 있으면 먼저 diff 확인.
@@ -232,7 +262,8 @@ scripts/run_dev.sh</code></pre>
 <p>안전한 기본 원칙:</p>
 <ul><li>real DB에 새 이야기를 공개하기 전에 real 앱 빌드를 먼저 준비한다.</li><li>새 앱이 Store 심사를 통과하고 출시될 준비가 되기 전까지는 real에</li></ul>
 <p>canonical seed를 적용하지 않는다.</p>
-<ul><li>real에 먼저 적용해야 한다면 <code>scene_image_paths</code> fallback을 채워야 한다.</li></ul>
+<ul><li>real에 먼저 적용해야 한다면 <code>scene_image_paths</code> fallback을 채워야 한다.</li><li>중간 삽입이면 seed apply 전에 DB row shift+insert 절차로 기존 <code>events.id</code>를</li></ul>
+<p>보존한다. seed-only 재번호 적용은 금지한다.</p>
 <h4 id="권장-a-store-출시-후-real-공개">권장 A: Store 출시 후 real 공개</h4>
 <p>이미지 fallback 없이 가장 단순한 방법이다.</p>
 <pre><code class="language-bash"># dev에서 검증 완료 후
@@ -255,6 +286,7 @@ scripts/run_real.sh</code></pre>
 <ul><li>신버전 앱: 로컬 번들에 새 썸네일이 있으므로 Storage를 호출하지 않는다.</li><li>앱 출시 후 1~2주 정도 지나 대부분 업데이트된 뒤에 Storage 원본 정리를 고려한다.</li></ul>
 <p>과거에는 사역자 웹 제안/승인 흐름이 이 역할을 했다. 하지만 현재 운영 정책은 웹을 배포하지 않고 로컬에서 직접 이야기와 이미지를 추가하는 방식이다. 따라서 제안/승인 문서를 표준 경로로 보지 않는다.</p>
 <p>현재 repo에는 로컬에서 생성한 canonical 장면 이미지를 Storage에 업로드하고 <code>events.scene_image_paths</code>를 채우는 전용 Make target이 없다. 그래서 구버전 앱까지 이미지를 보장해야 하는 배포를 자주 할 계획이면 먼저 별도 운영 도구를 추가해야 한다.</p>
+<p>주의: <code>make upload-character-avatars</code>는 캐릭터 아바타 전용이다. 이야기 장면 이미지나 <code>assets/story_images_thumbs</code>를 업로드하지 않는다.</p>
 <p>필요한 도구의 역할:</p>
 <ol><li><code>assets/story_images/&lt;title&gt;/scene_N.png</code> 또는 썸네일을 public Storage에 업로드한다.</li><li>업로드 결과를 <code>bucket/path/scene_N.png</code> 형식으로 모은다.</li><li>real DB의 해당 이벤트에 <code>scene_image_paths = ARRAY[...]</code>를 patch 한다.</li><li>앱 출시 후 충분히 시간이 지난 뒤에만 Storage 원본 정리를 검토한다.</li></ol>
 <p>이 도구가 없는 현재 상태에서 이미지 빈 상태를 피하는 가장 단순한 운영은 real 공개 자체를 새 앱 출시 이후로 늦추는 것이다.</p>

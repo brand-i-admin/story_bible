@@ -13,7 +13,12 @@
       <div class="subtle">HTML companion docs</div>
       <nav class="nav">
         <a class="active" href="index.html">가이드 인덱스</a>
-        <a href="readme.html">Story Bible 개발 가이드 허브</a><a href="develop-flow.html">개발 / 배포 Flow</a><a href="content-update.html">콘텐츠 추가/수정 → 앱 반영 워크플로우</a><a href="local-env-files.html">로컬 환경 파일 공유 가이드</a><a href="db-setup.html">DB / Supabase 환경 구축 가이드</a><a href="infra-guide.html">Story Bible 인프라 가이드</a><a href="push-setup.html">푸시 알림 설정 가이드</a><a href="test-guide.html">테스트 가이드 — Story Bible</a><a href="workflow-guide.html">워크플로 가이드 — Story Bible 코드 작업 + 유지보수</a><a href="story-guide.html">이야기 가이드 (Story Guide)</a>
+        <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
+<div class="nav-group"><div class="nav-heading">개발/배포 Flow</div><a class="nav-main" href="develop-flow.html"><span>개발 / 배포 Flow</span></a><a class="nav-sub" href="content-update.html"><span>콘텐츠 추가/수정 → 앱 반영 워크플로우</span></a><a class="nav-sub" href="make-targets.html"><span>Make target 운영 지도</span></a></div>
+<div class="nav-group"><div class="nav-heading">인프라 세팅/구축</div><a class="nav-main" href="infra-guide.html"><span>Story Bible 인프라 가이드</span></a><a class="nav-sub" href="db-setup.html"><span>DB / Supabase 환경 구축 가이드</span></a><a class="nav-sub" href="local-env-files.html"><span>로컬 환경 파일 공유 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">기능 가이드</div><a class="nav-main" href="push-setup.html"><span>푸시 알림 설정 가이드</span></a></div>
+<div class="nav-group"><div class="nav-heading">테스트 가이드</div><a class="nav-main" href="test-guide.html"><span>테스트 가이드 — Story Bible</span></a></div>
+<div class="nav-group"><div class="nav-heading">부록/참고</div><a class="nav-appendix" href="workflow-guide.html"><span>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</span></a><a class="nav-appendix" href="story-guide.html"><span>이야기 가이드 (Story Guide)</span></a></div>
       </nav>
     </aside>
     <main class="content">
@@ -24,7 +29,7 @@
           <p>Markdown 가이드를 시각화된 HTML로 변환한 보조 문서다. 실제 소스는 같은 폴더의 md 파일이며, 이 HTML은 빠른 탐색과 온보딩용으로 쓴다.</p>
 
 <div class="grid cards">
-  <div class="card"><span class="subtle">Guide files</span><div class="metric">10</div><strong>역할별 문서</strong></div>
+  <div class="card"><span class="subtle">Guide files</span><div class="metric">11</div><strong>역할별 문서</strong></div>
   <div class="card"><span class="subtle">Story events</span><div class="metric">310</div><strong>현재 JSON 사건</strong></div>
   <div class="card"><span class="subtle">Dart tests</span><div class="metric">445</div><strong>61개 테스트 파일 + helper</strong></div>
   <div class="card"><span class="subtle">Python tool tests</span><div class="metric">93</div><strong>13개 파일</strong></div>
@@ -34,6 +39,7 @@
 <div class="flow">
   <div class="step"><span>Daily work</span><strong>develop-flow</strong><p>코드, seed, patch, real 배포 판단</p></div>
   <div class="step"><span>Content</span><strong>CONTENT_UPDATE</strong><p>새 이야기와 이미지 번들 운영</p></div>
+  <div class="step"><span>Make</span><strong>MAKE_TARGETS</strong><p>target별 입력, 출력, 원격 영향</p></div>
   <div class="step"><span>Platform</span><strong>DB / Infra / Push</strong><p>신규 환경과 푸시 배관</p></div>
   <div class="step"><span>Quality</span><strong>TEST_GUIDE</strong><p>테스트 영향 범위 탐색</p></div>
 </div>
@@ -41,25 +47,21 @@
         </section>
         <section class="doc-body">
           <h2>문서 역할</h2>
-          <div class="grid cards"><a class="card" href="readme.html"><span class="subtle">문서 허브</span><strong>Story Bible 개발 가이드 허브</strong><p>중복된 운영 문서의 역할과 읽는 순서를 묶은 진입점</p></a>
-<a class="card" href="develop-flow.html"><span class="subtle">개발/배포</span><strong>개발 / 배포 Flow</strong><p>dev/real 실행, seed, patch, real 배포 판단</p></a>
-<a class="card" href="content-update.html"><span class="subtle">콘텐츠 운영</span><strong>콘텐츠 추가/수정 → 앱 반영 워크플로우</strong><p>새 이야기, 퀴즈, 이미지, pubspec 반영 절차</p></a>
-<a class="card" href="local-env-files.html"><span class="subtle">로컬 환경 파일</span><strong>로컬 환경 파일 공유 가이드</strong><p>git에 올리는 예제 파일과 별도 공유가 필요한 secret 구분</p></a>
-<a class="card" href="db-setup.html"><span class="subtle">환경 구축</span><strong>DB / Supabase 환경 구축 가이드</strong><p>Supabase 신규/복구 환경의 Auth, secret, seed 세팅</p></a>
-<a class="card" href="infra-guide.html"><span class="subtle">인프라 원리</span><strong>Story Bible 인프라 가이드</strong><p>Supabase, FCM, GCP, Apple, OAuth 동작 원리</p></a>
-<a class="card" href="push-setup.html"><span class="subtle">푸시 설정</span><strong>푸시 알림 설정 가이드</strong><p>Firebase와 send-push를 처음 연결하는 체크리스트</p></a>
-<a class="card" href="test-guide.html"><span class="subtle">테스트 지도</span><strong>테스트 가이드 — Story Bible</strong><p>현재 테스트 파일과 검증 책임 카탈로그</p></a>
-<a class="card" href="workflow-guide.html"><span class="subtle">작업 규칙</span><strong>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</strong><p>Codex 작업 루프와 웹 제안 기능의 구조 참고</p></a>
-<a class="card" href="story-guide.html"><span class="subtle">이야기 카탈로그</span><strong>이야기 가이드 (Story Guide)</strong><p>현재 JSON 기준 전체 사건, 인물, 장소, 본문</p></a></div>
-          <h2>중복 정리 기준</h2>
+          <section class="guide-family"><div class="family-head"><div><h3>문서 지도</h3><p>전체 문서의 역할과 읽는 순서를 먼저 잡는 진입점</p></div></div><div class="family-docs"><a class="guide-doc main" href="readme.html"><span class="doc-type">문서 허브</span><strong>Story Bible 개발 가이드 허브</strong><p>중복된 운영 문서의 역할과 읽는 순서를 묶은 진입점</p></a></div></section>
+<section class="guide-family"><div class="family-head"><div><h3>개발/배포 Flow</h3><p>일상 개발, real 배포, 콘텐츠 반영, Make target 원리</p></div></div><div class="family-docs"><a class="guide-doc main" href="develop-flow.html"><span class="doc-type">개발/배포</span><strong>개발 / 배포 Flow</strong><p>dev/real 실행, 검증, patch, real 배포 판단</p></a><a class="guide-doc sub" href="content-update.html"><span class="doc-type">콘텐츠 운영</span><strong>콘텐츠 추가/수정 → 앱 반영 워크플로우</strong><p>새 이야기, 퀴즈, 이미지, pubspec 반영 절차</p></a><a class="guide-doc sub" href="make-targets.html"><span class="doc-type">Make target</span><strong>Make target 운영 지도</strong><p>각 make 명령의 입력, 출력, 원격 영향, 중간 삽입 주의점</p></a></div></section>
+<section class="guide-family"><div class="family-head"><div><h3>인프라 세팅/구축</h3><p>현재 Supabase/Firebase/GCP 구조와 새 환경 구축 절차</p></div></div><div class="family-docs"><a class="guide-doc main" href="infra-guide.html"><span class="doc-type">인프라</span><strong>Story Bible 인프라 가이드</strong><p>Supabase, Firebase, GCP, Apple, OAuth 현재 구조</p></a><a class="guide-doc sub" href="db-setup.html"><span class="doc-type">구축 절차</span><strong>DB / Supabase 환경 구축 가이드</strong><p>Supabase 신규/복구 환경의 Auth, secret, seed 세팅</p></a><a class="guide-doc sub" href="local-env-files.html"><span class="doc-type">환경 파일</span><strong>로컬 환경 파일 공유 가이드</strong><p>git에 올리는 예제 파일과 별도 공유가 필요한 secret 구분</p></a></div></section>
+<section class="guide-family"><div class="family-head"><div><h3>기능 가이드</h3><p>앱 기능별 운영/설정 문서</p></div></div><div class="family-docs"><a class="guide-doc main" href="push-setup.html"><span class="doc-type">푸시 알림</span><strong>푸시 알림 설정 가이드</strong><p>Firebase와 send-push를 처음 연결하는 체크리스트</p></a></div></section>
+<section class="guide-family"><div class="family-head"><div><h3>테스트 가이드</h3><p>변경 유형별 검증 범위와 현재 테스트 지도</p></div></div><div class="family-docs"><a class="guide-doc main" href="test-guide.html"><span class="doc-type">테스트</span><strong>테스트 가이드 — Story Bible</strong><p>현재 테스트 파일과 검증 책임 카탈로그</p></a></div></section>
+<section class="guide-family"><div class="family-head"><div><h3>부록/참고</h3><p>메인 문서를 보조하는 긴 레퍼런스와 생성 카탈로그</p></div></div><div class="family-docs"><a class="guide-doc appendix" href="workflow-guide.html"><span class="doc-type">레퍼런스</span><strong>워크플로 가이드 — Story Bible 코드 작업 + 유지보수</strong><p>Codex 작업 루프와 웹 제안 기능의 구조 참고</p></a><a class="guide-doc appendix" href="story-guide.html"><span class="doc-type">카탈로그</span><strong>이야기 가이드 (Story Guide)</strong><p>현재 JSON 기준 전체 사건, 인물, 장소, 본문</p></a></div></section>
+          <h2>읽는 순서</h2>
           <div class="table-wrap"><table>
-            <thead><tr><th>질문</th><th>먼저 볼 문서</th><th>보조 문서</th></tr></thead>
+            <thead><tr><th>상황</th><th>먼저 볼 문서</th><th>함께 볼 문서</th></tr></thead>
             <tbody>
-              <tr><td>평소 개발/배포 순서</td><td>develop-flow.md</td><td>WORKFLOW_GUIDE.md</td></tr>
-              <tr><td>새 이야기/퀴즈/이미지 추가</td><td>CONTENT_UPDATE.md</td><td>story_guide.md, DATA_PIPELINE.md</td></tr>
-              <tr><td>새 Supabase 환경 구축</td><td>DB_SETUP.md</td><td>INFRA_GUIDE.md, PUSH_SETUP.md</td></tr>
-              <tr><td>푸시가 안 올 때</td><td>PUSH_SETUP.md</td><td>INFRA_GUIDE.md</td></tr>
+              <tr><td>개발/배포 판단</td><td>develop-flow.md</td><td>CONTENT_UPDATE.md, MAKE_TARGETS.md</td></tr>
+              <tr><td>인프라 현재 구조 파악</td><td>INFRA_GUIDE.md</td><td>DB_SETUP.md, LOCAL_ENV_FILES.md</td></tr>
+              <tr><td>기능별 운영</td><td>PUSH_SETUP.md</td><td>INFRA_GUIDE.md의 FCM/secret 원리</td></tr>
               <tr><td>테스트 영향 범위</td><td>TEST_GUIDE.md</td><td>docs/TESTING.md</td></tr>
+              <tr><td>긴 레퍼런스 확인</td><td>각 메인 문서</td><td>WORKFLOW_GUIDE.md, story_guide.md</td></tr>
             </tbody>
           </table></div>
           <h2>현재 콘텐츠 분포</h2>
