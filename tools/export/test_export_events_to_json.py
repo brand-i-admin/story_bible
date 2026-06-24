@@ -17,6 +17,8 @@ from export_events_to_json import (  # noqa: E402
     event_row_to_json,
     filename_for_era,
     group_events_by_era_file,
+    published_events_query_params,
+    write_grouped_events,
 )
 
 
@@ -199,6 +201,41 @@ class ExportEventsToJsonTests(unittest.TestCase):
         decoded = json.loads(json.dumps(out, ensure_ascii=False))
 
         self.assertEqual(decoded["title"], "001 X")
+
+    def test_published_events_query_params_excludes_soft_deleted_rows(self) -> None:
+        params = published_events_query_params(limit=1000, offset=0)
+
+        self.assertEqual(params["status"], "eq.published")
+        self.assertEqual(params["deleted_at"], "is.null")
+
+    def test_write_grouped_events_prunes_stale_era_files(self) -> None:
+        temp_dir = Path(self._temp_dir.name)
+        stale = temp_dir / "era_exodus.json"
+        stale.write_text("[]\n", encoding="utf-8")
+
+        write_grouped_events(
+            temp_dir,
+            {
+                "era_primeval.json": [
+                    {
+                        "title": "창조",
+                        "era": "era_primeval",
+                        "story_index": 1,
+                    }
+                ]
+            },
+        )
+
+        self.assertTrue((temp_dir / "era_primeval.json").exists())
+        self.assertFalse(stale.exists())
+
+    def setUp(self) -> None:
+        import tempfile
+
+        self._temp_dir = tempfile.TemporaryDirectory()
+
+    def tearDown(self) -> None:
+        self._temp_dir.cleanup()
 
 
 if __name__ == "__main__":

@@ -62,21 +62,24 @@ real에서 중간 삽입을 안전하게 하려면 먼저 DB에서 기존 row의
 
 ### `make export-stories-json`
 
-DB의 `events`를 `assets/200_stories/*.json`으로 역추출한다.
+DB의 active `events`를 `assets/200_stories/*.json`으로 역추출한다.
 
-- 입력: 원격 DB의 published events
+- 입력: 원격 DB의 `status='published' AND deleted_at IS NULL` events
 - 출력: `assets/200_stories/*.json`
 - 원격 변경: 없음, 읽기만 함
+- 정리: 현재 active export에 없는 stale era JSON 파일을 제거한다.
 - 주의: 로컬 JSON을 덮어쓸 수 있으므로 `git status --short assets/200_stories`를 먼저 본다.
 
 ### `make export-quizzes-json`
 
-DB의 `quiz_questions`를 `assets/quizzes/*.json`으로 역추출하고,
-`supabase/quizzes/db_events.json`도 현재 published events 기준으로 갱신한다.
+DB의 active events에 연결된 `quiz_questions`를 `assets/quizzes/*.json`으로
+역추출하고, `supabase/quizzes/db_events.json`도 현재 active events 기준으로 갱신한다.
 
-- 입력: 원격 DB의 published events, quiz_questions
+- 입력: 원격 DB의 `status='published' AND deleted_at IS NULL` events, quiz_questions
 - 출력: `assets/quizzes/<era_code>_nNNN.json`, `supabase/quizzes/db_events.json`
 - 원격 변경: 없음, 읽기만 함
+- 정리: 현재 active DB snapshot에 없는 stale quiz JSON을 제거한다. 삭제/reindex 후
+  옛 `era_xxx_nNNN.json`이 새 `story_index`의 다른 이야기에 붙는 것을 막기 위해서다.
 - 주의: 제안/RPC와 동일하게 퀴즈 1~3개를 canonical JSON으로 허용한다.
 
 ### `make export-event-region-mapping`
@@ -122,7 +125,9 @@ DB의 `events.landmark_id`를 기준으로 `assets/landmarks/event_region_mappin
 - 모든 이야기에 정수 `story_index`가 있어야 한다.
 - `(era, story_index)`에 맞는 `event_region_mapping.json` 매핑이 없으면 실패한다.
 - 생성된 events SQL은 `(era_id, story_index)` 기준으로 UPSERT한다.
-- `part_01`에는 JSON에 없는 `(era_id, story_index)`를 삭제하는 stale 정리가 들어간다.
+- `part_01`에는 JSON에 없는 활성 `(era_id, story_index)`를 삭제하는 stale 정리가
+  들어간다. 삭제 제안 승인으로 `deleted_at` 이 set 된 row 는 사용자 진행도/제안
+  이력 보존을 위해 stale 정리에서 hard delete 하지 않는다.
 
 ### `make seed-quizzes`
 
@@ -178,6 +183,10 @@ DB의 `events.landmark_id`를 기준으로 `assets/landmarks/event_region_mappin
 
 `assets/story_images_thumbs/index.json`은 한글 제목 기반 원본 폴더와 짧은 런타임 폴더를
 연결한다. Android/iOS asset 경로 길이 문제를 피하려고 짧은 폴더를 쓴다.
+썸네일 생성 대상은 current story JSON에 등장하는 title 폴더뿐이다. 삭제 승인 후
+로컬 `assets/story_images/<삭제된 제목>/` 원본 폴더가 남아 있어도 current JSON에
+없으면 앱 번들 썸네일로 다시 생성하지 않고, 기존 짧은 썸네일 디렉토리도 orphan으로
+정리한다.
 
 ### `make update-pubspec-assets`
 
@@ -231,15 +240,24 @@ make apply-drafts ENV=real STORIES_GLOB="assets/story_drafts/202606*.json"
 - 실행 순서: `export-stories-json` → `export-quizzes-json` →
   `export-event-region-mapping` → `sync-approved-proposal-assets` → `thumbnails` →
   `update-pubspec-assets`
-- 입력: DB의 published events, quiz_questions, landmarks, 승인 proposal assets
+- 입력: DB의 active published events, quiz_questions, landmarks, 승인 proposal assets
 - 출력: `assets/200_stories/*.json`, `assets/story_images/<title>/scene_N.png`,
   `assets/quizzes/*.json`, `supabase/quizzes/db_events.json`,
   `assets/landmarks/event_region_mapping.json`, `assets/story_images_thumbs/`,
   `pubspec.yaml`
 - 원격 변경: `sync-approved-proposal-assets` 단계에서 신규 캐릭터 이미지를
   `characters` 버킷으로 복사하고 `characters.avatar_storage_path`를 갱신할 수 있다.
-- 여러 approved proposal이 한 번에 쌓여 있어도 DB의 현재 published 상태 전체를
-  release canonical 파일로 되돌린다.
+- 여러 approved proposal과 delete approval이 한 번에 쌓여 있어도 DB의 현재 active
+  published 상태 전체를 release canonical 파일로 되돌린다.
+- 삭제 승인된 이야기는 DB row가 `deleted_at`으로 보존되어도 export에서 제외된다.
+  `sync-approved-proposal-assets` Phase B가 active title diff로 로컬
+  `assets/story_images/<삭제된 제목>/` 폴더를 제거하고, `thumbnails`가 current JSON에
+  없는 짧은 썸네일 디렉토리를 제거한다.
+
+예: 같은 era에서 4번과 8번을 삭제 승인하고, 새 이야기 2건을 각각 2번 뒤와 마지막에
+승인한 뒤 이 target을 실행하면, DB의 active `story_index=1..N` 상태가 그대로
+`assets/200_stories`, `assets/quizzes`, landmark mapping, `story_images_thumbs`,
+`pubspec.yaml`에 반영된다. 삭제된 title의 quiz JSON과 썸네일 디렉토리는 남지 않는다.
 
 ## 4. DB 적용 target
 
@@ -289,13 +307,17 @@ make apply-drafts ENV=real STORIES_GLOB="assets/story_drafts/202606*.json"
 
 승인된 proposal 이미지를 로컬 canonical assets로 동기화한다.
 
-- 입력: `event_proposals`, `proposal-scenes`, `proposal-characters`
+- 입력: `event_proposals`, active/deleted `events`, `characters`, `proposal-scenes`, `proposal-characters`
 - 출력: `assets/story_images/`, `assets/avatars/`
 - 원격 변경: 신규 캐릭터 이미지를 `characters` 버킷으로 복사하고 `characters.avatar_storage_path` 갱신 가능
 
 이 target은 proposal asset sync의 기반이다. 신규 이야기 표준 흐름에서는
 `release-sync-stories`가 이 target을 포함해 DB → canonical JSON export, thumbnails,
 pubspec 갱신까지 이어서 실행한다.
+Phase A는 unsynced approved proposal 이미지를 내려받고 marker를 set한다. Phase B는
+active event title 집합에 없는 로컬 story image 폴더를 제거하고, soft-deleted events의
+Storage fallback을 best-effort로 지운다. 과거 underscore 폴더명은 canonical 제목 폴더로
+마이그레이션한다.
 
 ### 직접 seed 경로에 없는 target: 이야기 썸네일 Storage 업로드
 

@@ -5,4343 +5,4343 @@
 begin;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아히야는 여로보암에게 몇 조각을 주었습니까?$q$, $q$열 조각$q$, $q$두 조각$q$, $q$열두 조각 모두$q$, $q$헷갈렸어요$q$, 0, $q$왕상 11:31 — '열 조각을 취하라 ... 열 지파를 네게 주리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아히야가 말한 나라가 갈라지는 이유는 무엇입니까?$q$, $q$다른 신들을 섬겼기 때문$q$, $q$군사가 너무 적었기 때문$q$, $q$스바 여왕이 선물을 가져왔기 때문$q$, $q$헷갈렸어요$q$, 0, $q$왕상 11:33 — '이는 저희가 나를 버리고 ... 다른 신들을 숭배하며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬이 죽이려 하자 여로보암은 어디로 피했습니까?$q$, $q$갈멜 산으로 피했다$q$, $q$애굽으로 피했다$q$, $q$바벨론으로 피했다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 11:40 — '여로보암이 일어나 애굽으로 도망하여 시삭에게 이르러'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$르호보암은 백성에게 어떤 대답을 했습니까?$q$, $q$세금을 줄이겠다고 했다$q$, $q$곧장 물러나겠다고 했다$q$, $q$더 무거운 멍에를 메라 했다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 12:14 — '내 부친은 너희의 멍에를 무겁게 하였으나 나는 너희의 멍에를 더욱 무겁게 할찌라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여로보암은 백성이 예루살렘에 올라갈까 두려워 무엇을 만들었습니까?$q$, $q$금송아지 둘을 만들었다$q$, $q$성전 문을 고쳤다$q$, $q$언약궤를 옮겼다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 12:28 — '이에 계획하고 두 금송아지를 만들고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님의 말씀이 스마야에게 임했을 때 유다와 베냐민은 어떻게 했습니까?$q$, $q$여호와의 말씀을 듣고 돌아갔다$q$, $q$여로보암을 왕으로 세웠다$q$, $q$곧장 북쪽을 공격했다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 12:24 — '무리가 여호와의 말씀을 듣고 ... 돌아갔더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여로보암의 아내는 누구를 찾아갔습니까?$q$, $q$아히야 선지자$q$, $q$엘리야 선지자$q$, $q$나단 선지자$q$, $q$헷갈렸어요$q$, 0, $q$왕상 14:2 — '실로에 있는 선지자 아히야에게로 가라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여로보암의 집에 심판이 임한 이유는 무엇입니까?$q$, $q$성전을 크게 지었기 때문$q$, $q$금송아지로 하나님께 범죄했기 때문$q$, $q$백성을 쉬게 했기 때문$q$, $q$헷갈렸어요$q$, 1, $q$왕상 14:9 — '다른 신을 만들며 우상을 부어 나를 노엽게 하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아히야의 말처럼 아이는 언제 죽었습니까?$q$, $q$아히야가 길을 떠날 때$q$, $q$여로보암이 왕이 될 때$q$, $q$아내가 성읍에 들어갈 때$q$, $q$헷갈렸어요$q$, 2, $q$왕상 14:17 — '집 문지방에 이를 때에 아이가 죽은지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$르호보암 때 남유다는 무엇을 세웠습니까?$q$, $q$새 언약궤와 성막$q$, $q$열두 돌 제단만$q$, $q$산당과 주상과 아세라 목상$q$, $q$헷갈렸어요$q$, 2, $q$왕상 14:23 — '산당과 주상과 아세라 목상을 세웠음이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$르호보암 제오년에 예루살렘을 치러 온 사람은 누구입니까?$q$, $q$앗수르 왕 산헤립$q$, $q$애굽 왕 시삭$q$, $q$바벨론 왕 느부갓네살$q$, $q$헷갈렸어요$q$, 1, $q$왕상 14:25 — '르호보암 왕 제 오년에 애굽 왕 시삭이 올라와서 예루살렘을 치고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시삭은 무엇을 빼앗아 갔습니까?$q$, $q$요단강의 돌기둥$q$, $q$성전과 왕궁의 보물과 금방패$q$, $q$선지자들의 겉옷$q$, $q$헷갈렸어요$q$, 1, $q$왕상 14:26 — '여호와의 전의 보물과 왕궁의 보물을 몰수히 빼앗고 ... 금방패를 다 빼앗은지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아비얌의 마음은 누구의 마음 같지 않았습니까?$q$, $q$엘리야의 마음 같지 않았다$q$, $q$아사의 마음 같지 않았다$q$, $q$다윗의 마음 같지 않았다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 15:3 — '그 마음이 그 조상 다윗의 마음 같지 아니하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 다윗을 위하여 예루살렘에 무엇을 주셨습니까?$q$, $q$금송아지를 주셨다$q$, $q$등불을 주셨다$q$, $q$아람의 전차를 주셨다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 15:4 — '다윗을 위하여 예루살렘에서 저에게 등불을 주시되'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아사는 왕이 된 뒤 무엇을 없애며 개혁을 시작했습니까?$q$, $q$바알 선지자들을 세웠다$q$, $q$우상들을 없앴다$q$, $q$성전을 버렸다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 15:12 — '그 열조의 지은 모든 우상을 없이 하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나답은 누구의 길을 따라 악을 행했습니까?$q$, $q$아사 왕의 길$q$, $q$다윗의 길$q$, $q$그 아버지 여로보암의 길$q$, $q$헷갈렸어요$q$, 2, $q$왕상 15:26 — '그 아비의 길로 행하며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바아사는 나답에게 무엇을 하였습니까?$q$, $q$모반하여 나답을 죽이고 왕이 되었다$q$, $q$나답에게 포도원을 주었다$q$, $q$나답을 예루살렘으로 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 15:27-28 — '바아사가 저를 모반하여 ... 나답을 죽이고 대신하여 왕이 되고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 예후를 통해 바아사의 집에 대해 무엇을 말씀하셨습니까?$q$, $q$바아사의 집을 영원히 세우겠다고 하셨다$q$, $q$바아사에게 성전을 맡기겠다고 하셨다$q$, $q$바아사의 집을 쓸어버리겠다고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 16:3 — '내가 너 바아사와 네 집을 쓸어버려'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시므리는 엘라가 무엇을 하고 있을 때 반란을 일으켰습니까?$q$, $q$성전에서 기도하고 있을 때$q$, $q$술을 마시고 취해 있을 때$q$, $q$포도원을 가꾸고 있을 때$q$, $q$헷갈렸어요$q$, 1, $q$왕상 16:9-10 — 엘라가 '마시고 취할 때에' 시므리가 들어가 그를 쳤다$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시므리는 성이 함락되는 것을 보고 어떻게 되었습니까?$q$, $q$여호사밧에게 항복했다$q$, $q$왕궁에 불을 놓고 그 가운데서 죽었다$q$, $q$엘리야에게 찾아갔다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 16:18 — '왕궁에 불을 놓고 그 가운데서 죽었으니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아합은 왕이 된 뒤 누구와 결혼하고 바알을 섬겼습니까?$q$, $q$나봇과 결혼하고 포도원을 지켰다$q$, $q$미가야와 결혼하고 예언자가 되었다$q$, $q$이세벨과 결혼하고 바알을 섬겼다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 16:31-32 — '바알을 섬겨 숭배하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야는 아합에게 무엇이 없을 것이라고 말했습니까?$q$, $q$요단강 물길$q$, $q$성전의 금방패$q$, $q$수년 동안 이슬과 비$q$, $q$헷갈렸어요$q$, 2, $q$왕상 17:1 — '수년 동안 우로가 있지 아니하리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그릿 시냇가에서 하나님은 무엇으로 엘리야를 먹이셨습니까?$q$, $q$바알 제사장들$q$, $q$아람 군사들$q$, $q$까마귀들$q$, $q$헷갈렸어요$q$, 2, $q$왕상 17:6 — '까마귀들이 아침에도 떡과 고기를, 저녁에도 떡과 고기를 가져왔고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사르밧 과부의 집에서 가루 통과 기름병은 어떻게 되었습니까?$q$, $q$가루와 기름이 다하지 않았다$q$, $q$왕궁으로 옮겨졌다$q$, $q$곧바로 비어 버렸다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 17:16 — '통의 가루가 다하지 아니하고 병의 기름이 없어지지 아니하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야는 여호와의 단을 어떻게 하였습니까?$q$, $q$무너진 여호와의 단을 수축하였다$q$, $q$바알 제단 위에 올렸다$q$, $q$새 제단을 따로 쌓았다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 18:30 — '저가 무너진 여호와의 단을 수축하되'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야는 갈멜산에서 하나님께 무엇을 알게 해 달라고 기도했습니까?$q$, $q$바알이 하나님임을 알게 해 달라$q$, $q$여호와가 하나님이심을 알게 해 달라$q$, $q$가뭄의 이유를 숨겨 달라$q$, $q$헷갈렸어요$q$, 1, $q$왕상 18:36 — '주께서 이스라엘 중에서 하나님이 되심과 내가 주의 종이 됨과'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$갈멜 산 대결에서 백성이 마지막에 엎드려 외친 말은 무엇입니까?$q$, $q$여호와 그는 하나님이시로다$q$, $q$바알이 참 신이로다$q$, $q$엘리야가 이겼도다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 18:39 — '여호와 그는 하나님이시로다 여호와 그는 하나님이시로다 하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$호렙 산에서 엘리야 앞에 지나간 것은 무엇입니까?$q$, $q$큰 바람과 지진과 불$q$, $q$금송아지 둘과 제단$q$, $q$애굽 군대와 금방패$q$, $q$헷갈렸어요$q$, 0, $q$왕상 19:11-12 — '크고 강한 바람'과 '지진'과 '불' 뒤에 세미한 소리가 있었다$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 지친 엘리야에게 무엇을 맡기셨습니까?$q$, $q$금송아지를 세우는 일$q$, $q$사마리아 궁전을 짓는 일$q$, $q$하사엘과 예후와 엘리사를 세우는 일$q$, $q$헷갈렸어요$q$, 2, $q$왕상 19:15-16 — 하사엘, 예후, 엘리사를 세우라고 명하셨다$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 바알에게 무릎 꿇지 않게 남기신 사람은 몇 명입니까?$q$, $q$칠천 명$q$, $q$백 명$q$, $q$오천 명$q$, $q$헷갈렸어요$q$, 0, $q$왕상 19:18 — '내가 이스라엘 가운데 칠천 인을 남기리니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나봇은 왜 아합에게 포도원을 줄 수 없다고 했습니까?$q$, $q$포도원이 너무 작았기 때문$q$, $q$조상의 유업이기 때문$q$, $q$이미 이세벨에게 팔았기 때문$q$, $q$헷갈렸어요$q$, 1, $q$왕상 21:3 — '내 열조의 유업을 왕에게 주기를 여호와께서 금하실지로다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이세벨은 나봇을 해치기 위해 어떤 일을 꾸몄습니까?$q$, $q$거짓 증인을 세웠다$q$, $q$엘리야에게 도움을 청했다$q$, $q$포도원을 나봇에게 돌려주었다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 21:10 — '비류 두 사람을 그 앞에 마주 앉히고 ... 네가 하나님과 왕을 저주하였다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아합이 엘리야의 말을 듣고 겸비하자 재앙은 어떻게 되었습니까?$q$, $q$아합의 시대에는 내리지 않게 되었다$q$, $q$그날 즉시 모두 끝났다$q$, $q$나봇의 집에 내리게 되었다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 21:29 — '저가 내 앞에서 겸비함을 인하여 내가 재앙을 저의 시대에는 내리지 아니하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호사밧은 전쟁 전에 먼저 무엇을 물어 보자고 했습니까?$q$, $q$전차의 수$q$, $q$여호와의 말씀$q$, $q$금의 무게$q$, $q$헷갈렸어요$q$, 1, $q$왕상 22:5 — '청컨대 먼저 여호와의 말씀이 어떠하신지 물어 보소서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$미가야는 무엇을 말하겠다고 맹세했습니까?$q$, $q$여호와께서 말씀하시는 것$q$, $q$왕들이 듣기 좋아하는 말$q$, $q$선지자들이 미리 정한 말$q$, $q$헷갈렸어요$q$, 0, $q$왕상 22:14 — '여호와께서 내게 말씀하시는 것 곧 그것을 내가 말하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아합은 미가야를 어디에 가두라고 명했습니까?$q$, $q$성전 안에 숨기라고 했다$q$, $q$포도원으로 보내라고 했다$q$, $q$옥에 가두고 고생의 떡과 물을 주라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 22:27 — '이놈을 옥에 가두고 ... 고생의 떡과 고생의 물로 먹이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아합은 전쟁터에 나갈 때 여호사밧에게 무엇을 입으라고 했습니까?$q$, $q$왕복$q$, $q$제사장 옷$q$, $q$상복$q$, $q$헷갈렸어요$q$, 0, $q$왕상 22:30 — '나는 변장하고 군중으로 들어가려 하노니 당신은 왕복을 입으소서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$한 사람이 우연히 쏜 화살은 아합의 어디를 맞혔습니까?$q$, $q$방패 한가운데$q$, $q$갑옷 솔기 사이$q$, $q$왕관 위$q$, $q$헷갈렸어요$q$, 1, $q$왕상 22:34 — '이스라엘 왕의 갑옷 솔기를 쏜지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아합 뒤를 이어 북이스라엘 왕이 된 사람은 누구입니까?$q$, $q$여호사밧$q$, $q$미가야$q$, $q$아하시야$q$, $q$헷갈렸어요$q$, 2, $q$왕상 22:40 — '그 아들 아하시야가 대신하여 왕이 되니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호사밧은 여호와 보시기에 어떻게 행했습니까?$q$, $q$정직히 행했다$q$, $q$바알을 섬겼다$q$, $q$나봇의 포도원을 빼앗았다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 22:43 — '여호와 보시기에 정직히 행하였으나'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호사밧이 금을 얻으러 보내려 한 배는 어떻게 되었습니까?$q$, $q$에시온게벨에서 파선했다$q$, $q$사마리아에 도착했다$q$, $q$갈멜 산에 올라갔다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 22:48 — '그 배가 에시온게벨에서 파선하였으므로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아하시야가 자기 종들을 배에 함께 태우자고 하자 여호사밧은 어떻게 했습니까?$q$, $q$즉시 허락했다$q$, $q$미가야에게 감옥을 맡겼다$q$, $q$허락하지 않았다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 22:49 — '여호사밧이 허락지 아니하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아하시야는 병들자 누구에게 물으려고 사자를 보냈습니까?$q$, $q$예루살렘의 제사장$q$, $q$갈멜 산의 백성$q$, $q$에그론의 신 바알세불$q$, $q$헷갈렸어요$q$, 2, $q$왕하 1:2 — '에그론의 신 바알세불에게 이 병이 낫겠나 물어 보라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야는 아하시야가 침상에서 어떻게 된다고 전했습니까?$q$, $q$내려오지 못하고 죽는다$q$, $q$애굽으로 도망간다$q$, $q$곧 건강히 일어난다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 1:4 — '네가 올라간 침상에서 내려오지 못할지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야를 잡으러 간 오십부장과 군사들에게 무엇이 내려왔습니까?$q$, $q$하늘에서 불이 내려왔다$q$, $q$큰 비가 내려왔다$q$, $q$성문이 열렸다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 1:10 — '불이 곧 하늘에서 내려와서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야는 어떤 방법으로 하늘로 올라갔습니까?$q$, $q$회리바람을 타고 승천하였다$q$, $q$천사들에게 이끌려 올라갔다$q$, $q$불수레를 타고 올라갔다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 2:11 — '엘리야가 회리바람을 타고 승천하더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리야가 보이지 않게 된 뒤 엘리사는 자기 옷을 어떻게 했습니까?$q$, $q$요단강에 던졌다$q$, $q$엘리야에게 돌려주었다$q$, $q$잡아 둘로 찢었다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 2:12 — '자기의 옷을 잡아 둘에 찢고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 엘리야의 겉옷으로 물을 치며 무엇을 외쳤습니까?$q$, $q$요단강을 마르게 하지 말라고 외쳤다$q$, $q$불수레를 다시 보내 달라고 외쳤다$q$, $q$엘리야의 하나님 여호와는 어디 계시냐고 외쳤다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 2:14 — '엘리야의 하나님 여호와는 어디 계시니이까'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사람들은 엘리야를 찾으러 몇 명을 보냈습니까?$q$, $q$백 명$q$, $q$오십 명$q$, $q$열두 명$q$, $q$헷갈렸어요$q$, 1, $q$왕하 2:17 — '오십 인을 보내매 사흘을 찾되 발견하지 못하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 여리고 물 근원에 무엇을 던졌습니까?$q$, $q$금방패$q$, $q$소금$q$, $q$기름$q$, $q$헷갈렸어요$q$, 1, $q$왕하 2:21 — '소금을 그 가운데 던지며' 여호와께서 물을 고치신다고 말했다$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$벧엘 길에서 엘리사를 조롱한 무리에게 무엇이 나왔습니까?$q$, $q$까마귀들$q$, $q$애굽 군대$q$, $q$곰 두 마리$q$, $q$헷갈렸어요$q$, 2, $q$왕하 2:24 — '암콤 둘이 수풀 가운데서 나와서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가난한 여인의 그릇들에 무엇이 가득 찼습니까?$q$, $q$기름$q$, $q$소금$q$, $q$금방패$q$, $q$헷갈렸어요$q$, 0, $q$왕하 4:4-6 — 여인이 그릇마다 기름을 부었고 그릇이 다 차자 기름이 그쳤다$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 죽은 아이를 위해 어떻게 했습니까?$q$, $q$왕궁으로 돌아갔다$q$, $q$아이를 버려두었다$q$, $q$하나님께 기도했다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 4:33 — 엘리사가 문을 닫고 여호와께 기도했다$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$보리떡 스무 개로 먹은 사람은 몇 명입니까?$q$, $q$열두 명$q$, $q$백 명$q$, $q$오십 명$q$, $q$헷갈렸어요$q$, 1, $q$왕하 4:43 — '이것을 일백명에게 베풀겠나이까'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나아만은 엘리사의 지시를 처음 들었을 때 어떻게 하였습니까?$q$, $q$노하여 물러갔다$q$, $q$기뻐하며 즉시 따랐다$q$, $q$왕에게 먼저 허락을 구하였다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 5:11 — '나아만이 노하여 물러가며 가로되'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나아만의 종들은 선지자의 말을 어떻게 받아들이라고 권했습니까?$q$, $q$요단강을 피하라고 권했다$q$, $q$씻으라는 말도 따르라고 권했다$q$, $q$엘리사를 왕에게 고발하라고 권했다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 5:13 — '씻어 깨끗하게 하라 함이리이까'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나아만이 문둥병 치유를 위해 몸을 잠근 횟수는 몇 번입니까?$q$, $q$일곱 번$q$, $q$열 번$q$, $q$세 번$q$, $q$헷갈렸어요$q$, 0, $q$왕하 5:14 — '요단 강에 일곱 번 몸을 잠그니 그 살이 깨끗하게 되었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아람 왕이 엘리사를 잡으려고 군대를 보낸 곳은 어디입니까?$q$, $q$도단 성$q$, $q$예루살렘 성전$q$, $q$요단강 나루$q$, $q$헷갈렸어요$q$, 0, $q$왕하 6:13-14 — '도단에 있나이다 ... 그 성을 에워쌌더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 두려워하는 사환을 위해 무엇을 기도했습니까?$q$, $q$눈을 열어 보게 해 달라고 기도했다$q$, $q$아람 군대를 크게 보라 했다$q$, $q$도단 성문을 닫아 달라고 기도했다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 6:17 — '여호와여 원컨대 저의 눈을 열어서 보게 하옵소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 사마리아로 이끌고 온 아람 군대를 어떻게 하게 했습니까?$q$, $q$곧바로 다시 도단으로 보냈다$q$, $q$먹이고 마시게 한 뒤 돌려보냈다$q$, $q$성 안 감옥에 오래 가두었다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 6:23 — '식물을 많이 베풀고 ... 그 주인에게로 돌아가니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$남유다 여호람은 예루살렘에서 몇 해 동안 다스렸습니까?$q$, $q$한 해$q$, $q$마흔 해$q$, $q$여덟 해$q$, $q$헷갈렸어요$q$, 2, $q$왕하 8:17 — '예루살렘에서 팔 년을 치리하니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호람은 누구의 딸을 아내로 맞아 악한 길을 따랐습니까?$q$, $q$바로의 딸$q$, $q$아합의 딸$q$, $q$나봇의 딸$q$, $q$헷갈렸어요$q$, 1, $q$왕하 8:18 — '아합의 딸이 그 아내가 되었음이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호람 때 유다의 지배에서 벗어난 곳은 어디입니까?$q$, $q$갈멜과 도단$q$, $q$니느웨와 바벨론$q$, $q$에돔과 립나$q$, $q$헷갈렸어요$q$, 2, $q$왕하 8:20-22 — '에돔이 배반하여 유다의 수하에서 벗어났더니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$유다 왕 아하시야는 몇 살에 왕이 되었습니까?$q$, $q$스물두 살$q$, $q$쉰 살$q$, $q$여덟 살$q$, $q$헷갈렸어요$q$, 0, $q$왕하 8:26 — '나이 이십이세라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아하시야는 여호와 보시기에 어떤 길로 행했습니까?$q$, $q$다윗처럼 정직히 행했다$q$, $q$바알을 버리고 개혁했다$q$, $q$아합의 집 길로 악을 행했다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 8:27 — '아합의 집 길로 행하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아하시야는 요람과 함께 어디로 가서 아람과 싸웠습니까?$q$, $q$예루살렘 성전$q$, $q$길르앗 라못$q$, $q$사르밧 마을$q$, $q$헷갈렸어요$q$, 1, $q$왕하 8:28 — '길르앗 라못으로 가서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 선지자의 생도에게 무엇을 가지고 예후에게 가라고 했습니까?$q$, $q$금송아지$q$, $q$성전 열쇠$q$, $q$기름병$q$, $q$헷갈렸어요$q$, 2, $q$왕하 9:1 — '이 기름병을 손에 가지고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 예후에게 누구의 집을 치라고 하셨습니까?$q$, $q$다윗의 집$q$, $q$요나단의 집$q$, $q$아합의 집$q$, $q$헷갈렸어요$q$, 2, $q$왕하 9:7 — '네 주 아합의 집을 치라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$군대 장관들은 예후가 기름부음을 받은 뒤 어떻게 반응했습니까?$q$, $q$예후를 왕으로 선포했다$q$, $q$아합을 다시 왕으로 세웠다$q$, $q$엘리사를 왕으로 삼았다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 9:13 — '예후는 왕이라 하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예후가 온 이스라엘에 사람을 보내자 누가 바알 신전에 모였습니까?$q$, $q$바알을 섬기는 사람들$q$, $q$예루살렘 제사장들$q$, $q$에돔의 장로들$q$, $q$헷갈렸어요$q$, 0, $q$왕하 10:21 — '무릇 바알을 섬기는 사람이 하나도 빠진 자가 없이'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예후는 바알을 없앤 뒤에도 어떤 죄에서 떠나지 못했습니까?$q$, $q$금송아지를 섬기는 죄$q$, $q$엘리사를 찾아가는 일$q$, $q$성전을 보수하는 일$q$, $q$헷갈렸어요$q$, 0, $q$왕하 10:29 — '금송아지를 섬기는 죄에서 떠나지 아니하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예후가 죽은 뒤 누가 북이스라엘 왕이 되었습니까?$q$, $q$여호아하스$q$, $q$요시야$q$, $q$히스기야$q$, $q$헷갈렸어요$q$, 0, $q$왕하 10:35 — '그 아들 여호아하스가 대신하여 왕이 되니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아달랴가 왕의 씨를 없애려 할 때 요아스는 어디에 숨어 지냈습니까?$q$, $q$여호와의 전$q$, $q$라기스 성문$q$, $q$사마리아 왕궁$q$, $q$헷갈렸어요$q$, 0, $q$왕하 11:3 — '여호와의 전에 육 년을 숨어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호야다는 요아스를 왕으로 세울 때 백성과 무엇을 세웠습니까?$q$, $q$앗수르와의 조약$q$, $q$여호와와의 언약$q$, $q$바알 신전의 제사$q$, $q$헷갈렸어요$q$, 1, $q$왕하 11:17 — '여호와와 언약을 세워'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$온 국민은 언약 뒤 바알의 당에 가서 무엇을 했습니까?$q$, $q$아람 왕에게 은을 보냈다$q$, $q$제단과 우상들을 깨뜨렸다$q$, $q$왕궁 보물을 숨겼다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 11:18 — '그 단들과 우상들을 깨뜨리고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요아스 왕 이십삼년에도 제사장들이 하지 못한 일은 무엇이었습니까?$q$, $q$성전의 퇴락한 곳을 수리하는 일$q$, $q$사마리아 성벽을 쌓는 일$q$, $q$아람과 조약을 맺는 일$q$, $q$헷갈렸어요$q$, 0, $q$왕하 12:6 — '전의 퇴락한 데를 수리하지 아니하였는지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요아스와 여호야다는 성전 수리를 위해 백성의 은을 어디에 넣게 했습니까?$q$, $q$사마리아 성문 창고$q$, $q$왕궁 침상 아래$q$, $q$성전 문 곁의 궤$q$, $q$헷갈렸어요$q$, 2, $q$왕하 12:9 — '한 궤를 취하여... 전 문 어귀 우편... 두매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호야다가 죽은 뒤 요아스와 방백들은 무엇을 섬겼습니까?$q$, $q$여호와의 언약궤$q$, $q$아세라 목상과 우상$q$, $q$엘리사의 무덤$q$, $q$헷갈렸어요$q$, 1, $q$대하 24:18 — '아세라 목상과 우상을 섬긴 고로'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호아하스 때 사마리아에 남아 있던 우상은 무엇입니까?$q$, $q$율법책$q$, $q$아세라 목상$q$, $q$다윗의 방패$q$, $q$헷갈렸어요$q$, 1, $q$왕하 13:6 — '사마리아에 아세라 목상을 그저 두었더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리사는 요아스에게 동쪽 창문을 열고 무엇을 하라고 했습니까?$q$, $q$성벽을 허물라고 했다$q$, $q$화살을 쏘라고 했다$q$, $q$금을 세어 보라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 13:17 — '동편 창을 여소서... 쏘소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요아스는 벤하닷을 몇 번 쳐서 이스라엘 성읍들을 회복했습니까?$q$, $q$일곱 번$q$, $q$세 번$q$, $q$한 번$q$, $q$헷갈렸어요$q$, 1, $q$왕하 13:25 — '벤하닷을 세번 쳐서 파하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 28;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 28 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하사엘은 예루살렘을 향하기 전에 어느 성을 쳐서 취했습니까?$q$, $q$니느웨$q$, $q$단$q$, $q$가드$q$, $q$헷갈렸어요$q$, 2, $q$왕하 12:17 — '가드를 쳐서 취하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요아스는 하사엘을 물러가게 하려고 무엇을 보냈습니까?$q$, $q$성물과 왕궁의 금$q$, $q$아마샤의 편지$q$, $q$엘리사의 겉옷$q$, $q$헷갈렸어요$q$, 0, $q$왕하 12:18 — '모든 성물과... 왕궁에 있는 금을... 하사엘에게 보내었더니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요아스가 크게 다친 뒤 그의 신하들은 어떻게 했습니까?$q$, $q$그를 사마리아 왕으로 세웠다$q$, $q$그와 함께 금송아지를 버렸다$q$, $q$반역하여 침상에서 쳐 죽였다$q$, $q$헷갈렸어요$q$, 2, $q$대하 24:25 — '그 신복들이... 모반하여 그 침상에서 쳐 죽인지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 28 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 29;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 29 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아마샤는 염곡에서 누구를 쳐서 크게 이겼습니까?$q$, $q$바알 제사장$q$, $q$에돔 사람$q$, $q$앗수르 군대$q$, $q$헷갈렸어요$q$, 1, $q$왕하 14:7 — '염곡에서 에돔 사람 일만을 죽이고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$북이스라엘 요아스는 아마샤에게 어떤 마음을 경계하라고 했습니까?$q$, $q$교만한 마음$q$, $q$슬퍼하는 마음$q$, $q$두려워 숨는 마음$q$, $q$헷갈렸어요$q$, 0, $q$왕하 14:10 — '마음이 교만하였으니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$북이스라엘 요아스는 예루살렘에서 금은과 사람들을 어디로 데려갔습니까?$q$, $q$사마리아$q$, $q$호렙 산$q$, $q$바벨론$q$, $q$헷갈렸어요$q$, 0, $q$왕하 14:14 — '사람을 볼모로 잡아가지고 사마리아로 돌아갔더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 29 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 30;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 30 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아마샤는 예루살렘의 반역을 피해 어디로 도망갔습니까?$q$, $q$갈멜 산$q$, $q$라기스$q$, $q$디르사$q$, $q$헷갈렸어요$q$, 1, $q$왕하 14:19 — '라기스로 도망하였더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아마샤 뒤에 왕이 된 아사랴는 몇 살이었습니까?$q$, $q$서른 살$q$, $q$열여섯 살$q$, $q$일곱 살$q$, $q$헷갈렸어요$q$, 1, $q$왕하 14:21 — '나이 십륙세라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여로보암 2세는 어느 범위까지 이스라엘 지경을 회복했습니까?$q$, $q$수산 궁에서 예루살렘까지$q$, $q$하맛 어귀에서 아라바 바다까지$q$, $q$시내산에서 나일강까지$q$, $q$헷갈렸어요$q$, 1, $q$왕하 14:25 — '하맛 어귀에서부터 아라바 바다까지'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 30 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 31;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 31 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 요나에게 어느 큰 성읍으로 가서 외치라고 하셨습니까?$q$, $q$니느웨$q$, $q$애굽$q$, $q$수산$q$, $q$헷갈렸어요$q$, 0, $q$욘 1:2 — '너는 일어나 저 큰 성읍 니느웨로 가서 그것을 쳐서 외치라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요나는 하나님의 명령을 듣고 처음에 어떻게 행동했습니까?$q$, $q$예루살렘 성전에 머물렀다$q$, $q$곧장 니느웨 성문으로 갔다$q$, $q$다시스로 도망하려고 배를 탔다$q$, $q$헷갈렸어요$q$, 2, $q$욘 1:3 — '여호와의 낯을 피하려고 일어나 다시스로 도망하려 하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바다 폭풍 속에서 제비가 요나에게 떨어진 뒤 요나는 무엇을 알렸습니까?$q$, $q$배 안의 짐이 너무 많다고 했다$q$, $q$니느웨 사람들이 이미 회개했다고 했다$q$, $q$자기 때문에 이 큰 폭풍이 일어난 줄 안다고 했다$q$, $q$헷갈렸어요$q$, 2, $q$욘 1:12 — '이 큰 폭풍을 만난 것이 나의 연고인 줄을 내가 아노라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 31 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 32;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 32 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요나의 외침을 들은 니느웨 사람들은 어떻게 반응했습니까?$q$, $q$요나를 성 밖으로 쫓아냈다$q$, $q$금식을 선포하고 굵은 베옷을 입었다$q$, $q$큰 탑을 세우기 시작했다$q$, $q$헷갈렸어요$q$, 1, $q$욘 3:5 — '니느웨 백성이 하나님을 믿고 금식을 선포하고 무론대소하고 굵은 베를 입은지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 32 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 니느웨를 아끼시자 요나는 어떤 마음을 보였습니까?$q$, $q$니느웨 사람들과 함께 기뻐했다$q$, $q$즉시 예루살렘으로 돌아갔다$q$, $q$심히 싫어하고 노했다$q$, $q$헷갈렸어요$q$, 2, $q$욘 4:1 — '요나가 심히 싫어하고 노하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 32 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 요나에게 니느웨를 아끼는 마음을 무엇과 비교해 가르치셨습니까?$q$, $q$요나가 아꼈던 박넝쿨$q$, $q$요나가 탄 배의 돛$q$, $q$왕이 벗어 둔 왕복$q$, $q$헷갈렸어요$q$, 0, $q$욘 4:10-11 — '네가 수고도 아니하였고 배양도 아니하였고... 이 큰 성읍 니느웨를 내가 아끼는 것이 어찌 합당치 아니하냐'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 32 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 33;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 33 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$웃시야가 블레셋 사람과 싸워 헐었던 성들에 포함된 곳은 어디입니까?$q$, $q$니느웨와 갈그미스와 수산$q$, $q$벧엘과 단과 실로$q$, $q$가드와 야브네와 아스돗$q$, $q$헷갈렸어요$q$, 2, $q$대하 26:6 — '가드 성과 야브네 성과 아스돗 성을 헐고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 33 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$웃시야가 강성해진 뒤 성전에 들어가 하려던 일은 무엇입니까?$q$, $q$성전 궤에 은을 넣으려 했다$q$, $q$율법책을 읽으려 했다$q$, $q$향단에 분향하려 했다$q$, $q$헷갈렸어요$q$, 2, $q$대하 26:16 — '여호와의 전에 들어가서 향단에 분향하려 한지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 33 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$웃시야가 제사장들에게 분노할 때 나병은 어디에 나타났습니까?$q$, $q$손바닥$q$, $q$발꿈치$q$, $q$이마$q$, $q$헷갈렸어요$q$, 2, $q$대하 26:19 — '그 이마에 문둥병이 발한지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 33 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 34;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 34 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$스가랴를 모반하여 백성 앞에서 쳐 죽이고 왕이 된 사람은 누구입니까?$q$, $q$아마샤$q$, $q$히스기야$q$, $q$살룸$q$, $q$헷갈렸어요$q$, 2, $q$왕하 15:10 — '살룸이 저를 모반하여... 대신하여 왕이 되니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 34 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$므나헴은 앗수르 왕 불이 올라오자 무엇을 주어 물러가게 했습니까?$q$, $q$성전의 율법책$q$, $q$엘리사의 화살$q$, $q$은 일천 달란트$q$, $q$헷갈렸어요$q$, 2, $q$왕하 15:19 — '은 일천 달란트를 불에게 주어서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 34 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베가를 반역하여 치고 대신 왕이 된 사람은 누구입니까?$q$, $q$여호야다$q$, $q$호세아$q$, $q$스가랴$q$, $q$헷갈렸어요$q$, 1, $q$왕하 15:30 — '호세아가 반역하여... 대신하여 왕이 되니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 34 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 35;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 35 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요담이 예루살렘 성전에 세운 것은 무엇입니까?$q$, $q$여호와의 전 윗문$q$, $q$바알 신전$q$, $q$다메섹 제단$q$, $q$헷갈렸어요$q$, 0, $q$대하 27:3 — '여호와의 전 윗문을 건축하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 35 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요담 때 백성은 어떤 상태로 남아 있었습니까?$q$, $q$여전히 부패하였다$q$, $q$바벨론으로 끌려갔다$q$, $q$모두 우상을 버렸다$q$, $q$헷갈렸어요$q$, 0, $q$대하 27:2 — '오히려 백성은 사악을 행하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 35 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요담이 점점 강하여진 이유는 무엇입니까?$q$, $q$성전 제단을 바꾸었다$q$, $q$앗수르와 조약을 맺었다$q$, $q$여호와 앞에 길을 바로 하였다$q$, $q$헷갈렸어요$q$, 2, $q$대하 27:6 — '그 하나님 여호와 앞에 정도를 행하였으므로'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 35 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 36;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 36 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이사야가 본 스랍들은 각각 몇 개의 날개를 가지고 있었습니까?$q$, $q$두 날개$q$, $q$여섯 날개$q$, $q$열두 날개$q$, $q$헷갈렸어요$q$, 1, $q$사 6:2 — '각기 여섯 날개가 있어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 36 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이사야는 하나님의 보좌 환상 앞에서 자신을 어떻게 고백했습니까?$q$, $q$스랍에게 왕이 되게 해 달라고 했다$q$, $q$입술이 부정해 망하게 되었다고 했다$q$, $q$자신이 이미 깨끗하다고 자랑했다$q$, $q$헷갈렸어요$q$, 1, $q$사 6:5 — '화로다 나여 망하게 되었도다 나는 입술이 부정한 사람이요'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 36 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 누구를 보낼지 부르실 때 이사야는 어떻게 응답했습니까?$q$, $q$다른 선지자를 보내 달라고 물러섰다$q$, $q$제가 여기 있으니 저를 보내 달라고 응답했다$q$, $q$성전을 떠나 아무 말도 하지 않았다$q$, $q$헷갈렸어요$q$, 1, $q$사 6:8 — '내가 여기 있나이다 나를 보내소서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 36 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 37;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 37 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아하스는 어떤 악한 일을 따라 행했습니까?$q$, $q$자기 아들을 불 가운데 지나가게 했다$q$, $q$성전 윗문을 건축했다$q$, $q$바알 제단을 무너뜨렸다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 16:3 — '자기 아들을 불 가운데로 지나가게 하며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 37 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$르신과 베가가 예루살렘을 에워쌌을 때 결과는 어떠했습니까?$q$, $q$아하스를 바벨론으로 끌고 갔다$q$, $q$아하스를 이기지 못했다$q$, $q$예루살렘을 완전히 불태웠다$q$, $q$헷갈렸어요$q$, 1, $q$왕하 16:5 — '능히 이기지 못하니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 37 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아하스는 다메섹에서 본 것을 성전에 어떻게 들여왔습니까?$q$, $q$그 모양대로 새 제단을 만들었다$q$, $q$율법책을 다시 읽게 했다$q$, $q$성전 문 곁에 궤를 두었다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 16:10 — '단의 모든 구조와 제도의 식양을 그려'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 37 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 38;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 38 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아람 왕 르신과 이스라엘 왕 베가는 아하스 때에 무엇을 하려 했습니까?$q$, $q$예루살렘을 치러 올라왔다$q$, $q$성전을 함께 보수하려고 왔다$q$, $q$유다와 화해하려고 예물을 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$사 7:1 — '르신과 베가가 올라와서 예루살렘을 쳤으나'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 38 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아람과 에브라임 동맹 소식에 왕과 백성의 마음은 어땠습니까?$q$, $q$아무 걱정 없이 잠잠히 기다렸다$q$, $q$기뻐하며 성대한 잔치를 열었다$q$, $q$숲이 바람에 흔들리듯 흔들렸다$q$, $q$헷갈렸어요$q$, 2, $q$사 7:2 — '그 마음이 삼림이 바람에 흔들림 같이 흔들렸더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 38 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 이사야를 통해 아하스에게 어떤 징조를 주시겠다고 하셨습니까?$q$, $q$한 여인이 아들을 낳고 임마누엘이라 부르는 징조$q$, $q$예루살렘 성벽이 즉시 더 높아지는 징조$q$, $q$아하스가 스스로 강한 군대를 세우는 징조$q$, $q$헷갈렸어요$q$, 0, $q$사 7:14 — '처녀가 잉태하여 아들을 낳을 것이요 그 이름을 임마누엘이라 하리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 38 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 39;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 39 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$호세아는 어디에서 북이스라엘 왕으로 다스렸습니까?$q$, $q$예루살렘$q$, $q$니느웨$q$, $q$사마리아$q$, $q$헷갈렸어요$q$, 2, $q$왕하 17:1 — '호세아가 사마리아에서 이스라엘 왕이 되어 구년을 치리하 며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 39 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$앗수르 왕은 호세아의 어떤 행동을 보고 그를 옥에 가두었습니까?$q$, $q$애굽 왕에게 기대고 조공을 끊었다$q$, $q$사마리아 백성을 모두 돌려보냈다$q$, $q$예루살렘 성전을 고치려 했다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 17:4 — '조공을 드리지 아니하매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 39 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사마리아가 함락된 뒤 이스라엘 사람들은 어떻게 되었습니까?$q$, $q$앗수르로 끌려가 여러 곳에 살게 되었다$q$, $q$곧바로 사마리아로 다시 돌아왔다$q$, $q$예루살렘에서 새 왕을 세웠다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 17:6 — '이스라엘 사람을 사로잡아 앗수르로 끌어다가 ... 여러 고을에 두었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 39 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 40;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 40 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$히스기야는 랍사게의 말을 듣고 먼저 어떻게 반응했습니까?$q$, $q$옷을 찢고 성전으로 갔다$q$, $q$예루살렘 성벽을 버리고 도망했다$q$, $q$앗수르 왕에게 항복 문서를 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$사 37:1 — '그 옷을 찢고 굵은 베를 입고 여호와의 전으로 갔고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 40 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$히스기야는 산헤립의 편지를 받고 하나님께 무엇을 구했습니까?$q$, $q$앗수르 왕에게서 구원해 달라고 했다$q$, $q$애굽 군대가 오게 해 달라 했다$q$, $q$백성이 흩어지게 해 달라 했다$q$, $q$헷갈렸어요$q$, 0, $q$사 37:20 — '이제 우리를 그의 손에서 구원하사'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 40 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 이사야를 통해 앗수르 왕이 예루살렘에 어떻게 하지 못한다고 말씀하셨습니까?$q$, $q$성문을 열고 조공을 받게 된다고 하셨다$q$, $q$히스기야와 함께 성전을 짓게 된다고 하셨다$q$, $q$성에 이르지도 못하고 화살 하나도 쏘지 못한다고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$사 37:33 — '그가 이 성에 이르지 못하며 화살 하나도 이리로 쏘지 못하며'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 40 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 41;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 41 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바벨론 사신이 방문했을 때 히스기야가 보여준 것은 무엇입니까?$q$, $q$보물고와 군기고의 모든 것$q$, $q$성전의 제단과 언약궤$q$, $q$예루살렘 성벽과 망대$q$, $q$헷갈렸어요$q$, 0, $q$왕하 20:13 — '보물고의 금은과 향품과 보배로운 기름과 그 군기고 ... 보이지 아니한 것이 없으니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 41 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$히스기야는 이사야의 심판 예언을 듣고 무엇이라 하였습니까?$q$, $q$이사야의 말을 부인하였다$q$, $q$즉시 회개하고 금식을 선포하였다$q$, $q$나의 생전에는 평안하리라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 20:19 — '나의 생전에는 평안과 견고함이 있으리로다 하니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 41 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$히스기야는 찾아온 사신들이 어디에서 왔다고 말했습니까?$q$, $q$먼 나라 바벨론에서 왔다고 말했다$q$, $q$북이스라엘에서 왔다고 말했다$q$, $q$애굽 궁정에서 왔다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$사 39:3 — '이에 선지자 이사야가 히스기야 왕에게 나아와 묻되 그 사람들이 무슨 말을 하였으며 어디서 왕에 게 왔나이까 히스기야가 가로되 그들이 원방 곧 바벨론에서 내게 왔나이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 41 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 42;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 42 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$므낫세는 여호와의 전 두 마당에 무엇을 세웠습니까?$q$, $q$하늘의 일월성신을 위한 단들$q$, $q$성전 보수 헌금 궤$q$, $q$언약궤를 멘 제사장들$q$, $q$헷갈렸어요$q$, 0, $q$왕하 21:5 — '하늘의 일월 성신을 위하여 단들을 쌓고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 42 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$앗수르 군대는 므낫세를 어떻게 끌고 갔습니까?$q$, $q$애굽 왕에게 넘겼다$q$, $q$사슬로 결박하여 바벨론으로 끌고 갔다$q$, $q$왕궁에서 그대로 섬기게 했다$q$, $q$헷갈렸어요$q$, 1, $q$대하 33:11 — '쇠사슬로 결박하여 바벨론으로 끌어간지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 42 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$낮아진 뒤 므낫세는 성전의 우상들을 어떻게 했습니까?$q$, $q$다메섹 제단 앞으로 옮겼다$q$, $q$금으로 다시 입혔다$q$, $q$성 밖으로 내어 버렸다$q$, $q$헷갈렸어요$q$, 2, $q$대하 33:15 — '이방 신들과 여호와의 전의 우상을 제하며'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 42 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 43;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 43 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아몬은 몇 살에 왕이 되었습니까?$q$, $q$열여덟 살$q$, $q$일곱 살$q$, $q$스물두 살$q$, $q$헷갈렸어요$q$, 2, $q$왕하 21:19 — '아몬이 위에 나아갈 때에 나이 이십 이세라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 43 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아몬은 아버지 므낫세와 달리 무엇을 하지 않았습니까?$q$, $q$예루살렘에서 왕이 되지 않았다$q$, $q$우상들을 섬기지 않았다$q$, $q$여호와 앞에 스스로 겸비하지 않았다$q$, $q$헷갈렸어요$q$, 2, $q$대하 33:23 — '여호와 앞에 스스로 겸비치 아니하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 43 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아몬은 누구의 반역으로 죽임을 당했습니까?$q$, $q$바벨론 군대$q$, $q$바로 느고$q$, $q$자기 신복들$q$, $q$헷갈렸어요$q$, 2, $q$왕하 21:23 — '그 신복들이 반역하여 왕을 궁중에서 죽이매'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 43 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 44;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 44 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요시야는 왕이 되었을 때 몇 살이었습니까?$q$, $q$18살$q$, $q$8살$q$, $q$30살$q$, $q$헷갈렸어요$q$, 1, $q$왕하 22:1 — '요시야가 위에 나아갈 때에 나이 팔세라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 44 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$율법책의 말을 들은 요시야는 어떻게 반응했습니까?$q$, $q$책을 성전 창고에 다시 넣었다$q$, $q$신하들에게 읽지 말라고 했다$q$, $q$옷을 찢으며 두려워했다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 22:11 — '왕이 율법책의 말을 듣자 곧 그 옷을 찢으니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 44 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요시야는 성전에서 무엇을 내어다가 불사르게 했습니까?$q$, $q$바알과 아세라와 하늘 별들을 위한 기명$q$, $q$백성이 드린 은과 예물$q$, $q$성전 보수에 쓰던 나무와 돌$q$, $q$헷갈렸어요$q$, 0, $q$왕하 23:4 — '바알과 아세라와 하늘의 일월 성신을 위하여 만든 모든 기명을 ... 불사르고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 44 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 45;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 45 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호아하스는 몇 달 동안 예루살렘에서 다스렸습니까?$q$, $q$열두 달$q$, $q$삼 년$q$, $q$석 달$q$, $q$헷갈렸어요$q$, 2, $q$왕하 23:31 — '예루살렘에서 치리한지 석 달이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 45;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 45 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로 느고는 여호아하스를 어디에 가두었습니까?$q$, $q$예루살렘 성전$q$, $q$사마리아 왕궁$q$, $q$하맛 땅 립나$q$, $q$헷갈렸어요$q$, 2, $q$왕하 23:33 — '하맛 땅 립나에 가두어'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 45;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 45 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로 느고는 엘리야김의 이름을 무엇으로 바꾸었습니까?$q$, $q$시드기야$q$, $q$여호야긴$q$, $q$여호야김$q$, $q$헷갈렸어요$q$, 2, $q$왕하 23:34 — '그 이름을 고쳐 여호야김이라 하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 45;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 45 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 46;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 46 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호야김은 몇 살에 왕이 되었습니까?$q$, $q$스물다섯 살$q$, $q$스물세 살$q$, $q$열여덟 살$q$, $q$헷갈렸어요$q$, 0, $q$왕하 23:36 — '여호야김이 위에 나아갈 때에 나이 이십 오세라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 46;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 46 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느부갓네살이 올라온 뒤 여호야김은 처음에 어떻게 되었습니까?$q$, $q$곧바로 애굽으로 끌려갔다$q$, $q$성전 윗문을 세웠다$q$, $q$삼 년 동안 그의 종이 되었다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 24:1 — '여호야김이 삼 년을 섬기다가'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 46;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 46 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바벨론으로 옮겨진 성전 기구들은 어디에 두어졌습니까?$q$, $q$아하스의 제단 아래$q$, $q$예루살렘 윗문$q$, $q$바벨론 신의 보고$q$, $q$헷갈렸어요$q$, 2, $q$단 1:2 — '그 신의 보고에 두었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 46;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 46 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 47;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 47 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예레미야는 유다가 바벨론 왕을 얼마 동안 섬긴다고 전했습니까?$q$, $q$칠 일 동안 섬긴다$q$, $q$삼 년 동안 섬긴다$q$, $q$칠십 년 동안 섬긴다$q$, $q$헷갈렸어요$q$, 2, $q$렘 25:11 — '칠십년 동안 바벨론 왕을 섬기리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 47;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 47 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 예언자들을 보내셨지만 백성은 어떻게 반응했습니까?$q$, $q$곧바로 우상을 모두 버렸다$q$, $q$예레미야에게 왕관을 씌웠다$q$, $q$듣지 않고 귀를 기울이지 않았다$q$, $q$헷갈렸어요$q$, 2, $q$렘 25:4 — '너희가 듣지 아니하였으며 귀를 기울여 듣지도 아니하였도다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 47;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 47 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$칠십 년이 차면 하나님은 바벨론 왕과 그 나라에 어떻게 하신다고 하셨습니까?$q$, $q$죄악을 벌하고 황폐하게 하신다$q$, $q$영원히 왕위를 굳게 세우신다$q$, $q$예루살렘 성전을 맡기신다$q$, $q$헷갈렸어요$q$, 0, $q$렘 25:12 — '바벨론 왕과 그 나라와 갈대아인의 땅을 그 죄악으로 인하여 벌하여'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 47;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 47 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 48;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 48 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$회복의 약속에서 이스라엘은 무엇을 들고 다시 춤추게 됩니까?$q$, $q$전쟁 창을 들고 행진한다$q$, $q$바벨론 왕의 인장을 든다$q$, $q$소고를 들고 춤춘다$q$, $q$헷갈렸어요$q$, 2, $q$렘 31:4 — '네가 소고로 너를 장식하고 즐거운 무리처럼 춤추며 나올 것이며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 48;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 48 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 흩어진 이스라엘을 어떤 모습처럼 지키신다고 하셨습니까?$q$, $q$파수꾼이 성문을 닫듯 버려두신다$q$, $q$상인이 물건을 감추듯 숨기신다$q$, $q$목자가 양 떼를 지키듯 지키신다$q$, $q$헷갈렸어요$q$, 2, $q$렘 31:10 — '목자가 그 양무리에게 행함 같이 그를 지키시리로다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 48;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 48 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$새 언약에서 하나님은 율법을 어디에 기록하겠다고 하셨습니까?$q$, $q$왕궁 담장에만 기록하신다$q$, $q$바벨론 왕의 문서에 기록하신다$q$, $q$백성의 마음에 기록하신다$q$, $q$헷갈렸어요$q$, 2, $q$렘 31:33 — '내가 나의 법을 그들의 속에 두며 그 마음에 기록하여'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 48;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 48 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 49;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 49 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 예레미야에게 무엇에 말씀을 기록하라고 하셨습니까?$q$, $q$성벽 돌마다 숨기라고 하셨다$q$, $q$두루마리 책에 기록하라고 하셨다$q$, $q$왕의 금방패에 새기라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$렘 36:2 — '너는 두루마리 책을 취하여 ... 기록하라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 49;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 49 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바룩은 예레미야의 말을 적은 두루마리를 어디에서 낭독했습니까?$q$, $q$애굽 왕궁에서만 낭독했다$q$, $q$성전에서 백성에게 낭독했다$q$, $q$광야 동굴 안에서 혼자 읽었다$q$, $q$헷갈렸어요$q$, 1, $q$렘 36:10 — '바룩이 여호와의 집 ... 모든 백성에게 그 책에 있는 예레미야의 말을 낭독하니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 49;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 49 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호야김 왕은 두루마리 말씀을 듣고 어떻게 했습니까?$q$, $q$칼로 베어 화롯불에 던졌다$q$, $q$눈물로 회개하며 성전에 올렸다$q$, $q$바룩에게 금을 주며 보관하게 했다$q$, $q$헷갈렸어요$q$, 0, $q$렘 36:23 — '소도로 그것을 연하여 베어 화롯불에 던져서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 49;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 49 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 50;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 50 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호야긴은 몇 살에 왕이 되었습니까?$q$, $q$일곱 살$q$, $q$스물다섯 살$q$, $q$열여덟 살$q$, $q$헷갈렸어요$q$, 2, $q$왕하 24:8 — '여호야긴이 위에 나아갈 때에 나이 십 팔세라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 50;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 50 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바벨론 왕은 여호야긴과 백성들을 어떻게 했습니까?$q$, $q$애굽 왕에게 맡겼다$q$, $q$예루살렘에서 왕으로 회복했다$q$, $q$바벨론으로 사로잡아 갔다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 24:15 — '여호야긴을 바벨론으로 사로잡아 가고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 50;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 50 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느부갓네살은 맛다니야의 이름을 무엇으로 바꾸었습니까?$q$, $q$시드기야$q$, $q$여호야김$q$, $q$아몬$q$, $q$헷갈렸어요$q$, 0, $q$왕하 24:17 — '그 이름을 고쳐 시드기야라 하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 50;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 50 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 51;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 51 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예레미야는 갈대아 군대가 예루살렘에 대해 어떻게 한다고 전했습니까?$q$, $q$성전을 지어 준다고 전했다$q$, $q$다시는 오지 않는다고 전했다$q$, $q$돌아와 성을 불사를 것이라 전했다$q$, $q$헷갈렸어요$q$, 2, $q$렘 37:8 — '갈대아인이 다시 와서 이 성을 쳐서 취하여 불사르리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 51;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 51 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베냐민 문에서 문지기 우두머리는 예레미야를 어떻게 몰아세웠습니까?$q$, $q$성전을 수리하지 않는다고 칭찬했다$q$, $q$왕의 보물을 숨겼다고 축복했다$q$, $q$갈대아인에게 항복한다고 몰았다$q$, $q$헷갈렸어요$q$, 2, $q$렘 37:13 — '네가 갈대아인에게 항복하려 하는도다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 51;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 51 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$감옥에서 나온 예레미야는 시드기야 왕에게 어떤 말씀을 전했습니까?$q$, $q$왕이 예레미야를 제사장으로 삼는다고 전했다$q$, $q$왕이 곧 애굽의 왕이 된다고 전했다$q$, $q$왕이 바벨론 왕의 손에 넘겨진다고 전했다$q$, $q$헷갈렸어요$q$, 2, $q$렘 37:17 — '왕이 바벨론 왕의 손에 붙임을 입으리이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 51;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 51 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 52;
+  where q.event_id = e.id and er.code = 'era_divided_kingdom' and e.story_index = 52 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시드기야는 여호와 보시기에 어떤 왕이었습니까?$q$, $q$성전을 깨끗하게 고친 왕$q$, $q$율법책을 발견하고 회개한 왕$q$, $q$여호와 보시기에 악을 행한 왕$q$, $q$헷갈렸어요$q$, 2, $q$왕하 24:19 — '여호야김의 모든 행위를 본받아 여호와 보시기에 악을 행한지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 52;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 52 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바벨론 왕의 군대는 예루살렘을 어떻게 압박했습니까?$q$, $q$화친 선물을 보내고 물러갔다$q$, $q$성전을 수리하도록 도왔다$q$, $q$사방에 진을 치고 토성을 쌓았다$q$, $q$헷갈렸어요$q$, 2, $q$왕하 25:1 — '예루살렘을 치러 올라와서 그 성에 대하여 진을 치고 사면으로 토성을 쌓으매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 52;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 52 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$붙잡힌 시드기야는 결국 어떻게 되었습니까?$q$, $q$눈을 잃고 사슬에 묶여 바벨론으로 끌려갔다$q$, $q$예루살렘 왕궁으로 다시 돌아왔다$q$, $q$애굽으로 피신해 왕위를 지켰다$q$, $q$헷갈렸어요$q$, 0, $q$왕하 25:7 — '시드기야의 두 눈을 빼고 사슬로 결박하여 바벨론으로 끌어갔더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 52;
+from events e join eras er on er.id = e.era_id where er.code = 'era_divided_kingdom' and e.story_index = 52 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스겔은 하나님의 명령에 따라 마른 뼈들에게 어떻게 하였습니까?$q$, $q$뼈들 위에 손을 얹어 기도하였다$q$, $q$뼈들에게 대언하였다$q$, $q$뼈들을 모아 매장하였다$q$, $q$헷갈렸어요$q$, 1, $q$겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마른 뼈들에게 하나님이 주신 약속은 무엇입니까?$q$, $q$뼈들을 그대로 흩어 두시겠다는 말씀$q$, $q$생기를 넣어 다시 살게 하시겠다는 약속$q$, $q$성읍 밖으로 옮기라는 명령$q$, $q$헷갈렸어요$q$, 1, $q$겔 37:5 — '주 여호와께서 이 뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마른 뼈 환상에서 뼈들은 무엇을 상징합니까?$q$, $q$이스라엘 온 족속$q$, $q$바벨론의 군대$q$, $q$죽은 선지자들$q$, $q$헷갈렸어요$q$, 0, $q$겔 37:11 — '이 뼈들은 이스라엘 온 족속이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다니엘이 뜻을 정하여 먹지 않겠다고 한 것은 무엇이었습니까?$q$, $q$이방 신에게 제사한 음식$q$, $q$왕의 진미와 포도주$q$, $q$피로 만든 음식$q$, $q$헷갈렸어요$q$, 1, $q$단 1:8 — '왕의 진미와 그의 마시는 포도주로 자기를 더럽히지 아니하리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다니엘과 세 친구가 열흘 시험 후 어떠하였습니까?$q$, $q$왕의 진미를 먹은 자보다 더 윤택하였다$q$, $q$여위어 보여 다시 왕의 음식을 먹게 되었다$q$, $q$건강에 차이가 없었다$q$, $q$헷갈렸어요$q$, 0, $q$단 1:15 — '열흘 후에 ... 왕의 진미를 먹는 자보다 더욱 아름답고 윤택하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 다니엘에게 어떤 특별한 지혜를 주셨습니까?$q$, $q$모든 이상과 꿈을 깨달아 알게 하셨다$q$, $q$왕의 음식을 더 많이 먹게 하셨다$q$, $q$궁중 일을 피하게 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$단 1:17 — '하나님이 이 네 소년에게 지식을 얻게 하시며 모든 학문과 재주에 명철하게 하신 외에 다니엘은 또 모든 이상과 몽조를 깨달아 알더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느부갓네살이 두라 평지에 세운 신상의 높이는 얼마였습니까?$q$, $q$삼십 규빗$q$, $q$백 규빗$q$, $q$육십 규빗$q$, $q$헷갈렸어요$q$, 2, $q$단 3:1 — '고는 육십 규빗이요 광은 여섯 규빗이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사드락과 메삭과 아벳느고는 왕의 명을 받자 어떻게 하였습니까?$q$, $q$도망쳐서 숨었다$q$, $q$절을 한 척하고 마음속으로 기도하였다$q$, $q$왕에게 대답할 필요가 없다며 굴복을 거절하였다$q$, $q$헷갈렸어요$q$, 2, $q$단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$풀무불 속 사람 수를 확인한 왕에게 신하들은 어떻게 대답했습니까?$q$, $q$아무도 불 속에 없다고 대답했다$q$, $q$네 사람을 던졌다고 대답했다$q$, $q$세 사람을 던진 것이 맞다고 대답했다$q$, $q$헷갈렸어요$q$, 2, $q$단 3:24 — '때에 느부갓네살 왕이 놀라 급히 일어나서 모사들에게 물어 가로되 우리가 결박하여 불가운데 던진 자는 세 사람이 아니었느냐 그들이 왕에게 대답하여 가로되 왕이여 옳소이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$벨사살의 잔치에 초대된 귀인의 수는 몇 명이었습니까?$q$, $q$칠십 명$q$, $q$오백 명$q$, $q$일천 명$q$, $q$헷갈렸어요$q$, 2, $q$단 5:1 — '벨사살 왕이 그 귀인 일천 명을 위하여 큰 잔치를 배설하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다니엘은 왕이 제안한 상급을 받겠느냐는 질문에 어떻게 하였습니까?$q$, $q$상급은 왕이 취하고 글을 읽어 해석을 알려주겠다고 하였다$q$, $q$상급을 기꺼이 받겠다고 하였다$q$, $q$상급을 거절하고 아무 말도 하지 않았다$q$, $q$헷갈렸어요$q$, 0, $q$단 5:17 — '왕의 예물은 왕이 취하시고 ... 글을 읽어 해석을 알려드리겠나이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$벽의 글씨에서 ‘데겔’은 벨사살 왕에게 어떤 뜻이었습니까?$q$, $q$저울에 달려 부족함이 드러났다는 뜻$q$, $q$왕이 다시 높아진다는 뜻$q$, $q$나라가 오래 견고하다는 뜻$q$, $q$헷갈렸어요$q$, 0, $q$단 5:27 — '데겔은 왕이 저울에 달려서 부족함이 뵈었다 함이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다리오 왕이 세운 방백의 수는 몇 명이었습니까?$q$, $q$칠십 명$q$, $q$일백이십 명$q$, $q$삼백 명$q$, $q$헷갈렸어요$q$, 1, $q$단 6:1 — '다리오가 방백 일백이십 명을 세워 전국을 통치하게 하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다니엘은 기도 금지령이 내려진 후에도 어떻게 하였습니까?$q$, $q$몰래 방에 숨어서 기도하였다$q$, $q$금지 기간 동안만 기도를 멈추었다$q$, $q$전에 하던 대로 하루 세 번 예루살렘을 향해 기도하였다$q$, $q$헷갈렸어요$q$, 2, $q$단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다리오 왕은 조서를 내리며 백성들에게 어떤 인사를 전했습니까?$q$, $q$많은 평강이 있기를 원한다고 전했다$q$, $q$다니엘을 다시 굴에 넣으라고 전했다$q$, $q$예루살렘으로 돌아가지 말라고 전했다$q$, $q$헷갈렸어요$q$, 0, $q$단 6:25 — '이에 다리오 왕이 온 땅에 있는 모든 백성과 나라들과 각 방언하는 자들에게 조서를 내려 가로되 원컨대 많은 평강이 너희에게 있을지어다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$고레스 왕은 조서에서 예루살렘에 무엇을 하라고 하였습니까?$q$, $q$바벨론 성벽을 더 높이라고 하였다$q$, $q$여호와의 전을 건축하라고 하였다$q$, $q$수산 궁을 새로 짓게 하였다$q$, $q$헷갈렸어요$q$, 1, $q$스 1:2 — '나를 명하사 유다 예루살렘에 전을 건축하라 하셨나니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$스룹바벨과 지도자들은 함께 건축하자는 주변 사람들에게 어떻게 답했습니까?$q$, $q$성전 대신 왕궁을 짓겠다고 했다$q$, $q$모든 공사를 그들에게 맡기겠다고 했다$q$, $q$우리와 상관이 없고 우리가 홀로 건축하겠다고 했다$q$, $q$헷갈렸어요$q$, 2, $q$스 4:3 — '너희는 우리와 상관이 없느니라 ... 우리가 이스라엘 하나님 여호와를 위하여 홀로 건축하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$방해가 이어진 뒤 예루살렘의 하나님의 전 공사는 어떻게 되었습니까?$q$, $q$수산 궁으로 옮겨졌다$q$, $q$바사 왕 다리오 제이년까지 그쳤다$q$, $q$그날 바로 완성되었다$q$, $q$헷갈렸어요$q$, 1, $q$스 4:24 — '이에 예루살렘에서 하나님의 전 역사가 그쳐서 바사 왕 다리오 제이년까지 이르니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 학개를 통해 스룹바벨에게 무엇을 진동시키겠다고 하셨습니까?$q$, $q$바벨론의 강물만$q$, $q$하늘과 땅$q$, $q$예루살렘 성문만$q$, $q$헷갈렸어요$q$, 1, $q$학 2:21 — '내가 하늘과 땅을 진동시킬 것이요'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 열국의 보좌와 병거들에 대해 무엇을 하겠다고 하셨습니까?$q$, $q$그 왕좌들을 더 강하게 세우겠다고 하셨다$q$, $q$스룹바벨에게 그 병거들을 숨기라고 하셨다$q$, $q$보좌를 엎고 병거들을 엎드러뜨리겠다고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$학 2:22 — '열국의 보좌를 엎을 것이요 ... 그 병거들과 그 탄 자를 엎드러뜨리리니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 스룹바벨을 택하셨다고 하시며 무엇으로 삼겠다고 하셨습니까?$q$, $q$전쟁 깃발$q$, $q$금송아지$q$, $q$인장$q$, $q$헷갈렸어요$q$, 2, $q$학 2:23 — '내가 너를 취하고 너로 인을 삼으리니 이는 내가 너를 택하였음이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다리오 왕의 조서가 내리자 강 서편 관리들은 어떻게 했습니까?$q$, $q$스룹바벨을 바벨론으로 보냈다$q$, $q$성전 터를 다시 막았다$q$, $q$신속히 준행했다$q$, $q$헷갈렸어요$q$, 2, $q$스 6:13 — '다리오 왕의 조서가 내리매 ... 신속히 준행한지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성전 건축은 어떤 선지자들의 권면으로 형통했습니까?$q$, $q$학개와 잇도의 손자 스가랴$q$, $q$엘리야와 엘리사$q$, $q$나단과 사무엘$q$, $q$헷갈렸어요$q$, 0, $q$스 6:14 — '선지자 학개와 잇도의 손자 스가랴의 권력으로 인하여 전 건축할 일이 형통한지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사로잡혔던 자의 자손은 유월절 뒤 무교절을 어떻게 지켰습니까?$q$, $q$즐거움으로 칠 일 동안 지켰다$q$, $q$제사장 없이 조용히 지나갔다$q$, $q$두려워서 모두 흩어졌다$q$, $q$헷갈렸어요$q$, 0, $q$스 6:22 — '즐거우므로 칠 일 동안 무교절을 지켰으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스더가 왕에게 나아가기 전 몸을 정결케 하는 기한은 얼마였습니까?$q$, $q$열두 달$q$, $q$사십 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 0, $q$에 2:12 — '열두 달 동안을 행하되 여섯 달은 몰약 기름을 쓰고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스더는 왕에게 나아갈 때 어떻게 하였습니까?$q$, $q$헤개가 정한 것 외에는 다른 것을 구하지 아니하였다$q$, $q$많은 장신구와 예물을 준비하였다$q$, $q$왕비 와스디의 예를 따라 준비하였다$q$, $q$헷갈렸어요$q$, 0, $q$에 2:15 — '헤개의 정한 것 외에는 다른 것을 구하지 아니하였으나 모든 보는 자에게 굄을 얻더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모르드개는 왕을 해치려는 음모를 알게 된 뒤 누구에게 알렸습니까?$q$, $q$하만에게$q$, $q$수산 성 밖의 군대에게$q$, $q$왕후 에스더에게$q$, $q$헷갈렸어요$q$, 2, $q$에 2:22 — '모르드개가 알고 왕후 에스더에게 고하니 에스더가 모르드개의 이름으로 왕에게 고한지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하만이 모르드개에게 분노하게 된 이유는 무엇입니까?$q$, $q$모르드개가 하만을 왕에게 고발했기 때문이다$q$, $q$모르드개가 왕의 재물을 훔쳤기 때문이다$q$, $q$모르드개가 절하지 않고 경의를 표하지 않았기 때문이다$q$, $q$헷갈렸어요$q$, 2, $q$에 3:2 — '날마다 권하되 모르드개가 듣지 아니하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하만은 모르드개에 대한 분노를 어떻게 확대하였습니까?$q$, $q$온 나라에 있는 유다인을 모두 멸하려는 음모를 꾸몄다$q$, $q$모르드개를 옥에 가두게 하였다$q$, $q$모르드개만 죽이도록 왕에게 청하였다$q$, $q$헷갈렸어요$q$, 0, $q$에 3:6 — '유다인을 죽이고 멸하려 하더니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하만의 조서가 수산 성에 반포된 뒤 왕과 하만은 무엇을 하고 있었습니까?$q$, $q$함께 앉아 마시고 있었다$q$, $q$성문에서 백성을 위로하고 있었다$q$, $q$모르드개를 불러 상을 주고 있었다$q$, $q$헷갈렸어요$q$, 0, $q$에 3:15 — '역졸이 왕의 명을 받들어 급히 나가매 그 조서가 도성 수산에도 반포되니 왕은 하만과 함께 앉아 마시되 수산 성은 어지럽더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스더가 왕 앞에 나아가기 전 금식한 기간은 얼마였습니까?$q$, $q$밤낮 삼 일$q$, $q$사십 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 0, $q$에 4:16 — '밤낮 삼일을 먹지도 말고 마시지도 마소서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스더는 왕 앞에 나아가겠다고 결단하며 무엇이라 하였습니까?$q$, $q$모르드개에게 다른 방법을 찾아보라고 하였다$q$, $q$규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다$q$, $q$왕의 부름을 기다리겠다고 하였다$q$, $q$헷갈렸어요$q$, 1, $q$에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스더가 금식을 부탁하자 모르드개는 어떻게 했습니까?$q$, $q$하만에게 먼저 알렸다$q$, $q$에스더의 부탁을 거절했다$q$, $q$에스더가 명한 대로 다 행했다$q$, $q$헷갈렸어요$q$, 2, $q$에 4:17 — '모르드개가 가서 에스더의 명한 대로 다 행하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스더는 잔치 자리에서 왕에게 누가 대적이라고 하였습니까?$q$, $q$모르드개라고 하였다$q$, $q$악한 하만이라고 하였다$q$, $q$산헤립이라고 하였다$q$, $q$헷갈렸어요$q$, 1, $q$에 7:6 — '대적과 원수는 이 악한 하만이니이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$왕이 하만을 꾸짖자 곁에 있던 무리는 하만에게 무엇을 했습니까?$q$, $q$하만을 몰래 도망시켰다$q$, $q$하만의 얼굴을 싸었다$q$, $q$모르드개에게 사과하게 했다$q$, $q$헷갈렸어요$q$, 1, $q$에 7:8 — '왕이 후원으로부터 잔치 자리에 돌아오니 하만이 에스더의 앉은 걸상 위에 엎드렸거늘 왕이 가로되 저가 궁중 내 앞에서 왕후를 강간까지 하고자 하는가 이 말이 왕의 입에서 나오매 무리가 하만의 얼굴을 싸더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하만이 준비한 나무에는 결국 누가 달리게 되었습니까?$q$, $q$모르드개가 그대로 달리게 되었다$q$, $q$왕의 내시가 대신 달리게 되었다$q$, $q$하만 자신이 달리게 되었다$q$, $q$헷갈렸어요$q$, 2, $q$에 7:9 — '왕을 모신 내시 중에 하르보나가 왕에게 아뢰되 왕을 위하여 충성된 말로 고발한 모르드개를 달고자 하여 하만이 고가 오십 규빗되는 나무를 준비하였는데 이제 그 나무가 하만의 집에 섰나이다 왕이 가로 되 하만을 그 나무에 달라 하매'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아닥사스다 왕은 조서에서 누가 에스라와 함께 예루살렘으로 올라갈 수 있다고 하였습니까?$q$, $q$뜻이 있는 이스라엘 백성과 제사장들과 레위 사람들$q$, $q$수산 궁의 잔치 손님들만$q$, $q$바사 왕궁의 군사 장관들만$q$, $q$헷갈렸어요$q$, 0, $q$스 7:13 — '예루살렘으로 올라갈 뜻이 있는 자는 누구든지 너와 함께 갈지어다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$백성의 죄를 들은 에스라는 어떤 태도를 보였습니까?$q$, $q$왕의 조서를 감추고 수산 궁으로 돌아갔다$q$, $q$성전 기명을 모두 다시 바벨론으로 보냈다$q$, $q$옷을 찢고 기가 막혀 앉았다가 하나님께 무릎 꿇고 기도했다$q$, $q$헷갈렸어요$q$, 2, $q$스 9:3,5 — '속옷과 겉옷을 찢고... 기가 막혀 앉으니', '무릎을 꿇고 나의 하나님 여호와를 향하여 손을 들고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에스라는 백성에게 죄를 자복한 뒤 무엇을 하라고 명했습니까?$q$, $q$아닥사스다 왕에게 금은을 돌려보내라고 했다$q$, $q$예루살렘 성벽 수리를 멈추라고 했다$q$, $q$이 땅 족속들과 이방 여인을 끊어 버리라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$스 10:11 — '죄를 자복하고 그 뜻대로 행하여 이 땅 족속들과 이방 여인을 끊어 버리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야는 예루살렘 소식을 어디에서 들었습니까?$q$, $q$예루살렘 성벽 앞에서 들었다$q$, $q$수산 궁에서 들었다$q$, $q$바벨론 강가에서 들었다$q$, $q$헷갈렸어요$q$, 1, $q$느 1:1 — '아닥사스다왕 제 이십년 기슬르월에 내가 수산 궁에 있더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야는 왕의 질문에 무엇을 원하느냐는 말을 듣고 어떻게 하였습니까?$q$, $q$바로 예루살렘으로 가겠다고 하였다$q$, $q$왕의 허락을 기다리며 아무 말도 하지 않았다$q$, $q$하늘의 하나님께 묵도하고 대답하였다$q$, $q$헷갈렸어요$q$, 2, $q$느 2:4 — '내가 곧 하늘의 하나님께 묵도하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야가 성벽 재목을 요청했을 때 왕은 어떻게 반응했습니까?$q$, $q$느헤미야를 옥에 가두었다$q$, $q$하나님의 선한 손이 도우심으로 허락했다$q$, $q$요청을 듣고 즉시 거절했다$q$, $q$헷갈렸어요$q$, 1, $q$느 2:8 — '또 왕의 삼림 감독 아삽에게 조서를 내리사 저로 전에 속한 영문의 문과 성곽과 나의 거할 집을 위 하여 들보 재목을 주게 하옵소서 하매 내 하나님의 선한 손이 나를 도우심으로 왕이 허락하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야가 예루살렘에 이르러 며칠 만에 밤에 성벽을 조사하였습니까?$q$, $q$칠 일 만에 조사하였다$q$, $q$삼 일 만에 조사하였다$q$, $q$하룻밤 만에 조사하였다$q$, $q$헷갈렸어요$q$, 1, $q$느 2:11 — '내가 예루살렘에 이르러 거한지 삼일에'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야는 방백들에게 폐허의 상황을 알린 후 무엇이라 하였습니까?$q$, $q$일어나 건축하자고 선언하였다$q$, $q$먼저 성전을 재건하자고 하였다$q$, $q$왕의 허락을 더 받아야 한다고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$느 2:17 — '저희의 말이 일어나 건축하자 하고 모두 힘을 내어 이 선한 일을 하려 하매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성벽을 다시 쌓던 사람들은 어떤 어려움을 느꼈습니까?$q$, $q$일할 사람이 너무 많아 혼란스러웠다$q$, $q$돌무더기는 많고 일할 힘은 줄었다고 느꼈다$q$, $q$성벽이 이미 다 완성되었다고 생각했다$q$, $q$헷갈렸어요$q$, 1, $q$느 4:10 — '유다 사람들은 이르기를 흙 무더기가 아직도 많거늘 담부(擔負)하는 자의 힘이 쇠하였으니 우리가 성을 건축하지 못하리라 하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_exile_return' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$백성에게 율법을 낭독한 사람은 누구였습니까?$q$, $q$느헤미야$q$, $q$대제사장 힐기야$q$, $q$학사 에스라$q$, $q$헷갈렸어요$q$, 2, $q$느 8:5 — '때에 학사 에스라가 특별히 지은 나무 강단에 서매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$느헤미야는 율법을 듣고 우는 백성에게 무엇이라 하였습니까?$q$, $q$여호와를 기뻐하는 것이 너희의 힘이니라 하였다$q$, $q$율법을 깨닫지 못함을 책망하였다$q$, $q$더욱 금식하며 통곡하라 하였다$q$, $q$헷갈렸어요$q$, 0, $q$느 8:10 — '여호와를 기뻐하는 것이 너희의 힘이니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$율법의 뜻을 알게 된 백성은 어떻게 반응했습니까?$q$, $q$다시 성벽 공사를 멈추었다$q$, $q$먹고 나누며 크게 기뻐했다$q$, $q$모두 흩어져 숨어 버렸다$q$, $q$헷갈렸어요$q$, 1, $q$느 8:12 — '모든 백성이 곧 가서 먹고 마시며 나누어 주고 크게 즐거워하였으니 이는 그 읽어 들린 말을 밝히 앎이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exile_return' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$산파들은 왜 바로의 명을 어기고 남자 아이를 살렸습니까?$q$, $q$하나님을 두려워하였기 때문이다$q$, $q$바로를 불쌍히 여겼기 때문이다$q$, $q$히브리 여자들이 먼저 낳아 버렸기 때문이다$q$, $q$헷갈렸어요$q$, 0, $q$출 1:17 — '그러나 산파들이 하나님을 두려워하여 애굽 왕의 명을 어기고 남자를 살린지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로는 산파들에게 무엇을 물었습니까?$q$, $q$왜 강가에 아이를 두었느냐고 물었다$q$, $q$왜 남자아이들을 살렸느냐고 물었다$q$, $q$왜 애굽을 떠나려 하느냐고 물었다$q$, $q$헷갈렸어요$q$, 1, $q$출 1:18 — '애굽 왕이 산파를 불러서 그들에게 이르되 너희가 어찌 이같이 하여 남자를 살렸느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로가 이스라엘 남자 아이에 대해 신민에게 내린 명령은 무엇입니까?$q$, $q$노예로 팔라$q$, $q$광야로 내보내라$q$, $q$하수에 던지라$q$, $q$헷갈렸어요$q$, 2, $q$출 1:22 — '남자가 나거든 너희는 그를 하수에 던지고 여자여든 살리라 하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세의 어머니는 더 숨길 수 없게 되자 어떻게 했습니까?$q$, $q$아이를 바로의 궁으로 직접 데려갔다$q$, $q$갈대상자에 아이를 담아 강가에 두었다$q$, $q$아이를 이웃집에 맡겼다$q$, $q$헷갈렸어요$q$, 1, $q$출 2:3 — '갈 상자를 가져다가 역청과 나무 진을 칠하고 아이를 거기 담아 하숫가 갈대 사이에 두고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로의 딸은 우는 아이를 보고 어떻게 반응했습니까?$q$, $q$아무도 모르게 그 자리를 떠났다$q$, $q$아이를 다시 강물에 띄워 보냈다$q$, $q$불쌍히 여기고 히브리 아이임을 알아보았다$q$, $q$헷갈렸어요$q$, 2, $q$출 2:6 — '열고 그 아이를 보니 아이가 우는지라 그가 불쌍히 여겨 가로되 이는 히브리 사람의 아이로다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로의 딸은 아이에게 어떤 이름을 지었습니까?$q$, $q$궁에서 자랐다는 뜻으로 아론이라 불렀다$q$, $q$강가에서 찾았다는 뜻으로 요셉이라 불렀다$q$, $q$물에서 건졌다는 뜻으로 모세라 불렀다$q$, $q$헷갈렸어요$q$, 2, $q$출 2:10 — '그가 그 이름을 모세라 하여 가로되 이는 내가 그를 물에서 건져 내었음이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 히브리 사람을 치는 애굽인을 보고 어떻게 하였습니까?$q$, $q$히브리인에게 피하라 외쳤다$q$, $q$바로에게 달려가 고발하였다$q$, $q$좌우를 살피고 그 애굽인을 죽여 모래 속에 감추었다$q$, $q$헷갈렸어요$q$, 2, $q$출 2:12 — '좌우를 살펴 사람이 없음을 보고 그 애굽 사람을 쳐죽여 모래 속에 감추니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 미디안에서 얻은 아들의 이름은 무엇입니까?$q$, $q$엘리에셀$q$, $q$비느하스$q$, $q$게르솜$q$, $q$헷갈렸어요$q$, 2, $q$출 2:22 — '그가 아들을 낳으매 모세가 그 이름을 게르솜이라 하여 가로되 내가 타국에서 객이 되었음이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 아들의 이름을 게르솜이라 하며 자신을 어떻게 표현했습니까?$q$, $q$타국에서 객이 되었다고 말했다$q$, $q$애굽의 왕자가 되었다고 말했다$q$, $q$광야의 제사장이 되었다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$출 2:22 — '그가 아들을 낳으매 모세가 그 이름을 게르솜이라 하여 가로되 내가 타국에서 객이 되었음이라 하 였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 모세에게 나타나신 불타는 떨기나무가 있던 산의 이름은 무엇입니까?$q$, $q$호렙 산$q$, $q$시내 산$q$, $q$모리아 산$q$, $q$헷갈렸어요$q$, 0, $q$출 3:1 — '그 무리를 광야 서편으로 인도하여 하나님의 산 호렙에 이르매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 소명을 받을 때 자신의 부족함을 들어 어떻게 반응하였습니까?$q$, $q$내가 누구이기에 바로에게 가겠냐며 거절하였다$q$, $q$즉시 '예'라 하고 출발하였다$q$, $q$아론에게 맡기자고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$출 3:11 — '모세가 하나님께 고하되 내가 누구관대 바로에게 가며 이스라엘 자손을 애굽에서 인도하여 내리이까'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 이스라엘 자손에게 자신을 누구라고 전하라 하셨습니까?$q$, $q$스스로 있는 자가 보내셨다고 하라 하셨다$q$, $q$미디안 장로들이 보냈다고 하라 하셨다$q$, $q$애굽 왕이 보냈다고 하라 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$출 3:14 — '하나님이 모세에게 이르시되 나는 스스로 있는 자니라 또 이르시되 너는 이스라엘 자손에게 이같이 이르기를 스스로 있는 자가 나를 너희에게 보내셨다 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로는 모세와 아론의 요구 이후 이스라엘에게 무엇을 더 이상 주지 말라 하였습니까?$q$, $q$식량 배급$q$, $q$벽돌 만들 짚$q$, $q$쉬는 날$q$, $q$헷갈렸어요$q$, 1, $q$출 5:7 — '너희는 이제부터 백성에게 벽돌 굽는 짚을 전과 같이 주지 말고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘 자손은 짐이 더해진 후 모세의 말에 어떻게 반응하였습니까?$q$, $q$마음의 상함으로 모세를 듣지 않았다$q$, $q$바로에게 탄원서를 올렸다$q$, $q$모세에게 힘을 내자 하였다$q$, $q$헷갈렸어요$q$, 0, $q$출 6:9 — '이스라엘 자손이 ... 마음의 상함과 역사의 혹독함을 인하여 모세를 듣지 아니하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 무거운 짐에 눌린 백성 다음으로 모세에게 무엇을 하셨습니까?$q$, $q$백성에게 짚을 직접 나누어 주셨다$q$, $q$바로를 바로 왕에서 내리셨다$q$, $q$모세에게 다시 말씀하셨다$q$, $q$헷갈렸어요$q$, 2, $q$출 6:10 — '여호와께서 모세에게 일러 가라사대'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아론이 지팡이로 땅의 티끌을 치자 무엇이 되어 사람과 짐승에게 올랐습니까?$q$, $q$개구리$q$, $q$메뚜기$q$, $q$이$q$, $q$헷갈렸어요$q$, 2, $q$출 8:17 — '아론이 지팡이를 잡고 손을 들어 땅의 티끌을 치매 애굽 온 땅의 티끌이 다 이가 되어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$재앙마다 여호와께서 파리를 제거해 주신 후 바로는 어떻게 하였습니까?$q$, $q$모세에게 화해를 청하였다$q$, $q$마음을 강퍅하게 하여 백성을 보내지 않았다$q$, $q$이스라엘을 광야로 내보냈다$q$, $q$헷갈렸어요$q$, 1, $q$출 8:32 — '바로가 이때에도 마음을 완강케 하여 백성을 보내지 아니하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$재앙 가운데 바로는 모세와 아론에게 어떤 죄를 인정했습니까?$q$, $q$여호와와 이스라엘에게 죄를 지었다고 말했다$q$, $q$이스라엘을 이미 보냈다고 말했다$q$, $q$모세가 재앙을 꾸몄다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$출 10:16 — '바로가 모세와 아론을 급히 불러서 이르되 내가 너희 하나님 여호와와 너희에게 득죄하였으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘은 유월절 어린 양의 피를 어디에 발랐습니까?$q$, $q$문 인방과 좌우 설주$q$, $q$지붕 위$q$, $q$제단 뿔$q$, $q$헷갈렸어요$q$, 0, $q$출 12:7 — '그 피를 양을 먹을 집 좌우 문설주와 인방에 바르고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘은 유월절 음식을 어떤 자세로 먹으라 명령받았습니까?$q$, $q$허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라$q$, $q$서서 조용히 먹으라$q$, $q$앉아서 천천히 먹으라$q$, $q$헷갈렸어요$q$, 0, $q$출 12:11 — '허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 유월절의 날을 앞으로 어떻게 지키라고 하셨습니까?$q$, $q$여호와의 절기로 대대로 지키라고 하셨다$q$, $q$애굽의 승리를 기념하라고 하셨다$q$, $q$그날을 다시 말하지 말라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$출 12:14 — '너희는 이 날을 기념하여 여호와의 절기를 삼아 영원한 규례로 대대에 지킬지니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘 자손이 애굽에 거주한 기간은 얼마입니까?$q$, $q$삼백 년$q$, $q$사백 삼십 년$q$, $q$사백 년$q$, $q$헷갈렸어요$q$, 1, $q$출 12:40 — '이스라엘 자손이 애굽에 거주한지 사백 삼십 년이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$출애굽 길에서 여호와께서 이스라엘을 어떻게 인도하셨습니까?$q$, $q$낮에는 구름 기둥, 밤에는 불기둥으로 인도하셨다$q$, $q$모세의 지팡이로 길을 여셨다$q$, $q$천사들을 앞서 보내셨다$q$, $q$헷갈렸어요$q$, 0, $q$출 13:21 — '낮에는 구름 기둥, 밤에는 불기둥이 백성 앞에서 떠나지 아니하니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 백성을 블레셋 사람의 땅 길 대신 어느 길로 돌리셨습니까?$q$, $q$하란으로 돌아가는 길$q$, $q$홍해의 광야 길$q$, $q$소돔으로 가는 들길$q$, $q$헷갈렸어요$q$, 1, $q$출 13:18 — '하나님이 홍해의 광야 길로 돌려 백성을 인도하시매'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$홍해를 갈라지게 한 것은 무엇이었습니까?$q$, $q$하나님의 번개$q$, $q$큰 동풍$q$, $q$큰 서풍$q$, $q$헷갈렸어요$q$, 1, $q$출 14:21 — '여호와께서 큰 동풍으로 밤새도록 바닷물을 물러가게 하시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$애굽 사람들은 홍해에서 무엇을 깨달았습니까?$q$, $q$바다가 곧 다시 마를 것이라고 생각했다$q$, $q$하나님이 이스라엘을 위해 싸우신다고 깨달았다$q$, $q$이스라엘이 길을 잃었다고 생각했다$q$, $q$헷갈렸어요$q$, 1, $q$출 14:25 — '그 병거 바퀴를 벗겨서 달리기에 극난하게 하시니 애굽 사람들이 가로되 이스라엘 앞에서 우리가 도망하자 여호와가 그들을 위하여 싸워 애굽 사람들을 치는도다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$홍해에서 큰 구원을 본 이스라엘 백성은 어떻게 반응했습니까?$q$, $q$여호와를 경외하며 여호와와 모세를 믿었다$q$, $q$모세에게 바다를 다시 닫으라 했다$q$, $q$곧바로 애굽으로 돌아가려 했다$q$, $q$헷갈렸어요$q$, 0, $q$출 14:31 — '이스라엘이 여호와께서 애굽 사람들에게 베푸신 큰 일을 보았으므로 백성이 여호와를 경외하며 여 호와와 그 종 모세를 믿었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마라에서 물을 마시지 못한 백성은 어떻게 하였습니까?$q$, $q$원망하였다$q$, $q$다른 물을 찾아 떠났다$q$, $q$금식하며 기도하였다$q$, $q$헷갈렸어요$q$, 0, $q$출 15:24 — '백성이 모세를 원망하여 가로되 우리가 무엇을 마시리요'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마라에서 쓴 물을 달게 한 것은 무엇이었습니까?$q$, $q$하나님이 지시하신 나무$q$, $q$소금 한 줌$q$, $q$모세의 지팡이$q$, $q$헷갈렸어요$q$, 0, $q$출 15:25 — '여호와께서 그에게 한 나무를 지시하시니 그가 물에 던지매 물이 달아졌더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마라를 떠난 뒤 이스라엘이 이른 엘림에는 무엇이 있었습니까?$q$, $q$마른 우물 하나와 빈 들판$q$, $q$금송아지 제단과 큰 성문$q$, $q$물 샘 열둘과 종려나무 칠십 주$q$, $q$헷갈렸어요$q$, 2, $q$출 15:27 — '엘림에 이르니 거기 물샘 열둘과 종려 칠십 주가 있는지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$일부 백성은 만나를 어떻게 하였습니까?$q$, $q$아침까지 남겨 두었다$q$, $q$먹기를 거부하였다$q$, $q$안식일에도 거두러 나갔다$q$, $q$헷갈렸어요$q$, 0, $q$출 16:20 — '모세의 말을 청종하지 않고 ... 아침까지 두매 벌레가 생기고 냄새가 난지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 안식일에 만나를 어떻게 하라고 말했습니까?$q$, $q$그날은 만나를 먹지 말라고 했다$q$, $q$그날도 평소처럼 새로 거두라고 했다$q$, $q$그날은 들에서 얻지 못하니 남은 것을 먹으라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$출 16:25 — '모세가 가로되 오늘은 그것을 먹으라 오늘은 여호와께 안식일인즉 오늘은 너희가 그것을 들에서 얻지 못하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$한 오멜은 에바의 몇 분의 일입니까?$q$, $q$오분의 일$q$, $q$사분의 일$q$, $q$십분의 일$q$, $q$헷갈렸어요$q$, 2, $q$출 16:36 — '오멜은 에바 십분의 일이더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아말렉과 싸운 장소는 어디입니까?$q$, $q$시내산$q$, $q$르비딤$q$, $q$마라$q$, $q$헷갈렸어요$q$, 1, $q$출 17:8 — '아말렉이 이르러 이스라엘과 르비딤에서 싸우니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세의 팔이 피곤할 때 아론과 훌은 어떻게 하였습니까?$q$, $q$모세의 손을 붙들어 올렸다$q$, $q$모세 대신 산에서 기도하였다$q$, $q$직접 여호수아와 싸웠다$q$, $q$헷갈렸어요$q$, 0, $q$출 17:12 — '아론과 훌이 ... 모세의 손을 붙들어 올렸더니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아말렉 전투에서 여호수아는 어떻게 싸웠습니까?$q$, $q$산 위에서 모세의 팔을 붙들었다$q$, $q$칼날로 아말렉과 그 백성을 쳐서 이겼다$q$, $q$전투를 피하고 광야로 물러났다$q$, $q$헷갈렸어요$q$, 1, $q$출 17:13 — '여호수아가 칼날로 아말렉과 그 백성을 쳐서 파하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$십계명에서 이웃에 대해 금한 것은 무엇입니까?$q$, $q$도둑질$q$, $q$거짓 증거$q$, $q$살인$q$, $q$헷갈렸어요$q$, 1, $q$출 20:16 — '네 이웃에 대하여 거짓 증거하지 말지니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$십계명 선포 후 백성은 어디에 있었습니까?$q$, $q$산 아래에 모여 절하였다$q$, $q$성막 앞에 엎드렸다$q$, $q$멀리 섰다$q$, $q$헷갈렸어요$q$, 2, $q$출 20:21 — '백성은 멀리 섰고 모세는 하나님의 계신 암흑으로 가까이 가니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$십계명을 들은 뒤 백성은 모세에게 무엇을 부탁했습니까?$q$, $q$애굽으로 다시 돌아가자고 부탁했다$q$, $q$시내산 위로 함께 올라가자고 부탁했다$q$, $q$모세가 대신 말씀을 전해 달라고 부탁했다$q$, $q$헷갈렸어요$q$, 2, $q$출 20:19 — '당신이 우리에게 말씀하소서 우리가 들으리이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$금송아지를 만들도록 허락한 사람은 누구입니까?$q$, $q$여호수아$q$, $q$모세$q$, $q$아론$q$, $q$헷갈렸어요$q$, 2, $q$출 32:1-4 — 백성이 아론에게 신을 만들라 하매 아론이 금 귀고리를 모아 송아지를 만들었더라$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 산에서 내려와 백성의 소리를 들었을 때 어떻게 말하였습니까?$q$, $q$통곡하는 소리라 하였다$q$, $q$전쟁의 함성이라 하였다$q$, $q$노래하는 소리라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$출 32:18 — '나의 듣기에는 노래하는 소리로다 하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$금송아지 일로 모세가 책망하자 아론은 백성에 대해 무엇이라고 말했습니까?$q$, $q$여호수아가 송아지를 만들었다고 말했다$q$, $q$백성은 아무 잘못이 없다고 말했다$q$, $q$백성의 악함을 당신이 안다고 말했다$q$, $q$헷갈렸어요$q$, 2, $q$출 32:22 — '아론이 가로되 내 주여 노하지 마소서 이 백성의 악함을 당신이 아나이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 진 밖에 친 장막의 이름은 무엇이었습니까?$q$, $q$성막$q$, $q$회막$q$, $q$증거막$q$, $q$헷갈렸어요$q$, 1, $q$출 33:7 — '모세가 ... 진 밖에 쳐서 ... 회막이라 이름하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$새 돌판을 받으러 시내산에 오를 때 모세는 어떻게 하였습니까?$q$, $q$백성 앞에 서약하고 올라갔다$q$, $q$아침에 일찌기 일어나 돌판을 들고 올라갔다$q$, $q$아론과 함께 올라갔다$q$, $q$헷갈렸어요$q$, 1, $q$출 34:4 — '모세가 ... 아침에 일찌기 일어나 그 두 돌판을 손에 들고 ... 시내 산에 올라가니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 모세 앞을 지나시며 자신을 어떤 분으로 선포하셨습니까?$q$, $q$속히 노하고 약속을 잊는 하나님$q$, $q$이스라엘을 다시 애굽으로 보내는 하나님$q$, $q$자비롭고 은혜롭고 인자와 진실이 많은 하나님$q$, $q$헷갈렸어요$q$, 2, $q$출 34:6 — '여호와께서 그의 앞으로 지나시며 반포하시되 여호와로라 여호와로라 자비롭고 은혜롭고 노하기를 더디하고 인자와 진실이 많은 하나님이로라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$미리암과 아론은 모세에 대해 무엇을 문제 삼았습니까?$q$, $q$모세가 구스 여자를 취한 일$q$, $q$모세가 장대를 세운 일$q$, $q$모세가 만나를 거두지 않은 일$q$, $q$헷갈렸어요$q$, 0, $q$민 12:1 — '모세가 구스 여자를 취하였더니 ... 미리암과 아론이 모세를 비방하니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 모세를 어떤 종으로 인정하셨습니까?$q$, $q$하나님의 온 집에 충성된 종$q$, $q$백성을 피하려 한 종$q$, $q$아론보다 말이 많은 종$q$, $q$헷갈렸어요$q$, 0, $q$민 12:7 — '내 종 모세와는 그렇지 아니하니 그는 나의 온 집에 충성됨이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$미리암이 징계를 받은 뒤 모세는 무엇을 했습니까?$q$, $q$하나님께 고쳐 달라고 부르짖었다$q$, $q$진영을 떠나 혼자 올라갔다$q$, $q$백성에게 미리암을 잊으라 했다$q$, $q$헷갈렸어요$q$, 0, $q$민 12:13 — '모세가 여호와께 부르짖어 가로되 하나님이여 원컨대 그를 고쳐 주옵소서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 정탐꾼들에게 살피라고 한 것은 무엇입니까?$q$, $q$애굽으로 돌아갈 지름길$q$, $q$시내산으로 다시 오를 길$q$, $q$땅과 그곳 백성이 강한지 약한지$q$, $q$헷갈렸어요$q$, 2, $q$민 13:18 — '그 땅의 어떠함을 탐지하라 곧 그 땅 거민의 강약과 다소와'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$갈렙은 두려워하는 백성 앞에서 어떤 태도를 보였습니까?$q$, $q$애굽으로 즉시 돌아가자고 말했다$q$, $q$곧 올라가서 그 땅을 취하자고 말했다$q$, $q$정탐한 일을 숨기자고 말했다$q$, $q$헷갈렸어요$q$, 1, $q$민 13:30 — '우리가 곧 올라가서 그 땅을 취하자 능히 이기리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호수아와 갈렙은 백성에게 왜 두려워하지 말라고 했습니까?$q$, $q$정탐꾼들이 모두 같은 보고를 했기 때문$q$, $q$성읍들이 이미 비어 있었기 때문$q$, $q$여호와께서 함께하시기 때문$q$, $q$헷갈렸어요$q$, 2, $q$민 14:9 — '오직 여호와를 거역하지 말라 또 그 땅 백성을 두려워하지 말라 ... 여호와는 우리와 함께 하시느니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$고라와 함께 모인 무리는 누구에게 맞섰습니까?$q$, $q$모세와 아론$q$, $q$여호수아와 갈렙$q$, $q$미리암과 훌$q$, $q$헷갈렸어요$q$, 0, $q$민 16:3 — '그들이 모여서 모세와 아론을 거스려 그들에게 이르되'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$반역의 말을 들은 모세는 어떤 반응을 보였습니까?$q$, $q$군사를 모았다$q$, $q$엎드렸다$q$, $q$애굽으로 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$민 16:4 — '모세가 듣고 엎드렸다가'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$염병이 시작되었을 때 아론은 백성 사이에서 무엇을 했습니까?$q$, $q$성막의 휘장을 새로 만들었다$q$, $q$가나안 정탐꾼들을 다시 보냈다$q$, $q$향을 피워 백성을 위하여 속죄하였다$q$, $q$헷갈렸어요$q$, 2, $q$민 16:47 — '아론이 ... 백성 중에 달려간즉 염병이 백성 중에 시작되었는지라 이에 백성을 위하여 속죄하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$백성은 모세와 아론에게 무엇 때문에 불평했습니까?$q$, $q$장막을 세울 나무가 없다고 불평했다$q$, $q$마실 물이 없다고 불평했다$q$, $q$전쟁할 무기가 없다고 불평했다$q$, $q$헷갈렸어요$q$, 1, $q$민 20:2-3 — '회중이 물이 없으므로 모세와 아론을 공박하니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 모세에게 물을 내기 위해 무엇을 하라고 하셨습니까?$q$, $q$지팡이를 가지고 반석에게 말하라고 하셨다$q$, $q$백성에게 새 우물을 파라고 하셨다$q$, $q$애굽으로 돌아갈 길을 찾으라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$민 20:8 — '너희는 반석에게 명하여 물을 내라 하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 왜 모세와 아론이 약속의 땅에 들어가지 못한다고 하셨습니까?$q$, $q$백성에게 물을 전혀 주지 않았기 때문이다$q$, $q$가나안 정탐을 직접 가지 않았기 때문이다$q$, $q$하나님의 거룩함을 나타내지 못했기 때문이다$q$, $q$헷갈렸어요$q$, 2, $q$민 20:12 — '너희가 나를 믿지 아니하고 이스라엘 자손의 목전에 나의 거룩함을 나타내지 아니한고로'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$광야 길에서 백성은 무엇을 원망했습니까?$q$, $q$성막을 너무 오래 지었다고 불평했다$q$, $q$제사장이 너무 많다고 불평했다$q$, $q$먹을 것과 물이 부족하다고 불평했다$q$, $q$헷갈렸어요$q$, 2, $q$민 21:5 — '어찌하여 우리를 애굽에서 인도하여 올려서 이 광야에서 죽게 하는고 이곳에는 식물도 없고 물도 없도다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$불뱀에 물린 뒤 백성은 모세에게 무엇을 부탁했습니까?$q$, $q$여호와께 기도해 달라고 부탁했다$q$, $q$새 지도자를 세워 달라고 부탁했다$q$, $q$애굽으로 데려가 달라고 부탁했다$q$, $q$헷갈렸어요$q$, 0, $q$민 21:7 — '여호와께 기도하여 이 뱀들을 우리에게서 떠나게 하소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$뱀에 물린 사람들은 어떻게 살아났습니까?$q$, $q$장대 위의 놋뱀을 바라보았다$q$, $q$광야 밖으로 도망쳤다$q$, $q$스스로 약초를 찾아 먹었다$q$, $q$헷갈렸어요$q$, 0, $q$민 21:9 — '모세가 놋뱀을 만들어 장대 위에 다니 뱀에게 물린 자마다 놋뱀을 쳐다본즉 살더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘 백성은 싯딤에서 어떤 죄에 빠졌습니까?$q$, $q$모압 사람들의 우상 제사에 참여했다$q$, $q$여리고 성을 먼저 공격했다$q$, $q$성막 기구를 새로 만들었다$q$, $q$헷갈렸어요$q$, 0, $q$민 25:1-2 — '백성이 모압 여자들과 음행하기를 시작하니라 그 여자들이 그 신들에게 제사할 때에 백성을 청하매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$비느하스의 행동 뒤에 하나님은 무엇이 그쳤다고 하셨습니까?$q$, $q$요단강 물이 멈추었다$q$, $q$이스라엘을 향한 진노가 그쳤다$q$, $q$만나가 다시 내리기 시작했다$q$, $q$헷갈렸어요$q$, 1, $q$민 25:11 — '그가 나의 질투심으로 그들 중에서 나의 노를 돌이켜서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 비느하스의 열심을 어떻게 보셨습니까?$q$, $q$언약을 향한 열심으로 보셨다$q$, $q$전쟁을 피하려는 두려움으로 보셨다$q$, $q$왕이 되려는 욕심으로 보셨다$q$, $q$헷갈렸어요$q$, 0, $q$민 25:13 — '그가 그 하나님을 위하여 질투하여 이스라엘 자손을 속죄하였음이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 광야 생활 동안 하나님이 백성을 어떻게 돌보셨다고 말했습니까?$q$, $q$애굽 왕에게 다시 보내셨다고 말했다$q$, $q$성전을 완성하게 하셨다고 말했다$q$, $q$먹을 것과 길과 승리를 주셨다고 말했다$q$, $q$헷갈렸어요$q$, 2, $q$신 29:5-7 — '너희 옷이 낡아지지 아니하였고 ... 헤스본 왕 시혼과 바산 왕 옥이 ... 싸우러 나왔으므로 우리가 그들을 치고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 백성에게 어떤 우상들을 경계하라고 했습니까?$q$, $q$성막의 등잔대와 떡상$q$, $q$나무와 돌과 은금으로 만든 우상$q$, $q$요단강의 돌기념물$q$, $q$헷갈렸어요$q$, 1, $q$신 29:17 — '목석과 은금의 우상을 보았느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 백성이 하나님께 돌아오면 어떤 일이 있을 것이라고 말했습니까?$q$, $q$하나님이 다시 복을 주시고 돌아오게 하신다$q$, $q$가나안 땅을 모두 잊게 된다$q$, $q$광야 생활이 처음부터 다시 시작된다$q$, $q$헷갈렸어요$q$, 0, $q$신 30:3 — '네 하나님 여호와께서 마음을 돌이키시고 너를 긍휼히 여기사 ... 돌아오게 하시되'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 백성 앞에서 누구를 다음 지도자로 세웠습니까?$q$, $q$비느하스$q$, $q$여호수아$q$, $q$갈렙$q$, $q$헷갈렸어요$q$, 1, $q$신 31:7 — '모세가 여호수아를 불러 온 이스라엘의 목전에서 그에게 이르되 너는 강하고 담대하라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세는 여호수아에게 어떤 마음으로 서라고 말했습니까?$q$, $q$숨어서 기다리라고 말했다$q$, $q$백성을 두려워하라고 말했다$q$, $q$강하고 담대하라고 말했다$q$, $q$헷갈렸어요$q$, 2, $q$신 31:7 — '너는 강하고 담대하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 회막에서 모세에게 이스라엘에 대해 무엇을 말씀하셨습니까?$q$, $q$그들이 훗날 하나님을 떠날 것이라고 하셨다$q$, $q$그들이 다시 애굽 왕이 될 것이라고 하셨다$q$, $q$그들이 광야에서 모두 사라질 것이라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$신 31:16 — '이 백성은 ... 일어나서 이방 신들을 음란히 좇아 나를 버리며'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 모세에게 어느 산에서 약속의 땅을 보게 하셨습니까?$q$, $q$갈멜산$q$, $q$느보산$q$, $q$시내산$q$, $q$헷갈렸어요$q$, 1, $q$신 34:1 — '모세가 모압 평지에서 느보 산에 올라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 죽기 전 여호수아에게 한 일은 무엇입니까?$q$, $q$여호수아의 장막을 불태웠다$q$, $q$여호수아에게 안수했다$q$, $q$여호수아를 애굽으로 보냈다$q$, $q$헷갈렸어요$q$, 1, $q$신 34:9 — '모세가 눈의 아들 여호수아에게 안수하였으므로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$모세가 죽을 때 그의 몸 상태는 어떠했다고 기록되어 있습니까?$q$, $q$눈이 흐리지 않고 기력이 쇠하지 않았다$q$, $q$전쟁에서 크게 다쳤다$q$, $q$광야 길을 걷지 못했다$q$, $q$헷갈렸어요$q$, 0, $q$신 34:7 — '그 눈이 흐리지 아니하였고 기력이 쇠하지 아니하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호수아는 여리고를 알아보기 위해 누구를 보냈습니까?$q$, $q$열두 제사장$q$, $q$블레셋 사신들$q$, $q$두 정탐꾼$q$, $q$헷갈렸어요$q$, 2, $q$수 2:1 — '여호수아가 싯딤에서 두 사람을 정탐으로 가만히 보내며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라합은 정탐꾼들을 어떻게 도왔습니까?$q$, $q$그들을 성문 앞에 묶어 두었다$q$, $q$그들을 왕에게 바로 넘겼다$q$, $q$그들을 숨기고 추적자들을 다른 길로 보냈다$q$, $q$헷갈렸어요$q$, 2, $q$수 2:4-6 — '그 여인이 그 두 사람을 이미 숨긴지라 ... 실상은 그가 이미 그들을 이끌고 지붕에 올라가서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라합의 집을 구별하는 표는 무엇이었습니까?$q$, $q$지붕 위에 놓은 등잔$q$, $q$창문에 매단 붉은 줄$q$, $q$문 앞에 쌓은 열두 돌$q$, $q$헷갈렸어요$q$, 1, $q$수 2:18 — '이 붉은 줄을 창문에 매고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요단강 도하를 위해 먼저 강으로 들어간 것은 무엇이었습니까?$q$, $q$모세의 지팡이$q$, $q$언약궤$q$, $q$제사장 열둘$q$, $q$헷갈렸어요$q$, 1, $q$수 3:11 — '온 땅의 주의 언약궤가 너희 앞서 요단으로 들어가나니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요단강 도하 이후 이스라엘 백성은 여호수아를 어떻게 대하였습니까?$q$, $q$여호수아를 왕으로 추대하였다$q$, $q$모세를 두려워하던 것같이 두려워하였다$q$, $q$함께 노래와 춤을 추었다$q$, $q$헷갈렸어요$q$, 1, $q$수 4:14 — '백성이 두려워하기를 모세를 두려워하던 것같이 하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요단강을 건넌 뒤 하나님은 여호수아에게 어떻게 하셨습니까?$q$, $q$여호수아에게 말씀하셨다$q$, $q$언약궤를 숨기라고 하셨다$q$, $q$백성을 다시 강가로 돌려보내셨다$q$, $q$헷갈렸어요$q$, 0, $q$수 4:15 — '여호와께서 여호수아에게 일러 가라사대'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여리고 성을 함락하기 위해 성을 돈 날수는 총 며칠이었습니까?$q$, $q$사십 일$q$, $q$삼 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 2, $q$수 6:3-4 — 엿새 동안 하루 한 번, 일곱째 날 일곱 번 돌아 총 칠 일이었더라$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$일곱째 날 여호수아는 백성에게 무엇을 하라고 했습니까?$q$, $q$밤이 될 때까지 기다리라고 했다$q$, $q$하나님이 성을 주셨으니 외치라고 했다$q$, $q$조용히 성에서 물러나라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$수 6:16 — '일곱 번째에 제사장들이 나팔을 불 때에 여호수아가 백성에게 이르되 외치라 여호와께서 너희에게 이 성을 주셨느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여리고 성 앞에서 백성이 외치자 어떤 일이 일어났습니까?$q$, $q$성벽이 무너져 백성이 성으로 들어갔다$q$, $q$성문이 더 굳게 닫혔다$q$, $q$백성이 겁을 내고 광야로 돌아갔다$q$, $q$헷갈렸어요$q$, 0, $q$수 6:20 — '이에 백성은 외치고 제사장들은 나팔을 불매 백성이 나팔 소리를 듣는 동시에 크게 소리질러 외치 니 성벽이 무너져 내린지라 백성이 각기 앞으로 나아가 성에 들어가서 그 성을 취하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 28;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 28 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아간은 어느 지파 사람이었습니까?$q$, $q$베냐민 지파$q$, $q$에브라임 지파$q$, $q$유다 지파$q$, $q$헷갈렸어요$q$, 2, $q$수 7:1 — '유다 지파 세라의 증손 삽디의 손자 갈미의 아들 아간이 바친 물건을 취하였음이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아간은 여호수아 앞에서 어떻게 하였습니까?$q$, $q$아무것도 모른다고 부인하였다$q$, $q$도망치려 하였다$q$, $q$자신의 죄를 고백하였다$q$, $q$헷갈렸어요$q$, 2, $q$수 7:20 — '아간이 여호수아에게 대답하여 가로되 참으로 나는 ... 범죄하여 여차여차히 행하였나이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아간의 죄가 드러난 뒤 이스라엘은 아간과 그 물건들을 어떻게 했습니까?$q$, $q$아간을 제사장으로 세웠다$q$, $q$돌로 치고 불살랐다$q$, $q$몰래 성 안에 숨겼다$q$, $q$헷갈렸어요$q$, 1, $q$수 7:25 — '여호수아가 가로되 네가 어찌하여 우리를 괴롭게 하였느뇨 여호와께서 오늘날 너를 괴롭게 하시리 라하니 온 이스라엘이 그를 돌로 치고 그것들도 돌로 치고 불사르고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 28 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 29;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 29 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 여호수아에게 아이 성에 대해 무엇을 약속하셨습니까?$q$, $q$아이 성 주변을 그냥 지나가라고 하셨다$q$, $q$아이 왕과 성읍을 여호수아의 손에 주시겠다고 하셨다$q$, $q$이스라엘이 다시 애굽으로 돌아가야 한다고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$수 8:1 — '내가 아이 왕과 그 백성과 그 성읍과 그 땅을 다 네 손에 주었노니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 두려워하는 여호수아에게 어떤 태도로 나아가라고 하셨습니까?$q$, $q$패배를 받아들이고 전투를 포기하라고 하셨다$q$, $q$아무에게도 말하지 말고 숨으라고 하셨다$q$, $q$두려워하지 말고 놀라지 말라고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$수 8:1 — '두려워 말라 놀라지 말라 군사를 다 거느리고 일어나 아이로 올라가라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아이 성 승리 뒤 여호수아는 에발 산에 무엇을 쌓았습니까?$q$, $q$군사들이 머물 새 성문$q$, $q$아이 왕의 궁전$q$, $q$여호와를 위한 제단$q$, $q$헷갈렸어요$q$, 2, $q$수 8:30 — '여호수아가 이스라엘 하나님 여호와를 위하여 에발 산에 한 단을 쌓았으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 29 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 30;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 30 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아도니세덱과 여러 왕들은 무엇을 하려고 함께 모였습니까?$q$, $q$요단강을 다시 건너려고 모였다$q$, $q$기브온을 치려고 모였다$q$, $q$여호수아에게 땅을 나누어 주려고 모였다$q$, $q$헷갈렸어요$q$, 1, $q$수 10:4 — '내게로 올라와 나를 도우라 우리가 기브온을 치자'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$전투 중 하나님은 도망하는 군사들에게 무엇을 내리셨습니까?$q$, $q$강물이 갑자기 마르게 하셨다$q$, $q$하늘에서 큰 우박을 내리셨다$q$, $q$성문을 스스로 열게 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$수 10:11 — '여호와께서 하늘에서 큰 덩이 우박을 내리우시매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호수아가 말한 뒤 태양과 달은 어떻게 되었습니까?$q$, $q$태양과 달이 머물렀다$q$, $q$하늘이 완전히 어두워졌다$q$, $q$달만 땅 가까이 내려왔다$q$, $q$헷갈렸어요$q$, 0, $q$수 10:13 — '태양이 머물고 달이 그치기를 백성이 그 대적에게 원수를 갚도록 하였느니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 30 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 31;
+  where q.event_id = e.id and er.code = 'era_exodus' and e.story_index = 31 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$늙은 여호수아는 마지막 권면을 위해 누구를 불렀습니까?$q$, $q$이스라엘의 장로들과 지도자들$q$, $q$애굽의 술객들과 군대$q$, $q$가나안의 다섯 왕들$q$, $q$헷갈렸어요$q$, 0, $q$수 23:2 — '여호수아가 온 이스라엘 곧 그 장로들과 두령들과 재판장들과 유사들을 불러다가'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호수아는 백성에게 어떤 일을 조심하라고 당부했습니까?$q$, $q$다른 민족의 신들을 가까이하지 말라고 했다$q$, $q$율법책을 모두 숨기라고 했다$q$, $q$하나님께 드리는 예배를 멈추라고 했다$q$, $q$헷갈렸어요$q$, 0, $q$수 23:7 — '그 신들의 이름을 부르지 말라 그것을 가리켜 맹세하지 말라 또 그것을 섬겨서 그것에게 절하지 말라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호수아는 말씀을 기록한 뒤 큰 돌을 어디에 세웠습니까?$q$, $q$요단강 한가운데 물길 아래$q$, $q$여리고 성문 밖 붉은 줄 아래$q$, $q$여호와의 성소 곁 상수리나무 아래$q$, $q$헷갈렸어요$q$, 2, $q$수 24:26 — '큰 돌을 취하여 거기 여호와의 성소 곁에 있는 상수리나무 아래 세우고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_exodus' and e.story_index = 31 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$옷니엘이 이긴 메소보다미아 왕은 누구였습니까?$q$, $q$시스라$q$, $q$에글론$q$, $q$구산 리사다임$q$, $q$헷갈렸어요$q$, 2, $q$삿 3:10 — '여호와께서 메소보다미아 왕 구산 리사다임을 그 손에 붙이시매 옷니엘의 손이 구산 리사다임을 이기니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘이 부르짖을 때 하나님은 어떤 일을 하셨습니까?$q$, $q$성읍을 모두 버려 두셨다$q$, $q$블레셋에게 왕을 세우셨다$q$, $q$구원자를 세워 건지셨다$q$, $q$헷갈렸어요$q$, 2, $q$삿 3:9 — '여호와께서 그들을 위하여 한 구원자를 세워 구원하게 하시니 ... 옷니엘이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$드보라와 바락의 노래 뒤 그 땅은 얼마 동안 평안했습니까?$q$, $q$사십 년$q$, $q$삼 년$q$, $q$팔 년$q$, $q$헷갈렸어요$q$, 0, $q$삿 5:31 — '그땅이 사십 년 동안 태평하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$기드온이 미디안을 피해 밀을 타작하던 곳은 어디였습니까?$q$, $q$다볼산 꼭대기$q$, $q$포도주 틀$q$, $q$성문 앞$q$, $q$헷갈렸어요$q$, 1, $q$삿 6:11 — '미디안 사람에게 알리지 아니하려 하여 밀을 포도주 틀에서 타작하더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바위에서 나온 불은 무엇을 태웠습니까?$q$, $q$나팔과 항아리$q$, $q$고기와 무교 전병$q$, $q$아세라 목상과 성문$q$, $q$헷갈렸어요$q$, 1, $q$삿 6:21 — '불이 반석에서 나와 고기와 무교 전병을 살랐고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 기드온에게 아세라 나무로 무엇을 하라고 하셨습니까?$q$, $q$미디안 진에 숨기라고 하셨다$q$, $q$수소를 번제로 드릴 때 땔감으로 쓰라고 하셨다$q$, $q$성문 앞에 다시 세우라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$삿 6:26 — '네가 찍은 아세라 나무로 번제를 드릴지니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$기드온이 처음 구한 양털 표징은 무엇이었습니까?$q$, $q$양털에만 이슬이 있고 땅은 마르는 것$q$, $q$양털이 돌로 변하는 것$q$, $q$양털이 불타고 땅은 젖는 것$q$, $q$헷갈렸어요$q$, 0, $q$삿 6:37 — '이슬이 양털에만 있고 사면 땅은 마르면 ... 알겠나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 왜 기드온의 군사가 너무 많다고 하셨습니까?$q$, $q$이스라엘이 자기 힘으로 구원했다고 자랑할까 하셨다$q$, $q$미디안과 평화를 맺게 하려 하셨다$q$, $q$기드온을 왕으로 세우려 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$삿 7:2 — '내 손이 나를 구원하였다 할까 함이니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$기드온이 삼백 명에게 나누어 준 것은 무엇이었습니까?$q$, $q$나팔과 빈 항아리와 횃불$q$, $q$방패와 긴 창과 왕관$q$, $q$양털과 물그릇과 돌판$q$, $q$헷갈렸어요$q$, 0, $q$삿 7:16 — '각 손에 나팔과 빈 항아리를 들리고 항아리 안에는 횃불을 감추게 하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$돌라는 어디에 거하며 이스라엘을 다스렸습니까?$q$, $q$에브라임 산지 사밀$q$, $q$블레셋 가사$q$, $q$모압 평지$q$, $q$헷갈렸어요$q$, 0, $q$삿 10:1 — '그가 에브라임 산지 사밀에 거하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야일에게 있던 아들들과 성읍은 각각 몇이었습니까?$q$, $q$삼십$q$, $q$열둘$q$, $q$칠십$q$, $q$헷갈렸어요$q$, 0, $q$삿 10:4 — '그에게 아들 삼십이 있어 ... 성읍 삼십을 두었었는데'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야일은 몇 해 동안 이스라엘의 사사가 되었습니까?$q$, $q$이십이 년$q$, $q$팔십 년$q$, $q$사십 년$q$, $q$헷갈렸어요$q$, 0, $q$삿 10:3 — '이십이 년 동안 이스라엘의 사사가 되니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$길르앗 장로들은 입다에게 무엇을 맡아 달라고 했습니까?$q$, $q$성막 제사장이 되어 달라고 했다$q$, $q$암몬 자손과 싸울 장관이 되어 달라고 했다$q$, $q$블레셋 왕에게 공물을 바쳐 달라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$삿 11:6 — '우리가 암몬 자손과 싸우려 하나니 당신은 와서 우리의 장관이 되라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$입다가 암몬 자손에게 나아가기 전 누구의 영이 그에게 임했습니까?$q$, $q$블레셋 신의 영$q$, $q$여호와의 신$q$, $q$모압 왕의 영$q$, $q$헷갈렸어요$q$, 1, $q$삿 11:29 — '이에 여호와의 신이 입다에게 임하시니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$입다가 승리하고 집에 돌아왔을 때 누가 그를 맞이했습니까?$q$, $q$그의 딸이 소고를 잡고 춤추며 나왔다$q$, $q$드보라가 종려나무 아래 앉아 있었다$q$, $q$에글론 왕이 칼을 들고 나왔다$q$, $q$헷갈렸어요$q$, 0, $q$삿 11:34 — '그 딸이 소고를 잡고 춤추며 나와서 영접하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$입산은 어느 성읍의 사람이었습니까?$q$, $q$가사$q$, $q$여리고$q$, $q$베들레헴$q$, $q$헷갈렸어요$q$, 2, $q$삿 12:8 — '베들레헴 입산이 이스라엘의 사사이었더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$스불론 사람 엘론은 몇 해 동안 이스라엘을 다스렸습니까?$q$, $q$십 년$q$, $q$사십 년$q$, $q$이십삼 년$q$, $q$헷갈렸어요$q$, 0, $q$삿 12:11 — '십 년 동안 이스라엘을 다스렸더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$압돈의 아들들과 손자들은 무엇을 탔다고 기록됩니까?$q$, $q$어린 나귀 칠십 필$q$, $q$낙타 십이만 마리$q$, $q$철병거 구백 승$q$, $q$헷갈렸어요$q$, 0, $q$삿 12:14 — '아들과 손자 칠십 인이 있어 어린 나귀 칠십 필을 탔었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$삼손은 힘의 비밀을 결국 누구에게 털어놓았습니까?$q$, $q$들릴라$q$, $q$블레셋 방백들$q$, $q$다곤 제사장$q$, $q$헷갈렸어요$q$, 0, $q$삿 16:17 — '삼손이 진심을 토하여 그에게 이르되'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$들릴라는 삼손의 비밀을 알게 된 뒤 그가 잠들었을 때 무엇이 밀리게 했습니까?$q$, $q$머리털 일곱 가닥$q$, $q$손에 든 나팔$q$, $q$수염과 겉옷$q$, $q$헷갈렸어요$q$, 0, $q$삿 16:19 — '사람을 불러 그 머리털 일곱 가닥을 밀고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$삼손의 머리털은 밀린 뒤 어떻게 되기 시작했습니까?$q$, $q$다시 자라기 시작했다$q$, $q$바로 왕관으로 변했다$q$, $q$영원히 자라지 않았다$q$, $q$헷갈렸어요$q$, 0, $q$삿 16:22 — '그의 머리털이 밀리운 후에 다시 자라기 시작하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나오미와 룻이 돌아간 곳은 어느 나라였습니까?$q$, $q$이스라엘(유다)$q$, $q$에돔$q$, $q$아람$q$, $q$헷갈렸어요$q$, 0, $q$룻 1:7 — '모압 지방에서 돌아오려 하여 ... 이스라엘 땅으로 향하여 길을 가더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나오미는 두 며느리에게 여호와께서 어떻게 해 주시기를 바랐습니까?$q$, $q$모압을 벌하시기를 바랐다$q$, $q$베들레헴에 못 오게 하시기를 바랐다$q$, $q$그들을 선대하시기를 바랐다$q$, $q$헷갈렸어요$q$, 2, $q$룻 1:8 — '나오미가 두 자부에게 이르되 너희는 각각 어미의 집으로 돌아가라 너희가 죽은 자와 나를 선대한 것같이 여호와께서 너희를 선대하시기를 원하며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$룻이 함께 가기로 굳게 결심하자 나오미는 어떻게 했습니까?$q$, $q$룻을 억지로 돌려보냈다$q$, $q$더 말리기를 그쳤다$q$, $q$혼자 몰래 떠났다$q$, $q$헷갈렸어요$q$, 1, $q$룻 1:18 — '나오미가 룻의 자기와 함께 가기로 굳게 결심함을 보고 그에게 말하기를 그치니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$보아스는 룻에게 밭에서 이삭을 줍도록 어떻게 배려하였습니까?$q$, $q$자기 손으로 보리를 가져다 주었다$q$, $q$일꾼들과 함께 급여를 주었다$q$, $q$소년들에게 건드리지 말라 명하였다$q$, $q$헷갈렸어요$q$, 2, $q$룻 2:9 — '내가 그 소년들에게 명하여 너를 건드리지 말라 하였느니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$룻이 저녁까지 주워 떤 보리의 양은 얼마였습니까?$q$, $q$한 오멜$q$, $q$한 호멜$q$, $q$한 에바$q$, $q$헷갈렸어요$q$, 2, $q$룻 2:17 — '룻이 밭에서 저녁까지 줍고 그 주운 것을 떠니 보리가 한 에바쯤 되는지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$룻은 나오미에게 자신이 일한 밭 주인의 이름을 누구라고 말했습니까?$q$, $q$엘리멜렉이라고 말했다$q$, $q$오르바라고 말했다$q$, $q$보아스라고 말했다$q$, $q$헷갈렸어요$q$, 2, $q$룻 2:19 — '시모가 그에게 이르되 오늘 어디서 주웠느냐 어디서 일을 하였느냐 너를 돌아본 자에게 복이 있기 를 원하노라 룻이 누구에게서 일한 것을 시모에게 알게 하여 가로되 오늘 일하게 한 사람의 이름은 보아 스니이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$보아스는 성문에서 기업 무를 결정을 어떻게 공개하였습니까?$q$, $q$장로들과 모든 백성에게 자신이 산다고 선언하였다$q$, $q$제비를 뽑아 결정하였다$q$, $q$성전에서 제사를 드리고 선포하였다$q$, $q$헷갈렸어요$q$, 0, $q$룻 4:9 — '보아스가 장로들과 모든 백성에게 이르되 내가 엘리멜렉과 ... 모든 것을 산 일에 너희가 오늘날 증인이 되었고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성문에 있던 사람들은 보아스에게 무엇을 축복했습니까?$q$, $q$성전을 새로 짓기를 축복했다$q$, $q$베들레헴에서 이름이 높아지기를 축복했다$q$, $q$모압으로 다시 돌아가기를 축복했다$q$, $q$헷갈렸어요$q$, 1, $q$룻 4:11 — '성문에 있는 모든 백성과 장로들이 가로되 우리가 증인이 되노니 여호와께서 네 집에 들어가는 여 인으로 이스라엘 집을 세운 라헬, 레아 두 사람과 같게 하시고 너로 에브랏에서 유력하고 베들레헴에서 유명케 하시기를 원하며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$보아스와 룻이 낳은 아들의 이름은 무엇입니까?$q$, $q$오벧$q$, $q$다윗$q$, $q$이새$q$, $q$헷갈렸어요$q$, 0, $q$룻 4:17 — '그 이름을 오벧이라 하였는데 그는 다윗의 아비인 이새의 아비였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$한나의 남편 엘가나의 출신 지파는 어디입니까?$q$, $q$베냐민 지파$q$, $q$유다 지파$q$, $q$에브라임 지파$q$, $q$헷갈렸어요$q$, 2, $q$삼상 1:1 — '에브라임 산지 라마다임소빔에 에브라임 사람 엘가나라 하는 자가 있으니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리는 성전에서 기도하던 한나를 보고 무엇이라고 오해해 말했습니까?$q$, $q$언제까지 취해 있겠느냐고 말했다$q$, $q$아들을 낳았다고 축하했다$q$, $q$제사장이 되라고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 1:14 — '엘리가 그에게 이르되 네가 언제까지 취하여 있겠느냐 포도주를 끊으라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$한나는 사무엘을 두고 여호와께서 자신의 기도에 어떻게 응답하셨다고 고백했습니까?$q$, $q$기도를 듣지 않으셨다고 고백했다$q$, $q$구하여 기도한 바를 허락하셨다고 고백했다$q$, $q$엘리에게 아이를 맡기지 말라 하셨다고 고백했다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 1:27 — '이 아이를 위하여 내가 기도하였더니 여호와께서 나의 구하여 기도한 바를 허락하신지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$어린 사무엘은 엘리 앞에서 무엇을 하고 있었습니까?$q$, $q$왕으로 기름부음을 받고 있었다$q$, $q$블레셋과 싸우고 있었다$q$, $q$여호와를 섬기고 있었다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 3:1 — '아이 사무엘이 엘리 앞에서 여호와를 섬길 때에는'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘은 밤에 자기 이름을 부르는 소리를 처음 듣고 누구에게 달려갔습니까?$q$, $q$엘리에게 달려갔다$q$, $q$한나에게 달려갔다$q$, $q$블레셋 사람들에게 달려갔다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 3:5 — '엘리에게로 달려가서 가로되 당신이 나를 부르셨기로 내가 여기 있나이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엘리는 사무엘에게 다시 부르심을 들으면 어떻게 대답하라고 알려 주었습니까?$q$, $q$말씀하옵소서 주의 종이 듣겠나이다$q$, $q$다곤 신전에 가겠나이다$q$, $q$잠시 후에 다시 오겠나이다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 3:9 — '여호와여 말씀하옵소서 주의 종이 듣겠나이다 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_judges' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$블레셋 사람들이 언약궤를 새 수레에 실었을 때 암소들은 어디로 갔습니까?$q$, $q$아스돗 신전으로 돌아갔다$q$, $q$가드 성문 앞에서 멈추었다$q$, $q$벧세메스 길로 바로 갔다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 6:12 — '암소가 벧세메스 길로 바로 행하여 대로로 가며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아스돗 사람들은 언약궤가 자기들과 함께 있을 때 무엇을 깨달았습니까?$q$, $q$아무 일도 일어나지 않았다고 여겼다$q$, $q$언약궤가 다곤을 더 강하게 만든다고 여겼다$q$, $q$하나님의 손이 자기들과 다곤을 치신다고 여겼다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 5:7 — '그 손이 우리와 우리 신 다곤을 친다 하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$미스바 전투에서 여호와께서는 블레셋 사람들을 어떻게 어지럽게 하셨습니까?$q$, $q$사무엘을 블레셋 왕으로 세우셨다$q$, $q$언약궤를 새 수레에 싣게 하셨다$q$, $q$큰 우레를 발하여 그들을 어지럽게 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 7:10 — '여호와께서 블레셋 사람에게 큰 우레를 발하여 그들을 어지럽게 하시니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_judges' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 어느 지파 출신이었습니까?$q$, $q$유다 지파$q$, $q$베냐민 지파$q$, $q$에브라임 지파$q$, $q$헷갈렸어요$q$, 1, $q$삼상 9:1 — '베냐민 지파에 기스라 이름하는 유력한 사람이 있으니 ... 베냐민 사람이더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 암나귀를 찾다가 왜 돌아가려 했습니까?$q$, $q$암나귀를 이미 찾았다고 생각했다$q$, $q$사무엘을 만나고 싶지 않았다$q$, $q$아버지가 자신들을 걱정할까 두려웠다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 9:5 — '그들이 숩 땅에 이른 때에 사울이 함께 하는 사환에게 이르되 돌아가자 내 부친이 암나귀 생각은 고 사하고 우리를 위하여 걱정하실까 두려워하노라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘이 백성 앞에서 사울을 찾게 했을 때, 사울은 어디에 숨어 있었습니까?$q$, $q$짐보따리 사이에 숨어 있었다$q$, $q$블레셋 진영으로 도망가 있었다$q$, $q$성막 문 앞에 당당히 서 있었다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 10:22 — '그가 행구 사이에 숨었느니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울이 베섹에서 계수한 이스라엘 군사는 몇 명이었습니까?$q$, $q$삼십만$q$, $q$오십만$q$, $q$십만$q$, $q$헷갈렸어요$q$, 0, $q$삼상 11:8 — '사울이 베섹에서 그들을 계수하니 이스라엘 자손이 삼십만이요'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사람들은 야베스 주민들에게 어떤 소식을 전했습니까?$q$, $q$길갈로 모두 이사하라고 전했다$q$, $q$사울이 더 이상 돕지 않을 것이라고 전했다$q$, $q$다음 날 해가 더울 때 구원을 얻을 것이라고 전했다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 11:9 — '무리가 온 사자들에게 이르되 너희는 길르앗 야베스 사람에게 이같이 이르기를 내일 해가 더울 때 에 너희가 구원을 얻으리라 하라 사자들이 돌아가서 야베스 사람들에게 고하매 그들이 기뻐하니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$승리 뒤 백성은 길갈에서 무엇을 했습니까?$q$, $q$사울을 왕으로 세우고 함께 기뻐했다$q$, $q$사울을 왕 자리에서 내렸다$q$, $q$각자 집으로 조용히 돌아갔다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 11:15 — '모든 백성이 길갈로 가서 거기서 여호와 앞에 사울로 왕을 삼고 거기서 여호와 앞에 화목제를 드 리고 사울과 이스라엘 모든 사람이 거기서 크게 기뻐하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘이 사울에게 버림받을 것을 선포한 이유는 무엇이었습니까?$q$, $q$아론 자손이 아니었기 때문$q$, $q$블레셋에 패배했기 때문$q$, $q$여호와의 명하신 바를 지키지 않았기 때문$q$, $q$헷갈렸어요$q$, 2, $q$삼상 13:13-14 — '여호와의 명하신 바를 왕이 지키지 아니하였으므로 여호와께서 그 마음에 맞는 사람을 구하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울이 아말렉을 칠 때 아각을 어떻게 하였습니까?$q$, $q$살려두었다$q$, $q$제사를 드리고 죽였다$q$, $q$즉시 처형하였다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 15:8-9 — '아말렉 사람의 왕 아각을 사로잡고 칼날로 그 모든 백성을 진멸하였으되 ... 아각을 살려두었더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘은 사울에게 무엇을 전하려 했습니까?$q$, $q$사울의 승리를 칭찬하려 했다$q$, $q$블레셋과 화해하라고 했다$q$, $q$밤에 하나님께 들은 말씀을 전하려 했다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 15:16 — '사무엘이 사울에게 이르되 가만히 계시옵소서 간 밤에 여호와께서 내게 이르신 것을 왕에게 말하 리이다 가로되 말씀하소서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘이 이새의 아들들을 볼 때 하나님은 무엇이라 하셨습니까?$q$, $q$맏아들을 세우신다$q$, $q$가장 큰 자를 택하신다$q$, $q$외모가 아닌 중심을 보신다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 16:7 — '나는 중심을 보느니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘은 아비나답을 보고 무엇을 알게 되었습니까?$q$, $q$아비나답이 바로 왕이 된다는 것$q$, $q$하나님이 그를 택하지 않으셨다는 것$q$, $q$이새의 아들들이 모두 선택되었다는 것$q$, $q$헷갈렸어요$q$, 1, $q$삼상 16:8 — '이새가 아비나답을 불러 사무엘의 앞을 지나게 하매 사무엘이 가로되 이도 여호와께서 택하지 아니 하셨느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗에게 기름을 부은 사람은 누구입니까?$q$, $q$엘리야$q$, $q$나단$q$, $q$사무엘$q$, $q$헷갈렸어요$q$, 2, $q$삼상 16:13 — '사무엘이 기름 뿔병을 취하여 ... 기름을 부었더니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 골리앗에게 싸움을 선포할 때 어떻게 말하였습니까?$q$, $q$여호와께서 너를 내 손에 붙이시리라 하였다$q$, $q$두려워하지 말라고 외쳤다$q$, $q$이스라엘 군대의 이름으로 싸운다 하였다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 17:46 — '오늘 여호와께서 너를 내 손에 붙이시리니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$골리앗이 가까이 오자 다윗은 어떻게 맞섰습니까?$q$, $q$뒤로 물러나 사울을 불렀다$q$, $q$블레셋 사람을 향해 빨리 달려갔다$q$, $q$갑옷을 입으러 진으로 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 17:48 — '블레셋 사람이 일어나 다윗에게로 마주 가까이 올 때에 다윗이 블레셋 사람에게로 마주 그 항오를 향하여 빨리 달리며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗이 골리앗을 쓰러뜨리는 데 사용한 무기는 무엇이었습니까?$q$, $q$창$q$, $q$물매와 돌$q$, $q$칼$q$, $q$헷갈렸어요$q$, 1, $q$삼상 17:50 — '다윗이 이같이 물매와 돌로 블레셋 사람을 이기고 그를 쳐 죽였으나 자기 손에는 칼이 없었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요나단은 다윗을 어떻게 여기고 언약을 맺었습니까?$q$, $q$두려운 적으로 여겼다$q$, $q$자기 생명처럼 사랑했다$q$, $q$낯선 사람처럼 모른 척했다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 18:3 — '요나단은 다윗을 자기 생명 같이 사랑하여 더불어 언약을 맺었으며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 다윗이 계속 지혜롭게 행하자 어떤 마음을 품게 되었습니까?$q$, $q$완전히 안심했다$q$, $q$곧바로 왕위를 넘겼다$q$, $q$더욱더욱 두려워했다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 18:29 — '사울이 다윗을 더욱더욱 두려워하여 평생에 다윗의 대적이 되니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 미갈과 결혼하려는 다윗에게 어떤 전투의 증표를 요구했습니까?$q$, $q$골리앗의 칼 한 자루$q$, $q$암나귀 세 마리$q$, $q$블레셋 사람의 양피 일백$q$, $q$헷갈렸어요$q$, 2, $q$삼상 18:25 — '왕은 아무 것도 요구하지 아니하고 다만 왕의 원수의 보복으로 블레셋 사람의 양피 일백을 원하신다 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 요나단과 신하들에게 다윗에 대해 무엇을 말했습니까?$q$, $q$다윗을 왕으로 세우라고 말했다$q$, $q$다윗을 죽이라고 말했다$q$, $q$다윗을 블레셋으로 보내라고 말했다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 19:1 — '사울이 그 아들 요나단과 그 모든 신하에게 다윗을 죽이라 말하였더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요나단은 사울에게 다윗을 두고 어떤 말을 했습니까?$q$, $q$다윗이 이미 죽었다고 말했다$q$, $q$다윗에게 범죄하지 말라고 말했다$q$, $q$다윗을 멀리 팔아 버리라고 말했다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 19:4 — '왕은 신하 다윗에게 범죄치 마옵소서 그는 왕께 득죄하지 아니하였고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$미갈은 다윗이 사울의 손에서 피하도록 어떻게 도왔습니까?$q$, $q$다윗을 블레셋 진영에 넘겼다$q$, $q$창에서 달아내려 도망하게 했다$q$, $q$사울에게 직접 창을 던졌다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 19:12 — '미갈이 다윗을 창에서 달아내리매 그가 도망하여 피하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 사울을 피해 어디로 가서 사무엘에게 일을 알렸습니까?$q$, $q$라마로 갔다$q$, $q$갈멜산으로 갔다$q$, $q$애굽으로 갔다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 19:18 — '다윗이 도피하여 라마로 가서 사무엘에게로 나아가서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울이 다윗을 죽이려는 뜻을 드러내자 요나단은 식탁에서 어떤 마음으로 일어났습니까?$q$, $q$아무렇지 않게 웃었다$q$, $q$심히 노하여 일어났다$q$, $q$다윗을 비난하며 기뻐했다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 20:34 — '요나단이 심히 노하여 식사 자리에서 떠나고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요나단은 다윗에게 위험을 알리려고 들판에서 무엇으로 신호를 보냈습니까?$q$, $q$화살을 쏘아 신호를 보냈다$q$, $q$언약궤를 들고 갔다$q$, $q$성문에 금패를 걸었다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 20:36-37 — '아이에게 이르되 달려가서 나의 쏘는 살을 찾으라 ... 살이 네 앞편에 있지 아니하냐'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울이 동굴에 들어갔을 때 다윗이 있던 곳은 어디입니까?$q$, $q$브엘세바 광야$q$, $q$유다 광야$q$, $q$엔게디 황무지$q$, $q$헷갈렸어요$q$, 2, $q$삼상 24:1 — '다윗이 엔게디 황무지에 있더이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 사울을 해칠 기회를 얻었을 때 어떻게 하였습니까?$q$, $q$부하들에게 명하여 사울을 잡아두었다$q$, $q$여호와의 기름 부음 받은 자이므로 손을 대지 않았다$q$, $q$사울의 겉옷만 베고 용서를 구하였다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 24:6 — '내가 손을 들어 여호와의 기름 부음을 받은 내 주를 치는 것은 여호와의 금하시는 것이니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗이 막은 뒤 사울은 어떻게 했습니까?$q$, $q$굴에서 나와 자기 길로 갔다$q$, $q$다윗의 사람들을 잡아갔다$q$, $q$다윗에게 곧바로 절했다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 24:7 — '다윗이 이 말로 자기 사람들을 금하여 사울을 해하지 못하게 하니라 사울이 일어나 굴에서 나가 자 기 길을 가니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 다윗을 찾으려고 몇 명을 거느리고 십 광야로 내려갔습니까?$q$, $q$삼백 명$q$, $q$열두 명$q$, $q$삼천 명$q$, $q$헷갈렸어요$q$, 2, $q$삼상 26:2 — '사울이 일어나 십 황무지에서 다윗을 찾으려고 이스라엘에서 택한 사람 삼천명과 함께 십 황무지로 내려가서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 밤에 사울의 진영에 들어갔을 때 사울을 어떻게 하지 않았습니까?$q$, $q$사울을 블레셋에 넘겼다$q$, $q$사울을 해치지 않았다$q$, $q$사울에게 창을 던졌다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 26:9 — '다윗이 아비새에게 이르되 죽이지 말라 누구든지 손을 들어 여호와의 기름 부음을 받은 자를 치면 죄가 없겠느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 사울을 해치지 않았음을 보이려고 무엇을 가져갔습니까?$q$, $q$언약궤와 나팔$q$, $q$사울의 왕관과 겉옷$q$, $q$사울의 창과 물병$q$, $q$헷갈렸어요$q$, 2, $q$삼상 26:12 — '다윗이 사울의 머리 곁에서 창과 물병을 가지고 떠나가되'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$블레셋 군대를 본 사울은 마음이 어떠했습니까?$q$, $q$곧바로 다윗에게 도움을 구했다$q$, $q$기뻐하며 잔치를 열었다$q$, $q$크게 두려워 떨었다$q$, $q$헷갈렸어요$q$, 2, $q$삼상 28:5 — '사울이 블레셋 사람의 군대를 보고 두려워서 그 마음이 크게 떨린지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울은 하나님께 응답을 받지 못하자 누구를 찾게 했습니까?$q$, $q$신접한 여인$q$, $q$블레셋 왕$q$, $q$성전 제사장$q$, $q$헷갈렸어요$q$, 0, $q$삼상 28:7 — '나를 위하여 신접한 여인을 찾으라 내가 그리로 가서 그에게 물으리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사무엘은 사울에게 전쟁의 결과를 어떻게 경고했습니까?$q$, $q$사울과 아들들이 함께 넘겨질 것이라고 경고했다$q$, $q$다윗이 블레셋 편이 될 것이라고 말했다$q$, $q$사울이 곧 왕국을 회복할 것이라고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$삼상 28:19 — '여호와께서 이스라엘도 너와 함께 블레셋 사람의 손에 붙이시리니 내일 너와 네 아들들이 나와 함께 있으리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$길보아 전투에서 이스라엘 사람들은 블레셋 앞에서 어떻게 되었습니까?$q$, $q$여리고 성을 다시 점령했다$q$, $q$도망하다가 길보아 산에서 쓰러졌다$q$, $q$모압 평지로 평화롭게 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 31:1 — '이스라엘 사람들이 블레셋 사람 앞에서 도망하여 길보아 산에서 엎드러져 죽으니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$블레셋 사람들이 사울을 집중해서 공격하자 사울은 어떤 상태가 되었습니까?$q$, $q$기쁨으로 노래하였다$q$, $q$크게 군급하였다$q$, $q$담대하게 성전을 지었다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 31:3 — '활 쏘는 자들이 사울을 따라 미치매 사울이 그 활 쏘는 자를 인하여 중상한지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울과 그의 세 아들이 넘어진 날 사울의 집에는 어떤 일이 일어났습니까?$q$, $q$사울이 왕위를 다윗에게 곧 넘겼다$q$, $q$사울과 세 아들이 함께 죽었다$q$, $q$사울의 아들들이 모두 왕이 되었다$q$, $q$헷갈렸어요$q$, 1, $q$삼상 31:6 — '사울과 그 세 아들과 병기 든 자와 그의 모든 사람이 다 그 날에 함께 죽었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘 장로들은 헤브론에서 다윗에게 무엇을 하였습니까?$q$, $q$다윗에게 기름을 부어 왕으로 세웠다$q$, $q$다윗을 블레셋으로 돌려보냈다$q$, $q$다윗에게 성전을 허물라고 했다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 5:3 — '이스라엘 모든 장로가 헤브론에 이르러 왕에게 나아오매 ... 저희가 다윗에게 기름을 부어 이스라엘 왕을 삼으니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗이 점점 강성해진 까닭은 무엇입니까?$q$, $q$블레셋 왕이 다윗에게 왕관을 주었기 때문이다$q$, $q$사울의 군대가 모두 다윗을 떠났기 때문이다$q$, $q$만군의 하나님 여호와께서 함께 계셨기 때문이다$q$, $q$헷갈렸어요$q$, 2, $q$삼하 5:10 — '만군의 하나님 여호와께서 함께 계시니 다윗이 점점 강성하여 가니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$두로 왕 히람은 다윗을 위해 무엇을 보내 왕궁을 짓게 했습니까?$q$, $q$양털과 물동이$q$, $q$백향목과 목수와 석수$q$, $q$금송아지와 제단$q$, $q$헷갈렸어요$q$, 1, $q$삼하 5:11 — '두로 왕 히람이 다윗에게 사자들과 백향목과 목수와 석수를 보내매 저희가 다윗을 위하여 집을 지으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나곤의 타작마당에서 소들이 뛰자 웃사는 무엇을 하였습니까?$q$, $q$다윗에게 예루살렘으로 돌아가자고 말했다$q$, $q$손을 들어 하나님의 궤를 붙들었다$q$, $q$수레를 버리고 광야로 도망했다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 6:6 — '소들이 뛰므로 웃사가 손을 들어 하나님의 궤를 붙들었더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$언약궤가 다윗 성으로 들어올 때 다윗은 여호와 앞에서 어떻게 하였습니까?$q$, $q$두려워 숨어 있었다$q$, $q$힘을 다하여 춤을 추었다$q$, $q$말없이 왕궁으로 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 6:14 — '다윗이 여호와 앞에서 힘을 다하여 춤을 추는데 때에 베 에봇을 입었더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$미갈은 다윗이 뛰놀며 춤추는 모습을 보고 마음으로 어떻게 하였습니까?$q$, $q$다윗과 함께 춤추었다$q$, $q$다윗을 업신여겼다$q$, $q$언약궤를 직접 메었다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 6:16 — '사울의 딸 미갈이 창으로 내다보다가 다윗 왕이 여호와 앞에서 뛰놀며 춤추는 것을 보고 심중에 저를 업신여기니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 나단에게 하나님의 궤가 어디에 있다고 말했습니까?$q$, $q$휘장 가운데 있다고 말했다$q$, $q$블레셋 성읍에 있다고 말했다$q$, $q$백향목 궁전 안에 있다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 7:2 — '나는 백향목 궁에 거하거늘 하나님의 궤는 휘장 가운데 있도다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 다윗에게 누가 하나님의 이름을 위한 집을 지을 것이라고 말씀하셨습니까?$q$, $q$다윗의 뒤에 날 자식$q$, $q$사울의 집 사람들$q$, $q$두로 왕 히람$q$, $q$헷갈렸어요$q$, 0, $q$삼하 7:12-13 — '네 뒤에 날 자식을 세워 ... 저는 내 이름을 위하여 집을 건축할 것이요'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 다윗의 집과 나라와 위가 어떻게 될 것이라고 약속하셨습니까?$q$, $q$광야로 다시 흩어질 것이라고 하셨다$q$, $q$영원히 견고할 것이라고 약속하셨다$q$, $q$곧 블레셋에게 넘겨질 것이라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 7:16 — '네 집과 네 나라가 네 앞에서 영원히 보전되고 네 위가 영원히 견고하리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗이 왕궁 지붕에서 본 여인은 누구의 아내였습니까?$q$, $q$헷 사람 우리아의 아내 밧세바$q$, $q$요압의 아내$q$, $q$나단 선지자의 딸$q$, $q$헷갈렸어요$q$, 0, $q$삼하 11:3 — '그는 엘리암의 딸이요 헷사람 우리아의 아내 밧세바가 아니니이까'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 우리아를 어떻게 하라는 편지를 요압에게 보냈습니까?$q$, $q$전쟁을 멈추고 우리아를 쉬게 하라고 했다$q$, $q$맹렬한 싸움 앞에 세우고 뒤로 물러가게 하라고 했다$q$, $q$우리아에게 큰 상을 주라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 11:15 — '우리아를 맹렬한 싸움에 앞세워 두고 너희는 뒤로 물러가서 저로 맞아 죽게하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$우리아가 죽은 뒤 본문은 다윗의 행동을 어떻게 평가합니까?$q$, $q$여호와 보시기에 악하였다$q$, $q$하나님이 곧바로 칭찬하셨다$q$, $q$아무 잘못도 없다고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 11:27 — '다윗의 소위가 여호와 보시기에 악하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나단의 비유에서 부자는 가난한 사람에게 무엇을 했습니까?$q$, $q$가난한 사람에게 자기 양 떼를 나누어 주었다$q$, $q$가난한 사람을 왕궁 잔치에 초대했다$q$, $q$가난한 사람의 작은 암양 새끼를 빼앗았다$q$, $q$헷갈렸어요$q$, 2, $q$삼하 12:4 — '가난한 사람의 양 새끼를 빼앗아다가 자기에게 온 사람을 위하여 잡았나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$비유를 들은 다윗은 그 일을 한 사람에 대해 어떻게 반응했습니까?$q$, $q$크게 노하며 네 배로 갚아야 한다고 말했다$q$, $q$그 일을 지혜롭다고 칭찬했다$q$, $q$나단의 말을 듣지 않고 자리를 떠났다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 12:5-6 — '다윗이 그 사람을 크게 노하여... 그 양 새끼를 사 배나 갚아 주어야 하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나단의 책망 뒤에 다윗은 아이를 위해 어떻게 했습니까?$q$, $q$곧바로 큰 잔치를 열어 신하들을 불렀다$q$, $q$전쟁터로 나가 요압을 책망했다$q$, $q$금식하며 밤새도록 땅에 엎드려 하나님께 간구했다$q$, $q$헷갈렸어요$q$, 2, $q$삼하 12:16 — '다윗이 그 아이를 위하여 하나님께 간구하되 금식하고 안에 들어가서 밤새도록 땅에 엎드렸으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$암논은 누구 때문에 마음이 병들 만큼 괴로워했습니까?$q$, $q$압살롬의 누이 다말$q$, $q$요압의 딸$q$, $q$드고아의 여인$q$, $q$헷갈렸어요$q$, 0, $q$삼하 13:2 — '암논이 그 누이 다말을 인하여 심화로 병이 되니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다말이 울며 압살롬에게 온 뒤 압살롬은 암논을 어떻게 대했습니까?$q$, $q$다말을 곧바로 왕궁 밖으로 보냈다$q$, $q$암논을 미워하며 마음에 분노를 품었다$q$, $q$암논을 왕 앞에서 칭찬했다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 13:22 — '압살롬이 그 누이 다말을 암논이 욕되게 하였으므로 저를 미워하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$암논이 죽었다는 소식이 다윗에게 이르자 다윗은 어떻게 했습니까?$q$, $q$압살롬을 왕으로 세웠다$q$, $q$옷을 찢고 땅에 엎드렸다$q$, $q$곧바로 잔치를 베풀었다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 13:31 — '왕이 곧 일어나서 그 옷을 찢고 땅에 엎드러지고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요압은 다윗의 마음이 압살롬에게 향한 줄 알고 누구를 데려왔습니까?$q$, $q$드고아의 지혜로운 여인$q$, $q$모압의 공주$q$, $q$엔돌의 여인$q$, $q$헷갈렸어요$q$, 0, $q$삼하 14:2 — '드고아에 보내어 거기서 슬기있는 여인 하나를 데려다가'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 여인의 남은 아들을 해치려는 사람들에 대해 무엇을 약속했습니까?$q$, $q$그 아들의 머리카락 하나도 떨어지지 않게 하겠다고 했다$q$, $q$그 일을 듣지 않은 척하겠다고 했다$q$, $q$그 아들을 곧 전쟁터로 보내겠다고 했다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 14:11 — '네 아들의 머리카락 하나라도 땅에 떨어지지 아니하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$압살롬이 왕 앞에 나아가 절하자 다윗은 어떻게 했습니까?$q$, $q$압살롬과 입을 맞추었다$q$, $q$압살롬을 감옥에 가두었다$q$, $q$압살롬을 다시 그술로 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 14:33 — '왕이 압살롬을 부르니... 왕이 압살롬과 입을 맞추니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$압살롬은 성문 길 곁에서 사람들에게 어떻게 하여 마음을 얻었습니까?$q$, $q$언약궤를 숨겨 두었다$q$, $q$재판을 청하러 오는 사람들을 붙들고 친절히 대했다$q$, $q$모든 사람을 광야로 쫓아냈다$q$, $q$헷갈렸어요$q$, 1, $q$삼하 15:5-6 — '압살롬이 손을 펴서 그 사람을 붙들고 입을 맞추니... 이스라엘 사람의 마음을 도적하니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 사독에게 언약궤를 어떻게 하라고 했습니까?$q$, $q$성으로 도로 메어 가라고 했다$q$, $q$압살롬에게 넘기라고 했다$q$, $q$광야에 숨기라고 했다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 15:25 — '하나님의 궤를 성으로 도로 메어 가라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$압살롬과 이스라엘 사람들은 후새와 아히도벨의 모략 중 어느 쪽을 더 좋게 여겼습니까?$q$, $q$아무 모략도 듣지 않았다$q$, $q$후새의 모략$q$, $q$아히도벨의 모략$q$, $q$헷갈렸어요$q$, 1, $q$삼하 17:14 — '아렉 사람 후새의 모략은 아히도벨의 모략보다 낫다 하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 전투에 나가는 지휘관들에게 압살롬을 어떻게 대하라고 명했습니까?$q$, $q$반드시 왕궁으로 데려오지 말라고 했다$q$, $q$이름을 다시 부르지 말라고 했다$q$, $q$자기를 위해 너그러이 대하라고 했다$q$, $q$헷갈렸어요$q$, 2, $q$삼하 18:5 — '나를 위하여 소년 압살롬을 너그러이 대접하라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$압살롬은 에브라임 수풀에서 어떻게 붙잡힌 처지가 되었습니까?$q$, $q$상수리나무 가지에 머리털이 걸렸다$q$, $q$성문 앞에서 스스로 항복했다$q$, $q$요단강에서 배를 잃어버렸다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 18:9 — '압살롬의 머리털이 그 상수리나무에 걸리매 저가 공중에 달리고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$압살롬의 죽음 소식을 들은 다윗은 어떻게 반응했습니까?$q$, $q$곧바로 승리 잔치를 열었다$q$, $q$전령에게 상을 내리고 웃었다$q$, $q$문루로 올라가 압살롬을 부르며 울었다$q$, $q$헷갈렸어요$q$, 2, $q$삼하 18:33 — '왕의 마음이 심히 아파 문루로 올라가서 우니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 인구조사 후 자신의 잘못을 어떻게 고백했습니까?$q$, $q$큰 죄를 범했고 심히 미련하게 행했다고 했다$q$, $q$아무 잘못도 없다고 말했다$q$, $q$모든 책임을 요압에게만 돌렸다$q$, $q$헷갈렸어요$q$, 0, $q$삼하 24:10 — '내가 이 일을 행함으로 큰 죄를 범하였나이다... 내가 심히 미련하게 행하였나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$갓이 세 가지 재앙을 전했을 때 다윗은 누구의 손에 빠지기를 원했습니까?$q$, $q$긍휼이 크신 여호와의 손$q$, $q$대적의 손$q$, $q$요압의 손$q$, $q$헷갈렸어요$q$, 0, $q$삼하 24:14 — '여호와께서는 긍휼이 크시니 우리가 여호와의 손에 빠지고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$온역이 이스라엘에 내렸을 때 단부터 브엘세바까지 몇 사람이 죽었습니까?$q$, $q$칠백 인$q$, $q$칠천 인$q$, $q$칠만 인$q$, $q$헷갈렸어요$q$, 2, $q$삼하 24:15 — '단부터 브엘세바까지 백성의 죽은 자가 칠만 인이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아도니야가 스스로 왕이 되려 하자 나단은 누구에게 먼저 말했습니까?$q$, $q$솔로몬의 어머니 밧세바$q$, $q$군대장관 요압$q$, $q$제사장 아비아달$q$, $q$헷갈렸어요$q$, 0, $q$왕상 1:11 — '나단이 솔로몬의 모친 밧세바에게 고하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 솔로몬을 왕으로 세우기 위해 무엇에 태우라고 명했습니까?$q$, $q$다윗 왕의 노새$q$, $q$요압의 말$q$, $q$아도니야의 병거$q$, $q$헷갈렸어요$q$, 0, $q$왕상 1:33 — '내 아들 솔로몬을 나의 노새에 태우고 기혼으로 인도하여 내려가고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$제단 뿔을 잡고 두려워한 아도니야에게 솔로몬은 어떻게 하였습니까?$q$, $q$다윗의 침상으로 데려가 축복하게 했다$q$, $q$그 자리에서 왕으로 세웠다$q$, $q$선한 사람이 되면 해치지 않겠다며 집으로 보내었다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 1:52-53 — '저가 만일 선한 사람이 될진대 그 머리카락 하나라도 땅에 떨어지지 아니하려니와... 네 집으로 가라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다윗은 죽기 전에 솔로몬에게 무엇을 지키라고 당부했습니까?$q$, $q$아도니야의 잔치 계획$q$, $q$애굽 왕의 조언$q$, $q$여호와의 명령과 율법의 길$q$, $q$헷갈렸어요$q$, 2, $q$왕상 2:3 — '네 하나님 여호와의 명을 지켜 그 길로 행하여 그 법률과 계명과 율례와 증거를... 지키라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아도니야는 밧세바를 통해 솔로몬에게 누구를 달라고 구했습니까?$q$, $q$수넴 여자 아비삭$q$, $q$바로의 딸$q$, $q$드고아의 여인$q$, $q$헷갈렸어요$q$, 0, $q$왕상 2:17 — '수넴 여자 아비삭을 내게 주어 아내를 삼게 하소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아도니야와 요압과 시므이의 일이 정리된 뒤 나라는 어떻게 되었습니까?$q$, $q$곧바로 둘로 갈라졌다$q$, $q$아도니야에게 넘어갔다$q$, $q$솔로몬의 손에 견고하여졌다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 2:46 — '이에 나라가 솔로몬의 손에 견고하여지니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬은 꿈에서 하나님께 무엇을 구했습니까?$q$, $q$백성을 재판할 지혜로운 마음$q$, $q$긴 수명과 많은 재물$q$, $q$원수들의 목숨$q$, $q$헷갈렸어요$q$, 0, $q$왕상 3:9 — '지혜로운 마음을 종에게 주사 주의 백성을 재판하여 선악을 분별하게 하옵소서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬이 지혜를 구하자 하나님은 어떻게 여기셨습니까?$q$, $q$그 말씀이 주의 마음에 맞았다$q$, $q$크게 책망하셨다$q$, $q$아무 응답도 하지 않으셨다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 3:10 — '솔로몬이 이것을 구하매 그 말씀이 주의 마음에 맞은지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬은 아기를 살려 달라고 한 여자를 어떻게 판단했습니까?$q$, $q$그 여자가 참 어머니라고 판결했다$q$, $q$아기를 궁전에 남겨 두라고 했다$q$, $q$두 여자 모두 거짓이라고 했다$q$, $q$헷갈렸어요$q$, 0, $q$왕상 3:27 — '산 아들을 저 계집에게 주고 결코 죽이지말라 저가 그 어미니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$두로 왕 히람은 솔로몬에게 어떻게 하였습니까?$q$, $q$거부하고 물러났다$q$, $q$전쟁을 선포하였다$q$, $q$백향목과 잣나무 재목을 보내기로 했다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 5:8 — '내가 백향목 재목과 잣나무 재목에 대하여는 당신의 바라시는대로 할찌라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성전 건축을 준비할 때 하나님은 솔로몬에게 어떻게 하셨습니까?$q$, $q$히람과 전쟁하게 하셨다$q$, $q$지혜를 주어 협력하게 하셨다$q$, $q$성전 건축을 포기하게 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 5:12 — '솔로몬에게 지혜를 주시므로 히람과 솔로몬이 친목하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬이 성전을 건축하는 데 걸린 기간은 얼마입니까?$q$, $q$칠년$q$, $q$삼년$q$, $q$십년$q$, $q$헷갈렸어요$q$, 0, $q$왕상 6:38 — '솔로몬이 전을 건축한 동안이 칠년이었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_monarchy' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$스바 여왕은 무엇을 가지고 예루살렘에 왔습니까?$q$, $q$전쟁 병거와 창$q$, $q$빈 항아리와 횃불$q$, $q$향품과 많은 금과 보석$q$, $q$헷갈렸어요$q$, 2, $q$왕상 10:2 — '심히 많은 향품과 금과 보석을 약대에 실리고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬의 마음이 여호와에게서 떠나게 된 원인은 무엇입니까?$q$, $q$선지자들이 그를 떠나갔다$q$, $q$이방 아내들이 그의 마음을 돌이켰다$q$, $q$전쟁의 패배에 낙심하였다$q$, $q$헷갈렸어요$q$, 1, $q$왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$솔로몬이 언약과 법도를 지키지 않자 여호와는 무엇을 말씀하셨습니까?$q$, $q$성전을 더 크게 지어 주겠다고 하셨다$q$, $q$왕위를 그대로 두겠다고 하셨다$q$, $q$나라를 빼앗아 신복에게 주겠다고 하셨다$q$, $q$헷갈렸어요$q$, 2, $q$왕상 11:11 — '내가 결단코 이 나라를 네게서 빼앗아 네 신복에게 주리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_monarchy' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 성령이 임하면 제자들이 무엇을 받는다고 하셨습니까?$q$, $q$왕위$q$, $q$은전$q$, $q$권능$q$, $q$헷갈렸어요$q$, 2, $q$행 1:8 — '오직 성령이 너희에게 임하시면 너희가 권능을 받고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 제자들이 어디까지 증인이 되리라 하셨습니까?$q$, $q$갈릴리 호수$q$, $q$성전 안$q$, $q$땅끝$q$, $q$헷갈렸어요$q$, 2, $q$행 1:8 — '땅 끝까지 이르러 내 증인이 되리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$흰 옷 입은 두 사람은 예수님이 어떤 모습으로 다시 오신다고 말했습니까?$q$, $q$다른 이름으로$q$, $q$성전에서만$q$, $q$올라가신 그대로$q$, $q$헷갈렸어요$q$, 2, $q$행 1:11 — '하늘로 가심을 본 그대로 오시리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$오순절에 성령이 임하자 제자들은 무엇으로 말하기 시작했습니까?$q$, $q$다른 방언$q$, $q$침묵$q$, $q$로마 말만$q$, $q$헷갈렸어요$q$, 0, $q$행 2:4 — '다른 방언으로 말하기를 시작하니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 하나님이 예수님을 무엇과 그리스도가 되게 하셨다고 선포했습니까?$q$, $q$총독$q$, $q$제사장$q$, $q$주$q$, $q$헷갈렸어요$q$, 2, $q$행 2:36 — '주와 그리스도가 되게 하셨느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마음에 찔린 사람들이 묻자 베드로는 무엇을 하라고 했습니까?$q$, $q$성전 세금 납부$q$, $q$회개와 세례$q$, $q$예루살렘 이탈$q$, $q$헷갈렸어요$q$, 1, $q$행 2:38 — '회개하여 각각 예수 그리스도의 이름으로 세례를 받고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 성전 미문의 못 걷던 사람에게 누구의 이름으로 걸으라 했습니까?$q$, $q$예수 그리스도$q$, $q$모세$q$, $q$가이사$q$, $q$헷갈렸어요$q$, 0, $q$행 3:6 — '나사렛 예수 그리스도의 이름으로 걸으라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$고침 받은 사람은 걷고 뛰며 누구를 찬미했습니까?$q$, $q$성전 문지기$q$, $q$하나님$q$, $q$베드로$q$, $q$헷갈렸어요$q$, 1, $q$행 3:8 — '걷기도 하고 뛰기도 하며 하나님을 찬미하니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 솔로몬 행각의 무리에게 죄 사함을 위해 무엇을 하라고 선포했습니까?$q$, $q$제물 추가 구매$q$, $q$회개와 돌이킴$q$, $q$로마행$q$, $q$헷갈렸어요$q$, 1, $q$행 3:19 — '너희가 회개하고 돌이켜 너희 죄 없이 함을 받으라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$지도자들은 베드로와 요한이 무엇을 전한다고 싫어했습니까?$q$, $q$성전 세금$q$, $q$예수 안의 부활$q$, $q$로마 법$q$, $q$헷갈렸어요$q$, 1, $q$행 4:2 — '예수를 들어 죽은 자 가운데서 부활하는 도 전함을 싫어하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 구원이 누구 외에는 없다고 말했습니까?$q$, $q$예수님$q$, $q$헤롯$q$, $q$모세$q$, $q$헷갈렸어요$q$, 0, $q$행 4:12 — '다른 이로서는 구원을 얻을 수 없나니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로와 요한은 금지 명령 앞에서 무엇을 말하지 않을 수 없다고 했습니까?$q$, $q$성전 장식$q$, $q$로마 소식$q$, $q$보고 들은 것$q$, $q$헷갈렸어요$q$, 2, $q$행 4:20 — '우리는 보고 들은 것을 말하지 아니할 수 없다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사도들의 손을 통해 백성 가운데 무엇이 많이 나타났습니까?$q$, $q$칼과 병거$q$, $q$표적과 기사$q$, $q$세금과 명령$q$, $q$헷갈렸어요$q$, 1, $q$행 5:12 — '표적과 기사가 많이 되매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주의 사자가 감옥 문을 열고 사도들에게 어디서 말씀을 전하라 했습니까?$q$, $q$광야$q$, $q$로마 법정$q$, $q$성전$q$, $q$헷갈렸어요$q$, 2, $q$행 5:20 — '성전에 서서 이 생명의 말씀을 다 백성에게 말하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사도들은 공회 앞에서 사람보다 누구께 순종해야 한다고 했습니까?$q$, $q$하나님$q$, $q$가말리엘$q$, $q$헤롯$q$, $q$헷갈렸어요$q$, 0, $q$행 5:29 — '사람보다 하나님을 순종하는 것이 마땅하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$스데반은 어떤 충만함으로 큰 기사와 표적을 행했습니까?$q$, $q$분노와 힘$q$, $q$은혜와 권능$q$, $q$재물과 지위$q$, $q$헷갈렸어요$q$, 1, $q$행 6:8 — '은혜와 권능이 충만하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$공회 사람들이 본 스데반의 얼굴은 무엇과 같았습니까?$q$, $q$군인의 얼굴$q$, $q$천사의 얼굴$q$, $q$왕의 얼굴$q$, $q$헷갈렸어요$q$, 1, $q$행 6:15 — '그 얼굴이 천사의 얼굴과 같더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$스데반은 돌에 맞으며 사람들의 죄를 위해 무엇을 구했습니까?$q$, $q$숨겨 달라고$q$, $q$돌리지 말아 달라고$q$, $q$갚아 달라고$q$, $q$헷갈렸어요$q$, 1, $q$행 7:60 — '이 죄를 저들에게 돌리지 마옵소서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울의 박해로 흩어진 사람들은 두루 다니며 무엇을 전했습니까?$q$, $q$말씀$q$, $q$왕의 조서$q$, $q$성전 세금$q$, $q$헷갈렸어요$q$, 0, $q$행 8:4 — '두루 다니며 복음의 말씀을 전할새'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$빌립의 사역 뒤 사마리아 성에는 무엇이 있었습니까?$q$, $q$큰 기쁨$q$, $q$큰 침묵$q$, $q$큰 흉년$q$, $q$헷갈렸어요$q$, 0, $q$행 8:8 — '그 성에 큰 기쁨이 있더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시몬은 성령을 주는 권능을 얻으려고 무엇을 주려 했습니까?$q$, $q$돈$q$, $q$그물$q$, $q$향유$q$, $q$헷갈렸어요$q$, 0, $q$행 8:18 — '돈을 드려'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주의 사자는 빌립에게 어디로 내려가는 길로 가라 했습니까?$q$, $q$시내산으로 가는 길$q$, $q$가사로 가는 광야 길$q$, $q$로마로 가는 바닷길$q$, $q$헷갈렸어요$q$, 1, $q$행 8:26 — '예루살렘에서 가사로 내려가는 길까지 가라 하니 그 길은 광야라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에디오피아 내시는 수레에서 어떤 선지자의 글을 읽고 있었습니까?$q$, $q$예레미야$q$, $q$이사야$q$, $q$요나$q$, $q$헷갈렸어요$q$, 1, $q$행 8:28 — '선지자 아사야의 글을 읽더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$빌립은 이사야 글에서 시작해 누구를 전했습니까?$q$, $q$헤롯$q$, $q$모세$q$, $q$예수님$q$, $q$헷갈렸어요$q$, 2, $q$행 8:35 — '예수를 가르쳐 복음을 전하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$다메섹 길에서 사울에게 하늘에서 어떤 일이 있었습니다?$q$, $q$성문이 열렸다$q$, $q$비가 내렸다$q$, $q$빛이 둘러 비췄다$q$, $q$헷갈렸어요$q$, 2, $q$행 9:3 — '홀연히 하늘로서 빛이 저를 둘러 비추는지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 사울이 자신에게 무엇을 하고 있다고 물으셨습니까?$q$, $q$찾느냐$q$, $q$따르느냐$q$, $q$핍박하느냐$q$, $q$헷갈렸어요$q$, 2, $q$행 9:4 — '사울아 사울아 네가 어찌하여 나를 핍박하느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아나니아가 안수하자 사울의 눈에서 무엇 같은 것이 벗어졌습니까?$q$, $q$비늘$q$, $q$눈물$q$, $q$먼지$q$, $q$헷갈렸어요$q$, 0, $q$행 9:18 — '비늘 같은 것이 벗어져 다시 보게 된지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$회심 뒤 사울은 회당에서 예수님을 누구라고 전파했습니까?$q$, $q$하나님의 아들$q$, $q$성전 제사장$q$, $q$로마의 왕$q$, $q$헷갈렸어요$q$, 0, $q$행 9:20 — '예수의 하나님의 아들이심을 전파하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사울을 죽이려는 모의를 피해 제자들은 밤에 그를 무엇에 담아 내렸습니까?$q$, $q$배$q$, $q$상자$q$, $q$광주리$q$, $q$헷갈렸어요$q$, 2, $q$행 9:25 — '광주리에 사울을 담아 성에서 달아 내리니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예루살렘 제자들이 두려워할 때 누가 사울을 사도들에게 데려갔습니까?$q$, $q$바나바$q$, $q$베드로$q$, $q$아나니아$q$, $q$헷갈렸어요$q$, 0, $q$행 9:27 — '바나바가 데리고 사도들에게 가서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 룻다의 애니아에게 누가 너를 낫게 한다고 말했습니까?$q$, $q$다비다$q$, $q$예수 그리스도$q$, $q$가이사$q$, $q$헷갈렸어요$q$, 1, $q$행 9:34 — '예수 그리스도께서 너를 낫게 하시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$욥바의 다비다는 어떤 일과 구제가 심히 많았습니까?$q$, $q$장사$q$, $q$선행$q$, $q$재판$q$, $q$헷갈렸어요$q$, 1, $q$행 9:36 — '선행과 구제하는 일이 심히 많더니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로가 기도한 뒤 다비다에게 명한 것은 무엇입니까?$q$, $q$일어나라는 명령$q$, $q$숨으라는 명령$q$, $q$떠나라는 명령$q$, $q$헷갈렸어요$q$, 0, $q$행 9:40 — '다비다야 일어나라 하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$고넬료는 하나님을 경외하며 백성을 많이 돕고 무엇을 항상 했습니까?$q$, $q$기도$q$, $q$전쟁$q$, $q$장사$q$, $q$헷갈렸어요$q$, 0, $q$행 10:2 — '하나님께 항상 기도하더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 환상 뒤 하나님이 사람을 무엇으로 보지 않으신다고 깨달았습니까?$q$, $q$외모$q$, $q$직업$q$, $q$나이$q$, $q$헷갈렸어요$q$, 0, $q$행 10:34 — '하나님은 사람의 외모를 취하지 아니하시고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로가 말씀할 때 고넬료의 집 사람들에게 무엇이 임했습니까?$q$, $q$감옥$q$, $q$성령$q$, $q$흉년$q$, $q$헷갈렸어요$q$, 1, $q$행 10:44 — '성령이 말씀 듣는 모든 사람에게 내려오시니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예루살렘의 할례자들은 베드로가 누구의 집에 들어갔다고 따졌습니까?$q$, $q$무할례자$q$, $q$레위인$q$, $q$제사장$q$, $q$헷갈렸어요$q$, 0, $q$행 11:3 — '네가 무할례자의 집에 들어가'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 이방인 성령 사건 뒤 누구를 막을 수 없다고 했습니까?$q$, $q$하나님$q$, $q$고넬료$q$, $q$야고보$q$, $q$헷갈렸어요$q$, 0, $q$행 11:17 — '내가 누구관대 하나님을 능히 막겠느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$설명을 들은 교회는 하나님이 이방인에게도 무엇을 주셨다고 영광 돌렸습니까?$q$, $q$성전 직분$q$, $q$왕의 권세$q$, $q$생명 얻는 회개$q$, $q$헷갈렸어요$q$, 2, $q$행 11:18 — '이방인에게도 생명 얻는 회개를 주셨도다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$흩어진 성도들은 안디옥에서 누구에게도 주 예수를 전했습니다?$q$, $q$헬라인$q$, $q$로마 군인만$q$, $q$제사장만$q$, $q$헷갈렸어요$q$, 0, $q$행 11:20 — '헬라인에게도 말하여 주 예수를 전파하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바나바는 안디옥에서 하나님의 은혜를 보고 어떤 반응을 보였습니까?$q$, $q$떠났다$q$, $q$기뻐했다$q$, $q$숨었다$q$, $q$헷갈렸어요$q$, 1, $q$행 11:23 — '하나님의 은혜를 보고 기뻐하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$안디옥에서 제자들은 처음으로 어떤 이름으로 불렸습니까?$q$, $q$그리스도인$q$, $q$갈릴리인$q$, $q$나사렛 사람$q$, $q$헷갈렸어요$q$, 0, $q$행 11:26 — '제자들이 안디옥에서 비로소 그리스도인이라 일컬음을 받게 되었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$헤롯은 요한의 형제 야고보를 무엇으로 죽였습니까?$q$, $q$칼$q$, $q$독$q$, $q$돌$q$, $q$헷갈렸어요$q$, 0, $q$행 12:2 — '요한의 형제 야고보를 칼로 죽이니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로가 감옥에 갇혔을 때 교회는 그를 위해 무엇을 했습니까?$q$, $q$잔치를 열었다$q$, $q$간절히 기도했다$q$, $q$도망쳤다$q$, $q$헷갈렸어요$q$, 1, $q$행 12:5 — '교회는 그를 위하여 간절히 하나님께 빌더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$로데는 문밖의 베드로 목소리를 듣고 무엇 때문에 문도 열지 못했습니까?$q$, $q$졸음$q$, $q$기쁨$q$, $q$분노$q$, $q$헷갈렸어요$q$, 1, $q$행 12:14 — '베드로의 음성인 줄 알고 기뻐하여 문을 미처 열지 못하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$안디옥 교회가 주를 섬기며 무엇을 할 때 성령이 말씀하셨습니까?$q$, $q$재판$q$, $q$금식$q$, $q$장사$q$, $q$헷갈렸어요$q$, 1, $q$행 13:2 — '주를 섬겨 금식할 때에'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성령은 바나바와 사울을 무엇을 위해 따로 세우라 하셨습니까?$q$, $q$부르신 일$q$, $q$성전 건축$q$, $q$로마 여행$q$, $q$헷갈렸어요$q$, 0, $q$행 13:2 — '내가 불러 시키는 일을 위하여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$교회는 금식하고 기도한 뒤 두 사람에게 무엇을 하고 보냈습니까?$q$, $q$재판$q$, $q$안수$q$, $q$세례$q$, $q$헷갈렸어요$q$, 1, $q$행 13:3 — '두 사람에게 안수하여 보내니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$구브로 바보에서 총독 곁에 있던 거짓 선지자의 이름은 무엇입니까?$q$, $q$디모데$q$, $q$아볼로$q$, $q$바예수$q$, $q$헷갈렸어요$q$, 2, $q$행 13:6 — '바예수라 하는 유대인 거짓 선지자'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 꾸짖자 엘루마에게 곧 어떤 일이 일어났습니까?$q$, $q$왕이 되었다$q$, $q$병이 나았다$q$, $q$눈이 어두워졌다$q$, $q$헷갈렸어요$q$, 2, $q$행 13:11 — '네가 소경이 되어 얼마 동안 해를 보지 못하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$총독 서기오 바울은 주의 가르치심을 보고 어떤 반응을 보였습니까?$q$, $q$믿었다$q$, $q$도망쳤다$q$, $q$돌을 던졌다$q$, $q$헷갈렸어요$q$, 0, $q$행 13:12 — '믿으며 주의 가르치심을 기이히 여기니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 예수님이 누구의 씨에서 오셨다고 전했습니까?$q$, $q$로마 황실$q$, $q$다윗의 씨$q$, $q$헤롯의 집$q$, $q$헷갈렸어요$q$, 1, $q$행 13:23 — '다윗의 씨에서 ... 예수를 세우셨으니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 예수님을 통해 무엇을 전한다고 말했습니까?$q$, $q$죄 사함$q$, $q$성전 자리$q$, $q$세금 면제$q$, $q$헷갈렸어요$q$, 0, $q$행 13:38 — '죄 사함을 너희에게 전하는 이것이며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이방인들은 주의 말씀을 듣고 어떤 반응을 보였습니까?$q$, $q$성문을 닫았다$q$, $q$바울을 감옥에 넣었다$q$, $q$기뻐하며 영광 돌렸다$q$, $q$헷갈렸어요$q$, 2, $q$행 13:48 — '이방인들이 듣고 기뻐하여 하나님의 말씀을 찬송하며'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$루스드라에서 바울은 나면서 걷지 못하던 사람에게 어떤 말을 했습니까?$q$, $q$일어서라는 말$q$, $q$숨으라는 말$q$, $q$돌아가라는 말$q$, $q$헷갈렸어요$q$, 0, $q$행 14:10 — '네 발로 바로 일어서라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$무리는 바울과 바나바를 보고 무엇들이 사람 모양으로 내려왔다고 했습니까?$q$, $q$신들$q$, $q$왕들$q$, $q$천사들$q$, $q$헷갈렸어요$q$, 0, $q$행 14:11 — '신들이 사람의 형상으로 우리 가운데 내려오셨다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울과 바나바는 돌아가며 각 교회에 무엇을 세웠습니까?$q$, $q$왕들$q$, $q$장로들$q$, $q$세리들$q$, $q$헷갈렸어요$q$, 1, $q$행 14:23 — '각 교회에서 장로들을 택하여'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$어떤 사람들은 구원 조건으로 무엇을 받아야 한다고 했습니까?$q$, $q$성전 자리$q$, $q$로마 시민권$q$, $q$할례$q$, $q$헷갈렸어요$q$, 2, $q$행 15:1 — '할례를 받지 아니하면 능히 구원을 얻지 못하리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 우리가 무엇으로 구원받는 줄 믿는다고 말했습니까?$q$, $q$주의 은혜$q$, $q$율법의 멍에$q$, $q$성전 세금$q$, $q$헷갈렸어요$q$, 0, $q$행 15:11 — '주 예수의 은혜로 구원 받는 줄을 믿노라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울과 바나바는 누구를 데려가는 문제로 서로 갈라섰습니까?$q$, $q$디모데$q$, $q$아볼로$q$, $q$마가 요한$q$, $q$헷갈렸어요$q$, 2, $q$행 15:37 — '마가라 하는 요한도 데리고 가고자 하나'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$루스드라와 이고니온 형제들에게 칭찬받던 제자는 누구입니까?$q$, $q$디모데$q$, $q$마가$q$, $q$아볼로$q$, $q$헷갈렸어요$q$, 0, $q$행 16:2 — '디모데는 루스드라와 이고니온에 있는 형제들에게 칭찬 받는 자니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 그 지방 유대인들 때문에 디모데에게 무엇을 행했습니까?$q$, $q$할례$q$, $q$감금$q$, $q$세례$q$, $q$헷갈렸어요$q$, 0, $q$행 16:3 — '그를 데려다가 할례를 행하니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울 일행이 여러 성에 전한 것은 예루살렘 사도와 장로들이 정한 무엇입니까?$q$, $q$세금$q$, $q$왕명$q$, $q$규례$q$, $q$헷갈렸어요$q$, 2, $q$행 16:4 — '작정한 규례를 저희에게 주어 지키게 하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울 일행은 성령이 막으셔서 어디에서 말씀을 전하지 못했습니까?$q$, $q$예루살렘$q$, $q$아시아$q$, $q$로마$q$, $q$헷갈렸어요$q$, 1, $q$행 16:6 — '성령이 아시아에서 말씀을 전하지 못하게 하시거늘'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$밤 환상에서 마게도냐 사람은 어떤 도움을 요청했습니까?$q$, $q$성전에 머물라는 요청$q$, $q$건너와 도와 달라는 요청$q$, $q$배를 팔라는 요청$q$, $q$헷갈렸어요$q$, 1, $q$행 16:9 — '마게도냐로 건너와서 우리를 도우라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$환상 뒤 일행은 하나님이 어디에 복음을 전하라고 부르신 줄 인정했습니까?$q$, $q$바벨론$q$, $q$애굽$q$, $q$마게도냐$q$, $q$헷갈렸어요$q$, 2, $q$행 16:10 — '마게도냐 사람들에게 복음을 전하라고 우리를 부르신 줄로 인정함이러라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주께서 마음을 열어 바울의 말을 듣게 하신 여인은 누구입니까?$q$, $q$루디아$q$, $q$드루실라$q$, $q$로데$q$, $q$헷갈렸어요$q$, 0, $q$행 16:14 — '루디아라 하는 한 여자가 ... 주께서 그 마음을 열어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$귀신이 나가자 여종의 주인들은 왜 바울과 실라를 붙잡았습니까?$q$, $q$세금을 돌려받아서$q$, $q$병이 나아서$q$, $q$이익의 소망이 끊어져서$q$, $q$헷갈렸어요$q$, 2, $q$행 16:19 — '자기 이익의 소망이 끊어진 것을 보고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$빌립보 간수는 바울과 실라에게 무엇을 물었습니까?$q$, $q$도망갈 곳$q$, $q$구원받는 길$q$, $q$고발할 사람$q$, $q$헷갈렸어요$q$, 1, $q$행 16:30 — '내가 어떻게 하여야 구원을 얻으리이까'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 데살로니가 회당에서 몇 안식일 동안 성경을 강론했습니까?$q$, $q$열두 안식일$q$, $q$세 안식일$q$, $q$한 안식일$q$, $q$헷갈렸어요$q$, 1, $q$행 17:2 — '세 안식일에 성경을 가지고 강론하며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 그리스도가 무엇을 받아야 한다고 설명했습니까?$q$, $q$고난과 부활$q$, $q$왕궁과 세금$q$, $q$침묵과 은둔$q$, $q$헷갈렸어요$q$, 0, $q$행 17:3 — '그리스도가 해를 받고 죽은 자 가운데서 다시 살아야 할 것'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시기한 유대인들은 누구의 집을 습격했습니까?$q$, $q$야손$q$, $q$루디아$q$, $q$고넬료$q$, $q$헷갈렸어요$q$, 0, $q$행 17:5 — '야손의 집에 달려들어'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베뢰아 사람들은 말씀을 받을 때 어떤 마음을 가졌습니까?$q$, $q$간절한 마음$q$, $q$시기하는 마음$q$, $q$무관심한 마음$q$, $q$헷갈렸어요$q$, 0, $q$행 17:11 — '간절한 마음으로 말씀을 받고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베뢰아 사람들은 바울의 말이 맞는지 날마다 무엇을 상고했습니까?$q$, $q$장부$q$, $q$성경$q$, $q$왕의 조서$q$, $q$헷갈렸어요$q$, 1, $q$행 17:11 — '이것이 그러한가 하여 날마다 성경을 상고하므로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$소동이 일어나자 형제들은 바울을 어디까지 보냈습니까?$q$, $q$성전$q$, $q$감옥$q$, $q$바다$q$, $q$헷갈렸어요$q$, 2, $q$행 17:14 — '형제들이 곧 바울을 내어 보내어 바다까지 가게 하되'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 아덴에 우상이 가득한 것을 보고 마음이 어떠했습니까?$q$, $q$기뻤다$q$, $q$격분했다$q$, $q$졸렸다$q$, $q$헷갈렸어요$q$, 1, $q$행 17:16 — '그 마음에 분하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 아레오바고에서 누구를 알게 하겠다고 했습니까?$q$, $q$아데미$q$, $q$가이사$q$, $q$알지 못하는 신$q$, $q$헷갈렸어요$q$, 2, $q$행 17:23 — '너희가 알지 못하고 위하는 그것을 내가 너희에게 알게 하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 하나님이 모든 사람에게 이제 무엇을 명하신다고 전했습니까?$q$, $q$전쟁$q$, $q$세금$q$, $q$회개$q$, $q$헷갈렸어요$q$, 2, $q$행 17:30 — '이제는 어디든지 사람을 다 명하사 회개하라 하셨으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 고린도에서 같은 장막 일을 하던 누구를 만났습니까?$q$, $q$마가와 실라$q$, $q$루디아와 로데$q$, $q$아굴라와 브리스길라$q$, $q$헷갈렸어요$q$, 2, $q$행 18:2 — '아굴라라 하는 본도에서 난 유대인 하나를 만나니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$반대가 거세지자 바울은 이제 누구에게로 가겠다고 했습니까?$q$, $q$대제사장$q$, $q$헤롯$q$, $q$이방인$q$, $q$헷갈렸어요$q$, 2, $q$행 18:6 — '이 후에는 이방인에게로 가리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주께서는 밤 환상에서 바울에게 무엇하지 말고 말하라고 하셨습니까?$q$, $q$재판하지 말고$q$, $q$두려워하지 말고$q$, $q$배를 타지 말고$q$, $q$헷갈렸어요$q$, 1, $q$행 18:9 — '두려워하지 말며 잠잠하지 말고 말하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 28;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 28 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 겐그레아에서 서원이 있어 무엇을 했습니까?$q$, $q$감옥에 갔다$q$, $q$배를 팔았다$q$, $q$머리를 깎았다$q$, $q$헷갈렸어요$q$, 2, $q$행 18:18 — '머리를 깎았으니 이는 서원이 있음이러라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에베소 사람들이 더 머물라 하자 바울은 어떤 조건을 말했습니까?$q$, $q$하나님의 뜻$q$, $q$총독의 명령$q$, $q$바람의 방향$q$, $q$헷갈렸어요$q$, 0, $q$행 18:21 — '만일 하나님의 뜻이면 너희에게 돌아오리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 가이사랴에 상륙한 뒤 어디로 내려갔습니까?$q$, $q$안디옥$q$, $q$빌립보$q$, $q$로마$q$, $q$헷갈렸어요$q$, 0, $q$행 18:22 — '안디옥으로 내려가서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 28 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 29;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 29 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에베소에 온 아볼로는 어느 성경에 능한 사람이었습니까?$q$, $q$로마 출신$q$, $q$알렉산드리아 출신$q$, $q$나사렛 출신$q$, $q$헷갈렸어요$q$, 1, $q$행 18:24 — '알렉산드리아에서 난 아볼로라 하는 유대인이 ... 성경에 능한 자라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아볼로에게 하나님의 도를 어느 정도로 알려 주었습니까?$q$, $q$더 자세히$q$, $q$몰래 숨기며$q$, $q$꾸짖기만 하며$q$, $q$헷갈렸어요$q$, 0, $q$행 18:26 — '하나님의 도를 더 자세히 풀어 이르더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아볼로는 성경으로 예수가 누구임을 증거했습니까?$q$, $q$제사장$q$, $q$로마 시민$q$, $q$그리스도$q$, $q$헷갈렸어요$q$, 2, $q$행 18:28 — '예수는 그리스도라고 증거하여'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 29 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 30;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 30 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에베소의 어떤 제자들은 처음에 누구의 세례만 알았습니까?$q$, $q$요한$q$, $q$베드로$q$, $q$빌립$q$, $q$헷갈렸어요$q$, 0, $q$행 19:3 — '요한의 세례로라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 안수하자 그들에게 무엇이 임했습니까?$q$, $q$성령$q$, $q$흉년$q$, $q$감옥$q$, $q$헷갈렸어요$q$, 0, $q$행 19:6 — '성령이 그들에게 임하시므로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마술하던 사람들은 회개하며 무엇을 모아 불살랐습니까?$q$, $q$갑옷$q$, $q$그물$q$, $q$책$q$, $q$헷갈렸어요$q$, 2, $q$행 19:19 — '그 책을 모아 가지고 와서 모든 사람 앞에서 불사르니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 30 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 31;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 31 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$데메드리오는 어떤 신전 모형을 만드는 직공들을 모았습니까?$q$, $q$가이사$q$, $q$아데미$q$, $q$아폴로$q$, $q$헷갈렸어요$q$, 1, $q$행 19:24 — '아데미의 은감실을 만들어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$소동이 커지자 무리는 에베소 사람의 무엇을 크게 외쳤습니까?$q$, $q$다윗$q$, $q$아데미$q$, $q$모세$q$, $q$헷갈렸어요$q$, 1, $q$행 19:28 — '크다 에베소 사람의 아데미여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시청 서기관은 무리를 진정시킨 뒤 집회를 어떻게 했습니까?$q$, $q$배에 태웠다$q$, $q$흩어지게 했다$q$, $q$감옥에 보냈다$q$, $q$헷갈렸어요$q$, 1, $q$행 19:41 — '이에 그 모임을 흩어지게 하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 31 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 32;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 32 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에베소 소동 뒤 바울은 제자들을 불러 무엇하고 떠났습니까?$q$, $q$꾸짖은 뒤 숨음$q$, $q$권한 뒤 작별$q$, $q$재판한 뒤 감금$q$, $q$헷갈렸어요$q$, 1, $q$행 20:1 — '제자들을 불러 권한 후에 작별하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 32 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 어떤 음모 때문에 헬라 뒤 여정을 바꾸었습니까?$q$, $q$환대$q$, $q$기도 요청$q$, $q$공모$q$, $q$헷갈렸어요$q$, 2, $q$행 20:3 — '유대인들이 자기를 해하려고 공모하므로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 32 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울의 동역자들은 먼저 어디로 가서 기다렸습니까?$q$, $q$로마$q$, $q$드로아$q$, $q$예루살렘$q$, $q$헷갈렸어요$q$, 1, $q$행 20:5 — '먼저 가서 드로아에서 우리를 기다리더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 32 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 33;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 33 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$드로아 성도들은 주간 첫날 무엇을 하려고 모였습니까?$q$, $q$배를 고치러$q$, $q$떡을 떼려$q$, $q$세금을 내러$q$, $q$헷갈렸어요$q$, 1, $q$행 20:7 — '떡을 떼려 하여 모였더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 33 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$유두고는 바울의 긴 강론 중 어디에 걸터앉아 졸았습니까?$q$, $q$배$q$, $q$제단$q$, $q$창$q$, $q$헷갈렸어요$q$, 2, $q$행 20:9 — '창에 걸터 앉았다가 깊이 졸더니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 33 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 떨어진 유두고를 안고 무엇이 있다고 말했습니까?$q$, $q$죄$q$, $q$생명$q$, $q$빚$q$, $q$헷갈렸어요$q$, 1, $q$행 20:10 — '떠들지 말라 생명이 저에게 있다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 33 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 34;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 34 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 밀레도에서 누구를 불렀습니까?$q$, $q$로마 군인들$q$, $q$에베소 장로들$q$, $q$예루살렘 제사장들$q$, $q$헷갈렸어요$q$, 1, $q$행 20:17 — '에베소로 사람을 보내어 교회 장로들을 청하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 34 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 자기 달려갈 길과 주 예수께 받은 무엇을 마치려 한다고 했습니까?$q$, $q$재판$q$, $q$장사$q$, $q$사명$q$, $q$헷갈렸어요$q$, 2, $q$행 20:24 — '나의 달려갈 길과 주 예수께 받은 사명'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 34 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 자신이 떠난 뒤 무엇들이 들어와 양 떼를 아끼지 않을 것이라 경고했습니까?$q$, $q$로마 군대$q$, $q$흉악한 이리$q$, $q$바다 폭풍$q$, $q$헷갈렸어요$q$, 1, $q$행 20:29 — '흉악한 이리가 너희에게 들어와서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 34 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 35;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 35 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$두로 제자들은 성령의 감동으로 바울에게 어디에 들어가지 말라 했습니까?$q$, $q$드로아$q$, $q$로마$q$, $q$예루살렘$q$, $q$헷갈렸어요$q$, 2, $q$행 21:4 — '예루살렘에 들어가지 말라 하더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 35 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아가보는 바울의 무엇으로 자기 손발을 묶어 예언했습니까?$q$, $q$겉옷$q$, $q$띠$q$, $q$두루마리$q$, $q$헷갈렸어요$q$, 1, $q$행 21:11 — '바울의 띠를 가져다가 자기 수족을 잡아매고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 35 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 주 예수의 이름을 위해 무엇까지 각오했다고 했습니까?$q$, $q$돈 버는 것$q$, $q$성전 짓는 것$q$, $q$죽는 것$q$, $q$헷갈렸어요$q$, 2, $q$행 21:13 — '주 예수의 이름을 위하여 ... 죽을 것도 각오하였노라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 35 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 36;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 36 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울 일행이 예루살렘에 이르자 형제들은 어떤 태도로 영접했습니까?$q$, $q$몰래$q$, $q$두려워하며$q$, $q$기꺼이$q$, $q$헷갈렸어요$q$, 2, $q$행 21:17 — '형제들이 우리를 기꺼이 영접하거늘'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 36 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 야고보와 장로들에게 하나님이 누구 가운데 하신 일을 보고했습니까?$q$, $q$로마 군대$q$, $q$성전 상인$q$, $q$이방인$q$, $q$헷갈렸어요$q$, 2, $q$행 21:19 — '하나님이 자기의 봉사로 말미암아 이방 가운데서 하신 일을'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 36 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$장로들은 오해를 풀기 위해 바울에게 네 사람과 함께 무엇을 하라 권했습니까?$q$, $q$항해$q$, $q$결례$q$, $q$재판$q$, $q$헷갈렸어요$q$, 1, $q$행 21:24 — '저희를 데리고 함께 결례를 행하고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 36 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 37;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 37 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아시아에서 온 유대인들은 바울이 누구를 성전에 데려왔다고 생각했습니까?$q$, $q$레위인$q$, $q$헬라인$q$, $q$제사장$q$, $q$헷갈렸어요$q$, 1, $q$행 21:29 — '드로비모가 바울과 함께 성내에 있음을 보고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 37 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$무리가 바울을 죽이려 할 때 누가 군사들과 달려왔습니까?$q$, $q$베드로$q$, $q$천부장$q$, $q$가말리엘$q$, $q$헷갈렸어요$q$, 1, $q$행 21:31 — '천부장에게 예루살렘이 다 요란하다 하는 소문이 들리매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 37 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 층대 위에서 무리에게 어떤 말로 말하기 시작했습니까?$q$, $q$히브리 말$q$, $q$라틴 말$q$, $q$헬라 말$q$, $q$헷갈렸어요$q$, 0, $q$행 21:40 — '히브리 방언으로 말하여 가로되'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 37 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 38;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 38 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$채찍질하려 할 때 바울은 자신이 어떤 시민이라고 밝혔습니까?$q$, $q$에베소$q$, $q$로마$q$, $q$알렉산드리아$q$, $q$헷갈렸어요$q$, 1, $q$행 22:25 — '너희가 로마 사람 된 자를 죄도 정치 아니하고 채찍질할 수 있느냐'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 38 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 공회 앞에서 무엇 때문에 심문받는다고 말했습니까?$q$, $q$부활 소망$q$, $q$아데미 신전$q$, $q$성전 세금$q$, $q$헷갈렸어요$q$, 0, $q$행 23:6 — '죽은 자의 소망 곧 부활을 인하여 내가 심문을 받노라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 38 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그 밤 주께서는 바울에게 어디에서도 증거해야 한다고 하셨습니까?$q$, $q$바벨론$q$, $q$애굽$q$, $q$로마$q$, $q$헷갈렸어요$q$, 2, $q$행 23:11 — '로마에서도 증거하여야 하리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 38 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 39;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 39 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울 암살을 맹세한 사람은 몇 명이 넘었습니까?$q$, $q$열두 명$q$, $q$사십 명$q$, $q$일곱 명$q$, $q$헷갈렸어요$q$, 1, $q$행 23:13 — '사십여 명이더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 39 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울의 생질은 음모를 누구에게 알렸습니까?$q$, $q$천부장$q$, $q$대제사장$q$, $q$헤롯$q$, $q$헷갈렸어요$q$, 0, $q$행 23:19 — '천부장이 그 손을 잡고 물러가서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 39 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$천부장은 밤에 바울을 어디로 호송하게 했습니까?$q$, $q$가이사랴$q$, $q$안디옥$q$, $q$드로아$q$, $q$헷갈렸어요$q$, 0, $q$행 23:23 — '가이사랴까지 가라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 39 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 40;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 40 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$더둘로는 바울을 어떤 파의 괴수라고 고발했습니까?$q$, $q$나사렛 이단$q$, $q$로마 군대$q$, $q$사두개인$q$, $q$헷갈렸어요$q$, 0, $q$행 24:5 — '나사렛 이단의 괴수라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 40 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 하나님과 사람을 대하여 항상 무엇에 힘쓴다고 했습니까?$q$, $q$돈을 많이 벌기$q$, $q$양심에 거리낌 없기$q$, $q$재판을 피하기$q$, $q$헷갈렸어요$q$, 1, $q$행 24:16 — '양심에 거리낌이 없기를 힘쓰노라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 40 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$벨릭스는 유대인의 마음을 얻으려고 바울을 얼마 동안 구류해 두었습니까?$q$, $q$이 년$q$, $q$삼 일$q$, $q$사십 일$q$, $q$헷갈렸어요$q$, 0, $q$행 24:27 — '이태를 지내서 ... 바울을 구류하여 두니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 40 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 41;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 41 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$유대인들은 베스도에게 바울을 어디로 옮겨 달라고 청했습니까?$q$, $q$예루살렘$q$, $q$로마$q$, $q$빌립보$q$, $q$헷갈렸어요$q$, 0, $q$행 25:3 — '바울을 예루살렘으로 옮기기를 청하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 41 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 재판 중 누구에게 상소한다고 했습니까?$q$, $q$가이사$q$, $q$야고보$q$, $q$헤롯$q$, $q$헷갈렸어요$q$, 0, $q$행 25:11 — '내가 가이사께 호소하노라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 41 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베스도는 아그립바에게 바울에 대해 무엇을 쓸 만한 확실한 일이 없다고 했습니까?$q$, $q$전도 여행 계획$q$, $q$황제께 올릴 죄목$q$, $q$성전 봉헌문$q$, $q$헷갈렸어요$q$, 1, $q$행 25:26 — '그에게 대하여 황제께 쓸 확실한 일이 없으므로'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 41 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 42;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 42 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 아그립바 앞에서 어느 길의 만남을 증언했습니까?$q$, $q$여리고 길$q$, $q$다메섹 길$q$, $q$엠마오 길$q$, $q$헷갈렸어요$q$, 1, $q$행 26:12 — '다메섹으로 갔나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 42 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 사람들을 어둠에서 어디로 돌리게 하셨습니까?$q$, $q$광야$q$, $q$감옥$q$, $q$빛$q$, $q$헷갈렸어요$q$, 2, $q$행 26:18 — '어두움에서 빛으로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 42 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아그립바와 베스도는 바울이 상소하지 않았다면 어떻게 될 수 있었다고 말했습니까?$q$, $q$성전장이 될 수 있었다$q$, $q$왕이 될 수 있었다$q$, $q$석방될 수 있었다$q$, $q$헷갈렸어요$q$, 2, $q$행 26:32 — '가이사에게 호소하지 아니하였더면 놓을 수 있을 뻔하였다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 42 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 43;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 43 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 항해가 계속되면 배와 생명에 어떤 일이 있을 것이라 경고했습니까?$q$, $q$큰 잔치$q$, $q$빠른 도착$q$, $q$큰 타격과 손상$q$, $q$헷갈렸어요$q$, 2, $q$행 27:10 — '타격과 많은 손해가 있으리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 43 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$폭풍 속 천사는 바울이 누구 앞에 서야 한다고 했습니까?$q$, $q$아그립바$q$, $q$가이사$q$, $q$헤롯$q$, $q$헷갈렸어요$q$, 1, $q$행 27:24 — '네가 가이사 앞에 서야 하겠고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 43 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$배가 부서진 뒤 사람들은 무엇을 붙잡고 모두 육지에 올랐습니까?$q$, $q$널조각과 배 물건$q$, $q$광야 나무$q$, $q$성전 기둥$q$, $q$헷갈렸어요$q$, 0, $q$행 27:44 — '널조각 혹은 배 물건에 의지하여 나가게 하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 43 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 44;
+  where q.event_id = e.id and er.code = 'era_nt_apostolic' and e.story_index = 44 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$몰타 사람들은 추위와 비 속의 바울 일행에게 무엇을 피워 영접했습니까?$q$, $q$등잔$q$, $q$불$q$, $q$향$q$, $q$헷갈렸어요$q$, 1, $q$행 28:2 — '불을 피워 우리를 다 영접하더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 44 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 보블리오의 아버지에게 기도하고 무엇을 해 고쳤습니까?$q$, $q$재판$q$, $q$안수$q$, $q$세례$q$, $q$헷갈렸어요$q$, 1, $q$행 28:8 — '기도하고 그에게 안수하여 낫게 하매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 44 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$로마 셋집에서 바울은 담대히 무엇을 전파하고 가르쳤습니까?$q$, $q$성전 세금과 제사$q$, $q$하나님 나라와 예수 그리스도$q$, $q$로마 법과 항해술$q$, $q$헷갈렸어요$q$, 1, $q$행 28:31 — '하나님 나라를 전파하며 주 예수 그리스도께 관한 것을 가르치되'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_apostolic' and e.story_index = 44 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 계시를 받은 장소는 어디입니까?$q$, $q$밧모라 하는 섬$q$, $q$빌립보 감옥$q$, $q$고린도 항구$q$, $q$헷갈렸어요$q$, 0, $q$계 1:9 — '밧모라 하는 섬에 있었더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한은 영광의 그리스도를 보고 어떤 반응을 보였습니까?$q$, $q$그 발 앞에 엎드러졌다$q$, $q$두루마리를 찢었다$q$, $q$배를 타고 도망했다$q$, $q$헷갈렸어요$q$, 0, $q$계 1:17 — '그 발 앞에 엎드러져 죽은 자 같이 되매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 요한에게 본 것을 어디에 보내라고 하십니까?$q$, $q$일곱 교회$q$, $q$예루살렘 군대$q$, $q$로마 원로원$q$, $q$헷갈렸어요$q$, 0, $q$계 1:11 — '일곱 교회에 보내라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 하늘에서 처음 본 중심 장면은 무엇입니까?$q$, $q$갈릴리의 배$q$, $q$보좌와 그 위에 앉으신 이$q$, $q$무너진 성벽$q$, $q$헷갈렸어요$q$, 1, $q$계 4:2 — '보좌를 베풀었고 그 보좌 위에 앉으신 이가 있는데'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이십사 장로들은 보좌 앞에서 무엇을 내려놓습니까?$q$, $q$세금 장부$q$, $q$그물$q$, $q$면류관$q$, $q$헷갈렸어요$q$, 2, $q$계 4:10 — '자기의 면류관을 보좌 앞에 던지며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$네 생물이 밤낮 쉬지 않고 외치는 말의 중심은 무엇입니까?$q$, $q$두렵다$q$, $q$떠나라$q$, $q$거룩하다$q$, $q$헷갈렸어요$q$, 2, $q$계 4:8 — '거룩하다 거룩하다 거룩하다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 오른손에서 본 두루마리는 어떤 상태였습니까?$q$, $q$빈 종이였다$q$, $q$일곱 인으로 봉해졌다$q$, $q$이미 불에 탔다$q$, $q$헷갈렸어요$q$, 1, $q$계 5:1 — '일곱 인으로 봉하였더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$두루마리를 펴기에 합당한 분으로 나타난 이는 누구입니까?$q$, $q$힘센 천사$q$, $q$죽임 당한 어린양$q$, $q$로마 황제$q$, $q$헷갈렸어요$q$, 1, $q$계 5:6 — '어린 양이 섰는데 일찍 죽임을 당한 것 같더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하늘의 존재들이 어린양께 드린 찬양의 이유는 무엇입니까?$q$, $q$피로 사람들을 사셨기 때문$q$, $q$전쟁 무기를 만들었기 때문$q$, $q$큰 도시를 세웠기 때문$q$, $q$헷갈렸어요$q$, 0, $q$계 5:9 — '각 족속과 방언과 백성과 나라 가운데서 사람들을 피로 사서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한은 각 나라와 족속에서 나온 어떤 무리를 봅니까?$q$, $q$열두 명의 재판관$q$, $q$한 도시의 상인들$q$, $q$아무도 능히 셀 수 없는 큰 무리$q$, $q$헷갈렸어요$q$, 2, $q$계 7:9 — '아무라도 능히 셀 수 없는 큰 무리'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$큰 무리는 보좌와 어린양 앞에서 무엇을 입고 섭니까?$q$, $q$왕의 붉은 망토$q$, $q$로마 갑옷$q$, $q$흰 옷$q$, $q$헷갈렸어요$q$, 2, $q$계 7:9 — '흰 옷을 입고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 큰 환난에서 나온 이들에게 무엇을 닦아 주십니까?$q$, $q$모든 눈물$q$, $q$전쟁의 피$q$, $q$성전의 먼지$q$, $q$헷갈렸어요$q$, 0, $q$계 7:17 — '모든 눈물을 그 눈에서 씻어 주실 것임이러라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하늘의 큰 무리가 외치는 찬양의 말은 무엇입니까?$q$, $q$문을 닫으라$q$, $q$할렐루야$q$, $q$가이사 만세$q$, $q$헷갈렸어요$q$, 1, $q$계 19:1 — '할렐루야 구원과 영광과 능력이'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$혼인잔치가 준비된 이는 누구입니까?$q$, $q$짐승$q$, $q$어린양$q$, $q$용$q$, $q$헷갈렸어요$q$, 1, $q$계 19:7 — '어린 양의 혼인 기약이 이르렀고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$천사는 요한이 엎드려 경배하려 하자 누구께 경배하라고 합니까?$q$, $q$천사 자신$q$, $q$일곱 교회$q$, $q$하나님$q$, $q$헷갈렸어요$q$, 2, $q$계 19:10 — '오직 하나님께 경배하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 본 백마 탄 이는 어떤 이름으로 불립니까?$q$, $q$상인과 재판관$q$, $q$충신과 진실$q$, $q$두려움과 혼돈$q$, $q$헷갈렸어요$q$, 1, $q$계 19:11 — '그 이름은 충신과 진실이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$백마 탄 왕은 무엇으로 만국을 치십니까?$q$, $q$어부의 그물$q$, $q$성전의 금잔$q$, $q$입에서 나오는 예리한 검$q$, $q$헷갈렸어요$q$, 2, $q$계 19:15 — '그의 입에서 이한 검이 나오니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$왕의 옷과 다리에 기록된 이름은 무엇입니까?$q$, $q$로마의 수호자$q$, $q$바다의 주인$q$, $q$만왕의 왕이요 만주의 주$q$, $q$헷갈렸어요$q$, 2, $q$계 19:16 — '만왕의 왕이요 만주의 주라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 본 큰 흰 보좌 앞에서 무엇들이 펼쳐집니까?$q$, $q$책들과 생명책$q$, $q$성전 지도와 항해도$q$, $q$세금 장부와 군사 명단$q$, $q$헷갈렸어요$q$, 0, $q$계 20:12 — '책들이 펴 있고 또 다른 책이 펴졌으니 곧 생명책이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사망과 음부는 어디에 던져집니까?$q$, $q$불못$q$, $q$갈릴리 바다$q$, $q$예루살렘 성문$q$, $q$헷갈렸어요$q$, 0, $q$계 20:14 — '사망과 음부도 불못에 던지우니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$새 창조에서 다시 있지 않은 것으로 언급된 것은 무엇입니까?$q$, $q$생명수와 거룩한 성$q$, $q$찬양과 예배와 기쁨$q$, $q$사망과 애통과 아픈 것$q$, $q$헷갈렸어요$q$, 2, $q$계 21:4 — '사망이 없고 애통하는 것이나 곡하는 것이나 아픈 것이'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$새 예루살렘에서 요한이 성 안에 보지 못한 것은 무엇입니까?$q$, $q$성전$q$, $q$생명수의 강$q$, $q$하나님의 보좌$q$, $q$헷갈렸어요$q$, 0, $q$계 21:22 — '성안에 성전을 내가 보지 못하였으니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$새 예루살렘을 밝히는 등은 누구입니까?$q$, $q$해와 달$q$, $q$일곱 촛대$q$, $q$어린양$q$, $q$헷갈렸어요$q$, 2, $q$계 21:23 — '어린 양이 그 등이 되심이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$생명나무 잎사귀는 무엇을 위해 있다고 합니까?$q$, $q$만국을 소성하게 한다$q$, $q$성문을 잠그게 한다$q$, $q$바다를 다시 만들게 한다$q$, $q$헷갈렸어요$q$, 0, $q$계 22:2 — '그 나무 잎사귀들은 만국을 소성하기 위하여 있더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_nt_consummation' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$천사는 요한에게 이 말씀들이 어떠하다고 말합니까?$q$, $q$사람이 만든 이야기다$q$, $q$신실하고 참되다$q$, $q$숨겨야 할 비밀이다$q$, $q$헷갈렸어요$q$, 1, $q$계 22:6 — '이 말은 신실하고 참된지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성령과 신부가 함께 하는 초청은 무엇입니까?$q$, $q$떠나라$q$, $q$잠잠하라$q$, $q$오라$q$, $q$헷갈렸어요$q$, 2, $q$계 22:17 — '성령과 신부가 말씀하시기를 오라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한계시록의 마지막 응답은 무엇을 기다리는 고백입니까?$q$, $q$주 예수여 오시옵소서$q$, $q$책을 다시 봉하겠습니다$q$, $q$예루살렘으로 돌아가겠습니다$q$, $q$헷갈렸어요$q$, 0, $q$계 22:20 — '아멘 주 예수여 오시옵소서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_consummation' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야고보가 흩어진 성도들에게 강조한 태도는 무엇입니까?$q$, $q$말씀을 듣고 행하는 믿음$q$, $q$성전 제사 절차 암기$q$, $q$로마 법정 승소 전략$q$, $q$헷갈렸어요$q$, 0, $q$약 1:22 — '말씀을 행하는 자가 되고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$참된 경건은 누구를 돌보는 모습으로 드러납니까?$q$, $q$친한 사람만 섬기는 모습$q$, $q$부자에게 좋은 자리를 주는 모습$q$, $q$고아와 과부를 돌보는 모습$q$, $q$헷갈렸어요$q$, 2, $q$약 1:27 — '고아와 과부를 그 환난중에 돌아보고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$행함이 없는 믿음에 대해 야고보가 든 비유는 무엇입니까?$q$, $q$기름 없는 등잔처럼 잠든다$q$, $q$비 없는 구름처럼 떠간다$q$, $q$영혼 없는 몸처럼 죽은 것이다$q$, $q$헷갈렸어요$q$, 2, $q$약 2:26 — '행함이 없는 믿음은 죽은 것이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야고보가 혀를 설명할 때 사용한 작은 물건은 무엇입니까?$q$, $q$성전의 은잔$q$, $q$말의 입에 넣는 재갈$q$, $q$어부의 큰 그물$q$, $q$헷갈렸어요$q$, 1, $q$약 3:3 — '말들의 입에 재갈 물리는 것은'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$위로부터 난 지혜의 첫 모습은 무엇입니까?$q$, $q$재물을 빠르게 모으는 지혜$q$, $q$성결하고 화평한 지혜$q$, $q$자랑하고 다투는 지혜$q$, $q$헷갈렸어요$q$, 1, $q$약 3:17 — '첫째 성결하고 다음에 화평하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야고보가 다툼의 뿌리로 지적한 것은 무엇입니까?$q$, $q$로마 군인의 감시$q$, $q$마음속에서 싸우는 정욕$q$, $q$성전에서 멀리 사는 거리$q$, $q$헷갈렸어요$q$, 1, $q$약 4:1 — '너희 지체 중에서 싸우는 정욕'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 갈라디아 교회에 놀란 이유는 무엇입니까?$q$, $q$구제 헌금을 많이 모았기 때문$q$, $q$예루살렘 방문을 미뤘기 때문$q$, $q$다른 복음을 따르려 했기 때문$q$, $q$헷갈렸어요$q$, 2, $q$갈 1:6 — '다른 복음 좇는 것을 내가 이상히 여기노라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 자신의 사도 직분이 어디에서 왔다고 밝힙니까?$q$, $q$예루살렘 서기관 회의로부터$q$, $q$갈라디아 장로들의 투표로부터$q$, $q$예수 그리스도와 하나님께로부터$q$, $q$헷갈렸어요$q$, 2, $q$갈 1:1 — '사람들에게서 난 것도 아니요'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$안디옥에서 바울이 베드로를 책망한 까닭은 무엇입니까?$q$, $q$헌금을 예루살렘에 보내지 않았기 때문$q$, $q$구브로 항해를 거절했기 때문$q$, $q$이방인과 먹다가 물러섰기 때문$q$, $q$헷갈렸어요$q$, 2, $q$갈 2:12 — '이방인과 함께 먹다가 물러가고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 아브라함의 의로움을 설명할 때 붙든 근거는 무엇입니까?$q$, $q$아브라함이 하나님을 믿은 것$q$, $q$아브라함이 왕이 된 것$q$, $q$아브라함이 도시를 세운 것$q$, $q$헷갈렸어요$q$, 0, $q$갈 3:6 — '아브라함이 하나님을 믿으매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$율법은 그리스도께 인도하기 전 어떤 역할을 했습니까?$q$, $q$초등교사처럼 인도했다$q$, $q$시장 상인처럼 값을 정했다$q$, $q$왕궁 문지기처럼 막았다$q$, $q$헷갈렸어요$q$, 0, $q$갈 3:24 — '율법이 우리를 그리스도께로 인도하는 초등교사가 되어'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그리스도 안에 있는 사람의 신분을 바울은 무엇으로 설명합니까?$q$, $q$종이 아니라 아들이다$q$, $q$손님이 아니라 상인이다$q$, $q$군인이 아니라 서기관이다$q$, $q$헷갈렸어요$q$, 0, $q$갈 4:7 — '네가 이 후로는 종이 아니요 아들이니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 그리스도인의 자유를 어떤 기회로 삼지 말라고 합니까?$q$, $q$육체의 기회$q$, $q$복음 전도의 기회$q$, $q$기도의 기회$q$, $q$헷갈렸어요$q$, 0, $q$갈 5:13 — '자유로 육체의 기회를 삼지 말고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성령의 열매 목록에 들어가는 것은 무엇입니까?$q$, $q$사랑과 희락과 화평$q$, $q$시기와 분냄과 분쟁$q$, $q$자랑과 탐욕과 술취함$q$, $q$헷갈렸어요$q$, 0, $q$갈 5:22 — '성령의 열매는 사랑과 희락과 화평'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$짐을 지는 문제에서 바울이 권한 공동체 모습은 무엇입니까?$q$, $q$서로의 짐을 함께 지는 모습$q$, $q$각자의 짐을 숨기는 모습$q$, $q$약한 사람의 짐을 비웃는 모습$q$, $q$헷갈렸어요$q$, 0, $q$갈 6:2 — '너희가 짐을 서로 지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$데살로니가 교회에 대해 바울이 기억한 세 가지는 무엇입니까?$q$, $q$성전 건축과 왕의 칙령과 군대의 승리$q$, $q$믿음·사랑·소망의 열매$q$, $q$부와 항구와 재판의 지혜$q$, $q$헷갈렸어요$q$, 1, $q$살전 1:3 — '믿음·사랑·소망의 열매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울 일행은 데살로니가 성도들을 어떤 마음으로 대했습니까?$q$, $q$상인이 값을 흥정하듯 계산적으로$q$, $q$유모가 자녀를 기르듯 부드럽게$q$, $q$군관이 병사를 몰아붙이듯 엄하게$q$, $q$헷갈렸어요$q$, 1, $q$살전 2:7 — '유모가 자기 자녀를 기름과 같이'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$데살로니가 사람들이 우상을 버리고 향한 대상은 누구입니까?$q$, $q$살아 계시고 참되신 하나님$q$, $q$아덴의 많은 신상$q$, $q$로마 황제의 신전$q$, $q$헷갈렸어요$q$, 0, $q$살전 1:9 — '우상을 버리고 하나님께로 돌아와서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 데살로니가 성도들에게 말한 하나님의 뜻은 무엇입니까?$q$, $q$명예로운 자리$q$, $q$거룩함$q$, $q$부유함$q$, $q$헷갈렸어요$q$, 1, $q$살전 4:3 — '하나님의 뜻은 이것이니 너희의 거룩함이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주의 강림 때 먼저 일어나는 사람들은 누구입니까?$q$, $q$그리스도 안에서 죽은 자들$q$, $q$성전 제사장들$q$, $q$로마 군대의 장군들$q$, $q$헷갈렸어요$q$, 0, $q$살전 4:16 — '그리스도 안에서 죽은 자들이 먼저 일어나고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 재림 소망을 들은 성도들이 서로에게 무엇을 하라고 합니까?$q$, $q$위로하고 덕을 세우라$q$, $q$날짜를 계산해 공개하라$q$, $q$모든 일을 멈추고 숨으라$q$, $q$헷갈렸어요$q$, 0, $q$살전 5:11 — '피차 권면하고 피차 덕을 세우기를'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$고린도 교회의 분열에서 사람들이 내세운 이름은 무엇입니까?$q$, $q$바울과 아볼로와 게바$q$, $q$다윗과 솔로몬과 히스기야$q$, $q$모세와 아론과 여호수아$q$, $q$헷갈렸어요$q$, 0, $q$고전 1:12 — '나는 바울에게, 나는 아볼로에게'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 고린도에서 중심으로 전한 분은 누구입니까?$q$, $q$로마 총독의 평화$q$, $q$십자가에 못 박히신 그리스도$q$, $q$헬라 철학자의 명성$q$, $q$헷갈렸어요$q$, 1, $q$고전 2:2 — '예수 그리스도와 그의 십자가에 못 박히신 것'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 하나님의 지혜가 사람에게 무엇으로 알려진다고 말합니까?$q$, $q$시장 소문으로 퍼진다$q$, $q$가문 기록으로 증명된다$q$, $q$성령으로 보이신다$q$, $q$헷갈렸어요$q$, 2, $q$고전 2:10 — '성령으로 이것을 우리에게 보이셨으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$교회 안의 드러난 죄에 대해 바울이 요구한 조치는 무엇입니까?$q$, $q$자랑거리로 삼으라$q$, $q$교회 밖으로 내어보내라$q$, $q$재판을 피해 숨기라$q$, $q$헷갈렸어요$q$, 1, $q$고전 5:13 — '이 악한 사람은 너희 중에서 내어 쫓으라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성도의 몸에 대해 바울이 강조한 사실은 무엇입니까?$q$, $q$시장에 팔 수 있는 재산이다$q$, $q$성령의 전이다$q$, $q$개인의 물건일 뿐이다$q$, $q$헷갈렸어요$q$, 1, $q$고전 6:19 — '너희 몸은 성령의 전인 줄을 알지 못하느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성도 사이의 송사에 대해 바울이 책망한 문제는 무엇입니까?$q$, $q$믿지 않는 자 앞에서 다투는 일$q$, $q$장로들에게 먼저 묻는 일$q$, $q$가난한 사람을 돕는 일$q$, $q$헷갈렸어요$q$, 0, $q$고전 6:6 — '믿지 아니하는 자들 앞에서 하느냐'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성찬을 대할 때 바울이 요구한 태도는 무엇입니까?$q$, $q$가장 늦게 온 사람을 밀어내는 태도$q$, $q$자기를 살피고 먹는 태도$q$, $q$부자부터 먼저 먹는 태도$q$, $q$헷갈렸어요$q$, 1, $q$고전 11:28 — '사람이 자기를 살피고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 교회를 무엇에 비유해 여러 지체의 필요를 설명합니까?$q$, $q$한 배$q$, $q$한 성문$q$, $q$한 몸$q$, $q$헷갈렸어요$q$, 2, $q$고전 12:12 — '몸은 하나인데 많은 지체가 있고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성령의 은사에 대해 바울이 밝힌 공통 근원은 무엇입니까?$q$, $q$가장 부유한 사람이 정한다$q$, $q$같은 성령께서 나누신다$q$, $q$도시마다 다른 신이 준다$q$, $q$헷갈렸어요$q$, 1, $q$고전 12:11 — '같은 한 성령이 행하사'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 모든 은사보다 더 크다고 말한 길은 무엇입니까?$q$, $q$사랑$q$, $q$논쟁$q$, $q$명예$q$, $q$헷갈렸어요$q$, 0, $q$고전 13:13 — '그 중에 제일은 사랑이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예언의 은사가 교회에 주는 유익은 무엇입니까?$q$, $q$자기 이름을 높인다$q$, $q$덕을 세우고 권면하고 위로한다$q$, $q$사람을 서로 갈라놓는다$q$, $q$헷갈렸어요$q$, 1, $q$고전 14:3 — '덕을 세우며 권면하며 안위하는 것이요'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예배 질서에 대해 바울이 마지막으로 권한 원칙은 무엇입니까?$q$, $q$모든 일을 품위 있고 질서 있게 하라$q$, $q$각자 동시에 크게 말하라$q$, $q$알아듣지 못해도 길게 말하라$q$, $q$헷갈렸어요$q$, 0, $q$고전 14:40 — '모든 것을 적당하게 하고 질서대로 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 받은 대로 전한 복음의 중심은 무엇입니까?$q$, $q$그리스도의 죽음과 장사와 부활$q$, $q$성전 세금의 납부 방식$q$, $q$고린도의 정치 개혁$q$, $q$헷갈렸어요$q$, 0, $q$고전 15:3 — '그리스도께서 우리 죄를 위하여 죽으시고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그리스도께서 다시 살아나지 않으셨다면 믿음은 무엇이 됩니까?$q$, $q$헛것이 된다$q$, $q$더 강해진다$q$, $q$법정 증거가 된다$q$, $q$헷갈렸어요$q$, 0, $q$고전 15:17 — '너희의 믿음도 헛되고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$부활 승리를 말하며 바울이 성도들에게 권한 자세는 무엇입니까?$q$, $q$견고하여 흔들리지 말라$q$, $q$죽음 이야기를 피하라$q$, $q$두려워 숨어 지내라$q$, $q$헷갈렸어요$q$, 0, $q$고전 15:58 — '견고하며 흔들리지 말며'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 자신들이 무엇으로 행했다고 말합니까?$q$, $q$하나님의 거룩함과 진실함$q$, $q$사람의 칭찬과 명예$q$, $q$육체의 지혜와 계산$q$, $q$헷갈렸어요$q$, 0, $q$고후 1:12 — '하나님의 거룩함과 진실함으로써'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 징계받은 사람을 향해 교회가 무엇을 하라고 합니까?$q$, $q$용서하고 위로하라$q$, $q$영원히 멀리하라$q$, $q$도시 밖에 묶어두라$q$, $q$헷갈렸어요$q$, 0, $q$고후 2:7 — '저를 용서하고 위로할 것이니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 복음을 전하는 자신들을 무엇의 향기라고 부릅니까?$q$, $q$그리스도의 향기$q$, $q$시장의 향료$q$, $q$전쟁의 연기$q$, $q$헷갈렸어요$q$, 0, $q$고후 2:15 — '우리는 구원 얻는 자들에게나... 그리스도의 향기니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 주의 영이 계신 곳에 무엇이 있다고 말합니까?$q$, $q$두려움$q$, $q$혼잡함$q$, $q$자유함$q$, $q$헷갈렸어요$q$, 2, $q$고후 3:17 — '주의 영이 계신 곳에는 자유함이 있느니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$질그릇 안에 담긴 보배는 무엇을 드러냅니까?$q$, $q$사도의 말재주를 드러낸다$q$, $q$능력이 하나님께 있음을 드러낸다$q$, $q$고린도의 부유함을 드러낸다$q$, $q$헷갈렸어요$q$, 1, $q$고후 4:7 — '능력의 심히 큰 것이 하나님께 있고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 보이는 것과 보이지 않는 것 중 무엇을 바라보라고 합니까?$q$, $q$보이는 잠깐의 것$q$, $q$사람들의 칭찬$q$, $q$보이지 않는 영원한 것$q$, $q$헷갈렸어요$q$, 2, $q$고후 4:18 — '보이지 않는 것은 영원함이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 자신의 사도직을 말하며 많이 언급한 경험은 무엇입니까?$q$, $q$수고와 매 맞음과 위험$q$, $q$궁전 잔치와 금관$q$, $q$평안한 은퇴와 휴식$q$, $q$헷갈렸어요$q$, 0, $q$고후 11:23 — '수고를 넘치도록 하고 옥에 갇히기도 더 많이 하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 자신의 약함에 대해 고백한 내용은 무엇입니까?$q$, $q$사람을 지배할 핑계로 삼는다$q$, $q$복음을 포기할 이유로 삼는다$q$, $q$그리스도의 능력이 머물 자리로 여긴다$q$, $q$헷갈렸어요$q$, 2, $q$고후 12:9 — '내 능력이 약한 데서 온전하여짐이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 받은 육체의 가시에 대해 세 번 구한 것은 무엇입니까?$q$, $q$더 많은 가시를 달라고 구했다$q$, $q$사람들이 보지 못하게 해 달라고 구했다$q$, $q$그것이 떠나가게 해 달라고 구했다$q$, $q$헷갈렸어요$q$, 2, $q$고후 12:8 — '이것이 내게서 떠나기 위하여... 세 번 주께 간구하였더니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 선언한 복음의 정체는 무엇입니까?$q$, $q$율법 학자의 토론 자료$q$, $q$로마 시민권의 증명서$q$, $q$구원을 주시는 하나님의 능력$q$, $q$헷갈렸어요$q$, 2, $q$롬 1:16 — '구원을 주시는 하나님의 능력이 됨이라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 남을 판단하는 사람도 무엇을 피할 수 없다고 말합니까?$q$, $q$상인의 계산$q$, $q$하나님의 판단$q$, $q$예루살렘 방문$q$, $q$헷갈렸어요$q$, 1, $q$롬 2:3 — '하나님의 판단을 피할 줄로 생각하느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$겉모양이 아니라 참된 할례가 이루어지는 곳은 어디입니까?$q$, $q$시장$q$, $q$성문$q$, $q$마음$q$, $q$헷갈렸어요$q$, 2, $q$롬 2:29 — '할례는 마음에 할지니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 모든 사람이 어떤 상태에 있다고 말합니까?$q$, $q$이미 율법을 완전히 지켰다$q$, $q$자기 힘으로 의롭게 되었다$q$, $q$죄로 하나님의 영광에 못 이른다$q$, $q$헷갈렸어요$q$, 2, $q$롬 3:23 — '모든 사람이 죄를 범하였으매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$의롭다 하심은 무엇을 통해 값없이 주어집니까?$q$, $q$예수 안의 구속$q$, $q$많은 은화의 헌납$q$, $q$가문과 혈통의 자랑$q$, $q$헷갈렸어요$q$, 0, $q$롬 3:24 — '그리스도 예수 안에 있는 구속으로'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함에게 의로 여겨진 것은 무엇입니까?$q$, $q$많은 종을 거느린 힘$q$, $q$하나님을 믿은 믿음$q$, $q$고향을 유명하게 만든 일$q$, $q$헷갈렸어요$q$, 1, $q$롬 4:3 — '아브라함이 하나님을 믿으매'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그리스도 예수 안에 있는 사람에게 없어진 것은 무엇입니까?$q$, $q$소망$q$, $q$기도$q$, $q$정죄함$q$, $q$헷갈렸어요$q$, 2, $q$롬 8:1 — '결코 정죄함이 없나니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성령이 성도들에게 하게 하시는 하나님 향한 고백은 무엇입니까?$q$, $q$알 수 없는 주인$q$, $q$아빠 아버지$q$, $q$멀리 계신 왕$q$, $q$헷갈렸어요$q$, 1, $q$롬 8:15 — '아바 아버지라 부르짖느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 말한 끊을 수 없는 사랑은 누구의 사랑입니까?$q$, $q$가족 이름이 주는 명예$q$, $q$도시 사람들이 주는 인기$q$, $q$그리스도 예수 안에 있는 하나님의 사랑$q$, $q$헷갈렸어요$q$, 2, $q$롬 8:39 — '그리스도 예수 안에 있는 하나님의 사랑'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 성도의 몸을 무엇으로 드리라고 권합니까?$q$, $q$상인의 담보$q$, $q$거룩한 산 제물$q$, $q$전쟁 무기$q$, $q$헷갈렸어요$q$, 1, $q$롬 12:1 — '거룩한 산 제사로 드리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$악에 대한 성도의 태도는 무엇입니까?$q$, $q$악에게 지지 말고 선으로 이긴다$q$, $q$악을 보고도 기뻐한다$q$, $q$악을 더 큰 악으로 갚는다$q$, $q$헷갈렸어요$q$, 0, $q$롬 12:21 — '선으로 악을 이기라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 사랑이 율법과 어떤 관계라고 말합니까?$q$, $q$율법과 아무 상관이 없다$q$, $q$율법의 완성이다$q$, $q$율법을 숨기는 가면이다$q$, $q$헷갈렸어요$q$, 1, $q$롬 13:10 — '사랑은 율법의 완성이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 구원을 무엇으로 받은 것이라고 말합니까?$q$, $q$은혜로 믿음을 통해 받은 것$q$, $q$성전 세금으로 산 것$q$, $q$가문 이름으로 얻은 것$q$, $q$헷갈렸어요$q$, 0, $q$엡 2:8 — '너희가 그 은혜를 인하여 믿음으로 말미암아'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그리스도께서 유대인과 이방인 사이에 하신 일은 무엇입니까?$q$, $q$두 성전을 따로 지으셨다$q$, $q$막힌 담을 허무셨다$q$, $q$더 높은 담을 세우셨다$q$, $q$헷갈렸어요$q$, 1, $q$엡 2:14 — '중간에 막힌 담을 허시고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$성도들은 사도들과 선지자들의 터 위에 무엇으로 세워집니까?$q$, $q$로마의 성벽$q$, $q$상인의 창고$q$, $q$하나님의 성전$q$, $q$헷갈렸어요$q$, 2, $q$엡 2:21 — '주 안에서 성전이 되어가고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울의 매임은 복음에 어떤 결과를 가져왔습니까?$q$, $q$모든 교회가 문을 닫았다$q$, $q$빌립보가 로마를 정복했다$q$, $q$복음 전파에 진전이 되었다$q$, $q$헷갈렸어요$q$, 2, $q$빌 1:12 — '도리어 복음의 진보가 된 줄을'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 성도들에게 어떤 마음을 품으라고 권합니까?$q$, $q$감옥을 두려워하는 마음$q$, $q$서로 이기려는 마음$q$, $q$그리스도 예수의 마음$q$, $q$헷갈렸어요$q$, 2, $q$빌 2:5 — '그리스도 예수의 마음이니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그리스도께서 자신을 낮추신 끝은 무엇이었습니까?$q$, $q$빌립보 감옥을 피하심$q$, $q$십자가에 죽기까지 복종하심$q$, $q$로마 왕좌에 앉으심$q$, $q$헷갈렸어요$q$, 1, $q$빌 2:8 — '십자가에 죽으심이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 말한 이방인 가운데 나타난 비밀은 무엇입니까?$q$, $q$너희 안에 계신 그리스도$q$, $q$숨겨진 로마의 권세$q$, $q$사람의 유전과 규칙$q$, $q$헷갈렸어요$q$, 0, $q$골 1:27 — '이 비밀은 너희 안에 계신 그리스도시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 그리스도 안에 무엇이 충만히 거한다고 말합니까?$q$, $q$세상의 모든 철학$q$, $q$신성의 모든 충만$q$, $q$로마의 모든 권세$q$, $q$헷갈렸어요$q$, 1, $q$골 2:9 — '신성의 모든 충만이 육체로 거하시고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 경계한 가르침은 무엇을 따른 것이었습니까?$q$, $q$그리스도의 복음$q$, $q$사람의 유전과 세상의 초등학문$q$, $q$감사의 기도$q$, $q$헷갈렸어요$q$, 1, $q$골 2:8 — '사람의 유전과 세상의 초등학문을 좇음이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$감독에게 요구되는 기본 성품은 무엇입니까?$q$, $q$다투기를 좋아하는 성격$q$, $q$책망할 것이 없는 삶$q$, $q$술에 빠진 습관$q$, $q$헷갈렸어요$q$, 1, $q$딤전 3:2 — '감독은 책망할 것이 없으며'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 디모데에게 무엇에 이르도록 자신을 연단하라고 합니까?$q$, $q$경건$q$, $q$논쟁에서 이기는 말$q$, $q$부자 되는 기술$q$, $q$헷갈렸어요$q$, 0, $q$딤전 4:7 — '경건에 이르도록 네 자신을 연단하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$젊은 디모데가 믿는 자에게 보여야 할 모습은 무엇입니까?$q$, $q$나이를 숨기는 태도$q$, $q$말과 행실과 사랑의 본$q$, $q$권위를 세우는 거친 말$q$, $q$헷갈렸어요$q$, 1, $q$딤전 4:12 — '말과 행실과 사랑과 믿음과 정절에 대하여 본이 되어'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 모든 성경이 어디에서 난 것이라고 말합니까?$q$, $q$로마 법령$q$, $q$사람의 상상$q$, $q$하나님의 감동$q$, $q$헷갈렸어요$q$, 2, $q$딤후 3:16 — '모든 성경은 하나님의 감동으로 된 것으로'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울이 디모데에게 때를 얻든지 못 얻든지 하라고 한 일은 무엇입니까?$q$, $q$말씀을 전파하는 일$q$, $q$감옥을 피하는 일$q$, $q$서신을 숨기는 일$q$, $q$헷갈렸어요$q$, 0, $q$딤후 4:2 — '너는 말씀을 전파하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바울은 자신의 마지막 사명을 어떤 말로 표현합니까?$q$, $q$선한 싸움을 싸우고 달려갈 길을 마쳤다$q$, $q$모든 고난을 피하고 편히 쉬었다$q$, $q$아직 아무 일도 시작하지 않았다$q$, $q$헷갈렸어요$q$, 0, $q$딤후 4:7 — '내가 선한 싸움을 싸우고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로가 성도들에게 말한 소망은 무엇입니까?$q$, $q$로마의 보호로 얻은 안전$q$, $q$예수님의 부활로 난 산 소망$q$, $q$성전 건물의 영원함$q$, $q$헷갈렸어요$q$, 1, $q$벧전 1:3 — '예수 그리스도의 죽은 자 가운데서 부활하심으로 말미암아'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 성도들에게 어떤 삶을 살라고 권합니까?$q$, $q$두려움에 숨는 삶$q$, $q$탐욕을 따르는 삶$q$, $q$거룩한 삶$q$, $q$헷갈렸어요$q$, 2, $q$벧전 1:15 — '너희도 모든 행실에 거룩한 자가 되라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로가 성도들의 정체성으로 사용한 표현은 무엇입니까?$q$, $q$버려진 성 밖 사람들$q$, $q$이름 없는 장사꾼들$q$, $q$택하신 족속과 왕 같은 제사장$q$, $q$헷갈렸어요$q$, 2, $q$벧전 2:9 — '택하신 족속이요 왕 같은 제사장들이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주께서는 경건한 자와 불의한 자를 어떻게 하신다고 합니까?$q$, $q$불의한 자에게만 먼저 상을 주신다$q$, $q$경건한 자와 불의한 자를 모두 버리신다$q$, $q$경건한 자는 건지고 불의한 자는 심판까지 지키신다$q$, $q$헷갈렸어요$q$, 2, $q$벧후 2:9 — '경건한 자는 시험에서 건지시고 불의한 자는 형벌 아래 두어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$주의 약속이 더딘 듯 보이는 이유는 무엇입니까?$q$, $q$하나님이 약속을 잊으셨기 때문$q$, $q$모두 회개하기를 원하시기 때문$q$, $q$사람의 달력이 틀렸기 때문$q$, $q$헷갈렸어요$q$, 1, $q$벧후 3:9 — '아무도 멸망치 않고 다 회개하기에 이르기를'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 마지막 권면에서 무엇에서 자라가라고 합니까?$q$, $q$돈과 권력$q$, $q$은혜와 지식$q$, $q$분노와 논쟁$q$, $q$헷갈렸어요$q$, 1, $q$벧후 3:18 — '은혜와 저를 아는 지식에서 자라 가라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 전한 생명의 말씀은 어떤 방식으로 증언됩니까?$q$, $q$보고 듣고 손으로 만진 증언$q$, $q$로마 관리의 보고서$q$, $q$멀리서 들은 소문$q$, $q$헷갈렸어요$q$, 0, $q$요일 1:1 — '눈으로 본 바요... 손으로 만진 바라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$빛 가운데 행하는 사람에게 일어나는 일은 무엇입니까?$q$, $q$죄가 전혀 문제 되지 않는다$q$, $q$형제를 미워하게 된다$q$, $q$서로 사귐이 있다$q$, $q$헷갈렸어요$q$, 2, $q$요일 1:7 — '빛 가운데 행하면 우리가 서로 사귐이 있고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$죄를 자백할 때 하나님은 어떤 분으로 나타나십니까?$q$, $q$미쁘시고 의로우셔서 깨끗하게 하신다$q$, $q$죄를 더 크게 만드신다$q$, $q$듣지 않고 지나가신다$q$, $q$헷갈렸어요$q$, 0, $q$요일 1:9 — '미쁘시고 의로우사... 깨끗하게 하실 것이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 28;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 28 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한이 계시를 받은 장소는 어디입니까?$q$, $q$밧모라 하는 섬$q$, $q$고린도 회당$q$, $q$로마 원형경기장$q$, $q$헷갈렸어요$q$, 0, $q$계 1:9 — '밧모라 하는 섬에 있었더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$영광의 그리스도를 본 요한은 어떤 반응을 보였습니까?$q$, $q$그 발 앞에 엎드러졌다$q$, $q$두루마리를 숨겼다$q$, $q$바로 도시로 달려갔다$q$, $q$헷갈렸어요$q$, 0, $q$계 1:17 — '그 발 앞에 엎드러져 죽은 자 같이 되매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 요한에게 본 것을 어디에 보내라고 하십니까?$q$, $q$일곱 교회$q$, $q$로마 황제$q$, $q$예루살렘 군대$q$, $q$헷갈렸어요$q$, 0, $q$계 1:11 — '일곱 교회에 보내라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 28 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 29;
+  where q.event_id = e.id and er.code = 'era_nt_post_apostolic' and e.story_index = 29 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에베소 교회가 책망받은 것은 무엇을 버렸기 때문입니까?$q$, $q$도시의 성문$q$, $q$처음 사랑$q$, $q$성전의 금그릇$q$, $q$헷갈렸어요$q$, 1, $q$계 2:4 — '처음 사랑을 버렸느니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$서머나 교회에 주신 격려는 무엇입니까?$q$, $q$죽도록 충성하라$q$, $q$부를 먼저 구하라$q$, $q$두려워 바로 떠나라$q$, $q$헷갈렸어요$q$, 0, $q$계 2:10 — '죽도록 충성하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라오디게아 교회가 책망받은 상태는 무엇입니까?$q$, $q$차지도 뜨겁지도 않은 상태$q$, $q$박해 중에도 충성한 상태$q$, $q$형제를 끝까지 섬긴 상태$q$, $q$헷갈렸어요$q$, 0, $q$계 3:16 — '네가 미지근하여 더웁지도 아니하고 차지도 아니하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_post_apostolic' and e.story_index = 29 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가브리엘은 사가랴의 아들을 어떤 이름으로 부르라 했습니까?$q$, $q$예수$q$, $q$엘리야$q$, $q$요한$q$, $q$헷갈렸어요$q$, 2, $q$눅 1:13 — '그 이름을 요한이라 하라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$천사는 요셉에게 마리아의 아기가 누구로 말미암았다고 했습니까?$q$, $q$성령$q$, $q$헤롯$q$, $q$사가랴$q$, $q$헷갈렸어요$q$, 0, $q$마 1:20 — '성령으로 잉태된 것이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$목자들은 베들레헴에서 아기 예수님을 어디에 누인 모습으로 보았습니까?$q$, $q$왕궁 침상$q$, $q$성전 제단$q$, $q$구유$q$, $q$헷갈렸어요$q$, 2, $q$눅 2:16 — '구유에 누인 아기를 찾아서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시므온은 아기 예수님을 품에 안고 무엇을 보았다고 찬송했습니까?$q$, $q$로마의 권세$q$, $q$성전의 금$q$, $q$주의 구원$q$, $q$헷갈렸어요$q$, 2, $q$눅 2:30 — '내 눈이 주의 구원을 보았사오니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$안나는 성전에서 아기 예수님을 보고 누구에게 말했습니까?$q$, $q$예루살렘의 구속을 기다리는 사람들$q$, $q$갈릴리 어부들$q$, $q$헤롯의 신하들$q$, $q$헷갈렸어요$q$, 0, $q$눅 2:38 — '예루살렘의 구속됨을 바라는 모든 사람에게'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$열두 살 예수님은 성전에서 무엇을 하고 계셨습니까?$q$, $q$제사장들과 제물을 나누셨다$q$, $q$로마 군인들을 가르치셨다$q$, $q$선생들 사이에서 듣고 묻고 계셨다$q$, $q$헷갈렸어요$q$, 2, $q$눅 2:46 — '선생들 중에 앉으사 저희에게 듣기도 하시며 묻기도 하시니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한은 예수님이 세례를 받으러 오시자 무엇을 느꼈습니까?$q$, $q$무리가 먼저라서$q$, $q$예수님이 떠나셔서$q$, $q$자기가 받아야 해서$q$, $q$헷갈렸어요$q$, 2, $q$마 3:14 — '내가 당신에게 세례를 받아야 할 터인데'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$세례 뒤 성령은 어떤 모습으로 예수님 위에 내려오셨습니까?$q$, $q$비둘기 같이$q$, $q$구름 같이$q$, $q$불기둥 같이$q$, $q$헷갈렸어요$q$, 0, $q$마 3:16 — '하나님의 성령이 비둘기 같이 내려'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하늘의 음성은 예수님을 누구로 밝히셨습니까?$q$, $q$광야의 선지자$q$, $q$사랑하는 아들$q$, $q$성전의 제사장$q$, $q$헷갈렸어요$q$, 1, $q$마 3:17 — '이는 내 사랑하는 아들이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 광야에서 며칠을 금식하셨습니까?$q$, $q$삼 일$q$, $q$사십 일$q$, $q$칠 일$q$, $q$헷갈렸어요$q$, 1, $q$마 4:2 — '사십 일을 밤낮으로 금식하신 후에'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$돌을 떡으로 만들라는 시험에 예수님은 무엇으로 답하셨습니까?$q$, $q$하나님의 말씀$q$, $q$제자들의 음식$q$, $q$천사의 도움$q$, $q$헷갈렸어요$q$, 0, $q$마 4:4 — '사람이 떡으로만 살 것이 아니요'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$세상 영광을 주겠다는 시험 앞에서 예수님은 누구만 섬기라 하셨습니까?$q$, $q$성전 지도자$q$, $q$주 하나님$q$, $q$로마 황제$q$, $q$헷갈렸어요$q$, 1, $q$마 4:10 — '주 너의 하나님께 경배하고 다만 그를 섬기라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$세례 요한은 예수님을 어떤 분으로 가리켰습니까?$q$, $q$하나님의 어린양$q$, $q$갈릴리 목수$q$, $q$성전 문지기$q$, $q$헷갈렸어요$q$, 0, $q$요 1:36 — '하나님의 어린 양이로다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$안드레는 예수님을 만난 뒤 누구를 데려왔습니까?$q$, $q$세리 마태$q$, $q$형제 시몬$q$, $q$제사장 사가랴$q$, $q$헷갈렸어요$q$, 1, $q$요 1:41 — '자기의 형제 시몬을 찾아 말하되'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 나다나엘을 만나기 전에 그를 어디서 보셨다고 하셨습니까?$q$, $q$요단강 물가$q$, $q$무화과나무 아래$q$, $q$성전 뜰$q$, $q$헷갈렸어요$q$, 1, $q$요 1:48 — '네가 무화과나무 아래 있을 때에 보았노라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가나 혼인잔치에서 떨어진 것은 무엇입니까?$q$, $q$떡$q$, $q$포도주$q$, $q$등불 기름$q$, $q$헷갈렸어요$q$, 1, $q$요 2:3 — '포도주가 모자란지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 하인들에게 항아리에 무엇을 채우라 하셨습니까?$q$, $q$향유$q$, $q$포도주$q$, $q$물$q$, $q$헷갈렸어요$q$, 2, $q$요 2:7 — '항아리에 물을 채우라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가나의 첫 표적 뒤 제자들은 예수님께 무엇을 보였습니까?$q$, $q$믿음$q$, $q$분노$q$, $q$두려움$q$, $q$헷갈렸어요$q$, 0, $q$요 2:11 — '제자들이 그를 믿으니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 성전에서 무엇을 파는 사람들을 내쫓으셨습니까?$q$, $q$밀과 포도$q$, $q$소와 양과 비둘기$q$, $q$향유와 몰약$q$, $q$헷갈렸어요$q$, 1, $q$요 2:14 — '소와 양과 비둘기 파는 사람들과'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 아버지의 집을 무엇으로 만들지 말라고 하셨습니까?$q$, $q$장사하는 집$q$, $q$기도하는 집$q$, $q$가르치는 집$q$, $q$헷갈렸어요$q$, 0, $q$요 2:16 — '내 아버지의 집으로 장사하는 집을 만들지 말라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님이 사흘 동안 다시 일으키겠다고 하신 성전은 무엇을 가리켰습니까?$q$, $q$자기 육체$q$, $q$헤롯 성전$q$, $q$제자들의 배$q$, $q$헷갈렸어요$q$, 0, $q$요 2:21 — '예수는 성전된 자기 육체를 가리켜 말씀하신 것이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요한의 제자들은 사람들이 누구에게 간다고 말했습니까?$q$, $q$대제사장$q$, $q$헤롯$q$, $q$예수님$q$, $q$헷갈렸어요$q$, 2, $q$요 3:26 — '사람이 다 그에게로 가더이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$세례 요한은 자신을 신랑의 무엇으로 비유했습니까?$q$, $q$형제$q$, $q$종$q$, $q$친구$q$, $q$헷갈렸어요$q$, 2, $q$요 3:29 — '신랑의 친구가 서서 신랑의 음성을 듣고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$세례 요한은 예수님과 자기 사역의 흐름을 어떤 말로 설명했습니까?$q$, $q$둘 다 예루살렘을 떠나야 한다$q$, $q$자신이 먼저 왕이 되어야 한다$q$, $q$예수님은 흥하고 자신은 쇠해야 한다$q$, $q$헷갈렸어요$q$, 2, $q$요 3:30 — '그는 흥하여야 하겠고 나는 쇠하여야 하리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 우물가에서 사마리아 여인에게 무엇을 달라 하셨습니까?$q$, $q$떡$q$, $q$동전$q$, $q$물$q$, $q$헷갈렸어요$q$, 2, $q$요 4:7 — '물을 좀 달라 하시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 여인에게 어떤 물을 주겠다고 하셨습니까?$q$, $q$성전 정결수$q$, $q$영원히 목마르지 않는 물$q$, $q$야곱의 우물물$q$, $q$헷갈렸어요$q$, 1, $q$요 4:14 — '영원히 목마르지 아니하리니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 참 예배자가 무엇으로 예배한다고 하셨습니까?$q$, $q$향과 제물$q$, $q$영과 진리$q$, $q$산과 성전$q$, $q$헷갈렸어요$q$, 1, $q$요 4:23 — '아버지께 참으로 예배하는 자들은 신령과 진정으로 예배할 때가 오나니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 시몬에게 어디로 가서 그물을 내리라 하셨습니까?$q$, $q$성전 뜰$q$, $q$광야 길$q$, $q$깊은 데$q$, $q$헷갈렸어요$q$, 2, $q$눅 5:4 — '깊은 데로 가서 그물을 내려'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$시몬은 밤새 잡지 못했지만 무엇에 의지해 그물을 내렸습니까?$q$, $q$자기 경험$q$, $q$예수님의 말씀$q$, $q$사람들의 응원$q$, $q$헷갈렸어요$q$, 1, $q$눅 5:5 — '말씀에 의지하여 내가 그물을 내리리이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야고보와 요한까지 부르심을 받은 뒤 제자들은 무엇을 버려두고 예수님을 따랐습니까?$q$, $q$헤롯의 편지$q$, $q$성전 제물$q$, $q$모든 것$q$, $q$헷갈렸어요$q$, 2, $q$눅 5:11 — '모든 것을 버려 두고 예수를 좇으니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가버나움 회당 사람들은 예수님의 가르침에서 무엇을 느꼈습니까?$q$, $q$권세$q$, $q$두려움$q$, $q$침묵$q$, $q$헷갈렸어요$q$, 0, $q$막 1:22 — '그 가르치시는 것이 권세 있는 자와 같고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 더러운 귀신에게 어떤 명령을 하셨습니까?$q$, $q$떡을 가져오라는 명령$q$, $q$잠잠하고 나오라는 명령$q$, $q$성전으로 가라는 명령$q$, $q$헷갈렸어요$q$, 1, $q$막 1:25 — '잠잠하고 그 사람에게서 나오라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님의 권위 있는 가르침과 치유 소식은 어디까지 퍼졌습니까?$q$, $q$로마 궁전$q$, $q$애굽 전역$q$, $q$갈릴리 사방$q$, $q$헷갈렸어요$q$, 2, $q$막 1:28 — '갈릴리 사방에 퍼지더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$중풍병자의 친구들은 사람들 때문에 어디를 열고 병자를 내렸습니까?$q$, $q$배의 갑판$q$, $q$지붕$q$, $q$성전 문$q$, $q$헷갈렸어요$q$, 1, $q$막 2:4 — '지붕을 뜯어 구멍을 내고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 그들의 믿음을 보시고 중풍병자에게 먼저 무엇을 말씀하셨습니까?$q$, $q$로마 시민권$q$, $q$죄 사함$q$, $q$세금 면제$q$, $q$헷갈렸어요$q$, 1, $q$막 2:5 — '소자야 네 죄 사함을 받았느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$고침 받은 사람은 예수님의 말씀 뒤 무엇을 들고 나갔습니까?$q$, $q$물 항아리$q$, $q$성전 두루마리$q$, $q$자기 상$q$, $q$헷갈렸어요$q$, 2, $q$막 2:12 — '그가 일어나 곧 상을 가지고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 세관에 앉은 마태를 어떤 말씀으로 부르셨습니까?$q$, $q$성전으로 가라는 말$q$, $q$갈릴리를 떠나라는 말$q$, $q$나를 따르라는 부르심$q$, $q$헷갈렸어요$q$, 2, $q$마 9:9 — '나를 좇으라 하시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마태의 집에서 예수님과 함께 앉은 사람들은 누구였습니까?$q$, $q$세리와 죄인들$q$, $q$제사장과 장로들$q$, $q$로마 군인들$q$, $q$헷갈렸어요$q$, 0, $q$마 9:10 — '많은 세리와 죄인들이 와서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 자신이 누구를 부르러 왔다고 하셨습니까?$q$, $q$죄인$q$, $q$의인$q$, $q$부자$q$, $q$헷갈렸어요$q$, 0, $q$마 9:13 — '내가 의인을 부르러 온 것이 아니요 죄인을 부르러 왔노라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베데스다 못가의 병자는 몇 해 동안 병을 앓았습니까?$q$, $q$사십 년$q$, $q$열두 해$q$, $q$삼십팔 년$q$, $q$헷갈렸어요$q$, 2, $q$요 5:5 — '삼십 팔 년 된 병자가 있더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 병자에게 무엇을 들고 걸어가라 하셨습니까?$q$, $q$성전 문$q$, $q$물동이$q$, $q$자리$q$, $q$헷갈렸어요$q$, 2, $q$요 5:8 — '네 자리를 들고 걸어가라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$유대인들이 안식일 문제로 따질 때 예수님은 누가 일하신다고 하셨습니까?$q$, $q$제사장과 레위인$q$, $q$천사와 제자들$q$, $q$아버지와 자신$q$, $q$헷갈렸어요$q$, 2, $q$요 5:17 — '내 아버지께서 이제까지 일하시니 나도 일한다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 열두 제자를 세우기 전 밤에 무엇을 하셨습니까?$q$, $q$재판$q$, $q$잔치$q$, $q$기도$q$, $q$헷갈렸어요$q$, 2, $q$눅 6:12 — '밤이 맞도록 하나님께 기도하시고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 열두 제자를 세워 무엇을 하게 하려 하셨습니까?$q$, $q$함께 있게 하고 전도하게 하려 하셨다$q$, $q$성전 세금을 거두게 하려 하셨다$q$, $q$로마 군대를 지휘하게 하려 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$막 3:14 — '자기와 함께 있게 하시고 또 보내사 전도도 하며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 열두 제자에게 무엇을 고치는 권능을 주셨습니까?$q$, $q$무너진 성벽$q$, $q$모든 병과 약한 것$q$, $q$마른 밭$q$, $q$헷갈렸어요$q$, 1, $q$마 10:1 — '모든 병과 모든 약한 것을 고치는 권능을 주시니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 심령이 가난한 사람에게 무엇이 있다고 하셨습니까?$q$, $q$성전 창고$q$, $q$로마 권세$q$, $q$천국$q$, $q$헷갈렸어요$q$, 2, $q$마 5:3 — '천국이 저희 것임이요'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 원수에게 어떤 태도를 가지라 하셨습니까?$q$, $q$피하고 숨는 태도$q$, $q$재판으로 갚는 태도$q$, $q$사랑하고 기도하는 태도$q$, $q$헷갈렸어요$q$, 2, $q$마 5:44 — '너희 원수를 사랑하며 ... 기도하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 말씀을 듣고 행하는 사람을 무엇 위에 집 지은 사람에 비유하셨습니까?$q$, $q$배$q$, $q$반석$q$, $q$모래$q$, $q$헷갈렸어요$q$, 1, $q$마 7:24 — '그 집을 반석 위에 지은 지혜로운 사람 같으리니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$백부장은 예수님께 무엇만 하시면 종이 낫겠다고 했습니까?$q$, $q$말씀만 하시면$q$, $q$집에 머무시면$q$, $q$성전 제사를 드리시면$q$, $q$헷갈렸어요$q$, 0, $q$마 8:8 — '다만 말씀으로만 하옵소서 그러면 내 하인이 낫겠삽나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 백부장의 믿음을 보고 어떤 반응을 보이셨습니까?$q$, $q$피하셨다$q$, $q$화내셨다$q$, $q$기이히 여기셨다$q$, $q$헷갈렸어요$q$, 2, $q$마 8:10 — '예수께서 들으시고 기이히 여겨'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나인성 과부의 아들에게 예수님이 하신 명령은 무엇입니까?$q$, $q$잠잠하라는 명령$q$, $q$물을 떠오라는 명령$q$, $q$일어나라는 명령$q$, $q$헷갈렸어요$q$, 2, $q$눅 7:14 — '청년아 내가 네게 말하노니 일어나라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$풍랑 속 배에서 예수님은 바람과 바다에게 어떤 명령을 하셨습니까?$q$, $q$갈라지라는 명령$q$, $q$잠잠해지라는 명령$q$, $q$더 거세지라는 명령$q$, $q$헷갈렸어요$q$, 1, $q$막 4:39 — '잠잠하라 고요하라 하시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$혈루증 여인은 무엇만 만져도 구원받겠다고 생각했습니까?$q$, $q$예수님의 옷$q$, $q$제자의 지팡이$q$, $q$성전 휘장$q$, $q$헷갈렸어요$q$, 0, $q$막 5:28 — '그의 옷에만 손을 대어도 구원을 얻으리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야이로의 딸에게 예수님이 하신 명령은 무엇입니까?$q$, $q$집 밖으로 나가라는 명령$q$, $q$소녀에게 일어나라는 명령$q$, $q$떡을 나누라는 명령$q$, $q$헷갈렸어요$q$, 1, $q$막 5:41 — '소녀야 내가 네게 말하노니 일어나라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 열두 제자를 보내며 무엇을 전하고 고치게 하셨습니까?$q$, $q$하나님 나라와 병든 사람$q$, $q$성전 세금과 로마 법$q$, $q$헤롯의 명령과 군대$q$, $q$헷갈렸어요$q$, 0, $q$눅 9:2 — '하나님의 나라를 전파하며 앓는 자를 고치게 하려고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 제자들에게 여행을 위해 무엇을 가지지 말라고 하셨습니까?$q$, $q$지팡이나 주머니나 양식$q$, $q$평안의 인사$q$, $q$기도와 믿음$q$, $q$헷갈렸어요$q$, 0, $q$눅 9:3 — '지팡이나 주머니나 양식이나 돈이나'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$제자들은 나가서 마을마다 무엇을 전하며 고쳤습니까?$q$, $q$복음$q$, $q$왕의 명령$q$, $q$세금 규칙$q$, $q$헷갈렸어요$q$, 0, $q$눅 9:6 — '각 촌에 두루 행하여 처처에 복음을 전하며 병을 고치더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$무리가 가진 음식은 떡 다섯 개와 무엇 두 마리였습니까?$q$, $q$양$q$, $q$비둘기$q$, $q$물고기$q$, $q$헷갈렸어요$q$, 2, $q$눅 9:13 — '떡 다섯 개와 물고기 두 마리 밖에 없으니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사람들이 먹고 남은 조각은 몇 바구니였습니까?$q$, $q$열두 바구니$q$, $q$두 바구니$q$, $q$일곱 바구니$q$, $q$헷갈렸어요$q$, 0, $q$눅 9:17 — '남은 조각 열 두 바구니를 거두니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$밤바다에서 제자들이 본 예수님은 무엇 위로 걸어오셨습니까?$q$, $q$바다$q$, $q$광야 모래$q$, $q$성전 지붕$q$, $q$헷갈렸어요$q$, 0, $q$마 14:25 — '바다 위로 걸어서 제자들에게 오시니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 자신을 어떤 떡으로 밝히셨습니까?$q$, $q$성전 문$q$, $q$생명의 떡$q$, $q$포도원 주인$q$, $q$헷갈렸어요$q$, 1, $q$요 6:35 — '내가 곧 생명의 떡이니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 자신에게 오는 사람은 무엇을 겪지 않는다고 하셨습니까?$q$, $q$여행과 수고$q$, $q$질문과 대답$q$, $q$주림과 목마름$q$, $q$헷갈렸어요$q$, 2, $q$요 6:35 — '결코 주리지 아니할 터이요 ... 목마르지 아니하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 예수님께 무엇이 있다고 고백했습니까?$q$, $q$영생의 말씀$q$, $q$성전 열쇠$q$, $q$로마 문서$q$, $q$헷갈렸어요$q$, 0, $q$요 6:68 — '영생의 말씀이 계시매'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$지도자들은 제자들이 무엇을 씻지 않는다고 따졌습니까?$q$, $q$그물$q$, $q$발$q$, $q$손$q$, $q$헷갈렸어요$q$, 2, $q$막 7:5 — '씻지 아니한 손으로 떡을 먹나이까'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 입술로는 공경하지만 무엇이 멀다고 책망하셨습니까?$q$, $q$배$q$, $q$집$q$, $q$마음$q$, $q$헷갈렸어요$q$, 2, $q$막 7:6 — '그 마음은 내게서 멀도다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 사람을 더럽게 하는 것이 어디서 나온다고 하셨습니까?$q$, $q$시장$q$, $q$마음$q$, $q$우물$q$, $q$헷갈렸어요$q$, 1, $q$막 7:21 — '속에서 곧 사람의 마음에서 나오는 것은'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가나안 여인은 예수님께 누구를 고쳐 달라고 간청했습니까?$q$, $q$중풍 든 종$q$, $q$눈먼 아버지$q$, $q$귀신 들린 딸$q$, $q$헷갈렸어요$q$, 2, $q$마 15:22 — '내 딸이 흉악히 귀신들렸나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여인의 믿음에 대한 예수님의 평가는 무엇입니까?$q$, $q$작다$q$, $q$크다$q$, $q$없다$q$, $q$헷갈렸어요$q$, 1, $q$마 15:28 — '여자야 네 믿음이 크도다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$귀먹고 말 더듬는 사람에게 하신 말은 무엇입니까?$q$, $q$달리다굼$q$, $q$호산나$q$, $q$에바다$q$, $q$헷갈렸어요$q$, 2, $q$막 7:34 — '에바다 하시니 이는 열리라는 뜻이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바리새인과 사두개인들은 예수님께 무엇을 보여 달라고 요구했습니까?$q$, $q$하늘의 표적$q$, $q$성전 세금$q$, $q$로마 군대$q$, $q$헷갈렸어요$q$, 0, $q$마 16:1 — '하늘로서 오는 표적 보이기를 청하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 제자들에게 바리새인과 사두개인의 무엇을 주의하라 하셨습니까?$q$, $q$누룩$q$, $q$향유$q$, $q$그물$q$, $q$헷갈렸어요$q$, 0, $q$마 16:6 — '바리새인과 사두개인들의 누룩을 주의하라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$벳새다의 맹인은 처음 눈이 열렸을 때 사람들이 무엇처럼 보인다고 했습니까?$q$, $q$나무가 걸어가는 것$q$, $q$양 떼가 흩어지는 것$q$, $q$불기둥이 움직이는 것$q$, $q$헷갈렸어요$q$, 0, $q$막 8:24 — '사람들이 보이나이다 나무 같은 것들의 걸어 가는 것을 보나이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 예수님을 누구라고 고백했습니까?$q$, $q$엘리야$q$, $q$그리스도$q$, $q$예레미야$q$, $q$헷갈렸어요$q$, 1, $q$마 16:16 — '주는 그리스도시요'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 고난을 말리던 베드로를 어떤 말로 책망하셨습니까?$q$, $q$평안히 가라는 말$q$, $q$뒤로 물러가라는 책망$q$, $q$믿음이 크다는 칭찬$q$, $q$헷갈렸어요$q$, 1, $q$마 16:23 — '사단아 내 뒤로 물러 가라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 자신을 따르려면 무엇을 지고 따르라 하셨습니까?$q$, $q$자기 십자가$q$, $q$성전 기구$q$, $q$왕의 깃발$q$, $q$헷갈렸어요$q$, 0, $q$마 16:24 — '자기 십자가를 지고 나를 좇을 것이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$변화산에서 예수님과 함께 나타난 두 사람은 누구입니까?$q$, $q$모세와 엘리야$q$, $q$베드로와 요한$q$, $q$아브라함과 다윗$q$, $q$헷갈렸어요$q$, 0, $q$마 17:3 — '모세와 엘리야가 예수로 더불어 말씀하는 것이'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하늘의 음성은 제자들에게 예수님의 무엇을 들으라 하셨습니까?$q$, $q$말$q$, $q$발자국$q$, $q$옷자락$q$, $q$헷갈렸어요$q$, 0, $q$마 17:5 — '너희는 저의 말을 들으라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$산에서 내려올 때 예수님은 언제까지 본 것을 말하지 말라 하셨습니까?$q$, $q$유월절이 끝날 때까지$q$, $q$성전이 완성될 때까지$q$, $q$인자가 죽은 자 가운데서 살아날 때까지$q$, $q$헷갈렸어요$q$, 2, $q$막 9:9 — '인자가 죽은 자 가운데서 살아날 때까지는'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아이의 아버지는 예수님께 자신의 어떤 부족함을 도와 달라고 했습니까?$q$, $q$믿음 없는 것$q$, $q$재산 없는 것$q$, $q$말이 느린 것$q$, $q$헷갈렸어요$q$, 0, $q$막 9:24 — '나의 믿음 없는 것을 도와 주소서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$더러운 귀신에게 다시 들어가지 말라는 명령의 내용은 무엇입니까?$q$, $q$다시 먹지 말라는 명령$q$, $q$다시 말하지 말라는 명령$q$, $q$다시 들어가지 말라는 명령$q$, $q$헷갈렸어요$q$, 2, $q$막 9:25 — '다시 들어가지 말라 하시매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 제자들에게 이 종류가 무엇 외에는 나갈 수 없다고 하셨습니까?$q$, $q$기도$q$, $q$돈$q$, $q$칼$q$, $q$헷갈렸어요$q$, 0, $q$막 9:29 — '기도 외에 다른 것으로는 이런 유가 나갈 수 없느니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 28;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 28 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 인자가 사람들의 손에 넘겨져 무엇을 당할 것이라 하셨습니까?$q$, $q$왕위$q$, $q$죽임$q$, $q$감옥 탈출$q$, $q$헷갈렸어요$q$, 1, $q$막 9:31 — '사람들의 손에 넘기워 죽임을 당하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$제자들은 길에서 무엇을 두고 서로 다투었습니까?$q$, $q$누가 크냐$q$, $q$누가 배를 탔냐$q$, $q$누가 돈을 냈냐$q$, $q$헷갈렸어요$q$, 0, $q$막 9:34 — '서로 누가 크냐 하고 쟁론하였음이라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 어린아이 하나를 영접하는 것이 누구를 영접하는 것이라 하셨습니까?$q$, $q$대제사장$q$, $q$헤롯$q$, $q$예수님$q$, $q$헷갈렸어요$q$, 2, $q$막 9:37 — '이런 어린 아이 하나를 영접하면 곧 나를 영접함이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 28 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 29;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 29 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$제자들은 예수님께 무엇을 가르쳐 달라고 청했습니까?$q$, $q$고기잡이$q$, $q$성전 세금$q$, $q$기도$q$, $q$헷갈렸어요$q$, 2, $q$눅 11:1 — '우리에게도 기도를 가르쳐 주옵소서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 기도에서 날마다 무엇을 달라고 구하라 하셨습니까?$q$, $q$성전 기름$q$, $q$일용할 양식$q$, $q$왕의 자리$q$, $q$헷갈렸어요$q$, 1, $q$눅 11:3 — '우리에게 날마다 일용할 양식을 주옵시고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 구하고 찾고 두드리는 사람에게 어떤 일이 있다고 하셨습니까?$q$, $q$숨고 잊힌다$q$, $q$빼앗기고 닫힌다$q$, $q$받고 찾고 열린다$q$, $q$헷갈렸어요$q$, 2, $q$눅 11:10 — '구하는 이마다 받을 것이요 찾는 이가 찾을 것이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 29 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 30;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 30 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$포도원 주인은 나중 온 품꾼에게도 얼마를 주었습니까?$q$, $q$두 렙돈$q$, $q$한 데나리온$q$, $q$은 삼십$q$, $q$헷갈렸어요$q$, 1, $q$마 20:9 — '한 데나리온씩을 받거늘'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$어리석은 부자는 곡식이 많아지자 무엇을 더 크게 짓겠다고 했습니까?$q$, $q$곳간$q$, $q$배$q$, $q$성전$q$, $q$헷갈렸어요$q$, 0, $q$눅 12:18 — '내 곳간을 헐고 더 크게 짓고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$집을 떠났던 아들이 돌아오자 아버지는 무엇을 베풀었습니까?$q$, $q$추방$q$, $q$재판$q$, $q$잔치$q$, $q$헷갈렸어요$q$, 2, $q$눅 15:23 — '우리가 먹고 즐기자'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 30 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 31;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 31 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$부자 청년은 예수님께 무엇을 얻는 길을 물었습니까?$q$, $q$로마 시민권$q$, $q$왕위$q$, $q$영생$q$, $q$헷갈렸어요$q$, 2, $q$마 19:16 — '내가 무슨 선한 일을 하여야 영생을 얻으리이까'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 청년에게 재산을 팔아 누구에게 주라 하셨습니까?$q$, $q$제사장들$q$, $q$가난한 자들$q$, $q$로마 군인들$q$, $q$헷갈렸어요$q$, 1, $q$마 19:21 — '네 소유를 팔아 가난한 자들을 주라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 31 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$청년은 많은 재물 때문에 어떤 마음으로 떠났습니까?$q$, $q$기쁨$q$, $q$근심$q$, $q$분노$q$, $q$헷갈렸어요$q$, 1, $q$마 19:22 — '재물이 많으므로 근심하며 가니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 31;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 31 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 32;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 32 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 열두 제자와 함께 어디로 올라가고 계셨습니까?$q$, $q$예루살렘$q$, $q$사마리아$q$, $q$나사렛$q$, $q$헷갈렸어요$q$, 0, $q$마 20:17 — '예루살렘으로 올라가려 하실 때에'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 32 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 인자가 누구들에게 넘겨질 것이라 하셨습니까?$q$, $q$대제사장들과 서기관들$q$, $q$갈릴리 어부들$q$, $q$로마 백부장들$q$, $q$헷갈렸어요$q$, 0, $q$마 20:18 — '대제사장들과 서기관들에게 넘기우매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 32 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 죽임을 당한 뒤 며칠 만에 살아나리라 하셨습니까?$q$, $q$칠 일$q$, $q$삼 일$q$, $q$사십 일$q$, $q$헷갈렸어요$q$, 1, $q$마 20:19 — '제 삼일에 살아나리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 32;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 32 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 33;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 33 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$삭개오는 예수님을 보려고 무엇 위에 올라갔습니까?$q$, $q$감람산$q$, $q$뽕나무$q$, $q$성전 지붕$q$, $q$헷갈렸어요$q$, 1, $q$눅 19:4 — '뽕나무에 올라가니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 33 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 삭개오에게 오늘 어디에 머물겠다고 하셨습니까?$q$, $q$회당$q$, $q$삭개오의 집$q$, $q$광야$q$, $q$헷갈렸어요$q$, 1, $q$눅 19:5 — '오늘 내가 네 집에 유하여야 하겠다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 33 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$삭개오는 속여 빼앗은 것이 있으면 몇 배로 갚겠다고 했습니까?$q$, $q$네 배$q$, $q$두 배$q$, $q$열 배$q$, $q$헷갈렸어요$q$, 0, $q$눅 19:8 — '사 배나 갚겠나이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 33;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 33 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 34;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 34 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 마르다에게 자신을 어떤 분으로 밝히셨습니까?$q$, $q$참 포도나무$q$, $q$선한 목자$q$, $q$부활이요 생명$q$, $q$헷갈렸어요$q$, 2, $q$요 11:25 — '나는 부활이요 생명이니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 34 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$나사로의 무덤 앞에서 예수님은 어떤 반응을 보이셨습니까?$q$, $q$눈물을 흘리셨다$q$, $q$웃으셨다$q$, $q$떠나셨다$q$, $q$헷갈렸어요$q$, 0, $q$요 11:35 — '예수께서 눈물을 흘리시더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 34 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님이 무덤 속 나사로에게 외치신 명령은 무엇입니까?$q$, $q$물러가라는 명령$q$, $q$나오라는 명령$q$, $q$잠잠하라는 명령$q$, $q$헷갈렸어요$q$, 1, $q$요 11:43 — '나사로야 나오라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 34;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 34 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 35;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 35 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마리아는 예수님의 발에 무엇을 부었습니까?$q$, $q$물$q$, $q$포도주$q$, $q$비싼 향유$q$, $q$헷갈렸어요$q$, 2, $q$요 12:3 — '지극히 비싼 향유 곧 순전한 나드 한 근을 가져다가'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 35 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$유다는 향유를 팔아 누구에게 주지 않았느냐고 말했습니까?$q$, $q$로마 군인들$q$, $q$제사장들$q$, $q$가난한 자들$q$, $q$헷갈렸어요$q$, 2, $q$요 12:5 — '가난한 자들에게 주지 아니하였느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 35 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 마리아가 이 일을 무엇을 위해 간직한 것이라 하셨습니까?$q$, $q$성전 봉헌$q$, $q$혼인잔치$q$, $q$장사할 날$q$, $q$헷갈렸어요$q$, 2, $q$요 12:7 — '나의 장사할 날을 위하여 이를 두게 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 35;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 35 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 36;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 36 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 예루살렘에 들어가실 때 무엇을 타셨습니까?$q$, $q$말$q$, $q$나귀 새끼$q$, $q$수레$q$, $q$헷갈렸어요$q$, 1, $q$마 21:5 — '나귀 새끼를 탔도다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 36 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$무리는 예수님을 맞으며 어떤 환호를 외쳤습니까?$q$, $q$조용히 하자는 말$q$, $q$가이사 만세$q$, $q$호산나$q$, $q$헷갈렸어요$q$, 2, $q$마 21:9 — '호산나 다윗의 자손이여'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 36 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 성전의 바른 이름을 무엇으로 말씀하셨습니까?$q$, $q$재판하는 집$q$, $q$장사하는 집$q$, $q$기도하는 집$q$, $q$헷갈렸어요$q$, 2, $q$마 21:13 — '내 집은 기도하는 집이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 36;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 36 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 37;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 37 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$제자들이 다시 본 무화과나무는 어떤 상태였습니까?$q$, $q$열매가 가득했다$q$, $q$옮겨 심겨 있었다$q$, $q$말라 있었다$q$, $q$헷갈렸어요$q$, 2, $q$막 11:20 — '무화과나무가 뿌리로부터 마른 것을 보고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 37 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 기도할 때 어떤 태도를 가지라고 하셨습니까?$q$, $q$말하지 않는 태도$q$, $q$받은 줄로 믿는 태도$q$, $q$사람에게 보이는 태도$q$, $q$헷갈렸어요$q$, 1, $q$막 11:24 — '받은 줄로 믿으라 그리하면 너희에게 그대로 되리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 37 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 권위를 묻는 지도자들에게 누구의 세례를 되물으셨습니까?$q$, $q$모세$q$, $q$가야바$q$, $q$요한$q$, $q$헷갈렸어요$q$, 2, $q$막 11:30 — '요한의 세례가 하늘로서냐 사람에게로서냐'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 37;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 37 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 38;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 38 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$두 아들 비유에서 아버지 뜻대로 한 아들은 누구입니까?$q$, $q$집을 떠난 아들$q$, $q$처음에는 싫다 하고 나중에 간 아들$q$, $q$말만 하고 가지 않은 아들$q$, $q$헷갈렸어요$q$, 1, $q$마 21:31 — '그 둘 중에 누가 아비의 뜻대로 하였느뇨'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 38 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$악한 농부들은 주인의 아들을 보고 무엇을 하려 했습니까?$q$, $q$죽이고 유업을 차지하려 했다$q$, $q$잔치를 열려 했다$q$, $q$성전으로 보내려 했다$q$, $q$헷갈렸어요$q$, 0, $q$마 21:38 — '이는 상속자니 자 죽이고 그의 유업을 차지하자'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 38 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$혼인잔치 비유에서 예복 없이 온 사람은 어디로 쫓겨났습니까?$q$, $q$포도원$q$, $q$바깥 어두움$q$, $q$성전 안뜰$q$, $q$헷갈렸어요$q$, 1, $q$마 22:13 — '바깥 어두움에 내어 던지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 38;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 38 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 39;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 39 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$세금 질문에 예수님은 가이사의 것은 누구에게 바치라 하셨습니까?$q$, $q$성전$q$, $q$제자들$q$, $q$가이사$q$, $q$헷갈렸어요$q$, 2, $q$마 22:21 — '가이사의 것은 가이사에게'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 39 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$부활 논쟁에서 예수님은 하나님이 어떤 자의 하나님이라고 하셨습니까?$q$, $q$산 자$q$, $q$죽은 자$q$, $q$천사만$q$, $q$헷갈렸어요$q$, 0, $q$마 22:32 — '하나님은 죽은 자의 하나님이 아니요 산 자의 하나님이시니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 39 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 가장 큰 계명으로 누구를 사랑하라고 하셨습니까?$q$, $q$부자와 권세자$q$, $q$가이사와 헤롯$q$, $q$하나님과 이웃$q$, $q$헷갈렸어요$q$, 2, $q$마 22:37 — '주 너의 하나님을 사랑하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 39;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 39 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 40;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 40 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 서기관과 바리새인이 말만 하고 무엇을 하지 않는다고 하셨습니까?$q$, $q$묻지 않는다$q$, $q$가르치지 않는다$q$, $q$행하지 않는다$q$, $q$헷갈렸어요$q$, 2, $q$마 23:3 — '저희의 하는 행위는 본받지 말라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 40 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 그들이 사람들에게 보이려고 무엇을 넓게 한다고 하셨습니까?$q$, $q$그물$q$, $q$경문$q$, $q$문지방$q$, $q$헷갈렸어요$q$, 1, $q$마 23:5 — '그 경문을 넓게 하며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 40 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 겉은 아름답지만 속은 더러운 그들을 무엇에 비유하셨습니까?$q$, $q$회칠한 무덤$q$, $q$마른 그물$q$, $q$빈 항아리$q$, $q$헷갈렸어요$q$, 0, $q$마 23:27 — '회칠한 무덤 같으니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 40;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 40 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 41;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 41 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 성전 돌들에 대해 어떤 일을 예고하셨습니까?$q$, $q$바다로 옮겨진다$q$, $q$금으로 덮인다$q$, $q$하나도 남지 않고 무너진다$q$, $q$헷갈렸어요$q$, 2, $q$마 24:2 — '돌 하나도 돌 위에 남지 않고 다 무너뜨리우리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 41 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 끝까지 견디는 사람에게 어떤 일이 있다고 하셨습니까?$q$, $q$구원$q$, $q$부귀$q$, $q$침묵$q$, $q$헷갈렸어요$q$, 0, $q$마 24:13 — '끝까지 견디는 자는 구원을 얻으리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 41 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$양과 염소 비유에서 임금은 형제 중 지극히 작은 자에게 한 일을 누구에게 한 일로 보셨습니까?$q$, $q$예수님$q$, $q$가이사$q$, $q$헤롯$q$, $q$헷갈렸어요$q$, 0, $q$마 25:40 — '내게 한 것이니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 41;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 41 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 42;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 42 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$유다는 예수님을 넘겨주기로 하고 무엇을 받았습니까?$q$, $q$은 삼십$q$, $q$금 한 달란트$q$, $q$떡 다섯 개$q$, $q$헷갈렸어요$q$, 0, $q$마 26:15 — '은 삼십을 달아 주거늘'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 42 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 제자들의 발을 씻기시며 어떤 섬김의 본을 보이셨습니까?$q$, $q$세금을 거두는 섬김$q$, $q$서로 발을 씻기는 섬김$q$, $q$높은 자리에 앉는 섬김$q$, $q$헷갈렸어요$q$, 1, $q$요 13:14 — '너희도 서로 발을 씻기는 것이 옳으니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 42 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$마지막 만찬에서 예수님은 잔의 의미를 무엇으로 말씀하셨습니까?$q$, $q$왕의 잔$q$, $q$성전 기름$q$, $q$새 언약$q$, $q$헷갈렸어요$q$, 2, $q$눅 22:20 — '이 잔은 내 피로 세우는 새 언약이니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 42;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 42 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 43;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 43 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$겟세마네에서 예수님은 누구의 원대로 되기를 기도하셨습니까?$q$, $q$빌라도$q$, $q$제자$q$, $q$아버지$q$, $q$헷갈렸어요$q$, 2, $q$눅 22:42 — '내 원대로 마옵시고 아버지의 원대로 되기를 원하나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 43 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님이 기도하시는 동안 제자들은 무엇을 하고 있었습니까?$q$, $q$검을 갈고 있었다$q$, $q$자고 있었다$q$, $q$성전에 있었다$q$, $q$헷갈렸어요$q$, 1, $q$마 26:40 — '제자들에게 오사 그 자는 것을 보시고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 43 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님을 잡으러 온 무리에게 유다는 어떤 표시를 했습니까?$q$, $q$손 씻음$q$, $q$입맞춤$q$, $q$향유 부음$q$, $q$헷갈렸어요$q$, 1, $q$마 26:48 — '내가 입맞추는 자가 그이니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 43;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 43 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 44;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 44 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 예수님을 붙잡아 간 뒤 어떤 거리로 따라갔습니까?$q$, $q$멀찍이$q$, $q$성전 안에서$q$, $q$맨 앞에서$q$, $q$헷갈렸어요$q$, 0, $q$눅 22:54 — '베드로가 멀찍이 따라가니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 44 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$베드로는 사람들의 질문 앞에서 예수님을 몇 번 부인했습니까?$q$, $q$일곱 번$q$, $q$세 번$q$, $q$한 번$q$, $q$헷갈렸어요$q$, 1, $q$마 26:75 — '닭 울기 전에 네가 세 번 나를 부인하리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 44 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$닭이 울고 예수님의 말씀이 생각난 베드로는 밖에 나가 무엇을 했습니까?$q$, $q$잔치를 열었다$q$, $q$심히 통곡했다$q$, $q$성전으로 뛰어갔다$q$, $q$헷갈렸어요$q$, 1, $q$마 26:75 — '밖에 나가서 심히 통곡하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 44;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 44 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 45;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 45 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$공회는 예수님을 죽이려고 무엇을 찾았습니까?$q$, $q$로마 군대$q$, $q$거짓 증거$q$, $q$성전 세금$q$, $q$헷갈렸어요$q$, 1, $q$마 26:59 — '거짓 증거를 찾으매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 45;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 45 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$대제사장이 묻자 예수님은 인자가 어디에 앉을 것을 보리라 하셨습니까?$q$, $q$갈릴리 배$q$, $q$성전 문$q$, $q$권능의 우편$q$, $q$헷갈렸어요$q$, 2, $q$마 26:64 — '권능의 우편에 앉은 것과'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 45;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 45 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사람들은 예수님을 때리고 조롱하며 어떤 말로 모욕했습니까?$q$, $q$왕궁으로 가라는 말$q$, $q$선지자처럼 맞혀 보라는 말$q$, $q$떡을 나누라는 말$q$, $q$헷갈렸어요$q$, 1, $q$마 26:68 — '그리스도야 우리에게 선지자 노릇을 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 45;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 45 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 46;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 46 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$빌라도는 예수님께 네가 누구냐고 물었습니까?$q$, $q$유대인의 왕$q$, $q$성전 제사장$q$, $q$갈릴리 어부$q$, $q$헷갈렸어요$q$, 0, $q$마 27:11 — '네가 유대인의 왕이냐'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 46;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 46 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$무리는 예수님 대신 누구를 놓아 달라고 요구했습니까?$q$, $q$요셉$q$, $q$바라바$q$, $q$시몬$q$, $q$헷갈렸어요$q$, 1, $q$마 27:21 — '바라바로소이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 46;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 46 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$빌라도는 무리에게 예수님을 넘겨주기 전 손을 씻으며 자신이 무엇에 대해 무죄하다고 했습니까?$q$, $q$로마 법$q$, $q$이 사람의 피$q$, $q$성전 세금$q$, $q$헷갈렸어요$q$, 1, $q$마 27:24 — '이 사람의 피에 대하여 나는 무죄하니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 46;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 46 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 47;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 47 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$군병들은 누구에게 예수님의 십자가를 억지로 지게 했습니까?$q$, $q$아리마대 요셉$q$, $q$백부장$q$, $q$구레네 사람 시몬$q$, $q$헷갈렸어요$q$, 2, $q$마 27:32 — '구레네 사람 시몬을 만나매 그를 억지로 같이 가게 하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 47;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 47 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 십자가 위에서 자신을 못 박는 이들을 위해 무엇을 구하셨습니까?$q$, $q$용서$q$, $q$침묵$q$, $q$복수$q$, $q$헷갈렸어요$q$, 0, $q$눅 23:34 — '아버지여 저희를 사하여 주옵소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 47;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 47 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님이 숨지실 때 성소의 휘장에는 어떤 일이 일어났습니까?$q$, $q$금으로 덮였다$q$, $q$둘로 찢어졌다$q$, $q$밖으로 옮겨졌다$q$, $q$헷갈렸어요$q$, 1, $q$마 27:51 — '성소 휘장이 위로부터 아래까지 찢어져 둘이 되고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 47;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 47 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 48;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 48 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여인들은 안식 후 첫날 무덤에 무엇을 가지고 갔습니까?$q$, $q$은전$q$, $q$향품$q$, $q$그물$q$, $q$헷갈렸어요$q$, 1, $q$눅 24:1 — '예비한 향품을 가지고 무덤에 가서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 48;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 48 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$천사는 여인들에게 예수님이 여기 계시지 않는 이유를 무엇으로 말했습니까?$q$, $q$옮겨지셨다$q$, $q$잠드셨다$q$, $q$살아나셨다$q$, $q$헷갈렸어요$q$, 2, $q$눅 24:6 — '여기 계시지 않고 살아나셨느니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 48;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 48 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$동산에서 예수님이 막달라 마리아를 부르신 이름은 무엇입니까?$q$, $q$여자여$q$, $q$마리아야$q$, $q$갈릴리야$q$, $q$헷갈렸어요$q$, 1, $q$요 20:16 — '예수께서 마리아야 하시거늘'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 48;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 48 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 49;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 49 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$엠마오로 가던 두 제자는 처음에 부활하신 예수님을 알아보았습니까?$q$, $q$먼저 경배했다$q$, $q$즉시 알아보았다$q$, $q$알아보지 못했다$q$, $q$헷갈렸어요$q$, 2, $q$눅 24:16 — '저희의 눈이 가리워져서 그인 줄 알아보지 못하거늘'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 49;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 49 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 길에서 무엇을 풀어 설명해 주셨습니까?$q$, $q$성전 세금$q$, $q$로마 법$q$, $q$성경$q$, $q$헷갈렸어요$q$, 2, $q$눅 24:27 — '모든 성경에 쓴 바 자기에 관한 것을 자세히 설명하시니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 49;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 49 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$두 제자의 눈은 예수님이 무엇을 하실 때 밝아졌습니까?$q$, $q$물을 길으실 때$q$, $q$떡을 떼실 때$q$, $q$배를 타실 때$q$, $q$헷갈렸어요$q$, 1, $q$눅 24:30 — '떡을 가지사 축사하시고 떼어 저희에게 주시매'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 49;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 49 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 50;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 50 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$부활하신 예수님은 두려워하던 제자들에게 어떤 인사를 하셨습니까?$q$, $q$평강의 인사$q$, $q$광야로 숨으라는 말$q$, $q$가이사에게 가라는 말$q$, $q$헷갈렸어요$q$, 0, $q$요 20:19 — '너희에게 평강이 있을지어다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 50;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 50 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$도마는 예수님의 상처를 보고 예수님을 누구로 고백했습니까?$q$, $q$나의 왕 나의 제사장$q$, $q$나의 선생 나의 형제$q$, $q$나의 주 나의 하나님$q$, $q$헷갈렸어요$q$, 2, $q$요 20:28 — '나의 주시며 나의 하나님이시니이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 50;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 50 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 베드로에게 사랑하느냐 물으신 뒤 무엇을 먹이라고 하셨습니까?$q$, $q$물고기$q$, $q$내 양$q$, $q$무리의 떡$q$, $q$헷갈렸어요$q$, 1, $q$요 21:17 — '내 양을 먹이라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 50;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 50 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 51;
+  where q.event_id = e.id and er.code = 'era_nt_public_ministry' and e.story_index = 51 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$부활하신 예수님은 하늘과 땅의 무엇을 받으셨다고 하셨습니까?$q$, $q$모든 권세$q$, $q$로마 군대$q$, $q$성전 세금$q$, $q$헷갈렸어요$q$, 0, $q$마 28:18 — '하늘과 땅의 모든 권세를 내게 주셨으니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 51;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 51 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$예수님은 제자들에게 모든 민족을 무엇으로 삼으라 하셨습니까?$q$, $q$상인$q$, $q$군사$q$, $q$제자$q$, $q$헷갈렸어요$q$, 2, $q$마 28:19 — '모든 족속으로 제자를 삼아'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 51;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 51 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$승천 전 예수님은 성령이 임하면 제자들이 어디까지 증인이 된다고 하셨습니까?$q$, $q$땅끝$q$, $q$성전 안$q$, $q$갈릴리 호수$q$, $q$헷갈렸어요$q$, 0, $q$행 1:8 — '땅 끝까지 이르러 내 증인이 되리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 51;
+from events e join eras er on er.id = e.era_id where er.code = 'era_nt_public_ministry' and e.story_index = 51 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와의 말씀을 받은 아브람은 어떻게 행동하였습니까?$q$, $q$먼저 하란에 삼 년을 머물렀다$q$, $q$아내와 상의한 후 결정하였다$q$, $q$즉시 떠나 가나안 땅에 들어갔다$q$, $q$헷갈렸어요$q$, 2, $q$창 12:4-5 — '아브람이 ... 마침내 가나안 땅에 들어 갔더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와께서 아브람에게 '네 자손에게 주리라' 하신 땅은 어디입니까?$q$, $q$메소포타미아$q$, $q$가나안 땅$q$, $q$애굽 땅$q$, $q$헷갈렸어요$q$, 1, $q$창 12:7 — '여호와께서 아브람에게 나타나 ... 내가 이 땅을 네 자손에게 주리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와께서 세겜에서 나타나신 뒤 아브람은 무엇을 했습니까?$q$, $q$가나안 왕에게 성을 넘겼다$q$, $q$여호와를 위하여 제단을 쌓았다$q$, $q$하란으로 다시 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$창 12:7 — '그가 자기에게 나타나신 여호와를 위하여 그 곳에 단을 쌓고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$롯이 눈을 들어 바라보고 선택한 땅은 어디입니까?$q$, $q$헤브론 산지$q$, $q$요단 들$q$, $q$브엘세바 광야$q$, $q$헷갈렸어요$q$, 1, $q$창 13:10-11 — '롯이 눈을 들어 요단 들을 바라본즉 ... 그 온 땅에 물이 넉넉하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$목자들의 다툼을 본 아브람은 롯에게 무엇을 제안했습니까?$q$, $q$가축을 모두 두고 떠나라고 했다$q$, $q$먼저 원하는 땅을 선택하라고 했다$q$, $q$애굽으로 함께 내려가자고 했다$q$, $q$헷갈렸어요$q$, 1, $q$창 13:8-9 — '나나 너나 ... 서로 다투게 말자 ... 네가 좌하면 나는 우하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$롯과 헤어진 뒤 아브람은 어디로 장막을 옮겼습니까?$q$, $q$헤브론의 마므레 상수리 수풀$q$, $q$요단 온 들 한가운데$q$, $q$소돔 성문 앞$q$, $q$헷갈렸어요$q$, 0, $q$창 13:18 — '이에 아브람이 장막을 옮겨 헤브론에 있는 마므레 상수리 수풀에 이르러 거하며 거기서 여호와를 위하여 단을 쌓았더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와께서 아브람의 믿음을 무엇으로 여기셨습니까?$q$, $q$제물로$q$, $q$율법 준수로$q$, $q$의로$q$, $q$헷갈렸어요$q$, 2, $q$창 15:6 — '아브람이 여호와를 믿으니 여호와께서 이를 그의 의로 여기시고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$언약을 위해 쪼개 놓은 고기 위에 솔개가 내리자 아브람은 어떻게 하였습니까?$q$, $q$그대로 두고 기다렸다$q$, $q$제단에 불을 붙였다$q$, $q$솔개를 쫓았다$q$, $q$헷갈렸어요$q$, 2, $q$창 15:11 — '솔개가 그 사체 위에 내릴 때에는 아브람이 쫓았더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 아브람과 언약을 세우며 무엇을 약속하셨습니까?$q$, $q$아브람의 집을 바로 빼앗겠다고 하셨다$q$, $q$넓은 땅을 아브람의 자손에게 주겠다고 하셨다$q$, $q$아브람에게 애굽으로 돌아가라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 15:18 — '그 날에 여호와께서 아브람으로 더불어 언약을 세워 가라사대 내가 이 땅을 애굽강에서부터 그 큰 강 유브라데까지 네 자손에게 주노니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하갈이 광야로 도망쳤을 때 여호와의 사자는 그에게 무엇을 명하였습니까?$q$, $q$여주인에게로 돌아가 복종하라$q$, $q$애굽으로 가라$q$, $q$이스마엘을 낳으면 돌아오라$q$, $q$헷갈렸어요$q$, 0, $q$창 16:9 — '네 여주인에게로 돌아가서 그 수하에 복종하라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와의 사자는 하갈의 자손에 대해 무엇을 약속했습니까?$q$, $q$아브람의 집으로 돌아가지 말라고 말했다$q$, $q$크게 번성하여 셀 수 없게 하겠다고 약속했다$q$, $q$다시는 광야에 살지 못하게 하겠다고 말했다$q$, $q$헷갈렸어요$q$, 1, $q$창 16:10 — '여호와의 사자가 또 그에게 이르되 내가 네 자손으로 크게 번성하여 그 수가 많아 셀 수 없게 하 리라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브람이 이스마엘을 낳을 때 아브람의 나이는 몇 세였습니까?$q$, $q$구십 구 세$q$, $q$칠십 오 세$q$, $q$팔십 륙 세$q$, $q$헷갈렸어요$q$, 2, $q$창 16:16 — '하갈이 아브람에게 이스마엘을 낳을 때에 아브람이 팔십 륙 세이었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$할례 언약 때 아브람의 나이는 몇 세였습니까?$q$, $q$구십구 세$q$, $q$팔십 세$q$, $q$백 세$q$, $q$헷갈렸어요$q$, 0, $q$창 17:1 — '아브람의 구십구세 때에 여호와께서 아브람에게 나타나서'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브람이 엎드리자 하나님은 어떻게 하셨습니까?$q$, $q$아브람을 애굽으로 보내셨다$q$, $q$할례를 취소하셨다$q$, $q$그에게 다시 말씀하셨다$q$, $q$헷갈렸어요$q$, 2, $q$창 17:3 — '아브람이 엎드린대 하나님이 또 그에게 일러 가라사대'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 사래의 이름을 무엇으로 바꾸셨습니까?$q$, $q$리브가$q$, $q$하갈$q$, $q$사라$q$, $q$헷갈렸어요$q$, 2, $q$창 17:15 — '사래라 하지 말고 그 이름을 사라라 하라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$손님들이 아브라함을 찾아온 장소는 어디입니까?$q$, $q$브엘세바$q$, $q$헤브론 성문$q$, $q$마므레 상수리 수풀$q$, $q$헷갈렸어요$q$, 2, $q$창 18:1 — '여호와께서 마므레의 상수리 수풀 근처에서 아브라함에게 나타나시니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아들을 낳을 것이라는 말을 들은 사라는 어떻게 했습니까?$q$, $q$소리 내어 울었다$q$, $q$속으로 웃었다$q$, $q$하나님께 감사했다$q$, $q$헷갈렸어요$q$, 1, $q$창 18:12 — '사라가 속으로 웃고 이르되 내가 노쇠하였고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사라는 웃은 일을 두려워하며 어떻게 말했습니까?$q$, $q$웃지 않았다고 부인했다$q$, $q$하나님을 처음 보았다고 했다$q$, $q$아브라함이 웃었다고 둘러댔다$q$, $q$헷갈렸어요$q$, 0, $q$창 18:15 — '사라가 두려워서 승인치 아니하여 가로되 내가 웃지 아니하였나이다 가라사대 아니라 네가 웃었느 니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함은 소돔을 위해 의인의 수를 어떻게 간구하였습니까?$q$, $q$소돔을 용서해 달라고만 구하였다$q$, $q$한 번만 간구하고 침묵하였다$q$, $q$여러 번 반복해 숫자를 낮추어 구하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 18:23-32 — 아브라함이 오십 명에서 십 명까지 반복해 간구함$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함은 소돔을 위해 간구하며 자신을 무엇에 비유했습니까?$q$, $q$큰 산 같은 의인$q$, $q$티끌과 같은 존재$q$, $q$성문을 지키는 재판장$q$, $q$헷갈렸어요$q$, 1, $q$창 18:27 — '아브라함이 말씀하여 가로되 티끌과 같은 나라도 감히 주께 고하나이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함이 마지막으로 의인의 수를 몇 명까지 낮추어 간구하였습니까?$q$, $q$십 명$q$, $q$오십 명$q$, $q$이십 명$q$, $q$헷갈렸어요$q$, 0, $q$창 18:32 — '혹 거기서 십 인을 찾으시면 어찌 하시려나이까 ... 십 인을 인하여도 멸하지 아니하리라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$천사가 롯에게 떠나라 재촉하자 롯은 어떻게 하였습니까?$q$, $q$이웃에게 알리러 갔다$q$, $q$즉시 달려 나갔다$q$, $q$지체하여 천사가 손을 잡아 이끌었다$q$, $q$헷갈렸어요$q$, 2, $q$창 19:16 — '롯이 지체하매 그 사람들이 롯의 손과 ... 손을 잡아 이끌어 성 밖에 두니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$롯은 천사들의 재촉에 어떻게 반응했습니까?$q$, $q$그렇게 하지 말아 달라고 부탁했다$q$, $q$즉시 아무 말 없이 순종했다$q$, $q$소돔으로 다시 돌아가겠다고 했다$q$, $q$헷갈렸어요$q$, 0, $q$창 19:18 — '롯이 그들에게 이르되 내 주여 그리 마옵소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$롯의 처는 소돔을 탈출할 때 뒤를 돌아보아 무엇이 되었습니까?$q$, $q$재 더미$q$, $q$돌 조각$q$, $q$소금 기둥$q$, $q$헷갈렸어요$q$, 2, $q$창 19:26 — '롯의 아내는 뒤를 돌아보았으므로 소금 기둥이 되었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 8 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 9;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 9 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아비멜렉이 사라를 취한 것에 대해 아비멜렉은 자신의 행동을 어떻게 설명하였습니까?$q$, $q$바로의 명령을 따랐다$q$, $q$온전한 마음과 깨끗한 손으로 행하였다$q$, $q$신하들이 권하여 어쩔 수 없었다$q$, $q$헷갈렸어요$q$, 1, $q$창 20:5 — '나는 온전한 마음과 깨끗한 손으로 이렇게 하였나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아비멜렉은 아브라함에게 무엇을 물었습니까?$q$, $q$어느 땅을 팔 것인지 물었다$q$, $q$왜 전쟁을 시작했는지 물었다$q$, $q$왜 그렇게 했는지 이유를 물었다$q$, $q$헷갈렸어요$q$, 2, $q$창 20:10 — '아비멜렉이 또 아브라함에게 이르되 네가 무슨 의견으로 이렇게 하였느냐'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아비멜렉은 아브라함에게 사라를 돌려보내며 무엇을 함께 주었습니까?$q$, $q$떡과 포도주$q$, $q$금과 은과 토지$q$, $q$양과 소와 노비$q$, $q$헷갈렸어요$q$, 2, $q$창 20:14 — '아비멜렉이 양과 소와 노비를 취하여 아브라함에게 주고 그 아내 사라도 그에게 돌려보내고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 9 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 10;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 10 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사라는 이삭을 낳고 하나님이 자신을 어떻게 하셨다고 하였습니까?$q$, $q$웃게 하셨다$q$, $q$높이셨다$q$, $q$눈물을 닦아 주셨다$q$, $q$헷갈렸어요$q$, 0, $q$창 21:6 — '사라가 가로되 하나님이 나로 웃게 하시니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하갈이 물이 다 떨어지자 아이에 대해 어떻게 행동하였습니까?$q$, $q$아이를 수풀 아래 두고 떨어져 방성대곡하였다$q$, $q$아이를 이스마엘에게 맡겼다$q$, $q$아이를 안고 계속 걸었다$q$, $q$헷갈렸어요$q$, 0, $q$창 21:15-16 — '그 아이를 관목 아래 두고 ... 방성대곡하니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 하갈에게 어떤 위로를 주셨습니까?$q$, $q$아이의 소리를 들으셨으니 두려워하지 말라고 하셨다$q$, $q$아이를 혼자 두고 떠나라고 하셨다$q$, $q$이삭에게 돌아가지 말라고 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$창 21:17 — '하나님이 그 아이의 소리를 들으시므로 하나님의 사자가 하늘에서부터 하갈을 불러 가라사대 하갈 아 무슨 일이냐 두려워 말라 하나님이 거기 있는 아이의 소리를 들으셨나니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 10 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 11;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 11 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이삭이 번제 재료는 있는데 어린 양이 없다고 묻자 아브라함은 뭐라 대답하였습니까?$q$, $q$내가 사 오리라$q$, $q$하나님께 맡기고 계속 가자$q$, $q$하나님이 자기를 위하여 친히 준비하시리라$q$, $q$헷갈렸어요$q$, 2, $q$창 22:8 — '아브라함이 가로되 아들아 번제할 어린 양은 하나님이 자기를 위하여 친히 준비하시리라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와의 사자가 아브라함을 부르자 아브라함은 어떻게 대답했습니까?$q$, $q$이삭이 어디 있느냐고 물었다$q$, $q$양은 이미 준비했다고 말했다$q$, $q$내가 여기 있다고 대답했다$q$, $q$헷갈렸어요$q$, 2, $q$창 22:11 — '여호와의 사자가 하늘에서부터 그를 불러 가라사대 아브라함아 아브라함아 하시는지라 아브라함이 가로되 내가 여기 있나이다 하매'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함이 번제할 어린 양 대신 드린 것은 무엇입니까?$q$, $q$비둘기 두 마리$q$, $q$소 한 마리$q$, $q$뿔이 수풀에 걸린 숫양$q$, $q$헷갈렸어요$q$, 2, $q$창 22:13 — '아브라함이 ... 뿔이 수풀에 걸린 숫양을 ... 가져다가 번제로 드렸더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 11 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 12;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 12 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사라가 죽었을 때 아브라함은 어떻게 하였습니까?$q$, $q$사라를 위해 슬퍼하며 애통하였다$q$, $q$이삭에게 소식을 먼저 전하였다$q$, $q$즉시 장사 터를 구하러 떠났다$q$, $q$헷갈렸어요$q$, 0, $q$창 23:2 — '아브라함이 들어가서 사라를 위하여 슬퍼하며 애통하다가'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$헷 사람들은 아브라함의 요청에 어떻게 반응했습니까?$q$, $q$장사할 곳을 절대 주지 않겠다고 했다$q$, $q$아브라함에게 대답하려고 나섰다$q$, $q$아브라함을 성 밖으로 쫓아냈다$q$, $q$헷갈렸어요$q$, 1, $q$창 23:5 — '헷족속이 아브라함에게 대답하여 가로되'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함이 막벨라 굴과 밭을 사기 위해 에브론에게 지불한 은은 얼마입니까?$q$, $q$사백 세겔$q$, $q$천 세겔$q$, $q$오십 세겔$q$, $q$헷갈렸어요$q$, 0, $q$창 23:16 — '은 사백 세겔을 달아 에브론에게 주었더니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 12 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 13;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 13 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함의 종이 물을 청하자 리브가는 어떻게 행동하였습니까?$q$, $q$먼저 누구인지 물었다$q$, $q$종과 낙타들에게도 물을 길어 주었다$q$, $q$물만 주고 돌아갔다$q$, $q$헷갈렸어요$q$, 1, $q$창 24:19-20 — '낙타를 위하여도 물을 길어 ... 모든 낙타에게 먹이니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아브라함의 종은 리브가에게 무엇을 부탁했습니까?$q$, $q$물을 조금 마시게 해 달라고 부탁했다$q$, $q$가족을 숨겨 달라고 부탁했다$q$, $q$이삭에게 바로 가 달라고 부탁했다$q$, $q$헷갈렸어요$q$, 0, $q$창 24:45 — '내가 묵도하기를 마치지 못하여 리브가가 물 항아리를 어깨에 메고 나와서 우물로 내려와 긷기로 내가 그에게 이르기를 청컨대 내게 마시우라 한즉'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이삭은 리브가를 인도하여 어느 장막으로 들였습니까?$q$, $q$아버지 아브라함의 장막$q$, $q$모친 사라의 장막$q$, $q$자기 장막$q$, $q$헷갈렸어요$q$, 1, $q$창 24:67 — '이삭이 리브가를 인도하여 모친 사라의 장막으로 들이고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 13 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 14;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 14 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에서는 들에서 돌아왔을 때 어떤 상태였습니까?$q$, $q$아버지에게 축복을 받으러 갔다$q$, $q$몹시 피곤하고 배가 고팠다$q$, $q$사냥감을 많이 가져와 기뻐했다$q$, $q$헷갈렸어요$q$, 1, $q$창 25:29 — '에서가 들에서부터 돌아와서 심히 곤비하여'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 에서에게 먼저 무엇을 팔라고 했습니까?$q$, $q$장자의 명분$q$, $q$사냥한 고기$q$, $q$아버지의 장막$q$, $q$헷갈렸어요$q$, 0, $q$창 25:31 — '야곱이 가로되 형의 장자의 명분을 오늘날 내게 팔라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에서가 야곱에게 장자의 명분을 판 것은 무엇을 받고서입니까?$q$, $q$은 삼십$q$, $q$양과 소$q$, $q$떡과 팥죽$q$, $q$헷갈렸어요$q$, 2, $q$창 25:34 — '야곱이 떡과 팥죽을 에서에게 주매 에서가 먹으며 마시고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 14 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 15;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 15 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이삭이 야곱을 에서로 착각하게 된 이유는 무엇입니까?$q$, $q$리브가가 이삭 옆에 없었다$q$, $q$눈이 완전히 멀어 아무것도 보지 못하였다$q$, $q$야곱의 손에 털이 있어 분별치 못하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 27:23 — '그 손이 형 에서의 손과 같이 털이 있으므로 능히 분별치 못하고 축복하였더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에서가 아버지의 말을 듣고 어떻게 반응하였습니까?$q$, $q$야곱을 즉시 쫓아갔다$q$, $q$말없이 들에 나갔다$q$, $q$방성대곡하며 자기도 축복해 달라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 27:34 — '에서가 그 아비의 말을 듣고 방성대곡하며 아비에게 이르되 내게도 축복하소서'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에서가 축복을 빼앗긴 일을 알게 되었을 때 이삭은 야곱에 대해 무엇이라고 말했습니까?$q$, $q$네 아우가 간교하게 와서 네 복을 빼앗았다고 말했다$q$, $q$네 어머니가 모든 복을 돌려주었다고 말했다$q$, $q$네 복은 처음부터 없었다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$창 27:35 — '이삭이 가로되 네 아우가 간교하게 와서 네 복을 빼앗았도다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 15 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 16;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 16 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 꿈에서 깨어 여호와가 그곳에 계신다는 것을 알고 어떻게 말하였습니까?$q$, $q$이 땅이 두렵도다 이곳은 하나님의 집이라 하였다$q$, $q$즉시 무릎 꿇고 기도하였다$q$, $q$내가 하나님을 만났으니 기쁘도다 하였다$q$, $q$헷갈렸어요$q$, 0, $q$창 28:17 — '야곱이 두려워하여 가로되 이 곳이 두렵도다 이것이 다름 아닌 하나님의 전이요 하늘의 문이로다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 자기가 베고 잔 돌을 일어나 무엇으로 세웠습니까?$q$, $q$강에 던졌다$q$, $q$기둥으로 세웠다$q$, $q$제단에 놓았다$q$, $q$헷갈렸어요$q$, 1, $q$창 28:18 — '야곱이 아침에 일찌기 일어나 베개하였던 돌을 가져 기둥으로 세우고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 평안히 아버지 집으로 돌아가게 하시면 여호와를 어떤 분으로 삼겠다고 했습니까?$q$, $q$라반의 하나님으로 삼겠다고 했다$q$, $q$자신의 하나님으로 삼겠다고 했다$q$, $q$돌베개의 주인으로 삼겠다고 했다$q$, $q$헷갈렸어요$q$, 1, $q$창 28:21 — '나로 평안히 아비 집으로 돌아가게 하시오면 여호와께서 나의 하나님이 되실 것이요'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 16 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 17;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 17 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 라헬을 아내로 얻기 위해 라반을 위해 몇 년 동안 봉사하였습니까?$q$, $q$이 년$q$, $q$칠 년$q$, $q$십 년$q$, $q$헷갈렸어요$q$, 1, $q$창 29:20 — '야곱이 라헬을 위하여 칠 년 동안 봉사하였으나'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라반은 라헬 대신 레아를 야곱에게 준 사실을 어떻게 정당화하였습니까?$q$, $q$야곱이 일을 다 마치지 못했다고 하였다$q$, $q$라헬이 아직 어리다고 하였다$q$, $q$이 고장에서 언니보다 아우를 먼저 주는 것은 관례가 아니라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 29:26 — '우리 지방에서는 언니보다 아우를 먼저 주는 것이 관례가 아니니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라헬을 아내로 얻기 위해 야곱은 라반이 정한 칠 일을 어떻게 했습니까?$q$, $q$그날 밤 바로 떠났다$q$, $q$그 칠 일을 채웠다$q$, $q$레아를 돌려보냈다$q$, $q$헷갈렸어요$q$, 1, $q$창 29:28 — '야곱이 그대로 하여 그 칠 일을 채우매 라반이 딸 라헬도 그에게 아내로 주고'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 17 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 18;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 18 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라헬은 자녀가 없자 야곱에게 어떻게 하였습니까?$q$, $q$혼자 하나님께 기도하였다$q$, $q$레아에게 도움을 청하였다$q$, $q$야곱에게 아들을 낳아 달라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 30:1 — '라헬이 자기가 야곱에게 아들을 낳지 못함을 보고 그 형을 시기하여 야곱에게 이르되 내게 자식을 낳게 하라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$레아는 갓의 이름을 지으며 무엇이라고 말했습니까?$q$, $q$복되도다라고 말했다$q$, $q$이제 떠나겠다고 말했다$q$, $q$내 슬픔이 끝났다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$창 30:11 — '레아가 가로되 복되도다 하고 그 이름을 갓이라 하였으며'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라헬이 아들을 낳고 '다시 다른 아들을 더하시기를 원하노라'며 지은 이름은 무엇입니까?$q$, $q$시므온$q$, $q$르우벤$q$, $q$요셉$q$, $q$헷갈렸어요$q$, 2, $q$창 30:24 — '그 이름을 요셉이라 하니 여호와는 다시 다른 아들을 내게 더하시기를 원하노라 함이었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 18 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 19;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 19 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱과 라반이 맺은 계약에서 야곱의 품삯은 무엇으로 정해졌습니까?$q$, $q$양떼의 절반$q$, $q$흰 양 전부$q$, $q$아롱지고 점 있고 검은 양과 염소$q$, $q$헷갈렸어요$q$, 2, $q$창 30:32 — '아롱진 자와 점 있는 자와 모든 검은 자를 내 품삯으로 하리이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라반이 자주 계약 내용을 바꾸자 야곱은 어떻게 하였습니까?$q$, $q$새 계약서를 요청하였다$q$, $q$라반에게 항의하고 고향으로 떠났다$q$, $q$나뭇가지를 이용해 양을 번성하게 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 30:37-39 — 야곱이 껍질 벗긴 나뭇가지를 이용해 자신의 몫이 되는 양을 번성시킴$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 라반의 집에 있던 야곱에게 무엇을 약속하셨습니까?$q$, $q$고향으로 돌아가라 하시며 함께 있으리라 약속하셨다$q$, $q$양 떼를 모두 라반에게 돌리라 하셨다$q$, $q$라반의 집에 영원히 머물라 하셨다$q$, $q$헷갈렸어요$q$, 0, $q$창 31:3 — '여호와께서 야곱에게 이르시되 네 조상의 땅, 네 족속에게로 돌아가라 내가 너와 함께 있으리라 하 신지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 19 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 20;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 20 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라반과 야곱이 화해의 표로 쌓은 것은 무엇입니까?$q$, $q$돌 무더기$q$, $q$나무 기둥$q$, $q$흙 단$q$, $q$헷갈렸어요$q$, 0, $q$창 31:46 — '야곱이 형제들에게 돌을 모으라 하니 그들이 돌을 취하여 무더기를 이루매'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라반과 언약을 세울 때 야곱은 돌무더기를 무엇이라 불렀습니까?$q$, $q$브니엘이라 불렀다$q$, $q$벧엘이라 불렀다$q$, $q$갈르엣이라 불렀다$q$, $q$헷갈렸어요$q$, 2, $q$창 31:47 — '라반은 그것을 여갈사하두다라 칭하였고 야곱은 그것을 갈르엣이라 칭하였으니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라반은 야곱과 헤어진 아침에 가족들에게 어떻게 했습니까?$q$, $q$손자들과 딸들에게 입맞추고 축복했다$q$, $q$밤중에 몰래 도망했다$q$, $q$야곱의 양 떼를 빼앗았다$q$, $q$헷갈렸어요$q$, 0, $q$창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 떠나 고향으로 돌아 갔더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 20 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 21;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 21 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$씨름 상대가 날이 새니 가게 해 달라 하자 야곱은 어떻게 응답하였습니까?$q$, $q$이름을 물어보았다$q$, $q$축복하지 않으면 가게 하지 않겠다 하였다$q$, $q$즉시 놓아 주었다$q$, $q$헷갈렸어요$q$, 1, $q$창 32:26 — '야곱이 가로되 당신이 내게 축복하지 아니하면 가게 하지 아니하겠나이다'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱이 씨름 후 받은 새 이름은 무엇입니까?$q$, $q$이스라엘$q$, $q$이삭$q$, $q$아브라함$q$, $q$헷갈렸어요$q$, 0, $q$창 32:28 — '네 이름을 다시는 야곱이라 부를 것이 아니요 이스라엘이라 부를 것이니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱이 이름을 묻자 그 사람은 어떻게 했습니까?$q$, $q$이름 대신 야곱을 축복했다$q$, $q$자기 이름을 자세히 알려 주었다$q$, $q$야곱을 다시 에서에게 보냈다$q$, $q$헷갈렸어요$q$, 0, $q$창 32:29 — '야곱이 청하여 가로되 당신의 이름을 고하소서 그 사람이 가로되 어찌 내 이름을 묻느냐 하고 거 기서 야곱에게 축복한지라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 21 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 22;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 22 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에서는 야곱을 만나러 올 때 몇 명을 거느리고 왔습니까?$q$, $q$사백 명$q$, $q$오십 명$q$, $q$백 명$q$, $q$헷갈렸어요$q$, 0, $q$창 33:1 — '에서가 사백인을 거느리고 오는지라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 형 에서에게 가까이 가며 어떻게 절하였습니까?$q$, $q$한 번 절하고 예물을 내밀었다$q$, $q$멀리서 엎드렸다$q$, $q$몸을 일곱 번 땅에 굽혔다$q$, $q$헷갈렸어요$q$, 2, $q$창 33:3 — '자기는 그들 앞에서 나아가되 몸을 일곱 번 땅에 굽히며 그 형 에서에게 가까이 하니'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에서이 함께한 여인과 자식들을 묻자 야곱은 그들을 누구의 은혜로 받은 자식이라고 말했습니까?$q$, $q$에서이 맡긴 자식이라고 말했다$q$, $q$라반이 품삯으로 준 자식이라고 말했다$q$, $q$하나님이 은혜로 주신 자식이라고 말했다$q$, $q$헷갈렸어요$q$, 2, $q$창 33:5 — '에서가 눈을 들어 여인과 자식들을 보고 묻되 너와 함께한 이들 은 누구냐 야곱이 가로되 하나님이 주의 종에게 은혜로 주신 자식이니이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 22 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 23;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 23 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라헬은 어디로 가는 길에 아이를 낳다가 죽었습니까?$q$, $q$벧엘로 가는 길$q$, $q$헤브론으로 가는 길$q$, $q$에브랏으로 가는 길$q$, $q$헷갈렸어요$q$, 2, $q$창 35:16-17 — '그들이 벧엘에서 발행하여 에브랏에 이르기까지 ... 라헬이 임산하여 심히 신고하더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$라헬이 죽어가며 아들을 베노니라 불렀을 때 아버지는 그 이름을 무엇으로 불렀습니까?$q$, $q$르우벤$q$, $q$요셉$q$, $q$베냐민$q$, $q$헷갈렸어요$q$, 2, $q$창 35:18 — '그가 죽기에 임하여 그 혼이 떠나려 할 때에 아들의 이름은 베노니라 불렀으나 그 아비가 그를 베 냐민이라 불렀더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 라헬의 묘에 무엇을 세웠습니까?$q$, $q$성벽을 세웠다$q$, $q$우물을 팠다$q$, $q$묘비를 세웠다$q$, $q$헷갈렸어요$q$, 2, $q$창 35:20 — '야곱이 라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 23 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 24;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 24 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$이스라엘이 요셉을 특별히 사랑하여 만들어 준 것은 무엇입니까?$q$, $q$채색옷$q$, $q$금 반지$q$, $q$은 지팡이$q$, $q$헷갈렸어요$q$, 0, $q$창 37:3 — '이스라엘이 ... 요셉을 깊이 사랑하여 위하여 채색옷을 지었더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉은 형들에게 무엇을 들으라고 했습니까?$q$, $q$애굽에서 들은 소식$q$, $q$아버지가 준 명령$q$, $q$자기가 꾼 꿈$q$, $q$헷갈렸어요$q$, 2, $q$창 37:6 — '요셉이 그들에게 이르되 청컨대 나의 꾼 꿈을 들으시오'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉의 꿈 이야기를 들은 형들과 아버지는 어떻게 반응했습니까?$q$, $q$아버지는 요셉을 집 밖으로 내보냈다$q$, $q$형들은 시기했고 아버지는 마음에 두었다$q$, $q$모두 즉시 요셉에게 절했다$q$, $q$헷갈렸어요$q$, 1, $q$창 37:11 — '그 형들은 시기하되 그 아비는 그 말을 마음에 두었더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 24 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 25;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 25 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉을 팔고 돌아온 형들은 아버지에게 무엇을 하였습니까?$q$, $q$요셉이 들짐승에게 죽었다고 말하였다$q$, $q$채색옷에 숫염소의 피를 묻혀 보냈다$q$, $q$요셉이 도망쳤다고 거짓말하였다$q$, $q$헷갈렸어요$q$, 1, $q$창 37:31-32 — '요셉의 옷을 가져다가 숫염소를 죽여 그 옷을 피에 적시고 ... 아비에게로 보내어'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 피 묻은 옷을 보고 무엇이라고 생각했습니까?$q$, $q$요셉이 애굽의 왕이 되었다고 생각했다$q$, $q$형들이 요셉을 팔았다고 바로 알았다$q$, $q$요셉이 들짐승에게 찢겨 죽었다고 생각했다$q$, $q$헷갈렸어요$q$, 2, $q$창 37:33 — '아비가 그것을 알아보고 가로되 내 아들의 옷이라 악한 짐승이 그를 먹었도다 요셉이 정녕 찢겼도 다 하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$형들이 요셉을 판 미디안 상인들은 요셉을 누구에게 팔았습니까?$q$, $q$바로의 신하 시위대장 보디발$q$, $q$애굽의 상인들에게$q$, $q$바로에게$q$, $q$헷갈렸어요$q$, 0, $q$창 37:36 — '미디안 사람이 애굽에서 바로의 신하 시위대장 보디발에게 요셉을 팔았더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 25 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 26;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 26 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$보디발의 아내가 유혹할 때 요셉은 어떻게 했습니까?$q$, $q$보디발에게 즉시 알렸다$q$, $q$겉옷을 버리고 밖으로 피했다$q$, $q$아무 말 없이 따랐다$q$, $q$헷갈렸어요$q$, 1, $q$창 39:12 — '그가 그 옷을 그 손에 버려두고 도망하여 나가니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉에게 누명을 씌운 사람은 누구입니까?$q$, $q$파라오$q$, $q$보디발$q$, $q$보디발의 아내$q$, $q$헷갈렸어요$q$, 2, $q$창 39:14-18 — 보디발의 아내가 요셉의 옷을 잡고 거짓 고발함$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$그 뒤 요셉에게 어떤 일이 있었습니까?$q$, $q$바로의 궁으로 바로 들어갔다$q$, $q$요셉이 감옥에 갇혔다$q$, $q$보디발의 집 주인이 되었다$q$, $q$헷갈렸어요$q$, 1, $q$창 39:20 — '이에 요셉의 주인이 그를 잡아 옥에 넣으니 그 옥은 왕의 죄수를 가두는 곳이었더라 요셉이 옥에 갇혔으나'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 26 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 27;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 27 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로의 꿈에서 먼저 나온 일곱 마리 소의 상태는 어떠하였습니까?$q$, $q$살지고 아름다운 소$q$, $q$강하고 검은 소$q$, $q$파리하고 흉악한 소$q$, $q$헷갈렸어요$q$, 0, $q$창 41:2 — '하수에서 살지고 아름다운 암소 일곱이 올라와 갈밭에서 뜯어먹더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로는 요셉의 꿈 해석을 듣고 요셉에게 어떻게 하였습니까?$q$, $q$애굽 전국의 총리로 세웠다$q$, $q$신하들과 상의 후 결정하였다$q$, $q$감옥에서 풀어 주었다$q$, $q$헷갈렸어요$q$, 0, $q$창 41:41 — '바로가 그로 애굽 전국을 총리하게 하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$포위된 성 안에는 어떤 일이 일어났습니까?$q$, $q$강하고 검은 소$q$, $q$파리하고 흉악한 소$q$, $q$기근이 심해 먹을 것이 떨어졌다$q$, $q$헷갈렸어요$q$, 2, $q$창 41:56 — '온 지면에 기근이 있으매 요셉이 모든 창고를 열고 애굽 백성에게 팔새 애굽 땅에 기근이 심하며'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 27 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 28;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 28 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉이 자신의 정체를 드러낼 때 그와 함께 있었던 사람은 몇 명입니까?$q$, $q$바로의 신하들이 있었다$q$, $q$청지기 한 명이 있었다$q$, $q$아무도 없었다$q$, $q$헷갈렸어요$q$, 2, $q$창 45:1 — '요셉이 시종하는 자들 앞에서 ... 모든 사람을 자기에게서 물러가라 하고 ... 때에 그와 함께한 자가 없었더라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉은 자신을 팔았던 형들에게 그 일에 대해 어떻게 말하였습니까?$q$, $q$형들의 잘못을 낱낱이 책망하였다$q$, $q$아무 말도 하지 않고 울기만 하였다$q$, $q$나를 이리로 보낸 자는 하나님이시라 하였다$q$, $q$헷갈렸어요$q$, 2, $q$창 45:8 — '그런즉 나를 이리로 보낸 자는 당신들이 아니요 하나님이시라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$요셉은 형들에게 하나님이 자신을 애굽에서 어떤 자리에 세우셨다고 말했습니까?$q$, $q$감옥을 지키는 사람으로 세우셨다고 말했다$q$, $q$애굽 전국의 주로 세우셨다고 말했다$q$, $q$가나안의 목자로 세우셨다고 말했다$q$, $q$헷갈렸어요$q$, 1, $q$창 45:9 — '당신들은 속히 아버지께로 올라가서 고하기를 아버지의 아들 요셉의 말에 하나님이 나를 애굽 전국 의 주로 세우셨으니 내게로 지체말고 내려오사'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 28 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 29;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 29 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱의 가족이 애굽에서 정착한 땅의 이름은 무엇입니까?$q$, $q$나일 강가$q$, $q$고센 땅$q$, $q$가나안 땅$q$, $q$헷갈렸어요$q$, 1, $q$창 46:28 — '야곱이 유다를 요셉에게 미리 보내어 자기를 고센으로 인도하게 하고 다 고센 땅에 이르니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바로가 야곱 가족의 생업을 묻자 그들은 어떻게 대답하였습니까?$q$, $q$종들은 목자라 우리와 선조가 다 그러하다 하였다$q$, $q$장사꾼이라고 하였다$q$, $q$농부라고 하였다$q$, $q$헷갈렸어요$q$, 0, $q$창 47:3 — '바로가 요셉의 형들에게 묻되 너희 생업이 무엇이냐 그들이 ... 종들은 목자이온데 우리와 선조가 다 그러하니이다'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$포위된 성 안에는 어떤 일이 일어났습니까?$q$, $q$가나안 땅$q$, $q$나일 강가$q$, $q$기근이 심해 먹을 것이 떨어졌다$q$, $q$헷갈렸어요$q$, 2, $q$창 47:4 — '그들이 또 바로에게 고하되 가나안 땅에 기근이 심하여 종들의 떼를 칠 곳이 없기로 종들이 이곳에 우거하러 왔사오니 청컨대 종들로 고센 땅에 거하게 하소서'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 29 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 30;
+  where q.event_id = e.id and er.code = 'era_patriarch' and e.story_index = 30 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱이 요셉의 두 아들에게 축복할 때 오른손은 어느 아들 머리에 얹었습니까?$q$, $q$요셉$q$, $q$므낫세$q$, $q$에브라임$q$, $q$헷갈렸어요$q$, 2, $q$창 48:14 — '이스라엘이 오른손을 펴서 차남 에브라임의 머리에 얹고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 에브라임과 므낫세에 대해 무엇을 말했습니까?$q$, $q$두 아들을 축복하지 않겠다고 했다$q$, $q$동생 에브라임이 더 큰 민족을 이룰 것이라고 했다$q$, $q$므낫세만 축복을 받을 것이라고 했다$q$, $q$헷갈렸어요$q$, 1, $q$창 48:19 — '아비가 허락지 아니하여 가로되 나도 안다 내 아들아 나도 안다 그도 한 족속이 되며 그도 크게 되려니와 그 아우가 그보다 큰 자가 되고 그 자손이 여러 민족을 이루리라 하고'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$야곱은 열두 아들에게 축복할 때 어떤 방식으로 축복했습니까?$q$, $q$아무 말 없이 축복을 거두었다$q$, $q$각 사람의 분량대로 축복했다$q$, $q$장자에게만 모든 복을 주었다$q$, $q$헷갈렸어요$q$, 1, $q$창 49:28 — '이들은 이스라엘의 십이 지파라 이와 같이 그 아비가 그들에게 말하고 그들에게 축복하였으되 곧 그들 각인의 분량대로 축복하였더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30;
+from events e join eras er on er.id = e.era_id where er.code = 'era_patriarch' and e.story_index = 30 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 1;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 1 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 빛을 만드신 것은 몇째 날입니까?$q$, $q$첫째 날$q$, $q$여섯째 날$q$, $q$넷째 날$q$, $q$헷갈렸어요$q$, 0, $q$창 1:3-5 — '빛이 있으라 하시매 ... 첫째 날이니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$일곱째 날에 하나님은 무엇을 하셨습니까?$q$, $q$계속 창조하셨다$q$, $q$사람을 심판하셨다$q$, $q$안식하셨다$q$, $q$헷갈렸어요$q$, 2, $q$창 2:2 — '일곱째 날에 ... 안식하셨음이더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 일곱째 날을 어떻게 하셨습니까?$q$, $q$다시 첫째 날로 되돌리셨다$q$, $q$복 주시고 거룩하게 하셨다$q$, $q$사람에게만 일하라고 하셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 2:3 — '하나님이 일곱째 날을 복 주사 거룩하게 하셨으니 이는 하나님이 그 창조하시며 만드시던 모든 일을 마치시고 이 날에 안식하셨음이더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 1 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 2;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 2 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 아담을 두어 맡기신 곳은 어디입니까?$q$, $q$모리아 산$q$, $q$헤브론 들판$q$, $q$에덴 동산$q$, $q$헷갈렸어요$q$, 2, $q$창 2:15 — '여호와 하나님이 그 사람을 이끌어 에덴 동산에 두사'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아담은 동산의 짐승과 새에게 무엇을 하였습니까?$q$, $q$제물로 드렸다$q$, $q$이름을 지어 주었다$q$, $q$피해 숨었다$q$, $q$헷갈렸어요$q$, 1, $q$창 2:20 — '아담이 모든 육축과 공중의 새와 들의 모든 짐승에게 이름을 주니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아담은 여자를 보고 어떻게 불렀습니까?$q$, $q$자기와 상관없는 사람으로 여겼다$q$, $q$동물들 가운데 하나로 불렀다$q$, $q$자기에게서 나온 사람으로 불렀다$q$, $q$헷갈렸어요$q$, 2, $q$창 2:23 — '아담이 가로되 이는 내 뼈 중의 뼈요 살 중의 살이라 이것을 남자에게서 취하였은즉 여자라 칭하리 라 하니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 2 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 3;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 3 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$에덴에서 하와를 유혹한 것은 무엇입니까?$q$, $q$독수리$q$, $q$사자$q$, $q$뱀$q$, $q$헷갈렸어요$q$, 2, $q$창 3:1 — '여호와 하나님이 지으신 들짐승 중에 뱀이 가장 간교하니라'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$아담과 하와는 죄를 지은 후 어떻게 했습니까?$q$, $q$하나님께 즉시 고백했다$q$, $q$에덴을 떠났다$q$, $q$나무 사이에 숨었다$q$, $q$헷갈렸어요$q$, 2, $q$창 3:8 — '그들이 동산 나무 사이에 숨은지라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 여자에게 왜 그랬느냐고 물으셨을 때 여자는 무엇이라고 대답했습니까?$q$, $q$뱀이 나를 꾀어 먹었다고 말했다$q$, $q$아무 일도 없었다고 말했다$q$, $q$아담이 혼자 먹었다고 말했다$q$, $q$헷갈렸어요$q$, 0, $q$창 3:13 — '여호와 하나님이 여자에게 이르시되 네가 어찌하여 이렇게 하였느냐 여자가 가로되 뱀이 나를 꾀므 로 내가 먹었나이다'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 3 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 4;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 4 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여자에게 내리신 형벌로 하나님은 무엇을 크게 더하셨습니까?$q$, $q$잉태하는 고통$q$, $q$언어의 혼란$q$, $q$노동의 무게$q$, $q$헷갈렸어요$q$, 0, $q$창 3:16 — '내가 네게 잉태하는 고통을 크게 더하리니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님은 아담과 하와를 위해 무엇을 해 주셨습니까?$q$, $q$돌기둥을 세워 주셨다$q$, $q$가죽옷을 만들어 입혀 주셨다$q$, $q$새 동산을 바로 만들어 주셨다$q$, $q$헷갈렸어요$q$, 1, $q$창 3:21 — '여호와 하나님이 아담과 그 아내를 위하여 가죽옷을 지어 입히시니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 에덴 동산 동편에 무엇을 두어 길을 지키게 하셨습니까?$q$, $q$천사와 물$q$, $q$그룹들과 화염검$q$, $q$돌 기둥과 구름$q$, $q$헷갈렸어요$q$, 1, $q$창 3:24 — '그룹들과 두루 도는 화염검을 두어 생명 나무의 길을 지키게 하시니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 4 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 5;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 5 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가인의 제물이 열납되지 않자 가인은 어떻게 반응하였습니까?$q$, $q$제물을 다시 드렸다$q$, $q$심히 분하여 안색이 변하였다$q$, $q$울며 회개하였다$q$, $q$헷갈렸어요$q$, 1, $q$창 4:5 — '가인이 심히 분하여 안색이 변하니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가인은 아벨이 어디 있느냐는 질문에 어떻게 대답했습니까?$q$, $q$아벨이 제물을 다시 드리러 갔다고 했다$q$, $q$아벨이 성을 쌓으러 갔다고 했다$q$, $q$모른다고 하며 자신이 아우를 지키는 사람이냐고 했다$q$, $q$헷갈렸어요$q$, 2, $q$창 4:9 — '여호와께서 가인에게 이르시되 네 아우 아벨이 어디 있느냐 그가 가로되 내가 알지 못하나이다 내 가 내 아우를 지키는 자이니까'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$가인이 여호와 앞을 떠나 거한 땅의 이름은 무엇입니까?$q$, $q$갈대아 우르$q$, $q$모압 땅$q$, $q$놋 땅$q$, $q$헷갈렸어요$q$, 2, $q$창 4:16 — '가인이 여호와의 앞을 떠나 나가 에덴 동편 놋 땅에 거하였더니'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 5 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 6;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 6 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 노아에게 지으라고 명하신 것은 무엇입니까?$q$, $q$제단$q$, $q$성전$q$, $q$방주$q$, $q$헷갈렸어요$q$, 2, $q$창 6:14 — '너는 잣나무로 너를 위하여 방주를 짓고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$노아는 하나님의 명령에 어떻게 반응했습니까?$q$, $q$다 준행하였다$q$, $q$이웃과 상의했다$q$, $q$두려워 피했다$q$, $q$헷갈렸어요$q$, 0, $q$창 6:22 — '노아가 그와 같이 하되 하나님이 자기에게 명하신 대로 다 준행하였더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$홍수 때 비가 땅에 쏟아진 기간은 얼마였습니까?$q$, $q$사십 주야$q$, $q$칠 일$q$, $q$백오십 년$q$, $q$헷갈렸어요$q$, 0, $q$창 7:12 — '사십 주야를 비가 땅에 쏟아졌더라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 6 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 7;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 7 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$방주에서 나온 노아는 가장 먼저 무엇을 하였습니까?$q$, $q$가족과 함께 식사하였다$q$, $q$여호와를 위하여 단을 쌓았다$q$, $q$밭을 갈고 씨를 뿌렸다$q$, $q$헷갈렸어요$q$, 1, $q$창 8:20 — '노아가 여호와를 위하여 단을 쌓고 ... 번제로 단에 드렸더니'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$사람의 생명을 귀하게 보아야 하는 이유는 무엇입니까?$q$, $q$사람이 방주를 만들 수 있기 때문이다$q$, $q$사람이 무지개를 볼 수 있기 때문이다$q$, $q$사람이 하나님의 형상대로 지음 받았기 때문이다$q$, $q$헷갈렸어요$q$, 2, $q$창 9:6 — '무릇 사람의 피를 흘리면 사람이 그 피를 흘릴 것이니 이는 하나님이 자기 형상대로 사람을 지었음 이니라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$하나님이 세상과의 언약의 증거로 구름 속에 두신 것은 무엇입니까?$q$, $q$돌 제단$q$, $q$무지개$q$, $q$불기둥$q$, $q$헷갈렸어요$q$, 1, $q$창 9:13 — '내가 내 무지개를 구름 속에 두었나니 이것이 나의 세상과의 언약의 증거니라'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 7 and e.deleted_at is null;
 
 delete from quiz_questions q using events e join eras er on er.id = e.era_id
-  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 8;
+  where q.event_id = e.id and er.code = 'era_primeval' and e.story_index = 8 and e.deleted_at is null;
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바벨탑 건축자들이 돌 대신 사용한 것은 무엇입니까?$q$, $q$나무$q$, $q$돌과 흙$q$, $q$벽돌$q$, $q$헷갈렸어요$q$, 2, $q$창 11:3 — '벽돌로 돌을 대신하며 역청으로 진흙을 대신하고'$q$, 0
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$여호와께서 언어를 혼잡케 하신 결과 사람들은 어떻게 되었습니까?$q$, $q$바벨에 계속 머물렀다$q$, $q$온 지면에 흩어졌다$q$, $q$다른 탑을 세우려 하였다$q$, $q$헷갈렸어요$q$, 1, $q$창 11:8 — '여호와께서 거기서 그들을 온 지면에 흩으셨더라'$q$, 1
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8 and e.deleted_at is null;
 
 insert into quiz_questions (event_id, question, choice_a, choice_b, choice_c, choice_d, answer_index, explanation, display_order)
 select e.id, $q$바벨탑을 세우던 사람들은 왜 성과 탑을 쌓으려 했습니까?$q$, $q$자기 이름을 내고 흩어짐을 면하려고 했다$q$, $q$가축을 지킬 성막을 세우려고 했다$q$, $q$홍수를 피할 방주를 만들려고 했다$q$, $q$헷갈렸어요$q$, 0, $q$창 11:4 — '우리 이름을 내고 온 지면에 흩어짐을 면하자'$q$, 2
-from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8;
+from events e join eras er on er.id = e.era_id where er.code = 'era_primeval' and e.story_index = 8 and e.deleted_at is null;
 
 commit;

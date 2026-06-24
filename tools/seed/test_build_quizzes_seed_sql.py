@@ -428,6 +428,7 @@ class BuildSqlStatementsTests(unittest.TestCase):
         self.assertIn("commit;", sql)
         self.assertIn("er.code = 'era_primeval'", sql)
         self.assertIn("e.story_index = 1", sql)
+        self.assertIn("e.deleted_at is null", sql)
 
     def test_sql_emits_three_inserts_per_quiz(self) -> None:
         sql = mod.build_sql_statements([self._sample_quiz_file()])

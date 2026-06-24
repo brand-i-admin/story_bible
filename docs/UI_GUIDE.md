@@ -216,6 +216,7 @@ tap suppression 을 걸어, 조작 직후 커서 아래 region·랜드마크가 
 | GameUiSkin | `widgets/game_ui_skin.dart` | 커스텀 테마 데코레이션 |
 | NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 상단 종 아이콘 + 빨간 ! 배지 + 드롭다운 |
 | NotificationDropdown | `widgets/notification/notification_dropdown.dart` | 미독 최대 5개 + 모두 읽음 / 전체 보기 |
+| ApproveProposalDialog | `widgets/proposal/approve_proposal_dialog.dart` | 관리자 새 이야기 승인 다이얼로그. 삽입 위치 목록에서 제안자가 고른 위치는 금색 배지, 관리자가 최종 승인할 위치는 초록 배지로 구분해 같은 목록 안에서 비교한다. |
 
 > 삭제된 위젯 (참고): `StoryListPanel`, `EraSelector`, `SearchBox` — 역할이 `StorySelectionPanel`·`SearchBottomSheet` 로 통합됨.
 

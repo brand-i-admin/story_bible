@@ -139,9 +139,6 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     _backgroundContextCtrl.addListener(_onFormChanged);
     _startYearCtrl.addListener(_onFormChanged);
     _endYearCtrl.addListener(_onFormChanged);
-    _unitCodeCtrl.addListener(_onFormChanged);
-    _unitTitleCtrl.addListener(_onFormChanged);
-    _unitOrderCtrl.addListener(_onFormChanged);
     _loadOptions();
   }
 
@@ -166,9 +163,6 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     _backgroundContextCtrl.removeListener(_onFormChanged);
     _startYearCtrl.removeListener(_onFormChanged);
     _endYearCtrl.removeListener(_onFormChanged);
-    _unitCodeCtrl.removeListener(_onFormChanged);
-    _unitTitleCtrl.removeListener(_onFormChanged);
-    _unitOrderCtrl.removeListener(_onFormChanged);
     _titleCtrl.dispose();
     _summaryCtrl.dispose();
     _backgroundContextCtrl.dispose();
@@ -234,6 +228,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       setState(() {
         _eventsByEra[eraId] = events;
         _loadingEvents = false;
+        _syncTimelineUnitSelection(
+          events,
+          preserveCurrent: widget.existing != null,
+        );
       });
     } catch (_) {
       if (!mounted) return;
@@ -307,12 +305,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     if (_titleCtrl.text.trim().isEmpty) items.add('제목');
     if (_summaryCtrl.text.trim().isEmpty) items.add('요약');
     if (_backgroundContextCtrl.text.trim().isEmpty) items.add('배경 지식');
-    if (_unitCodeCtrl.text.trim().isEmpty) items.add('시간순 구간 코드');
-    if (_unitTitleCtrl.text.trim().isEmpty) items.add('시간순 구간 제목');
-    if (int.tryParse(_unitOrderCtrl.text.trim()) == null) {
-      items.add('시간순 구간 순서 (숫자)');
+    if (_unitCodeCtrl.text.trim().isEmpty ||
+        _unitTitleCtrl.text.trim().isEmpty ||
+        int.tryParse(_unitOrderCtrl.text.trim()) == null) {
+      items.add('시간순 구간 선택');
     }
-    if (_landmarkId == null) items.add('지도/칩에서 위치(region/anchor/minor) 선택');
+    if (_landmarkId == null) items.add('장소 선택');
     final sy = int.tryParse(_startYearCtrl.text.trim());
     final ey = int.tryParse(_endYearCtrl.text.trim());
     if (sy == null) items.add('시작 연도 (숫자)');
@@ -375,6 +373,61 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   List<StoryEvent> get _eraEvents =>
       _eraId != null ? (_eventsByEra[_eraId!] ?? const []) : const [];
+
+  TimelineUnitOption? get _currentTimelineUnitFallback {
+    final code = _unitCodeCtrl.text.trim();
+    final title = _unitTitleCtrl.text.trim();
+    final order = int.tryParse(_unitOrderCtrl.text.trim());
+    if (code.isEmpty || title.isEmpty || order == null) return null;
+    return TimelineUnitOption(code: code, title: title, order: order);
+  }
+
+  List<TimelineUnitOption> get _timelineUnitOptions {
+    return timelineUnitOptionsForEvents(
+      _eraEvents,
+      selectedFallback: widget.existing != null
+          ? _currentTimelineUnitFallback
+          : null,
+    );
+  }
+
+  TimelineUnitOption? _timelineUnitByCode(
+    String? code,
+    List<TimelineUnitOption> options,
+  ) {
+    if (code == null || code.trim().isEmpty) return null;
+    for (final option in options) {
+      if (option.code == code.trim()) return option;
+    }
+    return null;
+  }
+
+  void _applyTimelineUnit(TimelineUnitOption option) {
+    _unitCodeCtrl.text = option.code;
+    _unitTitleCtrl.text = option.title;
+    _unitOrderCtrl.text = option.order.toString();
+  }
+
+  void _syncTimelineUnitSelection(
+    List<StoryEvent> events, {
+    required bool preserveCurrent,
+  }) {
+    final fallback = preserveCurrent ? _currentTimelineUnitFallback : null;
+    final options = timelineUnitOptionsForEvents(
+      events,
+      selectedFallback: fallback,
+    );
+    if (options.isEmpty) {
+      if (!preserveCurrent && _unitCodeCtrl.text.trim().isEmpty) {
+        _unitCodeCtrl.text = 'default';
+        _unitTitleCtrl.text = '전체 흐름';
+        _unitOrderCtrl.text = '1';
+      }
+      return;
+    }
+    final current = _timelineUnitByCode(_unitCodeCtrl.text, options);
+    _applyTimelineUnit(current ?? options.first);
+  }
 
   Era? get _selectedEra {
     if (_eraId == null) return null;
@@ -761,7 +814,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 const _IntroBullet(
                   number: '4',
                   title: '세부 내용을 작성합니다',
-                  body: '제목 / 요약 / 장소(지도) / 연도 / 성경 본문 / 4장면까지 입력 후 제출합니다.',
+                  body:
+                      '제목 / 요약 / 장소 / 연도 / 시간순 구간 / 성경 본문 / 4장면까지 입력 후 제출합니다.',
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -798,6 +852,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 _eraId = null;
                 _afterStoryIndex = null;
                 _positionPicked = false;
+                _unitCodeCtrl.clear();
+                _unitTitleCtrl.clear();
+                _unitOrderCtrl.clear();
               }
             }),
           ),
@@ -830,6 +887,13 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       // era 바뀌면 이전 선택 리셋
       _afterStoryIndex = null;
       _positionPicked = false;
+      _unitCodeCtrl.clear();
+      _unitTitleCtrl.clear();
+      _unitOrderCtrl.clear();
+      final cachedEvents = _eventsByEra[era.id];
+      if (cachedEvents != null) {
+        _syncTimelineUnitSelection(cachedEvents, preserveCurrent: false);
+      }
     });
     _loadEventsForEra(era.id);
   }
@@ -1262,7 +1326,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '오른쪽 지도/칩에서 위치를 선택하세요.\n반드시 region 1개는 골라야 합니다.\n해당 region 의 anchor/minor 점도 선택할 수 있습니다.',
+                      '오른쪽 지도/칩에서 장소 1개를 선택하세요.\n정확한 산·도시·강 같은 장소가 있으면 그 장소를 고르고, 정확한 지점을 모르면 넓은 지역을 고르면 됩니다.',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -1347,40 +1411,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           decoration: const InputDecoration(labelText: '연도 정확도'),
         ),
         _sectionTitle('시간순 구간'),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _unitCodeCtrl,
-                decoration: const InputDecoration(
-                  labelText: '구간 코드',
-                  hintText: '예: div_elijah',
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextField(
-                controller: _unitTitleCtrl,
-                decoration: const InputDecoration(
-                  labelText: '구간 제목',
-                  hintText: '예: 엘리야와 엘리사',
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 96,
-              child: TextField(
-                controller: _unitOrderCtrl,
-                keyboardType: const TextInputType.numberWithOptions(
-                  signed: false,
-                ),
-                decoration: const InputDecoration(labelText: '순서'),
-              ),
-            ),
-          ],
-        ),
+        _buildTimelineUnitDropdown(theme),
         _sectionTitle('성경 본문'),
         BibleRefsPicker(
           initial: _bibleRefs,
@@ -1424,6 +1455,64 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         const SizedBox(height: 24),
         _missingDetailsChecklist(theme),
         const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildTimelineUnitDropdown(ThemeData theme) {
+    final options = _timelineUnitOptions;
+    final selected = _timelineUnitByCode(_unitCodeCtrl.text, options);
+    if (_loadingEvents && options.isEmpty) {
+      return const LinearProgressIndicator(minHeight: 2);
+    }
+    if (options.isEmpty) {
+      return InputDecorator(
+        decoration: const InputDecoration(labelText: '시간순 구간'),
+        child: Text(
+          '이 시대의 기존 구간을 아직 불러오지 못했습니다.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.error,
+          ),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DropdownButtonFormField<String>(
+          value: selected?.code,
+          isExpanded: true,
+          decoration: const InputDecoration(
+            labelText: '시간순 구간',
+            helperText: '선택한 시대에 이미 있는 구간만 표시됩니다.',
+          ),
+          items: [
+            for (final option in options)
+              DropdownMenuItem<String>(
+                value: option.code,
+                child: Text(
+                  '${option.displayTitle} · ${option.eventCount}개 이야기',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+          onChanged: (code) {
+            final next = _timelineUnitByCode(code, options);
+            if (next == null) return;
+            setState(() => _applyTimelineUnit(next));
+          },
+        ),
+        const SizedBox(height: 6),
+        Text(
+          selected == null
+              ? '구간을 선택해주세요.'
+              : '저장값: ${selected.code} / 순서 ${selected.order}',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: selected == null
+                ? theme.colorScheme.error
+                : theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }

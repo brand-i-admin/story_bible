@@ -273,7 +273,8 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                       Expanded(
                         child: Text(
                           '이 제안은 기존 이야기의 삭제를 요청합니다. 승인하면 대상 '
-                          '이야기가 앱에서 숨겨집니다 (진도는 보존).',
+                          '이야기가 앱과 프로필 진행률에서 제외됩니다. 과거 기록은 '
+                          'DB에만 남습니다.',
                           style: theme.textTheme.bodySmall,
                         ),
                       ),

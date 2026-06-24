@@ -68,6 +68,9 @@ status text DEFAULT 'published'      -- draft / published (어드민 전용)
   CHECK (status in ('draft','published'))
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
+- 활성 published 이야기는 각 era 안에서 `story_index = 1..N` 을 유지한다. 삭제
+  승인된 soft-deleted row 는 보존하되 활성 row 뒤쪽 번호로 밀어, 다음 삽입 위치와
+  앱/시드 canonical 순서가 어긋나지 않게 한다.
 - `unit_code`/`unit_title`/`unit_order`는 시간 순 보기의 중간 선택 단계에 사용한다.
   구약도 시대별 curated 구간(원역사 2개, 족장 3개, 출애굽 3개, 사사 3개,
   왕정 3개, 분열왕국 5개, 포로/귀환 3개)로 나눠 카드 선택에 사용한다.
@@ -170,7 +173,7 @@ created_at, updated_at
 - `approve_event_proposal` RPC 가 `insert_event_at_position` 호출 + 퀴즈 1~3개를 `quiz_questions` 로 풀어 넣음(작성 선택지 3개만 셔플, `choice_d='헷갈렸어요'`) + `approved_event_id` 역참조 기록.
   - 같은 era + 같은 effective `after_story_index`를 겨냥한 다른 pending 제안은 `position_invalidated_at`으로 잠긴다.
   - 관리자는 승인 다이얼로그에서 새 위치를 명시해 `p_after_story_index_override`로 바로 재배치 승인할 수 있다. 제안자가 직접 풀 때는 `revise_proposal_position`을 사용한다.
-- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다. ⚠️ **HARD DELETE 사용 금지** — `target_event_id` FK 의 `ON DELETE SET NULL` 가 발화되어 `chk_proposal_type_target` 위반(23514) 을 유발한다.
+- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다. 이후 같은 era 의 활성 published 이벤트를 `story_index = 1..N` 으로 재번호 매기고, 삭제된 위치 이후를 가리키던 pending NEW 제안은 `position_invalidated_at` 으로 잠가 위치 재선택을 요구한다. ⚠️ **HARD DELETE 사용 금지** — `target_event_id` FK 의 `ON DELETE SET NULL` 가 발화되어 `chk_proposal_type_target` 위반(23514) 을 유발한다.
 - `approve_general_proposal` / `reject_general_proposal` RPC 는 status 만 갱신 (이미지 정리/row 삭제 없음).
 
 #### `event_proposal_comments` — 댓글
@@ -193,7 +196,7 @@ body text, created_at, updated_at
 | `submit_delete_proposal(target_event_id, reason)` | pastor | 기존 이야기 삭제 제안 INSERT (`proposal_type='delete'`, `summary=reason`). 이미 삭제된 이벤트면 거부. |
 | `submit_general_proposal(title, body, image_paths)` | pastor | 일반 제안 INSERT (`proposal_type='general'`). 본문 필수, 이미지 최대 5장. |
 | `approve_event_proposal(proposal_id, after_override, character_active_overrides)` | admin | `proposal_type='new'` 전용. 위치 override 가능. `insert_event_at_position` 호출 → events 반영 + 퀴즈 rows insert + proposal status='approved'. |
-| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent, soft delete). 퀴즈/진도/캐릭터/이미지 정리 모두 미수행. |
+| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent, soft delete) 후 같은 era 활성 이벤트 `story_index`를 1..N으로 압축. 삭제된 위치 이후 pending NEW 제안은 위치 재선택 필요 상태로 전환. 퀴즈/진도/캐릭터/이미지 정리 모두 미수행. |
 | `approve_general_proposal(proposal_id)` | admin | `proposal_type='general'` 전용. status='approved' 만. 이미지 정리 없음. |
 | `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 (new/delete 공통). 반환 jsonb 에 정리 후보 storage 경로 포함. |
 | `reject_general_proposal(proposal_id, note)` | admin | `proposal_type='general'` 전용. status='rejected' + 사유만 갱신. |
@@ -204,7 +207,7 @@ body text, created_at, updated_at
 
 #### Soft delete — events.deleted_at
 
-이야기 삭제 제안이 승인되면 `events.deleted_at` 이 `now()` 로 set 된다. `quiz_questions`/`user_event_progress` 의 `ON DELETE CASCADE` 연쇄로 인한 **사용자 진도 유실** 을 막기 위해 hard delete 는 의도적으로 피한다 ([ADR-017](ADR.md#adr-017-이야기-삭제-제안--soft-delete--퀴즈-필수화)).
+이야기 삭제 제안이 승인되면 `events.deleted_at` 이 `now()` 로 set 된다. `quiz_questions`/`user_event_progress`/`user_quiz_attempts`/`user_event_emotion_marks` 의 FK 연쇄 삭제나 orphan 을 피하기 위해 hard delete 는 의도적으로 피한다 ([ADR-017](ADR.md#adr-017-이야기-삭제-제안--soft-delete--퀴즈-필수화)). 여기서 "보존"은 DB의 과거 기록 row 를 남긴다는 뜻이지, 앱에 보이는 진행률을 유지한다는 뜻이 아니다. 앱과 프로필은 active `events_ordered` id 기준으로 진행/퀴즈/감정 기록을 필터링하므로 삭제된 이야기에만 있던 완료, 퀴즈, 감정 기록은 현재 진행률과 달력/기록 탭에서 빠진다. 대신 같은 era 의 활성 published 이벤트를 `story_index = 1..N` 으로 즉시 재번호 매기고, soft-deleted row 는 활성 row 뒤쪽 번호로 이동한다 ([ADR-028](ADR.md#adr-028-삭제-승인-후-active-story_index-재번호-매김)).
 
 앱 전체에서 자동으로 숨겨지도록 두 곳에 필터를 건다:
 
@@ -214,7 +217,10 @@ body text, created_at, updated_at
 | `character_eras` (view) | join 조건에 `and e.deleted_at is null` |
 | `list_characters_by_era(era_id)` RPC | join 조건에 `and e.deleted_at is null` |
 
-Flutter 앱은 `events_ordered` / RPC 만 호출하므로 이 두 곳만 필터 걸면 추가 작업 없음. `fetchQuizQuestions(event_id)` 는 앱 흐름상 삭제된 event 로 도달하지 않아 별도 필터 생략 (이미 목록에서 제외됨).
+Flutter 앱은 사건 목록을 `events_ordered` / RPC 로만 호출한다. 사용자 기록 조회도 active `events_ordered` id 와 교차해 필터링하므로 프로필의 인물 진행도, 장소 진행도, 기록 탭 퀴즈 통계, 감정 달력에서 soft-deleted event 는 제외된다. `fetchQuizQuestions(event_id)` 는 앱 흐름상 삭제된 event 로 도달하지 않아 별도 필터 생략 (이미 목록에서 제외됨).
+삭제로 인해 같은 era 의 숫자 위치가 바뀌면, 삭제된 `story_index` 이상을 가리키던
+pending NEW 제안은 `position_invalidated_at` 이 set 된다. 제안자는 현재 활성 목록을
+보고 `revise_proposal_position` 으로 위치/연도/랜드마크를 다시 제출해야 한다.
 
 #### `bible_verses` — KRV 성경 전문 (31,904절)
 ```sql
@@ -474,6 +480,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `list_intercessory_prayer_requests(p_limit, p_offset)` | RPC | 중보기도 목록 페이지네이션 |
 | `add_intercessory_prayer_by_share_id(p_share_id)` | RPC | 공유 코드로 중보기도 추가 |
 | `insert_event_at_position(...)` | RPC (admin 전용) | 새 이야기를 era 안 특정 위치에 끼워 넣기. story_index 시프트 + INSERT 를 advisory lock 안에서 처리. status 는 항상 'published'. |
+| `approve_delete_proposal(...)` | RPC (admin 전용) | 삭제 제안 승인. soft delete + 같은 era 활성 story_index 압축 + 영향받은 pending NEW 제안 위치 무효화를 advisory lock 안에서 처리. |
 
 ## 5. Repository 패턴
 

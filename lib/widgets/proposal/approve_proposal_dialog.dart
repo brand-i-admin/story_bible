@@ -7,6 +7,7 @@ import '../../data/character_name_fallbacks.dart';
 import '../../models/event_proposal.dart';
 import '../../models/story_event.dart';
 import '../../state/story_controller.dart';
+import '../../theme/tokens.dart';
 
 /// 새 이야기 제안 승인 전 띄우는 확인 다이얼로그.
 ///
@@ -59,6 +60,20 @@ class _CharRow {
   final String name;
   final bool isNew;
   bool isActive;
+}
+
+@visibleForTesting
+int normalizeSuggestedAfterStoryIndex(int? afterStoryIndex) {
+  return afterStoryIndex ?? 0;
+}
+
+@visibleForTesting
+bool isSuggestedProposalPosition({
+  required int candidateAfterStoryIndex,
+  required int? proposedAfterStoryIndex,
+}) {
+  return candidateAfterStoryIndex ==
+      normalizeSuggestedAfterStoryIndex(proposedAfterStoryIndex);
 }
 
 class _ApproveProposalDialogState extends ConsumerState<ApproveProposalDialog> {
@@ -207,6 +222,8 @@ class _ApproveProposalDialogState extends ConsumerState<ApproveProposalDialog> {
                         const SizedBox(height: 14),
                         _PositionReviewSection(
                           events: events,
+                          suggestedAfterStoryIndex:
+                              widget.proposal.afterStoryIndex,
                           selectedAfterStoryIndex: _selectedAfterStoryIndex,
                           onSelect: (value) =>
                               setState(() => _selectedAfterStoryIndex = value),
@@ -337,17 +354,25 @@ class _PositionWarning extends StatelessWidget {
 class _PositionReviewSection extends StatelessWidget {
   const _PositionReviewSection({
     required this.events,
+    required this.suggestedAfterStoryIndex,
     required this.selectedAfterStoryIndex,
     required this.onSelect,
   });
 
   final List<StoryEvent> events;
+  final int? suggestedAfterStoryIndex;
   final int selectedAfterStoryIndex;
   final ValueChanged<int> onSelect;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final suggestedAfter = normalizeSuggestedAfterStoryIndex(
+      suggestedAfterStoryIndex,
+    );
+    final suggestedPositionExists =
+        suggestedAfter == 0 ||
+        events.any((event) => event.storyIndex == suggestedAfter);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -365,8 +390,16 @@ class _PositionReviewSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
+        if (!suggestedPositionExists) ...[
+          _SuggestedPositionMissingNotice(afterStoryIndex: suggestedAfter),
+          const SizedBox(height: 8),
+        ],
         _PositionChoiceTile(
           label: '맨 앞에 삽입',
+          suggested: isSuggestedProposalPosition(
+            candidateAfterStoryIndex: 0,
+            proposedAfterStoryIndex: suggestedAfterStoryIndex,
+          ),
           selected: selectedAfterStoryIndex == 0,
           onTap: () => onSelect(0),
         ),
@@ -374,6 +407,10 @@ class _PositionReviewSection extends StatelessWidget {
           (event) => _PositionChoiceTile(
             label:
                 '${event.title} 다음 (#${event.storyIndex}, ${_formatYear(event.startYear)}-${_formatYear(event.endYear)})',
+            suggested: isSuggestedProposalPosition(
+              candidateAfterStoryIndex: event.storyIndex,
+              proposedAfterStoryIndex: suggestedAfterStoryIndex,
+            ),
             selected: selectedAfterStoryIndex == event.storyIndex,
             onTap: () => onSelect(event.storyIndex),
           ),
@@ -388,22 +425,40 @@ class _PositionReviewSection extends StatelessWidget {
 class _PositionChoiceTile extends StatelessWidget {
   const _PositionChoiceTile({
     required this.label,
+    required this.suggested,
     required this.selected,
     required this.onTap,
   });
 
   final String label;
+  final bool suggested;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final borderColor = selected
+        ? theme.colorScheme.primary
+        : suggested
+        ? AppColors.goldDeep
+        : Colors.transparent;
+    final backgroundColor = selected
+        ? theme.colorScheme.primaryContainer.withAlpha(120)
+        : suggested
+        ? AppColors.goldHi.withAlpha(140)
+        : Colors.transparent;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: borderColor),
+        ),
         child: Row(
           children: [
             Icon(
@@ -424,7 +479,90 @@ class _PositionChoiceTile extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(width: 8),
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
+              alignment: WrapAlignment.end,
+              children: [
+                if (suggested)
+                  const _PositionBadge(
+                    label: '제안 위치',
+                    foreground: AppColors.ink700,
+                    background: AppColors.goldHi,
+                    border: AppColors.goldDeep,
+                  ),
+                if (selected)
+                  _PositionBadge(
+                    label: '최종 선택',
+                    foreground: theme.colorScheme.onPrimaryContainer,
+                    background: theme.colorScheme.primaryContainer,
+                    border: theme.colorScheme.primary,
+                  ),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PositionBadge extends StatelessWidget {
+  const _PositionBadge({
+    required this.label,
+    required this.foreground,
+    required this.background,
+    required this.border,
+  });
+
+  final String label;
+  final Color foreground;
+  final Color background;
+  final Color border;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: border),
+      ),
+      child: Text(
+        label,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: foreground,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+class _SuggestedPositionMissingNotice extends StatelessWidget {
+  const _SuggestedPositionMissingNotice({required this.afterStoryIndex});
+
+  final int afterStoryIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.goldHi.withAlpha(120),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppColors.goldDeep),
+      ),
+      child: Text(
+        '제안자가 고른 위치: #$afterStoryIndex 다음 (현재 이야기 목록에서 찾을 수 없음)',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: AppColors.ink700,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

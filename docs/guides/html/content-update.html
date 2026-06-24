@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 447 Dart tests</div>
+      <div class="subtle">310 events · 455 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -95,6 +95,10 @@
 <p>이미지 fallback은 proposal 승인 경로에서 채워지는 Storage path가 담당한다.</p>
 <ul><li><code>SceneAssetLoader</code>는 장면 이미지를 로컬 번들에서 먼저 찾고, 없으면</li></ul>
 <p><code>scene_image_paths</code>를 Supabase Storage public URL로 바꿔 fallback한다.</p>
+<ul><li><code>make release-sync-stories</code>는 <code>deleted_at IS NULL</code>인 active events만 JSON/quiz/mapping</li></ul>
+<p>source로 삼는다. 삭제 승인된 row는 DB에 남아도 로컬 release 번들에서는 빠진다.</p>
+<ul><li><code>make thumbnails</code>는 current <code>assets/200_stories/*.json</code>에 등장하는 title만</li></ul>
+<p><code>story_images_thumbs/index.json</code>에 넣는다. 삭제된 title의 원본 폴더가 실수로 남아 있어도 앱 번들 썸네일로 다시 살아나지 않는다.</p>
 <ul><li><code>make apply-seeds-stories-characters</code>는 Storage에 장면 이미지나 썸네일을 업로드하지</li></ul>
 <p>않는다. <code>make upload-character-avatars</code>도 캐릭터 아바타 전용이다.</p>
 <ul><li>중간 삽입으로 기존 이야기들의 <code>story_index</code>가 밀리면 real DB에는 seed-only로</li></ul>
@@ -153,6 +157,8 @@ make export-stories-json ENV=dev</code></pre>
 <p><code>assets/landmarks/event_region_mapping.json</code>도 같이 조정해야 한다.</p>
 <ul><li>단, real에 이미 공개된 시대의 중간 삽입은 로컬 JSON 재번호 + seed apply만으로</li></ul>
 <p>처리하지 않는다. generated seed는 <code>(era_id, story_index)</code>를 UPSERT 키로 쓰므로, 기존 row id가 다른 이야기 내용으로 덮일 수 있다.</p>
+<ul><li>generated seed의 stale 정리는 <code>deleted_at is null</code>인 활성 row만 hard delete 한다.</li></ul>
+<p>삭제 제안 승인으로 soft-delete 된 row는 진행도/제안 이력 보존을 위해 남긴다.</p>
 <ul><li><code>story_scenes</code>, <code>scene_captions</code>, <code>scene_characters</code> 길이는 맞춘다.</li><li><code>characters</code>와 <code>scene_characters</code>에는 인물 code를 쓴다.</li><li>새 인물 code는 JSON에 먼저 넣어도 된다. 이후 <code>build-character-meta</code>가 meta에 반영한다.</li></ul>
 <h3 id="1-3-위치-매핑-추가">1.3 위치 매핑 추가</h3>
 <p><code>make seed-stories-characters</code>는 모든 이벤트에 <code>landmark_id</code>가 필요하다. 새 이야기의 <code>(era, story_index)</code>에 대응하는 row를 <code>assets/landmarks/event_region_mapping.json</code>에 추가한다.</p>
@@ -267,7 +273,9 @@ set is_active = true
 where code = &#x27;goliath&#x27;;</code></pre>
 <p><code>make seed-characters</code>는 일반 false 기본값으로 기존 런타임 설정을 끄지 않지만, 명시 비활성 예외 코드는 seed에서 다시 false가 될 수 있으므로 diff를 확인한다.</p>
 <h2 id="4-배포-전-체크리스트">4. 배포 전 체크리스트</h2>
-<ul><li>[ ] <code>assets/200_stories/*.json</code> title에 번호 prefix를 넣지 않았다.</li><li>[ ] <code>characters</code>, <code>scene_characters</code> code가 맞다.</li><li>[ ] <code>story_index</code>가 era 안에서 unique하다.</li><li>[ ] 표준 proposal 흐름이면 <code>make release-sync-stories</code>로 stories/quiz/landmark mapping/assets/pubspec을 갱신했다.</li><li>[ ] 직접 JSON/seed 흐름이면 <code>assets/landmarks/event_region_mapping.json</code>에 새 <code>(era, story_index)</code> 매핑이 있다.</li><li>[ ] <code>landmark_code</code>가 <code>assets/landmarks/landmarks.json</code>에 존재한다.</li><li>[ ] <code>make seed-stories-characters</code> 성공.</li><li>[ ] 퀴즈가 있으면 <code>supabase/quizzes/db_events.json</code> snapshot도 갱신했고 <code>make seed-quizzes</code> 성공. 표준 proposal 흐름에서는 <code>make export-quizzes-json</code> 또는 <code>make release-sync-stories</code>가 갱신한다.</li><li>[ ] <code>make thumbnails</code>와 <code>make update-pubspec-assets</code> 실행.</li><li>[ ] <code>make check-pubspec-assets</code> 통과.</li><li>[ ] <code>python3 tools/seed/verify_polygons_contain_events.py</code> 통과.</li><li>[ ] <code>scripts/run_dev.sh</code>에서 새 이야기/이미지/퀴즈 확인.</li><li>[ ] real DB 공개 타이밍을 앱 Store 배포 타이밍과 맞췄다.</li></ul>
+<ul><li>[ ] <code>assets/200_stories/*.json</code> title에 번호 prefix를 넣지 않았다.</li><li>[ ] <code>characters</code>, <code>scene_characters</code> code가 맞다.</li><li>[ ] <code>story_index</code>가 era 안에서 unique하다.</li><li>[ ] 표준 proposal 흐름이면 <code>make release-sync-stories</code>로 stories/quiz/landmark mapping/assets/pubspec을 갱신했다.</li><li>[ ] 삭제 승인된 이야기가 있다면 해당 title이 <code>assets/200_stories/*.json</code>,</li></ul>
+<p><code>assets/quizzes/*.json</code>, <code>assets/story_images_thumbs/index.json</code>, <code>pubspec.yaml</code>의 story thumb asset 목록에서 빠진 것을 확인했다.</p>
+<ul><li>[ ] 직접 JSON/seed 흐름이면 <code>assets/landmarks/event_region_mapping.json</code>에 새 <code>(era, story_index)</code> 매핑이 있다.</li><li>[ ] <code>landmark_code</code>가 <code>assets/landmarks/landmarks.json</code>에 존재한다.</li><li>[ ] <code>make seed-stories-characters</code> 성공.</li><li>[ ] 퀴즈가 있으면 <code>supabase/quizzes/db_events.json</code> snapshot도 갱신했고 <code>make seed-quizzes</code> 성공. 표준 proposal 흐름에서는 <code>make export-quizzes-json</code> 또는 <code>make release-sync-stories</code>가 갱신한다.</li><li>[ ] <code>make thumbnails</code>와 <code>make update-pubspec-assets</code> 실행.</li><li>[ ] <code>make check-pubspec-assets</code> 통과.</li><li>[ ] <code>python3 tools/seed/verify_polygons_contain_events.py</code> 통과.</li><li>[ ] <code>scripts/run_dev.sh</code>에서 새 이야기/이미지/퀴즈 확인.</li><li>[ ] real DB 공개 타이밍을 앱 Store 배포 타이밍과 맞췄다.</li></ul>
 <h2 id="5-관련-문서">5. 관련 문서</h2>
 <ul><li><a href="develop-flow.html">develop-flow.md</a> — dev/real 운영 흐름</li><li><a href="make-targets.html">MAKE_TARGETS.md</a> — Make target별 입력/출력/원격 영향</li><li><a href="../../DATA_PIPELINE.md">DATA_PIPELINE.md</a> — seed/image 도구 상세</li><li><a href="../../BACKEND.md">BACKEND.md</a> — events/characters/storage schema</li><li><a href="workflow-guide.html">WORKFLOW_GUIDE.md</a> — 웹 제안/승인 기능의 역사적 설계 참고</li></ul>
           <a class="top-link" href="#top">맨 위로</a>

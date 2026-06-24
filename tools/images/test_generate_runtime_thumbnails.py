@@ -12,6 +12,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from generate_runtime_thumbnails import (  # noqa: E402
+    filter_story_files_to_indexed_dirs,
     load_story_thumb_index,
     relative_story_dest,
     short_story_thumb_dir,
@@ -75,6 +76,22 @@ class GenerateRuntimeThumbnailsTest(unittest.TestCase):
             ),
             dest_root / "nt_apostolic_034" / "scene_01.jpg",
         )
+
+    def test_filter_story_files_to_indexed_dirs_skips_deleted_story_sources(
+        self,
+    ) -> None:
+        source_root = Path("/tmp/story_images")
+        active = source_root / "살아있는 이야기" / "scene_1.png"
+        deleted = source_root / "삭제된 이야기" / "scene_1.png"
+
+        indexed, orphaned = filter_story_files_to_indexed_dirs(
+            [active, deleted],
+            source_root,
+            {"살아있는 이야기": "primeval_001"},
+        )
+
+        self.assertEqual(indexed, [active])
+        self.assertEqual(orphaned, [deleted])
 
 
 if __name__ == "__main__":

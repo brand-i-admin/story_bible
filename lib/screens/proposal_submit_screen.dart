@@ -10,6 +10,7 @@ import '../models/landmark.dart';
 import '../models/story_event.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
+import '../utils/timeline_units.dart';
 import '../widgets/proposal/bible_refs_picker.dart';
 import '../widgets/proposal/character_codes_picker.dart';
 import '../widgets/proposal/new_character_dialog.dart';

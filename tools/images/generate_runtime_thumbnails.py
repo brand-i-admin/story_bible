@@ -321,6 +321,30 @@ def relative_story_dest(
     return dest_root / short_dir / f"{src.stem}.jpg"
 
 
+def filter_story_files_to_indexed_dirs(
+    story_files: list[Path],
+    src_root: Path,
+    source_dir_to_short: dict[str, str],
+) -> tuple[list[Path], list[Path]]:
+    """Keep scene files whose title folder exists in current story JSON.
+
+    `assets/story_images/` is a writable staging area, so deleted stories can
+    leave old source folders behind. The runtime thumbnail index is driven by
+    `assets/200_stories/*.json`; files outside that index must not be rebuilt
+    into the app bundle.
+    """
+    indexed: list[Path] = []
+    orphaned: list[Path] = []
+    for src in story_files:
+        relative = src.relative_to(src_root)
+        source_dir = normalize_nfc(relative.parts[0]) if relative.parts else ""
+        if source_dir in source_dir_to_short:
+            indexed.append(src)
+        else:
+            orphaned.append(src)
+    return indexed, orphaned
+
+
 def relative_avatar_dest(src_root: Path, dest_root: Path, src: Path) -> Path:
     return dest_root / src.relative_to(src_root)
 
@@ -347,7 +371,22 @@ def main() -> int:
         encoding="utf-8",
     )
 
-    story_files = sorted(story_source.rglob("scene_*.png"))
+    all_story_files = sorted(story_source.rglob("scene_*.png"))
+    story_files, orphaned_story_files = filter_story_files_to_indexed_dirs(
+        all_story_files,
+        story_source,
+        source_dir_to_short,
+    )
+    if orphaned_story_files:
+        orphan_dirs = {
+            normalize_nfc(src.relative_to(story_source).parts[0])
+            for src in orphaned_story_files
+            if src.relative_to(story_source).parts
+        }
+        print(
+            "[SKIP] story source files not present in current story JSON: "
+            f"{len(orphaned_story_files)} file(s) in {len(orphan_dirs)} dir(s)"
+        )
     avatar_files = sorted(avatar_source.glob("*.png"))
 
     if not args.no_prune_orphans:

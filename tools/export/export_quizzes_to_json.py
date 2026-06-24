@@ -202,6 +202,39 @@ def build_quiz_payloads(
     return dict(sorted(payloads.items()))
 
 
+def write_quiz_payloads(
+    output_dir: Path,
+    payloads: dict[str, dict[str, Any]],
+) -> list[Path]:
+    """Write active quiz files and prune stale quiz JSON files.
+
+    Quiz seed files are keyed by `(era_code, story_index)`. After a delete
+    approval reindexes active stories, a stale quiz file at the same numeric
+    position could attach to the wrong event on the next seed build. Export is
+    therefore authoritative: files not present in the current DB snapshot are
+    removed.
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for filename, payload in payloads.items():
+        path = output_dir / filename
+        path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        written.append(path)
+        print(f"wrote {path}")
+
+    expected = set(payloads)
+    for stale in sorted(output_dir.glob("era_*_n*.json")):
+        if stale.name in expected:
+            continue
+        stale.unlink()
+        print(f"removed stale {stale}")
+
+    return written
+
+
 def main() -> int:
     args = parse_args()
     _load_env_file(Path(args.env_file))
@@ -232,13 +265,7 @@ def main() -> int:
         )
         return 0
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    for filename, payload in payloads.items():
-        (output_dir / filename).write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        print(f"wrote {output_dir / filename}")
+    write_quiz_payloads(output_dir, payloads)
 
     events_output = Path(args.events_output)
     events_output.parent.mkdir(parents=True, exist_ok=True)

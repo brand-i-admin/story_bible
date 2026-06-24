@@ -76,6 +76,7 @@ class StorySelectionPanel extends StatefulWidget {
     this.currentSelectedEventId,
     this.headerOverride,
     this.eraEvents = const <StoryEvent>[],
+    this.publicUrlForStoragePath,
   });
 
   final ScrollController scrollController;
@@ -153,6 +154,9 @@ class StorySelectionPanel extends StatefulWidget {
   /// 는 선택된 인물 timeline 만 갖고 있어, 선택 전(빈 상태) 에는 모든 카드가
   /// 0개로 표시되는 문제가 있다. 부모가 era 의 전체 사건을 그대로 넘긴다.
   final List<StoryEvent> eraEvents;
+
+  /// 로컬 썸네일이 없는 승인 직후 제안 이미지를 Supabase Storage URL 로 변환한다.
+  final String Function(String storagePath)? publicUrlForStoragePath;
 
   @override
   State<StorySelectionPanel> createState() => _StorySelectionPanelState();
@@ -412,6 +416,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
           onCelebrationComplete: widget.onCelebrationComplete,
           quizReviewEventIds: widget.quizReviewEventIds,
           quizConfusedEventIds: widget.quizConfusedEventIds,
+          publicUrlForStoragePath: widget.publicUrlForStoragePath,
           onTapEvent: (event) => widget.onOpenEventDetail?.call(event),
           // SliverToBoxAdapter 안 — fixed height 필요.
           rowHeight: eventTimelineRowHeightFor(context, base: 248),

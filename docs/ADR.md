@@ -586,3 +586,38 @@
   - 매일/주간 탐험은 로그인 여부와 무관하게 사건을 보여 주되, 저장은 기존 사건 상세의
     로그인/진행도 정책을 따른다.
   - 매일/주간 탐험에서 푼 사건은 프로필과 지도 완료 상태에 즉시 반영된다.
+
+## ADR-028: 삭제 승인 후 active story_index 재번호 매김 (2026-06-24)
+
+- **상태**: 채택
+- **배경**: ADR-017 은 삭제 제안 승인을 hard delete 대신 `events.deleted_at` soft
+  delete 로 처리하도록 결정했다. 이 결정은 사용자 진도와 제안 이력 보존에는 맞지만,
+  soft-deleted row 가 원래 `story_index`를 계속 차지하면 같은 era 의 활성 이야기
+  번호가 `1, 2, 4, 5...` 처럼 듬성듬성 남는다. 이후 새 이야기 승인이나 위치 재선택
+  UI는 숫자 기반 `after_story_index`를 사용하므로, 활성 순서와 raw `story_index`가
+  갈라지면 삽입 위치가 사용자의 의도와 다르게 해석될 수 있다.
+- **결정**:
+  1. hard delete 금지는 유지한다. `event_proposals.target_event_id`와 사용자 진행도 FK
+     때문에 `events` row 자체는 삭제하지 않는다.
+  2. `approve_delete_proposal` 은 대상 row 에 `deleted_at` 을 set 한 뒤, 같은 era 의
+     활성 published 이벤트를 기존 상대 순서대로 `story_index = 1..N` 으로 재번호 매긴다.
+  3. soft-deleted 또는 non-active row 는 같은 UNIQUE 제약 안에서 충돌하지 않도록 활성
+     row 뒤쪽 번호로 이동한다.
+  4. 삭제된 위치 이상을 가리키던 pending NEW 제안은 숫자 의미가 바뀌므로
+     `position_invalidated_at` / `position_invalidation_reason` 을 set 해 위치 재선택을
+     요구한다.
+  5. 운영 DB에 이미 생긴 gap은 `supabase/patches/20260624_1200_approve_delete_reindex_story_indices.sql`
+     로 한 번 보정한다.
+- **이유**:
+  - row id를 보존하면 저장, 퀴즈, 학습 진행도, 승인 이력이 다른 이야기로 붙거나
+    사라지는 문제를 피할 수 있다.
+  - 활성 row 의 `story_index`를 압축하면 앱 UI, 제안 위치 선택, 로컬 canonical seed
+    순서가 모두 같은 숫자 체계를 사용한다.
+  - pending 제안을 자동으로 숫자만 보정하면 제안자가 실제로 의도한 앞뒤 문맥을 알 수
+    없으므로, 기존 위치 충돌 정책과 마찬가지로 재선택을 요구하는 쪽이 안전하다.
+- **결과**:
+  - 새 삭제 승인부터는 `events_ordered.story_index`가 활성 이야기 기준으로 바로
+    재정렬된다.
+  - soft-deleted row 는 DB에 남지만 앱에서는 계속 숨겨지고, 활성 row 뒤쪽 index를
+    가진다.
+  - 삭제 이후 위치가 흔들린 pending NEW 제안은 게시판에서 "수정 필요" 상태가 된다.

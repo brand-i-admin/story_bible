@@ -792,11 +792,13 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
 
 
 def render_delete_stale_events_sql(events: list[NormalizedEvent]) -> list[str]:
-    """현재 JSON 에 없는 (era_id, story_index) 조합의 events 를 삭제한다.
+    """현재 JSON 에 없는 활성 (era_id, story_index) 조합의 events 를 삭제한다.
 
     user 가 stories JSON 에서 사건을 지우면 DB 에 남은 row 도 정리되어야
     "JSON 이 단일 진실 소스" 약속이 유지된다. events 의존 테이블들은
     on delete cascade 로 잡혀 있어 안전하다 (quiz_questions 등).
+    단, 삭제 제안 승인으로 soft-delete 된 row 는 사용자 진행도/제안 이력을
+    보존해야 하므로 stale cleanup 이 hard delete 하지 않는다.
     """
     lines: list[str] = []
     lines.append("-- Delete events that no longer exist in current stories JSON")
@@ -818,6 +820,7 @@ def render_delete_stale_events_sql(events: list[NormalizedEvent]) -> list[str]:
     lines.append("delete from events e")
     lines.append("using eras er")
     lines.append("where er.id = e.era_id")
+    lines.append("  and e.deleted_at is null")
     lines.append("  and not exists (")
     lines.append("    select 1 from keep_pairs k")
     lines.append("    where k.era_code = er.code and k.story_index = e.story_index")

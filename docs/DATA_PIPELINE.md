@@ -144,7 +144,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - **장면 캡션**: `scene_captions`는 `assets/200_stories/*.json`에서 직접 수정 가능하다. `tools/seed/generate_scene_captions.py`는 기존 `story_scenes`/`summary`/`bible_ref` 맥락에서 프롬프트 지시문을 제거한 초안을 다시 만들 때만 사용한다.
 - **시간 순 구간**: `unit_code`/`unit_title`/`unit_order`는 `assets/200_stories/*.json`이 원본이다. 구약 시대는 원역사 2개, 족장 3개, 출애굽 3개, 사사 3개, 왕정 3개, 분열왕국 5개, 포로/귀환 3개 구간으로 나눠 `TimelineUnitPickPanel`의 가로 카드 선택에 사용한다.
 - **on conflict 키**: `(era_id, story_index)` — 시드 재실행 시 같은 자리의 이벤트를 갱신
-- **stale 정리**: 시드 SQL 머리에 `delete from events where (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 이벤트는 DB 에서도 사라진다. quiz_questions 등 의존 테이블은 cascade.
+- **stale 정리**: 시드 SQL 머리에 `delete from events where deleted_at is null and (era_id, story_index) not in keep_pairs` 절이 들어간다 → JSON 에서 삭제된 **활성** 이벤트는 DB 에서도 사라진다. 삭제 제안 승인으로 soft-delete 된 row 는 사용자 진행도/제안 이력 보존을 위해 stale cleanup 에서 hard delete 하지 않는다. quiz_questions 등 의존 테이블은 active stale row 삭제 시 cascade.
 - **split 파일 주의**: `200_stories_seed_part_01.sql` 만 stale-delete 를 포함, part_02 는 INSERT 만.
 - ⚠️ **real 중간 삽입 주의**: 이미 공개된 era 중간에 이야기를 끼워 넣고 뒤쪽 `story_index`를 재번호 매긴 SQL을 seed-only로 real에 적용하면 기존 `(era_id, story_index)` row가 다른 이야기 내용으로 업데이트될 수 있다. `saved_events`, `user_event_progress`, `quiz_questions` 등은 `event_id`를 참조하므로, 운영 DB에서는 먼저 `insert_event_at_position(...)` 또는 별도 patch로 기존 row id를 보존한 채 index shift+insert를 수행한 뒤 seed와 로컬 JSON을 맞춘다.
 - **참고**: `code`/`story`/`short_story`/`time_sort_key`/`event_characters`/`event_bible_refs` 산출 로직은 폐기됨 (스키마 v3 변경)
@@ -228,7 +228,7 @@ Makefile                                # 파이프라인 오케스트레이션
 - **방식**: 로컬 이미지 리사이즈 (Vertex AI 불필요)
 - **옵션**: `--no-prune-orphans`
 - **story thumb 경로**: 원본 `assets/story_images/{한글 제목}/`은 그대로 두지만, 앱 번들용 썸네일은 Android/iOS 파일명 길이 제한을 피하기 위해 `assets/story_images_thumbs/{era_slug}_{story_index}/` 같은 짧은 디렉토리에 저장한다. `assets/story_images_thumbs/index.json`이 이야기 제목/원본 디렉토리와 짧은 디렉토리를 매핑한다.
-- **stale 정리**: source 에 없는 thumbnail 자동 삭제 (빈 부모 디렉토리도 정리). 제목 기반 옛 썸네일 디렉토리는 새 짧은 디렉토리로 재생성된 뒤 orphan 으로 정리된다.
+- **stale 정리**: current `assets/200_stories/*.json` 에 등장하는 title 폴더만 썸네일 생성 대상으로 삼는다. 삭제 승인 후 로컬 `assets/story_images/<삭제된 제목>/` 원본 폴더가 실수로 남아 있어도 `index.json`에 없으면 앱 번들 썸네일로 다시 살아나지 않는다. source 에 없는 thumbnail 과 current story JSON 에 없는 짧은 썸네일 디렉토리는 자동 삭제하고, 제목 기반 옛 썸네일 디렉토리는 새 짧은 디렉토리로 재생성된 뒤 orphan 으로 정리된다.
 
 > 이전에 있던 `generate_assets_vertex.py` (UI 장식 요소 일괄 생성), `generate_app_icons.py` (런처 아이콘 일괄 생성)는 사용 빈도가 낮아 폐기됨. 결과물(`assets/elements/`, iOS/Android 런처 아이콘)은 이미 생성된 상태로 유지.
 
@@ -289,10 +289,32 @@ Make target별 입력/출력/원격 영향과 신규 이야기 중간 삽입 주
 
 DB-first release 동기화는 다음 export target을 묶어 사용한다.
 
-- `make export-stories-json`: published `events`를 `assets/200_stories/*.json`으로 역추출한다.
-- `make export-quizzes-json`: `quiz_questions`를 `assets/quizzes/*.json`으로 역추출하고 `supabase/quizzes/db_events.json` 스냅샷을 갱신한다. 제안/RPC와 동일하게 1~3문항을 허용한다.
-- `make export-event-region-mapping`: `events.landmark_id`와 `landmarks.parent_landmark_id` 기준으로 `assets/landmarks/event_region_mapping.json`을 갱신한다.
-- `make release-sync-stories`: 위 세 export와 승인 proposal 이미지 동기화, 썸네일 생성, pubspec 갱신을 순서대로 실행한다. 여러 approved proposal이 한 번에 쌓여 있어도 전체 DB 상태를 로컬 release 번들로 당겨온다.
+- `make export-stories-json`: active published `events`(`status='published' AND deleted_at IS NULL`)를 `assets/200_stories/*.json`으로 역추출한다. soft-deleted row 는 DB에 남아도 canonical JSON 에 다시 섞지 않는다.
+- `make export-quizzes-json`: active events의 `quiz_questions`만 `assets/quizzes/*.json`으로 역추출하고 `supabase/quizzes/db_events.json` 스냅샷을 갱신한다. 현재 DB snapshot에 없는 stale quiz JSON은 삭제해, reindex 후 옛 `era_xxx_nNNN.json`이 새 이야기 번호에 잘못 붙는 일을 막는다. 제안/RPC와 동일하게 1~3문항을 허용한다.
+- `make export-event-region-mapping`: active events의 `events.landmark_id`와 `landmarks.parent_landmark_id` 기준으로 `assets/landmarks/event_region_mapping.json`을 갱신한다.
+- `make release-sync-stories`: 위 세 export와 승인 proposal 이미지 동기화, 삭제/추가 diff 정리, 썸네일 생성, pubspec 갱신을 순서대로 실행한다. 여러 approved proposal과 delete approval이 한 번에 쌓여 있어도 전체 DB 상태를 로컬 release 번들로 당겨온다.
+
+### 4.1 DB-first release sync 상세
+
+`make release-sync-stories ENV=real`은 운영 DB를 **다음 앱 배포용 로컬 번들**로 되돌리는 표준 명령이다. DB의 이력 보존 정책과 앱 번들 정리는 역할이 다르다. 삭제 승인된 이야기는 `events` row 자체를 hard delete 하지 않고 `deleted_at`만 set해 사용자 진행도/제안 이력을 보존하지만, release sync는 `deleted_at IS NULL`인 active row만 JSON/퀴즈/썸네일 source로 삼는다.
+
+실행 순서와 고려 범위:
+
+1. `export-stories-json`: `events` 직접 조회 시 `status='published' AND deleted_at IS NULL`을 함께 건다. era별 JSON을 덮어쓰고, 현재 active export에 없는 stale `era_*.json`/`unknown_era.json` 파일은 제거한다.
+2. `export-quizzes-json`: 같은 active event snapshot을 먼저 가져온 뒤 그 event id에 연결된 `quiz_questions`만 쓴다. 결과에 없는 `assets/quizzes/era_*_n*.json`은 제거한다. 이 단계가 있어야 삭제 후 `story_index`가 당겨졌을 때 예전 8번 퀴즈가 새 8번 이야기에 붙지 않는다.
+3. `export-event-region-mapping`: active events 기준으로 `(era, story_index) → landmark/region` 매핑을 다시 쓴다.
+4. `sync-approved-proposal-assets` Phase A: 아직 `synced_to_local_at`이 없는 approved NEW proposal의 장면 이미지를 `proposal-scenes`에서 `assets/story_images/<canonical title>/scene_N.png`로 내려받고, 신규 캐릭터 PNG는 `assets/avatars/<code>.png`와 `characters/<code>.png` Storage로 복사한다. 성공한 proposal만 sync marker를 set하므로 중간 실패는 다음 실행에서 재시도된다.
+5. `sync-approved-proposal-assets` Phase B: DB active event title 집합과 로컬 `assets/story_images/`를 비교해 active set에 없는 이야기 폴더를 삭제한다. 과거 sync 버그로 공백이 `_`로 바뀐 폴더는 canonical 제목 폴더로 먼저 옮긴다. soft-deleted events의 `scene_image_paths` Storage fallback은 best-effort로 삭제한다. 캐릭터는 DB에 존재하지 않는 code의 로컬 avatar/thumb만 삭제한다.
+6. `make thumbnails`: `assets/200_stories/*.json`에 등장하는 current story title만 썸네일 대상으로 삼고, `assets/story_images_thumbs/index.json`과 짧은 디렉토리를 재생성/정리한다. 로컬에 삭제된 이야기 원본 폴더가 남아 있어도 current JSON에 없으면 번들 썸네일로 살아나지 않는다.
+7. `make update-pubspec-assets`: 현재 `story_images_thumbs/index.json`과 실제 짧은 디렉토리 목록을 `pubspec.yaml`의 asset 엔트리에 반영한다.
+
+예시:
+
+1. real DB의 한 era에 1~10번 이야기가 있다.
+2. 관리자가 4번과 8번 삭제 제안을 승인한다. `approve_delete_proposal`은 두 row의 `deleted_at`을 채우고 active row를 1~8로 다시 압축한다. soft-deleted row는 DB 뒤쪽에 남지만 `events_ordered`와 앱에는 보이지 않는다.
+3. 같은 배포 전 관리자가 새 이야기 A를 2번 뒤, 새 이야기 B를 마지막 뒤에 승인한다. `insert_event_at_position`이 era advisory lock 안에서 뒤쪽 index를 밀고 새 row를 넣으므로 active index는 다시 1..10으로 연속이다.
+4. 운영자가 `make release-sync-stories ENV=real`을 실행한다. 로컬 JSON은 active 10건만 담고, 삭제된 두 title은 `assets/200_stories`, `assets/quizzes`, `assets/story_images_thumbs/index.json`, `pubspec.yaml`에서 빠진다. `assets/story_images/<삭제된 title>/` 원본 폴더도 active-title diff에서 삭제된다. 새 A/B 장면 이미지는 proposal Storage에서 로컬로 내려오고 짧은 썸네일 디렉토리가 새 `story_index` 기준으로 만들어진다.
+5. 이후 `make seed-stories-characters`/`make seed-quizzes`를 다시 돌려도 JSON과 quiz snapshot이 active DB 기준이라 삭제된 story_index gap이나 stale quiz가 seed에 섞이지 않는다.
 
 ```makefile
 # 개별 타겟
@@ -440,7 +462,7 @@ real 배포 이후 DB 구조 변경은 [guides/develop-flow.md](guides/develop-f
 patch 흐름을 따른다.
 
 ### 신규 이야기 1건 추가된 경우
-⚠️ **반드시 먼저**: 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json` (운영 기준은 `ENV=real` 또는 `ENV=prod`) 으로 DB의 published events를 JSON으로 역추출해 복원한다. 이 사전 조건을 빼먹고 부분 상태에서 빌드하면 기존 인물 description이 손상된다.
+⚠️ **반드시 먼저**: 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 한다. 로컬이 비었거나 오래됐다면 `make export-stories-json` (운영 기준은 `ENV=real` 또는 `ENV=prod`) 으로 DB의 active published events(`deleted_at IS NULL`)를 JSON으로 역추출해 복원한다. 이 사전 조건을 빼먹고 부분 상태에서 빌드하면 기존 인물 description이 손상된다.
 
 사전 조건 충족 후:
 `make seed-stories-characters && make apply-seeds-stories-characters && make generate-avatars && make thumbnails && make update-pubspec-assets`.

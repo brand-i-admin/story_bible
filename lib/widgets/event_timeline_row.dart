@@ -46,6 +46,7 @@ class EventTimelineRow extends StatefulWidget {
     this.celebrationStampLabel,
     this.celebrationNonce = 0,
     this.onCelebrationComplete,
+    this.publicUrlForStoragePath,
   });
 
   final List<StoryEvent> events;
@@ -89,6 +90,7 @@ class EventTimelineRow extends StatefulWidget {
   final String? celebrationStampLabel;
   final int celebrationNonce;
   final VoidCallback? onCelebrationComplete;
+  final String Function(String storagePath)? publicUrlForStoragePath;
 
   final ValueChanged<StoryEvent> onTapEvent;
 
@@ -277,6 +279,7 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
           attemptSummary: widget.quizAttemptSummaries[event.id],
           orderNumber: widget.orderNumberBuilder?.call(event, idx) ?? idx + 1,
           loader: _loader,
+          publicUrlForStoragePath: widget.publicUrlForStoragePath,
           onTap: () => widget.onTapEvent(event),
           highlightedCharacterCodes: widget.highlightedCharacterCodes,
           colorForHighlightedCharacter: widget.colorForHighlightedCharacter,

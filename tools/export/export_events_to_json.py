@@ -12,7 +12,9 @@ build_200_stories_seed_sql.py) 가 변경 사항을 자동으로 따라잡고, g
 
 환경:
     .env 의 SUPABASE_URL_DEV / SUPABASE_ANON_KEY_DEV (또는 PROD) 사용.
-    Pure read-only 라 anon key 로 충분 (events RLS: status='published' 공개 SELECT).
+    Pure read-only 라 anon key 로 충분. 이 스크립트는 `status='published'`와
+    `deleted_at IS NULL`을 함께 요청해 soft-deleted 이야기를 canonical JSON 에
+    다시 섞지 않는다.
 """
 
 from __future__ import annotations
@@ -138,6 +140,28 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def published_events_query_params(*, limit: int, offset: int) -> dict[str, str]:
+    """PostgREST query params for canonical app-visible events.
+
+    The direct `events` table RLS allows published rows, including soft-deleted
+    rows for backward compatibility with older clients. Export is stricter:
+    only active published stories become local JSON source.
+    """
+    return {
+        "select": (
+            "title,summary,background_context,character_codes,bible_refs,"
+            "story_scenes,scene_captions,scene_characters,start_year,end_year,"
+            "time_precision,story_index,unit_code,unit_title,unit_order,"
+            "era:era_id(code),landmark:landmark_id(name,lat,lng)"
+        ),
+        "status": "eq.published",
+        "deleted_at": "is.null",
+        "order": "story_index.asc",
+        "limit": str(limit),
+        "offset": str(offset),
+    }
+
+
 def _load_env_file(path: Path) -> None:
     if not path.exists():
         return
@@ -170,24 +194,12 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
         raise SystemExit("requests 가 필요합니다: pip install requests") from exc
 
     rest = url.rstrip("/") + "/rest/v1/events"
-    params = {
-        "select": (
-            "title,summary,background_context,character_codes,bible_refs,"
-            "story_scenes,scene_captions,scene_characters,start_year,end_year,"
-            "time_precision,story_index,unit_code,unit_title,unit_order,"
-            "era:era_id(code),landmark:landmark_id(name,lat,lng)"
-        ),
-        "status": "eq.published",
-        "order": "story_index.asc",
-    }
     headers = {"apikey": key, "Authorization": f"Bearer {key}"}
     rows: list[dict[str, Any]] = []
     offset = 0
     page = 1000
     while True:
-        params_paged = dict(params)
-        params_paged["limit"] = str(page)
-        params_paged["offset"] = str(offset)
+        params_paged = published_events_query_params(limit=page, offset=offset)
         resp = requests.get(rest, params=params_paged, headers=headers, timeout=30)
         resp.raise_for_status()
         chunk = resp.json()
@@ -207,6 +219,42 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
             break
         offset += page
     return rows
+
+
+def write_grouped_events(
+    output_dir: Path,
+    grouped: dict[str, list[dict[str, Any]]],
+) -> list[Path]:
+    """Write era JSON files and remove stale era JSON files.
+
+    Normal deletion inside an era overwrites the same file with fewer rows.
+    This extra prune covers the edge case where every story in an era was
+    removed from the active export and the old file would otherwise linger.
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for filename, era_rows in grouped.items():
+        path = output_dir / filename
+        path.write_text(
+            json.dumps(era_rows, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        written.append(path)
+        print(f"wrote {path} ({len(era_rows)} stories)")
+
+    expected = set(grouped)
+    for stale in sorted(output_dir.glob("era_*.json")):
+        if stale.name in expected:
+            continue
+        stale.unlink()
+        print(f"removed stale {stale}")
+
+    unknown = output_dir / "unknown_era.json"
+    if unknown.exists() and unknown.name not in expected:
+        unknown.unlink()
+        print(f"removed stale {unknown}")
+
+    return written
 
 
 def main() -> int:
@@ -232,14 +280,7 @@ def main() -> int:
         return 0
 
     out_dir = Path(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for filename, era_rows in grouped.items():
-        path = out_dir / filename
-        path.write_text(
-            json.dumps(era_rows, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        print(f"wrote {path} ({len(era_rows)} stories)")
+    write_grouped_events(out_dir, grouped)
 
     print(f"done: total {len(rows)} events → {len(grouped)} era files in {out_dir}")
     return 0

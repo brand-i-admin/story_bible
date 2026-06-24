@@ -682,7 +682,8 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
         )
         lines.append(
             f"  where q.event_id = e.id and er.code = '{quiz.era_code}' "
-            f"and e.story_index = {quiz.story_index};"
+            f"and e.story_index = {quiz.story_index} "
+            "and e.deleted_at is null;"
         )
 
         for q in quiz.questions:
@@ -707,7 +708,8 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
             lines.append(
                 f"from events e join eras er on er.id = e.era_id "
                 f"where er.code = '{quiz.era_code}' "
-                f"and e.story_index = {quiz.story_index};"
+                f"and e.story_index = {quiz.story_index} "
+                "and e.deleted_at is null;"
             )
             lines.append("")
 

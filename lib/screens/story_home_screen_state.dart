@@ -1681,22 +1681,30 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         .toList(growable: false);
   }
 
+  String _publicUrlForStoragePath(String storagePath) {
+    final trimmed = storagePath.trim();
+    if (trimmed.isEmpty || trimmed.startsWith('http')) {
+      return trimmed;
+    }
+    final slash = trimmed.indexOf('/');
+    if (slash <= 0 || slash == trimmed.length - 1) {
+      return trimmed;
+    }
+    final bucket = trimmed.substring(0, slash);
+    final path = trimmed.substring(slash + 1);
+    final client = ref.read(supabaseClientProvider);
+    return client.storage.from(bucket).getPublicUrl(path);
+  }
+
   Future<void> _openEventDetailPage(
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
   }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
     // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
-    final client = ref.read(supabaseClientProvider);
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
-      publicUrlFor: (storagePath) {
-        final slash = storagePath.indexOf('/');
-        if (slash < 0) return storagePath;
-        final bucket = storagePath.substring(0, slash);
-        final path = storagePath.substring(slash + 1);
-        return client.storage.from(bucket).getPublicUrl(path);
-      },
+      publicUrlFor: _publicUrlForStoragePath,
     );
     if (!mounted) {
       return;
@@ -1792,16 +1800,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
   }) {
-    final client = ref.read(supabaseClientProvider);
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
-      publicUrlFor: (storagePath) {
-        final slash = storagePath.indexOf('/');
-        if (slash < 0) return storagePath;
-        final bucket = storagePath.substring(0, slash);
-        final path = storagePath.substring(slash + 1);
-        return client.storage.from(bucket).getPublicUrl(path);
-      },
+      publicUrlFor: _publicUrlForStoragePath,
     );
     final state = ref.read(storyControllerProvider);
     final sequence = _eventSequenceForDetail(state);
@@ -2532,6 +2533,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                           .selectEvent(event.id);
                                       _openEventDetailPage(event);
                                     },
+                                    publicUrlForStoragePath:
+                                        _publicUrlForStoragePath,
                                     // 지도 핀 클릭 등으로 controller 가 가진 현재
                                     // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
                                     currentSelectedEventId:
@@ -3058,6 +3061,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     onCelebrationComplete: _mapCelebrationCompleteCallback(),
                     quizReviewEventIds: quizReviewEventIds,
                     quizConfusedEventIds: quizConfusedEventIds,
+                    publicUrlForStoragePath: _publicUrlForStoragePath,
                     onSelectEvent: (event) {
                       ref
                           .read(storyControllerProvider.notifier)

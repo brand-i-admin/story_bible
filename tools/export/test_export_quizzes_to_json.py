@@ -12,6 +12,7 @@ from export_quizzes_to_json import (  # noqa: E402
     build_quiz_payloads,
     filename_for_quiz,
     quiz_row_to_json,
+    write_quiz_payloads,
 )
 
 
@@ -77,6 +78,29 @@ class ExportQuizzesToJsonTests(unittest.TestCase):
         self.assertEqual(payload["source_version"], "2026-05-25")
         self.assertEqual(len(payload["questions"]), 1)
         self.assertEqual(payload["questions"][0]["type"], "fact")
+
+    def test_write_quiz_payloads_prunes_stale_quiz_files(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            stale = output_dir / "era_primeval_n002.json"
+            stale.write_text("{}", encoding="utf-8")
+
+            write_quiz_payloads(
+                output_dir,
+                {
+                    "era_primeval_n001.json": {
+                        "era_code": "era_primeval",
+                        "story_index": 1,
+                        "story_title": "창조",
+                        "questions": [],
+                    }
+                },
+            )
+
+            self.assertTrue((output_dir / "era_primeval_n001.json").exists())
+            self.assertFalse(stale.exists())
 
 
 if __name__ == "__main__":

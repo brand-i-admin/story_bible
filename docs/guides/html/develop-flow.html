@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 447 Dart tests</div>
+      <div class="subtle">310 events · 455 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -221,6 +221,26 @@ scripts/run_real.sh</code></pre>
 <ol><li>초기 앱 배포에는 모든 초기 이야기 썸네일이 앱 번들에 포함된다.</li><li>초기 이야기의 <code>events.scene_image_paths</code>는 비어 있어도 된다.</li><li>앱은 초기/번들된 이야기를 로컬 <code>assets/story_images_thumbs/index.json</code> 매핑으로 찾는다.</li><li>중간에 새 이야기가 추가되어 기존 이야기들의 <code>story_index</code>가 밀려도, 기존 이야기 제목은 그대로라 구버전 앱의 옛 <code>index.json</code>이 기존 이미지들을 계속 찾을 수 있다.</li><li>새 이야기는 구버전 앱의 <code>index.json</code>에 없으므로 로컬 매핑으로는 이미지를 찾지 못한다. 이때 <code>events.scene_image_paths</code> fallback이 연결된 화면에서만 <code>proposal-scenes/...</code> Storage 이미지를 보여줄 수 있다.</li><li>Storage fallback은 초기 데이터가 아니라, 앱 배포 뒤 추가되는 새 이야기의 임시 노출을 위한 장치다.</li></ol>
 <h4 id="3-2-1-새-이야기-추가-flow">3.2.1 새 이야기 추가 Flow</h4>
 <p>표준 후보 흐름은 <code>draft JSON → draft 이미지 생성 → proposal row 생성 + Storage 업로드 → 관리자 승인 → release sync → 앱 배포</code>다. 이 흐름은 구버전 앱 사용자도 승인 직후 Storage fallback으로 새 이야기 이미지를 볼 수 있게 하려는 운영 방식이다.</p>
+<p>새 이야기를 추가할 때는 먼저 아래 순서대로 진행한다. 상세 원리는 뒤쪽 <code>make generate-draft-story-images</code> / <code>make apply-draft</code> 설명을 참고한다.</p>
+<p><strong>1. draft JSON 생성</strong></p>
+<ul><li>파일 위치: <code>assets/story_drafts/&lt;draft_slug&gt;.json</code></li><li>예: <code>assets/story_drafts/20260624_cain_test_story.json</code></li></ul>
+<p><strong>2. draft 장면 이미지 생성</strong></p>
+<pre><code class="language-bash">make generate-draft-story-images STORY=assets/story_drafts/20260624_cain_test_story.json</code></pre>
+<p><code>STORY=</code>를 쓸 때는 반드시 <code>.json</code>까지 포함한 파일 경로를 넣는다. 이미지는 <code>assets/story_drafts/20260624_cain_test_story/scene_01.png</code>처럼 draft JSON과 같은 stem의 폴더에 생성된다.</p>
+<p><strong>3. real 적용 전 dry-run</strong></p>
+<pre><code class="language-bash">make apply-draft ENV=real DRAFT=20260624_cain_test_story PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt; DRY_RUN=1</code></pre>
+<p><code>DRAFT=20260624_cain_test_story</code>는 <code>assets/story_drafts/20260624_cain_test_story.json</code>으로 해석된다. <code>PROPOSER_USER_ID</code>는 운영 Supabase <code>auth.users.id</code>이며, 매번 넘기지 않으려면 <code>.env.ops</code>에 <code>STORY_DRAFT_PROPOSER_USER_ID_PROD=&lt;Supabase auth.users.id&gt;</code>를 둔다.</p>
+<p><strong>4. pending proposal 등록 + proposal-scenes 업로드</strong></p>
+<pre><code class="language-bash">make apply-draft ENV=real DRAFT=20260624_cain_test_story PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt;</code></pre>
+<p><strong>5. 관리자 UI에서 proposal 승인</strong></p>
+<ul><li>승인 다이얼로그에서 삽입 위치와 인물 노출을 확인한다.</li><li>같은 위치를 겨냥한 다른 pending 제안이 있으면 승인 다이얼로그에서 위치를 조정한다.</li></ul>
+<p><strong>6. release sync 실행</strong></p>
+<pre><code class="language-bash">make release-sync-stories ENV=real</code></pre>
+<p><strong>7. 검증 후 real 앱 빌드/배포</strong></p>
+<pre><code class="language-bash">python3 tools/app/verify_asset_paths.py
+python3 tools/seed/verify_polygons_contain_events.py
+scripts/build_android_real.sh
+scripts/build_ios_real.sh</code></pre>
 <p>현재 구현 상태:</p>
 <ul><li><code>db_init.sql</code> 기준으로 <code>event_proposals</code>, <code>submit_event_proposal</code>,</li></ul>
 <p><code>approve_event_proposal</code>, <code>insert_event_at_position</code>이 <code>background_context</code>, <code>scene_captions</code>, <code>unit_code/unit_title/unit_order</code>를 함께 다룬다.</p>
@@ -236,28 +256,9 @@ scripts/run_real.sh</code></pre>
 <p><code>events.scene_image_paths</code>가 있으면 기본 Supabase client로 Storage public URL을 만들어 fallback한다. 따라서 <code>StoryEventThumbCard</code>, 상세 이전/다음 카드, 프로필 미니맵처럼 별도 <code>publicUrlFor</code>를 넘기지 않는 진입점도 새 이야기 이미지를 표시할 수 있다.</p>
 <ul><li><code>make release-sync-stories</code>는 DB events export, DB quiz export,</li></ul>
 <p>DB landmark mapping export, 승인 자산 다운로드, thumbnails, <code>pubspec.yaml</code> 갱신을 묶는다. 여러 approved proposal이 한 번에 쌓여 있어도 현재 DB published 상태 전체를 다음 앱 배포용 로컬 canonical 파일로 되돌린다.</p>
-<p>운영자가 새 이야기를 추가할 때의 행동:</p>
-<pre><code class="language-bash"># 1. draft JSON 작성
-assets/story_drafts/20260623_elijah_ravens.json
-
-# 2. draft 원본 이미지 생성
-make generate-draft-story-images STORY=assets/story_drafts/20260623_elijah_ravens.json
-
-# 3. draft를 proposal로 올림
-make apply-draft ENV=real STORY=assets/story_drafts/20260623_elijah_ravens.json
-# 여러 draft를 한 번에 pending proposal로 올릴 때
-make apply-drafts ENV=real DRAFTS=&quot;20260623_elijah_ravens 20260624_amos_call&quot;
-
-# 4. 앱/웹의 관리자 UI에서 proposal 승인
-#    같은 위치에 다른 pending 제안이 있으면 승인 다이얼로그에서 삽입 위치를 조정
-# 5. release sync
-make release-sync-stories ENV=real
-
-# 6. 검증 후 새 앱 빌드/배포
-python3 tools/app/verify_asset_paths.py
-python3 tools/seed/verify_polygons_contain_events.py
-scripts/build_android_real.sh
-scripts/build_ios_real.sh</code></pre>
+<p>여러 draft를 한 번에 pending proposal로 올릴 때는 각 slug를 공백으로 나열한다. 이 경우에도 real 전에는 <code>DRY_RUN=1</code>로 먼저 확인한다.</p>
+<pre><code class="language-bash">make apply-drafts ENV=real DRAFTS=&quot;20260623_elijah_ravens 20260624_amos_call&quot; DRY_RUN=1
+make apply-drafts ENV=real DRAFTS=&quot;20260623_elijah_ravens 20260624_amos_call&quot;</code></pre>
 <p><code>release-sync-stories</code>는 <code>export-stories-json</code>, <code>export-quizzes-json</code>, <code>export-event-region-mapping</code>, <code>sync-approved-proposal-assets</code>, <code>thumbnails</code>, <code>update-pubspec-assets</code>를 순서대로 실행한다. 즉 앱 번들용 이야기 JSON, 퀴즈 JSON, landmark mapping, 원본 이미지, 썸네일, pubspec 준비까지 담당한다.</p>
 <p>권장 draft 구조:</p>
 <pre><code class="language-text">assets/story_drafts/
@@ -323,34 +324,41 @@ scripts/build_ios_real.sh</code></pre>
 </tr>
 <tr>
 <td>2. draft 이미지 생성</td>
-<td><code>make generate-draft-story-images STORY=...</code></td>
+<td><code>make generate-draft-story-images STORY=assets/story_drafts/&lt;slug&gt;.json</code></td>
 <td>변화 없음</td>
 <td>변화 없음</td>
 <td>변화 없음</td>
 </tr>
 <tr>
-<td>3. draft 적용</td>
-<td><code>make apply-draft ENV=real STORY=...</code></td>
+<td>3. draft dry-run</td>
+<td><code>make apply-draft ENV=real DRAFT=&lt;slug&gt; PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt; DRY_RUN=1</code></td>
+<td>변화 없음</td>
+<td>변화 없음</td>
+<td>JSON/이미지/중복/payload만 확인</td>
+</tr>
+<tr>
+<td>4. draft 적용</td>
+<td><code>make apply-draft ENV=real DRAFT=&lt;slug&gt; PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt;</code></td>
 <td><code>event_proposals(status=&#x27;pending&#x27;)</code> 생성</td>
 <td><code>proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_N.png</code> 업로드</td>
 <td>일반 사용자에게는 아직 안 보임. 관리자/제안자는 proposal 상세에서 이미지 확인</td>
 </tr>
 <tr>
-<td>4. 관리자 승인</td>
+<td>5. 관리자 승인</td>
 <td>관리자 UI에서 위치/인물 노출 확정 후 승인</td>
 <td><code>events</code>에 published row 삽입, 뒤 index shift, <code>scene_image_paths</code> 복사, 퀴즈 row 생성</td>
 <td>proposal scene 원본 유지</td>
 <td>새 이야기가 즉시 보임. 새 앱 전에는 Storage 이미지 fallback</td>
 </tr>
 <tr>
-<td>5. release sync</td>
+<td>6. release sync</td>
 <td>DB → 로컬 stories/quiz/mapping export, 원본 복사/다운로드, thumbnails/pubspec 생성</td>
 <td>DB는 이미 공개 상태</td>
 <td>Storage는 fallback 보호용으로 유지</td>
 <td>구버전은 Storage, 신버전 빌드는 로컬 썸네일 준비 완료</td>
 </tr>
 <tr>
-<td>6. 앱 배포</td>
+<td>7. 앱 배포</td>
 <td>real 빌드 후 Store 배포</td>
 <td>변화 없음</td>
 <td>cleanup 전까지 유지</td>
@@ -358,13 +366,21 @@ scripts/build_ios_real.sh</code></pre>
 </tr>
 </tbody></table></div>
 <p><code>make generate-draft-story-images</code> 원리:</p>
-<ul><li>입력은 draft JSON 하나다.</li><li>출력은 <code>assets/story_drafts/&lt;draft_slug&gt;/scene_N.png</code> 원본 PNG다.</li><li>기존 <code>make generate-story-images</code>처럼 <code>assets/200_stories</code> 전체나</li></ul>
+<ul><li>입력은 draft JSON 하나다.</li><li>출력은 <code>assets/story_drafts/&lt;draft_slug&gt;/scene_N.png</code> 원본 PNG다.</li><li><code>STORY=</code>를 쓸 때는 <code>assets/story_drafts/&lt;draft_slug&gt;.json</code>처럼 <code>.json</code>까지 포함한</li></ul>
+<p>파일 경로를 넘긴다. 예: <code>make generate-draft-story-images STORY=assets/story_drafts/20260624_cain_test_story.json</code></p>
+<ul><li>기존 <code>make generate-story-images</code>처럼 <code>assets/200_stories</code> 전체나</li></ul>
 <p><code>assets/story_images</code> canonical 디렉토리를 prune하지 않는다.</p>
 <ul><li>prompt 생성은 <code>story_scenes</code>, <code>scene_characters</code>, <code>characters</code>, <code>bible_ref</code>,</li></ul>
 <p>인물 아바타 레퍼런스를 사용한다.</p>
 <p><code>make apply-draft</code> 원리:</p>
 <ul><li>draft JSON schema를 검증한다. 필수 항목은 <code>title</code>, <code>summary</code>,</li></ul>
 <p><code>background_context</code>, 1개 이상 <code>story_scenes</code>, 장면 수와 같은 <code>scene_captions</code>, 1~3개 <code>quiz_questions</code>다. 각 퀴즈는 질문, 3개 작성 선택지, <code>answer_index</code> 0~2, 해설이 필요하다.</p>
+<ul><li><code>DRAFT=&lt;draft_slug&gt;</code>는 <code>assets/story_drafts/&lt;draft_slug&gt;.json</code>으로 해석된다.</li></ul>
+<p><code>STORY=</code>를 직접 쓰려면 <code>.json</code> 파일 경로를 넘긴다.</p>
+<ul><li>real 적용 전에는 항상 <code>DRY_RUN=1</code>로 먼저 확인한다. 예:</li></ul>
+<p><code>make apply-draft ENV=real DRAFT=20260624_cain_test_story PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt; DRY_RUN=1</code></p>
+<ul><li><code>PROPOSER_USER_ID</code>는 <code>event_proposals.proposer_user_id</code>에 들어갈 운영 Supabase</li></ul>
+<p><code>auth.users.id</code>다. 매번 넘기지 않으려면 <code>.env.ops</code>에 <code>STORY_DRAFT_PROPOSER_USER_ID_PROD=&lt;Supabase auth.users.id&gt;</code>를 둔다.</p>
 <ul><li>같은 제목의 published event 또는 pending new proposal이 이미 있으면 중단한다.</li><li><code>assets/story_drafts/&lt;draft_slug&gt;/scene_N.png</code>가 <code>story_scenes</code> 길이만큼 있는지 확인한다.</li><li>원본 PNG를 <code>proposal-scenes/&lt;proposer_user_id&gt;/&lt;draft_slug&gt;/scene_N.png</code>로 업로드한다.</li><li><code>event_proposals</code>에 pending row를 만든다. 이때 <code>scene_image_paths</code>에는 업로드된</li></ul>
 <p>Storage path가 들어간다.</p>
 <ul><li>이 단계는 아직 <code>events</code>를 바꾸지 않으므로 일반 사용자에게 노출되지 않는다.</li><li><code>db_init.sql</code>의 <code>event_proposals</code> CHECK 제약도 같은 최소 조건을 한 번 더 막는다.</li></ul>
@@ -379,17 +395,20 @@ scripts/build_ios_real.sh</code></pre>
 <ul><li>proposal의 <code>scene_image_paths</code>가 <code>events.scene_image_paths</code>로 복사된다.</li><li>앱은 <code>events_ordered</code> view를 읽으므로 승인 직후부터 새 이야기를 볼 수 있다.</li><li>앱 번들에 아직 로컬 썸네일이 없으면 <code>scene_image_paths</code>를 public URL로 바꿔</li></ul>
 <p>네트워크 이미지를 보여준다.</p>
 <p><code>make release-sync-stories</code> 원리:</p>
-<ol><li>real DB의 published <code>events</code>를 era별로</li></ol>
-<p><code>assets/200_stories/*.json</code>에 export한다. export는 <code>background_context</code>, <code>scene_captions</code>, <code>unit_code/unit_title/unit_order</code>를 보존한다.</p>
-<ol><li>DB의 <code>quiz_questions</code>를 <code>assets/quizzes/*.json</code>으로 export하고,</li></ol>
-<p><code>supabase/quizzes/db_events.json</code>을 현재 events snapshot으로 갱신한다.</p>
-<ol><li>DB의 <code>events.landmark_id</code>를 <code>assets/landmarks/event_region_mapping.json</code>으로</li></ol>
-<p>export한다.</p>
+<ol><li>real DB의 active published <code>events</code>(<code>status=&#x27;published&#x27; AND deleted_at IS NULL</code>)를</li></ol>
+<p>era별로 <code>assets/200_stories/*.json</code>에 export한다. export는 <code>background_context</code>, <code>scene_captions</code>, <code>unit_code/unit_title/unit_order</code>를 보존하고 stale era JSON 파일을 제거한다.</p>
+<ol><li>같은 active events snapshot에 연결된 <code>quiz_questions</code>를 <code>assets/quizzes/*.json</code>으로</li></ol>
+<p>export하고, <code>supabase/quizzes/db_events.json</code>을 갱신한다. snapshot에 없는 stale quiz JSON은 삭제해 reindex 뒤 옛 퀴즈가 새 번호의 다른 이야기에 붙지 않게 한다.</p>
+<ol><li>active events의 <code>events.landmark_id</code>를</li></ol>
+<p><code>assets/landmarks/event_region_mapping.json</code>으로 export한다.</p>
 <ol><li>새 이야기 원본 이미지를 <code>assets/story_images/&lt;title&gt;/scene_N.png</code>로 둔다.</li></ol>
 <p>로컬 draft 원본이 있으면 복사하고, 웹/앱에서 생성한 proposal이면 <code>proposal-scenes</code>에서 다운로드한다.</p>
-<ol><li><code>make thumbnails</code>로 새 <code>story_index</code> 기준 짧은 썸네일 디렉토리와</li></ol>
-<p><code>assets/story_images_thumbs/index.json</code>을 재생성한다.</p>
-<ol><li><code>make update-pubspec-assets</code>로 새 썸네일 디렉토리를 앱 asset 목록에 등록한다.</li><li>검증 후 커밋하고 새 앱을 빌드/배포한다.</li></ol>
+<ol><li>삭제 승인된 title은 active events에 없으므로</li></ol>
+<p><code>sync-approved-proposal-assets</code> Phase B가 로컬 <code>assets/story_images/&lt;title&gt;/</code> 폴더를 제거한다. 과거 sync 버그로 공백이 <code>_</code>가 된 폴더는 canonical 제목 폴더로 먼저 옮긴 뒤 비교한다.</p>
+<ol><li><code>make thumbnails</code>로 현재 story JSON에 등장하는 title만 짧은 썸네일 디렉토리와</li></ol>
+<p><code>assets/story_images_thumbs/index.json</code>에 반영한다. 삭제된 원본 폴더가 남아 있어도 current JSON에 없으면 앱 번들 썸네일로 다시 생성하지 않는다.</p>
+<ol><li><code>make update-pubspec-assets</code>로 현재 썸네일 디렉토리를 앱 asset 목록에 등록한다.</li><li>검증 후 커밋하고 새 앱을 빌드/배포한다.</li></ol>
+<p>예를 들어 4번과 8번 이야기를 삭제 승인한 뒤 새 이야기 2건을 2번 뒤/마지막 뒤에 승인해도, DB RPC가 active <code>story_index</code>를 1..N으로 유지한다. 이후 <code>make release-sync-stories ENV=real</code>을 실행하면 삭제된 title은 story JSON, quiz JSON, thumbnail index, pubspec asset 목록에서 빠지고, 새 이야기는 proposal Storage의 이미지를 로컬 번들로 가져온다.</p>
 <p>Storage cleanup은 앱 배포 직후 하지 않는다. 사용자가 앱을 업데이트하기 전까지는 구버전 앱이 <code>events.scene_image_paths</code>의 <code>proposal-scenes/...</code>를 읽을 수 있기 때문이다. 충분한 업데이트 기간이 지난 뒤에만 <code>sync-approved-proposal-assets-clean ENV=real</code> 같은 정리 명령을 검토한다.</p>
 <h4 id="3-2-2-목사님-이야기-제안-flow">3.2.2 목사님 이야기 제안 Flow</h4>
 <p>목사님이 앱/웹 UI에서 직접 이야기를 제안하는 흐름도 같은 인프라를 쓴다. 차이는 draft JSON을 운영자가 만드는 대신, UI wizard가 같은 필드를 수집한다는 점이다.</p>
@@ -527,13 +546,16 @@ scripts/build_ios_real.sh</code></pre>
 <pre><code class="language-bash"># 1. draft 작성 + 이미지 생성
 make generate-draft-story-images STORY=assets/story_drafts/YYYYMMDD_slug.json
 
-# 2. proposal row 생성 + proposal-scenes 업로드
-make apply-draft ENV=real STORY=assets/story_drafts/YYYYMMDD_slug.json
+# 2. real 적용 전 dry-run
+make apply-draft ENV=real DRAFT=YYYYMMDD_slug PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt; DRY_RUN=1
 
-# 3. 관리자 UI 승인 후 release sync
+# 3. proposal row 생성 + proposal-scenes 업로드
+make apply-draft ENV=real DRAFT=YYYYMMDD_slug PROPOSER_USER_ID=&lt;Supabase auth.users.id&gt;
+
+# 4. 관리자 UI 승인 후 release sync
 make release-sync-stories ENV=real
 
-# 4. 검증 + real 앱 빌드
+# 5. 검증 + real 앱 빌드
 python3 tools/app/verify_asset_paths.py
 python3 tools/seed/verify_polygons_contain_events.py
 scripts/build_android_real.sh

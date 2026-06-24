@@ -2439,6 +2439,8 @@ as $$
 declare
   v_proposal event_proposals%rowtype;
   v_event events%rowtype;
+  v_deleted_story_index int;
+  v_reason text;
 begin
   if not public.is_admin() then
     raise exception 'permission denied: admin role required';
@@ -2461,8 +2463,58 @@ begin
 
   -- soft delete: idempotent (이미 deleted_at 인 경우는 noop)
   select * into v_event from events where id = v_proposal.target_event_id;
-  if found and v_event.deleted_at is null then
-    update events set deleted_at = now() where id = v_event.id;
+  if found then
+    v_deleted_story_index := v_event.story_index;
+
+    -- 삭제와 재번호 매김은 era 단위로 직렬화한다. insert_event_at_position 과
+    -- 같은 advisory lock key 를 사용해 삽입/삭제가 서로 story_index 를
+    -- 엇갈리게 갱신하지 않도록 한다.
+    perform pg_advisory_xact_lock(hashtext('events_era_' || v_event.era_id::text));
+
+    if v_event.deleted_at is null then
+      update events set deleted_at = now() where id = v_event.id;
+    end if;
+
+    -- 활성 published 이벤트의 story_index 를 1..N 으로 압축한다. soft-deleted
+    -- row 는 사용자 진도/제안 이력 보존을 위해 남기되, UNIQUE(era_id, story_index)
+    -- 충돌을 피하도록 활성 row 뒤쪽 번호로 밀어 둔다.
+    update events
+       set story_index = -(story_index + 1000000)
+     where era_id = v_event.era_id;
+
+    with ranked as (
+      select
+        id,
+        row_number() over (
+          order by
+            case when status = 'published' and deleted_at is null then 0 else 1 end,
+            abs(story_index),
+            coalesce(deleted_at, 'infinity'::timestamptz),
+            id
+        ) as new_story_index
+      from events
+      where era_id = v_event.era_id
+    )
+    update events e
+       set story_index = ranked.new_story_index
+      from ranked
+     where e.id = ranked.id;
+
+    -- 삭제된 위치 이후를 가리키던 pending NEW 제안은 숫자 의미가 바뀐다.
+    -- 예: 기존 3번 삭제 후 기존 5번은 새 4번이 되므로, after_story_index=5 는
+    -- 더 이상 "원래 5번 뒤"가 아니다. 제안자가 현재 활성 목록을 보고 재선택하게
+    -- 잠근다.
+    v_reason := '삭제 제안 승인으로 같은 시대의 이야기 순서가 바뀌었어요. '
+      || '현재 목록을 기준으로 위치와 연도를 다시 골라주세요.';
+
+    update event_proposals
+       set position_invalidated_at = now(),
+           position_invalidation_reason = v_reason
+     where era_id = v_event.era_id
+       and proposal_type = 'new'
+       and status = 'pending'
+       and position_invalidated_at is null
+       and coalesce(after_story_index, 0) >= v_deleted_story_index;
   end if;
 
   update event_proposals

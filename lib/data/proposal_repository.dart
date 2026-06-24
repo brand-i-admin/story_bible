@@ -305,17 +305,14 @@ class ProposalRepository {
   /// 서버 RPC `approve_delete_proposal` 가:
   ///   1) `events.deleted_at = now()` (soft delete) — events_ordered view 가
   ///      앱 전체에서 자동으로 숨김.
-  ///   2) 이 이벤트가 마지막 출연이었던 캐릭터를 `characters.is_active = false`
-  ///      로 비활성화 — characters_read_active 정책이 활성 인물만 노출하므로
-  ///      앱 캐릭터 목록 fetch 결과에 들어가지 않는다 (로컬 번들에 PNG 가
-  ///      남아있어도 사용자에게는 안 보임).
-  ///   3) 정리할 storage 경로 묶음(jsonb) 반환:
-  ///        - scene_image_paths: 이 이벤트의 장면 이미지 경로
-  ///        - inactive_character_avatar_paths: 방금 비활성화된 캐릭터 아바타 경로
+  ///   2) 같은 era 의 활성 published 이벤트를 `story_index = 1..N` 으로 압축.
+  ///   3) 삭제된 위치 이후를 가리키던 pending NEW 제안은 위치 재선택 상태로 전환.
+  ///   4) 호환용 storage 경로 묶음(jsonb)을 반환. 현재 RPC 는 캐릭터/이미지 정리를
+  ///      의도적으로 하지 않으므로 보통 빈 배열이다.
   ///
-  /// 이 메서드는 그 두 묶음에 대해 **best-effort** 로 Supabase Storage 에서
+  /// 이 메서드는 반환된 경로가 있을 때만 **best-effort** 로 Supabase Storage 에서
   /// 파일을 제거한다. 이미 삭제됐거나 권한 문제로 실패해도 무시(앱 동작에는
-  /// 영향 없음) — 고아 파일은 향후 cleanup 잡으로 정리 가능.
+  /// 영향 없음) — 현재 soft delete 승인 경로에서는 대개 제거할 파일이 없다.
   ///
   /// **이미 sync 됐다면 정리 불필요한 이유**: `make sync-approved-proposal-assets`
   /// 가 `--delete-source` 로 돌면 proposal-* 원본 파일이 사라지고 path 도
@@ -343,8 +340,9 @@ class ProposalRepository {
             .where((p) => p.isNotEmpty)
             .toList() ??
         const <String>[];
-    // 키 호환: 신 RPC = deleted_character_avatar_paths (hard delete),
-    //           구 RPC = inactive_character_avatar_paths (soft delete) — 둘 다 본다.
+    // 키 호환: 일부 RPC 버전은 deleted_character_avatar_paths, 이전 버전은
+    // inactive_character_avatar_paths 를 반환했다. 현재 soft delete 경로는 보통
+    // 둘 다 빈 배열이지만, 클라이언트는 양쪽을 모두 받아들인다.
     final avatarPaths =
         (map['deleted_character_avatar_paths'] as List? ??
                 map['inactive_character_avatar_paths'] as List?)
