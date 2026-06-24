@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-24T04:30:29+00:00",
+  "generated_at": "2026-06-24T14:50:04+00:00",
   "total_quiz_files": 310,
   "total_events": 310,
   "total_questions": 930,
@@ -9,918 +9,912 @@
     "2": 321
   },
   "orphan_quizzes": [],
-  "title_mismatches": [
-    {
-      "filename": "era_patriarch_n006.json",
-      "json_title": "세 손님: 사라의 웃음과 하나님의 약속",
-      "event_title": "세 손님: 사래의 웃음과 하나님의 약속"
-    }
-  ],
+  "title_mismatches": [],
   "verse_scope_violations": [],
   "events_without_quiz": [],
   "length_warnings": [
     {
-      "filename": "era_exile_return_n001.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_exile_return_n001.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "explanation",
       "length": 61
     },
     {
-      "filename": "era_exile_return_n002.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_exile_return_n002.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_exile_return_n003.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
     },
     {
-      "filename": "era_exile_return_n004.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 31
     },
     {
-      "filename": "era_exile_return_n004.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_exile_return_n005.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 30
     },
     {
-      "filename": "era_exile_return_n006.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_exile_return_n006.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "explanation",
       "length": 61
     },
     {
-      "filename": "era_exile_return_n007.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 24
     },
     {
-      "filename": "era_exile_return_n007.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 22
     },
     {
-      "filename": "era_exile_return_n007.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 22
     },
     {
-      "filename": "era_exile_return_n009.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_exile_return_n010.json",
+      "filename": "era_exile_return.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 29
     },
     {
-      "filename": "era_exile_return_n010.json",
+      "filename": "era_exile_return.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_exile_return_n010.json",
+      "filename": "era_exile_return.json",
       "display_order": 0,
       "field": "choices[2]",
       "length": 23
     },
     {
-      "filename": "era_exile_return_n010.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 29
     },
     {
-      "filename": "era_exile_return_n011.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 31
     },
     {
-      "filename": "era_exile_return_n011.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_exile_return_n012.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "explanation",
       "length": 123
     },
     {
-      "filename": "era_exile_return_n013.json",
+      "filename": "era_exile_return.json",
       "display_order": 0,
       "field": "question",
       "length": 48
     },
     {
-      "filename": "era_exile_return_n013.json",
+      "filename": "era_exile_return.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_exile_return_n013.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 32
     },
     {
-      "filename": "era_exile_return_n013.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 22
     },
     {
-      "filename": "era_exile_return_n013.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 22
     },
     {
-      "filename": "era_exile_return_n013.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "explanation",
       "length": 67
     },
     {
-      "filename": "era_exile_return_n014.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 24
     },
     {
-      "filename": "era_exile_return_n016.json",
+      "filename": "era_exile_return.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
     },
     {
-      "filename": "era_exodus_n001.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[2]",
       "length": 23
     },
     {
-      "filename": "era_exodus_n002.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_exodus_n003.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_exodus_n003.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 61
     },
     {
-      "filename": "era_exodus_n004.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "question",
       "length": 41
     },
     {
-      "filename": "era_exodus_n004.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 24
     },
     {
-      "filename": "era_exodus_n004.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 63
     },
     {
-      "filename": "era_exodus_n005.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "question",
       "length": 46
     },
     {
-      "filename": "era_exodus_n006.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "question",
       "length": 41
     },
     {
-      "filename": "era_exodus_n006.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_exodus_n007.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 36
     },
     {
-      "filename": "era_exodus_n008.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 26
     },
     {
-      "filename": "era_exodus_n009.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 24
     },
     {
-      "filename": "era_exodus_n009.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_exodus_n009.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 97
     },
     {
-      "filename": "era_exodus_n011.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_exodus_n011.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 70
     },
     {
-      "filename": "era_exodus_n015.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_exodus_n019.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_exodus_n020.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "explanation",
       "length": 66
     },
     {
-      "filename": "era_exodus_n021.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "explanation",
       "length": 65
     },
     {
-      "filename": "era_exodus_n022.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_exodus_n022.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "explanation",
       "length": 76
     },
     {
-      "filename": "era_exodus_n025.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_exodus_n025.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 64
     },
     {
-      "filename": "era_exodus_n027.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 73
     },
     {
-      "filename": "era_exodus_n029.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_exodus_n029.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_exodus_n029.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[2]",
       "length": 26
     },
     {
-      "filename": "era_exodus_n029.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_exodus_n029.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 23
     },
     {
-      "filename": "era_exodus_n030.json",
+      "filename": "era_exodus.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_exodus_n031.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_exodus_n031.json",
+      "filename": "era_exodus.json",
       "display_order": 1,
       "field": "explanation",
       "length": 65
     },
     {
-      "filename": "era_judges_n001.json",
+      "filename": "era_judges.json",
       "display_order": 0,
       "field": "explanation",
       "length": 66
     },
     {
-      "filename": "era_judges_n003.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_judges_n005.json",
+      "filename": "era_judges.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_judges_n005.json",
+      "filename": "era_judges.json",
       "display_order": 0,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_judges_n007.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "question",
       "length": 43
     },
     {
-      "filename": "era_judges_n008.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "explanation",
       "length": 87
     },
     {
-      "filename": "era_judges_n010.json",
+      "filename": "era_judges.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 26
     },
     {
-      "filename": "era_judges_n010.json",
+      "filename": "era_judges.json",
       "display_order": 0,
       "field": "explanation",
       "length": 71
     },
     {
-      "filename": "era_judges_n010.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_judges_n010.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "explanation",
       "length": 132
     },
     {
-      "filename": "era_judges_n012.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "question",
       "length": 41
     },
     {
-      "filename": "era_judges_n013.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
     },
     {
-      "filename": "era_judges_n013.json",
+      "filename": "era_judges.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_monarchy_n001.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "explanation",
       "length": 90
     },
     {
-      "filename": "era_monarchy_n002.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_monarchy_n002.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_monarchy_n002.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "explanation",
       "length": 116
     },
     {
-      "filename": "era_monarchy_n003.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_monarchy_n003.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "explanation",
       "length": 65
     },
     {
-      "filename": "era_monarchy_n003.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "explanation",
       "length": 67
     },
     {
-      "filename": "era_monarchy_n004.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "explanation",
       "length": 70
     },
     {
-      "filename": "era_monarchy_n005.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_monarchy_n005.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_monarchy_n005.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "explanation",
       "length": 76
     },
     {
-      "filename": "era_monarchy_n008.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "question",
       "length": 46
     },
     {
-      "filename": "era_monarchy_n009.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_monarchy_n010.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "explanation",
       "length": 69
     },
     {
-      "filename": "era_monarchy_n010.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "explanation",
       "length": 72
     },
     {
-      "filename": "era_monarchy_n013.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "explanation",
       "length": 73
     },
     {
-      "filename": "era_monarchy_n013.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
     },
     {
-      "filename": "era_monarchy_n013.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 24
     },
     {
-      "filename": "era_monarchy_n013.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 23
     },
     {
-      "filename": "era_monarchy_n014.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_monarchy_n015.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "question",
       "length": 44
     },
     {
-      "filename": "era_monarchy_n016.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_monarchy_n016.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 22
     },
     {
-      "filename": "era_monarchy_n017.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_monarchy_n017.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 24
     },
     {
-      "filename": "era_monarchy_n017.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_monarchy_n019.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 30
     },
     {
-      "filename": "era_monarchy_n019.json",
+      "filename": "era_monarchy.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_monarchy_n020.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_monarchy_n020.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "explanation",
       "length": 63
     },
     {
-      "filename": "era_monarchy_n022.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 24
     },
     {
-      "filename": "era_monarchy_n024.json",
+      "filename": "era_monarchy.json",
       "display_order": 0,
       "field": "explanation",
       "length": 61
     },
     {
-      "filename": "era_nt_post_apostolic_n026.json",
+      "filename": "era_nt_post_apostolic.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_nt_post_apostolic_n026.json",
+      "filename": "era_nt_post_apostolic.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n003.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "question",
       "length": 42
     },
     {
-      "filename": "era_patriarch_n004.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 24
     },
     {
-      "filename": "era_patriarch_n004.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[1]",
       "length": 23
     },
     {
-      "filename": "era_patriarch_n004.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n004.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 68
     },
     {
-      "filename": "era_patriarch_n007.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n009.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "question",
       "length": 45
     },
     {
-      "filename": "era_patriarch_n010.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 24
     },
     {
-      "filename": "era_patriarch_n011.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "question",
       "length": 45
     },
     {
-      "filename": "era_patriarch_n011.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_patriarch_n011.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 80
     },
     {
-      "filename": "era_patriarch_n013.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 90
     },
     {
-      "filename": "era_patriarch_n015.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n015.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 22
     },
     {
-      "filename": "era_patriarch_n015.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n016.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "question",
       "length": 42
     },
     {
-      "filename": "era_patriarch_n016.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 26
     },
     {
-      "filename": "era_patriarch_n016.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[1]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n016.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "explanation",
       "length": 63
     },
     {
-      "filename": "era_patriarch_n017.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 36
     },
     {
-      "filename": "era_patriarch_n017.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n018.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "explanation",
       "length": 69
     },
     {
-      "filename": "era_patriarch_n019.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 21
     },
     {
-      "filename": "era_patriarch_n021.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_patriarch_n023.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "explanation",
       "length": 61
     },
     {
-      "filename": "era_patriarch_n023.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "question",
       "length": 46
     },
     {
-      "filename": "era_patriarch_n023.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 75
     },
     {
-      "filename": "era_patriarch_n025.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 22
     },
     {
-      "filename": "era_patriarch_n025.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 69
     },
     {
-      "filename": "era_patriarch_n028.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "explanation",
       "length": 73
     },
     {
-      "filename": "era_patriarch_n028.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 23
     },
     {
-      "filename": "era_patriarch_n029.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 26
     },
     {
-      "filename": "era_patriarch_n029.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 73
     },
     {
-      "filename": "era_patriarch_n030.json",
+      "filename": "era_patriarch.json",
       "display_order": 0,
       "field": "question",
       "length": 42
     },
     {
-      "filename": "era_patriarch_n030.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 27
     },
     {
-      "filename": "era_patriarch_n030.json",
+      "filename": "era_patriarch.json",
       "display_order": 1,
       "field": "explanation",
       "length": 108
     },
     {
-      "filename": "era_primeval_n005.json",
+      "filename": "era_primeval.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 28
     },
     {
-      "filename": "era_primeval_n005.json",
+      "filename": "era_primeval.json",
       "display_order": 1,
       "field": "choices[2]",
       "length": 21
     },
     {
-      "filename": "era_primeval_n005.json",
+      "filename": "era_primeval.json",
       "display_order": 1,
       "field": "explanation",
       "length": 79
     },
     {
-      "filename": "era_primeval_n007.json",
+      "filename": "era_primeval.json",
       "display_order": 1,
       "field": "choices[0]",
       "length": 25
     },
     {
-      "filename": "era_primeval_n007.json",
+      "filename": "era_primeval.json",
       "display_order": 1,
       "field": "explanation",
       "length": 67

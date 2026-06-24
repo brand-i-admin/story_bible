@@ -6762,7 +6762,7 @@
       "emoji": "🩹",
       "lat": 32.55,
       "lng": 36.0,
-      "parent_region_code": "rgn_div_north_israel",
+      "parent_region_code": "rgn_decapolis",
       "era_codes": [
         "era_divided_kingdom"
       ],
@@ -6804,7 +6804,7 @@
       "emoji": "🏹",
       "lat": 32.55,
       "lng": 36.0,
-      "parent_region_code": "rgn_div_north_israel",
+      "parent_region_code": "rgn_decapolis",
       "era_codes": [
         "era_divided_kingdom"
       ],
@@ -7182,7 +7182,7 @@
       "emoji": "❓",
       "lat": 28.5,
       "lng": 33.0,
-      "parent_region_code": "rgn_egypt",
+      "parent_region_code": "rgn_red_sea",
       "era_codes": [
         "era_exodus"
       ],
@@ -7446,7 +7446,7 @@
       "emoji": "🔥",
       "lat": 32.55,
       "lng": 35.35,
-      "parent_region_code": "rgn_galilee",
+      "parent_region_code": "rgn_armageddon",
       "era_codes": [
         "era_judges"
       ],
@@ -8610,9 +8610,9 @@
       "name": "애굽 → 미디안(전승)",
       "kind": "wilderness",
       "emoji": "🏜️",
-      "lat": 28.4,
-      "lng": 35.7,
-      "parent_region_code": "rgn_sinai_peninsula",
+      "lat": 29.9,
+      "lng": 31.25,
+      "parent_region_code": "rgn_egypt",
       "era_codes": [
         "era_exodus"
       ],

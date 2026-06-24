@@ -63,7 +63,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help="Directory containing era story JSON files.",
     )
     parser.add_argument(

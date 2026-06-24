@@ -81,9 +81,9 @@
 
 ```
 assets/bible/*.txt ─→ build_krv_seed_sql.py ─→ bible_verses SQL
-assets/200_stories/ (각 항목에 story_index 직접 박힘)
+assets/events/ (각 항목에 story_index 직접 박힘)
                     ├→ build_character_meta_json.py    ─→ character_meta.json (모든 인물 + 아바타 프롬프트)
-                    ├→ build_200_stories_seed_sql.py ─→ events SQL (jsonb/배열 흡수)
+                    ├→ build_events_seed_sql.py ─→ events SQL (jsonb/배열 흡수)
                     ├→ build_characters_seed_sql.py ─→ characters SQL (is_active 토글 보존)
                     ├→ generate_avatars_vertex.py ─→ 아바타 PNG (기존 보존)
                     └→ generate_event_story_images_vertex.py ─→ 장면 이미지

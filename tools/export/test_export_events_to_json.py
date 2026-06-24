@@ -18,6 +18,7 @@ from export_events_to_json import (  # noqa: E402
     filename_for_era,
     group_events_by_era_file,
     published_events_query_params,
+    quiz_row_to_json,
     write_grouped_events,
 )
 
@@ -29,6 +30,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "era_code": "era_primeval",
             "summary": "하나님이 말씀으로 세상을 창조하신다.",
             "character_codes": ["god"],
+            "landmark_code": "lm_primeval_creation",
             "place_name": "메소포타미아(추정)",
             "lat": 31.018,
             "lng": 47.423,
@@ -51,6 +53,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertEqual(result["title"], "001 창조: 7일과 안식")
         self.assertEqual(result["era"], "era_primeval")
         self.assertEqual(result["characters"], ["god"])
+        self.assertEqual(result["landmark_code"], "lm_primeval_creation")
         self.assertEqual(result["lat"], 31.018)
         self.assertEqual(result["lng"], 47.423)
         self.assertEqual(
@@ -71,6 +74,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "title",
                 "era",
                 "characters",
+                "landmark_code",
                 "place_name",
                 "lat",
                 "lng",
@@ -87,6 +91,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "story_scenes",
                 "scene_captions",
                 "scene_characters",
+                "quiz_questions",
             ],
         )
 
@@ -96,6 +101,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "era_code": "era_judges",
             "summary": None,
             "character_codes": None,
+            "landmark_code": None,
             "place_name": None,
             "lat": None,
             "lng": None,
@@ -125,8 +131,28 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertEqual(result["unit_code"], "default")
         self.assertEqual(result["unit_title"], "전체 흐름")
         self.assertEqual(result["unit_order"], 1)
+        self.assertEqual(result["landmark_code"], "")
+        self.assertEqual(result["quiz_questions"], [])
         self.assertIsNone(result["lat"])
         self.assertEqual(result["summary"], "")
+
+    def test_quiz_row_to_json_omits_confused_choice(self) -> None:
+        result = quiz_row_to_json(
+            {
+                "question": "무엇을 보았습니까?",
+                "choice_a": "빛",
+                "choice_b": "물",
+                "choice_c": "땅",
+                "choice_d": "헷갈렸어요",
+                "answer_index": 1,
+                "explanation": "창 1:3 — '빛이 있으라'",
+                "display_order": 2,
+            }
+        )
+
+        self.assertEqual(result["type"], "story_context")
+        self.assertEqual(result["choices"], ["빛", "물", "땅"])
+        self.assertEqual(result["answer_index"], 1)
 
     def test_filename_for_era_uses_era_scoped_files(self) -> None:
         self.assertEqual(filename_for_era("era_primeval"), "era_primeval.json")
@@ -147,6 +173,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 **row,
                 "summary": "",
                 "character_codes": [],
+                "landmark_code": "lm_a",
                 "place_name": "",
                 "lat": None,
                 "lng": None,
@@ -161,6 +188,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "story_scenes": [],
                 "scene_captions": [],
                 "scene_characters": [],
+                "quiz_questions": [],
             }
             for row in rows
         ]
@@ -180,6 +208,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "era_code": "era_primeval",
             "summary": "s",
             "character_codes": ["god"],
+            "landmark_code": "lm_x",
             "place_name": "p",
             "lat": 1.0,
             "lng": 2.0,
@@ -195,6 +224,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "story_scenes": ["scene"],
             "scene_captions": ["caption"],
             "scene_characters": [["god"]],
+            "quiz_questions": [],
         }
 
         out = event_row_to_json(row)

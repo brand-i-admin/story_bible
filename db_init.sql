@@ -296,7 +296,7 @@ alter table events
 -- 시대(era_codes 배열) 단위로 묶여 있어 사용자가 시대를 선택하면 그 시대에 해당
 -- 하는 랜드마크만 지도에 떠올라 시대별 무대 감각을 잡아 준다. events 와 별개의
 -- 정적 카탈로그 — 시드는 assets/landmarks/landmarks.json →
--- tools/seed/build_landmarks_seed_sql.py → supabase/200_stories/landmarks_seed.sql.
+-- tools/seed/build_landmarks_seed_sql.py → supabase/events/landmarks_seed.sql.
 -- v3 — region(영역) + 시각 마크(point 종류) 통합 단일 테이블.
 -- alias_group 기능은 v3 에서 제거 (시대별 별개 landmark 로 자연 분리).
 create table if not exists landmarks (
@@ -1551,7 +1551,7 @@ values
 -- -----------------------------------------------------------------------------
 -- Seed data for characters/character_eras/events/event_characters/event_bible_refs/quiz_questions
 -- is intentionally omitted here.
--- Use generated SQL files under supabase/200_stories instead.
+-- Use generated SQL files under supabase/events instead.
 -- -----------------------------------------------------------------------------
 
 -- -----------------------------------------------------------------------------

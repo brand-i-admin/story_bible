@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-STORY_DIR = ROOT / "assets" / "200_stories"
+STORY_DIR = ROOT / "assets" / "events"
 MAX_CAPTION_CHARS = 58
 MAX_SUMMARY_CHARS = 130
 MAX_BACKGROUND_CHARS = 220

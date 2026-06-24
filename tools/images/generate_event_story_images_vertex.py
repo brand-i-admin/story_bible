@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Generate per-scene story images from assets/200_stories JSON using Vertex Gemini.
+"""Generate per-scene story images from assets/events JSON using Vertex Gemini.
 
 Input JSON format is expected from:
-  assets/200_stories/*.json
+  assets/events/*.json
 
 Usage:
   source .env
@@ -69,11 +69,11 @@ SPEECH_BUBBLE_TEXT_POLICY = (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate scene images per event from assets/200_stories JSON."
+        description="Generate scene images per event from assets/events JSON."
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help="Directory containing stories JSON files.",
     )
     parser.add_argument(
@@ -184,7 +184,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--characters-seed-sql",
-        default="supabase/200_stories/characters_seed.sql",
+        default="supabase/events/characters_seed.sql",
         help="Characters seed SQL used to recover canonical Korean character names.",
     )
     parser.add_argument(

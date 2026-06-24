@@ -292,7 +292,7 @@ $backend 스킬 호출 시:
 
     subgraph BUILD[&quot;🔨 2. SQL 생성 (make)&quot;]
         BO[build_landmarks_&lt;br/&gt;seed_sql.py]
-        OS[supabase/200_stories/&lt;br/&gt;landmarks_seed.sql]
+        OS[supabase/events/&lt;br/&gt;landmarks_seed.sql]
     end
 
     subgraph DB[(&quot;🗄️ 3. Supabase DB&quot;)]
@@ -390,7 +390,7 @@ $backend 스킬 호출 시:
 
 이벤트 좌표 ↔ 랜드마크 정렬 (모리아·헤브론·막벨라 등 어긋남 보정):
   ① make align-events-to-landmarks-dry   → 변경 후보만 출력 (검증)
-  ② make align-events-to-landmarks       → assets/200_stories/*.json 의 lat/lng 를
+  ② make align-events-to-landmarks       → assets/events/*.json 의 lat/lng 를
                                           매칭되는 landmark 좌표로 일괄 갱신
   ③ make seed-stories                    → events SQL 재생성
   ④ make apply-seeds-stories-characters ENV=dev
@@ -405,7 +405,7 @@ $backend 스킬 호출 시:
     Q --&gt; S1[성경 본문 텍스트&lt;br/&gt;assets/bible/*.txt]
     S1 --&gt; C1[make seed-bible-verses&lt;br/&gt;+ apply-bible-verses-seeds]
 
-    Q --&gt; S2[이야기/인물&lt;br/&gt;assets/200_stories/*.json]
+    Q --&gt; S2[이야기/인물&lt;br/&gt;assets/events/*.json]
     S2 --&gt; C2[make seed-stories-characters&lt;br/&gt;+ apply-seeds-stories-characters]
 
     Q --&gt; S3[랜드마크 추가/수정&lt;br/&gt;assets/landmarks/landmarks.json]
@@ -442,7 +442,7 @@ $backend 스킬 호출 시:
     Note over U: ① SQL 생성 (전체)
     U-&gt;&gt;Local: make seed-all
     Local-&gt;&gt;SQL: krv_bible_verses_part_*.sql
-    Local-&gt;&gt;SQL: 200_stories_seed_part_*.sql
+    Local-&gt;&gt;SQL: events_seed_part_*.sql
     Local-&gt;&gt;SQL: characters_seed.sql
     Local-&gt;&gt;SQL: landmarks_seed.sql
 
@@ -1588,7 +1588,7 @@ make upload-story-image-sources-dry ENV=real</code></pre>
 <ul><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ul>
 <p>인 행을 모두 읽어 list 출력 (실제 다운로드/DB 변경 없음).</p>
 <ul><li>각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.</li><li>source archive dry-run은 현재 로컬 원본과</li></ul>
-<p><code>story-image-sources/_manifests/story_images_manifest.json</code>의 <code>size</code>/<code>sha256</code>을 비교해 내려받거나 올릴 파일 수를 보여 준다.</p>
+<p><code>story-image-sources/_manifests/story_images_manifest.json</code>의 <code>size</code>/<code>sha256</code>을 비교해 내려받을 파일, upsert할 파일, old manifest에만 남아 삭제될 stale object 수를 보여 준다.</p>
 <p>기대 출력:</p>
 <pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
 == [uuid1] 엘리야와 까마귀
@@ -1635,24 +1635,27 @@ Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)
 <p><code>story-image-sources/story_images/&lt;source_key&gt;/scene_N.png</code>에서 내려받는다. <code>&lt;source_key&gt;</code>는 한글 source dir의 SHA prefix이고, 실제 title/source_dir 매핑은 manifest에 있다.</p>
 <ol><li>remote manifest가 없고 로컬 원본이 이미 완전하면 통과한다. 이 경우 release 마지막</li></ol>
 <p>upload 단계가 현재 로컬 원본 전체를 최초 seed 한다.</p>
-<p><strong>Step C — 썸네일 자동 재생성</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
-<ul><li>내부적으로 <code>python tools/images/generate_runtime_thumbnails.py</code> 호출.</li><li><code>assets/avatars/</code> → <code>assets/avatars_thumbs/</code> (모든 PNG 압축 사본)</li><li><code>assets/story_images/&lt;title&gt;/</code> → <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/</code></li><li><code>assets/story_images_thumbs/index.json</code>에 title/original dir ↔ short dir 매핑 기록</li><li>current <code>assets/200_stories/*.json</code>에 없는 story image 원본 폴더는 썸네일 생성 대상에서</li></ul>
-<p>제외하고, 기존 짧은 썸네일 디렉토리는 orphan으로 정리.</p>
-<ul><li>이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.</li><li>current story JSON에 대응하는 <code>assets/story_images/&lt;title&gt;/scene_*.png</code> 원본이 하나도</li></ul>
-<p>없는 story가 있으면 중단한다. <code>assets/story_images/</code>는 git에 없는 로컬 원본 staging 디렉토리라서, 원본이 없는 컴퓨터에서 thumbnails를 돌리면 삭제/reindex 후 <code>&lt;era_slug&gt;_&lt;story_index&gt;</code> 폴더에 이전 이야기 이미지가 남을 수 있기 때문이다.</p>
-<p><strong>Step D — pubspec.yaml 자동 갱신</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
+<p><strong>Step C — 썸네일 자동 재생성</strong></p>
+<ul><li>내부적으로 <code>python tools/images/generate_runtime_thumbnails.py</code> 호출.</li><li><code>assets/avatars/</code> → <code>assets/avatars_thumbs/</code> (모든 PNG 압축 사본)</li><li><code>assets/story_images/&lt;title&gt;/</code> → <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/</code></li><li><code>assets/story_images_thumbs/index.json</code>에 title/original dir ↔ short dir 매핑 기록</li><li>current <code>assets/events/*.json</code>에 없는 story image 원본 폴더는 썸네일 생성 대상에서</li></ul>
+<p>제외.</p>
+<ul><li>누락 원본 검사를 먼저 통과한 뒤 <code>assets/story_images_thumbs/</code>의 story 하위 디렉토리를</li></ul>
+<p>모두 지우고 current <code>era + story_index</code> 기준으로 clean rebuild. <code>index.json</code>은 다시 쓴다.</p>
+<ul><li>avatar thumb은 기존처럼 missing/changed만 갱신하고 orphan PNG만 정리.</li><li>current story JSON에 대응하는 <code>assets/story_images/&lt;title&gt;/scene_*.png</code> 원본이 하나도</li></ul>
+<p>없는 story가 있으면 중단한다. <code>assets/story_images/</code>는 git에 없는 로컬 원본 staging 디렉토리라서, 원본이 없는 컴퓨터에서 thumbnails를 돌리면 삭제/reindex 후 current story 전체를 정확히 다시 만들 수 없기 때문이다.</p>
+<p><strong>Step D — pubspec.yaml 자동 갱신</strong></p>
 <ul><li>내부적으로 <code>python tools/app/update_pubspec_assets.py</code> 호출.</li><li><code>pubspec.yaml</code> 의 <code>flutter.assets:</code> 아래 <code>story_images_thumbs/index.json</code>과</li></ul>
 <p><code>story_images_thumbs/&lt;short_dir&gt;/</code> 엔트리를 실제 디렉토리 목록에 맞춰 추가/제거.</p>
 <ul><li><code>avatars_thumbs/</code> 는 이미 글롭 패턴 (<code>assets/avatars_thumbs/</code>) 으로</li></ul>
 <p>등록돼 있어 손대지 않음.</p>
 <p>→ Step C, D 둘 다 끄고 싶으면 <code>--skip-post-processing</code>.</p>
 <p><strong>Step E — 원본 source archive push</strong></p>
-<ul><li><code>make release-sync-stories</code> 마지막에 <code>upload-story-image-sources</code>를 실행한다.</li><li>local <code>assets/story_images/</code>와 remote manifest를 비교해 missing/changed PNG만</li></ul>
-<p><code>story-image-sources</code> private bucket에 업로드한다.</p>
+<ul><li><code>make release-sync-stories</code> 마지막에 <code>upload-story-image-sources</code>를 실행한다.</li><li>local <code>assets/story_images/</code>와 remote manifest를 비교해 current active set의 신규/변경</li></ul>
+<p>PNG만 <code>story-image-sources</code> private bucket에 upsert한다.</p>
 <ul><li><code>proposal-scenes</code>에서 막 내려받은 신규 story 원본도 이 단계에서 source archive에</li></ul>
 <p>보존된다.</p>
-<ul><li>manifest는 current active story 기준으로 갱신하지만, 삭제 승인된 story의 과거 원본</li></ul>
-<p>객체는 즉시 삭제하지 않는다. 필요하면 별도 retention 정책으로 정리한다.</p>
+<ul><li>old manifest에는 있지만 current active set에는 없는 object는 stale로 보고 삭제한다.</li></ul>
+<p>삭제 판단은 bucket 전체 listing이 아니라 이전 manifest entries와 현재 active entries의 차이만 사용한다.</p>
+<ul><li>active manifest는 current active story 기준으로 갱신된다.</li></ul>
 <h5 id="release-builder와-이미지-원본">Release builder와 이미지 원본</h5>
 <p>일반 개발자가 현재 커밋을 checkout해서 앱을 빌드하는 것과, 운영 DB를 기준으로 <code>release-sync-stories</code>를 실행해 다음 배포 번들을 만드는 것은 다르다.</p>
 <ul><li>단순 빌드: git에 포함된 <code>assets/story_images_thumbs/</code>와 <code>pubspec.yaml</code>만 있으면 된다.</li></ul>
@@ -1660,7 +1663,7 @@ Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)
 <ul><li>release sync/build: <code>make release-sync-stories ENV=real</code> 안에서 <code>make thumbnails</code>가</li></ul>
 <p>실행되므로 active story 전체의 원본 PNG가 필요하다. 특히 삭제 승인으로 <code>story_index</code>가 당겨진 경우, 기존 썸네일 폴더를 그대로 쓰면 같은 <code>primeval_004</code> 같은 경로가 다른 이야기를 가리키는 오류가 생길 수 있다.</p>
 <p>다른 개발자나 CI도 release sync를 해야 한다면 <code>assets/story_images/</code> 전체를 별도 원격 원본 저장소에서 복원하게 만든다. 실무적으로는 Supabase/GCS의 release-only bucket 또는 zip artifact가 적당하고, 큰 PNG 원본을 git에 직접 넣는 것은 피한다. 승인 proposal로 추가된 새 이야기 원본만 필요한 경우에는 <code>proposal-scenes</code> 파일이 남아 있는 동안 <code>make sync-approved-proposal-assets-all ENV=real</code>로 다시 내려받을 수 있다. 하지만 초기 seed 이야기처럼 <code>events.scene_image_paths</code>가 비어 있는 이미지는 이 방법으로 복원되지 않으므로, 원본 archive가 최종 권위 저장소가 된다.</p>
-<p>효율 기준은 “매번 전체 2GB+ 왕복”이 아니라 “원격 원본 저장소 + 로컬 캐시 + delta sync”다. release builder는 시작 시 원본 저장소의 manifest(etag/sha256/size)를 보고 <code>assets/story_images/</code>에 없는 story 폴더나 바뀐 scene PNG만 내려받는다. 승인 proposal로 새 원본이 생긴 경우에는 <code>sync-approved-proposal-assets</code>가 <code>proposal-scenes</code>에서 로컬로 가져오고, <code>upload-story-image-sources</code>가 그 신규/변경 PNG만 원본 저장소에 다시 업로드한다. 삭제 승인된 story의 원본은 앱 번들에서는 빠지지만, 원본 저장소에서는 즉시 삭제하기보다 versioned archive 또는 grace window를 두는 편이 안전하다.</p>
+<p>효율 기준은 “매번 전체 2GB+ 왕복”이 아니라 “원격 원본 저장소 + 로컬 캐시 + manifest diff sync”다. release builder는 시작 시 원본 저장소의 manifest(etag/sha256/size)를 보고 <code>assets/story_images/</code>에 없는 story 폴더나 바뀐 scene PNG만 내려받는다. 승인 proposal로 새 원본이 생긴 경우에는 <code>sync-approved-proposal-assets</code>가 <code>proposal-scenes</code>에서 로컬로 가져오고, <code>upload-story-image-sources</code>가 그 신규/변경 PNG만 원본 저장소에 upsert한다. 삭제 승인으로 active set에서 빠진 story 원본은 old manifest와 current active manifest의 차이로 삭제된다.</p>
 <p>따라서 <code>sync-approved-proposal-assets-clean</code>의 <code>--delete-source</code>는 새 앱 배포가 끝나고 원본 archive까지 갱신된 뒤에만 실행한다. 먼저 지우면 구버전 앱의 Storage fallback과 다른 release builder의 재동기화 경로가 함께 사라진다.</p>
 <p>기대 출력 (요약):</p>
 <pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
@@ -1674,7 +1677,7 @@ Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)
    ✗ events deleted_at: 2 events → 2 dirs removed
    ✗ characters inactive: 1 → 1 avatar+thumb removed
 
-[thumbnails] generated: 8, skipped: 310
+Story thumbs: built 318, skipped 0, total 318
 [pubspec] added: 2 entries, removed: 1
 
 === Summary ===
@@ -1697,7 +1700,7 @@ flutter test</code></pre>
 <p>신규 인물이 한 명도 없으면 이 단계는 <strong>건너뛴다</strong>.</p>
 <pre><code class="language-bash">make build-character-meta</code></pre>
 <p>내부 동작:</p>
-<ul><li><code>assets/200_stories/*.json</code> 전체를 스캔 → 등장하는 모든 character code 수집.</li><li><code>tools/seed/character_meta.json</code> 갱신 (이름/설명/아바타 프롬프트 카탈로그).</li><li>이 파일은 다음 빌더 (<code>seed-characters</code>, <code>generate-avatars</code>) 의 입력.</li></ul>
+<ul><li><code>assets/events/*.json</code> 전체를 스캔 → 등장하는 모든 character code 수집.</li><li><code>tools/seed/character_meta.json</code> 갱신 (이름/설명/아바타 프롬프트 카탈로그).</li><li>이 파일은 다음 빌더 (<code>seed-characters</code>, <code>generate-avatars</code>) 의 입력.</li></ul>
 <h5 id="5-선택-db-seed-파일을-현재-상태로-재생성">5) (선택) DB seed 파일을 현재 상태로 재생성</h5>
 <p><code>approve_event_proposal</code> RPC 가 이미 <code>events</code> / <code>characters</code> 행을 INSERT 했 으므로 <strong>운영 DB 자체에는 sync 가 필요 없다</strong>. 다만 <code>db_init.sql + seed</code> 로 클린 부트스트랩하는 시나리오를 지원하려면 seed SQL 도 최신 상태로 유지 하는 게 좋다.</p>
 <pre><code class="language-bash"># (a) DB 현재 events 를 로컬 JSON 으로 역추출 (description 등 보존)
@@ -1722,7 +1725,7 @@ git add \
   assets/story_images_thumbs/ \
   pubspec.yaml \
   tools/seed/character_meta.json \
-  supabase/200_stories/  # 5번까지 돌렸을 때만
+  supabase/events/  # 5번까지 돌렸을 때만
 
 git commit -m &quot;content: 승인된 제안 반영 — &lt;사건 제목&gt;&quot;
 git push origin &lt;branch&gt;   # 사용자 지시 후 실행</code></pre>
@@ -1965,8 +1968,8 @@ Storage
 <p>빌드가 나간다.</p>
 <ul><li>삭제된 이야기는 이미 <code>events.deleted_at</code> 때문에 사용자에게 안 보이고 있던 상태라,</li></ul>
 <p>이 단계는 <strong>번들 크기 절감</strong> + 신규 사용자가 받는 빌드의 정합성 확보 목적이다.</p>
-<ul><li>quiz JSON/export도 current active events 기준이라, 삭제 후 <code>story_index</code>가 당겨져도</li></ul>
-<p>옛 <code>era_xxx_nNNN.json</code>이 다른 이야기의 퀴즈로 재사용되지 않는다.</p>
+<ul><li><code>quiz_questions</code>도 current active events JSON 안에 함께 들어 있으므로, 삭제 후</li></ul>
+<p><code>story_index</code>가 당겨져도 옛 번호의 퀴즈가 다른 이야기로 재사용되지 않는다.</p>
 <h3 id="19-3-비활성화된-캐릭터의-흔적">19.3 비활성화된 캐릭터의 흔적</h3>
 <ul><li><code>events.character_codes</code> 에는 inactive 코드가 그대로 남는다 (배열 컬럼이라</li></ul>
 <p>무결성 검증 없음). <code>character_eras</code> view 가 <code>p.is_active = true</code> 로 join 하기 때문에 그 캐릭터는 era 목록에서 자동 제외 → 시각적으로 영향 없음.</p>

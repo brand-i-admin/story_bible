@@ -58,7 +58,7 @@
 <p>보조 문서:</p>
 <ul><li><a href="../../TESTING.md">../TESTING.md</a> — 저장소 전체 테스트 전략.</li></ul>
 <h3 id="부록-참고">부록/참고</h3>
-<ul><li><a href="workflow-guide.html">WORKFLOW_GUIDE.md</a> — Codex 작업 규칙과 웹 제안 기능의 긴 구조 참고. 현재 운영 경로는 <code>develop-flow.md</code>와 <code>CONTENT_UPDATE.md</code>가 우선이다.</li><li><a href="story-guide.html">story_guide.md</a> — 현재 <code>assets/200_stories/*.json</code> 기준 전체 사건 카탈로그. <code>make build-guides</code>가 생성한다.</li></ul>
+<ul><li><a href="workflow-guide.html">WORKFLOW_GUIDE.md</a> — Codex 작업 규칙과 웹 제안 기능의 긴 구조 참고. 현재 운영 경로는 <code>develop-flow.md</code>와 <code>CONTENT_UPDATE.md</code>가 우선이다.</li><li><a href="story-guide.html">story_guide.md</a> — 현재 <code>assets/events/*.json</code> 기준 전체 사건 카탈로그. <code>make build-guides</code>가 생성한다.</li></ul>
 <h2 id="1-빠른-선택">1. 빠른 선택</h2>
 <div class="table-wrap"><table>
 <thead><tr>
@@ -124,7 +124,7 @@
 <p>HTML과 <code>story_guide.md</code>는 아래 명령으로 다시 생성한다.</p>
 <pre><code class="language-bash">make build-guides</code></pre>
 <h2 id="4-최신성-점검-기준">4. 최신성 점검 기준</h2>
-<ul><li>명령은 <code>Makefile</code>, <code>scripts/</code>, <code>.pre-commit-config.yaml</code>, <code>.github/workflows/flutter_ci.yml</code>과 맞춘다.</li><li>로컬 환경 파일 설명은 <code>.gitignore</code>, <code>*.example</code>, <code>scripts/common.sh</code>, <code>Makefile</code>의 env 로딩 방식과 맞춘다.</li><li>DB/Storage/RPC 설명은 <code>db_init.sql</code>, <code>supabase/functions/</code>, <code>lib/data/</code>와 맞춘다.</li><li>콘텐츠 수와 제목은 <code>assets/200_stories/*.json</code>을 기준으로 한다.</li><li>테스트 파일과 테스트 수는 <code>test/</code>와 <code>tools/**/test_*.py</code>를 기준으로 한다.</li></ul>
+<ul><li>명령은 <code>Makefile</code>, <code>scripts/</code>, <code>.pre-commit-config.yaml</code>, <code>.github/workflows/flutter_ci.yml</code>과 맞춘다.</li><li>로컬 환경 파일 설명은 <code>.gitignore</code>, <code>*.example</code>, <code>scripts/common.sh</code>, <code>Makefile</code>의 env 로딩 방식과 맞춘다.</li><li>DB/Storage/RPC 설명은 <code>db_init.sql</code>, <code>supabase/functions/</code>, <code>lib/data/</code>와 맞춘다.</li><li>콘텐츠 수와 제목은 <code>assets/events/*.json</code>을 기준으로 한다.</li><li>테스트 파일과 테스트 수는 <code>test/</code>와 <code>tools/**/test_*.py</code>를 기준으로 한다.</li></ul>
           <a class="top-link" href="#top">맨 위로</a>
         </article>
       </div>

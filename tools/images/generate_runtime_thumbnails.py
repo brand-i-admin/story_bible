@@ -34,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help=(
             "Directory containing story JSON files. Used to map long Korean "
             "story titles to short stable thumbnail asset directories."
@@ -66,7 +66,8 @@ def parse_args() -> argparse.Namespace:
         "--no-prune-orphans",
         action="store_true",
         help=(
-            "기본 동작은 source 에 없는 thumbnail 을 자동 삭제한다. "
+            "기본 동작은 story thumbnail 디렉토리를 clean rebuild 하고 "
+            "avatar orphan thumbnail 을 삭제한다. "
             "이 플래그를 주면 정리 단계를 스킵한다."
         ),
     )
@@ -217,6 +218,25 @@ def prune_orphan_dirs(expected_dirs: set[Path], output_root: Path) -> list[Path]
     return removed
 
 
+def clean_story_thumbnail_dirs(output_root: Path) -> list[Path]:
+    """Remove generated story thumbnail directories before rebuilding them.
+
+    Story thumbnail directories are derived from `era + story_index`. If a new
+    story is inserted in the middle, the same directory name can point at a
+    different story after reindexing. A clean rebuild prevents stale thumbnails
+    from surviving in a reused short directory.
+    """
+    if not output_root.exists():
+        return []
+    removed: list[Path] = []
+    for child in sorted(output_root.iterdir()):
+        if not child.is_dir():
+            continue
+        shutil.rmtree(child)
+        removed.append(child)
+    return removed
+
+
 def run_sips(command: list[str]) -> None:
     subprocess.run(
         command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
@@ -339,7 +359,7 @@ def filter_story_files_to_indexed_dirs(
 
     `assets/story_images/` is a writable staging area, so deleted stories can
     leave old source folders behind. The runtime thumbnail index is driven by
-    `assets/200_stories/*.json`; files outside that index must not be rebuilt
+    `assets/events/*.json`; files outside that index must not be rebuilt
     into the app bundle.
     """
     indexed: list[Path] = []
@@ -428,6 +448,13 @@ def main() -> int:
         return 2
 
     story_output.mkdir(parents=True, exist_ok=True)
+    if not args.no_prune_orphans:
+        removed_story_dirs = clean_story_thumbnail_dirs(story_output)
+        if removed_story_dirs:
+            print(
+                "[CLEAN] removed story thumb dirs before rebuild: "
+                f"{len(removed_story_dirs)}"
+            )
     (story_output / "index.json").write_text(
         json.dumps(story_index_payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -452,15 +479,6 @@ def main() -> int:
     avatar_files = sorted(avatar_source.glob("*.png"))
 
     if not args.no_prune_orphans:
-        expected_story_thumbs = {
-            relative_story_dest(story_source, story_output, src, source_dir_to_short)
-            for src in story_files
-        }
-        prune_orphan_thumbs(expected_story_thumbs, story_output, "*.jpg")
-        prune_orphan_dirs(
-            {path.parent for path in expected_story_thumbs},
-            story_output,
-        )
         expected_avatar_thumbs = {
             relative_avatar_dest(avatar_source, avatar_output, src)
             for src in avatar_files

@@ -1,11 +1,11 @@
 # 이야기 가이드 (Story Guide)
 
-> 현재 `assets/200_stories/*.json` 기준으로 자동 생성한 검수용 카탈로그다.
+> 현재 `assets/events/*.json` 기준으로 자동 생성한 검수용 카탈로그다.
 > 사건 제목, 시대, 등장 인물, 위치 매핑, 성경 본문, 장면 구성이 UI와 맞는지 확인할 때 쓴다.
 
 **총 사건 수**: 310개  ·  **시대 수**: 11개
 
-> 자동 생성 소스: `assets/200_stories/*.json`, `assets/landmarks/event_region_mapping.json`, `tools/seed/character_meta.json`.
+> 자동 생성 소스: `assets/events/*.json`, `assets/landmarks/landmarks.json`, `tools/seed/character_meta.json`.
 > 데이터 변경 후 `make build-guides`를 실행해 이 문서와 HTML 가이드를 함께 갱신한다.
 
 > 참고: `era_nt_consummation` 9개 사건은 현재 앱에서 숨김 era로 취급된다.
@@ -238,7 +238,7 @@
 - **구간**: 아브라함과 이삭의 약속 (`patriarch_abraham_isaac_promise`)
 - **인물**: 아브라함, 하나님, 사라, 롯
 - **장소**: 하란 (36.8589, 39.0314)
-- **랜드마크 매핑**: `lm_pat_haran` / `rgn_mesopotamia`
+- **랜드마크 매핑**: `lm_pat_haran` / `rgn_aram_naharaim`
 - **연대**: B.C. 2100경 · `approx`
 - **성경**: 창 12:1~12:9
 - **요약**: 하나님이 아브라함을 부르시고 약속의 길을 여신다.
@@ -448,7 +448,7 @@
 - **구간**: 아브라함과 이삭의 약속 (`patriarch_abraham_isaac_promise`)
 - **인물**: 이삭, 리브가
 - **장소**: 하란 주변(전승) (36.8589, 39.0314)
-- **랜드마크 매핑**: `lm_pat_haran` / `rgn_mesopotamia`
+- **랜드마크 매핑**: `lm_pat_haran` / `rgn_aram_naharaim`
 - **연대**: B.C. 2026경 · `approx`
 - **성경**: 창 24:1~24:67
 - **요약**: 기도와 만남을 통해 리브가가 이삭의 아내로 선택된다.
@@ -518,7 +518,7 @@
 - **구간**: 야곱: 이스라엘이 되다 (`patriarch_jacob_israel`)
 - **인물**: 야곱, 라반, 레아, 라헬
 - **장소**: 하란(전승) (36.8589, 39.0314)
-- **랜드마크 매핑**: `lm_pat_haran` / `rgn_mesopotamia`
+- **랜드마크 매핑**: `lm_pat_haran` / `rgn_aram_naharaim`
 - **연대**: B.C. 1984 ~ B.C. 1977경 · `approx`
 - **성경**: 창 29:1~29:30
 - **요약**: 야곱은 라헬을 사랑하지만 속임수로 레아와도 결혼하게 된다.
@@ -536,7 +536,7 @@
 - **구간**: 야곱: 이스라엘이 되다 (`patriarch_jacob_israel`)
 - **인물**: 야곱, 레아, 라헬, 요셉
 - **장소**: 하란(전승) (36.8589, 39.0314)
-- **랜드마크 매핑**: `lm_pat_haran` / `rgn_mesopotamia`
+- **랜드마크 매핑**: `lm_pat_haran` / `rgn_aram_naharaim`
 - **연대**: B.C. 1977 ~ B.C. 1965경 · `approx`
 - **성경**: 창 29:31~30:24
 - **요약**: 경쟁과 상처 속에서도 열두 지파의 뿌리가 형성된다.
@@ -554,7 +554,7 @@
 - **구간**: 야곱: 이스라엘이 되다 (`patriarch_jacob_israel`)
 - **인물**: 야곱, 라반, 레아, 라헬
 - **장소**: 하란(전승) (36.8589, 39.0314)
-- **랜드마크 매핑**: `lm_pat_haran` / `rgn_mesopotamia`
+- **랜드마크 매핑**: `lm_pat_haran` / `rgn_aram_naharaim`
 - **연대**: B.C. 1965 ~ B.C. 1961경 · `approx`
 - **성경**: 창 30:25~31:16
 - **요약**: 야곱은 라반의 집에서 번성하고 라반과 갈등이 깊어진다.
@@ -843,7 +843,7 @@
 - **구간**: 애굽의 압제와 홍해 구원 (`exodus_egypt_red_sea`)
 - **인물**: 모세
 - **장소**: 애굽 → 미디안(전승) (29.9, 31.25)
-- **랜드마크 매핑**: `lm_exo_midian_desert` / `rgn_sinai_peninsula`
+- **랜드마크 매핑**: `lm_exo_midian_desert` / `rgn_egypt`
 - **연대**: B.C. 1406경 · `approx`
 - **성경**: 출 2:11~2:25
 - **요약**: 모세는 억압을 보고 분노하지만, 결국 광야로 도망쳐 새 삶을 시작한다.
@@ -930,7 +930,7 @@
 - **구간**: 애굽의 압제와 홍해 구원 (`exodus_egypt_red_sea`)
 - **인물**: 하나님, 아론, 모세, 바로
 - **장소**: 애굽 → 광야(전승) (30.8, 31.85)
-- **랜드마크 매핑**: `lm_exo_unknown` / `rgn_egypt`
+- **랜드마크 매핑**: `lm_exo_unknown` / `rgn_red_sea`
 - **연대**: B.C. 1446경 · `approx`
 - **성경**: 출 12:29~13:22
 - **요약**: 마침내 바로가 떠나라 말하고, 이스라엘은 급히 길을 나선다.
@@ -1415,7 +1415,7 @@
 - **구간**: 사사들의 구원과 반복되는 위기 (`judges_deliverers_cycles`)
 - **인물**: 기드온, 하나님
 - **장소**: 하롯 샘/모레산 앞 골짜기(전승) (32.55, 35.35)
-- **랜드마크 매핑**: `lm_jud_harod_spring` / `rgn_galilee`
+- **랜드마크 매핑**: `lm_jud_harod_spring` / `rgn_armageddon`
 - **연대**: B.C. 1160경 · `approx`
 - **성경**: 삿 6:34~7:25
 - **요약**: 하나님은 기드온에게 표징을 주시고, 삼백 명으로 미디안을 이기게 하신다.
@@ -2409,7 +2409,7 @@
 - **구간**: 엘리야 시대: 아합 집과 참 말씀 (`divided_elijah_ahab_word`)
 - **인물**: 아합, 여호사밧, 아하시야(북이스라엘)
 - **장소**: 길르앗 라못/사마리아(전승) (32.55, 36.0)
-- **랜드마크 매핑**: `lm_div_ramoth_gilead` / `rgn_div_north_israel`
+- **랜드마크 매핑**: `lm_div_ramoth_gilead` / `rgn_decapolis`
 - **연대**: B.C. 853경 · `approx`
 - **성경**: 왕상 22:29~22:40, 왕상 22:51~22:53
 - **요약**: 아합은 변장하고 전쟁에 나가지만 우연히 날아온 화살에 맞고, 그의 아들 아하시야는 악한 길을 이어 간다.
@@ -2570,7 +2570,7 @@
 - **구간**: 엘리사와 예후: 표징과 심판 (`divided_elisha_jehu_judgment`)
 - **인물**: 아하시야(남유다), 요람(북이스라엘)
 - **장소**: 예루살렘 → 길르앗 라못 → 이스르엘(전승) (32.55, 36.0)
-- **랜드마크 매핑**: `lm_div_ramoth_jezreel` / `rgn_div_north_israel`
+- **랜드마크 매핑**: `lm_div_ramoth_jezreel` / `rgn_decapolis`
 - **연대**: B.C. 841경 · `approx`
 - **성경**: 왕하 8:25~8:29
 - **요약**: 유다의 아하시야는 아합 집의 길을 따라 북이스라엘 요람과 함께 전쟁에 나아가고, 요람은 이스르엘에서 상처를 치료한다.

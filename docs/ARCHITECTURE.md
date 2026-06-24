@@ -254,7 +254,7 @@ stories JSON (소스 — 각 항목에 story_index 직접 박힘)
   │     ├→ generate_avatars_vertex.py → assets/avatars/ (기존 png 보존)
   │     │     └→ generate_runtime_thumbnails.py → assets/avatars_thumbs/
   │     ├→ build_characters_seed_sql.py → characters_seed.sql (is_active 토글 보존 UPSERT)
-  │     └→ build_200_stories_seed_sql.py → 200_stories_seed.sql (events 한 테이블)
+  │     └→ build_events_seed_sql.py → events_seed.sql (events 한 테이블)
   ├→ generate_event_story_images_vertex.py → assets/story_images/
   │     └→ generate_runtime_thumbnails.py → assets/story_images_thumbs/
   └→ build_krv_seed_sql.py → krv_bible_verses.sql (독립)

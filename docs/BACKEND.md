@@ -9,10 +9,10 @@
 ```
 db_init.sql                            # 스키마 정의 — 단일 진실 소스
 supabase/
-├── 200_stories/                       # 생성된 시드 SQL
-│   ├── 200_stories_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
+├── events/                       # 생성된 시드 SQL
+│   ├── events_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
 │   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
-│   └── 200_stories_report.json
+│   └── events_report.json
 └── seeds/
     └── krv_bible_verses*.sql          # KRV 성경 구절 시드
 
@@ -45,7 +45,7 @@ is_active boolean DEFAULT false   -- 어드민이 노출 여부 결정
 - 빌더는 `character_meta.json`의 `is_active_default` 값(등장 2회 이상이면 true)을
   따라 초기값을 결정한다. 어드민이 토글한 `is_active`는 시드 재실행 시에도
   보존된다 (`on conflict ... do update`에서 `is_active` 제외).
-- 단 `description`은 `coalesce(excluded.description, persons.description)`로 UPSERT되고 excluded가 항상 non-null이므로 **시드에 포함된 인물은 매번 새 description으로 덮어써진다**. 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 description이 엉뚱한 "대표 이야기"로 망가지지 않는다 — 상세 절차는 [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로).
+- 단 `description`은 `coalesce(excluded.description, persons.description)`로 UPSERT되고 excluded가 항상 non-null이므로 **시드에 포함된 인물은 매번 새 description으로 덮어써진다**. 로컬 `assets/events/`가 DB와 동기화된 상태여야 description이 엉뚱한 "대표 이야기"로 망가지지 않는다 — 상세 절차는 [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로).
 
 #### `events` — 성경 사건 (table)
 ```sql
@@ -251,7 +251,7 @@ era_codes text[] DEFAULT '{}',
 related_event_codes text[] DEFAULT '{}',
 is_active boolean DEFAULT true
 ```
-- **v2 위치 모델 (2026-05-04)**: `events.lat/lng/place_name` 직접 좌표 → `events.landmark_id` FK 로 전환. 시드: `assets/landmarks/landmarks_v2_draft.json` → `tools/seed/build_landmarks_v2_seed_sql.py` → `supabase/200_stories/landmarks_v2_seed.sql`.
+- **v2 위치 모델 (2026-05-04)**: `events.lat/lng/place_name` 직접 좌표 → `events.landmark_id` FK 로 전환. 시드: `assets/landmarks/landmarks_v2_draft.json` → `tools/seed/build_landmarks_v2_seed_sql.py` → `supabase/events/landmarks_v2_seed.sql`.
 - **3 종**:
   - `region`: 폴리곤으로 영역 표시. 사건 발생 가능 영역을 빈틈없이 덮음. parent 없음.
   - `anchor`: region 의 대표 점, 자주 사건이 일어나는 핵심 위치 (예: 예루살렘, 시내산). parent = region.
@@ -592,8 +592,13 @@ Storage 버킷은 `db_init.sql` 에 선언된다. 앱 런타임/public 자산과
   - `_manifests/story_images_manifest.json`
 - **접근**: public read 없음. 앱 런타임은 사용하지 않고 service_role 운영 도구
   `sync_story_image_sources.py`만 pull/push한다.
-- **운영**: `make ensure-story-image-sources`가 missing/changed 원본을 내려받고,
-  `make upload-story-image-sources`가 신규/변경 원본과 manifest를 업로드한다.
+- **운영**: `make ensure-story-image-sources`가 manifest 기준 missing/changed 원본을
+  내려받는다. `make upload-story-image-sources`는 current active story 원본 중
+  신규/변경 PNG를 upsert하고, 이전 manifest에만 남은 stale object를 삭제한 뒤
+  active manifest를 업로드한다.
+- **삭제 범위**: stale 삭제는 bucket listing 전체가 아니라 이전
+  `_manifests/story_images_manifest.json` entries와 current active entries의 차이만
+  대상으로 한다. manifest에 없는 수동 object는 건드리지 않는다.
 - **db-init 보존**: `db_init.sql`에는 bucket 정의가 있지만
   `tools/supabase/purge_owned_buckets.py`의 purge 대상이 아니다. 따라서
   `make db-init`이 `characters`, `proposal-scenes`, `proposal-characters`를 비워도
@@ -668,7 +673,7 @@ tools/supabase/check_edge_functions.sh
 |------|------|----------|----------|
 | `db_init.sql` | 스키마 **단일 진실 소스** (최종 desired schema) | dev reset / 신규 bootstrap | `make db-init ENV=dev` |
 | `supabase/patches/*.sql` | 운영 DB 를 보존하며 schema/RLS/RPC/cron 변경 | dev/real patch | `make apply-patch ENV=<env> PATCH=<file>` |
-| `supabase/seeds/*.sql`, `supabase/200_stories/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | dev/real seed 적용 | `make apply-seeds ENV=<env>` |
+| `supabase/seeds/*.sql`, `supabase/events/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | dev/real seed 적용 | `make apply-seeds ENV=<env>` |
 
 Makefile 운영 타겟의 기본값은 `ENV=dev`다. real DB/Storage에 적용할 때만
 명시적으로 `ENV=real`을 붙인다 (`ENV=prod`도 real alias로 동작한다).

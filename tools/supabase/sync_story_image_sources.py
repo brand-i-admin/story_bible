@@ -4,7 +4,9 @@
 The app bundles `assets/story_images_thumbs/`, but `make thumbnails` needs the
 large original PNGs under `assets/story_images/`. This tool treats that local
 directory as a cache and `story-image-sources` as the release-only source of
-truth.
+truth. Push uploads new/changed active PNGs, publishes a current active
+manifest, and deletes objects that existed in the previous manifest but no
+longer exist in the active manifest.
 
 Usage:
     python3 tools/supabase/sync_story_image_sources.py pull --env prod
@@ -46,7 +48,7 @@ from generate_runtime_thumbnails import load_story_thumb_index  # noqa: E402
 DEFAULT_BUCKET = "story-image-sources"
 DEFAULT_MANIFEST_PATH = "_manifests/story_images_manifest.json"
 DEFAULT_OBJECT_PREFIX = "story_images"
-DEFAULT_STORIES_DIR = REPO_ROOT / "assets" / "200_stories"
+DEFAULT_STORIES_DIR = REPO_ROOT / "assets" / "events"
 DEFAULT_SOURCE_DIR = REPO_ROOT / "assets" / "story_images"
 RETRYABLE_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 
@@ -76,6 +78,7 @@ class SourceEntry:
 class PushPlan:
     upload: list[SourceEntry]
     skip: list[SourceEntry]
+    delete_stale: list[SourceEntry]
 
 
 @dataclass(frozen=True)
@@ -232,6 +235,7 @@ def plan_push(
 ) -> PushPlan:
     upload: list[SourceEntry] = []
     skip: list[SourceEntry] = []
+    local_by_path = {entry.object_path: entry for entry in local_entries}
     for entry in local_entries:
         remote = remote_entries.get(entry.object_path)
         if (
@@ -242,7 +246,12 @@ def plan_push(
             skip.append(entry)
         else:
             upload.append(entry)
-    return PushPlan(upload=upload, skip=skip)
+    delete_stale = [
+        entry
+        for object_path, entry in sorted(remote_entries.items())
+        if object_path not in local_by_path
+    ]
+    return PushPlan(upload=upload, skip=skip, delete_stale=delete_stale)
 
 
 def plan_pull(
@@ -513,6 +522,39 @@ def upload_object(
         )
 
 
+def delete_object(
+    *,
+    session: requests.Session,
+    base_url: str,
+    bucket: str,
+    object_path: str,
+    timeout_sec: int,
+    retry_attempts: int,
+    retry_wait_sec: float,
+) -> None:
+    encoded_path = quote(object_path, safe="/")
+    response = request_with_retries(
+        session,
+        "DELETE",
+        f"{base_url.rstrip('/')}/storage/v1/object/{bucket}/{encoded_path}",
+        timeout_sec=timeout_sec,
+        retry_attempts=retry_attempts,
+        retry_wait_sec=retry_wait_sec,
+    )
+    if response.status_code in (200, 204, 404):
+        return
+    if response.status_code == 400 and (
+        is_not_found_body(response, "object not found")
+        or is_not_found_body(response, "bucket not found")
+    ):
+        return
+    if not response.ok:
+        raise RuntimeError(
+            f"delete failed for {bucket}/{object_path}: "
+            f"{response.status_code} {response.text[:200]}"
+        )
+
+
 def write_downloaded_entry(
     *,
     entry: SourceEntry,
@@ -677,6 +719,7 @@ def command_push(args: argparse.Namespace) -> int:
     plan = plan_push(local_entries=local_entries, remote_entries=remote_entries)
     print(
         f"Push plan: upload={len(plan.upload)}, skip={len(plan.skip)}, "
+        f"delete_stale={len(plan.delete_stale)}, "
         f"manifest_entries={len(local_entries)}"
     )
 
@@ -699,6 +742,23 @@ def command_push(args: argparse.Namespace) -> int:
             data=src.read_bytes(),
             content_type="image/png",
             dry_run=False,
+            timeout_sec=args.timeout_sec,
+            retry_attempts=args.retry_attempts,
+            retry_wait_sec=args.retry_wait_sec,
+        )
+
+    for entry in plan.delete_stale:
+        if args.dry_run:
+            print(f"  [dry-run] delete stale {args.bucket}/{entry.object_path}")
+            continue
+        print(f"  [delete stale] {entry.object_path}")
+        if session is None:
+            raise RuntimeError("session unexpectedly missing")
+        delete_object(
+            session=session,
+            base_url=args.base_url,
+            bucket=args.bucket,
+            object_path=entry.object_path,
             timeout_sec=args.timeout_sec,
             retry_attempts=args.retry_attempts,
             retry_wait_sec=args.retry_wait_sec,

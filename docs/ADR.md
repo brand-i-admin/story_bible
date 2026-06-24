@@ -351,8 +351,8 @@
   3. 같은 위치 다른 시대 이름 처리(alias_group)로 시대 멀티 선택 시에도 같은 점에 라벨을 합쳐 표시.
 - **마이그레이션**:
   - `supabase/migrations/20260504_landmarks_v2.sql` (스키마 + landmark_id 컬럼)
-  - `supabase/200_stories/landmarks_v2_seed.sql` (31 region + 66 anchor + 17 minor + 4 alias_group)
-  - `supabase/200_stories/event_landmark_update.sql` (168 events 의 landmark_id 채움)
+  - `supabase/events/landmarks_v2_seed.sql` (31 region + 66 anchor + 17 minor + 4 alias_group)
+  - `supabase/events/event_landmark_update.sql` (168 events 의 landmark_id 채움)
   - `supabase/migrations/20260504_landmarks_v2_finalize.sql` (NOT NULL + RPC 시그니처 변경 + lat/lng/place_name DROP + events_ordered view 재정의)
 - **RPC 시그니처 변경 4건**:
   - `insert_event_at_position`: `p_place_name/p_lat/p_lng` → `p_landmark_id uuid`
@@ -373,7 +373,7 @@
   - 지역 모드 region 마커에 그곳에서 발생한 사건의 인물 아바타(첫 4명) 동그라미 stack 표시 (`_RegionMarkerWithAvatars`).
   - 사건 카드 탭 → 미리보기 다이얼로그 (제목/요약/장소·연도 메타 + 닫기). 풀 EventDetailPage 진입은 추후 v2 화면용 콜백 통합 후.
   - `RevisePositionDialog` 가 landmark ChoiceChip 그룹으로 region/anchor/minor 재선택 가능. `revise_proposal_position` RPC 의 `p_landmark_id` 파라미터로 전달.
-- **시드 빌더 변경**: `build_200_stories_seed_sql.py` 가 `assets/landmarks/event_landmark_mapping_draft.json` 을 읽어 events.landmark_id 를 INSERT 시 lookup. 별도 event_landmark_update.sql 적용 불필요.
+- **시드 빌더 변경**: `build_events_seed_sql.py` 가 `assets/landmarks/event_landmark_mapping_draft.json` 을 읽어 events.landmark_id 를 INSERT 시 lookup. 별도 event_landmark_update.sql 적용 불필요.
 - **Make pipeline**: `make seed-all` 이 `seed-landmarks-v2` 를 포함, `make apply-seeds` 가 v2 landmarks 를 stories 보다 먼저 적용.
 
 ## ADR-020: 프로필 "진행률 표시" 섹션 + 지도 region 정복(D안) (2026-05-08)
@@ -492,7 +492,7 @@
   1. `daily_quiz` 를 `choices jsonb` + `answer_index` 구조로 바꿔 2~6개 선택지를 허용한다.
   2. `slug text unique` 를 추가해 seed 재실행 시 같은 문항을 UPSERT 한다. pg_cron 이 매일 발급하는 복제 row 는 `slug=NULL` 로 두어 새 PK 를 유지한다.
   3. `quiz_type` 을 추가해 지도 문항 유형을 보존한다: `event_region_match`, `region_event_exclusion`, `character_region_exclusion`, `character_event_region_match`, `region_event_inclusion`.
-  4. `tools/seed/build_daily_quiz_seed_sql.py` 가 현재 `assets/200_stories`, `assets/landmarks/event_region_mapping.json`, `landmarks.json`, `character_meta.json`, `db_init.sql` 을 읽어 `supabase/seeds/daily_quiz.sql` 100문항과 `docs/DAILY_QUIZ_SEED_GUIDE.md` 를 생성한다.
+  4. `tools/seed/build_daily_quiz_seed_sql.py` 가 현재 `assets/events`, `assets/landmarks/landmarks.json`, `character_meta.json`, `db_init.sql` 을 읽어 `supabase/seeds/daily_quiz.sql` 100문항과 `docs/DAILY_QUIZ_SEED_GUIDE.md` 를 생성한다.
   5. Flutter `DailyQuiz` 모델과 `StoryRepository.fetchLatestDailyQuiz()` 는 `choices` 배열을 읽고, `DailyQuizSection` 은 배열 길이만큼 선택지를 렌더링한다.
 - **이유**:
   1. `수산 궁(페르시아)` 같은 값은 사용자가 선택하는 region 이 아니라 `페르시아` region 안의 세부 landmark 이므로 보기로 쓰면 앱 UX 와 어긋난다.

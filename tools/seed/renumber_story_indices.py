@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Renumber `story_index` per era across assets/200_stories/*.json.
+"""Renumber `story_index` per era across assets/events/*.json.
 
 Why: 사용자가 stories 를 추가/삭제하면서 era 안에서 story_index 가 듬성듬성
 비거나 None 으로 남는 경우가 있다. 이 스크립트는 era 마다 1..N 으로 다시
@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help="Directory containing the stories JSON files.",
     )
     parser.add_argument(

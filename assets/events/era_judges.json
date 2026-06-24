@@ -1,0 +1,1270 @@
+[
+  {
+    "title": "첫 사사들: 구원의 노래",
+    "era": "era_judges",
+    "characters": [
+      "othniel",
+      "ehud",
+      "shamgar",
+      "deborah"
+    ],
+    "landmark_code": "lm_jud_megiddo",
+    "place_name": "므깃도 물가/기손강(전승)",
+    "lat": 32.5847,
+    "lng": 35.1844,
+    "summary": "옷니엘은 메소보다미아의 압제를 물리치고, 에훗은 모압 왕 에글론에게서 이스라엘을 건지며, 삼갈은 소 모는 막대기로 블레셋을 막고, 드보라와 바락은 시스라의 군대를 이긴다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「첫 사사들」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "3:7",
+        "to": "5:31"
+      }
+    ],
+    "start_year": -1375,
+    "end_year": -1200,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "옷니엘이 메소보다미아 왕의 군대를 물리치는 장면",
+      "왼손잡이 에훗이 모압 왕 에글론 앞에서 숨겨 둔 짧은 칼로 왕을 찌르는 결정적 순간과, 아래쪽 작은 구역에는 80년 동안 평화롭게 지내는 이스라엘 마을이 함께 보인다. 에글론은 이름표 없는 왕으로만 보이고, 피와 상처와 시신은 직접 보이지 않는다",
+      "삼갈이 소 모는 막대기를 두 손으로 단단히 잡고 블레셋 무리를 막아서는 장면. 배경에는 많은 적들이 겁먹고 흩어지는 실루엣으로 보이며, 피와 시신은 보이지 않는다",
+      "드보라와 바락이 다볼산과 기손강 전투 뒤에 하나님을 찬양하는 노래를 부르는 장면. 한쪽에는 시스라의 철병거와 군대가 혼란 속에 물러나고, 다른 쪽에는 드보라와 바락이 백성과 함께 노래한다."
+    ],
+    "scene_captions": [
+      "옷니엘이 메소보다미아 왕의 군대를 물리치고 이스라엘에는 40년 평화가 찾아온다",
+      "왼손잡이 에훗이 모압 왕 에글론을 칼로 찌르고 이스라엘에는 80년 평화가 찾아온다",
+      "삼갈이 소 모는 막대기를 두 손으로 단단히 잡고 블레셋 무리를 막아서는 장면이다",
+      "드보라와 바락이 다볼산과 기손강 전투 뒤에 하나님을 찬양하고 이스라엘에는 40년 평화가 찾아온다"
+    ],
+    "scene_characters": [
+      [
+        "othniel"
+      ],
+      [
+        "ehud"
+      ],
+      [
+        "shamgar"
+      ],
+      [
+        "deborah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "옷니엘이 이긴 메소보다미아 왕은 누구였습니까?",
+        "choices": [
+          "구산 리사다임",
+          "에글론",
+          "시스라"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 3:10 — '여호와께서 메소보다미아 왕 구산 리사다임을 그 손에 붙이시매 옷니엘의 손이 구산 리사다임을 이기니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "이스라엘이 부르짖을 때 하나님은 어떤 일을 하셨습니까?",
+        "choices": [
+          "구원자를 세워 건지셨다",
+          "성읍을 모두 버려 두셨다",
+          "블레셋에게 왕을 세우셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 3:9 — '여호와께서 그들을 위하여 한 구원자를 세워 구원하게 하시니 ... 옷니엘이라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "드보라와 바락의 노래 뒤 그 땅은 얼마 동안 평안했습니까?",
+        "choices": [
+          "사십 년",
+          "팔 년",
+          "삼 년"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 5:31 — '그땅이 사십 년 동안 태평하였더라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Othniel as the same avatar character. Mesopotamian enemies are unnamed silhouettes. No readable labels.",
+      "Show Ehud as the same left-handed avatar character. This is a story scene, not an avatar: exactly one Ehud, one unnamed king, no duplicated Ehud. Hide gore and wounds.",
+      "Show Shamgar as the same avatar character with an oxgoad. Enemies are distant unnamed silhouettes, not detailed bodies. No gore.",
+      ""
+    ]
+  },
+  {
+    "title": "기드온의 소명: 밤에 무너진 우상",
+    "era": "era_judges",
+    "characters": [
+      "gideon",
+      "god"
+    ],
+    "landmark_code": "lm_jud_ophrah",
+    "place_name": "오브라(전승)",
+    "lat": 32.62,
+    "lng": 35.25,
+    "summary": "기드온은 두려움 속에서 부르심을 받고, 표징과 순종을 통해 우상을 무너뜨린다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「기드온의 소명」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "6:11",
+        "to": "6:27"
+      }
+    ],
+    "start_year": -1160,
+    "end_year": -1160,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "기드온이 미디안 사람들에게 들키지 않으려고 포도주 짜는 큰 틀 안에서 몰래 밀을 타작한다. 주변을 살피는 눈치 보는 표정, 낮은 자세, 숨어 있는 긴장감이 보인다",
+      "기드온이 고기와 무교병을 바위 위에 놓고 국물을 쏟자, 바위에서 밝은 불이 솟아 고기와 빵을 태워 버린다. 기드온은 뒤로 물러나 놀라고, 하나님의 임재는 따뜻한 빛으로만 표현된다",
+      "깊은 밤, 기드온이 10명의 종들과 함께 바알 제단과 아세라 목상을 파괴한다. 달빛 아래 무너지는 우상이 보인다",
+      "밤에 기드온과 10명의 종들이 무너뜨린 아세라 나무를 땔감으로 삼아 제단 위에서 수소 번제를 드린다."
+    ],
+    "scene_captions": [
+      "기드온이 미디안 사람들에게 들키지 않으려고 포도주 짜는 큰 틀 안에서 몰래 밀을 타작한다",
+      "기드온은 두려움 속에서 하나님의 표징을 받는다",
+      "깊은 밤, 기드온이 10명의 종들과 함께 바알 제단과 아세라 목상을 파괴한다",
+      "밤에 기드온과 10명의 종들이 무너뜨린 아세라 나무를 땔감으로 삼아 제단 위에서 수소 번제를 드린다"
+    ],
+    "scene_characters": [
+      [
+        "gideon"
+      ],
+      [
+        "god",
+        "gideon"
+      ],
+      [
+        "gideon"
+      ],
+      [
+        "gideon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "기드온이 미디안을 피해 밀을 타작하던 곳은 어디였습니까?",
+        "choices": [
+          "포도주 틀",
+          "성문 앞",
+          "다볼산 꼭대기"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 6:11 — '미디안 사람에게 알리지 아니하려 하여 밀을 포도주 틀에서 타작하더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "바위에서 나온 불은 무엇을 태웠습니까?",
+        "choices": [
+          "고기와 무교 전병",
+          "아세라 목상과 성문",
+          "나팔과 항아리"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 6:21 — '불이 반석에서 나와 고기와 무교 전병을 살랐고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 기드온에게 아세라 나무로 무엇을 하라고 하셨습니까?",
+        "choices": [
+          "수소를 번제로 드릴 때 땔감으로 쓰라고 하셨다",
+          "성문 앞에 다시 세우라고 하셨다",
+          "미디안 진에 숨기라고 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 6:26 — '네가 찍은 아세라 나무로 번제를 드릴지니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Gideon consistently as his avatar character. No readable labels.",
+      "Show God as non-anthropomorphic warm light only. The offering is bread and meat on a rock; no human angel body is required.",
+      "Show the Asherah object as a wooden pole/tree-like idol beside a Baal altar. No readable labels or idol text.",
+      "Show the bull offering symbolically through altar fire and smoke; no animal suffering, no gore, no readable labels."
+    ]
+  },
+  {
+    "title": "기드온 300: 양털과 횃불",
+    "era": "era_judges",
+    "characters": [
+      "gideon",
+      "god"
+    ],
+    "landmark_code": "lm_jud_harod_spring",
+    "place_name": "하롯 샘/모레산 앞 골짜기(전승)",
+    "lat": 32.55,
+    "lng": 35.35,
+    "summary": "하나님은 기드온에게 표징을 주시고, 삼백 명으로 미디안을 이기게 하신다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「기드온 300」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "6:34",
+        "to": "7:25"
+      }
+    ],
+    "start_year": -1160,
+    "end_year": -1160,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "두 구역으로 나뉜 장면: 왼쪽에는 기드온이 기도한 뒤 양털 위에만 이슬이 흠뻑 있고 주변 땅은 마른 모습, 오른쪽에는 보송하게 마른 양털 주변 땅에만 이슬이 맺힌 모습. 기드온은 두 표징 앞에서 놀라고 조심스럽게 기도한다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 하늘을 향한 빈 손과 보호받는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "기드온이 수많은 군사를 이끌고 미디안과 싸울 준비를 하자, 하나님의 밝은 빛에서 큰 글자 없는 말풍선이 나오고 그 안에는 많은 군사가 300명으로 줄어드는 상징 그림이 보인다. 기드온은 놀라지만 순종하려 한다",
+      "밤에 기드온과 300명의 군사가 미디안 장막 주위를 둘러싸고 나팔, 빈 항아리, 숨겨 둔 횃불을 든다. 항아리가 깨지며 횃불 빛이 터지고 미디안 군대는 혼란 속에 흩어진다. 글자는 보이지 않는다",
+      "기드온과 300명의 군사들이 밤 전투 뒤 미디안 군대를 물리치고 환호한다. 횃불과 나팔이 보이고, 적들은 멀리 도망치는 실루엣으로만 표현된다. 피와 시신은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "하나님은 기드온에게 양털과 이슬을 통해 표징을 주신다",
+      "하나님은 기드온에게 삼백 명으로 미디안을 이길 것임을 말씀하신다",
+      "밤에 기드온과 300명의 군사들은 적진의 막사에서 항아리와 횃불로 적군을 혼란케하고 승리한다",
+      "기드온과 300명의 군사들이 밤 전투 뒤 미디안 군대를 물리치고 환호한다"
+    ],
+    "scene_characters": [
+      [
+        "gideon"
+      ],
+      [
+        "gideon",
+        "god"
+      ],
+      [
+        "gideon"
+      ],
+      [
+        "gideon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "기드온이 처음 구한 양털 표징은 무엇이었습니까?",
+        "choices": [
+          "양털에만 이슬이 있고 땅은 마르는 것",
+          "양털이 불타고 땅은 젖는 것",
+          "양털이 돌로 변하는 것"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 6:37 — '이슬이 양털에만 있고 사면 땅은 마르면 ... 알겠나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하나님은 왜 기드온의 군사가 너무 많다고 하셨습니까?",
+        "choices": [
+          "이스라엘이 자기 힘으로 구원했다고 자랑할까 하셨다",
+          "미디안과 평화를 맺게 하려 하셨다",
+          "기드온을 왕으로 세우려 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 7:2 — '내 손이 나를 구원하였다 할까 함이니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "기드온이 삼백 명에게 나누어 준 것은 무엇이었습니까?",
+        "choices": [
+          "나팔과 빈 항아리와 횃불",
+          "방패와 긴 창과 왕관",
+          "양털과 물그릇과 돌판"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 7:16 — '각 손에 나팔과 빈 항아리를 들리고 항아리 안에는 횃불을 감추게 하고'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Use a clear split-panel composition for the two fleece signs. Show Gideon as the same avatar character. No readable labels.",
+      "Show God as non-anthropomorphic light. The speech bubble must be pictorial only, no readable text or numbers except the visual idea of a small selected group.",
+      "Show Gideon and many unnamed Israelite soldiers; Gideon should remain recognizable. No readable slogan text.",
+      "No gore, no bodies, no readable labels. Show victory through light, posture, and fleeing silhouettes."
+    ]
+  },
+  {
+    "title": "돌라와 야일: 짧게 기록된 평화",
+    "era": "era_judges",
+    "characters": [
+      "tola",
+      "jair"
+    ],
+    "landmark_code": "lm_jud_shamir",
+    "place_name": "사밀/길르앗(전승)",
+    "lat": 32.12,
+    "lng": 35.25,
+    "summary": "돌라는 이스라엘을 일으켜 세우고 사사로 다스리며, 야일은 길르앗에서 여러 성읍을 다스려 이스라엘의 질서를 이어 간다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「돌라와 야일」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "10:1",
+        "to": "10:5"
+      }
+    ],
+    "start_year": -1120,
+    "end_year": -1070,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "에브라임 산지 사밀에서 돌라가 이스라엘을 조용히 구원하고 다스리는 장면. 돌라는 지팡이를 들고 마을 사람들의 이야기를 듣고, 뒤쪽에는 평화로운 언덕 마을과 밭이 보인다",
+      "길르앗에서 야일이 여러 성읍을 평화롭게 다스리는 장면. 야일은 장로다운 모습으로 서 있고, 배경에는 젊은 나귀를 탄 아들들과 여러 작은 성읍들이 상징적으로 이어져 보인다. 과장된 군중이나 글자는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "에브라임 산지 사밀에서 돌라가 이스라엘을 조용히 구원하고 다스리는 장면이다",
+      "길르앗에서 야일이 여러 성읍을 평화롭게 다스리는 장면이다"
+    ],
+    "scene_characters": [
+      [
+        "tola"
+      ],
+      [
+        "jair"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "돌라는 어디에 거하며 이스라엘을 다스렸습니까?",
+        "choices": [
+          "에브라임 산지 사밀",
+          "블레셋 가사",
+          "모압 평지"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 10:1 — '그가 에브라임 산지 사밀에 거하여'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야일에게 있던 아들들과 성읍은 각각 몇이었습니까?",
+        "choices": [
+          "삼십",
+          "열둘",
+          "칠십"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 10:4 — '그에게 아들 삼십이 있어 ... 성읍 삼십을 두었었는데'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야일은 몇 해 동안 이스라엘의 사사가 되었습니까?",
+        "choices": [
+          "이십이 년",
+          "사십 년",
+          "팔십 년"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 10:3 — '이십이 년 동안 이스라엘의 사사가 되니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Tola as the same avatar character. No insect imagery, no readable labels.",
+      "Show Jair as the same avatar character. His sons and towns are background symbols, not a crowded character lineup. No readable labels."
+    ]
+  },
+  {
+    "title": "입다의 서원: 승리와 눈물",
+    "era": "era_judges",
+    "characters": [
+      "jephthah",
+      "god"
+    ],
+    "landmark_code": "lm_jud_gilead_mizpah",
+    "place_name": "길르앗 미스바(전승)",
+    "lat": 32.2,
+    "lng": 35.7,
+    "summary": "입다는 이스라엘을 위해 싸워 승리하지만, 경솔한 서원은 깊은 슬픔을 남긴다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「입다의 서원」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "10:6",
+        "to": "12:7"
+      }
+    ],
+    "start_year": -1100,
+    "end_year": -1094,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "길르앗 장로들과 백성들이 입다를 찾아와 암몬 자손과 싸울 군대 지휘를 맡아 달라고 부탁한다. 입다는 거칠고 상처 입은 지도자처럼 서 있고, 장로들은 절박한 표정으로 손을 내민다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다",
+      "하나님의 영이 군복입고 결단적인 표정을 짓고 있는 입다에게 임하자 밝은 빛이 입다 위에 비치고, 입다는 하나님 앞에서 두 손을 들고 서원한다. 주변에는 길르앗 광야와 전쟁을 앞둔 긴장감이 보인다. 글자는 보이지 않는다",
+      "군복입은 입다가 이끄는 이스라엘 군대가 암몬 군대를 이기고 돌아오는 장면. 입다는 앞에 서서 기쁜 얼굴로 승리를 만끽하고, 적들은 멀리 흩어진다. 피와 시신은 보이지 않는다",
+      "군복입은 입다가 승리 후 집으로 돌아오자 그의 딸이 소고를 들고 춤추며 맞이하고, 입다는 옷을 붙잡고 무너질 듯 좌절해 운다. 딸은 이름 없는 젊은 여인으로 보이며, 번제나 죽음 장면은 전혀 보이지 않는다"
+    ],
+    "scene_captions": [
+      "길르앗 장로들과 백성들이 입다를 찾아와 암몬 자손과 싸울 군대 지휘를 맡아 달라고 부탁한다",
+      "밝은 빛이 입다 위에 비치고 입다는 서원한다",
+      "군복입은 입다가 이끄는 이스라엘 군대가 암몬 군대를 이기고 돌아온다",
+      "그의 딸이 소고를 들고 춤추며 맞이하여 입다는 슬퍼한다"
+    ],
+    "scene_characters": [
+      [
+        "jephthah"
+      ],
+      [
+        "god",
+        "jephthah"
+      ],
+      [
+        "jephthah"
+      ],
+      [
+        "jephthah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "길르앗 장로들은 입다에게 무엇을 맡아 달라고 했습니까?",
+        "choices": [
+          "암몬 자손과 싸울 장관이 되어 달라고 했다",
+          "성막 제사장이 되어 달라고 했다",
+          "블레셋 왕에게 공물을 바쳐 달라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 11:6 — '우리가 암몬 자손과 싸우려 하나니 당신은 와서 우리의 장관이 되라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "입다가 암몬 자손에게 나아가기 전 누구의 영이 그에게 임했습니까?",
+        "choices": [
+          "여호와의 신",
+          "모압 왕의 영",
+          "블레셋 신의 영"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 11:29 — '이에 여호와의 신이 입다에게 임하시니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "입다가 승리하고 집에 돌아왔을 때 누가 그를 맞이했습니까?",
+        "choices": [
+          "그의 딸이 소고를 잡고 춤추며 나왔다",
+          "에글론 왕이 칼을 들고 나왔다",
+          "드보라가 종려나무 아래 앉아 있었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 11:34 — '그 딸이 소고를 잡고 춤추며 나와서 영접하니'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Jephthah as the same avatar character. Elders are unnamed background figures. No readable labels.",
+      "Show God as non-anthropomorphic light, not a human figure. No readable text in the vow scene.",
+      "No gore, no bodies, no graphic violence. Show victory through fleeing silhouettes and relieved posture.",
+      "Do not show sacrifice, altar fire, death, or harm to the daughter. The emotion is Jephthah's grief after recognizing the vow."
+    ]
+  },
+  {
+    "title": "입산과 엘론과 압돈: 이어지는 사사들",
+    "era": "era_judges",
+    "characters": [
+      "ibzan",
+      "elon",
+      "abdon"
+    ],
+    "landmark_code": "lm_jud_bethlehem",
+    "place_name": "베들레헴/스불론/비라돈(전승)",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "입산은 베들레헴에서 넓은 가문을 세우고, 엘론은 스불론에서 이스라엘을 다스리며, 압돈은 에브라임 산지에서 뒤를 이어 사사 시대를 이어 간다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「입산과 엘론과 압돈」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "12:8",
+        "to": "12:15"
+      }
+    ],
+    "start_year": -1085,
+    "end_year": -1065,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "베들레헴의 입산이 30명의 딸과 아들을 두고 이스라엘을 평화롭게 다스리는 장면. 입산은 장로처럼 서 있고, 주변 가족들은 배경의 작은 무리로만 보인다. 결혼식 군중이나 글자는 보이지 않는다",
+      "스불론 사람 엘론이 산지 마을 앞에서 차분히 이스라엘을 재판하고 다스리는 장면. 엘론은 지팡이를 들고 조용한 권위를 보이며, 배경에는 스불론 지역의 언덕이 보인다",
+      "비라돈의 압돈이 아들들과 손자들이 탄 70마리의 나귀와 함께 서있는 모습"
+    ],
+    "scene_captions": [
+      "베들레헴의 입산이 30명의 딸과 아들을 두고 이스라엘을 평화롭게 다스리는 장면이다",
+      "스불론 사람 엘론이 산지 마을 앞에서 차분히 이스라엘을 재판하고 다스리는 장면이다",
+      "비라돈의 압돈이 아들들과 손자들이 탄 70마리의 나귀와 함께 서있다"
+    ],
+    "scene_characters": [
+      [
+        "ibzan"
+      ],
+      [
+        "elon"
+      ],
+      [
+        "abdon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "입산은 어느 성읍의 사람이었습니까?",
+        "choices": [
+          "베들레헴",
+          "여리고",
+          "가사"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 12:8 — '베들레헴 입산이 이스라엘의 사사이었더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "스불론 사람 엘론은 몇 해 동안 이스라엘을 다스렸습니까?",
+        "choices": [
+          "십 년",
+          "이십삼 년",
+          "사십 년"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 12:11 — '십 년 동안 이스라엘을 다스렸더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "압돈의 아들들과 손자들은 무엇을 탔다고 기록됩니까?",
+        "choices": [
+          "어린 나귀 칠십 필",
+          "철병거 구백 승",
+          "낙타 십이만 마리"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 12:14 — '아들과 손자 칠십 인이 있어 어린 나귀 칠십 필을 탔었더라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Ibzan as the same avatar character. Family members are secondary background figures only. No readable labels.",
+      "Show Elon as the same avatar character. Avoid any modern Elon/technology/business imagery. No readable labels.",
+      "Show Abdon as the same avatar character. Donkeys and descendants are background symbols, not a crowded lineup. No readable labels."
+    ]
+  },
+  {
+    "title": "삼손: 긴 머리와 마지막 부르짖음",
+    "era": "era_judges",
+    "characters": [
+      "samson",
+      "delilah",
+      "god"
+    ],
+    "landmark_code": "lm_jud_philistia_gaza",
+    "place_name": "블레셋 지역(가사/소렉, 전승)",
+    "lat": 31.5,
+    "lng": 34.46,
+    "summary": "삼손은 나실인의 부르심을 가볍게 여기다 무너지지만, 마지막 순간 하나님께 부르짖는다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「삼손」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삿",
+        "from": "16:1",
+        "to": "16:31"
+      }
+    ],
+    "start_year": -1080,
+    "end_year": -1060,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "judges_deliverers_cycles",
+    "unit_title": "사사들의 구원과 반복되는 위기",
+    "unit_order": 1,
+    "story_scenes": [
+      "긴 머리의 삼손이 들릴라에게 속아 힘의 비밀을 말한 뒤 잠든 장면. 들릴라 곁에서 블레셋 사람이 삼손의 긴 머리카락을 조심스럽게 자르고, 들릴라는 악한 표정으로 지켜본다. 피와 폭력 장면은 보이지 않는다",
+      "머리카락이 짧게 잘리고 눈에 천 보호대를 한 삼손이 블레셋 사람들에게 조롱받으며 다곤 신전 안 두 기둥 사이에 세워져 있다. 삼손은 약해진 모습이고, 군중은 멀리 흐릿한 실루엣으로만 보인다. 눈 부상은 직접 보이지 않는다",
+      "눈 보호대를 하고 머리카락이 조금 다시 자라기 시작한 삼손이 하나님께 마지막으로 부르짖으며 다곤 신전의 두 기둥을 밀고 있다. 신전이 무너지는 순간을 먼 거리에서 극적으로 보이되, 사람의 부상이나 시신은 직접 보이지 않는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너지는 성벽을 뒤로하고 죄에서 돌이켜 피하는 사람들이 보이는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "삼손이 들릴라에게 속아 힘의 비밀을 말한 뒤 잠들고, 머리가 잘린다",
+      "블레셋 사람들에게 눈을 뽑힌 삼손이 다곤 신전에서 기둥 가운데 서서 조롱을 받는다",
+      "삼손은 마지막 순간 하나님께 부르짖어 다곤 신전을 무너뜨린다"
+    ],
+    "scene_characters": [
+      [
+        "samson",
+        "delilah"
+      ],
+      [
+        "samson"
+      ],
+      [
+        "god",
+        "samson"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "삼손은 힘의 비밀을 결국 누구에게 털어놓았습니까?",
+        "choices": [
+          "들릴라",
+          "블레셋 방백들",
+          "다곤 제사장"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 16:17 — '삼손이 진심을 토하여 그에게 이르되'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "들릴라는 삼손의 비밀을 알게 된 뒤 그가 잠들었을 때 무엇이 밀리게 했습니까?",
+        "choices": [
+          "머리털 일곱 가닥",
+          "수염과 겉옷",
+          "손에 든 나팔"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 16:19 — '사람을 불러 그 머리털 일곱 가닥을 밀고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "삼손의 머리털은 밀린 뒤 어떻게 되기 시작했습니까?",
+        "choices": [
+          "다시 자라기 시작했다",
+          "영원히 자라지 않았다",
+          "바로 왕관으로 변했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삿 16:22 — '그의 머리털이 밀리운 후에 다시 자라기 시작하니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Samson with long hair before it is cut. Delilah should match her avatar. Hair cutting is visible but non-violent; no blood, no injury.",
+      "Deliberately alter Samson from his avatar: shaved or very short hair, cloth eye covering, weakened posture. No visible eye injury, no gore, no readable labels.",
+      "Samson remains blind with cloth eye covering; hair is still short but visibly regrowing. Show God as light, not a human figure. Collapse is dramatic but non-graphic."
+    ]
+  },
+  {
+    "title": "룻의 귀향: 따라가겠습니다",
+    "era": "era_judges",
+    "characters": [
+      "ruth",
+      "naomi"
+    ],
+    "landmark_code": "lm_jud_bethlehem",
+    "place_name": "모압 → 베들레헴",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "룻은 모든 것을 내려놓고 나오미를 따라 약속의 땅으로 돌아온다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「룻의 귀향」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "룻",
+        "from": "1:6",
+        "to": "1:22"
+      }
+    ],
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "judges_ruth_boaz",
+    "unit_title": "룻과 보아스의 기업 무름",
+    "unit_order": 2,
+    "story_scenes": [
+      "모압 땅에서 나오미가 남편과 두 아들을 잃은 뒤 검은 상복 차림으로 길에 서고, 룻과 오르바는 젊은 과부의 슬픈 얼굴로 곁에 선다",
+      "룻이 나오미의 손을 꼭 붙잡고 떠나지 않겠다는 결심을 보이며, 나오미는 늙고 지친 얼굴로 룻을 바라본다. 오르바는 눈물로 돌아서는 모습이 멀리 보인다",
+      "베들레헴 사람들이 돌아온 나오미와 룻을 놀라 바라보고, 나오미는 쓰라린 얼굴로 서 있으며 룻은 낯선 마을에서 조심스럽게 주변을 살핀다"
+    ],
+    "scene_captions": [
+      "모압 땅에서 나오미가 남편과 두 아들을 잃은 뒤 검은 상복 차림으로 길에 선다",
+      "룻이 나오미의 손을 꼭 붙잡고 떠나지 않겠다는 결심을 보인다",
+      "베들레헴 사람들이 빈털터리로 돌아온 나오미를 보며 놀란다"
+    ],
+    "scene_characters": [
+      [
+        "ruth",
+        "naomi"
+      ],
+      [
+        "ruth",
+        "naomi"
+      ],
+      [
+        "ruth",
+        "naomi"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "나오미와 룻이 돌아간 곳은 어느 나라였습니까?",
+        "choices": [
+          "이스라엘(유다)",
+          "에돔",
+          "아람"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 1:7 — '모압 지방에서 돌아오려 하여 ... 이스라엘 땅으로 향하여 길을 가더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "나오미는 두 며느리에게 여호와께서 어떻게 해 주시기를 바랐습니까?",
+        "choices": [
+          "그들을 선대하시기를 바랐다",
+          "모압을 벌하시기를 바랐다",
+          "베들레헴에 못 오게 하시기를 바랐다"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 1:8 — '나오미가 두 자부에게 이르되 너희는 각각 어미의 집으로 돌아가라 너희가 죽은 자와 나를 선대한 것같이 여호와께서 너희를 선대하시기를 원하며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "룻이 함께 가기로 굳게 결심하자 나오미는 어떻게 했습니까?",
+        "choices": [
+          "더 말리기를 그쳤다",
+          "룻을 억지로 돌려보냈다",
+          "혼자 몰래 떠났다"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 1:18 — '나오미가 룻의 자기와 함께 가기로 굳게 결심함을 보고 그에게 말하기를 그치니라'"
+      }
+    ]
+  },
+  {
+    "title": "보아스의 은혜: 이삭 줍는 자리",
+    "era": "era_judges",
+    "characters": [
+      "ruth",
+      "boaz",
+      "naomi"
+    ],
+    "landmark_code": "lm_jud_bethlehem",
+    "place_name": "베들레헴 들판",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "룻은 이삭을 줍다 보아스를 만나고, 보호와 은혜를 경험한다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「보아스의 은혜」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "룻",
+        "from": "2:1",
+        "to": "3:18"
+      }
+    ],
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "story_index": 9,
+    "unit_code": "judges_ruth_boaz",
+    "unit_title": "룻과 보아스의 기업 무름",
+    "unit_order": 2,
+    "story_scenes": [
+      "젊은 과부 룻이 보아스의 밭에서 허리를 굽혀 이삭을 줍고, 멀리서 보아스는 일꾼들에게 그녀를 해치지 말고 곡식 사이에서 줍게 하라고 온화하게 손짓한다",
+      "보아스가 룻에게 물과 식사 자리를 내어 주며 친절하게 말하고, 룻은 감사와 놀라움으로 고개를 숙인다. 주변 일꾼들은 존중하는 거리에서 바라본다. 보아스의 말풍선에는 룻이 나오미와 함께 먼길을 걸어온 모습이 보인다",
+      "늦은 밤 침대에서 룻이 보아스의 발치에 조심스럽게 앉아 기업 무를 책임을 요청하고, 보아스는 깨어나 놀라지만 절제되고 존중하는 얼굴로 겉옷 자락을 덮어 준다. 성적 장면은 없다",
+      "룻이 보리 여섯 되를 들고 나오미에게 돌아오고, 나오미는 희망이 되살아난 얼굴로 룻의 손을 잡는다"
+    ],
+    "scene_captions": [
+      "과부 룻이 보아스의 밭에서 허리를 굽혀 이삭을 줍고 보아스는 멀리서 허락한다",
+      "보아스가 룻에게 물과 식사 자리를 내어 주며 친절하게 말한다",
+      "늦은 밤 침대에서 룻이 보아스의 발치에 조심스럽게 앉아 기업 무를 책임을 요청한다",
+      "룻이 보리 여섯 되를 들고 나오미에게 돌아온다, 나오미는 희망이 되살아난 얼굴로 룻의 손을 잡는다"
+    ],
+    "scene_characters": [
+      [
+        "ruth",
+        "boaz"
+      ],
+      [
+        "ruth",
+        "naomi",
+        "boaz"
+      ],
+      [
+        "ruth",
+        "boaz"
+      ],
+      [
+        "ruth",
+        "naomi"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "보아스는 룻에게 밭에서 이삭을 줍도록 어떻게 배려하였습니까?",
+        "choices": [
+          "소년들에게 건드리지 말라 명하였다",
+          "일꾼들과 함께 급여를 주었다",
+          "자기 손으로 보리를 가져다 주었다"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 2:9 — '내가 그 소년들에게 명하여 너를 건드리지 말라 하였느니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "룻이 저녁까지 주워 떤 보리의 양은 얼마였습니까?",
+        "choices": [
+          "한 에바",
+          "한 오멜",
+          "한 호멜"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 2:17 — '룻이 밭에서 저녁까지 줍고 그 주운 것을 떠니 보리가 한 에바쯤 되는지라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "룻은 나오미에게 자신이 일한 밭 주인의 이름을 누구라고 말했습니까?",
+        "choices": [
+          "보아스라고 말했다",
+          "엘리멜렉이라고 말했다",
+          "오르바라고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 2:19 — '시모가 그에게 이르되 오늘 어디서 주웠느냐 어디서 일을 하였느냐 너를 돌아본 자에게 복이 있기 를 원하노라 룻이 누구에게서 일한 것을 시모에게 알게 하여 가로되 오늘 일하게 한 사람의 이름은 보아 스니이다'"
+      }
+    ]
+  },
+  {
+    "title": "기업 무를 자: 문 앞의 결정",
+    "era": "era_judges",
+    "characters": [
+      "boaz",
+      "ruth",
+      "naomi"
+    ],
+    "landmark_code": "lm_jud_bethlehem",
+    "place_name": "베들레헴 성문",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "보아스는 공적인 자리에서 룻을 맞아들이며 가문을 세운다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「기업 무를 자」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "룻",
+        "from": "4:1",
+        "to": "4:17"
+      }
+    ],
+    "start_year": -1100,
+    "end_year": -1100,
+    "time_precision": "approx",
+    "story_index": 10,
+    "unit_code": "judges_ruth_boaz",
+    "unit_title": "룻과 보아스의 기업 무름",
+    "unit_order": 2,
+    "story_scenes": [
+      "보아스가 베들레헴 성문에서 장로들을 불러 앉히고, 가까운 친족 남자(40대 부유한 차림새)는 밭과 룻의 책임을 두고 망설이는 얼굴로 듣는다",
+      "가까운 친족 남자(40대 부유한 차림새)가 샌들을 벗어 보아스에게 건네고, 장로들은 거래의 증인으로 엄숙히 바라본다. 글자나 문서는 보이지 않는다",
+      "보아스와 룻이 공동체 앞에서 결혼의 기쁨을 나누고, 룻은 모압 여인의 단정한 옷차림 위에 새 가족의 겉옷을 걸친다",
+      "나오미가 아기 오벳을 품에 안고 기쁨의 눈물을 흘리며, 룻과 보아스는 곁에서 감사한 얼굴로 바라본다"
+    ],
+    "scene_captions": [
+      "보아스가 베들레헴 성문에서 장로들을 불러 앉혀서 기업 무를 자를 이야기한다",
+      "가까운 친족 남자가 샌들을 벗어 보아스에게 건넨다",
+      "보아스와 룻이 공동체 앞에서 결혼의 기쁨을 나눈다",
+      "나오미가 아기 오벳을 품에 안고 기쁨의 눈물을 흘린다"
+    ],
+    "scene_characters": [
+      [
+        "boaz"
+      ],
+      [
+        "boaz"
+      ],
+      [
+        "boaz",
+        "ruth"
+      ],
+      [
+        "naomi",
+        "ruth",
+        "boaz"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "보아스는 성문에서 기업 무를 결정을 어떻게 공개하였습니까?",
+        "choices": [
+          "장로들과 모든 백성에게 자신이 산다고 선언하였다",
+          "제비를 뽑아 결정하였다",
+          "성전에서 제사를 드리고 선포하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 4:9 — '보아스가 장로들과 모든 백성에게 이르되 내가 엘리멜렉과 ... 모든 것을 산 일에 너희가 오늘날 증인이 되었고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "성문에 있던 사람들은 보아스에게 무엇을 축복했습니까?",
+        "choices": [
+          "베들레헴에서 이름이 높아지기를 축복했다",
+          "모압으로 다시 돌아가기를 축복했다",
+          "성전을 새로 짓기를 축복했다"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 4:11 — '성문에 있는 모든 백성과 장로들이 가로되 우리가 증인이 되노니 여호와께서 네 집에 들어가는 여 인으로 이스라엘 집을 세운 라헬, 레아 두 사람과 같게 하시고 너로 에브랏에서 유력하고 베들레헴에서 유명케 하시기를 원하며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "보아스와 룻이 낳은 아들의 이름은 무엇입니까?",
+        "choices": [
+          "오벧",
+          "이새",
+          "다윗"
+        ],
+        "answer_index": 0,
+        "explanation": "룻 4:17 — '그 이름을 오벧이라 하였는데 그는 다윗의 아비인 이새의 아비였더라'"
+      }
+    ]
+  },
+  {
+    "title": "사무엘의 탄생: 한나의 눈물",
+    "era": "era_judges",
+    "characters": [
+      "samuel",
+      "hannah",
+      "eli"
+    ],
+    "landmark_code": "lm_jud_shiloh",
+    "place_name": "실로",
+    "lat": 32.056,
+    "lng": 35.29,
+    "summary": "한나는 눈물의 기도로 사무엘을 얻고, 약속대로 하나님께 드린다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「사무엘의 탄생」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "1:1",
+        "to": "1:28"
+      }
+    ],
+    "start_year": -1105,
+    "end_year": -1105,
+    "time_precision": "approx",
+    "story_index": 11,
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
+    "unit_order": 3,
+    "story_scenes": [
+      "실로 성막 앞에서 젊은 성인 여성 한나가 아이를 얻지 못한 슬픔으로 눈물 흘리며 기도하고, 늙은 제사장 엘리는 의자에 앉아 그녀를 유심히 바라본다. 한나는 할머니처럼 보이면 안 되며, 제사장 엘리의 생각 풍선에는 한나가 술취했다고 오해하는 장면이 그림으로 담겨 있다",
+      "늙은 제사장 엘리가 한나의 기도를 오해했다가 그녀의 진심을 듣고 부드럽게 축복하며, 젊은 성인 한나는 근심이 풀린 얼굴로 고개를 든다. 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 훗날 한나가 아기를 안고 감사하는 모습이 담겨 있다",
+      "젊은 어머니 한나가 갓난 사무엘을 품에 안고 감사하며, 엘가나 가족은 실로 제사 후 기쁨과 경외로 아기를 바라본다. 한나는 노년 산모가 아니라 기도 응답을 받은 젊은 어머니로 보인다",
+      "어린 사무엘이 작은 세마포 에봇을 입고 실로 성막에서 늙은 제사장 엘리 곁에 서고, 한나는 젊은 어머니의 얼굴로 아들을 하나님께 드리는 눈물 어린 결심으로 손을 놓는다"
+    ],
+    "scene_captions": [
+      "한나가 울며 기도하고 제사장 엘리는 술취했다고 오해한다",
+      "제사장 엘리가 한나의 진심을 듣고 축복한다",
+      "어머니 한나가 갓난 사무엘을 품에 안고 감사한다",
+      "어린 사무엘이 작은 세마포 에봇을 입고 실로 성막에서 제사장 엘리에게로 간다"
+    ],
+    "scene_characters": [
+      [
+        "hannah",
+        "eli"
+      ],
+      [
+        "hannah",
+        "eli"
+      ],
+      [
+        "hannah",
+        "samuel"
+      ],
+      [
+        "hannah",
+        "eli",
+        "samuel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "한나의 남편 엘가나의 출신 지파는 어디입니까?",
+        "choices": [
+          "에브라임 지파",
+          "유다 지파",
+          "베냐민 지파"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 1:1 — '에브라임 산지 라마다임소빔에 에브라임 사람 엘가나라 하는 자가 있으니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "엘리는 성전에서 기도하던 한나를 보고 무엇이라고 오해해 말했습니까?",
+        "choices": [
+          "언제까지 취해 있겠느냐고 말했다",
+          "아들을 낳았다고 축하했다",
+          "제사장이 되라고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 1:14 — '엘리가 그에게 이르되 네가 언제까지 취하여 있겠느냐 포도주를 끊으라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "한나는 사무엘을 두고 여호와께서 자신의 기도에 어떻게 응답하셨다고 고백했습니까?",
+        "choices": [
+          "구하여 기도한 바를 허락하셨다고 고백했다",
+          "기도를 듣지 않으셨다고 고백했다",
+          "엘리에게 아이를 맡기지 말라 하셨다고 고백했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 1:27 — '이 아이를 위하여 내가 기도하였더니 여호와께서 나의 구하여 기도한 바를 허락하신지라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Hannah's age is not given in Scripture. Do not make her elderly: show her as a young adult married Israelite woman, around late twenties to early thirties, with no gray hair, no wrinkles, and no grandmother look. Eli is the elderly figure.",
+      "Hannah remains a young adult woman. Eli is elderly. The thought bubble must be pictorial only with no readable words.",
+      "Show Hannah as a young mother holding newborn Samuel, not as Sarah-like elderly mother and not as a grandmother.",
+      "Several years have passed, but Hannah should still look like a young mother, while Eli is clearly the elderly priest."
+    ]
+  },
+  {
+    "title": "어린 사무엘의 부르심: 말씀을 듣다",
+    "era": "era_judges",
+    "characters": [
+      "samuel",
+      "god",
+      "eli"
+    ],
+    "landmark_code": "lm_jud_shiloh",
+    "place_name": "실로",
+    "lat": 32.056,
+    "lng": 35.29,
+    "summary": "어린 사무엘은 엘리 곁에서 성막을 섬기다가 밤에 하나님의 음성을 듣고, 말씀을 듣는 선지자로 부름받는다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「어린 사무엘의 부르심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "3:1",
+        "to": "3:21"
+      }
+    ],
+    "start_year": -1090,
+    "end_year": -1090,
+    "time_precision": "approx",
+    "story_index": 12,
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
+    "unit_order": 3,
+    "story_scenes": [
+      "어린 사무엘이 실로 성막에서 엘리 밑에서 등불과 성전 기물을 정리하며 조용히 섬기는 모습. 엘리는 나이 든 제사장으로 배경에 앉아 있고, 글자는 보이지 않는다",
+      "한밤중 성막 곁 침상에서 어린 사무엘이 하나님의 음성을 듣고 놀라 일어나, 어두운 방에서 엘리에게 급히 달려가는 모습. 위쪽에는 하나님 음성을 상징하는 따뜻한 빛이 보이고 하나님은 사람 모습으로 나타나지 않는다",
+      "한밤중 성막 안에서 어린 사무엘이 두 손을 모으고 하나님께 응답하듯 고요히 앉아 있으며, 위에서 부드러운 하나님의 빛이 임한다. 말풍선에는 글자 없이 열린 귀와 겸손히 듣는 마음을 상징하는 그림만 담겨 있다",
+      "제사장 엘리는 어린 사무엘에게 하나님의 뜻을 듣고 좌절하지만 받아들이는 모습. 사무엘의 말풍선에는 엘리의 집안이 하나님의 심판을 받는 모습"
+    ],
+    "scene_captions": [
+      "어린 사무엘이 실로 성막에서 엘리 밑에서 등불과 성전 기물을 정리하며 조용히 섬기는 모습이다",
+      "어린 사무엘은 하나님의 음성을 듣고, 엘리에게 이야기한다",
+      "한밤중 성막 안에서 어린 사무엘이 두 손을 모으고 하나님의 말씀을 듣는다",
+      "엘리가 사무엘에게서 집이 심판 받을 것임을 듣고 좌절하지만 받아들인다"
+    ],
+    "scene_characters": [
+      [
+        "eli",
+        "samuel"
+      ],
+      [
+        "eli",
+        "samuel",
+        "god"
+      ],
+      [
+        "samuel",
+        "god"
+      ],
+      [
+        "eli",
+        "samuel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "어린 사무엘은 엘리 앞에서 무엇을 하고 있었습니까?",
+        "choices": [
+          "여호와를 섬기고 있었다",
+          "블레셋과 싸우고 있었다",
+          "왕으로 기름부음을 받고 있었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 3:1 — '아이 사무엘이 엘리 앞에서 여호와를 섬길 때에는'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사무엘은 밤에 자기 이름을 부르는 소리를 처음 듣고 누구에게 달려갔습니까?",
+        "choices": [
+          "엘리에게 달려갔다",
+          "한나에게 달려갔다",
+          "블레셋 사람들에게 달려갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 3:5 — '엘리에게로 달려가서 가로되 당신이 나를 부르셨기로 내가 여기 있나이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "엘리는 사무엘에게 다시 부르심을 들으면 어떻게 대답하라고 알려 주었습니까?",
+        "choices": [
+          "말씀하옵소서 주의 종이 듣겠나이다",
+          "잠시 후에 다시 오겠나이다",
+          "다곤 신전에 가겠나이다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 3:9 — '여호와여 말씀하옵소서 주의 종이 듣겠나이다 하라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Samuel as a young boy serving in Shiloh, not as an adult avatar. Eli has no reference avatar; show him as an unnamed elderly priest. No readable labels.",
+      "Show God as warm light and voice only, never as a human figure. Eli has no reference avatar; show him as an unnamed elderly priest. No readable labels.",
+      "Use a text-free pictorial speech bubble only. Show God as light, not a human figure.",
+      "Show Samuel as a young boy serving in Shiloh, not as an adult avatar. Eli has no reference avatar; show him as an unnamed elderly priest. No readable labels."
+    ]
+  },
+  {
+    "title": "언약궤 사건: 회개와 승리",
+    "era": "era_judges",
+    "characters": [
+      "samuel",
+      "god"
+    ],
+    "landmark_code": "lm_jud_mizpah",
+    "place_name": "미스바",
+    "lat": 31.831,
+    "lng": 35.18,
+    "summary": "언약궤가 빼앗기는 아픔 뒤 블레셋 땅에서도 하나님의 권능이 드러나고, 백성은 회개하며 하나님은 천둥으로 구원을 보여주신다.",
+    "background_context": "사사 시대는 여호수아 이후부터 왕정 이전까지의 이스라엘 이야기입니다. 이 이야기는 「언약궤 사건」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "4:1",
+        "to": "4:11"
+      },
+      {
+        "book": "삼상",
+        "from": "5:1",
+        "to": "6:21"
+      },
+      {
+        "book": "삼상",
+        "from": "7:3",
+        "to": "7:13"
+      }
+    ],
+    "start_year": -1075,
+    "end_year": -1075,
+    "time_precision": "approx",
+    "story_index": 13,
+    "unit_code": "judges_samuel_transition",
+    "unit_title": "사무엘과 왕정의 문턱",
+    "unit_order": 3,
+    "story_scenes": [
+      "전투에서 이스라엘이 언약궤를 들고 나갔지만 블레셋에게 패배하고 군사들이 흩어지는 장면. 언약궤가 빼앗기는 위기가 보이되, 피와 시신은 보이지 않는다",
+      "블레셋 다곤 신전 안에서 언약궤 앞에 다곤 신상이 넘어져 부서져 있고, 성읍 사람들은 몸을 움츠리며 괴로워한다. 종기의 고통은 표정과 자세로만 표현하고 피부 상처나 신체 훼손은 직접 보이지 않는다",
+      "두 마리 소가 언약궤를 실은 새 수레를 끌고 블레셋 성읍을 떠나 이스라엘 쪽 벧세메스 길로 곧장 가는 장면. 블레셋 방백들은 멀리서 조심스럽게 지켜보고, 글자는 보이지 않는다",
+      "블레셋 사람들이 이스라엘 백성을 치러 미스바로 올라오자, 하늘에서 하나님의 강한 천둥과 빛이 울려 블레셋 군대가 놀라 흩어지고 이스라엘이 승리하는 장면. 사무엘과 백성은 뒤쪽에서 하나님께 부르짖고 있으며, 피와 시신은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "전투에서 이스라엘이 언약궤를 들고 나갔지만 블레셋에게 패배하고 군사들이 흩어진다",
+      "블레셋 다곤 신전 안에서 언약궤 앞에 다곤 신상이 넘어져 부서져 있다",
+      "두 마리 소가 언약궤를 실은 새 수레를 끌고 블레셋 성읍을 떠나 이스라엘 쪽 벧세메스 길로 곧장 간다",
+      "사무엘이 간절히 기도하고 하나님의 천둥소리로 블레셋 군대와의 전투에서 이긴다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "god"
+      ],
+      [],
+      [
+        "samuel",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "블레셋 사람들이 언약궤를 새 수레에 실었을 때 암소들은 어디로 갔습니까?",
+        "choices": [
+          "벧세메스 길로 바로 갔다",
+          "아스돗 신전으로 돌아갔다",
+          "가드 성문 앞에서 멈추었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 6:12 — '암소가 벧세메스 길로 바로 행하여 대로로 가며'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아스돗 사람들은 언약궤가 자기들과 함께 있을 때 무엇을 깨달았습니까?",
+        "choices": [
+          "하나님의 손이 자기들과 다곤을 치신다고 여겼다",
+          "언약궤가 다곤을 더 강하게 만든다고 여겼다",
+          "아무 일도 일어나지 않았다고 여겼다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 5:7 — '그 손이 우리와 우리 신 다곤을 친다 하고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "미스바 전투에서 여호와께서는 블레셋 사람들을 어떻게 어지럽게 하셨습니까?",
+        "choices": [
+          "큰 우레를 발하여 그들을 어지럽게 하셨다",
+          "언약궤를 새 수레에 싣게 하셨다",
+          "사무엘을 블레셋 왕으로 세우셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 7:10 — '여호와께서 블레셋 사람에게 큰 우레를 발하여 그들을 어지럽게 하시니'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show the ark as a sacred gold chest carried into battle. No gore, no bodies, no readable labels.",
+      "Show Dagon as a broken idol statue, not a living character. Show illness distress symbolically with posture and faces only; no skin lesions, gore, or readable labels.",
+      "Show two cows pulling the cart with the ark toward Beth-shemesh. No readable labels.",
+      "Show God as thunder and light only, never as a human figure. Keep the battle non-graphic."
+    ]
+  }
+]

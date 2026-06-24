@@ -377,6 +377,28 @@ class LoadQuizFileTests(unittest.TestCase):
             path.unlink()
 
 
+class LoadEventsAndQuizzesFromEventsDirTests(unittest.TestCase):
+    def test_loads_embedded_quiz_questions(self) -> None:
+        payload = LoadQuizFileTests()._valid_payload()
+        story = {
+            "title": payload["story_title"],
+            "era": payload["era_code"],
+            "story_index": payload["story_index"],
+            "bible_ref": [{"book": "창", "from": "1:1", "to": "2:3"}],
+            "quiz_questions": payload["questions"],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "era_primeval.json"
+            path.write_text(json.dumps([story], ensure_ascii=False), encoding="utf-8")
+
+            events, quizzes = mod.load_events_and_quizzes_from_events_dir(Path(tmp))
+
+        self.assertEqual(events, [mod.EventKey("era_primeval", "창조: 7일과 안식", 1)])
+        self.assertEqual(len(quizzes), 1)
+        self.assertEqual(quizzes[0].story_title, "창조: 7일과 안식")
+        self.assertEqual(len(quizzes[0].questions), 3)
+
+
 class BuildSqlStatementsTests(unittest.TestCase):
     def _sample_quiz_file(
         self,
@@ -385,7 +407,7 @@ class BuildSqlStatementsTests(unittest.TestCase):
         title: str = "창조: 7일과 안식",
     ) -> "mod.QuizFile":
         return mod.QuizFile(
-            path=Path(f"assets/quizzes/{era_code}_n{story_index:03d}.json"),
+            path=Path(f"assets/events/{era_code}.json"),
             era_code=era_code,
             story_index=story_index,
             story_title=title,
@@ -448,7 +470,7 @@ class BuildSqlStatementsTests(unittest.TestCase):
 
     def test_dollar_quoting_handles_single_quotes(self) -> None:
         q = mod.QuizFile(
-            path=Path("assets/quizzes/era_primeval_n001.json"),
+            path=Path("assets/events/era_primeval.json"),
             era_code="era_primeval",
             story_index=1,
             story_title="창조: 7일과 안식",
@@ -506,7 +528,7 @@ class BuildReportTests(unittest.TestCase):
 
     def test_story_context_uses_longer_length_limits(self) -> None:
         q = mod.QuizFile(
-            path=Path("assets/quizzes/era_primeval_n001.json"),
+            path=Path("assets/events/era_primeval.json"),
             era_code="era_primeval",
             story_index=1,
             story_title="창조: 7일과 안식",
@@ -594,6 +616,13 @@ class DeterministicShuffleTests(unittest.TestCase):
         choices = ["CORRECT", "wrong1", "wrong2"]
         shuffled, answer_index = mod.deterministic_shuffle(
             "era_judges:n099", 2, choices
+        )
+        self.assertEqual(shuffled[answer_index], "CORRECT")
+
+    def test_answer_index_tracks_nonzero_source_index(self) -> None:
+        choices = ["wrong1", "CORRECT", "wrong2"]
+        shuffled, answer_index = mod.deterministic_shuffle(
+            "era_judges:n099", 2, choices, answer_index=1
         )
         self.assertEqual(shuffled[answer_index], "CORRECT")
 

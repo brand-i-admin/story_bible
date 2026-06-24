@@ -12,6 +12,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from generate_runtime_thumbnails import (  # noqa: E402
+    clean_story_thumbnail_dirs,
     filter_story_files_to_indexed_dirs,
     find_missing_story_sources,
     load_story_thumb_index,
@@ -145,6 +146,24 @@ class GenerateRuntimeThumbnailsTest(unittest.TestCase):
             missing = find_missing_story_sources(source_root, payload)
 
         self.assertEqual(missing, [])
+
+    def test_clean_story_thumbnail_dirs_removes_dirs_and_keeps_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_root = Path(temp_dir)
+            (output_root / "index.json").write_text("{}\n", encoding="utf-8")
+            story_dir = output_root / "primeval_001"
+            story_dir.mkdir()
+            (story_dir / "scene_01.jpg").write_bytes(b"jpg")
+            (output_root / "primeval_002").mkdir()
+
+            removed = clean_story_thumbnail_dirs(output_root)
+
+            self.assertEqual(
+                [path.name for path in removed],
+                ["primeval_001", "primeval_002"],
+            )
+            self.assertTrue((output_root / "index.json").is_file())
+            self.assertFalse(story_dir.exists())
 
 
 if __name__ == "__main__":

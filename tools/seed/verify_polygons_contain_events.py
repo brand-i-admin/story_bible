@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""모든 사건 좌표가 region polygon 내부에 있는지 검증.
+"""모든 사건 landmark 좌표가 region polygon 내부에 있는지 검증.
 
 사용:
   python tools/seed/verify_polygons_contain_events.py
@@ -7,7 +7,7 @@
       --landmarks /tmp/test_landmarks.json --stories /tmp/test_stories.json
 
 종료 코드:
-  0 — 모든 사건이 region polygon 내부 (또는 region 미배정 사건)
+  0 — 모든 사건의 landmark가 region polygon 내부 (또는 region 미배정 사건)
   1 — 1건 이상 외부에 위치 (위반 목록 stderr 로 출력)
 
 stories 인자가 디렉토리이면 *.json 글롭으로 일괄 검사한다.
@@ -21,7 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LANDMARKS = ROOT / "assets" / "landmarks" / "landmarks.json"
-DEFAULT_STORIES = ROOT / "assets" / "200_stories"
+DEFAULT_STORIES = ROOT / "assets" / "events"
 
 
 def point_in_polygon(point, polygon):
@@ -83,11 +83,18 @@ def main() -> int:
 
     violations = []
     for ev in events:
-        lat = ev.get("lat")
-        lng = ev.get("lng")
+        lm_code = ev.get("landmark_code")
+        landmark = landmarks_by_code.get(lm_code) if lm_code else None
+        if landmark is not None:
+            lat = landmark.get("lat")
+            lng = landmark.get("lng")
+            place = landmark.get("name") or ev.get("place_name")
+        else:
+            lat = ev.get("lat")
+            lng = ev.get("lng")
+            place = ev.get("place_name")
         if lat is None or lng is None:
             continue
-        lm_code = ev.get("landmark_code")
         region = (
             parent_region(lm_code, regions_by_code, landmarks_by_code)
             if lm_code
@@ -103,7 +110,7 @@ def main() -> int:
                         "title": ev.get("title"),
                         "lat": lat,
                         "lng": lng,
-                        "place": ev.get("place_name"),
+                        "place": place,
                         "reason": "no region polygon contains this point",
                     }
                 )
@@ -114,7 +121,7 @@ def main() -> int:
                     "title": ev.get("title"),
                     "lat": lat,
                     "lng": lng,
-                    "place": ev.get("place_name"),
+                    "place": place,
                     "region_code": region["code"],
                     "region_name": region["name"],
                     "reason": "outside parent region polygon",

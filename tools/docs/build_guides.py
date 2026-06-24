@@ -2,7 +2,7 @@
 """Build developer guide artifacts from current repository sources.
 
 Outputs:
-- docs/guides/story_guide.md from assets/200_stories/*.json
+- docs/guides/story_guide.md from assets/events/*.json
 - docs/guides/html/*.html from docs/guides/*.md
 
 The HTML renderer intentionally uses only the Python standard library. It is
@@ -217,28 +217,31 @@ def load_character_names() -> dict[str, str]:
     return names
 
 
-def load_event_mapping() -> dict[tuple[str, int], dict]:
-    path = ROOT / "assets" / "landmarks" / "event_region_mapping.json"
+def load_landmark_region_codes() -> dict[str, str]:
+    path = ROOT / "assets" / "landmarks" / "landmarks.json"
     if not path.exists():
         return {}
     payload = json.loads(path.read_text(encoding="utf-8"))
-    rows = payload.get("rows", [])
-    result: dict[tuple[str, int], dict] = {}
-    for row in rows:
+    result: dict[str, str] = {}
+    for row in payload.get("regions", []):
         if not isinstance(row, dict):
             continue
-        era = str(row.get("era") or "")
-        try:
-            index = int(row.get("story_index"))
-        except (TypeError, ValueError):
+        code = str(row.get("code") or "").strip()
+        if code:
+            result[code] = code
+    for row in payload.get("landmarks", []):
+        if not isinstance(row, dict):
             continue
-        result[(era, index)] = row
+        code = str(row.get("code") or "").strip()
+        parent = str(row.get("parent_region_code") or "").strip()
+        if code:
+            result[code] = parent or code
     return result
 
 
 def load_stories_by_era() -> dict[str, list[dict]]:
     result: dict[str, list[dict]] = {}
-    for path in sorted((ROOT / "assets" / "200_stories").glob("*.json")):
+    for path in sorted((ROOT / "assets" / "events").glob("*.json")):
         events = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(events, list):
             raise ValueError(f"{path} must contain a JSON list")
@@ -261,7 +264,7 @@ def names_for_codes(codes: object, name_map: dict[str, str]) -> str:
 def build_story_guide_text() -> str:
     stories_by_era = load_stories_by_era()
     name_map = load_character_names()
-    mapping = load_event_mapping()
+    landmark_region_codes = load_landmark_region_codes()
     total_events = sum(len(stories_by_era.get(era.code, [])) for era in ERA_ORDER)
     total_eras = sum(1 for era in ERA_ORDER if stories_by_era.get(era.code))
     hidden_count = len(stories_by_era.get("era_nt_consummation", []))
@@ -269,12 +272,12 @@ def build_story_guide_text() -> str:
     lines: list[str] = [
         "# 이야기 가이드 (Story Guide)",
         "",
-        "> 현재 `assets/200_stories/*.json` 기준으로 자동 생성한 검수용 카탈로그다.",
+        "> 현재 `assets/events/*.json` 기준으로 자동 생성한 검수용 카탈로그다.",
         "> 사건 제목, 시대, 등장 인물, 위치 매핑, 성경 본문, 장면 구성이 UI와 맞는지 확인할 때 쓴다.",
         "",
         f"**총 사건 수**: {total_events}개  ·  **시대 수**: {total_eras}개",
         "",
-        "> 자동 생성 소스: `assets/200_stories/*.json`, `assets/landmarks/event_region_mapping.json`, `tools/seed/character_meta.json`.",
+        "> 자동 생성 소스: `assets/events/*.json`, `assets/landmarks/landmarks.json`, `tools/seed/character_meta.json`.",
         "> 데이터 변경 후 `make build-guides`를 실행해 이 문서와 HTML 가이드를 함께 갱신한다.",
         "",
     ]
@@ -351,16 +354,14 @@ def build_story_guide_text() -> str:
         for event in events:
             idx = int(event.get("story_index") or 0)
             title = str(event.get("title") or "").strip()
-            key = (era.code, idx)
-            row = mapping.get(key, {})
             refs = format_refs(event.get("bible_ref") or event.get("bible_refs"))
             people = names_for_codes(event.get("characters"), name_map)
             years = format_year_range(event.get("start_year"), event.get("end_year"))
             lat = event.get("lat")
             lng = event.get("lng")
             coord = f"{lat}, {lng}" if lat is not None and lng is not None else "—"
-            landmark = row.get("landmark_code") or "—"
-            region = row.get("region_code") or "—"
+            landmark = str(event.get("landmark_code") or "").strip() or "—"
+            region = landmark_region_codes.get(landmark, "—")
 
             lines.extend(
                 [
@@ -941,7 +942,7 @@ def flow_panel(stem: str, stats: dict) -> str:
         return test_bars(stats)
     flows = {
         "CONTENT_UPDATE": [
-            ("1", "JSON", "assets/200_stories + event_region_mapping"),
+            ("1", "JSON", "assets/events"),
             ("2", "Seed", "seed-stories-characters / seed-quizzes"),
             ("3", "Assets", "generate-story-images / thumbnails"),
             ("4", "Bundle", "update-pubspec-assets + real build"),
