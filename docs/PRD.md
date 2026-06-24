@@ -23,7 +23,7 @@
 | 지도 | MapLibre GL JS WebView + OpenFreeMap Liberty + Mapzen Terrarium DEM |
 | AI 에셋 생성 | Google Cloud Vertex AI Imagen |
 | 인증 | Apple / Google / Kakao 소셜 로그인 |
-| 성경 텍스트 | KRV 개역한글 (31,904절) |
+| 성경 텍스트 | KRV 개역한글 (31,102절) |
 
 ## 4. 핵심 기능
 

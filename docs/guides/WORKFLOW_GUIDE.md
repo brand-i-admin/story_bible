@@ -448,7 +448,7 @@ sequenceDiagram
 
     Note over U: ③ 데이터 시드 (4-체인 자동)
     U->>DB: make apply-seeds ENV=dev
-    SQL->>DB: bible_verses (31,904절)
+    SQL->>DB: bible_verses (31,102절)
     SQL->>DB: characters + events
     SQL->>DB: landmarks
 

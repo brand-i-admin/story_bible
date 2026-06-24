@@ -66,7 +66,7 @@ group by translation;
 
 ### 1) 성경 구절(`bible_verses`)을 Supabase에 넣기
 - 이 문서 상단 `bible_verses 테이블 적재` 절차를 그대로 사용합니다.
-- 핵심: `tools/seed/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31904 개 생성 확인
+- 핵심: `tools/seed/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31,102개 생성 확인
 
 ### 2) `assets/events`에 통합 이벤트 JSON 준비
 - `assets/events/*.json` 형태로 준비합니다.

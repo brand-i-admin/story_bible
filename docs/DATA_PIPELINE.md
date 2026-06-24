@@ -4,13 +4,13 @@
 
 ## 0. 입력 데이터 (사람·AI 이전 단계에서 준비됨)
 
-- **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,904절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력.
+- **`assets/bible/*.txt`** — KRV 개역한글 66권 텍스트 (31,102절). 외부 공개 본문을 정리해 둔 gitignore 로컬 입력.
 - **`assets/events/*.json`** — 시대별 이야기 dict 리스트. **사람이 의도하고 AI(LLM)로 초안을 뽑아 정리한 결과물**이다. 파이프라인은 이 정리된 JSON을 초기/배포 canonical 입력으로 사용한다. 신규 이야기는 `assets/story_drafts/*.json`에서 초안을 만들고 proposal 승인 후 release sync 단계에서 이 canonical JSON으로 편입한다.
 
 ### 가장 단순한 흐름: KRV 성경 시드
 
 ```
-assets/bible/{창세기,출애굽기, ... ,요한계시록}.txt   (66 파일, 31,904절)
+assets/bible/{창세기,출애굽기, ... ,요한계시록}.txt   (66 파일, 31,102절)
     │
     ▼  make seed-bible-verses
         (build_krv_seed_sql.py --input-dir assets/bible --split-parts 10)
@@ -92,12 +92,15 @@ Makefile                                # 파이프라인 오케스트레이션
 - **본문 줄바꿈 처리**: TXT 원문은 고정 폭 표시용 줄바꿈이 단어 중간에도 들어올 수 있다.
   빌더는 이어진 줄을 붙일 때 원문 줄 끝에 실제 공백이 있으면 한 칸만 보존하고,
   공백 없이 끊긴 줄은 바로 이어 붙여 `보\n이시며` → `보이시며`처럼 복원한다.
+- **절 번호 검증**: 같은 `(translation, book, chapter, verse)` 주소가 두 번 나오거나,
+  한 장 안에서 `1..N` 사이 절 번호가 비면 SQL 생성 전에 실패한다. 예를 들어
+  `창 33:9`가 `33:8` 뒤에 붙어 있거나 `삿 9:52`가 빠진 상태를 조용히 dedupe하지 않는다.
 - **옵션**:
   - `--input-dir assets/bible` — 입력 디렉토리
   - `--output supabase/seeds/krv_bible_verses.sql`
   - `--truncate-translation` — 기존 KRV 데이터 삭제 후 재삽입
   - `--split-parts 10` — 파일 분할 (SQL Editor 크기 제한 대응)
-- **결과**: 31,904절 INSERT
+- **결과**: 31,102절 INSERT
 
 #### `build_character_meta_json.py` — 인물 메타 JSON 생성 (카탈로그 + 아바타 프롬프트)
 - **입력**: `assets/events/*.json` (⚠️ **로컬에 있는 파일만** 스캔 — 부분 스캔 주의)
@@ -545,7 +548,7 @@ gcloud auth application-default login
 2. `make seed-stories-characters` → `characters_seed.sql` + `events_seed_part_*.sql` 생성
    (내부에서 `build-character-meta`가 한 번 실행되어 `character_meta.json`도 갱신)
 3. `make db-init` — 앱 소유 Storage 버킷(`characters`, `proposal-scenes`, `proposal-characters`)을 먼저 비우고 남은 객체까지 확인/삭제한 뒤 스키마, 함수, 트리거, RLS, eras 시드 재생성 (drop & recreate). Storage purge 실패나 service_role 키 누락 시 SQL 실행 전 중단한다.
-4. `make apply-bible-verses-seeds` — KRV 31,904절 적용 (1회만)
+4. `make apply-bible-verses-seeds` — KRV 31,102절 적용 (1회만)
 5. `make apply-seeds-stories-characters` — persons + events 적용 (UPSERT)
 6. `make generate-avatars` (Vertex 비용; 기존 `assets/avatars/{code}.png`는 자동 보존, 신규만 생성)
 7. `make generate-story-images` (장면 이미지 필요 시)

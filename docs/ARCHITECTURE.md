@@ -224,7 +224,7 @@ persons       (어드민이 is_active 토글로 노출 제어)
 events_ordered (view: rank_in_era / global_rank 동적 계산)
 character_eras    (view: 인물 첫 등장 story_index 기반 era별 순서)
 
-bible_verses (독립 — 31,904절 KRV)
+bible_verses (독립 — 31,102절 KRV)
 
 user_profiles ──< user_notes
               ├──< user_saved_verses
