@@ -19,10 +19,40 @@ from story_scene_utils import (  # noqa: E402
     requests_speech_bubble,
     sanitize_scene_text_for_visual,
 )
-from generate_event_story_images_vertex import scene_age_art_direction_for  # noqa: E402
+from generate_event_story_images_vertex import (  # noqa: E402
+    load_story_events,
+    scene_age_art_direction_for,
+)
 
 
 class StorySceneUtilsTest(unittest.TestCase):
+    def test_load_story_events_accepts_single_draft_object(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "draft.json"
+            path.write_text(
+                '{"title": "테스트 draft", "story_scenes": ["장면"]}',
+                encoding="utf-8",
+            )
+
+            events = load_story_events(Path(temp_dir), "draft.json")
+
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["title"], "테스트 draft")
+        self.assertEqual(events[0]["__source_index"], 1)
+
+    def test_load_story_events_accepts_events_wrapper(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "wrapped.json"
+            path.write_text(
+                '{"events": [{"title": "wrapped draft"}]}',
+                encoding="utf-8",
+            )
+
+            events = load_story_events(Path(temp_dir), "wrapped.json")
+
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["title"], "wrapped draft")
+
     def test_parse_person_name_map_reads_all_seed_person_chunks(self) -> None:
         sql = """
 delete from characters where code not in ('dan', 'lot_wife');

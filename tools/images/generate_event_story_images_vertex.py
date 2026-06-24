@@ -247,12 +247,15 @@ def load_story_events(stories_dir: Path, stories_glob: str) -> list[dict[str, An
         with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
         if isinstance(data, dict):
-            raw_events = data.get("events", [])
+            raw_events = data.get("events")
+            if raw_events is None:
+                raw_events = [data]
         else:
             raw_events = data
         if not isinstance(raw_events, list):
             raise ValueError(
-                f"Invalid stories JSON format in {path}: expected list or {{'events': [...]}}."
+                f"Invalid stories JSON format in {path}: expected event object, "
+                "list, or {'events': [...]}."
             )
         for index_in_file, item in enumerate(raw_events, start=1):
             if not isinstance(item, dict):

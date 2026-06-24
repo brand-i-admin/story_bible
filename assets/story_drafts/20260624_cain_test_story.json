@@ -1,0 +1,39 @@
+{
+  "title": "테스트: 가인의 이야기",
+  "era": "era_primeval",
+  "characters": ["cain", "abel", "god"],
+  "landmark_code": "lm_prim_eden_east",
+  "summary": "테스트용 이야기입니다. 가인은 아벨과 함께 제사를 드리고, 분노를 다스리지 못해 하나님 앞에서 죄의 결과를 마주합니다.",
+  "background_context": "테스트용 배경 문구입니다. 원역사 시대 첫 구간에 넣어 위치와 승인 흐름을 확인하기 위한 가인의 이야기 초안입니다.",
+  "bible_ref": [
+    {
+      "book": "창",
+      "from": "4:1",
+      "to": "4:16"
+    }
+  ],
+  "start_year": -4000,
+  "end_year": -4000,
+  "time_precision": "approx",
+  "after_story_index": 0,
+  "unit_code": "primeval_creation_mission",
+  "unit_title": "창조와 사람의 사명",
+  "unit_order": 1,
+  "story_scenes": [
+    "가인과 아벨이 에덴 밖 들판에서 각자의 일을 준비한다. 가인은 땅의 소산을 들고 있고 아벨은 양 떼 곁에 서 있다."
+  ],
+  "scene_captions": [
+    "가인과 아벨이 에덴 밖 들판에서 각자의 일을 준비한다."
+  ],
+  "scene_characters": [
+    ["cain", "abel"]
+  ],
+  "quiz_questions": [
+    {
+      "question": "가인이 아벨을 해친 뒤 하나님은 가인에게 무엇을 물으셨나요?",
+      "choices": ["네 아우 아벨이 어디 있느냐고 물으셨다", "왜 양 떼를 돌보지 않았느냐고 물으셨다", "누가 성을 세웠느냐고 물으셨다"],
+      "answer_index": 0,
+      "explanation": "창세기 4장 9절에서 하나님은 가인에게 그의 아우 아벨이 어디 있는지 물으십니다."
+    }
+  ]
+}
