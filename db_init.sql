@@ -1384,6 +1384,26 @@ using (
   )
 );
 
+-- ============================================================================
+-- Storage 버킷: 'story-image-sources' — release builder 전용 원본 장면 PNG 저장소.
+--   경로 규칙: story_images/<source_key>/scene_N.png
+--   쓰기/읽기 권한: service_role 운영 도구만 사용. 앱 런타임은 읽지 않는다.
+--   중요: tools/supabase/purge_owned_buckets.py 의 db-init purge 대상이 아니다.
+--   즉 characters/proposal-* 버킷을 초기화해도 2GB+ 원본 archive 는 유지된다.
+-- ============================================================================
+insert into storage.buckets (
+  id, name, public, file_size_limit, allowed_mime_types
+)
+values (
+  'story-image-sources', 'story-image-sources', false,
+  20971520,
+  array['image/png', 'application/json']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
 -- -----------------------------------------------------------------------------
 -- RPC: 새 이야기를 era 안의 특정 위치에 끼워 넣기.
 -- (era_id, story_index) UNIQUE 제약이 있으므로 뒤 인덱스를 +1 시프트한 뒤 INSERT.

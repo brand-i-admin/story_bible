@@ -30,6 +30,7 @@ AVATARS_THUMBS_DIR := $(ASSETS_DIR)/avatars_thumbs
 STORY_IMAGES_DIR := $(ASSETS_DIR)/story_images
 STORY_IMAGES_THUMBS_DIR := $(ASSETS_DIR)/story_images_thumbs
 STORY_DRAFTS_DIR := $(ASSETS_DIR)/story_drafts
+STORY_IMAGE_SOURCE_BUCKET ?= story-image-sources
 AVATAR_CODES ?=
 AVATAR_OVERWRITE ?=
 AVATAR_EXTRA_ARGS := $(if $(strip $(AVATAR_CODES)),--only-codes $(AVATAR_CODES),) $(if $(filter 1 true yes,$(AVATAR_OVERWRITE)),--overwrite,)
@@ -58,6 +59,8 @@ LANDMARKS_DIR := $(ASSETS_DIR)/landmarks
         db-init apply-patch apply-seeds apply-bible-verses-seeds apply-seeds-stories-characters \
         apply-seeds-landmarks apply-seeds-quizzes \
         upload-character-avatars upload-character-avatars-force \
+        ensure-story-image-sources ensure-story-image-sources-dry \
+        upload-story-image-sources upload-story-image-sources-dry \
         apply-draft apply-drafts \
         sync-approved-proposal-assets sync-approved-proposal-assets-all \
         sync-approved-proposal-assets-dry sync-approved-proposal-assets-clean \
@@ -111,6 +114,8 @@ help:
 	@echo "Supabase Storage (service_role 키 필요):"
 	@echo "  upload-character-avatars        [ENV=dev|real]  assets/avatars/*.png → characters/ 버킷 (이미 있으면 스킵)"
 	@echo "  upload-character-avatars-force  [ENV=dev|real]  전부 덮어쓰기 업로드 (--overwrite)"
+	@echo "  ensure-story-image-sources      [ENV=dev|real]  private 원본 bucket → assets/story_images missing/changed PNG 다운로드"
+	@echo "  upload-story-image-sources      [ENV=dev|real]  assets/story_images → private 원본 bucket delta 업로드"
 	@echo "  apply-draft                     [ENV=dev|real STORY=assets/story_drafts/foo.json|DRAFT=foo] draft → proposal-scenes + pending event_proposals"
 	@echo "  apply-drafts                    [ENV=dev|real DRAFTS=\"foo bar\"|STORIES_GLOB=\"assets/story_drafts/202606*.json\"] 여러 draft 순차 업로드"
 	@echo ""
@@ -296,6 +301,32 @@ upload-character-avatars-force:
 	@echo "[Makefile] 캐릭터 아바타 강제 덮어쓰기 업로드 (ENV=$(ENV) → ops=$(OPS_ENV))"
 	$(PYTHON) $(TOOLS_DIR)/supabase/upload_character_avatars.py --env $(OPS_ENV) --overwrite
 
+# -----------------------------------------------------------------------------
+# 앱 번들용 썸네일의 원본 PNG 보관소 (release-only private bucket)
+# -----------------------------------------------------------------------------
+# bucket 기본값은 story-image-sources. purge_owned_buckets.py 대상이 아니므로
+# db-init 으로 characters/proposal-* 버킷을 비워도 이 원본 저장소는 유지된다.
+
+ensure-story-image-sources:
+	@echo "[Makefile] story 원본 PNG pull (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
+	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py pull --env $(OPS_ENV)
+
+ensure-story-image-sources-dry:
+	@echo "[Makefile] story 원본 PNG pull dry-run (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
+	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py pull --env $(OPS_ENV) --dry-run
+
+upload-story-image-sources:
+	@echo "[Makefile] story 원본 PNG push (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
+	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py push --env $(OPS_ENV)
+
+upload-story-image-sources-dry:
+	@echo "[Makefile] story 원본 PNG push dry-run (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
+	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py push --env $(OPS_ENV) --dry-run
+
 apply-draft:
 	@story_json="$(STORY)"; \
 	if [ -z "$$story_json" ] && [ -n "$(DRAFT)" ]; then story_json="$(STORY_DRAFTS_DIR)/$(DRAFT).json"; fi; \
@@ -421,9 +452,11 @@ release-sync-stories:
 	$(MAKE) export-stories-json ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
 	$(MAKE) export-quizzes-json ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
 	$(MAKE) export-event-region-mapping ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
-	$(MAKE) sync-approved-proposal-assets ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(OPS_ENV) --skip-post-processing
+	$(MAKE) ensure-story-image-sources ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE) STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET)
 	$(MAKE) thumbnails
 	$(MAKE) update-pubspec-assets
+	$(MAKE) upload-story-image-sources ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE) STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET)
 	@echo "[Makefile] release sync 완료 — stories, quizzes, landmark mapping, 승인 자산, 썸네일, pubspec 확인 필요."
 
 # .env + .env.ops 파일을 한 셸 안에서만 source 한 뒤 psql 호출.

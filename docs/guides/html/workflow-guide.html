@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 455 Dart tests</div>
+      <div class="subtle">310 events · 457 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -1564,11 +1564,12 @@ Storage
 <ul><li>신규 이야기를 보는 <strong>모든 사용자</strong>가 이미지 4장 + 신규 캐릭터 1+장씩 Storage 에서 다운로드</li><li>Supabase Storage 는 public 버킷이라 CDN 캐시 발동 (같은 사용자가 두 번째 보면 로컬 브라우저/CDN 캐시 hit)</li><li>비용: 사용자 수 × 이미지 수 × 첫 view 1회 분량. 1000명 × 5장 × ~200KB ≈ <strong>1GB/대유행 한 이야기당</strong> 정도 — 운영자가 시점 C 까지 빨리 완료하면 부담 적음</li></ul>
 <h3 id="18-3-시점-c-—-운영자가-sync-실행-+-앱-재배포-완료">18.3 시점 C — 운영자가 sync 실행 + 앱 재배포 완료</h3>
 <h4 id="재배포는-어떻게-이루어지는가-운영자-표준-레시피">재배포는 어떻게 이루어지는가 (운영자 표준 레시피)</h4>
-<blockquote><p>핵심은 단 하나의 명령 — <code>make sync-approved-proposal-assets</code> 가 Phase A</p>
-<p>(다운로드) + Phase B (DB↔로컬 diff 정리) + Step C (썸네일) + Step D (pubspec</p>
-<p>갱신) <strong>네 단계를 자동으로 실행</strong>한다. 운영자가 따로 <code>make thumbnails</code>,</p>
-<p><code>make update-pubspec-assets</code> 를 부를 필요 없음. 다만 신규 인물이 추가된 경우</p>
-<p>seed 갱신만 별도로 한 번 더 돌려야 한다 (아래 5번).</p></blockquote>
+<blockquote><p>다음 앱 배포용 canonical 번들을 만드는 표준 명령은</p>
+<p><code>make release-sync-stories ENV=real</code>이다. 이 명령은 DB active events/quiz/landmark</p>
+<p>export, 승인 proposal 자산 다운로드, 삭제 diff 정리, private 원본 archive pull,</p>
+<p>썸네일 생성, pubspec 갱신, private 원본 archive push를 한 번에 실행한다.</p>
+<p><code>make sync-approved-proposal-assets</code> 단독 실행은 proposal 자산 동기화만 따로</p>
+<p>점검하거나 디버깅할 때 사용한다.</p></blockquote>
 <h5 id="사전-준비-한-번만">사전 준비 (한 번만)</h5>
 <pre><code class="language-bash"># Python 가상환경 활성 — sync 스크립트가 requests 등 의존
 source .venv/bin/activate
@@ -1579,12 +1580,15 @@ grep -E &quot;SUPABASE_SERVICE_ROLE_KEY_DEV&quot; .env.ops
 #   → service_role 키는 Storage 쓰기/PATCH 권한 필요.
 #   → ENV=prod 로 운영 환경에 적용할 거면 SUPABASE_URL_PROD 와
 #      SUPABASE_SERVICE_ROLE_KEY_PROD 도 필요.</code></pre>
-<h5 id="1-어떤-제안이-sync-대상인지-먼저-확인-dry-run">1) 어떤 제안이 sync 대상인지 먼저 확인 (dry-run)</h5>
-<pre><code class="language-bash">make sync-approved-proposal-assets-dry</code></pre>
+<h5 id="1-어떤-제안과-원본-archive-변경이-sync-대상인지-먼저-확인">1) 어떤 제안과 원본 archive 변경이 sync 대상인지 먼저 확인</h5>
+<pre><code class="language-bash">make sync-approved-proposal-assets-dry ENV=real
+make ensure-story-image-sources-dry ENV=real
+make upload-story-image-sources-dry ENV=real</code></pre>
 <p>내부 동작:</p>
 <ul><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ul>
 <p>인 행을 모두 읽어 list 출력 (실제 다운로드/DB 변경 없음).</p>
-<ul><li>각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.</li></ul>
+<ul><li>각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.</li><li>source archive dry-run은 현재 로컬 원본과</li></ul>
+<p><code>story-image-sources/_manifests/story_images_manifest.json</code>의 <code>size</code>/<code>sha256</code>을 비교해 내려받거나 올릴 파일 수를 보여 준다.</p>
 <p>기대 출력:</p>
 <pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
 == [uuid1] 엘리야와 까마귀
@@ -1597,9 +1601,9 @@ grep -E &quot;SUPABASE_SERVICE_ROLE_KEY_DEV&quot; .env.ops
 ...
 Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)</code></pre>
 <p>→ 결과를 보고 의도와 일치하는지 확인. 어긋나면 DB 상태 점검 후 재실행.</p>
-<h5 id="2-실제-sync-실행-—-4-phase-자동">2) 실제 sync 실행 — 4-phase 자동</h5>
-<pre><code class="language-bash">make sync-approved-proposal-assets</code></pre>
-<p><code>tools/supabase/sync_approved_proposal_assets.py --env dev</code> 가 다음 순서로 실행된다. 각 단계는 멱등 (재실행 안전).</p>
+<h5 id="2-실제-release-sync-실행">2) 실제 release sync 실행</h5>
+<pre><code class="language-bash">make release-sync-stories ENV=real</code></pre>
+<p><code>make release-sync-stories</code>는 먼저 active DB export를 끝낸 뒤, <code>tools/supabase/sync_approved_proposal_assets.py --env prod --skip-post-processing</code>로 아래 Phase A/B를 실행한다. 새 proposal 원본은 아직 source archive에 없고 <code>proposal-scenes</code>에만 있을 수 있으므로, proposal sync를 먼저 하고 thumbnails/pubspec은 나중에 한 번만 만든다. 각 단계는 멱등 (재실행 안전).</p>
 <p><strong>Phase A — 신규 승인 제안 다운로드</strong></p>
 <ol><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ol>
 <p>조회.</p>
@@ -1626,16 +1630,38 @@ Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)
 <ol><li><code>characters</code> 전체 code 집합을 조회해, DB에 없는 code의</li></ol>
 <p><code>assets/avatars/&lt;code&gt;.png</code>, <code>assets/avatars_thumbs/&lt;code&gt;.png</code>만 제거한다.</p>
 <p>→ Phase B 만 끄고 싶으면 <code>--skip-deletions</code> (별도 워크플로우에서 정리할 때).</p>
+<p><strong>Phase C — 원본 source archive pull</strong></p>
+<ol><li><code>story-image-sources/_manifests/story_images_manifest.json</code>을 읽는다.</li><li>manifest의 <code>size</code>/<code>sha256</code>과 로컬 <code>assets/story_images/</code>를 비교한다.</li><li>proposal sync로 이미 내려받은 신규 story 원본은 그대로 둔다.</li><li>아직 없는 파일이나 바뀐 파일만</li></ol>
+<p><code>story-image-sources/story_images/&lt;source_key&gt;/scene_N.png</code>에서 내려받는다. <code>&lt;source_key&gt;</code>는 한글 source dir의 SHA prefix이고, 실제 title/source_dir 매핑은 manifest에 있다.</p>
+<ol><li>remote manifest가 없고 로컬 원본이 이미 완전하면 통과한다. 이 경우 release 마지막</li></ol>
+<p>upload 단계가 현재 로컬 원본 전체를 최초 seed 한다.</p>
 <p><strong>Step C — 썸네일 자동 재생성</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
 <ul><li>내부적으로 <code>python tools/images/generate_runtime_thumbnails.py</code> 호출.</li><li><code>assets/avatars/</code> → <code>assets/avatars_thumbs/</code> (모든 PNG 압축 사본)</li><li><code>assets/story_images/&lt;title&gt;/</code> → <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/</code></li><li><code>assets/story_images_thumbs/index.json</code>에 title/original dir ↔ short dir 매핑 기록</li><li>current <code>assets/200_stories/*.json</code>에 없는 story image 원본 폴더는 썸네일 생성 대상에서</li></ul>
 <p>제외하고, 기존 짧은 썸네일 디렉토리는 orphan으로 정리.</p>
-<ul><li>이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.</li></ul>
+<ul><li>이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.</li><li>current story JSON에 대응하는 <code>assets/story_images/&lt;title&gt;/scene_*.png</code> 원본이 하나도</li></ul>
+<p>없는 story가 있으면 중단한다. <code>assets/story_images/</code>는 git에 없는 로컬 원본 staging 디렉토리라서, 원본이 없는 컴퓨터에서 thumbnails를 돌리면 삭제/reindex 후 <code>&lt;era_slug&gt;_&lt;story_index&gt;</code> 폴더에 이전 이야기 이미지가 남을 수 있기 때문이다.</p>
 <p><strong>Step D — pubspec.yaml 자동 갱신</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
 <ul><li>내부적으로 <code>python tools/app/update_pubspec_assets.py</code> 호출.</li><li><code>pubspec.yaml</code> 의 <code>flutter.assets:</code> 아래 <code>story_images_thumbs/index.json</code>과</li></ul>
 <p><code>story_images_thumbs/&lt;short_dir&gt;/</code> 엔트리를 실제 디렉토리 목록에 맞춰 추가/제거.</p>
 <ul><li><code>avatars_thumbs/</code> 는 이미 글롭 패턴 (<code>assets/avatars_thumbs/</code>) 으로</li></ul>
 <p>등록돼 있어 손대지 않음.</p>
 <p>→ Step C, D 둘 다 끄고 싶으면 <code>--skip-post-processing</code>.</p>
+<p><strong>Step E — 원본 source archive push</strong></p>
+<ul><li><code>make release-sync-stories</code> 마지막에 <code>upload-story-image-sources</code>를 실행한다.</li><li>local <code>assets/story_images/</code>와 remote manifest를 비교해 missing/changed PNG만</li></ul>
+<p><code>story-image-sources</code> private bucket에 업로드한다.</p>
+<ul><li><code>proposal-scenes</code>에서 막 내려받은 신규 story 원본도 이 단계에서 source archive에</li></ul>
+<p>보존된다.</p>
+<ul><li>manifest는 current active story 기준으로 갱신하지만, 삭제 승인된 story의 과거 원본</li></ul>
+<p>객체는 즉시 삭제하지 않는다. 필요하면 별도 retention 정책으로 정리한다.</p>
+<h5 id="release-builder와-이미지-원본">Release builder와 이미지 원본</h5>
+<p>일반 개발자가 현재 커밋을 checkout해서 앱을 빌드하는 것과, 운영 DB를 기준으로 <code>release-sync-stories</code>를 실행해 다음 배포 번들을 만드는 것은 다르다.</p>
+<ul><li>단순 빌드: git에 포함된 <code>assets/story_images_thumbs/</code>와 <code>pubspec.yaml</code>만 있으면 된다.</li></ul>
+<p>이 경우 원본 <code>assets/story_images/</code>가 없어도 앱 번들은 만들어진다.</p>
+<ul><li>release sync/build: <code>make release-sync-stories ENV=real</code> 안에서 <code>make thumbnails</code>가</li></ul>
+<p>실행되므로 active story 전체의 원본 PNG가 필요하다. 특히 삭제 승인으로 <code>story_index</code>가 당겨진 경우, 기존 썸네일 폴더를 그대로 쓰면 같은 <code>primeval_004</code> 같은 경로가 다른 이야기를 가리키는 오류가 생길 수 있다.</p>
+<p>다른 개발자나 CI도 release sync를 해야 한다면 <code>assets/story_images/</code> 전체를 별도 원격 원본 저장소에서 복원하게 만든다. 실무적으로는 Supabase/GCS의 release-only bucket 또는 zip artifact가 적당하고, 큰 PNG 원본을 git에 직접 넣는 것은 피한다. 승인 proposal로 추가된 새 이야기 원본만 필요한 경우에는 <code>proposal-scenes</code> 파일이 남아 있는 동안 <code>make sync-approved-proposal-assets-all ENV=real</code>로 다시 내려받을 수 있다. 하지만 초기 seed 이야기처럼 <code>events.scene_image_paths</code>가 비어 있는 이미지는 이 방법으로 복원되지 않으므로, 원본 archive가 최종 권위 저장소가 된다.</p>
+<p>효율 기준은 “매번 전체 2GB+ 왕복”이 아니라 “원격 원본 저장소 + 로컬 캐시 + delta sync”다. release builder는 시작 시 원본 저장소의 manifest(etag/sha256/size)를 보고 <code>assets/story_images/</code>에 없는 story 폴더나 바뀐 scene PNG만 내려받는다. 승인 proposal로 새 원본이 생긴 경우에는 <code>sync-approved-proposal-assets</code>가 <code>proposal-scenes</code>에서 로컬로 가져오고, <code>upload-story-image-sources</code>가 그 신규/변경 PNG만 원본 저장소에 다시 업로드한다. 삭제 승인된 story의 원본은 앱 번들에서는 빠지지만, 원본 저장소에서는 즉시 삭제하기보다 versioned archive 또는 grace window를 두는 편이 안전하다.</p>
+<p>따라서 <code>sync-approved-proposal-assets-clean</code>의 <code>--delete-source</code>는 새 앱 배포가 끝나고 원본 archive까지 갱신된 뒤에만 실행한다. 먼저 지우면 구버전 앱의 Storage fallback과 다른 release builder의 재동기화 경로가 함께 사라진다.</p>
 <p>기대 출력 (요약):</p>
 <pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
 == [uuid1] 엘리야와 까마귀  (downloading 4 scene + 1 character)
@@ -2081,7 +2107,7 @@ where era_id = :era
                                                    └─ 알림: 승인 + 충돌자에게 &quot;수정 필요&quot;
                                                           │
                                                           ▼
-                                              운영자: make sync-approved-proposal-assets
+                                              운영자: make release-sync-stories
                                               ┌──────────── Phase A ─────────────┐
                                               │ proposal-* → 로컬 assets/        │
                                               │ proposal-characters → characters │
@@ -2092,9 +2118,13 @@ where era_id = :era
                                               │ DB events vs 로컬 dir → 차이 정리 │
                                               │ DB characters vs 로컬 PNG → 차이  │
                                               ├──────────── Step C ──────────────┤
-                                              │ make thumbnails                  │
+                                              │ ensure-story-image-sources       │
                                               ├──────────── Step D ──────────────┤
+                                              │ make thumbnails                  │
+                                              ├──────────── Step E ──────────────┤
                                               │ make update-pubspec-assets       │
+                                              ├──────────── Step F ──────────────┤
+                                              │ upload-story-image-sources       │
                                               └───────────────────────────────────┘
                                                           │
                                                           ▼

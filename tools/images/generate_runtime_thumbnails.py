@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -67,6 +68,14 @@ def parse_args() -> argparse.Namespace:
         help=(
             "기본 동작은 source 에 없는 thumbnail 을 자동 삭제한다. "
             "이 플래그를 주면 정리 단계를 스킵한다."
+        ),
+    )
+    parser.add_argument(
+        "--allow-missing-story-sources",
+        action="store_true",
+        help=(
+            "current story JSON 에 대응하는 원본 scene PNG 가 없어도 계속 진행한다. "
+            "일반 release/build 흐름에서는 쓰지 않는다."
         ),
     )
     return parser.parse_args()
@@ -345,6 +354,29 @@ def filter_story_files_to_indexed_dirs(
     return indexed, orphaned
 
 
+def find_missing_story_sources(
+    story_source: Path,
+    story_index_payload: dict,
+) -> list[dict[str, object]]:
+    """Return current story index entries with no local source scene PNGs."""
+    actual_dirs = {
+        normalize_nfc(path.name): path
+        for path in story_source.iterdir()
+        if path.is_dir()
+    }
+    missing: list[dict[str, object]] = []
+    for item in story_index_payload.get("items", []):
+        if not isinstance(item, dict):
+            continue
+        source_dir = normalize_nfc(str(item.get("source_dir") or ""))
+        if not source_dir:
+            continue
+        actual_dir = actual_dirs.get(source_dir)
+        if actual_dir is None or not any(actual_dir.glob("scene_*.png")):
+            missing.append(item)
+    return missing
+
+
 def relative_avatar_dest(src_root: Path, dest_root: Path, src: Path) -> Path:
     return dest_root / src.relative_to(src_root)
 
@@ -365,6 +397,36 @@ def main() -> int:
         raise SystemExit(f"Avatar source not found: {avatar_source}")
 
     source_dir_to_short, story_index_payload = load_story_thumb_index(stories_dir)
+    missing_story_sources = find_missing_story_sources(
+        story_source, story_index_payload
+    )
+    if missing_story_sources and not args.allow_missing_story_sources:
+        preview = "\n".join(
+            "  - {era} #{story_index}: {title} "
+            "(expected assets/story_images/{source_dir}/scene_*.png)".format(
+                era=item.get("era") or "",
+                story_index=item.get("story_index") or "",
+                title=item.get("title") or "",
+                source_dir=item.get("source_dir") or "",
+            )
+            for item in missing_story_sources[:20]
+        )
+        more = ""
+        if len(missing_story_sources) > 20:
+            more = f"\n  ... and {len(missing_story_sources) - 20} more"
+        print(
+            "ERROR: Missing local original story scene images for "
+            f"{len(missing_story_sources)} current story item(s).\n"
+            "`make thumbnails` needs source PNGs in assets/story_images/ because "
+            "story_images_thumbs are generated from those originals. "
+            "On a fresh machine, run `make ensure-story-image-sources ENV=<env>` "
+            "to restore missing originals from the private source archive before "
+            "retrying.\n"
+            f"{preview}{more}",
+            file=sys.stderr,
+        )
+        return 2
+
     story_output.mkdir(parents=True, exist_ok=True)
     (story_output / "index.json").write_text(
         json.dumps(story_index_payload, ensure_ascii=False, indent=2) + "\n",

@@ -1319,11 +1319,12 @@ character.avatarUrl ('') + character.avatarStoragePath ('proposal-characters/...
 
 #### 재배포는 어떻게 이루어지는가 (운영자 표준 레시피)
 
-> 핵심은 단 하나의 명령 — `make sync-approved-proposal-assets` 가 Phase A
-> (다운로드) + Phase B (DB↔로컬 diff 정리) + Step C (썸네일) + Step D (pubspec
-> 갱신) **네 단계를 자동으로 실행**한다. 운영자가 따로 `make thumbnails`,
-> `make update-pubspec-assets` 를 부를 필요 없음. 다만 신규 인물이 추가된 경우
-> seed 갱신만 별도로 한 번 더 돌려야 한다 (아래 5번).
+> 다음 앱 배포용 canonical 번들을 만드는 표준 명령은
+> `make release-sync-stories ENV=real`이다. 이 명령은 DB active events/quiz/landmark
+> export, 승인 proposal 자산 다운로드, 삭제 diff 정리, private 원본 archive pull,
+> 썸네일 생성, pubspec 갱신, private 원본 archive push를 한 번에 실행한다.
+> `make sync-approved-proposal-assets` 단독 실행은 proposal 자산 동기화만 따로
+> 점검하거나 디버깅할 때 사용한다.
 
 ##### 사전 준비 (한 번만)
 
@@ -1339,16 +1340,21 @@ grep -E "SUPABASE_SERVICE_ROLE_KEY_DEV" .env.ops
 #      SUPABASE_SERVICE_ROLE_KEY_PROD 도 필요.
 ```
 
-##### 1) 어떤 제안이 sync 대상인지 먼저 확인 (dry-run)
+##### 1) 어떤 제안과 원본 archive 변경이 sync 대상인지 먼저 확인
 
 ```bash
-make sync-approved-proposal-assets-dry
+make sync-approved-proposal-assets-dry ENV=real
+make ensure-story-image-sources-dry ENV=real
+make upload-story-image-sources-dry ENV=real
 ```
 
 내부 동작:
 - `event_proposals` 에서 `status='approved' AND synced_to_local_at IS NULL`
   인 행을 모두 읽어 list 출력 (실제 다운로드/DB 변경 없음).
 - 각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.
+- source archive dry-run은 현재 로컬 원본과
+  `story-image-sources/_manifests/story_images_manifest.json`의 `size`/`sha256`을
+  비교해 내려받거나 올릴 파일 수를 보여 준다.
 
 기대 출력:
 ```
@@ -1366,14 +1372,17 @@ Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)
 
 → 결과를 보고 의도와 일치하는지 확인. 어긋나면 DB 상태 점검 후 재실행.
 
-##### 2) 실제 sync 실행 — 4-phase 자동
+##### 2) 실제 release sync 실행
 
 ```bash
-make sync-approved-proposal-assets
+make release-sync-stories ENV=real
 ```
 
-`tools/supabase/sync_approved_proposal_assets.py --env dev` 가 다음 순서로
-실행된다. 각 단계는 멱등 (재실행 안전).
+`make release-sync-stories`는 먼저 active DB export를 끝낸 뒤,
+`tools/supabase/sync_approved_proposal_assets.py --env prod --skip-post-processing`로
+아래 Phase A/B를 실행한다. 새 proposal 원본은 아직 source archive에 없고
+`proposal-scenes`에만 있을 수 있으므로, proposal sync를 먼저 하고 thumbnails/pubspec은
+나중에 한 번만 만든다. 각 단계는 멱등 (재실행 안전).
 
 **Phase A — 신규 승인 제안 다운로드**
 1. `event_proposals` 에서 `status='approved' AND synced_to_local_at IS NULL`
@@ -1405,6 +1414,17 @@ make sync-approved-proposal-assets
 
 → Phase B 만 끄고 싶으면 `--skip-deletions` (별도 워크플로우에서 정리할 때).
 
+**Phase C — 원본 source archive pull**
+1. `story-image-sources/_manifests/story_images_manifest.json`을 읽는다.
+2. manifest의 `size`/`sha256`과 로컬 `assets/story_images/`를 비교한다.
+3. proposal sync로 이미 내려받은 신규 story 원본은 그대로 둔다.
+4. 아직 없는 파일이나 바뀐 파일만
+   `story-image-sources/story_images/<source_key>/scene_N.png`에서 내려받는다.
+   `<source_key>`는 한글 source dir의 SHA prefix이고, 실제 title/source_dir 매핑은
+   manifest에 있다.
+5. remote manifest가 없고 로컬 원본이 이미 완전하면 통과한다. 이 경우 release 마지막
+   upload 단계가 현재 로컬 원본 전체를 최초 seed 한다.
+
 **Step C — 썸네일 자동 재생성** (Phase A 또는 B 에서 변경이 있을 때만)
 - 내부적으로 `python tools/images/generate_runtime_thumbnails.py` 호출.
 - `assets/avatars/` → `assets/avatars_thumbs/` (모든 PNG 압축 사본)
@@ -1413,6 +1433,10 @@ make sync-approved-proposal-assets
 - current `assets/200_stories/*.json`에 없는 story image 원본 폴더는 썸네일 생성 대상에서
   제외하고, 기존 짧은 썸네일 디렉토리는 orphan으로 정리.
 - 이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.
+- current story JSON에 대응하는 `assets/story_images/<title>/scene_*.png` 원본이 하나도
+  없는 story가 있으면 중단한다. `assets/story_images/`는 git에 없는 로컬 원본 staging
+  디렉토리라서, 원본이 없는 컴퓨터에서 thumbnails를 돌리면 삭제/reindex 후
+  `<era_slug>_<story_index>` 폴더에 이전 이야기 이미지가 남을 수 있기 때문이다.
 
 **Step D — pubspec.yaml 자동 갱신** (Phase A 또는 B 에서 변경이 있을 때만)
 - 내부적으로 `python tools/app/update_pubspec_assets.py` 호출.
@@ -1423,6 +1447,47 @@ make sync-approved-proposal-assets
   등록돼 있어 손대지 않음.
 
 → Step C, D 둘 다 끄고 싶으면 `--skip-post-processing`.
+
+**Step E — 원본 source archive push**
+- `make release-sync-stories` 마지막에 `upload-story-image-sources`를 실행한다.
+- local `assets/story_images/`와 remote manifest를 비교해 missing/changed PNG만
+  `story-image-sources` private bucket에 업로드한다.
+- `proposal-scenes`에서 막 내려받은 신규 story 원본도 이 단계에서 source archive에
+  보존된다.
+- manifest는 current active story 기준으로 갱신하지만, 삭제 승인된 story의 과거 원본
+  객체는 즉시 삭제하지 않는다. 필요하면 별도 retention 정책으로 정리한다.
+
+##### Release builder와 이미지 원본
+
+일반 개발자가 현재 커밋을 checkout해서 앱을 빌드하는 것과, 운영 DB를 기준으로
+`release-sync-stories`를 실행해 다음 배포 번들을 만드는 것은 다르다.
+
+- 단순 빌드: git에 포함된 `assets/story_images_thumbs/`와 `pubspec.yaml`만 있으면 된다.
+  이 경우 원본 `assets/story_images/`가 없어도 앱 번들은 만들어진다.
+- release sync/build: `make release-sync-stories ENV=real` 안에서 `make thumbnails`가
+  실행되므로 active story 전체의 원본 PNG가 필요하다. 특히 삭제 승인으로
+  `story_index`가 당겨진 경우, 기존 썸네일 폴더를 그대로 쓰면 같은
+  `primeval_004` 같은 경로가 다른 이야기를 가리키는 오류가 생길 수 있다.
+
+다른 개발자나 CI도 release sync를 해야 한다면 `assets/story_images/` 전체를 별도 원격
+원본 저장소에서 복원하게 만든다. 실무적으로는 Supabase/GCS의 release-only bucket 또는
+zip artifact가 적당하고, 큰 PNG 원본을 git에 직접 넣는 것은 피한다. 승인 proposal로
+추가된 새 이야기 원본만 필요한 경우에는 `proposal-scenes` 파일이 남아 있는 동안
+`make sync-approved-proposal-assets-all ENV=real`로 다시 내려받을 수 있다. 하지만 초기
+seed 이야기처럼 `events.scene_image_paths`가 비어 있는 이미지는 이 방법으로 복원되지
+않으므로, 원본 archive가 최종 권위 저장소가 된다.
+
+효율 기준은 “매번 전체 2GB+ 왕복”이 아니라 “원격 원본 저장소 + 로컬 캐시 + delta
+sync”다. release builder는 시작 시 원본 저장소의 manifest(etag/sha256/size)를 보고
+`assets/story_images/`에 없는 story 폴더나 바뀐 scene PNG만 내려받는다. 승인 proposal로
+새 원본이 생긴 경우에는 `sync-approved-proposal-assets`가 `proposal-scenes`에서 로컬로
+가져오고, `upload-story-image-sources`가 그 신규/변경 PNG만 원본 저장소에 다시 업로드한다.
+삭제 승인된 story의 원본은 앱 번들에서는 빠지지만, 원본 저장소에서는 즉시 삭제하기보다
+versioned archive 또는 grace window를 두는 편이 안전하다.
+
+따라서 `sync-approved-proposal-assets-clean`의 `--delete-source`는 새 앱 배포가 끝나고
+원본 archive까지 갱신된 뒤에만 실행한다. 먼저 지우면 구버전 앱의 Storage fallback과
+다른 release builder의 재동기화 경로가 함께 사라진다.
 
 기대 출력 (요약):
 ```
@@ -1998,7 +2063,7 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
                                                    └─ 알림: 승인 + 충돌자에게 "수정 필요"
                                                           │
                                                           ▼
-                                              운영자: make sync-approved-proposal-assets
+                                              운영자: make release-sync-stories
                                               ┌──────────── Phase A ─────────────┐
                                               │ proposal-* → 로컬 assets/        │
                                               │ proposal-characters → characters │
@@ -2009,9 +2074,13 @@ A 제출 (after=5)        B 제출 (after=5)            관리자 A 승인
                                               │ DB events vs 로컬 dir → 차이 정리 │
                                               │ DB characters vs 로컬 PNG → 차이  │
                                               ├──────────── Step C ──────────────┤
-                                              │ make thumbnails                  │
+                                              │ ensure-story-image-sources       │
                                               ├──────────── Step D ──────────────┤
+                                              │ make thumbnails                  │
+                                              ├──────────── Step E ──────────────┤
                                               │ make update-pubspec-assets       │
+                                              ├──────────── Step F ──────────────┤
+                                              │ upload-story-image-sources       │
                                               └───────────────────────────────────┘
                                                           │
                                                           ▼

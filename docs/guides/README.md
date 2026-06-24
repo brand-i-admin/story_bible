@@ -62,8 +62,10 @@ real seed 적용, 앱 Store 배포 타이밍처럼 운영 판단이 필요하면
 
 | 상황 | 먼저 볼 문서 | 함께 볼 문서 |
 |------|------------|----------------|
-| 평소 dev/real 실행, 검증, 배포 순서 | [develop-flow.md](develop-flow.md) | [MAKE_TARGETS.md](MAKE_TARGETS.md) |
-| 새 이야기, 퀴즈, 장면 이미지 반영 | [develop-flow.md](develop-flow.md) | [CONTENT_UPDATE.md](CONTENT_UPDATE.md), [MAKE_TARGETS.md](MAKE_TARGETS.md) |
+| 앱 기능/UI만 개발하고 빌드/배포 | [develop-flow.md](develop-flow.md) | [../FRONTEND.md](../FRONTEND.md), [TEST_GUIDE.md](TEST_GUIDE.md) |
+| DB schema/RLS/RPC/cron patch가 필요한 기능 개발 | [develop-flow.md](develop-flow.md) | [../BACKEND.md](../BACKEND.md), [../../supabase/patches/README.md](../../supabase/patches/README.md) |
+| 새 이야기 추가/삭제 승인 후 release sync | [develop-flow.md](develop-flow.md) | [CONTENT_UPDATE.md](CONTENT_UPDATE.md), [MAKE_TARGETS.md](MAKE_TARGETS.md) |
+| 기존 퀴즈/landmark/seed 수정 | [develop-flow.md](develop-flow.md) | [MAKE_TARGETS.md](MAKE_TARGETS.md), [../DATA_PIPELINE.md](../DATA_PIPELINE.md) |
 | `make` 명령 내부 동작 확인 | [MAKE_TARGETS.md](MAKE_TARGETS.md) | [../DATA_PIPELINE.md](../DATA_PIPELINE.md) |
 | 새 컴퓨터나 팀원 환경 파일 공유 | [INFRA_GUIDE.md](INFRA_GUIDE.md) | [LOCAL_ENV_FILES.md](LOCAL_ENV_FILES.md) |
 | 새 Supabase 프로젝트 구축/복구 | [INFRA_GUIDE.md](INFRA_GUIDE.md) | [DB_SETUP.md](DB_SETUP.md) |

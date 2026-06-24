@@ -180,6 +180,8 @@ DB의 `events.landmark_id`를 기준으로 `assets/landmarks/event_region_mappin
 - 입력: `assets/story_images/`, `assets/avatars/`, `assets/200_stories/*.json`
 - 출력: `assets/story_images_thumbs/<era_slug>_<story_index>/scene_N.jpg`, `assets/story_images_thumbs/index.json`, `assets/avatars_thumbs/*.png`
 - 원격 변경: 없음
+- 전제: current `assets/200_stories/*.json`에 들어 있는 모든 active story title에 대해
+  `assets/story_images/<safe title>/scene_*.png` 원본이 로컬에 있어야 한다.
 
 `assets/story_images_thumbs/index.json`은 한글 제목 기반 원본 폴더와 짧은 런타임 폴더를
 연결한다. Android/iOS asset 경로 길이 문제를 피하려고 짧은 폴더를 쓴다.
@@ -187,6 +189,13 @@ DB의 `events.landmark_id`를 기준으로 `assets/landmarks/event_region_mappin
 로컬 `assets/story_images/<삭제된 제목>/` 원본 폴더가 남아 있어도 current JSON에
 없으면 앱 번들 썸네일로 다시 생성하지 않고, 기존 짧은 썸네일 디렉토리도 orphan으로
 정리한다.
+
+`assets/story_images/`는 `.gitignore` 대상인 원본 staging 디렉토리다.
+이미 sync가 끝난 커밋을 단순히 앱 빌드만 하는 컴퓨터는 git에 포함된
+`assets/story_images_thumbs/`로 충분하지만, `make thumbnails`나
+`make release-sync-stories`를 실행하는 release builder는 원본 PNG 전체가 필요하다.
+원본이 빠진 상태에서 삭제/reindex가 반영되면 `<era_slug>_<story_index>` 폴더가
+이전 이야기 이미지를 가리킬 수 있으므로, 스크립트는 누락 원본을 발견하면 실패한다.
 
 ### `make update-pubspec-assets`
 
@@ -197,6 +206,39 @@ Flutter가 새 썸네일 폴더를 번들에 포함하도록 `pubspec.yaml`의 a
 - 원격 변경: 없음
 
 이 target을 빼먹으면 로컬에는 JPG가 있어도 새 앱 번들에 포함되지 않는다.
+
+### `make ensure-story-image-sources ENV=real`
+
+release builder의 로컬 원본 캐시를 private source archive에서 채운다.
+
+- 입력: `assets/200_stories/*.json`, Supabase Storage private bucket
+  `story-image-sources`
+- 출력: missing/changed `assets/story_images/<safe title>/scene_*.png`
+- 원격 변경: 없음
+- dry-run: `make ensure-story-image-sources-dry ENV=real`
+
+이 target은 `story-image-sources/_manifests/story_images_manifest.json`의
+`size`/`sha256`과 로컬 파일을 비교한다. remote manifest가 없고 로컬 원본이 이미
+완전하면 통과한다. 이 경우 다음 `upload-story-image-sources`가 현재 로컬 전체를 최초
+seed 한다. remote manifest도 없고 로컬 원본도 없으면 복구할 출처가 없으므로 실패한다.
+
+### `make upload-story-image-sources ENV=real`
+
+release builder의 로컬 원본 캐시를 private source archive로 밀어 올린다.
+
+- 입력: `assets/200_stories/*.json`, `assets/story_images/<safe title>/scene_*.png`
+- 출력: `story-image-sources/story_images/<source_key>/scene_*.png`,
+  `story-image-sources/_manifests/story_images_manifest.json`
+- 원격 변경: private bucket 생성/업로드/manifest 갱신
+- dry-run: `make upload-story-image-sources-dry ENV=real`
+
+`story-image-sources`는 앱 런타임용 public bucket이 아니라 release-only private bucket이다.
+`db_init.sql`에는 bucket 정의가 있지만 `make db-init` 전 purge 대상이 아니므로,
+`characters`/`proposal-scenes`/`proposal-characters`를 초기화해도 이 원본 archive는
+비워지지 않는다. 원격 object path는 한글 title이 아니라
+`story_images/<source_key>/scene_*.png` 형식의 ASCII key를 쓰고, 실제 title/source_dir은
+manifest에 보존한다. 기존 manifest와 같은 `size`/`sha256` 파일은 skip하고, 새 proposal
+승인으로 생긴 story 폴더나 바뀐 PNG만 업로드한다.
 
 ## 3.1 Draft / proposal 운영 target
 
@@ -238,8 +280,9 @@ make apply-drafts ENV=real STORIES_GLOB="assets/story_drafts/202606*.json"
 관리자 승인 후 real DB 상태를 다음 앱 배포용 로컬 canonical 파일로 되돌린다.
 
 - 실행 순서: `export-stories-json` → `export-quizzes-json` →
-  `export-event-region-mapping` → `sync-approved-proposal-assets` → `thumbnails` →
-  `update-pubspec-assets`
+  `export-event-region-mapping` → `sync-approved-proposal-assets --skip-post-processing` →
+  `ensure-story-image-sources` → `thumbnails` → `update-pubspec-assets` →
+  `upload-story-image-sources`
 - 입력: DB의 active published events, quiz_questions, landmarks, 승인 proposal assets
 - 출력: `assets/200_stories/*.json`, `assets/story_images/<title>/scene_N.png`,
   `assets/quizzes/*.json`, `supabase/quizzes/db_events.json`,
@@ -253,6 +296,22 @@ make apply-drafts ENV=real STORIES_GLOB="assets/story_drafts/202606*.json"
   `sync-approved-proposal-assets` Phase B가 active title diff로 로컬
   `assets/story_images/<삭제된 제목>/` 폴더를 제거하고, `thumbnails`가 current JSON에
   없는 짧은 썸네일 디렉토리를 제거한다.
+- `assets/story_images/` 원본은 git에 없으므로, 이 target은 원본이 복원된 release
+  builder에서 실행해야 한다. 다른 컴퓨터에서 실행할 때는 먼저
+  `make ensure-story-image-sources-dry ENV=real`로 source archive 상태를 확인하고,
+  필요하면 `make ensure-story-image-sources ENV=real`로 missing/changed 원본을 내려받는다.
+  `release-sync-stories` 안에도 이 pull 단계가 포함되어 있다. proposal-backed 신규
+  이야기의 경우 `proposal-scenes`에 남아 있는 원본도 sync 단계에서 내려받지만, 초기 seed
+  이야기처럼 proposal 원본이 없는 이미지는 `story-image-sources` archive 없이는
+  재생성할 수 없다.
+- 원본 archive는 매 release마다 2GB+ 전체를 다시 받거나 올리는 대상이 아니다. 원격
+  private bucket(Supabase/GCS 등)을 권위 저장소로 두고, release builder의
+  `assets/story_images/`는 로컬 캐시로 취급한다. manifest/etag/sha256 기준으로
+  missing/changed PNG만 다운로드하고, proposal 승인으로 새로 생긴 story 폴더만 업로드하는
+  delta sync가 효율적이다.
+- release sync가 끝난 뒤에는 `make upload-story-image-sources-dry ENV=real`로 새로 올릴
+  원본이 남았는지 확인할 수 있다. 정상적으로 push까지 끝났다면 보통
+  `upload=0, skip=<현재 원본 수>`가 나온다.
 
 예: 같은 era에서 4번과 8번을 삭제 승인하고, 새 이야기 2건을 각각 2번 뒤와 마지막에
 승인한 뒤 이 target을 실행하면, DB의 active `story_index=1..N` 상태가 그대로

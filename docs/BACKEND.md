@@ -552,7 +552,8 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 
 ## 6. Storage
 
-세 버킷이 `db_init.sql` 에 선언된다.
+Storage 버킷은 `db_init.sql` 에 선언된다. 앱 런타임/public 자산과 release-only
+원본 archive는 분리한다.
 
 ### `profile-images` (기존)
 - **제한**: 5 MB, PNG/JPEG/WebP
@@ -582,6 +583,21 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 - **읽기 권한**: public — 제안 상세 페이지에서 다른 pastor/admin 이 열람.
 - **DB 연동**: `event_proposals.scene_image_paths` 가 이 경로 목록을 유지
   (인덱스 순서 = 장면 순서).
+
+### `story-image-sources` (release-only, private)
+- 앱 번들 썸네일을 만들기 위한 원본 장면 PNG archive.
+- **제한**: 20 MB, PNG/JSON(manifest)
+- **경로 패턴**:
+  - `story_images/<source_key>/scene_*.png` (`source_key`는 한글 source dir의 SHA prefix)
+  - `_manifests/story_images_manifest.json`
+- **접근**: public read 없음. 앱 런타임은 사용하지 않고 service_role 운영 도구
+  `sync_story_image_sources.py`만 pull/push한다.
+- **운영**: `make ensure-story-image-sources`가 missing/changed 원본을 내려받고,
+  `make upload-story-image-sources`가 신규/변경 원본과 manifest를 업로드한다.
+- **db-init 보존**: `db_init.sql`에는 bucket 정의가 있지만
+  `tools/supabase/purge_owned_buckets.py`의 purge 대상이 아니다. 따라서
+  `make db-init`이 `characters`, `proposal-scenes`, `proposal-characters`를 비워도
+  이 source archive는 유지된다.
 
 ## 7. Edge Functions
 
@@ -701,10 +717,11 @@ make upload-character-avatars ENV=dev
 make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 ```
 
-`make db-init`은 SQL 실행 전에 앱 소유 Storage 버킷(`characters`,
+`make db-init`은 SQL 실행 전에 앱 소유 재생성 버킷(`characters`,
 `proposal-scenes`, `proposal-characters`)을 REST API로 먼저 비운다.
 service_role 키가 없거나 purge가 실패하면 기존 파일이 남지 않도록 DB 초기화도
-중단한다. 사용자 업로드 버킷인 `profile-images`는 건드리지 않는다.
+중단한다. 사용자 업로드 버킷인 `profile-images`와 release 원본 archive인
+`story-image-sources`는 건드리지 않는다.
 
 ### 8.4 이력 보존
 

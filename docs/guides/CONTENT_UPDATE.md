@@ -37,6 +37,9 @@ JSON/이미지/seed 작업 순서를 다룬다.
 - `make thumbnails`는 current `assets/200_stories/*.json`에 등장하는 title만
   `story_images_thumbs/index.json`에 넣는다. 삭제된 title의 원본 폴더가 실수로 남아
   있어도 앱 번들 썸네일로 다시 살아나지 않는다.
+- `make release-sync-stories`는 `ensure-story-image-sources`로 private
+  `story-image-sources` bucket에서 missing/changed 원본 PNG를 내려받고, 마지막에
+  `upload-story-image-sources`로 새 proposal 원본과 manifest를 다시 올린다.
 - `make apply-seeds-stories-characters`는 Storage에 장면 이미지나 썸네일을 업로드하지
   않는다. `make upload-character-avatars`도 캐릭터 아바타 전용이다.
 - 중간 삽입으로 기존 이야기들의 `story_index`가 밀리면 real DB에는 seed-only로
@@ -375,6 +378,8 @@ where code = 'goliath';
 - [ ] `characters`, `scene_characters` code가 맞다.
 - [ ] `story_index`가 era 안에서 unique하다.
 - [ ] 표준 proposal 흐름이면 `make release-sync-stories`로 stories/quiz/landmark mapping/assets/pubspec을 갱신했다.
+- [ ] release builder라면 `story-image-sources` private bucket pull/push가 정상 통과했다
+      (`make release-sync-stories` 안에서 자동 실행).
 - [ ] 삭제 승인된 이야기가 있다면 해당 title이 `assets/200_stories/*.json`,
       `assets/quizzes/*.json`, `assets/story_images_thumbs/index.json`,
       `pubspec.yaml`의 story thumb asset 목록에서 빠진 것을 확인했다.
@@ -382,7 +387,8 @@ where code = 'goliath';
 - [ ] `landmark_code`가 `assets/landmarks/landmarks.json`에 존재한다.
 - [ ] `make seed-stories-characters` 성공.
 - [ ] 퀴즈가 있으면 `supabase/quizzes/db_events.json` snapshot도 갱신했고 `make seed-quizzes` 성공. 표준 proposal 흐름에서는 `make export-quizzes-json` 또는 `make release-sync-stories`가 갱신한다.
-- [ ] `make thumbnails`와 `make update-pubspec-assets` 실행.
+- [ ] 직접 JSON/seed 흐름이면 `make thumbnails`와 `make update-pubspec-assets` 실행.
+      표준 proposal 흐름에서는 `make release-sync-stories`가 자동 실행한다.
 - [ ] `make check-pubspec-assets` 통과.
 - [ ] `python3 tools/seed/verify_polygons_contain_events.py` 통과.
 - [ ] `scripts/run_dev.sh`에서 새 이야기/이미지/퀴즈 확인.
