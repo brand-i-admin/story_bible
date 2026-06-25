@@ -1,0 +1,1496 @@
+[
+  {
+    "title": "마른 뼈: 숨이 들어오다",
+    "era": "era_exile_return",
+    "characters": [
+      "ezekiel"
+    ],
+    "landmark_code": "lm_exi_chebar",
+    "place_name": "그발 강가(추정)",
+    "lat": 32.65,
+    "lng": 44.6,
+    "summary": "절망의 뼈들에게 말씀과 숨이 임해 회복의 그림이 그려진다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「마른 뼈」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "겔",
+        "from": "37:1",
+        "to": "37:14"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "바벨론 포로 땅의 넓은 골짜기에 마른 뼈들이 흩어져 있고, 에스겔은 제사장 겉옷을 입은 채 두려움과 슬픔으로 그 사이를 걸어간다",
+      "하나님의 빛에서 나오는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다, 에스겔은 떨리는 손을 들어 마른 뼈들을 향해 선포한다",
+      "에스겔이 서 있는 가운데 마른 뼈들이 서로 맞춰지고 힘줄과 살이 덮이기 시작한다. 잔혹한 해부 장면이 아니라 회복의 상징으로 보인다",
+      "하나님의 바람이 불어와 숨이 돌아온 큰 군대가 일어서고, 에스겔은 놀라움과 소망이 섞인 얼굴로 그 가운데 서 있다"
+    ],
+    "scene_captions": [
+      "바벨론 포로 땅의 넓은 골짜기에 마른 뼈들이 흩어져 있다",
+      "에스겔은 떨리는 손을 들어 마른 뼈들을 향해 선포한다",
+      "에스겔이 서 있는 가운데 마른 뼈들이 서로 맞춰지고 힘줄과 살이 덮이기 시작한다",
+      "하나님의 바람이 불어와 숨이 돌아온 큰 군대가 일어선다"
+    ],
+    "scene_characters": [
+      [
+        "ezekiel"
+      ],
+      [
+        "god",
+        "ezekiel"
+      ],
+      [
+        "ezekiel"
+      ],
+      [
+        "ezekiel",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에스겔은 하나님의 명령에 따라 마른 뼈들에게 어떻게 하였습니까?",
+        "choices": [
+          "뼈들에게 대언하였다",
+          "뼈들을 모아 매장하였다",
+          "뼈들 위에 손을 얹어 기도하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "마른 뼈들에게 하나님이 주신 약속은 무엇입니까?",
+        "choices": [
+          "생기를 넣어 다시 살게 하시겠다는 약속",
+          "뼈들을 그대로 흩어 두시겠다는 말씀",
+          "성읍 밖으로 옮기라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "겔 37:5 — '주 여호와께서 이 뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "마른 뼈 환상에서 뼈들은 무엇을 상징합니까?",
+        "choices": [
+          "이스라엘 온 족속",
+          "바벨론의 군대",
+          "죽은 선지자들"
+        ],
+        "answer_index": 0,
+        "explanation": "겔 37:11 — '이 뼈들은 이스라엘 온 족속이라'"
+      }
+    ]
+  },
+  {
+    "title": "다니엘: 뜻을 정하다",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel",
+      "shadrach",
+      "meshach",
+      "abednego"
+    ],
+    "landmark_code": "lm_exi_babylon",
+    "place_name": "바벨론",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "다니엘은 낯선 제국 한복판에서 믿음의 기준을 세운다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「다니엘」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "1:8",
+        "to": "1:20"
+      }
+    ],
+    "start_year": -605,
+    "end_year": -605,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "십대 후반의 다니엘과 세 친구가 예루살렘에서 바벨론으로 끌려와 낯선 궁정 훈련복을 받으며, 두려움 속에서도 서로를 격려한다",
+      "바벨론 왕궁 훈련장에서 다니엘이 왕의 진미와 포도주가 놓인 식탁 앞에서 정중하지만 단호하게 거절하고, 환관장은 걱정스러운 얼굴로 바라본다",
+      "다니엘과 세 친구가 채소와 물을 먹으며 열흘 동안 지내고, 다른 청년들과 비교해 건강하고 맑은 얼굴을 보인다",
+      "젊은 다니엘과 세 친구가 바벨론 왕 앞에 서서 지혜롭게 대답하고, 왕과 관리들은 놀라운 표정으로 그들을 바라본다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 법정 앞에서도 흔들리지 않는 증언과 밝은 길이 보이는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "다니엘과 세 친구가 예루살렘에서 바벨론으로 끌려와서 서로 격려한다",
+      "다니엘은 왕의 진미와 포도주를 거절한다",
+      "다니엘과 세 친구가 채소와 물을 먹으며 열흘 동안 지낸다",
+      "다니엘과 세 친구가 바벨론 왕 앞에 서서 지혜롭게 대답한다"
+    ],
+    "scene_characters": [
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "daniel",
+        "shadrach",
+        "meshach",
+        "abednego"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다니엘이 뜻을 정하여 먹지 않겠다고 한 것은 무엇이었습니까?",
+        "choices": [
+          "왕의 진미와 포도주",
+          "이방 신에게 제사한 음식",
+          "피로 만든 음식"
+        ],
+        "answer_index": 0,
+        "explanation": "단 1:8 — '왕의 진미와 그의 마시는 포도주로 자기를 더럽히지 아니하리라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다니엘과 세 친구가 열흘 시험 후 어떠하였습니까?",
+        "choices": [
+          "왕의 진미를 먹은 자보다 더 윤택하였다",
+          "여위어 보여 다시 왕의 음식을 먹게 되었다",
+          "건강에 차이가 없었다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 1:15 — '열흘 후에 ... 왕의 진미를 먹는 자보다 더욱 아름답고 윤택하여'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 다니엘에게 어떤 특별한 지혜를 주셨습니까?",
+        "choices": [
+          "모든 이상과 꿈을 깨달아 알게 하셨다",
+          "왕의 음식을 더 많이 먹게 하셨다",
+          "궁중 일을 피하게 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 1:17 — '하나님이 이 네 소년에게 지식을 얻게 하시며 모든 학문과 재주에 명철하게 하신 외에 다니엘은 또 모든 이상과 몽조를 깨달아 알더라'"
+      }
+    ]
+  },
+  {
+    "title": "풀무불: 세 친구의 믿음",
+    "era": "era_exile_return",
+    "characters": [
+      "shadrach",
+      "meshach",
+      "abednego"
+    ],
+    "landmark_code": "lm_exi_babylon",
+    "place_name": "바벨론(전승)",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "사드락과 메삭과 아벳느고는 금 신상에 절하지 않고 풀무불에 던져지지만, 하나님이 그들을 보호하신다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「풀무불」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "3:1",
+        "to": "3:30"
+      }
+    ],
+    "start_year": -585,
+    "end_year": -585,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "두라 평지의 거대한 금 신상 앞에서 관리들과 백성이 엎드리지만, 사드락과 메삭과 아벳느고 세 친구는 바벨론 관리복을 입은 채 굳게 서 있다. 글자나 상징 문양은 보이지 않는다",
+      "분노한 느부갓네살 왕이 세 친구를 불러 다시 절하라고 위협하고, 세 친구는 두려움이 있어도 하나님을 신뢰하는 단호한 얼굴로 대답하는 자세를 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 빈 손으로 빛을 받는 사람과 활짝 열린 문이 보이는 장면이 작은 그림처럼 보인다",
+      "세 친구가 결박된 채 뜨거운 풀무불 속에 던져졌지만 불길 가운데 해를 입지 않고 서 있으며, 그들 곁에는 하나님의 보호를 상징하는 밝은 거룩한 인물이 보인다. 사람 타는 장면이나 시신은 없다",
+      "느부갓네살 왕이 놀라 세 친구를 불러내고, 불에 그슬리지 않은 옷차림의 세 친구는 왕과 관리들 앞에서 겸손히 서 있다"
+    ],
+    "scene_captions": [
+      "두라 평지의 거대한 금 신상 앞에서 관리들과 백성이 엎드리지만 다니엘의 친구들은 절하지 않는다",
+      "분노한 느부갓네살 왕이 세 친구를 불러 다시 절하라고 위협한다",
+      "사드락과 메삭과 아벳느고는 금 신상에 절하지 않고 풀무불에 던져지지만, 하나님이 그들을 보호하신다",
+      "느부갓네살 왕이 놀라 세 친구를 불러내고, 불에 그슬리지 않은 옷차림의 세 친구는 왕과 관리들 앞에 선다"
+    ],
+    "scene_characters": [
+      [
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "shadrach",
+        "meshach",
+        "abednego"
+      ],
+      [
+        "shadrach",
+        "meshach",
+        "abednego"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "느부갓네살이 두라 평지에 세운 신상의 높이는 얼마였습니까?",
+        "choices": [
+          "육십 규빗",
+          "삼십 규빗",
+          "백 규빗"
+        ],
+        "answer_index": 0,
+        "explanation": "단 3:1 — '고는 육십 규빗이요 광은 여섯 규빗이라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사드락과 메삭과 아벳느고는 왕의 명을 받자 어떻게 하였습니까?",
+        "choices": [
+          "왕에게 대답할 필요가 없다며 굴복을 거절하였다",
+          "절을 한 척하고 마음속으로 기도하였다",
+          "도망쳐서 숨었다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "풀무불 속 사람 수를 확인한 왕에게 신하들은 어떻게 대답했습니까?",
+        "choices": [
+          "세 사람을 던진 것이 맞다고 대답했다",
+          "네 사람을 던졌다고 대답했다",
+          "아무도 불 속에 없다고 대답했다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 3:24 — '때에 느부갓네살 왕이 놀라 급히 일어나서 모사들에게 물어 가로되 우리가 결박하여 불가운데 던진 자는 세 사람이 아니었느냐 그들이 왕에게 대답하여 가로되 왕이여 옳소이다'"
+      }
+    ]
+  },
+  {
+    "title": "벨사살의 잔치: 벽에 쓴 글",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel"
+    ],
+    "landmark_code": "lm_exi_babylon",
+    "place_name": "바벨론",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "교만한 잔치에 ‘손 글씨’가 나타나고, 심판이 선포된다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「벨사살의 잔치」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "5:1",
+        "to": "5:31"
+      }
+    ],
+    "start_year": -539,
+    "end_year": -539,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "벽 가까이에 신비로운 손이 나타나 읽을 수 없는 빛의 흔적을 남기자, 벨사살은 얼굴이 창백해지고 무릎이 떨리는 모습으로 왕좌에서 일어난다. 글자는 알아볼 수 없게 표현한다",
+      "나이 많은 다니엘이 흰 수염과 단정한 포로 출신 현자의 옷차림으로 왕 앞에 들어오고, 바벨론 현자들은 해결하지 못한 채 당황해 서 있다",
+      "나이 많은 다니엘이 흰 수염과 단정한 포로 출신 현자의 옷차림 벨사살에게 교만과 심판을 엄중히 알리고, 왕은 자주색 옷과 금 사슬을 다니엘에게 걸어 주지만 얼굴에는 두려움이 남아 있다. 글자나 두루마리 문자는 없다"
+    ],
+    "scene_captions": [
+      "교만한 잔치에 ‘손 글씨’가 나타나고, 심판이 선포된다",
+      "늙은 다니엘이 바벨론 현자들앞에서 왕에게 사건을 해석한다",
+      "늙은 다니엘이 벨사살에게 교만과 심판을 엄중히 알린다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "벨사살의 잔치에 초대된 귀인의 수는 몇 명이었습니까?",
+        "choices": [
+          "일천 명",
+          "오백 명",
+          "칠십 명"
+        ],
+        "answer_index": 0,
+        "explanation": "단 5:1 — '벨사살 왕이 그 귀인 일천 명을 위하여 큰 잔치를 배설하고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다니엘은 왕이 제안한 상급을 받겠느냐는 질문에 어떻게 하였습니까?",
+        "choices": [
+          "상급은 왕이 취하고 글을 읽어 해석을 알려주겠다고 하였다",
+          "상급을 기꺼이 받겠다고 하였다",
+          "상급을 거절하고 아무 말도 하지 않았다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 5:17 — '왕의 예물은 왕이 취하시고 ... 글을 읽어 해석을 알려드리겠나이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "벽의 글씨에서 ‘데겔’은 벨사살 왕에게 어떤 뜻이었습니까?",
+        "choices": [
+          "저울에 달려 부족함이 드러났다는 뜻",
+          "나라가 오래 견고하다는 뜻",
+          "왕이 다시 높아진다는 뜻"
+        ],
+        "answer_index": 0,
+        "explanation": "단 5:27 — '데겔은 왕이 저울에 달려서 부족함이 뵈었다 함이요'"
+      }
+    ]
+  },
+  {
+    "title": "사자굴: 멈추지 않는 기도",
+    "era": "era_exile_return",
+    "characters": [
+      "daniel"
+    ],
+    "landmark_code": "lm_exi_babylon",
+    "place_name": "바벨론/메대-바사(전승)",
+    "lat": 32.5421,
+    "lng": 44.4209,
+    "summary": "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「사자굴」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "단",
+        "from": "6:1",
+        "to": "6:28"
+      }
+    ],
+    "start_year": -537,
+    "end_year": -537,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "80 세 정도 나이 많은 다니엘이 예루살렘을 향한 열린 창가에서 하루 세 번 무릎 꿇어 기도하고, 적대적인 관리들이 문밖에서 몰래 지켜본다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 하늘을 향한 빈 손과 보호받는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "관리들이 다리오 왕 앞에서 나이 많은 다니엘을 고발하자 왕은 자신이 내린 법 때문에 괴로워하며 얼굴을 감싸고, 다니엘은 차분하게 서 있다",
+      "80 세 정도 나이 많은 다니엘이 사자굴에 내려가고 다리오 왕은 밤새 잠 못 이루며 걱정한다. 굴 안의 사자들은 하나님의 보호 아래 입을 다문 채 다니엘 주변에 조용히 앉아 있다",
+      "새벽에 다리오 왕이 사자굴 입구로 달려와 80 세 정도 다니엘이 살아 있음을 보고 놀라며, 늙은 다니엘은 평안한 얼굴로 굴 안에서 손을 들어 응답한다"
+    ],
+    "scene_captions": [
+      "80세 정도 다니엘이 예루살렘을 향한 열린 창가에서 하루 세 번 무릎 꿇어 기도한다",
+      "왕은 자신이 내린 법 때문에 괴로워하며 얼굴을 감싸다",
+      "다니엘이 사자굴에 내려가고 다리오 왕은 밤새 잠 못 이루며 걱정한다",
+      "새벽에 다리오 왕이 사자굴 입구로 달려와 다니엘이 살아 있음을 보고 놀라다"
+    ],
+    "scene_characters": [
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ],
+      [
+        "daniel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다리오 왕이 세운 방백의 수는 몇 명이었습니까?",
+        "choices": [
+          "일백이십 명",
+          "칠십 명",
+          "삼백 명"
+        ],
+        "answer_index": 0,
+        "explanation": "단 6:1 — '다리오가 방백 일백이십 명을 세워 전국을 통치하게 하고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다니엘은 기도 금지령이 내려진 후에도 어떻게 하였습니까?",
+        "choices": [
+          "전에 하던 대로 하루 세 번 예루살렘을 향해 기도하였다",
+          "몰래 방에 숨어서 기도하였다",
+          "금지 기간 동안만 기도를 멈추었다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "다리오 왕은 조서를 내리며 백성들에게 어떤 인사를 전했습니까?",
+        "choices": [
+          "많은 평강이 있기를 원한다고 전했다",
+          "다니엘을 다시 굴에 넣으라고 전했다",
+          "예루살렘으로 돌아가지 말라고 전했다"
+        ],
+        "answer_index": 0,
+        "explanation": "단 6:25 — '이에 다리오 왕이 온 땅에 있는 모든 백성과 나라들과 각 방언하는 자들에게 조서를 내려 가로되 원컨대 많은 평강이 너희에게 있을지어다'"
+      }
+    ]
+  },
+  {
+    "title": "귀환과 성전 기초: 시작과 중단",
+    "era": "era_exile_return",
+    "characters": [
+      "zerubbabel"
+    ],
+    "landmark_code": "lm_exi_jerusalem",
+    "place_name": "예루살렘과 유다 귀환지(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "고레스의 명령으로 귀환한 백성은 유다 땅에 정착하고 성전 재건을 시작하지만, 방해 속에서 공사가 멈춘다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「귀환과 성전 기초」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "1:1",
+        "to": "4:24"
+      }
+    ],
+    "start_year": -538,
+    "end_year": -520,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "고레스의 명령으로 이스라엘 자손들이 바벨론과 페르시아 여러 지역에서 돌아와 유다 땅 각 성읍에 정착해 살고, 옆에는 바벨론에서 예루살렘과 유다 성읍들로 이어지는 간단한 지도 그림이 함께 보인다. 지도에는 글자나 읽을 수 있는 표시는 없다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 포로들이 짐을 들고 예루살렘 길로 돌아가는 장면이 작은 그림처럼 보인다",
+      "스룹바벨과 예수아와 동료들이 예루살렘 성전 터에서 돌과 목재를 놓고 성전 재건을 시작하며, 제사장들과 레위 사람들과 백성들이 조심스러운 기쁨으로 함께 일하는 장면",
+      "사마리아 사람들이 성전 건축 현장으로 찾아와 우리도 함께 짓겠다고 제안하지만, 스룹바벨과 지도자들이 단호하면서도 절제된 표정으로 거절하는 장면. 사마리아 사람들은 이름 없는 방문자 무리로 보인다",
+      "방해와 고발 때문에 예루살렘 성전 건축이 중단되어 돌더미와 목재가 멈춰 있고, 스룹바벨과 동료들이 허탈한 표정으로 빈 성전 터를 바라보는 장면"
+    ],
+    "scene_captions": [
+      "고레스의 명령으로 귀환한 백성은 유다 땅에 정착하고 성전 재건을 시작한다",
+      "스룹바벨과 예수아와 동료들이 예루살렘 성전 터에서 돌과 목재를 놓고 성전 재건을 시작한다",
+      "사마리아 사람들이 성전 건축 현장으로 찾아와 우리도 함께 짓겠다고 제안하지만 거절한다",
+      "방해와 고발 때문에 예루살렘 성전 건축이 중단되어 돌더미와 목재가 멈춘다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "zerubbabel"
+      ],
+      [
+        "zerubbabel"
+      ],
+      [
+        "zerubbabel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "고레스 왕은 조서에서 예루살렘에 무엇을 하라고 하였습니까?",
+        "choices": [
+          "여호와의 전을 건축하라고 하였다",
+          "수산 궁을 새로 짓게 하였다",
+          "바벨론 성벽을 더 높이라고 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 1:2 — '나를 명하사 유다 예루살렘에 전을 건축하라 하셨나니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "스룹바벨과 지도자들은 함께 건축하자는 주변 사람들에게 어떻게 답했습니까?",
+        "choices": [
+          "우리와 상관이 없고 우리가 홀로 건축하겠다고 했다",
+          "모든 공사를 그들에게 맡기겠다고 했다",
+          "성전 대신 왕궁을 짓겠다고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 4:3 — '너희는 우리와 상관이 없느니라 ... 우리가 이스라엘 하나님 여호와를 위하여 홀로 건축하리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "방해가 이어진 뒤 예루살렘의 하나님의 전 공사는 어떻게 되었습니까?",
+        "choices": [
+          "바사 왕 다리오 제이년까지 그쳤다",
+          "그날 바로 완성되었다",
+          "수산 궁으로 옮겨졌다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 4:24 — '이에 예루살렘에서 하나님의 전 역사가 그쳐서 바사 왕 다리오 제이년까지 이르니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show a simple pictorial map route without readable labels or letters. No text in the map.",
+      "Show Zerubbabel as the same post-exile Judah governor throughout this story. Jeshua has no reference avatar and should appear only as an unnamed priestly coworker if needed. No readable labels.",
+      "Show the Samaritan visitors as an unnamed group with no text labels. Keep Zerubbabel visually consistent with scene 2.",
+      "No violence. Emphasize stopped construction and discouragement, with Zerubbabel visually consistent."
+    ]
+  },
+  {
+    "title": "학개의 말씀: 스룹바벨을 택하다",
+    "era": "era_exile_return",
+    "characters": [
+      "haggai",
+      "zerubbabel",
+      "zechariah_prophet"
+    ],
+    "landmark_code": "lm_exi_jerusalem",
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "학개는 스룹바벨에게 하나님이 세상을 흔드시고 나라의 권세를 뒤엎으시며 그를 택하셨다고 전한다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「학개의 말씀」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "학",
+        "from": "1:1",
+        "to": "2:23"
+      }
+    ],
+    "start_year": -520,
+    "end_year": -520,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "학개가 성전 터 가까이에서 스룹바벨에게 강하게 하나님의 말씀을 전하고, 큰 글자 없는 말풍선 안에는 하나님의 성전은 짓다가 중단되었는데 본인들 집만 꾸미는 이스라엘 백성들을 꾸짖는 장면",
+      "학개가 스룹바벨에게 다시 엄중히 말하고, 큰 글자 없는 말풍선 안에는 하나님을 믿지 않는 나라들의 왕좌와 전차들이 뒤집히는 상징 그림이 담겨 있다. 폭력과 시신은 보이지 않는다",
+      "학개가 스룹바벨을 향해 손을 들고 선포하며, 큰 글자 없는 말풍선 안에는 하나님이 스룹바벨을 택하셨음을 보이는 인장 반지와 밝은 선택의 빛이 담겨 있다"
+    ],
+    "scene_captions": [
+      "학개가 스룹바벨에게 하나님의 성전은 멈추고 본인들 집을 꾸미는 것을 꾸짖는다",
+      "학개가 스룹바벨에게 하나님을 믿지 않는 나라의 최후를 말한다",
+      "학개가 스룹바벨을 향해 손을 들고 하나님의 인장을 찍었음을 선포한다"
+    ],
+    "scene_characters": [
+      [
+        "haggai",
+        "zerubbabel"
+      ],
+      [
+        "haggai",
+        "zerubbabel"
+      ],
+      [
+        "haggai",
+        "zerubbabel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하나님은 학개를 통해 스룹바벨에게 무엇을 진동시키겠다고 하셨습니까?",
+        "choices": [
+          "하늘과 땅",
+          "바벨론의 강물만",
+          "예루살렘 성문만"
+        ],
+        "answer_index": 0,
+        "explanation": "학 2:21 — '내가 하늘과 땅을 진동시킬 것이요'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하나님은 열국의 보좌와 병거들에 대해 무엇을 하겠다고 하셨습니까?",
+        "choices": [
+          "보좌를 엎고 병거들을 엎드러뜨리겠다고 하셨다",
+          "그 왕좌들을 더 강하게 세우겠다고 하셨다",
+          "스룹바벨에게 그 병거들을 숨기라고 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "학 2:22 — '열국의 보좌를 엎을 것이요 ... 그 병거들과 그 탄 자를 엎드러뜨리리니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 스룹바벨을 택하셨다고 하시며 무엇으로 삼겠다고 하셨습니까?",
+        "choices": [
+          "인장",
+          "금송아지",
+          "전쟁 깃발"
+        ],
+        "answer_index": 0,
+        "explanation": "학 2:23 — '내가 너를 취하고 너로 인을 삼으리니 이는 내가 너를 택하였음이니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Zechariah the prophet is included in this story characters for restoration-prophet continuity but does not appear in the scenes. No readable speech text.",
+      "Show symbolic overturned thrones and chariots only; no gore, no bodies, no readable labels.",
+      "Show the signet ring as a symbolic image inside the speech bubble, not readable text. Keep Haggai and Zerubbabel consistent."
+    ]
+  },
+  {
+    "title": "성전 완공과 유월절: 다시 드리는 예배",
+    "era": "era_exile_return",
+    "characters": [
+      "zerubbabel",
+      "haggai",
+      "zechariah_prophet"
+    ],
+    "landmark_code": "lm_exi_jerusalem",
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "멈췄던 성전 재건은 다시 힘을 얻어 완성되고, 백성은 봉헌식과 유월절을 기쁨으로 지킨다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「성전 완공과 유월절」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "6:13",
+        "to": "6:22"
+      }
+    ],
+    "start_year": -515,
+    "end_year": -515,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "exile_hope_temple_restored",
+    "unit_title": "포로지의 소망과 성전 회복",
+    "unit_order": 1,
+    "story_scenes": [
+      "스룹바벨과 동료들이 멈췄던 예루살렘 성전 재건을 다시 시작하고, 장로들과 일꾼들이 돌과 목재를 옮기며 새 힘을 얻는 장면",
+      "성전이 완성되고 백성들이 기쁨으로 봉헌식을 거행하며, 제단 가까이에는 황소와 숫양과 어린양이 많이 준비되어 있지만 피나 도살 장면은 보이지 않는다",
+      "이스라엘 백성들이 유월절과 무교절을 기쁨으로 지키며 가족과 이웃이 함께 음식을 나누고 찬양하는 장면. 성전과 예루살렘의 회복된 분위기가 따뜻하게 보인다"
+    ],
+    "scene_captions": [
+      "스룹바벨과 동료들이 멈췄던 예루살렘 성전 재건을 다시 시작한다",
+      "성전이 완성되고 백성들이 기쁨으로 봉헌식을 거행한다",
+      "이스라엘 백성들이 유월절과 무교절을 기쁨으로 지키며 가족과 이웃이 함께 음식을 나누고 찬양한다"
+    ],
+    "scene_characters": [
+      [
+        "zerubbabel"
+      ],
+      [
+        "zerubbabel"
+      ],
+      []
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다리오 왕의 조서가 내리자 강 서편 관리들은 어떻게 했습니까?",
+        "choices": [
+          "신속히 준행했다",
+          "성전 터를 다시 막았다",
+          "스룹바벨을 바벨론으로 보냈다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 6:13 — '다리오 왕의 조서가 내리매 ... 신속히 준행한지라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "성전 건축은 어떤 선지자들의 권면으로 형통했습니까?",
+        "choices": [
+          "학개와 잇도의 손자 스가랴",
+          "엘리야와 엘리사",
+          "나단과 사무엘"
+        ],
+        "answer_index": 0,
+        "explanation": "스 6:14 — '선지자 학개와 잇도의 손자 스가랴의 권력으로 인하여 전 건축할 일이 형통한지라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사로잡혔던 자의 자손은 유월절 뒤 무교절을 어떻게 지켰습니까?",
+        "choices": [
+          "즐거움으로 칠 일 동안 지켰다",
+          "두려워서 모두 흩어졌다",
+          "제사장 없이 조용히 지나갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 6:22 — '즐거우므로 칠 일 동안 무교절을 지켰으니'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Zerubbabel as the same post-exile governor from previous stories. Haggai and Zechariah may be implied by the restored work but do not need to appear.",
+      "Animal offerings are present as prepared sacrificial animals only. No blood, no slaughter, no gore.",
+      "Show joyful Passover and Feast of Unleavened Bread with families and priests, no readable text."
+    ]
+  },
+  {
+    "title": "에스더: 왕후가 되다",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "mordecai"
+    ],
+    "landmark_code": "lm_exi_susa",
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더는 예상치 못한 자리에서 왕후가 되어 때를 기다린다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「에스더」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "2:5",
+        "to": "2:23"
+      }
+    ],
+    "start_year": -480,
+    "end_year": -480,
+    "time_precision": "approx",
+    "story_index": 9,
+    "unit_code": "exile_esther_reversal",
+    "unit_title": "에스더와 뒤집힌 위기",
+    "unit_order": 2,
+    "story_scenes": [
+      "어린 시절 부모를 잃은 젊은 유다 여인 에스더가 수산 궁에서 모르드개의 돌봄을 받으며, 모르드개는 나이 든 보호자의 신중한 얼굴로 그녀를 격려한다",
+      "에스더가 페르시아 궁정의 후보들 사이에서 단정한 왕궁 훈련복을 입고 겸손히 준비하며, 다른 여인들과 달리 차분하고 지혜로운 태도를 보인다",
+      "아하수에로 왕이 에스더에게 왕관을 씌워 왕후로 세우고, 에스더는 화려하지만 절제된 페르시아 왕후복 차림으로 놀람과 책임감을 동시에 느낀다",
+      "모르드개가 궁문 근처에서 음모를 듣고 에스더에게 알리며, 에스더는 왕에게 조심스럽게 전하려 결심한다. 글자나 문서는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "어린 시절 부모를 잃은 유다 여인 에스더가 수산 궁에서 모르드개의 돌봄을 받는다",
+      "에스더가 페르시아 궁정의 후보들 사이에서 자신을 가꾸고 있다",
+      "아하수에로 왕이 에스더에게 왕관을 씌워 왕후로 세운다",
+      "모르드개가 음모를 듣고 에스더에게 알리고 에스더는 왕에게 전한다"
+    ],
+    "scene_characters": [
+      [
+        "esther",
+        "mordecai"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther",
+        "mordecai"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에스더가 왕에게 나아가기 전 몸을 정결케 하는 기한은 얼마였습니까?",
+        "choices": [
+          "열두 달",
+          "사십 일",
+          "칠 일"
+        ],
+        "answer_index": 0,
+        "explanation": "에 2:12 — '열두 달 동안을 행하되 여섯 달은 몰약 기름을 쓰고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "에스더는 왕에게 나아갈 때 어떻게 하였습니까?",
+        "choices": [
+          "헤개가 정한 것 외에는 다른 것을 구하지 아니하였다",
+          "많은 장신구와 예물을 준비하였다",
+          "왕비 와스디의 예를 따라 준비하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 2:15 — '헤개의 정한 것 외에는 다른 것을 구하지 아니하였으나 모든 보는 자에게 굄을 얻더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "모르드개는 왕을 해치려는 음모를 알게 된 뒤 누구에게 알렸습니까?",
+        "choices": [
+          "왕후 에스더에게",
+          "하만에게",
+          "수산 성 밖의 군대에게"
+        ],
+        "answer_index": 0,
+        "explanation": "에 2:22 — '모르드개가 알고 왕후 에스더에게 고하니 에스더가 모르드개의 이름으로 왕에게 고한지라'"
+      }
+    ]
+  },
+  {
+    "title": "하만의 음모: 유다인을 없애라",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "haman",
+      "mordecai"
+    ],
+    "landmark_code": "lm_exi_susa",
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "모르드개의 거절은 하만의 분노를 불러 대규모 학살 음모로 번진다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「하만의 음모」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "3:1",
+        "to": "4:9"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_index": 10,
+    "unit_code": "exile_esther_reversal",
+    "unit_title": "에스더와 뒤집힌 위기",
+    "unit_order": 2,
+    "story_scenes": [
+      "하만이 높은 관리복과 교만한 자세로 궁문을 지나가지만 모르드개는 유다인의 옷차림으로 조용히 서서 절하지 않는다",
+      "하만이 분노하여 왕 앞에서 유다인을 없애자는 계략을 말하고, 왕의 인장 반지가 건네지는 장면이 보인다. 글자나 조서 문자는 없다",
+      "수산 성에 조서가 퍼지자 유다인들이 굵은 베옷을 입고 울며 금식하고, 모르드개는 재를 쓴 모습으로 궁문 앞에 앉아 있다. 에스더가 보낸 내시에게 하만이 유대인을 학살할 것임을 말하는 말풍선",
+      "에스더가 내시에게 소식을 전해듣고 주저하는 모습"
+    ],
+    "scene_captions": [
+      "하만이 높은 관리복과 교만한 자세로 궁문을 지나가고 모르드개는 절하지 않는다",
+      "하만이 절하지 않는 모르드개에게 분노하여 왕 앞에서 유다인을 없애자는 계략을 말한다",
+      "모르드개가 궁문 앞에서 에스더가 보낸 내시에게 하만의 유대인 학살을 전한다",
+      "에스더가 내시에게 소식을 전해듣고 주저한다"
+    ],
+    "scene_characters": [
+      [
+        "haman",
+        "mordecai"
+      ],
+      [
+        "haman"
+      ],
+      [
+        "mordecai"
+      ],
+      [
+        "esther"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하만이 모르드개에게 분노하게 된 이유는 무엇입니까?",
+        "choices": [
+          "모르드개가 절하지 않고 경의를 표하지 않았기 때문이다",
+          "모르드개가 왕의 재물을 훔쳤기 때문이다",
+          "모르드개가 하만을 왕에게 고발했기 때문이다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 3:2 — '날마다 권하되 모르드개가 듣지 아니하고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하만은 모르드개에 대한 분노를 어떻게 확대하였습니까?",
+        "choices": [
+          "온 나라에 있는 유다인을 모두 멸하려는 음모를 꾸몄다",
+          "모르드개만 죽이도록 왕에게 청하였다",
+          "모르드개를 옥에 가두게 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 3:6 — '유다인을 죽이고 멸하려 하더니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하만의 조서가 수산 성에 반포된 뒤 왕과 하만은 무엇을 하고 있었습니까?",
+        "choices": [
+          "함께 앉아 마시고 있었다",
+          "성문에서 백성을 위로하고 있었다",
+          "모르드개를 불러 상을 주고 있었다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 3:15 — '역졸이 왕의 명을 받들어 급히 나가매 그 조서가 도성 수산에도 반포되니 왕은 하만과 함께 앉아 마시되 수산 성은 어지럽더라'"
+      }
+    ]
+  },
+  {
+    "title": "에스더의 결단: 죽으면 죽으리라",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "mordecai"
+    ],
+    "landmark_code": "lm_exi_susa",
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더는 금식 후 왕 앞에 나아가기로 결단한다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「에스더의 결단」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "4:10",
+        "to": "4:17"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_index": 11,
+    "unit_code": "exile_esther_reversal",
+    "unit_title": "에스더와 뒤집힌 위기",
+    "unit_order": 2,
+    "story_scenes": [
+      "에스더가 수산의 유다인들에게 사흘 금식을 부탁하고, 왕궁 안에서도 에스더와 시녀들이 함께 금식하며 기도한다",
+      "에스더가 왕후복을 갖추어 입고 왕의 안뜰 문 앞에 서며, 얼굴에는 죽음을 각오한 두려움과 담대함이 함께 보인다",
+      "아하수에로 왕이 금 홀을 내밀어 에스더를 받아들이고, 에스더는 안도의 숨을 쉬며 첫 잔치에 왕과 하만을 초대하는 손짓을 한다. 읽을 수 있는 글자는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "에스더가 수산의 유다인들에게 사흘 금식을 부탁한다",
+      "에스더가 왕후복을 갖추어 입고 왕의 안뜰 문 앞에 선다",
+      "아하수에로 왕이 금 홀을 내밀어 에스더를 받아들인다"
+    ],
+    "scene_characters": [
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ],
+      [
+        "esther"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에스더가 왕 앞에 나아가기 전 금식한 기간은 얼마였습니까?",
+        "choices": [
+          "밤낮 삼 일",
+          "칠 일",
+          "사십 일"
+        ],
+        "answer_index": 0,
+        "explanation": "에 4:16 — '밤낮 삼일을 먹지도 말고 마시지도 마소서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "에스더는 왕 앞에 나아가겠다고 결단하며 무엇이라 하였습니까?",
+        "choices": [
+          "규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다",
+          "모르드개에게 다른 방법을 찾아보라고 하였다",
+          "왕의 부름을 기다리겠다고 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "에스더가 금식을 부탁하자 모르드개는 어떻게 했습니까?",
+        "choices": [
+          "에스더가 명한 대로 다 행했다",
+          "에스더의 부탁을 거절했다",
+          "하만에게 먼저 알렸다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 4:17 — '모르드개가 가서 에스더의 명한 대로 다 행하니라'"
+      }
+    ]
+  },
+  {
+    "title": "잔치의 반전: 하만의 몰락",
+    "era": "era_exile_return",
+    "characters": [
+      "esther",
+      "haman",
+      "mordecai"
+    ],
+    "landmark_code": "lm_exi_susa",
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「잔치의 반전」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "에",
+        "from": "5:1",
+        "to": "7:10"
+      }
+    ],
+    "start_year": -474,
+    "end_year": -474,
+    "time_precision": "approx",
+    "story_index": 12,
+    "unit_code": "exile_esther_reversal",
+    "unit_title": "에스더와 뒤집힌 위기",
+    "unit_order": 2,
+    "story_scenes": [
+      "하만과 아내 세레스가 50규빗 나무를 만들고 악한 미소를 짓는다",
+      "밤에 아하수에로 왕이 궁중 기록을 읽게 하고, 기록을 읽는 신하는 모르드개가 왕을 구한 일을 두루마리로 보여 주자 왕은 놀라 앉아 있다. 두루마리 안에는 모르드게가 왕을 구하는 장면이 있음",
+      "하만이 왕의 명령으로 모르드개에게 직접 왕복을 입히고 왕의 말을 태워 수산 거리를 지나가며, 하만은 굴욕스러운 얼굴이고 모르드개는 겸손히 앉아 있다",
+      "하만의 음모가 드러난 뒤 왕의 근위병들이 하만을 끌고 나가고, 에스더와 모르드개는 두려움 속에서도 백성이 살아날 희망을 바라본다. 처형 장면은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "하만과 아내 세레스가 50규빗 나무를 만들고 악한 미소를 짓는다",
+      "밤에 아하수에로 왕이 궁중 기록을 듣다가 모르드개가 자신을 구한것에 놀란다",
+      "하만이 왕의 명령으로 모르드개에게 직접 왕복을 입히고 왕의 말을 태워 수산 거리를 지나간다",
+      "하만의 음모가 드러난 뒤 왕의 근위병들이 하만을 끌고 나간다"
+    ],
+    "scene_characters": [
+      [
+        "haman"
+      ],
+      [
+        "haman",
+        "mordecai"
+      ],
+      [
+        "esther",
+        "mordecai"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에스더는 잔치 자리에서 왕에게 누가 대적이라고 하였습니까?",
+        "choices": [
+          "악한 하만이라고 하였다",
+          "산헤립이라고 하였다",
+          "모르드개라고 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 7:6 — '대적과 원수는 이 악한 하만이니이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "왕이 하만을 꾸짖자 곁에 있던 무리는 하만에게 무엇을 했습니까?",
+        "choices": [
+          "하만의 얼굴을 싸었다",
+          "하만을 몰래 도망시켰다",
+          "모르드개에게 사과하게 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 7:8 — '왕이 후원으로부터 잔치 자리에 돌아오니 하만이 에스더의 앉은 걸상 위에 엎드렸거늘 왕이 가로되 저가 궁중 내 앞에서 왕후를 강간까지 하고자 하는가 이 말이 왕의 입에서 나오매 무리가 하만의 얼굴을 싸더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하만이 준비한 나무에는 결국 누가 달리게 되었습니까?",
+        "choices": [
+          "하만 자신이 달리게 되었다",
+          "모르드개가 그대로 달리게 되었다",
+          "왕의 내시가 대신 달리게 되었다"
+        ],
+        "answer_index": 0,
+        "explanation": "에 7:9 — '왕을 모신 내시 중에 하르보나가 왕에게 아뢰되 왕을 위하여 충성된 말로 고발한 모르드개를 달고자 하여 하만이 고가 오십 규빗되는 나무를 준비하였는데 이제 그 나무가 하만의 집에 섰나이다 왕이 가로 되 하만을 그 나무에 달라 하매'"
+      }
+    ]
+  },
+  {
+    "title": "에스라의 회개와 정리: 거룩함을 회복하다",
+    "era": "era_exile_return",
+    "characters": [
+      "ezra"
+    ],
+    "landmark_code": "lm_exi_jerusalem",
+    "place_name": "예루살렘(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "에스라는 왕의 허락으로 예루살렘에 돌아오고, 백성의 죄 앞에서 회개하며 공동체를 말씀으로 정리한다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「에스라의 회개와 정리」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "스",
+        "from": "7:11",
+        "to": "7:22"
+      },
+      {
+        "book": "스",
+        "from": "9:1",
+        "to": "10:17"
+      }
+    ],
+    "start_year": -458,
+    "end_year": -458,
+    "time_precision": "approx",
+    "story_index": 13,
+    "unit_code": "exile_ezra_nehemiah_community",
+    "unit_title": "에스라와 느헤미야의 공동체 회복",
+    "unit_order": 3,
+    "story_scenes": [
+      "아닥사스다 왕의 명령을 받은 에스라가 예루살렘으로 향하는 귀환 행렬을 이끈다. 나귀와 낙타에는 성전 그릇, 은, 밀 자루, 포도주 항아리, 올리브 기름 항아리, 소금 포대가 많이 실려 있고, 에스라는 율법 두루마리를 품은 채 감사하면서도 책임감을 느끼는 얼굴로 앞장선다",
+      "예루살렘에 도착한 에스라가 이스라엘 백성 가운데 여전히 남아 있는 우상숭배와 이방 신 섬김을 보고 겉옷과 속옷을 찢으며 통탄한다. 성전 뜰 한쪽에서 에스라는 흐느끼며 무릎 꿇고 두 손을 하나님의 밝은 빛을 향해 들고 기도하고, 먼 배경에는 작은 우상 조각상과 우상 제단을 곁에 둔 사람들이 죄를 깨닫지 못한 표정으로 서 있다",
+      "예루살렘 성전 앞 광장에 남자와 여자와 아이들이 비를 맞으며 모이고, 에스라가 찢어진 옷을 입은 채 단호하고 슬픈 표정으로 백성 앞에 서서 다른 신을 섬기지 말고 언약 백성답게 정리하자고 말한다. 글자 없는 말풍선 안에는 부서지는 작은 우상들, 성전으로 돌아오는 백성, 정돈된 공동체의 장면이 그림으로 보인다",
+      "에스라 앞에서 백성들이 슬프지만 질서 있게 이방 여인들과 그 자녀들을 공동체 밖으로 떠나보낸다. 백성들은 눈물을 흘리며 고개를 숙이고, 떠나는 사람들은 짐 꾸러미를 들고 천천히 걸어가며, 에스라는 가슴 아픈 표정으로 두 손을 모아 서 있다. 폭력, 끌려감, 조롱, 혐오 표현은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "아닥사스다 왕의 명령을 받은 에스라가 예루살렘으로 향하는 귀환 행렬을 이끈다",
+      "예루살렘에 도착한 에스라는 백성들의 여전한 우상숭배에 옷을 찢으며 통탄한다",
+      "성전 앞 광장에 백성이 모여 울고 에스라는 공동체 정리를 말한다",
+      "에스라 앞에서 백성들이 슬프지만 질서 있게 이방 여인들과 그 자녀들을 공동체 밖으로 떠나보낸다"
+    ],
+    "scene_characters": [
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ],
+      [
+        "ezra"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "아닥사스다 왕은 조서에서 누가 에스라와 함께 예루살렘으로 올라갈 수 있다고 하였습니까?",
+        "choices": [
+          "뜻이 있는 이스라엘 백성과 제사장들과 레위 사람들",
+          "바사 왕궁의 군사 장관들만",
+          "수산 궁의 잔치 손님들만"
+        ],
+        "answer_index": 0,
+        "explanation": "스 7:13 — '예루살렘으로 올라갈 뜻이 있는 자는 누구든지 너와 함께 갈지어다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "백성의 죄를 들은 에스라는 어떤 태도를 보였습니까?",
+        "choices": [
+          "옷을 찢고 기가 막혀 앉았다가 하나님께 무릎 꿇고 기도했다",
+          "왕의 조서를 감추고 수산 궁으로 돌아갔다",
+          "성전 기명을 모두 다시 바벨론으로 보냈다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 9:3,5 — '속옷과 겉옷을 찢고... 기가 막혀 앉으니', '무릎을 꿇고 나의 하나님 여호와를 향하여 손을 들고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "에스라는 백성에게 죄를 자복한 뒤 무엇을 하라고 명했습니까?",
+        "choices": [
+          "이 땅 족속들과 이방 여인을 끊어 버리라고 했다",
+          "예루살렘 성벽 수리를 멈추라고 했다",
+          "아닥사스다 왕에게 금은을 돌려보내라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "스 10:11 — '죄를 자복하고 그 뜻대로 행하여 이 땅 족속들과 이방 여인을 끊어 버리라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Do not show Artaxerxes unless absolutely necessary; the focus is Ezra leading the caravan with temple supplies. No readable text on scrolls, sacks, jars, or decree objects.",
+      "No sexual depiction, no hateful caricature. Ezra must face upward toward God's bright light, not toward the people as if begging them. Show idols as small non-readable figurines and an altar in the background only to explain Ezra's grief.",
+      "Use a pictorial speech bubble only, with no letters or symbols. The bubble should summarize Ezra's covenant reform visually through broken idol figurines, people turning toward the temple, and an orderly gathered community.",
+      "Show a solemn covenant reform scene without violence, dragging, abuse, gore, mockery, or hateful caricature. Make the separation sorrowful, orderly, and historically framed, with no readable labels."
+    ]
+  },
+  {
+    "title": "느헤미야의 파송: 무너진 성벽 소식",
+    "era": "era_exile_return",
+    "characters": [
+      "nehemiah"
+    ],
+    "landmark_code": "lm_exi_susa",
+    "place_name": "수산 궁(페르시아)",
+    "lat": 32.19,
+    "lng": 48.26,
+    "summary": "느헤미야는 예루살렘 소식을 듣고 눈물로 기도한 뒤 파송을 받는다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「느헤미야의 파송」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "1:1",
+        "to": "1:11"
+      },
+      {
+        "book": "느",
+        "from": "2:1",
+        "to": "2:8"
+      }
+    ],
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "story_index": 14,
+    "unit_code": "exile_ezra_nehemiah_community",
+    "unit_title": "에스라와 느헤미야의 공동체 회복",
+    "unit_order": 3,
+    "story_scenes": [
+      "느헤미야가 여러 날 금식하며 하나님께 기도하고, 창밖에는 수산 궁전이 보이지만 그의 얼굴은 예루살렘을 향한 슬픔으로 가득하다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너진 예루살렘 성벽을 바라보며 기도하는 느헤미야가 보이는 장면이 작은 그림처럼 보인다",
+      "느헤미야가 아닥사스다 왕에게 술잔을 올리다 슬픈 얼굴을 들키고, 왕과 왕후는 놀라 바라보며 느헤미야는 짧게 마음속으로 기도하는 자세를 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너진 예루살렘 성벽을 바라보며 기도하는 느헤미야가 보이는 장면이 작은 그림처럼 보인다",
+      "왕이 느헤미야에게 예루살렘으로 가도록 허락하고 목재와 호위 조치를 내리자, 느헤미야는 두려움에서 결심으로 표정이 바뀐다. 글자나 문서는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "느헤미야가 여러 날 금식하며 하나님께 예루살렘을 향한 슬픔을 기도한다",
+      "느헤미야가 아닥사스다 왕에게 술잔을 올리다 슬픈 얼굴을 들키고 왕과 왕후는 느헤미야에게 묻는다",
+      "아닥사스다 왕은 느헤미야에게 예루살렘으로 가도록 허락하고 목재와 호위 조치를 내린다"
+    ],
+    "scene_characters": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "느헤미야는 예루살렘 소식을 어디에서 들었습니까?",
+        "choices": [
+          "수산 궁에서 들었다",
+          "바벨론 강가에서 들었다",
+          "예루살렘 성벽 앞에서 들었다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 1:1 — '아닥사스다왕 제 이십년 기슬르월에 내가 수산 궁에 있더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "느헤미야는 왕의 질문에 무엇을 원하느냐는 말을 듣고 어떻게 하였습니까?",
+        "choices": [
+          "하늘의 하나님께 묵도하고 대답하였다",
+          "바로 예루살렘으로 가겠다고 하였다",
+          "왕의 허락을 기다리며 아무 말도 하지 않았다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 2:4 — '내가 곧 하늘의 하나님께 묵도하고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "느헤미야가 성벽 재목을 요청했을 때 왕은 어떻게 반응했습니까?",
+        "choices": [
+          "하나님의 선한 손이 도우심으로 허락했다",
+          "요청을 듣고 즉시 거절했다",
+          "느헤미야를 옥에 가두었다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 2:8 — '또 왕의 삼림 감독 아삽에게 조서를 내리사 저로 전에 속한 영문의 문과 성곽과 나의 거할 집을 위 하여 들보 재목을 주게 하옵소서 하매 내 하나님의 선한 손이 나를 도우심으로 왕이 허락하고'"
+      }
+    ]
+  },
+  {
+    "title": "성벽 재건: 밤의 조사와 한 손엔 무기",
+    "era": "era_exile_return",
+    "characters": [
+      "nehemiah"
+    ],
+    "landmark_code": "lm_exi_jerusalem",
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "느헤미야는 밤에 성벽을 살핀 뒤 재건을 이끌었고, 백성은 한 손에 돌 한 손에 무기를 들고 성을 세웠다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「성벽 재건」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "2:11",
+        "to": "2:20"
+      },
+      {
+        "book": "느",
+        "from": "4:10",
+        "to": "4:20"
+      }
+    ],
+    "start_year": -445,
+    "end_year": -445,
+    "time_precision": "approx",
+    "story_index": 15,
+    "unit_code": "exile_ezra_nehemiah_community",
+    "unit_title": "에스라와 느헤미야의 공동체 회복",
+    "unit_order": 3,
+    "story_scenes": [
+      "밤에 느헤미야가 몇 사람과 짐승 한 마리만 데리고 무너진 예루살렘 성벽과 불탄 성문을 조용히 조사하며, 손에는 작은 등불이 있다",
+      "해가 뜬 뒤 느헤미야가 백성 지도자들에게 무너진 성벽을 가리키며 재건을 호소하고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 무너진 성벽과 성전 돌들이 다시 세워지는 장면이 작은 그림처럼 보인다",
+      "나팔 소리에 사람들이 성벽 한쪽으로 모이고, 느헤미야가 손을 들어 하나님이 싸우신다고 격려하자 모두가 두려움에서 결심으로 고개를 든다"
+    ],
+    "scene_captions": [
+      "밤에 느헤미야가 몇 사람과 짐승 한 마리만 데리고 무너진 예루살렘 성벽과 불탄 성문을 조용히 조사한다",
+      "해가 뜬 뒤 느헤미야가 백성 지도자들에게 무너진 성벽을 가리키며 재건을 호소한다",
+      "사람들이 모이고 느헤미야가 손을 들어 하나님이 싸우신다고 격려한다"
+    ],
+    "scene_characters": [
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ],
+      [
+        "nehemiah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "느헤미야가 예루살렘에 이르러 며칠 만에 밤에 성벽을 조사하였습니까?",
+        "choices": [
+          "삼 일 만에 조사하였다",
+          "칠 일 만에 조사하였다",
+          "하룻밤 만에 조사하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 2:11 — '내가 예루살렘에 이르러 거한지 삼일에'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "느헤미야는 방백들에게 폐허의 상황을 알린 후 무엇이라 하였습니까?",
+        "choices": [
+          "일어나 건축하자고 선언하였다",
+          "왕의 허락을 더 받아야 한다고 하였다",
+          "먼저 성전을 재건하자고 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 2:17 — '저희의 말이 일어나 건축하자 하고 모두 힘을 내어 이 선한 일을 하려 하매'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "성벽을 다시 쌓던 사람들은 어떤 어려움을 느꼈습니까?",
+        "choices": [
+          "돌무더기는 많고 일할 힘은 줄었다고 느꼈다",
+          "일할 사람이 너무 많아 혼란스러웠다",
+          "성벽이 이미 다 완성되었다고 생각했다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 4:10 — '유다 사람들은 이르기를 흙 무더기가 아직도 많거늘 담부(擔負)하는 자의 힘이 쇠하였으니 우리가 성을 건축하지 못하리라 하고'"
+      }
+    ]
+  },
+  {
+    "title": "율법 낭독: 울음에서 기쁨으로",
+    "era": "era_exile_return",
+    "characters": [
+      "ezra",
+      "nehemiah"
+    ],
+    "landmark_code": "lm_exi_jerusalem",
+    "place_name": "예루살렘 수문 앞 광장(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다.",
+    "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「율법 낭독」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "느",
+        "from": "8:1",
+        "to": "8:18"
+      }
+    ],
+    "start_year": -444,
+    "end_year": -444,
+    "time_precision": "approx",
+    "story_index": 16,
+    "unit_code": "exile_ezra_nehemiah_community",
+    "unit_title": "에스라와 느헤미야의 공동체 회복",
+    "unit_order": 3,
+    "story_scenes": [
+      "예루살렘 수문 앞 광장에서 에스라가 높은 나무 강단 위에 서서 율법 두루마리를 펼치고, 백성은 새벽부터 귀를 기울인다. 두루마리 글자는 읽히지 않는다",
+      "율법을 들은 백성이 울기 시작하자 느헤미야와 레위 사람들이 손을 내밀어 그들을 다독이는 모습",
+      "에스라와 느헤미야와 백성들이 음식을 나누어 먹고 몫이 없는 사람에게도 보내며, 울음이 기쁨으로 바뀐 얼굴들이 분명히 보인다"
+    ],
+    "scene_captions": [
+      "예루살렘 수문 앞 광장에서 에스라가 높은 나무 강단 위에 서서 율법 두루마리를 읽는다",
+      "율법을 들은 백성이 울기 시작하자 느헤미야와 레위 사람들이 손을 내밀어 그들을 다독인다",
+      "에스라와 느헤미야와 백성들이 음식을 나누어 먹고 몫이 없는 사람에게도 보낸다"
+    ],
+    "scene_characters": [
+      [
+        "ezra"
+      ],
+      [
+        "nehemiah",
+        "ezra"
+      ],
+      [
+        "ezra",
+        "nehemiah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "백성에게 율법을 낭독한 사람은 누구였습니까?",
+        "choices": [
+          "학사 에스라",
+          "느헤미야",
+          "대제사장 힐기야"
+        ],
+        "answer_index": 0,
+        "explanation": "느 8:5 — '때에 학사 에스라가 특별히 지은 나무 강단에 서매'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "느헤미야는 율법을 듣고 우는 백성에게 무엇이라 하였습니까?",
+        "choices": [
+          "여호와를 기뻐하는 것이 너희의 힘이니라 하였다",
+          "더욱 금식하며 통곡하라 하였다",
+          "율법을 깨닫지 못함을 책망하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 8:10 — '여호와를 기뻐하는 것이 너희의 힘이니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "율법의 뜻을 알게 된 백성은 어떻게 반응했습니까?",
+        "choices": [
+          "먹고 나누며 크게 기뻐했다",
+          "모두 흩어져 숨어 버렸다",
+          "다시 성벽 공사를 멈추었다"
+        ],
+        "answer_index": 0,
+        "explanation": "느 8:12 — '모든 백성이 곧 가서 먹고 마시며 나누어 주고 크게 즐거워하였으니 이는 그 읽어 들린 말을 밝히 앎이니라'"
+      }
+    ]
+  }
+]

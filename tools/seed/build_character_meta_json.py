@@ -4568,6 +4568,7 @@ def build_person_meta(
     template_map: dict[str, dict[str, Any]],
     min_mentions: int,
     active_threshold: int,
+    source_label: str = "assets/events",
 ) -> dict[str, Any]:
     avatar_roster = {
         **CURATED_AVATAR_ROSTER,
@@ -4938,7 +4939,7 @@ def build_person_meta(
             "curated_avatar_roster_codes": list(CURATED_AVATAR_ROSTER.keys()),
             "ui_only_avatar_codes": list(UI_ONLY_AVATAR_ROSTER.keys()),
             "note": (
-                "Generated from assets/events with "
+                f"Generated from {source_label} with "
                 "disciples/apostles/brothers expanded to individuals. "
                 f"All characters with mention_count >= {min_mentions} are emitted; "
                 f"is_active_default=true when mention_count >= {active_threshold}, "
@@ -4988,6 +4989,7 @@ def main() -> int:
         template_map=template_map,
         min_mentions=max(1, int(args.min_mentions)),
         active_threshold=max(1, int(args.active_threshold)),
+        source_label=str(stories_dir),
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

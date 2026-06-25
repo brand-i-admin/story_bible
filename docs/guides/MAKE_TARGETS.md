@@ -60,6 +60,11 @@ real에서 중간 삽입을 안전하게 하려면 먼저 DB에서 기존 row의
 
 ## 2. 이야기/인물 seed 생성 target
 
+이 섹션의 seed/이미지 생성 target은 기본적으로 `STORIES_DIR=assets/initial_seed_events`를 읽는다.
+`assets/initial_seed_events`는 초기 DB bootstrap과 레거시 원본 보존용 소스다. 운영 중
+승인/삭제/재정렬이 반영된 DB active snapshot으로 seed 산출물을 만들 필요가 있을 때만
+`STORIES_DIR=assets/events`를 명시한다.
+
 ### `make export-stories-json`
 
 DB의 active `events`를 `assets/events/*.json`으로 역추출한다. 각 event row에는
@@ -75,7 +80,7 @@ DB의 active `events`를 `assets/events/*.json`으로 역추출한다. 각 event
 
 로컬 JSON의 `story_index`를 시대별 1..N으로 재정렬한다.
 
-- 입력: `assets/events/*.json`
+- 입력: `$(STORIES_DIR)/*.json` (기본 `assets/initial_seed_events`)
 - 출력: 같은 JSON 파일 수정
 - 원격 변경: 없음
 - 주의: real에 이미 공개된 중간 삽입에는 이것만 믿고 seed apply하지 않는다. §1의 row id 보존 문제가 있다.
@@ -94,7 +99,7 @@ DB의 active `events`를 `assets/events/*.json`으로 역추출한다. 각 event
 
 | 입력 | 출력 |
 |------|------|
-| `assets/events/*.json` | `supabase/events/events_seed.sql` |
+| `$(STORIES_DIR)/*.json` (기본 `assets/initial_seed_events`) | `supabase/events/events_seed.sql` |
 | 각 event row의 `landmark_code` | `supabase/events/events_seed_part_*.sql` |
 | `tools/seed/character_meta.json` 생성물 | `supabase/events/characters_seed.sql` |
 
@@ -113,7 +118,7 @@ DB의 active `events`를 `assets/events/*.json`으로 역추출한다. 각 event
 
 퀴즈 SQL을 생성한다.
 
-- 입력: `assets/events/*.json` 안의 `quiz_questions`
+- 입력: `$(STORIES_DIR)/*.json` 안의 `quiz_questions` (기본 `assets/initial_seed_events`)
 - 출력: `supabase/quizzes/quizzes_seed.sql`, `quizzes_report.json`
 - 원격 변경: 없음
 - 주의: 같은 event row의 `bible_ref` 범위 안에 해설 절 근거가 있어야 한다.
@@ -132,7 +137,7 @@ DB의 active `events`를 `assets/events/*.json`으로 역추출한다. 각 event
 
 로컬 이야기 JSON의 `story_scenes`를 기준으로 Vertex AI 장면 이미지를 만든다.
 
-- 입력: `assets/events/*.json`, `.env`의 `GOOGLE_CLOUD_PROJECT`
+- 입력: `$(STORIES_DIR)/*.json` (기본 `assets/initial_seed_events`), `.env`의 `GOOGLE_CLOUD_PROJECT`
 - 출력: `assets/story_images/<title>/scene_N.png`
 - 원격 변경: 없음
 - 비용: Vertex AI 호출 비용 발생 가능
@@ -157,7 +162,7 @@ DB의 active `events`를 `assets/events/*.json`으로 역추출한다. 각 event
 
 앱 런타임용 썸네일을 만든다.
 
-- 입력: `assets/story_images/`, `assets/avatars/`, `assets/events/*.json`
+- 입력: `assets/story_images/`, `assets/avatars/`, `$(THUMBNAIL_STORIES_DIR)/*.json` (기본 `assets/events`)
 - 출력: `assets/story_images_thumbs/<era_slug>_<story_index>/scene_N.jpg`, `assets/story_images_thumbs/index.json`, `assets/avatars_thumbs/*.png`
 - 원격 변경: 없음
 - 전제: current `assets/events/*.json`에 들어 있는 모든 active story title에 대해

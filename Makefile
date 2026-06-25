@@ -23,8 +23,11 @@ SUPABASE_DIR := supabase
 
 # 주요 파일 경로
 CHARACTER_META := $(TOOLS_DIR)/seed/character_meta.json
-EVENTS_DIR := $(ASSETS_DIR)/events
-STORIES_DIR := $(EVENTS_DIR)
+ACTIVE_EVENTS_DIR := $(ASSETS_DIR)/events
+INITIAL_SEED_EVENTS_DIR := $(ASSETS_DIR)/initial_seed_events
+EVENTS_DIR := $(ACTIVE_EVENTS_DIR)
+STORIES_DIR ?= $(INITIAL_SEED_EVENTS_DIR)
+THUMBNAIL_STORIES_DIR ?= $(EVENTS_DIR)
 BIBLE_DIR := $(ASSETS_DIR)/bible
 AVATARS_DIR := $(ASSETS_DIR)/avatars
 AVATARS_THUMBS_DIR := $(ASSETS_DIR)/avatars_thumbs
@@ -80,18 +83,18 @@ help:
 	@echo ""
 	@echo "개별 타겟:"
 	@echo "  seed-bible-verses       성경 구절 SQL 생성 (독립)"
-	@echo "  build-character-meta       character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트, 모든 인물 포함)"
+	@echo "  build-character-meta       STORIES_DIR 기준 character_meta.json 생성 (기본 assets/initial_seed_events)"
 	@echo "  generate-story-contexts    curated summary 정규화 + background_context 생성"
-	@echo "  seed-stories            events SQL 생성 (→ character-meta 의존)"
-	@echo "  seed-characters            characters SQL 생성 (→ character-meta 의존)"
+	@echo "  seed-stories            STORIES_DIR 기준 events SQL 생성 (기본 assets/initial_seed_events)"
+	@echo "  seed-characters            STORIES_DIR 기준 characters SQL 생성 (기본 assets/initial_seed_events)"
 	@echo "  seed-stories-characters    events + characters SQL 한 번에 생성 (권장)"
-	@echo "  seed-quizzes               퀴즈 SQL 생성 (→ seed-stories 선행 필요)"
+	@echo "  seed-quizzes               STORIES_DIR 기준 퀴즈 SQL 생성 (기본 assets/initial_seed_events)"
 	@echo "  audit-landmark-polygons    박스형/저정점 region polygon 감사"
 	@echo "  refine-landmark-polygons   Natural Earth 기반 region polygon 정제 후보 생성"
 	@echo "  generate-avatars        Vertex AI Gemini 아바타 생성 (→ character-meta 의존, 기존 png 보존)"
-	@echo "  generate-story-images   Vertex AI 장면 이미지 생성"
+	@echo "  generate-story-images   STORIES_DIR 기준 Vertex AI 장면 이미지 생성 (기본 assets/initial_seed_events)"
 	@echo "  generate-draft-story-images [STORY=assets/story_drafts/foo.json|DRAFT=foo] draft 장면 이미지 생성"
-	@echo "  thumbnails              썸네일 생성 (story thumbs clean rebuild → avatars, story-images 의존)"
+	@echo "  thumbnails              THUMBNAIL_STORIES_DIR 기준 썸네일 생성 (기본 assets/events)"
 	@echo ""
 	@echo "묶음 타겟:"
 	@echo "  seed-all                전체 SQL 생성 (bible + stories + characters + quizzes + landmarks)"
@@ -139,6 +142,8 @@ help:
 	@echo "  clean-generated         생성된 SQL 파일 삭제"
 	@echo ""
 	@echo "선행 조건: source .venv/bin/activate"
+	@echo "운영 active snapshot 으로 seed 생성: make seed-all STORIES_DIR=$(EVENTS_DIR)"
+	@echo "초기 원본으로 썸네일 생성: make thumbnails THUMBNAIL_STORIES_DIR=$(INITIAL_SEED_EVENTS_DIR)"
 
 all: seed-all generate-all
 
@@ -155,34 +160,34 @@ seed-bible-verses:
 		--truncate-translation
 
 build-character-meta:
-	@echo "[Makefile] character_meta.json 생성 (인물 카탈로그 + 아바타 프롬프트)..."
+	@echo "[Makefile] character_meta.json 생성 ($(STORIES_DIR) 기준 인물 카탈로그 + 아바타 프롬프트)..."
 	$(PYTHON) $(TOOLS_DIR)/seed/build_character_meta_json.py \
 		--stories-dir $(STORIES_DIR) \
 		--output $(CHARACTER_META)
 
 renumber-story-indices:
-	@echo "[Makefile] story_index 를 era 별 1..N 으로 재정렬..."
+	@echo "[Makefile] $(STORIES_DIR) story_index 를 era 별 1..N 으로 재정렬..."
 	$(PYTHON) $(TOOLS_DIR)/seed/renumber_story_indices.py \
 		--stories-dir $(STORIES_DIR)
 
 generate-story-contexts:
-	@echo "[Makefile] summary/background_context 생성..."
+	@echo "[Makefile] $(STORIES_DIR) summary/background_context 생성..."
 	$(PYTHON) $(TOOLS_DIR)/seed/generate_story_background_contexts.py \
 		--stories-dir $(STORIES_DIR) \
 		--bible-dir $(BIBLE_DIR)
 
 # 이벤트 lat/lng 를 매칭되는 landmark 의 정확한 좌표로 정렬.
 # 같은 장소(예: "헤브론") 인 이벤트들이 핀 분산 알고리즘에 의해 떨어져 보이는
-# 문제 + landmark 와 미세 좌표 차이 문제 둘 다 해결. assets/events/*.json
+# 문제 + landmark 와 미세 좌표 차이 문제 둘 다 해결. $(STORIES_DIR)/*.json
 # 을 직접 수정하므로 실행 후 git diff 로 검증 권장.
 align-events-to-landmarks:
-	@echo "[Makefile] 이벤트 lat/lng → landmark 좌표 정렬..."
+	@echo "[Makefile] $(STORIES_DIR) 이벤트 lat/lng → landmark 좌표 정렬..."
 	$(PYTHON) $(TOOLS_DIR)/seed/align_events_to_landmarks.py \
 		--landmarks $(LANDMARKS_DIR)/landmarks.json \
 		--stories-dir $(STORIES_DIR)
 
 align-events-to-landmarks-dry:
-	@echo "[Makefile] 이벤트 정렬 dry-run (변경만 출력)"
+	@echo "[Makefile] $(STORIES_DIR) 이벤트 정렬 dry-run (변경만 출력)"
 	$(PYTHON) $(TOOLS_DIR)/seed/align_events_to_landmarks.py \
 		--landmarks $(LANDMARKS_DIR)/landmarks.json \
 		--stories-dir $(STORIES_DIR) \
@@ -190,8 +195,9 @@ align-events-to-landmarks-dry:
 
 seed-stories: build-character-meta
 	@echo "[Makefile] events SQL 생성..."
-	@echo "  → 사전 조건: assets/events/*.json 의 각 항목에 story_index 가 있어야 함"
+	@echo "  → 사전 조건: $(STORIES_DIR)/*.json 의 각 항목에 story_index 가 있어야 함"
 	$(PYTHON) $(TOOLS_DIR)/seed/build_events_seed_sql.py \
+		--input-dir $(STORIES_DIR) \
 		--output-dir $(EVENTS_SQL_DIR) \
 		--character-meta-json $(CHARACTER_META)
 
@@ -228,7 +234,7 @@ refine-landmark-polygons:
 
 seed-quizzes:
 	@echo "[Makefile] 퀴즈 SQL 생성..."
-	@# 권위 소스: assets/events/*.json 안의 quiz_questions.
+	@# 권위 소스: $(STORIES_DIR)/*.json 안의 quiz_questions.
 	$(PYTHON) $(TOOLS_DIR)/seed/build_quizzes_seed_sql.py \
 		--stories-dir $(STORIES_DIR) \
 		--output $(QUIZZES_SQL) \
@@ -252,7 +258,8 @@ generate-avatars: build-character-meta
 generate-story-images:
 	@echo "[Makefile] Vertex AI 장면 이미지 생성..."
 	@echo "  → .env의 GOOGLE_CLOUD_PROJECT 확인 필요"
-	$(PYTHON) $(TOOLS_DIR)/images/generate_event_story_images_vertex.py
+	$(PYTHON) $(TOOLS_DIR)/images/generate_event_story_images_vertex.py \
+		--stories-dir $(STORIES_DIR)
 
 generate-draft-story-images:
 	@story_json="$(STORY)"; \
@@ -272,9 +279,11 @@ generate-draft-story-images:
 
 thumbnails:
 	@echo "[Makefile] 썸네일 생성..."
-	$(PYTHON) $(TOOLS_DIR)/images/generate_runtime_thumbnails.py
+	$(PYTHON) $(TOOLS_DIR)/images/generate_runtime_thumbnails.py \
+		--stories-dir $(THUMBNAIL_STORIES_DIR)
 
-generate-all: generate-avatars generate-story-images thumbnails
+generate-all: generate-avatars generate-story-images
+	$(MAKE) thumbnails THUMBNAIL_STORIES_DIR=$(STORIES_DIR)
 	@echo "[Makefile] 전체 이미지 생성 완료."
 
 # =============================================================================
@@ -305,22 +314,22 @@ upload-character-avatars-force:
 ensure-story-image-sources:
 	@echo "[Makefile] story 원본 PNG pull (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
 	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py pull --env $(OPS_ENV)
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py pull --env $(OPS_ENV) --stories-dir $(EVENTS_DIR)
 
 ensure-story-image-sources-dry:
 	@echo "[Makefile] story 원본 PNG pull dry-run (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
 	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py pull --env $(OPS_ENV) --dry-run
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py pull --env $(OPS_ENV) --stories-dir $(EVENTS_DIR) --dry-run
 
 upload-story-image-sources:
 	@echo "[Makefile] story 원본 PNG push/upsert + stale 삭제 (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
 	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py push --env $(OPS_ENV)
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py push --env $(OPS_ENV) --stories-dir $(EVENTS_DIR)
 
 upload-story-image-sources-dry:
 	@echo "[Makefile] story 원본 PNG push/upsert + stale 삭제 dry-run (bucket=$(STORY_IMAGE_SOURCE_BUCKET), ENV=$(ENV) → ops=$(OPS_ENV))"
 	STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET) \
-	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py push --env $(OPS_ENV) --dry-run
+	$(PYTHON) $(TOOLS_DIR)/supabase/sync_story_image_sources.py push --env $(OPS_ENV) --stories-dir $(EVENTS_DIR) --dry-run
 
 apply-draft:
 	@story_json="$(STORY)"; \
@@ -419,22 +428,20 @@ OPS_ENV := $(shell if [ "$(ENV)" = "dev" ]; then printf "dev"; elif [ "$(ENV)" =
 OPS_ENV_SUFFIX := $(shell if [ "$(OPS_ENV)" = "dev" ]; then printf "DEV"; elif [ "$(OPS_ENV)" = "prod" ]; then printf "PROD"; else printf "INVALID"; fi)
 DB_URL_VAR := SUPABASE_DB_URL_$(OPS_ENV_SUFFIX)
 
-# DB의 published events 를 assets/events/*.json 으로 역추출.
-# 빌더(build-character-meta 등)가 로컬 JSON만 스캔하므로, 로컬이 비었거나
-# 오래된 상태에서 빌드하면 description 이 부분 정보로 덮어써질 수 있다.
-# 새 이야기 추가 전에 항상 이 타겟으로 로컬을 DB 와 동기화한 뒤 작업한다.
-# 상세: docs/CONTENT_UPDATE.md §2.1b [0]
+# DB의 published events 를 active snapshot인 assets/events/*.json 으로 역추출.
+# seed SQL/초기 이미지 생성은 기본 assets/initial_seed_events 를 기준으로 한다.
+# 운영 active snapshot 으로 seed 를 만들 때만 STORIES_DIR=assets/events 로 명시한다.
 export-stories-json:
-	@echo "[Makefile] DB events → $(STORIES_DIR)/*.json 역추출 (ENV=$(ENV) → ops=$(OPS_ENV))"
+	@echo "[Makefile] DB events → $(EVENTS_DIR)/*.json 역추출 (ENV=$(ENV) → ops=$(OPS_ENV))"
 	$(PYTHON) $(TOOLS_DIR)/export/export_events_to_json.py \
-		--output-dir $(STORIES_DIR) \
+		--output-dir $(EVENTS_DIR) \
 		--env $(OPS_ENV)
 
 release-sync-stories:
 	$(MAKE) export-stories-json ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE)
 	$(PYTHON) $(TOOLS_DIR)/supabase/sync_approved_proposal_assets.py --env $(OPS_ENV) --skip-post-processing
 	$(MAKE) ensure-story-image-sources ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE) STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET)
-	$(MAKE) thumbnails
+	$(MAKE) thumbnails THUMBNAIL_STORIES_DIR=$(EVENTS_DIR)
 	$(MAKE) update-pubspec-assets
 	$(MAKE) upload-story-image-sources ENV=$(ENV) OPS_ENV_FILE=$(OPS_ENV_FILE) STORY_IMAGE_SOURCE_BUCKET=$(STORY_IMAGE_SOURCE_BUCKET)
 	@echo "[Makefile] release sync 완료 — events 통합 JSON, 승인 자산, 썸네일, pubspec 확인 필요."

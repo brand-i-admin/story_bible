@@ -1,0 +1,5645 @@
+[
+  {
+    "title": "탄생 예고와 예수님의 탄생",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "mary",
+      "joseph_nazareth",
+      "zechariah",
+      "elizabeth",
+      "gabriel",
+      "john_the_baptist",
+      "herod"
+    ],
+    "landmark_code": "lm_nt_pm_bethlehem",
+    "place_name": "예루살렘 성전 → 나사렛 → 베들레헴",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "세례 요한과 예수님의 탄생이 예고되고, 예수님은 베들레헴에서 태어나 목자들과 동방박사에게 경배를 받으신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「탄생 예고와 예수님의 탄생」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "눅",
+        "from": "1:5",
+        "to": "1:80"
+      },
+      {
+        "book": "마",
+        "from": "1:18",
+        "to": "1:25"
+      },
+      {
+        "book": "눅",
+        "from": "2:1",
+        "to": "2:20"
+      },
+      {
+        "book": "마",
+        "from": "2:1",
+        "to": "2:12"
+      }
+    ],
+    "start_year": 4,
+    "end_year": 4,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "성전 안에서 노년의 제사장 사가랴가 제사장 옷을 입고 분향하다가 가브리엘의 아들 탄생 예고를 듣고 두려움과 놀라움으로 뒤로 물러선다",
+      "나사렛의 젊은 마리아는 겸손하지만 놀란 얼굴로 가브리엘의 소식을 듣고, 의로운 목수 요셉은 밤의 꿈 뒤에 마리아를 보호하듯 곁에 선다",
+      "베들레헴 밤 들판에서 거친 양치기 망토를 입은 목자들이 천사의 빛에 놀란 뒤, 마구간의 포대기에 싸인 아기 예수님을 찾아간다",
+      "동방박사들이 먼 길의 여행복과 예물 상자를 들고 어린 예수님 앞에 엎드리고, 마리아는 아기를 품에 안은 채 조용히 바라본다"
+    ],
+    "scene_captions": [
+      "성전 안에서 노년의 제사장 사가랴가 분향하다가 천사 가브리엘이 전해주는 아들 탄생 예고를 듣고 놀란다",
+      "나사렛의 마리아가 가브리엘에게 소식을, 듣고 목수 요셉은 꿈에서 본다",
+      "베들레헴 밤 목자들이 마구간의 포대기에 싸인 아기 예수님을 찾아간다",
+      "동방박사들이 먼 길의 여행복과 예물 상자를 들고 어린 예수님 앞에 엎드린다"
+    ],
+    "scene_characters": [
+      [
+        "zechariah",
+        "gabriel"
+      ],
+      [
+        "mary",
+        "joseph_nazareth",
+        "gabriel"
+      ],
+      [
+        "mary",
+        "joseph_nazareth",
+        "jesus"
+      ],
+      [
+        "jesus",
+        "mary"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "가브리엘은 사가랴의 아들을 어떤 이름으로 부르라 했습니까?",
+        "choices": [
+          "요한",
+          "예수",
+          "엘리야"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 1:13 — '그 이름을 요한이라 하라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "천사는 요셉에게 마리아의 아기가 누구로 말미암았다고 했습니까?",
+        "choices": [
+          "성령",
+          "사가랴",
+          "헤롯"
+        ],
+        "answer_index": 0,
+        "explanation": "마 1:20 — '성령으로 잉태된 것이라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "목자들은 베들레헴에서 아기 예수님을 어디에 누인 모습으로 보았습니까?",
+        "choices": [
+          "구유",
+          "왕궁 침상",
+          "성전 제단"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 2:16 — '구유에 누인 아기를 찾아서'"
+      }
+    ]
+  },
+  {
+    "title": "정결예식과 열두 살 예수님의 성전 방문",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "mary",
+      "joseph_nazareth"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "아기 예수님은 성전에서 하나님께 드려지고, 열두 살에는 성전에서 선생들과 대화하시며 자신의 정체를 드러내신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「정결예식과 열두 살 예수님의 성전 방문」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "눅",
+        "from": "2:21",
+        "to": "2:52"
+      }
+    ],
+    "start_year": 4,
+    "end_year": 8,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "마리아와 요셉이 아기 예수님을 안고 성전으로 올라가 정결예식을 드리며, 가난한 가정의 예물로 작은 새 두 마리를 조심스럽게 들고 있다",
+      "성전에서 노년의 시므온이 아기 예수님을 품에 안고 감사하며, 나이 많은 여선지자 안나는 기쁨에 찬 얼굴로 하나님을 찬양한다",
+      "유월절 후 돌아가는 길에서 마리아와 요셉이 열두 살 예수님이 보이지 않자 창백해진 얼굴로 다시 예루살렘 길을 되돌아간다",
+      "열두 살 예수님이 성전 선생들 사이에 앉아 질문하고 대답하며, 선생들은 놀란 표정으로 몸을 앞으로 기울인다"
+    ],
+    "scene_captions": [
+      "마리아와 요셉이 아기 예수님을 안고 성전으로 올라가 정결예식을 드린다",
+      "성전에서 노년의 시므온이 아기 예수님을 품에 안고 감사한다",
+      "유월절 후 집에가던 마리아와 요셉이 어린 예수를 찾으로 다시 예루살렘 길을 되돌아간다",
+      "열두 살 예수가 성전 선생들 사이에 앉아 질문하고 대답한다"
+    ],
+    "scene_characters": [
+      [
+        "mary",
+        "joseph_nazareth",
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "mary",
+        "joseph_nazareth"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "시므온은 아기 예수님을 품에 안고 무엇을 보았다고 찬송했습니까?",
+        "choices": [
+          "주의 구원",
+          "로마의 권세",
+          "성전의 금"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 2:30 — '내 눈이 주의 구원을 보았사오니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "안나는 성전에서 아기 예수님을 보고 누구에게 말했습니까?",
+        "choices": [
+          "예루살렘의 구속을 기다리는 사람들",
+          "헤롯의 신하들",
+          "갈릴리 어부들"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 2:38 — '예루살렘의 구속됨을 바라는 모든 사람에게'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "열두 살 예수님은 성전에서 무엇을 하고 계셨습니까?",
+        "choices": [
+          "선생들 사이에서 듣고 묻고 계셨다",
+          "제사장들과 제물을 나누셨다",
+          "로마 군인들을 가르치셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 2:46 — '선생들 중에 앉으사 저희에게 듣기도 하시며 묻기도 하시니'"
+      }
+    ]
+  },
+  {
+    "title": "예수님의 세례",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "john_the_baptist"
+    ],
+    "landmark_code": "lm_nt_pm_jericho",
+    "place_name": "요단강(여리고 근처, 전승)",
+    "lat": 31.8744,
+    "lng": 35.4441,
+    "summary": "예수님이 요단강에서 세례를 받으실 때 성령이 임하고 하늘의 음성이 그분을 하나님의 아들로 증언한다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「예수님의 세례」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "3:13",
+        "to": "3:17"
+      },
+      {
+        "book": "막",
+        "from": "1:9",
+        "to": "1:11"
+      },
+      {
+        "book": "눅",
+        "from": "3:21",
+        "to": "3:22"
+      },
+      {
+        "book": "요",
+        "from": "1:29",
+        "to": "1:34"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "요단강가에서 낙타털 옷과 가죽띠를 한 세례 요한이 회개의 세례를 베푸는 가운데, 예수님이 그쪽으로 걸어 나오신다",
+      "젖은 옷자락의 예수님 앞에서 세례 요한이 두 손을 내밀며 망설이지만, 예수님은 차분하고 단호한 얼굴로 세례를 받아들이신다",
+      "세례 뒤 물가에 서신 예수님 위로 하늘빛이 열리고 비둘기 같은 성령이 내려오며, 세례 요한은 경외에 찬 얼굴로 하나님의 어린양을 증언한다"
+    ],
+    "scene_captions": [
+      "예수님이 요단강에서 요한의 세례 장소에 걸어오신다",
+      "젖은 옷자락의 예수님 앞에서 세례 요한이 두 손을 내밀며 망설이다",
+      "세례 뒤 물가에 서신 예수님 위로 하늘빛이 열리고 비둘기 같은 성령이 내려온다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "john_the_baptist"
+      ],
+      [
+        "jesus",
+        "john_the_baptist"
+      ],
+      [
+        "john_the_baptist",
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한은 예수님이 세례를 받으러 오시자 무엇을 느꼈습니까?",
+        "choices": [
+          "자기가 받아야 해서",
+          "무리가 먼저라서",
+          "예수님이 떠나셔서"
+        ],
+        "answer_index": 0,
+        "explanation": "마 3:14 — '내가 당신에게 세례를 받아야 할 터인데'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "세례 뒤 성령은 어떤 모습으로 예수님 위에 내려오셨습니까?",
+        "choices": [
+          "비둘기 같이",
+          "불기둥 같이",
+          "구름 같이"
+        ],
+        "answer_index": 0,
+        "explanation": "마 3:16 — '하나님의 성령이 비둘기 같이 내려'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하늘의 음성은 예수님을 누구로 밝히셨습니까?",
+        "choices": [
+          "사랑하는 아들",
+          "광야의 선지자",
+          "성전의 제사장"
+        ],
+        "answer_index": 0,
+        "explanation": "마 3:17 — '이는 내 사랑하는 아들이요'"
+      }
+    ]
+  },
+  {
+    "title": "광야 시험",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_unknown",
+    "place_name": "유대 광야(전승)",
+    "lat": 31.7,
+    "lng": 35.4,
+    "summary": "예수님은 광야에서 사십 일을 금식하신 뒤 세 가지 시험을 말씀으로 물리치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「광야 시험」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "4:1",
+        "to": "4:11"
+      },
+      {
+        "book": "막",
+        "from": "1:12",
+        "to": "1:13"
+      },
+      {
+        "book": "눅",
+        "from": "4:1",
+        "to": "4:13"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "사십 일을 금식하신 예수님이 먼지 묻은 소박한 옷차림으로 광야 바위 사이에 지쳐 앉아 있고, 시험하는 자가 교활한 몸짓으로 다가온다",
+      "돌들이 흩어진 광야에서 시장하고 지친 예수님이 돌을 떡으로 만들라는 유혹 앞에 단호한 눈빛으로 말씀을 붙드신다",
+      "성전 꼭대기와 높은 산을 나눈 화면처럼 보여 주고, 예수님은 뛰어내림과 세상 영광의 유혹을 모두 거절하며 하나님만 섬기라는 자세로 서 계신다",
+      "시험을 이기신 예수님이 단호한 눈빛으로 서 있고 천사들이 곁에서 수종든다"
+    ],
+    "scene_captions": [
+      "사십 일을 금식하신 예수님에게 시험하는 자가 다가온다",
+      "예수님이 돌을 떡으로 만들라는 유혹 앞에 단호한 눈빛으로 말씀을 붙드신다",
+      "예수님은 뛰어내림과 세상 영광의 유혹을 모두 거절하며 하나님만 섬기라고 하신다",
+      "시험을 이기신 예수님이 단호한 눈빛으로 서 있고 천사들이 곁에서 수종든다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 광야에서 며칠을 금식하셨습니까?",
+        "choices": [
+          "사십 일",
+          "칠 일",
+          "삼 일"
+        ],
+        "answer_index": 0,
+        "explanation": "마 4:2 — '사십 일을 밤낮으로 금식하신 후에'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "돌을 떡으로 만들라는 시험에 예수님은 무엇으로 답하셨습니까?",
+        "choices": [
+          "하나님의 말씀",
+          "천사의 도움",
+          "제자들의 음식"
+        ],
+        "answer_index": 0,
+        "explanation": "마 4:4 — '사람이 떡으로만 살 것이 아니요'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "세상 영광을 주겠다는 시험 앞에서 예수님은 누구만 섬기라 하셨습니까?",
+        "choices": [
+          "주 하나님",
+          "성전 지도자",
+          "로마 황제"
+        ],
+        "answer_index": 0,
+        "explanation": "마 4:10 — '주 너의 하나님께 경배하고 다만 그를 섬기라'"
+      }
+    ]
+  },
+  {
+    "title": "첫 제자들이 예수님을 따름",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "john_the_baptist",
+      "andrew",
+      "peter",
+      "philip",
+      "john"
+    ],
+    "landmark_code": "lm_nt_pm_perea",
+    "place_name": "요단강 건너편 → 갈릴리",
+    "lat": 31.85,
+    "lng": 35.65,
+    "summary": "세례 요한의 증언을 들은 제자들이 예수님을 따르고, 안드레는 형제 시몬(베드로)을, 빌립은 나다나엘을 예수님께 데려온다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「첫 제자들이 예수님을 따름」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "1:35",
+        "to": "1:51"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "세례 요한이 지나가시는 예수님을 가리키자 두 제자가 조용히 따라간다",
+      "갈릴리 마을길에서 안드레가 형제 시몬을 예수님께 데려오고, 예수님은 시몬에게 베드로라는 새 이름을 주시며, 시몬은 어부의 파란 겉옷과 그물 차림으로 놀라움과 기대가 섞인 표정으로 바라본다",
+      "예수님이 빌립을 부르시고 빌립은 나다나엘에게 예수님을 전한다",
+      "예수님이 나다나엘을 만나 그의 마음을 아시고 더 큰 일을 보리라 말씀하신다"
+    ],
+    "scene_captions": [
+      "세례 요한의 두 제자가 예수님을 조용히 따라간다",
+      "갈릴리 마을길에서 안드레와 형제 시몬이 예수님을 만난다",
+      "예수님이 빌립을 부르시고 빌립은 나다나엘에게 예수님을 전한다",
+      "예수님이 나다나엘을 만나 그의 마음을 아시고 더 큰 일을 보리라 말씀하신다"
+    ],
+    "scene_characters": [
+      [
+        "john_the_baptist",
+        "jesus",
+        "andrew",
+        "john"
+      ],
+      [
+        "andrew",
+        "peter",
+        "jesus"
+      ],
+      [
+        "philip",
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "세례 요한은 예수님을 어떤 분으로 가리켰습니까?",
+        "choices": [
+          "하나님의 어린양",
+          "갈릴리 목수",
+          "성전 문지기"
+        ],
+        "answer_index": 0,
+        "explanation": "요 1:36 — '하나님의 어린 양이로다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "안드레는 예수님을 만난 뒤 누구를 데려왔습니까?",
+        "choices": [
+          "형제 시몬",
+          "세리 마태",
+          "제사장 사가랴"
+        ],
+        "answer_index": 0,
+        "explanation": "요 1:41 — '자기의 형제 시몬을 찾아 말하되'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 나다나엘을 만나기 전에 그를 어디서 보셨다고 하셨습니까?",
+        "choices": [
+          "무화과나무 아래",
+          "성전 뜰",
+          "요단강 물가"
+        ],
+        "answer_index": 0,
+        "explanation": "요 1:48 — '네가 무화과나무 아래 있을 때에 보았노라'"
+      }
+    ]
+  },
+  {
+    "title": "가나 혼인잔치",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "mary",
+      "andrew",
+      "peter",
+      "philip",
+      "john"
+    ],
+    "landmark_code": "rgn_galilee",
+    "place_name": "가나(갈릴리, 전승)",
+    "lat": 32.746,
+    "lng": 35.338,
+    "summary": "예수님은 가나 혼인잔치에서 물을 포도주로 바꾸는 첫 표적을 행하시고 제자들이 그분을 믿게 된다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「가나 혼인잔치」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "2:1",
+        "to": "2:12"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "가나의 혼인잔치에서 포도주가 떨어지자 마리아가 예수님께 조용히 알린다",
+      "예수님이 항아리에 물을 채우게 하시고 하인들이 순종해 움직인다",
+      "혼인잔치의 빈 항아리 옆에서 제자들이 포도주가 된 물을 보고 놀라며 예수님의 영광을 깨닫는다"
+    ],
+    "scene_captions": [
+      "마리아가 예수님께 포도주가 떨어짐을 알린다",
+      "예수님이 항아리에 물을 채우게 하시고 하인들이 순종해 움직인다",
+      "혼인잔치의 항아리에 제자들이 포도주가 된 물을 보고 놀라며 예수님의 영광을 깨닫는다"
+    ],
+    "scene_characters": [
+      [
+        "mary",
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "andrew",
+        "peter",
+        "philip",
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "가나 혼인잔치에서 떨어진 것은 무엇입니까?",
+        "choices": [
+          "포도주",
+          "떡",
+          "등불 기름"
+        ],
+        "answer_index": 0,
+        "explanation": "요 2:3 — '포도주가 모자란지라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 하인들에게 항아리에 무엇을 채우라 하셨습니까?",
+        "choices": [
+          "물",
+          "포도주",
+          "향유"
+        ],
+        "answer_index": 0,
+        "explanation": "요 2:7 — '항아리에 물을 채우라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "가나의 첫 표적 뒤 제자들은 예수님께 무엇을 보였습니까?",
+        "choices": [
+          "믿음",
+          "두려움",
+          "분노"
+        ],
+        "answer_index": 0,
+        "explanation": "요 2:11 — '제자들이 그를 믿으니라'"
+      }
+    ]
+  },
+  {
+    "title": "첫 번째 성전 정화",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 성전에서 장사하는 이들을 내쫓으시며 성전을 아버지의 집으로 대해야 함을 드러내신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「첫 번째 성전 정화」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "2:13",
+        "to": "2:22"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "예수님이 성전 뜰에서 장사하는 이들을 내쫓고 상을 흩으신다",
+      "유대 지도자들이 표적을 요구하자 예수님은 성전과 부활을 가리키는 말씀을 하신다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 빈 무덤과 다시 일어선 생명 앞에서 사람들이 놀라는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "예수님이 성전 뜰에서 장사하는 이들을 내쫓고 상을 흩으신다",
+      "예수님은 성전과 부활을 가리키는 말씀을 하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 성전에서 무엇을 파는 사람들을 내쫓으셨습니까?",
+        "choices": [
+          "소와 양과 비둘기",
+          "밀과 포도",
+          "향유와 몰약"
+        ],
+        "answer_index": 0,
+        "explanation": "요 2:14 — '소와 양과 비둘기 파는 사람들과'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 아버지의 집을 무엇으로 만들지 말라고 하셨습니까?",
+        "choices": [
+          "장사하는 집",
+          "기도하는 집",
+          "가르치는 집"
+        ],
+        "answer_index": 0,
+        "explanation": "요 2:16 — '내 아버지의 집으로 장사하는 집을 만들지 말라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님이 사흘 동안 다시 일으키겠다고 하신 성전은 무엇을 가리켰습니까?",
+        "choices": [
+          "자기 육체",
+          "헤롯 성전",
+          "제자들의 배"
+        ],
+        "answer_index": 0,
+        "explanation": "요 2:21 — '예수는 성전된 자기 육체를 가리켜 말씀하신 것이라'"
+      }
+    ]
+  },
+  {
+    "title": "세례 요한의 마지막 증언",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "john_the_baptist"
+    ],
+    "landmark_code": "lm_nt_pm_perea",
+    "place_name": "유대 지방과 애논(전승)",
+    "lat": 31.85,
+    "lng": 35.65,
+    "summary": "세례 요한은 예수님이 흥하고 자신은 쇠해야 한다고 고백하며 하늘로부터 오신 이를 증언한다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「세례 요한의 마지막 증언」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "3:22",
+        "to": "3:36"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 27,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "요한의 제자들이 사람들이 예수님께 가는 일을 요한에게 알린다. 제자들의 말풍선에는 사람들이 예수님을 많이 따르는 장면",
+      "세례 요한이 신랑의 친구처럼 기뻐하며 제자들에게 예수님은 흥해야 한다고 증언한다. 예수님은 따르는 많은 사람들과 함께 멀리 보인다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "요한의 제자들이 사람들이 예수님께 가는 일을 요한에게 알린다",
+      "세례 요한이 신랑의 친구처럼 기뻐하며 제자들에게 예수님은 흥해야 한다고 증언한다"
+    ],
+    "scene_characters": [
+      [
+        "john_the_baptist",
+        "jesus"
+      ],
+      [
+        "john_the_baptist",
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한의 제자들은 사람들이 누구에게 간다고 말했습니까?",
+        "choices": [
+          "예수님",
+          "헤롯",
+          "대제사장"
+        ],
+        "answer_index": 0,
+        "explanation": "요 3:26 — '사람이 다 그에게로 가더이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "세례 요한은 자신을 신랑의 무엇으로 비유했습니까?",
+        "choices": [
+          "친구",
+          "종",
+          "형제"
+        ],
+        "answer_index": 0,
+        "explanation": "요 3:29 — '신랑의 친구가 서서 신랑의 음성을 듣고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "세례 요한은 예수님과 자기 사역의 흐름을 어떤 말로 설명했습니까?",
+        "choices": [
+          "예수님은 흥하고 자신은 쇠해야 한다",
+          "둘 다 예루살렘을 떠나야 한다",
+          "자신이 먼저 왕이 되어야 한다"
+        ],
+        "answer_index": 0,
+        "explanation": "요 3:30 — '그는 흥하여야 하겠고 나는 쇠하여야 하리라'"
+      }
+    ]
+  },
+  {
+    "title": "사마리아 여인",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "john",
+      "philip"
+    ],
+    "landmark_code": "rgn_samaria",
+    "place_name": "수가 성 야곱의 우물(전승)",
+    "lat": 32.211,
+    "lng": 35.281,
+    "summary": "예수님은 사마리아 여인에게 생수를 말씀하시고, 그 여인의 증언으로 많은 사마리아 사람들이 예수님을 믿는다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「사마리아 여인」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "4:1",
+        "to": "4:42"
+      }
+    ],
+    "start_year": 27,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 9,
+    "unit_code": "birth_early_ministry",
+    "unit_title": "탄생과 초기 사역",
+    "unit_order": 1,
+    "story_scenes": [
+      "한낮의 야곱의 우물가에서 예수님이 지친 여행자 옷차림으로 앉아 계시고, 물동이를 든 수가 성 사마리아 여인에게 차분한 표정으로 물을 달라고 손을 내미신다",
+      "수가 성 사마리아 여인이 물동이를 우물가에 두고 기쁨과 놀라움이 가득한 얼굴로 동네 골목을 달리며 사람들에게 예수님을 알린다. 여인의 말풍선에는 우물가에 메시아가 나타났다는 그림",
+      "베드로와 안드레와 요한과 빌립이 먹을 것을 들고 돌아와 예수님께 드시라고 권하고, 예수님은 평온하고 사명감 있는 표정으로 손을 들어 말씀하신다. 예수님의 말풍선에는 하나님의 사명이 예수님의 양식이라는 표현이 나온다",
+      "수가 성의 많은 사람들이 우물가로 나아와 예수님 둘레에 모이고, 예수님은 따뜻한 얼굴로 말씀하시며 사람들은 놀라움과 믿음이 섞인 표정으로 귀 기울인다"
+    ],
+    "scene_captions": [
+      "우물가에서 예수님이 지친 여행자 옷차림으로 앉아 계시고, 물동이를 든 수가 성 사마리아 여인이 나타난다",
+      "사마리아 여인이 동네 사람들에게 예수님에 대해 전한다",
+      "제자들이 돌아와 예수님께 드시라고 권하지만 예수님은 하나님의 사명의 양식을 말씀하신다",
+      "수가 성의 많은 사람들이 우물가로 나아와 예수님 주변에 모인다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "john",
+        "philip"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 우물가에서 사마리아 여인에게 무엇을 달라 하셨습니까?",
+        "choices": [
+          "물",
+          "떡",
+          "동전"
+        ],
+        "answer_index": 0,
+        "explanation": "요 4:7 — '물을 좀 달라 하시니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 여인에게 어떤 물을 주겠다고 하셨습니까?",
+        "choices": [
+          "영원히 목마르지 않는 물",
+          "야곱의 우물물",
+          "성전 정결수"
+        ],
+        "answer_index": 0,
+        "explanation": "요 4:14 — '영원히 목마르지 아니하리니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 참 예배자가 무엇으로 예배한다고 하셨습니까?",
+        "choices": [
+          "영과 진리",
+          "산과 성전",
+          "향과 제물"
+        ],
+        "answer_index": 0,
+        "explanation": "요 4:23 — '아버지께 참으로 예배하는 자들은 신령과 진정으로 예배할 때가 오나니'"
+      }
+    ]
+  },
+  {
+    "title": "네 어부 제자를 부르심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john"
+    ],
+    "landmark_code": "lm_nt_pm_capernaum",
+    "place_name": "갈릴리 호수(가버나움 근처)",
+    "lat": 32.881,
+    "lng": 35.575,
+    "summary": "예수님은 갈릴리 호숫가에서 시몬 베드로와 안드레, 야고보와 요한을 부르시고 그들은 모든 것을 버려 따르게 된다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「네 어부 제자를 부르심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "4:18",
+        "to": "4:22"
+      },
+      {
+        "book": "막",
+        "from": "1:16",
+        "to": "1:20"
+      },
+      {
+        "book": "눅",
+        "from": "5:1",
+        "to": "5:11"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 10,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "갈릴리 호숫가에서 시몬 베드로와 안드레가 밤새 쓴 그물을 씻고 있고, 예수님이 배 가까이에서 그들을 바라보신다",
+      "예수님이 시몬 베드로의 배에서 깊은 데로 가서 그물을 내리라 하시고, 시몬 베드로가 지친 얼굴로 순종하자 배에 고기가 가득해진다",
+      "야고보와 요한까지 배와 그물을 두고 예수님을 따라 길을 나서고, 시몬 베드로와 안드레도 빈 그물 곁을 떠난다"
+    ],
+    "scene_captions": [
+      "갈릴리 호숫가에서 시몬 베드로와 안드레가 밤새 쓴 그물을 씻고 있다",
+      "예수님이 시몬 베드로의 배에서 깊은 데로 가서 그물을 내리라 하신다",
+      "야고보와 요한까지 배와 그물을 두고 예수님을 따라 길을 나선다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew"
+      ],
+      [
+        "jesus",
+        "peter"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 시몬에게 어디로 가서 그물을 내리라 하셨습니까?",
+        "choices": [
+          "깊은 데",
+          "성전 뜰",
+          "광야 길"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 5:4 — '깊은 데로 가서 그물을 내려'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "시몬은 밤새 잡지 못했지만 무엇에 의지해 그물을 내렸습니까?",
+        "choices": [
+          "예수님의 말씀",
+          "자기 경험",
+          "사람들의 응원"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 5:5 — '말씀에 의지하여 내가 그물을 내리리이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야고보와 요한까지 부르심을 받은 뒤 제자들은 무엇을 버려두고 예수님을 따랐습니까?",
+        "choices": [
+          "모든 것",
+          "성전 제물",
+          "헤롯의 편지"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 5:11 — '모든 것을 버려 두고 예수를 좇으니라'"
+      }
+    ]
+  },
+  {
+    "title": "가버나움 회당의 권위",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_capernaum",
+    "place_name": "가버나움 회당",
+    "lat": 32.881,
+    "lng": 35.575,
+    "summary": "예수님은 가버나움 회당에서 권위 있게 가르치시고 더러운 귀신 들린 사람을 고치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「가버나움 회당의 권위」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "막",
+        "from": "1:21",
+        "to": "1:28"
+      },
+      {
+        "book": "눅",
+        "from": "4:31",
+        "to": "4:37"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 11,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "가버나움 회당 안에서 사람들이 예수님의 가르침을 듣고 놀란다",
+      "가버나움 회당 안에서 더러운 귀신 들린 사람이 몸을 움츠리며 소리치고, 예수님이 귀신을 꾸짖으시자 몸을 웅크렸던 사람이 평온을 되찾고, 검은 영이 도망감. 주변 사람들은 놀란다",
+      "예수님이 시몬의 집으로 가서 열병에 시달리는 장모의 열병을 꾸짖으시자 열병이 낫고, 수 많은 사람들이 몰려오는 모습",
+      "예수님이 여러 회당에서 말씀을 전하시는 모습"
+    ],
+    "scene_captions": [
+      "가버나움 회당 안에서 사람들이 예수님의 가르침을 듣고 놀란다",
+      "가버나움 회당 안에서 더러운 귀신 들린 사람에게서 귀신을 내쫓으신다",
+      "예수님이 시몬의 집으로 가서 열병에 시달리는 장모의 열병을 꾸짖으시자 열병이 낫는다",
+      "예수님이 여러 회당에서 말씀을 전하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "가버나움 회당 사람들은 예수님의 가르침에서 무엇을 느꼈습니까?",
+        "choices": [
+          "권세",
+          "두려움",
+          "침묵"
+        ],
+        "answer_index": 0,
+        "explanation": "막 1:22 — '그 가르치시는 것이 권세 있는 자와 같고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 더러운 귀신에게 어떤 명령을 하셨습니까?",
+        "choices": [
+          "잠잠하고 나오라는 명령",
+          "성전으로 가라는 명령",
+          "떡을 가져오라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "막 1:25 — '잠잠하고 그 사람에게서 나오라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님의 권위 있는 가르침과 치유 소식은 어디까지 퍼졌습니까?",
+        "choices": [
+          "갈릴리 사방",
+          "애굽 전역",
+          "로마 궁전"
+        ],
+        "answer_index": 0,
+        "explanation": "막 1:28 — '갈릴리 사방에 퍼지더라'"
+      }
+    ]
+  },
+  {
+    "title": "중풍병자 치유",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_capernaum",
+    "place_name": "가버나움의 한 집(전승)",
+    "lat": 32.881,
+    "lng": 35.575,
+    "summary": "친구들이 중풍병자를 지붕으로 내려 보내자 예수님은 죄 사함과 치유의 권세를 보이신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「중풍병자 치유」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "9:1",
+        "to": "9:8"
+      },
+      {
+        "book": "막",
+        "from": "2:1",
+        "to": "2:12"
+      },
+      {
+        "book": "눅",
+        "from": "5:17",
+        "to": "5:26"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 12,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "사람들로 가득 찬 집 지붕 위에서 친구들이 중풍병자의 자리를 조심스럽게 내리고 예수님이 그들의 믿음을 보시고 중풍병자에게 죄 사함을 말씀하신다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 어두운 길에서 돌아서 밝은 길로 걷는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "서기관들이 마음속으로 의심하자 예수님은 인자의 권세를 드러내신다",
+      "고침 받은 사람이 자리를 들고 걸어 나가고 무리는 하나님께 영광을 돌린다"
+    ],
+    "scene_captions": [
+      "사람들로 가득 찬 집 지붕 위에서 친구들이 중풍병자를 예수님께 내린다",
+      "의심하는 서기관들에게 예수님은 인자의 권세를 드러내신다",
+      "고침 받은 사람이 자리를 들고 걸어 나가고 무리는 하나님께 영광을 돌린다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "중풍병자의 친구들은 사람들 때문에 어디를 열고 병자를 내렸습니까?",
+        "choices": [
+          "지붕",
+          "성전 문",
+          "배의 갑판"
+        ],
+        "answer_index": 0,
+        "explanation": "막 2:4 — '지붕을 뜯어 구멍을 내고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 그들의 믿음을 보시고 중풍병자에게 먼저 무엇을 말씀하셨습니까?",
+        "choices": [
+          "죄 사함",
+          "세금 면제",
+          "로마 시민권"
+        ],
+        "answer_index": 0,
+        "explanation": "막 2:5 — '소자야 네 죄 사함을 받았느니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "고침 받은 사람은 예수님의 말씀 뒤 무엇을 들고 나갔습니까?",
+        "choices": [
+          "자기 상",
+          "물 항아리",
+          "성전 두루마리"
+        ],
+        "answer_index": 0,
+        "explanation": "막 2:12 — '그가 일어나 곧 상을 가지고'"
+      }
+    ]
+  },
+  {
+    "title": "마태와 레위를 부르심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "matthew"
+    ],
+    "landmark_code": "lm_nt_pm_capernaum",
+    "place_name": "가버나움 세관과 마태의 집(전승)",
+    "lat": 32.881,
+    "lng": 35.575,
+    "summary": "예수님은 세관에 앉아 있던 마태, 곧 레위를 부르시고 죄인을 부르러 오셨음을 밝히신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「마태와 레위를 부르심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "9:9",
+        "to": "9:13"
+      },
+      {
+        "book": "막",
+        "from": "2:13",
+        "to": "2:17"
+      },
+      {
+        "book": "눅",
+        "from": "5:27",
+        "to": "5:32"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 13,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "세관 자리에서 마태가 동전과 장부를 남겨 둔 채 일어나 예수님을 따르고, 주변 세리들은 놀란 얼굴로 바라본다",
+      "마태의 집 잔치에 세리와 죄인들이 함께 앉아 예수님과 식사한다",
+      "예수님이 바리새파 사람들과 율법학자들의 의도적인 질문에 건강한 자가 아니라 병든 자에게 의원이 필요하다고 말씀하신다"
+    ],
+    "scene_captions": [
+      "세관 자리에서 마태가 동전과 장부를 남겨 둔 채 일어나 예수님을 따르다",
+      "마태의 집 잔치에 세리와 죄인들이 함께 앉아 예수님과 식사한다",
+      "예수님이 바리새파 사람들과 율법학자들의 의도적인 질문에 의원이 필요한 자에대해 말씀하신다"
+    ],
+    "scene_characters": [
+      [
+        "matthew",
+        "jesus"
+      ],
+      [
+        "jesus",
+        "matthew"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 세관에 앉은 마태를 어떤 말씀으로 부르셨습니까?",
+        "choices": [
+          "나를 따르라는 부르심",
+          "성전으로 가라는 말",
+          "갈릴리를 떠나라는 말"
+        ],
+        "answer_index": 0,
+        "explanation": "마 9:9 — '나를 좇으라 하시니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "마태의 집에서 예수님과 함께 앉은 사람들은 누구였습니까?",
+        "choices": [
+          "세리와 죄인들",
+          "제사장과 장로들",
+          "로마 군인들"
+        ],
+        "answer_index": 0,
+        "explanation": "마 9:10 — '많은 세리와 죄인들이 와서'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 자신이 누구를 부르러 왔다고 하셨습니까?",
+        "choices": [
+          "죄인",
+          "의인",
+          "부자"
+        ],
+        "answer_index": 0,
+        "explanation": "마 9:13 — '내가 의인을 부르러 온 것이 아니요 죄인을 부르러 왔노라'"
+      }
+    ]
+  },
+  {
+    "title": "베데스다 못의 병자 치유",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 베데스다 못(전승)",
+    "lat": 31.7819,
+    "lng": 35.236,
+    "summary": "예수님은 베데스다 못가의 오래된 병자를 고치시고 안식일과 아버지의 일에 대한 논쟁을 일으키신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「베데스다 못의 병자 치유」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "5:1",
+        "to": "5:18"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 14,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "베데스다 못가 행각에 많은 병자들이 누워 있고 한 사람이 오래 기다리고 있다",
+      "베데스다 못 행각에서 예수님이 오래 누운 병자 곁에 몸을 낮추고, 병자는 낡은 자리를 붙든 채 간절히 올려다본다",
+      "그 사람이 자리를 들고 걸어가자 주변 사람들이 놀라 바라본다",
+      "유대 지도자들이 안식일 문제를 제기하고 예수님은 아버지께서 일하신다고 말씀하신다"
+    ],
+    "scene_captions": [
+      "베데스다 못가 행각에 많은 병자들이 누워 있고 한 사람이 오래 기다리고 있다",
+      "예수님이 오래 누운 병자 곁에 몸을 낮추고, 병자는 도와달라며 예수님을 바라본다",
+      "그 사람이 자리를 들고 걸어가자 주변 사람들이 놀라 바라본다",
+      "유대 지도자들이 안식일 문제를 제기하고 예수님은 아버지께서 일하신다고 말씀하신다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "베데스다 못가의 병자는 몇 해 동안 병을 앓았습니까?",
+        "choices": [
+          "삼십팔 년",
+          "열두 해",
+          "사십 년"
+        ],
+        "answer_index": 0,
+        "explanation": "요 5:5 — '삼십 팔 년 된 병자가 있더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 병자에게 무엇을 들고 걸어가라 하셨습니까?",
+        "choices": [
+          "자리",
+          "물동이",
+          "성전 문"
+        ],
+        "answer_index": 0,
+        "explanation": "요 5:8 — '네 자리를 들고 걸어가라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "유대인들이 안식일 문제로 따질 때 예수님은 누가 일하신다고 하셨습니까?",
+        "choices": [
+          "아버지와 자신",
+          "천사와 제자들",
+          "제사장과 레위인"
+        ],
+        "answer_index": 0,
+        "explanation": "요 5:17 — '내 아버지께서 이제까지 일하시니 나도 일한다'"
+      }
+    ]
+  },
+  {
+    "title": "열두 제자를 세우심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_mt_beatitudes",
+    "place_name": "갈릴리 산지(전승)",
+    "lat": 32.8804,
+    "lng": 35.5552,
+    "summary": "예수님은 밤새 기도하신 뒤 열두 제자를 세워 가까이 있게 하시고 보내실 준비를 하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「열두 제자를 세우심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "10:1",
+        "to": "10:4"
+      },
+      {
+        "book": "막",
+        "from": "3:13",
+        "to": "3:19"
+      },
+      {
+        "book": "눅",
+        "from": "6:12",
+        "to": "6:16"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 15,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "열두 제자가 예수님 곁에 반원으로 모여 새 사명을 받고, 각자 먼지 묻은 여행복 차림으로 결심한 표정을 짓는다"
+    ],
+    "scene_captions": [
+      "열두 제자가 예수님 곁에 반원으로 모여 새 사명을 받는다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 열두 제자를 세우기 전 밤에 무엇을 하셨습니까?",
+        "choices": [
+          "기도",
+          "잔치",
+          "재판"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 6:12 — '밤이 맞도록 하나님께 기도하시고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 열두 제자를 세워 무엇을 하게 하려 하셨습니까?",
+        "choices": [
+          "함께 있게 하고 전도하게 하려 하셨다",
+          "성전 세금을 거두게 하려 하셨다",
+          "로마 군대를 지휘하게 하려 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "막 3:14 — '자기와 함께 있게 하시고 또 보내사 전도도 하며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 열두 제자에게 무엇을 고치는 권능을 주셨습니까?",
+        "choices": [
+          "모든 병과 약한 것",
+          "무너진 성벽",
+          "마른 밭"
+        ],
+        "answer_index": 0,
+        "explanation": "마 10:1 — '모든 병과 모든 약한 것을 고치는 권능을 주시니라'"
+      }
+    ]
+  },
+  {
+    "title": "산상수훈과 평지설교",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_mt_beatitudes",
+    "place_name": "갈릴리 산지와 평지(전승)",
+    "lat": 32.8804,
+    "lng": 35.5552,
+    "summary": "예수님은 하나님 나라 백성의 복, 의, 사랑, 기도, 선택과 순종의 길을 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「산상수훈과 평지설교」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "5:1",
+        "to": "7:29"
+      },
+      {
+        "book": "눅",
+        "from": "6:20",
+        "to": "6:49"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 16,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "산비탈과 평지에 제자들과 무리가 모여 앉고 예수님이 가르치기 시작하신다",
+      "예수님이 가난하고 애통한 사람들이 예수님의 복 선언을 들으며 위로받는 장면(말풍선)",
+      "예수님이 배부르고 부요하고 악인에게 칭찬 받는 사람은 상급이 없다는 말씀을 하시는 장면(말풍선)",
+      "예수님이 이웃을 사랑하고 이웃에게 소유를 내어주고 이웃을 잘 대접하라는 말씀을 하시는 장면(말풍선)"
+    ],
+    "scene_captions": [
+      "산비탈과 평지에 제자들과 무리가 모여 앉고 예수님이 가르치기 시작하신다",
+      "예수님이 가난하고 애통한 사람들의 복에 대해 말씀하신다",
+      "예수님이 배부르고 부요하고 악인에게 칭찬 받는 사람은 상급이 없다는 말씀을 하신다",
+      "예수님이 이웃을 사랑하고 이웃에게 소유를 내어주고 이웃을 잘 대접하라는 말씀을 하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 심령이 가난한 사람에게 무엇이 있다고 하셨습니까?",
+        "choices": [
+          "천국",
+          "성전 창고",
+          "로마 권세"
+        ],
+        "answer_index": 0,
+        "explanation": "마 5:3 — '천국이 저희 것임이요'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 원수에게 어떤 태도를 가지라 하셨습니까?",
+        "choices": [
+          "사랑하고 기도하는 태도",
+          "피하고 숨는 태도",
+          "재판으로 갚는 태도"
+        ],
+        "answer_index": 0,
+        "explanation": "마 5:44 — '너희 원수를 사랑하며 ... 기도하라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 말씀을 듣고 행하는 사람을 무엇 위에 집 지은 사람에 비유하셨습니까?",
+        "choices": [
+          "반석",
+          "모래",
+          "배"
+        ],
+        "answer_index": 0,
+        "explanation": "마 7:24 — '그 집을 반석 위에 지은 지혜로운 사람 같으리니'"
+      }
+    ]
+  },
+  {
+    "title": "백부장의 종과 나인성 과부의 아들",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "rgn_galilee",
+    "place_name": "가버나움 → 나인성(전승)",
+    "lat": 32.63,
+    "lng": 35.349,
+    "summary": "예수님은 백부장의 믿음을 칭찬하며 종을 고치시고, 나인성 과부의 죽은 아들을 살리신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「백부장의 종과 나인성 과부의 아들」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "8:5",
+        "to": "8:13"
+      },
+      {
+        "book": "눅",
+        "from": "7:1",
+        "to": "7:17"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 28,
+    "time_precision": "approx",
+    "story_index": 17,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "가버나움에서 장로들이 예수님께 병든 종을 고쳐 달라고 정중히 간청한다. 장로들 머리 위에는 침상에 누워있는 종이 그려진 말풍선",
+      "백부장의 친구들이 예수님께 나아와서 말씀만 하시라고 간청하는 모습",
+      "예수님이 손짓하며 명령하자 멀리 있는 집에서 종이 살아나고 백부장이 즐거워 하는 모습",
+      "예수님이 관에 손을 대시자 죽었던 청년이 몸을 일으키고, 과부는 믿기지 않는 기쁨으로 아들에게 다가간다"
+    ],
+    "scene_captions": [
+      "가버나움에서 장로들이 예수님께 병든 종을 고쳐 달라고 정중히 간청한다",
+      "백부장의 친구들이 예수님께 나아와서 말씀만 하시라고 간청한다",
+      "멀리 있는 집에서 종이 살아나고 백부장이 즐거워 한다",
+      "예수님이 관에 손을 대시자 죽었던 청년이 몸을 일으킨다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "백부장은 예수님께 무엇만 하시면 종이 낫겠다고 했습니까?",
+        "choices": [
+          "말씀만 하시면",
+          "집에 머무시면",
+          "성전 제사를 드리시면"
+        ],
+        "answer_index": 0,
+        "explanation": "마 8:8 — '다만 말씀으로만 하옵소서 그러면 내 하인이 낫겠삽나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 백부장의 믿음을 보고 어떤 반응을 보이셨습니까?",
+        "choices": [
+          "기이히 여기셨다",
+          "화내셨다",
+          "피하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 8:10 — '예수께서 들으시고 기이히 여겨'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "나인성 과부의 아들에게 예수님이 하신 명령은 무엇입니까?",
+        "choices": [
+          "일어나라는 명령",
+          "잠잠하라는 명령",
+          "물을 떠오라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 7:14 — '청년아 내가 네게 말하노니 일어나라'"
+      }
+    ]
+  },
+  {
+    "title": "갈릴리 호수의 기적들",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "jairus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "rgn_galilee",
+    "place_name": "갈릴리 호수와 주변 지역",
+    "lat": 32.83,
+    "lng": 35.58,
+    "summary": "예수님은 풍랑을 잠잠케 하시고 귀신 들린 사람과 병든 이들, 야이로의 딸과 혈루증 여인을 고치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「갈릴리 호수의 기적들」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "8:23",
+        "to": "8:34"
+      },
+      {
+        "book": "마",
+        "from": "9:27",
+        "to": "9:34"
+      },
+      {
+        "book": "막",
+        "from": "4:35",
+        "to": "5:43"
+      },
+      {
+        "book": "눅",
+        "from": "8:22",
+        "to": "8:56"
+      }
+    ],
+    "start_year": 28,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 18,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "갈릴리 호수의 거센 풍랑 속에서 젖은 어부 옷의 제자들이 배 밧줄과 노를 붙잡고 두려워하며, 예수님은 흔들리는 배 안에서 바람과 바다를 꾸짖으신다",
+      "거라사 들판에서 헝클어진 머리와 찢어진 옷의 사람이 예수님 앞에 쓰러지고, 악한 영이 떠나 돼지 떼가 낭떠러지를 향해 달려가자 주변 사람들은 겁에 질린다",
+      "무리 속에서 오래 앓아 지친 혈루증 여인이 떨리는 손으로 예수님의 옷자락을 만지고, 예수님은 그녀를 찾듯 돌아보신다",
+      "야이로의 집에서 예수님이 죽은 딸의 손을 잡아 일으키시고, 회당장 야이로와 가족들 그리고 베드로와 야고보와 요한은 침상 곁에서 숨을 죽인 채 놀라 다가온다"
+    ],
+    "scene_captions": [
+      "갈릴리 호수의 거센 풍랑 속에서 젖은 제자들이 배 밧줄과 노를 붙잡고 두려워한다",
+      "거라사 들판에서 사람에게서 귀신을 내쫓아 군대가 돼지에게 들어간다",
+      "무리 속에서 혈루증 여인이 떨리는 손으로 예수님의 옷자락을 만져 치유 받는다",
+      "야이로의 집에서 예수님이 죽은 딸의 손을 잡아 일으키시다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "peter",
+        "james_zebedee",
+        "john",
+        "jairus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "풍랑 속 배에서 예수님은 바람과 바다에게 어떤 명령을 하셨습니까?",
+        "choices": [
+          "잠잠해지라는 명령",
+          "더 거세지라는 명령",
+          "갈라지라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "막 4:39 — '잠잠하라 고요하라 하시니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "혈루증 여인은 무엇만 만져도 구원받겠다고 생각했습니까?",
+        "choices": [
+          "예수님의 옷",
+          "성전 휘장",
+          "제자의 지팡이"
+        ],
+        "answer_index": 0,
+        "explanation": "막 5:28 — '그의 옷에만 손을 대어도 구원을 얻으리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야이로의 딸에게 예수님이 하신 명령은 무엇입니까?",
+        "choices": [
+          "소녀에게 일어나라는 명령",
+          "집 밖으로 나가라는 명령",
+          "떡을 나누라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "막 5:41 — '소녀야 내가 네게 말하노니 일어나라'"
+      }
+    ]
+  },
+  {
+    "title": "열두 제자 파송",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas",
+      "herod"
+    ],
+    "landmark_code": "rgn_galilee",
+    "place_name": "갈릴리 여러 마을",
+    "lat": 32.83,
+    "lng": 35.55,
+    "summary": "예수님은 열두 제자에게 권능과 지침을 주시고 하나님 나라를 전하며 병을 고치도록 보내신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「열두 제자 파송」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "10:1",
+        "to": "10:42"
+      },
+      {
+        "book": "막",
+        "from": "6:7",
+        "to": "6:13"
+      },
+      {
+        "book": "눅",
+        "from": "9:1",
+        "to": "9:6"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 19,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "예수님이 열두 제자를 가까이 부르시고, 제자들은 먼지 묻은 샌들과 단순한 여행복 차림으로 더러운 영과 병을 고칠 권능을 받는다",
+      "열두 제자가 둘씩 짝을 지어 여벌 옷과 돈주머니 없이 지팡이와 샌들만 갖춘 간소한 차림으로 갈릴리 마을길을 떠난다",
+      "제자들이 마을집 앞에서 복음을 전하고, 병든 사람을 고치며 가족들은 간절한 표정으로 지켜본다",
+      "헤롯 왕이 화를 내고 그 앞에 신하들이 이야기를 전하는 모습 신하들의 이야기 말풍선에는 제자들이 사람들을 고쳐주는 모습"
+    ],
+    "scene_captions": [
+      "예수님은 열두 제자에게 권능과 지침을 주시고 하나님 나라를 전하며 병을 고치도록 보내신다",
+      "제자들이 여벌 옷과 돈주머니 없이 지팡이와 샌들만 갖춘 간소한 차림으로 갈릴리 마을길을 떠난다",
+      "제자들이 마을집 앞에서 복음을 전한다, 병든 사람을 고친다",
+      "헤롯 왕이 화를 내고 그 앞에 신하들이 이야기를 전한다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "herod"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 열두 제자를 보내며 무엇을 전하고 고치게 하셨습니까?",
+        "choices": [
+          "하나님 나라와 병든 사람",
+          "성전 세금과 로마 법",
+          "헤롯의 명령과 군대"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 9:2 — '하나님의 나라를 전파하며 앓는 자를 고치게 하려고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 제자들에게 여행을 위해 무엇을 가지지 말라고 하셨습니까?",
+        "choices": [
+          "지팡이나 주머니나 양식",
+          "기도와 믿음",
+          "평안의 인사"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 9:3 — '지팡이나 주머니나 양식이나 돈이나'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "제자들은 나가서 마을마다 무엇을 전하며 고쳤습니까?",
+        "choices": [
+          "복음",
+          "세금 규칙",
+          "왕의 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 9:6 — '각 촌에 두루 행하여 처처에 복음을 전하며 병을 고치더라'"
+      }
+    ]
+  },
+  {
+    "title": "오병이어와 물 위를 걸으심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_bethsaida",
+    "place_name": "갈릴리 호숫가 들판과 호수",
+    "lat": 32.9101,
+    "lng": 35.6306,
+    "summary": "예수님은 오병이어로 큰 무리를 먹이시고 밤바다 위를 걸어 제자들에게 오신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「오병이어와 물 위를 걸으심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "14:13",
+        "to": "14:33"
+      },
+      {
+        "book": "막",
+        "from": "6:30",
+        "to": "6:52"
+      },
+      {
+        "book": "눅",
+        "from": "9:10",
+        "to": "9:17"
+      },
+      {
+        "book": "요",
+        "from": "6:1",
+        "to": "6:21"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 20,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "빈 들판에 큰 무리가 앉아 있고 예수님이 떡 다섯 개와 물고기 두 마리를 받으신다",
+      "예수님이 축사하시고 제자들이 떡과 물고기를 나누자 모두가 배부르게 먹는다",
+      "밤바다에서 제자들의 배가 바람에 흔들리고 예수님이 물 위로 걸어오신다"
+    ],
+    "scene_captions": [
+      "빈 들판에 큰 무리가 앉아 있고 예수님이 떡 다섯 개와 물고기 두 마리를 받으신다",
+      "예수님이 축사하시고 떡과 물고기로 모두가 배부르게 먹는다",
+      "밤바다에서 제자들의 배가 바람에 흔들리고 예수님이 물 위로 걸어오신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "무리가 가진 음식은 떡 다섯 개와 무엇 두 마리였습니까?",
+        "choices": [
+          "물고기",
+          "양",
+          "비둘기"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 9:13 — '떡 다섯 개와 물고기 두 마리 밖에 없으니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사람들이 먹고 남은 조각은 몇 바구니였습니까?",
+        "choices": [
+          "열두 바구니",
+          "일곱 바구니",
+          "두 바구니"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 9:17 — '남은 조각 열 두 바구니를 거두니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "밤바다에서 제자들이 본 예수님은 무엇 위로 걸어오셨습니까?",
+        "choices": [
+          "바다",
+          "성전 지붕",
+          "광야 모래"
+        ],
+        "answer_index": 0,
+        "explanation": "마 14:25 — '바다 위로 걸어서 제자들에게 오시니'"
+      }
+    ]
+  },
+  {
+    "title": "생명의 떡 말씀",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_capernaum",
+    "place_name": "가버나움 회당",
+    "lat": 32.881,
+    "lng": 35.575,
+    "summary": "예수님은 자신이 하늘에서 내려온 생명의 떡이라고 말씀하시고, 베드로는 영생의 말씀이 주께 있다고 고백한다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「생명의 떡 말씀」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "6:22",
+        "to": "6:71"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 21,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "가버나움 회당에서 사람들이 예수님을 둘러서고, 예수님은 말씀을 전하신다. 예수님의 말풍선에는 사람들이 하나님을 바라보고 하나님은 하늘에서 빛나는 빵(하나)을 내려주시는 그림",
+      "예수님이 자신을 생명의 떡으로 밝히시자 사람들이 서로 수군거린다",
+      "예수님은 제자들에게 물어보시고 베드로가 영생의 말씀이 주께 있다고 고백하며 예수님 곁에 선다. 베드로의 말풍선에는 예수님이 말씀을 들고 뒤에서 밝은 빛이 나오는 모습"
+    ],
+    "scene_captions": [
+      "가버나움 회당에서 사람들이 예수님을 둘러선다, 예수님은 참 떡을 내려주심을 말씀하신다",
+      "예수님이 자신을 생명의 떡으로 밝히시자 사람들이 서로 수군거린다",
+      "예수님은 제자들에게 물어보시고 베드로가 영생의 말씀이 주께 있다고 고백하며 예수님 곁에 선다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 자신을 어떤 떡으로 밝히셨습니까?",
+        "choices": [
+          "생명의 떡",
+          "성전 문",
+          "포도원 주인"
+        ],
+        "answer_index": 0,
+        "explanation": "요 6:35 — '내가 곧 생명의 떡이니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 자신에게 오는 사람은 무엇을 겪지 않는다고 하셨습니까?",
+        "choices": [
+          "주림과 목마름",
+          "여행과 수고",
+          "질문과 대답"
+        ],
+        "answer_index": 0,
+        "explanation": "요 6:35 — '결코 주리지 아니할 터이요 ... 목마르지 아니하리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "베드로는 예수님께 무엇이 있다고 고백했습니까?",
+        "choices": [
+          "영생의 말씀",
+          "성전 열쇠",
+          "로마 문서"
+        ],
+        "answer_index": 0,
+        "explanation": "요 6:68 — '영생의 말씀이 계시매'"
+      }
+    ]
+  },
+  {
+    "title": "장로들의 전통과 정결 논쟁",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "rgn_galilee",
+    "place_name": "갈릴리(전승)",
+    "lat": 32.83,
+    "lng": 35.55,
+    "summary": "예수님은 사람을 더럽게 하는 것은 손의 의식이 아니라 마음에서 나오는 악이라고 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「장로들의 전통과 정결 논쟁」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "15:1",
+        "to": "15:20"
+      },
+      {
+        "book": "막",
+        "from": "7:1",
+        "to": "7:23"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 22,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "예루살렘에서 온 지도자들이 제자들이 장로들의 전통대로 손을 씻지 않는다고 따진다",
+      "예수님이 장로들의 전통을 따지는 지도자들 앞에서 한 손으로 성경 두루마리를 가리키며 하나님의 계명을 강조하신다",
+      "예수님이 무리를 불러 사람을 더럽게 하는 것이 마음에서 나온다고 가르치신다. 예수님의 말풍선에는 겉보기에 멀쩡하지만 마음속이 시커먼 사람의 주변에 냄새가 나고 파리가 꼬이는 모습"
+    ],
+    "scene_captions": [
+      "예루살렘에서 온 지도자들이 제자들이 장로들의 전통대로 손을 씻지 않는다고 따진다",
+      "예수님은 사람을 더럽게 하는 것은 손의 의식이 아니라 마음에서 나오는 악이라고 가르치신다",
+      "예수님이 무리를 불러 사람을 더럽게 하는 것이 마음에서 나온다고 가르치신다"
+    ],
+    "scene_characters": [
+      [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "지도자들은 제자들이 무엇을 씻지 않는다고 따졌습니까?",
+        "choices": [
+          "손",
+          "발",
+          "그물"
+        ],
+        "answer_index": 0,
+        "explanation": "막 7:5 — '씻지 아니한 손으로 떡을 먹나이까'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 입술로는 공경하지만 무엇이 멀다고 책망하셨습니까?",
+        "choices": [
+          "마음",
+          "집",
+          "배"
+        ],
+        "answer_index": 0,
+        "explanation": "막 7:6 — '그 마음은 내게서 멀도다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 사람을 더럽게 하는 것이 어디서 나온다고 하셨습니까?",
+        "choices": [
+          "마음",
+          "시장",
+          "우물"
+        ],
+        "answer_index": 0,
+        "explanation": "막 7:21 — '속에서 곧 사람의 마음에서 나오는 것은'"
+      }
+    ]
+  },
+  {
+    "title": "이방 땅에서 베푸신 치유",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_tyre",
+    "place_name": "두로와 시돈, 데가볼리(전승)",
+    "lat": 33.2704,
+    "lng": 35.2038,
+    "summary": "예수님은 가나안 여인의 딸을 고치시고, 데가볼리와 갈릴리 주변의 여러 병자를 치유하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「이방 땅에서 베푸신 치유」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "15:21",
+        "to": "15:31"
+      },
+      {
+        "book": "막",
+        "from": "7:24",
+        "to": "7:37"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 23,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "예수님이 여인의 믿음을 칭찬하시자 여인은 눈물 어린 안도로 고개를 들고, 멀리 집 안의 딸은 침상에서 평온을 되찾는다",
+      "데가볼리에서 친구들이 귀먹고 말 더듬는 사람을 부축해 예수님께 데려오고, 예수님은 그를 따로 세워 귀와 입을 고쳐 주려는 다정한 손짓을 하신다"
+    ],
+    "scene_captions": [
+      "예수님이 여인의 믿음을 칭찬하시자 여인은 눈물 어린 안도로 고개를 든다",
+      "데가볼리에서 친구들이 귀먹고 말 더듬는 사람을 부축해 예수님께 데려온다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "가나안 여인은 예수님께 누구를 고쳐 달라고 간청했습니까?",
+        "choices": [
+          "귀신 들린 딸",
+          "중풍 든 종",
+          "눈먼 아버지"
+        ],
+        "answer_index": 0,
+        "explanation": "마 15:22 — '내 딸이 흉악히 귀신들렸나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "여인의 믿음에 대한 예수님의 평가는 무엇입니까?",
+        "choices": [
+          "크다",
+          "작다",
+          "없다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 15:28 — '여자야 네 믿음이 크도다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "귀먹고 말 더듬는 사람에게 하신 말은 무엇입니까?",
+        "choices": [
+          "에바다",
+          "달리다굼",
+          "호산나"
+        ],
+        "answer_index": 0,
+        "explanation": "막 7:34 — '에바다 하시니 이는 열리라는 뜻이라'"
+      }
+    ]
+  },
+  {
+    "title": "표적 요구와 누룩 경고",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_bethsaida",
+    "place_name": "갈릴리 호수 주변과 벳새다(전승)",
+    "lat": 32.9101,
+    "lng": 35.6306,
+    "summary": "지도자들은 하늘의 표적을 요구하지만 예수님은 그들의 누룩을 경계하라고 하시며 벳새다의 맹인을 고치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「표적 요구와 누룩 경고」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "16:1",
+        "to": "16:12"
+      },
+      {
+        "book": "막",
+        "from": "8:11",
+        "to": "8:26"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 24,
+    "unit_code": "galilee_ministry",
+    "unit_title": "갈릴리 사역",
+    "unit_order": 2,
+    "story_scenes": [
+      "바리새인과 사두개인들이 예수님께 하늘로부터 오는 표적을 요구한다",
+      "배 안에서 제자들이 빈 빵 바구니를 보며 걱정하고, 예수님은 이전에 오병이어 사건을 떠올리게 하신다",
+      "벳새다에서 예수님이 맹인의 눈을 만져 점차 밝히 보게 하신다"
+    ],
+    "scene_captions": [
+      "바리새인과 사두개인들이 예수님께 하늘로부터 오는 표적을 요구한다",
+      "배 안에서 제자들이 빈 빵 바구니를 보며 걱정하고, 예수님은 오병이어 사건을 말씀하신다",
+      "벳새다에서 예수님이 맹인의 눈을 만져 점차 밝히 보게 하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "바리새인과 사두개인들은 예수님께 무엇을 보여 달라고 요구했습니까?",
+        "choices": [
+          "하늘의 표적",
+          "성전 세금",
+          "로마 군대"
+        ],
+        "answer_index": 0,
+        "explanation": "마 16:1 — '하늘로서 오는 표적 보이기를 청하니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 제자들에게 바리새인과 사두개인의 무엇을 주의하라 하셨습니까?",
+        "choices": [
+          "누룩",
+          "그물",
+          "향유"
+        ],
+        "answer_index": 0,
+        "explanation": "마 16:6 — '바리새인과 사두개인들의 누룩을 주의하라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "벳새다의 맹인은 처음 눈이 열렸을 때 사람들이 무엇처럼 보인다고 했습니까?",
+        "choices": [
+          "나무가 걸어가는 것",
+          "불기둥이 움직이는 것",
+          "양 떼가 흩어지는 것"
+        ],
+        "answer_index": 0,
+        "explanation": "막 8:24 — '사람들이 보이나이다 나무 같은 것들의 걸어 가는 것을 보나이다'"
+      }
+    ]
+  },
+  {
+    "title": "베드로의 신앙고백과 첫 수난 예고",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_caesarea_philippi",
+    "place_name": "가이사랴 빌립보",
+    "lat": 33.248,
+    "lng": 35.695,
+    "summary": "베드로가 예수님을 그리스도로 고백하고, 예수님은 고난과 죽음과 부활을 처음으로 분명히 예고하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「베드로의 신앙고백과 첫 수난 예고」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "16:13",
+        "to": "16:28"
+      },
+      {
+        "book": "막",
+        "from": "8:27",
+        "to": "9:1"
+      },
+      {
+        "book": "눅",
+        "from": "9:18",
+        "to": "9:27"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 25,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "가이사랴 빌립보 길에서 예수님이 제자들에게 사람들이 자신을 누구라 하는지 물으신다",
+      "베드로가 예수님은 그리스도시며 살아 계신 하나님의 아들이라고 고백한다. 베드로의 말풍선에는 하나님과 빛이 예수님에게 있다",
+      "예수님이 고난과 죽음과 부활을 예고하시자 제자들은 길가에서 서로 굳은 얼굴로 물러서고, 예수님은 예루살렘 쪽을 향해 결연히 서신다",
+      "예수님이 자신의 죽음을 부인하는 베드로를 향해 호통치신다. 베드로는 놀란 얼굴이고 주변의 제자들도 함께 놀란다."
+    ],
+    "scene_captions": [
+      "가이사랴 빌립보 길에서 예수님이 제자들에게 사람들이 자신을 누구라 하는지 물으신다",
+      "베드로가 예수님은 그리스도시며 살아 계신 하나님의 아들이라고 고백한다",
+      "예수님이 고난과 죽음과 부활을 예고하시자 제자들은 길가에서 서로 굳은 얼굴로 물러선다",
+      "예수님이 자신의 죽음을 부인하는 베드로를 향해 호통치신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "베드로는 예수님을 누구라고 고백했습니까?",
+        "choices": [
+          "그리스도",
+          "엘리야",
+          "예레미야"
+        ],
+        "answer_index": 0,
+        "explanation": "마 16:16 — '주는 그리스도시요'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 고난을 말리던 베드로를 어떤 말로 책망하셨습니까?",
+        "choices": [
+          "뒤로 물러가라는 책망",
+          "믿음이 크다는 칭찬",
+          "평안히 가라는 말"
+        ],
+        "answer_index": 0,
+        "explanation": "마 16:23 — '사단아 내 뒤로 물러 가라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 자신을 따르려면 무엇을 지고 따르라 하셨습니까?",
+        "choices": [
+          "자기 십자가",
+          "성전 기구",
+          "왕의 깃발"
+        ],
+        "answer_index": 0,
+        "explanation": "마 16:24 — '자기 십자가를 지고 나를 좇을 것이니라'"
+      }
+    ]
+  },
+  {
+    "title": "변화산 사건",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "james_zebedee",
+      "john",
+      "moses",
+      "elijah"
+    ],
+    "landmark_code": "lm_nt_pm_mt_transfiguration",
+    "place_name": "변화산(전승, 다볼/헤르몬 견해)",
+    "lat": 32.69,
+    "lng": 35.39,
+    "summary": "예수님의 영광이 산 위에서 드러나고 모세와 엘리야가 함께 나타나며 제자들은 하늘의 음성을 듣는다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「변화산 사건」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "17:1",
+        "to": "17:13"
+      },
+      {
+        "book": "막",
+        "from": "9:2",
+        "to": "9:13"
+      },
+      {
+        "book": "눅",
+        "from": "9:28",
+        "to": "9:36"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 26,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "예수님이 베드로와 야고보와 요한을 데리고 높은 산에 오르신다",
+      "예수님의 얼굴과 옷이 빛나고 모세와 엘리야가 함께 나타난다. 제자들은 이를 보며 놀란다",
+      "산에서 내려오며 즐거워하는 제자들에게 예수님이 본 것을 말하지 말라 하신다. 예수님을 손가락을 입에 대며 말하지 말라는 제스처를 취하신다"
+    ],
+    "scene_captions": [
+      "예수님이 베드로와 야고보와 요한을 데리고 높은 산에 오르신다",
+      "예수님의 얼굴과 옷이 빛나고 모세와 엘리야가 함께 제자들 앞에 나타난다",
+      "산에서 내려오며 즐거워하는 제자들에게 예수님이 본 것을 말하지 말라 하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "james_zebedee",
+        "john"
+      ],
+      [
+        "jesus",
+        "moses",
+        "elijah"
+      ],
+      [
+        "jesus",
+        "peter",
+        "james_zebedee",
+        "john"
+      ],
+      [
+        "jesus",
+        "peter",
+        "james_zebedee",
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "변화산에서 예수님과 함께 나타난 두 사람은 누구입니까?",
+        "choices": [
+          "모세와 엘리야",
+          "아브라함과 다윗",
+          "베드로와 요한"
+        ],
+        "answer_index": 0,
+        "explanation": "마 17:3 — '모세와 엘리야가 예수로 더불어 말씀하는 것이'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하늘의 음성은 제자들에게 예수님의 무엇을 들으라 하셨습니까?",
+        "choices": [
+          "말",
+          "발자국",
+          "옷자락"
+        ],
+        "answer_index": 0,
+        "explanation": "마 17:5 — '너희는 저의 말을 들으라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "산에서 내려올 때 예수님은 언제까지 본 것을 말하지 말라 하셨습니까?",
+        "choices": [
+          "인자가 죽은 자 가운데서 살아날 때까지",
+          "유월절이 끝날 때까지",
+          "성전이 완성될 때까지"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:9 — '인자가 죽은 자 가운데서 살아날 때까지는'"
+      }
+    ]
+  },
+  {
+    "title": "귀신 들린 아이 치유",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_mt_transfiguration",
+    "place_name": "변화산 아래 마을(전승)",
+    "lat": 32.69,
+    "lng": 35.39,
+    "summary": "제자들이 고치지 못한 아이를 예수님이 고치시고 믿음과 기도의 필요를 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「귀신 들린 아이 치유」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "17:14",
+        "to": "17:21"
+      },
+      {
+        "book": "막",
+        "from": "9:14",
+        "to": "9:29"
+      },
+      {
+        "book": "눅",
+        "from": "9:37",
+        "to": "9:43"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 27,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "산 아래에서 율법학자들과 예수님의 제자들 사이에 논쟁이 벌어지고 한 아버지가 절박하게 기다린다",
+      "아버지가 귀신 들린 아이의 어깨를 붙들고 예수님 앞에 무릎 꿇으며, 아이는 땅에서 뒹굴고 입에는 하얀 거품이 있다. 주변에는 사람들이 지켜본다",
+      "예수님이 더러운 영을 꾸짖으시고 아이를 붙들어 일으키신다. 아이는 회복된 모습이다. 이를 주변 사람들이 지켜본다",
+      "제자들이 조용히 묻자 예수님은 기도와 믿음의 길을 가르치신다. 예수님의 말풍선에는 기도하는 모습이 있다"
+    ],
+    "scene_captions": [
+      "산 아래에서 율법학자들과 예수님의 제자들 사이에 논쟁이 벌어지고 한 아버지가 절박하게 기다린다",
+      "아버지가 귀신 들린 아이의 어깨를 붙들고 예수님 앞에 무릎 꿇는다",
+      "예수님이 더러운 영을 꾸짖으시고 아이를 붙들어 일으키신다",
+      "예수님은 기도와 믿음의 길을 가르치신다"
+    ],
+    "scene_characters": [
+      [
+        "andrew",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "andrew",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "아이의 아버지는 예수님께 자신의 어떤 부족함을 도와 달라고 했습니까?",
+        "choices": [
+          "믿음 없는 것",
+          "재산 없는 것",
+          "말이 느린 것"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:24 — '나의 믿음 없는 것을 도와 주소서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "더러운 귀신에게 다시 들어가지 말라는 명령의 내용은 무엇입니까?",
+        "choices": [
+          "다시 들어가지 말라는 명령",
+          "다시 말하지 말라는 명령",
+          "다시 먹지 말라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:25 — '다시 들어가지 말라 하시매'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 제자들에게 이 종류가 무엇 외에는 나갈 수 없다고 하셨습니까?",
+        "choices": [
+          "기도",
+          "돈",
+          "칼"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:29 — '기도 외에 다른 것으로는 이런 유가 나갈 수 없느니라'"
+      }
+    ]
+  },
+  {
+    "title": "두 번째 수난 예고와 제자들의 논쟁",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_capernaum",
+    "place_name": "갈릴리와 가버나움(전승)",
+    "lat": 32.881,
+    "lng": 35.575,
+    "summary": "예수님은 두 번째로 죽음과 부활을 예고하시고, 제자들에게 어린아이처럼 낮아지는 큰 자의 길을 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「두 번째 수난 예고와 제자들의 논쟁」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "17:22",
+        "to": "18:5"
+      },
+      {
+        "book": "막",
+        "from": "9:30",
+        "to": "9:37"
+      },
+      {
+        "book": "눅",
+        "from": "9:43",
+        "to": "9:48"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 29,
+    "time_precision": "approx",
+    "story_index": 28,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "갈릴리를 지나는 길에서 예수님이 제자들에게 다시 고난과 부활을 예고하시고, 제자들은 먼지 묻은 길 위에서 서로 눈치를 보며 이해하지 못한 채 긴장한다",
+      "제자들은 말씀을 이해하지 못한 채 서로 누가 큰지를 조용히 논쟁한다. 말풍선 안에는 큰자와 작은자의 실루엣이 보인다",
+      "가버나움 집 안에서 예수님이 어린아이를 가운데 세우시고 제자들은 부끄러움과 배움의 얼굴로 바라본다"
+    ],
+    "scene_captions": [
+      "갈릴리를 지나는 길에서 예수님이 제자들에게 다시 고난과 부활을 예고하신다",
+      "제자들은 말씀을 이해하지 못한 채 서로 누가 큰지를 조용히 논쟁한다",
+      "가버나움 집 안에서 예수님이 어린아이를 가운데 세우시고 제자들에게 말씀하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 인자가 사람들의 손에 넘겨져 무엇을 당할 것이라 하셨습니까?",
+        "choices": [
+          "죽임",
+          "왕위",
+          "감옥 탈출"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:31 — '사람들의 손에 넘기워 죽임을 당하고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "제자들은 길에서 무엇을 두고 서로 다투었습니까?",
+        "choices": [
+          "누가 크냐",
+          "누가 돈을 냈냐",
+          "누가 배를 탔냐"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:34 — '서로 누가 크냐 하고 쟁론하였음이라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 어린아이 하나를 영접하는 것이 누구를 영접하는 것이라 하셨습니까?",
+        "choices": [
+          "예수님",
+          "헤롯",
+          "대제사장"
+        ],
+        "answer_index": 0,
+        "explanation": "막 9:37 — '이런 어린 아이 하나를 영접하면 곧 나를 영접함이요'"
+      }
+    ]
+  },
+  {
+    "title": "주기도문과 기도 가르침",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_mt_beatitudes",
+    "place_name": "갈릴리 산지와 길 위의 한 곳(전승)",
+    "lat": 32.8804,
+    "lng": 35.5552,
+    "summary": "예수님은 제자들에게 하나님을 아버지로 부르며 기도하는 법과 끈질기게 구하는 믿음을 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「주기도문과 기도 가르침」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "6:9",
+        "to": "6:13"
+      },
+      {
+        "book": "눅",
+        "from": "11:1",
+        "to": "11:13"
+      }
+    ],
+    "start_year": 29,
+    "end_year": 30,
+    "time_precision": "approx",
+    "story_index": 29,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "제자들이 예수님께 기도를 가르쳐 달라고 조심스럽게 청한다",
+      "예수님이 하늘 아버지의 이름과 나라와 뜻을 구하는 기도를 가르치신다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 하늘을 향한 빈 손과 보호받는 사람들이 보이는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "제자들이 예수님께 기도를 가르쳐 달라고 조심스럽게 청한다",
+      "예수님이 하늘 아버지의 이름과 나라와 뜻을 구하는 기도를 가르치신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "제자들은 예수님께 무엇을 가르쳐 달라고 청했습니까?",
+        "choices": [
+          "기도",
+          "고기잡이",
+          "성전 세금"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 11:1 — '우리에게도 기도를 가르쳐 주옵소서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 기도에서 날마다 무엇을 달라고 구하라 하셨습니까?",
+        "choices": [
+          "일용할 양식",
+          "왕의 자리",
+          "성전 기름"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 11:3 — '우리에게 날마다 일용할 양식을 주옵시고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 구하고 찾고 두드리는 사람에게 어떤 일이 있다고 하셨습니까?",
+        "choices": [
+          "받고 찾고 열린다",
+          "숨고 잊힌다",
+          "빼앗기고 닫힌다"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 11:10 — '구하는 이마다 받을 것이요 찾는 이가 찾을 것이요'"
+      }
+    ]
+  },
+  {
+    "title": "은혜와 탐심을 비유로 말씀하심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_perea",
+    "place_name": "베레아와 길 위의 마을들(전승)",
+    "lat": 31.85,
+    "lng": 35.65,
+    "summary": "예수님은 포도원 품꾼, 어리석은 부자, 잃은 양과 잃은 은전, 탕자와 청지기 비유로 은혜와 회개와 재물의 태도를 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「은혜와 탐심을 비유로 말씀하심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "20:1",
+        "to": "20:16"
+      },
+      {
+        "book": "눅",
+        "from": "12:13",
+        "to": "12:21"
+      },
+      {
+        "book": "눅",
+        "from": "15:1",
+        "to": "16:18"
+      }
+    ],
+    "start_year": 30,
+    "end_year": 32,
+    "time_precision": "approx",
+    "story_index": 30,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "예수님이 포도원 품꾼 비유로 먼저 된 자와 나중 된 자의 은혜를 가르치신다. 말풍선에는 포도원 주인이 두 사람에게 1 데나리온씩을 분배하는 모습",
+      "한 사람이 유산 문제를 꺼내자 예수님이 어리석은 부자의 비유로 탐심을 경계하신다",
+      "세리와 죄인들이 가까이 오는 자리에서 예수님이 잃은 양과 잃은 은전을 비유로 말씀하신다. 말풍선에는 잃은 양을 찾아서 기뻐하는 목자의 모습",
+      "예수님이 집을 떠난 아들 비유를 말씀하신다. 말풍선 안에는 집으로 빈털터리가 되어 돌아온 아이를 부자 아빠가 안아주며 기뻐하는 모습"
+    ],
+    "scene_captions": [
+      "예수님이 포도원 품꾼 비유로 먼저 된 자와 나중 된 자의 은혜를 가르치신다",
+      "예수님이 어리석은 부자의 비유로 탐심을 경계하신다",
+      "세리와 죄인들이 가까이 오는 자리에서 예수님이 잃은 양과 잃은 은전을 비유로 말씀하신다",
+      "예수님이 집을 떠난 아들 비유를 말씀하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "포도원 주인은 나중 온 품꾼에게도 얼마를 주었습니까?",
+        "choices": [
+          "한 데나리온",
+          "두 렙돈",
+          "은 삼십"
+        ],
+        "answer_index": 0,
+        "explanation": "마 20:9 — '한 데나리온씩을 받거늘'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "어리석은 부자는 곡식이 많아지자 무엇을 더 크게 짓겠다고 했습니까?",
+        "choices": [
+          "곳간",
+          "성전",
+          "배"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 12:18 — '내 곳간을 헐고 더 크게 짓고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "집을 떠났던 아들이 돌아오자 아버지는 무엇을 베풀었습니까?",
+        "choices": [
+          "잔치",
+          "재판",
+          "추방"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 15:23 — '우리가 먹고 즐기자'"
+      }
+    ]
+  },
+  {
+    "title": "부자 청년",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_perea",
+    "place_name": "요단 동편 길(전승)",
+    "lat": 31.85,
+    "lng": 35.65,
+    "summary": "부자 청년이 영생을 묻지만 재물을 내려놓지 못하고, 예수님은 하나님께는 모든 것이 가능하다고 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「부자 청년」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "19:16",
+        "to": "19:30"
+      },
+      {
+        "book": "막",
+        "from": "10:17",
+        "to": "10:31"
+      },
+      {
+        "book": "눅",
+        "from": "18:18",
+        "to": "18:30"
+      }
+    ],
+    "start_year": 32,
+    "end_year": 32,
+    "time_precision": "approx",
+    "story_index": 31,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "한 부자 청년이 예수님께 달려와 영생을 얻으려면 무엇을 해야 하는지 묻는다",
+      "예수님이 계명과 이웃 사랑을 짚으시며 부족한 한 가지를 말씀하신다",
+      "청년이 재물을 내려놓지 못해 근심하며 물러가고 예수님은 슬프게 바라보신다",
+      "제자들이 놀라자 예수님은 하나님께는 모든 것이 가능하다고 가르치신다"
+    ],
+    "scene_captions": [
+      "부자 청년이 예수님께 달려와 영생을 얻으려면 무엇을 해야 하는지 묻는다",
+      "예수님이 계명과 이웃 사랑을 짚으시며 부족한 한 가지를 말씀하신다",
+      "청년이 재물을 내려놓지 못해 근심하며 물러가고 예수님은 슬프게 바라보신다",
+      "예수님은 하나님께는 모든 것이 가능하다고 가르치신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "부자 청년은 예수님께 무엇을 얻는 길을 물었습니까?",
+        "choices": [
+          "영생",
+          "왕위",
+          "로마 시민권"
+        ],
+        "answer_index": 0,
+        "explanation": "마 19:16 — '내가 무슨 선한 일을 하여야 영생을 얻으리이까'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 청년에게 재산을 팔아 누구에게 주라 하셨습니까?",
+        "choices": [
+          "가난한 자들",
+          "제사장들",
+          "로마 군인들"
+        ],
+        "answer_index": 0,
+        "explanation": "마 19:21 — '네 소유를 팔아 가난한 자들을 주라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "청년은 많은 재물 때문에 어떤 마음으로 떠났습니까?",
+        "choices": [
+          "근심",
+          "기쁨",
+          "분노"
+        ],
+        "answer_index": 0,
+        "explanation": "마 19:22 — '재물이 많으므로 근심하며 가니라'"
+      }
+    ]
+  },
+  {
+    "title": "세 번째 수난 예고",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_perea",
+    "place_name": "예루살렘으로 올라가는 길",
+    "lat": 31.85,
+    "lng": 35.65,
+    "summary": "예수님은 예루살렘으로 올라가며 고난과 죽음과 부활을 세 번째로 예고하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「세 번째 수난 예고」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "20:17",
+        "to": "20:19"
+      },
+      {
+        "book": "막",
+        "from": "10:32",
+        "to": "10:34"
+      },
+      {
+        "book": "눅",
+        "from": "18:31",
+        "to": "18:34"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 32,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "예루살렘으로 올라가는 길에서 예수님이 열두 제자를 따로 부르신다",
+      "예수님이 인자가 넘겨지고 조롱과 채찍질과 죽임을 당할 것을 말씀하신다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 고난의 길과 어두운 언덕에 십자가와 채찍이 있는 모습",
+      "예수님이 사흘 만에 다시 살아날 것을 덧붙이시지만 제자들은 이해하지 못한다"
+    ],
+    "scene_captions": [
+      "예루살렘으로 올라가는 길에서 예수님이 열두 제자를 따로 부르신다",
+      "예수님이 인자가 넘겨지고 조롱과 채찍질과 죽임을 당할 것을 말씀하신다",
+      "예수님은 예루살렘으로 올라가며 고난과 죽음과 부활을 세 번째로 예고하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 열두 제자와 함께 어디로 올라가고 계셨습니까?",
+        "choices": [
+          "예루살렘",
+          "나사렛",
+          "사마리아"
+        ],
+        "answer_index": 0,
+        "explanation": "마 20:17 — '예루살렘으로 올라가려 하실 때에'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 인자가 누구들에게 넘겨질 것이라 하셨습니까?",
+        "choices": [
+          "대제사장들과 서기관들",
+          "갈릴리 어부들",
+          "로마 백부장들"
+        ],
+        "answer_index": 0,
+        "explanation": "마 20:18 — '대제사장들과 서기관들에게 넘기우매'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 죽임을 당한 뒤 며칠 만에 살아나리라 하셨습니까?",
+        "choices": [
+          "삼 일",
+          "칠 일",
+          "사십 일"
+        ],
+        "answer_index": 0,
+        "explanation": "마 20:19 — '제 삼일에 살아나리라'"
+      }
+    ]
+  },
+  {
+    "title": "삭개오",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jericho",
+    "place_name": "여리고",
+    "lat": 31.8744,
+    "lng": 35.4441,
+    "summary": "예수님은 여리고에서 삭개오를 부르시고 그의 집에 머무시며 잃어버린 자를 찾아 구원하러 오셨음을 보이신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「삭개오」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "눅",
+        "from": "19:1",
+        "to": "19:10"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 33,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "여리고 길가에 큰 무리가 모이고, 키 작은 부유한 세리장 삭개오가 값비싼 겉옷 자락을 붙잡은 채 돌무화과나무 위로 다급히 올라간다",
+      "예수님이 나무 아래에서 멈추어 올려다보시고, 삭개오는 나뭇가지 사이에서 놀람과 기쁨이 섞인 얼굴로 예수님을 바라본다",
+      "삭개오가 기뻐하며 예수님을 자기 집으로 모시고, 주변 사람들은 세리장의 화려한 집 앞에서 못마땅한 표정으로 수군거린다",
+      "삭개오가 돈주머니와 장부를 내려놓고 가난한 이들을 향해 나눔을 약속하며, 예수님은 따뜻한 얼굴로 그 집에 임한 구원을 선포하신다"
+    ],
+    "scene_captions": [
+      "키 작은 부유한 세리장 삭개오가 무화과나무 위로 다급히 올라간다",
+      "예수님이 나무 아래에서 멈추어 올려다보시고, 삭개오에게 내려오라 하신다",
+      "삭개오가 기뻐하며 예수님을 자기 집으로 모시고, 주변 사람들은 못마땅해한다",
+      "삭개오가 돈주머니와 장부를 내려놓고 가난한 이들을 향해 나눔을 약속하고 예수님은 구원을 말씀하신다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "삭개오는 예수님을 보려고 무엇 위에 올라갔습니까?",
+        "choices": [
+          "뽕나무",
+          "감람산",
+          "성전 지붕"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 19:4 — '뽕나무에 올라가니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 삭개오에게 오늘 어디에 머물겠다고 하셨습니까?",
+        "choices": [
+          "삭개오의 집",
+          "회당",
+          "광야"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 19:5 — '오늘 내가 네 집에 유하여야 하겠다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "삭개오는 속여 빼앗은 것이 있으면 몇 배로 갚겠다고 했습니까?",
+        "choices": [
+          "네 배",
+          "두 배",
+          "열 배"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 19:8 — '사 배나 갚겠나이다'"
+      }
+    ]
+  },
+  {
+    "title": "나사로를 살리심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "lazarus",
+      "martha",
+      "mary"
+    ],
+    "landmark_code": "lm_nt_pm_bethany",
+    "place_name": "베다니",
+    "lat": 31.771,
+    "lng": 35.257,
+    "summary": "예수님은 자신이 부활이요 생명이라고 선포하시고 죽은 나사로를 무덤에서 불러내신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「나사로를 살리심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "요",
+        "from": "11:1",
+        "to": "11:44"
+      }
+    ],
+    "start_year": 32,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 34,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "베다니의 마르다와 마리아가 나사로의 죽음으로 슬퍼하고 예수님이 도착하신다",
+      "예수님이 마르다에게 자신이 부활이요 생명이라고 말씀하신다",
+      "예수님이 무덤 앞에서 눈물을 보이시고 돌을 옮기게 하신다",
+      "예수님이 큰 소리로 부르시자 나사로가 수의 천을 감은 채 무덤에서 나오고, 주변 사람들은 놀라 뒤로 물러서며 기뻐한다"
+    ],
+    "scene_captions": [
+      "베다니의 마르다와 마리아가 나사로의 죽음으로 슬퍼하고 예수님이 도착하신다",
+      "예수님이 마르다에게 자신이 부활이요 생명이라고 말씀하신다",
+      "예수님이 무덤 앞에서 돌을 옮기게 하신다",
+      "나사로가 수의 천을 감은 채 무덤에서 나온다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "martha",
+        "mary"
+      ],
+      [
+        "jesus",
+        "martha"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "lazarus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 마르다에게 자신을 어떤 분으로 밝히셨습니까?",
+        "choices": [
+          "부활이요 생명",
+          "선한 목자",
+          "참 포도나무"
+        ],
+        "answer_index": 0,
+        "explanation": "요 11:25 — '나는 부활이요 생명이니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "나사로의 무덤 앞에서 예수님은 어떤 반응을 보이셨습니까?",
+        "choices": [
+          "눈물을 흘리셨다",
+          "웃으셨다",
+          "떠나셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "요 11:35 — '예수께서 눈물을 흘리시더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님이 무덤 속 나사로에게 외치신 명령은 무엇입니까?",
+        "choices": [
+          "나오라는 명령",
+          "잠잠하라는 명령",
+          "물러가라는 명령"
+        ],
+        "answer_index": 0,
+        "explanation": "요 11:43 — '나사로야 나오라'"
+      }
+    ]
+  },
+  {
+    "title": "베다니에서 향유 부음",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "mary",
+      "martha",
+      "lazarus",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_bethany",
+    "place_name": "베다니",
+    "lat": 31.771,
+    "lng": 35.257,
+    "summary": "베다니에서 한 여인이 예수님께 값비싼 향유를 붓고, 예수님은 그 일이 자신의 장례를 준비한 아름다운 일이라고 말씀하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「베다니에서 향유 부음」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "26:6",
+        "to": "26:13"
+      },
+      {
+        "book": "막",
+        "from": "14:3",
+        "to": "14:9"
+      },
+      {
+        "book": "요",
+        "from": "12:1",
+        "to": "12:8"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 35,
+    "unit_code": "journey_teaching_to_jerusalem",
+    "unit_title": "길 위의 가르침과 예루살렘으로",
+    "unit_order": 3,
+    "story_scenes": [
+      "베다니 식탁에서 예수님과 나사로가 앉아 있고 마르다가 음식 그릇을 들고 섬기며, 방 안 사람들은 감사와 경외로 조용히 바라본다",
+      "마리아가 깨뜨린 향유 옥합을 들고 예수님의 발에 값비싼 향유를 붓고 머리털로 닦으며, 향유 냄새 속에서 겸손히 엎드린다",
+      "유다가 돈궤를 움켜쥔 채 향유를 가리키며 낭비라고 항의하고, 방 안 사람들은 향유 냄새 가득한 식탁 옆에서 불편하게 굳어 선다",
+      "예수님이 그 여인의 일을 장례를 준비한 아름다운 일로 받아 주신다"
+    ],
+    "scene_captions": [
+      "베다니 식탁에서 예수님과 나사로가 앉아 있고 마르다가 음식 그릇을 들고 섬긴다",
+      "마리아가 깨뜨린 향유 옥합을 들고 예수님의 발에 값비싼 향유를 붓고 머리털로 닦는다",
+      "유다가 돈궤를 움켜쥔 채 향유를 가리키며 낭비라고 항의한다",
+      "예수님이 그 여인의 일을 장례를 준비한 아름다운 일로 받아 주신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "lazarus",
+        "martha"
+      ],
+      [
+        "mary",
+        "jesus"
+      ],
+      [
+        "judas"
+      ],
+      [
+        "jesus",
+        "mary"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "마리아는 예수님의 발에 무엇을 부었습니까?",
+        "choices": [
+          "비싼 향유",
+          "물",
+          "포도주"
+        ],
+        "answer_index": 0,
+        "explanation": "요 12:3 — '지극히 비싼 향유 곧 순전한 나드 한 근을 가져다가'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "유다는 향유를 팔아 누구에게 주지 않았느냐고 말했습니까?",
+        "choices": [
+          "가난한 자들",
+          "제사장들",
+          "로마 군인들"
+        ],
+        "answer_index": 0,
+        "explanation": "요 12:5 — '가난한 자들에게 주지 아니하였느냐'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 마리아가 이 일을 무엇을 위해 간직한 것이라 하셨습니까?",
+        "choices": [
+          "장사할 날",
+          "혼인잔치",
+          "성전 봉헌"
+        ],
+        "answer_index": 0,
+        "explanation": "요 12:7 — '나의 장사할 날을 위하여 이를 두게 하라'"
+      }
+    ]
+  },
+  {
+    "title": "예루살렘 입성과 성전 정화",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘과 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 나귀를 타고 예루살렘에 입성하시고 성전을 기도의 집으로 회복시키시며 성전 정화의 의미를 드러내신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「예루살렘 입성과 성전 정화」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "21:1",
+        "to": "21:17"
+      },
+      {
+        "book": "막",
+        "from": "11:1",
+        "to": "11:19"
+      },
+      {
+        "book": "눅",
+        "from": "19:28",
+        "to": "19:48"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 36,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "예수님이 나귀를 타고 예루살렘으로 들어오시고 무리가 겉옷과 종려나무 가지를 편다",
+      "예수님이 예루살렘과 백성들을 보시며 평화의 길을 알지 못하는 성을 두고 우신다. 예수님의 말풍선에는 사람들이 눈을 가리고 뒤돌아 서있고, 예수님은 십자가에 달리시는 모습",
+      "성전 뜰에서 예수님이 장사하는 이들을 내쫓고 기도의 집을 더럽히지 말라 하신다."
+    ],
+    "scene_captions": [
+      "예수님이 나귀를 타고 예루살렘으로 들어오시고 무리가 겉옷과 종려나무 가지를 편다",
+      "예수님이 예루살렘과 백성들을 보시며 평화의 길을 알지 못하는 성을 두고 우신다",
+      "성전 뜰에서 예수님이 장사하는 이들을 내쫓고 기도의 집을 더럽히지 말라 하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 예루살렘에 들어가실 때 무엇을 타셨습니까?",
+        "choices": [
+          "나귀 새끼",
+          "말",
+          "수레"
+        ],
+        "answer_index": 0,
+        "explanation": "마 21:5 — '나귀 새끼를 탔도다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "무리는 예수님을 맞으며 어떤 환호를 외쳤습니까?",
+        "choices": [
+          "호산나",
+          "가이사 만세",
+          "조용히 하자는 말"
+        ],
+        "answer_index": 0,
+        "explanation": "마 21:9 — '호산나 다윗의 자손이여'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 성전의 바른 이름을 무엇으로 말씀하셨습니까?",
+        "choices": [
+          "기도하는 집",
+          "장사하는 집",
+          "재판하는 집"
+        ],
+        "answer_index": 0,
+        "explanation": "마 21:13 — '내 집은 기도하는 집이라'"
+      }
+    ]
+  },
+  {
+    "title": "무화과나무와 예수님의 권위 논쟁",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "베다니 길과 예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 열매 없는 무화과나무 사건을 통해 믿음과 열매를 가르치시고 성전에서 권위에 대한 질문을 받으신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「무화과나무와 예수님의 권위 논쟁」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "21:18",
+        "to": "21:27"
+      },
+      {
+        "book": "막",
+        "from": "11:20",
+        "to": "11:33"
+      },
+      {
+        "book": "눅",
+        "from": "20:1",
+        "to": "20:8"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 37,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "제자들이 마른 무화과나무를 보고 놀라자 예수님이 믿음과 기도를 가르치신다",
+      "성전 뜰에서 대제사장들과 장로들이 예수님의 권위가 어디서 왔는지 묻는다",
+      "예수님이 요한의 세례를 되물으시자 지도자들이 대답하지 못한다"
+    ],
+    "scene_captions": [
+      "제자들이 마른 무화과나무를 보고 놀라자 예수님이 믿음과 기도를 가르치신다",
+      "성전 뜰에서 대제사장들과 장로들이 예수님의 권위가 어디서 왔는지 묻는다",
+      "예수님이 요한의 세례를 되물으시자 지도자들이 대답하지 못한다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "제자들이 다시 본 무화과나무는 어떤 상태였습니까?",
+        "choices": [
+          "말라 있었다",
+          "열매가 가득했다",
+          "옮겨 심겨 있었다"
+        ],
+        "answer_index": 0,
+        "explanation": "막 11:20 — '무화과나무가 뿌리로부터 마른 것을 보고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 기도할 때 어떤 태도를 가지라고 하셨습니까?",
+        "choices": [
+          "받은 줄로 믿는 태도",
+          "사람에게 보이는 태도",
+          "말하지 않는 태도"
+        ],
+        "answer_index": 0,
+        "explanation": "막 11:24 — '받은 줄로 믿으라 그리하면 너희에게 그대로 되리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 권위를 묻는 지도자들에게 누구의 세례를 되물으셨습니까?",
+        "choices": [
+          "요한",
+          "모세",
+          "가야바"
+        ],
+        "answer_index": 0,
+        "explanation": "막 11:30 — '요한의 세례가 하늘로서냐 사람에게로서냐'"
+      }
+    ]
+  },
+  {
+    "title": "두 아들, 악한 농부, 혼인잔치 비유",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 세 비유로 회개하지 않는 지도자들을 책망하시고 하나님 나라의 초청과 심판을 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「두 아들, 악한 농부, 혼인잔치 비유」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "21:28",
+        "to": "22:14"
+      },
+      {
+        "book": "막",
+        "from": "12:1",
+        "to": "12:12"
+      },
+      {
+        "book": "눅",
+        "from": "20:9",
+        "to": "20:19"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 38,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "예수님이 두 아들의 비유로 말보다 순종이 중요함을 성전 뜰에서 가르치신다. 말풍선에는 세리와 여자들이 엎드려 순종하는 모습",
+      "예수님이 굳은 얼굴의 지도자들에게 말씀하신다. 말풍선에는 악한 농부들이 몽둥이를 들고 포도원 주인의 종을 밀어 넘어뜨리는 장면",
+      "예수님이 혼인잔치 비유를 말씀하신다. 말풍선에는 예식장에 초대받은 사람들이 오지 않아 화난 주최자의 모습"
+    ],
+    "scene_captions": [
+      "예수님이 두 아들의 비유로 말보다 순종이 중요함을 성전 뜰에서 가르치신다",
+      "예수님이 지도자들에게 악한 농부에 대해 말씀하신다",
+      "예수님이 혼인잔치 비유를 말씀하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "두 아들 비유에서 아버지 뜻대로 한 아들은 누구입니까?",
+        "choices": [
+          "처음에는 싫다 하고 나중에 간 아들",
+          "말만 하고 가지 않은 아들",
+          "집을 떠난 아들"
+        ],
+        "answer_index": 0,
+        "explanation": "마 21:31 — '그 둘 중에 누가 아비의 뜻대로 하였느뇨'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "악한 농부들은 주인의 아들을 보고 무엇을 하려 했습니까?",
+        "choices": [
+          "죽이고 유업을 차지하려 했다",
+          "잔치를 열려 했다",
+          "성전으로 보내려 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 21:38 — '이는 상속자니 자 죽이고 그의 유업을 차지하자'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "혼인잔치 비유에서 예복 없이 온 사람은 어디로 쫓겨났습니까?",
+        "choices": [
+          "바깥 어두움",
+          "성전 안뜰",
+          "포도원"
+        ],
+        "answer_index": 0,
+        "explanation": "마 22:13 — '바깥 어두움에 내어 던지라'"
+      }
+    ]
+  },
+  {
+    "title": "세금과 부활과 가장 큰 계명 논쟁",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 가이사에게 세금 바치는 문제, 부활 논쟁, 가장 큰 계명 질문에 지혜롭게 답하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「세금과 부활과 가장 큰 계명 논쟁」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "22:15",
+        "to": "22:40"
+      },
+      {
+        "book": "막",
+        "from": "12:13",
+        "to": "12:34"
+      },
+      {
+        "book": "눅",
+        "from": "20:20",
+        "to": "20:40"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 39,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "지도자들이 세금 문제로 예수님을 시험하고 예수님은 동전을 보이며 답하신다",
+      "사두개인들이 부활을 두고 묻자 예수님은 살아 있는 자의 하나님을 말씀하신다",
+      "한 서기관이 가장 큰 계명을 묻고 예수님은 하나님 사랑과 이웃 사랑을 밝히신다",
+      "무리가 예수님의 지혜로운 대답에 놀라며 더 이상 쉽게 묻지 못한다"
+    ],
+    "scene_captions": [
+      "지도자들이 세금 문제로 예수님을 시험하고 예수님은 동전을 보이며 답하신다",
+      "사두개인들이 부활을 두고 묻자 예수님은 살아 있는 자의 하나님을 말씀하신다",
+      "한 서기관이 가장 큰 계명을 묻고 예수님은 하나님 사랑과 이웃 사랑을 밝히신다",
+      "무리가 예수님의 지혜로운 대답에 놀라며 더 이상 쉽게 묻지 못한다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "세금 질문에 예수님은 가이사의 것은 누구에게 바치라 하셨습니까?",
+        "choices": [
+          "가이사",
+          "성전",
+          "제자들"
+        ],
+        "answer_index": 0,
+        "explanation": "마 22:21 — '가이사의 것은 가이사에게'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "부활 논쟁에서 예수님은 하나님이 어떤 자의 하나님이라고 하셨습니까?",
+        "choices": [
+          "산 자",
+          "죽은 자",
+          "천사만"
+        ],
+        "answer_index": 0,
+        "explanation": "마 22:32 — '하나님은 죽은 자의 하나님이 아니요 산 자의 하나님이시니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 가장 큰 계명으로 누구를 사랑하라고 하셨습니까?",
+        "choices": [
+          "하나님과 이웃",
+          "가이사와 헤롯",
+          "부자와 권세자"
+        ],
+        "answer_index": 0,
+        "explanation": "마 22:37 — '주 너의 하나님을 사랑하라'"
+      }
+    ]
+  },
+  {
+    "title": "서기관과 바리새인 책망",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot",
+      "judas"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 성전",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 외식하는 서기관과 바리새인을 책망하시고 예루살렘을 향한 탄식을 남기신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「서기관과 바리새인 책망」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "23:1",
+        "to": "23:39"
+      },
+      {
+        "book": "막",
+        "from": "12:38",
+        "to": "12:40"
+      },
+      {
+        "book": "눅",
+        "from": "20:45",
+        "to": "20:47"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 40,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "예수님이 무리와 제자들에게 말만 하고 행하지 않는 지도자들의 모습을 경계하라 하신다",
+      "예수님이 성전 들에서 자신들이 지도자라 불리는 것을 좋아하는 사람들을 책망하신다",
+      "성전 뜰의 사람들 앞에서 겉은 아름다우나 속은 무너진 신앙의 위험이 드러난다",
+      "예수님이 예루살렘이 황폐하게 될 것임을 선포하신다"
+    ],
+    "scene_captions": [
+      "예수님이 무리와 제자들에게 말만 하고 행하지 않는 지도자들의 모습을 경계하라 하신다",
+      "예수님이 성전 들에서 자신들이 지도자라 불리는 것을 좋아하는 사람들을 책망하신다",
+      "성전 뜰의 사람들 앞에서 겉은 아름다우나 속은 무너진 신앙의 위험이 드러난다",
+      "예수님이 예루살렘이 황폐하게 될 것임을 선포하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 서기관과 바리새인이 말만 하고 무엇을 하지 않는다고 하셨습니까?",
+        "choices": [
+          "행하지 않는다",
+          "가르치지 않는다",
+          "묻지 않는다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 23:3 — '저희의 하는 행위는 본받지 말라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 그들이 사람들에게 보이려고 무엇을 넓게 한다고 하셨습니까?",
+        "choices": [
+          "경문",
+          "그물",
+          "문지방"
+        ],
+        "answer_index": 0,
+        "explanation": "마 23:5 — '그 경문을 넓게 하며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 겉은 아름답지만 속은 더러운 그들을 무엇에 비유하셨습니까?",
+        "choices": [
+          "회칠한 무덤",
+          "마른 그물",
+          "빈 항아리"
+        ],
+        "answer_index": 0,
+        "explanation": "마 23:27 — '회칠한 무덤 같으니'"
+      }
+    ]
+  },
+  {
+    "title": "감람산 종말 담화",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john"
+    ],
+    "landmark_code": "lm_nt_pm_gethsemane",
+    "place_name": "감람산",
+    "lat": 31.779,
+    "lng": 35.243,
+    "summary": "예수님은 성전 파괴와 장차 올 환난, 깨어 있음과 충성된 종의 삶을 감람산에서 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「감람산 종말 담화」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "24:1",
+        "to": "25:46"
+      },
+      {
+        "book": "막",
+        "from": "13:1",
+        "to": "13:37"
+      },
+      {
+        "book": "눅",
+        "from": "21:5",
+        "to": "21:38"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 41,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "제자들이 성전의 웅장함을 말하자 예수님은 돌 하나도 남지 않을 날을 예고하신다",
+      "감람산에 앉으신 예수님이 제자들에게 징조와 환난과 인자의 오심을 말씀하신다",
+      "예수님이 무화과나무와 깨어 있는 종의 비유로 준비된 삶을 가르치신다",
+      "예수님이 열 처녀와 달란트와 양과 염소의 비유를 말씀하시고 제자들은 마지막 책임을 무겁게 받아들이는 얼굴로 듣는다"
+    ],
+    "scene_captions": [
+      "제자들이 성전의 웅장함을 말하자 예수님은 돌 하나도 남지 않을 날을 예고하신다",
+      "감람산에 앉으신 예수님이 제자들에게 징조와 환난과 인자의 오심을 말씀하신다",
+      "예수님이 무화과나무와 깨어 있는 종의 비유로 준비된 삶을 가르치신다",
+      "예수님은 열 처녀와 달란트와 양과 염소의 비유를 말씀하시고 제자들은 듣는다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "예수님은 성전 돌들에 대해 어떤 일을 예고하셨습니까?",
+        "choices": [
+          "하나도 남지 않고 무너진다",
+          "금으로 덮인다",
+          "바다로 옮겨진다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 24:2 — '돌 하나도 돌 위에 남지 않고 다 무너뜨리우리라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 끝까지 견디는 사람에게 어떤 일이 있다고 하셨습니까?",
+        "choices": [
+          "구원",
+          "부귀",
+          "침묵"
+        ],
+        "answer_index": 0,
+        "explanation": "마 24:13 — '끝까지 견디는 자는 구원을 얻으리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "양과 염소 비유에서 임금은 형제 중 지극히 작은 자에게 한 일을 누구에게 한 일로 보셨습니까?",
+        "choices": [
+          "예수님",
+          "가이사",
+          "헤롯"
+        ],
+        "answer_index": 0,
+        "explanation": "마 25:40 — '내게 한 것이니라'"
+      }
+    ]
+  },
+  {
+    "title": "유다의 배신과 마지막 만찬",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "judas",
+      "peter",
+      "andrew",
+      "james_zebedee",
+      "john",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 다락방(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "유다는 예수님을 넘길 마음을 품고, 예수님은 마지막 만찬에서 새 언약과 섬김, 사랑과 보혜사 약속을 가르치신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「유다의 배신과 마지막 만찬」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "26:14",
+        "to": "26:30"
+      },
+      {
+        "book": "막",
+        "from": "14:10",
+        "to": "14:26"
+      },
+      {
+        "book": "눅",
+        "from": "22:3",
+        "to": "22:38"
+      },
+      {
+        "book": "요",
+        "from": "13:1",
+        "to": "13:38"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 42,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "유다가 어두운 뜰에서 대제사장들과 몰래 만나 은전 주머니를 바라보며 예수님을 넘길 기회를 의논하고, 얼굴에는 망설임과 탐욕이 함께 비친다",
+      "예수님이 허리에 수건을 두르고 물대야 앞에 무릎 꿇어 제자들의 먼지 묻은 발을 씻기시며, 제자들은 당황과 부끄러움으로 서로를 바라본다",
+      "유월절 다락방의 낮은 식탁에서 예수님이 예수님을 팔 자가 있다고 말하자 제자들이 놀라며 쳐다본다. 유다 위에는 어두운 영이 있다.",
+      "유다가 떠난 뒤 예수님이 남은 제자들을 위해 위로와 기도를 남기시고, 기름등잔 아래 제자들은 슬픔과 사랑이 뒤섞인 얼굴로 듣는다"
+    ],
+    "scene_captions": [
+      "유다가 어두운 뜰에서 대제사장들과 몰래 만나 은전 주머니를 바라보며 예수님을 넘길 기회를 의논한다",
+      "예수님이 허리에 수건을 두르고 물대야 앞에 무릎 꿇어 제자들의 먼지 묻은 발을 씻기시다",
+      "유월절 다락방의 낮은 식탁에서 예수님이 예수님을 팔 자가 있다고 말하자 제자들이 놀라며 쳐다본다",
+      "유다가 떠난 뒤 예수님이 남은 제자들을 위해 위로와 기도를 남기시다"
+    ],
+    "scene_characters": [
+      [
+        "judas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot",
+        "judas"
+      ],
+      [
+        "jesus",
+        "judas"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "유다는 예수님을 넘겨주기로 하고 무엇을 받았습니까?",
+        "choices": [
+          "은 삼십",
+          "금 한 달란트",
+          "떡 다섯 개"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:15 — '은 삼십을 달아 주거늘'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 제자들의 발을 씻기시며 어떤 섬김의 본을 보이셨습니까?",
+        "choices": [
+          "서로 발을 씻기는 섬김",
+          "높은 자리에 앉는 섬김",
+          "세금을 거두는 섬김"
+        ],
+        "answer_index": 0,
+        "explanation": "요 13:14 — '너희도 서로 발을 씻기는 것이 옳으니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "마지막 만찬에서 예수님은 잔의 의미를 무엇으로 말씀하셨습니까?",
+        "choices": [
+          "새 언약",
+          "왕의 잔",
+          "성전 기름"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 22:20 — '이 잔은 내 피로 세우는 새 언약이니'"
+      }
+    ]
+  },
+  {
+    "title": "겟세마네 기도와 체포",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "james_zebedee",
+      "john",
+      "judas",
+      "andrew",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot"
+    ],
+    "landmark_code": "lm_nt_pm_gethsemane",
+    "place_name": "겟세마네(감람산)",
+    "lat": 31.779,
+    "lng": 35.243,
+    "summary": "예수님은 겟세마네에서 아버지의 뜻에 자신을 맡기시고, 유다의 배신과 무리의 체포를 순순히 맞으신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「겟세마네 기도와 체포」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "26:36",
+        "to": "26:56"
+      },
+      {
+        "book": "막",
+        "from": "14:32",
+        "to": "14:52"
+      },
+      {
+        "book": "눅",
+        "from": "22:39",
+        "to": "22:53"
+      },
+      {
+        "book": "요",
+        "from": "18:1",
+        "to": "18:12"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 43,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "겟세마네 동산의 밤, 예수님이 베드로와 야고보와 요한을 가까이 데리고 몹시 슬퍼하는 얼굴로 깨어 있으라 하시고 세 제자는 무거운 눈꺼풀로 힘겨워한다",
+      "예수님이 올리브나무 아래 홀로 엎드려 땀과 눈물이 맺힌 얼굴로 아버지의 뜻이 이루어지기를 간절히 기도하신다",
+      "유다가 횃불과 몽둥이와 칼을 든 무리를 이끌고 와 입맞춤으로 예수님을 넘기고, 제자들은 잠에서 깨어 두려움에 뒤로 물러선다",
+      "베드로가 칼을 든 손을 멈춘 채 서 있고, 예수님은 차분하고 단호한 얼굴로 칼을 거두게 하시며 자신을 잡으러 온 사람들에게 순순히 나아가신다"
+    ],
+    "scene_captions": [
+      "겟세마네 동산에서 예수님은 기도하시고 제자들은 졸고 있다",
+      "예수님은 겟세마네에서 아버지의 뜻에 자신을 맡기는 기도를 하신다",
+      "유다가 횃불과 몽둥이와 칼을 든 무리를 이끌고 와 입맞춤으로 예수님을 넘긴다",
+      "베드로가 칼을 든 손을 예수님은 멈추신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "james_zebedee",
+        "john"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "judas",
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "thomas",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot"
+      ],
+      [
+        "jesus",
+        "peter"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "겟세마네에서 예수님은 누구의 원대로 되기를 기도하셨습니까?",
+        "choices": [
+          "아버지",
+          "제자",
+          "빌라도"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 22:42 — '내 원대로 마옵시고 아버지의 원대로 되기를 원하나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님이 기도하시는 동안 제자들은 무엇을 하고 있었습니까?",
+        "choices": [
+          "자고 있었다",
+          "검을 갈고 있었다",
+          "성전에 있었다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:40 — '제자들에게 오사 그 자는 것을 보시고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님을 잡으러 온 무리에게 유다는 어떤 표시를 했습니까?",
+        "choices": [
+          "입맞춤",
+          "향유 부음",
+          "손 씻음"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:48 — '내가 입맞추는 자가 그이니'"
+      }
+    ]
+  },
+  {
+    "title": "베드로의 부인",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "대제사장의 뜰(예루살렘, 전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "베드로는 대제사장의 뜰에서 세 번 예수님을 모른다고 부인하고 닭 울음 뒤에 통곡한다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「베드로의 부인」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "26:69",
+        "to": "26:75"
+      },
+      {
+        "book": "막",
+        "from": "14:66",
+        "to": "14:72"
+      },
+      {
+        "book": "눅",
+        "from": "22:54",
+        "to": "22:62"
+      },
+      {
+        "book": "요",
+        "from": "18:15",
+        "to": "18:27"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 44,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "예수님이 붙잡혀 가신 뒤 베드로가 멀찍이 따라 대제사장의 뜰로 들어간다",
+      "대제사장의 뜰 뒷편에서 베드로가 사람들의 질문 앞에서 예수님을 모른다고 부인한다",
+      "세 번째 부인 뒤 닭이 울고 베드로가 대제사장의 뜰에서 잡혀가는 예수님과 멀리서 눈이 마주친다",
+      "대제사장의 뜰 바깥 어두운 골목에서 베드로가 외투로 얼굴을 감싸고 무너진 마음으로 통곡한다"
+    ],
+    "scene_captions": [
+      "예수님이 붙잡혀 가신 뒤 베드로가 멀찍이 따라 대제사장의 뜰로 들어간다",
+      "대제사장의 뜰 뒷편에서 베드로가 사람들의 질문 앞에서 예수님을 모른다고 부인한다",
+      "세 번째 부인 뒤 닭이 울고 베드로가 대제사장의 뜰에서 잡혀가는 예수님과 멀리서 눈이 마주친다",
+      "대제사장의 뜰 바깥 어두운 골목에서 베드로가 외투로 얼굴을 감싸고 무너진 마음으로 통곡한다"
+    ],
+    "scene_characters": [
+      [
+        "peter"
+      ],
+      [
+        "peter"
+      ],
+      [
+        "peter",
+        "jesus"
+      ],
+      [
+        "peter"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "베드로는 예수님을 붙잡아 간 뒤 어떤 거리로 따라갔습니까?",
+        "choices": [
+          "멀찍이",
+          "맨 앞에서",
+          "성전 안에서"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 22:54 — '베드로가 멀찍이 따라가니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "베드로는 사람들의 질문 앞에서 예수님을 몇 번 부인했습니까?",
+        "choices": [
+          "세 번",
+          "한 번",
+          "일곱 번"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:75 — '닭 울기 전에 네가 세 번 나를 부인하리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "닭이 울고 예수님의 말씀이 생각난 베드로는 밖에 나가 무엇을 했습니까?",
+        "choices": [
+          "심히 통곡했다",
+          "잔치를 열었다",
+          "성전으로 뛰어갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:75 — '밖에 나가서 심히 통곡하니라'"
+      }
+    ]
+  },
+  {
+    "title": "유대 지도자들 앞 재판",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "대제사장의 집과 공회(예루살렘, 전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 유대 지도자들 앞에서 거짓 증언과 모욕을 받으시고 자신이 하나님의 아들임을 증언하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「유대 지도자들 앞 재판」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "26:57",
+        "to": "26:68"
+      },
+      {
+        "book": "막",
+        "from": "14:53",
+        "to": "14:65"
+      },
+      {
+        "book": "눅",
+        "from": "22:63",
+        "to": "22:71"
+      },
+      {
+        "book": "요",
+        "from": "18:12",
+        "to": "18:24"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 45,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "예수님이 손이 묶인 채 대제사장의 집 안뜰로 끌려가고, 지도자들은 밤중의 기름등잔 아래 엄숙하고 적대적인 얼굴로 모인다",
+      "대제사장들, 율법학자들, 장로들은 화가 나서 예수님을 추궁하고 예수님은 자신이 하나님의 아들이심을 말씀하신다",
+      "대제사장들, 율법학자들, 장로들은 예수님에게 손가락질 하며 대답을 요구하고 예수님은 말씀하신다. 말풍선에는 예수님이 구름 위 권능의 보좌 오른편에 앉아있는 모습",
+      "사람들이 눈을 가리고 예수님을 조롱하며 때리지만, 예수님은 상처 입은 얼굴로 고난을 묵묵히 견디신다"
+    ],
+    "scene_captions": [
+      "예수님이 손이 묶인 채 대제사장의 집 안뜰로 끌려간다",
+      "대제사장들과 율법학자들이 예수님을 추궁하고 예수님은 자신이 하나님의 아들이심을 말씀하신다",
+      "대제사장들, 율법학자들, 장로들에게 예수님은 구름 위 권능의 보좌 오른편에 앉을 것임을 말씀하신다",
+      "사람들이 눈을 가리고 예수님을 조롱하며 때리다, 예수님은 상처 입은 얼굴로 고난을 묵묵히 견디신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "공회는 예수님을 죽이려고 무엇을 찾았습니까?",
+        "choices": [
+          "거짓 증거",
+          "성전 세금",
+          "로마 군대"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:59 — '거짓 증거를 찾으매'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "대제사장이 묻자 예수님은 인자가 어디에 앉을 것을 보리라 하셨습니까?",
+        "choices": [
+          "권능의 우편",
+          "성전 문",
+          "갈릴리 배"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:64 — '권능의 우편에 앉은 것과'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사람들은 예수님을 때리고 조롱하며 어떤 말로 모욕했습니까?",
+        "choices": [
+          "선지자처럼 맞혀 보라는 말",
+          "왕궁으로 가라는 말",
+          "떡을 나누라는 말"
+        ],
+        "answer_index": 0,
+        "explanation": "마 26:68 — '그리스도야 우리에게 선지자 노릇을 하라'"
+      }
+    ]
+  },
+  {
+    "title": "빌라도 앞 재판",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "pilate",
+      "herod"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 총독 관저(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "예수님은 빌라도와 헤롯 앞에서 심문을 받으시고, 무리의 요구 속에 십자가형에 넘겨지신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「빌라도 앞 재판」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "27:11",
+        "to": "27:26"
+      },
+      {
+        "book": "막",
+        "from": "15:1",
+        "to": "15:15"
+      },
+      {
+        "book": "눅",
+        "from": "23:1",
+        "to": "23:25"
+      },
+      {
+        "book": "요",
+        "from": "18:28",
+        "to": "19:16"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 46,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "새벽에 결박된 예수님이 로마식 관저의 빌라도 앞에 서고, 종교 지도자들은 피곤하지만 분노한 얼굴로 고발을 이어 간다",
+      "빌라도가 총독의 망토를 걸치고 재판석에서 예수님께 왕인지 묻지만, 예수님은 매 맞은 뒤에도 차분히 진리를 증언하신다",
+      "대제사장들이 빌라도에게 소리쳐서 바라바를 놓아주라고 요구하고, 빌라도는 의아하다는 표정을 지으며 바라바를 풀어주고 예수를 계속 묶어 놓으라고 한다",
+      "빌라도가 잘모르겠다는 제스쳐를 취하면서 무리의 요구대로 상처 입은 예수님을 십자가 형에 처하라고 한다"
+    ],
+    "scene_captions": [
+      "새벽에 결박된 예수님이 로마식 관저의 빌라도 앞에 서고 종교 지도자들이 고발을 이어간다",
+      "빌라도가 예수님께 왕인지 묻고 예수님은 그렇다고 말씀하신다",
+      "대제사장들이 빌라도에게 소리쳐서 바라바를 놓아주라고 요구한다",
+      "빌라도가 잘모르겠다는 제스쳐를 취하면서 무리의 요구대로 상처 입은 예수님을 그들에게 넘기신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "pilate"
+      ],
+      [
+        "jesus",
+        "pilate"
+      ],
+      [
+        "pilate",
+        "jesus"
+      ],
+      [
+        "pilate",
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "빌라도는 예수님께 네가 누구냐고 물었습니까?",
+        "choices": [
+          "유대인의 왕",
+          "성전 제사장",
+          "갈릴리 어부"
+        ],
+        "answer_index": 0,
+        "explanation": "마 27:11 — '네가 유대인의 왕이냐'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "무리는 예수님 대신 누구를 놓아 달라고 요구했습니까?",
+        "choices": [
+          "바라바",
+          "요셉",
+          "시몬"
+        ],
+        "answer_index": 0,
+        "explanation": "마 27:21 — '바라바로소이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "빌라도는 무리에게 예수님을 넘겨주기 전 손을 씻으며 자신이 무엇에 대해 무죄하다고 했습니까?",
+        "choices": [
+          "이 사람의 피",
+          "성전 세금",
+          "로마 법"
+        ],
+        "answer_index": 0,
+        "explanation": "마 27:24 — '이 사람의 피에 대하여 나는 무죄하니'"
+      }
+    ]
+  },
+  {
+    "title": "십자가",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "mary",
+      "john",
+      "mary_magdalene"
+    ],
+    "landmark_code": "lm_nt_pm_golgotha",
+    "place_name": "골고다(예루살렘)",
+    "lat": 31.7783,
+    "lng": 35.2298,
+    "summary": "예수님은 골고다에서 십자가에 못 박혀 죽으시고, 마지막까지 용서와 구원을 이루신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「십자가」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "27:32",
+        "to": "27:56"
+      },
+      {
+        "book": "막",
+        "from": "15:21",
+        "to": "15:41"
+      },
+      {
+        "book": "눅",
+        "from": "23:26",
+        "to": "23:49"
+      },
+      {
+        "book": "요",
+        "from": "19:16",
+        "to": "19:37"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 47,
+    "unit_code": "passion_week",
+    "unit_title": "고난주간",
+    "unit_order": 4,
+    "story_scenes": [
+      "채찍질과 조롱 뒤 지친 예수님이 십자가를 지고 골고다로 향하시고, 로마 군인들과 울며 따라가는 사람들이 좁은 길을 메운다",
+      "예수님이 두 행악자 사이에 십자가에 달리시고, 군인들은 아래에서 옷을 나누며 무리와 지도자들은 조롱과 두려움이 섞인 얼굴로 바라본다",
+      "십자가 아래에서 나이 든 어머니 마리아와 사랑하는 제자 요한, 막달라 마리아가 눈물로 서 있고, 예수님은 어머니와 제자를 서로에게 맡기신다",
+      "예수님이 숨을 거두시자 하늘이 어두워지고 땅이 흔들리며, 로마 백부장과 지켜보던 사람들은 두려움과 경외로 뒤로 물러선다"
+    ],
+    "scene_captions": [
+      "채찍질과 조롱 뒤 지친 예수님이 십자가를 지고 골고다로 향하신다",
+      "예수님이 두 행악자 사이에 십자가에 달리시다",
+      "십자가 아래에서 나이 든 어머니 마리아와 사랑하는 제자 요한, 막달라 마리아가 눈물을 흘린다",
+      "예수님이 숨을 거두시자 하늘이 어두워지고 땅이 흔들린다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus",
+        "mary",
+        "john",
+        "mary_magdalene"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "군병들은 누구에게 예수님의 십자가를 억지로 지게 했습니까?",
+        "choices": [
+          "구레네 사람 시몬",
+          "아리마대 요셉",
+          "백부장"
+        ],
+        "answer_index": 0,
+        "explanation": "마 27:32 — '구레네 사람 시몬을 만나매 그를 억지로 같이 가게 하여'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 십자가 위에서 자신을 못 박는 이들을 위해 무엇을 구하셨습니까?",
+        "choices": [
+          "용서",
+          "복수",
+          "침묵"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 23:34 — '아버지여 저희를 사하여 주옵소서'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님이 숨지실 때 성소의 휘장에는 어떤 일이 일어났습니까?",
+        "choices": [
+          "둘로 찢어졌다",
+          "금으로 덮였다",
+          "밖으로 옮겨졌다"
+        ],
+        "answer_index": 0,
+        "explanation": "마 27:51 — '성소 휘장이 위로부터 아래까지 찢어져 둘이 되고'"
+      }
+    ]
+  },
+  {
+    "title": "빈 무덤과 여인들",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "mary_magdalene",
+      "peter",
+      "john"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘 무덤(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "안식 후 첫날 여인들이 빈 무덤을 발견하고, 부활하신 예수님은 막달라 마리아에게 나타나신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「빈 무덤과 여인들」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "28:1",
+        "to": "28:10"
+      },
+      {
+        "book": "막",
+        "from": "16:1",
+        "to": "16:8"
+      },
+      {
+        "book": "눅",
+        "from": "24:1",
+        "to": "24:12"
+      },
+      {
+        "book": "요",
+        "from": "20:1",
+        "to": "20:18"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 48,
+    "unit_code": "resurrection_ascension",
+    "unit_title": "부활과 승천",
+    "unit_order": 5,
+    "story_scenes": [
+      "새벽 어스름에 막달라 마리아와 여인들이 향품 항아리를 품고 무덤으로 향하는 모습 무덤 입구 돌문은 저 멀리 열린 채로 보인다",
+      "무덤 돌이 굴려져 있고 흰 옷의 천사들이 빈 무덤 곁에서 부활 소식을 알리며, 여인들은 두려움과 기쁨으로 몸을 숙인다",
+      "베드로와 요한이 숨 가쁘게 달려와 빈 무덤의 세마포와 머리 수건을 보고, 놀람과 깨달음이 섞인 얼굴로 서로를 바라본다",
+      "동산 무덤가에서 부활하신 예수님이 막달라 마리아를 이름으로 부르시고, 그녀는 눈물에서 기쁨으로 바뀐 얼굴로 돌아본다"
+    ],
+    "scene_captions": [
+      "새벽 어스름에 막달라 마리아와 여인들이 향품 항아리를 품고 무덤으로 향한다",
+      "무덤 돌이 굴려져 있고 흰 옷의 천사들이 빈 무덤 곁에서 부활 소식을 알린다",
+      "베드로와 요한이 숨 가쁘게 달려와 빈 무덤의 세마포와 머리 수건을 본다",
+      "동산 무덤가에서 부활하신 예수님이 막달라 마리아를 이름으로 부르시다"
+    ],
+    "scene_characters": [
+      [
+        "mary_magdalene"
+      ],
+      [
+        "mary_magdalene"
+      ],
+      [
+        "peter",
+        "john"
+      ],
+      [
+        "jesus",
+        "mary_magdalene"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "여인들은 안식 후 첫날 무덤에 무엇을 가지고 갔습니까?",
+        "choices": [
+          "향품",
+          "은전",
+          "그물"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 24:1 — '예비한 향품을 가지고 무덤에 가서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "천사는 여인들에게 예수님이 여기 계시지 않는 이유를 무엇으로 말했습니까?",
+        "choices": [
+          "살아나셨다",
+          "잠드셨다",
+          "옮겨지셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 24:6 — '여기 계시지 않고 살아나셨느니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "동산에서 예수님이 막달라 마리아를 부르신 이름은 무엇입니까?",
+        "choices": [
+          "마리아야",
+          "여자여",
+          "갈릴리야"
+        ],
+        "answer_index": 0,
+        "explanation": "요 20:16 — '예수께서 마리아야 하시거늘'"
+      }
+    ]
+  },
+  {
+    "title": "엠마오로 가는 두 제자",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus"
+    ],
+    "landmark_code": "rgn_judea",
+    "place_name": "예루살렘에서 엠마오로 가는 길(전승)",
+    "lat": 31.82,
+    "lng": 35.1,
+    "summary": "부활하신 예수님은 엠마오로 가는 두 제자와 동행하시며 성경을 풀어 주시고 떡을 떼실 때 자신을 알아보게 하신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「엠마오로 가는 두 제자」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "눅",
+        "from": "24:13",
+        "to": "24:35"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 49,
+    "unit_code": "resurrection_ascension",
+    "unit_title": "부활과 승천",
+    "unit_order": 5,
+    "story_scenes": [
+      "글로바와 다른 한 제자가 여행용 망토를 걸치고 예루살렘을 떠나 엠마오 길을 걸으며, 어깨가 처진 채 십자가 일을 슬퍼하며 이야기한다",
+      "부활하신 예수님이 가까이 오셔서 먼지 묻은 길을 함께 걸으시지만, 두 제자는 근심 어린 얼굴로 그분을 알아보지 못한다",
+      "예수님이 길가에서 모세와 선지자의 글을 가리키듯 손짓하며 그리스도에 관한 말씀을 풀어 주시고, 두 제자는 마음이 뜨거워지는 표정으로 듣는다",
+      "엠마오 집 식탁에서 예수님이 떡을 떼실 때 두 제자의 눈이 열리고, 그들은 놀라움과 기쁨으로 곧 예루살렘으로 돌아갈 채비를 한다"
+    ],
+    "scene_captions": [
+      "글로바와 다른 한 제자가 여행용 망토를 걸치고 예루살렘을 떠나 엠마오 길을 걷는다",
+      "부활하신 예수님이 가까이 오셔서 먼지 묻은 길을 함께 걸으시다",
+      "예수님이 길가에서 모세와 선지자의 글을 가리키듯 그리스도에 관한 말씀을 풀어 주시다",
+      "엠마오 집 식탁에서 예수님이 떡을 떼실 때 두 제자의 눈이 열리다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "엠마오로 가던 두 제자는 처음에 부활하신 예수님을 알아보았습니까?",
+        "choices": [
+          "알아보지 못했다",
+          "즉시 알아보았다",
+          "먼저 경배했다"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 24:16 — '저희의 눈이 가리워져서 그인 줄 알아보지 못하거늘'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 길에서 무엇을 풀어 설명해 주셨습니까?",
+        "choices": [
+          "성경",
+          "로마 법",
+          "성전 세금"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 24:27 — '모든 성경에 쓴 바 자기에 관한 것을 자세히 설명하시니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "두 제자의 눈은 예수님이 무엇을 하실 때 밝아졌습니까?",
+        "choices": [
+          "떡을 떼실 때",
+          "배를 타실 때",
+          "물을 길으실 때"
+        ],
+        "answer_index": 0,
+        "explanation": "눅 24:30 — '떡을 가지사 축사하시고 떼어 저희에게 주시매'"
+      }
+    ]
+  },
+  {
+    "title": "제자들에게 나타나심",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "john",
+      "thomas",
+      "mary_magdalene",
+      "james_zebedee",
+      "bartholomew",
+      "andrew",
+      "philip",
+      "matthew",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot"
+    ],
+    "landmark_code": "lm_nt_pm_jerusalem",
+    "place_name": "예루살렘과 갈릴리 호수",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "부활하신 예수님은 두려워하는 제자들에게 평강을 주시고 도마와 베드로를 회복시키시며 사명을 맡기신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「제자들에게 나타나심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "눅",
+        "from": "24:36",
+        "to": "24:49"
+      },
+      {
+        "book": "마",
+        "from": "28:16",
+        "to": "28:20"
+      },
+      {
+        "book": "요",
+        "from": "20:19",
+        "to": "21:19"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 50,
+    "unit_code": "resurrection_ascension",
+    "unit_title": "부활과 승천",
+    "unit_order": 5,
+    "story_scenes": [
+      "문이 굳게 닫힌 방에서 두려워하던 제자들 가운데 부활하신 예수님이 오셔서 손과 옆구리의 상처를 보이시며 평강을 전하신다",
+      "도마가 예수님의 손과 옆구리 상처를 보고 떨리는 손을 가슴에 모으며, 의심이 경배로 바뀐 얼굴로 고백한다",
+      "갈릴리 호수의 새벽, 밤새 고기 잡지 못해 지친 제자들이 빈 그물을 붙잡고 있을 때 예수님이 물가에서 그물을 던지게 하신다",
+      "숯불이 피어 있는 호숫가에서 예수님이 베드로에게 사랑을 물으시고, 베드로는 회한과 회복의 눈빛으로 내 양을 먹이라는 맡김을 듣는다"
+    ],
+    "scene_captions": [
+      "문이 굳게 닫힌 방에서 두려워하던 제자들 가운데 부활하신 예수님이 오셔서 손과 옆구리의 상처를 보이시다",
+      "도마가 예수님의 손과 옆구리 상처를 보고 떨리는 손을 가슴에 모은다",
+      "밤새 고기 잡지 못해 지친 제자들이 빈 그물을 붙잡고 있을 때 예수님이 물가에서 그물을 던지게 하신다",
+      "숯불이 피어 있는 호숫가에서 예수님이 베드로에게 사랑하냐 물으시다"
+    ],
+    "scene_characters": [
+      [
+        "jesus",
+        "peter",
+        "andrew",
+        "james_zebedee",
+        "john",
+        "philip",
+        "bartholomew",
+        "matthew",
+        "james_alphaeus",
+        "thaddaeus",
+        "simon_zealot"
+      ],
+      [
+        "jesus",
+        "thomas"
+      ],
+      [
+        "jesus",
+        "peter",
+        "thomas",
+        "bartholomew",
+        "james_zebedee",
+        "john"
+      ],
+      [
+        "jesus",
+        "peter"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "부활하신 예수님은 두려워하던 제자들에게 어떤 인사를 하셨습니까?",
+        "choices": [
+          "평강의 인사",
+          "가이사에게 가라는 말",
+          "광야로 숨으라는 말"
+        ],
+        "answer_index": 0,
+        "explanation": "요 20:19 — '너희에게 평강이 있을지어다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "도마는 예수님의 상처를 보고 예수님을 누구로 고백했습니까?",
+        "choices": [
+          "나의 주 나의 하나님",
+          "나의 선생 나의 형제",
+          "나의 왕 나의 제사장"
+        ],
+        "answer_index": 0,
+        "explanation": "요 20:28 — '나의 주시며 나의 하나님이시니이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 베드로에게 사랑하느냐 물으신 뒤 무엇을 먹이라고 하셨습니까?",
+        "choices": [
+          "내 양",
+          "물고기",
+          "무리의 떡"
+        ],
+        "answer_index": 0,
+        "explanation": "요 21:17 — '내 양을 먹이라'"
+      }
+    ]
+  },
+  {
+    "title": "대위임령과 승천",
+    "era": "era_nt_public_ministry",
+    "characters": [
+      "jesus",
+      "peter",
+      "john",
+      "andrew",
+      "james_zebedee",
+      "philip",
+      "bartholomew",
+      "matthew",
+      "thomas",
+      "james_alphaeus",
+      "thaddaeus",
+      "simon_zealot"
+    ],
+    "landmark_code": "lm_nt_pm_gethsemane",
+    "place_name": "갈릴리 산과 감람산(전승)",
+    "lat": 31.779,
+    "lng": 35.243,
+    "summary": "예수님은 모든 민족을 제자로 삼으라는 사명을 주시고 감람산에서 승천하시며 다시 오실 약속을 남기신다.",
+    "background_context": "복음서의 예수님 이야기는 예수님의 탄생, 공적 사역, 십자가와 부활로 이어집니다. 이 이야기는 「대위임령과 승천」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "마",
+        "from": "28:18",
+        "to": "28:20"
+      },
+      {
+        "book": "막",
+        "from": "16:15",
+        "to": "16:18"
+      },
+      {
+        "book": "눅",
+        "from": "24:46",
+        "to": "24:53"
+      },
+      {
+        "book": "행",
+        "from": "1:6",
+        "to": "1:11"
+      }
+    ],
+    "start_year": 33,
+    "end_year": 33,
+    "time_precision": "approx",
+    "story_index": 51,
+    "unit_code": "resurrection_ascension",
+    "unit_title": "부활과 승천",
+    "unit_order": 5,
+    "story_scenes": [
+      "갈릴리 산에서 부활하신 예수님이 열한 제자 앞에 서서 하늘과 땅의 모든 권세를 받으셨다고 말씀하시고, 제자들은 경배와 망설임이 섞인 얼굴로 엎드린다",
+      "예수님이 모든 민족을 제자로 삼고 세례를 베풀며 가르치라고 손을 들어 명하시고, 열한 제자는 먼 나라를 향한 사명을 받는 굳은 표정으로 듣는다",
+      "감람산에서 예수님이 하늘로 올려지시고 성령의 권능과 땅끝까지 증인의 사명을 약속하시고, 제자들 예수님을 바라본다"
+    ],
+    "scene_captions": [
+      "부활하신 예수님이 제자들 앞에 서서 하늘과 땅의 모든 권세를 받으셨다고 말씀하신다",
+      "예수님이 모든 민족을 제자로 삼고 세례를 베풀며 가르치라고 손을 들어 명하신다",
+      "감람산에서 예수님이 하늘로 올려지시고 성령의 권능과 땅끝까지 증인의 사명을 약속하신다"
+    ],
+    "scene_characters": [
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "부활하신 예수님은 하늘과 땅의 무엇을 받으셨다고 하셨습니까?",
+        "choices": [
+          "모든 권세",
+          "성전 세금",
+          "로마 군대"
+        ],
+        "answer_index": 0,
+        "explanation": "마 28:18 — '하늘과 땅의 모든 권세를 내게 주셨으니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "예수님은 제자들에게 모든 민족을 무엇으로 삼으라 하셨습니까?",
+        "choices": [
+          "제자",
+          "군사",
+          "상인"
+        ],
+        "answer_index": 0,
+        "explanation": "마 28:19 — '모든 족속으로 제자를 삼아'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "승천 전 예수님은 성령이 임하면 제자들이 어디까지 증인이 된다고 하셨습니까?",
+        "choices": [
+          "땅끝",
+          "성전 안",
+          "갈릴리 호수"
+        ],
+        "answer_index": 0,
+        "explanation": "행 1:8 — '땅 끝까지 이르러 내 증인이 되리라'"
+      }
+    ]
+  }
+]

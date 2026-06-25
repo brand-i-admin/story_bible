@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -17,16 +18,25 @@ sys.modules[spec.name] = build_guides
 spec.loader.exec_module(build_guides)
 
 
+def current_story_count() -> int:
+    total = 0
+    for path in sorted((ROOT / "assets" / "events").glob("*.json")):
+        total += len(json.loads(path.read_text(encoding="utf-8")))
+    return total
+
+
 class BuildGuidesTest(unittest.TestCase):
     def test_story_stats_match_current_assets(self) -> None:
         stories = build_guides.load_stories_by_era()
-        self.assertEqual(sum(len(events) for events in stories.values()), 310)
+        self.assertEqual(
+            sum(len(events) for events in stories.values()), current_story_count()
+        )
         self.assertEqual(len(stories["era_divided_kingdom"]), 52)
         self.assertEqual(len(stories["era_nt_consummation"]), 9)
 
     def test_story_guide_mentions_current_totals_and_hidden_era(self) -> None:
         text = build_guides.build_story_guide_text()
-        self.assertIn("**총 사건 수**: 310개", text)
+        self.assertIn(f"**총 사건 수**: {current_story_count()}개", text)
         self.assertIn("**시대 수**: 11개", text)
         self.assertIn("`era_nt_consummation` 9개 사건", text)
 

@@ -1,0 +1,2651 @@
+[
+  {
+    "title": "사울의 기름부음: 숨은 청년",
+    "era": "era_monarchy",
+    "characters": [
+      "saul",
+      "samuel",
+      "god"
+    ],
+    "landmark_code": "lm_mon_ramah",
+    "place_name": "라마(전승)",
+    "lat": 31.92,
+    "lng": 35.21,
+    "summary": "사울은 예상치 못한 자리에서 기름부음을 받고 첫 왕의 길에 들어선다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「사울의 기름부음」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "9:1",
+        "to": "10:27"
+      }
+    ],
+    "start_year": -1050,
+    "end_year": -1050,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "키크고 용모가 빼어난 사울이 아버지의 잃어버린 나귀들을 찾으며 종들과 함께 산지를 다니는 모습",
+      "성문 근처에서 젊은 사울이 산당으로 올라가려는 늙은 사무엘을 만나고, 사무엘에게 하나님이 저 사람에게 기름을 부으라고 말씀하시는 말풍선",
+      "사무엘이 사울의 머리에 기름을 붓고 사울은 두려움과 경외가 섞인 얼굴이다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 왕관과 보좌 앞에서 하나님의 뜻을 따라야 하는 왕이 보이는 장면이 작은 그림처럼 보인다",
+      "사무엘이 미스바에 모인 백성 앞에서 사울을 왕으로 세웠음을 선포하고, 화면 한쪽에는 키 큰 사울이 짐 보따리들 사이에 몸을 낮추고 숨어 있다. 글자는 보이지 않는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 왕관과 보좌 앞에서 하나님의 뜻을 따라야 하는 왕이 보이는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "키크고 용모가 빼어난 사울이 아버지의 잃어버린 나귀들을 찾으며 종들과 함께 산지를 다닌다",
+      "성문 근처에서 사울이 산당으로 올라가려는 사무엘을 만나다",
+      "사무엘이 사울의 머리에 기름을 붓고 사울은 두려움과 경외가 섞인 얼굴이다",
+      "사무엘이 미스바에 모인 백성 앞에서 사울을 왕으로 세웠음을 선포하지만 사울은 짐 보따리에 숨는다"
+    ],
+    "scene_characters": [
+      [
+        "saul"
+      ],
+      [
+        "saul",
+        "samuel",
+        "god"
+      ],
+      [
+        "samuel",
+        "saul"
+      ],
+      [
+        "samuel",
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사울은 어느 지파 출신이었습니까?",
+        "choices": [
+          "베냐민 지파",
+          "유다 지파",
+          "에브라임 지파"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 9:1 — '베냐민 지파에 기스라 이름하는 유력한 사람이 있으니 ... 베냐민 사람이더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사울은 암나귀를 찾다가 왜 돌아가려 했습니까?",
+        "choices": [
+          "아버지가 자신들을 걱정할까 두려웠다",
+          "암나귀를 이미 찾았다고 생각했다",
+          "사무엘을 만나고 싶지 않았다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 9:5 — '그들이 숩 땅에 이른 때에 사울이 함께 하는 사환에게 이르되 돌아가자 내 부친이 암나귀 생각은 고 사하고 우리를 위하여 걱정하실까 두려워하노라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사무엘이 백성 앞에서 사울을 찾게 했을 때, 사울은 어디에 숨어 있었습니까?",
+        "choices": [
+          "짐보따리 사이에 숨어 있었다",
+          "성막 문 앞에 당당히 서 있었다",
+          "블레셋 진영으로 도망가 있었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 10:22 — '그가 행구 사이에 숨었느니라'"
+      }
+    ]
+  },
+  {
+    "title": "사울의 첫 승리: 얍베스 길르앗",
+    "era": "era_monarchy",
+    "characters": [
+      "saul",
+      "god",
+      "samuel"
+    ],
+    "landmark_code": "lm_mon_jabesh_gilead",
+    "place_name": "얍베스 길르앗(전승)",
+    "lat": 32.38,
+    "lng": 35.56,
+    "summary": "사울은 첫 위기에서 백성을 모아 구원하고 왕권을 굳힌다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「사울의 첫 승리」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "11:1",
+        "to": "11:15"
+      }
+    ],
+    "start_year": -1049,
+    "end_year": -1049,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "암몬 사람 나하스가 얍베스 길르앗을 위협했다는 소식이 전해지고, 밭에서 돌아온 사울(아직은 일반인 복장)에게 하나님의 영을 상징하는 밝은 빛이 임하고 사울의 얼굴이 분노와 책임감으로 바뀐다",
+      "사울(전투를 위해 군복을 입은 복장)이 엄중한 얼굴로 이스라엘 전역에 경고를 전하려 황소 조각이 담긴 가죽 꾸러미를 전령들에게 맡기고, 전령들은 이스라엘 여러 지파로 달려갈 준비를 한다",
+      "새벽에 사울이 이끈 군사들이 얍베스 길르앗을 구원하고, 성 안 사람들은 성문에서 눈물과 기쁨으로 맞이한다. 전투의 폭력과 시신은 보이지 않는다",
+      "길갈에서 사무엘이 사울의 왕권을 다시 확인하며 백성은 기뻐하고, 사울은 어두운 왕복이 아니라 초기의 단정한 왕복 차림으로 겸손히 서 있다"
+    ],
+    "scene_captions": [
+      "암몬 사람이 길르앗을 위협했다는 소식이 전해고 하나님의 분노가 사울에게 임한다",
+      "사울이 이스라엘 전역에 경고를 전하려 황소 조각이 담긴 가죽 꾸러미를 전령들에게 맡긴다",
+      "사울이 이끈 군사들이 길르앗을 구원한다",
+      "길갈에서 사무엘이 사울의 왕권을 다시 확인하며 백성은 기뻐한다"
+    ],
+    "scene_characters": [
+      [
+        "saul",
+        "god"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "samuel",
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사울이 베섹에서 계수한 이스라엘 군사는 몇 명이었습니까?",
+        "choices": [
+          "삼십만",
+          "십만",
+          "오십만"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 11:8 — '사울이 베섹에서 그들을 계수하니 이스라엘 자손이 삼십만이요'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사람들은 야베스 주민들에게 어떤 소식을 전했습니까?",
+        "choices": [
+          "다음 날 해가 더울 때 구원을 얻을 것이라고 전했다",
+          "사울이 더 이상 돕지 않을 것이라고 전했다",
+          "길갈로 모두 이사하라고 전했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 11:9 — '무리가 온 사자들에게 이르되 너희는 길르앗 야베스 사람에게 이같이 이르기를 내일 해가 더울 때 에 너희가 구원을 얻으리라 하라 사자들이 돌아가서 야베스 사람들에게 고하매 그들이 기뻐하니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "승리 뒤 백성은 길갈에서 무엇을 했습니까?",
+        "choices": [
+          "사울을 왕으로 세우고 함께 기뻐했다",
+          "사울을 왕 자리에서 내렸다",
+          "각자 집으로 조용히 돌아갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 11:15 — '모든 백성이 길갈로 가서 거기서 여호와 앞에 사울로 왕을 삼고 거기서 여호와 앞에 화목제를 드 리고 사울과 이스라엘 모든 사람이 거기서 크게 기뻐하니라'"
+      }
+    ]
+  },
+  {
+    "title": "사울의 불순종: 왕의 균열",
+    "era": "era_monarchy",
+    "characters": [
+      "saul",
+      "samuel"
+    ],
+    "landmark_code": "lm_mon_gilgal",
+    "place_name": "길갈(전승)",
+    "lat": 31.85,
+    "lng": 35.5,
+    "summary": "사울의 조급함과 자기합리화는 왕으로서의 길에 균열을 만든다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「사울의 불순종」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "13:7",
+        "to": "13:14"
+      },
+      {
+        "book": "삼상",
+        "from": "15:1",
+        "to": "15:23"
+      }
+    ],
+    "start_year": -1045,
+    "end_year": -1045,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "길갈에서 블레셋 전투를 앞두고 백성이 흩어지자 사울이 조급한 얼굴로 제단 앞에 서서 사무엘을 기다리지 못하고 제사를 드린다",
+      "늙은 사무엘이 도착해 사울을 엄하게 꾸짖고 사울은 변명하려다 굳어진다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 잘못된 길에서 돌이키라는 경고와 멈춰 선 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "아말렉 전쟁 뒤 사울이 살진 양과 소를 몰래 남겨 두었고, 사무엘은 그 울음소리를 들으며 당황한 사울을 꾸짖는다",
+      "사무엘이 뒤돌아서 떠나자 사울이 절박하게 옷자락을 붙잡고, 옷자락이 찢어지며 사울의 얼굴에는 두려움과 후회가 번진다"
+    ],
+    "scene_captions": [
+      "사무엘이 늦자 사울이 조급한 얼굴로 제단 앞에 서서 직접 제사를 드린다",
+      "사무엘이 도착해 사울을 엄하게 꾸짖고 사울은 변명하려다 굳어진다",
+      "아말렉 전쟁 뒤 사울이 살진 양과 소를 몰래 남겨 두고 사무엘은 꾸짖는다",
+      "사울이 절박하게 옷자락을 붙잡지만 옷자락이 찢어진다"
+    ],
+    "scene_characters": [
+      [
+        "saul"
+      ],
+      [
+        "samuel",
+        "saul"
+      ],
+      [
+        "samuel",
+        "saul"
+      ],
+      [
+        "samuel",
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사무엘이 사울에게 버림받을 것을 선포한 이유는 무엇이었습니까?",
+        "choices": [
+          "여호와의 명하신 바를 지키지 않았기 때문",
+          "블레셋에 패배했기 때문",
+          "아론 자손이 아니었기 때문"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 13:13-14 — '여호와의 명하신 바를 왕이 지키지 아니하였으므로 여호와께서 그 마음에 맞는 사람을 구하여'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사울이 아말렉을 칠 때 아각을 어떻게 하였습니까?",
+        "choices": [
+          "살려두었다",
+          "즉시 처형하였다",
+          "제사를 드리고 죽였다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 15:8-9 — '아말렉 사람의 왕 아각을 사로잡고 칼날로 그 모든 백성을 진멸하였으되 ... 아각을 살려두었더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사무엘은 사울에게 무엇을 전하려 했습니까?",
+        "choices": [
+          "밤에 하나님께 들은 말씀을 전하려 했다",
+          "사울의 승리를 칭찬하려 했다",
+          "블레셋과 화해하라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 15:16 — '사무엘이 사울에게 이르되 가만히 계시옵소서 간 밤에 여호와께서 내게 이르신 것을 왕에게 말하 리이다 가로되 말씀하소서'"
+      }
+    ]
+  },
+  {
+    "title": "다윗의 기름부음: 새로운 선택",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "samuel",
+      "jesse"
+    ],
+    "landmark_code": "lm_mon_bethlehem",
+    "place_name": "베들레헴",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "하나님은 사람의 기준이 아닌 마음을 보시고 다윗을 택하신다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗의 기름부음」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "16:1",
+        "to": "16:13"
+      }
+    ],
+    "start_year": -1030,
+    "end_year": -1030,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "사무엘이 이새의 키 크고 훌륭해 보이는 아들들 앞에서 고개를 젓고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 왕관과 보좌 앞에서 하나님의 뜻을 따라야 하는 왕이 보이는 장면이 작은 그림처럼 보인다",
+      "막내 다윗이 들판에서 양을 치다가 집으로 불려오고, 따뜻한색 목동 겉옷과 물매 주머니를 입고 있다",
+      "사무엘이 젊은 다윗의 머리에 기름을 붓고, 다윗은 놀라움과 경외로 고개를 숙이며 이새와 형들도 뒤에서 놀란 모습으로 바라본다"
+    ],
+    "scene_captions": [
+      "사무엘이 이새의 키 크고 훌륭해 보이는 아들들 앞에서 고개를 젓다",
+      "막내 다윗이 들판에서 양을 치다가 집으로 불려온다",
+      "하나님은 사람의 기준이 아닌 마음을 보시고 다윗을 택하신다"
+    ],
+    "scene_characters": [
+      [
+        "samuel",
+        "jesse"
+      ],
+      [
+        "samuel",
+        "david"
+      ],
+      [
+        "samuel",
+        "david",
+        "jesse"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사무엘이 이새의 아들들을 볼 때 하나님은 무엇이라 하셨습니까?",
+        "choices": [
+          "외모가 아닌 중심을 보신다",
+          "가장 큰 자를 택하신다",
+          "맏아들을 세우신다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 16:7 — '나는 중심을 보느니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사무엘은 아비나답을 보고 무엇을 알게 되었습니까?",
+        "choices": [
+          "하나님이 그를 택하지 않으셨다는 것",
+          "아비나답이 바로 왕이 된다는 것",
+          "이새의 아들들이 모두 선택되었다는 것"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 16:8 — '이새가 아비나답을 불러 사무엘의 앞을 지나게 하매 사무엘이 가로되 이도 여호와께서 택하지 아니 하셨느니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "다윗에게 기름을 부은 사람은 누구입니까?",
+        "choices": [
+          "사무엘",
+          "엘리야",
+          "나단"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 16:13 — '사무엘이 기름 뿔병을 취하여 ... 기름을 부었더니'"
+      }
+    ]
+  },
+  {
+    "title": "다윗과 골리앗: 돌 하나",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "goliath",
+      "saul"
+    ],
+    "landmark_code": "lm_mon_elah_valley",
+    "place_name": "엘라 골짜기",
+    "lat": 31.69,
+    "lng": 34.97,
+    "summary": "소년 다윗은 믿음으로 거인을 맞서 전세를 뒤집는다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗과 골리앗」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "17:32",
+        "to": "17:50"
+      }
+    ],
+    "start_year": -1025,
+    "end_year": -1025,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "엘라 골짜기에서 거대한 골리앗이 청동 갑옷과 긴 창을 들고 이스라엘 군대를 조롱하고 이스라엘 군대는 두려움에 떨고 있다",
+      "18세쯤의 젊은 다윗이 어두운 왕복의 사울 앞에 서서 사자와 곰에게서 양을 지킨 일을 말하듯 손짓하고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 목자가 잃은 양을 품고 안전한 우리로 데려오는 장면이 작은 그림처럼 보인다",
+      "18세쯤의 젊은 다윗이 시냇가에서 매끄러운 돌 다섯 개를 고르고 물매를 점검하며, 사울의 갑옷은 벗어 둔 채 목동 옷차림으로 결연하게 선다",
+      "다윗의 물매 돌이 골리앗을 쓰러뜨리고, 소년 다윗은 놀란 이스라엘 군대 앞에서 하나님이 구원하셨음을 보여 주듯 당당히 서 있다. 피나 참수 장면은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "골리앗이 하나님을 모독하는 것을 다윗이 본다",
+      "다윗이 사울 앞에 서서 하나님께서 사자와 곰에게서 자신으 지키신 일을 말한다",
+      "다윗이 시냇가에서 매끄러운 돌 다섯 개를 고르고 물매를 점검한다",
+      "다윗의 물맷돌이 거인 골리앗을 쓰러뜨린다"
+    ],
+    "scene_characters": [
+      [
+        "goliath",
+        "david"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david",
+        "goliath"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗은 골리앗에게 싸움을 선포할 때 어떻게 말하였습니까?",
+        "choices": [
+          "여호와께서 너를 내 손에 붙이시리라 하였다",
+          "이스라엘 군대의 이름으로 싸운다 하였다",
+          "두려워하지 말라고 외쳤다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 17:46 — '오늘 여호와께서 너를 내 손에 붙이시리니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "골리앗이 가까이 오자 다윗은 어떻게 맞섰습니까?",
+        "choices": [
+          "블레셋 사람을 향해 빨리 달려갔다",
+          "뒤로 물러나 사울을 불렀다",
+          "갑옷을 입으러 진으로 돌아갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 17:48 — '블레셋 사람이 일어나 다윗에게로 마주 가까이 올 때에 다윗이 블레셋 사람에게로 마주 그 항오를 향하여 빨리 달리며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "다윗이 골리앗을 쓰러뜨리는 데 사용한 무기는 무엇이었습니까?",
+        "choices": [
+          "물매와 돌",
+          "칼",
+          "창"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 17:50 — '다윗이 이같이 물매와 돌로 블레셋 사람을 이기고 그를 쳐 죽였으나 자기 손에는 칼이 없었더라'"
+      }
+    ]
+  },
+  {
+    "title": "사울의 시기: 다윗의 도망 시작",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "saul",
+      "jonathan"
+    ],
+    "landmark_code": "lm_mon_gibeah",
+    "place_name": "기브아(사울의 성, 전승)",
+    "lat": 31.85,
+    "lng": 35.25,
+    "summary": "요나단은 다윗을 사랑해 언약을 맺지만, 사울은 다윗을 질투하고 두려워하며 미갈과의 결혼까지 이용하려 한다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「사울의 시기」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "18:1",
+        "to": "18:30"
+      }
+    ],
+    "start_year": -1024,
+    "end_year": -1024,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "승리 후 백성들이 노래와 소고로 다윗을 환호하자, 20대 초반의 젊은 다윗은 겸손히 서 있고 사울은 뒤쪽에서 악한 질투와 두려움으로 눈빛이 어두워지며 표정이 굳어진다. 글자와 숫자는 보이지 않는다",
+      "궁전 안에서 악한 질투와 두려움으로 눈빛이 사나워진 사울이 창을 던지고, 20대 초반의 젊은 다윗은 하프를 내려놓고 기둥 뒤로 급히 몸을 피한다. 피와 상처는 보이지 않는다",
+      "20대 초반의 젊은 다윗이 블레셋 사람들과의 전투에서 얻은 증표를 직접 보이지 않는 닫힌 꾸러미로 가져와 사울에게 바치는 장면. 사울은 속셈이 드러난 듯 놀라고 차갑게 불편한 표정으로 앉아 있다",
+      "20대 초반의 젊은 다윗이 사울의 딸 미갈과 결혼하며 행복해하고, 사울은 뒤쪽에서 질투와 계산이 섞인 차가운 표정으로 바라보는 장면."
+    ],
+    "scene_captions": [
+      "승리 후 백성들이 환호하고 다윗은 겸손히 서있지만 사울이 못마땅해한다",
+      "궁전 안에서 악한 질투와 두려움으로 눈빛이 사나워진 사울이 창을 던진다",
+      "사울은 다윗을 죽이려 미갈과의 결혼을 이용해 전투에 보내지만 다윗은 증표를 가져온다",
+      "초반의 다윗이 사울의 딸 미갈과 결혼하며 행복해한다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요나단은 다윗을 어떻게 여기고 언약을 맺었습니까?",
+        "choices": [
+          "자기 생명처럼 사랑했다",
+          "두려운 적으로 여겼다",
+          "낯선 사람처럼 모른 척했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 18:3 — '요나단은 다윗을 자기 생명 같이 사랑하여 더불어 언약을 맺었으며'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사울은 다윗이 계속 지혜롭게 행하자 어떤 마음을 품게 되었습니까?",
+        "choices": [
+          "더욱더욱 두려워했다",
+          "완전히 안심했다",
+          "곧바로 왕위를 넘겼다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 18:29 — '사울이 다윗을 더욱더욱 두려워하여 평생에 다윗의 대적이 되니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사울은 미갈과 결혼하려는 다윗에게 어떤 전투의 증표를 요구했습니까?",
+        "choices": [
+          "블레셋 사람의 양피 일백",
+          "골리앗의 칼 한 자루",
+          "암나귀 세 마리"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 18:25 — '왕은 아무 것도 요구하지 아니하고 다만 왕의 원수의 보복으로 블레셋 사람의 양피 일백을 원하신다 하라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show David as a young man in his early twenties. No readable labels.",
+      "Keep the spear-throwing moment non-graphic; no blood or injury. No readable labels.",
+      "Do not show explicit body parts, gore, blood, or severed details. Represent the requested proof as sealed bundles only.",
+      "Michal has no reference avatar. Show her as the same unnamed young Israelite woman in this story; no readable labels."
+    ]
+  },
+  {
+    "title": "요나단과 미갈: 다윗을 살리다",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "saul",
+      "jonathan"
+    ],
+    "landmark_code": "lm_mon_gibeah",
+    "place_name": "기브아(사울의 성, 전승)",
+    "lat": 31.85,
+    "lng": 35.25,
+    "summary": "사울이 다윗을 죽이려 하자 요나단은 다윗을 위해 중보하고, 미갈은 다윗을 창밖으로 피하게 하며 살린다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「요나단과 미갈」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "19:1",
+        "to": "19:17"
+      }
+    ],
+    "start_year": -1023,
+    "end_year": -1023,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "궁전 안에서 사울이 악한 살의와 분노로 눈빛이 사나워진 얼굴로 화를 내고 있으며, 가까운 한쪽에는 요나단과 20대 초반의 젊은 다윗이 몸을 낮추고 몰래 조용히 이야기하는 장면. 글자는 보이지 않는다",
+      "20대 초반의 젊은 다윗이 전쟁에서 승리하고 돌아와 사람들의 환영을 받지만, 사울은 뒤쪽에서 질투와 두려움이 섞인 악한 표정으로 바라보는 장면. 피와 시신은 보이지 않는다",
+      "궁전 안에서 악한 영에 사로잡힌 듯 눈빛이 사납게 흐려진 사울이 다윗에게 창을 던지고, 20대 초반의 젊은 다윗은 하프를 놓고 급히 도망가는 모습. 폭력은 절제되고 피와 상처는 보이지 않는다",
+      "사울이 보낸 군사들이 미갈의 집으로 들이닥쳤는데, 미갈이 침대 위에 염소털을 씌운 우상 모양의 물건을 놓아 다윗이 누워 있는 것처럼 꾸민 장면. 미갈은 침착하게 서 있고, 다윗은 보이지 않는다. 글자는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "궁전 안, 요나단과 다윗은 사울을 피해 이야기한다",
+      "다윗이 전쟁에서 승리하고 돌아와 사람들의 환영을 받는다",
+      "궁전 안에서 악한 영에 사로잡힌 듯 눈빛이 사납게 흐려진 사울이 다윗에게 창을 던진다",
+      "미갈은 염소털을 씌운 우상을 침대에 눕혀서 사울의 군사를 따돌리고 다윗이 도망치게 한다"
+    ],
+    "scene_characters": [
+      [
+        "saul",
+        "jonathan",
+        "david"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      []
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사울은 요나단과 신하들에게 다윗에 대해 무엇을 말했습니까?",
+        "choices": [
+          "다윗을 죽이라고 말했다",
+          "다윗을 왕으로 세우라고 말했다",
+          "다윗을 블레셋으로 보내라고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 19:1 — '사울이 그 아들 요나단과 그 모든 신하에게 다윗을 죽이라 말하였더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "요나단은 사울에게 다윗을 두고 어떤 말을 했습니까?",
+        "choices": [
+          "다윗에게 범죄하지 말라고 말했다",
+          "다윗을 멀리 팔아 버리라고 말했다",
+          "다윗이 이미 죽었다고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 19:4 — '왕은 신하 다윗에게 범죄치 마옵소서 그는 왕께 득죄하지 아니하였고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "미갈은 다윗이 사울의 손에서 피하도록 어떻게 도왔습니까?",
+        "choices": [
+          "창에서 달아내려 도망하게 했다",
+          "사울에게 직접 창을 던졌다",
+          "다윗을 블레셋 진영에 넘겼다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 19:12 — '미갈이 다윗을 창에서 달아내리매 그가 도망하여 피하니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Jonathan as Sauls young adult son, matching his avatar. Keep the secret conversation clear without text labels.",
+      "David is a young victorious commander returning from battle; no gore, no bodies, no readable labels.",
+      "Show the harmful spirit symbolically with dark mood around Saul; no demonic creature, no gore, no injury.",
+      "Michal has no reference avatar. Show her as the same unnamed young rich Israelite woman from the previous story. The household idol is an object, not a living character."
+    ]
+  },
+  {
+    "title": "요나단의 신호: 다윗을 떠나보내다",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "saul",
+      "jonathan",
+      "samuel"
+    ],
+    "landmark_code": "lm_mon_ramah",
+    "place_name": "라마 나욧/들판(전승)",
+    "lat": 31.93,
+    "lng": 35.22,
+    "summary": "다윗은 사무엘에게 피하고, 요나단은 아버지 사울의 살의를 확인한 뒤 들판의 화살 신호로 다윗을 떠나보낸다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「요나단의 신호」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "19:18",
+        "to": "20:42"
+      }
+    ],
+    "start_year": -1022,
+    "end_year": -1022,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "다윗과 사무엘이 사울의 집요한 추격을 피해 라마 나욧으로 급히 도망가는 장면. 뒤쪽에는 악한 질투에서 비롯된 추격의 긴장감이 있지만 직접적인 폭력은 보이지 않는다",
+      "들판에서 다윗과 요나단이 서로 가까이 앉아 진지하게 이야기하며 다윗의 안전을 의논하는 장면. 두 사람의 우정과 긴장감이 함께 보인다",
+      "궁전 식탁 자리에서 요나단이 사울이 던진 창을 아슬아슬하게 피해 물러나는 장면. 사울은 악한 살의가 섞인 격노로 얼굴이 일그러져 있고 요나단은 충격을 받은 표정이며, 피와 상처는 보이지 않는다",
+      "들판 바위 근처에서 요나단이 활을 쏘아 신호를 보내고, 다윗은 바위 뒤에서 그 신호를 듣고 조용히 도망갈 준비를 하는 장면. 읽을 수 있는 글자는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "다윗과 사무엘이 사울의 집요한 추격을 피해 라마 나욧으로 급히 도망간다",
+      "들판에서 다윗과 요나단이 이야기하며 다윗의 안전을 의논하고 신호를 정한다",
+      "궁전 식탁 자리에서 요나단이 사울이 던진 창을 아슬아슬하게 피해 물러난다",
+      "들판 바위 근처에서 요나단이 활을 쏘아 다윗에게 신호를 보낸다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "samuel"
+      ],
+      [
+        "david",
+        "jonathan"
+      ],
+      [
+        "jonathan",
+        "saul"
+      ],
+      [
+        "david",
+        "jonathan"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗은 사울을 피해 어디로 가서 사무엘에게 일을 알렸습니까?",
+        "choices": [
+          "라마로 갔다",
+          "애굽으로 갔다",
+          "갈멜산으로 갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 19:18 — '다윗이 도피하여 라마로 가서 사무엘에게로 나아가서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사울이 다윗을 죽이려는 뜻을 드러내자 요나단은 식탁에서 어떤 마음으로 일어났습니까?",
+        "choices": [
+          "심히 노하여 일어났다",
+          "아무렇지 않게 웃었다",
+          "다윗을 비난하며 기뻐했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 20:34 — '요나단이 심히 노하여 식사 자리에서 떠나고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "요나단은 다윗에게 위험을 알리려고 들판에서 무엇으로 신호를 보냈습니까?",
+        "choices": [
+          "화살을 쏘아 신호를 보냈다",
+          "성문에 금패를 걸었다",
+          "언약궤를 들고 갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 20:36-37 — '아이에게 이르되 달려가서 나의 쏘는 살을 찾으라 ... 살이 네 앞편에 있지 아니하냐'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "No readable labels.",
+      "No readable labels.",
+      "Keep the spear scene non-graphic; no blood or injury. No readable labels.",
+      "Make the arrow signal visually clear without written words or speech bubbles."
+    ]
+  },
+  {
+    "title": "다윗이 사울을 살려주다: 동굴의 순간",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "saul"
+    ],
+    "landmark_code": "lm_mon_engedi",
+    "place_name": "엔게디(전승)",
+    "lat": 31.46,
+    "lng": 35.39,
+    "summary": "다윗은 복수의 기회를 놓아주며 ‘손대지 않음’으로 자신의 길을 지킨다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗이 사울을 살려주다」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "24:1",
+        "to": "24:22"
+      }
+    ],
+    "start_year": -1012,
+    "end_year": -1012,
+    "time_precision": "approx",
+    "story_index": 9,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "다윗 일행이 동굴 깊은 곳에 몸을 숨기고 긴장한 채 웅크리고 있고, 동굴 입구에는 집요한 질투로 얼굴이 굳은 사울이 어두운 왕복을 입고 아무것도 모른 채 들어온다",
+      "다윗이 칼을 들었지만 사울을 해치지 않고 겉옷 자락만 조용히 자르며, 다윗의 얼굴에는 경외와 망설임이 함께 보인다. 피와 폭력은 보이지 않는다",
+      "동굴 밖에서 다윗이 잘라낸 사울의 겉옷 자락을 들고 멀리 있는 사울에게 자신이 해치지 않았음을 보이며, 사울은 충격과 부끄러움으로 눈물을 글썽인다"
+    ],
+    "scene_captions": [
+      "다윗 일행이 동굴 깊은 곳에 몸을 숨기고 긴장한 채 웅크리고 사울이 들어온다",
+      "다윗은 복수의 기회 앞에서 사울의 옷자락만 자른다",
+      "동굴 밖에서 다윗이 잘라낸 사울의 겉옷 자락을 들고 멀리 있는 사울에게 자신이 해치지 않았음을 보인다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사울이 동굴에 들어갔을 때 다윗이 있던 곳은 어디입니까?",
+        "choices": [
+          "엔게디 황무지",
+          "브엘세바 광야",
+          "유다 광야"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 24:1 — '다윗이 엔게디 황무지에 있더이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗은 사울을 해칠 기회를 얻었을 때 어떻게 하였습니까?",
+        "choices": [
+          "여호와의 기름 부음 받은 자이므로 손을 대지 않았다",
+          "사울의 겉옷만 베고 용서를 구하였다",
+          "부하들에게 명하여 사울을 잡아두었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 24:6 — '내가 손을 들어 여호와의 기름 부음을 받은 내 주를 치는 것은 여호와의 금하시는 것이니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "다윗이 막은 뒤 사울은 어떻게 했습니까?",
+        "choices": [
+          "굴에서 나와 자기 길로 갔다",
+          "다윗에게 곧바로 절했다",
+          "다윗의 사람들을 잡아갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 24:7 — '다윗이 이 말로 자기 사람들을 금하여 사울을 해하지 못하게 하니라 사울이 일어나 굴에서 나가 자 기 길을 가니라'"
+      }
+    ]
+  },
+  {
+    "title": "십 광야: 창과 물통",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "saul"
+    ],
+    "landmark_code": "lm_mon_engedi",
+    "place_name": "십 광야(전승)",
+    "lat": 31.49,
+    "lng": 35.12,
+    "summary": "사울이 또 다윗을 쫓지만, 다윗은 밤에 사울의 진영에 들어가 창과 물통만 가져오며 다시 사울을 해치지 않는다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「십 광야」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "26:1",
+        "to": "26:25"
+      }
+    ],
+    "start_year": -1011,
+    "end_year": -1011,
+    "time_precision": "approx",
+    "story_index": 10,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "사울이 3000명의 군사를 거느리고 십 광야 언덕과 골짜기 사이에서 다윗을 찾는 장면. 많은 군사는 먼 배경의 질서 있는 행렬로 보이고, 사울은 앞쪽에서 집요한 질투와 악한 두려움이 섞인 굳은 표정으로 지휘한다",
+      "어두운 밤, 다윗이 사울이 잠든 장막 안으로 조용히 들어가 머리맡에 놓인 창과 물통만 들고 빠져나오는 장면. 사울과 군사들은 깊이 잠들어 있고, 폭력이나 피는 보이지 않는다",
+      "다윗이 멀리 산꼭대기에 서서 사울의 물통과 창을 들어 보이며 아브넬에게 호통치는 장면. 아래쪽 진영에는 아브넬과 군사들이 놀라 올려다보고, 글자는 보이지 않는다",
+      "사울이 다윗을 보고 미안한 마음으로 울며 고개를 숙이고, 멀리 산꼭대기의 다윗은 물통과 창을 들고 그 모습을 바라보는 장면. 두 사람 사이의 거리가 분명히 느껴지고, 사울의 뒤에는 군대가 있다"
+    ],
+    "scene_captions": [
+      "사울이 3000명의 군사를 거느리고 십 광야 언덕과 골짜기 사이에서 다윗을 찾는다",
+      "다윗이 사울의 진영에서 창과 물통만을 가지고 나온다",
+      "다윗이 멀리 산꼭대기에 서서 사울의 물통과 창을 들어 보이며 아브넬에게 호통친다",
+      "사울이 다윗을 보고 미안한 마음으로 울며 고개를 숙인다"
+    ],
+    "scene_characters": [
+      [
+        "saul"
+      ],
+      [
+        "david",
+        "saul"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david",
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사울은 다윗을 찾으려고 몇 명을 거느리고 십 광야로 내려갔습니까?",
+        "choices": [
+          "삼천 명",
+          "삼백 명",
+          "열두 명"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 26:2 — '사울이 일어나 십 황무지에서 다윗을 찾으려고 이스라엘에서 택한 사람 삼천명과 함께 십 황무지로 내려가서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗은 밤에 사울의 진영에 들어갔을 때 사울을 어떻게 하지 않았습니까?",
+        "choices": [
+          "사울을 해치지 않았다",
+          "사울에게 창을 던졌다",
+          "사울을 블레셋에 넘겼다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 26:9 — '다윗이 아비새에게 이르되 죽이지 말라 누구든지 손을 들어 여호와의 기름 부음을 받은 자를 치면 죄가 없겠느냐'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "다윗은 사울을 해치지 않았음을 보이려고 무엇을 가져갔습니까?",
+        "choices": [
+          "사울의 창과 물병",
+          "사울의 왕관과 겉옷",
+          "언약궤와 나팔"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 26:12 — '다윗이 사울의 머리 곁에서 창과 물병을 가지고 떠나가되'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show the 3000 soldiers as a background army mass without readable numbers or labels.",
+      "Night stealth scene only; David takes the spear and water jug without harming Saul. No gore, no injury.",
+      "Abner has no reference avatar. Show him as an unnamed commander in the distant camp. No readable labels or speech text.",
+      "Show Saul repentant and emotional from a distance, with David still separated on the hill. No readable labels."
+    ]
+  },
+  {
+    "title": "엔돌의 밤: 사무엘의 경고",
+    "era": "era_monarchy",
+    "characters": [
+      "saul",
+      "samuel"
+    ],
+    "landmark_code": "lm_mon_endor",
+    "place_name": "엔돌(전승)",
+    "lat": 32.6436,
+    "lng": 35.3902,
+    "summary": "사울은 블레셋 군대 앞에서 두려움에 사로잡혀 금지된 길을 찾고, 사무엘의 경고 앞에서 무너진다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「엔돌의 밤」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "28:1",
+        "to": "28:25"
+      }
+    ],
+    "start_year": -1010,
+    "end_year": -1010,
+    "time_precision": "approx",
+    "story_index": 11,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "블레셋 군대가 수넴 들판에 진을 치고, 사울이 그 군대를 바라보며 두려워 떨고 있는 장면. 사울은 왕복을 입었지만 얼굴에는 공포와 불안이 분명하고, 전투나 폭력은 직접 보이지 않는다",
+      "어두운 밤, 사울이 평범한 겉옷으로 변장한 채 엔돌의 신접한 여인에게 찾아가 사무엘의 영을 불러 달라고 부탁하는 장면. 신접한 여인은 40대 후반의 여인, 짙은 남색 머리덮개와 갈색 겉옷, 좁은 등불 곁에 선 같은 모습으로 표현한다. 주술적 상징은 과장하지 않고, 글자는 보이지 않는다",
+      "희미하고 엄숙한 빛 속에 사무엘의 영이 사울 앞에 나타나고, 사울은 땅에 엎드려 두려워한다. 큰 글자 없는 말풍선 안에는 사울과 아들들이 곧 전쟁에서 쓰러질 것을 상징하는 어두운 길보아 전장 그림이 담겨 있다. 피와 시신은 직접 보이지 않는다",
+      "넋이 나간 사울이 신접한 여인의 집 안 낮은 자리에서 살진 송아지 한 마리로 급히 준비한 음식과 누룩 없는 빵을 먹고 있는 장면. 같은 신접한 여인이 짙은 남색 머리덮개와 갈색 겉옷으로 조용히 곁에 서 있으며, 사울은 창백하고 무너진 표정이다"
+    ],
+    "scene_captions": [
+      "블레셋 군대가 수넴 들판에 진을 치자, 사울이 그 군대를 바라보며 두려워 떨고 있다",
+      "어두운 밤, 사울이 평범한 겉옷으로 변장한 채 엔돌의 신접한 여인에게 찾아가 사무엘의 영을 요구한다",
+      "희미하고 엄숙한 빛 속에 사무엘의 영이 사울 앞에 나타나다",
+      "사무엘의 경고 앞에 사울은 넋이 나가 온종일 굶다가 여자가 차린 음식을 먹고 떠난다"
+    ],
+    "scene_characters": [
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "saul",
+        "samuel"
+      ],
+      [
+        "saul"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "블레셋 군대를 본 사울은 마음이 어떠했습니까?",
+        "choices": [
+          "크게 두려워 떨었다",
+          "기뻐하며 잔치를 열었다",
+          "곧바로 다윗에게 도움을 구했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 28:5 — '사울이 블레셋 사람의 군대를 보고 두려워서 그 마음이 크게 떨린지라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사울은 하나님께 응답을 받지 못하자 누구를 찾게 했습니까?",
+        "choices": [
+          "신접한 여인",
+          "블레셋 왕",
+          "성전 제사장"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 28:7 — '나를 위하여 신접한 여인을 찾으라 내가 그리로 가서 그에게 물으리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사무엘은 사울에게 전쟁의 결과를 어떻게 경고했습니까?",
+        "choices": [
+          "사울과 아들들이 함께 넘겨질 것이라고 경고했다",
+          "사울이 곧 왕국을 회복할 것이라고 말했다",
+          "다윗이 블레셋 편이 될 것이라고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 28:19 — '여호와께서 이스라엘도 너와 함께 블레셋 사람의 손에 붙이시리니 내일 너와 네 아들들이 나와 함께 있으리라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show the Philistine army as a distant threatening camp, not a battle scene. No gore or bodies.",
+      "The medium of Endor has no reference avatar. Keep her consistent in scenes 2 and 4: late-40s woman, dark navy head covering, brown outer robe, weathered face, small oil lamp. No readable labels, no occult symbols as text.",
+      "Samuel appears as a solemn pale spiritual figure, not frightening horror. Use a text-free pictorial speech bubble for the warning. No readable words, no gore, no bodies.",
+      "Keep the same medium of Endor from scene 2. Show food plainly: a prepared calf meal and unleavened bread. No readable labels."
+    ]
+  },
+  {
+    "title": "길보아의 패배: 사울의 최후",
+    "era": "era_monarchy",
+    "characters": [
+      "saul"
+    ],
+    "landmark_code": "lm_mon_mt_gilboa",
+    "place_name": "길보아 산(전승)",
+    "lat": 32.56,
+    "lng": 35.41,
+    "summary": "길보아 전투에서 사울과 이스라엘은 무너지고, 첫 왕정의 어두운 끝이 드러난다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「길보아의 패배」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼상",
+        "from": "31:1",
+        "to": "31:6"
+      }
+    ],
+    "start_year": -1010,
+    "end_year": -1010,
+    "time_precision": "approx",
+    "story_index": 12,
+    "unit_code": "monarchy_saul_rise_fall",
+    "unit_title": "사울 시대: 왕의 시작과 몰락",
+    "unit_order": 1,
+    "story_scenes": [
+      "길보아 산 능선에서 블레셋 군대가 활과 방패를 들고 거세게 밀려오고, 이스라엘 군사들은 흩어져 도망한다. 사울은 왕의 갑옷을 입고 언덕 위에서 전세가 무너지는 것을 바라보며 두려움에 굳어 있다. 피와 시신은 직접 보이지 않는다",
+      "블레셋 궁수들의 화살이 사울의 방패와 갑옷에 박히고, 사울은 크게 다친 듯 무릎을 꿇은 채 자기 병기 든 자에게 자신을 끝내 달라고 절박하게 손짓한다. 병기 든 자는 두려워하며 뒤로 물러나고, 피와 상처의 세부 묘사는 보이지 않는다",
+      "병기 든 자가 거절한 뒤, 사울이 자기 칼을 땅에 세우고 그 위에 엎드린 결과가 길보아 산 전장 한쪽에서 멀리 보인다. 직접 찌르는 순간은 보이지 않고, 사울의 왕관과 방패가 곁에 떨어져 있어 사울의 죽음이 분명히 느껴진다. 피와 상처는 보이지 않는다",
+      "길보아 산 위에 사울의 왕관과 갑옷과 꺾인 깃발이 버려져 있고, 살아남은 이스라엘 군사들이 멀리 흩어져 달아난다. 블레셋 군대는 멀리서 전장을 장악하고 있으며, 첫 왕정의 비극적 끝이 상징적으로 드러난다. 시신과 피는 직접 보이지 않는다"
+    ],
+    "scene_captions": [
+      "길보아 산 능선에서 블레셋 군대가 활과 방패를 들고 거세게 밀려온다",
+      "블레셋 궁수들의 화살이 사울의 방패와 갑옷에 박히고 군사에게 죽여달라고 한다",
+      "사울은 스스로 목숨을 끊는다",
+      "길보아 산 위에 사울의 왕관과 갑옷과 꺾인 깃발이 버려져 있다"
+    ],
+    "scene_characters": [
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      [
+        "saul"
+      ],
+      []
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "길보아 전투에서 이스라엘 사람들은 블레셋 앞에서 어떻게 되었습니까?",
+        "choices": [
+          "도망하다가 길보아 산에서 쓰러졌다",
+          "여리고 성을 다시 점령했다",
+          "모압 평지로 평화롭게 돌아갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 31:1 — '이스라엘 사람들이 블레셋 사람 앞에서 도망하여 길보아 산에서 엎드러져 죽으니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "블레셋 사람들이 사울을 집중해서 공격하자 사울은 어떤 상태가 되었습니까?",
+        "choices": [
+          "크게 군급하였다",
+          "담대하게 성전을 지었다",
+          "기쁨으로 노래하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 31:3 — '활 쏘는 자들이 사울을 따라 미치매 사울이 그 활 쏘는 자를 인하여 중상한지라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사울과 그의 세 아들이 넘어진 날 사울의 집에는 어떤 일이 일어났습니까?",
+        "choices": [
+          "사울과 세 아들이 함께 죽었다",
+          "사울이 왕위를 다윗에게 곧 넘겼다",
+          "사울의 아들들이 모두 왕이 되었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼상 31:6 — '사울과 그 세 아들과 병기 든 자와 그의 모든 사람이 다 그 날에 함께 죽었더라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show the battle action clearly: Philistine soldiers advancing and Israelite soldiers fleeing on Mount Gilboa. Keep it non-graphic: no blood, no bodies, no visible wounds.",
+      "Show Saul hit by arrows through arrows stuck in shield and armor, not through visible wounds. Show him urgently gesturing to his armor-bearer, who refuses in fear. No readable speech text, no blood.",
+      "Convey Saul falling on his own sword as a distant, non-graphic result. Do not show the blade entering the body, blood, wounds, or a close-up of the act. Use crown, shield, and posture to make the death clear.",
+      "Symbolic aftermath only: abandoned crown, armor, broken banner, fleeing Israelite soldiers, distant Philistine control of the field. No gore, no bodies, no readable labels."
+    ]
+  },
+  {
+    "title": "다윗 즉위: 한 왕국으로",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "헤브론 → 예루살렘(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "이스라엘 장로들이 다윗을 왕으로 세우고, 하나님이 함께하심으로 다윗은 예루살렘을 얻어 왕국의 중심을 세운다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗 즉위」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "5:1",
+        "to": "5:16"
+      }
+    ],
+    "start_year": -1000,
+    "end_year": -1000,
+    "time_precision": "approx",
+    "story_index": 13,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "헤브론에서 이스라엘 장로들이 다윗 앞에 모여 언약을 맺고, 장로들이 다윗의 머리에 기름을 부어 온 이스라엘의 왕으로 세우는 장면. 사무엘은 보이지 않고, 글자도 보이지 않는다",
+      "하나님의 밝은 임재의 빛이 다윗과 함께하는 가운데, 다윗이 군사들을 이끌고 예루살렘 성을 점령해 성문 안으로 들어가는 장면. 다윗은 담대하게 앞장서고, 성벽과 성문이 분명히 보이며, 피와 시신은 보이지 않는다",
+      "두로 왕 히람이 보낸 사절들이 백향목 목재와 목수와 석수를 예루살렘에 가져오고, 일꾼들이 다윗을 위해 왕궁을 짓는 장면. 다윗은 새 왕궁 공사를 바라보며 하나님이 나라를 세우심을 깨닫는 표정이다",
+      "완성된 예루살렘 왕궁 안에서 다윗이 왕실 가족과 함께 서 있고, 여러 아내와 첩들은 단정한 고대 왕실 의복을 입은 어른들로, 아들딸들은 곁에서 밝게 지낸다. 하나님의 보호하심에 다윗은 감사한 얼굴"
+    ],
+    "scene_captions": [
+      "헤브론에서 이스라엘 장로들이 다윗을 기름부어 왕으로 세운다",
+      "다윗이 하나님의 보호 아래 점점 강성해진다",
+      "두로 왕 히람이 백향목 목재와 목수와 석수를 예루살렘에 가져와 다윗 왕궁을 지어준다",
+      "완성된 예루살렘 왕궁 안에서 다윗이 왕실 가족과 함께 서 있다"
+    ],
+    "scene_characters": [
+      [
+        "david"
+      ],
+      [
+        "god",
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "god",
+        "david"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "이스라엘 장로들은 헤브론에서 다윗에게 무엇을 하였습니까?",
+        "choices": [
+          "다윗에게 기름을 부어 왕으로 세웠다",
+          "다윗을 블레셋으로 돌려보냈다",
+          "다윗에게 성전을 허물라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 5:3 — '이스라엘 모든 장로가 헤브론에 이르러 왕에게 나아오매 ... 저희가 다윗에게 기름을 부어 이스라엘 왕을 삼으니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗이 점점 강성해진 까닭은 무엇입니까?",
+        "choices": [
+          "만군의 하나님 여호와께서 함께 계셨기 때문이다",
+          "블레셋 왕이 다윗에게 왕관을 주었기 때문이다",
+          "사울의 군대가 모두 다윗을 떠났기 때문이다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 5:10 — '만군의 하나님 여호와께서 함께 계시니 다윗이 점점 강성하여 가니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "두로 왕 히람은 다윗을 위해 무엇을 보내 왕궁을 짓게 했습니까?",
+        "choices": [
+          "백향목과 목수와 석수",
+          "금송아지와 제단",
+          "양털과 물동이"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 5:11 — '두로 왕 히람이 다윗에게 사자들과 백향목과 목수와 석수를 보내매 저희가 다윗을 위하여 집을 지으니'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "The elders have no reference avatars. Show them as unnamed Israelite elders anointing David at Hebron. Do not show Samuel. No readable labels.",
+      "Show God only as holy light or radiant presence with David, not as a human figure. Show conquest without gore, bodies, or visible wounds.",
+      "Hiram has no reference avatar. Show foreign messengers and builders as unnamed figures with cedar timber, carpenters, and stoneworkers. No readable labels.",
+      "Show wives and concubines modestly as adult royal household members, with sons and daughters nearby."
+    ]
+  },
+  {
+    "title": "언약궤 입성: 춤과 기쁨",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "다윗은 언약궤가 들어올 때 온 마음으로 기뻐하며 예배한다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「언약궤 입성」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "6:1",
+        "to": "6:23"
+      }
+    ],
+    "start_year": -1000,
+    "end_year": -1000,
+    "time_precision": "approx",
+    "story_index": 14,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "언약궤를 실은 새 수레를 끄는 소들이 갑자기 뛰어 언약궤가 흔들리고, 웃사가 두 손을 뻗어 언약궤가 떨어지지 않게 붙잡으려는 장면. 웃사는 30대 이스라엘 남자, 베이지색 튜닉과 짙은 청록색 겉옷을 입은 같은 모습으로 보이며, 글자는 보이지 않는다",
+      "웃사가 언약궤와 소들 곁에 쓰러져 움직이지 않고, 위에서는 하나님의 거룩한 진노를 상징하는 엄중한 금빛과 붉은 빛이 내려온다. 주변 사람들은 놀라 물러나고, 피와 상처와 시신의 세부 묘사는 보이지 않는다",
+      "다윗이 두려움으로 언약궤 앞에서 멈추어 고개를 숙이고, 손을 들어 수레가 더 나아가지 못하게 하며 주변 사람들은 숨죽여 바라본다",
+      "언약궤가 예루살렘 성안으로 들어오자 다윗이 기뻐 힘을 다해 춤추며 겉옷이 벗겨지듯 흘러내리고 세마포 에봇 차림이 드러나는 장면. 노출이나 성적 묘사는 없고, 미갈은 궁 창가 멀리서 못마땅한 표정으로 다윗을 지켜본다"
+    ],
+    "scene_captions": [
+      "언약궤를 실은 새 수레를 끄는 소들이 갑자기 뛰어 언약궤가 흔들리고 웃사가 잡는다",
+      "웃사가 하나님의 진노에 죽는다",
+      "다윗이 오벧에돔에서 다시 언약궤를 모셔오기 위해 고개를 숙인다",
+      "다윗이 기뻐 힘을 다해 춤추며 겉옷이 벗겨질 정도로 기뻐하고, 미갈은 비웃는다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "god"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "나곤의 타작마당에서 소들이 뛰자 웃사는 무엇을 하였습니까?",
+        "choices": [
+          "손을 들어 하나님의 궤를 붙들었다",
+          "다윗에게 예루살렘으로 돌아가자고 말했다",
+          "수레를 버리고 광야로 도망했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 6:6 — '소들이 뛰므로 웃사가 손을 들어 하나님의 궤를 붙들었더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "언약궤가 다윗 성으로 들어올 때 다윗은 여호와 앞에서 어떻게 하였습니까?",
+        "choices": [
+          "힘을 다하여 춤을 추었다",
+          "두려워 숨어 있었다",
+          "말없이 왕궁으로 돌아갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 6:14 — '다윗이 여호와 앞에서 힘을 다하여 춤을 추는데 때에 베 에봇을 입었더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "미갈은 다윗이 뛰놀며 춤추는 모습을 보고 마음으로 어떻게 하였습니까?",
+        "choices": [
+          "다윗을 업신여겼다",
+          "다윗과 함께 춤추었다",
+          "언약궤를 직접 메었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 6:16 — '사울의 딸 미갈이 창으로 내다보다가 다윗 왕이 여호와 앞에서 뛰놀며 춤추는 것을 보고 심중에 저를 업신여기니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Uzzah has no reference avatar. Keep him consistent in scenes 1 and 2: Israelite man in his 30s, beige tunic, dark teal outer robe, short dark beard. Show the oxen startling and the ark wobbling. No readable labels.",
+      "Show God only as holy judgment light, not as a human figure. Show Uzzah's death non-graphically: motionless beside the ark and oxen, no blood, no visible wounds, no close-up body detail.",
+      "Keep this reverent and simple: David bows before the ark. No readable labels.",
+      "Show David's outer garment slipping while he dances in a modest linen ephod; no nudity, no erotic framing. Michal has no reference avatar; show her as an unnamed royal woman watching disapprovingly from a distant palace window."
+    ]
+  },
+  {
+    "title": "다윗 언약: 집을 세우리라",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "nathan",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "하나님은 다윗에게 ‘네 집과 왕위를 견고케 하겠다’는 약속을 주신다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗 언약」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "7:1",
+        "to": "7:17"
+      }
+    ],
+    "start_year": -995,
+    "end_year": -995,
+    "time_precision": "approx",
+    "story_index": 15,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "으리으리한 백향목 궁전 안에서 다윗이 나단을 불러, 자신은 백향목 궁에 살지만 하나님의 언약궤는 장막 안에 있으니 하나님을 위한 집을 짓고 싶다고 제안하는 장면. 나단은 곁에서 진지하게 듣고, 궁전의 기둥과 백향목 장식이 분명히 보인다",
+      "두 구역으로 나눈 장면: 한쪽에는 밤에 나단이 하나님의 음성을 듣고 경외하는 모습, 다른 한쪽에는 다음 날 나단이 다윗에게 와서 하나님이 다윗의 마음을 아시고 기뻐하시며, 성전은 후손이 짓고 하나님이 다윗의 집과 왕위를 세우시겠다는 약속을 전하는 모습. 하나님의 음성은 밝은 빛으로만 표현되고 글자는 보이지 않는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다",
+      "다윗이 성막 안으로 들어가 언약궤 가까이에 앉아 하나님께 감사 기도를 드리고, 주변에는 하나님의 부드러운 빛이 가득한 장면. 다윗은 겸손하게 고개를 숙이고, 왕관과 화려한 권위보다 감사와 경외가 강조된다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "다윗이 나단을 불러 하나님의 장막을 짓고 싶다는 이야기를 한다",
+      "밤에 나단이 하나님의 음성을 듣고 다윗에게 하나님의 말씀을 전한다",
+      "다윗이 성막 안으로 들어가 언약궤 가까이에 앉아 하나님께 감사 기도를 드린다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "god",
+        "nathan",
+        "david"
+      ],
+      [
+        "god",
+        "david"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗은 나단에게 하나님의 궤가 어디에 있다고 말했습니까?",
+        "choices": [
+          "휘장 가운데 있다고 말했다",
+          "블레셋 성읍에 있다고 말했다",
+          "백향목 궁전 안에 있다고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 7:2 — '나는 백향목 궁에 거하거늘 하나님의 궤는 휘장 가운데 있도다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하나님은 다윗에게 누가 하나님의 이름을 위한 집을 지을 것이라고 말씀하셨습니까?",
+        "choices": [
+          "다윗의 뒤에 날 자식",
+          "사울의 집 사람들",
+          "두로 왕 히람"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 7:12-13 — '네 뒤에 날 자식을 세워 ... 저는 내 이름을 위하여 집을 건축할 것이요'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 다윗의 집과 나라와 위가 어떻게 될 것이라고 약속하셨습니까?",
+        "choices": [
+          "영원히 견고할 것이라고 약속하셨다",
+          "곧 블레셋에게 넘겨질 것이라고 하셨다",
+          "광야로 다시 흩어질 것이라고 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 7:16 — '네 집과 네 나라가 네 앞에서 영원히 보전되고 네 위가 영원히 견고하리라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show David inside a cedar palace speaking to Nathan about the ark still dwelling in a tent. No readable speech text or labels.",
+      "Use a split composition to show Nathan hearing God at night and then reporting the covenant to David. Show God only as holy light or voice-like radiance, never as a human figure. Include a text-free symbolic speech bubble showing a future temple, a royal house, and an enduring throne.",
+      "Show David praying in the tent near the ark with gentle divine light. No readable text, no human depiction of God."
+    ]
+  },
+  {
+    "title": "다윗과 밧세바: 무너진 마음",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "god",
+      "bathsheba"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘 왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "다윗은 왕궁에 머물며 은밀한 죄를 저지르고, 그 악함은 하나님 앞에 드러난다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗과 밧세바」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "11:1",
+        "to": "11:27"
+      }
+    ],
+    "start_year": -990,
+    "end_year": -990,
+    "time_precision": "approx",
+    "story_index": 16,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "저녁 무렵 예루살렘 왕궁 옥상에서 왕복을 느슨히 걸친 다윗이 아래 뜰을 내려다보고, 낮은 가림막 뒤에서는 밧세바가 물동이와 목욕 천으로 목욕하는 모습이 멀리 보인다. 노출이나 선정적 묘사는 없다",
+      "왕궁 안에서 다윗이 사자를 보내 밧세바를 부르게 하고, 장면 한쪽에는 밧세바가 엄숙한 궁전 복도에서 다윗 앞에 서며, 다른 한쪽에는 시간이 지나 밧세바가 조심스럽게 배를 감싸 임신 소식을 전하는 상징 장면이 보인다. 침실이나 성적 장면은 없다",
+      "다윗이 헷 사람 우리아를 전쟁터에서 앞장 서서 싸우게 하고,우리아는 요압 군대에 쓰러진다",
+      "우리아의 죽음 소식에 궁전 안에서 다윗은 무거운 얼굴로 밧세바를 위로하고 밧세바는 검소한 상복 차림으로 조용히 울고, 위쪽에는 하나님이 다윗의 악함을 보시는 듯한 엄중한 금빛과 붉은 빛이 왕궁을 비춘다."
+    ],
+    "scene_captions": [
+      "저녁 무렵 다윗이 옥상에서 목욕중인 밧세바를 본다",
+      "다윗이 밧세바를 부르고 임신시킨다",
+      "다윗이 헷 사람 우리아를 전쟁터에서 앞장 서서 싸우게 한다",
+      "다윗은 밧세바를 위로하고 하나님은 이를 악하다 하신다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "bathsheba"
+      ],
+      [
+        "david",
+        "bathsheba"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david",
+        "bathsheba",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗이 왕궁 지붕에서 본 여인은 누구의 아내였습니까?",
+        "choices": [
+          "헷 사람 우리아의 아내 밧세바",
+          "나단 선지자의 딸",
+          "요압의 아내"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 11:3 — '그는 엘리암의 딸이요 헷사람 우리아의 아내 밧세바가 아니니이까'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗은 우리아를 어떻게 하라는 편지를 요압에게 보냈습니까?",
+        "choices": [
+          "맹렬한 싸움 앞에 세우고 뒤로 물러가게 하라고 했다",
+          "전쟁을 멈추고 우리아를 쉬게 하라고 했다",
+          "우리아에게 큰 상을 주라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 11:15 — '우리아를 맹렬한 싸움에 앞세워 두고 너희는 뒤로 물러가서 저로 맞아 죽게하라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "우리아가 죽은 뒤 본문은 다윗의 행동을 어떻게 평가합니까?",
+        "choices": [
+          "여호와 보시기에 악하였다",
+          "하나님이 곧바로 칭찬하셨다",
+          "아무 잘못도 없다고 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 11:27 — '다윗의 소위가 여호와 보시기에 악하였더라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Bathsheba as a dignified Jerusalem woman with dark braided hair, a deep blue outer shawl, and a bronze water jar. No nudity, no sexualized framing, no readable labels.",
+      "Use a split composition for summons and pregnancy news. Keep Bathsheba visually consistent with scene 1. No bedroom scene, no sexual act, no readable text.",
+      "",
+      "Show God only as holy judgment light, never as a human figure. Keep Bathsheba visually consistent and grieving. No gore, no body, no readable labels."
+    ]
+  },
+  {
+    "title": "나단의 책망: 그 사람이라",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "nathan",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘 왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "나단은 비유로 다윗의 죄를 드러내고, 다윗은 아이를 위해 하나님 앞에 엎드린다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「나단의 책망」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "12:1",
+        "to": "12:23"
+      }
+    ],
+    "start_year": -990,
+    "end_year": -990,
+    "time_precision": "approx",
+    "story_index": 17,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "예루살렘 왕궁에서 나단 선지자가 다윗 앞에 서서 비유를 들려주고, 큰 글자 없는 말풍선 안에는 많은 양을 가진 부자가 가난한 사람의 작은 어린 양을 빼앗아 가는 그림이 담겨 있다",
+      "다윗이 왕좌에서 일어나 의로운 분노로 나단에게 그 부자는 잘못했고 네 배로 갚아야 한다고 말하며, 큰 글자 없는 말풍선 안에는 부자가 가난한 사람에게 어린 양 네 마리를 돌려주는 그림이 담겨 있다",
+      "나단이 다윗을 향해 단호하게 손가락질하며 책망하고, 다윗은 충격으로 굳어 있다. 큰 글자 없는 말풍선 안에는 병든 아기를 상징하는 어두운 빈 요람과 꺼져 가는 작은 등불이 보인다. 죽음이나 시신은 직접 보이지 않는다",
+      "다윗이 왕궁 바닥에 엎드려 금식하며 하나님께 아이를 살려 달라고 밤새 기도하고, 신하들은 멀리서 걱정스럽게 지켜본다. 위쪽에는 사람 형상 없는 하나님의 조용한 빛이 드리운다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 잘못된 길에서 돌이키라는 경고와 멈춰 선 사람들이 보이는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "예루살렘 왕궁에서 나단 선지자가 다윗 앞에 서서 비유를 들려준다",
+      "다윗이 왕좌에서 일어나 의로운 분노로 나단에게 그 부자는 잘못했고 네 배로 갚아야 한다고 말한다",
+      "나단이 다윗을 향해 단호하게 손가락질하며 그게 바로 당신이라고, 아이가 죽을 것임을 말한다",
+      "다윗이 왕궁 바닥에 엎드려 금식하며 하나님께 아이를 살려 달라고 밤새 기도한다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "david",
+        "nathan"
+      ],
+      [
+        "david",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "나단의 비유에서 부자는 가난한 사람에게 무엇을 했습니까?",
+        "choices": [
+          "가난한 사람의 작은 암양 새끼를 빼앗았다",
+          "가난한 사람에게 자기 양 떼를 나누어 주었다",
+          "가난한 사람을 왕궁 잔치에 초대했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 12:4 — '가난한 사람의 양 새끼를 빼앗아다가 자기에게 온 사람을 위하여 잡았나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "비유를 들은 다윗은 그 일을 한 사람에 대해 어떻게 반응했습니까?",
+        "choices": [
+          "크게 노하며 네 배로 갚아야 한다고 말했다",
+          "그 일을 지혜롭다고 칭찬했다",
+          "나단의 말을 듣지 않고 자리를 떠났다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 12:5-6 — '다윗이 그 사람을 크게 노하여... 그 양 새끼를 사 배나 갚아 주어야 하리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "나단의 책망 뒤에 다윗은 아이를 위해 어떻게 했습니까?",
+        "choices": [
+          "금식하며 밤새도록 땅에 엎드려 하나님께 간구했다",
+          "곧바로 큰 잔치를 열어 신하들을 불렀다",
+          "전쟁터로 나가 요압을 책망했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 12:16 — '다윗이 그 아이를 위하여 하나님께 간구하되 금식하고 안에 들어가서 밤새도록 땅에 엎드렸으니'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Use a text-free pictorial speech bubble only; show the rich man, poor man, and lamb clearly with no readable labels.",
+      "Use a text-free pictorial speech bubble showing four lambs returned as repayment. No readable numbers or labels.",
+      "Show Nathan's accusation through posture and gesture, not readable text. The speech bubble symbolizes the child's severe illness with an empty cradle and dim lamp; no body, no death scene, no gore.",
+      "Show God only as gentle solemn light, never as a human figure. No depiction of the child, no readable labels."
+    ]
+  },
+  {
+    "title": "암논과 다말: 압살롬의 분노",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "absalom"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘 왕궁/바알하솔(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "암논의 죄와 다말의 눈물은 압살롬의 분노로 이어지고, 다윗의 집에는 깊은 상처가 남는다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「암논과 다말」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "13:1",
+        "to": "13:39"
+      }
+    ],
+    "start_year": -987,
+    "end_year": -985,
+    "time_precision": "approx",
+    "story_index": 18,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "예루살렘 왕궁 뜰, 다윗의 아들 암논이 20대 왕자 모습으로 다말을 집요하게 바라보며 따라가고, 20대 공주 다말은 화려한 채색 긴 옷을 입고 불편한 표정으로 거리를 두는 장면. 성적 묘사는 전혀 보이지 않는다",
+      "암논이 병든 척 침대에 누워 있고, 다말이 구운 빵과 과자를 들고 방 안으로 들어오자 암논이 손목을 붙잡아 침상 쪽으로 끌어당기려 하며 다말은 놀라 뒤로 물러나는 장면. 침실 장면은 위협의 순간만 보이고 성폭력 행위나 노출은 직접 보이지 않는다",
+      "머리에 재를 얹고 찢어진 채색 옷을 붙든 다말이 압살롬의 집으로 와서 울고, 20대 후반의 압살롬은 긴 머리와 왕자 복장으로 다말을 보호하듯 감싸며 분노를 억누르는 장면",
+      "세로 3등분 구도: 위에는 바알하솔 잔치에서 압살롬의 부하들이 암논에게 포도주를 권하고 암논이 취해 앉아 있는 모습, 가운데에는 부하들이 암논에게 달려들어 심판이 벌어지는 순간을 멀리서 보여주되 피와 상처는 보이지 않는 모습, 아래에는 60대 초반 다윗이 궁전에서 소식을 듣고 옷을 찢으며 통곡하고, 긴 머리의 압살롬은 먼 길로 도망하는 모습"
+    ],
+    "scene_captions": [
+      "모습으로 다말을 집요하게 바라보며 따라간다",
+      "암논이 병든 척 침대에 누워 있다가 다말을 범한다",
+      "다말이 압살롬의 집으로 와서 울고 압살롬은 분노한다",
+      "바알하솔 잔치에서 압살롬이 암논을 죽인다"
+    ],
+    "scene_characters": [
+      [],
+      [],
+      [
+        "absalom"
+      ],
+      [
+        "david",
+        "absalom"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "암논은 누구 때문에 마음이 병들 만큼 괴로워했습니까?",
+        "choices": [
+          "압살롬의 누이 다말",
+          "요압의 딸",
+          "드고아의 여인"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 13:2 — '암논이 그 누이 다말을 인하여 심화로 병이 되니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다말이 울며 압살롬에게 온 뒤 압살롬은 암논을 어떻게 대했습니까?",
+        "choices": [
+          "암논을 미워하며 마음에 분노를 품었다",
+          "암논을 왕 앞에서 칭찬했다",
+          "다말을 곧바로 왕궁 밖으로 보냈다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 13:22 — '압살롬이 그 누이 다말을 암논이 욕되게 하였으므로 저를 미워하여'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "암논이 죽었다는 소식이 다윗에게 이르자 다윗은 어떻게 했습니까?",
+        "choices": [
+          "옷을 찢고 땅에 엎드렸다",
+          "곧바로 잔치를 베풀었다",
+          "압살롬을 왕으로 세웠다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 13:31 — '왕이 곧 일어나서 그 옷을 찢고 땅에 엎드러지고'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Amnon and Tamar have no reference avatars. Show Amnon consistently as a handsome but troubled young prince in his 20s, short dark curls, burgundy tunic, gold sash. Show Tamar consistently as a dignified young princess in her 20s, long dark braided hair, colorful long-sleeved royal robe, cream-purple veil. No nudity, no sexualized framing, no readable labels.",
+      "Keep Amnon and Tamar visually consistent with scene 1. Show only the threatening moment before the assault; no sexual act, no nudity, no exposed body, no bed intimacy, no readable labels.",
+      "Keep Tamar visually consistent but grieving, with torn royal robe and ashes. Show Absalom younger than his later avatar, late 20s, long thick hair, protective posture. No readable labels.",
+      "Use a restrained split/vertical composition for feast, judgment, and aftermath. No gore, no visible wound, no corpse detail. Show David as early 60s with graying hair and beard; show Absalom fleeing, not celebrating. No readable labels."
+    ]
+  },
+  {
+    "title": "압살롬의 귀환: 멀어진 아버지",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "absalom"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘 왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "요압의 계책과 드고아 여인의 비유를 통해 압살롬은 돌아오지만, 부자의 관계는 쉽게 회복되지 않는다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「압살롬의 귀환」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "14:1",
+        "to": "14:33"
+      }
+    ],
+    "start_year": -984,
+    "end_year": -982,
+    "time_precision": "approx",
+    "story_index": 19,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "상복을 입은 드고아의 젊은 지혜로운 여인이 60대 초반 다윗 왕 앞에 엎드려 슬픈 얼굴로 자기 사정을 말하고, 큰 글자 없는 말풍선 안에는 들판에서 한 아들이 다른 아들을 쓰러뜨린 뒤 도망가는 그림이 담겨 있다. 폭력의 세부 묘사는 보이지 않는다",
+      "60대 초반의 다윗이 왕좌에서 드고아 여인에게 손을 들어 보호를 약속하고, 큰 글자 없는 말풍선 안에는 도망간 아들이 안전하게 집으로 돌아오며 왕의 보호 빛 아래 서 있는 그림이 담겨 있다",
+      "드고아 여인이 60대 초반의 다윗을 향해 조심스럽지만 단호하게 손짓하며 말하고, 큰 글자 없는 말풍선 안에는 긴 머리의 압살롬을 예루살렘으로 데려와야 한다는 상징 그림이 담겨 있다. 다윗은 깨달은 표정으로 굳어 있다",
+      "예루살렘 왕궁 안, 60대 초반의 다윗이 30대의 긴 머리 압살롬을 불러 끌어안고 입맞추며 맞이하지만, 두 사람 사이에는 아직 어색한 침묵과 거리감이 남아 있는 장면"
+    ],
+    "scene_captions": [
+      "상복을 입은 드고아의 지혜로운 여인이 초반 다윗 왕 앞에 엎드려 슬픈 얼굴로 자기 사정을 말한다",
+      "초반의 다윗이 왕좌에서 드고아 여인에게 손을 들어 보호를 약속한다",
+      "드고아 여인은 다윗에게 압살롬을 데려올 것을 말한다",
+      "예루살렘 왕궁 안, 다윗이 머리 압살롬을 불러 끌어안고 입맞추며 맞이한다"
+    ],
+    "scene_characters": [
+      [
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david",
+        "absalom"
+      ],
+      [
+        "david",
+        "absalom"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요압은 다윗의 마음이 압살롬에게 향한 줄 알고 누구를 데려왔습니까?",
+        "choices": [
+          "드고아의 지혜로운 여인",
+          "엔돌의 여인",
+          "모압의 공주"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 14:2 — '드고아에 보내어 거기서 슬기있는 여인 하나를 데려다가'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗은 여인의 남은 아들을 해치려는 사람들에 대해 무엇을 약속했습니까?",
+        "choices": [
+          "그 아들의 머리카락 하나도 떨어지지 않게 하겠다고 했다",
+          "그 아들을 곧 전쟁터로 보내겠다고 했다",
+          "그 일을 듣지 않은 척하겠다고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 14:11 — '네 아들의 머리카락 하나라도 땅에 떨어지지 아니하리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "압살롬이 왕 앞에 나아가 절하자 다윗은 어떻게 했습니까?",
+        "choices": [
+          "압살롬과 입을 맞추었다",
+          "압살롬을 다시 그술로 보냈다",
+          "압살롬을 감옥에 가두었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 14:33 — '왕이 압살롬을 부르니... 왕이 압살롬과 입을 맞추니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "The Tekoa woman has no reference avatar. Show her consistently in this story as the same young wise woman, olive-brown mourning veil, simple dark shawl, calm intelligent eyes. Use text-free pictorial speech bubbles only; no readable labels.",
+      "Keep the Tekoa woman visually consistent. The speech bubble should show protection and return, not readable words.",
+      "Keep the Tekoa woman visually consistent. Show Absalom in the speech bubble as a long-haired prince returning from exile, no readable text.",
+      "Show David as early 60s with graying hair and beard. Show Absalom around 30 with the avatar traits: long thick dark hair, royal prince clothing, handsome but restless presence. No readable labels."
+    ]
+  },
+  {
+    "title": "압살롬의 반역: 감람산의 눈물",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "absalom"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "헤브론 → 예루살렘/감람산(전승)",
+    "lat": 31.5326,
+    "lng": 35.0998,
+    "summary": "압살롬은 백성의 마음을 빼앗아 반역을 일으키고, 다윗은 눈물로 예루살렘을 떠난다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「압살롬의 반역」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "15:1",
+        "to": "15:37"
+      },
+      {
+        "book": "삼하",
+        "from": "17:1",
+        "to": "17:23"
+      }
+    ],
+    "start_year": -979,
+    "end_year": -979,
+    "time_precision": "approx",
+    "story_index": 20,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "헤브론 성문 근처, 30대의 긴 머리 압살롬이 병거와 말과 따르는 사람들을 세우고 몰래 반역을 도모하며, 주변 사람들의 손을 잡아 주지만 얼굴에는 사악하고 계산적인 미소가 드러나는 장면. 왕이 되었다는 글자나 깃발 문구는 보이지 않는다",
+      "예루살렘을 떠나는 60대 초반 다윗이 가족과 충성스러운 신하들과 함께 슬픈 표정으로 도망가고, 사독과 아비아달 제사장도 침통한 얼굴로 언약궤를 메고 서 있으며, 다윗이 제사장들에게 성쪽을 가리키며 언약궤를 다시 성으로 돌아가게 하라고 손짓하는 장면",
+      "감람산 길, 침통한 표정의 백성들이 다윗과 함께 울며 산을 오르고, 60대 초반 다윗은 신하 후새를 향해 침통하지만 단호한 표정으로 손으로 막아서며 예루살렘 궁전 방향을 가리키며 돌아가 압살롬 곁에서 아히도벨의 모략을 막아 달라고 부탁하는 장면",
+      "예루살렘 궁정 회의에서 노년의 신하 후새와 아히도벨이 압살롬 앞에서 조언한다. 후새의 마음속에는 다윗이 희미한 투명 이미지로 보이고, 압살롬은 악한 표정으로 후새의 조언을 선택한다. 곁의 아히도벨은 낙담한 표정을 짓는다. 죽음 장면은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "헤브론 성문 근처, 압살롬이 병거와 말과 따르는 사람들을 세우고 몰래 반역을 도모한다",
+      "압살롬은 백성의 마음을 빼앗아 반역을 일으키고, 다윗은 눈물로 예루살렘을 떠난다",
+      "감람산 길, 다윗은 후새에게 궁으로 돌아가서 압살롬을 막아줄 것을 부탁한다",
+      "예루살렘 궁정 회의에서 후새와 아히도벨이 압살롬 앞에서 조언하고 압살롬은 후새를 택한다"
+    ],
+    "scene_characters": [
+      [
+        "absalom"
+      ],
+      [
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "absalom"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "압살롬은 성문 길 곁에서 사람들에게 어떻게 하여 마음을 얻었습니까?",
+        "choices": [
+          "재판을 청하러 오는 사람들을 붙들고 친절히 대했다",
+          "모든 사람을 광야로 쫓아냈다",
+          "언약궤를 숨겨 두었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 15:5-6 — '압살롬이 손을 펴서 그 사람을 붙들고 입을 맞추니... 이스라엘 사람의 마음을 도적하니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗은 사독에게 언약궤를 어떻게 하라고 했습니까?",
+        "choices": [
+          "성으로 도로 메어 가라고 했다",
+          "광야에 숨기라고 했다",
+          "압살롬에게 넘기라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 15:25 — '하나님의 궤를 성으로 도로 메어 가라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "압살롬과 이스라엘 사람들은 후새와 아히도벨의 모략 중 어느 쪽을 더 좋게 여겼습니까?",
+        "choices": [
+          "후새의 모략",
+          "아히도벨의 모략",
+          "아무 모략도 듣지 않았다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 17:14 — '아렉 사람 후새의 모략은 아히도벨의 모략보다 낫다 하니'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Absalom around 30 with long thick dark hair and royal-prince clothing. His expression should feel wicked, calculating, and secretly ambitious, even while he appears friendly to the crowd. No crown, no readable labels.",
+      "Zadok and Abiathar have no reference avatars. Show them as unnamed priests carrying the ark with sorrowful expressions. Show David as early 60s with graying hair and beard; David, his family, loyal servants, and priests should all look sad and burdened. No readable labels.",
+      "Hushai has no reference avatar. Show him as an unnamed older counselor with torn robe and dust on head. Show David and the people climbing the Mount of Olives with mournful, heavy expressions; David should point firmly toward the palace while asking Hushai to return. No readable labels.",
+      "Single court meeting scene, no split panels. Hushai and Ahithophel are elderly royal officials in formal robes: Hushai wears deep blue, with a faint translucent image of David near his head or heart to show his hidden motive. Absalom looks wicked and pleased as he chooses Hushai. Ahithophel wears dark burgundy and looks dejected. No death scene, no readable labels."
+    ]
+  },
+  {
+    "title": "압살롬의 최후: 다윗의 통곡",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "absalom"
+    ],
+    "landmark_code": "lm_mon_ephraim_forest",
+    "place_name": "에브라임 수풀/마하나임 근처(전승)",
+    "lat": 32.2,
+    "lng": 35.7,
+    "summary": "압살롬의 반역은 수풀에서 끝나고, 다윗은 원수보다 아들로 그를 통곡한다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「압살롬의 최후」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "18:5",
+        "to": "18:33"
+      }
+    ],
+    "start_year": -978,
+    "end_year": -978,
+    "time_precision": "approx",
+    "story_index": 21,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "마하나임 성문 앞, 60대 초반 다윗이 전쟁터로 나갈 군대를 정비해 요압과 지휘관들에게 나누어 보내며, 압살롬을 죽이지 말고 반드시 생포해 데려오라고 단호하게 명령하는 장면.",
+      "에브라임 수풀의 큰 상수리나무 아래, 30대 압살롬의 긴 머리털이 굵은 가지에 걸려 공중에 매달리고 노새는 아래로 달아나며, 멀리 다윗의 군사들이 조심스럽게 다가오는 장면. 피와 상처는 보이지 않는다",
+      "요압이 상수리나무에 머리가 걸려있는 압살롬에게 창을 겨누며 다가간다",
+      "성문 위 방으로 올라간 60대 초반 다윗에게 전령이 압살롬의 죽음 소식을 전하고, 다윗은 얼굴을 가리며 무너져 통곡하는 장면. 주변 신하들은 침묵하며 슬퍼한다"
+    ],
+    "scene_captions": [
+      "마하나임 성문 앞, 다윗이 지휘관들에게 압살롬을 죽이지 말고 생포해 올 것을 명령한다",
+      "압살롬이 머리털이 굵은 가지에 걸려 매달리고 노새를 달아난다",
+      "요압이 상수리나무 아래 압살롬을 죽인다",
+      "다윗에게 전령이 압살롬의 죽음 소식을 전한다"
+    ],
+    "scene_characters": [
+      [
+        "david"
+      ],
+      [
+        "absalom"
+      ],
+      [
+        "absalom"
+      ],
+      [
+        "david"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗은 전투에 나가는 지휘관들에게 압살롬을 어떻게 대하라고 명했습니까?",
+        "choices": [
+          "자기를 위해 너그러이 대하라고 했다",
+          "반드시 왕궁으로 데려오지 말라고 했다",
+          "이름을 다시 부르지 말라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 18:5 — '나를 위하여 소년 압살롬을 너그러이 대접하라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "압살롬은 에브라임 수풀에서 어떻게 붙잡힌 처지가 되었습니까?",
+        "choices": [
+          "상수리나무 가지에 머리털이 걸렸다",
+          "성문 앞에서 스스로 항복했다",
+          "요단강에서 배를 잃어버렸다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 18:9 — '압살롬의 머리털이 그 상수리나무에 걸리매 저가 공중에 달리고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "압살롬의 죽음 소식을 들은 다윗은 어떻게 반응했습니까?",
+        "choices": [
+          "문루로 올라가 압살롬을 부르며 울었다",
+          "곧바로 승리 잔치를 열었다",
+          "전령에게 상을 내리고 웃었다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 18:33 — '왕의 마음이 심히 아파 문루로 올라가서 우니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Joab, Abishai, and Ittai have no reference avatars. Show them as unnamed commanders receiving military orders. Show David as early 60s with graying hair and beard, composed and commanding, not crying or collapsing. No readable labels.",
+      "Show Absalom around 30 with long thick hair clearly caught in the oak branches. No gore, no wound, no death detail, no readable labels.",
+      "Joab has no reference avatar. Show the event at a restrained distance; no piercing close-up, no blood, no wound, no visible corpse detail, no readable labels.",
+      "Show the messenger as an unnamed runner. Emphasize David's grief, not battlefield gore. No readable labels."
+    ]
+  },
+  {
+    "title": "인구조사와 제단: 다윗의 선택",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘(아라우나 타작마당, 전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "잘못된 자랑이 재앙을 부르고, 다윗은 값을 치르고 제단을 세운다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「인구조사와 제단」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "삼하",
+        "from": "24:10",
+        "to": "24:25"
+      }
+    ],
+    "start_year": -970,
+    "end_year": -970,
+    "time_precision": "approx",
+    "story_index": 22,
+    "unit_code": "monarchy_david_covenant_fracture",
+    "unit_title": "다윗 왕국: 언약과 집안의 균열",
+    "unit_order": 2,
+    "story_scenes": [
+      "늙은 왕 다윗이 예루살렘 왕궁에서 요압과 군사 지휘관들에게 이스라엘과 유다의 수를 세라고 명령하고, 요압은 걱정스러운 얼굴로 왕을 바라본다",
+      "선견자 갓이 하얀 머리와 수염의 늙은 다윗에게 와서 하나님의 책망과 세 가지 재앙의 선택을 전하고, 다윗은 바닥에 엎드려 울며 괴로워하는 장면.",
+      "단에서부터 브엘세바까지 이스라엘 전역에 온역의 어두운 기운이 퍼지고 수많은 집과 마을이 비통해하는 장면. 위쪽에는 사람 형상 없는 하나님의 엄중한 심판 빛이 드리우며, 칠만 명의 죽음을 상징하되 시신과 피는 직접 보이지 않는다",
+      "늙은 왕 다윗이 아라우나의 타작마당 제단 앞에서 손을 들고 기도하며, 하늘에서 불이 제물을 사르고 재앙이 멈추는 빛이 예루살렘 위에 퍼진다"
+    ],
+    "scene_captions": [
+      "왕 다윗이 예루살렘 왕궁에서 요압과 군사 지휘관들에게 이스라엘과 유다의 수를 세라고 명령한다",
+      "갓이 다윗에게 와서 하나님의 책망과 세 가지 재앙의 선택을 전한다",
+      "하나님의 진노로 단에서부터 브엘세바까지 이스라엘 전역에서 7만명이 죽는다",
+      "왕 다윗이 아라우나의 타작마당 제단 앞에서 손을 들고 기도하고 하나님의 진노가 그친다"
+    ],
+    "scene_characters": [
+      [
+        "david"
+      ],
+      [
+        "david"
+      ],
+      [
+        "god"
+      ],
+      [
+        "david",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗은 인구조사 후 자신의 잘못을 어떻게 고백했습니까?",
+        "choices": [
+          "큰 죄를 범했고 심히 미련하게 행했다고 했다",
+          "모든 책임을 요압에게만 돌렸다",
+          "아무 잘못도 없다고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 24:10 — '내가 이 일을 행함으로 큰 죄를 범하였나이다... 내가 심히 미련하게 행하였나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "갓이 세 가지 재앙을 전했을 때 다윗은 누구의 손에 빠지기를 원했습니까?",
+        "choices": [
+          "긍휼이 크신 여호와의 손",
+          "대적의 손",
+          "요압의 손"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 24:14 — '여호와께서는 긍휼이 크시니 우리가 여호와의 손에 빠지고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "온역이 이스라엘에 내렸을 때 단부터 브엘세바까지 몇 사람이 죽었습니까?",
+        "choices": [
+          "칠만 인",
+          "칠천 인",
+          "칠백 인"
+        ],
+        "answer_index": 0,
+        "explanation": "삼하 24:15 — '단부터 브엘세바까지 백성의 죽은 자가 칠만 인이라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show David as an elderly king with white hair and white beard. No readable labels.",
+      "",
+      "Show God only as solemn divine judgment light, never as a human figure. Symbolize the plague across the land without gore, corpses, wounds, or readable numbers.",
+      "Show the altar at Araunah's threshing floor and the plague stopping through lifted darkness and gentle light. No readable labels, no human depiction of God."
+    ]
+  },
+  {
+    "title": "솔로몬 즉위: 왕의 노새",
+    "era": "era_monarchy",
+    "characters": [
+      "solomon",
+      "david",
+      "bathsheba"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "밧세바와 나단의 요청 뒤에 다윗은 솔로몬을 왕으로 세우고, 솔로몬은 아도니야를 단호하지만 절제 있게 대한다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「솔로몬 즉위」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "1:1",
+        "to": "1:53"
+      }
+    ],
+    "start_year": -970,
+    "end_year": -970,
+    "time_precision": "approx",
+    "story_index": 23,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
+    "story_scenes": [
+      "나이 든 왕모 밧세바가 깊은 청색 너울과 단정한 왕궁 옷차림으로 매우 늙고 쇠약한 다윗 왕의 침상 곁에 다가와, 아도니야가 스스로 왕위에 오르려 잔치를 벌이는 위험을 손짓으로 알린다. 다윗은 약해 보이지만 정신을 차려 듣는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 나누어진 떡과 한 식탁에서 서로를 돌보는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "기혼 샘 근처, 젊은 솔로몬이 다윗 왕의 노새를 타고 왕으로 세워지며 사독과 나단이 기름을 붓고, 백성들이 양각 나팔 소리와 함께 크게 환호하는 장면",
+      "아도니야가 두려워 제단 뿔을 붙잡고 떨고 있고, 젊은 솔로몬은 왕좌 앞에서 아도니야를 해치지 않겠다고 단호하지만 절제 있게 말하는 장면. 폭력이나 피는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "밧세바가 다윗에게 다가와 아도니야의 소식을 전하고 솔로몬을 왕으로 세울 것을 요청한다",
+      "기혼 샘 근처, 솔로몬이 다윗 왕의 노새를 타고 왕으로 세워지며 사독과 나단이 기름을 붓다",
+      "아도니야가 솔로몬 앞에서 떨고 솔로몬은 해치지 않겠다고 이야기한다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "bathsheba"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "아도니야가 스스로 왕이 되려 하자 나단은 누구에게 먼저 말했습니까?",
+        "choices": [
+          "솔로몬의 어머니 밧세바",
+          "제사장 아비아달",
+          "군대장관 요압"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 1:11 — '나단이 솔로몬의 모친 밧세바에게 고하여'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "다윗은 솔로몬을 왕으로 세우기 위해 무엇에 태우라고 명했습니까?",
+        "choices": [
+          "다윗 왕의 노새",
+          "아도니야의 병거",
+          "요압의 말"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 1:33 — '내 아들 솔로몬을 나의 노새에 태우고 기혼으로 인도하여 내려가고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "제단 뿔을 잡고 두려워한 아도니야에게 솔로몬은 어떻게 하였습니까?",
+        "choices": [
+          "선한 사람이 되면 해치지 않겠다며 집으로 보내었다",
+          "그 자리에서 왕으로 세웠다",
+          "다윗의 침상으로 데려가 축복하게 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 1:52-53 — '저가 만일 선한 사람이 될진대 그 머리카락 하나라도 땅에 떨어지지 아니하려니와... 네 집으로 가라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show Bathsheba as a dignified older queen mother with gray-streaked dark hair under a deep blue veil, urgent but composed. Show David as very old, white-haired, weak on a bed. No readable labels or speech bubbles.",
+      "Show Solomon on the royal mule at Gihon with Zadok and Nathan nearby if visible; no readable labels.",
+      "Show Solomon newly seated as king, young but solemn. No readable labels."
+    ]
+  },
+  {
+    "title": "다윗의 마지막 명령: 나라를 굳게 하다",
+    "era": "era_monarchy",
+    "characters": [
+      "david",
+      "solomon",
+      "bathsheba"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘 왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "다윗은 마지막으로 솔로몬에게 하나님을 따르라고 당부하고, 솔로몬은 흔들리는 왕권을 바로 세운다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「다윗의 마지막 명령」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "2:1",
+        "to": "2:46"
+      }
+    ],
+    "start_year": -970,
+    "end_year": -970,
+    "time_precision": "approx",
+    "story_index": 24,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
+    "story_scenes": [
+      "늙은 다윗 왕이 침상에 누워 젊은 솔로몬에게 마지막으로 당부하고, 큰 글자 없는 말풍선 안에는 솔로몬이 하나님만 따르고 율법의 길을 지키면 왕국이 견고해지는 상징 그림이 담겨 있다. 솔로몬은 무겁게 고개를 끄덕인다",
+      "나이 든 왕모 밧세바가 솔로몬 왕에게 아도니야의 요청을 전하러 오고, 장면 뒤쪽의 작은 그림 구역에는 아도니야와 아비삭이 함께 서 있는 상징 모습만 보인다. 솔로몬은 왕좌에서 화가 난 표정으로 단호하게 거절한다",
+      "솔로몬이 군사 지휘관에게 명령을 내리고, 먼 배경에서는 아도니야가 칼의 심판받는 장면이 처리된다. 직접적인 칼질, 피, 상처, 시신은 보이지 않고, 솔로몬의 단호한 왕권 확립이 강조된다",
+      "솔로몬이 브니야에게 명령을 내려 시므이가 칼의 심판을 받는다. 직접적인 칼질, 피, 상처, 시신은 보이지 않고, 솔로몬의 단호한 왕권 확립이 강조된다"
+    ],
+    "scene_captions": [
+      "다윗 왕이 침상에 누워 솔로몬에게 마지막으로 당부한다",
+      "왕모 밧세바가 솔로몬 왕에게 아도니야의 요청(수넴 여인 아비삭을 달라)을 전하러 온다",
+      "솔로몬이 군사 지휘관에게 명령을 내려 아도니야가 칼의 심판받는다",
+      "솔로몬이 군사 지휘관에게 명령을 내려 시므이가 칼의 심판을 받는다"
+    ],
+    "scene_characters": [
+      [
+        "david",
+        "solomon"
+      ],
+      [
+        "solomon",
+        "bathsheba"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "다윗은 죽기 전에 솔로몬에게 무엇을 지키라고 당부했습니까?",
+        "choices": [
+          "여호와의 명령과 율법의 길",
+          "아도니야의 잔치 계획",
+          "애굽 왕의 조언"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 2:3 — '네 하나님 여호와의 명을 지켜 그 길로 행하여 그 법률과 계명과 율례와 증거를... 지키라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아도니야는 밧세바를 통해 솔로몬에게 누구를 달라고 구했습니까?",
+        "choices": [
+          "수넴 여자 아비삭",
+          "드고아의 여인",
+          "바로의 딸"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 2:17 — '수넴 여자 아비삭을 내게 주어 아내를 삼게 하소서'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아도니야와 요압과 시므이의 일이 정리된 뒤 나라는 어떻게 되었습니까?",
+        "choices": [
+          "솔로몬의 손에 견고하여졌다",
+          "곧바로 둘로 갈라졌다",
+          "아도니야에게 넘어갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 2:46 — '이에 나라가 솔로몬의 손에 견고하여지니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show David as very old on his deathbed and Solomon as a young king receiving final counsel. No readable labels.",
+      "Show Bathsheba consistently as an older queen mother with dignified posture, gray-streaked dark hair under a deep blue veil, modest royal robe. Adonijah and Abishag have no reference avatars and should appear only in a small text-free inset image. No readable text.",
+      "Show Solomon carrying out difficult royal justice with grave restraint, not cruelty. No gore, no readable labels.",
+      "Show Solomon established on the throne with elders nearby, solemn and responsible. No readable labels.",
+      "Show Solomon established on the throne with elders nearby, solemn and responsible. No readable labels."
+    ]
+  },
+  {
+    "title": "솔로몬의 지혜: 참 어머니를 가리다",
+    "era": "era_monarchy",
+    "characters": [
+      "solomon",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "기브온 → 예루살렘 왕궁(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "솔로몬은 하나님께 지혜를 구하고, 어려운 재판으로 그 지혜를 온 이스라엘 앞에 드러낸다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「솔로몬의 지혜」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "3:1",
+        "to": "3:28"
+      }
+    ],
+    "start_year": -967,
+    "end_year": -967,
+    "time_precision": "approx",
+    "story_index": 25,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
+    "story_scenes": [
+      "밤의 꿈속, 솔로몬이 하나님 앞에 겸손히 무릎 꿇고 백성을 재판할 지혜를 구하며, 사람 형상 없는 하나님의 밝은 빛은 솔로몬의 구함을 기뻐하는 듯 따뜻하게 비추는 장면",
+      "예루살렘 왕궁 재판 자리, 서로 다른 옷차림의 두 여자가 같은 아기를 두고 서로 자기 아이라고 주장하며 솔로몬 앞에 서 있고, 솔로몬은 집중해서 듣는 장면. 아기는 포대기에 싸여 안전하게 보인다",
+      "솔로몬이 두 여자와 포대기에 싸인 아기를 앞에 두고 신하에게 칼을 가져오라고 단호하게 명령하자, 한 여자는 아기를 살려 달라는 듯 놀라 울고 다른 여자는 차갑게 굳어 있는 장면. 칼은 신하 손에만 보이고 아기에게 닿지 않는다",
+      "솔로몬이 울며 아기를 살려 달라 한 여자가 참 어머니라고 판결하고 아기를 그 여자에게 돌려주며, 옆의 다른 여자는 속마음이 들켜 놀라 굳어 있는 장면. 궁정 사람들은 솔로몬의 지혜에 경외하는 표정이다"
+    ],
+    "scene_captions": [
+      "밤의 꿈속, 솔로몬이 하나님 앞에 겸손히 무릎 꿇고 지혜를 구한다",
+      "두 여자가 같은 아기를 두고 자기 아이라고 주장하며 솔로몬 앞에 선다",
+      "솔로몬은 칼을 가져오라고 이야기하고, 한 여인이 격하게 놀란다",
+      "솔로몬이 울며 아기를 살려 달라 한 여자가 참 어머니라고 판결하고 아기를 그 여자에게 돌려준다"
+    ],
+    "scene_characters": [
+      [
+        "solomon",
+        "god"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "솔로몬은 꿈에서 하나님께 무엇을 구했습니까?",
+        "choices": [
+          "백성을 재판할 지혜로운 마음",
+          "긴 수명과 많은 재물",
+          "원수들의 목숨"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 3:9 — '지혜로운 마음을 종에게 주사 주의 백성을 재판하여 선악을 분별하게 하옵소서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "솔로몬이 지혜를 구하자 하나님은 어떻게 여기셨습니까?",
+        "choices": [
+          "그 말씀이 주의 마음에 맞았다",
+          "크게 책망하셨다",
+          "아무 응답도 하지 않으셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 3:10 — '솔로몬이 이것을 구하매 그 말씀이 주의 마음에 맞은지라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "솔로몬은 아기를 살려 달라고 한 여자를 어떻게 판단했습니까?",
+        "choices": [
+          "그 여자가 참 어머니라고 판결했다",
+          "두 여자 모두 거짓이라고 했다",
+          "아기를 궁전에 남겨 두라고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 3:27 — '산 아들을 저 계집에게 주고 결코 죽이지말라 저가 그 어미니라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Show God only as joyful holy light in the dream, never as a human figure. Show Solomon as a young king asking for wisdom, not wealth or power. No readable text.",
+      "The two women and the baby have no reference avatars. Keep them consistent across scenes 2-4: Woman A is the true mother, young adult with teal headscarf and cream robe, tearful protective expression. Woman B is the false claimant, young adult with rust-red headscarf and ochre robe, tense guarded expression. The baby is a small swaddled infant in a pale cloth bundle. No readable labels.",
+      "Keep Woman A, Woman B, and the baby visually consistent. The sword is only a test and must not touch the baby; no injury, no blood, no threat close-up, no gore, no readable labels.",
+      "Keep Woman A, Woman B, and the baby visually consistent. Show the baby safe in Woman A's arms. No readable labels."
+    ]
+  },
+  {
+    "title": "성전 건축: 손으로 짓는 집",
+    "era": "era_monarchy",
+    "characters": [
+      "solomon"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘 성전 터(전승)",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "솔로몬은 오랜 준비 끝에 성전을 건축한다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「성전 건축」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "5:1",
+        "to": "6:38"
+      }
+    ],
+    "start_year": -966,
+    "end_year": -959,
+    "time_precision": "approx",
+    "story_index": 26,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
+    "story_scenes": [
+      "솔로몬이 두로 왕 히람에게 성전 건축에 쓸 백향목과 잣나무 재목을 제공해 달라고 요청하고, 히람이 기뻐하며 재목을 보내 주기로 하는 장면, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 거대한 왕궁이 백향목과 잣나무로 지어질 것을 보여줌",
+      "예루살렘 성전 터에서 솔로몬의 건축자들과 히람의 건축자들이 함께 돌과 목재로 성전을 열심히 건축하는 장면",
+      "으리으리한 성전이 완성되어 금빛 장식과 높은 기둥이 빛나고, 솔로몬이 성전 앞에서 기뻐하며 하나님께 감사하는 장면"
+    ],
+    "scene_captions": [
+      "솔로몬이 두로 왕 히람에게 성전 건축에 쓸 백향목과 잣나무 재목을 제공해 달라고 요청한다",
+      "예루살렘 성전 터에서 솔로몬의 건축자들과 히람의 건축자들이 함께 돌과 목재로 성전을 열심히 건축한다",
+      "으리으리한 성전이 완성되어 금빛 장식과 높은 기둥이 빛난다"
+    ],
+    "scene_characters": [
+      [
+        "solomon"
+      ],
+      [],
+      [
+        "solomon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "두로 왕 히람은 솔로몬에게 어떻게 하였습니까?",
+        "choices": [
+          "백향목과 잣나무 재목을 보내기로 했다",
+          "전쟁을 선포하였다",
+          "거부하고 물러났다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 5:8 — '내가 백향목 재목과 잣나무 재목에 대하여는 당신의 바라시는대로 할찌라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "성전 건축을 준비할 때 하나님은 솔로몬에게 어떻게 하셨습니까?",
+        "choices": [
+          "지혜를 주어 협력하게 하셨다",
+          "성전 건축을 포기하게 하셨다",
+          "히람과 전쟁하게 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 5:12 — '솔로몬에게 지혜를 주시므로 히람과 솔로몬이 친목하여'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "솔로몬이 성전을 건축하는 데 걸린 기간은 얼마입니까?",
+        "choices": [
+          "칠년",
+          "삼년",
+          "십년"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 6:38 — '솔로몬이 전을 건축한 동안이 칠년이었더라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "Hiram has no reference avatar. Show him as an older Phoenician king from Tyre with a short dark-gray beard, deep purple robe, bronze headband, and generous pleased expression. No readable labels or speech text.",
+      "Show Solomon's builders and Hiram's builders as two cooperating work crews, with cedar and cypress timbers clearly visible. No readable labels.",
+      "Show the temple grand and newly finished, but do not show readable inscriptions."
+    ]
+  },
+  {
+    "title": "솔로몬: 이방의 경탄부터 타락까지",
+    "era": "era_monarchy",
+    "characters": [
+      "solomon",
+      "god"
+    ],
+    "landmark_code": "lm_mon_jerusalem",
+    "place_name": "예루살렘",
+    "lat": 31.778,
+    "lng": 35.2354,
+    "summary": "솔로몬의 지혜와 영화는 이방을 놀라게 했지만, 말년의 타락은 왕국의 균열을 예고했다.",
+    "background_context": "통일왕국 시대는 사울, 다윗, 솔로몬이 이스라엘 전체를 다스리던 시기입니다. 이 이야기는 「솔로몬」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "왕상",
+        "from": "10:1",
+        "to": "11:13"
+      }
+    ],
+    "start_year": -950,
+    "end_year": -950,
+    "time_precision": "approx",
+    "story_index": 27,
+    "unit_code": "monarchy_solomon_temple_fall",
+    "unit_title": "솔로몬 시대: 지혜와 성전, 타락",
+    "unit_order": 3,
+    "story_scenes": [
+      "스바 여왕이 낙타 행렬과 많은 향품, 보석, 금을 가지고 예루살렘에 도착하고, 솔로몬이 궁정 앞에서 맞이하는 장면",
+      "솔로몬의 성과 궁전 안에 금은보화와 귀한 그릇들이 가득 쌓여 있고, 솔로몬은 화려한 보좌 곁에서 부유한 왕국을 바라보는 장면",
+      "솔로몬이 다른 나라 왕비들을 궁정으로 들이고, 그들이 가져온 작은 우상들이 성전과 궁전 주변에 조금씩 채워지는 장면",
+      "금은보화와 우상들이 가득한 성전 안에 하나님의 거룩한 빛이 엄중하게 임하고, 큰 글자 없는 말풍선 안에는 성전과 왕국의 영광이 황폐해지는 경고 그림이 담긴 장면"
+    ],
+    "scene_captions": [
+      "스바 여왕이 낙타 행렬과 많은 향품, 보석, 금을 가지고 예루살렘에 도착한다",
+      "솔로몬의 성과 궁전 안에 금은보화와 귀한 그릇들이 가득 쌓여 있다",
+      "솔로몬의 지혜와 영화는 이방을 놀라게 했지만, 솔로몬은 다른 나라 왕비들을 궁에 들인다",
+      "금은보화와 우상들이 가득한 성전 안에 하나님의 거룩한 빛이 엄중하게 임한다"
+    ],
+    "scene_characters": [
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "solomon"
+      ],
+      [
+        "god",
+        "solomon"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "스바 여왕은 무엇을 가지고 예루살렘에 왔습니까?",
+        "choices": [
+          "향품과 많은 금과 보석",
+          "전쟁 병거와 창",
+          "빈 항아리와 횃불"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 10:2 — '심히 많은 향품과 금과 보석을 약대에 실리고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "솔로몬의 마음이 여호와에게서 떠나게 된 원인은 무엇입니까?",
+        "choices": [
+          "이방 아내들이 그의 마음을 돌이켰다",
+          "전쟁의 패배에 낙심하였다",
+          "선지자들이 그를 떠나갔다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 11:4 — '그의 아내들이 그의 마음을 돌려 다른 신들을 따르게 하였으므로'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "솔로몬이 언약과 법도를 지키지 않자 여호와는 무엇을 말씀하셨습니까?",
+        "choices": [
+          "나라를 빼앗아 신복에게 주겠다고 하셨다",
+          "성전을 더 크게 지어 주겠다고 하셨다",
+          "왕위를 그대로 두겠다고 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "왕상 11:11 — '내가 결단코 이 나라를 네게서 빼앗아 네 신복에게 주리라'"
+      }
+    ],
+    "scene_prompt_notes": [
+      "The queen of Sheba has no reference avatar. Show her as the same dignified foreign queen in this story, with royal robes, camel caravan, spices, jewels, and gold. No readable labels.",
+      "Show overwhelming royal wealth clearly: gold shields, vessels, silver, jewels, and treasure chests inside Solomon's palace. No readable labels.",
+      "Show foreign queens as a group in modest royal clothing; no sexualized depiction. Show small idols gradually filling the temple and palace area. No readable labels.",
+      "Show God only as severe holy light, never as a human figure. Use a text-free speech bubble with a symbolic image of Solomon's glory and kingdom becoming desolate because of idols. No readable labels."
+    ]
+  }
+]
