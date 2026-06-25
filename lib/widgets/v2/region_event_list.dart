@@ -35,6 +35,7 @@ class RegionEventList extends StatelessWidget {
     this.onCelebrationComplete,
     this.quizReviewEventIds = const <String>{},
     this.quizConfusedEventIds = const <String>{},
+    this.publicUrlForStoragePath,
   });
 
   final Landmark landmark;
@@ -67,6 +68,10 @@ class RegionEventList extends StatelessWidget {
 
   /// 최근 퀴즈에서 "헷갈렸어요" 선택이 있었던 사건 id 셋.
   final Set<String> quizConfusedEventIds;
+
+  /// `events.scene_image_paths` 의 `bucket/path` 값을 public URL 로 바꾼다.
+  /// 홈 화면은 상세 페이지와 같은 Supabase client 변환 함수를 내려준다.
+  final String Function(String storagePath)? publicUrlForStoragePath;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +127,7 @@ class RegionEventList extends StatelessWidget {
                     onCelebrationComplete: onCelebrationComplete,
                     quizReviewEventIds: quizReviewEventIds,
                     quizConfusedEventIds: quizConfusedEventIds,
+                    publicUrlForStoragePath: publicUrlForStoragePath,
                     onTapEvent: onSelectEvent,
                     rowHeight: rowHeight,
                   ),
@@ -173,6 +179,7 @@ class StoryEventThumbCard extends StatelessWidget {
     this.showSummary = true,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
+    this.publicUrlForStoragePath,
   });
   final StoryEvent event;
   final Era? era;
@@ -187,6 +194,7 @@ class StoryEventThumbCard extends StatelessWidget {
   final bool showSummary;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
+  final String Function(String storagePath)? publicUrlForStoragePath;
 
   /// 사용자가 명시적으로 고른 인물 코드(예: 인물 모드 step 3 의 선택된 인물).
   /// 이 인물들의 pill 은 [colorForHighlightedCharacter] 색으로 강조되고
@@ -277,7 +285,12 @@ class StoryEventThumbCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _CardThumbnailFrame(event: event, loader: loader, size: thumbnailSize),
+        _CardThumbnailFrame(
+          event: event,
+          loader: loader,
+          size: thumbnailSize,
+          publicUrlForStoragePath: publicUrlForStoragePath,
+        ),
         SizedBox(height: gapAfterThumbnail),
         _ThumbTitle(event: event, theme: theme),
         SizedBox(height: gapAfterTitle),
@@ -341,11 +354,13 @@ class _CardThumbnailFrame extends StatelessWidget {
     required this.event,
     required this.loader,
     required this.size,
+    this.publicUrlForStoragePath,
   });
 
   final StoryEvent event;
   final SceneAssetLoader loader;
   final double size;
+  final String Function(String storagePath)? publicUrlForStoragePath;
 
   @override
   Widget build(BuildContext context) {
@@ -355,7 +370,11 @@ class _CardThumbnailFrame extends StatelessWidget {
         height: size,
         child: ColoredBox(
           color: const Color(0xFFF1E4C8),
-          child: _CardThumbnail(event: event, loader: loader),
+          child: _CardThumbnail(
+            event: event,
+            loader: loader,
+            publicUrlForStoragePath: publicUrlForStoragePath,
+          ),
         ),
       ),
     );
@@ -642,13 +661,18 @@ class _CurrentStoryBadge extends StatelessWidget {
 }
 
 class _CardThumbnail extends StatelessWidget {
-  const _CardThumbnail({required this.event, required this.loader});
+  const _CardThumbnail({
+    required this.event,
+    required this.loader,
+    this.publicUrlForStoragePath,
+  });
   final StoryEvent event;
   final SceneAssetLoader loader;
+  final String Function(String storagePath)? publicUrlForStoragePath;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(
-      future: loader.loadForEvent(event),
+      future: loader.loadForEvent(event, publicUrlFor: publicUrlForStoragePath),
       builder: (_, snap) {
         const placeholder = Center(
           child: Icon(Icons.menu_book, color: Color(0xFF8C6743), size: 28),

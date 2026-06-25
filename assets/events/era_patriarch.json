@@ -1,0 +1,2809 @@
+[
+  {
+    "title": "아브라함의 부르심: 떠나라",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "god",
+      "sarah",
+      "lot"
+    ],
+    "landmark_code": "lm_pat_haran",
+    "place_name": "하란",
+    "lat": 36.8589,
+    "lng": 39.0314,
+    "summary": "하나님이 아브라함을 부르시고 약속의 길을 여신다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「아브라함의 부르심」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "12:9",
+        "book": "창",
+        "from": "12:1"
+      }
+    ],
+    "start_year": -2100,
+    "end_year": -2100,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "칠십오 세쯤 된 아브람이 흰 수염과 여행 지팡이를 지고 하나님을 바라본다",
+      "아브람이 사래와 롯, 종들과 함께 낙타와 양 떼를 이끌고 하란을 떠나 가나안 길로 나아가며, 얼굴에는 두려움과 믿음이 함께 보인다",
+      "세겜의 큰 나무 곁에서 아브람이 돌 제단을 쌓고 경외하는 표정으로 예배하며, 사래와 가족들은 낯선 땅의 산과 들을 둘러본다",
+      "벧엘과 아이 사이에서 아브람이 장막을 치고 제단 앞에 무릎 꿇으며, 먼 길의 먼지 묻은 옷과 늙은 손의 주름이 보인다"
+    ],
+    "scene_captions": [
+      "아브람에게 하나님이 이동을 명령하신다",
+      "아브람이 사래와 롯, 종들과 함께 낙타와 양 떼를 이끌고 하란을 떠나 가나안 길로 나아간다",
+      "세겜의 큰 나무 곁에서 아브람이 돌 제단을 쌓고 경외한다",
+      "벧엘과 아이 사이에서 아브람이 장막을 치고 제단 앞에 무릎 꿇는다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham",
+        "sarah",
+        "lot"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "abraham"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "여호와의 말씀을 받은 아브람은 어떻게 행동하였습니까?",
+        "choices": [
+          "먼저 하란에 삼 년을 머물렀다",
+          "아내와 상의한 후 결정하였다",
+          "즉시 떠나 가나안 땅에 들어갔다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 12:4-5 — '아브람이 ... 마침내 가나안 땅에 들어 갔더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "여호와께서 아브람에게 '네 자손에게 주리라' 하신 땅은 어디입니까?",
+        "choices": [
+          "메소포타미아",
+          "가나안 땅",
+          "애굽 땅"
+        ],
+        "answer_index": 1,
+        "explanation": "창 12:7 — '여호와께서 아브람에게 나타나 ... 내가 이 땅을 네 자손에게 주리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "여호와께서 세겜에서 나타나신 뒤 아브람은 무엇을 했습니까?",
+        "choices": [
+          "가나안 왕에게 성을 넘겼다",
+          "여호와를 위하여 제단을 쌓았다",
+          "하란으로 다시 돌아갔다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 12:7 — '그가 자기에게 나타나신 여호와를 위하여 그 곳에 단을 쌓고'"
+      }
+    ]
+  },
+  {
+    "title": "롯과 분리: 시선의 선택",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "lot",
+      "god"
+    ],
+    "landmark_code": "lm_pat_jordan_river",
+    "place_name": "요단 들(전승)",
+    "lat": 31.85,
+    "lng": 35.5,
+    "summary": "아브라함과 롯이 함께 머물기에 좁아지자 둘은 다른 곳으로 향한다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「롯과 분리」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "13:18",
+        "book": "창",
+        "from": "13:1"
+      }
+    ],
+    "start_year": -2098,
+    "end_year": -2098,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "나이 든 아브람과 장성한 조카 롯의 목자들이 좁은 목초지에서 양 떼와 소 떼를 두고 다투고, 두 족장은 무거운 표정으로 그 모습을 바라본다",
+      "아브람이 평화를 위해 손을 내밀며 롯에게 먼저 땅을 고르라고 양보하고, 롯은 물이 넉넉한 요단 들판을 바라보며 마음이 기우는 표정을 짓는다",
+      "롯이 가족과 가축을 이끌고 소돔 쪽 평지로 내려가고, 아브람은 산지에 남아 조용히 그 뒷모습을 바라본다",
+      "하나님이 약속하신 땅을 바라보는 늙은 아브람이 헤브론 상수리나무 곁에 제단을 쌓고 하나님은 번성을 약속하신다, 넓은 가나안 들판이 앞에 펼쳐진다"
+    ],
+    "scene_captions": [
+      "아브람과 장성한 조카 롯의 목자들이 서로 다툰다 다투다",
+      "아브람이 평화를 위해 손을 내밀며 롯에게 먼저 땅을 고르라고 양보한다",
+      "롯이 가족과 가축을 이끌고 소돔 쪽 평지로 내려간다",
+      "하나님이 번성을 약속하시고 아브람은 헤브론 상수리나무 곁에 제단을 쌓는다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "lot"
+      ],
+      [
+        "abraham",
+        "lot"
+      ],
+      [
+        "abraham",
+        "lot"
+      ],
+      [
+        "abraham",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "롯이 눈을 들어 바라보고 선택한 땅은 어디입니까?",
+        "choices": [
+          "헤브론 산지",
+          "요단 들",
+          "브엘세바 광야"
+        ],
+        "answer_index": 1,
+        "explanation": "창 13:10-11 — '롯이 눈을 들어 요단 들을 바라본즉 ... 그 온 땅에 물이 넉넉하니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "목자들의 다툼을 본 아브람은 롯에게 무엇을 제안했습니까?",
+        "choices": [
+          "가축을 모두 두고 떠나라고 했다",
+          "먼저 원하는 땅을 선택하라고 했다",
+          "애굽으로 함께 내려가자고 했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 13:8-9 — '나나 너나 ... 서로 다투게 말자 ... 네가 좌하면 나는 우하고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "롯과 헤어진 뒤 아브람은 어디로 장막을 옮겼습니까?",
+        "choices": [
+          "헤브론의 마므레 상수리 수풀",
+          "요단 온 들 한가운데",
+          "소돔 성문 앞"
+        ],
+        "answer_index": 0,
+        "explanation": "창 13:18 — '이에 아브람이 장막을 옮겨 헤브론에 있는 마므레 상수리 수풀에 이르러 거하며 거기서 여호와를 위하여 단을 쌓았더라'"
+      }
+    ]
+  },
+  {
+    "title": "별 언약: 믿음이 의로",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "god"
+    ],
+    "landmark_code": "lm_pat_mamre",
+    "place_name": "가나안(전승)",
+    "lat": 31.55,
+    "lng": 35.1,
+    "summary": "하나님은 별처럼 많은 자손을 약속하시고 언약을 확증하신다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「별 언약」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "15:21",
+        "book": "창",
+        "from": "15:1"
+      }
+    ],
+    "start_year": -2096,
+    "end_year": -2096,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "하나님이 아브람을 밖으로 이끄시는 듯한 거룩한 빛 아래, 아브람이 셀 수 없는 별을 올려다보며 두려움에서 믿음으로 표정이 바뀐다",
+      "아브람이 언약 제사를 위해 짐승(쪼갠 암소, 쪼갬 염소, 쪼갬 양, 쪼개지 않은 새)들을 준비하고, 해가 저물자 깊은 잠과 두려움 속에서 횃불과 연기 나는 화로의 빛이 쪼갠 고기 사이로 지나간다(화로부터 빛이나와 쪼갠 고기들 사이까지 이어짐)",
+      "늙은 아브람이 밤에 하나님이 보여주시는 이집트 강부터 유프라테스 강까지 땅을 바라본다"
+    ],
+    "scene_captions": [
+      "하나님은 별처럼 많은 자손을 약속하시고 언약을 확증하신다",
+      "아브람이 짐승을 쪼개고 하나님의 빛은 쪼갠 짐승 사이로 지나가신다",
+      "아브람이 별 아래에서 약속을 붙든 얼굴로 서 있다"
+    ],
+    "scene_characters": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "여호와께서 아브람의 믿음을 무엇으로 여기셨습니까?",
+        "choices": [
+          "제물로",
+          "율법 준수로",
+          "의로"
+        ],
+        "answer_index": 2,
+        "explanation": "창 15:6 — '아브람이 여호와를 믿으니 여호와께서 이를 그의 의로 여기시고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "언약을 위해 쪼개 놓은 고기 위에 솔개가 내리자 아브람은 어떻게 하였습니까?",
+        "choices": [
+          "그대로 두고 기다렸다",
+          "제단에 불을 붙였다",
+          "솔개를 쫓았다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 15:11 — '솔개가 그 사체 위에 내릴 때에는 아브람이 쫓았더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 아브람과 언약을 세우며 무엇을 약속하셨습니까?",
+        "choices": [
+          "아브람의 집을 바로 빼앗겠다고 하셨다",
+          "넓은 땅을 아브람의 자손에게 주겠다고 하셨다",
+          "아브람에게 애굽으로 돌아가라고 하셨다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 15:18 — '그 날에 여호와께서 아브람으로 더불어 언약을 세워 가라사대 내가 이 땅을 애굽강에서부터 그 큰 강 유브라데까지 네 자손에게 주노니'"
+      }
+    ]
+  },
+  {
+    "title": "하갈과 이스마엘: 사람의 방법",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "sarah",
+      "hagar",
+      "ishmael"
+    ],
+    "landmark_code": "lm_pat_mamre",
+    "place_name": "가나안(전승)",
+    "lat": 31.55,
+    "lng": 35.1,
+    "summary": "하갈은 이스마엘을 낳고, 사라와의 갈등이 깊어진다. 이 때 하나님의 천사를 만나 위로 받고, 다시 돌아와 이스마엘을 낳는다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「하갈과 이스마엘」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "16:16",
+        "book": "창",
+        "from": "16:1"
+      }
+    ],
+    "start_year": -2090,
+    "end_year": -2090,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "하갈이 임신하자 사래를 업신여기는 장면. 사래는 기분이 나빠하고 하갈은 비웃고 있다",
+      "임신한 하갈이 사래의 거친 대우를 견디지 못해 눈물 어린 얼굴로 광야 길을 향해 달아나고, 사래는 장막 입구에서 분노와 상처가 섞인 표정으로 서 있다",
+      "광야 샘 곁에서 하갈이 지친 몸으로 앉아 있고, 하나님의 사자가 그녀에게 돌아가라는 약속을 전하는 듯 손을 내민다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 여러 도시로 이어지는 길과 각 민족 사람들이 밝은 소식을 듣는 장면이 작은 그림처럼 보인다",
+      "하갈이 아들 이스마엘을 낳고 아브람은 나이 든 얼굴로 아기를 바라보지만, 사래는 멀리서 복잡한 마음으로 그 장면을 지켜본다"
+    ],
+    "scene_captions": [
+      "사래를 업신여기는 장면, 사래는 기분이 나빠하고 하갈은 비웃고 있다",
+      "임신한 하갈이 사래의 거친 대우를 견디지 못해 눈물 어린 얼굴로 광야 길을 향해 달아나다",
+      "하갈에게 천사가 사래에게 돌아가라 명하시고 자손의 번성을 약속하신다",
+      "하갈이 아들 이스마엘을 낳고 아브람은 이스마엘을 바라본다"
+    ],
+    "scene_characters": [
+      [
+        "sarah",
+        "hagar"
+      ],
+      [
+        "sarah",
+        "hagar"
+      ],
+      [
+        "hagar"
+      ],
+      [
+        "abraham",
+        "sarah",
+        "hagar",
+        "ishmael"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하갈이 광야로 도망쳤을 때 여호와의 사자는 그에게 무엇을 명하였습니까?",
+        "choices": [
+          "여주인에게로 돌아가 복종하라",
+          "애굽으로 가라",
+          "이스마엘을 낳으면 돌아오라"
+        ],
+        "answer_index": 0,
+        "explanation": "창 16:9 — '네 여주인에게로 돌아가서 그 수하에 복종하라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "여호와의 사자는 하갈의 자손에 대해 무엇을 약속했습니까?",
+        "choices": [
+          "아브람의 집으로 돌아가지 말라고 말했다",
+          "크게 번성하여 셀 수 없게 하겠다고 약속했다",
+          "다시는 광야에 살지 못하게 하겠다고 말했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 16:10 — '여호와의 사자가 또 그에게 이르되 내가 네 자손으로 크게 번성하여 그 수가 많아 셀 수 없게 하 리라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아브람이 이스마엘을 낳을 때 아브람의 나이는 몇 세였습니까?",
+        "choices": [
+          "구십 구 세",
+          "칠십 오 세",
+          "팔십 륙 세"
+        ],
+        "answer_index": 2,
+        "explanation": "창 16:16 — '하갈이 아브람에게 이스마엘을 낳을 때에 아브람이 팔십 륙 세이었더라'"
+      }
+    ]
+  },
+  {
+    "title": "할례 언약: 이름이 바뀌다",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "god"
+    ],
+    "landmark_code": "lm_pat_mamre",
+    "place_name": "가나안(전승)",
+    "lat": 31.55,
+    "lng": 35.1,
+    "summary": "언약의 표가 주어지고 아브라함과 사라의 이름이 바뀐다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「할례 언약」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "17:27",
+        "book": "창",
+        "from": "17:1"
+      }
+    ],
+    "start_year": -2088,
+    "end_year": -2088,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "아흔아홉세 아브라함이 장막 앞에서 하나님의 빛 앞에 엎드리고, 하나님의 빛의 말풍선에는 자손의 번성이 약속된다",
+      "아브라함이 엎드려서 하나님께 의문을 표하며 질문하고 하나님은 약속을 확정하시는 모습",
+      "아브라함의 집 남자들이 장막 밖에서 언약의 표를 받기 위해 줄지어 서 있고, 아브라함은 늙은 족장답게 엄숙한 얼굴로 가족을 이끈다. 노골적 신체 묘사는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "아브라함으로 이름이 바뀌고, 영원한 약속과 할례의 명령이 주어진다",
+      "하나님이 사라를 통한 아들을 약속하시고 아브라함은 의문을 표한다",
+      "아브라함의 집 남자들에게 할례를 행한다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "할례 언약 때 아브람의 나이는 몇 세였습니까?",
+        "choices": [
+          "구십구 세",
+          "팔십 세",
+          "백 세"
+        ],
+        "answer_index": 0,
+        "explanation": "창 17:1 — '아브람의 구십구세 때에 여호와께서 아브람에게 나타나서'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아브람이 엎드리자 하나님은 어떻게 하셨습니까?",
+        "choices": [
+          "아브람을 애굽으로 보내셨다",
+          "할례를 취소하셨다",
+          "그에게 다시 말씀하셨다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 17:3 — '아브람이 엎드린대 하나님이 또 그에게 일러 가라사대'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 사래의 이름을 무엇으로 바꾸셨습니까?",
+        "choices": [
+          "리브가",
+          "하갈",
+          "사라"
+        ],
+        "answer_index": 2,
+        "explanation": "창 17:15 — '사래라 하지 말고 그 이름을 사라라 하라'"
+      }
+    ]
+  },
+  {
+    "title": "세 손님: 사라의 웃음과 하나님의 약속",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "sarah",
+      "god"
+    ],
+    "landmark_code": "lm_pat_hebron",
+    "place_name": "마므레(헤브론, 전승)",
+    "lat": 31.5326,
+    "lng": 35.0998,
+    "summary": "손님을 맞이한 아브라함의 집에 불가능해 보이던 약속이 다시 선포된다. 사라는 비웃지만 하나님은 약속을 확증하신다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「세 손님」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "18:15",
+        "book": "창",
+        "from": "18:1"
+      }
+    ],
+    "start_year": -2087,
+    "end_year": -2087,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "99살 아브라함이 흰 수염과 구부정한 자세로 마므레 상수리나무 아래 세 천사(천사의 실루엣)을 맞아 급히 절하며, 장막 앞에는 물동이와 빵 반죽이 준비되어 있다",
+      "세 천사(천사의 실루엣) 가운데 한 사람이 손을 들고 말하는 듯하고 사라는 장막 입구에서 비웃는 얼굴로 듣는다",
+      "세 천사(천사의 실루엣) 가운데 한 사람이 사라를 가리키며 다시 말하고 아브라함과 사라는 놀라며 듣는 장면"
+    ],
+    "scene_captions": [
+      "아브라함이 세 손님을 맞이한다",
+      "세 손님 가운데 한 사람이 손을 들고 말하는 듯하고 사라는 비웃는 얼굴로 듣는다",
+      "세 손님 가운데 한 사람이 사라를 가리키며 사라를 향해 약속을 다시 말씀하신다"
+    ],
+    "scene_characters": [
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "손님들이 아브라함을 찾아온 장소는 어디입니까?",
+        "choices": [
+          "브엘세바",
+          "헤브론 성문",
+          "마므레 상수리 수풀"
+        ],
+        "answer_index": 2,
+        "explanation": "창 18:1 — '여호와께서 마므레의 상수리 수풀 근처에서 아브라함에게 나타나시니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아들을 낳을 것이라는 말을 들은 사라는 어떻게 했습니까?",
+        "choices": [
+          "소리 내어 울었다",
+          "속으로 웃었다",
+          "하나님께 감사했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 18:12 — '사라가 속으로 웃고 이르되 내가 노쇠하였고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "사라는 웃은 일을 두려워하며 어떻게 말했습니까?",
+        "choices": [
+          "웃지 않았다고 부인했다",
+          "하나님을 처음 보았다고 했다",
+          "아브라함이 웃었다고 둘러댔다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 18:15 — '사라가 두려워서 승인치 아니하여 가로되 내가 웃지 아니하였나이다 가라사대 아니라 네가 웃었느 니라'"
+      }
+    ]
+  },
+  {
+    "title": "소돔을 위한 중보: 숫자가 줄어들다",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "god"
+    ],
+    "landmark_code": "lm_pat_mamre",
+    "place_name": "가나안(전승)",
+    "lat": 31.55,
+    "lng": 35.1,
+    "summary": "아브라함은 의인을 위해 담대하게 간구하며 하나님의 공의를 붙든다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「소돔을 위한 중보」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "18:33",
+        "book": "창",
+        "from": "18:16"
+      }
+    ],
+    "start_year": -2087,
+    "end_year": -2087,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "늙은 아브라함이 높은 곳에서 소돔 평지를 내려다보며 하나님 앞에 조심스럽게 손을 모으고, 멀리 성읍과 어두운 하늘이 보인다",
+      "아브라함이 의인 오십 명부터 점점 적은 수까지 간구하듯 손가락을 접고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 하늘을 향한 빈 손과 보호받는 사람들이 보이는 장면이 작은 그림처럼 보인다",
+      "중보를 마친 아브라함이 무거운 마음으로 장막 쪽으로 돌아가고, 멀리 소돔 평지에는 심판 전의 긴장감이 감돈다"
+    ],
+    "scene_captions": [
+      "아브라함이 높은 곳에서 소돔 평지를 내려다보며 하나님 앞에 조심스럽게 손을 모은다",
+      "아브라함이 의인 오십 명부터 점점 적은 수까지 간구하듯 손가락을 접다",
+      "중보를 마친 아브라함이 무거운 마음으로 장막 쪽으로 돌아간다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham",
+        "god"
+      ],
+      [
+        "abraham"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "아브라함은 소돔을 위해 의인의 수를 어떻게 간구하였습니까?",
+        "choices": [
+          "소돔을 용서해 달라고만 구하였다",
+          "한 번만 간구하고 침묵하였다",
+          "여러 번 반복해 숫자를 낮추어 구하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 18:23-32 — 아브라함이 오십 명에서 십 명까지 반복해 간구함"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아브라함은 소돔을 위해 간구하며 자신을 무엇에 비유했습니까?",
+        "choices": [
+          "큰 산 같은 의인",
+          "티끌과 같은 존재",
+          "성문을 지키는 재판장"
+        ],
+        "answer_index": 1,
+        "explanation": "창 18:27 — '아브라함이 말씀하여 가로되 티끌과 같은 나라도 감히 주께 고하나이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아브라함이 마지막으로 의인의 수를 몇 명까지 낮추어 간구하였습니까?",
+        "choices": [
+          "십 명",
+          "오십 명",
+          "이십 명"
+        ],
+        "answer_index": 0,
+        "explanation": "창 18:32 — '혹 거기서 십 인을 찾으시면 어찌 하시려나이까 ... 십 인을 인하여도 멸하지 아니하리라'"
+      }
+    ]
+  },
+  {
+    "title": "소돔 멸망과 롯 구출",
+    "era": "era_patriarch",
+    "characters": [
+      "lot"
+    ],
+    "landmark_code": "lm_pat_sodom",
+    "place_name": "소돔 일대(사해 남부, 전승)",
+    "lat": 31.0667,
+    "lng": 35.45,
+    "summary": "도시는 심판을 받고 롯의 가족은 급히 나오지만 뒤돌아봄이 비극을 만든다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「소돔 멸망과 롯 구출」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "19:38",
+        "book": "창",
+        "from": "19:1"
+      }
+    ],
+    "start_year": -2086,
+    "end_year": -2086,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "밤의 소돔 성문 근처에서 롯이 낯선 두 천사를 보고 급히 일어나 자기 집 안으로 들여 보호하려 하며, 거리 뒤쪽에는 불안한 소돔 사람들의 그림자가 보인다",
+      "천사들이 심판이 임하기 전에 떠나라고 재촉하지만 롯은 머뭇거리고, 천사들은 롯과 가족의 손목을 붙잡아 성문 밖으로 이끈다. 손을 잡는 보호 행동이 분명히 보인다",
+      "도망 중 뒤를 돌아본 롯의 아내는 소금기둥이 되고, 롯과 두 성인 딸은 불타는 성을 뒤로한 채 두려움으로 달아난다. 피와 시신은 보이지 않는다",
+      "롯이 가족을 잃은 뒤 외딴 산굴에 지쳐 앉아 있고 두 딸은 두려움과 혼란 속에서 서로를 바라본다. 수치스러운 선택은 암시만 되며 술병이나 침실, 성적 장면은 보이지 않는다"
+    ],
+    "scene_captions": [
+      "밤의 소돔 성문 근처에서 롯이 낯선 두 천사를 보고 급히 일어나 자기 집 안으로 들여 보호하려 한다",
+      "롯은 머뭇거리고 천사가 롯의 가족들을 이끌어낸다",
+      "도망 중 뒤를 돌아본 롯의 아내는 소금 기둥이 된다",
+      "롯과 두 딸은 동굴에서 살며, 두 딸은 롯과 동침하여 자손을 보존한다"
+    ],
+    "scene_characters": [
+      [
+        "lot"
+      ],
+      [
+        "lot"
+      ],
+      [
+        "lot"
+      ],
+      [
+        "lot"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "천사가 롯에게 떠나라 재촉하자 롯은 어떻게 하였습니까?",
+        "choices": [
+          "이웃에게 알리러 갔다",
+          "즉시 달려 나갔다",
+          "지체하여 천사가 손을 잡아 이끌었다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 19:16 — '롯이 지체하매 그 사람들이 롯의 손과 ... 손을 잡아 이끌어 성 밖에 두니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "롯은 천사들의 재촉에 어떻게 반응했습니까?",
+        "choices": [
+          "그렇게 하지 말아 달라고 부탁했다",
+          "즉시 아무 말 없이 순종했다",
+          "소돔으로 다시 돌아가겠다고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 19:18 — '롯이 그들에게 이르되 내 주여 그리 마옵소서'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "롯의 처는 소돔을 탈출할 때 뒤를 돌아보아 무엇이 되었습니까?",
+        "choices": [
+          "재 더미",
+          "돌 조각",
+          "소금 기둥"
+        ],
+        "answer_index": 2,
+        "explanation": "창 19:26 — '롯의 아내는 뒤를 돌아보았으므로 소금 기둥이 되었더라'"
+      }
+    ]
+  },
+  {
+    "title": "아브라함과 아비멜렉: 오해와 보호",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "sarah"
+    ],
+    "landmark_code": "lm_pat_gerar",
+    "place_name": "그랄(전승)",
+    "lat": 31.18,
+    "lng": 34.55,
+    "summary": "아브라함의 두려움이 다시 거짓을 낳지만 하나님이 사라를 지키신다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「아브라함과 아비멜렉」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "20:18",
+        "book": "창",
+        "from": "20:1"
+      }
+    ],
+    "start_year": -2085,
+    "end_year": -2085,
+    "time_precision": "approx",
+    "story_index": 9,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "나이 든 아브라함과 백발 섞인 사라가 그랄 땅에 머물고, 왕의 신하들이 사라를 왕궁으로 데려가려 하자 아브라함은 두려운 얼굴로 침묵한다",
+      "밤의 왕궁 침상 옆에서 아비멜렉 왕이 꿈속 하나님의 경고를 듣고 식은땀을 흘리며 깨어난다. 하나님은 사람 형상 없이 엄중한 빛으로만 표현된다",
+      "아비멜렉이 양과 소와 종들과 은을 돌려주고 사라를 보호하며, 아브라함과 사라는 늙은 부부의 무거운 안도감으로 왕궁 뜰을 떠난다"
+    ],
+    "scene_captions": [
+      "사라가 아비멜렉에게 잡혀가고 아브라함은 여동생이라며 보내준다",
+      "아비멜렉 왕이 꿈속 하나님의 경고를 듣고 식은땀을 흘리며 깨어난다",
+      "아비멜렉이 양과 소와 종들과 은을 돌려주고 사라를 아브라함에게 보낸다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "sarah"
+      ],
+      [],
+      [
+        "abraham",
+        "sarah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "아비멜렉이 사라를 취한 것에 대해 아비멜렉은 자신의 행동을 어떻게 설명하였습니까?",
+        "choices": [
+          "바로의 명령을 따랐다",
+          "온전한 마음과 깨끗한 손으로 행하였다",
+          "신하들이 권하여 어쩔 수 없었다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 20:5 — '나는 온전한 마음과 깨끗한 손으로 이렇게 하였나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아비멜렉은 아브라함에게 무엇을 물었습니까?",
+        "choices": [
+          "어느 땅을 팔 것인지 물었다",
+          "왜 전쟁을 시작했는지 물었다",
+          "왜 그렇게 했는지 이유를 물었다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 20:10 — '아비멜렉이 또 아브라함에게 이르되 네가 무슨 의견으로 이렇게 하였느냐'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아비멜렉은 아브라함에게 사라를 돌려보내며 무엇을 함께 주었습니까?",
+        "choices": [
+          "떡과 포도주",
+          "금과 은과 토지",
+          "양과 소와 노비"
+        ],
+        "answer_index": 2,
+        "explanation": "창 20:14 — '아비멜렉이 양과 소와 노비를 취하여 아브라함에게 주고 그 아내 사라도 그에게 돌려보내고'"
+      }
+    ]
+  },
+  {
+    "title": "이삭 탄생과 하갈 추방",
+    "era": "era_patriarch",
+    "characters": [
+      "sarah",
+      "isaac",
+      "hagar",
+      "ishmael",
+      "abraham"
+    ],
+    "landmark_code": "lm_pat_beersheba",
+    "place_name": "브엘세바 주변(전승)",
+    "lat": 31.15,
+    "lng": 34.79,
+    "summary": "약속의 아들이 태어나지만 가정의 갈등은 하갈을 광야로 내몬다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「이삭 탄생과 하갈 추방」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "21:21",
+        "book": "창",
+        "from": "21:1"
+      }
+    ],
+    "start_year": -2066,
+    "end_year": -2066,
+    "time_precision": "approx",
+    "story_index": 10,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "백세 된 아브라함과 아흔 세쯤 된 사라가 갓난 이삭을 품에 안고 기뻐하며, 사라의 주름진 얼굴에는 오래 기다린 웃음과 눈물이 함께 보인다",
+      "어린 이삭 곁에 십대 중반의 이스마엘이 서 있고, 이스마엘이 이삭을 놀리고, 사라는 단호함이 섞인 표정으로 아브라함에게 안된다고 말한다",
+      "늙은 아브라함이 새벽에 빵과 물가죽부대를 하갈에게 건네며 괴로운 얼굴로 서 있고, 하갈은 십대 이스마엘과 함께 광야 길을 떠난다",
+      "브엘세바 광야에서 지친 하갈과 십대 소년 이스마엘은 쉬고 있는데 하나님의 사자가 나타나 샘 쪽을 가리킨다"
+    ],
+    "scene_captions": [
+      "백세 된 아브라함과 아흔 세쯤 된 사라가 갓난 이삭을 품에 안고 기뻐한다",
+      "이스마엘이 이삭을 놀리고, 사라는 아브라함에게 내 쫓을 것을 요청한다",
+      "아브라함이 새벽에 빵과 물가죽부대를 하갈에게 건넨다",
+      "브엘세바 광야에서 지친 하갈과 소년 이스마엘에게 하나님의 사자가 나타나 큰 나라를 약속하신다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "sarah",
+        "isaac"
+      ],
+      [
+        "abraham",
+        "sarah",
+        "isaac",
+        "ishmael"
+      ],
+      [
+        "abraham",
+        "hagar",
+        "ishmael"
+      ],
+      [
+        "hagar",
+        "ishmael"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사라는 이삭을 낳고 하나님이 자신을 어떻게 하셨다고 하였습니까?",
+        "choices": [
+          "웃게 하셨다",
+          "높이셨다",
+          "눈물을 닦아 주셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 21:6 — '사라가 가로되 하나님이 나로 웃게 하시니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하갈이 물이 다 떨어지자 아이에 대해 어떻게 행동하였습니까?",
+        "choices": [
+          "아이를 수풀 아래 두고 떨어져 방성대곡하였다",
+          "아이를 이스마엘에게 맡겼다",
+          "아이를 안고 계속 걸었다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 21:15-16 — '그 아이를 관목 아래 두고 ... 방성대곡하니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 하갈에게 어떤 위로를 주셨습니까?",
+        "choices": [
+          "아이의 소리를 들으셨으니 두려워하지 말라고 하셨다",
+          "아이를 혼자 두고 떠나라고 하셨다",
+          "이삭에게 돌아가지 말라고 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 21:17 — '하나님이 그 아이의 소리를 들으시므로 하나님의 사자가 하늘에서부터 하갈을 불러 가라사대 하갈 아 무슨 일이냐 두려워 말라 하나님이 거기 있는 아이의 소리를 들으셨나니'"
+      }
+    ]
+  },
+  {
+    "title": "이삭 번제: 멈추게 하시는 하나님",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "isaac",
+      "god"
+    ],
+    "landmark_code": "lm_pat_moriah",
+    "place_name": "모리아(예루살렘, 전승)",
+    "lat": 31.78,
+    "lng": 35.24,
+    "summary": "극한의 시험 속에서 하나님은 아브라함을 멈추게 하시고 대안을 준비하신다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「이삭 번제」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "22:18",
+        "book": "창",
+        "from": "22:1"
+      }
+    ],
+    "start_year": -2055,
+    "end_year": -2055,
+    "time_precision": "approx",
+    "story_index": 11,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "모리아 산길에서 성인 이삭이 장작을 지고 앞서 걷고, 매우 늙은 아브라함은 지팡이에 기대며 괴로운 믿음으로 뒤따른다",
+      "돌 제단 위에 장작이 놓이고 성인 이삭이 결박된 채 두려움 속에서도 아버지를 바라보며, 아브라함은 칼을 든 손을 떨고 있다. 피나 상처는 보이지 않는다",
+      "하나님의 사자가 아브라함의 손을 멈추게 하고, 수풀에 걸린 숫양이 보이며, 아브라함과 성인 이삭은 눈물 어린 안도감으로 서로를 바라본다"
+    ],
+    "scene_captions": [
+      "모리아 산길에서 성인 이삭이 장작을 지고 앞서 걷다",
+      "돌 제단 위에 이삭이 결박되어 있고 아브라함은 칼을 들고 있다",
+      "하나님의 사자가 아브라함의 손을 멈추게 하시고 덤불에 숫양을 준비하셨다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "isaac"
+      ],
+      [
+        "abraham",
+        "isaac"
+      ],
+      [
+        "abraham",
+        "isaac"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "이삭이 번제 재료는 있는데 어린 양이 없다고 묻자 아브라함은 뭐라 대답하였습니까?",
+        "choices": [
+          "내가 사 오리라",
+          "하나님께 맡기고 계속 가자",
+          "하나님이 자기를 위하여 친히 준비하시리라"
+        ],
+        "answer_index": 2,
+        "explanation": "창 22:8 — '아브라함이 가로되 아들아 번제할 어린 양은 하나님이 자기를 위하여 친히 준비하시리라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "여호와의 사자가 아브라함을 부르자 아브라함은 어떻게 대답했습니까?",
+        "choices": [
+          "이삭이 어디 있느냐고 물었다",
+          "양은 이미 준비했다고 말했다",
+          "내가 여기 있다고 대답했다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 22:11 — '여호와의 사자가 하늘에서부터 그를 불러 가라사대 아브라함아 아브라함아 하시는지라 아브라함이 가로되 내가 여기 있나이다 하매'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아브라함이 번제할 어린 양 대신 드린 것은 무엇입니까?",
+        "choices": [
+          "비둘기 두 마리",
+          "소 한 마리",
+          "뿔이 수풀에 걸린 숫양"
+        ],
+        "answer_index": 2,
+        "explanation": "창 22:13 — '아브라함이 ... 뿔이 수풀에 걸린 숫양을 ... 가져다가 번제로 드렸더라'"
+      }
+    ]
+  },
+  {
+    "title": "사라의 죽음과 막벨라 굴",
+    "era": "era_patriarch",
+    "characters": [
+      "abraham",
+      "sarah"
+    ],
+    "landmark_code": "lm_pat_machpelah",
+    "place_name": "헤브론(막벨라, 전승)",
+    "lat": 31.5246,
+    "lng": 35.111,
+    "summary": "아브라함은 약속의 땅에서 첫 소유지로 묘지를 산다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「사라의 죽음과 막벨라 굴」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "23:20",
+        "book": "창",
+        "from": "23:1"
+      }
+    ],
+    "start_year": -2030,
+    "end_year": -2030,
+    "time_precision": "approx",
+    "story_index": 12,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "백이십칠 세 사라가 평안히 누운 장막 안에서 숨을 거두고, 백삼십대의 매우 늙은 아브라함은 흰 수염을 떨며 깊은 슬픔으로 무릎을 꿇는다",
+      "아브라함이 헤브론 성문에서 헷 족속 장로들 앞에 허리를 숙여 매장지를 구하고, 장로들은 성문 회의석에 앉아 엄숙히 듣는다",
+      "아브라함이 은을 달아 에브론에게 지불하고 막벨라 굴과 밭을 사며, 거래 저울과 은 조각, 성문 증인들이 보인다. 글자는 없다",
+      "막벨라 굴 앞에서 매우 늙은 아브라함이 사라를 장사하고, 가족과 종들이 조용히 서 있다"
+    ],
+    "scene_captions": [
+      "백이십칠 세 사라가 평안히 누운 장막 안에서 숨을 거두다",
+      "아브라함이 헤브론 성문에서 헷 족속 장로들 앞에 허리를 숙여 매장지를 구한다",
+      "아브라함이 은을 달아 에브론에게 지불하고 막벨라 굴과 밭을 사다",
+      "막벨라 굴 앞에서 매우 아브라함이 사라를 장사한다"
+    ],
+    "scene_characters": [
+      [
+        "abraham",
+        "sarah"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham"
+      ],
+      [
+        "abraham",
+        "sarah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "사라가 죽었을 때 아브라함은 어떻게 하였습니까?",
+        "choices": [
+          "사라를 위해 슬퍼하며 애통하였다",
+          "이삭에게 소식을 먼저 전하였다",
+          "즉시 장사 터를 구하러 떠났다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 23:2 — '아브라함이 들어가서 사라를 위하여 슬퍼하며 애통하다가'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "헷 사람들은 아브라함의 요청에 어떻게 반응했습니까?",
+        "choices": [
+          "장사할 곳을 절대 주지 않겠다고 했다",
+          "아브라함에게 대답하려고 나섰다",
+          "아브라함을 성 밖으로 쫓아냈다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 23:5 — '헷족속이 아브라함에게 대답하여 가로되'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아브라함이 막벨라 굴과 밭을 사기 위해 에브론에게 지불한 은은 얼마입니까?",
+        "choices": [
+          "사백 세겔",
+          "천 세겔",
+          "오십 세겔"
+        ],
+        "answer_index": 0,
+        "explanation": "창 23:16 — '은 사백 세겔을 달아 에브론에게 주었더니'"
+      }
+    ]
+  },
+  {
+    "title": "리브가: 이삭의 결혼",
+    "era": "era_patriarch",
+    "characters": [
+      "isaac",
+      "rebekah"
+    ],
+    "landmark_code": "lm_pat_haran",
+    "place_name": "하란",
+    "lat": 36.8589,
+    "lng": 39.0314,
+    "summary": "기도와 만남을 통해 리브가가 이삭의 아내로 선택된다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「리브가」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "24:67",
+        "book": "창",
+        "from": "24:1"
+      }
+    ],
+    "start_year": -2026,
+    "end_year": -2026,
+    "time_precision": "approx",
+    "story_index": 13,
+    "unit_code": "patriarch_abraham_isaac_promise",
+    "unit_title": "아브라함과 이삭의 약속",
+    "unit_order": 1,
+    "story_scenes": [
+      "젊은 리브가가 물동이를 내려 종과 낙타들에게 물을 주고, 종은 놀라움과 감사가 섞인 표정으로 그녀의 친절을 지켜본다",
+      "라반의 집에서 가족들이 리브가의 결정을 묻고, 리브가는 담대하게 떠나겠다는 표정을 짓는다",
+      "마흔 세쯤 된 이삭이 브엘라해로이 들판에서 묵상하다가 리브가의 낙타 행렬을 보고 일어서며, 리브가는 너울을 쓰고 조심스럽게 그에게 다가온다"
+    ],
+    "scene_captions": [
+      "리브가가 물동이를 내려 아브라함의 종과 낙타들에게 물을 준다",
+      "기도와 만남을 통해 리브가가 이삭의 아내로 선택된다",
+      "마흔 세쯤 된 이삭이 리브가의 낙타 행렬을 보고 일어선다"
+    ],
+    "scene_characters": [
+      [
+        "rebekah"
+      ],
+      [
+        "rebekah"
+      ],
+      [
+        "isaac",
+        "rebekah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "아브라함의 종이 물을 청하자 리브가는 어떻게 행동하였습니까?",
+        "choices": [
+          "먼저 누구인지 물었다",
+          "종과 낙타들에게도 물을 길어 주었다",
+          "물만 주고 돌아갔다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 24:19-20 — '낙타를 위하여도 물을 길어 ... 모든 낙타에게 먹이니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아브라함의 종은 리브가에게 무엇을 부탁했습니까?",
+        "choices": [
+          "물을 조금 마시게 해 달라고 부탁했다",
+          "가족을 숨겨 달라고 부탁했다",
+          "이삭에게 바로 가 달라고 부탁했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 24:45 — '내가 묵도하기를 마치지 못하여 리브가가 물 항아리를 어깨에 메고 나와서 우물로 내려와 긷기로 내가 그에게 이르기를 청컨대 내게 마시우라 한즉'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "이삭은 리브가를 인도하여 어느 장막으로 들였습니까?",
+        "choices": [
+          "아버지 아브라함의 장막",
+          "모친 사라의 장막",
+          "자기 장막"
+        ],
+        "answer_index": 1,
+        "explanation": "창 24:67 — '이삭이 리브가를 인도하여 모친 사라의 장막으로 들이고'"
+      }
+    ]
+  },
+  {
+    "title": "장자권: 한 그릇의 거래",
+    "era": "era_patriarch",
+    "characters": [
+      "esau",
+      "jacob"
+    ],
+    "landmark_code": "lm_pat_beersheba",
+    "place_name": "브엘세바 주변(전승)",
+    "lat": 31.15,
+    "lng": 34.79,
+    "summary": "에서는 배고픔에 장자의 권리를 가볍게 팔고 야곱은 그것을 붙잡는다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「장자권」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "25:34",
+        "book": "창",
+        "from": "25:19"
+      }
+    ],
+    "start_year": -2006,
+    "end_year": -2006,
+    "time_precision": "approx",
+    "story_index": 14,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "붉은 털과 사냥복이 두드러지는 에서가 들판 사냥에서 지쳐 돌아와 장막 입구에 비틀거리며 들어온다",
+      "야곱이 죽 그릇을 뒤로 빼며 장자권을 요구하듯 말하고 에서는 배를 움켜쥔다",
+      "에서가 죽을 허겁지겁 먹고 장자권을 받은 에서가 뒤에서 마음속으로 기뻐하고 있다"
+    ],
+    "scene_captions": [
+      "에서가 들판 사냥에서 지쳐 돌아온다",
+      "야곱이 죽 그릇을 내며 장자권을 요구하고 에서는 배를 움켜쥔다",
+      "에서가 죽을 허겁지겁 먹고 장자권을 받은 에서가 뒤에서 마음속으로 기뻐하고 있다"
+    ],
+    "scene_characters": [
+      [
+        "esau"
+      ],
+      [
+        "jacob",
+        "esau"
+      ],
+      [
+        "esau",
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에서는 들에서 돌아왔을 때 어떤 상태였습니까?",
+        "choices": [
+          "아버지에게 축복을 받으러 갔다",
+          "몹시 피곤하고 배가 고팠다",
+          "사냥감을 많이 가져와 기뻐했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 25:29 — '에서가 들에서부터 돌아와서 심히 곤비하여'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야곱은 에서에게 먼저 무엇을 팔라고 했습니까?",
+        "choices": [
+          "장자의 명분",
+          "사냥한 고기",
+          "아버지의 장막"
+        ],
+        "answer_index": 0,
+        "explanation": "창 25:31 — '야곱이 가로되 형의 장자의 명분을 오늘날 내게 팔라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "에서가 야곱에게 장자의 명분을 판 것은 무엇을 받고서입니까?",
+        "choices": [
+          "은 삼십",
+          "양과 소",
+          "떡과 팥죽"
+        ],
+        "answer_index": 2,
+        "explanation": "창 25:34 — '야곱이 떡과 팥죽을 에서에게 주매 에서가 먹으며 마시고'"
+      }
+    ]
+  },
+  {
+    "title": "축복 가로채기: 속임수의 밤",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "esau",
+      "isaac",
+      "rebekah"
+    ],
+    "landmark_code": "lm_pat_beersheba",
+    "place_name": "브엘세바 주변(전승)",
+    "lat": 31.15,
+    "lng": 34.79,
+    "summary": "야곱은 속임수로 이삭의 축복을 받고 도망길에 오른다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「축복 가로채기」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "27:45",
+        "book": "창",
+        "from": "27:1"
+      }
+    ],
+    "start_year": -1985,
+    "end_year": -1985,
+    "time_precision": "approx",
+    "story_index": 15,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "눈이 어두운 늙은 이삭이 침상에 기대어 에서를 부르고, 사냥복을 입은 장성한 에서는 활과 화살통을 챙겨 들판으로 나간다",
+      "나이 든 리브가가 긴장한 얼굴로 장성한 야곱에게 염소 새끼와 옷을 준비시키며, 야곱은 털가죽을 팔에 두르는 일 앞에서 불안해한다",
+      "야곱이 에서의 옷을 입고 늙고 눈먼 이삭 앞에 음식을 들고 서 있으며, 이삭은 떨리는 손으로 야곱의 팔을 만져 확인하려 한다",
+      "에서가 사냥한 음식을 들고 돌아와 속임수를 알고 절망하며 울부짖고, 늙은 이삭은 떨리는 얼굴로 침상에 앉아 있다"
+    ],
+    "scene_captions": [
+      "눈이 어두운 이삭이 에서에게 축복 전 사냥을 요구한다",
+      "리브가가 긴장한 얼굴로 야곱에게 음식과 야곱의 옷, 염소 가죽을 준비시킨다",
+      "야곱이 이삭에게 음식을 대접하고 축복받는다",
+      "에서가 사냥한 음식을 들고 돌아와 받을 복이 없음에 절망하며 울부짖는다"
+    ],
+    "scene_characters": [
+      [
+        "isaac",
+        "esau"
+      ],
+      [
+        "rebekah",
+        "jacob"
+      ],
+      [
+        "jacob",
+        "isaac"
+      ],
+      [
+        "esau",
+        "isaac"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "이삭이 야곱을 에서로 착각하게 된 이유는 무엇입니까?",
+        "choices": [
+          "리브가가 이삭 옆에 없었다",
+          "눈이 완전히 멀어 아무것도 보지 못하였다",
+          "야곱의 손에 털이 있어 분별치 못하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 27:23 — '그 손이 형 에서의 손과 같이 털이 있으므로 능히 분별치 못하고 축복하였더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "에서가 아버지의 말을 듣고 어떻게 반응하였습니까?",
+        "choices": [
+          "야곱을 즉시 쫓아갔다",
+          "말없이 들에 나갔다",
+          "방성대곡하며 자기도 축복해 달라 하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 27:34 — '에서가 그 아비의 말을 듣고 방성대곡하며 아비에게 이르되 내게도 축복하소서'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "에서가 축복을 빼앗긴 일을 알게 되었을 때 이삭은 야곱에 대해 무엇이라고 말했습니까?",
+        "choices": [
+          "네 아우가 간교하게 와서 네 복을 빼앗았다고 말했다",
+          "네 어머니가 모든 복을 돌려주었다고 말했다",
+          "네 복은 처음부터 없었다고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 27:35 — '이삭이 가로되 네 아우가 간교하게 와서 네 복을 빼앗았도다'"
+      }
+    ]
+  },
+  {
+    "title": "벧엘의 꿈: 사다리와 약속",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "god"
+    ],
+    "landmark_code": "lm_pat_bethel",
+    "place_name": "벧엘(전승)",
+    "lat": 31.96,
+    "lng": 35.22,
+    "summary": "도망자 야곱은 길 위에서 ‘함께하심’의 약속을 받는다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「벧엘의 꿈」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "28:22",
+        "book": "창",
+        "from": "28:10"
+      }
+    ],
+    "start_year": -1985,
+    "end_year": -1985,
+    "time_precision": "approx",
+    "story_index": 16,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "야곱이 광야 길에서 돌을 베개 삼아 외롭게 누워 잠들고, 낡은 여행 보따리와 어두운 들판이 그의 두려운 도피 상황을 보여 준다",
+      "잠든 야곱 위로 하늘까지 닿은 사닥리가 보이고, 천사들이 오르내리는 가운데 야곱은 꿈속에서 놀라 눈을 크게 뜬다",
+      "하나님의 빛이 야곱 위로 임하고, 하나님의 빛에서 나오는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다 야곱은 두려움에서 경외로 바뀐다",
+      "아침에 야곱이 베개 삼았던 돌을 세우고 기름을 붓고, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 별빛 아래 가족과 열린 길, 약속의 땅이 이어지는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "야곱이 광야 길에서 돌을 베개 삼아 외롭게 누워 잠든다",
+      "야곱은 길 위에서 천사가 사다리를 오르내림을 본다",
+      "하나님의 빛이 야곱에게 임하고 복을 약속 받는다",
+      "아침에 야곱이 베개 삼았던 돌을 세우고 기름을 붓다"
+    ],
+    "scene_characters": [
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "god",
+        "jacob"
+      ],
+      [
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "야곱은 꿈에서 깨어 여호와가 그곳에 계신다는 것을 알고 어떻게 말하였습니까?",
+        "choices": [
+          "이 땅이 두렵도다 이곳은 하나님의 집이라 하였다",
+          "즉시 무릎 꿇고 기도하였다",
+          "내가 하나님을 만났으니 기쁘도다 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 28:17 — '야곱이 두려워하여 가로되 이 곳이 두렵도다 이것이 다름 아닌 하나님의 전이요 하늘의 문이로다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야곱은 자기가 베고 잔 돌을 일어나 무엇으로 세웠습니까?",
+        "choices": [
+          "강에 던졌다",
+          "기둥으로 세웠다",
+          "제단에 놓았다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 28:18 — '야곱이 아침에 일찌기 일어나 베개하였던 돌을 가져 기둥으로 세우고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야곱은 평안히 아버지 집으로 돌아가게 하시면 여호와를 어떤 분으로 삼겠다고 했습니까?",
+        "choices": [
+          "라반의 하나님으로 삼겠다고 했다",
+          "자신의 하나님으로 삼겠다고 했다",
+          "돌베개의 주인으로 삼겠다고 했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 28:21 — '나로 평안히 아비 집으로 돌아가게 하시오면 여호와께서 나의 하나님이 되실 것이요'"
+      }
+    ]
+  },
+  {
+    "title": "라반의 집: 레아와 라헬",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "laban",
+      "leah",
+      "rachel"
+    ],
+    "landmark_code": "lm_pat_haran",
+    "place_name": "하란",
+    "lat": 36.8589,
+    "lng": 39.0314,
+    "summary": "야곱은 라헬을 사랑하지만 속임수로 레아와도 결혼하게 된다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「라반의 집」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "29:30",
+        "book": "창",
+        "from": "29:1"
+      }
+    ],
+    "start_year": -1984,
+    "end_year": -1977,
+    "time_precision": "approx",
+    "story_index": 17,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "우물가에서 젊은 라헬이 양 떼를 몰고 오자 야곱이 큰 돌을 옮기며 라헬에게 반한 얼굴로 그녀를 맞이한다",
+      "나이 많은 라반이 장막 앞에서 야곱과 칠 년 봉사 계약을 맺고, 라헬은 뒤에서 이를 바라본다",
+      "혼인 다음 아침, 얼굴을 가린 신부가 레아였음을 알아차린 야곱이 충격을 받고, 라반은 곤란하지만 계산적인 표정으로 서 있다. 성적 장면은 없다",
+      "야곱 라헬과 결혼을 준비하고 레아는 뒤에서 씁쓸한 모습으로 서있다"
+    ],
+    "scene_captions": [
+      "야곱이 큰 돌이 덮인 우물물 앞에서 양 떼를 몰고오는 라헬을 만난다",
+      "라반과 야곱이 라헬의 결혼을 위해 칠 년 봉사 계약을 맺는다",
+      "혼인 다음 아침, 얼굴을 가린 신부가 레아였음을 알아차린 야곱이 충격을 받는다",
+      "야곱이 라헬과 혼인을 위해 7년을 더 일하고 라헬을 아내로 맞는다"
+    ],
+    "scene_characters": [
+      [
+        "jacob",
+        "rachel"
+      ],
+      [
+        "laban",
+        "jacob",
+        "rachel"
+      ],
+      [
+        "jacob",
+        "laban",
+        "leah"
+      ],
+      [
+        "jacob",
+        "rachel",
+        "leah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "야곱은 라헬을 아내로 얻기 위해 라반을 위해 몇 년 동안 봉사하였습니까?",
+        "choices": [
+          "이 년",
+          "칠 년",
+          "십 년"
+        ],
+        "answer_index": 1,
+        "explanation": "창 29:20 — '야곱이 라헬을 위하여 칠 년 동안 봉사하였으나'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "라반은 라헬 대신 레아를 야곱에게 준 사실을 어떻게 정당화하였습니까?",
+        "choices": [
+          "야곱이 일을 다 마치지 못했다고 하였다",
+          "라헬이 아직 어리다고 하였다",
+          "이 고장에서 언니보다 아우를 먼저 주는 것은 관례가 아니라 하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 29:26 — '우리 지방에서는 언니보다 아우를 먼저 주는 것이 관례가 아니니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "라헬을 아내로 얻기 위해 야곱은 라반이 정한 칠 일을 어떻게 했습니까?",
+        "choices": [
+          "그날 밤 바로 떠났다",
+          "그 칠 일을 채웠다",
+          "레아를 돌려보냈다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 29:28 — '야곱이 그대로 하여 그 칠 일을 채우매 라반이 딸 라헬도 그에게 아내로 주고'"
+      }
+    ]
+  },
+  {
+    "title": "열두 아들의 시작: 이름에 담긴 마음",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "leah",
+      "rachel",
+      "joseph"
+    ],
+    "landmark_code": "lm_pat_haran",
+    "place_name": "하란",
+    "lat": 36.8589,
+    "lng": 39.0314,
+    "summary": "경쟁과 상처 속에서도 열두 지파의 뿌리가 형성된다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「열두 아들의 시작」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "30:24",
+        "book": "창",
+        "from": "29:31"
+      }
+    ],
+    "start_year": -1977,
+    "end_year": -1965,
+    "time_precision": "approx",
+    "story_index": 18,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "레아가 여러 아들들과 딸 디나를 돌보며 분주한 장막 안에 서 있고, 야곱의 큰 가정이 복잡하게 늘어나는 모습이 보인다",
+      "라헬이 마음 아픈 얼굴로 시녀 빌하를 자기 가정 안에 들이고, 뒤쪽에는 빌하가 낳은 두 아들이 작은 요람 곁에 보인다. 침실이나 성적 장면은 보이지 않는다",
+      "레아가 시녀 실바를 자기 가정 안에 들이고, 뒤쪽에는 실바가 낳은 두 아들이 가족들 사이에 함께 서 있다. 침실이나 성적 장면은 보이지 않는다",
+      "하나님이 라헬을 기억하신 뒤 라헬이 갓난 요셉을 품에 안고 안도의 숨을 쉬며, 야곱은 곁에서 감사한 얼굴로 바라본다"
+    ],
+    "scene_captions": [
+      "레아가 여러 아들들과 딸 디나를 돌보며 분주한 장막 안에 서 있다",
+      "라헬이 마음 아픈 얼굴로 시녀 빌하와 야곱사이에서 아이를 얻는다",
+      "경쟁과 상처 속에서도 열두 지파의 뿌리가 형성된다",
+      "하나님이 라헬을 기억하신 뒤 라헬이 갓난 요셉을 품에 안고 안도의 숨을 쉬다"
+    ],
+    "scene_characters": [
+      [
+        "leah",
+        "jacob"
+      ],
+      [
+        "rachel"
+      ],
+      [
+        "leah"
+      ],
+      [
+        "rachel",
+        "joseph",
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "라헬은 자녀가 없자 야곱에게 어떻게 하였습니까?",
+        "choices": [
+          "혼자 하나님께 기도하였다",
+          "레아에게 도움을 청하였다",
+          "야곱에게 아들을 낳아 달라 하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 30:1 — '라헬이 자기가 야곱에게 아들을 낳지 못함을 보고 그 형을 시기하여 야곱에게 이르되 내게 자식을 낳게 하라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "레아는 갓의 이름을 지으며 무엇이라고 말했습니까?",
+        "choices": [
+          "복되도다라고 말했다",
+          "이제 떠나겠다고 말했다",
+          "내 슬픔이 끝났다고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 30:11 — '레아가 가로되 복되도다 하고 그 이름을 갓이라 하였으며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "라헬이 아들을 낳고 '다시 다른 아들을 더하시기를 원하노라'며 지은 이름은 무엇입니까?",
+        "choices": [
+          "시므온",
+          "르우벤",
+          "요셉"
+        ],
+        "answer_index": 2,
+        "explanation": "창 30:24 — '그 이름을 요셉이라 하니 여호와는 다시 다른 아들을 내게 더하시기를 원하노라 함이었더라'"
+      }
+    ]
+  },
+  {
+    "title": "야곱의 번성: 양떼의 기묘한 계약",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "laban",
+      "leah",
+      "rachel"
+    ],
+    "landmark_code": "lm_pat_haran",
+    "place_name": "하란",
+    "lat": 36.8589,
+    "lng": 39.0314,
+    "summary": "야곱은 라반의 집에서 번성하고 라반과 갈등이 깊어진다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「야곱의 번성」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "31:16",
+        "book": "창",
+        "from": "30:25"
+      }
+    ],
+    "start_year": -1965,
+    "end_year": -1961,
+    "time_precision": "approx",
+    "story_index": 19,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "야곱이 장막 앞에서 떠나겠다고 말하자 라반이 손을 들어 붙잡고, 뒤에는 야곱의 가족과 양 떼가 길 떠날 준비를 하고 있다",
+      "야곱과 라반이 양 떼의 얼룩지고 아롱진 표식을 두고 계약을 정하며, 야곱은 표식 있는 양들을 조심스럽게 따로 세운다",
+      "야곱의 얼룩진 양 떼가 크게 늘어나고, 라반과 그의 아들들은 굳은 얼굴로 그 풍성함을 바라본다",
+      "야곱이 레아와 라헬에게 낮은 목소리로 떠날 때가 되었다고 알린다"
+    ],
+    "scene_captions": [
+      "야곱이 떠나겠다고 하고 라반이 손을 들어 붙잡다",
+      "야곱과 라반이 양 떼의 얼룩지고 아롱진 표식을 두고 계약을 정한다",
+      "야곱의 얼룩진 양 떼가 크게 늘어난다, 라반과 그의 아들들은 굳은 얼굴로 그 풍성함을 바라본다",
+      "야곱이 레아와 라헬에게 낮은 목소리로 떠날 때가 되었다고 알린다"
+    ],
+    "scene_characters": [
+      [
+        "jacob",
+        "laban"
+      ],
+      [
+        "jacob",
+        "laban"
+      ],
+      [
+        "jacob",
+        "laban"
+      ],
+      [
+        "jacob",
+        "leah",
+        "rachel"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "야곱과 라반이 맺은 계약에서 야곱의 품삯은 무엇으로 정해졌습니까?",
+        "choices": [
+          "양떼의 절반",
+          "흰 양 전부",
+          "아롱지고 점 있고 검은 양과 염소"
+        ],
+        "answer_index": 2,
+        "explanation": "창 30:32 — '아롱진 자와 점 있는 자와 모든 검은 자를 내 품삯으로 하리이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "라반이 자주 계약 내용을 바꾸자 야곱은 어떻게 하였습니까?",
+        "choices": [
+          "새 계약서를 요청하였다",
+          "라반에게 항의하고 고향으로 떠났다",
+          "나뭇가지를 이용해 양을 번성하게 하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 30:37-39 — 야곱이 껍질 벗긴 나뭇가지를 이용해 자신의 몫이 되는 양을 번성시킴"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 라반의 집에 있던 야곱에게 무엇을 약속하셨습니까?",
+        "choices": [
+          "고향으로 돌아가라 하시며 함께 있으리라 약속하셨다",
+          "양 떼를 모두 라반에게 돌리라 하셨다",
+          "라반의 집에 영원히 머물라 하셨다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 31:3 — '여호와께서 야곱에게 이르시되 네 조상의 땅, 네 족속에게로 돌아가라 내가 너와 함께 있으리라 하 신지라'"
+      }
+    ]
+  },
+  {
+    "title": "도피와 언약: 라반과의 마지막",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "laban",
+      "leah",
+      "rachel"
+    ],
+    "landmark_code": "lm_pat_gilead",
+    "place_name": "길르앗(전승)",
+    "lat": 32.2,
+    "lng": 35.85,
+    "summary": "야곱은 라반을 떠나고, 추격 끝에 언약으로 갈등을 마무리한다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「도피와 언약」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "31:55",
+        "book": "창",
+        "from": "31:17"
+      }
+    ],
+    "start_year": -1961,
+    "end_year": -1961,
+    "time_precision": "approx",
+    "story_index": 20,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "야곱이 밤에 가족과 가축과 짐을 조용히 모아 라반의 집을 떠나고, 라헬은 숨긴 드라빔 때문에 불안한 얼굴로 장막 꾸러미를 붙든다",
+      "라반이 분노한 얼굴로 야곱의 행렬을 따라잡아 추궁하고, 야곱은 가족을 지키려 긴장한 자세로 맞선다",
+      "라반이 라헬의 장막 안을 수색하고, 라헬은 낙타 안장 위에 앉아 긴장된 얼굴로 침착한 척한다. 드라빔은 노골적으로 보이지 않는다",
+      "야곱과 라반이 돌무더기를 세워 서로 해치지 않겠다는 언약을 맺고, 가족들은 긴장 끝의 안도와 피로가 섞인 표정으로 바라본다"
+    ],
+    "scene_captions": [
+      "야곱이 밤에 가족과 가축과 짐을 조용히 모아 라반의 집을 떠나다. 라헬을 드라빔을 들고 있다",
+      "라반이 분노한 얼굴로 야곱의 행렬을 따라잡아 인사 없이 떠난것과 드라빔을 가져간 것을 추궁한다",
+      "라반이 라헬의 장막 안을 수색한다, 라헬은 낙타 안장 위에 드라빔을 숨기고 앉아 있다",
+      "야곱과 라반이 돌무더기를 세워 서로 해치지 않겠다는 언약을 맺다"
+    ],
+    "scene_characters": [
+      [
+        "jacob",
+        "rachel",
+        "leah"
+      ],
+      [
+        "laban",
+        "jacob"
+      ],
+      [
+        "laban",
+        "rachel"
+      ],
+      [
+        "laban",
+        "rachel",
+        "leah",
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "라반과 야곱이 화해의 표로 쌓은 것은 무엇입니까?",
+        "choices": [
+          "돌 무더기",
+          "나무 기둥",
+          "흙 단"
+        ],
+        "answer_index": 0,
+        "explanation": "창 31:46 — '야곱이 형제들에게 돌을 모으라 하니 그들이 돌을 취하여 무더기를 이루매'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "라반과 언약을 세울 때 야곱은 돌무더기를 무엇이라 불렀습니까?",
+        "choices": [
+          "브니엘이라 불렀다",
+          "벧엘이라 불렀다",
+          "갈르엣이라 불렀다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 31:47 — '라반은 그것을 여갈사하두다라 칭하였고 야곱은 그것을 갈르엣이라 칭하였으니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "라반은 야곱과 헤어진 아침에 가족들에게 어떻게 했습니까?",
+        "choices": [
+          "손자들과 딸들에게 입맞추고 축복했다",
+          "밤중에 몰래 도망했다",
+          "야곱의 양 떼를 빼앗았다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 31:55 — '라반이 아침에 일찌기 일어나 손자들과 딸들에게 입맞추며 그들에게 축복하고 떠나 고향으로 돌아 갔더라'"
+      }
+    ]
+  },
+  {
+    "title": "얍복강 씨름: 이스라엘",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob"
+    ],
+    "landmark_code": "lm_pat_jabbok",
+    "place_name": "얍복 강가(전승)",
+    "lat": 32.15,
+    "lng": 35.62,
+    "summary": "야곱은 밤새 씨름하며 새 이름 ‘이스라엘’을 받는다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「얍복강 씨름」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "32:32",
+        "book": "창",
+        "from": "32:24"
+      }
+    ],
+    "start_year": -1960,
+    "end_year": -1960,
+    "time_precision": "approx",
+    "story_index": 21,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "얍복강 밤 어둠 속에서 야곱이 가족과 소유를 먼저 건너보낸 뒤 혼자 남아 숨을 고르며 두려운 얼굴로 서 있다",
+      "천사 같은 신비한 존재가 야곱을 붙잡고 밤새 씨름을 시작하며, 야곱은 온몸으로 버티고 얼굴에는 절박함이 드러난다",
+      "신비한 존재가 야곱의 허벅지를 치자 야곱이 쓰러지면서 고통 속에서도 신비한 존재를 붙잡는다",
+      "새벽빛 속에서 이름을 받은 중년의 야곱이 다리를 절며 가족에게 돌아오고, 얼굴에는 고통과 새 정체성을 얻은 경외감이 함께 보인다"
+    ],
+    "scene_captions": [
+      "얍복강 밤 어둠 속에서 야곱이 가족과 소유를 먼저 보내고 두려운 얼굴로 서 있다",
+      "천사 같은 신비한 존재가 야곱을 붙잡고 밤새 씨름을 시작한다",
+      "야곱이 쓰러지면서 고통 속에서도 신비한 존재를 붙잡는다",
+      "새벽빛 속에서 이름을 받은 중년의 야곱이 다리를 절며 가족에게 돌아온다"
+    ],
+    "scene_characters": [
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ],
+      [
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "씨름 상대가 날이 새니 가게 해 달라 하자 야곱은 어떻게 응답하였습니까?",
+        "choices": [
+          "이름을 물어보았다",
+          "축복하지 않으면 가게 하지 않겠다 하였다",
+          "즉시 놓아 주었다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 32:26 — '야곱이 가로되 당신이 내게 축복하지 아니하면 가게 하지 아니하겠나이다'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야곱이 씨름 후 받은 새 이름은 무엇입니까?",
+        "choices": [
+          "이스라엘",
+          "이삭",
+          "아브라함"
+        ],
+        "answer_index": 0,
+        "explanation": "창 32:28 — '네 이름을 다시는 야곱이라 부를 것이 아니요 이스라엘이라 부를 것이니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야곱이 이름을 묻자 그 사람은 어떻게 했습니까?",
+        "choices": [
+          "이름 대신 야곱을 축복했다",
+          "자기 이름을 자세히 알려 주었다",
+          "야곱을 다시 에서에게 보냈다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 32:29 — '야곱이 청하여 가로되 당신의 이름을 고하소서 그 사람이 가로되 어찌 내 이름을 묻느냐 하고 거 기서 야곱에게 축복한지라'"
+      }
+    ]
+  },
+  {
+    "title": "에서와 화해: 달려오는 형",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "esau"
+    ],
+    "landmark_code": "lm_pat_jabbok",
+    "place_name": "얍복 강가(전승)",
+    "lat": 32.15,
+    "lng": 35.62,
+    "summary": "두려움으로 맞이한 재회는 포옹과 눈물로 풀린다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「에서와 화해」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "33:11",
+        "book": "창",
+        "from": "33:1"
+      }
+    ],
+    "start_year": -1960,
+    "end_year": -1960,
+    "time_precision": "approx",
+    "story_index": 22,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "야곱이 가족과 가축을 여러 무리로 나누어 앞세우고, 멀리 붉은 사냥꾼 같은 에서가 많은 사람들과 다가오자 야곱의 얼굴에 두려움이 번진다",
+      "야곱이 에서 앞에서 일곱 번 몸을 낮추어 절하고, 에서는 예상과 달리 무기를 내리지 않은 채 달려오지만 얼굴에는 분노보다 그리움이 드러난다",
+      "에서가 야곱을 끌어안고 울고 야곱도 울음을 삼키며, 두 형제의 옷차림과 체형 차이가 뚜렷하게 보인다. 뒤쪽 가족들은 안도의 표정으로 바라본다"
+    ],
+    "scene_captions": [
+      "야곱이 가족과 가축을 여러 무리로 나누어 앞세운다",
+      "야곱이 에서 앞에서 일곱 번 몸을 낮추어 절한다",
+      "에서가 야곱을 끌어안고 울고 야곱도 울음을 삼키다"
+    ],
+    "scene_characters": [
+      [
+        "jacob",
+        "esau"
+      ],
+      [
+        "jacob",
+        "esau"
+      ],
+      [
+        "jacob",
+        "esau"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에서는 야곱을 만나러 올 때 몇 명을 거느리고 왔습니까?",
+        "choices": [
+          "사백 명",
+          "오십 명",
+          "백 명"
+        ],
+        "answer_index": 0,
+        "explanation": "창 33:1 — '에서가 사백인을 거느리고 오는지라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야곱은 형 에서에게 가까이 가며 어떻게 절하였습니까?",
+        "choices": [
+          "한 번 절하고 예물을 내밀었다",
+          "멀리서 엎드렸다",
+          "몸을 일곱 번 땅에 굽혔다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 33:3 — '자기는 그들 앞에서 나아가되 몸을 일곱 번 땅에 굽히며 그 형 에서에게 가까이 하니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "에서이 함께한 여인과 자식들을 묻자 야곱은 그들을 누구의 은혜로 받은 자식이라고 말했습니까?",
+        "choices": [
+          "에서이 맡긴 자식이라고 말했다",
+          "라반이 품삯으로 준 자식이라고 말했다",
+          "하나님이 은혜로 주신 자식이라고 말했다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 33:5 — '에서가 눈을 들어 여인과 자식들을 보고 묻되 너와 함께한 이들 은 누구냐 야곱이 가로되 하나님이 주의 종에게 은혜로 주신 자식이니이다'"
+      }
+    ]
+  },
+  {
+    "title": "벧엘 귀환: 라헬의 죽음",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "rachel",
+      "benjamin"
+    ],
+    "landmark_code": "lm_pat_bethlehem",
+    "place_name": "베들레헴 길(전승)",
+    "lat": 31.7054,
+    "lng": 35.2024,
+    "summary": "야곱의 가정은 이동 중 큰 상실을 겪고도 약속의 길을 이어간다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「벧엘 귀환」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "35:20",
+        "book": "창",
+        "from": "35:1"
+      }
+    ],
+    "start_year": -1955,
+    "end_year": -1955,
+    "time_precision": "approx",
+    "story_index": 23,
+    "unit_code": "patriarch_jacob_israel",
+    "unit_title": "야곱: 이스라엘이 되다",
+    "unit_order": 2,
+    "story_scenes": [
+      "하나님의 빛이 야곱에게 임하고 야곱은 가족에게 우상을 버리고 길을 준비하라고 엄숙히 손짓한다. 가족들은 이방 신상들을 야곱에게 건낸다",
+      "베들레헴 길 위에서 라헬이 해산의 고통으로 누워 있고, 야곱은 초조하게 곁을 지키며 산파는 갓난아이를 조심히 받는다. 직접적인 출산 묘사는 없다",
+      "야곱이 라헬의 무덤 기둥을 세우고 오래 서 있으며, 품에 안긴 갓난 베냐민과 가족들은 먼지 묻은 여행복으로 조용히 애도한다"
+    ],
+    "scene_captions": [
+      "야곱은 하나님의 명령을 따라 가지고 있던 우상들을 제거한다",
+      "베들레헴 길 위에서 라헬이 해산의 고통으로 누워 있고 베냐민이 나온다",
+      "야곱이 아기 베냐민을 들고 라헬의 무덤 기둥을 세우고 슬퍼한다"
+    ],
+    "scene_characters": [
+      [
+        "god",
+        "jacob"
+      ],
+      [
+        "rachel",
+        "jacob",
+        "benjamin"
+      ],
+      [
+        "jacob",
+        "benjamin"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "라헬은 어디로 가는 길에 아이를 낳다가 죽었습니까?",
+        "choices": [
+          "벧엘로 가는 길",
+          "헤브론으로 가는 길",
+          "에브랏으로 가는 길"
+        ],
+        "answer_index": 2,
+        "explanation": "창 35:16-17 — '그들이 벧엘에서 발행하여 에브랏에 이르기까지 ... 라헬이 임산하여 심히 신고하더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "라헬이 죽어가며 아들을 베노니라 불렀을 때 아버지는 그 이름을 무엇으로 불렀습니까?",
+        "choices": [
+          "르우벤",
+          "요셉",
+          "베냐민"
+        ],
+        "answer_index": 2,
+        "explanation": "창 35:18 — '그가 죽기에 임하여 그 혼이 떠나려 할 때에 아들의 이름은 베노니라 불렀으나 그 아비가 그를 베 냐민이라 불렀더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야곱은 라헬의 묘에 무엇을 세웠습니까?",
+        "choices": [
+          "성벽을 세웠다",
+          "우물을 팠다",
+          "묘비를 세웠다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 35:20 — '야곱이 라헬의 묘에 비를 세웠더니 지금까지 라헬의 묘비라 일컫더라'"
+      }
+    ]
+  },
+  {
+    "title": "요셉의 꿈: 형제들의 시기",
+    "era": "era_patriarch",
+    "characters": [
+      "joseph",
+      "jacob",
+      "reuben",
+      "simeon",
+      "levi",
+      "judah",
+      "naphtali",
+      "gad",
+      "asher",
+      "issachar",
+      "zebulun"
+    ],
+    "landmark_code": "lm_pat_hebron",
+    "place_name": "마므레(헤브론, 전승)",
+    "lat": 31.5326,
+    "lng": 35.0998,
+    "summary": "요셉의 꿈과 편애가 형제들의 마음을 뒤틀리게 한다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「요셉의 꿈」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "37:11",
+        "book": "창",
+        "from": "37:1"
+      }
+    ],
+    "start_year": -1915,
+    "end_year": -1915,
+    "time_precision": "approx",
+    "story_index": 24,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "17세 안팎의 어린 요셉이 채색옷을 입고 형들 사이를 지나가자, 르우벤과 유다를 비롯한 형들은 질투와 거리감이 섞인 얼굴로 서로 눈짓한다",
+      "17세 안팎의 어린 요셉이 형들에게 곡식단 꿈을 이야기하고, 말풍선 안에는 중앙 곡식단에게 주변 곡식단들이 절하는 그림이 글자 없이 보인다. 형들의 표정은 차갑게 굳는다",
+      "늙어서 머리가 하얀 야곱이 17세 안팎의 어린 요셉을 꾸짖지만, 말풍선 안의 해와 달과 별들이 요셉에게 절하는 그림을 보며 마음속에 그 말을 담아둔다"
+    ],
+    "scene_captions": [
+      "채색옷을 입을 요셉을 형제들이 시기한다",
+      "17세 안팎의 어린 요셉이 형들에게 곡식단 꿈을 이야기한다",
+      "야곱이 17세 안팎의 어린 요셉을 꾸짖지만 이야기를 마음에 담아둔다"
+    ],
+    "scene_characters": [
+      [
+        "joseph",
+        "reuben",
+        "judah"
+      ],
+      [
+        "joseph",
+        "reuben",
+        "simeon",
+        "levi",
+        "judah"
+      ],
+      [
+        "jacob",
+        "joseph"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "이스라엘이 요셉을 특별히 사랑하여 만들어 준 것은 무엇입니까?",
+        "choices": [
+          "채색옷",
+          "금 반지",
+          "은 지팡이"
+        ],
+        "answer_index": 0,
+        "explanation": "창 37:3 — '이스라엘이 ... 요셉을 깊이 사랑하여 위하여 채색옷을 지었더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "요셉은 형들에게 무엇을 들으라고 했습니까?",
+        "choices": [
+          "애굽에서 들은 소식",
+          "아버지가 준 명령",
+          "자기가 꾼 꿈"
+        ],
+        "answer_index": 2,
+        "explanation": "창 37:6 — '요셉이 그들에게 이르되 청컨대 나의 꾼 꿈을 들으시오'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "요셉의 꿈 이야기를 들은 형들과 아버지는 어떻게 반응했습니까?",
+        "choices": [
+          "아버지는 요셉을 집 밖으로 내보냈다",
+          "형들은 시기했고 아버지는 마음에 두었다",
+          "모두 즉시 요셉에게 절했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 37:11 — '그 형들은 시기하되 그 아비는 그 말을 마음에 두었더라'"
+      }
+    ]
+  },
+  {
+    "title": "요셉이 팔리다: 구덩이와 은",
+    "era": "era_patriarch",
+    "characters": [
+      "joseph",
+      "judah",
+      "jacob",
+      "reuben"
+    ],
+    "landmark_code": "lm_pat_dothan",
+    "place_name": "도단(전승)",
+    "lat": 32.41,
+    "lng": 35.24,
+    "summary": "시기는 요셉을 구덩이에 던지고 끝내 종으로 팔아넘긴다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「요셉이 팔리다」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "37:36",
+        "book": "창",
+        "from": "37:12"
+      }
+    ],
+    "start_year": -1915,
+    "end_year": -1915,
+    "time_precision": "approx",
+    "story_index": 25,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "형들이 요셉의 채색옷을 빼앗고 그를 물 없는 구덩이로 밀어 넣으며, 요셉은 두려움으로 손을 뻗는다. 피와 직접 폭력은 보이지 않는다",
+      "형들의 손에 은 조각이 쥐어지고, 멀리서는 17세 안팎의 어린 요셉이 상인들의 낙타 행렬 쪽으로 끌려가며 뒤돌아본다. 르우벤은 옷을 찢으며 슬퍼한다",
+      "붉게 물든 요셉의 채색옷을 형들이 야곱에게 전달하고, 늙은 야곱은 슬퍼 통곡한다"
+    ],
+    "scene_captions": [
+      "형들이 요셉의 채색옷을 빼앗고 요셉을 구덩이로 밀어 넣는다",
+      "형들은 은조각에 요셉을 상인들에게 팔아 넘긴다",
+      "붉게 물든 요셉의 채색옷을 전달받은 야곱이 슬퍼한다"
+    ],
+    "scene_characters": [
+      [
+        "joseph"
+      ],
+      [
+        "joseph",
+        "judah",
+        "reuben"
+      ],
+      [
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요셉을 팔고 돌아온 형들은 아버지에게 무엇을 하였습니까?",
+        "choices": [
+          "요셉이 들짐승에게 죽었다고 말하였다",
+          "채색옷에 숫염소의 피를 묻혀 보냈다",
+          "요셉이 도망쳤다고 거짓말하였다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 37:31-32 — '요셉의 옷을 가져다가 숫염소를 죽여 그 옷을 피에 적시고 ... 아비에게로 보내어'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야곱은 피 묻은 옷을 보고 무엇이라고 생각했습니까?",
+        "choices": [
+          "요셉이 애굽의 왕이 되었다고 생각했다",
+          "형들이 요셉을 팔았다고 바로 알았다",
+          "요셉이 들짐승에게 찢겨 죽었다고 생각했다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 37:33 — '아비가 그것을 알아보고 가로되 내 아들의 옷이라 악한 짐승이 그를 먹었도다 요셉이 정녕 찢겼도 다 하고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "형들이 요셉을 판 미디안 상인들은 요셉을 누구에게 팔았습니까?",
+        "choices": [
+          "바로의 신하 시위대장 보디발",
+          "애굽의 상인들에게",
+          "바로에게"
+        ],
+        "answer_index": 0,
+        "explanation": "창 37:36 — '미디안 사람이 애굽에서 바로의 신하 시위대장 보디발에게 요셉을 팔았더라'"
+      }
+    ]
+  },
+  {
+    "title": "보디발의 집: 성실과 누명",
+    "era": "era_patriarch",
+    "characters": [
+      "joseph",
+      "potiphar"
+    ],
+    "landmark_code": "lm_pat_unknown",
+    "place_name": "애굽(전승)",
+    "lat": 30,
+    "lng": 31.5,
+    "summary": "요셉은 유혹을 거절하지만 누명을 쓰고 감옥으로 내려간다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「보디발의 집」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "39:23",
+        "book": "창",
+        "from": "39:1"
+      }
+    ],
+    "start_year": -1910,
+    "end_year": -1909,
+    "time_precision": "approx",
+    "story_index": 26,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "종으로 팔려 온 요셉이 보디발의 이집트 저택에서 곡식 창고와 열쇠를 정리하고, 보디발은 그에게 집안 일을 맡기며 신뢰하는 표정으로 서 있다",
+      "이집트 저택의 방 안, 화려한 침상 가장자리에 앉은 여인이 종 요셉을 향해 손짓하고, 요셉은 문가 앞에 서서 몸을 뒤로 물리며 두 손을 가슴 앞에 들어 단호히 거절하는 표정",
+      "여자가 요셉의 겉옷을 붙잡아 천이 손에 남고, 요셉은 문 밖으로 급히 도망가며 하나님 앞에 죄짓지 않겠다는 단호한 얼굴이다. 선정적 장면은 없다",
+      "감옥에 갇힌 종 요셉이 어두운 감옥 안에서 죄수들에게 물과 빵을 나누고 일을 정리하며, 간수는 그를 신뢰하는 표정으로 바라본다"
+    ],
+    "scene_captions": [
+      "종으로 팔려 온 요셉이 보디발에게 인정받아 집을 관리하게 된다",
+      "화려한 침상에서 보디발의 아내가 종 요셉을 유혹한다",
+      "요셉은 보디발의 아내에게서 도망가다가 옷이 찢어진다",
+      "감옥에 갇힌 종 요셉은 하나님이 함께하사 감옥에 있는 모든 일을 맡게 된다"
+    ],
+    "scene_characters": [
+      [
+        "potiphar",
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ],
+      [
+        "joseph"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "보디발의 아내가 유혹할 때 요셉은 어떻게 했습니까?",
+        "choices": [
+          "보디발에게 즉시 알렸다",
+          "겉옷을 버리고 밖으로 피했다",
+          "아무 말 없이 따랐다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 39:12 — '그가 그 옷을 그 손에 버려두고 도망하여 나가니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "요셉에게 누명을 씌운 사람은 누구입니까?",
+        "choices": [
+          "파라오",
+          "보디발",
+          "보디발의 아내"
+        ],
+        "answer_index": 2,
+        "explanation": "창 39:14-18 — 보디발의 아내가 요셉의 옷을 잡고 거짓 고발함"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "그 뒤 요셉에게 어떤 일이 있었습니까?",
+        "choices": [
+          "바로의 궁으로 바로 들어갔다",
+          "요셉이 감옥에 갇혔다",
+          "보디발의 집 주인이 되었다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 39:20 — '이에 요셉의 주인이 그를 잡아 옥에 넣으니 그 옥은 왕의 죄수를 가두는 곳이었더라 요셉이 옥에 갇혔으나'"
+      }
+    ]
+  },
+  {
+    "title": "바로의 꿈: 총리 요셉",
+    "era": "era_patriarch",
+    "characters": [
+      "joseph",
+      "pharaoh"
+    ],
+    "landmark_code": "lm_pat_unknown",
+    "place_name": "애굽(전승)",
+    "lat": 30,
+    "lng": 31.5,
+    "summary": "바로의 꿈을 해석한 요셉은 애굽의 총리로 세워진다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「바로의 꿈」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "41:57",
+        "book": "창",
+        "from": "41:1"
+      }
+    ],
+    "start_year": -1900,
+    "end_year": -1900,
+    "time_precision": "approx",
+    "story_index": 27,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "바로가 왕궁 침상에서 살진 소와 마른 소의 꿈을 꾸고 놀라 깨어나며, 애굽식 왕관과 얇은 아마포 침구가 보인다",
+      "요셉이 풍년과 흉년을 대비하는 저장 계획을 설명하자 바로와 신하들이 놀라 듣고, 곡식 이삭과 저장 창고 모형이 보인다. 글자는 없다",
+      "바로가 요셉을 애굽 총리로 세우고, 요셉이 애굽 총리의 세마포 옷과 금 목걸이를 받고 얼굴에는 책임감과 하나님의 섭리에 대한 경외감이 함께 보인다"
+    ],
+    "scene_captions": [
+      "바로가 살진 소와 마른 소, 좋은 이삭과 시든 이삭의 꿈을 꾸고 놀라 깨어나다",
+      "바로와 신하들이 요셉의 꿈 해석을 놀라 듣는다",
+      "바로가 요셉을 애굽 총리로 세운다. 요셉은 반지와 삼베옷, 금목걸이를 받는다"
+    ],
+    "scene_characters": [
+      [
+        "pharaoh"
+      ],
+      [
+        "pharaoh",
+        "joseph"
+      ],
+      [
+        "pharaoh",
+        "joseph"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "바로의 꿈에서 먼저 나온 일곱 마리 소의 상태는 어떠하였습니까?",
+        "choices": [
+          "살지고 아름다운 소",
+          "강하고 검은 소",
+          "파리하고 흉악한 소"
+        ],
+        "answer_index": 0,
+        "explanation": "창 41:2 — '하수에서 살지고 아름다운 암소 일곱이 올라와 갈밭에서 뜯어먹더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "바로는 요셉의 꿈 해석을 듣고 요셉에게 어떻게 하였습니까?",
+        "choices": [
+          "애굽 전국의 총리로 세웠다",
+          "신하들과 상의 후 결정하였다",
+          "감옥에서 풀어 주었다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 41:41 — '바로가 그로 애굽 전국을 총리하게 하였더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "포위된 성 안에는 어떤 일이 일어났습니까?",
+        "choices": [
+          "강하고 검은 소",
+          "파리하고 흉악한 소",
+          "기근이 심해 먹을 것이 떨어졌다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 41:56 — '온 지면에 기근이 있으매 요셉이 모든 창고를 열고 애굽 백성에게 팔새 애굽 땅에 기근이 심하며'"
+      }
+    ]
+  },
+  {
+    "title": "요셉의 정체 공개: 울음의 방",
+    "era": "era_patriarch",
+    "characters": [
+      "joseph",
+      "benjamin",
+      "judah",
+      "reuben"
+    ],
+    "landmark_code": "lm_pat_egypt_court",
+    "place_name": "애굽(요셉의 집, 전승)",
+    "lat": 30.05,
+    "lng": 31.25,
+    "summary": "요셉은 더 이상 참지 못하고 형제들에게 자신을 드러낸다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「요셉의 정체 공개」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "45:15",
+        "book": "창",
+        "from": "45:1"
+      }
+    ],
+    "start_year": -1885,
+    "end_year": -1885,
+    "time_precision": "approx",
+    "story_index": 28,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "요셉이 총리의 겉모습 일부를 내려놓고 자신을 밝히며, 형들은 믿기 어려운 얼굴로 뒤로 물러선다. 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 총리 옷 일부를 내려놓은 요셉과 어린 시절 형제들이 함께 서 있던 모습이 작은 그림처럼 보인다",
+      "총리 차림의 요셉이 베냐민을 끌어안고 울고, 유다와 형들은 뒤에서 죄책감과 안도감이 섞인 얼굴로 그 모습을 바라본다"
+    ],
+    "scene_captions": [
+      "요셉이 총리의 겉모습 일부를 내려놓고 자신을 밝히다",
+      "요셉은 베냐민을 끌어안고 울고 모두 놀란다"
+    ],
+    "scene_characters": [
+      [
+        "joseph",
+        "benjamin",
+        "judah",
+        "reuben"
+      ],
+      [
+        "joseph",
+        "benjamin",
+        "judah",
+        "reuben"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요셉이 자신의 정체를 드러낼 때 그와 함께 있었던 사람은 몇 명입니까?",
+        "choices": [
+          "바로의 신하들이 있었다",
+          "청지기 한 명이 있었다",
+          "아무도 없었다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 45:1 — '요셉이 시종하는 자들 앞에서 ... 모든 사람을 자기에게서 물러가라 하고 ... 때에 그와 함께한 자가 없었더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "요셉은 자신을 팔았던 형들에게 그 일에 대해 어떻게 말하였습니까?",
+        "choices": [
+          "형들의 잘못을 낱낱이 책망하였다",
+          "아무 말도 하지 않고 울기만 하였다",
+          "나를 이리로 보낸 자는 하나님이시라 하였다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 45:8 — '그런즉 나를 이리로 보낸 자는 당신들이 아니요 하나님이시라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "요셉은 형들에게 하나님이 자신을 애굽에서 어떤 자리에 세우셨다고 말했습니까?",
+        "choices": [
+          "감옥을 지키는 사람으로 세우셨다고 말했다",
+          "애굽 전국의 주로 세우셨다고 말했다",
+          "가나안의 목자로 세우셨다고 말했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 45:9 — '당신들은 속히 아버지께로 올라가서 고하기를 아버지의 아들 요셉의 말에 하나님이 나를 애굽 전국 의 주로 세우셨으니 내게로 지체말고 내려오사'"
+      }
+    ]
+  },
+  {
+    "title": "고센 정착: 만남과 눈물",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "joseph",
+      "pharaoh"
+    ],
+    "landmark_code": "lm_pat_goshen",
+    "place_name": "고센 땅(나일 델타, 전승)",
+    "lat": 30.78,
+    "lng": 31.36,
+    "summary": "요셉은 야곱을 맞이하고, 이스라엘은 고센에 자리 잡는다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「고센 정착」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "47:12",
+        "book": "창",
+        "from": "46:28"
+      }
+    ],
+    "start_year": -1880,
+    "end_year": -1879,
+    "time_precision": "approx",
+    "story_index": 29,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "고센 들판 길 위, 애굽 총리 요셉이 흰 세마포 겉옷과 얇은 금 목걸이를 단정히 하고 작은 전차를 타고 야곱의 가족을 맞으러 달려간다",
+      "고센 들판 입구, 흰 세마포 옷과 얇은 금 목걸이를 한 애굽 총리 요셉이 흰 수염의 늙은 야곱을 두 팔로 끌어안고 눈물을 흘린다",
+      "애굽 궁정 안, 왕관을 쓴 바로와 흰 수염의 야곱이 서로 마주 서 있고, 흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉은 두 사람 사이 옆쪽에서 조용히 안내한다"
+    ],
+    "scene_captions": [
+      "요셉이 병거를 갖추고 이스라엘을 만나러 고센으로 간다",
+      "야곱과 요셉이 끌어안고 기쁨을 만끽한다",
+      "애굽 궁정 안, 바로에게 요셉이 야곱을 소개하고 야곱과 가족들은 고센에 정착한다"
+    ],
+    "scene_characters": [
+      [
+        "joseph"
+      ],
+      [
+        "jacob",
+        "joseph"
+      ],
+      [
+        "pharaoh",
+        "jacob",
+        "joseph"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "야곱의 가족이 애굽에서 정착한 땅의 이름은 무엇입니까?",
+        "choices": [
+          "나일 강가",
+          "고센 땅",
+          "가나안 땅"
+        ],
+        "answer_index": 1,
+        "explanation": "창 46:28 — '야곱이 유다를 요셉에게 미리 보내어 자기를 고센으로 인도하게 하고 다 고센 땅에 이르니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "바로가 야곱 가족의 생업을 묻자 그들은 어떻게 대답하였습니까?",
+        "choices": [
+          "종들은 목자라 우리와 선조가 다 그러하다 하였다",
+          "장사꾼이라고 하였다",
+          "농부라고 하였다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 47:3 — '바로가 요셉의 형들에게 묻되 너희 생업이 무엇이냐 그들이 ... 종들은 목자이온데 우리와 선조가 다 그러하니이다'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "포위된 성 안에는 어떤 일이 일어났습니까?",
+        "choices": [
+          "가나안 땅",
+          "나일 강가",
+          "기근이 심해 먹을 것이 떨어졌다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 47:4 — '그들이 또 바로에게 고하되 가나안 땅에 기근이 심하여 종들의 떼를 칠 곳이 없기로 종들이 이곳에 우거하러 왔사오니 청컨대 종들로 고센 땅에 거하게 하소서'"
+      }
+    ]
+  },
+  {
+    "title": "야곱의 축복: 열두 아들",
+    "era": "era_patriarch",
+    "characters": [
+      "jacob",
+      "joseph"
+    ],
+    "landmark_code": "lm_pat_unknown",
+    "place_name": "애굽(전승)",
+    "lat": 30,
+    "lng": 31.5,
+    "summary": "야곱은 마지막 순간 아들들을 불러 각 지파의 길을 예언적으로 선언한다.",
+    "background_context": "족장 시대는 아브라함, 이삭, 야곱, 요셉의 가족 이야기가 중심입니다. 이 이야기는 「야곱의 축복」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "48:22",
+        "book": "창",
+        "from": "48:1"
+      },
+      {
+        "to": "49:33",
+        "book": "창",
+        "from": "49:1"
+      }
+    ],
+    "start_year": -1860,
+    "end_year": -1860,
+    "time_precision": "approx",
+    "story_index": 30,
+    "unit_code": "patriarch_joseph_egypt",
+    "unit_title": "요셉: 애굽으로 이어진 구원",
+    "unit_order": 3,
+    "story_scenes": [
+      "침상 앞, 흰수염의 눈이 어둡고 늙은 야곱이 팔을 어긋맞겨 오른손을 어린 에브라임의 머리에 얹고 왼손을 므낫세의 머리에 얹으며, 흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉은 놀란 얼굴로 야곱의 손을 조심히 바로잡으려 하지만 야곱은 맞다고 하는 장면",
+      "넓은 애굽 집 안, 흰수염의 눈이 어둡고 늙은 야곱 앞에 열두 아들(흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉을 포함한 중년의 남자들)이 반원으로 둘러섰고 야곱이 한사람씩 축복하는 모습",
+      "흰수염의 눈이 어둡고 늙은 야곱이 침대에 발을 올려놓고 숨을 거두고, 열두 아들(흰 세마포 옷과 얇은 금 목걸이를 한 총리 요셉을 중년의 남자들)이 흐느낀다"
+    ],
+    "scene_captions": [
+      "야곱은 마지막 순간 요셉의 아들들에게 팔을 어긋맞겨 축복한다",
+      "야곱은 마지막 순간 아들들을 불러 각 지파의 길을 예언적으로 선언한다",
+      "야곱이 침대에서 숨을 거두고 가족들은 슬퍼한다"
+    ],
+    "scene_characters": [
+      [
+        "joseph",
+        "jacob"
+      ],
+      [
+        "joseph",
+        "jacob"
+      ],
+      [
+        "joseph",
+        "jacob"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "야곱이 요셉의 두 아들에게 축복할 때 오른손은 어느 아들 머리에 얹었습니까?",
+        "choices": [
+          "요셉",
+          "므낫세",
+          "에브라임"
+        ],
+        "answer_index": 2,
+        "explanation": "창 48:14 — '이스라엘이 오른손을 펴서 차남 에브라임의 머리에 얹고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "야곱은 에브라임과 므낫세에 대해 무엇을 말했습니까?",
+        "choices": [
+          "두 아들을 축복하지 않겠다고 했다",
+          "동생 에브라임이 더 큰 민족을 이룰 것이라고 했다",
+          "므낫세만 축복을 받을 것이라고 했다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 48:19 — '아비가 허락지 아니하여 가로되 나도 안다 내 아들아 나도 안다 그도 한 족속이 되며 그도 크게 되려니와 그 아우가 그보다 큰 자가 되고 그 자손이 여러 민족을 이루리라 하고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "야곱은 열두 아들에게 축복할 때 어떤 방식으로 축복했습니까?",
+        "choices": [
+          "아무 말 없이 축복을 거두었다",
+          "각 사람의 분량대로 축복했다",
+          "장자에게만 모든 복을 주었다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 49:28 — '이들은 이스라엘의 십이 지파라 이와 같이 그 아비가 그들에게 말하고 그들에게 축복하였으되 곧 그들 각인의 분량대로 축복하였더라'"
+      }
+    ]
+  }
+]

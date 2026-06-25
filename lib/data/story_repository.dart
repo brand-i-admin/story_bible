@@ -269,6 +269,19 @@ class StoryRepository {
         .toList();
   }
 
+  Future<Set<String>> _fetchVisibleEventIds() async {
+    final rows = await _client
+        .from('events_ordered')
+        .select('id, era_id')
+        .order('global_rank', ascending: true);
+    final hiddenEraIds = await _fetchHiddenEraIds();
+    return {
+      for (final row in rows)
+        if (row['id'] is String && !hiddenEraIds.contains(row['era_id']))
+          row['id'] as String,
+    };
+  }
+
   Future<Map<String, String>> _fetchActiveCharacterNamesByCode() async {
     final rows = await _client.from('characters').select('code, name');
     final result = <String, String>{};
@@ -334,6 +347,10 @@ class StoryRepository {
   }
 
   Future<Set<String>> fetchCompletedEventIds(String userId) async {
+    final visibleEventIds = await _fetchVisibleEventIds();
+    if (visibleEventIds.isEmpty) {
+      return const <String>{};
+    }
     final rows = await _client
         .from('user_event_progress')
         .select('event_id, is_completed')
@@ -342,30 +359,41 @@ class StoryRepository {
 
     return rows
         .map((row) => row['event_id'] as String)
-        .whereType<String>()
+        .where(visibleEventIds.contains)
         .toSet();
   }
 
   Future<Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>>
   fetchEventProgress(String userId) async {
+    final visibleEventIds = await _fetchVisibleEventIds();
+    if (visibleEventIds.isEmpty) {
+      return const <
+        String,
+        ({bool bibleRead, bool quizCompleted, bool completed})
+      >{};
+    }
     final rows = await _client
         .from('user_event_progress')
         .select('event_id, is_bible_read, is_quiz_completed, is_completed')
         .eq('user_id', userId);
 
-    return {
+    return filterByVisibleEventIds({
       for (final row in rows)
         row['event_id'] as String: (
           bibleRead: (row['is_bible_read'] as bool?) ?? false,
           quizCompleted: (row['is_quiz_completed'] as bool?) ?? false,
           completed: (row['is_completed'] as bool?) ?? false,
         ),
-    };
+    }, visibleEventIds);
   }
 
   Future<Map<String, QuizAttemptSummary>> fetchQuizAttemptSummaries(
     String userId,
   ) async {
+    final visibleEventIds = await _fetchVisibleEventIds();
+    if (visibleEventIds.isEmpty) {
+      return const <String, QuizAttemptSummary>{};
+    }
     final rows = await _client
         .from('user_quiz_attempts')
         .select(
@@ -374,10 +402,10 @@ class StoryRepository {
         .eq('user_id', userId)
         .order('updated_at', ascending: false);
 
-    return {
+    return filterByVisibleEventIds({
       for (final row in rows)
         row['event_id'] as String: QuizAttemptSummary.fromMap(row),
-    };
+    }, visibleEventIds);
   }
 
   Future<void> upsertQuizAttempt({
@@ -392,6 +420,10 @@ class StoryRepository {
   Future<Map<String, EventEmotionMark>> fetchEventEmotionMarks(
     String userId,
   ) async {
+    final visibleEventIds = await _fetchVisibleEventIds();
+    if (visibleEventIds.isEmpty) {
+      return const <String, EventEmotionMark>{};
+    }
     final rows = await _client
         .from('user_event_emotion_marks')
         .select(
@@ -400,10 +432,10 @@ class StoryRepository {
         .eq('user_id', userId)
         .order('updated_at', ascending: false);
 
-    return {
+    return filterByVisibleEventIds({
       for (final row in rows)
         row['event_id'] as String: EventEmotionMark.fromMap(row),
-    };
+    }, visibleEventIds);
   }
 
   Future<void> upsertEventEmotionMark({
@@ -549,6 +581,20 @@ bool eventContainsBibleVerse(
     }
   }
   return false;
+}
+
+@visibleForTesting
+Map<String, T> filterByVisibleEventIds<T>(
+  Map<String, T> values,
+  Set<String> visibleEventIds,
+) {
+  if (values.isEmpty || visibleEventIds.isEmpty) {
+    return <String, T>{};
+  }
+  return {
+    for (final entry in values.entries)
+      if (visibleEventIds.contains(entry.key)) entry.key: entry.value,
+  };
 }
 
 class _ScoredEvent {

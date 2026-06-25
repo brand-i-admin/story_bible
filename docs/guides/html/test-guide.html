@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 445 Dart tests</div>
+      <div class="subtle">310 events · 465 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -27,7 +27,7 @@
           <div class="eyebrow">Developer documentation</div>
           <h1>테스트 가이드 — Story Bible</h1>
           <p>테스트: 현재 테스트 파일과 검증 책임 카탈로그</p>
-          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:2%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:23%"></i></div><b>33</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:63%"></i></div><b>89</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:17%"></i></div><b>25</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:9%"></i></div><b>14</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:76%"></i></div><b>108</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>141</b></div></div>
+          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:1%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:25%"></i></div><b>38</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:58%"></i></div><b>89</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:16%"></i></div><b>25</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:9%"></i></div><b>14</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:74%"></i></div><b>113</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>151</b></div></div>
           <div class="toc"><strong>On this page</strong><a class="level-1" href="#테스트-가이드-—-story-bible">테스트 가이드 — Story Bible</a><a class="level-2" href="#0-한-장-요약">0. 한 장 요약</a><a class="level-2" href="#1-기본-실행-명령">1. 기본 실행 명령</a><a class="level-2" href="#2-모델-테스트">2. 모델 테스트</a><a class="level-2" href="#3-repository-state-테스트">3. Repository / State 테스트</a><a class="level-2" href="#4-utils-테스트">4. Utils 테스트</a><a class="level-2" href="#5-widget-테스트">5. Widget 테스트</a><a class="level-2" href="#6-python-도구-테스트">6. Python 도구 테스트</a><a class="level-2" href="#7-변경-유형별-최소-검증">7. 변경 유형별 최소 검증</a><a class="level-2" href="#8-남은-테스트-공백">8. 남은 테스트 공백</a></div>
         </section>
         <article class="doc-body">
@@ -186,6 +186,11 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td>Repository</td>
+<td><code>test/data/auth_repository_test.dart</code></td>
+<td>계정 삭제 확인 아이디 선택/비교 helper</td>
+</tr>
+<tr>
+<td>Repository</td>
 <td><code>test/data/font_scale_repository_test.dart</code></td>
 <td>접근성 글자 크기 저장/복원</td>
 </tr>
@@ -283,6 +288,10 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 <tr>
 <td>프로필</td>
 <td><code>profile_*_test.dart</code>, <code>saved_verse_row_test.dart</code></td>
+</tr>
+<tr>
+<td>로그인</td>
+<td><code>inline_login_prompt_card_test.dart</code></td>
 </tr>
 <tr>
 <td>접근성/공통 UI</td>

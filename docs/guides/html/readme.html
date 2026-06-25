@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 445 Dart tests</div>
+      <div class="subtle">310 events · 465 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="active nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -58,7 +58,7 @@
 <p>보조 문서:</p>
 <ul><li><a href="../../TESTING.md">../TESTING.md</a> — 저장소 전체 테스트 전략.</li></ul>
 <h3 id="부록-참고">부록/참고</h3>
-<ul><li><a href="workflow-guide.html">WORKFLOW_GUIDE.md</a> — Codex 작업 규칙과 웹 제안 기능의 긴 구조 참고. 현재 운영 경로는 <code>develop-flow.md</code>와 <code>CONTENT_UPDATE.md</code>가 우선이다.</li><li><a href="story-guide.html">story_guide.md</a> — 현재 <code>assets/200_stories/*.json</code> 기준 전체 사건 카탈로그. <code>make build-guides</code>가 생성한다.</li></ul>
+<ul><li><a href="workflow-guide.html">WORKFLOW_GUIDE.md</a> — Codex 작업 규칙과 웹 제안 기능의 긴 구조 참고. 현재 운영 경로는 <code>develop-flow.md</code>와 <code>CONTENT_UPDATE.md</code>가 우선이다.</li><li><a href="story-guide.html">story_guide.md</a> — 현재 <code>assets/events/*.json</code> 기준 전체 사건 카탈로그. <code>make build-guides</code>가 생성한다.</li></ul>
 <h2 id="1-빠른-선택">1. 빠른 선택</h2>
 <div class="table-wrap"><table>
 <thead><tr>
@@ -67,14 +67,24 @@
 <th>함께 볼 문서</th>
 </tr></thead><tbody>
 <tr>
-<td>평소 dev/real 실행, 검증, 배포 순서</td>
+<td>앱 기능/UI만 개발하고 빌드/배포</td>
 <td><a href="develop-flow.html">develop-flow.md</a></td>
-<td><a href="make-targets.html">MAKE_TARGETS.md</a></td>
+<td><a href="../../FRONTEND.md">../FRONTEND.md</a>, <a href="test-guide.html">TEST_GUIDE.md</a></td>
 </tr>
 <tr>
-<td>새 이야기, 퀴즈, 장면 이미지 반영</td>
+<td>DB schema/RLS/RPC/cron patch가 필요한 기능 개발</td>
+<td><a href="develop-flow.html">develop-flow.md</a></td>
+<td><a href="../../BACKEND.md">../BACKEND.md</a>, <a href="../../../supabase/patches/README.md">../../supabase/patches/README.md</a></td>
+</tr>
+<tr>
+<td>새 이야기 추가/삭제 승인 후 release sync</td>
 <td><a href="develop-flow.html">develop-flow.md</a></td>
 <td><a href="content-update.html">CONTENT_UPDATE.md</a>, <a href="make-targets.html">MAKE_TARGETS.md</a></td>
+</tr>
+<tr>
+<td>기존 퀴즈/landmark/seed 수정</td>
+<td><a href="develop-flow.html">develop-flow.md</a></td>
+<td><a href="make-targets.html">MAKE_TARGETS.md</a>, <a href="../../DATA_PIPELINE.md">../DATA_PIPELINE.md</a></td>
 </tr>
 <tr>
 <td><code>make</code> 명령 내부 동작 확인</td>
@@ -114,7 +124,7 @@
 <p>HTML과 <code>story_guide.md</code>는 아래 명령으로 다시 생성한다.</p>
 <pre><code class="language-bash">make build-guides</code></pre>
 <h2 id="4-최신성-점검-기준">4. 최신성 점검 기준</h2>
-<ul><li>명령은 <code>Makefile</code>, <code>scripts/</code>, <code>.pre-commit-config.yaml</code>, <code>.github/workflows/flutter_ci.yml</code>과 맞춘다.</li><li>로컬 환경 파일 설명은 <code>.gitignore</code>, <code>*.example</code>, <code>scripts/common.sh</code>, <code>Makefile</code>의 env 로딩 방식과 맞춘다.</li><li>DB/Storage/RPC 설명은 <code>db_init.sql</code>, <code>supabase/functions/</code>, <code>lib/data/</code>와 맞춘다.</li><li>콘텐츠 수와 제목은 <code>assets/200_stories/*.json</code>을 기준으로 한다.</li><li>테스트 파일과 테스트 수는 <code>test/</code>와 <code>tools/**/test_*.py</code>를 기준으로 한다.</li></ul>
+<ul><li>명령은 <code>Makefile</code>, <code>scripts/</code>, <code>.pre-commit-config.yaml</code>, <code>.github/workflows/flutter_ci.yml</code>과 맞춘다.</li><li>로컬 환경 파일 설명은 <code>.gitignore</code>, <code>*.example</code>, <code>scripts/common.sh</code>, <code>Makefile</code>의 env 로딩 방식과 맞춘다.</li><li>DB/Storage/RPC 설명은 <code>db_init.sql</code>, <code>supabase/functions/</code>, <code>lib/data/</code>와 맞춘다.</li><li>콘텐츠 수와 제목은 <code>assets/events/*.json</code>을 기준으로 한다.</li><li>테스트 파일과 테스트 수는 <code>test/</code>와 <code>tools/**/test_*.py</code>를 기준으로 한다.</li></ul>
           <a class="top-link" href="#top">맨 위로</a>
         </article>
       </div>

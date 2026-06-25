@@ -94,21 +94,38 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   @override
   void dispose() {
-    _completeMapCelebration();
+    _completeMapCelebrationFuture();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 
-  void _completeMapCelebration([int? nonce]) {
-    if (nonce != null && nonce != _mapCelebrationNonce) {
-      return;
-    }
+  void _completeMapCelebrationFuture() {
     final completer = _mapCelebrationCompleter;
     if (completer != null && !completer.isCompleted) {
       completer.complete();
     }
+    _mapCelebrationCompleter = null;
+  }
+
+  void _completeMapCelebration([int? nonce]) {
+    if (nonce != null && nonce != _mapCelebrationNonce) {
+      return;
+    }
+    _completeMapCelebrationFuture();
+    if (_mapCelebrationEventId == null && _mapCelebrationStampLabel == null) {
+      return;
+    }
+    if (!mounted) {
+      _mapCelebrationEventId = null;
+      _mapCelebrationStampLabel = null;
+      return;
+    }
+    setState(() {
+      _mapCelebrationEventId = null;
+      _mapCelebrationStampLabel = null;
+    });
   }
 
   VoidCallback _mapCelebrationCompleteCallback() {
@@ -1681,22 +1698,30 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         .toList(growable: false);
   }
 
+  String _publicUrlForStoragePath(String storagePath) {
+    final trimmed = storagePath.trim();
+    if (trimmed.isEmpty || trimmed.startsWith('http')) {
+      return trimmed;
+    }
+    final slash = trimmed.indexOf('/');
+    if (slash <= 0 || slash == trimmed.length - 1) {
+      return trimmed;
+    }
+    final bucket = trimmed.substring(0, slash);
+    final path = trimmed.substring(slash + 1);
+    final client = ref.read(supabaseClientProvider);
+    return client.storage.from(bucket).getPublicUrl(path);
+  }
+
   Future<void> _openEventDetailPage(
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
   }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
     // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
-    final client = ref.read(supabaseClientProvider);
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
-      publicUrlFor: (storagePath) {
-        final slash = storagePath.indexOf('/');
-        if (slash < 0) return storagePath;
-        final bucket = storagePath.substring(0, slash);
-        final path = storagePath.substring(slash + 1);
-        return client.storage.from(bucket).getPublicUrl(path);
-      },
+      publicUrlFor: _publicUrlForStoragePath,
     );
     if (!mounted) {
       return;
@@ -1792,16 +1817,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
   }) {
-    final client = ref.read(supabaseClientProvider);
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
-      publicUrlFor: (storagePath) {
-        final slash = storagePath.indexOf('/');
-        if (slash < 0) return storagePath;
-        final bucket = storagePath.substring(0, slash);
-        final path = storagePath.substring(slash + 1);
-        return client.storage.from(bucket).getPublicUrl(path);
-      },
+      publicUrlFor: _publicUrlForStoragePath,
     );
     final state = ref.read(storyControllerProvider);
     final sequence = _eventSequenceForDetail(state);
@@ -1910,11 +1928,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
 
       final celebrationCompleter = Completer<void>();
+      final celebrationNonce = _mapCelebrationNonce + 1;
       _mapCelebrationCompleter = celebrationCompleter;
       setState(() {
         _mapCelebrationEventId = event.id;
         _mapCelebrationStampLabel = option.emoji;
-        _mapCelebrationNonce += 1;
+        _mapCelebrationNonce = celebrationNonce;
       });
 
       await WidgetsBinding.instance.endOfFrame;
@@ -1924,9 +1943,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           CompletionCelebration.stampDuration + _emotionMapStampFallbackSlack,
         ),
       ]);
-      if (_mapCelebrationCompleter == celebrationCompleter) {
-        _mapCelebrationCompleter = null;
-      }
+      _completeMapCelebration(celebrationNonce);
       if (!mounted) return;
 
       await Future<void>.delayed(_emotionMapPostStampDelay);
@@ -2411,124 +2428,135 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       // spacer 를 두어 컨텐츠를 nav bar 위로 띄운다.
                       // (gesture-only 단말은 bottomInset=0 이라 기존과 동일한 동작.)
                       bottom: 0,
-                      child: Listener(
-                        behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) {
-                          _handleMapInteraction();
-                          _suppressMapTaps(const Duration(milliseconds: 1200));
-                        },
-                        onPointerMove: (_) =>
-                            _suppressMapTaps(const Duration(milliseconds: 350)),
-                        onPointerUp: (_) => _suppressMapTaps(
-                          const Duration(milliseconds: 1200),
-                        ),
-                        onPointerCancel: (_) => _suppressMapTaps(
-                          const Duration(milliseconds: 1200),
-                        ),
-                        onPointerSignal: (_) => _suppressMapTaps(
-                          const Duration(milliseconds: 1200),
-                        ),
-                        child: AnimatedContainer(
-                          key: const ValueKey<String>('selection-sheet'),
-                          duration: const Duration(milliseconds: 280),
-                          curve: Curves.easeOutCubic,
-                          height: sheetHeight + bottomInset,
-                          child: _mode == _SelectionMode.region
-                              ? _buildRegionPanel(state, bottomInset)
-                              : (_mode == _SelectionMode.timeline &&
-                                    _selectionStep == 2)
-                              ? _buildTimelineUnitPanel(state, bottomInset)
-                              : (_mode == null && _selectionStep == 1)
-                              ? _buildHomeIntroPanel(state, bottomInset)
-                              : StorySelectionPanel(
-                                  scrollController:
-                                      _selectionPanelScrollController,
-                                  step: _selectionStep,
-                                  panelStage: _selectionPanelStage,
-                                  // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
-                                  headerOverride: _panelStageHandle(),
-                                  // step 2 인물 카드의 "사건 N개" 카운트 source.
-                                  eraEvents: state.events,
-                                  onStepUp: _stepSelectionPanelUp,
-                                  onStepDown: _stepSelectionPanelDown,
-                                  canOpenStep: (step) =>
-                                      _canOpenSelectionStep(step, state),
-                                  onSelectStep: (step) =>
-                                      _goToSelectionStep(step),
-                                  eras: testamentEras,
-                                  selectedEraId: state.selectedEraId,
-                                  selectedTestament: state.selectedTestament,
-                                  onSelectEra: (eraId) {
-                                    _handleStepEraSelect(eraId);
-                                  },
-                                  onSelectTestament: (testament) {
-                                    _handleStepTestamentSelect(testament);
-                                  },
-                                  characters: state.characters,
-                                  characterSortMode: _characterSortMode,
-                                  onCharacterSortModeChanged: (mode) {
-                                    setState(() {
-                                      _characterSortMode = mode;
-                                    });
-                                  },
-                                  draftSelectedCharacterCodes:
-                                      _sanitizeDraftSelectedCharacterCodes(
-                                        state,
-                                      ),
-                                  onToggleDraftCharacter: _toggleDraftCharacter,
-                                  committedSelectedCharacterCodes:
-                                      state.selectedCharacterCodes,
-                                  hasPendingCharacterChanges:
-                                      _hasPendingCharacterSelectionChanges(
-                                        state,
-                                      ),
-                                  colorForDraftCharacter: (characterId) =>
-                                      _colorForDraftCharacter(
-                                        characterId,
-                                        state,
-                                      ),
-                                  colorForCommittedCharacter:
-                                      controller.colorForCharacter,
-                                  events: storyPanelTimeline,
-                                  completedEventIds: state.completedEventIds,
-                                  eventEmotionMarks: state.eventEmotionMarks,
-                                  quizAttemptSummaries:
-                                      state.quizAttemptSummaries,
-                                  celebrationEventId: _mapCelebrationEventId,
-                                  celebrationStampLabel:
-                                      _mapCelebrationStampLabel,
-                                  celebrationNonce: _mapCelebrationNonce,
-                                  onCelebrationComplete:
-                                      _mapCelebrationCompleteCallback(),
-                                  quizReviewEventIds: quizReviewEventIds,
-                                  quizConfusedEventIds: quizConfusedEventIds,
-                                  draftDisplayedEventIds:
-                                      sanitizedDraftDisplayed,
-                                  committedDisplayedEventIds:
-                                      state.displayedEventIds,
-                                  onToggleDisplayedEvent:
-                                      _toggleDraftDisplayedEvent,
-                                  onSelectAllDisplayedEvents: () =>
-                                      _selectAllDraftDisplayedEvents(
-                                        storyPanelTimeline,
-                                      ),
-                                  onDeselectAllDisplayedEvents:
-                                      _deselectAllDraftDisplayedEvents,
-                                  onCommitDisplayedEvents:
-                                      _proceedFromStoryStep,
-                                  onNextFromEra: _proceedFromEraStep,
-                                  onNextFromCharacters:
-                                      _proceedFromCharacterStep,
-                                  onOpenEventDetail: (event) {
-                                    ref
-                                        .read(storyControllerProvider.notifier)
-                                        .selectEvent(event.id);
-                                    _openEventDetailPage(event);
-                                  },
-                                  // 지도 핀 클릭 등으로 controller 가 가진 현재
-                                  // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
-                                  currentSelectedEventId: state.selectedEventId,
-                                ),
+                      child: WebPointerInterceptor(
+                        child: Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (_) {
+                            _handleMapInteraction();
+                            _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
+                            );
+                          },
+                          onPointerMove: (_) => _suppressMapTaps(
+                            const Duration(milliseconds: 350),
+                          ),
+                          onPointerUp: (_) => _suppressMapTaps(
+                            const Duration(milliseconds: 1200),
+                          ),
+                          onPointerCancel: (_) => _suppressMapTaps(
+                            const Duration(milliseconds: 1200),
+                          ),
+                          onPointerSignal: (_) => _suppressMapTaps(
+                            const Duration(milliseconds: 1200),
+                          ),
+                          child: AnimatedContainer(
+                            key: const ValueKey<String>('selection-sheet'),
+                            duration: const Duration(milliseconds: 280),
+                            curve: Curves.easeOutCubic,
+                            height: sheetHeight + bottomInset,
+                            child: _mode == _SelectionMode.region
+                                ? _buildRegionPanel(state, bottomInset)
+                                : (_mode == _SelectionMode.timeline &&
+                                      _selectionStep == 2)
+                                ? _buildTimelineUnitPanel(state, bottomInset)
+                                : (_mode == null && _selectionStep == 1)
+                                ? _buildHomeIntroPanel(state, bottomInset)
+                                : StorySelectionPanel(
+                                    scrollController:
+                                        _selectionPanelScrollController,
+                                    step: _selectionStep,
+                                    panelStage: _selectionPanelStage,
+                                    // 장소 모드와 동일한 핸들·stepper 헤더를 인물 모드에도 노출.
+                                    headerOverride: _panelStageHandle(),
+                                    // step 2 인물 카드의 "사건 N개" 카운트 source.
+                                    eraEvents: state.events,
+                                    onStepUp: _stepSelectionPanelUp,
+                                    onStepDown: _stepSelectionPanelDown,
+                                    canOpenStep: (step) =>
+                                        _canOpenSelectionStep(step, state),
+                                    onSelectStep: (step) =>
+                                        _goToSelectionStep(step),
+                                    eras: testamentEras,
+                                    selectedEraId: state.selectedEraId,
+                                    selectedTestament: state.selectedTestament,
+                                    onSelectEra: (eraId) {
+                                      _handleStepEraSelect(eraId);
+                                    },
+                                    onSelectTestament: (testament) {
+                                      _handleStepTestamentSelect(testament);
+                                    },
+                                    characters: state.characters,
+                                    characterSortMode: _characterSortMode,
+                                    onCharacterSortModeChanged: (mode) {
+                                      setState(() {
+                                        _characterSortMode = mode;
+                                      });
+                                    },
+                                    draftSelectedCharacterCodes:
+                                        _sanitizeDraftSelectedCharacterCodes(
+                                          state,
+                                        ),
+                                    onToggleDraftCharacter:
+                                        _toggleDraftCharacter,
+                                    committedSelectedCharacterCodes:
+                                        state.selectedCharacterCodes,
+                                    hasPendingCharacterChanges:
+                                        _hasPendingCharacterSelectionChanges(
+                                          state,
+                                        ),
+                                    colorForDraftCharacter: (characterId) =>
+                                        _colorForDraftCharacter(
+                                          characterId,
+                                          state,
+                                        ),
+                                    colorForCommittedCharacter:
+                                        controller.colorForCharacter,
+                                    events: storyPanelTimeline,
+                                    completedEventIds: state.completedEventIds,
+                                    eventEmotionMarks: state.eventEmotionMarks,
+                                    quizAttemptSummaries:
+                                        state.quizAttemptSummaries,
+                                    celebrationEventId: _mapCelebrationEventId,
+                                    celebrationStampLabel:
+                                        _mapCelebrationStampLabel,
+                                    celebrationNonce: _mapCelebrationNonce,
+                                    onCelebrationComplete:
+                                        _mapCelebrationCompleteCallback(),
+                                    quizReviewEventIds: quizReviewEventIds,
+                                    quizConfusedEventIds: quizConfusedEventIds,
+                                    draftDisplayedEventIds:
+                                        sanitizedDraftDisplayed,
+                                    committedDisplayedEventIds:
+                                        state.displayedEventIds,
+                                    onToggleDisplayedEvent:
+                                        _toggleDraftDisplayedEvent,
+                                    onSelectAllDisplayedEvents: () =>
+                                        _selectAllDraftDisplayedEvents(
+                                          storyPanelTimeline,
+                                        ),
+                                    onDeselectAllDisplayedEvents:
+                                        _deselectAllDraftDisplayedEvents,
+                                    onCommitDisplayedEvents:
+                                        _proceedFromStoryStep,
+                                    onNextFromEra: _proceedFromEraStep,
+                                    onNextFromCharacters:
+                                        _proceedFromCharacterStep,
+                                    onOpenEventDetail: (event) {
+                                      ref
+                                          .read(
+                                            storyControllerProvider.notifier,
+                                          )
+                                          .selectEvent(event.id);
+                                      _openEventDetailPage(event);
+                                    },
+                                    publicUrlForStoragePath:
+                                        _publicUrlForStoragePath,
+                                    // 지도 핀 클릭 등으로 controller 가 가진 현재
+                                    // 강조 이벤트. EventTimelineRow 가 자동 스크롤.
+                                    currentSelectedEventId:
+                                        state.selectedEventId,
+                                  ),
+                          ),
                         ),
                       ),
                     ),
@@ -2537,23 +2565,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                         top: topInset + 96,
                         right: isPhone ? 18 : 30,
                         bottom: bottomInset + sheetHeight + 24,
-                        child: Center(
-                          child: Listener(
-                            behavior: HitTestBehavior.opaque,
-                            onPointerDown: (_) {
-                              _handleMapInteraction();
-                              _suppressMapTaps(
+                        child: WebPointerInterceptor(
+                          child: Center(
+                            child: Listener(
+                              behavior: HitTestBehavior.opaque,
+                              onPointerDown: (_) {
+                                _handleMapInteraction();
+                                _suppressMapTaps(
+                                  const Duration(milliseconds: 1200),
+                                );
+                              },
+                              onPointerUp: (_) => _suppressMapTaps(
                                 const Duration(milliseconds: 1200),
-                              );
-                            },
-                            onPointerUp: (_) => _suppressMapTaps(
-                              const Duration(milliseconds: 1200),
-                            ),
-                            onPointerCancel: (_) => _suppressMapTaps(
-                              const Duration(milliseconds: 1200),
-                            ),
-                            child: _MapRevealSkipButton(
-                              onPressed: _skipMapReveal,
+                              ),
+                              onPointerCancel: (_) => _suppressMapTaps(
+                                const Duration(milliseconds: 1200),
+                              ),
+                              child: _MapRevealSkipButton(
+                                onPressed: _skipMapReveal,
+                              ),
                             ),
                           ),
                         ),
@@ -2564,61 +2594,65 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       left: 0,
                       right: 0,
                       top: sideTop,
-                      child: Listener(
-                        behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) {
-                          _handleMapInteraction();
-                          _suppressMapTaps();
-                        },
-                        onPointerUp: (_) => _suppressMapTaps(),
-                        onPointerCancel: (_) => _suppressMapTaps(),
-                        onPointerSignal: (_) => _suppressMapTaps(),
-                        child: SizedBox(
-                          height: 38,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Row(
-                              children: [
-                                // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
-                                // 항상 일부 보이므로 별도 토글 불필요.
-                                topUtilityIconButton(
-                                  icon: Icons.search_rounded,
-                                  tooltip: '성경 구절로 이야기 찾기',
-                                  onTap: _openBibleVerseSearch,
-                                ),
-                                const SizedBox(width: 4),
-                                topUtilityButton(
-                                  label: '성경',
-                                  onTap: _openBibleReaderPopup,
-                                ),
-                                const SizedBox(width: 4),
-                                topUtilityButton(
-                                  label: '탐험',
-                                  onTap: _openQuizTab,
-                                ),
-                                const SizedBox(width: 4),
-                                topUtilityButton(
-                                  label: '프로필',
-                                  onTap: _openProfileTab,
-                                ),
-                                const SizedBox(width: 4),
-                                topFontScaleButton(
-                                  onTap: () => showFontScaleSheet(context),
-                                ),
-                                const SizedBox(width: 4),
-                                NotificationBellButton(
-                                  onNavigate: _handleNotificationTap,
-                                  onOpenHistory: _openNotificationHistory,
-                                ),
-                                if (kIsWeb) ...[
+                      child: WebPointerInterceptor(
+                        child: Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (_) {
+                            _handleMapInteraction();
+                            _suppressMapTaps();
+                          },
+                          onPointerUp: (_) => _suppressMapTaps(),
+                          onPointerCancel: (_) => _suppressMapTaps(),
+                          onPointerSignal: (_) => _suppressMapTaps(),
+                          child: SizedBox(
+                            height: 38,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: Row(
+                                children: [
+                                  // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
+                                  // 항상 일부 보이므로 별도 토글 불필요.
+                                  topUtilityIconButton(
+                                    icon: Icons.search_rounded,
+                                    tooltip: '성경 구절로 이야기 찾기',
+                                    onTap: _openBibleVerseSearch,
+                                  ),
                                   const SizedBox(width: 4),
                                   topUtilityButton(
-                                    label: '이야기 등록',
-                                    onTap: _openProposalBoardOrGate,
+                                    label: '성경',
+                                    onTap: _openBibleReaderPopup,
                                   ),
+                                  const SizedBox(width: 4),
+                                  topUtilityButton(
+                                    label: '탐험',
+                                    onTap: _openQuizTab,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  topUtilityButton(
+                                    label: '프로필',
+                                    onTap: _openProfileTab,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  topFontScaleButton(
+                                    onTap: () => showFontScaleSheet(context),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  NotificationBellButton(
+                                    onNavigate: _handleNotificationTap,
+                                    onOpenHistory: _openNotificationHistory,
+                                  ),
+                                  if (kIsWeb) ...[
+                                    const SizedBox(width: 4),
+                                    topUtilityButton(
+                                      label: '이야기 등록',
+                                      onTap: _openProposalBoardOrGate,
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
                           ),
                         ),
@@ -2646,19 +2680,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       left: isPhone ? 12 : sheetHorizontalMargin + 14,
                       right: isPhone ? 12 : sheetHorizontalMargin + 14,
                       bottom: bottomInset + sheetHeight + (isPhone ? 8 : 12),
-                      child: Listener(
-                        behavior: HitTestBehavior.translucent,
-                        onPointerDown: (_) {
-                          _handleMapInteraction();
-                          _suppressMapTaps(const Duration(milliseconds: 1200));
-                        },
-                        onPointerUp: (_) => _suppressMapTaps(
-                          const Duration(milliseconds: 1200),
+                      child: WebPointerInterceptor(
+                        child: Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (_) {
+                            _handleMapInteraction();
+                            _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
+                            );
+                          },
+                          onPointerUp: (_) => _suppressMapTaps(
+                            const Duration(milliseconds: 1200),
+                          ),
+                          onPointerCancel: (_) => _suppressMapTaps(
+                            const Duration(milliseconds: 1200),
+                          ),
+                          child: _buildFloatingPanelActions(state),
                         ),
-                        onPointerCancel: (_) => _suppressMapTaps(
-                          const Duration(milliseconds: 1200),
-                        ),
-                        child: _buildFloatingPanelActions(state),
                       ),
                     ),
                   ],
@@ -3039,6 +3077,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     onCelebrationComplete: _mapCelebrationCompleteCallback(),
                     quizReviewEventIds: quizReviewEventIds,
                     quizConfusedEventIds: quizConfusedEventIds,
+                    publicUrlForStoragePath: _publicUrlForStoragePath,
                     onSelectEvent: (event) {
                       ref
                           .read(storyControllerProvider.notifier)

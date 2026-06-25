@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../state/font_scale_providers.dart';
+import 'web_pointer_interceptor.dart';
 
 /// 글자 크기 선택 바텀시트를 띄운다.
 ///
@@ -15,7 +16,7 @@ Future<void> showFontScaleSheet(BuildContext context) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    builder: (_) => const FontScaleBottomSheet(),
+    builder: (_) => const WebPointerInterceptor(child: FontScaleBottomSheet()),
   );
 }
 

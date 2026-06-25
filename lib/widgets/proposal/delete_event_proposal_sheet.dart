@@ -119,8 +119,9 @@ class _DeleteEventProposalSheetState
           ),
           const SizedBox(height: 14),
           Text(
-            '관리자가 승인하면 이 이야기는 앱에서 숨겨집니다. 기존 사용자의 퀴즈 '
-            '진도는 보존됩니다. 되돌리고 싶다면 관리자에게 문의해주세요.',
+            '관리자가 승인하면 이 이야기는 앱과 프로필 진행률에서 제외됩니다. '
+            '기존 사용자의 과거 기록은 DB에만 남습니다. 되돌리고 싶다면 '
+            '관리자에게 문의해주세요.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

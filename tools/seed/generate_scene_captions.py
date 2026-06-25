@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate editable scene captions for assets/200_stories story JSON.
+"""Generate editable scene captions for assets/events story JSON.
 
 The source ``story_scenes`` values are image-generation prompts, so they often
 include art-direction phrases such as "글자 없는 말풍선" or safety notes such as
@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_STORY_DIR = ROOT / "assets" / "200_stories"
+DEFAULT_STORY_DIR = ROOT / "assets" / "events"
 
 MAX_CAPTION_CHARS = 58
 MIN_CAPTION_CHARS = 8

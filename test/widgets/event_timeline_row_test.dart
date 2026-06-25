@@ -30,6 +30,7 @@ StoryEvent _event(
   String? placeName,
   int? startYear,
   List<String> characterCodes = const <String>[],
+  List<String> sceneImagePaths = const <String>[],
 }) => StoryEvent(
   id: 'e$i',
   landmarkId: 'lm_test',
@@ -49,6 +50,7 @@ StoryEvent _event(
   lng: null,
   characterCodes: characterCodes,
   bibleRefs: const [],
+  sceneImagePaths: sceneImagePaths,
 );
 
 Widget _harness(
@@ -67,6 +69,18 @@ Widget _harness(
       ),
     ),
   );
+}
+
+class _StoragePathSceneAssetLoader extends SceneAssetLoader {
+  @override
+  Future<List<String>> loadForEvent(
+    StoryEvent event, {
+    String Function(String storagePath)? publicUrlFor,
+  }) async {
+    return event.sceneImagePaths
+        .map((path) => publicUrlFor?.call(path) ?? path)
+        .toList(growable: false);
+  }
 }
 
 void main() {
@@ -400,6 +414,42 @@ void main() {
               widget.image is AssetImage &&
               (widget.image as AssetImage).assetName ==
                   'assets/avatars_thumbs/abel.png',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('로컬 썸네일이 없는 제안 이미지는 Storage URL로 변환해 표시한다', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(
+              31,
+              title: '로컬에 없는 목회자 제안 이야기',
+              sceneImagePaths: const [
+                'proposal-scenes/u-1/draft-1/scene_0.png',
+              ],
+            ),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: _StoragePathSceneAssetLoader(),
+            publicUrlForStoragePath: (path) =>
+                'https://cdn.test/storage/v1/object/public/$path',
+            onTap: () {},
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is NetworkImage &&
+              (widget.image as NetworkImage).url ==
+                  'https://cdn.test/storage/v1/object/public/proposal-scenes/u-1/draft-1/scene_0.png',
         ),
         findsOneWidget,
       );

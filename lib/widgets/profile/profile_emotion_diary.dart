@@ -458,7 +458,7 @@ class _DiaryContentTabBar extends StatelessWidget {
         children: [
           Expanded(
             child: _DiaryContentTabButton(
-              label: '오늘의 동행 일지',
+              label: '오늘의 신앙 기록',
               selected: selected == _DiaryContentTab.companion,
               onTap: () => onSelect(_DiaryContentTab.companion),
             ),
@@ -732,6 +732,9 @@ class _EmotionCalendarDayCell extends StatelessWidget {
                 selected: selected,
                 color: textColor,
                 hasCompanionDiary: hasCompanionDiary,
+                dayNumberKey: ValueKey(
+                  'emotion-calendar-day-number-${date.year}-${date.month}-${date.day}',
+                ),
                 markerKey: ValueKey(
                   'companion-diary-marker-${date.year}-${date.month}-${date.day}',
                 ),
@@ -799,6 +802,7 @@ class _DayNumber extends StatelessWidget {
     required this.selected,
     required this.color,
     required this.hasCompanionDiary,
+    required this.dayNumberKey,
     required this.markerKey,
   });
 
@@ -807,6 +811,7 @@ class _DayNumber extends StatelessWidget {
   final bool selected;
   final Color color;
   final bool hasCompanionDiary;
+  final Key dayNumberKey;
   final Key markerKey;
 
   @override
@@ -818,8 +823,11 @@ class _DayNumber extends StatelessWidget {
       color: color,
     );
     final content = SizedBox(
-      width: hasCompanionDiary ? 30 : 21,
-      height: 21,
+      key: dayNumberKey,
+      width: hasCompanionDiary
+          ? _calendarDayNumberWithMarkerWidth
+          : _calendarDayNumberSize,
+      height: _calendarDayNumberSize,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,
@@ -834,7 +842,10 @@ class _DayNumber extends StatelessWidget {
         ],
       ),
     );
-    return SizedBox(height: 21, child: Center(child: content));
+    return SizedBox(
+      height: _calendarDayNumberSize,
+      child: Center(child: content),
+    );
   }
 }
 
@@ -878,6 +889,8 @@ class _DayNumberText extends StatelessWidget {
     final text = Text(
       '$day',
       textAlign: TextAlign.center,
+      maxLines: 1,
+      softWrap: false,
       style: TextStyle(
         color: today ? AppColors.ink900 : color,
         fontSize: 11.6,
@@ -885,19 +898,24 @@ class _DayNumberText extends StatelessWidget {
         height: 1,
       ),
     );
+    final fittedText = FittedBox(fit: BoxFit.scaleDown, child: text);
     if (!today) {
-      return text;
+      return SizedBox(
+        width: _calendarDayNumberSize,
+        height: _calendarDayNumberSize,
+        child: Center(child: fittedText),
+      );
     }
     return Container(
-      width: 21,
-      height: 21,
+      width: _calendarDayNumberSize,
+      height: _calendarDayNumberSize,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: selected ? Colors.transparent : AppColors.parchmentCream,
         border: Border.all(color: AppColors.goldDeep, width: 1.1),
       ),
-      child: text,
+      child: Center(child: fittedText),
     );
   }
 }
@@ -1218,9 +1236,11 @@ bool _isSameMonth(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month;
 }
 
-const double _emptyCalendarWeekHeight = 34;
+const double _emptyCalendarWeekHeight = 36;
 const double _oneLineCalendarWeekHeight = 56;
 const double _twoLineCalendarWeekHeight = 76;
+const double _calendarDayNumberSize = 24;
+const double _calendarDayNumberWithMarkerWidth = 32;
 const int _calendarEmotionSlotsPerRow = 2;
 const int _calendarMaxVisibleEmotionSlots = 4;
 const int _calendarVisibleEmotionMarksBeforeMore = 3;

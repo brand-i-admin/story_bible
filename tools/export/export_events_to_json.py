@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""Export published events from Supabase back into assets/200_stories/*.json.
+"""Export published events from Supabase back into assets/events/*.json.
 
 DB-first 운영 흐름을 위해 어드민이 published 한 events 를 정기적으로 JSON 으로
 역추출한다. 이렇게 하면 빌더 (build_character_meta_json.py / build_characters_seed_sql.py /
-build_200_stories_seed_sql.py) 가 변경 사항을 자동으로 따라잡고, git history 로도
+build_events_seed_sql.py) 가 변경 사항을 자동으로 따라잡고, git history 로도
 콘텐츠 변경을 추적할 수 있다.
 
 사용:
-    python tools/export/export_events_to_json.py --output-dir assets/200_stories
+    python tools/export/export_events_to_json.py --output-dir assets/events
     python tools/export/export_events_to_json.py --dry-run   # JSON 파일 안 쓰고 표준출력으로
 
 환경:
     .env 의 SUPABASE_URL_DEV / SUPABASE_ANON_KEY_DEV (또는 PROD) 사용.
-    Pure read-only 라 anon key 로 충분 (events RLS: status='published' 공개 SELECT).
+    Pure read-only 라 anon key 로 충분. 이 스크립트는 `status='published'`와
+    `deleted_at IS NULL`을 함께 요청해 soft-deleted 이야기를 canonical JSON 에
+    다시 섞지 않는다.
 """
 
 from __future__ import annotations
@@ -24,27 +26,56 @@ import sys
 from pathlib import Path
 from typing import Any
 
+QUESTION_TYPES = ("fact", "attitude", "story_context")
+
 # 키 출력 순서 — 사람이 보던 JSON 포맷과 일치.
 _KEY_ORDER = [
     "title",
     "era",
     "characters",
+    "landmark_code",
     "place_name",
     "lat",
     "lng",
     "summary",
+    "background_context",
     "bible_ref",
     "start_year",
     "end_year",
     "time_precision",
     "story_index",
+    "unit_code",
+    "unit_title",
+    "unit_order",
     "story_scenes",
     "scene_captions",
     "scene_characters",
+    "quiz_questions",
 ]
 
 
-def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
+def quiz_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
+    """DB quiz_questions row → embedded event JSON quiz draft."""
+    order = int(row.get("display_order") or 0)
+    question_type = QUESTION_TYPES[order] if order < len(QUESTION_TYPES) else "fact"
+    return {
+        "type": question_type,
+        "display_order": order,
+        "question": str(row.get("question") or ""),
+        "choices": [
+            str(row.get("choice_a") or ""),
+            str(row.get("choice_b") or ""),
+            str(row.get("choice_c") or ""),
+        ],
+        "answer_index": int(row.get("answer_index") or 0),
+        "explanation": str(row.get("explanation") or ""),
+    }
+
+
+def event_row_to_json(
+    row: dict[str, Any],
+    quiz_rows: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Supabase events row (era_code 가 join 으로 함께 들어온다고 가정) → JSON dict.
 
     DB 컬럼 매핑:
@@ -57,20 +88,26 @@ def event_row_to_json(row: dict[str, Any]) -> dict[str, Any]:
         "title": row.get("title", ""),
         "era": row.get("era_code", ""),
         "characters": list(row.get("character_codes") or []),
+        "landmark_code": row.get("landmark_code") or "",
         "place_name": row.get("place_name") or "",
         "lat": row.get("lat"),
         "lng": row.get("lng"),
         "summary": row.get("summary") or "",
+        "background_context": row.get("background_context") or "",
         "bible_ref": list(row.get("bible_refs") or []),
         "start_year": row.get("start_year"),
         "end_year": row.get("end_year"),
         "time_precision": row.get("time_precision") or "approx",
         "story_index": int(row.get("story_index") or 0),
+        "unit_code": row.get("unit_code") or "default",
+        "unit_title": row.get("unit_title") or "전체 흐름",
+        "unit_order": int(row.get("unit_order") or 1),
         "story_scenes": list(row.get("story_scenes") or []),
         "scene_captions": list(row.get("scene_captions") or []),
         "scene_characters": [
             list(s or []) for s in (row.get("scene_characters") or [])
         ],
+        "quiz_questions": [quiz_row_to_json(q) for q in (quiz_rows or [])],
     }
     # KEY_ORDER 순서로 재구성 (Python 3.7+ dict 는 삽입 순서 유지).
     return {key: out[key] for key in _KEY_ORDER if key in out}
@@ -90,15 +127,18 @@ def filename_for_era(era_code: str | None) -> str:
 
 def group_events_by_era_file(
     rows: list[dict[str, Any]],
+    quizzes_by_event: dict[str, list[dict[str, Any]]] | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
     """rows 를 era 파일명으로 그룹화 + 파일 안에서 story_index 오름차순 정렬."""
+    quizzes_by_event = quizzes_by_event or {}
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
         idx = int(row.get("story_index") or 0)
         if idx <= 0:
             continue
         filename = filename_for_era(row.get("era_code"))
-        grouped.setdefault(filename, []).append(event_row_to_json(row))
+        quiz_rows = quizzes_by_event.get(str(row.get("id")), [])
+        grouped.setdefault(filename, []).append(event_row_to_json(row, quiz_rows))
     for era_rows in grouped.values():
         era_rows.sort(key=lambda r: r.get("story_index", 0))
     return dict(grouped)
@@ -108,7 +148,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--output-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help="era JSON 파일을 쓸 디렉토리.",
     )
     parser.add_argument(
@@ -128,6 +168,28 @@ def parse_args() -> argparse.Namespace:
         help=".env 파일 경로.",
     )
     return parser.parse_args()
+
+
+def published_events_query_params(*, limit: int, offset: int) -> dict[str, str]:
+    """PostgREST query params for canonical app-visible events.
+
+    The direct `events` table RLS allows published rows, including soft-deleted
+    rows for backward compatibility with older clients. Export is stricter:
+    only active published stories become local JSON source.
+    """
+    return {
+        "select": (
+            "title,summary,background_context,character_codes,bible_refs,"
+            "story_scenes,scene_captions,scene_characters,start_year,end_year,"
+            "time_precision,story_index,unit_code,unit_title,unit_order,"
+            "id,era:era_id(code),landmark:landmark_id(code,name,lat,lng)"
+        ),
+        "status": "eq.published",
+        "deleted_at": "is.null",
+        "order": "story_index.asc",
+        "limit": str(limit),
+        "offset": str(offset),
+    }
 
 
 def _load_env_file(path: Path) -> None:
@@ -162,23 +224,12 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
         raise SystemExit("requests 가 필요합니다: pip install requests") from exc
 
     rest = url.rstrip("/") + "/rest/v1/events"
-    params = {
-        "select": (
-            "title,summary,character_codes,bible_refs,story_scenes,scene_captions,scene_characters,"
-            "place_name,lat,lng,start_year,end_year,time_precision,story_index,"
-            "era:era_id(code)"
-        ),
-        "status": "eq.published",
-        "order": "story_index.asc",
-    }
     headers = {"apikey": key, "Authorization": f"Bearer {key}"}
     rows: list[dict[str, Any]] = []
     offset = 0
     page = 1000
     while True:
-        params_paged = dict(params)
-        params_paged["limit"] = str(page)
-        params_paged["offset"] = str(offset)
+        params_paged = published_events_query_params(limit=page, offset=offset)
         resp = requests.get(rest, params=params_paged, headers=headers, timeout=30)
         resp.raise_for_status()
         chunk = resp.json()
@@ -188,11 +239,123 @@ def _fetch_published_events(env_suffix: str) -> list[dict[str, Any]]:
             era = r.pop("era", None)
             if isinstance(era, dict):
                 r["era_code"] = era.get("code")
+            landmark = r.pop("landmark", None)
+            if isinstance(landmark, dict):
+                r["landmark_code"] = landmark.get("code")
+                r["place_name"] = landmark.get("name")
+                r["lat"] = landmark.get("lat")
+                r["lng"] = landmark.get("lng")
             rows.append(r)
         if len(chunk) < page:
             break
         offset += page
     return rows
+
+
+def _request_json(
+    session: Any,
+    url: str,
+    *,
+    params: dict[str, str],
+    label: str,
+) -> list[dict[str, Any]]:
+    response = session.get(url, params=params, timeout=60)
+    if not response.ok:
+        raise SystemExit(
+            f"ERROR: failed to fetch {label}: {response.status_code} {response.text}"
+        )
+    rows = response.json()
+    if not isinstance(rows, list):
+        raise SystemExit(f"ERROR: invalid {label} response")
+    return [dict(row) for row in rows]
+
+
+def _fetch_quiz_questions_by_event_id(
+    env_suffix: str,
+    event_ids: list[str],
+) -> dict[str, list[dict[str, Any]]]:
+    """Fetch quiz rows for the already-filtered active events."""
+    if not event_ids:
+        return {}
+    url = os.environ.get(f"SUPABASE_URL_{env_suffix}")
+    key = os.environ.get(f"SUPABASE_ANON_KEY_{env_suffix}")
+    if not url or not key:
+        raise SystemExit(
+            f"ERROR: SUPABASE_URL_{env_suffix} / SUPABASE_ANON_KEY_{env_suffix} "
+            "가 .env 에 없습니다."
+        )
+
+    try:
+        import requests  # type: ignore
+    except ImportError as exc:
+        raise SystemExit("requests 가 필요합니다: pip install requests") from exc
+
+    session = requests.Session()
+    session.headers.update({"apikey": key, "Authorization": f"Bearer {key}"})
+    quiz_url = url.rstrip("/") + "/rest/v1/quiz_questions"
+
+    quiz_rows: list[dict[str, Any]] = []
+    chunk_size = 80
+    for offset in range(0, len(event_ids), chunk_size):
+        chunk = event_ids[offset : offset + chunk_size]
+        quiz_rows.extend(
+            _request_json(
+                session,
+                quiz_url,
+                params={
+                    "select": (
+                        "event_id,question,choice_a,choice_b,choice_c,choice_d,"
+                        "answer_index,explanation,display_order"
+                    ),
+                    "event_id": f"in.({','.join(chunk)})",
+                    "order": "display_order.asc",
+                },
+                label="quiz_questions",
+            )
+        )
+
+    by_event: dict[str, list[dict[str, Any]]] = {}
+    for row in quiz_rows:
+        by_event.setdefault(str(row.get("event_id")), []).append(row)
+    for rows in by_event.values():
+        rows.sort(key=lambda item: int(item.get("display_order") or 0))
+    return by_event
+
+
+def write_grouped_events(
+    output_dir: Path,
+    grouped: dict[str, list[dict[str, Any]]],
+) -> list[Path]:
+    """Write era JSON files and remove stale era JSON files.
+
+    Normal deletion inside an era overwrites the same file with fewer rows.
+    This extra prune covers the edge case where every story in an era was
+    removed from the active export and the old file would otherwise linger.
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for filename, era_rows in grouped.items():
+        path = output_dir / filename
+        path.write_text(
+            json.dumps(era_rows, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        written.append(path)
+        print(f"wrote {path} ({len(era_rows)} stories)")
+
+    expected = set(grouped)
+    for stale in sorted(output_dir.glob("era_*.json")):
+        if stale.name in expected:
+            continue
+        stale.unlink()
+        print(f"removed stale {stale}")
+
+    unknown = output_dir / "unknown_era.json"
+    if unknown.exists() and unknown.name not in expected:
+        unknown.unlink()
+        print(f"removed stale {unknown}")
+
+    return written
 
 
 def main() -> int:
@@ -201,7 +364,11 @@ def main() -> int:
     env_suffix = args.env.upper()
 
     rows = _fetch_published_events(env_suffix)
-    grouped = group_events_by_era_file(rows)
+    quizzes_by_event = _fetch_quiz_questions_by_event_id(
+        env_suffix,
+        [str(row["id"]) for row in rows if row.get("id")],
+    )
+    grouped = group_events_by_era_file(rows, quizzes_by_event)
 
     if args.dry_run:
         json.dump(
@@ -212,20 +379,15 @@ def main() -> int:
         )
         sys.stdout.write("\n")
         print(
-            f"\n# fetched: {len(rows)} events, " f"era files: {sorted(grouped.keys())}",
+            f"\n# fetched: {len(rows)} events, "
+            f"{sum(len(v) for v in quizzes_by_event.values())} quiz questions, "
+            f"era files: {sorted(grouped.keys())}",
             file=sys.stderr,
         )
         return 0
 
     out_dir = Path(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for filename, era_rows in grouped.items():
-        path = out_dir / filename
-        path.write_text(
-            json.dumps(era_rows, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        print(f"wrote {path} ({len(era_rows)} stories)")
+    write_grouped_events(out_dir, grouped)
 
     print(f"done: total {len(rows)} events → {len(grouped)} era files in {out_dir}")
     return 0

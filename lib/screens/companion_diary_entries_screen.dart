@@ -49,7 +49,7 @@ class _CompanionDiaryEntriesScreenState
         child: _entries.isEmpty
             ? const Center(
                 child: Text(
-                  '아직 남긴 동행 일지가 없습니다.\n오늘 하루 예수님과 동행한 일지를 남겨보세요.',
+                  '아직 남긴 동행 일지가 없습니다.\n오늘 하루 예배, 말씀, 기도 등 신앙 기록을 남겨보세요.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.ink300,

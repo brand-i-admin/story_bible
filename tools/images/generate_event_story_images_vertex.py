@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Generate per-scene story images from assets/200_stories JSON using Vertex Gemini.
+"""Generate per-scene story images from assets/events JSON using Vertex Gemini.
 
 Input JSON format is expected from:
-  assets/200_stories/*.json
+  assets/events/*.json
 
 Usage:
   source .env
@@ -69,11 +69,11 @@ SPEECH_BUBBLE_TEXT_POLICY = (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate scene images per event from assets/200_stories JSON."
+        description="Generate scene images per event from assets/events JSON."
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help="Directory containing stories JSON files.",
     )
     parser.add_argument(
@@ -108,6 +108,14 @@ def parse_args() -> argparse.Namespace:
         "--output-root",
         default="assets/story_images",
         help="Root directory where per-title folders are created.",
+    )
+    parser.add_argument(
+        "--single-output-dir",
+        default="",
+        help=(
+            "Process exactly one event and write scene_XX.png directly into this "
+            "directory instead of creating an event title subdirectory."
+        ),
     )
     parser.add_argument(
         "--overwrite",
@@ -176,7 +184,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--characters-seed-sql",
-        default="supabase/200_stories/characters_seed.sql",
+        default="supabase/events/characters_seed.sql",
         help="Characters seed SQL used to recover canonical Korean character names.",
     )
     parser.add_argument(
@@ -239,12 +247,15 @@ def load_story_events(stories_dir: Path, stories_glob: str) -> list[dict[str, An
         with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
         if isinstance(data, dict):
-            raw_events = data.get("events", [])
+            raw_events = data.get("events")
+            if raw_events is None:
+                raw_events = [data]
         else:
             raw_events = data
         if not isinstance(raw_events, list):
             raise ValueError(
-                f"Invalid stories JSON format in {path}: expected list or {{'events': [...]}}."
+                f"Invalid stories JSON format in {path}: expected event object, "
+                "list, or {'events': [...]}."
             )
         for index_in_file, item in enumerate(raw_events, start=1):
             if not isinstance(item, dict):
@@ -1012,11 +1023,20 @@ def main() -> int:
     if not events:
         print("ERROR: no events to process.", file=sys.stderr)
         return 2
+    single_output_dir = Path(args.single_output_dir) if args.single_output_dir else None
+    if single_output_dir is not None and len(events) != 1:
+        print(
+            "ERROR: --single-output-dir requires exactly one loaded event.",
+            file=sys.stderr,
+        )
+        return 2
 
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    if not args.no_prune_orphans:
+    if single_output_dir is not None:
+        single_output_dir.mkdir(parents=True, exist_ok=True)
+    elif not args.no_prune_orphans:
         # 본 처리에서 unique_dirname 이 충돌 시 접미사를 붙여 늘릴 수 있으므로
         # 먼저 같은 로직으로 active dirname 집합을 만들어 그 외만 정리한다.
         preview_used: set[str] = set()
@@ -1066,8 +1086,12 @@ def main() -> int:
     for idx, event in enumerate(events, start=1):
         title = str(event.get("title") or "").strip() or f"event_{idx:03d}"
         event_code = event_code_for(event, idx)
-        dirname = unique_dirname(sanitize_dirname(title), event_code, used_dirnames)
-        event_dir = output_root / dirname
+        if single_output_dir is not None:
+            dirname = single_output_dir.name
+            event_dir = single_output_dir
+        else:
+            dirname = unique_dirname(sanitize_dirname(title), event_code, used_dirnames)
+            event_dir = output_root / dirname
         event_dir.mkdir(parents=True, exist_ok=True)
 
         characters = normalize_persons(event, code_to_name=code_to_name)

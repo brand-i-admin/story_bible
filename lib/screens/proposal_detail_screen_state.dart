@@ -34,10 +34,10 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
   Future<void> _approve(EventProposal p) async {
     // 새 이야기 제안은 승인 전 등장 인물 is_active 결정 다이얼로그.
     // 삭제/일반 제안은 단순 yes/no.
-    Map<String, bool>? overrides;
+    ApproveProposalReviewResult? reviewResult;
     if (p.isNewProposal) {
-      overrides = await ApproveProposalDialog.show(context, p);
-      if (overrides == null) return; // 취소
+      reviewResult = await ApproveProposalDialog.show(context, p);
+      if (reviewResult == null) return; // 취소
     } else {
       final (title, body) = p.isDeleteProposal
           ? ('삭제 제안 승인', '"${p.title}" 이(가) 앱에서 숨겨집니다. 진행할까요?')
@@ -73,9 +73,14 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
         await repo.approveGeneral(p.id);
         successMessage = '일반 제안이 승인되었습니다';
       } else {
+        final newReviewResult = reviewResult;
+        if (newReviewResult == null) {
+          throw StateError('새 이야기 승인 검토 결과가 없습니다.');
+        }
         await repo.approve(
           p.id,
-          characterActiveOverrides: overrides ?? const {},
+          afterStoryIndexOverride: newReviewResult.afterStoryIndexOverride,
+          characterActiveOverrides: newReviewResult.characterActiveOverrides,
         );
         successMessage = '제안이 승인되어 events 에 반영되었습니다';
       }
@@ -268,7 +273,8 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                       Expanded(
                         child: Text(
                           '이 제안은 기존 이야기의 삭제를 요청합니다. 승인하면 대상 '
-                          '이야기가 앱에서 숨겨집니다 (진도는 보존).',
+                          '이야기가 앱과 프로필 진행률에서 제외됩니다. 과거 기록은 '
+                          'DB에만 남습니다.',
                           style: theme.textTheme.bodySmall,
                         ),
                       ),
@@ -328,10 +334,21 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                 if (p.sceneImagePaths.any((s) => s.isNotEmpty)) ...[
                   const SizedBox(height: 12),
                   _PreviewSection(
-                    child: _ProposalSceneGrid(paths: p.sceneImagePaths),
+                    child: _ProposalSceneGrid(
+                      paths: p.sceneImagePaths,
+                      captions: p.sceneCaptions,
+                    ),
                   ),
                 ],
                 const SizedBox(height: 14),
+                // ───── 배경 지식 ─────
+                _DetailSection(
+                  title: '배경 지식',
+                  content: (p.backgroundContext ?? '').trim().isEmpty
+                      ? '배경 지식이 없습니다.'
+                      : p.backgroundContext!,
+                ),
+                const SizedBox(height: 12),
                 // ───── 요약 이야기 ─────
                 _DetailSection(
                   title: '요약 이야기',
@@ -339,6 +356,13 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                       ? '요약 정보가 없습니다.'
                       : p.summary!,
                 ),
+                if (p.storyScenes.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _SceneTextSection(
+                    scenes: p.storyScenes,
+                    captions: p.sceneCaptions,
+                  ),
+                ],
                 // ───── 관련 본문 + 이동 버튼 ─────
                 if (p.bibleRefs.isNotEmpty) ...[
                   const SizedBox(height: 12),
@@ -454,8 +478,9 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                       currentUser != null && p.proposerUserId == currentUser.id;
                   final canOwnerDelete = isOwner && !p.isApproved;
                   final canAdminDelete = isAdmin;
-                  // invalidate 된 동안은 admin 의 approve/reject 가 RPC 에서도
-                  // 거부됨. UI 에서도 잠가 혼란을 줄임.
+                  // invalidate 된 동안에도 admin 은 승인 다이얼로그에서 새 위치를
+                  // 명시하면 바로 승인 가능하다. 거절은 위치 의미가 모호한 동안
+                  // RPC 에서 거부하므로 UI 에서도 잠근다.
                   final reviewLocked = p.needsPositionRevision;
                   return Wrap(
                     spacing: 8,
@@ -486,17 +511,10 @@ class _ProposalDetailScreenState extends ConsumerState<ProposalDetailScreen> {
                           label: const Text('위치 재선택'),
                         ),
                       if (isAdmin && p.isPending) ...[
-                        Tooltip(
-                          message: reviewLocked
-                              ? '제안자가 위치를 다시 결정한 뒤에 승인할 수 있어요'
-                              : '',
-                          child: FilledButton.icon(
-                            onPressed: (_reviewing || reviewLocked)
-                                ? null
-                                : () => _approve(p),
-                            icon: const Icon(Icons.check),
-                            label: const Text('승인'),
-                          ),
+                        FilledButton.icon(
+                          onPressed: _reviewing ? null : () => _approve(p),
+                          icon: const Icon(Icons.check),
+                          label: Text(reviewLocked ? '위치 조정 후 승인' : '승인'),
                         ),
                         Tooltip(
                           message: reviewLocked

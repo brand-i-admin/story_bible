@@ -499,12 +499,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help="Directory containing story JSON files.",
     )
     parser.add_argument(
         "--output",
-        default="supabase/200_stories/characters_seed.sql",
+        default="supabase/events/characters_seed.sql",
         help="Output SQL path.",
     )
     return parser.parse_args()

@@ -1,8 +1,10 @@
 # 콘텐츠 추가/수정 → 앱 반영 워크플로우
 
-> 현재 운영 기준: 웹 제안/승인 화면은 배포하지 않는다. 새 이야기 요청이 들어오면
-> 운영자가 로컬에서 `assets/200_stories/*.json`, 이미지, seed SQL, 앱 번들을 직접
-> 갱신한다.
+> 신규 이야기 추가의 목표 표준은
+> [develop-flow.md §3.2.1](develop-flow.md#321-새-이야기-추가-flow)의
+> `draft JSON → proposal row → 관리자 승인 → release sync → 앱 배포` 흐름이다.
+> 이 문서는 그 흐름에서 쓰는 JSON/이미지/seed 작업의 세부 규칙과, 기존 콘텐츠를
+> 직접 수정할 때의 보조 절차를 정리한다.
 
 문서 계층: 이 문서는 [develop-flow.md](develop-flow.md)를 보조하는 콘텐츠 운영
 하위 문서다. real 공개 타이밍과 배포 판단은 develop-flow에서 결정하고, 여기서는
@@ -12,29 +14,45 @@ JSON/이미지/seed 작업 순서를 다룬다.
 
 | 변경 종류 | 기준 소스 | 적용 타이밍 |
 |----------|-----------|-------------|
-| 이야기 메타 | `assets/200_stories/*.json` → `supabase/200_stories/*.sql` | DB seed 적용 즉시 |
-| 이야기 위치 | `assets/landmarks/event_region_mapping.json` | `seed-stories-characters` 전에 필수 |
+| 이야기 메타 | `assets/events/*.json` → `supabase/events/*.sql` | DB seed 적용 즉시 |
+| 이야기 위치 | 각 event row의 `landmark_code` + `assets/landmarks/landmarks.json` | `seed-stories-characters` 전에 필수 |
 | 인물 메타 | `tools/seed/character_meta.json` 생성물 | `make build-character-meta` / `make seed-characters` |
 | 장면 원본 이미지 | `assets/story_images/<title>/scene_N.png` | 앱 번들 전 |
 | 런타임 썸네일 | `assets/story_images_thumbs/<short_dir>/scene_N.jpg` + `index.json` | `make thumbnails` |
-| 장면 Storage fallback | `events.scene_image_paths` | 현재 수동 JSON seed 흐름에서는 자동 생성/업로드 없음 |
+| 장면 Storage fallback | `events.scene_image_paths` | 신규 이야기 표준 흐름에서는 `proposal-scenes` 업로드 후 승인 시 복사 |
 | 앱 asset 목록 | `pubspec.yaml` | `make update-pubspec-assets` |
-| 퀴즈 | `assets/quizzes/*.json` → `supabase/quizzes/quizzes_seed.sql` | `apply-seeds-quizzes` |
+| 퀴즈 | 각 event row의 `quiz_questions` → `supabase/quizzes/quizzes_seed.sql` | `apply-seeds-quizzes` |
 
 중요한 현재 사실:
 
 - `title`에는 `001` 같은 번호 prefix를 붙이지 않는다. 화면에 보일 순수 제목만 쓴다.
 - 이야기 순서는 `story_index`가 결정한다.
 - 인물 필드는 `characters`를 쓴다. 예전 문서의 `persons`는 현재 JSON 포맷이 아니다.
-- canonical seed는 `events.scene_image_paths`를 채우지 않는다.
-- `SceneAssetLoader`는 장면 이미지를 로컬 번들에서 먼저 찾고, 호출부가
-  `publicUrlFor`를 넘긴 경우에만 `scene_image_paths` Storage fallback을 쓴다.
+- canonical seed는 `events.scene_image_paths`를 채우지 않는다. 새 이야기의 배포 전
+  이미지 fallback은 proposal 승인 경로에서 채워지는 Storage path가 담당한다.
+- `SceneAssetLoader`는 장면 이미지를 로컬 번들에서 먼저 찾고, 없으면
+  `scene_image_paths`를 Supabase Storage public URL로 바꿔 fallback한다.
+- `make release-sync-stories`는 `deleted_at IS NULL`인 active events만 통합 JSON과 이미지
+  source로 삼는다. 삭제 승인된 row는 DB에 남아도 로컬 release 번들에서는 빠진다.
+- `make thumbnails`는 current `assets/events/*.json`에 등장하는 title만
+  `story_images_thumbs/index.json`에 넣고, story thumbnail 하위 디렉토리를 clean
+  rebuild한다. 삭제된 title의 원본 폴더가 실수로 남아 있어도 앱 번들 썸네일로 다시
+  살아나지 않고, 중간 삽입으로 재사용된 `<era>_<index>` 폴더에 이전 이미지가 남지 않는다.
+- `make release-sync-stories`는 `ensure-story-image-sources`로 private
+  `story-image-sources` bucket에서 missing/changed 원본 PNG를 내려받고, 마지막에
+  `upload-story-image-sources`로 새 proposal 원본을 upsert하고 old manifest에만 남은
+  stale object를 삭제한 뒤 active manifest를 다시 올린다.
 - `make apply-seeds-stories-characters`는 Storage에 장면 이미지나 썸네일을 업로드하지
   않는다. `make upload-character-avatars`도 캐릭터 아바타 전용이다.
 - 중간 삽입으로 기존 이야기들의 `story_index`가 밀리면 real DB에는 seed-only로
   적용하지 않는다. 기존 `events.id`를 보존하는 DB shift+insert가 먼저 필요하다.
 
 ## 1. 신규 이야기 1건 추가
+
+신규 이야기는 운영 DB에 바로 seed apply하지 않고, `assets/story_drafts/*.json`으로
+초안을 만들고 proposal 승인 경로를 거치는 것을 표준으로 한다. 아래 직접
+`assets/events/*.json`을 수정하는 절차는 release sync 결과를 검토하거나 기존
+콘텐츠를 수정할 때의 기준 규칙으로 본다.
 
 ### 1.1 작업 전 동기화
 
@@ -43,7 +61,7 @@ JSON/이미지/seed 작업 순서를 다룬다.
 먼저 diff를 확인한다.
 
 ```bash
-git status --short assets/200_stories
+git status --short assets/events
 make export-stories-json ENV=dev
 ```
 
@@ -53,12 +71,14 @@ real DB를 기준으로 복원해야 할 때만:
 make export-stories-json ENV=real
 ```
 
-현재 운영에서 웹 제안 화면은 쓰지 않으므로, 평소에는 저장소의
-`assets/200_stories/*.json`이 기준 소스라고 보면 된다.
+신규 이야기 표준 흐름에서는 이 역추출이 release sync 단계에 포함된다. 기존 콘텐츠를
+직접 고치는 경우에는 저장소의 `assets/events/*.json`이 기준 소스다.
 
 ### 1.2 JSON 추가
 
-해당 시대 파일에 새 객체를 추가한다.
+release sync 후 canonical 파일을 검토하거나 기존 직접 편집 경로를 쓸 때는 해당 시대
+파일에 새 객체를 추가한다. draft 단계에서는 같은 필드를
+`assets/story_drafts/YYYYMMDD_slug.json`에 작성한다.
 
 예:
 
@@ -67,6 +87,7 @@ make export-stories-json ENV=real
   "title": "새 이야기 제목",
   "era": "era_divided_kingdom",
   "characters": ["elijah", "ahab"],
+  "landmark_code": "lm_div_mt_carmel",
   "place_name": "갈멜 산",
   "lat": 32.731,
   "lng": 35.049,
@@ -97,39 +118,43 @@ make export-stories-json ENV=real
     ["ahab"],
     ["elijah"],
     []
+  ],
+  "quiz_questions": [
+    {
+      "type": "fact",
+      "display_order": 0,
+      "question": "엘리야는 갈멜 산에서 누구에게 결단을 촉구했습니까?",
+      "choices": ["이스라엘 백성", "애굽 군대", "바벨론 포로"],
+      "answer_index": 0,
+      "explanation": "왕상 18:21 — '너희가 어느 때까지 두 사이에서 머뭇머뭇 하려느냐'"
+    }
   ]
 }
 ```
 
+draft JSON에서는 `story_index` 대신 `after_story_index`를 쓴다. 예를 들어
+`after_story_index: 12`는 같은 시대의 12번 이야기 뒤에 새 이야기를 넣는다는 뜻이다.
+관리자 승인 시 DB가 뒤쪽 `story_index`를 밀고 실제 `story_index`를 정한다.
+
 작성 규칙:
 
 - `story_index`는 같은 era 안에서 중복되면 안 된다.
-- 중간에 끼워 넣으면 뒤 이야기들의 `story_index`와
-  `assets/landmarks/event_region_mapping.json`도 같이 조정해야 한다.
+- 중간에 끼워 넣으면 뒤 이야기들의 `story_index`가 같이 조정되어야 한다.
 - 단, real에 이미 공개된 시대의 중간 삽입은 로컬 JSON 재번호 + seed apply만으로
   처리하지 않는다. generated seed는 `(era_id, story_index)`를 UPSERT 키로 쓰므로,
   기존 row id가 다른 이야기 내용으로 덮일 수 있다.
+- generated seed의 stale 정리는 `deleted_at is null`인 활성 row만 hard delete 한다.
+  삭제 제안 승인으로 soft-delete 된 row는 진행도/제안 이력 보존을 위해 남긴다.
 - `story_scenes`, `scene_captions`, `scene_characters` 길이는 맞춘다.
 - `characters`와 `scene_characters`에는 인물 code를 쓴다.
+- `landmark_code`는 `assets/landmarks/landmarks.json`에 존재하는 code를 쓴다.
+- `quiz_questions`는 1~3개를 넣고, 각 문항은 선택지 3개와 `answer_index` 0~2를 가진다.
 - 새 인물 code는 JSON에 먼저 넣어도 된다. 이후 `build-character-meta`가 meta에 반영한다.
 
 ### 1.3 위치 매핑 추가
 
-`make seed-stories-characters`는 모든 이벤트에 `landmark_id`가 필요하다. 새 이야기의
-`(era, story_index)`에 대응하는 row를 `assets/landmarks/event_region_mapping.json`에
-추가한다.
-
-```json
-{
-  "story_index": 99,
-  "title": "새 이야기 제목",
-  "era": "era_divided_kingdom",
-  "place_name": "갈멜 산",
-  "region_code": "rgn_div_north_israel",
-  "landmark_code": "lm_div_mt_carmel"
-}
-```
-
+`make seed-stories-characters`는 모든 이벤트에 `landmark_id`가 필요하다. 이제 매핑은
+별도 위치 매핑 파일이 아니라 event row의 `landmark_code`가 담당한다.
 `landmark_code`는 `assets/landmarks/landmarks.json`에 존재해야 한다. 새 landmark가
 필요하면 `landmarks.json`도 추가하고 `make seed-landmarks`를 실행한다.
 
@@ -144,8 +169,8 @@ make seed-stories-characters
 
 - `tools/seed/character_meta.json`에 신규 인물이 들어갔는지
 - 신규 인물의 `name`, `tagline`, `prompt`, `is_active_default`가 의도와 맞는지
-- `supabase/200_stories/characters_seed.sql`과
-  `supabase/200_stories/200_stories_seed_part_*.sql` diff가 의도한 범위인지
+- `supabase/events/characters_seed.sql`과
+  `supabase/events/events_seed_part_*.sql` diff가 의도한 범위인지
 
 신규 인물의 prompt가 마음에 들지 않으면
 `tools/seed/build_character_meta_json.py`의 override/hint를 보강한 뒤 다시 실행한다.
@@ -166,25 +191,14 @@ make update-pubspec-assets
   `make generate-story-images`를 다시 실행한다.
 - `make thumbnails`는 앱 런타임용 짧은 디렉토리
   `assets/story_images_thumbs/<era_slug>_<story_index>/`와 `index.json`을 만든다.
+- story thumbnail 디렉토리는 누락 원본 검사를 통과한 뒤 매번 clean rebuild된다.
+  중간 삽입/삭제로 같은 `<era_slug>_<story_index>`가 다른 이야기를 가리키게 되어도
+  이전 JPG가 남지 않는다.
 - `make update-pubspec-assets`를 빼먹으면 새 썸네일이 앱 번들에 포함되지 않는다.
 
 ### 1.6 퀴즈를 같이 추가할 때
 
-퀴즈 파일은 `assets/quizzes/<era_code>_n<story_index:03d>.json` 형식이다.
-
-현재 Makefile의 `seed-quizzes`는 `supabase/quizzes/db_events.json`을 기준 이벤트
-목록으로 사용한다. 따라서 신규 이야기 퀴즈를 추가하면 이 snapshot에도 아래 형태의
-항목을 같이 추가해야 한다.
-
-```json
-{
-  "era_code": "era_divided_kingdom",
-  "story_index": 99,
-  "title": "새 이야기 제목"
-}
-```
-
-그 다음:
+퀴즈는 같은 event row의 `quiz_questions` 배열에 넣는다. 그 다음:
 
 ```bash
 make seed-quizzes
@@ -192,9 +206,8 @@ make seed-quizzes
 
 주의:
 
-- snapshot에 신규 이야기가 없으면 `orphan quizzes` 에러가 난다.
-- 이 구조는 임시 운영상 제약이다. 나중에 seed SQL과 DB snapshot이 완전히 맞으면
-  `seed-quizzes`가 `200_stories_seed.sql`을 직접 기준으로 쓰도록 정리할 수 있다.
+- `quiz_questions`가 빠진 active event는 `quizzes_report.json`의 `events_without_quiz`에 나온다.
+- 해설 첫머리의 절 근거가 같은 event row의 `bible_ref` 범위 밖이면 빌드가 실패한다.
 
 ### 1.7 dev 적용과 검증
 
@@ -234,9 +247,11 @@ scripts/run_dev.sh
 운영 DB에서는 `insert_event_at_position(...)` RPC나 별도 patch로 기존 row를 먼저
 shift+insert한 다음 seed와 로컬 JSON을 맞춘다.
 
-### 2.2 기본 배포 순서
+### 2.2 직접 seed 공개 순서
 
-이미지 없는 노출을 줄이는 보수적 순서:
+신규 이야기는 proposal 승인 흐름을 우선한다. 아래 순서는 기존 콘텐츠 수정처럼
+`events.id`가 새로 생기지 않거나, 새 앱 출시 이후에만 공개해도 되는 직접 seed 배포
+경로다.
 
 ```bash
 # 1. dev에서 검증 완료
@@ -258,8 +273,10 @@ make upload-character-avatars ENV=real    # 신규 인물 아바타가 있으면
 scripts/run_real.sh
 ```
 
-현실적으로 사용자가 모두 즉시 업데이트하지는 않는다. 이미지 빈 상태를 절대 피해야 하는
-콘텐츠라면 2.3을 먼저 해결해야 한다.
+현실적으로 사용자가 모두 즉시 업데이트하지는 않는다. 신규 이야기에서 이미지 빈 상태를
+피해야 한다면 직접 seed 공개가 아니라
+[develop-flow.md §3.2.1](develop-flow.md#321-새-이야기-추가-flow)의 proposal
+승인 흐름을 사용한다.
 
 ### 2.3 구버전 앱에도 이미지를 보여야 할 때
 
@@ -270,18 +287,18 @@ scripts/run_real.sh
 3. 구버전 앱은 Storage URL로 이미지를 본다.
 4. 신버전 앱은 로컬 번들 이미지를 먼저 보므로 Storage 호출이 줄어든다.
 
-현재 repo에는 이 작업을 자동화하는 로컬 Make target이 없다. 과거 웹 제안/승인
-흐름은 이 역할을 했지만, 지금 웹을 배포하지 않는 운영에서는 표준 경로가 아니다.
+신규 이야기 표준 흐름에서는 `make apply-draft`/`make apply-drafts`가 draft 이미지를 `proposal-scenes`에
+업로드하고, 관리자 승인 RPC가 그 경로를 `events.scene_image_paths`로 복사한다.
+구버전 앱은 로컬 번들에 새 썸네일이 없어도 `SceneAssetLoader`의 Storage fallback으로
+새 이야기 이미지를 불러온다.
 
 `make upload-character-avatars ENV=real`은 `characters` 버킷만 다룬다. 이야기 장면
 PNG/JPG 또는 `assets/story_images_thumbs`를 Storage에 올리고 `events.scene_image_paths`
 를 채우는 target은 아직 없다.
 
-또한 Storage fallback은 `SceneAssetLoader.loadForEvent(..., publicUrlFor: ...)`를
-넘기는 화면에서만 동작한다. 상세 화면의 큰 장면 row는 이 경로를 쓰지만, 모든 작은
-카드 썸네일까지 보장하려면 앱 호출부 패치를 함께 확인한다.
-
-따라서 선택지는 둘이다.
+직접 seed 배포 경로에는 아직 장면 이미지를 Storage에 올리고
+`events.scene_image_paths`를 채우는 로컬 Make target이 없다. 따라서 직접 seed 배포를
+계속 쓰는 경우의 선택지는 둘이다.
 
 - real 공개를 새 앱 출시 이후로 미룬다.
 - 별도 도구를 만든다: `assets/story_images/<title>/scene_N.png`를 Storage에 업로드하고
@@ -346,14 +363,20 @@ where code = 'goliath';
 
 ## 4. 배포 전 체크리스트
 
-- [ ] `assets/200_stories/*.json` title에 번호 prefix를 넣지 않았다.
+- [ ] `assets/events/*.json` title에 번호 prefix를 넣지 않았다.
 - [ ] `characters`, `scene_characters` code가 맞다.
 - [ ] `story_index`가 era 안에서 unique하다.
-- [ ] `assets/landmarks/event_region_mapping.json`에 새 `(era, story_index)` 매핑이 있다.
+- [ ] 표준 proposal 흐름이면 `make release-sync-stories`로 통합 events JSON/assets/pubspec을 갱신했다.
+- [ ] release builder라면 `story-image-sources` private bucket pull/push가 정상 통과했고,
+      upload dry-run에서 `upload`, `skip`, `delete_stale` 계획이 기대와 맞았다
+      (`make release-sync-stories` 안에서 자동 실행).
+- [ ] 삭제 승인된 이야기가 있다면 해당 title이 `assets/events/*.json`,
+      `assets/story_images_thumbs/index.json`, `pubspec.yaml`의 story thumb asset 목록에서 빠진 것을 확인했다.
 - [ ] `landmark_code`가 `assets/landmarks/landmarks.json`에 존재한다.
 - [ ] `make seed-stories-characters` 성공.
-- [ ] 퀴즈가 있으면 `supabase/quizzes/db_events.json` snapshot도 갱신했고 `make seed-quizzes` 성공.
-- [ ] `make thumbnails`와 `make update-pubspec-assets` 실행.
+- [ ] 퀴즈가 있으면 같은 event row의 `quiz_questions`에 들어 있고 `make seed-quizzes` 성공.
+- [ ] 직접 JSON/seed 흐름이면 `make thumbnails`와 `make update-pubspec-assets` 실행.
+      표준 proposal 흐름에서는 `make release-sync-stories`가 자동 실행한다.
 - [ ] `make check-pubspec-assets` 통과.
 - [ ] `python3 tools/seed/verify_polygons_contain_events.py` 통과.
 - [ ] `scripts/run_dev.sh`에서 새 이야기/이미지/퀴즈 확인.

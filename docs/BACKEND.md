@@ -9,10 +9,10 @@
 ```
 db_init.sql                            # 스키마 정의 — 단일 진실 소스
 supabase/
-├── 200_stories/                       # 생성된 시드 SQL
-│   ├── 200_stories_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
+├── events/                       # 생성된 시드 SQL
+│   ├── events_seed.sql           # events INSERT (배열/JSONB 컬럼 포함)
 │   ├── characters_seed.sql               # persons INSERT (is_active 만, mention_count 는 character_meta.json 메타)
-│   └── 200_stories_report.json
+│   └── events_report.json
 └── seeds/
     └── krv_bible_verses*.sql          # KRV 성경 구절 시드
 
@@ -45,7 +45,7 @@ is_active boolean DEFAULT false   -- 어드민이 노출 여부 결정
 - 빌더는 `character_meta.json`의 `is_active_default` 값(등장 2회 이상이면 true)을
   따라 초기값을 결정한다. 어드민이 토글한 `is_active`는 시드 재실행 시에도
   보존된다 (`on conflict ... do update`에서 `is_active` 제외).
-- 단 `description`은 `coalesce(excluded.description, persons.description)`로 UPSERT되고 excluded가 항상 non-null이므로 **시드에 포함된 인물은 매번 새 description으로 덮어써진다**. 로컬 `assets/200_stories/`가 DB와 동기화된 상태여야 description이 엉뚱한 "대표 이야기"로 망가지지 않는다 — 상세 절차는 [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로).
+- 단 `description`은 `coalesce(excluded.description, persons.description)`로 UPSERT되고 excluded가 항상 non-null이므로 **시드에 포함된 인물은 매번 새 description으로 덮어써진다**. 로컬 `assets/events/`가 DB와 동기화된 상태여야 description이 엉뚱한 "대표 이야기"로 망가지지 않는다 — 상세 절차는 [CONTENT_UPDATE.md §2.1b \[0\]](CONTENT_UPDATE.md#21b-어드민-웹-없이-json-직접-편집--신규-이야기-1건-추가-백업-경로).
 
 #### `events` — 성경 사건 (table)
 ```sql
@@ -68,6 +68,9 @@ status text DEFAULT 'published'      -- draft / published (어드민 전용)
   CHECK (status in ('draft','published'))
 ```
 - 정렬 기준은 view에서 동적으로 계산 (`time_sort_key`/`code` 컬럼 폐기).
+- 활성 published 이야기는 각 era 안에서 `story_index = 1..N` 을 유지한다. 삭제
+  승인된 soft-deleted row 는 보존하되 활성 row 뒤쪽 번호로 밀어, 다음 삽입 위치와
+  앱/시드 canonical 순서가 어긋나지 않게 한다.
 - `unit_code`/`unit_title`/`unit_order`는 시간 순 보기의 중간 선택 단계에 사용한다.
   구약도 시대별 curated 구간(원역사 2개, 족장 3개, 출애굽 3개, 사사 3개,
   왕정 3개, 분열왕국 5개, 포로/귀환 3개)로 나눠 카드 선택에 사용한다.
@@ -137,16 +140,20 @@ FROM first;
 id uuid PK, proposer_user_id uuid FK→auth.users, era_id uuid FK→eras (NULL for 'general'),
 proposal_type text CHECK ('new'/'delete'/'general') DEFAULT 'new',
 target_event_id uuid FK→events (NULL for 'new'/'general', required for 'delete'),
-title text, summary text, character_codes text[], landmark_id uuid → landmarks(id),
+title text, summary text, background_context text,
+character_codes text[], landmark_id uuid → landmarks(id),
 start_year/end_year/time_precision, bible_refs jsonb,
-story_scenes jsonb, scene_characters jsonb,
+story_scenes jsonb, scene_captions jsonb, scene_characters jsonb,
+unit_code/unit_title/unit_order,
 scene_image_paths text[], scene_image_prompts text[],
 proposed_characters jsonb, quiz_questions jsonb,
 image_paths text[],   -- 'general' 첨부 이미지 (최대 5장)
 after_story_index int,
 status text CHECK ('pending'/'approved'/'rejected'),
 reviewed_by_user_id, reviewed_at, review_note, approved_event_id uuid FK→events,
-synced_to_local_at timestamptz, created_at, updated_at
+synced_to_local_at timestamptz,
+position_invalidated_at, position_invalidation_reason,
+created_at, updated_at
 ```
 - 제안 종류 (`proposal_type`):
   - `'new'`: 새 이야기 제안 — 기존 플로우, `quiz_questions` 1~3개 강제 (목회자 작성 선택지 3개 + 해설 필수, 승인 시 4번 "헷갈렸어요" 자동 추가).
@@ -156,11 +163,17 @@ synced_to_local_at timestamptz, created_at, updated_at
   - `chk_proposal_type_target`: new ↔ target IS NULL / delete ↔ target IS NOT NULL / general ↔ target IS NULL
   - `chk_quiz_count_by_type`: new → 1~3개, delete/general → 0개
   - `chk_era_id_required_unless_general`: 'general' 만 era_id NULL 허용
+  - `chk_scene_captions_count_for_new`: new → `scene_captions` 길이가 `story_scenes`와 같아야 함
+  - `chk_new_story_required_payload`: service-role direct insert 경로에서도 new 제안은
+    `landmark_id`, `background_context`, 1개 이상 `story_scenes`,
+    장면 수와 같은 `scene_image_paths`/`scene_image_prompts`를 가져야 함
   - `chk_general_image_count`: 'general' 의 image_paths 는 최대 5장
 - Partial unique index `uniq_pending_delete_target`: 동일 이벤트에 pending 삭제 제안은 1건만 허용 (두 명이 동시에 같은 이야기 삭제 못 냄).
 - 승인 전까지 `events` 와 격리되므로 모바일 앱 쿼리(`events_ordered` view, `events.status='published' AND deleted_at IS NULL`)에 영향 0.
 - `approve_event_proposal` RPC 가 `insert_event_at_position` 호출 + 퀴즈 1~3개를 `quiz_questions` 로 풀어 넣음(작성 선택지 3개만 셔플, `choice_d='헷갈렸어요'`) + `approved_event_id` 역참조 기록.
-- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다. ⚠️ **HARD DELETE 사용 금지** — `target_event_id` FK 의 `ON DELETE SET NULL` 가 발화되어 `chk_proposal_type_target` 위반(23514) 을 유발한다.
+  - 같은 era + 같은 effective `after_story_index`를 겨냥한 다른 pending 제안은 `position_invalidated_at`으로 잠긴다.
+  - 관리자는 승인 다이얼로그에서 새 위치를 명시해 `p_after_story_index_override`로 바로 재배치 승인할 수 있다. 제안자가 직접 풀 때는 `revise_proposal_position`을 사용한다.
+- `approve_delete_proposal` RPC 가 `events.deleted_at = now()` 로 soft delete. 퀴즈/진도(`quiz_questions` / `user_event_progress`)는 보존 — `events_ordered` view 의 `deleted_at IS NULL` 필터가 앱 전체 가시성을 차단한다. 이후 같은 era 의 활성 published 이벤트를 `story_index = 1..N` 으로 재번호 매기고, 삭제된 위치 이후를 가리키던 pending NEW 제안은 `position_invalidated_at` 으로 잠가 위치 재선택을 요구한다. ⚠️ **HARD DELETE 사용 금지** — `target_event_id` FK 의 `ON DELETE SET NULL` 가 발화되어 `chk_proposal_type_target` 위반(23514) 을 유발한다.
 - `approve_general_proposal` / `reject_general_proposal` RPC 는 status 만 갱신 (이미지 정리/row 삭제 없음).
 
 #### `event_proposal_comments` — 댓글
@@ -176,24 +189,25 @@ body text, created_at, updated_at
 - 댓글: pastor + admin 작성 가능, 본인 것만 UPDATE, 삭제는 본인 또는 admin
 - 제안 DELETE: admin 만
 
-#### RPC 9종
+#### 주요 RPC
 | 이름 | 호출자 | 역할 |
 |------|------|------|
 | `submit_event_proposal(..., p_quiz_questions)` | pastor | 새 이야기 제안 INSERT (`proposal_type='new'`). 퀴즈 1~3개 검증 (작성 선택지 3개 + 해설 필수). |
 | `submit_delete_proposal(target_event_id, reason)` | pastor | 기존 이야기 삭제 제안 INSERT (`proposal_type='delete'`, `summary=reason`). 이미 삭제된 이벤트면 거부. |
 | `submit_general_proposal(title, body, image_paths)` | pastor | 일반 제안 INSERT (`proposal_type='general'`). 본문 필수, 이미지 최대 5장. |
-| `approve_event_proposal(proposal_id, after_override)` | admin | `proposal_type='new'` 전용. `insert_event_at_position` 호출 → events 반영 + 퀴즈 rows insert + proposal status='approved'. |
-| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent, soft delete). 퀴즈/진도/캐릭터/이미지 정리 모두 미수행. |
+| `approve_event_proposal(proposal_id, after_override, character_active_overrides)` | admin | `proposal_type='new'` 전용. 위치 override 가능. `insert_event_at_position` 호출 → events 반영 + 퀴즈 rows insert + proposal status='approved'. |
+| `approve_delete_proposal(proposal_id)` | admin | `proposal_type='delete'` 전용. 대상 이벤트 `deleted_at=now()` set (idempotent, soft delete) 후 같은 era 활성 이벤트 `story_index`를 1..N으로 압축. 삭제된 위치 이후 pending NEW 제안은 위치 재선택 필요 상태로 전환. 퀴즈/진도/캐릭터/이미지 정리 모두 미수행. |
 | `approve_general_proposal(proposal_id)` | admin | `proposal_type='general'` 전용. status='approved' 만. 이미지 정리 없음. |
 | `reject_event_proposal(proposal_id, note)` | admin | status='rejected' + review_note 저장 (new/delete 공통). 반환 jsonb 에 정리 후보 storage 경로 포함. |
 | `reject_general_proposal(proposal_id, note)` | admin | `proposal_type='general'` 전용. status='rejected' + 사유만 갱신. |
+| `revise_proposal_position(proposal_id, after_story_index, start_year, end_year, landmark_id)` | proposer | 같은 위치 제안이 먼저 승인되어 잠긴 pending new 제안의 위치/연도/랜드마크를 다시 제출. |
 | `add_proposal_comment(proposal_id, body)` | pastor/admin | 댓글 INSERT 편의 함수 |
 
 상세 SQL: [db_init.sql](../db_init.sql) §Story proposal workflow. (개별 증분 마이그레이션 파일은 폐기 — `db_init.sql` 이 단일 진실 소스.)
 
 #### Soft delete — events.deleted_at
 
-이야기 삭제 제안이 승인되면 `events.deleted_at` 이 `now()` 로 set 된다. `quiz_questions`/`user_event_progress` 의 `ON DELETE CASCADE` 연쇄로 인한 **사용자 진도 유실** 을 막기 위해 hard delete 는 의도적으로 피한다 ([ADR-017](ADR.md#adr-017-이야기-삭제-제안--soft-delete--퀴즈-필수화)).
+이야기 삭제 제안이 승인되면 `events.deleted_at` 이 `now()` 로 set 된다. `quiz_questions`/`user_event_progress`/`user_quiz_attempts`/`user_event_emotion_marks` 의 FK 연쇄 삭제나 orphan 을 피하기 위해 hard delete 는 의도적으로 피한다 ([ADR-017](ADR.md#adr-017-이야기-삭제-제안--soft-delete--퀴즈-필수화)). 여기서 "보존"은 DB의 과거 기록 row 를 남긴다는 뜻이지, 앱에 보이는 진행률을 유지한다는 뜻이 아니다. 앱과 프로필은 active `events_ordered` id 기준으로 진행/퀴즈/감정 기록을 필터링하므로 삭제된 이야기에만 있던 완료, 퀴즈, 감정 기록은 현재 진행률과 달력/기록 탭에서 빠진다. 대신 같은 era 의 활성 published 이벤트를 `story_index = 1..N` 으로 즉시 재번호 매기고, soft-deleted row 는 활성 row 뒤쪽 번호로 이동한다 ([ADR-028](ADR.md#adr-028-삭제-승인-후-active-story_index-재번호-매김)).
 
 앱 전체에서 자동으로 숨겨지도록 두 곳에 필터를 건다:
 
@@ -203,9 +217,12 @@ body text, created_at, updated_at
 | `character_eras` (view) | join 조건에 `and e.deleted_at is null` |
 | `list_characters_by_era(era_id)` RPC | join 조건에 `and e.deleted_at is null` |
 
-Flutter 앱은 `events_ordered` / RPC 만 호출하므로 이 두 곳만 필터 걸면 추가 작업 없음. `fetchQuizQuestions(event_id)` 는 앱 흐름상 삭제된 event 로 도달하지 않아 별도 필터 생략 (이미 목록에서 제외됨).
+Flutter 앱은 사건 목록을 `events_ordered` / RPC 로만 호출한다. 사용자 기록 조회도 active `events_ordered` id 와 교차해 필터링하므로 프로필의 인물 진행도, 장소 진행도, 기록 탭 퀴즈 통계, 감정 달력에서 soft-deleted event 는 제외된다. `fetchQuizQuestions(event_id)` 는 앱 흐름상 삭제된 event 로 도달하지 않아 별도 필터 생략 (이미 목록에서 제외됨).
+삭제로 인해 같은 era 의 숫자 위치가 바뀌면, 삭제된 `story_index` 이상을 가리키던
+pending NEW 제안은 `position_invalidated_at` 이 set 된다. 제안자는 현재 활성 목록을
+보고 `revise_proposal_position` 으로 위치/연도/랜드마크를 다시 제출해야 한다.
 
-#### `bible_verses` — KRV 성경 전문 (31,904절)
+#### `bible_verses` — KRV 성경 전문 (31,102절)
 ```sql
 id uuid PK, translation text DEFAULT 'KRV',
 book_no int, book_name text, chapter_no int,
@@ -234,7 +251,7 @@ era_codes text[] DEFAULT '{}',
 related_event_codes text[] DEFAULT '{}',
 is_active boolean DEFAULT true
 ```
-- **v2 위치 모델 (2026-05-04)**: `events.lat/lng/place_name` 직접 좌표 → `events.landmark_id` FK 로 전환. 시드: `assets/landmarks/landmarks_v2_draft.json` → `tools/seed/build_landmarks_v2_seed_sql.py` → `supabase/200_stories/landmarks_v2_seed.sql`.
+- **v2 위치 모델 (2026-05-04)**: `events.lat/lng/place_name` 직접 좌표 → `events.landmark_id` FK 로 전환. 시드: `assets/landmarks/landmarks_v2_draft.json` → `tools/seed/build_landmarks_v2_seed_sql.py` → `supabase/events/landmarks_v2_seed.sql`.
 - **3 종**:
   - `region`: 폴리곤으로 영역 표시. 사건 발생 가능 영역을 빈틈없이 덮음. parent 없음.
   - `anchor`: region 의 대표 점, 자주 사건이 일어나는 핵심 위치 (예: 예루살렘, 시내산). parent = region.
@@ -463,6 +480,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `list_intercessory_prayer_requests(p_limit, p_offset)` | RPC | 중보기도 목록 페이지네이션 |
 | `add_intercessory_prayer_by_share_id(p_share_id)` | RPC | 공유 코드로 중보기도 추가 |
 | `insert_event_at_position(...)` | RPC (admin 전용) | 새 이야기를 era 안 특정 위치에 끼워 넣기. story_index 시프트 + INSERT 를 advisory lock 안에서 처리. status 는 항상 'published'. |
+| `approve_delete_proposal(...)` | RPC (admin 전용) | 삭제 제안 승인. soft delete + 같은 era 활성 story_index 압축 + 영향받은 pending NEW 제안 위치 무효화를 advisory lock 안에서 처리. |
 
 ## 5. Repository 패턴
 
@@ -523,18 +541,23 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `registerPushToken(...)` / `unregisterPushToken(token)` | RPC `register_push_token` / `unregister_push_token` | void |
 | `notifyQuizCompleted(eventId)` | RPC `notify_quiz_completed` (퀴즈 완료 시) | void |
 
-### 5.3 AuthRepository (`lib/data/auth_repository.dart`, 77줄)
+### 5.3 AuthRepository (`lib/data/auth_repository.dart`)
 
 | 메서드 | 역할 |
 |--------|------|
 | `signInWithApple()` | Apple ID 로그인 (SHA256 nonce) |
-| `signInWithGoogle()` | Google 로그인. Android는 `google_sign_in` 네이티브 토큰 → `signInWithIdToken`, Web/iOS는 Supabase OAuth redirect |
-| `signInWithKakao()` | Kakao 로그인 |
+| `signInWithGoogle()` | Google 로그인. 모바일은 Supabase OAuth redirect + 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
+| `signInWithKakao()` | Kakao 로그인. 모바일 OAuth는 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
 | `signOut()` | 로그아웃 |
+| `deleteCurrentAccount(...)` | `delete-account` Edge Function 호출 후 로컬 세션 정리 |
+
+계정 삭제 확인 아이디는 이메일 → `user_profiles.share_id` → Auth UUID 순서로 표시하며,
+동일 값이 Edge Function 에 전달되어 서버에서도 한 번 더 검증된다.
 
 ## 6. Storage
 
-세 버킷이 `db_init.sql` 에 선언된다.
+Storage 버킷은 `db_init.sql` 에 선언된다. 앱 런타임/public 자산과 release-only
+원본 archive는 분리한다.
 
 ### `profile-images` (기존)
 - **제한**: 5 MB, PNG/JPEG/WebP
@@ -564,6 +587,26 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 - **읽기 권한**: public — 제안 상세 페이지에서 다른 pastor/admin 이 열람.
 - **DB 연동**: `event_proposals.scene_image_paths` 가 이 경로 목록을 유지
   (인덱스 순서 = 장면 순서).
+
+### `story-image-sources` (release-only, private)
+- 앱 번들 썸네일을 만들기 위한 원본 장면 PNG archive.
+- **제한**: 20 MB, PNG/JSON(manifest)
+- **경로 패턴**:
+  - `story_images/<source_key>/scene_*.png` (`source_key`는 한글 source dir의 SHA prefix)
+  - `_manifests/story_images_manifest.json`
+- **접근**: public read 없음. 앱 런타임은 사용하지 않고 service_role 운영 도구
+  `sync_story_image_sources.py`만 pull/push한다.
+- **운영**: `make ensure-story-image-sources`가 manifest 기준 missing/changed 원본을
+  내려받는다. `make upload-story-image-sources`는 current active story 원본 중
+  신규/변경 PNG를 upsert하고, 이전 manifest에만 남은 stale object를 삭제한 뒤
+  active manifest를 업로드한다.
+- **삭제 범위**: stale 삭제는 bucket listing 전체가 아니라 이전
+  `_manifests/story_images_manifest.json` entries와 current active entries의 차이만
+  대상으로 한다. manifest에 없는 수동 object는 건드리지 않는다.
+- **db-init 보존**: `db_init.sql`에는 bucket 정의가 있지만
+  `tools/supabase/purge_owned_buckets.py`의 purge 대상이 아니다. 따라서
+  `make db-init`이 `characters`, `proposal-scenes`, `proposal-characters`를 비워도
+  이 source archive는 유지된다.
 
 ## 7. Edge Functions
 
@@ -602,6 +645,23 @@ PL/pgSQL 함수로 RLS 안에서 사용.
   5. 404/UNREGISTERED 응답은 해당 토큰을 자동 정리
 - 상세: `supabase/functions/send-push/README.md` + `docs/guides/PUSH_SETUP.md`
 
+### `delete-account` (2026-06-25)
+- 경로: `supabase/functions/delete-account/index.ts`
+- 호출 시점: 프로필 설정 시트의 `계정 삭제` 확인 다이얼로그에서 표시된 계정 확인 아이디를 입력하고 최종 삭제를 누를 때
+- 배포: `supabase functions deploy delete-account`
+- 배포 전제 secrets:
+  - `SUPABASE_URL` — 자동 주입됨
+  - `SUPABASE_SERVICE_ROLE_KEY` — 자동 주입됨
+- 기능 개요:
+  1. Flutter 세션 JWT 를 `auth.getUser()` 로 검증
+  2. 입력한 `confirmationId` 가 사용자 이메일, `user_profiles.share_id`, Auth UUID 중 하나인지 검증
+  3. `{userId}/...` prefix 의 사용자 소유 Storage 파일 삭제 (`profile-images`, `proposal-scenes`, `proposal-characters`, `proposal-general-images`)
+  4. 단, 승인된 공개 콘텐츠가 아직 참조 중인 `events.scene_image_paths`, `characters.avatar_storage_path` 의 `proposal-*` 파일은 보존
+  5. service-role `auth.admin.deleteUser(user.id)` 호출
+  6. `auth.users(id) on delete cascade` FK 로 사용자별 DB row 삭제
+- 계정 삭제 cascade 대상: `user_profiles`, `user_event_progress`, `user_quiz_attempts`, `user_event_emotion_marks`, `user_companion_diary_entries`, `user_notes`, `user_saved_verses`, `user_saved_events`, `user_intercessory_prayers`(구독/대상 양쪽), `event_proposals`(작성자), `event_proposal_comments`(댓글 작성자), `notifications`, `broadcast_notification_reads`, `user_push_tokens`.
+- `event_proposals.reviewed_by_user_id` 는 삭제 대상 사용자가 관리자 검토자인 경우 제안 이력을 보존하고 참조만 `NULL` 로 비우도록 `on delete set null` 을 사용한다.
+
 ### 로컬 개발
 
 ```bash
@@ -620,7 +680,7 @@ tools/supabase/check_edge_functions.sh
 ```
 
 이 스크립트는 `generate-proposal-character`, `generate-proposal-scene`,
-`send-push` 의 `index.ts` 를 모두 `deno check` 한다.
+`delete-account`, `send-push` 의 `index.ts` 를 모두 `deno check` 한다.
 
 ## 8. DB 개발/운영 적용 워크플로우
 
@@ -634,7 +694,7 @@ tools/supabase/check_edge_functions.sh
 |------|------|----------|----------|
 | `db_init.sql` | 스키마 **단일 진실 소스** (최종 desired schema) | dev reset / 신규 bootstrap | `make db-init ENV=dev` |
 | `supabase/patches/*.sql` | 운영 DB 를 보존하며 schema/RLS/RPC/cron 변경 | dev/real patch | `make apply-patch ENV=<env> PATCH=<file>` |
-| `supabase/seeds/*.sql`, `supabase/200_stories/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | dev/real seed 적용 | `make apply-seeds ENV=<env>` |
+| `supabase/seeds/*.sql`, `supabase/events/*.sql`, `supabase/quizzes/*.sql` | 기준 콘텐츠/퀴즈/성경 구절 seed | dev/real seed 적용 | `make apply-seeds ENV=<env>` |
 
 Makefile 운영 타겟의 기본값은 `ENV=dev`다. real DB/Storage에 적용할 때만
 명시적으로 `ENV=real`을 붙인다 (`ENV=prod`도 real alias로 동작한다).
@@ -683,10 +743,11 @@ make upload-character-avatars ENV=dev
 make apply-patch ENV=real PATCH=supabase/patches/YYYYMMDD_HHMM_description.sql
 ```
 
-`make db-init`은 SQL 실행 전에 앱 소유 Storage 버킷(`characters`,
+`make db-init`은 SQL 실행 전에 앱 소유 재생성 버킷(`characters`,
 `proposal-scenes`, `proposal-characters`)을 REST API로 먼저 비운다.
 service_role 키가 없거나 purge가 실패하면 기존 파일이 남지 않도록 DB 초기화도
-중단한다. 사용자 업로드 버킷인 `profile-images`는 건드리지 않는다.
+중단한다. 사용자 업로드 버킷인 `profile-images`와 release 원본 archive인
+`story-image-sources`는 건드리지 않는다.
 
 ### 8.4 이력 보존
 

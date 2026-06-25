@@ -1,0 +1,733 @@
+[
+  {
+    "title": "창조: 7일과 안식",
+    "era": "era_primeval",
+    "characters": [
+      "god"
+    ],
+    "landmark_code": "lm_prim_unknown",
+    "place_name": "메소포타미아(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "하나님이 말씀으로 세상을 창조하시고 안식으로 완성하신다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「창조」를 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "2:3",
+        "book": "창",
+        "from": "1:1"
+      }
+    ],
+    "start_year": -4000,
+    "end_year": -4000,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "primeval_creation_mission",
+    "unit_title": "창조와 사람의 사명",
+    "unit_order": 1,
+    "story_scenes": [
+      "완전한 어둠과 혼돈 위에 하나님의 영을 상징하는 부드러운 빛이 수면 위를 덮고, 아무 사람도 보이지 않는다",
+      "하늘과 바다와 땅, 식물과 별과 동물이 차례로 채워지고 사람은 전혀 보이지 않는다",
+      "하나님의 빛 아래 잎과 옷을 입지 않고 대신 수풀 뒤에 몸을 가린 남자와 여자가 동물들과 세상을 바라본다"
+    ],
+    "scene_captions": [
+      "완전한 어둠과 혼돈 위에 부드러운 빛이 수면 위를 덮는다",
+      "하늘과 바다와 땅, 식물과 별과 동물이 차례로 채워진다",
+      "잎과 수풀 뒤에 몸을 가린 남자와 여자가 하나님의 창조물을 다스린다"
+    ],
+    "scene_characters": [
+      [
+        "god"
+      ],
+      [],
+      [
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하나님이 빛을 만드신 것은 몇째 날입니까?",
+        "choices": [
+          "첫째 날",
+          "여섯째 날",
+          "넷째 날"
+        ],
+        "answer_index": 0,
+        "explanation": "창 1:3-5 — '빛이 있으라 하시매 ... 첫째 날이니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "일곱째 날에 하나님은 무엇을 하셨습니까?",
+        "choices": [
+          "계속 창조하셨다",
+          "사람을 심판하셨다",
+          "안식하셨다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 2:2 — '일곱째 날에 ... 안식하셨음이더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 일곱째 날을 어떻게 하셨습니까?",
+        "choices": [
+          "다시 첫째 날로 되돌리셨다",
+          "복 주시고 거룩하게 하셨다",
+          "사람에게만 일하라고 하셨다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 2:3 — '하나님이 일곱째 날을 복 주사 거룩하게 하셨으니 이는 하나님이 그 창조하시며 만드시던 모든 일을 마치시고 이 날에 안식하셨음이더라'"
+      }
+    ]
+  },
+  {
+    "title": "에덴: 사람의 창조와 사명",
+    "era": "era_primeval",
+    "characters": [
+      "god",
+      "adam",
+      "eve"
+    ],
+    "landmark_code": "lm_prim_eden",
+    "place_name": "에덴 지역(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "사람은 에덴에서 돌보고 지키는 사명을 받는다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「에덴」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "2:25",
+        "book": "창",
+        "from": "2:4"
+      }
+    ],
+    "start_year": -4000,
+    "end_year": -4000,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "primeval_creation_mission",
+    "unit_title": "창조와 사람의 사명",
+    "unit_order": 1,
+    "story_scenes": [
+      "옷을 입지 않은 아담이 큰 잎과 풀숲에 몸을 가린 채 흙에서 일어나 숨을 들이마시며 눈을 뜬다, 얼굴과 어깨 위주만 보이며 코 주변에는 하나님의 바람이 표시된다",
+      "동산 가운데는 생명 나무와 선악을 알게하는 나무가 있으며 하나님이 선악을 알게하는 나무는 먹지말라 명하시며 벌거벗은 아담은 수풀 뒤에서 이를 듣는다",
+      "옷을 입지 않은 아담이 큰 잎과 풀숲에 몸을 가린 채 동물들을 바라보며 이름을 붙인다, 얼굴과 상반신 위주만 보인다",
+      "아담이 깊이 잠든 사이 하나님이 하와를 지으시고, 큰 잎과 풀숲이 몸을 가린 두 사람이 에덴 동산에서 서로를 처음 바라보며 놀라워한다"
+    ],
+    "scene_captions": [
+      "아담이 큰 잎과 풀숲에 몸을 가린 채 흙에서 일어나 숨을 들이마시며 눈을 뜬다",
+      "하나님이 아담에게 선악을 알게 하는 나무를 먹지 말라 명하신다",
+      "아담이 큰 잎과 풀숲에 몸을 가린 채 동물들을 바라보며 이름을 붙인다",
+      "아담이 깊이 잠든 사이 하나님이 하와를 지으신다"
+    ],
+    "scene_characters": [
+      [
+        "adam"
+      ],
+      [
+        "god",
+        "adam"
+      ],
+      [
+        "adam"
+      ],
+      [
+        "adam",
+        "eve"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하나님이 아담을 두어 맡기신 곳은 어디입니까?",
+        "choices": [
+          "모리아 산",
+          "헤브론 들판",
+          "에덴 동산"
+        ],
+        "answer_index": 2,
+        "explanation": "창 2:15 — '여호와 하나님이 그 사람을 이끌어 에덴 동산에 두사'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아담은 동산의 짐승과 새에게 무엇을 하였습니까?",
+        "choices": [
+          "제물로 드렸다",
+          "이름을 지어 주었다",
+          "피해 숨었다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 2:20 — '아담이 모든 육축과 공중의 새와 들의 모든 짐승에게 이름을 주니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "아담은 여자를 보고 어떻게 불렀습니까?",
+        "choices": [
+          "자기와 상관없는 사람으로 여겼다",
+          "동물들 가운데 하나로 불렀다",
+          "자기에게서 나온 사람으로 불렀다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 2:23 — '아담이 가로되 이는 내 뼈 중의 뼈요 살 중의 살이라 이것을 남자에게서 취하였은즉 여자라 칭하리 라 하니라'"
+      }
+    ]
+  },
+  {
+    "title": "타락: 뱀의 유혹과 선택",
+    "era": "era_primeval",
+    "characters": [
+      "eve",
+      "adam",
+      "god"
+    ],
+    "landmark_code": "lm_prim_eden",
+    "place_name": "에덴 지역(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "유혹은 의심을 만들고, 선택은 관계의 균열로 이어진다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「타락」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "3:13",
+        "book": "창",
+        "from": "3:1"
+      }
+    ],
+    "start_year": -3995,
+    "end_year": -3995,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
+    "story_scenes": [
+      "옷을 입지 않은 하와가 큰 잎과 풀숲 뒤에 몸을 가린 채 선악을 알게 하는 나무 곁에 서 있고, 뱀은 나뭇가지에서 그녀를 유혹하듯 몸을 낮춘다",
+      "하와가 열매를 들고 벌거벗은 아담에게 건네며, 두 사람의 몸은 큰 잎과 풀숲에 가려지고 얼굴에는 망설임과 끌림이 함께 보인다",
+      "아담과 하와가 당황한 얼굴로 무화과나무 잎을 엮어 몸을 가리고, 서로 눈을 피하며 나무 사이에 숨는다",
+      "무화과나무 잎으로 몸을 가린 아담과 하와가 나무 뒤에 숨고, 하나님이 아담과 하와를 찾으신다"
+    ],
+    "scene_captions": [
+      "하와가 뱀의 유혹에 빠져 선악과를 먹는다",
+      "하와가 열매를 들고 아담에게 건넨다",
+      "아담과 하와가 당황한 얼굴로 무화과나무 잎을 엮어 몸을 가리다",
+      "하나님이 숨어있는 아담과 하와를 찾으신다"
+    ],
+    "scene_characters": [
+      [
+        "eve"
+      ],
+      [
+        "adam",
+        "eve"
+      ],
+      [
+        "adam",
+        "eve"
+      ],
+      [
+        "god",
+        "adam",
+        "eve"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "에덴에서 하와를 유혹한 것은 무엇입니까?",
+        "choices": [
+          "독수리",
+          "사자",
+          "뱀"
+        ],
+        "answer_index": 2,
+        "explanation": "창 3:1 — '여호와 하나님이 지으신 들짐승 중에 뱀이 가장 간교하니라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "아담과 하와는 죄를 지은 후 어떻게 했습니까?",
+        "choices": [
+          "하나님께 즉시 고백했다",
+          "에덴을 떠났다",
+          "나무 사이에 숨었다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 3:8 — '그들이 동산 나무 사이에 숨은지라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님이 여자에게 왜 그랬느냐고 물으셨을 때 여자는 무엇이라고 대답했습니까?",
+        "choices": [
+          "뱀이 나를 꾀어 먹었다고 말했다",
+          "아무 일도 없었다고 말했다",
+          "아담이 혼자 먹었다고 말했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 3:13 — '여호와 하나님이 여자에게 이르시되 네가 어찌하여 이렇게 하였느냐 여자가 가로되 뱀이 나를 꾀므 로 내가 먹었나이다'"
+      }
+    ]
+  },
+  {
+    "title": "추방: 동산 밖으로",
+    "era": "era_primeval",
+    "characters": [
+      "god",
+      "adam",
+      "eve"
+    ],
+    "landmark_code": "lm_prim_eden_east",
+    "place_name": "에덴 동쪽(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "죄의 결과로 사람은 에덴을 떠나고, 길은 막힌다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「추방」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "3:24",
+        "book": "창",
+        "from": "3:14"
+      }
+    ],
+    "start_year": -3995,
+    "end_year": -3995,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
+    "story_scenes": [
+      "하나님의 진노의 빛이 뱀에게 임하고 뱀은 슬픈 표정을 짓는다",
+      "무화과나무 잎으로 몸을 가린 아담과 하와 앞에서 하나님의 거룩한 빛이 죄의 결과를 엄중히 알리고, 하와는 해산의 고통을, 아담은 땀 흘려 밭을 갈 일을 듣고 낙담한다",
+      "하나님의 빛 아래에서 아담과 하와가 가죽옷을 받아 입고, 두 사람은 부끄러움과 슬픔으로 고개를 숙인다. 노출은 보이지 않고 가죽옷과 잎사귀가 몸을 완전히 가린다",
+      "아담과 하와가 가죽옷을 입고 에덴 동산 밖으로 걸어 나가며, 입구에는 천사들과 화염검이 생명 나무 길을 지키고 두 사람은 뒤돌아보며 눈물짓는다"
+    ],
+    "scene_captions": [
+      "하나님이 뱀에게 저주를 받아 흙을 먹을 것을 명하신다",
+      "하나님이 여자는 임신의 수고, 남자는 일의 수고를 져야함을 말씀하신다",
+      "하나님의 빛 아래에서 아담과 하와가 가죽옷을 받아 입다",
+      "아담과 하와가 가죽옷을 입고 에덴 동산 밖으로 나가고 화염검이 생명나무를 지킨다"
+    ],
+    "scene_characters": [
+      [
+        "god",
+        "adam",
+        "eve"
+      ],
+      [
+        "god",
+        "adam",
+        "eve"
+      ],
+      [
+        "adam",
+        "eve"
+      ],
+      [
+        "adam",
+        "eve"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "여자에게 내리신 형벌로 하나님은 무엇을 크게 더하셨습니까?",
+        "choices": [
+          "잉태하는 고통",
+          "언어의 혼란",
+          "노동의 무게"
+        ],
+        "answer_index": 0,
+        "explanation": "창 3:16 — '내가 네게 잉태하는 고통을 크게 더하리니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "하나님은 아담과 하와를 위해 무엇을 해 주셨습니까?",
+        "choices": [
+          "돌기둥을 세워 주셨다",
+          "가죽옷을 만들어 입혀 주셨다",
+          "새 동산을 바로 만들어 주셨다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 3:21 — '여호와 하나님이 아담과 그 아내를 위하여 가죽옷을 지어 입히시니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님이 에덴 동산 동편에 무엇을 두어 길을 지키게 하셨습니까?",
+        "choices": [
+          "천사와 물",
+          "그룹들과 화염검",
+          "돌 기둥과 구름"
+        ],
+        "answer_index": 1,
+        "explanation": "창 3:24 — '그룹들과 두루 도는 화염검을 두어 생명 나무의 길을 지키게 하시니라'"
+      }
+    ]
+  },
+  {
+    "title": "가인과 아벨: 들판의 비극",
+    "era": "era_primeval",
+    "characters": [
+      "cain",
+      "abel",
+      "god"
+    ],
+    "landmark_code": "lm_prim_eden",
+    "place_name": "에덴 지역(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "자신의 방법대로 제사를 드리고, 분노가 다스려지지 않자 형제가 형제를 해친다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「가인과 아벨」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "4:16",
+        "book": "창",
+        "from": "4:1"
+      }
+    ],
+    "start_year": -3950,
+    "end_year": -3950,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
+    "story_scenes": [
+      "가인은 밭에서 곡식을 거두고 아벨은 양 떼를 돌보며, 두 형제의 옷차림과 일터가 분명히 다르게 보인다",
+      "가인과 아벨이 제사를 드릴 때 아벨의 양 제물 쪽에는 하나님이 받으시는 밝은 빛이 머물고, 가인의 땅의 소산 제물 쪽에는 빛이 머물지 않아 아벨은 경외하고 가인은 분노로 얼굴이 굳는다",
+      "들판에서 가인이 아벨을 해치려 다가가는 순간을 먼 거리와 그림자로만 보여 주고, 직접적인 상처와 피는 보이지 않는다",
+      "하나님의 빛에서 나오는 글자 없는 말풍선 안에는 말을 들은 사람들이 어두운 길에서 밝은 길로 돌아서는 장면이 작은 그림처럼 보인다, 가인은 겁먹고 굳은 얼굴로 뒤로 물러난다"
+    ],
+    "scene_captions": [
+      "가인은 밭에서 곡식을 거두고 아벨은 양 떼를 돌보다",
+      "가인과 아벨이 제사를 드릴 때 아벨의 양 제물 쪽에는 하나님이 받으시는 밝은 빛이 머물다",
+      "들판에서 가인이 아벨을 해친다",
+      "가인은 하나님 앞을 떠나 놋땅에서 살게 된다"
+    ],
+    "scene_characters": [
+      [
+        "cain",
+        "abel"
+      ],
+      [
+        "god",
+        "cain",
+        "abel"
+      ],
+      [
+        "cain",
+        "abel"
+      ],
+      [
+        "god",
+        "cain"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "가인의 제물이 열납되지 않자 가인은 어떻게 반응하였습니까?",
+        "choices": [
+          "제물을 다시 드렸다",
+          "심히 분하여 안색이 변하였다",
+          "울며 회개하였다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 4:5 — '가인이 심히 분하여 안색이 변하니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "가인은 아벨이 어디 있느냐는 질문에 어떻게 대답했습니까?",
+        "choices": [
+          "아벨이 제물을 다시 드리러 갔다고 했다",
+          "아벨이 성을 쌓으러 갔다고 했다",
+          "모른다고 하며 자신이 아우를 지키는 사람이냐고 했다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 4:9 — '여호와께서 가인에게 이르시되 네 아우 아벨이 어디 있느냐 그가 가로되 내가 알지 못하나이다 내 가 내 아우를 지키는 자이니까'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "가인이 여호와 앞을 떠나 거한 땅의 이름은 무엇입니까?",
+        "choices": [
+          "갈대아 우르",
+          "모압 땅",
+          "놋 땅"
+        ],
+        "answer_index": 2,
+        "explanation": "창 4:16 — '가인이 여호와의 앞을 떠나 나가 에덴 동편 놋 땅에 거하였더니'"
+      }
+    ]
+  },
+  {
+    "title": "홍수 전의 타락: 노아가 방주를 만들다",
+    "era": "era_primeval",
+    "characters": [
+      "god",
+      "noah"
+    ],
+    "landmark_code": "lm_prim_unknown",
+    "place_name": "메소포타미아(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "폭력으로 가득 찬 세상 속에서 하나님은 노아에게 방주를 만들게 하신다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「홍수 전의 타락」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "7:24",
+        "book": "창",
+        "from": "6:1"
+      }
+    ],
+    "start_year": -2500,
+    "end_year": -2500,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
+    "story_scenes": [
+      "세상에서 사람들이 서로 밀치고 빼앗으며 거리와 들판에 폭력과 두려움이 퍼지고, 하나님은 이를 지켜보신다",
+      "하나님의 빛이 노아에게 임하고 노아는 나무 기둥과 도구를 들고 큰 방주 공사를 시작한다. 배는 공사 초기의 형태이다",
+      "노아 가족이 방주 문으로 들어가고 짐승들이 한 쌍씩 따라 들어오며, 노아는 가족을 안심시키듯 손짓하고 하늘은 비구름으로 어두워진다",
+      "폭우와 물기둥 속에서 큰 방주가 물 위로 떠오르고, 방주 창가에는 노아 가족의 작은 실루엣이 안전하게 보인다. 물에 잠긴 사람이나 시신은 보이지 않는다, 그 말의 뜻을 보여 주는 글자 없는 말풍선 안에는 서로 손을 잡고 무너진 관계가 회복되는 장면이 작은 그림처럼 보인다"
+    ],
+    "scene_captions": [
+      "악이 세상에 가득하고 하나님이 마음아파 하신다",
+      "노아는 하나님의 명령으로 큰 방주 공사를 시작한다",
+      "노아 가족이 방주 문으로 들어가고 짐승들이 종류대로 따라 들어온다",
+      "폭우와 물기둥 속에서 큰 방주가 물 위로 떠오른다"
+    ],
+    "scene_characters": [
+      [
+        "god"
+      ],
+      [
+        "god",
+        "noah"
+      ],
+      [
+        "noah"
+      ],
+      [
+        "noah"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하나님이 노아에게 지으라고 명하신 것은 무엇입니까?",
+        "choices": [
+          "제단",
+          "성전",
+          "방주"
+        ],
+        "answer_index": 2,
+        "explanation": "창 6:14 — '너는 잣나무로 너를 위하여 방주를 짓고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "노아는 하나님의 명령에 어떻게 반응했습니까?",
+        "choices": [
+          "다 준행하였다",
+          "이웃과 상의했다",
+          "두려워 피했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 6:22 — '노아가 그와 같이 하되 하나님이 자기에게 명하신 대로 다 준행하였더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "홍수 때 비가 땅에 쏟아진 기간은 얼마였습니까?",
+        "choices": [
+          "사십 주야",
+          "칠 일",
+          "백오십 년"
+        ],
+        "answer_index": 0,
+        "explanation": "창 7:12 — '사십 주야를 비가 땅에 쏟아졌더라'"
+      }
+    ]
+  },
+  {
+    "title": "무지개 언약: 다시는",
+    "era": "era_primeval",
+    "characters": [
+      "noah",
+      "god"
+    ],
+    "landmark_code": "lm_prim_unknown",
+    "place_name": "메소포타미아(추정)",
+    "lat": 33,
+    "lng": 44.5,
+    "summary": "물이 잦아들고 방주 문이 열리며 새 땅이 보인다. 무지개로 언약을 표징하시며 새 출발을 약속하신다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「무지개 언약」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "9:17",
+        "book": "창",
+        "from": "8:1"
+      }
+    ],
+    "start_year": -2500,
+    "end_year": -2499,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
+    "story_scenes": [
+      "비가 그친 뒤 늙은 노아가 방주 창을 열고 까마귀와 비둘기를 차례로 날리며, 가족들은 젖은 나무 바닥에서 숨죽여 결과를 기다린다",
+      "방주 문이 열리고 짐승들이 종류대로 땅으로 걸어 나오며, 늙은 노아 가족은 진흙 묻은 땅 위에서 새 시작을 조심스럽게 바라본다 (무지개 없음)",
+      "방주에서 내린 늙은 노아와 아들들이 제단을 쌓고 고개 숙여 예배하고 위에는 하나님 옆에 무지개가 뜬다"
+    ],
+    "scene_captions": [
+      "비가 그친 뒤 노아가 방주 창을 열고 까마귀와 비둘기를 차례로 날리다",
+      "방주 문이 열리고 짐승들이 종류대로 땅으로 걸어 나온다",
+      "방주에서 내린 노아와 아들들이 제단을 쌓고 고개 숙여 예배하고 무지개가 뜬다"
+    ],
+    "scene_characters": [
+      [
+        "noah"
+      ],
+      [],
+      [
+        "noah",
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "방주에서 나온 노아는 가장 먼저 무엇을 하였습니까?",
+        "choices": [
+          "가족과 함께 식사하였다",
+          "여호와를 위하여 단을 쌓았다",
+          "밭을 갈고 씨를 뿌렸다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 8:20 — '노아가 여호와를 위하여 단을 쌓고 ... 번제로 단에 드렸더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사람의 생명을 귀하게 보아야 하는 이유는 무엇입니까?",
+        "choices": [
+          "사람이 방주를 만들 수 있기 때문이다",
+          "사람이 무지개를 볼 수 있기 때문이다",
+          "사람이 하나님의 형상대로 지음 받았기 때문이다"
+        ],
+        "answer_index": 2,
+        "explanation": "창 9:6 — '무릇 사람의 피를 흘리면 사람이 그 피를 흘릴 것이니 이는 하나님이 자기 형상대로 사람을 지었음 이니라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님이 세상과의 언약의 증거로 구름 속에 두신 것은 무엇입니까?",
+        "choices": [
+          "돌 제단",
+          "무지개",
+          "불기둥"
+        ],
+        "answer_index": 1,
+        "explanation": "창 9:13 — '내가 내 무지개를 구름 속에 두었나니 이것이 나의 세상과의 언약의 증거니라'"
+      }
+    ]
+  },
+  {
+    "title": "바벨탑: 언어가 갈라지다",
+    "era": "era_primeval",
+    "characters": [
+      "god"
+    ],
+    "landmark_code": "lm_prim_babel",
+    "place_name": "시날 평지(바벨론, 전승)",
+    "lat": 32.54,
+    "lng": 44.42,
+    "summary": "자기 이름을 세우려던 계획은 언어의 혼잡으로 멈춘다.",
+    "background_context": "창세기 원역사는 창조부터 바벨 사건까지를 다루는 초반 이야기입니다. 이 이야기는 「바벨탑」을 다룹니다.",
+    "bible_ref": [
+      {
+        "to": "11:9",
+        "book": "창",
+        "from": "11:1"
+      }
+    ],
+    "start_year": -2200,
+    "end_year": -2200,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "primeval_outside_eden",
+    "unit_title": "에덴 밖 세상",
+    "unit_order": 2,
+    "story_scenes": [
+      "탑이 하늘을 향해 높아지자 사람들은 벽돌과 도구를 들고 서로 이름을 높이려는 도취된 얼굴로 공사를 밀어붙인다",
+      "사람들이 서로 다른 말을 하게 되어 벽돌과 도구를 들고도 뜻이 통하지 않아 혼란스러운 표정으로 손짓한다. 읽을 수 있는 글자는 보이지 않는다"
+    ],
+    "scene_captions": [
+      "사람들은 벽돌과 도구를 들고 서로 이름을 높이려는 도취된 얼굴로 공사를 밀어붙인다",
+      "자기 이름을 세우려던 계획은 언어의 혼잡으로 멈춘다"
+    ],
+    "scene_characters": [
+      [],
+      [
+        "god"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "바벨탑 건축자들이 돌 대신 사용한 것은 무엇입니까?",
+        "choices": [
+          "나무",
+          "돌과 흙",
+          "벽돌"
+        ],
+        "answer_index": 2,
+        "explanation": "창 11:3 — '벽돌로 돌을 대신하며 역청으로 진흙을 대신하고'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "여호와께서 언어를 혼잡케 하신 결과 사람들은 어떻게 되었습니까?",
+        "choices": [
+          "바벨에 계속 머물렀다",
+          "온 지면에 흩어졌다",
+          "다른 탑을 세우려 하였다"
+        ],
+        "answer_index": 1,
+        "explanation": "창 11:8 — '여호와께서 거기서 그들을 온 지면에 흩으셨더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "바벨탑을 세우던 사람들은 왜 성과 탑을 쌓으려 했습니까?",
+        "choices": [
+          "자기 이름을 내고 흩어짐을 면하려고 했다",
+          "가축을 지킬 성막을 세우려고 했다",
+          "홍수를 피할 방주를 만들려고 했다"
+        ],
+        "answer_index": 0,
+        "explanation": "창 11:4 — '우리 이름을 내고 온 지면에 흩어짐을 면하자'"
+      }
+    ]
+  }
+]

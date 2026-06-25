@@ -1,10 +1,9 @@
-"""Build SQL seed for quiz_questions from assets/quizzes/*.json.
+"""Build SQL seed for quiz_questions from assets/events/*.json.
 
-Each quiz JSON is keyed by `(era_code, story_index)`, mirroring how the events
-seed identifies stories. Filenames follow `<era_code>_n<story_index:03d>.json`
-(e.g. `era_primeval_n001.json`). The generated SQL deletes existing rows for
-each managed event and re-inserts the 3 questions, so the script is safely
-re-runnable.
+Each event JSON row embeds ``quiz_questions`` and is keyed by
+``(era, story_index)``, mirroring how the events seed identifies stories. The
+generated SQL deletes existing rows for each managed event and re-inserts the
+questions, so the script is safely re-runnable.
 """
 
 from __future__ import annotations
@@ -139,11 +138,16 @@ def extract_events_from_seed_sql(sql_text: str) -> list[EventKey]:
 # Deterministic shuffle
 # ---------------------------------------------------------------------------
 def deterministic_shuffle(
-    seed_key: str, display_order: int, choices: list[str]
+    seed_key: str,
+    display_order: int,
+    choices: list[str],
+    answer_index: int = 0,
 ) -> tuple[list[str], int]:
     """Shuffle deterministically from `(seed_key, display_order)`.
 
-    Draft convention: `answer_index == 0`. Returns `(shuffled, new_answer_index)`.
+    Returns `(shuffled, new_answer_index)` while preserving the source
+    `answer_index`. Older hand-authored quiz entries usually used index 0 as the
+    correct answer, but DB exports may already contain shuffled choices.
     """
     seed_input = f"{seed_key}:{display_order}"
     seed_int = int.from_bytes(
@@ -152,7 +156,9 @@ def deterministic_shuffle(
     rng = random.Random(seed_int)
     indexed = list(enumerate(choices))
     rng.shuffle(indexed)
-    new_answer_index = next(i for i, (orig, _) in enumerate(indexed) if orig == 0)
+    new_answer_index = next(
+        i for i, (orig, _) in enumerate(indexed) if orig == answer_index
+    )
     shuffled = [text for _, text in indexed]
     return shuffled, new_answer_index
 
@@ -274,7 +280,7 @@ GENERIC_DISTRACTOR_CHOICES: frozenset[str] = frozenset(
 
 
 class QuizValidationError(ValueError):
-    """Raised when a quiz JSON file fails schema validation."""
+    """Raised when a quiz entry fails schema validation."""
 
 
 def asks_for_source_location(question_text: str) -> bool:
@@ -468,8 +474,17 @@ class QuizFile:
 _FILENAME_PATTERN = re.compile(r"^(?P<era>era_[a-z_]+)_n(?P<sidx>\d+)$")
 
 
-def load_quiz_file(path: Path) -> QuizFile:
-    raw = json.loads(path.read_text(encoding="utf-8"))
+def load_quiz_file(
+    path: Path,
+    raw_payload: dict | None = None,
+    *,
+    validate_filename: bool = True,
+) -> QuizFile:
+    raw = (
+        json.loads(path.read_text(encoding="utf-8"))
+        if raw_payload is None
+        else raw_payload
+    )
     if not isinstance(raw, dict):
         raise QuizValidationError(f"{path.name}: root must be an object")
 
@@ -484,27 +499,28 @@ def load_quiz_file(path: Path) -> QuizFile:
             f"{path.name}: story_index must be a positive integer"
         )
 
-    m = _FILENAME_PATTERN.match(path.stem)
-    if m is None:
-        raise QuizValidationError(
-            f"{path.name}: filename stem must match '<era_code>_n<int>' "
-            f"(e.g. era_primeval_n001)"
-        )
-    if m.group("era") != era_code:
-        raise QuizValidationError(
-            f"{path.name}: filename era {m.group('era')!r} does not match "
-            f"era_code {era_code!r}"
-        )
-    if int(m.group("sidx")) != story_index:
-        raise QuizValidationError(
-            f"{path.name}: filename story_index {m.group('sidx')!r} does not "
-            f"match story_index {story_index!r}"
-        )
+    if validate_filename:
+        m = _FILENAME_PATTERN.match(path.stem)
+        if m is None:
+            raise QuizValidationError(
+                f"{path.name}: filename stem must match '<era_code>_n<int>' "
+                f"(e.g. era_primeval_n001)"
+            )
+        if m.group("era") != era_code:
+            raise QuizValidationError(
+                f"{path.name}: filename era {m.group('era')!r} does not match "
+                f"era_code {era_code!r}"
+            )
+        if int(m.group("sidx")) != story_index:
+            raise QuizValidationError(
+                f"{path.name}: filename story_index {m.group('sidx')!r} does not "
+                f"match story_index {story_index!r}"
+            )
 
     story_title = str(raw.get("story_title", "")).strip()
     questions_raw = raw.get("questions")
-    if not isinstance(questions_raw, list) or len(questions_raw) != 3:
-        raise QuizValidationError(f"{path.name}: questions length must be exactly 3")
+    if not isinstance(questions_raw, list) or not (1 <= len(questions_raw) <= 3):
+        raise QuizValidationError(f"{path.name}: questions length must be 1 to 3")
 
     questions: list[QuizQuestionDraft] = []
     for i, q in enumerate(questions_raw):
@@ -649,6 +665,51 @@ def load_quiz_file(path: Path) -> QuizFile:
     )
 
 
+def load_events_and_quizzes_from_events_dir(
+    events_dir: Path,
+) -> tuple[list[EventKey], list[QuizFile]]:
+    """Load EventKey rows and embedded quiz_questions from canonical events JSON."""
+    events: list[EventKey] = []
+    quiz_files: list[QuizFile] = []
+    for path in sorted(events_dir.glob("*.json")):
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(raw, list):
+            raise QuizValidationError(f"{path.name}: root must be a list")
+        for story in raw:
+            if not isinstance(story, dict):
+                raise QuizValidationError(f"{path.name}: story entry must be object")
+            era_code = story.get("era")
+            story_index = story.get("story_index")
+            story_title = str(story.get("title", "")).strip()
+            if not isinstance(era_code, str) or not era_code.startswith("era_"):
+                raise QuizValidationError(
+                    f"{path.name}: story {story_title!r} must have era"
+                )
+            if not isinstance(story_index, int) or story_index < 1:
+                raise QuizValidationError(
+                    f"{path.name}: story {story_title!r} must have story_index"
+                )
+            events.append(
+                EventKey(
+                    era_code=era_code,
+                    title=story_title,
+                    story_index=story_index,
+                )
+            )
+            questions = story.get("quiz_questions")
+            if questions is None:
+                continue
+            payload = {
+                "era_code": era_code,
+                "story_index": story_index,
+                "story_title": story_title,
+                "source_version": str(story.get("quiz_source_version", "")).strip(),
+                "questions": questions,
+            }
+            quiz_files.append(load_quiz_file(path, payload, validate_filename=False))
+    return events, quiz_files
+
+
 def _dollar_quote(text: str) -> str:
     """Wrap text in a unique dollar-quote tag."""
     tag = "q"
@@ -668,7 +729,7 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
     """
     lines: list[str] = [
         "-- auto-generated by tools/seed/build_quizzes_seed_sql.py",
-        "-- source: assets/quizzes/*.json",
+        "-- source: assets/events/*.json quiz_questions",
         "-- idempotent: delete-then-insert per (era_code, story_index)",
         "",
         "begin;",
@@ -682,12 +743,13 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
         )
         lines.append(
             f"  where q.event_id = e.id and er.code = '{quiz.era_code}' "
-            f"and e.story_index = {quiz.story_index};"
+            f"and e.story_index = {quiz.story_index} "
+            "and e.deleted_at is null;"
         )
 
         for q in quiz.questions:
             shuffled, new_answer_index = deterministic_shuffle(
-                quiz.seed_key, q.display_order, q.choices
+                quiz.seed_key, q.display_order, q.choices, q.answer_index
             )
             lines.append(
                 "insert into quiz_questions ("
@@ -707,7 +769,8 @@ def build_sql_statements(quiz_files: Iterable[QuizFile]) -> str:
             lines.append(
                 f"from events e join eras er on er.id = e.era_id "
                 f"where er.code = '{quiz.era_code}' "
-                f"and e.story_index = {quiz.story_index};"
+                f"and e.story_index = {quiz.story_index} "
+                "and e.deleted_at is null;"
             )
             lines.append("")
 
@@ -775,7 +838,7 @@ def build_report(
 
         for q in quiz.questions:
             _, shuffled_answer_index = deterministic_shuffle(
-                quiz.seed_key, q.display_order, q.choices
+                quiz.seed_key, q.display_order, q.choices, q.answer_index
             )
             answer_dist[shuffled_answer_index] += 1
             length_limits = _length_limits_for(q)
@@ -884,13 +947,7 @@ def build_report(
 # ---------------------------------------------------------------------------
 def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build quiz_questions seed SQL from assets/quizzes/*.json."
-    )
-    parser.add_argument(
-        "--input-dir",
-        type=Path,
-        default=Path("assets/quizzes"),
-        help="Directory containing per-event quiz JSON files.",
+        description="Build quiz_questions seed SQL from assets/events/*.json."
     )
     parser.add_argument(
         "--output",
@@ -905,28 +962,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         help="Validation report path (JSON).",
     )
     parser.add_argument(
-        "--events-seed-sql",
-        type=Path,
-        default=Path("supabase/200_stories/200_stories_seed.sql"),
-        help="Events seed SQL used as the authority for (era_code, story_index, title).",
-    )
-    parser.add_argument(
-        "--events-from-json",
-        type=Path,
-        default=None,
-        help=(
-            "If set, read the authoritative events list from a JSON file "
-            "([{era_code,story_index,title}, ...]) instead of parsing seed SQL. "
-            "Useful for aligning to a live DB snapshot."
-        ),
-    )
-    parser.add_argument(
         "--stories-dir",
         type=Path,
-        default=Path("assets/200_stories"),
+        default=Path("assets/events"),
         help=(
-            "Directory containing story JSON files. Used to ensure quiz "
-            "explanation verse refs stay inside each story bible_ref."
+            "Directory containing canonical event JSON files with embedded "
+            "quiz_questions."
         ),
     )
     return parser.parse_args(argv)
@@ -935,55 +976,18 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(list(sys.argv[1:]) if argv is None else argv)
 
-    if args.events_from_json is not None:
-        if not args.events_from_json.exists():
-            print(
-                f"ERROR: events JSON snapshot not found: {args.events_from_json}",
-                file=sys.stderr,
-            )
-            return 1
-        raw = json.loads(args.events_from_json.read_text(encoding="utf-8"))
-        events = [
-            EventKey(
-                era_code=item["era_code"],
-                title=item["title"],
-                story_index=int(item["story_index"]),
-            )
-            for item in raw
-        ]
-    else:
-        if not args.events_seed_sql.exists():
-            print(
-                f"ERROR: events seed SQL not found: {args.events_seed_sql}",
-                file=sys.stderr,
-            )
-            return 1
-        events = extract_events_from_seed_sql(
-            args.events_seed_sql.read_text(encoding="utf-8")
-        )
-    if not events:
-        print("ERROR: no events parsed", file=sys.stderr)
-        return 1
-
     if not args.stories_dir.exists():
-        print(
-            f"ERROR: stories directory not found: {args.stories_dir}", file=sys.stderr
-        )
+        print(f"ERROR: events directory not found: {args.stories_dir}", file=sys.stderr)
         return 1
     try:
+        events, quiz_files = load_events_and_quizzes_from_events_dir(args.stories_dir)
         story_scopes = load_story_ref_scopes(args.stories_dir)
     except QuizValidationError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
-
-    json_paths = sorted(args.input_dir.glob("*.json"))
-    quiz_files: list[QuizFile] = []
-    for p in json_paths:
-        try:
-            quiz_files.append(load_quiz_file(p))
-        except QuizValidationError as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            return 1
+    if not events:
+        print("ERROR: no events parsed", file=sys.stderr)
+        return 1
 
     seen_keys: set[tuple[str, int]] = set()
     for q in quiz_files:
@@ -1062,7 +1066,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     print(
-        f"OK: {report['total_quiz_files']} files, "
+        f"OK: {report['total_quiz_files']} events with quizzes, "
         f"{report['total_questions']} questions -> {args.output}",
         file=sys.stderr,
     )

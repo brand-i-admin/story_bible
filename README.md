@@ -66,11 +66,11 @@ group by translation;
 
 ### 1) 성경 구절(`bible_verses`)을 Supabase에 넣기
 - 이 문서 상단 `bible_verses 테이블 적재` 절차를 그대로 사용합니다.
-- 핵심: `tools/seed/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31904 개 생성 확인
+- 핵심: `tools/seed/build_krv_seed_sql.py --split-parts 10`로 SQL 생성 -> Supabase SQL Editor 실행. -> 31,102개 생성 확인
 
-### 2) `assets/200_stories`에 이야기 JSON 준비
-- `assets/200_stories/*.json` (총 215개 이야기) 형태로 준비합니다.
-- 각 항목은 최소 `title`, `era`, `persons`, `bible_ref`를 포함해야 합니다.
+### 2) `assets/events`에 통합 이벤트 JSON 준비
+- `assets/events/*.json` 형태로 준비합니다.
+- 각 항목은 `title`, `era`, `characters`, `landmark_code`, `bible_ref`, `story_index`, `story_scenes`, `quiz_questions` 등을 포함합니다.
 
 ### 3) 인물 메타 JSON 생성 (`tools/seed/character_meta.json`)
 - 사용 스크립트: `tools/seed/build_character_meta_json.py`
@@ -79,12 +79,12 @@ group by translation;
 
 ```bash
 python3 tools/seed/build_character_meta_json.py \
-  --stories-dir assets/200_stories \
+  --stories-dir assets/events \
   --output tools/seed/character_meta.json
 ```
 
 ### 4) 이야기 JSON을 Supabase 적재용 SQL로 정제/생성 후 적용
-- 사용 스크립트: `tools/seed/build_200_stories_seed_sql.py`
+- 사용 스크립트: `tools/seed/build_events_seed_sql.py`
 - 주의: `tools/seed/character_meta.json`이 먼저 있어야 합니다. (3번 단계 선행)
 - 정제 규칙:
   - `disciples`, `apostles`, `brothers`는 개인 코드로 확장
@@ -92,22 +92,22 @@ python3 tools/seed/build_character_meta_json.py \
   - 인물 화이트리스트는 `tools/seed/character_meta.json` 기준으로 필터링
 
 ```bash
-python3 tools/seed/build_200_stories_seed_sql.py \
-  --output-dir supabase/200_stories \
+python3 tools/seed/build_events_seed_sql.py \
+  --output-dir supabase/events \
   --character-meta-json tools/seed/character_meta.json
 ```
 
 - 생성 결과:
-  - `supabase/200_stories/200_stories_seed.sql`
-  - `supabase/200_stories/200_stories_report.json`
-  - `supabase/200_stories/200_stories_normalized.json`
-- Supabase SQL Editor에서 `200_stories_seed.sql`를 실행해 `events`, `event_persons`, `event_bible_refs`를 반영합니다.
+  - `supabase/events/events_seed.sql`
+  - `supabase/events/events_report.json`
+  - `supabase/events/events_normalized.json`
+- Supabase SQL Editor에서 `events_seed.sql`를 실행해 `events`를 반영합니다.
 - SQL Editor에서 `Query is too large` 에러가 나면 분할 SQL을 생성해 순서대로 실행합니다.
 
 ```bash
 # 기본은 2분할 생성
-python3 tools/seed/build_200_stories_seed_sql.py \
-  --output-dir supabase/200_stories \
+python3 tools/seed/build_events_seed_sql.py \
+  --output-dir supabase/events \
   --character-meta-json tools/seed/character_meta.json
 ```
 
@@ -128,11 +128,11 @@ python3 tools/images/generate_avatars_vertex.py \
 ```bash
 python3 tools/seed/build_characters_seed_sql.py \
   --character-meta-json tools/seed/character_meta.json \
-  --stories-dir assets/200_stories \
-  --output supabase/200_stories/characters_seed.sql
+  --stories-dir assets/events \
+  --output supabase/events/characters_seed.sql
 ```
 
-- 생성된 `supabase/200_stories/characters_seed.sql`을 Supabase SQL Editor에서 실행합니다.
+- 생성된 `supabase/events/characters_seed.sql`을 Supabase SQL Editor에서 실행합니다.
 
 ## 기타 자산 메모
 
@@ -154,7 +154,7 @@ ogr2ogr -f GeoJSON assets/maps/ne_50m_admin_0_countries.geojson \
 
 ### `assets/story_images` 생성
 - 사용 스크립트: `tools/images/generate_event_story_images_vertex.py`
-- `assets/200_stories/*.json`의 `story_scenes` 리스트를 읽어 장면(1~4)을 생성합니다.
+- `assets/events/*.json`의 `story_scenes` 리스트를 읽어 장면(1~4)을 생성합니다.
 
 
 ```bash

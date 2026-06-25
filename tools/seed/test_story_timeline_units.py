@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-STORY_DIR = ROOT / "assets" / "200_stories"
+STORY_DIR = ROOT / "assets" / "events"
 
 EXPECTED_OLD_TESTAMENT_UNITS = {
     "era_primeval.json": [

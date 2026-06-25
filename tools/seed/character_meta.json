@@ -62,7 +62,7 @@
     "ui_only_avatar_codes": [
       "guide"
     ],
-    "note": "Generated from assets/200_stories with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2, or when a character appears in an era_judges story at least once. Some codes have explicit visibility overrides, including abijah_judah=true, absalom=true, ahab=true, ahaz=true, ahaziah_israel=true, ahaziah_judah=true, amaziah_judah=true, amon_judah=true, asa=true, athaliah=true, baasha=true, elah_king=true, haggai=true, hoshea_king=true, jehoahaz_israel=true, jehoahaz_judah=true, jehoash_israel=true, jehoiachin=true, jehoiakim=true, jehoram_judah=true, jehoshaphat=true, jehu=true, jeroboam=true, jeroboam_ii=true, joash_judah=true, jonah=true, jonathan=true, joram_israel=true, josiah=true, jotham=true, manasseh=true, menahem=true, micaiah=true, naaman=true, nadab=true, omri=true, pekah=true, pekahiah=true, rehoboam=true, shallum=true, uzziah=true, zechariah_king=true, zechariah_prophet=true, zedekiah=true, zerubbabel=true, zimri=true, elizabeth=false, gabriel=false, god=false. Curated avatar roster entries may have mention_count=0 so avatars can be prepared before their story events are written. Runtime visibility is controlled by characters.is_active in DB. UI-only avatar entries are marked asset_only=true and are generated as PNG assets but skipped by DB seed builders."
+    "note": "Generated from assets/events with disciples/apostles/brothers expanded to individuals. All characters with mention_count >= 1 are emitted; is_active_default=true when mention_count >= 2, or when a character appears in an era_judges story at least once. Some codes have explicit visibility overrides, including abel=true, abijah_judah=true, absalom=true, achan=true, ahab=true, ahaz=true, ahaziah_israel=true, ahaziah_judah=true, amaziah_judah=true, amon_judah=true, asa=true, athaliah=true, baasha=true, cain=true, caleb=true, cornelius=true, elah_king=true, goliath=true, haggai=true, hoshea_king=true, jairus=true, jehoahaz_israel=true, jehoahaz_judah=true, jehoash_israel=true, jehoiachin=true, jehoiakim=true, jehoram_judah=true, jehoshaphat=true, jehu=true, jeroboam=true, jeroboam_ii=true, jesse=true, joash_judah=true, jonah=true, jonathan=true, joram_israel=true, josiah=true, jotham=true, korah=true, lydia=true, manasseh=true, matthias=true, menahem=true, micaiah=true, naaman=true, nadab=true, omri=true, pekah=true, pekahiah=true, phinehas=true, pilate=true, potiphar=true, rahab=true, rehoboam=true, shallum=true, stephen=true, uzziah=true, zechariah=true, zechariah_king=true, zechariah_prophet=true, zedekiah=true, zerubbabel=true, zimri=true, elizabeth=false, gabriel=false, god=false. Curated avatar roster entries may have mention_count=0 so avatars can be prepared before their story events are written. Runtime visibility is controlled by characters.is_active in DB. UI-only avatar entries are marked asset_only=true and are generated as PNG assets but skipped by DB seed builders."
   },
   "common_style": "stylized geometric biblical character illustration, blocky low-poly faceted planes, angular polygon face and hair, flat matte vector shading with subtle cut-paper facets, rich deep color blocks, medium-to-strong saturation, clear value contrast, not pale, not faded, not washed out, natural stylized full-body adult proportions, head about one-fifth to one-sixth of total height, head clearly smaller than torso, torso and legs longer than head, same natural body ratio template across all human characters, compact adult proportions, not chibi, simple small eyes and nose, mature friendly expression, no visible outline, no ink contour, no dark stroke, edges defined only by adjacent flat color planes, exactly one character only, solo single subject, small full-body avatar with generous white margin around the entire figure, entire body visible from top of head to soles of sandals, both full feet and sandals clearly visible, whole figure fits inside frame with no cropping at the head, hands, robe hem, legs, feet, or staff, centered inside a square 1:1 avatar canvas, plain white background, high resolution, consistent design system across the full cast, distinct silhouette and face geometry for each character, distinct hairstyle and story-inspired accessory for each character, no text, no watermark",
   "negative_prompt": "realistic, photoreal, anime, manga, glossy 3D render, clay, pixel art, chibi, super-deformed, giant head, large head, huge face, bobblehead, baby proportions, oversized eyes, long legs, short legs, tiny torso, oversized torso, tiny body, stretched body, uneven body ratio, inconsistent body proportions, head larger than torso, head one-third of body height, face fills frame, legs longer than torso, pale colors, washed-out colors, faded pastel look, overexposed, low contrast, weak color, transparent-looking color, same-face clones, duplicate character, multiple people, crowd, group shot, companions, side characters, extra faces, extra bodies, twin, mirrored figure, close-up, portrait crop, bust shot, half body, cropped head, cropped feet, waist-up, upper body only, torso crop, knees cropped, robe hem cropped, bottom cropped, missing legs, missing feet, missing sandals, cut off toes, zoomed-in character, fills entire frame, marshmallow body, gritty, dark, horror, black outline, dark outline, heavy outline, thick outline, ink line, line art, comic ink, contour line, stroke, bold stroke, sticker outline, cel-shaded contour lines, complex background, text, logo, watermark",
@@ -1570,7 +1570,7 @@
       "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Abel, adult biblical man (age 25+), shepherd-inspired outdoor silhouette, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, trimmed faceted beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 112,
@@ -1598,7 +1598,7 @@
       "prompt": "COMMON_STYLE, palette: teal + desert tan + bronze accents, Achan, adult biblical man (age 25+), guilty Israelite soldier silhouette caught in shame, plain dusty Israelite tunic and simple leather belt, no special armor, one hand clutching a hidden cloth bundle (stolen spoils) close to the chest, furtive uneasy stance with downcast nervous eyes, ordinary plain look, not heroic, shrinking nervous posture with shoulders hunched, guilty downcast expression, lean ordinary build, no commanding presence, narrow uneasy face with sunken anxious eyes, tangled medium-length dark hair with plain look, short scruffy uneven beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "heroic posture, proud stance, noble bearing, kingly presence, regal aura, shining bright armor, polished cuirass, golden crown, royal robe, royal sash, elegant features, glamorous beautiful face, model-like proportions, idealized hero, warrior champion silhouette, victorious pose, raised sword pose, commander baton"
     },
     {
@@ -1690,7 +1690,7 @@
       "prompt": "COMMON_STYLE, palette: soft beige + olive + sky blue accents, Cain, adult biblical man (age 25+), first farmer silhouette from the primeval era, simple sleeveless tunic in earthy tones, bare arms, wooden farming implement in one hand: simple short hoe or hand sickle, subtle small dark mark on the forehead (mark of Cain), brooding exiled wanderer presence, brooding upright posture with downcast resentful gaze, lean compact farmer build, long narrow face with sharp angular jaw and heavy brow, medium-length dark hair pulled loosely back, short trimmed beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, three people, extra character, background character, twin, mirrored figure, second character, scene with brother, scene with sibling, brother nearby, abel, scene with parents, family scene, mother, father, child, shepherd staff, sheep, lamb, flock"
     },
     {
@@ -1702,7 +1702,7 @@
       "prompt": "COMMON_STYLE, palette: rugged desert tan + muted teal commander cloak + warm clay brown + bronze accents, medium saturation with rich deep color blocks and clear contrast, Caleb, adult biblical man (age 25+), Caleb son of Jephunneh, faithful spy and rugged commander, exactly one man only, stocky broad-shouldered veteran build, weathered face, strong brow, clear unwavering eyes, muted teal commander cloak over desert-tan travel robe, bronze belt, small spy staff and grape-cluster token, faith-filled battle-tested confidence, not a handsome slim court noble and not Joshua, front-facing rugged faithful commander posture, chest square, weathered confident eyes, one hand near a spy staff or grape-cluster token, Caleb son of Jephunneh build with rugged broad-shouldered faithful commander proportions, stockier and tougher than a slim court noble, weathered warm face with clear unwavering eyes, strong brow, square jaw, and sun-worn veteran confidence, short dark hair under a simple scout headband, thick practical beard with angular facets, muted teal commander cloak over desert-tan travel robe, bronze belt, small spy staff and grape-cluster token kept secondary, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "turnaround sheet, character model sheet, reference sheet, concept sheet, front and back view, front view and rear view, back view, rear view, side-by-side poses, multiple poses, duplicate pose, second view, split screen, vertical center seam, mirrored figure, back-facing figure, rear-facing figure, extra full body view, shoulder pole, long pole across shoulders, thick black outline, heavy dark outline, comic ink lines, sticker outline, bold stroke, dark contour stroke, cel-shaded game art, toy mascot, chunky game character, stubby legs, oversized head, short body, squat proportions, large cartoon shoes, black line art around clothing, high contrast outline, timid expression, sad expression, blank passive face, weak posture, drooping shoulders, limp arms, hesitant pose, gardener, farmer holding produce, cute soft mascot, childlike innocence, handsome slim court noble, delicate fashion model, skinny body, narrow shoulders, angry warrior, aggressive fighter, armor",
       "style_reference_codes": [
         "moses",
@@ -1718,7 +1718,7 @@
       "prompt": "COMMON_STYLE, palette: bronze + deep red + iron gray accents, medium saturation with rich deep color blocks and clear contrast, Cornelius, adult biblical man (age 25+), Cornelius the Roman centurion who receives Peter, exactly one man only, bronze armor, deep red tunic, disciplined prayerful posture, not a Judean elder, disciplined prayerful posture, military body held respectfully still, Roman centurion build with disciplined military posture, square Roman face with respectful prayerful eyes and short trimmed beard, closely cropped dark hair beneath a bronze centurion headband, bronze armor over a deep red tunic, red cloak, and short baton held calmly, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 122,
@@ -1846,7 +1846,7 @@
       "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Goliath, adult biblical man (age 25+), towering Philistine giant warrior silhouette, thick bronze scale armor over a heavy padded tunic, bronze greaves on shins, massive oversized iron sword held high in one hand, large rectangular shield slung at the back, imposing intimidating presence with heavy brow, menacing forward-leaning stance, intimidating fierce expression with stern brow, towering oversized warrior build, clearly larger than other characters in the cast, wide square jaw with strong heavy brow planes and deep-set narrow eyes, short cropped dark hair under a polished bronze helmet with cheek plates, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "kind smile, friendly expression, gentle posture, peaceful aura, warm welcoming gesture, slim build, delicate features, child, teenager, slim shoulders, small stature, unarmed, empty hands"
     },
     {
@@ -1916,7 +1916,7 @@
       "prompt": "COMMON_STYLE, palette: dark teal + temple cream + muted bronze accents, medium saturation with rich deep color blocks and clear contrast, Jairus, adult biblical man (age 25+), Jairus the synagogue ruler and desperate father, exactly one man only, formal synagogue robe, small blank scroll case, anxious fatherly expression, anxious father and synagogue leader posture, hands pleading but dignified, synagogue ruler build with formal steady bearing, serious fatherly face with worried compassionate eyes and trimmed gray-streaked beard, neatly wrapped headcloth framing the face, dignified dark teal robe with a small blank synagogue scroll case, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 136,
@@ -2012,7 +2012,7 @@
       "prompt": "COMMON_STYLE, palette: royal purple + navy + muted gold accents, Jesse, adult biblical man (age 25+), shepherd-inspired outdoor silhouette, simple geometric crown band or royal sash, tall narrow build, diamond-shaped face with a sharp chin, closely cropped faceted hair, short angular beard, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 142,
@@ -2051,7 +2051,7 @@
       "prompt": "COMMON_STYLE, palette: deep teal + desert tan + clay red sash + bronze censer accents, medium saturation with rich deep color blocks and clear contrast, Korah, adult biblical man (age 25+), Korah the rebellious Levite leader who challenged Moses and Aaron, exactly one man only, deep teal Levite robe with desert tan underlayer, clay-red sash, and bronze censer held forward, front-facing proud argumentative expression with narrowed eyes and lifted chin, not humble and not heroic, avatar shows his identity before judgment, no earthquake, no falling body, no death scene, no crowd, strict front-facing rebellious Levite posture, bronze censer held forward, chin lifted, argumentative eyes challenging Moses' authority, Korah the rebellious Levite leader build with proud squared shoulders and tense challenging posture, ordinary Levite face with narrowed argumentative eyes, lifted chin, and self-important expression, not gentle and not heroic, deep teal Levite robe with desert tan underlayer and clay-red sash, clearly distinct from Aaron's cream spokesman robe, bronze censer thrust forward as his unmistakable sign, one free hand partly clenched as if challenging Moses and Aaron, no earthquake scene in the avatar, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "ordinary shepherd, faithful priest, humble servant, gentle smile, brave hero, calm teacher, Moses, Aaron, kind face, soft innocent eyes, priestly high-priest breastplate, ornate priest turban, royal crown, king robe, earthquake scene, falling body, person swallowed, corpse, death scene, blood, gore, multiple people, crowd, plain teal robe only, empty hands, no censer, no rebel sign, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
     },
     {
@@ -2075,7 +2075,7 @@
       "prompt": "COMMON_STYLE, palette: rich purple + cream + muted gold accents, medium saturation with rich deep color blocks and clear contrast, Lydia, adult biblical woman (age 25+), Lydia the purple-cloth merchant and faithful host, exactly one woman only, purple cloth bolt, modest merchant robe, welcoming dignified expression, welcoming faithful host posture with purple cloth folded neatly, poised merchant woman build with graceful confident posture, soft elegant face with warm intelligent eyes, long dark hair partly covered by a refined purple shawl, rich but modest purple-dyed robe with a folded bolt of purple cloth under one arm, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, warrior, armor, soldier, slave, prisoner, jailer, Samson, Delilah scene, judge-era man, Nazirite hair, muscular male, second character, multiple people"
     },
     {
@@ -2104,7 +2104,7 @@
       "prompt": "COMMON_STYLE, palette: warm cream + muted olive cloak + parchment scroll + small stone accents, medium saturation with rich deep color blocks and clear contrast, Matthias, adult biblical man (age 25+), Matthias the apostle chosen by lot to replace Judas, exactly one man only, strict front-facing full-body avatar, face and torso square to the viewer, both eyes visible, warm cream robe with muted olive cloak, small pouch of blank lot stones and a blank witness scroll as the main identity signs, humble sincere witness expression, not Paul, not Barnabas, not Judas, no fisherman net and no weapon, strict front-facing newly chosen apostle posture, lot-stone pouch and blank scroll visible, humble steady witness expression, Matthias the apostle chosen after Judas build with humble adult witness posture, warm Judean face with steady sincere eyes, short dark beard, and calm prayerful brow, short dark hair under a simple travel headcloth, not a fisherman and not Paul, warm cream apostle robe with muted olive cloak, small pouch of blank lot stones and a blank witness scroll held close, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "generic missionary, Paul, Barnabas, Judas Iscariot, Roman official, fisherman net, warrior, armor, weapon, side view, three-quarter view, looking away, turned head, leaning pose, running pose, empty hands, no lots, no scroll, no witness sign, dark villain expression, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait",
       "style_reference_codes": [
         "peter",
@@ -2246,7 +2246,7 @@
       "prompt": "COMMON_STYLE, palette: priestly cream + muted blue + bronze spear and censer + clay accent, medium saturation with rich deep color blocks and clear contrast, Phinehas, adult biblical man (age 25+), Phinehas son of Eleazar the zealous priest, exactly one man only, simple cream Levite-priest robe with muted blue sash, bronze spear lowered vertically, and small censer at the belt, intense covenant-protective eyes, not an ornate high priest and not a battle warrior, avatar shows identity without violence: no stabbing, no blood, no crowd, strict front-facing zealous priest posture, spear lowered vertical, small censer visible, intense protective expression without violence, Phinehas son of Eleazar build with young priestly zeal and compact upright strength, natural warm face with intense covenant-protective eyes, strong brow, and short dark beard, simple cream Levite-priest robe with muted blue sash and bronze clasp, not the ornate high-priest breastplate, bronze spear held lowered and vertical beside the body plus small incense censer at the belt, no violent action scene, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "generic temple servant, ordinary ceremonial robe only, high priest breastplate, jeweled breastpiece, ornate turban, king, warrior armor, battle scene, active stabbing, killing scene, blood, gore, corpse, wound, multiple people, crowd, empty hands, no spear, no censer, timid expression, soft gentle smile, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
     },
     {
@@ -2258,7 +2258,7 @@
       "prompt": "COMMON_STYLE, palette: Roman ivory + muted crimson + stone gray accents, medium saturation with rich deep color blocks and clear contrast, Pilate, adult biblical man (age 25+), Pontius Pilate the Roman governor, exactly one man only, ivory tunic, red-edged toga cloak, legal tablet, Roman cropped hair, not Herod, weary judging posture with legal tablet lowered, conflicted but authoritative, Roman governor build with formal upright authority, clean angular Roman face with weary skeptical eyes and short trimmed beard, short cropped dark hair with no Hebrew headcloth, ivory tunic, red-edged toga cloak, and small blank legal tablet held at the side, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 159,
@@ -2269,7 +2269,7 @@
       "prompt": "COMMON_STYLE, palette: warm sand + cream + muted teal accents, Potiphar, adult biblical man (age 25+), ancient Egyptian captain of Pharaoh's guard silhouette, white linen wrapped kilt (shendyt) with broad gold-banded usekh collar over bare chest, wide leather officer's belt with a bronze short sword (khopesh) at the hip, striped Egyptian nemes headcloth or short blunt black wig framing the face, stern disciplined officer presence, distinctly Egyptian rather than Hebrew nomad, stern authoritative officer's posture with formal upright bearing, arms held with disciplined command, broad-shouldered authoritative ancient Egyptian officer build, angular Egyptian profile with straight strong nose and clean shaven trimmed jaw, kohl-lined dark eyes characteristic of ancient Egyptian art style, short blunt black hair under a striped Egyptian nemes headcloth, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "multiple people, crowd, group, duo, pair, two people, extra character, background character, twin, mirrored figure, second character, Hebrew patriarch, Hebrew nomad, desert traveler robe, full-length flowing robe, long beard, wrapped turban, long staff, sandals only outfit, biblical patriarch costume"
     },
     {
@@ -2281,7 +2281,7 @@
       "prompt": "COMMON_STYLE, palette: deep teal + sand headscarf + clay brown wrap + scarlet cord accent, medium saturation with rich deep color blocks and clear contrast, Rahab, adult biblical woman (age 25+), Rahab the young courageous woman of Jericho, exactly one woman only, strict front-facing youthful face, dark attentive eyes looking directly forward, smooth warm skin, and modest hopeful expression, deep teal city dress with sand headscarf and clay-brown wrap, scarlet cord held clearly near the chest, not old, not walking, not side view, not seductive, not a queen, and not a soldier, strict front-facing young Jericho woman posture, scarlet cord held near the chest, courageous hopeful eyes looking directly forward, full body visible, young adult Jericho woman build with front-facing graceful posture and courageous calm, warm youthful face looking directly forward, dark attentive eyes, smooth skin, and modest hopeful expression, deep teal dress with sand headscarf and clay-brown wrap, simple city-house clothing and not royal, scarlet cord held visibly but modestly near the chest as the unmistakable Jericho sign, no weapon and no walking pose, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false,
+      "is_active_default": true,
       "negative_prompt_extra": "male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, soldier, male, man, masculine face, broad male jaw, square male shoulders, beard, mustache, facial hair, stubble, warrior, armor, soldier, older woman, middle-aged matron, elderly face, deep wrinkles, gray hair, hunched posture, side view, three-quarter view, walking pose, running pose, leaning forward, looking away, face turned aside, seductive pose, exposed body, royal queen, soldier, warrior, weapon, oversized head, huge face, cropped feet, missing sandals, waist-up crop, close-up portrait"
     },
     {
@@ -2354,7 +2354,7 @@
       "prompt": "COMMON_STYLE, palette: plain linen cream + warm ochre + pale blue accents, medium saturation with rich deep color blocks and clear contrast, Stephen, adult biblical man (age 25+), Stephen the Hellenistic deacon and martyr, exactly one man only, plain linen service tunic, folded serving cloth, courageous peaceful face, courageous servant posture with peaceful face lifted slightly, Hellenistic deacon build with humble service posture, bright calm face with courageous eyes and short neat beard, short dark curls with a simple cream headcloth, plain linen tunic with a folded serving cloth and small bread basket held close, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 166,
@@ -2394,7 +2394,7 @@
       "prompt": "COMMON_STYLE, palette: temple linen white + muted gold + warm gray accents, medium saturation with rich deep color blocks and clear contrast, Zechariah, adult biblical man (age 25+), Zechariah the temple priest and father of John the Baptist, exactly one elderly man only, white linen priest robe, muted gold sash, small incense censer, astonished temple-priest expression, distinct from Zechariah the prophet by priestly clothing and elderly father role, astonished priestly posture, censer held low as if surprised in the temple, elderly Jerusalem priest build with dignified narrow shoulders, long weathered face with astonished priestly eyes and heavy gray brows, gray hair under a cream priestly head wrap, white linen priest robe with a muted gold sash and small incense censer held low, ancient Near Eastern inspired clothing, clean iconic silhouette, distinctive story-driven accessory, single character only, no other people, full body visible head to toe",
       "prompt_source": "auto_story_v2",
       "mention_count": 1,
-      "is_active_default": false
+      "is_active_default": true
     },
     {
       "index": 169,

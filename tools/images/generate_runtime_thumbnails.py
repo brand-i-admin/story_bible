@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -33,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stories-dir",
-        default="assets/200_stories",
+        default="assets/events",
         help=(
             "Directory containing story JSON files. Used to map long Korean "
             "story titles to short stable thumbnail asset directories."
@@ -65,8 +66,17 @@ def parse_args() -> argparse.Namespace:
         "--no-prune-orphans",
         action="store_true",
         help=(
-            "기본 동작은 source 에 없는 thumbnail 을 자동 삭제한다. "
+            "기본 동작은 story thumbnail 디렉토리를 clean rebuild 하고 "
+            "avatar orphan thumbnail 을 삭제한다. "
             "이 플래그를 주면 정리 단계를 스킵한다."
+        ),
+    )
+    parser.add_argument(
+        "--allow-missing-story-sources",
+        action="store_true",
+        help=(
+            "current story JSON 에 대응하는 원본 scene PNG 가 없어도 계속 진행한다. "
+            "일반 release/build 흐름에서는 쓰지 않는다."
         ),
     )
     return parser.parse_args()
@@ -208,6 +218,25 @@ def prune_orphan_dirs(expected_dirs: set[Path], output_root: Path) -> list[Path]
     return removed
 
 
+def clean_story_thumbnail_dirs(output_root: Path) -> list[Path]:
+    """Remove generated story thumbnail directories before rebuilding them.
+
+    Story thumbnail directories are derived from `era + story_index`. If a new
+    story is inserted in the middle, the same directory name can point at a
+    different story after reindexing. A clean rebuild prevents stale thumbnails
+    from surviving in a reused short directory.
+    """
+    if not output_root.exists():
+        return []
+    removed: list[Path] = []
+    for child in sorted(output_root.iterdir()):
+        if not child.is_dir():
+            continue
+        shutil.rmtree(child)
+        removed.append(child)
+    return removed
+
+
 def run_sips(command: list[str]) -> None:
     subprocess.run(
         command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
@@ -321,6 +350,53 @@ def relative_story_dest(
     return dest_root / short_dir / f"{src.stem}.jpg"
 
 
+def filter_story_files_to_indexed_dirs(
+    story_files: list[Path],
+    src_root: Path,
+    source_dir_to_short: dict[str, str],
+) -> tuple[list[Path], list[Path]]:
+    """Keep scene files whose title folder exists in current story JSON.
+
+    `assets/story_images/` is a writable staging area, so deleted stories can
+    leave old source folders behind. The runtime thumbnail index is driven by
+    `assets/events/*.json`; files outside that index must not be rebuilt
+    into the app bundle.
+    """
+    indexed: list[Path] = []
+    orphaned: list[Path] = []
+    for src in story_files:
+        relative = src.relative_to(src_root)
+        source_dir = normalize_nfc(relative.parts[0]) if relative.parts else ""
+        if source_dir in source_dir_to_short:
+            indexed.append(src)
+        else:
+            orphaned.append(src)
+    return indexed, orphaned
+
+
+def find_missing_story_sources(
+    story_source: Path,
+    story_index_payload: dict,
+) -> list[dict[str, object]]:
+    """Return current story index entries with no local source scene PNGs."""
+    actual_dirs = {
+        normalize_nfc(path.name): path
+        for path in story_source.iterdir()
+        if path.is_dir()
+    }
+    missing: list[dict[str, object]] = []
+    for item in story_index_payload.get("items", []):
+        if not isinstance(item, dict):
+            continue
+        source_dir = normalize_nfc(str(item.get("source_dir") or ""))
+        if not source_dir:
+            continue
+        actual_dir = actual_dirs.get(source_dir)
+        if actual_dir is None or not any(actual_dir.glob("scene_*.png")):
+            missing.append(item)
+    return missing
+
+
 def relative_avatar_dest(src_root: Path, dest_root: Path, src: Path) -> Path:
     return dest_root / src.relative_to(src_root)
 
@@ -341,25 +417,68 @@ def main() -> int:
         raise SystemExit(f"Avatar source not found: {avatar_source}")
 
     source_dir_to_short, story_index_payload = load_story_thumb_index(stories_dir)
+    missing_story_sources = find_missing_story_sources(
+        story_source, story_index_payload
+    )
+    if missing_story_sources and not args.allow_missing_story_sources:
+        preview = "\n".join(
+            "  - {era} #{story_index}: {title} "
+            "(expected assets/story_images/{source_dir}/scene_*.png)".format(
+                era=item.get("era") or "",
+                story_index=item.get("story_index") or "",
+                title=item.get("title") or "",
+                source_dir=item.get("source_dir") or "",
+            )
+            for item in missing_story_sources[:20]
+        )
+        more = ""
+        if len(missing_story_sources) > 20:
+            more = f"\n  ... and {len(missing_story_sources) - 20} more"
+        print(
+            "ERROR: Missing local original story scene images for "
+            f"{len(missing_story_sources)} current story item(s).\n"
+            "`make thumbnails` needs source PNGs in assets/story_images/ because "
+            "story_images_thumbs are generated from those originals. "
+            "On a fresh machine, run `make ensure-story-image-sources ENV=<env>` "
+            "to restore missing originals from the private source archive before "
+            "retrying.\n"
+            f"{preview}{more}",
+            file=sys.stderr,
+        )
+        return 2
+
     story_output.mkdir(parents=True, exist_ok=True)
+    if not args.no_prune_orphans:
+        removed_story_dirs = clean_story_thumbnail_dirs(story_output)
+        if removed_story_dirs:
+            print(
+                "[CLEAN] removed story thumb dirs before rebuild: "
+                f"{len(removed_story_dirs)}"
+            )
     (story_output / "index.json").write_text(
         json.dumps(story_index_payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
 
-    story_files = sorted(story_source.rglob("scene_*.png"))
+    all_story_files = sorted(story_source.rglob("scene_*.png"))
+    story_files, orphaned_story_files = filter_story_files_to_indexed_dirs(
+        all_story_files,
+        story_source,
+        source_dir_to_short,
+    )
+    if orphaned_story_files:
+        orphan_dirs = {
+            normalize_nfc(src.relative_to(story_source).parts[0])
+            for src in orphaned_story_files
+            if src.relative_to(story_source).parts
+        }
+        print(
+            "[SKIP] story source files not present in current story JSON: "
+            f"{len(orphaned_story_files)} file(s) in {len(orphan_dirs)} dir(s)"
+        )
     avatar_files = sorted(avatar_source.glob("*.png"))
 
     if not args.no_prune_orphans:
-        expected_story_thumbs = {
-            relative_story_dest(story_source, story_output, src, source_dir_to_short)
-            for src in story_files
-        }
-        prune_orphan_thumbs(expected_story_thumbs, story_output, "*.jpg")
-        prune_orphan_dirs(
-            {path.parent for path in expected_story_thumbs},
-            story_output,
-        )
         expected_avatar_thumbs = {
             relative_avatar_dest(avatar_source, avatar_output, src)
             for src in avatar_files

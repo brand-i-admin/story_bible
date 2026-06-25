@@ -24,8 +24,12 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   // Step 3 fields
   final _titleCtrl = TextEditingController();
   final _summaryCtrl = TextEditingController();
+  final _backgroundContextCtrl = TextEditingController();
   final _startYearCtrl = TextEditingController();
   final _endYearCtrl = TextEditingController();
+  final _unitCodeCtrl = TextEditingController(text: 'default');
+  final _unitTitleCtrl = TextEditingController(text: '전체 흐름');
+  final _unitOrderCtrl = TextEditingController(text: '1');
   String _timePrecision = 'approx';
 
   /// v2 위치 모델 — landmarks.id (region/anchor/minor 중 하나) FK.
@@ -34,6 +38,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   List<Landmark> _landmarks = const [];
   List<Map<String, String>> _bibleRefs = const [];
   List<String> _scenes = const [''];
+  List<String> _sceneCaptions = const [''];
   List<List<String>> _sceneCharacters = const [[]];
 
   // 장면별 AI 생성 이미지 상태 (scenes 와 같은 길이로 유지).
@@ -68,23 +73,30 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     if (e != null) {
       _eraId = e.eraId;
       _characterCodes = List.of(e.characterCodes);
-      // 기존 after_story_index 가 있으면 모든 인물에 동일하게 기록
-      if (e.afterStoryIndex != null) {
-        _afterStoryIndex = e.afterStoryIndex;
-        _positionPicked = true;
-      }
+      // 기존 after_story_index 를 복원한다. null 은 "맨 앞"이라는 유효한 선택이므로
+      // 수정 모드에서는 항상 positionPicked 로 취급한다.
+      _afterStoryIndex = e.afterStoryIndex;
+      _positionPicked = true;
       _landmarkId = e.landmarkId;
       _timePrecision = e.timePrecision;
       _titleCtrl.text = e.title;
       _summaryCtrl.text = e.summary ?? '';
+      _backgroundContextCtrl.text = e.backgroundContext ?? '';
       _startYearCtrl.text = e.startYear?.toString() ?? '';
       _endYearCtrl.text = e.endYear?.toString() ?? '';
+      _unitCodeCtrl.text = e.unitCode;
+      _unitTitleCtrl.text = e.unitTitle;
+      _unitOrderCtrl.text = e.unitOrder.toString();
       _bibleRefs = e.bibleRefs
           .map<Map<String, String>>(
             (m) => m.map((k, v) => MapEntry(k, v?.toString() ?? '')),
           )
           .toList();
       _scenes = e.storyScenes.isEmpty ? [''] : List.of(e.storyScenes);
+      _sceneCaptions = List.generate(
+        _scenes.length,
+        (i) => i < e.sceneCaptions.length ? e.sceneCaptions[i] : '',
+      );
       _sceneCharacters = List.generate(
         _scenes.length,
         (i) => i < e.sceneCharacters.length
@@ -124,6 +136,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     // 텍스트 필드 변경 시 제출 버튼 활성화 여부 재평가.
     _titleCtrl.addListener(_onFormChanged);
     _summaryCtrl.addListener(_onFormChanged);
+    _backgroundContextCtrl.addListener(_onFormChanged);
     _startYearCtrl.addListener(_onFormChanged);
     _endYearCtrl.addListener(_onFormChanged);
     _loadOptions();
@@ -147,12 +160,17 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   void dispose() {
     _titleCtrl.removeListener(_onFormChanged);
     _summaryCtrl.removeListener(_onFormChanged);
+    _backgroundContextCtrl.removeListener(_onFormChanged);
     _startYearCtrl.removeListener(_onFormChanged);
     _endYearCtrl.removeListener(_onFormChanged);
     _titleCtrl.dispose();
     _summaryCtrl.dispose();
+    _backgroundContextCtrl.dispose();
     _startYearCtrl.dispose();
     _endYearCtrl.dispose();
+    _unitCodeCtrl.dispose();
+    _unitTitleCtrl.dispose();
+    _unitOrderCtrl.dispose();
     super.dispose();
   }
 
@@ -210,6 +228,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       setState(() {
         _eventsByEra[eraId] = events;
         _loadingEvents = false;
+        _syncTimelineUnitSelection(
+          events,
+          preserveCurrent: widget.existing != null,
+        );
       });
     } catch (_) {
       if (!mounted) return;
@@ -227,6 +249,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
   bool get _canProceedFromDetails {
     if (_titleCtrl.text.trim().isEmpty) return false;
     if (_summaryCtrl.text.trim().isEmpty) return false;
+    if (_backgroundContextCtrl.text.trim().isEmpty) return false;
+    if (_unitCodeCtrl.text.trim().isEmpty) return false;
+    if (_unitTitleCtrl.text.trim().isEmpty) return false;
+    if (int.tryParse(_unitOrderCtrl.text.trim()) == null) return false;
     // v2 위치 모델 — landmark 한 개 필수.
     if (_landmarkId == null) return false;
     // 연도: 시작/끝 둘 다 정수 + 끝 ≥ 시작
@@ -252,6 +278,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     // 장면 이미지: 입력된 모든 장면이 생성 완료되어야 다음 단계로 진행 가능
     for (var i = 0; i < _scenes.length; i++) {
       if (_scenes[i].trim().isEmpty) continue;
+      if (i >= _sceneCaptions.length || _sceneCaptions[i].trim().isEmpty) {
+        return false;
+      }
       if (i >= _sceneImages.length || !_sceneImages[i].isReady) {
         return false;
       }
@@ -275,7 +304,13 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final items = <String>[];
     if (_titleCtrl.text.trim().isEmpty) items.add('제목');
     if (_summaryCtrl.text.trim().isEmpty) items.add('요약');
-    if (_landmarkId == null) items.add('지도/칩에서 위치(region/anchor/minor) 선택');
+    if (_backgroundContextCtrl.text.trim().isEmpty) items.add('배경 지식');
+    if (_unitCodeCtrl.text.trim().isEmpty ||
+        _unitTitleCtrl.text.trim().isEmpty ||
+        int.tryParse(_unitOrderCtrl.text.trim()) == null) {
+      items.add('시간순 구간 선택');
+    }
+    if (_landmarkId == null) items.add('장소 선택');
     final sy = int.tryParse(_startYearCtrl.text.trim());
     final ey = int.tryParse(_endYearCtrl.text.trim());
     if (sy == null) items.add('시작 연도 (숫자)');
@@ -302,6 +337,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     if (nonEmptyScenes.isEmpty) items.add('장면 1개 이상 (텍스트)');
     for (var i = 0; i < _scenes.length; i++) {
       if (_scenes[i].trim().isEmpty) continue;
+      if (i >= _sceneCaptions.length || _sceneCaptions[i].trim().isEmpty) {
+        items.add('장면 ${i + 1} 사용자 캡션');
+      }
       if (i >= _sceneImages.length || !_sceneImages[i].isReady) {
         items.add('장면 ${i + 1} 이미지 생성');
       }
@@ -335,6 +373,61 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
 
   List<StoryEvent> get _eraEvents =>
       _eraId != null ? (_eventsByEra[_eraId!] ?? const []) : const [];
+
+  TimelineUnitOption? get _currentTimelineUnitFallback {
+    final code = _unitCodeCtrl.text.trim();
+    final title = _unitTitleCtrl.text.trim();
+    final order = int.tryParse(_unitOrderCtrl.text.trim());
+    if (code.isEmpty || title.isEmpty || order == null) return null;
+    return TimelineUnitOption(code: code, title: title, order: order);
+  }
+
+  List<TimelineUnitOption> get _timelineUnitOptions {
+    return timelineUnitOptionsForEvents(
+      _eraEvents,
+      selectedFallback: widget.existing != null
+          ? _currentTimelineUnitFallback
+          : null,
+    );
+  }
+
+  TimelineUnitOption? _timelineUnitByCode(
+    String? code,
+    List<TimelineUnitOption> options,
+  ) {
+    if (code == null || code.trim().isEmpty) return null;
+    for (final option in options) {
+      if (option.code == code.trim()) return option;
+    }
+    return null;
+  }
+
+  void _applyTimelineUnit(TimelineUnitOption option) {
+    _unitCodeCtrl.text = option.code;
+    _unitTitleCtrl.text = option.title;
+    _unitOrderCtrl.text = option.order.toString();
+  }
+
+  void _syncTimelineUnitSelection(
+    List<StoryEvent> events, {
+    required bool preserveCurrent,
+  }) {
+    final fallback = preserveCurrent ? _currentTimelineUnitFallback : null;
+    final options = timelineUnitOptionsForEvents(
+      events,
+      selectedFallback: fallback,
+    );
+    if (options.isEmpty) {
+      if (!preserveCurrent && _unitCodeCtrl.text.trim().isEmpty) {
+        _unitCodeCtrl.text = 'default';
+        _unitTitleCtrl.text = '전체 흐름';
+        _unitOrderCtrl.text = '1';
+      }
+      return;
+    }
+    final current = _timelineUnitByCode(_unitCodeCtrl.text, options);
+    _applyTimelineUnit(current ?? options.first);
+  }
 
   Era? get _selectedEra {
     if (_eraId == null) return null;
@@ -481,6 +574,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       setState(() => _errorText = '장면을 최소 1개 입력해주세요.');
       return;
     }
+    final unitOrder = int.tryParse(_unitOrderCtrl.text.trim());
+    if (unitOrder == null) {
+      setState(() => _errorText = '시간순 구간 순서는 숫자로 입력해주세요.');
+      return;
+    }
 
     setState(() {
       _submitting = true;
@@ -490,10 +588,14 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
     final repo = ref.read(proposalRepositoryProvider);
     // scenes 에 해당하는 (비어있지 않은) 인덱스만 골라 이미지/프롬프트 배열 재구성.
     final paddedSceneCharacters = <List<String>>[];
+    final sceneCaptions = <String>[];
     final sceneImagePaths = <String>[];
     final sceneImagePrompts = <String>[];
     for (var i = 0; i < _scenes.length; i++) {
       if (_scenes[i].trim().isEmpty) continue;
+      sceneCaptions.add(
+        i < _sceneCaptions.length ? _sceneCaptions[i].trim() : '',
+      );
       paddedSceneCharacters.add(
         i < _sceneCharacters.length ? _sceneCharacters[i] : const [],
       );
@@ -520,6 +622,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           eraId: _eraId!,
           title: _titleCtrl.text.trim(),
           summary: _emptyAsNull(_summaryCtrl.text),
+          backgroundContext: _emptyAsNull(_backgroundContextCtrl.text),
           characterCodes: _characterCodes,
           landmarkId: _landmarkId!,
           startYear: int.tryParse(_startYearCtrl.text.trim()),
@@ -527,7 +630,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           timePrecision: _timePrecision,
           bibleRefs: _bibleRefs,
           storyScenes: scenes,
+          sceneCaptions: sceneCaptions,
           sceneCharacters: paddedSceneCharacters,
+          unitCode: _unitCodeCtrl.text.trim(),
+          unitTitle: _unitTitleCtrl.text.trim(),
+          unitOrder: unitOrder,
           sceneImagePaths: sceneImagePaths,
           sceneImagePrompts: sceneImagePrompts,
           proposedCharacters: proposedCharactersPayload,
@@ -540,6 +647,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           eraId: _eraId!,
           title: _titleCtrl.text.trim(),
           summary: _emptyAsNull(_summaryCtrl.text),
+          backgroundContext: _emptyAsNull(_backgroundContextCtrl.text),
           characterCodes: _characterCodes,
           landmarkId: _landmarkId!,
           startYear: int.tryParse(_startYearCtrl.text.trim()),
@@ -547,7 +655,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           timePrecision: _timePrecision,
           bibleRefs: refsAsDynamic,
           storyScenes: scenes,
+          sceneCaptions: sceneCaptions,
           sceneCharacters: paddedSceneCharacters,
+          unitCode: _unitCodeCtrl.text.trim(),
+          unitTitle: _unitTitleCtrl.text.trim(),
+          unitOrder: unitOrder,
           sceneImagePaths: sceneImagePaths,
           sceneImagePrompts: sceneImagePrompts,
           proposedCharacters: proposedCharactersPayload,
@@ -702,7 +814,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 const _IntroBullet(
                   number: '4',
                   title: '세부 내용을 작성합니다',
-                  body: '제목 / 요약 / 장소(지도) / 연도 / 성경 본문 / 4장면까지 입력 후 제출합니다.',
+                  body:
+                      '제목 / 요약 / 장소 / 연도 / 시간순 구간 / 성경 본문 / 4장면까지 입력 후 제출합니다.',
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -739,6 +852,9 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 _eraId = null;
                 _afterStoryIndex = null;
                 _positionPicked = false;
+                _unitCodeCtrl.clear();
+                _unitTitleCtrl.clear();
+                _unitOrderCtrl.clear();
               }
             }),
           ),
@@ -771,6 +887,13 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       // era 바뀌면 이전 선택 리셋
       _afterStoryIndex = null;
       _positionPicked = false;
+      _unitCodeCtrl.clear();
+      _unitTitleCtrl.clear();
+      _unitOrderCtrl.clear();
+      final cachedEvents = _eventsByEra[era.id];
+      if (cachedEvents != null) {
+        _syncTimelineUnitSelection(cachedEvents, preserveCurrent: false);
+      }
     });
     _loadEventsForEra(era.id);
   }
@@ -1182,6 +1305,15 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           maxLines: 5,
           decoration: const InputDecoration(hintText: '최대 4문장으로 요약'),
         ),
+        _sectionTitle('배경 지식'),
+        TextField(
+          controller: _backgroundContextCtrl,
+          minLines: 2,
+          maxLines: 4,
+          decoration: const InputDecoration(
+            hintText: '시대 배경과 이 사건이 무엇을 다루는지 1~2문장으로 적어주세요.',
+          ),
+        ),
         _sectionTitle('장소'),
         // 좌우 2-col: col1 = 장소 이름 입력 + 좌표 안내, col2 = 지도 (위아래로 더 큼)
         IntrinsicHeight(
@@ -1194,7 +1326,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '오른쪽 지도/칩에서 위치를 선택하세요.\n반드시 region 1개는 골라야 합니다.\n해당 region 의 anchor/minor 점도 선택할 수 있습니다.',
+                      '오른쪽 지도/칩에서 장소 1개를 선택하세요.\n정확한 산·도시·강 같은 장소가 있으면 그 장소를 고르고, 정확한 지점을 모르면 넓은 지역을 고르면 됩니다.',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -1278,6 +1410,8 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           onChanged: (v) => setState(() => _timePrecision = v ?? 'approx'),
           decoration: const InputDecoration(labelText: '연도 정확도'),
         ),
+        _sectionTitle('시간순 구간'),
+        _buildTimelineUnitDropdown(theme),
         _sectionTitle('성경 본문'),
         BibleRefsPicker(
           initial: _bibleRefs,
@@ -1304,6 +1438,10 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
               .publicUrlForProposalScene(path),
           onChanged: (scenes, images, sceneCharacters) => setState(() {
             _scenes = scenes;
+            _sceneCaptions = List.generate(
+              scenes.length,
+              (i) => i < _sceneCaptions.length ? _sceneCaptions[i] : '',
+            );
             _sceneCharacters = sceneCharacters;
             _sceneImages = List.generate(
               scenes.length,
@@ -1312,9 +1450,111 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           }),
           onGenerate: _onGenerateSceneImage,
         ),
+        const SizedBox(height: 12),
+        _buildSceneCaptionsEditor(theme),
         const SizedBox(height: 24),
         _missingDetailsChecklist(theme),
         const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildTimelineUnitDropdown(ThemeData theme) {
+    final options = _timelineUnitOptions;
+    final selected = _timelineUnitByCode(_unitCodeCtrl.text, options);
+    if (_loadingEvents && options.isEmpty) {
+      return const LinearProgressIndicator(minHeight: 2);
+    }
+    if (options.isEmpty) {
+      return InputDecorator(
+        decoration: const InputDecoration(labelText: '시간순 구간'),
+        child: Text(
+          '이 시대의 기존 구간을 아직 불러오지 못했습니다.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.error,
+          ),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DropdownButtonFormField<String>(
+          value: selected?.code,
+          isExpanded: true,
+          decoration: const InputDecoration(
+            labelText: '시간순 구간',
+            helperText: '선택한 시대에 이미 있는 구간만 표시됩니다.',
+          ),
+          items: [
+            for (final option in options)
+              DropdownMenuItem<String>(
+                value: option.code,
+                child: Text(
+                  '${option.displayTitle} · ${option.eventCount}개 이야기',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+          onChanged: (code) {
+            final next = _timelineUnitByCode(code, options);
+            if (next == null) return;
+            setState(() => _applyTimelineUnit(next));
+          },
+        ),
+        const SizedBox(height: 6),
+        Text(
+          selected == null
+              ? '구간을 선택해주세요.'
+              : '저장값: ${selected.code} / 순서 ${selected.order}',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: selected == null
+                ? theme.colorScheme.error
+                : theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSceneCaptionsEditor(ThemeData theme) {
+    final editableIndexes = <int>[
+      for (var i = 0; i < _scenes.length; i++)
+        if (_scenes[i].trim().isNotEmpty) i,
+    ];
+    if (editableIndexes.isEmpty) {
+      return Text(
+        '장면을 입력하면 사용자에게 보일 장면 캡션을 추가할 수 있어요.',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('장면 캡션 (사용자 표시용)'),
+        for (final i in editableIndexes) ...[
+          if (i != editableIndexes.first) const SizedBox(height: 8),
+          TextFormField(
+            key: ValueKey('scene-caption-$i-${_scenes[i].hashCode}'),
+            initialValue: i < _sceneCaptions.length ? _sceneCaptions[i] : '',
+            minLines: 1,
+            maxLines: 2,
+            decoration: InputDecoration(
+              labelText: '장면 ${i + 1} 캡션',
+              hintText: '이미지 아래에 짧게 보일 설명',
+            ),
+            onChanged: (value) => setState(() {
+              final next = List<String>.of(_sceneCaptions);
+              while (next.length <= i) {
+                next.add('');
+              }
+              next[i] = value;
+              _sceneCaptions = next;
+            }),
+          ),
+        ],
       ],
     );
   }

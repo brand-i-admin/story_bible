@@ -17,6 +17,9 @@ from export_events_to_json import (  # noqa: E402
     event_row_to_json,
     filename_for_era,
     group_events_by_era_file,
+    published_events_query_params,
+    quiz_row_to_json,
+    write_grouped_events,
 )
 
 
@@ -27,14 +30,19 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "era_code": "era_primeval",
             "summary": "하나님이 말씀으로 세상을 창조하신다.",
             "character_codes": ["god"],
+            "landmark_code": "lm_primeval_creation",
             "place_name": "메소포타미아(추정)",
             "lat": 31.018,
             "lng": 47.423,
             "bible_refs": [{"book": "창", "from": "1:1", "to": "2:3"}],
+            "background_context": "창조 이야기의 배경 지식.",
             "start_year": -4000,
             "end_year": -4000,
             "time_precision": "approx",
             "story_index": 1,
+            "unit_code": "primeval_creation",
+            "unit_title": "창조와 타락",
+            "unit_order": 1,
             "story_scenes": ["장면 1", "장면 2"],
             "scene_captions": ["캡션 1", "캡션 2"],
             "scene_characters": [["god"], []],
@@ -45,6 +53,7 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertEqual(result["title"], "001 창조: 7일과 안식")
         self.assertEqual(result["era"], "era_primeval")
         self.assertEqual(result["characters"], ["god"])
+        self.assertEqual(result["landmark_code"], "lm_primeval_creation")
         self.assertEqual(result["lat"], 31.018)
         self.assertEqual(result["lng"], 47.423)
         self.assertEqual(
@@ -52,6 +61,10 @@ class ExportEventsToJsonTests(unittest.TestCase):
             [{"book": "창", "from": "1:1", "to": "2:3"}],
         )
         self.assertEqual(result["story_index"], 1)
+        self.assertEqual(result["background_context"], "창조 이야기의 배경 지식.")
+        self.assertEqual(result["unit_code"], "primeval_creation")
+        self.assertEqual(result["unit_title"], "창조와 타락")
+        self.assertEqual(result["unit_order"], 1)
         self.assertEqual(result["story_scenes"], ["장면 1", "장면 2"])
         self.assertEqual(result["scene_captions"], ["캡션 1", "캡션 2"])
         self.assertEqual(result["scene_characters"], [["god"], []])
@@ -61,18 +74,24 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 "title",
                 "era",
                 "characters",
+                "landmark_code",
                 "place_name",
                 "lat",
                 "lng",
                 "summary",
+                "background_context",
                 "bible_ref",
                 "start_year",
                 "end_year",
                 "time_precision",
                 "story_index",
+                "unit_code",
+                "unit_title",
+                "unit_order",
                 "story_scenes",
                 "scene_captions",
                 "scene_characters",
+                "quiz_questions",
             ],
         )
 
@@ -82,14 +101,19 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "era_code": "era_judges",
             "summary": None,
             "character_codes": None,
+            "landmark_code": None,
             "place_name": None,
             "lat": None,
             "lng": None,
             "bible_refs": None,
+            "background_context": None,
             "start_year": None,
             "end_year": None,
             "time_precision": None,
             "story_index": 5,
+            "unit_code": None,
+            "unit_title": None,
+            "unit_order": None,
             "story_scenes": None,
             "scene_captions": None,
             "scene_characters": None,
@@ -103,8 +127,32 @@ class ExportEventsToJsonTests(unittest.TestCase):
         self.assertEqual(result["scene_captions"], [])
         self.assertEqual(result["scene_characters"], [])
         self.assertEqual(result["time_precision"], "approx")
+        self.assertEqual(result["background_context"], "")
+        self.assertEqual(result["unit_code"], "default")
+        self.assertEqual(result["unit_title"], "전체 흐름")
+        self.assertEqual(result["unit_order"], 1)
+        self.assertEqual(result["landmark_code"], "")
+        self.assertEqual(result["quiz_questions"], [])
         self.assertIsNone(result["lat"])
         self.assertEqual(result["summary"], "")
+
+    def test_quiz_row_to_json_omits_confused_choice(self) -> None:
+        result = quiz_row_to_json(
+            {
+                "question": "무엇을 보았습니까?",
+                "choice_a": "빛",
+                "choice_b": "물",
+                "choice_c": "땅",
+                "choice_d": "헷갈렸어요",
+                "answer_index": 1,
+                "explanation": "창 1:3 — '빛이 있으라'",
+                "display_order": 2,
+            }
+        )
+
+        self.assertEqual(result["type"], "story_context")
+        self.assertEqual(result["choices"], ["빛", "물", "땅"])
+        self.assertEqual(result["answer_index"], 1)
 
     def test_filename_for_era_uses_era_scoped_files(self) -> None:
         self.assertEqual(filename_for_era("era_primeval"), "era_primeval.json")
@@ -125,16 +173,22 @@ class ExportEventsToJsonTests(unittest.TestCase):
                 **row,
                 "summary": "",
                 "character_codes": [],
+                "landmark_code": "lm_a",
                 "place_name": "",
                 "lat": None,
                 "lng": None,
                 "bible_refs": [],
+                "background_context": "",
                 "start_year": None,
                 "end_year": None,
                 "time_precision": "approx",
+                "unit_code": "default",
+                "unit_title": "전체 흐름",
+                "unit_order": 1,
                 "story_scenes": [],
                 "scene_captions": [],
                 "scene_characters": [],
+                "quiz_questions": [],
             }
             for row in rows
         ]
@@ -154,23 +208,64 @@ class ExportEventsToJsonTests(unittest.TestCase):
             "era_code": "era_primeval",
             "summary": "s",
             "character_codes": ["god"],
+            "landmark_code": "lm_x",
             "place_name": "p",
             "lat": 1.0,
             "lng": 2.0,
             "bible_refs": [{"book": "창", "from": "1:1", "to": "1:1"}],
+            "background_context": "bg",
             "start_year": -4000,
             "end_year": -4000,
             "time_precision": "approx",
             "story_index": 1,
+            "unit_code": "default",
+            "unit_title": "전체 흐름",
+            "unit_order": 1,
             "story_scenes": ["scene"],
             "scene_captions": ["caption"],
             "scene_characters": [["god"]],
+            "quiz_questions": [],
         }
 
         out = event_row_to_json(row)
         decoded = json.loads(json.dumps(out, ensure_ascii=False))
 
         self.assertEqual(decoded["title"], "001 X")
+
+    def test_published_events_query_params_excludes_soft_deleted_rows(self) -> None:
+        params = published_events_query_params(limit=1000, offset=0)
+
+        self.assertEqual(params["status"], "eq.published")
+        self.assertEqual(params["deleted_at"], "is.null")
+
+    def test_write_grouped_events_prunes_stale_era_files(self) -> None:
+        temp_dir = Path(self._temp_dir.name)
+        stale = temp_dir / "era_exodus.json"
+        stale.write_text("[]\n", encoding="utf-8")
+
+        write_grouped_events(
+            temp_dir,
+            {
+                "era_primeval.json": [
+                    {
+                        "title": "창조",
+                        "era": "era_primeval",
+                        "story_index": 1,
+                    }
+                ]
+            },
+        )
+
+        self.assertTrue((temp_dir / "era_primeval.json").exists())
+        self.assertFalse(stale.exists())
+
+    def setUp(self) -> None:
+        import tempfile
+
+        self._temp_dir = tempfile.TemporaryDirectory()
+
+    def tearDown(self) -> None:
+        self._temp_dir.cleanup()
 
 
 if __name__ == "__main__":

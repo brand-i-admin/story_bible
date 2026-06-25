@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""landmarks.json → supabase/200_stories/landmarks_seed.sql.
+"""landmarks.json → supabase/events/landmarks_seed.sql.
 
 성경 전체 시대 region/landmark 카탈로그를 landmarks 테이블에 UPSERT 한다.
 
@@ -29,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG_PATH = ROOT / "assets" / "landmarks" / "landmarks.json"
-OUT_PATH = ROOT / "supabase" / "200_stories" / "landmarks_seed.sql"
+OUT_PATH = ROOT / "supabase" / "events" / "landmarks_seed.sql"
 
 
 def sql_str(value) -> str:

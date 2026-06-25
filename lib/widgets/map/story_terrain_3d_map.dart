@@ -8,12 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart' show LatLngBounds;
 import 'package:latlong2/latlong.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
 import '../../models/story_event.dart';
 import '../../utils/map_math.dart' as map_math;
 import 'map_tile_style.dart';
+
+import 'story_terrain_web_view_stub.dart'
+    if (dart.library.html) 'story_terrain_web_view_web.dart';
 
 class StoryTerrain3dMap extends StatefulWidget {
   const StoryTerrain3dMap({
@@ -183,8 +187,12 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
   };
 
-  late final WebViewController _controller;
+  WebViewController? _controller;
+  final StoryTerrainWebViewController _webController =
+      StoryTerrainWebViewController();
   Timer? _initialLoadTimeout;
+  late final String _webBridgeId = 'story-terrain-${identityHashCode(this)}';
+  String? _webHtml;
   String? _lastRendererSignature;
   String? _lastCameraSignature;
   String? _lastOverlaySignature;
@@ -216,12 +224,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   void initState() {
     super.initState();
     widget.controller?._bind(this);
+    if (kIsWeb) {
+      _loadHtmlIfNeeded(force: true);
+      return;
+    }
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFE5D2B5))
       ..addJavaScriptChannel(
         'StoryBibleMap',
-        onMessageReceived: _handleJavaScriptMessage,
+        onMessageReceived: (message) =>
+            _handleJavaScriptMessageRaw(message.message),
       )
       ..setNavigationDelegate(
         NavigationDelegate(
@@ -257,13 +270,29 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       return const ColoredBox(color: Color(0xFFE5D2B5));
     }
 
+    if (kIsWeb) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          StoryTerrainWebView(
+            controller: _webController,
+            html: _webHtml ?? _buildHtml(),
+            bridgeId: _webBridgeId,
+            onMessage: _handleJavaScriptMessageRaw,
+          ),
+          if (_hasError)
+            const _Map3dStatusOverlay(
+              title: '3D 지도를 불러오지 못했어요',
+              message: '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+            ),
+        ],
+      );
+    }
+
     return Stack(
       fit: StackFit.expand,
       children: [
-        WebViewWidget(
-          controller: _controller,
-          gestureRecognizers: _mapGestureRecognizers,
-        ),
+        _buildNativeWebView(),
         if (_hasError)
           const _Map3dStatusOverlay(
             title: '3D 지도를 불러오지 못했어요',
@@ -273,8 +302,30 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     );
   }
 
-  void _handleJavaScriptMessage(JavaScriptMessage message) {
-    final raw = message.message;
+  Widget _buildNativeWebView() {
+    final controller = _controller;
+    if (controller == null) {
+      return const ColoredBox(color: Color(0xFFE5D2B5));
+    }
+
+    PlatformWebViewWidgetCreationParams params =
+        PlatformWebViewWidgetCreationParams(
+          controller: controller.platform,
+          gestureRecognizers: _mapGestureRecognizers,
+        );
+
+    if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+      params =
+          AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
+            params,
+            displayWithHybridComposition: true,
+          );
+    }
+
+    return WebViewWidget.fromPlatformCreationParams(params: params);
+  }
+
+  void _handleJavaScriptMessageRaw(String raw) {
     try {
       final decoded = jsonDecode(raw);
       if (decoded is! Map<String, dynamic>) {
@@ -306,6 +357,16 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           widget.onMapReady?.call();
           _flushPendingCameraPayload();
           _flushPendingOverlayPayload();
+          break;
+        case 'mapError':
+          debugPrint('[Map3D] map error: ${decoded['message'] ?? decoded}');
+          break;
+        case 'error':
+          debugPrint('[Map3D] js error: ${decoded['message'] ?? decoded}');
+          if (kIsWeb && !_mapReady && mounted) {
+            _initialLoadTimeout?.cancel();
+            setState(() => _hasError = true);
+          }
           break;
       }
     } catch (error) {
@@ -392,7 +453,12 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     _pendingOverlayPayload = jsonEncode(overlayPayload);
     _mapReady = false;
     _hasError = false;
-    _controller.loadHtmlString(
+    if (kIsWeb) {
+      _webHtml = _buildHtml();
+      _armInitialLoadTimeout();
+      return;
+    }
+    _controller?.loadHtmlString(
       _buildHtml(),
       baseUrl: 'https://story-bible.local',
     );
@@ -400,20 +466,21 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   void _handleWebResourceError(WebResourceError error) {
+    // Tile and stylesheet requests can fail or be cancelled while MapLibre is
+    // still recovering. Surface only a main-frame failure immediately; otherwise
+    // let the readiness timeout decide whether the map truly failed to start.
+    if (_mapReady || error.isForMainFrame != true) {
+      return;
+    }
+
     debugPrint(
-      '[Map3D] resource error ${error.errorCode}: ${error.description} '
+      '[Map3D] main-frame resource error ${error.errorCode}: '
+      '${error.description} '
       '(type: ${error.errorType}, mainFrame: ${error.isForMainFrame}, '
       'url: ${error.url ?? 'unknown'})',
     );
 
-    if (_mapReady) {
-      return;
-    }
-
-    // Tile and stylesheet requests can fail or be cancelled while MapLibre is
-    // still recovering. Surface only a main-frame failure immediately; otherwise
-    // let the readiness timeout decide whether the map truly failed to start.
-    if (error.isForMainFrame == true && mounted) {
+    if (mounted) {
       _initialLoadTimeout?.cancel();
       setState(() => _hasError = true);
     }
@@ -676,7 +743,19 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   Future<void> _runMapJavaScript(String script) {
-    return _controller.runJavaScript('''
+    if (kIsWeb) {
+      return _webController.runJavaScript('''
+      (() => {
+        $script
+        return null;
+      })();
+    ''');
+    }
+    final controller = _controller;
+    if (controller == null) {
+      return Future<void>.value();
+    }
+    return controller.runJavaScript('''
       (() => {
         $script
         return null;
@@ -687,6 +766,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   String _buildHtml() {
     final initialCenter = [widget.center.longitude, widget.center.latitude];
     final payload = jsonEncode({
+      'bridgeId': _webBridgeId,
       'styleJsonUrl': widget.source.styleJsonUrl,
       'terrainTileJsonUrl': widget.source.terrainTileJsonUrl,
       'terrainTiles': widget.source.terrainTiles,
@@ -968,13 +1048,54 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     const config = $payload;
     const post = (message) => {
       try {
-        window.StoryBibleMap.postMessage(JSON.stringify(message));
+        message.bridgeId = config.bridgeId;
+        const encoded = JSON.stringify(message);
+        if (window.StoryBibleMap && window.StoryBibleMap.postMessage) {
+          window.StoryBibleMap.postMessage(encoded);
+          return;
+        }
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage(encoded, '*');
+        }
       } catch (_) {}
     };
+    const reportError = (message, details = {}) => {
+      post({
+        type: 'error',
+        message: String(message || 'unknown map error'),
+        details
+      });
+    };
+    window.addEventListener('error', (event) => {
+      reportError(event.message || event.error || 'window error', {
+        filename: event.filename || '',
+        lineno: event.lineno || 0,
+        colno: event.colno || 0
+      });
+    });
+    window.addEventListener('unhandledrejection', (event) => {
+      reportError(event.reason || 'unhandled rejection');
+    });
+    window.addEventListener('message', (event) => {
+      const data = event.data || {};
+      if (data.bridgeId !== config.bridgeId || data.type !== 'storyBibleEval') {
+        return;
+      }
+      try {
+        const fn = new Function(String(data.script || ''));
+        fn();
+      } catch (error) {
+        post({ type: 'error', message: String(error) });
+      }
+    });
     const numberOrNull = (value) => {
       const next = Number(value);
       return Number.isFinite(next) ? next : null;
     };
+    if (!window.maplibregl) {
+      reportError('MapLibre GL JS did not load');
+      throw new Error('MapLibre GL JS did not load');
+    }
     const requestedWorkerCount = numberOrNull(config.workerCount);
     if (requestedWorkerCount !== null && requestedWorkerCount > 0) {
       maplibregl.workerCount = requestedWorkerCount;
@@ -1004,6 +1125,13 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       mapOptions.maxTileCacheZoomLevels = maxTileCacheZoomLevels;
     }
     const map = new maplibregl.Map(mapOptions);
+    map.on('error', (event) => {
+      const error = event && event.error;
+      post({
+        type: 'mapError',
+        message: error && error.message ? error.message : String(error || 'unknown MapLibre error')
+      });
+    });
     if (map.dragPan && map.dragPan.enable) {
       map.dragPan.enable();
     }

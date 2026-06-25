@@ -533,6 +533,50 @@ def read_rows_from_book_dir(
     return parsed_rows, len(unique_pairs)
 
 
+def find_verse_sequence_problems(rows: list[VerseRow]) -> list[str]:
+    problems: list[str] = []
+    seen: dict[tuple[str, int, int, int], VerseRow] = {}
+    grouped: dict[tuple[str, int, str, int], set[int]] = {}
+
+    for row in rows:
+        key = (row.translation, row.book_no, row.chapter_no, row.verse_no)
+        if key in seen:
+            first = seen[key]
+            problems.append(
+                "duplicate verse address: "
+                f"{row.translation} {row.book_name} "
+                f"{row.chapter_no}:{row.verse_no} "
+                f"(lines {first.source_line_no}, {row.source_line_no})"
+            )
+        else:
+            seen[key] = row
+
+        group_key = (row.translation, row.book_no, row.book_name, row.chapter_no)
+        grouped.setdefault(group_key, set()).add(row.verse_no)
+
+    for (
+        translation,
+        _book_no,
+        book_name,
+        chapter_no,
+    ), verse_numbers in sorted(grouped.items()):
+        if not verse_numbers:
+            continue
+        missing = [
+            verse_no
+            for verse_no in range(1, max(verse_numbers) + 1)
+            if verse_no not in verse_numbers
+        ]
+        if missing:
+            missing_text = ",".join(str(verse_no) for verse_no in missing)
+            problems.append(
+                "missing verse address: "
+                f"{translation} {book_name} {chapter_no}:{missing_text}"
+            )
+
+    return problems
+
+
 T = TypeVar("T")
 
 
@@ -653,7 +697,17 @@ def main() -> int:
         raw_row_count = len(parsed_rows)
         source_info = f"dir:{input_dir} (books={used_files})"
 
-    # Deduplicate by PK, keep last row when duplicated.
+    sequence_problems = find_verse_sequence_problems(parsed_rows)
+    if sequence_problems:
+        preview = "\n".join(f"- {problem}" for problem in sequence_problems[:20])
+        suffix = (
+            ""
+            if len(sequence_problems) <= 20
+            else f"\n... {len(sequence_problems) - 20} more"
+        )
+        raise SystemExit(f"입력 성경 절 번호 검증 실패:\n{preview}{suffix}")
+
+    # Keep a PK map defensively; sequence validation above should prevent drops.
     dedup: dict[tuple[str, int, int, int], VerseRow] = {}
     for row in parsed_rows:
         key = (row.translation, row.book_no, row.chapter_no, row.verse_no)

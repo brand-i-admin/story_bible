@@ -23,7 +23,10 @@ supabase link --project-ref <your-project-ref>
 Vertex AI 가 enabled 된 GCP 프로젝트에서:
 
 1. IAM & Admin → Service Accounts → Create service account
-2. 권한: **Vertex AI User** (`roles/aiplatform.user`)
+2. 권한: Gemini 3 이미지 모델 호출 권한이 있는 역할
+   - Google Cloud의 최신 Gemini/Agent Platform 기준: **Agent Platform User**
+   - 기존 Vertex AI 기준: **Vertex AI User** (`roles/aiplatform.user`)
+   - 핵심 권한은 `aiplatform.endpoints.predict`
 3. Keys → Add key → JSON → 다운로드 (이 JSON 파일 전체가 secret 값)
 
 ### 3) Supabase secrets 등록
@@ -140,3 +143,21 @@ Content-Type: application/json
 - `private_key` 는 **절대 클라이언트 코드에 노출 금지**. Edge Function 런타임
   환경변수로만 주입.
 - 로컬 디버그 시 `.env.supabase.secrets` 는 `.gitignore` 에 있음을 확인.
+
+## 트러블슈팅
+
+### `403 permission 'aiplatform.endpoints.predict' denied`
+
+이 오류는 Supabase JWT 나 Storage 권한 문제가 아니라, Edge Function 이
+`GCP_SERVICE_ACCOUNT_JSON` 으로 GCP access token 을 받은 뒤 Vertex/Agent
+Platform 모델 호출 권한에서 막혔다는 뜻이다.
+
+확인 순서:
+
+1. GCP 프로젝트에서 Agent Platform API / Vertex AI API 가 활성화되어 있는지 확인.
+2. `GCP_SERVICE_ACCOUNT_JSON` 의 `client_email` 서비스 계정에
+   `aiplatform.endpoints.predict` 를 포함하는 역할을 부여.
+3. 최신 Gemini 3 이미지 모델은 `global` location 을 우선 사용하므로
+   `GOOGLE_CLOUD_LOCATION=global` 인지 확인.
+4. 모델 접근 권한 또는 allowlist 가 필요한 프로젝트라면 Google Cloud 콘솔에서
+   해당 모델을 사용할 수 있는지 확인.

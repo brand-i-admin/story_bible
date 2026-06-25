@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../data/auth_repository.dart';
 import '../models/app_user_profile.dart';
 import '../models/character.dart';
 import '../models/character_study_progress.dart';
@@ -132,6 +133,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   bool _profileLoading = false;
   String? _profileError;
   bool _signingOut = false;
+  bool _deletingAccount = false;
 
   Set<String> _profileExploredEventIds(StoryState state) => {
     ...state.completedEventIds,
@@ -197,6 +199,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       case _ProfileContentTab.prayer:
         break;
     }
+  }
+
+  void _setDeletingAccount(bool value) {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _deletingAccount = value;
+    });
   }
 
   void _handleIntercessoryPrayerScroll() {

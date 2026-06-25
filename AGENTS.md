@@ -173,6 +173,8 @@ make seed-quizzes
 make generate-avatars
 make generate-story-images
 make thumbnails
+make ensure-story-image-sources
+make upload-story-image-sources
 make update-pubspec-assets
 make check-pubspec-assets
 ```

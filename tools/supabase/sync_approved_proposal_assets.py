@@ -10,14 +10,15 @@ Phase A — **추가** (approved proposals):
   - 완료 시 synced_to_local_at = now() 로 멱등 마커 세팅
   - (--delete-source) proposal-* 버킷의 원본 파일 삭제
 
-Phase B — **삭제** (NEW: approve_delete_proposal 결과 반영):
-  - events 중 deleted_at IS NOT NULL → 로컬 `assets/story_images/<title>/`
-    디렉토리(장면 PNG) 제거. 이미 없으면 스킵.
-  - characters 중 is_active = false AND avatar_url/avatar_storage_path 가
-    있는 것 → 로컬 `assets/avatars/<code>.png` 와
-    `assets/avatars_thumbs/<code>.png` 제거. 이미 없으면 스킵.
-  - Supabase Storage 의 잔존 파일도 best-effort 로 한 번 더 정리(approve_delete
-    RPC 가 이미 시도했으나 실패했을 경우의 안전망).
+Phase B — **삭제/정리** (approve_delete_proposal 결과 반영):
+  - active events(status='published' AND deleted_at IS NULL)의 title 집합을
+    기준으로 로컬 `assets/story_images/<title>/` 디렉토리 diff 정리.
+    soft-deleted row 는 DB에 남아 있어도 앱 번들 source 에서는 제외된다.
+  - 과거 sync 버그로 공백이 `_`로 바뀐 story_images 폴더가 있으면 현재
+    canonical 폴더명으로 옮긴다.
+  - deleted events 의 scene_image_paths Storage 원본은 best-effort 로 삭제한다.
+    이미 앱에서는 보이지 않으므로 fallback 보존 대상이 아니다.
+  - characters 는 DB에 없는 code의 로컬 avatar/thumb만 diff 정리한다.
 
   Phase B 는 별도 마커 없이 **파일 존재 여부**로 멱등성 보장 — 이미 정리된
   것은 자연스럽게 skip. 사용자가 요청한 "이전에 sync 할 때 이미 삭제했다면
@@ -55,6 +56,7 @@ import argparse
 import os
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 import requests
@@ -77,13 +79,11 @@ STORIES_IMG_THUMBS_DIR = REPO_ROOT / "assets" / "story_images_thumbs"
 AVATAR_BUCKET = "characters"
 PROPOSAL_SCENES_BUCKET = "proposal-scenes"
 PROPOSAL_CHARS_BUCKET = "proposal-characters"
+ASSET_ONLY_AVATAR_CODES = {"guide"}
 
 
 def env_var(name: str, env_suffix: str) -> str | None:
-    return (
-        os.environ.get(f"{name}_{env_suffix.upper()}")
-        or os.environ.get(name)
-    )
+    return os.environ.get(f"{name}_{env_suffix.upper()}") or os.environ.get(name)
 
 
 def safe_dirname(title: str) -> str:
@@ -92,11 +92,18 @@ def safe_dirname(title: str) -> str:
     Consistent with how `generate_event_story_images_vertex.py` names the
     `assets/story_images/<title>/` directory for production events.
     """
+    cleaned = re.sub(r"[\\/:*?\"<>|]+", "_", title).strip()
+    cleaned = cleaned.strip(".")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return unicodedata.normalize("NFC", cleaned or "untitled_event")
+
+
+def legacy_underscore_dirname(title: str) -> str:
+    """Return the old sync-only folder name that replaced spaces with `_`."""
     cleaned = re.sub(r"\s+", " ", title.strip())
-    # Keep hangul, latin, digits, spaces, hyphens, underscores; replace rest.
     keep = re.compile(r"[^\w가-힣 \-]+", re.UNICODE)
     out = keep.sub("", cleaned)
-    return out.replace(" ", "_") or "untitled"
+    return unicodedata.normalize("NFC", out.replace(" ", "_") or "untitled")
 
 
 def sb_get(session: requests.Session, url: str, **kw) -> requests.Response:
@@ -208,9 +215,7 @@ def patch_character_avatar_path(
         timeout=30,
     )
     if not r.ok:
-        raise RuntimeError(
-            f"PATCH characters[{code}] failed: {r.status_code} {r.text}"
-        )
+        raise RuntimeError(f"PATCH characters[{code}] failed: {r.status_code} {r.text}")
 
 
 def sync_one_proposal(
@@ -294,25 +299,47 @@ def sync_one_proposal(
 
 
 # =====================================================================
-# Phase B — deletion sync: soft-deleted events / inactive characters 정리.
+# Phase B — deletion sync: active event diff / local orphan cleanup.
 # =====================================================================
 
-def fetch_all_events(
+
+def fetch_events(
+    session: requests.Session,
+    base_url: str,
+    *,
+    deleted_at_filter: str,
+) -> list[dict]:
+    """Fetch events for local asset diffing."""
+    url = f"{base_url}/rest/v1/events"
+    params: dict[str, str] = {
+        "select": "id,title,scene_image_paths,deleted_at",
+        "status": "eq.published",
+        "deleted_at": deleted_at_filter,
+        "limit": "2000",
+    }
+    r = sb_get(session, url, params=params)
+    return r.json()
+
+
+def fetch_active_events(
     session: requests.Session,
     base_url: str,
 ) -> list[dict]:
-    """모든 events 를 가져온다 (hard delete 모델: row 가 있으면 살아있음)."""
-    url = f"{base_url}/rest/v1/events"
-    params: dict[str, str] = {"select": "id,title,scene_image_paths"}
-    r = sb_get(session, url, params=params)
-    return r.json()
+    return fetch_events(session, base_url, deleted_at_filter="is.null")
+
+
+def fetch_deleted_events(
+    session: requests.Session,
+    base_url: str,
+) -> list[dict]:
+    return fetch_events(session, base_url, deleted_at_filter="not.is.null")
 
 
 def fetch_all_characters(
     session: requests.Session,
     base_url: str,
 ) -> list[dict]:
-    """모든 characters 를 가져온다 (hard delete 모델: row 가 있으면 살아있음)."""
+    """모든 characters 를 가져온다 (row 가 있으면 로컬 avatar 보존 대상)."""
     url = f"{base_url}/rest/v1/characters"
     params: dict[str, str] = {
         "select": "code,avatar_url,avatar_storage_path",
@@ -354,6 +381,38 @@ def remove_local_path(
     return True
 
 
+def migrate_legacy_story_dirs(
+    active_events: list[dict],
+    *,
+    dry_run: bool,
+) -> int:
+    """Move old underscore-space folders to the canonical title folder name."""
+    if not STORIES_IMG_DIR.exists():
+        return 0
+    moved = 0
+    for ev in active_events:
+        title = ev.get("title") or ""
+        canonical = safe_dirname(title)
+        legacy = legacy_underscore_dirname(title)
+        if canonical == legacy:
+            continue
+        legacy_path = STORIES_IMG_DIR / legacy
+        canonical_path = STORIES_IMG_DIR / canonical
+        if not legacy_path.exists() or not legacy_path.is_dir():
+            continue
+        if canonical_path.exists():
+            continue
+        print(
+            f"  rename legacy story dir: "
+            f"{legacy_path.relative_to(REPO_ROOT)} → "
+            f"{canonical_path.relative_to(REPO_ROOT)}"
+        )
+        if not dry_run:
+            legacy_path.rename(canonical_path)
+        moved += 1
+    return moved
+
+
 def cleanup_storage_paths(
     session: requests.Session,
     base_url: str,
@@ -384,25 +443,39 @@ def sync_deletions(
     base_url: str,
     dry_run: bool,
 ) -> dict[str, int]:
-    """**Diff-based** 정리. hard delete 모델이라 "삭제된 row" 자체가 사라져
-    있으므로:
+    """**Diff-based** 정리.
 
-      - events 테이블의 title 집합을 가져와, 로컬 `assets/story_images/`
-        디렉토리 중 **그 집합에 없는** 디렉토리를 삭제.
+      - active events(status='published' AND deleted_at IS NULL)의 title 집합을
+        가져와, 로컬 `assets/story_images/` 디렉토리 중 **그 집합에 없는**
+        디렉토리를 삭제. soft-deleted row 는 DB 에 남아도 이 집합에서 제외된다.
         `assets/story_images_thumbs/`는 짧은 asset 디렉토리 + index.json 구조라
-        `make thumbnails` 단계의 source diff/prune 에 맡긴다.
+        후속 `make thumbnails` 단계의 source diff/prune 에 맡긴다.
       - characters 테이블의 code 집합을 가져와, 로컬 `assets/avatars/` 와
         `assets/avatars_thumbs/` 의 PNG 중 **그 집합에 없는** 파일을 삭제.
 
     멱등성: file-exists check 으로 자연스럽게 skip. 이미 일치하면 카운터 0.
     """
     print("\n=== Phase B: deletions (diff-based) ===")
-    totals = {"event_dirs": 0, "avatars": 0, "thumbs": 0}
+    totals = {
+        "event_dirs": 0,
+        "event_dirs_renamed": 0,
+        "avatars": 0,
+        "thumbs": 0,
+    }
 
-    # 1) events.title diff
-    events = fetch_all_events(session, base_url)
-    db_safe_titles = {safe_dirname(ev.get("title") or "") for ev in events}
-    print(f"DB events: {len(events)} (unique safe-titles {len(db_safe_titles)})")
+    # 1) active events.title diff
+    active_events = fetch_active_events(session, base_url)
+    deleted_events = fetch_deleted_events(session, base_url)
+    totals["event_dirs_renamed"] = migrate_legacy_story_dirs(
+        active_events,
+        dry_run=dry_run,
+    )
+    db_safe_titles = {safe_dirname(ev.get("title") or "") for ev in active_events}
+    print(
+        f"DB active events: {len(active_events)} "
+        f"(unique story dirs {len(db_safe_titles)}), "
+        f"soft-deleted events: {len(deleted_events)}"
+    )
 
     if STORIES_IMG_DIR.exists():
         for child in sorted(STORIES_IMG_DIR.iterdir()):
@@ -414,6 +487,20 @@ def sync_deletions(
             if remove_local_path(child, dry_run=dry_run):
                 totals["event_dirs"] += 1
 
+    deleted_scene_paths: list[str] = []
+    for ev in deleted_events:
+        for path in ev.get("scene_image_paths") or []:
+            if path:
+                deleted_scene_paths.append(path)
+    if deleted_scene_paths:
+        print("\n-- deleted event storage fallbacks")
+        cleanup_storage_paths(
+            session,
+            base_url,
+            sorted(set(deleted_scene_paths)),
+            dry_run=dry_run,
+        )
+
     # 2) characters.code diff
     chars = fetch_all_characters(session, base_url)
     db_codes = {(c.get("code") or "").strip() for c in chars if c.get("code")}
@@ -421,6 +508,8 @@ def sync_deletions(
 
     for path in sorted(AVATARS_DIR.glob("*.png")) if AVATARS_DIR.exists() else []:
         code = path.stem
+        if code in ASSET_ONLY_AVATAR_CODES:
+            continue
         if code in db_codes:
             continue
         print(f"\n-- avatars/{path.name}  (DB 에 code={code} 없음 → 삭제)")
@@ -431,6 +520,8 @@ def sync_deletions(
         sorted(AVATARS_THUMBS_DIR.glob("*.png")) if AVATARS_THUMBS_DIR.exists() else []
     ):
         code = path.stem
+        if code in ASSET_ONLY_AVATAR_CODES:
+            continue
         if code in db_codes:
             continue
         # _placeholder 같은 시스템 파일이 있으면 보호 (현 코드베이스엔 없지만 방어).
@@ -505,8 +596,7 @@ def main() -> int:
         "--skip-deletions",
         action="store_true",
         help=(
-            "Phase B (DB 와 로컬 자산 diff 정리) 를 건너뜀. "
-            "Phase A(추가) 만 실행"
+            "Phase B (DB 와 로컬 자산 diff 정리) 를 건너뜀. " "Phase A(추가) 만 실행"
         ),
     )
     parser.add_argument(
@@ -536,9 +626,7 @@ def main() -> int:
 
     session = requests.Session()
     if key:
-        session.headers.update(
-            {"apikey": key, "Authorization": f"Bearer {key}"}
-        )
+        session.headers.update({"apikey": key, "Authorization": f"Bearer {key}"})
 
     proposals = fetch_approved_proposals(
         session, base_url, include_already_synced=args.all
@@ -582,6 +670,7 @@ def main() -> int:
     # Phase B — DB 와의 diff 로 로컬에 남은 이미지/디렉토리 정리.
     deletion_totals: dict[str, int] = {
         "event_dirs": 0,
+        "event_dirs_renamed": 0,
         "avatars": 0,
         "thumbs": 0,
     }
@@ -598,6 +687,7 @@ def main() -> int:
     any_change = (
         totals["synced"] > 0
         or deletion_totals["event_dirs"] > 0
+        or deletion_totals["event_dirs_renamed"] > 0
         or deletion_totals["avatars"] > 0
         or deletion_totals["thumbs"] > 0
     )
@@ -611,12 +701,15 @@ def main() -> int:
 
     print("\n=== Summary ===")
     print(f"  Phase A — synced (marker 업데이트됨): {totals['synced']}")
-    print(f"  Phase A — failed (마커 미세팅 — 다음 run 에서 재시도): {totals['failed']}")
+    print(
+        f"  Phase A — failed (마커 미세팅 — 다음 run 에서 재시도): {totals['failed']}"
+    )
     if args.dry_run:
         print(f"  Phase A — skipped (dry-run): {totals['skipped']}")
     print(
         f"  Phase B — local 정리: "
         f"event_dirs={deletion_totals['event_dirs']}, "
+        f"event_dirs_renamed={deletion_totals['event_dirs_renamed']}, "
         f"avatars={deletion_totals['avatars']}, "
         f"thumbs={deletion_totals['thumbs']}"
     )

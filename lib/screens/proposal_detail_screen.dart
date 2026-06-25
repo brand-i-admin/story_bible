@@ -317,8 +317,9 @@ class _ProposalHeaderRow extends StatelessWidget {
 /// 빈 path 는 placeholder 로 대체. 이벤트 상세 페이지의 `storySceneRow` 와
 /// 비슷한 느낌을 Image.network 기반으로 재현.
 class _ProposalSceneGrid extends ConsumerWidget {
-  const _ProposalSceneGrid({required this.paths});
+  const _ProposalSceneGrid({required this.paths, required this.captions});
   final List<String> paths;
+  final List<String> captions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -364,14 +365,18 @@ class _ProposalSceneGrid extends ConsumerWidget {
                       ),
                       child: SizedBox(
                         height: tileH,
-                        child: url == null
-                            ? const ColoredBox(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            if (url == null)
+                              const ColoredBox(
                                 color: Color(0xFFE7D2B2),
                                 child: Center(
                                   child: Icon(Icons.image_outlined),
                                 ),
                               )
-                            : Image.network(
+                            else
+                              Image.network(
                                 url,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, _, _) => const ColoredBox(
@@ -381,6 +386,41 @@ class _ProposalSceneGrid extends ConsumerWidget {
                                   ),
                                 ),
                               ),
+                            if (i < captions.length &&
+                                captions[i].trim().isNotEmpty)
+                              Positioned(
+                                left: 8,
+                                right: 8,
+                                bottom: 8,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.55),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 6,
+                                    ),
+                                    child: Text(
+                                      captions[i],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            height: 1.25,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -389,6 +429,60 @@ class _ProposalSceneGrid extends ConsumerWidget {
             }),
           );
         },
+      ),
+    );
+  }
+}
+
+class _SceneTextSection extends StatelessWidget {
+  const _SceneTextSection({required this.scenes, required this.captions});
+  final List<String> scenes;
+  final List<String> captions;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '장면 원고와 캡션',
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 10),
+          for (var i = 0; i < scenes.length; i++) ...[
+            if (i > 0) Divider(color: theme.colorScheme.outlineVariant),
+            Text(
+              '장면 ${i + 1}',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(scenes[i], style: theme.textTheme.bodyMedium),
+            if (i < captions.length && captions[i].trim().isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                '캡션: ${captions[i]}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ],
+        ],
       ),
     );
   }
@@ -705,6 +799,10 @@ class _MetaKvBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final rows = <List<String>>[
+      [
+        '구간',
+        '${proposal.unitTitle} (${proposal.unitCode}, ${proposal.unitOrder})',
+      ],
       [
         '좌표',
         proposal.lat == null || proposal.lng == null

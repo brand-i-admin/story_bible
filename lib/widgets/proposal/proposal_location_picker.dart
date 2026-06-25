@@ -22,8 +22,8 @@ class ProposalReferencePin {
   final bool highlighted;
 }
 
-/// v2 위치 선택 — 지도에 region(영역)/anchor(대표점)/minor(작은 점) 들이 표시되고
-/// 사용자가 그 중 하나를 클릭/칩으로 선택. 자유 좌표 입력은 폐기.
+/// v2 위치 선택 — 지도에 region(넓은 장소)/anchor(대표 장소)/minor(작은 장소)
+/// 들이 표시되고 사용자가 그 중 하나를 클릭/칩으로 선택. 자유 좌표 입력은 폐기.
 ///
 /// - [eraLandmarks]: 현재 시대(들)에 노출되는 landmarks. region 은 폴리곤,
 ///   anchor/minor 는 점 마커로 그려진다.
@@ -116,11 +116,11 @@ class _ProposalLocationPickerState extends State<ProposalLocationPicker> {
         _buildMap(theme, regions, points, selected),
         const SizedBox(height: 12),
         _buildChipSection(
-          label: '지역(region) — 빈 폴리곤 영역',
+          label: '넓은 지역 — 정확한 장소를 특정하기 어려울 때',
           landmarks: regions,
           bottomGap: points.isNotEmpty ? 12 : 0,
         ),
-        _buildChipSection(label: '랜드마크 (산·도시·강·섬 등)', landmarks: points),
+        _buildChipSection(label: '구체 장소 (산·도시·강·섬 등)', landmarks: points),
       ],
     );
   }
@@ -275,7 +275,7 @@ class _MapStatusBadge extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Text(
-            selected != null ? '선택: ${selected!.name}' : '지도 마커/아래 칩에서 위치 선택',
+            selected != null ? '선택: ${selected!.name}' : '지도 마커/아래 칩에서 장소 선택',
             style: theme.textTheme.labelSmall,
           ),
         ),

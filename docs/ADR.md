@@ -75,7 +75,7 @@
 ## ADR-007: KRV 성경 SQL 시딩 방식
 
 - **상태**: 채택
-- **맥락**: 31,904절의 KRV 성경 텍스트를 DB에 적재하는 방법
+- **맥락**: 31,102절의 KRV 성경 텍스트를 DB에 적재하는 방법
 - **결정**: Python 스크립트로 SQL 파일 생성 → Supabase SQL Editor에서 실행
 - **이유**:
   - 대용량 INSERT를 분할 SQL로 안전하게 처리
@@ -351,8 +351,8 @@
   3. 같은 위치 다른 시대 이름 처리(alias_group)로 시대 멀티 선택 시에도 같은 점에 라벨을 합쳐 표시.
 - **마이그레이션**:
   - `supabase/migrations/20260504_landmarks_v2.sql` (스키마 + landmark_id 컬럼)
-  - `supabase/200_stories/landmarks_v2_seed.sql` (31 region + 66 anchor + 17 minor + 4 alias_group)
-  - `supabase/200_stories/event_landmark_update.sql` (168 events 의 landmark_id 채움)
+  - `supabase/events/landmarks_v2_seed.sql` (31 region + 66 anchor + 17 minor + 4 alias_group)
+  - `supabase/events/event_landmark_update.sql` (168 events 의 landmark_id 채움)
   - `supabase/migrations/20260504_landmarks_v2_finalize.sql` (NOT NULL + RPC 시그니처 변경 + lat/lng/place_name DROP + events_ordered view 재정의)
 - **RPC 시그니처 변경 4건**:
   - `insert_event_at_position`: `p_place_name/p_lat/p_lng` → `p_landmark_id uuid`
@@ -373,7 +373,7 @@
   - 지역 모드 region 마커에 그곳에서 발생한 사건의 인물 아바타(첫 4명) 동그라미 stack 표시 (`_RegionMarkerWithAvatars`).
   - 사건 카드 탭 → 미리보기 다이얼로그 (제목/요약/장소·연도 메타 + 닫기). 풀 EventDetailPage 진입은 추후 v2 화면용 콜백 통합 후.
   - `RevisePositionDialog` 가 landmark ChoiceChip 그룹으로 region/anchor/minor 재선택 가능. `revise_proposal_position` RPC 의 `p_landmark_id` 파라미터로 전달.
-- **시드 빌더 변경**: `build_200_stories_seed_sql.py` 가 `assets/landmarks/event_landmark_mapping_draft.json` 을 읽어 events.landmark_id 를 INSERT 시 lookup. 별도 event_landmark_update.sql 적용 불필요.
+- **시드 빌더 변경**: `build_events_seed_sql.py` 가 `assets/landmarks/event_landmark_mapping_draft.json` 을 읽어 events.landmark_id 를 INSERT 시 lookup. 별도 event_landmark_update.sql 적용 불필요.
 - **Make pipeline**: `make seed-all` 이 `seed-landmarks-v2` 를 포함, `make apply-seeds` 가 v2 landmarks 를 stories 보다 먼저 적용.
 
 ## ADR-020: 프로필 "진행률 표시" 섹션 + 지도 region 정복(D안) (2026-05-08)
@@ -492,7 +492,7 @@
   1. `daily_quiz` 를 `choices jsonb` + `answer_index` 구조로 바꿔 2~6개 선택지를 허용한다.
   2. `slug text unique` 를 추가해 seed 재실행 시 같은 문항을 UPSERT 한다. pg_cron 이 매일 발급하는 복제 row 는 `slug=NULL` 로 두어 새 PK 를 유지한다.
   3. `quiz_type` 을 추가해 지도 문항 유형을 보존한다: `event_region_match`, `region_event_exclusion`, `character_region_exclusion`, `character_event_region_match`, `region_event_inclusion`.
-  4. `tools/seed/build_daily_quiz_seed_sql.py` 가 현재 `assets/200_stories`, `assets/landmarks/event_region_mapping.json`, `landmarks.json`, `character_meta.json`, `db_init.sql` 을 읽어 `supabase/seeds/daily_quiz.sql` 100문항과 `docs/DAILY_QUIZ_SEED_GUIDE.md` 를 생성한다.
+  4. `tools/seed/build_daily_quiz_seed_sql.py` 가 현재 `assets/events`, `assets/landmarks/landmarks.json`, `character_meta.json`, `db_init.sql` 을 읽어 `supabase/seeds/daily_quiz.sql` 100문항과 `docs/DAILY_QUIZ_SEED_GUIDE.md` 를 생성한다.
   5. Flutter `DailyQuiz` 모델과 `StoryRepository.fetchLatestDailyQuiz()` 는 `choices` 배열을 읽고, `DailyQuizSection` 은 배열 길이만큼 선택지를 렌더링한다.
 - **이유**:
   1. `수산 궁(페르시아)` 같은 값은 사용자가 선택하는 region 이 아니라 `페르시아` region 안의 세부 landmark 이므로 보기로 쓰면 앱 UX 와 어긋난다.
@@ -586,3 +586,38 @@
   - 매일/주간 탐험은 로그인 여부와 무관하게 사건을 보여 주되, 저장은 기존 사건 상세의
     로그인/진행도 정책을 따른다.
   - 매일/주간 탐험에서 푼 사건은 프로필과 지도 완료 상태에 즉시 반영된다.
+
+## ADR-028: 삭제 승인 후 active story_index 재번호 매김 (2026-06-24)
+
+- **상태**: 채택
+- **배경**: ADR-017 은 삭제 제안 승인을 hard delete 대신 `events.deleted_at` soft
+  delete 로 처리하도록 결정했다. 이 결정은 사용자 진도와 제안 이력 보존에는 맞지만,
+  soft-deleted row 가 원래 `story_index`를 계속 차지하면 같은 era 의 활성 이야기
+  번호가 `1, 2, 4, 5...` 처럼 듬성듬성 남는다. 이후 새 이야기 승인이나 위치 재선택
+  UI는 숫자 기반 `after_story_index`를 사용하므로, 활성 순서와 raw `story_index`가
+  갈라지면 삽입 위치가 사용자의 의도와 다르게 해석될 수 있다.
+- **결정**:
+  1. hard delete 금지는 유지한다. `event_proposals.target_event_id`와 사용자 진행도 FK
+     때문에 `events` row 자체는 삭제하지 않는다.
+  2. `approve_delete_proposal` 은 대상 row 에 `deleted_at` 을 set 한 뒤, 같은 era 의
+     활성 published 이벤트를 기존 상대 순서대로 `story_index = 1..N` 으로 재번호 매긴다.
+  3. soft-deleted 또는 non-active row 는 같은 UNIQUE 제약 안에서 충돌하지 않도록 활성
+     row 뒤쪽 번호로 이동한다.
+  4. 삭제된 위치 이상을 가리키던 pending NEW 제안은 숫자 의미가 바뀌므로
+     `position_invalidated_at` / `position_invalidation_reason` 을 set 해 위치 재선택을
+     요구한다.
+  5. 운영 DB에 이미 생긴 gap은 `supabase/patches/20260624_1200_approve_delete_reindex_story_indices.sql`
+     로 한 번 보정한다.
+- **이유**:
+  - row id를 보존하면 저장, 퀴즈, 학습 진행도, 승인 이력이 다른 이야기로 붙거나
+    사라지는 문제를 피할 수 있다.
+  - 활성 row 의 `story_index`를 압축하면 앱 UI, 제안 위치 선택, 로컬 canonical seed
+    순서가 모두 같은 숫자 체계를 사용한다.
+  - pending 제안을 자동으로 숫자만 보정하면 제안자가 실제로 의도한 앞뒤 문맥을 알 수
+    없으므로, 기존 위치 충돌 정책과 마찬가지로 재선택을 요구하는 쪽이 안전하다.
+- **결과**:
+  - 새 삭제 승인부터는 `events_ordered.story_index`가 활성 이야기 기준으로 바로
+    재정렬된다.
+  - soft-deleted row 는 DB에 남지만 앱에서는 계속 숨겨지고, 활성 row 뒤쪽 index를
+    가진다.
+  - 삭제 이후 위치가 흔들린 pending NEW 제안은 게시판에서 "수정 필요" 상태가 된다.

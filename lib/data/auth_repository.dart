@@ -1,18 +1,16 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../models/app_user_profile.dart';
 
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
 class AuthRepository {
   const AuthRepository(this._client);
-
-  static const String _googleWebClientId =
-      '196457947669-f2hcqoqmc9v4bdtchuvee5l9fiqt26ka.apps.googleusercontent.com';
 
   /// 모바일 앱의 deep link URL.
   /// iOS Info.plist / Android intent-filter 에 등록되어 있어야 Supabase 가
@@ -78,64 +76,83 @@ class AuthRepository {
   }
 
   Future<void> signInWithGoogle() async {
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      final googleSignIn = GoogleSignIn(
-        serverClientId: _googleWebClientId,
-        scopes: const ['email', 'profile', 'openid'],
-      );
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        throw const AuthException('구글 로그인이 취소되었습니다.');
-      }
+    await _signInWithOAuth(OAuthProvider.google, failureLabel: '구글');
+  }
 
-      final googleAuth = await googleUser.authentication;
-      final idToken = googleAuth.idToken;
-      final accessToken = googleAuth.accessToken;
-      if (idToken == null || idToken.isEmpty) {
-        throw const AuthException('구글 ID 토큰을 가져오지 못했습니다.');
-      }
-      if (accessToken == null || accessToken.isEmpty) {
-        throw const AuthException('구글 액세스 토큰을 가져오지 못했습니다.');
-      }
+  Future<void> signInWithKakao() async {
+    await _signInWithOAuth(OAuthProvider.kakao, failureLabel: '카카오');
+  }
 
-      await _client.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-        accessToken: accessToken,
-      );
-      return;
-    }
-
+  Future<void> _signInWithOAuth(
+    OAuthProvider provider, {
+    required String failureLabel,
+  }) async {
     final launched = await _client.auth.signInWithOAuth(
-      OAuthProvider.google,
+      provider,
       redirectTo: _oauthRedirectForPlatform,
       // authScreenLaunchMode 는 모바일 전용. 웹에서는 current tab 리다이렉트를
       // 써야 SetSID → Supabase callback 체인이 정상 동작한다.
       authScreenLaunchMode: kIsWeb
           ? LaunchMode.platformDefault
-          : LaunchMode.externalApplication,
+          : LaunchMode.inAppBrowserView,
     );
 
     if (!launched) {
-      throw const AuthException('구글 로그인 화면을 열지 못했습니다.');
-    }
-  }
-
-  Future<void> signInWithKakao() async {
-    final launched = await _client.auth.signInWithOAuth(
-      OAuthProvider.kakao,
-      redirectTo: _oauthRedirectForPlatform,
-      authScreenLaunchMode: kIsWeb
-          ? LaunchMode.platformDefault
-          : LaunchMode.externalApplication,
-    );
-
-    if (!launched) {
-      throw const AuthException('카카오 로그인 화면을 열지 못했습니다.');
+      throw AuthException('$failureLabel 로그인 화면을 열지 못했습니다.');
     }
   }
 
   Future<void> signOut() {
     return _client.auth.signOut();
   }
+
+  Future<void> deleteCurrentAccount({required String confirmationId}) async {
+    final response = await _client.functions.invoke(
+      'delete-account',
+      body: {'confirmationId': confirmationId.trim()},
+    );
+    if (response.status < 200 || response.status >= 300) {
+      final data = response.data;
+      final msg = data is Map && data['error'] is String
+          ? data['error'] as String
+          : 'HTTP ${response.status}';
+      throw AuthException('계정 삭제에 실패했습니다: $msg');
+    }
+
+    try {
+      await _client.auth.signOut();
+    } catch (_) {
+      // Auth row has already been deleted; local session cleanup failure should
+      // not surface as a failed deletion.
+    }
+  }
+}
+
+String accountDeletionConfirmationId({
+  required User user,
+  AppUserProfile? profile,
+}) {
+  final email = _cleanNullableText(user.email);
+  if (email != null) {
+    return email;
+  }
+  final shareId = _cleanNullableText(profile?.shareId);
+  if (shareId != null) {
+    return shareId;
+  }
+  return user.id;
+}
+
+bool accountDeletionConfirmationMatches({
+  required String input,
+  required String expected,
+}) {
+  return _normalizeConfirmation(input) == _normalizeConfirmation(expected);
+}
+
+String _normalizeConfirmation(String value) => value.trim().toLowerCase();
+
+String? _cleanNullableText(String? value) {
+  final trimmed = value?.trim();
+  return trimmed == null || trimmed.isEmpty ? null : trimmed;
 }

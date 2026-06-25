@@ -219,7 +219,7 @@ class _CompanionDiaryEmptyState extends StatelessWidget {
           Text(
             error ??
                 (canWrite
-                    ? '오늘 하루 예수님과 동행한 일지를 남겨보세요'
+                    ? '오늘 하루 예배, 말씀, 기도 등 신앙 기록을 남겨보세요'
                     : '로그인하면 동행 일지를 남길 수 있어요.'),
             textAlign: TextAlign.center,
             style: const TextStyle(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/app_notification.dart';
 import '../../state/notification_providers.dart';
+import '../web_pointer_interceptor.dart';
 import 'notification_badge.dart';
 import 'notification_dropdown.dart';
 
@@ -76,25 +77,29 @@ class _NotificationBellButtonState
           children: [
             // Barrier: 바깥 탭으로 닫기.
             Positioned.fill(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: _closeDropdown,
-                child: const ColoredBox(color: Color(0x00000000)),
+              child: WebPointerInterceptor(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: _closeDropdown,
+                  child: const ColoredBox(color: Color(0x00000000)),
+                ),
               ),
             ),
             Positioned(
               left: left,
               top: anchorPosition.dy + anchorSize.height + 6,
-              child: NotificationDropdown(
-                onClose: _closeDropdown,
-                onTapItem: (n) {
-                  _closeDropdown();
-                  widget.onNavigate(n);
-                },
-                onOpenHistory: () {
-                  _closeDropdown();
-                  widget.onOpenHistory();
-                },
+              child: WebPointerInterceptor(
+                child: NotificationDropdown(
+                  onClose: _closeDropdown,
+                  onTapItem: (n) {
+                    _closeDropdown();
+                    widget.onNavigate(n);
+                  },
+                  onOpenHistory: () {
+                    _closeDropdown();
+                    widget.onOpenHistory();
+                  },
+                ),
               ),
             ),
           ],

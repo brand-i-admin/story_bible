@@ -21,6 +21,10 @@ Buckets emptied:
 destroy user data; operators can manually empty it from Dashboard if they're
 on a disposable dev project.
 
+**story-image-sources is NOT touched** — release-builder source PNG archive.
+It is intentionally preserved across db-init so another machine can restore
+`assets/story_images/` without regenerating or reuploading 2GB+ of originals.
+
 Behaviour if `SUPABASE_SERVICE_ROLE_KEY_<ENV>` is missing:
   Default direct script usage warns and exits 0. `make db-init` passes
   `--strict`, so missing keys or purge failures stop the reset before SQL runs.
@@ -52,10 +56,7 @@ BUCKETS = ("characters", "proposal-scenes", "proposal-characters")
 
 
 def env_var(name: str, env_suffix: str) -> str | None:
-    return (
-        os.environ.get(f"{name}_{env_suffix.upper()}")
-        or os.environ.get(name)
-    )
+    return os.environ.get(f"{name}_{env_suffix.upper()}") or os.environ.get(name)
 
 
 def empty_bucket(
@@ -188,9 +189,7 @@ def delete_object(
         f"{base_url.rstrip('/')}/storage/v1/object/{bucket}/{encoded_path}",
         timeout=30,
     )
-    if response.status_code in (200, 204, 404) or _is_object_not_found_body(
-        response
-    ):
+    if response.status_code in (200, 204, 404) or _is_object_not_found_body(response):
         return True, "deleted"
     return (
         False,

@@ -1,0 +1,782 @@
+[
+  {
+    "title": "계시의 시작: 영광의 그리스도",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "lm_nt_con_patmos",
+    "place_name": "밧모섬",
+    "lat": 37.32,
+    "lng": 26.55,
+    "summary": "요한은 밧모섬에서 영광 가운데 계신 그리스도를 보고 일곱 교회에 전할 말씀을 받는다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「계시의 시작」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "1:9",
+        "to": "1:20"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 1,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "밧모섬의 바위 해안에서 노년의 요한이 거친 유배자의 망토를 입고 외롭게 기도하며, 얼굴에는 고난과 충성이 함께 드러난다",
+      "노년의 요한이 강한 빛 앞에 놀라 엎드리고, 예수님은 위엄과 자비가 함께 있는 표정으로 그에게 손을 내미신다",
+      "노년의 요한이 떨리는 손으로 두루마리를 품에 안고 일어서며, 바다 바람 속에서도 일곱 교회에 전할 말씀을 받을 준비를 한다"
+    ],
+    "scene_captions": [
+      "밧모섬의 바위 해안에서 노년의 요한이 거친 유배자의 망토를 입고 외롭게 기도한다",
+      "요한은 밧모섬에서 영광 가운데 계신 그리스도를 보고 일곱 교회에 전할 말씀을 받는다",
+      "노년의 요한이 떨리는 손으로 두루마리를 품에 안고 일어선다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "john",
+        "jesus"
+      ],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한이 계시를 받은 장소는 어디입니까?",
+        "choices": [
+          "밧모라 하는 섬",
+          "고린도 항구",
+          "빌립보 감옥"
+        ],
+        "answer_index": 0,
+        "explanation": "계 1:9 — '밧모라 하는 섬에 있었더니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "요한은 영광의 그리스도를 보고 어떤 반응을 보였습니까?",
+        "choices": [
+          "그 발 앞에 엎드러졌다",
+          "배를 타고 도망했다",
+          "두루마리를 찢었다"
+        ],
+        "answer_index": 0,
+        "explanation": "계 1:17 — '그 발 앞에 엎드러져 죽은 자 같이 되매'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "예수님은 요한에게 본 것을 어디에 보내라고 하십니까?",
+        "choices": [
+          "일곱 교회",
+          "예루살렘 군대",
+          "로마 원로원"
+        ],
+        "answer_index": 0,
+        "explanation": "계 1:11 — '일곱 교회에 보내라'"
+      }
+    ]
+  },
+  {
+    "title": "하늘 보좌와 예배",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john"
+    ],
+    "landmark_code": "rgn_heavenly_throne",
+    "place_name": "하늘 보좌",
+    "lat": null,
+    "lng": null,
+    "summary": "요한은 열린 하늘 문을 통해 보좌와 그 앞의 예배를 보고 하나님께 드려지는 영광을 목격한다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「하늘 보좌와 예배」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "4:1",
+        "to": "4:11"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 2,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "노년의 요한이 열린 하늘 문 앞에서 놀라 숨을 멈춘 듯 서 있고, 그의 거친 유배자 옷자락은 밝은 빛을 받아 흔들린다",
+      "하늘 보좌 둘레에 흰 옷을 입은 장로들이 엎드려 예배하고, 노년의 요한은 압도된 표정으로 그 광경을 바라본다",
+      "장로들이 자기 관을 내려놓고 경배하는 장면 앞에서 노년의 요한은 두 손을 가슴에 모은 채 경외심으로 고개를 숙인다"
+    ],
+    "scene_captions": [
+      "노년의 요한이 열린 하늘 문 앞에서 놀라 숨을 멈춘 듯 서 있다",
+      "하늘 보좌 둘레에 흰 옷을 입은 장로들이 엎드려 예배한다",
+      "요한은 열린 하늘 문을 통해 보좌와 그 앞의 예배를 보고 하나님께 드려지는 영광을 목격한다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한이 하늘에서 처음 본 중심 장면은 무엇입니까?",
+        "choices": [
+          "보좌와 그 위에 앉으신 이",
+          "무너진 성벽",
+          "갈릴리의 배"
+        ],
+        "answer_index": 0,
+        "explanation": "계 4:2 — '보좌를 베풀었고 그 보좌 위에 앉으신 이가 있는데'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "이십사 장로들은 보좌 앞에서 무엇을 내려놓습니까?",
+        "choices": [
+          "면류관",
+          "그물",
+          "세금 장부"
+        ],
+        "answer_index": 0,
+        "explanation": "계 4:10 — '자기의 면류관을 보좌 앞에 던지며'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "네 생물이 밤낮 쉬지 않고 외치는 말의 중심은 무엇입니까?",
+        "choices": [
+          "거룩하다",
+          "두렵다",
+          "떠나라"
+        ],
+        "answer_index": 0,
+        "explanation": "계 4:8 — '거룩하다 거룩하다 거룩하다'"
+      }
+    ]
+  },
+  {
+    "title": "어린양과 봉인된 두루마리",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "rgn_heavenly_throne",
+    "place_name": "하늘 보좌",
+    "lat": null,
+    "lng": null,
+    "summary": "요한은 봉인된 두루마리를 열기에 합당하신 어린양을 보고 하늘과 땅의 찬양을 듣는다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「어린양과 봉인된 두루마리」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "5:1",
+        "to": "5:14"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 3,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "노년의 요한이 아무도 봉인된 두루마리를 열 수 없다는 사실에 눈물을 흘리고, 주변의 장로들은 조용하고 엄숙한 얼굴로 그를 바라본다",
+      "예수님이 어린양으로 묘사되는 승리자의 모습으로 두루마리 앞에 서 계시고, 노년의 요한은 눈물 사이로 놀라움과 소망을 품고 바라본다",
+      "하늘의 무리가 보좌 앞에 모여 찬양하고, 노년의 요한은 깊은 경외심으로 무릎을 꿇은 채 그 찬양의 중심을 바라본다"
+    ],
+    "scene_captions": [
+      "노년의 요한이 아무도 봉인된 두루마리를 열 수 없다는 사실에 눈물을 흘린다",
+      "예수님이 어린양으로 묘사되는 승리자의 모습으로 두루마리 앞에 서 계시다",
+      "요한은 봉인된 두루마리를 열기에 합당하신 어린양을 보고 하늘과 땅의 찬양을 듣는다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "john",
+        "jesus"
+      ],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한이 오른손에서 본 두루마리는 어떤 상태였습니까?",
+        "choices": [
+          "일곱 인으로 봉해졌다",
+          "이미 불에 탔다",
+          "빈 종이였다"
+        ],
+        "answer_index": 0,
+        "explanation": "계 5:1 — '일곱 인으로 봉하였더라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "두루마리를 펴기에 합당한 분으로 나타난 이는 누구입니까?",
+        "choices": [
+          "죽임 당한 어린양",
+          "로마 황제",
+          "힘센 천사"
+        ],
+        "answer_index": 0,
+        "explanation": "계 5:6 — '어린 양이 섰는데 일찍 죽임을 당한 것 같더라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하늘의 존재들이 어린양께 드린 찬양의 이유는 무엇입니까?",
+        "choices": [
+          "피로 사람들을 사셨기 때문",
+          "큰 도시를 세웠기 때문",
+          "전쟁 무기를 만들었기 때문"
+        ],
+        "answer_index": 0,
+        "explanation": "계 5:9 — '각 족속과 방언과 백성과 나라 가운데서 사람들을 피로 사서'"
+      }
+    ]
+  },
+  {
+    "title": "하나님의 백성과 큰 무리",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john"
+    ],
+    "landmark_code": "rgn_heavenly_throne",
+    "place_name": "땅, 하나님의 보좌 앞",
+    "lat": null,
+    "lng": null,
+    "summary": "요한은 하나님의 백성이 보호받고 큰 무리가 보좌 앞에서 구원의 기쁨을 누리는 환상을 본다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「하나님의 백성과 큰 무리」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "7:1",
+        "to": "7:17"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 4,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "땅의 네 방향에서 강한 바람이 멈춘 듯하고, 흰 옷을 입은 하나님의 백성은 두려움 속에서도 보호받는 표정으로 서 있다",
+      "셀 수 없이 많은 무리가 흰 옷을 입고 보좌 앞에 모여 기쁨과 눈물이 섞인 얼굴로 구원을 찬양한다",
+      "노년의 요한이 큰 무리를 바라보다가 눈물을 닦아 주시는 위로의 장면을 보고, 얼굴에 깊은 안도와 경외가 번진다"
+    ],
+    "scene_captions": [
+      "요한은 하나님의 백성이 보호받고 큰 무리가 보좌 앞에서 구원의 기쁨을 누리는 환상을 본다",
+      "셀 수 없이 많은 무리가 흰 옷을 입고 보좌 앞에 모여 기쁨과 눈물이 섞인 얼굴로 구원을 찬양한다",
+      "노년의 요한이 큰 무리를 바라보다가 눈물을 닦아 주시는 위로의 장면을 보다"
+    ],
+    "scene_characters": [
+      [],
+      [],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한은 각 나라와 족속에서 나온 어떤 무리를 봅니까?",
+        "choices": [
+          "아무도 능히 셀 수 없는 큰 무리",
+          "열두 명의 재판관",
+          "한 도시의 상인들"
+        ],
+        "answer_index": 0,
+        "explanation": "계 7:9 — '아무라도 능히 셀 수 없는 큰 무리'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "큰 무리는 보좌와 어린양 앞에서 무엇을 입고 섭니까?",
+        "choices": [
+          "흰 옷",
+          "로마 갑옷",
+          "왕의 붉은 망토"
+        ],
+        "answer_index": 0,
+        "explanation": "계 7:9 — '흰 옷을 입고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "하나님은 큰 환난에서 나온 이들에게 무엇을 닦아 주십니까?",
+        "choices": [
+          "모든 눈물",
+          "성전의 먼지",
+          "전쟁의 피"
+        ],
+        "answer_index": 0,
+        "explanation": "계 7:17 — '모든 눈물을 그 눈에서 씻어 주실 것임이러라'"
+      }
+    ]
+  },
+  {
+    "title": "하늘의 찬양과 어린양의 혼인잔치",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "rgn_heavenly_throne",
+    "place_name": "하늘",
+    "lat": null,
+    "lng": null,
+    "summary": "요한은 하늘의 큰 찬양과 어린양의 혼인잔치에 초대된 자들의 복을 본다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「하늘의 찬양과 어린양의 혼인잔치」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "19:1",
+        "to": "19:10"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 5,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "하늘의 큰 무리가 밝은 옷차림으로 보좌 앞에 모이고, 노년의 요한은 압도된 얼굴로 그 찬양의 물결을 바라본다",
+      "예수님이 잔치의 주인처럼 기쁨과 위엄이 함께 있는 모습으로 서 계시고, 초대받은 이들은 깨끗한 예복을 입고 설레는 표정으로 기다린다",
+      "노년의 요한이 너무 놀라 엎드리려 하자 한 사자가 그를 일으켜 세우고, 요한은 겸손하고 떨리는 얼굴로 하나님께 예배해야 함을 깨닫는다"
+    ],
+    "scene_captions": [
+      "하늘의 큰 무리가 밝은 옷차림으로 보좌 앞에 모인다",
+      "예수님이 잔치의 주인처럼 기쁨과 위엄이 함께 있는 모습으로 서 계시다",
+      "한 사자가 그를 일으켜 세운다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "하늘의 큰 무리가 외치는 찬양의 말은 무엇입니까?",
+        "choices": [
+          "할렐루야",
+          "가이사 만세",
+          "문을 닫으라"
+        ],
+        "answer_index": 0,
+        "explanation": "계 19:1 — '할렐루야 구원과 영광과 능력이'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "혼인잔치가 준비된 이는 누구입니까?",
+        "choices": [
+          "어린양",
+          "용",
+          "짐승"
+        ],
+        "answer_index": 0,
+        "explanation": "계 19:7 — '어린 양의 혼인 기약이 이르렀고'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "천사는 요한이 엎드려 경배하려 하자 누구께 경배하라고 합니까?",
+        "choices": [
+          "하나님",
+          "천사 자신",
+          "일곱 교회"
+        ],
+        "answer_index": 0,
+        "explanation": "계 19:10 — '오직 하나님께 경배하라'"
+      }
+    ]
+  },
+  {
+    "title": "백마 탄 왕의 승리",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "rgn_armageddon",
+    "place_name": "하늘, 땅",
+    "lat": 32.58,
+    "lng": 35.18,
+    "summary": "요한은 백마 탄 왕으로 오시는 그리스도의 공의로운 승리와 악의 패배를 본다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「백마 탄 왕의 승리」를 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "19:11",
+        "to": "19:21"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 6,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "하늘이 열리고 예수님이 백마 탄 왕처럼 위엄 있게 나타나시며, 노년의 요한은 두려움과 확신이 섞인 얼굴로 그 모습을 바라본다",
+      "왕을 따르는 무리가 밝은 옷차림으로 질서 있게 뒤따르고, 땅의 교만한 권세자들은 굳은 얼굴로 물러선다",
+      "전투가 끝난 들판에서 악한 권세는 무너지고, 예수님은 공의로운 승리자의 차분한 표정으로 서 계신다"
+    ],
+    "scene_captions": [
+      "하늘이 열리고 예수님이 백마 탄 왕처럼 위엄 있게 나타나시다",
+      "왕을 따르는 무리가 밝은 옷차림으로 질서 있게 뒤따르다",
+      "전투가 끝난 들판에서 악한 권세는 무너진다, 예수님은 공의로운 승리자의 차분한 표정으로 서 계신다"
+    ],
+    "scene_characters": [
+      [
+        "john",
+        "jesus"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한이 본 백마 탄 이는 어떤 이름으로 불립니까?",
+        "choices": [
+          "충신과 진실",
+          "두려움과 혼돈",
+          "상인과 재판관"
+        ],
+        "answer_index": 0,
+        "explanation": "계 19:11 — '그 이름은 충신과 진실이라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "백마 탄 왕은 무엇으로 만국을 치십니까?",
+        "choices": [
+          "입에서 나오는 예리한 검",
+          "성전의 금잔",
+          "어부의 그물"
+        ],
+        "answer_index": 0,
+        "explanation": "계 19:15 — '그의 입에서 이한 검이 나오니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "왕의 옷과 다리에 기록된 이름은 무엇입니까?",
+        "choices": [
+          "만왕의 왕이요 만주의 주",
+          "로마의 수호자",
+          "바다의 주인"
+        ],
+        "answer_index": 0,
+        "explanation": "계 19:16 — '만왕의 왕이요 만주의 주라'"
+      }
+    ]
+  },
+  {
+    "title": "흰 보좌 심판과 새 창조 선언",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "rgn_new_jerusalem",
+    "place_name": "흰 보좌, 새 창조",
+    "lat": null,
+    "lng": null,
+    "summary": "요한은 흰 보좌 앞의 심판과 처음 것들이 지나가고 새 창조가 선언되는 장면을 본다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「흰 보좌 심판과 새 창조 선언」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "20:11",
+        "to": "21:8"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 7,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "노년의 요한이 크고 흰 보좌 앞에 서서 엄숙하게 떨고, 사람들은 자기 삶이 드러나는 자리 앞에서 진지하고 두려운 표정이다",
+      "바다와 죽음이 사람들을 내어놓는 환상적 장면을 노년의 요한이 숨죽여 바라보고, 보좌 앞에는 공의로운 침묵이 흐른다",
+      "예수님이 새 창조의 빛 가운데 서 계시고, 눈물을 닦은 사람들이 슬픔에서 벗어나 놀라운 평안의 표정으로 새 시작을 바라본다"
+    ],
+    "scene_captions": [
+      "노년의 요한이 크고 흰 보좌 앞에 서서 엄숙하게 떨다",
+      "바다와 죽음이 사람들을 내어놓는 환상적 장면을 노년의 요한이 숨죽여 바라본다",
+      "요한은 흰 보좌 앞의 심판과 처음 것들이 지나가고 새 창조가 선언되는 장면을 본다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "john"
+      ],
+      [
+        "jesus"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "요한이 본 큰 흰 보좌 앞에서 무엇들이 펼쳐집니까?",
+        "choices": [
+          "책들과 생명책",
+          "세금 장부와 군사 명단",
+          "성전 지도와 항해도"
+        ],
+        "answer_index": 0,
+        "explanation": "계 20:12 — '책들이 펴 있고 또 다른 책이 펴졌으니 곧 생명책이라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "사망과 음부는 어디에 던져집니까?",
+        "choices": [
+          "불못",
+          "갈릴리 바다",
+          "예루살렘 성문"
+        ],
+        "answer_index": 0,
+        "explanation": "계 20:14 — '사망과 음부도 불못에 던지우니'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "새 창조에서 다시 있지 않은 것으로 언급된 것은 무엇입니까?",
+        "choices": [
+          "사망과 애통과 아픈 것",
+          "찬양과 예배와 기쁨",
+          "생명수와 거룩한 성"
+        ],
+        "answer_index": 0,
+        "explanation": "계 21:4 — '사망이 없고 애통하는 것이나 곡하는 것이나 아픈 것이'"
+      }
+    ]
+  },
+  {
+    "title": "새 예루살렘의 영광",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "rgn_new_jerusalem",
+    "place_name": "새 예루살렘",
+    "lat": null,
+    "lng": null,
+    "summary": "요한은 하나님께로부터 내려오는 새 예루살렘과 그 안의 생명수 강, 생명나무의 영광을 본다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「새 예루살렘의 영광」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "21:9",
+        "to": "22:5"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 8,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "노년의 요한이 높은 산 같은 곳에서 빛나는 새 예루살렘을 바라보며, 얼굴에는 말로 다 못할 경외와 기쁨이 떠오른다",
+      "성문들이 밝게 열리고 여러 민족의 사람들이 깨끗한 옷차림으로 평화롭게 들어오며, 예수님은 따뜻한 왕의 표정으로 그들을 맞으신다",
+      "생명수 강이 도시 한가운데 흐르고 사람들이 치유와 쉼을 누리며, 노년의 요한은 두 손을 모은 채 영원한 예배의 평안을 바라본다"
+    ],
+    "scene_captions": [
+      "노년의 요한이 높은 산 같은 곳에서 빛나는 새 예루살렘을 바라본다",
+      "성문들이 밝게 열리고 여러 민족의 사람들이 깨끗한 옷차림으로 평화롭게 들어온다",
+      "생명수 강이 도시 한가운데 흐르고 사람들이 치유와 쉼을 누리다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "새 예루살렘에서 요한이 성 안에 보지 못한 것은 무엇입니까?",
+        "choices": [
+          "성전",
+          "생명수의 강",
+          "하나님의 보좌"
+        ],
+        "answer_index": 0,
+        "explanation": "계 21:22 — '성안에 성전을 내가 보지 못하였으니'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "새 예루살렘을 밝히는 등은 누구입니까?",
+        "choices": [
+          "어린양",
+          "해와 달",
+          "일곱 촛대"
+        ],
+        "answer_index": 0,
+        "explanation": "계 21:23 — '어린 양이 그 등이 되심이라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "생명나무 잎사귀는 무엇을 위해 있다고 합니까?",
+        "choices": [
+          "만국을 소성하게 한다",
+          "성문을 잠그게 한다",
+          "바다를 다시 만들게 한다"
+        ],
+        "answer_index": 0,
+        "explanation": "계 22:2 — '그 나무 잎사귀들은 만국을 소성하기 위하여 있더라'"
+      }
+    ]
+  },
+  {
+    "title": "마지막 초청: 내가 속히 오리라",
+    "era": "era_nt_consummation",
+    "characters": [
+      "john",
+      "jesus"
+    ],
+    "landmark_code": "rgn_new_jerusalem",
+    "place_name": "새 예루살렘, 교회들",
+    "lat": null,
+    "lng": null,
+    "summary": "요한계시록은 주 예수께서 속히 오신다는 약속과 생명수를 받으라는 마지막 초청으로 마무리된다.",
+    "background_context": "요한계시록은 요한이 밧모섬에서 받은 계시를 소아시아 일곱 교회에 전하도록 기록한 책입니다. 이 이야기는 「마지막 초청」을 다룹니다.",
+    "bible_ref": [
+      {
+        "book": "계",
+        "from": "22:6",
+        "to": "22:21"
+      }
+    ],
+    "start_year": 95,
+    "end_year": 95,
+    "time_precision": "approx",
+    "story_index": 9,
+    "unit_code": "revelation_safe_vision_flow",
+    "unit_title": "요한계시록의 안전한 큰 환상 흐름",
+    "unit_order": 1,
+    "story_scenes": [
+      "노년의 요한이 마지막 말씀을 듣고 두루마리를 조심스럽게 품에 안으며, 얼굴에는 경외와 긴급함이 함께 드러난다",
+      "예수님이 교회들을 향해 속히 오겠다는 약속을 전하시는 듯 손을 내미시고, 성도들은 기다림과 기쁨이 섞인 표정으로 바라본다",
+      "목마른 사람들이 생명수 강가로 다가와 두 손을 모으고, 노년의 요한은 마지막 초청을 전해야 한다는 결심으로 교회들을 향해 몸을 돌린다"
+    ],
+    "scene_captions": [
+      "노년의 요한이 마지막 말씀을 듣고 두루마리를 조심스럽게 품에 안는다",
+      "예수님이 교회들을 향해 속히 오겠다는 약속을 전하시는 듯 손을 내미시다",
+      "목마른 사람들이 생명수 강가로 다가와 두 손을 모은다"
+    ],
+    "scene_characters": [
+      [
+        "john"
+      ],
+      [
+        "jesus"
+      ],
+      [
+        "john"
+      ]
+    ],
+    "quiz_questions": [
+      {
+        "type": "fact",
+        "display_order": 0,
+        "question": "천사는 요한에게 이 말씀들이 어떠하다고 말합니까?",
+        "choices": [
+          "신실하고 참되다",
+          "숨겨야 할 비밀이다",
+          "사람이 만든 이야기다"
+        ],
+        "answer_index": 0,
+        "explanation": "계 22:6 — '이 말은 신실하고 참된지라'"
+      },
+      {
+        "type": "attitude",
+        "display_order": 1,
+        "question": "성령과 신부가 함께 하는 초청은 무엇입니까?",
+        "choices": [
+          "오라",
+          "떠나라",
+          "잠잠하라"
+        ],
+        "answer_index": 0,
+        "explanation": "계 22:17 — '성령과 신부가 말씀하시기를 오라'"
+      },
+      {
+        "type": "story_context",
+        "display_order": 2,
+        "question": "요한계시록의 마지막 응답은 무엇을 기다리는 고백입니까?",
+        "choices": [
+          "주 예수여 오시옵소서",
+          "예루살렘으로 돌아가겠습니다",
+          "책을 다시 봉하겠습니다"
+        ],
+        "answer_index": 0,
+        "explanation": "계 22:20 — '아멘 주 예수여 오시옵소서'"
+      }
+    ]
+  }
+]

@@ -21,6 +21,7 @@ class EventProposal {
     required this.eraId,
     required this.title,
     required this.summary,
+    required this.backgroundContext,
     required this.characterCodes,
     required this.landmarkId,
     this.placeName,
@@ -31,7 +32,11 @@ class EventProposal {
     required this.timePrecision,
     required this.bibleRefs,
     required this.storyScenes,
+    required this.sceneCaptions,
     required this.sceneCharacters,
+    required this.unitCode,
+    required this.unitTitle,
+    required this.unitOrder,
     required this.sceneImagePaths,
     required this.sceneImagePrompts,
     required this.proposedCharacters,
@@ -66,6 +71,7 @@ class EventProposal {
   final String? eraId;
   final String title;
   final String? summary;
+  final String? backgroundContext;
   final List<String> characterCodes;
 
   /// v2 위치 모델 — landmarks.id (region/anchor/minor) FK. 'general' 타입에서는 null.
@@ -83,7 +89,11 @@ class EventProposal {
   final String timePrecision;
   final List<Map<String, dynamic>> bibleRefs; // [{book, from, to}, ...]
   final List<String> storyScenes;
+  final List<String> sceneCaptions;
   final List<List<String>> sceneCharacters;
+  final String unitCode;
+  final String unitTitle;
+  final int unitOrder;
 
   /// 장면별 생성된 이미지의 Supabase Storage 경로. storyScenes 와 동일한 길이여야
   /// 함. `proposal-scenes/{uid}/{draft}/scene_{idx}.png` 형태. 비어 있으면 아직
@@ -146,6 +156,7 @@ class EventProposal {
       eraId: row['era_id'] as String?,
       title: row['title'] as String,
       summary: row['summary'] as String?,
+      backgroundContext: row['background_context'] as String?,
       characterCodes: _asStringList(row['character_codes']),
       landmarkId: row['landmark_id'] as String?,
       placeName: _landmarkField(row, 'name') as String?,
@@ -156,7 +167,11 @@ class EventProposal {
       timePrecision: (row['time_precision'] as String?) ?? 'approx',
       bibleRefs: _asMapList(row['bible_refs']),
       storyScenes: _asStringList(row['story_scenes']),
+      sceneCaptions: _asStringList(row['scene_captions']),
       sceneCharacters: _asNestedStringList(row['scene_characters']),
+      unitCode: (row['unit_code'] as String?) ?? 'default',
+      unitTitle: (row['unit_title'] as String?) ?? '전체 흐름',
+      unitOrder: (row['unit_order'] as num?)?.toInt() ?? 1,
       sceneImagePaths: _asStringList(row['scene_image_paths']),
       sceneImagePrompts: _asStringList(row['scene_image_prompts']),
       proposedCharacters: _asProposedCharacters(row['proposed_characters']),

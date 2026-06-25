@@ -41,7 +41,7 @@ make check-pubspec-assets
 
 - Vertex AI 대량 생성은 비용이 들 수 있으므로 가볍게 실행하지 않는다.
 - 생성 SQL은 검토 없이 production에 적용하지 않는다.
-- 이야기/인물 데이터 변경 시 `assets/200_stories`, `tools/seed/character_meta.json`, 생성 seed SQL의 일관성을 확인한다.
+- 이야기/인물 데이터 변경 시 `assets/events`, `tools/seed/character_meta.json`, 생성 seed SQL의 일관성을 확인한다.
 - 가능하면 ad-hoc 문자열 조작보다 JSON/SQL builder와 구조화 parser를 사용한다.
 
 ## 검증

@@ -23,7 +23,7 @@
 | 지도 | MapLibre GL JS WebView + OpenFreeMap Liberty + Mapzen Terrarium DEM |
 | AI 에셋 생성 | Google Cloud Vertex AI Imagen |
 | 인증 | Apple / Google / Kakao 소셜 로그인 |
-| 성경 텍스트 | KRV 개역한글 (31,904절) |
+| 성경 텍스트 | KRV 개역한글 (31,102절) |
 
 ## 4. 핵심 기능
 
@@ -81,9 +81,9 @@
 
 ```
 assets/bible/*.txt ─→ build_krv_seed_sql.py ─→ bible_verses SQL
-assets/200_stories/ (각 항목에 story_index 직접 박힘)
+assets/events/ (각 항목에 story_index 직접 박힘)
                     ├→ build_character_meta_json.py    ─→ character_meta.json (모든 인물 + 아바타 프롬프트)
-                    ├→ build_200_stories_seed_sql.py ─→ events SQL (jsonb/배열 흡수)
+                    ├→ build_events_seed_sql.py ─→ events SQL (jsonb/배열 흡수)
                     ├→ build_characters_seed_sql.py ─→ characters SQL (is_active 토글 보존)
                     ├→ generate_avatars_vertex.py ─→ 아바타 PNG (기존 보존)
                     └→ generate_event_story_images_vertex.py ─→ 장면 이미지

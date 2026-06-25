@@ -54,5 +54,44 @@ class ParseBookTextFileTests(unittest.TestCase):
         )
 
 
+class VerseSequenceValidationTests(unittest.TestCase):
+    def _row(self, chapter_no: int, verse_no: int, line_no: int) -> mod.VerseRow:
+        return mod.VerseRow(
+            translation="KRV",
+            testament="new",
+            book_no=44,
+            book_name="사도행전",
+            chapter_no=chapter_no,
+            verse_no=verse_no,
+            verse_text=f"본문 {chapter_no}:{verse_no}",
+            source_line_no=line_no,
+        )
+
+    def test_detects_duplicate_verse_address(self) -> None:
+        problems = mod.find_verse_sequence_problems(
+            [
+                self._row(1, 1, 10),
+                self._row(1, 1, 11),
+            ]
+        )
+
+        self.assertEqual(len(problems), 1)
+        self.assertIn("duplicate verse address: KRV 사도행전 1:1", problems[0])
+        self.assertIn("lines 10, 11", problems[0])
+
+    def test_detects_internal_missing_verse_address(self) -> None:
+        problems = mod.find_verse_sequence_problems(
+            [
+                self._row(1, 1, 10),
+                self._row(1, 3, 12),
+            ]
+        )
+
+        self.assertEqual(
+            problems,
+            ["missing verse address: KRV 사도행전 1:2"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

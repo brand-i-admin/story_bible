@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 445 Dart tests</div>
+      <div class="subtle">310 events · 465 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -39,11 +39,11 @@
 <p>프로젝트 스킬/에이전트가 어떻게 동작하는지, 그리고 유지보수 규칙을 정리한 가이드이다.</p>
 <p>실제 진입 규칙은 <code>AGENTS.md</code>를 우선한다.</p>
 <p>최종 수정: 2026-06-23</p></blockquote>
-<blockquote><p>현재 콘텐츠 운영 주의: 이 문서의 17~20장에 있는 사역자 웹 제안/승인 흐름은</p>
-<p>구현 이력과 구조 참고용이다. 현재 운영에서는 웹을 배포하지 않고, 신규 이야기</p>
-<p>요청이 들어오면 운영자가 로컬에서 JSON/이미지/seed/앱 번들을 직접 갱신한다.</p>
-<p>실제 신규 이야기 추가 절차는 <a href="content-update.html">CONTENT_UPDATE.md</a>와</p>
-<p><a href="develop-flow.html">develop-flow.md</a>를 우선한다.</p></blockquote>
+<blockquote><p>현재 콘텐츠 운영 주의: 신규 이야기 추가의 기준 흐름은</p>
+<p><a href="develop-flow.html#32-공개-콘텐츠--이야기-데이터-flow">develop-flow.md §3.2</a>를</p>
+<p>우선한다. 이 문서의 17~20장은 proposal 라이프사이클의 상세 참고 자료이며,</p>
+<p>최신 <code>background_context</code>, <code>scene_captions</code>, unit 필드는 <code>db_init.sql</code>,</p>
+<p>Flutter 제안 UI, 관리자 승인 UI에 반영되어 있다.</p></blockquote>
 <hr>
 <h2 id="1-전체-흐름-한눈에">1. 전체 흐름 한눈에</h2>
 <pre><code class="language-">[코드 작성 요청]
@@ -292,7 +292,7 @@ $backend 스킬 호출 시:
 
     subgraph BUILD[&quot;🔨 2. SQL 생성 (make)&quot;]
         BO[build_landmarks_&lt;br/&gt;seed_sql.py]
-        OS[supabase/200_stories/&lt;br/&gt;landmarks_seed.sql]
+        OS[supabase/events/&lt;br/&gt;landmarks_seed.sql]
     end
 
     subgraph DB[(&quot;🗄️ 3. Supabase DB&quot;)]
@@ -390,7 +390,7 @@ $backend 스킬 호출 시:
 
 이벤트 좌표 ↔ 랜드마크 정렬 (모리아·헤브론·막벨라 등 어긋남 보정):
   ① make align-events-to-landmarks-dry   → 변경 후보만 출력 (검증)
-  ② make align-events-to-landmarks       → assets/200_stories/*.json 의 lat/lng 를
+  ② make align-events-to-landmarks       → assets/events/*.json 의 lat/lng 를
                                           매칭되는 landmark 좌표로 일괄 갱신
   ③ make seed-stories                    → events SQL 재생성
   ④ make apply-seeds-stories-characters ENV=dev
@@ -405,7 +405,7 @@ $backend 스킬 호출 시:
     Q --&gt; S1[성경 본문 텍스트&lt;br/&gt;assets/bible/*.txt]
     S1 --&gt; C1[make seed-bible-verses&lt;br/&gt;+ apply-bible-verses-seeds]
 
-    Q --&gt; S2[이야기/인물&lt;br/&gt;assets/200_stories/*.json]
+    Q --&gt; S2[이야기/인물&lt;br/&gt;assets/events/*.json]
     S2 --&gt; C2[make seed-stories-characters&lt;br/&gt;+ apply-seeds-stories-characters]
 
     Q --&gt; S3[랜드마크 추가/수정&lt;br/&gt;assets/landmarks/landmarks.json]
@@ -442,7 +442,7 @@ $backend 스킬 호출 시:
     Note over U: ① SQL 생성 (전체)
     U-&gt;&gt;Local: make seed-all
     Local-&gt;&gt;SQL: krv_bible_verses_part_*.sql
-    Local-&gt;&gt;SQL: 200_stories_seed_part_*.sql
+    Local-&gt;&gt;SQL: events_seed_part_*.sql
     Local-&gt;&gt;SQL: characters_seed.sql
     Local-&gt;&gt;SQL: landmarks_seed.sql
 
@@ -452,7 +452,7 @@ $backend 스킬 호출 시:
 
     Note over U: ③ 데이터 시드 (4-체인 자동)
     U-&gt;&gt;DB: make apply-seeds ENV=dev
-    SQL-&gt;&gt;DB: bible_verses (31,904절)
+    SQL-&gt;&gt;DB: bible_verses (31,102절)
     SQL-&gt;&gt;DB: characters + events
     SQL-&gt;&gt;DB: landmarks
 
@@ -1484,7 +1484,7 @@ Referenced paths in event_proposals: 12
         └─► ApproveProposalDialog (등장 인물 is_active 결정)
                 │
                 └─► supabase.rpc(&#x27;approve_event_proposal&#x27;,
-                                  proposal_id, after_idx, char_active_overrides)
+                                  proposal_id, after_idx_override, char_active_overrides)
                        │
                        │ 한 트랜잭션 안에서:
                        │
@@ -1502,7 +1502,8 @@ Referenced paths in event_proposals: 12
                        │     → events 테이블에 row 1개 추가
                        │     · scene_image_paths = proposal 의 것 그대로 복사
                        │       (즉 &#x27;proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_N.png&#x27;)
-                       │     · 같은 era 내 뒷 story_index 시프트
+                       │     · 관리자가 승인 다이얼로그에서 고른 after_idx_override 기준
+                       │       같은 era 내 뒷 story_index 시프트
                        │     · status=&#x27;published&#x27;, deleted_at=null
                        │
                        ├─ 4. quiz_questions 테이블에 1~3개 row 풀어넣기
@@ -1510,7 +1511,9 @@ Referenced paths in event_proposals: 12
                        └─ 5. event_proposals UPDATE
                              · status=&#x27;approved&#x27;
                              · approved_event_id = &lt;events.id&gt;
-                             · synced_to_local_at IS NULL  ← 아직 로컬 미반영</code></pre>
+                             · synced_to_local_at IS NULL  ← 아직 로컬 미반영
+                             · 같은 effective after 위치의 다른 pending 제안은
+                               position_invalidated_at set</code></pre>
 <h4 id="데이터-위치-시점-b">데이터 위치 (시점 B)</h4>
 <pre><code class="language-">DB (Postgres)
 ├── events                            ← NEW row
@@ -1561,11 +1564,12 @@ Storage
 <ul><li>신규 이야기를 보는 <strong>모든 사용자</strong>가 이미지 4장 + 신규 캐릭터 1+장씩 Storage 에서 다운로드</li><li>Supabase Storage 는 public 버킷이라 CDN 캐시 발동 (같은 사용자가 두 번째 보면 로컬 브라우저/CDN 캐시 hit)</li><li>비용: 사용자 수 × 이미지 수 × 첫 view 1회 분량. 1000명 × 5장 × ~200KB ≈ <strong>1GB/대유행 한 이야기당</strong> 정도 — 운영자가 시점 C 까지 빨리 완료하면 부담 적음</li></ul>
 <h3 id="18-3-시점-c-—-운영자가-sync-실행-+-앱-재배포-완료">18.3 시점 C — 운영자가 sync 실행 + 앱 재배포 완료</h3>
 <h4 id="재배포는-어떻게-이루어지는가-운영자-표준-레시피">재배포는 어떻게 이루어지는가 (운영자 표준 레시피)</h4>
-<blockquote><p>핵심은 단 하나의 명령 — <code>make sync-approved-proposal-assets</code> 가 Phase A</p>
-<p>(다운로드) + Phase B (DB↔로컬 diff 정리) + Step C (썸네일) + Step D (pubspec</p>
-<p>갱신) <strong>네 단계를 자동으로 실행</strong>한다. 운영자가 따로 <code>make thumbnails</code>,</p>
-<p><code>make update-pubspec-assets</code> 를 부를 필요 없음. 다만 신규 인물이 추가된 경우</p>
-<p>seed 갱신만 별도로 한 번 더 돌려야 한다 (아래 5번).</p></blockquote>
+<blockquote><p>다음 앱 배포용 canonical 번들을 만드는 표준 명령은</p>
+<p><code>make release-sync-stories ENV=real</code>이다. 이 명령은 DB active events/quiz/landmark</p>
+<p>export, 승인 proposal 자산 다운로드, 삭제 diff 정리, private 원본 archive pull,</p>
+<p>썸네일 생성, pubspec 갱신, private 원본 archive push를 한 번에 실행한다.</p>
+<p><code>make sync-approved-proposal-assets</code> 단독 실행은 proposal 자산 동기화만 따로</p>
+<p>점검하거나 디버깅할 때 사용한다.</p></blockquote>
 <h5 id="사전-준비-한-번만">사전 준비 (한 번만)</h5>
 <pre><code class="language-bash"># Python 가상환경 활성 — sync 스크립트가 requests 등 의존
 source .venv/bin/activate
@@ -1576,27 +1580,30 @@ grep -E &quot;SUPABASE_SERVICE_ROLE_KEY_DEV&quot; .env.ops
 #   → service_role 키는 Storage 쓰기/PATCH 권한 필요.
 #   → ENV=prod 로 운영 환경에 적용할 거면 SUPABASE_URL_PROD 와
 #      SUPABASE_SERVICE_ROLE_KEY_PROD 도 필요.</code></pre>
-<h5 id="1-어떤-제안이-sync-대상인지-먼저-확인-dry-run">1) 어떤 제안이 sync 대상인지 먼저 확인 (dry-run)</h5>
-<pre><code class="language-bash">make sync-approved-proposal-assets-dry</code></pre>
+<h5 id="1-어떤-제안과-원본-archive-변경이-sync-대상인지-먼저-확인">1) 어떤 제안과 원본 archive 변경이 sync 대상인지 먼저 확인</h5>
+<pre><code class="language-bash">make sync-approved-proposal-assets-dry ENV=real
+make ensure-story-image-sources-dry ENV=real
+make upload-story-image-sources-dry ENV=real</code></pre>
 <p>내부 동작:</p>
 <ul><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ul>
 <p>인 행을 모두 읽어 list 출력 (실제 다운로드/DB 변경 없음).</p>
-<ul><li>각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.</li></ul>
+<ul><li>각 제안마다 어떤 파일이 어디로 갈지 미리 보여 줌.</li><li>source archive dry-run은 현재 로컬 원본과</li></ul>
+<p><code>story-image-sources/_manifests/story_images_manifest.json</code>의 <code>size</code>/<code>sha256</code>을 비교해 내려받을 파일, upsert할 파일, old manifest에만 남아 삭제될 stale object 수를 보여 준다.</p>
 <p>기대 출력:</p>
 <pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
 == [uuid1] 엘리야와 까마귀
    scene[0] proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_1.png
-     → assets/story_images/엘리야와_까마귀/scene_1.png
+     → assets/story_images/엘리야와 까마귀/scene_1.png
    scene[1] proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_2.png
-     → assets/story_images/엘리야와_까마귀/scene_2.png
+     → assets/story_images/엘리야와 까마귀/scene_2.png
    character[새] proposal-characters/&lt;uid&gt;/&lt;draft&gt;/elijah.png
      → assets/avatars/elijah.png + characters 버킷 업로드
 ...
-Phase B (예상): event_dirs=2 (deleted_at), avatars=1 (is_active=false)</code></pre>
+Phase B (예상): event_dirs=2 (active events diff), avatars=1 (DB missing code)</code></pre>
 <p>→ 결과를 보고 의도와 일치하는지 확인. 어긋나면 DB 상태 점검 후 재실행.</p>
-<h5 id="2-실제-sync-실행-—-4-phase-자동">2) 실제 sync 실행 — 4-phase 자동</h5>
-<pre><code class="language-bash">make sync-approved-proposal-assets</code></pre>
-<p><code>tools/supabase/sync_approved_proposal_assets.py --env dev</code> 가 다음 순서로 실행된다. 각 단계는 멱등 (재실행 안전).</p>
+<h5 id="2-실제-release-sync-실행">2) 실제 release sync 실행</h5>
+<pre><code class="language-bash">make release-sync-stories ENV=real</code></pre>
+<p><code>make release-sync-stories</code>는 먼저 active DB export를 끝낸 뒤, <code>tools/supabase/sync_approved_proposal_assets.py --env prod --skip-post-processing</code>로 아래 Phase A/B를 실행한다. 새 proposal 원본은 아직 source archive에 없고 <code>proposal-scenes</code>에만 있을 수 있으므로, proposal sync를 먼저 하고 thumbnails/pubspec은 나중에 한 번만 만든다. 각 단계는 멱등 (재실행 안전).</p>
 <p><strong>Phase A — 신규 승인 제안 다운로드</strong></p>
 <ol><li><code>event_proposals</code> 에서 <code>status=&#x27;approved&#x27; AND synced_to_local_at IS NULL</code></li></ol>
 <p>조회.</p>
@@ -1607,26 +1614,57 @@ Phase B (예상): event_dirs=2 (deleted_at), avatars=1 (is_active=false)</code><
 <p>→ <code>assets/avatars/&lt;code&gt;.png</code> 저장.</p>
 <ul><li>같은 PNG 바이트를 <code>characters</code> 버킷의 canonical <code>{code}.png</code> 로</li></ul>
 <p><strong>service_role 키로 업로드</strong>. 이걸로 <code>proposal-characters/...</code> → <code>characters/...</code> 로 자산 이동 완료.</p>
-<ul><li>DB PATCH: <code>characters</code> 의 <code>avatar_url=&#x27;assets/avatars/&lt;code&gt;.png&#x27;</code>,</li></ul>
-<p><code>avatar_storage_path=&#x27;&lt;code&gt;.png&#x27;</code> 로 갱신 (canonical 두 경로 동시 부여).</p>
+<ul><li>DB PATCH: <code>characters.avatar_storage_path=&#x27;&lt;code&gt;.png&#x27;</code> 로 갱신해 앱이</li></ul>
+<p>canonical <code>characters/&lt;code&gt;.png</code> Storage 객체를 fallback으로 쓸 수 있게 한다.</p>
 <ol><li>모든 파일이 성공한 제안에만 <code>event_proposals.synced_to_local_at=now()</code></li></ol>
 <p>PATCH. <strong>한 파일이라도 실패하면 마커 미세팅 → 다음 run 에서 자동 재시도</strong>.</p>
-<p><strong>Phase B — DB↔로컬 diff 정리</strong> (소프트 삭제 / 비활성 캐릭터 흔적 제거)</p>
-<ol><li><code>events</code> 중 <code>deleted_at IS NOT NULL</code> 행 조회.</li><li>각 행마다:</li></ol>
-<ul><li><code>assets/story_images/&lt;safe_title&gt;/</code>, 연결된 <code>assets/story_images_thumbs/&lt;short_dir&gt;/</code></li></ul>
-<p>디렉토리 제거 (이미 없으면 skip).</p>
-<ul><li><code>events.scene_image_paths</code> 의 storage 파일 best-effort 삭제 (404 무시).</li></ul>
-<ol><li><code>characters</code> 중 <code>is_active=false</code> 행 조회.</li><li>각 행마다:</li></ol>
-<ul><li><code>assets/avatars/&lt;code&gt;.png</code>, <code>assets/avatars_thumbs/&lt;code&gt;.png</code> 제거.</li><li><code>characters.avatar_storage_path</code> 의 storage 파일 best-effort 삭제.</li></ul>
+<p><strong>Phase B — DB↔로컬 diff 정리</strong> (삭제 승인 / 로컬 orphan 제거)</p>
+<ol><li><code>events</code> 중 active published row(<code>status=&#x27;published&#x27; AND deleted_at IS NULL</code>)를 조회해</li></ol>
+<p>현재 살아 있는 title 집합을 만든다.</p>
+<ol><li>과거 sync 버그로 공백이 <code>_</code>로 바뀐 story image 폴더가 있으면 canonical 제목</li></ol>
+<p>폴더로 먼저 옮긴다.</p>
+<ol><li><code>assets/story_images/</code> 하위 디렉토리 중 active title 집합에 없는 폴더를 제거한다.</li></ol>
+<p>soft-deleted row는 DB에 남아도 active 집합에는 없으므로 로컬 번들 source에서 빠진다.</p>
+<ol><li><code>events</code> 중 <code>deleted_at IS NOT NULL</code> row의 <code>scene_image_paths</code> Storage fallback은</li></ol>
+<p>best-effort로 삭제한다 (404 무시).</p>
+<ol><li><code>characters</code> 전체 code 집합을 조회해, DB에 없는 code의</li></ol>
+<p><code>assets/avatars/&lt;code&gt;.png</code>, <code>assets/avatars_thumbs/&lt;code&gt;.png</code>만 제거한다.</p>
 <p>→ Phase B 만 끄고 싶으면 <code>--skip-deletions</code> (별도 워크플로우에서 정리할 때).</p>
-<p><strong>Step C — 썸네일 자동 재생성</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
-<ul><li>내부적으로 <code>python tools/images/generate_runtime_thumbnails.py</code> 호출.</li><li><code>assets/avatars/</code> → <code>assets/avatars_thumbs/</code> (모든 PNG 압축 사본)</li><li><code>assets/story_images/&lt;title&gt;/</code> → <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/</code></li><li><code>assets/story_images_thumbs/index.json</code>에 title/original dir ↔ short dir 매핑 기록</li><li>이미 있는 썸네일은 mtime 비교로 skip → 재실행 빠름.</li></ul>
-<p><strong>Step D — pubspec.yaml 자동 갱신</strong> (Phase A 또는 B 에서 변경이 있을 때만)</p>
+<p><strong>Phase C — 원본 source archive pull</strong></p>
+<ol><li><code>story-image-sources/_manifests/story_images_manifest.json</code>을 읽는다.</li><li>manifest의 <code>size</code>/<code>sha256</code>과 로컬 <code>assets/story_images/</code>를 비교한다.</li><li>proposal sync로 이미 내려받은 신규 story 원본은 그대로 둔다.</li><li>아직 없는 파일이나 바뀐 파일만</li></ol>
+<p><code>story-image-sources/story_images/&lt;source_key&gt;/scene_N.png</code>에서 내려받는다. <code>&lt;source_key&gt;</code>는 한글 source dir의 SHA prefix이고, 실제 title/source_dir 매핑은 manifest에 있다.</p>
+<ol><li>remote manifest가 없고 로컬 원본이 이미 완전하면 통과한다. 이 경우 release 마지막</li></ol>
+<p>upload 단계가 현재 로컬 원본 전체를 최초 seed 한다.</p>
+<p><strong>Step C — 썸네일 자동 재생성</strong></p>
+<ul><li>내부적으로 <code>python tools/images/generate_runtime_thumbnails.py</code> 호출.</li><li><code>assets/avatars/</code> → <code>assets/avatars_thumbs/</code> (모든 PNG 압축 사본)</li><li><code>assets/story_images/&lt;title&gt;/</code> → <code>assets/story_images_thumbs/&lt;era_slug&gt;_&lt;story_index&gt;/</code></li><li><code>assets/story_images_thumbs/index.json</code>에 title/original dir ↔ short dir 매핑 기록</li><li>current <code>assets/events/*.json</code>에 없는 story image 원본 폴더는 썸네일 생성 대상에서</li></ul>
+<p>제외.</p>
+<ul><li>누락 원본 검사를 먼저 통과한 뒤 <code>assets/story_images_thumbs/</code>의 story 하위 디렉토리를</li></ul>
+<p>모두 지우고 current <code>era + story_index</code> 기준으로 clean rebuild. <code>index.json</code>은 다시 쓴다.</p>
+<ul><li>avatar thumb은 기존처럼 missing/changed만 갱신하고 orphan PNG만 정리.</li><li>current story JSON에 대응하는 <code>assets/story_images/&lt;title&gt;/scene_*.png</code> 원본이 하나도</li></ul>
+<p>없는 story가 있으면 중단한다. <code>assets/story_images/</code>는 git에 없는 로컬 원본 staging 디렉토리라서, 원본이 없는 컴퓨터에서 thumbnails를 돌리면 삭제/reindex 후 current story 전체를 정확히 다시 만들 수 없기 때문이다.</p>
+<p><strong>Step D — pubspec.yaml 자동 갱신</strong></p>
 <ul><li>내부적으로 <code>python tools/app/update_pubspec_assets.py</code> 호출.</li><li><code>pubspec.yaml</code> 의 <code>flutter.assets:</code> 아래 <code>story_images_thumbs/index.json</code>과</li></ul>
 <p><code>story_images_thumbs/&lt;short_dir&gt;/</code> 엔트리를 실제 디렉토리 목록에 맞춰 추가/제거.</p>
 <ul><li><code>avatars_thumbs/</code> 는 이미 글롭 패턴 (<code>assets/avatars_thumbs/</code>) 으로</li></ul>
 <p>등록돼 있어 손대지 않음.</p>
 <p>→ Step C, D 둘 다 끄고 싶으면 <code>--skip-post-processing</code>.</p>
+<p><strong>Step E — 원본 source archive push</strong></p>
+<ul><li><code>make release-sync-stories</code> 마지막에 <code>upload-story-image-sources</code>를 실행한다.</li><li>local <code>assets/story_images/</code>와 remote manifest를 비교해 current active set의 신규/변경</li></ul>
+<p>PNG만 <code>story-image-sources</code> private bucket에 upsert한다.</p>
+<ul><li><code>proposal-scenes</code>에서 막 내려받은 신규 story 원본도 이 단계에서 source archive에</li></ul>
+<p>보존된다.</p>
+<ul><li>old manifest에는 있지만 current active set에는 없는 object는 stale로 보고 삭제한다.</li></ul>
+<p>삭제 판단은 bucket 전체 listing이 아니라 이전 manifest entries와 현재 active entries의 차이만 사용한다.</p>
+<ul><li>active manifest는 current active story 기준으로 갱신된다.</li></ul>
+<h5 id="release-builder와-이미지-원본">Release builder와 이미지 원본</h5>
+<p>일반 개발자가 현재 커밋을 checkout해서 앱을 빌드하는 것과, 운영 DB를 기준으로 <code>release-sync-stories</code>를 실행해 다음 배포 번들을 만드는 것은 다르다.</p>
+<ul><li>단순 빌드: git에 포함된 <code>assets/story_images_thumbs/</code>와 <code>pubspec.yaml</code>만 있으면 된다.</li></ul>
+<p>이 경우 원본 <code>assets/story_images/</code>가 없어도 앱 번들은 만들어진다.</p>
+<ul><li>release sync/build: <code>make release-sync-stories ENV=real</code> 안에서 <code>make thumbnails</code>가</li></ul>
+<p>실행되므로 active story 전체의 원본 PNG가 필요하다. 특히 삭제 승인으로 <code>story_index</code>가 당겨진 경우, 기존 썸네일 폴더를 그대로 쓰면 같은 <code>primeval_004</code> 같은 경로가 다른 이야기를 가리키는 오류가 생길 수 있다.</p>
+<p>다른 개발자나 CI도 release sync를 해야 한다면 <code>assets/story_images/</code> 전체를 별도 원격 원본 저장소에서 복원하게 만든다. 실무적으로는 Supabase/GCS의 release-only bucket 또는 zip artifact가 적당하고, 큰 PNG 원본을 git에 직접 넣는 것은 피한다. 승인 proposal로 추가된 새 이야기 원본만 필요한 경우에는 <code>proposal-scenes</code> 파일이 남아 있는 동안 <code>make sync-approved-proposal-assets-all ENV=real</code>로 다시 내려받을 수 있다. 하지만 초기 seed 이야기처럼 <code>events.scene_image_paths</code>가 비어 있는 이미지는 이 방법으로 복원되지 않으므로, 원본 archive가 최종 권위 저장소가 된다.</p>
+<p>효율 기준은 “매번 전체 2GB+ 왕복”이 아니라 “원격 원본 저장소 + 로컬 캐시 + manifest diff sync”다. release builder는 시작 시 원본 저장소의 manifest(etag/sha256/size)를 보고 <code>assets/story_images/</code>에 없는 story 폴더나 바뀐 scene PNG만 내려받는다. 승인 proposal로 새 원본이 생긴 경우에는 <code>sync-approved-proposal-assets</code>가 <code>proposal-scenes</code>에서 로컬로 가져오고, <code>upload-story-image-sources</code>가 그 신규/변경 PNG만 원본 저장소에 upsert한다. 삭제 승인으로 active set에서 빠진 story 원본은 old manifest와 current active manifest의 차이로 삭제된다.</p>
+<p>따라서 <code>sync-approved-proposal-assets-clean</code>의 <code>--delete-source</code>는 새 앱 배포가 끝나고 원본 archive까지 갱신된 뒤에만 실행한다. 먼저 지우면 구버전 앱의 Storage fallback과 다른 release builder의 재동기화 경로가 함께 사라진다.</p>
 <p>기대 출력 (요약):</p>
 <pre><code class="language-">approved &amp; unsynced: 3 proposal(s)
 == [uuid1] 엘리야와 까마귀  (downloading 4 scene + 1 character)
@@ -1639,7 +1677,7 @@ Phase B (예상): event_dirs=2 (deleted_at), avatars=1 (is_active=false)</code><
    ✗ events deleted_at: 2 events → 2 dirs removed
    ✗ characters inactive: 1 → 1 avatar+thumb removed
 
-[thumbnails] generated: 8, skipped: 310
+Story thumbs: built 318, skipped 0, total 318
 [pubspec] added: 2 entries, removed: 1
 
 === Summary ===
@@ -1662,7 +1700,7 @@ flutter test</code></pre>
 <p>신규 인물이 한 명도 없으면 이 단계는 <strong>건너뛴다</strong>.</p>
 <pre><code class="language-bash">make build-character-meta</code></pre>
 <p>내부 동작:</p>
-<ul><li><code>assets/200_stories/*.json</code> 전체를 스캔 → 등장하는 모든 character code 수집.</li><li><code>tools/seed/character_meta.json</code> 갱신 (이름/설명/아바타 프롬프트 카탈로그).</li><li>이 파일은 다음 빌더 (<code>seed-characters</code>, <code>generate-avatars</code>) 의 입력.</li></ul>
+<ul><li><code>assets/events/*.json</code> 전체를 스캔 → 등장하는 모든 character code 수집.</li><li><code>tools/seed/character_meta.json</code> 갱신 (이름/설명/아바타 프롬프트 카탈로그).</li><li>이 파일은 다음 빌더 (<code>seed-characters</code>, <code>generate-avatars</code>) 의 입력.</li></ul>
 <h5 id="5-선택-db-seed-파일을-현재-상태로-재생성">5) (선택) DB seed 파일을 현재 상태로 재생성</h5>
 <p><code>approve_event_proposal</code> RPC 가 이미 <code>events</code> / <code>characters</code> 행을 INSERT 했 으므로 <strong>운영 DB 자체에는 sync 가 필요 없다</strong>. 다만 <code>db_init.sql + seed</code> 로 클린 부트스트랩하는 시나리오를 지원하려면 seed SQL 도 최신 상태로 유지 하는 게 좋다.</p>
 <pre><code class="language-bash"># (a) DB 현재 events 를 로컬 JSON 으로 역추출 (description 등 보존)
@@ -1687,7 +1725,7 @@ git add \
   assets/story_images_thumbs/ \
   pubspec.yaml \
   tools/seed/character_meta.json \
-  supabase/200_stories/  # 5번까지 돌렸을 때만
+  supabase/events/  # 5번까지 돌렸을 때만
 
 git commit -m &quot;content: 승인된 제안 반영 — &lt;사건 제목&gt;&quot;
 git push origin &lt;branch&gt;   # 사용자 지시 후 실행</code></pre>
@@ -1733,7 +1771,7 @@ flutter build ipa --release --dart-define=ENV=prod</code></pre>
 </tr>
 <tr>
 <td>승인 후 운영자가 캐릭터 <code>is_active</code> 만 끄고 싶을 때</td>
-<td><code>update characters set is_active=false where code=&#x27;&lt;code&gt;&#x27;;</code> → 다음 sync 의 Phase B 가 로컬 PNG + storage 파일 정리</td>
+<td><code>update characters set is_active=false where code=&#x27;&lt;code&gt;&#x27;;</code> 로 앱 노출만 끈다. Phase B 는 DB에 없는 code의 로컬 orphan만 지우므로, PNG 정리까지 원하면 별도 삭제/정리 절차를 검토한다.</td>
 </tr>
 <tr>
 <td>사용자가 시점 C 도달 전 앱 업데이트를 안 받음</td>
@@ -1863,10 +1901,10 @@ Storage
 </tr>
 <tr>
 <td>관리자 승인 직후 (RPC 완료)</td>
-<td>now()</td>
-<td>마지막 출연이면 false, 아니면 true</td>
+<td>now() + active <code>story_index</code> 압축</td>
+<td>변경 없음</td>
 <td>그대로</td>
-<td>1차 정리됨</td>
+<td>그대로</td>
 <td>안 보임</td>
 </tr>
 <tr>
@@ -1874,7 +1912,7 @@ Storage
 <td>now()</td>
 <td>동일</td>
 <td>정리됨</td>
-<td>2차 정리됨 (잔존만)</td>
+<td>필요 시 별도 정리</td>
 <td>안 보임</td>
 </tr>
 <tr>
@@ -1886,7 +1924,7 @@ Storage
 <td>안 보임 (로컬 번들 자체에 없음)</td>
 </tr>
 </tbody></table></div>
-<p><strong>핵심 invariant</strong>: <code>events.deleted_at IS NOT NULL</code> 이 set 된 그 순간부터 사용자 는 이미 그 이야기를 못 본다. <code>events_ordered</code> view 가 <code>deleted_at IS NULL</code> 필터 를 걸기 때문. 후속 sync/재배포는 디스크/스토리지 비용 정리 + 캐릭터 일관성 보강 일 뿐 사용자 경험에 영향 없다.</p>
+<p><strong>핵심 invariant</strong>: <code>events.deleted_at IS NOT NULL</code> 이 set 된 그 순간부터 사용자 는 이미 그 이야기를 못 본다. <code>events_ordered</code> view 가 <code>deleted_at IS NULL</code> 필터 를 걸기 때문. 승인 RPC 는 같은 era 의 활성 published 이벤트를 <code>story_index = 1..N</code> 으로 재번호 매기고, 삭제된 위치 이후를 가리키던 pending NEW 제안은 위치 재선택 상태로 잠근다. 후속 sync/재배포는 디스크/스토리지 비용 정리일 뿐 사용자 경험에 영향 없다.</p>
 <h3 id="19-2-시점별-상세">19.2 시점별 상세</h3>
 <h4 id="19-2-1-시점-a-—-사역자-삭제-제안-submit-delete-proposal-rpc">19.2.1 시점 A — 사역자 삭제 제안 (<code>submit_delete_proposal</code> RPC)</h4>
 <p><code>event_proposals</code> 에 <code>proposal_type=&#x27;delete&#x27;</code>, <code>target_event_id</code> set, <code>status=&#x27;pending&#x27;</code> 인 row 가 만들어진다. 이 단계에서는:</p>
@@ -1899,35 +1937,39 @@ Storage
 <p>이 RPC 한 번이 다음 4가지를 atomically 수행:</p>
 <ol><li><code>events.deleted_at = now()</code> (idempotent: 이미 set 이면 no-op).</li></ol>
 <p>→ <code>events_ordered</code> 가 즉시 숨김 → 모든 사용자 화면에서 사라짐.</p>
-<ol><li>이벤트의 <code>character_codes</code> 각 코드에 대해 다른 활성 이벤트(deleted_at IS NULL</li></ol>
-<p>AND status=&#x27;published&#x27;) 가 그 코드를 참조하는지 카운트:</p>
-<ul><li><strong>0건</strong> → 이 이벤트가 그 캐릭터의 마지막 출연 → <code>characters.is_active = false</code></li></ul>
-<p>로 비활성화. <code>characters_read_active</code> RLS 가 anon 에 대해 <code>is_active=true</code> 만 노출하므로 <strong>로컬 번들에 PNG 가 남아있어도 캐릭터 목록 fetch 결과에 안 들어옴</strong>.</p>
-<ul><li><strong>1건 이상</strong> → 그 캐릭터는 다른 이야기에서 살아있음 → 건드리지 않음.</li></ul>
+<ol><li>같은 era 의 활성 published 이벤트를 기존 상대 순서대로 <code>story_index = 1..N</code> 으로</li></ol>
+<p>압축한다. soft-deleted row 는 사용자 진행도/제안 이력 보존을 위해 남기되 활성 row 뒤쪽 번호로 이동한다.</p>
 <ol><li><code>event_proposals</code> 를 <code>status=&#x27;approved&#x27;</code>, <code>reviewed_by_user_id=auth.uid()</code>,</li></ol>
 <p><code>reviewed_at=now()</code>, <code>approved_event_id=target_event_id</code> 로 업데이트.</p>
-<ol><li>클라이언트가 정리할 storage 경로 묶음을 jsonb 로 반환:</li></ol>
-<ul><li><code>scene_image_paths</code>: 이 이벤트의 장면 이미지 경로 (예: <code>proposal-scenes/&lt;uid&gt;/&lt;draft&gt;/scene_1.png</code>)</li><li><code>inactive_character_avatar_paths</code>: 방금 비활성화된 캐릭터 아바타 경로</li></ul>
-<p>클라이언트 <code>lib/data/proposal_repository.dart::approveDelete</code> 가 이 두 묶음을 받아 <strong>best-effort</strong> 로 Supabase Storage 에서 제거 (<code>storage.from(bucket).remove([path])</code>). 이미 다른 경로에서 정리됐거나 권한 문제로 실패해도 무시 — 앱 동작에 영향 없음.</p>
-<p><strong>왜 best-effort 인가</strong>: storage 파일은 아래 시나리오들에서 이미 사라졌을 수 있다:</p>
-<ul><li><code>make sync-approved-proposal-assets-clean</code> (<code>--delete-source</code>) 가 돌아 proposal-* 원본 제거</li><li>같은 캐릭터의 다른 이야기 삭제 시 한 번 비활성화됐다가 재활성화 후 다시 비활성화</li><li>외부 운영자가 수동으로 정리</li></ul>
-<p>각 경우 remove() 가 404 에 가깝게 실패해도 클라이언트는 정상으로 간주한다.</p>
+<ol><li>삭제된 위치 이상을 가리키던 pending NEW 제안은 숫자 의미가 바뀌므로</li></ol>
+<p><code>position_invalidated_at</code> / <code>position_invalidation_reason</code> 을 set 해 제안자가 현재 활성 목록 기준으로 위치와 연도를 다시 고르게 한다.</p>
+<p>클라이언트 <code>lib/data/proposal_repository.dart::approveDelete</code> 는 RPC 가 반환한 호환용 storage 경로 묶음이 있을 때만 <strong>best-effort</strong> 로 제거한다. 현재 soft delete 승인 경로는 캐릭터 비활성화나 Storage 원본 삭제를 의도적으로 수행하지 않으므로, 보통 빈 배열이 반환된다.</p>
 <h4 id="19-2-3-시점-c-—-운영자-sync-실행-make-sync-approved-proposal-assets">19.2.3 시점 C — 운영자 sync 실행 (<code>make sync-approved-proposal-assets</code>)</h4>
 <p>이 Makefile 타겟은 두 phase 를 실행한다:</p>
 <p><strong>Phase A — 추가</strong> (§18 에서 이미 다룬 내용): 새로 승인된 제안의 PNG 를 로컬로 다운로드 + characters/ 버킷으로 이동 + <code>synced_to_local_at</code> 마커 세팅.</p>
-<p><strong>Phase B — 삭제</strong> (NEW):</p>
-<ol><li><code>events</code> 중 <code>deleted_at IS NOT NULL</code> 인 모든 row 조회 (service-role 키로 직접</li></ol>
-<p>events 쿼리; <code>events_ordered</code> view 는 이걸 안 보여줌).</p>
-<ol><li>각 이벤트마다:</li></ol>
-<ul><li>로컬 <code>assets/story_images/&lt;safe_title&gt;/</code> 디렉토리 제거 (이미 없으면 skip)</li><li><code>assets/story_images_thumbs/index.json</code> 매핑에서 연결된 <code>&lt;short_dir&gt;</code> 썸네일 디렉토리 제거</li><li><code>scene_image_paths</code> 의 storage 파일 best-effort 삭제 (404 무시)</li></ul>
-<ol><li><code>characters</code> 중 <code>is_active = false</code> 인 모든 row 조회.</li><li>각 캐릭터마다:</li></ol>
-<ul><li>로컬 <code>assets/avatars/&lt;code&gt;.png</code> 제거</li><li>로컬 <code>assets/avatars_thumbs/&lt;code&gt;.png</code> 제거</li><li><code>avatar_storage_path</code> 의 storage 파일 best-effort 삭제</li></ul>
+<p><strong>Phase B — 삭제/정리</strong>:</p>
+<ol><li><code>events</code> 중 active published row(<code>status=&#x27;published&#x27; AND deleted_at IS NULL</code>)를</li></ol>
+<p>조회해 현재 살아 있는 title 집합을 만든다.</p>
+<ol><li>과거 sync 버그로 <code>assets/story_images/가인과_아벨</code>처럼 공백이 <code>_</code>가 된 폴더가</li></ol>
+<p>있으면 current title 기준 canonical 폴더명으로 먼저 옮긴다.</p>
+<ol><li>로컬 <code>assets/story_images/</code> 디렉토리 중 active title 집합에 없는 폴더를 제거한다.</li></ol>
+<p>삭제 승인된 이야기는 DB row가 남아도 active 집합에서는 제외되므로 여기서 빠진다.</p>
+<ol><li><code>events</code> 중 <code>deleted_at IS NOT NULL</code> row의 <code>scene_image_paths</code> Storage fallback은</li></ol>
+<p>best-effort로 삭제한다 (404 무시).</p>
+<ol><li><code>characters</code> 전체 code 집합을 조회해 DB에 없는 code의 로컬</li></ol>
+<p><code>assets/avatars/&lt;code&gt;.png</code>, <code>assets/avatars_thumbs/&lt;code&gt;.png</code>만 제거한다.</p>
+<ol><li><code>assets/story_images_thumbs/</code>는 직접 title로 지우지 않고, 이어지는</li></ol>
+<p><code>make thumbnails</code>가 current story JSON 기준 index/short dir를 재생성하면서 orphan 디렉토리를 제거한다.</p>
 <p><strong>멱등성</strong>: 별도 sync marker 없이 <strong>파일 존재 여부</strong>로만 판단. 이미 정리된 파일은 자연스럽게 skip → 같은 sync 를 N번 돌려도 안전.</p>
 <p><strong>스킵 옵션</strong>: Phase B 가 불필요하면 <code>--skip-deletions</code> 플래그 (예: 운영자가 local 정리를 별도 워크플로우로 하고 싶을 때).</p>
 <h4 id="19-2-4-시점-d-—-앱-재배포">19.2.4 시점 D — 앱 재배포</h4>
 <p>운영자가 sync 후 <code>flutter build</code> + 앱 스토어 배포를 돌리면:</p>
-<ul><li>로컬 번들에서 삭제된 캐릭터/장면 PNG 가 빠진 새 빌드가 나간다.</li><li>이미 <code>events.deleted_at</code> / <code>is_active=false</code> 로 사용자에게는 안 보이고 있던 상태</li></ul>
-<p>였으니, 이 단계는 <strong>번들 크기 절감</strong> + 신규 사용자가 받는 빌드의 정합성 확보 목적.</p>
+<ul><li>로컬 번들에서 삭제된 이야기의 장면 PNG와 DB에 없는 캐릭터 orphan PNG가 빠진 새</li></ul>
+<p>빌드가 나간다.</p>
+<ul><li>삭제된 이야기는 이미 <code>events.deleted_at</code> 때문에 사용자에게 안 보이고 있던 상태라,</li></ul>
+<p>이 단계는 <strong>번들 크기 절감</strong> + 신규 사용자가 받는 빌드의 정합성 확보 목적이다.</p>
+<ul><li><code>quiz_questions</code>도 current active events JSON 안에 함께 들어 있으므로, 삭제 후</li></ul>
+<p><code>story_index</code>가 당겨져도 옛 번호의 퀴즈가 다른 이야기로 재사용되지 않는다.</p>
 <h3 id="19-3-비활성화된-캐릭터의-흔적">19.3 비활성화된 캐릭터의 흔적</h3>
 <ul><li><code>events.character_codes</code> 에는 inactive 코드가 그대로 남는다 (배열 컬럼이라</li></ul>
 <p>무결성 검증 없음). <code>character_eras</code> view 가 <code>p.is_active = true</code> 로 join 하기 때문에 그 캐릭터는 era 목록에서 자동 제외 → 시각적으로 영향 없음.</p>
@@ -1940,7 +1982,7 @@ Storage
 <p>StoryEvent 객체를 들고 있어 그대로 보일 수 있다. 다음 새로고침 시점에 자연 소거. 이 경우의 사용자 진도(<code>user_event_progress</code>) 는 보존 — soft delete 의 핵심 가치.</p>
 <h3 id="19-5-관련-파일">19.5 관련 파일</h3>
 <ul><li>DB / RPC: <code>db_init.sql</code> 의 <code>approve_delete_proposal</code>, <code>submit_delete_proposal</code>,</li></ul>
-<p><code>events.deleted_at</code>, <code>characters.is_active</code></p>
+<p><code>events.deleted_at</code>, <code>events.story_index</code></p>
 <ul><li>Schema 통합: 현재는 <code>db_init.sql</code> 에 포함</li><li>Client: <code>lib/data/proposal_repository.dart::approveDelete</code>,</li></ul>
 <p><code>lib/widgets/proposal/delete_event_proposal_sheet.dart</code>, <code>lib/screens/proposal_detail_screen.dart</code></p>
 <ul><li>Sync 스크립트: <code>tools/supabase/sync_approved_proposal_assets.py</code> Phase B</li></ul>
@@ -2068,7 +2110,7 @@ where era_id = :era
                                                    └─ 알림: 승인 + 충돌자에게 &quot;수정 필요&quot;
                                                           │
                                                           ▼
-                                              운영자: make sync-approved-proposal-assets
+                                              운영자: make release-sync-stories
                                               ┌──────────── Phase A ─────────────┐
                                               │ proposal-* → 로컬 assets/        │
                                               │ proposal-characters → characters │
@@ -2079,9 +2121,13 @@ where era_id = :era
                                               │ DB events vs 로컬 dir → 차이 정리 │
                                               │ DB characters vs 로컬 PNG → 차이  │
                                               ├──────────── Step C ──────────────┤
-                                              │ make thumbnails                  │
+                                              │ ensure-story-image-sources       │
                                               ├──────────── Step D ──────────────┤
+                                              │ make thumbnails                  │
+                                              ├──────────── Step E ──────────────┤
                                               │ make update-pubspec-assets       │
+                                              ├──────────── Step F ──────────────┤
+                                              │ upload-story-image-sources       │
                                               └───────────────────────────────────┘
                                                           │
                                                           ▼
@@ -2225,14 +2271,14 @@ where era_id = :era
 </tr>
 <tr>
 <td><strong>7. 삭제 승인</strong> (<code>approve_delete_proposal</code>)</td>
-<td>UPDATE status=&#x27;approved&#x27;</td>
-<td><strong>DELETE row</strong></td>
+<td>UPDATE status=&#x27;approved&#x27; + 영향받은 pending NEW 위치 무효화</td>
+<td>UPDATE deleted_at + active story_index 압축</td>
 <td>(자동 갱신)</td>
-<td>DELETE (이 이벤트만 쓰던 캐릭터)</td>
+<td>—</td>
 <td>(자동 갱신)</td>
-<td>DELETE cascade</td>
-<td>(그대로 — 클라이언트가 정리 호출)</td>
-<td>DELETE (방금 삭제된 캐릭터의 PNG)</td>
+<td>보존</td>
+<td>그대로</td>
+<td>그대로</td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -2305,12 +2351,13 @@ where era_id = :era
 <blockquote><p>📌 <strong>메모</strong>:</p>
 <p>- <strong>events_ordered, character_eras 는 VIEW</strong> — events/characters 변경 시 자동</p>
 <p>재계산. 별도 인덱스 재구성/INSERT/DELETE 필요 없음.</p>
-<p>- <strong>quiz_questions</strong> 는 events FK <code>ON DELETE CASCADE</code> — 이벤트 hard delete 시</p>
-<p>퀴즈도 자동 삭제.</p>
-<p>- <strong>user_event_progress</strong> 도 events FK <code>ON DELETE CASCADE</code> — hard delete 시</p>
-<p>사용자 학습 진도가 함께 cascade 삭제됨 (수용한 트레이드오프).</p>
-<p>- <strong>events.deleted_at / characters.is_active</strong> 컬럼은 backward-compat 위해</p>
-<p>유지하되 신규 흐름에서는 set 되지 않음 (vestigial).</p>
+<p>- <strong>quiz_questions</strong> 와 <strong>user_event_progress</strong> 는 events FK에 묶여 있어 event</p>
+<p>hard delete 시 함께 cascade 될 수 있다. 그래서 삭제 승인 흐름은 hard delete 대신</p>
+<p><code>events.deleted_at</code> soft delete + active <code>story_index</code> 재번호 매김을 쓴다.</p>
+<p>- <strong>events.deleted_at</strong> 은 삭제 승인 흐름의 핵심 상태값이다. 앱은</p>
+<p><code>events_ordered</code>의 <code>deleted_at IS NULL</code> 필터를 통해 삭제된 이야기를 숨긴다.</p>
+<p>- <strong>characters.is_active</strong> 는 인물 노출 제어에 쓰인다. sync Phase B는 inactive 여부가</p>
+<p>아니라 DB에 없는 code의 로컬 avatar/thumb orphan만 제거한다.</p>
 <p>- <strong>avatars_thumbs/</strong> 는 pubspec.yaml 에 글롭 패턴 (<code>assets/avatars_thumbs/</code>) 으로</p>
 <p>등록되어 있어 PNG 추가/삭제 시 pubspec 변경 불필요. 반면</p>
 <p><strong>story_images_thumbs/</strong> 는 디렉토리별로 따로 등록되어 있어 추가/삭제 시</p>
