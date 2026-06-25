@@ -13,9 +13,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「이스라엘의 압제와 산파들」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "1:22",
         "book": "출",
-        "from": "1:1",
-        "to": "1:22"
+        "from": "1:1"
       }
     ],
     "start_year": -1446,
@@ -65,11 +65,11 @@
         "display_order": 1,
         "question": "바로는 산파들에게 무엇을 물었습니까?",
         "choices": [
+          "왜 강가에 아이를 두었느냐고 물었다",
           "왜 남자아이들을 살렸느냐고 물었다",
-          "왜 애굽을 떠나려 하느냐고 물었다",
-          "왜 강가에 아이를 두었느냐고 물었다"
+          "왜 애굽을 떠나려 하느냐고 물었다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 1:18 — '애굽 왕이 산파를 불러서 그들에게 이르되 너희가 어찌 이같이 하여 남자를 살렸느냐'"
       },
       {
@@ -77,11 +77,11 @@
         "display_order": 2,
         "question": "바로가 이스라엘 남자 아이에 대해 신민에게 내린 명령은 무엇입니까?",
         "choices": [
-          "하수에 던지라",
           "노예로 팔라",
-          "광야로 내보내라"
+          "광야로 내보내라",
+          "하수에 던지라"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 1:22 — '남자가 나거든 너희는 그를 하수에 던지고 여자여든 살리라 하였더라'"
       }
     ]
@@ -95,15 +95,15 @@
     ],
     "landmark_code": "lm_exo_nile",
     "place_name": "나일강(전승)",
-    "lat": 29.9,
-    "lng": 31.25,
+    "lat": 30.05,
+    "lng": 31.22,
     "summary": "죽음의 명령 속에서 한 아기가 갈대상자에 실려 기적처럼 보호받는다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「모세의 탄생과 갈대상자」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:10",
         "book": "출",
-        "from": "2:1",
-        "to": "2:10"
+        "from": "2:1"
       }
     ],
     "start_year": -1446,
@@ -147,11 +147,11 @@
         "display_order": 0,
         "question": "모세의 어머니는 더 숨길 수 없게 되자 어떻게 했습니까?",
         "choices": [
-          "갈대상자에 아이를 담아 강가에 두었다",
           "아이를 바로의 궁으로 직접 데려갔다",
+          "갈대상자에 아이를 담아 강가에 두었다",
           "아이를 이웃집에 맡겼다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 2:3 — '갈 상자를 가져다가 역청과 나무 진을 칠하고 아이를 거기 담아 하숫가 갈대 사이에 두고'"
       },
       {
@@ -159,11 +159,11 @@
         "display_order": 1,
         "question": "바로의 딸은 우는 아이를 보고 어떻게 반응했습니까?",
         "choices": [
-          "불쌍히 여기고 히브리 아이임을 알아보았다",
+          "아무도 모르게 그 자리를 떠났다",
           "아이를 다시 강물에 띄워 보냈다",
-          "아무도 모르게 그 자리를 떠났다"
+          "불쌍히 여기고 히브리 아이임을 알아보았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 2:6 — '열고 그 아이를 보니 아이가 우는지라 그가 불쌍히 여겨 가로되 이는 히브리 사람의 아이로다'"
       },
       {
@@ -171,11 +171,11 @@
         "display_order": 2,
         "question": "바로의 딸은 아이에게 어떤 이름을 지었습니까?",
         "choices": [
-          "물에서 건졌다는 뜻으로 모세라 불렀다",
+          "궁에서 자랐다는 뜻으로 아론이라 불렀다",
           "강가에서 찾았다는 뜻으로 요셉이라 불렀다",
-          "궁에서 자랐다는 뜻으로 아론이라 불렀다"
+          "물에서 건졌다는 뜻으로 모세라 불렀다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 2:10 — '그가 그 이름을 모세라 하여 가로되 이는 내가 그를 물에서 건져 내었음이라'"
       }
     ]
@@ -194,9 +194,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「모세의 분노와 미디안 도피」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:25",
         "book": "출",
-        "from": "2:11",
-        "to": "2:25"
+        "from": "2:11"
       }
     ],
     "start_year": -1406,
@@ -233,11 +233,11 @@
         "display_order": 0,
         "question": "모세가 히브리 사람을 치는 애굽인을 보고 어떻게 하였습니까?",
         "choices": [
-          "좌우를 살피고 그 애굽인을 죽여 모래 속에 감추었다",
+          "히브리인에게 피하라 외쳤다",
           "바로에게 달려가 고발하였다",
-          "히브리인에게 피하라 외쳤다"
+          "좌우를 살피고 그 애굽인을 죽여 모래 속에 감추었다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 2:12 — '좌우를 살펴 사람이 없음을 보고 그 애굽 사람을 쳐죽여 모래 속에 감추니라'"
       },
       {
@@ -245,11 +245,11 @@
         "display_order": 1,
         "question": "모세가 미디안에서 얻은 아들의 이름은 무엇입니까?",
         "choices": [
-          "게르솜",
           "엘리에셀",
-          "비느하스"
+          "비느하스",
+          "게르솜"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 2:22 — '그가 아들을 낳으매 모세가 그 이름을 게르솜이라 하여 가로되 내가 타국에서 객이 되었음이라'"
       },
       {
@@ -275,20 +275,20 @@
     ],
     "landmark_code": "lm_exo_mt_horeb",
     "place_name": "호렙 산(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "lat": 28.54,
+    "lng": 33.97,
     "summary": "광야에서 하나님은 모세를 부르시고 ‘내가 너와 함께’라는 약속을 주신다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「불타는 떨기나무」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "3:22",
         "book": "출",
-        "from": "3:1",
-        "to": "3:22"
+        "from": "3:1"
       },
       {
+        "to": "4:17",
         "book": "출",
-        "from": "4:1",
-        "to": "4:17"
+        "from": "4:1"
       }
     ],
     "start_year": -1446,
@@ -352,8 +352,8 @@
         "question": "하나님은 이스라엘 자손에게 자신을 누구라고 전하라 하셨습니까?",
         "choices": [
           "스스로 있는 자가 보내셨다고 하라 하셨다",
-          "애굽 왕이 보냈다고 하라 하셨다",
-          "미디안 장로들이 보냈다고 하라 하셨다"
+          "미디안 장로들이 보냈다고 하라 하셨다",
+          "애굽 왕이 보냈다고 하라 하셨다"
         ],
         "answer_index": 0,
         "explanation": "출 3:14 — '하나님이 모세에게 이르시되 나는 스스로 있는 자니라 또 이르시되 너는 이스라엘 자손에게 이같이 이르기를 스스로 있는 자가 나를 너희에게 보내셨다 하라'"
@@ -370,15 +370,15 @@
     ],
     "landmark_code": "lm_exo_egypt_court",
     "place_name": "애굽 궁정(전승)",
-    "lat": 29.9,
+    "lat": 30.05,
     "lng": 31.25,
     "summary": "해방 요구와 표징 앞에서도 바로는 마음을 굳게 하고 노역을 더 무겁게 만든다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「바로 앞 첫 대면」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "6:12",
         "book": "출",
-        "from": "5:1",
-        "to": "6:12"
+        "from": "5:1"
       }
     ],
     "start_year": -1446,
@@ -424,11 +424,11 @@
         "display_order": 0,
         "question": "바로는 모세와 아론의 요구 이후 이스라엘에게 무엇을 더 이상 주지 말라 하였습니까?",
         "choices": [
-          "벽돌 만들 짚",
           "식량 배급",
+          "벽돌 만들 짚",
           "쉬는 날"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 5:7 — '너희는 이제부터 백성에게 벽돌 굽는 짚을 전과 같이 주지 말고'"
       },
       {
@@ -437,8 +437,8 @@
         "question": "이스라엘 자손은 짐이 더해진 후 모세의 말에 어떻게 반응하였습니까?",
         "choices": [
           "마음의 상함으로 모세를 듣지 않았다",
-          "모세에게 힘을 내자 하였다",
-          "바로에게 탄원서를 올렸다"
+          "바로에게 탄원서를 올렸다",
+          "모세에게 힘을 내자 하였다"
         ],
         "answer_index": 0,
         "explanation": "출 6:9 — '이스라엘 자손이 ... 마음의 상함과 역사의 혹독함을 인하여 모세를 듣지 아니하였더라'"
@@ -448,11 +448,11 @@
         "display_order": 2,
         "question": "하나님은 무거운 짐에 눌린 백성 다음으로 모세에게 무엇을 하셨습니까?",
         "choices": [
-          "모세에게 다시 말씀하셨다",
+          "백성에게 짚을 직접 나누어 주셨다",
           "바로를 바로 왕에서 내리셨다",
-          "백성에게 짚을 직접 나누어 주셨다"
+          "모세에게 다시 말씀하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 6:10 — '여호와께서 모세에게 일러 가라사대'"
       }
     ]
@@ -467,15 +467,15 @@
     ],
     "landmark_code": "lm_exo_nile",
     "place_name": "나일강(전승)",
-    "lat": 29.9,
-    "lng": 31.25,
+    "lat": 30.05,
+    "lng": 31.22,
     "summary": "하나님은 열 가지 재앙으로 바로의 완강함을 흔드시지만, 바로는 끝까지 마음을 굳힌다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「열 가지 재앙」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "11:10",
         "book": "출",
-        "from": "7:14",
-        "to": "11:10"
+        "from": "7:14"
       }
     ],
     "start_year": -1446,
@@ -523,11 +523,11 @@
         "display_order": 0,
         "question": "아론이 지팡이로 땅의 티끌을 치자 무엇이 되어 사람과 짐승에게 올랐습니까?",
         "choices": [
-          "이",
           "개구리",
-          "메뚜기"
+          "메뚜기",
+          "이"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 8:17 — '아론이 지팡이를 잡고 손을 들어 땅의 티끌을 치매 애굽 온 땅의 티끌이 다 이가 되어'"
       },
       {
@@ -535,11 +535,11 @@
         "display_order": 1,
         "question": "재앙마다 여호와께서 파리를 제거해 주신 후 바로는 어떻게 하였습니까?",
         "choices": [
+          "모세에게 화해를 청하였다",
           "마음을 강퍅하게 하여 백성을 보내지 않았다",
-          "이스라엘을 광야로 내보냈다",
-          "모세에게 화해를 청하였다"
+          "이스라엘을 광야로 내보냈다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 8:32 — '바로가 이때에도 마음을 완강케 하여 백성을 보내지 아니하였더라'"
       },
       {
@@ -554,12 +554,6 @@
         "answer_index": 0,
         "explanation": "출 10:16 — '바로가 모세와 아론을 급히 불러서 이르되 내가 너희 하나님 여호와와 너희에게 득죄하였으니'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Make this one tall mobile illustration with three stacked horizontal rows separated by thin parchment dividers. Each row must show a different plague clearly. No text labels, no captions, no readable marks.",
-      "Make this one tall mobile illustration with three stacked horizontal rows separated by thin parchment dividers. Each row must show a different plague clearly. No text labels, no captions, no readable marks.",
-      "Make this one tall mobile illustration with three stacked horizontal rows separated by thin parchment dividers. Each row must show a different plague clearly. No text labels, no captions, no readable marks.",
-      "Allow exactly one large picture-only speech bubble beside Moses. The bubble must contain only symbolic imagery of the midnight judgment over Egyptian homes and firstborn people and livestock; no readable text, no bodies, no gore, no visible human form of God."
     ]
   },
   {
@@ -571,16 +565,16 @@
       "aaron"
     ],
     "landmark_code": "lm_exo_goshen",
-    "place_name": "고센(전승)",
+    "place_name": "애굽(고센 일대, 전승)",
     "lat": 30.78,
     "lng": 31.36,
     "summary": "이스라엘은 유월절을 준비하며 ‘보호의 표’를 문에 남긴다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「유월절」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "12:28",
         "book": "출",
-        "from": "12:1",
-        "to": "12:28"
+        "from": "12:1"
       }
     ],
     "start_year": -1446,
@@ -629,8 +623,8 @@
         "question": "이스라엘은 유월절 음식을 어떤 자세로 먹으라 명령받았습니까?",
         "choices": [
           "허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라",
-          "앉아서 천천히 먹으라",
-          "서서 조용히 먹으라"
+          "서서 조용히 먹으라",
+          "앉아서 천천히 먹으라"
         ],
         "answer_index": 0,
         "explanation": "출 12:11 — '허리에 띠를 띠고 발에 신을 신고 손에 지팡이를 잡고 급히 먹으라'"
@@ -647,11 +641,6 @@
         "answer_index": 0,
         "explanation": "출 12:14 — '너희는 이 날을 기념하여 여호와의 절기를 삼아 영원한 규례로 대대에 지킬지니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show preparation only, not sacrifice: Moses and Aaron guide families outside simple Goshen homes, one spotless lamb per household near the doorway, gentle divine light from above, no text, no knife, no blood.",
-      "",
-      ""
     ]
   },
   {
@@ -665,15 +654,15 @@
     ],
     "landmark_code": "lm_exo_unknown",
     "place_name": "애굽 → 광야(전승)",
-    "lat": 30.8,
-    "lng": 31.85,
+    "lat": 28.5,
+    "lng": 33,
     "summary": "마침내 바로가 떠나라 말하고, 이스라엘은 급히 길을 나선다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「출애굽의 밤」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "13:22",
         "book": "출",
-        "from": "12:29",
-        "to": "13:22"
+        "from": "12:29"
       }
     ],
     "start_year": -1446,
@@ -717,11 +706,11 @@
         "display_order": 0,
         "question": "이스라엘 자손이 애굽에 거주한 기간은 얼마입니까?",
         "choices": [
+          "삼백 년",
           "사백 삼십 년",
-          "사백 년",
-          "삼백 년"
+          "사백 년"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 12:40 — '이스라엘 자손이 애굽에 거주한지 사백 삼십 년이라'"
       },
       {
@@ -741,19 +730,13 @@
         "display_order": 2,
         "question": "하나님은 백성을 블레셋 사람의 땅 길 대신 어느 길로 돌리셨습니까?",
         "choices": [
+          "하란으로 돌아가는 길",
           "홍해의 광야 길",
-          "소돔으로 가는 들길",
-          "하란으로 돌아가는 길"
+          "소돔으로 가는 들길"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 13:18 — '하나님이 홍해의 광야 길로 돌려 백성을 인도하시매'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Make this a clear side-by-side contrast. Left side: unmarked Egyptian home interior with grieving family and cold darkness. Right side: marked Israelite home interior with safe family, warm light, and no shadow touching it. No bodies, no gore, no text.",
-      "",
-      "",
-      ""
     ]
   },
   {
@@ -765,15 +748,15 @@
     ],
     "landmark_code": "lm_exo_red_sea_crossing",
     "place_name": "홍해/갈대바다(전승)",
-    "lat": 28.0,
+    "lat": 28,
     "lng": 33.5,
     "summary": "막다른 길에서 하나님이 길을 여시고 백성은 두려움에서 믿음으로 옮겨간다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「홍해」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "14:31",
         "book": "출",
-        "from": "14:1",
-        "to": "14:31"
+        "from": "14:1"
       }
     ],
     "start_year": -1446,
@@ -812,11 +795,11 @@
         "display_order": 0,
         "question": "홍해를 갈라지게 한 것은 무엇이었습니까?",
         "choices": [
+          "하나님의 번개",
           "큰 동풍",
-          "큰 서풍",
-          "하나님의 번개"
+          "큰 서풍"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 14:21 — '여호와께서 큰 동풍으로 밤새도록 바닷물을 물러가게 하시니'"
       },
       {
@@ -824,11 +807,11 @@
         "display_order": 1,
         "question": "애굽 사람들은 홍해에서 무엇을 깨달았습니까?",
         "choices": [
+          "바다가 곧 다시 마를 것이라고 생각했다",
           "하나님이 이스라엘을 위해 싸우신다고 깨달았다",
-          "이스라엘이 길을 잃었다고 생각했다",
-          "바다가 곧 다시 마를 것이라고 생각했다"
+          "이스라엘이 길을 잃었다고 생각했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 14:25 — '그 병거 바퀴를 벗겨서 달리기에 극난하게 하시니 애굽 사람들이 가로되 이스라엘 앞에서 우리가 도망하자 여호와가 그들을 위하여 싸워 애굽 사람들을 치는도다'"
       },
       {
@@ -837,18 +820,12 @@
         "question": "홍해에서 큰 구원을 본 이스라엘 백성은 어떻게 반응했습니까?",
         "choices": [
           "여호와를 경외하며 여호와와 모세를 믿었다",
-          "곧바로 애굽으로 돌아가려 했다",
-          "모세에게 바다를 다시 닫으라 했다"
+          "모세에게 바다를 다시 닫으라 했다",
+          "곧바로 애굽으로 돌아가려 했다"
         ],
         "answer_index": 0,
         "explanation": "출 14:31 — '이스라엘이 여호와께서 애굽 사람들에게 베푸신 큰 일을 보았으므로 백성이 여호와를 경외하며 여 호와와 그 종 모세를 믿었더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "",
-      "",
-      "",
-      ""
     ]
   },
   {
@@ -860,15 +837,15 @@
     ],
     "landmark_code": "lm_exo_marah",
     "place_name": "마라(전승)",
-    "lat": 28.7,
-    "lng": 33.4,
+    "lat": 29.85,
+    "lng": 32.95,
     "summary": "광야의 첫 위기에서 하나님은 쓴 물을 바꾸며 백성을 가르치신다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「마라」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "15:27",
         "book": "출",
-        "from": "15:22",
-        "to": "15:27"
+        "from": "15:22"
       }
     ],
     "start_year": -1446,
@@ -907,8 +884,8 @@
         "question": "마라에서 물을 마시지 못한 백성은 어떻게 하였습니까?",
         "choices": [
           "원망하였다",
-          "금식하며 기도하였다",
-          "다른 물을 찾아 떠났다"
+          "다른 물을 찾아 떠났다",
+          "금식하며 기도하였다"
         ],
         "answer_index": 0,
         "explanation": "출 15:24 — '백성이 모세를 원망하여 가로되 우리가 무엇을 마시리요'"
@@ -930,11 +907,11 @@
         "display_order": 2,
         "question": "마라를 떠난 뒤 이스라엘이 이른 엘림에는 무엇이 있었습니까?",
         "choices": [
-          "물 샘 열둘과 종려나무 칠십 주",
+          "마른 우물 하나와 빈 들판",
           "금송아지 제단과 큰 성문",
-          "마른 우물 하나와 빈 들판"
+          "물 샘 열둘과 종려나무 칠십 주"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 15:27 — '엘림에 이르니 거기 물샘 열둘과 종려 칠십 주가 있는지라'"
       }
     ]
@@ -949,15 +926,15 @@
     ],
     "landmark_code": "lm_exo_wilderness_of_sin",
     "place_name": "신 광야(전승)",
-    "lat": 30.5,
-    "lng": 34.7,
+    "lat": 29.1,
+    "lng": 33.3,
     "summary": "먹을 것이 없던 광야에서 하나님은 매일의 양식을 주시며 ‘신뢰’를 훈련하신다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「만나와 메추라기」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "16:36",
         "book": "출",
-        "from": "16:1",
-        "to": "16:36"
+        "from": "16:1"
       }
     ],
     "start_year": -1446,
@@ -1000,8 +977,8 @@
         "question": "일부 백성은 만나를 어떻게 하였습니까?",
         "choices": [
           "아침까지 남겨 두었다",
-          "안식일에도 거두러 나갔다",
-          "먹기를 거부하였다"
+          "먹기를 거부하였다",
+          "안식일에도 거두러 나갔다"
         ],
         "answer_index": 0,
         "explanation": "출 16:20 — '모세의 말을 청종하지 않고 ... 아침까지 두매 벌레가 생기고 냄새가 난지라'"
@@ -1011,11 +988,11 @@
         "display_order": 1,
         "question": "모세는 안식일에 만나를 어떻게 하라고 말했습니까?",
         "choices": [
-          "그날은 들에서 얻지 못하니 남은 것을 먹으라고 했다",
+          "그날은 만나를 먹지 말라고 했다",
           "그날도 평소처럼 새로 거두라고 했다",
-          "그날은 만나를 먹지 말라고 했다"
+          "그날은 들에서 얻지 못하니 남은 것을 먹으라고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 16:25 — '모세가 가로되 오늘은 그것을 먹으라 오늘은 여호와께 안식일인즉 오늘은 너희가 그것을 들에서 얻지 못하리라'"
       },
       {
@@ -1023,11 +1000,11 @@
         "display_order": 2,
         "question": "한 오멜은 에바의 몇 분의 일입니까?",
         "choices": [
-          "십분의 일",
           "오분의 일",
-          "사분의 일"
+          "사분의 일",
+          "십분의 일"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 16:36 — '오멜은 에바 십분의 일이더라'"
       }
     ]
@@ -1048,9 +1025,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「아말렉 전투」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "17:16",
         "book": "출",
-        "from": "17:8",
-        "to": "17:16"
+        "from": "17:8"
       }
     ],
     "start_year": -1446,
@@ -1096,11 +1073,11 @@
         "display_order": 0,
         "question": "아말렉과 싸운 장소는 어디입니까?",
         "choices": [
+          "시내산",
           "르비딤",
-          "마라",
-          "시내산"
+          "마라"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 17:8 — '아말렉이 이르러 이스라엘과 르비딤에서 싸우니라'"
       },
       {
@@ -1120,11 +1097,11 @@
         "display_order": 2,
         "question": "아말렉 전투에서 여호수아는 어떻게 싸웠습니까?",
         "choices": [
-          "칼날로 아말렉과 그 백성을 쳐서 이겼다",
           "산 위에서 모세의 팔을 붙들었다",
+          "칼날로 아말렉과 그 백성을 쳐서 이겼다",
           "전투를 피하고 광야로 물러났다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 17:13 — '여호수아가 칼날로 아말렉과 그 백성을 쳐서 파하니라'"
       }
     ]
@@ -1144,9 +1121,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「시내산 도착」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "20:26",
         "book": "출",
-        "from": "19:1",
-        "to": "20:26"
+        "from": "19:1"
       }
     ],
     "start_year": -1446,
@@ -1185,11 +1162,11 @@
         "display_order": 0,
         "question": "십계명에서 이웃에 대해 금한 것은 무엇입니까?",
         "choices": [
+          "도둑질",
           "거짓 증거",
-          "살인",
-          "도둑질"
+          "살인"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 20:16 — '네 이웃에 대하여 거짓 증거하지 말지니라'"
       },
       {
@@ -1197,11 +1174,11 @@
         "display_order": 1,
         "question": "십계명 선포 후 백성은 어디에 있었습니까?",
         "choices": [
-          "멀리 섰다",
           "산 아래에 모여 절하였다",
-          "성막 앞에 엎드렸다"
+          "성막 앞에 엎드렸다",
+          "멀리 섰다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 20:21 — '백성은 멀리 섰고 모세는 하나님의 계신 암흑으로 가까이 가니라'"
       },
       {
@@ -1209,18 +1186,13 @@
         "display_order": 2,
         "question": "십계명을 들은 뒤 백성은 모세에게 무엇을 부탁했습니까?",
         "choices": [
-          "모세가 대신 말씀을 전해 달라고 부탁했다",
+          "애굽으로 다시 돌아가자고 부탁했다",
           "시내산 위로 함께 올라가자고 부탁했다",
-          "애굽으로 다시 돌아가자고 부탁했다"
+          "모세가 대신 말씀을 전해 달라고 부탁했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 20:19 — '당신이 우리에게 말씀하소서 우리가 들으리이다'"
       }
-    ],
-    "scene_prompt_notes": [
-      "",
-      "",
-      ""
     ]
   },
   {
@@ -1232,16 +1204,16 @@
       "aaron"
     ],
     "landmark_code": "lm_exo_mt_sinai",
-    "place_name": "시내산 진(전승)",
+    "place_name": "시내산(전승)",
     "lat": 28.5392,
     "lng": 33.9756,
     "summary": "기다림을 견디지 못한 백성은 우상을 만들고 언약을 깨뜨린다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「금송아지」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "32:35",
         "book": "출",
-        "from": "32:1",
-        "to": "32:35"
+        "from": "32:1"
       }
     ],
     "start_year": -1446,
@@ -1285,11 +1257,11 @@
         "display_order": 0,
         "question": "금송아지를 만들도록 허락한 사람은 누구입니까?",
         "choices": [
-          "아론",
+          "여호수아",
           "모세",
-          "여호수아"
+          "아론"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 32:1-4 — 백성이 아론에게 신을 만들라 하매 아론이 금 귀고리를 모아 송아지를 만들었더라"
       },
       {
@@ -1297,11 +1269,11 @@
         "display_order": 1,
         "question": "모세가 산에서 내려와 백성의 소리를 들었을 때 어떻게 말하였습니까?",
         "choices": [
-          "노래하는 소리라 하였다",
+          "통곡하는 소리라 하였다",
           "전쟁의 함성이라 하였다",
-          "통곡하는 소리라 하였다"
+          "노래하는 소리라 하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 32:18 — '나의 듣기에는 노래하는 소리로다 하고'"
       },
       {
@@ -1309,11 +1281,11 @@
         "display_order": 2,
         "question": "금송아지 일로 모세가 책망하자 아론은 백성에 대해 무엇이라고 말했습니까?",
         "choices": [
-          "백성의 악함을 당신이 안다고 말했다",
+          "여호수아가 송아지를 만들었다고 말했다",
           "백성은 아무 잘못이 없다고 말했다",
-          "여호수아가 송아지를 만들었다고 말했다"
+          "백성의 악함을 당신이 안다고 말했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 32:22 — '아론이 가로되 내 주여 노하지 마소서 이 백성의 악함을 당신이 아나이다'"
       }
     ]
@@ -1334,9 +1306,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「모세의 중보」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "34:35",
         "book": "출",
-        "from": "33:7",
-        "to": "34:35"
+        "from": "33:7"
       }
     ],
     "start_year": -1446,
@@ -1381,11 +1353,11 @@
         "display_order": 0,
         "question": "모세가 진 밖에 친 장막의 이름은 무엇이었습니까?",
         "choices": [
-          "회막",
           "성막",
+          "회막",
           "증거막"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 33:7 — '모세가 ... 진 밖에 쳐서 ... 회막이라 이름하니'"
       },
       {
@@ -1393,11 +1365,11 @@
         "display_order": 1,
         "question": "새 돌판을 받으러 시내산에 오를 때 모세는 어떻게 하였습니까?",
         "choices": [
+          "백성 앞에 서약하고 올라갔다",
           "아침에 일찌기 일어나 돌판을 들고 올라갔다",
-          "아론과 함께 올라갔다",
-          "백성 앞에 서약하고 올라갔다"
+          "아론과 함께 올라갔다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "출 34:4 — '모세가 ... 아침에 일찌기 일어나 그 두 돌판을 손에 들고 ... 시내 산에 올라가니'"
       },
       {
@@ -1405,11 +1377,11 @@
         "display_order": 2,
         "question": "하나님은 모세 앞을 지나시며 자신을 어떤 분으로 선포하셨습니까?",
         "choices": [
-          "자비롭고 은혜롭고 인자와 진실이 많은 하나님",
           "속히 노하고 약속을 잊는 하나님",
-          "이스라엘을 다시 애굽으로 보내는 하나님"
+          "이스라엘을 다시 애굽으로 보내는 하나님",
+          "자비롭고 은혜롭고 인자와 진실이 많은 하나님"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "출 34:6 — '여호와께서 그의 앞으로 지나시며 반포하시되 여호와로라 여호와로라 자비롭고 은혜롭고 노하기를 더디하고 인자와 진실이 많은 하나님이로라'"
       }
     ]
@@ -1431,9 +1403,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「미리암과 아론」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "12:16",
         "book": "민",
-        "from": "12:1",
-        "to": "12:16"
+        "from": "12:1"
       }
     ],
     "start_year": -1445,
@@ -1484,8 +1456,8 @@
         "question": "미리암과 아론은 모세에 대해 무엇을 문제 삼았습니까?",
         "choices": [
           "모세가 구스 여자를 취한 일",
-          "모세가 만나를 거두지 않은 일",
-          "모세가 장대를 세운 일"
+          "모세가 장대를 세운 일",
+          "모세가 만나를 거두지 않은 일"
         ],
         "answer_index": 0,
         "explanation": "민 12:1 — '모세가 구스 여자를 취하였더니 ... 미리암과 아론이 모세를 비방하니라'"
@@ -1514,12 +1486,6 @@
         "answer_index": 0,
         "explanation": "민 12:13 — '모세가 여호와께 부르짖어 가로되 하나님이여 원컨대 그를 고쳐 주옵소서'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Miriam as an elderly Israelite woman, older sister of Moses, with gray-streaked hair under a modest head covering. Aaron wears high-priestly linen garments and breastpiece here, clearly distinct from Moses. Moses must hold only a wooden staff; no stone tablets, no scroll tablets, no commandment tablets. No text labels.",
-      "Show God only as a holy cloud/light at the tent of meeting, never as a human figure. In the picture-only speech bubble, show direct closeness between God's light and Moses without readable text. Aaron wears high-priestly linen garments and breastpiece. Moses must not hold stone tablets.",
-      "Miriam remains the same elderly woman. Aaron wears high-priestly linen garments and breastpiece. Moses must not hold stone tablets. Show pale skin as a clean visual sign only; no gore, no wounds, no horror.",
-      "Miriam remains the same elderly woman outside the camp, humbled but not abandoned. Moses must hold only a wooden staff or have empty hands; no stone tablets. No readable labels."
     ]
   },
   {
@@ -1539,9 +1505,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「가나안 정탐」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "14:45",
         "book": "민",
-        "from": "13:1",
-        "to": "14:45"
+        "from": "13:1"
       }
     ],
     "start_year": -1445,
@@ -1589,11 +1555,11 @@
         "display_order": 0,
         "question": "모세가 정탐꾼들에게 살피라고 한 것은 무엇입니까?",
         "choices": [
-          "땅과 그곳 백성이 강한지 약한지",
           "애굽으로 돌아갈 지름길",
-          "시내산으로 다시 오를 길"
+          "시내산으로 다시 오를 길",
+          "땅과 그곳 백성이 강한지 약한지"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "민 13:18 — '그 땅의 어떠함을 탐지하라 곧 그 땅 거민의 강약과 다소와'"
       },
       {
@@ -1601,11 +1567,11 @@
         "display_order": 1,
         "question": "갈렙은 두려워하는 백성 앞에서 어떤 태도를 보였습니까?",
         "choices": [
-          "곧 올라가서 그 땅을 취하자고 말했다",
           "애굽으로 즉시 돌아가자고 말했다",
+          "곧 올라가서 그 땅을 취하자고 말했다",
           "정탐한 일을 숨기자고 말했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "민 13:30 — '우리가 곧 올라가서 그 땅을 취하자 능히 이기리라'"
       },
       {
@@ -1613,19 +1579,13 @@
         "display_order": 2,
         "question": "여호수아와 갈렙은 백성에게 왜 두려워하지 말라고 했습니까?",
         "choices": [
-          "여호와께서 함께하시기 때문",
+          "정탐꾼들이 모두 같은 보고를 했기 때문",
           "성읍들이 이미 비어 있었기 때문",
-          "정탐꾼들이 모두 같은 보고를 했기 때문"
+          "여호와께서 함께하시기 때문"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "민 14:9 — '오직 여호와를 거역하지 말라 또 그 땅 백성을 두려워하지 말라 ... 여호와는 우리와 함께 하시느니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "",
-      "",
-      "Show Joshua and Caleb as two distinct faithful scouts standing apart from the fearful spies. No text labels.",
-      "Show a large text-free pictorial speech bubble coming from God's glory, containing a solemn image of Israelites enduring long wilderness wandering and hardship. No readable text, no letters, no labels."
     ]
   },
   {
@@ -1638,16 +1598,16 @@
       "korah"
     ],
     "landmark_code": "lm_exo_kadesh_barnea",
-    "place_name": "광야 진영(가데스 바네아 전승)",
+    "place_name": "가데스 바네아",
     "lat": 30.6786,
     "lng": 34.4325,
     "summary": "거룩한 직분을 둘러싼 반역 속에서 하나님은 공동체의 질서를 분명히 세우신다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「고라의 반역」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "16:50",
         "book": "민",
-        "from": "16:1",
-        "to": "16:50"
+        "from": "16:1"
       }
     ],
     "start_year": -1445,
@@ -1700,11 +1660,11 @@
         "display_order": 1,
         "question": "반역의 말을 들은 모세는 어떤 반응을 보였습니까?",
         "choices": [
-          "엎드렸다",
           "군사를 모았다",
+          "엎드렸다",
           "애굽으로 돌아갔다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "민 16:4 — '모세가 듣고 엎드렸다가'"
       },
       {
@@ -1712,18 +1672,13 @@
         "display_order": 2,
         "question": "염병이 시작되었을 때 아론은 백성 사이에서 무엇을 했습니까?",
         "choices": [
-          "향을 피워 백성을 위하여 속죄하였다",
+          "성막의 휘장을 새로 만들었다",
           "가나안 정탐꾼들을 다시 보냈다",
-          "성막의 휘장을 새로 만들었다"
+          "향을 피워 백성을 위하여 속죄하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "민 16:47 — '아론이 ... 백성 중에 달려간즉 염병이 백성 중에 시작되었는지라 이에 백성을 위하여 속죄하고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Korah as a Levite rebel leader with proud posture and a bronze censer; no readable labels.",
-      "Show censers and the tent of meeting clearly. Avoid gore or visible injury.",
-      "Show judgment from a safe distance: cracked ground and frightened crowd only; no falling bodies, no corpses, no gore."
     ]
   },
   {
@@ -1742,9 +1697,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「므리바 물」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "20:13",
         "book": "민",
-        "from": "20:1",
-        "to": "20:13"
+        "from": "20:1"
       }
     ],
     "start_year": -1408,
@@ -1792,11 +1747,11 @@
         "display_order": 0,
         "question": "백성은 모세와 아론에게 무엇 때문에 불평했습니까?",
         "choices": [
+          "장막을 세울 나무가 없다고 불평했다",
           "마실 물이 없다고 불평했다",
-          "전쟁할 무기가 없다고 불평했다",
-          "장막을 세울 나무가 없다고 불평했다"
+          "전쟁할 무기가 없다고 불평했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "민 20:2-3 — '회중이 물이 없으므로 모세와 아론을 공박하니라'"
       },
       {
@@ -1816,19 +1771,13 @@
         "display_order": 2,
         "question": "하나님은 왜 모세와 아론이 약속의 땅에 들어가지 못한다고 하셨습니까?",
         "choices": [
-          "하나님의 거룩함을 나타내지 못했기 때문이다",
+          "백성에게 물을 전혀 주지 않았기 때문이다",
           "가나안 정탐을 직접 가지 않았기 때문이다",
-          "백성에게 물을 전혀 주지 않았기 때문이다"
+          "하나님의 거룩함을 나타내지 못했기 때문이다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "민 20:12 — '너희가 나를 믿지 아니하고 이스라엘 자손의 목전에 나의 거룩함을 나타내지 아니한고로'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Aaron is Moses' older brother and must look older than Moses here: very elderly, white beard, high-priestly linen garments, breastpiece, priestly turban, and dignified but burdened expression. Show the people complaining about lack of water without readable text labels.",
-      "Aaron is Moses' older brother and must look older than Moses here: very elderly, white beard, high-priestly linen garments, breastpiece, and priestly turban. Show a large text-free pictorial speech bubble coming from God's glory. Inside it, show Moses with a staff speaking to a rock and water flowing from the rock. No readable text, no letters, no labels.",
-      "Aaron is Moses' older brother and must look older than Moses here: very elderly, white beard, high-priestly linen garments, breastpiece, and priestly turban. Moses should strike the rock twice with the staff. Show water bursting out clearly. No gore, no readable labels.",
-      "Aaron is Moses' older brother and must look older than Moses here: very elderly, white beard, high-priestly linen garments, breastpiece, and priestly turban. Show a large text-free pictorial speech bubble coming from God's glory. Inside it, show the lush promised land far beyond a closed gate and a glowing boundary line that clearly blocks the path, while Moses and Aaron stand outside the boundary with bowed heads. Make it feel unmistakably forbidden to enter, not like they are waiting to enter. No readable text, no letters, no labels."
     ]
   },
   {
@@ -1839,15 +1788,15 @@
     ],
     "landmark_code": "lm_exo_edom_road",
     "place_name": "광야(에돔 길, 전승)",
-    "lat": 30.0,
-    "lng": 35.5,
+    "lat": 30.3,
+    "lng": 35.3,
     "summary": "원망 속에서 고통이 번지지만, 하나님은 ‘바라봄’으로 살 길을 주신다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「놋뱀」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "21:9",
         "book": "민",
-        "from": "21:4",
-        "to": "21:9"
+        "from": "21:4"
       }
     ],
     "start_year": -1408,
@@ -1886,11 +1835,11 @@
         "display_order": 0,
         "question": "광야 길에서 백성은 무엇을 원망했습니까?",
         "choices": [
-          "먹을 것과 물이 부족하다고 불평했다",
           "성막을 너무 오래 지었다고 불평했다",
-          "제사장이 너무 많다고 불평했다"
+          "제사장이 너무 많다고 불평했다",
+          "먹을 것과 물이 부족하다고 불평했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "민 21:5 — '어찌하여 우리를 애굽에서 인도하여 올려서 이 광야에서 죽게 하는고 이곳에는 식물도 없고 물도 없도다'"
       },
       {
@@ -1899,8 +1848,8 @@
         "question": "불뱀에 물린 뒤 백성은 모세에게 무엇을 부탁했습니까?",
         "choices": [
           "여호와께 기도해 달라고 부탁했다",
-          "애굽으로 데려가 달라고 부탁했다",
-          "새 지도자를 세워 달라고 부탁했다"
+          "새 지도자를 세워 달라고 부탁했다",
+          "애굽으로 데려가 달라고 부탁했다"
         ],
         "answer_index": 0,
         "explanation": "민 21:7 — '여호와께 기도하여 이 뱀들을 우리에게서 떠나게 하소서'"
@@ -1935,9 +1884,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「바알브올」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "25:18",
         "book": "민",
-        "from": "25:1",
-        "to": "25:18"
+        "from": "25:1"
       }
     ],
     "start_year": -1408,
@@ -1988,11 +1937,11 @@
         "display_order": 1,
         "question": "비느하스의 행동 뒤에 하나님은 무엇이 그쳤다고 하셨습니까?",
         "choices": [
-          "이스라엘을 향한 진노가 그쳤다",
           "요단강 물이 멈추었다",
+          "이스라엘을 향한 진노가 그쳤다",
           "만나가 다시 내리기 시작했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "민 25:11 — '그가 나의 질투심으로 그들 중에서 나의 노를 돌이켜서'"
       },
       {
@@ -2001,17 +1950,12 @@
         "question": "하나님은 비느하스의 열심을 어떻게 보셨습니까?",
         "choices": [
           "언약을 향한 열심으로 보셨다",
-          "왕이 되려는 욕심으로 보셨다",
-          "전쟁을 피하려는 두려움으로 보셨다"
+          "전쟁을 피하려는 두려움으로 보셨다",
+          "왕이 되려는 욕심으로 보셨다"
         ],
         "answer_index": 0,
         "explanation": "민 25:13 — '그가 그 하나님을 위하여 질투하여 이스라엘 자손을 속죄하였음이니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show idolatrous feast as visible disorder around an altar only; no sexual scene, no nudity, no readable labels.",
-      "Show Phinehas as a young priestly man acting decisively; violence is implied only, no blood, no bodies.",
-      "Show God only as holy light and the plague stopping symbolically; no gore, no bodies."
     ]
   },
   {
@@ -2029,9 +1973,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「모압 언약」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "30:10",
         "book": "신",
-        "from": "29:1",
-        "to": "30:10"
+        "from": "29:1"
       }
     ],
     "start_year": -1406,
@@ -2070,11 +2014,11 @@
         "display_order": 0,
         "question": "모세는 광야 생활 동안 하나님이 백성을 어떻게 돌보셨다고 말했습니까?",
         "choices": [
-          "먹을 것과 길과 승리를 주셨다고 말했다",
           "애굽 왕에게 다시 보내셨다고 말했다",
-          "성전을 완성하게 하셨다고 말했다"
+          "성전을 완성하게 하셨다고 말했다",
+          "먹을 것과 길과 승리를 주셨다고 말했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "신 29:5-7 — '너희 옷이 낡아지지 아니하였고 ... 헤스본 왕 시혼과 바산 왕 옥이 ... 싸우러 나왔으므로 우리가 그들을 치고'"
       },
       {
@@ -2082,11 +2026,11 @@
         "display_order": 1,
         "question": "모세는 백성에게 어떤 우상들을 경계하라고 했습니까?",
         "choices": [
+          "성막의 등잔대와 떡상",
           "나무와 돌과 은금으로 만든 우상",
-          "요단강의 돌기념물",
-          "성막의 등잔대와 떡상"
+          "요단강의 돌기념물"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "신 29:17 — '목석과 은금의 우상을 보았느니라'"
       },
       {
@@ -2095,17 +2039,12 @@
         "question": "모세는 백성이 하나님께 돌아오면 어떤 일이 있을 것이라고 말했습니까?",
         "choices": [
           "하나님이 다시 복을 주시고 돌아오게 하신다",
-          "광야 생활이 처음부터 다시 시작된다",
-          "가나안 땅을 모두 잊게 된다"
+          "가나안 땅을 모두 잊게 된다",
+          "광야 생활이 처음부터 다시 시작된다"
         ],
         "answer_index": 0,
         "explanation": "신 30:3 — '네 하나님 여호와께서 마음을 돌이키시고 너를 긍휼히 여기사 ... 돌아오게 하시되'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Moses as very old with white hair but dignified and strong. Speech bubble is pictorial only: manna/food provision and victory in battle. No readable text.",
-      "Show Moses as the same old white-haired man. Use a text-free pictorial speech bubble with a crossed-out calf idol and silver/gold idols, but no readable letters.",
-      "Show a text-free pictorial speech bubble of blessing: abundant fields, families, and peace under God's light. No readable text."
     ]
   },
   {
@@ -2124,9 +2063,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「여호수아 위임」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "31:29",
         "book": "신",
-        "from": "31:1",
-        "to": "31:29"
+        "from": "31:1"
       }
     ],
     "start_year": -1406,
@@ -2167,11 +2106,11 @@
         "display_order": 0,
         "question": "모세는 백성 앞에서 누구를 다음 지도자로 세웠습니까?",
         "choices": [
+          "비느하스",
           "여호수아",
-          "갈렙",
-          "비느하스"
+          "갈렙"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "신 31:7 — '모세가 여호수아를 불러 온 이스라엘의 목전에서 그에게 이르되 너는 강하고 담대하라'"
       },
       {
@@ -2179,11 +2118,11 @@
         "display_order": 1,
         "question": "모세는 여호수아에게 어떤 마음으로 서라고 말했습니까?",
         "choices": [
-          "강하고 담대하라고 말했다",
           "숨어서 기다리라고 말했다",
-          "백성을 두려워하라고 말했다"
+          "백성을 두려워하라고 말했다",
+          "강하고 담대하라고 말했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "신 31:7 — '너는 강하고 담대하라'"
       },
       {
@@ -2198,11 +2137,6 @@
         "answer_index": 0,
         "explanation": "신 31:16 — '이 백성은 ... 일어나서 이방 신들을 음란히 좇아 나를 버리며'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Moses as 120 years old with white hair, still dignified and strong. No readable text labels.",
-      "Make the cloud pillar feel unmistakably like God's holy presence, not ordinary smoke: a tall luminous vertical column descending from heaven to the tent entrance, bright white and warm gold light glowing from within, soft halo lighting Moses and Joshua, no human face or body. Show a text-free pictorial speech bubble from the radiant cloud pillar, symbolizing future apostasy with dark idol silhouettes and people turning away, but no readable text.",
-      "Show Moses as the same 120-year-old white-haired leader giving a final charge. No readable text."
     ]
   },
   {
@@ -2221,9 +2155,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「모세의 마지막」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "34:12",
         "book": "신",
-        "from": "34:1",
-        "to": "34:12"
+        "from": "34:1"
       }
     ],
     "start_year": -1406,
@@ -2262,11 +2196,11 @@
         "display_order": 0,
         "question": "하나님은 모세에게 어느 산에서 약속의 땅을 보게 하셨습니까?",
         "choices": [
+          "갈멜산",
           "느보산",
-          "시내산",
-          "갈멜산"
+          "시내산"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "신 34:1 — '모세가 모압 평지에서 느보 산에 올라'"
       },
       {
@@ -2274,11 +2208,11 @@
         "display_order": 1,
         "question": "모세가 죽기 전 여호수아에게 한 일은 무엇입니까?",
         "choices": [
+          "여호수아의 장막을 불태웠다",
           "여호수아에게 안수했다",
-          "여호수아를 애굽으로 보냈다",
-          "여호수아의 장막을 불태웠다"
+          "여호수아를 애굽으로 보냈다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "신 34:9 — '모세가 눈의 아들 여호수아에게 안수하였으므로'"
       },
       {
@@ -2293,11 +2227,6 @@
         "answer_index": 0,
         "explanation": "신 34:7 — '그 눈이 흐리지 아니하였고 기력이 쇠하지 아니하였더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Moses as 120 years old with white hair, still vigorous. No readable text.",
-      "Show Moses laying hands on Joshua with strength and dignity, no oil anointing, no readable text.",
-      "Make it unmistakably a mourning scene for Moses' death: show Moses' staff and cloak as an empty-place memorial, Joshua kneeling in front, elders and people covering their faces, and distant warm light over Mount Nebo. Do not show Moses' body, a grave, burial details, or readable labels."
     ]
   },
   {
@@ -2309,16 +2238,16 @@
       "rahab"
     ],
     "landmark_code": "lm_jud_jericho",
-    "place_name": "여리고",
+    "place_name": "요단강(여리고 맞은편, 전승)",
     "lat": 31.8744,
     "lng": 35.4441,
     "summary": "여리고 성 안에서 라합은 두 정탐꾼을 숨기고, 붉은 줄로 구원의 표를 매단다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「라합과 두 정탐꾼」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:24",
         "book": "수",
-        "from": "2:1",
-        "to": "2:24"
+        "from": "2:1"
       }
     ],
     "start_year": -1406,
@@ -2360,11 +2289,11 @@
         "display_order": 0,
         "question": "여호수아는 여리고를 알아보기 위해 누구를 보냈습니까?",
         "choices": [
-          "두 정탐꾼",
           "열두 제사장",
-          "블레셋 사신들"
+          "블레셋 사신들",
+          "두 정탐꾼"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 2:1 — '여호수아가 싯딤에서 두 사람을 정탐으로 가만히 보내며'"
       },
       {
@@ -2372,11 +2301,11 @@
         "display_order": 1,
         "question": "라합은 정탐꾼들을 어떻게 도왔습니까?",
         "choices": [
-          "그들을 숨기고 추적자들을 다른 길로 보냈다",
           "그들을 성문 앞에 묶어 두었다",
-          "그들을 왕에게 바로 넘겼다"
+          "그들을 왕에게 바로 넘겼다",
+          "그들을 숨기고 추적자들을 다른 길로 보냈다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 2:4-6 — '그 여인이 그 두 사람을 이미 숨긴지라 ... 실상은 그가 이미 그들을 이끌고 지붕에 올라가서'"
       },
       {
@@ -2384,19 +2313,13 @@
         "display_order": 2,
         "question": "라합의 집을 구별하는 표는 무엇이었습니까?",
         "choices": [
+          "지붕 위에 놓은 등잔",
           "창문에 매단 붉은 줄",
-          "문 앞에 쌓은 열두 돌",
-          "지붕 위에 놓은 등잔"
+          "문 앞에 쌓은 열두 돌"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 2:18 — '이 붉은 줄을 창문에 매고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "The two scouts are unnamed Israelite men in plain travel cloaks. No readable labels.",
-      "Rahab identity lock: same Jericho woman across scenes, sand-colored headscarf wrapping dark hair, teal outer robe, brown shoulder shawl, small beauty mark below her right cheek, modest ancient city clothing. Do not show any scarlet thread or scarlet cord in this indoor scene. No readable labels.",
-      "Rahab identity lock: same woman as scene 2. Show the same two scouts hidden under flax bundles on the roof. No readable labels.",
-      "Rahab identity lock: same woman as scenes 2-3. Only in this scene show the scarlet cord tied from the window. No readable labels."
     ]
   },
   {
@@ -2413,9 +2336,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「요단강 도하」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "4:24",
         "book": "수",
-        "from": "3:1",
-        "to": "4:24"
+        "from": "3:1"
       }
     ],
     "start_year": -1406,
@@ -2453,11 +2376,11 @@
         "display_order": 0,
         "question": "요단강 도하를 위해 먼저 강으로 들어간 것은 무엇이었습니까?",
         "choices": [
-          "언약궤",
           "모세의 지팡이",
+          "언약궤",
           "제사장 열둘"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 3:11 — '온 땅의 주의 언약궤가 너희 앞서 요단으로 들어가나니'"
       },
       {
@@ -2465,11 +2388,11 @@
         "display_order": 1,
         "question": "요단강 도하 이후 이스라엘 백성은 여호수아를 어떻게 대하였습니까?",
         "choices": [
-          "모세를 두려워하던 것같이 두려워하였다",
           "여호수아를 왕으로 추대하였다",
+          "모세를 두려워하던 것같이 두려워하였다",
           "함께 노래와 춤을 추었다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 4:14 — '백성이 두려워하기를 모세를 두려워하던 것같이 하였더라'"
       },
       {
@@ -2494,16 +2417,16 @@
       "joshua"
     ],
     "landmark_code": "lm_jud_jericho",
-    "place_name": "여리고",
+    "place_name": "요단강(여리고 맞은편, 전승)",
     "lat": 31.8744,
     "lng": 35.4441,
     "summary": "상식을 깨는 순종의 행진 끝에 성벽이 무너진다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「여리고」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "6:20",
         "book": "수",
-        "from": "6:1",
-        "to": "6:20"
+        "from": "6:1"
       }
     ],
     "start_year": -1406,
@@ -2546,11 +2469,11 @@
         "display_order": 0,
         "question": "여리고 성을 함락하기 위해 성을 돈 날수는 총 며칠이었습니까?",
         "choices": [
-          "칠 일",
+          "사십 일",
           "삼 일",
-          "사십 일"
+          "칠 일"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 6:3-4 — 엿새 동안 하루 한 번, 일곱째 날 일곱 번 돌아 총 칠 일이었더라"
       },
       {
@@ -2558,11 +2481,11 @@
         "display_order": 1,
         "question": "일곱째 날 여호수아는 백성에게 무엇을 하라고 했습니까?",
         "choices": [
+          "밤이 될 때까지 기다리라고 했다",
           "하나님이 성을 주셨으니 외치라고 했다",
-          "조용히 성에서 물러나라고 했다",
-          "밤이 될 때까지 기다리라고 했다"
+          "조용히 성에서 물러나라고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 6:16 — '일곱 번째에 제사장들이 나팔을 불 때에 여호수아가 백성에게 이르되 외치라 여호와께서 너희에게 이 성을 주셨느니라'"
       },
       {
@@ -2589,15 +2512,15 @@
     ],
     "landmark_code": "lm_jud_ai",
     "place_name": "아이 성 근처(전승)",
-    "lat": 31.93,
-    "lng": 35.25,
+    "lat": 31.97,
+    "lng": 35.28,
     "summary": "숨긴 탐욕이 공동체의 패배로 드러나고, 정리가 시작된다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「아간」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "7:26",
         "book": "수",
-        "from": "7:1",
-        "to": "7:26"
+        "from": "7:1"
       }
     ],
     "start_year": -1406,
@@ -2636,11 +2559,11 @@
         "display_order": 0,
         "question": "아간은 어느 지파 사람이었습니까?",
         "choices": [
-          "유다 지파",
           "베냐민 지파",
-          "에브라임 지파"
+          "에브라임 지파",
+          "유다 지파"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 7:1 — '유다 지파 세라의 증손 삽디의 손자 갈미의 아들 아간이 바친 물건을 취하였음이라'"
       },
       {
@@ -2648,11 +2571,11 @@
         "display_order": 1,
         "question": "아간은 여호수아 앞에서 어떻게 하였습니까?",
         "choices": [
-          "자신의 죄를 고백하였다",
           "아무것도 모른다고 부인하였다",
-          "도망치려 하였다"
+          "도망치려 하였다",
+          "자신의 죄를 고백하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 7:20 — '아간이 여호수아에게 대답하여 가로되 참으로 나는 ... 범죄하여 여차여차히 행하였나이다'"
       },
       {
@@ -2660,11 +2583,11 @@
         "display_order": 2,
         "question": "아간의 죄가 드러난 뒤 이스라엘은 아간과 그 물건들을 어떻게 했습니까?",
         "choices": [
+          "아간을 제사장으로 세웠다",
           "돌로 치고 불살랐다",
-          "몰래 성 안에 숨겼다",
-          "아간을 제사장으로 세웠다"
+          "몰래 성 안에 숨겼다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 7:25 — '여호수아가 가로되 네가 어찌하여 우리를 괴롭게 하였느뇨 여호와께서 오늘날 너를 괴롭게 하시리 라하니 온 이스라엘이 그를 돌로 치고 그것들도 돌로 치고 불사르고'"
       }
     ]
@@ -2684,9 +2607,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「아이 성 정복」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "8:35",
         "book": "수",
-        "from": "8:1",
-        "to": "8:35"
+        "from": "8:1"
       }
     ],
     "start_year": -1406,
@@ -2726,11 +2649,11 @@
         "display_order": 0,
         "question": "하나님은 여호수아에게 아이 성에 대해 무엇을 약속하셨습니까?",
         "choices": [
-          "아이 왕과 성읍을 여호수아의 손에 주시겠다고 하셨다",
           "아이 성 주변을 그냥 지나가라고 하셨다",
+          "아이 왕과 성읍을 여호수아의 손에 주시겠다고 하셨다",
           "이스라엘이 다시 애굽으로 돌아가야 한다고 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 8:1 — '내가 아이 왕과 그 백성과 그 성읍과 그 땅을 다 네 손에 주었노니'"
       },
       {
@@ -2738,11 +2661,11 @@
         "display_order": 1,
         "question": "하나님은 두려워하는 여호수아에게 어떤 태도로 나아가라고 하셨습니까?",
         "choices": [
-          "두려워하지 말고 놀라지 말라고 하셨다",
+          "패배를 받아들이고 전투를 포기하라고 하셨다",
           "아무에게도 말하지 말고 숨으라고 하셨다",
-          "패배를 받아들이고 전투를 포기하라고 하셨다"
+          "두려워하지 말고 놀라지 말라고 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 8:1 — '두려워 말라 놀라지 말라 군사를 다 거느리고 일어나 아이로 올라가라'"
       },
       {
@@ -2750,11 +2673,11 @@
         "display_order": 2,
         "question": "아이 성 승리 뒤 여호수아는 에발 산에 무엇을 쌓았습니까?",
         "choices": [
-          "여호와를 위한 제단",
+          "군사들이 머물 새 성문",
           "아이 왕의 궁전",
-          "군사들이 머물 새 성문"
+          "여호와를 위한 제단"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 8:30 — '여호수아가 이스라엘 하나님 여호와를 위하여 에발 산에 한 단을 쌓았으니'"
       }
     ]
@@ -2774,9 +2697,9 @@
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「기브온 전투」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "10:15",
         "book": "수",
-        "from": "10:1",
-        "to": "10:15"
+        "from": "10:1"
       }
     ],
     "start_year": -1406,
@@ -2807,11 +2730,11 @@
         "display_order": 0,
         "question": "아도니세덱과 여러 왕들은 무엇을 하려고 함께 모였습니까?",
         "choices": [
+          "요단강을 다시 건너려고 모였다",
           "기브온을 치려고 모였다",
-          "여호수아에게 땅을 나누어 주려고 모였다",
-          "요단강을 다시 건너려고 모였다"
+          "여호수아에게 땅을 나누어 주려고 모였다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 10:4 — '내게로 올라와 나를 도우라 우리가 기브온을 치자'"
       },
       {
@@ -2819,11 +2742,11 @@
         "display_order": 1,
         "question": "전투 중 하나님은 도망하는 군사들에게 무엇을 내리셨습니까?",
         "choices": [
+          "강물이 갑자기 마르게 하셨다",
           "하늘에서 큰 우박을 내리셨다",
-          "성문을 스스로 열게 하셨다",
-          "강물이 갑자기 마르게 하셨다"
+          "성문을 스스로 열게 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "수 10:11 — '여호와께서 하늘에서 큰 덩이 우박을 내리우시매'"
       },
       {
@@ -2838,10 +2761,6 @@
         "answer_index": 0,
         "explanation": "수 10:13 — '태양이 머물고 달이 그치기를 백성이 그 대적에게 원수를 갚도록 하였느니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show the five kings as unnamed Canaanite rulers in ancient royal clothing. No readable labels or text.",
-      "No gore, no bodies, no readable labels."
     ]
   },
   {
@@ -2852,16 +2771,16 @@
       "joshua"
     ],
     "landmark_code": "lm_exo_shechem_oak",
-    "place_name": "세겜(전승)",
+    "place_name": "세겜 상수리나무(전승)",
     "lat": 32.213,
     "lng": 35.281,
     "summary": "늙은 여호수아는 백성에게 하나님만 섬기라고 당부하고, 언약의 증거를 세운 뒤 사명을 마친다.",
     "background_context": "출애굽과 광야 여정은 이스라엘이 애굽을 떠나 시내산과 광야를 지나는 시기입니다. 이 이야기는 「여호수아의 마지막 권면」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "24:30",
         "book": "수",
-        "from": "23:1",
-        "to": "24:30"
+        "from": "23:1"
       }
     ],
     "start_year": -1390,
@@ -2917,8 +2836,8 @@
         "question": "여호수아는 백성에게 어떤 일을 조심하라고 당부했습니까?",
         "choices": [
           "다른 민족의 신들을 가까이하지 말라고 했다",
-          "하나님께 드리는 예배를 멈추라고 했다",
-          "율법책을 모두 숨기라고 했다"
+          "율법책을 모두 숨기라고 했다",
+          "하나님께 드리는 예배를 멈추라고 했다"
         ],
         "answer_index": 0,
         "explanation": "수 23:7 — '그 신들의 이름을 부르지 말라 그것을 가리켜 맹세하지 말라 또 그것을 섬겨서 그것에게 절하지 말라'"
@@ -2928,19 +2847,13 @@
         "display_order": 2,
         "question": "여호수아는 말씀을 기록한 뒤 큰 돌을 어디에 세웠습니까?",
         "choices": [
-          "여호와의 성소 곁 상수리나무 아래",
+          "요단강 한가운데 물길 아래",
           "여리고 성문 밖 붉은 줄 아래",
-          "요단강 한가운데 물길 아래"
+          "여호와의 성소 곁 상수리나무 아래"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "수 24:26 — '큰 돌을 취하여 거기 여호와의 성소 곁에 있는 상수리나무 아래 세우고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Joshua consistently as an elderly leader with white hair, dignified and strong despite age. No readable labels.",
-      "Show Joshua as the same elderly white-haired leader. No readable labels.",
-      "Show Joshua as the same elderly white-haired leader. The law book may have line-like marks but no readable text.",
-      "Show mourning clearly but gently. No graphic death detail, no readable labels."
     ]
   }
 ]

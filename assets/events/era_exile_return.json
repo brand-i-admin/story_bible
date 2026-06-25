@@ -13,9 +13,9 @@
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「마른 뼈」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "37:14",
         "book": "겔",
-        "from": "37:1",
-        "to": "37:14"
+        "from": "37:1"
       }
     ],
     "start_year": -585,
@@ -59,11 +59,11 @@
         "display_order": 0,
         "question": "에스겔은 하나님의 명령에 따라 마른 뼈들에게 어떻게 하였습니까?",
         "choices": [
+          "뼈들 위에 손을 얹어 기도하였다",
           "뼈들에게 대언하였다",
-          "뼈들을 모아 매장하였다",
-          "뼈들 위에 손을 얹어 기도하였다"
+          "뼈들을 모아 매장하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "겔 37:4 — '너는 이 모든 뼈에게 대언하여 이르기를'"
       },
       {
@@ -71,11 +71,11 @@
         "display_order": 1,
         "question": "마른 뼈들에게 하나님이 주신 약속은 무엇입니까?",
         "choices": [
-          "생기를 넣어 다시 살게 하시겠다는 약속",
           "뼈들을 그대로 흩어 두시겠다는 말씀",
+          "생기를 넣어 다시 살게 하시겠다는 약속",
           "성읍 밖으로 옮기라는 명령"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "겔 37:5 — '주 여호와께서 이 뼈들에게 말씀하시기를 내가 생기로 너희에게 들어가게 하리니 너희가 살리라'"
       },
       {
@@ -109,9 +109,9 @@
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「다니엘」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "1:20",
         "book": "단",
-        "from": "1:8",
-        "to": "1:20"
+        "from": "1:8"
       }
     ],
     "start_year": -605,
@@ -162,11 +162,11 @@
         "display_order": 0,
         "question": "다니엘이 뜻을 정하여 먹지 않겠다고 한 것은 무엇이었습니까?",
         "choices": [
-          "왕의 진미와 포도주",
           "이방 신에게 제사한 음식",
+          "왕의 진미와 포도주",
           "피로 만든 음식"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "단 1:8 — '왕의 진미와 그의 마시는 포도주로 자기를 더럽히지 아니하리라'"
       },
       {
@@ -204,16 +204,16 @@
       "abednego"
     ],
     "landmark_code": "lm_exi_babylon",
-    "place_name": "바벨론(전승)",
+    "place_name": "바벨론",
     "lat": 32.5421,
     "lng": 44.4209,
     "summary": "사드락과 메삭과 아벳느고는 금 신상에 절하지 않고 풀무불에 던져지지만, 하나님이 그들을 보호하신다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「풀무불」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "3:30",
         "book": "단",
-        "from": "3:1",
-        "to": "3:30"
+        "from": "3:1"
       }
     ],
     "start_year": -585,
@@ -263,11 +263,11 @@
         "display_order": 0,
         "question": "느부갓네살이 두라 평지에 세운 신상의 높이는 얼마였습니까?",
         "choices": [
-          "육십 규빗",
           "삼십 규빗",
-          "백 규빗"
+          "백 규빗",
+          "육십 규빗"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "단 3:1 — '고는 육십 규빗이요 광은 여섯 규빗이라'"
       },
       {
@@ -275,11 +275,11 @@
         "display_order": 1,
         "question": "사드락과 메삭과 아벳느고는 왕의 명을 받자 어떻게 하였습니까?",
         "choices": [
-          "왕에게 대답할 필요가 없다며 굴복을 거절하였다",
+          "도망쳐서 숨었다",
           "절을 한 척하고 마음속으로 기도하였다",
-          "도망쳐서 숨었다"
+          "왕에게 대답할 필요가 없다며 굴복을 거절하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "단 3:16 — '우리가 이 일에 대하여 왕에게 대답할 필요가 없나이다'"
       },
       {
@@ -287,11 +287,11 @@
         "display_order": 2,
         "question": "풀무불 속 사람 수를 확인한 왕에게 신하들은 어떻게 대답했습니까?",
         "choices": [
-          "세 사람을 던진 것이 맞다고 대답했다",
+          "아무도 불 속에 없다고 대답했다",
           "네 사람을 던졌다고 대답했다",
-          "아무도 불 속에 없다고 대답했다"
+          "세 사람을 던진 것이 맞다고 대답했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "단 3:24 — '때에 느부갓네살 왕이 놀라 급히 일어나서 모사들에게 물어 가로되 우리가 결박하여 불가운데 던진 자는 세 사람이 아니었느냐 그들이 왕에게 대답하여 가로되 왕이여 옳소이다'"
       }
     ]
@@ -310,9 +310,9 @@
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「벨사살의 잔치」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "5:31",
         "book": "단",
-        "from": "5:1",
-        "to": "5:31"
+        "from": "5:1"
       }
     ],
     "start_year": -539,
@@ -347,11 +347,11 @@
         "display_order": 0,
         "question": "벨사살의 잔치에 초대된 귀인의 수는 몇 명이었습니까?",
         "choices": [
-          "일천 명",
+          "칠십 명",
           "오백 명",
-          "칠십 명"
+          "일천 명"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "단 5:1 — '벨사살 왕이 그 귀인 일천 명을 위하여 큰 잔치를 배설하고'"
       },
       {
@@ -372,8 +372,8 @@
         "question": "벽의 글씨에서 ‘데겔’은 벨사살 왕에게 어떤 뜻이었습니까?",
         "choices": [
           "저울에 달려 부족함이 드러났다는 뜻",
-          "나라가 오래 견고하다는 뜻",
-          "왕이 다시 높아진다는 뜻"
+          "왕이 다시 높아진다는 뜻",
+          "나라가 오래 견고하다는 뜻"
         ],
         "answer_index": 0,
         "explanation": "단 5:27 — '데겔은 왕이 저울에 달려서 부족함이 뵈었다 함이요'"
@@ -387,16 +387,16 @@
       "daniel"
     ],
     "landmark_code": "lm_exi_babylon",
-    "place_name": "바벨론/메대-바사(전승)",
+    "place_name": "바벨론",
     "lat": 32.5421,
     "lng": 44.4209,
     "summary": "금지령 속에서도 다니엘은 기도를 멈추지 않고, 구원은 새벽에 드러난다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「사자굴」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "6:28",
         "book": "단",
-        "from": "6:1",
-        "to": "6:28"
+        "from": "6:1"
       }
     ],
     "start_year": -537,
@@ -438,11 +438,11 @@
         "display_order": 0,
         "question": "다리오 왕이 세운 방백의 수는 몇 명이었습니까?",
         "choices": [
-          "일백이십 명",
           "칠십 명",
+          "일백이십 명",
           "삼백 명"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "단 6:1 — '다리오가 방백 일백이십 명을 세워 전국을 통치하게 하고'"
       },
       {
@@ -450,11 +450,11 @@
         "display_order": 1,
         "question": "다니엘은 기도 금지령이 내려진 후에도 어떻게 하였습니까?",
         "choices": [
-          "전에 하던 대로 하루 세 번 예루살렘을 향해 기도하였다",
           "몰래 방에 숨어서 기도하였다",
-          "금지 기간 동안만 기도를 멈추었다"
+          "금지 기간 동안만 기도를 멈추었다",
+          "전에 하던 대로 하루 세 번 예루살렘을 향해 기도하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "단 6:10 — '전에 하던 대로 하루 세 번씩 무릎을 꿇고 기도하며 감사하였더라'"
       },
       {
@@ -478,16 +478,16 @@
       "zerubbabel"
     ],
     "landmark_code": "lm_exi_jerusalem",
-    "place_name": "예루살렘과 유다 귀환지(전승)",
+    "place_name": "바벨론 → 예루살렘(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "고레스의 명령으로 귀환한 백성은 유다 땅에 정착하고 성전 재건을 시작하지만, 방해 속에서 공사가 멈춘다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「귀환과 성전 기초」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "4:24",
         "book": "스",
-        "from": "1:1",
-        "to": "4:24"
+        "from": "1:1"
       }
     ],
     "start_year": -538,
@@ -527,11 +527,11 @@
         "display_order": 0,
         "question": "고레스 왕은 조서에서 예루살렘에 무엇을 하라고 하였습니까?",
         "choices": [
+          "바벨론 성벽을 더 높이라고 하였다",
           "여호와의 전을 건축하라고 하였다",
-          "수산 궁을 새로 짓게 하였다",
-          "바벨론 성벽을 더 높이라고 하였다"
+          "수산 궁을 새로 짓게 하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "스 1:2 — '나를 명하사 유다 예루살렘에 전을 건축하라 하셨나니'"
       },
       {
@@ -539,11 +539,11 @@
         "display_order": 1,
         "question": "스룹바벨과 지도자들은 함께 건축하자는 주변 사람들에게 어떻게 답했습니까?",
         "choices": [
-          "우리와 상관이 없고 우리가 홀로 건축하겠다고 했다",
+          "성전 대신 왕궁을 짓겠다고 했다",
           "모든 공사를 그들에게 맡기겠다고 했다",
-          "성전 대신 왕궁을 짓겠다고 했다"
+          "우리와 상관이 없고 우리가 홀로 건축하겠다고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "스 4:3 — '너희는 우리와 상관이 없느니라 ... 우리가 이스라엘 하나님 여호와를 위하여 홀로 건축하리라'"
       },
       {
@@ -551,19 +551,13 @@
         "display_order": 2,
         "question": "방해가 이어진 뒤 예루살렘의 하나님의 전 공사는 어떻게 되었습니까?",
         "choices": [
+          "수산 궁으로 옮겨졌다",
           "바사 왕 다리오 제이년까지 그쳤다",
-          "그날 바로 완성되었다",
-          "수산 궁으로 옮겨졌다"
+          "그날 바로 완성되었다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "스 4:24 — '이에 예루살렘에서 하나님의 전 역사가 그쳐서 바사 왕 다리오 제이년까지 이르니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show a simple pictorial map route without readable labels or letters. No text in the map.",
-      "Show Zerubbabel as the same post-exile Judah governor throughout this story. Jeshua has no reference avatar and should appear only as an unnamed priestly coworker if needed. No readable labels.",
-      "Show the Samaritan visitors as an unnamed group with no text labels. Keep Zerubbabel visually consistent with scene 2.",
-      "No violence. Emphasize stopped construction and discouragement, with Zerubbabel visually consistent."
     ]
   },
   {
@@ -575,16 +569,16 @@
       "zechariah_prophet"
     ],
     "landmark_code": "lm_exi_jerusalem",
-    "place_name": "예루살렘 성전 터(전승)",
+    "place_name": "바벨론 → 예루살렘(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "학개는 스룹바벨에게 하나님이 세상을 흔드시고 나라의 권세를 뒤엎으시며 그를 택하셨다고 전한다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「학개의 말씀」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:23",
         "book": "학",
-        "from": "1:1",
-        "to": "2:23"
+        "from": "1:1"
       }
     ],
     "start_year": -520,
@@ -624,11 +618,11 @@
         "display_order": 0,
         "question": "하나님은 학개를 통해 스룹바벨에게 무엇을 진동시키겠다고 하셨습니까?",
         "choices": [
-          "하늘과 땅",
           "바벨론의 강물만",
+          "하늘과 땅",
           "예루살렘 성문만"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "학 2:21 — '내가 하늘과 땅을 진동시킬 것이요'"
       },
       {
@@ -636,11 +630,11 @@
         "display_order": 1,
         "question": "하나님은 열국의 보좌와 병거들에 대해 무엇을 하겠다고 하셨습니까?",
         "choices": [
-          "보좌를 엎고 병거들을 엎드러뜨리겠다고 하셨다",
           "그 왕좌들을 더 강하게 세우겠다고 하셨다",
-          "스룹바벨에게 그 병거들을 숨기라고 하셨다"
+          "스룹바벨에게 그 병거들을 숨기라고 하셨다",
+          "보좌를 엎고 병거들을 엎드러뜨리겠다고 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "학 2:22 — '열국의 보좌를 엎을 것이요 ... 그 병거들과 그 탄 자를 엎드러뜨리리니'"
       },
       {
@@ -648,18 +642,13 @@
         "display_order": 2,
         "question": "하나님은 스룹바벨을 택하셨다고 하시며 무엇으로 삼겠다고 하셨습니까?",
         "choices": [
-          "인장",
+          "전쟁 깃발",
           "금송아지",
-          "전쟁 깃발"
+          "인장"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "학 2:23 — '내가 너를 취하고 너로 인을 삼으리니 이는 내가 너를 택하였음이니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Zechariah the prophet is included in this story characters for restoration-prophet continuity but does not appear in the scenes. No readable speech text.",
-      "Show symbolic overturned thrones and chariots only; no gore, no bodies, no readable labels.",
-      "Show the signet ring as a symbolic image inside the speech bubble, not readable text. Keep Haggai and Zerubbabel consistent."
     ]
   },
   {
@@ -671,16 +660,16 @@
       "zechariah_prophet"
     ],
     "landmark_code": "lm_exi_jerusalem",
-    "place_name": "예루살렘 성전 터(전승)",
+    "place_name": "바벨론 → 예루살렘(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "멈췄던 성전 재건은 다시 힘을 얻어 완성되고, 백성은 봉헌식과 유월절을 기쁨으로 지킨다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「성전 완공과 유월절」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "6:22",
         "book": "스",
-        "from": "6:13",
-        "to": "6:22"
+        "from": "6:13"
       }
     ],
     "start_year": -515,
@@ -715,11 +704,11 @@
         "display_order": 0,
         "question": "다리오 왕의 조서가 내리자 강 서편 관리들은 어떻게 했습니까?",
         "choices": [
-          "신속히 준행했다",
+          "스룹바벨을 바벨론으로 보냈다",
           "성전 터를 다시 막았다",
-          "스룹바벨을 바벨론으로 보냈다"
+          "신속히 준행했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "스 6:13 — '다리오 왕의 조서가 내리매 ... 신속히 준행한지라'"
       },
       {
@@ -740,17 +729,12 @@
         "question": "사로잡혔던 자의 자손은 유월절 뒤 무교절을 어떻게 지켰습니까?",
         "choices": [
           "즐거움으로 칠 일 동안 지켰다",
-          "두려워서 모두 흩어졌다",
-          "제사장 없이 조용히 지나갔다"
+          "제사장 없이 조용히 지나갔다",
+          "두려워서 모두 흩어졌다"
         ],
         "answer_index": 0,
         "explanation": "스 6:22 — '즐거우므로 칠 일 동안 무교절을 지켰으니'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Zerubbabel as the same post-exile governor from previous stories. Haggai and Zechariah may be implied by the restored work but do not need to appear.",
-      "Animal offerings are present as prepared sacrificial animals only. No blood, no slaughter, no gore.",
-      "Show joyful Passover and Feast of Unleavened Bread with families and priests, no readable text."
     ]
   },
   {
@@ -762,15 +746,15 @@
     ],
     "landmark_code": "lm_exi_susa",
     "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "lat": 32.1881,
+    "lng": 48.2581,
     "summary": "에스더는 예상치 못한 자리에서 왕후가 되어 때를 기다린다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「에스더」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:23",
         "book": "에",
-        "from": "2:5",
-        "to": "2:23"
+        "from": "2:5"
       }
     ],
     "start_year": -480,
@@ -838,11 +822,11 @@
         "display_order": 2,
         "question": "모르드개는 왕을 해치려는 음모를 알게 된 뒤 누구에게 알렸습니까?",
         "choices": [
-          "왕후 에스더에게",
           "하만에게",
-          "수산 성 밖의 군대에게"
+          "수산 성 밖의 군대에게",
+          "왕후 에스더에게"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "에 2:22 — '모르드개가 알고 왕후 에스더에게 고하니 에스더가 모르드개의 이름으로 왕에게 고한지라'"
       }
     ]
@@ -857,15 +841,15 @@
     ],
     "landmark_code": "lm_exi_susa",
     "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "lat": 32.1881,
+    "lng": 48.2581,
     "summary": "모르드개의 거절은 하만의 분노를 불러 대규모 학살 음모로 번진다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「하만의 음모」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "4:9",
         "book": "에",
-        "from": "3:1",
-        "to": "4:9"
+        "from": "3:1"
       }
     ],
     "start_year": -474,
@@ -908,11 +892,11 @@
         "display_order": 0,
         "question": "하만이 모르드개에게 분노하게 된 이유는 무엇입니까?",
         "choices": [
-          "모르드개가 절하지 않고 경의를 표하지 않았기 때문이다",
+          "모르드개가 하만을 왕에게 고발했기 때문이다",
           "모르드개가 왕의 재물을 훔쳤기 때문이다",
-          "모르드개가 하만을 왕에게 고발했기 때문이다"
+          "모르드개가 절하지 않고 경의를 표하지 않았기 때문이다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "에 3:2 — '날마다 권하되 모르드개가 듣지 아니하고'"
       },
       {
@@ -921,8 +905,8 @@
         "question": "하만은 모르드개에 대한 분노를 어떻게 확대하였습니까?",
         "choices": [
           "온 나라에 있는 유다인을 모두 멸하려는 음모를 꾸몄다",
-          "모르드개만 죽이도록 왕에게 청하였다",
-          "모르드개를 옥에 가두게 하였다"
+          "모르드개를 옥에 가두게 하였다",
+          "모르드개만 죽이도록 왕에게 청하였다"
         ],
         "answer_index": 0,
         "explanation": "에 3:6 — '유다인을 죽이고 멸하려 하더니'"
@@ -950,15 +934,15 @@
     ],
     "landmark_code": "lm_exi_susa",
     "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "lat": 32.1881,
+    "lng": 48.2581,
     "summary": "에스더는 금식 후 왕 앞에 나아가기로 결단한다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「에스더의 결단」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "4:17",
         "book": "에",
-        "from": "4:10",
-        "to": "4:17"
+        "from": "4:10"
       }
     ],
     "start_year": -474,
@@ -996,8 +980,8 @@
         "question": "에스더가 왕 앞에 나아가기 전 금식한 기간은 얼마였습니까?",
         "choices": [
           "밤낮 삼 일",
-          "칠 일",
-          "사십 일"
+          "사십 일",
+          "칠 일"
         ],
         "answer_index": 0,
         "explanation": "에 4:16 — '밤낮 삼일을 먹지도 말고 마시지도 마소서'"
@@ -1007,11 +991,11 @@
         "display_order": 1,
         "question": "에스더는 왕 앞에 나아가겠다고 결단하며 무엇이라 하였습니까?",
         "choices": [
-          "규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다",
           "모르드개에게 다른 방법을 찾아보라고 하였다",
+          "규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다 하였다",
           "왕의 부름을 기다리겠다고 하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "에 4:16 — '규례를 어기고 왕에게 나아가리니 죽으면 죽으리이다'"
       },
       {
@@ -1019,11 +1003,11 @@
         "display_order": 2,
         "question": "에스더가 금식을 부탁하자 모르드개는 어떻게 했습니까?",
         "choices": [
-          "에스더가 명한 대로 다 행했다",
+          "하만에게 먼저 알렸다",
           "에스더의 부탁을 거절했다",
-          "하만에게 먼저 알렸다"
+          "에스더가 명한 대로 다 행했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "에 4:17 — '모르드개가 가서 에스더의 명한 대로 다 행하니라'"
       }
     ]
@@ -1038,15 +1022,15 @@
     ],
     "landmark_code": "lm_exi_susa",
     "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "lat": 32.1881,
+    "lng": 48.2581,
     "summary": "에스더의 잔치 자리에서 음모가 폭로되고 하만은 무너진다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「잔치의 반전」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "7:10",
         "book": "에",
-        "from": "5:1",
-        "to": "7:10"
+        "from": "5:1"
       }
     ],
     "start_year": -474,
@@ -1079,7 +1063,8 @@
       [
         "esther",
         "mordecai"
-      ]
+      ],
+      []
     ],
     "quiz_questions": [
       {
@@ -1087,11 +1072,11 @@
         "display_order": 0,
         "question": "에스더는 잔치 자리에서 왕에게 누가 대적이라고 하였습니까?",
         "choices": [
+          "모르드개라고 하였다",
           "악한 하만이라고 하였다",
-          "산헤립이라고 하였다",
-          "모르드개라고 하였다"
+          "산헤립이라고 하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "에 7:6 — '대적과 원수는 이 악한 하만이니이다'"
       },
       {
@@ -1099,11 +1084,11 @@
         "display_order": 1,
         "question": "왕이 하만을 꾸짖자 곁에 있던 무리는 하만에게 무엇을 했습니까?",
         "choices": [
-          "하만의 얼굴을 싸었다",
           "하만을 몰래 도망시켰다",
+          "하만의 얼굴을 싸었다",
           "모르드개에게 사과하게 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "에 7:8 — '왕이 후원으로부터 잔치 자리에 돌아오니 하만이 에스더의 앉은 걸상 위에 엎드렸거늘 왕이 가로되 저가 궁중 내 앞에서 왕후를 강간까지 하고자 하는가 이 말이 왕의 입에서 나오매 무리가 하만의 얼굴을 싸더라'"
       },
       {
@@ -1111,11 +1096,11 @@
         "display_order": 2,
         "question": "하만이 준비한 나무에는 결국 누가 달리게 되었습니까?",
         "choices": [
-          "하만 자신이 달리게 되었다",
           "모르드개가 그대로 달리게 되었다",
-          "왕의 내시가 대신 달리게 되었다"
+          "왕의 내시가 대신 달리게 되었다",
+          "하만 자신이 달리게 되었다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "에 7:9 — '왕을 모신 내시 중에 하르보나가 왕에게 아뢰되 왕을 위하여 충성된 말로 고발한 모르드개를 달고자 하여 하만이 고가 오십 규빗되는 나무를 준비하였는데 이제 그 나무가 하만의 집에 섰나이다 왕이 가로 되 하만을 그 나무에 달라 하매'"
       }
     ]
@@ -1127,21 +1112,21 @@
       "ezra"
     ],
     "landmark_code": "lm_exi_jerusalem",
-    "place_name": "예루살렘(전승)",
+    "place_name": "바벨론 → 예루살렘(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "에스라는 왕의 허락으로 예루살렘에 돌아오고, 백성의 죄 앞에서 회개하며 공동체를 말씀으로 정리한다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「에스라의 회개와 정리」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "7:22",
         "book": "스",
-        "from": "7:11",
-        "to": "7:22"
+        "from": "7:11"
       },
       {
+        "to": "10:17",
         "book": "스",
-        "from": "9:1",
-        "to": "10:17"
+        "from": "9:1"
       }
     ],
     "start_year": -458,
@@ -1184,8 +1169,8 @@
         "question": "아닥사스다 왕은 조서에서 누가 에스라와 함께 예루살렘으로 올라갈 수 있다고 하였습니까?",
         "choices": [
           "뜻이 있는 이스라엘 백성과 제사장들과 레위 사람들",
-          "바사 왕궁의 군사 장관들만",
-          "수산 궁의 잔치 손님들만"
+          "수산 궁의 잔치 손님들만",
+          "바사 왕궁의 군사 장관들만"
         ],
         "answer_index": 0,
         "explanation": "스 7:13 — '예루살렘으로 올라갈 뜻이 있는 자는 누구든지 너와 함께 갈지어다'"
@@ -1195,11 +1180,11 @@
         "display_order": 1,
         "question": "백성의 죄를 들은 에스라는 어떤 태도를 보였습니까?",
         "choices": [
-          "옷을 찢고 기가 막혀 앉았다가 하나님께 무릎 꿇고 기도했다",
           "왕의 조서를 감추고 수산 궁으로 돌아갔다",
-          "성전 기명을 모두 다시 바벨론으로 보냈다"
+          "성전 기명을 모두 다시 바벨론으로 보냈다",
+          "옷을 찢고 기가 막혀 앉았다가 하나님께 무릎 꿇고 기도했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "스 9:3,5 — '속옷과 겉옷을 찢고... 기가 막혀 앉으니', '무릎을 꿇고 나의 하나님 여호와를 향하여 손을 들고'"
       },
       {
@@ -1207,19 +1192,13 @@
         "display_order": 2,
         "question": "에스라는 백성에게 죄를 자복한 뒤 무엇을 하라고 명했습니까?",
         "choices": [
-          "이 땅 족속들과 이방 여인을 끊어 버리라고 했다",
+          "아닥사스다 왕에게 금은을 돌려보내라고 했다",
           "예루살렘 성벽 수리를 멈추라고 했다",
-          "아닥사스다 왕에게 금은을 돌려보내라고 했다"
+          "이 땅 족속들과 이방 여인을 끊어 버리라고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "스 10:11 — '죄를 자복하고 그 뜻대로 행하여 이 땅 족속들과 이방 여인을 끊어 버리라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Do not show Artaxerxes unless absolutely necessary; the focus is Ezra leading the caravan with temple supplies. No readable text on scrolls, sacks, jars, or decree objects.",
-      "No sexual depiction, no hateful caricature. Ezra must face upward toward God's bright light, not toward the people as if begging them. Show idols as small non-readable figurines and an altar in the background only to explain Ezra's grief.",
-      "Use a pictorial speech bubble only, with no letters or symbols. The bubble should summarize Ezra's covenant reform visually through broken idol figurines, people turning toward the temple, and an orderly gathered community.",
-      "Show a solemn covenant reform scene without violence, dragging, abuse, gore, mockery, or hateful caricature. Make the separation sorrowful, orderly, and historically framed, with no readable labels."
     ]
   },
   {
@@ -1230,20 +1209,20 @@
     ],
     "landmark_code": "lm_exi_susa",
     "place_name": "수산 궁(페르시아)",
-    "lat": 32.19,
-    "lng": 48.26,
+    "lat": 32.1881,
+    "lng": 48.2581,
     "summary": "느헤미야는 예루살렘 소식을 듣고 눈물로 기도한 뒤 파송을 받는다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「느헤미야의 파송」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "1:11",
         "book": "느",
-        "from": "1:1",
-        "to": "1:11"
+        "from": "1:1"
       },
       {
+        "to": "2:8",
         "book": "느",
-        "from": "2:1",
-        "to": "2:8"
+        "from": "2:1"
       }
     ],
     "start_year": -445,
@@ -1280,11 +1259,11 @@
         "display_order": 0,
         "question": "느헤미야는 예루살렘 소식을 어디에서 들었습니까?",
         "choices": [
+          "예루살렘 성벽 앞에서 들었다",
           "수산 궁에서 들었다",
-          "바벨론 강가에서 들었다",
-          "예루살렘 성벽 앞에서 들었다"
+          "바벨론 강가에서 들었다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "느 1:1 — '아닥사스다왕 제 이십년 기슬르월에 내가 수산 궁에 있더니'"
       },
       {
@@ -1292,11 +1271,11 @@
         "display_order": 1,
         "question": "느헤미야는 왕의 질문에 무엇을 원하느냐는 말을 듣고 어떻게 하였습니까?",
         "choices": [
-          "하늘의 하나님께 묵도하고 대답하였다",
           "바로 예루살렘으로 가겠다고 하였다",
-          "왕의 허락을 기다리며 아무 말도 하지 않았다"
+          "왕의 허락을 기다리며 아무 말도 하지 않았다",
+          "하늘의 하나님께 묵도하고 대답하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "느 2:4 — '내가 곧 하늘의 하나님께 묵도하고'"
       },
       {
@@ -1304,11 +1283,11 @@
         "display_order": 2,
         "question": "느헤미야가 성벽 재목을 요청했을 때 왕은 어떻게 반응했습니까?",
         "choices": [
+          "느헤미야를 옥에 가두었다",
           "하나님의 선한 손이 도우심으로 허락했다",
-          "요청을 듣고 즉시 거절했다",
-          "느헤미야를 옥에 가두었다"
+          "요청을 듣고 즉시 거절했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "느 2:8 — '또 왕의 삼림 감독 아삽에게 조서를 내리사 저로 전에 속한 영문의 문과 성곽과 나의 거할 집을 위 하여 들보 재목을 주게 하옵소서 하매 내 하나님의 선한 손이 나를 도우심으로 왕이 허락하고'"
       }
     ]
@@ -1320,21 +1299,21 @@
       "nehemiah"
     ],
     "landmark_code": "lm_exi_jerusalem",
-    "place_name": "예루살렘",
+    "place_name": "바벨론 → 예루살렘(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "느헤미야는 밤에 성벽을 살핀 뒤 재건을 이끌었고, 백성은 한 손에 돌 한 손에 무기를 들고 성을 세웠다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「성벽 재건」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:20",
         "book": "느",
-        "from": "2:11",
-        "to": "2:20"
+        "from": "2:11"
       },
       {
+        "to": "4:20",
         "book": "느",
-        "from": "4:10",
-        "to": "4:20"
+        "from": "4:10"
       }
     ],
     "start_year": -445,
@@ -1371,11 +1350,11 @@
         "display_order": 0,
         "question": "느헤미야가 예루살렘에 이르러 며칠 만에 밤에 성벽을 조사하였습니까?",
         "choices": [
-          "삼 일 만에 조사하였다",
           "칠 일 만에 조사하였다",
+          "삼 일 만에 조사하였다",
           "하룻밤 만에 조사하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "느 2:11 — '내가 예루살렘에 이르러 거한지 삼일에'"
       },
       {
@@ -1384,8 +1363,8 @@
         "question": "느헤미야는 방백들에게 폐허의 상황을 알린 후 무엇이라 하였습니까?",
         "choices": [
           "일어나 건축하자고 선언하였다",
-          "왕의 허락을 더 받아야 한다고 하였다",
-          "먼저 성전을 재건하자고 하였다"
+          "먼저 성전을 재건하자고 하였다",
+          "왕의 허락을 더 받아야 한다고 하였다"
         ],
         "answer_index": 0,
         "explanation": "느 2:17 — '저희의 말이 일어나 건축하자 하고 모두 힘을 내어 이 선한 일을 하려 하매'"
@@ -1395,11 +1374,11 @@
         "display_order": 2,
         "question": "성벽을 다시 쌓던 사람들은 어떤 어려움을 느꼈습니까?",
         "choices": [
-          "돌무더기는 많고 일할 힘은 줄었다고 느꼈다",
           "일할 사람이 너무 많아 혼란스러웠다",
+          "돌무더기는 많고 일할 힘은 줄었다고 느꼈다",
           "성벽이 이미 다 완성되었다고 생각했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "느 4:10 — '유다 사람들은 이르기를 흙 무더기가 아직도 많거늘 담부(擔負)하는 자의 힘이 쇠하였으니 우리가 성을 건축하지 못하리라 하고'"
       }
     ]
@@ -1412,16 +1391,16 @@
       "nehemiah"
     ],
     "landmark_code": "lm_exi_jerusalem",
-    "place_name": "예루살렘 수문 앞 광장(전승)",
+    "place_name": "바벨론 → 예루살렘(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "말씀이 낭독되자 백성은 울고, 지도자들은 ‘기쁨이 힘’이라 격려한다.",
     "background_context": "포로와 귀환 시대는 바벨론 포로와 페르시아 때의 귀환을 다룹니다. 이 이야기는 「율법 낭독」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "8:18",
         "book": "느",
-        "from": "8:1",
-        "to": "8:18"
+        "from": "8:1"
       }
     ],
     "start_year": -444,
@@ -1460,11 +1439,11 @@
         "display_order": 0,
         "question": "백성에게 율법을 낭독한 사람은 누구였습니까?",
         "choices": [
-          "학사 에스라",
           "느헤미야",
-          "대제사장 힐기야"
+          "대제사장 힐기야",
+          "학사 에스라"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "느 8:5 — '때에 학사 에스라가 특별히 지은 나무 강단에 서매'"
       },
       {
@@ -1473,8 +1452,8 @@
         "question": "느헤미야는 율법을 듣고 우는 백성에게 무엇이라 하였습니까?",
         "choices": [
           "여호와를 기뻐하는 것이 너희의 힘이니라 하였다",
-          "더욱 금식하며 통곡하라 하였다",
-          "율법을 깨닫지 못함을 책망하였다"
+          "율법을 깨닫지 못함을 책망하였다",
+          "더욱 금식하며 통곡하라 하였다"
         ],
         "answer_index": 0,
         "explanation": "느 8:10 — '여호와를 기뻐하는 것이 너희의 힘이니라'"
@@ -1484,11 +1463,11 @@
         "display_order": 2,
         "question": "율법의 뜻을 알게 된 백성은 어떻게 반응했습니까?",
         "choices": [
+          "다시 성벽 공사를 멈추었다",
           "먹고 나누며 크게 기뻐했다",
-          "모두 흩어져 숨어 버렸다",
-          "다시 성벽 공사를 멈추었다"
+          "모두 흩어져 숨어 버렸다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "느 8:12 — '모든 백성이 곧 가서 먹고 마시며 나누어 주고 크게 즐거워하였으니 이는 그 읽어 들린 말을 밝히 앎이니라'"
       }
     ]

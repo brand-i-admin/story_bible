@@ -9,16 +9,16 @@
       "rehoboam"
     ],
     "landmark_code": "lm_div_shechem",
-    "place_name": "예루살렘/실로 길(전승)",
-    "lat": 31.778,
-    "lng": 35.2354,
+    "place_name": "세겜/왕국 분열(전승)",
+    "lat": 32.213,
+    "lng": 35.281,
     "summary": "솔로몬의 불순종 이후 대적들이 일어나고, 여로보암에게 찢어진 나라의 예고가 주어진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「왕국의 균열」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "11:43",
         "book": "왕상",
-        "from": "11:14",
-        "to": "11:43"
+        "from": "11:14"
       }
     ],
     "start_year": -931,
@@ -87,19 +87,13 @@
         "display_order": 2,
         "question": "솔로몬이 죽이려 하자 여로보암은 어디로 피했습니까?",
         "choices": [
-          "애굽으로 피했다",
           "갈멜 산으로 피했다",
+          "애굽으로 피했다",
           "바벨론으로 피했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 11:40 — '여로보암이 일어나 애굽으로 도망하여 시삭에게 이르러'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Hadad of Edom and Rezon of Damascus only as unnamed foreign adversary forces at the border, with no readable labels. Show old Solomon worried in the palace map room. No gore.",
-      "Show Ahijah as the solemn elderly Shiloh prophet matching his canonical avatar, in a plain warm-brown mantle and cream robe, with soft pale cataract-like blind eyes and an unfocused gaze, holding a new outer garment torn into twelve clear pieces. Do not show him with a blindfold, bandage, injury, or horror eyes. Show Jeroboam matching his avatar, receiving ten torn cloth pieces from the divided cloak. No readable labels, no injury, no blood.",
-      "Show Jeroboam matching his avatar, fleeing toward Egypt while Solomon sends soldiers behind him. No injury, no blood, no readable labels.",
-      "Show Solomon very old on a deathbed, with Rehoboam matching his avatar standing nearby as the grieving heir. No corpse detail, no gore, no readable labels."
     ]
   },
   {
@@ -111,16 +105,16 @@
       "god"
     ],
     "landmark_code": "lm_div_shechem",
-    "place_name": "세겜/벧엘과 단(전승)",
+    "place_name": "세겜/왕국 분열(전승)",
     "lat": 32.213,
     "lng": 35.281,
     "summary": "르호보암의 완고한 대답으로 왕국이 둘로 갈라지고, 여로보암은 금송아지로 백성을 잘못 이끈다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「왕국 분열」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "12:33",
         "book": "왕상",
-        "from": "12:1",
-        "to": "12:33"
+        "from": "12:1"
       }
     ],
     "start_year": -931,
@@ -165,11 +159,11 @@
         "display_order": 0,
         "question": "르호보암은 백성에게 어떤 대답을 했습니까?",
         "choices": [
-          "더 무거운 멍에를 메라 했다",
           "세금을 줄이겠다고 했다",
-          "곧장 물러나겠다고 했다"
+          "곧장 물러나겠다고 했다",
+          "더 무거운 멍에를 메라 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 12:14 — '내 부친은 너희의 멍에를 무겁게 하였으나 나는 너희의 멍에를 더욱 무겁게 할찌라'"
       },
       {
@@ -190,18 +184,12 @@
         "question": "하나님의 말씀이 스마야에게 임했을 때 유다와 베냐민은 어떻게 했습니까?",
         "choices": [
           "여호와의 말씀을 듣고 돌아갔다",
-          "곧장 북쪽을 공격했다",
-          "여로보암을 왕으로 세웠다"
+          "여로보암을 왕으로 세웠다",
+          "곧장 북쪽을 공격했다"
         ],
         "answer_index": 0,
         "explanation": "왕상 12:24 — '무리가 여호와의 말씀을 듣고 ... 돌아갔더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Rehoboam matching his avatar with a harsh, arrogant expression. The crowd should look burdened and pleading. No readable labels or speech text.",
-      "Show Jeroboam matching his avatar being accepted by the northern tribes, while Rehoboam and Judah stand separate and refuse to join. No readable labels.",
-      "Shemaiah has no reference avatar. Show him as an unnamed prophet between the two divided kingdoms; God is represented only by holy light from above. Make the north/south split clear without readable map labels.",
-      "Show two golden calf idols at Bethel and Dan as two shrine areas in one scene; Jeroboam looks hardened and corrupt. No readable labels."
     ]
   },
   {
@@ -213,16 +201,16 @@
       "god"
     ],
     "landmark_code": "lm_div_shiloh",
-    "place_name": "실로 → 디르사(전승)",
+    "place_name": "실로(아히야의 경고, 전승)",
     "lat": 32.056,
     "lng": 35.29,
     "summary": "여로보암이 금송아지로 백성을 죄에 빠뜨리자, 아히야는 그의 집에 임할 심판을 전한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여로보암의 집」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "14:20",
         "book": "왕상",
-        "from": "14:1",
-        "to": "14:20"
+        "from": "14:1"
       }
     ],
     "start_year": -910,
@@ -272,11 +260,11 @@
         "display_order": 1,
         "question": "여로보암의 집에 심판이 임한 이유는 무엇입니까?",
         "choices": [
-          "금송아지로 하나님께 범죄했기 때문",
           "성전을 크게 지었기 때문",
+          "금송아지로 하나님께 범죄했기 때문",
           "백성을 쉬게 했기 때문"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 14:9 — '다른 신을 만들며 우상을 부어 나를 노엽게 하고'"
       },
       {
@@ -284,18 +272,13 @@
         "display_order": 2,
         "question": "아히야의 말처럼 아이는 언제 죽었습니까?",
         "choices": [
-          "아내가 성읍에 들어갈 때",
+          "아히야가 길을 떠날 때",
           "여로보암이 왕이 될 때",
-          "아히야가 길을 떠날 때"
+          "아내가 성읍에 들어갈 때"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 14:17 — '집 문지방에 이를 때에 아이가 죽은지라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Ahijah as the same Shiloh prophet but much older inside his house, with soft pale cataract-like blind eyes, almost no dark pupils, and an unfocused gaze. His face is turned toward the doorway as if recognizing Jeroboam's wife by her footsteps and God's word. Do not use a blindfold, bandage, horror eyes, or visible injury. Show Jeroboam's wife as the same unnamed woman throughout this story, disguised in a deep blue cloak and cream veil. God is represented only by holy light and the pictorial speech bubble. No readable labels, no injury, no blood.",
-      "Show Jeroboam matching his avatar with king crown but older and grief-stricken. Show the wife as the same deep-blue-cloaked woman from scene 1. The child is only implied under a blanket; no graphic death details, no readable labels.",
-      "Show Jeroboam much older than earlier scenes, on a bed with family and servants mourning. Peaceful deathbed tone only; no gore, no readable labels."
     ]
   },
   {
@@ -312,9 +295,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「르호보암의 남유다」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "14:31",
         "book": "왕상",
-        "from": "14:21",
-        "to": "14:31"
+        "from": "14:21"
       }
     ],
     "start_year": -931,
@@ -351,11 +334,11 @@
         "display_order": 0,
         "question": "르호보암 때 남유다는 무엇을 세웠습니까?",
         "choices": [
-          "산당과 주상과 아세라 목상",
           "새 언약궤와 성막",
-          "열두 돌 제단만"
+          "열두 돌 제단만",
+          "산당과 주상과 아세라 목상"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 14:23 — '산당과 주상과 아세라 목상을 세웠음이라'"
       },
       {
@@ -363,11 +346,11 @@
         "display_order": 1,
         "question": "르호보암 제오년에 예루살렘을 치러 온 사람은 누구입니까?",
         "choices": [
+          "앗수르 왕 산헤립",
           "애굽 왕 시삭",
-          "바벨론 왕 느부갓네살",
-          "앗수르 왕 산헤립"
+          "바벨론 왕 느부갓네살"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 14:25 — '르호보암 왕 제 오년에 애굽 왕 시삭이 올라와서 예루살렘을 치고'"
       },
       {
@@ -375,18 +358,13 @@
         "display_order": 2,
         "question": "시삭은 무엇을 빼앗아 갔습니까?",
         "choices": [
-          "성전과 왕궁의 보물과 금방패",
           "요단강의 돌기둥",
+          "성전과 왕궁의 보물과 금방패",
           "선지자들의 겉옷"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 14:26 — '여호와의 전의 보물과 왕궁의 보물을 몰수히 빼앗고 ... 금방패를 다 빼앗은지라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Rehoboam matching his avatar as king of Judah in Jerusalem. For the male cult prostitutes of 1 Kings 14:24, show only corrupted male cult attendants standing near an idol shrine; no nudity, no sexual act, no readable labels.",
-      "Shishak and the Egyptian soldiers have no reference avatars. Show them as an Egyptian army carrying away golden shields and treasures. Keep Rehoboam visibly defeated and humiliated. No gore, no readable labels.",
-      "Show Rehoboam much older than earlier scenes, on a deathbed with family and servants mourning. Peaceful deathbed tone only; no gore, no readable labels."
     ]
   },
   {
@@ -398,16 +376,16 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "아비얌은 악을 따르지만 하나님은 다윗을 위하여 등불을 남기시고, 아사는 우상을 제거하며 개혁을 시작한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아비얌과 아사」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "15:15",
         "book": "왕상",
-        "from": "15:1",
-        "to": "15:15"
+        "from": "15:1"
       }
     ],
     "start_year": -913,
@@ -440,11 +418,11 @@
         "display_order": 0,
         "question": "아비얌의 마음은 누구의 마음 같지 않았습니까?",
         "choices": [
-          "다윗의 마음 같지 않았다",
+          "엘리야의 마음 같지 않았다",
           "아사의 마음 같지 않았다",
-          "엘리야의 마음 같지 않았다"
+          "다윗의 마음 같지 않았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 15:3 — '그 마음이 그 조상 다윗의 마음 같지 아니하여'"
       },
       {
@@ -452,11 +430,11 @@
         "display_order": 1,
         "question": "하나님은 다윗을 위하여 예루살렘에 무엇을 주셨습니까?",
         "choices": [
-          "등불을 주셨다",
           "금송아지를 주셨다",
+          "등불을 주셨다",
           "아람의 전차를 주셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 15:4 — '다윗을 위하여 예루살렘에서 저에게 등불을 주시되'"
       },
       {
@@ -464,17 +442,13 @@
         "display_order": 2,
         "question": "아사는 왕이 된 뒤 무엇을 없애며 개혁을 시작했습니까?",
         "choices": [
+          "바알 선지자들을 세웠다",
           "우상들을 없앴다",
-          "성전을 버렸다",
-          "바알 선지자들을 세웠다"
+          "성전을 버렸다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 15:12 — '그 열조의 지은 모든 우상을 없이 하고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Abijam/Abijah as the Judah king avatar, proud and spiritually compromised. The lamp of God should be symbolic holy light near Jerusalem/temple, not a human figure. No readable labels.",
-      "Show Asa matching his avatar as a reforming Judah king. Idol removal is non-violent cleanup: broken idol fragments and carried-away shrine objects only, no gore, no readable text."
     ]
   },
   {
@@ -493,9 +467,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「나답과 바아사」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "16:7",
         "book": "왕상",
-        "from": "15:25",
-        "to": "16:7"
+        "from": "15:25"
       }
     ],
     "start_year": -910,
@@ -534,11 +508,11 @@
         "display_order": 0,
         "question": "나답은 누구의 길을 따라 악을 행했습니까?",
         "choices": [
-          "그 아버지 여로보암의 길",
           "아사 왕의 길",
-          "다윗의 길"
+          "다윗의 길",
+          "그 아버지 여로보암의 길"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 15:26 — '그 아비의 길로 행하며'"
       },
       {
@@ -558,18 +532,13 @@
         "display_order": 2,
         "question": "하나님은 예후를 통해 바아사의 집에 대해 무엇을 말씀하셨습니까?",
         "choices": [
-          "바아사의 집을 쓸어버리겠다고 하셨다",
           "바아사의 집을 영원히 세우겠다고 하셨다",
-          "바아사에게 성전을 맡기겠다고 하셨다"
+          "바아사에게 성전을 맡기겠다고 하셨다",
+          "바아사의 집을 쓸어버리겠다고 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 16:3 — '내가 너 바아사와 네 집을 쓸어버려'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Nadab matching his avatar as a short-lived northern king. The idols should be visible in the palace but no readable labels.",
-      "Show Baasha matching his avatar as a ruthless usurper. Keep the scene restrained: no blood, no wounds, no corpse detail, no readable labels.",
-      "Jehu son of Hanani is not the later King Jehu and has no reference avatar. Show him as an unnamed stern prophet in a plain mantle, not the Jehu king avatar. The speech bubble is pictorial only: a swept-away royal house symbol, no gore and no readable text."
     ]
   },
   {
@@ -590,9 +559,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「엘라와 시므리와 오므리」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "16:34",
         "book": "왕상",
-        "from": "16:8",
-        "to": "16:34"
+        "from": "16:8"
       }
     ],
     "start_year": -885,
@@ -637,11 +606,11 @@
         "display_order": 0,
         "question": "시므리는 엘라가 무엇을 하고 있을 때 반란을 일으켰습니까?",
         "choices": [
-          "술을 마시고 취해 있을 때",
           "성전에서 기도하고 있을 때",
+          "술을 마시고 취해 있을 때",
           "포도원을 가꾸고 있을 때"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 16:9-10 — 엘라가 '마시고 취할 때에' 시므리가 들어가 그를 쳤다"
       },
       {
@@ -649,11 +618,11 @@
         "display_order": 1,
         "question": "시므리는 성이 함락되는 것을 보고 어떻게 되었습니까?",
         "choices": [
+          "여호사밧에게 항복했다",
           "왕궁에 불을 놓고 그 가운데서 죽었다",
-          "엘리야에게 찾아갔다",
-          "여호사밧에게 항복했다"
+          "엘리야에게 찾아갔다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 16:18 — '왕궁에 불을 놓고 그 가운데서 죽었으니'"
       },
       {
@@ -661,19 +630,13 @@
         "display_order": 2,
         "question": "아합은 왕이 된 뒤 누구와 결혼하고 바알을 섬겼습니까?",
         "choices": [
-          "이세벨과 결혼하고 바알을 섬겼다",
           "나봇과 결혼하고 포도원을 지켰다",
-          "미가야와 결혼하고 예언자가 되었다"
+          "미가야와 결혼하고 예언자가 되었다",
+          "이세벨과 결혼하고 바알을 섬겼다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 16:31-32 — '바알을 섬겨 숭배하고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Elah and Zimri matching their avatars. This is a coup scene but must be non-graphic: no blood, no visible wound, no corpse detail.",
-      "Show Omri matching his avatar. Zimri should match scene 1. Palace fire is symbolic and contained; no suicide depiction, no body, no gore, no readable text.",
-      "Show Omri matching his avatar as a calculating northern king. Idols are visual symbols only with no readable labels.",
-      "Show Ahab and Jezebel matching their avatars. Jezebel should be the Sidonian queen avatar: dark braided hair, jeweled Phoenician-style veil, deep crimson and gold royal dress, cold confident expression. No readable labels."
     ]
   },
   {
@@ -684,16 +647,16 @@
       "elijah"
     ],
     "landmark_code": "lm_div_samaria",
-    "place_name": "사마리아 → 그릿 시냇가 → 사르밧(전승)",
+    "place_name": "사마리아 왕궁(북이스라엘, 전승)",
     "lat": 32.279,
     "lng": 35.19,
     "summary": "엘리야는 아합에게 가뭄을 선포하고, 하나님은 그릿 시냇가와 사르밧 과부의 집에서 생명을 돌보신다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아합과 엘리야」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "17:24",
         "book": "왕상",
-        "from": "17:1",
-        "to": "17:24"
+        "from": "17:1"
       }
     ],
     "start_year": -874,
@@ -736,11 +699,11 @@
         "display_order": 0,
         "question": "엘리야는 아합에게 무엇이 없을 것이라고 말했습니까?",
         "choices": [
-          "수년 동안 이슬과 비",
+          "요단강 물길",
           "성전의 금방패",
-          "요단강 물길"
+          "수년 동안 이슬과 비"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 17:1 — '수년 동안 우로가 있지 아니하리라'"
       },
       {
@@ -748,11 +711,11 @@
         "display_order": 1,
         "question": "그릿 시냇가에서 하나님은 무엇으로 엘리야를 먹이셨습니까?",
         "choices": [
-          "까마귀들",
+          "바알 제사장들",
           "아람 군사들",
-          "바알 제사장들"
+          "까마귀들"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 17:6 — '까마귀들이 아침에도 떡과 고기를, 저녁에도 떡과 고기를 가져왔고'"
       },
       {
@@ -761,18 +724,12 @@
         "question": "사르밧 과부의 집에서 가루 통과 기름병은 어떻게 되었습니까?",
         "choices": [
           "가루와 기름이 다하지 않았다",
-          "곧바로 비어 버렸다",
-          "왕궁으로 옮겨졌다"
+          "왕궁으로 옮겨졌다",
+          "곧바로 비어 버렸다"
         ],
         "answer_index": 0,
         "explanation": "왕상 17:16 — '통의 가루가 다하지 아니하고 병의 기름이 없어지지 아니하니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Elijah matching his avatar with rough orange mantle and prophet robe. Show Ahab matching his avatar as the hardened northern king. The speech bubble must be pictorial only, with dry cracked land and no rain, no readable text.",
-      "Show Elijah matching his avatar beside the brook Cherith, east of the Jordan tradition. Ravens bring bread and meat in their beaks or claws; keep the scene peaceful and non-threatening.",
-      "The widow has no reference avatar. Show her consistently as an unnamed poor Phoenician widow: modest dark teal veil, simple brown dress, anxious but hopeful expression. The flour jar and oil jar remain visibly not empty; no readable labels.",
-      "Show the same widow from scene 3. The child is shown alive again, sitting up; no corpse details, no readable labels."
     ]
   },
   {
@@ -790,9 +747,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「엘리야와 갈멜」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "18:39",
         "book": "왕상",
-        "from": "18:20",
-        "to": "18:39"
+        "from": "18:20"
       }
     ],
     "start_year": -860,
@@ -836,8 +793,8 @@
         "question": "엘리야는 여호와의 단을 어떻게 하였습니까?",
         "choices": [
           "무너진 여호와의 단을 수축하였다",
-          "새 제단을 따로 쌓았다",
-          "바알 제단 위에 올렸다"
+          "바알 제단 위에 올렸다",
+          "새 제단을 따로 쌓았다"
         ],
         "answer_index": 0,
         "explanation": "왕상 18:30 — '저가 무너진 여호와의 단을 수축하되'"
@@ -847,11 +804,11 @@
         "display_order": 1,
         "question": "엘리야는 갈멜산에서 하나님께 무엇을 알게 해 달라고 기도했습니까?",
         "choices": [
-          "여호와가 하나님이심을 알게 해 달라",
           "바알이 하나님임을 알게 해 달라",
+          "여호와가 하나님이심을 알게 해 달라",
           "가뭄의 이유를 숨겨 달라"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 18:36 — '주께서 이스라엘 중에서 하나님이 되심과 내가 주의 종이 됨과'"
       },
       {
@@ -875,16 +832,16 @@
       "elijah"
     ],
     "landmark_code": "lm_div_mt_horeb",
-    "place_name": "호렙 산(전승)",
-    "lat": 28.5392,
-    "lng": 33.9756,
+    "place_name": "호렙 산(엘리야, 전승)",
+    "lat": 28.54,
+    "lng": 33.97,
     "summary": "엘리야는 절망 속에서 ‘세미한 음성’으로 다시 부르심을 받는다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「호렙의 엘리야」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "19:18",
         "book": "왕상",
-        "from": "19:1",
-        "to": "19:18"
+        "from": "19:1"
       }
     ],
     "start_year": -860,
@@ -938,11 +895,11 @@
         "display_order": 1,
         "question": "하나님은 지친 엘리야에게 무엇을 맡기셨습니까?",
         "choices": [
-          "하사엘과 예후와 엘리사를 세우는 일",
+          "금송아지를 세우는 일",
           "사마리아 궁전을 짓는 일",
-          "금송아지를 세우는 일"
+          "하사엘과 예후와 엘리사를 세우는 일"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 19:15-16 — 하사엘, 예후, 엘리사를 세우라고 명하셨다"
       },
       {
@@ -951,18 +908,12 @@
         "question": "하나님이 바알에게 무릎 꿇지 않게 남기신 사람은 몇 명입니까?",
         "choices": [
           "칠천 명",
-          "오천 명",
-          "백 명"
+          "백 명",
+          "오천 명"
         ],
         "answer_index": 0,
         "explanation": "왕상 19:18 — '내가 이스라엘 가운데 칠천 인을 남기리니'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Keep the same Horeb mountain wilderness and rocky cave area across all four scenes. Show Elijah matching his avatar, visibly exhausted, isolated, and emotionally worn down. No readable text.",
-      "Keep the same Horeb cave background from scene 1. Show wind, earthquake cracks, and fire as passing forces, followed by stillness. Elijah remains tired and small before the scene. No readable text.",
-      "Keep the same Horeb cave entrance. The divine voice is pictorial only: Hazael of Aram, Jehu of Israel, and Elisha as successor prophet shown as three symbolic appointments. No readable labels or written names.",
-      "Keep the same Horeb cave entrance. The seven thousand are symbolic faithful people in a speech-bubble image, fighting against a Baal idol; avoid literal readable numbers or labels."
     ]
   },
   {
@@ -981,9 +932,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「나봇의 포도원」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "21:29",
         "book": "왕상",
-        "from": "21:1",
-        "to": "21:29"
+        "from": "21:1"
       }
     ],
     "start_year": -856,
@@ -1025,11 +976,11 @@
         "display_order": 0,
         "question": "나봇은 왜 아합에게 포도원을 줄 수 없다고 했습니까?",
         "choices": [
-          "조상의 유업이기 때문",
           "포도원이 너무 작았기 때문",
+          "조상의 유업이기 때문",
           "이미 이세벨에게 팔았기 때문"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 21:3 — '내 열조의 유업을 왕에게 주기를 여호와께서 금하실지로다'"
       },
       {
@@ -1056,12 +1007,6 @@
         "answer_index": 0,
         "explanation": "왕상 21:29 — '저가 내 앞에서 겸비함을 인하여 내가 재앙을 저의 시대에는 내리지 아니하고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Naboth has no reference avatar. Show him consistently in all Naboth scenes as the same Jezreelite vineyard owner: adult man, weathered tan face, short gray-streaked beard, simple olive robe, clay-brown sash, humble but firm expression. Show Ahab matching his avatar.",
-      "Show Jezebel matching her avatar as the same Sidonian queen: dark braided hair under jeweled Phoenician-style veil, deep crimson and gold royal dress, cold calculating expression. The two false witnesses are unnamed rough men. No readable text.",
-      "Show Naboth as the same vineyard owner. Keep the stoning scene non-graphic and distant enough for a family-safe biblical illustration: no gore, no wound detail, no corpse close-up, no readable labels.",
-      "Show Elijah matching his avatar and Ahab matching his avatar. Use Jezebel reference only inside the symbolic judgment speech bubble if she appears there; do not place Jezebel as a second physical figure beside Elijah and Ahab. The judgment bubble must be symbolic only: no graphic bodies, no gore, no readable text."
     ]
   },
   {
@@ -1080,9 +1025,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「미가야」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "22:28",
         "book": "왕상",
-        "from": "22:1",
-        "to": "22:28"
+        "from": "22:1"
       }
     ],
     "start_year": -853,
@@ -1128,11 +1073,11 @@
         "display_order": 0,
         "question": "여호사밧은 전쟁 전에 먼저 무엇을 물어 보자고 했습니까?",
         "choices": [
+          "전차의 수",
           "여호와의 말씀",
-          "금의 무게",
-          "전차의 수"
+          "금의 무게"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 22:5 — '청컨대 먼저 여호와의 말씀이 어떠하신지 물어 보소서'"
       },
       {
@@ -1152,19 +1097,13 @@
         "display_order": 2,
         "question": "아합은 미가야를 어디에 가두라고 명했습니까?",
         "choices": [
-          "옥에 가두고 고생의 떡과 물을 주라고 했다",
           "성전 안에 숨기라고 했다",
-          "포도원으로 보내라고 했다"
+          "포도원으로 보내라고 했다",
+          "옥에 가두고 고생의 떡과 물을 주라고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 22:27 — '이놈을 옥에 가두고 ... 고생의 떡과 고생의 물로 먹이라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Micaiah matching his avatar as a solitary truth-telling prophet. False prophets have no reference avatars; show them as unnamed court prophets, no readable labels.",
-      "The king of Israel here is Ahab. Show Ahab matching his avatar and Jehoshaphat matching his avatar as Judah king. Micaiah speech bubble is pictorial only, no text.",
-      "Show the true warning as symbolic and non-graphic: no gore, no corpse detail. Sheep-without-shepherd imagery should be clear inside the bubble, no readable labels.",
-      "Show Micaiah matching his avatar. Bread and water are simple prison rations. No torture, no injury, no readable text."
     ]
   },
   {
@@ -1178,19 +1117,19 @@
     "landmark_code": "lm_div_ramoth_gilead",
     "place_name": "길르앗 라못/사마리아(전승)",
     "lat": 32.55,
-    "lng": 36.0,
+    "lng": 36,
     "summary": "아합은 변장하고 전쟁에 나가지만 우연히 날아온 화살에 맞고, 그의 아들 아하시야는 악한 길을 이어 간다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아합의 최후」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "22:40",
         "book": "왕상",
-        "from": "22:29",
-        "to": "22:40"
+        "from": "22:29"
       },
       {
+        "to": "22:53",
         "book": "왕상",
-        "from": "22:51",
-        "to": "22:53"
+        "from": "22:51"
       }
     ],
     "start_year": -853,
@@ -1234,8 +1173,8 @@
         "question": "아합은 전쟁터에 나갈 때 여호사밧에게 무엇을 입으라고 했습니까?",
         "choices": [
           "왕복",
-          "상복",
-          "제사장 옷"
+          "제사장 옷",
+          "상복"
         ],
         "answer_index": 0,
         "explanation": "왕상 22:30 — '나는 변장하고 군중으로 들어가려 하노니 당신은 왕복을 입으소서'"
@@ -1245,11 +1184,11 @@
         "display_order": 1,
         "question": "한 사람이 우연히 쏜 화살은 아합의 어디를 맞혔습니까?",
         "choices": [
+          "방패 한가운데",
           "갑옷 솔기 사이",
-          "왕관 위",
-          "방패 한가운데"
+          "왕관 위"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕상 22:34 — '이스라엘 왕의 갑옷 솔기를 쏜지라'"
       },
       {
@@ -1257,19 +1196,13 @@
         "display_order": 2,
         "question": "아합 뒤를 이어 북이스라엘 왕이 된 사람은 누구입니까?",
         "choices": [
-          "아하시야",
           "여호사밧",
-          "미가야"
+          "미가야",
+          "아하시야"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 22:40 — '그 아들 아하시야가 대신하여 왕이 되니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jehoshaphat in royal robes and Ahab disguised as an ordinary soldier. Keep battle distant and non-graphic: no gore, no bodies, no readable labels.",
-      "Show Ahab matching his avatar but disguised in soldier clothing. The arrow impact is implied at the armor seam; no wound detail, no blood close-up.",
-      "Symbolic aftermath only. Dogs near the chariot fulfill the warning, but no graphic body or gore. No readable labels.",
-      "Show Ahaziah of Northern Israel matching his avatar, not Ahaziah of Judah. Baal worship is shown through idol shrine imagery only, no readable text."
     ]
   },
   {
@@ -1287,9 +1220,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여호사밧」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "22:50",
         "book": "왕상",
-        "from": "22:41",
-        "to": "22:50"
+        "from": "22:41"
       }
     ],
     "start_year": -853,
@@ -1356,19 +1289,13 @@
         "display_order": 2,
         "question": "아하시야가 자기 종들을 배에 함께 태우자고 하자 여호사밧은 어떻게 했습니까?",
         "choices": [
-          "허락하지 않았다",
           "즉시 허락했다",
-          "미가야에게 감옥을 맡겼다"
+          "미가야에게 감옥을 맡겼다",
+          "허락하지 않았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕상 22:49 — '여호사밧이 허락지 아니하였더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "",
-      "Shipwreck at Ezion-geber should be dramatic but safe: broken ships and waves only, no drowning bodies, no gore, no readable labels.",
-      "Show Ahaziah of Northern Israel matching his avatar and Jehoshaphat matching his avatar. The refusal should be clear through posture, no readable speech text.",
-      "Show Jehoshaphat as much older than earlier scenes. Peaceful royal deathbed tone only; no gore, no readable labels."
     ]
   },
   {
@@ -1387,9 +1314,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아하시야의 병」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "1:18",
         "book": "왕하",
-        "from": "1:1",
-        "to": "1:18"
+        "from": "1:1"
       }
     ],
     "start_year": -852,
@@ -1433,11 +1360,11 @@
         "display_order": 0,
         "question": "아하시야는 병들자 누구에게 물으려고 사자를 보냈습니까?",
         "choices": [
-          "에그론의 신 바알세불",
           "예루살렘의 제사장",
-          "갈멜 산의 백성"
+          "갈멜 산의 백성",
+          "에그론의 신 바알세불"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 1:2 — '에그론의 신 바알세불에게 이 병이 낫겠나 물어 보라'"
       },
       {
@@ -1446,8 +1373,8 @@
         "question": "엘리야는 아하시야가 침상에서 어떻게 된다고 전했습니까?",
         "choices": [
           "내려오지 못하고 죽는다",
-          "곧 건강히 일어난다",
-          "애굽으로 도망간다"
+          "애굽으로 도망간다",
+          "곧 건강히 일어난다"
         ],
         "answer_index": 0,
         "explanation": "왕하 1:4 — '네가 올라간 침상에서 내려오지 못할지라'"
@@ -1464,12 +1391,6 @@
         "answer_index": 0,
         "explanation": "왕하 1:10 — '불이 곧 하늘에서 내려와서'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Ahaziah of Northern Israel matching his avatar, not Ahaziah of Judah. Sickbed aftermath only: no wound close-up, no blood, no readable labels.",
-      "Show Elijah matching his avatar. The messengers are unnamed servants. The speech bubble is pictorial only, no readable text.",
-      "Show Elijah calm on the mountain. The fifty soldiers are a grouped troop, not individually labeled. Divine fire descends from heaven, but no gore, no bodies, no readable text.",
-      "Show Ahaziah of Northern Israel matching scene 1. Elijah speaks firmly beside the sickbed. Speech bubble is pictorial only, no readable text."
     ]
   },
   {
@@ -1480,16 +1401,16 @@
       "elisha"
     ],
     "landmark_code": "lm_div_jordan_river",
-    "place_name": "요단강 근처(전승)",
+    "place_name": "요단강 근처(엘리야와 엘리사, 전승)",
     "lat": 32.311,
     "lng": 35.5688,
     "summary": "엘리야는 떠나고, 엘리사는 겉옷과 사명을 이어받는다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「엘리야 승천」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:14",
         "book": "왕하",
-        "from": "2:1",
-        "to": "2:14"
+        "from": "2:1"
       }
     ],
     "start_year": -850,
@@ -1535,8 +1456,8 @@
         "question": "엘리야는 어떤 방법으로 하늘로 올라갔습니까?",
         "choices": [
           "회리바람을 타고 승천하였다",
-          "불수레를 타고 올라갔다",
-          "천사들에게 이끌려 올라갔다"
+          "천사들에게 이끌려 올라갔다",
+          "불수레를 타고 올라갔다"
         ],
         "answer_index": 0,
         "explanation": "왕하 2:11 — '엘리야가 회리바람을 타고 승천하더라'"
@@ -1546,11 +1467,11 @@
         "display_order": 1,
         "question": "엘리야가 보이지 않게 된 뒤 엘리사는 자기 옷을 어떻게 했습니까?",
         "choices": [
-          "잡아 둘로 찢었다",
           "요단강에 던졌다",
-          "엘리야에게 돌려주었다"
+          "엘리야에게 돌려주었다",
+          "잡아 둘로 찢었다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 2:12 — '자기의 옷을 잡아 둘에 찢고'"
       },
       {
@@ -1558,11 +1479,11 @@
         "display_order": 2,
         "question": "엘리사는 엘리야의 겉옷으로 물을 치며 무엇을 외쳤습니까?",
         "choices": [
-          "엘리야의 하나님 여호와는 어디 계시냐고 외쳤다",
+          "요단강을 마르게 하지 말라고 외쳤다",
           "불수레를 다시 보내 달라고 외쳤다",
-          "요단강을 마르게 하지 말라고 외쳤다"
+          "엘리야의 하나님 여호와는 어디 계시냐고 외쳤다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 2:14 — '엘리야의 하나님 여호와는 어디 계시니이까'"
       }
     ]
@@ -1574,16 +1495,16 @@
       "elisha"
     ],
     "landmark_code": "lm_div_jericho",
-    "place_name": "여리고 → 벧엘 길(전승)",
+    "place_name": "여리고/벧엘 길(엘리사, 전승)",
     "lat": 31.8744,
     "lng": 35.4441,
     "summary": "엘리사는 엘리야의 계승자로 인정받고, 물을 고치며 하나님의 권위를 가볍게 여긴 조롱에 경고를 드러낸다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「엘리사의 첫 표징」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "2:25",
         "book": "왕하",
-        "from": "2:15",
-        "to": "2:25"
+        "from": "2:15"
       }
     ],
     "start_year": -850,
@@ -1620,11 +1541,11 @@
         "display_order": 0,
         "question": "사람들은 엘리야를 찾으러 몇 명을 보냈습니까?",
         "choices": [
+          "백 명",
           "오십 명",
-          "열두 명",
-          "백 명"
+          "열두 명"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 2:17 — '오십 인을 보내매 사흘을 찾되 발견하지 못하고'"
       },
       {
@@ -1632,11 +1553,11 @@
         "display_order": 1,
         "question": "엘리사는 여리고 물 근원에 무엇을 던졌습니까?",
         "choices": [
+          "금방패",
           "소금",
-          "기름",
-          "금방패"
+          "기름"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 2:21 — '소금을 그 가운데 던지며' 여호와께서 물을 고치신다고 말했다"
       },
       {
@@ -1644,18 +1565,13 @@
         "display_order": 2,
         "question": "벧엘 길에서 엘리사를 조롱한 무리에게 무엇이 나왔습니까?",
         "choices": [
-          "곰 두 마리",
           "까마귀들",
-          "애굽 군대"
+          "애굽 군대",
+          "곰 두 마리"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 2:24 — '암콤 둘이 수풀 가운데서 나와서'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Elisha matching his avatar and clearly holding Elijah's mantle as a sign of succession. The sons of the prophets have no reference avatars; show them as unnamed prophet disciples with no readable labels.",
-      "Show Elisha matching his avatar at Jericho's water source. The water visibly changes from troubled to clear; no readable labels or text.",
-      ""
     ]
   },
   {
@@ -1665,16 +1581,16 @@
       "elisha"
     ],
     "landmark_code": "lm_div_gilgal",
-    "place_name": "길갈/수넴/바알살리사(전승)",
+    "place_name": "길갈/엘리사 사역(전승)",
     "lat": 31.85,
     "lng": 35.5,
     "summary": "엘리사는 가난한 집의 기름, 죽은 아이의 회복, 독이 사라진 국, 적은 떡으로 먹인 무리를 통해 하나님의 돌보심을 보여 준다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「엘리사의 기적들」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "4:44",
         "book": "왕하",
-        "from": "4:1",
-        "to": "4:44"
+        "from": "4:1"
       }
     ],
     "start_year": -845,
@@ -1728,11 +1644,11 @@
         "display_order": 1,
         "question": "엘리사는 죽은 아이를 위해 어떻게 했습니까?",
         "choices": [
-          "하나님께 기도했다",
+          "왕궁으로 돌아갔다",
           "아이를 버려두었다",
-          "왕궁으로 돌아갔다"
+          "하나님께 기도했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 4:33 — 엘리사가 문을 닫고 여호와께 기도했다"
       },
       {
@@ -1740,19 +1656,13 @@
         "display_order": 2,
         "question": "보리떡 스무 개로 먹은 사람은 몇 명입니까?",
         "choices": [
+          "열두 명",
           "백 명",
-          "오십 명",
-          "열두 명"
+          "오십 명"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 4:43 — '이것을 일백명에게 베풀겠나이까'"
       }
-    ],
-    "scene_prompt_notes": [
-      "The poor widow has no reference avatar. Show her as an unnamed humble Israelite widow in a plain brown veil and simple robe; keep Elisha matching his avatar. No readable labels.",
-      "The Shunammite woman and child have no reference avatars. Show the child alive again, sitting up; no corpse details, no gore, no medical horror, no readable labels.",
-      "Show a communal meal pot at Gilgal. The danger is symbolized by worried faces and bitter wild gourds near the pot, then flour making the stew safe; no sickness details, no readable labels.",
-      "Show barley loaves and fresh grain feeding a large seated group. The crowd can be a stylized background group; no readable numbers or labels."
     ]
   },
   {
@@ -1763,16 +1673,16 @@
       "elisha"
     ],
     "landmark_code": "lm_div_samaria",
-    "place_name": "사마리아/요단강(전승)",
+    "place_name": "사마리아 왕궁(북이스라엘, 전승)",
     "lat": 32.279,
     "lng": 35.19,
     "summary": "자존심을 내려놓을 때 치유가 찾아온다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「나아만」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "5:14",
         "book": "왕하",
-        "from": "5:1",
-        "to": "5:14"
+        "from": "5:1"
       }
     ],
     "start_year": -845,
@@ -1828,11 +1738,11 @@
         "display_order": 1,
         "question": "나아만의 종들은 선지자의 말을 어떻게 받아들이라고 권했습니까?",
         "choices": [
-          "씻으라는 말도 따르라고 권했다",
           "요단강을 피하라고 권했다",
+          "씻으라는 말도 따르라고 권했다",
           "엘리사를 왕에게 고발하라고 권했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 5:13 — '씻어 깨끗하게 하라 함이리이까'"
       },
       {
@@ -1841,8 +1751,8 @@
         "question": "나아만이 문둥병 치유를 위해 몸을 잠근 횟수는 몇 번입니까?",
         "choices": [
           "일곱 번",
-          "세 번",
-          "열 번"
+          "열 번",
+          "세 번"
         ],
         "answer_index": 0,
         "explanation": "왕하 5:14 — '요단 강에 일곱 번 몸을 잠그니 그 살이 깨끗하게 되었더라'"
@@ -1857,16 +1767,16 @@
       "god"
     ],
     "landmark_code": "lm_div_dothan",
-    "place_name": "도단(전승)",
+    "place_name": "도단(엘리사의 불 전차, 전승)",
     "lat": 32.41,
     "lng": 35.24,
     "summary": "아람 군대가 도단을 에워싸지만, 하나님은 엘리사 곁의 불 말과 불 전차를 보이시고 원수에게 자비를 베풀게 하신다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「도단의 불 말과 불 전차」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "6:23",
         "book": "왕하",
-        "from": "6:8",
-        "to": "6:23"
+        "from": "6:8"
       }
     ],
     "start_year": -845,
@@ -1931,19 +1841,13 @@
         "display_order": 2,
         "question": "엘리사는 사마리아로 이끌고 온 아람 군대를 어떻게 하게 했습니까?",
         "choices": [
+          "곧바로 다시 도단으로 보냈다",
           "먹이고 마시게 한 뒤 돌려보냈다",
-          "성 안 감옥에 오래 가두었다",
-          "곧바로 다시 도단으로 보냈다"
+          "성 안 감옥에 오래 가두었다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 6:23 — '식물을 많이 베풀고 ... 그 주인에게로 돌아가니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Aram soldiers have no reference avatars. Show them as an unnamed night army surrounding Dothan; no readable labels, no combat impact.",
-      "The young servant has no reference avatar. Show him as the same frightened young man beside Elisha. God is represented by holy fire-light, fiery horses, and fiery chariots only; no human figure, no readable text.",
-      "Show blindness as symbolic confusion with covered or clouded eyes and outstretched hands. No injury, no medical gore, no readable labels.",
-      "Show mercy and release: food, water, and a peaceful departure for the Aramean soldiers. No violence, no prisoners in chains, no readable labels."
     ]
   },
   {
@@ -1961,9 +1865,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여호람의 남유다」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "8:24",
         "book": "왕하",
-        "from": "8:16",
-        "to": "8:24"
+        "from": "8:16"
       }
     ],
     "start_year": -848,
@@ -2006,11 +1910,11 @@
         "display_order": 0,
         "question": "남유다 여호람은 예루살렘에서 몇 해 동안 다스렸습니까?",
         "choices": [
-          "여덟 해",
           "한 해",
-          "마흔 해"
+          "마흔 해",
+          "여덟 해"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 8:17 — '예루살렘에서 팔 년을 치리하니라'"
       },
       {
@@ -2018,11 +1922,11 @@
         "display_order": 1,
         "question": "여호람은 누구의 딸을 아내로 맞아 악한 길을 따랐습니까?",
         "choices": [
-          "아합의 딸",
           "바로의 딸",
+          "아합의 딸",
           "나봇의 딸"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 8:18 — '아합의 딸이 그 아내가 되었음이라'"
       },
       {
@@ -2030,19 +1934,13 @@
         "display_order": 2,
         "question": "여호람 때 유다의 지배에서 벗어난 곳은 어디입니까?",
         "choices": [
-          "에돔과 립나",
+          "갈멜과 도단",
           "니느웨와 바벨론",
-          "갈멜과 도단"
+          "에돔과 립나"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 8:20-22 — '에돔이 배반하여 유다의 수하에서 벗어났더니'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jehoram of Judah matching his avatar, not Joram of Israel. No readable labels.",
-      "Ahab's daughter has no reference avatar. Show her as an unnamed northern princess in dark teal and gold royal clothing. God's anger is holy light, not a human figure. No readable text.",
-      "Show Edom and Libnah rebels as unnamed opposing forces. Battle is non-graphic: no gore, no bodies, no readable labels.",
-      "Show Jehoram of Judah older and weakened. Deathbed tone only, no gore, no readable labels."
     ]
   },
   {
@@ -2053,16 +1951,16 @@
       "joram_israel"
     ],
     "landmark_code": "lm_div_ramoth_jezreel",
-    "place_name": "예루살렘 → 길르앗 라못 → 이스르엘(전승)",
+    "place_name": "길르앗 라못 → 이스르엘(전승)",
     "lat": 32.55,
-    "lng": 36.0,
+    "lng": 36,
     "summary": "유다의 아하시야는 아합 집의 길을 따라 북이스라엘 요람과 함께 전쟁에 나아가고, 요람은 이스르엘에서 상처를 치료한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「유다 아하시야」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "8:29",
         "book": "왕하",
-        "from": "8:25",
-        "to": "8:29"
+        "from": "8:25"
       }
     ],
     "start_year": -841,
@@ -2102,8 +2000,8 @@
         "question": "유다 왕 아하시야는 몇 살에 왕이 되었습니까?",
         "choices": [
           "스물두 살",
-          "여덟 살",
-          "쉰 살"
+          "쉰 살",
+          "여덟 살"
         ],
         "answer_index": 0,
         "explanation": "왕하 8:26 — '나이 이십이세라'"
@@ -2113,11 +2011,11 @@
         "display_order": 1,
         "question": "아하시야는 여호와 보시기에 어떤 길로 행했습니까?",
         "choices": [
-          "아합의 집 길로 악을 행했다",
           "다윗처럼 정직히 행했다",
-          "바알을 버리고 개혁했다"
+          "바알을 버리고 개혁했다",
+          "아합의 집 길로 악을 행했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 8:27 — '아합의 집 길로 행하여'"
       },
       {
@@ -2125,18 +2023,13 @@
         "display_order": 2,
         "question": "아하시야는 요람과 함께 어디로 가서 아람과 싸웠습니까?",
         "choices": [
-          "길르앗 라못",
           "예루살렘 성전",
+          "길르앗 라못",
           "사르밧 마을"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 8:28 — '길르앗 라못으로 가서'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Ahaziah of Judah matching his avatar, clearly distinct from Ahaziah of Northern Israel. No readable labels.",
-      "Show Joram of Northern Israel matching his avatar and Ahaziah of Judah matching his avatar. Battle aftermath is non-graphic: no blood close-up, no gore, no readable labels.",
-      "Show Joram of Northern Israel recovering in Jezreel and Ahaziah of Judah visiting him. Sickroom tone only, no wound detail, no readable labels."
     ]
   },
   {
@@ -2150,16 +2043,16 @@
       "jezebel"
     ],
     "landmark_code": "lm_div_jezreel_jehu",
-    "place_name": "길르앗 라못 → 이스르엘(전승)",
+    "place_name": "이스르엘/예후의 심판(전승)",
     "lat": 32.56,
     "lng": 35.32,
     "summary": "예후는 기름부음을 받고 아합 집에 임한 하나님의 심판을 실행한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「예후의 기름부음」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "9:37",
         "book": "왕하",
-        "from": "9:1",
-        "to": "9:37"
+        "from": "9:1"
       }
     ],
     "start_year": -841,
@@ -2204,11 +2097,11 @@
         "display_order": 0,
         "question": "엘리사는 선지자의 생도에게 무엇을 가지고 예후에게 가라고 했습니까?",
         "choices": [
-          "기름병",
           "금송아지",
-          "성전 열쇠"
+          "성전 열쇠",
+          "기름병"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 9:1 — '이 기름병을 손에 가지고'"
       },
       {
@@ -2216,11 +2109,11 @@
         "display_order": 1,
         "question": "하나님은 예후에게 누구의 집을 치라고 하셨습니까?",
         "choices": [
-          "아합의 집",
           "다윗의 집",
-          "요나단의 집"
+          "요나단의 집",
+          "아합의 집"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 9:7 — '네 주 아합의 집을 치라'"
       },
       {
@@ -2235,12 +2128,6 @@
         "answer_index": 0,
         "explanation": "왕하 9:13 — '예후는 왕이라 하니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Elisha's disciple has no reference avatar. Show him as an unnamed young prophet carrying a small oil flask. Speech bubble is pictorial only, no readable text.",
-      "Show Jehu matching his avatar as a commander, not a gentle king. The prophet disciple is the same unnamed young prophet from scene 1. No readable labels.",
-      "Show Joram of Northern Israel and Ahaziah of Judah matching their avatars. This is a judgment battle scene but must be non-graphic: no gore, no wound close-up, no corpse detail, no readable text.",
-      "Show Jehu matching his avatar and Jezebel matching her avatar as the Sidonian queen falling down from the window: dark braided hair, jeweled Phoenician-style veil, deep crimson and gold royal dress. no readable labels."
     ]
   },
   {
@@ -2258,9 +2145,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「예후의 열심과 한계」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "10:36",
         "book": "왕하",
-        "from": "10:1",
-        "to": "10:36"
+        "from": "10:1"
       }
     ],
     "start_year": -841,
@@ -2316,8 +2203,8 @@
         "question": "예후는 바알을 없앤 뒤에도 어떤 죄에서 떠나지 못했습니까?",
         "choices": [
           "금송아지를 섬기는 죄",
-          "성전을 보수하는 일",
-          "엘리사를 찾아가는 일"
+          "엘리사를 찾아가는 일",
+          "성전을 보수하는 일"
         ],
         "answer_index": 0,
         "explanation": "왕하 10:29 — '금송아지를 섬기는 죄에서 떠나지 아니하였더라'"
@@ -2334,12 +2221,6 @@
         "answer_index": 0,
         "explanation": "왕하 10:35 — '그 아들 여호아하스가 대신하여 왕이 되니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jehu matching his avatar, acting with calculated zeal. Baal worshipers are unnamed crowd figures. No readable labels.",
-      "Keep the temple purge non-graphic and distant: burning idol objects and collapsing shrine are clear, but no gore, no body detail, no readable text.",
-      "Show Jehu matching his avatar with a conflicted hard expression. Golden calves at Bethel and Dan are visual idol symbols, no readable labels.",
-      "Show Jehu older on a peaceful deathbed and Jehoahaz of Northern Israel matching his avatar as successor. No gore, no readable labels."
     ]
   },
   {
@@ -2351,16 +2232,16 @@
       "jehoiada"
     ],
     "landmark_code": "lm_div_jerusalem_athaliah_joash",
-    "place_name": "예루살렘 성전/왕궁(전승)",
+    "place_name": "예루살렘 성전/왕궁(아달랴와 요아스, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "아달랴의 폭력 속에서도 요아스는 성전에 숨겨지고, 여호야다는 언약을 세워 다윗 왕조를 다시 드러낸다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아달랴와 요아스」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "11:20",
         "book": "왕하",
-        "from": "11:1",
-        "to": "11:20"
+        "from": "11:1"
       }
     ],
     "start_year": -841,
@@ -2405,8 +2286,8 @@
         "question": "아달랴가 왕의 씨를 없애려 할 때 요아스는 어디에 숨어 지냈습니까?",
         "choices": [
           "여호와의 전",
-          "사마리아 왕궁",
-          "라기스 성문"
+          "라기스 성문",
+          "사마리아 왕궁"
         ],
         "answer_index": 0,
         "explanation": "왕하 11:3 — '여호와의 전에 육 년을 숨어'"
@@ -2416,11 +2297,11 @@
         "display_order": 1,
         "question": "여호야다는 요아스를 왕으로 세울 때 백성과 무엇을 세웠습니까?",
         "choices": [
-          "여호와와의 언약",
           "앗수르와의 조약",
+          "여호와와의 언약",
           "바알 신전의 제사"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 11:17 — '여호와와 언약을 세워'"
       },
       {
@@ -2428,19 +2309,13 @@
         "display_order": 2,
         "question": "온 국민은 언약 뒤 바알의 당에 가서 무엇을 했습니까?",
         "choices": [
+          "아람 왕에게 은을 보냈다",
           "제단과 우상들을 깨뜨렸다",
-          "왕궁 보물을 숨겼다",
-          "아람 왕에게 은을 보냈다"
+          "왕궁 보물을 숨겼다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 11:18 — '그 단들과 우상들을 깨뜨리고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Jehosheba and the nurse have no reference avatars. Show baby Joash as an infant hidden safely in the temple room, not using Joash's adult avatar. No gore, no bodies, no readable labels.",
-      "Show Athaliah matching her avatar. Keep judgment non-graphic: no blood, no wound close-up, no corpse detail, no readable labels.",
-      "Show Jehoiada matching his priest avatar, not as a royal king. Baal temple destruction focuses on idols and altar objects breaking; no gore, no readable text.",
-      "Show Joash as a seven-year-old child king even though his avatar represents the character identity. Jehoiada is an elderly temple priest. No readable labels."
     ]
   },
   {
@@ -2451,21 +2326,21 @@
       "jehoiada"
     ],
     "landmark_code": "lm_div_jerusalem_joash_temple",
-    "place_name": "예루살렘 성전(전승)",
+    "place_name": "예루살렘 성전 보수(요아스, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "요아스는 여호야다의 교훈 아래 성전을 보수하지만, 말년에는 우상과 폭력으로 하나님 앞에서 무너진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「요아스의 성전 보수와 배교」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "12:16",
         "book": "왕하",
-        "from": "12:1",
-        "to": "12:16"
+        "from": "12:1"
       },
       {
+        "to": "24:22",
         "book": "대하",
-        "from": "24:1",
-        "to": "24:22"
+        "from": "24:1"
       }
     ],
     "start_year": -835,
@@ -2521,11 +2396,11 @@
         "display_order": 1,
         "question": "요아스와 여호야다는 성전 수리를 위해 백성의 은을 어디에 넣게 했습니까?",
         "choices": [
-          "성전 문 곁의 궤",
+          "사마리아 성문 창고",
           "왕궁 침상 아래",
-          "사마리아 성문 창고"
+          "성전 문 곁의 궤"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 12:9 — '한 궤를 취하여... 전 문 어귀 우편... 두매'"
       },
       {
@@ -2533,19 +2408,13 @@
         "display_order": 2,
         "question": "여호야다가 죽은 뒤 요아스와 방백들은 무엇을 섬겼습니까?",
         "choices": [
-          "아세라 목상과 우상",
           "여호와의 언약궤",
+          "아세라 목상과 우상",
           "엘리사의 무덤"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "대하 24:18 — '아세라 목상과 우상을 섬긴 고로'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Joash as a young child king in royal Judah clothing. No readable labels.",
-      "Show Joash as about 30 years old and Jehoiada as the same elderly priest. The offering chest should be visible near the temple entrance. No readable text.",
-      "Show temple repair complete and dignified. Joash is about 30, Jehoiada is elderly. No readable labels.",
-      "Zechariah son of Jehoiada has no reference avatar and is not Zechariah the post-exile prophet. Show him as an unnamed priest-prophet in white linen. Non-graphic scene: no gore, no body detail, no readable labels."
     ]
   },
   {
@@ -2558,16 +2427,16 @@
       "god"
     ],
     "landmark_code": "lm_div_samaria_jehoahaz_jehoash",
-    "place_name": "사마리아/아벡 전승",
+    "place_name": "사마리아/아벡(여호아하스와 요아스, 전승)",
     "lat": 32.279,
     "lng": 35.19,
     "summary": "북이스라엘은 여전히 우상을 따르지만, 하나님은 긍휼로 숨통을 열어 주시고 엘리사는 마지막까지 구원의 표징을 전한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여호아하스와 요아스」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "13:25",
         "book": "왕하",
-        "from": "13:1",
-        "to": "13:25"
+        "from": "13:1"
       }
     ],
     "start_year": -814,
@@ -2611,11 +2480,11 @@
         "display_order": 0,
         "question": "여호아하스 때 사마리아에 남아 있던 우상은 무엇입니까?",
         "choices": [
-          "아세라 목상",
           "율법책",
+          "아세라 목상",
           "다윗의 방패"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 13:6 — '사마리아에 아세라 목상을 그저 두었더라'"
       },
       {
@@ -2623,11 +2492,11 @@
         "display_order": 1,
         "question": "엘리사는 요아스에게 동쪽 창문을 열고 무엇을 하라고 했습니까?",
         "choices": [
+          "성벽을 허물라고 했다",
           "화살을 쏘라고 했다",
-          "금을 세어 보라고 했다",
-          "성벽을 허물라고 했다"
+          "금을 세어 보라고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 13:17 — '동편 창을 여소서... 쏘소서'"
       },
       {
@@ -2635,19 +2504,13 @@
         "display_order": 2,
         "question": "요아스는 벤하닷을 몇 번 쳐서 이스라엘 성읍들을 회복했습니까?",
         "choices": [
+          "일곱 번",
           "세 번",
-          "한 번",
-          "일곱 번"
+          "한 번"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 13:25 — '벤하닷을 세번 쳐서 파하고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "God is represented only as stern holy light, not a human figure. Show Jehoahaz of Northern Israel matching his avatar. No readable labels.",
-      "Show Jehoash of Northern Israel matching his avatar, distinct from Joash of Judah. Idols are visual symbols only, no readable labels.",
-      "Show Elisha very old and sick but dignified; no medical gore. The arrow shot is symbolic and nonviolent. No readable labels.",
-      "Elisha's burial is shown by a sealed tomb or mound only, no body. Battle victory is distant and non-graphic; no gore, no readable text."
     ]
   },
   {
@@ -2657,21 +2520,21 @@
       "joash_judah"
     ],
     "landmark_code": "lm_div_jerusalem_joash_last",
-    "place_name": "예루살렘/가드 길(전승)",
+    "place_name": "예루살렘/가드 길(요아스 최후, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "요아스의 배교 뒤 아람의 압박이 찾아오고, 그는 성전의 보물을 내어 주지만 결국 신하들의 반역으로 무너진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「요아스의 최후」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "12:21",
         "book": "왕하",
-        "from": "12:17",
-        "to": "12:21"
+        "from": "12:17"
       },
       {
+        "to": "24:27",
         "book": "대하",
-        "from": "24:23",
-        "to": "24:27"
+        "from": "24:23"
       }
     ],
     "start_year": -796,
@@ -2708,11 +2571,11 @@
         "display_order": 0,
         "question": "하사엘은 예루살렘을 향하기 전에 어느 성을 쳐서 취했습니까?",
         "choices": [
-          "가드",
+          "니느웨",
           "단",
-          "니느웨"
+          "가드"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 12:17 — '가드를 쳐서 취하고'"
       },
       {
@@ -2721,8 +2584,8 @@
         "question": "요아스는 하사엘을 물러가게 하려고 무엇을 보냈습니까?",
         "choices": [
           "성물과 왕궁의 금",
-          "엘리사의 겉옷",
-          "아마샤의 편지"
+          "아마샤의 편지",
+          "엘리사의 겉옷"
         ],
         "answer_index": 0,
         "explanation": "왕하 12:18 — '모든 성물과... 왕궁에 있는 금을... 하사엘에게 보내었더니'"
@@ -2732,18 +2595,13 @@
         "display_order": 2,
         "question": "요아스가 크게 다친 뒤 그의 신하들은 어떻게 했습니까?",
         "choices": [
-          "반역하여 침상에서 쳐 죽였다",
           "그를 사마리아 왕으로 세웠다",
-          "그와 함께 금송아지를 버렸다"
+          "그와 함께 금송아지를 버렸다",
+          "반역하여 침상에서 쳐 죽였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 24:25 — '그 신복들이... 모반하여 그 침상에서 쳐 죽인지라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Hazael and Aram soldiers have no reference avatars. Show them as unnamed Aramean forces. Non-graphic injury only; no gore, no wound close-up.",
-      "Hazael is the same unnamed Aramean king throughout this story: older stern king with Aramean bronze headband and red-brown cloak. No readable labels.",
-      "Make the betrayal unmistakable, not a caring sickbed visit: locked royal bedroom at night, conspirators exchanging secret signals, hidden daggers under robes, one guard deliberately looking away as if bribed, Joash shocked and trying to sit up. Do not show the killing impact. No gore, no body detail, no readable text."
     ]
   },
   {
@@ -2754,16 +2612,16 @@
       "jehoash_israel"
     ],
     "landmark_code": "lm_div_salt_valley_beth_shemesh",
-    "place_name": "소금 골짜기 → 예루살렘/사마리아(전승)",
-    "lat": 31.0,
+    "place_name": "소금 골짜기/벧세메스(아마샤, 전승)",
+    "lat": 31,
     "lng": 35.35,
     "summary": "아마샤는 에돔을 이긴 뒤 교만하게 북이스라엘에 도전하지만, 예루살렘 성벽과 성전 보물까지 잃는다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아마샤와 북이스라엘 요아스」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "14:15",
         "book": "왕하",
-        "from": "14:1",
-        "to": "14:15"
+        "from": "14:1"
       }
     ],
     "start_year": -796,
@@ -2808,11 +2666,11 @@
         "display_order": 0,
         "question": "아마샤는 염곡에서 누구를 쳐서 크게 이겼습니까?",
         "choices": [
+          "바알 제사장",
           "에돔 사람",
-          "앗수르 군대",
-          "바알 제사장"
+          "앗수르 군대"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 14:7 — '염곡에서 에돔 사람 일만을 죽이고'"
       },
       {
@@ -2833,18 +2691,12 @@
         "question": "북이스라엘 요아스는 예루살렘에서 금은과 사람들을 어디로 데려갔습니까?",
         "choices": [
           "사마리아",
-          "바벨론",
-          "호렙 산"
+          "호렙 산",
+          "바벨론"
         ],
         "answer_index": 0,
         "explanation": "왕하 14:14 — '사람을 볼모로 잡아가지고 사마리아로 돌아갔더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Amaziah of Judah matching his avatar. Edomite army is unnamed and distant. No gore, no readable labels.",
-      "Show Jehoash of Northern Israel matching his avatar, clearly distinct from Joash of Judah. Speech bubble is pictorial only: thornbush and cedar, no text.",
-      "Battle defeat is non-graphic; no blood, no bodies, no readable text.",
-      "Show temple vessels and captives symbolically, not as cruelty. No gore, no readable labels."
     ]
   },
   {
@@ -2856,16 +2708,16 @@
       "uzziah"
     ],
     "landmark_code": "lm_div_samaria_jeroboam_ii",
-    "place_name": "사마리아/라기스/예루살렘(전승)",
+    "place_name": "사마리아/여로보암 2세(전승)",
     "lat": 32.279,
     "lng": 35.19,
     "summary": "북이스라엘은 여로보암 2세 때 영토를 회복하지만 악에서 떠나지 않고, 남유다는 아마샤 뒤에 어린 아사랴가 왕위에 오른다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여로보암 2세와 왕위 전환」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "14:29",
         "book": "왕하",
-        "from": "14:16",
-        "to": "14:29"
+        "from": "14:16"
       }
     ],
     "start_year": -793,
@@ -2907,11 +2759,11 @@
         "display_order": 0,
         "question": "아마샤는 예루살렘의 반역을 피해 어디로 도망갔습니까?",
         "choices": [
-          "라기스",
           "갈멜 산",
+          "라기스",
           "디르사"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 14:19 — '라기스로 도망하였더니'"
       },
       {
@@ -2919,11 +2771,11 @@
         "display_order": 1,
         "question": "아마샤 뒤에 왕이 된 아사랴는 몇 살이었습니까?",
         "choices": [
+          "서른 살",
           "열여섯 살",
-          "일곱 살",
-          "서른 살"
+          "일곱 살"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 14:21 — '나이 십륙세라'"
       },
       {
@@ -2931,19 +2783,13 @@
         "display_order": 2,
         "question": "여로보암 2세는 어느 범위까지 이스라엘 지경을 회복했습니까?",
         "choices": [
+          "수산 궁에서 예루살렘까지",
           "하맛 어귀에서 아라바 바다까지",
-          "시내산에서 나일강까지",
-          "수산 궁에서 예루살렘까지"
+          "시내산에서 나일강까지"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 14:25 — '하맛 어귀에서부터 아라바 바다까지'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jeroboam II matching his avatar, distinct from Jeroboam son of Nebat. No readable labels.",
-      "Conspirators are unnamed. Show capture and fatal outcome symbolically, no gore, no body detail, no readable text.",
-      "Show Uzziah/Azariah as a 16-year-old boy king, solemn and grieving. No readable labels.",
-      "Map is pictorial with borders but no readable letters or numbers. Battle victories are symbolic and non-graphic."
     ]
   },
   {
@@ -2954,16 +2800,16 @@
       "god"
     ],
     "landmark_code": "lm_div_joppa_jonah",
-    "place_name": "욥바 항구와 큰 바다(전승)",
+    "place_name": "욥바 항구(요나 전승)",
     "lat": 32.055,
     "lng": 34.752,
     "summary": "하나님은 요나에게 니느웨로 가라 하시지만, 요나는 다시스로 도망하다가 큰 폭풍과 물고기 표징을 통해 하나님의 부르심을 피할 수 없음을 배운다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「요나」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "1:17",
         "book": "욘",
-        "from": "1:1",
-        "to": "1:17"
+        "from": "1:1"
       }
     ],
     "start_year": -760,
@@ -3007,8 +2853,8 @@
         "question": "하나님은 요나에게 어느 큰 성읍으로 가서 외치라고 하셨습니까?",
         "choices": [
           "니느웨",
-          "수산",
-          "애굽"
+          "애굽",
+          "수산"
         ],
         "answer_index": 0,
         "explanation": "욘 1:2 — '너는 일어나 저 큰 성읍 니느웨로 가서 그것을 쳐서 외치라'"
@@ -3018,11 +2864,11 @@
         "display_order": 1,
         "question": "요나는 하나님의 명령을 듣고 처음에 어떻게 행동했습니까?",
         "choices": [
-          "다시스로 도망하려고 배를 탔다",
+          "예루살렘 성전에 머물렀다",
           "곧장 니느웨 성문으로 갔다",
-          "예루살렘 성전에 머물렀다"
+          "다시스로 도망하려고 배를 탔다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "욘 1:3 — '여호와의 낯을 피하려고 일어나 다시스로 도망하려 하여'"
       },
       {
@@ -3030,19 +2876,13 @@
         "display_order": 2,
         "question": "바다 폭풍 속에서 제비가 요나에게 떨어진 뒤 요나는 무엇을 알렸습니까?",
         "choices": [
-          "자기 때문에 이 큰 폭풍이 일어난 줄 안다고 했다",
           "배 안의 짐이 너무 많다고 했다",
-          "니느웨 사람들이 이미 회개했다고 했다"
+          "니느웨 사람들이 이미 회개했다고 했다",
+          "자기 때문에 이 큰 폭풍이 일어난 줄 안다고 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "욘 1:12 — '이 큰 폭풍을 만난 것이 나의 연고인 줄을 내가 아노라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "God is shown only as holy light, not a human body. Keep the Korean speech bubble short and simple.",
-      "Sailors are unnamed one-time background figures; do not create avatar-like portraits for them.",
-      "Make the storm concrete with ropes, sail, tilted deck, and frightened poses; no gore.",
-      "Show the large fish as a stylized sea creature at distance, not a horror image."
     ]
   },
   {
@@ -3060,9 +2900,9 @@
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「요나」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "4:11",
         "book": "욘",
-        "from": "3:1",
-        "to": "4:11"
+        "from": "3:1"
       }
     ],
     "start_year": -760,
@@ -3106,11 +2946,11 @@
         "display_order": 0,
         "question": "요나의 외침을 들은 니느웨 사람들은 어떻게 반응했습니까?",
         "choices": [
-          "금식을 선포하고 굵은 베옷을 입었다",
           "요나를 성 밖으로 쫓아냈다",
+          "금식을 선포하고 굵은 베옷을 입었다",
           "큰 탑을 세우기 시작했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "욘 3:5 — '니느웨 백성이 하나님을 믿고 금식을 선포하고 무론대소하고 굵은 베를 입은지라'"
       },
       {
@@ -3118,11 +2958,11 @@
         "display_order": 1,
         "question": "하나님이 니느웨를 아끼시자 요나는 어떤 마음을 보였습니까?",
         "choices": [
-          "심히 싫어하고 노했다",
           "니느웨 사람들과 함께 기뻐했다",
-          "즉시 예루살렘으로 돌아갔다"
+          "즉시 예루살렘으로 돌아갔다",
+          "심히 싫어하고 노했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "욘 4:1 — '요나가 심히 싫어하고 노하여'"
       },
       {
@@ -3137,12 +2977,6 @@
         "answer_index": 0,
         "explanation": "욘 4:10-11 — '네가 수고도 아니하였고 배양도 아니하였고... 이 큰 성읍 니느웨를 내가 아끼는 것이 어찌 합당치 아니하냐'"
       }
-    ],
-    "scene_prompt_notes": [
-      "God is shown only as holy light, not a human body. Jonah keeps his canonical sea-teal traveler look but looks dust-worn.",
-      "Ninevites are unnamed one-time figures; make their shocked posture and ancient Assyrian setting clear without labels.",
-      "Show repentance through sackcloth, ashes, lowered crown, and fasting posture; no readable decree text.",
-      "Keep the plant, withered vine, hot sun, and Jonah’s angry posture concrete. Use one short Korean speech bubble only."
     ]
   },
   {
@@ -3153,21 +2987,21 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem_uzziah",
-    "place_name": "예루살렘/블레셋 성읍들(전승)",
+    "place_name": "예루살렘/웃시야의 성전 문(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "웃시야는 하나님의 도우심으로 강성해지지만, 교만하여 제사장의 일을 넘보다가 나병으로 낮아진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「웃시야의 강성함과 교만」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "15:7",
         "book": "왕하",
-        "from": "15:1",
-        "to": "15:7"
+        "from": "15:1"
       },
       {
+        "to": "26:23",
         "book": "대하",
-        "from": "26:1",
-        "to": "26:23"
+        "from": "26:1"
       }
     ],
     "start_year": -792,
@@ -3210,11 +3044,11 @@
         "display_order": 0,
         "question": "웃시야가 블레셋 사람과 싸워 헐었던 성들에 포함된 곳은 어디입니까?",
         "choices": [
-          "가드와 야브네와 아스돗",
           "니느웨와 갈그미스와 수산",
-          "벧엘과 단과 실로"
+          "벧엘과 단과 실로",
+          "가드와 야브네와 아스돗"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 26:6 — '가드 성과 야브네 성과 아스돗 성을 헐고'"
       },
       {
@@ -3222,11 +3056,11 @@
         "display_order": 1,
         "question": "웃시야가 강성해진 뒤 성전에 들어가 하려던 일은 무엇입니까?",
         "choices": [
-          "향단에 분향하려 했다",
+          "성전 궤에 은을 넣으려 했다",
           "율법책을 읽으려 했다",
-          "성전 궤에 은을 넣으려 했다"
+          "향단에 분향하려 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 26:16 — '여호와의 전에 들어가서 향단에 분향하려 한지라'"
       },
       {
@@ -3234,19 +3068,13 @@
         "display_order": 2,
         "question": "웃시야가 제사장들에게 분노할 때 나병은 어디에 나타났습니까?",
         "choices": [
-          "이마",
           "손바닥",
-          "발꿈치"
+          "발꿈치",
+          "이마"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 26:19 — '그 이마에 문둥병이 발한지라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Uzziah/Azariah matching his avatar. Philistine cities are distant fortified towns. Non-graphic battle, no labels.",
-      "Tribute and fortified towers are the focus. No readable labels or numbers.",
-      "Priest Azariah has no reference avatar. Show him as an unnamed high priest in white linen blocking the king. No readable text.",
-      "God is represented by stern holy light, not a human figure. Leprosy is subtle pale marks on the forehead only, clean and non-gory."
     ]
   },
   {
@@ -3261,16 +3089,16 @@
       "hoshea_king"
     ],
     "landmark_code": "lm_div_samaria_late_kings",
-    "place_name": "사마리아/디르사/북이스라엘(전승)",
+    "place_name": "사마리아 말기 왕궁(전승)",
     "lat": 32.279,
     "lng": 35.19,
     "summary": "북이스라엘 말기에는 왕들이 악에서 떠나지 못하고, 반역과 앗수르의 압박 속에서 왕위가 빠르게 흔들린다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「북이스라엘 말기 왕들」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "15:31",
         "book": "왕하",
-        "from": "15:8",
-        "to": "15:31"
+        "from": "15:8"
       }
     ],
     "start_year": -753,
@@ -3316,11 +3144,11 @@
         "display_order": 0,
         "question": "스가랴를 모반하여 백성 앞에서 쳐 죽이고 왕이 된 사람은 누구입니까?",
         "choices": [
-          "살룸",
           "아마샤",
-          "히스기야"
+          "히스기야",
+          "살룸"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 15:10 — '살룸이 저를 모반하여... 대신하여 왕이 되니라'"
       },
       {
@@ -3328,11 +3156,11 @@
         "display_order": 1,
         "question": "므나헴은 앗수르 왕 불이 올라오자 무엇을 주어 물러가게 했습니까?",
         "choices": [
-          "은 일천 달란트",
           "성전의 율법책",
-          "엘리사의 화살"
+          "엘리사의 화살",
+          "은 일천 달란트"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 15:19 — '은 일천 달란트를 불에게 주어서'"
       },
       {
@@ -3340,19 +3168,13 @@
         "display_order": 2,
         "question": "베가를 반역하여 치고 대신 왕이 된 사람은 누구입니까?",
         "choices": [
-          "호세아",
           "여호야다",
+          "호세아",
           "스가랴"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 15:30 — '호세아가 반역하여... 대신하여 왕이 되니라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Use exact top-bottom split. Show Zechariah king, Shallum, and Menahem matching their avatars; no gore, no corpse detail, no readable labels.",
-      "Assyrian soldiers have no reference avatars. Show Menahem matching his avatar in both panels. Tribute silver is clear; no readable labels.",
-      "Show Pekahiah and Pekah matching their avatars. Pekahiah is the crowned king being overthrown and must look shocked. Pekah is still an army commander here: military clothing, commander cloak or armor-like robe, no crown. The revolt is tense but non-graphic; no blood, no body detail, no readable labels.",
-      "Show Pekah and Hoshea king matching their avatars. Pekah is the crowned king in this scene. Hoshea is the future king, not Hosea the prophet, and must appear as a servant or court official with no crown and no royal diadem. No gore, no readable labels."
     ]
   },
   {
@@ -3363,21 +3185,21 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem_jotham_gate",
-    "place_name": "예루살렘 성전 윗문(전승)",
+    "place_name": "예루살렘 성전 윗문(요담, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "요담은 하나님 앞에서 바른 길을 걸으며 성전 윗문을 세우지만, 백성의 부패는 여전히 남아 있다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「요담」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "15:38",
         "book": "왕하",
-        "from": "15:32",
-        "to": "15:38"
+        "from": "15:32"
       },
       {
+        "to": "27:9",
         "book": "대하",
-        "from": "27:1",
-        "to": "27:9"
+        "from": "27:1"
       }
     ],
     "start_year": -750,
@@ -3411,8 +3233,8 @@
         "question": "요담이 예루살렘 성전에 세운 것은 무엇입니까?",
         "choices": [
           "여호와의 전 윗문",
-          "다메섹 제단",
-          "바알 신전"
+          "바알 신전",
+          "다메섹 제단"
         ],
         "answer_index": 0,
         "explanation": "대하 27:3 — '여호와의 전 윗문을 건축하고'"
@@ -3423,8 +3245,8 @@
         "question": "요담 때 백성은 어떤 상태로 남아 있었습니까?",
         "choices": [
           "여전히 부패하였다",
-          "모두 우상을 버렸다",
-          "바벨론으로 끌려갔다"
+          "바벨론으로 끌려갔다",
+          "모두 우상을 버렸다"
         ],
         "answer_index": 0,
         "explanation": "대하 27:2 — '오히려 백성은 사악을 행하였더라'"
@@ -3434,17 +3256,13 @@
         "display_order": 2,
         "question": "요담이 점점 강하여진 이유는 무엇입니까?",
         "choices": [
-          "여호와 앞에 길을 바로 하였다",
+          "성전 제단을 바꾸었다",
           "앗수르와 조약을 맺었다",
-          "성전 제단을 바꾸었다"
+          "여호와 앞에 길을 바로 하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 27:6 — '그 하나님 여호와 앞에 정도를 행하였으므로'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jotham as a good Judah king: calm, sincere, dignified. The temple upper gate should be visually prominent. No readable labels.",
-      "Contrast Jotham worshiping God with distant people still serving idols. God is represented only by holy light, not a human figure. No readable text."
     ]
   },
   {
@@ -3455,16 +3273,16 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘 성전(환상)",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "이사야는 거룩하신 하나님의 보좌 환상 앞에서 자신의 죄를 깨닫고, 정결하게 된 뒤 보내심에 응답한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「이사야의 소명」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "6:13",
         "book": "사",
-        "from": "6:1",
-        "to": "6:13"
+        "from": "6:1"
       }
     ],
     "start_year": -740,
@@ -3504,11 +3322,11 @@
         "display_order": 0,
         "question": "이사야가 본 스랍들은 각각 몇 개의 날개를 가지고 있었습니까?",
         "choices": [
-          "여섯 날개",
           "두 날개",
+          "여섯 날개",
           "열두 날개"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "사 6:2 — '각기 여섯 날개가 있어'"
       },
       {
@@ -3516,11 +3334,11 @@
         "display_order": 1,
         "question": "이사야는 하나님의 보좌 환상 앞에서 자신을 어떻게 고백했습니까?",
         "choices": [
+          "스랍에게 왕이 되게 해 달라고 했다",
           "입술이 부정해 망하게 되었다고 했다",
-          "자신이 이미 깨끗하다고 자랑했다",
-          "스랍에게 왕이 되게 해 달라고 했다"
+          "자신이 이미 깨끗하다고 자랑했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "사 6:5 — '화로다 나여 망하게 되었도다 나는 입술이 부정한 사람이요'"
       },
       {
@@ -3528,18 +3346,13 @@
         "display_order": 2,
         "question": "하나님이 누구를 보낼지 부르실 때 이사야는 어떻게 응답했습니까?",
         "choices": [
-          "제가 여기 있으니 저를 보내 달라고 응답했다",
           "다른 선지자를 보내 달라고 물러섰다",
+          "제가 여기 있으니 저를 보내 달라고 응답했다",
           "성전을 떠나 아무 말도 하지 않았다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "사 6:8 — '내가 여기 있나이다 나를 보내소서'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Vision inside a text-free thought bubble. The coal touches Isaiah’s lips symbolically and gently; no burn, no injury, no gore. God is radiant throne-light, not a human figure. Seraphim must be front-facing and must match Isaiah 6:2 exactly: only six wings total. Upper pair crosses over and covers the face/eyes. Lower pair crosses over and covers the legs/feet. Middle pair spreads wide left and right for flight. Do not add extra wings or random wing placement.",
-      "Vision inside a text-free thought bubble. Show Isaiah volunteering with a raised hand. Use pictorial light/gesture only; no readable speech text. God is radiant throne-light, not a human figure. Every visible seraph must be front-facing with exactly six wings: 2 upper wings covering the face, 2 lower wings covering the legs/feet, 2 middle wings spread horizontally to both sides. No extra wings, no arbitrary angel-wing layout.",
-      "Vision inside a text-free thought bubble. Show the message visually: people refusing to listen, a desolate land, and a remaining stump with a small shoot. No corpses, no gore, no readable labels. God is radiant throne-light, not a human figure. If seraphim appear, force the Isaiah 6:2 layout: front-facing, exactly six wings, upper pair covering face, lower pair covering legs/feet, middle pair spread left and right. No extra wings."
     ]
   },
   {
@@ -3552,26 +3365,26 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem_ahaz_altars",
-    "place_name": "예루살렘 성전/윗못 수도 끝(전승)",
+    "place_name": "예루살렘 성전/다메섹 제단(아하스, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "아하스는 우상과 두려움 속에서 하나님을 의지하지 않고, 끝내 성전에 이방 제단을 들여놓는다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아하스의 우상과 다메섹 제단」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "16:20",
         "book": "왕하",
-        "from": "16:1",
-        "to": "16:20"
+        "from": "16:1"
       },
       {
+        "to": "28:27",
         "book": "대하",
-        "from": "28:1",
-        "to": "28:27"
+        "from": "28:1"
       },
       {
+        "to": "7:12",
         "book": "사",
-        "from": "7:3",
-        "to": "7:12"
+        "from": "7:3"
       }
     ],
     "start_year": -735,
@@ -3630,11 +3443,11 @@
         "display_order": 1,
         "question": "르신과 베가가 예루살렘을 에워쌌을 때 결과는 어떠했습니까?",
         "choices": [
+          "아하스를 바벨론으로 끌고 갔다",
           "아하스를 이기지 못했다",
-          "예루살렘을 완전히 불태웠다",
-          "아하스를 바벨론으로 끌고 갔다"
+          "예루살렘을 완전히 불태웠다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 16:5 — '능히 이기지 못하니라'"
       },
       {
@@ -3649,12 +3462,6 @@
         "answer_index": 0,
         "explanation": "왕하 16:10 — '단의 모든 구조와 제도의 식양을 그려'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Non-graphic symbolic scene only. Ahaz is holding up his own young son before the Molech altar fire to show the evil sacrifice being prepared, but the child must not touch the fire and must not be harmed, burned, bound, injured, or in pain. The Molech idol itself must not be on fire; only the altar furnace or fire pit in front of the idol burns. God’s anger should read as wrathful judgment: cold sharp red-gold light, dark clouds, not a peaceful holy glow. No gore, no readable labels.",
-      "Rezin has no reference avatar. Show him as an unnamed Aramean king beside Pekah. Pekah should match his avatar. No readable labels.",
-      "This scene connects to the Isaiah 7 crisis but should feel like Ahaz refusing God’s help before the Immanuel sign story. No readable speech text.",
-      "Make the two altars visually unmistakable without text labels: the Lord’s original altar is pushed far back, smaller, simple bronze, with faint muted gold light; the Damascus foreign altar is large in the center/front, dark red stone, foreign ornamental shapes, smoky red fire, and visual dominance. Ahaz must look wicked and stubborn while sacrificing at the foreign altar. Show God’s displeasure as sharp red judgment light from above, not peaceful holy light. No readable labels."
     ]
   },
   {
@@ -3666,16 +3473,16 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘 윗못 수도 끝(전승)",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "아하스는 두 왕의 위협 앞에서 흔들리지만, 하나님은 이사야를 통해 굳게 믿으라는 말씀과 임마누엘의 징조를 주신다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아하스와 임마누엘」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "7:25",
         "book": "사",
-        "from": "7:1",
-        "to": "7:25"
+        "from": "7:1"
       }
     ],
     "start_year": -735,
@@ -3716,8 +3523,8 @@
         "question": "아람 왕 르신과 이스라엘 왕 베가는 아하스 때에 무엇을 하려 했습니까?",
         "choices": [
           "예루살렘을 치러 올라왔다",
-          "유다와 화해하려고 예물을 보냈다",
-          "성전을 함께 보수하려고 왔다"
+          "성전을 함께 보수하려고 왔다",
+          "유다와 화해하려고 예물을 보냈다"
         ],
         "answer_index": 0,
         "explanation": "사 7:1 — '르신과 베가가 올라와서 예루살렘을 쳤으나'"
@@ -3727,11 +3534,11 @@
         "display_order": 1,
         "question": "아람과 에브라임 동맹 소식에 왕과 백성의 마음은 어땠습니까?",
         "choices": [
-          "숲이 바람에 흔들리듯 흔들렸다",
+          "아무 걱정 없이 잠잠히 기다렸다",
           "기뻐하며 성대한 잔치를 열었다",
-          "아무 걱정 없이 잠잠히 기다렸다"
+          "숲이 바람에 흔들리듯 흔들렸다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "사 7:2 — '그 마음이 삼림이 바람에 흔들림 같이 흔들렸더라'"
       },
       {
@@ -3746,11 +3553,6 @@
         "answer_index": 0,
         "explanation": "사 7:14 — '처녀가 잉태하여 아들을 낳을 것이요 그 이름을 임마누엘이라 하리라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Rezin and Pekah do not have reference avatars. Show them only as distant unnamed threatening forces; Ahaz is fearful, not heroic. No readable labels.",
-      "Ahaz refuses trust with hesitant eyes and political calculation, not bold faith. No readable text.",
-      "Use a pictorial speech bubble only; do not write Immanuel as readable text. Keep it a prophetic sign scene, not a Nativity scene; no Mary/Jesus depiction, no readable labels."
     ]
   },
   {
@@ -3760,16 +3562,16 @@
       "hoshea_king"
     ],
     "landmark_code": "lm_div_samaria",
-    "place_name": "사마리아",
+    "place_name": "사마리아 왕궁(북이스라엘, 전승)",
     "lat": 32.279,
     "lng": 35.19,
     "summary": "북이스라엘의 마지막 왕 호세아는 앗수르에 반역하다 붙잡히고, 사마리아는 함락되어 백성이 포로로 끌려간다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「호세아의 몰락」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "17:6",
         "book": "왕하",
-        "from": "17:1",
-        "to": "17:6"
+        "from": "17:1"
       }
     ],
     "start_year": -724,
@@ -3804,11 +3606,11 @@
         "display_order": 0,
         "question": "호세아는 어디에서 북이스라엘 왕으로 다스렸습니까?",
         "choices": [
-          "사마리아",
           "예루살렘",
-          "니느웨"
+          "니느웨",
+          "사마리아"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 17:1 — '호세아가 사마리아에서 이스라엘 왕이 되어 구년을 치리하 며'"
       },
       {
@@ -3817,8 +3619,8 @@
         "question": "앗수르 왕은 호세아의 어떤 행동을 보고 그를 옥에 가두었습니까?",
         "choices": [
           "애굽 왕에게 기대고 조공을 끊었다",
-          "예루살렘 성전을 고치려 했다",
-          "사마리아 백성을 모두 돌려보냈다"
+          "사마리아 백성을 모두 돌려보냈다",
+          "예루살렘 성전을 고치려 했다"
         ],
         "answer_index": 0,
         "explanation": "왕하 17:4 — '조공을 드리지 아니하매'"
@@ -3835,11 +3637,6 @@
         "answer_index": 0,
         "explanation": "왕하 17:6 — '이스라엘 사람을 사로잡아 앗수르로 끌어다가 ... 여러 고을에 두었더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Hoshea is the last king of Northern Israel, not Hosea the prophet. Show him as a somber northern king in a blue-gray royal robe and bronze headband; no prophecy scroll, no prophet robe, no readable labels.",
-      "Assyrian king and guards have no reference avatars. Show Hoshea imprisoned and gloomy, but no gore, no visible wounds, no readable labels.",
-      "Show the fall and exile of Samaria with families being led away; no graphic violence, no bodies, no readable labels."
     ]
   },
   {
@@ -3850,21 +3647,21 @@
       "isaiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "포위 속에서 히스기야는 편지를 성전에 펼치고 하나님께 매달린다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「히스기야와 산헤립」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "19:37",
         "book": "왕하",
-        "from": "18:13",
-        "to": "19:37"
+        "from": "18:13"
       },
       {
+        "to": "37:38",
         "book": "사",
-        "from": "37:1",
-        "to": "37:38"
+        "from": "37:1"
       }
     ],
     "start_year": -701,
@@ -3909,8 +3706,8 @@
         "question": "히스기야는 랍사게의 말을 듣고 먼저 어떻게 반응했습니까?",
         "choices": [
           "옷을 찢고 성전으로 갔다",
-          "앗수르 왕에게 항복 문서를 보냈다",
-          "예루살렘 성벽을 버리고 도망했다"
+          "예루살렘 성벽을 버리고 도망했다",
+          "앗수르 왕에게 항복 문서를 보냈다"
         ],
         "answer_index": 0,
         "explanation": "사 37:1 — '그 옷을 찢고 굵은 베를 입고 여호와의 전으로 갔고'"
@@ -3932,11 +3729,11 @@
         "display_order": 2,
         "question": "하나님은 이사야를 통해 앗수르 왕이 예루살렘에 어떻게 하지 못한다고 말씀하셨습니까?",
         "choices": [
-          "성에 이르지도 못하고 화살 하나도 쏘지 못한다고 하셨다",
           "성문을 열고 조공을 받게 된다고 하셨다",
-          "히스기야와 함께 성전을 짓게 된다고 하셨다"
+          "히스기야와 함께 성전을 짓게 된다고 하셨다",
+          "성에 이르지도 못하고 화살 하나도 쏘지 못한다고 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "사 37:33 — '그가 이 성에 이르지 못하며 화살 하나도 이리로 쏘지 못하며'"
       }
     ]
@@ -3949,21 +3746,21 @@
       "isaiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "회복 이후의 자랑은 또 다른 위기를 예고한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「히스기야의 병과 바벨론 사신」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "20:19",
         "book": "왕하",
-        "from": "20:1",
-        "to": "20:19"
+        "from": "20:1"
       },
       {
+        "to": "39:8",
         "book": "사",
-        "from": "38:1",
-        "to": "39:8"
+        "from": "38:1"
       }
     ],
     "start_year": -700,
@@ -4020,11 +3817,11 @@
         "display_order": 1,
         "question": "히스기야는 이사야의 심판 예언을 듣고 무엇이라 하였습니까?",
         "choices": [
-          "나의 생전에는 평안하리라 하였다",
+          "이사야의 말을 부인하였다",
           "즉시 회개하고 금식을 선포하였다",
-          "이사야의 말을 부인하였다"
+          "나의 생전에는 평안하리라 하였다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 20:19 — '나의 생전에는 평안과 견고함이 있으리로다 하니라'"
       },
       {
@@ -4033,8 +3830,8 @@
         "question": "히스기야는 찾아온 사신들이 어디에서 왔다고 말했습니까?",
         "choices": [
           "먼 나라 바벨론에서 왔다고 말했다",
-          "애굽 궁정에서 왔다고 말했다",
-          "북이스라엘에서 왔다고 말했다"
+          "북이스라엘에서 왔다고 말했다",
+          "애굽 궁정에서 왔다고 말했다"
         ],
         "answer_index": 0,
         "explanation": "사 39:3 — '이에 선지자 이사야가 히스기야 왕에게 나아와 묻되 그 사람들이 무슨 말을 하였으며 어디서 왕에 게 왔나이까 히스기야가 가로되 그들이 원방 곧 바벨론에서 내게 왔나이다'"
@@ -4049,21 +3846,21 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem_manasseh",
-    "place_name": "예루살렘 → 바벨론 → 예루살렘(전승)",
+    "place_name": "예루살렘/바벨론 길(므낫세, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "므낫세는 성전을 우상으로 더럽히지만, 포로의 낮아짐 속에서 하나님께 돌이켜 다시 우상을 제거한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「므낫세의 낮아짐」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "21:18",
         "book": "왕하",
-        "from": "21:1",
-        "to": "21:18"
+        "from": "21:1"
       },
       {
+        "to": "33:20",
         "book": "대하",
-        "from": "33:1",
-        "to": "33:20"
+        "from": "33:1"
       }
     ],
     "start_year": -697,
@@ -4120,11 +3917,11 @@
         "display_order": 1,
         "question": "앗수르 군대는 므낫세를 어떻게 끌고 갔습니까?",
         "choices": [
+          "애굽 왕에게 넘겼다",
           "사슬로 결박하여 바벨론으로 끌고 갔다",
-          "왕궁에서 그대로 섬기게 했다",
-          "애굽 왕에게 넘겼다"
+          "왕궁에서 그대로 섬기게 했다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "대하 33:11 — '쇠사슬로 결박하여 바벨론으로 끌어간지라'"
       },
       {
@@ -4132,19 +3929,13 @@
         "display_order": 2,
         "question": "낮아진 뒤 므낫세는 성전의 우상들을 어떻게 했습니까?",
         "choices": [
-          "성 밖으로 내어 버렸다",
           "다메섹 제단 앞으로 옮겼다",
-          "금으로 다시 입혔다"
+          "금으로 다시 입혔다",
+          "성 밖으로 내어 버렸다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 33:15 — '이방 신들과 여호와의 전의 우상을 제하며'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Non-graphic symbolic child-sacrifice reference only. Manasseh is preparing to offer his own young son, but do not depict the child being burned, harmed, injured, restrained, or in pain. The Molech idol itself must not be on fire; only the altar furnace or fire pit in front of the idol burns. God’s anger should read as wrathful judgment: cold sharp red-gold light, dark clouds, lightning-like beams, not a peaceful holy glow. No gore, no readable labels.",
-      "Show Assyrian captivity with hooks/chains symbolically but not as torture. No blood, no wounds, no close-up injury.",
-      "Show Manasseh humbled and repentant, not triumphant. God is represented by distant protective light only.",
-      "Show repentance through idol removal and restored worship. No readable labels."
     ]
   },
   {
@@ -4154,21 +3945,21 @@
       "amon_judah"
     ],
     "landmark_code": "lm_div_jerusalem_amon",
-    "place_name": "예루살렘 왕궁/성전(전승)",
+    "place_name": "예루살렘 왕궁(아몬, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "아몬은 아버지의 악한 길을 따르지만 회개하지 않고, 짧은 통치 끝에 반역으로 무너진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「아몬」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "21:26",
         "book": "왕하",
-        "from": "21:19",
-        "to": "21:26"
+        "from": "21:19"
       },
       {
+        "to": "33:25",
         "book": "대하",
-        "from": "33:21",
-        "to": "33:25"
+        "from": "33:21"
       }
     ],
     "start_year": -642,
@@ -4200,11 +3991,11 @@
         "display_order": 0,
         "question": "아몬은 몇 살에 왕이 되었습니까?",
         "choices": [
-          "스물두 살",
+          "열여덟 살",
           "일곱 살",
-          "열여덟 살"
+          "스물두 살"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 21:19 — '아몬이 위에 나아갈 때에 나이 이십 이세라'"
       },
       {
@@ -4212,11 +4003,11 @@
         "display_order": 1,
         "question": "아몬은 아버지 므낫세와 달리 무엇을 하지 않았습니까?",
         "choices": [
-          "여호와 앞에 스스로 겸비하지 않았다",
+          "예루살렘에서 왕이 되지 않았다",
           "우상들을 섬기지 않았다",
-          "예루살렘에서 왕이 되지 않았다"
+          "여호와 앞에 스스로 겸비하지 않았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "대하 33:23 — '여호와 앞에 스스로 겸비치 아니하고'"
       },
       {
@@ -4224,17 +4015,13 @@
         "display_order": 2,
         "question": "아몬은 누구의 반역으로 죽임을 당했습니까?",
         "choices": [
-          "자기 신복들",
           "바벨론 군대",
-          "바로 느고"
+          "바로 느고",
+          "자기 신복들"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 21:23 — '그 신복들이 반역하여 왕을 궁중에서 죽이매'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Amon as a young Judah king who follows idols and refuses repentance. No readable labels.",
-      "Non-graphic betrayal scene only: no blood, no visible wound, no corpse detail."
     ]
   },
   {
@@ -4244,21 +4031,21 @@
       "josiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘 성전",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "어린 나이에 왕이 된 요시야는 여호와의 길을 따르고, 발견된 율법책 앞에서 회개하며 유다의 우상 숭배를 정리한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「요시야의 개혁」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "22:13",
         "book": "왕하",
-        "from": "22:1",
-        "to": "22:13"
+        "from": "22:1"
       },
       {
+        "to": "23:21",
         "book": "왕하",
-        "from": "23:1",
-        "to": "23:21"
+        "from": "23:1"
       }
     ],
     "start_year": -622,
@@ -4300,11 +4087,11 @@
         "display_order": 0,
         "question": "요시야는 왕이 되었을 때 몇 살이었습니까?",
         "choices": [
-          "8살",
           "18살",
+          "8살",
           "30살"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "왕하 22:1 — '요시야가 위에 나아갈 때에 나이 팔세라'"
       },
       {
@@ -4312,11 +4099,11 @@
         "display_order": 1,
         "question": "율법책의 말을 들은 요시야는 어떻게 반응했습니까?",
         "choices": [
-          "옷을 찢으며 두려워했다",
           "책을 성전 창고에 다시 넣었다",
-          "신하들에게 읽지 말라고 했다"
+          "신하들에게 읽지 말라고 했다",
+          "옷을 찢으며 두려워했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 22:11 — '왕이 율법책의 말을 듣자 곧 그 옷을 찢으니라'"
       },
       {
@@ -4325,18 +4112,12 @@
         "question": "요시야는 성전에서 무엇을 내어다가 불사르게 했습니까?",
         "choices": [
           "바알과 아세라와 하늘 별들을 위한 기명",
-          "성전 보수에 쓰던 나무와 돌",
-          "백성이 드린 은과 예물"
+          "백성이 드린 은과 예물",
+          "성전 보수에 쓰던 나무와 돌"
         ],
         "answer_index": 0,
         "explanation": "왕하 23:4 — '바알과 아세라와 하늘의 일월 성신을 위하여 만든 모든 기명을 ... 불사르고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Josiah as an 8-year-old child king in this scene only, with a small royal robe and no adult beard. God is represented by warm holy glory-light only; no human figure, no readable labels.",
-      "Show Josiah as about 26 years old, matching his adult avatar style. Hilkiah has no reference avatar; show him as an unnamed elderly high priest discovering a blank scroll. Workers are background figures. No readable text.",
-      "Show Shaphan as an unnamed scribe reading a blank scroll to Josiah. Make Josiah visibly grieving and tearing his robe, but no injury or gore and no readable text.",
-      "Show reform clearly: Josiah reads a blank scroll before the people while Baal and Asherah objects are removed and broken outside the temple. No readable text, no gore, no combat."
     ]
   },
   {
@@ -4346,21 +4127,21 @@
       "jehoahaz_judah"
     ],
     "landmark_code": "lm_div_jerusalem_jehoahaz_judah",
-    "place_name": "예루살렘 → 립나/애굽(전승)",
+    "place_name": "예루살렘/립나 길(여호아하스, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "요시야 뒤에 세워진 여호아하스는 짧게 악을 행하고, 바로 느고에게 붙잡혀 애굽으로 끌려간다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여호아하스」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "23:35",
         "book": "왕하",
-        "from": "23:31",
-        "to": "23:35"
+        "from": "23:31"
       },
       {
+        "to": "36:4",
         "book": "대하",
-        "from": "36:2",
-        "to": "36:4"
+        "from": "36:2"
       }
     ],
     "start_year": -609,
@@ -4392,11 +4173,11 @@
         "display_order": 0,
         "question": "여호아하스는 몇 달 동안 예루살렘에서 다스렸습니까?",
         "choices": [
-          "석 달",
           "열두 달",
-          "삼 년"
+          "삼 년",
+          "석 달"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 23:31 — '예루살렘에서 치리한지 석 달이라'"
       },
       {
@@ -4404,11 +4185,11 @@
         "display_order": 1,
         "question": "바로 느고는 여호아하스를 어디에 가두었습니까?",
         "choices": [
-          "하맛 땅 립나",
+          "예루살렘 성전",
           "사마리아 왕궁",
-          "예루살렘 성전"
+          "하맛 땅 립나"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 23:33 — '하맛 땅 립나에 가두어'"
       },
       {
@@ -4416,17 +4197,13 @@
         "display_order": 2,
         "question": "바로 느고는 엘리야김의 이름을 무엇으로 바꾸었습니까?",
         "choices": [
-          "여호야김",
           "시드기야",
-          "여호야긴"
+          "여호야긴",
+          "여호야김"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 23:34 — '그 이름을 고쳐 여호야김이라 하고'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jehoahaz of Judah as a 23-year-old king, distinct from Jehoahaz of Israel. No readable labels.",
-      "Pharaoh Neco has no reference avatar. Show him as an unnamed Egyptian pharaoh/commander with Egyptian royal symbols. No gore, no readable labels."
     ]
   },
   {
@@ -4438,26 +4215,26 @@
       "god"
     ],
     "landmark_code": "lm_div_jerusalem_jehoiakim_first_exile",
-    "place_name": "예루살렘 → 바벨론(전승)",
+    "place_name": "예루살렘/첫 바벨론 포로(여호야김, 전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "애굽이 세운 여호야김은 악을 행하고, 바벨론의 압박 속에서 성전 기물과 다니엘을 포함한 젊은 포로들이 바벨론으로 끌려간다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여호야김과 첫 포로」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "24:7",
         "book": "왕하",
-        "from": "23:36",
-        "to": "24:7"
+        "from": "23:36"
       },
       {
+        "to": "36:8",
         "book": "대하",
-        "from": "36:4",
-        "to": "36:8"
+        "from": "36:4"
       },
       {
+        "to": "1:2",
         "book": "단",
-        "from": "1:1",
-        "to": "1:2"
+        "from": "1:1"
       }
     ],
     "start_year": -609,
@@ -4508,11 +4285,11 @@
         "display_order": 1,
         "question": "느부갓네살이 올라온 뒤 여호야김은 처음에 어떻게 되었습니까?",
         "choices": [
-          "삼 년 동안 그의 종이 되었다",
           "곧바로 애굽으로 끌려갔다",
-          "성전 윗문을 세웠다"
+          "성전 윗문을 세웠다",
+          "삼 년 동안 그의 종이 되었다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 24:1 — '여호야김이 삼 년을 섬기다가'"
       },
       {
@@ -4520,18 +4297,13 @@
         "display_order": 2,
         "question": "바벨론으로 옮겨진 성전 기구들은 어디에 두어졌습니까?",
         "choices": [
-          "바벨론 신의 보고",
+          "아하스의 제단 아래",
           "예루살렘 윗문",
-          "아하스의 제단 아래"
+          "바벨론 신의 보고"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "단 1:2 — '그 신의 보고에 두었더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Pharaoh Neco has no reference avatar. Show Egyptian royal authority but no readable labels.",
-      "God is represented only by stern holy light, not a human figure. No readable labels.",
-      "Show Daniel as younger than his later exile avatar if needed, but recognizable. His three friends have no reference avatars; show them as the same unnamed faithful youths. No gore, no readable labels."
     ]
   },
   {
@@ -4541,16 +4313,16 @@
       "jeremiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘/유다(전승)",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "예레미야는 유다가 말씀을 듣지 않았기에 바벨론을 섬기게 되지만, 정한 때가 차면 바벨론도 심판받을 것이라고 선포한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「예레미야의 경고」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "25:14",
         "book": "렘",
-        "from": "25:1",
-        "to": "25:14"
+        "from": "25:1"
       }
     ],
     "start_year": -605,
@@ -4582,11 +4354,11 @@
         "display_order": 0,
         "question": "예레미야는 유다가 바벨론 왕을 얼마 동안 섬긴다고 전했습니까?",
         "choices": [
-          "칠십 년 동안 섬긴다",
           "칠 일 동안 섬긴다",
-          "삼 년 동안 섬긴다"
+          "삼 년 동안 섬긴다",
+          "칠십 년 동안 섬긴다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 25:11 — '칠십년 동안 바벨론 왕을 섬기리라'"
       },
       {
@@ -4594,11 +4366,11 @@
         "display_order": 1,
         "question": "하나님이 예언자들을 보내셨지만 백성은 어떻게 반응했습니까?",
         "choices": [
-          "듣지 않고 귀를 기울이지 않았다",
           "곧바로 우상을 모두 버렸다",
-          "예레미야에게 왕관을 씌웠다"
+          "예레미야에게 왕관을 씌웠다",
+          "듣지 않고 귀를 기울이지 않았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 25:4 — '너희가 듣지 아니하였으며 귀를 기울여 듣지도 아니하였도다'"
       },
       {
@@ -4613,10 +4385,6 @@
         "answer_index": 0,
         "explanation": "렘 25:12 — '바벨론 왕과 그 나라와 갈대아인의 땅을 그 죄악으로 인하여 벌하여'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Only the number 70 may appear as readable text. Do not include other letters or labels. Show Jeremiah as the same weeping prophet avatar.",
-      "No readable text. Jeremiah must not be crying in this scene: show him upright, bold, resolute, one hand raised in prophetic proclamation, stern but controlled expression. The speech bubble should clearly focus on Babylon and the Babylonian king being judged after seventy years: broken throne, fallen crown, collapsing Babylon city walls, dark judgment clouds. No gore, no bodies, no explicit violence."
     ]
   },
   {
@@ -4626,16 +4394,16 @@
       "jeremiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘/유다(전승)",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "예레미야는 무너진 백성에게 회복과 새 언약을 전하며, 하나님이 말씀을 마음에 새기실 날을 바라보게 한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「새 언약의 약속」을 다룹니다.",
     "bible_ref": [
       {
+        "to": "31:40",
         "book": "렘",
-        "from": "31:1",
-        "to": "31:40"
+        "from": "31:1"
       }
     ],
     "start_year": -587,
@@ -4677,11 +4445,11 @@
         "display_order": 0,
         "question": "회복의 약속에서 이스라엘은 무엇을 들고 다시 춤추게 됩니까?",
         "choices": [
-          "소고를 들고 춤춘다",
           "전쟁 창을 들고 행진한다",
-          "바벨론 왕의 인장을 든다"
+          "바벨론 왕의 인장을 든다",
+          "소고를 들고 춤춘다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 31:4 — '네가 소고로 너를 장식하고 즐거운 무리처럼 춤추며 나올 것이며'"
       },
       {
@@ -4689,11 +4457,11 @@
         "display_order": 1,
         "question": "하나님은 흩어진 이스라엘을 어떤 모습처럼 지키신다고 하셨습니까?",
         "choices": [
-          "목자가 양 떼를 지키듯 지키신다",
           "파수꾼이 성문을 닫듯 버려두신다",
-          "상인이 물건을 감추듯 숨기신다"
+          "상인이 물건을 감추듯 숨기신다",
+          "목자가 양 떼를 지키듯 지키신다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 31:10 — '목자가 그 양무리에게 행함 같이 그를 지키시리로다'"
       },
       {
@@ -4701,19 +4469,13 @@
         "display_order": 2,
         "question": "새 언약에서 하나님은 율법을 어디에 기록하겠다고 하셨습니까?",
         "choices": [
-          "백성의 마음에 기록하신다",
           "왕궁 담장에만 기록하신다",
-          "바벨론 왕의 문서에 기록하신다"
+          "바벨론 왕의 문서에 기록하신다",
+          "백성의 마음에 기록하신다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 31:33 — '내가 나의 법을 그들의 속에 두며 그 마음에 기록하여'"
       }
-    ],
-    "scene_prompt_notes": [
-      "No readable text. Keep all restoration scenes inside Jeremiah's speech bubble.",
-      "No readable text. The shepherd is a symbolic figure in the speech bubble, not a new reference avatar.",
-      "No readable text. Show repentance clearly: people turning away from small idol shapes toward God's light.",
-      "No readable text. Show law written on hearts pictorially with light and book symbols, not letters."
     ]
   },
   {
@@ -4724,16 +4486,16 @@
       "jehoiakim"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘 성전/왕궁(전승)",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "예레미야의 말씀이 바룩의 두루마리에 기록되어 낭독되지만, 여호야김은 말씀을 잘라 불태우며 거부한다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「불태워진 두루마리」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "36:26",
         "book": "렘",
-        "from": "36:1",
-        "to": "36:26"
+        "from": "36:1"
       }
     ],
     "start_year": -605,
@@ -4768,11 +4530,11 @@
         "display_order": 0,
         "question": "하나님은 예레미야에게 무엇에 말씀을 기록하라고 하셨습니까?",
         "choices": [
+          "성벽 돌마다 숨기라고 하셨다",
           "두루마리 책에 기록하라고 하셨다",
-          "왕의 금방패에 새기라고 하셨다",
-          "성벽 돌마다 숨기라고 하셨다"
+          "왕의 금방패에 새기라고 하셨다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "렘 36:2 — '너는 두루마리 책을 취하여 ... 기록하라'"
       },
       {
@@ -4780,11 +4542,11 @@
         "display_order": 1,
         "question": "바룩은 예레미야의 말을 적은 두루마리를 어디에서 낭독했습니까?",
         "choices": [
-          "성전에서 백성에게 낭독했다",
           "애굽 왕궁에서만 낭독했다",
+          "성전에서 백성에게 낭독했다",
           "광야 동굴 안에서 혼자 읽었다"
         ],
-        "answer_index": 0,
+        "answer_index": 1,
         "explanation": "렘 36:10 — '바룩이 여호와의 집 ... 모든 백성에게 그 책에 있는 예레미야의 말을 낭독하니라'"
       },
       {
@@ -4799,11 +4561,6 @@
         "answer_index": 0,
         "explanation": "렘 36:23 — '소도로 그것을 연하여 베어 화롯불에 던져서'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Baruch has no reference avatar. Show him as the same unnamed young-to-middle-aged scribe in scenes 1-3: short dark beard, simple parchment robe, blue-gray sash. No readable text.",
-      "Show Baruch as the same scribe from scene 1. No readable text on the scroll.",
-      "Jehudi has no reference avatar. Show him as an unnamed court reader. Jehoiakim should look like a proud Judah king. No gore, no readable labels."
     ]
   },
   {
@@ -4815,26 +4572,26 @@
       "zedekiah"
     ],
     "landmark_code": "lm_div_jerusalem_jehoiachin_exile",
-    "place_name": "예루살렘 → 바벨론(전승)",
+    "place_name": "예루살렘/여호야긴 포로(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "여호야긴 때 예루살렘은 바벨론에 굴복하고, 왕과 에스겔을 포함한 백성이 포로로 끌려가며 시드기야가 마지막 왕으로 세워진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「여호야긴의 포로」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "24:17",
         "book": "왕하",
-        "from": "24:8",
-        "to": "24:17"
+        "from": "24:8"
       },
       {
+        "to": "36:10",
         "book": "대하",
-        "from": "36:9",
-        "to": "36:10"
+        "from": "36:9"
       },
       {
+        "to": "1:3",
         "book": "겔",
-        "from": "1:1",
-        "to": "1:3"
+        "from": "1:1"
       }
     ],
     "start_year": -597,
@@ -4875,11 +4632,11 @@
         "display_order": 0,
         "question": "여호야긴은 몇 살에 왕이 되었습니까?",
         "choices": [
-          "열여덟 살",
           "일곱 살",
-          "스물다섯 살"
+          "스물다섯 살",
+          "열여덟 살"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 24:8 — '여호야긴이 위에 나아갈 때에 나이 십 팔세라'"
       },
       {
@@ -4887,11 +4644,11 @@
         "display_order": 1,
         "question": "바벨론 왕은 여호야긴과 백성들을 어떻게 했습니까?",
         "choices": [
-          "바벨론으로 사로잡아 갔다",
+          "애굽 왕에게 맡겼다",
           "예루살렘에서 왕으로 회복했다",
-          "애굽 왕에게 맡겼다"
+          "바벨론으로 사로잡아 갔다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 24:15 — '여호야긴을 바벨론으로 사로잡아 가고'"
       },
       {
@@ -4906,12 +4663,6 @@
         "answer_index": 0,
         "explanation": "왕하 24:17 — '그 이름을 고쳐 시드기야라 하였더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show Jehoiachin as an 18-year-old Judah king, distinct from Jehoiakim. No readable labels.",
-      "Show Ezekiel as a young priest-prophet among the exiles, matching his avatar style but younger if needed. No readable labels.",
-      "Nebuchadnezzar has no reference avatar. Show him as an unnamed Babylonian king/authority. No gore, no readable labels.",
-      "Show Zedekiah sad and burdened as the last Judah king. Nebuchadnezzar is unnamed. No readable labels."
     ]
   },
   {
@@ -4922,16 +4673,16 @@
       "zedekiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘 베냐민 문/왕궁(전승)",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "시드기야 때 예레미야는 거짓 고발로 갇히지만, 왕 앞에서도 바벨론에게 넘겨질 말씀을 굽히지 않는다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「토굴의 예레미야」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "37:21",
         "book": "렘",
-        "from": "37:1",
-        "to": "37:21"
+        "from": "37:1"
       }
     ],
     "start_year": -588,
@@ -4975,11 +4726,11 @@
         "display_order": 0,
         "question": "예레미야는 갈대아 군대가 예루살렘에 대해 어떻게 한다고 전했습니까?",
         "choices": [
-          "돌아와 성을 불사를 것이라 전했다",
+          "성전을 지어 준다고 전했다",
           "다시는 오지 않는다고 전했다",
-          "성전을 지어 준다고 전했다"
+          "돌아와 성을 불사를 것이라 전했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 37:8 — '갈대아인이 다시 와서 이 성을 쳐서 취하여 불사르리라'"
       },
       {
@@ -4987,11 +4738,11 @@
         "display_order": 1,
         "question": "베냐민 문에서 문지기 우두머리는 예레미야를 어떻게 몰아세웠습니까?",
         "choices": [
-          "갈대아인에게 항복한다고 몰았다",
           "성전을 수리하지 않는다고 칭찬했다",
-          "왕의 보물을 숨겼다고 축복했다"
+          "왕의 보물을 숨겼다고 축복했다",
+          "갈대아인에게 항복한다고 몰았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 37:13 — '네가 갈대아인에게 항복하려 하는도다'"
       },
       {
@@ -4999,19 +4750,13 @@
         "display_order": 2,
         "question": "감옥에서 나온 예레미야는 시드기야 왕에게 어떤 말씀을 전했습니까?",
         "choices": [
-          "왕이 바벨론 왕의 손에 넘겨진다고 전했다",
+          "왕이 예레미야를 제사장으로 삼는다고 전했다",
           "왕이 곧 애굽의 왕이 된다고 전했다",
-          "왕이 예레미야를 제사장으로 삼는다고 전했다"
+          "왕이 바벨론 왕의 손에 넘겨진다고 전했다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "렘 37:17 — '왕이 바벨론 왕의 손에 붙임을 입으리이다'"
       }
-    ],
-    "scene_prompt_notes": [
-      "No readable text. Show Babylon as distant army silhouettes in Jeremiah's speech bubble, no gore.",
-      "The gate captain has no reference avatar. Show him as an unnamed angry guard leader with no label.",
-      "No gore, no injury, no torture. Show a dark cistern-like prison chamber but keep Jeremiah dignified.",
-      "No readable text. Show Zedekiah as the existing Judah king avatar and Jeremiah as the same prophet."
     ]
   },
   {
@@ -5021,16 +4766,16 @@
       "zedekiah"
     ],
     "landmark_code": "lm_div_jerusalem",
-    "place_name": "예루살렘",
+    "place_name": "예루살렘/남유다(전승)",
     "lat": 31.778,
     "lng": 35.2354,
     "summary": "포위는 길어지고, 마지막 순간 왕과 도시는 무너진다.",
     "background_context": "분열왕국 시대는 솔로몬 이후 남유다와 북이스라엘로 나뉜 시기입니다. 이 이야기는 「예루살렘 포위」를 다룹니다.",
     "bible_ref": [
       {
+        "to": "25:7",
         "book": "왕하",
-        "from": "24:18",
-        "to": "25:7"
+        "from": "24:18"
       }
     ],
     "start_year": -588,
@@ -5065,11 +4810,11 @@
         "display_order": 0,
         "question": "시드기야는 여호와 보시기에 어떤 왕이었습니까?",
         "choices": [
-          "여호와 보시기에 악을 행한 왕",
           "성전을 깨끗하게 고친 왕",
-          "율법책을 발견하고 회개한 왕"
+          "율법책을 발견하고 회개한 왕",
+          "여호와 보시기에 악을 행한 왕"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 24:19 — '여호야김의 모든 행위를 본받아 여호와 보시기에 악을 행한지라'"
       },
       {
@@ -5077,11 +4822,11 @@
         "display_order": 1,
         "question": "바벨론 왕의 군대는 예루살렘을 어떻게 압박했습니까?",
         "choices": [
-          "사방에 진을 치고 토성을 쌓았다",
           "화친 선물을 보내고 물러갔다",
-          "성전을 수리하도록 도왔다"
+          "성전을 수리하도록 도왔다",
+          "사방에 진을 치고 토성을 쌓았다"
         ],
-        "answer_index": 0,
+        "answer_index": 2,
         "explanation": "왕하 25:1 — '예루살렘을 치러 올라와서 그 성에 대하여 진을 치고 사면으로 토성을 쌓으매'"
       },
       {
@@ -5096,11 +4841,6 @@
         "answer_index": 0,
         "explanation": "왕하 25:7 — '시드기야의 두 눈을 빼고 사슬로 결박하여 바벨론으로 끌어갔더라'"
       }
-    ],
-    "scene_prompt_notes": [
-      "Show idolatry as small palace idols and people bowing; no readable labels or text.",
-      "Show siege pressure, walls, earthworks, and surrounding Babylonian army; no gore, no bodies.",
-      "Show Zedekiah with a dark eye bandage or protective blindfold, not graphic injury. No blood, no visible wound, no close-up violence."
     ]
   }
 ]
