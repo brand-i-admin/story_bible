@@ -62,9 +62,25 @@ make upload-character-avatars ENV=real
 |------|-------------|--------------|---------|-----------|
 | 앱 기능/UI만 변경 | 없음 | 필요 없음 | 필요 | `flutter analyze` → `flutter test` → `scripts/build_*_real.sh` |
 | 앱 코드가 새 column/RPC/RLS에 의존 | patch 필요 | 보통 필요 없음 | 필요 | `make apply-patch ENV=real PATCH=...` 후 real smoke/build |
-| 기존 seed/콘텐츠 수정(새 이야기 추가/삭제 아님) | seed apply | 필요한 경우만 | 보통 필요 | `make seed-*` → `make apply-seeds-* ENV=real` |
+| 기존 이야기 문구만 수정 (`summary`, `background_context`, `scene_captions`, 화면 노출용 `story_scenes` 텍스트) | patch 권장 | 필요 없음 | 필요 없음 | `assets/events/*.json`도 같이 수정 → 필요 시 `make seed-stories-characters` → `make apply-patch ENV=real PATCH=...` |
+| 기존 퀴즈 문항/해설/정답 수정 | 보통 quiz seed apply | 필요 없음 | 필요 없음 | `make seed-quizzes` → 검토 → `make apply-seeds-quizzes ENV=real` |
+| 기존 제목(`title`) 수정 | patch 또는 seed apply | 필요 | 필요 | 제목은 이미지 번들 매핑에 쓰이므로 `make release-sync-stories ENV=real` 또는 `make thumbnails`/`make update-pubspec-assets` 후 build |
+| 기존 장면 이미지 교체(같은 이야기 유지) | 보통 없음 | 필요 | 필요 | `assets/story_images/<title>/scene_N.png` 교체 → `make thumbnails` → `make update-pubspec-assets` → build |
+| 기존 인물/장소/순서/성경 범위 등 탐색 데이터 수정 | seed apply 또는 patch | 변경 범위에 따라 필요 | 보통 필요 없음 | 소규모는 idempotent patch, 기준 데이터 갱신은 `make seed-*` → `make apply-seeds-* ENV=real` |
 | 이야기 추가/삭제 proposal 승인 후 배포 | DB는 이미 승인으로 변경됨 | 필요 | 필요 | `make release-sync-stories ENV=real` → 검증 → build |
 | 신규/복구 Supabase bootstrap | reset | 초기 자산 생성 | 필요 | `CONFIRM_REAL_DB_INIT=1 make db-init ENV=real` |
+
+문구처럼 DB row의 텍스트만 바꾸는 작은 운영 수정은 seed 전체 적용보다
+idempotent patch가 안전하다. 다만 patch만 적용하고 끝내면 다음 seed/release sync 때
+기준 JSON과 생성 SQL이 운영 DB를 다시 덮을 수 있으므로, 같은 변경에서
+`assets/events/*.json`과 필요한 생성 seed도 함께 맞춘다.
+
+이미지는 반대로 앱 번들 자산이 우선이다. `SceneAssetLoader`는 기존 앱에 로컬 번들
+이미지가 있으면 그것을 먼저 쓰고, 로컬 번들에 없을 때만 `events.scene_image_paths`
+Storage fallback을 쓴다. 따라서 기존 이야기의 장면 이미지를 바꾼 경우 새 앱으로
+업데이트한 사용자부터 새 이미지가 보이고, 업데이트하지 않은 사용자는 이전 번들 이미지를
+계속 볼 수 있다. 새 이야기처럼 구버전 앱 번들에 로컬 이미지가 없는 경우에만
+`scene_image_paths` fallback이 구버전 앱에도 의미가 있다.
 
 `release-sync-stories`는 이야기/퀴즈/랜드마크/이미지 번들을 운영 DB 상태로 되돌리는
 콘텐츠 배포 명령이다. 일반 UI 수정이나 단순 DB schema patch를 배포할 때는 실행하지
