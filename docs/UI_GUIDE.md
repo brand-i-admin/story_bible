@@ -116,11 +116,13 @@ iframe 브릿지로 같은 HTML 렌더러를 띄운다. country boundary, region
 Android WebView 는 Flutter gesture arena 에서 지도 드래그/핀치를 놓치지 않도록
 eager gesture recognizer 를 사용한다. Android 에서는 WebView renderer OOM 을 줄이기
 위해 worker/cache/antialias/pitch 를 보수적으로 제한하고 DEM terrain 은 비활성화한다.
+또한 WebView 를 Hybrid Composition 으로 생성해 SurfaceProducer/ImageReader 경로의
+버퍼 고갈 경고를 줄이고, 화면 전환 때 지도를 내렸다 다시 로드하지 않는다.
 네이티브 Activity 는 WebView renderer 종료를 처리해 렌더러가 죽어도 앱 프로세스가
 같이 종료되지 않게 한다.
-확대/이동 중 일부 타일이나 서브리소스 요청이 실패·취소되어도 지도 실패 팝업을
-띄우지 않고 debug 로그로만 남긴다. 초기 로딩에서 MapLibre `ready` 신호가 일정 시간
-오지 않거나 main frame 이 실패한 경우에만 지도 실패 안내를 표시한다.
+확대/이동 중 일부 타일이나 서브리소스 요청이 실패·취소되어도 지도 실패 팝업이나
+반복 로그로 올리지 않는다. 초기 로딩에서 MapLibre `ready` 신호가 일정 시간 오지
+않거나 main frame 이 실패한 경우에만 지도 실패 안내와 main-frame 로그를 표시한다.
 기본 지도 style 의 symbol label layer 를 숨겨 영어/현지어 지명 대신 앱이 직접
 올리는 한국어 국가/region 라벨과 사건 핀만 보이게 한다.
 3D 첫 화면은 하단 선택 시트에 사우디아라비아와 걸프 지역이 가려지지 않도록

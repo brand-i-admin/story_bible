@@ -521,10 +521,13 @@ void main() {
       ).readAsStringSync();
 
       expect(source, contains('void _handleWebResourceError'));
-      expect(source, contains('mainFrame: \${error.isForMainFrame}'));
+      expect(
+        source,
+        contains('if (_mapReady || error.isForMainFrame != true)'),
+      );
+      expect(source, contains('[Map3D] main-frame resource error'));
       expect(source, contains('url: \${error.url ?? '));
-      expect(source, contains('if (_mapReady) {'));
-      expect(source, contains('if (error.isForMainFrame == true && mounted)'));
+      expect(source, contains('if (mounted) {'));
       expect(source, contains('void _armInitialLoadTimeout()'));
       expect(source, contains('_initialLoadTimeoutDuration'));
       expect(source, contains('if (!mounted || _mapReady)'));

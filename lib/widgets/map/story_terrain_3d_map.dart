@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart' show LatLngBounds;
 import 'package:latlong2/latlong.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
@@ -291,10 +292,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        WebViewWidget(
-          controller: _controller!,
-          gestureRecognizers: _mapGestureRecognizers,
-        ),
+        _buildNativeWebView(),
         if (_hasError)
           const _Map3dStatusOverlay(
             title: '3D 지도를 불러오지 못했어요',
@@ -302,6 +300,29 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           ),
       ],
     );
+  }
+
+  Widget _buildNativeWebView() {
+    final controller = _controller;
+    if (controller == null) {
+      return const ColoredBox(color: Color(0xFFE5D2B5));
+    }
+
+    PlatformWebViewWidgetCreationParams params =
+        PlatformWebViewWidgetCreationParams(
+          controller: controller.platform,
+          gestureRecognizers: _mapGestureRecognizers,
+        );
+
+    if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+      params =
+          AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
+            params,
+            displayWithHybridComposition: true,
+          );
+    }
+
+    return WebViewWidget.fromPlatformCreationParams(params: params);
   }
 
   void _handleJavaScriptMessageRaw(String raw) {
@@ -445,20 +466,21 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   void _handleWebResourceError(WebResourceError error) {
+    // Tile and stylesheet requests can fail or be cancelled while MapLibre is
+    // still recovering. Surface only a main-frame failure immediately; otherwise
+    // let the readiness timeout decide whether the map truly failed to start.
+    if (_mapReady || error.isForMainFrame != true) {
+      return;
+    }
+
     debugPrint(
-      '[Map3D] resource error ${error.errorCode}: ${error.description} '
+      '[Map3D] main-frame resource error ${error.errorCode}: '
+      '${error.description} '
       '(type: ${error.errorType}, mainFrame: ${error.isForMainFrame}, '
       'url: ${error.url ?? 'unknown'})',
     );
 
-    if (_mapReady) {
-      return;
-    }
-
-    // Tile and stylesheet requests can fail or be cancelled while MapLibre is
-    // still recovering. Surface only a main-frame failure immediately; otherwise
-    // let the readiness timeout decide whether the map truly failed to start.
-    if (error.isForMainFrame == true && mounted) {
+    if (mounted) {
       _initialLoadTimeout?.cancel();
       setState(() => _hasError = true);
     }
