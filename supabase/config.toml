@@ -7,6 +7,7 @@
 # Deploy:     supabase functions deploy generate-proposal-scene
 #             supabase functions deploy generate-proposal-character
 #             supabase functions deploy send-push
+#             supabase functions deploy delete-account
 
 project_id = "story_bible"
 
@@ -29,4 +30,7 @@ project_id = "story_bible"
 verify_jwt = false
 
 [functions.generate-proposal-character]
+verify_jwt = false
+
+[functions.delete-account]
 verify_jwt = false

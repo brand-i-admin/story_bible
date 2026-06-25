@@ -117,6 +117,7 @@ jobs:
           deno check \
             supabase/functions/generate-proposal-character/index.ts \
             supabase/functions/generate-proposal-scene/index.ts \
+            supabase/functions/delete-account/index.ts \
             supabase/functions/send-push/index.ts
 
   code-metrics:

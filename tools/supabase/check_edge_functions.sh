@@ -12,6 +12,7 @@ fi
 functions=(
   "generate-proposal-character"
   "generate-proposal-scene"
+  "delete-account"
   "send-push"
 )
 

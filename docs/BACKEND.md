@@ -541,14 +541,18 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `registerPushToken(...)` / `unregisterPushToken(token)` | RPC `register_push_token` / `unregister_push_token` | void |
 | `notifyQuizCompleted(eventId)` | RPC `notify_quiz_completed` (퀴즈 완료 시) | void |
 
-### 5.3 AuthRepository (`lib/data/auth_repository.dart`, 77줄)
+### 5.3 AuthRepository (`lib/data/auth_repository.dart`)
 
 | 메서드 | 역할 |
 |--------|------|
 | `signInWithApple()` | Apple ID 로그인 (SHA256 nonce) |
-| `signInWithGoogle()` | Google 로그인. Android는 `google_sign_in` 네이티브 토큰 → `signInWithIdToken`, Web/iOS는 Supabase OAuth redirect |
-| `signInWithKakao()` | Kakao 로그인 |
+| `signInWithGoogle()` | Google 로그인. 모바일은 Supabase OAuth redirect + 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
+| `signInWithKakao()` | Kakao 로그인. 모바일 OAuth는 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
 | `signOut()` | 로그아웃 |
+| `deleteCurrentAccount(...)` | `delete-account` Edge Function 호출 후 로컬 세션 정리 |
+
+계정 삭제 확인 아이디는 이메일 → `user_profiles.share_id` → Auth UUID 순서로 표시하며,
+동일 값이 Edge Function 에 전달되어 서버에서도 한 번 더 검증된다.
 
 ## 6. Storage
 
@@ -641,6 +645,23 @@ Storage 버킷은 `db_init.sql` 에 선언된다. 앱 런타임/public 자산과
   5. 404/UNREGISTERED 응답은 해당 토큰을 자동 정리
 - 상세: `supabase/functions/send-push/README.md` + `docs/guides/PUSH_SETUP.md`
 
+### `delete-account` (2026-06-25)
+- 경로: `supabase/functions/delete-account/index.ts`
+- 호출 시점: 프로필 설정 시트의 `계정 삭제` 확인 다이얼로그에서 표시된 계정 확인 아이디를 입력하고 최종 삭제를 누를 때
+- 배포: `supabase functions deploy delete-account`
+- 배포 전제 secrets:
+  - `SUPABASE_URL` — 자동 주입됨
+  - `SUPABASE_SERVICE_ROLE_KEY` — 자동 주입됨
+- 기능 개요:
+  1. Flutter 세션 JWT 를 `auth.getUser()` 로 검증
+  2. 입력한 `confirmationId` 가 사용자 이메일, `user_profiles.share_id`, Auth UUID 중 하나인지 검증
+  3. `{userId}/...` prefix 의 사용자 소유 Storage 파일 삭제 (`profile-images`, `proposal-scenes`, `proposal-characters`, `proposal-general-images`)
+  4. 단, 승인된 공개 콘텐츠가 아직 참조 중인 `events.scene_image_paths`, `characters.avatar_storage_path` 의 `proposal-*` 파일은 보존
+  5. service-role `auth.admin.deleteUser(user.id)` 호출
+  6. `auth.users(id) on delete cascade` FK 로 사용자별 DB row 삭제
+- 계정 삭제 cascade 대상: `user_profiles`, `user_event_progress`, `user_quiz_attempts`, `user_event_emotion_marks`, `user_companion_diary_entries`, `user_notes`, `user_saved_verses`, `user_saved_events`, `user_intercessory_prayers`(구독/대상 양쪽), `event_proposals`(작성자), `event_proposal_comments`(댓글 작성자), `notifications`, `broadcast_notification_reads`, `user_push_tokens`.
+- `event_proposals.reviewed_by_user_id` 는 삭제 대상 사용자가 관리자 검토자인 경우 제안 이력을 보존하고 참조만 `NULL` 로 비우도록 `on delete set null` 을 사용한다.
+
 ### 로컬 개발
 
 ```bash
@@ -659,7 +680,7 @@ tools/supabase/check_edge_functions.sh
 ```
 
 이 스크립트는 `generate-proposal-character`, `generate-proposal-scene`,
-`send-push` 의 `index.ts` 를 모두 `deno check` 한다.
+`delete-account`, `send-push` 의 `index.ts` 를 모두 `deno check` 한다.
 
 ## 8. DB 개발/운영 적용 워크플로우
 

@@ -201,6 +201,61 @@ void main() {
     expect(find.textContaining('현재 배경:'), findsOneWidget);
   });
 
+  testWidgets('계정 삭제는 확인 아이디를 입력해야 활성화된다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(find.byTooltip('설정'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('계정 삭제'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('ABC1234'), findsWidgets);
+    final disabledButton = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '계정 삭제'),
+    );
+    expect(disabledButton.onPressed, isNull);
+
+    await tester.enterText(find.byType(TextField), 'ABC1234');
+    await tester.pump();
+
+    final enabledButton = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '계정 삭제'),
+    );
+    expect(enabledButton.onPressed, isNotNull);
+  });
+
+  testWidgets('계정 삭제 취소는 다이얼로그만 닫고 프로필 화면을 유지한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(find.byTooltip('설정'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('계정 삭제'));
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(OutlinedButton, '취소'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, '취소'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('기도친구'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, '취소'), findsNothing);
+  });
+
   testWidgets('프로필 진행 탭은 다이어리 다음에 인물과 걷기를 먼저 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,

@@ -5,6 +5,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:story_bible/widgets/pulse_highlight.dart';
 
 void main() {
+  group('PulseHighlight pulse', () {
+    testWidgets('active=true 상태가 유지되어도 지정된 횟수 뒤에는 glow를 숨긴다', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: PulseHighlight(
+              active: true,
+              pulseCount: 1,
+              child: SizedBox(width: 100, height: 100),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(_glowContainerFinder(), findsOneWidget);
+
+      await tester.pump(const Duration(milliseconds: 1500));
+      await tester.pump();
+
+      expect(_glowContainerFinder(), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('PulseHighlight dispose', () {
     testWidgets('active=false 인 채로 한 번도 활성화되지 않고 unmount 되어도 예외가 안 난다', (
       tester,
@@ -55,4 +80,11 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+Finder _glowContainerFinder() {
+  return find.descendant(
+    of: find.byType(PulseHighlight),
+    matching: find.byType(Container),
+  );
 }

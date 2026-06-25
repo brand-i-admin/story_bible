@@ -94,21 +94,38 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   @override
   void dispose() {
-    _completeMapCelebration();
+    _completeMapCelebrationFuture();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 
-  void _completeMapCelebration([int? nonce]) {
-    if (nonce != null && nonce != _mapCelebrationNonce) {
-      return;
-    }
+  void _completeMapCelebrationFuture() {
     final completer = _mapCelebrationCompleter;
     if (completer != null && !completer.isCompleted) {
       completer.complete();
     }
+    _mapCelebrationCompleter = null;
+  }
+
+  void _completeMapCelebration([int? nonce]) {
+    if (nonce != null && nonce != _mapCelebrationNonce) {
+      return;
+    }
+    _completeMapCelebrationFuture();
+    if (_mapCelebrationEventId == null && _mapCelebrationStampLabel == null) {
+      return;
+    }
+    if (!mounted) {
+      _mapCelebrationEventId = null;
+      _mapCelebrationStampLabel = null;
+      return;
+    }
+    setState(() {
+      _mapCelebrationEventId = null;
+      _mapCelebrationStampLabel = null;
+    });
   }
 
   VoidCallback _mapCelebrationCompleteCallback() {
@@ -1911,11 +1928,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
 
       final celebrationCompleter = Completer<void>();
+      final celebrationNonce = _mapCelebrationNonce + 1;
       _mapCelebrationCompleter = celebrationCompleter;
       setState(() {
         _mapCelebrationEventId = event.id;
         _mapCelebrationStampLabel = option.emoji;
-        _mapCelebrationNonce += 1;
+        _mapCelebrationNonce = celebrationNonce;
       });
 
       await WidgetsBinding.instance.endOfFrame;
@@ -1925,9 +1943,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           CompletionCelebration.stampDuration + _emotionMapStampFallbackSlack,
         ),
       ]);
-      if (_mapCelebrationCompleter == celebrationCompleter) {
-        _mapCelebrationCompleter = null;
-      }
+      _completeMapCelebration(celebrationNonce);
       if (!mounted) return;
 
       await Future<void>.delayed(_emotionMapPostStampDelay);

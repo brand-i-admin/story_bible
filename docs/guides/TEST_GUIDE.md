@@ -70,6 +70,7 @@ enum 문자열, JSON list/map 변환은 정상값과 빈값을 같이 넣는다.
 |------|------|--------------|
 | Repository | `test/data/story_repository_test.dart` | story, era, landmark, event query와 row mapping |
 | Repository | `test/data/user_repository_test.dart` | 유저 프로필, 알림, 진행도, 일지 |
+| Repository | `test/data/auth_repository_test.dart` | 계정 삭제 확인 아이디 선택/비교 helper |
 | Repository | `test/data/font_scale_repository_test.dart` | 접근성 글자 크기 저장/복원 |
 | Repository | `test/data/character_name_fallbacks_test.dart` | 인물 이름 fallback |
 | State | `test/state/story_state_test.dart` | `StoryState.copyWith`, 로딩/에러 상태 |
@@ -110,6 +111,7 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 | 지도 | `map/map_tile_style_test.dart`, `map/story_terrain_3d_map_marker_test.dart`, `map_hint_overlay_test.dart`, `region_pick_panel_test.dart`, `timeline_unit_pick_panel_test.dart` |
 | 퀴즈/제안 | `event_quiz_dialog_test.dart`, `proposal_quiz_editor_test.dart` |
 | 프로필 | `profile_*_test.dart`, `saved_verse_row_test.dart` |
+| 로그인 | `inline_login_prompt_card_test.dart` |
 | 접근성/공통 UI | `font_scale_bottom_sheet_test.dart`, `pulse_highlight_test.dart`, `story_home_styles_test.dart`, `emotion_badge_icon_test.dart` |
 | 알림 | `notification_deep_link_test.dart` |
 

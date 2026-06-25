@@ -394,7 +394,7 @@ supabase functions list --project-ref cvnutbizsgeycdjcbled
 supabase functions list --project-ref zmcffwcfmyhdykdhxhgy
 ```
 
-`send-push`, `generate-proposal-scene`, `generate-proposal-character`가 `ACTIVE`이면 된다.
+`send-push`, `generate-proposal-scene`, `generate-proposal-character`, `delete-account`가 `ACTIVE`이면 된다.
 
 ## 7. DB 내부 secret / extension 설정
 

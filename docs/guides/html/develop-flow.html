@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 458 Dart tests</div>
+      <div class="subtle">310 events · 465 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -246,11 +246,12 @@ scripts/build_ios_real.sh</code></pre>
 <p>초기 데이터 세팅은 “사람이 관리하는 canonical 파일”에서 “로컬 SQL/asset 산출물”을 만들고, 그 산출물을 Supabase DB와 Storage에 적용하는 흐름이다. 이 절은 아직 운영 사용자가 없는 real DB를 새로 만들거나, dev DB를 같은 기준으로 다시 세팅할 때 읽는다. 이미 운영 중인 DB에서는 <code>db-init</code>으로 전체 초기화하지 않고, 필요한 patch와 release sync 절차를 사용한다.</p>
 <p>전체 명령은 아래 순서다.</p>
 <pre><code class="language-bash">make seed-all \
-  &amp;&amp; make thumbnails \
+  &amp;&amp; make thumbnails THUMBNAIL_STORIES_DIR=assets/initial_seed_events \
   &amp;&amp; make update-pubspec-assets \
   &amp;&amp; make check-pubspec-assets \
   &amp;&amp; CONFIRM_REAL_DB_INIT=1 make db-init ENV=real \
   &amp;&amp; make apply-seeds ENV=real \
+  &amp;&amp; make export-stories-json ENV=real \
   &amp;&amp; make upload-character-avatars ENV=real \
   &amp;&amp; make upload-story-image-sources ENV=real</code></pre>
 <p>핵심 원칙은 세 가지다.</p>
@@ -261,9 +262,14 @@ scripts/build_ios_real.sh</code></pre>
 <th>의미</th>
 </tr></thead><tbody>
 <tr>
-<td>사람이 관리하는 원본</td>
-<td><code>assets/events/*.json</code>, <code>assets/landmarks/landmarks.json</code>, <code>assets/bible/*.txt</code>, <code>assets/story_images/</code>, <code>assets/avatars/</code></td>
-<td>초기 세팅의 기준이다. 이 파일들이 틀리면 뒤의 SQL/asset도 그대로 틀어진다.</td>
+<td>초기 bootstrap 원본</td>
+<td><code>assets/initial_seed_events/*.json</code>, <code>assets/landmarks/landmarks.json</code>, <code>assets/bible/*.txt</code>, <code>assets/story_images/</code>, <code>assets/avatars/</code></td>
+<td>새 Supabase 프로젝트를 처음 세팅할 때 쓰는 보존 seed이며 <code>make seed-*</code>의 기본 입력이다.</td>
+</tr>
+<tr>
+<td>운영 active snapshot</td>
+<td><code>assets/events/*.json</code></td>
+<td>DB의 active published events를 export한 release snapshot이다. 운영 중 승인/삭제/재정렬 후 앱 번들 썸네일과 <code>story-image-sources</code> 원본 archive를 맞출 때 기본으로 쓴다.</td>
 </tr>
 <tr>
 <td>로컬 생성 산출물</td>
@@ -276,7 +282,8 @@ scripts/build_ios_real.sh</code></pre>
 <td><code>make db-init</code>, <code>make apply-seeds</code>, <code>make upload-character-avatars</code>, <code>make upload-story-image-sources</code>가 실제 원격 상태를 바꾼다.</td>
 </tr>
 </tbody></table></div>
-<p>주의할 점은 <code>make seed-all</code>이 현재 로컬 <code>assets/events/*.json</code>만 믿는다는 것이다. <code>assets/events</code>가 비어 있거나 일부 파일만 남은 상태에서 실행하면 그 일부 상태를 기준으로 SQL이 만들어진다. 운영 DB의 active 상태를 기준으로 복원해야 하는 경우에는 먼저 <code>make export-stories-json ENV=real</code>로 DB snapshot을 다시 받아 둔다.</p>
+<p>주의할 점은 <code>make seed-all</code>이 기본적으로 <code>assets/initial_seed_events/*.json</code>만 믿는다는 것이다. 초기 원본 seed를 보존하고, 운영 DB의 active 상태를 기준으로 seed 산출물을 만들 필요가 있는 예외 상황에서만 먼저 <code>make export-stories-json ENV=real</code>로 DB snapshot을 받은 뒤 <code>make seed-all STORIES_DIR=assets/events</code>처럼 명시한다.</p>
+<p>초기 bootstrap 직후 <code>upload-story-image-sources</code>까지 실행하려면 <code>make apply-seeds ENV=real</code> 다음에 <code>make export-stories-json ENV=real</code>을 한 번 실행해 <code>assets/events</code>를 방금 만든 DB active snapshot으로 맞춘다. source archive sync는 항상 <code>assets/events</code> 기준으로 움직이기 때문이다.</p>
 <h5 id="3-2-0-1-make-seed-all-—-로컬-seed-sql-만들기">3.2.0.1 <code>make seed-all</code> — 로컬 seed SQL 만들기</h5>
 <p><code>make seed-all</code>은 DB나 Storage에 적용하지 않는다. 입력 파일을 읽어 로컬 SQL과 검수 리포트만 다시 만든다.</p>
 <div class="table-wrap"><table>
@@ -294,25 +301,25 @@ scripts/build_ios_real.sh</code></pre>
 </tr>
 <tr>
 <td><code>build-character-meta</code></td>
-<td><code>assets/events/*.json</code>의 <code>characters</code>, <code>scene_characters</code></td>
+<td><code>$(STORIES_DIR)/*.json</code>의 <code>characters</code>, <code>scene_characters</code> (기본 <code>assets/initial_seed_events</code>)</td>
 <td><code>tools/seed/character_meta.json</code></td>
 <td>인물 seed, events 인물 코드 검증, 아바타 생성 후보에 쓰인다.</td>
 </tr>
 <tr>
 <td><code>seed-stories</code></td>
-<td><code>assets/events/*.json</code>, <code>tools/seed/character_meta.json</code></td>
+<td><code>$(STORIES_DIR)/*.json</code>, <code>tools/seed/character_meta.json</code></td>
 <td><code>supabase/events/events_seed.sql</code>, <code>supabase/events/events_seed_part_*.sql</code>, <code>supabase/events/events_report.json</code>, <code>supabase/events/events_normalized.json</code></td>
 <td><code>make apply-seeds</code>가 <code>events</code> 테이블에 넣는다.</td>
 </tr>
 <tr>
 <td><code>seed-characters</code></td>
-<td><code>tools/seed/character_meta.json</code>, <code>assets/events/*.json</code></td>
+<td><code>tools/seed/character_meta.json</code>, <code>$(STORIES_DIR)/*.json</code></td>
 <td><code>supabase/events/characters_seed.sql</code></td>
 <td><code>make apply-seeds</code>가 <code>characters</code> 테이블에 넣는다.</td>
 </tr>
 <tr>
 <td><code>seed-quizzes</code></td>
-<td><code>assets/events/*.json</code> 안의 <code>quiz_questions</code></td>
+<td><code>$(STORIES_DIR)/*.json</code> 안의 <code>quiz_questions</code></td>
 <td><code>supabase/quizzes/quizzes_seed.sql</code>, <code>supabase/quizzes/quizzes_report.json</code></td>
 <td><code>make apply-seeds</code>가 <code>quiz_questions</code> 테이블에 넣는다.</td>
 </tr>
@@ -332,16 +339,16 @@ assets/landmarks/landmarks.json
   -&gt; supabase/events/landmarks_seed.sql
   -&gt; DB landmarks
 
-assets/events/*.json
+$(STORIES_DIR)/*.json
   -&gt; tools/seed/character_meta.json
   -&gt; supabase/events/characters_seed.sql
   -&gt; DB characters
 
-assets/events/*.json + tools/seed/character_meta.json
+$(STORIES_DIR)/*.json + tools/seed/character_meta.json
   -&gt; supabase/events/events_seed_part_*.sql
   -&gt; DB events
 
-assets/events/*.json 안의 quiz_questions
+$(STORIES_DIR)/*.json 안의 quiz_questions
   -&gt; supabase/quizzes/quizzes_seed.sql
   -&gt; DB quiz_questions</code></pre>
 <p>예를 들어 <code>assets/events/era_primeval.json</code>의 한 event row는 이런 구조다.</p>
@@ -374,7 +381,7 @@ assets/events/*.json 안의 quiz_questions
 <p>이 한 row는 <code>events_seed_part_*.sql</code>에서는 <code>events</code> 한 행이 되고, <code>characters_seed.sql</code>에서는 <code>god</code> 같은 인물 코드가 <code>characters</code> 후보가 되며, <code>quizzes_seed.sql</code>에서는 이 event에 연결될 <code>quiz_questions</code> 행이 된다. <code>landmark_code</code> 자체가 <code>events</code>에 문자열로 저장되는 것은 아니고, seed SQL 적용 시 <code>landmarks.code = &#x27;lm_prim_unknown&#x27;</code>을 찾아 그 id를 <code>events.landmark_id</code>에 넣는다.</p>
 <p><code>supabase/events/events_report.json</code>은 생성 결과 요약과 경고를 보는 파일이고, <code>supabase/events/events_normalized.json</code>은 SQL에 들어가기 직전의 정규화된 events snapshot이다. 둘 다 사람이 직접 편집하는 원본은 아니며, 이상한 diff가 생겼을 때 원인 확인용으로 본다.</p>
 <h5 id="3-2-0-2-make-thumbnails-—-앱-번들용-이미지-다시-만들기">3.2.0.2 <code>make thumbnails</code> — 앱 번들용 이미지 다시 만들기</h5>
-<p><code>make seed-all</code>은 썸네일을 만들지 않는다. 앱에 포함될 이미지까지 현재 <code>assets/events/*.json</code>과 맞추려면 다음으로 <code>make thumbnails</code>를 실행한다.</p>
+<p><code>make seed-all</code>은 썸네일을 만들지 않는다. 앱에 포함될 이미지까지 운영 active snapshot과 맞추려면 다음으로 <code>make thumbnails</code>를 실행한다. <code>make thumbnails</code>는 seed용 <code>STORIES_DIR</code>가 아니라 <code>THUMBNAIL_STORIES_DIR</code>를 읽으며, 기본값은 <code>assets/events</code>다. 초기 bootstrap 이미지 세트를 만들 때만 <code>THUMBNAIL_STORIES_DIR=assets/initial_seed_events</code>를 명시한다.</p>
 <div class="table-wrap"><table>
 <thead><tr>
 <th>입력</th>
@@ -382,7 +389,7 @@ assets/events/*.json 안의 quiz_questions
 <th>동작</th>
 </tr></thead><tbody>
 <tr>
-<td><code>assets/events/*.json</code></td>
+<td><code>$(THUMBNAIL_STORIES_DIR)/*.json</code> (기본 <code>assets/events</code>)</td>
 <td><code>assets/story_images_thumbs/index.json</code></td>
 <td>각 이야기 title, era, story_index와 짧은 썸네일 디렉토리의 매핑을 만든다.</td>
 </tr>
@@ -397,7 +404,7 @@ assets/events/*.json 안의 quiz_questions
 <td>인물 아바타 썸네일을 만든다.</td>
 </tr>
 </tbody></table></div>
-<p>story thumbnail은 매번 clean rebuild다. 먼저 current <code>assets/events/*.json</code>에 필요한 원본 PNG가 모두 있는지 확인하고, 통과하면 <code>assets/story_images_thumbs/</code>의 story 하위 디렉토리를 지운 뒤 현재 <code>era + story_index</code> 기준으로 다시 만든다. 그래서 중간 삽입이나 삭제로 뒤쪽 story_index가 바뀌어도 예전 썸네일 디렉토리가 앱 번들에 남아 잘못 매칭되는 일을 막는다.</p>
+<p>story thumbnail은 매번 clean rebuild다. 먼저 current <code>$(THUMBNAIL_STORIES_DIR)/*.json</code>에 필요한 원본 PNG가 모두 있는지 확인하고, 통과하면 <code>assets/story_images_thumbs/</code>의 story 하위 디렉토리를 지운 뒤 현재 <code>era + story_index</code> 기준으로 다시 만든다. 그래서 중간 삽입이나 삭제로 뒤쪽 story_index가 바뀌어도 예전 썸네일 디렉토리가 앱 번들에 남아 잘못 매칭되는 일을 막는다.</p>
 <p>만약 원본 PNG가 없다면 <code>make thumbnails</code>는 중단된다. 새 컴퓨터나 원본 캐시가 비어 있는 환경에서는 먼저 <code>make ensure-story-image-sources ENV=real</code>로 private source archive에서 원본을 내려받는다.</p>
 <h5 id="3-2-0-3-make-update-pubspec-assets-와-make-check-pubspec-assets">3.2.0.3 <code>make update-pubspec-assets</code>와 <code>make check-pubspec-assets</code></h5>
 <p>썸네일을 만든 뒤에는 Flutter가 그 파일들을 번들 asset으로 인식하도록 <code>pubspec.yaml</code>을 갱신하고 검증한다.</p>
@@ -470,7 +477,7 @@ assets/events/*.json 안의 quiz_questions
 <td>5</td>
 <td><code>supabase/quizzes/quizzes_seed.sql</code></td>
 <td><code>quiz_questions</code></td>
-<td>각 event의 기존 quiz row를 지운 뒤 <code>assets/events/*.json</code> 안의 <code>quiz_questions</code>를 다시 insert한다.</td>
+<td>각 event의 기존 quiz row를 지운 뒤 seed 생성에 사용한 <code>$(STORIES_DIR)/*.json</code> 안의 <code>quiz_questions</code>를 다시 insert한다.</td>
 </tr>
 </tbody></table></div>
 <p><code>make upload-character-avatars ENV=real</code>은 DB seed가 아니라 Storage 업로드다. 입력은 <code>assets/avatars/*.png</code>이고, 출력은 Supabase Storage <code>characters/{code}.png</code>와 DB <code>characters.avatar_storage_path</code> 갱신이다. 이 target은 업로드 전에 <code>characters</code> bucket을 먼저 비우고 현재 로컬 아바타를 다시 올린다.</p>

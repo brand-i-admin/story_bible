@@ -1691,7 +1691,7 @@ create table if not exists event_proposals (
   after_story_index int,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected')),
-  reviewed_by_user_id uuid references auth.users(id),
+  reviewed_by_user_id uuid references auth.users(id) on delete set null,
   reviewed_at timestamptz,
   review_note text,
   approved_event_id uuid references events(id) on delete set null,

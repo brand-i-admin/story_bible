@@ -107,11 +107,13 @@ Deno TypeScript로 작성된 서버리스 함수. AWS Lambda 와 유사.
 
 - `generate-proposal-scene` — 제안 장면 이미지를 Vertex AI Gemini 로 생성
 - `generate-proposal-character` — 제안 캐릭터 아바타를 Imagen 으로 생성
+- `delete-account` — 앱 내 계정 삭제 요청을 검증하고 Auth 유저와 사용자 소유 Storage 파일 삭제
 - `send-push` — FCM 으로 푸시 전송
 
 **왜 Edge Function이 필요한가**:
 - GCP 서비스 계정 JSON 같은 비밀키를 서버에서만 써야 해서.
 - 브라우저에서 직접 Vertex AI 를 호출하면 API 키가 공개돼 악용됨.
+- Auth 유저 삭제에는 service-role 키가 필요하므로 앱에 직접 노출하지 않기 위해.
 
 #### Realtime
 
@@ -334,7 +336,7 @@ iOS 디바이스는 "Apple 이 발행한 서명"이 없으면 **아무것도 못
 
 앱은 **Supabase JWT 만** 알면 된다. Provider 별 특성은 Supabase가 흡수.
 
-### 5.2 Google 로그인 — Android native + OAuth fallback
+### 5.2 Google 로그인 — Supabase OAuth 인앱 브라우저
 
 #### 구성 (GCP Console)
 
@@ -343,35 +345,13 @@ iOS 디바이스는 "Apple 이 발행한 서명"이 없으면 **아무것도 못
    - "+ CREATE CREDENTIALS" → "OAuth client ID" → 유형: **웹 애플리케이션**
    - **승인된 리디렉션 URI**: `https://zmcffwcfmyhdykdhxhgy.supabase.co/auth/v1/callback`
    - 생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기
-   - 이 Web Client ID 는 Android native 로그인에서 `serverClientId` 로도 사용한다.
-3. Android OAuth Client
-   - 유형: **Android**
-   - Package name: `com.storybible.app`
-   - SHA-1/SHA-256: Play Console → App integrity → App signing key certificate 값을 등록한다.
-   - 내부 테스트/직접 설치 빌드도 필요하면 upload key/debug key SHA 를 별도 Android Client 로 추가한다.
-4. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 `com.storybible.app://login-callback` 추가
+3. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 `com.storybible.app://login-callback` 추가
 
 #### 동작
 
-Android 앱은 Google의 embedded user-agent 차단(`403 disallowed_useragent`)을 피하기 위해
-브라우저 OAuth 대신 `google_sign_in` 으로 네이티브 계정 선택 UI를 열고,
-Google `idToken/accessToken` 을 Supabase `signInWithIdToken` 으로 전달한다.
-
-```
-사용자 "Google로 로그인" 클릭
-  ↓
-GoogleSignIn(serverClientId=<WEB_CLIENT_ID>).signIn()
-  ↓
-Google Play services 계정 선택/동의
-  ↓
-앱이 idToken + accessToken 수신
-  ↓
-supabase.auth.signInWithIdToken(OAuthProvider.google, idToken, accessToken)
-  ↓
-Supabase 가 Google 토큰 검증 후 Supabase JWT 발급
-```
-
-Web/iOS fallback 은 Supabase OAuth Authorization Code Flow 를 사용한다.
+Google 로그인은 Android/iOS 모두 Supabase OAuth Authorization Code Flow 를 사용한다.
+모바일에서는 `LaunchMode.inAppBrowserView` 로 앱 바깥 기본 브라우저가 아니라
+Custom Tabs/Safari View Controller 계열 인앱 브라우저를 연다.
 
 ```
 사용자 "Google로 로그인" 클릭
@@ -404,6 +384,14 @@ Flutter SDK 가 URL 파싱해서 세션 저장
 ```
 
 **왜 이 복잡한 과정**: 비밀번호를 앱에 **절대 노출 안 하려고**. 사용자는 Google 사이트에서만 입력, 앱은 "로그인 완료" 신호만 받는다.
+
+#### Android `ApiException: 10`
+
+`google_sign_in` 네이티브 방식을 사용할 때 `com.google.android.gms.common.api.ApiException: 10` 이
+뜨면 대개 Android OAuth Client 의 package name/SHA-1/SHA-256 설정이 현재 서명키와
+맞지 않는다는 뜻이다. 이 앱은 해당 네이티브 경로를 사용하지 않고 Supabase OAuth
+인앱 브라우저 경로를 사용하므로 Android SHA 등록 누락 때문에 Google 로그인이
+깨지지 않는다.
 
 ### 5.3 Apple 로그인 — idToken 직접 검증 방식
 

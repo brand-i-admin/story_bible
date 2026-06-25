@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 458 Dart tests</div>
+      <div class="subtle">310 events · 465 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -31,7 +31,7 @@
 <div class="step"><span>db</span><strong>Supabase</strong><p>Auth / Postgres / Storage / RPC</p></div>
 <div class="step"><span>edge</span><strong>Edge Functions</strong><p>Vertex / FCM 서버 호출</p></div>
 <div class="step"><span>device</span><strong>Devices</strong><p>iOS / Android / Web 알림</p></div></div>
-          <div class="toc"><strong>On this page</strong><a class="level-1" href="#story-bible-인프라-가이드">Story Bible 인프라 가이드</a><a class="level-2" href="#0-이-문서를-읽기-전에">0. 이 문서를 읽기 전에</a><a class="level-3" href="#전체-인프라-지도">전체 인프라 지도</a><a class="level-3" href="#한-줄-요약">한 줄 요약</a><a class="level-2" href="#1-supabase-—-중앙-baas">1. Supabase — 중앙 BaaS</a><a class="level-3" href="#1-1-왜-쓰는가">1.1 왜 쓰는가</a><a class="level-3" href="#1-2-프로젝트-구성">1.2 프로젝트 구성</a><a class="level-3" href="#1-3-주요-모듈과-실제-쓰임">1.3 주요 모듈과 실제 쓰임</a><a class="level-3" href="#1-4-연결-설정-env-env-ops">1.4 연결 설정 (`.env` / `.env.ops`)</a><a class="level-2" href="#2-firebase-cloud-messaging-fcm-—-푸시-유일-경로">2. Firebase Cloud Messaging (FCM) — 푸시 유일 경로</a><a class="level-3" href="#2-1-왜-쓰는가">2.1 왜 쓰는가</a><a class="level-3" href="#2-2-프로젝트-구성-—-story-bible-491907">2.2 프로젝트 구성 — `story-bible-491907`</a><a class="level-3" href="#2-3-네-가지-필수-자격-증명">2.3 네 가지 필수 자격 증명</a><a class="level-3" href="#2-4-동작-흐름">2.4 동작 흐름</a><a class="level-3" href="#2-5-왜-aps-environment-가-development-production-두-개인가">2.5 왜 `aps-environment` 가 development/production 두 개인가</a><a class="level-2" href="#3-gcp-google-cloud-platform-—-ai-이미지-생성-+-firebase-의-뒷단">3. GCP (Google Cloud Platform) — AI 이미지 생성 + Firebase 의 뒷단</a><a class="level-3" href="#3-1-왜-쓰는가">3.1 왜 쓰는가</a><a class="level-3" href="#3-2-서비스-계정-두-개를-쓰는-이유">3.2 서비스 계정 두 개를 쓰는 이유</a><a class="level-3" href="#3-3-vertex-ai-호출-흐름-generate-proposal-scene-예시">3.3 Vertex AI 호출 흐름 (`generate-proposal-scene` 예시)</a><a class="level-2" href="#4-apple-developer-portal-+-apns-—-ios-의-모든-것">4. Apple Developer Portal + APNs — iOS 의 모든 것</a><a class="level-3" href="#4-1-왜-복잡한가">4.1 왜 복잡한가</a><a class="level-3" href="#4-2-이-프로젝트에서-발급받아야-하는-것들">4.2 이 프로젝트에서 발급받아야 하는 것들</a><a class="level-3" href="#4-3-ios-푸시-동작-흐름-전체">4.3 iOS 푸시 동작 흐름 (전체)</a><a class="level-3" href="#4-4-sign-in-with-apple-의-key-왜-따로인가">4.4 Sign in with Apple 의 Key 왜 따로인가</a><a class="level-2" href="#5-oauth-2-0-identity-providers-—-소셜-로그인-3종">5. OAuth 2.0 Identity Providers — 소셜 로그인 3종</a><a class="level-3" href="#5-1-이-프로젝트의-위임-구조">5.1 이 프로젝트의 위임 구조</a><a class="level-3" href="#5-2-google-로그인-—-android-native-+-oauth-fallback">5.2 Google 로그인 — Android native + OAuth fallback</a><a class="level-3" href="#5-3-apple-로그인-—-idtoken-직접-검증-방식">5.3 Apple 로그인 — idToken 직접 검증 방식</a><a class="level-3" href="#5-4-kakao-로그인-—-google-과-동일-구조">5.4 Kakao 로그인 — Google 과 동일 구조</a><a class="level-2" href="#6-시크릿-관리-—-계층-구조">6. 시크릿 관리 — 계층 구조</a><a class="level-3" href="#6-1-각-시크릿의-집">6.1 각 시크릿의 집</a><a class="level-3" href="#6-2-env-env-ops-파일-규칙">6.2 `.env` / `.env.ops` 파일 규칙</a><a class="level-3" href="#6-3-왜-firebase-apikey-는-커밋해도-되는가">6.3 왜 Firebase `apiKey` 는 커밋해도 되는가</a><a class="level-3" href="#6-4-git-pre-commit-hook-의-방어">6.4 Git pre-commit hook 의 방어</a><a class="level-2" href="#7-자주-나오는-핵심-원리">7. 자주 나오는 핵심 원리</a><a class="level-3" href="#7-1-jwt-json-web-token-—-supabase-firebase-google-모두-사용">7.1 JWT (JSON Web Token) — Supabase, Firebase, Google 모두 사용</a><a class="level-3" href="#7-2-apple-로그인-nonce-가-두-번-쓰이는-이유">7.2 Apple 로그인 nonce 가 두 번 쓰이는 이유</a><a class="level-3" href="#7-3-edge-function-이-gcp-access-token-을-받는-원리">7.3 Edge Function 이 GCP access_token 을 받는 원리</a><a class="level-3" href="#7-4-rls-row-level-security-내부-동작">7.4 RLS (Row Level Security) 내부 동작</a><a class="level-3" href="#7-5-service-worker-라이프사이클-웹-푸시">7.5 Service Worker 라이프사이클 (웹 푸시)</a><a class="level-3" href="#7-6-cors-csp-간단-정리">7.6 CORS / CSP 간단 정리</a><a class="level-2" href="#8-종합-라이프사이클-—-내-제안에-댓글-달리는-순간-end-to-end">8. 종합 라이프사이클 — &quot;내 제안에 댓글 달리는 순간&quot; end-to-end</a><a class="level-2" href="#9-트러블슈팅-체크리스트">9. 트러블슈팅 체크리스트</a><a class="level-2" href="#10-참고-링크">10. 참고 링크</a><a class="level-2" href="#문서-교차-참조">문서 교차 참조</a></div>
+          <div class="toc"><strong>On this page</strong><a class="level-1" href="#story-bible-인프라-가이드">Story Bible 인프라 가이드</a><a class="level-2" href="#0-이-문서를-읽기-전에">0. 이 문서를 읽기 전에</a><a class="level-3" href="#전체-인프라-지도">전체 인프라 지도</a><a class="level-3" href="#한-줄-요약">한 줄 요약</a><a class="level-2" href="#1-supabase-—-중앙-baas">1. Supabase — 중앙 BaaS</a><a class="level-3" href="#1-1-왜-쓰는가">1.1 왜 쓰는가</a><a class="level-3" href="#1-2-프로젝트-구성">1.2 프로젝트 구성</a><a class="level-3" href="#1-3-주요-모듈과-실제-쓰임">1.3 주요 모듈과 실제 쓰임</a><a class="level-3" href="#1-4-연결-설정-env-env-ops">1.4 연결 설정 (`.env` / `.env.ops`)</a><a class="level-2" href="#2-firebase-cloud-messaging-fcm-—-푸시-유일-경로">2. Firebase Cloud Messaging (FCM) — 푸시 유일 경로</a><a class="level-3" href="#2-1-왜-쓰는가">2.1 왜 쓰는가</a><a class="level-3" href="#2-2-프로젝트-구성-—-story-bible-491907">2.2 프로젝트 구성 — `story-bible-491907`</a><a class="level-3" href="#2-3-네-가지-필수-자격-증명">2.3 네 가지 필수 자격 증명</a><a class="level-3" href="#2-4-동작-흐름">2.4 동작 흐름</a><a class="level-3" href="#2-5-왜-aps-environment-가-development-production-두-개인가">2.5 왜 `aps-environment` 가 development/production 두 개인가</a><a class="level-2" href="#3-gcp-google-cloud-platform-—-ai-이미지-생성-+-firebase-의-뒷단">3. GCP (Google Cloud Platform) — AI 이미지 생성 + Firebase 의 뒷단</a><a class="level-3" href="#3-1-왜-쓰는가">3.1 왜 쓰는가</a><a class="level-3" href="#3-2-서비스-계정-두-개를-쓰는-이유">3.2 서비스 계정 두 개를 쓰는 이유</a><a class="level-3" href="#3-3-vertex-ai-호출-흐름-generate-proposal-scene-예시">3.3 Vertex AI 호출 흐름 (`generate-proposal-scene` 예시)</a><a class="level-2" href="#4-apple-developer-portal-+-apns-—-ios-의-모든-것">4. Apple Developer Portal + APNs — iOS 의 모든 것</a><a class="level-3" href="#4-1-왜-복잡한가">4.1 왜 복잡한가</a><a class="level-3" href="#4-2-이-프로젝트에서-발급받아야-하는-것들">4.2 이 프로젝트에서 발급받아야 하는 것들</a><a class="level-3" href="#4-3-ios-푸시-동작-흐름-전체">4.3 iOS 푸시 동작 흐름 (전체)</a><a class="level-3" href="#4-4-sign-in-with-apple-의-key-왜-따로인가">4.4 Sign in with Apple 의 Key 왜 따로인가</a><a class="level-2" href="#5-oauth-2-0-identity-providers-—-소셜-로그인-3종">5. OAuth 2.0 Identity Providers — 소셜 로그인 3종</a><a class="level-3" href="#5-1-이-프로젝트의-위임-구조">5.1 이 프로젝트의 위임 구조</a><a class="level-3" href="#5-2-google-로그인-—-supabase-oauth-인앱-브라우저">5.2 Google 로그인 — Supabase OAuth 인앱 브라우저</a><a class="level-3" href="#5-3-apple-로그인-—-idtoken-직접-검증-방식">5.3 Apple 로그인 — idToken 직접 검증 방식</a><a class="level-3" href="#5-4-kakao-로그인-—-google-과-동일-구조">5.4 Kakao 로그인 — Google 과 동일 구조</a><a class="level-2" href="#6-시크릿-관리-—-계층-구조">6. 시크릿 관리 — 계층 구조</a><a class="level-3" href="#6-1-각-시크릿의-집">6.1 각 시크릿의 집</a><a class="level-3" href="#6-2-env-env-ops-파일-규칙">6.2 `.env` / `.env.ops` 파일 규칙</a><a class="level-3" href="#6-3-왜-firebase-apikey-는-커밋해도-되는가">6.3 왜 Firebase `apiKey` 는 커밋해도 되는가</a><a class="level-3" href="#6-4-git-pre-commit-hook-의-방어">6.4 Git pre-commit hook 의 방어</a><a class="level-2" href="#7-자주-나오는-핵심-원리">7. 자주 나오는 핵심 원리</a><a class="level-3" href="#7-1-jwt-json-web-token-—-supabase-firebase-google-모두-사용">7.1 JWT (JSON Web Token) — Supabase, Firebase, Google 모두 사용</a><a class="level-3" href="#7-2-apple-로그인-nonce-가-두-번-쓰이는-이유">7.2 Apple 로그인 nonce 가 두 번 쓰이는 이유</a><a class="level-3" href="#7-3-edge-function-이-gcp-access-token-을-받는-원리">7.3 Edge Function 이 GCP access_token 을 받는 원리</a><a class="level-3" href="#7-4-rls-row-level-security-내부-동작">7.4 RLS (Row Level Security) 내부 동작</a><a class="level-3" href="#7-5-service-worker-라이프사이클-웹-푸시">7.5 Service Worker 라이프사이클 (웹 푸시)</a><a class="level-3" href="#7-6-cors-csp-간단-정리">7.6 CORS / CSP 간단 정리</a><a class="level-2" href="#8-종합-라이프사이클-—-내-제안에-댓글-달리는-순간-end-to-end">8. 종합 라이프사이클 — &quot;내 제안에 댓글 달리는 순간&quot; end-to-end</a><a class="level-2" href="#9-트러블슈팅-체크리스트">9. 트러블슈팅 체크리스트</a><a class="level-2" href="#10-참고-링크">10. 참고 링크</a><a class="level-2" href="#문서-교차-참조">문서 교차 참조</a></div>
         </section>
         <article class="doc-body">
           <h1 id="story-bible-인프라-가이드">Story Bible 인프라 가이드</h1>
@@ -110,9 +110,9 @@
 <p>각 버킷도 RLS policy 로 접근 제어.</p>
 <h4 id="edge-functions">Edge Functions</h4>
 <p>Deno TypeScript로 작성된 서버리스 함수. AWS Lambda 와 유사.</p>
-<ul><li><code>generate-proposal-scene</code> — 제안 장면 이미지를 Vertex AI Gemini 로 생성</li><li><code>generate-proposal-character</code> — 제안 캐릭터 아바타를 Imagen 으로 생성</li><li><code>send-push</code> — FCM 으로 푸시 전송</li></ul>
+<ul><li><code>generate-proposal-scene</code> — 제안 장면 이미지를 Vertex AI Gemini 로 생성</li><li><code>generate-proposal-character</code> — 제안 캐릭터 아바타를 Imagen 으로 생성</li><li><code>delete-account</code> — 앱 내 계정 삭제 요청을 검증하고 Auth 유저와 사용자 소유 Storage 파일 삭제</li><li><code>send-push</code> — FCM 으로 푸시 전송</li></ul>
 <p><strong>왜 Edge Function이 필요한가</strong>:</p>
-<ul><li>GCP 서비스 계정 JSON 같은 비밀키를 서버에서만 써야 해서.</li><li>브라우저에서 직접 Vertex AI 를 호출하면 API 키가 공개돼 악용됨.</li></ul>
+<ul><li>GCP 서비스 계정 JSON 같은 비밀키를 서버에서만 써야 해서.</li><li>브라우저에서 직접 Vertex AI 를 호출하면 API 키가 공개돼 악용됨.</li><li>Auth 유저 삭제에는 service-role 키가 필요하므로 앱에 직접 노출하지 않기 위해.</li></ul>
 <h4 id="realtime">Realtime</h4>
 <p>Postgres WAL(Write-Ahead Log) 변경사항을 WebSocket 스트림. 이 프로젝트는 현재 <strong>polling 방식</strong>(<code>unreadNotificationCountProvider</code> 30초)을 쓰므로 Realtime 미사용. 향후 bell 배지를 즉각 갱신하려면 도입 가능.</p>
 <h4 id="pg-cron">pg_cron</h4>
@@ -337,27 +337,13 @@ Edge Function (Deno TypeScript):
                  │ (code or idToken)
 [앱] ◄── Supabase JWT ───┘</code></pre>
 <p>앱은 <strong>Supabase JWT 만</strong> 알면 된다. Provider 별 특성은 Supabase가 흡수.</p>
-<h3 id="5-2-google-로그인-—-android-native-+-oauth-fallback">5.2 Google 로그인 — Android native + OAuth fallback</h3>
+<h3 id="5-2-google-로그인-—-supabase-oauth-인앱-브라우저">5.2 Google 로그인 — Supabase OAuth 인앱 브라우저</h3>
 <h4 id="구성-gcp-console">구성 (GCP Console)</h4>
 <ol><li>https://console.cloud.google.com → APIs &amp; Services → <strong>Credentials</strong></li><li>Web OAuth Client</li></ol>
-<ul><li>&quot;+ CREATE CREDENTIALS&quot; → &quot;OAuth client ID&quot; → 유형: <strong>웹 애플리케이션</strong></li><li><strong>승인된 리디렉션 URI</strong>: <code>https://zmcffwcfmyhdykdhxhgy.supabase.co/auth/v1/callback</code></li><li>생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기</li><li>이 Web Client ID 는 Android native 로그인에서 <code>serverClientId</code> 로도 사용한다.</li></ul>
-<ol><li>Android OAuth Client</li></ol>
-<ul><li>유형: <strong>Android</strong></li><li>Package name: <code>com.storybible.app</code></li><li>SHA-1/SHA-256: Play Console → App integrity → App signing key certificate 값을 등록한다.</li><li>내부 테스트/직접 설치 빌드도 필요하면 upload key/debug key SHA 를 별도 Android Client 로 추가한다.</li></ul>
+<ul><li>&quot;+ CREATE CREDENTIALS&quot; → &quot;OAuth client ID&quot; → 유형: <strong>웹 애플리케이션</strong></li><li><strong>승인된 리디렉션 URI</strong>: <code>https://zmcffwcfmyhdykdhxhgy.supabase.co/auth/v1/callback</code></li><li>생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기</li></ul>
 <ol><li>Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 <code>com.storybible.app://login-callback</code> 추가</li></ol>
 <h4 id="동작">동작</h4>
-<p>Android 앱은 Google의 embedded user-agent 차단(<code>403 disallowed_useragent</code>)을 피하기 위해 브라우저 OAuth 대신 <code>google_sign_in</code> 으로 네이티브 계정 선택 UI를 열고, Google <code>idToken/accessToken</code> 을 Supabase <code>signInWithIdToken</code> 으로 전달한다.</p>
-<pre><code class="language-">사용자 &quot;Google로 로그인&quot; 클릭
-  ↓
-GoogleSignIn(serverClientId=&lt;WEB_CLIENT_ID&gt;).signIn()
-  ↓
-Google Play services 계정 선택/동의
-  ↓
-앱이 idToken + accessToken 수신
-  ↓
-supabase.auth.signInWithIdToken(OAuthProvider.google, idToken, accessToken)
-  ↓
-Supabase 가 Google 토큰 검증 후 Supabase JWT 발급</code></pre>
-<p>Web/iOS fallback 은 Supabase OAuth Authorization Code Flow 를 사용한다.</p>
+<p>Google 로그인은 Android/iOS 모두 Supabase OAuth Authorization Code Flow 를 사용한다. 모바일에서는 <code>LaunchMode.inAppBrowserView</code> 로 앱 바깥 기본 브라우저가 아니라 Custom Tabs/Safari View Controller 계열 인앱 브라우저를 연다.</p>
 <pre><code class="language-">사용자 &quot;Google로 로그인&quot; 클릭
   ↓
 supabase.auth.signInWithOAuth(OAuthProvider.google, redirectTo: &lt;앱 URL&gt;)
@@ -386,6 +372,8 @@ Supabase 서버가:
   ↓
 Flutter SDK 가 URL 파싱해서 세션 저장</code></pre>
 <p><strong>왜 이 복잡한 과정</strong>: 비밀번호를 앱에 <strong>절대 노출 안 하려고</strong>. 사용자는 Google 사이트에서만 입력, 앱은 &quot;로그인 완료&quot; 신호만 받는다.</p>
+<h4 id="android-apiexception-10">Android <code>ApiException: 10</code></h4>
+<p><code>google_sign_in</code> 네이티브 방식을 사용할 때 <code>com.google.android.gms.common.api.ApiException: 10</code> 이 뜨면 대개 Android OAuth Client 의 package name/SHA-1/SHA-256 설정이 현재 서명키와 맞지 않는다는 뜻이다. 이 앱은 해당 네이티브 경로를 사용하지 않고 Supabase OAuth 인앱 브라우저 경로를 사용하므로 Android SHA 등록 누락 때문에 Google 로그인이 깨지지 않는다.</p>
 <h3 id="5-3-apple-로그인-—-idtoken-직접-검증-방식">5.3 Apple 로그인 — idToken 직접 검증 방식</h3>
 <p>Google 과 다르게 Apple 은 <strong>앱 내 native dialog + idToken 즉시 반환</strong> 방식을 선호. Supabase 는 <code>signInWithIdToken</code> 으로 Apple idToken 을 <strong>직접 검증</strong>한다.</p>
 <pre><code class="language-dart">// auth_repository.dart
