@@ -80,8 +80,8 @@ class AppNotification {
   /// 클릭 시 이동할 앱 내 경로. 현재 스키마:
   /// - `/proposal/<uuid>` — 제안 상세
   /// - `/event/<uuid>`    — 이야기 상세
-  /// - `/daily-exploration` 또는 `/daily-quiz` — 매일 탐험
-  /// - `/weekly`          — 주간 탐험
+  /// - `/daily-exploration` 또는 `/daily-quiz` — 매일 미션
+  /// - `/weekly`          — 주간 미션
   /// - `/profile`         — 프로필
   /// null 이면 클릭해도 이동하지 않고 읽음 처리만.
   final String? deepLink;

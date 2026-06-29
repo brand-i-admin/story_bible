@@ -13,7 +13,7 @@ import 'v2/region_event_list.dart' show StoryEventThumbCard;
 
 double eventTimelineRowHeightFor(BuildContext context, {required double base}) {
   final textScale = MediaQuery.textScalerOf(context).scale(1);
-  final extra = ((textScale - 1) * 90).clamp(0.0, 40.0).toDouble();
+  final extra = ((textScale - 1) * 130).clamp(0.0, 60.0).toDouble();
   return base + extra;
 }
 

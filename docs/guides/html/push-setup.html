@@ -106,7 +106,7 @@ supabase functions deploy send-push</code></pre>
 <ul><li><code>service_role_key</code> — ⚙ Project Settings → API Keys → <code>service_role</code> 값</li><li><code>supabase_url</code> — ⚙ Project Settings → API → &quot;Project URL&quot; (예: <code>https://&lt;ref&gt;.supabase.co</code>)</li></ul>
 <ol><li><strong>db_init.sql 적용</strong> — <code>make db-init ENV=&lt;env&gt;</code> 또는 Dashboard → SQL Editor 에 <code>db_init.sql</code> 전체 붙여넣고 Run. 새 헬퍼/트리거/<code>dispatch_daily_exploration_push</code>/pg_cron 모두 자동 등록된다.</li></ol>
 <p>자동 발송 경로:</p>
-<ul><li>새 이야기/인물 승인 (admin → <code>approve_event_proposal</code>) → broadcast row INSERT → 트리거 → push</li><li>매주 월요일 KST 9시 → <code>pick_weekly_character()</code> (주간 탐험 시작 push-only)</li><li>매주 수요일 KST 9시 → <code>dispatch_daily_exploration_push()</code> (매일 탐험 push-only)</li><li>매주 금요일 KST 9시 → <code>notify_weekly_diary_reflection()</code> (나의 다이어리 묵상 push-only)</li></ul>
+<ul><li>새 이야기/인물 승인 (admin → <code>approve_event_proposal</code>) → broadcast row INSERT → 트리거 → push</li><li>매주 월요일 KST 9시 → <code>pick_weekly_character()</code> (주간 미션 시작 push-only)</li><li>매주 수요일 KST 9시 → <code>dispatch_daily_exploration_push()</code> (매일 미션 push-only)</li><li>매주 금요일 KST 9시 → <code>notify_weekly_diary_reflection()</code> (나의 다이어리 묵상 push-only)</li></ul>
 <p>설정 검증 SQL:</p>
 <pre><code class="language-sql">-- Vault secret 2건
 select name, length(decrypted_secret) as len
@@ -117,9 +117,9 @@ select tgname from pg_trigger where tgname = &#x27;trg_push_after_broadcast&#x27
 select jobname, schedule, active from cron.job order by jobname;</code></pre>
 <h2 id="9-동작-확인">9. 동작 확인</h2>
 <ol><li>앱 재빌드 후 콘솔에 <code>[push] token: &lt;긴 문자열&gt;</code> 출력 확인.</li><li>Supabase Dashboard → Table Editor → <code>user_push_tokens</code> 에서 해당 토큰 row 확인.</li><li>Supabase SQL Editor 에서 즉시 푸쉬 테스트:</li></ol>
-<pre><code class="language-sql">   -- 수요일 매일 탐험 푸쉬 발송 (전체 유저 + 본인 디바이스)
+<pre><code class="language-sql">   -- 수요일 매일 미션 푸쉬 발송 (전체 유저 + 본인 디바이스)
    select public.dispatch_daily_exploration_push();</code></pre>
-<p>→ 본인 휴대폰에 &quot;오늘의 탐험이 열렸어요&quot; 알림이 오면 통과.</p>
+<p>→ 본인 휴대폰에 &quot;오늘의 미션이 열렸어요&quot; 알림이 오면 통과.</p>
 <ol><li>send-push 함수 로그 (Supabase Dashboard → Functions → send-push → Logs):</li></ol>
 <ul><li>정상: <code>[send-push] sent: N, failed: 0</code></li><li>실패 시: <code>FIREBASE_SERVICE_ACCOUNT</code> 누락이 가장 흔한 원인</li></ul>
 <ol><li>broadcast 흐름 테스트 — 관리자 계정으로 임의 제안을 승인하면 본인+다른 사용자 디바이스에 &quot;새 이야기가 등록되었어요&quot; 푸쉬 + bell drop 둘 다 옴.</li></ol>

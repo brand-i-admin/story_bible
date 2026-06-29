@@ -23,6 +23,7 @@ import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/tokens.dart';
+import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';
 import 'avatar_progress_ring.dart';
 import 'character_avatar.dart';
@@ -104,6 +105,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       ScrollController();
 
   List<Character> _profileAllPeople = const [];
+  List<StoryEvent> _profileAllEvents = const [];
   Map<String, String> _profileCharacterTestamentByCode = const {};
   AppUserProfile? _profileUser;
   Map<String, CharacterStudyProgress> _profileStudyProgressByCharacterCode =
@@ -531,6 +533,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final peopleByEra = await Future.wait(
         state.eras.map((era) => repo.fetchCharactersByEra(era.id)),
       );
+      final eventsByEra = await Future.wait(
+        state.eras.map((era) => repo.fetchEventsByEra(era.id)),
+      );
       final characterTimelineOrderByCode = await repo
           .fetchCharacterTimelineOrder();
 
@@ -554,6 +559,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             timelineOrderByCode: characterTimelineOrderByCode,
           ),
         );
+      final allEvents = eventsByEra.expand((events) => events).toList()
+        ..sort((a, b) {
+          final rank = a.globalRank.compareTo(b.globalRank);
+          if (rank != 0) {
+            return rank;
+          }
+          return a.id.compareTo(b.id);
+        });
 
       AppUserProfile? profile;
       Map<String, CharacterStudyProgress> progressByCharacterCode = const {};
@@ -572,6 +585,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             .read(storyControllerProvider.notifier)
             .refreshQuizAttemptSummaries();
         await ref.read(storyControllerProvider.notifier).refreshSavedEventIds();
+        await ref
+            .read(storyControllerProvider.notifier)
+            .refreshCompletedBibleChapterKeys();
       }
 
       if (!mounted) {
@@ -579,6 +595,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       }
       setState(() {
         _profileAllPeople = allPeople;
+        _profileAllEvents = allEvents;
         _profileCharacterTestamentByCode = testamentByCharacterCode;
         _profileUser = profile;
         _profileStudyProgressByCharacterCode = progressByCharacterCode;

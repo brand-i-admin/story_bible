@@ -36,6 +36,7 @@ class HomeIntroPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final canPickMode = selectedEraId != null;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
     // 다시 고르려면 패널 위 "시대 다시 선택" 또는 stepper 의 "시대/방법"을 사용한다.
     final eraStepOpacity = canPickMode ? 0.55 : 1.0;
@@ -138,21 +139,32 @@ class HomeIntroPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const Padding(
-            padding: EdgeInsets.only(right: _homeIntroHorizontalPadding),
+          Padding(
+            padding: const EdgeInsets.only(right: _homeIntroHorizontalPadding),
             child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: AppColors.ink450,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+              child: largeText
+                  ? const Text(
+                      '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      style: TextStyle(
+                        color: AppColors.ink450,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )
+                  : const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: AppColors.ink450,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ],
@@ -195,13 +207,16 @@ class _StepHeader extends StatelessWidget {
       children: [
         Icon(iconData, size: 16, color: color),
         const SizedBox(width: 6),
-        Text(
-          '$number. $title',
-          style: TextStyle(
-            fontSize: 13.2,
-            height: 1.1,
-            color: color,
-            fontWeight: highlighted ? FontWeight.w800 : FontWeight.w700,
+        Expanded(
+          child: Text(
+            '$number. $title',
+            softWrap: true,
+            style: TextStyle(
+              fontSize: 13.2,
+              height: 1.1,
+              color: color,
+              fontWeight: highlighted ? FontWeight.w800 : FontWeight.w700,
+            ),
           ),
         ),
         if (done) ...[
@@ -260,8 +275,10 @@ class _ModeCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 11.2,
                         height: 1.12,

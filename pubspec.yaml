@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+25
+version: 1.0.0+27
 
 environment:
   sdk: ^3.8.1
@@ -37,9 +37,11 @@ dependencies:
   flutter_map_marker_cluster: ^8.2.2
   latlong2: ^0.9.1
   sign_in_with_apple: ^6.1.4
+  google_sign_in: ^6.3.0
   image_picker: ^1.1.2
   crypto: ^3.0.6
   shared_preferences: ^2.5.3
+  url_launcher: ^6.3.2
 
   # Firebase Cloud Messaging — 푸시 알림.
   # firebase_core 초기화 + firebase_messaging 으로 토큰 발급/수신.

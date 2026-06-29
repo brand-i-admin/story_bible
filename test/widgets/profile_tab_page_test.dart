@@ -97,6 +97,9 @@ void main() {
       ],
     );
     when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    when(
       () => storyRepository.fetchCharacterTimelineOrder(),
     ).thenAnswer((_) async => const <String, int>{});
     when(
@@ -391,6 +394,45 @@ void main() {
     expect(find.text('태초에 하나님이 천지를 창조하시니라'), findsOneWidget);
     expect(find.text('처음 저장한 말씀'), findsOneWidget);
   });
+
+  testWidgets('통독 진행률 팝업에서 장을 누르면 해당 장 성경 리더를 연다', (tester) async {
+    int? openedBookNo;
+    int? openedChapterNo;
+    int? openedVerseNo;
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      onOpenBibleReader:
+          ({initialBookNo, initialChapterNo, initialVerseNo}) async {
+            openedBookNo = initialBookNo;
+            openedChapterNo = initialChapterNo;
+            openedVerseNo = initialVerseNo;
+          },
+    );
+
+    await tester.tap(find.text('통독 진행률'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('bible-progress-chapter-2')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('bible-progress-chapter-2')));
+    await tester.pumpAndSettle();
+
+    expect(openedBookNo, 1);
+    expect(openedChapterNo, 2);
+    expect(openedVerseNo, isNull);
+    expect(
+      find.byKey(const ValueKey('bible-progress-chapter-2')),
+      findsNothing,
+    );
+  });
 }
 
 Future<void> _pumpProfileTab(
@@ -399,6 +441,12 @@ Future<void> _pumpProfileTab(
   required StoryRepository storyRepository,
   required UserRepository userRepository,
   required SupabaseClient supabaseClient,
+  Future<void> Function({
+    int? initialBookNo,
+    int? initialChapterNo,
+    int? initialVerseNo,
+  })?
+  onOpenBibleReader,
 }) async {
   tester.view.physicalSize = const Size(900, 700);
   tester.view.devicePixelRatio = 1.0;
@@ -418,6 +466,7 @@ Future<void> _pumpProfileTab(
           onStartQuiz: (_) {},
           onOpenEventDetail: (_, {source, sourceId}) {},
           onOpenBibleReader:
+              onOpenBibleReader ??
               ({initialBookNo, initialChapterNo, initialVerseNo}) {
                 return Future<void>.value();
               },

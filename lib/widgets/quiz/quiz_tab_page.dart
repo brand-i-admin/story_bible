@@ -11,11 +11,11 @@ import 'daily_exploration_section.dart';
 
 enum QuizTabInitialTab { daily, weekly }
 
-/// 홈 상단 "탐험" 버튼이 여는 페이지.
+/// 홈 상단 "미션" 버튼이 여는 페이지.
 ///
 /// 두 탭으로 구성:
-///  - 매일 탐험: KST 날짜 시드로 고른 사건 1개를 지도 + 사건 카드로 표시.
-///  - 주간 탐험: 기존 [WeeklyTabPage] 본문 (embedded 모드, scaffold 생략).
+///  - 매일 미션: KST 날짜 시드로 고른 사건 1개를 지도 + 사건 카드로 표시.
+///  - 주간 미션: 기존 [WeeklyTabPage] 본문 (embedded 모드, scaffold 생략).
 class QuizTabPage extends ConsumerStatefulWidget {
   const QuizTabPage({
     super.key,
@@ -45,7 +45,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
   @override
   Widget build(BuildContext context) {
     return SubPageScaffold(
-      title: '탐험',
+      title: '미션',
       compactBackOnly: true,
       child: Column(
         children: [
@@ -90,7 +90,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
           children: [
             Expanded(
               child: _tabButton(
-                label: '매일 탐험',
+                label: '매일 미션',
                 selected: _selectedTab == 0,
                 completed: _dailyCompleted,
                 onTap: () => setState(() => _selectedTab = 0),
@@ -99,12 +99,12 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
             const SizedBox(width: 4),
             Expanded(
               child: _tabButton(
-                label: '주간 탐험',
+                label: '주간 미션',
                 selected: _selectedTab == 1,
                 completed: false,
                 onTap: () {
                   if (ref.read(signedInUserProvider) == null) {
-                    widget.onLoginRequired?.call('주간 탐험 기록을 저장하려면 로그인이 필요해요.');
+                    widget.onLoginRequired?.call('주간 미션 기록을 저장하려면 로그인이 필요해요.');
                   }
                   setState(() => _selectedTab = 1);
                 },
@@ -122,7 +122,7 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
     required bool completed,
     required VoidCallback onTap,
   }) {
-    // 우선순위: completed > selected > 기본. 완료된 매일 탐험은 항상 초록 표시.
+    // 우선순위: completed > selected > 기본. 완료된 매일 미션은 항상 초록 표시.
     final Color bg;
     final Color textColor;
     if (completed) {

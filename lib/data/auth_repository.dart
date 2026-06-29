@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
 import 'package:crypto/crypto.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_user_profile.dart';
-
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
 class AuthRepository {
   const AuthRepository(this._client);
@@ -76,7 +77,51 @@ class AuthRepository {
   }
 
   Future<void> signInWithGoogle() async {
-    await _signInWithOAuth(OAuthProvider.google, failureLabel: '구글');
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      await _signInWithNativeGoogleOnAndroid();
+      return;
+    }
+    await _signInWithOAuth(
+      OAuthProvider.google,
+      failureLabel: '구글',
+      queryParams: googleAccountChooserQueryParams(),
+    );
+  }
+
+  Future<void> _signInWithNativeGoogleOnAndroid() async {
+    final googleSignIn = GoogleSignIn(scopes: const ['email', 'profile']);
+
+    try {
+      await googleSignIn.signOut();
+      final account = await googleSignIn.signIn();
+      if (account == null) {
+        return;
+      }
+
+      final authentication = await account.authentication;
+      final idToken = authentication.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw const AuthException('구글 로그인 토큰을 가져오지 못했습니다.');
+      }
+
+      await _client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: authentication.accessToken,
+      );
+    } on PlatformException catch (error) {
+      if (error.code == GoogleSignIn.kSignInCanceledError) {
+        return;
+      }
+      if (_isGoogleDeveloperError(error)) {
+        throw const AuthException(
+          '구글 로그인 설정을 확인해야 합니다. Firebase/Google Cloud의 Android OAuth '
+          'client에 com.storybible.app 패키지와 현재 서명 인증서 SHA-1/SHA-256을 '
+          '등록한 뒤 google-services.json을 다시 내려받아 주세요.',
+        );
+      }
+      throw AuthException(error.message ?? '구글 로그인에 실패했습니다.');
+    }
   }
 
   Future<void> signInWithKakao() async {
@@ -86,10 +131,12 @@ class AuthRepository {
   Future<void> _signInWithOAuth(
     OAuthProvider provider, {
     required String failureLabel,
+    Map<String, String>? queryParams,
   }) async {
     final launched = await _client.auth.signInWithOAuth(
       provider,
       redirectTo: _oauthRedirectForPlatform,
+      queryParams: queryParams,
       // authScreenLaunchMode 는 모바일 전용. 웹에서는 current tab 리다이렉트를
       // 써야 SetSID → Supabase callback 체인이 정상 동작한다.
       authScreenLaunchMode: kIsWeb
@@ -126,6 +173,22 @@ class AuthRepository {
       // not surface as a failed deletion.
     }
   }
+}
+
+@visibleForTesting
+Map<String, String> googleAccountChooserQueryParams() {
+  return const {'prompt': 'select_account'};
+}
+
+bool _isGoogleDeveloperError(PlatformException error) {
+  final detailText = [
+    error.code,
+    error.message,
+    error.details,
+  ].whereType<Object>().join(' ');
+  return detailText.contains('ApiException: 10') ||
+      detailText.contains('DEVELOPER_ERROR') ||
+      detailText.contains('developer_error');
 }
 
 String accountDeletionConfirmationId({

@@ -101,6 +101,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -123,8 +124,10 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           ),
           child: Text(
             label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: selected ? Colors.white : const Color(0xFF6A4C2E),
               fontWeight: FontWeight.w900,

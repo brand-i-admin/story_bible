@@ -10,8 +10,9 @@ extension ProfileRightPanelExt on ProfileTabPageState {
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,
   }) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
-      height: 50,
+      constraints: BoxConstraints(minHeight: largeText ? 58 : 50),
       padding: const EdgeInsets.all(4),
       decoration: floatingPanelDecoration(
         color: const Color(0xFFF7E9D2),
@@ -40,19 +41,26 @@ extension ProfileRightPanelExt on ProfileTabPageState {
     required String label,
     required VoidCallback onTap,
   }) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: 48,
+          constraints: BoxConstraints(minHeight: largeText ? 58 : 48),
+          padding: EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: largeText ? 8 : 0,
+          ),
           decoration: softButtonDecoration(selected: false),
           alignment: Alignment.center,
           child: Text(
             label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.ink500,
               fontSize: 15.2,
@@ -70,6 +78,7 @@ extension ProfileRightPanelExt on ProfileTabPageState {
     required VoidCallback onTap,
   }) {
     final visibleId = shareId.trim().isEmpty ? '-------' : shareId.trim();
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -87,8 +96,11 @@ extension ProfileRightPanelExt on ProfileTabPageState {
             children: [
               Text(
                 visibleId,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? 2 : 1,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: TextStyle(
                   color: enabled
                       ? const Color(0xFF6C4C28)

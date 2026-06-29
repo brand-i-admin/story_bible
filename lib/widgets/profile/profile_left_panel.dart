@@ -3,6 +3,10 @@
 // 프로필 좌측 패널 (아바타/헤더/콘텐츠 탭/기록·기도·저장·말씀 미리보기).
 part of '../profile_tab_page.dart';
 
+bool _profileUsesLargeTextLayout(BuildContext context) {
+  return MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+}
+
 extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileLeftPanel({
     required AppUserProfile profile,
@@ -78,7 +82,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   double _profileRecordsContentHeight() {
     final state = ref.read(storyControllerProvider);
     final stats = buildProfileQuizStats(state.quizAttemptSummaries);
-    return stats.total == 0 ? 116 : 96;
+    return stats.total == 0 ? 188 : 168;
   }
 
   double _profilePrayerContentHeight({required bool isAuthenticated}) {
@@ -115,6 +119,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   Widget _buildProfileHeader({required AppUserProfile profile}) {
+    final largeText = _profileUsesLargeTextLayout(context);
     return Padding(
       padding: const EdgeInsets.only(left: 56, right: 10),
       child: Row(
@@ -140,8 +145,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                         Expanded(
                           child: Text(
                             profile.nickname,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: largeText ? 2 : 1,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
                             style: const TextStyle(
                               color: AppColors.ink500,
                               fontSize: 16,
@@ -173,89 +181,45 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   Widget _buildProfileContentTabs() {
-    final selectedIndex = switch (_profileContentTab) {
-      _ProfileContentTab.records => 0,
-      _ProfileContentTab.prayer => 1,
-      _ProfileContentTab.saved => 2,
-      _ProfileContentTab.verses => 3,
-    };
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final tabBarWidth = math.min(constraints.maxWidth, 336.0);
-        final segmentWidth = tabBarWidth / 4;
-        final indicatorWidth = math.min(54.0, segmentWidth - 14);
-        final indicatorLeft =
-            segmentWidth * selectedIndex +
-            ((segmentWidth - indicatorWidth) / 2);
-
-        return SizedBox(
-          height: 34,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: SizedBox(
-              width: tabBarWidth,
-              child: Stack(
-                children: [
-                  const Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: ColoredBox(
-                      color: Color(0x338E6F48),
-                      child: SizedBox(height: 2),
-                    ),
-                  ),
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOut,
-                    left: indicatorLeft,
-                    bottom: 0,
-                    child: Container(
-                      width: indicatorWidth,
-                      height: 3,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFB26B28),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _profileContentTabButton(
-                            label: '기록',
-                            tab: _ProfileContentTab.records,
-                          ),
-                        ),
-                        Expanded(
-                          child: _profileContentTabButton(
-                            label: '기도',
-                            tab: _ProfileContentTab.prayer,
-                          ),
-                        ),
-                        Expanded(
-                          child: _profileContentTabButton(
-                            label: '저장',
-                            tab: _ProfileContentTab.saved,
-                          ),
-                        ),
-                        Expanded(
-                          child: _profileContentTabButton(
-                            label: '말씀',
-                            tab: _ProfileContentTab.verses,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+    return Container(
+      height: 42,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1E1C0),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xAA8E6F48), width: 0.8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _profileContentTabButton(
+              label: '기록',
+              tab: _ProfileContentTab.records,
             ),
           ),
-        );
-      },
+          const SizedBox(width: 4),
+          Expanded(
+            child: _profileContentTabButton(
+              label: '기도',
+              tab: _ProfileContentTab.prayer,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: _profileContentTabButton(
+              label: '저장',
+              tab: _ProfileContentTab.saved,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: _profileContentTabButton(
+              label: '말씀',
+              tab: _ProfileContentTab.verses,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -264,28 +228,32 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required _ProfileContentTab tab,
   }) {
     final selected = _profileContentTab == tab;
+    final largeText = _profileUsesLargeTextLayout(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
           _selectProfileContentTab(tab);
         },
-        borderRadius: BorderRadius.circular(8),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              // "내 기도/중보 기도" 섹션 타이틀과 동일한 14.7pt 통일.
-              style: TextStyle(
-                color: selected
-                    ? const Color(0xFFB26B28)
-                    : const Color(0xFF7E735F),
-                fontSize: 14.7,
-                fontWeight: FontWeight.w900,
-              ),
+        borderRadius: BorderRadius.circular(9),
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? AppColors.brownWarm : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
+            boxShadow: selected ? AppShadows.sm : null,
+          ),
+          child: Text(
+            label,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: selected ? Colors.white : AppColors.ink350,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w900,
+              height: 1,
             ),
           ),
         ),
@@ -311,15 +279,64 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
+  ({int completed, int total, double fraction}) _profileStoryProgress(
+    StoryState state,
+  ) {
+    final events = _profileAllEvents.isNotEmpty
+        ? _profileAllEvents
+        : state.events;
+    final total = events.length;
+    if (total == 0) {
+      return (completed: 0, total: 0, fraction: 0);
+    }
+    final completed = events
+        .where((event) => state.completedEventIds.contains(event.id))
+        .length;
+    return (
+      completed: completed,
+      total: total,
+      fraction: (completed / total).clamp(0.0, 1.0).toDouble(),
+    );
+  }
+
+  ({int completed, int total, double fraction}) _profileBibleProgress(
+    StoryState state,
+  ) {
+    final total = _bibleChapterTotalCount();
+    final completed = state.completedBibleChapterKeys.length
+        .clamp(0, total)
+        .toInt();
+    return (
+      completed: completed,
+      total: total,
+      fraction: total == 0
+          ? 0.0
+          : (completed / total).clamp(0.0, 1.0).toDouble(),
+    );
+  }
+
+  int _bibleChapterTotalCount() {
+    return bibleBooks.fold<int>(0, (sum, book) => sum + book.chapters);
+  }
+
   Widget _buildProfileRecordsTabBody() {
     final state = ref.watch(storyControllerProvider);
     final stats = buildProfileQuizStats(state.quizAttemptSummaries);
+    final storyProgress = _profileStoryProgress(state);
+    final bibleProgress = _profileBibleProgress(state);
 
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _ProfileOverallProgressRow(
+            storyProgress: storyProgress,
+            bibleProgress: bibleProgress,
+            onTapStory: _openStoryProgressDialog,
+            onTapBible: _openBibleProgressDialog,
+          ),
+          const SizedBox(height: 9),
           _ProfileRecordsStatsPanel(
             quizStats: stats,
             selectedQuizFilter: null,
@@ -336,14 +353,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               );
             },
           ),
-          if (stats.total == 0) ...[
-            const SizedBox(height: 6),
-            _buildProfileTabMessage(
-              '퀴즈를 풀면 기록이 쌓여요.',
-              fontSize: 10.8,
-              scaleDownSingleLine: true,
-            ),
-          ],
         ],
       ),
     );
@@ -383,8 +392,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       children: [
         const Text(
           '저장한 말씀',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          overflow: TextOverflow.visible,
           style: TextStyle(
             color: Color(0xFF452F1A),
             fontWeight: FontWeight.w900,
@@ -418,6 +427,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         ? profile.prayerRequest!.trim()
         : '오늘의 기도제목을 적어 보세요.';
     final hasItems = _intercessoryPrayerItems.isNotEmpty;
+    final largeText = _profileUsesLargeTextLayout(context);
     const sectionTitleStyle = TextStyle(
       color: Color(0xFF452F1A),
       fontWeight: FontWeight.w900,
@@ -432,8 +442,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             const Expanded(
               child: Text(
                 '내 기도',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                overflow: TextOverflow.visible,
                 style: sectionTitleStyle,
               ),
             ),
@@ -466,8 +476,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               padding: const EdgeInsets.only(right: 2, bottom: 2),
               child: Text(
                 prayerText,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? null : 2,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   color: Color(0xFF5A4326),
                   fontWeight: FontWeight.w400,
@@ -484,8 +497,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             const Expanded(
               child: Text(
                 '중보 기도',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                overflow: TextOverflow.visible,
                 style: sectionTitleStyle,
               ),
             ),
@@ -550,13 +563,15 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required String actionLabel,
     required VoidCallback onAction,
   }) {
+    final largeText = _profileUsesLargeTextLayout(context);
     return Row(
       children: [
         Expanded(
           child: Text(
             title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
             style: const TextStyle(
               color: Color(0xFF452F1A),
               fontWeight: FontWeight.w900,
@@ -738,6 +753,280 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       title: title,
       eventIds: eventIds,
       emptyText: emptyText,
+    );
+  }
+
+  Future<void> _openStoryProgressDialog() async {
+    final state = ref.read(storyControllerProvider);
+    final events = _profileAllEvents.isNotEmpty
+        ? _profileAllEvents
+        : state.events;
+    final eraIdsWithEvents = events.map((event) => event.eraId).toSet();
+    final eras = state.eras
+        .where((era) => eraIdsWithEvents.contains(era.id))
+        .toList(growable: false);
+    var selectedEraId = eras.firstOrNull?.id;
+    final charactersByCode = <String, Character>{
+      for (final character in _profileAllPeople) character.code: character,
+      for (final character in state.characters) character.code: character,
+    };
+
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'close',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 260),
+      pageBuilder: (dialogContext, _, __) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final selectedEra = eras
+                .where((era) => era.id == selectedEraId)
+                .firstOrNull;
+            final selectedEvents = selectedEra == null
+                ? const <StoryEvent>[]
+                : events
+                      .where((event) => event.eraId == selectedEra.id)
+                      .toList(growable: false);
+            final selectedCompletedCount = selectedEvents
+                .where((event) => state.completedEventIds.contains(event.id))
+                .length;
+            final selectedFraction = selectedEvents.isEmpty
+                ? 0.0
+                : (selectedCompletedCount / selectedEvents.length)
+                      .clamp(0.0, 1.0)
+                      .toDouble();
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 880,
+                  maxHeight: MediaQuery.of(dialogContext).size.height * 0.86,
+                  minWidth: 320,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: modalSurfaceDecoration(),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const Text(
+                                  '이야기 진행률',
+                                  style: TextStyle(
+                                    color: Color(0xFF3A2B15),
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                EraPickRows(
+                                  eras: eras,
+                                  selectedEraId: selectedEraId,
+                                  onSelectEra: (eraId) {
+                                    setDialogState(() {
+                                      selectedEraId = eraId;
+                                    });
+                                  },
+                                  trailingScrollPadding: 8,
+                                ),
+                                const SizedBox(height: 10),
+                                _StoryProgressSelectedEraMeter(
+                                  eraName: selectedEra?.name ?? '시대',
+                                  completed: selectedCompletedCount,
+                                  total: selectedEvents.length,
+                                  fraction: selectedFraction,
+                                ),
+                                const SizedBox(height: 10),
+                                Expanded(
+                                  child: ProfileEventReviewGrid(
+                                    events: selectedEvents,
+                                    eras: state.eras,
+                                    charactersByCode: charactersByCode,
+                                    completedEventIds: state.completedEventIds,
+                                    eventEmotionMarks: state.eventEmotionMarks,
+                                    quizAttemptSummaries:
+                                        state.quizAttemptSummaries,
+                                    emptyText: '이 시대의 이야기가 없습니다.',
+                                    onOpenEventDetail: (event) {
+                                      Navigator.of(dialogContext).pop();
+                                      widget.onOpenEventDetail(event);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            right: 12,
+                            top: 12,
+                            child: modalCloseButton(
+                              onTap: () => Navigator.of(dialogContext).pop(),
+                              size: 32,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _openBibleProgressDialog() async {
+    final state = ref.read(storyControllerProvider);
+    var selectedTestament = 'old';
+    var selectedBookNo = oldTestamentFirstBookNo;
+
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'close',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 260),
+      pageBuilder: (dialogContext, _, __) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final bookNumbers = _profileBookNumbersForTestament(
+              selectedTestament,
+            );
+            if (!bookNumbers.contains(selectedBookNo)) {
+              selectedBookNo = bookNumbers.first;
+            }
+            final book = bibleBooks[selectedBookNo - 1];
+            final completedChapters = {
+              for (var chapter = 1; chapter <= book.chapters; chapter += 1)
+                if (state.completedBibleChapterKeys.contains(
+                  bibleChapterProgressKey(
+                    bookNo: selectedBookNo,
+                    chapterNo: chapter,
+                  ),
+                ))
+                  chapter,
+            };
+            final fraction = book.chapters == 0
+                ? 0.0
+                : (completedChapters.length / book.chapters)
+                      .clamp(0.0, 1.0)
+                      .toDouble();
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 720,
+                  maxHeight: MediaQuery.of(dialogContext).size.height * 0.82,
+                  minWidth: 320,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: modalSurfaceDecoration(),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const Text(
+                                  '통독 진행률',
+                                  style: TextStyle(
+                                    color: Color(0xFF3A2B15),
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                _BibleProgressPickerRow(
+                                  selectedTestament: selectedTestament,
+                                  selectedBookNo: selectedBookNo,
+                                  bookNumbers: bookNumbers,
+                                  onTestamentChanged: (testament) {
+                                    setDialogState(() {
+                                      selectedTestament = testament;
+                                      selectedBookNo =
+                                          _profileBookNumbersForTestament(
+                                            testament,
+                                          ).first;
+                                    });
+                                  },
+                                  onBookChanged: (bookNo) {
+                                    setDialogState(() {
+                                      selectedBookNo = bookNo;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(height: 14),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    physics: const ClampingScrollPhysics(),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        _BibleChapterProgressGrid(
+                                          chapterCount: book.chapters,
+                                          completedChapters: completedChapters,
+                                          onChapterTap: (chapter) async {
+                                            final bookNo = selectedBookNo;
+                                            Navigator.of(dialogContext).pop();
+                                            await widget.onOpenBibleReader(
+                                              initialBookNo: bookNo,
+                                              initialChapterNo: chapter,
+                                            );
+                                          },
+                                        ),
+                                        const SizedBox(height: 14),
+                                        _BibleBookProgressFooter(
+                                          bookName: book.name,
+                                          completed: completedChapters.length,
+                                          total: book.chapters,
+                                          fraction: fraction,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            right: 12,
+                            top: 12,
+                            child: modalCloseButton(
+                              onTap: () => Navigator.of(dialogContext).pop(),
+                              size: 32,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1116,6 +1405,551 @@ class _ProfileRecordsStatsPanel extends StatelessWidget {
   }
 }
 
+class _ProfileOverallProgressRow extends StatelessWidget {
+  const _ProfileOverallProgressRow({
+    required this.storyProgress,
+    required this.bibleProgress,
+    required this.onTapStory,
+    required this.onTapBible,
+  });
+
+  final ({int completed, int total, double fraction}) storyProgress;
+  final ({int completed, int total, double fraction}) bibleProgress;
+  final VoidCallback onTapStory;
+  final VoidCallback onTapBible;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _ProfileOverallProgressButton(
+            icon: Icons.auto_stories_rounded,
+            label: '이야기 진행률',
+            completed: storyProgress.completed,
+            total: storyProgress.total,
+            fraction: storyProgress.fraction,
+            color: AppColors.greenTop,
+            onTap: onTapStory,
+          ),
+        ),
+        const SizedBox(width: 9),
+        Expanded(
+          child: _ProfileOverallProgressButton(
+            icon: Icons.menu_book_rounded,
+            label: '통독 진행률',
+            completed: bibleProgress.completed,
+            total: bibleProgress.total,
+            fraction: bibleProgress.fraction,
+            color: const Color(0xFFC7923D),
+            onTap: onTapBible,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileOverallProgressButton extends StatelessWidget {
+  const _ProfileOverallProgressButton({
+    required this.icon,
+    required this.label,
+    required this.completed,
+    required this.total,
+    required this.fraction,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final int completed;
+  final int total;
+  final double fraction;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final valueLabel = '$completed/$total';
+    final largeText = _profileUsesLargeTextLayout(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(13),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 64),
+          padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
+          decoration: BoxDecoration(
+            color: const Color(0xEFFFF8E9),
+            borderRadius: BorderRadius.circular(13),
+            border: Border.all(color: const Color(0x55A8834D), width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x10000000),
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 16, color: color),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      label,
+                      maxLines: largeText ? 2 : 1,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
+                      style: const TextStyle(
+                        color: Color(0xFF5A4326),
+                        fontSize: 12.2,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      minHeight: 13,
+                      value: fraction.clamp(0.0, 1.0).toDouble(),
+                      backgroundColor: const Color(0xFFE4D3AF),
+                      color: color,
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          valueLabel,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            color: Color(0xFF4E3B21),
+                            fontSize: 9.4,
+                            fontWeight: FontWeight.w900,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryProgressSelectedEraMeter extends StatelessWidget {
+  const _StoryProgressSelectedEraMeter({
+    required this.eraName,
+    required this.completed,
+    required this.total,
+    required this.fraction,
+  });
+
+  final String eraName;
+  final int completed;
+  final int total;
+  final double fraction;
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = (fraction.clamp(0.0, 1.0) * 100).round();
+    final largeText = _profileUsesLargeTextLayout(context);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(11, 9, 11, 10),
+      decoration: BoxDecoration(
+        color: const Color(0xEFFFF8E9),
+        borderRadius: BorderRadius.circular(13),
+        border: Border.all(color: const Color(0x55A8834D), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  eraName,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: const TextStyle(
+                    color: Color(0xFF5A4326),
+                    fontSize: 12.4,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
+                  ),
+                ),
+              ),
+              Text(
+                '$percent%',
+                maxLines: 1,
+                style: const TextStyle(
+                  color: AppColors.greenBot,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w900,
+                  height: 1.0,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              minHeight: 7,
+              value: fraction.clamp(0.0, 1.0).toDouble(),
+              backgroundColor: const Color(0xFFE4D3AF),
+              color: AppColors.greenTop,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$completed / $total',
+            maxLines: 1,
+            style: const TextStyle(
+              color: AppColors.ink300,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              height: 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BibleProgressPickerRow extends StatelessWidget {
+  const _BibleProgressPickerRow({
+    required this.selectedTestament,
+    required this.selectedBookNo,
+    required this.bookNumbers,
+    required this.onTestamentChanged,
+    required this.onBookChanged,
+  });
+
+  final String selectedTestament;
+  final int selectedBookNo;
+  final List<int> bookNumbers;
+  final ValueChanged<String> onTestamentChanged;
+  final ValueChanged<int> onBookChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final safeBookNo = bookNumbers.contains(selectedBookNo)
+        ? selectedBookNo
+        : bookNumbers.first;
+    final largeText = _profileUsesLargeTextLayout(context);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 92,
+            child: bibleDropdownFrame<String>(
+              value: selectedTestament,
+              items: const [
+                DropdownMenuItem(value: 'old', child: Text('구약')),
+                DropdownMenuItem(value: 'new', child: Text('신약')),
+              ],
+              onChanged: (v) => v != null ? onTestamentChanged(v) : null,
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 148,
+            child: bibleDropdownFrame<int>(
+              value: safeBookNo,
+              items: [
+                for (final bookNo in bookNumbers)
+                  DropdownMenuItem<int>(
+                    value: bookNo,
+                    child: Text(
+                      bibleBooks[bookNo - 1].name,
+                      maxLines: largeText ? 2 : 1,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
+                    ),
+                  ),
+              ],
+              onChanged: (v) => v != null ? onBookChanged(v) : null,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BibleChapterProgressGrid extends StatelessWidget {
+  const _BibleChapterProgressGrid({
+    required this.chapterCount,
+    required this.completedChapters,
+    required this.onChapterTap,
+  });
+
+  final int chapterCount;
+  final Set<int> completedChapters;
+  final ValueChanged<int> onChapterTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (chapterCount <= 0) {
+      return const SizedBox.shrink();
+    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 620
+            ? 10
+            : (constraints.maxWidth >= 460 ? 8 : 6);
+        final rowCount = (chapterCount / columns).ceil();
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadii.lg),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.parchmentCream.withValues(alpha: 0.54),
+              borderRadius: BorderRadius.circular(AppRadii.lg),
+              border: Border.all(color: const Color(0x228E6F48)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) ...[
+                  if (rowIndex > 0) const _BibleChapterHorizontalDivider(),
+                  SizedBox(
+                    height: 42,
+                    child: Row(
+                      children: [
+                        for (
+                          var colIndex = 0;
+                          colIndex < columns;
+                          colIndex++
+                        ) ...[
+                          Expanded(
+                            child: _BibleChapterGridCell(
+                              chapter: rowIndex * columns + colIndex + 1,
+                              chapterCount: chapterCount,
+                              completedChapters: completedChapters,
+                              onTap: onChapterTap,
+                            ),
+                          ),
+                          if (colIndex < columns - 1)
+                            const _BibleChapterVerticalDivider(),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _BibleChapterGridCell extends StatelessWidget {
+  const _BibleChapterGridCell({
+    required this.chapter,
+    required this.chapterCount,
+    required this.completedChapters,
+    required this.onTap,
+  });
+
+  final int chapter;
+  final int chapterCount;
+  final Set<int> completedChapters;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (chapter > chapterCount) {
+      return const SizedBox.shrink();
+    }
+    final completed = completedChapters.contains(chapter);
+    return Semantics(
+      button: true,
+      label: '$chapter장 성경 열기',
+      child: Tooltip(
+        message: '$chapter장 읽기',
+        child: InkWell(
+          key: ValueKey('bible-progress-chapter-$chapter'),
+          onTap: () => onTap(chapter),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            alignment: Alignment.center,
+            color: completed
+                ? AppColors.greenTint1.withValues(alpha: 0.86)
+                : Colors.transparent,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$chapter',
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: completed ? AppColors.greenBot : AppColors.ink500,
+                      fontSize: AppFontSizes.body,
+                      fontWeight: completed ? FontWeight.w900 : FontWeight.w800,
+                      height: 1,
+                    ),
+                  ),
+                  if (completed) ...[
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      size: 14,
+                      color: AppColors.greenBot,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BibleBookProgressFooter extends StatelessWidget {
+  const _BibleBookProgressFooter({
+    required this.bookName,
+    required this.completed,
+    required this.total,
+    required this.fraction,
+  });
+
+  final String bookName;
+  final int completed;
+  final int total;
+  final double fraction;
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = (fraction.clamp(0.0, 1.0) * 100).round();
+    final largeText = _profileUsesLargeTextLayout(context);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
+      decoration: BoxDecoration(
+        color: const Color(0xEFFFF8E9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x55A8834D), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '$bookName 통독',
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: const TextStyle(
+                    color: Color(0xFF5A4326),
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              Text(
+                '$percent%',
+                style: const TextStyle(
+                  color: AppColors.greenBot,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              minHeight: 8,
+              value: fraction.clamp(0.0, 1.0).toDouble(),
+              backgroundColor: const Color(0xFFE4D3AF),
+              color: AppColors.greenTop,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            '$completed / $total장',
+            style: const TextStyle(
+              color: AppColors.ink300,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BibleChapterHorizontalDivider extends StatelessWidget {
+  const _BibleChapterHorizontalDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7,
+      alignment: Alignment.center,
+      child: Container(height: 1, color: const Color(0x228E6F48)),
+    );
+  }
+}
+
+class _BibleChapterVerticalDivider extends StatelessWidget {
+  const _BibleChapterVerticalDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 5,
+      alignment: Alignment.center,
+      child: Container(
+        width: 1,
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        color: const Color(0x228E6F48),
+      ),
+    );
+  }
+}
+
 class _ProfileQuizStatsStrip extends StatelessWidget {
   const _ProfileQuizStatsStrip({
     required this.stats,
@@ -1304,4 +2138,17 @@ class _ProfileEraSectionLabel extends StatelessWidget {
       ),
     );
   }
+}
+
+List<int> _profileBookNumbersForTestament(String testament) {
+  final firstBookNo = testament == 'new'
+      ? newTestamentFirstBookNo
+      : oldTestamentFirstBookNo;
+  final lastBookNo = testament == 'new'
+      ? newTestamentLastBookNo
+      : oldTestamentLastBookNo;
+  return List<int>.generate(
+    lastBookNo - firstBookNo + 1,
+    (index) => firstBookNo + index,
+  );
 }

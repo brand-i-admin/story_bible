@@ -22,6 +22,7 @@ class ParchmentPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Scaffold(
       floatingActionButton: floatingActionButton,
       body: Stack(
@@ -99,10 +100,13 @@ class ParchmentPageScaffold extends StatelessWidget {
                             if (showBackButton) const SizedBox(width: 12),
                             Expanded(
                               child: Container(
-                                height: 40,
+                                constraints: BoxConstraints(
+                                  minHeight: largeText ? 52 : 40,
+                                ),
                                 alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   horizontal: 14,
+                                  vertical: largeText ? 8 : 0,
                                 ),
                                 decoration: BoxDecoration(
                                   color: AppColors.floatingSurfaceDefault,
@@ -121,8 +125,11 @@ class ParchmentPageScaffold extends StatelessWidget {
                                 ),
                                 child: Text(
                                   title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: largeText ? 2 : 1,
+                                  overflow: largeText
+                                      ? TextOverflow.visible
+                                      : TextOverflow.ellipsis,
+                                  softWrap: true,
                                   style: const TextStyle(
                                     color: AppColors.ink500,
                                     fontSize: 16,
@@ -268,6 +275,7 @@ class ParchmentListPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Row(
       children: [
         ParchmentIconBackButton(
@@ -277,8 +285,9 @@ class ParchmentListPageHeader extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
             style: const TextStyle(
               color: AppColors.ink800,
               fontSize: 18,

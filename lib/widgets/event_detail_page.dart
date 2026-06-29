@@ -604,6 +604,7 @@ class _StoryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final metaLabel = _eventDetailMetaLabel(event);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -611,27 +612,44 @@ class _StoryHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FittedBox(
-                alignment: Alignment.centerLeft,
-                fit: BoxFit.scaleDown,
-                child: Text(
+              if (largeText)
+                Text(
                   event.title,
-                  maxLines: 1,
-                  softWrap: false,
+                  maxLines: 3,
+                  overflow: TextOverflow.visible,
+                  softWrap: true,
                   style: const TextStyle(
                     fontSize: 20,
                     height: 1.22,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF3A2B15),
                   ),
+                )
+              else
+                FittedBox(
+                  alignment: Alignment.centerLeft,
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    event.title,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      height: 1.22,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF3A2B15),
+                    ),
+                  ),
                 ),
-              ),
               if (metaLabel.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Text(
                   metaLabel,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? null : 2,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     fontSize: 11.5,
                     height: 1.2,
@@ -878,6 +896,7 @@ class _NavRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final thumbnail = ClipOval(
       child: SizedBox(
         width: 48,
@@ -932,8 +951,9 @@ class _NavRow extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           event.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          maxLines: largeText ? 3 : 1,
+          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+          softWrap: true,
           textAlign: isPrev ? TextAlign.left : TextAlign.right,
           style: const TextStyle(
             fontSize: 13,
@@ -1430,6 +1450,7 @@ class _EmotionChoiceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1459,8 +1480,11 @@ class _EmotionChoiceChip extends StatelessWidget {
               Flexible(
                 child: Text(
                   option.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: TextStyle(
                     color: selected
                         ? const Color(0xFF7C4716)

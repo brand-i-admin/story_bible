@@ -296,6 +296,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentMonth = _monthStart(today);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final canGoNext = focusedMonth.isBefore(currentMonth);
     final visibleDates = expanded
         ? _monthVisibleDates(focusedMonth)
@@ -330,8 +331,11 @@ class _EmotionDiaryPanel extends StatelessWidget {
               Expanded(
                 child: Text(
                   '${focusedMonth.year}년 ${focusedMonth.month}월',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     color: AppColors.ink800,
                     fontSize: 15.4,
@@ -447,7 +451,8 @@ class _DiaryContentTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 38,
+      key: const ValueKey('diary-content-tab-bar'),
+      height: 42,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppColors.parchmentCard,
@@ -490,6 +495,7 @@ class _DiaryContentTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -504,8 +510,10 @@ class _DiaryContentTabButton extends StatelessWidget {
           ),
           child: Text(
             label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: selected ? Colors.white : AppColors.ink350,
               fontSize: 11.8,
@@ -1050,6 +1058,7 @@ class _SelectedEmotionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final note = mark.note.trim().isEmpty
         ? '${mark.emotionLabel}으로 새겼어요.'
         : mark.note.trim();
@@ -1079,8 +1088,11 @@ class _SelectedEmotionRow extends StatelessWidget {
                         Expanded(
                           child: Text(
                             event?.title ?? '이야기 정보를 불러오는 중',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: largeText ? 2 : 1,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
                             style: const TextStyle(
                               color: AppColors.ink200,
                               fontSize: 10.8,
@@ -1102,8 +1114,11 @@ class _SelectedEmotionRow extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       note,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText ? null : 2,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: const TextStyle(
                         color: AppColors.ink700,
                         fontSize: 13.2,

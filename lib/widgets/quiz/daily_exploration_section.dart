@@ -84,7 +84,7 @@ class _DailyExplorationSectionState
     final dayKey = dailyExplorationKeyForKst(DateTime.now());
     final event = pickDailyExplorationEvent(events: events, dayKey: dayKey);
     if (event == null) {
-      throw StateError('오늘의 탐험 사건을 찾지 못했습니다.');
+      throw StateError('오늘의 미션 사건을 찾지 못했습니다.');
     }
 
     final era = eras.where((candidate) => candidate.id == event.eraId).first;
@@ -236,17 +236,22 @@ class _DailyExplorationSectionState
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return _errorBox('매일 탐험을 불러오지 못했습니다.\n${snapshot.error}');
+          return _errorBox('매일 미션을 불러오지 못했습니다.\n${snapshot.error}');
         }
         final data = snapshot.data;
         if (data == null) {
-          return _errorBox('오늘의 탐험 사건이 아직 없습니다.');
+          return _errorBox('오늘의 미션 사건이 아직 없습니다.');
         }
         _selectedEventId ??= data.event.id;
         final exploredEventIds = _exploredEventIds(state);
         _reportCompletion(
           data.event.id,
-          exploredEventIds.contains(data.event.id),
+          isDailyMissionCompletedForEvent(
+            eventId: data.event.id,
+            completedEventIds: state.completedEventIds,
+            mark: state.eventEmotionMarks[data.event.id],
+            now: DateTime.now(),
+          ),
         );
         return _buildBody(
           data: data,
@@ -488,7 +493,7 @@ class _DailyExplorationSectionState
           SizedBox(width: 8),
           Expanded(
             child: Text(
-              '비로그인 상태예요. 오늘의 탐험은 볼 수 있지만 읽기와 퀴즈 진행 기록은 로그인 후 저장돼요.',
+              '비로그인 상태예요. 오늘의 미션은 볼 수 있지만 읽기와 퀴즈 진행 기록은 로그인 후 저장돼요.',
               style: TextStyle(
                 color: Color(0xFF6A4A23),
                 fontSize: 12.2,
@@ -552,7 +557,7 @@ class _DailyExplorationIntro extends StatelessWidget {
               ),
               SizedBox(width: 7),
               Text(
-                '오늘의 탐험',
+                '오늘의 미션',
                 style: TextStyle(
                   color: AppColors.greenBtnBot,
                   fontSize: 13,
@@ -636,19 +641,28 @@ class _DailyExplorationViewSwitch extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            const SizedBox(
-              width: 58,
-              child: Text(
-                '함께 보기',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.ink300,
-                  fontSize: 11.8,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
+            Builder(
+              builder: (context) {
+                final largeText =
+                    MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+                return SizedBox(
+                  width: largeText ? 72 : 58,
+                  child: Text(
+                    '함께 보기',
+                    maxLines: largeText ? 2 : 1,
+                    overflow: largeText
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    softWrap: true,
+                    style: const TextStyle(
+                      color: AppColors.ink300,
+                      fontSize: 11.8,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
+                    ),
+                  ),
+                );
+              },
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -697,6 +711,7 @@ class _DailyExplorationPrimaryAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Tooltip(
       message: '오늘 선정된 사건 보기',
       child: Material(
@@ -722,8 +737,11 @@ class _DailyExplorationPrimaryAction extends StatelessWidget {
                 Flexible(
                   child: Text(
                     title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: largeText ? null : 2,
+                    overflow: largeText
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    softWrap: true,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: selected ? AppColors.fgOnDark : AppColors.ink500,
@@ -761,6 +779,7 @@ class _DailyExplorationSideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final color = selected
         ? AppColors.greenBtnBot
         : enabled
@@ -778,7 +797,7 @@ class _DailyExplorationSideButton extends StatelessWidget {
           onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(11),
           child: Container(
-            height: 38 + ((textScale - 1) * 16),
+            constraints: BoxConstraints(minHeight: 38 + ((textScale - 1) * 16)),
             padding: const EdgeInsets.symmetric(horizontal: 9),
             decoration: BoxDecoration(
               color: selected
@@ -799,8 +818,11 @@ class _DailyExplorationSideButton extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: largeText ? 2 : 1,
+                    overflow: largeText
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    softWrap: true,
                     style: TextStyle(
                       color: color,
                       fontSize: 12.1,
@@ -814,8 +836,11 @@ class _DailyExplorationSideButton extends StatelessWidget {
                   flex: 0,
                   child: Text(
                     countText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: largeText ? 2 : 1,
+                    overflow: largeText
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    softWrap: true,
                     style: TextStyle(
                       color: color.withValues(alpha: 0.78),
                       fontSize: 10.9,
@@ -856,6 +881,7 @@ class _DailyExplorationCardNoteBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isBlessing = note.kind == DailyExplorationCardNoteKind.blessing;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
       decoration: BoxDecoration(
@@ -882,8 +908,11 @@ class _DailyExplorationCardNoteBanner extends StatelessWidget {
           Expanded(
             child: Text(
               note.message,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? null : 2,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: const TextStyle(
                 color: AppColors.ink450,
                 fontSize: 12.4,
@@ -925,6 +954,7 @@ class _DailyIntroChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final maxWidth = MediaQuery.sizeOf(context).width * 0.58;
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth.clamp(148.0, 240.0)),
@@ -936,8 +966,11 @@ class _DailyIntroChip extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? 2 : 1,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: const TextStyle(
                 color: AppColors.ink450,
                 fontSize: 13.0,

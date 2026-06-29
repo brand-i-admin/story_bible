@@ -169,6 +169,7 @@ class _RegionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: selected
           ? theme.colorScheme.primary.withValues(alpha: 0.10)
@@ -200,8 +201,11 @@ class _RegionCard extends StatelessWidget {
                   children: [
                     Text(
                       landmark.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText ? 2 : 1,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 12,
@@ -210,8 +214,11 @@ class _RegionCard extends StatelessWidget {
                     if ((landmark.description ?? '').isNotEmpty)
                       Text(
                         landmark.description!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? null : 2,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 10,

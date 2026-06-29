@@ -22,6 +22,7 @@ class NotificationListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconData = _iconFor(notification.type);
     final iconColor = _iconColorFor(notification.type);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final titleStyle = TextStyle(
       fontSize: compact ? 13 : 14,
       fontWeight: notification.isRead ? FontWeight.w600 : FontWeight.w800,
@@ -72,8 +73,11 @@ class NotificationListTile extends StatelessWidget {
                         Expanded(
                           child: Text(
                             notification.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: largeText ? 2 : 1,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
                             style: titleStyle,
                           ),
                         ),
@@ -103,8 +107,11 @@ class NotificationListTile extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         notification.body!,
-                        maxLines: compact ? 1 : 2,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? null : (compact ? 1 : 2),
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                         style: bodyStyle,
                       ),
                     ],

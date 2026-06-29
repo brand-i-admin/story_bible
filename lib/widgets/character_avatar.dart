@@ -208,7 +208,7 @@ class _Fallback extends StatelessWidget {
       child: Text(
         text,
         maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.visible,
         style: TextStyle(
           color: const Color(0xFFF3EAD6),
           fontSize: fontSize,

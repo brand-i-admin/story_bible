@@ -140,6 +140,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
   }
 
   Widget _editorSectionLabel(String title, {String? subtitle}) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -156,8 +157,11 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
           Expanded(
             child: Text(
               subtitle.trim(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? 2 : 1,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: const TextStyle(
                 color: AppColors.ink200,
                 fontSize: 10.4,

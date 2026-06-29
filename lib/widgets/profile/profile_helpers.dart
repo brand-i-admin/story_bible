@@ -90,6 +90,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -97,13 +98,19 @@ extension ProfileHelpersExt on ProfileTabPageState {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           width: 54,
-          height: double.infinity,
+          constraints: BoxConstraints(minHeight: largeText ? 48 : 38),
           alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(
+            horizontal: 4,
+            vertical: largeText ? 6 : 0,
+          ),
           decoration: softButtonDecoration(selected: selected),
           child: Text(
             label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: selected ? AppColors.parchmentCream : AppColors.ink500,
               fontSize: 13.2,

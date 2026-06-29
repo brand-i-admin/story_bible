@@ -11,6 +11,17 @@ class BibleBookMeta {
   final int chapters;
 }
 
+String bibleChapterProgressKey({required int bookNo, required int chapterNo}) {
+  return '$bookNo:$chapterNo';
+}
+
+const int oldTestamentFirstBookNo = 1;
+const int oldTestamentLastBookNo = 39;
+const int newTestamentFirstBookNo = 40;
+const int newTestamentLastBookNo = 66;
+
+bool isNewTestamentBook(int bookNo) => bookNo >= newTestamentFirstBookNo;
+
 class BibleNavigationTarget {
   const BibleNavigationTarget({
     required this.bookNo,

@@ -14,6 +14,7 @@ import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../theme/tokens.dart';
+import '../utils/bible_book_meta.dart';
 import 'story_state.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -43,6 +44,8 @@ class StoryController extends Notifier<StoryState> {
       final eventProgress = await _fetchEventProgressForCurrentUser();
       final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
       final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+      final completedBibleChapterKeys =
+          await _fetchCompletedBibleChapterKeysForCurrentUser();
       final completedEventIds = _completedIdsFromProgress(
         eventProgress,
         eventEmotionMarks,
@@ -86,6 +89,7 @@ class StoryController extends Notifier<StoryState> {
         quizAttemptSummaries: quizAttemptSummaries,
         eventEmotionMarks: eventEmotionMarks,
         savedEventIds: savedEventIds,
+        completedBibleChapterKeys: completedBibleChapterKeys,
         selectedEraId: null,
         selectedCharacterCodes: const {},
         selectedCharacterColors: const {},
@@ -243,6 +247,8 @@ class StoryController extends Notifier<StoryState> {
       final eventProgress = await _fetchEventProgressForCurrentUser();
       final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
       final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+      final completedBibleChapterKeys =
+          await _fetchCompletedBibleChapterKeysForCurrentUser();
       final completedEventIds = _completedIdsFromProgress(
         eventProgress,
         eventEmotionMarks,
@@ -260,6 +266,7 @@ class StoryController extends Notifier<StoryState> {
         quizAttemptSummaries: quizAttemptSummaries,
         eventEmotionMarks: eventEmotionMarks,
         savedEventIds: savedEventIds,
+        completedBibleChapterKeys: completedBibleChapterKeys,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
         selectedTimelineUnitCodes: const {},
@@ -436,6 +443,48 @@ class StoryController extends Notifier<StoryState> {
       return;
     }
     state = state.copyWith(savedEventIds: savedEventIds);
+  }
+
+  Future<void> refreshCompletedBibleChapterKeys() async {
+    final keys = await _fetchCompletedBibleChapterKeysForCurrentUser();
+    state = state.copyWith(completedBibleChapterKeys: keys);
+  }
+
+  Future<void> setBibleChapterRead({
+    required int bookNo,
+    required int chapterNo,
+    required bool isRead,
+  }) async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return;
+    }
+    final safeBookNo = bookNo.clamp(1, bibleBooks.length).toInt();
+    final maxChapter = bibleBooks[safeBookNo - 1].chapters;
+    final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
+    final key = bibleChapterProgressKey(
+      bookNo: safeBookNo,
+      chapterNo: safeChapterNo,
+    );
+    final previous = state.completedBibleChapterKeys;
+    final next = {...previous};
+    if (isRead) {
+      next.add(key);
+    } else {
+      next.remove(key);
+    }
+    state = state.copyWith(completedBibleChapterKeys: next);
+    try {
+      await _repo.setBibleChapterRead(
+        userId: user.id,
+        bookNo: safeBookNo,
+        chapterNo: safeChapterNo,
+        isRead: isRead,
+      );
+    } catch (_) {
+      state = state.copyWith(completedBibleChapterKeys: previous);
+      rethrow;
+    }
   }
 
   Future<bool> toggleSavedEvent(String eventId) async {
@@ -712,6 +761,21 @@ class StoryController extends Notifier<StoryState> {
       return const <String>{};
     }
     return _repo.fetchSavedEventIds(user.id);
+  }
+
+  Future<Set<String>> _fetchCompletedBibleChapterKeysForCurrentUser() async {
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user == null) {
+      return const <String>{};
+    }
+    try {
+      return await _repo.fetchCompletedBibleChapterKeys(user.id);
+    } catch (error) {
+      debugPrint(
+        '[StoryController] fetch bible chapter progress failed: $error',
+      );
+      return const <String>{};
+    }
   }
 
   Set<String> _bibleReadIdsFromProgress(

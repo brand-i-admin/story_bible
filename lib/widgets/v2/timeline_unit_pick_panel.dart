@@ -313,8 +313,52 @@ class _TimelineUnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cardHeight = _cardHeightFor(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     const selectedColor = AppColors.greenBot;
     final bodyColor = selected ? AppColors.ink600 : AppColors.ink350;
+    final titleText = Text(
+      unit.numberedTitle,
+      maxLines: largeText ? null : 3,
+      overflow: largeText ? TextOverflow.visible : TextOverflow.clip,
+      softWrap: true,
+      style: theme.textTheme.labelLarge?.copyWith(
+        color: AppColors.ink800,
+        fontSize: 11.2,
+        fontWeight: FontWeight.w800,
+        height: 1.12,
+      ),
+    );
+    final countText = Text(
+      '${unit.events.length}개 이야기',
+      style: theme.textTheme.labelSmall?.copyWith(
+        color: selectedColor,
+        fontSize: 10.6,
+        fontWeight: FontWeight.w800,
+        height: 1.1,
+      ),
+    );
+    final subtitleText = Text(
+      unit.subtitle,
+      maxLines: largeText ? null : 4,
+      overflow: largeText ? TextOverflow.visible : TextOverflow.clip,
+      softWrap: true,
+      style: theme.textTheme.bodySmall?.copyWith(
+        color: bodyColor,
+        fontSize: 9.4,
+        height: 1.16,
+      ),
+    );
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: largeText ? MainAxisSize.min : MainAxisSize.max,
+      children: [
+        largeText ? titleText : Flexible(fit: FlexFit.loose, child: titleText),
+        const SizedBox(height: 2),
+        countText,
+        const SizedBox(height: AppSpacing.x1),
+        largeText ? subtitleText : Expanded(child: subtitleText),
+      ],
+    );
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -334,48 +378,7 @@ class _TimelineUnitCard extends StatelessWidget {
               ),
               boxShadow: selected ? AppShadows.green : AppShadows.sm,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: Text(
-                    unit.numberedTitle,
-                    maxLines: 3,
-                    overflow: TextOverflow.clip,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: AppColors.ink800,
-                      fontSize: 11.2,
-                      fontWeight: FontWeight.w800,
-                      height: 1.12,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${unit.events.length}개 이야기',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: selectedColor,
-                    fontSize: 10.6,
-                    fontWeight: FontWeight.w800,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.x1),
-                Expanded(
-                  child: Text(
-                    unit.subtitle,
-                    maxLines: 4,
-                    overflow: TextOverflow.clip,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: bodyColor,
-                      fontSize: 9.4,
-                      height: 1.16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: largeText ? SingleChildScrollView(child: content) : content,
           ),
         ),
       ),

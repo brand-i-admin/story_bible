@@ -4,7 +4,7 @@ import 'kst_date.dart';
 const dailyExplorationBlessingMessage = '오늘 새긴 감정을 가지고 주님과 함께하는 복된 하루 되세요!';
 
 const dailyExplorationRevisitMessage =
-    '이전에 느꼈던 성경 사건의 감정이 지금 나에게도 동일하게 와닿는지 다시 탐험해보시는 건 어떨까요?';
+    '이전에 느꼈던 성경 사건의 감정이 지금 나에게도 동일하게 와닿는지 오늘의 미션으로 다시 돌아보시는 건 어떨까요?';
 
 enum DailyExplorationCardNoteKind { blessing, revisit }
 
@@ -22,7 +22,7 @@ DailyExplorationCardNote? dailyExplorationCardNoteFor({
   if (mark == null) {
     return null;
   }
-  if (_isSameKstDate(mark.updatedAt, now)) {
+  if (isDailyMissionCompletedToday(mark: mark, now: now)) {
     return const DailyExplorationCardNote(
       kind: DailyExplorationCardNoteKind.blessing,
       message: dailyExplorationBlessingMessage,
@@ -32,6 +32,23 @@ DailyExplorationCardNote? dailyExplorationCardNoteFor({
     kind: DailyExplorationCardNoteKind.revisit,
     message: dailyExplorationRevisitMessage,
   );
+}
+
+bool isDailyMissionCompletedToday({
+  required EventEmotionMark? mark,
+  required DateTime now,
+}) {
+  return mark != null && _isSameKstDate(mark.updatedAt, now);
+}
+
+bool isDailyMissionCompletedForEvent({
+  required String eventId,
+  required Set<String> completedEventIds,
+  required EventEmotionMark? mark,
+  required DateTime now,
+}) {
+  return completedEventIds.contains(eventId) ||
+      isDailyMissionCompletedToday(mark: mark, now: now);
 }
 
 bool _isSameKstDate(DateTime? a, DateTime b) {

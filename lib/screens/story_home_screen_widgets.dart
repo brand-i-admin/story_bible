@@ -129,6 +129,7 @@ class _PanelFloatingActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final isNext = action.tone == _PanelFloatingActionTone.next;
     final gradient = isNext
         ? const LinearGradient(
@@ -157,13 +158,13 @@ class _PanelFloatingActionButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadii.pill),
               onTap: action.onPressed,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
+                constraints: BoxConstraints(
                   minWidth: 116,
                   maxWidth: 178,
-                  minHeight: 48,
+                  minHeight: largeText ? 56 : 48,
                 ),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(8, 7, 12, 7),
+                  padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 7, 12, 7),
                   decoration: BoxDecoration(
                     gradient: gradient,
                     borderRadius: BorderRadius.circular(AppRadii.pill),
@@ -190,8 +191,11 @@ class _PanelFloatingActionButton extends StatelessWidget {
                       Flexible(
                         child: Text(
                           action.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: largeText ? 2 : 1,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -229,8 +233,8 @@ class _SelectionStepper extends StatelessWidget {
   final _SelectionMode? mode;
   final ValueChanged<int> onStepTap;
 
-  static const Color _activeColor = Color(0xFF2E8B57); // 초록
-  static const Color _doneColor = Color(0xFFE8A33D); // 노랑
+  static const Color _activeColor = homeStepperActiveColor; // 초록
+  static const Color _doneColor = homeStepperDoneColor; // 노랑
   static const Color _futureColor = Color(0xFF8C6743); // 갈색
 
   Color _colorFor(int step) {
@@ -529,6 +533,7 @@ class _ScrollBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       decoration: modalSurfaceDecoration(),
       child: ClipRRect(
@@ -639,8 +644,11 @@ class _ScrollBody extends StatelessWidget {
                               children: [
                                 Text(
                                   landmark.name,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: largeText ? null : 2,
+                                  overflow: largeText
+                                      ? TextOverflow.visible
+                                      : TextOverflow.ellipsis,
+                                  softWrap: true,
                                   style: const TextStyle(
                                     fontSize: AppFontSizes.title,
                                     color: AppColors.ink500,

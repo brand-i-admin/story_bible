@@ -347,6 +347,8 @@ class _ProfileMiniMapState extends ConsumerState<ProfileMiniMap> {
       context: context,
       builder: (dialogContext) {
         final size = MediaQuery.sizeOf(dialogContext);
+        final largeText =
+            MediaQuery.textScalerOf(dialogContext).scale(1) >= 1.3;
         return Dialog(
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 18,
@@ -375,8 +377,11 @@ class _ProfileMiniMapState extends ConsumerState<ProfileMiniMap> {
                       Expanded(
                         child: Text(
                           region.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: largeText ? 2 : 1,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: const TextStyle(
                             color: AppColors.ink800,
                             fontSize: 18,
@@ -607,6 +612,7 @@ class _RegionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -638,8 +644,11 @@ class _RegionLabel extends StatelessWidget {
               Flexible(
                 child: Text(
                   name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: TextStyle(
                     color: completed
                         ? const Color(0xFFB07220)
@@ -689,6 +698,7 @@ class _RegionReviewEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _RegionQuizTone.fromAttempt(attempt);
     final hasAttempt = attempt != null && attempt!.totalCount > 0;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: tone?.background ?? Colors.white.withValues(alpha: 0.86),
       borderRadius: BorderRadius.circular(12),
@@ -716,8 +726,11 @@ class _RegionReviewEventCard extends StatelessWidget {
                   children: [
                     Text(
                       event.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText ? null : 2,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: const TextStyle(
                         color: AppColors.ink800,
                         fontSize: 13.2,
@@ -880,6 +893,7 @@ class _RegionQuizCountChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
@@ -889,8 +903,9 @@ class _RegionQuizCountChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        maxLines: largeText ? 2 : 1,
+        overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+        softWrap: true,
         style: TextStyle(
           color: color,
           fontSize: 10.4,

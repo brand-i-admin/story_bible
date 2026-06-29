@@ -41,6 +41,7 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = dateLabel?.trim();
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -59,8 +60,11 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
               if (date != null && date.isNotEmpty) ...[
                 Text(
                   date,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     color: AppColors.greenBot,
                     fontSize: 11.6,
@@ -80,8 +84,11 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       entry.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText ? 2 : 1,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: const TextStyle(
                         color: AppColors.ink800,
                         fontSize: 15.2,
@@ -96,8 +103,11 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
               Text(
                 entry.body,
                 key: ValueKey('companion-diary-preview-body-${entry.id}'),
-                maxLines: maxBodyLines,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? null : maxBodyLines,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   color: AppColors.ink350,
                   fontSize: 12.4,
@@ -222,33 +232,37 @@ Future<bool> showCompanionDiaryDeleteConfirmDialog(
 ) async {
   final confirmed = await showDialog<bool>(
     context: context,
-    builder: (dialogContext) => ParchmentDialog(
-      title: '동행 일지를 삭제할까요?',
-      subtitle: '남긴 일지를 삭제합니다.',
-      actions: [
-        ParchmentDialogActionButton(
-          label: '취소',
-          style: ParchmentDialogActionStyle.secondary,
-          onTap: () => Navigator.of(dialogContext).pop(false),
+    builder: (dialogContext) {
+      final largeText = MediaQuery.textScalerOf(dialogContext).scale(1) >= 1.3;
+      return ParchmentDialog(
+        title: '동행 일지를 삭제할까요?',
+        subtitle: '남긴 일지를 삭제합니다.',
+        actions: [
+          ParchmentDialogActionButton(
+            label: '취소',
+            style: ParchmentDialogActionStyle.secondary,
+            onTap: () => Navigator.of(dialogContext).pop(false),
+          ),
+          ParchmentDialogActionButton(
+            label: '삭제',
+            style: ParchmentDialogActionStyle.danger,
+            onTap: () => Navigator.of(dialogContext).pop(true),
+          ),
+        ],
+        child: Text(
+          entry.title,
+          maxLines: largeText ? null : 2,
+          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+          softWrap: true,
+          style: const TextStyle(
+            color: AppColors.ink500,
+            fontSize: 13.2,
+            fontWeight: FontWeight.w800,
+            height: 1.4,
+          ),
         ),
-        ParchmentDialogActionButton(
-          label: '삭제',
-          style: ParchmentDialogActionStyle.danger,
-          onTap: () => Navigator.of(dialogContext).pop(true),
-        ),
-      ],
-      child: Text(
-        entry.title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          color: AppColors.ink500,
-          fontSize: 13.2,
-          fontWeight: FontWeight.w800,
-          height: 1.4,
-        ),
-      ),
-    ),
+      );
+    },
   );
   return confirmed == true;
 }

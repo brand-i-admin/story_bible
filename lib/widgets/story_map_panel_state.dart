@@ -43,7 +43,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     }
     // numbered pin reveal 초기 설정. didUpdateWidget 은 같은 로직을 키 변경 시
     // 재트리거하지만, 첫 마운트에는 그게 안 불려서 _eventRevealCount=0 으로
-    // 핀이 그려지지 않는다 (주간 탐험 첫 진입 시 발생).
+    // 핀이 그려지지 않는다 (주간 미션 첫 진입 시 발생).
     _initEventReveal();
   }
 

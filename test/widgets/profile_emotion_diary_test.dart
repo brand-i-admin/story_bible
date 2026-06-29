@@ -158,7 +158,7 @@ void _companionDiaryWidgetTests() {
     }
     expect(find.text('오늘의 내 감정'), findsOneWidget);
     expect(find.text('오늘의 신앙 기록'), findsOneWidget);
-    expect(find.text('오늘 하루 예배, 말씀, 기도 등 신앙 기록을 남겨보세요'), findsOneWidget);
+    expect(find.text('신앙(예배,말씀,기도,삶의 사건)을 기록해보세요'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('companion-diary-add-button')),
       findsOneWidget,
@@ -168,7 +168,7 @@ void _companionDiaryWidgetTests() {
     await tester.tap(find.text('오늘의 내 감정'));
     await tester.pumpAndSettle();
 
-    expect(find.text('오늘 하루 예배, 말씀, 기도 등 신앙 기록을 남겨보세요'), findsNothing);
+    expect(find.text('신앙(예배,말씀,기도,삶의 사건)을 기록해보세요'), findsNothing);
     expect(
       find.byKey(const ValueKey('companion-diary-add-button')),
       findsNothing,
@@ -202,6 +202,44 @@ void _companionDiaryWidgetTests() {
     expect(
       todayText.getMaxIntrinsicWidth(double.infinity),
       lessThanOrEqualTo(todayText.size.width),
+    );
+  });
+
+  testWidgets('아주크게에서 신앙 기록 탭 선택 배경은 탭 높이를 채운다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        now: DateTime.utc(2026, 6, 25),
+        width: 390,
+        textScale: 1.4,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final selectedBackground = find.byWidgetPredicate((widget) {
+      if (widget is! Container) return false;
+      final decoration = widget.decoration;
+      return decoration is BoxDecoration &&
+          decoration.color == AppColors.brownWarm;
+    });
+
+    expect(selectedBackground, findsOneWidget);
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('diary-content-tab-bar')))
+          .height,
+      42,
+    );
+    expect(tester.getSize(selectedBackground).height, lessThanOrEqualTo(34));
+    expect(
+      tester.getSize(selectedBackground).height,
+      greaterThan(tester.getSize(find.text('오늘의 신앙 기록')).height + 8),
     );
   });
 
@@ -402,7 +440,7 @@ void _companionDiaryWidgetTests() {
     await tester.tap(find.text('전체보기'));
     await tester.pumpAndSettle();
 
-    expect(find.text('동행 일지 리스트'), findsOneWidget);
+    expect(find.text('오늘의 신앙 기록'), findsWidgets);
     expect(tester.getTopLeft(find.byType(ParchmentCard).last).dx, lessThan(24));
     expect(find.text('6월 9일'), findsOneWidget);
     expect(find.text('광야의 감사'), findsOneWidget);

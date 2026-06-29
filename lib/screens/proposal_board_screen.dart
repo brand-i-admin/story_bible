@@ -113,6 +113,8 @@ class _ProposalBoardScreenState extends ConsumerState<ProposalBoardScreen>
               separatorBuilder: (_, __) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final p = proposals[index];
+                final largeText =
+                    MediaQuery.textScalerOf(context).scale(1) >= 1.3;
                 // 본인 제안 + status='pending' 일 때만 취소 가능 (RLS 와 일치).
                 final isMine = myUserId != null && p.proposerUserId == myUserId;
                 final canCancel = isMine && p.status == 'pending';
@@ -121,8 +123,11 @@ class _ProposalBoardScreenState extends ConsumerState<ProposalBoardScreen>
                     leading: _ProposalTypeIcon(type: p.proposalType),
                     title: Text(
                       p.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText ? 2 : 1,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: theme.textTheme.titleMedium,
                     ),
                     subtitle: Column(
@@ -131,8 +136,11 @@ class _ProposalBoardScreenState extends ConsumerState<ProposalBoardScreen>
                         const SizedBox(height: 4),
                         Text(
                           p.summary ?? '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: largeText ? null : 2,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: theme.textTheme.bodySmall,
                         ),
                         const SizedBox(height: 8),

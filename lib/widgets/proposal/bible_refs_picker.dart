@@ -150,6 +150,7 @@ class _BibleRefsPickerState extends State<BibleRefsPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -197,7 +198,11 @@ class _BibleRefsPickerState extends State<BibleRefsPicker> {
                                     value: b.abbr,
                                     child: Text(
                                       b.abbr,
-                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: largeText ? 2 : 1,
+                                      overflow: largeText
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                      softWrap: true,
                                     ),
                                   ),
                                 )

@@ -186,6 +186,7 @@ class _ProfileEventEraDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
       child: Row(
@@ -201,8 +202,11 @@ class _ProfileEventEraDivider extends StatelessWidget {
             ),
             child: Text(
               label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? 2 : 1,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: const TextStyle(
                 color: Color(0xFF5A4326),
                 fontSize: 11.5,

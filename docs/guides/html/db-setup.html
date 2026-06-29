@@ -127,7 +127,7 @@ Apple private key .p8</code></pre>
 <td>DB 함수가 <code>pg_net</code>으로 Edge Function 호출</td>
 </tr>
 </tbody></table></div>
-<p>예를 들어 수요일 매일 탐험 푸시는 이런 경로로 움직인다.</p>
+<p>예를 들어 수요일 매일 미션 푸시는 이런 경로로 움직인다.</p>
 <pre><code class="language-text">pg_cron
   -&gt; public.dispatch_daily_exploration_push()
   -&gt; public._fire_push_broadcast()
@@ -480,7 +480,7 @@ pg_cron 또는 trigger
 <h3 id="9-3-푸시-즉시-테스트">9.3 푸시 즉시 테스트</h3>
 <p>오전 9시 cron 을 기다리지 않고 바로 테스트하려면 SQL Editor 에서 실행한다.</p>
 <pre><code class="language-sql">select public.dispatch_daily_exploration_push();</code></pre>
-<p>이 함수는 KST 날짜 시드로 오늘의 사건 제목을 고르고 전체 push token 대상에게 &quot;오늘의 탐험이 열렸어요&quot; 알림을 보낸다.</p>
+<p>이 함수는 KST 날짜 시드로 오늘의 사건 제목을 고르고 전체 push token 대상에게 &quot;오늘의 미션이 열렸어요&quot; 알림을 보낸다.</p>
 <p>테스트 전 확인:</p>
 <pre><code class="language-sql">select platform, count(*)
 from public.user_push_tokens

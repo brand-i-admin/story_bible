@@ -23,7 +23,7 @@ import 'sub_page_scaffold.dart';
 // 주간 화면 빌더 메소드를 도메인별 part 파일로 분리.
 part 'weekly/weekly_avatar.dart';
 
-/// 주간 탐험 탭 페이지.
+/// 주간 미션 탭 페이지.
 ///
 /// 1. 랜덤 또는 지정된 인물의 그 주 이야기 목록 표시
 /// 2. 지도에 관련 사건 핀 표시
@@ -306,7 +306,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     if (widget.embedded) {
       return body;
     }
-    return SubPageScaffold(title: '주간 탐험', compactBackOnly: true, child: body);
+    return SubPageScaffold(title: '주간 미션', compactBackOnly: true, child: body);
   }
 
   Widget _buildWeeklyBody({
@@ -495,6 +495,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
   /// 모드별 헤더 — 인물 모드는 아바타 + "금주 인물: xxx", 지역 모드는 깃발
   /// 아이콘 + "금주 지역: 시대명 · 지역명".
   Widget _weeklyHeaderBadge(WeeklyStudyData weekly) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     if (weekly.mode == WeeklyMode.character && weekly.character != null) {
       return _weeklyCharacterTitleBadge(
         text: '금주 인물: ${weekly.character!.name}',
@@ -528,8 +529,11 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
             Expanded(
               child: Text(
                 '금주 지역: ${weekly.era!.name} · ${weekly.region!.name}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? 2 : 1,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   fontSize: 16.2,
                   fontWeight: FontWeight.w800,
@@ -548,6 +552,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     required String text,
     required Character character,
   }) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: headerChipDecoration(),
@@ -558,8 +563,11 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
           Expanded(
             child: Text(
               text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? 2 : 1,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: const TextStyle(
                 fontSize: 16.2,
                 fontWeight: FontWeight.w800,
@@ -583,6 +591,8 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 540;
+        final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+        final stacked = compact || largeText;
         final summaryStyle = TextStyle(
           color: AppColors.parchmentCream,
           fontSize: compact ? 12.6 : 14.2,
@@ -629,14 +639,17 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
               horizontal: compact ? 10 : 14,
               vertical: compact ? 8 : 10,
             ),
-            child: compact
+            child: stacked
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         '이번주 남은 $daysRemainingKst일 · 이야기 $completedCount/$totalCount 달성',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? null : 2,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                         style: summaryStyle,
                       ),
                       const SizedBox(height: 8),
@@ -655,8 +668,9 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                         flex: 9,
                         child: Text(
                           '이번주 남은 $daysRemainingKst일 · 이야기 $completedCount/$totalCount 달성',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
                           style: summaryStyle,
                         ),
                       ),

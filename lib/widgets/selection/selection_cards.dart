@@ -74,6 +74,7 @@ class _EraCompactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return _CardShell(
       selected: selected,
       onTap: onTap,
@@ -83,8 +84,11 @@ class _EraCompactCard extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text.rich(
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? 4 : 2,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               TextSpan(
                 children: [
                   TextSpan(
@@ -136,6 +140,7 @@ class _CharacterCompactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final identityLabel = _identityLabelFor(character);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return _CardShell(
       selected: selected,
       onTap: onTap,
@@ -184,8 +189,10 @@ class _CharacterCompactCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             character.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
@@ -197,8 +204,9 @@ class _CharacterCompactCard extends StatelessWidget {
           const SizedBox(height: 1),
           Text(
             identityLabel,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? null : 3,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 9.1,
@@ -482,7 +490,7 @@ class _AvatarFallback extends StatelessWidget {
       child: Text(
         name,
         maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.visible,
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w800,

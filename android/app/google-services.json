@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "196457947669-v0qhnho460ik0esjo0ioq0fa89g745hb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.storybible.app",
+            "certificate_hash": "fc70a05be28dab5705e71b8a7d12928e3f2419e9"
+          }
+        },
+        {
           "client_id": "196457947669-f2hcqoqmc9v4bdtchuvee5l9fiqt26ka.apps.googleusercontent.com",
           "client_type": 3
         }

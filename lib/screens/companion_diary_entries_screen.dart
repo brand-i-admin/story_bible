@@ -43,13 +43,13 @@ class _CompanionDiaryEntriesScreenState
   @override
   Widget build(BuildContext context) {
     return ParchmentListPageScaffold(
-      title: '동행 일지 리스트',
+      title: '오늘의 신앙 기록',
       child: ParchmentCard(
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
         child: _entries.isEmpty
             ? const Center(
                 child: Text(
-                  '아직 남긴 동행 일지가 없습니다.\n오늘 하루 예배, 말씀, 기도 등 신앙 기록을 남겨보세요.',
+                  '아직 남긴 신앙 기록이 없습니다.\n신앙(예배,말씀,기도,삶의 사건)을 기록해보세요.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.ink300,

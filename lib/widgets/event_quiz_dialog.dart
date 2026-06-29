@@ -180,6 +180,7 @@ class _QuizQuestionPane extends StatelessWidget {
     final isLast = questionIndex == totalCount - 1;
     final progress = (questionIndex + 1) / totalCount;
     final primaryLabel = submitted ? (isLast ? '결과 보기' : '다음') : '정답 확인';
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -190,8 +191,11 @@ class _QuizQuestionPane extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? 2 : 1,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,

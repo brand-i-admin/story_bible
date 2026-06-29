@@ -126,6 +126,7 @@ class _CharacterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final avatarUrl = item.avatarUrl;
     final tappable = avatarUrl != null;
     final avatar = Container(
@@ -178,8 +179,9 @@ class _CharacterChip extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: size + 8),
           child: Text(
             item.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: largeText ? 2 : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
             textAlign: TextAlign.center,
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w700,

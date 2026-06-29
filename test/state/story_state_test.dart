@@ -22,6 +22,7 @@ void main() {
       expect(state.completedEventIds, isEmpty);
       expect(state.eventEmotionMarks, isEmpty);
       expect(state.savedEventIds, isEmpty);
+      expect(state.completedBibleChapterKeys, isEmpty);
       expect(state.searchQuery, '');
       expect(state.searchResults, isEmpty);
       expect(state.isSearching, false);
@@ -125,6 +126,14 @@ void main() {
       const original = StoryState();
       final updated = original.copyWith(savedEventIds: {'ev1', 'ev2'});
       expect(updated.savedEventIds, {'ev1', 'ev2'});
+    });
+
+    test('completedBibleChapterKeys를 교체할 수 있다', () {
+      const original = StoryState();
+      final updated = original.copyWith(
+        completedBibleChapterKeys: {'1:1', '1:2'},
+      );
+      expect(updated.completedBibleChapterKeys, {'1:1', '1:2'});
     });
 
     test('eras를 교체할 수 있다', () {

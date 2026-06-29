@@ -28,6 +28,8 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 280),
       pageBuilder: (dialogContext, _, __) {
+        final largeText =
+            MediaQuery.textScalerOf(dialogContext).scale(1) >= 1.3;
         return Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -67,8 +69,11 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                             flex: 4,
                                             child: Text(
                                               character.name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: largeText ? 2 : 1,
+                                              overflow: largeText
+                                                  ? TextOverflow.visible
+                                                  : TextOverflow.ellipsis,
+                                              softWrap: true,
                                               style: const TextStyle(
                                                 color: Color(0xFF3A2B15),
                                                 fontSize: 21,
@@ -132,8 +137,11 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                                 ? character.description
                                                 : character.tagline) ??
                                             '아직 등록된 인물 소개가 없습니다.',
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: largeText ? null : 2,
+                                        overflow: largeText
+                                            ? TextOverflow.visible
+                                            : TextOverflow.ellipsis,
+                                        softWrap: true,
                                         style: const TextStyle(
                                           color: AppColors.ink450,
                                           fontSize: 13,

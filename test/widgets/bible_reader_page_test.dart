@@ -200,6 +200,61 @@ void main() {
       expect(find.text('끝 절을 선택하세요'), findsNothing);
     });
 
+    testWidgets('일반 성경 리더는 장 통독 읽음 처리 버튼을 보여준다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('통독 읽음 처리'), findsOneWidget);
+      expect(find.text('이전 장'), findsOneWidget);
+      expect(find.text('다음 장'), findsOneWidget);
+    });
+
+    testWidgets('장 통독 읽음 처리 버튼은 마지막 절 아래에서만 보인다', (tester) async {
+      tester.view.physicalSize = const Size(390, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(
+            home: BibleReaderPage(initialBookNo: 1, initialChapterNo: 2),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('이전 장'), findsOneWidget);
+      expect(find.text('다음 장'), findsOneWidget);
+      expect(find.text('통독 읽음 처리'), findsNothing);
+
+      for (var i = 0; i < 20 && find.text('통독 읽음 처리').evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(ListView), const Offset(0, -520));
+        await tester.pumpAndSettle();
+      }
+
+      expect(find.textContaining('테스트 본문 30'), findsOneWidget);
+      expect(find.text('통독 읽음 처리'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('통독 읽음 처리')).dy,
+        greaterThan(tester.getTopLeft(find.textContaining('테스트 본문 30')).dy),
+      );
+    });
+
     testWidgets('비로그인 상태에서는 별표와 저장 목록 버튼이 로그인 유도를 요청한다', (tester) async {
       var loginPromptCount = 0;
 

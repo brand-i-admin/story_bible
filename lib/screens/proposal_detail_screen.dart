@@ -267,6 +267,7 @@ class _ProposalHeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final place = (proposal.placeName ?? '').trim();
     final year = _formatYearRange(proposal.startYear, proposal.endYear);
     final meta = [
@@ -290,8 +291,11 @@ class _ProposalHeaderRow extends StatelessWidget {
             child: Text(
               meta,
               textAlign: TextAlign.right,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? null : 2,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w700,
@@ -325,6 +329,7 @@ class _ProposalSceneGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final repo = ref.read(proposalRepositoryProvider);
     final visible = paths.take(4).toList(growable: false);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     const gap = 8.0;
     return Container(
       decoration: BoxDecoration(
@@ -404,8 +409,11 @@ class _ProposalSceneGrid extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       captions[i],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: largeText ? null : 2,
+                                      overflow: largeText
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                      softWrap: true,
                                       textAlign: TextAlign.center,
                                       style: Theme.of(context)
                                           .textTheme

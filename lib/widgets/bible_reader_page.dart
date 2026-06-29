@@ -286,6 +286,45 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     Navigator.of(context).pop(true);
   }
 
+  Future<void> _setCurrentChapterRead({required bool isRead}) async {
+    if (ref.read(signedInUserProvider) == null) {
+      _requestLogin('통독 기록을 저장하려면 로그인이 필요해요.');
+      return;
+    }
+
+    try {
+      await ref
+          .read(storyControllerProvider.notifier)
+          .setBibleChapterRead(
+            bookNo: _selectedBookNo,
+            chapterNo: _selectedChapter,
+            isRead: isRead,
+          );
+      if (!mounted) {
+        return;
+      }
+      final bookName = bibleBooks[_selectedBookNo - 1].name;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              isRead
+                  ? '$bookName $_selectedChapter장을 통독 완료로 표시했어요.'
+                  : '$bookName $_selectedChapter장 통독 표시를 취소했어요.',
+            ),
+          ),
+        );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text('통독 기록을 저장하지 못했습니다.\n$error')));
+    }
+  }
+
   void _focusSavedVerse(SavedBibleVerse verse) {
     final bookNo = verse.bookNo.clamp(1, bibleBooks.length).toInt();
     final maxChapter = bibleBooks[bookNo - 1].chapters;
@@ -321,6 +360,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final storyState = ref.watch(storyControllerProvider);
     final readingTarget = _readingTargetIndex < _readingTargets.length
         ? _readingTargets[_readingTargetIndex]
         : null;
@@ -343,6 +383,13 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
             chapterNo: selectedChapterSafe,
           );
     final highlightedTarget = readingTarget ?? widget.highlightTarget;
+    final selectedChapterKey = bibleChapterProgressKey(
+      bookNo: selectedBookNoSafe,
+      chapterNo: selectedChapterSafe,
+    );
+    final isSelectedChapterRead = storyState.completedBibleChapterKeys.contains(
+      selectedChapterKey,
+    );
 
     return SubPageScaffold(
       title: '성경',
@@ -368,6 +415,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               chapter: selectedChapterSafe,
               books: testamentBooks,
               chapters: chapterItems,
+              completedChapterKeys: storyState.completedBibleChapterKeys,
               onTestamentChanged: (t) {
                 setState(() {
                   _selectedTestament = t;
@@ -420,6 +468,14 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               savedVerseKeys: _savedVersesByKey.keys.toSet(),
               onTapStar: _onTapStar,
               showStars: !isGuidedReading,
+              footer: isGuidedReading
+                  ? null
+                  : _ChapterReadButton(
+                      isChapterRead: isSelectedChapterRead,
+                      onToggleChapterRead: () => _setCurrentChapterRead(
+                        isRead: !isSelectedChapterRead,
+                      ),
+                    ),
             ),
           ),
           if (isGuidedReading)
@@ -480,6 +536,7 @@ class _BibleReaderHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.fromLTRB(60, 8, 12, 8),
       child: Row(
@@ -488,8 +545,11 @@ class _BibleReaderHeader extends StatelessWidget {
             child: Text(
               title,
               textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: largeText ? 2 : 1,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
               style: const TextStyle(
                 color: AppColors.ink800,
                 fontSize: 18,
@@ -564,10 +624,10 @@ class _BibleTranslationLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       key: const ValueKey('bible-reader-translation-label'),
-      height: 26,
-      constraints: const BoxConstraints(minWidth: 42),
+      constraints: BoxConstraints(minWidth: 42, minHeight: largeText ? 32 : 26),
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 9),
       decoration: BoxDecoration(
@@ -577,8 +637,9 @@ class _BibleTranslationLabel extends StatelessWidget {
       ),
       child: Text(
         label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        maxLines: largeText ? 2 : 1,
+        overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+        softWrap: true,
         style: const TextStyle(
           color: AppColors.ink500,
           fontSize: 11,
@@ -638,6 +699,7 @@ class _BibleChipsRow extends StatelessWidget {
     required this.chapter,
     required this.books,
     required this.chapters,
+    required this.completedChapterKeys,
     required this.onTestamentChanged,
     required this.onBookChanged,
     required this.onChapterChanged,
@@ -648,12 +710,14 @@ class _BibleChipsRow extends StatelessWidget {
   final int chapter;
   final List<MapEntry<int, BibleBookMeta>> books;
   final List<int> chapters;
+  final Set<String> completedChapterKeys;
   final ValueChanged<String> onTestamentChanged;
   final ValueChanged<int> onBookChanged;
   final ValueChanged<int> onChapterChanged;
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
       child: SingleChildScrollView(
@@ -682,8 +746,11 @@ class _BibleChipsRow extends StatelessWidget {
                         value: e.key + 1,
                         child: Text(
                           e.value.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: largeText ? 2 : 1,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                         ),
                       ),
                     )
@@ -697,10 +764,15 @@ class _BibleChipsRow extends StatelessWidget {
               child: bibleDropdownFrame<int>(
                 value: chapter,
                 items: chapters
-                    .map(
-                      (c) =>
-                          DropdownMenuItem<int>(value: c, child: Text('$c장')),
-                    )
+                    .map((c) {
+                      final read = completedChapterKeys.contains(
+                        bibleChapterProgressKey(bookNo: bookNo, chapterNo: c),
+                      );
+                      return DropdownMenuItem<int>(
+                        value: c,
+                        child: _ChapterDropdownItem(chapter: c, read: read),
+                      );
+                    })
                     .toList(growable: false),
                 onChanged: (v) => v != null ? onChapterChanged(v) : null,
               ),
@@ -708,6 +780,37 @@ class _BibleChipsRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ChapterDropdownItem extends StatelessWidget {
+  const _ChapterDropdownItem({required this.chapter, required this.read});
+
+  final int chapter;
+  final bool read;
+
+  @override
+  Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$chapter장',
+          maxLines: largeText ? 2 : 1,
+          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+          softWrap: true,
+        ),
+        if (read) ...[
+          const SizedBox(width: 5),
+          const Icon(
+            Icons.check_circle_rounded,
+            size: 15,
+            color: AppColors.greenTop,
+          ),
+        ],
+      ],
     );
   }
 }
@@ -726,6 +829,7 @@ class _BibleVersesArea extends StatelessWidget {
     required this.savedVerseKeys,
     required this.onTapStar,
     required this.showStars,
+    this.footer,
   });
 
   final Future<List<BibleVerse>> versesFuture;
@@ -736,6 +840,7 @@ class _BibleVersesArea extends StatelessWidget {
   final Set<String> savedVerseKeys;
   final void Function(BibleVerse) onTapStar;
   final bool showStars;
+  final Widget? footer;
 
   static const double _estimatedVerseRowExtent = 82;
 
@@ -900,6 +1005,7 @@ class _BibleVersesArea extends StatelessWidget {
                   showStar: showStars,
                 );
               }),
+            if (footer != null) ...[const SizedBox(height: 14), footer!],
             const SizedBox(height: 12),
           ],
         );
@@ -1191,6 +1297,50 @@ class _BibleBottomBar extends StatelessWidget {
   }
 }
 
+class _ChapterReadButton extends StatelessWidget {
+  const _ChapterReadButton({
+    required this.isChapterRead,
+    required this.onToggleChapterRead,
+  });
+
+  final bool isChapterRead;
+  final VoidCallback onToggleChapterRead;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 4, 0, 10),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: onToggleChapterRead,
+          icon: Icon(
+            isChapterRead ? Icons.undo_rounded : Icons.check_circle_rounded,
+          ),
+          label: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(isChapterRead ? '통독 읽음 취소' : '통독 읽음 처리'),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isChapterRead
+                ? const Color(0xFF8A6A3F)
+                : AppColors.greenBtnBot,
+            foregroundColor: Colors.white,
+            minimumSize: const Size.fromHeight(46),
+            textStyle: const TextStyle(
+              fontSize: 14.5,
+              fontWeight: FontWeight.w900,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _BarButton extends StatelessWidget {
   const _BarButton({
     required this.label,
@@ -1209,17 +1359,39 @@ class _BarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fg = enabled ? const Color(0xFF6A4F2A) : const Color(0x77745D3F);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final iconWidget = Icon(icon, size: 18, color: fg);
     final textWidget = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
-        label,
-        style: TextStyle(color: fg, fontSize: 13, fontWeight: FontWeight.w800),
-      ),
+      child: largeText
+          ? Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.visible,
+              softWrap: true,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: fg,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+              ),
+            )
+          : FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                style: TextStyle(
+                  color: fg,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
     );
     final children = trailingIcon
-        ? [textWidget, iconWidget]
-        : [iconWidget, textWidget];
+        ? [Expanded(child: textWidget), iconWidget]
+        : [iconWidget, Expanded(child: textWidget)];
     return Material(
       color: Colors.transparent,
       child: InkWell(

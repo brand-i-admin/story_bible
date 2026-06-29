@@ -61,6 +61,7 @@ drop table if exists user_daily_attendance cascade;
 drop table if exists user_intercessory_prayers cascade;
 drop table if exists user_saved_events cascade;
 drop table if exists user_saved_verses cascade;
+drop table if exists user_bible_chapter_progress cascade;
 drop table if exists user_notes cascade;
 drop table if exists user_companion_diary_entries cascade;
 drop table if exists user_profiles cascade;
@@ -195,6 +196,7 @@ drop table if exists broadcast_notifications cascade;
 drop table if exists notifications cascade;
 drop table if exists user_push_tokens cascade;
 drop table if exists weekly_character_selection cascade;
+drop table if exists app_publications cascade;
 
 create table if not exists eras (
   id uuid primary key default gen_random_uuid(),
@@ -669,6 +671,18 @@ create table if not exists user_saved_verses (
   unique (user_id, translation, book_no, chapter_no, verse_no)
 );
 
+create table if not exists user_bible_chapter_progress (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  translation text not null default 'KRV',
+  book_no smallint not null check (book_no between 1 and 66),
+  chapter_no smallint not null check (chapter_no > 0),
+  read_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, translation, book_no, chapter_no)
+);
+
 create table if not exists user_saved_events (
   user_id uuid not null references auth.users(id) on delete cascade,
   event_id uuid not null references events(id) on delete cascade,
@@ -704,6 +718,8 @@ create index if not exists idx_embed_ivfflat on search_embeddings using ivfflat 
 create index if not exists idx_bible_verses_lookup on bible_verses (translation, book_no, chapter_no, verse_no);
 create index if not exists idx_user_notes_user_created on user_notes (user_id, created_at desc);
 create index if not exists idx_user_saved_verses_user_created on user_saved_verses (user_id, created_at desc);
+create index if not exists idx_user_bible_chapter_progress_user_book
+  on user_bible_chapter_progress (user_id, translation, book_no, chapter_no);
 create index if not exists idx_user_saved_events_user_created on user_saved_events (user_id, created_at desc);
 create index if not exists idx_user_intercessory_prayers_user_created on user_intercessory_prayers (user_id, created_at desc);
 create index if not exists idx_user_intercessory_prayers_target on user_intercessory_prayers (target_user_id);
@@ -748,6 +764,12 @@ drop trigger if exists set_user_companion_diary_entries_updated_at
   on user_companion_diary_entries;
 create trigger set_user_companion_diary_entries_updated_at
 before update on user_companion_diary_entries
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_user_bible_chapter_progress_updated_at
+  on user_bible_chapter_progress;
+create trigger set_user_bible_chapter_progress_updated_at
+before update on user_bible_chapter_progress
 for each row execute function public.touch_updated_at();
 
 create or replace function public.handle_new_user_profile()
@@ -915,6 +937,7 @@ grant select, insert, update on table user_profiles to authenticated;
 grant select, insert, delete on table user_intercessory_prayers to authenticated;
 grant select, insert, update, delete on table user_notes to authenticated;
 grant select, insert, delete on table user_saved_verses to authenticated;
+grant select, insert, update, delete on table user_bible_chapter_progress to authenticated;
 grant select, insert, delete on table user_saved_events to authenticated;
 
 alter table eras enable row level security;
@@ -931,6 +954,7 @@ alter table user_profiles enable row level security;
 alter table user_intercessory_prayers enable row level security;
 alter table user_notes enable row level security;
 alter table user_saved_verses enable row level security;
+alter table user_bible_chapter_progress enable row level security;
 alter table user_saved_events enable row level security;
 
 drop policy if exists eras_read_all on eras;
@@ -1053,6 +1077,20 @@ drop policy if exists user_saved_verses_delete_own on user_saved_verses;
 create policy user_saved_verses_delete_own on user_saved_verses
 for delete using (auth.uid() = user_id);
 
+drop policy if exists user_bible_chapter_progress_read_own
+  on user_bible_chapter_progress;
+create policy user_bible_chapter_progress_read_own
+  on user_bible_chapter_progress
+for select using (auth.uid() = user_id);
+
+drop policy if exists user_bible_chapter_progress_write_own
+  on user_bible_chapter_progress;
+create policy user_bible_chapter_progress_write_own
+  on user_bible_chapter_progress
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
 drop policy if exists user_saved_events_read_own on user_saved_events;
 create policy user_saved_events_read_own on user_saved_events
 for select using (auth.uid() = user_id);
@@ -1141,6 +1179,90 @@ as $$
 $$;
 
 grant execute on function public.is_admin() to authenticated;
+
+-- 앱 공지/가이드 게시물. bell 알림과 달리 읽음/30일 보관에 묶이지 않는
+-- 개발자 게시 콘텐츠이며, 홈 좌상단 메가폰 버튼에서 목록으로 노출한다.
+create table if not exists app_publications (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  category text not null default 'notice'
+    check (category in ('notice', 'guide')),
+  title text not null,
+  body text not null,
+  link_url text,
+  link_label text,
+  is_published boolean not null default false,
+  published_at timestamptz,
+  display_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_app_publications_published
+  on app_publications(is_published, display_order, published_at desc);
+
+drop trigger if exists set_app_publications_updated_at on app_publications;
+create trigger set_app_publications_updated_at
+before update on app_publications
+for each row execute function public.touch_updated_at();
+
+grant select on table app_publications to anon, authenticated;
+grant insert, update, delete on table app_publications to authenticated;
+
+alter table app_publications enable row level security;
+
+drop policy if exists app_publications_read_published on app_publications;
+create policy app_publications_read_published on app_publications
+for select to anon, authenticated
+using (
+  is_published = true
+  and (published_at is null or published_at <= now())
+);
+
+drop policy if exists app_publications_admin_all on app_publications;
+create policy app_publications_admin_all on app_publications
+for all to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+insert into app_publications (
+  slug, category, title, body, link_url, link_label,
+  is_published, published_at, display_order
+) values (
+  'welcome',
+  'notice',
+  '환영인사',
+  '환영합니다! 이야기 성경에서 성경 이야기를 지도와 인물, 사건, 퀴즈로 함께 따라가 보세요.'
+    || E'\n'
+    || '오늘도 하나님과 깊은 교제하며 동행하는 하루가 되기를 기도합니다.',
+  null,
+  null,
+  true,
+  '2026-06-28 00:00:00+00'::timestamptz,
+  2
+), (
+  'guide-and-tutorial',
+  'guide',
+  '가이드 및 튜토리얼',
+  '처음 사용하신다면 홈에서 시대를 고른 뒤 시간 순, 인물과 걷기, 장소로 시작 중 하나를 선택해 보세요.'
+    || E'\n'
+    || '다양한 활용 예시는 아래 가이드 페이지에서 확인하세요.',
+  'https://brand-i-admin.github.io/story-bible-pages/',
+  null,
+  true,
+  '2026-06-29 00:00:00+00'::timestamptz,
+  1
+)
+on conflict (slug) do update set
+  category = excluded.category,
+  title = excluded.title,
+  body = excluded.body,
+  link_url = excluded.link_url,
+  link_label = excluded.link_label,
+  is_published = excluded.is_published,
+  published_at = excluded.published_at,
+  display_order = excluded.display_order,
+  updated_at = now();
 
 -- events / characters 쓰기 권한: 관리자(is_admin())만 INSERT/UPDATE/DELETE 가능.
 -- GRANT 는 authenticated 에 부여하되, RLS 정책이 admin 여부를 체크한다.
@@ -3359,37 +3481,23 @@ set search_path = public, auth
 as $$
 declare
   v_event_title text;
-  v_total_events int;
-  v_completed_count int;
-  v_percent int;
 begin
   if auth.uid() is null then
     raise exception '로그인이 필요합니다.';
   end if;
 
   select title into v_event_title from events where id = p_event_id;
-  select count(*) into v_total_events from events where status = 'published';
-  select count(*) into v_completed_count
-  from user_event_progress
-  where user_id = auth.uid() and is_completed = true;
-
-  v_percent := case when v_total_events > 0
-    then (v_completed_count * 100 / v_total_events) else 0 end;
 
   insert into notifications (user_id, type, title, body, deep_link, payload)
   values (
     auth.uid(),
     'quiz_completed',
     '퀴즈를 완주했어요!',
-    '"' || coalesce(v_event_title, '이야기') || '" 퀴즈 완료 — 전체 진도 ' ||
-      v_percent || '%',
+    '"' || coalesce(v_event_title, '이야기') || '" 퀴즈 완료',
     '/event/' || p_event_id::text,
     jsonb_build_object(
       'event_id', p_event_id,
-      'event_title', v_event_title,
-      'progress_percent', v_percent,
-      'completed_count', v_completed_count,
-      'total_count', v_total_events
+      'event_title', v_event_title
     )
   );
 end;
@@ -3525,7 +3633,7 @@ returns void language sql security definer set search_path = public as $$
 $$;
 grant execute on function public.unregister_push_token(text) to authenticated;
 
--- 금주 인물 — seed 포팅 + pick + 월요일 주간 탐험 알림
+-- 금주 인물 — seed 포팅 + pick + 월요일 주간 미션 알림
 create or replace function public._seed_from_week_key(p_key text)
 returns bigint language plpgsql immutable as $$
 declare v_acc bigint := 0; v_i int;
@@ -3568,9 +3676,9 @@ begin
 
   -- bell drop 에 쌓이지 않게 broadcast 를 거치지 않고 send-push 로 직접 발송.
   perform public._fire_push_broadcast(
-    '이번 주 탐험이 열렸어요',
+    '이번 주 미션이 열렸어요',
     '이번 주는 "' || coalesce(v_character_name, v_character_code) ||
-      '" 이야기와 함께 걸어요. 주간 탐험을 시작해 보세요.',
+      '" 이야기와 함께 걸어요. 주간 미션을 시작해 보세요.',
     '/weekly',
     'weekly_exploration'
   );
@@ -3674,7 +3782,7 @@ create trigger trg_push_after_broadcast
 after insert on broadcast_notifications
 for each row execute function public._push_after_broadcast();
 
--- 매일 탐험 푸시 — 수요일 KST 9시 (= UTC 0시)에 전체 사용자에게 push-only
+-- 매일 미션 푸시 — 수요일 KST 9시 (= UTC 0시)에 전체 사용자에게 push-only
 -- 발송. KST 날짜 시드로 오늘의 사건 제목을 함께 담아 보낸다.
 create or replace function public.dispatch_daily_exploration_push()
 returns void
@@ -3717,9 +3825,9 @@ begin
   end if;
 
   perform public._fire_push_broadcast(
-    '오늘의 탐험이 열렸어요',
+    '오늘의 미션이 열렸어요',
     '「' || coalesce(v_event_title, '오늘 도착한 성경 사건') ||
-      '」 사건을 함께 탐험해봐요.',
+      '」 사건을 함께 미션으로 만나봐요.',
     '/daily-exploration',
     'daily_exploration'
   );

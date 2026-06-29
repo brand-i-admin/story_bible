@@ -265,7 +265,28 @@ is_active boolean DEFAULT true
 - 클라이언트: `StoryState.landmarks` 에 부팅 시 한 번 전체 로드. `StoryHomeScreen` 이 selectedEraId 로 필터한 non-region landmark 는 `StoryMapPanel.activeLandmarks`, region polygon 은 `StoryMapPanel.eraRegionLandmarks` 로 전달한다. 운영 지도는 이를 `StoryTerrain3dMap` WebView 내부 MapLibre GeoJSON layer/DOM marker 로 렌더링한다.
 - PoC 단계는 emoji 컬럼만 사용. 향후 실제 일러스트가 필요하면 `icon_storage_path` 같은 새 컬럼 추가로 확장.
 
-### 2.2c Notifications & Push (2026-04-22 도입)
+### 2.2c App publications — 공지사항과 사용법
+
+홈 좌상단 메가폰 버튼에서 보여 줄 개발자 게시 콘텐츠다. bell 알림과 달리 읽음
+상태나 30일 보관 정책에 묶이지 않고, `is_published`와 `published_at`으로 노출을
+제어한다.
+
+```sql
+id uuid PK, slug text UNIQUE, category text CHECK ('notice','guide'),
+title text, body text, link_url text, link_label text,
+is_published boolean, published_at timestamptz,
+display_order int, created_at timestamptz, updated_at timestamptz
+```
+
+- RLS: `anon, authenticated` 는 게시된 row만 SELECT. authenticated admin은 전체
+  INSERT/UPDATE/DELETE 가능.
+- 첫 seed: `slug='welcome'`, 제목 `환영인사`, 환영 문구와 하루 동행 기도 문구.
+- 두 번째 seed: `slug='guide-and-tutorial'`, 제목 `가이드 및 튜토리얼`, 첫 사용법과 활용 예시 안내,
+  외부 가이드 URL `https://brand-i-admin.github.io/story-bible-pages/`.
+- Flutter: `AppPublicationRepository.fetchPublishedPublications()` →
+  `publishedAppPublicationsProvider` → `AppPublicationsScreen`.
+
+### 2.2d Notifications & Push (2026-04-22 도입)
 
 인앱 알림함(bell 아이콘)과 FCM 푸시를 지원한다. 하이브리드 팬아웃:
 
@@ -308,7 +329,7 @@ token text UNIQUE, device_label text
 ```sql
 week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at timestamptz
 ```
-- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 주간 탐험 시작 FCM 을 직접 발송.
+- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 주간 미션 시작 FCM 을 직접 발송.
 - Dart 쪽 `weekly_selection.dart` 의 `seedFromKey` 를 plpgsql `_seed_from_week_key` 로 포팅해 동일 결과 보장.
 
 #### 트리거
@@ -333,8 +354,8 @@ week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at ti
 | `notify_quiz_completed(event_id)` | 퀴즈 완료 시 클라이언트가 호출 |
 | `register_push_token(token, platform, label)` | FCM 토큰 upsert |
 | `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
-| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 주간 탐험 시작 push-only 발송 |
-| `dispatch_daily_exploration_push()` | pg_cron 수요일 KST 9시 — KST 날짜 시드로 오늘의 사건 제목을 고른 뒤 “「사건명」 사건을 함께 탐험해봐요.” push-only 발송 |
+| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 주간 미션 시작 push-only 발송 |
+| `dispatch_daily_exploration_push()` | pg_cron 수요일 KST 9시 — KST 날짜 시드로 오늘의 사건 제목을 고른 뒤 “「사건명」 사건을 함께 미션으로 만나봐요.” push-only 발송 |
 | `notify_weekly_diary_reflection()` | pg_cron 금요일 KST 9시 — 나의 다이어리 묵상/신앙 정리 push-only 발송 |
 
 #### 30일 보관
@@ -414,11 +435,11 @@ target_user_id uuid FK→auth.users
 _(2026-05-08: `user_daily_activity` 테이블 — "연속 출석일 / 연속 인물 공부"
 스트릭 기능 — 제거됨. db_init.sql 의 `drop table if exists` 만 정리용으로 유지.)_
 
-#### 매일/주간 탐험 진행도 (2026-06-23)
+#### 매일/주간 미션 진행도 (2026-06-23)
 - `daily_quiz`, `user_daily_quiz_attempts`, `weekly_quiz_progress` 는 제거했다.
-- 매일 탐험과 주간 탐험은 별도 문제/진행도 테이블을 만들지 않고, 앱의 일반 사건 상세 플로우를 여는 진입점으로만 동작한다.
+- 매일 미션과 주간 미션은 별도 문제/진행도 테이블을 만들지 않고, 앱의 일반 사건 상세 플로우를 여는 진입점으로만 동작한다.
 - 읽기/퀴즈/감정 새김 결과는 모두 `user_event_progress`, `user_quiz_attempts`, `user_event_emotion_marks` 에 저장되어 홈 지도, 프로필, 나의 다이어리와 동일하게 연결된다.
-- 이미 완료한 사건이 매일/주간 탐험에 다시 선정될 수 있다. 이 경우에도 동일 사건 상세를 연다. 매일 탐험은 해당 사건의 감정 기록이 이전 날짜면 재탐험 문구를, 오늘 KST 기록이면 축복 문구를 사건 카드 패널에 표시한다. 주간 탐험은 별도 재탐험 문구를 표시하지 않는다.
+- 이미 완료한 사건이 매일/주간 미션에 다시 선정될 수 있다. 이 경우에도 동일 사건 상세를 연다. 매일 미션은 해당 사건의 감정 기록이 이전 날짜면 다시 미션 문구를, 오늘 KST 기록이면 축복 문구를 사건 카드 패널에 표시한다. 주간 미션은 별도 다시 미션 문구를 표시하지 않는다.
 
 #### `user_quiz_attempts` (2026-05-25)
 ```sql
@@ -428,7 +449,7 @@ selected_answers jsonb, updated_at,
 UNIQUE (user_id, event_id)
 ```
 - 이야기별 최근 퀴즈 풀이 결과. "헷갈렸어요" 선택과 오답을 프로필/사건 카드의 복습 신호로 보여 주기 위한 본인 전용 기록.
-- 매일/주간 탐험에서 푼 결과도 같은 사건 학습 기록으로 저장된다.
+- 매일/주간 미션에서 푼 결과도 같은 사건 학습 기록으로 저장된다.
 - RLS: 본인만 read/write.
 
 ### 2.3 검색/ML (향후)
@@ -546,7 +567,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | 메서드 | 역할 |
 |--------|------|
 | `signInWithApple()` | Apple ID 로그인 (SHA256 nonce) |
-| `signInWithGoogle()` | Google 로그인. 모바일은 Supabase OAuth redirect + 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
+| `signInWithGoogle()` | Google 로그인. Android 는 이전 네이티브 Google 선택 계정을 `signOut()`으로 비운 뒤 `google_sign_in` 계정 선택 → Supabase `signInWithIdToken` 경로를 사용해 Google `disallowed_useragent` 정책을 피한다. iOS/Web 은 Supabase OAuth redirect + Safari View Controller/브라우저 경로를 사용하며 `prompt=select_account`로 계정 선택 화면을 요청한다. |
 | `signInWithKakao()` | Kakao 로그인. 모바일 OAuth는 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
 | `signOut()` | 로그아웃 |
 | `deleteCurrentAccount(...)` | `delete-account` Edge Function 호출 후 로컬 세션 정리 |

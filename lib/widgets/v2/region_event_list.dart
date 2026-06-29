@@ -264,7 +264,24 @@ class StoryEventThumbCard extends StatelessWidget {
             border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
           ),
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
-          child: _buildCardBody(context, theme),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final body = _buildCardBody(context, theme);
+              final textScale = MediaQuery.textScalerOf(context).scale(1);
+              if (textScale < 1.3 || !constraints.hasBoundedHeight) {
+                return body;
+              }
+              return ScrollConfiguration(
+                behavior: ScrollConfiguration.of(
+                  context,
+                ).copyWith(scrollbars: false),
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: body,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -274,13 +291,14 @@ class StoryEventThumbCard extends StatelessWidget {
     final summary = (event.summary ?? '').trim();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final compactLargeText = textScale >= 1.3;
-    final thumbnailSize = compactLargeText ? 52.0 : 64.0;
-    final characterPillsHeight = compactLargeText ? 22.0 : 18.0;
-    final summaryMaxLines = compactLargeText ? 1 : 2;
-    final gapAfterThumbnail = compactLargeText ? 5.0 : 6.0;
-    final gapAfterTitle = compactLargeText ? 3.0 : 4.0;
-    final gapBeforeSummary = compactLargeText ? 4.0 : 6.0;
-    final gapBeforePills = compactLargeText ? 5.0 : 6.0;
+    final thumbnailSize = compactLargeText ? 44.0 : 64.0;
+    final characterPillsHeight = compactLargeText ? 24.0 : 18.0;
+    final titleMaxLines = compactLargeText ? null : 2;
+    final summaryMaxLines = compactLargeText ? null : 2;
+    final gapAfterThumbnail = compactLargeText ? 3.0 : 6.0;
+    final gapAfterTitle = compactLargeText ? 2.0 : 4.0;
+    final gapBeforeSummary = compactLargeText ? 3.0 : 6.0;
+    final gapBeforePills = compactLargeText ? 4.0 : 6.0;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -292,7 +310,7 @@ class StoryEventThumbCard extends StatelessWidget {
           publicUrlForStoragePath: publicUrlForStoragePath,
         ),
         SizedBox(height: gapAfterThumbnail),
-        _ThumbTitle(event: event, theme: theme),
+        _ThumbTitle(event: event, theme: theme, maxLines: titleMaxLines),
         SizedBox(height: gapAfterTitle),
         _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
         if (showSummary && summary.isNotEmpty) ...[
@@ -382,22 +400,28 @@ class _CardThumbnailFrame extends StatelessWidget {
 }
 
 class _ThumbTitle extends StatelessWidget {
-  const _ThumbTitle({required this.event, required this.theme});
+  const _ThumbTitle({
+    required this.event,
+    required this.theme,
+    required this.maxLines,
+  });
 
   final StoryEvent event;
   final ThemeData theme;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       event.title,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
+      maxLines: maxLines,
+      overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
+      softWrap: true,
       textAlign: TextAlign.center,
       style: theme.textTheme.titleSmall?.copyWith(
         fontWeight: FontWeight.w700,
         fontSize: 12,
-        height: 1.08,
+        height: maxLines == null ? 1.14 : 1.08,
       ),
     );
   }
@@ -427,7 +451,8 @@ class _ThumbMetaRow extends StatelessWidget {
               Text(
                 placeName!,
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.visible,
+                softWrap: false,
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -465,14 +490,15 @@ class _ThumbSummary extends StatelessWidget {
   const _ThumbSummary({required this.summary, required this.maxLines});
 
   final String summary;
-  final int maxLines;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       summary,
       maxLines: maxLines,
-      overflow: TextOverflow.ellipsis,
+      overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
+      softWrap: true,
       textAlign: TextAlign.center,
       style: const TextStyle(
         fontSize: 10,

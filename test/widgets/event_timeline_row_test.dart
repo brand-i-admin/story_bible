@@ -311,6 +311,44 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('아주크게 글자 크기에서 제목과 요약을 말줄임하지 않는다', (tester) async {
+      const title = '예수님은 겟세마네에서 아버지의 뜻에 자신을 맡기신다';
+      const summary = '예수님은 십자가 앞에서 깊이 기도하며 아버지의 뜻을 따르십니다.';
+
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(
+              7,
+              title: title,
+              summary: summary,
+              placeName: '예루살렘 성전 뜰과 감람산 근처',
+              startYear: 33,
+              characterCodes: const ['jesus', 'peter', 'john', 'james'],
+            ),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            orderNumber: 7,
+          ),
+          width: 148,
+          height: 290,
+          textScale: 1.4,
+        ),
+      );
+      await tester.pump();
+
+      final titleText = tester.widget<Text>(find.text(title));
+      final summaryText = tester.widget<Text>(find.text(summary));
+      expect(titleText.maxLines, anyOf(isNull, greaterThanOrEqualTo(3)));
+      expect(titleText.overflow, isNot(TextOverflow.ellipsis));
+      expect(summaryText.maxLines, anyOf(isNull, greaterThanOrEqualTo(2)));
+      expect(summaryText.overflow, isNot(TextOverflow.ellipsis));
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('아주크게 글자 크기에서도 저장한 이야기 미리보기 카드가 overflow 되지 않는다', (
       tester,
     ) async {

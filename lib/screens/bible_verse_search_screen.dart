@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/bible_verse.dart';
+import '../models/character.dart';
+import '../models/era.dart';
+import '../models/event_emotion_mark.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../state/story_controller.dart';
 import '../theme/tokens.dart';
@@ -10,11 +14,13 @@ import '../utils/bible_book_meta.dart';
 import '../widgets/parchment_texture_layer.dart';
 import '../widgets/profile/profile_event_review_grid.dart';
 import '../widgets/story_home_styles.dart';
+import '../widgets/story_map_panel.dart';
 import '../widgets/sub_page_floating_home_button.dart';
 
 const int _oldTestamentFirstBookNo = 1;
 const int _oldTestamentLastBookNo = 39;
 const int _newTestamentFirstBookNo = 40;
+const double _verseSearchResultsHeight = 300;
 const int _newTestamentLastBookNo = 66;
 const Color _verseGridLineColor = Color(0x228E6F48);
 const double _bibleBookDropdownWidth = 124;
@@ -42,6 +48,7 @@ class _BibleVerseSearchScreenState
   bool _loadingVerseNumbers = false;
   String? _verseNumberError;
   Future<List<StoryEvent>>? _resultsFuture;
+  String? _selectedResultEventId;
   int _verseLoadSerial = 0;
 
   @override
@@ -116,6 +123,7 @@ class _BibleVerseSearchScreenState
   void _refreshResults() {
     final repo = ref.read(storyRepositoryProvider);
     setState(() {
+      _selectedResultEventId = null;
       _resultsFuture = repo.fetchEventsContainingBibleVerse(
         bookNo: _selectedBookNo,
         chapterNo: _selectedChapterNo,
@@ -183,6 +191,7 @@ class _BibleVerseSearchScreenState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
+    final controller = ref.read(storyControllerProvider.notifier);
     final charactersByCode = {for (final c in state.characters) c.code: c};
 
     return Scaffold(
@@ -290,7 +299,7 @@ class _BibleVerseSearchScreenState
                                   }
                                   final events =
                                       snapshot.data ?? const <StoryEvent>[];
-                                  return ProfileEventReviewGrid(
+                                  return _VerseSearchResultsWithMap(
                                     events: events,
                                     eras: state.eras,
                                     charactersByCode: charactersByCode,
@@ -298,17 +307,17 @@ class _BibleVerseSearchScreenState
                                     eventEmotionMarks: state.eventEmotionMarks,
                                     quizAttemptSummaries:
                                         state.quizAttemptSummaries,
+                                    selectedEventId: _selectedResultEventId,
+                                    onSelectEvent: (eventId) {
+                                      setState(
+                                        () => _selectedResultEventId = eventId,
+                                      );
+                                    },
+                                    colorForCharacter:
+                                        controller.colorForCharacter,
                                     onOpenEventDetail: _openEvent,
                                     emptyText: '이 구절을 포함하는 이야기가 아직 없습니다.',
-                                    padding: const EdgeInsets.fromLTRB(
-                                      2,
-                                      0,
-                                      2,
-                                      28,
-                                    ),
-                                    crossAxisCount: crossAxisCount,
-                                    mainAxisExtent: 226,
-                                    scrollable: false,
+                                    compactCrossAxisCount: crossAxisCount,
                                   );
                                 },
                               ),
@@ -325,6 +334,153 @@ class _BibleVerseSearchScreenState
   }
 }
 
+class _VerseSearchResultsWithMap extends StatelessWidget {
+  const _VerseSearchResultsWithMap({
+    required this.events,
+    required this.eras,
+    required this.charactersByCode,
+    required this.completedEventIds,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
+    required this.selectedEventId,
+    required this.onSelectEvent,
+    required this.colorForCharacter,
+    required this.onOpenEventDetail,
+    required this.emptyText,
+    required this.compactCrossAxisCount,
+  });
+
+  final List<StoryEvent> events;
+  final List<Era> eras;
+  final Map<String, Character> charactersByCode;
+  final Set<String> completedEventIds;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final String? selectedEventId;
+  final ValueChanged<String> onSelectEvent;
+  final Color Function(String characterId) colorForCharacter;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+  final String emptyText;
+  final int compactCrossAxisCount;
+
+  @override
+  Widget build(BuildContext context) {
+    if (events.isEmpty) {
+      return ProfileEventReviewGrid(
+        events: events,
+        eras: eras,
+        charactersByCode: charactersByCode,
+        completedEventIds: completedEventIds,
+        eventEmotionMarks: eventEmotionMarks,
+        quizAttemptSummaries: quizAttemptSummaries,
+        onOpenEventDetail: onOpenEventDetail,
+        emptyText: emptyText,
+        padding: const EdgeInsets.fromLTRB(2, 0, 2, 28),
+        crossAxisCount: compactCrossAxisCount,
+        mainAxisExtent: 226,
+        scrollable: false,
+      );
+    }
+
+    final selectedId = events.any((event) => event.id == selectedEventId)
+        ? selectedEventId
+        : events.first.id;
+    final map = _VerseSearchMapPanel(
+      events: events,
+      selectedEventId: selectedId,
+      onSelectEvent: onSelectEvent,
+      colorForCharacter: colorForCharacter,
+      eventEmotionMarks: eventEmotionMarks,
+      onOpenEventDetail: onOpenEventDetail,
+    );
+    final cards = ProfileEventReviewGrid(
+      events: events,
+      eras: eras,
+      charactersByCode: charactersByCode,
+      completedEventIds: completedEventIds,
+      eventEmotionMarks: eventEmotionMarks,
+      quizAttemptSummaries: quizAttemptSummaries,
+      onOpenEventDetail: onOpenEventDetail,
+      emptyText: emptyText,
+      padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+      crossAxisCount: 1,
+      mainAxisExtent: 226,
+      scrollable: true,
+    );
+
+    return SizedBox(
+      height: _verseSearchResultsHeight,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(flex: 7, child: map),
+          const SizedBox(width: AppSpacing.x5),
+          Expanded(flex: 3, child: cards),
+        ],
+      ),
+    );
+  }
+}
+
+class _VerseSearchMapPanel extends StatelessWidget {
+  const _VerseSearchMapPanel({
+    required this.events,
+    required this.selectedEventId,
+    required this.onSelectEvent,
+    required this.colorForCharacter,
+    required this.eventEmotionMarks,
+    required this.onOpenEventDetail,
+  });
+
+  final List<StoryEvent> events;
+  final String? selectedEventId;
+  final ValueChanged<String> onSelectEvent;
+  final Color Function(String characterId) colorForCharacter;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    final eventById = {for (final event in events) event.id: event};
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadii.xl),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.ink900.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          border: Border.all(color: AppColors.borderCard, width: 1),
+        ),
+        child: StoryMapPanel(
+          events: events,
+          selectedEventId: selectedEventId,
+          onSelectEvent: onSelectEvent,
+          onOpenDetail: (eventId) {
+            final event = eventById[eventId];
+            if (event != null) {
+              onOpenEventDetail(event);
+            }
+          },
+          colorForCharacter: colorForCharacter,
+          selectedCharacterCodes: const <String>{},
+          eventEmotionMarks: eventEmotionMarks,
+          revealEventsKey: _resultMapKey(events),
+          revealInstantly: true,
+          decorate: false,
+          animateReveal: false,
+          centerSelectedOnReady: false,
+          fitAllEventsOnReady: true,
+          fitAllZoomAdjust: -0.18,
+        ),
+      ),
+    );
+  }
+}
+
+String _resultMapKey(List<StoryEvent> events) {
+  final ids = events.map((event) => event.id).join(',');
+  return 'verse-search:${events.length}:$ids';
+}
+
 class _SearchHeader extends StatelessWidget {
   const _SearchHeader({required this.onBack});
 
@@ -332,8 +488,9 @@ class _SearchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 44,
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: largeText ? 58 : 44),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -341,14 +498,17 @@ class _SearchHeader extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: SubPageFloatingHomeButton(onTap: onBack),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 60),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 60),
             child: Text(
               '성경 구절로 찾는 이야기',
               textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              maxLines: largeText ? 2 : 1,
+              overflow: largeText
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              softWrap: true,
+              style: const TextStyle(
                 color: AppColors.ink800,
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
@@ -381,6 +541,7 @@ class _VersePickerPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final bookNumbers = _bookNumbersForTestament(selectedTestament);
     final safeBookNo = bookNumbers.contains(selectedBookNo)
         ? selectedBookNo
@@ -417,8 +578,11 @@ class _VersePickerPanel extends StatelessWidget {
                       value: bookNo,
                       child: Text(
                         bibleBooks[bookNo - 1].name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? 2 : 1,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                       ),
                     ),
                 ],
@@ -577,6 +741,7 @@ class _SelectedVersePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final reference = '${_shortBibleBookName(bookNo)} $chapterNo:$verseNo';
     final verseText = verse?.verseText.trim();
     final body = verseText != null && verseText.isNotEmpty
@@ -614,8 +779,11 @@ class _SelectedVersePreview extends StatelessWidget {
                 ),
                 child: Text(
                   reference,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     color: AppColors.greenBot,
                     fontSize: AppFontSizes.sm,
@@ -673,15 +841,17 @@ class _VerseButton extends StatelessWidget {
             color: selected
                 ? AppColors.greenTint1.withValues(alpha: 0.86)
                 : Colors.transparent,
-            child: Text(
-              '$verseNo',
-              maxLines: 1,
-              overflow: TextOverflow.clip,
-              style: TextStyle(
-                color: selected ? AppColors.greenBot : AppColors.ink500,
-                fontSize: AppFontSizes.body,
-                fontWeight: selected ? FontWeight.w900 : FontWeight.w800,
-                height: 1,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$verseNo',
+                maxLines: 1,
+                style: TextStyle(
+                  color: selected ? AppColors.greenBot : AppColors.ink500,
+                  fontSize: AppFontSizes.body,
+                  fontWeight: selected ? FontWeight.w900 : FontWeight.w800,
+                  height: 1,
+                ),
               ),
             ),
           ),

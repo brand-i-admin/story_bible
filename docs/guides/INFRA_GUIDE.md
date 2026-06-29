@@ -336,7 +336,7 @@ iOS 디바이스는 "Apple 이 발행한 서명"이 없으면 **아무것도 못
 
 앱은 **Supabase JWT 만** 알면 된다. Provider 별 특성은 Supabase가 흡수.
 
-### 5.2 Google 로그인 — Supabase OAuth 인앱 브라우저
+### 5.2 Google 로그인 — Android 네이티브 / iOS·Web OAuth
 
 #### 구성 (GCP Console)
 
@@ -345,16 +345,31 @@ iOS 디바이스는 "Apple 이 발행한 서명"이 없으면 **아무것도 못
    - "+ CREATE CREDENTIALS" → "OAuth client ID" → 유형: **웹 애플리케이션**
    - **승인된 리디렉션 URI**: `https://zmcffwcfmyhdykdhxhgy.supabase.co/auth/v1/callback`
    - 생성된 Client ID + Client Secret → Supabase Dashboard → Authentication → Providers → Google 에 붙여넣기
-3. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 `com.storybible.app://login-callback` 추가
+3. Android OAuth Client
+   - 유형: **Android**
+   - package name: `com.storybible.app`
+   - SHA-1/SHA-256: 테스트 방식에 맞는 인증서를 모두 등록한다.
+     - 로컬 debug 빌드: debug keystore
+     - Play Console 내부/프로덕션 테스트: **Play App Signing certificate**
+     - 직접 release APK/로컬 설치: release upload/signing keystore
+   - Firebase Console 에서 Android 앱 SHA 인증서를 추가한 뒤 `android/app/google-services.json`을 다시 내려받는다.
+   - 정상 파일에는 `oauth_client` 안에 `client_type: 1` Android client 와 `certificate_hash`가 포함된다.
+4. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 `com.storybible.app://login-callback` 추가
 
 #### 동작
 
-Google 로그인은 Android/iOS 모두 Supabase OAuth Authorization Code Flow 를 사용한다.
-모바일에서는 `LaunchMode.inAppBrowserView` 로 앱 바깥 기본 브라우저가 아니라
-Custom Tabs/Safari View Controller 계열 인앱 브라우저를 연다.
+Android Google 로그인은 `google_sign_in` 네이티브 계정 선택 UI 를 사용하고,
+받은 Google `idToken`을 Supabase `signInWithIdToken(provider: google, ...)`에
+전달한다. Google 은 WebView/일부 인앱 브라우저 기반 OAuth 를
+`403 disallowed_useragent`로 막을 수 있으므로 Android Google 로그인에서는 Supabase
+OAuth 인앱 브라우저 경로를 쓰지 않는다.
+
+iOS/Web 의 Google 로그인과 Kakao 로그인은 Supabase OAuth Authorization Code Flow 를
+사용한다. 모바일에서는 `LaunchMode.inAppBrowserView` 로 앱 바깥 기본 브라우저가 아니라
+Safari View Controller/플랫폼 인앱 브라우저 계열 화면을 연다.
 
 ```
-사용자 "Google로 로그인" 클릭
+사용자 "Google로 로그인" 클릭 (iOS/Web OAuth 경로)
   ↓
 supabase.auth.signInWithOAuth(OAuthProvider.google, redirectTo: <앱 URL>)
   ↓
@@ -389,9 +404,18 @@ Flutter SDK 가 URL 파싱해서 세션 저장
 
 `google_sign_in` 네이티브 방식을 사용할 때 `com.google.android.gms.common.api.ApiException: 10` 이
 뜨면 대개 Android OAuth Client 의 package name/SHA-1/SHA-256 설정이 현재 서명키와
-맞지 않는다는 뜻이다. 이 앱은 해당 네이티브 경로를 사용하지 않고 Supabase OAuth
-인앱 브라우저 경로를 사용하므로 Android SHA 등록 누락 때문에 Google 로그인이
-깨지지 않는다.
+맞지 않는다는 뜻이다. 이 앱의 Android Google 로그인은 네이티브 경로를 사용하므로,
+이 오류는 코드 우회가 아니라 Firebase/GCP 설정으로 해결한다.
+
+확인 순서:
+
+1. Play Console → 앱 → Setup → App integrity → **App signing key certificate** 의
+   SHA-1/SHA-256을 복사한다.
+2. Firebase Console → Project settings → Android app(`com.storybible.app`) →
+   SHA certificate fingerprints 에 SHA-1/SHA-256을 추가한다.
+3. 새 `google-services.json`을 내려받아 `android/app/google-services.json`을 교체한다.
+4. 파일에 `client_type: 1`과 `certificate_hash`가 생겼는지 확인한다.
+5. `flutter clean && flutter pub get` 후 Android release/appbundle 을 다시 빌드한다.
 
 ### 5.3 Apple 로그인 — idToken 직접 검증 방식
 

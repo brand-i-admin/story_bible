@@ -5,6 +5,14 @@ import 'package:story_bible/data/auth_repository.dart';
 import 'package:story_bible/models/app_user_profile.dart';
 
 void main() {
+  group('googleAccountChooserQueryParams', () {
+    test('Google OAuth 에 계정 선택 화면을 요청한다', () {
+      expect(googleAccountChooserQueryParams(), const {
+        'prompt': 'select_account',
+      });
+    });
+  });
+
   group('accountDeletionConfirmationId', () {
     test('이메일이 있으면 이메일을 확인 아이디로 사용한다', () {
       const user = User(

@@ -9,6 +9,24 @@ import '../theme/tokens.dart';
 // 시각 값은 lib/theme/tokens.dart에 정의된 토큰을 참조한다.
 // 새 위젯은 가능하면 AppSurfaces / AppColors를 직접 사용할 것.
 
+const Color homeStepperActiveColor = Color(0xFF2E8B57);
+const Color homeStepperDoneColor = Color(0xFFE8A33D);
+
+double _textScaleOf(BuildContext context) {
+  return MediaQuery.textScalerOf(context).scale(1);
+}
+
+bool _usesLargeTextLayout(BuildContext context) => _textScaleOf(context) >= 1.3;
+
+double topUtilityButtonHeightFor(BuildContext context) {
+  final extra = ((_textScaleOf(context) - 1) * 28).clamp(0.0, 12.0).toDouble();
+  return _topUtilityIconButtonHeight + extra;
+}
+
+double topUtilityBarHeightFor(BuildContext context) {
+  return topUtilityButtonHeightFor(context) + 2;
+}
+
 BoxDecoration modalSurfaceDecoration() {
   return AppSurfaces.modal();
 }
@@ -137,64 +155,80 @@ Widget filledActionButton({
   Color? borderColor,
   Color? shadowColor,
 }) {
-  final height = minHeight ?? (compact ? 34.0 : 42.0);
-  final horizontal = horizontalPadding ?? (compact ? 12.0 : 18.0);
-  final resolvedRadius = radius ?? (compact ? 12.0 : 15.0);
-  final resolvedFontSize = fontSize ?? (compact ? 11.5 : AppFontSizes.btn);
-  return Material(
-    color: Colors.transparent,
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(resolvedRadius),
-      child: Container(
-        constraints: BoxConstraints(
-          minWidth: minWidth ?? 92,
-          minHeight: height,
-        ),
-        padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors:
-                gradientColors ??
-                (completed
-                    ? const [AppColors.greenBtnTop, AppColors.greenBtnBot]
-                    : const [AppColors.goldLight, AppColors.goldDeep]),
-          ),
+  return Builder(
+    builder: (context) {
+      final textScale = _textScaleOf(context);
+      final largeText = textScale >= 1.3;
+      final baseHeight = minHeight ?? (compact ? 34.0 : 42.0);
+      final extraHeight = ((textScale - 1) * (compact ? 24 : 30))
+          .clamp(0.0, compact ? 12.0 : 18.0)
+          .toDouble();
+      final height = baseHeight + extraHeight;
+      final horizontal = horizontalPadding ?? (compact ? 12.0 : 18.0);
+      final vertical = largeText ? (compact ? 7.0 : 9.0) : 8.0;
+      final resolvedRadius = radius ?? (compact ? 12.0 : 15.0);
+      final resolvedFontSize = fontSize ?? (compact ? 11.5 : AppFontSizes.btn);
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(resolvedRadius),
-          border: Border.all(
-            color:
-                borderColor ??
-                (completed ? AppColors.greenRim : AppColors.goldHi),
-            width: 1.1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  shadowColor ??
-                  (completed
-                      ? const Color(0x223D8758)
-                      : const Color(0x26A35B22)),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+          child: Container(
+            constraints: BoxConstraints(
+              minWidth: minWidth ?? 92,
+              minHeight: height,
             ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: AppColors.parchmentCream,
-            fontSize: resolvedFontSize,
-            fontWeight: FontWeight.w900,
-            height: 1.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontal,
+              vertical: vertical,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors:
+                    gradientColors ??
+                    (completed
+                        ? const [AppColors.greenBtnTop, AppColors.greenBtnBot]
+                        : const [AppColors.goldLight, AppColors.goldDeep]),
+              ),
+              borderRadius: BorderRadius.circular(resolvedRadius),
+              border: Border.all(
+                color:
+                    borderColor ??
+                    (completed ? AppColors.greenRim : AppColors.goldHi),
+                width: 1.1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      shadowColor ??
+                      (completed
+                          ? const Color(0x223D8758)
+                          : const Color(0x26A35B22)),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              maxLines: largeText ? 3 : 2,
+              overflow: TextOverflow.visible,
+              softWrap: true,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.parchmentCream,
+                fontSize: resolvedFontSize,
+                fontWeight: FontWeight.w900,
+                height: largeText ? 1.12 : 1.0,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -254,6 +288,204 @@ Widget mapControlButton({
 const double _topUtilityIconButtonHeight = 36;
 const double _topUtilityIconButtonWidth = 38;
 
+Widget topMissionButton({
+  required VoidCallback onTap,
+  required bool dailyCompleted,
+  bool dailyStatusKnown = true,
+}) {
+  return _TopMissionButton(
+    onTap: onTap,
+    dailyCompleted: dailyCompleted,
+    dailyStatusKnown: dailyStatusKnown,
+  );
+}
+
+class _TopMissionButton extends StatefulWidget {
+  const _TopMissionButton({
+    required this.onTap,
+    required this.dailyCompleted,
+    required this.dailyStatusKnown,
+  });
+
+  final VoidCallback onTap;
+  final bool dailyCompleted;
+  final bool dailyStatusKnown;
+
+  @override
+  State<_TopMissionButton> createState() => _TopMissionButtonState();
+}
+
+class _TopMissionButtonState extends State<_TopMissionButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  bool get _shouldPulse => widget.dailyStatusKnown && !widget.dailyCompleted;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1050),
+    );
+    _syncPulse();
+  }
+
+  @override
+  void didUpdateWidget(covariant _TopMissionButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.dailyCompleted != widget.dailyCompleted ||
+        oldWidget.dailyStatusKnown != widget.dailyStatusKnown) {
+      _syncPulse();
+    }
+  }
+
+  void _syncPulse() {
+    if (_shouldPulse) {
+      _controller.repeat(reverse: true);
+    } else {
+      _controller
+        ..stop()
+        ..value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: widget.dailyCompleted ? '매일 미션 완료' : '매일 미션 진행하기',
+      child: Tooltip(
+        message: widget.dailyCompleted
+            ? '오늘의 매일 미션 완료'
+            : widget.dailyStatusKnown
+            ? '오늘의 매일 미션 진행하기'
+            : '매일 미션 열기',
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            final pulse = _shouldPulse ? _controller.value : 0.0;
+            final scale = _shouldPulse
+                ? 1.0 + (math.sin(pulse * math.pi) * 0.035)
+                : 1.0;
+            return Transform.scale(
+              scale: scale,
+              child: _TopMissionButtonBody(
+                onTap: widget.onTap,
+                dailyCompleted: widget.dailyCompleted,
+                dailyStatusKnown: widget.dailyStatusKnown,
+                pulse: pulse,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _TopMissionButtonBody extends StatelessWidget {
+  const _TopMissionButtonBody({
+    required this.onTap,
+    required this.dailyCompleted,
+    required this.dailyStatusKnown,
+    required this.pulse,
+  });
+
+  final VoidCallback onTap;
+  final bool dailyCompleted;
+  final bool dailyStatusKnown;
+  final double pulse;
+
+  @override
+  Widget build(BuildContext context) {
+    final waiting = !dailyStatusKnown;
+    final backgroundColor = dailyCompleted
+        ? homeStepperActiveColor
+        : waiting
+        ? AppColors.ink900.withValues(alpha: 0.76)
+        : homeStepperDoneColor;
+    final borderColor = dailyCompleted
+        ? Colors.white
+        : waiting
+        ? AppColors.borderHairlineDark
+        : Colors.white;
+    const foregroundColor = Colors.white;
+    final shadows = dailyCompleted
+        ? const [
+            BoxShadow(
+              color: Color(0x662E8B57),
+              blurRadius: 6,
+              spreadRadius: 0.4,
+            ),
+          ]
+        : waiting
+        ? null
+        : [
+            BoxShadow(
+              color: homeStepperDoneColor.withValues(
+                alpha: 0.24 + pulse * 0.22,
+              ),
+              blurRadius: 8 + pulse * 8,
+              offset: const Offset(0, 3),
+            ),
+            BoxShadow(
+              color: homeStepperDoneColor.withValues(
+                alpha: 0.18 + pulse * 0.24,
+              ),
+              blurRadius: 14 + pulse * 10,
+            ),
+          ];
+
+    final height = topUtilityButtonHeightFor(context);
+    return SizedBox(
+      width: 52,
+      height: height,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const ValueKey('top-mission-button'),
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: borderColor,
+                width: waiting ? 1.1 : 1.2,
+              ),
+              boxShadow: shadows,
+            ),
+            alignment: Alignment.center,
+            child: const Text(
+              '미션',
+              maxLines: 2,
+              overflow: TextOverflow.visible,
+              softWrap: true,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: foregroundColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                height: AppLineHeights.tight,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 Widget topUtilityButton({
   required String label,
   required VoidCallback onTap,
@@ -276,40 +508,51 @@ Widget topUtilityButton({
   final resolvedBoxShadow =
       boxShadow ?? (selected ? AppShadows.goldGlow : null);
 
-  return Opacity(
-    opacity: enabled ? 1 : 0.42,
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: resolvedBackgroundColor,
+  return Builder(
+    builder: (context) {
+      final largeText = _usesLargeTextLayout(context);
+      final height = topUtilityButtonHeightFor(context);
+      return Opacity(
+        opacity: enabled ? 1 : 0.42,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: enabled ? onTap : null,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: resolvedBorderColor,
-              width: selected ? 1.2 : 0.9,
-            ),
-            boxShadow: resolvedBoxShadow,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: resolvedForegroundColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              height: AppLineHeights.tight,
+            child: Container(
+              constraints: BoxConstraints(minHeight: height),
+              padding: EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: largeText ? 7 : 6,
+              ),
+              decoration: BoxDecoration(
+                color: resolvedBackgroundColor,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: resolvedBorderColor,
+                  width: selected ? 1.2 : 0.9,
+                ),
+                boxShadow: resolvedBoxShadow,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: largeText ? 2 : 2,
+                overflow: TextOverflow.visible,
+                softWrap: true,
+                style: TextStyle(
+                  color: resolvedForegroundColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  height: largeText ? 1.08 : AppLineHeights.tight,
+                ),
+              ),
             ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -749,6 +992,7 @@ class _SceneCaptionOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = _usesLargeTextLayout(context);
     return Align(
       alignment: Alignment.bottomCenter,
       child: DecoratedBox(
@@ -761,17 +1005,21 @@ class _SceneCaptionOverlay extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          padding: EdgeInsets.symmetric(
+            horizontal: 9,
+            vertical: largeText ? 7 : 6,
+          ),
           child: Text(
             caption,
             textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            maxLines: largeText ? null : 1,
+            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+            softWrap: true,
+            style: TextStyle(
               color: Colors.white,
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              height: 1.18,
+              height: largeText ? 1.24 : 1.18,
               letterSpacing: 0,
             ),
           ),
@@ -847,69 +1095,91 @@ Widget bibleDropdownFrame<T>({
   required List<DropdownMenuItem<T>> items,
   required ValueChanged<T?> onChanged,
 }) {
-  return SizedBox(
-    height: 38,
-    child: DecoratedBox(
-      decoration: softButtonDecoration(selected: false),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<T>(
-            value: value,
-            isDense: true,
-            isExpanded: true,
-            iconSize: 12,
-            borderRadius: BorderRadius.circular(AppRadii.sm),
-            dropdownColor: const Color(0xFFF3E4CC),
-            iconEnabledColor: const Color(0xFF5B4327),
-            style: const TextStyle(
-              color: AppColors.ink500,
-              fontWeight: FontWeight.w900,
-              fontSize: AppFontSizes.base,
+  return Builder(
+    builder: (context) {
+      final largeText = _usesLargeTextLayout(context);
+      return ConstrainedBox(
+        constraints: BoxConstraints(minHeight: largeText ? 48 : 38),
+        child: DecoratedBox(
+          decoration: softButtonDecoration(selected: false),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: largeText ? 5 : 0,
             ),
-            items: items,
-            onChanged: onChanged,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                isDense: !largeText,
+                isExpanded: true,
+                iconSize: 12,
+                borderRadius: BorderRadius.circular(AppRadii.sm),
+                dropdownColor: const Color(0xFFF3E4CC),
+                iconEnabledColor: const Color(0xFF5B4327),
+                style: const TextStyle(
+                  color: AppColors.ink500,
+                  fontWeight: FontWeight.w900,
+                  fontSize: AppFontSizes.base,
+                ),
+                items: items,
+                onChanged: onChanged,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
 /// 상단 row에서 글자 크기 설정 바텀시트를 여는 토글 버튼.
 Widget topFontScaleButton({required VoidCallback onTap}) {
-  return Semantics(
-    button: true,
-    label: '글자 크기 변경',
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: const ValueKey('top-font-scale-button'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          constraints: const BoxConstraints(minWidth: 42, minHeight: 28),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.ink900.withValues(alpha: 0.76),
+  return Builder(
+    builder: (context) {
+      final largeText = _usesLargeTextLayout(context);
+      final height = topUtilityButtonHeightFor(context);
+      return Semantics(
+        button: true,
+        label: '글자 크기 변경',
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: const ValueKey('top-font-scale-button'),
+            onTap: onTap,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.borderHairlineDark, width: 0.9),
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            '글자',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: AppColors.fgOnDark,
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              height: 1,
+            child: Container(
+              constraints: BoxConstraints(minWidth: 42, minHeight: height),
+              padding: EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: largeText ? 7 : 4,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.ink900.withValues(alpha: 0.76),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: AppColors.borderHairlineDark,
+                  width: 0.9,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '글자',
+                maxLines: 2,
+                overflow: TextOverflow.visible,
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.fgOnDark,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  height: largeText ? 1.08 : 1,
+                ),
+              ),
             ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 

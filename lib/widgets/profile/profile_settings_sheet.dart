@@ -186,13 +186,14 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
     bool danger = false,
   }) {
     final fg = danger ? const Color(0xFF8C4A3A) : const Color(0xFF3A2B15);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: 50,
+          constraints: BoxConstraints(minHeight: largeText ? 62 : 50),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
             color: const Color(0x88F7E9D2),
@@ -206,8 +207,11 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
               Expanded(
                 child: Text(
                   label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: TextStyle(
                     color: fg,
                     fontWeight: FontWeight.w800,

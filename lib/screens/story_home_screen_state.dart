@@ -2114,6 +2114,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  Future<void> _openAppPublications() async {
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const AppPublicationsScreen()),
+    );
+  }
+
   String _eraTestament(Era era) {
     final raw = era.testament.trim().toLowerCase();
     if (raw == 'new' || raw == 'nt' || raw == 'new_testament') {
@@ -2132,7 +2139,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
     final state = ref.read(storyControllerProvider);
     final repo = ref.read(storyRepositoryProvider);
-    // 호출자가 event 를 직접 넘겼으면 그걸 사용 (탐험처럼 state.events 에 없는
+    // 호출자가 event 를 직접 넘겼으면 그걸 사용 (미션처럼 state.events 에 없는
     // 이벤트도 처리). 아니면 state.events 에서 lookup.
     final resolvedEvent =
         event ?? state.events.where((e) => e.id == eventId).firstOrNull;
@@ -2224,7 +2231,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final score = quizResult.score;
     final confusedCount = quizResult.confusedCount;
 
-    // 퀴즈 완료 + 점수 저장. 탐험/홈/프로필 어디에서 들어와도 일반 진행도에
+    // 퀴즈 완료 + 점수 저장. 미션/홈/프로필 어디에서 들어와도 일반 진행도에
     // 저장하고 controller 가 markEventCompleted 까지 동기화한다.
     final notifier = ref.read(storyControllerProvider.notifier);
     await notifier.setQuizCompleted(
@@ -2251,6 +2258,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
+    final dailyMissionEventAsync = ref.watch(dailyMissionEventProvider);
+    final dailyMissionStatusKnown = dailyMissionEventAsync.maybeWhen(
+      data: (event) => event != null,
+      orElse: () => false,
+    );
+    final dailyMissionCompleted = dailyMissionEventAsync.maybeWhen(
+      data: (event) =>
+          event != null &&
+          isDailyMissionCompletedForEvent(
+            eventId: event.id,
+            completedEventIds: state.completedEventIds,
+            mark: state.eventEmotionMarks[event.id],
+            now: DateTime.now(),
+          ),
+      orElse: () => false,
+    );
     // 인물 기반 전체 후보: Step 3 선택지 + 정렬 기준.
     final characterTimeline = _timelineForSelectedCharacters(
       state,
@@ -2605,7 +2628,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           onPointerCancel: (_) => _suppressMapTaps(),
                           onPointerSignal: (_) => _suppressMapTaps(),
                           child: SizedBox(
-                            height: 38,
+                            height: topUtilityBarHeightFor(context),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               padding: const EdgeInsets.symmetric(
@@ -2613,6 +2636,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               ),
                               child: Row(
                                 children: [
+                                  topUtilityIconButton(
+                                    icon: Icons.campaign_rounded,
+                                    tooltip: '공지사항과 사용법',
+                                    onTap: _openAppPublications,
+                                  ),
+                                  const SizedBox(width: 4),
                                   // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
                                   // 항상 일부 보이므로 별도 토글 불필요.
                                   topUtilityIconButton(
@@ -2626,9 +2655,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     onTap: _openBibleReaderPopup,
                                   ),
                                   const SizedBox(width: 4),
-                                  topUtilityButton(
-                                    label: '탐험',
+                                  topMissionButton(
                                     onTap: _openQuizTab,
+                                    dailyCompleted: dailyMissionCompleted,
+                                    dailyStatusKnown: dailyMissionStatusKnown,
                                   ),
                                   const SizedBox(width: 4),
                                   topUtilityButton(

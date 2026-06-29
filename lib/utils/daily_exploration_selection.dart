@@ -1,7 +1,7 @@
 import '../models/story_event.dart';
 import 'weekly_selection.dart';
 
-/// KST 기준 날짜를 'YYYY-M-D' 형식의 매일 탐험 키로 변환한다.
+/// KST 기준 날짜를 'YYYY-M-D' 형식의 매일 미션 키로 변환한다.
 String dailyExplorationKeyForKst(DateTime instant) {
   final kst = instant.toUtc().add(const Duration(hours: 9));
   return '${kst.year}-${kst.month}-${kst.day}';

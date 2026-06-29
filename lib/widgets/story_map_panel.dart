@@ -120,7 +120,7 @@ class StoryMapPanel extends StatefulWidget {
   /// 사용 (fallback).
   final String Function(String characterCode)? nameForCharacter;
 
-  /// 인물 경로 색상 legend 표시 여부. 주간/매일 탐험처럼 상단 카드에서 이미
+  /// 인물 경로 색상 legend 표시 여부. 주간/매일 미션처럼 상단 카드에서 이미
   /// 인물을 설명하는 화면은 지도 위 코드 라벨을 숨긴다.
   final bool showCharacterLegend;
 

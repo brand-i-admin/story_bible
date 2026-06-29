@@ -346,6 +346,56 @@ class StoryRepository {
     return rows.map<BibleVerse>((row) => BibleVerse.fromMap(row)).toList();
   }
 
+  Future<Set<String>> fetchCompletedBibleChapterKeys(
+    String userId, {
+    String translation = 'KRV',
+  }) async {
+    final rows = await _client
+        .from('user_bible_chapter_progress')
+        .select('book_no, chapter_no')
+        .eq('user_id', userId)
+        .eq('translation', translation);
+
+    return {
+      for (final row in rows)
+        bibleChapterProgressKey(
+          bookNo: (row['book_no'] as num).toInt(),
+          chapterNo: (row['chapter_no'] as num).toInt(),
+        ),
+    };
+  }
+
+  Future<void> setBibleChapterRead({
+    required String userId,
+    required int bookNo,
+    required int chapterNo,
+    required bool isRead,
+    String translation = 'KRV',
+  }) async {
+    final safeBookNo = bookNo.clamp(1, bibleBooks.length).toInt();
+    final maxChapter = bibleBooks[safeBookNo - 1].chapters;
+    final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
+    if (isRead) {
+      await _client.from('user_bible_chapter_progress').upsert({
+        'user_id': userId,
+        'translation': translation,
+        'book_no': safeBookNo,
+        'chapter_no': safeChapterNo,
+        'read_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }, onConflict: 'user_id,translation,book_no,chapter_no');
+      return;
+    }
+
+    await _client
+        .from('user_bible_chapter_progress')
+        .delete()
+        .eq('user_id', userId)
+        .eq('translation', translation)
+        .eq('book_no', safeBookNo)
+        .eq('chapter_no', safeChapterNo);
+  }
+
   Future<Set<String>> fetchCompletedEventIds(String userId) async {
     final visibleEventIds = await _fetchVisibleEventIds();
     if (visibleEventIds.isEmpty) {

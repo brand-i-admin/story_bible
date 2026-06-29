@@ -78,7 +78,7 @@ Supabase 서버 secret 에만 둔다.
 | Edge Function secrets | Deno Edge Function | `FIREBASE_SERVICE_ACCOUNT`, `GCP_SERVICE_ACCOUNT_JSON` | `send-push` / 이미지 생성 함수가 외부 API 호출 |
 | Supabase Vault | Postgres SQL 함수 | `service_role_key`, `supabase_url` | DB 함수가 `pg_net`으로 Edge Function 호출 |
 
-예를 들어 수요일 매일 탐험 푸시는 이런 경로로 움직인다.
+예를 들어 수요일 매일 미션 푸시는 이런 경로로 움직인다.
 
 ```text
 pg_cron
@@ -592,7 +592,7 @@ select public.dispatch_daily_exploration_push();
 ```
 
 이 함수는 KST 날짜 시드로 오늘의 사건 제목을 고르고 전체 push token 대상에게
-"오늘의 탐험이 열렸어요" 알림을 보낸다.
+"오늘의 미션이 열렸어요" 알림을 보낸다.
 
 테스트 전 확인:
 

@@ -36,6 +36,7 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
   }
 
   Widget _buildIntercessoryPrayerEmptyCard({required bool enabled}) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return LayoutBuilder(
       builder: (context, constraints) {
         final isVeryCompact = constraints.maxHeight < 150;
@@ -99,8 +100,11 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
                             ? '다른 사람의 기도제목을 공유 받아\n함께 기도해요'
                             : '로그인하면 다른 사람의 기도제목을\n함께 볼 수 있어요',
                         textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? null : 2,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                         style: TextStyle(
                           color: const Color(0xFF5A4326),
                           fontSize: fontSize,
@@ -123,6 +127,7 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
     final prayerText = (item.prayerRequest ?? '').trim().isEmpty
         ? '아직 등록된 기도제목이 없어요.'
         : item.prayerRequest!.trim();
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xC9F1E3CB),
@@ -148,8 +153,11 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
                     Expanded(
                       child: Text(
                         item.nickname,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? 2 : 1,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                         style: const TextStyle(
                           color: Color(0xFF452F1A),
                           fontWeight: FontWeight.w900,
@@ -172,8 +180,11 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
                 const SizedBox(height: 5),
                 Text(
                   prayerText,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? null : 4,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     color: Color(0xFF5A4326),
                     fontWeight: FontWeight.w700,

@@ -108,6 +108,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -143,8 +144,11 @@ class _FontScaleChoiceButton extends StatelessWidget {
               Text(
                 scale.label,
                 textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? 2 : 1,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,

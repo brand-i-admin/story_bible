@@ -208,6 +208,7 @@ class _InsertionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final highlight = theme.colorScheme.primary;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Material(
@@ -248,15 +249,21 @@ class _InsertionCard extends StatelessWidget {
                       Text(
                         title,
                         style: theme.textTheme.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: largeText ? 2 : 1,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
                       ),
                       if (subtitle.isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Text(
                           subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: largeText ? null : 2,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

@@ -119,6 +119,7 @@ class _CharacterPanelHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 2, 2, 3),
       child: Row(
@@ -139,55 +140,63 @@ class _CharacterPanelHeader extends StatelessWidget {
           ),
           SizedBox(
             width: 78,
-            height: 36,
-            child: DecoratedBox(
-              decoration: statesButtonDecoration(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<CharacterSortMode>(
-                    value: sortMode,
-                    isDense: true,
-                    isExpanded: true,
-                    iconSize: 12,
-                    dropdownColor: const Color(0xFF4E3A26),
-                    borderRadius: BorderRadius.circular(10),
-                    iconEnabledColor: AppColors.parchmentCream,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.parchmentCream,
-                      shadows: [
-                        Shadow(
-                          color: Color(0xAA000000),
-                          blurRadius: 2,
-                          offset: Offset(0, 1),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: largeText ? 46 : 36),
+              child: DecoratedBox(
+                decoration: statesButtonDecoration(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<CharacterSortMode>(
+                      value: sortMode,
+                      isDense: !largeText,
+                      isExpanded: true,
+                      iconSize: 12,
+                      dropdownColor: const Color(0xFF4E3A26),
+                      borderRadius: BorderRadius.circular(10),
+                      iconEnabledColor: AppColors.parchmentCream,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.parchmentCream,
+                        shadows: [
+                          Shadow(
+                            color: Color(0xAA000000),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                          value: CharacterSortMode.alphabetical,
+                          child: Text(
+                            '가나다순',
+                            maxLines: largeText ? 2 : 1,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: CharacterSortMode.eraOrder,
+                          child: Text(
+                            '시대순',
+                            maxLines: largeText ? 2 : 1,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
                         ),
                       ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          onSortModeChanged(value);
+                        }
+                      },
                     ),
-                    items: const [
-                      DropdownMenuItem(
-                        value: CharacterSortMode.alphabetical,
-                        child: Text(
-                          '가나다순',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      DropdownMenuItem(
-                        value: CharacterSortMode.eraOrder,
-                        child: Text(
-                          '시대순',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        onSortModeChanged(value);
-                      }
-                    },
                   ),
                 ),
               ),
@@ -310,13 +319,15 @@ class _CharacterTileText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           character.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          maxLines: largeText ? 2 : 1,
+          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+          softWrap: true,
           style: const TextStyle(
             fontWeight: FontWeight.w800,
             fontSize: 14,
@@ -353,8 +364,11 @@ class _CharacterTileText extends StatelessWidget {
             Expanded(
               child: Text(
                 character.tagline ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? null : 1,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   fontSize: 12,
                   color: Color(0xFFF4E9D2),

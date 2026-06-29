@@ -97,6 +97,7 @@ class _PopupBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Stack(
       children: [
         Padding(
@@ -107,8 +108,11 @@ class _PopupBody extends StatelessWidget {
             children: [
               Text(
                 title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                maxLines: largeText ? null : 2,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
                 style: const TextStyle(
                   color: Color(0xFF3D2D18),
                   fontSize: 13,
@@ -119,8 +123,11 @@ class _PopupBody extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   shortText,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? null : 3,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     color: Color(0xFF4C3A21),
                     fontSize: 11,

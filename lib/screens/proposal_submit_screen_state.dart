@@ -1476,6 +1476,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
         ),
       );
     }
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1492,7 +1493,11 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
                 value: option.code,
                 child: Text(
                   '${option.displayTitle} · ${option.eventCount}개 이야기',
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
               ),
           ],

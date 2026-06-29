@@ -8,8 +8,8 @@ import '../../models/app_notification.dart';
 /// 현재 스키마가 지원하는 target:
 ///  - `proposal/{id}`  : 제안 상세 — 편집은 웹 전용이라 모바일이면 경고 다이얼로그
 ///  - `event/{id}`     : 이야기 상세
-///  - `daily-exploration` / `daily-quiz` : 매일 탐험
-///  - `weekly`                         : 주간 탐험
+///  - `daily-exploration` / `daily-quiz` : 매일 미션
+///  - `weekly`                         : 주간 미션
 ///  - `profile`        : 프로필
 ///  - `unknown`        : 처리 불가 (읽음만 남기고 끝)
 enum NotificationTarget {
