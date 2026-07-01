@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,6 +43,25 @@ void main() {
     setUp(() {
       storyRepository = _MockStoryRepository();
       userRepository = _MockUserRepository();
+      final clipboard = <String, String>{};
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (
+            MethodCall methodCall,
+          ) async {
+            switch (methodCall.method) {
+              case 'Clipboard.setData':
+                final args = methodCall.arguments as Map<dynamic, dynamic>;
+                clipboard['text'] = args['text'] as String? ?? '';
+                return null;
+              case 'Clipboard.getData':
+                return <String, dynamic>{'text': clipboard['text'] ?? ''};
+            }
+            return null;
+          });
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform, null);
+      });
 
       when(
         () => userRepository.fetchSavedVerseMap('user-1'),
@@ -65,6 +85,30 @@ void main() {
           verseNo: verse.verseNo,
           verseText: verse.verseText,
           comment: comment,
+          createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+        );
+      });
+      when(
+        () => userRepository.setBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+          highlightColor: any(named: 'highlightColor'),
+        ),
+      ).thenAnswer((invocation) async {
+        final verse = invocation.namedArguments[#verse] as BibleVerse;
+        final highlightColor =
+            invocation.namedArguments[#highlightColor] as String;
+        return SavedBibleVerse(
+          id: 'highlight-${verse.verseNo}',
+          userId: 'user-1',
+          translation: verse.translation,
+          bookNo: verse.bookNo,
+          bookName: verse.bookName,
+          chapterNo: verse.chapterNo,
+          verseNo: verse.verseNo,
+          verseText: verse.verseText,
+          isSaved: false,
+          highlightColor: highlightColor,
           createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
         );
       });
@@ -181,7 +225,7 @@ void main() {
       expect(find.textContaining('요셉이 시종하는 자들 앞에서'), findsOneWidget);
     });
 
-    testWidgets('본문 절을 눌러도 범위 저장 선택이 시작되지 않는다', (tester) async {
+    testWidgets('본문 절을 누르면 저장, 복사, 하이라이트 액션바가 열린다', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -197,7 +241,28 @@ void main() {
       await tester.tap(find.text('테스트 본문 1'));
       await tester.pump();
 
-      expect(find.text('끝 절을 선택하세요'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('selected-verse-continuous-underline')),
+        findsOneWidget,
+      );
+      final selectedText = tester.widget<Text>(find.text('테스트 본문 1'));
+      expect(selectedText.style?.decoration, isNull);
+      expect(find.text('창세기 1:1'), findsOneWidget);
+      expect(find.text('저장'), findsOneWidget);
+      expect(find.text('복사'), findsOneWidget);
+      expect(find.text('파랑'), findsOneWidget);
+      expect(find.text('노랑'), findsOneWidget);
+      final blueSwatch = tester
+          .widgetList<Container>(
+            find.descendant(
+              of: find.byKey(const ValueKey('bible-highlight-blue-button')),
+              matching: find.byType(Container),
+            ),
+          )
+          .map((container) => container.decoration)
+          .whereType<BoxDecoration>()
+          .firstWhere((decoration) => decoration.shape == BoxShape.circle);
+      expect(blueSwatch.border, isNull);
     });
 
     testWidgets('일반 성경 리더는 장 통독 읽음 처리 버튼을 보여준다', (tester) async {
@@ -255,7 +320,7 @@ void main() {
       );
     });
 
-    testWidgets('비로그인 상태에서는 별표와 저장 목록 버튼이 로그인 유도를 요청한다', (tester) async {
+    testWidgets('비로그인 상태에서는 저장 액션과 저장 목록 버튼이 로그인 유도를 요청한다', (tester) async {
       var loginPromptCount = 0;
 
       await tester.pumpWidget(
@@ -276,7 +341,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.star_border_rounded));
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('bible-selected-verse-save-button')),
+      );
       await tester.pump();
       expect(loginPromptCount, 1);
 
@@ -286,7 +355,7 @@ void main() {
       expect(find.text('저장한 말씀'), findsNothing);
     });
 
-    testWidgets('별표로 저장할 때 묵상 코멘트를 입력해 함께 저장한다', (tester) async {
+    testWidgets('선택 액션바 저장 버튼은 묵상 코멘트를 입력해 함께 저장한다', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -299,13 +368,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.star_border_rounded));
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('bible-selected-verse-save-button')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('말씀을 저장할까요?'), findsOneWidget);
+      expect(find.text('왜 이 구절을 저장했나요? (코멘트 선택사항)'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), '오늘 붙잡고 싶은 약속입니다.');
-      await tester.tap(find.text('저장'));
+      await tester.tap(find.text('저장').last);
       await tester.pumpAndSettle();
 
       verify(
@@ -315,11 +389,65 @@ void main() {
           comment: '오늘 붙잡고 싶은 약속입니다.',
         ),
       ).called(1);
-      expect(find.byIcon(Icons.star_rounded), findsOneWidget);
       expect(find.text('저장되었어요.'), findsOneWidget);
     });
 
-    testWidgets('저장 코멘트가 없으면 확인 팝업 없이 바로 저장 취소한다', (tester) async {
+    testWidgets('선택 액션바 복사는 참조와 본문을 클립보드에 넣는다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('bible-selected-verse-copy-button')),
+      );
+      await tester.pump(const Duration(milliseconds: 250));
+
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      expect(data?.text, '창세기 1:1 테스트 본문 1');
+      expect(find.text('말씀을 복사했어요.'), findsOneWidget);
+    });
+
+    testWidgets('선택 액션바 색상 버튼은 코멘트 없이 하이라이트를 저장한다', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('bible-highlight-yellow-button')),
+      );
+      await tester.pumpAndSettle();
+
+      verify(
+        () => userRepository.setBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+          highlightColor: 'yellow',
+        ),
+      ).called(1);
+      expect(find.text('하이라이트를 저장했어요.'), findsOneWidget);
+    });
+
+    testWidgets('저장 코멘트가 없으면 말씀 목록에서 확인 팝업 없이 바로 저장 취소한다', (tester) async {
       final saved = SavedBibleVerse(
         id: 'saved-1',
         userId: 'user-1',
@@ -334,6 +462,20 @@ void main() {
       when(
         () => userRepository.fetchSavedVerseMap('user-1'),
       ).thenAnswer((_) async => {saved.key: saved});
+      when(
+        () => userRepository.fetchSavedVersesPage(
+          userId: 'user-1',
+          pageIndex: 0,
+          pageSize: 10,
+        ),
+      ).thenAnswer(
+        (_) async => PagedResult<SavedBibleVerse>(
+          items: [saved],
+          pageIndex: 0,
+          pageSize: 10,
+          hasNextPage: false,
+        ),
+      );
 
       await tester.pumpWidget(
         ProviderScope(
@@ -347,16 +489,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.star_rounded));
+      await tester.tap(find.byIcon(Icons.menu_book_rounded));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.delete_outline_rounded));
       await tester.pumpAndSettle();
 
       verify(() => userRepository.deleteSavedVerse('saved-1')).called(1);
       expect(find.text('말씀 저장을 취소할까요?'), findsNothing);
-      expect(find.byIcon(Icons.star_border_rounded), findsOneWidget);
       expect(find.text('저장된 코멘트가 없어서 바로 구절 저장을 취소했어요.'), findsOneWidget);
     });
 
-    testWidgets('저장 코멘트가 있으면 저장 취소 전 확인 팝업을 띄운다', (tester) async {
+    testWidgets('저장 코멘트가 있으면 말씀 목록에서 저장 취소 전 확인 팝업을 띄운다', (tester) async {
       final saved = SavedBibleVerse(
         id: 'saved-1',
         userId: 'user-1',
@@ -372,6 +515,20 @@ void main() {
       when(
         () => userRepository.fetchSavedVerseMap('user-1'),
       ).thenAnswer((_) async => {saved.key: saved});
+      when(
+        () => userRepository.fetchSavedVersesPage(
+          userId: 'user-1',
+          pageIndex: 0,
+          pageSize: 10,
+        ),
+      ).thenAnswer(
+        (_) async => PagedResult<SavedBibleVerse>(
+          items: [saved],
+          pageIndex: 0,
+          pageSize: 10,
+          hasNextPage: false,
+        ),
+      );
 
       await tester.pumpWidget(
         ProviderScope(
@@ -385,7 +542,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.star_rounded));
+      await tester.tap(find.byIcon(Icons.menu_book_rounded));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.delete_outline_rounded));
       await tester.pumpAndSettle();
 
       expect(find.text('말씀 저장을 취소할까요?'), findsOneWidget);
@@ -395,7 +554,6 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(() => userRepository.deleteSavedVerse('saved-1')).called(1);
-      expect(find.byIcon(Icons.star_border_rounded), findsOneWidget);
     });
 
     testWidgets('초기 절 번호가 있으면 해당 절을 본문 목록 상단으로 올린다', (tester) async {

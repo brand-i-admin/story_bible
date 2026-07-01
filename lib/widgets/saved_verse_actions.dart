@@ -31,7 +31,7 @@ Future<SavedVerseDeleteDecision> confirmSavedVerseDelete({
   required SavedBibleVerse verse,
 }) async {
   final comment = verse.comment.trim();
-  if (comment.isEmpty) {
+  if (comment.isEmpty || !verse.isSaved) {
     return const SavedVerseDeleteDecision(
       shouldDelete: true,
       hadComment: false,
@@ -125,7 +125,7 @@ class _SavedVerseCommentDialogState extends State<_SavedVerseCommentDialog> {
       ],
       child: ParchmentDialogTextField(
         controller: _controller,
-        hintText: '왜 이 구절을 저장했나요?',
+        hintText: '왜 이 구절을 저장했나요? (코멘트 선택사항)',
         maxLength: savedVerseCommentMaxLength,
         minLines: 3,
         maxLines: 4,

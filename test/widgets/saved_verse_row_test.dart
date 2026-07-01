@@ -71,4 +71,29 @@ void main() {
     final text = tester.widget<Text>(emptyComment);
     expect(text.style?.color, isNotNull);
   });
+
+  testWidgets('하이라이트 전용 말씀은 코멘트 영역 없이 지정한 형광 배경으로 표시한다', (tester) async {
+    final verse = SavedBibleVerse(
+      id: 'saved_1',
+      userId: 'user_1',
+      translation: 'KRV',
+      bookNo: 1,
+      bookName: '창세기',
+      chapterNo: 41,
+      verseNo: 1,
+      verseText: '만 이년 후에 바로가 꿈을 꾼즉 자기가 하숫가에 섰는데',
+      isSaved: false,
+      highlightColor: 'blue',
+      createdAt: DateTime.parse('2026-05-26T09:00:00Z'),
+    );
+
+    await tester.pumpWidget(_wrap(SavedVerseRow(verse: verse)));
+
+    expect(find.text('남긴 코멘트가 없습니다.'), findsNothing);
+    final container = tester.widget<AnimatedContainer>(
+      find.byKey(const ValueKey('saved-verse-row-container')),
+    );
+    final decoration = container.decoration! as BoxDecoration;
+    expect(decoration.color, const Color(0x6639C6E8));
+  });
 }

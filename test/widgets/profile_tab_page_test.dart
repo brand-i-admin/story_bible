@@ -391,6 +391,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(fetchCount, greaterThanOrEqualTo(2));
+    expect(find.text('저장한 말씀'), findsNothing);
     expect(find.text('태초에 하나님이 천지를 창조하시니라'), findsOneWidget);
     expect(find.text('처음 저장한 말씀'), findsOneWidget);
   });

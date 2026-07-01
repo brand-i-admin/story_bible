@@ -667,7 +667,10 @@ create table if not exists user_saved_verses (
   verse_no smallint not null check (verse_no > 0),
   verse_text text not null,
   comment text not null default '' check (char_length(comment) <= 200),
+  is_saved boolean not null default true,
+  highlight_color text check (highlight_color is null or highlight_color in ('blue', 'yellow')),
   created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
   unique (user_id, translation, book_no, chapter_no, verse_no)
 );
 
@@ -718,6 +721,7 @@ create index if not exists idx_embed_ivfflat on search_embeddings using ivfflat 
 create index if not exists idx_bible_verses_lookup on bible_verses (translation, book_no, chapter_no, verse_no);
 create index if not exists idx_user_notes_user_created on user_notes (user_id, created_at desc);
 create index if not exists idx_user_saved_verses_user_created on user_saved_verses (user_id, created_at desc);
+create index if not exists idx_user_saved_verses_user_updated on user_saved_verses (user_id, updated_at desc);
 create index if not exists idx_user_bible_chapter_progress_user_book
   on user_bible_chapter_progress (user_id, translation, book_no, chapter_no);
 create index if not exists idx_user_saved_events_user_created on user_saved_events (user_id, created_at desc);
@@ -742,6 +746,11 @@ for each row execute function public.touch_updated_at();
 drop trigger if exists set_user_notes_updated_at on user_notes;
 create trigger set_user_notes_updated_at
 before update on user_notes
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists set_user_saved_verses_updated_at on user_saved_verses;
+create trigger set_user_saved_verses_updated_at
+before update on user_saved_verses
 for each row execute function public.touch_updated_at();
 
 drop trigger if exists set_user_quiz_attempts_updated_at on user_quiz_attempts;
@@ -936,7 +945,7 @@ grant select, insert, update, delete on table user_companion_diary_entries to au
 grant select, insert, update on table user_profiles to authenticated;
 grant select, insert, delete on table user_intercessory_prayers to authenticated;
 grant select, insert, update, delete on table user_notes to authenticated;
-grant select, insert, delete on table user_saved_verses to authenticated;
+grant select, insert, update, delete on table user_saved_verses to authenticated;
 grant select, insert, update, delete on table user_bible_chapter_progress to authenticated;
 grant select, insert, delete on table user_saved_events to authenticated;
 
@@ -1072,6 +1081,12 @@ for select using (auth.uid() = user_id);
 drop policy if exists user_saved_verses_insert_own on user_saved_verses;
 create policy user_saved_verses_insert_own on user_saved_verses
 for insert with check (auth.uid() = user_id);
+
+drop policy if exists user_saved_verses_update_own on user_saved_verses;
+create policy user_saved_verses_update_own on user_saved_verses
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
 
 drop policy if exists user_saved_verses_delete_own on user_saved_verses;
 create policy user_saved_verses_delete_own on user_saved_verses

@@ -22,6 +22,7 @@ class SavedVerseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final badgeSize = compact ? 28.0 : 32.0;
     final comment = verse.comment.trim();
+    final showComment = verse.isSaved;
 
     return Material(
       color: Colors.transparent,
@@ -29,6 +30,7 @@ class SavedVerseRow extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: AnimatedContainer(
+          key: const ValueKey('saved-verse-row-container'),
           duration: const Duration(milliseconds: 160),
           padding: EdgeInsets.fromLTRB(
             compact ? 8 : 10,
@@ -37,7 +39,7 @@ class SavedVerseRow extends StatelessWidget {
             compact ? 8 : 10,
           ),
           decoration: BoxDecoration(
-            color: AppColors.gold.withAlpha(34),
+            color: _savedVerseRowBackground(verse),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: AppColors.borderHairlineDark, width: 1),
           ),
@@ -70,26 +72,28 @@ class SavedVerseRow extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: compact ? 7 : 9),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: AppColors.borderHairlineDark.withAlpha(110),
-                    ),
-                    SizedBox(height: compact ? 7 : 8),
-                    Text(
-                      comment.isEmpty ? '남긴 코멘트가 없습니다.' : comment,
-                      style: TextStyle(
-                        color: comment.isEmpty
-                            ? AppColors.ink150
-                            : AppColors.ink500,
-                        fontSize: compact ? 11.5 : 12.7,
-                        height: 1.42,
-                        fontWeight: comment.isEmpty
-                            ? FontWeight.w700
-                            : FontWeight.w800,
+                    if (showComment) ...[
+                      SizedBox(height: compact ? 7 : 9),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: AppColors.borderHairlineDark.withAlpha(110),
                       ),
-                    ),
+                      SizedBox(height: compact ? 7 : 8),
+                      Text(
+                        comment.isEmpty ? '남긴 코멘트가 없습니다.' : comment,
+                        style: TextStyle(
+                          color: comment.isEmpty
+                              ? AppColors.ink150
+                              : AppColors.ink500,
+                          fontSize: compact ? 11.5 : 12.7,
+                          height: 1.42,
+                          fontWeight: comment.isEmpty
+                              ? FontWeight.w700
+                              : FontWeight.w800,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -98,7 +102,7 @@ class SavedVerseRow extends StatelessWidget {
                 SizedBox(
                   width: compact ? 34 : 38,
                   child: IconButton(
-                    tooltip: '저장 취소',
+                    tooltip: verse.isSaved ? '저장 취소' : '하이라이트 삭제',
                     onPressed: onDelete,
                     icon: const Icon(Icons.delete_outline_rounded),
                     color: AppColors.seed,
@@ -113,6 +117,14 @@ class SavedVerseRow extends StatelessWidget {
       ),
     );
   }
+}
+
+Color _savedVerseRowBackground(SavedBibleVerse verse) {
+  return switch (verse.highlightColor) {
+    SavedBibleVerse.highlightBlue => const Color(0x6639C6E8),
+    SavedBibleVerse.highlightYellow => const Color(0x66FFF176),
+    _ => AppColors.gold.withAlpha(34),
+  };
 }
 
 class _SavedVerseReferenceBadge extends StatelessWidget {

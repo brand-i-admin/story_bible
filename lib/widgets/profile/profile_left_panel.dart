@@ -390,17 +390,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '저장한 말씀',
-          maxLines: 2,
-          overflow: TextOverflow.visible,
-          style: TextStyle(
-            color: Color(0xFF452F1A),
-            fontWeight: FontWeight.w900,
-            fontSize: 15.2,
-          ),
-        ),
-        const SizedBox(height: 8),
         Expanded(
           child: _profileSavedVersesLoading
               ? const Center(child: CircularProgressIndicator())

@@ -1,5 +1,25 @@
 part of 'story_home_screen.dart';
 
+class _HomeMapFilterSnapshot {
+  const _HomeMapFilterSnapshot({
+    required this.mode,
+    required this.selectedCharacterCodes,
+    required this.selectedTimelineUnitCodes,
+    required this.selectedLandmarkId,
+    required this.displayedEventIds,
+    required this.draftSelectedCharacterCodes,
+    required this.draftDisplayedEventIds,
+  });
+
+  final _SelectionMode? mode;
+  final Set<String> selectedCharacterCodes;
+  final Set<String> selectedTimelineUnitCodes;
+  final String? selectedLandmarkId;
+  final Set<String> displayedEventIds;
+  final Set<String> draftSelectedCharacterCodes;
+  final Set<String> draftDisplayedEventIds;
+}
+
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
@@ -1534,6 +1554,93 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return direct.parentLandmarkId ?? event.landmarkParentId;
   }
 
+  _HomeMapFilterSnapshot? _captureHomeMapFilterSnapshot(StoryEvent event) {
+    final state = ref.read(storyControllerProvider);
+    final eventIsLoaded =
+        state.selectedEraId == event.eraId &&
+        state.events.any((entry) => entry.id == event.id);
+    if (!eventIsLoaded) {
+      return null;
+    }
+
+    final visibleEventIds = {
+      ...state.displayedEventIds,
+      ..._draftDisplayedEventIds,
+    };
+    if (!visibleEventIds.contains(event.id)) {
+      return null;
+    }
+
+    return _HomeMapFilterSnapshot(
+      mode: _mode,
+      selectedCharacterCodes: state.selectedCharacterCodes.toSet(),
+      selectedTimelineUnitCodes: state.selectedTimelineUnitCodes.toSet(),
+      selectedLandmarkId: state.selectedLandmarkId,
+      displayedEventIds: state.displayedEventIds.toSet(),
+      draftSelectedCharacterCodes: _draftSelectedCharacterCodes.toSet(),
+      draftDisplayedEventIds: _draftDisplayedEventIds.toSet(),
+    );
+  }
+
+  bool _restoreHomeMapFilterSnapshot(
+    _HomeMapFilterSnapshot? snapshot,
+    StoryEvent event,
+  ) {
+    if (snapshot == null || !mounted) {
+      return false;
+    }
+    final state = ref.read(storyControllerProvider);
+    final eventIsLoaded =
+        state.selectedEraId == event.eraId &&
+        state.events.any((entry) => entry.id == event.id);
+    if (!eventIsLoaded) {
+      return false;
+    }
+
+    final notifier = ref.read(storyControllerProvider.notifier);
+    switch (snapshot.mode) {
+      case _SelectionMode.character:
+        if (snapshot.selectedCharacterCodes.isEmpty) {
+          return false;
+        }
+        notifier.setSelectionMode(SelectionMode.character);
+        notifier.setSelectedCharacters(snapshot.selectedCharacterCodes);
+      case _SelectionMode.region:
+        final landmarkId = snapshot.selectedLandmarkId;
+        if (landmarkId == null || state.landmarkById(landmarkId) == null) {
+          return false;
+        }
+        notifier.setSelectionMode(SelectionMode.region);
+        notifier.selectLandmark(landmarkId);
+      case _SelectionMode.timeline:
+        if (snapshot.selectedTimelineUnitCodes.isEmpty) {
+          return false;
+        }
+        notifier.setSelectionMode(SelectionMode.timeline);
+        notifier.setSelectedTimelineUnits(snapshot.selectedTimelineUnitCodes);
+      case null:
+        notifier.clearSelectionMode();
+    }
+    notifier.setDisplayedEvents(snapshot.displayedEventIds);
+    notifier.selectEvent(event.id);
+
+    setState(() {
+      _mode = snapshot.mode;
+      _selectionStep = 3;
+      _draftSelectedCharacterCodes = snapshot.draftSelectedCharacterCodes;
+      _draftDisplayedEventIds = snapshot.draftDisplayedEventIds;
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = _sheetSizeForStage(
+        MediaQuery.sizeOf(context),
+        StorySelectionPanelStage.collapsed,
+      );
+      _awaitingRevealComplete = false;
+      _revealInstantly = true;
+      _mapHintDismissed = true;
+    });
+    return true;
+  }
+
   void _handleEventSelect(String eventId) {
     final state = ref.read(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
@@ -1876,6 +1983,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     bool revealHomeBeforeMapAnimation = false,
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
+    final filterSnapshot = _captureHomeMapFilterSnapshot(event);
     _setMapAnimationInputLocked(true);
     try {
       _completeMapCelebration();
@@ -1890,11 +1998,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       if (!mounted) return;
 
-      await _prepareHomeMapForProfileEvent(
+      final restoredFilter = _restoreHomeMapFilterSnapshot(
+        filterSnapshot,
         event,
-        source: ProfileEventOpenSource.general,
       );
-      if (!mounted) return;
+      if (!restoredFilter) {
+        await _prepareHomeMapForProfileEvent(
+          event,
+          source: ProfileEventOpenSource.general,
+        );
+        if (!mounted) return;
+      }
 
       final notifier = ref.read(storyControllerProvider.notifier);
       final state = ref.read(storyControllerProvider);

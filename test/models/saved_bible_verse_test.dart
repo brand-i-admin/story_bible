@@ -14,7 +14,10 @@ void main() {
       'verse_no': 1,
       'verse_text': '태초에 하나님이 천지를 창조하시니라',
       'comment': '창조의 시작을 기억하고 싶어서',
+      'is_saved': true,
+      'highlight_color': 'yellow',
       'created_at': '2024-03-10T09:00:00Z',
+      'updated_at': '2024-03-11T09:00:00Z',
     };
 
     test('유효한 map에서 모든 필드를 올바르게 파싱한다', () {
@@ -28,13 +31,31 @@ void main() {
       expect(verse.verseNo, 1);
       expect(verse.verseText, '태초에 하나님이 천지를 창조하시니라');
       expect(verse.comment, '창조의 시작을 기억하고 싶어서');
+      expect(verse.isSaved, isTrue);
+      expect(verse.highlightColor, 'yellow');
+      expect(verse.isHighlighted, isTrue);
       expect(verse.createdAt, DateTime.parse('2024-03-10T09:00:00Z'));
+      expect(verse.updatedAt, DateTime.parse('2024-03-11T09:00:00Z'));
     });
 
     test('comment가 없으면 빈 문자열로 파싱한다', () {
       final verse = SavedBibleVerse.fromMap({...validMap, 'comment': null});
 
       expect(verse.comment, '');
+    });
+
+    test('신규 저장/하이라이트 필드가 없으면 기존 row 기본값으로 파싱한다', () {
+      final verse = SavedBibleVerse.fromMap({
+        ...validMap,
+        'is_saved': null,
+        'highlight_color': null,
+        'updated_at': null,
+      });
+
+      expect(verse.isSaved, isTrue);
+      expect(verse.highlightColor, isNull);
+      expect(verse.isHighlighted, isFalse);
+      expect(verse.updatedAt, verse.createdAt);
     });
   });
 

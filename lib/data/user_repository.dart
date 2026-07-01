@@ -16,7 +16,7 @@ class UserRepository {
 
   static const profileImageBucket = 'profile-images';
   static const _savedVerseColumns =
-      'id, user_id, translation, book_no, book_name, chapter_no, verse_no, verse_text, comment, created_at';
+      'id, user_id, translation, book_no, book_name, chapter_no, verse_no, verse_text, comment, is_saved, highlight_color, created_at, updated_at';
   static const _savedVerseCommentMaxLength = 200;
   static const _companionDiaryColumns =
       'id, user_id, entry_date, title, body, created_at, updated_at';
@@ -124,6 +124,7 @@ class UserRepository {
         .from('user_saved_verses')
         .select(_savedVerseColumns)
         .eq('user_id', userId)
+        .order('updated_at', ascending: false)
         .order('created_at', ascending: false)
         .range(from, to);
 
@@ -157,21 +158,104 @@ class UserRepository {
     String comment = '',
   }) async {
     final normalizedComment = _normalizeSavedVerseComment(comment);
+    final existing = await _fetchSavedVerseForVerse(
+      userId: userId,
+      verse: verse,
+    );
+    final payload = {
+      'user_id': userId,
+      'translation': verse.translation,
+      'book_no': verse.bookNo,
+      'book_name': verse.bookName,
+      'chapter_no': verse.chapterNo,
+      'verse_no': verse.verseNo,
+      'verse_text': verse.verseText,
+      'comment': normalizedComment,
+      'is_saved': true,
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+
+    final row = existing == null
+        ? await _client
+              .from('user_saved_verses')
+              .insert(payload)
+              .select(_savedVerseColumns)
+              .single()
+        : await _client
+              .from('user_saved_verses')
+              .update(payload)
+              .eq('id', existing.id)
+              .select(_savedVerseColumns)
+              .single();
+    return SavedBibleVerse.fromMap(row);
+  }
+
+  Future<SavedBibleVerse> setBibleVerseHighlight({
+    required String userId,
+    required BibleVerse verse,
+    required String highlightColor,
+  }) async {
+    final normalizedColor = SavedBibleVerse.normalizeHighlightColor(
+      highlightColor,
+    );
+    if (normalizedColor == null) {
+      throw ArgumentError.value(
+        highlightColor,
+        'highlightColor',
+        'blue 또는 yellow만 사용할 수 있습니다.',
+      );
+    }
+    final existing = await _fetchSavedVerseForVerse(
+      userId: userId,
+      verse: verse,
+    );
+    final updatedAt = DateTime.now().toIso8601String();
+    final row = existing == null
+        ? await _client
+              .from('user_saved_verses')
+              .insert({
+                'user_id': userId,
+                'translation': verse.translation,
+                'book_no': verse.bookNo,
+                'book_name': verse.bookName,
+                'chapter_no': verse.chapterNo,
+                'verse_no': verse.verseNo,
+                'verse_text': verse.verseText,
+                'comment': '',
+                'is_saved': false,
+                'highlight_color': normalizedColor,
+                'updated_at': updatedAt,
+              })
+              .select(_savedVerseColumns)
+              .single()
+        : await _client
+              .from('user_saved_verses')
+              .update({
+                'book_name': verse.bookName,
+                'verse_text': verse.verseText,
+                'highlight_color': normalizedColor,
+                'updated_at': updatedAt,
+              })
+              .eq('id', existing.id)
+              .select(_savedVerseColumns)
+              .single();
+    return SavedBibleVerse.fromMap(row);
+  }
+
+  Future<SavedBibleVerse?> _fetchSavedVerseForVerse({
+    required String userId,
+    required BibleVerse verse,
+  }) async {
     final row = await _client
         .from('user_saved_verses')
-        .insert({
-          'user_id': userId,
-          'translation': verse.translation,
-          'book_no': verse.bookNo,
-          'book_name': verse.bookName,
-          'chapter_no': verse.chapterNo,
-          'verse_no': verse.verseNo,
-          'verse_text': verse.verseText,
-          'comment': normalizedComment,
-        })
         .select(_savedVerseColumns)
-        .single();
-    return SavedBibleVerse.fromMap(row);
+        .eq('user_id', userId)
+        .eq('translation', verse.translation)
+        .eq('book_no', verse.bookNo)
+        .eq('chapter_no', verse.chapterNo)
+        .eq('verse_no', verse.verseNo)
+        .maybeSingle();
+    return row == null ? null : SavedBibleVerse.fromMap(row);
   }
 
   Future<void> deleteSavedVerse(String verseId) {
