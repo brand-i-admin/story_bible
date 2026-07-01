@@ -242,7 +242,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     }
   }
 
-  Future<void> _setVerseHighlight(
+  Future<void> _toggleVerseHighlight(
     BibleVerse verse,
     String highlightColor,
   ) async {
@@ -253,6 +253,33 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     }
 
     try {
+      final verseKey = _verseKey(verse);
+      final currentSavedVerse = _savedVersesByKey[verseKey];
+      final normalizedColor = SavedBibleVerse.normalizeHighlightColor(
+        highlightColor,
+      );
+      final shouldClear =
+          normalizedColor != null &&
+          currentSavedVerse?.highlightColor == normalizedColor;
+      final messenger = ScaffoldMessenger.of(context);
+      if (shouldClear) {
+        final nextSavedVerse = await ref
+            .read(userRepositoryProvider)
+            .clearBibleVerseHighlight(userId: user.id, verse: verse);
+        if (!mounted) return;
+        setState(() {
+          _savedVersesByKey = nextSavedVerse == null
+              ? {
+                  for (final entry in _savedVersesByKey.entries)
+                    if (entry.key != verseKey) entry.key: entry.value,
+                }
+              : {..._savedVersesByKey, nextSavedVerse.key: nextSavedVerse};
+        });
+        messenger.hideCurrentSnackBar();
+        messenger.showSnackBar(const SnackBar(content: Text('하이라이트를 해제했어요.')));
+        return;
+      }
+
       final nextSavedVerse = await ref
           .read(userRepositoryProvider)
           .setBibleVerseHighlight(
@@ -267,7 +294,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
           nextSavedVerse.key: nextSavedVerse,
         };
       });
-      final messenger = ScaffoldMessenger.of(context);
       messenger.hideCurrentSnackBar();
       messenger.showSnackBar(const SnackBar(content: Text('하이라이트를 저장했어요.')));
     } catch (error) {
@@ -546,11 +572,11 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                   )
                 : _SelectedVerseActionBar(
                     verse: selectedVerse,
-                    onBlue: () => _setVerseHighlight(
+                    onBlue: () => _toggleVerseHighlight(
                       selectedVerse,
                       SavedBibleVerse.highlightBlue,
                     ),
-                    onYellow: () => _setVerseHighlight(
+                    onYellow: () => _toggleVerseHighlight(
                       selectedVerse,
                       SavedBibleVerse.highlightYellow,
                     ),

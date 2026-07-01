@@ -242,6 +242,36 @@ class UserRepository {
     return SavedBibleVerse.fromMap(row);
   }
 
+  Future<SavedBibleVerse?> clearBibleVerseHighlight({
+    required String userId,
+    required BibleVerse verse,
+  }) async {
+    final existing = await _fetchSavedVerseForVerse(
+      userId: userId,
+      verse: verse,
+    );
+    if (existing == null) {
+      return null;
+    }
+    if (!existing.isSaved) {
+      await _client.from('user_saved_verses').delete().eq('id', existing.id);
+      return null;
+    }
+
+    final row = await _client
+        .from('user_saved_verses')
+        .update({
+          'book_name': verse.bookName,
+          'verse_text': verse.verseText,
+          'highlight_color': null,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', existing.id)
+        .select(_savedVerseColumns)
+        .single();
+    return SavedBibleVerse.fromMap(row);
+  }
+
   Future<SavedBibleVerse?> _fetchSavedVerseForVerse({
     required String userId,
     required BibleVerse verse,

@@ -116,6 +116,12 @@ void main() {
         () => userRepository.deleteSavedVerse(any()),
       ).thenAnswer((_) async {});
       when(
+        () => userRepository.clearBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+        ),
+      ).thenAnswer((_) async => null);
+      when(
         () => storyRepository.fetchBibleVersesByChapter(
           translation: 'KRV',
           bookNo: 1,
@@ -445,6 +451,132 @@ void main() {
         ),
       ).called(1);
       expect(find.text('하이라이트를 저장했어요.'), findsOneWidget);
+    });
+
+    testWidgets('하이라이트만 있는 말씀은 같은 색을 다시 누르면 목록에서 제거한다', (tester) async {
+      final highlighted = SavedBibleVerse(
+        id: 'highlight-1',
+        userId: 'user-1',
+        translation: 'KRV',
+        bookNo: 1,
+        bookName: '창세기',
+        chapterNo: 1,
+        verseNo: 1,
+        verseText: '테스트 본문 1',
+        isSaved: false,
+        highlightColor: SavedBibleVerse.highlightYellow,
+        createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+      );
+      when(
+        () => userRepository.fetchSavedVerseMap('user-1'),
+      ).thenAnswer((_) async => {highlighted.key: highlighted});
+      when(
+        () => userRepository.clearBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+        ),
+      ).thenAnswer((_) async => null);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('bible-highlight-yellow-button')),
+      );
+      await tester.pumpAndSettle();
+
+      verify(
+        () => userRepository.clearBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+        ),
+      ).called(1);
+      verifyNever(
+        () => userRepository.setBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+          highlightColor: 'yellow',
+        ),
+      );
+      expect(find.text('하이라이트를 해제했어요.'), findsOneWidget);
+    });
+
+    testWidgets('저장된 말씀의 같은 색 하이라이트 재탭은 저장을 남기고 하이라이트만 지운다', (tester) async {
+      final savedHighlighted = SavedBibleVerse(
+        id: 'saved-1',
+        userId: 'user-1',
+        translation: 'KRV',
+        bookNo: 1,
+        bookName: '창세기',
+        chapterNo: 1,
+        verseNo: 1,
+        verseText: '테스트 본문 1',
+        comment: '저장은 유지되어야 합니다.',
+        isSaved: true,
+        highlightColor: SavedBibleVerse.highlightYellow,
+        createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+      );
+      final savedOnly = SavedBibleVerse(
+        id: 'saved-1',
+        userId: 'user-1',
+        translation: 'KRV',
+        bookNo: 1,
+        bookName: '창세기',
+        chapterNo: 1,
+        verseNo: 1,
+        verseText: '테스트 본문 1',
+        comment: '저장은 유지되어야 합니다.',
+        isSaved: true,
+        createdAt: DateTime.parse('2026-05-26T00:00:00Z'),
+      );
+      when(
+        () => userRepository.fetchSavedVerseMap('user-1'),
+      ).thenAnswer((_) async => {savedHighlighted.key: savedHighlighted});
+      when(
+        () => userRepository.clearBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+        ),
+      ).thenAnswer((_) async => savedOnly);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(home: BibleReaderPage()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('테스트 본문 1'));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('bible-highlight-yellow-button')),
+      );
+      await tester.pumpAndSettle();
+
+      verify(
+        () => userRepository.clearBibleVerseHighlight(
+          userId: 'user-1',
+          verse: any(named: 'verse'),
+        ),
+      ).called(1);
+      verifyNever(() => userRepository.deleteSavedVerse('saved-1'));
+      expect(find.text('하이라이트를 해제했어요.'), findsOneWidget);
     });
 
     testWidgets('저장 코멘트가 없으면 말씀 목록에서 확인 팝업 없이 바로 저장 취소한다', (tester) async {
