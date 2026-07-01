@@ -155,6 +155,114 @@ if updated != text:
 PY
 }
 
+read_pubspec_version_part() {
+  local part="$1"
+  require_command python3
+
+  python3 - "$ROOT_DIR/pubspec.yaml" "$part" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+pubspec_path = Path(sys.argv[1])
+part = sys.argv[2]
+version = None
+
+for raw_line in pubspec_path.read_text(encoding="utf-8").splitlines():
+    match = re.match(r"^\s*version:\s*['\"]?([^'\"\s#]+)", raw_line)
+    if match:
+        version = match.group(1)
+        break
+
+if not version:
+    raise SystemExit(f"Missing version in {pubspec_path}")
+if "+" not in version:
+    raise SystemExit(
+        f"{pubspec_path} version must include a build number, e.g. 1.0.2+29"
+    )
+
+build_name, build_number = version.split("+", 1)
+if not build_name or not build_number:
+    raise SystemExit(f"Invalid version in {pubspec_path}: {version}")
+
+print(build_name if part == "name" else build_number)
+PY
+}
+
+sync_ios_flutter_version_settings() {
+  local build_name
+  local build_number
+  build_name="$(read_pubspec_version_part name)"
+  build_number="$(read_pubspec_version_part number)"
+
+  local generated_xcconfig="$ROOT_DIR/ios/Flutter/Generated.xcconfig"
+  local export_environment="$ROOT_DIR/ios/Flutter/flutter_export_environment.sh"
+  [[ -f "$generated_xcconfig" ]] || return 0
+
+  python3 - "$generated_xcconfig" "$export_environment" "$build_name" "$build_number" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+generated_xcconfig = Path(sys.argv[1])
+export_environment = Path(sys.argv[2])
+build_name = sys.argv[3]
+build_number = sys.argv[4]
+
+
+def replace_or_append(text: str, pattern: str, replacement: str) -> str:
+    if re.search(pattern, text, flags=re.MULTILINE):
+        return re.sub(pattern, replacement, text, flags=re.MULTILINE)
+    suffix = "" if text.endswith("\n") else "\n"
+    return f"{text}{suffix}{replacement}\n"
+
+
+updates = [
+    (
+        generated_xcconfig,
+        False,
+        {
+            "FLUTTER_BUILD_NAME": build_name,
+            "FLUTTER_BUILD_NUMBER": build_number,
+        },
+    ),
+    (
+        export_environment,
+        True,
+        {
+            "FLUTTER_BUILD_NAME": build_name,
+            "FLUTTER_BUILD_NUMBER": build_number,
+        },
+    ),
+]
+
+for path, is_export, values in updates:
+    if not path.exists():
+        continue
+    text = path.read_text(encoding="utf-8")
+    updated = text
+    for key, value in values.items():
+        if is_export:
+            pattern = rf'^export "{re.escape(key)}=.*"$'
+            replacement = f'export "{key}={value}"'
+        else:
+            pattern = rf"^{re.escape(key)}=.*$"
+            replacement = f"{key}={value}"
+        updated = replace_or_append(updated, pattern, replacement)
+    if updated != text:
+        path.write_text(updated, encoding="utf-8")
+
+print(f"Synced iOS Flutter version: {build_name} ({build_number})")
+PY
+}
+
+install_ios_pods() {
+  require_command pod
+
+  echo "Installing iOS pods..."
+  (cd "$ROOT_DIR/ios" && pod install)
+}
+
 prepare_flutter_workspace() {
   require_command flutter
   require_command python3
@@ -215,7 +323,43 @@ run_app() {
 build_ios() {
   local runtime_env="$1"
   shift
-  run_flutter "$runtime_env" build ipa --release "$@"
+  local build_name
+  local build_number
+  build_name="$(read_pubspec_version_part name)"
+  build_number="$(read_pubspec_version_part number)"
+  local fcm_vapid_key
+  local supabase_env_suffix
+  local supabase_url
+  local supabase_anon_key
+
+  validate_supabase_env "$runtime_env"
+  print_target "$runtime_env"
+  prepare_flutter_workspace
+  sync_ios_flutter_version_settings
+  install_ios_pods
+
+  fcm_vapid_key="$(read_env_value FCM_VAPID_KEY)"
+  supabase_env_suffix="$(env_suffix_for_runtime "$runtime_env")"
+  supabase_url="$(read_env_value "SUPABASE_URL_${supabase_env_suffix}")"
+  supabase_anon_key="$(read_env_value "SUPABASE_ANON_KEY_${supabase_env_suffix}")"
+
+  local flutter_args=(
+    build ipa
+    --release
+    --build-name="$build_name"
+    --build-number="$build_number"
+    "$@"
+    --no-pub
+    --dart-define=ENV="$runtime_env"
+    --dart-define=SUPABASE_URL="$supabase_url"
+    --dart-define=SUPABASE_ANON_KEY="$supabase_anon_key"
+  )
+
+  if [[ -n "$fcm_vapid_key" ]]; then
+    exec flutter "${flutter_args[@]}" --dart-define=FCM_VAPID_KEY="$fcm_vapid_key"
+  else
+    exec flutter "${flutter_args[@]}"
+  fi
 }
 
 build_android() {

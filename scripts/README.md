@@ -61,7 +61,7 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 
 - 모든 스크립트는 Flutter 호출 전에 `flutter clean`과 `flutter pub get`을 실행한 뒤, 본 호출은 `--no-pub`으로 진행합니다.
 - `run_*` 스크립트는 `flutter run --no-pub --dart-define=ENV=... --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...`를 호출합니다.
-- `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값을 붙여 호출합니다.
+- `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값과 `pubspec.yaml`의 `--build-name`, `--build-number`를 붙여 호출합니다. 빌드 전 `ios/Flutter/Generated.xcconfig`와 `ios/Flutter/flutter_export_environment.sh`를 `pubspec.yaml` 버전으로 동기화하고 `pod install`로 `ios/Pods/Manifest.lock`을 맞춥니다.
 - `build_android_*` 스크립트는 `flutter build appbundle --release --no-pub`에 같은 dart-define 값을 붙여 호출합니다.
 - `.env`에 `FCM_VAPID_KEY`가 있으면 `--dart-define=FCM_VAPID_KEY=...`도 자동 주입합니다 (Flutter Web 푸시용). 비어 있거나 없으면 주입 생략.
 - `.env`에는 앱 실행용 공개값만 둡니다. `SUPABASE_SERVICE_ROLE_KEY_*`, `SUPABASE_DB_URL_*` 같은 운영 비밀은 `.env.ops`에 둡니다.
